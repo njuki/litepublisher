@@ -9,7 +9,7 @@
 <link rel="pingback" href="$Options->pingurl" />
 <link rel="shortcut icon" type="image/x-icon" href="$Options->url/favicon.ico" />
 <link rel="meta" type="application/rdf+xml" title="FOAF" href="$Options->foaf" />
-<meta name="generator" content="Blogolet $Options->version" /> <!-- leave this for stats -->
+<meta name="generator" content="Lite Publisher $Options->version" /> <!-- leave this for stats -->
 <meta name="keywords" content="$Template->keywords" />
 <meta name="description" content="$Template->description" />
 <link rel="sitemap" href="$Options->url/sitemap/" />
