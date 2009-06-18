@@ -1,0 +1,379 @@
+<?php
+
+class TUrlmap extends TItems {
+ public $host;
+ public $url;
+ public $urlid;
+ public $uripath;
+ public $pagenumber;
+ public $get;
+ public $tree;
+ public $is404;
+ public $IsAdminPanel;
+ private $argfinal;
+ 
+ public static function &Instance() {
+  return GetInstance(__class__);
+ }
+ 
+ protected function CreateData() {
+  parent::CreateData();
+  $this->basename = 'urlmap';
+  $this->AddEvents('BeforeRequest', 'AfterRequest', 'CacheExpired');
+  $this->AddDataMap('get', array());
+  $this->AddDataMap('tree', array());
+  $this->is404 = false;
+  $this->IsAdminPanel = false;
+ }
+ 
+ public function Request($host, $url) {
+  global $Options;
+  $this->host = $host;
+  $this->pagenumber = 1;
+  if ($Options->q == '?') {
+   $this->url = substr($url, strlen($Options->subdir));
+  } else {
+   $this->url = $_GET['url'];
+  }
+  $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
+  $this->BeforeRequest($this->url);
+  try {
+   $this->DoRequest($this->url);
+  } catch (Exception $e) {
+   global $paths;
+   $trace =str_replace($paths['home'], '', $e->getTraceAsString());
+   echo 'Caught exception: ',  $e->getMessage() , "<br>\ntrace error\n<pre>\n", $trace, "\n</pre>\n";
+  }
+  $this->AfterRequest($this->url);
+  $this->CheckSingleCron();
+ }
+ 
+ protected function ParseUriPath($url) {
+  $url = trim($url, '/');
+  $result = array();
+  while ($i = strpos($url, '/')) {
+   $result[] = substr($url, 0, $i);
+   $url = substr($url, $i + 1);
+  }
+  $result[] = $url;
+  return $result;
+ }
+ 
+ protected function DoRequest($url) {
+  if ($item = &$this->FindItem($url)) {
+   return $this->PrintContent($item);
+  }
+  $this->NotFound404();
+ }
+ 
+ public function &FindItem($url) {
+  global $Options;
+  //4 steps: items, get, pagenumber, tree
+  if (isset($this->items[$url])) return $this->items[$url];
+  $slashed = rtrim($url, '/');
+  if (isset($this->items[$slashed])) return $this->Redir301($slashed);
+  $slashed  .= '/';
+  if (isset($this->items[$slashed])) return $this->Redir301($slashed);
+  
+  if (($Options->q == '?') && ($i = strpos($url, '?')) ) {
+   $url = substr($url, 0, $i);
+  }
+  
+  if (isset($this->get[$url])) return $this->get[$url];
+  $slashed = rtrim($url, '/');
+  if (isset($this->get[$slashed])) return $this->Redir301($slashed);
+  $slashed  .= '/';
+  if (isset($this->get[$slashed])) return $this->Redir301($slashed);
+  
+  //check page number as  /page/pagenumber/
+  $this->uripath = $this->ParseUriPath($url);
+  $c = count($this->uripath);
+  if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
+   $this->pagenumber = (int) $this->uripath[$c - 1];
+   $url = substr($url, 0, strpos($url, "page/$this->pagenumber"));
+   array_splice($this->uripath, $c - 2, 2);
+   return $this->FindItem($url);
+  }
+  
+  $null = null;
+  
+  if (isset($this->tree[$this->uripath[0]])) {
+   //walk on tree
+   $item = &$this->tree[$this->uripath[0]];
+   for ($i = 1; $i <  count($this->uripath); $i++ ) {
+    if (isset($item['items'][$this->uripath[$i]])) {
+     $item = &$item['items'][$this->uripath[$i]];
+    } elseif (isset($item['final'])) {
+     $this->argfinal = implode('/', array_slice($this->uripath, $i));
+     return $item;
+    } else {
+     return $null;
+    }
+   }
+   return $item;
+  }
+  
+  return $null;
+ }
+ 
+ protected function  PrintContent(&$item) {
+  global $Options, $paths;
+  $this->urlid = $item['id'];
+  if ($Options->CacheEnabled) {
+ $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+   //@file_exists($CacheFileName)
+   if (($time = @filemtime ($CacheFileName)) && (($time  + $Options->CacheExpired) >= time() )) {
+    include($CacheFileName);
+    return;
+   }
+  }
+  
+  $ClassName = $item['class'];
+  if (!class_exists($ClassName)) {
+   __autoload($ClassName);
+   if (!@class_exists($ClassName)) {
+    $this->DeleteClass($ClassName);
+    return $this->NotFound404();
+   }
+  }
+  $this->PrintClassContent($ClassName, $item);
+ }
+ 
+ protected function PrintClassContent($ClassName, &$item) {
+  global $Options, $paths;
+  $Obj = &GetInstance($ClassName);
+  $arg = isset($this->argfinal)  ? $this->argfinal : $item['arg'];
+  //special handling for rss
+  if (method_exists($Obj, 'Request') && ($s = $Obj->Request($arg))) {
+   if ($s == 404) return $this->NotFound404();
+  } else {
+   $Template = &TTemplate::Instance();
+   $s = &$Template->Request($Obj);
+  }
+  
+  eval('?>'. $s);
+  if ($Options->CacheEnabled && $Obj->CacheEnabled) {
+ $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+   file_put_contents($CacheFileName, $s);
+   @chmod($CacheFileName, 0666);
+  }
+ }
+ 
+ public function NotFound404() {
+  $redir = &TRedirector ::Instance();
+  if (isset($redir->items[$this->url])) {
+   return $this->Redir301($redir->items[$this->url]);
+  }
+  
+  $this->is404 = true;
+  $obj = &TNotFound404::Instance();
+  $Template = &TTemplate::Instance();
+  $s = &$Template->Request($obj);
+  eval('?>'. $s);
+ }
+ 
+ protected function AddItem(&$items, $url, $class, $arg) {
+  if (isset($items[$url])) return $items[$url]['id'];
+  
+  $items[$url] = array(
+  'id' => ++$this->lastid,
+  'class' => $class,
+  'arg' => $arg
+  );
+  $this->Save();
+  return $this->lastid;
+ }
+ 
+ public function Add($url, $class, $arg) {
+  return $this->AddItem($this->items, $url, $class, $arg);
+ }
+ 
+ public function AddGet($url, $class, $arg) {
+  return $this->AddItem($this->get, $url, $class, $arg);
+ }
+ 
+ public function AddNode($url, $class, $arg) {
+  return $this->AddItem($this->tree, $url, $class, $arg);
+ }
+ 
+ public function AddSubNode($nodeurl, $url, $class, $arg) {
+  if (!isset($this->tree[$nodeurl])) $this->Error("$nodeurl not exists!");
+  if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
+  return $this->AddItem($this->tree[$nodeurl]['items'], $url, $class, $arg);
+ }
+ 
+ public function AddFinalNode($nodeurl, $url, $class) {
+  if (!isset($this->tree[$nodeurl])) $this->Error("node $nodeurl is not exists!");
+  if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
+  $this->tree[$nodeurl]['items'][$url] = array(
+  'id' => ++$this->lastid,
+  'class' => $class,
+  'arg' => null,
+  'final' => true
+  );
+  $this->Save();
+  return $this->lastid;
+ }
+ 
+ public function AddFinal($url, $class) {
+  $this->tree[$url] = array(
+  'id' => ++$this->lastid,
+  'class' => $class,
+  'arg' => null,
+  'final' => true
+  );
+  $this->Save();
+  return $this->lastid;
+ }
+ 
+ private function DeleteItem(&$items, $url) {
+  if (isset($items[$url])) {
+   global $paths;
+   @unlink("$paths[cache]$items[$url][id]-1.php");
+   unset($items[$url]);
+   return true;
+  }
+  return false;
+ }
+ public function Delete($url) {
+  if ($this->DeleteItem($this->items, $url) || $this->DeleteItem($this->get, $url) || $this->DeleteItem($this->tree, $url)) {
+   $this->Save();
+  }
+ }
+ 
+ public function DeleteSubNode($node, $subnode) {
+  if ($this->DeleteItem($this->tree[$node]['items'], $subnode)) {
+   $this->Save();
+  }
+ }
+ 
+ public function &GetClassItems($class) {
+  $result = array();
+  foreach ($this->items as $url => $item) {
+   if ($item['class'] == $class) $result[] = $url;
+  }
+  return $result;
+ }
+ 
+ private function RemoveItems(&$items, $class) {
+  foreach ($items as $url => $item) {
+   if ($item['class'] == $class) {
+    @unlink("$paths[cache]$item[id]-1.php");
+    unset($items[$url]);
+   }
+  }
+ }
+ 
+ public function DeleteClass($class) {
+  $this->Lock();
+  
+  $this->RemoveItems($this->items, $class);
+  $this->RemoveItems($this->get, $class);
+  $this->RemoveItems($this->tree, $class);
+  foreach ($this->tree as $url => $item) {
+   if (isset($item['items'])) {
+    $this->RemoveItems($this->tree[$url]['items'], $class);
+   }
+  }
+  
+  $this->Unlock();
+ }
+ 
+ public function Find($class, $params) {
+  foreach ($this->items as $url => $item) {
+   if (($item['class']== $class) && ($item['arg'] == $params)) {
+    return $url;
+   }
+  }
+  return false;
+ }
+ 
+ public function Edit($class, $params, $newurl) {
+  if ($url = $this->Find($class, $params)) {
+   if ($url == $url) return true;
+   if (isset($this->items[$newurl]))  {
+    $newurl = TLinkGenerator ::MakeUnique($newurl);
+   }
+   $this->Replace($url, $newurl);
+   return true;
+  }
+  return false;
+ }
+ 
+ public function ClearCache() {
+  global $paths;
+  TFiler::DeleteFiles($paths['cache'], true, false);
+  $this->CacheExpired();
+ }
+ 
+ public function SetExpired($url) {
+  global $paths;
+  if (isset($this->items[$url])) {
+ @unlink("{$paths['cache']}{$this->items[$url]['id']}-1.php");
+  }
+ }
+ 
+ public function SubNodeExpired($node, $subnode) {
+  global $paths;
+  if (isset($this->tree[$node]['items'][$subnode])) {
+ @unlink("{$paths['cache']}{$this->tree[$node]['items'][$subnode]['id']}-$this->pagenumber.php");
+  } elseif (isset($this->tree[$node]['final'])) {
+   $CacheFileName = $paths['cache'] . $this->tree[$node]['id']. "-$subnode.php";
+   @unlink($CacheFileName );
+  }
+ }
+ 
+ public function Replace($old, $new) {
+  global $paths;
+  if ($old == $new) return;
+  $this->Lock();
+  $Redir = &TRedirector::Instance();
+  $Redir->Add($old, $new);
+  $this->items[$new] = $this->items[$old];
+  @unlink($paths['cache'] .$this->items[$old]['id'] . '.php');
+  unset($this->items[$old]);
+  $this->Add($old, get_class($Redir), null);
+  $this->Unlock();
+ }
+ 
+ public function AddRedir($from, $to) {
+  if ($from == $to) return;
+  $this->Lock();
+  $Redir = &TRedirector::Instance();
+  $Redir->Add($from, $to);
+  $this->Add($from, get_class($Redir), null);
+  $this->Unlock();
+ }
+ 
+ 
+ public static function unsub(&$obj) {
+  $self = self::Instance();
+  $self->Lock();
+  $self->UnsubscribeClassName(get_class($obj));
+  $self->DeleteClass(get_class($obj));
+  $self->Unlock();
+ }
+ 
+ protected function CheckSingleCron() {
+  if (defined('cronpinged')) return;
+  global $paths;
+  $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+  $time = @filemtime($cronfile);
+  if (($time === false) || ($time + 3600 < time())) {
+   register_shutdown_function('TCron::SelfPing');
+  }
+ }
+ 
+ public function Redir301($to) {
+  global $Options;
+  $protocol = $_SERVER["SERVER_PROTOCOL"];
+  if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
+  $protocol = 'HTTP/1.0';
+  @header( "$protocol 301 Moved Permanently", true, 301);
+  @header("Location: $Options->url$to");
+  exit();
+ }
+ 
+}
+
+?>
