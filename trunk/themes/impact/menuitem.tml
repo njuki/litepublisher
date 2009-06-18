@@ -1,0 +1,12 @@
+		<div class="post" id="post-$post->id">
+        <h2><a href="$Options->url$post->url" rel="bookmark" title="Ссылка на запись $post->title">$post->title</a></h2>
+	
+			<div class="entry">
+$post->content
+			</div>
+
+	<div class="postmetadata">
+$Template->postscript
+	</div>
+	
+		</div>

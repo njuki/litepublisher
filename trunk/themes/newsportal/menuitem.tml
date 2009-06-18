@@ -1,0 +1,17 @@
+    <div>
+	
+	</div>
+        
+    <div class="tabs"></div>
+            <!-- begin content --><div id="first-time">
+			
+<div class="post" id="post-$post->id">
+        <h3><a href="$Options->url$post->url" rel="bookmark" title="Ссылка на запись $post->title">$post->title</a></h3>
+
+<div class="entry">
+$post->content
+</div>
+
+</div>
+
+	  </div><!-- end content --> 
