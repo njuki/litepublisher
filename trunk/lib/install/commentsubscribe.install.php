@@ -1,7 +1,7 @@
 <?php
 
 function TSubscribeInstall(&$self) {
- $self->fromemail = 'blogolet@' . $_SERVER['HTTP_HOST'];
+ $self->fromemail = 'litepublisher@' . $_SERVER['HTTP_HOST'];
  $self->Save();
  $CommentManager = &TCommentManager::Instance();
  $CommentManager->Lock();

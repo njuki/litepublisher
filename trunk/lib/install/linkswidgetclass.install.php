@@ -1,8 +1,9 @@
 <?php
 
 function TLinksWidgetInstall(&$self) {
- $lang = TLocal::$data['blogolet'];
- $self->Add($lang['url'], $lang['description'], $lang['name']);
+  TLocal::LoadLangFile('admin');
+ $lang = TLocal::$data['installation'];
+ $self->Add($lang['homeurl'], $lang['homedescription'], $lang['homename']);
  
  $Urlmap = &TUrlmap::Instance();
  $Urlmap->AddGet($self->redirlink, get_class($self), null);

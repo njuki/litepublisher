@@ -67,7 +67,9 @@ class TInstaller extends TDataClass {
     $r = new IXR_Value($result);
     $resultxml = $r->getXml();
     // Create the XML
-    eval('$xml = "'. TLocal::$data['xmlrpc']['xml'] . '\n";');
+$html = &THtmlResource::Instance();
+$html->section = installation';
+    eval('$xml = "'. $html->xmlrpc . '\n";');
     // Send it
     $xml = '<?xml version="1.0"?>'."\n".$xml;
     $length = strlen($xml);
@@ -96,9 +98,7 @@ class TInstaller extends TDataClass {
  }
  
  public function CreateDefaultItems($password) {
-  TLocal::LoadLangFile('install');
-  
-  if ($this->mode != 'remote') {
+ if ($this->mode != 'remote') {
    $this->PrintCongratulation($password);
   }
   $Urlmap = &TUrlmap::Instance();
@@ -339,56 +339,67 @@ class TInstaller extends TDataClass {
    $Template->AddWidget('TMetaWidget', 'echo', 2, 1);
    
    //footer
-   $Template->footer = TLocal::$data['footer']['footer'];
+$html = &THtmlResource::Instance();
+$html->section = installation';
+
+   $Template->footer = $html->footer;
    $Template->Unlock();
   }
   
   public function CreateMenuItem() {
+$html = &THtmlResource::Instance();
+$html->section = installation';
+
    $Menu = &TMenu::Instance();
    $Item = &new TContactForm();
    $Item->order = 10;
-   $Item->title =  TLocal::$data['initcontactform']['title'];
-   $Item->content = TLocal::$data['initcontactform']['content'];
-   //$Item->rawcontent = $Item->content;
+   $Item->title =  TLocal::$data['installation']['contacttitle'];
+   $Item->content = $html->contactform;
+
    $Menu->Add($Item);
   }
   
   public function CreateFirstPost() {
    global $Options;
-   $text = &TLocal::$data['firstpost'];
+$html = &THtmlResource::Instance();
+$html->section = installation';
+
+   $lang = &TLocal::$data['instalation'];
    $post = &new TPost();
-   $post->title = $text['title'];
-   $post->catnames = $text['categories'];
-   $post->tagnames = $text['tags'];
-   eval('$content ="'. $text['content'] . '";');
+   $post->title = $lang['posttitle'];
+   $post->catnames = $lang['postcategories'];
+   $post->tagnames = $lang['posttags'];
+   eval('$content ="'. $lang['postcontent'] . '";');
    $post->content = $content;
    $posts = &TPosts::Instance();
    $posts->Add($post);
    
-   $lang = TLocal::$data['blogolet'];
    $users = &TCommentUsers::Instance();
-   $userid = $users->Add($lang['author'], $lang['email'], $lang['url']);
+   $userid = $users->Add($lang['author'], $lang['email'], $lang['homeurl']);
    
    $CommentManager = &TCommentManager::Instance();
-   $CommentManager->AddToPost($post, $userid,$text['comment']);
+   $CommentManager->AddToPost($post, $userid,$lang['postcomment']);
   }
   
   public static function SendEmail($password) {
    global $Options;
+  TLocal::LoadLangFile('admin');
+$lang = &TLocal::$data['installation'];
    $url = $Options->url . $Options->home;
    $login = $Options->login;
-   $body = TLocal::$data['firstmail']['body'];
-   eval('$body = "' . $body . '";');
+   eval('$body = "' . $blang['body'] . '";');
    
-   TMailer::SendMail('', 'blogolet@'. $_SERVER['SERVER_NAME'],
-   '', $Options->email, TLocal::$data['firstmail']['subject'], $body);
+   TMailer::SendMail('', $Options->fromemail,
+   '', $Options->email, $lang['subject'], $body);
   }
   
   public function PrintCongratulation($password) {
    global $Options;
+$html = &THtmlResource::Instance();
+$html->section = installation';
+
    $url = $Options->url . $Options->home;
-   $content = TLocal::$data['congratulation']['content'];
-   eval('$content = "'. $content . '";');
+   eval('$content = "'. $html->congratulation . '";');
    
    echo SimplyHtml($Options->name, $content);
   }

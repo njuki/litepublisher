@@ -34,7 +34,7 @@ class TTemplate extends TEventClass {
   $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'BeforeContent', 'AfterContent', 'Onhead');
   $this->Data['themename'] = 'default';
   $this->Data['sitebarcount'] = 2;
-  $this->Data['footer']=   '<a href="http://blogolet.ru/">Powered by blogolet CMS</a>';
+  $this->Data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
   $this->Data['idwidget'] = 0;
   $this->Data['submenuinwidget'] = true;
   $this->AddDataMap('sitebars', array(0 => array(), 1 => array(), 2 => array()));

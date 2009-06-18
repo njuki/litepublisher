@@ -130,7 +130,7 @@ class TRSS extends TEventClass {
  public function GetRSSHeader($title) {
   global $Options;
   $pubdate = gmdate("D, d M Y H:i:s") . " +0000";
-  return "\n<!-- generator=\"Blogolet/$Options->version version\" -->
+  return "\n<!-- generator=\"Lite Publisher/$Options->version version\" -->
   <rss version=\"2.0\"
   xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"
   xmlns:wfw=\"http://wellformedweb.org/CommentAPI/\"
@@ -142,7 +142,7 @@ class TRSS extends TEventClass {
   <link>$Options->rss</link>
   <description>$Options->description</description>
   <pubDate>$pubdate</pubDate>
-  <generator>http://blogolet.ru/?version=$Options->version</generator>
+  <generator>http://litepublisher.com/?version=$Options->version</generator>
   <language>en</language>
   ";
  }
