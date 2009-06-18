@@ -1,0 +1,16 @@
+<div class="post" id="post-$post->id">
+
+        <h3><a href="$Options->url$post->url" rel="bookmark" title="Ссылка на запись $post->title">$post->title</a></h3>
+
+$post->localdate
+<div class="entry">
+$post->excerpt
+$post->morelink
+</div>
+
+<p class="info">
+Рубрики: $post->categorieslinks | 
+Метки: $post->tagslinks | 
+$Template->CommentsCountLink
+</p>
+</div>
