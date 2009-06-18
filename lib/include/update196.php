@@ -2,7 +2,7 @@
 
 function Update196() {
  global $Options, $Urlmap, $paths;
- $Options->fromemail = 'blogolet@' . $_SERVER['SERVER_NAME'];
+ $Options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
  
  $admin = &TAdminModerator::Instance();
  unset($admin->Data['fromemail']);

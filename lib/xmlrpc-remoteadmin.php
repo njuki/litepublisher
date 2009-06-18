@@ -10,14 +10,13 @@ class TXMLRPCRemoteAdmin extends TXMLRPCAbstract {
  public function Install() {
   $Caller = &TXMLRPC::Instance();
   $Caller->Lock();
-  $Caller->Add('blogolet.call', 'BlogoletCall', get_class($this));
-  $Caller->Add('blogolet.set', 'BlogoletSet', get_class($this));
-  $Caller->Add('blogolet.get', 'BlogoletGet', get_class($this));
-  
-  $Caller->Unlock();
+  $Caller->Add('litepublisher.call', 'LitePublisherCall', get_class($this));
+  $Caller->Add('litepublisher.set', 'LitePublisherSet', get_class($this));
+  $Caller->Add('litepublisher.get', 'LitePublisherGet', get_class($this));
+    $Caller->Unlock();
  }
  
- public function BlogoletCall(&$args) {
+ public function LitePublisherCall(&$args) {
   if (!$this->CanLogin($args, 0)) {
    return $this->Error;
   }
@@ -54,7 +53,7 @@ class TXMLRPCRemoteAdmin extends TXMLRPCAbstract {
   }
  }
  
- public function BlogoletGet(&$args) {
+ public function LitePublisherGet(&$args) {
   if (!$this->CanLogin($args, 0)) {
    return $this->Error;
   }
@@ -77,7 +76,7 @@ class TXMLRPCRemoteAdmin extends TXMLRPCAbstract {
   return $obj->$propname;
  }
  
- public function BlogoletSet(&$args) {
+ public function LitePublisherSet(&$args) {
   if (!$this->CanLogin($args, 0)) {
    return $this->Error;
   }

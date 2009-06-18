@@ -58,7 +58,6 @@ class TUpdater extends TEventClass {
   global $Options, $paths;
   $current = (int) str_replace('.', '', $Options->version);
   include_once($paths['libinclude'] . 'utils.php');
-  //  if ($s = GetWebPage("http://blogolet.ru/service/version.txt?from=$current") ) {
    if ($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') ) {
     return $current >= (int)$s;
    }
@@ -84,7 +83,6 @@ class TUpdater extends TEventClass {
    }
    
    include_once($paths['libinclude'] . 'utils.php');
-   //  if (!($s = GetWebPage('http://blogolet.ru/service/blogolet.zip') )) {
     if (!($s = GetWebPage('http://litepublisher.googlecode.com/files/litepublisher.zip') )) {
      return $lang['erordownloadlatest'];
     }

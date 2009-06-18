@@ -94,7 +94,7 @@ class TPinger extends TItems {
   if ($ping = self::Discover($link)) {
    $client = new IXR_Client($ping);
    $client->timeout = 3;
-   $client->useragent .= " -- Blogolet/$Options->version";
+   $client->useragent .= " -- Lite Publisher/$Options->version";
    $client->debug = false;
    
    if ( $client->query('pingback.ping', $posturl, $link) || ( isset($client->error->code) && 48 == $client->error->code ) ) return true;
@@ -128,7 +128,7 @@ class TPinger extends TItems {
   return false;
   
   // Send the GET request
-  $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Blogolet/$Options->version\r\n\r\n";
+  $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/$Options->version\r\n\r\n";
   fputs($fp, $request);
   
   // Let's check for an X-Pingback header first
@@ -190,7 +190,7 @@ class TPinger extends TItems {
    $service = trim($service);
    $client = new IXR_Client($service);
    $client->timeout = 3;
-   $client->useragent .= ' -- Blogolet/'.$Options->version;
+   $client->useragent .= ' -- Lite Publisher/'.$Options->version;
    $client->debug = false;
    if ( !$client->query('weblogUpdates.extendedPing', $Options->name, $home, $url, $Options->rss) )
    $client->query('weblogUpdates.ping', $Options->name, $url);
