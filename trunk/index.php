@@ -1,4 +1,9 @@
 <?php
+  if (version_compare(PHP_VERSION, '5.1.4', '<')) {
+   echo 'Lite Publisher requires PHP 5.1.4 or later. You are using PHP ' . PHP_VERSION ;
+   exit;
+  }
+
 ob_start();
 //begin config
 $domain = strtolower(trim($_SERVER['HTTP_HOST']));
@@ -15,22 +20,18 @@ $paths['cache'] = $paths['home'] . 'cache'. DIRECTORY_SEPARATOR . $domain . DIRE
 $paths['files'] = $paths['home'] . 'files' . DIRECTORY_SEPARATOR;
 $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
 
-
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
-
+$microtime = microtime();
 require_once($paths['lib'] . 'classes.php');
 TClasses::Load();
-
-require_once($paths['lib']. 'optionsclass.php');
+if (!@class_exists('TOptions')) require_once($paths['libinclude'] . 'install.php');
 $Options = &TOptions::Instance();
-
-define('gmt_offset', date('Z'));
-$microtime = microtime();
 //end config
 
 if (!isset($mode)) {
 $Urlmap = &TUrlmap::Instance();
 $Urlmap->Request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
+
 ob_end_flush ();
 ?>
