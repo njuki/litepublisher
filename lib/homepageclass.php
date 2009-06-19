@@ -14,11 +14,13 @@ class THomepage extends TEventClass {
  }
  
  public function GetTemplateContent() {
+  global $Options, $Urlmap;
   $result = $this->text;
   if ($this->hideposts) return $result;
 $items =  $this->GetItems();
   $TemplatePost = &TTemplatePost::Instance();
   $result .= $TemplatePost->PrintPosts($Items);
+  $Posts = &TPosts::Instance();
   $result .=$TemplatePost->PrintNaviPages($Options->home, $Urlmap->pagenumber, ceil(count($Posts->archives)/ $Options->postsperpage));
   return $result;
  }
@@ -26,7 +28,7 @@ $items =  $this->GetItems();
 public function GetItems() {
   global $Options, $Urlmap;
   $Posts = &TPosts::Instance();
-  return Posts->GetPublishedRange($Urlmap->pagenumber, $Options->postsperpage);
+  return $Posts->GetPublishedRange($Urlmap->pagenumber, $Options->postsperpage);
 }
  
  public function Settext($s) {
