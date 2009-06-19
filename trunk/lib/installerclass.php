@@ -2,6 +2,7 @@
 require_once($paths['lib']. 'dataclass.php');
 
 class TInstaller extends TDataClass {
+public $language;
  public $mode;
  public $lite;
  public $resulttype;
@@ -12,27 +13,34 @@ class TInstaller extends TDataClass {
  
  public function DefineMode () {
   $this->mode = 'form';
+$this->language = $this->GetBrowserLang();
   $this->lite = false;
   
   if (isset($_GET) && (count($_GET) > 0)) {
    $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
   }
+
+  if (!empty($_GET['lang']))  {
+global $paths;
+if (@file_exists($paths['languages']. $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
+}
+
   if (!empty($_GET['mode'])) $this->mode = $_GET['mode'];
   if (!empty($_GET['lite'])) $this->lite = $_GET['lite'] == 'true';
   if (!empty($_GET['resulttype'])) $this->resulttype = $_GET['resulttype'];
  }
  
  public function AutoInstall() {
-  global $Options;
   $this->CanInstall();
-  $Options->Lock();
-  $this->FirstStep();
-  
-  $password = md5(secret. uniqid( microtime()));
-  $Options->SetPassword($password);
-  
-  $Options->installed = true;
-  $Options->Unlock();
+  $password = $this->FirstStep();
+
+   $this->ProcessForm(
+$_GET['email'],
+$_GET['name'],
+$_GET['description'],
+isset($_GET['checkrewrite'])
+);
+
   $this->CreateDefaultItems($password);
   if ($this->mode == 'remote') {
    $this->OutputResult($password);
@@ -68,7 +76,7 @@ class TInstaller extends TDataClass {
     $resultxml = $r->getXml();
     // Create the XML
 $html = &THtmlResource::Instance();
-$html->section = installation';
+$html->section = 'installation';
     eval('$xml = "'. $html->xmlrpc . '\n";');
     // Send it
     $xml = '<?xml version="1.0"?>'."\n".$xml;
@@ -119,46 +127,55 @@ $html->section = installation';
  public function FirstStep() {
   $this->CheckFolders();
   $this->RegisterStandartClasses();
-  $this->SetOptions();
+  $password = $this->InstallOptions();
   $this->InstallClasses();
+return $password;
  }
  
  public function Install() {
-  $this->DefineMode();
-  if ($this->mode != 'form') {
-   return $this->AutoInstall();
-  }
-  
-  if (isset($_POST) && (count($_POST) > 0)) {
    if (get_magic_quotes_gpc()) {
+  if (isset($_POST) && (count($_POST) > 0)) {
     foreach ($_POST as $name => $value) {
      $_POST[$name] = stripslashes($_POST[$name]);
     }
-   }
-   
-   $this->FirstStep();
-   $this->ProcessForm();
-  } else {
-   $this->CanInstall();
-   $this->PrintForm();
-  }
- }
+}
  
- public function ProcessForm() {
+  if (isset($_GET) && (count($_GET) > 0)) {
+    foreach ($_GET as $name => $value) {
+     $_GET[$name] = stripslashes($_GET[$name]);
+    }
+   }
+
+}
+   
+  $this->DefineMode();
+  if ($this->mode != 'form') return $this->AutoInstall();
+
+  if (!isset($_POST) || (count($_POST) <= 1)) {
+     $this->CanInstall();
+   return $this->PrintForm();
+}
+
+   $password = $this->FirstStep();
+   $this->ProcessForm(
+$_POST['email'],
+$_POST['name'],
+$_POST['description'],
+isset($_POST['checkrewrite'])
+);
+
+  return $this->CreateDefaultItems($password); 
+}
+
+  public function ProcessForm($email, $name, $description, $rewrite) {
   global $Options;
   $Options->Lock();
-  $Options->login = 'admin';
-  $password = md5(secret. uniqid( microtime()));
-  $Options->SetPassword($password);
-  
-  $Options->email = $_POST['email'];
-  $Options->name = $_POST['sitename'];
-  $Options->description = $_POST['description'];
-  $Options->fromemail = 'blogolet@' . $_SERVER['SERVER_NAME'];
-  $this->CheckApache(isset($_POST['checkrewrite']));
-  $Options->installed = true;
+ $Options->email = $email;
+  $Options->name = $name;
+  $Options->description = $description;
+  $Options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
+  $this->CheckApache($rewrite);
   $Options->Unlock();
-  return $this->CreateDefaultItems($password);
  }
  
  public function RegisterStandartClasses() {
@@ -222,27 +239,30 @@ $html->section = installation';
    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('index.php'));
   }
   
-  
-  if (preg_match('/install\.php$/', $_SERVER['REQUEST_URI'])) {
+    if (preg_match('/install\.php$/', $_SERVER['REQUEST_URI'])) {
    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('install.php'));
   }
   
   return rtrim($_SERVER['REQUEST_URI'], '/');
  }
  
- public function  SetOptions() {
-  global $Options, $paths;
+ public function  InstallOptions() {
+  global $paths;
+$GLOBALS['Options'] = &TOptions::Instance();
+$Options = &TOptions::Instance();
   $Options->Lock();
-  $ini= TLocal::$data['initoptons'];
-  foreach ($ini as $name => $value) {
-   $Options->$name = $value;
-  }
-
-$Options->language = "ru";
+$Options->language = $this->language;
+  TLocal::LoadLangFile('admin');
+$Options->timezone = TLocal::$data['installation']['timezone'];
+$Options->keywords = "blog";
   $Options->themeclass = "";
   $Options->login = "admin";
   $Options->password = "";
 $Options->realm = "Admin panel";
+  $Options->login = 'admin';
+  $password = md5(secret. uniqid( microtime()));
+  $Options->SetPassword($password);
+
 $Options->email = "yarrowsoft@gmail.com";
 $Options->mailer = "";
 $Options->DefaultCommentStatus = "approved";
@@ -257,6 +277,7 @@ $Options->DefaultCommentStatus = "approved";
   $Options->version = TUpdater::GetVersion();
   
   $Options->Unlock();
+return $password;
  }
  
  public function InstallClasses() {
@@ -278,57 +299,36 @@ $Options->DefaultCommentStatus = "approved";
  }
  
  public function PrintForm() {
-  global $Options;
-  $rewrite = function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules());
-  $checkbox = '';
-  if (true) {
-   //$Options->language == 'ru') {
-    if (!$rewrite) $checkbox = '<p><input type="checkbox" name="checkrewrite" />
-    <label for="checkrewrite">Я уверен, что установлен apache с модулем mod_rewrite</label></p>';
-    
-    echo SimplyHtml('Установка Blogolet',
-    '<p>Пожалуйста, заполните следующие поля. Обратите особое внимание на адрес E-Mail, на который будет выслан пароль от вашего нового блога</p>
-    <form method="post" action="">
-    <br clear="all" />
-    <p>E-Mail:</p>
-    <input name="email" type="text" id="email" value="" />
-    <br clear="all" />
-    <p>Название блога:</p>
-    <input name="sitename" type="text" id="sitename" value="" />
-    <br clear="all" />
-    <p>Описание блога:</p>
-    <input name="description" type="text" id="description" value="" />
-    <br clear="all" />
-    ' . $checkbox . '
-    <br clear="all" /><br clear="all" />
-    <input type="submit" name="UPDATE" value="Создать блог" />
-    </form>
-    ');
-   } else {
-    if (!$rewrite) $checkbox = '<p><input type="checkbox" name="checkrewrite" />
-    <label for="checkrewrite">I sure what apache installed with mod_rewrite</label></p>';
-    
-    echo SimplyHtml('Welcome to Blogolet',
-    '<h2>Information needed</h2>
-    <p>Please provide the following information. Double-check your email address before continuing.</p>
-    <form method="post" action="index.php?step=2">
-    <br clear="all" />
-    <p>E-Mail:</p>
-    <input name="email" type="text" id="email" value="" />
-    <br clear="all" />
-    <p>Blog title:</p>
-    <input name="sitename" type="text" id="sitename" value="" />
-    <br clear="all" />
-    <p>Description:</p>
-    <input name="description" type="text" id="description" value="" />
-    <br clear="all" />
-    ' . $checkbox . '
-    <br clear="all" /><br clear="all" />
-    <input type="submit" name="UPDATE" value="Create blog" />
-    </form>
-    ');
-   }
+$this->LoadLang();
+$form = $this->GetLangForm();
+$html = &THtmlResource::Instance();
+$html->section = 'installation';
+
+$checkrewrite = function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()) ? '' : $html->checkrewrite;
+eval('$form .= "'. $html->installform. '\n";');
+        echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
   }
+
+private function GetLangForm() {
+$langs = array(
+'en' => 'English',
+'ru' => 'Russian'
+);
+
+$result = "<form name='langform' action='' method='get'>
+<p><select name='lang' id='lang'>\n";
+
+foreach ($langs as $lang => $value) {
+   $selected = $lang == $this->language ? 'selected' : '';
+   $result .= "<option value='$lang' $selected>$value</option>\n";
+}
+
+$result .= "</select>
+<input type='submit' name='submit' value='Change language' /></p>
+    </form>";
+
+return $result;
+}
   
   public function CreateWidgets() {
    $arch = &TArchives::Instance();
@@ -349,7 +349,7 @@ $Options->DefaultCommentStatus = "approved";
    
    //footer
 $html = &THtmlResource::Instance();
-$html->section = installation';
+$html->section = 'installation';
 
    $Template->footer = $html->footer;
    $Template->Unlock();
@@ -357,7 +357,7 @@ $html->section = installation';
   
   public function CreateMenuItem() {
 $html = &THtmlResource::Instance();
-$html->section = installation';
+$html->section = 'installation';
 
    $Menu = &TMenu::Instance();
    $Item = &new TContactForm();
@@ -371,7 +371,7 @@ $html->section = installation';
   public function CreateFirstPost() {
    global $Options;
 $html = &THtmlResource::Instance();
-$html->section = installation';
+$html->section = 'installation';
 
    $lang = &TLocal::$data['instalation'];
    $post = &new TPost();
@@ -405,7 +405,7 @@ $lang = &TLocal::$data['installation'];
   public function PrintCongratulation($password) {
    global $Options;
 $html = &THtmlResource::Instance();
-$html->section = installation';
+$html->section = 'installation';
 
    $url = $Options->url . $Options->home;
    eval('$content = "'. $html->congratulation . '";');
@@ -419,8 +419,27 @@ $html->section = installation';
    TFiler::DeleteFiles($paths['cache'], true);
    TFiler::DeleteFiles($paths['files'], true);
   }
+
+private function LoadLang() {
+global $paths;
+$GLOBALS['Options'] = &$this;
+require_once($paths['lib'] . 'filerclass.php');
+require_once($paths['lib'] . 'localclass.php');
+require_once($paths['lib'] . 'htmlresource.php');
+  TLocal::LoadLangFile('admin');
+}
+
+private function GetBrowserLang() {
+global $paths;
+if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+$result = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+$result = substr($result, 0, 2);
+if (@file_exists($paths['languages']. "$result.ini")) return $result;
+}
+return 'en';
+}
   
- }
+ }//class
  
  function SimplyHtml($title, $content) {
   @header('Content-Type: text/html; charset=utf-8');
@@ -438,5 +457,4 @@ $html->section = installation';
   ';
  }
  
- 
- ?>
+  ?>

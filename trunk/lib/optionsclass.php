@@ -17,6 +17,7 @@ class TOptions extends TEventClass {
  public function Load() {
   parent::Load();
   if($this->PropExists('timezone'))  date_default_timezone_set($this->timezone);
+define('gmt_offset', date('Z'));
  }
  
  public function __set($name, $value) {
