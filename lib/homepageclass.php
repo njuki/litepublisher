@@ -17,19 +17,19 @@ class THomepage extends TEventClass {
   global $Options, $Urlmap;
   $result = $this->text;
   if ($this->hideposts) return $result;
-$items =  $this->GetItems();
+  $items =  $this->GetItems();
   $TemplatePost = &TTemplatePost::Instance();
-  $result .= $TemplatePost->PrintPosts($Items);
+  $result .= $TemplatePost->PrintPosts($items);
   $Posts = &TPosts::Instance();
   $result .=$TemplatePost->PrintNaviPages($Options->home, $Urlmap->pagenumber, ceil(count($Posts->archives)/ $Options->postsperpage));
   return $result;
  }
-
-public function GetItems() {
+ 
+ public function GetItems() {
   global $Options, $Urlmap;
   $Posts = &TPosts::Instance();
   return $Posts->GetPublishedRange($Urlmap->pagenumber, $Options->postsperpage);
-}
+ }
  
  public function Settext($s) {
   global $Options;

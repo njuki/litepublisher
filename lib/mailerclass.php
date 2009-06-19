@@ -3,7 +3,7 @@
 class TMailer {
  
  protected static function  Send($from, $to, $subj, $body) {
-global $Options;
+  global $Options;
   $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
   $date = gmdate ("M d Y H:i:s", time());
   if (defined('debug'))

@@ -13,7 +13,7 @@ class TXMLRPCRemoteAdmin extends TXMLRPCAbstract {
   $Caller->Add('litepublisher.call', 'LitePublisherCall', get_class($this));
   $Caller->Add('litepublisher.set', 'LitePublisherSet', get_class($this));
   $Caller->Add('litepublisher.get', 'LitePublisherGet', get_class($this));
-    $Caller->Unlock();
+  $Caller->Unlock();
  }
  
  public function LitePublisherCall(&$args) {
