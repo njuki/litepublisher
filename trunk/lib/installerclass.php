@@ -233,10 +233,19 @@ $html->section = installation';
  public function  SetOptions() {
   global $Options, $paths;
   $Options->Lock();
-  $ini= parse_ini_file($paths['libinclude']. 'options.ini');
+  $ini= TLocal::$data['initoptons'];
   foreach ($ini as $name => $value) {
    $Options->$name = $value;
   }
+
+$Options->language = "ru";
+  $Options->themeclass = "";
+  $Options->login = "admin";
+  $Options->password = "";
+$Options->realm = "Admin panel";
+$Options->email = "yarrowsoft@gmail.com";
+$Options->mailer = "";
+$Options->DefaultCommentStatus = "approved";
   
   $Options->subdir = $this->ExtractSubdir();
   $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
