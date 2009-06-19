@@ -2,7 +2,7 @@
 require_once($paths['lib']. 'dataclass.php');
 
 class TInstaller extends TDataClass {
-public $language;
+ public $language;
  public $mode;
  public $lite;
  public $resulttype;
@@ -13,18 +13,18 @@ public $language;
  
  public function DefineMode () {
   $this->mode = 'form';
-$this->language = $this->GetBrowserLang();
+  $this->language = $this->GetBrowserLang();
   $this->lite = false;
   
   if (isset($_GET) && (count($_GET) > 0)) {
    $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
   }
-
+  
   if (!empty($_GET['lang']))  {
-global $paths;
-if (@file_exists($paths['languages']. $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
-}
-
+   global $paths;
+   if (@file_exists($paths['languages']. $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
+  }
+  
   if (!empty($_GET['mode'])) $this->mode = $_GET['mode'];
   if (!empty($_GET['lite'])) $this->lite = $_GET['lite'] == 'true';
   if (!empty($_GET['resulttype'])) $this->resulttype = $_GET['resulttype'];
@@ -33,14 +33,14 @@ if (@file_exists($paths['languages']. $_GET['lang'] . '.ini')) $this->language =
  public function AutoInstall() {
   $this->CanInstall();
   $password = $this->FirstStep();
-
-   $this->ProcessForm(
-$_GET['email'],
-$_GET['name'],
-$_GET['description'],
-isset($_GET['checkrewrite'])
-);
-
+  
+  $this->ProcessForm(
+  $_GET['email'],
+  $_GET['name'],
+  $_GET['description'],
+  isset($_GET['checkrewrite'])
+  );
+  
   $this->CreateDefaultItems($password);
   if ($this->mode == 'remote') {
    $this->OutputResult($password);
@@ -75,8 +75,8 @@ isset($_GET['checkrewrite'])
     $r = new IXR_Value($result);
     $resultxml = $r->getXml();
     // Create the XML
-$html = &THtmlResource::Instance();
-$html->section = 'installation';
+    $html = &THtmlResource::Instance();
+    $html->section = 'installation';
     eval('$xml = "'. $html->xmlrpc . '\n";');
     // Send it
     $xml = '<?xml version="1.0"?>'."\n".$xml;
@@ -106,7 +106,7 @@ $html->section = 'installation';
  }
  
  public function CreateDefaultItems($password) {
- if ($this->mode != 'remote') {
+  if ($this->mode != 'remote') {
    $this->PrintCongratulation($password);
   }
   $Urlmap = &TUrlmap::Instance();
@@ -129,48 +129,48 @@ $html->section = 'installation';
   $this->RegisterStandartClasses();
   $password = $this->InstallOptions();
   $this->InstallClasses();
-return $password;
+  return $password;
  }
  
  public function Install() {
-   if (get_magic_quotes_gpc()) {
-  if (isset($_POST) && (count($_POST) > 0)) {
+  if (get_magic_quotes_gpc()) {
+   if (isset($_POST) && (count($_POST) > 0)) {
     foreach ($_POST as $name => $value) {
      $_POST[$name] = stripslashes($_POST[$name]);
     }
-}
- 
-  if (isset($_GET) && (count($_GET) > 0)) {
+   }
+   
+   if (isset($_GET) && (count($_GET) > 0)) {
     foreach ($_GET as $name => $value) {
      $_GET[$name] = stripslashes($_GET[$name]);
     }
    }
-
-}
    
+  }
+  
   $this->DefineMode();
   if ($this->mode != 'form') return $this->AutoInstall();
-
+  
   if (!isset($_POST) || (count($_POST) <= 1)) {
-     $this->CanInstall();
+   $this->CanInstall();
    return $this->PrintForm();
-}
-
-   $password = $this->FirstStep();
-   $this->ProcessForm(
-$_POST['email'],
-$_POST['name'],
-$_POST['description'],
-isset($_POST['checkrewrite'])
-);
-
-  return $this->CreateDefaultItems($password); 
-}
-
-  public function ProcessForm($email, $name, $description, $rewrite) {
+  }
+  
+  $password = $this->FirstStep();
+  $this->ProcessForm(
+  $_POST['email'],
+  $_POST['name'],
+  $_POST['description'],
+  isset($_POST['checkrewrite'])
+  );
+  
+  return $this->CreateDefaultItems($password);
+ }
+ 
+ public function ProcessForm($email, $name, $description, $rewrite) {
   global $Options;
   $Options->Lock();
- $Options->email = $email;
+  $Options->email = $email;
   $Options->name = $name;
   $Options->description = $description;
   $Options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
@@ -239,7 +239,7 @@ isset($_POST['checkrewrite'])
    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('index.php'));
   }
   
-    if (preg_match('/install\.php$/', $_SERVER['REQUEST_URI'])) {
+  if (preg_match('/install\.php$/', $_SERVER['REQUEST_URI'])) {
    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('install.php'));
   }
   
@@ -248,24 +248,24 @@ isset($_POST['checkrewrite'])
  
  public function  InstallOptions() {
   global $paths;
-$GLOBALS['Options'] = &TOptions::Instance();
-$Options = &TOptions::Instance();
+  $GLOBALS['Options'] = &TOptions::Instance();
+  $Options = &TOptions::Instance();
   $Options->Lock();
-$Options->language = $this->language;
+  $Options->language = $this->language;
   TLocal::LoadLangFile('admin');
-$Options->timezone = TLocal::$data['installation']['timezone'];
-$Options->keywords = "blog";
+  $Options->timezone = TLocal::$data['installation']['timezone'];
+  $Options->keywords = "blog";
   $Options->themeclass = "";
   $Options->login = "admin";
   $Options->password = "";
-$Options->realm = "Admin panel";
+  $Options->realm = "Admin panel";
   $Options->login = 'admin';
   $password = md5(secret. uniqid( microtime()));
   $Options->SetPassword($password);
-
-$Options->email = "yarrowsoft@gmail.com";
-$Options->mailer = "";
-$Options->DefaultCommentStatus = "approved";
+  
+  $Options->email = "yarrowsoft@gmail.com";
+  $Options->mailer = "";
+  $Options->DefaultCommentStatus = "approved";
   
   $Options->subdir = $this->ExtractSubdir();
   $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
@@ -277,7 +277,7 @@ $Options->DefaultCommentStatus = "approved";
   $Options->version = TUpdater::GetVersion();
   
   $Options->Unlock();
-return $password;
+  return $password;
  }
  
  public function InstallClasses() {
@@ -299,162 +299,163 @@ return $password;
  }
  
  public function PrintForm() {
-$this->LoadLang();
-$form = $this->GetLangForm();
-$html = &THtmlResource::Instance();
-$html->section = 'installation';
-
-$checkrewrite = function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()) ? '' : $html->checkrewrite;
-eval('$form .= "'. $html->installform. '\n";');
-        echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
-  }
-
-private function GetLangForm() {
-$langs = array(
-'en' => 'English',
-'ru' => 'Russian'
-);
-
-$result = "<form name='langform' action='' method='get'>
-<p><select name='lang' id='lang'>\n";
-
-foreach ($langs as $lang => $value) {
-   $selected = $lang == $this->language ? 'selected' : '';
-   $result .= "<option value='$lang' $selected>$value</option>\n";
-}
-
-$result .= "</select>
-<input type='submit' name='submit' value='Change language' /></p>
-    </form>";
-
-return $result;
-}
+  $this->LoadLang();
+  $form = $this->GetLangForm();
+  $html = &THtmlResource::Instance();
+  $html->section = 'installation';
   
-  public function CreateWidgets() {
-   $arch = &TArchives::Instance();
-   $arch->lite = $this->lite;
-   $Template = &TTemplate::Instance();
-   $Template->Lock();
-   //sitebar1
-   if (!$this->lite) $Template->AddWidget('TCategories', 'echo', 0, 0);
-   $Template->AddWidget('TLinksWidget', 'echo', -1, 0);
-   $Template->AddWidget('TArchives', 'echo', -1, 0);
-   //$Template->AddWidget('TTags', 'echo', -1, 1);
-   $Template->AddWidget('TFoaf', 'echo', -1, 0);
-   
-   //sitebar2
-   $Template->AddWidget('TPosts', 'echo', 0, 1);
-   $Template->AddWidget('TCommentManager', 'include', 1, 1);
-   $Template->AddWidget('TMetaWidget', 'echo', 2, 1);
-   
-   //footer
-$html = &THtmlResource::Instance();
-$html->section = 'installation';
-
-   $Template->footer = $html->footer;
-   $Template->Unlock();
-  }
-  
-  public function CreateMenuItem() {
-$html = &THtmlResource::Instance();
-$html->section = 'installation';
-
-   $Menu = &TMenu::Instance();
-   $Item = &new TContactForm();
-   $Item->order = 10;
-   $Item->title =  TLocal::$data['installation']['contacttitle'];
-   $Item->content = $html->contactform;
-
-   $Menu->Add($Item);
-  }
-  
-  public function CreateFirstPost() {
-   global $Options;
-$html = &THtmlResource::Instance();
-$html->section = 'installation';
-
-   $lang = &TLocal::$data['instalation'];
-   $post = &new TPost();
-   $post->title = $lang['posttitle'];
-   $post->catnames = $lang['postcategories'];
-   $post->tagnames = $lang['posttags'];
-   eval('$content ="'. $lang['postcontent'] . '";');
-   $post->content = $content;
-   $posts = &TPosts::Instance();
-   $posts->Add($post);
-   
-   $users = &TCommentUsers::Instance();
-   $userid = $users->Add($lang['author'], $lang['email'], $lang['homeurl']);
-   
-   $CommentManager = &TCommentManager::Instance();
-   $CommentManager->AddToPost($post, $userid,$lang['postcomment']);
-  }
-  
-  public static function SendEmail($password) {
-   global $Options;
-  TLocal::LoadLangFile('admin');
-$lang = &TLocal::$data['installation'];
-   $url = $Options->url . $Options->home;
-   $login = $Options->login;
-   eval('$body = "' . $blang['body'] . '";');
-   
-   TMailer::SendMail('', $Options->fromemail,
-   '', $Options->email, $lang['subject'], $body);
-  }
-  
-  public function PrintCongratulation($password) {
-   global $Options;
-$html = &THtmlResource::Instance();
-$html->section = 'installation';
-
-   $url = $Options->url . $Options->home;
-   eval('$content = "'. $html->congratulation . '";');
-   
-   echo SimplyHtml($Options->name, $content);
-  }
-  
-  public function Uninstall() {
-   global $paths;
-   TFiler::DeleteFiles($paths['data'], true);
-   TFiler::DeleteFiles($paths['cache'], true);
-   TFiler::DeleteFiles($paths['files'], true);
-  }
-
-private function LoadLang() {
-global $paths;
-$GLOBALS['Options'] = &$this;
-require_once($paths['lib'] . 'filerclass.php');
-require_once($paths['lib'] . 'localclass.php');
-require_once($paths['lib'] . 'htmlresource.php');
-  TLocal::LoadLangFile('admin');
-}
-
-private function GetBrowserLang() {
-global $paths;
-if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-$result = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-$result = substr($result, 0, 2);
-if (@file_exists($paths['languages']. "$result.ini")) return $result;
-}
-return 'en';
-}
-  
- }//class
- 
- function SimplyHtml($title, $content) {
-  @header('Content-Type: text/html; charset=utf-8');
-  @Header( 'Cache-Control: no-cache, must-revalidate');
-  @Header( 'Pragma: no-cache');
-  
-  return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-  <html xmlns="http://www.w3.org/1999/xhtml">
-  <head profile="http://gmpg.org/xfn/11">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>'. $title . '</title>
-  </head>
-  <body> ' .$content .'</body>
-  </html>
-  ';
+  $checkrewrite = function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()) ? '' : $html->checkrewrite;
+  eval('$form .= "'. $html->installform. '\n";');
+  echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
  }
  
-  ?>
+ private function GetLangForm() {
+  $langs = array(
+  'en' => 'English',
+  'ru' => 'Russian'
+  );
+  
+  $result = "<form name='langform' action='' method='get'>
+  <p><select name='lang' id='lang'>\n";
+  
+  foreach ($langs as $lang => $value) {
+   $selected = $lang == $this->language ? 'selected' : '';
+   $result .= "<option value='$lang' $selected>$value</option>\n";
+  }
+  
+  $result .= "</select>
+  <input type='submit' name='submit' value='Change language' /></p>
+  </form>";
+  
+  return $result;
+ }
+ 
+ public function CreateWidgets() {
+  $arch = &TArchives::Instance();
+  $arch->lite = $this->lite;
+  $Template = &TTemplate::Instance();
+  $Template->Lock();
+  //sitebar1
+  if (!$this->lite) $Template->AddWidget('TCategories', 'echo', 0, 0);
+  $Template->AddWidget('TLinksWidget', 'echo', -1, 0);
+  $Template->AddWidget('TArchives', 'echo', -1, 0);
+  //$Template->AddWidget('TTags', 'echo', -1, 1);
+  $Template->AddWidget('TFoaf', 'echo', -1, 0);
+  
+  //sitebar2
+  $Template->AddWidget('TPosts', 'echo', 0, 1);
+  $Template->AddWidget('TCommentManager', 'include', 1, 1);
+  $Template->AddWidget('TMetaWidget', 'echo', 2, 1);
+  
+  //footer
+  $html = &THtmlResource::Instance();
+  $html->section = 'installation';
+  
+  $Template->footer = $html->footer;
+  $Template->Unlock();
+ }
+ 
+ public function CreateMenuItem() {
+  $html = &THtmlResource::Instance();
+  $html->section = 'installation';
+  
+  $Menu = &TMenu::Instance();
+  $Item = &new TContactForm();
+  $Item->order = 10;
+  $Item->title =  TLocal::$data['installation']['contacttitle'];
+  $Item->content = $html->contactform;
+  
+  $Menu->Add($Item);
+ }
+ 
+ public function CreateFirstPost() {
+  global $Options;
+  $html = &THtmlResource::Instance();
+  $html->section = 'installation';
+  
+  $lang = &TLocal::$data['installation'];
+  
+  $post = &new TPost();
+  $post->title = $lang['posttitle'];
+  $post->catnames = $lang['postcategories'];
+  $post->tagnames = $lang['posttags'];
+  eval('$content ="'. $lang['postcontent'] . '";');
+  $post->content = $content;
+  $posts = &TPosts::Instance();
+  $posts->Add($post);
+  
+  $users = &TCommentUsers::Instance();
+  $userid = $users->Add($lang['author'], $lang['email'], $lang['homeurl']);
+  
+  $CommentManager = &TCommentManager::Instance();
+  $CommentManager->AddToPost($post, $userid,$lang['postcomment']);
+ }
+ 
+ public static function SendEmail($password) {
+  global $Options;
+  TLocal::LoadLangFile('admin');
+  $lang = &TLocal::$data['installation'];
+  $url = $Options->url . $Options->home;
+  $login = $Options->login;
+  eval('$body = "' . $lang['body'] . '";');
+  
+  TMailer::SendMail('', $Options->fromemail,
+  '', $Options->email, $lang['subject'], $body);
+ }
+ 
+ public function PrintCongratulation($password) {
+  global $Options;
+  $html = &THtmlResource::Instance();
+  $html->section = 'installation';
+  
+  $url = $Options->url . $Options->home;
+  eval('$content = "'. $html->congratulation . '";');
+  
+  echo SimplyHtml($Options->name, $content);
+ }
+ 
+ public function Uninstall() {
+  global $paths;
+  TFiler::DeleteFiles($paths['data'], true);
+  TFiler::DeleteFiles($paths['cache'], true);
+  TFiler::DeleteFiles($paths['files'], true);
+ }
+ 
+ private function LoadLang() {
+  global $paths;
+  $GLOBALS['Options'] = &$this;
+  require_once($paths['lib'] . 'filerclass.php');
+  require_once($paths['lib'] . 'localclass.php');
+  require_once($paths['lib'] . 'htmlresource.php');
+  TLocal::LoadLangFile('admin');
+ }
+ 
+ private function GetBrowserLang() {
+  global $paths;
+  if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+   $result = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+   $result = substr($result, 0, 2);
+   if (@file_exists($paths['languages']. "$result.ini")) return $result;
+  }
+  return 'en';
+ }
+ 
+}//class
+
+function SimplyHtml($title, $content) {
+ @header('Content-Type: text/html; charset=utf-8');
+ @Header( 'Cache-Control: no-cache, must-revalidate');
+ @Header( 'Pragma: no-cache');
+ 
+ return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml">
+ <head profile="http://gmpg.org/xfn/11">
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>'. $title . '</title>
+ </head>
+ <body> ' .$content .'</body>
+ </html>
+ ';
+}
+
+?>

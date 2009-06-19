@@ -133,17 +133,17 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   $Item->title = $Struct['title'];
-
-$more = isset($Struct['mt_text_more']) ? trim($Struct['mt_text_more']) : '';
+  
+  $more = isset($Struct['mt_text_more']) ? trim($Struct['mt_text_more']) : '';
   if ($more == '') {
    $Item->content = $Struct['description'];
   } else {
    $Item->content = $Struct['description']. '[more '. TLocal::$data['post']['more'] ."]\n". $more;
   }
-
-$excerpt =isset($Struct['mt_excerpt']) ? trim($Struct['mt_excerpt']) : '';
+  
+  $excerpt =isset($Struct['mt_excerpt']) ? trim($Struct['mt_excerpt']) : '';
   if ($excerpt != '') $Item->excerpt = $excerpt;
-
+  
   $this->MWSetDate($Struct, $Item);
   
   if (!empty($Struct['mt_keywords'])) {
