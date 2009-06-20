@@ -36,8 +36,7 @@ class TAdminPlugins extends TAdminPage {
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
   
-  $admin = &TRemoteAdmin::Instance();
-  $list = $admin->GetPluginsList();
+  $list = TFiler::GetDirList($paths['plugins']);
   sort($list);
   $plugins = &TPlugins::Instance();
   

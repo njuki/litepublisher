@@ -5,7 +5,7 @@ class TFiler {
  public static function DeleteFiles($path, $subdirs , $rmdir = false) {
   if ( $h = @opendir($path)) {
    while(FALSE !== ($filename = @readdir($h))) {
-    if (($filename == '.') || ($filename == '..')) continue;
+    if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
     if (@is_dir($path . $filename)) {
      if ($subdirs) self::DeleteFiles($path . $filename . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
     } else {
@@ -20,7 +20,7 @@ class TFiler {
  public static function DeleteFilesExt($path, $ext) {
   if ($fp = @opendir($path )) {
    while (FALSE !== ($file = readdir($fp))) {
-    if (($file == '.') || ($file == '..')) continue;
+    if (($file == '.') || ($file == '..') || ($file == '.svn')) continue;
     $filename = $path . $file;
     if (@is_dir($filename))  continue;
     if (preg_match("/(\\.$ext\$)/",  $file)) {
@@ -34,7 +34,7 @@ class TFiler {
   $result = array();
   if ( $h = @opendir($path)) {
    while(FALSE !== ($filename = @readdir($h))) {
-    if (($filename == '.') || ($filename == '..')) continue;
+    if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
     if (!@is_dir($path . $filename)) $result[] = $filename;
    }
    @closedir($h);
@@ -46,7 +46,7 @@ class TFiler {
   $result = array();
   if ($fp = @opendir($dir)) {
    while (FALSE !== ($file = readdir($fp))) {
-    if (@is_dir($dir.$file)  && ($file != '.') && ($file != '..')){
+    if (@is_dir($dir.$file)  && ($file != '.') && ($file != '..') && ($file != '.svn')){
      $result[] = $file;
     }
    }
