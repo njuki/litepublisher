@@ -162,7 +162,7 @@ class TComment {
  
  public function Getauthorlink() {
   if ($this->type == 'pingback') {
- return "<a href=\"{$this->website}\">${$this->name}</a>";
+ return "<a href=\"{$this->website}\">{$this->name}</a>";
   }
   
   $authors = &TCommentUsers ::Instance();
