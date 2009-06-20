@@ -52,11 +52,13 @@ class TPlugins extends TItems {
  }
  
  public function UpdatePlugins($list) {
+global $paths;
+  $dirs = TFiler::GetDirList($paths['plugins']);
   $names = array_keys($this->items);
   $this->Lock();
   
   foreach ($names as $name) {
-   if (!in_array($name, $list)) $this->Delete($name);
+   if (!in_array($name, $list) && in_array($name, $dirs)) $this->Delete($name);
   }
   
   foreach ($list as $name) {
