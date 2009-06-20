@@ -52,7 +52,7 @@ class TPlugins extends TItems {
  }
  
  public function UpdatePlugins($list) {
-global $paths;
+  global $paths;
   $dirs = TFiler::GetDirList($paths['plugins']);
   $names = array_keys($this->items);
   $this->Lock();
