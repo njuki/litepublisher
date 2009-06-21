@@ -1,5 +1,11 @@
 <?php
 
+class TLang {
+public function __get($name) {
+return TLocal::$data['default'][$name];
+}
+}
+
 class TLocal {
  public static $data;
  private static $files;
@@ -22,6 +28,7 @@ class TLocal {
  public static function checkload() {
   if (!isset(self::$data)) {
    self::LoadLangFile('');
+$GLOBALS['lang'] = &new TLang();
   }
  }
  

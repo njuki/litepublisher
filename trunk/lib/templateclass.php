@@ -380,12 +380,13 @@ class TTemplate extends TEventClass {
  }
  
  public function ParseFile($FileName) {
-  global $Options, $Urlmap, $Template, $DataObject, $user, $post, $item, $tabindex;
+  global $Options, $Urlmap, $Template, $DataObject, $user, $post, $item, $tabindex, $lang;
   if (!isset($this->fFiles[$FileName])) {
    $this->fFiles[$FileName] = @file_get_contents($this->path . $FileName);
   }
   $Result = $this->fFiles[$FileName];
   $Result = str_replace('"', '\"', $Result);
+TLocal::checkload();
   eval("\$Result = \"$Result\";");
   return $Result;
  }
