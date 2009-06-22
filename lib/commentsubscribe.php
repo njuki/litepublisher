@@ -4,6 +4,7 @@ class TSubscribe extends TItems {
  //public $fromemail;
  
  public $title;
+ public $formresult;
  private $user;
  
  public static function &Instance() {
@@ -41,50 +42,67 @@ class TSubscribe extends TItems {
  }
  
  public function Request($param) {
-  $this->title = TLocal::$data['subscribe']['title'];
+  TLocal::LoadLangFile('admin');
+  $lang = &TLocal::Instance();
+  $lang->section = $this->basename;
+  $this->title = $lang->title;
+  $this->formresult = '';
+  if (isset($_POST) && (count($_POST) > 0)) {
+   if (get_magic_quotes_gpc()) {
+    foreach ($_POST as $name => $value) {
+     $_POST[$name] = stripslashes($_POST[$name]);
+    }
+   }
+   $this->formresult= $this->ProcessForm();
+  }
  }
  
  public function GetTemplateContent() {
+  global $Options;
+  $html= &THtmlResource::Instance();
+  $html->section = $this->basename;
+  $lang = &TLocal::Instance();
+  eval('$result = "' . $html->title . '\n";');
+  $result .= $this->formresult;
+  
   $Users = &TCommentUsers::Instance();
   if ($this->user = $Users->GetItemFromCookie($_GET['userid'])) {
-   if (isset($_POST) ) $this->Unsubscribe();
-   $result = 	'<h2 class="center">' . TLocal::$data['subscribe']['title'] . "</h2>\n";
-   if (count($this->user['subscribe']) > 0) {
-    $result .=    '<p><strong>' . $this->user['email'] . '</strong> ' . TLocal::$data['subscribe']['help'] . "</p>\n";
-    $result .= $this->GetForm();
+   if (count($this->user['subscribe']) == 0) {
+    eval('$result .=  "' . $html->nosubscribtions . '\m";');
    } else {
-    $result .=    '<p class="center">'. TLocal::$data['subscribe']['empty'] . "</p>\n";
+    $email = $this->user['email'];
+    eval('$result .="'. $html->formhead . '\n";');
+    
+    foreach ($this->user['subscribe'] as $postid) {
+     $post = &TPost::Instance($postid);
+     if ($post->status != 'published') continue;
+     eval('$result .= "'. $html->formitem . '\n";');
+    }
+    eval('$result .= "'. $html->formfooter . '\n";');
    }
-   return $result;
   } else {
-   return 		'<h2 class="center">' . TLocal::$data['default']['notfound'] . '</h2>
-   <p class="center">'. TLocal::$data['default']['nocontent'] . '</p>';
+   eval('$result .= "'. $html->notfound . '\m";');
   }
+  $result = str_replace("'", '"', $result);
+  return $result;
  }
  
- public function Unsubscribe() {
-  $users = &TCommentUsers::Instance();
-  $users->Lock();
-  foreach ($_POST as $name => $value) {
-   if (substr($name, 0, 7) == 'postid-') {
-    $users->Unsubscribe($this->user['id'], $value);
+ public function ProcessForm() {
+  $result = '';
+  $Users = &TCommentUsers::Instance();
+  if ($this->user = $Users->GetItemFromCookie($_GET['userid'])) {
+   $users->Lock();
+   foreach ($_POST as $name => $value) {
+    if (substr($name, 0, 7) == 'postid-') {
+     $users->Unsubscribe($this->user['id'], $value);
+    }
    }
+   $users->Unlock();
+   $html = &THtmlResource::Instance();
+   $html->section = $this->basename;
+   $lang = &TLocal::Instance();
+   eval('$result .= "'. $html->unsubscribed . '\n";');
   }
-  $users->Unlock();
- }
- 
- public function GetForm() {
-  global $Options;
-  $result = '<form method="post" action="" >';
-  foreach ($this->user['subscribe'] as $postid) {
-   $post = &TPost::Instance($postid);
-   if ($post->status != 'published') continue;
-   $result .="\n<p><input type=\"checkbox\" name=\"postid-$postid\" id=\"postid-$postid\" value=\"$postid\" />
-   <label for=\"postid-$postid\"><a href=\"$Options->url$post->url\"><strong>$post->title</strong></a></label></p>\n";
-  }
-  
-  $result .= '<p><input name="submit" type="submit" id="submit" value="' . TLocal::$data['default']['unsubscribe'] . '" />
-  </form>';
   return $result;
  }
  
@@ -114,11 +132,13 @@ class TSubscribe extends TItems {
   if (count($subscribers) == 0) return;
   $comment = new TComment($comments);
   $comment->id = $id;
-  $body = TLocal::$data['subscribe']['body'];
-  eval('$body = "' . $body . '";');
   
-  $subj = TLocal::$data['subscribe']['subject'];
-  eval('$subj = "'. $subj . '";');
+  $html = &THtmlResource::Instance();
+  $html->section = 'moderator';
+  $lang = &TLocal::Instance();
+  
+  eval('$subj = "'. $html->subject . '";');
+  eval('$body = "' . $html->subscriberbody . '";');
   
   $url = $this->Geturl();
   

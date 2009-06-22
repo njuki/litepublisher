@@ -24,7 +24,7 @@ class TAdminWidgets extends TAdminPage {
   global $Options, $Template;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $checked = "checked='checked'";
   switch ($this->arg) {
@@ -259,7 +259,7 @@ $lang = &TLocal::Instance();
   
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
  return $html->{$rname};
  }
  
@@ -278,7 +278,7 @@ $lang = &TLocal::Instance();
   $Urlmap->ClearCache();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   return $html->successdeleted;
  }

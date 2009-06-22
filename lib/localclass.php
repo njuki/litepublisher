@@ -3,19 +3,19 @@
 class TLocal {
  public static $data;
  private static $files;
-public $section;
-
-public function __get($name) {
-if (isset(self::$data[$this->section][$name])) return self::$data[$this->section][$name];
-if (isset(self::$data['common'][$name])) return self::$data['common'][$name];
-if (isset(self::$data['cdefault'][$name])) return self::$data['default'][$name];
-return '';
-}
-
+ public $section;
+ 
+ public function __get($name) {
+  if (isset(self::$data[$this->section][$name])) return self::$data[$this->section][$name];
+  if (isset(self::$data['common'][$name])) return self::$data['common'][$name];
+  if (isset(self::$data['default'][$name])) return self::$data['default'][$name];
+  return '';
+ }
+ 
  public static function &Instance() {
   return GetInstance(__class__);
  }
-
+ 
  public static function date($date, $format = '') {
   if (empty($format)) {
    $format = self::GetDateFormat();

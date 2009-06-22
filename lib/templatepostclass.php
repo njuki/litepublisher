@@ -15,7 +15,7 @@ class TTemplatePost extends TEventClass {
  
  public function GetPostscript($tagname) {
   global $Options, $post;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   $this->ps = '';;
   if (is_a($post, 'TPost')) {
    if (($post->comments->count > 0) && $post->commentsenabled) {
@@ -47,7 +47,7 @@ $lang = &TLocal::Instance();
  public function PrintPosts(&$Items) {
   global $Template;
   if (count($Items) == 0) {
-$lang = &TLocal::Instance();  
+   $lang = &TLocal::Instance();
    return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
   }
   

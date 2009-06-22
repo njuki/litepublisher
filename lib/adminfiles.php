@@ -15,7 +15,7 @@ class TAdminFiles extends TAdminPage {
   $files = &TFiles::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $result = '';
   
@@ -53,7 +53,7 @@ $lang = &TLocal::Instance();
   foreach ($files->items as $id =>$item) {
    eval('$result .= "' . $tableitem . '\n";');
   }
-   eval('$result .= "'. $html->tablefooter . '\n";');;
+  eval('$result .= "'. $html->tablefooter . '\n";');;
   $result = str_replace("'", '"', $result);
   return $result;
  }
@@ -63,7 +63,7 @@ $lang = &TLocal::Instance();
   $files = &TFiles::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
