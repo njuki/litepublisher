@@ -11,7 +11,6 @@ class THtmlResource  {
  
  public function __construct() {
   $this->ini = array();
-  $this->map = array();
   $this->LoadFile('adminhtml');
   TLocal::LoadLangFile('admin');
  }
@@ -24,34 +23,9 @@ class THtmlResource  {
   } else {
    throw new Exception("the requested $name item not found in $this->section section");
   }
-  $s = $this->translate($s);
-  $s = $this->CommonTranslate($s);
+$lang = &TLocal::Instance();
+$lang->section = $this->section;
   return $s;
- }
- 
- public function translate($s){
-  if (!isset($this->map[$this->section])) {
-   $this->map[$this->section] = array();
-   $map = &$this->map[$this->section];
-   $lang = &TLocal::$data[$this->section];
-   foreach ($lang as $key => $value) {
-    $map['$lang->' . trim($key)] = $value;
-   }
-  }
-  return strtr($s, $this->map[$this->section]);
- }
- 
- public function CommonTranslate($s){
-  $section = 'common';
-  if (!isset($this->map[$section])) {
-   $this->map[$section] = array();
-   $map = &$this->map[$section];
-   $lang = &TLocal::$data[$section];
-   foreach ($lang as $key => $value) {
-    $map['$lang->' . trim($key)] = $value;
-   }
-  }
-  return strtr($s, $this->map[$section]);
  }
  
  public function LoadFile($FileName) {

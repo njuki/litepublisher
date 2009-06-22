@@ -144,7 +144,7 @@ class TCommentForm extends TItems {
    
    $Posts = &TPosts::Instance();
    if(!$Posts->ItemExists($values['postid']))  {
-    $error = TLocal::$data['post']['notfound'];
+    $error = TLocal::$data['default']['postnotfound'];
     return TTemplate::SimpleContent($error);
    }
    
@@ -229,21 +229,22 @@ class TCommentForm extends TItems {
  }
  
  public function CanAdd(&$values, &$post, &$error) {
-  $lang = TLocal::$data['post'];
+$lang = &TLocal::Instance();  
+$lang->section = 'comment';
   if (!$post->commentsenabled) {
-   $error = $lang['commentsdisabled'];
+   $error = $lang->commentsdisabled;
    return false;
   }
   
   if ($post->status != 'published')  {
-   $error = $lang['commentondraft'];
+   $error = $lang->commentondraft;
    return false;
   }
   
   //check duplicates
   $comments = &$post->comments;
   if ($comments->IndexOfRawContent($values['content']) >= 0) {
-   $error = TLocal::$data['comment']['duplicate'];
+   $error = $lang->duplicate;
    return false;
   }
   

@@ -35,6 +35,7 @@ class TAdminPlugins extends TAdminPage {
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $list = TFiler::GetDirList($paths['plugins']);
   sort($list);
@@ -61,7 +62,7 @@ class TAdminPlugins extends TAdminPage {
   }
   
   if ($radio) {
-   $result .= $html->formfooter;
+   eval('$result .= "'. $html->formfooter . '\n";');;
    $result = $this->FixCheckall($result);
   }
   if ($this->submenu != '') $this->submenu = '<p>' . $this->submenu . "</p>\n";
@@ -75,6 +76,7 @@ class TAdminPlugins extends TAdminPage {
   $plugins = &TPlugins::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   if (!isset($plugins->items[$name])) return $html->notfound;
   if (!isset($this->plugin)) {
@@ -101,6 +103,7 @@ class TAdminPlugins extends TAdminPage {
    $plugins->UpdatePlugins($list);
    $html = &THtmlResource::Instance();
    $html->section = $this->basename;
+$lang = &TLocal::Instance();
    $result = $html->updated;
    break;
    

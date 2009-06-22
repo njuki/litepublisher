@@ -33,6 +33,7 @@ class TAdminModerator extends TAdminPage {
   $checked = "checked='checked'";
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   $subcribeitem = $html->subscribeitem;
   foreach ($list as $id => $item) {
    $subscribed = $item['subscribed'] ? $checked : '';
@@ -48,6 +49,7 @@ class TAdminModerator extends TAdminPage {
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
+$lang = &TLocal::Instance();
   
   $checked = "checked='checked'";
   $CommentManager = &TCommentManager::Instance();
@@ -80,7 +82,7 @@ class TAdminModerator extends TAdminPage {
     $onhold = $comment->status == 'hold' ? "checked='checked'" : '';
     eval('$result .="' . $itemlist . '\n";');
    }
-   $result .= $html->tablefooter;
+   eval('$result .= "'. $html->tablefooter . '\n";');;
    $result = $this->FixCheckall($result);
    
    $TemplatePost = &TTemplatePost::Instance();
@@ -109,7 +111,7 @@ class TAdminModerator extends TAdminPage {
     if (is_array($item['ip'])) $ip = implode('; ', $item['ip']);
     eval('$result .= "'. $html->authoritem . '\n";');
    }
-   $result .= $html->authorfooter;
+   eval('$result .= "'. $html->authorfooter . '\n";');;
    $result = $this->FixCheckall($result);
    break;
    
@@ -128,6 +130,7 @@ class TAdminModerator extends TAdminPage {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
+$lang = &TLocal::Instance();
   
   $id = (int) $_GET['commentid'];
   $CommentManager = &TCommentManager::Instance();
@@ -165,6 +168,7 @@ class TAdminModerator extends TAdminPage {
   global $Options, $Urlmap;
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
+$lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -269,6 +273,7 @@ class TAdminModerator extends TAdminPage {
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
+$lang = &TLocal::Instance();
   
   eval('$result .= "'. $html->info . '\n";');
   eval('$result .= "'. $html->editform . '\n";');

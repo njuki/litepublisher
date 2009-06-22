@@ -21,6 +21,7 @@ class TAdminThemes extends TAdminPage {
    $themename = $Template->themename;
    $html = &THtmlResource::Instance();
    $html->section = $this->basename;
+$lang = &TLocal::Instance();
    eval('$result .= "' . $html->adminplugin . '\n";');
   }
   return $result;
@@ -30,6 +31,7 @@ class TAdminThemes extends TAdminPage {
   global $Options, $Template, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -45,7 +47,7 @@ class TAdminThemes extends TAdminPage {
     $about = $Template->GetAbout($name);
     eval('$result .= "'. $item . '\n";');
    }
-   $result .= $html->formfooter;
+   eval('$result .= "' . $html->formfooter . '\n";');
    $result = str_replace("'", '"', $result);
    return $result;
    
@@ -76,6 +78,7 @@ class TAdminThemes extends TAdminPage {
   global $Options, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:

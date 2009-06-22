@@ -20,6 +20,7 @@ class TAdminPosts extends TAdminPage {
   $id = (int) $_GET['postid'];
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $posts= &TPosts::Instance();
   if (!$posts->ItemExists($id)) {
@@ -47,9 +48,8 @@ class TAdminPosts extends TAdminPage {
    
    $result .=  sprintf($html->confirmed, TLocal::$data['poststatus'][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
   } else {
-   $lang = &TLocal::$data[$this->basename];
-   $confirm = sprintf($lang['confirm'], $lang[$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
-   $yes = TLocal::$data['default']['yesword'];
+   $lang->section = $this->basename;
+   $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
    eval('$result .= "'. $html->confirmform . '\n";');
   }
   return $result;
@@ -60,6 +60,7 @@ class TAdminPosts extends TAdminPage {
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $posts = &TPosts::Instance();
   $from = max(0, count($posts->items) - $Urlmap->pagenumber * 100);
@@ -73,7 +74,7 @@ class TAdminPosts extends TAdminPage {
    eval('$list="\n' . $html->itemlist . '" . $list;');
   }
   $result .= $list;
-  $result .= $html->listfooter;
+   eval('$result .= "'. $html->listfooter . '\n";');;
   $result = str_replace("'", '"', $result);
   
   $TemplatePost = &TTemplatePost::Instance();

@@ -13,13 +13,13 @@ class TAdminFoaf extends TAdminPage {
  }
  
  private function GetComboStatus($id, $status) {
-  $lang= &TLocal::$data[$this->basename];
+  $langar = &TLocal::$data[$this->basename];
   $names = array('accepted', 'delete', 'hold', 'invated', 'rejected', 'ban');
   $result = "<select name='status-$id' >\n";
   
   foreach ($names as $name) {
    $selected = $status == $name ? 'selected' : '';
-  $result .= "<option value='$name' $selected>{$lang[$name]}</option>\n";
+  $result .= "<option value='$name' $selected>{$langar[$name]}</option>\n";
   }
   $result .= "</select>";
   return $result;
@@ -30,6 +30,7 @@ class TAdminFoaf extends TAdminPage {
   $foaf = &TFoaf::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $result = '';
   
@@ -42,7 +43,7 @@ class TAdminFoaf extends TAdminPage {
    foreach ($foaf->items as $id => $item) {
     eval('$result .= "'. $html->itemlist . '\n";');
    }
-   $result .= $html->tablefooter;
+   eval('$result .= "'. $html->tablefooter. '\n";');;
    break;
    
    case 'edit':
@@ -72,7 +73,7 @@ class TAdminFoaf extends TAdminPage {
     $status = $this->GetComboStatus($item['id'], $item['status']);
     eval('$result .= "'. $html->moderitem . '\n";');
    }
-   $result .= $html->moderfooter;
+   eval('$result .= "'. $html->moderfooter . '\n";');;
    return $this->FixCheckall($result);
    
    case 'profile':
@@ -90,6 +91,7 @@ class TAdminFoaf extends TAdminPage {
   $foaf = &TFoaf::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -147,6 +149,7 @@ class TAdminFoaf extends TAdminPage {
   global $Urlmap;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $Urlmap->ClearCache();
  return $html->{$key};

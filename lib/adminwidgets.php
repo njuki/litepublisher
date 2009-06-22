@@ -24,6 +24,7 @@ class TAdminWidgets extends TAdminPage {
   global $Options, $Template;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $checked = "checked='checked'";
   switch ($this->arg) {
@@ -59,7 +60,7 @@ class TAdminWidgets extends TAdminPage {
      eval('$result .= "'. $item . '\n";');
     }
    }
-   $result .= $html->formfooter;
+   eval('$result .= "'. $html->formfooter . '\n";');;
    return  $this->FixCheckall($result);
    
    case 'std':
@@ -71,7 +72,7 @@ class TAdminWidgets extends TAdminPage {
     $selected = !$Template->ClassHasWidget($class) ? $checked : '';
     eval('$result .= "' . $item . '\n";');
    }
-   $result .= $html->stdfooter;
+   eval('$result .= "'. $html->stdfooter . '\n";');;
    break;
    
    case 'stdoptions':
@@ -120,7 +121,7 @@ class TAdminWidgets extends TAdminPage {
    foreach ($links->items as $id => $item) {
     eval('$result .= "' .$linkitem . '\n";');
    }
-   $result .= $html->linkstablefooter;
+   eval('$result .= "'. $html->linkstablefooter . '\n";');;
    return $this->FixCheckall($result);
    
    case 'custom':
@@ -258,6 +259,7 @@ class TAdminWidgets extends TAdminPage {
   
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
  return $html->{$rname};
  }
  
@@ -276,6 +278,7 @@ class TAdminWidgets extends TAdminPage {
   $Urlmap->ClearCache();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   return $html->successdeleted;
  }
