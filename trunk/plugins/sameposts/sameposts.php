@@ -49,7 +49,7 @@ if (!isset($cats->items[$id])) continue;
   $result = '';
   if (!isset($this->items[$id])) $this->Find($id);
   if (count($this->items[$id]) == 0) return $result;
-  $result = TLocal::$data['post']['sameposts'];
+  $result = TLocal::$data['default']['sameposts'];
   $result = "<ul>$result\n";
   foreach ($this->items[$id] as $postid) {
    $post = &TPost::Instance($postid);
