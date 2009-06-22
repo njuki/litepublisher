@@ -1,6 +1,6 @@
 	<div class="entry entry-$post->id">
 		<div class="entrytitle">
-        <h2><a href="$Options->url$post->url" rel="bookmark" title="Ссылка на запись $post->title">$post->title</a></h2>
+        <h2><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h2>
 			<h3>$post->localdate</h3>
 		</div>
 		<div class="entrybody">
@@ -10,8 +10,8 @@ $Template->postscript
 		
 		<div class="entrymeta">
 		<div class="postinfo">
-			<span class="filedto">Рубрики: $post->categorieslinks ,  </span>
-			<span class="filedto">Метки: $post->tagslinks , </span>
+			<span class="filedto">$lang->categories: $post->categorieslinks ,  </span>
+			<span class="filedto">$lang->tags: $post->tagslinks , </span>
 		</div>
 		</div>
 		

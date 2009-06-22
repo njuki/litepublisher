@@ -42,7 +42,7 @@ $Template->content
   </div>
 
 <div id="sidebar">
-  <a href="$Options->rss"><img src="$Template->url/images/rss-icon.png" alt="Подписка на RSS" border="0" /></a>
+  <a href="$Options->rss"><img src="$Template->url/images/rss-icon.png" alt="$lang->subscriberss" border="0" /></a>
 <ul>
 $Template->sitebar
  </ul>
