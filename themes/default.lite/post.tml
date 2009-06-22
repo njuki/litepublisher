@@ -1,5 +1,5 @@
     <div class="post" id="post-$post->id">
-        <h2><a href="$Options->url$post->url" rel="bookmark" title="Постоянная ссылка: $post->title">$post->title</a></h2>
+        <h2><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink: $post->title">$post->title</a></h2>
 <span class="post-calendar">$post->localdate</span>
 		<div class="post-content">
 $post->content
