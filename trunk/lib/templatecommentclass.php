@@ -79,10 +79,12 @@ class TTemplateComment extends TEventClass {
  }
  
  public function GetHoldList(&$items, &$comment) {
+$lang = &TLocal::Instance();  
+$lang->section = 'comment';
   $this->CheckThemeComments();
   $Result = '';
   if (count($items) > 0) {
-   $hold = TLocal::$data['comment']['hold'];
+   $hold = $lang->hold;
    $list = '';
    foreach  ($items as $id => $date) {
     $comment->id = $id;
@@ -96,7 +98,8 @@ class TTemplateComment extends TEventClass {
  public function GenerateCommentForm() {
   global $Options;
   $CommentForm = &TCommentForm::Instance();
-  
+$lang = &TLocal::Instance();    
+$lang->section = 'comment';
   $this->CheckThemeComments();
   eval('$Result = "'. $this->ThemeComments['formhead'] . '"; ');
   $Result .= "\n<form action=\"$Options->url$CommentForm->url\" method=\"post\" id=\"commentform\">\n";
@@ -105,7 +108,7 @@ class TTemplateComment extends TEventClass {
   $TemplateField = $this->ThemeComments['field'];
   foreach ($CommentForm->Fields as $field => $type) {
    $value = "\$values[$field]";
-   $label = TLocal::$data['comment'][$field];
+   $label = $lang->$field;
    eval("\$Result .= \"$TemplateField\n\";");
    $tabindex++;
   }

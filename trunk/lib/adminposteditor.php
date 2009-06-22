@@ -33,6 +33,7 @@ class TPostEditor extends TAdminPage {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $this->postid = isset($_GET['postid']) ? (int) $_GET['postid'] : (isset($_POST['postid']) ? (int) $_POST['postid'] : 0);
   $post = &TPost::Instance($this->postid);
@@ -58,6 +59,7 @@ class TPostEditor extends TAdminPage {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $cats = array();
   $cat = 'category-';

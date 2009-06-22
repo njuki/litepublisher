@@ -14,6 +14,7 @@ class TAdminService extends TAdminPage {
   global $Options, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   $result = '';
   $checked = "checked='checked'";
   
@@ -85,6 +86,7 @@ class TAdminService extends TAdminPage {
   global $Options, $Urlmap, $paths, $domain;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -101,20 +103,20 @@ class TAdminService extends TAdminPage {
    
    case 'engine':
    $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
-   $lang= &TLocal::$data[$this->basename];
+   $lang->section = $this->basename;
    TClasses::Lock();
    foreach ($ini as $name => $value) {
     if ( isset($_POST[$name])) {
      switch ($_POST['submit']) {
-      case $lang['install']:
+      case $lang->install:
       TClasses::Register($name, $value);
       break;
       
-      case $lang['uninstall']:
+      case $lang->uninstall:
       TClasses::Unregister($name);
       break;
       
-      case $lang['reinstall']:
+      case $lang->reinstall:
       TClasses::Reinstall($name);
       break;
      }
@@ -169,6 +171,7 @@ class TAdminService extends TAdminPage {
   global $Options, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
+$lang = &TLocal::Instance();
   
   $result = $html->backupheader;
   $filelist = TFiler::GetFileList($paths['backup']);
@@ -176,7 +179,7 @@ class TAdminService extends TAdminPage {
    if (!preg_match('/\.zip$/',  $filename)) continue;
    eval('$result .= "'. $html->backupitem . '\n";');
   }
-  $result .= $html->backupfooter;
+   eval('$result .= "'. $html->backupfooter . '\n";');;
   return $result;
  }
  

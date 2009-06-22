@@ -386,16 +386,20 @@ class TTemplate extends TEventClass {
   }
   $Result = $this->fFiles[$FileName];
   $Result = str_replace('"', '\"', $Result);
-TLocal::checkload();
+$lang = &TLocal::Instance();
   eval("\$Result = \"$Result\";");
   return $Result;
  }
  
  public function GetAbout($themename) {
-  global $paths;
+  global $Options, $paths;
   if (!isset($this->aboutFiles)) $this->aboutFiles = array();
   if (!isset($this->aboutFiles[$themename])) {
    $this->aboutFiles[$themename] = @parse_ini_file($paths['themes'] . $themename . DIRECTORY_SEPARATOR    . 'about.ini', false);
+$langfile = $paths['themes'] . $themename . DIRECTORY_SEPARATOR    . $Options->language . '.ini';
+if (@file_exists($langfile) && ($ini = @parse_ini_file($langfile, true))) {
+   $this->aboutFiles[$themename] = $ini['about'] + $this->aboutFiles[$themename];
+}
   }
   return $this->aboutFiles[$themename];
  }

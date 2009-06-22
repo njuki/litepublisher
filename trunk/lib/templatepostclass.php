@@ -15,10 +15,11 @@ class TTemplatePost extends TEventClass {
  
  public function GetPostscript($tagname) {
   global $Options, $post;
+$lang = &TLocal::Instance();
   $this->ps = '';;
   if (is_a($post, 'TPost')) {
    if (($post->comments->count > 0) && $post->commentsenabled) {
-    $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">". TLocal::$data['post']['rsscomments'] . "</a></p>\n";
+    $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
    }
    
    //prev and next post
@@ -28,15 +29,13 @@ class TTemplatePost extends TEventClass {
    $i = array_search($post->id, $keys);
    if ($i < count($keys) -1) {
     $prevpost = &TPost::Instance($keys[$i + 1]);
-    $links .= TLocal::$data['post']['prev'];
-    $links .= " <a href=\"$Options->url$prevpost->url\">$prevpost->title</a>";
+    $links .= "$lang->prev <a href=\"$Options->url$prevpost->url\">$prevpost->title</a>";
    }
    
    if ($i > 0) {
     $nextpost = &TPost::Instance($keys[$i - 1]);
     if ($links != '') $links .= ' | ';
-    $links .= TLocal::$data['post']['next'];
-    $links .= " <a href=\"$Options->url$nextpost->url\">$nextpost->title</a>";
+    $links .= "$lang->next <a href=\"$Options->url$nextpost->url\">$nextpost->title</a>";
    }
    
    if ($links != '') $this->ps .= "<p>$links</p>\n";
@@ -47,10 +46,9 @@ class TTemplatePost extends TEventClass {
  
  public function PrintPosts(&$Items) {
   global $Template;
-  
   if (count($Items) == 0) {
-   return 		'<h2 class="center">' . TLocal::$data['default']['notfound'] . '</h2>
-   <p class="center">'. TLocal::$data['default']['nocontent'] . '</p>';
+$lang = &TLocal::Instance();  
+   return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
   }
   
   $Result = '';

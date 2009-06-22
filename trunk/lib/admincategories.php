@@ -20,7 +20,7 @@ class TAdminCategories extends TAdminPage {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-  
+$lang = &TLocal::Instance();  
   $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
   $form = $class == 'TTags' ? 'tagform' : 'catform';
   $tags = GetInstance($class);
@@ -64,7 +64,7 @@ class TAdminCategories extends TAdminPage {
   foreach ($tags->items as $id => $item) {
    eval('$result .= "'. $itemlist . '\n";');
   }
-  $result .= $html->listfooter;
+   eval('$result .= "'. $html->listfooter. '\n";');;
   $result = str_replace("'", '"', $result);
   return $result;
  }
@@ -76,6 +76,7 @@ class TAdminCategories extends TAdminPage {
    $content = isset($_POST['content']) ? $_POST['content'] : '';
    $html = &THtmlResource::Instance();
    $html->section = $this->basename;
+$lang = &TLocal::Instance();
    
    $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
    $tags = GetInstance($class);
