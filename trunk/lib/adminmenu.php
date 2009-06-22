@@ -15,7 +15,7 @@ class TAdminMenu extends TAdminPage {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -89,7 +89,7 @@ $lang = &TLocal::Instance();
   $id = (int) $_GET['postid'];
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $menu = &TMenu::Instance();
   if (!$menu->ItemExists($id)) {
@@ -118,7 +118,7 @@ $lang = &TLocal::Instance();
    $result .=  sprintf($html->confirmed, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
   } else {
    $lang->section = $this->basename;
-   $confirm = sprintf($lang->confirm, $lang{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
+  $confirm = sprintf($lang->confirm, $lang{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
    eval('$result .= "'. $html->confirmform . '\n";');
   }
   return $result;

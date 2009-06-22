@@ -220,6 +220,7 @@ class TCommentManager extends TItems {
   $comment = &$this->Getcomment($id);
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
+  $lang = &TLocal::Instance();
   eval('$subject = "' . $html->subject . '";');
   eval('$body = "'. $html->body . '";');
   TMailer::SendMail($Options->name, $Options->fromemail,

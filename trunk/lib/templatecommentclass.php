@@ -79,8 +79,8 @@ class TTemplateComment extends TEventClass {
  }
  
  public function GetHoldList(&$items, &$comment) {
-$lang = &TLocal::Instance();  
-$lang->section = 'comment';
+  $lang = &TLocal::Instance();
+  $lang->section = 'comment';
   $this->CheckThemeComments();
   $Result = '';
   if (count($items) > 0) {
@@ -98,8 +98,8 @@ $lang->section = 'comment';
  public function GenerateCommentForm() {
   global $Options;
   $CommentForm = &TCommentForm::Instance();
-$lang = &TLocal::Instance();    
-$lang->section = 'comment';
+  $lang = &TLocal::Instance();
+  $lang->section = 'comment';
   $this->CheckThemeComments();
   eval('$Result = "'. $this->ThemeComments['formhead'] . '"; ');
   $Result .= "\n<form action=\"$Options->url$CommentForm->url\" method=\"post\" id=\"commentform\">\n";

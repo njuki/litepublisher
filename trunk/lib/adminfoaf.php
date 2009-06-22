@@ -30,7 +30,7 @@ class TAdminFoaf extends TAdminPage {
   $foaf = &TFoaf::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $result = '';
   
@@ -91,7 +91,7 @@ $lang = &TLocal::Instance();
   $foaf = &TFoaf::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -149,7 +149,7 @@ $lang = &TLocal::Instance();
   global $Urlmap;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $Urlmap->ClearCache();
  return $html->{$key};

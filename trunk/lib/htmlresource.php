@@ -23,8 +23,8 @@ class THtmlResource  {
   } else {
    throw new Exception("the requested $name item not found in $this->section section");
   }
-$lang = &TLocal::Instance();
-$lang->section = $this->section;
+  $lang = &TLocal::Instance();
+  $lang->section = $this->section;
   return $s;
  }
  

@@ -35,7 +35,7 @@ class TAdminPlugins extends TAdminPage {
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $list = TFiler::GetDirList($paths['plugins']);
   sort($list);
@@ -43,13 +43,17 @@ $lang = &TLocal::Instance();
   
   if ($radio) {
    $result = $html->checkallscript;
-   $result .= $html->formhead;
+   eval('$result .= "'. $html->formhead . '\n";');
    $item = $html->item;
   }
   
   foreach ($list as $name) {
    $ini = parse_ini_file($paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
    $about = $ini['about'];
+   $langini = $paths['plugins'] . $name . DIRECTORY_SEPARATOR . $Options->language . '.ini';
+   if (@file_exists($langini) && ($ini = @parse_ini_file($langini, true))) {
+    $about= $ini['about'] + $about;
+   }
    $checked =  '';
    if (isset($plugins->items[$name])) {
     $checked =  "checked='checked'";
@@ -76,7 +80,7 @@ $lang = &TLocal::Instance();
   $plugins = &TPlugins::Instance();
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   if (!isset($plugins->items[$name])) return $html->notfound;
   if (!isset($this->plugin)) {
@@ -103,7 +107,7 @@ $lang = &TLocal::Instance();
    $plugins->UpdatePlugins($list);
    $html = &THtmlResource::Instance();
    $html->section = $this->basename;
-$lang = &TLocal::Instance();
+   $lang = &TLocal::Instance();
    $result = $html->updated;
    break;
    

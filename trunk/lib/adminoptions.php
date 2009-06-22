@@ -119,7 +119,7 @@ class TAdminOptions extends TAdminPage {
   
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
  eval('$result .= "'. $html->{$formname} . '\n";');
   $result = str_replace("'", '"', $result);
   return $result;

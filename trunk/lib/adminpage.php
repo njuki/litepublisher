@@ -53,7 +53,7 @@ class TAdminPage extends TEventClass {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   eval('$result = "'. $html->menu . '\n";');
   return $result;
  }
@@ -80,7 +80,7 @@ $lang = &TLocal::Instance();
   global $Options, $Template;
   $html = &THtmlResource::Instance();
   $html->section = 'index';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   eval('$result = "'. $html->content . '\n";');
   $result .= $this->GetMenu();
   $result = str_replace("'", '"', $result);

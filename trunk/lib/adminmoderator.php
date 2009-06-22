@@ -33,7 +33,7 @@ class TAdminModerator extends TAdminPage {
   $checked = "checked='checked'";
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   $subcribeitem = $html->subscribeitem;
   foreach ($list as $id => $item) {
    $subscribed = $item['subscribed'] ? $checked : '';
@@ -49,7 +49,7 @@ $lang = &TLocal::Instance();
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $checked = "checked='checked'";
   $CommentManager = &TCommentManager::Instance();
@@ -130,7 +130,7 @@ $lang = &TLocal::Instance();
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $id = (int) $_GET['commentid'];
   $CommentManager = &TCommentManager::Instance();
@@ -168,7 +168,7 @@ $lang = &TLocal::Instance();
   global $Options, $Urlmap;
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -273,7 +273,7 @@ $lang = &TLocal::Instance();
   $result = '';
   $html = &THtmlResource::Instance();
   $html->section = 'moderator';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   eval('$result .= "'. $html->info . '\n";');
   eval('$result .= "'. $html->editform . '\n";');

@@ -229,8 +229,8 @@ class TCommentForm extends TItems {
  }
  
  public function CanAdd(&$values, &$post, &$error) {
-$lang = &TLocal::Instance();  
-$lang->section = 'comment';
+  $lang = &TLocal::Instance();
+  $lang->section = 'comment';
   if (!$post->commentsenabled) {
    $error = $lang->commentsdisabled;
    return false;

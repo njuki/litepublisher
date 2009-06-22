@@ -29,7 +29,7 @@ class TPasswordRecover extends TAdminPage {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = 'passwordrecover';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   eval('$result = "'.  $html->form . '\n";');
   $result = str_replace("'", '"', $result);
   return $result;
@@ -39,7 +39,7 @@ $lang = &TLocal::Instance();
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = 'passwordrecover';
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   if (strtolower(trim($_POST['email'])) == strtolower(trim($Options->email))) {
    $password = md5(secret. uniqid( microtime()));
    $Options->SetPassword($password);

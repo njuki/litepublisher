@@ -21,7 +21,7 @@ class TAdminThemes extends TAdminPage {
    $themename = $Template->themename;
    $html = &THtmlResource::Instance();
    $html->section = $this->basename;
-$lang = &TLocal::Instance();
+   $lang = &TLocal::Instance();
    eval('$result .= "' . $html->adminplugin . '\n";');
   }
   return $result;
@@ -31,7 +31,7 @@ $lang = &TLocal::Instance();
   global $Options, $Template, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -78,7 +78,7 @@ $lang = &TLocal::Instance();
   global $Options, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:

@@ -14,7 +14,7 @@ class TAdminService extends TAdminPage {
   global $Options, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   $result = '';
   $checked = "checked='checked'";
   
@@ -86,7 +86,7 @@ $lang = &TLocal::Instance();
   global $Options, $Urlmap, $paths, $domain;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   switch ($this->arg) {
    case null:
@@ -171,7 +171,7 @@ $lang = &TLocal::Instance();
   global $Options, $paths;
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
-$lang = &TLocal::Instance();
+  $lang = &TLocal::Instance();
   
   $result = $html->backupheader;
   $filelist = TFiler::GetFileList($paths['backup']);
@@ -179,7 +179,7 @@ $lang = &TLocal::Instance();
    if (!preg_match('/\.zip$/',  $filename)) continue;
    eval('$result .= "'. $html->backupitem . '\n";');
   }
-   eval('$result .= "'. $html->backupfooter . '\n";');;
+  eval('$result .= "'. $html->backupfooter . '\n";');;
   return $result;
  }
  
