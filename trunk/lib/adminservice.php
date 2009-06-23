@@ -26,11 +26,11 @@ class TAdminService extends TAdminPage {
    eval('$result = "' . $html->info . '\n";');
    $islatest= $updater->IsLatest();
    if ($islatest === true) {
-    $result .= $html->islatest;
+    eval('$result .= "' . $html->islatest . '\n";');
    } elseif ($islatest === false) {
-    $result .= $html->requireupdate;
+    eval('$result .= "' . $html->requireupdate . '\n";');
    } else {
-    $result .= $html->errorgetlatest;
+    eval('$result .= "'. $html->errorgetlatest . '\n";');
    }
    break;
    
@@ -53,6 +53,7 @@ class TAdminService extends TAdminPage {
    $result .= $html->fullbackupform;
    $result .=  $html->uploadform;
    $result .= $this->GetBackupFilelist();
+   eval('$result = "'. $result . '\n";');
    break;
    
    case 'download':
