@@ -21,7 +21,7 @@ class TAdminMenu extends TAdminPage {
    case null:
    if (isset($_GET['action'])) return $this->ProcessAction();
    $menu = &TMenu::Instance();
-   $result = $html->listhead;
+   eval('$result = "'. $html->listhead . '\n";');
    foreach ($menu->items as $id => $item) {
     $post = &TMenuItem::Instance($id);
     $status = TLocal::$data['poststatus'][$post->status];

@@ -108,6 +108,7 @@ class TCommentUsers extends TItems {
  }
  
  public function UpdateSubscribtion($id, $postid, $subscribed) {
+  $postid = (int) $postid;
   if ($subscribed) {
    $this->Subscribe($id, $postid);
   } else {

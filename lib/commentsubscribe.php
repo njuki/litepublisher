@@ -118,10 +118,17 @@ class TSubscribe extends TItems {
   $item = $CommentManager->GetItem($id);
   if (isset($item['status']) || isset($item['type']))return;
   
+  $cron = &TCron::Instance();
+  $cron->Add('single', get_class($this),  'CronSendMailToSubscribers', $id);
+ }
+ 
+ public function CronSendMailToSubscribers($id) {
+  global $Options;
+  $CommentManager = &TCommentManager::Instance();
+  $item = $CommentManager->GetItem($id);
+  
   $this->items[$id] = true;
   $this->Save();
-  
-  global $Options;
   
   $comments = &TComments::Instance($item['pid']);
   $subscribers = &$comments->GetSubscribers();

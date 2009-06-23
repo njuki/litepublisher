@@ -41,6 +41,8 @@ class TTemplateComment extends TEventClass {
   $comments = &$post->comments;
   if (($comments->count == 0) && !$post->commentsenabled) return '';
   $this->CheckThemeComments();
+  $lang = &TLocal::Instance();
+  $lang->section = 'comment';
   
   $Result = '';
   $comment = &new TComment($comments);
@@ -107,9 +109,14 @@ class TTemplateComment extends TEventClass {
   $tabindex = 1;
   $TemplateField = $this->ThemeComments['field'];
   foreach ($CommentForm->Fields as $field => $type) {
-   $value = "\$values[$field]";
+  $value = "{\$values['$field']}";
    $label = $lang->$field;
-   eval("\$Result .= \"$TemplateField\n\";");
+   if ($type == 'checkbox') {
+    eval('$Result .= "'. $this->ThemeComments['checkbox'] . '\n";');
+   } else {
+    eval('$Result .= "'. $TemplateField . '\n";');
+   }
+   
    $tabindex++;
   }
   
@@ -118,7 +125,7 @@ class TTemplateComment extends TEventClass {
   
   $TemplateField = '<input type=\"hidden\" name=\"$field\" value=\"$value\" />';
   foreach ($CommentForm->Hidden as $field => $default) {
-   $value = "\$values[$field]";
+  $value = "{\$values['$field']}";
    eval("\$Result .= \"$TemplateField\n\";");
   }
   

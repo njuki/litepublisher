@@ -56,7 +56,7 @@ class TCommentForm extends TItems {
    $Users = &TCommentUsers::Instance();
    if ($user = $Users->GetItemFromCookie($_COOKIE['userid'])) {
     if (isset($values['subscribe'])) {
-     $values['subscribe'] = in_array($postid, $user['subscribe']) ? 'checked' : '';
+     $values['subscribe'] = $Users->Subscribed($user['id'], $postid) ? 'checked' : '';
      unset($user['subscribe']);
     }
     
@@ -76,9 +76,11 @@ class TCommentForm extends TItems {
   if (!($form = @file_get_contents($paths['cache']. 'commentform.php'))) {
    $form = $self->Regenerate();
   }
-  $form = str_replace('"', '\"', $form);
+  
   $self->BeforeForm($values);
-  eval("\$form = \"$form\";");
+  $form = str_replace('"', "'", $form);
+  eval('$form = "'. $form . '\n";');
+  $form = str_replace("'", '"', $form);
   $Result .= $form;
   return $Result;
  }
@@ -140,15 +142,17 @@ class TCommentForm extends TItems {
    $values = $this->items[$confirmid];
    unset($this->items[$confirmid]);
    $this->Save();
+   
    $values = $this->FilterValues($values);
    
    $Posts = &TPosts::Instance();
-   if(!$Posts->ItemExists($values['postid']))  {
+   $postid = (int) $values['postid'];
+   if(!$Posts->ItemExists($postid))  {
     $error = TLocal::$data['default']['postnotfound'];
     return TTemplate::SimpleContent($error);
    }
    
-   $post = &TPost::Instance($values['postid']);
+   $post = &TPost::Instance($postid);
    if (!$this->ValidateValues($values, $error)) {
     return TTemplate::SimpleContent($error);
    }
@@ -166,7 +170,7 @@ class TCommentForm extends TItems {
     $error = TLocal::$data['comment']['toomany'];
     return TTemplate::SimpleContent($error);
    }
-   $users->UpdateSubscribtion($userid, $post->id, isset($_POST['subscribe']));
+   $users->UpdateSubscribtion($userid, $post->id, isset($values['subscribe']));
    $users->Unlock();
    $usercookie = $users->GetCookie($userid);
    
