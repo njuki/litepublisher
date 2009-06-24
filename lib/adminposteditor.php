@@ -103,7 +103,8 @@ class TPostEditor extends TAdminPage {
    $posts->Edit($post);
   }
   
-  eval('$result = "'. sprintf($html->success,"<a href=\"$Options->url$post->url\">$post->title</a>") . '\n";');
+  eval('$s = "'. $html->success  . '\n";');
+  $result = sprintf($s,"<a href=\"$Options->url$post->url\">$post->title</a>");
   return $result;
  }
  

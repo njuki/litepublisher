@@ -116,10 +116,11 @@ class TAdminMenu extends TAdminPage {
     $menu->Edit($post);
     break;
    }
-   eval('$result .=  "'. sprintf($html->confirmed, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>") . '\n";');
+   eval('$s =  "'. $html->confirmed . '\n";');
+   $result .=  sprintf($s, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
   } else {
    $lang->section = $this->basename;
-  $confirm = sprintf($lang->confirm, $lang{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
+  $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
    eval('$result .= "'. $html->confirmform . '\n";');
   }
   return $result;

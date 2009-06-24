@@ -265,9 +265,9 @@ class TFoafManager extends TItems {
  
  private function NotifyModerator($url, $type) {
   global $Options;
-  TLocal::LoadLangFile('admin');
   $html = &THtmlResource::Instance();
   $html->section = 'foaf';
+  $lang = &TLocal::Instance();
   
   if ($type == 'error') {
    eval('$subject = "'. $html->errorsubj . '";');
