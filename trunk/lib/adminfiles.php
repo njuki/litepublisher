@@ -30,8 +30,8 @@ class TAdminFiles extends TAdminPage {
     $confirm = sprintf(TLocal::$data[$this->basename]['confirm'], $files->items[$id]['filename']);
     eval('$result .= "'. $html->confirmform . '\n";');
    } else {
-    if (!$this->confirmed()) $result .= $html->notfound;
-    $result .=  $html->uploadform;
+    if (!$this->confirmed()) eval('$result .= "'. $html->notfound. '\n";');
+    eval('$result .=  "'. $html->uploadform . '\n";');
    }
    break;
    
@@ -41,14 +41,14 @@ class TAdminFiles extends TAdminPage {
     $item = $files->items[$id];
     eval('$result .= "'. $html->editform . '\n";');
    } else {
-    $result .= $html->notfound;
+    eval('$result .= "'. $html->notfound. '\n";');
     break;
    }
    
   }
   
-  $result .= sprintf($html->countfiles, count($files->items));
-  $result .= $html->tableheader;
+  eval('$result .= "'. sprintf($html->countfiles, count($files->items)) . '\n";');
+  eval('$result .= "'. $html->tableheader. '\n";');
   $tableitem = $html->tableitem ;
   foreach ($files->items as $id =>$item) {
    eval('$result .= "' . $tableitem . '\n";');
@@ -68,29 +68,39 @@ class TAdminFiles extends TAdminPage {
   switch ($this->arg) {
    case null:
    if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
-    return sprintf($html->attack, $_FILES["filename"]["name"]);
+    eval('$result = "'. sprintf($html->attack, $_FILES["filename"]["name"]) . '\n";');
+    return $result;
    }
    
    $overwrite  = isset($_POST['overwrite']);
    
    $files->AddFile($_FILES["filename"]["name"], file_get_contents($_FILES["filename"]["tmp_name"]),
    $_POST['title'], $overwrite);
-   return $html->success;
+   eval('$result = "'. $html->success . '\n";');
+   return $result;
    
    case 'delete':
    $id = $this->idget();
-   if (!$files->ItemExists($id)) return $html->notfound;
+   if (!$files->ItemExists($id)) {
+    eval('$result = "'. $html->notfound . '\n";');
+    return $result;
+   }
    if ($this->confirmed()) {
     $files->Delete($id);
-    return $html->deleted;
+    eval('$result = "'. $html->deleted . '\n";');
+    return $result;
    }
    
    case 'edit':
    $id = $this->idget();
-   if (!$files->ItemExists($id)) return $html->notfound;
+   if (!$files->ItemExists($id)) {
+    eval('$result = "'. $html->notfound . '\n";');
+    return $result;
+   }
    $files->items[$id]['title'] = $_POST['title'];
    $files->Save();
-   return $html->edited;
+   eval('$result = "'. $html->edited . '\n";');
+   return $result;
   }
   
   return '';

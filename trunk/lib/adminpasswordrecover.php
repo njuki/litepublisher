@@ -46,9 +46,11 @@ class TPasswordRecover extends TAdminPage {
    eval('$subject = "'. $html->subject . '";');
    eval('$body = "'. $html->body . '";');
    TMailer::SentToAdmin(subject, $body);
-   return $html->success;
+   eval('$result = "'. $html->success . '\n";');
+   return $result;
   } else {
-   return $html->error;
+   eval('$result = "'. $html->error . '\n";');
+   return $result;
   }
  }
  

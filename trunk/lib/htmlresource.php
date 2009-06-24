@@ -25,6 +25,7 @@ class THtmlResource  {
   }
   $lang = &TLocal::Instance();
   $lang->section = $this->section;
+  //eval('$s = "'. $s . '";');
   return $s;
  }
  

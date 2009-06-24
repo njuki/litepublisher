@@ -71,7 +71,10 @@ class TPostEditor extends TAdminPage {
   }
   
   extract($_POST);
-  if (empty($title)) return $html->emptytitle;
+  if (empty($title)){
+   eval('$result = "'. $html->emptytitle . '\n";');
+   return $result;
+  }
   
   $post = &TPost::Instance($postid);
   $post->title = $title;
@@ -100,8 +103,8 @@ class TPostEditor extends TAdminPage {
    $posts->Edit($post);
   }
   
-  return sprintf($html->success,"<a href=\"$Options->url$post->url\">$post->title</a>");
-  
+  eval('$result = "'. sprintf($html->success,"<a href=\"$Options->url$post->url\">$post->title</a>") . '\n";');
+  return $result;
  }
  
 }//class

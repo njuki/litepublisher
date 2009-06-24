@@ -36,10 +36,8 @@ class TAdminFoaf extends TAdminPage {
   
   switch ($this->arg) {
    case null:
-   $result .= $html->addform;
-   $result .= "\n";
-   $result .= $html->tableheader;
-   $result .= "\n";
+   eval('$result .= "'. $html->addform . '\n";');
+   eval('$result .= "'. $html->tableheader . '\n";');
    foreach ($foaf->items as $id => $item) {
     eval('$result .= "'. $html->itemlist . '\n";');
    }
@@ -48,7 +46,10 @@ class TAdminFoaf extends TAdminPage {
    
    case 'edit':
    $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-   if (!isset($foaf->items[$id])) return $html->notfound;
+   if (!isset($foaf->items[$id])) {
+    eval('$result = "'. $html->notfound  . '\n";');
+    return $result;
+   }
    $friend = $foaf->items[$id];
    $status = '';
    eval('$result .= "' . $html->editform . '\n";');
@@ -56,18 +57,21 @@ class TAdminFoaf extends TAdminPage {
    
    case 'delete':
    $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-   if (!isset($foaf->items[$id])) return $html->notfound;
+   if (!isset($foaf->items[$id])) {
+    eval('$result = "'. $html->notfound  . '\n";');
+    return $result;
+   }
    $friend = $foaf->items[$id];
    if (!empty($_GET['confirm']) && ($_GET['confirm'] == 1)) {
     $foaf->Delete($id);
-    $result = $html->deleted;
+    eval('$result = "'. $html->deleted . '\n";');
    } else {
     eval('$result .= "'. $html->confirmdelete . '\n";');
    }
    break;
    
    case 'moderate':
-   $result .= $html->moderheader;
+   eval('$result .= "'. $html->moderheader . '\n";');
    $manager = &TFoafManager::Instance();
    foreach ($manager->items as $url => $item) {
     $status = $this->GetComboStatus($item['id'], $item['status']);
@@ -152,7 +156,8 @@ class TAdminFoaf extends TAdminPage {
   $lang = &TLocal::Instance();
   
   $Urlmap->ClearCache();
- return $html->{$key};
+ eval('$result = "'. $html->{$key} . '\n";');
+  return $result;
  }
  
 }//class

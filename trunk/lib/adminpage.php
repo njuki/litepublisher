@@ -105,5 +105,13 @@ class TAdminPage extends TEventClass {
   return str_replace('checkAll(document.getElementById("form"));', "checkAll(document.getElementById('form'));",    str_replace("'", '"', $s));
  }
  
+ public function notfound() {
+  $html = &THtmlResource::Instance();
+  $html->section - $this->basename;
+  $lang = &TLocal::Instance();
+  eval('$result = "'. $html->notfound  . '\n";');
+  return $result;
+ }
+ 
 }//class
 ?>
