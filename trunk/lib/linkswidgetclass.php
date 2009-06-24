@@ -6,7 +6,7 @@ class TLinksWidget extends TItems {
   parent::CreateData();
   $this->basename = 'linkswidget';
   $this->redirlink = '/linkswidget/';
-  $this->Data['redir'] = false;
+  $this->Data['redir'] = true;
  }
  
  public static function &Instance() {
