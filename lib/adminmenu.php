@@ -93,7 +93,8 @@ class TAdminMenu extends TAdminPage {
   
   $menu = &TMenu::Instance();
   if (!$menu->ItemExists($id)) {
-   return $html->notfound;
+   eval('$result = "'. $html->notfound  . '\n";');
+   return $result;
   }
   
   $post = &TMenuItem::Instance($id);
@@ -115,7 +116,7 @@ class TAdminMenu extends TAdminPage {
     $menu->Edit($post);
     break;
    }
-   $result .=  sprintf($html->confirmed, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
+   eval('$result .=  "'. sprintf($html->confirmed, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>") . '\n";');
   } else {
    $lang->section = $this->basename;
   $confirm = sprintf($lang->confirm, $lang{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");

@@ -82,11 +82,11 @@ class TAdminPlugins extends TAdminPage {
   $html->section = $this->basename;
   $lang = &TLocal::Instance();
   
-  if (!isset($plugins->items[$name])) return $html->notfound;
+  if (!isset($plugins->items[$name])) return $this->notfound;
   if (!isset($this->plugin)) {
    $ini = parse_ini_file($paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
    $about = $ini['about'];
-   if (empty($about['adminclassname'])) return $html->notfound;
+   if (empty($about['adminclassname'])) return $this->notfound;
    $class = $about['adminclassname'];
    if (!@class_exists($class)) {
     require_once($paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
@@ -108,7 +108,7 @@ class TAdminPlugins extends TAdminPage {
    $html = &THtmlResource::Instance();
    $html->section = $this->basename;
    $lang = &TLocal::Instance();
-   $result = $html->updated;
+   eval('$result = "'. $html->updated . '\n";');
    break;
    
    default:

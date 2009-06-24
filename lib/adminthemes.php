@@ -37,7 +37,7 @@ class TAdminThemes extends TAdminPage {
    case null:
    if (!empty($_GET['adminplugin'])) return $this->GetAdminPlugin('Getcontent');
    $Template = &TTemplate::Instance();
-   $result = $html->formheader;
+   eval('$result = "'. $html->formheader . '\n";');
    $item = $html->radioitem;
    $admin = &TRemoteAdmin::Instance();
    $list =$admin->GetThemesList();
@@ -53,8 +53,8 @@ class TAdminThemes extends TAdminPage {
    
    case 'edit':
    $themename = !empty($_GET['themename']) ? $_GET['themename'] : $Template->themename;
-   $result = sprintf($html->filelist, $themename);
-   $result .= "\n<ul>\n";
+   eval('$result = "'. sprintf($html->filelist, $themename) . '\n";');
+   $result .= "<ul>\n";
    $filelist = TFiler::GetFileList($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
    sort($filelist);
    foreach ($filelist as $filename) {
@@ -64,7 +64,7 @@ class TAdminThemes extends TAdminPage {
    if (!empty($_GET['filename'])) {
     $content = file_get_contents($paths['themes'].$themename . DIRECTORY_SEPARATOR  . $_GET['filename']);
     $content = $this->ContentToForm($content);
-    $result .= sprintf($html->filename, $_GET['filename']);
+    eval('$result .= "'. sprintf($html->filename, $_GET['filename']) . '\n";');
    } else {
     $content = '';
    }
@@ -94,7 +94,8 @@ class TAdminThemes extends TAdminPage {
      return 'Caught exception: '.  $e->getMessage() . "<br>\ntrace error\n<pre>\n" .  $e->getTraceAsString() . "\n</pre>\n";
     }
     
-    return $html->success;
+    eval('$result = "'. $html->success . '\n";');
+    return $result;
    }
    break;
    
@@ -104,7 +105,8 @@ class TAdminThemes extends TAdminPage {
      $Urlmap = &TUrlmap::Instance();
      $Urlmap->ClearCache;
     } else {
-     return $html->errorsave;
+     eval('$result = "'. $html->errorsave . '\n";');
+     return $result;
     }
    }
    break;

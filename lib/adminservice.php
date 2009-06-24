@@ -63,16 +63,16 @@ class TAdminService extends TAdminPage {
      $this->SendZip($content, $filename);
     }
    }
-   $result = $html->notfound;
+   $result = $this->notfound;
    break;
    
    case 'delete':
    $filename = $paths['backup'] . $_GET['filename'];
    if (!@file_exists($filename)) {
-    $result = $html->notfound;
+    $result = $this->notfound;
    } elseif ($this->confirmed()) {
     @unlink($filename);
-    $result = $html->backupdeleted;
+    eval('$result = "'. $html->backupdeleted . '\n";');
    } else {
     eval('$result .= "'. $html->confirmdelete . '\n";');
    }
@@ -98,7 +98,8 @@ class TAdminService extends TAdminPage {
    } elseif (isset($_POST['update'])) {
     $updater = &TUpdater::Instance();
     $updater->Update();
-    return $html->successupdated;
+    eval('$result = "'. $html->successupdated . '\n";');
+    return $result;
    }
    break;
    
@@ -174,7 +175,7 @@ class TAdminService extends TAdminPage {
   $html->section = $this->basename;
   $lang = &TLocal::Instance();
   
-  $result = $html->backupheader;
+  eval('$result = "'. $html->backupheader . '\n";');
   $filelist = TFiler::GetFileList($paths['backup']);
   foreach($filelist as $filename) {
    if (!preg_match('/\.zip$/',  $filename)) continue;

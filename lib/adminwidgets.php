@@ -30,7 +30,7 @@ class TAdminWidgets extends TAdminPage {
   switch ($this->arg) {
    case null:
    $result = $html->checkallscript;
-   $result .= $html->formhead;
+   eval('$result .= "'. $html->formhead . '\n";');
    $item = $html->item;
    $sitebarscount = 3;
    for ($i = 0; $i < $sitebarscount; $i++) {
@@ -65,7 +65,7 @@ class TAdminWidgets extends TAdminPage {
    
    case 'std':
    $Template = &TTemplate::Instance();
-   $result = $html->stdheader;
+   eval('$result = "'. $html->stdheader . '\n";');
    $item = $html->stditem;
    foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
     if ($class == 'TCustomWidget') continue;
@@ -100,15 +100,15 @@ class TAdminWidgets extends TAdminPage {
    
    case 'links':
    $links = TLinksWidget::Instance();
-   $result = $html->linkshead;
+   eval('$result = "'. $html->linkshead . '\n";');
    $id = $this->idget();
    if ($id > 0) {
     $url = $this->ContentToForm($links->items[$id]['url']);
     $title = $this->ContentToForm($links->items[$id]['title']);
     $text = $this->ContentToForm($links->items[$id]['text']);
-    $result .= sprintf($html->editlink, $url);
+    eval('$result .= "'. sprintf($html->editlink, $url) . '\n";');
    } else {
-    $result .= $html->newlink;
+    eval('$result .= "'. $html->newlink . '\n";');
     $url = '';
     $title = '';
     $text = '';
@@ -116,7 +116,7 @@ class TAdminWidgets extends TAdminPage {
    eval('$result .= "'. $html->linkform . '\n";');
    
    $result .= $html->checkallscript;
-   $result .= $html->linkstable;
+   eval('$result .= "'. $html->linkstable . '\n";');
    $linkitem = $html->linkitem;
    foreach ($links->items as $id => $item) {
     eval('$result .= "' .$linkitem . '\n";');
@@ -126,8 +126,8 @@ class TAdminWidgets extends TAdminPage {
    
    case 'custom':
    $widget = &TCustomWidget::Instance();
-   $result = $html->customhead;
-   $result .= "\n<ul>\n";
+   eval('$result = "'. $html->customhead . '\n";');
+   $result .= "<ul>\n";
    foreach ($widget->items as $id => $item) {
     $result .= "<li><a href='$Options->url/admin/widgets/custom/?id=$id'>$item[title]</a></li>\n";
    }
@@ -136,9 +136,9 @@ class TAdminWidgets extends TAdminPage {
    if ($id > 0) {
     $title = $this->ContentToForm($widget->items[$id]['title']);
     $content = $this->ContentToForm($widget->items[$id]['content']);
-    $result .= sprintf($html->editcustom, $title);
+    eval('$result .= "'. sprintf($html->editcustom, $title) . '\n";');
    } else {
-    $result .= $html->newcustom;
+    eval('$result .= "'. $html->newcustom . '\n";');
     $title = '';
     $content = '';
    }
@@ -260,7 +260,8 @@ class TAdminWidgets extends TAdminPage {
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
   $lang = &TLocal::Instance();
- return $html->{$rname};
+ eval('$result = "'. $html->{$rname} . '\n";');
+  return $result;
  }
  
  protected function DeleteWidgets() {
@@ -280,7 +281,8 @@ class TAdminWidgets extends TAdminPage {
   $html->section = $this->basename;
   $lang = &TLocal::Instance();
   
-  return $html->successdeleted;
+  eval('$result = "'. $html->successdeleted . '\n";');
+  return $result;
  }
  
  public function GetWidgetName($class, $id) {

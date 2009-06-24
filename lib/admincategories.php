@@ -29,24 +29,25 @@ class TAdminCategories extends TAdminPage {
    $name = '';
    $content = '';
    if ($class == 'TTags') {
-    $result = $html->addtag;
+    eval('$result = "'. $html->addtag . '\n";');
    } else {
-    $result = $html->addcategory;
+    eval('$result = "'. $html->addcategory. '\n";');
    }
   eval('$result .= "'. $html->{$form} . '\n";');
   } elseif (!$tags->ItemExists($id)) {
-   $result = $html->notfound;
+   eval('$result = "'. $html->notfound. '\n";');
   } else {
    $name = $tags->items[$id]['name'];
    if (!empty($_GET['action']) &&($_GET['action'] == 'delete'))  {
     if  (!empty($_GET['confirm']) && ($_GET['confirm'] == 1)) {
      $tags->Delete($id);
-     $result = $html->successdeleted;
+     eval('$result = "'. $html->successdeleted. '\n";');
     } else {
      eval('$result = "'. $html->confirmdelete . '\n";');
     }
    } else {
    $result = sprintf($html->{ $class == 'TTags' ? 'edittag' : 'editcategory'}, $name);
+    eval('$result = "' . $result . '\n"');
     if ($class == 'TCategories') {
      if ($desc = $tags->GetItemContent($id)) {
       $content = $this->ContentToForm($desc['content']);
@@ -59,7 +60,7 @@ class TAdminCategories extends TAdminPage {
   }
   
   //table
-  $result .= $html->listhead;
+  eval('$result .= "'. $html->listhead. '\n";');
   $itemlist = $html->itemlist;
   foreach ($tags->items as $id => $item) {
    eval('$result .= "'. $itemlist . '\n";');
@@ -87,7 +88,8 @@ class TAdminCategories extends TAdminPage {
     $tags->Edit($id, $name, $tags->items[$id]['url']);
    }
    if ($class == 'TCategories') $tags->SetItemContent($id, $content);
-   return  sprintf($html->success, $name);
+   eval('$result = "'. sprintf($html->success, $name).  '\n";');
+   return $result;
   }
  }
  

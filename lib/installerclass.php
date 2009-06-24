@@ -303,6 +303,7 @@ class TInstaller extends TDataClass {
   $form = $this->GetLangForm();
   $html = &THtmlResource::Instance();
   $html->section = 'installation';
+  $lang = &TLocal::Instance();
   
   $checkrewrite = function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()) ? '' : $html->checkrewrite;
   eval('$form .= "'. $html->installform. '\n";');
@@ -350,20 +351,23 @@ class TInstaller extends TDataClass {
   //footer
   $html = &THtmlResource::Instance();
   $html->section = 'installation';
+  $lang = &TLocal::Instance();
   
-  $Template->footer = $html->footer;
+  eval('$Template->footer = "'. $html->footer . '";');
+  $Template->footer  .= $html->stat;
   $Template->Unlock();
  }
  
  public function CreateMenuItem() {
   $html = &THtmlResource::Instance();
   $html->section = 'installation';
+  $lang = &TLocal::Instance();
   
   $Menu = &TMenu::Instance();
   $Item = &new TContactForm();
   $Item->order = 10;
   $Item->title =  TLocal::$data['installation']['contacttitle'];
-  $Item->content = $html->contactform;
+  eval('$Item->content = "'. $html->contactform . '\n";');
   
   $Menu->Add($Item);
  }
@@ -372,23 +376,22 @@ class TInstaller extends TDataClass {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = 'installation';
-  
-  $lang = &TLocal::$data['installation'];
+  $lang = &TLocal::Instance();
   
   $post = &new TPost();
-  $post->title = $lang['posttitle'];
-  $post->catnames = $lang['postcategories'];
-  $post->tagnames = $lang['posttags'];
-  eval('$content ="'. $lang['postcontent'] . '";');
-  $post->content = $content;
+  $post->title = $lang->posttitle;
+  $post->catnames = $lang->postcategories;
+  $post->tagnames = $lang->posttags;
+  eval('$post->content = "'. $lang->postcontent . '";');
+  
   $posts = &TPosts::Instance();
   $posts->Add($post);
   
   $users = &TCommentUsers::Instance();
-  $userid = $users->Add($lang['author'], $lang['email'], $lang['homeurl']);
+  $userid = $users->Add($lang->author, $lang->email, $lang->homeurl);
   
   $CommentManager = &TCommentManager::Instance();
-  $CommentManager->AddToPost($post, $userid,$lang['postcomment']);
+  $CommentManager->AddToPost($post, $userid,$lang->postcomment);
  }
  
  public static function SendEmail($password) {
@@ -407,6 +410,7 @@ class TInstaller extends TDataClass {
   global $Options;
   $html = &THtmlResource::Instance();
   $html->section = 'installation';
+  $lang = &TLocal::Instance();
   
   $url = $Options->url . $Options->home;
   eval('$content = "'. $html->congratulation . '";');

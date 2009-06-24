@@ -10,8 +10,8 @@ class TContentFilter extends TEventClass {
   parent::CreateData();
   $this->basename = 'contentfilter';
   $this->AddEvents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt');
-  $this->Data['automore'] = false;
-  $this->Data['automorelength'] = 150;
+  $this->Data['automore'] = true;
+  $this->Data['automorelength'] = 250;
  }
  
  public function GetCommentContent($content) {
@@ -38,13 +38,13 @@ class TContentFilter extends TEventClass {
    $post->OutputContent = $post->excerpt . $this->GetPostContent($parts[1]);
    $post->rss =  str_replace(']]>', ']]]]><![CDATA[>',$post->excerpt);
    $post->moretitle =  self::NormalizeMoreTitle($matches[1]);
-   if ($post->moretitle == '')  $post->moretitle = TLocal::$data['post']['more'];
+   if ($post->moretitle == '')  $post->moretitle = TLocal::$data['default']['more'];
   } else {
    if ($this->automore) {
     $post->OutputContent = $this->GetPostContent($s);
     $post->excerpt = self::GetExcerpt($s, $this->automorelength);
     $post->rss =  str_replace(']]>', ']]]]><![CDATA[>',$post->excerpt);
-    $post->moretitle = TLocal::$data['post']['more'];
+    $post->moretitle = TLocal::$data['default']['more'];
    } else {
     $post->excerpt = $this->GetPostContent($s);
     $post->OutputContent = $post->excerpt;

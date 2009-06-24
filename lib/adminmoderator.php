@@ -65,9 +65,9 @@ class TAdminModerator extends TAdminPage {
    } else {
     $list = array_slice($CommentManager->items, $from, 100, true);
    }
-   $result .= sprintf($html->listhead, $from, $from + count($list), count($CommentManager->items));
+   eval('$result .= "'. sprintf($html->listhead, $from, $from + count($list), count($CommentManager->items)) . '\n";');
    $result = $html->checkallscript;
-   $result .= $html->tableheader;
+   eval('$result .= "'. $html->tableheader . '\n";');
    $itemlist = $html->itemlist;
    foreach ($list as $id => $item) {
     //repair
@@ -117,7 +117,7 @@ class TAdminModerator extends TAdminPage {
    
    case 'reply':
    $id = $this->idget();
-   if (!$CommentManager ->ItemExists($id)) return $html->notfound;
+   if (!$CommentManager ->ItemExists($id))return $this->notfound();
    $comment = &$CommentManager->Getcomment($id);
    eval('$result .= "'. $html->replyform . '\n";');
    break;
@@ -134,7 +134,7 @@ class TAdminModerator extends TAdminPage {
   
   $id = (int) $_GET['commentid'];
   $CommentManager = &TCommentManager::Instance();
-  if (!$CommentManager->ItemExists($id)) return $html->notfound;
+  if (!$CommentManager->ItemExists($id)) return $this->notfound;
   if ($_GET['action'] == 'edit') return $this->EditComment($id);
   
   $comment = &TComments::GetComment($CommentManager->items[$id]['pid'], $id);
@@ -143,7 +143,8 @@ class TAdminModerator extends TAdminPage {
    case 'delete' :
    if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
     $CommentManager->Delete($id);
-    return $html->successmoderated;
+    eval('$result = "'. $html->successmoderated . '\n";');
+    return $result;
    } else {
     eval('$result .= "'. $html->confirmform . '\n";');
     eval('$result .= "'. $html->info . '\n"; ');
@@ -159,7 +160,7 @@ class TAdminModerator extends TAdminPage {
    $CommentManager->SetStatus($id, 'approved');
    break;
   }
-  $result .= $html->successmoderated;
+  eval('$result = "'. $result .= $html->successmoderated . '\n";');
   eval('$result .= "'. $html->info . '\n"; ');
   return $result;
  }
@@ -204,13 +205,13 @@ class TAdminModerator extends TAdminPage {
     }
    }
    $CommentManager->Unlock();
-   $result = $html->successmoderated;
+   eval('$result = "'. $html->successmoderated . '\n";');
    break;
    
    case 'authors':
    $authorid = $this->idget();
    $authors = &TCommentUsers::Instance();
-   if (!$authors->ItemExists($authorid)) return $html->notfound;
+   if (!$authors->ItemExists($authorid)) return $this->notfound;
    if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete') &&!empty($_REQUEST['confirm'])  ) {
     $CommentManager = &TCommentManager::Instance();
     $CommentManager->Lock();
@@ -219,7 +220,7 @@ class TAdminModerator extends TAdminPage {
     }
     $authors->Delete($authorid);
     $CommentManager->Unlock();
-    $result = $html->authordeleted;
+    eval('$result = "'. $html->authordeleted . '\n";');
    } else {
     $authors->items[$authorid]['name'] = $_POST['name'];
     $authors->items[$authorid]['url'] = $_POST['url'];
@@ -230,14 +231,14 @@ class TAdminModerator extends TAdminPage {
      $authors->items[$authorid]['subscribe'][]  = (int) $postid;
     }
     $authors->Save();
-    $result = $html->authoredited;
+    eval('$result = "'. $html->authoredited . '\n";');
    }
    break;
    
    case 'reply':
    $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
    $manager = &TCommentManager::Instance();
-   if (!$manager->ItemExists($id)) return $html->notfound;
+   if (!$manager->ItemExists($id)) return $this->notfound;
    $email = $this->GetAdminEmail();
    $site = $Options->url . $Options->home;
    $profile = &TProfile::Instance();

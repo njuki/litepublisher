@@ -24,7 +24,7 @@ class TAdminPosts extends TAdminPage {
   
   $posts= &TPosts::Instance();
   if (!$posts->ItemExists($id)) {
-   return $html->notfound;
+   return $this->notfound;
   }
   $post = &TPost::Instance($id);
   
@@ -46,7 +46,7 @@ class TAdminPosts extends TAdminPage {
     break;
    }
    
-   $result .=  sprintf($html->confirmed, TLocal::$data['poststatus'][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
+   eval('$result .=  "'. sprintf($html->confirmed, TLocal::$data['poststatus'][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>") . '\n";');
   } else {
    $lang->section = $this->basename;
   $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
@@ -65,8 +65,9 @@ class TAdminPosts extends TAdminPage {
   $posts = &TPosts::Instance();
   $from = max(0, count($posts->items) - $Urlmap->pagenumber * 100);
   $items = array_slice($posts->items, $from, 100, true);
-  $result .= sprintf($html->count, $from, $from + count($items), count($posts->items));
-  $result .= $html->listhead;
+  eval('$s = "'. $html->count . '\n";');
+  $result .=sprintf($s, $from, $from + count($items), count($posts->items));
+  eval('$result .= "' . $html->listhead . '\n";');
   $list = '';
   foreach ($items  as $id => $item) {
    $post = &TPost::Instance($id);
