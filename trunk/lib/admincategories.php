@@ -12,7 +12,11 @@ class TAdminCategories extends TAdminPage {
  
  public function GetMenu() {
   global $Options;
-  eval('$result = "'. TLocal::$data['posts']['menu'] . '\n";');
+  $html = &THtmlResource::Instance();
+  $html->section = 'posts';
+  $lang = &TLocal::Instance();
+  
+  eval('$result = "'. $html->menu . '\n";');
   return  $result;
  }
  
@@ -21,6 +25,7 @@ class TAdminCategories extends TAdminPage {
   $html = &THtmlResource::Instance();
   $html->section = $this->basename;
   $lang = &TLocal::Instance();
+  $lang->section = $this->basename;
   $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
   $form = $class == 'TTags' ? 'tagform' : 'catform';
   $tags = GetInstance($class);
@@ -46,8 +51,9 @@ class TAdminCategories extends TAdminPage {
      eval('$result = "'. $html->confirmdelete . '\n";');
     }
    } else {
-   $result = sprintf($html->{ $class == 'TTags' ? 'edittag' : 'editcategory'}, $name);
-    eval('$result = "' . $result . '\n"');
+    eval('$s = "' . $s . '\n";');
+    $result = sprintf($s, $name);
+    
     if ($class == 'TCategories') {
      if ($desc = $tags->GetItemContent($id)) {
       $content = $this->ContentToForm($desc['content']);
@@ -88,8 +94,9 @@ class TAdminCategories extends TAdminPage {
     $tags->Edit($id, $name, $tags->items[$id]['url']);
    }
    if ($class == 'TCategories') $tags->SetItemContent($id, $content);
-   eval('$result = "'. sprintf($html->success, $name).  '\n";');
-   return $result;
+   eval('$s = "'. $html->success. '\n";');
+   return sprintf($s, $name);
+   
   }
  }
  

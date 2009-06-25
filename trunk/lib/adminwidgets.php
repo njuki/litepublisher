@@ -106,7 +106,8 @@ class TAdminWidgets extends TAdminPage {
     $url = $this->ContentToForm($links->items[$id]['url']);
     $title = $this->ContentToForm($links->items[$id]['title']);
     $text = $this->ContentToForm($links->items[$id]['text']);
-    eval('$result .= "'. sprintf($html->editlink, $url) . '\n";');
+    eval('$s= "'. $html->editlink. '\n";');
+    $result .= sprintf($s, $url);
    } else {
     eval('$result .= "'. $html->newlink . '\n";');
     $url = '';
@@ -136,7 +137,8 @@ class TAdminWidgets extends TAdminPage {
    if ($id > 0) {
     $title = $this->ContentToForm($widget->items[$id]['title']);
     $content = $this->ContentToForm($widget->items[$id]['content']);
-    eval('$result .= "'. sprintf($html->editcustom, $title) . '\n";');
+    eval('$s = "'. $html->editcustom. '\n";');
+    $result .= sprintf($s, $title);
    } else {
     eval('$result .= "'. $html->newcustom . '\n";');
     $title = '';

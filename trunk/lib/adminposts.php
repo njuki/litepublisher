@@ -45,8 +45,8 @@ class TAdminPosts extends TAdminPage {
     $posts->Edit($post);
     break;
    }
-   
-   eval('$result .=  "'. sprintf($html->confirmed, TLocal::$data['poststatus'][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>") . '\n";');
+   eval('$s ="'. $html->confirmed. '\n";');
+   $result .= sprintf($s, TLocal::$data['poststatus'][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
   } else {
    $lang->section = $this->basename;
   $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");

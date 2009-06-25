@@ -253,13 +253,12 @@ class TCommonTags extends TItems {
   $items= $this->items[$this->id]['items'];
   $Posts = &GetInstance($this->postsclass);
   $items = $Posts->SortAsArchive($items);
+  $TemplatePost = &TTemplatePost::Instance();
   if ($this->lite) {
-   $result .= '<p>'. TLocal::$data['post']['archivelist'] ." $this->title</p>\n<ul>\n";
-   foreach ($items as $id) {
-    $post = $Posts->GetItem($id);
-    $result .= "<li>$post->localdate <a href=\"$Options->url$post->url\">$post->title</a></li>\n";
-   }
-   $result .= "</ul>\n";
+   $postsperpage = 1000;
+   $list = array_slice($items, ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
+   $result .= $TemplatePost->LitePrintPosts($list);
+   $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $Urlmap->pagenumber, ceil(count($items)/ $postsperpage));
    return $result;
   } else{
    $list = array_slice($items, ($Urlmap->pagenumber - 1) * $Options->postsperpage, $Options->postsperpage);

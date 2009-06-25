@@ -60,6 +60,22 @@ class TTemplatePost extends TEventClass {
   return $Result;
  }
  
+ public function LitePrintPosts(&$Items) {
+  global $Options;
+  if (count($Items) == 0) {
+   $lang = &TLocal::Instance();
+   return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
+  }
+  
+  $result = '<p>'. TLocal::$data['default']['archivelist'] ." </p>\n<ul>\n";
+  foreach($Items as $id) {
+   $post = TPost::Instance($id);
+   $result .= "<li>$post->localdate <a href=\"$Options->url$post->url\">$post->title</a></li>\n";
+  }
+  $result .= "</ul>\n";
+  return $result;
+ }
+ 
  public function PrintNaviPages($url, $page, $count) {
   global  $Options;
   if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';

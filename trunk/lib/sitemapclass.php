@@ -22,21 +22,23 @@ class TSitemap extends TEventClass {
  }
  
  public function GetTemplateContent() {
-  global $Options;
-  $result = '';
-  $result = "<ul>$this->title\n";
+  global $Options, $Urlmap;
   $posts = &TPosts::Instance();
-  foreach ($posts->archives as $id => $date) {
-   $post = &TPost::Instance($id);
-   $result .= "<li><a href=\"$Options->url$post->url\">$post->title</a></li>\n";
+  $TemplatePost = &TTemplatePost::Instance();
+  $postsperpage = 1000;
+  $list = array_slice(array_keys($posts->archives), ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
+  $result = $TemplatePost->LitePrintPosts($list);
+  
+  if ($Urlmap->pagenumber  == 1) {
+   $result .= '<ul>' . TLocal::$data['default']['tags'];
+   $tags = &TTags::Instance();
+   foreach ($tags->items as $id => $item) {
+  $result .= "<li><a href=\"$Options->url{$item['url']}\">{$item['name']}</a></li>\n";
+   }
+   $result .= "</ul>\n";
   }
   
-  $tags = &TTags::Instance();
-  foreach ($tags->items as $id => $item) {
- $result .= "<li><a href=\"$Options->url{$item['url']}\">{$item['name']}</a></li>\n";
-  }
-  
-  $result .= "</ul>\n";
+  $result .=$TemplatePost->PrintNaviPages('/sitemap/', $Urlmap->pagenumber, ceil(count($posts->archives)/ $postsperpage));
   return $result;
  }
  

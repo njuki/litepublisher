@@ -53,7 +53,8 @@ class TAdminThemes extends TAdminPage {
    
    case 'edit':
    $themename = !empty($_GET['themename']) ? $_GET['themename'] : $Template->themename;
-   eval('$result = "'. sprintf($html->filelist, $themename) . '\n";');
+   eval('$s = "'. $html->filelist. '\n";');
+   $result = sprintf($s, $themename);
    $result .= "<ul>\n";
    $filelist = TFiler::GetFileList($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
    sort($filelist);
@@ -64,7 +65,8 @@ class TAdminThemes extends TAdminPage {
    if (!empty($_GET['filename'])) {
     $content = file_get_contents($paths['themes'].$themename . DIRECTORY_SEPARATOR  . $_GET['filename']);
     $content = $this->ContentToForm($content);
-    eval('$result .= "'. sprintf($html->filename, $_GET['filename']) . '\n";');
+    eval('$s = "'. $html->filename. '\n";');
+    $result .= sprintf($s, $_GET['filename']);
    } else {
     $content = '';
    }
