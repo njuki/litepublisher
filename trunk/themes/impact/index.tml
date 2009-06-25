@@ -55,7 +55,7 @@ border-left: 3px solid $Template->ImpactColor;
 	<div id="sidebar">
 	
 	<li class="widget" id="pages"> 
-	<h3>Страницы</h3>
+	<h3>$lang->menu</h3>
 		<ul>
 		$Template->menu
 		</ul>

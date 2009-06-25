@@ -29,7 +29,7 @@ $Template->head
 	</div>
 	<div id="navi">
 		<ul id="nav">
-		  <li class="page_item"><a href="$Options->url$Options->home" title="Главная">Главная</a></li>
+		  <li class="page_item"><a href="$Options->url$Options->home" title="$lang->home">$lang->lang</a></li>
 $Template->menu
 		</ul>
 	</div>

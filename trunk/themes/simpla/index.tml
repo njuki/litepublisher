@@ -36,7 +36,7 @@ $Template->content
 
 <h2>Страницы</h2>
 <ul>
-		  <li><a href="$Options->url$Options->home" title="Главная">Главная</a></li>
+		  <li><a href="$Options->url$Options->home" title="$lang->home">$lang->home</a></li>
 $Template->menu
 </ul>
 
