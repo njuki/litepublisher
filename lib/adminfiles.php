@@ -46,8 +46,8 @@ class TAdminFiles extends TAdminPage {
    }
    
   }
-  
-  eval('$result .= "'. sprintf($html->countfiles, count($files->items)) . '\n";');
+  eval('$s = "'. $html->countfiles. '\n";');
+  $result .= sprintf($s, count($files->items));
   eval('$result .= "'. $html->tableheader. '\n";');
   $tableitem = $html->tableitem ;
   foreach ($files->items as $id =>$item) {
@@ -68,8 +68,8 @@ class TAdminFiles extends TAdminPage {
   switch ($this->arg) {
    case null:
    if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
-    eval('$result = "'. sprintf($html->attack, $_FILES["filename"]["name"]) . '\n";');
-    return $result;
+    eval('$s = "'. $html->attack. '\n";');
+    return sprintf($s, $_FILES["filename"]["name"]);
    }
    
    $overwrite  = isset($_POST['overwrite']);

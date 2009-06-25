@@ -65,7 +65,8 @@ class TAdminModerator extends TAdminPage {
    } else {
     $list = array_slice($CommentManager->items, $from, 100, true);
    }
-   eval('$result .= "'. sprintf($html->listhead, $from, $from + count($list), count($CommentManager->items)) . '\n";');
+   eval('$s = "'. $html->listhead. '\n";');
+   $result .= sprintf($s, $from, $from + count($list), count($CommentManager->items));
    $result = $html->checkallscript;
    eval('$result .= "'. $html->tableheader . '\n";');
    $itemlist = $html->itemlist;

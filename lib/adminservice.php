@@ -133,7 +133,8 @@ class TAdminService extends TAdminPage {
    switch ($dest) {
     case 'upload':
     if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
-     return sprintf(TLocal::$data['files']['attack'], $_FILES["filename"]["name"]);
+     eval('$s = "'. $html->attack. '\n";');
+     return sprintf($s, $_FILES["filename"]["name"]);
     }
     
     $admin->Upload(file_get_contents($_FILES["filename"]["tmp_name"]));
