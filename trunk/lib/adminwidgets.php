@@ -137,14 +137,14 @@ class TAdminWidgets extends TAdminPage {
    if ($id > 0) {
     $title = $this->ContentToForm($widget->items[$id]['title']);
     $content = $this->ContentToForm($widget->items[$id]['content']);
-$templ = $widget->items[$id]['templ']? $checked : '';
+    $templ = $widget->items[$id]['templ']? $checked : '';
     eval('$s = "'. $html->editcustom. '\n";');
     $result .= sprintf($s, $title);
    } else {
     eval('$result .= "'. $html->newcustom . '\n";');
     $title = '';
     $content = '';
-$templ = $checked;
+    $templ = $checked;
    }
    eval('$result .= "'. $html->customform . '\n";');
    break;
