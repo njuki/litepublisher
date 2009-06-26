@@ -16,7 +16,7 @@ class TTemplatePost extends TEventClass {
  public function GetPostscript($tagname) {
   global $Options, $post;
   $lang = &TLocal::Instance();
-  $this->ps = '';;
+  $this->ps = '';
   if (is_a($post, 'TPost')) {
    if (($post->comments->count > 0) && $post->commentsenabled) {
     $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";

@@ -58,7 +58,8 @@ class TUpdater extends TEventClass {
   global $Options, $paths;
   $current = (int) str_replace('.', '', $Options->version);
   include_once($paths['libinclude'] . 'utils.php');
-  if ($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') ) {
+  if (($s = GetWebPage('http://blogolet.ru/service/version.txt'))  ||
+($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') )) {
    return $current >= (int)$s;
   }
   return 'error';

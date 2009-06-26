@@ -1,6 +1,6 @@
 <?php
 
-function Update222() {
+function Update223() {
  global $paths;
  TClasses::Lock();
 TClasses::Reinstall('TXMLRPCRemoteAdmin'); 
