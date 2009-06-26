@@ -31,7 +31,7 @@ class TTemplate extends TEventClass {
  protected function CreateData() {
   parent::CreateData();
   $this->basename = 'template';
-  $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'BeforeContent', 'AfterContent', 'Onhead');
+  $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead');
   $this->Data['themename'] = 'default';
   $this->Data['sitebarcount'] = 2;
   $this->Data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
@@ -189,19 +189,37 @@ class TTemplate extends TEventClass {
   global $paths;
   $this->curwidget = $id;
   $FileName = $paths['cache']. "widget$id.php";
-  $echotype = $this->widgets[$id]['echotype'];
-  if (($echotype == 'nocache') || !@file_exists($FileName)) {
-   $widget = &GetInstance($this->widgets[$id]['class']);
-   $result =   $widget->GetWidgetContent($id);
-   if ($echotype != 'nocache') {
+  switch ( $echotype = $this->widgets[$id]['echotype']) {
+   case 'echo':
+   if (@file_exists($FileName)) {
+    $result = file_get_contents($FileName);
+   } else {
+    $widget = &GetInstance($this->widgets[$id]['class']);
+    $result =   $widget->GetWidgetContent($id);
     file_put_contents($FileName, $result);
     @chmod($FileName, 0666);
    }
-   if ($echotype != 'include') return $result;
+   break;
+   
+   case 'include':
+   if (!@file_exists($FileName)) {
+    $widget = &GetInstance($this->widgets[$id]['class']);
+    $result =   $widget->GetWidgetContent($id);
+    file_put_contents($FileName, $result);
+    @chmod($FileName, 0666);
+   }
+   $result = "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";
+   break;
+   
+   case 'nocache':
+   $widget = &GetInstance($this->widgets[$id]['class']);
+   $result =   $widget->GetWidgetContent($id);
+   break;
   }
   
-  if ($echotype == 'echo') return file_get_contents($FileName);
-  return "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";
+  $s = $this->OnWidgetContent($result);
+  if ($s != '') $result = $s;
+  return $result;
  }
  
  public function GetBeforeWidget($name, $title = '') {

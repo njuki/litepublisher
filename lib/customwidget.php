@@ -12,6 +12,7 @@ class TCustomWidget extends TItems {
  }
  
  public function GetWidgetContent($id) {
+if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
   global $Options, $Template;
   $result = $Template->GetBeforeWidget('before', $this->items[$id]['title']);
   $result .= $this->items[$id]['content'];
@@ -19,12 +20,13 @@ class TCustomWidget extends TItems {
   return $result;
  }
  
- public function Add($title, $content) {
+ public function Add($title, $content, $templ) {
   $Template = &TTemplate::Instance();
   $id = $Template->AddWidget(get_class($this), 'echo');
   $this->items[$id] = array(
   'title' => $title,
-  'content' => $content
+  'content' => $content,
+'templ' => $templ
   );
   
   $this->Save();
@@ -32,10 +34,11 @@ class TCustomWidget extends TItems {
   return $id;
  }
  
- public function Edit($id, $title, $content) {
+ public function Edit($id, $title, $content, $templ) {
   $this->items[$id] = array(
   'title' => $title,
-  'content' => $content
+  'content' => $content,
+'templ' = $templ
   );
   
   $this->Save();
