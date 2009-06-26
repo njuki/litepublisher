@@ -12,7 +12,7 @@ class TCustomWidget extends TItems {
  }
  
  public function GetWidgetContent($id) {
-if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
+  if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
   global $Options, $Template;
   $result = $Template->GetBeforeWidget('before', $this->items[$id]['title']);
   $result .= $this->items[$id]['content'];
@@ -26,7 +26,7 @@ if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
   $this->items[$id] = array(
   'title' => $title,
   'content' => $content,
-'templ' => $templ
+  'templ' => $templ
   );
   
   $this->Save();
@@ -38,7 +38,7 @@ if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
   $this->items[$id] = array(
   'title' => $title,
   'content' => $content,
-'templ' = $templ
+  'templ' => $templ
   );
   
   $this->Save();
