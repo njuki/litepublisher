@@ -13,6 +13,8 @@ public $widgets;
 $this->Data['user'] = '';
 $this->Data['count'] = 2;
 $this->Data['force'] = false;
+$this->Data['optimize'] = false;
+$this->Data['optcode'] = '';
 $this->AddDataMap('widgets', array());
 }
 
@@ -30,7 +32,7 @@ $this->sape = new SAPE_client($o);
 
 public static function PrintLinks($count = null) {
 $self = &GetInstance(__class__);
-return $self->GetLinks($count);
+echo $self->GetLinks($count);
 }
 
 public function GetLinks($count = null) {
@@ -55,8 +57,35 @@ $result .= $this->GetLinks($this->count);
 
 public function AfterWidget($id) {
   global  $Template;
-if (in_array($Template->widgets[$id]['class'], $this->widgets)) {
+if (!in_array($Template->widgets[$id]['class'], $this->widgets))  return '';
+if ($this->optimize) {
+return "<!--$this->optcode-->\n";
+} else {
 return '<?php '. get_class($this) . "::PrintLinks($this->count); ?>\n";
+}
+}
+
+public function Setoptimize($value) {
+global $Urlmap;
+if ($this->optimize != $value) {
+$this->Data['optimize'] = $value;
+$this->Data['optcode'] = md5(secret. uniqid( microtime()) . 'sapeplugin optimize');
+$this->Save();
+
+$Template = &TTemplate::Instance();
+if  ($value) {
+$Template->OnWidgetContent = $this->OnWidgetContent;
+} else {
+$Template->UnsubscribeEvent('OnWidgetContent', get_class($this));
+}
+$Urlmap->ClearCache();
+}
+}
+
+public function OnWidgetContent($s) {
+$code = "<!--$this->optcode-->";
+if (strpos($s, $code) !== false) {
+return str_replace($code, $this->GetLinks($this->count), $s);
 }
 return '';
 }

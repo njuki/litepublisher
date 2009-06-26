@@ -1,7 +1,7 @@
 <?php
 
 class TAdminSapePlugin {
-private $widgets = array('TCategories', 'TArchives', 'TLinksWidget', 'TPosts', 'TCommentManager', 'TMetaWidget');
+private $widgets = array('TCategories', 'TArchives', 'TLinksWidget', 'TPosts', 'TMetaWidget');
 
 public function Getcontent() {
 $plugin = &TSapePlugin::Instance();
@@ -17,6 +17,7 @@ eval('$checkboxes .= "'. $checkbox . '\n";');
 }
 
 $force = $plugin->force ? "checked='checked'" : '';
+$optimize = $plugin->optimize ? "checked='checked'" : '';
 $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'sapeform.tml');
 eval('$result = "'. $tml . '\n";');
 $result = str_replace("'", '"', $result);
@@ -34,6 +35,7 @@ extract($_POST);
 $plugin->count = $count;
 $plugin->user = $user;
 $plugin->force = isset($force);
+$plugin->optimize = $optimize;
 $plugin->Unlock();		
 return '';
 }
