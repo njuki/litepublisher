@@ -304,8 +304,11 @@ class TInstaller extends TDataClass {
   $html = &THtmlResource::Instance();
   $html->section = 'installation';
   $lang = &TLocal::Instance();
-  
-  $checkrewrite = function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()) ? '' : $html->checkrewrite;
+  if (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules())) {
+  $checkrewrite =  = '';
+} else {
+  eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
+}
   eval('$form .= "'. $html->installform. '\n";');
   echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
  }

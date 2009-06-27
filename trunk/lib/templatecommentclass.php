@@ -52,12 +52,10 @@ class TTemplateComment extends TEventClass {
    eval('$Result .= "'. $this->ThemeComments['count'] . '\n";');
    $hold = '';
    $list = '';
+$comtempl = $this->ThemeComments['comment'];
    foreach  ($items as $id => $date) {
     $comment->id = $id;
-    //$class =  ($count % 2) == 0 ? 'alt' : '';
-    //$class = 'alt';
-    
-    eval('$list .= "'. $this->ThemeComments['comment'] . '\n"; ');
+    eval('$list .= "'. $comtempl . '\n"; ');
    }
    eval('$Result .= "'. $this->ThemeComments['list'] . '\n"; ');
   }
@@ -66,16 +64,17 @@ class TTemplateComment extends TEventClass {
   if (count($items) > 0) {
    eval('$Result .= "'. $this->ThemeComments['pingbackhead'] . '\n";');
    $list = '';
+$comtempl = $this->ThemeComments['pingback'];
    foreach  ($items as $id => $date) {
     $comment->id = $id;
-    eval('$list .= "'. $this->ThemeComments['pingback'] . '\n"; ');
+    eval('$list .= "'. $comtempl  . '\n"; ');
    }
    eval('$Result .= "'. $this->ThemeComments['list'] . '\n"; ');
   }
   if ($post->commentsenabled) {
    $Result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
   } else {
-   $Result .= $this->CommentTemplate['closed'];
+   $Result .= $this->ThemeComments['closed'];
   }
   return $Result;
  }
