@@ -52,7 +52,7 @@ class TTemplateComment extends TEventClass {
    eval('$Result .= "'. $this->ThemeComments['count'] . '\n";');
    $hold = '';
    $list = '';
-$comtempl = $this->ThemeComments['comment'];
+   $comtempl = $this->ThemeComments['comment'];
    foreach  ($items as $id => $date) {
     $comment->id = $id;
     eval('$list .= "'. $comtempl . '\n"; ');
@@ -64,7 +64,7 @@ $comtempl = $this->ThemeComments['comment'];
   if (count($items) > 0) {
    eval('$Result .= "'. $this->ThemeComments['pingbackhead'] . '\n";');
    $list = '';
-$comtempl = $this->ThemeComments['pingback'];
+   $comtempl = $this->ThemeComments['pingback'];
    foreach  ($items as $id => $date) {
     $comment->id = $id;
     eval('$list .= "'. $comtempl  . '\n"; ');
