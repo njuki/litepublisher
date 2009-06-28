@@ -375,7 +375,7 @@ class TTemplate extends TEventClass {
   $this->DataObject = &$DataObject;
   $GLOBALS['DataObject'] = &$DataObject;
   $header = $this->ServerHeader();
-$tml = $this->DataObjectHasProp('template') ? $this->DataObject->template : 'index.tml';
+  $tml = $this->DataObjectHasProp('template') ? $this->DataObject->template : 'index.tml';
   $s = $this->ParseFile($tml);
   $s = $header .$s;
   return $s;
