@@ -273,7 +273,7 @@ class TFoafManager extends TItems {
    eval('$subject = "'. $html->errorsubj . '";');
    eval('$body = "'. $html->errorbody . '\n";');
   } else {
-   $status = TLocal::$data['foaf'][$type];
+   $status = sprintf($lang->notify, TLocal::$data['foaf'][$type]);
    eval('$subject = "'. $html->subject . '";');
    eval('$body = "'. $html->body . '\n";');
   }

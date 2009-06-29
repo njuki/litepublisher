@@ -345,7 +345,6 @@ class TUrlmap extends TItems {
   $this->Unlock();
  }
  
- 
  public static function unsub(&$obj) {
   $self = self::Instance();
   $self->Lock();

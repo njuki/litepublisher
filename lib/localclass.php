@@ -56,6 +56,12 @@ class TLocal {
   self::$data = $v + self::$data ;
  }
  
+ public static function LoadIni($filename) {
+  if (@file_exists($filename) && ($v = parse_ini_file($filename, true))) {
+   self::$data = $v + self::$data ;
+  }
+ }
+ 
  public static function Install() {
   self::checkload();
  }

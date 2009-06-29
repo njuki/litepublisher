@@ -39,6 +39,12 @@ class THtmlResource  {
   $this->ini = $v + $this->ini;
  }
  
+ public function LoadIni($filename) {
+  if( $v = parse_ini_file($filename, true)) {
+   $this->ini = $v + $this->ini;
+  }
+ }
+ 
 }
 
 ?>

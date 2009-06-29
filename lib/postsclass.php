@@ -133,23 +133,23 @@ class TPosts extends TItems {
   return true;
  }
  
- public function Updated(&$Post) {
-  if (($Post->status == 'published') && ($Post->date > time())) {
-   $Post->status = 'future';
+ public function Updated(&$post) {
+  if (($post->status == 'published') && ($post->date > time())) {
+   $post->status = 'future';
   }
-  $this->items[$Post->id] = array(
-  'date' => $Post->date,
-  'status' => $Post->status
+  $this->items[$post->id] = array(
+  'date' => $Post->date
   );
+  if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
   $this->UpdateArchives();
   $Cron = &TCron::Instance();
-  $Cron->Add('single', get_class($this), 'DoSingleCron', $Post->id);
+  $Cron->Add('single', get_class($this), 'DoSingleCron', $post->id);
  }
  
  protected function UpdateArchives() {
   $this->archives = array();
   foreach ($this->items as $id => $Item) {
-   if (($Item['status'] == 'published') &&(time() >= $Item['date'])) {
+   if ((!isset($item['status']) || ($Item['status'] == 'published')) &&(time() >= $Item['date'])) {
     $this->archives[$id] = $Item['date'];
    }
   }
@@ -164,7 +164,7 @@ class TPosts extends TItems {
  
  public function HourCron() {
   foreach ($this->items as $id => $Item) {
-   if (($Item['status'] == 'future') && ($Item['date'] <= time())) {
+   if (isset($item['status']) && ($Item['status'] == 'future') && ($Item['date'] <= time())) {
     $Post = &TPost::Instance($id);
     $Post->status = 'published';
     $this->Edit($Post);

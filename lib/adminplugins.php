@@ -91,6 +91,7 @@ class TAdminPlugins extends TAdminPage {
    if (!@class_exists($class)) {
     require_once($paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
    }
+   
    $this->plugin = &new $class ();
   }
   
