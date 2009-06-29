@@ -14,22 +14,6 @@ class TPinger extends TItems {
   $this->Data['enabled'] = true;
  }
  
- public function Install() {
-  $Posts = &TPosts::Instance();
-  $Posts->Lock();
-  $Posts->SingleCron = $this->PingPost;
-  $Posts->Deleted = $this->PostDeleted;
-  $Posts->Unlock();
-  if ($this->services== '') {
-   global $paths;
-   $this->services = file_get_contents($paths['libinclude'] . 'pingservices.txt');
-  }
- }
- 
- public function Uninstall() {
-  TPosts::unsub($this);
- }
- 
  public function SetEnabled($value) {
   if ($value != $this->enabled) {
    $this->Lock();

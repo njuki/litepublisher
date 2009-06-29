@@ -42,7 +42,7 @@ class TAdminPage extends TEventClass {
   return $Urlmap->url;
  }
  
- protected function ContentToForm($s) {
+ public function ContentToForm($s) {
   $s = htmlspecialchars($s);
   $s = str_replace('"', '&quot;', $s);
   $s = str_replace("'", '&#39;', $s);
@@ -107,7 +107,7 @@ class TAdminPage extends TEventClass {
  
  public function notfound() {
   $html = &THtmlResource::Instance();
-  $html->section - $this->basename;
+  $html->section = $this->basename;
   $lang = &TLocal::Instance();
   eval('$result = "'. $html->notfound  . '\n";');
   return $result;

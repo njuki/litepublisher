@@ -59,7 +59,7 @@ class TAdminThemes extends TAdminPage {
    $filelist = TFiler::GetFileList($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
    sort($filelist);
    foreach ($filelist as $filename) {
-    $result .= "<li><a href=\"$Options->url/admin/themes/edit/?themename=$themename&filename=$filename\">$filename</a></li>\n";
+   $result .= "<li><a href=\"$Options->url/admin/themes/edit/{$Options->q}themename=$themename&filename=$filename\">$filename</a></li>\n";
    }
    $result .= "</ul>\n";
    if (!empty($_GET['filename'])) {

@@ -31,7 +31,7 @@ class TMailer {
  public static function SentToAdmin($subject, $body) {
   global $Options;
   self::SendMail($Options->name, $Options->fromemail,
-  $Options->authorname, $Options->email, $subject, $body);
+  'admin', $Options->email, $subject, $body);
  }
  
 } //class
