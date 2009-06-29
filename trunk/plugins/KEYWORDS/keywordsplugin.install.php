@@ -16,7 +16,7 @@ function TKeywordsPluginUninstall(&$self) {
   TUrlmap::unsub($self);
   $Template = &TTemplate::Instance();
   $Template->DeleteWidget(get_class($self));
-  TFiler::DeleteFiles($paths['data'] . 'keywords', true);
+  //TFiler::DeleteFiles($paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  , true);
  }
 
 ?>
