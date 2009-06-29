@@ -3,15 +3,15 @@
 function Update233() {
 global $paths;
 $plugins = &TPlugins::Instance();
-if (isset($plugins->items['KeyWords'])) {
-$plugins->items['keywords'] = $plugins->items['KeyWords'];
-unset($plugins->items['KeyWords']);
+if (isset($plugins->items['KEYWORDS'])) {
+$plugins->items['keywords'] = $plugins->items['KEYWORDS'];
+unset($plugins->items['KEYWORDS']);
 $plugins->Save();
 TClasses::$items['TKeywordsPlugin'][1] = 'keywords';
 TClasses::Save();
 }
 
-$old = $paths['plugins'] . 'KeyWords';
+$old = $paths['plugins'] . 'KEYWORDS';
 $new = $paths['plugins'] . 'keywords';
 $tmp = $paths['plugins'] . 'tmp';
 
