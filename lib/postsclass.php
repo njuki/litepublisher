@@ -138,7 +138,7 @@ class TPosts extends TItems {
    $post->status = 'future';
   }
   $this->items[$post->id] = array(
-  'date' => $Post->date
+  'date' => $post->date
   );
   if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
   $this->UpdateArchives();
