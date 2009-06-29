@@ -6,6 +6,7 @@ class TCommentForm extends TItems {
   parent::CreateData();
   $this->basename ='commentform';
   $this->CacheEnabled = false;
+  $this->Data['confirmtemplate'] = '';
  }
  
  public static function &Instance() {
@@ -129,7 +130,7 @@ class TCommentForm extends TItems {
     $values['date'] = time();
     $this->items[$confirmid] =$values;
     $this->Save();
-    eval('$form ="' . TLocal::$data['commentform']['form'] . '\n";');
+    $form = $this->GetConfirmForm($postid, $confirmid);
     return TTemplate::SimpleHtml($form);
    }
    
@@ -253,6 +254,20 @@ class TCommentForm extends TItems {
   }
   
   return true;
+ }
+ 
+ private function GetConfirmForm($postid, $confirmid) {
+  $lang = &TLocal::Instance();
+  $lang->section = $this->basename;
+  $tml = $this->GetConfirmFormTemplate();
+  eval('$result = "'. $tml . '\n";');
+  return $result;
+ }
+ 
+ private function GetConfirmFormTemplate() {
+  global $paths;
+  $filename = $this->confirmtemplate == '' ? 'confirmform.tml' : $this->confirmtemplate;
+  return file_get_contents($paths['libinclude'] . $filename);
  }
  
 }//class
