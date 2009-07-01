@@ -43,15 +43,18 @@ class TLinkGenerator extends TEventClass {
  }
  
  public function AfterCreate($url) {
-  global $Options, $paths;
-  static $ru2lat_gost;
-  if ($Options->language == 'ru') {
-   if (!isset($ru2lat_gost)) {
-    require_once($paths['libinclude'] . 'ru2lat-gost.php');
-   }
-   $url = strtr($url, $ru2lat_gost);
-  }
+  global $Options;
+  if ($Options->language == 'ru') $url = $this->ru2lat($url);
   return strtolower($url);
+ }
+ 
+ public function ru2lat($s) {
+  static $ru2lat_iso;
+  if (!isset($ru2lat_iso)) {
+   global  $paths;
+   require_once($paths['libinclude'] . 'ru2lat-iso.php');
+  }
+  return strtr($s, $ru2lat_iso);
  }
  
  public function Validate($url) {

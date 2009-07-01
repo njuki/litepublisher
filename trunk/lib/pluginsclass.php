@@ -41,9 +41,12 @@ class TPlugins extends TItems {
   $item = $this->items[$name];
   unset($this->items[$name]);
   $this->Save();
-  TClasses::Unregister($item['class']);
   $plugin = &GetInstance($item['class']);
-  @unlink($paths['data']. $plugin->GetBaseName() . '.php');
+  TClasses::Unregister($item['class']);
+  if (is_a($plugin, 'TPlugin')) {
+   @unlink($paths['data']. $plugin->GetBaseName() . '.php');
+   @unlink($paths['data']. $plugin->GetBaseName() . 'bak..php');
+  }
   $this->Deleted($name);
  }
  
