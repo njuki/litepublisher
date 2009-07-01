@@ -52,7 +52,7 @@ return $admin->FixCheckall($result);
 private function GetPages($page, $count) {
 global $Options;
 $result = "<p><a href='$Options->url/admin/plugins/keywords/'>1</a>\n";
-for ($i = 2; $i < $count; $i++) {
+for ($i = 2; $i <= $count; $i++) {
 $result .= "<a href='$Options->url/admin/plugins/keywords/{$Options->q}page=$i'>$i</a>|\n";
 }
 $result .= "</p>\n";
