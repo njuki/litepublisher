@@ -40,13 +40,9 @@ class TTemplate extends TEventClass {
   $this->AddDataMap('sitebars', array(0 => array(), 1 => array(), 2 => array()));
   $this->AddDataMap('widgets', array());
   $this->AddDataMap('tags', array());
+  $this->AddDataMap('theme', array());
   
   $this->fFiles = array();
- }
- 
- public function Load() {
-  parent::Load();
-  $this->LoadTheme();
  }
  
  public function __get($name) {
@@ -69,21 +65,22 @@ class TTemplate extends TEventClass {
   return isset($this->DataObject) && (isset($this->DataObject->$name) || (method_exists($this->DataObject, 'PropExists') && $this->DataObject->PropExists($name)));
  }
  
- protected function LoadTheme() {
-  global $paths, $Options;
-  if (($this->themename == '') || !@file_exists($paths['themes']. $this->themename . DIRECTORY_SEPARATOR   . 'index.tml')) {
-   $this->themename = 'default';
-   return;
-  }
-  
+ public function Load() {
+  global $Options, $paths;
+  parent::Load();
+  if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
   $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
   $this->url = $Options->url . '/themes/'. $this->themename;
-  $this->theme = parse_ini_file($this->path . 'theme.ini', true);
+ }
+ 
+ public function ThemeExists($name) {
+  global $paths;
+  return ($name != '') && @file_exists($paths['themes']. $name . DIRECTORY_SEPARATOR   . 'index.tml');
  }
  
  protected function Setthemename($name) {
   global $paths, $Options;
-  if ($this->themename <> $name) {
+  if (($this->themename <> $name) && $this->ThemeExists($name)) {
    $this->Lock();
    //echo "uninstall prev theme plugin if exists\n";
    if ($about = $this->GetAbout($this->themename)) {
@@ -96,6 +93,7 @@ class TTemplate extends TEventClass {
    }
    $this->Data['themename'] = $name;
    $this->path = $paths['themes'] . $name . DIRECTORY_SEPARATOR  ;
+   $this->url = $Options->url  . '/themes/'. $this->themename;
    //echo "load info about new theme\n";
    $about = $this->GetAbout($name);
    $this->sitebarcount = $about['sitebars'];
@@ -105,8 +103,7 @@ class TTemplate extends TEventClass {
     $plugins->AddExt($name, $about['pluginclassname'], $about['pluginfilename']);
    }
    
-   $this->url = $Options->url  . '/themes/'. $this->themename;
-   $this->LoadTheme();
+   $this->theme = parse_ini_file($this->path . 'theme.ini', true);
    $this->Unlock();
    $urlmap = &TUrlmap::Instance();
    $urlmap->ClearCache();

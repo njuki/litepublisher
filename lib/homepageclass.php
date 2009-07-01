@@ -15,7 +15,8 @@ class THomepage extends TEventClass {
  
  public function GetTemplateContent() {
   global $Options, $Urlmap;
-  $result = $this->text;
+  $result = '';
+  if ($Urlmap->pagenumber == 1) $result .= $this->text;
   if ($this->hideposts) return $result;
   $items =  $this->GetItems();
   $TemplatePost = &TTemplatePost::Instance();
