@@ -89,8 +89,8 @@ class TSubscribe extends TItems {
  
  public function ProcessForm() {
   $result = '';
-  $Users = &TCommentUsers::Instance();
-  if ($this->user = $Users->GetItemFromCookie($_GET['userid'])) {
+  $users = &TCommentUsers::Instance();
+  if ($this->user = $users->GetItemFromCookie($_GET['userid'])) {
    $users->Lock();
    foreach ($_POST as $name => $value) {
     if (substr($name, 0, 7) == 'postid-') {
@@ -125,6 +125,7 @@ class TSubscribe extends TItems {
  public function CronSendMailToSubscribers($id) {
   global $Options;
   $CommentManager = &TCommentManager::Instance();
+  if (!isset($CommentManager->items[$id])) return;
   $item = $CommentManager->GetItem($id);
   
   $this->items[$id] = true;
