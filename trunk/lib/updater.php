@@ -23,16 +23,23 @@ class TUpdater extends TEventClass {
  
  public function Update() {
   global $Options, $paths;
+  $log = true;
+  if ($log) TFiler::log("begin update");
   TFiler::DeleteFilesExt($paths['languages'], 'php');
   $s = file_get_contents($paths['libinclude']. 'version.txt');
   $this->version =  (int) trim($s);
  $current = ((int) $Options->version{0}) * 100 + (int)substr($Options->version, 2);
-  
+  if ($log) TFiler::log("update started from $current to $this->version");
   for ($v = $current + 1; $v<= $this->version; $v++) {
+   if ($log) TFiler::log("$v selected to update");
    if (@file_exists("$paths[libinclude]update$v.php")) {
     require_once("$paths[libinclude]update$v.php");
+    if ($log) TFiler::log("update$v.php is required file");
     $func = "Update$v";
-    if (function_exists($func)) $func();
+    if (function_exists($func)) {
+     $func();
+     if ($log) TFiler::log("$func is called");
+    }
    }
   }
   
@@ -40,6 +47,7 @@ class TUpdater extends TEventClass {
   
   $Urlmap = &TUrlmap::Instance();
   $Urlmap->ClearCache();
+  if ($log) TFiler::log("update finished");
  }
  
  public function AutoUpdate() {
@@ -84,7 +92,8 @@ class TUpdater extends TEventClass {
   }
   
   include_once($paths['libinclude'] . 'utils.php');
-  if (!($s = GetWebPage('http://litepublisher.googlecode.com/files/litepublisher.zip') )) {
+  if (!($s = GetWebPage('http://litepublisher.googlecode.com/files/litepublisher.zip')) &&
+  !($s = GetWebPage('http://blogolet.ru/service/blogolet.zip') )) {
    return $lang['erordownloadlatest'];
   }
   

@@ -168,6 +168,7 @@ class TRSS extends TEventClass {
   $pubdate = gmdate("D, d M Y H:i:s", $post->date - gmt_offset) . " +0000";
   $CommentRSS = $Options->url . "/comments/$post->id/";
   
+  $profile = &TProfile::Instance();
   $content = $this->BeforePostContent($post->id);
   $content .=$post->rss;
   $content .= $post->morelink;
@@ -178,7 +179,7 @@ class TRSS extends TEventClass {
   <link>$posturl</link>
   <comments>$posturl#comments</comments>
   <pubDate>$pubdate</pubDate>
-  <dc:creator>admin</dc:creator>
+  <dc:creator>$profile->nick</dc:creator>
   $RSSCategories
   <guid isPermaLink=\"false\">$posturl</guid>
   <description><![CDATA[". strip_tags($content) . "]]></description>

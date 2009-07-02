@@ -1,14 +1,34 @@
 <?php
 
 class TTemplateComment extends TEventClass {
- public $ThemeComments;
+ public $commentsini;
  
- public function GetBaseName() {
-  return 'templatecomment';
+ protected function CreateData() {
+  parent::CreateData();
+  $this->basename = 'templatecomment';
+  $this->AddDataMap('commentsini', array());
  }
  
  public static function &Instance() {
   return GetInstance(__class__);
+ }
+ 
+ public function ThemeChanged() {
+  global $Template;
+  $this->commentsini     = parse_ini_file($Template->path . 'comments.ini');
+  foreach ($this->commentsini  as $name => $value) {
+   $this->commentsini [$name] = str_replace("'", '\"', $value);
+  }
+  
+  $this->Save();
+ }
+ 
+ public function Load() {
+  parent::Load();
+  if (count($this->commentsini ) == 0) {
+   $Template = &TTemplate::Instance();
+   $this->ThemeChanged();
+  }
  }
  
  public function GetCommentCountStr($count) {
@@ -26,21 +46,10 @@ class TTemplateComment extends TEventClass {
   return "<a href=\"$Options->url$post->url#comments\">$CountStr</a>";
  }
  
- public function CheckThemeComments() {
-  if (!isset($this->ThemeComments )) {
-   $Template = &TTemplate::Instance();
-   $this->ThemeComments     = parse_ini_file($Template->path . 'comments.ini');
-   foreach ($this->ThemeComments  as $name => $value) {
-    $this->ThemeComments [$name] = str_replace("'", '\"', $value);
-   }
-  }
- }
- 
  public function GetComments($tagname) {
   global $post, $Template;
   $comments = &$post->comments;
   if (($comments->count == 0) && !$post->commentsenabled) return '';
-  $this->CheckThemeComments();
   $lang = &TLocal::Instance();
   $lang->section = 'comment';
   
@@ -49,32 +58,32 @@ class TTemplateComment extends TEventClass {
   $items = &$comments->GetApproved();
   if (count($items)  > 0) {
    $count = $this->GetCommentCountStr(count($items));
-   eval('$Result .= "'. $this->ThemeComments['count'] . '\n";');
+   eval('$Result .= "'. $this->commentsini['count'] . '\n";');
    $hold = '';
    $list = '';
-   $comtempl = $this->ThemeComments['comment'];
+   $comtempl = $this->commentsini['comment'];
    foreach  ($items as $id => $date) {
     $comment->id = $id;
     eval('$list .= "'. $comtempl . '\n"; ');
    }
-   eval('$Result .= "'. $this->ThemeComments['list'] . '\n"; ');
+   eval('$Result .= "'. $this->commentsini['list'] . '\n"; ');
   }
   
   $items = &$comments->GetApproved('pingback');
   if (count($items) > 0) {
-   eval('$Result .= "'. $this->ThemeComments['pingbackhead'] . '\n";');
+   eval('$Result .= "'. $this->commentsini['pingbackhead'] . '\n";');
    $list = '';
-   $comtempl = $this->ThemeComments['pingback'];
+   $comtempl = $this->commentsini['pingback'];
    foreach  ($items as $id => $date) {
     $comment->id = $id;
     eval('$list .= "'. $comtempl  . '\n"; ');
    }
-   eval('$Result .= "'. $this->ThemeComments['list'] . '\n"; ');
+   eval('$Result .= "'. $this->commentsini['list'] . '\n"; ');
   }
   if ($post->commentsenabled) {
    $Result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
   } else {
-   $Result .= $this->ThemeComments['closed'];
+   $Result .= $this->commentsini['closed'];
   }
   return $Result;
  }
@@ -82,16 +91,15 @@ class TTemplateComment extends TEventClass {
  public function GetHoldList(&$items, &$comment) {
   $lang = &TLocal::Instance();
   $lang->section = 'comment';
-  $this->CheckThemeComments();
   $Result = '';
   if (count($items) > 0) {
    $hold = $lang->hold;
    $list = '';
    foreach  ($items as $id => $date) {
     $comment->id = $id;
-    eval('$list .= "'. $this->ThemeComments['comment'] . '\n"; ');
+    eval('$list .= "'. $this->commentsini['comment'] . '\n"; ');
    }
-   eval('$Result .= "'. $this->ThemeComments['list'] . '\n"; ');
+   eval('$Result .= "'. $this->commentsini['list'] . '\n"; ');
   }
   return $Result;
  }
@@ -101,17 +109,16 @@ class TTemplateComment extends TEventClass {
   $CommentForm = &TCommentForm::Instance();
   $lang = &TLocal::Instance();
   $lang->section = 'comment';
-  $this->CheckThemeComments();
-  eval('$Result = "'. $this->ThemeComments['formhead'] . '"; ');
+  eval('$Result = "'. $this->commentsini['formhead'] . '"; ');
   $Result .= "\n<form action=\"$Options->url$CommentForm->url\" method=\"post\" id=\"commentform\">\n";
   
   $tabindex = 1;
-  $TemplateField = $this->ThemeComments['field'];
+  $TemplateField = $this->commentsini['field'];
   foreach ($CommentForm->Fields as $field => $type) {
   $value = "{\$values['$field']}";
    $label = $lang->$field;
    if ($type == 'checkbox') {
-    eval('$Result .= "'. $this->ThemeComments['checkbox'] . '\n";');
+    eval('$Result .= "'. $this->commentsini['checkbox'] . '\n";');
    } else {
     eval('$Result .= "'. $TemplateField . '\n";');
    }
@@ -119,7 +126,7 @@ class TTemplateComment extends TEventClass {
    $tabindex++;
   }
   
-  eval('$Result .= "'. $this->ThemeComments['content'] .'\n"; ');
+  eval('$Result .= "'. $this->commentsini['content'] .'\n"; ');
   $tabindex++;
   
   $TemplateField = '<input type=\"hidden\" name=\"$field\" value=\"$value\" />';
@@ -128,7 +135,7 @@ class TTemplateComment extends TEventClass {
    eval("\$Result .= \"$TemplateField\n\";");
   }
   
-  eval('$Result .= "'. $this->ThemeComments['button'] . '"; ');
+  eval('$Result .= "'. $this->commentsini['button'] . '"; ');
   $Result .= "\n</form>\n";
   return $Result;
  }
