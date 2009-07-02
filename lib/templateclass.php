@@ -31,7 +31,7 @@ class TTemplate extends TEventClass {
  protected function CreateData() {
   parent::CreateData();
   $this->basename = 'template';
-  $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead');
+  $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'ThemeChanged');
   $this->Data['themename'] = 'default';
   $this->Data['sitebarcount'] = 2;
   $this->Data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
@@ -71,6 +71,10 @@ class TTemplate extends TEventClass {
   if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
   $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
   $this->url = $Options->url . '/themes/'. $this->themename;
+  if (count($this->theme) == 0) {
+   $this->theme = parse_ini_file($this->path . 'theme.ini', true);
+   $this->Save();
+  }
  }
  
  public function ThemeExists($name) {
@@ -105,6 +109,7 @@ class TTemplate extends TEventClass {
    
    $this->theme = parse_ini_file($this->path . 'theme.ini', true);
    $this->Unlock();
+   $this->ThemeChanged();
    $urlmap = &TUrlmap::Instance();
    $urlmap->ClearCache();
   }

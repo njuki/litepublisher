@@ -34,6 +34,29 @@ class TMailer {
   'admin', $Options->email, $subject, $body);
  }
  
+ public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
+  global $Options;
+  $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
+  $date = gmdate ("M d Y H:i:s", time());
+  $from = self::CreateEmail($Options->name, $Options->fromemail);
+  $to = self::CreateEmail('admin', $Options->email);
+  $boundary = md5($attachment);
+  $textpart = "--$boundary\nContent-Type: text/plain; charset=\"UTF-8\"\nContent-Transfer-Encoding: base64\n\n";
+  $textpart .= base64_encode($body);
+  
+  $attachpart = "--$boundary\nContent-Type: application/octet-stream; name=\"$filename\"\nContent-Disposition: attachment; filename=\"$filename\"\nContent-Transfer-Encoding: base64\n\n";
+  $attachpart .= base64_encode($attachment);
+  
+  $body = $textpart . "\n". $attachpart;
+  
+  if (defined('debug'))
+  return file_put_contents($GLOBALS['paths']['home']. 'mail.eml',
+  "To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $Options->version\n\n". $body);
+  
+  mail($to, $subj, $body,
+  "From: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $Options->version");
+ }
+ 
 } //class
 
 class TSMTPMailer extends TEventClass {
