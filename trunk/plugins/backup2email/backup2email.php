@@ -14,7 +14,7 @@ $this->Data['idcron'] = 0;
  public function SendBackup() {
 global $Options, $domain;
   $admin = &TRemoteAdmin::Instance();
-  $s = $admin->GetPartialBackup(true, true, true);
+  $s = $admin->GetPartialBackup(true, false, true);
   $date = date('d-m-Y');
   $filename = "$domain-$date.zip";
 
