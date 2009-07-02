@@ -54,10 +54,11 @@ class TCronTask extends TDataClass {
   global $paths;
   @unlink($paths['data'] . $this->GetBaseName() .'.php');
   @unlink($paths['data'] . $this->GetBaseName() .'.bak.php');
+  $this->owner->AppendLog("task deleted ". $paths['data'] . $this->GetBaseName() .'.php');
  }
  
  public function Execute() {
-if (defined('debug')) $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
+$this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
   
   $func = $this->func;
   if ($this->class == '' ) {
@@ -108,11 +109,11 @@ class TCron extends TEventClass {
    flock($fh, LOCK_EX);
    ignore_user_abort(true);
    set_time_limit(60*20);
-   if (defined('debug')) $this->AppendLog("started loop");
+   $this->AppendLog("started loop");
    $this->ExecuteTasks();
    flock($fh, LOCK_UN);
    fclose($fh);
-   if (defined('debug')) $this->AppendLog("finished loop");
+   $this->AppendLog("finished loop");
    $this->PopChain();
    return 'Ok';
   }
@@ -125,6 +126,8 @@ class TCron extends TEventClass {
  }
  
  public function ExecuteTasks() {
+  ob_end_flush ();
+  echo "<pre>\n";
   $time = time();
   $task = new TCronTask($this);
   $processed = array();
@@ -132,6 +135,7 @@ class TCron extends TEventClass {
    foreach ($filelist as $filename) {
     $processed[] = $filename;
     $task->filename = $filename;
+    //var_dump($task->Data);
     if  ($time >= $task->time)  $task->Execute();
    }
   }
@@ -189,13 +193,13 @@ class TCron extends TEventClass {
  }
  
  public function Ping() {
-  global $Options;
+  global $Options, $domain;
   $this->AddToChain($_SERVER['HTTP_HOST'], $Options->subdir . $this->url);
-  $this->PingHost($_SERVER['HTTP_HOST'], $Options->subdir . $this->url);
+  $this->PingHost($domain, $Options->subdir . $this->url);
  }
  
  private function PingHost($host, $path) {
-  if (defined('debug')) $this->AppendLog("pinged host $host$path");
+  $this->AppendLog("pinged host $host$path");
   if (		$socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
    fputs( $socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
   }
@@ -227,6 +231,9 @@ class TCron extends TEventClass {
  }
  
  public function AppendLog($s) {
+  echo date('r') . "\n$s\n\n";
+  flush();
+  return;
   global $paths;
   $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronlog.txt';
   if ($fp = fopen($filename,"a+")) {

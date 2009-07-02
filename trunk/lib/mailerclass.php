@@ -40,7 +40,7 @@ class TMailer {
   $date = gmdate ("M d Y H:i:s", time());
   $from = self::CreateEmail($Options->name, $Options->fromemail);
   $to = self::CreateEmail('admin', $Options->email);
-  $boundary = md5($attachment);
+  $boundary = md5(microtime());
   $textpart = "--$boundary\nContent-Type: text/plain; charset=\"UTF-8\"\nContent-Transfer-Encoding: base64\n\n";
   $textpart .= base64_encode($body);
   
