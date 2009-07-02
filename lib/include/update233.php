@@ -18,7 +18,7 @@ $tmp = $paths['plugins'] . 'tmp';
 if (@is_dir($old)) {
 rename($old, $tmp);
 if (@is_dir($new))  {
-TFiler::DeleteFiles($temp . DIRECTORY_SEPARATOR  , true, true);
+TFiler::DeleteFiles($tmp . DIRECTORY_SEPARATOR  , true, true);
 } else {
 rename($tmp, $new);
 }

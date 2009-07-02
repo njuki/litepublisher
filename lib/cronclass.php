@@ -194,20 +194,20 @@ class TCron extends TEventClass {
  
  public function Ping() {
   global $Options, $domain;
-  $this->AddToChain($_SERVER['HTTP_HOST'], $Options->subdir . $this->url);
+  $this->AddToChain($domain, $Options->subdir . $this->url);
   $this->PingHost($domain, $Options->subdir . $this->url);
  }
  
  private function PingHost($host, $path) {
-  $this->AppendLog("pinged host $host$path");
+  //$this->AppendLog("pinged host $host$path");
   if (		$socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
    fputs( $socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
   }
  }
  
  private function PopChain() {
-  global $paths;
-  $host = $_SERVER['HTTP_HOST'];
+  global $paths, $domain;
+  $host = $domain;
   $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronchain.php';
   if(!TFiler::UnserializeFromFile($filename, $list))  return;
   if (isset($list[$host]))  unset($list[$host]);
