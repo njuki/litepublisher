@@ -269,7 +269,7 @@ class TAdminModerator extends TAdminPage {
   $comment = &$CommentManager->GetComment($id);
   if (isset($_POST['submit'])) {
    $comment->content = $_POST['content'];
-   $comment->Save();
+   //$comment->Save();
   }
   $content = $this->ContentToForm($comment->content);
   $result = '';
