@@ -65,10 +65,10 @@ class TSubscribe extends TItems {
   eval('$result = "' . $html->title . '\n";');
   $result .= $this->formresult;
   
-  $Users = &TCommentUsers::Instance();
-  if ($this->user = $Users->GetItemFromCookie($_GET['userid'])) {
+  $users = &TCommentUsers::Instance();
+  if ($this->user = $users->GetItemFromCookie($_GET['userid'])) {
    if (count($this->user['subscribe']) == 0) {
-    eval('$result .=  "' . $html->nosubscribtions . '\m";');
+    eval('$result .=  "' . $html->nosubscribtions . '\n";');
    } else {
     $email = $this->user['email'];
     eval('$result .="'. $html->formhead . '\n";');
@@ -81,10 +81,9 @@ class TSubscribe extends TItems {
     eval('$result .= "'. $html->formfooter . '\n";');
    }
   } else {
-   eval('$result .= "'. $html->notfound . '\m";');
+   eval('$result .= "'. $html->notfound . '\n";');
   }
-  $result = str_replace("'", '"', $result);
-  return $result;
+  return str_replace('checkAll(document.getElementById("form"));', "checkAll(document.getElementById('form'));",    str_replace("'", '"', $result));
  }
  
  public function ProcessForm() {
