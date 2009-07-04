@@ -462,6 +462,13 @@ class TTemplate extends TEventClass {
    return file_get_contents($filename);
   }
 
+$result = $this->GetMenuItems();
+  file_put_contents($filename, $result);
+  @chmod($filename, 0666);
+  return $result;
+ }
+
+private function GetMenuItems() {
 $jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
   $Menu = &TMenu::Instance();
    $links = $Menu->GetMenuList();
@@ -481,30 +488,23 @@ $link = $save . $sublinks;
 eval('$result .= "'. $item . '\n";');
 }
 $result = str_replace("'", '"', $result);
-
-if ($jsmenu) {
-   $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
-$id = $this->theme['menu']['id'];
-$tag = $this->theme['menu']['tag'];
-eval('$java = "'. str_replace('"', '\"', $java) . '\n";');
-$result = $java . $result;
-  }
-
-  file_put_contents($filename, $result);
-  @chmod($filename, 0666);
-  return $result;
- }
+return $result;
+}
  
  public function Getsubmenuwidget() {
   if (!method_exists($this->DataObject, 'Getsubmenu'))  return '';
   
   $links = &$this->DataObject->Getsubmenu();
   if (count($links) == 0) return '';
-  $liclass = isset($this->theme['class']['menu']) ? $this->theme['class']['menu'] : '';
-  $liclass = empty($liclass) ? '' : "class=\"$liclass\"";
-  
+$item = $this->theme['menu']['item'];
+$content = '';
+foreach ($links as $link) {
+eval('$content .= "'. $item . '\n";');
+}
+$content = str_replace("'", '"', $content);
+
   $result = $this->GetBeforeWidget ('submenu');
-  $result .= "\n<li $liclass>" . implode("</li>\n<li $liclass>", $links) . '</li>';
+$result .= $content;
   $result .= $this->GetAfterWidget();
   return $result;
  }
@@ -529,7 +529,17 @@ $result = $java . $result;
  }
  
  public function Gethead() {
-  return $this->Onhead();
+$result = '';
+if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
+global $paths;
+   $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
+$id = $this->theme['menu']['id'];
+$tag = $this->theme['menu']['tag'];
+eval('$java = "'. str_replace('"', '\"', $java) . '\n";');
+$result .= $java;
+}
+  $result .= $this->Onhead();
+return $result;
  }
  
  public function Getcontent() {

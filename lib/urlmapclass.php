@@ -10,6 +10,7 @@ class TUrlmap extends TItems {
  public $tree;
  public $is404;
  public $IsAdminPanel;
+public $Ispda;
  private $argfinal;
  
  public static function &Instance() {
@@ -24,6 +25,7 @@ class TUrlmap extends TItems {
   $this->AddDataMap('tree', array());
   $this->is404 = false;
   $this->IsAdminPanel = false;
+$this->Ispda= false;
  }
  
  public function Request($host, $url) {
@@ -35,6 +37,9 @@ class TUrlmap extends TItems {
   } else {
    $this->url = $_GET['url'];
   }
+  if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/admin')) {
+   $this->url = substr($this->url, strlen('/pda/'));
+}
   $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
   $this->BeforeRequest($this->url);
   try {
