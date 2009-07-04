@@ -128,29 +128,24 @@ class TMenu extends TItems {
   $Result = array();
   foreach ($this->home as $id => $order) {
    $title =  $this->items[$id]['title'];
-   $Result[] = '<a href="'. $Options->url . $this->items[$id]['url'] . "\" title=\"$title\">$title</a>";
+   $Result[] = "<a href='". $Options->url . $this->items[$id]['url'] . "' title='$title'>$title</a>";
   }
   return $Result;
  }
  
- public function GetMenuList($idmenu, $liclass) {
+ public function GetMenuList() {
   global $Options;
-  $result = '';
+  $result = array();
   foreach ($this->home as $id => $order) {
    $title =  $this->items[$id]['title'];
-   $Result .= "<li $liclass><a href=\"" . $Options->url . $this->items[$id]['url'] .
-   "\" title=\"$title\">$title</a>";
-   
-   if ($this->GetChildsCount($id) > 0) {
-    $Result .= "\n  <ul $idmenu>\n";
+$link =  "<a href='". $Options->url . $this->items[$id]['url'] . "' title='$title'>$title</a>";
+   $Result[$link] =array();
+      if ($this->GetChildsCount($id) > 0) {
     foreach ($this->items[$id]['childs'] as $idchild) {
      $title =  $this->items[$idchild]['title'];
-     $Result .= "     <li $liclass><a href=\"" . $Options->url . $this->items[$idchild]['url'] .
-     "\" title=\"$title\">$title</a></li>\n";
+     $Result[$link][] = "<a href='" . $Options->url . $this->items[$idchild]['url'] . "' title='$title'>$title</a>";
     }
-    $Result .= "  </ul>\n";
    }
-   $Result .= "</li>\n";
   }
   return $Result;
  }
