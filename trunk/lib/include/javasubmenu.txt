@@ -1,6 +1,6 @@
 <script type="text/javascript">
   jsHover = function() {
-    var hEls = document.getElementById("idmenu").getElementsByTagName("LI");
+    var hEls = document.getElementById("$id").getElementsByTagName("$tag");
     for (var i=0, len=hEls.length; i<len; i++) {
       hEls[i].onmouseover=function() { this.className+=" jshover"; }
       hEls[i].onmouseout=function() { this.className=this.className.replace(" jshover", ""); }

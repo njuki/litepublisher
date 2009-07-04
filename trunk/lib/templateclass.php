@@ -71,7 +71,8 @@ class TTemplate extends TEventClass {
   if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
   $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
   $this->url = $Options->url . '/themes/'. $this->themename;
-  if (count($this->theme) == 0) {
+
+ if (count($this->theme) == 0) {
    $this->theme = parse_ini_file($this->path . 'theme.ini', true);
    $this->Save();
   }
@@ -455,26 +456,40 @@ class TTemplate extends TEventClass {
  }
  
  public function Getmenu() {
-  global $paths;
+   global $paths;
   $filename = $paths['cache'] . 'menu.php';
   if (@file_exists($filename)) {
    return file_get_contents($filename);
   }
-  
+
+$jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
   $Menu = &TMenu::Instance();
-  $liclass = isset($this->theme['class']['menu']) ? $this->theme['class']['menu'] : '';
-  $liclass = empty($liclass) ? '' : "class=\"$liclass\"";
-  $idmenu = isset($this->theme['class']['idmenu']) ? $this->theme['class']['idmenu'] : '';
-  if (empty($idmenu) || $this->submenuinwidget) {
-   $links = $Menu->GetHomeLinks();
+   $links = $Menu->GetMenuList();
    if (count($links) == 0) return '';
-   $result = "\n<li $liclass>" . implode("</li>\n<li $liclass>", $links) . '</li>';
-  } else {
-   $result .= file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
-   $result = str_replace('idmenu', $idmenu, $result);
-   $idmenu = "id=\"$idmenu\"";
-   $result .= $Menu->GetMenuList($idmenu, $liclass);
+$item = $this->theme['menu']['item'];
+$result = '';
+foreach ($links as $link => $items) {
+if ($jsmenu &&(count($items) > 0)) {
+$save = $link;
+$sublinks = '';
+foreach ($items as $link) {
+eval('$sublinks .= "'. $item . '\n";');
+}
+eval('$sublinks = "'. $this->theme['menu']['subitems'] . '\n";');
+$link = $save . $sublinks;
+}
+eval('$result .= "'. $item . '\n";');
+}
+$result = str_replace("'", '"', $result);
+
+if ($jsmenu) {
+   $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
+$id = $this->theme['menu']['id'];
+$tag = $this->theme['menu']['tag'];
+eval('$java = "'. str_replace('"', '\"', $java) . '\n";');
+$result = $java . $result;
   }
+
   file_put_contents($filename, $result);
   @chmod($filename, 0666);
   return $result;
