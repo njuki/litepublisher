@@ -239,13 +239,13 @@ class TUrlmap extends TItems {
  
  private function DeleteItem(&$items, $url) {
   if (isset($items[$url])) {
-   global $paths;
-   @unlink("$paths[cache]$items[$url][id]-1.php");
+   $this->unlink($items[$url]['id'] . '-1.php');
    unset($items[$url]);
    return true;
   }
   return false;
  }
+ 
  public function Delete($url) {
   if ($this->DeleteItem($this->items, $url) || $this->DeleteItem($this->get, $url) || $this->DeleteItem($this->tree, $url)) {
    $this->Save();
@@ -269,7 +269,7 @@ class TUrlmap extends TItems {
  private function RemoveItems(&$items, $class) {
   foreach ($items as $url => $item) {
    if ($item['class'] == $class) {
-    @unlink("$paths[cache]$item[id]-1.php");
+    $this->unlink($item['id']. '-1.php');
     unset($items[$url]);
    }
   }
@@ -313,77 +313,87 @@ class TUrlmap extends TItems {
  
  public function ClearCache() {
   global $paths;
-  TFiler::DeleteFiles($paths['cache'], true, false);
+  if ($this->Ispda) {
+   TFiler::DeleteFiles(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR, true, false);
+  } else {
+   TFiler::DeleteFiles($paths['cache'], true, false);
+  }
   $this->CacheExpired();
  }
  
- public function SetExpired($url) {
+ private function unlink($filename) {
   global $paths;
+  @unlink($paths['cache'] . $filename);
+  if ($this->Ispda) {
+   @unlink(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR . $filename);
+  } else {
+   @unlink($paths['cache'] . 'pda'. DIRECTORY_SEPARATOR . $filename);
+  }
+ }
+ 
+ public function SetExpired($url) {
   if (isset($this->items[$url])) {
- @unlink("{$paths['cache']}{$this->items[$url]['id']}-1.php");
+  $this->unlink("{$this->items[$url]['id']}-1.php");
   }
  }
  
  public function SubNodeExpired($node, $subnode) {
-  global $paths;
   if (isset($this->tree[$node]['items'][$subnode])) {
- @unlink("{$paths['cache']}{$this->tree[$node]['items'][$subnode]['id']}-$this->pagenumber.php");
-  } elseif (isset($this->tree[$node]['final'])) {
-   $CacheFileName = $paths['cache'] . $this->tree[$node]['id']. "-$subnode.php";
-   @unlink($CacheFileName );
-  }
+ $this->unlink("}{$this->tree[$node]['items'][$subnode]['id']}-$this->pagenumber.php");
+ } elseif (isset($this->tree[$node]['final'])) {
+  $this->unlink($this->tree[$node]['id']. "-$subnode.php");
  }
- 
- public function Replace($old, $new) {
-  global $paths;
-  if ($old == $new) return;
-  $this->Lock();
-  $Redir = &TRedirector::Instance();
-  $Redir->Add($old, $new);
-  $this->items[$new] = $this->items[$old];
-  @unlink($paths['cache'] .$this->items[$old]['id'] . '.php');
-  unset($this->items[$old]);
-  $this->Add($old, get_class($Redir), null);
-  $this->Unlock();
+}
+
+public function Replace($old, $new) {
+ if ($old == $new) return;
+ $this->Lock();
+ $Redir = &TRedirector::Instance();
+ $Redir->Add($old, $new);
+ $this->items[$new] = $this->items[$old];
+ $this->unlink($this->items[$old]['id'] . '.php');
+ unset($this->items[$old]);
+ $this->Add($old, get_class($Redir), null);
+ $this->Unlock();
+}
+
+public function AddRedir($from, $to) {
+ if ($from == $to) return;
+ $this->Lock();
+ $Redir = &TRedirector::Instance();
+ $Redir->Add($from, $to);
+ $this->Add($from, get_class($Redir), null);
+ $this->Unlock();
+}
+
+public static function unsub(&$obj) {
+ $self = self::Instance();
+ $self->Lock();
+ $self->UnsubscribeClassName(get_class($obj));
+ $self->DeleteClass(get_class($obj));
+ $self->Unlock();
+}
+
+protected function CheckSingleCron() {
+ if (defined('cronpinged')) return;
+ global $paths;
+ $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+ $time = @filemtime($cronfile);
+ if (($time === false) || ($time + 3600 < time())) {
+  register_shutdown_function('TCron::SelfPing');
  }
- 
- public function AddRedir($from, $to) {
-  if ($from == $to) return;
-  $this->Lock();
-  $Redir = &TRedirector::Instance();
-  $Redir->Add($from, $to);
-  $this->Add($from, get_class($Redir), null);
-  $this->Unlock();
- }
- 
- public static function unsub(&$obj) {
-  $self = self::Instance();
-  $self->Lock();
-  $self->UnsubscribeClassName(get_class($obj));
-  $self->DeleteClass(get_class($obj));
-  $self->Unlock();
- }
- 
- protected function CheckSingleCron() {
-  if (defined('cronpinged')) return;
-  global $paths;
-  $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-  $time = @filemtime($cronfile);
-  if (($time === false) || ($time + 3600 < time())) {
-   register_shutdown_function('TCron::SelfPing');
-  }
- }
- 
- public function Redir301($to) {
-  global $Options;
-  $protocol = $_SERVER["SERVER_PROTOCOL"];
-  if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
-  $protocol = 'HTTP/1.0';
-  @header( "$protocol 301 Moved Permanently", true, 301);
-  @header("Location: $Options->url$to");
-  exit();
- }
- 
+}
+
+public function Redir301($to) {
+ global $Options;
+ $protocol = $_SERVER["SERVER_PROTOCOL"];
+ if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
+ $protocol = 'HTTP/1.0';
+ @header( "$protocol 301 Moved Permanently", true, 301);
+ @header("Location: $Options->url$to");
+ exit();
+}
+
 }
 
 ?>

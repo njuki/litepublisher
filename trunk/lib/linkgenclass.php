@@ -67,6 +67,8 @@ class TLinkGenerator extends TEventClass {
   $url = preg_replace('/\s+/', '-', $url);
   $url = preg_replace('|-+|', '-', $url);
   $url = trim($url, '-');
+  $url = trim($url, '. ');
+  $url = str_replace('..', '-', $url);
   return $url;
  }
  

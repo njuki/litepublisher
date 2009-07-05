@@ -35,18 +35,18 @@ class TContentFilter extends TEventClass {
   ) {
    $parts = explode($matches[0], $s, 2);
    $post->excerpt = $this->GetPostContent($parts[0]);
-   $post->OutputContent = $post->excerpt . $this->GetPostContent($parts[1]);
+   $post->OutputContent = $post->excerpt . $this->ExtractPages($post,$parts[1]);
    $post->rss =  str_replace(']]>', ']]]]><![CDATA[>',$post->excerpt);
    $post->moretitle =  self::NormalizeMoreTitle($matches[1]);
    if ($post->moretitle == '')  $post->moretitle = TLocal::$data['default']['more'];
   } else {
    if ($this->automore) {
-    $post->OutputContent = $this->GetPostContent($s);
+    $post->OutputContent = $this->ExtractPages($post, $s);
     $post->excerpt = self::GetExcerpt($s, $this->automorelength);
     $post->rss =  str_replace(']]>', ']]]]><![CDATA[>',$post->excerpt);
     $post->moretitle = TLocal::$data['default']['more'];
    } else {
-    $post->excerpt = $this->GetPostContent($s);
+    $post->excerpt = $this->ExtractPages($post, $s);
     $post->OutputContent = $post->excerpt;
     $post->rss =  str_replace(']]>', ']]]]><![CDATA[>',$post->excerpt);
     $post->moretitle =  '';
@@ -54,6 +54,20 @@ class TContentFilter extends TEventClass {
   }
   $post->description = self::GetExcerpt($post->excerpt, 80);
   $this->DoFilterEvents($post);
+ }
+ 
+ public function ExtractPages(&$post, $s) {
+  $tag = '<!--nextpage-->';
+  $post->Data['pages'] = array();
+  if (!strpos( $s, $tag) )  return $this->GetPostContent($s);
+  
+  while($i = strpos( $s, $tag) ) {
+   $page = trim(substr($s, 0, $i));
+   $post->Data['pages'][] = $this->GetPostContent($page);
+   $s = trim(substr($s, $i + strlen($tag)));
+  }
+  if ($s != '') $post->Data['pages'][] = $this->GetPostContent($s);
+  return $post->Data['pages'][0];
  }
  
  private function DoFilterEvents(&$post) {

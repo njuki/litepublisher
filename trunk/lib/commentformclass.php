@@ -180,7 +180,7 @@ class TCommentForm extends TItems {
   
   return "<?php
   @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
-  @header('Location: http://$Options->url$posturl');
+  @header('Location: $Options->url$posturl');
   ?>";
  }
  

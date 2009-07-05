@@ -14,10 +14,14 @@ class TTemplatePost extends TEventClass {
  }
  
  public function GetPostscript($tagname) {
-  global $Options, $post;
+  global $Options, $Urlmap, $post;
   $lang = &TLocal::Instance();
   $this->ps = '';
   if (is_a($post, 'TPost')) {
+   //pages
+   if ($post->HasPages()) {
+    $this->ps .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, count($post->Data['pages']));
+   }
    if (($post->comments->count > 0) && $post->commentsenabled) {
     $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
    }
