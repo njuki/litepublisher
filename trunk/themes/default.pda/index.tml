@@ -21,7 +21,7 @@ $Template->content
 <h3>$Options->description</h3>
 <p>
 <a href="$Options->url$Options->home" title="$lang->home">&bull;$lang->home</a>
-$Template->pdamenu
+$Template->menu
 </p>
 </body>
 </html>
