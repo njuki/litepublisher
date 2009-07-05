@@ -2,7 +2,7 @@
 
 class TTemplate extends TEventClass {
  private static $fInstance;
- public $theme;
+ //public $theme;
  public $path;
  public $url;
  public $DataObject;
@@ -40,9 +40,9 @@ class TTemplate extends TEventClass {
   $this->AddDataMap('sitebars', array(0 => array(), 1 => array(), 2 => array()));
   $this->AddDataMap('widgets', array());
   $this->AddDataMap('tags', array());
-  $this->AddDataMap('theme', array());
-  
-  $this->fFiles = array();
+  //$this->AddDataMap('theme', array());
+$this->Data['theme'] = array();
+    $this->fFiles = array();
  }
  
  public function __get($name) {
@@ -77,6 +77,11 @@ class TTemplate extends TEventClass {
    $this->Save();
   }
  }
+
+public function Gettheme() {
+global $Urlmap;
+return $Urlmap->Ispda ? $this->Data['pdatheme'] : $this->Data['theme'];
+}
  
  public function ThemeExists($name) {
   global $paths;

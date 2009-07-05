@@ -11,6 +11,7 @@ function TRobotstxtInstall(&$self) {
  $self->AddDisallow('/rss/');
  $self->AddDisallow('/comments/');
  $self->AddDisallow('/admin/');
+ $self->AddDisallow('/pda/');
  $self->Unlock();
 }
 

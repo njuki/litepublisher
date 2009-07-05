@@ -125,7 +125,8 @@ $this->Ispda= false;
   global $Options, $paths;
   $this->urlid = $item['id'];
   if ($Options->CacheEnabled) {
- $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+$pda = $this->Ispda ? 'pda-' : '';
+ $CacheFileName = "{$paths['cache']}{$pda}{$item['id']}-$this->pagenumber.php";
    //@file_exists($CacheFileName)
    if (($time = @filemtime ($CacheFileName)) && (($time  + $Options->CacheExpired) >= time() )) {
     include($CacheFileName);
@@ -158,7 +159,8 @@ $this->Ispda= false;
   
   eval('?>'. $s);
   if ($Options->CacheEnabled && $Obj->CacheEnabled) {
- $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+$pda = $this->Ispda ? 'pda-' : '';
+ $CacheFileName = "{$paths['cache']}{$pda}{$item['id']}-$this->pagenumber.php";
    file_put_contents($CacheFileName, $s);
    @chmod($CacheFileName, 0666);
   }
