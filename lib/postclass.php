@@ -31,7 +31,8 @@ class TPost extends TItem {
   'commentsenabled' => $Options->commentsenabled,
   'pingenabled' => $Options->pingenabled,
   'password' => '',
-  'theme' => ''
+  'theme' => '',
+  'pages' => array()
   );
  }
  
@@ -113,7 +114,17 @@ class TPost extends TItem {
  public function Getcontent() {
   $Template = &TTemplatePost::Instance();
   $result = $Template->BeforePostContent($this->id);
-  $result .= $this->Data['content'];
+  $Urlmap = &TUrlmap::Instance();
+  if (($Urlmap->pagenumber != 1) && $this->HasPages()) {
+   if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {
+    $result .= $this->Data['pages'][$Urlmap->pagenumber - 1];
+   } else {
+    $lang = &TLocal::Instance();
+    $result .= $lang->notfound;
+   }
+  } else {
+   $result .= $this->Data['content'];
+  }
   $result .= $Template->AfterPostContent($this->id);
   return $result;
  }
@@ -138,6 +149,11 @@ class TPost extends TItem {
   foreach ($data as $key => $value) {
    if (key_exists($key, $this->Data)) $this->Data[$key] = $value;
   }
+ }
+ 
+ 
+ public function HasPages() {
+  return isset($this->Data['pages']) && (count($this->Data['pages']) > 0);
  }
  
 }//class
