@@ -191,6 +191,7 @@ class TInstaller extends TDataClass {
   global $paths;
   $this->checkFolder($paths['data']);
   $this->CheckFolder($paths['cache']);
+  $this->CheckFolder($paths['cache'] . 'pda' . DIRECTORY_SEPARATOR);
   $this->CheckFolder($paths['files']);
   $this->CheckFolder($paths['languages']);
   $this->CheckFolder($paths['plugins']);

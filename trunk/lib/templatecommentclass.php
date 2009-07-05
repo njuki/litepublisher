@@ -4,8 +4,9 @@ class TTemplateComment extends TEventClass {
  public $commentsini;
  
  protected function CreateData() {
+  global $Urlmap;
   parent::CreateData();
-  $this->basename = 'templatecomment';
+  $this->basename = 'templatecomment' . ($Urlmap->Ispda ? '.pda'  : '');
   $this->AddDataMap('commentsini', array());
  }
  

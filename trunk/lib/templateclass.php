@@ -2,7 +2,7 @@
 
 class TTemplate extends TEventClass {
  private static $fInstance;
- //public $theme;
+ public $theme;
  public $path;
  public $url;
  public $DataObject;
@@ -29,8 +29,9 @@ class TTemplate extends TEventClass {
  }
  
  protected function CreateData() {
+  global $Urlmap;
   parent::CreateData();
-  $this->basename = 'template';
+  $this->basename = 'template' . ($Urlmap->Ispda ? '.pda' : '');
   $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'ThemeChanged');
   $this->Data['themename'] = 'default';
   $this->Data['sitebarcount'] = 2;
@@ -40,9 +41,8 @@ class TTemplate extends TEventClass {
   $this->AddDataMap('sitebars', array(0 => array(), 1 => array(), 2 => array()));
   $this->AddDataMap('widgets', array());
   $this->AddDataMap('tags', array());
-  //$this->AddDataMap('theme', array());
-$this->Data['theme'] = array();
-    $this->fFiles = array();
+  $this->AddDataMap('theme', array());
+  $this->fFiles = array();
  }
  
  public function __get($name) {
@@ -71,17 +71,12 @@ $this->Data['theme'] = array();
   if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
   $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
   $this->url = $Options->url . '/themes/'. $this->themename;
-
- if (count($this->theme) == 0) {
+  
+  if (count($this->theme) == 0) {
    $this->theme = parse_ini_file($this->path . 'theme.ini', true);
    $this->Save();
   }
  }
-
-public function Gettheme() {
-global $Urlmap;
-return $Urlmap->Ispda ? $this->Data['pdatheme'] : $this->Data['theme'];
-}
  
  public function ThemeExists($name) {
   global $paths;
@@ -461,55 +456,55 @@ return $Urlmap->Ispda ? $this->Data['pdatheme'] : $this->Data['theme'];
  }
  
  public function Getmenu() {
-   global $paths;
+  global $paths;
   $filename = $paths['cache'] . 'menu.php';
   if (@file_exists($filename)) {
    return file_get_contents($filename);
   }
-
-$result = $this->GetMenuItems();
+  
+  $result = $this->GetMenuItems();
   file_put_contents($filename, $result);
   @chmod($filename, 0666);
   return $result;
  }
-
-private function GetMenuItems() {
-$jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
+ 
+ private function GetMenuItems() {
+  $jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
   $Menu = &TMenu::Instance();
-   $links = $Menu->GetMenuList();
-   if (count($links) == 0) return '';
-$item = $this->theme['menu']['item'];
-$result = '';
-foreach ($links as $link => $items) {
-if ($jsmenu &&(count($items) > 0)) {
-$save = $link;
-$sublinks = '';
-foreach ($items as $link) {
-eval('$sublinks .= "'. $item . '\n";');
-}
-eval('$sublinks = "'. $this->theme['menu']['subitems'] . '\n";');
-$link = $save . $sublinks;
-}
-eval('$result .= "'. $item . '\n";');
-}
-$result = str_replace("'", '"', $result);
-return $result;
-}
+  $links = $Menu->GetMenuList();
+  if (count($links) == 0) return '';
+  $item = $this->theme['menu']['item'];
+  $result = '';
+  foreach ($links as $link => $items) {
+   if ($jsmenu &&(count($items) > 0)) {
+    $save = $link;
+    $sublinks = '';
+    foreach ($items as $link) {
+     eval('$sublinks .= "'. $item . '\n";');
+    }
+    eval('$sublinks = "'. $this->theme['menu']['subitems'] . '\n";');
+    $link = $save . $sublinks;
+   }
+   eval('$result .= "'. $item . '\n";');
+  }
+  $result = str_replace("'", '"', $result);
+  return $result;
+ }
  
  public function Getsubmenuwidget() {
   if (!method_exists($this->DataObject, 'Getsubmenu'))  return '';
   
   $links = &$this->DataObject->Getsubmenu();
   if (count($links) == 0) return '';
-$item = $this->theme['menu']['item'];
-$content = '';
-foreach ($links as $link) {
-eval('$content .= "'. $item . '\n";');
-}
-$content = str_replace("'", '"', $content);
-
+  $item = $this->theme['menu']['item'];
+  $content = '';
+  foreach ($links as $link) {
+   eval('$content .= "'. $item . '\n";');
+  }
+  $content = str_replace("'", '"', $content);
+  
   $result = $this->GetBeforeWidget ('submenu');
-$result .= $content;
+  $result .= $content;
   $result .= $this->GetAfterWidget();
   return $result;
  }
@@ -534,17 +529,17 @@ $result .= $content;
  }
  
  public function Gethead() {
-$result = '';
-if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
-global $paths;
+  $result = '';
+  if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
+   global $paths;
    $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
-$id = $this->theme['menu']['id'];
-$tag = $this->theme['menu']['tag'];
-eval('$java = "'. str_replace('"', '\"', $java) . '\n";');
-$result .= $java;
-}
+   $id = $this->theme['menu']['id'];
+   $tag = $this->theme['menu']['tag'];
+   eval('$java = "'. str_replace('"', '\"', $java) . '\n";');
+   $result .= $java;
+  }
   $result .= $this->Onhead();
-return $result;
+  return $result;
  }
  
  public function Getcontent() {
