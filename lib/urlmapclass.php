@@ -10,7 +10,7 @@ class TUrlmap extends TItems {
  public $tree;
  public $is404;
  public $IsAdminPanel;
-public $Ispda;
+ public $Ispda;
  private $argfinal;
  
  public static function &Instance() {
@@ -25,7 +25,7 @@ public $Ispda;
   $this->AddDataMap('tree', array());
   $this->is404 = false;
   $this->IsAdminPanel = false;
-$this->Ispda= false;
+  $this->Ispda= false;
  }
  
  public function Request($host, $url) {
@@ -37,9 +37,15 @@ $this->Ispda= false;
   } else {
    $this->url = $_GET['url'];
   }
-  if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/admin')) {
-   $this->url = substr($this->url, strlen('/pda/'));
-}
+  if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
+   if ($this->url == '/pda') {
+    $this->url = '/';
+   } else {
+    $this->url = substr($this->url, strlen('/pda'));
+   }
+   global $paths;
+   $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
+  }
   $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
   $this->BeforeRequest($this->url);
   try {
@@ -125,8 +131,7 @@ $this->Ispda= false;
   global $Options, $paths;
   $this->urlid = $item['id'];
   if ($Options->CacheEnabled) {
-$pda = $this->Ispda ? 'pda-' : '';
- $CacheFileName = "{$paths['cache']}{$pda}{$item['id']}-$this->pagenumber.php";
+ $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
    //@file_exists($CacheFileName)
    if (($time = @filemtime ($CacheFileName)) && (($time  + $Options->CacheExpired) >= time() )) {
     include($CacheFileName);
@@ -159,8 +164,7 @@ $pda = $this->Ispda ? 'pda-' : '';
   
   eval('?>'. $s);
   if ($Options->CacheEnabled && $Obj->CacheEnabled) {
-$pda = $this->Ispda ? 'pda-' : '';
- $CacheFileName = "{$paths['cache']}{$pda}{$item['id']}-$this->pagenumber.php";
+ $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
    file_put_contents($CacheFileName, $s);
    @chmod($CacheFileName, 0666);
   }

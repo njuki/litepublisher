@@ -43,11 +43,12 @@ class TOptions extends TEventClass {
    $this->Changed($name, $value);
   }
  }
-
-public function Geturl() {
-$Urlmap = &TUrlmap::Instance();
-return $Urlmap->Ispda ? $this->Data['url'] . '/pda' : $this->Data['url'];
-}
+ 
+ public function Geturl() {
+  global $Urlmap;
+  
+  return $this->Data['url'] . ($Urlmap->Ispda ? '/pda' : '');
+ }
  
  public function CheckLogin($login, $password) {
   return $this->password == md5("$login:$this->realm:$password");

@@ -52,12 +52,12 @@ class TComments extends TItems {
  }
  
  public function SetContent($id, $value) {
-if (isset($this->items[$id])) {
-  $ContentFilter = &TContentFilter::Instance();
-$this->items[$id]['content'] = $ContentFilter ->GetCommentContent($value);
-$this->items[$id]['rawcontent'] =  $value;
-$this->Save();
-}
+  if (isset($this->items[$id])) {
+   $ContentFilter = &TContentFilter::Instance();
+   $this->items[$id]['content'] = $ContentFilter ->GetCommentContent($value);
+   $this->items[$id]['rawcontent'] =  $value;
+   $this->Save();
+  }
  }
  
  public function &GetApproved($type = '') {
@@ -144,11 +144,11 @@ class TComment {
  }
  
  public function __set($name, $value) {
-if ($name == 'content') {
-$this->Owner->SetContent($this->id, $value);
- } else {
-$this->Owner->SetValue($this->id, $name, $value);
-}
+  if ($name == 'content') {
+   $this->Owner->SetContent($this->id, $value);
+  } else {
+   $this->Owner->SetValue($this->id, $name, $value);
+  }
  }
  
  public function Save() {

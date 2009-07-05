@@ -138,9 +138,9 @@ class TMenu extends TItems {
   $result = array();
   foreach ($this->home as $id => $order) {
    $title =  $this->items[$id]['title'];
-$link =  "<a href='". $Options->url . $this->items[$id]['url'] . "' title='$title'>$title</a>";
+   $link =  "<a href='". $Options->url . $this->items[$id]['url'] . "' title='$title'>$title</a>";
    $Result[$link] =array();
-      if ($this->GetChildsCount($id) > 0) {
+   if ($this->GetChildsCount($id) > 0) {
     foreach ($this->items[$id]['childs'] as $idchild) {
      $title =  $this->items[$idchild]['title'];
      $Result[$link][] = "<a href='" . $Options->url . $this->items[$idchild]['url'] . "' title='$title'>$title</a>";
