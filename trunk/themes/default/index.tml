@@ -30,6 +30,7 @@ $Template->head
 	<div id="navi">
 		<ul id="nav">
 		  <li class="page_item"><a href="$Options->url$Options->home" title="$lang->home">$lang->home</a></li>
+		  <li class="page_item"><a href="$Options->url/pda$Options->home" title="$lang->mobile">$lang->mobile</a></li>
 $Template->menu
 		</ul>
 	</div>
