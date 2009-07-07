@@ -146,11 +146,11 @@ class TPosts extends TItems {
   $Cron->Add('single', get_class($this), 'DoSingleCron', $post->id);
  }
  
- protected function UpdateArchives() {
+ public function UpdateArchives() {
   $this->archives = array();
-  foreach ($this->items as $id => $Item) {
-   if ((!isset($item['status']) || ($Item['status'] == 'published')) &&(time() >= $Item['date'])) {
-    $this->archives[$id] = $Item['date'];
+  foreach ($this->items as $id => $item) {
+   if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['date'])) {
+    $this->archives[$id] = $item['date'];
    }
   }
   arsort($this->archives,  SORT_NUMERIC);

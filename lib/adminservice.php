@@ -132,12 +132,12 @@ class TAdminService extends TAdminPage {
    extract($_POST);
    switch ($dest) {
     case 'upload':
-/*
+    /*
     if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
      eval('$s = "'. $html->attack. '\n";');
      return sprintf($s, $_FILES["filename"]["name"]);
     }
-*/
+    */
     
     $admin->Upload(file_get_contents($_FILES["filename"]["tmp_name"]));
     $Urlmap->ClearCache();
