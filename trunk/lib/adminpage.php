@@ -58,11 +58,30 @@ class TAdminPage extends TEventClass {
   return $result;
  }
  
- public function Request($arg) {
-  global $Options, $paths;
+public function Auth() {
+  global $Options, $Urlmap, $paths;
   $auth = &TAuthDigest::Instance();
+if (!($auth->cookieenabled && $Urlmap->Ispda)) {
   if (!$auth->Auth())  return $auth->Headers();
-  //$Options->cookie = empty($_COOKIE['userid']) ? '' :$_COOKIE['userid'];
+} else {
+if ($auth->xxxcheck) {
+if (empty($_SERVER['HTTP_REFERER'])) {
+$p = '';
+} else {
+	$p = parse_url($_SERVER['HTTP_REFERER']);
+	$p = $p['host'];
+}
+		if ( $p != $_SERVER['HTTP_HOST'] ) {
+		if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
+		if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
+	}
+}
+if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin'])) return "<?php @header('Location: $Options->url/admin/login/'); ?>";
+}
+}
+
+ public function Request($arg) {
+if ($s = $this->Auth()) return $s;
   $this->arg = $arg;
   TLocal::LoadLangFile('admin');
   $this->title = TLocal::$data[$this->basename]['title'];

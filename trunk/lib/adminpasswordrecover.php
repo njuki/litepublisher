@@ -10,25 +10,14 @@ class TPasswordRecover extends TAdminPage {
   parent::CreateData();
   $this->basename = 'passwordrecover';
  }
- 
- public function Request($param) {
-  TLocal::LoadLangFile('admin');
-  $this->title = TLocal::$data['passwordrecover']['title'];
-  if (isset($_POST) && (count($_POST) > 0)) {
-   if (get_magic_quotes_gpc()) {
-    foreach ($_POST as $name => $value) {
-     $_POST[$name] = stripslashes($_POST[$name]);
-    }
-   }
-   $this->formresult= $this->ProcessForm();
-  }
-  
- }
+
+public function Auth() {
+}
  
  public function Getcontent() {
   global $Options;
   $html = &THtmlResource::Instance();
-  $html->section = 'passwordrecover';
+  $html->section = $this->basename;
   $lang = &TLocal::Instance();
   eval('$result = "'.  $html->form . '\n";');
   $result = str_replace("'", '"', $result);
@@ -38,7 +27,7 @@ class TPasswordRecover extends TAdminPage {
  public function ProcessForm() {
   global $Options;
   $html = &THtmlResource::Instance();
-  $html->section = 'passwordrecover';
+  $html->section = $this->basename;
   $lang = &TLocal::Instance();
   if (strtolower(trim($_POST['email'])) == strtolower(trim($Options->email))) {
    $password = md5(secret. uniqid( microtime()));
