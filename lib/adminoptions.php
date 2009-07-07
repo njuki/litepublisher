@@ -96,6 +96,14 @@ class TAdminOptions extends TAdminPage {
    $litetags = $tags->lite ? $checked : '';
    $formname = 'liteform';
    break;
+
+case 'secure':
+  $auth = &TAuthDigest::Instance();
+$cookie = $auth->cookieenabled ? $checked : '';
+$xxxcheck = $auth->xxxcheck ? $checked : '';
+$ssl = false;
+$formname = 'secureform';
+break;
    
    case 'robotstxt':
    $robotstxt = &TRobotstxt::Instance();
@@ -251,6 +259,13 @@ class TAdminOptions extends TAdminPage {
    $tags = &TTags::Instance();
    $tags->SetParams(isset($litetags), $tags->sortname, $tags->showcount, $tags->maxcount);
    break;
+
+case 'secure':
+  $auth = &TAuthDigest::Instance();
+$auth->cookieenabled = isset($cookie);
+$auth->xxxcheck = isset($xxxcheck);
+$auth->Save();
+break;
    
    case 'robotstxt':
    $robotstxt = &TRobotstxt::Instance();
