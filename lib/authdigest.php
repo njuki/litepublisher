@@ -12,10 +12,10 @@ class TAuthDigest extends TEventClass {
   $this->basename = 'authdigest';
   $this->Data['nonce'] = '';
   $this->Data['time'] = 0;
-$this->Data['cookie'] = '';
-$this->Data['cookieenabled'] = false;
-$this->Data['cookieexpired'] = 0;
-$this->Data['xxxcheck'] = true;
+  $this->Data['cookie'] = '';
+  $this->Data['cookieenabled'] = false;
+  $this->Data['cookieexpired'] = 0;
+  $this->Data['xxxcheck'] = true;
   $this->stale = false;
  }
  

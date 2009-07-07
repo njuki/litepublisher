@@ -2,6 +2,7 @@
 
 class TAdminPage extends TEventClass {
  public $title;
+ public $menu;
  public $formresult;
  public $arg;
  public $id = 1;//for menu item template
@@ -13,6 +14,7 @@ class TAdminPage extends TEventClass {
  protected function CreateData() {
   parent::CreateData();
   $this->CacheEnabled = false;
+  $this->menu = '';
   $this->formresult = '';
  }
  
@@ -52,36 +54,44 @@ class TAdminPage extends TEventClass {
  public function GetMenu() {
   global $Options;
   $html = &THtmlResource::Instance();
-  $html->section = $this->basename;
+  $html->section = 'index';
   $lang = &TLocal::Instance();
-  eval('$result = "'. $html->menu . '\n";');
-  return $result;
+  eval('$this->menu .=  "'. $html->content . '\n";');
+  
+  $html->section = $this->basename;
+  eval('$this->menu .= "'. $html->menu . '\n";');
+  return $this->menu;
  }
  
-public function Auth() {
+ public function Auth() {
   global $Options, $Urlmap, $paths;
   $auth = &TAuthDigest::Instance();
-if (!($auth->cookieenabled && $Urlmap->Ispda)) {
-  if (!$auth->Auth())  return $auth->Headers();
-} else {
-if ($auth->xxxcheck) {
-if (empty($_SERVER['HTTP_REFERER'])) {
-$p = '';
-} else {
-	$p = parse_url($_SERVER['HTTP_REFERER']);
-	$p = $p['host'];
-}
-		if ( $p != $_SERVER['HTTP_HOST'] ) {
-		if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
-		if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
-	}
-}
-if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin'])) return "<?php @header('Location: $Options->url/admin/login/'); ?>";
-}
-}
-
+  if (!($auth->cookieenabled && $Urlmap->Ispda)) {
+   if (!$auth->Auth())  return $auth->Headers();
+  } else {
+   if ($auth->xxxcheck) {
+    if (empty($_SERVER['HTTP_REFERER'])) {
+     $p = '';
+    } else {
+     $p = parse_url($_SERVER['HTTP_REFERER']);
+     $p = $p['host'];
+    }
+    if ( $p != $_SERVER['HTTP_HOST'] ) {
+     if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
+   if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
+    }
+   }
+   if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin']) || ($auth->cookieexpired < time())) return "<?php @header('Location: $Options->url/admin/login/'); ?>";
+   
+   $html = &THtmlResource::Instance();
+   $html->section = 'login';
+   $lang = &TLocal::Instance();
+   eval('$this->menu .= "'. $html->logout . '\n";');
+  }
+ }
+ 
  public function Request($arg) {
-if ($s = $this->Auth()) return $s;
+  if ($s = $this->Auth()) return $s;
   $this->arg = $arg;
   TLocal::LoadLangFile('admin');
   $this->title = TLocal::$data[$this->basename]['title'];
@@ -91,17 +101,13 @@ if ($s = $this->Auth()) return $s;
      $_POST[$name] = stripslashes($_POST[$name]);
     }
    }
-   $this->formresult= $this->ProcessForm();
+   $this->formresult.= $this->ProcessForm();
   }
  }
  
  public function GetTemplateContent() {
   global $Options, $Template;
-  $html = &THtmlResource::Instance();
-  $html->section = 'index';
-  $lang = &TLocal::Instance();
-  eval('$result = "'. $html->content . '\n";');
-  $result .= $this->GetMenu();
+  $result = $this->GetMenu();
   $result = str_replace("'", '"', $result);
   $GLOBALS['post'] = &$this;
   $result .= $Template->ParseFile('menuitem.tml');

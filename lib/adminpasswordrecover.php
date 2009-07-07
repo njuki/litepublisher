@@ -10,9 +10,13 @@ class TPasswordRecover extends TAdminPage {
   parent::CreateData();
   $this->basename = 'passwordrecover';
  }
-
-public function Auth() {
-}
+ 
+ public function Auth() {
+ }
+ 
+ public function GetMenu() {
+  return '';
+ }
  
  public function Getcontent() {
   global $Options;
