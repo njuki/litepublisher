@@ -285,6 +285,7 @@ class TInstaller extends TDataClass {
   global  $Options;
   $Options->Lock();
   $Urlmap = &TUrlmap::Instance();
+  $GLOBALS['Urlmap'] = &TUrlmap::Instance();
   $Urlmap->Lock();
   $posts = &TPosts::Instance();
   $posts->Lock();

@@ -333,67 +333,67 @@ class TUrlmap extends TItems {
  
  public function SetExpired($url) {
   if (isset($this->items[$url])) {
-  $this->unlink("{$this->items[$url]['id']}-1.php");
+   $this->unlink($this->items[$url]['id'] . '-1.php');
   }
  }
  
  public function SubNodeExpired($node, $subnode) {
   if (isset($this->tree[$node]['items'][$subnode])) {
- $this->unlink("}{$this->tree[$node]['items'][$subnode]['id']}-$this->pagenumber.php");
- } elseif (isset($this->tree[$node]['final'])) {
-  $this->unlink($this->tree[$node]['id']. "-$subnode.php");
+   $this->unlink($this->tree[$node]['items'][$subnode]['id'] . "-$this->pagenumber.php");
+  } elseif (isset($this->tree[$node]['final'])) {
+   $this->unlink($this->tree[$node]['id']. "-$subnode.php");
+  }
  }
-}
-
-public function Replace($old, $new) {
- if ($old == $new) return;
- $this->Lock();
- $Redir = &TRedirector::Instance();
- $Redir->Add($old, $new);
- $this->items[$new] = $this->items[$old];
- $this->unlink($this->items[$old]['id'] . '.php');
- unset($this->items[$old]);
- $this->Add($old, get_class($Redir), null);
- $this->Unlock();
-}
-
-public function AddRedir($from, $to) {
- if ($from == $to) return;
- $this->Lock();
- $Redir = &TRedirector::Instance();
- $Redir->Add($from, $to);
- $this->Add($from, get_class($Redir), null);
- $this->Unlock();
-}
-
-public static function unsub(&$obj) {
- $self = self::Instance();
- $self->Lock();
- $self->UnsubscribeClassName(get_class($obj));
- $self->DeleteClass(get_class($obj));
- $self->Unlock();
-}
-
-protected function CheckSingleCron() {
- if (defined('cronpinged')) return;
- global $paths;
- $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
- $time = @filemtime($cronfile);
- if (($time === false) || ($time + 3600 < time())) {
-  register_shutdown_function('TCron::SelfPing');
+ 
+ public function Replace($old, $new) {
+  if ($old == $new) return;
+  $this->Lock();
+  $Redir = &TRedirector::Instance();
+  $Redir->Add($old, $new);
+  $this->items[$new] = $this->items[$old];
+  $this->unlink($this->items[$old]['id'] . '.php');
+  unset($this->items[$old]);
+  $this->Add($old, get_class($Redir), null);
+  $this->Unlock();
  }
-}
-
-public function Redir301($to) {
- global $Options;
- $protocol = $_SERVER["SERVER_PROTOCOL"];
- if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
- $protocol = 'HTTP/1.0';
- @header( "$protocol 301 Moved Permanently", true, 301);
- @header("Location: $Options->url$to");
- exit();
-}
-
+ 
+ public function AddRedir($from, $to) {
+  if ($from == $to) return;
+  $this->Lock();
+  $Redir = &TRedirector::Instance();
+  $Redir->Add($from, $to);
+  $this->Add($from, get_class($Redir), null);
+  $this->Unlock();
+ }
+ 
+ public static function unsub(&$obj) {
+  $self = self::Instance();
+  $self->Lock();
+  $self->UnsubscribeClassName(get_class($obj));
+  $self->DeleteClass(get_class($obj));
+  $self->Unlock();
+ }
+ 
+ protected function CheckSingleCron() {
+  if (defined('cronpinged')) return;
+  global $paths;
+  $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+  $time = @filemtime($cronfile);
+  if (($time === false) || ($time + 3600 < time())) {
+   register_shutdown_function('TCron::SelfPing');
+  }
+ }
+ 
+ public function Redir301($to) {
+  global $Options;
+  $protocol = $_SERVER["SERVER_PROTOCOL"];
+  if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
+  $protocol = 'HTTP/1.0';
+  @header( "$protocol 301 Moved Permanently", true, 301);
+  @header("Location: $Options->url$to");
+  exit();
+ }
+ 
 }
 
 ?>
