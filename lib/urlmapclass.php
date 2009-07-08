@@ -333,7 +333,10 @@ class TUrlmap extends TItems {
  
  public function SetExpired($url) {
   if (isset($this->items[$url])) {
-   $this->unlink($this->items[$url]['id'] . '-1.php');
+   $id = $this->items[$url]['id'];
+   for ($i = 1; $i <=10; $i++) {
+    $this->unlink("$id-$i.php");
+   }
   }
  }
  

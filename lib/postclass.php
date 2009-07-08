@@ -115,7 +115,7 @@ class TPost extends TItem {
   $Template = &TTemplatePost::Instance();
   $result = $Template->BeforePostContent($this->id);
   $Urlmap = &TUrlmap::Instance();
-  if (($Urlmap->pagenumber != 1) && $this->HasPages()) {
+  if (($Urlmap->pagenumber != 1) && $this->haspages) {
    if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {
     $result .= $this->Data['pages'][$Urlmap->pagenumber - 1];
    } else {
@@ -152,8 +152,12 @@ class TPost extends TItem {
  }
  
  
- public function HasPages() {
+ public function Gethaspages() {
   return isset($this->Data['pages']) && (count($this->Data['pages']) > 0);
+ }
+ 
+ public function Getpagescount() {
+  return count($this->Data['pages']);
  }
  
 }//class
