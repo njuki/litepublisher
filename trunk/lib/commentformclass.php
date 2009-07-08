@@ -161,8 +161,7 @@ class TCommentForm extends TItems {
    if (!$this->CanAdd($values, $post, $error)) {
     return TTemplate::SimpleContent($error);
    }
-   
-   $posturl =  $post->url;
+   $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
    $users = &TCommentUsers ::Instance();
    $users->Lock();
    $userid = $users->Add($values['name'], $values['email'], $values['url']);

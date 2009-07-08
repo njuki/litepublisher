@@ -19,10 +19,10 @@ class TTemplatePost extends TEventClass {
   $this->ps = '';
   if (is_a($post, 'TPost')) {
    //pages
-   if ($post->HasPages()) {
+   if ($post->haspages) {
     $this->ps .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, count($post->Data['pages']));
    }
-   if (($post->comments->count > 0) && $post->commentsenabled) {
+   if ($post->commentsenabled && ($post->comments->count > 0)) {
     $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
    }
    

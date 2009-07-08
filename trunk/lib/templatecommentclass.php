@@ -44,13 +44,15 @@ class TTemplateComment extends TEventClass {
   global $post, $Options;
   $comments = &$post->comments;
   $CountStr = $this->GetCommentCountStr($comments->GetCountApproved());
-  return "<a href=\"$Options->url$post->url#comments\">$CountStr</a>";
+  $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
+  return "<a href=\"$Options->url$url#comments\">$CountStr</a>";
  }
  
  public function GetComments($tagname) {
-  global $post, $Template;
+  global $post, $Template, $Urlmap;
   $comments = &$post->comments;
   if (($comments->count == 0) && !$post->commentsenabled) return '';
+  if ($post->haspages && ($Urlmap->pagenumber != $post->pagescount)) return $this->GetCommentsCountLink('');
   $lang = &TLocal::Instance();
   $lang->section = 'comment';
   
