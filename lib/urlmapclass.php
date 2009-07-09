@@ -100,6 +100,9 @@ class TUrlmap extends TItems {
   $this->uripath = $this->ParseUriPath($url);
   $c = count($this->uripath);
   if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
+   //redir if is not a single /
+   $slashed = rtrim($url, '/') . '/';
+   if ($url != $slashed) return $this->Redir301($slashed);
    $this->pagenumber = (int) $this->uripath[$c - 1];
    $url = substr($url, 0, strpos($url, "page/$this->pagenumber"));
    array_splice($this->uripath, $c - 2, 2);
