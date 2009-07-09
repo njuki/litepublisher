@@ -381,6 +381,9 @@ class TTemplate extends TEventClass {
   $tml = $this->DataObjectHasProp('template') ? $this->DataObject->template : 'index.tml';
   $s = $this->ParseFile($tml);
   $s = $header .$s;
+  if (method_exists($this->DataObject, 'AfterTemplated')) {
+   $this->DataObject->AfterTemplated($s);
+  }
   return $s;
  }
  

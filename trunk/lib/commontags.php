@@ -226,12 +226,23 @@ class TCommonTags extends TItems {
  
  //template
  public function Request($id) {
+  global $Urlmap;
   $this->id = $id;
   if ($id == 0) {
    $this->title = TLocal::$data['default']['categories'];
   } else {
+   if (!isset($this->items[$id])) return 404;
+   if ($Urlmap->url != $this->items[$id]['url'])  $Urlmap->Redir301($this->items[$id]['url']);
    $this->title = $this->items[$id]['name'];
   }
+ }
+ 
+ public function AfterTemplated(&$s) {
+  $redir = "<?php
+  global \$Urlmap;
+if (\$Urlmap->url != '{$this->items[$this->id]['url']}') \$Urlmap->Redir301('{$this->items[$this->id]['url']}');
+  ?>";
+  $s = $redir.$s;
  }
  
  public function GetTemplateContent() {
