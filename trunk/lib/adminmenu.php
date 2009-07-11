@@ -1,130 +1,130 @@
 <?php
 
 class TAdminMenu extends TAdminPage {
- 
- public static function &Instance() {
-  return GetInstance(__class__);
- }
- 
- protected function CreateData() {
-  parent::CreateData();
-  $this->basename = 'menu';
- }
- 
- public function Getcontent() {
-  global $Options;
-  $html = &THtmlResource::Instance();
-  $html->section = $this->basename;
-  $lang = &TLocal::Instance();
   
-  switch ($this->arg) {
-   case null:
-   if (isset($_GET['action'])) return $this->ProcessAction();
-   $menu = &TMenu::Instance();
-   eval('$result = "'. $html->listhead . '\n";');
-   foreach ($menu->items as $id => $item) {
+  public static function &Instance() {
+    return GetInstance(__class__);
+  }
+  
+  protected function CreateData() {
+    parent::CreateData();
+    $this->basename = 'menu';
+  }
+  
+  public function Getcontent() {
+    global $Options;
+    $html = &THtmlResource::Instance();
+    $html->section = $this->basename;
+    $lang = &TLocal::Instance();
+    
+    switch ($this->arg) {
+      case null:
+      if (isset($_GET['action'])) return $this->ProcessAction();
+      $menu = &TMenu::Instance();
+      eval('$result = "'. $html->listhead . '\n";');
+      foreach ($menu->items as $id => $item) {
+        $post = &TMenuItem::Instance($id);
+        $status = TLocal::$data['poststatus'][$post->status];
+        if ($item['parent'] == 0) {
+          $parent = '---';
+        } else {
+          $parent = "<a href='" . $Options->url . $menu->items[$item['parent']]['url'] . "'>". $menu->items[$item['parent']]['title'] . '</a>';
+        }
+        eval('$result .="' . $html->itemlist . '\n" ;');
+      }
+      eval('$result .= "'. $html->listfooter. '\n";');;
+      $result = str_replace("'", '"', $result);
+      break;
+      
+      case 'edit':
+      $id = !empty($_GET['postid']) ? (int) $_GET['postid'] : (!empty($_POST['postid']) ? (int) $_POST['postid'] : 0);
+      $post = &TMenuItem::Instance($id);
+      $content = $this->ContentToForm($post->content);
+      $menu = &TMenu::Instance();
+      $selected = $post->parent  == 0 ? 'selected' : '';
+      $parentcombo = "<option value='0' $selected>---</option>\n";
+      foreach ($menu->items as $id => $item) {
+        if ($id != $post->id) {
+          $selected = $post->parent  == $id ? 'selected' : '';
+          $parentcombo .= "<option value='$id' $selected>$item[title]</option>\n";
+        }
+        
+      }
+      eval('$result = "' . $html->editform . '\n";');
+      break;
+    }
+    
+    return $result;
+  }
+  
+  public function ProcessForm() {
+    global $Options;
+    extract($_POST);
+    switch ($this->arg) {
+      case null:
+      break;
+      
+      case 'edit':
+      if (empty($title) || empty($content)) return '';
+      $id = !empty($_GET['postid']) ? (int) $_GET['postid'] : (!empty($_POST['postid']) ? (int) $_POST['postid'] : 0);
+      $post = &TMenuItem::Instance($id);
+      $post->title = $title;
+      $post->order = (int) $order;
+      $post->parent = (int) $parent;
+      $post->content = $content;
+      
+      $menu = &TMenu::Instance();
+      if ($id == 0) {
+        $menu->Add($post);
+      } else  {
+        $menu->Edit($post);
+      }
+      break;
+    }
+    return '';
+  }
+  
+  public function ProcessAction() {
+    global $Options;
+    $id = (int) $_GET['postid'];
+    $html = &THtmlResource::Instance();
+    $html->section = $this->basename;
+    $lang = &TLocal::Instance();
+    
+    $menu = &TMenu::Instance();
+    if (!$menu->ItemExists($id)) {
+      eval('$result = "'. $html->notfound  . '\n";');
+      return $result;
+    }
+    
     $post = &TMenuItem::Instance($id);
-    $status = TLocal::$data['poststatus'][$post->status];
-    if ($item['parent'] == 0) {
-     $parent = '---';
+    
+    $result ='';
+    if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
+      switch ($_GET['action']) {
+        case 'delete' :
+        $menu->Delete($id);
+        break;
+        
+        case 'setdraft':
+        $post->status = 'draft';
+        $menu->Edit($post);
+        break;
+        
+        case 'publish':
+        $post->status = 'published';
+        $menu->Edit($post);
+        break;
+      }
+      eval('$s =  "'. $html->confirmed . '\n";');
+      $result .=  sprintf($s, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
     } else {
-     $parent = "<a href='" . $Options->url . $menu->items[$item['parent']]['url'] . "'>". $menu->items[$item['parent']]['title'] . '</a>';
+      $lang->section = $this->basename;
+    $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
+      eval('$result .= "'. $html->confirmform . '\n";');
     }
-    eval('$result .="' . $html->itemlist . '\n" ;');
-   }
-   eval('$result .= "'. $html->listfooter. '\n";');;
-   $result = str_replace("'", '"', $result);
-   break;
-   
-   case 'edit':
-   $id = !empty($_GET['postid']) ? (int) $_GET['postid'] : (!empty($_POST['postid']) ? (int) $_POST['postid'] : 0);
-   $post = &TMenuItem::Instance($id);
-   $content = $this->ContentToForm($post->content);
-   $menu = &TMenu::Instance();
-   $selected = $post->parent  == 0 ? 'selected' : '';
-   $parentcombo = "<option value='0' $selected>---</option>\n";
-   foreach ($menu->items as $id => $item) {
-    if ($id != $post->id) {
-     $selected = $post->parent  == $id ? 'selected' : '';
-     $parentcombo .= "<option value='$id' $selected>$item[title]</option>\n";
-    }
-    
-   }
-   eval('$result = "' . $html->editform . '\n";');
-   break;
+    return $result;
   }
   
-  return $result;
- }
- 
- public function ProcessForm() {
-  global $Options;
-  extract($_POST);
-  switch ($this->arg) {
-   case null:
-   break;
-   
-   case 'edit':
-   if (empty($title) || empty($content)) return '';
-   $id = !empty($_GET['postid']) ? (int) $_GET['postid'] : (!empty($_POST['postid']) ? (int) $_POST['postid'] : 0);
-   $post = &TMenuItem::Instance($id);
-   $post->title = $title;
-   $post->order = (int) $order;
-   $post->parent = (int) $parent;
-   $post->content = $content;
-   
-   $menu = &TMenu::Instance();
-   if ($id == 0) {
-    $menu->Add($post);
-   } else  {
-    $menu->Edit($post);
-   }
-   break;
-  }
-  return '';
- }
- 
- public function ProcessAction() {
-  global $Options;
-  $id = (int) $_GET['postid'];
-  $html = &THtmlResource::Instance();
-  $html->section = $this->basename;
-  $lang = &TLocal::Instance();
-  
-  $menu = &TMenu::Instance();
-  if (!$menu->ItemExists($id)) {
-   eval('$result = "'. $html->notfound  . '\n";');
-   return $result;
-  }
-  
-  $post = &TMenuItem::Instance($id);
-  
-  $result ='';
-  if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
-   switch ($_GET['action']) {
-    case 'delete' :
-    $menu->Delete($id);
-    break;
-    
-    case 'setdraft':
-    $post->status = 'draft';
-    $menu->Edit($post);
-    break;
-    
-    case 'publish':
-    $post->status = 'published';
-    $menu->Edit($post);
-    break;
-   }
-   eval('$s =  "'. $html->confirmed . '\n";');
-   $result .=  sprintf($s, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
-  } else {
-   $lang->section = $this->basename;
-  $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
-   eval('$result .= "'. $html->confirmform . '\n";');
-  }
-  return $result;
- }
- 
 }//class
 ?>

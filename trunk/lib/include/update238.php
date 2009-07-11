@@ -11,7 +11,7 @@ $robot->AddDisallow('/pda/');
 global $paths;
 $pda = $paths['cache'] . 'pda' ;
 @mkdir($pda, 0777);
-@mkdir($pda, 0777);
+@chmod($pda, 0777);
 
 copy($paths['data']. 'template.php', $paths['data'] . 'template.pda.php');
 chmod($paths['data']. 'template.pda.php', 0666);
