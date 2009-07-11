@@ -1,6 +1,5 @@
 <?php
 
-
 function Update241() {
 $auth = &TAuthDigest::Instance();
 $auth->Data['cookie'] = '';
