@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR   . 'dataclass.php');
 
 class TEventClass extends TDataClass {
   protected $events;

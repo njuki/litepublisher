@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR  .  'eventclass.php');
 
 class TOptions extends TEventClass {
   
@@ -64,6 +63,10 @@ class TOptions extends TEventClass {
   public function SetPassword($value) {
     $this->password = md5("$this->login:$this->realm:$value");
   }
+
+public function Getinstalled() {
+return isset($this->Data['url'];
+}
   
   /*
   public function IsAdmin() {
