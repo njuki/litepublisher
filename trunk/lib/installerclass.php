@@ -1,5 +1,5 @@
 <?php
-require_once($paths['lib']. 'dataclass.php');
+require_once($paths['lib']. 'kernel.php');
 
 class TInstaller extends TDataClass {
   public $language;
