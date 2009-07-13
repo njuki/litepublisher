@@ -1,6 +1,6 @@
 <?php
-  if (version_compare(PHP_VERSION, '5.1.4', '<')) {
-   echo 'Lite Publisher requires PHP 5.1.4 or later. You are using PHP ' . PHP_VERSION ;
+  if (version_compare(PHP_VERSION, '5.2', '<')) {
+   echo 'Lite Publisher requires PHP 5.2 or later. You are using PHP ' . PHP_VERSION ;
    exit;
   }
 
@@ -22,10 +22,10 @@ $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
 
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
 $microtime = microtime();
-require_once($paths['lib'] . 'classes.php');
+require_once($paths['lib'] . 'kernel.php');
 TClasses::Load();
-if (!@class_exists('TOptions')) require_once($paths['libinclude'] . 'install.php');
 $Options = &TOptions::Instance();
+if (!$Options->installed) require_once($paths['libinclude'] . 'install.php');
 //end config
 
 if (!isset($mode)) {
