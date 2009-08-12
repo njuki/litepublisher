@@ -311,7 +311,10 @@ class TOpenid extends TEventClass {
     if ($wait && (!in_array($trust_root, $this->trusted) || $this->confirm)) {
       //вывести форму и проверит результат формы
       if (empty($_POST['submit'])) {
-        eval('$form = "'. TLocal::$data['openidserver']['trustform'] . '\n";');
+        $html = THtmlResource::Instance();
+        $html->section = 'openidserver';
+        $lang = TLocal::Instance();
+        eval('$form = "'. $html->trustform . '\n";');
         return TTemplate::SimpleHtml($form);
       } else {
         switch ($_POST['accept']) {

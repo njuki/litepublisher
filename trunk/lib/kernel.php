@@ -976,11 +976,25 @@ class TUrlmap extends TItems {
   
   public function Redir301($to) {
     global $Options;
-    $protocol = $_SERVER["SERVER_PROTOCOL"];
-    if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
-    $protocol = 'HTTP/1.0';
-    @header( "$protocol 301 Moved Permanently", true, 301);
+    if ( php_sapi_name() != 'cgi-fcgi' ) {
+      $protocol = $_SERVER["SERVER_PROTOCOL"];
+      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
+      $protocol = 'HTTP/1.0';
+      @header( "$protocol 301 Moved Permanently", true, 301);
+    }
     @header("Location: $Options->url$to");
+    exit();
+  }
+  
+  public static function redir($url) {
+    if ( php_sapi_name() != 'cgi-fcgi' ) {
+      $protocol = $_SERVER["SERVER_PROTOCOL"];
+      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
+      $protocol = 'HTTP/1.0';
+      @header( "$protocol 301 Moved Permanently", true, 301);
+    }
+    
+    @header("Location: $url");
     exit();
   }
   

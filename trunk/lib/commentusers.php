@@ -135,10 +135,13 @@ class TCommentUsers extends TItems {
   }
   
   public function Request($arg) {
+    global $Options;
     $id = (int) $arg;
     if (!isset($this->items[$id])) return 404;
     $url = $this->items[$id]['url'];
-    return   "<?php @header('Location: $url'); ?>";
+    if (!strpos($url, '.')) $url = $Options->url . $Options->home;
+    if (substr($url, 0, 7) != 'http://') $url = 'http://' . $url;
+    TUrlmap::redir($url);
   }
   
 }

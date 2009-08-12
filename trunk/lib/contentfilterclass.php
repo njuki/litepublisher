@@ -9,7 +9,7 @@ class TContentFilter extends TEventClass {
   protected function CreateData() {
     parent::CreateData();
     $this->basename = 'contentfilter';
-    $this->AddEvents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt');
+    $this->AddEvents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt', 'BeforeSetPostContent', 'AfterSetPostContent');
     $this->Data['automore'] = true;
     $this->Data['automorelength'] = 250;
   }
@@ -28,6 +28,7 @@ class TContentFilter extends TEventClass {
   }
   
   public function SetPostContent(&$post, $s) {
+    $this->BeforeSetPostContent($post->id);
     $s = $this->FilterInternalLinks($s);
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
@@ -54,6 +55,7 @@ class TContentFilter extends TEventClass {
     }
     $post->description = self::GetExcerpt($post->excerpt, 80);
     $this->DoFilterEvents($post);
+    $this->AfterSetPostContent($post->id);
   }
   
   public function ExtractPages(&$post, $s) {

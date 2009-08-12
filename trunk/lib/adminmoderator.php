@@ -58,12 +58,12 @@ class TAdminModerator extends TAdminPage {
       case null:
       case 'hold':
       if (!empty($_GET['action']))    return $this->SingleModerate();
-      
-      $from = max(0, count($CommentManager->items) - $Urlmap->pagenumber * 100);
+      $perpage = 20;
+      $from = max(0, count($CommentManager->items) - $Urlmap->pagenumber * $perpage);
       if ($this->arg == 'hold') {
-        $list = array_slice($CommentManager->holditems, $from, 100, true);
+        $list = array_slice($CommentManager->holditems, $from, $perpage, true);
       } else {
-        $list = array_slice($CommentManager->items, $from, 100, true);
+        $list = array_slice($CommentManager->items, $from, $perpage, true);
       }
       eval('$s = "'. $html->listhead. '\n";');
       $result .= sprintf($s, $from, $from + count($list), count($CommentManager->items));
@@ -87,7 +87,7 @@ class TAdminModerator extends TAdminPage {
       $result = $this->FixCheckall($result);
       
       $TemplatePost = &TTemplatePost::Instance();
-      $result .= $TemplatePost ->PrintNaviPages('/admin/moderator/', $Urlmap->pagenumber, ceil(count($CommentManager->items)/100));
+      $result .= $TemplatePost ->PrintNaviPages('/admin/moderator/', $Urlmap->pagenumber, ceil(count($CommentManager->items)/$perpage));
       return $result;
       
       case 'authors':
