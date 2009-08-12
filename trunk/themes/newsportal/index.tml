@@ -28,7 +28,8 @@ $Template->head
     <div id="navcontainer">
 	<ul id="navlist">
 
-		  <li class="page_item"><a href="$Options->url$Options->home" title="$lang->home">$lang->menu</a></li>
+		  <li class="page_item"><a href="$Options->url$Options->home" title="$lang->home">$lang->home</a></li>
+		  <li class="page_item"><a href="$Options->url/pda$Options->home" title="$lang->mobile">$lang->mobile</a></li>
 $Template->menu
 </ul>
           </div>
