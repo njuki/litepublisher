@@ -14,7 +14,7 @@ class TRSSPrevNext extends TPlugin {
   $i = array_search($id, $keys);
   if ($i < count($keys) -1) {
    $prevpost = &TPost::Instance($keys[$i + 1]);
-   $result .= TLocal::$data['post']['prev'];
+   $result .= TLocal::$data['default']['prev'];
    $result .= " <a href=\"$Options->url$prevpost->url\">$prevpost->title</a>";
   }
   
