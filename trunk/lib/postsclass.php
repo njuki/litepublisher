@@ -27,7 +27,8 @@ class TPosts extends TItems {
   }
   
   public function GetWidgetContent($id) {
-    global $Options, $Template;
+    global $Options;
+$Template = TTemplate::Instance();
     $item = !empty($Template->theme['widget']['recentpost']) ? $Template->theme['widget']['recentpost'] :
     '<li><strong><a href=\'$Options->url$post->url\' rel=\'bookmark\' title=\'Permalink to $post->title\'>$post->title</a></strong><br />
     <small>$post->localdate</small></li>';

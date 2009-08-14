@@ -38,11 +38,16 @@ class TAdminService extends TAdminPage {
       $result = $html->checkallscript;
       $checkboxes = '';
       $item = $html->engineitem;
+$item .= "\n";
       
       $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
       foreach ($ini as $name => $value) {
-        $selected = !isset(TClasses::$items[$name]) ? $checked : '';
-        eval('$checkboxes .= "' . $item . '\n";');
+$checkboxes .= sprintf($item, $name, $value, !isset(TClasses::$items[$name]) ? $checked : '');
+      }
+
+      foreach (TClasses::$items as $name => $value) {
+if (isset($ini[$name])) continue;
+$checkboxes .= sprintf($item, $name, $value[0], '');
       }
       
       eval('$result .= "'. $html->engineform  . '\n";');
@@ -107,14 +112,15 @@ class TAdminService extends TAdminPage {
       $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
       $lang->section = $this->basename;
       TClasses::Lock();
-      foreach ($ini as $name => $value) {
-        if ( isset($_POST[$name])) {
+      foreach ($_POST as $name => $value) {
+        if ( isset($ini[$name]) || isset(TClasses::$items[$name])) {
           switch ($_POST['submit']) {
             case $lang->install:
             TClasses::Register($name, $value);
             break;
             
             case $lang->uninstall:
+var_dump($name);
             TClasses::Unregister($name);
             break;
             

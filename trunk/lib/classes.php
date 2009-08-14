@@ -26,8 +26,10 @@ class TClasses {
   
   public static function Unregister($ClassName) {
     if (isset(self::$items[$ClassName])) {
+if (@class_exists($ClassName)) {
       $instance = &GetInstance($ClassName);
       if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
+}
       unset(self::$items[$ClassName]);
       self::Save();
     }
@@ -89,6 +91,7 @@ class TClasses {
 }//class
 
 function &GetInstance($ClassName) {
+if (!@class_exists($ClassName)) return null;
   if (!isset(TClasses::$instances[$ClassName])) {
     TClasses::$instances[$ClassName] = &new $ClassName ();
   }

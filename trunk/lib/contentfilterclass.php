@@ -17,7 +17,7 @@ class TContentFilter extends TEventClass {
   public function GetCommentContent($content) {
     $s = $this->OnComment($content);
     if ($s != '') $content  = $s;
-    $result = trim(strip_tags($content));
+    $result = trim($content);
     $result = htmlspecialchars($result);
     $result = str_replace("\r\n", "\n", $result);
     $result = str_replace("\r", "\n", $result);

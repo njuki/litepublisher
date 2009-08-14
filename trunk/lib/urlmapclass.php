@@ -37,6 +37,7 @@ class TUrlmap extends TItems {
     } else {
       $this->url = $_GET['url'];
     }
+    $this->BeforeRequest();
     if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
       if ($this->url == '/pda') {
         $this->url = '/';
@@ -47,7 +48,7 @@ class TUrlmap extends TItems {
       $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
     }
     $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
-    $this->BeforeRequest($this->url);
+
     try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
@@ -164,7 +165,6 @@ class TUrlmap extends TItems {
       $Template = &TTemplate::Instance();
       $s = &$Template->Request($Obj);
     }
-    
     eval('?>'. $s);
     if ($Options->CacheEnabled && $Obj->CacheEnabled) {
   $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
