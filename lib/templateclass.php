@@ -166,6 +166,13 @@ class TTemplate extends TEventClass {
       $this->WidgetDeleted($id);
     }
   }
+
+  public function FindWidget($ClassName) {
+    foreach ($this->widgets as $id => $item) {
+      if ($item['class'] == $ClassName) return $id;
+      }
+return false;
+  }
   
   public static function  WidgetExpired(&$widget) {
     $self = &self::Instance();
@@ -188,7 +195,7 @@ class TTemplate extends TEventClass {
     }
   }
   
-  protected function GetWidgetContent($id) {
+  public function GetWidgetContent($id) {
     global $paths;
     $this->curwidget = $id;
     $FileName = $paths['cache']. "widget$id.php";
@@ -249,7 +256,8 @@ class TTemplate extends TEventClass {
       $title=  TLocal::$data['default'][$name];
     }
     
-    eval("\$result =\"$result\n\";");
+    //eval("\$result =\"$result\n\";");
+$result = sprintf($result, $title);
     return str_replace("'", '"', $result);
   }
   
@@ -264,7 +272,7 @@ class TTemplate extends TEventClass {
       $result .= $this->theme['widget']['after'];
     }
     
-    return $result;
+    return str_replace("'", '"', $result);
   }
   
   public function Getsitebar() {
@@ -473,23 +481,22 @@ class TTemplate extends TEventClass {
   
   private function GetMenuItems() {
     $jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
-    $Menu = &TMenu::Instance();
-    $links = $Menu->GetMenuList();
-    if (count($links) == 0) return '';
-    $item = $this->theme['menu']['item'];
+    $Menu = TMenu::Instance();
+    $items = $Menu->GetMenuList();
+    if (count($items) == 0) return '';
+    $menuitem = $this->theme['menu']['item'];
     $result = '';
-    foreach ($links as $link => $items) {
-      if ($jsmenu &&(count($items) > 0)) {
-        $save = $link;
-        $sublinks = '';
-        foreach ($items as $link) {
-          eval('$sublinks .= "'. $item . '\n";');
+    foreach ($items as $item) {
+        $subitems = '';
+      if ($jsmenu &&(count($item['subitems']) > 0)) {
+        foreach ($item['subitems'] as $subitem) {
+$subitems .= sprintf($menuitem , $subitem['url'], $subitem['title']) . "\n";
         }
-        eval('$sublinks = "'. $this->theme['menu']['subitems'] . '\n";');
-        $link = $save . $sublinks;
+$subitems = sprintf($this->theme['menu']['subitems'], $$subitems) . "\n";
       }
-      eval('$result .= "'. $item . '\n";');
-    }
+
+$result .= sprintf($menuitem , $item['url'], $item['title'], $subitems) . "\n";
+   }
     $result = str_replace("'", '"', $result);
     return $result;
   }

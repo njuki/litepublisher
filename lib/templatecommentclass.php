@@ -56,12 +56,12 @@ class TTemplateComment extends TEventClass {
     $lang = &TLocal::Instance();
     $lang->section = 'comment';
     
-    $Result = '';
+    $result = '';
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
     if (count($items)  > 0) {
       $count = $this->GetCommentCountStr(count($items));
-      eval('$Result .= "'. $this->commentsini['count'] . '\n";');
+      eval('$result .= "'. $this->commentsini['count'] . '\n";');
       $hold = '';
       $list = '';
       $comtempl = $this->commentsini['comment'];
@@ -69,32 +69,33 @@ class TTemplateComment extends TEventClass {
         $comment->id = $id;
         eval('$list .= "'. $comtempl . '\n"; ');
       }
-      eval('$Result .= "'. $this->commentsini['list'] . '\n"; ');
+      $result .= sprintf($this->commentsini['list'], $list);
+$result .= "\n";
     }
     
     $items = &$comments->GetApproved('pingback');
     if (count($items) > 0) {
-      eval('$Result .= "'. $this->commentsini['pingbackhead'] . '\n";');
+      eval('$result .= "'. $this->commentsini['pingbackhead'] . '\n";');
       $list = '';
       $comtempl = $this->commentsini['pingback'];
       foreach  ($items as $id => $date) {
         $comment->id = $id;
         eval('$list .= "'. $comtempl  . '\n"; ');
       }
-      eval('$Result .= "'. $this->commentsini['list'] . '\n"; ');
+      eval('$result .= "'. $this->commentsini['list'] . '\n"; ');
     }
     if ($post->commentsenabled) {
-      $Result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
+      $result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
     } else {
-      $Result .= $this->commentsini['closed'];
+      $result .= $this->commentsini['closed'];
     }
-    return $Result;
+    return $result;
   }
   
   public function GetHoldList(&$items, &$comment) {
     $lang = &TLocal::Instance();
     $lang->section = 'comment';
-    $Result = '';
+    $result = '';
     if (count($items) > 0) {
       $hold = $lang->hold;
       $list = '';
@@ -102,9 +103,9 @@ class TTemplateComment extends TEventClass {
         $comment->id = $id;
         eval('$list .= "'. $this->commentsini['comment'] . '\n"; ');
       }
-      eval('$Result .= "'. $this->commentsini['list'] . '\n"; ');
+      eval('$result .= "'. $this->commentsini['list'] . '\n"; ');
     }
-    return $Result;
+    return $result;
   }
   
   public function GenerateCommentForm() {
@@ -112,8 +113,8 @@ class TTemplateComment extends TEventClass {
     $CommentForm = &TCommentForm::Instance();
     $lang = &TLocal::Instance();
     $lang->section = 'comment';
-    eval('$Result = "'. $this->commentsini['formhead'] . '"; ');
-    $Result .= "\n<form action=\"$Options->url$CommentForm->url\" method=\"post\" id=\"commentform\">\n";
+    eval('$result = "'. $this->commentsini['formheader'] . '\n";');
+    $result .= "\n<form action=\"$Options->url$CommentForm->url\" method=\"post\" id=\"commentform\">\n";
     
     $tabindex = 1;
     $TemplateField = $this->commentsini['field'];
@@ -121,26 +122,27 @@ class TTemplateComment extends TEventClass {
     $value = "{\$values['$field']}";
       $label = $lang->$field;
       if ($type == 'checkbox') {
-        eval('$Result .= "'. $this->commentsini['checkbox'] . '\n";');
+        eval('$result .= "'. $this->commentsini['checkbox'] . '\n";');
       } else {
-        eval('$Result .= "'. $TemplateField . '\n";');
+        eval('$result .= "'. $TemplateField . '\n";');
       }
       
       $tabindex++;
     }
     
-    eval('$Result .= "'. $this->commentsini['content'] .'\n"; ');
+    eval('$result .= "'. $this->commentsini['content'] .'\n"; ');
     $tabindex++;
     
     $TemplateField = '<input type=\"hidden\" name=\"$field\" value=\"$value\" />';
     foreach ($CommentForm->Hidden as $field => $default) {
     $value = "{\$values['$field']}";
-      eval("\$Result .= \"$TemplateField\n\";");
+      eval("\$result .= \"$TemplateField\n\";");
     }
     
-    eval('$Result .= "'. $this->commentsini['button'] . '"; ');
-    $Result .= "\n</form>\n";
-    return $Result;
+    eval('$result .= "'. $this->commentsini['button'] . '"; ');
+    $result .= "\n</form>\n";
+    eval('$result .= "'. $this->commentsini['formfooter'] . '"; ');
+    return $result;
   }
   
 } //class

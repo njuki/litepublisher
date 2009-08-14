@@ -33,7 +33,8 @@ class TCommentManager extends TItems {
   }
   
   public function GetWidgetContent($id) {
-    global $Options, $Template;
+    global $Options;
+$Template = TTemplate::Instance();
     $result = $Template->GetBeforeWidget('recentcomments');
     
     $count = $this->recentcount;

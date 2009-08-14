@@ -35,7 +35,8 @@ class TCommonTags extends TItems {
   }
   
   public function GetWidgetContent($id) {
-    global $Options, $Template;
+    global $Options;
+$Template = TTemplate::Instance();
     $result = $Template->GetBeforeWidget($this->WidgetClass );
     
     $Sorted = &$this->GetSorted($this->sortname);

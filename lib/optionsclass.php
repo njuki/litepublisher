@@ -9,7 +9,7 @@ class TOptions extends TEventClass {
   protected function CreateData() {
     parent::CreateData();
     $this->basename = 'options';
-    $this->AddEvents('Changed', 'PostsPerPageChanged');
+    $this->AddEvents('Changed', 'PostsPerPageChanged', 'OnGeturl');
     unset($this->CacheEnabled);
   }
   
@@ -45,8 +45,9 @@ class TOptions extends TEventClass {
   
   public function Geturl() {
     global $Urlmap;
-    
-    return $this->Data['url'] . ($Urlmap->Ispda ? '/pda' : '');
+$s = $this->OnGeturl();
+if ($s == '') $s = $this->Data['url'];
+    return $s . ($Urlmap->Ispda ? '/pda' : '');
   }
   
   public function CheckLogin($login, $password) {
