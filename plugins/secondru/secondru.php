@@ -14,9 +14,7 @@ $this->ru = false;
 }
 
 public function Geturl() {
-echo "url\n";
 global $Options;
-var_dump($this->ru);
 if ($this->ru) return $Options->Data['url'] . '/ru';
 }
 
