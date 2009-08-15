@@ -70,7 +70,7 @@ class TTemplateComment extends TEventClass {
         eval('$list .= "'. $comtempl . '\n"; ');
       }
       $result .= sprintf($this->commentsini['list'], $list);
-$result .= "\n";
+      $result .= "\n";
     }
     
     $items = &$comments->GetApproved('pingback');

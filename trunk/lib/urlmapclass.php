@@ -48,7 +48,7 @@ class TUrlmap extends TItems {
       $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
     }
     $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
-
+    
     try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
