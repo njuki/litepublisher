@@ -38,16 +38,16 @@ class TAdminService extends TAdminPage {
       $result = $html->checkallscript;
       $checkboxes = '';
       $item = $html->engineitem;
-$item .= "\n";
+      $item .= "\n";
       
       $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
       foreach ($ini as $name => $value) {
-$checkboxes .= sprintf($item, $name, $value, !isset(TClasses::$items[$name]) ? $checked : '');
+        $checkboxes .= sprintf($item, $name, $value, !isset(TClasses::$items[$name]) ? $checked : '');
       }
-
+      
       foreach (TClasses::$items as $name => $value) {
-if (isset($ini[$name])) continue;
-$checkboxes .= sprintf($item, $name, $value[0], '');
+        if (isset($ini[$name])) continue;
+        $checkboxes .= sprintf($item, $name, $value[0], '');
       }
       
       eval('$result .= "'. $html->engineform  . '\n";');
@@ -120,7 +120,8 @@ $checkboxes .= sprintf($item, $name, $value[0], '');
             break;
             
             case $lang->uninstall:
-var_dump($name);
+            $plugins = TPlugins::Instance();
+            $plugins->DeleteClass($name);
             TClasses::Unregister($name);
             break;
             

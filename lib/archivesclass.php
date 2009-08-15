@@ -17,7 +17,7 @@ class TArchives extends TItems {
   
   public function GetWidgetContent($id) {
     global $Options;
-$Template = TTemplate::Instance();
+    $Template = TTemplate::Instance();
     $result = $Template->GetBeforeWidget('archives');
     
     foreach ($this->items as $date => $item) {
@@ -98,7 +98,7 @@ $Template = TTemplate::Instance();
   
   public function GetTemplateContent() {
     global $Options, $Urlmap;
-if (!isset($this->items[$this->date]['posts'])) return '';
+    if (!isset($this->items[$this->date]['posts'])) return '';
     $items = &$this->items[$this->date]['posts'];
     $TemplatePost = &TTemplatePost::Instance();
     if ($this->lite) {

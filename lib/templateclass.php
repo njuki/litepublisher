@@ -166,12 +166,12 @@ class TTemplate extends TEventClass {
       $this->WidgetDeleted($id);
     }
   }
-
+  
   public function FindWidget($ClassName) {
     foreach ($this->widgets as $id => $item) {
       if ($item['class'] == $ClassName) return $id;
-      }
-return false;
+    }
+    return false;
   }
   
   public static function  WidgetExpired(&$widget) {
@@ -257,7 +257,7 @@ return false;
     }
     
     //eval("\$result =\"$result\n\";");
-$result = sprintf($result, $title);
+    $result = sprintf($result, $title);
     return str_replace("'", '"', $result);
   }
   
@@ -487,16 +487,16 @@ $result = sprintf($result, $title);
     $menuitem = $this->theme['menu']['item'];
     $result = '';
     foreach ($items as $item) {
-        $subitems = '';
+      $subitems = '';
       if ($jsmenu &&(count($item['subitems']) > 0)) {
         foreach ($item['subitems'] as $subitem) {
-$subitems .= sprintf($menuitem , $subitem['url'], $subitem['title']) . "\n";
+          $subitems .= sprintf($menuitem , $subitem['url'], $subitem['title']) . "\n";
         }
-$subitems = sprintf($this->theme['menu']['subitems'], $$subitems) . "\n";
+        $subitems = sprintf($this->theme['menu']['subitems'], $$subitems) . "\n";
       }
-
-$result .= sprintf($menuitem , $item['url'], $item['title'], $subitems) . "\n";
-   }
+      
+      $result .= sprintf($menuitem , $item['url'], $item['title'], $subitems) . "\n";
+    }
     $result = str_replace("'", '"', $result);
     return $result;
   }

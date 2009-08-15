@@ -27,8 +27,10 @@ class TClasses {
   
   public static function Unregister($ClassName) {
     if (isset(self::$items[$ClassName])) {
-      $instance = &GetInstance($ClassName);
-      if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
+      if (@class_exists($ClassName)) {
+        $instance = &GetInstance($ClassName);
+        if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
+      }
       unset(self::$items[$ClassName]);
       self::Save();
     }
@@ -90,6 +92,7 @@ class TClasses {
 }//class
 
 function &GetInstance($ClassName) {
+  if (!@class_exists($ClassName)) return null;
   if (!isset(TClasses::$instances[$ClassName])) {
     TClasses::$instances[$ClassName] = &new $ClassName ();
   }
@@ -516,7 +519,7 @@ class TOptions extends TEventClass {
   protected function CreateData() {
     parent::CreateData();
     $this->basename = 'options';
-    $this->AddEvents('Changed', 'PostsPerPageChanged');
+    $this->AddEvents('Changed', 'PostsPerPageChanged', 'OnGeturl');
     unset($this->CacheEnabled);
   }
   
@@ -552,8 +555,9 @@ class TOptions extends TEventClass {
   
   public function Geturl() {
     global $Urlmap;
-    
-    return $this->Data['url'] . ($Urlmap->Ispda ? '/pda' : '');
+    $s = $this->OnGeturl();
+    if ($s == '') $s = $this->Data['url'];
+    return $s . ($Urlmap->Ispda ? '/pda' : '');
   }
   
   public function CheckLogin($login, $password) {
@@ -621,6 +625,7 @@ class TUrlmap extends TItems {
     } else {
       $this->url = $_GET['url'];
     }
+    $this->BeforeRequest();
     if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
       if ($this->url == '/pda') {
         $this->url = '/';
@@ -631,7 +636,7 @@ class TUrlmap extends TItems {
       $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
     }
     $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
-    $this->BeforeRequest($this->url);
+    
     try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
@@ -748,7 +753,6 @@ class TUrlmap extends TItems {
       $Template = &TTemplate::Instance();
       $s = &$Template->Request($Obj);
     }
-    
     eval('?>'. $s);
     if ($Options->CacheEnabled && $Obj->CacheEnabled) {
   $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";

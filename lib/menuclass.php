@@ -137,21 +137,21 @@ class TMenu extends TItems {
     global $Options;
     $result = array();
     foreach ($this->home as $id => $order) {
-$subitems = array();
+      $subitems = array();
       if ($this->GetChildsCount($id) > 0) {
         foreach ($this->items[$id]['childs'] as $idchild) {
-$subitems[] = array(
-'url' => $Options->url . $this->items[$idchild]['url'],
+          $subitems[] = array(
+          'url' => $Options->url . $this->items[$idchild]['url'],
           'title' =>  $this->items[$idchild]['title']
-);
+          );
         }
       }
-
-$result[] = array(
-'url' =>       $Options->url . $this->items[$id]['url'],
+      
+      $result[] = array(
+      'url' =>       $Options->url . $this->items[$id]['url'],
       'title' =>  $this->items[$id]['title'],
-'subitems' => $subitems
-);
+      'subitems' => $subitems
+      );
     }
     return $result;
   }

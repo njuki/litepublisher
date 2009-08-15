@@ -32,7 +32,7 @@ class TAdminThemes extends TAdminPage {
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
-$result = '';
+    $result = '';
     
     switch ($this->arg) {
       case null:

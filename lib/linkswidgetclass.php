@@ -15,7 +15,7 @@ class TLinksWidget extends TItems {
   
   public function GetWidgetContent($id) {
     global $Options;
-$Template = TTemplate::Instance();
+    $Template = TTemplate::Instance();
     $lang = &TLocal::$data['default'];
     
     $result = $Template->GetBeforeWidget('links');

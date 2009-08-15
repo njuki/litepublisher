@@ -17,7 +17,7 @@ class TFoaf extends TItems {
   
   public function GetWidgetContent($id) {
     global $Options;
-$Template = TTemplate::Instance();
+    $Template = TTemplate::Instance();
     $item = !empty($Template->theme['widget']['myfriends']) ? $Template->theme['widget']['myfriends'] :
   '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
     

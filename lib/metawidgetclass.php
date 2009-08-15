@@ -11,7 +11,7 @@ class TMetaWidget extends TEventClass {
   
   public function GetWidgetContent($id) {
     global $Options;
-$Template = TTemplate::Instance();
+    $Template = TTemplate::Instance();
     $lang = &TLocal::$data['default'];
     
     $result = $Template->GetBeforeWidget('meta');
