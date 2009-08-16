@@ -32,7 +32,7 @@ class TTemplate extends TEventClass {
     global $Urlmap;
     parent::CreateData();
     $this->basename = 'template' . ($Urlmap->Ispda ? '.pda' : '');
-    $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'ThemeChanged');
+    $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'ThemeChanged');
     $this->Data['themename'] = 'default';
     $this->Data['sitebarcount'] = 2;
     $this->Data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
@@ -549,6 +549,8 @@ class TTemplate extends TEventClass {
       $result .= $java;
     }
     $result .= $this->Onhead();
+$Urlmap = TUrlmap::Instance();
+if ($Urlmap->IsAdminPanel) $result .= $this->OnAdminHead();
     return $result;
   }
   

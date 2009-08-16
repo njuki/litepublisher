@@ -11,8 +11,8 @@ class TCustomWidget extends TItems {
     $this->basename   = 'customwidget';
   }
   
-  
-  global $Options;  public function GetWidgetContent($id) {
+public function GetWidgetContent($id) {
+  global $Options;  
     if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
     $Template = TTemplate::Instance();
     $result = $Template->GetBeforeWidget('before', $this->items[$id]['title']);
