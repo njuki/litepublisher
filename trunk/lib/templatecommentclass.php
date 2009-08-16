@@ -49,18 +49,20 @@ class TTemplateComment extends TEventClass {
   }
   
   public function GetComments($tagname) {
-    global $post, $Template, $Urlmap;
+    global $post, $Template, $Urlmap, $Options;
     $comments = &$post->comments;
     if (($comments->count == 0) && !$post->commentsenabled) return '';
-    if ($post->haspages && ($Urlmap->pagenumber != $post->pagescount)) return $this->GetCommentsCountLink('');
+    if ($post->haspages && ($post->commentpages < $Urlmap->pagenumber)) return $this->GetCommentsCountLink('');
     $lang = &TLocal::Instance();
     $lang->section = 'comment';
     
     $result = '';
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
-    if (count($items)  > 0) {
       $count = $this->GetCommentCountStr(count($items));
+//страницы как бы в обратном порядке, то есть первая страница будет в конце массива
+$items = array_slice($items, ($post->commentpages - $Urlmap->pagenumber) * $Options->commentsperpage, $Options->commentsperpage, true);
+    if (count($items)  > 0) {
       eval('$result .= "'. $this->commentsini['count'] . '\n";');
       $hold = '';
       $list = '';
@@ -73,6 +75,7 @@ class TTemplateComment extends TEventClass {
       $result .= "\n";
     }
     
+if ($Urlmap->pagenumber == 1) {
     $items = &$comments->GetApproved('pingback');
     if (count($items) > 0) {
       eval('$result .= "'. $this->commentsini['pingbackhead'] . '\n";');
@@ -82,8 +85,10 @@ class TTemplateComment extends TEventClass {
         $comment->id = $id;
         eval('$list .= "'. $comtempl  . '\n"; ');
       }
-      eval('$result .= "'. $this->commentsini['list'] . '\n"; ');
+      $result .= sprintf($this->commentsini['list'] , $list);
+$result .= "\n";
     }
+}
     if ($post->commentsenabled) {
       $result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
     } else {

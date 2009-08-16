@@ -275,6 +275,8 @@ class TInstaller extends TDataClass {
     $Options->postsperpage = 10;
     $Options->commentsenabled = true;
     $Options->pingenabled = true;
+$Options->commentpages = true;
+$Options->commentsperpage = 100;
     $Options->version = TUpdater::GetVersion();
     
     $Options->Unlock();

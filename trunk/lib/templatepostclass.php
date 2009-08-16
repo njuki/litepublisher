@@ -20,7 +20,7 @@ class TTemplatePost extends TEventClass {
     if (is_a($post, 'TPost')) {
       //pages
       if ($post->haspages) {
-        $this->ps .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, count($post->Data['pages']));
+        $this->ps .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
       }
       if ($post->commentsenabled && ($post->comments->count > 0)) {
         $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
@@ -49,7 +49,8 @@ class TTemplatePost extends TEventClass {
   }
   
   public function PrintPosts(&$Items) {
-    global $Template;
+$Template = TTemplate::Instance();
+
     if (count($Items) == 0) {
       $lang = &TLocal::Instance();
       return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
