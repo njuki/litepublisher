@@ -49,8 +49,8 @@ class TTemplatePost extends TEventClass {
   }
   
   public function PrintPosts(&$Items) {
-$Template = TTemplate::Instance();
-
+    $Template = TTemplate::Instance();
+    
     if (count($Items) == 0) {
       $lang = &TLocal::Instance();
       return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";

@@ -3,7 +3,7 @@
 class TDataClass {
   private $LockCount;
   public $Data;
-  protected $basename;
+  public $basename;
   public $CacheEnabled;
   
   public function __construct() {
