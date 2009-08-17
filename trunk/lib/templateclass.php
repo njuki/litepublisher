@@ -29,7 +29,7 @@ class TTemplate extends TEventClass {
   }
   
   protected function CreateData() {
-    global $Urlmap;
+    $Urlmap = TUrlmap::Instance();
     parent::CreateData();
     $this->basename = 'template' . ($Urlmap->Ispda ? '.pda' : '');
     $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'ThemeChanged');
@@ -549,8 +549,8 @@ class TTemplate extends TEventClass {
       $result .= $java;
     }
     $result .= $this->Onhead();
-$Urlmap = TUrlmap::Instance();
-if ($Urlmap->IsAdminPanel) $result .= $this->OnAdminHead();
+    $Urlmap = TUrlmap::Instance();
+    if ($Urlmap->IsAdminPanel) $result .= $this->OnAdminHead();
     return $result;
   }
   

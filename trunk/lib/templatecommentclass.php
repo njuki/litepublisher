@@ -59,9 +59,8 @@ class TTemplateComment extends TEventClass {
     $result = '';
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
-      $count = $this->GetCommentCountStr(count($items));
-//страницы как бы в обратном порядке, то есть первая страница будет в конце массива
-$items = array_slice($items, ($post->commentpages - $Urlmap->pagenumber) * $Options->commentsperpage, $Options->commentsperpage, true);
+    $count = $this->GetCommentCountStr(count($items));
+    $items = array_slice($items, ($Urlmap->pagenumber - 1) * $Options->commentsperpage, $Options->commentsperpage, true);
     if (count($items)  > 0) {
       eval('$result .= "'. $this->commentsini['count'] . '\n";');
       $hold = '';
@@ -75,20 +74,20 @@ $items = array_slice($items, ($post->commentpages - $Urlmap->pagenumber) * $Opti
       $result .= "\n";
     }
     
-if ($Urlmap->pagenumber == 1) {
-    $items = &$comments->GetApproved('pingback');
-    if (count($items) > 0) {
-      eval('$result .= "'. $this->commentsini['pingbackhead'] . '\n";');
-      $list = '';
-      $comtempl = $this->commentsini['pingback'];
-      foreach  ($items as $id => $date) {
-        $comment->id = $id;
-        eval('$list .= "'. $comtempl  . '\n"; ');
+    if ($Urlmap->pagenumber == 1) {
+      $items = &$comments->GetApproved('pingback');
+      if (count($items) > 0) {
+        eval('$result .= "'. $this->commentsini['pingbackhead'] . '\n";');
+        $list = '';
+        $comtempl = $this->commentsini['pingback'];
+        foreach  ($items as $id => $date) {
+          $comment->id = $id;
+          eval('$list .= "'. $comtempl  . '\n"; ');
+        }
+        $result .= sprintf($this->commentsini['list'] , $list);
+        $result .= "\n";
       }
-      $result .= sprintf($this->commentsini['list'] , $list);
-$result .= "\n";
     }
-}
     if ($post->commentsenabled) {
       $result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
     } else {

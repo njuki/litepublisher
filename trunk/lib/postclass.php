@@ -118,8 +118,8 @@ class TPost extends TItem {
     if (($Urlmap->pagenumber != 1) && $this->haspages) {
       if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {
         $result .= $this->Data['pages'][$Urlmap->pagenumber - 1];
-} elseif ($Urlmap->pagenumber <= $this->commentpages) {
-//$result .= '';
+      } elseif ($Urlmap->pagenumber <= $this->commentpages) {
+        //$result .= '';
       } else {
         $lang = &TLocal::Instance();
         $result .= $lang->notfound;
@@ -153,19 +153,19 @@ class TPost extends TItem {
     }
   }
   
-    public function Gethaspages() {
+  public function Gethaspages() {
     return (isset($this->Data['pages']) && (count($this->Data['pages']) > 0)) || ($this->commentpages > 1);
   }
   
   public function Getpagescount() {
-return max($this->commentpages,  isset($this->Data['pages']) ? count($this->Data['pages']) : 0);
+    return max($this->commentpages,  isset($this->Data['pages']) ? count($this->Data['pages']) : 0);
   }
-
-public function Getcommentpages() {
-global $Options;
-if (!$Options->commentpages) return 1;
-return ceil($this->comments->count / $Options->commentsperpage);
-}
+  
+  public function Getcommentpages() {
+    global $Options;
+    if (!$Options->commentpages) return 1;
+    return ceil($this->comments->count / $Options->commentsperpage);
+  }
   
 }//class
 
