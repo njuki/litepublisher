@@ -21,7 +21,7 @@ class TRSSPrevNext extends TPlugin {
   if ($i > 0) {
    $nextpost = &TPost::Instance($keys[$i - 1]);
    if ($result != '') $result .= ' | ';
-   $result .= TLocal::$data['post']['next'];
+   $result .= TLocal::$data['default']['next'];
    $result .= " <a href=\"$Options->url$nextpost->url\">$nextpost->title</a>";
   }
   
