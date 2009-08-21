@@ -171,7 +171,7 @@ class TRSS extends TEventClass {
     $profile = &TProfile::Instance();
     $content = $this->BeforePostContent($post->id);
     $content .=$post->rss;
-    $content .= $post->morelink;
+    //$content .= $post->morelink;
     $content .= $this->AfterPostContent($post->id);
     
     return "<item>

@@ -599,6 +599,8 @@ class IXR_Date {
     var $hour;
     var $minute;
     var $second;
+    var $timezone;
+
     function IXR_Date($time) {
         // $time can be a PHP timestamp or an ISO one
         if (is_numeric($time)) {
@@ -614,6 +616,7 @@ class IXR_Date {
         $this->hour = date('H', $timestamp);
         $this->minute = date('i', $timestamp);
         $this->second = date('s', $timestamp);
+        $this->timezone = '';
     }
     function parseIso($iso) {
         $this->year = substr($iso, 0, 4);

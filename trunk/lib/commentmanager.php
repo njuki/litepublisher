@@ -68,6 +68,13 @@ class TCommentManager extends TItems {
     $this->Unlock();
   }
   
+  public function Add($postid, $name, $email, $url, $content) {
+    $users = TCommentUsers ::Instance();
+    $userid = $users->Add($name, $email, $url);
+    $post = TPost::Instance($postid);
+    return $this->AddToPost($post, $userid, $content);
+  }
+  
   public function AddToPost(&$post, $userid, $content) {
     $id = ++  $this->lastid;
     $comments = &$post->comments;

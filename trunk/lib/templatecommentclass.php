@@ -60,7 +60,8 @@ class TTemplateComment extends TEventClass {
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
     $count = $this->GetCommentCountStr(count($items));
-    $items = array_slice($items, ($Urlmap->pagenumber - 1) * $Options->commentsperpage, $Options->commentsperpage, true);
+    $from = ($Urlmap->pagenumber - 1) * $Options->commentsperpage;
+    $items = array_slice($items, $from, $Options->commentsperpage, true);
     if (count($items)  > 0) {
       eval('$result .= "'. $this->commentsini['count'] . '\n";');
       $hold = '';
@@ -70,7 +71,8 @@ class TTemplateComment extends TEventClass {
         $comment->id = $id;
         eval('$list .= "'. $comtempl . '\n"; ');
       }
-      $result .= sprintf($this->commentsini['list'], $list);
+      
+      $result .= $this->FormatCommentList($list, $from );
       $result .= "\n";
     }
     
@@ -84,7 +86,7 @@ class TTemplateComment extends TEventClass {
           $comment->id = $id;
           eval('$list .= "'. $comtempl  . '\n"; ');
         }
-        $result .= sprintf($this->commentsini['list'] , $list);
+        $result .= $this->FormatCommentList($list, 0);
         $result .= "\n";
       }
     }
@@ -94,6 +96,11 @@ class TTemplateComment extends TEventClass {
       $result .= $this->commentsini['closed'];
     }
     return $result;
+  }
+  
+  private function FormatCommentList(&$list, $from) {
+    $s = str_replace('\"', '"', $this->commentsini['list']);
+    return sprintf($s, $list, $from + 1);
   }
   
   public function GetHoldList(&$items, &$comment) {

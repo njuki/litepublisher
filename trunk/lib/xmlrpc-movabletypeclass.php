@@ -39,7 +39,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     $Result = array();
     foreach ($Items as $id => $Item) {
       $Result[] = array(
-      'categoryId' => $id,
+      'categoryId' => (string) $id,
       'categoryName' => $Item['name']
       );
     }
