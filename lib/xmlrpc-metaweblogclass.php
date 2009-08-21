@@ -150,7 +150,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $Item->tagnames = $Struct['mt_keywords'];
     }
     
-    if (is_array($Struct['categories'])) {
+    if (isset($Struct['categories']) && is_array($Struct['categories'])) {
       $Item->catnames = $Struct['categories'];
     }
   }
@@ -188,6 +188,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       'parentId' => 0,
       'description' => $Item['name'],
       'categoryName' => $Item['name'],
+      'title' => $Item['name'],
       'htmlUrl' => $Options->url . $Item['url'],
       'rssUrl' =>  $Options->url . $Item['url']
       );
@@ -199,7 +200,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   public function newPost(&$args) {
     $Struct = &$args[3];
     if(!empty($Struct["post_type"]) && ($Struct["post_type"] == "page")) {
-      return $this->wp_newPage($args);
+      return (string) $this->wp_newPage($args);
     }
     
     if (!$this->CanLogin($args, 1)) {
@@ -211,13 +212,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
     $this->MWSetPost($Struct, $Item);
     $Posts->Add($Item);
-    return $Item->id;
+    return (string) $Item->id;
   }
   
   public function editPost(&$args) {
     $Struct = &$args[3];
     if(!empty($Struct["post_type"]) && ($Struct["post_type"] == "page")) {
-      return $this->wp_editPage($args);
+      return (string) $this->wp_editPage($args);
     }
     
     if (!$this->CanLogin($args, 1)) {
@@ -256,8 +257,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     global $Options;
     return array(
     'dateCreated' => new IXR_Date($Item->date),
-    'userid' => 1,
-    'postid' => $Item->id,
+    'userid' => '1',
+    'postid' =>  (string) $Item->id,
     'description' => $Item->rawcontent,
     'title' => $Item->title,
     'link' => $Options->url . $Item->url,
