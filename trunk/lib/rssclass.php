@@ -11,6 +11,7 @@ class TRSS extends TEventClass {
     $this->basename = 'rss';
     $this->Data['feedburner'] = '';
     $this->Data['feedburnercomments'] = '';
+    $this->Data['template'] = '';
     $this->AddEvents('BeforePostContent', 'AfterPostContent');
   }
   
@@ -170,10 +171,14 @@ class TRSS extends TEventClass {
     
     $profile = &TProfile::Instance();
     $content = $this->BeforePostContent($post->id);
-    $content .=$post->rss;
-    //$content .= $post->morelink;
+    if ($this->template == '') {
+      $content .=$post->rss;
+      $content .= $post->morelink;
+    } else {
+      eval('$content .= "'. $this->template . '";');
+    }
     $content .= $this->AfterPostContent($post->id);
-    
+    $content = str_replace(']]>', ']]]]><![CDATA[>',$content);
     return "<item>
     <title>$post->title</title>
     <link>$posturl</link>

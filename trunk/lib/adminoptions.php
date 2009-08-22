@@ -52,7 +52,8 @@ class TAdminOptions extends TAdminPage {
       $status = $Options->DefaultCommentStatus  == 'approved' ? $checked: '';
       $commentsenabled = $Options->commentsenabled ? $checked: '';
       $pingenabled  = $Options->pingenabled  ? $checked: '';
-      $CommentManager = &TCommentManager::Instance();
+      $commentpages  = $Options->commentpages  ? $checked : '';
+      $CommentManager = TCommentManager::Instance();
       $sendnotification = $CommentManager->SendNotification ? $checked : '';
       
       $authors = &TCommentUsers ::Instance();
@@ -189,7 +190,10 @@ class TAdminOptions extends TAdminPage {
       
       case 'rss':
       $rss = &TRSS::Instance();
+      $rss->Lock();
       $rss->SetFeedburnerLinks($feedburner, $feedburnercomments);
+      $rss->template = $content;
+      $rss->Unlock();
       break;
       
       case 'view':
@@ -207,6 +211,8 @@ class TAdminOptions extends TAdminPage {
       $Options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
       $Options->commentsenabled = isset($commentsenabled);
       $Options->pingenabled  = isset($pingenabled );
+      $Options->commentpages = isset($commentpages);
+      $Options->commentsperpage = $commentsperpage;
       $Options->Unlock();
       
       $CommentManager = &TCommentManager::Instance();
