@@ -84,12 +84,14 @@ class TTemplatePost extends TEventClass {
   public function PrintNaviPages($url, $page, $count) {
     global  $Options;
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
+    $Template = TTemplate::Instance();
+    $linkclass = isset($Template->theme['class']['navipage']) ? $Template->theme['class']['navipage'] : '';
     $result = '<p>';
-    $result .= $page== 1 ? '1' : "<a href=\"$Options->url$url\">1</a>";
+    $result .= $page== 1 ? '1' : "<a $linkclass href=\"$Options->url$url\">1</a>";
     $url = rtrim($url, '/');
     for ($i = 2; $i <= $count; $i++) {
       if ($i != $page) {
-        $result .= "|<a href=\"$Options->url$url/page/$i/\">$i</a>";
+        $result .= "|<a $linkclass href=\"$Options->url$url/page/$i/\">$i</a>";
       } else {
         $result .= "|$i";
       }

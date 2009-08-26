@@ -11,7 +11,7 @@ function TSubscribeInstall(&$self) {
   $CommentManager->Unlock();
   
   $Urlmap = &TUrlmap::Instance();
-  $Urlmap->AddGet('/comments/subscribe/', get_class($self), null);
+  $Urlmap->AddGet('/admin/subscribe/', get_class($self), null);
 }
 
 function TSubscribeUninstall(&$self) {
