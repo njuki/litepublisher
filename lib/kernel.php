@@ -775,8 +775,6 @@ class TUrlmap extends TItems {
   }
   
   protected function AddItem(&$items, $url, $class, $arg) {
-    if (isset($items[$url])) return $items[$url]['id'];
-    
     $items[$url] = array(
     'id' => ++$this->lastid,
     'class' => $class,

@@ -107,7 +107,7 @@ class TSubscribe extends TItems {
   
   public function Geturl() {
     global $Options;
-    return $Options->url . '/comments/subscribe/' . $Options->q;
+    return $Options->url . '/admin/subscribe/' . $Options->q;
   }
   
   public function SendMailToSubscribers($id) {

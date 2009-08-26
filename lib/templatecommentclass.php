@@ -42,7 +42,7 @@ class TTemplateComment extends TEventClass {
   
   public function GetCommentsCountLink($tagname) {
     global $post, $Options;
-    $comments = &$post->comments;
+    $comments = $post->comments;
     $CountStr = $this->GetCommentCountStr($comments->GetCountApproved());
     $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
     return "<a href=\"$Options->url$url#comments\">$CountStr</a>";
@@ -67,8 +67,13 @@ class TTemplateComment extends TEventClass {
       $hold = '';
       $list = '';
       $comtempl = $this->commentsini['comment'];
+      $itemclass1 = isset($this->commentsini['itemclass']) ? $this->commentsini['itemclass'] : '';
+      $itemclass2 = isset($this->commentsini['itemclass2']) ? $this->commentsini['itemclass2'] : $itemclass1;
+      $i = 1;
       foreach  ($items as $id => $date) {
         $comment->id = $id;
+        $itemclass = (++$i % 2) == 0 ? $itemclass1 : $itemclass2;
+        $itemclass = str_replace('\"', '"', $itemclass);
         eval('$list .= "'. $comtempl . '\n"; ');
       }
       

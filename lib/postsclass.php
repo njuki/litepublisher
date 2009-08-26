@@ -148,6 +148,7 @@ class TPosts extends TItems {
   }
   
   public function UpdateArchives() {
+    $this->PublishFuture();
     $this->archives = array();
     foreach ($this->items as $id => $item) {
       if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['date'])) {
@@ -158,15 +159,20 @@ class TPosts extends TItems {
   }
   
   public function DoSingleCron($id) {
+    $this->PublishFuture();
     $GLOBALS['post'] = &TPost::Instance($id);
     $this->SingleCron($id);
     //ping
   }
   
   public function HourCron() {
+    $this->PublishFuture();
+  }
+  
+  public function PublishFuture() {
     foreach ($this->items as $id => $Item) {
       if (isset($item['status']) && ($Item['status'] == 'future') && ($Item['date'] <= time())) {
-        $Post = &TPost::Instance($id);
+        $Post = TPost::Instance($id);
         $Post->status = 'published';
         $this->Edit($Post);
       }
@@ -188,11 +194,7 @@ class TPosts extends TItems {
   }
   
   public function StripDrafts(&$Items) {
-    for ($i = count($Items) - 1; $i >= 0; $i--) {
-      if (!isset($this->archives[$Items[$i]])) {
-        array_splice($Items, $i, 1);
-      }
-    }
+    return array_intersect($items, array_keys($this->archives));
   }
   
   public function SortAsArchive($items) {

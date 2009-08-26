@@ -64,7 +64,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     foreach ($Post->categories as $id) {
       $Result =array(
       'categoryName' => $Items[$id]['name'],
-      'categoryId' => $id,
+      'categoryId' => (string) $id,
       'isPrimary' => 			$isPrimary
       );
       $isPrimary = false;
