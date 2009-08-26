@@ -180,10 +180,11 @@ class TInstaller extends TDataClass {
   
   public function RegisterStandartClasses() {
     global $paths;
-    $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
-    foreach ($ini as $class => $filename) {
+    $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
+    foreach ($ini['classes'] as $class => $filename) {
       TClasses::$items[$class] = array($filename, '');
     }
+TClasses::$standart = $ini['standart'];
     TClasses::Save();
   }
   

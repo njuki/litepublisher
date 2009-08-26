@@ -193,7 +193,7 @@ class TPosts extends TItems {
     return $Result;
   }
   
-  public function StripDrafts(&$Items) {
+  public function StripDrafts(&$items) {
     return array_intersect($items, array_keys($this->archives));
   }
   
@@ -212,7 +212,7 @@ class TPosts extends TItems {
   //statics
   
   public static function &Instance() {
-    return GetInstance(__class__);
+    return GetStandartInstance('posts');
   }
   
   public static function unsub(&$obj) {

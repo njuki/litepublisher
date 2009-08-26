@@ -11,7 +11,7 @@ class TTemplateComment extends TEventClass {
   }
   
   public static function &Instance() {
-    return GetInstance(__class__);
+    return GetStandartInstance('templatecomment');
   }
   
   public function ThemeChanged() {
