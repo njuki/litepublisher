@@ -11,6 +11,7 @@ function __autoload($ClassName) {
 
 class TClasses {
   public static $items;
+  public static $standart;
   public static $instances;
   private static $LockCount;
   
@@ -96,6 +97,10 @@ function &GetInstance($ClassName) {
     TClasses::$instances[$ClassName] = &new $ClassName ();
   }
   return TClasses::$instances[$ClassName];
+}
+
+function &GetStandartInstance($name) {
+return GetInstance(TClasses::$standart[$name]);
 }
 
 function PHPComment(&$s) {

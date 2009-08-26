@@ -8,7 +8,7 @@ class TPost extends TItem {
   }
   
   public static function &Instance($id = 0) {
-    return parent::Instance(__class__, $id);
+    return parent::Instance(TClasses::$standart['post'], $id);
   }
   
   protected function CreateData() {

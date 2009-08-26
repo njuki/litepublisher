@@ -14,7 +14,7 @@ class TUrlmap extends TItems {
   private $argfinal;
   
   public static function &Instance() {
-    return GetInstance(__class__);
+    return GetStandartInstance('urlmap');
   }
   
   protected function CreateData() {
