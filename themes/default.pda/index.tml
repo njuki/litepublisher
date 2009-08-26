@@ -17,6 +17,7 @@ $Template->head
 <body>
 <h1><a href="$Options->url$Options->home">$Options->name</a></h1>
 <h2><a href="$Options->rss">$lang->rss</a></h2>
+$Template->body
 $Template->content
 <h3>$Options->description</h3>
 <p>
