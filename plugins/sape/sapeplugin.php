@@ -22,7 +22,7 @@ $this->AddDataMap('widgets', array());
 parent::AfterLoad();
      if (!defined('_SAPE_USER')){
        define('_SAPE_USER', $this->user);
- include_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'sape.php');
+ require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'sape.php');
 $o['charset'] = 'UTF-8';
 $o['multi_site'] = true;
 if ($this->force) $o['force_show_code'] = $this->force;
