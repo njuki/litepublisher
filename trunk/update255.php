@@ -51,10 +51,11 @@ require_once($paths['lib'] . 'eventclass.php');
 require_once($paths['lib'] . 'itemsclass.php');
 require_once('lib/updater.php');
 require_once('lib/optionsclass.php');
-
+require_once('lib/localclass.php');
+require_once('lib/remoteadminclass.php');
 $Options = new TOptions();
         $updater = new TUpdater();
-echo $updater->AutoUpdate();
+echo $updater->DownloadLatest();
 
 //$classes = TClasses::Instance();
 
