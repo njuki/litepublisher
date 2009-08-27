@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="$Template->url/print.css" type="text/css" media="print" />
 <link rel="alternate" type="application/rss+xml" title="$Options->name RSS Feed" href="$Options->rss" />
 <link rel="pingback" href="$Options->pingurl" />
+ <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$Options->url/rsd.xml" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$Options->url/wlwmanifest.xml" />
 <link rel="shortcut icon" type="image/x-icon" href="$Options->url/favicon.ico" />
 <link rel="meta" type="application/rdf+xml" title="FOAF" href="$Options->foaf" />
 <meta name="generator" content="Lite Publisher $Options->version" /> <!-- leave this for stats -->
