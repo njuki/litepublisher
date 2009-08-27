@@ -48,7 +48,8 @@ return '';
 }
 
  public function GetWidgetContent($id) {
-  global  $Template;
+$Template = TTemplate::Instance();
+
     $result = $Template->GetBeforeWidget('links');
 $result .= $this->GetLinks($this->count);
   $result .= $Template->GetAfterWidget();
@@ -56,7 +57,7 @@ $result .= $this->GetLinks($this->count);
 }
 
 public function AfterWidget($id) {
-  global  $Template;
+$Template = TTemplate::Instance();
 if (!in_array($Template->widgets[$id]['class'], $this->widgets))  return '';
 if ($this->optimize) {
 return "<!--$this->optcode-->\n";
