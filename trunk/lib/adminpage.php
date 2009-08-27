@@ -106,7 +106,8 @@ class TAdminPage extends TEventClass {
   }
   
   public function GetTemplateContent() {
-    global $Options, $Template;
+    global $Options;
+    $Template = TTemplate::Instance();
     $result = $this->GetMenu();
     $result = str_replace("'", '"', $result);
     $GLOBALS['post'] = &$this;

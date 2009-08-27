@@ -8,7 +8,8 @@ class TPost extends TItem {
   }
   
   public static function &Instance($id = 0) {
-    return parent::Instance(TClasses::$standart['post'], $id);
+    global $classes;
+    return parent::Instance($classes->classes['post'], $id);
   }
   
   protected function CreateData() {
@@ -102,7 +103,8 @@ class TPost extends TItem {
   }
   
   public function GetTemplateContent() {
-    global $Template;
+    $Template = TTemplate::Instance();
+    
     $GLOBALS['post'] = &$this;
     $tml = 'post.tml';
     if ($this->theme <> '') {

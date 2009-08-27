@@ -25,18 +25,19 @@ class TPlugins extends TItems {
   }
   
   public function AddExt($name, $classname, $filename) {
+    global $classes;
     $this->items[$name] = array(
     'id' => ++$this->lastid,
     'class' => $classname,
     'file' => $filename
     );
     $this->Save();
-    TClasses::Register($classname, $filename, $name);
+    $classes->Add($classname, $filename, $name);
     $this->Added($name);return $this->lastid;
   }
   
   public function Delete($name) {
-    global $paths;
+    global $classes, $paths;
     if (!isset($this->items[$name])) return false;
     $item = $this->items[$name];
     unset($this->items[$name]);
@@ -48,7 +49,7 @@ class TPlugins extends TItems {
         @unlink($paths['data']. $plugin->GetBaseName() . 'bak..php');
       }
     }
-    TClasses::Unregister($item['class']);
+    $classes->Delete($item['class']);
     $this->Deleted($name);
   }
   

@@ -22,14 +22,14 @@ class TItem extends TDataClass {
     $this->id = 0;
   }
   
-  function __get($name) {
+  public function __get($name) {
     if (isset($this->Aliases[$name])) {
       return $this->Data[$this->Aliases[$name]];
     }
     return parent::__get($name);
   }
   
-  function __set($name, $value) {
+  public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
     
     if (isset($this->Aliases[$name])) {

@@ -125,8 +125,9 @@ class TInstaller extends TDataClass {
   }
   
   public function FirstStep() {
+    global $classes;
     $this->CheckFolders();
-    $this->RegisterStandartClasses();
+    $classes->Install();
     $password = $this->InstallOptions();
     $this->InstallClasses();
     return $password;
@@ -176,16 +177,6 @@ class TInstaller extends TDataClass {
     $Options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
     $Options->Unlock();
-  }
-  
-  public function RegisterStandartClasses() {
-    global $paths;
-    $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
-    foreach ($ini['classes'] as $class => $filename) {
-      TClasses::$items[$class] = array($filename, '');
-    }
-TClasses::$standart = $ini['standart'];
-    TClasses::Save();
   }
   
   public function CheckFolders() {
@@ -381,7 +372,7 @@ TClasses::$standart = $ini['standart'];
     $lang = &TLocal::Instance();
     
     $Menu = &TMenu::Instance();
-    $Item = &new TContactForm();
+    $Item = TContactForm::Instance();
     $Item->order = 10;
     $Item->title =  TLocal::$data['installation']['contacttitle'];
     eval('$Item->content = "'. $html->contactform . '\n";');
@@ -395,7 +386,7 @@ TClasses::$standart = $ini['standart'];
     $html->section = 'installation';
     $lang = &TLocal::Instance();
     
-    $post = &new TPost();
+    $post = TPost::Instance(0);
     $post->title = $lang->posttitle;
     $post->catnames = $lang->postcategories;
     $post->tagnames = $lang->posttags;

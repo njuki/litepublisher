@@ -1,84 +1,69 @@
 <?php
 
 function __autoload($ClassName) {
-  if ($path =TClasses::GetPath($ClassName)) {
-    $filename = $path . TClasses::$items[$ClassName][0];
+  global $classes;
+  if ($path =$classes->GetPath($ClassName)) {
+    $filename = $path . $classes->items[$ClassName][0];
     if (@file_exists($filename)) {
       require_once($filename);
     }
   }
 }
 
-class TClasses {
-  public static $items;
-  public static $standart;
-  public static $instances;
-  private static $LockCount;
+class TClasses extends TItems {
+  public $classes;
+  public $instances;
   
-  public static function Register($ClassName, $FileName, $Path = '') {
-    if (!isset(self::$items[$ClassName]) ||
-    (self::$items[$ClassName][0] != $FileName) || (self::$items[$ClassName][1] != $Path)) {
-      self::$items[$ClassName] = array($FileName, $Path);
-      self::Save();
+  public static function &Instance() {
+    return GetInstance(__class__);
+  }
+  
+  protected function CreateData() {
+    parent::CreateData();
+    $this->basename = 'classes';
+    $this->AddDataMap('classes', array());
+    $this->instances = array();
+  }
+  
+  public function Add($ClassName, $FileName, $Path = '') {
+    if (!isset($this->items[$ClassName]) ||
+    ($this->items[$ClassName][0] != $FileName) || ($this->items[$ClassName][1] != $Path)) {
+      $this->items[$ClassName] = array($FileName, $Path);
+      $this->Save();
       $instance = &GetInstance($ClassName);
       if (method_exists($instance, 'Install')) $instance->Install();
     }
+    $this->Added($ClassName);
   }
   
-  public static function Unregister($ClassName) {
-    if (isset(self::$items[$ClassName])) {
+  public function Delete($ClassName) {
+    if (isset($this->items[$ClassName])) {
       if (@class_exists($ClassName)) {
         $instance = &GetInstance($ClassName);
         if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
       }
-      unset(self::$items[$ClassName]);
-      self::Save();
+      unset($this->items[$ClassName]);
+      $this->Save();
+      $this->Deleted($ClassName);
     }
   }
   
-  public static function Reinstall($class) {
-    if (isset(self::$items[$class])) {
-      self::Lock();
-      $item = self::$items[$class];
-      self::Unregister($class);
-      self::Register($class, $item[0], $item[1]);
-      self::Unlock();
+  public function Reinstall($class) {
+    if (isset($this->items[$class])) {
+      $this->Lock();
+      $item = $this->items[$class];
+      $this->Delete($class);
+      $this->Add($class, $item[0], $item[1]);
+      $this->Unlock();
     }
   }
   
-  public static function Save() {
-    global $paths;
-    if (self::$LockCount > 0) return;
-    $s = serialize(self::$items);
-    $s = PHPComment($s);
-    SafeSaveFile($paths['data'].'classes', $s);
-  }
-  
-  public static  function Load() {
-    global $paths;
-    if (!isset(self::$items)) {
-      self::$items = array();
-    }
-    if ($s = @file_get_contents($paths['data'].'classes.php')) {
-      $s = PHPUncomment($s);
-      if (!empty($s)) self::$items = unserialize($s);
-    }
-  }
-  
-  public static function Lock() {
-    self::$LockCount++;
-  }
-  
-  public static function Unlock() {
-    if (--self::$LockCount <= 0) self::Save();
-  }
-  
-  public static function GetPath($class) {
+  public function GetPath($class) {
     global  $paths;
-    if (!isset(TClasses::$items[$class])) return false;
-    if (empty(TClasses::$items[$class][1])) return $paths['lib'];
+    if (!isset($this->items[$class])) return false;
+    if (empty($this->items[$class][1])) return $paths['lib'];
     
-    $result = rtrim(TClasses::$items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    $result = rtrim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if (@is_dir($result))  return $result;
     
     //may be is subdir?
@@ -92,15 +77,17 @@ class TClasses {
 }//class
 
 function &GetInstance($ClassName) {
+  global $classes;
   if (!@class_exists($ClassName)) return null;
-  if (!isset(TClasses::$instances[$ClassName])) {
-    TClasses::$instances[$ClassName] = &new $ClassName ();
+  if (!isset($classes->instances[$ClassName])) {
+    $classes->instances[$ClassName] = &new $ClassName ();
   }
-  return TClasses::$instances[$ClassName];
+  return $classes->instances[$ClassName];
 }
 
-function &GetStandartInstance($name) {
-return GetInstance(TClasses::$standart[$name]);
+function &GetNamedInstance($name) {
+  global $classes;
+  return GetInstance($classes->classes[$name]);
 }
 
 function PHPComment(&$s) {

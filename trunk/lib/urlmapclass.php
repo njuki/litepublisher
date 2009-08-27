@@ -14,7 +14,7 @@ class TUrlmap extends TItems {
   private $argfinal;
   
   public static function &Instance() {
-    return GetStandartInstance('urlmap');
+    return GetNamedInstance('urlmap');
   }
   
   protected function CreateData() {
@@ -155,14 +155,14 @@ class TUrlmap extends TItems {
   }
   
   protected function PrintClassContent($ClassName, &$item) {
-    global $Options, $paths;
+    global $Options, $paths, $Template;
     $Obj = &GetInstance($ClassName);
     $arg = isset($this->argfinal)  ? $this->argfinal : $item['arg'];
     //special handling for rss
     if (method_exists($Obj, 'Request') && ($s = $Obj->Request($arg))) {
       if ($s == 404) return $this->NotFound404();
     } else {
-      $Template = &TTemplate::Instance();
+      $Template = TTemplate::Instance();
       $s = &$Template->Request($Obj);
     }
     eval('?>'. $s);

@@ -1,7 +1,6 @@
 <?php
 
 class TTemplate extends TEventClass {
-  private static $fInstance;
   public $theme;
   public $path;
   public $url;
@@ -20,12 +19,7 @@ class TTemplate extends TEventClass {
   protected $aboutFiles;
   
   public static function &Instance() {
-    global   $Options;
-    if (isset(self::$fInstance))  return self::$fInstance;
-    $TemplateClass = isset($Options->themeclass) ? $Options->themeclass: __class__;
-    self::$fInstance = &GetInstance($TemplateClass);
-    $GLOBALS['Template'] = &self::$fInstance;
-    return self::$fInstance;
+    return GetNamedInstance('template');
   }
   
   protected function CreateData() {
@@ -414,6 +408,7 @@ class TTemplate extends TEventClass {
   
   public function ParseFile($FileName) {
     global $Options, $Urlmap, $Template, $DataObject, $user, $post, $item, $tabindex, $lang;
+    $Template = &$this;
     if (!isset($this->fFiles[$FileName])) {
       $this->fFiles[$FileName] = @file_get_contents($this->path . $FileName);
     }

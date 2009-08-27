@@ -212,7 +212,7 @@ class TPosts extends TItems {
   //statics
   
   public static function &Instance() {
-    return GetStandartInstance('posts');
+    return GetNamedInstance('posts');
   }
   
   public static function unsub(&$obj) {

@@ -11,11 +11,12 @@ class TTemplateComment extends TEventClass {
   }
   
   public static function &Instance() {
-    return GetStandartInstance('templatecomment');
+    return GetNamedInstance('templatecomment');
   }
   
   public function ThemeChanged() {
-    global $Template;
+    $Template = TTemplate::Instance();
+    
     $this->commentsini     = parse_ini_file($Template->path . 'comments.ini');
     foreach ($this->commentsini  as $name => $value) {
       $this->commentsini [$name] = str_replace("'", '\"', $value);

@@ -4,7 +4,7 @@ class TTemplatePost extends TEventClass {
   public $ps; //postscript text
   
   public static function &Instance() {
-    return GetStandartInstance('templatepost');
+    return GetNamedInstance('templatepost');
   }
   
   protected function CreateData() {
