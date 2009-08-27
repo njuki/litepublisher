@@ -9,7 +9,8 @@ class TComments extends TItems {
   }
   
   public static function &Instance($postid) {
-    $ClassName = __class__;
+    global $classes;
+    $ClassName = $classes->classes['comments'];
     if (!isset(self::$Instances)) self::$Instances = array();
     if (!isset(self::$Instances[$postid]))  {
       self::$Instances[$postid]  = &new $ClassName();

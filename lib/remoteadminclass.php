@@ -12,7 +12,8 @@ class TRemoteAdmin extends TEventClass {
   }
   
   public function GetClasses() {
-    return TClasses::$items;
+    global $classes
+    return $classes->$items;
   }
   
   public function ThemeExists($name) {

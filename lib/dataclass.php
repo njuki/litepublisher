@@ -70,12 +70,12 @@ class TDataClass {
   }
   
   protected function CallSatellite($func, $arg = null) {
-    global $paths;
+    global $classes, $paths;
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = TClasses::GetPath($class)) {
-        $filename = basename(TClasses::$items[$class][0], '.php') . '.install.php';
+      if ($path = $classes->GetPath($class)) {
+        $filename = basename($classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
         if (!@file_exists($file)) {
           $file =$path .  $filename;

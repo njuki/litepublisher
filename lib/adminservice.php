@@ -11,7 +11,7 @@ class TAdminService extends TAdminPage {
   }
   
   public function Getcontent() {
-    global $Options, $paths;
+    global $classes, $Options, $paths;
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
@@ -40,12 +40,13 @@ class TAdminService extends TAdminPage {
       $item = $html->engineitem;
       $item .= "\n";
       
-      $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
+      $inifile = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
+      $ini = &$inifile['items'];
       foreach ($ini as $name => $value) {
-        $checkboxes .= sprintf($item, $name, $value, !isset(TClasses::$items[$name]) ? $checked : '');
+        $checkboxes .= sprintf($item, $name, $value, !isset($classes->items[$name]) ? $checked : '');
       }
       
-      foreach (TClasses::$items as $name => $value) {
+      foreach ($classes->items as $name => $value) {
         if (isset($ini[$name])) continue;
         $checkboxes .= sprintf($item, $name, $value[0], '');
       }
@@ -89,7 +90,7 @@ class TAdminService extends TAdminPage {
   }
   
   public function ProcessForm() {
-    global $Options, $Urlmap, $paths, $domain;
+    global $classes, $Options, $Urlmap, $paths, $domain;
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
@@ -109,29 +110,30 @@ class TAdminService extends TAdminPage {
       break;
       
       case 'engine':
-      $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', false);
+      $inifile = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
+      $ini = &$inifile['items'];
       $lang->section = $this->basename;
-      TClasses::Lock();
+      $classes->Lock();
       foreach ($_POST as $name => $value) {
-        if ( isset($ini[$name]) || isset(TClasses::$items[$name])) {
+        if ( isset($ini[$name]) || isset($classes->items[$name])) {
           switch ($_POST['submit']) {
             case $lang->install:
-            TClasses::Register($name, $value);
+            $classes->Add($name, $value);
             break;
             
             case $lang->uninstall:
             $plugins = TPlugins::Instance();
             $plugins->DeleteClass($name);
-            TClasses::Unregister($name);
+            $classes->Delete($name);
             break;
             
             case $lang->reinstall:
-            TClasses::Reinstall($name);
+            $classes->Reinstall($name);
             break;
           }
         }
       }
-      TClasses::Unlock();
+      $classes->Unlock();
       break;
       
       case 'backup':

@@ -19,7 +19,7 @@ class TCategories extends TCommonTags {
   }
   
   public static function &Instance() {
-    return GetInstance(__class__);
+    return GetNamedInstance('categories');
   }
   
   public function Delete($id) {

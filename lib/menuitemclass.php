@@ -36,7 +36,8 @@ class TMenuItem extends TItem {
   }
   
   public function GetTemplateContent() {
-    global $Template;
+    $Template = TTemplate::Instance();
+    
     $GLOBALS['post'] = &$this;
     $tml = 'menuitem.tml';
     if ($this->theme <> '') {
