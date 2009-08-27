@@ -23,8 +23,8 @@ $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
 $microtime = microtime();
 require_once($paths['lib'] . 'kernel.php');
-TClasses::Load();
-$Options = &TOptions::Instance();
+$classes = TClasses::Instance();
+$Options = TOptions::Instance();
 if (!$Options->installed) require_once($paths['libinclude'] . 'install.php');
 //end config
 
