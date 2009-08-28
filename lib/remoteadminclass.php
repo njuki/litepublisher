@@ -12,7 +12,7 @@ class TRemoteAdmin extends TEventClass {
   }
   
   public function GetClasses() {
-    global $classes
+    global $classes;
     return $classes->$items;
   }
   

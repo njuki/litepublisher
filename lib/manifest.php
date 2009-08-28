@@ -24,11 +24,11 @@ class TManifest extends TEventClass {
       <supportsGetTags>Yes</supportsGetTags>
       <supportsNewCategories>Yes</supportsNewCategories>
       </options>
-      </options>
       
       <weblog>
       <serviceName>Lite Publisher</serviceName>';
-      $s . = "    <homepageLinkText>$Options->name</homepageLinkText>
+      
+      $s .= "    <homepageLinkText>$Options->name</homepageLinkText>
       <adminLinkText>$Options->name</adminLinkText>
       <adminUrl>$Options->url/admin/</adminUrl>
       <postEditingUrl>
@@ -67,9 +67,8 @@ class TManifest extends TEventClass {
       <api name=\"Blogger\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->pingurl\" />
       </apis>
       </service>
-      </rsd>\";
+      </rsd>";
       break;
-      
     }
     
     return  $s;

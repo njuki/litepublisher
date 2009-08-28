@@ -466,7 +466,7 @@ class TClasses extends TItems {
 
 function &GetInstance($ClassName) {
   global $classes;
-  if (!@class_exists($ClassName)) return null;
+  if (!class_exists($ClassName)) return null;
   if (!isset($classes->instances[$ClassName])) {
     $classes->instances[$ClassName] = &new $ClassName ();
   }
