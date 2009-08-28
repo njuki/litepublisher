@@ -1,5 +1,5 @@
 <?php
-require_once($paths['lib']. 'kernel.php');
+//require_once($paths['lib']. 'kernel.php');
 
 class TInstaller extends TDataClass {
   public $language;
@@ -125,9 +125,14 @@ class TInstaller extends TDataClass {
   }
   
   public function FirstStep() {
-    global $classes;
+    global $classes, $paths;
     $this->CheckFolders();
-    $classes->Install();
+    //$classes->Install();
+    //because TClasses cant self install
+    require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
+    TClassesInstall($classes);
+    
+    //require_once($paths['lib'] . DIRECTORY_SEPARATOR . 'optionsclass.install.php');
     $password = $this->InstallOptions();
     $this->InstallClasses();
     return $password;
@@ -240,15 +245,13 @@ class TInstaller extends TDataClass {
   }
   
   public function  InstallOptions() {
-    global $paths;
-    $GLOBALS['Options'] = &TOptions::Instance();
-    $Options = &TOptions::Instance();
+    global $paths, $Options;
+    $Options = TOptions::Instance();
     $Options->Lock();
     $Options->language = $this->language;
     TLocal::LoadLangFile('admin');
     $Options->timezone = TLocal::$data['installation']['timezone'];
     $Options->keywords = "blog";
-    $Options->themeclass = "";
     $Options->login = "admin";
     $Options->password = "";
     $Options->realm = "Admin panel";
@@ -262,9 +265,9 @@ class TInstaller extends TDataClass {
     
     $Options->subdir = $this->ExtractSubdir();
     $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
-    $Options->CacheEnabled = true;
+    $Options->Data['CacheEnabled'] = true;
     $Options->CacheExpired	= 3600;
-    $Options->postsperpage = 10;
+    $Options->Data['postsperpage'] = 10;
     $Options->commentsenabled = true;
     $Options->pingenabled = true;
     $Options->commentpages = true;
@@ -276,15 +279,14 @@ class TInstaller extends TDataClass {
   }
   
   public function InstallClasses() {
-    global  $Options;
+    global  $classes, $Options;
     $Options->Lock();
     $Urlmap = &TUrlmap::Instance();
     $GLOBALS['Urlmap'] = &TUrlmap::Instance();
     $Urlmap->Lock();
     $posts = &TPosts::Instance();
     $posts->Lock();
-    foreach( TClasses::$items as $ClassName => $Info) {
-      //echo "$ClassName<br>\n";
+    foreach( $classes->items as $ClassName => $Info) {
       $Obj = &GetInstance($ClassName);
       if (method_exists($Obj, 'Install')) $Obj->Install();
     }

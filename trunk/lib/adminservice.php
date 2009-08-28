@@ -40,7 +40,7 @@ class TAdminService extends TAdminPage {
       $item = $html->engineitem;
       $item .= "\n";
       
-      $inifile = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
+      $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       foreach ($ini as $name => $value) {
         $checkboxes .= sprintf($item, $name, $value, !isset($classes->items[$name]) ? $checked : '');
@@ -110,7 +110,7 @@ class TAdminService extends TAdminPage {
       break;
       
       case 'engine':
-      $inifile = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
+      $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       $lang->section = $this->basename;
       $classes->Lock();

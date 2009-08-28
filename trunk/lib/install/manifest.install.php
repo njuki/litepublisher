@@ -1,6 +1,6 @@
 <?php
 
-function TManifestInstall() {
+function TManifestInstall(&$self) {
   $Urlmap = TUrlmap::Instance();
   $Urlmap->Lock();
   $Urlmap->Add('/wlwmanifest.xml', get_class($self), 'manifest');
@@ -8,7 +8,7 @@ function TManifestInstall() {
   $Urlmap->Unlock();
 }
 
-function TManifestUninstall() {
+function TManifestUninstall(&$self) {
   TUrlmap::unsub($self);
 }
 
