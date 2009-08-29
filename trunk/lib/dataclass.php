@@ -2,6 +2,7 @@
 
 class TDataClass {
   private $LockCount;
+public static $GlobalLock;
   public $Data;
   public $basename;
   public $CacheEnabled;
@@ -100,6 +101,7 @@ class TDataClass {
   
   public function Save() {
     global $paths;
+if (self::$GlobalLock) return;
     if ($this->LockCount <= 0) {
       SafeSaveFile($paths['data'].$this->GetBaseName(), $this->SaveToString());
     }

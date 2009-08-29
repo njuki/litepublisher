@@ -99,6 +99,7 @@ class TCommentForm extends TItems {
   //
   public function Request($param) {
     global $Options;
+if ($Options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
       @header('Allow: POST');

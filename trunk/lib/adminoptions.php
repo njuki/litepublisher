@@ -50,6 +50,7 @@ class TAdminOptions extends TAdminPage {
       
       case 'comments':
       $status = $Options->DefaultCommentStatus  == 'approved' ? $checked: '';
+$commentsdisabled = $Options->commentsdisabled ? $checked : '';
       $commentsenabled = $Options->commentsenabled ? $checked: '';
       $pingenabled  = $Options->pingenabled  ? $checked: '';
       $commentpages  = $Options->commentpages  ? $checked : '';
@@ -209,6 +210,7 @@ class TAdminOptions extends TAdminPage {
       case 'comments':
       $Options->Lock();
       $Options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
+$Options->commentsdisabled = isset($commentsdisabled);
       $Options->commentsenabled = isset($commentsenabled);
       $Options->pingenabled  = isset($pingenabled );
       $Options->commentpages = isset($commentpages);
