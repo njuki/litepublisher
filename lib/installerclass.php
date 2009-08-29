@@ -261,13 +261,13 @@ class TInstaller extends TDataClass {
     
     $Options->email = "yarrowsoft@gmail.com";
     $Options->mailer = "";
-    $Options->DefaultCommentStatus = "approved";
-    
     $Options->subdir = $this->ExtractSubdir();
     $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
     $Options->Data['CacheEnabled'] = true;
     $Options->CacheExpired	= 3600;
     $Options->Data['postsperpage'] = 10;
+    $Options->DefaultCommentStatus = "approved";
+$Options->commentsdisabled = false;
     $Options->commentsenabled = true;
     $Options->pingenabled = true;
     $Options->commentpages = true;

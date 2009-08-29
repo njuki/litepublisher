@@ -96,7 +96,7 @@ class TTemplateComment extends TEventClass {
         $result .= "\n";
       }
     }
-    if ($post->commentsenabled) {
+    if (!$Options->commentsdisabled && $post->commentsenabled) {
       $result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
     } else {
       $result .= $this->commentsini['closed'];
