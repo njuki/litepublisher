@@ -267,7 +267,7 @@ class TInstaller extends TDataClass {
     $Options->CacheExpired	= 3600;
     $Options->Data['postsperpage'] = 10;
     $Options->DefaultCommentStatus = "approved";
-$Options->commentsdisabled = false;
+    $Options->commentsdisabled = false;
     $Options->commentsenabled = true;
     $Options->pingenabled = true;
     $Options->commentpages = true;

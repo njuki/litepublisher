@@ -38,7 +38,6 @@ class THtmlResource  {
       throw new Exception("the requested $name item not found in $this->section section");
     }
     
-    
     $s = $this->replacelang($s);
     return vsprintf($s, $args);
   }

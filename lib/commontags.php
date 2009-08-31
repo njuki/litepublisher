@@ -127,6 +127,7 @@ class TCommonTags extends TItems {
       $Urlmap->Add($url, get_class($this),  $this->lastid);
     }
     $this->Added($this->lastid);
+    $Urlmap->ClearCache();
     return $this->lastid;
   }
   

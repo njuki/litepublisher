@@ -49,13 +49,16 @@ class TMenuItem extends TItem {
   public function &Getsubmenu() {
     global $Options;
     $result = array();
-    $menu = &TMenu::Instance();
+    $menu = TMenu::Instance();
     $Childs = $menu->items[$this->id]['childs'];
     if (count($Childs) > 0) {
       $Items = &$menu->items;
       foreach ($Childs as $id) {
-        $title =  $Items[$id]['title'];
-        $result[] = '<a href="'. $Options->url . $Items[$id]['url'] . "\" title=\"$title\">$title</a>";
+        $result[] = array(
+        'url' =>       $Options->url . $Items[$id]['url'],
+        'title' =>  $Items[$id]['title'],
+        'subitems' => array()
+        );
       }
     }
     return $result;
