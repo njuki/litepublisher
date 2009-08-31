@@ -16,7 +16,7 @@ class TOptions extends TEventClass {
   public function Load() {
     parent::Load();
     if($this->PropExists('timezone'))  date_default_timezone_set($this->timezone);
-    define('gmt_offset', date('Z'));
+    if (!defined('gmt_offset')) define('gmt_offset', date('Z'));
   }
   
   public function __set($name, $value) {
@@ -48,6 +48,16 @@ class TOptions extends TEventClass {
     $s = $this->OnGeturl();
     if ($s == '') $s = $this->Data['url'];
     return $s . ($Urlmap->Ispda ? '/pda' : '');
+  }
+  
+  public function Seturl($url) {
+    $this->Lock();
+    $this->Data['url'] = $url;
+    $this->rss = $url . '/rss/';
+    $this->rsscomments = $url .  '/comments/';
+    $this->pingurl = $url . '/rpc.xml';
+    $this->foaf = $url . '/foaf.xml';
+    $this->Unlock();
   }
   
   public function CheckLogin($login, $password) {

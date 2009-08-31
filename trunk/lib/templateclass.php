@@ -499,12 +499,12 @@ class TTemplate extends TEventClass {
   public function Getsubmenuwidget() {
     if (!method_exists($this->DataObject, 'Getsubmenu'))  return '';
     
-    $links = &$this->DataObject->Getsubmenu();
-    if (count($links) == 0) return '';
-    $item = $this->theme['menu']['item'];
+    $items = $this->DataObject->Getsubmenu();
+    if (count($items) == 0) return '';
+    $menuitem = $this->theme['menu']['item'];
     $content = '';
-    foreach ($links as $link) {
-      eval('$content .= "'. $item . '\n";');
+    foreach ($items as $item) {
+      $content .= sprintf($menuitem , $item['url'], $item['title'], '') . "\n";
     }
     $content = str_replace("'", '"', $content);
     

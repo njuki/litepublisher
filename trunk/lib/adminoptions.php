@@ -50,7 +50,7 @@ class TAdminOptions extends TAdminPage {
       
       case 'comments':
       $status = $Options->DefaultCommentStatus  == 'approved' ? $checked: '';
-$commentsdisabled = $Options->commentsdisabled ? $checked : '';
+      $commentsdisabled = $Options->commentsdisabled ? $checked : '';
       $commentsenabled = $Options->commentsenabled ? $checked: '';
       $pingenabled  = $Options->pingenabled  ? $checked: '';
       $commentpages  = $Options->commentpages  ? $checked : '';
@@ -144,13 +144,7 @@ $commentsdisabled = $Options->commentsdisabled ? $checked : '';
       case null:
       $Template = &TTemplate::Instance();
       $Options->Lock();
-      if (!empty($url) && ($url != $Options->url))  {
-        $Options->url = $url;
-        $Options->rss = $url . '/rss/';
-        $Options->rsscomments = $url .  '/comments/';
-        $Options->pingurl = $url . '/rpc.xml';
-        $Options->foaf = $url . '/foaf.xml';
-      }
+      if (!empty($url) && ($url != $Options->url))  $Options->Seturl($url);
       if (!empty($name)) $Options->name = $name;
       if (!empty($description)) $Options->description = $description;
       if (!empty($keywords)) $Options->keywords = $keywords;
@@ -210,7 +204,7 @@ $commentsdisabled = $Options->commentsdisabled ? $checked : '';
       case 'comments':
       $Options->Lock();
       $Options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
-$Options->commentsdisabled = isset($commentsdisabled);
+      $Options->commentsdisabled = isset($commentsdisabled);
       $Options->commentsenabled = isset($commentsenabled);
       $Options->pingenabled  = isset($pingenabled );
       $Options->commentpages = isset($commentpages);

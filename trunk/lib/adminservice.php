@@ -142,11 +142,15 @@ class TAdminService extends TAdminPage {
       switch ($dest) {
         case 'upload':
         if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
-          eval('$s = "'. $html->attack. '\n";');
-          return sprintf($s, $_FILES["filename"]["name"]);
+          return $html->attack($_FILES["filename"]["name"]);
         }
         
+        $url = $Options->url;
         $admin->Upload(file_get_contents($_FILES["filename"]["tmp_name"]));
+        if (isset($saveurl)) {
+          $Options->Load();
+          $Options->Seturl($url);
+        }
         $Urlmap->ClearCache();
         @header('Location: http://' . $_SERVER['HTTP_HOST'] .  $_SERVER['REQUEST_URI']);
         exit();

@@ -130,7 +130,7 @@ class TAdminWidgets extends TAdminPage {
       eval('$result = "'. $html->customhead . '\n";');
       $result .= "<ul>\n";
       foreach ($widget->items as $id => $item) {
-        $result .= "<li><a href='$Options->url/admin/widgets/custom/?id=$id' title='widget $id'>{$item['title']}</a></li>\n";
+      $result .= "<li><a href='$Options->url/admin/widgets/custom/?id=$id' title='widget $id'>{$item['title']}</a></li>\n";
       }
       $result .= "</ul>\n";
       $id = $this->idget();
