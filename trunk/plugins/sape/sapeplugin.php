@@ -58,7 +58,7 @@ $result .= $this->GetLinks($this->count);
 
 public function AfterWidget($id) {
 $Template = TTemplate::Instance();
-if (!in_array($Template->widgets[$id]['class'], $this->widgets))  return '';
+if (!isset($Template->widgets[$id]) || !in_array($Template->widgets[$id]['class'], $this->widgets))  return '';
 if ($this->optimize) {
 return "<!--$this->optcode-->\n";
 } else {
