@@ -85,9 +85,10 @@ function &GetInstance($ClassName) {
   return $classes->instances[$ClassName];
 }
 
-function &GetNamedInstance($name) {
+function &GetNamedInstance($name, $defclass) {
   global $classes;
-  return GetInstance($classes->classes[$name]);
+$class = !empty($classes->classes[$name]) ? $classes->classes[$name]) : $defclass;
+  return GetInstance($class);
 }
 
 function PHPComment(&$s) {

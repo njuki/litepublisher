@@ -64,12 +64,11 @@ class TCommentForm extends TItems {
         $values = $user + $values;
         
         //hold comment list
-        $Comments = &TComments::Instance($postid);
+        $Comments = TComments::Instance($postid);
         $items = &$Comments->GetHold($user['id']);
         if (count($items) > 0) {
-          $comment = &new TComment($Comments);
           $TemplateComment = &TTemplateComment::Instance();
-          $Result .= $TemplateComment->GetHoldList($items, $comment);
+          $Result .= $TemplateComment->GetHoldList($items, $postid);
         }
       }
     }

@@ -1,6 +1,6 @@
 <?php
 
-class TSitemap extends TEventClass {
+class TSitemap extends TItems {
   private $lastmod;
   private $count;
   private $fd;
@@ -16,6 +16,11 @@ class TSitemap extends TEventClass {
     $this->Data['date'] = time();
     $this->Data['countfiles'] = 1;
   }
+
+public function Add($class, $prio) {
+$this->items[$class] = (int) $prio;
+$this->Save();
+}
   
   public function Cron() {
     $this->CreateFiles();
@@ -75,31 +80,47 @@ class TSitemap extends TEventClass {
   }
   
   public function CreateFiles() {
-    $prio = array(
-    'TPost' => 8,
-    'TMenuItem' => 8,
-    'TContactForm' => 8,
-    'TArchives' => 5,
-    'TCategories' => 6,
-    'TTags' => 5,
-    'THomepage' => 9);
-    
-    
     $this->countfiles = 0;
     $this->count = 0;
     $this->date = time();
     $this->lastmod = strftime("%Y-%m-%d", $this->date);
-    $urlmap = &TUrlmap::Instance();
+    $urlmap = TUrlmap::Instance();
     $this->OpenFile();
-    foreach ($urlmap->items as $url => $item) {
-      if (isset($prio[$item['class']])) {
-        $this->WriteItem($url, $prio[$item['class']]);
-      }
-    }
-    
-    $this->CloseFile();
+
+$this->WalkUrlmap($Urlmap->items);
+$this->WalkUrlmap($Urlmap->get);
+if (isset($Urlmap->tree['category']['items'])) $this->WalkUrlmap($Urlmap->tree['category']['items']);
+if (isset($Urlmap->tree['tag']['items'])) $this->WalkUrlmap($Urlmap->tree['tag']['items']);
+
+        $this->CloseFile();
     $this->Save();
   }
+
+private function WalkUrlmap(&$items) {
+global $classes;
+$posts = TPosts::Instance();
+    foreach ($items as $url => $item) {
+$class = $item['class'];
+if ($class == $classes->classes['post']) && !isset($posts->archives[$item['arg']])) continue;
+$prio = $this->GetPriority($class);
+if ($prio == 0) continue;
+        $this->WriteItem($url, $prio);
+      }
+}
+
+private function GetPriority($class) {
+if (isset($this->items[$class])) return $this->items[$class];
+switch ($class) {
+case $classes->classes['post']: return 8;
+case $classes->classes['categories']: return 6;
+case $classes->classes['tags']: return 5;
+    case 'TMenuItem': return 8;
+    case 'TContactForm': return 7;
+    case 'TArchives': return 5;
+    case 'THomepage': return 9;
+}
+return 0;
+}
   
   private function WriteItem($url, $prio = 5) {
     global $Options;
