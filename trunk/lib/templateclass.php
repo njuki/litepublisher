@@ -19,7 +19,7 @@ class TTemplate extends TEventClass {
   protected $aboutFiles;
   
   public static function &Instance() {
-    return GetNamedInstance('template');
+    return GetNamedInstance('template', __class__);
   }
   
   protected function CreateData() {

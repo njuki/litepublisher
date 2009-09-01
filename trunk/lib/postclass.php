@@ -9,7 +9,8 @@ class TPost extends TItem {
   
   public static function &Instance($id = 0) {
     global $classes;
-    return parent::Instance($classes->classes['post'], $id);
+$class = !empty($classes->classes['post']) ? $classes->classes['post']) : __class__;
+    return parent::Instance($class, $id);
   }
   
   protected function CreateData() {
@@ -101,6 +102,11 @@ class TPost extends TItem {
     $this->categories = $Categories->CreateNames($names);
     if (count($this->categories ) == 0) $this->categories [] = $Categories->defaultid;
   }
+
+  public function Request($id) {
+parent::Request($id);
+if ($this->status != 'published') return 404;
+}
   
   public function GetTemplateContent() {
     $Template = TTemplate::Instance();

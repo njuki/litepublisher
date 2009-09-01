@@ -13,7 +13,7 @@ class TTags extends TCommonTags {
   }
   
   public static function &Instance() {
-    return GetNamedInstance('tags');
+    return GetNamedInstance('tags', __class__);
   }
   
 }
