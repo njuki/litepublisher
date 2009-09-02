@@ -61,14 +61,14 @@ class TTemplateComment extends TEventClass {
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
     $count = $this->GetCommentCountStr(count($items));
-$from = 0;
-if ($Options->commentpages ) {
-    $from = ($Urlmap->pagenumber - 1) * $Options->commentsperpage;
-    $items = array_slice($items, $from, $Options->commentsperpage, true);
-}
+    $from = 0;
+    if ($Options->commentpages ) {
+      $from = ($Urlmap->pagenumber - 1) * $Options->commentsperpage;
+      $items = array_slice($items, $from, $Options->commentsperpage, true);
+    }
     if (count($items)  > 0) {
       eval('$result .= "'. $this->commentsini['count'] . '\n";');
-$result .= $this->GetcommentsList($items, $comment, '', $from);
+      $result .= $this->GetcommentsList($items, $comment, '', $from);
     }
     
     if ($Urlmap->pagenumber == 1) {
@@ -97,32 +97,32 @@ $result .= $this->GetcommentsList($items, $comment, '', $from);
     $s = str_replace('\"', '"', $this->commentsini['list']);
     return sprintf($s, $list, $from + 1);
   }
-
-private function GetCommentsList(&$items, &$comment, $hold, $from) {
-      $list = '';
-      $comtempl = $this->commentsini['comment'];
-      $itemclass1 = isset($this->commentsini['itemclass']) ? $this->commentsini['itemclass'] : '';
-      $itemclass2 = isset($this->commentsini['itemclass2']) ? $this->commentsini['itemclass2'] : $itemclass1;
-      $i = 1;
-      foreach  ($items as $id => $date) {
-        $comment->id = $id;
-        $itemclass = (++$i % 2) == 0 ? $itemclass1 : $itemclass2;
-        $itemclass = str_replace('\"', '"', $itemclass);
-        eval('$list .= "'. $comtempl . '\n"; ');
-      }
-      
-      $result .= $this->FormatCommentList($list, $from );
-      $result .= "\n";
-return $result;
-}
+  
+  private function GetCommentsList(&$items, &$comment, $hold, $from) {
+    $list = '';
+    $comtempl = $this->commentsini['comment'];
+    $itemclass1 = isset($this->commentsini['itemclass']) ? $this->commentsini['itemclass'] : '';
+    $itemclass2 = isset($this->commentsini['itemclass2']) ? $this->commentsini['itemclass2'] : $itemclass1;
+    $i = 1;
+    foreach  ($items as $id => $date) {
+      $comment->id = $id;
+      $itemclass = (++$i % 2) == 0 ? $itemclass1 : $itemclass2;
+      $itemclass = str_replace('\"', '"', $itemclass);
+      eval('$list .= "'. $comtempl . '\n"; ');
+    }
+    
+    $result .= $this->FormatCommentList($list, $from );
+    $result .= "\n";
+    return $result;
+  }
   
   public function GetHoldList(&$items, $postid) {
-if (count($items) == 0) return '';
-$comments = TComments::Instance($postid);
-$comment = new TComment($comments);
+    if (count($items) == 0) return '';
+    $comments = TComments::Instance($postid);
+    $comment = new TComment($comments);
     $lang = &TLocal::Instance();
     $lang->section = 'comment';
-return $this->GetCommentsList($items, $comment, $lang->hold, 0);
+    return $this->GetCommentsList($items, $comment, $lang->hold, 0);
   }
   
   public function GenerateCommentForm() {

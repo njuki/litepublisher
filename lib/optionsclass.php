@@ -51,12 +51,17 @@ class TOptions extends TEventClass {
   }
   
   public function Seturl($url) {
+    $url = rtrim($url, '/');
     $this->Lock();
     $this->Data['url'] = $url;
     $this->rss = $url . '/rss/';
     $this->rsscomments = $url .  '/comments/';
     $this->pingurl = $url . '/rpc.xml';
     $this->foaf = $url . '/foaf.xml';
+    $this->subdir = '';
+    if ($i = strpos($url, '/', 10)) {
+      $this->subdir = substr($url, $i);
+    }
     $this->Unlock();
   }
   

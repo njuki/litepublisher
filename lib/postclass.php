@@ -9,7 +9,7 @@ class TPost extends TItem {
   
   public static function &Instance($id = 0) {
     global $classes;
-$class = !empty($classes->classes['post']) ? $classes->classes['post']) : __class__;
+    $class = !empty($classes->classes['post']) ? $classes->classes['post'] : __class__;
     return parent::Instance($class, $id);
   }
   
@@ -102,11 +102,11 @@ $class = !empty($classes->classes['post']) ? $classes->classes['post']) : __clas
     $this->categories = $Categories->CreateNames($names);
     if (count($this->categories ) == 0) $this->categories [] = $Categories->defaultid;
   }
-
+  
   public function Request($id) {
-parent::Request($id);
-if ($this->status != 'published') return 404;
-}
+    parent::Request($id);
+    if ($this->status != 'published') return 404;
+  }
   
   public function GetTemplateContent() {
     $Template = TTemplate::Instance();
@@ -123,7 +123,9 @@ if ($this->status != 'published') return 404;
     $Template = &TTemplatePost::Instance();
     $result = $Template->BeforePostContent($this->id);
     $Urlmap = &TUrlmap::Instance();
-    if (($Urlmap->pagenumber != 1) && $this->haspages) {
+    if (($Urlmap->pagenumber == 1) && !$this->haspages) {
+      $result .= $this->Data['content'];
+    } else {
       if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {
         $result .= $this->Data['pages'][$Urlmap->pagenumber - 1];
       } elseif ($Urlmap->pagenumber <= $this->commentpages) {
@@ -132,8 +134,6 @@ if ($this->status != 'published') return 404;
         $lang = &TLocal::Instance();
         $result .= $lang->notfound;
       }
-    } else {
-      $result .= $this->Data['content'];
     }
     $result .= $Template->AfterPostContent($this->id);
     return $result;
