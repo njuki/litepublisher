@@ -475,9 +475,10 @@ function &GetInstance($ClassName) {
   return $classes->instances[$ClassName];
 }
 
-function &GetNamedInstance($name) {
+function &GetNamedInstance($name, $defclass) {
   global $classes;
-  return GetInstance($classes->classes[$name]);
+  $class = !empty($classes->classes[$name]) ? $classes->classes[$name] : $defclass;
+  return GetInstance($class);
 }
 
 function PHPComment(&$s) {
@@ -555,12 +556,17 @@ class TOptions extends TEventClass {
   }
   
   public function Seturl($url) {
+    $url = rtrim($url, '/');
     $this->Lock();
     $this->Data['url'] = $url;
     $this->rss = $url . '/rss/';
     $this->rsscomments = $url .  '/comments/';
     $this->pingurl = $url . '/rpc.xml';
     $this->foaf = $url . '/foaf.xml';
+    $this->subdir = '';
+    if ($i = strpos($url, '/', 10)) {
+      $this->subdir = substr($url, $i);
+    }
     $this->Unlock();
   }
   
@@ -606,7 +612,7 @@ class TUrlmap extends TItems {
   private $argfinal;
   
   public static function &Instance() {
-    return GetNamedInstance('urlmap');
+    return GetNamedInstance('urlmap', __class__);
   }
   
   protected function CreateData() {
@@ -672,31 +678,58 @@ class TUrlmap extends TItems {
   
   public function &FindItem($url) {
     global $Options;
+    //redir multi slashed
+    if ('//' == substr($url, strlen($url) - 3)) $this->Redir301(rtrim($url, '/') . '/');
+    
     //4 steps: items, get, pagenumber, tree
     if (isset($this->items[$url])) return $this->items[$url];
     $slashed = rtrim($url, '/');
-    if (isset($this->items[$slashed])) return $this->Redir301($slashed);
+    if (isset($this->items[$slashed])) {
+      if ($this->pagenumber == 1) {
+        return $this->Redir301($slashed);
+      } else {
+        return $this->items[$slashed];
+      }
+    }
+    
     $slashed  .= '/';
-    if (isset($this->items[$slashed])) return $this->Redir301($slashed);
+    if (isset($this->items[$slashed])) {
+      if ($this->pagenumber == 1) {
+        return $this->Redir301($slashed);
+      } else {
+        return $this->items[$slashed];
+      }
+    }
     
     if (($Options->q == '?') && ($i = strpos($url, '?')) ) {
       $url = substr($url, 0, $i);
     }
     
     if (isset($this->get[$url])) return $this->get[$url];
+    
     $slashed = rtrim($url, '/');
-    if (isset($this->get[$slashed])) return $this->Redir301($slashed);
+    if (isset($this->get[$slashed])) {
+      if ($this->pagenumber == 1) {
+        return $this->Redir301($slashed);
+      } else {
+        return $this->get[$slashed];
+      }
+    }
+    
     $slashed  .= '/';
-    if (isset($this->get[$slashed])) return $this->Redir301($slashed);
+    if (isset($this->get[$slashed])) {
+      if ($this->pagenumber == 1) {
+        return $this->Redir301($slashed);
+      } else {
+        return $this->get[$slashed];
+      }
+    }
     
     //check page number as  /page/pagenumber/
     $this->uripath = $this->ParseUriPath($url);
     $c = count($this->uripath);
     if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
       $this->pagenumber = (int) $this->uripath[$c - 1];
-      //redir if is not a single /
-      $slashed = rtrim($this->url, '/') . '/';
-      if ($this->url != $slashed) return $this->Redir301($slashed);
       $url = substr($url, 0, strpos($url, "page/$this->pagenumber"));
       array_splice($this->uripath, $c - 2, 2);
       return $this->FindItem($url);

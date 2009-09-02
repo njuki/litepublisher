@@ -87,7 +87,7 @@ function &GetInstance($ClassName) {
 
 function &GetNamedInstance($name, $defclass) {
   global $classes;
-$class = !empty($classes->classes[$name]) ? $classes->classes[$name]) : $defclass;
+  $class = !empty($classes->classes[$name]) ? $classes->classes[$name] : $defclass;
   return GetInstance($class);
 }
 

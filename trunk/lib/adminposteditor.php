@@ -87,6 +87,7 @@ class TPostEditor extends TAdminPage {
     if ($this->arg == null) {
       $post->content = $raw;
     } else {
+      $post->url = $url;
       $post->rawcontent = $raw;
       $post->outputcontent = $content;
       $post->excerpt = $excerpt;
