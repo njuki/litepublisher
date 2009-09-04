@@ -89,6 +89,8 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
 } //class
 
 class TCron extends TEventClass {
+  public $writelog;
+  public $disableadd;
   
   public static function &Instance() {
     return GetInstance(__class__);
@@ -100,6 +102,8 @@ class TCron extends TEventClass {
     $this->Data['url'] = '';
     $this->Data['lastid'] = 0;
     $this->CacheEnabled = false;
+    $this->writelog = false;
+    $this->disableadd = false;
   }
   
   public function Request($arg) {
@@ -155,6 +159,7 @@ class TCron extends TEventClass {
   }
   
   public function Add($type, $class, $func, $arg = null) {
+    if ($this->disableadd) return false;
     ++$this->Data['lastid'] ;
     $this->Save();
     $task = new TCronTask($this);
@@ -233,7 +238,7 @@ class TCron extends TEventClass {
   public function AppendLog($s) {
     echo date('r') . "\n$s\n\n";
     flush();
-    return;
+    if (!$this->writelog) return;
     global $paths;
     $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronlog.txt';
     if ($fp = fopen($filename,"a+")) {

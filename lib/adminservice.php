@@ -66,7 +66,7 @@ class TAdminService extends TAdminPage {
       if (isset($_GET['filename'])) {
         $filename = $_GET['filename'];
         if ($s = @file_get_contents($paths['backup'] . $filename)) {
-          $this->SendZip($content, $filename);
+          $this->SendZip($s, $filename);
         }
       }
       $result = $this->notfound;

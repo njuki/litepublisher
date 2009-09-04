@@ -176,8 +176,9 @@ class TCommonTags extends TItems {
       }
       unset($this->items[$id]);
       $this->Save();
-      $urlmap = &TUrlmap::Instance();
-      $urlmap->ClearCache();
+      $Urlmap = &TUrlmap::Instance();
+      $Urlmap->DeleteClassArg(get_class($this), $id);
+      $Urlmap->ClearCache();
       $this->Deleted($id);
     }
   }
