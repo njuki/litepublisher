@@ -113,7 +113,14 @@ class TCommonTags extends TItems {
     'items' => array()
     );
     $this->Unlock();
-    $Urlmap =&TUrlmap::Instance();
+$this->AddUrl($url);
+    $this->Added($this->lastid);
+    $Urlmap->ClearCache();
+    return $this->lastid;
+  }
+
+private function AddUrl($url) {
+    $Urlmap =TUrlmap::Instance();
     $dir = "/$this->PermalinkIndex/";
     if (substr($url, 0, strlen($dir)) == $dir) {
       $subdir = substr($url, strlen($dir));
@@ -126,10 +133,7 @@ class TCommonTags extends TItems {
     } else {
       $Urlmap->Add($url, get_class($this),  $this->lastid);
     }
-    $this->Added($this->lastid);
-    $Urlmap->ClearCache();
-    return $this->lastid;
-  }
+}
   
   public function Edit($id, $name, $url) {
     $item = $this->items[$id];
@@ -140,12 +144,13 @@ class TCommonTags extends TItems {
       $this->Lock();
       $item['name'] = $name;
       if ($item['url'] != $url) {
-        $Urlmap->Delete($item['url']);
+        $Urlmap->DeleteClassArg(get_class($this), $id);
         $url = trim($url, '/');
         $this->NewName = $url == '' ? $name : $url;
         $Linkgen = &TLinkGenerator::Instance();
         $url = $Linkgen->Create($this, $this->PermalinkIndex );
-        $Urlmap->Add($url, get_class($this),  array('id' => $id, 'page' => 1) );
+ 
+$this->AddUrl($url);
         if ($item['url'] != $url) {
           $Urlmap->AddRedir($item['url'], $url);
         }
