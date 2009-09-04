@@ -99,7 +99,7 @@ class TSitemap extends TItems {
   private function WalkUrlmap(&$items) {
     global $classes;
     $posts = TPosts::Instance();
-    foreach ($items as $url => $item) {
+    foreach ($this->items as $url => $item) {
       $class = $item['class'];
       if (($class == $classes->classes['post']) && !isset($posts->archives[$item['arg']])) continue;
       $prio = $this->GetPriority($class);

@@ -229,8 +229,8 @@ class TInstaller extends TDataClass {
   }
   
   public function ExtractSubdir() {
-    if (isset($_GET) && (count($_GET) > 0)) {
-      $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
+    if (isset($_GET) && (count($_GET) > 0) && ($i = strpos($_SERVER['REQUEST_URI'], '?'))) {
+      $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, $i);
     }
     
     if (preg_match('/index\.php$/', $_SERVER['REQUEST_URI'])) {

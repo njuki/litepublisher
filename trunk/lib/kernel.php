@@ -878,6 +878,25 @@ class TUrlmap extends TItems {
     }
   }
   
+  private function DeleteClassArgItem(&$items, $class, $arg) {
+    foreach ($items as  $url => $item) {
+      if (($item['class'] == $class) && ($item['arg'] == $arg)) {
+        unset($items[$url]);
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public function DeleteClassArg($class, $arg) {
+    if (!($this->DeleteClassArgItem($this->items, $class, $arg) || $this->DeleteClassArgItem($this->get, $class, $arg))) {
+      foreach ($this->tree as $url => $item) {
+        if ($this->DeleteClassArgItem($this->tree[$url]['items'], $class, $arg)) break;
+      }
+    }
+    $this->Save();
+  }
+  
   public function DeleteSubNode($node, $subnode) {
     if ($this->DeleteItem($this->tree[$node]['items'], $subnode)) {
       $this->Save();
