@@ -41,7 +41,7 @@ class TMenu extends TItems {
     $Item->Unlock();
     $this->Unlock();
     
-    $Urlmap = &TUrlmap::Instance();
+    $Urlmap = TUrlmap::Instance();
     if ($this->AcceptGet) {
       $Urlmap->AddGet($Item->url, get_class($Item), $Item->id);
     } else {
@@ -49,10 +49,12 @@ class TMenu extends TItems {
     }
     
     $this->Added($Item->id);
+    $Urlmap->ClearCache();
+    return $Item->id;
   }
   
   public function Edit(&$item) {
-    $Urlmap = &TUrlmap::Instance();
+    $Urlmap = TUrlmap::Instance();
     $Urlmap->Lock();
     
     $this->Lock();
@@ -80,8 +82,9 @@ class TMenu extends TItems {
     $item->Unlock();
     $this->Unlock();
     
-    $Urlmap->ClearCache();
     $Urlmap->Unlock();
+    $Urlmap->ClearCache();
+    
     
     $this->Edited($Item->id);
   }
@@ -165,13 +168,14 @@ class TMenu extends TItems {
     if (!$this->ItemExists($id)) return false;
     if ($this->GetChildsCount($id) > 0) return false;
     $this->Lock();
-    $Urlmap = &TUrlmap::Instance();
+    $Urlmap = TUrlmap::Instance();
     $Urlmap->Delete($this->items[$id]['url']);
     TItem::DeleteItemDir($paths['data']. 'menus'. DIRECTORY_SEPARATOR  . $id. DIRECTORY_SEPARATOR );
     unset($this->items[$id]);
     $this->Sort();
     $this->Unlock();
     $this->Deleted($id);
+    $Urlmap->ClearCache();
     return true;
   }
   

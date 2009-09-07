@@ -14,38 +14,42 @@ class TTemplatePost extends TEventClass {
   }
   
   public function GetPostscript($tagname) {
-    global $Options, $Urlmap, $post;
-    $lang = &TLocal::Instance();
+    global $classes, $post;
     $this->ps = '';
-    if (is_a($post, 'TPost')) {
-      //pages
-      if ($post->haspages) {
-        $this->ps .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
-      }
-      if ($post->commentsenabled && ($post->comments->count > 0)) {
-        $this->ps .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
-      }
-      
-      //prev and next post
-      $links = '';
-      $posts = &TPosts::Instance();
-      $keys = array_keys($posts->archives);
-      $i = array_search($post->id, $keys);
-      if ($i < count($keys) -1) {
-        $prevpost = &TPost::Instance($keys[$i + 1]);
-        $links .= "$lang->prev <a href=\"$Options->url$prevpost->url\">$prevpost->title</a>";
-      }
-      
-      if ($i > 0) {
-        $nextpost = &TPost::Instance($keys[$i - 1]);
-        if ($links != '') $links .= ' | ';
-        $links .= "$lang->next <a href=\"$Options->url$nextpost->url\">$nextpost->title</a>";
-      }
-      
-      if ($links != '') $this->ps .= "<p>$links</p>\n";
-    }
+    if (is_a($post, $classes->classes['post'])) $this->ps .= $this->GetPostFooter($post);
     $this->ps .= $this->Onpostscript($post->id);
     return $this->ps;
+  }
+  
+  private function GetPostFooter(&$post) {
+    global $Options, $Urlmap;
+    $result = '';
+    $lang = &TLocal::Instance();
+    //pages
+    if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
+    if ($post->commentsenabled && ($post->comments->count > 0)) {
+      $result .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
+    }
+    
+    //prev and next post
+    $links = '';
+    $posts = &TPosts::Instance();
+    $keys = array_keys($posts->archives);
+    $i = array_search($post->id, $keys);
+    if ($i < count($keys) -1) {
+      $prevpost = &TPost::Instance($keys[$i + 1]);
+      $links .= "$lang->prev <a href=\"$Options->url$prevpost->url\">$prevpost->title</a>";
+    }
+    
+    if ($i > 0) {
+      $nextpost = &TPost::Instance($keys[$i - 1]);
+      if ($links != '') $links .= ' | ';
+      $links .= "$lang->next <a href=\"$Options->url$nextpost->url\">$nextpost->title</a>";
+    }
+    
+    if ($links != '') $result .= "<p>$links</p>\n";
+    
+    return $result;
   }
   
   public function PrintPosts(&$Items) {

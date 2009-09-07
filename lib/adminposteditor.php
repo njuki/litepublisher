@@ -31,35 +31,39 @@ class TPostEditor extends TAdminPage {
   
   public function Getcontent() {
     global $Options;
-    $html = &THtmlResource::Instance();
+    $result = '';
+    $html = THtmlResource::Instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = TLocal::Instance();
     
     $this->postid = isset($_GET['postid']) ? (int) $_GET['postid'] : (isset($_POST['postid']) ? (int) $_POST['postid'] : 0);
-    $post = &TPost::Instance($this->postid);
+    $post = TPost::Instance($this->postid);
+    if ($post->id != 0) {
+  $result .= $html->formhead("<a href='$Options->url$post->url'>$post->title</a>", "$Options->url/admin/posteditor/{$Options->q}postid=$post->id", "$Options->url/admin/posteditor/full/{$Options->q}postid=$post->id");
+    }
     $raw = $this->ContentToForm($post->rawcontent);
     $commentsenabled = $post->commentsenabled ? 'checked' : '';
     $pingenabled = $post->pingenabled ? 'checked' : '';
     $published = $post->status != 'draft' ? 'selected' : '';
     $draft = $post->status == 'draft' ? 'selected' : '';
     if ($this->arg == null) {
-      eval('$result = "' . $html->form . '\n";');
+      eval('$result .= "' . $html->form . '\n";');
     } else {
       $date = $post->date != 0 ?date('d-m-Y', $post->date) : '';
       $time  = $post->date != 0 ?date('H:i', $post->date) : '';
       $content = $this->ContentToForm($post->Data['content']);
       $excerpt = $this->ContentToForm($post->excerpt);
       $rss = $this->ContentToForm($post->rss);
-      eval('$result = "' . $html->fullform . '\n";');
+      eval('$result .= "' . $html->fullform . '\n";');
     }
     return $result;
   }
   
   public function ProcessForm() {
     global $Options;
-    $html = &THtmlResource::Instance();
+    $html = THtmlResource::Instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = TLocal::Instance();
     
     $cats = array();
     $cat = 'category-';
@@ -76,7 +80,7 @@ class TPostEditor extends TAdminPage {
       return $result;
     }
     
-    $post = &TPost::Instance($postid);
+    $post = TPost::Instance($postid);
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
@@ -88,6 +92,7 @@ class TPostEditor extends TAdminPage {
       $post->content = $raw;
     } else {
       $post->url = $url;
+      $post->description = $description;
       $post->rawcontent = $raw;
       $post->outputcontent = $content;
       $post->excerpt = $excerpt;
@@ -97,7 +102,7 @@ class TPostEditor extends TAdminPage {
       }
     }
     
-    $posts = &TPosts::Instance();
+    $posts = TPosts::Instance();
     if ($postid == 0) {
       $posts->Add($post);
     } else {

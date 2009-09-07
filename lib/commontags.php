@@ -113,13 +113,12 @@ class TCommonTags extends TItems {
     'items' => array()
     );
     $this->Unlock();
-$this->AddUrl($url);
+    $this->AddUrl($url);
     $this->Added($this->lastid);
-    $Urlmap->ClearCache();
     return $this->lastid;
   }
-
-private function AddUrl($url) {
+  
+  private function AddUrl($url) {
     $Urlmap =TUrlmap::Instance();
     $dir = "/$this->PermalinkIndex/";
     if (substr($url, 0, strlen($dir)) == $dir) {
@@ -133,7 +132,8 @@ private function AddUrl($url) {
     } else {
       $Urlmap->Add($url, get_class($this),  $this->lastid);
     }
-}
+    $Urlmap->ClearCache();
+  }
   
   public function Edit($id, $name, $url) {
     $item = $this->items[$id];
@@ -149,8 +149,8 @@ private function AddUrl($url) {
         $this->NewName = $url == '' ? $name : $url;
         $Linkgen = &TLinkGenerator::Instance();
         $url = $Linkgen->Create($this, $this->PermalinkIndex );
- 
-$this->AddUrl($url);
+        
+        $this->AddUrl($url);
         if ($item['url'] != $url) {
           $Urlmap->AddRedir($item['url'], $url);
         }

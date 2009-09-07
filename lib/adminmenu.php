@@ -87,19 +87,20 @@ class TAdminMenu extends TAdminPage {
   public function ProcessAction() {
     global $Options;
     $id = (int) $_GET['postid'];
-    $html = &THtmlResource::Instance();
+    $html = THtmlResource::Instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = TLocal::Instance();
     
-    $menu = &TMenu::Instance();
+    $menu = TMenu::Instance();
     if (!$menu->ItemExists($id)) {
       eval('$result = "'. $html->notfound  . '\n";');
       return $result;
     }
     
-    $post = &TMenuItem::Instance($id);
+    $post = TMenuItem::Instance($id);
     
     $result ='';
+    $actionname = TLocal::$data['poststatus'][$_GET['action']];
     if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
       switch ($_GET['action']) {
         case 'delete' :
@@ -117,10 +118,10 @@ class TAdminMenu extends TAdminPage {
         break;
       }
       eval('$s =  "'. $html->confirmed . '\n";');
-      $result .=  sprintf($s, TLocal::$data[$this->basename][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
+      $result .=  sprintf($s, $actionname, "<a href='$Options->url$post->url'>$post->title</a>");
     } else {
       $lang->section = $this->basename;
-    $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
+      $confirm = sprintf($lang->confirm, $actionname, "<a href='$Options->url$post->url'>$post->title</a>");
       eval('$result .= "'. $html->confirmform . '\n";');
     }
     return $result;

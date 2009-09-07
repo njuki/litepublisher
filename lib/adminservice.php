@@ -97,11 +97,11 @@ class TAdminService extends TAdminPage {
     
     switch ($this->arg) {
       case null:
-      if (isset($_POST['autoupdate'])) {
+      if (isset($_REQUEST['autoupdate'])) {
         $updater = &TUpdater::Instance();
         $result = $updater->AutoUpdate();
         return "<h2>$result</h2>\n";
-      } elseif (isset($_POST['update'])) {
+      } elseif (isset($_REQUEST['update'])) {
         $updater = &TUpdater::Instance();
         $updater->Update();
         eval('$result = "'. $html->successupdated . '\n";');
