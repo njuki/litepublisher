@@ -7,13 +7,13 @@ global $Options, $paths;
 $result = '';
 $dir = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
 $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
-$admin = &TAdminPlugins::Instance();
-$html = &THtmlResource::Instance();
+$admin = TAdminPlugins::Instance();
+$html = THtmlResource::Instance();
 $html->LoadIni($selfdir . 'templates.ini');
 $html->section = 'keywords';
 TLocal::LoadIni($selfdir . 'about.ini');
 TLocal::LoadIni($selfdir . "$Options->language.ini");
-$lang = &TLocal::Instance();
+$lang = TLocal::Instance();
 $lang->section = 'keywords';
 
 if (isset($_GET['filename'])) {

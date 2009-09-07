@@ -45,7 +45,8 @@ if (!isset($cats->items[$id])) continue;
  }
  
  public function postscript($id) {
-  global $Options;
+  global $classes, $Options, $post;
+    if (!is_a($post, $classes->classes['post'])) return '';
   $result = '';
   if (!isset($this->items[$id])) $this->Find($id);
   if (count($this->items[$id]) == 0) return $result;
