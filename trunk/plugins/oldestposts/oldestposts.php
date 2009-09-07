@@ -8,7 +8,8 @@ class TOldestPosts extends TPlugin {
  }
  
  public function postscript($id) {
-  global $Options;
+  global $classes, $post, $Options;
+    if (!is_a($post, $classes->classes['post'])) return '';
   $result = '';
 $posts = TPosts::Instance();
 $arch = array_keys($posts->archives);
