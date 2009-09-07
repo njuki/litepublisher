@@ -130,16 +130,19 @@ class TCron extends TEventClass {
   }
   
   public function ExecuteTasks() {
-    ob_end_flush ();
+    @ob_end_flush ();
     echo "<pre>\n";
     $time = time();
     $task = new TCronTask($this);
     $processed = array();
     while ($filelist = $this->GetFileList($processed)) {
+      //var_dump($filelist);
       foreach ($filelist as $filename) {
         $processed[] = $filename;
         $task->filename = $filename;
         //var_dump($task->Data);
+        //echo $time - $task->time;
+        //echo date("r\n", $task->time);
         if  ($time >= $task->time)  $task->Execute();
       }
     }
@@ -238,7 +241,7 @@ class TCron extends TEventClass {
   public function AppendLog($s) {
     echo date('r') . "\n$s\n\n";
     flush();
-    if (!$this->writelog) return;
+    if (!defined('debug') && !$this->writelog) return;
     global $paths;
     $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronlog.txt';
     if ($fp = fopen($filename,"a+")) {

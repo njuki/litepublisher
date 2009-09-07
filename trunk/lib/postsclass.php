@@ -170,11 +170,12 @@ class TPosts extends TItems {
   }
   
   public function PublishFuture() {
-    foreach ($this->items as $id => $Item) {
-      if (isset($item['status']) && ($Item['status'] == 'future') && ($Item['date'] <= time())) {
-        $Post = TPost::Instance($id);
-        $Post->status = 'published';
-        $this->Edit($Post);
+    
+    foreach ($this->items as $id => $item) {
+      if (isset($item['status']) && ($item['status'] == 'future') && ($item['date'] <= time())) {
+        $post = TPost::Instance($id);
+        $post->status = 'published';
+        $this->Edit($post);
       }
     }
   }

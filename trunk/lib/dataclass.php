@@ -142,7 +142,7 @@ class TDataClass {
   public function LoadFromString($s) {
     try {
       $s = PHPUncomment($s);
-      if (!empty($s)) $this->Data = unserialize($s);
+      if (!empty($s)) $this->Data = unserialize($s) + $this->Data;
       $this->AfterLoad();
     } catch (Exception $e) {
       echo 'Caught exception: '.  $e->getMessage() ;
