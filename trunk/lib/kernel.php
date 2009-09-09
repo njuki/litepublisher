@@ -181,6 +181,11 @@ class TEventClass extends TDataClass {
     $this->Load();
   }
   
+  public function free() {
+    global $classes;
+    unset($classes->instances[get_class($this)]);
+  }
+  
   protected function CreateData() {
     $this->AddDataMap('events', array());
   }
