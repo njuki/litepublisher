@@ -17,6 +17,10 @@ class TItem extends TDataClass {
     return self::$AllItems[$ClassName][$id];
   }
   
+  public function free() {
+    unset(self::$AllItems[get_class($this)][$this->id]);
+  }
+  
   public function __construct() {
     parent::__construct();
     $this->id = 0;

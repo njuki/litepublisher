@@ -99,6 +99,9 @@ class TTemplateComment extends TEventClass {
   }
   
   private function GetCommentsList(&$items, &$comment, $hold, $from) {
+    $lang = TLocal::Instance();
+    $lang->section = 'comment';
+    
     $list = '';
     $comtempl = $this->commentsini['comment'];
     $itemclass1 = isset($this->commentsini['itemclass']) ? $this->commentsini['itemclass'] : '';
@@ -111,7 +114,7 @@ class TTemplateComment extends TEventClass {
       eval('$list .= "'. $comtempl . '\n"; ');
     }
     
-    $result .= $this->FormatCommentList($list, $from );
+    $result = $this->FormatCommentList($list, $from );
     $result .= "\n";
     return $result;
   }
