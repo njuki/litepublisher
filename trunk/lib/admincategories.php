@@ -26,18 +26,21 @@ class TAdminCategories extends TAdminPage {
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
     $lang->section = $this->basename;
-    $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
-    $istag = $class == $classes->classes['tags'];
+    
+    $class = 'cat';
+    if (isset($_GET['class']) && ($_GET['class'] == 'tag')) $class = 'tag';
+    $classinstance = $class == 'cat' ? $classes->classes['categories'] : $classes->classes['tags'];
+    $tags = GetInstance($classinstance);
+    
     if (isset($_GET['full'])) {
-      $form = $class == 'TTags' ? 'tagfullform' : 'catfullform';
+      $form = $class == 'tag' ? 'tagfullform' : 'catfullform';
     } else {
       $form = 'tagform';
     }
-    $tags = GetInstance($class);
     $id = $this->idget();
     if ($id ==  0) {
       $name = '';
-      if ($class == 'TTags') {
+      if ($class == 'tag') {
         eval('$result = "'. $html->addtag . '\n";');
       } else {
         eval('$result = "'. $html->addcategory. '\n";');
@@ -56,10 +59,10 @@ class TAdminCategories extends TAdminPage {
         }
       } else {
         
-      $result = $html->{ $istag ? 'edittag' : 'editcategory'} ($name);
+      $result = $html->{ $class == 'tag' ? 'edittag' : 'editcategory'} ($name);
         
         $url = $tags->items[$id]['url'];
-        if ($class == 'TCategories') {
+        if ($class == 'cat') {
           if ($desc = $tags->GetItemContent($id)) {
             $content = $this->ContentToForm($desc['content']);
           } else {
@@ -82,14 +85,18 @@ class TAdminCategories extends TAdminPage {
   }
   
   public function ProcessForm() {
-    global $Options;
+    global $Options, $classes;
     if (empty($_POST['name'])) return '';
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
     $name = $_POST['name'];
     
-    $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
+    $class = 'cat';
+    if (isset($_GET['class']) && ($_GET['class'] == 'tag')) $class = 'tag';
+    $classinstance = $class == 'cat' ? $classes->classes['categories'] : $classes->classes['tags'];
+    $tags = GetInstance($classinstance);
+    
     $tags = GetInstance($class);
     $id = $this->idget();
     if ($id == 0) {
@@ -98,7 +105,7 @@ class TAdminCategories extends TAdminPage {
       $tags->Edit($id, $name, $tags->items[$id]['url']);
       if (isset($_GET['full'])) {
         $tags->Edit($id, $name, $_POST['url']);
-        if ($class == 'TCategories') $tags->SetItemContent($id, $_POST['content']);
+        if ($class == 'cat') $tags->SetItemContent($id, $_POST['content']);
       } else {
         $tags->Edit($id, $name, $tags->items[$id]['url']);
       }
