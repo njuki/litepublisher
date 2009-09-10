@@ -97,7 +97,6 @@ class TAdminCategories extends TAdminPage {
     $classinstance = $class == 'cat' ? $classes->classes['categories'] : $classes->classes['tags'];
     $tags = GetInstance($classinstance);
     
-    $tags = GetInstance($class);
     $id = $this->idget();
     if ($id == 0) {
       $id = $tags->Add($name);
