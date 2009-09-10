@@ -1,4 +1,5 @@
 <?php
+
 function AddAttr(&$node, $name, $value) {
   $attr = $node->ownerDocument->createAttribute($name);
   $attr->value = $value;
@@ -25,6 +26,61 @@ function &AddCData(&$node, $name, $value) {
   $result->appendChild($textnode);
   $node->appendChild($result);
   Return $result;
+}
+
+
+function _struct_to_array(&$values, &$i)  {
+  $result = array();
+  if (isset($values[$i]['value'])) array_push($result, $values[$i]['value']);
+  
+  while (++$i < count($values)) {
+    switch ($values[$i]['type']) {
+      case 'cdata':
+      array_push($result, $values[$i]['value']);
+      break;
+      
+      case 'complete':
+      $name = $values[$i]['tag'];
+      if(!empty($name)){
+        if (isset($values[$i]['value'])) {
+          $result[$name]= $values[$i]['value'];
+        } elseif (isset($values[$i]['attributes'])) {
+          $result[$name] = $values[$i]['attributes'];
+        } else {
+          $result[$name]= '';
+        }
+      }
+      break;
+      
+      case 'open':
+      $name = $values[$i]['tag'];
+      $size = isset($result[$name]) ? sizeof($result[$name]) : 0;
+      $result[$name][$size] = _struct_to_array($values, $i);
+      break;
+      
+      case 'close':
+      return $result;
+      break;
+    }
+  }
+  return $result;
+}//_struct_to_array
+
+function xml2array($xml)  {
+  $values = array();
+  $index  = array();
+  $result  = array();
+  $parser = xml_parser_create();
+  xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
+  xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
+  xml_parse_into_struct($parser, $xml, $values, $index);
+  xml_parser_free($parser);
+  
+  $i = 0;
+  $name = $values[$i]['tag'];
+  $result[$name] = isset($values[$i]['attributes']) ? $values[$i]['attributes'] : '';
+  $result[$name] = _struct_to_array($values, $i);
+  return $result;
 }
 
 class Tdomrss extends domDocument {

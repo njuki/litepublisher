@@ -281,13 +281,13 @@ class TInstaller extends TDataClass {
   public function InstallClasses() {
     global  $classes, $Options;
     $Options->Lock();
-    $Urlmap = &TUrlmap::Instance();
+    $Urlmap = TUrlmap::Instance();
     $GLOBALS['Urlmap'] = &TUrlmap::Instance();
     $Urlmap->Lock();
-    $posts = &TPosts::Instance();
+    $posts = TPosts::Instance();
     $posts->Lock();
     foreach( $classes->items as $ClassName => $Info) {
-      $Obj = &GetInstance($ClassName);
+      $Obj = GetInstance($ClassName);
       if (method_exists($Obj, 'Install')) $Obj->Install();
     }
     $posts->Unlock();

@@ -4,6 +4,10 @@ class TCategories extends TCommonTags {
   private $contents;
   //public  $defaultid;
   
+  public static function &Instance() {
+    return GetNamedInstance('categories', __class__);
+  }
+  
   protected function CreateData() {
     parent::CreateData();
     $this->contents = array();
@@ -16,10 +20,6 @@ class TCategories extends TCommonTags {
       $this->Data['defaultid'] = $id;
       $this->Save();
     }
-  }
-  
-  public static function &Instance() {
-    return GetNamedInstance('categories', __class__);
   }
   
   public function Delete($id) {

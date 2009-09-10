@@ -14,8 +14,16 @@ class TAdminModerator extends TAdminPage {
   
   private function GetSubscribed($authorid) {
     global $Options;
-    $result = '';
-    $authors = &TCommentUsers::Instance();
+    $authors = TCommentUsers::Instance();
+    if (!$authors->ItemExists($authorid)) {
+      return '';
+    }
+    
+    $html = &THtmlResource::Instance();
+    $html->section = $this->basename;
+    $lang = &TLocal::Instance();
+    $result = $html->checkallscript;
+    
     $author = $authors->items[$authorid];
     $manager = &TCommentManager::Instance();
     $list = array();
@@ -31,9 +39,6 @@ class TAdminModerator extends TAdminPage {
     }
     
     $checked = "checked='checked'";
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
     $subcribeitem = $html->subscribeitem;
     foreach ($list as $id => $item) {
       $subscribed = $item['subscribed'] ? $checked : '';
@@ -41,7 +46,7 @@ class TAdminModerator extends TAdminPage {
       eval('$result .= "'. $subcribeitem . '\n";');
     }
     
-    return $result;
+    return $this->FixCheckall($result);
   }
   
   public function Getcontent() {
@@ -91,22 +96,21 @@ class TAdminModerator extends TAdminPage {
       return $result;
       
       case 'authors':
-      $authors = &TCommentUsers::Instance();
-      $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
+      $authors = TCommentUsers::Instance();
+      $id = $this->idget();
       if ($authors->ItemExists($id)) {
+        extract($authors->items[$id]);
         if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete')) {
-          eval('$result .= "'. $html->authorconfirmdelete . '\n";');
+          $result .= $html->authorconfirmdelete($id, $name, $url, $email);
           return str_replace("'", '"', $result);
         }
-        extract($authors->items[$id]);
-        $subscribed = $this->GetSubscribed($id);
       } else {
         $id = 0;
         $name = '';
         $email = '';
         $url = '';
-        $subscribed = '';
       }
+      $subscribed = $this->GetSubscribed($id);
       eval('$result .= "' . $html->authorheader . '\n";');
       foreach ($authors->items as $id => $item) {
         if (is_array($item['ip'])) $ip = implode('; ', $item['ip']);

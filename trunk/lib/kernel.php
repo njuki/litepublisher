@@ -896,6 +896,7 @@ class TUrlmap extends TItems {
   public function DeleteClassArg($class, $arg) {
     if (!($this->DeleteClassArgItem($this->items, $class, $arg) || $this->DeleteClassArgItem($this->get, $class, $arg))) {
       foreach ($this->tree as $url => $item) {
+        if (!isset($this->tree[$url]['items'])) continue;
         if ($this->DeleteClassArgItem($this->tree[$url]['items'], $class, $arg)) break;
       }
     }

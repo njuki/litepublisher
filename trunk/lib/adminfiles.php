@@ -30,7 +30,7 @@ class TAdminFiles extends TAdminPage {
         $confirm = sprintf(TLocal::$data[$this->basename]['confirm'], $files->items[$id]['filename']);
         $result .= $html->confirmform($confirm);
       } else {
-        if (!$this->confirmed()) $result .=  $html->notfound;
+        if (!$this->confirmed) $result .=  $html->notfound;
         $result .=  $html->uploadform();
       }
       break;
@@ -84,7 +84,7 @@ class TAdminFiles extends TAdminPage {
         eval('$result = "'. $html->notfound . '\n";');
         return $result;
       }
-      if ($this->confirmed()) {
+      if ($this->confirmed) {
         $files->Delete($id);
         eval('$result = "'. $html->deleted . '\n";');
         return $result;
