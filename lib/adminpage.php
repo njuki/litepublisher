@@ -123,8 +123,8 @@ class TAdminPage extends TEventClass {
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
   }
   
-  public function confirmed() {
-    return !empty($_GET['confirm']) && ($_GET['confirm'] == 1);
+  public function Getconfirmed() {
+    return !empty($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
   }
   
   public function FixCheckall($s) {
@@ -137,6 +137,11 @@ class TAdminPage extends TEventClass {
     $lang = &TLocal::Instance();
     eval('$result = "'. $html->notfound  . '\n";');
     return $result;
+  }
+  
+  public function Getadminurl($section, $arg) {
+    global $Options;
+    return "$Options->url/admin/$section/$Options->q$arg";
   }
   
 }//class

@@ -113,24 +113,24 @@ class TCommonTags extends TItems {
     'items' => array()
     );
     $this->Unlock();
-    $this->AddUrl($url);
+    $this->AddUrl($this->lastid, $url);
     $this->Added($this->lastid);
     return $this->lastid;
   }
   
-  private function AddUrl($url) {
+  private function AddUrl($id, $url) {
     $Urlmap =TUrlmap::Instance();
     $dir = "/$this->PermalinkIndex/";
     if (substr($url, 0, strlen($dir)) == $dir) {
       $subdir = substr($url, strlen($dir));
       $subdir = trim($subdir, '/');
       if (strpos($subdir, '/')) {
-        $Urlmap->Add($url, get_class($this),  $this->lastid);
+        $Urlmap->Add($url, get_class($this),  $id);
       } else {
-        $Urlmap->AddSubNode($this->PermalinkIndex, $subdir, get_class($this), $this->lastid);
+        $Urlmap->AddSubNode($this->PermalinkIndex, $subdir, get_class($this), $id);
       }
     } else {
-      $Urlmap->Add($url, get_class($this),  $this->lastid);
+      $Urlmap->Add($url, get_class($this),  $id);
     }
     $Urlmap->ClearCache();
   }
@@ -145,12 +145,13 @@ class TCommonTags extends TItems {
       $item['name'] = $name;
       if ($item['url'] != $url) {
         $Urlmap->DeleteClassArg(get_class($this), $id);
-        $url = trim($url, '/');
-        $this->NewName = $url == '' ? $name : $url;
-        $Linkgen = &TLinkGenerator::Instance();
-        $url = $Linkgen->Create($this, $this->PermalinkIndex );
-        
-        $this->AddUrl($url);
+        if ($url == '') {
+          $url = trim($url, '/');
+          $this->NewName = $url == '' ? $name : $url;
+          $Linkgen = &TLinkGenerator::Instance();
+          $url = $Linkgen->Create($this, $this->PermalinkIndex );
+        }
+        $this->AddUrl($id, $url);
         if ($item['url'] != $url) {
           $Urlmap->AddRedir($item['url'], $url);
         }
@@ -159,7 +160,7 @@ class TCommonTags extends TItems {
       }
       
       $this->items[$id] = $item;
-      $this->Save();
+      $this->Unlock();
       $Urlmap->ClearCache();
       $Urlmap->Unlock();
     }

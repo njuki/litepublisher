@@ -83,7 +83,9 @@ class TOpenid extends TEventClass {
   }
   
   private function nomode() {
-    return TTemplate::SimpleHtml(TLocal::$data['openidserver']['nomode']);
+    global $Urlmap;
+    $Urlmap->redir301('/');
+    //return TTemplate::SimpleHtml(TLocal::$data['openidserver']['nomode']);
   }
   
   private function id_res() {

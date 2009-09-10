@@ -21,18 +21,22 @@ class TAdminCategories extends TAdminPage {
   }
   
   public function Getcontent() {
-    global $Options;
+    global $Options, $classes;
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
     $lang->section = $this->basename;
     $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
-    $form = $class == 'TTags' ? 'tagform' : 'catform';
+    $istag = $class == $classes->classes['tags'];
+    if (isset($_GET['full'])) {
+      $form = $class == 'TTags' ? 'tagfullform' : 'catfullform';
+    } else {
+      $form = 'tagform';
+    }
     $tags = GetInstance($class);
     $id = $this->idget();
     if ($id ==  0) {
       $name = '';
-      $content = '';
       if ($class == 'TTags') {
         eval('$result = "'. $html->addtag . '\n";');
       } else {
@@ -44,16 +48,17 @@ class TAdminCategories extends TAdminPage {
     } else {
       $name = $tags->items[$id]['name'];
       if (!empty($_GET['action']) &&($_GET['action'] == 'delete'))  {
-        if  (!empty($_GET['confirm']) && ($_GET['confirm'] == 1)) {
+        if  ($this->confirmed) {
           $tags->Delete($id);
           eval('$result = "'. $html->successdeleted. '\n";');
         } else {
           eval('$result = "'. $html->confirmdelete . '\n";');
         }
       } else {
-        eval('$s = "' . $s . '\n";');
-        $result = sprintf($s, $name);
         
+      $result = $html->{ $istag ? 'edittag' : 'editcategory'} ($name);
+        
+        $url = $tags->items[$id]['url'];
         if ($class == 'TCategories') {
           if ($desc = $tags->GetItemContent($id)) {
             $content = $this->ContentToForm($desc['content']);
@@ -78,26 +83,29 @@ class TAdminCategories extends TAdminPage {
   
   public function ProcessForm() {
     global $Options;
-    if (!empty($_POST['name'])) {
-      $name = $_POST['name'];
-      $content = isset($_POST['content']) ? $_POST['content'] : '';
-      $html = &THtmlResource::Instance();
-      $html->section = $this->basename;
-      $lang = &TLocal::Instance();
-      
-      $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
-      $tags = GetInstance($class);
-      $id = $this->idget();
-      if ($id == 0) {
-        $id = $tags->Add($name);
+    if (empty($_POST['name'])) return '';
+    $html = &THtmlResource::Instance();
+    $html->section = $this->basename;
+    $lang = &TLocal::Instance();
+    $name = $_POST['name'];
+    
+    $class = !empty($_GET['class']) ? $_GET['class'] : 'TCategories';
+    $tags = GetInstance($class);
+    $id = $this->idget();
+    if ($id == 0) {
+      $id = $tags->Add($name);
+    } else {
+      $tags->Edit($id, $name, $tags->items[$id]['url']);
+      if (isset($_GET['full'])) {
+        $tags->Edit($id, $name, $_POST['url']);
+        if ($class == 'TCategories') $tags->SetItemContent($id, $_POST['content']);
       } else {
         $tags->Edit($id, $name, $tags->items[$id]['url']);
       }
-      if ($class == 'TCategories') $tags->SetItemContent($id, $content);
-      eval('$s = "'. $html->success. '\n";');
-      return sprintf($s, $name);
-      
     }
+    
+    eval('$s = "'. $html->success. '\n";');
+    return sprintf($s, $name);
   }
   
 }//class

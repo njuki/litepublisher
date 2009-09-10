@@ -84,7 +84,7 @@ class TSitemap extends TItems {
     $this->count = 0;
     $this->date = time();
     $this->lastmod = strftime("%Y-%m-%d", $this->date);
-    $urlmap = TUrlmap::Instance();
+    $Urlmap = TUrlmap::Instance();
     $this->OpenFile();
     
     $this->WalkUrlmap($Urlmap->items);
@@ -99,7 +99,7 @@ class TSitemap extends TItems {
   private function WalkUrlmap(&$items) {
     global $classes;
     $posts = TPosts::Instance();
-    foreach ($this->items as $url => $item) {
+    foreach ($items as $url => $item) {
       $class = $item['class'];
       if (($class == $classes->classes['post']) && !isset($posts->archives[$item['arg']])) continue;
       $prio = $this->GetPriority($class);
@@ -109,6 +109,7 @@ class TSitemap extends TItems {
   }
   
   private function GetPriority($class) {
+    global $classes;
     if (isset($this->items[$class])) return $this->items[$class];
     switch ($class) {
       case $classes->classes['post']: return 8;

@@ -20,6 +20,7 @@ class TAdminService extends TAdminPage {
     
     switch ($this->arg) {
       case null:
+      $result .= $this->HandleUpdate($_GET);
       $posts = &TPosts::Instance();
       $CommentManager = &TCommentManager::Instance();
       $updater = &TUpdater::Instance();
@@ -76,7 +77,7 @@ class TAdminService extends TAdminPage {
       $filename = $paths['backup'] . $_GET['filename'];
       if (!@file_exists($filename)) {
         $result = $this->notfound;
-      } elseif ($this->confirmed()) {
+      } elseif ($this->confirmed) {
         @unlink($filename);
         eval('$result = "'. $html->backupdeleted . '\n";');
       } else {
@@ -89,6 +90,20 @@ class TAdminService extends TAdminPage {
     return $result;
   }
   
+  private function HandleUpdate($req) {
+    if (isset($req['autoupdate'])) {
+      $updater = TUpdater::Instance();
+      $result = $updater->AutoUpdate();
+      return "<h2>$result</h2>\n";
+    } elseif (isset($req['update'])) {
+      $updater = &TUpdater::Instance();
+      $updater->Update();
+      eval('$result = "'. $html->successupdated . '\n";');
+      return $result;
+    }
+    return '';
+  }
+  
   public function ProcessForm() {
     global $classes, $Options, $Urlmap, $paths, $domain;
     $html = &THtmlResource::Instance();
@@ -96,18 +111,7 @@ class TAdminService extends TAdminPage {
     $lang = &TLocal::Instance();
     
     switch ($this->arg) {
-      case null:
-      if (isset($_REQUEST['autoupdate'])) {
-        $updater = &TUpdater::Instance();
-        $result = $updater->AutoUpdate();
-        return "<h2>$result</h2>\n";
-      } elseif (isset($_REQUEST['update'])) {
-        $updater = &TUpdater::Instance();
-        $updater->Update();
-        eval('$result = "'. $html->successupdated . '\n";');
-        return $result;
-      }
-      break;
+      case null: return $this->HandleUpdate($_POST);
       
       case 'engine':
       $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
