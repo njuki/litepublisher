@@ -32,10 +32,10 @@ class TUpdater extends TEventClass {
     if ($log) TFiler::log("update started from $current to $this->version");
     for ($v = $current + 1; $v<= $this->version; $v++) {
       if ($log) TFiler::log("$v selected to update");
-      $dir = $v >= 264 ? $paths['lib'] . 'update' . DIRECTORY_SEPARATOR : $paths[libinclude];
+      $dir = $v >= 264 ? $paths['lib'] . 'update' . DIRECTORY_SEPARATOR : $paths['libinclude'];
       $filename = $dir . "update$v.php";
       if (@file_exists($filename)) {
-        require_once("$filename);
+        require_once($filename);
         if ($log) TFiler::log("$filename is required file");
         $func = "Update$v";
         if (function_exists($func)) {
