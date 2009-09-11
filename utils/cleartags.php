@@ -2,7 +2,7 @@
 $mode = 'clear';
 include('index.php');
 
-function clearlinks(&$tags) {
+function clearlinks($tags) {
 global $urlmap;
 $Urlmap->DeleteClass(get_class($tags));
 foreach ($tags->items as $id => $item) {
