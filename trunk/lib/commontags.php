@@ -118,7 +118,7 @@ class TCommonTags extends TItems {
     return $this->lastid;
   }
   
-  private function AddUrl($id, $url) {
+  public function AddUrl($id, $url) {
     $Urlmap =TUrlmap::Instance();
     $dir = "/$this->PermalinkIndex/";
     if (substr($url, 0, strlen($dir)) == $dir) {
