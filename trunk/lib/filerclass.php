@@ -72,9 +72,15 @@ class TFiler {
     @chmod($FileName, 0666);
   }
   
-  public static function log($s) {
+  public static function log($s, $filename = '') {
     global $paths;
-    $filename = $paths['data'] . 'log.txt';
+    $dir = $paths['data'] . 'logs' . DIRECTORY_SEPARATOR;
+    if (!is_dir($dir)) {
+      @mkdir($dir, 0777);
+      @chmod($dir, 0777);
+    }
+    if ($filename == '') $filename = 'log.txt';
+    $filename = $dir . $filename;
     if ($fp = fopen($filename,"a+")) {
       fwrite($fp, date('r') . "\n$s\n\n");
       fclose($fp);

@@ -473,7 +473,9 @@ class TClasses extends TItems {
 
 function &GetInstance($ClassName) {
   global $classes;
-  if (!class_exists($ClassName)) return null;
+  if (!class_exists($ClassName)) {
+    $classes->Error("Class $ClassName not found");
+  }
   if (!isset($classes->instances[$ClassName])) {
     $classes->instances[$ClassName] = &new $ClassName ();
   }
@@ -594,13 +596,20 @@ class TOptions extends TEventClass {
     return isset($this->Data['url']);
   }
   
-  /*
-  public function IsAdmin() {
-    if (empty($_COOKIE['userid'])) return false;
-    return $this->cookie == $_COOKIE['userid'];
+  public function HandleException(&$e) {
+    global $paths;
+    $trace =str_replace($paths['home'], '', $e->getTraceAsString());
+    $message = 'Caught exception: ' . $e->getMessage();
+    $log = $message . "\n" . $trace;
+    TFiler::log($log, 'exceptions.log');
+    if (defined('debug') || $this->echoexception) {
+      echo str_replace("\n", "<br />\n", htmlspecialchars($log));
+    } else {
+      TFiler::log($log, 'exceptionsmail.log');
+    }
   }
-  */
-}
+  
+}//class
 
 //urlmapclass.php
 class TUrlmap extends TItems {
@@ -632,7 +641,7 @@ class TUrlmap extends TItems {
   }
   
   public function Request($host, $url) {
-    global $Options;
+    global $Options, $paths;
     $this->host = $host;
     $this->pagenumber = 1;
     if ($Options->q == '?') {
@@ -647,7 +656,6 @@ class TUrlmap extends TItems {
       } else {
         $this->url = substr($this->url, strlen('/pda'));
       }
-      global $paths;
       $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
     }
     $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
@@ -655,9 +663,7 @@ class TUrlmap extends TItems {
     try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
-      global $paths;
-      $trace =str_replace($paths['home'], '', $e->getTraceAsString());
-      echo 'Caught exception: ',  $e->getMessage() , "<br>\ntrace error\n<pre>\n", $trace, "\n</pre>\n";
+      $Options->HandleException($e);
     }
     $this->AfterRequest($this->url);
     $this->CheckSingleCron();

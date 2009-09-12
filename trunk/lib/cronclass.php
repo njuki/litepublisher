@@ -113,6 +113,7 @@ class TCron extends TEventClass {
       flock($fh, LOCK_EX);
       ignore_user_abort(true);
       set_time_limit(60*20);
+      $this->SendExceptions();
       $this->AppendLog("started loop");
       $this->ExecuteTasks();
       flock($fh, LOCK_UN);
@@ -238,11 +239,22 @@ class TCron extends TEventClass {
     }
   }
   
+  public function SendExceptions() {
+    global $paths, $Options;
+    //проверить, если файл логов создан более часа назад, то его отослать на почту
+    $filename = $paths['data'] . 'exceptionsmail.log';
+    $time = @filectime ($filename);
+    if ($time + 3600 < time()) {
+      $s = file_get_contents($filename);
+      @unlink($filename);
+      TMailer::SendAttachmentToAdmin("[error] $Options->name", "See attachment", 'errors.txt', $s);
+    }
+  }
+  
   public function AppendLog($s) {
     echo date('r') . "\n$s\n\n";
     flush();
     if (!defined('debug') && !$this->writelog) return;
-    global $paths;
     $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronlog.txt';
     if ($fp = fopen($filename,"a+")) {
       fwrite($fp, date('r') . "\n$s\n\n");

@@ -84,12 +84,19 @@ class TOptions extends TEventClass {
     return isset($this->Data['url']);
   }
   
-  /*
-  public function IsAdmin() {
-    if (empty($_COOKIE['userid'])) return false;
-    return $this->cookie == $_COOKIE['userid'];
+  public function HandleException(&$e) {
+    global $paths;
+    $trace =str_replace($paths['home'], '', $e->getTraceAsString());
+    $message = 'Caught exception: ' . $e->getMessage();
+    $log = $message . "\n" . $trace;
+    TFiler::log($log, 'exceptions.log');
+    if (defined('debug') || $this->echoexception) {
+      echo str_replace("\n", "<br />\n", htmlspecialchars($log));
+    } else {
+      TFiler::log($log, 'exceptionsmail.log');
+    }
   }
-  */
-}
+  
+}//class
 
 ?>
