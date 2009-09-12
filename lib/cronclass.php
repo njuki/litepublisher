@@ -244,11 +244,10 @@ class TCron extends TEventClass {
     //проверить, если файл логов создан более часа назад, то его отослать на почту
     $filename = $paths['data'] . 'exceptionsmail.log';
     $time = @filectime ($filename);
-    if ($time + 3600 < time()) {
+    if (($time === false) || ($time + 3600 > time())) return;
       $s = file_get_contents($filename);
       @unlink($filename);
       TMailer::SendAttachmentToAdmin("[error] $Options->name", "See attachment", 'errors.txt', $s);
-    }
   }
   
   public function AppendLog($s) {
