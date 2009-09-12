@@ -15,7 +15,7 @@ class TKeywordsPlugin extends TPlugin {
  }
  
 public function GetWidgetContent() {
-  global $Options, $Urlmap, $Template, $paths;
+  global $Options, $Urlmap, $paths;
   if ('/admin/' == substr($Urlmap->url, 0, 7)) return '';
   if ('/croncron.php' == substr($Urlmap->url, 0, strlen('/croncron.php'))) return '';
 
@@ -31,7 +31,7 @@ $arlinks = array_splice($this->links, 0, $this->count);
    $links = "\n<li>" . implode("</li>\n<li>", $arlinks)  . "</li>";
    file_put_contents($filename, $links);
   }
-  
+$Template  = TTemplate::Instance();
   $result = $Template->GetBeforeWidget('keywords');
   $result .= $links;
   $result .= $Template->GetAfterWidget();
