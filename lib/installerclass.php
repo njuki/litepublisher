@@ -273,6 +273,7 @@ class TInstaller extends TDataClass {
     $Options->commentpages = true;
     $Options->commentsperpage = 100;
     $Options->version = TUpdater::GetVersion();
+    $Options->echoexception = true;
     
     $Options->Unlock();
     return $password;

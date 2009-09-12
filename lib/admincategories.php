@@ -101,7 +101,6 @@ class TAdminCategories extends TAdminPage {
     if ($id == 0) {
       $id = $tags->Add($name);
     } else {
-      $tags->Edit($id, $name, $tags->items[$id]['url']);
       if (isset($_GET['full'])) {
         $tags->Edit($id, $name, $_POST['url']);
         if ($class == 'cat') $tags->SetItemContent($id, $_POST['content']);

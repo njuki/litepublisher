@@ -190,7 +190,8 @@ class TTemplate extends TEventClass {
   }
   
   public function GetWidgetContent($id) {
-    global $paths;
+    global $paths, $Options;
+    $class = $this->widgets[$id]['class'];
     $this->curwidget = $id;
     $FileName = $paths['cache']. "widget$id.php";
     switch ( $echotype = $this->widgets[$id]['echotype']) {
@@ -198,8 +199,16 @@ class TTemplate extends TEventClass {
       if (@file_exists($FileName)) {
         $result = file_get_contents($FileName);
       } else {
-        $widget = &GetInstance($this->widgets[$id]['class']);
-        $result =   $widget->GetWidgetContent($id);
+        if (!@class_exists($class)) {
+          $this->DeleteIdWidget($id);
+          return '';
+        }
+        $widget = &GetInstance($class);
+        try {
+          $result =   $widget->GetWidgetContent($id);
+        } catch (Exception $e) {
+          $Options->HandleException($e);
+        }
         file_put_contents($FileName, $result);
         @chmod($FileName, 0666);
       }
@@ -207,8 +216,18 @@ class TTemplate extends TEventClass {
       
       case 'include':
       if (!@file_exists($FileName)) {
-        $widget = &GetInstance($this->widgets[$id]['class']);
-        $result =   $widget->GetWidgetContent($id);
+        if (!@class_exists($class)) {
+          $this->DeleteIdWidget($id);
+          return '';
+        }
+        
+        $widget = &GetInstance($class);
+        try {
+          $result =   $widget->GetWidgetContent($id);
+        } catch (Exception $e) {
+          $Options->HandleException($e);
+        }
+        
         file_put_contents($FileName, $result);
         @chmod($FileName, 0666);
       }
@@ -216,8 +235,17 @@ class TTemplate extends TEventClass {
       break;
       
       case 'nocache':
-      $widget = &GetInstance($this->widgets[$id]['class']);
-      $result =   $widget->GetWidgetContent($id);
+      if (!@class_exists($class)) {
+        $this->DeleteIdWidget($id);
+        return '';
+      }
+      
+      $widget = &GetInstance($class);
+      try {
+        $result =   $widget->GetWidgetContent($id);
+      } catch (Exception $e) {
+        $Options->HandleException($e);
+      }
       break;
     }
     
@@ -377,6 +405,7 @@ class TTemplate extends TEventClass {
   }
   
   public function&Request(&$DataObject) {
+    global $Options;
     $this->DataObject = &$DataObject;
     $GLOBALS['DataObject'] = &$DataObject;
     $header = $this->ServerHeader();
@@ -415,7 +444,12 @@ class TTemplate extends TEventClass {
     $Result = $this->fFiles[$FileName];
     $Result = str_replace('"', '\"', $Result);
     $lang = &TLocal::Instance();
-    eval("\$Result = \"$Result\";");
+    try {
+      eval("\$Result = \"$Result\";");
+    } catch (Exception $e) {
+      $Options->HandleException($e);
+    }
+    
     return $Result;
   }
   

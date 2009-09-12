@@ -29,7 +29,7 @@ class TUrlmap extends TItems {
   }
   
   public function Request($host, $url) {
-    global $Options;
+    global $Options, $paths;
     $this->host = $host;
     $this->pagenumber = 1;
     if ($Options->q == '?') {
@@ -44,7 +44,6 @@ class TUrlmap extends TItems {
       } else {
         $this->url = substr($this->url, strlen('/pda'));
       }
-      global $paths;
       $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
     }
     $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
@@ -52,9 +51,7 @@ class TUrlmap extends TItems {
     try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
-      global $paths;
-      $trace =str_replace($paths['home'], '', $e->getTraceAsString());
-      echo 'Caught exception: ',  $e->getMessage() , "<br>\ntrace error\n<pre>\n", $trace, "\n</pre>\n";
+      $Options->HandleException($e);
     }
     $this->AfterRequest($this->url);
     $this->CheckSingleCron();
@@ -236,7 +233,7 @@ class TUrlmap extends TItems {
   }
   
   public function AddSubNode($nodeurl, $url, $class, $arg) {
-    if (!isset($this->tree[$nodeurl])) $this->Error("$nodeurl not exists!");
+    if (!isset($this->tree[$nodeurl])) $this->AddNode($nodeurl, $class, null);
     if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
     return $this->AddItem($this->tree[$nodeurl]['items'], $url, $class, $arg);
   }
