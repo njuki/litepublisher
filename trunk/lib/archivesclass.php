@@ -5,7 +5,7 @@ class TArchives extends TItems {
   public $title;
   
   public static function &Instance() {
-    return GetInstance(__class__);
+    return GetNamedInstance('archives', __class__);
   }
   
   protected function CreateData() {

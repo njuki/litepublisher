@@ -84,16 +84,36 @@ class TSitemap extends TItems {
     $this->count = 0;
     $this->date = time();
     $this->lastmod = strftime("%Y-%m-%d", $this->date);
-    $Urlmap = TUrlmap::Instance();
     $this->OpenFile();
     
-    $this->WalkUrlmap($Urlmap->items);
-    $this->WalkUrlmap($Urlmap->get);
-    if (isset($Urlmap->tree['category']['items'])) $this->WalkUrlmap($Urlmap->tree['category']['items']);
-    if (isset($Urlmap->tree['tag']['items'])) $this->WalkUrlmap($Urlmap->tree['tag']['items']);
+    //home page
+    $this->WriteItem('/', 9);
+    $this->WritePosts();
+    $this->WriteNamed('menus', 8);
+    $this->WriteNamed('categories', 7);
+    $this->WriteNamed('tags', 6);
+    $this->WriteNamed('archives', 5);
     
     $this->CloseFile();
     $this->Save();
+  }
+  
+  private function WritePosts() {
+    global $classes;
+    $Urlmap = TUrlmap::Instance();
+    $posts = TPosts::Instance();
+    foreach ($Urlmap->items as $url => $item) {
+      if (($item['class'] == $classes->classes['post']) && isset($posts->archives[$item['arg']])) {
+        $this->WriteItem($url, 8);
+      }
+    }
+  }
+  
+  private function WriteNamed($name, $prio = 5) {
+    $instance = GetNamedInstance($name, '');
+    foreach ($instance->items as $id => $item) {
+      $this->WriteItem($item['url'], $prio);
+    }
   }
   
   private function WalkUrlmap(&$items) {
