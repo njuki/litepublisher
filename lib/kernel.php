@@ -556,7 +556,7 @@ class TOptions extends TEventClass {
   }
   
   public function Geturl() {
-    global $Urlmap;
+    $Urlmap = TUrlmap::Instance();
     $s = $this->OnGeturl();
     if ($s == '') $s = $this->Data['url'];
     return $s . ($Urlmap->Ispda ? '/pda' : '');
@@ -845,7 +845,7 @@ class TUrlmap extends TItems {
   }
   
   public function AddSubNode($nodeurl, $url, $class, $arg) {
-    if (!isset($this->tree[$nodeurl])) $this->Error("$nodeurl not exists!");
+    if (!isset($this->tree[$nodeurl])) $this->AddNode($nodeurl, $class, null);
     if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
     return $this->AddItem($this->tree[$nodeurl]['items'], $url, $class, $arg);
   }

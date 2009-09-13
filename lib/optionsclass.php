@@ -44,7 +44,7 @@ class TOptions extends TEventClass {
   }
   
   public function Geturl() {
-    global $Urlmap;
+    $Urlmap = TUrlmap::Instance();
     $s = $this->OnGeturl();
     if ($s == '') $s = $this->Data['url'];
     return $s . ($Urlmap->Ispda ? '/pda' : '');

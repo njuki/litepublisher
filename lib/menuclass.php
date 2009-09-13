@@ -5,7 +5,7 @@ class TMenu extends TItems {
   public $AcceptGet;
   
   public static function &Instance() {
-    return GetInstance(__class__);
+    return GetNamedInstance('menu', __class__);
   }
   
   protected function CreateData() {

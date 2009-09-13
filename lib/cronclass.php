@@ -245,9 +245,9 @@ class TCron extends TEventClass {
     $filename = $paths['data'] . 'exceptionsmail.log';
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
-      $s = file_get_contents($filename);
-      @unlink($filename);
-      TMailer::SendAttachmentToAdmin("[error] $Options->name", "See attachment", 'errors.txt', $s);
+    $s = file_get_contents($filename);
+    @unlink($filename);
+    TMailer::SendAttachmentToAdmin("[error] $Options->name", "See attachment", 'errors.txt', $s);
   }
   
   public function AppendLog($s) {
