@@ -23,24 +23,24 @@ class TUpdater extends TEventClass {
   
   public function Update() {
     global $Options, $paths;
-    $log = true;
-    if ($log) TFiler::log("begin update");
+    $log = false;
+    if ($log) TFiler::log("begin update", 'update');
     TFiler::DeleteFilesExt($paths['languages'], 'php');
     $s = file_get_contents($paths['libinclude']. 'version.txt');
     $this->version =  (int) trim($s);
   $current = ((int) $Options->version{0}) * 100 + (int)substr($Options->version, 2);
-    if ($log) TFiler::log("update started from $current to $this->version");
+    if ($log) TFiler::log("update started from $current to $this->version", 'update');
     for ($v = $current + 1; $v<= $this->version; $v++) {
-      if ($log) TFiler::log("$v selected to update");
+      if ($log) TFiler::log("$v selected to update", 'update');
       $dir = $v >= 264 ? $paths['lib'] . 'update' . DIRECTORY_SEPARATOR : $paths['libinclude'];
       $filename = $dir . "update$v.php";
       if (@file_exists($filename)) {
         require_once($filename);
-        if ($log) TFiler::log("$filename is required file");
+        if ($log) TFiler::log("$filename is required file", 'update');
         $func = "Update$v";
         if (function_exists($func)) {
           $func();
-          if ($log) TFiler::log("$func is called");
+          if ($log) TFiler::log("$func is called", 'update');
         }
       }
     }
@@ -49,7 +49,7 @@ class TUpdater extends TEventClass {
     
     $Urlmap = &TUrlmap::Instance();
     $Urlmap->ClearCache();
-    if ($log) TFiler::log("update finished");
+    if ($log) TFiler::log("update finished", 'update');
   }
   
   public function AutoUpdate() {
@@ -79,7 +79,7 @@ class TUpdater extends TEventClass {
     global $paths, $domain;
     $admin = &TRemoteAdmin::Instance();
     $s = $admin->GetPartialBackup(true, true, true);
-    $date = date('d-m-Y');
+    $date = date('Y-m-d');
     $filename = $paths['backup'] . "$domain-$date.zip";
     @file_put_contents($filename, $s);
     @chmod($filename, 0666);

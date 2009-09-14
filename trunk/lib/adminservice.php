@@ -84,6 +84,11 @@ class TAdminService extends TAdminPage {
         eval('$result .= "'. $html->confirmdelete . '\n";');
       }
       break;
+
+case 'run':
+$script = isset($_POST['content']) ? $_POST['content'] : '';
+$result = $html->runform($this->ContentToForm($script));
+break;
     }
     
     $result = str_replace("'", '"', $result);
@@ -166,9 +171,13 @@ class TAdminService extends TAdminPage {
         case 'fullbackup':
         $content = $admin->GetFullBackup();
         $this->SendZip($content);
-        
       }
       break;
+
+case 'run':
+$result = eval($_POST['content']);
+return $result;
+break;
     }
     
   }
@@ -176,7 +185,7 @@ class TAdminService extends TAdminPage {
   private function SendZip(&$content, $filename = '') {
     global $domain;
     //@file_put_contents("$domain.zip", $content);
-    if ($filename == '') $filename = str_replace('.', '-', $domain) . date('-d-m-Y') . '.zip';
+    if ($filename == '') $filename = str_replace('.', '-', $domain) . date('-Y-m-d') . '.zip';
     @header("HTTP/1.1 200 OK");
     @header("Content-type: application/octet-stream");
     @header("Content-Disposition: attachment; filename=$filename");
