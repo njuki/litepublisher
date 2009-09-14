@@ -8,7 +8,6 @@ $classes->Add('Tdomrss', 'domrss.php');
 $sitemap =TSitemap::Instance();
 $sitemap->Data['items'] = array();
 $sitemap->Save();
-$sitemap->CreateFiles();
 }
 
 ?>
