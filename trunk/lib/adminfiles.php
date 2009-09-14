@@ -15,7 +15,8 @@ class TAdminFiles extends TAdminPage {
     $files = &TFiles::Instance();
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = TLocal::Instance();
+$lang->section = $this->basename;
     
     $result = '';
     
@@ -27,8 +28,7 @@ class TAdminFiles extends TAdminPage {
       case 'delete':
       $id = $this->idget();
       if ($files->ItemExists($id)) {
-        $confirm = sprintf(TLocal::$data[$this->basename]['confirm'], $files->items[$id]['filename']);
-        $result .= $html->confirmform($confirm);
+        $result .= $html->confirmform($id, sprintf($lang->confirm, $files->items[$id]['filename']));
       } else {
         if (!$this->confirmed) $result .=  $html->notfound;
         $result .=  $html->uploadform();
@@ -80,10 +80,7 @@ class TAdminFiles extends TAdminPage {
       
       case 'delete':
       $id = $this->idget();
-      if (!$files->ItemExists($id)) {
-        eval('$result = "'. $html->notfound . '\n";');
-        return $result;
-      }
+      if (!$files->ItemExists($id)) return $this->notfound();
       if ($this->confirmed) {
         $files->Delete($id);
         eval('$result = "'. $html->deleted . '\n";');
