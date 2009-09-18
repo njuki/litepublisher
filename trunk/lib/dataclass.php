@@ -6,6 +6,8 @@ class TDataClass {
   public $Data;
   public $basename;
   public $CacheEnabled;
+//database
+public $table;
   
   public function __construct() {
     $this->LockCount = 0;
@@ -21,7 +23,7 @@ class TDataClass {
   public function __get($name) {
     if (method_exists($this, $get = "Get$name")) {
       return $this->$get();
-    } elseif (key_exists($name, $this->Data)) {
+    } elseif (isset($this->Data[$name])) {
       return $this->Data[$name];
     } else {
       return    $this->Error("The requested property $name not found in class ". get_class($this));
@@ -43,6 +45,9 @@ class TDataClass {
   }
   
   public  function __call($name, $params) {
+    if (method_exists($this, strtolower($name))) {
+      return call_user_func_array(array(&$this, strtolower($name)), $params);
+    }
     $this->Error("The requested method $name not found in class " . get_class($this));
   }
   
@@ -91,7 +96,7 @@ class TDataClass {
     }
   }
   
-  public function Load() {
+  public function load() {
     global $paths;
     $FileName = $paths['data'] . $this->GetBaseName() .'.php';
     if (@file_exists($FileName)) {
@@ -99,7 +104,7 @@ class TDataClass {
     }
   }
   
-  public function Save() {
+  public function save() {
     global $paths;
     if (self::$GlobalLock) return;
     if ($this->LockCount <= 0) {
@@ -152,7 +157,7 @@ class TDataClass {
   public function AfterLoad() {
   }
   
-  public function Lock() {
+  public function lock() {
     $this->LockCount++;
   }
   
@@ -160,9 +165,19 @@ class TDataClass {
     if (--$this->LockCount <= 0) $this->Save();
   }
   
-  public function Locked() {
+  public function Getlocked() {
     return $this->LockCount  > 0;
   }
+
+public function Getdbversion() {
+return false;
+}
+
+public function Getdb() {
+global $db;
+if ($this->table != '') $db->table = $this->table;
+return $db;
+}
   
 }//class
 ?>

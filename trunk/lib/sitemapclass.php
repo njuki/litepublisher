@@ -89,7 +89,7 @@ class TSitemap extends TItems {
     //home page
     $this->WriteItem('/', 9);
     $this->WritePosts();
-    $this->WriteNamed('menus', 8);
+    $this->WriteNamed('menu', 8);
     $this->WriteNamed('categories', 7);
     $this->WriteNamed('tags', 6);
     $this->WriteNamed('archives', 5);

@@ -22,7 +22,7 @@ class TPosts extends TItems {
   public function Setrecentcount($value) {
     if ($value != $this->recentcount) {
       $this->Data['recentcount'] = $value;
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -46,7 +46,7 @@ class TPosts extends TItems {
   
   public function Add(&$Post) {
     global $paths;
-    $this->Lock();
+    $this->lock();
     $Post->id = ++$this->lastid;
     $dir =$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $Post->id;
     @mkdir($dir, 0777);
@@ -65,25 +65,25 @@ class TPosts extends TItems {
     }
     
     $this->Updated($Post);
-    $Post->Save();
-    $this->Unlock();
+    $Post->save();
+    $this->unlock();
     $this->Added($Post->id);
     $this->Changed();
     
     $Urlmap = &TUrlmap::Instance();
-    $Urlmap->Lock();
+    $Urlmap->lock();
     $Urlmap->Add($Post->url, get_class($Post), $Post->id);
     $Urlmap->ClearCache();
-    $Urlmap->Unlock();
+    $Urlmap->unlock();
   }
   
   public function Edit(&$Post) {
     $Urlmap = &TUrlmap::Instance();
-    $this->Lock();
+    $this->lock();
     
     $oldurl = $Urlmap->Find(get_class($Post), $Post->id);
     if ($oldurl != $Post->url) {
-      $Urlmap->Lock();
+      $Urlmap->lock();
       $Urlmap->Delete($oldurl);
       $Linkgen = &TLinkGenerator::Instance();
       if ($Post->url == '') {
@@ -95,7 +95,7 @@ class TPosts extends TItems {
         $Post->title = $title;
       }
       $Urlmap->Add($Post->url, get_class($Post), $Post->id);
-      $Urlmap->Unlock();
+      $Urlmap->unlock();
     }
     
     if ($oldurl != $Post->url) {
@@ -104,8 +104,8 @@ class TPosts extends TItems {
     
     $Post->modified = time();
     $this->Updated($Post);
-    $Post->Save();
-    $this->Unlock();
+    $Post->save();
+    $this->unlock();
     
     $Urlmap->ClearCache();
     
@@ -116,19 +116,19 @@ class TPosts extends TItems {
   public function Delete($id) {
     global $paths;
     if (!$this->ItemExists($id)) return false;
-    $this->Lock();
+    $this->lock();
     $post = &TPost::Instance($id);
     
     $Urlmap = &TUrlmap::Instance();
-    $Urlmap->Lock();
+    $Urlmap->lock();
     $Urlmap->Delete($post->url);
     $Urlmap->ClearCache();
-    $Urlmap->Unlock();
+    $Urlmap->unlock();
     
     unset($this->items[$id]);
     TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
     $this->UpdateArchives();
-    $this->Unlock();
+    $this->unlock();
     $this->Deleted($post->id);
     $this->Changed();
     return true;

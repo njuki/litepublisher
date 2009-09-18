@@ -132,12 +132,11 @@ class TRSS extends TEventClass {
     global $Options;
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $post->title);
-    $url = $Options->url . $post->url;
-    AddNodeValue($item, 'link', $url);
-    AddNodeValue($item, 'comments', $url . '#comments');
-    AddNodeValue($item, 'pubDate', date('r', $post->date));
+    AddNodeValue($item, 'link', $post->link);
+    AddNodeValue($item, 'comments', $post->link . '#comments');
+    AddNodeValue($item, 'pubDate', $post->pubdate);
     
-    $guid  = AddNodeValue($item, 'guid', $url);
+    $guid  = AddNodeValue($item, 'guid', $post->link);
     AddAttr($guid, 'isPermaLink', 'false');
     
     $profile = &TProfile::Instance();
