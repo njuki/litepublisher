@@ -84,11 +84,11 @@ class TAdminService extends TAdminPage {
         eval('$result .= "'. $html->confirmdelete . '\n";');
       }
       break;
-
-case 'run':
-$script = isset($_POST['content']) ? $_POST['content'] : '';
-$result = $html->runform($this->ContentToForm($script));
-break;
+      
+      case 'run':
+      $script = isset($_POST['content']) ? $_POST['content'] : '';
+      $result = $html->runform($this->ContentToForm($script));
+      break;
     }
     
     $result = str_replace("'", '"', $result);
@@ -173,11 +173,11 @@ break;
         $this->SendZip($content);
       }
       break;
-
-case 'run':
-$result = eval($_POST['content']);
-return $result;
-break;
+      
+      case 'run':
+      $result = eval($_POST['content']);
+      return $result;
+      break;
     }
     
   }

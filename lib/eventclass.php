@@ -10,7 +10,7 @@ class TEventClass extends TDataClass {
     $this->DataMap = array();
     parent::__construct();
     $this->AssignDataMap();
-    $this->Load();
+    $this->load();
   }
   
   public function free() {
@@ -89,17 +89,13 @@ class TEventClass extends TDataClass {
           if (is_string($lResult)) $Result .= $lResult;
         } else {
           array_splice($list, $i, 1);
-          $this->Save();
+          $this->save();
         }
       } else {
-        
         if (!@class_exists($classname)) {
-          __autoload($classname);
-          if (!@class_exists($classname)) {
-            array_splice($list, $i, 1);
-            $this->Save();
-            continue;
-          }
+          array_splice($list, $i, 1);
+          $this->save();
+          continue;
         }
         
         $obj = &GetInstance($classname);
@@ -124,7 +120,7 @@ class TEventClass extends TDataClass {
     'class' => $params['class'],
     'func' => $params['func']
     );
-    $this->Save();
+    $this->save();
   }
   
   public function UnsubscribeEvent($EventName, $ClassName) {
@@ -133,7 +129,7 @@ class TEventClass extends TDataClass {
       for ($i = count($lEvents) - 1; $i >=  0; $i--) {
         if ($lEvents[$i]['class'] == $ClassName) {
           array_splice($lEvents, $i, 1);
-          $this->Save();
+          $this->save();
           return true;
         }
       }
@@ -151,7 +147,7 @@ class TEventClass extends TDataClass {
   }
   
   public function UnsubscribeClassName($class) {
-    $this->Lock();
+    $this->lock();
     foreach ($this->events as $name => $events) {
       for ($i = count($events) - 1; $i >=  0; $i--) {
         if ($events[$i]['class'] == $class) {
@@ -159,7 +155,7 @@ class TEventClass extends TDataClass {
         }
       }
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function Validate() {

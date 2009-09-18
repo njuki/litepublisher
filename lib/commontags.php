@@ -27,9 +27,9 @@ class TCommonTags extends TItems {
     $this->WidgetClass = 'categories';
   }
   
-  public function Save() {
-    parent::Save();
-    if (!$this->Locked())  {
+  public function save() {
+    parent::save();
+    if (!$this->locked)  {
       TTemplate::WidgetExpired($this);
     }
   }
@@ -59,7 +59,7 @@ class TCommonTags extends TItems {
     $post = &$posts->GetItem($postid);
     
   $list = $post->{$this->PostPropname};
-    $this->Lock();
+    $this->lock();
     foreach ($this->items as $id => $Item) {
       $toadd = in_array($id, $list);
       $i = array_search($postid, $Item['items']);
@@ -74,11 +74,11 @@ class TCommonTags extends TItems {
       $posts->StripDrafts($publ);
       $this->items[$id]['count'] = count($publ);
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function PostDeleted($postid) {
-    $this->Lock();
+    $this->lock();
     foreach ($this->items as $id => $item) {
       $i = array_search($postid, $this->items[$id]['items']);
       if (is_int($i)) {
@@ -86,7 +86,7 @@ class TCommonTags extends TItems {
         $this->items[$id]['count'] = count($this->items[$id]['items']);
       }
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
   //for link generator
@@ -98,7 +98,7 @@ class TCommonTags extends TItems {
     if (empty($name)) return false;
     $id  = $this->IndexOf('name', $name);
     if ($id > 0) return $id;
-    $this->Lock();
+    $this->lock();
     $this->lastid++;
     $this->NewName = $slug == '' ? $name : $slug;
     $Linkgen = &TLinkGenerator::Instance();
@@ -112,7 +112,7 @@ class TCommonTags extends TItems {
     //'keywords' => '',
     'items' => array()
     );
-    $this->Unlock();
+    $this->unlock();
     $this->AddUrl($this->lastid, $url);
     $this->Added($this->lastid);
     return $this->lastid;
@@ -139,9 +139,9 @@ class TCommonTags extends TItems {
     $item = $this->items[$id];
     if (($item['name'] != $name) || ($item['url'] != $url)) {
       $Urlmap = &TUrlmap::Instance();
-      $Urlmap->Lock();
+      $Urlmap->lock();
       
-      $this->Lock();
+      $this->lock();
       $item['name'] = $name;
       if ($item['url'] != $url) {
         $Urlmap->DeleteClassArg(get_class($this), $id);
@@ -160,9 +160,9 @@ class TCommonTags extends TItems {
       }
       
       $this->items[$id] = $item;
-      $this->Unlock();
+      $this->unlock();
       $Urlmap->ClearCache();
-      $Urlmap->Unlock();
+      $Urlmap->unlock();
     }
   }
   
@@ -192,13 +192,13 @@ class TCommonTags extends TItems {
   public function CreateNames($list) {
     if (is_string($list)) $list = explode(',', trim($list));
     $Result = array();
-    $this->Lock();
+    $this->lock();
     foreach ($list as $name) {
       $name = trim($name);
       if ($name == '') continue;
       $Result[] = $this->Add($name);
     }
-    $this->Unlock();
+    $this->unlock();
     return $Result;
   }
   

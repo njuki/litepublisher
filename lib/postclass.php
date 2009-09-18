@@ -19,14 +19,14 @@ class TPost extends TItem {
     'author' => 0, //reserved, not used
     'date' => 0,
     'modified' => 0,
-    'title' => '',
     'url' => '',
+    'title' => '',
     'content' => '',
     'excerpt' => '',
-    'moretitle' => '',
     'rss' => '',
     'rawcontent' => '',
     'description' => '',
+    'moretitle' => '',
     'categories' => array(0),
     'tags' => array(),
     'status' => 'published',
@@ -43,6 +43,28 @@ class TPost extends TItem {
       $this->fComments = &TComments::Instance($this->id);
     }
     return $this->fComments;
+  }
+  
+  public function Getlink() {
+    global $Options;
+    return $Options->url . $this->url;
+  }
+  
+  public function Setlink($link) {
+    global $Options;
+    if ($UrlArray = parse_url($link)) {
+      $url = $UrlArray['path'];
+      if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
+      $this->url = $url;
+    }
+  }
+  
+  public function Getpubdate() {
+    return date('r', $this->date);
+  }
+  
+  public function Setpubdate($date) {
+    $this->date = strtodate($date);
   }
   
   //template
@@ -79,7 +101,7 @@ class TPost extends TItem {
     return $this->Gettagnames();
   }
   
-  //xmlrpc
+  
   public function Gettagnames() {
     if (count($this->tags) == 0) return '';
     $Tags = &TTags::Instance();

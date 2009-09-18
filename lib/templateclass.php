@@ -190,7 +190,7 @@ class TTemplate extends TEventClass {
   }
   
   public function GetWidgetContent($id) {
-    global $paths, $Options;
+    global $paths;
     $class = $this->widgets[$id]['class'];
     $this->curwidget = $id;
     $FileName = $paths['cache']. "widget$id.php";
@@ -199,16 +199,7 @@ class TTemplate extends TEventClass {
       if (@file_exists($FileName)) {
         $result = file_get_contents($FileName);
       } else {
-        if (!@class_exists($class)) {
-          $this->DeleteIdWidget($id);
-          return '';
-        }
-        $widget = &GetInstance($class);
-        try {
-          $result =   $widget->GetWidgetContent($id);
-        } catch (Exception $e) {
-          $Options->HandleException($e);
-        }
+        $result = $this->DoGetWidgetContent($class, $id);
         file_put_contents($FileName, $result);
         @chmod($FileName, 0666);
       }
@@ -216,18 +207,7 @@ class TTemplate extends TEventClass {
       
       case 'include':
       if (!@file_exists($FileName)) {
-        if (!@class_exists($class)) {
-          $this->DeleteIdWidget($id);
-          return '';
-        }
-        
-        $widget = &GetInstance($class);
-        try {
-          $result =   $widget->GetWidgetContent($id);
-        } catch (Exception $e) {
-          $Options->HandleException($e);
-        }
-        
+        $result = $this->DoGetWidgetContent($class, $id);
         file_put_contents($FileName, $result);
         @chmod($FileName, 0666);
       }
@@ -235,22 +215,28 @@ class TTemplate extends TEventClass {
       break;
       
       case 'nocache':
-      if (!@class_exists($class)) {
-        $this->DeleteIdWidget($id);
-        return '';
-      }
-      
-      $widget = &GetInstance($class);
-      try {
-        $result =   $widget->GetWidgetContent($id);
-      } catch (Exception $e) {
-        $Options->HandleException($e);
-      }
+      $result = $this->DoGetWidgetContent($class, $id);
       break;
     }
     
     $s = $this->OnWidgetContent($result);
     if ($s != '') $result = $s;
+    return $result;
+  }
+  
+  private function DoGetWidgetContent($class, $id) {
+    global $Options;
+    if (!@class_exists($class)) {
+      $this->DeleteIdWidget($id);
+      return '';
+    }
+    $result = '';
+    $widget = &GetInstance($class);
+    try {
+      $result =   $widget->GetWidgetContent($id);
+    } catch (Exception $e) {
+      $Options->HandleException($e);
+    }
     return $result;
   }
   

@@ -44,6 +44,9 @@ class TDataClass {
   }
   
   public  function __call($name, $params) {
+    if (method_exists($this, strtolower($name))) {
+      return call_user_func_array(array(&$this, strtolower($name)), $params);
+    }
     $this->Error("The requested method $name not found in class " . get_class($this));
   }
   
@@ -92,7 +95,7 @@ class TDataClass {
     }
   }
   
-  public function Load() {
+  public function load() {
     global $paths;
     $FileName = $paths['data'] . $this->GetBaseName() .'.php';
     if (@file_exists($FileName)) {
@@ -100,7 +103,7 @@ class TDataClass {
     }
   }
   
-  public function Save() {
+  public function save() {
     global $paths;
     if (self::$GlobalLock) return;
     if ($this->LockCount <= 0) {
@@ -153,7 +156,7 @@ class TDataClass {
   public function AfterLoad() {
   }
   
-  public function Lock() {
+  public function lock() {
     $this->LockCount++;
   }
   
@@ -161,7 +164,7 @@ class TDataClass {
     if (--$this->LockCount <= 0) $this->Save();
   }
   
-  public function Locked() {
+  public function Getlocked() {
     return $this->LockCount  > 0;
   }
   
@@ -178,7 +181,7 @@ class TEventClass extends TDataClass {
     $this->DataMap = array();
     parent::__construct();
     $this->AssignDataMap();
-    $this->Load();
+    $this->load();
   }
   
   public function free() {
@@ -257,17 +260,13 @@ class TEventClass extends TDataClass {
           if (is_string($lResult)) $Result .= $lResult;
         } else {
           array_splice($list, $i, 1);
-          $this->Save();
+          $this->save();
         }
       } else {
-        
         if (!@class_exists($classname)) {
-          __autoload($classname);
-          if (!@class_exists($classname)) {
-            array_splice($list, $i, 1);
-            $this->Save();
-            continue;
-          }
+          array_splice($list, $i, 1);
+          $this->save();
+          continue;
         }
         
         $obj = &GetInstance($classname);
@@ -292,7 +291,7 @@ class TEventClass extends TDataClass {
     'class' => $params['class'],
     'func' => $params['func']
     );
-    $this->Save();
+    $this->save();
   }
   
   public function UnsubscribeEvent($EventName, $ClassName) {
@@ -301,7 +300,7 @@ class TEventClass extends TDataClass {
       for ($i = count($lEvents) - 1; $i >=  0; $i--) {
         if ($lEvents[$i]['class'] == $ClassName) {
           array_splice($lEvents, $i, 1);
-          $this->Save();
+          $this->save();
           return true;
         }
       }
@@ -319,7 +318,7 @@ class TEventClass extends TDataClass {
   }
   
   public function UnsubscribeClassName($class) {
-    $this->Lock();
+    $this->lock();
     foreach ($this->events as $name => $events) {
       for ($i = count($events) - 1; $i >=  0; $i--) {
         if ($events[$i]['class'] == $class) {
@@ -327,7 +326,7 @@ class TEventClass extends TDataClass {
         }
       }
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function Validate() {
@@ -385,7 +384,7 @@ class TItems extends TEventClass {
   public function Delete($id) {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
-      $this->Save();
+      $this->save();
       $this->Deleted($id);
       return true;
     }
@@ -602,7 +601,8 @@ class TOptions extends TEventClass {
     $message = 'Caught exception: ' . $e->getMessage();
     $log = $message . "\n" . $trace;
     TFiler::log($log, 'exceptions.log');
-    if (defined('debug') || $this->echoexception) {
+    $urlmap = TUrlmap::Instance();
+    if (defined('debug') || $this->echoexception || $urlmap->IsAdmin) {
       echo str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       TFiler::log($log, 'exceptionsmail.log');
@@ -933,7 +933,7 @@ class TUrlmap extends TItems {
   }
   
   public function DeleteClass($class) {
-    $this->Lock();
+    $this->lock();
     
     $this->RemoveItems($this->items, $class);
     $this->RemoveItems($this->get, $class);
@@ -944,7 +944,7 @@ class TUrlmap extends TItems {
       }
     }
     
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function Find($class, $params) {
@@ -1007,31 +1007,31 @@ class TUrlmap extends TItems {
   
   public function Replace($old, $new) {
     if ($old == $new) return;
-    $this->Lock();
+    $this->lock();
     $Redir = &TRedirector::Instance();
     $Redir->Add($old, $new);
     $this->items[$new] = $this->items[$old];
     $this->unlink($this->items[$old]['id'] . '.php');
     unset($this->items[$old]);
     $this->Add($old, get_class($Redir), null);
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function AddRedir($from, $to) {
     if ($from == $to) return;
-    $this->Lock();
+    $this->lock();
     $Redir = &TRedirector::Instance();
     $Redir->Add($from, $to);
     $this->Add($from, get_class($Redir), null);
-    $this->Unlock();
+    $this->unlock();
   }
   
   public static function unsub(&$obj) {
     $self = self::Instance();
-    $self->Lock();
+    $self->lock();
     $self->UnsubscribeClassName(get_class($obj));
     $self->DeleteClass(get_class($obj));
-    $self->Unlock();
+    $self->unlock();
   }
   
   protected function CheckSingleCron() {

@@ -46,7 +46,7 @@ class TItems extends TEventClass {
   public function Delete($id) {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
-      $this->Save();
+      $this->save();
       $this->Deleted($id);
       return true;
     }

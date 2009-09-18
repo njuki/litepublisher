@@ -16,7 +16,7 @@ class TAdminFiles extends TAdminPage {
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
     $lang = TLocal::Instance();
-$lang->section = $this->basename;
+    $lang->section = $this->basename;
     
     $result = '';
     

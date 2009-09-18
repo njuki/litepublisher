@@ -321,7 +321,7 @@ class TUrlmap extends TItems {
   }
   
   public function DeleteClass($class) {
-    $this->Lock();
+    $this->lock();
     
     $this->RemoveItems($this->items, $class);
     $this->RemoveItems($this->get, $class);
@@ -332,7 +332,7 @@ class TUrlmap extends TItems {
       }
     }
     
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function Find($class, $params) {
@@ -395,31 +395,31 @@ class TUrlmap extends TItems {
   
   public function Replace($old, $new) {
     if ($old == $new) return;
-    $this->Lock();
+    $this->lock();
     $Redir = &TRedirector::Instance();
     $Redir->Add($old, $new);
     $this->items[$new] = $this->items[$old];
     $this->unlink($this->items[$old]['id'] . '.php');
     unset($this->items[$old]);
     $this->Add($old, get_class($Redir), null);
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function AddRedir($from, $to) {
     if ($from == $to) return;
-    $this->Lock();
+    $this->lock();
     $Redir = &TRedirector::Instance();
     $Redir->Add($from, $to);
     $this->Add($from, get_class($Redir), null);
-    $this->Unlock();
+    $this->unlock();
   }
   
   public static function unsub(&$obj) {
     $self = self::Instance();
-    $self->Lock();
+    $self->lock();
     $self->UnsubscribeClassName(get_class($obj));
     $self->DeleteClass(get_class($obj));
-    $self->Unlock();
+    $self->unlock();
   }
   
   protected function CheckSingleCron() {

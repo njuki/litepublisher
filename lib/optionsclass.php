@@ -90,7 +90,8 @@ class TOptions extends TEventClass {
     $message = 'Caught exception: ' . $e->getMessage();
     $log = $message . "\n" . $trace;
     TFiler::log($log, 'exceptions.log');
-    if (defined('debug') || $this->echoexception) {
+    $urlmap = TUrlmap::Instance();
+    if (defined('debug') || $this->echoexception || $urlmap->IsAdmin) {
       echo str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       TFiler::log($log, 'exceptionsmail.log');
