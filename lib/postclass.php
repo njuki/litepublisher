@@ -2,6 +2,7 @@
 
 class TPost extends TItem {
   private $fComments;
+  private $dateformater;
   
   public function GetBaseName() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
@@ -87,8 +88,13 @@ class TPost extends TItem {
   }
   
   public function Getlocaldate() {
-    //return date('d.m.Y H:i', $this->date);
     return TLocal::date($this->date);
+  }
+  
+  public function Getdateformat() {
+    if (!isset($this->dateformater)) $this->dateformater = new TDate($this->date);
+    $this->dateformater->date = $this->date;
+    return $this->dateformater;
   }
   
   public function Getmorelink() {

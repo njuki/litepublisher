@@ -66,6 +66,19 @@ class TLocal {
     self::checkload();
   }
   
+}//class
+
+class TDate {
+  public  $date;
+  
+  public function __construct($date) {
+    $this->date = $date;
+  }
+  
+  public function __get($name) {
+    return TLocal::translate(date($name, $this->date), 'datetime');
+  }
+  
 }
 
 //init

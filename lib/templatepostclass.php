@@ -89,19 +89,24 @@ class TTemplatePost extends TEventClass {
     global  $Options;
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $Template = TTemplate::Instance();
-    $linkclass = isset($Template->theme['class']['navipage']) ? $Template->theme['class']['navipage'] : '';
-    $result = '<p>';
-    $result .= $page== 1 ? '1' : "<a $linkclass href=\"$Options->url$url\">1</a>";
-    $url = rtrim($url, '/');
-    for ($i = 2; $i <= $count; $i++) {
-      if ($i != $page) {
-        $result .= "|<a $linkclass href=\"$Options->url$url/page/$i/\">$i</a>";
+    //подготовка шаблонов ссылок
+    $navi =isset($Template->theme['navilinks']['navi']) ? $Template->theme['navilinks']['navi'] : '<p>%s</p>';
+    $link =isset($Template->theme['navilinks']['link']) ? $Template->theme['navilinks']['link'] : '<a href="%1$s">%2$s</a>';
+    $current= isset($Template->theme['navilinks']['current']) ? $Template->theme['navilinks']['current'] : '%2$s';
+    $separator =isset($Template->theme['navilinks']['separator']) ? $Template->theme['navilinks']['separator'] : ' | ';
+    
+    $suburl = rtrim($url, '/');
+    $a = array();
+    for ($i = 1; $i <= $count; $i++) {
+      if ($i == $page) {
+        $a[] = sprintf($current, $Options->url . $url, $i);
       } else {
-        $result .= "|$i";
+        $a[] = sprintf($link, $Options->url . $suburl, $i);
       }
     }
     
-    $result .= "</p>\n";
+    $result = implode($separator, $a);
+    $result = sprintf($navi, $result);
     return $result;
   }
   
