@@ -6,8 +6,8 @@ class TDataClass {
   public $Data;
   public $basename;
   public $CacheEnabled;
-//database
-public $table;
+  //database
+  public $table;
   
   public function __construct() {
     $this->LockCount = 0;
@@ -168,16 +168,16 @@ public $table;
   public function Getlocked() {
     return $this->LockCount  > 0;
   }
-
-public function Getdbversion() {
-return false;
-}
-
-public function Getdb() {
-global $db;
-if ($this->table != '') $db->table = $this->table;
-return $db;
-}
+  
+  public function Getdbversion() {
+    return false;
+  }
+  
+  public function Getdb() {
+    global $db;
+    if ($this->table != '') $db->table = $this->table;
+    return $db;
+  }
   
 }//class
 ?>

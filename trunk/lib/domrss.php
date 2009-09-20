@@ -43,7 +43,14 @@ function _struct_to_array(&$values, &$i)  {
       $name = $values[$i]['tag'];
       if(!empty($name)){
         if (isset($values[$i]['value'])) {
-          $result[$name]= $values[$i]['value'];
+          if (isset($values[$i]['attributes'])) {
+            $result[$name]= array(
+            0 => $values[$i]['value'],
+            'attributes' => $values[$i]['attributes']
+            );
+          } else {
+            $result[$name]= $values[$i]['value'];
+          }
         } elseif (isset($values[$i]['attributes'])) {
           $result[$name] = $values[$i]['attributes'];
         } else {
