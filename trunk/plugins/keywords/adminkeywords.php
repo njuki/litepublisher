@@ -63,7 +63,7 @@ public function ProcessForm() {
 global $Options, $paths;
 $dir = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
 if (isset($_GET['filename'])) {
-//edit file
+$filename = str_replace('_php', '.php', $_GET['filename']);
 file_put_contents($dir . $filename, $_POST['content']);
 } else {
 foreach ($_POST as $filename => $value) {
