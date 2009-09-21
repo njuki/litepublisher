@@ -98,11 +98,8 @@ class TTemplatePost extends TEventClass {
     $suburl = rtrim($url, '/');
     $a = array();
     for ($i = 1; $i <= $count; $i++) {
-      if ($i == $page) {
-        $a[] = sprintf($current, $Options->url . $url, $i);
-      } else {
-        $a[] = sprintf($link, $Options->url . $suburl, $i);
-      }
+$pageurl = $i == 1 ? $Options->url . $url : "$Options->url$suburl/page/$i/";
+        $a[] = sprintf($i == $page ? $current : $link, $pageurl, $i);
     }
     
     $result = implode($separator, $a);

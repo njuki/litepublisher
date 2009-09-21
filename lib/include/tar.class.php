@@ -85,6 +85,7 @@ class tar {
     // to try to ensure valid file
     // PRIVATE ACCESS FUNCTION
     function __computeUnsignedChecksum($bytestring) {
+$unsigned_chksum = 0;
         for($i=0; $i<512; $i++)
             $unsigned_chksum += ord($bytestring[$i]);
         for($i=0; $i<8; $i++)
@@ -279,11 +280,11 @@ class tar {
         // Generate Records for each file, if we have files (We should...)
         if($this->numFiles > 0) {
             foreach($this->files as $key => $information) {
-                unset($header);
+                //unset($header);
 
                 // Generate the TAR header for this file
                 // Filename, Permissions, UID, GID, size, Time, checksum, typeflag, linkname, magic, version, user name, group name, devmajor, devminor, prefix, end
-                $header .= str_pad($information["name"],100,chr(0));
+                $header = str_pad($information["name"],100,chr(0));
                 $header .= str_pad(decoct($information["mode"]),7,"0",STR_PAD_LEFT) . chr(0);
                 $header .= str_pad(decoct($information["user_id"]),7,"0",STR_PAD_LEFT) . chr(0);
                 $header .= str_pad(decoct($information["group_id"]),7,"0",STR_PAD_LEFT) . chr(0);
@@ -461,6 +462,7 @@ class tar {
         }
 
         // Add file to processed data
+$checksum = 0;
         $this->numFiles++;
         $activeFile         = &$this->files[];
         $activeFile["name"]     = $filename;
