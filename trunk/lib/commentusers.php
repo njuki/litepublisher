@@ -16,23 +16,25 @@ class TCommentUsers extends TItems {
   }
   
   public function PostDeleted($postid) {
-    $this->Lock();
+    $this->lock();
     foreach ($this->items as  $id => $item) {
       $i = array_search($postid, $item['subscribe']);
       if (is_int($i)) {
         array_splice($this->items[$id]['subscribe'], $i, 1);
       }
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function Add($name, $email, $url) {
+    //$name = htmlspecialchars(trim(strip_tags($name)));
+    //$url = htmlspecialchars(trim(strip_tags($url)));
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     if ($id = $this->Find($name, $email, $url)) {
       $this->AddIP($id, $ip);
       return $id;
     }
-    $this->Lock();
+    $this->lock();
     $this->items[++$this->lastid] = array(
     'id' => $this->lastid,
     'name' => $name,
@@ -43,13 +45,13 @@ class TCommentUsers extends TItems {
     'subscribe' => array( )
     );
     
-    $this->Unlock();
+    $this->unlock();
     $this->Added($this->lastid);
     return $this->lastid;
   }
   
   public function Edit($id, $name, $url, $email, $ip) {
-    $this->Lock();
+    $this->lock();
     $item = &$this->items[$id];
     $item['name'] = $name;
     $item['url'] = $url;
@@ -57,7 +59,7 @@ class TCommentUsers extends TItems {
     if (!in_array($ip, $item['ip'])) {
       $item['ip'][]  = $ip;
     }
-    $this->Unlock();
+    $this->unlock();
     return $id;
   }
   
@@ -84,7 +86,7 @@ class TCommentUsers extends TItems {
   public function AddIP($id, $ip) {
     if (!in_array($ip, $this->items[$id]['ip'])) {
       $this->items[$id]['ip'][] = $ip;
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -95,7 +97,7 @@ class TCommentUsers extends TItems {
   public function Subscribe($id, $postid) {
     if (!in_array($postid, $this->items[$id]['subscribe'])) {
       $this->items[$id]['subscribe'][] = $postid;
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -103,7 +105,7 @@ class TCommentUsers extends TItems {
     $i = array_search($postid, $this->items[$id]['subscribe']);
     if (is_int($i)) {
       array_splice($this->items[$id]['subscribe'], $i, 1);
-      $this->Save();
+      $this->save();
     }
   }
   

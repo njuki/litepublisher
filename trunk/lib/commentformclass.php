@@ -162,8 +162,8 @@ class TCommentForm extends TItems {
         return TTemplate::SimpleContent($error);
       }
       $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
-      $users = &TCommentUsers ::Instance();
-      $users->Lock();
+      $users = TCommentUsers ::Instance();
+      $users->lock();
       $userid = $users->Add($values['name'], $values['email'], $values['url']);
       $CommentManager = &TCommentManager::Instance();
       if (!$CommentManager->UserCanAdd( $userid)) {
@@ -171,7 +171,7 @@ class TCommentForm extends TItems {
         return TTemplate::SimpleContent($error);
       }
       $users->UpdateSubscribtion($userid, $post->id, isset($values['subscribe']));
-      $users->Unlock();
+      $users->unlock();
       $usercookie = $users->GetCookie($userid);
       
       $CommentManager->AddToPost($post, $userid, $values['content']);
@@ -191,19 +191,15 @@ class TCommentForm extends TItems {
     return $result;
   }
   
-  public function FilterValues(&$values) {
+  public function FilterValues($values) {
     $result = &$this->GetAllFields();
     foreach ($result as $name => $defval) {
-      if (isset($values[$name]) ) {
-        $result[$name]  =  trim($values[$name]);
-      }
+      if (isset($values[$name]) ) $result[$name]  =  trim($values[$name]);
     }
     
-    if (isset($fields['name'])) {
-      $result['name'] = strip_tags($result['name']);
-    }
+    if (isset($result['name'])) $result['name'] = htmlspecialchars(trim(strip_tags($result['name'])));
+    if (isset($result['url'])) $result['url'] = htmlspecialchars(trim(strip_tags($result['url'])));
     $result['content'] = trim($values['content']);
-    
     return $result;
   }
   
