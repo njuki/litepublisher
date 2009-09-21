@@ -36,6 +36,8 @@ class TCommentManager extends TItems {
     global $Options;
     $Template = TTemplate::Instance();
     $result = $Template->GetBeforeWidget('recentcomments');
+    $templ = isset($Template->theme['widget']['recentcomment']) ? $Template->theme['widget']['recentcomment'] :
+    '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
     
     $count = $this->recentcount;
     if ($item = end($this->items)) {
@@ -49,7 +51,7 @@ class TCommentManager extends TItems {
           $content = $post->comments->GetValue($id, 'content');
           $content = TContentFilter::GetExcerpt($content, 120);
           $user = $users->GetItem($item['uid']);
-          $result .= "\n\t<li><strong><a href=\"$Options->url$post->url#comment-$id\" title=\"$onrecent $post->title\">$user[name]</a></strong>: $content...</li>";
+          $result .= sprintf($templ, $Options->url . $post->url, $id,$post->title, $user['name'], $content, $onrecent);
         }
       } while (($count > 0) && ($item  = prev($this->items)));
     }
