@@ -197,8 +197,8 @@ class TCommentForm extends TItems {
       if (isset($values[$name]) ) $result[$name]  =  trim($values[$name]);
     }
     
-    if (isset($result['name'])) $result['name'] = htmlspecialchars(trim(strip_tags($result['name'])));
-    if (isset($result['url'])) $result['url'] = htmlspecialchars(trim(strip_tags($result['url'])));
+    if (isset($result['name'])) $result['name'] = TContentFilter::escape($result['name']);
+    if (isset($result['url'])) $result['url'] = TContentFilter::escape($result['url']);
     $result['content'] = trim($values['content']);
     return $result;
   }
@@ -264,6 +264,7 @@ class TCommentForm extends TItems {
     $filename = $this->confirmtemplate == '' ? 'confirmform.tml' : $this->confirmtemplate;
     return file_get_contents($paths['libinclude'] . $filename);
   }
+  
   
 }//class
 

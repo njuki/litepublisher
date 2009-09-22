@@ -94,6 +94,8 @@ class TContentFilter extends TEventClass {
   public function GetPostContent($content) {
     $result = trim($content);
     $result = self::ReplaceCode($result);
+    
+    /*мой старый код
     $result = str_replace("\r\n", "\n", $result);
     $result = str_replace("\r", "\n", $result);
     //послетега  до конца строки удаляются пробеллы
@@ -104,10 +106,22 @@ class TContentFilter extends TEventClass {
     $result = preg_replace('/(?<!\>)(\s*?)?\n\n(\s*\<)/im', "</p>\n<",$result);
     //через строку открывается параграф после закрытия тега
     $result = preg_replace('/(\>)(\s*)\n\n(?!\s*\<)/im', ">\n<p>",$result);
-    //переводыстроки если нет в конце тегов
+    //переводы строки если нет в конце тегов
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
+    */
+    //вариант sartas
+    $result = str_replace("\r\n", "\n", $result);
+    $result = str_replace("\r", "\n", $result);
+    $result = preg_replace('/\n<(a|img|div)(.*)>/im', "<br />\n<$1$2>", $result);
+    $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
+    $result = preg_replace('/\n<(b|i|u)>/im', "<br />\n<$1>", $result);
+    $result = preg_replace('/<\/(a|b|i|u|div)>\n/im', "</$1><br/>\n", $result);
+    $result = preg_replace('/\>(\s*?)?\n/',">\n", $result);
+    $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
+    $result = str_replace("\n\n", "</p>\n<p>", $result);
     
-    return "<p>" . $result . "</p>\n";
+if (!preg_match('/>$/', $result)) $result = $result . "</p>\n";
+return "<p>" . $result;
   }
   
   public static function ReplaceCode($s) {
@@ -157,6 +171,15 @@ class TContentFilter extends TEventClass {
     }
     
     return $s;
+  }
+  
+  public static function escape($s) {
+    $Table = array('"'=> '&quot;',
+    "'" => '&#039;',
+    '\\'=> '&#092;');
+    
+    $s = htmlspecialchars(trim(strip_tags($s)));
+    return strtr ($s, $Table);
   }
   
 }

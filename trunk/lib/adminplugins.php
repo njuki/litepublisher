@@ -76,7 +76,7 @@ class TAdminPlugins extends TAdminPage {
   }
   
   private function GetPluginContent($name, $method) {
-    global $paths;
+    global $paths, $Options;
     $plugins = &TPlugins::Instance();
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
@@ -88,11 +88,12 @@ class TAdminPlugins extends TAdminPage {
       $about = $ini['about'];
       if (empty($about['adminclassname'])) return $this->notfound;
       $class = $about['adminclassname'];
-      if (!@class_exists($class)) {
+      if (!class_exists($class)) {
         require_once($paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
       }
       
-      $this->plugin = &new $class ();
+      
+      $this->plugin = GetInstance($class );
     }
     
     return $this->plugin->$method();

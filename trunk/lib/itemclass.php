@@ -2,7 +2,7 @@
 
 class TItem extends TDataClass {
   public static $AllItems;
-  public $id;
+  //public $id;
   protected $Aliases;
   
   public static function &Instance($ClassName, $id = 0) {
@@ -23,7 +23,7 @@ class TItem extends TDataClass {
   
   public function __construct() {
     parent::__construct();
-    $this->id = 0;
+    $this->Data['id'] = 0;
   }
   
   public function __get($name) {
@@ -43,15 +43,12 @@ class TItem extends TDataClass {
     return  $this->Error("Field $name not exists in class " . get_class($this));
   }
   
-  private function Setid($id) {
+  public function Setid($id) {
     if ($id != $this->id) {
       $class = get_class($this);
-      if (isset(   self::$AllItems[$class][$this->id])) {
-        self::$AllItems[$class][$this->id] = null;
-        unset(self::$AllItems[$class][$this->id]);
-      }
-      $this->id = $id;
       self::$AllItems[$class][$id] = &$this;
+      if (isset(   self::$AllItems[$class][$this->id])) unset(self::$AllItems[$class][$this->id]);
+      $this->Data['id'] = $id;
     }
   }
   

@@ -46,6 +46,7 @@ class TPosts extends TItems {
   
   public function Add(&$Post) {
     global $paths;
+    if (!isset($Post)) return $this->Error('Post not assigned');
     $this->lock();
     $Post->id = ++$this->lastid;
     $dir =$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $Post->id;
