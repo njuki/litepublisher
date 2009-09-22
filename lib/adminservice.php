@@ -127,7 +127,7 @@ class TAdminService extends TAdminPage {
         if ( isset($ini[$name]) || isset($classes->items[$name])) {
           switch ($_POST['submit']) {
             case $lang->install:
-            $classes->Add($name, $value);
+            $classes->Add($name, $ini[$name]);
             break;
             
             case $lang->uninstall:

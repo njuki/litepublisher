@@ -17,6 +17,7 @@ class TPost extends TItem {
   protected function CreateData() {
     global $Options;
     $this->Data= array(
+    'parent' => 0,
     'author' => 0, //reserved, not used
     'date' => 0,
     'modified' => 0,
@@ -33,6 +34,7 @@ class TPost extends TItem {
     'status' => 'published',
     'commentsenabled' => $Options->commentsenabled,
     'pingenabled' => $Options->pingenabled,
+    'rssenabled' => true,
     'password' => '',
     'theme' => '',
     'pages' => array()
@@ -65,7 +67,7 @@ class TPost extends TItem {
   }
   
   public function Setpubdate($date) {
-    $this->date = strtodate($date);
+    $this->date = strtotime($date);
   }
   
   //template

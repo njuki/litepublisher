@@ -194,7 +194,7 @@ class TCommonTags extends TItems {
     $Result = array();
     $this->lock();
     foreach ($list as $name) {
-      $name = trim($name);
+      $name = TContentFilter::escape($name);
       if ($name == '') continue;
       $Result[] = $this->Add($name);
     }
