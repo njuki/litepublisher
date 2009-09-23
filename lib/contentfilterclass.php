@@ -173,13 +173,12 @@ return "<p>" . $result;
     return $s;
   }
   
+  public static function quote($s) {
+    return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;'));
+}
+
   public static function escape($s) {
-    $Table = array('"'=> '&quot;',
-    "'" => '&#039;',
-    '\\'=> '&#092;');
-    
-    $s = htmlspecialchars(trim(strip_tags($s)));
-    return strtr ($s, $Table);
+return self::quote(htmlspecialchars(trim(strip_tags($s))));
   }
   
 }

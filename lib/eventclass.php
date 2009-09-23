@@ -76,43 +76,45 @@ class TEventClass extends TDataClass {
     array_splice($this->EventNames, count($this->EventNames), 0, $a);
   }
   
+
+private function GetEvents($name) {
+return isset($this->events[$name])?$this->events[$name] : false;
+}
+
   private function CallEvent($name, &$params) {
-    if (!isset($this->events[$name])) return '';
     $Result = '';
-    $list = &$this->events[$name];
-    for($i = count($list) -1; $i >= 0; $i--) {
-      $function = $list[$i]['func'];
-      $classname = $list[$i]['class'];
-      if (empty($classname)) {
-        if (function_exists($function)) {
-          $lResult = call_user_func_array($function, $params);
-          if (is_string($lResult)) $Result .= $lResult;
-        } else {
-          array_splice($list, $i, 1);
-          $this->save();
-        }
-      } else {
-        if (!@class_exists($classname)) {
-          array_splice($list, $i, 1);
-          $this->save();
+if (    $list = $this->GetEvents($name)) {
+foreach ($list as $i => $item) {
+      if (empty($item['class'])) {
+        if (function_exists($item['func'])) {
+$call = $item['func'];
+} else {
+$this->DeleteEvent($name, $i);
+continue;
+}
+        } elseif (!class_exists($item['class'])) {
+$this->DeleteEvent();
           continue;
-        }
-        
-        $obj = &GetInstance($classname);
-        $lResult = call_user_func_array(array(&$obj, $function), $params);
+        } else {
+                $obj = &GetInstance($item['class']);
+$call = array(&$obj, $item['func']);
+}
+        $lResult = call_user_func_array($call, $params);
         if (is_string($lResult)) $Result .= $lResult;
-      }
     }
+}
     
     return $Result;
   }
+
+private function DeleteEvent($name, $i) {
+          array_splice($this->events[$name], $i, 1);
+          $this->save();
+}
   
   public function SubscribeEvent($name, $params) {
-    if (!isset($this->events[$name])) {
-      $this->events[$name] =array();
-    }
-    
-    foreach ($this->events[$name] as $event) {
+    if (!isset($this->events[$name])) $this->events[$name] =array();
+   foreach ($this->events[$name] as $event) {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
     
@@ -123,17 +125,15 @@ class TEventClass extends TDataClass {
     $this->save();
   }
   
-  public function UnsubscribeEvent($EventName, $ClassName) {
-    if (isset($this->events[$EventName])) {
-      $lEvents = &$this->events[$EventName];
-      for ($i = count($lEvents) - 1; $i >=  0; $i--) {
-        if ($lEvents[$i]['class'] == $ClassName) {
-          array_splice($lEvents, $i, 1);
-          $this->save();
+  public function UnsubscribeEvent($name, $class) {
+    if (isset($this->events[$name])) {
+foreach ($this->events[$name] as $i => $item) {
+        if ($item['class'] == $class) {
+$this->DeleteEvent($name, $i);
           return true;
         }
       }
-    }
+}
     return false;
   }
   
@@ -149,11 +149,9 @@ class TEventClass extends TDataClass {
   public function UnsubscribeClassName($class) {
     $this->lock();
     foreach ($this->events as $name => $events) {
-      for ($i = count($events) - 1; $i >=  0; $i--) {
-        if ($events[$i]['class'] == $class) {
-          array_splice($this->events[$name], $i, 1);
+foreach ($events as $i => $item) {
+        if ($item['class'] == $class)  $this->DeleteEvent($name, $i);
         }
-      }
     }
     $this->unlock();
   }
