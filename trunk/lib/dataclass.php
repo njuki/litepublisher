@@ -98,16 +98,22 @@ class TDataClass {
   
   public function load() {
     global $paths;
+if ($this->dbversion) {
+return $this->LoadFromDB();
+} else {
     $FileName = $paths['data'] . $this->GetBaseName() .'.php';
     if (@file_exists($FileName)) {
-      return $this->LoadFromString(file_get_contents($FileName));
+      return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
+}
     }
   }
   
   public function save() {
     global $paths;
-    if (self::$GlobalLock) return;
-    if ($this->LockCount <= 0) {
+    if (self::$GlobalLock || ($this->LockCount > 0)) return;
+if ($this->dbversion) {
+$this->SaveToDB();
+} else {
       SafeSaveFile($paths['data'].$this->GetBaseName(), $this->SaveToString());
     }
   }
@@ -146,7 +152,6 @@ class TDataClass {
   
   public function LoadFromString($s) {
     try {
-      $s = PHPUncomment($s);
       if (!empty($s)) $this->Data = unserialize($s) + $this->Data;
       $this->AfterLoad();
     } catch (Exception $e) {
@@ -172,12 +177,27 @@ class TDataClass {
   public function Getdbversion() {
     return false;
   }
+
+public function Getclass() {
+return get_class($this);
+}
   
-  public function Getdb() {
+  public function Getdb($table = 'data') {
     global $db;
-    if ($this->table != '') $db->table = $this->table;
+$table =$table != '' ? $table : $this->table;
+if ($table != '') $db->table = $table;
     return $db;
   }
+
+protected function SaveToDB() {
+$db->add($this->GetBaseName(), $this->SaveToString());
+}
+
+protected function LoadFromDB() {
+if ($r = $this->db->select('basename = '. $this->GetBaseName() . "'")) {
+return $this->LoadFromString($r['data']);
+}
+}
   
 }//class
 ?>
