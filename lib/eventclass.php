@@ -19,7 +19,7 @@ class TEventClass extends TDataClass {
   }
   
   protected function CreateData() {
-    $this->AddDataMap('events', array());
+if (!$this->dbversion) $this->AddDataMap('events', array());
   }
   
   public function AssignDataMap() {
@@ -76,9 +76,14 @@ class TEventClass extends TDataClass {
     array_splice($this->EventNames, count($this->EventNames), 0, $a);
   }
   
-
 private function GetEvents($name) {
-return isset($this->events[$name])?$this->events[$name] : false;
+if (isset($this->events[$name])) return $this->events[$name];
+if ($this->dbversion) {
+$r = $this->db->SelectTableWhere('events', "owner = '$this->class' and name = '$name'");
+$this->events[$name] = $r->fetchAll (PDO::FETCH_ASSOC);
+return $this->events[$name];
+} 
+return false;
 }
 
   private function CallEvent($name, &$params) {
@@ -108,8 +113,15 @@ $call = array(&$obj, $item['func']);
   }
 
 private function DeleteEvent($name, $i) {
+if ($this->dbversion) {
+$id =           $this->events[$name][$i]['id'];
+$db = $this->Getdb('events');
+$db->deleteid($id);
           array_splice($this->events[$name], $i, 1);
-          $this->save();
+} else {
+          array_splice($this->events[$name], $i, 1);
+$this->save();
+}
 }
   
   public function SubscribeEvent($name, $params) {
@@ -122,7 +134,15 @@ private function DeleteEvent($name, $i) {
     'class' => $params['class'],
     'func' => $params['func']
     );
+if ($this->dbversion) {
+$event = &$this->events[$name][count($this->events[$name]) - 1];
+$event['name'] = $name;
+$event['owner'] = get_class($this);
+$db = $this->Getdb('events');
+$event['id'] = $db->InsertAssoc($event);
+} else {
     $this->save();
+}
   }
   
   public function UnsubscribeEvent($name, $class) {

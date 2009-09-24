@@ -109,17 +109,27 @@ class TContentFilter extends TEventClass {
     //переводы строки если нет в конце тегов
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
     */
-    //вариант sartas
+    //мой старый код
     $result = str_replace("\r\n", "\n", $result);
     $result = str_replace("\r", "\n", $result);
-    $result = preg_replace('/\n<(a|img|div)(.*)>/im', "<br />\n<$1$2>", $result);
+    //послетега  до конца строки удаляются пробеллы
+    $result = preg_replace('/\>(\s*?)?\n/',">\n", $result);
+    //ставятся два праграфа если небыло тегов
+    $result = preg_replace('/(?<!\>)\n\n(?!\s*\<)/im', "</p>\n<p>",$result);
+    //закрывается параграф перед тегом через строку
+    $result = preg_replace('/(?<!\>)(\s*?)?\n\n(\s*\<)/im', "</p>\n<",$result);
+    //через строку открывается параграф после закрытия тега
+    $result = preg_replace('/(\>)(\s*)\n\n(?!\s*\<)/im', ">\n<p>",$result);
+    //переводы строки если нет в конце тегов
+    $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
+    
+    //вариант sartas
+
+    $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
     $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
     $result = preg_replace('/\n<(b|i|u)>/im', "<br />\n<$1>", $result);
-    $result = preg_replace('/<\/(a|b|i|u|div)>\n/im', "</$1><br/>\n", $result);
-    $result = preg_replace('/\>(\s*?)?\n/',">\n", $result);
-    $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
-    $result = str_replace("\n\n", "</p>\n<p>", $result);
-    
+    $result = preg_replace('/<\/(a|b|i|u)>\n/im', "</$1><br/>\n", $result);
+
 if (!preg_match('/>$/', $result)) $result = $result . "</p>\n";
 return "<p>" . $result;
   }
