@@ -247,10 +247,14 @@ class TAdminOptions extends TAdminPage {
       break;
       
       case 'cache':
-      $Options->Lock();
-      $Options->CacheEnabled  = isset($cacheenabled);
-      if (!empty($cacheexpired)) $Options->CacheExpired = (int) $cacheexpired;
-      $Options->Unlock();
+      if (isset($clearcache)) {
+        $Urlmap->ClearCache();
+      } else {
+        $Options->lock();
+        $Options->CacheEnabled  = isset($cacheenabled);
+        if (!empty($cacheexpired)) $Options->CacheExpired = (int) $cacheexpired;
+        $Options->unlock();
+      }
       break;
       
       case 'lite':
@@ -276,11 +280,18 @@ class TAdminOptions extends TAdminPage {
       break;
       
       case 'local':
-      $Options->timezone = $timezone;
+      $Options->lock();
+      $Options->dateformat = $dateformat;
       $Options->language = $language;
-      $archives = &TArchives::Instance();
-      TUrlmap::unsub($archives);
-      $archives->PostsChanged();
+      $Options->unlock();
+      if ($Options->timezone != $timezone) {
+        $Options->timezone = $timezone;
+        $archives = &TArchives::Instance();
+        TUrlmap::unsub($archives);
+        $archives->PostsChanged();
+      }
+      
+      $Urlmap->ClearCache();
       break;
       
       case '404':

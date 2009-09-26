@@ -2,6 +2,7 @@
 
 class TTemplateComment extends TEventClass {
   public $commentsini;
+  public $templ;
   
   protected function CreateData() {
     global $Urlmap;
@@ -100,7 +101,7 @@ class TTemplateComment extends TEventClass {
   }
   
   private function GetCommentsList(&$items, &$comment, $hold, $from) {
-global $Options, $post, $Template;
+    global $Options, $post, $Template;
     $lang = TLocal::Instance();
     $lang->section = 'comment';
     

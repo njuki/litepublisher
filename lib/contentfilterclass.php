@@ -124,14 +124,14 @@ class TContentFilter extends TEventClass {
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
     
     //вариант sartas
-
+    
     $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
     $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
     $result = preg_replace('/\n<(b|i|u)>/im', "<br />\n<$1>", $result);
     $result = preg_replace('/<\/(a|b|i|u)>\n/im', "</$1><br/>\n", $result);
-
-if (!preg_match('/>$/', $result)) $result = $result . "</p>\n";
-return "<p>" . $result;
+    
+    if (!preg_match('/>$/', $result)) $result = $result . "</p>\n";
+    return "<p>" . $result;
   }
   
   public static function ReplaceCode($s) {
@@ -185,10 +185,10 @@ return "<p>" . $result;
   
   public static function quote($s) {
     return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;'));
-}
-
+  }
+  
   public static function escape($s) {
-return self::quote(htmlspecialchars(trim(strip_tags($s))));
+    return self::quote(htmlspecialchars(trim(strip_tags($s))));
   }
   
 }

@@ -24,7 +24,8 @@ class TLocal {
   }
   
   public static function GetDateFormat() {
-    return self::$data['datetime']['dateformat'];
+    global $Options;
+    return $Options->dateformat != ''? $Options->dateformat : self::$data['datetime']['dateformat'];
   }
   
   public static function translate($s, $section = 'default') {

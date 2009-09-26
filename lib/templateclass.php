@@ -505,9 +505,9 @@ class TTemplate extends TEventClass {
       $subitems = '';
       if ($jsmenu &&(count($item['subitems']) > 0)) {
         foreach ($item['subitems'] as $subitem) {
-          $subitems .= sprintf($menuitem , $subitem['url'], $subitem['title']) . "\n";
+          $subitems .= sprintf($menuitem , $subitem['url'], $subitem['title'], '') . "\n";
         }
-        $subitems = sprintf($this->theme['menu']['subitems'], $$subitems) . "\n";
+        $subitems = sprintf($this->theme['menu']['subitems'], $subitems) . "\n";
       }
       
       $result .= sprintf($menuitem , $item['url'], $item['title'], $subitems) . "\n";
@@ -554,7 +554,7 @@ class TTemplate extends TEventClass {
   }
   
   public function Gethead() {
-      global $paths;
+    global $paths;
     $result = '';
     if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
       $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
@@ -589,17 +589,17 @@ class TTemplate extends TEventClass {
       $this->Save();
     }
   }
-
-public function parsetml(&$s, $tag, $replace) {
-$result = '';
-$opentag = "<!--$tag-->";
-$closetag = "<!--/$tag-->";
-if(($i = strpos(($s, $opentag))  && ($j = strpos($s, $closetag))) {
-$result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
-$s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
-}
-return $result;
-}
+  
+  public function parsetml(&$s, $tag, $replace) {
+    $result = '';
+    $opentag = "<!--$tag-->";
+    $closetag = "<!--/$tag-->";
+    if(($i = strpos($s, $opentag))  && ($j = strpos($s, $closetag))) {
+      $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
+      $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
+    }
+    return $result;
+  }
   
   public static function SimpleContent($content) {
     $DataObj  = &new TSimpleContent();
