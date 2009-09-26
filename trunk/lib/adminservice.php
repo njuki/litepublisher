@@ -96,6 +96,8 @@ class TAdminService extends TAdminPage {
   }
   
   private function HandleUpdate($req) {
+    $html = THtmlResource::Instance();
+    $lang = TLocal::Instance();
     if (isset($req['autoupdate'])) {
       $updater = TUpdater::Instance();
       $result = $updater->AutoUpdate();

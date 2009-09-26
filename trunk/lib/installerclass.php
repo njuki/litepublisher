@@ -248,9 +248,13 @@ class TInstaller extends TDataClass {
     global $paths, $Options;
     $Options = TOptions::Instance();
     $Options->Lock();
+    $Options->subdir = $this->ExtractSubdir();
+    $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
+    
     $Options->language = $this->language;
     TLocal::LoadLangFile('admin');
     $Options->timezone = TLocal::$data['installation']['timezone'];
+    $Options->dateformat = '';
     $Options->keywords = "blog";
     $Options->login = "admin";
     $Options->password = "";
@@ -261,8 +265,6 @@ class TInstaller extends TDataClass {
     
     $Options->email = "yarrowsoft@gmail.com";
     $Options->mailer = "";
-    $Options->subdir = $this->ExtractSubdir();
-    $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
     $Options->Data['CacheEnabled'] = true;
     $Options->CacheExpired	= 3600;
     $Options->Data['postsperpage'] = 10;

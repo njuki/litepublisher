@@ -19,7 +19,7 @@ class TEventClass extends TDataClass {
   }
   
   protected function CreateData() {
-if (!$this->dbversion) $this->AddDataMap('events', array());
+    if (!$this->dbversion) $this->AddDataMap('events', array());
   }
   
   public function AssignDataMap() {
@@ -76,57 +76,57 @@ if (!$this->dbversion) $this->AddDataMap('events', array());
     array_splice($this->EventNames, count($this->EventNames), 0, $a);
   }
   
-private function GetEvents($name) {
-if (isset($this->events[$name])) return $this->events[$name];
-if ($this->dbversion) {
-$r = $this->db->SelectTableWhere('events', "owner = '$this->class' and name = '$name'");
-$this->events[$name] = $r->fetchAll (PDO::FETCH_ASSOC);
-return $this->events[$name];
-} 
-return false;
-}
-
+  private function GetEvents($name) {
+    if (isset($this->events[$name])) return $this->events[$name];
+    if ($this->dbversion) {
+      $r = $this->db->SelectTableWhere('events', "owner = '$this->class' and name = '$name'");
+      $this->events[$name] = $r->fetchAll (PDO::FETCH_ASSOC);
+      return $this->events[$name];
+    }
+    return false;
+  }
+  
   private function CallEvent($name, &$params) {
     $Result = '';
-if (    $list = $this->GetEvents($name)) {
-foreach ($list as $i => $item) {
-      if (empty($item['class'])) {
-        if (function_exists($item['func'])) {
-$call = $item['func'];
-} else {
-$this->DeleteEvent($name, $i);
-continue;
-}
+    if (    $list = $this->GetEvents($name)) {
+      foreach ($list as $i => $item) {
+        if (empty($item['class'])) {
+          if (function_exists($item['func'])) {
+            $call = $item['func'];
+          } else {
+            $this->DeleteEvent($name, $i);
+            continue;
+          }
         } elseif (!class_exists($item['class'])) {
-$this->DeleteEvent();
+          $this->DeleteEvent();
           continue;
         } else {
-                $obj = &GetInstance($item['class']);
-$call = array(&$obj, $item['func']);
-}
+          $obj = &GetInstance($item['class']);
+          $call = array(&$obj, $item['func']);
+        }
         $lResult = call_user_func_array($call, $params);
         if (is_string($lResult)) $Result .= $lResult;
+      }
     }
-}
     
     return $Result;
   }
-
-private function DeleteEvent($name, $i) {
-if ($this->dbversion) {
-$id =           $this->events[$name][$i]['id'];
-$db = $this->Getdb('events');
-$db->deleteid($id);
-          array_splice($this->events[$name], $i, 1);
-} else {
-          array_splice($this->events[$name], $i, 1);
-$this->save();
-}
-}
+  
+  private function DeleteEvent($name, $i) {
+    if ($this->dbversion) {
+      $id =           $this->events[$name][$i]['id'];
+      $db = $this->Getdb('events');
+      $db->deleteid($id);
+      array_splice($this->events[$name], $i, 1);
+    } else {
+      array_splice($this->events[$name], $i, 1);
+      $this->save();
+    }
+  }
   
   public function SubscribeEvent($name, $params) {
     if (!isset($this->events[$name])) $this->events[$name] =array();
-   foreach ($this->events[$name] as $event) {
+    foreach ($this->events[$name] as $event) {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
     
@@ -134,26 +134,26 @@ $this->save();
     'class' => $params['class'],
     'func' => $params['func']
     );
-if ($this->dbversion) {
-$event = &$this->events[$name][count($this->events[$name]) - 1];
-$event['name'] = $name;
-$event['owner'] = get_class($this);
-$db = $this->Getdb('events');
-$event['id'] = $db->InsertAssoc($event);
-} else {
-    $this->save();
-}
+    if ($this->dbversion) {
+      $event = &$this->events[$name][count($this->events[$name]) - 1];
+      $event['name'] = $name;
+      $event['owner'] = get_class($this);
+      $db = $this->Getdb('events');
+      $event['id'] = $db->InsertAssoc($event);
+    } else {
+      $this->save();
+    }
   }
   
   public function UnsubscribeEvent($name, $class) {
     if (isset($this->events[$name])) {
-foreach ($this->events[$name] as $i => $item) {
+      foreach ($this->events[$name] as $i => $item) {
         if ($item['class'] == $class) {
-$this->DeleteEvent($name, $i);
+          $this->DeleteEvent($name, $i);
           return true;
         }
       }
-}
+    }
     return false;
   }
   
@@ -169,9 +169,9 @@ $this->DeleteEvent($name, $i);
   public function UnsubscribeClassName($class) {
     $this->lock();
     foreach ($this->events as $name => $events) {
-foreach ($events as $i => $item) {
+      foreach ($events as $i => $item) {
         if ($item['class'] == $class)  $this->DeleteEvent($name, $i);
-        }
+      }
     }
     $this->unlock();
   }
