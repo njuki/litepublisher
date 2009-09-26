@@ -554,14 +554,11 @@ class TTemplate extends TEventClass {
   }
   
   public function Gethead() {
+      global $paths;
     $result = '';
     if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
-      global $paths;
       $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
-      $id = $this->theme['menu']['id'];
-      $tag = $this->theme['menu']['tag'];
-      eval('$java = "'. str_replace('"', '\"', $java) . '\n";');
-      $result .= $java;
+      $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);
     }
     $result .= $this->Onhead();
     $Urlmap = TUrlmap::Instance();
@@ -592,6 +589,17 @@ class TTemplate extends TEventClass {
       $this->Save();
     }
   }
+
+public function parsetml(&$s, $tag, $replace) {
+$result = '';
+$opentag = "<!--$tag-->";
+$closetag = "<!--/$tag-->";
+if(($i = strpos(($s, $opentag))  && ($j = strpos($s, $closetag))) {
+$result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
+$s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
+}
+return $result;
+}
   
   public static function SimpleContent($content) {
     $DataObj  = &new TSimpleContent();

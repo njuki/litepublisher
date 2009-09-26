@@ -614,7 +614,7 @@ class TOptions extends TEventClass {
     $log = $message . "\n" . $trace;
     TFiler::log($log, 'exceptions.log');
     $urlmap = TUrlmap::Instance();
-    if (defined('debug') || $this->echoexception || $urlmap->IsAdmin) {
+    if (defined('debug') || $this->echoexception || $urlmap->IsAdminPanel) {
       echo str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       TFiler::log($log, 'exceptionsmail.log');

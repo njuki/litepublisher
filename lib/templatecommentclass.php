@@ -8,6 +8,7 @@ class TTemplateComment extends TEventClass {
     parent::CreateData();
     $this->basename = 'templatecomment' . ($Urlmap->Ispda ? '.pda'  : '');
     $this->AddDataMap('commentsini', array());
+    $this->AddDataMap('templ', array());
   }
   
   public static function &Instance() {
@@ -99,6 +100,7 @@ class TTemplateComment extends TEventClass {
   }
   
   private function GetCommentsList(&$items, &$comment, $hold, $from) {
+global $Options, $post, $Template;
     $lang = TLocal::Instance();
     $lang->section = 'comment';
     
