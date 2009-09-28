@@ -1,7 +1,7 @@
 <?php
 
-function Update270() {
-global $Options;;
+function Update271() {
+global $Options;
 $Options->dateformat = '';
 }
 

@@ -1,38 +1,47 @@
 <?php
 
 class TTemplateComment extends TEventClass {
-  public $commentsini;
   public $templ;
-  
-  protected function CreateData() {
-    global $Urlmap;
-    parent::CreateData();
-    $this->basename = 'templatecomment' . ($Urlmap->Ispda ? '.pda'  : '');
-    $this->AddDataMap('commentsini', array());
-    $this->AddDataMap('templ', array());
-  }
-  
+
   public static function &Instance() {
     return GetNamedInstance('templatecomment', __class__);
   }
   
-  public function ThemeChanged() {
-    $Template = TTemplate::Instance();
-    
-    $this->commentsini     = parse_ini_file($Template->path . 'comments.ini');
-    foreach ($this->commentsini  as $name => $value) {
-      $this->commentsini [$name] = str_replace("'", '\"', $value);
-    }
-    
-    $this->Save();
+  protected function CreateData() {
+    parent::CreateData();
+$urlmap = TUrlmap::Instance();
+    $this->basename = 'templatecomment' . ($urlmap->Ispda ? '.pda'  : '');
+    $this->AddDataMap('templ', array());
   }
   
-  public function Load() {
-    parent::Load();
-    if (count($this->commentsini ) == 0) {
-      $Template = &TTemplate::Instance();
-      $this->ThemeChanged();
-    }
+  public function ThemeChanged() {
+    $this->templ = array();
+    $template = TTemplate::Instance();
+$s = file_get_contents($template->path . 'comments.tml');
+$comments = $template->parsetml($s, 'comments', '');
+$count= $template->parsetml($comments, 'count', '');
+$this->templ['count'] = str_replace('"', '\"', ltrim($count));
+
+$comment = $template->parsetml($comments, 'comment', '%1$s');
+$this->templ['comments'] = $comments;
+$this->templ['class1'] = $template->parsetml($comment, 'class1', '$class');
+$this->templ['class2'] = $template->parsetml($comment, 'class2', '');
+$this->templ['hold'] = $template->parsetml($comment, 'hold', '$hold');
+$this->templ['comment'] = str_replace('"', '\"', ltrim($comment));
+
+$pingbacks = str_replace('"', '\"', $template->parsetml($s, 'pingbacks', ''));
+$this->templ['pingback'] = $template->parsetml($pingbacks, 'pingback', '%1$s');
+$this->templ['pingbacks'] = $pingbacks;
+
+$this->templ['closed'] = str_replace('"', '\"', $template->parsetml($s, 'closed', ''));
+$CommentForm = TCommentForm::Instance();
+$CommentForm->form = $template->parsetml($s, 'form', '');
+    $this->save();
+  }
+  
+  public function load() {
+    parent::load();
+    if (count($this->templ) == 0) $this->ThemeChanged();
   }
   
   public function GetCommentCountStr($count) {
@@ -53,13 +62,11 @@ class TTemplateComment extends TEventClass {
   
   public function GetComments($tagname) {
     global $post, $Template, $Urlmap, $Options;
-    $comments = &$post->comments;
+    $comments = $post->comments;
     if (($comments->count == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $Urlmap->pagenumber)) return $this->GetCommentsCountLink('');
-    $lang = &TLocal::Instance();
-    $lang->section = 'comment';
-    
-    $result = '';
+    $lang = TLocal::Instance('comment');
+        $result = '';
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
     $count = $this->GetCommentCountStr(count($items));
@@ -69,104 +76,56 @@ class TTemplateComment extends TEventClass {
       $items = array_slice($items, $from, $Options->commentsperpage, true);
     }
     if (count($items)  > 0) {
-      eval('$result .= "'. $this->commentsini['count'] . '\n";');
+      eval('$result .= "'. $this->templ['count'] . '";');
       $result .= $this->GetcommentsList($items, $comment, '', $from);
     }
     
     if ($Urlmap->pagenumber == 1) {
       $items = &$comments->GetApproved('pingback');
       if (count($items) > 0) {
-        eval('$result .= "'. $this->commentsini['pingbackhead'] . '\n";');
         $list = '';
-        $comtempl = $this->commentsini['pingback'];
+        $comtempl = $this->templ['pingback'];
         foreach  ($items as $id => $date) {
           $comment->id = $id;
-          eval('$list .= "'. $comtempl  . '\n"; ');
+          eval('$list .= "'. $comtempl  . '"; ');
         }
-        $result .= $this->FormatCommentList($list, 0);
-        $result .= "\n";
+eval('$pingbacks = "'. $this->templ['pingbacks'] . '";');
+        $result .= sprintf($pingbacks, $list);
       }
     }
     if (!$Options->commentsdisabled && $post->commentsenabled) {
       $result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
     } else {
-      $result .= $this->commentsini['closed'];
+      eval('$result .= "'. $this->templ['closed'] . '"';);
     }
     return $result;
   }
   
-  private function FormatCommentList(&$list, $from) {
-    $s = str_replace('\"', '"', $this->commentsini['list']);
-    return sprintf($s, $list, $from + 1);
-  }
-  
-  private function GetCommentsList(&$items, &$comment, $hold, $from) {
+ private function GetCommentsList(&$items, &$comment, $hold, $from) {
     global $Options, $post, $Template;
-    $lang = TLocal::Instance();
-    $lang->section = 'comment';
-    
-    $list = '';
-    $comtempl = $this->commentsini['comment'];
-    $itemclass1 = isset($this->commentsini['itemclass']) ? $this->commentsini['itemclass'] : '';
-    $itemclass2 = isset($this->commentsini['itemclass2']) ? $this->commentsini['itemclass2'] : $itemclass1;
+    $lang = TLocal::Instance('comment');
+        $result = '';
+    $comtempl = $this->templ['comment'];
+    $class1 = $this->templ['class1'];
+    $class2 = $this->templ['class2'];
     $i = 1;
     foreach  ($items as $id => $date) {
       $comment->id = $id;
-      $itemclass = (++$i % 2) == 0 ? $itemclass1 : $itemclass2;
-      $itemclass = str_replace('\"', '"', $itemclass);
-      eval('$list .= "'. $comtempl . '\n"; ');
+      $class = (++$i % 2) == 0 ? $class1 : $class2;
+      eval('$result .= "'. $comtempl . '\n"; ');
     }
     
-    $result = $this->FormatCommentList($list, $from );
-    $result .= "\n";
-    return $result;
+    return sprintf($this->templ['comments'], $result, $from + 1);
   }
   
   public function GetHoldList(&$items, $postid) {
     if (count($items) == 0) return '';
     $comments = TComments::Instance($postid);
     $comment = new TComment($comments);
-    $lang = &TLocal::Instance();
-    $lang->section = 'comment';
-    return $this->GetCommentsList($items, $comment, $lang->hold, 0);
+    $lang = TLocal::Instance('comment');
+eval('$hold = "'. $this->templ['hold'] . '";');
+    return $this->GetCommentsList($items, $comment, $hold, 0);
   }
-  
-  public function GenerateCommentForm() {
-    global $Options;
-    $CommentForm = &TCommentForm::Instance();
-    $lang = &TLocal::Instance();
-    $lang->section = 'comment';
-    eval('$result = "'. $this->commentsini['formheader'] . '\n";');
-    $result .= "\n<form action=\"$Options->url$CommentForm->url\" method=\"post\" id=\"commentform\">\n";
-    
-    $tabindex = 1;
-    $TemplateField = $this->commentsini['field'];
-    foreach ($CommentForm->Fields as $field => $type) {
-    $value = "{\$values['$field']}";
-      $label = $lang->$field;
-      if ($type == 'checkbox') {
-        eval('$result .= "'. $this->commentsini['checkbox'] . '\n";');
-      } else {
-        eval('$result .= "'. $TemplateField . '\n";');
-      }
-      
-      $tabindex++;
-    }
-    
-    eval('$result .= "'. $this->commentsini['content'] .'\n"; ');
-    $tabindex++;
-    
-    $TemplateField = '<input type=\"hidden\" name=\"$field\" value=\"$value\" />';
-    foreach ($CommentForm->Hidden as $field => $default) {
-    $value = "{\$values['$field']}";
-      eval("\$result .= \"$TemplateField\n\";");
-    }
-    
-    eval('$result .= "'. $this->commentsini['button'] . '"; ');
-    $result .= "\n</form>\n";
-    eval('$result .= "'. $this->commentsini['formfooter'] . '"; ');
-    return $result;
-  }
-  
+
 } //class
 ?>

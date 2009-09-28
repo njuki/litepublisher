@@ -1,71 +1,58 @@
 <?php
 
-class TCommentForm extends TItems {
-  
+class THoldComments extends TItems {
+
+  protected function CreateData() {
+    parent::CreateData();
+    $this->basename ='holdcomments';
+}
+
+}
+
+class TCommentForm extends TEventClass{
+
+  public static function &Instance() {
+    return GetNamedInstance('commentform', __class__);
+  }
+
   protected function CreateData() {
     parent::CreateData();
     $this->basename ='commentform';
     $this->CacheEnabled = false;
+$this->Data['form'] = '';
     $this->Data['confirmtemplate'] = '';
   }
-  
-  public static function &Instance() {
-    return GetInstance(__class__);
-  }
-  
-  public function __set($name, $value) {
-    if (isset($this->Data[$name])) {
-      return $this->SetValue($name, $value);
-    }
-    return parent::set($name, $value);
-  }
-  
-  public function SetValue($name, $value) {
-    if ($this->Data[$name] != $value) {
-      $this->Data[$name] = $value;
-      $values = array();
-      foreach ($this->Data['Fields'] as $name => $type) {
-        $values[$name] = '';
-      }
-      foreach ($this->Data['Hidden'] as $name => $type) {
-        $values[$name] = '';
-      }
-      
-      $this->Data['values'] = $values;
-      $this->Save();
-      $this->Regenerate();
-    }
-  }
-  
-  public function Regenerate() {
-    global $paths;
-    $TemplateComment = &TTemplateComment::Instance();
-    $form = $TemplateComment->GenerateCommentForm();
-    file_put_contents($paths['cache']. 'commentform.php', $form);
-    return $form;
-  }
+
+public function Setform($form) {
+    $this->form = str_replace('"', '\"', $form);
+$this->save();
+}
   
   public static function PrintForm($postid) {
-    global $paths;
-    $self = &GetInstance(__class__);
-    $values = $self->GetAllFields();
-    $values['postid'] = $postid;
-    if (isset($values['subscribe'])) $values['subscribe'] = 'checked';
+    $self = GetNamedInstance('commentform', __class__);
+$values = array(
+'name' => '',
+'email' => '',
+'url' => '',
+'subscribe' => 'checked',
+'content' => '',
+'postid' = $postid,
+'antispam' => '_Value' . strtotime ("+1 hour")
+);
+
     $Result = '';
     
     if (!empty($_COOKIE["userid"])) {
-      $Users = &TCommentUsers::Instance();
-      if ($user = $Users->GetItemFromCookie($_COOKIE['userid'])) {
-        if (isset($values['subscribe'])) {
-          $values['subscribe'] = $Users->Subscribed($user['id'], $postid) ? 'checked' : '';
-          unset($user['subscribe']);
-        }
+      $users = TCommentUsers::Instance();
+      if ($user = $users->GetItemFromCookie($_COOKIE['userid'])) {
+          $values['name'] = $user['name'];
+          $values['email'] = $user['email'];
+          $values['url'] = $user['url'];
+          $values['subscribe'] = $users->subscribed($user['id'], $postid) ? 'checked' : '';
         
-        $values = $user + $values;
-        
-        //hold comment list
-        $Comments = TComments::Instance($postid);
-        $items = &$Comments->GetHold($user['id']);
+        //hold comment list        
+$comments = TComments::Instance($postid);
+        $items = &$comments->GetHold($user['id']);
         if (count($items) > 0) {
           $TemplateComment = &TTemplateComment::Instance();
           $Result .= $TemplateComment->GetHoldList($items, $postid);
@@ -73,29 +60,15 @@ class TCommentForm extends TItems {
       }
     }
     
-    if (!($form = @file_get_contents($paths['cache']. 'commentform.php'))) {
-      $form = $self->Regenerate();
-    }
-    
-    $self->BeforeForm($values);
-    $form = str_replace('"', "'", $form);
-    eval('$form = "'. $form . '\n";');
-    $form = str_replace("'", '"', $form);
-    $Result .= $form;
+    eval('$result .= "'. $this->form . '\n";');
     return $Result;
   }
   
-  public function BeforeForm(&$values) {
-    //spam protection
-    $values['antispam'] = '_Value' . strtotime ("+1 hour");
-  }
-  
-  public function CheckSpam(&$values) {
-    $TimeKey = (int) substr($values['antispam'], strlen('_Value'));
+  private function CheckSpam($s) {
+    $TimeKey = (int) substr($s, strlen('_Value'));
     return time() < $TimeKey;
   }
   
-  //
   public function Request($param) {
     global $Options;
     if ($Options->commentsdisabled) return 404;
@@ -116,66 +89,67 @@ class TCommentForm extends TItems {
       }
       
       $postid = (int) $_POST['postid'];
-      if (!isset($_POST['confirmid'])) {
-        if (!is_array($this->items)) {
-          $this->items = array();
-        } else {
-          foreach ($this->items as $id => $item) {
-            if ($item['date']+ 600 < time()) unset($this->items[$id]);
+$hold = new THoldComments();
+          foreach ($hold->items as $id => $item) {
+            if ($item['date']+ 600 < time()) unset($hold->items[$id]);
           }
-        }
-        
-        $confirmid = md5($postid . secret. uniqid( microtime()));
+
+      if (!isset($_POST['confirmid'])) {
+              $confirmid = md5($postid . secret. uniqid( microtime()));
         $values = $_POST;
         $values['date'] = time();
-        $this->items[$confirmid] =$values;
-        $this->Save();
-        $form = $this->GetConfirmForm($postid, $confirmid);
-        return TTemplate::SimpleHtml($form);
+        $hold->items[$confirmid] =$values;
+        $hold->Save();
+
+        return TTemplate::SimpleHtml($this->GetConfirmForm($postid, $confirmid));
+      } 
+
+            $confirmid = $_POST['confirmid'];
+      if (!isset($hold->items[$confirmid])) {
+        return TTemplate::SimpleContent(TLocal::$data['commentform']['notfound']);
       }
       
-      $confirmid = $_POST['confirmid'];
-      if (!isset($this->items[$confirmid])) {
-        $error = TLocal::$data['commentform']['notfound'];
-        return TTemplate::SimpleContent($error);
-      }
+      $values = $hold->items[$confirmid];
+      unset($hold->items[$confirmid]);
+      $hold->Save();
       
-      $values = $this->items[$confirmid];
-      unset($this->items[$confirmid]);
-      $this->Save();
-      
-      $values = $this->FilterValues($values);
-      
-      $Posts = &TPosts::Instance();
-      $postid = (int) $values['postid'];
-      if(!$Posts->ItemExists($postid))  {
-        $error = TLocal::$data['default']['postnotfound'];
-        return TTemplate::SimpleContent($error);
-      }
-      
+      $postid = (isset($values['postid']) ? int) $values['postid'] : 0;
+      $posts = TPosts::Instance();
+      if(!$posts->ItemExists($postid)) return TTemplate::SimpleContent(TLocal::$data['default']['postnotfound']);
       $post = &TPost::Instance($postid);
-      if (!$this->ValidateValues($values, $error)) {
-        return TTemplate::SimpleContent($error);
-      }
-      
-      if (!$this->CanAdd($values, $post, $error)) {
-        return TTemplate::SimpleContent($error);
-      }
+
+$values = array(
+'name' => isset($values['name']) ? TContentFilter::escape(values['name) : '',
+'email' => isset($vlues['email']) ? trim($values['email']),
+'url' => isset($values['url']) ? TContentFilter::escape($values['url']) : '',
+'subscribe' = isset($values['subscribe']),
+'content' => isset($vlues['content']) ? trim($values['content']),
+'postid' => $postid,
+'antispam' => isset($vlues['antispam']) ? $values['antispam'] : ''
+);
+
+    $lang = TLocal::Instance('comment');
+    if (!$this->CheckSpam($values['antispam']))   return TTemplate::SimpleContent($lang->spamdetected);
+        if (empty($values['content'])) return TTemplate::SimpleContent($lang->emptycontent);
+    if (empty($values['name'])) return TTemplate::SimpleContent($lang->emptyname);
+    if (!TContentFilter::ValidateEmail($values['email'])) return TTemplate::SimpleContent($lang->invalidemail);
+       if (!$post->commentsenabled) return TTemplate::SimpleContent($lang->commentsdisabled);
+    if ($post->status != 'published')  return TTemplate::SimpleContent($lang->commentondraft);
+    //check duplicates
+    $comments = $post->comments;
+    if ($comments->IndexOfRawContent($values['content']) >= 0) return TTemplate::SimpleContent($lang->duplicate);
+   
       $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
       $users = TCommentUsers ::Instance();
       $users->lock();
       $userid = $users->Add($values['name'], $values['email'], $values['url']);
       $CommentManager = &TCommentManager::Instance();
-      if (!$CommentManager->UserCanAdd( $userid)) {
-        $error = TLocal::$data['comment']['toomany'];
-        return TTemplate::SimpleContent($error);
-      }
-      $users->UpdateSubscribtion($userid, $post->id, isset($values['subscribe']));
-      $users->unlock();
+      if (!$CommentManager->UserCanAdd( $userid)) return TTemplate::SimpleContent($lang->toomany);
+     $users->UpdateSubscribtion($userid, $post->id, $values['subscribe']);
       $usercookie = $users->GetCookie($userid);
-      
-      $CommentManager->AddToPost($post, $userid, $values['content']);
-    }
+      $users->unlock();
+
+            $CommentManager->AddToPost($post, $userid, $values['content']);
     
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
@@ -183,77 +157,8 @@ class TCommentForm extends TItems {
     ?>";
   }
   
-  protected function &GetAllFields() {
-    $result = $this->Data['Fields'] + $this->Data['Hidden'];
-    foreach ($result as $name => $type) {
-      $result[$name] = '';
-    }
-    return $result;
-  }
-  
-  public function FilterValues($values) {
-    $result = &$this->GetAllFields();
-    foreach ($result as $name => $defval) {
-      if (isset($values[$name]) ) $result[$name]  =  trim($values[$name]);
-    }
-    
-    if (isset($result['name'])) $result['name'] = TContentFilter::escape($result['name']);
-    if (isset($result['url'])) $result['url'] = TContentFilter::escape($result['url']);
-    $result['content'] = trim($values['content']);
-    return $result;
-  }
-  
-  public function ValidateValues(&$values, &$error) {
-    $lang = TLocal::$data['comment'];
-    if (!$this->CheckSpam($values))  {
-      $error = $lang['spamdetected'];
-      return false;
-    }
-    
-    if (empty($values['content'])) {
-      $error = $lang['emptycontent'];
-      return false;
-    }
-    
-    if (empty($values['name'])) {
-      $error = $lang['emptyname'];
-      return false;
-    }
-    
-    if (!TContentFilter::ValidateEmail($values['email'])) {
-      $error = $lang['invalidemail'];
-      return false;
-    }
-    
-    return true;
-  }
-  
-  public function CanAdd(&$values, &$post, &$error) {
-    $lang = &TLocal::Instance();
-    $lang->section = 'comment';
-    if (!$post->commentsenabled) {
-      $error = $lang->commentsdisabled;
-      return false;
-    }
-    
-    if ($post->status != 'published')  {
-      $error = $lang->commentondraft;
-      return false;
-    }
-    
-    //check duplicates
-    $comments = &$post->comments;
-    if ($comments->IndexOfRawContent($values['content']) >= 0) {
-      $error = $lang->duplicate;
-      return false;
-    }
-    
-    return true;
-  }
-  
   private function GetConfirmForm($postid, $confirmid) {
-    $lang = &TLocal::Instance();
-    $lang->section = $this->basename;
+    $lang = TLocal::Instance($this->basename);
     $tml = $this->GetConfirmFormTemplate();
     eval('$result = "'. $tml . '\n";');
     return $result;
@@ -265,7 +170,7 @@ class TCommentForm extends TItems {
     return file_get_contents($paths['libinclude'] . $filename);
   }
   
-  
+ 
 }//class
 
 ?>
