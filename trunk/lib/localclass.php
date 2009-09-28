@@ -14,8 +14,8 @@ class TLocal {
   
   public static function &Instance($section = '') {
     $result = GetInstance(__class__);
-if ($section != '') $result->section = $section;
-return $result;
+    if ($section != '') $result->section = $section;
+    return $result;
   }
   
   public static function date($date, $format = '') {

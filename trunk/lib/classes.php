@@ -38,7 +38,7 @@ class TClasses extends TItems {
   
   public function Delete($ClassName) {
     if (isset($this->items[$ClassName])) {
-      if (@class_exists($ClassName)) {
+      if (class_exists($ClassName)) {
         $instance = &GetInstance($ClassName);
         if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
       }

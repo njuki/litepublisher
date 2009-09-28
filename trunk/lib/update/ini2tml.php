@@ -1,16 +1,20 @@
 <?php
-/* Translates old comment.ini to new standart comments.tml */
 
-function ini2tml() {
-    $template = TTemplate::Instance();
-$tc = TTemplateComment ::Instance();
-    
-    $ini = parse_ini_file($template->path . 'comments.ini');
+function ini2tml($dir) {
+    $ini = parse_ini_file($dir . 'comments.ini');
 
 $comments = $ini['list'];
 $i = strpos($comments, '%1$s');
 $startcomments = substr($comments, 0, $i);
-$endcomments = substr($comments, $i +
+$endcomments = substr($comments, $i + strlen('%1$s'));
+$comment = $ini['comment'];
+if (isset($ini['itemclass1'])) {
+$classes = "<!--class1-->{$ini['itemclass1']}<!--/class1-->";
+if (isset($ini['itemclass2'])) $classes .= "<!--class2-->{$ini['itemclass2']}<!--/class2-->";
+$comment = str_replace('$itemclass', $classes, $comment);
+}
+$hold = "<!--hold-->{$ini['hold']}<!--/hold-->";
+$comment = str_replace('$hold', $hold, $comment);
 
 $tml = "<!--comments-->
 <!--count-->
@@ -24,47 +28,57 @@ $endcomments
 <!--/comments-->
 
 <!--pingbacks-->
-	<h3 id="comments">$lang->pingbacks</h3>
-	<ol class="commentlist" start="1">
+{$ini['pingbackhead']} 
+$startcomments
 <!--pingback-->
-<li class="alt" id="comment-$comment->id">
-			<cite>$comment->authorlink</cite>
-		</li>
+{$ini['pingback']}
 <!--/pingback-->
- </ol>
+$endcomments
 <!--/pingbacks-->
 
 <!--closed-->
-<p class="nocomments">$lang->closed</p>
+{$ini['closed']}
 <!--/closed-->
 
 <!--form-->
-<h3 id="respond">$lang->reply</h3>
-<form action="$Options->url/send-comment.php" method="post" id="commentform">
-<p><input type="text" name="name" id="name" value="{$values['name']}" size="22" tabindex="1" />
-<label for="name"><strong>$lang->name</strong></label></p>
+{$ini['formheader']} 
+";
+$form = '<form action="$Options->url/send-comment.php" method="post" id="commentform">';
 
-<p><input type="text" name="email" id="email" value="{$values['email']}" size="22" tabindex="2" />
-<label for="email"><strong>$lang->email</strong></label></p>
+$tabindex = 1;
+$type = 'text';
+$fields = array('name', 'email', 'url');
+    foreach ($fields as $field) {
+    $value = "{\$values['$field']}";
+      $label = '$lang->' . $field;
+        eval('$form .= "'. $ini['field'] . '\n";');
+$tabindex++;
+   }
 
-<p><input type="text" name="url" id="url" value="{$values['url']}" size="22" tabindex="3" />
-<label for="url"><strong>$lang->url</strong></label></p>
+//checkbox
+$field = 'subscribe';
+    $value = "{\$values['$field']}";
+      $label = '$lang->' . $field;
+        eval('$form .= "'. $ini['checkbox'] . '\n";');    
+$tabindex++;
 
-<p><input type="checkbox" name="subscribe" id="subscribe" checked="{$values['subscribe']}" size="22" tabindex="4" />
-<label for="subscribe"><strong>$lang->subscribe</strong></label></p>
+$form .= tabindex($ini['content'],     $tabindex++);
+$form .= '<input type="hidden" name="postid" value="{$values[\'postid\']}" />
+<input type="hidden" name="antispam" value="{$values[\'antispam\']}" />';
 
-<p><textarea name="content" id="comment" cols="100%" rows="10" tabindex="5"></textarea></p>
+$form .= tabindex($ini['button'], $tabindex++);
 
-<input type="hidden" name="postid" value="{$values['postid']}" />
-<input type="hidden" name="antispam" value="{$values['antispam']}" />
-
-<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang->send" />
+$tml .= "
+$form
 </form>
-<!--/form-->
-"
+{$ini['formfooter']}
+<!--/form-->";
 
-file_put_contents($template->path . 'comments.tml', $tml);
-    
+$tml = str_replace("'", '"', $tml);
+file_put_contents($dir . 'comments.tml', $tml);
+    }
 
+function tabindex($s, $i) {
+return str_replace('$tabindex', $i, $s);
 }
 ?>

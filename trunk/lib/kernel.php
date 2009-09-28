@@ -482,7 +482,7 @@ class TClasses extends TItems {
   
   public function Delete($ClassName) {
     if (isset($this->items[$ClassName])) {
-      if (@class_exists($ClassName)) {
+      if (class_exists($ClassName)) {
         $instance = &GetInstance($ClassName);
         if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
       }
@@ -842,14 +842,14 @@ class TUrlmap extends TItems {
   
   protected function PrintClassContent($ClassName, &$item) {
     global $Options, $paths, $Template;
-    $Obj = &GetInstance($ClassName);
+    $obj = &GetInstance($ClassName);
     $arg = isset($this->argfinal)  ? $this->argfinal : $item['arg'];
     //special handling for rss
-    if (method_exists($Obj, 'Request') && ($s = $Obj->Request($arg))) {
+    if (method_exists($obj, 'Request') && ($s = $obj->Request($arg))) {
       if ($s == 404) return $this->NotFound404();
     } else {
       $Template = TTemplate::Instance();
-      $s = &$Template->Request($Obj);
+      $s = &$Template->Request($obj);
     }
     eval('?>'. $s);
     if ($Options->CacheEnabled && $Obj->CacheEnabled) {
