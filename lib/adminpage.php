@@ -38,12 +38,12 @@ class TAdminPage extends TEventClass {
     }
     return parent::__get($name);
   }
-
-public function Gettemplate() {
-$template = TTemplate::Instance();
-if (file_exists($template->path . 'admin.tml')) return 'admin.tml';
-return 'index.tml';
-}
+  
+  public function Gettemplate() {
+    $template = TTemplate::Instance();
+    if (file_exists($template->path . 'admin.tml')) return 'admin.tml';
+    return 'index.tml';
+  }
   
   public function Geturl() {
     global $Urlmap;
