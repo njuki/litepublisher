@@ -90,7 +90,7 @@ class TCommentUsers extends TItems {
     }
   }
   
-  public function Subscribed($id, $postid) {
+  public function subscribed($id, $postid) {
     return in_array($postid, $this->items[$id]['subscribe']);
   }
   

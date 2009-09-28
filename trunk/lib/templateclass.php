@@ -594,7 +594,7 @@ class TTemplate extends TEventClass {
     $result = '';
     $opentag = "<!--$tag-->";
     $closetag = "<!--/$tag-->";
-    if(($i = strpos($s, $opentag))  && ($j = strpos($s, $closetag))) {
+    if(is_int($i = strpos($s, $opentag)) && ($j = strpos($s, $closetag))) {
       $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
       $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
     }

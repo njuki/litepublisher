@@ -12,8 +12,10 @@ class TLocal {
     return '';
   }
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function &Instance($section = '') {
+    $result = GetInstance(__class__);
+if ($section != '') $result->section = $section;
+return $result;
   }
   
   public static function date($date, $format = '') {
