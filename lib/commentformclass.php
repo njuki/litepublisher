@@ -29,7 +29,7 @@ class TCommentForm extends TEventClass{
   }
   
   public static function PrintForm($postid) {
-global $Options;
+    global $Options;
     $result = '';
     $self = GetNamedInstance('commentform', __class__);
     $values = array(
@@ -62,7 +62,7 @@ global $Options;
     $lang = TLocal::Instance('comments');
     eval('$result .= "'. $self->form . '\n";');
     return $result;
-
+    
   }
   
   private function CheckSpam($s) {
@@ -89,20 +89,18 @@ global $Options;
       }
     }
     
-    
-    $postid = (int) $_POST['postid'];
     $hold = new THoldComments();
     foreach ($hold->items as $id => $item) {
       if ($item['date']+ 600 < time()) unset($hold->items[$id]);
     }
     
     if (!isset($_POST['confirmid'])) {
-      $confirmid = md5($postid . secret. uniqid( microtime()));
+      $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
       $values = $_POST;
       $values['date'] = time();
       $hold->items[$confirmid] =$values;
       $hold->Save();
-      return TTemplate::SimpleHtml($this->GetConfirmForm($postid, $confirmid));
+      return TTemplate::SimpleHtml($this->GetConfirmForm($confirmid));
     }
     
     $confirmid = $_POST['confirmid'];
@@ -111,7 +109,7 @@ global $Options;
     }
     
     $values = $hold->items[$confirmid];
-    unset($hold->items[$confirmid]);
+    //unset($hold->items[$confirmid]);
     $hold->Save();
     
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
@@ -126,7 +124,7 @@ global $Options;
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
     'postid' => $postid,
-    'antispam' => isset($vlues['antispam']) ? $values['antispam'] : ''
+    'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
     );
     
     $lang = TLocal::Instance('comment');
@@ -158,7 +156,7 @@ global $Options;
     ?>";
   }
   
-  private function GetConfirmForm($postid, $confirmid) {
+  private function GetConfirmForm($confirmid) {
     $lang = TLocal::Instance($this->basename);
     $tml = $this->GetConfirmFormTemplate();
     eval('$result = "'. $tml . '\n";');
