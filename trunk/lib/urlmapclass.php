@@ -190,7 +190,7 @@ class TUrlmap extends TItems {
       $s = &$Template->Request($obj);
     }
     eval('?>'. $s);
-    if ($Options->CacheEnabled && $Obj->CacheEnabled) {
+    if ($Options->CacheEnabled && $obj->CacheEnabled) {
   $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
       file_put_contents($CacheFileName, $s);
       @chmod($CacheFileName, 0666);

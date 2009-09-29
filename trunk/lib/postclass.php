@@ -153,7 +153,7 @@ class TPost extends TItem {
     $Template = &TTemplatePost::Instance();
     $result = $Template->BeforePostContent($this->id);
     $Urlmap = &TUrlmap::Instance();
-    if (($Urlmap->pagenumber == 1) && !$this->haspages) {
+    if (($Urlmap->pagenumber == 1) && !(isset($this->Data['pages']) && (count($this->Data['pages']) > 0))) {
       $result .= $this->Data['content'];
     } else {
       if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {

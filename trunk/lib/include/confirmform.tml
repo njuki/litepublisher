@@ -4,7 +4,6 @@
 </form>
 
 <form name='form' method='post' action=''>
-<input type=hidden name='postid' value='$postid' />
 <input type=hidden name='confirmid' value='$confirmid' />
   <p><input type='submit' name='submit' value='$lang->human'/></p>
 </form>

@@ -8,10 +8,10 @@ $i = strpos($comments, '%1$s');
 $startcomments = substr($comments, 0, $i);
 $endcomments = substr($comments, $i + strlen('%1$s'));
 $comment = $ini['comment'];
-if (isset($ini['itemclass1'])) {
-$classes = "<!--class1-->{$ini['itemclass1']}<!--/class1-->";
-if (isset($ini['itemclass2'])) $classes .= "<!--class2-->{$ini['itemclass2']}<!--/class2-->";
-$comment = str_replace('$itemclass', $classes, $comment);
+if (isset($ini['itemclass'])) {
+$class= "<!--class1-->{$ini['itemclass']}<!--/class1-->";
+if (isset($ini['itemclass2'])) $class .= "<!--class2-->{$ini['itemclass2']}<!--/class2-->";
+$comment = str_replace('$itemclass', $class, $comment);
 }
 $hold = "<!--hold-->{$ini['hold']}<!--/hold-->";
 $comment = str_replace('$hold', $hold, $comment);
@@ -42,16 +42,19 @@ $endcomments
 
 <!--form-->
 {$ini['formheader']} 
-";
-$form = '<form action="$Options->url/send-comment.php" method="post" id="commentform">';
+<form action='\$Options->url/send-comment.php' method='post' id='commentform>\n";
+$tml = str_replace("'", '"', $tml);
 
+$form = '';
+
+$item = str_replace("'", '\"', $ini['field']);
 $tabindex = 1;
 $type = 'text';
 $fields = array('name', 'email', 'url');
     foreach ($fields as $field) {
     $value = "{\$values['$field']}";
       $label = '$lang->' . $field;
-        eval('$form .= "'. $ini['field'] . '\n";');
+        eval('$form .= "'. $item . '\n\n";');
 $tabindex++;
    }
 
@@ -59,26 +62,26 @@ $tabindex++;
 $field = 'subscribe';
     $value = "{\$values['$field']}";
       $label = '$lang->' . $field;
-        eval('$form .= "'. $ini['checkbox'] . '\n";');    
+        eval('$form .= "'. str_replace("'", '\"', $ini['checkbox']) . '\n\n";');
 $tabindex++;
 
-$form .= tabindex($ini['content'],     $tabindex++);
+$form .= tabindex($ini['content'] . "\n\n", $tabindex++);
 $form .= '<input type="hidden" name="postid" value="{$values[\'postid\']}" />
 <input type="hidden" name="antispam" value="{$values[\'antispam\']}" />';
-
+$form .= "\n\n";
 $form .= tabindex($ini['button'], $tabindex++);
-
 $tml .= "
 $form
 </form>
 {$ini['formfooter']}
 <!--/form-->";
 
-$tml = str_replace("'", '"', $tml);
 file_put_contents($dir . 'comments.tml', $tml);
+//echo htmlspecialchars($tml);
     }
 
 function tabindex($s, $i) {
-return str_replace('$tabindex', $i, $s);
+$s = str_replace('$tabindex', $i, $s);
+return str_replace("'", '"', $s);
 }
 ?>
