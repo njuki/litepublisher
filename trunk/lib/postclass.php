@@ -70,6 +70,14 @@ class TPost extends TItem {
     $this->date = strtotime($date);
   }
   
+  public function Getsqldate() {
+    return date('Y-m-d H:i:s', $this->date);
+  }
+  
+  public function Setsqldate($date) {
+    $this->date = strtotime($date);
+  }
+  
   //template
   public function Getcategorieslinks($divider = ', ') {
     $Categories = &TCategories::Instance();

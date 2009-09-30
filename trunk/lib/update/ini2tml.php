@@ -42,7 +42,7 @@ $endcomments
 
 <!--form-->
 {$ini['formheader']} 
-<form action='\$Options->url/send-comment.php' method='post' id='commentform>\n";
+<form action='\$Options->url/send-comment.php' method='post' id='commentform'>\n";
 $tml = str_replace("'", '"', $tml);
 
 $form = '';
@@ -53,7 +53,7 @@ $type = 'text';
 $fields = array('name', 'email', 'url');
     foreach ($fields as $field) {
     $value = "{\$values['$field']}";
-      $label = '$lang->' . $field;
+      $label = "\$lang->$field";
         eval('$form .= "'. $item . '\n\n";');
 $tabindex++;
    }
@@ -76,7 +76,9 @@ $form
 {$ini['formfooter']}
 <!--/form-->";
 
+@chmod($dir . 'comments.tml', 0666);
 file_put_contents($dir . 'comments.tml', $tml);
+chmod($dir . 'comments.tml', 0666);
 //echo htmlspecialchars($tml);
     }
 

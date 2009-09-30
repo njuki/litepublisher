@@ -10,12 +10,14 @@ ini2tml($paths['themes'] .$dir . DIRECTORY_SEPARATOR);
 
 $form = TCommentForm::Instance();
 $tc = TTemplateComment::Instance();
-unset($tc->Data['items']);
+if (isset($tc->Data['commentsini'])) unset($tc->Data['commentsini']);
 $tc->ThemeChanged();
 
-unset($form->Data['items']);
-unset($form->Data['fields']);
-unset($form->Data['Hidden']);
+if (isset($form->Data['items'])) unset($form->Data['items']);
+if (isset($form->Data['fields'])) unset($form->Data['fields']);
+if (isset($form->Data['Fields'])) unset($form->Data['Fields']);
+if (isset($form->Data['lastid'])) unset($form->Data['lastid']);
+if (isset($form->Data['Hidden'])) unset($form->Data['Hidden']);
 $form->unlock();
 }
 

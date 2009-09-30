@@ -59,7 +59,8 @@ class TCommentForm extends TEventClass{
         }
       }
     }
-    $lang = TLocal::Instance('comments');
+    $lang = TLocal::Instance('comment');
+    //var_dump($lang->name);
     eval('$result .= "'. $self->form . '\n";');
     return $result;
     
