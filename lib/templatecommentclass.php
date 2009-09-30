@@ -89,7 +89,10 @@ class TTemplateComment extends TEventClass {
           $comment->id = $id;
           eval('$list .= "'. $comtempl  . '"; ');
         }
-        eval('$pingbacks = "'. $this->templ['pingbacks'] . '";');
+        $pingbacks = str_replace('%1$', '%1\$', $this->templ['pingbacks']);
+        $pingbacks = str_replace('%2$', '%2\$', $pingbacks);
+        eval('$pingbacks = "'. $pingbacks . '";');
+        
         $result .= sprintf($pingbacks, $list, 1);
       }
     }
