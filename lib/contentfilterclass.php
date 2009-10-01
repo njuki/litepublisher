@@ -36,19 +36,19 @@ class TContentFilter extends TEventClass {
     ) {
       $parts = explode($matches[0], $s, 2);
       $post->excerpt = $this->GetPostContent($parts[0]);
-      $post->OutputContent = $post->excerpt . $this->ExtractPages($post,$parts[1]);
+      $post->filtered = $post->excerpt . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $post->excerpt;
       $post->moretitle =  self::NormalizeMoreTitle($matches[1]);
       if ($post->moretitle == '')  $post->moretitle = TLocal::$data['default']['more'];
     } else {
       if ($this->automore) {
-        $post->OutputContent = $this->ExtractPages($post, $s);
+        $post->filtered = $this->ExtractPages($post, $s);
         $post->excerpt = self::GetExcerpt($s, $this->automorelength);
         $post->rss =  $post->excerpt;
         $post->moretitle = TLocal::$data['default']['more'];
       } else {
         $post->excerpt = $this->ExtractPages($post, $s);
-        $post->OutputContent = $post->excerpt;
+        $post->filtered = $post->excerpt;
         $post->rss =  $post->excerpt;
         $post->moretitle =  '';
       }
@@ -73,8 +73,8 @@ class TContentFilter extends TEventClass {
   }
   
   private function DoFilterEvents(&$post) {
-    $s = $this->OnPost(    $post->OutputContent);
-    if ($s != '') $post->OutputContent =  $s;
+    $s = $this->OnPost(    $post->filtered);
+    if ($s != '') $post->filtered =  $s;
     
     $s = $this->OnExcerpt($post->excerpt);
     if ($s != '') $post->excerpt = $s;

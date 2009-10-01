@@ -96,7 +96,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
       $props = &$struct['props'];
       $post->commentsenabled = $props['opt_nocomments'] ? false : true;
       if ($props['opt_preformatted']) {
-        $post->outputcontent = $args[0]['event'];
+        $post->filtered = $args[0]['event'];
       }
       
       if (isset($props['taglist'])) {

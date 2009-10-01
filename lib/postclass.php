@@ -23,7 +23,7 @@ class TPost extends TItem {
     'modified' => 0,
     'url' => '',
     'title' => '',
-    'content' => '',
+    'filtered' => '',
     'excerpt' => '',
     'rss' => '',
     'rawcontent' => '',
@@ -67,15 +67,7 @@ class TPost extends TItem {
   }
   
   public function Setpubdate($date) {
-    $this->date = strtotime($date);
-  }
-  
-  public function Getsqldate() {
-    return date('Y-m-d H:i:s', $this->date);
-  }
-  
-  public function Setsqldate($date) {
-    $this->date = strtotime($date);
+    $this->Data['date'] = strtotime($date);
   }
   
   //template
@@ -162,7 +154,7 @@ class TPost extends TItem {
     $result = $Template->BeforePostContent($this->id);
     $Urlmap = &TUrlmap::Instance();
     if (($Urlmap->pagenumber == 1) && !(isset($this->Data['pages']) && (count($this->Data['pages']) > 0))) {
-      $result .= $this->Data['content'];
+      $result .= $this->filtered;
     } else {
       if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {
         $result .= $this->Data['pages'][$Urlmap->pagenumber - 1];
@@ -180,19 +172,23 @@ class TPost extends TItem {
   public function Setcontent($s) {
     if ($s <> $this->rawcontent) {
       $this->rawcontent = $s;
-      $ContentFilter = &TContentFilter::Instance();
-      $ContentFilter->SetPostContent($this,$s);
+      $filter = TContentFilter::Instance();
+      $filter->SetPostContent($this,$s);
     }
   }
   
-  public function Getoutputcontent() {
-    return $this->Data['content'];
+  /*
+  public function Getfiltered() {
+    if (isset($this->Data['content']))return $this->Data['content'];
+    return $this->Data['filtered'];
   }
   
-  public function SetOutputContent($s) {
-    $this->Data['content'] = $s;
+  public function Setfiltered($s) {
+    $this->Data['filtered'] = $s;
+    if (isset($this->Data['content']))unset($this->Data['content']);
   }
   
+  */
   public function SetData($data) {
     foreach ($data as $key => $value) {
       if (key_exists($key, $this->Data)) $this->Data[$key] = $value;
@@ -211,6 +207,27 @@ class TPost extends TItem {
     global $Options;
     if (!$Options->commentpages) return 1;
     return ceil($this->comments->count / $Options->commentsperpage);
+  }
+  
+  //db
+  public function Getdbdate() {
+    return date('Y-m-d H:i:s', $this->date);
+  }
+  
+  public function Setdbdate($date) {
+    $this->Data['date'] = strtotime($date);
+  }
+  
+  public function Getdbmodified() {
+    return date('Y-m-d H:i:s', $this->modified);
+  }
+  
+  public function Setdbmodified($date) {
+    $this->Data['modified'] = strtotime($date);
+  }
+  
+  protected function db2data($res) {
+    //$this->dbdate = $res->dbdate
   }
   
 }//class

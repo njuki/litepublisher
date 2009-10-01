@@ -85,7 +85,6 @@ class TAdminThemes extends TAdminPage {
     
     switch ($this->arg) {
       case null:
-      if (!empty($_GET['adminplugin'])) return $this->GetAdminPluginContent();
       if (!empty($_GET['adminplugin'])) return $this->GetAdminPlugin('ProcessForm');
       
       if (!empty($_POST['selection']))  {
@@ -119,12 +118,12 @@ class TAdminThemes extends TAdminPage {
   
   public function  GetAdminPlugin($method) {
     if (!isset($this->adminplugin)) {
-      $Template =  &TTemplate::Instance();
+      $Template =  TTemplate::Instance();
       $about = $Template->GetAbout($Template->themename);
       if (empty($about['adminclassname']))  return '';
       $class = $about['adminclassname'];
-      if (!@class_exists($class)) {
-        @require_once($Template->path . $about['adminfilename']);
+      if (!class_exists($class)) {
+        require_once($Template->path . $about['adminfilename']);
       }
       
       $this->adminplugin = new $class ();

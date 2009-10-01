@@ -21,14 +21,14 @@ class TCommentManager extends TItems {
   public function SetSendNotification($value) {
     if ($this->SendNotification != $value) {
       $this->Data['SendNotification'] = $value;
-      $this->Save();
+      $this->save();
     }
   }
   
   public function Setrecentcount($value) {
     if ($value != $this->recentcount) {
       $this->Data['recentcount'] = $value;
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -61,13 +61,13 @@ class TCommentManager extends TItems {
   }
   
   public function PostDeleted($postid) {
-    $this->Lock();
+    $this->lock();
     foreach ($this->items as  $id => $item) {
       if ($item['pid'] == $postid) {
         unset($this->items[$id]);
       }
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function Add($postid, $name, $email, $url, $content) {
@@ -90,7 +90,7 @@ class TCommentManager extends TItems {
     'date' => $date
     );
     if ($status != 'approved') $this->items[$id]['status'] = $status;
-    $this->Save();
+    $this->save();
     $this->DoAdded($id);
   }
   
@@ -116,11 +116,11 @@ class TCommentManager extends TItems {
     'status' => 'hold',
     'type' => 'pingback'
     );
-    $this->Save();
+    $this->save();
     $this->DoAdded($id);
   }
   
-  public function DoAdded($id) {
+  private function DoAdded($id) {
     $this->DoChanged($this->items[$id]['pid']);
     $this->CommentAdded($id);
     $this->Added($id);
@@ -151,13 +151,13 @@ class TCommentManager extends TItems {
   
   public function Delete($id) {
     if (isset($this->items[$id])) {
-      $this->Lock();
+      $this->lock();
       $comments = &TComments::Instance($this->items[$id]['pid']);
       $comments->Delete($id);
       $postid = $this->items[$id]['pid'];
       $userid = $this->items[$id]['uid'];
       unset($this->items[$id]);
-      $this->Unlock();
+      $this->unlock();
       
       if (!$this->HasUser($userid)) {
         $users = &TCommentUsers::Instance();
@@ -174,8 +174,8 @@ class TCommentManager extends TItems {
   public function DoChanged($postid) {
     TTemplate::WidgetExpired($this);
     
-    $post = &TPost::Instance($postid);
-    $Urlmap = &TUrlmap::Instance();
+    $post = TPost::Instance($postid);
+    $Urlmap = TUrlmap::Instance();
     $Urlmap->SetExpired($post->url);
     
     $this->Changed($postid);
@@ -189,14 +189,14 @@ class TCommentManager extends TItems {
     $comments = &TComments::Instance($item['pid']);
     $comments->SetStatus($id, $value);
     
-    $this->Lock();
+    $this->lock();
     if ($status == 'approved') {
       unset($this->items[$id]['status']);
       if (!isset($item['type'])) $this->Approved($id);
     } else {
       $this->items[$id]['status'] = $value;
     }
-    $this->Unlock();
+    $this->unlock();
     $this->DoChanged($item['pid']);
   }
   

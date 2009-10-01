@@ -83,9 +83,10 @@ class TOpenid extends TEventClass {
   }
   
   private function nomode() {
-    global $Urlmap;
-    $Urlmap->redir301('/');
-    //return TTemplate::SimpleHtml(TLocal::$data['openidserver']['nomode']);
+    global $Options;
+    $result = TTemplate::SimpleHtml(TLocal::$data['openidserver']['nomode']);
+    $result = str_replace('<body', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$Options->url$Options->home\">\n<body", $result);
+    return $result;
   }
   
   private function id_res() {
