@@ -54,7 +54,7 @@ if (!isset($cats->items[$id])) continue;
   $result = "<ul>$result\n";
   foreach ($this->items[$id] as $postid) {
    $post = &TPost::Instance($postid);
-$excerpt = TContentFilter ::GetExcerpt($post->outputcontent, 500);
+$excerpt = TContentFilter ::GetExcerpt($post->filtered , 500);
    $result .= "<li><a href=\"$Options->url$post->url\">$post->title</a><br /><small>$excerpt</small></li>\n";
 
   }
