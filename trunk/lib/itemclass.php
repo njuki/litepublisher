@@ -12,7 +12,7 @@ class TItem extends TDataClass {
       self::$AllItems[$ClassName][$id] = &new $ClassName ();
       $self = &self::$AllItems[$ClassName][$id];
       $self->id = $id;
-      if ($id > 0) $self->Load($id);
+      if ($id > 0) $self->Load();
     }
     return self::$AllItems[$ClassName][$id];
   }

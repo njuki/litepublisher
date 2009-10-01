@@ -43,13 +43,13 @@ class TComments extends TItems {
     'rawcontent' =>  $Content,
     'ip' =>$ip
     );
-    $this->Save();
+    $this->save();
     return $date;
   }
   
   public function SetStatus($id, $value) {
     $this->SetValue($id, 'status', $value);
-    $this->Save();
+    $this->save();
   }
   
   public function SetContent($id, $value) {
@@ -57,7 +57,7 @@ class TComments extends TItems {
       $ContentFilter = &TContentFilter::Instance();
       $this->items[$id]['content'] = $ContentFilter ->GetCommentContent($value);
       $this->items[$id]['rawcontent'] =  $value;
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -152,8 +152,8 @@ class TComment {
     }
   }
   
-  public function Save() {
-    $this->Owner->Save();
+  public function save() {
+    $this->Owner->save();
   }
   
   public function Getname() {
