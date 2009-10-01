@@ -31,6 +31,14 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     $this->result = parent::query($sql, $mode);
     return $this->result;
   }
+
+  public function exec($sql, $mode = null) {
+    $this->sql = $sql;
+    if (defined('debug')) $this->history[] = $sql;
+    if (isset($this->result)) $this->result->closeCursor();
+    $this->result = parent::exec($sql, $mode);
+    return $this->result;
+  }
   
   public function SelectTableWhere($table, $where) {
     return $this->query("SELECT * FROM $this->prefix$table WHERE ($where)");
@@ -41,7 +49,7 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   }
   
   public function update($values, $where) {
-    return $this->query("update $this->prefix$this->table set " . $values  ." where $where");
+    return $this->exec("update $this->prefix$this->table set " . $values  ." where $where");
   }
   
   public function idupdate($id, $values) {
@@ -49,14 +57,23 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   }
   
   public function UpdateAssoc($a) {
-    $id = $a['id'];
-    unset($a['id']);
     $list = array();
     foreach ($a As $name => $value) {
+if ($name == 'id') continue;
       $list[] = "$Name = " . $this->quote($value);
     }
     
-    return $this->update(implode(', ', $list), "id = $id");
+    return $this->update(implode(', ', $list), 'id = '. $a['id']);
+  }
+
+  public function UpdateProps($obj, $props) {
+    $list = array();
+    foreach ($props  As $name) {
+if ($name == 'id') continue;
+      $list[] = "$Name = " . $this->quote($obj->$name);
+    }
+    
+    return $this->update(implode(', ', $list), "id = $obj->id");
   }
   
   public function InsertRow($row) {
@@ -84,5 +101,19 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     }
   }
   
+public function getcount($where = '') {
+$sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table"
+if ($where != '') $sql .= ' where '. $where;
+if ($res = $this->query($sql)) {
+$r = $res->fetch(PDO::FETCH_ASSOC);
+return $r['count'];
+}
+return false;
+}
+
+public function delete($where) {
+return $this->exec("delete from $this->prefix$this->table where $where");
+}
+
 }//class
 ?>

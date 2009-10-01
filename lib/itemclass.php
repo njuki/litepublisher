@@ -54,7 +54,7 @@ class TItem extends TDataClass {
   
   public function Request($id) {
     $this->id = $id;
-    $this->Load();
+    $this->load();
   }
   
   public static function DeleteItemDir($dir) {
@@ -64,6 +64,16 @@ class TItem extends TDataClass {
     @rmdir($dir);
   }
   
+  protected function SaveToDB() {
+$this->db->UpdateProps($this, $this->tablefields);
+}
+  
+  protected function LoadFromDB() {
+if ($res = $this->db->select("id = $this->id limit 1")) {
+$res->fetch(PDO::FETCH_INTO, $this);
+}
+}
+
 }
 
 ?>
