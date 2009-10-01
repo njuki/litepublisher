@@ -12,10 +12,20 @@ class TItems extends TEventClass {
   }
   
   public function Getcount() {
+if ($this->dbversion) {
+return $this->db->getcount();
+} else {
     return count($this->items);
+}
   }
   
   public function GetItem($id) {
+if ($this->dbversion && !isset($this->items[$id])) {
+if ($res = $this->db->select("id = $id")) {
+$this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
+}
+}
+
     if (isset($this->items[$id])) {
       return $this->items[$id];
     }
@@ -43,7 +53,11 @@ class TItems extends TEventClass {
     return -1;
   }
   
-  public function Delete($id) {
+  public function delete($id) {
+if ($this->dbversion) {
+$this->db->delete("id = $id");
+    if (isset($this->items[$id])) unset($this->items[$id]);
+} else {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
       $this->save();
@@ -51,6 +65,7 @@ class TItems extends TEventClass {
       return true;
     }
     return false;
+}
   }
   
 }

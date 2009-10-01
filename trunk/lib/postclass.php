@@ -215,7 +215,7 @@ class TPost extends TItem {
   }
   
   public function Setdbdate($date) {
-    $this->Data['date'] = strtotime($date);
+    $this->date = strtotime($date);
   }
   
   public function Getdbmodified() {
@@ -223,13 +223,9 @@ class TPost extends TItem {
   }
   
   public function Setdbmodified($date) {
-    $this->Data['modified'] = strtotime($date);
+    $this->modified = strtotime($date);
   }
-  
-  protected function db2data($res) {
-    //$this->dbdate = $res->dbdate
-  }
-  
+
 }//class
 
 ?>
