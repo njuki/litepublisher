@@ -216,7 +216,7 @@ class TUrlmap extends TItems {
     'class' => $class,
     'arg' => $arg
     );
-    $this->Save();
+    $this->save();
     return $this->lastid;
   }
   

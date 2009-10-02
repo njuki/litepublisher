@@ -51,7 +51,7 @@ class TPostEditor extends TAdminPage {
     } else {
       $date = $post->date != 0 ?date('d-m-Y', $post->date) : '';
       $time  = $post->date != 0 ?date('H:i', $post->date) : '';
-      $content = $this->ContentToForm($post->Data['content']);
+      $content = $this->ContentToForm($post->filtered);
       $excerpt = $this->ContentToForm($post->excerpt);
       $rss = $this->ContentToForm($post->rss);
       eval('$result .= "' . $html->fullform . '\n";');
@@ -97,6 +97,7 @@ class TPostEditor extends TAdminPage {
       $post->filtered = $content;
       $post->excerpt = $excerpt;
       $post->rss = $rss;
+$post->moretitle = $moretitle;
       if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
         $post->date = mktime($h,$min,0, $m, $d, $y);
       }
