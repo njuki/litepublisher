@@ -60,16 +60,16 @@ class TContentFilter extends TEventClass {
   
   public function ExtractPages(&$post, $s) {
     $tag = '<!--nextpage-->';
-    $post->Data['pages'] = array();
+    $post->DeletePages();
     if (!strpos( $s, $tag) )  return $this->GetPostContent($s);
     
     while($i = strpos( $s, $tag) ) {
       $page = trim(substr($s, 0, $i));
-      $post->Data['pages'][] = $this->GetPostContent($page);
+      $post->AddPage($this->GetPostContent($page));
       $s = trim(substr($s, $i + strlen($tag)));
     }
-    if ($s != '') $post->Data['pages'][] = $this->GetPostContent($s);
-    return $post->Data['pages'][0];
+    if ($s != '') $post->AddPage$this->GetPostContent($s));
+    return $post->GetPage(0);
   }
   
   private function DoFilterEvents(&$post) {

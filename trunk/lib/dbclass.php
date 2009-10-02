@@ -47,6 +47,13 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   public function select($where) {
     return $this->query("SELECT * FROM $this->prefix$this->table WHERE  $where");
   }
+
+public function assoc($where) {
+if ($res = $this->query($where)) {
+return $res->fetch(PDO::FETCH_ASSOC);
+}
+return false;
+}
   
   public function update($values, $where) {
     return $this->exec("update $this->prefix$this->table set " . $values  ." where $where");
@@ -84,7 +91,8 @@ if ($name == 'id') continue;
   public function InsertAssoc(&$a) {
     $Names =implode(', ', array_keys($a));
     $vals = array();
-    foreach( array_values($a) as $val) {
+    foreach( $a as $name => $val) {
+if ($name == 'id') continue;
       $vals[] = $this->quote($val);
     }
     $Values = implode(', ', $vals);
@@ -113,6 +121,14 @@ return false;
 
 public function delete($where) {
 return $this->exec("delete from $this->prefix$this->table where $where");
+}
+
+public function idvalue($id, $name) {
+if ($res = $this->query("select $name from $this->prefix$this->table where id = $id limit 1")) {
+$r = $res->fetch(PDO::FETCH_ASSOC);
+return $r[$name];
+}
+return false;
 }
 
 }//class

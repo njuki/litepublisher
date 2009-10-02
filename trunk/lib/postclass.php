@@ -17,6 +17,8 @@ class TPost extends TItem {
   protected function CreateData() {
     global $Options;
     $this->Data= array(
+'id' => 0,
+'idurl' => 0,
     'parent' => 0,
     'author' => 0, //reserved, not used
     'date' => 0,
@@ -36,6 +38,7 @@ class TPost extends TItem {
     'pingenabled' => $Options->pingenabled,
     'rssenabled' => true,
     'password' => '',
+'template' => '',
     'theme' => '',
     'pages' => array()
     );
@@ -156,8 +159,8 @@ class TPost extends TItem {
     if (($Urlmap->pagenumber == 1) && !(isset($this->Data['pages']) && (count($this->Data['pages']) > 0))) {
       $result .= $this->filtered;
     } else {
-      if (isset($this->Data['pages'][$Urlmap->pagenumber - 1])) {
-        $result .= $this->Data['pages'][$Urlmap->pagenumber - 1];
+      if ($s = $this->GetPage($Urlmap->pagenumber - 1))) {
+        $result .= $s;
       } elseif ($Urlmap->pagenumber <= $this->commentpages) {
         //$result .= '';
       } else {
@@ -176,6 +179,24 @@ class TPost extends TItem {
       $filter->SetPostContent($this,$s);
     }
   }
+
+public function Getrawcontent() {
+if ($this->dbversion && ($this->id > 0) && empty($this->Data['rawcontent'])) {
+global $db;
+$db->table = 'rawcontent';
+$this->Data['rawcontent'] = $db->idvalue($this->id, 'rawcontent');
+}
+return $this->Data['rawcontent'];
+}
+
+public function Setrawcontent($s) {
+$this->Data['rawcontent'] = $s;
+if ($this->dbversion && ($this->id > 0)) {
+global $db;
+$db->table = 'rawcontent';
+$db->idupdate($this->id, 'rawcontent = '. $db->quote($s));
+}
+}
   
   /*
   public function Getfiltered() {
@@ -194,6 +215,42 @@ class TPost extends TItem {
       if (key_exists($key, $this->Data)) $this->Data[$key] = $value;
     }
   }
+
+public function GetPage($i) {
+if ($this->dbversion && ($this->id > 0)) {
+global $db;
+$db->table = 'pages';
+if ($r = $db->assoc("(post = $this->id) and (page = $i) limit 1")) {
+return $r['content'];
+}
+} elseif ( isset($This->Data['pages'][$i]))  {
+return $this->Data['pages'][$i];
+}
+return false;
+}
+
+public function AddPage($s) {
+$this->Data['pages'] = $s;
+if ($this->dbversion && ($this->id != 0)) {
+global $db;
+$db->table = 'pages';
+$count = $db->getcount("post = $this->id");
+$db->InsertAssoc(array(
+'post' => $this->id,
+'page' => $count,
+'content' => $s
+));
+}
+}
+
+public function DeletePages() {
+$this->Data['pages'] = array();
+if ($this->dbversion) {
+global $db;
+$db->table = 'pages';
+$db->delete("post = $this->id");
+}
+}
   
   public function Gethaspages() {
     return (isset($this->Data['pages']) && (count($this->Data['pages']) > 0)) || ($this->commentpages > 1);
