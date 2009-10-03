@@ -20,13 +20,14 @@ class TSamePosts extends TPlugin {
  public function Find($postid) {
   $result = array();
   $post = &TPost::Instance($postid);
+$posts = TPosts::Instance();
   $list = $post->categories;
   $cats = &TCategories::Instance();
   $same = array();
   foreach ($list as $id) {
 if (!isset($cats->items[$id])) continue;
    foreach ($cats->items[$id]['items'] as $i) {
-    if ($i == $postid) continue;
+    if (($i == $postid) || !isset($posts->archive[$i])) continue;
     if (isset($same[$i])) {
      $same[$i]++;
     } else {
