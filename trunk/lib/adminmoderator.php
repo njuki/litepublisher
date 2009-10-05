@@ -124,7 +124,6 @@ class TAdminModerator extends TAdminPage {
       $id = $this->idget();
       if (!$CommentManager ->ItemExists($id))return $this->notfound();
       $comment = &$CommentManager->Getcomment($id);
-      $rawcontent = $this->ContentToForm($comment->rawcontent);
       eval('$result .= "'. $html->replyform . '\n";');
       break;
     }
@@ -167,7 +166,6 @@ class TAdminModerator extends TAdminPage {
       break;
     }
     eval('$result = "'. $result .= $html->successmoderated . '\n";');
-    $rawcontent = $this->ContentToForm($comment->rawcontent);
     eval('$result .= "'. $html->info . '\n"; ');
     return $result;
   }

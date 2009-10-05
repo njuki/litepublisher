@@ -19,6 +19,10 @@ class TCronTask extends TDataClass {
     );
   }
   
+  public function Getclass() {
+    return $this->Data['class'];
+  }
+  
   public function Add($id, $type, $class, $func, $arg) {
     if (!in_array($type, array('single', 'hour', 'day', 'week'))) return $this->Error("unknown cron task $type");
     $this->id = $id;
@@ -58,6 +62,7 @@ class TCronTask extends TDataClass {
   }
   
   public function Execute() {
+    global $Options;
 $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
     
     $func = $this->func;
@@ -66,15 +71,15 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
       try {
         $func($this->arg);
       } catch (Exception $e) {
-        $this->owner->AppendLog('Caught exception: '.  $e->getMessage() . "\ntrace error\n" . $e->getTraceAsString());
+        $Options->HandleException($e);
       }
     } else {
       if (!class_exists($this->class)) return $this->Delete();
       try {
-        $Obj = &GetInstance($this->class);
-        $Obj->$func($this->arg);
+        $obj = &GetInstance($this->class);
+        $obj->$func($this->arg);
       } catch (Exception $e) {
-        $this->owner->AppendLog('Caught exception: '.  $e->getMessage() . "\ntrace error\n" . $e->getTraceAsString());
+        $Options->HandleException($e);
       }
     }
     
@@ -82,7 +87,7 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
       $this->Delete();
     } else {
       $this->time  = $this->GetExpired();
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -101,15 +106,27 @@ class TCron extends TEventClass {
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
     $this->Data['url'] = '';
     $this->Data['lastid'] = 0;
+    $this->Data['path'] = '';
     $this->CacheEnabled = false;
     $this->writelog = false;
     $this->disableadd = false;
   }
   
-  public function Request($arg) {
+  public function Getpath() {
     global $paths;
-    $LokFileName = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cron.lok';
-    if ($fh = @fopen($LokFileName, 'w')) {
+    if (($this->Data['path'] != '') && is_dir($this->Data['path'])) {
+      return  $this->Data['path'];
+    }
+    return  $paths['data'];
+  }
+  
+  protected function GetDir() {
+    global $paths;
+    return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
+  }
+  
+  public function Request($arg) {
+    if ($fh = @fopen($this->path .'cron.lok', 'w')) {
       flock($fh, LOCK_EX);
       ignore_user_abort(true);
       set_time_limit(60*20);
@@ -123,11 +140,6 @@ class TCron extends TEventClass {
       return 'Ok';
     }
     return 'locked';
-  }
-  
-  private function GetDir() {
-    global $paths;
-    return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
   }
   
   public function ExecuteTasks() {
@@ -193,11 +205,11 @@ class TCron extends TEventClass {
   }
   
   public static function SelfPing() {
-    global $paths;
-    $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+    $self = &GetInstance(__class__);
+    $cronfile =$self->dir .  'crontime.txt';
     @file_put_contents($cronfile, ' ');
     @chmod($cronfile, 0666);
-    $self = &GetInstance(__class__);
+    
     $self->Ping();
   }
   
@@ -215,9 +227,9 @@ class TCron extends TEventClass {
   }
   
   private function PopChain() {
-    global $paths, $domain;
+    global $domain;
     $host = $domain;
-    $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronchain.php';
+    $filename = $this->path .'cronchain.php';
     if(!TFiler::UnserializeFromFile($filename, $list))  return;
     if (isset($list[$host]))  unset($list[$host]);
     $item = array_splice($list, 0, 1);
@@ -228,8 +240,7 @@ class TCron extends TEventClass {
   }
   
   private function AddToChain($host, $path) {
-    global $paths;
-    $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronchain.php';
+    $filename = $this->path .'cronchain.php';
     if(!TFiler::UnserializeFromFile($filename, $list)) {
       $list = array();
     }
@@ -242,7 +253,7 @@ class TCron extends TEventClass {
   public function SendExceptions() {
     global $paths, $Options;
     //проверить, если файл логов создан более часа назад, то его отослать на почту
-    $filename = $paths['data'] . 'exceptionsmail.log';
+    $filename = $paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
@@ -254,12 +265,7 @@ class TCron extends TEventClass {
     echo date('r') . "\n$s\n\n";
     flush();
     if (!defined('debug') && !$this->writelog) return;
-    $filename = $paths['home']. 'data' . DIRECTORY_SEPARATOR.'cronlog.txt';
-    if ($fp = fopen($filename,"a+")) {
-      fwrite($fp, date('r') . "\n$s\n\n");
-      fclose($fp);
-      @chmod($filename, 0666);
-    }
+    TFiler::log($s, 'cron.log');
   }
   
 }//class

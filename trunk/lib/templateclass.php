@@ -395,13 +395,13 @@ class TTemplate extends TEventClass {
     $this->DataObject = &$DataObject;
     $GLOBALS['DataObject'] = &$DataObject;
     $header = $this->ServerHeader();
-if ($this->DataObjectHasProp('template')) {
-$tml = $this->DataObject->template;
-if (empty($tml)) $tml =  'index.tml';
-} else {
-$tml =  'index.tml';
-}
-
+    if ($this->DataObjectHasProp('template')) {
+      $tml = $this->DataObject->template;
+      if (empty($tml)) $tml =  'index.tml';
+    } else {
+      $tml =  'index.tml';
+    }
+    
     $s = $this->ParseFile($tml);
     $s = $header .$s;
     if (method_exists($this->DataObject, 'AfterTemplated')) {

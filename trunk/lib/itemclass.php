@@ -8,13 +8,14 @@ class TItem extends TDataClass {
   public static function &Instance($ClassName, $id = 0) {
     if (!isset(self::$AllItems)) self::$AllItems = array();
     if (!isset(self::$AllItems[$ClassName]))  self::$AllItems[$ClassName] = array();
-    if (!isset(self::$AllItems[$ClassName][$id])) {
-      self::$AllItems[$ClassName][$id] = &new $ClassName ();
-      $self = &self::$AllItems[$ClassName][$id];
-      $self->id = $id;
-      if ($id > 0) $self->Load();
+    if (isset(self::$AllItems[$ClassName][$id]))     return self::$AllItems[$ClassName][$id];
+    $self = &new $ClassName ();
+    $self->id = $id;
+    if ($id != 0) {
+      self::$AllItems[$ClassName][$id] = &$self;
+      $self->Load();
     }
-    return self::$AllItems[$ClassName][$id];
+    return $self;
   }
   
   public function free() {
@@ -65,15 +66,15 @@ class TItem extends TDataClass {
   }
   
   protected function SaveToDB() {
-$this->db->UpdateProps($this, $this->tablefields);
-}
+    $this->db->UpdateProps($this, $this->tablefields);
+  }
   
   protected function LoadFromDB() {
-if ($res = $this->db->select("id = $this->id limit 1")) {
-$res->fetch(PDO::FETCH_INTO, $this);
-}
-}
-
+    if ($res = $this->db->select("id = $this->id limit 1")) {
+      $res->fetch(PDO::FETCH_INTO, $this);
+    }
+  }
+  
 }
 
 ?>
