@@ -68,7 +68,7 @@ class TContentFilter extends TEventClass {
       $post->AddPage($this->GetPostContent($page));
       $s = trim(substr($s, $i + strlen($tag)));
     }
-    if ($s != '') $post->AddPage$this->GetPostContent($s));
+    if ($s != '') $post->AddPage($this->GetPostContent($s));
     return $post->GetPage(0);
   }
   

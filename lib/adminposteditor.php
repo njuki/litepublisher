@@ -97,7 +97,7 @@ class TPostEditor extends TAdminPage {
       $post->filtered = $content;
       $post->excerpt = $excerpt;
       $post->rss = $rss;
-$post->moretitle = $moretitle;
+      $post->moretitle = $moretitle;
       if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
         $post->date = mktime($h,$min,0, $m, $d, $y);
       }
