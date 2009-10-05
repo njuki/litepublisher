@@ -162,13 +162,15 @@ class TAdminWidgets extends TAdminPage {
       if (!empty($_POST['deletewidgets'])) {
         return $this->DeleteWidgets();
       }
-      $Template->Lock();
+      $Template->lock();
       $check = 'widgetcheck-';
       $sitebar = 'widgetsitebar-';
       $order =  'widgetorder-';
+      $checkid =       0;
       foreach ($_POST as $key => $value) {
         if ($check == substr($key, 0, strlen($check))){
           $checkid = (int) substr($key, strlen($check));
+          continue;
         } elseif ($sitebar == substr($key, 0, strlen($sitebar))) {
           $id = (int) substr($key, strlen($sitebar));
           if ($id == $checkid) $Template->MoveWidget($id, $value - 1);
@@ -177,18 +179,30 @@ class TAdminWidgets extends TAdminPage {
           if ($id == $checkid) $Template->MoveWidgetOrder($id, $value - 1);
         }
       }
-      $Template->Unlock();
+      $Template->unlock();
       $rname = 'success';
       break;
       
       case 'std':
-      $Template->Lock();
+      $names = array(
+      'TCategories' => 'categories',
+      'TTags' => 'tagcloud',
+      'TArchives' => 'archives',
+      'TLinksWidget' => 'links',
+      'TFoaf' => 'myfriends',
+      
+      'TPosts' => 'recentposts',
+      'TCommentManager' => 'recentcomments',
+      'TMetaWidget' => 'meta',
+      );
+      
+      $Template->lock();
       foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
         if (isset($_POST[$class]) && !$Template->ClassHasWidget($class)) {
-          $Template->AddWidget($class, 'echo');
+          $Template->AddWidget($class, 'echo', $names[$class], TLocal::$data['stdwidgetnames'][$class]);
         }
       }
-      $Template->Unlock();
+      $Template->unlock();
       $rname = 'stdsuccess';
       break;
       

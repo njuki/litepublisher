@@ -21,7 +21,7 @@ class TFoaf extends TItems {
     $item = !empty($Template->theme['widget']['myfriends']) ? $Template->theme['widget']['myfriends'] :
   '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
     
-    $result = $Template->GetBeforeWidget('', TLocal::$data['default']['myfriends']);
+    $result = '';
     if ($this->maxcount == 0) {
       $list = $this->items;
     } else {
@@ -33,7 +33,6 @@ class TFoaf extends TItems {
       eval('$result .= "'. $item . '\n";');
     }
     $result = str_replace("'", '"', $result);
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   

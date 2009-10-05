@@ -8,7 +8,6 @@ class TCommonTags extends TItems {
   
   public $postsclass;
   public $PostPropname;
-  protected $WidgetClass;
   protected $id;
   
   private $NewName;
@@ -24,7 +23,6 @@ class TCommonTags extends TItems {
     
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
-    $this->WidgetClass = 'categories';
   }
   
   public function save() {
@@ -36,8 +34,7 @@ class TCommonTags extends TItems {
   
   public function GetWidgetContent($id) {
     global $Options;
-    $Template = TTemplate::Instance();
-    $result = $Template->GetBeforeWidget($this->WidgetClass );
+    $result = '';
     
     $Sorted = &$this->GetSorted($this->sortname);
     if (($this->maxcount > 0) && ($this->maxcount < count($Sorted))) {
@@ -50,7 +47,6 @@ class TCommonTags extends TItems {
       $result .= "</li>\n";
     }
     
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   

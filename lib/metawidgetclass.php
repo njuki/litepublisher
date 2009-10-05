@@ -14,7 +14,7 @@ class TMetaWidget extends TEventClass {
     $Template = TTemplate::Instance();
     $lang = &TLocal::$data['default'];
     
-    $result = $Template->GetBeforeWidget('meta');
+    $result = '';
     $class = isset($Template->theme['class']['rss']) ? $Template->theme['class']['rss'] : '';
     $class = empty($class) ? '' : "class=\"$class\"";
   $result .=   "<li $class><a href=\"$Options->rss\" $class>{$lang['rss']}</a></li>
@@ -23,7 +23,6 @@ class TMetaWidget extends TEventClass {
   <li><a href=\"$Options->url/profile/\">{$lang['profile']}</a></li>
   <li><a rel=\"sitemap\" href=\"$Options->url/sitemap/\">{$lang['sitemap']}</a></li>\n";
     
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   

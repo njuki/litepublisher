@@ -35,7 +35,7 @@ class TCommentManager extends TItems {
   public function GetWidgetContent($id) {
     global $Options;
     $Template = TTemplate::Instance();
-    $result = $Template->GetBeforeWidget('recentcomments');
+    $result = '';
     $templ = isset($Template->theme['widget']['recentcomment']) ? $Template->theme['widget']['recentcomment'] :
     '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
     
@@ -56,7 +56,6 @@ class TCommentManager extends TItems {
       } while (($count > 0) && ($item  = prev($this->items)));
     }
     
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   

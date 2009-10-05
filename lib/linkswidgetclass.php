@@ -18,10 +18,9 @@ class TLinksWidget extends TItems {
     $Template = TTemplate::Instance();
     $lang = &TLocal::$data['default'];
     
-    $result = $Template->GetBeforeWidget('links');
+    $result = '';
     $class = isset($Template->theme['class']['links']) ? $Template->theme['class']['rss'] : '';
     $class = empty($class) ? '' : "class=\"$class\"";
-    
     
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
@@ -32,7 +31,6 @@ class TLinksWidget extends TItems {
   $result .=   "<li $class><a href=\"$url\" title=\"{$item['title']}\">{$item['text']}</a></li>\n";
     }
     
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   

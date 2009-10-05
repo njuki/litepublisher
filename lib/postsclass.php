@@ -33,14 +33,13 @@ class TPosts extends TItems {
     '<li><strong><a href=\'$Options->url$post->url\' rel=\'bookmark\' title=\'Permalink to $post->title\'>$post->title</a></strong><br />
     <small>$post->localdate</small></li>';
     
-    $result = $Template->GetBeforeWidget('recentposts');
+    $result = '';
     $list = $this->GetRecent($this->recentcount);
     foreach ($list as $id) {
-      $post = &TPost::Instance($id);
+      $post = TPost::Instance($id);
       eval('$result .= "'. $item . '\n";');
     }
     $result = str_replace("'", '"', $result);
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   
