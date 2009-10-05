@@ -17,8 +17,7 @@ class TArchives extends TItems {
   
   public function GetWidgetContent($id) {
     global $Options;
-    $Template = TTemplate::Instance();
-    $result = $Template->GetBeforeWidget('archives');
+    $result = '';
     
     foreach ($this->items as $date => $item) {
   $result  .= "<li><a rel=\"archives\" href=\"$Options->url{$item['url']}\">{$item['title']}</a>";
@@ -26,7 +25,6 @@ class TArchives extends TItems {
       $result .= "</li>\n";
     }
     
-    $result .= $Template->GetAfterWidget();
     return $result;
   }
   

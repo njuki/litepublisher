@@ -110,19 +110,21 @@ class TTemplate extends TEventClass {
     }
   }
   
-  public function AddWidget($class, $echotype, $order = -1, $index = 0) {
+  public function AddWidget($class, $echotype, $template, $title, $order = -1, $index = 0) {
     if ($index >= $this->sitebarcount) return $this->Error("sitebar index $index cant more than sitebars count in template");
     if (!in_array($echotype, array('echo', 'include', 'nocache'))) $echotype = 'echo';
     $this->widgets[++$this->Data['idwidget']] = array(
     'class' => $class,
-    'index' => $index,
-    'echotype' => $echotype
+    'echotype' => $echotype,
+    'template' => $template,
+    'title' => $title,
+    'index' => $index
     );
     
     if (($order < 0) || ($order > count($this->sitebars[$index]))) $order = count($this->sitebars[$index]);
     array_splice($this->sitebars[$index], $order, 0, $this->idwidget);
     
-    $this->Save();
+    $this->save();
     $this->WidgetAdded($this->idwidget);
     return $this->idwidget;
   }
@@ -233,7 +235,13 @@ class TTemplate extends TEventClass {
     $result = '';
     $widget = &GetInstance($class);
     try {
-      $result =   $widget->GetWidgetContent($id);
+      if (empty($this->widgets[$id]['template'])) {
+        $result =   $widget->getwidget($id);
+      }else {
+        $result = $this->GetBeforeWidget($this->widgets[$id]['template'], $this->widgets[$id]['title']);
+        $result .=   $widget->GetWidgetContent($id);
+        $result .= $this->GetAfterWidget();
+      }
     } catch (Exception $e) {
       $Options->HandleException($e);
     }

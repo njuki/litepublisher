@@ -23,7 +23,7 @@ class TDataClass {
   public function __get($name) {
     if (method_exists($this, $get = "Get$name")) {
       return $this->$get();
-    } elseif (isset($this->Data[$name])) {
+    } elseif (array_key_exists($name, $this->Data)) {
       return $this->Data[$name];
     } else {
       return    $this->Error("The requested property $name not found in class ". get_class($this));
@@ -52,7 +52,7 @@ class TDataClass {
   }
   
   public function PropExists($name) {
-    return isset($this->$name) || key_exists($name, $this->Data) || method_exists($this, "Get$name");
+    return isset($this->$name) || array_key_exists($name, $this->Data) || method_exists($this, "Get$name");
   }
   
   public function Error($Msg) {

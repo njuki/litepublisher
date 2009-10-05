@@ -11,7 +11,7 @@ class TCustomWidget extends TItems {
     $this->basename   = 'customwidget';
   }
   
-  public function GetWidgetContent($id) {
+  public function getwidget($id) {
     global $Options;
     if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
     $Template = TTemplate::Instance();
@@ -23,14 +23,14 @@ class TCustomWidget extends TItems {
   
   public function Add($title, $content, $templ) {
     $Template = &TTemplate::Instance();
-    $id = $Template->AddWidget(get_class($this), 'echo');
+    $id = $Template->AddWidget(get_class($this), 'echo', '', '');
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
     'templ' => $templ
     );
     
-    $this->Save();
+    $this->save();
     $this->Added($id);
     return $id;
   }
@@ -42,14 +42,14 @@ class TCustomWidget extends TItems {
     'templ' => $templ
     );
     
-    $this->Save();
+    $this->save();
     TTemplate::WidgetExpired($this);
   }
   
   public function Delete($id) {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
-      $this->Save();
+      $this->save();
       
       $Template = &TTemplate::Instance();
       $Template->DeleteIdWidget($id);

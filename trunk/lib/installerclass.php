@@ -350,16 +350,15 @@ class TInstaller extends TDataClass {
     $Template = &TTemplate::Instance();
     $Template->Lock();
     //sitebar1
-    if (!$this->lite) $Template->AddWidget('TCategories', 'echo', 0, 0);
-    $Template->AddWidget('TLinksWidget', 'echo', -1, 0);
-    $Template->AddWidget('TArchives', 'echo', -1, 0);
-    //$Template->AddWidget('TTags', 'echo', -1, 1);
-    $Template->AddWidget('TFoaf', 'echo', -1, 0);
+    if (!$this->lite) $Template->AddWidget('TCategories', 'echo', 'categories', TLocal::$data['default']['categories'], 0, 0);
+    $Template->AddWidget('TLinksWidget', 'echo', 'links', TLocal::$data['default']['links'],-1, 0);
+    $Template->AddWidget('TArchives', 'echo', 'archives', TLocal::$data['default']['archives'],-1, 0);
+    $Template->AddWidget('TFoaf', 'echo', 'myfriends', TLocal::$data['default']['myfriends'],-1, 0);
     
     //sitebar2
-    $Template->AddWidget('TPosts', 'echo', 0, 1);
-    $Template->AddWidget('TCommentManager', 'include', 1, 1);
-    $Template->AddWidget('TMetaWidget', 'echo', 2, 1);
+    $Template->AddWidget('TPosts', 'echo', 'recentposts', TLocal::$data['default']['recentposts'], 0, 1);
+    $Template->AddWidget('TCommentManager', 'include', 'recentcomments', TLocal::$data['default']['recentcomments'], 1, 1);
+    $Template->AddWidget('TMetaWidget', 'echo', 'meta', TLocal::$data['default']['meta'], 2, 1);
     
     //footer
     $html = &THtmlResource::Instance();
