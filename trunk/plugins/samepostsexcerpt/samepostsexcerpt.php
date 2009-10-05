@@ -27,7 +27,7 @@ $posts = TPosts::Instance();
   foreach ($list as $id) {
 if (!isset($cats->items[$id])) continue;
    foreach ($cats->items[$id]['items'] as $i) {
-    if (($i == $postid) || !isset($posts->archive[$i])) continue;
+    if (($i == $postid) || !isset($posts->archives[$i])) continue;
     if (isset($same[$i])) {
      $same[$i]++;
     } else {
