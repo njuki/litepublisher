@@ -98,20 +98,17 @@ class TDataClass {
   
   public function load() {
     global $paths;
-    if ($this->dbversion) {
-      return $this->LoadFromDB();
-    } else {
+    if ($this->dbversion == 'full') return $this->LoadFromDB();
       $FileName = $paths['data'] . $this->GetBaseName() .'.php';
       if (@file_exists($FileName)) {
         return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
       }
-    }
   }
   
   public function save() {
     global $paths;
     if (self::$GlobalLock || ($this->LockCount > 0)) return;
-    if ($this->dbversion) {
+    if ($this->dbversion == 'full') {
       $this->SaveToDB();
     } else {
       SafeSaveFile($paths['data'].$this->GetBaseName(), $this->SaveToString());

@@ -233,7 +233,7 @@ class TTemplate extends TEventClass {
       return '';
     }
     $result = '';
-    $widget = &GetInstance($class);
+    $widget = GetInstance($class);
     try {
       if (empty($this->widgets[$id]['template'])) {
         $result =   $widget->getwidget($id);

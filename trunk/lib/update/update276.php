@@ -1,5 +1,6 @@
 <?php
 function Update276() {
+global $Options;
 $names = array(
 'TCategories' => 'categories',
 'TTags' => 'tagcloud',
@@ -27,9 +28,10 @@ $template->widgets[$id] = $widget;
 }
 $template->save();
 
+$Options->version = '2.76';
 $urlmap = TUrlmap::Instance();
 $urlmap->ClearCache();
-$urlmap->Redir301('/admin/service/');
+$urlmap->Redir301('/admin/service/?update=1');
 }
 
 ?>
