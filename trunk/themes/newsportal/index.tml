@@ -4,12 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>$Template->title</title>
 <link rel="stylesheet" href="$Template->url/style.css" type="text/css" media="screen" />
-<link rel="alternate" type="application/rss+xml" title="$Options->name RSS Feed" href="$Options->rss" />
-<link rel="pingback" href="$Options->pingurl" />
+<link rel="alternate" type="application/rss+xml" title="$Options->name RSS Feed" href="$Options->url/rss/" />
+<link rel="pingback" href="$Options->url/rpc.xml" />
  <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$Options->url/rsd.xml" />
 <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$Options->url/wlwmanifest.xml" />
-<link rel="shortcut icon" type="image/x-icon" href="$Options->url/favicon.ico" />
-<link rel="meta" type="application/rdf+xml" title="FOAF" href="$Options->foaf" />
+<link rel="meta" type="application/rdf+xml" title="FOAF" href="$Options->url/foaf.xml" />
+<link rel="shortcut icon" type="image/x-icon" href="$Options->files/favicon.ico" />
 <meta name="generator" content="Lite Publisher $Options->version" /> <!-- leave this for stats -->
 <meta name="keywords" content="$Template->keywords" />
 <meta name="description" content="$Template->description" />

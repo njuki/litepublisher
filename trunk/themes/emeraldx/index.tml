@@ -7,12 +7,12 @@
 <link rel="stylesheet" media="screen,projection" type="text/css" href="$Template->url/css/main.css" />
 <link rel="stylesheet" media="print" type="text/css" href="$Template->url/css/print.css" />
 <link rel="stylesheet" media="aural" type="text/css" href="$Template->url/css/aural.css" />
-<link rel="alternate" type="application/rss+xml" title="$Options->name RSS Feed" href="$Options->rss" />
-<link rel="pingback" href="$Options->pingurl" />
-<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$Options->url/wlwmanifest.xml" />
+<link rel="alternate" type="application/rss+xml" title="$Options->name RSS Feed" href="$Options->url/rss/" />
+<link rel="pingback" href="$Options->url/rpc.xml" />
  <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$Options->url/rsd.xml" />
-<link rel="shortcut icon" type="image/x-icon" href="$Options->url/favicon.ico" />
-<link rel="meta" type="application/rdf+xml" title="FOAF" href="$Options->foaf" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$Options->url/wlwmanifest.xml" />
+<link rel="meta" type="application/rdf+xml" title="FOAF" href="$Options->url/foaf.xml" />
+<link rel="shortcut icon" type="image/x-icon" href="$Options->files/favicon.ico" />
 <meta name="generator" content="Lite Publisher $Options->version" /> <!-- leave this for stats -->
 <meta name="keywords" content="$Template->keywords" />
 <meta name="description" content="$Template->description" />
@@ -69,8 +69,8 @@ $Template->menu
         <div id="strip" class="box noprint">
             <!-- RSS feeds -->
             <p id="rss"><strong>RSS:</strong>
-<a href="$Options->rss">$lang->posts</a>
-<a href="$Options->rsscomments">$lang->comments</a>
+<a href="$Options->url/rss/">$lang->posts</a>
+<a href="$Options->url/comments/">$lang->comments</a>
 </p>
             <hr class="noscreen" />
        </div> <!-- /strip -->
