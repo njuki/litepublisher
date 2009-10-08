@@ -21,7 +21,8 @@ class TDataClass {
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "Get$name")) {
+    if (method_exists($this, $get = "Get$name") ||
+method_exists($this, $get = "get$name")) {
       return $this->$get();
     } elseif (array_key_exists($name, $this->Data)) {
       return $this->Data[$name];

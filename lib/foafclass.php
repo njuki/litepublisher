@@ -44,7 +44,7 @@ class TFoaf extends TItems {
       $s = "<?php
       @header('Content-Type: text/xml; charset=utf-8');
       @ header('Last-Modified: " . date('r') ."');
-      @header('X-Pingback: $Options->pingurl');
+      @header('X-Pingback: $Options->url/rpc.xml');
       echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
       '; ?>";
       $s .= $this->GetFoaf();

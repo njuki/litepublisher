@@ -22,7 +22,7 @@ class TXMLRPCParser extends IXR_Server  {
     @header('Content-Length: $length');
     @header('Content-Type: text/xml');
     @header('Date: ".date('r') . "');
-    @header('X-Pingback: $Options->pingurl');
+    @header('X-Pingback: $Options->url/rpc.xml');
     echo'$head';
     ?>". $xml;
   }

@@ -22,36 +22,34 @@ class TTemplatePost extends TEventClass {
   }
   
   private function GetPostFooter(&$post) {
-    global $Options, $Urlmap;
+    global $Urlmap;
+    $result = '';
+    if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
+    if ($post->commentsenabled && ($post->commentscount > 0)) {
+    $lang = &TLocal::Instance();
+      $result .= "<p><a href=\"$post->rsslink\">$lang->commentsrss</a></p>\n";
+    }
+    
+$result .= $this->GetPrevNextLinks($post);
+return $result;
+}
+
+public function GetPrevNextLinks(&$post) {
     $result = '';
     $lang = &TLocal::Instance();
-    //pages
-    if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
-    if ($post->commentsenabled && ($post->comments->count > 0)) {
-      $result .= "<p><a href=\"$Options->url/comments/$post->id/\">$lang->commentsrss</a></p>\n";
+      if ($prevpost = $post->prev) {
+      $result .= "$lang->prev <a rel=\"prev\" href=\"$prevpost->link\">$prevpost->title</a>";
     }
     
-    //prev and next post
-    $links = '';
-    $posts = &TPosts::Instance();
-    $keys = array_keys($posts->archives);
-    $i = array_search($post->id, $keys);
-    if ($i < count($keys) -1) {
-      $prevpost = &TPost::Instance($keys[$i + 1]);
-      $links .= "$lang->prev <a href=\"$Options->url$prevpost->url\">$prevpost->title</a>";
+      if ($nextpost = $post->next) {
+      if ($result != '') $result .= ' | ';
+      $result .= "$lang->next <a rel=\"next\" href=\"$nextpost->link\">$nextpost->title</a>";
     }
     
-    if ($i > 0) {
-      $nextpost = &TPost::Instance($keys[$i - 1]);
-      if ($links != '') $links .= ' | ';
-      $links .= "$lang->next <a href=\"$Options->url$nextpost->url\">$nextpost->title</a>";
-    }
-    
-    if ($links != '') $result .= "<p>$links</p>\n";
-    
-    return $result;
+    if ($result != '') $result = "<p>$result</p>\n";
+        return $result;
   }
-  
+
   public function PrintPosts(&$Items) {
     $Template = TTemplate::Instance();
     

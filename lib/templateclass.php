@@ -431,7 +431,7 @@ class TTemplate extends TEventClass {
     return "<?php $nocache
     @header('Content-Type: text/html; charset=utf-8');
     @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: $Options->pingurl');
+    @header('X-Pingback: $Options->url/rpc.xml');
     ?>";
   }
   
@@ -570,6 +570,7 @@ class TTemplate extends TEventClass {
   public function Gethead() {
     global $paths;
     $result = '';
+if (method_exists($this->DataObject, 'gethead')) $result .= $this->DataObject->gethead();
     if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
       $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
       $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);

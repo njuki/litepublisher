@@ -43,7 +43,7 @@ class TXMLRPCOpenAction extends TItems {
       return new IXR_Error(403, 'Action not found');
     }
     
-    if ($server != $Options->pingurl ) {
+    if ($server != $Options->url . '/rpc.xml') {
       return new IXR_Error(403, 'Bad xmlrpc server');
     }
     
@@ -91,7 +91,7 @@ class TXMLRPCOpenAction extends TItems {
     
     $action =array(
     'id' => $id,
-    'server' => $Options->pingurl ,
+    'server' => $Options->url . '/rpc.xml',
     'name' => $name,
     'arg' => $arg
     );
