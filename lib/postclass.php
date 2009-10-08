@@ -1,6 +1,6 @@
 <?php
 
-class TPost extends TItem {
+class TPost extends TItem implements  ITemplate {
   private $fComments;
   private $dateformater;
   
@@ -50,22 +50,22 @@ class TPost extends TItem {
     }
     return $this->fComments;
   }
-
-public function getprev() {
+  
+  public function getprev() {
     $posts = TPosts::Instance();
     $keys = array_keys($posts->archives);
     $i = array_search($this->id, $keys);
     if ($i < count($keys) -1) return self::Instance($keys[$i + 1]);
-return null;
-}
-
-public function getnext() {
+    return null;
+  }
+  
+  public function getnext() {
     $posts = TPosts::Instance();
     $keys = array_keys($posts->archives);
     $i = array_search($this->id, $keys);
     if ($i > 0 ) return self::Instance($keys[$i - 1]);
-return null;
-}
+    return null;
+  }
   
   public function Getlink() {
     global $Options;
@@ -80,11 +80,11 @@ return null;
       $this->url = $url;
     }
   }
-
-public function getrsslink() {
-global $Options;
-return "$Options->url/comments/$this->id/";
-}
+  
+  public function getrsslink() {
+    global $Options;
+    return "$Options->url/comments/$this->id/";
+  }
   
   public function Getpubdate() {
     return date('r', $this->date);
@@ -129,10 +129,6 @@ return "$Options->url/comments/$this->id/";
     return  "<a href=\"$Options->url$this->url#more-$this->id\" class=\"more-link\">$this->moretitle</a>";
   }
   
-  public function Getkeywords() {
-    return $this->Gettagnames();
-  }
-  
   
   public function Gettagnames() {
     if (count($this->tags) == 0) return '';
@@ -157,23 +153,32 @@ return "$Options->url/comments/$this->id/";
     if (count($this->categories ) == 0) $this->categories [] = $Categories->defaultid;
   }
   
-  public function Request($id) {
+//ITemplate
+  public function request($id) {
     parent::Request($id);
     if ($this->status != 'published') return 404;
   }
-
-public function gethead() {
-$result = '';
-if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
-if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
-    if ($this->commentsenabled && ($this->commentscount > 0))  {
- $lang = TLocal::Instance('comment');
-$result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsslink\" />\n";
-}
-return $result;
-}
   
-  public function GetTemplateContent() {
+  public function gethead() {
+    $result = '';
+    if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
+    if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
+    if ($this->commentsenabled && ($this->commentscount > 0))  {
+      $lang = TLocal::Instance('comment');
+      $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsslink\" />\n";
+    }
+    return $result;
+  }
+
+public function getkeywords() {
+    return $this->Gettagnames();
+}
+
+public function getdescription() {
+return $this->Data['description'];
+}
+
+   public function GetTemplateContent() {
     $Template = TTemplate::Instance();
     $GLOBALS['post'] = &$this;
     $tml = 'post.tml';
@@ -294,14 +299,14 @@ return $result;
     if (!$Options->commentpages) return 1;
     return ceil($this->comments->count / $Options->commentsperpage);
   }
-
-public function getcommentscount() {
-if ($this->dbversion) {
-return $this->Data['commentscount'];
-} else {
-return $this->comments->count;
-}
-}
+  
+  public function getcommentscount() {
+    if ($this->dbversion) {
+      return $this->Data['commentscount'];
+    } else {
+      return $this->comments->count;
+    }
+  }
   
   //db
   public function Getdbdate() {

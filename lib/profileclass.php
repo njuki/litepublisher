@@ -69,7 +69,7 @@ class TProfile extends TEventClass {
     <ya:Posts>
     <ya:feed
     dc:type=\"application/rss+xml\"
-    rdf:resource=\"$Options->rss\"/>
+    rdf:resource=\"$Options->url/rss/\"/>
     <ya:posted>$postscount</ya:posted>
     </ya:Posts>
     </ya:blogActivity>
@@ -78,7 +78,7 @@ class TProfile extends TEventClass {
     <ya:Comments>
     <ya:feed
     dc:type=\"application/rss+xml\"
-    rdf:resource=\"$Options->rsscomments\"/>
+    rdf:resource=\"$Options->url/comments/\"/>
     <ya:posted>$postscount</ya:posted>
     <ya:received>$CommentManager->count</ya:received>
     </ya:Comments>

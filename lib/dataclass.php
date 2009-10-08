@@ -22,7 +22,7 @@ class TDataClass {
   
   public function __get($name) {
     if (method_exists($this, $get = "Get$name") ||
-method_exists($this, $get = "get$name")) {
+    method_exists($this, $get = "get$name")) {
       return $this->$get();
     } elseif (array_key_exists($name, $this->Data)) {
       return $this->Data[$name];
@@ -100,10 +100,10 @@ method_exists($this, $get = "get$name")) {
   public function load() {
     global $paths;
     if ($this->dbversion == 'full') return $this->LoadFromDB();
-      $FileName = $paths['data'] . $this->GetBaseName() .'.php';
-      if (@file_exists($FileName)) {
-        return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
-      }
+    $FileName = $paths['data'] . $this->GetBaseName() .'.php';
+    if (@file_exists($FileName)) {
+      return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
+    }
   }
   
   public function save() {

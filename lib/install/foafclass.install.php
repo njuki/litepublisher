@@ -2,7 +2,6 @@
 
 function TFoafInstall(&$self) {
   global $Options;
-  $Options->foaf = $Options->url . '/foaf.xml';
   $Urlmap = &TUrlmap::Instance();
   $Urlmap->Lock();
   $Urlmap->Add('/foaf.xml', get_class($self), 'xml');

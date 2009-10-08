@@ -26,30 +26,30 @@ class TTemplatePost extends TEventClass {
     $result = '';
     if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
     if ($post->commentsenabled && ($post->commentscount > 0)) {
-    $lang = &TLocal::Instance();
+      $lang = &TLocal::Instance();
       $result .= "<p><a href=\"$post->rsslink\">$lang->commentsrss</a></p>\n";
     }
     
-$result .= $this->GetPrevNextLinks($post);
-return $result;
-}
-
-public function GetPrevNextLinks(&$post) {
+    $result .= $this->GetPrevNextLinks($post);
+    return $result;
+  }
+  
+  public function GetPrevNextLinks(&$post) {
     $result = '';
     $lang = &TLocal::Instance();
-      if ($prevpost = $post->prev) {
+    if ($prevpost = $post->prev) {
       $result .= "$lang->prev <a rel=\"prev\" href=\"$prevpost->link\">$prevpost->title</a>";
     }
     
-      if ($nextpost = $post->next) {
+    if ($nextpost = $post->next) {
       if ($result != '') $result .= ' | ';
       $result .= "$lang->next <a rel=\"next\" href=\"$nextpost->link\">$nextpost->title</a>";
     }
     
     if ($result != '') $result = "<p>$result</p>\n";
-        return $result;
+    return $result;
   }
-
+  
   public function PrintPosts(&$Items) {
     $Template = TTemplate::Instance();
     
