@@ -14,9 +14,9 @@ class TKeywordsPlugin extends TPlugin {
   $this->AddDataMap('links', array());
  }
  
-public function GetWidgetContent() {
+public function getwidget() {
   global $Options, $Urlmap, $paths;
-  if ('/admin/' == substr($Urlmap->url, 0, 7)) return '';
+  if ($Urlmap->IsAdminPanel) return '';
   if ('/croncron.php' == substr($Urlmap->url, 0, strlen('/croncron.php'))) return '';
 
   $filename = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. "$Urlmap->urlid-$Urlmap->pagenumber.php";

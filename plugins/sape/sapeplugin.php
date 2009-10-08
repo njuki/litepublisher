@@ -47,7 +47,7 @@ return "<li>$Links</li>\n";
 return '';
 }
 
- public function GetWidgetContent($id) {
+ public function getwidget($id) {
 $Template = TTemplate::Instance();
 
     $result = $Template->GetBeforeWidget('links');
