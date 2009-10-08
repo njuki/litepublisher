@@ -50,6 +50,22 @@ class TPost extends TItem {
     }
     return $this->fComments;
   }
+
+public function getprev() {
+    $posts = TPosts::Instance();
+    $keys = array_keys($posts->archives);
+    $i = array_search($this->id, $keys);
+    if ($i < count($keys) -1) return self::Instance($keys[$i + 1]);
+return null;
+}
+
+public function getnext() {
+    $posts = TPosts::Instance();
+    $keys = array_keys($posts->archives);
+    $i = array_search($this->id, $keys);
+    if ($i > 0 ) return self::Instance($keys[$i - 1]);
+return null;
+}
   
   public function Getlink() {
     global $Options;
@@ -64,6 +80,11 @@ class TPost extends TItem {
       $this->url = $url;
     }
   }
+
+public function getrsslink() {
+global $Options;
+return "$Options->url/comments/$this->id/";
+}
   
   public function Getpubdate() {
     return date('r', $this->date);
@@ -140,6 +161,17 @@ class TPost extends TItem {
     parent::Request($id);
     if ($this->status != 'published') return 404;
   }
+
+public function gethead() {
+$result = '';
+if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
+if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
+    if ($this->commentsenabled && ($this->commentscount > 0))  {
+ $lang = TLocal::Instance('comment');
+$result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsslink\" />\n";
+}
+return $result;
+}
   
   public function GetTemplateContent() {
     $Template = TTemplate::Instance();
@@ -262,6 +294,14 @@ class TPost extends TItem {
     if (!$Options->commentpages) return 1;
     return ceil($this->comments->count / $Options->commentsperpage);
   }
+
+public function getcommentscount() {
+if ($this->dbversion) {
+return $this->Data['commentscount'];
+} else {
+return $this->comments->count;
+}
+}
   
   //db
   public function Getdbdate() {

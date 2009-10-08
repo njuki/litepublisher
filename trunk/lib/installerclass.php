@@ -224,7 +224,6 @@ class TInstaller extends TDataClass {
       $Options->q = '?';
     } else {
       $Options->q = '&';
-      $Options->url = $Options->url . '/index.php?url=';
     }
   }
   
@@ -245,11 +244,12 @@ class TInstaller extends TDataClass {
   }
   
   public function  InstallOptions() {
-    global $paths, $Options;
+    global $paths, $Options, $domain;
     $Options = TOptions::Instance();
     $Options->Lock();
     $Options->subdir = $this->ExtractSubdir();
     $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
+$Options->files =$Options->url;
     
     $Options->language = $this->language;
     TLocal::LoadLangFile('admin');

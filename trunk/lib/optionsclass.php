@@ -47,21 +47,21 @@ class TOptions extends TEventClass {
   }
   
   public function Geturl() {
-    $Urlmap = TUrlmap::Instance();
-    $s = $this->OnGeturl();
-    if ($s == '') $s = $this->Data['url'];
-    return $s . ($Urlmap->Ispda ? '/pda' : '');
+    $result = $this->OnGeturl();
+if (!empty($result)) return $result;
+$result = $this->Data['url'];
+if ($this->q == '&') $result .= '/index.php?url=';
+    $urlmap = TUrlmap::Instance();
+if ($Urlmap->Ispda) $result .= '/pda';
+return $result;
   }
   
   public function Seturl($url) {
     $url = rtrim($url, '/');
     $this->Lock();
     $this->Data['url'] = $url;
-    $this->rss = $url . '/rss/';
-    $this->rsscomments = $url .  '/comments/';
-    $this->pingurl = $url . '/rpc.xml';
-    $this->foaf = $url . '/foaf.xml';
-    $this->subdir = '';
+$this->files= $url;
+   $this->subdir = '';
     if ($i = strpos($url, '/', 10)) {
       $this->subdir = substr($url, $i);
     }

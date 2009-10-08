@@ -12,7 +12,7 @@ class TManifest extends TEventClass {
     $s = "<?php
     @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $Options->pingurl');
+    @header('X-Pingback: $Options->url/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
     '; ?>";
     switch ($arg) {
@@ -61,10 +61,10 @@ class TManifest extends TEventClass {
       <engineLink>http://litepublisher.com/</engineLink>';
       $s .= "    <homePageLink>$Options->url</homePageLink>
       <apis>
-      <api name=\"WordPress\" blogID=\"1\" preferred=\"true\" apiLink=\"$Options->pingurl\" />
-      <api name=\"Movable Type\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->pingurl\" />
-      <api name=\"MetaWeblog\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->pingurl\" />
-      <api name=\"Blogger\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->pingurl\" />
+      <api name=\"WordPress\" blogID=\"1\" preferred=\"true\" apiLink=\"$Options->url/rpc.xml\" />
+      <api name=\"Movable Type\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml" />
+      <api name=\"MetaWeblog\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
+      <api name=\"Blogger\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
       </apis>
       </service>
       </rsd>";

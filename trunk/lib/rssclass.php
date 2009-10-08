@@ -22,7 +22,7 @@ class TRSS extends TEventClass {
   }
   
   public function Request($args) {
-    global $Options, $Urlmap, $paths;;
+    global $Options, $Urlmap;
     $result = "<?php\n";
     if (($args == 'posts') && ($this->feedburner  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
@@ -44,11 +44,10 @@ class TRSS extends TEventClass {
     
     $result .= "  @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $Options->pingurl');
+    @header('X-Pingback: $Options->url/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
     
-    require_once($paths['lib'] . 'domrss.php');
     $this->domrss = new Tdomrss;
     
     switch ($args) {
@@ -112,7 +111,8 @@ class TRSS extends TEventClass {
   public function GetRSSPostComments($postid) {
     global $Options;
     $post = TPost::Instance($postid);
-    $this->domrss->CreateRoot($Options->rsscomments . $postid, TLocal::$data['comment']['onpost'] . ' ' . $post->title);
+ $lang = TLocal::Instance('comment');
+    $this->domrss->CreateRoot($post->rsslink, "$lang->onpost $post->title");
     $count = $Options->postsperpage;
     $comment = new TComment($post->comments);
     $items = &$post->comments->items;

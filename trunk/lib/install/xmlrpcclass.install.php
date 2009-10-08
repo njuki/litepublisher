@@ -1,8 +1,6 @@
 <?php
 
 function TXMLRPCInstall(&$self) {
-  global $Options;
-  $Options->pingurl = $Options->url .  '/rpc.xml';
   $Urlmap = TUrlmap::Instance();
   $Urlmap->Lock();
   $Urlmap->Add('/rpc.xml', get_class($self), null);
@@ -17,8 +15,6 @@ function TXMLRPCInstall(&$self) {
 }
 
 function TXMLRPCUninstall(&$self) {
-  global $Options;
-  $Options->pingurl = '';
   TUrlmap::unsub($self);
 }
 ?>
