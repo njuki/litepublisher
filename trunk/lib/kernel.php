@@ -22,7 +22,8 @@ class TDataClass {
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "Get$name")) {
+    if (method_exists($this, $get = "Get$name") ||
+    method_exists($this, $get = "get$name")) {
       return $this->$get();
     } elseif (array_key_exists($name, $this->Data)) {
       return $this->Data[$name];
@@ -99,20 +100,17 @@ class TDataClass {
   
   public function load() {
     global $paths;
-    if ($this->dbversion) {
-      return $this->LoadFromDB();
-    } else {
-      $FileName = $paths['data'] . $this->GetBaseName() .'.php';
-      if (@file_exists($FileName)) {
-        return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
-      }
+    if ($this->dbversion == 'full') return $this->LoadFromDB();
+    $FileName = $paths['data'] . $this->GetBaseName() .'.php';
+    if (@file_exists($FileName)) {
+      return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
     }
   }
   
   public function save() {
     global $paths;
     if (self::$GlobalLock || ($this->LockCount > 0)) return;
-    if ($this->dbversion) {
+    if ($this->dbversion == 'full') {
       $this->SaveToDB();
     } else {
       SafeSaveFile($paths['data'].$this->GetBaseName(), $this->SaveToString());
@@ -623,20 +621,20 @@ class TOptions extends TEventClass {
   }
   
   public function Geturl() {
-    $Urlmap = TUrlmap::Instance();
-    $s = $this->OnGeturl();
-    if ($s == '') $s = $this->Data['url'];
-    return $s . ($Urlmap->Ispda ? '/pda' : '');
+    $result = $this->OnGeturl();
+    if (!empty($result)) return $result;
+    $result = $this->Data['url'];
+    if ($this->q == '&') $result .= '/index.php?url=';
+    $urlmap = TUrlmap::Instance();
+    if ($urlmap->Ispda) $result .= '/pda';
+    return $result;
   }
   
   public function Seturl($url) {
     $url = rtrim($url, '/');
     $this->Lock();
     $this->Data['url'] = $url;
-    $this->rss = $url . '/rss/';
-    $this->rsscomments = $url .  '/comments/';
-    $this->pingurl = $url . '/rpc.xml';
-    $this->foaf = $url . '/foaf.xml';
+    $this->files= $url;
     $this->subdir = '';
     if ($i = strpos($url, '/', 10)) {
       $this->subdir = substr($url, $i);

@@ -249,7 +249,8 @@ class TInstaller extends TDataClass {
     $Options->Lock();
     $Options->subdir = $this->ExtractSubdir();
     $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
-$Options->files =$Options->url;
+    $Options->files =$Options->Data['url'];
+$Options->q = '?';
     
     $Options->language = $this->language;
     TLocal::LoadLangFile('admin');

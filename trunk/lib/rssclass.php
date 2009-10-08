@@ -74,11 +74,11 @@ class TRSS extends TEventClass {
   
   public function GetRSSRecentPosts() {
     global $Options;
-    $this->domrss->CreateRoot($Options->rss, $Options->name);
+    $this->domrss->CreateRoot($Options->url. '/rss/', $Options->name);
     $posts = &TPosts::Instance();
     $list = $posts->GetRecent($Options->postsperpage);
     foreach ($list as $id ) {
-      $post = &TPost::Instance($id);
+      $post = TPost::Instance($id);
       $this->AddRSSPost($post);
     }
     
@@ -86,7 +86,7 @@ class TRSS extends TEventClass {
   
   public function GetRecentComments() {
     global $Options;
-    $this->domrss->CreateRoot($Options->rsscomments, TLocal::$data['comment']['onrecent'] . ' '. $Options->name);
+    $this->domrss->CreateRoot($Options->url . '/comments/', TLocal::$data['comment']['onrecent'] . ' '. $Options->name);
     
     $count = $Options->postsperpage;
     $CommentManager = TCommentManager::Instance();
@@ -111,7 +111,7 @@ class TRSS extends TEventClass {
   public function GetRSSPostComments($postid) {
     global $Options;
     $post = TPost::Instance($postid);
- $lang = TLocal::Instance('comment');
+    $lang = TLocal::Instance('comment');
     $this->domrss->CreateRoot($post->rsslink, "$lang->onpost $post->title");
     $count = $Options->postsperpage;
     $comment = new TComment($post->comments);

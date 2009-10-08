@@ -1,10 +1,6 @@
 <?php
 
 function TRSSInstall(&$self) {
-  global $Options;
-  $Options->rss = $Options->url . '/rss/';
-  $Options->rsscomments = $Options->url .  '/comments/';
-  
   $Urlmap = &TUrlmap::Instance();
   $Urlmap->Lock();
   $Urlmap->Add('/rss/', get_class($self), 'posts');

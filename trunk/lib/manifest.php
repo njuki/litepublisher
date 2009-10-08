@@ -62,7 +62,7 @@ class TManifest extends TEventClass {
       $s .= "    <homePageLink>$Options->url</homePageLink>
       <apis>
       <api name=\"WordPress\" blogID=\"1\" preferred=\"true\" apiLink=\"$Options->url/rpc.xml\" />
-      <api name=\"Movable Type\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml" />
+      <api name=\"Movable Type\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
       <api name=\"MetaWeblog\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
       <api name=\"Blogger\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
       </apis>

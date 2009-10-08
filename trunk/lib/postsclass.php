@@ -43,7 +43,7 @@ class TPosts extends TItems {
     return $result;
   }
   
-  public function Add(&$post) {
+  public function Add(TPost &$post) {
     if (!isset($post)) return $this->Error('Post not assigned');
     if ($post->date == 0) $post->date = time();
     $post->modified = time();
@@ -102,7 +102,7 @@ class TPosts extends TItems {
     return $post->id;
   }
   
-  public function Edit(&$Post) {
+  public function Edit(TPost &$Post) {
     $Urlmap = &TUrlmap::Instance();
     $this->lock();
     
@@ -169,7 +169,7 @@ class TPosts extends TItems {
     return true;
   }
   
-  public function Updated(&$post) {
+  public function Updated(TPost &$post) {
     if (($post->status == 'published') && ($post->date > time())) {
       $post->status = 'future';
     }
@@ -229,11 +229,11 @@ class TPosts extends TItems {
     return $Result;
   }
   
-  public function StripDrafts(&$items) {
+  public function StripDrafts(array &$items) {
     return array_intersect($items, array_keys($this->archives));
   }
   
-  public function SortAsArchive($items) {
+  public function SortAsArchive(array $items) {
     $result = array();
     foreach ($items as  $id) {
       if (isset($this->archives[$id])) {

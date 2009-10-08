@@ -64,7 +64,7 @@ class TTemplate extends TEventClass {
     parent::Load();
     if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
     $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
-    $this->url = $Options->url . '/themes/'. $this->themename;
+    $this->url = $Options->files . '/themes/'. $this->themename;
     
     if (count($this->theme) == 0) {
       $this->theme = parse_ini_file($this->path . 'theme.ini', true);
@@ -570,7 +570,7 @@ class TTemplate extends TEventClass {
   public function Gethead() {
     global $paths;
     $result = '';
-if (method_exists($this->DataObject, 'gethead')) $result .= $this->DataObject->gethead();
+    if (is_a($this->DataObject, 'ITemplate')) $result .= $this->DataObject->gethead();
     if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
       $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
       $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);

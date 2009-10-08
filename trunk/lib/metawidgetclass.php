@@ -17,9 +17,9 @@ class TMetaWidget extends TEventClass {
     $result = '';
     $class = isset($Template->theme['class']['rss']) ? $Template->theme['class']['rss'] : '';
     $class = empty($class) ? '' : "class=\"$class\"";
-  $result .=   "<li $class><a href=\"$Options->rss\" $class>{$lang['rss']}</a></li>
-  <li $class><a href=\"$Options->rsscomments\" $class>{$lang['rsscomments']}</a></li>
-  <li><a href=\"$Options->foaf\">{$lang['foaf']}</a></li>
+  $result .=   "<li $class><a href=\"$Options->url/rss/\" $class>{$lang['rss']}</a></li>
+  <li $class><a href=\"$Options->url/comments/\" $class>{$lang['rsscomments']}</a></li>
+  <li><a href=\"$Options->url/foaf.xml\">{$lang['foaf']}</a></li>
   <li><a href=\"$Options->url/profile/\">{$lang['profile']}</a></li>
   <li><a rel=\"sitemap\" href=\"$Options->url/sitemap/\">{$lang['sitemap']}</a></li>\n";
     
