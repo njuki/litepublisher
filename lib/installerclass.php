@@ -250,7 +250,7 @@ class TInstaller extends TDataClass {
     $Options->subdir = $this->ExtractSubdir();
     $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
     $Options->files =$Options->Data['url'];
-$Options->q = '?';
+    $Options->q = '?';
     
     $Options->language = $this->language;
     TLocal::LoadLangFile('admin');
@@ -291,6 +291,7 @@ $Options->q = '?';
     $posts = TPosts::Instance();
     $posts->Lock();
     foreach( $classes->items as $ClassName => $Info) {
+if ($ClassName  == 'ITemplate') continue;
       $Obj = GetInstance($ClassName);
       if (method_exists($Obj, 'Install')) $Obj->Install();
     }

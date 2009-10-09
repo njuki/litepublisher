@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR  .  'xmlrpc-abstractclass.php');
 
 class TXMLRPCBlogger  extends TXMLRPCAbstract {
   

@@ -187,7 +187,7 @@ class TUrlmap extends TItems {
       if ($s == 404) return $this->NotFound404();
     } else {
       $Template = TTemplate::Instance();
-      $s = &$Template->Request($obj);
+      $s = $Template->request($obj);
     }
     eval('?>'. $s);
     if ($Options->CacheEnabled && $obj->CacheEnabled) {

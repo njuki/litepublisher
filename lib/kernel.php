@@ -54,7 +54,11 @@ class TDataClass {
   }
   
   public function PropExists($name) {
-    return isset($this->$name) || array_key_exists($name, $this->Data) || method_exists($this, "Get$name");
+    return array_key_exists($name, $this->Data) || method_exists($this, "Get$name") | method_exists($this, "get$name") || isset($this->$name);
+  }
+  
+  public function supported($interface) {
+    return is_a($this, $interface);
   }
   
   public function Error($Msg) {
@@ -865,7 +869,7 @@ class TUrlmap extends TItems {
       if ($s == 404) return $this->NotFound404();
     } else {
       $Template = TTemplate::Instance();
-      $s = &$Template->Request($obj);
+      $s = $Template->request($obj);
     }
     eval('?>'. $s);
     if ($Options->CacheEnabled && $obj->CacheEnabled) {
@@ -1134,6 +1138,16 @@ class TUrlmap extends TItems {
     exit();
   }
   
+}
+
+//interfaces.php
+interface ITemplate {
+  public function request($arg);
+  public function gettitle();
+  public function gethead();
+  public function getkeywords();
+  public function getdescription();
+  public function GetTemplateContent();
 }
 
 ?>
