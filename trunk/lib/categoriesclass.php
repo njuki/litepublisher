@@ -55,10 +55,6 @@ class TCategories extends TCommonTags {
     return '';
   }
   
-  public function Getkeywords() {
-    return $this->title;
-  }
-  
   public function GetTemplateContent() {
     $result = '';
     if ($item = $this->GetItemContent($this->id)) {

@@ -153,10 +153,14 @@ class TPost extends TItem implements  ITemplate {
     if (count($this->categories ) == 0) $this->categories [] = $Categories->defaultid;
   }
   
-//ITemplate
+  //ITemplate
   public function request($id) {
     parent::Request($id);
     if ($this->status != 'published') return 404;
+  }
+  
+  public function gettitle() {
+    return $this->Data['title'];
   }
   
   public function gethead() {
@@ -169,16 +173,16 @@ class TPost extends TItem implements  ITemplate {
     }
     return $result;
   }
-
-public function getkeywords() {
+  
+  public function getkeywords() {
     return $this->Gettagnames();
-}
-
-public function getdescription() {
-return $this->Data['description'];
-}
-
-   public function GetTemplateContent() {
+  }
+  
+  public function getdescription() {
+    return $this->Data['description'];
+  }
+  
+  public function GetTemplateContent() {
     $Template = TTemplate::Instance();
     $GLOBALS['post'] = &$this;
     $tml = 'post.tml';

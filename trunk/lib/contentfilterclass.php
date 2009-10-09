@@ -94,46 +94,24 @@ class TContentFilter extends TEventClass {
   public function GetPostContent($content) {
     $result = trim($content);
     $result = self::ReplaceCode($result);
+
+$result = str_replace("\r\n", "\n", $result);
+$result = str_replace("\r", "\n", $result);
+//после тега до конца строки удаляются пробеллы
+$result = preg_replace('/\>(\s*?)?\n/',">\n", $result);
+//ставятся параграфы вместо двух разрывов строк
+$result = str_replace("\n\n", "</p>\n<p>", $result);
+//замена разрывов строк на <br /> до и после тегов a|img|b|i|u
+$result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
+$result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
+$result = preg_replace('/\n<(b|i|u|strong|emm)>/im', "<br />\n<$1>", $result);
+$result = preg_replace('/<\/(a|b|i|u|strong|emm)>\n/im', "</$1><br/>\n", $result);
+//переводы строки если нет в конце тегов
+$result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
+
+return '<p>' . $result . '</p>';
+} 
     
-    /*мой старый код
-    $result = str_replace("\r\n", "\n", $result);
-    $result = str_replace("\r", "\n", $result);
-    //послетега  до конца строки удаляются пробеллы
-    $result = preg_replace('/\>(\s*?)?\n/',">\n", $result);
-    //ставятся два праграфа если небыло тегов
-    $result = preg_replace('/(?<!\>)\n\n(?!\s*\<)/im', "</p>\n<p>",$result);
-    //закрывается параграф перед тегом через строку
-    $result = preg_replace('/(?<!\>)(\s*?)?\n\n(\s*\<)/im', "</p>\n<",$result);
-    //через строку открывается параграф после закрытия тега
-    $result = preg_replace('/(\>)(\s*)\n\n(?!\s*\<)/im', ">\n<p>",$result);
-    //переводы строки если нет в конце тегов
-    $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
-    */
-    //мой старый код
-    $result = str_replace("\r\n", "\n", $result);
-    $result = str_replace("\r", "\n", $result);
-    //послетега  до конца строки удаляются пробеллы
-    $result = preg_replace('/\>(\s*?)?\n/',">\n", $result);
-    //ставятся два праграфа если небыло тегов
-    $result = preg_replace('/(?<!\>)\n\n(?!\s*\<)/im', "</p>\n<p>",$result);
-    //закрывается параграф перед тегом через строку
-    $result = preg_replace('/(?<!\>)(\s*?)?\n\n(\s*\<)/im', "</p>\n<",$result);
-    //через строку открывается параграф после закрытия тега
-    $result = preg_replace('/(\>)(\s*)\n\n(?!\s*\<)/im', ">\n<p>",$result);
-    //переводы строки если нет в конце тегов
-    $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
-    
-    //вариант sartas
-    
-    $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
-    $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
-    $result = preg_replace('/\n<(b|i|u)>/im', "<br />\n<$1>", $result);
-    $result = preg_replace('/<\/(a|b|i|u)>\n/im', "</$1><br/>\n", $result);
-    
-    if (!preg_match('/>$/', $result)) $result = $result . "</p>\n";
-    return "<p>" . $result;
-  }
-  
   public static function ReplaceCode($s) {
     return preg_replace_callback('/<code>(.*?)<\/code>/ims', 'TContentFilter::CallbackReplaceCode', $s);
   }

@@ -4,7 +4,8 @@ class TTemplate extends TEventClass {
   public $theme;
   public $path;
   public $url;
-  public $DataObject;
+  public $context;
+  public $contextsupported;
   //public $footer;
   //public $sitebarcount;
   //public $submenuinwidget;
@@ -26,6 +27,8 @@ class TTemplate extends TEventClass {
     $Urlmap = TUrlmap::Instance();
     parent::CreateData();
     $this->basename = 'template' . ($Urlmap->Ispda ? '.pda' : '');
+    $this->fFiles = array();
+    $this->contextsupported = false;
     $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
     $this->Data['themename'] = 'default';
     $this->Data['sitebarcount'] = 2;
@@ -36,7 +39,6 @@ class TTemplate extends TEventClass {
     $this->AddDataMap('widgets', array());
     $this->AddDataMap('tags', array());
     $this->AddDataMap('theme', array());
-    $this->fFiles = array();
   }
   
   public function __get($name) {
@@ -48,20 +50,20 @@ class TTemplate extends TEventClass {
       return $this->GetTag($name);
     }
     
-    if ($this->DataObjectHasProp($name)) {
-      return $this->DataObject->$name;
+    if ($this->contextHasProp($name)) {
+      return $this->context->$name;
     }
     
     return parent::__get($name);
   }
   
-  protected function DataObjectHasProp($name) {
-    return isset($this->DataObject) && (isset($this->DataObject->$name) || (method_exists($this->DataObject, 'PropExists') && $this->DataObject->PropExists($name)));
+  protected function contextHasProp($name) {
+    return isset($this->context) && (isset($this->context->$name) || (method_exists($this->context, 'PropExists') && $this->context->PropExists($name)));
   }
   
-  public function Load() {
+  public function load() {
     global $Options, $paths;
-    parent::Load();
+    parent::load();
     if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
     $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
     $this->url = $Options->files . '/themes/'. $this->themename;
@@ -398,13 +400,14 @@ class TTemplate extends TEventClass {
     $this->Unlock();
   }
   
-  public function&Request(&$DataObject) {
+  public function request(&$context) {
     global $Options;
-    $this->DataObject = &$DataObject;
-    $GLOBALS['DataObject'] = &$DataObject;
+    $this->context = &$context;
+    $this->contextsupported = is_a($context, 'ITemplate');
+    $GLOBALS['context'] = &$context;
     $header = $this->ServerHeader();
-    if ($this->DataObjectHasProp('template')) {
-      $tml = $this->DataObject->template;
+    if ($this->contextHasProp('template')) {
+      $tml = $this->context->template;
       if (empty($tml)) $tml =  'index.tml';
     } else {
       $tml =  'index.tml';
@@ -412,19 +415,19 @@ class TTemplate extends TEventClass {
     
     $s = $this->ParseFile($tml);
     $s = $header .$s;
-    if (method_exists($this->DataObject, 'AfterTemplated')) {
-      $this->DataObject->AfterTemplated($s);
+    if (method_exists($this->context, 'AfterTemplated')) {
+      $this->context->AfterTemplated($s);
     }
     return $s;
   }
   
   protected function  ServerHeader() {
     global $Options;
-    if (method_exists($this->DataObject, 'ServerHeader')) {
-      $s= $this->DataObject->ServerHeader();
+    if (method_exists($this->context, 'ServerHeader')) {
+      $s= $this->context->ServerHeader();
       if (!empty($s)) return $s;
     }
-    $nocache = $this->DataObject->CacheEnabled ? '' : "
+    $nocache = $this->context->CacheEnabled ? '' : "
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');";
     
@@ -436,7 +439,7 @@ class TTemplate extends TEventClass {
   }
   
   public function ParseFile($FileName) {
-    global $Options, $Urlmap, $Template, $DataObject, $user, $post, $item, $tabindex, $lang;
+    global $Options, $Urlmap, $Template, $context, $user, $post, $item, $tabindex, $lang;
     $Template = &$this;
     if (!isset($this->fFiles[$FileName])) {
       $this->fFiles[$FileName] = @file_get_contents($this->path . $FileName);
@@ -470,8 +473,10 @@ class TTemplate extends TEventClass {
   public function Gettitle() {
     global $Options;
     $result = '';
-    if ($this->DataObjectHasProp('title')) {
-      $result = $this->DataObject->title;
+    if ($this->contextsupported) {
+      $result = $this->context->gettitle();
+    } elseif ($this->contextHasProp('title')) {
+      $result = $this->context->title;
     }
     if (empty($result)) {
       $result = $Options->name;
@@ -483,14 +488,14 @@ class TTemplate extends TEventClass {
   
   public function Getkeywords() {
     global $Options;
-    $result = $this->DataObjectHasProp('keywords') ? $this->DataObject->keywords : '';
+    $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';
     if ($result == '')  return $Options->keywords;
     return $result;
   }
   
   public function Getdescription() {
     global $Options;
-    $result = $this->DataObjectHasProp('description') ? $this->DataObject->description : '';
+    $result = $this->contextHasProp('description') ? $this->context->description : '';
     if ($result =='') return $Options->description;
     return $result;
   }
@@ -531,9 +536,9 @@ class TTemplate extends TEventClass {
   }
   
   public function Getsubmenuwidget() {
-    if (!method_exists($this->DataObject, 'Getsubmenu'))  return '';
+    if (!method_exists($this->context, 'Getsubmenu'))  return '';
     
-    $items = $this->DataObject->Getsubmenu();
+    $items = $this->context->Getsubmenu();
     if (count($items) == 0) return '';
     $menuitem = $this->theme['menu']['item'];
     $content = '';
@@ -570,7 +575,7 @@ class TTemplate extends TEventClass {
   public function Gethead() {
     global $paths;
     $result = '';
-    if (is_a($this->DataObject, 'ITemplate')) $result .= $this->DataObject->gethead();
+    if ($this->contextsupported) $result .= $this->context->gethead();
     if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
       $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
       $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);
@@ -588,10 +593,10 @@ class TTemplate extends TEventClass {
   public function Getcontent() {
     $result = $this->BeforeContent();
     if (empty($result)) $result = '';
-    if (method_exists($this->DataObject, 'GetTemplateContent')) {
-      $result .= $this->DataObject->GetTemplateContent();
-    } elseif ($this->DataObjectHasProp('content')) {
-      $result .= $this->DataObject->content;
+    if (method_exists($this->context, 'GetTemplateContent')) {
+      $result .= $this->context->GetTemplateContent();
+    } elseif ($this->contextHasProp('content')) {
+      $result .= $this->context->content;
     }
     
     $result .= $this->AfterContent();
@@ -620,14 +625,14 @@ class TTemplate extends TEventClass {
     $DataObj  = &new TSimpleContent();
     $DataObj->text = $content;
     $self = &self::Instance();
-    return $self->Request($DataObj);
+    return $self->request($DataObj);
   }
   
   public static function SimpleHtml($content) {
     $DataObj  = &new TSimpleContent();
     $DataObj->html = $content;
     $self = &self::Instance();
-    return $self->Request($DataObj);
+    return $self->request($DataObj);
   }
   
 }//class

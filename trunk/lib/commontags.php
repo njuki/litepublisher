@@ -1,9 +1,8 @@
 <?php
 
-class TCommonTags extends TItems {
+class TCommonTags extends TItems implements  ITemplate {
   //public $sortname;
   //public $showcount;
-  public $title;
   public $PermalinkIndex;
   
   public $postsclass;
@@ -229,20 +228,14 @@ class TCommonTags extends TItems {
     return $Result;
   }
   
-  //template
-  public function Request($id) {
+  //Itemplate
+  public function request($id) {
     global $Urlmap;
     $this->id = $id;
-    if ($id == 0) {
-      $this->title = TLocal::$data['default']['categories'];
-    } else {
-      if (!isset($this->items[$id])) return 404;
-      $url = $this->items[$this->id]['url'];
-      if($Urlmap->pagenumber != 1) $url = rtrim($url, '/') . "/page/$Urlmap->pagenumber/";
-      if ($Urlmap->url != $url) $Urlmap->Redir301($url);
-      
-      $this->title = $this->items[$id]['name'];
-    }
+    if (!isset($this->items[$id])) return 404;
+    $url = $this->items[$this->id]['url'];
+    if($Urlmap->pagenumber != 1) $url = rtrim($url, '/') . "/page/$Urlmap->pagenumber/";
+    if ($Urlmap->url != $url) $Urlmap->Redir301($url);
   }
   
   public function AfterTemplated(&$s) {
@@ -253,6 +246,22 @@ class TCommonTags extends TItems {
     if (\$Urlmap->url != \$url) \$Urlmap->Redir301(\$url);
     ?>";
     $s = $redir.$s;
+  }
+  
+  public function gettitle() {
+    return isset($this->items[$this->id]) ? $this->items[$this->id]['name'] : TLocal::$data['default']['categories'];
+  }
+  
+  public function gethead() {
+    return '';
+  }
+  
+  public function getkeywords() {
+    return $this->title;
+  }
+  
+  public function getdescription() {
+    return '';
   }
   
   public function GetTemplateContent() {
