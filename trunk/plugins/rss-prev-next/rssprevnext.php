@@ -7,7 +7,7 @@ class TRSSPrevNext extends TPlugin {
  }
  
  public function BeforePostContent($id) {
-$tp = TTemplatePost::Instnace();
+$tp = TTemplatePost::Instance();
 return $tp->GetPrevNextLinks(TPost::Instance($id));
 }
 
