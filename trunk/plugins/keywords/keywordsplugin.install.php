@@ -6,7 +6,7 @@ function TKeywordsPluginInstall(&$self) {$Template = &TTemplate::Instance();
   @chmod($paths['data'] . 'keywords', 0777);
   
   $Template = &TTemplate::Instance();
-  $Template->AddWidget(get_class($self), 'nocache',  -1, $Template->sitebarcount - 1);
+  $Template->AddWidget(get_class($self), 'nocache', '', '',  -1, $Template->sitebarcount - 1);
   $Urlmap = &TUrlmap::Instance();
   $Urlmap->AfterRequest = $self->ParseRef;
  }
