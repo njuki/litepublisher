@@ -1,5 +1,5 @@
 <?php
-$dbconfig = parse_ini_file(dirname(__file__) . '\dbconfig.ini', false);
+$dbconfig = parse_ini_file('lib/db/dbconfig.ini', false);
 
 class TDatabase extends PDO {
   public $result;
@@ -27,16 +27,18 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   public function query($sql, $mode = null) {
     $this->sql = $sql;
     if (defined('debug')) $this->history[] = $sql;
-    if (isset($this->result)) $this->result->closeCursor();
+    if (is_object ($this->result))  {
+$this->result->closeCursor();
+}
     $this->result = parent::query($sql, $mode);
     return $this->result;
   }
   
-  public function exec($sql, $mode = null) {
+  public function exec($sql) {
     $this->sql = $sql;
     if (defined('debug')) $this->history[] = $sql;
     if (isset($this->result)) $this->result->closeCursor();
-    $this->result = parent::exec($sql, $mode);
+    $this->result = parent::exec($sql);
     return $this->result;
   }
   
@@ -110,7 +112,7 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   }
   
   public function getcount($where = '') {
-    $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table"
+    $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;
     if ($res = $this->query($sql)) {
       $r = $res->fetch(PDO::FETCH_ASSOC);
@@ -130,6 +132,14 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     }
     return false;
   }
+
+public function res2array($res) {
+$result = array();
+while ($row = $res->fetch(PDO::FETCH_NUM)) {
+$result[] = $row[0];
+}
+return $result;
+}
   
 }//class
 ?>
