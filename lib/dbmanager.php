@@ -1,6 +1,7 @@
 <?php
 
 class TDBManager  {
+private $max_allowed_packet;
   
   public function __get($name) {
     global $db;
@@ -78,5 +79,56 @@ class TDBManager  {
     return $this->exec("CREATE DATABASE $name");
   }
   
+public function export() {
+global $options, $dbconfig;
+$res = $this->query("show variables like 'max_allowed_packet'");
+$v = $res->fetch();
+ $this->max_allowed_packet =floor($v['Value']*0.8);
+
+@$result = "-- Lite Publisher dump $options->version\n";
+$result .= "-- Datetime: ".date('Y-m-d H:i:s');
+$result .= "\n-- Host: {$dbconfig['host']}\n-- Database: {$dbconfig['dbname']}\n\n";
+$result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
+
+$tables = $this->GetTables();
+foreach ($tables as $table) {
+$result .= $this->ExportTable($table);
+}
+$result .= "\n-- Lite Publisher dump end\n";
+return $result;
+}
+
+public function ExportTable($name) {
+global $db;
+
+//if ($res = $this->query("show create table `$name`")) {
+if ($res = $this->query("show create table $name")) {
+var_dump($res);
+  $row=$res->fetch();
+$result = "DROP TABLE IF EXISTS `$name`;\n$row[1];\n\n";
+$result .= "LOCK TABLES `$name` WRITE;\n/*!40000 ALTER TABLE `$name` DISABLE KEYS */;\n";
+$sql = '';
+$res =$this->query("select * from `$name`");
+while ($row = $res->fetch(PDO::FETCH_NUM)) {
+    $values= array();
+    foreach($row as $v){
+$values[] = is_null($value) ? 'NULL' : $db->quote($value);
+}
+    $sql .= $sql ? ",\n(" : '(';
+$sql .= implode(', ', $values);
+$sql .= ')';
+
+    if (strlen($sql)>$this->max_allowed_packet) {
+$result .= "INSERT INTO `$name` VALUES ". $sql . ";\n";
+$sql = '';
+    }
+  }
+
+  if ($sql) $result .= "INSERT INTO `$name` VALUES ". $sql . ";\n";
+$result .= "/*!40000 ALTER TABLE `$name` ENABLE KEYS */;\nUNLOCK TABLES;\n";
+return $result;
+}
+}
+
 }//class
 ?>
