@@ -16,7 +16,9 @@ class TDatabase extends PDO {
     $this->history = array();
     
     try {
-parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}", $dbconfig['login'], $dbconfig['password']);
+parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}", $dbconfig['login'], $dbconfig['password'],
+array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)
+);
     } catch (Exception $e) {
       die($e->getMessage());
     }
@@ -37,7 +39,7 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   public function exec($sql) {
     $this->sql = $sql;
     if (defined('debug')) $this->history[] = $sql;
-    if (isset($this->result)) $this->result->closeCursor();
+    if (is_object($this->result)) $this->result->closeCursor();
     $this->result = parent::exec($sql);
     return $this->result;
   }

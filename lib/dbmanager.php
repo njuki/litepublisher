@@ -15,7 +15,7 @@ private $max_allowed_packet;
   }
   
   public function CreateTable($name, $struct) {
-    $this->exec("
+    return $this->exec("
     create table $this->prefix$name
     ($struct)
     DEFAULT CHARSET=utf8
@@ -101,20 +101,18 @@ return $result;
 public function ExportTable($name) {
 global $db;
 
-//if ($res = $this->query("show create table `$name`")) {
-if ($res = $this->query("show create table $name")) {
-var_dump($res);
+if ($res = $this->query("show create table `$name`")) {
   $row=$res->fetch();
 $result = "DROP TABLE IF EXISTS `$name`;\n$row[1];\n\n";
+if ($res =$this->query("select * from `$name`")) {
 $result .= "LOCK TABLES `$name` WRITE;\n/*!40000 ALTER TABLE `$name` DISABLE KEYS */;\n";
 $sql = '';
-$res =$this->query("select * from `$name`");
 while ($row = $res->fetch(PDO::FETCH_NUM)) {
     $values= array();
     foreach($row as $v){
 $values[] = is_null($value) ? 'NULL' : $db->quote($value);
 }
-    $sql .= $sql ? ",\n(" : '(';
+    $sql .= $sql ? ',(' : '(';
 $sql .= implode(', ', $values);
 $sql .= ')';
 
@@ -126,6 +124,7 @@ $sql = '';
 
   if ($sql) $result .= "INSERT INTO `$name` VALUES ". $sql . ";\n";
 $result .= "/*!40000 ALTER TABLE `$name` ENABLE KEYS */;\nUNLOCK TABLES;\n";
+}
 return $result;
 }
 }
