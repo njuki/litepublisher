@@ -62,6 +62,9 @@ class TAdminOptions extends TAdminPage {
       $redir = $authors->redir ? $checked : '';
       $nofollow = $authors->nofollow ? $checked : '';
       
+      $subscribtion = TSubscribe::Instance();
+      $locklist = $subscribtion ->locklist;
+      
       $formname = 'commentsform';
       break;
       
@@ -218,7 +221,13 @@ class TAdminOptions extends TAdminPage {
       $authors->hidelink = isset($hidelink);
       $authors->redir = isset($redir);
       $authors->nofollow = isset($nofollow);
-      $authors->Save();
+      $authors->save();
+      
+      $subscribtion = TSubscribe::Instance();
+      if ($locklist != $subscribtion->locklist) {
+        $subscribtion->locklist = $locklist;
+        $subscribtion->save();
+      }
       $Urlmap->ClearCache();
       break;
       

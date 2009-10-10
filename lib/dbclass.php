@@ -28,8 +28,8 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     $this->sql = $sql;
     if (defined('debug')) $this->history[] = $sql;
     if (is_object ($this->result))  {
-$this->result->closeCursor();
-}
+      $this->result->closeCursor();
+    }
     $this->result = parent::query($sql, $mode);
     return $this->result;
   }
@@ -132,14 +132,14 @@ $this->result->closeCursor();
     }
     return false;
   }
-
-public function res2array($res) {
-$result = array();
-while ($row = $res->fetch(PDO::FETCH_NUM)) {
-$result[] = $row[0];
-}
-return $result;
-}
+  
+  public function res2array($res) {
+    $result = array();
+    while ($row = $res->fetch(PDO::FETCH_NUM)) {
+      $result[] = $row[0];
+    }
+    return $result;
+  }
   
 }//class
 ?>

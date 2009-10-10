@@ -1,8 +1,8 @@
 <?php
 
-class TArchives extends TItems {
+class TArchives extends TItems implements  ITemplate {
   public $date;
-  public $title;
+  
   
   public static function &Instance() {
     return GetNamedInstance('archives', __class__);
@@ -89,10 +89,18 @@ class TArchives extends TItems {
     $Urlmap->Unlock();
   }
   
-  public function Request($date) {
+  //ITemplate
+  public function request($date) {
     $this->date = $date;
-    $this->title = $this->items[$date]['title'];
   }
+  
+  public function gettitle() {
+    return $this->items[$this->date]['title'];
+  }
+  
+public function gethead() {}
+public function getkeywords() {}
+public function getdescription() {}
   
   public function GetTemplateContent() {
     global $Options, $Urlmap;

@@ -1,6 +1,6 @@
 <?php
 
-class TMenuItem extends TItem {
+class TMenuItem extends TItem implements  ITemplate {
   
   public function GetBaseName() {
     return 'menus' . DIRECTORY_SEPARATOR . $this->id. DIRECTORY_SEPARATOR. 'index';
@@ -31,8 +31,26 @@ class TMenuItem extends TItem {
     'description' => '',
     'status' => 'published',
     'password' => '',
+    'template' => '',
     'theme' => '',
     );
+  }
+  
+  //ITemplate
+  //ITemplate
+//public function request($id) {}
+public function gethead() {}
+  
+  public function gettitle() {
+    return $this->Data['title'];
+  }
+  
+  public function getkeywords() {
+    return $this->Data['keywords'];
+  }
+  
+  public function getdescription() {
+    return $this->Data['description'];
   }
   
   public function GetTemplateContent() {
