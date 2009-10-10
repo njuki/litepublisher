@@ -1,6 +1,10 @@
 <?php
 
-class THomepage extends TEventClass {
+class THomepage extends TEventClass implements  ITemplate {
+  
+  public static function &Instance() {
+    return GetInstance(__class__);
+  }
   
   protected function CreateData() {
     parent::CreateData();
@@ -9,9 +13,12 @@ class THomepage extends TEventClass {
     $this->Data['hideposts'] = false;
   }
   
-  public static function &Instance() {
-    return GetInstance(__class__);
-  }
+  //ITemplate
+public function request($arg) {}
+public function gettitle() {}
+public function gethead() {}
+public function getkeywords() {}
+public function getdescription() {}
   
   public function GetTemplateContent() {
     global $Options, $Urlmap;
@@ -52,6 +59,6 @@ class THomepage extends TEventClass {
     }
   }
   
-}
+}//class
 
 ?>

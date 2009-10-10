@@ -1,6 +1,7 @@
 <?php
 
 class TSubscribe extends TItems {
+  //public $locklist;
   //public $fromemail;
   
   public $title;
@@ -17,6 +18,7 @@ class TSubscribe extends TItems {
     $this->CacheEnabled = false;
     $this->Data['fromemail'] = '';
     $this->Data['SubscribtionEnabled'] = true;
+    $this->Data['locklist'] = '';
   }
   
   public function SetSubscribtionEnabled($value) {
@@ -38,10 +40,10 @@ class TSubscribe extends TItems {
   
   public function CommentDeleted($id) {
     unset($this->items[$id]);
-    $this->Save();
+    $this->save();
   }
   
-  public function Request($param) {
+  public function request($param) {
     TLocal::LoadLangFile('admin');
     $lang = &TLocal::Instance();
     $lang->section = $this->basename;
@@ -153,6 +155,7 @@ class TSubscribe extends TItems {
     foreach ($subscribers as $userid) {
       $user = $users->GetItem($userid);
       if (empty($user['email'])) continue;
+      if (strpos($this->locklist, $user['email']) !== false) continue;
   $link = "\n{$url}userid={$user['cookie']}\n";
       TMailer::SendMail($Options->name, $this->fromemail,  $user['name'], $user['email'],
       $subj, $body . $link);

@@ -345,7 +345,7 @@ class TTemplate extends TEventClass {
     if ($oldorder != $order) {
       array_splice($this->sitebars[$index], $oldorder, 1);
       array_splice($this->sitebars[$index], $order, 0, $id);
-      $this->Save();
+      $this->save();
     }
   }
   
