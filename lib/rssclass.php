@@ -167,7 +167,7 @@ class TRSS extends TEventClass {
     
     AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);
-    AddNodeValue($item, 'wfw:commentRss', $Options->rsscomments . $post->id);
+    AddNodeValue($item, 'wfw:commentRss', $post->rsslink);
   }
   
   public function AddRSSComment(&$comment, $posturl, $title) {
