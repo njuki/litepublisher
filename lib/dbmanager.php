@@ -129,5 +129,9 @@ return $result;
 }
 }
 
+public function import($s) {
+
+}
+
 }//class
 ?>

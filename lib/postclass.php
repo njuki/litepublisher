@@ -313,22 +313,12 @@ class TPost extends TItem implements  ITemplate {
   }
   
   //db
-  public function Getdbdate() {
-    return date('Y-m-d H:i:s', $this->date);
-  }
-  
-  public function Setdbdate($date) {
-    $this->date = strtotime($date);
-  }
-  
-  public function Getdbmodified() {
-    return date('Y-m-d H:i:s', $this->modified);
-  }
-  
-  public function Setdbmodified($date) {
-    $this->modified = strtotime($date);
-  }
-  
+public function LoadFromDB() {
+if ($res = $this->db->select("id = $this->id")) {
+$res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
+}
+}
+
 }//class
 
 ?>
