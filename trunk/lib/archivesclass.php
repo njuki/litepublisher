@@ -20,7 +20,7 @@ class TArchives extends TItems implements  ITemplate {
     
     foreach ($this->items as $date => $item) {
   $result  .= "<li><a rel=\"archives\" href=\"$Options->url{$item['url']}\">{$item['title']}</a>";
-      if ($this->showcount) $result .= '(' . count($item['posts']) . ')';
+      if ($this->showcount) $result .= "({$item['count']})";
       $result .= "</li>\n";
     }
     
@@ -44,23 +44,42 @@ class TArchives extends TItems implements  ITemplate {
   }
   
   public function PostsChanged() {
-    $this->lock();
     $posts = &TPosts::Instance();
+    $this->lock();
     $this->items = array();
     //sort archive by months
     $Linkgen = &TLinkGenerator::Instance();
+if ($this->dbversion) {
+$db = $this->db;
+$res = $db->query("SELECT YEAR(created) AS 'year', MONTH(created) AS 'month', count(id) as 'count' FROM  {$db->prefix}posts
+where status = 'published' GROUP BY YEAR(created), MONTH(created) ORDER BY created DESC ";
+while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
+      $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
+        $this->items[$this->date] = array(
+        'url' => $Linkgen->Create($this, 'archive', false),
+        'title' => TLocal::date($this->date, 'F Y'),
+'year' => $r['year'],
+'month' => $r['month'],
+'count' => $r['count'];
+        );
+}
+} else {
     foreach ($posts->archives as $id => $date) {
       $d = getdate($date);
-      $this->date = mktime(0,0,0, $d["mon"] , 1, $d["year"]);
+      $this->date = mktime(0,0,0, $d['mon'] , 1, $d['year']);
       if (!isset($this->items[$this->date])) {
         $this->items[$this->date] = array(
         'url' => $Linkgen->Create($this, 'archive', false),
         'title' => TLocal::date($this->date, 'F Y'),
+'year' => $d['year'],
+'month' =>$d['mon'],
         'posts' => array()
         );
       }
       $this->items[$this->date]['posts'][] = $id;
     }
+foreach ($this->items as $date => $item) $this->$data]['count'] = count($item['posts']);
+}
     $this->CreatePageLinks();
     $this->unlock();
   }
@@ -68,8 +87,8 @@ class TArchives extends TItems implements  ITemplate {
   public function CreatePageLinks() {
     global $Options;
     $Urlmap = &TUrlmap::Instance();
-    $Urlmap->Lock();
-    $this->Lock();
+    $Urlmap->lock();
+    $this->lock();
     //Compare links
     $old = &$Urlmap->GetClassItems(get_class($this));
     foreach ($this->items as $date => $item) {
@@ -84,12 +103,14 @@ class TArchives extends TItems implements  ITemplate {
       $Urlmap->Delete($url);
     }
     
-    $this->Unlock();
-    $Urlmap->Unlock();
+    $this->unlock();
+    $Urlmap->unlock();
   }
   
   //ITemplate
   public function request($date) {
+$date = (int) $date;
+if (!isset($this->items[$date])) return 404;
     $this->date = $date;
   }
   
@@ -103,12 +124,18 @@ public function getdescription() {}
   
   public function GetTemplateContent() {
     global $Options, $Urlmap;
+if ($this->dbversion) {
+$item = $this->items[$this->date];
+$res = $db->query("select id from {$db->prefix}posts 
+where status = 'published' and year(created) = '{$item['year']}' and month(created) = '{$item['month']} ORDER BY created DESC ";
+$items = $db->res2array($res);
+} else {
     if (!isset($this->items[$this->date]['posts'])) return '';
     $items = &$this->items[$this->date]['posts'];
-    $TemplatePost = &TTemplatePost::Instance();
+}
+    $TemplatePost = TTemplatePost::Instance();
     if ($this->lite) {
-      
-      $postsperpage = 1000;
+            $postsperpage = 1000;
       $list = array_slice($items, ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
       $result = $TemplatePost->LitePrintPosts($list);
       $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $Urlmap->pagenumber, ceil(count($items)/ $postsperpage));
@@ -121,13 +148,6 @@ public function getdescription() {}
     }
   }
   
-
-private function SortArchives() {
-/*
-"SELECT YEAR(created) AS `year`, MONTH(created) AS `month`, count(ID) as 'count' FROM 
-where status = 'published' GROUP BY YEAR(created), MONTH(created) ORDER BY created DESC ";
-*/
-}
 }
 
 ?>
