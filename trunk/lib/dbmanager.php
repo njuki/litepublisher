@@ -80,14 +80,15 @@ private $max_allowed_packet;
   }
   
 public function export() {
-global $options, $dbconfig;
+global $options;
 $res = $this->query("show variables like 'max_allowed_packet'");
 $v = $res->fetch();
  $this->max_allowed_packet =floor($v['Value']*0.8);
 
-@$result = "-- Lite Publisher dump $options->version\n";
-$result .= "-- Datetime: ".date('Y-m-d H:i:s');
-$result .= "\n-- Host: {$dbconfig['host']}\n-- Database: {$dbconfig['dbname']}\n\n";
+$result = "-- Lite Publisher dump $options->version\n";
+$result .= "-- Datetime: ".date('Y-m-d H:i:s') . "\n";
+$result .= "-- Host: {$options->dbconfig['host']}\n";
+$result .= "-- Database: {$options->dbconfig['dbname']}\n\n";
 $result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
 
 $tables = $this->GetTables();
@@ -129,8 +130,34 @@ return $result;
 }
 }
 
-public function import($s) {
+public function import(&$dump) {
+global $db;
+$sql = '';
+$i = 0;
+while ($j = strpos($dump, "\n", $i)) {
+$s = substr($dump, $i, $j - $i);
+$i = $j + 1;
+if ($this->iscomment($s)) continue;
+$sql .= $s . "\n";
+if ($s[strlen($s) - 1] != ';') continue;
+$db->exec($sql);
+$sql = '';
+}
 
+$s = substr($dump, $i);
+if (!$this->iscomment($s))  $sql .= $s;
+if ($sql != '') $db->exec($sql);
+}
+
+private function iscomment(&$s) {
+if (strlen($s) <= 2) return true;
+$c2 = $s{1};
+switch ($s{0}) {
+case '/': return $c2 == '*';
+case '-': return $c2 == '-';
+case '#': return true;
+}
+return false;
 }
 
 }//class

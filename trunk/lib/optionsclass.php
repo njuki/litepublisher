@@ -17,7 +17,7 @@ class TOptions extends TEventClass {
     parent::Load();
     if($this->PropExists('timezone'))  {
       date_default_timezone_set($this->timezone);
-      if ($this->dbversion) $this->db->exec("SET time_zone = '$this->timezone'");
+      //if ($this->dbversion) $this->db->exec("SET time_zone = '$this->timezone'");
     }
     if (!defined('gmt_offset')) define('gmt_offset', date('Z'));
   }

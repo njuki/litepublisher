@@ -3,7 +3,6 @@
 class TArchives extends TItems implements  ITemplate {
   public $date;
   
-  
   public static function &Instance() {
     return GetNamedInstance('archives', __class__);
   }
@@ -45,7 +44,7 @@ class TArchives extends TItems implements  ITemplate {
   }
   
   public function PostsChanged() {
-    $this->Lock();
+    $this->lock();
     $posts = &TPosts::Instance();
     $this->items = array();
     //sort archive by months
@@ -63,7 +62,7 @@ class TArchives extends TItems implements  ITemplate {
       $this->items[$this->date]['posts'][] = $id;
     }
     $this->CreatePageLinks();
-    $this->Unlock();
+    $this->unlock();
   }
   
   public function CreatePageLinks() {
@@ -122,6 +121,13 @@ public function getdescription() {}
     }
   }
   
+
+private function SortArchives() {
+/*
+"SELECT YEAR(created) AS `year`, MONTH(created) AS `month`, count(ID) as 'count' FROM 
+where status = 'published' GROUP BY YEAR(created), MONTH(created) ORDER BY created DESC ";
+*/
+}
 }
 
 ?>
