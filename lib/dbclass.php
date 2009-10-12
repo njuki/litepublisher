@@ -1,6 +1,4 @@
 <?php
-$dbconfig = parse_ini_file('lib/db/dbconfig.ini', false);
-
 class TDatabase extends PDO {
   public $result;
   public $sql;
@@ -9,7 +7,8 @@ class TDatabase extends PDO {
   public $history;
   
   public function __construct() {
-    global $dbconfig;
+    global $options;
+$dbconfig = $options->dbconfig;
     $this->table = '';
     $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
@@ -23,7 +22,9 @@ array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)
       die($e->getMessage());
     }
     $this->exec('SET NAMES utf8');
-    //$this->exec("SET time_zone = '$Options->timezone'");
+$timezone = date('Z') / 3600;
+if ($timezone > 0) $timezone = "+$timezone";
+    $this->exec("SET time_zone = '$timezone:00'");
   }
   
   public function query($sql, $mode = null) {
