@@ -2,6 +2,10 @@
 
 class TDBManager  {
 private $max_allowed_packet;
+
+  public static function &instance() {
+    return GetInstance(__class__);
+  }
   
   public function __get($name) {
     global $db;
