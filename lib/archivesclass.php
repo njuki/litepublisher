@@ -10,6 +10,7 @@ class TArchives extends TItems implements  ITemplate {
   protected function CreateData() {
     parent::CreateData();
     $this->basename   = 'archives';
+    $this->table = 'posts';
     $this->Data['lite'] = false;
     $this->Data['showcount'] = false;
   }
@@ -20,7 +21,7 @@ class TArchives extends TItems implements  ITemplate {
     
     foreach ($this->items as $date => $item) {
   $result  .= "<li><a rel=\"archives\" href=\"$Options->url{$item['url']}\">{$item['title']}</a>";
-      if ($this->showcount) $result .= "({$item['count']})";
+    if ($this->showcount) $result .= "({$item['count']})";
       $result .= "</li>\n";
     }
     
@@ -49,37 +50,37 @@ class TArchives extends TItems implements  ITemplate {
     $this->items = array();
     //sort archive by months
     $Linkgen = &TLinkGenerator::Instance();
-if ($this->dbversion) {
-$db = $this->db;
-$res = $db->query("SELECT YEAR(created) AS 'year', MONTH(created) AS 'month', count(id) as 'count' FROM  {$db->prefix}posts
-where status = 'published' GROUP BY YEAR(created), MONTH(created) ORDER BY created DESC ";
-while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
-      $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
+    if ($this->dbversion) {
+      $db = $this->db;
+    $res = $db->query("SELECT YEAR(created) AS 'year', MONTH(created) AS 'month', count(id) as 'count' FROM  {$db->prefix}posts
+      where status = 'published' GROUP BY YEAR(created), MONTH(created) ORDER BY created DESC ");
+      while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
+        $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
         'url' => $Linkgen->Create($this, 'archive', false),
         'title' => TLocal::date($this->date, 'F Y'),
-'year' => $r['year'],
-'month' => $r['month'],
-'count' => $r['count'];
-        );
-}
-} else {
-    foreach ($posts->archives as $id => $date) {
-      $d = getdate($date);
-      $this->date = mktime(0,0,0, $d['mon'] , 1, $d['year']);
-      if (!isset($this->items[$this->date])) {
-        $this->items[$this->date] = array(
-        'url' => $Linkgen->Create($this, 'archive', false),
-        'title' => TLocal::date($this->date, 'F Y'),
-'year' => $d['year'],
-'month' =>$d['mon'],
-        'posts' => array()
+        'year' => $r['year'],
+        'month' => $r['month'],
+        'count' => $r['count']
         );
       }
-      $this->items[$this->date]['posts'][] = $id;
+    } else {
+      foreach ($posts->archives as $id => $date) {
+        $d = getdate($date);
+        $this->date = mktime(0,0,0, $d['mon'] , 1, $d['year']);
+        if (!isset($this->items[$this->date])) {
+          $this->items[$this->date] = array(
+          'url' => $Linkgen->Create($this, 'archive', false),
+          'title' => TLocal::date($this->date, 'F Y'),
+          'year' => $d['year'],
+          'month' =>$d['mon'],
+          'posts' => array()
+          );
+        }
+        $this->items[$this->date]['posts'][] = $id;
+      }
+      foreach ($this->items as $date => $item) $this->items[$date]['count'] = count($item['posts']);
     }
-foreach ($this->items as $date => $item) $this->$data]['count'] = count($item['posts']);
-}
     $this->CreatePageLinks();
     $this->unlock();
   }
@@ -109,8 +110,8 @@ foreach ($this->items as $date => $item) $this->$data]['count'] = count($item['p
   
   //ITemplate
   public function request($date) {
-$date = (int) $date;
-if (!isset($this->items[$date])) return 404;
+    $date = (int) $date;
+    if (!isset($this->items[$date])) return 404;
     $this->date = $date;
   }
   
@@ -124,18 +125,16 @@ public function getdescription() {}
   
   public function GetTemplateContent() {
     global $Options, $Urlmap;
-if ($this->dbversion) {
-$item = $this->items[$this->date];
-$res = $db->query("select id from {$db->prefix}posts 
-where status = 'published' and year(created) = '{$item['year']}' and month(created) = '{$item['month']} ORDER BY created DESC ";
-$items = $db->res2array($res);
-} else {
-    if (!isset($this->items[$this->date]['posts'])) return '';
-    $items = &$this->items[$this->date]['posts'];
-}
+    if ($this->dbversion) {
+      $item = $this->items[$this->date];
+  $items = $this->db->idselect("status = 'published' and year(created) = '{$item['year']}' and month(created) = '{$item['month']} ORDER BY created DESC ");
+    } else {
+      if (!isset($this->items[$this->date]['posts'])) return '';
+      $items = &$this->items[$this->date]['posts'];
+    }
     $TemplatePost = TTemplatePost::Instance();
     if ($this->lite) {
-            $postsperpage = 1000;
+      $postsperpage = 1000;
       $list = array_slice($items, ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
       $result = $TemplatePost->LitePrintPosts($list);
       $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $Urlmap->pagenumber, ceil(count($items)/ $postsperpage));
