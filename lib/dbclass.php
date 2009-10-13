@@ -94,7 +94,10 @@ if ($timezone > 0) $timezone = "+$timezone";
   }
   
   public function InsertAssoc(&$a) {
-    $Names =implode(', ', array_keys($a));
+$keys =array_keys($a));
+unset($keys['id']);
+    $Names =implode(', ', $keys);
+
     $vals = array();
     foreach( $a as $name => $val) {
       if ($name == 'id') continue;

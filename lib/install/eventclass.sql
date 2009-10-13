@@ -1,4 +1,4 @@
-id serial,
+id bigint UNSIGNED NOT NULL auto_increment,
 name varchar(64) not null,
 owner varchar(64) not null,
 class varchar(64) not null,
