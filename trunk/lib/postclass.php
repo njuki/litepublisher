@@ -220,9 +220,7 @@ class TPost extends TItem implements  ITemplate {
   
   public function Getrawcontent() {
     if ($this->dbversion && ($this->id > 0) && empty($this->Data['rawcontent'])) {
-      global $db;
-      $db->table = 'rawcontent';
-      $this->Data['rawcontent'] = $db->idvalue($this->id, 'rawcontent');
+      $this->Data['rawcontent'] = $this->getdb('postsraw')->idvalue($this->id, 'rawcontent');
     }
     return $this->Data['rawcontent'];
   }
@@ -230,24 +228,10 @@ class TPost extends TItem implements  ITemplate {
   public function Setrawcontent($s) {
     $this->Data['rawcontent'] = $s;
     if ($this->dbversion && ($this->id > 0)) {
-      global $db;
-      $db->table = 'rawcontent';
-      $db->idupdate($this->id, 'rawcontent = '. $db->quote($s));
+     $      this->getdb('postsraw')->idupdate($this->id, 'rawcontent = '. $db->quote($s));
     }
   }
   
-  /*
-  public function Getfiltered() {
-    if (isset($this->Data['content']))return $this->Data['content'];
-    return $this->Data['filtered'];
-  }
-  
-  public function Setfiltered($s) {
-    $this->Data['filtered'] = $s;
-    if (isset($this->Data['content']))unset($this->Data['content']);
-  }
-  
-  */
   public function SetData($data) {
     foreach ($data as $key => $value) {
       if (key_exists($key, $this->Data)) $this->Data[$key] = $value;
