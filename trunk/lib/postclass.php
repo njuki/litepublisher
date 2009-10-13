@@ -67,6 +67,14 @@ class TPost extends TItem implements  ITemplate {
     return null;
   }
   
+  public function geturl() {
+    if (($this->Data['url'] == '') && $this->dbversion && ($this->idurl > 0)) {
+      $urlmap = TUrlmap::instance();
+      $this->Data['url'] = $urlmap->getidurl($this->idurl);
+    }
+    return $this->Data['url'];
+  }
+  
   public function Getlink() {
     global $Options;
     return $Options->url . $this->url;
@@ -228,7 +236,7 @@ class TPost extends TItem implements  ITemplate {
   public function Setrawcontent($s) {
     $this->Data['rawcontent'] = $s;
     if ($this->dbversion && ($this->id > 0)) {
-     $      this->getdb('postsraw')->idupdate($this->id, 'rawcontent = '. $db->quote($s));
+      $this->getdb('postsraw')->idupdate($this->id, 'rawcontent = '. $this->db->quote($s));
     }
   }
   
@@ -297,12 +305,12 @@ class TPost extends TItem implements  ITemplate {
   }
   
   //db
-public function LoadFromDB() {
-if ($res = $this->db->select("id = $this->id")) {
-$res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
-}
-}
-
+  public function LoadFromDB() {
+    if ($res = $this->db->select("id = $this->id")) {
+      $res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
+    }
+  }
+  
 }//class
 
 ?>

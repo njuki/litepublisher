@@ -8,7 +8,7 @@ class TDatabase extends PDO {
   
   public function __construct() {
     global $options;
-$dbconfig = $options->dbconfig;
+    $dbconfig = $options->dbconfig;
     $this->table = '';
     $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
@@ -16,14 +16,14 @@ $dbconfig = $options->dbconfig;
     
     try {
 parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}", $dbconfig['login'], $dbconfig['password'],
-array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)
-);
+      array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)
+      );
     } catch (Exception $e) {
       die($e->getMessage());
     }
     $this->exec('SET NAMES utf8');
-$timezone = date('Z') / 3600;
-if ($timezone > 0) $timezone = "+$timezone";
+    $timezone = date('Z') / 3600;
+    if ($timezone > 0) $timezone = "+$timezone";
     $this->exec("SET time_zone = '$timezone:00'");
   }
   
@@ -53,6 +53,13 @@ if ($timezone > 0) $timezone = "+$timezone";
     return $this->query("SELECT * FROM $this->prefix$this->table WHERE  $where");
   }
   
+  public function idselect($where) {
+    if($res = $this->select("select id from $this->prefix$this->table where ". $where)) {
+      return $this->res2array($res);
+    }
+    return false;
+  }
+  
   public function getassoc($where) {
     if ($res = $this->select($where)) {
       return $res->fetch(PDO::FETCH_ASSOC);
@@ -78,7 +85,8 @@ if ($timezone > 0) $timezone = "+$timezone";
     return $this->update(implode(', ', $list), 'id = '. $a['id']);
   }
   
-  public function UpdateProps($obj, $props) {
+  public 
+function UpdateProps($obj, $props) {
     $list = array();
     foreach ($props  As $name) {
       if ($name == 'id') continue;
@@ -88,16 +96,16 @@ if ($timezone > 0) $timezone = "+$timezone";
     return $this->update(implode(', ', $list), "id = $obj->id");
   }
   
-  public function InsertRow($row) {
+  public function insertrow($row) {
     $this->exec("INSERT INTO $this->prefix$this->table $row");
     return $this->lastInsertId();
   }
   
   public function InsertAssoc(&$a) {
-$keys =array_keys($a));
-unset($keys['id']);
+    $keys =array_keys($a));
+    unset($keys['id']);
     $Names =implode(', ', $keys);
-
+    
     $vals = array();
     foreach( $a as $name => $val) {
       if ($name == 'id') continue;
@@ -130,6 +138,24 @@ unset($keys['id']);
   public function delete($where) {
     return $this->exec("delete from $this->prefix$this->table where $where");
   }
+
+public function idexists($id) {
+}
+  
+  public function getitem($id) {
+    if ($res = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) {
+      return $res->fetch(PDO::FETCH_ASSOC);
+    }
+    return false;
+  }
+
+public function findid($where) {
+    if($res = $this->select("select id from $this->prefix$this->table where ". $where . ' limit 1')) {
+$r = res->fetch(PDO::FETCH_NUM);
+return $r[0];
+}
+return -1;
+}
   
   public function idvalue($id, $name) {
     if ($res = $this->query("select $name from $this->prefix$this->table where id = $id limit 1")) {
@@ -138,6 +164,10 @@ unset($keys['id']);
     }
     return false;
   }
+
+public function setvalue($id, $name, $value) {
+return $this->update("$name = " . $this->quote($value), "id = $id");
+}
   
   public function res2array($res) {
     $result = array();

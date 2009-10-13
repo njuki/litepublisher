@@ -80,6 +80,15 @@ class TUrlmap extends TItems {
     //redir multi slashed
     if ('//' == substr($url, strlen($url) - 3)) $this->Redir301(rtrim($url, '/') . '/');
     
+    if ($this->dbversion) {
+      if ($res = $this->db->select('url = '. $this->db->quote($url). ' limit 1')) {
+        $item = $res->fetch(PDO::FETCH_ASSOC);
+        $this->items[$item['id']] = $item;
+        return $item;
+      }
+      return false;
+    }
+    
     //4 steps: items, get, pagenumber, tree
     if (isset($this->items[$url])) return $this->items[$url];
     $slashed = rtrim($url, '/');
@@ -456,6 +465,15 @@ class TUrlmap extends TItems {
     exit();
   }
   
-}
+  
+  //db
+  public function getidurl($id) {
+    if (!isset($this->items[$id])) {
+      $this->items[$id] = $this->db->getitem($id);
+    }
+    return $this->items[$id]['url'];
+  }
+  
+}//class
 
 ?>
