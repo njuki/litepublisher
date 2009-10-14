@@ -2,15 +2,22 @@
 
 class tposts extends TItems {
   public $archives;
-  //public $recentcount;
+
+  public static function instance() {
+    return getnamedinstance('posts', __class__);
+  }
+  
+  public static function unsub($obj) {
+    $self = self::instance();
+    $self->UnsubscribeClassName(get_class($obj));
+  }
   
   protected function create() {
     parent::create();
 $this->table = 'posts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
-    $this->addevents('edited', cChanged', 'singlecron');
-    $this->AddDataMap('archives' , array());
-    $this->data['recentcount'] = 10;
+    $this->addevents('edited', changed', 'singlecron');
+    if (!dbversion) $this->AddDataMap('archives' , array());
   }
   
   public function getitem($id) {
@@ -23,14 +30,7 @@ if ($result = tpost::instance($id)) return $result;
     return $this->error("Item $id not found in class ". get_class($this));
   }
   
-  public function setrecentcount($value) {
-    if ($value != $this->recentcount) {
-      $this->data['recentcount'] = $value;
-      $this->save();
-    }
-  }
-  
-  public function GetWidgetContent($id) {
+ public function GetWidgetContent($id) {
     global $options;
     $template = template::instance();
     $item = !empty($template->theme['widget']['recentpost']) ? $template->theme['widget']['recentpost'] :
@@ -47,12 +47,12 @@ if ($result = tpost::instance($id)) return $result;
     return $result;
   }
   
-  public function add(TPost $post) {
-    if (!isset($post)) return $this->Error('Post not assigned');
+  public function add(tpost $post) {
     if ($post->date == 0) $post->date = time();
     $post->modified = time();
+      $post->pagescount = count($post->pages);
     
-    $Linkgen = TLinkGenerator::Instance();
+    $Linkgen = TLinkGenerator::instance();
     if ($post->url == '' ) {
       $post->url = $Linkgen->Create($post, 'post');
     } else {
@@ -61,27 +61,17 @@ if ($result = tpost::instance($id)) return $result;
       $post->url = $Linkgen ->Create($post, 'post');
       $Post->title = $title;
     }
-    
-    if ($this->dbversion) {
-      global $db;
-      $post->pagescount = count($post->pages);
-      $post->idurl = $urlmap->add($post->url, get_class($post), $post->id, $post->pagescount);
-      
-      $post->id = $this->db->IInsertRow();
-      
-      $db->table = 'rawcontent';
-      $db->InsertAssoc(array(
-      'id' => $post->id,
-      'rawcontent' => $post->data['rawcontent']
-      ));
+
+        $urlmap = turlmap::instance();
+    if (dbversion) {
+      $post->id = TPostTransform ::add($post);
+      $post->idurl = $urlmap->add($post->url, get_class($post), $post->id, $post->pagescount);      
+$post->db->setvalue($post->id, 'idurl', $post->idurl);
+$post->raw->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['rawcontent']));
       
       $db->table = 'pages';
       foreach ($post->pages as $i => $content) {
-        $db->InsertAssoc(array(
-        'post' => $post->id,
-        'page' => $i,
-        'content' => $content
-        ));
+        $db->InsertAssoc(array('post' => $post->id, 'page' => $i         'content' => $content));
       }
       
       $this->Updated($post);
@@ -93,59 +83,57 @@ if ($result = tpost::instance($id)) return $result;
       @chmod($dir, 0777);
       
       $this->lock();
+    $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
       $this->Updated($post);
       $post->save();
       $this->unlock();
     }
     $this->Added($post->id);
     $this->Changed();
-    
-    $urlmap = &TUrlmap::Instance();
-    $urlmap->Add($post->url, get_class($post), $post->id);
     $urlmap->ClearCache();
     return $post->id;
   }
   
-  public function Edit(TPost &$Post) {
-    $urlmap = &TUrlmap::Instance();
+  public function edit(tpost $post) {
+    $urlmap = turlmap::instance();
     $this->lock();
     
-    $oldurl = $urlmap->Find(get_class($Post), $Post->id);
-    if ($oldurl != $Post->url) {
+    $oldurl = $urlmap->Find(get_class($post), $post->id);
+    if ($oldurl != $post->url) {
       $urlmap->lock();
       $urlmap->Delete($oldurl);
-      $Linkgen = &TLinkGenerator::Instance();
-      if ($Post->url == '') {
-        $Post->url = $Linkgen->Create($Post, 'post');
+      $Linkgen = TLinkGenerator::instance();
+      if ($post->url == '') {
+        $post->url = $Linkgen->Create($post, 'post');
       } else {
-        $title = $Post->title;
-        $Post->title = trim($Post->url, '/');
-        $Post->url = $Linkgen->Create($Post, 'post');
-        $Post->title = $title;
+        $title = $post->title;
+        $post->title = trim($post->url, '/');
+        $post->url = $Linkgen->Create($post, 'post');
+        $post->title = $title;
       }
-      $urlmap->Add($Post->url, get_class($Post), $Post->id);
+      $urlmap->Add($post->url, get_class($post), $post->id);
       $urlmap->unlock();
     }
     
-    if ($oldurl != $Post->url) {
-      $urlmap->AddRedir($oldurl, $Post->url);
+    if ($oldurl != $post->url) {
+      $urlmap->AddRedir($oldurl, $post->url);
     }
     
-    $Post->modified = time();
-    $this->Updated($Post);
-    $Post->save();
+    $post->modified = time();
+    $this->Updated($post);
+    $post->save();
     $this->unlock();
     
     $urlmap->ClearCache();
     
-    $this->Edited($Post->id);
+    $this->Edited($post->id);
     $this->Changed();
   }
   
-  public function Delete($id) {
+  public function delete($id) {
     if (!$this->ItemExists($id)) return false;
-    $urlmap = &TUrlmap::Instance();
-    if ($this->dbversion) {
+    $urlmap = turlmap::instance();
+    if (dbversion) {
       global $db;
       $idurl = $this->db->idvalue($id, 'idurl');
       $urlmap->delete($idurl);
@@ -156,7 +144,7 @@ if ($result = tpost::instance($id)) return $result;
       global $paths;
       
       $this->lock();
-      $post = &TPost::Instance($id);
+      $post = &TPost::instance($id);
       
       $urlmap->lock();
       $urlmap->Delete($post->url);
@@ -167,27 +155,31 @@ if ($result = tpost::instance($id)) return $result;
       $this->UpdateArchives();
       $this->unlock();
     }
-    $this->Deleted($post->id);
-    $this->Changed();
+    $this->deleted($post->id);
+    $this->changed();
     $urlmap->ClearCache();
     return true;
   }
   
-  public function Updated(TPost &$post) {
+  public function updated(tpost $post) {
     if (($post->status == 'published') && ($post->date > time())) {
       $post->status = 'future';
+if (dbversion) $post->db->setvalue($post->id, 'status', 'future');
     }
+    $this->PublishFuture();
+if (!dbversion) {
     $this->items[$post->id] = array(
     'date' => $post->date
     );
     if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
     $this->UpdateArchives();
-    $Cron = &TCron::Instance();
-    $Cron->Add('single', get_class($this), 'DoSingleCron', $post->id);
+}
+
+    $Cron = tcron::instance();
+    $Cron->add('single', get_class($this), 'DoSingleCron', $post->id);
   }
   
   public function UpdateArchives() {
-    $this->PublishFuture();
     $this->archives = array();
     foreach ($this->items as $id => $item) {
       if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['date'])) {
@@ -199,23 +191,29 @@ if ($result = tpost::instance($id)) return $result;
   
   public function DoSingleCron($id) {
     $this->PublishFuture();
-    $GLOBALS['post'] = &TPost::Instance($id);
-    $this->SingleCron($id);
+    $GLOBALS['post'] = tpost::instance($id);
+    $this->singlecron($id);
     //ping
   }
   
-  public function HourCron() {
+  public function hourcron() {
     $this->PublishFuture();
   }
   
-  public function PublishFuture() {
-    
-    foreach ($this->items as $id => $item) {
-      if (isset($item['status']) && ($item['status'] == 'future') && ($item['date'] <= time())) {
-        $post = TPost::Instance($id);
+private function publish($id) {
+$post = tpost::instance($id);
         $post->status = 'published';
-        $this->Edit($post);
-      }
+        $this->edit($post);
+}
+
+  public function PublishFuture() {
+    if (dbversion) {
+if ($list = $this->db->idselect("status = 'future' and created <= now() order by created asc")) {
+foreach( $list as $id) $this->publish($id);
+}
+} else {
+    foreach ($this->items as $id => $item) {
+      if (isset($item['status']) && ($item['status'] == 'future') && ($item['date'] <= time())) $this->publish($id);
     }
   }
 
@@ -256,17 +254,6 @@ return $this->db->idselect("status = 'published'order by created desc limit $cou
     
     arsort($result,  SORT_NUMERIC);
     return array_keys($result);
-  }
-  
-  //statics
-  
-  public static function &Instance() {
-    return GetNamedInstance('posts', __class__);
-  }
-  
-  public static function unsub(&$obj) {
-    $self = self::Instance();
-    $self->UnsubscribeClassName(get_class($obj));
   }
   
 }
