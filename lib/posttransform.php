@@ -19,13 +19,14 @@ class TPostTransform  {
     return $self;
   }
   
-  public function add() {
+  public static function add(tpost $post) {
     global $db;
+$self = self::instance($post);
     $db->table = 'posts';
     $names =emplode(', ', sself:props);
     $values = array();
     foreach (self::props as $name) {
-      $values[] = $db->quote($this->__get($name));
+      $values[] = $db->quote($self->__get($name));
     }
     
     return $db->insertrow("($Names) values (" . implode(', ', $values) . ')');
