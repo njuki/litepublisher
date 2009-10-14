@@ -4,21 +4,18 @@ class TCommonTags extends TItems implements  ITemplate {
   //public $sortname;
   //public $showcount;
   public $PermalinkIndex;
-  
-  public $postsclass;
   public $PostPropname;
   protected $id;
   
   private $NewName;
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     //$this->AddEvents();
-    $this->postsclass = 'TPosts';
-    $this->Data['lite'] = false;
-    $this->Data['sortname'] = 'count';
-    $this->Data['showcount'] = true;
-    $this->Data['maxcount'] =0;
+    $this->data['lite'] = false;
+    $this->data['sortname'] = 'count';
+    $this->data['showcount'] = true;
+    $this->data['maxcount'] =0;
     
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
@@ -27,31 +24,49 @@ class TCommonTags extends TItems implements  ITemplate {
   public function save() {
     parent::save();
     if (!$this->locked)  {
-      TTemplate::WidgetExpired($this);
+      ttemplate::WidgetExpired($this);
     }
   }
   
   public function GetWidgetContent($id) {
-    global $Options;
+    global $options;
     $result = '';
     
-    $Sorted = &$this->GetSorted($this->sortname);
+    $Sorted = $this->getsorted($this->sortname);
     if (($this->maxcount > 0) && ($this->maxcount < count($Sorted))) {
       $Sorted = array_slice($Sorted, 0, $this->maxcount, true);
     }
     
     foreach($Sorted as $id => $value ) {
-  $result .= "<li><a href=\"$Options->url{$this->items[$id]['url']}\">{$this->items[$id]['name']}</a>";
+$url = $this->geturl($id);
+
+
+  $result .= "<li><a href=\"$options->url$url\">{$this->items[$id]['name']}</a>";
       if ($this->showcount) $result .= ' ('. $this->items[$id]['count'] . ')';
       $result .= "</li>\n";
     }
     
     return $result;
   }
+
+public function geturl($id) {
+if (!isset($this->items[$id]) && dbversion) {
+global $db;
+$urlmap = turlmap::instance();
+$table = $db->prefix . $this->table;
+$urltable = $db->prefix . $urlmap->table;
+$res = $db->query("select $table.*, $urltable.url  from $table
+  left join $urltable on $urltable.id = $table.urlid
+where $table.id = $id limit 1");
+$this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
+} else {
+
+return $this->items[$id]['url'];
+}
   
   public function PostEdit($postid) {
-    $posts = &GetInstance($this->postsclass);
-    $post = &$posts->GetItem($postid);
+    $posts = getnamedinstance('posts, 'tposts');
+    $post = $posts->getitem($postid);
     
   $list = $post->{$this->PostPropname};
     $this->lock();
@@ -162,7 +177,7 @@ class TCommonTags extends TItems implements  ITemplate {
   
   public function Delete($id) {
     if (isset($this->items[$id])) {
-      $posts = &GetInstance($this->postsclass);
+      $posts = getnamedinstance('posts', 'tposts');
       $list = $this->items[$id]['items'];
       foreach ($list as $idpost) {
         $post = &$posts->GetItem($idpost);
@@ -185,46 +200,52 @@ class TCommonTags extends TItems implements  ITemplate {
   
   public function CreateNames($list) {
     if (is_string($list)) $list = explode(',', trim($list));
-    $Result = array();
+    $result = array();
     $this->lock();
     foreach ($list as $name) {
       $name = TContentFilter::escape($name);
       if ($name == '') continue;
-      $Result[] = $this->Add($name);
+      $result[] = $this->Add($name);
     }
     $this->unlock();
-    return $Result;
+    return $result;
   }
   
   public function GetNames($list) {
-    $Result =array();
+    $result =array();
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
-      $Result[] = $this->items[$id]['name'];
+      $result[] = $this->items[$id]['name'];
     }
-    return $Result;
+    return $result;
   }
   
   public function GetLink($id) {
-    global $Options;
+    global $options;
     if ($this->ItemExists($id)) {
-      return '<a href="'. $Options->url . $this->items[$id]['url'] . '">' . $this->items[$id]['name'] . '</a>';
+      return '<a href="'. $options->url . $this->items[$id]['url'] . '">' . $this->items[$id]['name'] . '</a>';
     } else {
       return '';
     }
   }
   
-  public function &GetSorted($sortname) {
-    $Result = array();
+  public function getsorted($sortname) {
+if (!in_array($sortname, array('title', 'count', 'id')) $sortname = 'name';
+if (dbversion) {
+if ($sortname == 'count') return $this->db->idselect("parent = 0 sort by itemscount asc");
+return $this->db->idselect("parent = 0 sort by $sortname desc");
+}
+
+    $result = array();
     foreach($this->items as $id => $item) {
-      $Result[$id] = $item[$sortname];
+      $result[$id] = $item[$sortname];
     }
     if (($sortname == 'count')) {
-      arsort($Result);
+      arsort($result);
     } else {
-      asort($Result);
+      asort($result);
     }
-    return $Result;
+    return $result;
   }
   
   //Itemplate
@@ -264,13 +285,13 @@ class TCommonTags extends TItems implements  ITemplate {
   }
   
   public function GetTemplateContent() {
-    global $Options, $Urlmap;
+    global $options, $Urlmap;
     $result = '';
     if ($this->id == 0) {
       $result .= "<ul>\n";
-      $Sorted = &$this->GetSorted($this->sortname);
+      $Sorted = $this->getsorted($this->sortname);
       foreach($Sorted as $id => $value ) {
-        $result .= '<li><a href="'. $Options->url. $this->items[$id]['url'] . '">'. $this->items[$id]['name'] . "</a>";
+        $result .= '<li><a href="'. $options->url. $this->items[$id]['url'] . '">'. $this->items[$id]['name'] . "</a>";
         if ($this->showcount) $result .= ' ('. $this->items[$id]['count'] . ')';
         $result .= "</li>\n";
       }
@@ -280,7 +301,7 @@ class TCommonTags extends TItems implements  ITemplate {
     }
     
     $items= $this->items[$this->id]['items'];
-    $Posts = getiInstance($this->postsclass);
+    $Posts = getnamedinstance('posts', 'tposts');
     $items = $Posts->SortAsArchive($items);
     $TemplatePost = &TTemplatePost::Instance();
     if ($this->lite) {
@@ -290,10 +311,10 @@ class TCommonTags extends TItems implements  ITemplate {
       $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $Urlmap->pagenumber, ceil(count($items)/ $postsperpage));
       return $result;
     } else{
-      $list = array_slice($items, ($Urlmap->pagenumber - 1) * $Options->postsperpage, $Options->postsperpage);
+      $list = array_slice($items, ($Urlmap->pagenumber - 1) * $options->postsperpage, $options->postsperpage);
       $TemplatePost = &TTemplatePost::Instance();
       $result .= $TemplatePost->PrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $Urlmap->pagenumber, ceil(count($items)/ $Options->postsperpage));
+      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $Urlmap->pagenumber, ceil(count($items)/ $options->postsperpage));
       return $result;
     }
   }
@@ -313,7 +334,7 @@ class TCommonTags extends TItems implements  ITemplate {
       $this->sortname = $sortname;
       $this->showcount = $showcount;
       $this->maxcount = $maxcount;
-      $this->Save();
+      $this->save();
     }
   }
   
