@@ -1,5 +1,5 @@
 <?php
-class TDatabase extends PDO {
+class tdatabase extends PDO {
   public $result;
   public $sql;
   public $table;

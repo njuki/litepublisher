@@ -3,28 +3,28 @@
 class TLinkGenerator extends TEventClass {
   public $DataObject;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'linkgenerator';
   }
   
-  public function Install() {
-    $this->Data['post'] = '/[title]/';
-    $this->Data['tag'] = '/tag/[name]/';
-    $this->Data['category'] = '/category/[name]/';
-    $this->Data['archive'] ='/[year]/[month]/';
-    $this->Data['file'] ='/[filename]/';
+  public function install() {
+    $this->data['post'] = '/[title]/';
+    $this->data['tag'] = '/tag/[name]/';
+    $this->data['category'] = '/category/[name]/';
+    $this->data['archive'] ='/[year]/[month]/';
+    $this->data['file'] ='/[filename]/';
     $this->Save();
   }
   
-  public function Create(&$Obj, $SchemaName, $uniq = true) {
-    global $Options;
-    $this->DataObject= &$Obj;
-    $result = $this->Data[$SchemaName];
+  public function createlink($Obj, $SchemaName, $uniq = true) {
+    global $options;
+    $this->DataObject= $Obj;
+    $result = $this->data[$SchemaName];
     while (preg_match('/\[(\w+)\]/', $result, $match)) {
       $tag = $match[1];
       if (method_exists($this, $tag)) {
@@ -37,14 +37,14 @@ class TLinkGenerator extends TEventClass {
       $result= str_replace("[$tag]", $text, $result);
     }
     $result= $this->AfterCreate($result);
-    $result= $this->Validate($result);
+    $result= $this->validate($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
   
   public function AfterCreate($url) {
-    global $Options;
-    if ($Options->language == 'ru') $url = $this->ru2lat($url);
+    global $options;
+    if ($options->language == 'ru') $url = $this->ru2lat($url);
     return strtolower($url);
   }
   
@@ -107,8 +107,8 @@ class TLinkGenerator extends TEventClass {
   }
   
   public function MakeUnique($url) {
-    $Urlmap = &TUrlmap::Instance();
-    if(!$Urlmap->ItemExists($url)) return $url;
+    $urlmap = turlmap::instance();
+    if(!$urlmap->ItemExists($url)) return $url;
     $l = strlen($url);
     if (substr($url, $l-1, 1) == '/') {
       $url = substr($url, 0, $l - 1);
@@ -123,7 +123,7 @@ class TLinkGenerator extends TEventClass {
     }
     for ($i = 2; $i < 1000; $i++) {
       $Result = "$url-$i$sufix";
-      if (!$Urlmap->ItemExists($Result)) return $Result;
+      if (!$urlmap->ItemExists($Result)) return $Result;
     }
     
     return "/some-wrong". time();

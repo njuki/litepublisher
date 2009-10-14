@@ -38,7 +38,7 @@ if ($result = tpost::instance($id)) return $result;
     <small>$post->localdate</small></li>';
     
     $result = '';
-    $list = $this->getrecent($this->recentcount);
+    $list = $this->getrecent($options->recentcount);
     foreach ($list as $id) {
       $post = tpost::instance($id);
       eval('$result .= "'. $item . '\n";');
@@ -46,19 +46,29 @@ if ($result = tpost::instance($id)) return $result;
     $result = str_replace("'", '"', $result);
     return $result;
   }
-  
-  public function add(tpost $post) {
+
+public function load() {
+if (dbversion) return true;
+return parent::load();
+}
+
+public function save() {
+if (dbversion) return true;
+return parent::save();
+}
+
+    public function add(tpost $post) {
     if ($post->date == 0) $post->date = time();
     $post->modified = time();
       $post->pagescount = count($post->pages);
     
     $Linkgen = TLinkGenerator::instance();
     if ($post->url == '' ) {
-      $post->url = $Linkgen->Create($post, 'post');
+      $post->url = $Linkgen->createlink($post, 'post');
     } else {
       $title = $post->title;
       $post->title = trim($post->url, '/');
-      $post->url = $Linkgen ->Create($post, 'post');
+      $post->url = $Linkgen ->createlink($post, 'post');
       $Post->title = $title;
     }
 
@@ -73,21 +83,18 @@ $post->raw->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['ra
       foreach ($post->pages as $i => $content) {
         $db->InsertAssoc(array('post' => $post->id, 'page' => $i         'content' => $content));
       }
-      
-      $this->Updated($post);
-    } else {
+   } else {
       global $paths;
       $post->id = ++$this->lastid;
       $dir =$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
       @mkdir($dir, 0777);
       @chmod($dir, 0777);
-      
-      $this->lock();
     $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
+}      
+      $this->lock();
       $this->Updated($post);
       $post->save();
       $this->unlock();
-    }
     $this->Added($post->id);
     $this->Changed();
     $urlmap->ClearCache();
@@ -95,66 +102,58 @@ $post->raw->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['ra
   }
   
   public function edit(tpost $post) {
+    $post->modified = time();
     $urlmap = turlmap::instance();
-    $this->lock();
-    
-    $oldurl = $urlmap->Find(get_class($post), $post->id);
+        $oldurl = $urlmap->gitidurl($post->idurl);
     if ($oldurl != $post->url) {
-      $urlmap->lock();
-      $urlmap->Delete($oldurl);
       $Linkgen = TLinkGenerator::instance();
       if ($post->url == '') {
-        $post->url = $Linkgen->Create($post, 'post');
+        $post->url = $Linkgen->createlink($post, 'post', false);
       } else {
         $title = $post->title;
         $post->title = trim($post->url, '/');
-        $post->url = $Linkgen->Create($post, 'post');
+        $post->url = $Linkgen->Create($post, 'post', false);
         $post->title = $title;
       }
-      $urlmap->Add($post->url, get_class($post), $post->id);
-      $urlmap->unlock();
-    }
-    
+
     if ($oldurl != $post->url) {
-      $urlmap->AddRedir($oldurl, $post->url);
+//check unique url
+if (($idurl = $urlmap->idfind($post->url) && ($idurl != $post->idurl)) {
+$post->url = $linkgen->MakeUnique($post->url);
+}
+$urlmap->setidurl($post->idurl, $post->url);
+      $urlmap->addredir($oldurl, $post->url);
     }
-    
-    $post->modified = time();
-    $this->Updated($post);
+
+    $this->lock();    
+    $this->updated($post);
     $post->save();
     $this->unlock();
-    
+        $this->edited($post->id);
+    $this->changed();
     $urlmap->ClearCache();
-    
-    $this->Edited($post->id);
-    $this->Changed();
   }
   
   public function delete($id) {
+global $classes;
     if (!$this->ItemExists($id)) return false;
     $urlmap = turlmap::instance();
+$urmap->DeleteClassArg($classes->classes['post'], $id);
     if (dbversion) {
-      global $db;
-      $idurl = $this->db->idvalue($id, 'idurl');
-      $urlmap->delete($idurl);
-      $this->db->delete("id = $id limit 1");
+      $this->db->iddelete($id);
       $db->table = 'pages';
       $db->delete("post = $id");
+$db->table = 'postsraw';
+$db->iddelete($id);
     } else {
       global $paths;
-      
-      $this->lock();
-      $post = &TPost::instance($id);
-      
-      $urlmap->lock();
-      $urlmap->Delete($post->url);
-      $urlmap->unlock();
-      
-      unset($this->items[$id]);
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
+      unset($this->items[$id]);
       $this->UpdateArchives();
-      $this->unlock();
-    }
+}
+$this->lock();
+    $this->PublishFuture();
+$this->unlock();
     $this->deleted($post->id);
     $this->changed();
     $urlmap->ClearCache();
