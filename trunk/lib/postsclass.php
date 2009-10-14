@@ -229,21 +229,30 @@ return $this->db->idselect("status = 'published'order by created desc limit $cou
 }
   }
   
-  public function &GetPublishedRange($PageNum, $CountPerPage) {
-    $Result= array();
-    $Count = count($this->archives);
+  public function GetPublishedRange($PageNum, $CountPerPage) {
+    $Count = $this->archivescount;
     $From = ($PageNum - 1) * $CountPerPage;
-    if ($From > $Count)  return $Result;
+    if ($From > $Count)  return array();
+if (dbversion)  return $this->db->idselect("status = 'published' order by created desc from $from limit $CountPerPage");
     $To = min($From + $CountPerPage, $Count);
-    $Result= array_slice(array_keys($this->archives), $From, $To - $From);
-    return $Result;
+return array_slice(array_keys($this->archives), $From, $To - $From);
   }
   
-  public function StripDrafts(array &$items) {
+  public function StripDrafts(array $items) {
+if (dbversion) {
+$list = implode(', ', $items);
+return $this->db->idselect("status = 'published' and id in ($list)");
+} else {
     return array_intersect($items, array_keys($this->archives));
+}
   }
   
   public function SortAsArchive(array $items) {
+if (dbversion) {
+$list = implode(', ', $items);
+return $this->db->idselect("status = 'published' and id in ($list) order by created desc");
+}
+
     $result = array();
     foreach ($items as  $id) {
       if (isset($this->archives[$id])) {
@@ -255,6 +264,6 @@ return $this->db->idselect("status = 'published'order by created desc limit $cou
     return array_keys($result);
   }
   
-}
+}//class
 
 ?>

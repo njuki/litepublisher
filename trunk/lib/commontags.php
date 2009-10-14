@@ -65,8 +65,7 @@ class TCommonTags extends TItems implements  ITemplate {
         $this->items[$id]['items'][] = $postid;
       }
       
-      $publ = $this->items[$id]['items'];
-      $posts->StripDrafts($publ);
+            $publ = $posts->stripdrafts($this->items[$id]['items']);
       $this->items[$id]['count'] = count($publ);
     }
     $this->unlock();
@@ -281,7 +280,7 @@ class TCommonTags extends TItems implements  ITemplate {
     }
     
     $items= $this->items[$this->id]['items'];
-    $Posts = &GetInstance($this->postsclass);
+    $Posts = getiInstance($this->postsclass);
     $items = $Posts->SortAsArchive($items);
     $TemplatePost = &TTemplatePost::Instance();
     if ($this->lite) {
