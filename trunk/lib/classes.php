@@ -2,7 +2,7 @@
 
 function __autoload($ClassName) {
   global $classes;
-  if ($path =$classes->GetPath($ClassName)) {
+  if ($path =$classes->getpath($ClassName)) {
     $filename = $path . $classes->items[$ClassName][0];
     if (@file_exists($filename)) {
       require_once($filename);
@@ -14,51 +14,51 @@ class TClasses extends TItems {
   public $classes;
   public $instances;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'classes';
     $this->AddDataMap('classes', array());
     $this->instances = array();
   }
   
-  public function Add($ClassName, $FileName, $Path = '') {
-    if (!isset($this->items[$ClassName]) ||
-    ($this->items[$ClassName][0] != $FileName) || ($this->items[$ClassName][1] != $Path)) {
-      $this->items[$ClassName] = array($FileName, $Path);
-      $this->Save();
-      $instance = &GetInstance($ClassName);
-      if (method_exists($instance, 'Install')) $instance->Install();
+  public function add($class, $filename, $path = '') {
+    if (!isset($this->items[$class]) ||
+    ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
+      $this->items[$class] = array($filename, $path);
+      $this->save();
+      $instance = getinstance($class);
+      if (method_exists($instance, 'install')) $instance->install();
     }
-    $this->Added($ClassName);
+    $this->added($class);
   }
   
-  public function Delete($ClassName) {
-    if (isset($this->items[$ClassName])) {
-      if (class_exists($ClassName)) {
-        $instance = &GetInstance($ClassName);
-        if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
-      }
-      unset($this->items[$ClassName]);
-      $this->Save();
-      $this->Deleted($ClassName);
-    }
-  }
-  
-  public function Reinstall($class) {
+  public function delete($clsss) {
     if (isset($this->items[$class])) {
-      $this->Lock();
-      $item = $this->items[$class];
-      $this->Delete($class);
-      $this->Add($class, $item[0], $item[1]);
-      $this->Unlock();
+      if (class_exists($class)) {
+        $instance = getinstance($class);
+        if (method_exists($instance, 'uninstall')) $instance->uninstall();
+      }
+      unset($this->items[$class]);
+      $this->save();
+      $this->deleted($ClassName);
     }
   }
   
-  public function GetPath($class) {
+  public function reinstall($class) {
+    if (isset($this->items[$class])) {
+      $this->lock();
+      $item = $this->items[$class];
+      $this->delete($class);
+      $this->add($class, $item[0], $item[1]);
+      $this->unlock();
+    }
+  }
+  
+  public function getpath($class) {
     global  $paths;
     if (!isset($this->items[$class])) return false;
     if (empty($this->items[$class][1])) return $paths['lib'];
@@ -76,21 +76,21 @@ class TClasses extends TItems {
   
 }//class
 
-function &GetInstance($ClassName) {
+function getinstance($class) {
   global $classes;
-  if (!class_exists($ClassName)) {
-    $classes->Error("Class $ClassName not found");
+  if (!class_exists($class)) {
+    $classes->error("Class $class not found");
   }
-  if (!isset($classes->instances[$ClassName])) {
-    $classes->instances[$ClassName] = &new $ClassName ();
+  if (!isset($classes->instances[$class])) {
+    $classes->instances[$class] = new $class();
   }
-  return $classes->instances[$ClassName];
+  return $classes->instances[$class];
 }
 
-function &GetNamedInstance($name, $defclass) {
+function GetNamedInstance($name, $defclass) {
   global $classes;
   $class = !empty($classes->classes[$name]) ? $classes->classes[$name] : $defclass;
-  return GetInstance($class);
+  return getinstance($class);
 }
 
 function PHPComment(&$s) {

@@ -14,7 +14,7 @@ class TPostTransform  {
   );
   
   public static function instance(TPost $post) {
-    $self = GetInstance(__class__);
+    $self = getinstance(__class__);
     $self->post = $post;
     return $self;
   }

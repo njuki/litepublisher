@@ -1,22 +1,23 @@
 <?php
 
-class TPost extends TItem implements  ITemplate {
+class tpost extends TItem implements  ITemplate {
   private $fComments;
   private $dateformater;
   
-  public function GetBaseName() {
+  public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
   }
   
-  public static function &Instance($id = 0) {
+  public static function instance($id = 0) {
     global $classes;
     $class = !empty($classes->classes['post']) ? $classes->classes['post'] : __class__;
-    return parent::Instance($class, $id);
+    return parent::instance($class, $id);
   }
   
-  protected function CreateData() {
-    global $Options;
-    $this->Data= array(
+  protected function create() {
+    global $options;
+$this->table = 'posts';
+    $this->data= array(
     'id' => 0,
     'idurl' => 0,
     'parent' => 0,
@@ -34,8 +35,8 @@ class TPost extends TItem implements  ITemplate {
     'categories' => array(0),
     'tags' => array(),
     'status' => 'published',
-    'commentsenabled' => $Options->commentsenabled,
-    'pingenabled' => $Options->pingenabled,
+    'commentsenabled' => $options->commentsenabled,
+    'pingenabled' => $options->pingenabled,
     'rssenabled' => true,
     'password' => '',
     'template' => '',
@@ -44,44 +45,56 @@ class TPost extends TItem implements  ITemplate {
     );
   }
   
-  public function &Getcomments() {
+  public function getcomments() {
     if (!isset($this->fComments) ) {
-      $this->fComments = &TComments::Instance($this->id);
+      $this->fComments = TComments::instance($this->id);
     }
     return $this->fComments;
   }
   
   public function getprev() {
-    $posts = TPosts::Instance();
+if (dbversion) {
+if ($id = $this->db->findid("status = 'published' and created < '$this->created' order by created desc");
+return self::instance($id);
+}
+} else {
+    $posts = tposts::instance();
     $keys = array_keys($posts->archives);
     $i = array_search($this->id, $keys);
-    if ($i < count($keys) -1) return self::Instance($keys[$i + 1]);
+    if ($i < count($keys) -1) return self::instance($keys[$i + 1]);
+}
     return null;
   }
   
   public function getnext() {
-    $posts = TPosts::Instance();
+if (dbversion) {
+if ($id = $this->db->findid("status = 'published' and created > '$this->created' order by created asc");
+return self::instance($id);
+}
+} else {
+    $posts = tposts::instance();
     $keys = array_keys($posts->archives);
     $i = array_search($this->id, $keys);
-    if ($i > 0 ) return self::Instance($keys[$i - 1]);
+    if ($i > 0 ) return self::instance($keys[$i - 1]);
+}
     return null;
   }
   
   public function geturl() {
-    if (($this->Data['url'] == '') && $this->dbversion && ($this->idurl > 0)) {
-      $urlmap = TUrlmap::instance();
-      $this->Data['url'] = $urlmap->getidurl($this->idurl);
+    if (($this->data['url'] == '') && dbversion && ($this->idurl > 0)) {
+      $urlmap = turlmap::instance();
+      $this->data['url'] = $urlmap->idvalue($this->idurl, 'url');
     }
-    return $this->Data['url'];
+    return $this->data['url'];
   }
   
   public function Getlink() {
-    global $Options;
-    return $Options->url . $this->url;
+    global $options;
+    return $options->url . $this->url;
   }
   
   public function Setlink($link) {
-    global $Options;
+    global $options;
     if ($UrlArray = parse_url($link)) {
       $url = $UrlArray['path'];
       if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
@@ -90,8 +103,8 @@ class TPost extends TItem implements  ITemplate {
   }
   
   public function getrsslink() {
-    global $Options;
-    return "$Options->url/comments/$this->id/";
+    global $options;
+    return "$options->url/comments/$this->id/";
   }
   
   public function Getpubdate() {
@@ -99,76 +112,75 @@ class TPost extends TItem implements  ITemplate {
   }
   
   public function Setpubdate($date) {
-    $this->Data['date'] = strtotime($date);
+    $this->data['date'] = strtotime($date);
   }
   
   //template
   public function Getcategorieslinks($divider = ', ') {
-    $Categories = &TCategories::Instance();
-    $Items= array();
-    foreach ($this->Data['categories'] as  $id) {
-      $Items[] = $Categories->GetLink($id);
+    $categories = tcategories::instance();
+    $items= array();
+    foreach ($this->data['categories'] as  $id) {
+      $items[] = $categories->getlink($id);
     }
-    return implode($divider, $Items);
+    return implode($divider, $items);
   }
   
   public function Gettagslinks($divider = ', ') {
-    $Tags= &TTags::Instance();
-    $Items= array();
-    foreach ($this->Data['tags'] as $id) {
-      $Items[] = $Tags->GetLink($id);
+    $tags= ttags::instance();
+    $items= array();
+    foreach ($this->data['tags'] as $id) {
+      $items[] = $tags->getlink($id);
     }
-    return implode($divider, $Items);
+    return implode($divider, $items);
   }
   
-  public function Getlocaldate() {
+  public function getlocaldate() {
     return TLocal::date($this->date);
   }
   
-  public function Getdateformat() {
-    if (!isset($this->dateformater)) $this->dateformater = new TDate($this->date);
+  public function getdateformat() {
+    if (!isset($this->dateformater)) $this->dateformater = new tdate($this->date);
     $this->dateformater->date = $this->date;
     return $this->dateformater;
   }
   
-  public function Getmorelink() {
-    global $Options;
+  public function getmorelink() {
+    global $options;
     if ($this->moretitle == '') return '';
-    return  "<a href=\"$Options->url$this->url#more-$this->id\" class=\"more-link\">$this->moretitle</a>";
+    return  "<a href=\"$options->url$this->url#more-$this->id\" class=\"more-link\">$this->moretitle</a>";
   }
   
-  
-  public function Gettagnames() {
+   public function gettagnames() {
     if (count($this->tags) == 0) return '';
-    $Tags = &TTags::Instance();
-    return implode(', ', $Tags->GetNames($this->tags));
+    $tags = ttags::instance();
+    return implode(', ', $tags->getnames($this->tags));
   }
   
-  public function Settagnames($names) {
-    $Tags = &TTags::Instance();
-    $this->tags=  $Tags->CreateNames($names);
+  public function settagnames($names) {
+    $tags = ttags::instance();
+    $this->tags=  $tags->createnames($names);
   }
   
-  public function Getcatnames() {
+  public function getcatnames() {
     if (count($this->categories) == 0)  return array();
-    $Categories = &TCategories::Instance();
-    return $Categories->GetNames($this->categories);
+    $categories = tcategories::instance();
+    return $categories->getnames($this->categories);
   }
   
-  public function Setcatnames($names) {
-    $Categories = &TCategories::Instance();
-    $this->categories = $Categories->CreateNames($names);
-    if (count($this->categories ) == 0) $this->categories [] = $Categories->defaultid;
+  public function setcatnames($names) {
+    $categories = tcategories::instance();
+    $this->categories = $categories->createnames($names);
+    if (count($this->categories ) == 0) $this->dat['categories '][] = $categories->defaultid;
   }
   
   //ITemplate
   public function request($id) {
-    parent::Request($id);
+    parent::request($id);
     if ($this->status != 'published') return 404;
   }
   
   public function gettitle() {
-    return $this->Data['title'];
+    return $this->data['title'];
   }
   
   public function gethead() {
@@ -176,7 +188,7 @@ class TPost extends TItem implements  ITemplate {
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
     if ($this->commentsenabled && ($this->commentscount > 0))  {
-      $lang = TLocal::Instance('comment');
+      $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsslink\" />\n";
     }
     return $result;
@@ -187,81 +199,79 @@ class TPost extends TItem implements  ITemplate {
   }
   
   public function getdescription() {
-    return $this->Data['description'];
+    return $this->data['description'];
   }
   
   public function GetTemplateContent() {
-    $Template = TTemplate::Instance();
-    $GLOBALS['post'] = &$this;
+    $template = ttemplate::instance();
+    $GLOBALS['post'] = $this;
     $tml = 'post.tml';
     if ($this->theme <> '') {
-      if (@file_exists($Template->path . $this->theme)) $tml = $this->theme;
+      if (@file_exists($template->path . $this->theme)) $tml = $this->theme;
     }
-    return $Template->ParseFile($tml);
+    return $template->ParseFile($tml);
   }
   
-  public function Getcontent() {
-    $Template = &TTemplatePost::Instance();
-    $result = $Template->BeforePostContent($this->id);
-    $Urlmap = &TUrlmap::Instance();
-    if (($Urlmap->pagenumber == 1) && !(isset($this->Data['pages']) && (count($this->Data['pages']) > 0))) {
+  public function getcontent() {
+    $template = ttemplatePost::instance();
+    $result = $template->BeforePostContent($this->id);
+    $urlmap = turlmap::instance();
+    if (($urlmap->pagenumber == 1) && !(isset($this->data['pages']) && (count($this->data['pages']) > 0))) {
       $result .= $this->filtered;
-    } elseif ($s = $this->GetPage($Urlmap->pagenumber - 1)) {
+    } elseif ($s = $this->getpage($urlmap->pagenumber - 1)) {
       $result .= $s;
-    } elseif ($Urlmap->pagenumber <= $this->commentpages) {
+    } elseif ($urlmap->pagenumber <= $this->commentpages) {
       //$result .= '';
     } else {
-      $lang = &TLocal::Instance();
+      $lang = tlocal::instance();
       $result .= $lang->notfound;
     }
-    $result .= $Template->AfterPostContent($this->id);
+    $result .= $template->AfterPostContent($this->id);
     return $result;
   }
   
-  public function Setcontent($s) {
+  public function setcontent($s) {
     if ($s <> $this->rawcontent) {
       $this->rawcontent = $s;
-      $filter = TContentFilter::Instance();
+      $filter = TContentFilter::instance();
       $filter->SetPostContent($this,$s);
     }
   }
   
-  public function Getrawcontent() {
-    if ($this->dbversion && ($this->id > 0) && empty($this->Data['rawcontent'])) {
-      $this->Data['rawcontent'] = $this->getdb('postsraw')->idvalue($this->id, 'rawcontent');
+  public function getrawcontent() {
+    if (dbversion && ($this->id > 0) && empty($this->data['rawcontent'])) {
+      $this->data['rawcontent'] = $this->raw->idvalue($this->id, 'rawcontent');
     }
-    return $this->Data['rawcontent'];
+    return $this->data['rawcontent'];
   }
   
-  public function Setrawcontent($s) {
-    $this->Data['rawcontent'] = $s;
-    if ($this->dbversion && ($this->id > 0)) {
-      $this->getdb('postsraw')->idupdate($this->id, 'rawcontent = '. $this->db->quote($s));
+  public function setrawcontent($s) {
+    $this->data['rawcontent'] = $s;
+    if (dbversion && ($this->id > 0)) {
+      $this->raw->idupdate($this->id, 'rawcontent = '. $this->db->quote($s));
     }
   }
+
+protected function getraw() {
+global $db;
+$db->table = 'postsraw';
+return $db;
+}
   
-  public function SetData($data) {
-    foreach ($data as $key => $value) {
-      if (key_exists($key, $this->Data)) $this->Data[$key] = $value;
-    }
-  }
-  
-  public function GetPage($i) {
-    if ($this->dbversion && ($this->id > 0)) {
-      global $db;
-      $db->table = 'pages';
-      if ($r = $db->getassoc("(post = $this->id) and (page = $i) limit 1")) {
+  public function getpage($i) {
+    if (dbversion && ($this->id > 0)) {
+     if ($r = $this->getdb('pages')->getassoc("(post = $this->id) and (page = $i) limit 1")) {
         return $r['content'];
       }
-    } elseif ( isset($This->Data['pages'][$i]))  {
-      return $this->Data['pages'][$i];
+    } elseif ( isset($This->data['pages'][$i]))  {
+      return $this->data['pages'][$i];
     }
     return false;
   }
   
-  public function AddPage($s) {
-    $this->Data['pages'] = $s;
-    if ($this->dbversion && ($this->id != 0)) {
+  public function addpage($s) {
+    $this->data['pages'][] = $s;
+    if (dbversion && ($this->id != 0)) {
       global $db;
       $db->table = 'pages';
       $count = $db->getcount("post = $this->id");
@@ -273,32 +283,30 @@ class TPost extends TItem implements  ITemplate {
     }
   }
   
-  public function DeletePages() {
-    $this->Data['pages'] = array();
-    if ($this->dbversion) {
-      global $db;
-      $db->table = 'pages';
-      $db->delete("post = $this->id");
+  public function deletepages() {
+    $this->data['pages'] = array();
+    if (dbversion) {
+      $this->getdb('pages')->delete("post = $this->id");
     }
   }
   
-  public function Gethaspages() {
-    return (isset($this->Data['pages']) && (count($this->Data['pages']) > 0)) || ($this->commentpages > 1);
+  public function gethaspages() {
+    return (isset($this->data['pages']) && (count($this->data['pages']) > 0)) || ($this->commentpages > 1);
   }
   
-  public function Getpagescount() {
-    return max($this->commentpages,  isset($this->Data['pages']) ? count($this->Data['pages']) : 0);
+  public function getpagescount() {
+    return max($this->commentpages,  isset($this->data['pages']) ? count($this->data['pages']) : 0);
   }
   
-  public function Getcommentpages() {
-    global $Options;
-    if (!$Options->commentpages) return 1;
-    return ceil($this->comments->count / $Options->commentsperpage);
+  public function getcommentpages() {
+    global $options;
+    if (!$options->commentpages) return 1;
+    return ceil($this->comments->count / $options->commentsperpage);
   }
   
   public function getcommentscount() {
-    if ($this->dbversion) {
-      return $this->Data['commentscount'];
+    if (dbversion) {
+      return $this->data['commentscount'];
     } else {
       return $this->comments->count;
     }
@@ -311,6 +319,11 @@ class TPost extends TItem implements  ITemplate {
     }
   }
   
+ 
+ protected function SaveToDB() {
+TPostTransform ::instance($this)->save();
+}
+
 }//class
 
 ?>
