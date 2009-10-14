@@ -154,7 +154,7 @@ public function findid($where) {
 $r = res->fetch(PDO::FETCH_NUM);
 return $r[0];
 }
-return -1;
+return false;
 }
   
   public function idvalue($id, $name) {

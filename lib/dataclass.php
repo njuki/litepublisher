@@ -1,44 +1,44 @@
 <?php
 
 class TDataClass {
-  private $LockCount;
+  private $lockcount;
   public static $GlobalLock;
-  public $Data;
+  public $data;
   public $basename;
   public $CacheEnabled;
   //database
   public $table;
   
   public function __construct() {
-    $this->LockCount = 0;
+    $this->lockcount = 0;
     $this->CacheEnabled = true;
-    $this->Data= array();
+    $this->data= array();
     $this->basename = 'data';
-    $this->CreateData();
+    $this->create();
   }
   
-  protected function CreateData() {
+  protected function create() {
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "Get$name") ||
-    method_exists($this, $get = "get$name")) {
+    if (method_exists($this, $get = "get$name") ||
+    method_exists($this, $get = "Get$name")) {
       return $this->$get();
-    } elseif (array_key_exists($name, $this->Data)) {
-      return $this->Data[$name];
+    } elseif (array_key_exists($name, $this->data)) {
+      return $this->data[$name];
     } else {
-      return    $this->Error("The requested property $name not found in class ". get_class($this));
+      return    $this->error("The requested property $name not found in class ". get_class($this));
     }
   }
   
   public function __set($name, $value) {
-    if (method_exists($this, $set = "Set$name")) {
+    if (method_exists($this, $set = "set$name")) {
       $this->$set($value);
       return true;
     }
     
-    if (key_exists($name, $this->Data)) {
-      $this->Data[$name] = $value;
+    if (key_exists($name, $this->data)) {
+      $this->data[$name] = $value;
       return true;
     }
     
@@ -49,43 +49,44 @@ class TDataClass {
     if (method_exists($this, strtolower($name))) {
       return call_user_func_array(array(&$this, strtolower($name)), $params);
     }
-    $this->Error("The requested method $name not found in class " . get_class($this));
+    $this->error("The requested method $name not found in class " . get_class($this));
   }
   
   public function PropExists($name) {
-    return array_key_exists($name, $this->Data) || method_exists($this, "Get$name") | method_exists($this, "get$name") || isset($this->$name);
+    return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name") || isset($this->$name);
   }
   
   public function supported($interface) {
     return is_a($this, $interface);
   }
   
-  public function Error($Msg) {
+  public function error($Msg) {
     throw new Exception($Msg);
   }
   
-  public function GetBaseName() {
+  public function getbasename() {
     return $this->basename;
   }
   
-  public function Install() {
-    $this->CallSatellite('Install');
+  public function install() {
+    $this->CallSatellite('install');
   }
   
-  public function Uninstall() {
-    $this->CallSatellite('Uninstall');
+  public function uninstall() {
+    $this->CallSatellite('uninstall');
   }
   
-  public function Validate($repair = false) {
-    $this->CallSatellite('Validate', $repair);
+  public function validate($repair = false) {
+    $this->CallSatellite('validate', $repair);
   }
   
   protected function CallSatellite($func, $arg = null) {
     global $classes, $paths;
+$func{0} = strtoupper($func{0});
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = $classes->GetPath($class)) {
+      if ($path = $classes->getpath($class)) {
         $filename = basename($classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
         if (!@file_exists($file)) {
@@ -103,58 +104,30 @@ class TDataClass {
   
   public function load() {
     global $paths;
-    if ($this->dbversion == 'full') return $this->LoadFromDB();
-    $FileName = $paths['data'] . $this->GetBaseName() .'.php';
-    if (@file_exists($FileName)) {
-      return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
+    if (dbversion == 'full') return $this->LoadFromDB();
+    $filename = $paths['data'] . $this->getbasename() .'.php';
+    if (@file_exists($filename)) {
+      return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }
   
   public function save() {
     global $paths;
-    if (self::$GlobalLock || ($this->LockCount > 0)) return;
-    if ($this->dbversion == 'full') {
+    if (self::$GlobalLock || ($this->lockcount > 0)) return;
+    if (dbversion == 'full') {
       $this->SaveToDB();
     } else {
-      SafeSaveFile($paths['data'].$this->GetBaseName(), $this->SaveToString());
+      SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
     }
-  }
-  
-  public function SaveToFile($FileName) {
-    if ($fh = fopen($FileName, 'w+')) {
-      $this->SaveToStream($fh);
-      fclose($fh);
-    } else {
-      $this->Error("Cannt open $FileName to write");
-    }
-  }
-  
-  public function SaveToStream($handle) {
-    $s = $this->SaveToString();
-    fwrite($handle, $s);
-  }
-  
-  public function LoadFromFile($FileName) {
-    if ($fh = fopen($FileName, 'r')) {
-      $this->LoadFromStream($fh, filesize($FileName));
-      fclose($fh);
-    } else {
-      $this->Error("Cant open $FileName to read");
-    }
-  }
-  
-  public function  LoadFromStream($handle, $length) {
-    $s = fread($handle,  $length);
-    $this->LoadFromString($s);
   }
   
   public function SaveToString() {
-    return PHPComment(serialize($this->Data));
+    return serialize($this->data);
   }
   
   public function LoadFromString($s) {
     try {
-      if (!empty($s)) $this->Data = unserialize($s) + $this->Data;
+      if (!empty($s)) $this->data = unserialize($s) + $this->data;
       $this->AfterLoad();
     } catch (Exception $e) {
       echo 'Caught exception: '.  $e->getMessage() ;
@@ -165,19 +138,15 @@ class TDataClass {
   }
   
   public function lock() {
-    $this->LockCount++;
+    $this->lockcount++;
   }
   
-  public function Unlock() {
-    if (--$this->LockCount <= 0) $this->Save();
+  public function unlock() {
+    if (--$this->lockcount <= 0) $this->save();
   }
   
   public function Getlocked() {
-    return $this->LockCount  > 0;
-  }
-  
-  public function Getdbversion() {
-    return false;
+    return $this->lockcount  > 0;
   }
   
   public function Getclass() {
@@ -192,11 +161,11 @@ class TDataClass {
   }
   
   protected function SaveToDB() {
-    $db->add($this->GetBaseName(), $this->SaveToString());
+    $db->add($this->getbasename(), $this->SaveToString());
   }
   
   protected function LoadFromDB() {
-    if ($r = $this->db->select('basename = '. $this->GetBaseName() . "'")) {
+    if ($r = $this->db->select('basename = '. $this->getbasename() . "'")) {
       return $this->LoadFromString($r['data']);
     }
   }
