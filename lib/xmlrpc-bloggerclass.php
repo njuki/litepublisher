@@ -70,7 +70,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     
     $num_posts  = $args[4];
     $Posts = &TPosts::Instance();
-    $Items = &$Posts->GetPublishedRange(0, $num_posts  );
+    $Items = $Posts->GetPublishedRange(0, $num_posts  );
     
     foreach ($Items as $id) {
       $Post = &TPost::Instance($id);
