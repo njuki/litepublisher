@@ -2,15 +2,15 @@
 
 class THomepage extends TEventClass implements  ITemplate {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'homepage' ;
-    $this->Data['text'] = '';
-    $this->Data['hideposts'] = false;
+    $this->data['text'] = '';
+    $this->data['hideposts'] = false;
   }
   
   //ITemplate
@@ -21,41 +21,41 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function GetTemplateContent() {
-    global $Options, $Urlmap;
+    global $options, $urlmap;
     $result = '';
-    if ($Urlmap->pagenumber == 1) $result .= $this->text;
+    if ($urlmap->pagenumber == 1) $result .= $this->text;
     if ($this->hideposts) return $result;
-    $items =  $this->GetItems();
-    $TemplatePost = &TTemplatePost::Instance();
+    $items =  $this->getitems();
+    $TemplatePost = &TTemplatePost::instance();
     $result .= $TemplatePost->PrintPosts($items);
-    $Posts = &TPosts::Instance();
-    $result .=$TemplatePost->PrintNaviPages($Options->home, $Urlmap->pagenumber, ceil(count($Posts->archives)/ $Options->postsperpage));
+    $Posts = tposts::instance();
+    $result .=$TemplatePost->PrintNaviPages($options->home, $urlmap->pagenumber, ceil($Posts->archivescount / $options->postsperpage));
     return $result;
   }
   
-  public function GetItems() {
-    global $Options, $Urlmap;
-    $Posts = &TPosts::Instance();
-    return $Posts->GetPublishedRange($Urlmap->pagenumber, $Options->postsperpage);
+  public function getitems() {
+    global $options, $urlmap;
+    $Posts = tposts::instance();
+    return $Posts->GetPublishedRange($urlmap->pagenumber, $options->postsperpage);
   }
   
-  public function Settext($s) {
-    global $Options;
+  public function settext($s) {
+    global $options;
     if ($this->text != $s) {
-      $this->Data['text'] = $s;
-      $this->Save();
-      $urlmap = &TUrlmap::Instance();
-      $urlmap->SetExpired($Options->home);
+      $this->data['text'] = $s;
+      $this->save();
+      $urlmap = turlmap::instance();
+      $urlmap->SetExpired($options->home);
     }
   }
   
-  public function Sethideposts($value) {
-    global $Options;
+  public function sethideposts($value) {
+    global $options;
     if ($this->hideposts != $value) {
-      $this->Data['hideposts'] = $value;
-      $this->Save();
-      $urlmap = &TUrlmap::Instance();
-      $urlmap->SetExpired($Options->home);
+      $this->data['hideposts'] = $value;
+      $this->save();
+      $urlmap = turlmap::instance();
+      $urlmap->SetExpired($options->home);
     }
   }
   

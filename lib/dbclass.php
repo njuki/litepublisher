@@ -139,6 +139,10 @@ function UpdateProps($obj, $props) {
     return $this->exec("delete from $this->prefix$this->table where $where");
   }
 
+public function iddelete($id) {
+    return $this->exec("delete from $this->prefix$this->table where id = $id");
+}
+
 public function idexists($id) {
 }
   

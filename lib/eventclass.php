@@ -18,13 +18,13 @@ class TEventClass extends TDataClass {
     unset($classes->instances[get_class($this)]);
   }
   
-  protected function CreateData() {
-    if (!$this->dbversion) $this->AddDataMap('events', array());
+  protected function create() {
+    if (!dbversion) $this->AddDataMap('events', array());
   }
   
   public function AssignDataMap() {
     foreach ($this->DataMap as $propname => $key) {
-      $this->$propname = &$this->Data[$key];
+      $this->$propname = &$this->data[$key];
     }
   }
   
@@ -34,28 +34,22 @@ class TEventClass extends TDataClass {
   
   protected function AddDataMap($name, $value) {
     $this->DataMap[$name] = $name;
-    $this->Data[$name] = $value;
-    $this->$name = &$this->Data[$name];
+    $this->data[$name] = $value;
+    $this->$name = &$this->data[$name];
   }
   
   public function __get($name) {
-    if (method_exists($this, $name)) {
-      return array(
-      'class' =>get_class($this),
-      'func' => $name
-      );
-    }
-    
+    if (method_exists($this, $name)) return array('class' =>get_class($this), 'func' => $name);
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
-    if ($this->SetEvent($name, $value)) return true;
-    $this->Error("Unknown property $name in class ". get_class($this));
+    if ($this->setevent($name, $value)) return true;
+    $this->error("Unknown property $name in class ". get_class($this));
   }
   
-  protected function SetEvent($name, $value) {
+  protected function setevent($name, $value) {
     if (in_array($name, $this->EventNames)) {
       $this->SubscribeEvent($name, $value);
       return true;
@@ -64,31 +58,29 @@ class TEventClass extends TDataClass {
   }
   
   public  function __call($name, $params) {
-    if (in_array($name, $this->EventNames)) {
-      return $this->CallEvent($name, $params);
-    }
-    
+    if (in_array($name, $this->EventNames)) return $this->CallEvent($name, $params);
     parent::__call($name, $params);
   }
   
-  protected function AddEvents() {
+  protected function addevents() {
     $a = func_get_args();
     array_splice($this->EventNames, count($this->EventNames), 0, $a);
   }
   
-  private function GetEvents($name) {
+  private function getevents($name) {
     if (isset($this->events[$name])) return $this->events[$name];
-    if ($this->dbversion) {
-      $r = $this->db->SelectTableWhere('events', "owner = '$this->class' and name = '$name'");
-      $this->events[$name] = $r->fetchAll (PDO::FETCH_ASSOC);
+    if (dbversion) {
+      if ($res = $this->getdb('events')->select("owner = '$this->class' and name = '$name'")) {
+      $this->events[$name] = $res->fetchAll (PDO::FETCH_ASSOC);
       return $this->events[$name];
+}
     }
     return false;
   }
   
   private function CallEvent($name, &$params) {
-    $Result = '';
-    if (    $list = $this->GetEvents($name)) {
+    $result = '';
+    if (    $list = $this->getevents($name)) {
       foreach ($list as $i => $item) {
         if (empty($item['class'])) {
           if (function_exists($item['func'])) {
@@ -101,22 +93,21 @@ class TEventClass extends TDataClass {
           $this->DeleteEvent();
           continue;
         } else {
-          $obj = &GetInstance($item['class']);
+          $obj = getinstance($item['class']);
           $call = array(&$obj, $item['func']);
         }
-        $lResult = call_user_func_array($call, $params);
-        if (is_string($lResult)) $Result .= $lResult;
+        $lresult = call_user_func_array($call, $params);
+        if (is_string($lresult)) $result .= $lresult;
       }
     }
     
-    return $Result;
+    return $result;
   }
   
   private function DeleteEvent($name, $i) {
-    if ($this->dbversion) {
+    if (dbversion) {
       $id =           $this->events[$name][$i]['id'];
-      $db = $this->Getdb('events');
-      $db->deleteid($id);
+      $this->getdb('events)->iddelete($id);
       array_splice($this->events[$name], $i, 1);
     } else {
       array_splice($this->events[$name], $i, 1);
@@ -130,16 +121,12 @@ class TEventClass extends TDataClass {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
     
-    $this->events[$name][] = array(
-    'class' => $params['class'],
-    'func' => $params['func']
-    );
-    if ($this->dbversion) {
+    $this->events[$name][] = array('class' => $params['class'], 'func' => $params['func']);
+    if (dbversion) {
       $event = &$this->events[$name][count($this->events[$name]) - 1];
       $event['name'] = $name;
       $event['owner'] = get_class($this);
-      $db = $this->Getdb('events');
-      $event['id'] = $db->InsertAssoc($event);
+      $event['id'] = $this->getdb('events')->InsertAssoc($event);
     } else {
       $this->save();
     }
@@ -158,7 +145,7 @@ class TEventClass extends TDataClass {
   }
   
   public static function unsub(&$obj) {
-    $self = self::Instance();
+    $self = self::instance();
     $self->UnsubscribeClassName(get_class($obj));
   }
   
@@ -174,12 +161,6 @@ class TEventClass extends TDataClass {
       }
     }
     $this->unlock();
-  }
-  
-  public function Validate() {
-    foreach ($this->EventNames as $name) {
-      if (Method_exists($this, $name)) $this->Error("the virtual method $name cannt be exist in class". get_class($this));
-    }
   }
   
 }
