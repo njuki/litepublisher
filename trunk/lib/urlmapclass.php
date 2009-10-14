@@ -6,29 +6,26 @@ class TUrlmap extends TItems {
   public $urlid;
   public $uripath;
   public $pagenumber;
-  public $get;
-  public $tree;
   public $is404;
   public $IsAdminPanel;
   public $Ispda;
   private $argfinal;
   
-  public static function &Instance() {
-    return GetNamedInstance('urlmap', __class__);
+  public static function instance() {
+    return getnamedinstance('urlmap', __class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->table = 'urlmap';
     $this->basename = 'urlmap';
-    $this->AddEvents('BeforeRequest', 'AfterRequest', 'CacheExpired');
-    $this->AddDataMap('get', array());
-    $this->AddDataMap('tree', array());
+    $this->addevents('BeforeRequest', 'AfterRequest', 'CacheExpired');
     $this->is404 = false;
     $this->IsAdminPanel = false;
     $this->Ispda= false;
   }
   
-  public function Request($host, $url) {
+  public function request($host, $url) {
     global $Options, $paths;
     $this->host = $host;
     $this->pagenumber = 1;
@@ -280,10 +277,15 @@ class TUrlmap extends TItems {
     return false;
   }
   
-  public function Delete($url) {
-    if ($this->DeleteItem($this->items, $url) || $this->DeleteItem($this->get, $url) || $this->DeleteItem($this->tree, $url)) {
-      $this->Save();
-    }
+  public function delete($url) {
+if (dbversion) {
+$this->db->delete('url = '. $this->db->quote($url));
+} else {
+if (isset(4ths->items[$url)) {
+unset($this->items[$url]);
+$this->save();
+}
+}
   }
   
   private function DeleteClassArgItem(&$items, $class, $arg) {
@@ -468,12 +470,34 @@ class TUrlmap extends TItems {
   
   //db
   public function getidurl($id) {
+if (dbversion) {
     if (!isset($this->items[$id])) {
       $this->items[$id] = $this->db->getitem($id);
     }
     return $this->items[$id]['url'];
+} else {
+foreach ($this->items as $url => $item) {
+if ($item['id'] == $id) return $url;
+}
+}
   }
   
+public function setidulr($id, $url) {
+if (dbversion) {
+$this->db->setvalue($id, 'url', $url);
+} else {
+foreach ($this->items as $u => $item) {
+if ($id == $item['id']) {
+unset($this->items[$u]);
+$this->items[$url] = $item;
+$this->save();
+return;
+}
+}
+}
+}
+
+
 }//class
 
 ?>

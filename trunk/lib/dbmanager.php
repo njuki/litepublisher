@@ -1,6 +1,6 @@
 <?php
 
-class TDBManager  {
+class tdbanager  {
   private $max_allowed_packet;
   
   public static function &instance() {
