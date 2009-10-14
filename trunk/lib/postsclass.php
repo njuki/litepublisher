@@ -1,49 +1,53 @@
 <?php
 
-class TPosts extends TItems {
+class tposts extends TItems {
   public $archives;
   //public $recentcount;
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->table = 'posts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
-    $this->AddEvents('Edited', 'Changed', 'SingleCron');
+    $this->addevents('edited', cChanged', 'singlecron');
     $this->AddDataMap('archives' , array());
-    $this->Data['recentcount'] = 10;
+    $this->data['recentcount'] = 10;
   }
   
-  public function &GetItem($id) {
-    if (isset($this->items[$id])) {
-      return TPost::Instance($id);
+  public function getitem($id) {
+if (dbversion) {
+    if ($res = $this->db->select("id = $id")) {
+if ($result = tpost::instance($id)) return $result;
+} else {
+    if (isset($this->items[$id])) return tpost::instance($id);
     }
-    return $this->Error("Item $id not found in class ". get_class($this));
+    return $this->error("Item $id not found in class ". get_class($this));
   }
   
-  public function Setrecentcount($value) {
+  public function setrecentcount($value) {
     if ($value != $this->recentcount) {
-      $this->Data['recentcount'] = $value;
+      $this->data['recentcount'] = $value;
       $this->save();
     }
   }
   
   public function GetWidgetContent($id) {
-    global $Options;
-    $Template = TTemplate::Instance();
-    $item = !empty($Template->theme['widget']['recentpost']) ? $Template->theme['widget']['recentpost'] :
-    '<li><strong><a href=\'$Options->url$post->url\' rel=\'bookmark\' title=\'Permalink to $post->title\'>$post->title</a></strong><br />
+    global $options;
+    $template = template::instance();
+    $item = !empty($template->theme['widget']['recentpost']) ? $template->theme['widget']['recentpost'] :
+    '<li><strong><a href=\'$options->url$post->url\' rel=\'bookmark\' title=\'Permalink to $post->title\'>$post->title</a></strong><br />
     <small>$post->localdate</small></li>';
     
     $result = '';
-    $list = $this->GetRecent($this->recentcount);
+    $list = $this->getrecent($this->recentcount);
     foreach ($list as $id) {
-      $post = TPost::Instance($id);
+      $post = tpost::instance($id);
       eval('$result .= "'. $item . '\n";');
     }
     $result = str_replace("'", '"', $result);
     return $result;
   }
   
-  public function Add(TPost &$post) {
+  public function add(TPost $post) {
     if (!isset($post)) return $this->Error('Post not assigned');
     if ($post->date == 0) $post->date = time();
     $post->modified = time();
@@ -68,7 +72,7 @@ class TPosts extends TItems {
       $db->table = 'rawcontent';
       $db->InsertAssoc(array(
       'id' => $post->id,
-      'rawcontent' => $post->Data['rawcontent']
+      'rawcontent' => $post->data['rawcontent']
       ));
       
       $db->table = 'pages';
@@ -103,13 +107,13 @@ class TPosts extends TItems {
   }
   
   public function Edit(TPost &$Post) {
-    $Urlmap = &TUrlmap::Instance();
+    $urlmap = &TUrlmap::Instance();
     $this->lock();
     
-    $oldurl = $Urlmap->Find(get_class($Post), $Post->id);
+    $oldurl = $urlmap->Find(get_class($Post), $Post->id);
     if ($oldurl != $Post->url) {
-      $Urlmap->lock();
-      $Urlmap->Delete($oldurl);
+      $urlmap->lock();
+      $urlmap->Delete($oldurl);
       $Linkgen = &TLinkGenerator::Instance();
       if ($Post->url == '') {
         $Post->url = $Linkgen->Create($Post, 'post');
@@ -119,12 +123,12 @@ class TPosts extends TItems {
         $Post->url = $Linkgen->Create($Post, 'post');
         $Post->title = $title;
       }
-      $Urlmap->Add($Post->url, get_class($Post), $Post->id);
-      $Urlmap->unlock();
+      $urlmap->Add($Post->url, get_class($Post), $Post->id);
+      $urlmap->unlock();
     }
     
     if ($oldurl != $Post->url) {
-      $Urlmap->AddRedir($oldurl, $Post->url);
+      $urlmap->AddRedir($oldurl, $Post->url);
     }
     
     $Post->modified = time();
@@ -132,7 +136,7 @@ class TPosts extends TItems {
     $Post->save();
     $this->unlock();
     
-    $Urlmap->ClearCache();
+    $urlmap->ClearCache();
     
     $this->Edited($Post->id);
     $this->Changed();
@@ -214,9 +218,18 @@ class TPosts extends TItems {
       }
     }
   }
+
+public function getarchivescount() {
+if (dbversion) return $this->db->getcount("status = 'published');
+return count($this->archives);
+}
   
-  public function GetRecent($count) {
+  public function getrecent($count) {
+if (dbversion) {
+return $this->db->idselect("status = 'published'order by created desc limit $count");
+} 
     return array_slice(array_keys($this->archives), 0, $count);
+}
   }
   
   public function &GetPublishedRange($PageNum, $CountPerPage) {

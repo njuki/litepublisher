@@ -316,10 +316,11 @@ return $db;
   public function LoadFromDB() {
     if ($res = $this->db->select("id = $this->id")) {
       $res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
+return true;
     }
+return false;
   }
   
- 
  protected function SaveToDB() {
 TPostTransform ::instance($this)->save();
 }

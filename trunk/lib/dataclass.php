@@ -129,8 +129,10 @@ $func{0} = strtoupper($func{0});
     try {
       if (!empty($s)) $this->data = unserialize($s) + $this->data;
       $this->AfterLoad();
+return true;
     } catch (Exception $e) {
       echo 'Caught exception: '.  $e->getMessage() ;
+return false;
     }
   }
   

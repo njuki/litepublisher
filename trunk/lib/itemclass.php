@@ -12,8 +12,11 @@ class TItem extends TDataClass {
     $self = new $class();
     $self->id = $id;
     if ($id != 0) {
+      if (!$self->load()) {
+$self->free();
+return false;
+}
       self::$instances[$class][$id] = $self;
-      $self->load();
     }
     return $self;
   }
@@ -44,7 +47,7 @@ class TItem extends TDataClass {
     return  $this->Error("Field $name not exists in class " . get_class($this));
   }
   
-  public function Setid($id) {
+  public function setid($id) {
     if ($id != $this->id) {
       $class = get_class($this);
       self::$instances[$class][$id] = $this;
@@ -55,7 +58,7 @@ class TItem extends TDataClass {
   
   public function request($id) {
     $this->id = $id;
-    $this->load();
+    if !$this->load()) return 404;
   }
   
   public static function DeleteItemDir($dir) {
