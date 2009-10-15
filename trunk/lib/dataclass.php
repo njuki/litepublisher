@@ -172,5 +172,18 @@ return false;
     }
   }
   
+protected function getthistable() {
+global $db;
+return $db->prefix . $this->table;
+}
+
+protected function geturltable() {
+global $db;
+return $db->prefix .'urlmap';
+}
+
+protected function getjoinurl() {
+  return " left join $this->urltable on $this->urltable.id = $this->thistable.urlid ";
+}
 }//class
 ?>
