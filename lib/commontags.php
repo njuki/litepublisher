@@ -6,7 +6,7 @@ class TCommonTags extends TItems implements  ITemplate {
   public $PermalinkIndex;
   public $PostPropname;
   protected $id;
-  private $NewName;
+  private $newname;
   
   protected function create() {
     parent::create();
@@ -65,16 +65,17 @@ return $this->items[$id]['url'];
       $list = $post->{$this->PostPropname};
 if (dbversion) {
 $items = implode(', ', $list);
-$this->getdb->$this->itemstable)->deletetag in (items)");
+$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'postid' and not tag in (items)");
+$this->getdb->$this->itemstable)->delete("tag in (items)");
 $this->db->query("insert into $this->itemstable ($postid, idtag)
 select $this->thistable.id as idtag  from $this->thistable  where idtag in ($items)");
-$this->db->query("update 
-select m.id,m.c,count(*) from m left join s using(id) group by m.id; 
-update $this->thistable (itemscount = pcount)
-
-select post from $this->itemstable  where  tag in (items)
-
-where id in (list)";
+//update count
+$poststable = $this->db->prefix . 'posts';
+$items = implode(', ', array_merge($list, $exclude));
+$this->db->query("update $this->thistable set itemscount = postscount 
+(select count($this->itemstable.post) as postscount  from $this->itemstable, $poststable 
+where tag in ($items) and post = $poststable.id and $poststable.status = 'published' group by post)
+where id in ($items)";
 } else {
     $this->lock();
     foreach ($this->items as $id => $Item) {
@@ -97,8 +98,16 @@ where id in (list)";
   public function PostDeleted($postid) {
 $postid = (int) $postid;
 if (dbversion) {
+$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'postid' and not tag in (items)");
+if (count($exclude) > 0) {
 $this->getdb($this->itemstable)->delete("post = $postid");
-//$this->db->
+$poststable = $this->db->prefix . 'posts';
+$items = implode(', ', $exclude);
+$this->db->query("update $this->thistable set itemscount = postscount 
+(select count($this->itemstable.post) as postscount  from $this->itemstable, $poststable 
+where tag in ($items) and post = $poststable.id and $poststable.status = 'published' group by post)
+where id in ($items)";
+}
 return;
 }
 
@@ -113,69 +122,56 @@ return;
     $this->unlock();
   }
   
-  //for link generator
-  public function name() {
-    return $this->NewName;
-  }
-  
-  public function Add($name, $slug = '') {
-    if (empty($name)) return false;
-    $id  = $this->IndexOf('name', $name);
+  public function add($title, $slug = '') {
+    if (empty($title)) return false;
+    $id  = $this->IndexOf('title', $title);
     if ($id > 0) return $id;
+    $this->newname = $slug == '' ? $title : $slug;
+    $urlmap =turlmap::instance();
+    $Linkgen = TLinkGenerator::instance();
+    $url = $Linkgen->createlink($this, $this->PermalinkIndex );
+
+if (dbversion)  {
+$id = $this->db->InsertAssoc(array('title' => $title));
+$urlid =         $urlmap->Add($url, get_class($this),  $id);
+$this->db->setvalue($id, 'urlid', $urlid);
+$urlmap->clearcache();
+}
     $this->lock();
-    $this->lastid++;
-    $this->NewName = $slug == '' ? $name : $slug;
-    $Linkgen = &TLinkGenerator::instance();
-    $url = $Linkgen->Create($this, $this->PermalinkIndex );
-    $this->items[$this->lastid] = array(
+    $this->items[++$this->lastid] = array(
     'id' => $this->lastid,
-    'count' => 0,
-    'name' => $name,
+    'itemscount' => 0,
+    'title' => $title,
     'url' =>$url,
+'urlid' =>         $urlmap->Add($url, get_class($this),  $this->lastid),
     //'description ' => '',
     //'keywords' => '',
     'items' => array()
     );
     $this->unlock();
-    $this->AddUrl($this->lastid, $url);
-    $this->Added($this->lastid);
+    $this->added($this->lastid);
+$urlmap->clearcache();
     return $this->lastid;
+}
   }
   
-  public function AddUrl($id, $url) {
-    $urlmap =turlmap::instance();
-    $dir = "/$this->PermalinkIndex/";
-    if (substr($url, 0, strlen($dir)) == $dir) {
-      $subdir = substr($url, strlen($dir));
-      $subdir = trim($subdir, '/');
-      if (strpos($subdir, '/')) {
-        $urlmap->Add($url, get_class($this),  $id);
-      } else {
-        $urlmap->AddSubNode($this->PermalinkIndex, $subdir, get_class($this), $id);
-      }
-    } else {
-      $urlmap->Add($url, get_class($this),  $id);
-    }
-    $urlmap->ClearCache();
-  }
-  
-  public function Edit($id, $name, $url) {
+ public function edit($id, $title, $url) {
+if (dbversion) {
+}
     $item = $this->items[$id];
     if (($item['name'] != $name) || ($item['url'] != $url)) {
-      $urlmap = &turlmap::instance();
+      $urlmap = turlmap::instance();
       $urlmap->lock();
-      
-      $this->lock();
-      $item['name'] = $name;
+            $this->lock();
+      $item['title'] = $title;
       if ($item['url'] != $url) {
-        $urlmap->DeleteClassArg(get_class($this), $id);
         if ($url == '') {
           $url = trim($url, '/');
-          $this->NewName = $url == '' ? $name : $url;
-          $Linkgen = &TLinkGenerator::instance();
-          $url = $Linkgen->Create($this, $this->PermalinkIndex );
+          $this->newname = $url == '' ? $title : $url;
+          $Linkgen = TLinkGenerator::instance();
+          $url = $Linkgen->createlink($this, $this->PermalinkIndex, false);
         }
-        $this->AddUrl($id, $url);
+
         if ($item['url'] != $url) {
           $urlmap->AddRedir($item['url'], $url);
         }
@@ -190,7 +186,12 @@ return;
     }
   }
   
-  public function Delete($id) {
+  public function delete($id) {
+if (dbversion) {
+$this->getdb($this->itemstable)->delete("tag = $id");
+$this->db->iddelete($id);
+return;
+}
     if (isset($this->items[$id])) {
       $posts = getnamedinstance('posts', 'tposts');
       $list = $this->items[$id]['items'];
@@ -213,29 +214,33 @@ return;
     }
   }
   
-  public function CreateNames($list) {
+  public function createnames($list) {
     if (is_string($list)) $list = explode(',', trim($list));
     $result = array();
     $this->lock();
-    foreach ($list as $name) {
-      $name = TContentFilter::escape($name);
-      if ($name == '') continue;
-      $result[] = $this->Add($name);
+    foreach ($list as $title) {
+      $title = TContentFilter::escape($title);
+      if ($title == '') continue;
+      $result[] = $this->add($title);
     }
     $this->unlock();
     return $result;
   }
   
-  public function GetNames($list) {
+  public function getnames($list) {
+if (dbversion) {
+$items = implode(', ', $list);
+return $this->db->res2array($this->db->query("select title from $this->thistable where id in ($items)");
+}
     $result =array();
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
-      $result[] = $this->items[$id]['name'];
+      $result[] = $this->items[$id]['title'];
     }
     return $result;
   }
   
-  public function GetLink($id) {
+  public function getlink($id) {
     global $options;
     if ($this->ItemExists($id)) {
       return '<a href="'. $options->url . $this->items[$id]['url'] . '">' . $this->items[$id]['name'] . '</a>';
@@ -298,6 +303,7 @@ $result[] = $this->items[$id];
   }
   
   public function gettitle() {
+if ($this->id == '') return $this->newname;
     return isset($this->items[$this->id]) ? $this->items[$this->id]['name'] : TLocal::$data['default']['categories'];
   }
   
