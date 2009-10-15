@@ -4,21 +4,22 @@ class TCategories extends TCommonTags {
   private $contents;
   //public  $defaultid;
   
-  public static function &Instance() {
-    return GetNamedInstance('categories', __class__);
+  public static function instance() {
+    return getnamedinstance('categories', __class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->contents = array();
+  protected function create() {
+    parent::create();
+$this->table = 'categories';
     $this->basename = 'categories' ;
-    $this->Data['defaultid']=  1;
+    $this->contents = array();
+    $this->data['defaultid']=  1;
   }
   
-  public function Setdefaultid($id) {
+  public function setdefaultid($id) {
     if (($id != $this->defaultid) && isset($this->items[$id])) {
-      $this->Data['defaultid'] = $id;
-      $this->Save();
+      $this->data['defaultid'] = $id;
+      $this->save();
     }
   }
   
