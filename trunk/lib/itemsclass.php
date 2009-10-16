@@ -44,7 +44,7 @@ return isset($this->items[$id]);
   
   public function IndexOf($name, $value) {
 if (dbversion){
-$id = $this->db->findid($name, $value));
+$id = $this->db->findid($name, $value);
 return $id ? $id : -1;
 }
 
