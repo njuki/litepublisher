@@ -235,8 +235,6 @@ return $item['id'];
     return $this->lastid;
   }
  
- 
- 
   public function delete($url) {
 if (dbversion) {
 $this->db->delete('url = '. $this->db->quote($url));
@@ -283,27 +281,6 @@ if (dbversion)  return $this->db->delete("class = `$class`");
         $this->unlink($item['id']. '-1.php');
       }
     }
-  }
-  
-  public function Find($class, $params) {
-    foreach ($this->items as $url => $item) {
-      if (($item['class']== $class) && ($item['arg'] == $params)) {
-        return $url;
-      }
-    }
-    return false;
-  }
-  
-  public function Edit($class, $params, $newurl) {
-    if ($url = $this->Find($class, $params)) {
-      if ($url == $url) return true;
-      if (isset($this->items[$newurl]))  {
-        $newurl = TLinkGenerator ::MakeUnique($newurl);
-      }
-      $this->Replace($url, $newurl);
-      return true;
-    }
-    return false;
   }
   
   public function clearcache() {

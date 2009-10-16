@@ -7,7 +7,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
   }
   
   public function ping(&$args) {
-    global $Options, $paths;
+    global $options, $paths, $classes;
     
     $from = $args[0];
     $to   = $args[1];
@@ -17,16 +17,16 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     }
     
     $url = substr($to, strlen($Options->url) );
-    $Urlmap = TUrlmap::Instance();
-    if (!($item = &$Urlmap->FindItem($url))) {
+    $urlmap = turlmap::Instance();
+    if (!($item = $urlmap->finditem($url))) {
       return new IXR_Error(0, 'Is there no link to us?');
     }
     
-    if ($item['class'] != 'TPost') {
+    if ($item['class'] != $classes->classes['post'])  {
       return new IXR_Error(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
-    $post = &TPost::Instance($item['arg']);
+    $post = tpost::instance($item['arg']);
     if (!$post->pingenabled) {
       return new IXR_Error(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
