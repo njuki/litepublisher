@@ -2,56 +2,57 @@
 
 class TCommentManager extends TItems {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->table = 'comments';
     $this->basename = 'commentmanager';
-    $this->AddEvents('Edited', 'Changed', 'Approved');
-    $this->Data['recentcount'] =  7;
-    $this->Data['SendNotification'] =  true;
+    $this->addevents('edited', 'changed', 'approved');
+    $this->data['recentcount'] =  7;
+    $this->data['SendNotification'] =  true;
   }
   
-  public function &Getcomment($id) {
-    return TComments::GetComment($this->items[$id]['pid'], $id);
+  public function getcomment($id) {
+    return tcomments::getcomment($this->items[$id]['pid'], $id);
   }
   
   public function SetSendNotification($value) {
     if ($this->SendNotification != $value) {
-      $this->Data['SendNotification'] = $value;
+      $this->data['SendNotification'] = $value;
       $this->save();
     }
   }
   
   public function Setrecentcount($value) {
     if ($value != $this->recentcount) {
-      $this->Data['recentcount'] = $value;
+      $this->data['recentcount'] = $value;
       $this->save();
     }
   }
   
   public function GetWidgetContent($id) {
-    global $Options;
-    $Template = TTemplate::Instance();
+    global $options;
+    $template = ttemplate::instance();
     $result = '';
-    $templ = isset($Template->theme['widget']['recentcomment']) ? $Template->theme['widget']['recentcomment'] :
+    $templ = isset($template->theme['widget']['recentcomment']) ? $template->theme['widget']['recentcomment'] :
     '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
     
     $count = $this->recentcount;
     if ($item = end($this->items)) {
-      $users = &TCommentUsers::Instance();
+      $users = TCommentUsers::instance();
       $onrecent = TLocal::$data['comment']['onrecent'];
       do {
         $id = key($this->items);
         if (!isset($item['status']) && !isset($item['type']) ) {
           $count--;
-          $post = &TPost::Instance($item['pid']);
+          $post = &TPost::instance($item['pid']);
           $content = $post->comments->GetValue($id, 'content');
           $content = TContentFilter::GetExcerpt($content, 120);
           $user = $users->GetItem($item['uid']);
-          $result .= sprintf($templ, $Options->url . $post->url, $id,$post->title, $user['name'], $content, $onrecent);
+          $result .= sprintf($templ, $options->url . $post->url, $id,$post->title, $user['name'], $content, $onrecent);
         }
       } while (($count > 0) && ($item  = prev($this->items)));
     }
@@ -60,6 +61,9 @@ class TCommentManager extends TItems {
   }
   
   public function PostDeleted($postid) {
+if (dbversion) {
+return $this->db->delete("post = $postid");
+}
     $this->lock();
     foreach ($this->items as  $id => $item) {
       if ($item['pid'] == $postid) {
@@ -69,40 +73,41 @@ class TCommentManager extends TItems {
     $this->unlock();
   }
   
-  public function Add($postid, $name, $email, $url, $content) {
-    $users = TCommentUsers ::Instance();
-    $userid = $users->Add($name, $email, $url);
-    $post = TPost::Instance($postid);
+  public function add($postid, $name, $email, $url, $content) {
+    $users = TCommentUsers ::instance();
+    $userid = $users->add($name, $email, $url);
+    $post = tpost::instance($postid);
     return $this->AddToPost($post, $userid, $content);
   }
   
-  public function AddToPost(&$post, $userid, $content) {
-    $id = ++  $this->lastid;
-    $comments = &$post->comments;
+  public function AddToPost($post, $userid, $content) {
     $status = $this->CreateStatus($userid, $content);
-    $date = $comments->Create($id, $userid,  $content, $status);
-    
-    $this->items[$id] = array(
-    //'id' => $id,
+$id = $post->comments->add($userid,  $content, $status);
+$item = array(
     'uid' => (int) $userid,
     'pid' => (int) $post->id,
-    'date' => $date
+    'created' => $date
     );
-    if ($status != 'approved') $this->items[$id]['status'] = $status;
+
+    if ($status != 'approved') $item['status'] = $status;
+
+if (dbversion) {
+} else {
+    $this->items[++$this->lastid] = $item;
     $this->save();
     $this->DoAdded($id);
   }
   
   protected function CreateStatus($userid, $content) {
-    global $Options;
-    if ($Options->DefaultCommentStatus == 'approved') return 'approved';
+    global $options;
+    if ($options->DefaultCommentStatus == 'approved') return 'approved';
     if ($this->UserHasApproved($userid)) return  'approved';
     return 'hold';
   }
   
   public function AddPingback(&$post, $url, $title) {
     $id =++$this->lastid;
-    $users = &TCommentUsers::Instance();
+    $users = &TCommentUsers::instance();
     $userid = $users->Add($title, '', $url);
     $comments = &$post->comments;
     $date = $comments->Create($id, $userid, '', 'hold', 'pingback');
@@ -151,7 +156,7 @@ class TCommentManager extends TItems {
   public function Delete($id) {
     if (isset($this->items[$id])) {
       $this->lock();
-      $comments = &TComments::Instance($this->items[$id]['pid']);
+      $comments = &TComments::instance($this->items[$id]['pid']);
       $comments->Delete($id);
       $postid = $this->items[$id]['pid'];
       $userid = $this->items[$id]['uid'];
@@ -159,7 +164,7 @@ class TCommentManager extends TItems {
       $this->unlock();
       
       if (!$this->HasUser($userid)) {
-        $users = &TCommentUsers::Instance();
+        $users = &TCommentUsers::instance();
         $users->Delete($userid);
       }
       
@@ -173,8 +178,8 @@ class TCommentManager extends TItems {
   public function DoChanged($postid) {
     TTemplate::WidgetExpired($this);
     
-    $post = TPost::Instance($postid);
-    $Urlmap = TUrlmap::Instance();
+    $post = TPost::instance($postid);
+    $Urlmap = TUrlmap::instance();
     $Urlmap->SetExpired($post->url);
     
     $this->Changed($postid);
@@ -185,7 +190,7 @@ class TCommentManager extends TItems {
     $item = $this->items[$id];
     if ( (($value == 'approved') && !isset($item['status']))  || ($value == $item['status'])) return false;
     
-    $comments = &TComments::Instance($item['pid']);
+    $comments = &TComments::instance($item['pid']);
     $comments->SetStatus($id, $value);
     
     $this->lock();
@@ -224,16 +229,16 @@ class TCommentManager extends TItems {
   }
   
   public function CommentAdded($id) {
-    global $Options;
+    global $options;
     if (!$this->SendNotification) return;
     $comment = &$this->Getcomment($id);
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     eval('$subject = "' . $html->subject . '";');
     eval('$body = "'. $html->body . '";');
-    TMailer::SendMail($Options->name, $Options->fromemail,
-    'admin', $Options->email,  $subject, $body);
+    TMailer::SendMail($options->name, $options->fromemail,
+    'admin', $options->email,  $subject, $body);
   }
   
 }//class

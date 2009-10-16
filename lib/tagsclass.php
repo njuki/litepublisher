@@ -1,17 +1,18 @@
 <?php
 
-class TTags extends TCommonTags {
+class ttags extends TCommonTags {
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->table = 'tags';
     $this->basename = 'tags';
-    $this->sortname = 'name';
+    $this->sortname = 'title';
     $this->showcount = false;
     $this->PermalinkIndex = 'tag';
     $this->PostPropname = 'tags';
   }
   
-  public static function &Instance() {
+  public static function instance() {
     return GetNamedInstance('tags', __class__);
   }
   
