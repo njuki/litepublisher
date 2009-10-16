@@ -91,7 +91,7 @@ class TArchives extends TItems implements  ITemplate {
     $Urlmap->lock();
     $this->lock();
     //Compare links
-    $old = &$Urlmap->GetClassItems(get_class($this));
+    $old = $Urlmap->GetClassUrls(get_class($this));
     foreach ($this->items as $date => $item) {
       $j = array_search($item['url'], $old);
       if (is_int($j))  {

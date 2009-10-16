@@ -183,7 +183,7 @@ return $db->prefix .'urlmap';
 }
 
 protected function getjoinurl() {
-  return " left join $this->urltable on $this->urltable.id = $this->thistable.urlid ";
+  return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
 }
 }//class
 ?>

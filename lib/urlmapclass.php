@@ -1,14 +1,13 @@
 <?php
 
-class TUrlmap extends TItems {
+class turlmap extends TItems {
   public $host;
   public $url;
   public $urlid;
-  public $uripath;
-  public $pagenumber;
+  public $page;
   public $is404;
-  public $IsAdminPanel;
-  public $Ispda;
+  public $admin;
+  public $mobile;
   private $argfinal;
   
   public static function instance() {
@@ -21,34 +20,34 @@ $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('BeforeRequest', 'AfterRequest', 'CacheExpired');
     $this->is404 = false;
-    $this->IsAdminPanel = false;
-    $this->Ispda= false;
+    $this->admin = false;
+    $this->mobile= false;
   }
   
   public function request($host, $url) {
-    global $Options, $paths;
+    global $options, $paths;
     $this->host = $host;
-    $this->pagenumber = 1;
-    if ($Options->q == '?') {
-      $this->url = substr($url, strlen($Options->subdir));
+    $this->page = 1;
+    if ($options->q == '?') {
+      $this->url = substr($url, strlen($options->subdir));
     } else {
       $this->url = $_GET['url'];
     }
     $this->BeforeRequest();
-    if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
+    if ($this->mobile = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
       if ($this->url == '/pda') {
         $this->url = '/';
       } else {
         $this->url = substr($this->url, strlen('/pda'));
       }
-      $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
+      $paths['cache'] .= 'mobile' . DIRECTORY_SEPARATOR;
     }
-    $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
+    $this->admin = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
     
     try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
-      $Options->HandleException($e);
+      $options->HandleException($e);
     }
     $this->AfterRequest($this->url);
     $this->CheckSingleCron();
@@ -66,32 +65,31 @@ $this->table = 'urlmap';
   }
   
   protected function DoRequest($url) {
-    if ($item = &$this->FindItem($url)) {
-      return $this->PrintContent($item);
-    }
+    if ($item = $this->finditem($url)) return $this->PrintContent($item);
     $this->NotFound404();
   }
   
-  public function &FindItem($url) {
-    global $Options;
+  public function finditem($url) {
+    global $options;
     //redir multi slashed
-    if ('//' == substr($url, strlen($url) - 3)) $this->Redir301(rtrim($url, '/') . '/');
+    if ('//' == substr($url, strlen($url) - 3)) $this->redir301(rtrim($url, '/') . '/');
     
     if ($this->dbversion) {
       if ($res = $this->db->select('url = '. $this->db->quote($url). ' limit 1')) {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
-      }
+      } else {
       return false;
+}
     }
     
-    //4 steps: items, get, pagenumber, tree
+
     if (isset($this->items[$url])) return $this->items[$url];
     $slashed = rtrim($url, '/');
     if (isset($this->items[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
+      if ($this->page == 1) {
+        return $this->redir301($slashed);
       } else {
         return $this->items[$slashed];
       }
@@ -99,14 +97,14 @@ $this->table = 'urlmap';
     
     $slashed  .= '/';
     if (isset($this->items[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
+      if ($this->page == 1) {
+        return $this->redir301($slashed);
       } else {
         return $this->items[$slashed];
       }
     }
     
-    if (($Options->q == '?') && ($i = strpos($url, '?')) ) {
+    if (($options->q == '?') && ($i = strpos($url, '?')) ) {
       $url = substr($url, 0, $i);
     }
     
@@ -114,8 +112,8 @@ $this->table = 'urlmap';
     
     $slashed = rtrim($url, '/');
     if (isset($this->get[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
+      if ($this->page == 1) {
+        return $this->redir301($slashed);
       } else {
         return $this->get[$slashed];
       }
@@ -123,19 +121,19 @@ $this->table = 'urlmap';
     
     $slashed  .= '/';
     if (isset($this->get[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
+      if ($this->page == 1) {
+        return $this->redir301($slashed);
       } else {
         return $this->get[$slashed];
       }
     }
     
-    //check page number as  /page/pagenumber/
+    //check page number as  /page/page/
     $this->uripath = $this->ParseUriPath($url);
     $c = count($this->uripath);
     if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
-      $this->pagenumber = (int) $this->uripath[$c - 1];
-      $url = substr($url, 0, strpos($url, "page/$this->pagenumber"));
+      $this->page = (int) $this->uripath[$c - 1];
+      $url = substr($url, 0, strpos($url, "page/$this->page"));
       array_splice($this->uripath, $c - 2, 2);
       return $this->FindItem($url);
     }
@@ -162,12 +160,12 @@ $this->table = 'urlmap';
   }
   
   protected function  PrintContent(&$item) {
-    global $Options, $paths;
+    global $options, $paths;
     $this->urlid = $item['id'];
-    if ($Options->CacheEnabled) {
-  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+    if ($options->CacheEnabled) {
+  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->page.php";
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($CacheFileName)) && (($time  + $Options->CacheExpired) >= time() )) {
+      if (($time = @filemtime ($CacheFileName)) && (($time  + $options->CacheExpired) >= time() )) {
         include($CacheFileName);
         return;
       }
@@ -185,7 +183,7 @@ $this->table = 'urlmap';
   }
   
   protected function PrintClassContent($ClassName, &$item) {
-    global $Options, $paths, $Template;
+    global $options, $paths, $Template;
     $obj = &GetInstance($ClassName);
     $arg = isset($this->argfinal)  ? $this->argfinal : $item['arg'];
     //special handling for rss
@@ -196,8 +194,8 @@ $this->table = 'urlmap';
       $s = $Template->request($obj);
     }
     eval('?>'. $s);
-    if ($Options->CacheEnabled && $obj->CacheEnabled) {
-  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+    if ($options->CacheEnabled && $obj->CacheEnabled) {
+  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->page.php";
       file_put_contents($CacheFileName, $s);
       @chmod($CacheFileName, 0666);
     }
@@ -206,7 +204,7 @@ $this->table = 'urlmap';
   public function NotFound404() {
     $redir = &TRedirector ::Instance();
     if (isset($redir->items[$this->url])) {
-      return $this->Redir301($redir->items[$this->url]);
+      return $this->redir301($redir->items[$this->url]);
     }
     
     $this->is404 = true;
@@ -216,80 +214,44 @@ $this->table = 'urlmap';
     eval('?>'. $s);
   }
   
-  protected function AddItem(&$items, $url, $class, $arg) {
-    $items[$url] = array(
+  public function add($url, $class, $arg, $type = 'nornal') {
+if (dbversion) {
+$item array(
+    'class' => $class,
+    'arg' => $arg,
+'type' => $type
+    );
+$item['id'] = $this->db->InsertAssoc($item);
+$this->items[$item['id']] = $item;
+return $item['id'];
+}
+    $this->items[$url] = array(
     'id' => ++$this->lastid,
     'class' => $class,
-    'arg' => $arg
+    'arg' => $arg,
+'type' => $type
     );
     $this->save();
     return $this->lastid;
   }
-  
-  public function Add($url, $class, $arg) {
-    return $this->AddItem($this->items, $url, $class, $arg);
-  }
-  
-  public function AddGet($url, $class, $arg) {
-    return $this->AddItem($this->get, $url, $class, $arg);
-  }
-  
-  public function AddNode($url, $class, $arg) {
-    return $this->AddItem($this->tree, $url, $class, $arg);
-  }
-  
-  public function AddSubNode($nodeurl, $url, $class, $arg) {
-    if (!isset($this->tree[$nodeurl])) $this->AddNode($nodeurl, $class, null);
-    if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
-    return $this->AddItem($this->tree[$nodeurl]['items'], $url, $class, $arg);
-  }
-  
-  public function AddFinalNode($nodeurl, $url, $class) {
-    if (!isset($this->tree[$nodeurl])) $this->Error("node $nodeurl is not exists!");
-    if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
-    $this->tree[$nodeurl]['items'][$url] = array(
-    'id' => ++$this->lastid,
-    'class' => $class,
-    'arg' => null,
-    'final' => true
-    );
-    $this->Save();
-    return $this->lastid;
-  }
-  
-  public function AddFinal($url, $class) {
-    $this->tree[$url] = array(
-    'id' => ++$this->lastid,
-    'class' => $class,
-    'arg' => null,
-    'final' => true
-    );
-    $this->Save();
-    return $this->lastid;
-  }
-  
-  private function DeleteItem(&$items, $url) {
-    if (isset($items[$url])) {
-      $this->unlink($items[$url]['id'] . '-1.php');
-      unset($items[$url]);
-      return true;
-    }
-    return false;
-  }
-  
+ 
+ 
+ 
   public function delete($url) {
 if (dbversion) {
 $this->db->delete('url = '. $this->db->quote($url));
 } else {
-if (isset(4ths->items[$url)) {
+if (isset($this->items[$url)) {
 unset($this->items[$url]);
 $this->save();
 }
 }
   }
   
-  private function DeleteClassArgItem(&$items, $class, $arg) {
-    foreach ($items as  $url => $item) {
+  public function DeleteClassArg($class, $arg) {
+if (dbversion) return $this->db->delete("class = '$class' and arg = ". $this->db->quote($arg));
+
+    foreach ($this->items as  $url => $item) {
       if (($item['class'] == $class) && ($item['arg'] == $arg)) {
         unset($items[$url]);
         return true;
@@ -298,23 +260,13 @@ $this->save();
     return false;
   }
   
-  public function DeleteClassArg($class, $arg) {
-    if (!($this->DeleteClassArgItem($this->items, $class, $arg) || $this->DeleteClassArgItem($this->get, $class, $arg))) {
-      foreach ($this->tree as $url => $item) {
-        if (!isset($this->tree[$url]['items'])) continue;
-        if ($this->DeleteClassArgItem($this->tree[$url]['items'], $class, $arg)) break;
-      }
-    }
-    $this->Save();
-  }
-  
-  public function DeleteSubNode($node, $subnode) {
-    if ($this->DeleteItem($this->tree[$node]['items'], $subnode)) {
-      $this->Save();
-    }
-  }
-  
-  public function &GetClassItems($class) {
+//uses TArchives
+  public function GetClassUrls($class) {
+if (dbversion) {
+$res = $this->db->query("select url from $this->thistable where class = '$class'");
+return $this->db->res2array($res);
+}
+
     $result = array();
     foreach ($this->items as $url => $item) {
       if ($item['class'] == $class) $result[] = $url;
@@ -322,28 +274,15 @@ $this->save();
     return $result;
   }
   
-  private function RemoveItems(&$items, $class) {
-    foreach ($items as $url => $item) {
-      if ($item['class'] == $class) {
-        $this->unlink($item['id']. '-1.php');
-        unset($items[$url]);
-      }
-    }
-  }
-  
   public function DeleteClass($class) {
-    $this->lock();
-    
-    $this->RemoveItems($this->items, $class);
-    $this->RemoveItems($this->get, $class);
-    $this->RemoveItems($this->tree, $class);
-    foreach ($this->tree as $url => $item) {
-      if (isset($item['items'])) {
-        $this->RemoveItems($this->tree[$url]['items'], $class);
+if (dbversion)  return $this->db->delete("class = `$class`");
+
+    foreach ($this->items as $url => $item) {
+      if ($item['class'] == $class) {
+        unset($items[$url]);
+        $this->unlink($item['id']. '-1.php');
       }
     }
-    
-    $this->unlock();
   }
   
   public function Find($class, $params) {
@@ -367,9 +306,9 @@ $this->save();
     return false;
   }
   
-  public function ClearCache() {
+  public function clearcache() {
     global $paths;
-    if ($this->Ispda) {
+    if ($this->mobile) {
       TFiler::DeleteFiles(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR, true, false);
     } else {
       TFiler::DeleteFiles($paths['cache'], true, false);
@@ -380,7 +319,7 @@ $this->save();
   private function unlink($filename) {
     global $paths;
     @unlink($paths['cache'] . $filename);
-    if ($this->Ispda) {
+    if ($this->mobile) {
       @unlink(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR . $filename);
     } else {
       @unlink($paths['cache'] . 'pda'. DIRECTORY_SEPARATOR . $filename);
@@ -396,14 +335,6 @@ $this->save();
     }
   }
   
-  public function SubNodeExpired($node, $subnode) {
-    if (isset($this->tree[$node]['items'][$subnode])) {
-      $this->unlink($this->tree[$node]['items'][$subnode]['id'] . "-$this->pagenumber.php");
-    } elseif (isset($this->tree[$node]['final'])) {
-      $this->unlink($this->tree[$node]['id']. "-$subnode.php");
-    }
-  }
-  
   public function Replace($old, $new) {
     if ($old == $new) return;
     $this->lock();
@@ -416,11 +347,11 @@ $this->save();
     $this->unlock();
   }
   
-  public function AddRedir($from, $to) {
+  public function addredir($from, $to) {
     if ($from == $to) return;
     $this->lock();
     $Redir = &TRedirector::Instance();
-    $Redir->Add($from, $to);
+    $Redir->add($from, $to);
     $this->Add($from, get_class($Redir), null);
     $this->unlock();
   }
@@ -443,15 +374,15 @@ $this->save();
     }
   }
   
-  public function Redir301($to) {
-    global $Options;
+  public function redir301($to) {
+    global $options;
     if ( php_sapi_name() != 'cgi-fcgi' ) {
       $protocol = $_SERVER["SERVER_PROTOCOL"];
       if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
       $protocol = 'HTTP/1.0';
       @header( "$protocol 301 Moved Permanently", true, 301);
     }
-    @header("Location: $Options->url$to");
+    @header("Location: $options->url$to");
     exit();
   }
   
@@ -467,8 +398,7 @@ $this->save();
     exit();
   }
   
-  
-  //db
+    //db
   public function getidurl($id) {
 if (dbversion) {
     if (!isset($this->items[$id])) {
@@ -496,7 +426,6 @@ return;
 }
 }
 }
-
 
 }//class
 
