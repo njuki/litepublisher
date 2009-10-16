@@ -1,6 +1,6 @@
 <?php
 
-class TCommentManager extends TItems {
+class TComments extends TEventClass {
   
   public static function instance() {
     return getinstance(__class__);
@@ -8,8 +8,8 @@ class TCommentManager extends TItems {
   
   protected function create() {
     parent::create();
-    $this->basename = 'commentmanager';
-    $this->AddEvents('Edited', 'Changed', 'Approved');
+    $this->table = 'comments';
+    $this->addevents('dited', 'changed', 'approved');
     $this->data['recentcount'] =  7;
     $this->data['SendNotification'] =  true;
   }
@@ -34,7 +34,7 @@ class TCommentManager extends TItems {
   
   public function GetWidgetContent($id) {
     global $options;
-    $template = ttemplate::instance();
+    $template = template::instance();
     $result = '';
     $templ = isset($template->theme['widget']['recentcomment']) ? $template->theme['widget']['recentcomment'] :
     '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
@@ -60,37 +60,28 @@ class TCommentManager extends TItems {
   }
   
   public function PostDeleted($postid) {
-    $this->lock();
-    foreach ($this->items as  $id => $item) {
-      if ($item['pid'] == $postid) {
-        unset($this->items[$id]);
-      }
-    }
-    $this->unlock();
+$this->db->delete("post = postid");
+$users->db->delete("id in
+(select $userstable.id as uid, from $userstable
+right join $commentstable on  $commentstable.author = $userstable.id
+where uid is  null)");
   }
   
   public function add($postid, $name, $email, $url, $content) {
     $users = TCommentUsers ::instance();
-    $userid = $users->add($name, $email, $url);
-    $post = tpost::instance($postid);
-    return $this->AddToPost($post, $userid, $content);
-  }
-  
-  public function AddToPost(&$post, $userid, $content) {
-    $id = ++  $this->lastid;
-    $comments = &$post->comments;
-    $status = $this->CreateStatus($userid, $content);
-    $date = $comments->Create($id, $userid,  $content, $status);
-    
-    $this->items[$id] = array(
-    //'id' => $id,
-    'uid' => (int) $userid,
-    'pid' => (int) $post->id,
-    'date' => $date
-    );
-    if ($status != 'approved') $this->items[$id]['status'] = $status;
-    $this->save();
-    $this->DoAdded($id);
+    $author = $users->add($name, $email, $url);
+$result =$this->db->InsertAssoc(array(
+'post' => $postid,
+'parent' => 0,
+'author' => $author,
+'created' => sqlnow(),
+'modified' => sqldate(),
+'content' =>
+'status' => $this->CreateStatus($author, $content),
+'pingback' => 'false'
+));
+$this->DoAdded($result);
+return $result;
   }
   
   protected function CreateStatus($userid, $content) {
@@ -122,12 +113,13 @@ class TCommentManager extends TItems {
   private function DoAdded($id) {
     $this->DoChanged($this->items[$id]['pid']);
     $this->CommentAdded($id);
-    $this->Added($id);
+    $this->added($id);
   }
   
   public function hasauthor($author) {
+$this->db->select("author = $author limit 1")
     foreach ($this->items as $id => $item) {
-      if ($author == $item['uid'])  return true;
+      if ($userid == $item['uid'])  return true;
     }
     return false;
   }
@@ -149,25 +141,16 @@ class TCommentManager extends TItems {
   }
   
   public function delete($id) {
-    if (isset($this->items[$id])) {
-      $this->lock();
-      $comments = &TComments::instance($this->items[$id]['pid']);
-      $comments->Delete($id);
-      $postid = $this->items[$id]['pid'];
-      $userid = $this->items[$id]['uid'];
-      unset($this->items[$id]);
-      $this->unlock();
-      
-      if (!$this->hasauthor($userid)) {
+$author = $this->db->getvalue($id, 'author');
+$this->db->iddelete($id);
+
+           if (!$this->hasauthor($author)) {
         $users = TCommentUsers::instance();
-        $users->delete($userid);
+        $users->iddelete($author);
       }
       
       $this->deleted($id);
       $this->DoChanged($postid);
-      return true;
-    }
-    return false;
   }
   
   public function DoChanged($postid) {
@@ -180,22 +163,9 @@ class TCommentManager extends TItems {
     $this->Changed($postid);
   }
   
-  public function setstatus($id, $value) {
+  public function settatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
-    $item = $this->items[$id];
-    if ( (($value == 'approved') && !isset($item['status']))  || ($value == $item['status'])) return false;
-    
-    $comments = &TComments::instance($item['pid']);
-    $comments->SetStatus($id, $value);
-    
-    $this->lock();
-    if ($status == 'approved') {
-      unset($this->items[$id]['status']);
-      if (!isset($item['type'])) $this->Approved($id);
-    } else {
-      $this->items[$id]['status'] = $value;
-    }
-    $this->unlock();
+$this->db->setvalue($id, 'status', $value);
     $this->DoChanged($item['pid']);
   }
   
@@ -213,14 +183,8 @@ class TCommentManager extends TItems {
     return true;
   }
   
-  public function Getholditems() {
-    $result = array();
-    foreach($this->items as $id => $item) {
-      if (!empty($item['status']) && ($item['status'] == 'hold')) {
-        $result[$id] = $item;
-      }
-    }
-    return $result;
+  public function getholditems() {
+return $this->db->res2array($this->db->select("status = 'hold' and pingback = false"));
   }
   
   public function CommentAdded($id) {
