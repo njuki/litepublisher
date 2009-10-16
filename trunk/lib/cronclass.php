@@ -1,15 +1,15 @@
 <?php
 
-class TCronTask extends TDataClass {
+class tcrontask extends TDataClass {
   public $owner;
   
   public function __construct(&$owner) {
-    $this->owner = &$owner;
+    $this->owner = $owner;
     parent::__construct();
   }
   
-  protected function CreateData() {
-    $this->Data= array(
+  protected function create() {
+    $this->data= array(
     'id' => 0,
     'type' => 'single',
     'time' => 0,
@@ -20,10 +20,10 @@ class TCronTask extends TDataClass {
   }
   
   public function Getclass() {
-    return $this->Data['class'];
+    return $this->data['class'];
   }
   
-  public function Add($id, $type, $class, $func, $arg) {
+  public function add($id, $type, $class, $func, $arg) {
     if (!in_array($type, array('single', 'hour', 'day', 'week'))) return $this->Error("unknown cron task $type");
     $this->id = $id;
     $this->type= $type;
@@ -34,7 +34,7 @@ class TCronTask extends TDataClass {
     $this->Save();
   }
   
-  public function GetExpired() {
+  public function getexpired() {
     switch ($this->type) {
       case 'single': return time() - 1;
       case 'hour': return time() + 60*60;
@@ -44,24 +44,24 @@ class TCronTask extends TDataClass {
     }
   }
   
-  protected function Setid($id) {
-    $this->Data['id'] = $id;
+  protected function setid($id) {
+    $this->data['id'] = $id;
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . $id;
   }
   
-  protected function Setfilename($filename) {
+  protected function setfilename($filename) {
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . basename($filename, '.php');
     $this->Load();
   }
   
-  public function Delete() {
+  public function delete() {
     global $paths;
     @unlink($paths['data'] . $this->GetBaseName() .'.php');
     @unlink($paths['data'] . $this->GetBaseName() .'.bak.php');
     $this->owner->AppendLog("task deleted ". $paths['data'] . $this->GetBaseName() .'.php');
   }
   
-  public function Execute() {
+  public function execute() {
     global $Options;
 $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
     
@@ -93,46 +93,47 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
   
 } //class
 
-class TCron extends TEventClass {
+class tcron extends TEventClass {
   public $writelog;
   public $disableadd;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->table = 'cron';
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
-    $this->Data['url'] = '';
-    $this->Data['lastid'] = 0;
-    $this->Data['path'] = '';
+    $this->data['url'] = '';
+    $this->data['lastid'] = 0;
+    $this->data['path'] = '';
     $this->CacheEnabled = false;
     $this->writelog = false;
     $this->disableadd = false;
   }
   
-  public function Getpath() {
+  public function getpath() {
     global $paths;
-    if (($this->Data['path'] != '') && is_dir($this->Data['path'])) {
-      return  $this->Data['path'];
+    if (($this->data['path'] != '') && is_dir($this->data['path'])) {
+      return  $this->data['path'];
     }
     return  $paths['data'];
   }
   
-  protected function GetDir() {
+  protected function etdir() {
     global $paths;
     return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
   }
   
-  public function Request($arg) {
+  public function request($arg) {
     if ($fh = @fopen($this->path .'cron.lok', 'w')) {
       flock($fh, LOCK_EX);
       ignore_user_abort(true);
       set_time_limit(60*20);
       $this->SendExceptions();
       $this->AppendLog("started loop");
-      $this->ExecuteTasks();
+      $this->execute();
       flock($fh, LOCK_UN);
       fclose($fh);
       $this->AppendLog("finished loop");
@@ -142,7 +143,7 @@ class TCron extends TEventClass {
     return 'locked';
   }
   
-  public function ExecuteTasks() {
+  public function execute() {
     @ob_end_flush ();
     echo "<pre>\n";
     $time = time();
@@ -153,7 +154,7 @@ class TCron extends TEventClass {
       foreach ($filelist as $filename) {
         $processed[] = $filename;
         $task->filename = $filename;
-        //var_dump($task->Data);
+        //var_dump($task->data);
         //echo $time - $task->time;
         //echo date("r\n", $task->time);
         if  ($time >= $task->time)  $task->Execute();
@@ -176,7 +177,7 @@ class TCron extends TEventClass {
   
   public function Add($type, $class, $func, $arg = null) {
     if ($this->disableadd) return false;
-    ++$this->Data['lastid'] ;
+    ++$this->data['lastid'] ;
     $this->Save();
     $task = new TCronTask($this);
     $task->Add($this->lastid, $type, $class, $func, $arg );

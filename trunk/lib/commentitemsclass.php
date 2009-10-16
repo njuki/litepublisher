@@ -1,6 +1,6 @@
 <?php
 
-class TComments extends TItems {
+class tcomments extends TItems {
   public $postid;
   private static $Instances;
   
@@ -8,7 +8,7 @@ class TComments extends TItems {
     return 'posts'.  DIRECTORY_SEPARATOR . $this->postid . DIRECTORY_SEPARATOR . 'comments';
   }
   
-  public static function &Instance($postid) {
+  public static function instance($postid) {
     global $classes;
     $ClassName = $classes->classes['comments'];
     if (!isset(self::$Instances)) self::$Instances = array();
@@ -21,14 +21,14 @@ class TComments extends TItems {
     return self::$Instances[$postid];
   }
   
-  public static function &GetComment($postid, $id) {
-    $self = &self::Instance($postid);
-    $result = &new TComment($self);
+  public static function getcomment($postid, $id) {
+    $self = self::instance($postid);
+    $result = new tcomment($self);
     $result->id = $id;
     return $result;
   }
   
-  public function Create($id, $userid,  $Content,$status = 'hold',  $type = '') {
+  public function add($id, $userid,  $Content,$status = 'hold',  $type = '') {
     $date = time();
     $ContentFilter = &TContentFilter::Instance();
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
