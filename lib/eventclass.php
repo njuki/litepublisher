@@ -107,7 +107,7 @@ class TEventClass extends TDataClass {
   private function DeleteEvent($name, $i) {
     if (dbversion) {
       $id =           $this->events[$name][$i]['id'];
-      $this->getdb('events)->iddelete($id);
+      $this->getdb('events')->iddelete($id);
       array_splice($this->events[$name], $i, 1);
     } else {
       array_splice($this->events[$name], $i, 1);
