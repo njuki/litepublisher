@@ -186,4 +186,22 @@ protected function getjoinurl() {
   return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
 }
 }//class
+
+class array2prop {
+public $array;
+
+public __construct(array &$array) {
+$this->array = &$array;
+}
+
+public function __get($name) {
+return $this->array[$name];
+}
+
+public function __set($name, $value) {
+$this->array[$name] = $value;
+}
+
+}//class
+
 ?>

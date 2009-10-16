@@ -240,7 +240,7 @@ return self::instance($id);
   
   public function getrawcontent() {
     if (dbversion && ($this->id > 0) && empty($this->data['rawcontent'])) {
-      $this->data['rawcontent'] = $this->raw->idvalue($this->id, 'rawcontent');
+      $this->data['rawcontent'] = $this->rawdb->idvalue($this->id, 'rawcontent');
     }
     return $this->data['rawcontent'];
   }
@@ -248,11 +248,11 @@ return self::instance($id);
   public function setrawcontent($s) {
     $this->data['rawcontent'] = $s;
     if (dbversion && ($this->id > 0)) {
-      $this->raw->idupdate($this->id, 'rawcontent = '. $this->db->quote($s));
+      $this->rawdb->idupdate($this->id, 'rawcontent = '. $this->db->quote($s));
     }
   }
 
-protected function getraw() {
+protected function getrawdb() {
 global $db;
 $db->table = 'postsraw';
 return $db;

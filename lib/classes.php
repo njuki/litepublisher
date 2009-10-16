@@ -24,6 +24,11 @@ class TClasses extends TItems {
     $this->AddDataMap('classes', array());
     $this->instances = array();
   }
+
+public function __get($name) {
+if (isset($this->classes[$name])) return getinstance($this->classes[$name]);
+return parent::__get($name);
+}
   
   public function add($class, $filename, $path = '') {
     if (!isset($this->items[$class]) ||

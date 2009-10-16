@@ -2,9 +2,10 @@
 
 class tposts extends TItems {
   public $archives;
+public $rawtable;
 
   public static function instance() {
-    return getnamedinstance('posts', __class__);
+    return GetNamedInstance('posts', __class__);
   }
   
   public static function unsub($obj) {
@@ -15,6 +16,7 @@ class tposts extends TItems {
   protected function create() {
     parent::create();
 $this->table = 'posts';
+$this->rawtable = 'postsraw';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', changed', 'singlecron');
     if (!dbversion) $this->AddDataMap('archives' , array());
@@ -75,13 +77,12 @@ return parent::save();
         $urlmap = turlmap::instance();
     if (dbversion) {
       $post->id = TPostTransform ::add($post);
-      $post->idurl = $urlmap->add($post->url, get_class($post), $post->id, $post->pagescount);      
+      $post->idurl = $urlmap->add($post->url, get_class($post), $post->id);      
 $post->db->setvalue($post->id, 'idurl', $post->idurl);
-$post->raw->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['rawcontent']));
+$post->rawdb->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['rawcontent']));
       
-      $db->table = 'pages';
-      foreach ($post->pages as $i => $content) {
-        $db->InsertAssoc(array('post' => $post->id, 'page' => $i         'content' => $content));
+     foreach ($post->pages as $i => $content) {
+        $this->getdb('pages')->InsertAssoc(array('post' => $post->id, 'page' => $i         'content' => $content));
       }
    } else {
       global $paths;
@@ -141,10 +142,8 @@ global $classes;
 $urmap->DeleteClassArg($classes->classes['post'], $id);
     if (dbversion) {
       $this->db->iddelete($id);
-      $db->table = 'pages';
-      $db->delete("post = $id");
-$db->table = 'postsraw';
-$db->iddelete($id);
+      $this->getdb('pages')->delete("post = $id");
+$this->getdb($this->rawtable)->iddelete($id);
     } else {
       global $paths;
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
