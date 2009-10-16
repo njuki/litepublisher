@@ -1,5 +1,5 @@
 id bigint UNSIGNED NOT NULL auto_increment,
-urlid bigint UNSIGNED NOT NULL default 0,
+idurl bigint UNSIGNED NOT NULL default 0,
 parent bigint UNSIGNED NOT NULL default 0,
 author bigint UNSIGNED NOT NULL default 0,
 

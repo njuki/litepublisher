@@ -24,6 +24,15 @@ protected function gettableitems() {
 global $db;
 return $db->prefix . $this->table . 'items';
 }
+
+public function getitem($id) {
+$result = parent::getitem($id);
+if (dbversion && empty($result['url'])) {
+$urlmap = turlmap::instance();
+$result['url'] = $urlmap->getidurl($result['idurl']);
+}
+return $result;
+}
   
   public function save() {
     parent::save();
@@ -133,8 +142,8 @@ return;
 
 if (dbversion)  {
 $id = $this->db->InsertAssoc(array('title' => $title));
-$urlid =         $urlmap->Add($url, get_class($this),  $id);
-$this->db->setvalue($id, 'urlid', $urlid);
+$idurl =         $urlmap->add($url, get_class($this),  $id);
+$this->db->setvalue($id, 'idurl', $idurl);
 $urlmap->clearcache();
 }
     $this->lock();
@@ -143,9 +152,9 @@ $urlmap->clearcache();
     'itemscount' => 0,
     'title' => $title,
     'url' =>$url,
-'urlid' =>         $urlmap->Add($url, get_class($this),  $this->lastid),
-    //'description ' => '',
-    //'keywords' => '',
+'idurl' =>         $urlmap->Add($url, get_class($this),  $this->lastid),
+    'description ' => '',
+    'keywords' => '',
     'items' => array()
     );
     $this->unlock();
@@ -156,15 +165,14 @@ $urlmap->clearcache();
   }
   
  public function edit($id, $title, $url) {
-if (dbversion) {
+    $item = $this->getitem($id);
+    if (($item['title'] == $title) && ($item['url'] == $url)) return;
+if ($item['title'] != $title)  {
+$item['title'] = $title;
+if (dbversion) $this->db->setvalue($id, 'title', $title);
 }
-    $item = $this->items[$id];
-    if (($item['name'] != $name) || ($item['url'] != $url)) {
       $urlmap = turlmap::instance();
-      $urlmap->lock();
-            $this->lock();
-      $item['title'] = $title;
-      if ($item['url'] != $url) {
+if ($item['url'] != $url) {
         if ($url == '') {
           $url = trim($url, '/');
           $this->newname = $url == '' ? $title : $url;
@@ -173,19 +181,20 @@ if (dbversion) {
         }
 
         if ($item['url'] != $url) {
-          $urlmap->AddRedir($item['url'], $url);
-        }
-        
+//check unique url
+if (($idurl = $urlmap->idfind($url) && ($idurl != $item['idurl'])) {
+$url = $linkgen->MakeUnique($url);
+}
+$urlmap->setidurl($item['idurl'], $url);
+      $urlmap->addredir($item['url'], $url);
         $item['url'] = $url;
-      }
-      
-      $this->items[$id] = $item;
-      $this->unlock();
-      $urlmap->ClearCache();
-      $urlmap->unlock();
+}
+
+     $this->items[$id] = $item;
+      $this->save();
+      $urlmap->clearcache();
     }
-  }
-  
+
   public function delete($id) {
 if (dbversion) {
 $this->getdb($this->itemstable)->delete("tag = $id");
@@ -196,7 +205,7 @@ return;
       $posts = getnamedinstance('posts', 'tposts');
       $list = $this->items[$id]['items'];
       foreach ($list as $idpost) {
-        $post = &$posts->GetItem($idpost);
+        $post = $posts->getitem($idpost);
       $postcats = $post->{$this->PostPropname};
         $i = array_search($id, $postcats);
         if (is_int($i)) {
@@ -242,12 +251,9 @@ return $this->db->res2array($this->db->query("select title from $this->thistable
   
   public function getlink($id) {
     global $options;
-    if ($this->ItemExists($id)) {
-      return '<a href="'. $options->url . $this->items[$id]['url'] . '">' . $this->items[$id]['name'] . '</a>';
-    } else {
-      return '';
-    }
-  }
+$item = $this->getitem($id);
+      return '<a href="'. $options->url . $item['url'] . '">' . $item['title'] . '</a>';
+ }
   
   public function getsorted($sortname, $count) {
 $count = (int) $count;
@@ -285,19 +291,20 @@ $result[] = $this->items[$id];
   //Itemplate
   public function request($id) {
     global $urlmap;
-    $this->id = $id;
-    if (!isset($this->items[$id])) return 404;
-    $url = $this->items[$this->id]['url'];
-    if($urlmap->pagenumber != 1) $url = rtrim($url, '/') . "/page/$urlmap->pagenumber/";
-    if ($urlmap->url != $url) $urlmap->Redir301($url);
+if (!$this->itemexists($id)) return 404;
+    $this->id = (int) $id;
+$item = $this->getitem((int) $id);
+$url = $item['url'];
+    if($urlmap->page != 1) $url = rtrim($url, '/') . "/page/$urlmap->page/";
+    if ($urlmap->url != $url) $urlmap->redir301($url);
   }
   
   public function AfterTemplated(&$s) {
     $redir = "<?php
     global \$urlmap;
   \$url = '{$this->items[$this->id]['url']}';
-    if(\$urlmap->pagenumber != 1) \$url = rtrim(\$url, '/') . \"/page/\$urlmap->pagenumber/\";
-    if (\$urlmap->url != \$url) \$urlmap->Redir301(\$url);
+    if(\$urlmap->page != 1) \$url = rtrim(\$url, '/') . \"/page/\$urlmap->page/\";
+    if (\$urlmap->url != \$url) \$urlmap->redir301(\$url);
     ?>";
     $s = $redir.$s;
   }
@@ -316,7 +323,7 @@ if ($this->id == '') return $this->newname;
   }
   
   public function getdescription() {
-    return '';
+    return $this->items[$this->id]['description'];
   }
   
   public function GetTemplateContent() {
@@ -340,15 +347,15 @@ $items = $db->res2array($res);
     $TemplatePost = &TTemplatePost::instance();
     if ($this->lite) {
       $postsperpage = 1000;
-      $list = array_slice($items, ($urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
+      $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
       $result .= $TemplatePost->LitePrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $urlmap->pagenumber, ceil(count($items)/ $postsperpage));
+      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
       return $result;
     } else{
-      $list = array_slice($items, ($urlmap->pagenumber - 1) * $options->postsperpage, $options->postsperpage);
+      $list = array_slice($items, ($urlmap->page - 1) * $options->postsperpage, $options->postsperpage);
       $TemplatePost = TTemplatePost::instance();
       $result .= $TemplatePost->PrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $urlmap->pagenumber, ceil(count($items)/ $options->postsperpage));
+      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $options->postsperpage));
       return $result;
     }
   }

@@ -37,7 +37,7 @@ $this->db->setvalue($id, $name, $value);
 }
   }
   
-  public function ItemExists($id) {
+  public function itemexists($id) {
 if (dbversion) return $this->db->idexists($id);
 return isset($this->items[$id]);
   }
