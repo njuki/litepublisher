@@ -10,36 +10,20 @@ class TCommentManager extends TItems {
     parent::create();
     $this->basename = 'commentmanager';
     $this->AddEvents('Edited', 'Changed', 'Approved');
-    $this->data['recentcount'] =  7;
-    $this->data['SendNotification'] =  true;
   }
   
   public function getcomment($id) {
     return tcomments::getcomment($this->items[$id]['pid'], $id);
   }
   
-  public function SetSendNotification($value) {
-    if ($this->SendNotification != $value) {
-      $this->data['SendNotification'] = $value;
-      $this->save();
-    }
-  }
-  
-  public function Setrecentcount($value) {
-    if ($value != $this->recentcount) {
-      $this->data['recentcount'] = $value;
-      $this->save();
-    }
-  }
-  
-  public function GetWidgetContent($id) {
+ public function GetWidgetContent($id) {
     global $options;
     $template = ttemplate::instance();
     $result = '';
     $templ = isset($template->theme['widget']['recentcomment']) ? $template->theme['widget']['recentcomment'] :
     '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
     
-    $count = $this->recentcount;
+    $count = $this->options->recentcount;
     if ($item = end($this->items)) {
       $users = TCommentUsers::instance();
       $onrecent = TLocal::$data['comment']['onrecent'];

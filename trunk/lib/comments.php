@@ -1,7 +1,8 @@
 <?php
 
 class TComments extends TEventClass {
-  
+public $rawtable;
+ 
   public static function instance() {
     return getinstance(__class__);
   }
@@ -9,52 +10,41 @@ class TComments extends TEventClass {
   protected function create() {
     parent::create();
     $this->table = 'comments';
+$this->rawtable = 'rawcomments';
     $this->addevents('dited', 'changed', 'approved');
-    $this->data['recentcount'] =  7;
-    $this->data['SendNotification'] =  true;
   }
+
+public function load() { return true; }
+public function save() { retrn true; }
   
   public function getcomment($id) {
-    return tcomments::getcomment($this->items[$id]['pid'], $id);
+    return new tcomment($id);
   }
   
-  public function SetSendNotification($value) {
-    if ($this->SendNotification != $value) {
-      $this->data['SendNotification'] = $value;
-      $this->save();
-    }
-  }
-  
-  public function Setrecentcount($value) {
-    if ($value != $this->recentcount) {
-      $this->data['recentcount'] = $value;
-      $this->save();
-    }
-  }
-  
-  public function GetWidgetContent($id) {
+ public function GetWidgetContent($id) {
     global $options;
     $template = template::instance();
     $result = '';
     $templ = isset($template->theme['widget']['recentcomment']) ? $template->theme['widget']['recentcomment'] :
     '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
     
-    $count = $this->recentcount;
-    if ($item = end($this->items)) {
-      $users = TCommentUsers::instance();
+
       $onrecent = TLocal::$data['comment']['onrecent'];
-      do {
-        $id = key($this->items);
-        if (!isset($item['status']) && !isset($item['type']) ) {
-          $count--;
-          $post = tpost::instance($item['pid']);
-          $content = $post->comments->getvalue($id, 'content');
-          $content = TContentFilter::GetExcerpt($content, 120);
-          $user = $users->getitem($item['uid']);
-          $result .= sprintf($templ, $options->url . $post->url, $id,$post->title, $user['name'], $content, $onrecent);
+$table =  $this->thistable;
+$prefix = $this->db->prefix;
+$authors = $prefix . 'commentsusers';
+$poststable = $prefix . 'posts';
+$urltable = $prefix . 'urlmap';
+$res = $this->db->query("
+select $table.*, $authors.name as name, $poststable.title as title, $urltable.url as url 
+from $table, $authorstable, $poststable, $urltable
+where $table.status = 'approved' and $table.pingback = 'false',
+$authorstable.id = $table.author, $poststable.id = $table.post, $urlmap.class = 'posts' and $urltable.arg = $table.post
+sort by $table.created desc limit ".$this->options->recentcount); 
+while ($row = $res->fetch()) {
+         $content = TContentFilter::GetExcerpt($row['content'], 120);
+          $result .= sprintf($templ, $options->url . $posturl, $row['id], $row['title'], $row['name'], $content, $onrecent);
         }
-      } while (($count > 0) && ($item  = prev($this->items)));
-    }
     
     return $result;
   }
