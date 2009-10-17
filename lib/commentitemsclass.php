@@ -4,33 +4,33 @@ class TComments extends TItems {
   public $postid;
   private static $Instances;
   
-  public function GetBaseName() {
+  public function getbasename() {
     return 'posts'.  DIRECTORY_SEPARATOR . $this->postid . DIRECTORY_SEPARATOR . 'comments';
   }
   
-  public static function &Instance($postid) {
+  public static function instance($postid) {
     global $classes;
-    $ClassName = $classes->classes['comments'];
+    $class = $classes->classes['comments'];
     if (!isset(self::$Instances)) self::$Instances = array();
     if (!isset(self::$Instances[$postid]))  {
-      self::$Instances[$postid]  = &new $ClassName();
-      $self = &self::$Instances[$postid];
+      self::$Instances[$postid]  = new $class();
+      $self = self::$Instances[$postid];
       $self->postid = $postid;
-      $self->Load();
+      $self->load();
     }
     return self::$Instances[$postid];
   }
   
   public static function &GetComment($postid, $id) {
-    $self = &self::Instance($postid);
+    $self = &self::instance($postid);
     $result = &new TComment($self);
     $result->id = $id;
     return $result;
   }
   
-  public function Create($id, $userid,  $Content,$status = 'hold',  $type = '') {
+  public function add($id, $userid,  $Content,$status = 'hold',  $type = '') {
     $date = time();
-    $ContentFilter = &TContentFilter::Instance();
+    $filter = TContentFilter::instance();
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     
     $this->items[$id] = array(
@@ -39,7 +39,7 @@ class TComments extends TItems {
     'date' => $date,
     'status' => $status,
     'type' => $type,
-    'content' => $ContentFilter ->GetCommentContent($Content),
+    'content' => $filter->GetCommentContent($Content),
     'rawcontent' =>  $Content,
     'ip' =>$ip
     );
@@ -54,7 +54,7 @@ class TComments extends TItems {
   
   public function SetContent($id, $value) {
     if (isset($this->items[$id])) {
-      $ContentFilter = &TContentFilter::Instance();
+      $ContentFilter = &TContentFilter::instance();
       $this->items[$id]['content'] = $ContentFilter ->GetCommentContent($value);
       $this->items[$id]['rawcontent'] =  $value;
       $this->save();
@@ -94,7 +94,7 @@ class TComments extends TItems {
   }
   
   public function GetUserInfo($id) {
-    $Users = &TCommentUsers::Instance();
+    $Users = &TCommentUsers::instance();
     return  $Users->GetItem($this->items[$id]['uid']);
   }
   
@@ -107,7 +107,7 @@ class TComments extends TItems {
   }
   
   public function HasPingback($url) {
-    $users = &TCommentUsers::Instance();
+    $users = &TCommentUsers::instance();
     $userid = $users->IndexOf('url', $url);
     if ($userid == -1) return false;
     $id = $this->IndexOf('uid', $userid);
@@ -117,7 +117,7 @@ class TComments extends TItems {
   
   public function &GetSubscribers() {
     $result = array();
-    $users = &TCommentUsers::Instance();
+    $users = &TCommentUsers::instance();
     foreach ($this->items as $id => $item) {
       if (($item['status'] == 'approved') && ($item['type'] == '') && $users->Subscribed($item['uid'], $this->postid)) {
         if (!in_array($item['uid'], $result)) $result[] = $item['uid'];
@@ -171,7 +171,7 @@ class TComment {
   return "<a href=\"{$this->website}\">{$this->name}</a>";
     }
     
-    $authors = &TCommentUsers ::Instance();
+    $authors = &TCommentUsers ::instance();
     return $authors->GetLink($this->Owner->items[$this->id]['uid']);
   }
   
@@ -188,7 +188,7 @@ class TComment {
   }
   
   public function Getwebsite() {
-    $users = &TCommentUsers::Instance();
+    $users = &TCommentUsers::instance();
     return $users->GetValue($this->Owner->GetValue($this->id, 'uid'), 'url');
   }
   
@@ -199,12 +199,12 @@ class TComment {
   
   public function Geturl() {
     global $Options;
-    $post = &TPost::Instance($this->Owner->postid);
+    $post = &TPost::instance($this->Owner->postid);
     return "$Options->url$post->url#comment-$this->id";
   }
   
   public function Getposttitle() {
-    $post = &TPost::Instance($this->Owner->postid);
+    $post = &TPost::instance($this->Owner->postid);
     return $post->title;
   }
   
