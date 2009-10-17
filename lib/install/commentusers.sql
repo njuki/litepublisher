@@ -1,4 +1,4 @@
-id bigint UNSIGNED NOT NULL auto_increment,
+id int UNSIGNED NOT NULL auto_increment,
 name varchar(64) NOT NULL,
 email varchar(64) NOT NULL,
 url varchar(255) NOT NULL,

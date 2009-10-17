@@ -187,21 +187,11 @@ protected function getjoinurl() {
 }
 }//class
 
-class array2prop {
+class tarray2prop {
 public $array;
-
-public __construct(array &$array) {
-$this->array = &$array;
-}
-
-public function __get($name) {
-return $this->array[$name];
-}
-
-public function __set($name, $value) {
-$this->array[$name] = $value;
-}
-
+public __construct(array &$array) { $this->array = &$array; }
+public function __get($name) { return $this->array[$name]; }
+public function __set($name, $value) { $this->array[$name] = $value; }
 }//class
 
 ?>

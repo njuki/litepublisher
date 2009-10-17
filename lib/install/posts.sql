@@ -1,11 +1,8 @@
-id bigint UNSIGNED NOT NULL auto_increment,
-idurl bigint UNSIGNED NOT NULL default 0,
-parent bigint UNSIGNED NOT NULL default 0,
-author bigint UNSIGNED NOT NULL default 0,
-
-created datetime NOT NULL default '0000-00-00 00:00:00',
-dbmodified datetime NOT NULL default '0000-00-00 00:00:00',
-
+id int UNSIGNED NOT NULL auto_increment,
+idurl int UNSIGNED NOT NULL default 0,
+parent int UNSIGNED NOT NULL default 0,
+author int UNSIGNED NOT NULL default 0,
+posted datetime NOT NULL default '0000-00-00 00:00:00',
 title text NOT NULL,
 filtered longtext not null,
 excerpt text not null,
@@ -30,6 +27,6 @@ commentscount int unsigned not null default 0,
 pagescount int unsigned not null default 0,
 
      PRIMARY KEY(id),
-key parent (parent),
-key created(created),
+key posted (posted),
 key status (status)
+key parent (parent),

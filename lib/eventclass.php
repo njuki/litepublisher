@@ -166,7 +166,7 @@ class TEventClass extends TDataClass {
 
 public function getoptions() {
 global $options;
-return new array2prop($options->__get($this->basename));
+return new tarray2prop($options->__get($this->basename));
 }
 
 public function setoptions($values) {

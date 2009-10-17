@@ -1,4 +1,4 @@
-id bigint UNSIGNED NOT NULL auto_increment,
+id int UNSIGNED NOT NULL auto_increment,
 url varchar(255) not null,
 class varchar(64) not null,
 arg varchar(64) not null,
