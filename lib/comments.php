@@ -142,4 +142,66 @@ return $this->db->res2array($this->db->select("status = 'hold' and pingback = fa
   
 }//class
 
+class tcomment extends TDataClass {
+
+  public function __construct($id) {
+parent::__construct();
+$this->table = 'comments';
+$table = $this->thistable;
+$authors = $this->db->prefix . 'comusers';
+$this->data= $this->db->queryassoc("select $table.*, $authors.name, $authors.email, $authors.url $authors.ip from $table, $authors
+where $table.id = $id, $authors.id = $table.author limit 1");
+  }
+  
+  public function save() {
+extract($this->data);
+$this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'status', 'content'));
+  }
+  
+ public function getauthorlink() {
+    if ($this->pingback == '1') {
+  return "<a href=\"{$this->website}\">{$this->name}</a>";
+    }
+    
+    $authors = TCommentUsers ::instance();
+    return $authors->getlink($this->author);
+  }
+  
+  public function Getlocaldate() {
+    return TLocal::date($this->date);
+  }
+  
+  public function Getlocalstatus() {
+    return tlocal::$data['commentstatus'][$this->status];
+  }
+
+public function getdate() {
+return strtotime($this->posted);
+}
+
+public function setdate($date) {
+$this->data['posted'] = sqldate($date);
+}
+  
+  public function  gettime() {
+    return date('H:i', $this->date);
+  }
+  
+  public function getwebsite() {
+return $this->data['url'];
+  }
+  
+  public function geturl() {
+    $post = tpost::instance($this->post);
+    return $post->link . "#comment-$this->id";
+  }
+  
+  public function getposttitle() {
+    $post = tpost::instance($this->post);
+    return $post->title;
+  }
+  
+}//class
+
+?>
 ?>
