@@ -82,6 +82,13 @@ class tdbanager  {
     if ( $this->DatabaseExists($name) )  return false;
     return $this->exec("CREATE DATABASE $name");
   }
+
+public function optimize() {
+    $tables = $this->GetTables();
+    foreach ($tables as $table) {
+$this->exec("optimize $table");
+}
+}
   
   public function export() {
     global $options;

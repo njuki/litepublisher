@@ -28,7 +28,6 @@ public function save() { retrn true; }
     $templ = isset($template->theme['widget']['recentcomment']) ? $template->theme['widget']['recentcomment'] :
     '<li><strong><a href="%1$s#comment-%2$s" title="%6$s %3$s">%4$s</a></strong>: %5$s...</li>';
     
-
       $onrecent = TLocal::$data['comment']['onrecent'];
 $table =  $this->thistable;
 $prefix = $this->db->prefix;
@@ -36,10 +35,10 @@ $authors = $prefix . 'commentsusers';
 $poststable = $prefix . 'posts';
 $urltable = $prefix . 'urlmap';
 $res = $this->db->query("
-select $table.*, $authors.name as name, $poststable.title as title, $urltable.url as url 
+select $table.*, $authors.name as name, $poststable.title as title, $urltable.url as posturl 
 from $table, $authorstable, $poststable, $urltable
 where $table.status = 'approved' and $table.pingback = 'false',
-$authorstable.id = $table.author, $poststable.id = $table.post, $urlmap.class = 'posts' and $urltable.arg = $table.post
+$authorstable.id = $table.author, $poststable.id = $table.post, $urlmap.class = 'tposts' and $urltable.arg = $table.post
 sort by $table.created desc limit ".$this->options->recentcount); 
 while ($row = $res->fetch()) {
          $content = TContentFilter::GetExcerpt($row['content'], 120);
@@ -50,7 +49,10 @@ while ($row = $res->fetch()) {
   }
   
   public function PostDeleted($postid) {
+$this->getdb($this->rawtable)->delete("id in (select id from $this->thistable where post = $postid)");
 $this->db->delete("post = postid");
+$authors = TCommentUsers::instance();
+$authors->DeleteWithoutComments();
 $users->db->delete("id in
 (select $userstable.id as uid, from $userstable
 right join $commentstable on  $commentstable.author = $userstable.id

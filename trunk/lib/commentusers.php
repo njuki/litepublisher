@@ -6,8 +6,9 @@ class TCommentUsers extends TItems {
     return GetInstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->table = 'commentusers';
     $this->basename = 'commentusers';
     $this->CacheEnabled = false;
     $this->Data['hidelink'] = false;
@@ -16,7 +17,10 @@ class TCommentUsers extends TItems {
   }
   
   public function PostDeleted($postid) {
+if (dbversion) return $this->DeleteWithoutComments();
+
     $this->lock();
+$this->DeleteWithoutComments();
     foreach ($this->items as  $id => $item) {
       $i = array_search($postid, $item['subscribe']);
       if (is_int($i)) {
@@ -24,6 +28,7 @@ class TCommentUsers extends TItems {
       }
     }
     $this->unlock();
+}
   }
   
   public function Add($name, $email, $url) {
@@ -146,6 +151,15 @@ class TCommentUsers extends TItems {
     TUrlmap::redir($url);
   }
   
+
+public function DeleteWithoutComments() {
+if (dbversion) {
+$comments = tcomments(::instance();
+$this->db->delete("id not in (select author from $comments->thistable group by author)");
+} else {
 }
+}
+
+}//class
 
 ?>
