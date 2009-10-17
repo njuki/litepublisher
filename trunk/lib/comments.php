@@ -1,7 +1,7 @@
 <?php
 
-class TComments extends TEventClass {
-public $rawtable;
+class TComments extends AbstractCommentManager {
+
  
   public static function instance() {
     return getinstance(__class__);
@@ -9,9 +9,7 @@ public $rawtable;
   
   protected function create() {
     parent::create();
-    $this->table = 'comments';
 $this->rawtable = 'rawcomments';
-    $this->addevents('dited', 'changed', 'approved');
   }
 
 public function load() { return true; }
@@ -97,13 +95,7 @@ return $result;
     $this->DoAdded($id);
   }
   
-  private function DoAdded($id) {
-    $this->DoChanged($this->items[$id]['pid']);
-    $this->CommentAdded($id);
-    $this->added($id);
-  }
-  
-  public function hasauthor($author) {
+ public function hasauthor($author) {
 if (($res = $this->db->select("author = $author limit 1")) && $res->fetch()) return true;
 return false;
   }
@@ -131,16 +123,6 @@ $this->db->iddelete($id);
       $this->DoChanged($postid);
   }
   
-  public function DoChanged($postid) {
-    ttemplate::WidgetExpired($this);
-    
-    $post = TPost::instance($postid);
-    $Urlmap = TUrlmap::instance();
-    $Urlmap->SetExpired($post->url);
-    
-    $this->changed($postid);
-  }
-  
   public function setstatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
 $this->db->setvalue($id, 'status', $value);
@@ -158,19 +140,6 @@ extract($row);
   
   public function getholditems() {
 return $this->db->res2array($this->db->select("status = 'hold' and pingback = false"));
-  }
-  
-  public function CommentAdded($id) {
-    global $options;
-    if (!$this->SendNotification) return;
-    $comment = &$this->Getcomment($id);
-    $html = &THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = &TLocal::instance();
-    eval('$subject = "' . $html->subject . '";');
-    eval('$body = "'. $html->body . '";');
-    TMailer::SendMail($options->name, $options->fromemail,
-    'admin', $options->email,  $subject, $body);
   }
   
 }//class
