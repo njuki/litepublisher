@@ -51,27 +51,22 @@ while ($row = $res->fetch()) {
   public function PostDeleted($postid) {
 $this->getdb($this->rawtable)->delete("id in (select id from $this->thistable where post = $postid)");
 $this->db->delete("post = postid");
-$authors = TCommentUsers::instance();
-$authors->DeleteWithoutComments();
-$users->db->delete("id in
-(select $userstable.id as uid, from $userstable
-right join $commentstable on  $commentstable.author = $userstable.id
-where uid is  null)");
-  }
+}
   
   public function add($postid, $name, $email, $url, $content) {
     $users = TCommentUsers ::instance();
     $author = $users->add($name, $email, $url);
+    $filter = TContentFilter::instance();
 $result =$this->db->InsertAssoc(array(
 'post' => $postid,
 'parent' => 0,
 'author' => $author,
-'created' => sqlnow(),
-'modified' => sqldate(),
-'content' =>
+'posted' => sqlnow(),
+'content' =>$filter->GetCommentContent($Content),
 'status' => $this->CreateStatus($author, $content),
 'pingback' => 'false'
 ));
+$this->getdb($this->rawtable)->InsertAssoc(array('id' => $result, 'rawcontent' => $content));
 $this->DoAdded($result);
 return $result;
   }
@@ -109,26 +104,17 @@ return $result;
   }
   
   public function hasauthor($author) {
-$this->db->select("author = $author limit 1")
-    foreach ($this->items as $id => $item) {
-      if ($userid == $item['uid'])  return true;
-    }
+if (($res = $this->db->select("author = $author limit 1")) && $res->fetch()) return true;
+return false;
+  }
+  
+  public function UserHasApproved($author) {
+if (($res = $this->db->select("author = $author and status = 'approved' limit 1")) && $res->fetch()) return true;
     return false;
   }
   
-  public function UserHasApproved($userid) {
-    foreach ($this->items as $id => $item) {
-      if (($userid == $item['uid']) && !isset($item['status'])) return true;
-    }
-    return false;
-  }
-  
-  public function HasApprovedCount($userid, $count) {
-    foreach ($this->items as $id => $item) {
-      if (($userid == $item['uid']) && !isset($item['status'])) {
-        if (--$count ==0) return true;
-      }
-    }
+  public function HasApprovedCount($author, $count) {
+if (($res = $this->db->query(select count(author) as count from $this->thistable where author = $author and status = 'approved' limit $count")) && ($row = $res->fetch()) return $count ><= $row['count'];
     return false;
   }
   
@@ -146,30 +132,25 @@ $this->db->iddelete($id);
   }
   
   public function DoChanged($postid) {
-    TTemplate::WidgetExpired($this);
+    ttemplate::WidgetExpired($this);
     
     $post = TPost::instance($postid);
     $Urlmap = TUrlmap::instance();
     $Urlmap->SetExpired($post->url);
     
-    $this->Changed($postid);
+    $this->changed($postid);
   }
   
-  public function settatus($id, $value) {
+  public function setstatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
 $this->db->setvalue($id, 'status', $value);
     $this->DoChanged($item['pid']);
   }
   
   public function UserCanAdd($userid) {
-    $count = 0;
-    $approved = 0;
-    foreach($this->items as $id => $item) {
-      if ($item['uid'] == $userid) {
-        $count++;
-        if (!isset($item['status']) ) $approved++;
-      }
-    }
+$this->db->query("select count(id) as countfrom $this->thistable where author = $author 
+union select count(id) as approved from $this->thistable where author = $author  and status = 'approved'");
+extract($row);
     if ($count < 2) return true;
     if  ($approved ==0) return false;
     return true;
