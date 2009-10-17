@@ -2,7 +2,6 @@
 
 class TPostTransform  {
   public $post;
-  const sqldate = 'Y-m-d H:i:s';
   const bullprops = array('commentsenabled', pingenabled', rssenabled');
   const props = array('id', 'urlid', 'parent', 'author',
   'created', 'modified',
@@ -59,7 +58,7 @@ $self = self::instance($post);
   }
   
   private function getcreated() {
-    return date(self::sqldate, $this->post->date);
+    return sqldate($this->post->date);
   }
   
   private function setcreated($date) {
@@ -67,7 +66,7 @@ $self = self::instance($post);
   }
   
   private function getmodified() {
-    return date(self::sqldate, $this->post->date);
+    return sqldate( $this->post->date);
   }
   
   private function setmodified($date) {

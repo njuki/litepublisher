@@ -76,23 +76,21 @@ return $result;
     return 'hold';
   }
   
-  public function AddPingback(&$post, $url, $title) {
-    $id =++$this->lastid;
-    $users = &TCommentUsers::instance();
-    $userid = $users->Add($title, '', $url);
-    $comments = &$post->comments;
+  public function AddPingback(tpost $post, $url, $title) {
+    $users = TCommentUsers::instance();
+    $userid = $users->add($title, '', $url);
+
     $date = $comments->Create($id, $userid, '', 'hold', 'pingback');
     
-    $this->items[$id] = array(
-    //'id' => $id,
-    'uid' => $userid,
-    'pid' => (int) $post->id,
-    'date' => $date,
+$result = $this->db->InsertAssoc(array(
+    'author' => $userid,
+    'post' => ($postid,
+    'posted' => sqldate(),
     'status' => 'hold',
     'type' => 'pingback'
-    );
-    $this->save();
-    $this->DoAdded($id);
+    ));
+//no add to raw
+    $this->DoAdded($result);
   }
   
  public function hasauthor($author) {
@@ -130,9 +128,9 @@ $this->db->setvalue($id, 'status', $value);
   }
   
   public function UserCanAdd($userid) {
-$this->db->query("select count(id) as countfrom $this->thistable where author = $author 
+$res = $this->db->query("select count(id) as countfrom $this->thistable where author = $author 
 union select count(id) as approved from $this->thistable where author = $author  and status = 'approved'");
-extract($row);
+extract($res->fetch());
     if ($count < 2) return true;
     if  ($approved ==0) return false;
     return true;

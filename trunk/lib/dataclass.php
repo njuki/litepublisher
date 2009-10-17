@@ -189,9 +189,14 @@ protected function getjoinurl() {
 
 class tarray2prop {
 public $array;
-public __construct(array &$array) { $this->array = &$array; }
+public function __construct(array &$array) { $this->array = &$array; }
 public function __get($name) { return $this->array[$name]; }
 public function __set($name, $value) { $this->array[$name] = $value; }
 }//class
+
+function sqldate($date = 0) {
+if ($date == 0) $date = time();
+return date('Y-m-d H:i:s', $date);
+}
 
 ?>
