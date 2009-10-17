@@ -1,15 +1,9 @@
 <?php
 
-class TCommentManager extends TItems {
+class TCommentManager extends TAbstractCommentManager {
   
   public static function instance() {
     return getinstance(__class__);
-  }
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'commentmanager';
-    $this->AddEvents('Edited', 'Changed', 'Approved');
   }
   
   public function getcomment($id) {
@@ -77,14 +71,7 @@ class TCommentManager extends TItems {
     $this->DoAdded($id);
   }
   
-  protected function CreateStatus($userid, $content) {
-    global $options;
-    if ($options->DefaultCommentStatus == 'approved') return 'approved';
-    if ($this->UserHasApproved($userid)) return  'approved';
-    return 'hold';
-  }
-  
-  public function AddPingback(&$post, $url, $title) {
+ public function AddPingback(&$post, $url, $title) {
     $id =++$this->lastid;
     $users = &TCommentUsers::instance();
     $userid = $users->Add($title, '', $url);
@@ -103,13 +90,7 @@ class TCommentManager extends TItems {
     $this->DoAdded($id);
   }
   
-  private function DoAdded($id) {
-    $this->DoChanged($this->items[$id]['pid']);
-    $this->CommentAdded($id);
-    $this->Added($id);
-  }
-  
-  public function hasauthor($author) {
+ public function hasauthor($author) {
     foreach ($this->items as $id => $item) {
       if ($author == $item['uid'])  return true;
     }
@@ -154,16 +135,6 @@ class TCommentManager extends TItems {
     return false;
   }
   
-  public function DoChanged($postid) {
-    TTemplate::WidgetExpired($this);
-    
-    $post = TPost::instance($postid);
-    $Urlmap = TUrlmap::instance();
-    $Urlmap->SetExpired($post->url);
-    
-    $this->Changed($postid);
-  }
-  
   public function setstatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
     $item = $this->items[$id];
@@ -205,19 +176,6 @@ class TCommentManager extends TItems {
       }
     }
     return $result;
-  }
-  
-  public function CommentAdded($id) {
-    global $options;
-    if (!$this->SendNotification) return;
-    $comment = &$this->Getcomment($id);
-    $html = &THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = &TLocal::instance();
-    eval('$subject = "' . $html->subject . '";');
-    eval('$body = "'. $html->body . '";');
-    TMailer::SendMail($options->name, $options->fromemail,
-    'admin', $options->email,  $subject, $body);
   }
   
 }//class
