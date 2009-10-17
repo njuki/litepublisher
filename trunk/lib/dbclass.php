@@ -59,6 +59,13 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     }
     return false;
   }
+
+public function queryassoc($sql) {
+if ($res = $this->query($sql)) {
+return $res->fetch(PDO::FETCH_ASSOC);
+}
+return false;
+}
   
   public function getassoc($where) {
     if ($res = $this->select($where)) {
@@ -152,6 +159,15 @@ public function idexists($id) {
     }
     return false;
   }
+
+public function idprops($id, $instance) {
+    if ($res = $this->select("id = $id limit 1")) {
+      $res->fetch(PDO::FETCH_INTO , $instance);
+return true;
+    }
+return false;
+
+}
 
 public function findid($where) {
     if($res = $this->select("select id from $this->prefix$this->table where ". $where . ' limit 1')) {

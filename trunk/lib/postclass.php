@@ -314,7 +314,7 @@ return $db;
   
   //db
   public function LoadFromDB() {
-    if ($res = $this->db->select("id = $this->id")) {
+    if ($res = $this->db->select("id = $this->id limit 1")) {
       $res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
 return true;
     }
