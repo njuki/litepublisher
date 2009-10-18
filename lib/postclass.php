@@ -80,14 +80,6 @@ return self::instance($id);
     return null;
   }
   
-  public function geturl() {
-    if (($this->data['url'] == '') && dbversion && ($this->idurl > 0)) {
-      $urlmap = turlmap::instance();
-      $this->data['url'] = $urlmap->idvalue($this->idurl, 'url');
-    }
-    return $this->data['url'];
-  }
-  
   public function Getlink() {
     global $options;
     return $options->url . $this->url;
@@ -314,7 +306,9 @@ return $db;
   
   //db
   public function LoadFromDB() {
-    if ($res = $this->db->select("id = $this->id limit 1")) {
+global $db;
+    if ($res = $db->query("select $db->poststable.*, $db->urltable.url as url  from $db->poststable, $db->urltable
+where $db->poststable.id = $this->id and  $db->urltable.id  = $db->poststable.idurl limit 1")) {
       $res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
 return true;
     }

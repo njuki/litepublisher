@@ -128,7 +128,7 @@ $this->db->setvalue($id, 'status', $value);
   }
   
   public function UserCanAdd($userid) {
-$res = $this->db->query("select count(id) as countfrom $this->thistable where author = $author 
+$res = $this->db->query("select count(id) as count from $this->thistable where author = $author 
 union select count(id) as approved from $this->thistable where author = $author  and status = 'approved'");
 extract($res->fetch());
     if ($count < 2) return true;
@@ -147,6 +147,10 @@ class tcomment extends TDataClass {
   public function __construct($id) {
 parent::__construct();
 $this->table = 'comments';
+$this->setid($id);
+}
+
+public function setid($id) {
 $table = $this->thistable;
 $authors = $this->db->prefix . 'comusers';
 $this->data= $this->db->queryassoc("select $table.*, $authors.name, $authors.email, $authors.url $authors.ip from $table, $authors
