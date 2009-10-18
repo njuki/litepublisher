@@ -1,12 +1,66 @@
 <?php
 
+if (dbversion) {
+class THoldComments extends TDataclass {
+  
+  protected function create() {
+    parent::create();
+    $this->table ='holdcomments';
+  }
+
+public function add($values) {
+      $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
+$this->db->InsertAssoc(array(
+'id' => $confirmid, 
+'posted' => sqldate(),
+'values' => serialize($values)
+));
+return $confirmid;
+}  
+
+public function getitem($confirmid) {
+if ($item = $this->getitem($confirmid)) {
+return unserialize($item['values']);
+}
+return false;
+}
+
+public function optimize() {
+$this->db->delete("posted + INTERVAL 20 minutes < now");
+}
+}//class
+
+} else {
+
 class THoldComments extends TItems {
   
   protected function CreateData() {
     parent::CreateData();
     $this->basename ='holdcomments';
   }
-  
+
+protected function Afterload() {
+parent::AfterLoad();
+    foreach ($this->items as $id => $item) {
+      if ($item['date']+ 600 < time()) unset($this->items[$id]);
+    }
+}
+
+public function add($values) {
+      $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
+      $this->items[$confirmid] =$values;
+$this->save();
+return $confirmid;
+}  
+
+public function getitem($confirmid) {
+if (!isset($this->items[$confirmid])) return false;
+$this->save();
+return $this->items[$confirmid];
+}
+
+}//class
+
 }
 
 class TCommentForm extends TEventClass{
@@ -91,27 +145,17 @@ class TCommentForm extends TEventClass{
     }
     
     $hold = new THoldComments();
-    foreach ($hold->items as $id => $item) {
-      if ($item['date']+ 600 < time()) unset($hold->items[$id]);
-    }
-    
     if (!isset($_POST['confirmid'])) {
-      $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
       $values = $_POST;
       $values['date'] = time();
-      $hold->items[$confirmid] =$values;
-      $hold->Save();
+      $confirmid  = $hold->add($values);
       return TTemplate::SimpleHtml($this->GetConfirmForm($confirmid));
     }
     
     $confirmid = $_POST['confirmid'];
-    if (!isset($hold->items[$confirmid])) {
+    if (!($values = $hold->getitem($confirmid))) {
       return TTemplate::SimpleContent(TLocal::$data['commentform']['notfound']);
     }
-    
-    $values = $hold->items[$confirmid];
-    //unset($hold->items[$confirmid]);
-    $hold->Save();
     
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = TPosts::Instance();

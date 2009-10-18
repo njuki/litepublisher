@@ -307,8 +307,8 @@ return $db;
   //db
   public function LoadFromDB() {
 global $db;
-    if ($res = $db->query("select $db->poststable.*, $db->urltable.url as url  from $db->poststable, $db->urltable
-where $db->poststable.id = $this->id and  $db->urltable.id  = $db->poststable.idurl limit 1")) {
+    if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
       $res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
 return true;
     }
