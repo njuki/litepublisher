@@ -26,6 +26,10 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     if ($timezone > 0) $timezone = "+$timezone";
     $this->exec("SET time_zone = '$timezone:00'");
   }
+
+public function __get($name) {
+return $this->"get$name"()
+}
   
   public function query($sql, $mode = null) {
     $this->sql = $sql;
@@ -197,5 +201,21 @@ return $this->update("$name = " . $this->quote($value), "id = $id");
     return $result;
   }
   
+public function geturltable() {
+return $this->prefix. 'urlmap';
+}
+
+public function getpoststable() {
+return $this->prefix . 'posts';
+}
+
+public function getcommentstable() {
+return $this->prefix . 'comments';
+}
+
+public function getauthorstable() {
+return $this->prefix . 'authors';
+}
+
 }//class
 ?>
