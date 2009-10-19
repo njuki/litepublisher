@@ -64,7 +64,7 @@ return $this->items[$confirmid];
 class TCommentForm extends TEventClass{
   
   public static function instance() {
-    return GetNamedInstance('commentform', __class__);
+    return getinstance(__class__);
   }
   
   protected function create() {
@@ -123,7 +123,7 @@ class TCommentForm extends TEventClass{
   }
   
   public function request($arg) {
-    global $options;
+    global $classes, $options;
     if ($options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
@@ -155,7 +155,7 @@ class TCommentForm extends TEventClass{
     }
     
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
-    $posts = tposts::instance();
+    $posts = $classes->posts;
     if(!$posts->ItemExists($postid)) return ttemplate::SimpleContent(TLocal::$data['default']['postnotfound']);
     $post = tpost::instance($postid);
     
@@ -184,13 +184,13 @@ class TCommentForm extends TEventClass{
     $users = TCommentUsers ::instance();
     $users->lock();
     $userid = $users->add($values['name'], $values['email'], $values['url']);
-    $CommentManager = TCommentManager::instance();
+    $CommentManager = $classes->commentmanager;
     if (!$CommentManager->UserCanAdd( $userid)) return ttemplate::SimpleContent($lang->toomany);
     $users->UpdateSubscribtion($userid, $post->id, $values['subscribe']);
     $usercookie = $users->getcookie($userid);
     $users->unlock();
     
-    $CommentManager->AddToPost($post, $userid, $values['content']);
+    $CommentManager->AddToPost($post->id, $userid, $values['content']);
     
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);

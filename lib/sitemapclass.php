@@ -110,7 +110,8 @@ class TSitemap extends TItems {
   }
   
   private function WriteNamed($name, $prio = 5) {
-    $instance = GetNamedInstance($name, '');
+global $classes;
+    $instance = $classes->$name;
     foreach ($instance->items as $id => $item) {
       $this->WriteItem($item['url'], $prio);
     }

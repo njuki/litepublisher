@@ -4,17 +4,12 @@ class TComments extends TItems {
   public $postid;
   private static $Instances;
   
-  public function getbasename() {
-    return 'posts'.  DIRECTORY_SEPARATOR . $this->postid . DIRECTORY_SEPARATOR . 'comments';
-  }
-  
   public static function instance($postid) {
-    global $classes;
-    $class = $classes->classes['comments'];
     if (!isset(self::$Instances)) self::$Instances = array();
     if (!isset(self::$Instances[$postid]))  {
-      self::$Instances[$postid]  = new $class();
-      $self = self::$Instances[$postid];
+$class = __class__;
+$self = new $class();
+      self::$Instances[$postid]  = $self;
       $self->postid = $postid;
       $self->load();
     }
@@ -27,6 +22,11 @@ class TComments extends TItems {
     $result->id = $id;
     return $result;
   }
+
+  public function getbasename() {
+    return 'posts'.  DIRECTORY_SEPARATOR . $this->postid . DIRECTORY_SEPARATOR . 'comments';
+  }
+  
   
   public function add($id, $userid,  $Content,$status = 'hold',  $type = '') {
     $date = time();

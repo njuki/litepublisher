@@ -4,15 +4,15 @@ class TMenu extends TItems {
   protected $home;
   public $AcceptGet;
   
-  public static function &Instance() {
-    return GetNamedInstance('menu', __class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
     $this->AddDataMap('home', array());
-    $this->AddEvents('BeforeAdd', 'Edited');
+    $this->addevents('BeforeAdd', 'Edited');
   }
   
   public function Add(&$Item) {
@@ -27,7 +27,7 @@ class TMenu extends TItems {
     $this->BeforeAdd($Item->id);
     if ($Item->date == 0) $Item->date = time();
     
-    $Linkgen = &TLinkGenerator::Instance();
+    $Linkgen = &TLinkGenerator::instance();
     if ($Item->url == '') {
       $Item->url = $Linkgen->Create($Item, 'post');
     } else {
@@ -41,7 +41,7 @@ class TMenu extends TItems {
     $Item->Unlock();
     $this->Unlock();
     
-    $Urlmap = TUrlmap::Instance();
+    $Urlmap = TUrlmap::instance();
     if ($this->AcceptGet) {
       $Urlmap->AddGet($Item->url, get_class($Item), $Item->id);
     } else {
@@ -54,7 +54,7 @@ class TMenu extends TItems {
   }
   
   public function Edit(&$item) {
-    $Urlmap = TUrlmap::Instance();
+    $Urlmap = TUrlmap::instance();
     $Urlmap->Lock();
     
     $this->Lock();
@@ -62,7 +62,7 @@ class TMenu extends TItems {
     $oldurl = $Urlmap->Find(get_class($item), $item->id);
     if ($oldurl != $item->url) {
       $Urlmap->Delete($oldurl);
-      $Linkgen = &TLinkGenerator::Instance();
+      $Linkgen = &TLinkGenerator::instance();
       if ($item->url == '') {
         $item->url = $Linkgen->Create($item, 'post');
       } else {
@@ -168,7 +168,7 @@ class TMenu extends TItems {
     if (!$this->ItemExists($id)) return false;
     if ($this->GetChildsCount($id) > 0) return false;
     $this->Lock();
-    $Urlmap = TUrlmap::Instance();
+    $Urlmap = TUrlmap::instance();
     $Urlmap->Delete($this->items[$id]['url']);
     TItem::DeleteItemDir($paths['data']. 'menus'. DIRECTORY_SEPARATOR  . $id. DIRECTORY_SEPARATOR );
     unset($this->items[$id]);

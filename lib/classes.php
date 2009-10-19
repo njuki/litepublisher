@@ -92,12 +92,6 @@ function getinstance($class) {
   return $classes->instances[$class];
 }
 
-function GetNamedInstance($name, $defclass) {
-  global $classes;
-  $class = !empty($classes->classes[$name]) ? $classes->classes[$name] : $defclass;
-  return getinstance($class);
-}
-
 function PHPComment(&$s) {
   $s = str_replace('*/', '**//*/', $s);
   return "<?php /* $s */ ?>";

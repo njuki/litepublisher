@@ -1,18 +1,16 @@
 <?php
 
 class tpost extends TItem implements  ITemplate {
-  private $fComments;
   private $dateformater;
   
+  public static function instance($id = 0) {
+    return parent::instance(__class__, $id);
+  }
+
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
   }
   
-  public static function instance($id = 0) {
-    global $classes;
-    $class = !empty($classes->classes['post']) ? $classes->classes['post'] : __class__;
-    return parent::instance($class, $id);
-  }
   
   protected function create() {
     global $options;
@@ -46,10 +44,7 @@ $this->table = 'posts';
   }
   
   public function getcomments() {
-    if (!isset($this->fComments) ) {
-      $this->fComments = TComments::instance($this->id);
-    }
-    return $this->fComments;
+return TComments::instance($this->id);
   }
   
   public function getprev() {

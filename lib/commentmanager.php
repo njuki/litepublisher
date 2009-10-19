@@ -50,21 +50,20 @@ class TCommentManager extends TAbstractCommentManager {
   public function add($postid, $name, $email, $url, $content) {
     $users = TCommentUsers ::instance();
     $userid = $users->add($name, $email, $url);
-    $post = tpost::instance($postid);
-    return $this->AddToPost($post, $userid, $content);
+    return $this->AddToPost($postid, $userid, $content);
   }
   
-  public function AddToPost(&$post, $userid, $content) {
+  public function AddToPost($postid, $userid, $content) {
     $id = ++  $this->lastid;
-    $comments = &$post->comments;
+    $comments = tcomments::instance($postid);
     $status = $this->CreateStatus($userid, $content);
-    $date = $comments->Create($id, $userid,  $content, $status);
+    $posted = $comments->add($id, $userid,  $content, $status);
     
     $this->items[$id] = array(
     //'id' => $id,
     'uid' => (int) $userid,
     'pid' => (int) $post->id,
-    'date' => $date
+    'posted' => $posted
     );
     if ($status != 'approved') $this->items[$id]['status'] = $status;
     $this->save();
@@ -76,13 +75,13 @@ class TCommentManager extends TAbstractCommentManager {
     $users = &TCommentUsers::instance();
     $userid = $users->Add($title, '', $url);
     $comments = &$post->comments;
-    $date = $comments->Create($id, $userid, '', 'hold', 'pingback');
+    $posted = $comments->add($id, $userid, '', 'hold', 'pingback');
     
     $this->items[$id] = array(
     //'id' => $id,
     'uid' => $userid,
     'pid' => (int) $post->id,
-    'date' => $date,
+    'posted' => $posted,
     'status' => 'hold',
     'type' => 'pingback'
     );

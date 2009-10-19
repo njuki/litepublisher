@@ -5,7 +5,7 @@ class tposts extends TItems {
 public $rawtable;
 
   public static function instance() {
-    return GetNamedInstance('posts', __class__);
+    return getinstance(__class__);
   }
   
   public static function unsub($obj) {

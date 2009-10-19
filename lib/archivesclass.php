@@ -3,24 +3,24 @@
 class TArchives extends TItems implements  ITemplate {
   public $date;
   
-  public static function &Instance() {
-    return GetNamedInstance('archives', __class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename   = 'archives';
     $this->table = 'posts';
-    $this->Data['lite'] = false;
-    $this->Data['showcount'] = false;
+    $this->data['lite'] = false;
+    $this->data['showcount'] = false;
   }
   
   public function GetWidgetContent($id) {
-    global $Options;
+    global $options;
     $result = '';
     
     foreach ($this->items as $date => $item) {
-  $result  .= "<li><a rel=\"archives\" href=\"$Options->url{$item['url']}\">{$item['title']}</a>";
+  $result  .= "<li><a rel=\"archives\" href=\"$options->url{$item['url']}\">{$item['title']}</a>";
     if ($this->showcount) $result .= "({$item['count']})";
       $result .= "</li>\n";
     }
@@ -29,36 +29,37 @@ class TArchives extends TItems implements  ITemplate {
   }
   
   public function GetHeadLinks() {
-    global $Options;
+    global $options;
     $result = '';
     foreach ($this->items as $date => $item) {
-  $result  .= "<link rel=\"archives\" title=\"{$item['title']}\" href=\"$Options->url{$item['url']}\" />\n";
+  $result  .= "<link rel=\"archives\" title=\"{$item['title']}\" href=\"$options->url{$item['url']}\" />\n";
     }
     return $result;
   }
   
-  protected function Setlite($value) {
+  protected function setlite($value) {
     if ($value != $this->lite) {
-      $this->Data['lite'] = $value;
+      $this->data['lite'] = $value;
       $this->Save();
     }
   }
   
   public function PostsChanged() {
-    $posts = &TPosts::Instance();
+    $posts = tposts::instance();
     $this->lock();
     $this->items = array();
     //sort archive by months
-    $Linkgen = &TLinkGenerator::Instance();
-    if ($this->dbversion) {
-      $db = $this->db;
-    $res = $db->query("SELECT YEAR(created) AS 'year', MONTH(created) AS 'month', count(id) as 'count' FROM  {$db->prefix}posts
-      where status = 'published' GROUP BY YEAR(created), MONTH(created) ORDER BY created DESC ");
+    $Linkgen = TLinkGenerator::instance();
+    if (dbversion) {
+global $db
+    $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
+      where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
       while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
+'idurl => 0,
         'url' => $Linkgen->Create($this, 'archive', false),
-        'title' => TLocal::date($this->date, 'F Y'),
+        'title' => tlocal::date($this->date, 'F Y'),
         'year' => $r['year'],
         'month' => $r['month'],
         'count' => $r['count']
@@ -70,10 +71,12 @@ class TArchives extends TItems implements  ITemplate {
         $this->date = mktime(0,0,0, $d['mon'] , 1, $d['year']);
         if (!isset($this->items[$this->date])) {
           $this->items[$this->date] = array(
+'idurl' => 0,
           'url' => $Linkgen->Create($this, 'archive', false),
           'title' => TLocal::date($this->date, 'F Y'),
           'year' => $d['year'],
           'month' =>$d['mon'],
+'count' => 0,
           'posts' => array()
           );
         }
@@ -86,26 +89,26 @@ class TArchives extends TItems implements  ITemplate {
   }
   
   public function CreatePageLinks() {
-    global $Options;
-    $Urlmap = &TUrlmap::Instance();
-    $Urlmap->lock();
+    global $options;
+    $urlmap = turlmap::instance();
+    $urlmap->lock();
     $this->lock();
     //Compare links
-    $old = $Urlmap->GetClassUrls(get_class($this));
+    $old = $urlmap->GetClassUrls(get_class($this));
     foreach ($this->items as $date => $item) {
       $j = array_search($item['url'], $old);
       if (is_int($j))  {
         array_splice($old, $j, 1);
       } else {
-        $Urlmap->Add($item['url'], get_class($this), $date);
+        $this->items[$date]['idurl'] = $urlmap->Add($item['url'], get_class($this), $date);
       }
     }
     foreach ($old as $url) {
-      $Urlmap->Delete($url);
+      $urlmap->delete($url);
     }
     
     $this->unlock();
-    $Urlmap->unlock();
+    $urlmap->unlock();
   }
   
   //ITemplate
@@ -124,25 +127,25 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function GetTemplateContent() {
-    global $Options, $Urlmap;
-    if ($this->dbversion) {
+    global $options, $urlmap;
+    if (dbversion) {
       $item = $this->items[$this->date];
-  $items = $this->db->idselect("status = 'published' and year(created) = '{$item['year']}' and month(created) = '{$item['month']} ORDER BY created DESC ");
+  $items = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']} ORDER BY posted DESC ");
     } else {
       if (!isset($this->items[$this->date]['posts'])) return '';
       $items = &$this->items[$this->date]['posts'];
     }
-    $TemplatePost = TTemplatePost::Instance();
+    $TemplatePost = TTemplatePost::instance();
     if ($this->lite) {
       $postsperpage = 1000;
-      $list = array_slice($items, ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
+      $list = array_slice($items, ($urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
       $result = $TemplatePost->LitePrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $Urlmap->pagenumber, ceil(count($items)/ $postsperpage));
+      $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $urlmap->pagenumber, ceil(count($items)/ $postsperpage));
       return $result;
     } else {
-      $list = array_slice($items, ($Urlmap->pagenumber - 1) * $Options->postsperpage, $Options->postsperpage);
+      $list = array_slice($items, ($urlmap->pagenumber - 1) * $options->postsperpage, $options->postsperpage);
       $result = $TemplatePost->PrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $Urlmap->pagenumber, ceil(count($items)/ $Options->postsperpage));
+      $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $urlmap->pagenumber, ceil(count($items)/ $options->postsperpage));
       return $result;
     }
   }

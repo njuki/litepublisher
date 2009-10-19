@@ -3,20 +3,20 @@
 class TTemplateComment extends TEventClass {
   public $templ;
   
-  public static function &Instance() {
-    return GetNamedInstance('templatecomment', __class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function CreateData() {
     parent::CreateData();
-    $urlmap = TUrlmap::Instance();
+    $urlmap = TUrlmap::instance();
     $this->basename = 'templatecomment' . ($urlmap->Ispda ? '.pda'  : '');
     $this->AddDataMap('templ', array());
   }
   
   public function ThemeChanged() {
     $this->templ = array();
-    $template = TTemplate::Instance();
+    $template = TTemplate::instance();
     $s = file_get_contents($template->path . 'comments.tml');
     $comments = $template->parsetml($s, 'comments', '');
     $count= $template->parsetml($comments, 'count', '');
@@ -34,7 +34,7 @@ class TTemplateComment extends TEventClass {
     $this->templ['pingbacks'] = $pingbacks;
     
     $this->templ['closed'] = str_replace('"', '\"', $template->parsetml($s, 'closed', ''));
-    $CommentForm = TCommentForm::Instance();
+    $CommentForm = TCommentForm::instance();
     $CommentForm->form = $template->parsetml($s, 'form', '');
     $this->save();
   }
@@ -65,7 +65,7 @@ class TTemplateComment extends TEventClass {
     $comments = $post->comments;
     if (($comments->count == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $Urlmap->pagenumber)) return $this->GetCommentsCountLink('');
-    $lang = TLocal::Instance('comment');
+    $lang = TLocal::instance('comment');
     $result = '';
     $comment = &new TComment($comments);
     $items = &$comments->GetApproved();
@@ -106,7 +106,7 @@ class TTemplateComment extends TEventClass {
   
   private function GetCommentsList(&$items, &$comment, $hold, $from) {
     global $Options, $post, $Template;
-    $lang = TLocal::Instance('comment');
+    $lang = TLocal::instance('comment');
     $result = '';
     $comtempl = $this->templ['comment'];
     $class1 = $this->templ['class1'];
@@ -123,9 +123,9 @@ class TTemplateComment extends TEventClass {
   
   public function GetHoldList(&$items, $postid) {
     if (count($items) == 0) return '';
-    $comments = TComments::Instance($postid);
+    $comments = TComments::instance($postid);
     $comment = new TComment($comments);
-    $lang = TLocal::Instance('comment');
+    $lang = TLocal::instance('comment');
     eval('$hold = "'. $this->templ['hold'] . '";');
     return $this->GetCommentsList($items, $comment, $hold, 0);
   }
