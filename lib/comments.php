@@ -2,8 +2,8 @@
 
 class TComments extends AbstractCommentManager {
 
- 
-  public static function instance() {
+//$postid ingnored
+  public static function instance($postid = 0) {
     return getinstance(__class__);
   }
   
@@ -141,9 +141,19 @@ extract($res->fetch());
     if  ($approved ==0) return false;
     return true;
   }
-  
+
+  public function gethold($author) {
+return $this->db->res2array($this->db->select("author = $author and status = 'hold' and pingback = false"));
+}
+
   public function getholditems() {
 return $this->db->res2array($this->db->select("status = 'hold' and pingback = false"));
+  }
+
+//from files version
+  public function IndexOfRawContent($s) {
+$id = $this->getdb('rawcomments')->findid('rawcontent', $s);
+return $id ? $id : -1;
   }
   
 }//class
