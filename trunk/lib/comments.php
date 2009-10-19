@@ -47,8 +47,11 @@ while ($row = $res->fetch()) {
   }
   
   public function PostDeleted($postid) {
+$this->db->update("status = 'deleted'", "post = $postid");
+/*
 $this->getdb($this->rawtable)->delete("id in (select id from $this->thistable where post = $postid)");
 $this->db->delete("post = postid");
+*/
 }
   
   public function add($postid, $name, $email, $url, $content) {
@@ -109,6 +112,8 @@ if (($res = $this->db->query(select count(author) as count from $this->thistable
   }
   
   public function delete($id) {
+$this->db->setvalue($id, 'status', 'deleted');
+/*
 $author = $this->db->getvalue($id, 'author');
 $this->db->iddelete($id);
 
@@ -116,7 +121,8 @@ $this->db->iddelete($id);
         $users = TCommentUsers::instance();
         $users->iddelete($author);
       }
-      
+  */
+    
       $this->deleted($id);
       $this->DoChanged($postid);
   }

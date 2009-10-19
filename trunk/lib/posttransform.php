@@ -3,8 +3,9 @@
 class TPostTransform  {
   public $post;
   const bullprops = array('commentsenabled', pingenabled', rssenabled');
-  const props = array('id', 'urlid', 'parent', 'author',
-  'created', 'modified',
+  const props = array('id', 'idurl', 'parent', 'author',
+  //'created', 'modified',
+'posted',
   'title', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
   'categories', 'tags',
   'password', 'template', 'theme',
@@ -56,6 +57,15 @@ $self = self::instance($post);
       $post->$name = $value;
     }
   }
+
+  private function getposted() {
+    return sqldate($this->post->posted);
+  }
+  
+  private function setposted($date) {
+    $this->post->posted = strtotime($date);
+  }
+  
   
   private function getcreated() {
     return sqldate($this->post->date);

@@ -6,6 +6,7 @@ class THoldComments extends TDataclass {
   protected function create() {
     parent::create();
     $this->table ='holdcomments';
+$this->db->delete("posted + INTERVAL 20 minutes < now");
   }
 
 public function add($values) {
@@ -25,9 +26,6 @@ return unserialize($item['values']);
 return false;
 }
 
-public function optimize() {
-$this->db->delete("posted + INTERVAL 20 minutes < now");
-}
 }//class
 
 } else {

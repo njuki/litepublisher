@@ -33,11 +33,20 @@ return $this->prefix . $name;
   
   public function query($sql, $mode = null) {
     $this->sql = $sql;
-    if (defined('debug')) $this->history[] = $sql;
+    if (defined('debug')) {
+$this->history[] = array(
+'sql' => $sql,
+'started' => microtime()
+);
+}
     if (is_object ($this->result))  {
       $this->result->closeCursor();
     }
     $this->result = parent::query($sql, $mode);
+
+if (defined('debug')) {
+$this->history[count($this->history) - 1]['finished'] = microtime();
+}
     return $this->result;
   }
   
