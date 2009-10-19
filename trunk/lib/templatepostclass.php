@@ -24,9 +24,9 @@ class TTemplatePost extends TEventClass {
   private function GetPostFooter(&$post) {
     global $Urlmap;
     $result = '';
-    if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
+    if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->countpages);
     if ($post->commentsenabled && ($post->commentscount > 0)) {
-      $lang = &TLocal::instance();
+      $lang = tlocal::instance();
       $result .= "<p><a href=\"$post->rsslink\">$lang->commentsrss</a></p>\n";
     }
     
