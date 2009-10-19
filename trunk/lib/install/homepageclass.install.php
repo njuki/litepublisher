@@ -1,14 +1,15 @@
 <?php
 
 function THomepageInstall(&$self) {
-  global $Options;
-  $Options->home = '/';
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Add($Options->home, get_class($self), null);
+  global $options;
+  $options->home = '/';
+  $urlmap = turlmap::instance();
+  $self->idurl = $urlmap->add($options->home, get_class($self), null);
+$self->save();
 }
 
 function THomepageUninstall(&$self) {
-  TUrlmap::unsub($self);
+  turlmap::unsub($self);
 }
 
 ?>

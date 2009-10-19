@@ -1,30 +1,32 @@
 <?php
 
 class TRobotstxt extends TItems {
-  public function GetBaseName() {
-    return 'robots.txt';
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
+  public function create() {
+parent::create();
+$this->basename = 'robots.txt';
+$this->data['idurl'] = 0;
   }
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+    public function AddDisallow($url) {
+    return $this->add("Disallow: $url");
   }
   
-  
-  public function AddDisallow($url) {
-    return $this->Add("Disallow: $url");
-  }
-  
-  public function Add($value) {
+  public function add($value) {
     if (!in_array($value, $this->items)) {
       $this->items[] = $value;
-      $this->Save();
-      $Urlmap = &TUrlmap::Instance();
-      $Urlmap->SetExpired('/robots.txt');
-      $this->Added($value);
+      $this->save();
+      $urlmap = turlmap::instance();
+      $Urlmap->setexpired($this->idurl);
+      $this->added($value);
     }
   }
   
-  public function Request($param) {
+  public function request($arg) {
     $s = "<?php
     @header('Content-Type: text/plain');
     ?>";

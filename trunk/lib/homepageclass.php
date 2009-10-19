@@ -9,6 +9,7 @@ class THomepage extends TEventClass implements  ITemplate {
   protected function create() {
     parent::create();
     $this->basename = 'homepage' ;
+$this->data['idurl'] = 0;
     $this->data['text'] = '';
     $this->data['hideposts'] = false;
   }
@@ -45,7 +46,7 @@ public function getdescription() {}
       $this->data['text'] = $s;
       $this->save();
       $urlmap = turlmap::instance();
-      $urlmap->SetExpired($options->home);
+      $urlmap->setexpired($this->idurl);
     }
   }
   
@@ -55,7 +56,7 @@ public function getdescription() {}
       $this->data['hideposts'] = $value;
       $this->save();
       $urlmap = turlmap::instance();
-      $urlmap->SetExpired($options->home);
+      $urlmap->setexpired($this->idurl);
     }
   }
   
