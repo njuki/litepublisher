@@ -8,7 +8,7 @@ class TPostTransform  {
 'posted',
   'title', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
   'categories', 'tags',
-  'password', 'template', 'theme',
+  'password', 'template', 'subtheme', 'icon',
   'status', 'commentsenabled', 'pingenabled', 'rssenabled',
   'commentscount', 'pagescount',
   );
