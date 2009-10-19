@@ -38,11 +38,11 @@ $this->rawtable = 'rawcomments';
   }
   
   public function DoChanged($postid) {
-    template::WidgetExpired($this);
+    ttemplate::WidgetExpired($this);
     
-    $post = TPost::instance($postid);
-    $Urlmap = TUrlmap::instance();
-    $Urlmap->SetExpired($post->url);
+    $post = tpost::instance($postid);
+    $urlmap = turlmap::instance();
+    $urlmap->setexpired($post->idurl);
     
     $this->changed($postid);
   }

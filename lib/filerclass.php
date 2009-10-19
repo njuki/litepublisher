@@ -1,6 +1,6 @@
 <?php
 
-class TFiler {
+class tfiler {
   
   public static function DeleteFiles($path, $subdirs , $rmdir = false) {
     if ( $h = @opendir($path)) {
@@ -29,8 +29,25 @@ class TFiler {
       }
     }
   }
+
+//clear cache
+  public static function DeleteFilesRegexp($path, $regexp) {
+    if ($fp = @opendir($path )) {
+      while (FALSE !== ($file = readdir($fp))) {
+        if (($file == '.') || ($file == '..') || ($file == '.svn')) continue;
+        $filename = $path . $file;
+        if (@is_dir($filename)) {
+self::DeleteFilesRegexp($filename. DIRECTORY_SEPARATOR, $regexp);
+} else {
+        if (preg_match($regexp, $file)) {
+          unlink($filename);
+}
+        }
+      }
+    }
+  }
   
-  public static function GetFileList($path) {
+   public static function GetFileList($path) {
     $result = array();
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {

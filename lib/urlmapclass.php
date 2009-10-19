@@ -264,16 +264,12 @@ if (dbversion)  return $this->db->delete("class = `$class`");
     }
   }
   
-  public function SetExpired($url) {
-    if (isset($this->items[$url])) {
-      $id = $this->items[$url]['id'];
-      for ($i = 1; $i <=10; $i++) {
-        $this->unlink("$id-$i.php");
-      }
-    }
-  }
-  
-  public function addredir($from, $to) {
+  public function setexpired($id) {
+global $paths;
+tfiler::DeleteFilesRegexp($paths['cache'], "/($id-\\d\\.php\$)/"
+}
+
+    public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = &TRedirector::instance();
     $Redir->add($from, $to);

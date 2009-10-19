@@ -1,22 +1,22 @@
 <?php
 
 function TRobotstxtInstall(&$self) {
-  global $Options;
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Add('/robots.txt', get_class($self), null);
+  global $options;
+  $self->lock();
+  $urlmap = turlmap::instance();
+$self->idurl = $Urlmap->add('/robots.txt', get_class($self), null);
   
-  $self->Lock();
-  $self->Add("#$Options->url$Options->home");
-  $self->Add('User-agent: *');
+  $self->add("#$Options->url$Options->home");
+  $self->add('User-agent: *');
   $self->AddDisallow('/rss/');
   $self->AddDisallow('/comments/');
   $self->AddDisallow('/admin/');
   $self->AddDisallow('/pda/');
-  $self->Unlock();
+  $self->unlock();
 }
 
 function TRobotstxtUninstall(&$self) {
-  TUrlmap::unsub($self);
+  turlmap::unsub($self);
 }
 
 ?>
