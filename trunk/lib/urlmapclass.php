@@ -11,7 +11,7 @@ class turlmap extends TItems {
   public $mobile;
   
   public static function instance() {
-    return getnamedinstance('urlmap', __class__);
+    return getinstance(__class__);
   }
   
   protected function create() {

@@ -5,7 +5,7 @@ class TCategories extends TCommonTags {
   //public  $defaultid;
   
   public static function instance() {
-    return getnamedinstance('categories', __class__);
+    return getinstance(__class__);
   }
   
   protected function create() {

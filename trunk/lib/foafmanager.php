@@ -2,8 +2,8 @@
 
 class TFoafManager extends TItems {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function CreateData() {
@@ -29,7 +29,7 @@ class TFoafManager extends TItems {
   public function Accept($friend) {
     if (!$this->SameDomain($friend)) return false;
     $url = (string) $friend['blog'];
-    $foaf = &TFoaf::Instance();
+    $foaf = &TFoaf::instance();
     if ($foaf->HasFriend($url)) return true;
     if (!isset($this->items[$url]) || ($this->items[$url]['status'] != 'invated')) return false;
     $foaf->Add($this->items[$url]['nick'], $this->items[$url]['foaf'], $url);
@@ -42,7 +42,7 @@ class TFoafManager extends TItems {
   public function Reject($friend) {
     if (!$this->SameDomain($friend)) return false;
     $url = (string) $friend['blog'];
-    $foaf = &TFoaf::Instance();
+    $foaf = &TFoaf::instance();
     if ($foaf->HasFriend($url))  {
       $foaf->DeleteUrl($url);
       $this->NotifyModerator($url, 'rejected');
@@ -59,7 +59,7 @@ class TFoafManager extends TItems {
   public function Add($url) {
     global $Options;
     if ($ping = TPinger::Discover($url)) {
-      $actions =&TXMLRPCOpenAction::Instance();
+      $actions =&TXMLRPCOpenAction::instance();
       if ($actions->CallAction($ping, 'friend.invate', $this->GetProfile())) {
         if ($friend = $this->GetFriendInfo($url)) {
           $friend['status'] = 'invated';
@@ -76,9 +76,9 @@ class TFoafManager extends TItems {
     global $Options;
     if (!isset($this->items[$url])) return false;
     if ($ping = TPinger::Discover($url)) {
-      $actions =&TXMLRPCOpenAction::Instance();
+      $actions =&TXMLRPCOpenAction::instance();
       if ($actions->CallAction($ping, 'friend.accept', $this->GetProfile())) {
-        $foaf = &TFoaf::Instance();
+        $foaf = &TFoaf::instance();
         $foaf->Add($this->items[$url]['nick'], $this->items[$url]['foaf'], $url);
         unset($this->items[$url]);
         $this->Save();
@@ -95,7 +95,7 @@ class TFoafManager extends TItems {
     $this->Save();
     
     if ($ping = TPinger::Discover($url)) {
-      $actions =&TXMLRPCOpenAction::Instance();
+      $actions =&TXMLRPCOpenAction::instance();
       if ($actions->CallAction($ping, 'friend.reject', $this->GetProfile())) {
         return true;
       }
@@ -110,7 +110,7 @@ class TFoafManager extends TItems {
   
   private function GetProfile() {
     global $Options;
-    $profile = &TProfile::Instance();
+    $profile = &TProfile::instance();
     return array(
     'nick' => $profile->nick,
     'foaf' => $Options->foaf,
@@ -186,7 +186,7 @@ class TFoafManager extends TItems {
   
   private function SameDomain($friend) {
     global $Options;
-    $actions = &TXMLRPCOpenAction ::Instance();
+    $actions = &TXMLRPCOpenAction ::instance();
     if (($foaf = $this->ExtractDomain($friend['foaf'])) && ($blog = $this->ExtractDomain($friend['blog'])) &&($from = $this->ExtractDomain($actions->from))) {
       $self = $this->ExtractDomain($Options->url);
       if (($foaf == $blog) && ($blog == $from) && ($from != $self)) return true;
@@ -196,7 +196,7 @@ class TFoafManager extends TItems {
   
   private function HasFriend($url) {
     if (isset($this->items[$url])) return true;
-    $foaf = &TFoaf::Instance();
+    $foaf = &TFoaf::instance();
     if ($foaf->HasFriend($url)) return true;
     return false;
   }
@@ -214,7 +214,7 @@ class TFoafManager extends TItems {
     switch ($status) {
       case 'accepted':
       if (!$this->AcceptInvate($url)) {
-        $foaf = &TFoaf::Instance();
+        $foaf = &TFoaf::instance();
         $foaf->Add($this->items[$url]['nick'], $this->items[$url]['foaf'], $url);
         unset($this->items[$url]);
       }
@@ -239,7 +239,7 @@ class TFoafManager extends TItems {
     $result = '';
     TLocal::LoadLangFile('admin');
     $lang = &TLocal::$data['foaf'];
-    $foaf = &TFoaf::Instance();
+    $foaf = &TFoaf::instance();
     foreach ($foaf->items as $id => $item) {
       $found = false;
       $url = $item['foaf'];
@@ -265,9 +265,9 @@ class TFoafManager extends TItems {
   
   private function NotifyModerator($url, $type) {
     global $Options;
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'foaf';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     if ($type == 'error') {
       eval('$subject = "'. $html->errorsubj . '";');

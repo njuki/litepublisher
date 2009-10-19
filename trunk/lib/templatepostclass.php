@@ -3,8 +3,8 @@
 class TTemplatePost extends TEventClass {
   public $ps; //postscript text
   
-  public static function &Instance() {
-    return GetNamedInstance('templatepost', __class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function CreateData() {
@@ -26,7 +26,7 @@ class TTemplatePost extends TEventClass {
     $result = '';
     if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->pagescount);
     if ($post->commentsenabled && ($post->commentscount > 0)) {
-      $lang = &TLocal::Instance();
+      $lang = &TLocal::instance();
       $result .= "<p><a href=\"$post->rsslink\">$lang->commentsrss</a></p>\n";
     }
     
@@ -36,7 +36,7 @@ class TTemplatePost extends TEventClass {
   
   public function GetPrevNextLinks(&$post) {
     $result = '';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     if ($prevpost = $post->prev) {
       $result .= "$lang->prev <a rel=\"prev\" href=\"$prevpost->link\">$prevpost->title</a>";
     }
@@ -51,16 +51,16 @@ class TTemplatePost extends TEventClass {
   }
   
   public function PrintPosts(&$Items) {
-    $Template = TTemplate::Instance();
+    $Template = TTemplate::instance();
     
     if (count($Items) == 0) {
-      $lang = &TLocal::Instance();
+      $lang = &TLocal::instance();
       return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
     }
     
     $Result = '';
     foreach($Items as $id) {
-      $GLOBALS['post'] = &TPost::Instance($id);
+      $GLOBALS['post'] = &TPost::instance($id);
       $Result .=  $Template->ParseFile('postexcerpt.tml');
     }
     
@@ -70,13 +70,13 @@ class TTemplatePost extends TEventClass {
   public function LitePrintPosts(&$Items) {
     global $Options;
     if (count($Items) == 0) {
-      $lang = &TLocal::Instance();
+      $lang = &TLocal::instance();
       return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
     }
     
     $result = '<p>'. TLocal::$data['default']['archivelist'] ." </p>\n<ul>\n";
     foreach($Items as $id) {
-      $post = TPost::Instance($id);
+      $post = TPost::instance($id);
       $result .= "<li>$post->localdate <a href=\"$Options->url$post->url\">$post->title</a></li>\n";
     }
     $result .= "</ul>\n";
@@ -86,7 +86,7 @@ class TTemplatePost extends TEventClass {
   public function PrintNaviPages($url, $page, $count) {
     global  $Options;
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $Template = TTemplate::Instance();
+    $Template = TTemplate::instance();
     //подготовка шаблонов ссылок
     $navi =isset($Template->theme['navilinks']['navi']) ? $Template->theme['navilinks']['navi'] : '<p>%s</p>';
     $link =isset($Template->theme['navilinks']['link']) ? $Template->theme['navilinks']['link'] : '<a href="%1$s">%2$s</a>';

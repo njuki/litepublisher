@@ -13,7 +13,7 @@ $this->table = 'tags';
   }
   
   public static function instance() {
-    return GetNamedInstance('tags', __class__);
+    return getinstance(__class__);
   }
   
 }

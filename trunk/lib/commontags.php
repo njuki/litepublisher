@@ -196,13 +196,14 @@ $urlmap->setidurl($item['idurl'], $url);
     }
 
   public function delete($id) {
+global $classes;
 if (dbversion) {
 $this->getdb($this->itemstable)->delete("tag = $id");
 $this->db->iddelete($id);
 return;
 }
     if (isset($this->items[$id])) {
-      $posts = getnamedinstance('posts', 'tposts');
+      $posts = $classes->posts;
       $list = $this->items[$id]['items'];
       foreach ($list as $idpost) {
         $post = $posts->getitem($idpost);
@@ -327,7 +328,7 @@ if ($this->id == '') return $this->newname;
   }
   
   public function GetTemplateContent() {
-    global $options, $urlmap;
+    global $classes, $options, $urlmap;
     $result = '';
     if ($this->id == 0) {
       $result .= "<ul>\n";
@@ -342,7 +343,7 @@ $items = $db->res2array($res);
 } else {
     $items= $this->items[$this->id]['items'];
 }
-    $Posts = getnamedinstance('posts', 'tposts');
+    $Posts = $classes->posts;
     $items = $Posts->SortAsArchive($items);
     $TemplatePost = &TTemplatePost::instance();
     if ($this->lite) {
