@@ -38,7 +38,8 @@ $this->table = 'posts';
     'rssenabled' => true,
     'password' => '',
     'template' => '',
-    'theme' => '',
+    'subtheme' => '',
+'icon' => 0,
     'pages' => array()
     );
   }
@@ -196,8 +197,8 @@ return self::instance($id);
     $template = ttemplate::instance();
     $GLOBALS['post'] = $this;
     $tml = 'post.tml';
-    if ($this->theme <> '') {
-      if (@file_exists($template->path . $this->theme)) $tml = $this->theme;
+    if ($this->template <> '') {
+      if (@file_exists($template->path . $this->template)) $tml = $this->template;
     }
     return $template->ParseFile($tml);
   }

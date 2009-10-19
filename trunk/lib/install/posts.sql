@@ -15,7 +15,8 @@ tags text not null,
 
 password varchar(64) not null,
 template varchar(64) not null,
-theme varchar(64) not null,
+subtheme varchar(64) not null,
+icon int UNSIGNED NOT NULL default 0,
 
 status enum('published', 'draft', 'future', 'deleted') default 'published',
 

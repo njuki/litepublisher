@@ -406,8 +406,8 @@ class TTemplate extends TEventClass {
     $this->contextsupported = is_a($context, 'ITemplate');
     $GLOBALS['context'] = &$context;
     $header = $this->ServerHeader();
-    if ($this->contextHasProp('template')) {
-      $tml = $this->context->template;
+    if ($this->contextHasProp('subtheme')) {
+      $tml = $this->context->subtheme;
       if (empty($tml)) $tml =  'index.tml';
     } else {
       $tml =  'index.tml';
