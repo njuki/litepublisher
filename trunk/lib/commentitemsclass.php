@@ -21,9 +21,9 @@ class TComments extends TItems {
     return self::$Instances[$postid];
   }
   
-  public static function &GetComment($postid, $id) {
-    $self = &self::instance($postid);
-    $result = &new TComment($self);
+  public static function getcomment($postid, $id) {
+    $self = self::instance($postid);
+    $result = new tcomment($self);
     $result->id = $id;
     return $result;
   }
@@ -82,7 +82,7 @@ class TComments extends TItems {
     return $result;
   }
   
-  public function &GetHold($userid) {
+  public function gethold($userid) {
     $Result = array();
     foreach ($this->items as $id => $item) {
       if (($item['status'] == 'hold')  && ($userid == $item['uid'])) {
