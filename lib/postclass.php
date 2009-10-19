@@ -207,11 +207,11 @@ return self::instance($id);
     $template = ttemplatePost::instance();
     $result = $template->BeforePostContent($this->id);
     $urlmap = turlmap::instance();
-    if (($urlmap->pagenumber == 1) && !(isset($this->data['pages']) && (count($this->data['pages']) > 0))) {
+    if ($urlmap->page == 1) {
       $result .= $this->filtered;
-    } elseif ($s = $this->getpage($urlmap->pagenumber - 1)) {
+    } elseif ($s = $this->getpage($urlmap->page - 1)) {
       $result .= $s;
-    } elseif ($urlmap->pagenumber <= $this->commentpages) {
+    } elseif ($urlmap->page <= $this->commentpages) {
       //$result .= '';
     } else {
       $lang = tlocal::instance();
@@ -250,8 +250,9 @@ return $db;
 }
   
   public function getpage($i) {
+if ($i == 0) return $this->filtered;
     if (dbversion && ($this->id > 0)) {
-     if ($r = $this->getdb('pages')->getassoc("(post = $this->id) and (page = $i) limit 1")) {
+     if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
         return $r['content'];
       }
     } elseif ( isset($This->data['pages'][$i]))  {
@@ -265,9 +266,9 @@ return $db;
     if (dbversion && ($this->id != 0)) {
       global $db;
       $db->table = 'pages';
-      $count = $db->getcount("post = $this->id");
+      $count = $db->getcount("id = $this->id");
       $db->InsertAssoc(array(
-      'post' => $this->id,
+      'id' => $this->id,
       'page' => $count,
       'content' => $s
       ));
@@ -277,22 +278,27 @@ return $db;
   public function deletepages() {
     $this->data['pages'] = array();
     if (dbversion) {
-      $this->getdb('pages')->delete("post = $this->id");
+      $this->getdb('pages')->delete("id = $this->id");
     }
   }
   
   public function gethaspages() {
-    return (isset($this->data['pages']) && (count($this->data['pages']) > 0)) || ($this->commentpages > 1);
+    return ($this->pagescount > 1) || ($this->commentpages > 1);
   }
-  
-  public function getpagescount() {
-    return max($this->commentpages,  isset($this->data['pages']) ? count($this->data['pages']) : 0);
+
+public function getpagescount() {
+if (dbversion && ($this->id > 0)) return $this->data['pagescount'];
+return isset($this->data['pages']) ? count($this->data['pages']) : 1;
+}
+
+    public function getcountpages() {
+    return max($this->pagescount, $this->commentpages);
   }
   
   public function getcommentpages() {
     global $options;
     if (!$options->commentpages) return 1;
-    return ceil($this->comments->count / $options->commentsperpage);
+    return ceil($this->commentscount / $options->commentsperpage);
   }
   
   public function getcommentscount() {

@@ -56,7 +56,7 @@ class TTemplateComment extends TEventClass {
     global $post, $Options;
     $comments = $post->comments;
     $CountStr = $this->GetCommentCountStr($comments->GetCountApproved());
-    $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
+    $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->countpages/" : $post->url;
     return "<a href=\"$Options->url$url#comments\">$CountStr</a>";
   }
   
