@@ -16,7 +16,7 @@ public $rawtable;
   protected function create() {
     parent::create();
 $this->table = 'posts';
-$this->rawtable = 'postsraw';
+$this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', changed', 'singlecron');
     if (!dbversion) $this->AddDataMap('archives' , array());
@@ -60,7 +60,7 @@ return parent::save();
 }
 
     public function add(tpost $post) {
-    if ($post->date == 0) $post->date = time();
+    if ($post->posted == 0) $post->posted = time();
     $post->modified = time();
       $post->pagescount = count($post->pages);
     
@@ -79,7 +79,12 @@ return parent::save();
       $post->id = TPostTransform ::add($post);
       $post->idurl = $urlmap->add($post->url, get_class($post), $post->id);      
 $post->db->setvalue($post->id, 'idurl', $post->idurl);
-$post->rawdb->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['rawcontent']));
+$post->rawdb->InsertAssoc(array(
+'id' => $post->id, 
+'created' => sqldate(),
+'modified' => sqldate(),
+'rawcontent' => $post->data['rawcontent']
+));
       
      foreach ($post->pages as $i => $content) {
         $this->getdb('pages')->InsertAssoc(array('post' => $post->id, 'page' => $i         'content' => $content));
@@ -103,7 +108,6 @@ $post->rawdb->InsertAssoc(array('id' => $post->id, 'rawcontent' => $post->data['
   }
   
   public function edit(tpost $post) {
-    $post->modified = time();
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($post->idurl);
     if ($oldurl != $post->url) {
@@ -126,9 +130,13 @@ $urlmap->setidurl($post->idurl, $post->url);
       $urlmap->addredir($oldurl, $post->url);
     }
 
+    $post->modified = time();
     $this->lock();    
     $this->updated($post);
     $post->save();
+if (dbversion) {
+$post->rawdb->setvalue($post->id, 'modified', sqldate($post->modified));
+}
     $this->unlock();
         $this->edited($post->id);
     $this->changed();
@@ -137,13 +145,16 @@ $urlmap->setidurl($post->idurl, $post->url);
   
   public function delete($id) {
 global $classes;
+if (dbversion) return $this->db->setvalue($id, 'status', 'deleted');
     if (!$this->ItemExists($id)) return false;
     $urlmap = turlmap::instance();
 $urmap->DeleteClassArg($classes->classes['post'], $id);
     if (dbversion) {
+/* 
       $this->db->iddelete($id);
       $this->getdb('pages')->delete("post = $id");
 $this->getdb($this->rawtable)->iddelete($id);
+*/
     } else {
       global $paths;
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
@@ -160,14 +171,14 @@ $this->unlock();
   }
   
   public function updated(tpost $post) {
-    if (($post->status == 'published') && ($post->date > time())) {
+    if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
 if (dbversion) $post->db->setvalue($post->id, 'status', 'future');
     }
     $this->PublishFuture();
 if (!dbversion) {
     $this->items[$post->id] = array(
-    'date' => $post->date
+    'posted' => $post->posted
     );
     if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
     $this->UpdateArchives();
@@ -180,8 +191,8 @@ if (!dbversion) {
   public function UpdateArchives() {
     $this->archives = array();
     foreach ($this->items as $id => $item) {
-      if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['date'])) {
-        $this->archives[$id] = $item['date'];
+      if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['posted'])) {
+        $this->archives[$id] = $item['posted'];
       }
     }
     arsort($this->archives,  SORT_NUMERIC);
@@ -211,7 +222,7 @@ foreach( $list as $id) $this->publish($id);
 }
 } else {
     foreach ($this->items as $id => $item) {
-      if (isset($item['status']) && ($item['status'] == 'future') && ($item['date'] <= time())) $this->publish($id);
+      if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
     }
   }
 

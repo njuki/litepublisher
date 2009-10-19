@@ -22,7 +22,7 @@ $this->table = 'posts';
     'idurl' => 0,
     'parent' => 0,
     'author' => 0, //reserved, not used
-    'date' => 0,
+    'posted' => 0,
     'modified' => 0,
     'url' => '',
     'title' => '',
@@ -100,11 +100,11 @@ return self::instance($id);
   }
   
   public function Getpubdate() {
-    return date('r', $this->date);
+    return date('r', $this->posted);
   }
   
   public function Setpubdate($date) {
-    $this->data['date'] = strtotime($date);
+    $this->data['posted'] = strtotime($date);
   }
   
   //template
@@ -127,12 +127,15 @@ return self::instance($id);
   }
   
   public function getlocaldate() {
-    return TLocal::date($this->date);
+    return tlocal::date($this->posted);
   }
   
   public function getdateformat() {
-    if (!isset($this->dateformater)) $this->dateformater = new tdate($this->date);
-    $this->dateformater->date = $this->date;
+    if (isset($this->dateformater)){
+    $this->dateformater->date = $this->posted;
+} else {
+ $this->dateformater = new tdate($this->posted);
+}
     return $this->dateformater;
   }
   
@@ -246,7 +249,7 @@ return self::instance($id);
 
 protected function getrawdb() {
 global $db;
-$db->table = 'postsraw';
+$db->table = 'rawposts';
 return $db;
 }
   

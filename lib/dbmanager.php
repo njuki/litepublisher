@@ -83,7 +83,31 @@ class tdbanager  {
     return $this->exec("CREATE DATABASE $name");
   }
 
+private function DeleteDeleted() {
+global $db;
+$db->exec("delete from $db->urlmap where id in
+(select idurl from $db->posts where status = 'deleted')");
+
+$db->exec("delete from $db->rawposts where id in 
+(select id from $db->posts where status = 'deleted')");
+
+$db->exec("delete from $db->pages where id in
+(select id from $db->posts where status = 'deleted')");
+
+$db->exec("delete from $db->posts where status = 'deleted'");
+
+$db->exec("delete from $db->rawcomments where id in
+(select id from $db->comments where status = 'deleted')");
+
+$db->exec("delete from $db->comments where status = 'deleted'");
+
+$db->exec("delete from $db->authors where id not in
+(select DISTINCT author from $db->comments)");
+
+}
+
 public function optimize() {
+$this->DeleteDeleted();
     $tables = $this->GetTables();
     foreach ($tables as $table) {
 $this->exec("optimize $table");
@@ -171,5 +195,20 @@ $this->exec("optimize $table");
     return false;
   }
   
+public function performance() {
+global $db;
+$result = '';
+$total = 0.0;
+foreach ($db->history as $item) {
+    list($usec2, $sec2) = explode(' ', $item['started']);
+    list($usec1, $sec1) = explode(' ', $item['finished']);
+$worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 4);
+$total += $worked;
+$result .= "$worked\n{$item['sql']}\n\n";
+}
+$stat = sprintf("%s total time\n$d querries\n\n", $total, count($db->history));
+ $result = $stat . $result;
+return $result;
+}
 }//class
 ?>
