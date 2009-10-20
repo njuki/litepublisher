@@ -180,17 +180,17 @@ class TCommentForm extends TEventClass{
     $comments = tcomments::instance($post->id);
     if ($comments->IndexOfRawContent($values['content']) >= 0) return ttemplate::SimpleContent($lang->duplicate);
     
-    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->pagescount/" : $post->url;
+    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commenspages/" : $post->url;
     $users = TCommentUsers ::instance();
     $users->lock();
     $userid = $users->add($values['name'], $values['email'], $values['url']);
-    $CommentManager = $classes->commentmanager;
-    if (!$CommentManager->UserCanAdd( $userid)) return ttemplate::SimpleContent($lang->toomany);
+    $manager = $classes->commentmanager;
+    if (!$manager->UserCanAdd( $userid)) return ttemplate::SimpleContent($lang->toomany);
     $users->UpdateSubscribtion($userid, $post->id, $values['subscribe']);
     $usercookie = $users->getcookie($userid);
     $users->unlock();
     
-    $CommentManager->AddToPost($post->id, $userid, $values['content']);
+    $manager->AddToPost($post->id, $userid, $values['content']);
     
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);

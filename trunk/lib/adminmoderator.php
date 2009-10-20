@@ -249,9 +249,10 @@ class TAdminModerator extends TAdminPage {
       $profile = &TProfile::Instance();
       $authors = &TCommentUsers ::Instance();
       $authorid = $authors->Add($profile->nick, $email, $site);
-      $post = &TPost::Instance($manager->items[$id]['pid']);
-      $manager->AddToPost($post, $authorid, $_POST['content']);
-      @header("Location: $Options->url$post->url");
+$post = tpost::instance($manager->items[$id]['pid']);
+      $manager->AddToPost($post->id, $authorid, $_POST['content']);
+    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
+      @header("Location: $Options->url$posturl");
       exit();
       
     }
