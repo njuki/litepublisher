@@ -85,6 +85,7 @@ class tdbanager  {
 
 private function DeleteDeleted() {
 global $db;
+//posts
 $db->exec("delete from $db->urlmap where id in
 (select idurl from $db->posts where status = 'deleted')");
 
@@ -96,6 +97,7 @@ $db->exec("delete from $db->pages where id in
 
 $db->exec("delete from $db->posts where status = 'deleted'");
 
+//comments
 $db->exec("delete from $db->rawcomments where id in
 (select id from $db->comments where status = 'deleted')");
 

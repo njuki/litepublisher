@@ -96,12 +96,7 @@ $result = $this->db->InsertAssoc(array(
     $this->DoAdded($result);
   }
   
- public function hasauthor($author) {
-if (($res = $this->db->select("author = $author limit 1")) && $res->fetch()) return true;
-return false;
-  }
-  
-  public function UserHasApproved($author) {
+ public function UserHasApproved($author) {
 if (($res = $this->db->select("author = $author and status = 'approved' limit 1")) && $res->fetch()) return true;
     return false;
   }
@@ -113,15 +108,6 @@ if (($res = $this->db->query(select count(author) as count from $this->thistable
   
   public function delete($id) {
 $this->db->setvalue($id, 'status', 'deleted');
-/*
-$author = $this->db->getvalue($id, 'author');
-$this->db->iddelete($id);
-
-           if (!$this->hasauthor($author)) {
-        $users = TCommentUsers::instance();
-        $users->iddelete($author);
-      }
-  */
     
       $this->deleted($id);
       $this->DoChanged($postid);

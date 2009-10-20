@@ -1,26 +1,27 @@
 <?php
 
-class TMailer {
+class tmailer {
   
-  protected static function  Send($from, $to, $subj, $body) {
-    global $Options;
+  protected static function  send($from, $to, $subj, $body) {
+    global $options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = gmdate ("M d Y H:i:s", time());
     if (defined('debug'))
-    return file_put_contents($GLOBALS['paths']['home']. 'mail.eml', "To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: LitePublisher mailer\n\n$body");
+return tfiler::log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: LitePublisher mailer\n\n$body",
+'mail.log');
     
     mail($to, $subj, $body,
-    "From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $Options->version");
+    "From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version");
   }
   
-  public static function  SendMail($fromname, $fromemail, $toname, $toemail, $subj, $body) {
-    global $Options;
-    if ($Options->mailer == 'smtp') {
+  public static function  sendmail($fromname, $fromemail, $toname, $toemail, $subj, $body) {
+    global $options;
+    if ($options->mailer == 'smtp') {
       $mailer = TSMTPMailer ::Instance();
       return $mailer->mail($fromname, $toname, $toemail, $subj, $body);
     }
     
-    return self::Send(self::CreateEmail($fromname, $fromemail), self::CreateEmail($toname, $toemail), $subj, $body);
+    return self::send(self::CreateEmail($fromname, $fromemail), self::CreateEmail($toname, $toemail), $subj, $body);
   }
   
   public static function CreateEmail($name, $email) {
@@ -28,18 +29,18 @@ class TMailer {
     return   '=?utf-8?B?'.@base64_encode($name). '?=' . " <$email>";
   }
   
-  public static function SentToAdmin($subject, $body) {
-    global $Options;
-    self::SendMail($Options->name, $Options->fromemail,
-    'admin', $Options->email, $subject, $body);
+  public static function sendtoadmin($subject, $body) {
+    global $options;
+    self::sendmail($options->name, $options->fromemail,
+    'admin', $options->email, $subject, $body);
   }
   
   public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
-    global $Options;
+    global $options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = gmdate ("M d Y H:i:s", time());
-    $from = self::CreateEmail($Options->name, $Options->fromemail);
-    $to = self::CreateEmail('admin', $Options->email);
+    $from = self::CreateEmail($options->name, $options->fromemail);
+    $to = self::CreateEmail('admin', $options->email);
     $boundary = md5(microtime());
     $textpart = "--$boundary\nContent-Type: text/plain; charset=\"UTF-8\"\nContent-Transfer-Encoding: base64\n\n";
     $textpart .= base64_encode($body);
@@ -50,11 +51,11 @@ class TMailer {
     $body = $textpart . "\n". $attachpart;
     
     if (defined('debug'))
-    return file_put_contents($GLOBALS['paths']['home']. 'mail.eml',
-    "To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $Options->version\n\n". $body);
+return tfiler;:log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n". $body,
+'mail.log');
     
     mail($to, $subj, $body,
-    "From: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $Options->version");
+    "From: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version");
   }
   
 } //class
@@ -81,7 +82,7 @@ class TSMTPMailer extends TEventClass {
   }
   
   public function Mail($fromname,  $toname, $toemail, $subj, $body) {
-    global $Options, $paths;
+    global $options, $paths;
     include_once($paths['libinclude'] . 'class-smtp.php');
     $smtp = new SMTP();
     if($smtp->Connect($this->host, $this->port, 10)) {
@@ -93,7 +94,7 @@ class TSMTPMailer extends TEventClass {
           $from = TMailer::CreateEmail($fromname, $fromemail);
           $to = TMailer::CreateEmail($toname, $toemail);
           
-          $smtp->Data("From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $Options->version\n\n$body");
+          $smtp->Data("From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
         }
         $smtp->Quit();
         $smtp->Close();
