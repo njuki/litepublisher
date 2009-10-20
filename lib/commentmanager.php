@@ -89,7 +89,7 @@ class TCommentManager extends TAbstractCommentManager {
     $this->DoAdded($id);
   }
   
- public function hasauthor($author) {
+ private function hasauthor($author) {
     foreach ($this->items as $id => $item) {
       if ($author == $item['uid'])  return true;
     }

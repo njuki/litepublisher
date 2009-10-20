@@ -1,20 +1,23 @@
 <?php
 
 abstract class TAbstractCommentManager extends TItems {
-
-  abstract   public function getcomment($id);
+//template
 abstract   public function GetWidgetContent($id);
 abstract   public function PostDeleted($postid);
+
+//manager
+  abstract   public function getcomment($id);
 abstract   public function add($postid, $name, $email, $url, $content);
-abstract   public function AddToPost(&$post, $userid, $content);
-abstract   public function AddPingback(&$post, $url, $title) {
+abstract   public function AddToPost($postid, $author, $content);
+abstract   public function AddPingback(&$post, $url, $title);
 abstract   public function delete($id);
-abstract   public function hasauthor($author);
+abstract   public function setstatus($id, $value);
+abstract   public function Getholditems();
+
+//spam filter
 abstract   public function UserHasApproved($userid);
 abstract   public function HasApprovedCount($userid, $count);
-abstract   public function setstatus($id, $value);
 abstract   public function UserCanAdd($userid);
-abstract   public function Getholditems();
 
   protected function create() {
     parent::create();
@@ -53,10 +56,10 @@ $this->rawtable = 'rawcomments';
     $comment = $this->getcomment($id);
     $html = THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = TLocal::instance();
+    $lang = tlocal::instance();
     eval('$subject = "' . $html->subject . '";');
     eval('$body = "'. $html->body . '";');
-    TMailer::SendMail($options->name, $options->fromemail,
+    tmailer::sendmail($options->name, $options->fromemail,
     'admin', $options->email,  $subject, $body);
   }
   
