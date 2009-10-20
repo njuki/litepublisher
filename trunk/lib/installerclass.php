@@ -181,6 +181,7 @@ class TInstaller extends TDataClass {
     $Options->description = $description;
     $Options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
+if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     $Options->Unlock();
   }
   

@@ -52,16 +52,6 @@ $this->save();
 }
 }
 
-  public function geturl() {
-    $result = $this->OnGeturl();
-    if (!empty($result)) return $result;
-    $result = $this->data['url'];
-    if ($this->q == '&') $result .= '/index.php?url=';
-    $urlmap = turlmap::instance();
-    if ($urlmap->mobile) $result .= '/pda';
-    return $result;
-  }
-  
   public function seturl($url) {
     $url = rtrim($url, '/');
     $this->lock();

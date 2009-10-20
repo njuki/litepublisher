@@ -6,10 +6,11 @@ class tfiler {
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
-        if (@is_dir($path . $filename)) {
-          if ($subdirs) self::DeleteFiles($path . $filename . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
+$file = $path. $filename;
+        if (@is_dir($file)) {
+          if ($subdirs) self::DeleteFiles($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
         } else {
-          unlink($path . $filename);
+          unlink($file);
         }
       }
       @closedir($h);
