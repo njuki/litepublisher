@@ -17,6 +17,16 @@ class TClasses extends TItems {
   public static function instance() {
     return getinstance(__class__);
   }
+
+public function getinstance($class) {
+  if (!class_exists($class)) {
+    $this->error("Class $class not found");
+  }
+  if (!isset($this->instances[$class])) {
+    $this->instances[$class] = new $class();
+  }
+  return $this->instances[$class];
+}
   
   protected function create() {
     parent::create();
@@ -83,13 +93,7 @@ return parent::__get($name);
 
 function getinstance($class) {
   global $classes;
-  if (!class_exists($class)) {
-    $classes->error("Class $class not found");
-  }
-  if (!isset($classes->instances[$class])) {
-    $classes->instances[$class] = new $class();
-  }
-  return $classes->instances[$class];
+return $classes->getinstance($class);
 }
 
 function PHPComment(&$s) {

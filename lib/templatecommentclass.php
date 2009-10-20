@@ -7,10 +7,9 @@ class TTemplateComment extends TEventClass {
     return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $urlmap = TUrlmap::instance();
-    $this->basename = 'templatecomment' . ($urlmap->Ispda ? '.pda'  : '');
+  protected function create() {
+    parent::create();
+    $this->basename = 'templatecomment';
     $this->AddDataMap('templ', array());
   }
   

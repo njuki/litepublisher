@@ -24,8 +24,8 @@ $this->table = 'urlmap';
     $this->mobile= false;
   }
   
-  public function request($host, $url) {
-    global $options, $paths;
+protected function prepareurl($host, $url) {
+    global $options;
     $this->host = $host;
     $this->page = 1;
   $this->uripath = array();
@@ -34,18 +34,13 @@ $this->table = 'urlmap';
     } else {
       $this->url = $_GET['url'];
     }
-    $this->BeforeRequest();
-    if ($this->mobile = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
-      if ($this->url == '/pda') {
-        $this->url = '/';
-      } else {
-        $this->url = substr($this->url, strlen('/pda'));
-      }
-      $paths['cache'] .= 'mobile' . DIRECTORY_SEPARATOR;
-    }
+}
+
+  public function request($host, $url) {
+$this->prepareurl($host, $url);
     $this->admin = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
-    
-    try {
+    $this->BeforeRequest();
+       try {
       $this->DoRequest($this->url);
     } catch (Exception $e) {
       $options->HandleException($e);
@@ -126,26 +121,33 @@ $j = - (strlen($url) - $i + 1);
 return false;    
   }
   
+protected function getcachefile($id) {
+global $paths;
+return $paths['cache']. "$id-$this->page.php";
+}
+
   protected function  PrintContent(array $item) {
-    global $options, $paths;
-    $this->urlid = $item['id'];
+    global $options;
+    $this->idurl = $item['id'];
     if ($options->CacheEnabled) {
-  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->page.php";
+  $cachefile = $this->getcachefile($item['id']);
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($CacheFileName)) && (($time  + $options->CacheExpired) >= time() )) {
-        include($CacheFileName);
+      if (($time = @filemtime ($cachefile)) && (($time  + $options->CacheExpired) >= time() )) {
+        include($cachefile);
         return;
       }
     }
     
-    if (class_exists($item['class']))  return $this->GenerateHTML($item);
-
+    if (class_exists($item['class']))  {
+return $this->GenerateHTML($item);
+} else {
         $this->DeleteClass($item['class']);
 $this->NotFound404();
+}
   }
   
   protected function GenerateHTML(array $item) {
-    global $options, $paths, $template;
+    global $options, $template;
     $obj = getinstance($item['class']);
     //special handling for rss
     if (method_exists($obj, 'request') && ($s = $obj->request($item['arg']))) {
@@ -156,9 +158,9 @@ $this->NotFound404();
     }
     eval('?>'. $s);
     if ($options->CacheEnabled && $obj->CacheEnabled) {
-  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->page.php";
-      file_put_contents($CacheFileName, $s);
-      @chmod($CacheFileName, 0666);
+  $cachefile = $this->getcachefile($item['id']);
+      file_put_contents($cachefile, $s);
+      @chmod($cachefile, 0666);
     }
   }
   
@@ -219,7 +221,7 @@ if (dbversion) return $this->db->delete("class = '$class' and arg = ". $this->db
     return false;
   }
   
-//uses TArchives
+//for TArchives
   public function GetClassUrls($class) {
 if (dbversion) {
 $res = $this->db->query("select url from $this->thistable where class = '$class'");
@@ -234,39 +236,41 @@ return $this->db->res2array($res);
   }
   
   public function DeleteClass($class) {
-if (dbversion)  return $this->db->delete("class = `$class`");
-
+if (dbversion){
+$list = $this->db->idselect("class = !`$class`");
+$this->db->delete("class = `$class`");
+foreach ($list as $id)         $this->setexpired($id);
+} else  {
     foreach ($this->items as $url => $item) {
       if ($item['class'] == $class) {
         unset($items[$url]);
-        $this->unlink($item['id']. '-1.php');
+        $this->setexpired($item['id']);
       }
     }
   }
   
   public function clearcache() {
     global $paths;
-    if ($this->mobile) {
-      TFiler::DeleteFiles(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR, true, false);
-    } else {
-      TFiler::DeleteFiles($paths['cache'], true, false);
+$path = $paths['cache'];
+    if ( $h = @opendir($path)) {
+      while(FALSE !== ($filename = @readdir($h))) {
+        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
+$file = $path. $filename;
+        if (@is_dir($file)) {
+TFiler::DeleteFiles($file . DIRECTORY_SEPARATOR, true, true);
+        } else {
+          unlink($file);
+        }
+      }
+      @closedir($h);
     }
+
     $this->CacheExpired();
-  }
-  
-  private function unlink($filename) {
-    global $paths;
-    @unlink($paths['cache'] . $filename);
-    if ($this->mobile) {
-      @unlink(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR . $filename);
-    } else {
-      @unlink($paths['cache'] . 'pda'. DIRECTORY_SEPARATOR . $filename);
-    }
   }
   
   public function setexpired($id) {
 global $paths;
-tfiler::DeleteFilesRegexp($paths['cache'], "/($id-\\d\\.php\$)/"
+tfiler::DeleteFilesRegexp($paths['cache'], sprintf"/($id-\\d\\.php\$)/");
 }
 
     public function addredir($from, $to) {

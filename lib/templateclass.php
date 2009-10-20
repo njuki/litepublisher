@@ -23,10 +23,9 @@ class TTemplate extends TEventClass {
     return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $urlmap = TUrlmap::Instance();
-    $this->basename = 'template' . ($urlmap->Ispda ? '.pda' : '');
+  protected function create() {
+    parent::create();
+    $this->basename = 'template' ;
     $this->fFiles = array();
     $this->contextsupported = false;
     $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
