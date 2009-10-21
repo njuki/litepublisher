@@ -2,12 +2,23 @@
 
 class tspamfilter extends TEventClass {
 
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
 protected function create() {
 parent::create();
 $this->basename = 'spamfilter';
 }
 
-public function AuthorHasApproved($authorid) {
+  public function createstatus($authorid, $content) {
+    global $options;
+    if ($options->DefaultCommentStatus == 'approved') return 'approved';
+    if ($this->AuthorHasApproved($authorid)) return  'approved';
+    return 'hold';
+  }
+  
+   public function AuthorHasApproved($authorid) {
 global $classes;
 $manager = $classes->commentmanager;
 if (dbversion) {
