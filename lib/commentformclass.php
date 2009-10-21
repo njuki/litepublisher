@@ -184,13 +184,12 @@ class TCommentForm extends TEventClass{
     $users = TCommentUsers ::instance();
     $users->lock();
     $userid = $users->add($values['name'], $values['email'], $values['url']);
-    $manager = $classes->commentmanager;
-    if (!$manager->UserCanAdd( $userid)) return ttemplate::SimpleContent($lang->toomany);
+    if (!$classes->spamfilter->UserCanAdd( $userid)) return ttemplate::SimpleContent($lang->toomany);
     $users->UpdateSubscribtion($userid, $post->id, $values['subscribe']);
     $usercookie = $users->getcookie($userid);
     $users->unlock();
     
-    $manager->AddToPost($post->id, $userid, $values['content']);
+    $classes->commentmanager->addcomment($post->id, $userid, $values['content']);
     
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);

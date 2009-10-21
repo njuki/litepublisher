@@ -8,16 +8,12 @@ abstract   public function PostDeleted($postid);
 //manager
   abstract   public function getcomment($id);
 abstract   public function add($postid, $name, $email, $url, $content);
-abstract   public function AddToPost($postid, $author, $content);
-abstract   public function AddPingback(&$post, $url, $title);
+abstract   public function addcomment($postid, $author, $content);
+abstract   public function addpingback(&$post, $url, $title);
 abstract   public function delete($id);
 abstract   public function setstatus($id, $value);
 abstract   public function Getholditems();
 
-//spam filter
-abstract   public function UserHasApproved($userid);
-abstract   public function HasApprovedCount($userid, $count);
-abstract   public function UserCanAdd($userid);
 
   protected function create() {
     parent::create();
@@ -26,15 +22,16 @@ $this->rawtable = 'rawcomments';
     $this->basename = 'commentmanager';
     $this->AddEvents('edited', 'changed', 'approved');
   }
-    
-  protected function CreateStatus($userid, $content) {
-    global $options;
+
+  protected function CreateStatus($authorid, $content) {
+    global $options, $classes;
     if ($options->DefaultCommentStatus == 'approved') return 'approved';
-    if ($this->UserHasApproved($userid)) return  'approved';
+    if ($classes->spamfilter->AuthorHasApproved($authorid)) return  'approved';
     return 'hold';
   }
   
-  protected function DoAdded($id) {
+   
+ protected function DoAdded($id) {
     $this->DoChanged($this->items[$id]['pid']);
     $this->CommentAdded($id);
     $this->Added($id);
