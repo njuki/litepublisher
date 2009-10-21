@@ -31,8 +31,8 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return new IXR_Error(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
-    $comments = &$post->comments;
-    if ($comments->HasPingback($from)) {
+    $comments = $post->comments;
+    if ($comments->haspingback($from)) {
       return new IXR_Error(48, 'The pingback has already been registered.');
     }
     

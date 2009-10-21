@@ -24,7 +24,7 @@ $this->rawtable = 'rawcomments';
     return $this->addcomment($postid, $userid, $content);
   }
   
- protected function DoAdded($id) {
+ protected function doadded($id) {
     $this->dochanged($this->items[$id]['pid']);
     $this->CommentAdded($id);
     $this->Added($id);

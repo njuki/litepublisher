@@ -6,22 +6,21 @@ class TCommentManager extends TAbstractCommentManager {
     return getinstance(__class__);
   }
   
-  public function addcomment($postid, $userid, $content) {
+  public function addcomment($pid, $uid, $content) {
 global $classes;
     $id = ++  $this->lastid;
-    $comments = tcomments::instance($postid);
-    $status = $classes->spamfilter->createstatus($userid, $content);
-    $posted = $comments->add($id, $userid,  $content, $status);
+    $comments = tcomments::instance($pid);
+    $status = $classes->spamfilter->createstatus($uid, $content);
+$comments->insert($id, $uid,  $content, $status, '');
     
     $this->items[$id] = array(
-    //'id' => $id,
-    'uid' => (int) $userid,
-    'pid' => (int) $post->id,
-    'posted' => $posted
+    'uid' => (int) $uid,
+    'pid' => (int) $pid,
+    'posted' => $comments->items[$id]['posted'],
     );
     if ($status != 'approved') $this->items[$id]['status'] = $status;
     $this->save();
-    $this->DoAdded($id);
+    $this->doadded($id);
   }
   
  public function addpingback($post, $url, $title) {
@@ -39,7 +38,7 @@ $comments->insert($id, $userid, '', 'hold', 'pingback');
     'type' => 'pingback'
     );
     $this->save();
-    $this->DoAdded($id);
+    $this->doadded($id);
   }
 
   public function getcomment($id) {

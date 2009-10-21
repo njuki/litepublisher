@@ -1,6 +1,6 @@
 <?php
 
-class TComments extends TItems {
+class tcomments extends TItems implements IComments {
   public $pid;
   private static $instances;
   
@@ -27,8 +27,7 @@ $self = new $class();
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments';
   }
   
-  public function insert($id, $userid,  $Content,$status = 'hold',  $type = '') {
-    $date = time();
+  public function insert($id, $userid,  $Content, $status,  $type) {
     $filter = TContentFilter::instance();
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     
@@ -49,15 +48,6 @@ $self = new $class();
   public function setstatus($id, $value) {
     $this->setvalue($id, 'status', $value);
     $this->save();
-  }
-  
-  public function setcontent($id, $value) {
-    if (isset($this->items[$id])) {
-      $filter = &TContentFilter::instance();
-      $this->items[$id]['content'] = $filter->GetCommentContent($value);
-      $this->items[$id]['rawcontent'] =  $value;
-      $this->save();
-    }
   }
   
   public function getapproved($type = '') {
@@ -96,12 +86,8 @@ $self = new $class();
     return $this->IndexOf('rawcontent', $s);
   }
   
-  public function Getcontent($id) {
-    return $this->items[$id]['content'];
-  }
-  
-  public function HasPingback($url) {
-    $users = &TCommentUsers::instance();
+ public function haspingback($url) {
+    $users = TCommentUsers::instance();
     $userid = $users->IndexOf('url', $url);
     if ($userid == -1) return false;
     $id = $this->IndexOf('uid', $userid);
@@ -140,7 +126,7 @@ class TComment {
   
   public function __set($name, $value) {
     if ($name == 'content') {
-      $this->owner->setcontent($this->id, $value);
+      $this->setcontent($value);
     } else {
       $this->owner->setvalue($this->id, $name, $value);
     }
@@ -149,6 +135,13 @@ class TComment {
   public function save() {
     $this->owner->save();
   }
+
+  private function setcontent($value) {
+      $filter = TContentFilter::instance();
+      $this->owner->items[$this->id]['content'] = $filter->GetCommentContent($value);
+      $this->owner->items[$this->id]['rawcontent'] =  $value;
+      $this->save();
+    }
   
 private function getuser($id) {
     $Users = TCommentUsers::instance();

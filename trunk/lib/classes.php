@@ -1,17 +1,13 @@
 <?php
 
-function __autoload($ClassName) {
+function __autoload($class) {
   global $classes;
-  if ($path =$classes->getpath($ClassName)) {
-    $filename = $path . $classes->items[$ClassName][0];
-    if (@file_exists($filename)) {
-      require_once($filename);
-    }
-  }
+$classes->_autoload($class);
 }
 
 class TClasses extends TItems {
   public $classes;
+public $interfaces;
   public $instances;
   
   public static function instance() {
@@ -32,6 +28,7 @@ public function getinstance($class) {
     parent::create();
     $this->basename = 'classes';
     $this->AddDataMap('classes', array());
+    $this->AddDataMap('interfaces', array());
     $this->instances = array();
   }
 
@@ -72,7 +69,16 @@ return parent::__get($name);
       $this->unlock();
     }
   }
-  
+public function _autoload($class) {
+global $paths;
+  if ($path =$this->getpath($class)) {
+    $filename = $path . $this->items[$class][0];
+} elseif (isset($this->interfaces[$class])) {
+    $filename = $paths['lib'] . $this->interfaces[$class];
+}
+    if (@file_exists($filename)) require_once($filename);
+}
+
   public function getpath($class) {
     global  $paths;
     if (!isset($this->items[$class])) return false;
