@@ -6,30 +6,11 @@ class TCommentManager extends TAbstractCommentManager {
     return getinstance(__class__);
   }
   
-  public function getcomment($id) {
-    return tcomments::getcomment($this->items[$id]['pid'], $id);
-  }
-  
-  public function PostDeleted($postid) {
-    $this->lock();
-    foreach ($this->items as  $id => $item) {
-      if ($item['pid'] == $postid) {
-        unset($this->items[$id]);
-      }
-    }
-    $this->unlock();
-  }
-  
-  public function add($postid, $name, $email, $url, $content) {
-    $users = TCommentUsers ::instance();
-    $userid = $users->add($name, $email, $url);
-    return $this->AddToPost($postid, $userid, $content);
-  }
-  
   public function addcomment($postid, $userid, $content) {
+global $classes;
     $id = ++  $this->lastid;
     $comments = tcomments::instance($postid);
-    $status = $this->CreateStatus($userid, $content);
+    $status = $classes->spamfilter->createstatus($userid, $content);
     $posted = $comments->add($id, $userid,  $content, $status);
     
     $this->items[$id] = array(
@@ -43,25 +24,28 @@ class TCommentManager extends TAbstractCommentManager {
     $this->DoAdded($id);
   }
   
- public function addpingback(&$post, $url, $title) {
+ public function addpingback($post, $url, $title) {
     $id =++$this->lastid;
-    $users = &TCommentUsers::instance();
-    $userid = $users->Add($title, '', $url);
-    $comments = &$post->comments;
-    $posted = $comments->add($id, $userid, '', 'hold', 'pingback');
+    $users = TCommentUsers::instance();
+    $userid = $users->add($title, '', $url);
+    $comments = tcomments::instance($post->id);
+$comments->insert($id, $userid, '', 'hold', 'pingback');
     
     $this->items[$id] = array(
-    //'id' => $id,
     'uid' => $userid,
     'pid' => (int) $post->id,
-    'posted' => $posted,
+    'posted' => time(),
     'status' => 'hold',
     'type' => 'pingback'
     );
     $this->save();
     $this->DoAdded($id);
   }
-  
+
+  public function getcomment($id) {
+    return tcomments::getcomment($this->items[$id]['pid'], $id);
+  }
+ 
  private function hasauthor($author) {
     foreach ($this->items as $id => $item) {
       if ($author == $item['uid'])  return true;
@@ -72,42 +56,52 @@ class TCommentManager extends TAbstractCommentManager {
   public function delete($id) {
     if (isset($this->items[$id])) {
       $this->lock();
-      $comments = &TComments::instance($this->items[$id]['pid']);
+      $comments = tcomments::instance($this->items[$id]['pid']);
       $comments->Delete($id);
-      $postid = $this->items[$id]['pid'];
-      $userid = $this->items[$id]['uid'];
+      $pid = $this->items[$id]['pid'];
+      $uid = $this->items[$id]['uid'];
       unset($this->items[$id]);
       $this->unlock();
       
-      if (!$this->hasauthor($userid)) {
+      if (!$this->hasauthor($uid)) {
         $users = TCommentUsers::instance();
-        $users->delete($userid);
+        $users->delete($uid);
       }
       
       $this->deleted($id);
-      $this->DoChanged($postid);
+      $this->dochanged($pid);
       return true;
     }
     return false;
   }
+
+  public function postdeleted($pid) {
+    $this->lock();
+    foreach ($this->items as  $id => $item) {
+      if ($item['pid'] == $pid) {
+        unset($this->items[$id]);
+      }
+    }
+    $this->unlock();
+  }
   
-  public function setstatus($id, $value) {
+    public function setstatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
     $item = $this->items[$id];
     if ( (($value == 'approved') && !isset($item['status']))  || ($value == $item['status'])) return false;
     
-    $comments = &TComments::instance($item['pid']);
+    $comments = tcomments::instance($item['pid']);
     $comments->SetStatus($id, $value);
     
     $this->lock();
     if ($status == 'approved') {
       unset($this->items[$id]['status']);
-      if (!isset($item['type'])) $this->Approved($id);
+      if (!isset($item['type'])) $this->approved($id);
     } else {
       $this->items[$id]['status'] = $value;
     }
     $this->unlock();
-    $this->DoChanged($item['pid']);
+    $this->dochanged($item['pid']);
   }
   
   public function Getholditems() {

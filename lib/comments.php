@@ -1,7 +1,7 @@
 <?php
 
 class TComments extends AbstractCommentManager {
-
+public $rawtable;
 //$postid ingnored
   public static function instance($postid = 0) {
     return getinstance(__class__);
@@ -15,37 +15,29 @@ $this->rawtable = 'rawcomments';
 public function load() { return true; }
 public function save() { retrn true; }
   
-  public function getcomment($id) {
-    return new tcomment($id);
-  }
-  
-  public function PostDeleted($postid) {
-$this->db->update("status = 'deleted'", "post = $postid");
-/*
-$this->getdb($this->rawtable)->delete("id in (select id from $this->thistable where post = $postid)");
-$this->db->delete("post = postid");
-*/
-}
-  
-  public function add($postid, $name, $email, $url, $content) {
-    $users = TCommentUsers ::instance();
-    $author = $users->add($name, $email, $url);
+  public function addcomment($postid, $userid, $content) {
     $filter = TContentFilter::instance();
 $result =$this->db->InsertAssoc(array(
 'post' => $postid,
 'parent' => 0,
-'author' => $author,
-'posted' => sqlnow(),
+'author' => $userid,
+'posted' => sqldate(),
 'content' =>$filter->GetCommentContent($Content),
-'status' => $this->CreateStatus($author, $content),
+'status' => $classes->spamfilter->createstatus($userid, $content),
 'pingback' => 'false'
 ));
-$this->getdb($this->rawtable)->InsertAssoc(array('id' => $result, 'rawcontent' => $content));
+
+$this->getdb($this->rawtable)->InsertAssoc(array(
+'id' => $result, 
+'created' => sqldate(),
+'modified' => sqldate(),
+'rawcontent' => $content
+));
 $this->DoAdded($result);
 return $result;
   }
-  
-  public function AddPingback(tpost $post, $url, $title) {
+
+ public function addpingback(tpost $post, $url, $title) {
     $users = TCommentUsers::instance();
     $userid = $users->add($title, '', $url);
 
@@ -62,17 +54,26 @@ $result = $this->db->InsertAssoc(array(
     $this->DoAdded($result);
   }
   
+  public function getcomment($id) {
+    return new tcomment($id);
+  }
+  
   public function delete($id) {
 $this->db->setvalue($id, 'status', 'deleted');
     
       $this->deleted($id);
-      $this->DoChanged($postid);
+      $this->dochanged($postid);
   }
+
+  public function postdeleted($postid) {
+$this->db->update("status = 'deleted'", "post = $postid");
+}
+  
   
   public function setstatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
 $this->db->setvalue($id, 'status', $value);
-    $this->DoChanged($item['pid']);
+    $this->dochanged($item['pid']);
   }
   
   public function gethold($author) {
@@ -83,7 +84,7 @@ return $this->db->res2array($this->db->select("author = $author and status = 'ho
 return $this->db->res2array($this->db->select("status = 'hold' and pingback = false"));
   }
 
-//from files version
+//from file version
   public function IndexOfRawContent($s) {
 $id = $this->getdb('rawcomments')->findid('rawcontent', $s);
 return $id ? $id : -1;
