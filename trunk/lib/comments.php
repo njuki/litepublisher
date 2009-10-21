@@ -2,9 +2,12 @@
 
 class TComments extends AbstractCommentManager {
 public $rawtable;
-//$postid ingnored
-  public static function instance($postid = 0) {
-    return getinstance(__class__);
+private $pid;
+
+  public static function instance($pid = 0) {
+    $result = getinstance(__class__);
+$result->pid = $pid;
+return $result;
   }
   
   protected function create() {
@@ -77,17 +80,24 @@ $this->db->setvalue($id, 'status', $value);
   }
   
   public function gethold($author) {
-return $this->db->res2array($this->db->select("author = $author and status = 'hold' and pingback = false"));
+return $this->db->idselect("post = $this->pid and author = $author and status = 'hold' and pingback = false");
 }
 
+//TAdminModerator uses holditems property
   public function getholditems() {
-return $this->db->res2array($this->db->select("status = 'hold' and pingback = false"));
+return $this->db->idselect("status = 'hold' and pingback = false"));
   }
 
 //from file version
   public function IndexOfRawContent($s) {
 $id = $this->getdb('rawcomments')->findid('rawcontent', $s);
 return $id ? $id : -1;
+  }
+  
+//template comments
+  public function getapproved($type = '') {
+$pingback = $type == 'pingback' ? 'true' : 'false';
+return $this->db->idselect("post = $this->pid and status = 'approved' and pingback = $pingback sort by posted asc");
   }
   
 }//class

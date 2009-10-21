@@ -63,15 +63,15 @@ class TTemplateComment extends TEventClass {
     global $post, $Template, $Urlmap, $Options;
     $comments = $post->comments;
     if (($comments->count == 0) && !$post->commentsenabled) return '';
-    if ($post->haspages && ($post->commentpages < $Urlmap->pagenumber)) return $this->GetCommentsCountLink('');
+    if ($post->haspages && ($post->commentpages < $Urlmap->page)) return $this->GetCommentsCountLink('');
     $lang = TLocal::instance('comment');
     $result = '';
     $comment = &new TComment($comments);
-    $items = &$comments->GetApproved();
+    $items = $comments->getapproved();
     $count = $this->GetCommentCountStr(count($items));
     $from = 0;
     if ($Options->commentpages ) {
-      $from = ($Urlmap->pagenumber - 1) * $Options->commentsperpage;
+      $from = ($Urlmap->page - 1) * $Options->commentsperpage;
       $items = array_slice($items, $from, $Options->commentsperpage, true);
     }
     if (count($items)  > 0) {
@@ -79,12 +79,12 @@ class TTemplateComment extends TEventClass {
       $result .= $this->GetcommentsList($items, $comment, '', $from);
     }
     
-    if ($Urlmap->pagenumber == 1) {
-      $items = &$comments->GetApproved('pingback');
+    if ($Urlmap->page == 1) {
+      $items = $comments->getapproved('pingback');
       if (count($items) > 0) {
         $list = '';
         $comtempl = $this->templ['pingback'];
-        foreach  ($items as $id => $date) {
+        foreach  ($items as $id) {
           $comment->id = $id;
           eval('$list .= "'. $comtempl  . '"; ');
         }
@@ -111,7 +111,7 @@ class TTemplateComment extends TEventClass {
     $class1 = $this->templ['class1'];
     $class2 = $this->templ['class2'];
     $i = 1;
-    foreach  ($items as $id => $date) {
+    foreach  ($items as $id) {
       $comment->id = $id;
       $class = (++$i % 2) == 0 ? $class1 : $class2;
       eval('$result .= "'. $comtempl . '\n"; ');
@@ -122,7 +122,7 @@ class TTemplateComment extends TEventClass {
   
   public function GetHoldList(&$items, $postid) {
     if (count($items) == 0) return '';
-    $comments = TComments::instance($postid);
+    $comments = tcomments::instance($postid);
     $comment = new TComment($comments);
     $lang = TLocal::instance('comment');
     eval('$hold = "'. $this->templ['hold'] . '";');
