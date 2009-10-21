@@ -8,4 +8,15 @@ interface ITemplate {
   public function GetTemplateContent();
 }
 
+interface  IComments {
+//comment form
+  public function gethold($author);
+  public function IndexOfRawContent($s);
+//holditems property used by TAdminModerator
+  public function getholditems() {
+//template comments
+  public function getapproved($type);
+//pingback xmlrpc
+ public function haspingback($url);
+}
 ?>

@@ -52,34 +52,42 @@ class TTemplateComment extends TEventClass {
   }
   
   public function GetCommentsCountLink($tagname) {
-    global $post, $Options;
+    global $post, $options;
     $comments = $post->comments;
     $CountStr = $this->GetCommentCountStr($comments->GetCountApproved());
     $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->countpages/" : $post->url;
-    return "<a href=\"$Options->url$url#comments\">$CountStr</a>";
+    return "<a href=\"$options->url$url#comments\">$CountStr</a>";
   }
   
   public function GetComments($tagname) {
-    global $post, $Template, $Urlmap, $Options;
+    global $post, $template, $urlmap, $options;
     $comments = $post->comments;
     if (($comments->count == 0) && !$post->commentsenabled) return '';
-    if ($post->haspages && ($post->commentpages < $Urlmap->page)) return $this->GetCommentsCountLink('');
-    $lang = TLocal::instance('comment');
+    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->GetCommentsCountLink('');
+    $lang = tlocal::instance('comment');
     $result = '';
-    $comment = &new TComment($comments);
+    $comment = new TComment($comments);
+    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
+if (dbversion) {
+$c = $comments->db->getcount("post = $post->id and status = 'approved' and pingback = false");
+    $count = $this->GetCommentCountStr($c);
+$db = $comments->db;
+$items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
+where $db->comments.post = $post->id and $db->comments.status = 'approved' and $db->comments.pingback = false and $db->comusers.id = $db->comments.author
+sort by $db->comments.posted asc limit $from, $options->commentsperpage");
+} else {
     $items = $comments->getapproved();
     $count = $this->GetCommentCountStr(count($items));
-    $from = 0;
-    if ($Options->commentpages ) {
-      $from = ($Urlmap->page - 1) * $Options->commentsperpage;
-      $items = array_slice($items, $from, $Options->commentsperpage, true);
+    if ($options->commentpages ) {
+      $items = array_slice($items, $from, $options->commentsperpage, true);
     }
+}
     if (count($items)  > 0) {
       eval('$result .= "'. $this->templ['count'] . '";');
       $result .= $this->GetcommentsList($items, $comment, '', $from);
     }
     
-    if ($Urlmap->page == 1) {
+    if ($urlmap->page == 1) {
       $items = $comments->getapproved('pingback');
       if (count($items) > 0) {
         $list = '';
@@ -95,7 +103,7 @@ class TTemplateComment extends TEventClass {
         $result .= sprintf($pingbacks, $list, 1);
       }
     }
-    if (!$Options->commentsdisabled && $post->commentsenabled) {
+    if (!$options->commentsdisabled && $post->commentsenabled) {
       $result .=  "<?php  echo TCommentForm::PrintForm($post->id); ?>\n";
     } else {
       eval('$result .= "'. $this->templ['closed'] . '";');
@@ -103,16 +111,21 @@ class TTemplateComment extends TEventClass {
     return $result;
   }
   
-  private function GetCommentsList(&$items, &$comment, $hold, $from) {
-    global $Options, $post, $Template;
+  private function GetCommentsList(array &$items, &$comment, $hold, $from) {
+    global $options, $post, $template;
     $lang = TLocal::instance('comment');
     $result = '';
     $comtempl = $this->templ['comment'];
     $class1 = $this->templ['class1'];
     $class2 = $this->templ['class2'];
     $i = 1;
+
     foreach  ($items as $id) {
+if (dbversion)  {
+      $comment->data = $id;
+} else {
       $comment->id = $id;
+}
       $class = (++$i % 2) == 0 ? $class1 : $class2;
       eval('$result .= "'. $comtempl . '\n"; ');
     }

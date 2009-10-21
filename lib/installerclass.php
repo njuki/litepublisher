@@ -292,7 +292,6 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     $posts = TPosts::Instance();
     $posts->Lock();
     foreach( $classes->items as $ClassName => $Info) {
-      if ($ClassName  == 'ITemplate') continue;
       $Obj = GetInstance($ClassName);
       if (method_exists($Obj, 'Install')) $Obj->Install();
     }

@@ -1,6 +1,6 @@
 <?php
 
-class TComments extends AbstractCommentManager {
+class tcomments extends AbstractCommentManager implements IComments {
 public $rawtable;
 private $pid;
 
@@ -36,7 +36,7 @@ $this->getdb($this->rawtable)->InsertAssoc(array(
 'modified' => sqldate(),
 'rawcontent' => $content
 ));
-$this->DoAdded($result);
+$this->doadded($result);
 return $result;
   }
 
@@ -54,7 +54,7 @@ $result = $this->db->InsertAssoc(array(
     'type' => 'pingback'
     ));
 //no add to raw
-    $this->DoAdded($result);
+    $this->doadded($result);
   }
   
   public function getcomment($id) {
@@ -83,23 +83,29 @@ $this->db->setvalue($id, 'status', $value);
 return $this->db->idselect("post = $this->pid and author = $author and status = 'hold' and pingback = false");
 }
 
-//TAdminModerator uses holditems property
   public function getholditems() {
 return $this->db->idselect("status = 'hold' and pingback = false"));
   }
 
-//from file version
+
   public function IndexOfRawContent($s) {
 $id = $this->getdb('rawcomments')->findid('rawcontent', $s);
 return $id ? $id : -1;
   }
   
-//template comments
-  public function getapproved($type = '') {
+  public function getapproved($type) {
 $pingback = $type == 'pingback' ? 'true' : 'false';
 return $this->db->idselect("post = $this->pid and status = 'approved' and pingback = $pingback sort by posted asc");
   }
   
+ public function haspingback($url) {
+$db = $this->db;
+$url = $db->quote($url);
+if (($res = $this->db->query("select $db->comments.id from$db->comments, $db->comusers
+where $db->post = $this->pid and pingback = true and $db->comusers.id = $db->comments.author and $db->comusers->url = $url limit 1")) && ($r = $res->fetch()) return true;
+return false;
+{
+
 }//class
 
 class tcomment extends TDataClass {

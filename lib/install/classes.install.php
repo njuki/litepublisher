@@ -7,6 +7,7 @@ function TClassesInstall(&$self) {
     $self->items[$class] = array($filename, '');
   }
   $self->classes = $ini['classes'];
+$self->interfaces = $ini['interfaces'];
   $self->Save();
 }
 
