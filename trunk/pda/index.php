@@ -6,11 +6,10 @@
 
 ob_start();
 //begin config
-define('dbversion' , false); //possible values combo, full
 $domain = strtolower(trim($_SERVER['HTTP_HOST']));
 if (substr($domain, 0, 4) == 'www.') $domain = substr($domain, 4);
 $domain = trim($domain, '.:/\,;');
-$paths = array('home' => dirname(__file__). DIRECTORY_SEPARATOR);
+$paths = array('home' => dirname(dirname(__file__)) . DIRECTORY_SEPARATOR);
 $paths['lib'] = $paths['home'] .'lib'. DIRECTORY_SEPARATOR;
 $paths['libinclude'] = $paths['lib'] . 'include'. DIRECTORY_SEPARATOR;
 $paths['languages'] = $paths['lib'] . 'languages'. DIRECTORY_SEPARATOR;
@@ -24,14 +23,16 @@ $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
 $microtime = microtime();
 require_once($paths['lib'] . 'kernel.php');
-$classes = TClasses::instance();
-$options = TOptions::instance();
+require_once($paths['lib'] . 'mobileclasses.php');
+$classes = TMobileClasses::Instance();
+$options = TMobileOptions::instance();
 
-if (!$options->installed) require_once($paths['libinclude'] . 'install.php');
+if (!$Options->installed) require_once($paths['libinclude'] . 'install.php');
 //end config
 
 if (!isset($mode)) {
-$urlmap = turlmap::instance();
+$urlmap = GetNamedInstance('urlmap', 'TUrlmap');
+$Urlmap = $urlmap;
 $urlmap->Request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
 

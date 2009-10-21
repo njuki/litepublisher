@@ -59,7 +59,7 @@ echo $updater->DownloadLatest();
 
 //$classes = TClasses::Instance();
 
-    $ini = parse_ini_file($paths['libinclude'] . 'classes.ini', true);
+      $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
 $s = file_get_contents($paths['data'].'classes.php');
 @unlink($paths['data'].'classes.php');
 @rename($paths['data'].'classes.php', $paths['data'].'classes.bak.php');
@@ -67,13 +67,11 @@ $s = file_get_contents($paths['data'].'classes.php');
 
 class TTempClasses extends TItems {
   public $classes;
-  public $instances;
 
   protected function CreateData() {
     parent::CreateData();
 $this->basename = 'tempclasses';
     $this->AddDataMap('classes', array());
-    $this->instances = array();
   }
 
 }//class
@@ -82,8 +80,7 @@ $classes = new TTempClasses ();
 $classes->Lock();
 $classes->basename = 'classes';
 $classes->items = unserialize($s);
-$classes->classes = $ini['classes'];
-//$classes->Add('TManifest', 'manifest.php');
+$classes->classes = $inifile['classes'];
 $classes->Unlock();
 
 ?>
