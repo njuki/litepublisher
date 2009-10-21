@@ -1,34 +1,33 @@
 <?php
 
 class TComments extends TItems {
-  public $postid;
-  private static $Instances;
+  public $pid;
+  private static $instances;
   
-  public static function instance($postid) {
-    if (!isset(self::$Instances)) self::$Instances = array();
-    if (!isset(self::$Instances[$postid]))  {
+  public static function instance($pid) {
+    if (!isset(self::$instances)) self::$instances = array();
+    if (!isset(self::$instances[$pid]))  {
 $class = __class__;
 $self = new $class();
-      self::$Instances[$postid]  = $self;
-      $self->postid = $postid;
+      self::$instances[$pid]  = $self;
+      $self->pid = $pid;
       $self->load();
     }
-    return self::$Instances[$postid];
+    return $self;
   }
   
-  public static function getcomment($postid, $id) {
-    $self = self::instance($postid);
+  public static function getcomment($pid, $id) {
+    $self = self::instance($pid);
     $result = new tcomment($self);
     $result->id = $id;
     return $result;
   }
 
   public function getbasename() {
-    return 'posts'.  DIRECTORY_SEPARATOR . $this->postid . DIRECTORY_SEPARATOR . 'comments';
+    return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments';
   }
   
-  
-  public function add($id, $userid,  $Content,$status = 'hold',  $type = '') {
+  public function insert($id, $userid,  $Content,$status = 'hold',  $type = '') {
     $date = time();
     $filter = TContentFilter::instance();
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
@@ -36,7 +35,7 @@ $self = new $class();
     $this->items[$id] = array(
     'id' => $id,
     'uid' => $userid,
-    'date' => $date,
+    'posted' => time(),
     'status' => $status,
     'type' => $type,
     'content' => $filter->GetCommentContent($Content),
@@ -44,32 +43,32 @@ $self = new $class();
     'ip' =>$ip
     );
     $this->save();
-    return $date;
+    return $id;
   }
   
-  public function SetStatus($id, $value) {
-    $this->SetValue($id, 'status', $value);
+  public function setstatus($id, $value) {
+    $this->setvalue($id, 'status', $value);
     $this->save();
   }
   
-  public function SetContent($id, $value) {
+  public function setcontent($id, $value) {
     if (isset($this->items[$id])) {
-      $ContentFilter = &TContentFilter::instance();
-      $this->items[$id]['content'] = $ContentFilter ->GetCommentContent($value);
+      $filter = &TContentFilter::instance();
+      $this->items[$id]['content'] = $filter->GetCommentContent($value);
       $this->items[$id]['rawcontent'] =  $value;
       $this->save();
     }
   }
   
-  public function &GetApproved($type = '') {
+  public function getapproved($type = '') {
     $Result = array();
     foreach ($this->items as $id => $item) {
       if (($item['status'] == 'approved')  && ($type == $item['type'])) {
-        $Result[$id] = $item['date'];
+        $Result[$id] = $item['posted'];
       }
     }
     asort($Result);
-    return  $Result;
+    return  array_keys($Result);
   }
   
   public function GetCountApproved() {
@@ -90,12 +89,7 @@ $self = new $class();
       }
     }
     asort($Result);
-    return  $Result;
-  }
-  
-  public function GetUserInfo($id) {
-    $Users = &TCommentUsers::instance();
-    return  $Users->GetItem($this->items[$id]['uid']);
+    return  array_keys($Result);
   }
   
   public function IndexOfRawContent($s) {
@@ -119,7 +113,7 @@ $self = new $class();
     $result = array();
     $users = &TCommentUsers::instance();
     foreach ($this->items as $id => $item) {
-      if (($item['status'] == 'approved') && ($item['type'] == '') && $users->Subscribed($item['uid'], $this->postid)) {
+      if (($item['status'] == 'approved') && ($item['type'] == '') && $users->Subscribed($item['uid'], $this->pid)) {
         if (!in_array($item['uid'], $result)) $result[] = $item['uid'];
       }
     }
@@ -131,80 +125,84 @@ $self = new $class();
 //wrapper for simple acces to single comment
 class TComment {
   public $id;
-  public $Owner;
+  public $owner;
   
-  public function __construct(&$Owner = null) {
-    $this->Owner = &$Owner;
+  public function __construct($owner = null) {
+    $this->owner = $owner;
   }
   
   public function __get($name) {
-    if (method_exists($this,$get = "Get$name")) {
+    if (method_exists($this,$get = "get$name")) {
       return  $this->$get();
     }
-    return $this->Owner->GetValue($this->id, $name);
+    return $this->owner->getvalue($this->id, $name);
   }
   
   public function __set($name, $value) {
     if ($name == 'content') {
-      $this->Owner->SetContent($this->id, $value);
+      $this->owner->setcontent($this->id, $value);
     } else {
-      $this->Owner->SetValue($this->id, $name, $value);
+      $this->owner->setvalue($this->id, $name, $value);
     }
   }
   
   public function save() {
-    $this->Owner->save();
+    $this->owner->save();
   }
   
-  public function Getname() {
-    $UserInfo = $this->Owner->GetUserInfo($this->id);
-    return $UserInfo['name'];
+private function getuser($id) {
+    $Users = TCommentUsers::instance();
+    return  $Users->getitem($this->owner->items[$id]['uid']);
   }
   
-  public function Getip() {
-    $UserInfo = $this->Owner->GetUserInfo($this->id);
-    return $UserInfo['ip'][0];
+  public function getname() {
+    $userinfo = $this->getuser($this->id);
+    return $userinfo['name'];
+  }
+
+    public function getemail() {
+    $userinfo = $this->getuser($this->id);
+    return $userinfo ['email'];
   }
   
-  public function Getauthorlink() {
+  public function getwebsite() {
+    $userinfo = $this->getuser($this->id);
+    return $userinfo['url'];
+}
+
+   public function getip() {
+    $userinfo = $this->getuser($this->id);
+    return $userinfo['ip'][0];
+  }
+  
+  public function getauthorlink() {
     if ($this->type == 'pingback') {
   return "<a href=\"{$this->website}\">{$this->name}</a>";
     }
     
-    $authors = &TCommentUsers ::instance();
-    return $authors->GetLink($this->Owner->items[$this->id]['uid']);
+    $authors = TCommentUsers ::instance();
+    return $authors->getlink($this->owner->items[$this->id]['uid']);
   }
   
-  public function Getlocaldate() {
-    return TLocal::date($this->date);
+  public function getlocaldate() {
+    return tlocal::date($this->date);
   }
   
-  public function Getlocalstatus() {
-    return TLocal::$data['commentstatus'][$this->status];
+  public function getlocalstatus() {
+    return tlocal::$data['commentstatus'][$this->status];
   }
   
-  public function  Gettime() {
-    return date('H:i', $this->date);
+  public function  gettime() {
+    return date('H:i', $this->posted);
   }
   
-  public function Getwebsite() {
-    $users = &TCommentUsers::instance();
-    return $users->GetValue($this->Owner->GetValue($this->id, 'uid'), 'url');
+  public function geturl() {
+    $post = tpost::instance($this->owner->pid);
+    return "$post->link#comment-$this->id";
   }
   
-  public function Getemail() {
-    $UserInfo = $this->Owner->GetUserInfo($this->id);
-    return $UserInfo ['email'];
-  }
-  
-  public function Geturl() {
-    global $Options;
-    $post = &TPost::instance($this->Owner->postid);
-    return "$Options->url$post->url#comment-$this->id";
-  }
-  
-  public function Getposttitle() {
-    $post = &TPost::instance($this->Owner->postid);
+  public function getposttitle() {
+    $post = tpost::instance($this->owner->pid);
     return $post->title;
   }
   
