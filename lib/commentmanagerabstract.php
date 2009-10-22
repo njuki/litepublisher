@@ -3,7 +3,7 @@
 abstract class TAbstractCommentManager extends TItems {
 
 abstract   public function addcomment($postid, $author, $content);
-abstract   public function addpingback(&$post, $url, $title);
+abstract   public function addpingback($pid, $url, $title);
   abstract   public function getcomment($id);
 abstract   public function delete($id);
 abstract   public function postdeleted($postid);

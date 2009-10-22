@@ -58,7 +58,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return new IXR_Error(32, 'The source URL contain nofollow or noindex atribute');
     }
     $CommentManager = &TCommentManager::Instance();
-    $CommentManager->AddPingback($post, $from, $matchtitle[1]);
+    $CommentManager->AddPingback($post->id, $from, $matchtitle[1]);
     
     return "Pingback from $from to $to registered. Keep the web talking! :-)";
   }

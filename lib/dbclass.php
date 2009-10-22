@@ -184,8 +184,7 @@ return false;
 
 public function findid($where) {
     if($res = $this->select("select id from $this->prefix$this->table where ". $where . ' limit 1')) {
-$r = res->fetch(PDO::FETCH_NUM);
-return $r[0];
+if ($r = res->fetch(PDO::FETCH_NUM) return $r[0];
 }
 return false;
 }
