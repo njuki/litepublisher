@@ -199,4 +199,9 @@ if ($date == 0) $date = time();
 return date('Y-m-d H:i:s', $date);
 }
 
+function dbqote($s) {
+global $db;
+return $db->quote($s);
+}
+
 ?>

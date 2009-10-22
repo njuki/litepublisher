@@ -23,16 +23,17 @@ $comments->insert($id, $uid,  $content, $status, '');
     $this->doadded($id);
   }
   
- public function addpingback($post, $url, $title) {
+ public function addpingback($pid, $url, $title) {
     $id =++$this->lastid;
-    $users = TCommentUsers::instance();
-    $userid = $users->add($title, '', $url);
-    $comments = tcomments::instance($post->id);
-$comments->insert($id, $userid, '', 'hold', 'pingback');
+    $comusers = TCommentUsers::instance();
+    $uid = $comusers->add($title, '', $url);
+    $comments = tcomments::instance($pid);
+$comments->insert($id, $uid, '', 'hold', 'pingback');
     
     $this->items[$id] = array(
-    'uid' => $userid,
-    'pid' => (int) $post->id,
+    'uid' => $uid,
+'parent' => 0,
+    'pid' => (int) $pid,
     'posted' => time(),
     'status' => 'hold',
     'type' => 'pingback'

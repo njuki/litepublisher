@@ -18,15 +18,15 @@ $this->rawtable = 'rawcomments';
 public function load() { return true; }
 public function save() { retrn true; }
   
-  public function addcomment($postid, $userid, $content) {
+  public function addcomment($pid, $uid, $content) {
     $filter = TContentFilter::instance();
 $result =$this->db->InsertAssoc(array(
-'post' => $postid,
+'post' => $pid,
 'parent' => 0,
-'author' => $userid,
+'author' => $uid,
 'posted' => sqldate(),
 'content' =>$filter->GetCommentContent($Content),
-'status' => $classes->spamfilter->createstatus($userid, $content),
+'status' => $classes->spamfilter->createstatus($uid, $content),
 'pingback' => 'false'
 ));
 
@@ -41,17 +41,16 @@ return $result;
   }
 
  public function addpingback(tpost $post, $url, $title) {
-    $users = TCommentUsers::instance();
-    $userid = $users->add($title, '', $url);
+    $comusers = TCommentUsers::instance();
+    $uid = $comusers->add($title, '', $url);
 
-    $date = $comments->Create($id, $userid, '', 'hold', 'pingback');
-    
 $result = $this->db->InsertAssoc(array(
-    'author' => $userid,
-    'post' => ($postid,
+'parent' => 0,
+    'author' => $uid,
+    'post' => $pid,
     'posted' => sqldate(),
     'status' => 'hold',
-    'type' => 'pingback'
+'pingback' => 'true'
     ));
 //no add to raw
     $this->doadded($result);
@@ -91,11 +90,6 @@ return $this->db->idselect("status = 'hold' and pingback = false"));
   public function IndexOfRawContent($s) {
 $id = $this->getdb('rawcomments')->findid('rawcontent', $s);
 return $id ? $id : -1;
-  }
-  
-  public function getapproved($type) {
-$pingback = $type == 'pingback' ? 'true' : 'false';
-return $this->db->idselect("post = $this->pid and status = 'approved' and pingback = $pingback sort by posted asc");
   }
   
  public function haspingback($url) {

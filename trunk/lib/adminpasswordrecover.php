@@ -34,7 +34,7 @@ class TPasswordRecover extends TAdminPage {
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
     if (strtolower(trim($_POST['email'])) == strtolower(trim($Options->email))) {
-      $password = md5(secret. uniqid( microtime()));
+      $password = md5(mt_rand() . secret. microtime());
       $Options->SetPassword($password);
       eval('$subject = "'. $html->subject . '";');
       eval('$body = "'. $html->body . '";');

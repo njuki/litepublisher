@@ -2,23 +2,18 @@
 
 class TCommentUsers extends TItems {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-$this->table = 'commentusers';
+$this->table = 'comusers';
     $this->basename = 'commentusers';
     $this->CacheEnabled = false;
-    $this->Data['hidelink'] = false;
-    $this->Data['redir'] = true;
-    $this->Data['nofollow'] = false;
   }
   
   public function PostDeleted($postid) {
-if (dbversion) return $this->DeleteWithoutComments();
-
     $this->lock();
 $this->DeleteWithoutComments();
     foreach ($this->items as  $id => $item) {
@@ -31,31 +26,50 @@ $this->DeleteWithoutComments();
 }
   }
   
-  public function Add($name, $email, $url) {
+  public function add($name, $email, $url) {
     //$name = htmlspecialchars(trim(strip_tags($name)));
     //$url = htmlspecialchars(trim(strip_tags($url)));
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
-    if ($id = $this->Find($name, $email, $url)) {
-      $this->AddIP($id, $ip);
+    if ($id = $this->find($name, $email, $url)) {
+      $this->addip($id, $ip);
       return $id;
     }
+
+if (dbversion) {
+return $this->db->InsertAssoc(array(
+    'name' => $name,
+    'url' => $url,
+    'email' => $email,
+    'cookie' => md5(mt_rand() . secret. microtime()),
+    ));
+
+} else {
     $this->lock();
     $this->items[++$this->lastid] = array(
     'id' => $this->lastid,
     'name' => $name,
     'url' => $url,
     'email' => $email,
-    'cookie' => md5(secret. uniqid( microtime())),
+    'cookie' => md5(mt_rand() . secret. microtime()),
     'ip' => array($ip),
     'subscribe' => array( )
     );
     
     $this->unlock();
-    $this->Added($this->lastid);
+    $this->added($this->lastid);
     return $this->lastid;
+}
   }
   
-  public function Edit($id, $name, $url, $email, $ip) {
+  public function edit($id, $name, $url, $email, $ip) {
+if (dbversion) {
+return $this->UpdateAssoc(array(
+'name' => $name,
+'email' => $email,
+'url' => $url
+));
+}
+
     $this->lock();
     $item = &$this->items[$id];
     $item['name'] = $name;
@@ -69,17 +83,23 @@ $this->DeleteWithoutComments();
   }
   
   public function GetItemFromCookie($cookie) {
+if (dbversion) return $this->db->findid('cookie = '. dbquote($cookie));
+
     foreach ($this->items as $id => $item) {
       if ($cookie == $item['cookie']) return $item;
     }
     return false;
   }
   
-  public function GetCookie($id) {
-    return $this->GetValue($id, 'cookie');
+  public function getcookie($id) {
+    return $this->getvalue($id, 'cookie');
   }
   
-  public function Find($name, $email, $url) {
+  public function find($name, $email, $url) {
+if (dbversion) {
+return $this->db->findid('name = '. dbquote($name) . ' and email = '. dbquote($email) .' and url = '. dbquote($url));
+} 
+
     foreach ($this->items as $id => $item) {
       if (($name == $item['name'])  && ($email == $item['email']) && ($url == $item['url'])) {
         return $id;
@@ -88,7 +108,9 @@ $this->DeleteWithoutComments();
     return false;
   }
   
-  public function AddIP($id, $ip) {
+  public function addip($id, $ip) {
+if (dbversion) return true;
+
     if (!in_array($ip, $this->items[$id]['ip'])) {
       $this->items[$id]['ip'][] = $ip;
       $this->save();
@@ -123,41 +145,36 @@ $this->DeleteWithoutComments();
     }
   }
   
-  public function GetLink($id) {
-    if (!isset($this->items[$id])) return '';
-    $name = $this->items[$id]['name'];
-    $url = $this->items[$id]['url'];
-    if ($this->hidelink || empty($url) ) return $name;
+  public function getlink($id) {
+global $classes, $options;
+$item = $this->getitem($id);
+    $name = $item['name'];
+    $url = $item['url'];
+$thisoptions = $this->options;
+    if ($thisoptions->hidelink || empty($url) ) return $name;
     
-    $CommentManager = &TCommentManager::Instance();
-    if (!$CommentManager->HasApprovedCount($id, 2)) return $name;
+    if (!$classes->commentmanager->HasApprovedCount($id, 2)) return $name;
     
-    $rel = $this->nofollow ? 'rel="nofollow noindex"' : '';
-    if ($this->redir) {
-      global $Options;
-      return "<a $rel href=\"$Options->url/authors/$id/\">$name</a>";
+    $rel = $thisoptions->nofollow ? 'rel="nofollow noindex"' : '';
+    if ($thisoptions->redir) {
+      return "<a $rel href=\"$options->url/comusers/$id/\">$name</a>";
     } else {
       return "<a $rel href=\"$url\">$name</a>";
     }
   }
   
-  public function Request($arg) {
-    global $Options;
+  public function request($arg) {
+    global $options;
     $id = (int) $arg;
-    if (!isset($this->items[$id])) return 404;
-    $url = $this->items[$id]['url'];
-    if (!strpos($url, '.')) $url = $Options->url . $Options->home;
+    if (!$this->itemexists($id)) return 404;
+$item = $this->getitem($id);
+$url = $item['url'];
+    if (!strpos($url, '.')) $url = $options->url . $options->home;
     if (substr($url, 0, 7) != 'http://') $url = 'http://' . $url;
     TUrlmap::redir($url);
   }
   
-
 public function DeleteWithoutComments() {
-if (dbversion) {
-$comments = tcomments(::instance();
-$this->db->delete("id not in (select author from $comments->thistable group by author)");
-} else {
-}
 }
 
 }//class

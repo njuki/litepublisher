@@ -1,19 +1,31 @@
 <?php
 
-function TCommentUsersInstall(&$self) {
-  $Posts= &TPosts::Instance();
-  $Posts->Deleted = $self->PostDeleted;
+function TCommentUsersInstall($self) {
+if (dbversion) {
+    $manager = TDBManager ::instance();
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
+    $manager->CreateTable($self->table, file_get_contents($dir .'commentusers.sql'));
+} else {
+  $posts= tposts::instance();
+  $posts->deleted = $self->postdeleted;
+}
+
+$self->options = array(
+'hidelink' => false,
+'redir' => true,
+'nofollow' => false
+);
+
+  $urlmap = turlmap::instance();
+  $urlmap->add('/comusers/', get_class($self), 'tree');
   
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->AddFinal('authors', get_class($self));
-  
-  $robots = &TRobotstxt ::Instance();
-  $robots->AddDisallow('/authors/');
+  $robots = TRobotstxt ::instance();
+  $robots->AddDisallow('/comusers/');
 }
 
 function TCommentUsersUninstall(&$self) {
-  TPosts::unsub($self);
-  TUrlmap::unsub($self);
+  tposts::unsub($self);
+  turlmap::unsub($self);
 }
 
 ?>
