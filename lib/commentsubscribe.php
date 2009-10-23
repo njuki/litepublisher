@@ -106,52 +106,52 @@ global $classes;
     return $options->url . '/admin/subscribe/' . $options->q;
   }
   
-  public function SendMailToSubscribers($id) {
-    if (!$this->SubscribtionEnabled || (isset($this->items[$id]) && $this->items[$id])) return;
+  public function sendmail($id) {
+global $classes;
+    if (!$this->SubscribtionEnabled) return;
     
-    $manager = &TCommentManager::instance();
-    $item = $manager->GetItem($id);
+    $manager = $classes->commentmanager;
+    $item = $manager->getitem($id);
+if (dbversion) {
+if ($item['status'] != 'approved') || ($item['pingback'] == '1')) return;
+} else {
     if (isset($item['status']) || isset($item['type']))return;
+}
     
-    $cron = &TCron::instance();
-    $cron->Add('single', get_class($this),  'CronSendMailToSubscribers', $id);
+    $cron = tcron::instance();
+    $cron->add('single', get_class($this),  'cronsendmail', $id);
   }
   
-  public function CronSendMailToSubscribers($id) {
-    global $options;
-    $manager = &TCommentManager::instance();
-    if (!isset($manager->items[$id])) return;
-    $item = $manager->GetItem($id);
-    
-    $this->items[$id] = true;
-    $this->Save();
-    
-    $comments = &TComments::instance($item['pid']);
-    $subscribers = &$comments->GetSubscribers();
-    if (in_array($item['uid'], $subscribers)) {
-      array_splice($subscribers,  array_search($item['uid'], $subscribers), 1);
-    }
-    
-    if (count($subscribers) == 0) return;
-    $comment = new TComment($comments);
-    $comment->id = $id;
-    
-    $html = &THtmlResource::instance();
+  public function cronsendmail($id) {
+    global $options, $classes;
+    $manager = $classes->commentmanager;
+    if (!$manager->itemexists($id)) return;
+    $item = $manager->getitem($id);
+$pid = $item['pid'];
+if (dbversion) {
+if ($this->db->getcount("post = $pid") == 0) return;
+} else {
+if (!isset($this->items[$pid]) || (count($this->items[$pid]) == 0)) return;
+}
+   
+    $comment = $manager->getcomment($id);
+
+    $html = THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = &TLocal::instance();
+    $lang = tlocal::instance();
     
     eval('$subj = "'. $html->subject . '";');
     eval('$body = "' . $html->subscriberbody . '";');
     
     $url = $this->Geturl();
     
-    $users = &TCommentUsers::instance();
-    foreach ($subscribers as $userid) {
-      $user = $users->GetItem($userid);
+    $users = tcomusers::instance();
+    foreach ($subscribers as $uid) {
+      $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
   $link = "\n{$url}userid={$user['cookie']}\n";
-      TMailer::SendMail($options->name, $this->fromemail,  $user['name'], $user['email'],
+      tmailer::sendmail($options->name, $this->fromemail,  $user['name'], $user['email'],
       $subj, $body . $link);
     }
   }
