@@ -91,7 +91,7 @@ class TOpenid extends TEventClass {
   
   private function id_res() {
     $auth = &TAuthDigest::Instance();
-    if (!$auth->Auth())  return $auth->Headers();
+    if (!$auth->auth())  return $auth->Headers();
     return TTemplate::SimpleHtml(TLocal::$data['openidserver']['logged']);
   }
   
@@ -306,7 +306,7 @@ class TOpenid extends TEventClass {
     $sreg_required .= ',' . $sreg_optional;
     
     $auth = &TAuthDigest::Instance();
-    if (!$auth->Auth())  return $auth->Headers();
+    if (!$auth->auth())  return $auth->Headers();
     
     $q = strpos($return_to, '?') ? '&' : '?';
     $cancel_url = $return_to . $q . 'openid.mode=cancel';

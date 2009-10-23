@@ -2,43 +2,39 @@
 
 class TPasswordRecover extends TAdminPage {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'passwordrecover';
   }
   
-  public function Auth() {
-  }
+  public function Auth() { }
+    public function getmenu() { return ''; }
   
-  public function GetMenu() {
-    return '';
-  }
-  
-  public function Getcontent() {
-    global $Options;
-    $html = &THtmlResource::Instance();
+  public function getcontent() {
+    global $options;
+    $html = THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = tlocal::instance();
     eval('$result = "'.  $html->form . '\n";');
     $result = str_replace("'", '"', $result);
     return $result;
   }
   
   public function ProcessForm() {
-    global $Options;
-    $html = &THtmlResource::Instance();
+    global $options;
+    $html = THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    if (strtolower(trim($_POST['email'])) == strtolower(trim($Options->email))) {
+    $lang = tlocal::instance();
+    if (strtolower(trim($_POST['email'])) == strtolower(trim($options->email))) {
       $password = md5(mt_rand() . secret. microtime());
-      $Options->SetPassword($password);
+      $options->setpassword($password);
       eval('$subject = "'. $html->subject . '";');
       eval('$body = "'. $html->body . '";');
-      TMailer::SentToAdmin(subject, $body);
+      tmiler::sendtoadmin(subject, $body);
       eval('$result = "'. $html->success . '\n";');
       return $result;
     } else {

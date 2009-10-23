@@ -7,47 +7,46 @@ class TAdminPage extends TEventClass {
   public $arg;
   public $id = 1;//for menu item template
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+$this->basename = strtolower(get_class($this));
     $this->CacheEnabled = false;
     $this->menu = '';
     $this->formresult = '';
   }
   
-  public function GetBaseName() {
+  public function getbasename() {
     return 'admin' . DIRECTORY_SEPARATOR . $this->basename;
   }
   
-  public function Install() {
+  public function install() {
     if (get_class($this) == __class__) return;
-    $urlmap = &TUrlmap::Instance();
-    $urlmap->AddFinalNode('admin', $this->basename, get_class($this), null);
+    $urlmap = turlmap::instance();
+    $urlmap->add('/admin/$this->basename/', get_class($this), null, 'tree');
   }
   
-  public function Uninstall() {
-    TUrlmap::unsub($this);
+  public function uninstall() {
+    turlmap::unsub($this);
   }
   
   public function __get($name) {
-    if ($name == 'content') {
-      return $this->formresult . $this->Getcontent();
-    }
+    if ($name == 'content') return $this->formresult . $this->getcontent();
     return parent::__get($name);
   }
   
   public function getsubtheme() {
-    $template = ttemplate::Instance();
+    $template = ttemplate::instance();
     if (file_exists($template->path . 'admin.tml')) return 'admin.tml';
     return 'index.tml';
   }
   
-  public function Geturl() {
-    global $Urlmap;
-    return $Urlmap->url;
+  public function geturl() {
+    global $urlmap;
+    return $urlmap->url;
   }
   
   public function ContentToForm($s) {
@@ -57,11 +56,11 @@ class TAdminPage extends TEventClass {
     return $s;
   }
   
-  public function GetMenu() {
-    global $Options;
-    $html = &THtmlResource::Instance();
+  public function getmenu() {
+    global $options;
+    $html = THtmlResource::instance();
     $html->section = 'index';
-    $lang = &TLocal::Instance();
+    $lang = tlocal::instance();
     eval('$this->menu .=  "'. $html->content . '\n";');
     
     $html->section = $this->basename;
@@ -69,11 +68,11 @@ class TAdminPage extends TEventClass {
     return $this->menu;
   }
   
-  public function Auth() {
-    global $Options, $Urlmap, $paths;
-    $auth = &TAuthDigest::Instance();
-    if (!($auth->cookieenabled && $Urlmap->Ispda)) {
-      if (!$auth->Auth())  return $auth->Headers();
+  public function auth() {
+    global $options, $urlmap, $paths;
+    $auth = TAuthDigest::instance();
+    if (!($auth->cookieenabled && $urlmap->mobile)) {
+      if (!$auth->Auth())  return $auth->headers();
     } else {
       if ($auth->xxxcheck) {
         if (empty($_SERVER['HTTP_REFERER'])) {
@@ -87,20 +86,20 @@ class TAdminPage extends TEventClass {
       if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
         }
       }
-      if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin']) || ($auth->cookieexpired < time())) return "<?php @header('Location: $Options->url/admin/login/'); ?>";
+      if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin']) || ($auth->cookieexpired < time())) return "<?php @header('Location: $options->url/admin/login/'); ?>";
       
-      $html = &THtmlResource::Instance();
+      $html = THtmlResource::instance();
       $html->section = 'login';
-      $lang = &TLocal::Instance();
+      $lang = tlocal::instance();
       eval('$this->menu .= "'. $html->logout . '\n";');
     }
   }
   
-  public function Request($arg) {
-    if ($s = $this->Auth()) return $s;
+  public function request($arg) {
+    if ($s = $this->auth()) return $s;
     $this->arg = $arg;
-    TLocal::LoadLangFile('admin');
-    $this->title = TLocal::$data[$this->basename]['title'];
+    tlocal::LoadLangFile('admin');
+    $this->title = tlcal::$data[$this->basename]['title'];
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {
         foreach ($_POST as $name => $value) {
@@ -112,9 +111,9 @@ class TAdminPage extends TEventClass {
   }
   
   public function GetTemplateContent() {
-    global $Options;
-    $Template = TTemplate::Instance();
-    $result = $this->GetMenu();
+    global $options;
+    $Template = ttemplate::instance();
+    $result = $this->Ggetmenu();
     $result = str_replace("'", '"', $result);
     $GLOBALS['post'] = &$this;
     $result .= $Template->ParseFile('menuitem.tml');
@@ -138,16 +137,16 @@ class TAdminPage extends TEventClass {
   }
   
   public function notfound() {
-    $html = &THtmlResource::Instance();
+    $html = THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = tlocal::instance();
     eval('$result = "'. $html->notfound  . '\n";');
     return $result;
   }
   
   public function Getadminurl($section, $arg) {
-    global $Options;
-    return "$Options->url/admin/$section/$Options->q$arg";
+    global $options;
+    return "$options->url/admin/$section/$options->q$arg";
   }
   
 }//class
