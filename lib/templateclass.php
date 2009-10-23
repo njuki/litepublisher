@@ -11,7 +11,6 @@ class TTemplate extends TEventClass {
   //public $submenuinwidget;
   
   protected $sitebars;
-  public $widgets;
   public $curwidget;
   //protected $idwidget;
   protected $SitebarIndex;
@@ -19,7 +18,7 @@ class TTemplate extends TEventClass {
   protected $fFiles;
   protected $aboutFiles;
   
-  public static function &Instance() {
+  public static function instance() {
     return getinstance(__class__);
   }
   
@@ -29,13 +28,13 @@ class TTemplate extends TEventClass {
     $this->fFiles = array();
     $this->contextsupported = false;
     $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
-    $this->Data['themename'] = 'default';
-    $this->Data['sitebarcount'] = 2;
-    $this->Data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
-    $this->Data['idwidget'] = 0;
-    $this->Data['submenuinwidget'] = true;
+    $this->data['themename'] = 'default';
+    $this->data['sitebarcount'] = 2;
+    $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
+    $this->data['idwidget'] = 0;
+    $this->data['submenuinwidget'] = true;
+$this->data['widgets'] = array();
     $this->AddDataMap('sitebars', array(0 => array(), 1 => array(), 2 => array()));
-    $this->AddDataMap('widgets', array());
     $this->AddDataMap('tags', array());
     $this->AddDataMap('theme', array());
   }
@@ -61,11 +60,11 @@ class TTemplate extends TEventClass {
   }
   
   public function load() {
-    global $Options, $paths;
+    global $options, $paths;
     parent::load();
     if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
     $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
-    $this->url = $Options->files . '/themes/'. $this->themename;
+    $this->url = $options->files . '/themes/'. $this->themename;
     
     if (count($this->theme) == 0) {
       $this->theme = parse_ini_file($this->path . 'theme.ini', true);
@@ -79,217 +78,36 @@ class TTemplate extends TEventClass {
   }
   
   protected function Setthemename($name) {
-    global $paths, $Options;
+    global $paths, $options;
     if (($this->themename <> $name) && $this->ThemeExists($name)) {
       $this->Lock();
       //echo "uninstall prev theme plugin if exists\n";
       if ($about = $this->GetAbout($this->themename)) {
         if (!empty($about['pluginclassname'])) {
           //echo "uninstall theme plugin<br>\n";
-          $plugins = &TPlugins::Instance();
+          $plugins = &TPlugins::instance();
           $plugins->Delete($this->themename);
           //echo "plugin successfuly deleted<br>\n";
         }
       }
-      $this->Data['themename'] = $name;
+      $this->data['themename'] = $name;
       $this->path = $paths['themes'] . $name . DIRECTORY_SEPARATOR  ;
-      $this->url = $Options->url  . '/themes/'. $this->themename;
+      $this->url = $options->url  . '/themes/'. $this->themename;
       //echo "load info about new theme\n";
       $about = $this->GetAbout($name);
       $this->sitebarcount = $about['sitebars'];
       // install theme plugin if exists
       if (!empty($about['pluginclassname'])) {
-        $plugins = &TPlugins::Instance();
+        $plugins = &TPlugins::instance();
         $plugins->AddExt($name, $about['pluginclassname'], $about['pluginfilename']);
       }
       
       $this->theme = parse_ini_file($this->path . 'theme.ini', true);
       $this->Unlock();
       $this->ThemeChanged();
-      $urlmap = &TUrlmap::Instance();
+      $urlmap = &TUrlmap::instance();
       $urlmap->ClearCache();
     }
-  }
-  
-  public function AddWidget($class, $echotype, $template, $title, $order = -1, $index = 0) {
-    if ($index >= $this->sitebarcount) return $this->Error("sitebar index $index cant more than sitebars count in template");
-    if (!in_array($echotype, array('echo', 'include', 'nocache'))) $echotype = 'echo';
-    $this->widgets[++$this->Data['idwidget']] = array(
-    'class' => $class,
-    'echotype' => $echotype,
-    'template' => $template,
-    'title' => $title,
-    'index' => $index
-    );
-    
-    if (($order < 0) || ($order > count($this->sitebars[$index]))) $order = count($this->sitebars[$index]);
-    array_splice($this->sitebars[$index], $order, 0, $this->idwidget);
-    
-    $this->save();
-    $this->WidgetAdded($this->idwidget);
-    return $this->idwidget;
-  }
-  
-  public function ClassHasWidget($class) {
-    foreach ($this->widgets as $id => $item) {
-      if ($item['class'] == $class) {
-        return true;
-      }
-    }
-    return false;
-  }
-  
-  public function DeleteWidget($ClassName) {
-    $this->Lock();
-    foreach ($this->widgets as $id => $item) {
-      if ($item['class'] == $ClassName) {
-        $this->DeleteIdWidget($id);
-      }
-    }
-    $this->Unlock();
-  }
-  
-  public function DeleteIdWidget($id) {
-    global $paths;
-    if (isset($this->widgets[$id])) {
-      for ($i = count($this->sitebars) -1; $i >= 0; $i--) {
-        $j = array_search($id, $this->sitebars[$i]);
-        if (is_int($j)) array_splice($this->sitebars[$i], $j, 1);
-      }
-      
-      @unlink($paths['cache']. "widget$id.php");
-      unset($this->widgets[$id]);
-      $this->Save();
-      $this->WidgetDeleted($id);
-    }
-  }
-  
-  public function FindWidget($ClassName) {
-    foreach ($this->widgets as $id => $item) {
-      if ($item['class'] == $ClassName) return $id;
-    }
-    return false;
-  }
-  
-  public static function  WidgetExpired(&$widget) {
-    $self = &self::Instance();
-    $self->SetWidgetExpired(get_class($widget));
-  }
-  
-  public function SetWidgetExpired($ClassName) {
-    global $paths;
-    foreach ($this->widgets as $id => $item) {
-      if ($item['class'] == $ClassName) {
-        @unlink($paths['cache']. "widget$id.php");
-      }
-    }
-  }
-  
-  public function WidgetsExpire() {
-    global $paths;
-    foreach ($this->widgets as $id => $item) {
-      @unlink($paths['cache']. "widget$id.php");
-    }
-  }
-  
-  public function GetWidgetContent($id) {
-    global $paths;
-    $class = $this->widgets[$id]['class'];
-    $this->curwidget = $id;
-    $FileName = $paths['cache']. "widget$id.php";
-    switch ( $echotype = $this->widgets[$id]['echotype']) {
-      case 'echo':
-      if (@file_exists($FileName)) {
-        $result = file_get_contents($FileName);
-      } else {
-        $result = $this->DoGetWidgetContent($class, $id);
-        file_put_contents($FileName, $result);
-        @chmod($FileName, 0666);
-      }
-      break;
-      
-      case 'include':
-      if (!@file_exists($FileName)) {
-        $result = $this->DoGetWidgetContent($class, $id);
-        file_put_contents($FileName, $result);
-        @chmod($FileName, 0666);
-      }
-      $result = "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";
-      break;
-      
-      case 'nocache':
-      $result = $this->DoGetWidgetContent($class, $id);
-      break;
-    }
-    
-    $s = $this->OnWidgetContent($result);
-    if ($s != '') $result = $s;
-    return $result;
-  }
-  
-  private function DoGetWidgetContent($class, $id) {
-    global $Options;
-    if (!@class_exists($class)) {
-      $this->DeleteIdWidget($id);
-      return '';
-    }
-    $result = '';
-    $widget = GetInstance($class);
-    try {
-      if (empty($this->widgets[$id]['template'])) {
-        $result =   $widget->getwidget($id);
-      }else {
-        $result = $this->GetBeforeWidget($this->widgets[$id]['template'], $this->widgets[$id]['title']);
-        $result .=   $widget->GetWidgetContent($id);
-        $result .= $this->GetAfterWidget();
-      }
-    } catch (Exception $e) {
-      $Options->HandleException($e);
-    }
-    return $result;
-  }
-  
-  public function GetBeforeWidget($name, $title = '') {
-    $i = $this->SitebarIndex + 1;
-    $result = '';
-    if (isset($this->theme["sitebar$i"][$name])) {
-      $result = $this->theme["sitebar$i"][$name];
-    } elseif (isset($this->theme["sitebar$i"]['before'])) {
-      $result = $this->theme["sitebar$i"]['before'];
-    } elseif (isset($this->theme['widget'])) {
-      $theme = &$this->theme['widget'];
-      if (isset($theme[$name])) {
-        $result = $theme[$name];
-      } elseif (isset($theme[$name . $i])) {
-        $result = $theme[$name . $i];
-      } elseif (isset($theme["before$i"])) {
-        $result = $theme["before$i"];
-      } elseif (isset($theme['before'])) {
-        $result = $theme['before'];
-      }
-    }
-    
-    if (empty($title) && isset(TLocal::$data['default'][$name])) {
-      $title=  TLocal::$data['default'][$name];
-    }
-    
-    //eval("\$result =\"$result\n\";");
-    $result = sprintf($result, $title);
-    return str_replace("'", '"', $result);
-  }
-  
-  public function GetAfterWidget() {
-    $result = $this->AfterWidget($this->curwidget);
-    $i = $this->SitebarIndex + 1;
-    if (isset($this->theme["sitebar$i"]['after'])) {
-      $result .= $this->theme["sitebar$i"]['after'];
-    } elseif (isset($this->theme['widget']["after$i"])) {
-      $result .= $this->theme['widget']["after$i"];
-    } elseif (isset($this->theme['widget']['after'])) {
-      $result .= $this->theme['widget']['after'];
-    }
-    
-    return str_replace("'", '"', $result);
   }
   
   public function Getsitebar() {
@@ -322,30 +140,6 @@ class TTemplate extends TEventClass {
       $result .= $this->GetWidgetContent($id);
     }
     return $result;
-  }
-  
-  public function MoveWidget($id, $index) {
-    if (!isset($this->widgets[$id])) return false;
-    $oldindex = $this->widgets[$id]['index'];
-    if ($index != $oldindex) {
-      $i = array_search($id, $this->sitebars[$oldindex]);
-      array_splice($this->sitebars[$oldindex],  $i, 1);
-      $this->sitebars[$index][] = $id;
-      $this->widgets[$id]['index'] = $index;
-      $this->Save();
-    }
-  }
-  
-  public function MoveWidgetOrder($id, $order) {
-    if (!isset($this->widgets[$id])) return false;
-    $index = $this->widgets[$id]['index'];
-    if (($order < 0) || ($order > count($this->sitebars[$index]))) $order = count($this->sitebars[$index]);
-    $oldorder = array_search($id, $this->sitebars[$index]);
-    if ($oldorder != $order) {
-      array_splice($this->sitebars[$index], $oldorder, 1);
-      array_splice($this->sitebars[$index], $order, 0, $id);
-      $this->save();
-    }
   }
   
   protected function GetTag($name) {
@@ -400,7 +194,7 @@ class TTemplate extends TEventClass {
   }
   
   public function request(&$context) {
-    global $Options;
+    global $options;
     $this->context = &$context;
     $this->contextsupported = is_a($context, 'ITemplate');
     $GLOBALS['context'] = &$context;
@@ -421,7 +215,7 @@ class TTemplate extends TEventClass {
   }
   
   protected function  ServerHeader() {
-    global $Options;
+    global $options;
     if (method_exists($this->context, 'ServerHeader')) {
       $s= $this->context->ServerHeader();
       if (!empty($s)) return $s;
@@ -433,34 +227,34 @@ class TTemplate extends TEventClass {
     return "<?php $nocache
     @header('Content-Type: text/html; charset=utf-8');
     @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: $Options->url/rpc.xml');
+    @header('X-Pingback: $options->url/rpc.xml');
     ?>";
   }
   
   public function ParseFile($FileName) {
-    global $Options, $Urlmap, $Template, $context, $user, $post, $item, $tabindex, $lang;
+    global $options, $Urlmap, $Template, $context, $user, $post, $item, $tabindex, $lang;
     $Template = &$this;
     if (!isset($this->fFiles[$FileName])) {
       $this->fFiles[$FileName] = @file_get_contents($this->path . $FileName);
     }
     $Result = $this->fFiles[$FileName];
     $Result = str_replace('"', '\"', $Result);
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     try {
       eval("\$Result = \"$Result\";");
     } catch (Exception $e) {
-      $Options->HandleException($e);
+      $options->HandleException($e);
     }
     
     return $Result;
   }
   
   public function GetAbout($themename) {
-    global $Options, $paths;
+    global $options, $paths;
     if (!isset($this->aboutFiles)) $this->aboutFiles = array();
     if (!isset($this->aboutFiles[$themename])) {
       $this->aboutFiles[$themename] = @parse_ini_file($paths['themes'] . $themename . DIRECTORY_SEPARATOR    . 'about.ini', false);
-      $langfile = $paths['themes'] . $themename . DIRECTORY_SEPARATOR    . $Options->language . '.ini';
+      $langfile = $paths['themes'] . $themename . DIRECTORY_SEPARATOR    . $options->language . '.ini';
       if (@file_exists($langfile) && ($ini = @parse_ini_file($langfile, true))) {
         $this->aboutFiles[$themename] = $ini['about'] + $this->aboutFiles[$themename];
       }
@@ -470,7 +264,7 @@ class TTemplate extends TEventClass {
   
   //html tags
   public function Gettitle() {
-    global $Options;
+    global $options;
     $result = '';
     if ($this->contextsupported) {
       $result = $this->context->gettitle();
@@ -478,24 +272,24 @@ class TTemplate extends TEventClass {
       $result = $this->context->title;
     }
     if (empty($result)) {
-      $result = $Options->name;
+      $result = $options->name;
     } else {
-      $result = "$result | $Options->name";
+      $result = "$result | $options->name";
     }
     return $result;
   }
   
   public function Getkeywords() {
-    global $Options;
+    global $options;
     $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';
-    if ($result == '')  return $Options->keywords;
+    if ($result == '')  return $options->keywords;
     return $result;
   }
   
   public function Getdescription() {
-    global $Options;
+    global $options;
     $result = $this->contextHasProp('description') ? $this->context->description : '';
-    if ($result =='') return $Options->description;
+    if ($result =='') return $options->description;
     return $result;
   }
   
@@ -514,7 +308,7 @@ class TTemplate extends TEventClass {
   
   private function GetMenuItems() {
     $jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
-    $Menu = TMenu::Instance();
+    $Menu = TMenu::instance();
     $items = $Menu->GetMenuList();
     if (count($items) == 0) return '';
     $menuitem = $this->theme['menu']['item'];
@@ -554,9 +348,9 @@ class TTemplate extends TEventClass {
   
   public function Setsubmenuinwidget($value) {
     if ($value != $this->submenuinwidget) {
-      $this->Data['submenuinwidget'] = $value;
+      $this->data['submenuinwidget'] = $value;
       $this->Save();
-      $urlmap = &TUrlmap::Instance();
+      $urlmap = &TUrlmap::instance();
       $urlmap->ClearCache();
     }
   }
@@ -565,7 +359,7 @@ class TTemplate extends TEventClass {
     global $paths;
     $filename = $paths['cache'] . 'archives.php';
     if (@file_exists($filename)) return file_get_contents($filename);
-    $arch = &TArchives::Instance();
+    $arch = &TArchives::instance();
     $result = $arch->GetHeadLinks();
     @file_put_contents($filename, $result);
     return $result;
@@ -580,7 +374,7 @@ class TTemplate extends TEventClass {
       $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);
     }
     $result .= $this->Onhead();
-    $Urlmap = TUrlmap::Instance();
+    $Urlmap = TUrlmap::instance();
     if ($Urlmap->IsAdminPanel) $result .= $this->OnAdminHead();
     return $result;
   }
@@ -603,8 +397,8 @@ class TTemplate extends TEventClass {
   }
   
   protected function Setfooter($s) {
-    if ($s != $this->Data['footer']) {
-      $this->Data['footer'] = $s;
+    if ($s != $this->data['footer']) {
+      $this->data['footer'] = $s;
       $this->Save();
     }
   }
@@ -623,14 +417,14 @@ class TTemplate extends TEventClass {
   public static function SimpleContent($content) {
     $DataObj  = &new TSimpleContent();
     $DataObj->text = $content;
-    $self = &self::Instance();
+    $self = &self::instance();
     return $self->request($DataObj);
   }
   
   public static function SimpleHtml($content) {
     $DataObj  = &new TSimpleContent();
     $DataObj->html = $content;
-    $self = &self::Instance();
+    $self = &self::instance();
     return $self->request($DataObj);
   }
   

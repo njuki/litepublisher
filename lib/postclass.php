@@ -236,13 +236,6 @@ return self::instance($id);
     return $this->data['rawcontent'];
   }
   
-  public function setrawcontent($s) {
-    $this->data['rawcontent'] = $s;
-    if (dbversion && ($this->id > 0)) {
-      $this->rawdb->idupdate($this->id, 'rawcontent = '. $this->db->quote($s));
-    }
-  }
-
 protected function getrawdb() {
 global $db;
 $db->table = 'rawposts';
@@ -263,23 +256,10 @@ if ($i == 0) return $this->filtered;
   
   public function addpage($s) {
     $this->data['pages'][] = $s;
-    if (dbversion && ($this->id != 0)) {
-      global $db;
-      $db->table = 'pages';
-      $count = $db->getcount("id = $this->id");
-      $db->InsertAssoc(array(
-      'id' => $this->id,
-      'page' => $count,
-      'content' => $s
-      ));
-    }
   }
   
   public function deletepages() {
     $this->data['pages'] = array();
-    if (dbversion) {
-      $this->getdb('pages')->delete("id = $this->id");
-    }
   }
   
   public function gethaspages() {

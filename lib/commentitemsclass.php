@@ -87,7 +87,7 @@ $self = new $class();
   }
   
  public function haspingback($url) {
-    $users = TCommentUsers::instance();
+    $users = tcomusers::instance();
     $userid = $users->IndexOf('url', $url);
     if ($userid == -1) return false;
     $id = $this->IndexOf('uid', $userid);
@@ -97,7 +97,7 @@ $self = new $class();
   
   public function &GetSubscribers() {
     $result = array();
-    $users = &TCommentUsers::instance();
+    $users = &tcomusers::instance();
     foreach ($this->items as $id => $item) {
       if (($item['status'] == 'approved') && ($item['type'] == '') && $users->Subscribed($item['uid'], $this->pid)) {
         if (!in_array($item['uid'], $result)) $result[] = $item['uid'];
@@ -144,7 +144,7 @@ class TComment {
     }
   
 private function getuser($id) {
-    $Users = TCommentUsers::instance();
+    $Users = tcomusers::instance();
     return  $Users->getitem($this->owner->items[$id]['uid']);
   }
   
@@ -173,7 +173,7 @@ private function getuser($id) {
   return "<a href=\"{$this->website}\">{$this->name}</a>";
     }
     
-    $authors = TCommentUsers ::instance();
+    $authors = tcomusers ::instance();
     return $authors->getlink($this->owner->items[$this->id]['uid']);
   }
   

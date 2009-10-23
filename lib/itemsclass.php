@@ -6,7 +6,7 @@ class TItems extends TEventClass {
   
   protected function create() {
     parent::create();
-    $this->AddEvents('added', 'deleted');
+    $this->addevents('added', 'deleted');
     $this->AddDataMap('items', array());
     $this->AddDataMap('lastid', 0);
   }

@@ -43,7 +43,7 @@ while ($row = $res->fetch()) {
         }
 } else {
     if ($item = end($manager->items)) {
-      $users = TCommentUsers::instance();
+      $users = tcomusers::instance();
       do {
         $id = key($manager->items);
         if (!isset($item['status']) && !isset($item['type']) ) {

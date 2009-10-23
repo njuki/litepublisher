@@ -57,7 +57,7 @@ class TAdminOptions extends TAdminPage {
       $CommentManager = TCommentManager::Instance();
       $sendnotification = $CommentManager->SendNotification ? $checked : '';
       
-      $authors = &TCommentUsers ::Instance();
+      $authors = tcomusers ::Instance();
       $hidelink = $authors->hidelink ? $checked : '';
       $redir = $authors->redir ? $checked : '';
       $nofollow = $authors->nofollow ? $checked : '';
@@ -217,7 +217,7 @@ class TAdminOptions extends TAdminPage {
       $CommentManager = &TCommentManager::Instance();
       $CommentManager->SendNotification = isset($sendnotification);
       
-      $authors = &TCommentUsers ::Instance();
+      $authors = tcomusers ::Instance();
       $authors->hidelink = isset($hidelink);
       $authors->redir = isset($redir);
       $authors->nofollow = isset($nofollow);

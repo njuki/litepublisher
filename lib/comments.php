@@ -41,7 +41,7 @@ return $result;
   }
 
  public function addpingback(tpost $post, $url, $title) {
-    $comusers = TCommentUsers::instance();
+    $comusers = tcomusers::instance();
     $uid = $comusers->add($title, '', $url);
 
 $result = $this->db->InsertAssoc(array(
@@ -127,7 +127,7 @@ $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'stat
   return "<a href=\"{$this->website}\">{$this->name}</a>";
     }
     
-    $authors = TCommentUsers ::instance();
+    $authors = tcomusers ::instance();
     return $authors->getlink($this->author);
   }
   

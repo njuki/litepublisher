@@ -96,7 +96,7 @@ class TCommentForm extends TEventClass{
     );
     
     if (!empty($_COOKIE["userid"])) {
-      $users = TCommentUsers::instance();
+      $users = tcomusers::instance();
       if ($user = $users->GetItemFromCookie($_COOKIE['userid'])) {
         $values['name'] = $user['name'];
         $values['email'] = $user['email'];
@@ -182,17 +182,14 @@ class TCommentForm extends TEventClass{
     if ($comments->IndexOfRawContent($values['content']) >= 0) return ttemplate::SimpleContent($lang->duplicate);
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commenspages/" : $post->url;
-    $users = TCommentUsers ::instance();
-    $users->lock();
+    $users = tcomusers::instance();
     $uid = $users->add($values['name'], $values['email'], $values['url']);
+    $usercookie = $users->getcookie($uid);
     if (!$classes->spamfilter->UserCanAdd( $uid)) return ttemplate::SimpleContent($lang->toomany);
 
 $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);
 
-    $usercookie = $users->getcookie($uid);
-    $users->unlock();
-    
     $classes->commentmanager->addcomment($post->id, $uid, $values['content']);
     
     return "<?php

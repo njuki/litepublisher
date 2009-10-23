@@ -21,8 +21,8 @@ $this->table = 'subscribe';
     $html->section = $this->basename;
     $lang = tlocal::instance();
 
-    $users = TCommentUsers::instance();
-    if (!($user = $users->GetItemFromCookie($_GET['userid']))) return $this->notfount();
+    $comusers = tcomusers::instance();
+    if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return $this->notfount();
 $subscribers=  tsubscribers::instance();
 $items = $subscribers->getitems($user['id']);
       if (count($items) == 0) return $html->nosubscribtions();
@@ -39,11 +39,9 @@ return $this->FixCheckall($result);
   
   public function ProcessForm() {
     $result = '';
-    $users = TCommentUsers::instance();
-    if (!($user = $users->GetItemFromCookie($_GET['userid']))) return '';
+    $comusers = tcomusers::instance();
+    if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return '';
 $subscribers = tsubscribers::instance();
-if (dbversion) {
-} else {
       $subscribers->lock();
       foreach ($_POST as $name => $value) {
         if (substr($name, 0, 7) == 'postid-') {
@@ -51,7 +49,6 @@ if (dbversion) {
         }
       }
       $subscribers->unlock();
-}
 
       $html = THtmlResource::instance();
       $html->section = $this->basename;

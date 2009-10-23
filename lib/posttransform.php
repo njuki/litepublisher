@@ -29,7 +29,21 @@ $self = self::instance($post);
       $values[] = $db->quote($self->__get($name));
     }
     
-    return $db->insertrow("($Names) values (" . implode(', ', $values) . ')');
+    $id = $db->insertrow("($Names) values (" . implode(', ', $values) . ')');
+
+$self->post->rawdb->InsertAssoc(array(
+'id' => $id,
+'created' => sqldate(),
+'modified' => sqldate(),
+'rawcontent' => $this->post->data['rawcontent']
+));
+
+$db->table = 'pages';
+     foreach ($self->post->data['pages'] as $i => $content) {
+$db->InsertAssoc(array('post' => $id, 'page' => $i         'content' => $content));
+      }
+
+return $id;
   }
   
   public function save() {
@@ -40,7 +54,19 @@ $self = self::instance($post);
       $list[] = "$Name = " . $db->quote($this->__get($name));
     }
     
-    return $db->idupdate($this->post->id, implode(', ', $list));
+    $db->idupdate($this->post->id, implode(', ', $list));
+
+$this->post->rawdb->updateassoc(array(
+'id' => $this->post->id,
+'modified' => sqldate(),
+'rawcontent' => $this->post->data['rawcontent']
+));
+
+$db->table = 'pages';
+$db->delete("id = '. $this->post->id);
+     foreach ($this->post->data['pages'] as $i => $content) {
+$db->updateassoc(array('post' => $this->post->id, 'page' => $i         'content' => $content));
+      }
   }
   
   public function __get($name) {

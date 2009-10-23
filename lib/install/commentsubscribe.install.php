@@ -20,14 +20,10 @@ $comusers->deleted = $self->deleteauthor;
   $manager->added = $self->sendmail;
   $manager->approved = $self->sendmail;
   $manager->unlock();
-  
-  $urlmap = turlmap::instance();
-  $urlmap->add('/admin/subscribe/', get_class($self), null, 'get');
 }
 
 function tsubscribersUninstall(&$self) {
 global $classes;
-  turlmap::unsub($self);
   
   $manager = $classes->commentmanager;
   $manager->UnsubscribeClass($self);

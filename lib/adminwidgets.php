@@ -69,7 +69,7 @@ class TAdminWidgets extends TAdminPage {
       $item = $html->stditem;
       foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
         if ($class == 'TCustomWidget') continue;
-        $selected = !$Template->ClassHasWidget($class) ? $checked : '';
+        $selected = !$widgets->hasclass($class) ? $checked : '';
         eval('$result .= "' . $item . '\n";');
       }
       eval('$result .= "'. $html->stdfooter . '\n";');;
