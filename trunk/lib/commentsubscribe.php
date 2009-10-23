@@ -14,8 +14,76 @@ $this->table = 'subscribers';
     $this->Data['SubscribtionEnabled'] = true;
     $this->Data['locklist'] = '';
   }
+
+public function add($pid, $uid) {
+if (dbversion) {
+$this->db->InsertAssoc(array(
+'post' => $pid,
+'author' => $uid
+));
+} else {
+if (!isset($this->items[$pid]))  $this->items[$pid] = array();
+if (!in_array($uid, $this->items[$pid])) {
+$this->items[$pid][] =$uid;
+$this->save();
+return true;
+}
+return false;
+}
+}
+
+public function delete($pid, $uid) {
+if (dbversion) {
+return $this->db->delete("post = $pid and $author = $uid");
+} elseif (isset($this->items[$pid])) {
+    $i = array_search($uid, $this->items[$pid]);
+    if (is_int($i))  {
+array_splice($this->items[$pid], $i, 1);
+$this->save();
+return true;
+}
+return false;
+}
+}
+
+public function deletepost($pid) {
+if (dbversion) {
+$this->db->delete("post = $pid");
+} elseif (isset($this->items[$pid])) {
+unset($this->items[$pid]);
+$this->save();
+} else {
+}
+
+public function deleteauthor($uid) {
+if (dbversion) {
+$this->db->delete("author = $uid");
+} else {
+foreach ($this->items as $pid => $item) {
+    $i = array_search($uid, $item);
+    if (is_int($i))  array_splice($this->items[$pid], $i, 1);
+    }
+$this->save();
+}
+}
+
+  public function update($pid, $uid, $subscribed) {
+if (dbversion) {
+$this->delete($pid, $uid);
+if ($subscribed) $this->add($pid, $uid);
+} elseif ($subscribed) {
+if (!isset($this->items[$pid]))  $this->items[$pid] = array();
+if (!in_array($uid, $this->items[$pid])) {
+$this->items[$pid][] =$uid;
+$this->save();
+}
+} else {
+$this->delete($pid, $uid);
+}
+
+  }
   
-  public function SetSubscribtionEnabled($value) {
+   public function SetSubscribtionEnabled($value) {
 global $classes;
     if ($this->SubscribtionEnabled != $value) {
       $this->Data['SubscribtionEnabled'] = $value;
@@ -31,11 +99,6 @@ global $classes;
         $manager->UnsubscribeClass($this);
       }
     }
-  }
-  
-  public function CommentDeleted($id) {
-    unset($this->items[$id]);
-    $this->save();
   }
   
   public function geturl() {

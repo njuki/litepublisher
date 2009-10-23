@@ -106,6 +106,9 @@ $db->exec("delete from $db->comments where status = 'deleted'");
 $db->exec("delete from $db->authors where id not in
 (select DISTINCT author from $db->comments)");
 
+//subscribtions
+$db->exec("delete from$db->subscribers where post not in (select id from $db->posts)");
+$db->exec("delete from$db->subscribers where author not in (select id from $db->comusers)");
 }
 
 public function optimize() {

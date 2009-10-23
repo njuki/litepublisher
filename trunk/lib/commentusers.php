@@ -52,7 +52,6 @@ return $this->db->InsertAssoc(array(
     'email' => $email,
     'cookie' => md5(mt_rand() . secret. microtime()),
     'ip' => array($ip),
-    'subscribe' => array( )
     );
     
     $this->unlock();
@@ -117,11 +116,7 @@ if (dbversion) return true;
     }
   }
   
-  public function subscribed($id, $postid) {
-    return in_array($postid, $this->items[$id]['subscribe']);
-  }
-  
-  public function Subscribe($id, $postid) {
+ public function Subscribe($id, $postid) {
     if (!in_array($postid, $this->items[$id]['subscribe'])) {
       $this->items[$id]['subscribe'][] = $postid;
       $this->save();

@@ -15,11 +15,14 @@ $tags->items[$id] = $item;
 $tags->save();
 }
 
-function Update280() {
+function newupdate() {
 global $paths, $options, $classes, $urlmap;
 $urlmap->lock();
 $options->lock();
-$classes->items['ITemplate'] = array('interfaces.php', '');
+unset($classes->items['ITemplate']);
+$classes->interfaces['ITemplate'] = array('interfaces.php', '');
+unset($classes->items['TSubscribe']);
+$classes->items['TSubscribers'] = array('commentsubscribe.php', ''); 
 $classes->items['TXMLRPCAbstract'] = array('xmlrpc-abstractclass.php', '');
 $classes->save();
 

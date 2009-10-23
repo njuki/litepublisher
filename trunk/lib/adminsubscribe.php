@@ -47,10 +47,10 @@ if (dbversion) {
       $subscribers->lock();
       foreach ($_POST as $name => $value) {
         if (substr($name, 0, 7) == 'postid-') {
-          $subscribers->unsubscribe($user['id'], $value);
+          $subscribers->delete($value, $user['id']);
         }
       }
-      $subscribers->Unlock();
+      $subscribers->unlock();
 }
 
       $html = THtmlResource::instance();
