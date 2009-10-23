@@ -1,6 +1,6 @@
 <?php
 
-class TCommentUsers extends TItems {
+class tcomusers extends TItems {
   
   public static function instance() {
     return getinstance(__class__);
@@ -9,21 +9,8 @@ class TCommentUsers extends TItems {
   protected function create() {
     parent::create();
 $this->table = 'comusers';
-    $this->basename = 'commentusers';
+    $this->basename = 'comusers';
     $this->CacheEnabled = false;
-  }
-  
-  public function PostDeleted($postid) {
-    $this->lock();
-$this->DeleteWithoutComments();
-    foreach ($this->items as  $id => $item) {
-      $i = array_search($postid, $item['subscribe']);
-      if (is_int($i)) {
-        array_splice($this->items[$id]['subscribe'], $i, 1);
-      }
-    }
-    $this->unlock();
-}
   }
   
   public function add($name, $email, $url) {
@@ -116,30 +103,6 @@ if (dbversion) return true;
     }
   }
   
- public function Subscribe($id, $postid) {
-    if (!in_array($postid, $this->items[$id]['subscribe'])) {
-      $this->items[$id]['subscribe'][] = $postid;
-      $this->save();
-    }
-  }
-  
-  public function Unsubscribe($id, $postid) {
-    $i = array_search($postid, $this->items[$id]['subscribe']);
-    if (is_int($i)) {
-      array_splice($this->items[$id]['subscribe'], $i, 1);
-      $this->save();
-    }
-  }
-  
-  public function UpdateSubscribtion($id, $postid, $subscribed) {
-    $postid = (int) $postid;
-    if ($subscribed) {
-      $this->Subscribe($id, $postid);
-    } else {
-      $this->Unsubscribe($id, $postid);
-    }
-  }
-  
   public function getlink($id) {
 global $classes, $options;
 $item = $this->getitem($id);
@@ -169,9 +132,6 @@ $url = $item['url'];
     TUrlmap::redir($url);
   }
   
-public function DeleteWithoutComments() {
-}
-
 }//class
 
 ?>

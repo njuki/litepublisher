@@ -64,8 +64,8 @@ $comments->insert($id, $uid, '', 'hold', 'pingback');
       $this->unlock();
       
       if (!$this->hasauthor($uid)) {
-        $users = TCommentUsers::instance();
-        $users->delete($uid);
+        $comusers = tcomusers::instance();
+        $comusers->delete($uid);
       }
       
       $this->deleted($id);
@@ -83,6 +83,17 @@ $comments->insert($id, $uid, '', 'hold', 'pingback');
       }
     }
     $this->unlock();
+
+$users = array();
+foreach ($this->items as $id => $item) {
+$users[$item['uid']] = 1;
+}
+
+$comusers = tcomusers::instance();
+foreach ($comusers->items as $uid => $user) {
+if (!isset($users[$uid])) unset($comusers->items[$uid]);
+}
+$comusers->save();
   }
   
     public function setstatus($id, $value) {

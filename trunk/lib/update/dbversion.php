@@ -15,6 +15,22 @@ $tags->items[$id] = $item;
 $tags->save();
 }
 
+function migratesubscribe() {
+$users = TComUsers::instance();
+$users->basename = 'commentusers';
+$users->load();
+$subscribers = tsubscribers::instance();
+$subscribers->lock();
+foreach ($users->items as $uid => $item) {
+foreach ($item['subscribe'] as $pid) $subscribers->add($pid, $uid);
+unset($users->items[$uid]['subscribe']);
+}
+$subscribers->unlock();
+$users->basename = 'comusers';
+$users->save();
+//unlink($paths['data'] . 'commentusers.php');
+}
+
 function newupdate() {
 global $paths, $options, $classes, $urlmap;
 $urlmap->lock();
@@ -22,7 +38,9 @@ $options->lock();
 unset($classes->items['ITemplate']);
 $classes->interfaces['ITemplate'] = array('interfaces.php', '');
 unset($classes->items['TSubscribe']);
-$classes->items['TSubscribers'] = array('commentsubscribe.php', ''); 
+$classes->items[tsSubscribers'] = array('commentsubscribe.php', ''); 
+$classes->items['tcomusers'] => $classes->items['TCommentUsers'];
+unset($classes->items['TCommentUsers']);
 $classes->items['TXMLRPCAbstract'] = array('xmlrpc-abstractclass.php', '');
 $classes->save();
 

@@ -1,24 +1,36 @@
 <?php
 
-function TSubscribeInstall(&$self) {
+function tsubscribersInstall($self) {
+global $classes;
+if (dbversion) {
+    $dbmanager = TDBManager ::instance();
+    $dbmanager->CreateTable('events', file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'commentsubscribe.sql'));
+} else {
+$posts = tposts::instance();
+$posts->deleted = $self->deletepost;
+}
   $self->fromemail = 'litepublisher@' . $_SERVER['HTTP_HOST'];
   $self->Save();
-  $CommentManager = &TCommentManager::Instance();
-  $CommentManager->Lock();
-  $CommentManager->Added = $self->SendMailToSubscribers;
-  $CommentManager->Approved = $self->SendMailToSubscribers;
-  $CommentManager->Deleted = $self->CommentDeleted;
-  $CommentManager->Unlock();
+
+$comusers = tcomusers::instance();
+$comusers->deleted = $self->deleteauthor;
+
+  $manager = $classes->commentmanager;
+  $manager->lock();
+  $manager->added = $self->sendmail;
+  $manager->approved = $self->sendmail;
+  $manager->unlock();
   
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->AddGet('/admin/subscribe/', get_class($self), null);
+  $urlmap = turlmap::instance();
+  $urlmap->add('/admin/subscribe/', get_class($self), null, 'get');
 }
 
-function TSubscribeUninstall(&$self) {
-  TUrlmap::unsub($self);
+function tsubscribersUninstall(&$self) {
+global $classes;
+  turlmap::unsub($self);
   
-  $CommentManager = &TCommentManager::Instance();
-  $CommentManager->UnsubscribeClass($self);
+  $manager = $classes->commentmanager;
+  $manager->UnsubscribeClass($self);
 }
 
 ?>
