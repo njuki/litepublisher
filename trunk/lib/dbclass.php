@@ -95,7 +95,7 @@ return false;
     return $this->update($values, "id = $id");
   }
   
-  public function UpdateAssoc($a) {
+  public function updateassoc($a) {
     $list = array();
     foreach ($a As $name => $value) {
       if ($name == 'id') continue;

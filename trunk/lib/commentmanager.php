@@ -25,7 +25,7 @@ $comments->insert($id, $uid,  $content, $status, '');
   
  public function addpingback($pid, $url, $title) {
     $id =++$this->lastid;
-    $comusers = TCommentUsers::instance();
+    $comusers = tcomusers::instance();
     $uid = $comusers->add($title, '', $url);
     $comments = tcomments::instance($pid);
 $comments->insert($id, $uid, '', 'hold', 'pingback');

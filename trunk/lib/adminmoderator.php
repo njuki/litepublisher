@@ -14,7 +14,7 @@ class TAdminModerator extends TAdminPage {
   
   private function GetSubscribed($authorid) {
     global $Options;
-    $authors = TCommentUsers::Instance();
+    $authors = tcomusers::Instance();
     if (!$authors->ItemExists($authorid)) {
       return '';
     }
@@ -96,7 +96,7 @@ class TAdminModerator extends TAdminPage {
       return $result;
       
       case 'authors':
-      $authors = TCommentUsers::Instance();
+      $authors = tcomusers::Instance();
       $id = $this->idget();
       if ($authors->ItemExists($id)) {
         extract($authors->items[$id]);
@@ -215,7 +215,7 @@ class TAdminModerator extends TAdminPage {
       
       case 'authors':
       $authorid = $this->idget();
-      $authors = &TCommentUsers::Instance();
+      $authors = &tcomusers::Instance();
       if (!$authors->ItemExists($authorid)) return $this->notfound;
       if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete') &&!empty($_REQUEST['confirm'])  ) {
         $CommentManager = &TCommentManager::Instance();
@@ -247,7 +247,7 @@ class TAdminModerator extends TAdminPage {
       $email = $this->GetAdminEmail();
       $site = $Options->url . $Options->home;
       $profile = &TProfile::Instance();
-      $authors = &TCommentUsers ::Instance();
+      $authors = &tcomusers ::Instance();
       $authorid = $authors->Add($profile->nick, $email, $site);
 $post = tpost::instance($manager->items[$id]['pid']);
       $manager->AddToPost($post->id, $authorid, $_POST['content']);

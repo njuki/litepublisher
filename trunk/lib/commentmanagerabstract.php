@@ -19,7 +19,7 @@ $this->rawtable = 'rawcomments';
   }
 
   public function add($postid, $name, $email, $url, $content) {
-    $users = TCommentUsers ::instance();
+    $users = tcomusers ::instance();
     $userid = $users->add($name, $email, $url);
     return $this->addcomment($postid, $userid, $content);
   }

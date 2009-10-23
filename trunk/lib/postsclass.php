@@ -79,16 +79,7 @@ return parent::save();
       $post->id = TPostTransform ::add($post);
       $post->idurl = $urlmap->add($post->url, get_class($post), $post->id);      
 $post->db->setvalue($post->id, 'idurl', $post->idurl);
-$post->rawdb->InsertAssoc(array(
-'id' => $post->id, 
-'created' => sqldate(),
-'modified' => sqldate(),
-'rawcontent' => $post->data['rawcontent']
-));
       
-     foreach ($post->pages as $i => $content) {
-        $this->getdb('pages')->InsertAssoc(array('post' => $post->id, 'page' => $i         'content' => $content));
-      }
    } else {
       global $paths;
       $post->id = ++$this->lastid;
@@ -134,9 +125,6 @@ $urlmap->setidurl($post->idurl, $post->url);
     $this->lock();    
     $this->updated($post);
     $post->save();
-if (dbversion) {
-$post->rawdb->setvalue($post->id, 'modified', sqldate($post->modified));
-}
     $this->unlock();
         $this->edited($post->id);
     $this->changed();

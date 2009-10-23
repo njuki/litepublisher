@@ -11,7 +11,7 @@ class tsubscribers extends TItems {
 $this->table = 'subscribers';
     $this->basename = 'subscribers';
     $this->Data['fromemail'] = '';
-    $this->Data['SubscribtionEnabled'] = true;
+    $this->Data['enabled'] = true;
     $this->Data['locklist'] = '';
   }
 
@@ -80,26 +80,36 @@ $this->save();
 } else {
 $this->delete($pid, $uid);
 }
-
   }
   
-   public function SetSubscribtionEnabled($value) {
+   public function setenabled($value) {
 global $classes;
-    if ($this->SubscribtionEnabled != $value) {
-      $this->Data['SubscribtionEnabled'] = $value;
+    if ($this->enabled != $value) {
+      $this->Data['enabled'] = $value;
       $this->save();
       $manager = $classes->commentmanager;
       if ($value) {
         $manager->lock();
-        $manager->added = $this->SendMailToSubscribers;
-        $manager->approved = $this->SendMailToSubscribers;
-        $manager->deleted = $this->CommentDeleted;
+        $manager->added = $this->sendmail;
+        $manager->approved = $this->sendmail;
         $manager->unlock();
       } else {
         $manager->UnsubscribeClass($this);
       }
     }
   }
+
+public function getitems($uid) {
+if (dbversion) {
+return $this->db->res2array($this->db->query("select post from $this->thistable where author = $uid"));
+} else {
+$result = array();
+foreach ($this->items as $pid => $items) {
+if (in_array($uid, $items)) $result[] = $pid;
+}
+return $result;
+}
+}
   
   public function geturl() {
     global $options;
@@ -108,7 +118,7 @@ global $classes;
   
   public function sendmail($id) {
 global $classes;
-    if (!$this->SubscribtionEnabled) return;
+    if (!$this->enabled) return;
     
     $manager = $classes->commentmanager;
     $item = $manager->getitem($id);
