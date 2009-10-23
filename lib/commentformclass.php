@@ -1,3 +1,4 @@
+
 <?php
 
 if (dbversion) {
@@ -183,13 +184,16 @@ class TCommentForm extends TEventClass{
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commenspages/" : $post->url;
     $users = TCommentUsers ::instance();
     $users->lock();
-    $userid = $users->add($values['name'], $values['email'], $values['url']);
-    if (!$classes->spamfilter->UserCanAdd( $userid)) return ttemplate::SimpleContent($lang->toomany);
-    $users->UpdateSubscribtion($userid, $post->id, $values['subscribe']);
-    $usercookie = $users->getcookie($userid);
+    $uid = $users->add($values['name'], $values['email'], $values['url']);
+    if (!$classes->spamfilter->UserCanAdd( $uid)) return ttemplate::SimpleContent($lang->toomany);
+
+$subscribers = tsubscribers::instance();
+    $subscribers->update($post->id, $uid, $values['subscribe']);
+
+    $usercookie = $users->getcookie($uid);
     $users->unlock();
     
-    $classes->commentmanager->addcomment($post->id, $userid, $values['content']);
+    $classes->commentmanager->addcomment($post->id, $uid, $values['content']);
     
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
