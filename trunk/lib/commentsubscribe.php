@@ -1,39 +1,34 @@
 <?php
 
-class TSubscribe extends TItems {
-  //public $locklist;
-  //public $fromemail;
+class tsubscribers extends TItems {
   
-  public $title;
-  public $formresult;
-  private $user;
-  
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'subscribe';
-    $this->CacheEnabled = false;
+  protected function create() {
+    parent::create();
+$this->table = 'subscribers';
+    $this->basename = 'subscribers';
     $this->Data['fromemail'] = '';
     $this->Data['SubscribtionEnabled'] = true;
     $this->Data['locklist'] = '';
   }
   
   public function SetSubscribtionEnabled($value) {
+global $classes;
     if ($this->SubscribtionEnabled != $value) {
       $this->Data['SubscribtionEnabled'] = $value;
-      $this->Save();
-      $CommentManager = &TCommentManager::Instance();
+      $this->save();
+      $manager = $classes->commentmanager;
       if ($value) {
-        $CommentManager->Lock();
-        $CommentManager->Added = $this->SendMailToSubscribers;
-        $CommentManager->Approved = $this->SendMailToSubscribers;
-        $CommentManager->Deleted = $this->CommentDeleted;
-        $CommentManager->Unlock();
+        $manager->lock();
+        $manager->added = $this->SendMailToSubscribers;
+        $manager->approved = $this->SendMailToSubscribers;
+        $manager->deleted = $this->CommentDeleted;
+        $manager->unlock();
       } else {
-        $CommentManager->UnsubscribeClass($this);
+        $manager->UnsubscribeClass($this);
       }
     }
   }
@@ -43,96 +38,32 @@ class TSubscribe extends TItems {
     $this->save();
   }
   
-  public function request($param) {
-    TLocal::LoadLangFile('admin');
-    $lang = &TLocal::Instance();
-    $lang->section = $this->basename;
-    $this->title = $lang->title;
-    $this->formresult = '';
-    if (isset($_POST) && (count($_POST) > 0)) {
-      if (get_magic_quotes_gpc()) {
-        foreach ($_POST as $name => $value) {
-          $_POST[$name] = stripslashes($_POST[$name]);
-        }
-      }
-      $this->formresult= $this->ProcessForm();
-    }
-  }
-  
-  public function GetTemplateContent() {
-    global $Options;
-    $html= &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    eval('$result = "' . $html->title . '\n";');
-    $result .= $this->formresult;
-    
-    $users = &TCommentUsers::Instance();
-    if ($this->user = $users->GetItemFromCookie($_GET['userid'])) {
-      if (count($this->user['subscribe']) == 0) {
-        eval('$result .=  "' . $html->nosubscribtions . '\n";');
-      } else {
-        $email = $this->user['email'];
-        eval('$result .="'. $html->formhead . '\n";');
-        
-        foreach ($this->user['subscribe'] as $postid) {
-          $post = &TPost::Instance($postid);
-          if ($post->status != 'published') continue;
-          eval('$result .= "'. $html->formitem . '\n";');
-        }
-        eval('$result .= "'. $html->formfooter . '\n";');
-      }
-    } else {
-      eval('$result .= "'. $html->notfound . '\n";');
-    }
-    return str_replace('checkAll(document.getElementById("form"));', "checkAll(document.getElementById('form'));",    str_replace("'", '"', $result));
-  }
-  
-  public function ProcessForm() {
-    $result = '';
-    $users = &TCommentUsers::Instance();
-    if ($this->user = $users->GetItemFromCookie($_GET['userid'])) {
-      $users->Lock();
-      foreach ($_POST as $name => $value) {
-        if (substr($name, 0, 7) == 'postid-') {
-          $users->Unsubscribe($this->user['id'], $value);
-        }
-      }
-      $users->Unlock();
-      $html = &THtmlResource::Instance();
-      $html->section = $this->basename;
-      $lang = &TLocal::Instance();
-      eval('$result .= "'. $html->unsubscribed . '\n";');
-    }
-    return $result;
-  }
-  
-  public function Geturl() {
-    global $Options;
-    return $Options->url . '/admin/subscribe/' . $Options->q;
+  public function geturl() {
+    global $options;
+    return $options->url . '/admin/subscribe/' . $options->q;
   }
   
   public function SendMailToSubscribers($id) {
     if (!$this->SubscribtionEnabled || (isset($this->items[$id]) && $this->items[$id])) return;
     
-    $CommentManager = &TCommentManager::Instance();
-    $item = $CommentManager->GetItem($id);
+    $manager = &TCommentManager::instance();
+    $item = $manager->GetItem($id);
     if (isset($item['status']) || isset($item['type']))return;
     
-    $cron = &TCron::Instance();
+    $cron = &TCron::instance();
     $cron->Add('single', get_class($this),  'CronSendMailToSubscribers', $id);
   }
   
   public function CronSendMailToSubscribers($id) {
-    global $Options;
-    $CommentManager = &TCommentManager::Instance();
-    if (!isset($CommentManager->items[$id])) return;
-    $item = $CommentManager->GetItem($id);
+    global $options;
+    $manager = &TCommentManager::instance();
+    if (!isset($manager->items[$id])) return;
+    $item = $manager->GetItem($id);
     
     $this->items[$id] = true;
     $this->Save();
     
-    $comments = &TComments::Instance($item['pid']);
+    $comments = &TComments::instance($item['pid']);
     $subscribers = &$comments->GetSubscribers();
     if (in_array($item['uid'], $subscribers)) {
       array_splice($subscribers,  array_search($item['uid'], $subscribers), 1);
@@ -142,22 +73,22 @@ class TSubscribe extends TItems {
     $comment = new TComment($comments);
     $comment->id = $id;
     
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     eval('$subj = "'. $html->subject . '";');
     eval('$body = "' . $html->subscriberbody . '";');
     
     $url = $this->Geturl();
     
-    $users = &TCommentUsers::Instance();
+    $users = &TCommentUsers::instance();
     foreach ($subscribers as $userid) {
       $user = $users->GetItem($userid);
       if (empty($user['email'])) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
   $link = "\n{$url}userid={$user['cookie']}\n";
-      TMailer::SendMail($Options->name, $this->fromemail,  $user['name'], $user['email'],
+      TMailer::SendMail($options->name, $this->fromemail,  $user['name'], $user['email'],
       $subj, $body . $link);
     }
   }

@@ -55,7 +55,7 @@ class TAuthDigest extends TEventClass {
     return null;
   }
   
-  public function Auth() {
+  public function auth() {
     global $Options;
     if ($this->nonce == '') $this->NewNonce();
     if ($digest  = $this->GetDigestHeader()) {
