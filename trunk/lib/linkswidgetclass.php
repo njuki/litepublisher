@@ -35,15 +35,15 @@ class TLinksWidget extends TItems {
   }
   
   public function Add($url, $title, $text) {
-    $this->items[++$this->lastid] = array(
+    $this->items[++$this->autoid] = array(
     'url' => $url,
     'title' => $title,
     'text' => $text
     );
     
     $this->Save();
-    $this->Added($this->lastid);
-    return $this->lastid;
+    $this->Added($this->autoid);
+    return $this->autoid;
   }
   
   public function Edit($id, $url, $title, $text) {

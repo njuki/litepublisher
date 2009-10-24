@@ -82,7 +82,7 @@ $post->db->setvalue($post->id, 'idurl', $post->idurl);
       
    } else {
       global $paths;
-      $post->id = ++$this->lastid;
+      $post->id = ++$this->autoid;
       $dir =$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
       @mkdir($dir, 0777);
       @chmod($dir, 0777);

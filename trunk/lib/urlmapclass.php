@@ -120,7 +120,7 @@ $j = - (strlen($url) - $i + 1);
 
 return false;    
   }
-  
+
 protected function getcachefile($id) {
 global $paths;
 return $paths['cache']. "$id-$this->page.php";
@@ -189,13 +189,13 @@ $this->items[$item['id']] = $item;
 return $item['id'];
 }
     $this->items[$url] = array(
-    'id' => ++$this->lastid,
+    'id' => ++$this->autoid,
     'class' => $class,
     'arg' => $arg,
 'type' => $type
     );
     $this->save();
-    return $this->lastid;
+    return $this->autoid;
   }
  
   public function delete($url) {
@@ -270,9 +270,19 @@ TFiler::DeleteFiles($file . DIRECTORY_SEPARATOR, true, true);
   
   public function setexpired($id) {
 global $paths;
-tfiler::DeleteFilesRegexp($paths['cache'], sprintf"/($id-\\d\\.php\$)/");
+tfiler::DeleteFilesRegexp($paths['cache'], "/($id-\\d\\.php\$)/");
 }
 
+public function getcachename($name, $id) {
+global $paths;
+return $paths['cache']. "$prefix-$id.php";
+}
+
+public function expiredname($name, $id) {
+global $paths;
+tfiler::DeleteFilesRegexp($paths['cache'], "/($name-$id\\.php\$)/");
+}
+  
     public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = &TRedirector::instance();

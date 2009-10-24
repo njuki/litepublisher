@@ -2,13 +2,13 @@
 
 class TItems extends TEventClass {
   public $items;
-  protected $lastid;
+  protected $autoid;
   
   protected function create() {
     parent::create();
     $this->addevents('added', 'deleted');
     $this->AddDataMap('items', array());
-    $this->AddDataMap('lastid', 0);
+    $this->AddDataMap('autoid', 0);
   }
   
   public function getcount() {

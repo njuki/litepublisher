@@ -79,16 +79,16 @@ class TFiles extends TItems {
   }
   
   function Add($filename, $title) {
-    $this->items[++$this->lastid] = array(
+    $this->items[++$this->autoid] = array(
     'filename' => $filename,
     'title' => $title,
     'posts' => array()
     );
-    $this->downloads[$this->lastid] = 0;
+    $this->downloads[$this->autoid] = 0;
     $this->Save();
     $this->Changed();
-    $this->Added($this->lastid);
-    return $this->lastid;
+    $this->Added($this->autoid);
+    return $this->autoid;
   }
   
   public function AddPost($id, $postid) {

@@ -106,7 +106,7 @@ class tcron extends TEventClass {
 $this->table = 'cron';
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
     $this->data['url'] = '';
-    $this->data['lastid'] = 0;
+    $this->data['autoid'] = 0;
     $this->data['path'] = '';
     $this->CacheEnabled = false;
     $this->writelog = false;
@@ -177,15 +177,15 @@ $this->table = 'cron';
   
   public function Add($type, $class, $func, $arg = null) {
     if ($this->disableadd) return false;
-    ++$this->data['lastid'] ;
+    ++$this->data['autoid'] ;
     $this->Save();
     $task = new TCronTask($this);
-    $task->Add($this->lastid, $type, $class, $func, $arg );
+    $task->Add($this->autoid, $type, $class, $func, $arg );
     if (($type == 'single') && !defined('cronpinged')) {
       define('cronpinged', true);
       register_shutdown_function('TCron::SelfPing');
     }
-    return $this->lastid;
+    return $this->autoid;
   }
   
   public function Remove($id) {

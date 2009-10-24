@@ -31,10 +31,33 @@ $users->save();
 //unlink($paths['data'] . 'commentusers.php');
 }
 
+
+function autoid($class) {
+$obj = getinstance($class);
+$classdata['autoid'] = $obj->data['lastid'];
+unset($obj->data['lastid']);
+$obj->save();
+}
+
+function updateautoid() {
+autoid('TPosts');
+autoid('TPlugins');
+autoid('TMenu');
+autoid('TLinksWidget');
+autoid('TFiles');
+autoid('TCron');
+autoid('TCommentUsers');
+autoid('TTags');
+autoid('TCategories');
+autoid('TCommentManager'); 
+autoid('TFoaf');
+autoid('TUrlmap');
+}
 function newupdate() {
 global $paths, $options, $classes, $urlmap;
 $urlmap->lock();
 $options->lock();
+updateautoid();
 unset($classes->items['ITemplate']);
 $classes->interfaces['ITemplate'] = array('interfaces.php', '');
 unset($classes->items['TSubscribe']);

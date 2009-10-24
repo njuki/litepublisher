@@ -84,7 +84,7 @@ class TOpenid extends TEventClass {
   
   private function nomode() {
     global $Options;
-    $result = TTemplate::SimpleHtml(TLocal::$data['openidserver']['nomode']);
+    $result = tsimplecontent::html(TLocal::$data['openidserver']['nomode']);
     $result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$Options->url$Options->home\">\n</head>", $result);
     return $result;
   }
@@ -92,11 +92,11 @@ class TOpenid extends TEventClass {
   private function id_res() {
     $auth = &TAuthDigest::Instance();
     if (!$auth->auth())  return $auth->Headers();
-    return TTemplate::SimpleHtml(TLocal::$data['openidserver']['logged']);
+    return tsimplecontent::html(TLocal::$data['openidserver']['logged']);
   }
   
   private function cancel() {
-    return TTemplate::SimpleHtml(TLocal::$data['openidserver']['canceled']);
+    return tsimplecontent::html(TLocal::$data['openidserver']['canceled']);
   }
   
   private function GetMessage($key, $defkey) {
@@ -106,13 +106,13 @@ class TOpenid extends TEventClass {
   
   private function error400($key ) {
     $result = "<?php @header('HTTP/1.1 400 Bad Request, true, 400); ?>";
-    $result .= TTemplate::SimpleHtml($this->GetMessage($key, 'badrequest'));
+    $result .= tsimplecontent::html($this->GetMessage($key, 'badrequest'));
     return $result;
   }
   
   private function error500($key ) {
     $result = "<?php\n@header('HTTP/1.1 500 Internal Server Error', true, 500);\n?>";
-    $result .= TTemplate::SimpleHtml($this->GetMessage($key, 'internalerror'));
+    $result .= tsimplecontent::html($this->GetMessage($key, 'internalerror'));
     return $result;
   }
   
@@ -131,7 +131,7 @@ class TOpenid extends TEventClass {
   
   private function DoError() {
     if (!empty($_REQUEST['openid_error'])) {
-      return TTemplate::SimpleHtml($_REQUEST['openid_error']);
+      return tsimplecontent::html($_REQUEST['openid_error']);
     } else {
       return $this->error500();
     }
@@ -318,7 +318,7 @@ class TOpenid extends TEventClass {
         $html->section = 'openidserver';
         $lang = TLocal::Instance();
         eval('$form = "'. $html->trustform . '\n";');
-        return TTemplate::SimpleHtml($form);
+        return tsimplecontent::html($form);
       } else {
         switch ($_POST['accept']) {
           case 'yes':

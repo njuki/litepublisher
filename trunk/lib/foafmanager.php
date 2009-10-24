@@ -16,7 +16,7 @@ class TFoafManager extends TItems {
     $url = (string) $friend['blog'];
     if ($this->HasFriend($url)) return false;
     $this->items[$url] =  array(
-    'id' => ++$this->lastid,
+    'id' => ++$this->autoid,
     'nick' => $friend['nick'],
     'foaf' => (string) $friend['foaf'],
     'status' => 'hold'
@@ -122,7 +122,7 @@ class TFoafManager extends TItems {
     if ($dom= $this->GetFoaf($url)) {
       $person = $dom->getElementsByTagName('RDF')->item(0)->getElementsByTagName('Person')->item(0);
       $result = array(
-      'id' => ++$this->lastid,
+      'id' => ++$this->autoid,
       'nick' =>$person->getElementsByTagName('nick')->item(0)->nodeValue,
       //'blog' =>$person->getElementsByTagName('weblog')->item(0)->attributes->getNamedItem('resource')->nodeValue
       'foaf' =>$url
