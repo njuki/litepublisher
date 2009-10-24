@@ -155,7 +155,7 @@ class TContentFilter extends TEventClass {
     
     if (strpos($s, '[file]')) {
       $files = &TFiles::Instance();
-      $s = str_replace('[file]', $files->Getlink($files->lastid), $s);
+      $s = str_replace('[file]', $files->Getlink($files->autoid), $s);
     }
     
     return $s;

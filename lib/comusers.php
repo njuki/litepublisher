@@ -32,8 +32,8 @@ return $this->db->InsertAssoc(array(
 
 } else {
     $this->lock();
-    $this->items[++$this->lastid] = array(
-    'id' => $this->lastid,
+    $this->items[++$this->autoid] = array(
+    'id' => $this->autoid,
     'name' => $name,
     'url' => $url,
     'email' => $email,
@@ -42,8 +42,8 @@ return $this->db->InsertAssoc(array(
     );
     
     $this->unlock();
-    $this->added($this->lastid);
-    return $this->lastid;
+    $this->added($this->autoid);
+    return $this->autoid;
 }
   }
   

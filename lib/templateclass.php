@@ -414,39 +414,7 @@ $this->data['widgets'] = array();
     return $result;
   }
   
-  public static function SimpleContent($content) {
-    $DataObj  = &new TSimpleContent();
-    $DataObj->text = $content;
-    $self = &self::instance();
-    return $self->request($DataObj);
-  }
-  
-  public static function SimpleHtml($content) {
-    $DataObj  = &new TSimpleContent();
-    $DataObj->html = $content;
-    $self = &self::instance();
-    return $self->request($DataObj);
-  }
-  
+ 
 }//class
-
-class TSimpleContent {
-  public $text;
-  public $html;
-  
-  public function  ServerHeader() {
-    return "<?php
-    @Header( 'Content-Type: text/html; charset=utf-8' );
-    @Header( 'Cache-Control: no-cache, must-revalidate');
-    @Header( 'Pragma: no-cache');
-    ?>";
-  }
-  
-  function GetTemplateContent() {
-    if (!empty($this->text)) return "<h2>$this->text</h2>";
-    return $this->html;
-  }
-  
-}
 
 ?>

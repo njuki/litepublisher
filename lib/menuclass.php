@@ -20,7 +20,7 @@ class TMenu extends TItems {
     global $paths;
     $this->Lock();
     $Item->Lock();
-    $Item->id = ++$this->lastid;
+    $Item->id = ++$this->autoid;
     @mkdir($paths['data'] . 'menus'. DIRECTORY_SEPARATOR . $Item->id, 0777);
     @chmod($paths['data'] . 'menus'. DIRECTORY_SEPARATOR . $Item->id, 0777);
     

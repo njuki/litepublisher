@@ -147,20 +147,20 @@ $this->db->setvalue($id, 'idurl', $idurl);
 $urlmap->clearcache();
 }
     $this->lock();
-    $this->items[++$this->lastid] = array(
-    'id' => $this->lastid,
+    $this->items[++$this->autoid] = array(
+    'id' => $this->autoid,
     'itemscount' => 0,
     'title' => $title,
     'url' =>$url,
-'idurl' =>         $urlmap->Add($url, get_class($this),  $this->lastid),
+'idurl' =>         $urlmap->Add($url, get_class($this),  $this->autoid),
     'description ' => '',
     'keywords' => '',
     'items' => array()
     );
     $this->unlock();
-    $this->added($this->lastid);
+    $this->added($this->autoid);
 $urlmap->clearcache();
-    return $this->lastid;
+    return $this->autoid;
 }
   }
   

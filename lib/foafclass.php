@@ -59,16 +59,16 @@ class TFoaf extends TItems {
   }
   
   public function Add($nick,$foaf, $blog) {
-    $this->items[++$this->lastid] = array(
+    $this->items[++$this->autoid] = array(
     'nick' => $nick,
     'foaf' => $foaf,
     'blog' => $blog
     );
     $this->Save();
-    $this->Added($this->lastid);
+    $this->Added($this->autoid);
     $Urlmap = &TUrlmap::Instance();
     $Urlmap->ClearCache();
-    return $this->lastid;
+    return $this->autoid;
   }
   
   public function Delete($id) {

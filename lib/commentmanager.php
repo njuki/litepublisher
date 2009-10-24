@@ -8,7 +8,7 @@ class TCommentManager extends TAbstractCommentManager {
   
   public function addcomment($pid, $uid, $content) {
 global $classes;
-    $id = ++  $this->lastid;
+    $id = ++  $this->autoid;
     $comments = tcomments::instance($pid);
     $status = $classes->spamfilter->createstatus($uid, $content);
 $comments->insert($id, $uid,  $content, $status, '');
@@ -24,7 +24,7 @@ $comments->insert($id, $uid,  $content, $status, '');
   }
   
  public function addpingback($pid, $url, $title) {
-    $id =++$this->lastid;
+    $id =++$this->autoid;
     $comusers = tcomusers::instance();
     $uid = $comusers->add($title, '', $url);
     $comments = tcomments::instance($pid);

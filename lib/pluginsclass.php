@@ -27,13 +27,13 @@ class TPlugins extends TItems {
   public function AddExt($name, $classname, $filename) {
     global $classes;
     $this->items[$name] = array(
-    'id' => ++$this->lastid,
+    'id' => ++$this->autoid,
     'class' => $classname,
     'file' => $filename
     );
     $this->Save();
     $classes->Add($classname, $filename, $name);
-    $this->Added($name);return $this->lastid;
+    $this->Added($name);return $this->autoid;
   }
   
   public function Delete($name) {

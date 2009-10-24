@@ -6,10 +6,6 @@ class twidgets extents TItems {
     return getinstance(__class__);
   }
   
-  protected function create() {
-  parent::create();
-}
-
 public function load() {
 $template = ttemplate::instance();
 $this->data = &$template->data['widgets'];
@@ -26,15 +22,14 @@ $template = ttemplate::instance();
 $template->lock();
 }
 
-
 public function unlock() {
 $template = ttemplate::instance();
 $template->unlock();
 }
 
   public function add($class, $echotype, $template, $title, $order = -1, $index = 0) {
-$template = ttemplate::instance();
-    if ($index >= $template->sitebarcount) return $this->error("sitebar index $index cant more than sitebars count in template");
+$sitebars = tsitebars::instance();
+    if ($index >= $sitebars->count) return $this->error("sitebar index $index cant more than sitebars count in template");
     if (!in_array($echotype, array('echo', 'include', 'nocache'))) $echotype = 'echo';
     $this->items[++$this->autoid] = array(
     'class' => $class,
@@ -44,9 +39,7 @@ $template = ttemplate::instance();
     'index' => $index
     );
     
-    if (($order < 0) || ($order > count($template->sitebars[$index]))) $order = count($template->sitebars[$index]);
-    array_splice($template->sitebars[$index], $order, 0, $this->autoid);
-    
+$sitebars->add($this->autid, $index, $order);
     $this->save();
     $this->addded($this->autoid);
     return $this->autoid;
@@ -61,51 +54,46 @@ $template = ttemplate::instance();
   }
   
   public function delete($id) {
-    global $paths;
     if (!isset($this->items[$id])) return false;
-$template = ttemplate::instance();
-      for ($i = count($template->sitebars) -1; $i >= 0; $i--) {
-        $j = array_search($id, $this->sitebars[$i]);
-        if (is_int($j)) array_splice($this->sitebars[$i], $j, 1);
-      }
-      
-      @unlink($paths['cache']. "widget$id.php");
-      unset($this->items[$id]);
+$sitebars = tsitebars::instance();
+$sitebars->deletewidget($id);
+            unset($this->items[$id]);
       $this->save();
       $this->deleted($id);
+$urlmap = turlmap::instance();
+$urlmap->clearcache();
   }
 
-  public function FindWidget($ClassName) {
-    foreach ($this->widgets as $id => $item) {
-      if ($item['class'] == $ClassName) return $id;
+  public function find($class) {
+    foreach ($this->items as $id => $item) {
+      if ($item['class'] == $class) return $id;
     }
     return false;
   }
   
-  public static function  WidgetExpired(&$widget) {
-    $self = &self::instance();
-    $self->SetWidgetExpired(get_class($widget));
+  public static function  expired($instance) {
+    $self = self::instance();
+    $self->setexpired(get_class($instance));
   }
   
-  public function SetWidgetExpired($ClassName) {
-    global $paths;
-    foreach ($this->widgets as $id => $item) {
-      if ($item['class'] == $ClassName) {
-        @unlink($paths['cache']. "widget$id.php");
-      }
+  public function setexpired($class) {
+    foreach ($this->items as $id => $item) {
+      if ($item['class'] == $class) $this->itemxpired($id);
     }
   }
-  
-  public function WidgetsExpire() {
-    global $paths;
-    foreach ($this->widgets as $id => $item) {
-      @unlink($paths['cache']. "widget$id.php");
-    }
-  }
-  
+
+public function itemexpired($id) {
+$urlmap = turlmap::instance();
+if ($this->items[$id]['echotype'] == 'echo') {
+$urlmap->clearcache();
+} else {
+$urlmap->expiredname('widget', $id);
+}
+}  
+
   public function GetWidgetContent($id) {
     global $paths;
-    $class = $this->widgets[$id]['class'];
+    $class = $this->items[$id]['class'];
     $this->curwidget = $id;
     $FileName = $paths['cache']. "widget$id.php";
     switch ( $echotype = $this->widgets[$id]['echotype']) {

@@ -1,4 +1,3 @@
-
 <?php
 
 if (dbversion) {
@@ -147,17 +146,17 @@ class TCommentForm extends TEventClass{
       $values = $_POST;
       $values['date'] = time();
       $confirmid  = $hold->add($values);
-      return ttemplate::SimpleHtml($this->GetConfirmForm($confirmid));
+      return tsimplecontent::html($this->GetConfirmForm($confirmid));
     }
     
     $confirmid = $_POST['confirmid'];
     if (!($values = $hold->getitem($confirmid))) {
-      return ttemplate::SimpleContent(TLocal::$data['commentform']['notfound']);
+      return tsimplecontent::content(TLocal::$data['commentform']['notfound']);
     }
     
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = $classes->posts;
-    if(!$posts->ItemExists($postid)) return ttemplate::SimpleContent(TLocal::$data['default']['postnotfound']);
+    if(!$posts->ItemExists($postid)) return tsimplecontent::content(TLocal::$data['default']['postnotfound']);
     $post = tpost::instance($postid);
     
     $values = array(
@@ -171,21 +170,21 @@ class TCommentForm extends TEventClass{
     );
     
     $lang = tlocal::instance('comment');
-    if (!$this->CheckSpam($values['antispam']))   return ttemplate::SimpleContent($lang->spamdetected);
-    if (empty($values['content'])) return ttemplate::SimpleContent($lang->emptycontent);
-    if (empty($values['name'])) return ttemplate::SimpleContent($lang->emptyname);
-    if (!TContentFilter::ValidateEmail($values['email'])) return ttemplate::SimpleContent($lang->invalidemail);
-    if (!$post->commentsenabled) return ttemplate::SimpleContent($lang->commentsdisabled);
-    if ($post->status != 'published')  return ttemplate::SimpleContent($lang->commentondraft);
+    if (!$this->CheckSpam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
+    if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
+    if (empty($values['name'])) return tsimplecontent::content($lang->emptyname);
+    if (!TContentFilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
+    if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
+    if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
     //check duplicates
     $comments = tcomments::instance($post->id);
-    if ($comments->IndexOfRawContent($values['content']) >= 0) return ttemplate::SimpleContent($lang->duplicate);
+    if ($comments->IndexOfRawContent($values['content']) >= 0) return tsimplecontent::content($lang->duplicate);
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commenspages/" : $post->url;
     $users = tcomusers::instance();
     $uid = $users->add($values['name'], $values['email'], $values['url']);
     $usercookie = $users->getcookie($uid);
-    if (!$classes->spamfilter->UserCanAdd( $uid)) return ttemplate::SimpleContent($lang->toomany);
+    if (!$classes->spamfilter->UserCanAdd( $uid)) return tsimplecontent::content($lang->toomany);
 
 $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);
