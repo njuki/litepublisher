@@ -3,13 +3,13 @@
 class TEventClass extends TDataClass {
   protected $events;
   protected $EventNames;
-  protected $DataMap;
+  protected $map;
   
   public function __construct() {
     $this->EventNames = array();
-    $this->DataMap = array();
+    $this->map = array();
     parent::__construct();
-    $this->AssignDataMap();
+    $this->assignmap();
     $this->load();
   }
   
@@ -19,21 +19,21 @@ class TEventClass extends TDataClass {
   }
   
   protected function create() {
-    if (!dbversion) $this->AddDataMap('events', array());
+    if (!dbversion) $this->addmap('events', array());
   }
   
-  public function AssignDataMap() {
-    foreach ($this->DataMap as $propname => $key) {
+  public function assignmap() {
+    foreach ($this->map as $propname => $key) {
       $this->$propname = &$this->data[$key];
     }
   }
   
   public function AfterLoad() {
-    $this->AssignDataMap();
+    $this->assignmap();
   }
   
-  protected function AddDataMap($name, $value) {
-    $this->DataMap[$name] = $name;
+  protected function addmap($name, $value) {
+    $this->map[$name] = $name;
     $this->data[$name] = $value;
     $this->$name = &$this->data[$name];
   }

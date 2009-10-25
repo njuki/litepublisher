@@ -2,15 +2,15 @@
 
 class TTemplate extends TEventClass {
   public $theme;
+public $tml;
   public $path;
   public $url;
   public $context;
   public $contextsupported;
   //public $footer;
-
   //public $submenuinwidget;
   protected $tags;
-  protected $fFiles;
+private $sitebarindex;
   protected $aboutFiles;
   
   public static function instance() {
@@ -20,19 +20,18 @@ class TTemplate extends TEventClass {
   protected function create() {
     parent::create();
     $this->basename = 'template' ;
-    $this->fFiles = array();
+$this->tml = 'index';
     $this->contextsupported = false;
+$this->sitebarindex = 0;
     $this->addevents('BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
-    $this->data['themename'] = 'default';
-    $this->data['sitebarcount'] = 2;
+    $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['submenuinwidget'] = true;
     $this->data['sitebars'] = array(
-'count' => 2;
-'items' => array(0 => array(), 1 => array(), 2 => array()));
+'count' => 2,
+'items' => array(0 => array(), 1 => array(), 2 => array()))
 );
-    $this->AddDataMap('tags', array());
-    $this->AddDataMap('theme', array());
+    $this->addmap('tags', array());
   }
   
   public function __get($name) {
@@ -106,31 +105,20 @@ class TTemplate extends TEventClass {
     }
   }
   
-  public function Getsitebar() {
+  public function getsitebar() {
     $result = '';
     if ($this->submenuinwidget) $result .= $this->Getsubmenuwidget();
-    $result .= $this->GetSitebarIndex(0);
-    if ($this->sitebarcount == 1) {
-      $result .= $this->GetSitebarIndex(1);
-      $result .= $this->GetSitebarIndex(2);
+    $result .= $this->getsitebarindex($this->sitebarindex++);
+    if ($this->data['sitebars']['count'] == $this->sitebarindex) {
+if ($this->sitebarindex == 1) $result .= $this->getsitebarindex($this->sitebarindex++);
+if ($this->sitebarindex == 2) $result .= $this->getsitebarindex($this->sitebarindex++);
     }
     return $result;
   }
   
-  public function Getsitebar2() {
-    $result = $this->GetSitebarIndex(1);
-    if ($this->sitebarcount == 2) {
-      $result .= $this->GetSitebarIndex(2);
-    }
-    return $result;
-  }
-  
-  public function Getsitebar3() {
-    return $this->GetSitebarIndex(2);
-  }
-
-  protected function GetSitebarIndex($index) { 
+  private function getsitebarindex($index) { 
 global $paths;
+$file = $paths['cache'] . "sitebar$index.php";
 if (file_exists($file)) return file_get_contents($file);
 $sitebars = tsitibars::instance();
 $result = $sitebars->getcontent($index);
@@ -138,7 +126,7 @@ file_put_contents($result);
 return $result;
 }
 
-  protected function GetTag($name) {
+  protected function gettag($name) {
     if (!isset($this->tags[$name]))  return '';
     $result ='';
     $function = $this->tags[$name]['function'];
@@ -399,18 +387,6 @@ return $result;
     }
   }
   
-  public function parsetml(&$s, $tag, $replace) {
-    $result = '';
-    $opentag = "<!--$tag-->";
-    $closetag = "<!--/$tag-->";
-    if(is_int($i = strpos($s, $opentag)) && ($j = strpos($s, $closetag))) {
-      $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
-      $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
-    }
-    return $result;
-  }
-  
- 
 }//class
 
 ?>
