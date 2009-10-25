@@ -1,31 +1,18 @@
 <?php
 
 class twidgets extents TItems {
+public $current;
 
   public static function instance() {
     return getinstance(__class__);
   }
-  
-public function load() {
-$template = ttemplate::instance();
-$this->data = &$template->data['widgets'];
-    $this->AssignDataMap();
-}
 
-public function save() {
-$template = ttemplate::instance();
-$template->save();
-}
-
-public function lock() {
-$template = ttemplate::instance();
-$template->lock();
-}
-
-public function unlock() {
-$template = ttemplate::instance();
-$template->unlock();
-}
+protected function create() {
+parent::create();
+    $this->contextsupported = false;
+    $this->addevents('ongetcontent');
+//$this->ADDDataMap()
+}  
 
   public function add($class, $echotype, $template, $title, $order = -1, $index = 0) {
 $sitebars = tsitebars::instance();
@@ -91,45 +78,43 @@ $urlmap->expiredname('widget', $id);
 }
 }  
 
-  public function GetWidgetContent($id) {
-    global $paths;
+  public function getcontent($id) {
+$this->current = $id;
     $class = $this->items[$id]['class'];
-    $this->curwidget = $id;
-    $FileName = $paths['cache']. "widget$id.php";
+
     switch ( $echotype = $this->widgets[$id]['echotype']) {
       case 'echo':
-      if (@file_exists($FileName)) {
-        $result = file_get_contents($FileName);
-      } else {
-        $result = $this->DoGetWidgetContent($class, $id);
-        file_put_contents($FileName, $result);
-        @chmod($FileName, 0666);
-      }
+        $result = $this->dogetcontent($class, $id);
       break;
       
       case 'include':
-      if (!@file_exists($FileName)) {
-        $result = $this->DoGetWidgetContent($class, $id);
-        file_put_contents($FileName, $result);
-        @chmod($FileName, 0666);
+    $file = $paths['cache']. "widget$id.php";
+      if (!@file_exists($file)) {
+        $result = $this->dogetcontent($class, $id);
+        file_put_contents($file, $result);
+        @chmod($file, 0666);
       }
-      $result = "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";
+      $result = "\n<?php @include(\$GLOBALS['paths']['cache']. '$file'); ?>\n";
       break;
       
       case 'nocache':
-      $result = $this->DoGetWidgetContent($class, $id);
+$sitebars = tsitebars::instance();
+      $result = "\n<?php 
+\$widget = getinstance('$class');
+echo \$widget->getwidget($id, $sitebars->current);
+?>\n";
       break;
     }
     
-    $s = $this->OnWidgetContent($result);
+    $s = $this->ongetcontent($result);
     if ($s != '') $result = $s;
     return $result;
   }
   
-  private function DoGetWidgetContent($class, $id) {
+  private function dogetcontent($class, $id) {
     global $options;
     if (!@class_exists($class)) {
-      $this->DeleteIdWidget($id);
+      $this->delete($id);
       return '';
     }
     $result = '';
@@ -149,7 +134,8 @@ $urlmap->expiredname('widget', $id);
   }
   
   public function GetBeforeWidget($name, $title = '') {
-    $i = $this->SitebarIndex + 1;
+$sitebars = tsitebars::instance();
+    $i = $sitebars->current + 1;
     $result = '';
     if (isset($this->theme["sitebar$i"][$name])) {
       $result = $this->theme["sitebar$i"][$name];
@@ -191,15 +177,15 @@ $urlmap->expiredname('widget', $id);
     return str_replace("'", '"', $result);
   }
   
-  public function MoveWidget($id, $index) {
-    if (!isset($this->widgets[$id])) return false;
-    $oldindex = $this->widgets[$id]['index'];
+  public function move($id, $index) {
+    if (!isset($this->items[$id])) return false;
+    $oldindex = $this->items[$id]['index'];
     if ($index != $oldindex) {
       $i = array_search($id, $this->sitebars[$oldindex]);
       array_splice($this->sitebars[$oldindex],  $i, 1);
       $this->sitebars[$index][] = $id;
       $this->widgets[$id]['index'] = $index;
-      $this->Save();
+      $this->save();
     }
   }
   
@@ -216,7 +202,6 @@ $urlmap->expiredname('widget', $id);
   }
   
   
-
   public function hasclass($class) {
     foreach ($this->items as $id => $item) {
       if ($item['class'] == $class) return true;
@@ -224,6 +209,6 @@ $urlmap->expiredname('widget', $id);
     return false;
   }
   
-  
+ 
 }//class
 ?>
