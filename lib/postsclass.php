@@ -32,12 +32,10 @@ if ($result = tpost::instance($id)) return $result;
     return $this->error("Item $id not found in class ". get_class($this));
   }
   
- public function GetWidgetContent($id) {
+ public function GetWidgetContent($id, $sitebar) {
     global $options;
-    $template = template::instance();
-    $item = !empty($template->theme['widget']['recentpost']) ? $template->theme['widget']['recentpost'] :
-    '<li><strong><a href=\'$options->url$post->url\' rel=\'bookmark\' title=\'Permalink to $post->title\'>$post->title</a></strong><br />
-    <small>$post->localdate</small></li>';
+    $theme = ttheme::instance();
+    $item = $theme->getwidget('postitem', $sitebar);
     
     $result = '';
     $list = $this->getrecent($options->recentcount);
