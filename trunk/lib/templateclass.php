@@ -7,13 +7,8 @@ class TTemplate extends TEventClass {
   public $context;
   public $contextsupported;
   //public $footer;
-  //public $sitebarcount;
+
   //public $submenuinwidget;
-  
-  protected $sitebars;
-  public $curwidget;
-  //protected $idwidget;
-  protected $SitebarIndex;
   protected $tags;
   protected $fFiles;
   protected $aboutFiles;
@@ -27,14 +22,15 @@ class TTemplate extends TEventClass {
     $this->basename = 'template' ;
     $this->fFiles = array();
     $this->contextsupported = false;
-    $this->AddEvents('WidgetAdded', 'WidgetDeleted', 'AfterWidget', 'OnWidgetContent', 'BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
+    $this->addevents('BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
     $this->data['themename'] = 'default';
     $this->data['sitebarcount'] = 2;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
-    $this->data['idwidget'] = 0;
     $this->data['submenuinwidget'] = true;
-$this->data['widgets'] = array();
-    $this->AddDataMap('sitebars', array(0 => array(), 1 => array(), 2 => array()));
+    $this->data['sitebars'] = array(
+'count' => 2;
+'items' => array(0 => array(), 1 => array(), 2 => array()));
+);
     $this->AddDataMap('tags', array());
     $this->AddDataMap('theme', array());
   }
@@ -132,16 +128,16 @@ $this->data['widgets'] = array();
   public function Getsitebar3() {
     return $this->GetSitebarIndex(2);
   }
-  
-  protected function GetSitebarIndex($index) {
-    $this->SitebarIndex = $index;
-    $result = '';
-    foreach ($this->sitebars[$index] as $id) {
-      $result .= $this->GetWidgetContent($id);
-    }
-    return $result;
-  }
-  
+
+  protected function GetSitebarIndex($index) { 
+global $paths;
+if (file_exists($file)) return file_get_contents($file);
+$sitebars = tsitibars::instance();
+$result = $sitebars->getcontent($index);
+file_put_contents($result);
+return $result;
+}
+
   protected function GetTag($name) {
     if (!isset($this->tags[$name]))  return '';
     $result ='';
