@@ -1,23 +1,23 @@
 <?php
 
-class TPlugins extends TItems {
+class tplugins extends TItems {
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
   }
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  public function GetAbout($name) {
+  public function getabout($name) {
     global $paths;
     $filename = $paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini';
     return parse_ini_file($filename);
   }
   
-  public function Add($name) {
+  public function add($name) {
     global $paths;
     if (!@is_dir($paths['plugins'] . $name)) return false;
     $about = $this->GetAbout($name);
@@ -36,24 +36,24 @@ class TPlugins extends TItems {
     $this->Added($name);return $this->autoid;
   }
   
-  public function Delete($name) {
+  public function delete($name) {
     global $classes, $paths;
     if (!isset($this->items[$name])) return false;
     $item = $this->items[$name];
     unset($this->items[$name]);
-    $this->Save();
+    $this->save();
     if (@class_exists($item['class'])) {
-      $plugin = &GetInstance($item['class']);
-      if (is_a($plugin, 'TPlugin')) {
-        @unlink($paths['data']. $plugin->GetBaseName() . '.php');
-        @unlink($paths['data']. $plugin->GetBaseName() . 'bak..php');
+      $plugin = getinstance($item['class']);
+      if (is_a($plugin, 'tplugin')) {
+        @unlink($paths['data']. $plugin->getbasename() . '.php');
+        @unlink($paths['data']. $plugin->getbasename() . 'bak..php');
       }
     }
-    $classes->Delete($item['class']);
-    $this->Deleted($name);
+    $classes->delete($item['class']);
+    $this->deleted($name);
   }
   
-  public function DeleteClass($class) {
+  public function deleteclass($class) {
     foreach ($this->items as $name => $item) {
       if ($item['class'] == $class) $this->Delete($name);
     }

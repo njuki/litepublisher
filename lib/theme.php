@@ -2,7 +2,6 @@
 
 class ttheme extends TEventClass {
 public $menu;
-public $content;
 public $navi;
 public $widgets;
 public $comments;
@@ -20,6 +19,7 @@ $this->data['sitebarscount'] = 1;
 $this->data['excerpt'] = '';
 $this->data['post'] = '';
 $this->data['commentform'] = '';
+$this->data['menucontent'] = '';
 
 $this->addmap('navi', array());
 $this->addmap('menu', array());

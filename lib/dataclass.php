@@ -128,7 +128,7 @@ $func{0} = strtoupper($func{0});
   public function LoadFromString($s) {
     try {
       if (!empty($s)) $this->data = unserialize($s) + $this->data;
-      $this->AfterLoad();
+      $this->afterload();
 return true;
     } catch (Exception $e) {
       echo 'Caught exception: '.  $e->getMessage() ;
@@ -136,7 +136,7 @@ return false;
     }
   }
   
-  public function AfterLoad() {
+  public function afterload() {
   }
   
   public function lock() {
