@@ -3,6 +3,7 @@
 class ttheme extends TEventClass {
 public $menu;
 public $content;
+public $navi;
 public $widgets;
 public $comments;
 
@@ -10,24 +11,34 @@ public static function instance() {
 return getinstance(__class__);
 }
 
-  public function getbasename() {
-$template = ttemplate::instance();
-return 'theme' . DIRECTORY_SEPARATOR . $template->tml;
-}
-
 protected function create() {
 parent::create();
-$this->data['main'] = '';
+$template = ttemplate::instance();
+$this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->tml";
+$this->data['index'] = '';
 $this->data['sitebarscount'] = 1;
 $this->data['excerpt'] = '';
 $this->data['post'] = '';
 $this->data['commentform'] = '';
 
-
+$this->addmap('navi', array());
 $this->addmap('menu', array());
 $this->addmap('content', array());
 $this->addmap('widgets', array());
 $this->addmap('comments', array());
+}
+
+public function load() {
+global $paths;
+    $filename = $paths['data'] . $this->getbasename() .'.php';
+    if (file_exists($filename)) {
+parent::load();
+} else {
+$template = ttemplate::instance();
+$parser = tthemeparser::instance();
+$parser->parse("$template->path$template->tml.tml", $this);
+$this->save();
+}
 }
 
 public function getwidget($name, $sitebar) {

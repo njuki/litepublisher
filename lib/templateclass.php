@@ -10,7 +10,6 @@ public $tml;
   //public $footer;
   //public $submenuinwidget;
   protected $tags;
-private $sitebarindex;
   protected $aboutFiles;
   
   public static function instance() {
@@ -22,7 +21,6 @@ private $sitebarindex;
     $this->basename = 'template' ;
 $this->tml = 'index';
     $this->contextsupported = false;
-$this->sitebarindex = 0;
     $this->addevents('BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
     $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
@@ -106,26 +104,13 @@ $this->sitebarindex = 0;
   }
   
   public function getsitebar() {
+$sitebars = tsitebars::instance();
     $result = '';
-    if ($this->submenuinwidget) $result .= $this->Getsubmenuwidget();
-    $result .= $this->getsitebarindex($this->sitebarindex++);
-    if ($this->data['sitebars']['count'] == $this->sitebarindex) {
-if ($this->sitebarindex == 1) $result .= $this->getsitebarindex($this->sitebarindex++);
-if ($this->sitebarindex == 2) $result .= $this->getsitebarindex($this->sitebarindex++);
-    }
+    if (($sitebars->current == 0) && $this->submenuinwidget) $result .= $this->Getsubmenuwidget();
+    $result .= $sitebars->getcurrent();
     return $result;
   }
   
-  private function getsitebarindex($index) { 
-global $paths;
-$file = $paths['cache'] . "sitebar$index.php";
-if (file_exists($file)) return file_get_contents($file);
-$sitebars = tsitibars::instance();
-$result = $sitebars->getcontent($index);
-file_put_contents($result);
-return $result;
-}
-
   protected function gettag($name) {
     if (!isset($this->tags[$name]))  return '';
     $result ='';
