@@ -1,12 +1,11 @@
 <?php
 
 class TTemplate extends TEventClass {
-  public $theme;
 public $tml;
   public $path;
   public $url;
   public $context;
-  public $contextsupported;
+  public $itemplate;
   //public $footer;
   //public $submenuinwidget;
 
@@ -18,7 +17,7 @@ public $tml;
     parent::create();
     $this->basename = 'template' ;
 $this->tml = 'index';
-    $this->contextsupported = false;
+    $this->itemplate = false;
     $this->addevents('BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
     $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
@@ -72,17 +71,19 @@ $sitebars = tsitebars::instance();
   public function request($context) {
     global $options;
     $this->context = $context;
-    $this->contextsupported = is_a($context, 'ITemplate');
+    $this->itemplate = is_a($context, 'ITemplate');
     $GLOBALS['context'] = $context;
-    $header = $this->ServerHeader();
+
     if ($this->contextHasProp('subtheme')) {
-      $tml = $this->context->subtheme;
-      if (empty($tml)) $tml =  'index.tml';
+      $this->tml = $this->context->subtheme;
+      if (empty($this->tml)) $this->tml =  'index';
     } else {
-      $tml =  'index.tml';
+      $this->tml =  'index';
     }
-    
-    $s = $this->ParseFile($tml);
+
+    $theme = ttheme::instance();
+    $header = $this->ServerHeader();
+    $s = $theme->parse($theme->main);
     $s = $header .$s;
     if (method_exists($this->context, 'AfterTemplated')) {
       $this->context->AfterTemplated($s);
@@ -107,29 +108,11 @@ $sitebars = tsitebars::instance();
     ?>";
   }
   
-  public function ParseFile($FileName) {
-    global $options, $Urlmap, $Template, $context, $user, $post, $item, $tabindex, $lang;
-    $Template = &$this;
-    if (!isset($this->fFiles[$FileName])) {
-      $this->fFiles[$FileName] = @file_get_contents($this->path . $FileName);
-    }
-    $Result = $this->fFiles[$FileName];
-    $Result = str_replace('"', '\"', $Result);
-    $lang = &TLocal::instance();
-    try {
-      eval("\$Result = \"$Result\";");
-    } catch (Exception $e) {
-      $options->HandleException($e);
-    }
-    
-    return $Result;
-  }
-  
   //html tags
-  public function Gettitle() {
+  public function gettitle() {
     global $options;
     $result = '';
-    if ($this->contextsupported) {
+    if ($this->itemplate) {
       $result = $this->context->gettitle();
     } elseif ($this->contextHasProp('title')) {
       $result = $this->context->title;
@@ -142,21 +125,21 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-  public function Getkeywords() {
+  public function getkeywords() {
     global $options;
     $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';
     if ($result == '')  return $options->keywords;
     return $result;
   }
   
-  public function Getdescription() {
+  public function getdescription() {
     global $options;
     $result = $this->contextHasProp('description') ? $this->context->description : '';
     if ($result =='') return $options->description;
     return $result;
   }
   
-  public function Getmenu() {
+  public function getmenu() {
     global $paths;
     $filename = $paths['cache'] . 'menu.php';
     if (@file_exists($filename)) {
@@ -191,7 +174,7 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-  public function Getsubmenuwidget() {
+  public function getsubmenuwidget() {
     if (!method_exists($this->context, 'Getsubmenu'))  return '';
     
     $items = $this->context->Getsubmenu();
@@ -209,7 +192,7 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-  public function Setsubmenuinwidget($value) {
+  public function setsubmenuinwidget($value) {
     if ($value != $this->submenuinwidget) {
       $this->data['submenuinwidget'] = $value;
       $this->Save();
@@ -218,20 +201,20 @@ $sitebars = tsitebars::instance();
     }
   }
   
-  public function Getarchives() {
+  public function getarchives() {
     global $paths;
     $filename = $paths['cache'] . 'archives.php';
     if (@file_exists($filename)) return file_get_contents($filename);
-    $arch = &TArchives::instance();
+    $arch = TArchives::instance();
     $result = $arch->GetHeadLinks();
     @file_put_contents($filename, $result);
     return $result;
   }
   
-  public function Gethead() {
+  public function gethead() {
     global $paths;
     $result = '';
-    if ($this->contextsupported) $result .= $this->context->gethead();
+    if ($this->itemplate) $result .= $this->context->gethead();
     if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
       $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
       $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);
@@ -242,14 +225,14 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-  public function Getbody() {
+  public function getbody() {
     return $this->Onbody();
   }
   
-  public function Getcontent() {
+  public function getcontent() {
     $result = $this->BeforeContent();
     if (empty($result)) $result = '';
-    if (method_exists($this->context, 'GetTemplateContent')) {
+    if ($this->itemplate || method_exists($this->context, 'GetTemplateContent')) {
       $result .= $this->context->GetTemplateContent();
     } elseif ($this->contextHasProp('content')) {
       $result .= $this->context->content;
@@ -259,7 +242,7 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-  protected function Setfooter($s) {
+  protected function setfooter($s) {
     if ($s != $this->data['footer']) {
       $this->data['footer'] = $s;
       $this->Save();
