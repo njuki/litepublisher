@@ -1,15 +1,15 @@
 <?php
 
-class TUpdater extends TEventClass {
+class tupdater extends TEventClass {
   public $version;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
+  protected function create() {
     global $paths;
-    parent::CreateData();
+    parent::create();
     $this->basename = 'updater';
     $s = file_get_contents($paths['libinclude']. 'version.txt');
     $this->version =  (int) trim($s);
