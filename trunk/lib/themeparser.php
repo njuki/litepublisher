@@ -32,7 +32,11 @@ $menu['item'] = $item;
 $menu['current'] = $this->parsetag($menus, 'current', '');
 $menu['menu'] = $menus;
 //hover
-
+if (preg_match('/<\w*?\s*.*?id\s*=\s*[\'"]([^"\'>]*)/i', $menus, $m)) {
+$menu['id'] = $m[1];
+preg_match('/\<(\w*?)\s/',$item, $t);
+$menu['tag'] = $t[1];
+}
 }
 
 private function parsecontent(&$s) {
