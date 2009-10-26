@@ -194,13 +194,9 @@ return self::instance($id);
   }
   
   public function GetTemplateContent() {
-    $template = ttemplate::instance();
     $GLOBALS['post'] = $this;
-    $tml = 'post.tml';
-    if ($this->template <> '') {
-      if (@file_exists($template->path . $this->template)) $tml = $this->template;
-    }
-    return $template->ParseFile($tml);
+$theme = ttheme::instance();
+    return $theme->parse($theme->post);
   }
 
 public function getcommentslink() {

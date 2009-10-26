@@ -1,6 +1,7 @@
 <?php
 
 class ttheme extends TEventClass {
+//public $tml;
 public $menu;
 public $navi;
 public $widgets;
@@ -14,7 +15,8 @@ protected function create() {
 parent::create();
 $template = ttemplate::instance();
 $this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->tml";
-$this->data['index'] = '';
+$this->data['tml'] = 'index';
+$this->data['main'] = '';
 $this->data['sitebarscount'] = 1;
 $this->data['excerpt'] = '';
 $this->data['post'] = '';
@@ -41,6 +43,19 @@ $this->save();
 }
 }
 
+  public function parse($s) {
+    global $options, $urlmap, $template, $context, $user, $post, $item, $tabindex, $lang;
+    $Template = ttemplate::instance();
+    $lang = tlocal::instance();
+    try {
+      eval('$result = "'. $s '";');
+    } catch (Exception $e) {
+      $options->HandleException($e);
+    }
+    
+    return $result;
+  }
+  
 public function getwidget($name, $sitebar) {
 if (isset($this->widgets[$sitebar][$name]) return $this->widgets[$sitebar][$name];
 switch ($name) {
