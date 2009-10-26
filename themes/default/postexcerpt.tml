@@ -1,6 +1,6 @@
 <div class="post" id="post-$post->id">
 	  <div class="entry">
-        <h2><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h2>
+        <h2><a href="$post->link" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h2>
 		<span>$lang->posted $post->localdate</span>
 	  </div>
 		<div class="post-content">
@@ -10,6 +10,6 @@ $post->morelink
 		<div class="post-info">
 			<span class="post-cat">$lang->categories: $post->categorieslinks ; </span>
 			<span class="post-cat">$lang->tags: $post->tagslinks ; </span>
- <span class="post-comments">$Template->CommentsCountLink</span>
+ <span class="post-comments">$template->commentscount</span>
 		</div>
 	</div>
