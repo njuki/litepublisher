@@ -164,6 +164,8 @@ public function iddelete($id) {
 }
 
 public function idexists($id) {
+    if (($res = $this->query("select id  from $this->prefix$this->table where id = $id limit 1")) && ($r = $res->fetch()))  return true;
+return false;
 }
   
   public function getitem($id) {
