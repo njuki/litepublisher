@@ -1,6 +1,6 @@
 <?php
 
-class TTemplateComment extends TEventClass {
+class ttemplatecomment extends TEventClass {
 
   public static function instance() {
     return getinstance(__class__);
@@ -25,8 +25,8 @@ public function save() {}
     return "<a href=\"$options->url$url#comments\">$CountStr</a>";
   }
   
-  public function getcomments($tagname) {
-    global $post, $template, $urlmap, $options;
+  public function getcomments(tpost $post) {
+    global $template, $urlmap, $options;
     $comments = $post->comments;
     if (($comments->count == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->GetCommentsCountLink('');

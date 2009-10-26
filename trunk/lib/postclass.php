@@ -202,6 +202,11 @@ return self::instance($id);
     }
     return $template->ParseFile($tml);
   }
+
+public function  gettemplatecomments() {
+$t = ttemplatecomment::instance();
+return $t->getcomments($this);
+}
   
   public function getcontent() {
     $template = ttemplatePost::instance();
