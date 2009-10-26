@@ -203,6 +203,11 @@ return self::instance($id);
     return $template->ParseFile($tml);
   }
 
+public function getcommentslink() {
+$t = ttemplatecomment::instance();
+return $t->getcommentslink($this);
+}
+
 public function  gettemplatecomments() {
 $t = ttemplatecomment::instance();
 return $t->getcomments($this);

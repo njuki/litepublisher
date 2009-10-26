@@ -9,9 +9,7 @@ public $tml;
   public $contextsupported;
   //public $footer;
   //public $submenuinwidget;
-  protected $tags;
-  protected $aboutFiles;
-  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -25,84 +23,44 @@ $this->tml = 'index';
     $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['submenuinwidget'] = true;
-    $this->data['sitebars'] = array(
-'count' => 2,
-'items' => array(0 => array(), 1 => array(), 2 => array()))
-);
-    $this->addmap('tags', array());
+    $this->data['sitebars'] = array(0 => array(), 1 => array(), 2 => array()));
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "Get$name")) {
-      return $this->$get();
-    }
-    
-    if (key_exists($name, $this->tags)) {
-      return $this->GetTag($name);
-    }
-    
-    if ($this->contextHasProp($name)) {
-      return $this->context->$name;
-    }
-    
+    if (method_exists($this, $get = "get$name")) return $this->$get();
+    if (array_key_exists($name, $this->data['tags'])) {
+$tags = ttemplatetags::instance();
+return $tags->__get($name);
+}
+    if ($this->contextHasProp($name)) return $this->context->$name;
     return parent::__get($name);
   }
   
-  protected function contextHasProp($name) {
+  private function contextHasProp($name) {
     return isset($this->context) && (isset($this->context->$name) || (method_exists($this->context, 'PropExists') && $this->context->PropExists($name)));
   }
   
-  public function load() {
+  public function afterload() {
     global $options, $paths;
-    parent::load();
-    if (!$this->ThemeExists($this->themename))  $this->themename = 'default';
-    $this->path = $paths['themes'] . $this->themename . DIRECTORY_SEPARATOR ;
-    $this->url = $options->files . '/themes/'. $this->themename;
-    
-    if (count($this->theme) == 0) {
-      $this->theme = parse_ini_file($this->path . 'theme.ini', true);
-      $this->Save();
-    }
+    parent::afterload();
+    if (!$this->themeexists($this->theme))  $this->theme = 'default';
+    $this->path = $paths['themes'] . $this->theme  . DIRECTORY_SEPARATOR ;
+    $this->url = $options->files . '/themes/'. $this->theme;
   }
   
-  public function ThemeExists($name) {
+  public function themeexists($name) {
     global $paths;
     return ($name != '') && @file_exists($paths['themes']. $name . DIRECTORY_SEPARATOR   . 'index.tml');
   }
   
-  protected function Setthemename($name) {
-    global $paths, $options;
-    if (($this->themename <> $name) && $this->ThemeExists($name)) {
-      $this->Lock();
-      //echo "uninstall prev theme plugin if exists\n";
-      if ($about = $this->GetAbout($this->themename)) {
-        if (!empty($about['pluginclassname'])) {
-          //echo "uninstall theme plugin<br>\n";
-          $plugins = &TPlugins::instance();
-          $plugins->Delete($this->themename);
-          //echo "plugin successfuly deleted<br>\n";
-        }
-      }
-      $this->data['themename'] = $name;
-      $this->path = $paths['themes'] . $name . DIRECTORY_SEPARATOR  ;
-      $this->url = $options->url  . '/themes/'. $this->themename;
-      //echo "load info about new theme\n";
-      $about = $this->GetAbout($name);
-      $this->sitebarcount = $about['sitebars'];
-      // install theme plugin if exists
-      if (!empty($about['pluginclassname'])) {
-        $plugins = &TPlugins::instance();
-        $plugins->AddExt($name, $about['pluginclassname'], $about['pluginfilename']);
-      }
-      
-      $this->theme = parse_ini_file($this->path . 'theme.ini', true);
-      $this->Unlock();
-      $this->ThemeChanged();
-      $urlmap = &TUrlmap::instance();
-      $urlmap->ClearCache();
-    }
-  }
-  
+  protected function settheme($name) {
+    if (($this->theme <> $name) && $this->themeexists($name)) {
+$parser = tthemeparser::instance();
+$parser->changetheme($this->theme, $name);
+$this->themechanged();
+}
+}
+
   public function getsitebar() {
 $sitebars = tsitebars::instance();
     $result = '';
@@ -111,62 +69,11 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-  protected function gettag($name) {
-    if (!isset($this->tags[$name]))  return '';
-    $result ='';
-    $function = $this->tags[$name]['function'];
-    $classname = $this->tags[$name]['class'];
-    if (empty($classname)) {
-      if (function_exists($function)) {
-        $result = $function($name);
-      } else {
-        unset($this->tags[$name]);
-        $this->Save();
-      }
-    } else {
-      
-      if (!@class_exists($classname))   __autoload($classname);
-      if (!@class_exists($classname)) {
-        unset($this->tags[$name]);
-        $this->Save();
-      } else {
-        $obj = &GetInstance($classname);
-        $result = $obj->$function($name);
-      }
-    }
-    
-    return $result;
-  }
-  
-  public function AddTag($tag, $classname, $function) {
-    $this->tags[$tag] = array(
-    'class' => $classname,
-    'function' => $function
-    );
-    $this->Save();
-  }
-  
-  public function DeleteTag($name) {
-    if (isset($this->tags[$name])) {
-      unset($this->tags[$name]);
-      $this->Save();
-    }
-  }
-  
-  
-  public function DeleteTagClass($classname) {
-    $this->Lock();
-    foreach ($this->tags as$tag => $item) {
-      if ($item['class'] == $classname) unset($this->tags[$tag]);
-    }
-    $this->Unlock();
-  }
-  
-  public function request(&$context) {
+  public function request($context) {
     global $options;
-    $this->context = &$context;
+    $this->context = $context;
     $this->contextsupported = is_a($context, 'ITemplate');
-    $GLOBALS['context'] = &$context;
+    $GLOBALS['context'] = $context;
     $header = $this->ServerHeader();
     if ($this->contextHasProp('subtheme')) {
       $tml = $this->context->subtheme;
@@ -216,19 +123,6 @@ $sitebars = tsitebars::instance();
     }
     
     return $Result;
-  }
-  
-  public function GetAbout($themename) {
-    global $options, $paths;
-    if (!isset($this->aboutFiles)) $this->aboutFiles = array();
-    if (!isset($this->aboutFiles[$themename])) {
-      $this->aboutFiles[$themename] = @parse_ini_file($paths['themes'] . $themename . DIRECTORY_SEPARATOR    . 'about.ini', false);
-      $langfile = $paths['themes'] . $themename . DIRECTORY_SEPARATOR    . $options->language . '.ini';
-      if (@file_exists($langfile) && ($ini = @parse_ini_file($langfile, true))) {
-        $this->aboutFiles[$themename] = $ini['about'] + $this->aboutFiles[$themename];
-      }
-    }
-    return $this->aboutFiles[$themename];
   }
   
   //html tags

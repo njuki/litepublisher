@@ -17,8 +17,8 @@ public function save() {}
     }
   }
   
-  public function GetCommentsCountLink($tagname) {
-    global $post, $options;
+  public function getcommentslink(tpost $post) {
+    global $options;
     $comments = $post->comments;
     $CountStr = $this->GetCommentCountStr($comments->GetCountApproved());
     $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->countpages/" : $post->url;

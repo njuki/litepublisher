@@ -2,6 +2,7 @@
 
 class tthemeparser {
 public $theme;
+  private $abouts;
 
   public function parsetag(&$s, $tag, $replace) {
     $result = '';
@@ -43,7 +44,7 @@ $comments = $this->parsetag($post, 'templatecomments', '$post->templatecomments'
 $this->parsecomments($comments);
 $theme->post = str_replace('"', '\"', $post);
 
-$theme->menuitem = str_replace('"', '\"', $this->parsetag($content, 'menuitem', ''));
+$theme->menucontent = str_replace('"', '\"', $this->parsetag($content, 'menucontent', ''));
 
 $navi = $this->parsetag($content, 'navi', '');
 $theme->navi['prev'] = $this->parsetag($navi, 'prev', '%s');
@@ -98,6 +99,47 @@ $index++;
 return $index;
 }
 
+//manager
+  public function getabout($theme) {
+    global $paths;
+    if (!isset($this->abouts)) $this->abouts = array();
+    if (!isset($this->abouts[$theme])) {
+      $this->abouts[$theme] = @parse_ini_file($paths['themes'] . $theme . DIRECTORY_SEPARATOR    . 'about.ini', true);
+    }
+    return $this->abouts[$theme];
+  }
+  
+public function changetheme($old, $name) {
+    global $paths, $options;
+$template = ttemplate::instance();
+
+      if ($about = $this->getabout($old)) {
+        if (!empty($about['about']['pluginclassname'])) {
+          $plugins = tplugins::instance();
+          $plugins->delete($old);
+        }
+      }
+
+      $template->data['theme'] = $name;
+      $template->path = $paths['themes'] . $name . DIRECTORY_SEPARATOR  ;
+      $template->url = $options->url  . '/themes/'. $template->theme;
+
+$theme = ttheme::instance();
+$this->parse($template->path . 'index.tml', $theme);
+$theme->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->tml";
+$theme->save();
+$template->save();
+
+      $about = $this->getabout($name);
+      if (!empty($about['about']['pluginclassname'])) {
+        $plugins = tplugins::instance();
+        $plugins->addext($name, $about['about']['pluginclassname'], $about['about']['pluginfilename']);
+      }
+
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache);
+  }
+  
 }//class
 
 ?>

@@ -118,65 +118,27 @@ echo \$widget->getwidget($id, $sitebars->current);
       return '';
     }
     $result = '';
+$sitebars = tsitebars::instance();
     $widget = GetInstance($class);
     try {
       if (empty($this->widgets[$id]['template'])) {
-        $result =   $widget->getwidget($id);
+        $result =   $widget->getwidget($id, $sitebars->current);
       }else {
-        $result = $this->GetBeforeWidget($this->widgets[$id]['template'], $this->widgets[$id]['title']);
-        $result .=   $widget->GetWidgetContent($id);
-        $result .= $this->GetAfterWidget();
+$result = $this->getcontenttemplate($this->widgets[$id]['title'], $widget->GetWidgetContent($id, $sitebars->current), 
+$this->widgets[$id]['template'], $sitebars->current);
       }
     } catch (Exception $e) {
       $options->HandleException($e);
     }
     return $result;
   }
-  
-  public function GetBeforeWidget($name, $title = '') {
-$sitebars = tsitebars::instance();
-    $i = $sitebars->current + 1;
-    $result = '';
-    if (isset($this->theme["sitebar$i"][$name])) {
-      $result = $this->theme["sitebar$i"][$name];
-    } elseif (isset($this->theme["sitebar$i"]['before'])) {
-      $result = $this->theme["sitebar$i"]['before'];
-    } elseif (isset($this->theme['widget'])) {
-      $theme = &$this->theme['widget'];
-      if (isset($theme[$name])) {
-        $result = $theme[$name];
-      } elseif (isset($theme[$name . $i])) {
-        $result = $theme[$name . $i];
-      } elseif (isset($theme["before$i"])) {
-        $result = $theme["before$i"];
-      } elseif (isset($theme['before'])) {
-        $result = $theme['before'];
-      }
-    }
-    
-    if (empty($title) && isset(TLocal::$data['default'][$name])) {
-      $title=  TLocal::$data['default'][$name];
-    }
-    
-    //eval("\$result =\"$result\n\";");
-    $result = sprintf($result, $title);
-    return str_replace("'", '"', $result);
+
+public function getcontenttemplate($title, $content, $template, $sitebar) {
+$theme= ttheme::instance();
+$tml = $theme->getwidget($template, $sitebar);
+return sprintf($tml, $title, $content);
   }
-  
-  public function GetAfterWidget() {
-    $result = $this->AfterWidget($this->curwidget);
-    $i = $this->SitebarIndex + 1;
-    if (isset($this->theme["sitebar$i"]['after'])) {
-      $result .= $this->theme["sitebar$i"]['after'];
-    } elseif (isset($this->theme['widget']["after$i"])) {
-      $result .= $this->theme['widget']["after$i"];
-    } elseif (isset($this->theme['widget']['after'])) {
-      $result .= $this->theme['widget']['after'];
-    }
-    
-    return str_replace("'", '"', $result);
-  }
-  
+
   public function move($id, $index) {
     if (!isset($this->items[$id])) return false;
     $oldindex = $this->items[$id]['index'];
