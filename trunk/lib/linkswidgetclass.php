@@ -1,5 +1,5 @@
 <?php
-class TLinksWidget extends TItems {
+class tlinkswidget extends TItems {
   public $redirlink;
   
   protected function CreateData() {

@@ -1,16 +1,16 @@
 <?php
 
-class TProfile extends TEventClass {
+class tprofile extends TEventClass {
   
-  public static function &Instance($id = 0) {
-    return GetInstance(__class__);
+  public static function instance($id = 0) {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    global $Options;
-    parent::CreateData();
+  protected function create() {
+    global $options;
+    parent::create();
     $this->basename = 'profile';
-    $this->Data = $this->Data + array(
+    $this->data = $this->data + array(
     'nick' => 'admin',
     'dateOfBirth' => date('Y-m-d'),
     'gender' => 'male',
@@ -23,7 +23,7 @@ class TProfile extends TEventClass {
     'yahooChatID' => '',
     'mbox' => '',
     
-    'country' => $Options->language,
+    'country' => $options->language,
     'region' => '',
     'city' => '',
     'geourl' => 'http://beta-maps.yandex.ru/?text=',
@@ -33,11 +33,11 @@ class TProfile extends TEventClass {
     );
   }
   
-  public function GetFoaf() {
-    global $Options;
-    $posts = &TPosts::Instance();
-    $postscount = count($posts->archives);
-    $CommentManager = &TCommentManager::Instance();
+  public function getfoaf() {
+    global $options, $classes;
+    $posts = tposts::instance();
+    $postscount = $posts->archivescount;
+    $manager = $classes->commentmanager;
     
     $result = "<foaf:nick>$this->nick</foaf:nick>
     <foaf:name>$this->nick</foaf:name>
@@ -49,27 +49,27 @@ class TProfile extends TEventClass {
     <foaf:jabberID>$this->jabberID</foaf:jabberID>
     <foaf:msnChatID>$this->msnChatID</foaf:msnChatID>
     <foaf:yahooChatID>$this->yahooChatID</foaf:yahooChatID>
-    <foaf:homepage>$Options->url$Options->home</foaf:homepage>
+    <foaf:homepage>$options->url$options->home</foaf:homepage>
     <foaf:mbox>$this->mbox</foaf:mbox>
     <foaf:weblog
-    dc:title=\"$Options->name\"
-    rdf:resource=\"$Options->url$Options->home\"/>
+    dc:title=\"$options->name\"
+    rdf:resource=\"$options->url$options->home\"/>
     
     <foaf:page>
-    <foaf:Document rdf:about=\"$Options->url/profile/\">
-    <dc:title>$Options->name Profile</dc:title>
+    <foaf:Document rdf:about=\"$options->url/profile/\">
+    <dc:title>$options->name Profile</dc:title>
     <dc:description>Full profile, including information such as interests and bio.</dc:description>
     </foaf:Document>
     </foaf:page>
     
-    <lj:journaltitle>$Options->name</lj:journaltitle>
-    <lj:journalsubtitle>$Options->description</lj:journalsubtitle>
+    <lj:journaltitle>$options->name</lj:journaltitle>
+    <lj:journalsubtitle>$options->description</lj:journalsubtitle>
     
     <ya:blogActivity>
     <ya:Posts>
     <ya:feed
     dc:type=\"application/rss+xml\"
-    rdf:resource=\"$Options->url/rss/\"/>
+    rdf:resource=\"$options->url/rss/\"/>
     <ya:posted>$postscount</ya:posted>
     </ya:Posts>
     </ya:blogActivity>
@@ -78,9 +78,9 @@ class TProfile extends TEventClass {
     <ya:Comments>
     <ya:feed
     dc:type=\"application/rss+xml\"
-    rdf:resource=\"$Options->url/comments/\"/>
+    rdf:resource=\"$options->url/comments/\"/>
     <ya:posted>$postscount</ya:posted>
-    <ya:received>$CommentManager->count</ya:received>
+    <ya:received>$manager->count</ya:received>
     </ya:Comments>
     </ya:blogActivity>\n";
     
@@ -128,7 +128,7 @@ class TProfile extends TEventClass {
   }
   
   public function GetTemplateContent() {
-    global $Options;
+    global $options;
     $lang = &TLocal::$data['profile'];
   $result = "<h2>{$lang['myprofile']}</h2>\n";
     $result .= $this->GetStat();
@@ -151,8 +151,8 @@ class TProfile extends TEventClass {
   }
   
   private function GetStat() {
-    $posts = &TPosts::Instance();
-    $CommentManager = &TCommentManager::Instance();
+    $posts = &TPosts::instance();
+    $CommentManager = &TCommentManager::instance();
     return sprintf(TLocal::$data['profile']['statistic'], count($posts->archives), $CommentManager->count) . "\n";
   }
   
@@ -195,10 +195,10 @@ class TProfile extends TEventClass {
     <tbody>\n";
     
     foreach ($contacts as $contact => $name) {
-      if ($this->Data[$contact] == '') continue;
+      if ($this->data[$contact] == '') continue;
       $result .= "<tr>
       <td align=\"left\">$name</td>
-    <td align=\"left\">{$this->Data[$contact]}</td>
+    <td align=\"left\">{$this->data[$contact]}</td>
       </tr>\n";
     }
     
@@ -220,11 +220,11 @@ class TProfile extends TEventClass {
   }
   
   private function GetFriendsList() {
-    global $Options;
+    global $options;
     $result = "<p>\n";
-    $foaf = &TFoaf::Instance();
+    $foaf = &TFoaf::instance();
     foreach ($foaf->items As $id => $friend) {
-    $url = $foaf->redir ?"$Options->url$foaf->redirlink{$Options->q}friend=$id" : $friend['blog'];
+    $url = $foaf->redir ?"$options->url$foaf->redirlink{$options->q}friend=$id" : $friend['blog'];
     $result .= "<a href=\"$url\" rel=\"friend\">{$friend['nick']}</a>,\n";
     }
     $result .= "</p>\n";

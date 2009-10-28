@@ -1,23 +1,23 @@
 <?php
 
-class TFoaf extends TItems {
+class tfoaf extends TItems {
   public $title;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'foaf';
-    $this->Data['maxcount'] =0;
-    $this->Data['redir'] = true;
-    $this->Data['redirlink'] = '/foaflink.php';
+    $this->data['maxcount'] =0;
+    $this->data['redir'] = true;
+    $this->data['redirlink'] = '/foaflink.php';
   }
   
   public function GetWidgetContent($id) {
-    global $Options;
-    $Template = TTemplate::Instance();
+    global $options;
+    $Template = TTemplate::instance();
     $item = !empty($Template->theme['widget']['myfriends']) ? $Template->theme['widget']['myfriends'] :
   '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
     
@@ -29,25 +29,25 @@ class TFoaf extends TItems {
     }
     
     foreach ($list as $id => $friend) {
-    $url = $this->redir ?"$Options->url$this->redirlink{$Options->q}friend=$id" : $friend['blog'];
+    $url = $this->redir ?"$options->url$this->redirlink{$options->q}friend=$id" : $friend['blog'];
       eval('$result .= "'. $item . '\n";');
     }
     $result = str_replace("'", '"', $result);
     return $result;
   }
   
-  public function Request($arg) {
-    global $Options;
+  public function request($arg) {
+    global $options;
     
     switch($arg) {
       case 'xml':
       $s = "<?php
       @header('Content-Type: text/xml; charset=utf-8');
       @ header('Last-Modified: " . date('r') ."');
-      @header('X-Pingback: $Options->url/rpc.xml');
+      @header('X-Pingback: $options->url/rpc.xml');
       echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
       '; ?>";
-      $s .= $this->GetFoaf();
+      $s .= $this->getfoaf();
       return  $s;
       
       case 'redir':
@@ -58,35 +58,35 @@ class TFoaf extends TItems {
     }
   }
   
-  public function Add($nick,$foaf, $blog) {
+  public function add($nick,$foaf, $blog) {
     $this->items[++$this->autoid] = array(
     'nick' => $nick,
     'foaf' => $foaf,
     'blog' => $blog
     );
-    $this->Save();
-    $this->Added($this->autoid);
-    $Urlmap = &TUrlmap::Instance();
-    $Urlmap->ClearCache();
+    $this->save();
+    $this->added($this->autoid);
+    $urlmap = turlmap::instance();
+    $urlmap->clearcache();
     return $this->autoid;
   }
   
-  public function Delete($id) {
+  public function delete($id) {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
-      $this->Save();
-      $Urlmap = &TUrlmap::Instance();
-      $Urlmap->ClearCache();
+      $this->save();
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache();
     }
   }
   
-  public function DeleteUrl($url) {
+  public function deleteurl($url) {
     foreach ($this->items as $id => $item) {
       if ($url == $item['blog'])  return $this->Delete($id);
     }
   }
   
-  private function GetFoaf() {
+  private function getfoaf() {
     $result = '<rdf:RDF
     xml:lang="en"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -99,9 +99,9 @@ class TFoaf extends TItems {
     <foaf:Person>
     ';
     
-    $profile = &TProfile::Instance();
-    $result .= $profile-> GetFoaf();
-    $result .= $this->GetKnows();
+    $profile = tprofile::instance();
+    $result .= $profile-> getfoaf();
+    $result .= $this->getknows();
     
     $result .= '</foaf:Person>
     </rdf:RDF>';
@@ -109,7 +109,7 @@ class TFoaf extends TItems {
     return $result;
   }
   
-  private function GetKnows() {
+  private function getknows() {
     $result = '';
     foreach ($this->items as $id => $item) {
       $result .= "<foaf:knows>
@@ -124,14 +124,14 @@ class TFoaf extends TItems {
     return $result;
   }
   
-  public function HasFriend($url) {
+  public function hasfriend($url) {
     foreach ($this->items as $id => $item) {
       if ($url == $item['blog']) return true;
     }
     return false;
   }
   
-  public function SetParams($maxcount, $redir) {
+  public function setparams($maxcount, $redir) {
     if (($this->maxcount != $maxcount) || ($this->redir != $redir)) {
       $this->maxcount = $maxcount;
       $this->redir = $redir;

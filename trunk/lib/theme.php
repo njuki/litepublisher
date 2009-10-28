@@ -55,8 +55,13 @@ $this->save();
     
     return $result;
   }
+
+public function getwidget($title, $content, $template, $sitebar) {
+$tml = $this->getwidgettemplate($template, $sitebar);
+return sprintf($tml, $title, $content);
+  }
   
-public function getwidget($name, $sitebar) {
+public function getwidgettemplate($name, $sitebar) {
 if (isset($this->widgets[$sitebar][$name]) return $this->widgets[$sitebar][$name];
 switch ($name) {
 case 'postitem': return '<li><strong><a href=\"$post->link\" rel=\"bookmark\" title=\"Permalink to $post->title\">$post->title</a></strong><br />

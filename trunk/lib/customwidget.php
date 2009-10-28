@@ -14,8 +14,8 @@ class tcustomwidget extends TItems {
   public function getwidget($id, $sitebar) {
     global $options;
     if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
-$widgets = twidgets::instance();
-return $widgets->getcontenttemplate($this->items[$id]['title']), $this->items[$id]['content'], 'widget', $sitebar);
+$theme = ttheme::instance();
+return $theme->getwidget($this->items[$id]['title']), $this->items[$id]['content'], 'widget', $sitebar);
 }
   
   public function add($title, $content, $templ) {
