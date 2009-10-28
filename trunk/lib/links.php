@@ -1,20 +1,20 @@
 <?php
-class tlinkswidget extends TItems {
+class tlinks extends TItems {
   public $redirlink;
-  
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'linkswidget';
-    $this->redirlink = '/linkswidget/';
-    $this->Data['redir'] = true;
+
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  protected function create() {
+    parent::create();
+    $this->basename = 'links';
+    $this->redirlink = '/links/';
+    $this->data['redir'] = true;
   }
   
-  public function GetWidgetContent($id) {
-    global $Options;
+  public function getwidgetcontent($id) {
+    global $options;
     $Template = TTemplate::Instance();
     $lang = &TLocal::$data['default'];
     
@@ -24,8 +24,8 @@ class tlinkswidget extends TItems {
     
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
-      if ($this->redir &&(strncmp($url, $Options->url, strlen($Options->url)) != 0)) {
-      $url = "$Options->url$this->redirlink{$Options->q}id=$id";
+      if ($this->redir &&(strncmp($url, $options->url, strlen($options->url)) != 0)) {
+      $url = "$options->url$this->redirlink{$options->q}id=$id";
       }
       
   $result .=   "<li $class><a href=\"$url\" title=\"{$item['title']}\">{$item['text']}</a></li>\n";
@@ -34,29 +34,29 @@ class tlinkswidget extends TItems {
     return $result;
   }
   
-  public function Add($url, $title, $text) {
+  public function add($url, $title, $text) {
     $this->items[++$this->autoid] = array(
     'url' => $url,
     'title' => $title,
     'text' => $text
     );
     
-    $this->Save();
-    $this->Added($this->autoid);
+    $this->save();
+    $this->added($this->autoid);
     return $this->autoid;
   }
   
-  public function Edit($id, $url, $title, $text) {
+  public function edit($id, $url, $title, $text) {
     $this->items[$id] = array(
     'url' => $url,
     'title' => $title,
     'text' => $text
     );
     
-    $this->Save();
+    $this->save();
   }
   
-  public function Request($arg) {
+  public function request($arg) {
     $this->CacheEnabled = false;
     $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
     if (!isset($this->items[$id])) return 404;

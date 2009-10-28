@@ -128,7 +128,7 @@ $sitebars = tsitebars::instance();
         $result =   $widget->getwidget($id, $sitebars->current);
       }else {
 $theme= ttheme::instance();
-$result = $theme->getwidget($this->widgets[$id]['title'], $widget->GetWidgetContent($id, $sitebars->current), 
+$result = $theme->getwidget($this->widgets[$id]['title'], $widget->getwidgetcontent($id, $sitebars->current), 
 $this->widgets[$id]['template'], $sitebars->current);
       }
     } catch (Exception $e) {

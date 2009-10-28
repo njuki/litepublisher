@@ -12,26 +12,17 @@ protected function create() {
 parent::create();
 $this->basename = 'stdwidgets';
 $this->ajaxincluded = false;
-$this->names = array(
-'categories' => 'tcategories',
- 'tags' => 'ttags',
- 'archives' => 'tarchives',
- 'links' => 'tlinks',
-'posts' => 'tposts',
- 'meta' => __class__, 
- 'friends' => 'tfoaf'
-);
+$this->names = array('categories', 'tags', 'archives', 'links', 'posts', 'meta', 'friends');
 }
 
 public function add($name, $ajax) {
-if (isset($this->items[$name])) return $this->eerror("widget  $name already exists");
+if (isset($this->items[$name])) return $this->error("widget  $name already exists");
 $widgets = twidgets::instance();
 $id = $widgets->add($this->class, 'echo', 0, -1);
 
 $this->items[$name] = array(
 'id' => $id,
-'ajax' = true,
-'options' => array()
+'ajax' = true
 );
 $this->save();
 }
@@ -56,10 +47,6 @@ foreach ($this->items as $name => $item) {
 if ($id == $item['id']) return $name;
 }
 return false;
-}
-
-public function getoptions($name) {
-return new tarray2prop($this->items[$name]['options']);
 }
 
 public function request($arg) {
@@ -93,38 +80,31 @@ $result .= $theme->getwidget($title, $content, $name, $sitebar);
 return $result;
 }
 
+public function getwidgetcontent($id) {
+if ($name = $this->getname($id)) {
+return $this->getcontent($name);
+}
+return '';
+}
+
 public function getcontent($name) {
-global $paths;
-switch ($arg) {
-case 'categories':
-$file = $paths['cache'] . 'categories.php';
-if (file_exists($file)) {
-$result =file_get_contents($file);
-} else {
-$cats = tcategories::instance();
-$result = $cats->getwidgetcontent(1);
+global $paths, $classes;
+if ($name == 'meta') return $this->meta;
+$id = $This->items[$name]['id'];
+$file = $paths['cache'] . 'widget$id.php';
+if (file_exists($file) return file_get_contents($file);
+
+$instance = $classes->$name;
+$result = $instance->getwidgetcontent($id);
 file_put_contents($file, $result);
-}
-break;
-
-case 'tags':
-$file = $paths['cache'] . 'tags.php';
-if (file_exists($file)) {
-$result = file_get_contents($file);
-} else {
-$tags = ttags::instance();
-$result = $tags->getwidgetcontent(1);
-file_put_contents($file, $result);
-}
-break;
-
-case 'meta':
-$custom = tcustomwidget::instance();
-
-break;
-}
-
 return $result;
+}
+
+protected function setmeta($s) {
+if ($this->meta != $s) {
+$this->data['meta'] = $s;
+$this->save();
+}
 }
 
 }//class

@@ -37,11 +37,11 @@ return $result;
   public function save() {
     parent::save();
     if (!$this->locked)  {
-      ttemplate::WidgetExpired($this);
+      twidgets::expired($this);
     }
   }
   
-  public function GetWidgetContent($id) {
+  public function getwidgetcontent($id) {
 return $this->GetSortedList($this->sortname, $this->maxcount);
 }
 
