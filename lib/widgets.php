@@ -26,7 +26,7 @@ $sitebars = tsitebars::instance();
     'echotype' => $echotype,
     'template' => $template,
     'title' => $title,
-    'index' => $index
+    'sitebar' => $sitebar
     );
     
 $sitebars->add($this->autid, $sitebar, $order);
@@ -34,7 +34,6 @@ $sitebars->add($this->autid, $sitebar, $order);
     $this->addded($this->autoid);
     return $this->autoid;
   }
-
 
   public function deleteclass($class) {
     $this->lock();
@@ -128,7 +127,8 @@ $sitebars = tsitebars::instance();
       if (empty($this->widgets[$id]['template'])) {
         $result =   $widget->getwidget($id, $sitebars->current);
       }else {
-$result = $this->getcontenttemplate($this->widgets[$id]['title'], $widget->GetWidgetContent($id, $sitebars->current), 
+$theme= ttheme::instance();
+$result = $theme->getwidget($this->widgets[$id]['title'], $widget->GetWidgetContent($id, $sitebars->current), 
 $this->widgets[$id]['template'], $sitebars->current);
       }
     } catch (Exception $e) {
@@ -137,36 +137,30 @@ $this->widgets[$id]['template'], $sitebars->current);
     return $result;
   }
 
-public function getcontenttemplate($title, $content, $template, $sitebar) {
-$theme= ttheme::instance();
-$tml = $theme->getwidget($template, $sitebar);
-return sprintf($tml, $title, $content);
-  }
-
-  public function move($id, $index) {
+  public function changesitebar($id, $sitebar) {
     if (!isset($this->items[$id])) return false;
-    $oldindex = $this->items[$id]['index'];
-    if ($index != $oldindex) {
-      $i = array_search($id, $this->sitebars[$oldindex]);
-      array_splice($this->sitebars[$oldindex],  $i, 1);
-      $this->sitebars[$index][] = $id;
-      $this->widgets[$id]['index'] = $index;
+    $oldsitebar = $this->items[$id]['sitebar'];
+    if ($sitebar == $oldsitebar) return;
+$sitebars = tsitebars::instance();
+      $i = array_search($id, $sitebars->items[$oldsitebar]);
+      array_splice($sitebars->items[$oldsitebar],  $i, 1);
+      $sitebars->items[$sitebar][] = $id;
+$sitebars->save();
+      $this->items[$id]['sitebar'] = $sitebar;
       $this->save();
-    }
   }
   
-  public function MoveWidgetOrder($id, $order) {
+  public function changeorder($id, $order) {
     if (!isset($this->widgets[$id])) return false;
-    $index = $this->widgets[$id]['index'];
-    if (($order < 0) || ($order > count($this->sitebars[$index]))) $order = count($this->sitebars[$index]);
-    $oldorder = array_search($id, $this->sitebars[$index]);
-    if ($oldorder != $order) {
-      array_splice($this->sitebars[$index], $oldorder, 1);
-      array_splice($this->sitebars[$index], $order, 0, $id);
-      $this->save();
+    $sitebar = $this->widgets[$id]['sitebar'];
+$sitebars = tsitebars::instance();
+    if (($order < 0) || ($order > $sitebars->getcount($sitebar))) $order = $sitebars->getcount($sitebar);
+    $oldorder = array_search($id, $sitebars->items[$sitebar]);
+    if ($oldorder == $order) return
+      array_splice($sitebars->items[$sitebar], $oldorder, 1);
+      array_splice($sitebars->items[$sitebar], $order, 0, $id);
+      $sitebars->save();
     }
-  }
-  
   
   public function hasclass($class) {
     foreach ($this->items as $id => $item) {
