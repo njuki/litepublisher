@@ -9,14 +9,17 @@ public $current;
 
 protected function create() {
 parent::create();
-    $this->contextsupported = false;
+$this->basename = 'widgets';
     $this->addevents('ongetcontent');
-//$this->ADDDataMap()
 }  
 
-  public function add($class, $echotype, $template, $title, $order = -1, $index = 0) {
+  public function add($class, $echotype, $sitebar, $order) {
+return $this->addext($class, $echotype, '', '', $sitebar, $order);
+}
+
+  public function addext($class, $echotype, $template, $title, $sitebar, $order) {
 $sitebars = tsitebars::instance();
-    if ($index >= $sitebars->count) return $this->error("sitebar index $index cant more than sitebars count in template");
+    if ($sitebar >= $sitebars->count) return $this->error("sitebar index $sitebar cant more than sitebars count in template");
     if (!in_array($echotype, array('echo', 'include', 'nocache'))) $echotype = 'echo';
     $this->items[++$this->autoid] = array(
     'class' => $class,
@@ -26,11 +29,12 @@ $sitebars = tsitebars::instance();
     'index' => $index
     );
     
-$sitebars->add($this->autid, $index, $order);
+$sitebars->add($this->autid, $sitebar, $order);
     $this->save();
     $this->addded($this->autoid);
     return $this->autoid;
   }
+
 
   public function deleteclass($class) {
     $this->lock();
