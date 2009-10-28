@@ -12,20 +12,18 @@ class TLocal {
     return '';
   }
   
-  public static function &Instance($section = '') {
-    $result = GetInstance(__class__);
+  public static function instance($section = '') {
+    $result = instance(__class__);
     if ($section != '') $result->section = $section;
     return $result;
   }
   
   public static function date($date, $format = '') {
-    if (empty($format)) {
-      $format = self::GetDateFormat();
-    }
-    return self::translate(date($format, $date), 'datetime');
+    if (empty($format)) $format = self::GetDateFormat();
+    return self::translate(strftime ($format, $date), 'datetime');
   }
   
-  public static function GetDateFormat() {
+  public static function getddateformat() {
     global $Options;
     return $Options->dateformat != ''? $Options->dateformat : self::$data['datetime']['dateformat'];
   }

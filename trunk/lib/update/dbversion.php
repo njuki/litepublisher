@@ -91,6 +91,7 @@ $posts->save();
 
 $options->recentcount= $post->recentcount;
 $options->version = '2.77';
+$options->dateformat ='';
 $options->unlock();
 
 foreach ($urlmap->items as $url => $item) {

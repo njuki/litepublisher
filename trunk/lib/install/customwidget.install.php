@@ -1,13 +1,13 @@
 <?php
 
-function TCustomWidgetInstall(&$self) {
-  $Template = &TTemplate::Instance();
-  $Template->WidgetDeleted = $self->WidgetDeleted;
+function tcustomwidgetInstall($self) {
+$widgets = twidgets::instance();
+  $widgets->deleted= $self->widgetdeleted;
 }
 
-function TCustomWidgetUninstall(&$self) {
-  $Template = &TTemplate::Instance();
-  $Template->DeleteWidget(get_class($self));
+function tcustomwidgetUninstall($self) {
+$widgets = twidgets::instance();
+  $widgets->deleteclass(get_class($self));
 }
 
 ?>

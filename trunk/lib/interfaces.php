@@ -8,6 +8,11 @@ interface ITemplate {
   public function GetTemplateContent();
 }
 
+interface IAdvancedTemplate {
+public function getsitebar($index, &$content);
+public function afterrequest(&$content);
+}
+
 interface  IComments {
 //comment form
   public function gethold($author);
@@ -17,4 +22,5 @@ interface  IComments {
 //pingback xmlrpc
  public function haspingback($url);
 }
+
 ?>

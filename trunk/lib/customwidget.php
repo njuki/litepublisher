@@ -1,29 +1,26 @@
 <?php
 
-class TCustomWidget extends TItems {
+class tcustomwidget extends TItems {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return instance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename   = 'customwidget';
   }
   
-  public function getwidget($id) {
-    global $Options;
+  public function getwidget($id, $sitebar) {
+    global $options;
     if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
-    $Template = TTemplate::Instance();
-    $result = $Template->GetBeforeWidget('before', $this->items[$id]['title']);
-    $result .= $this->items[$id]['content'];
-    $result .= $Template->GetAfterWidget();
-    return $result;
-  }
+$widgets = twidgets::instance();
+return $widgets->getcontenttemplate($this->items[$id]['title']), $this->items[$id]['content'], 'widget', $sitebar);
+}
   
-  public function Add($title, $content, $templ) {
-    $Template = &TTemplate::Instance();
-    $id = $Template->AddWidget(get_class($this), 'echo', '', '');
+  public function add($title, $content, $templ) {
+$widgets = twidgets::instance();
+    $id = $widgets->add(get_class($this), 'echo', '', '');
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
@@ -31,11 +28,11 @@ class TCustomWidget extends TItems {
     );
     
     $this->save();
-    $this->Added($id);
+    $this->added($id);
     return $id;
   }
   
-  public function Edit($id, $title, $content, $templ) {
+  public function edit($id, $title, $content, $templ) {
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
@@ -43,25 +40,27 @@ class TCustomWidget extends TItems {
     );
     
     $this->save();
-    TTemplate::WidgetExpired($this);
+$widgets = twidgets::instance();
+$widgets->itemexpired($id);
   }
   
-  public function Delete($id) {
+  public function delete($id) {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
       $this->save();
       
-      $Template = &TTemplate::Instance();
-      $Template->DeleteIdWidget($id);
-      $this->Deleted($id);
+$widgets = twidgets::instance();
+      $widgets->delete($id);
+      $this->deleted($id);
     }
   }
   
-  public function WidgetDeleted($id) {
+  public function widgetdeleted($id) {
     if (isset($this->items[$id])) {
       unset($this->items[$id]);
-      $this->Save();
+      $this->save();
     }
   }
+
 } //class
 ?>
