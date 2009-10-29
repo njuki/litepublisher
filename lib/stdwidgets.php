@@ -1,8 +1,6 @@
 <?php
 
 class tstdwidgets extends TItems {
-public $names;
-private $ajaxincluded;
 
   public static function instance() {
     return getinstance(__class__);
@@ -11,8 +9,7 @@ private $ajaxincluded;
 protected function create() {
 parent::create();
 $this->basename = 'stdwidgets';
-$this->ajaxincluded = false;
-$this->names = array('categories', 'tags', 'archives', 'links', 'posts', 'meta', 'friends');
+$this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'meta');
 }
 
 public function add($name, $ajax) {
@@ -22,9 +19,31 @@ $id = $widgets->add($this->class, 'echo', 0, -1);
 
 $this->items[$name] = array(
 'id' => $id,
-'ajax' = true
+'ajax' = $ajax
 );
 $this->save();
+$this->updateajax();
+return $id;
+}
+
+public function setajax($name, $ajax) {
+if (isset($this->items[$name) && ($this->items[$name]['ajax'] != $ajax)) {
+$this->items[$name]['ajax'] = $ajax;
+$this->save();
+$this->updateajax();
+}
+}
+
+public function updateajax() {
+$ajax = false;
+foreach ($this->items as $name => $item) {
+if ($item['ajax']) {
+$ajax = true;
+break;
+}
+}
+$theme = ttheme::instance();
+$theme->ajax = $ajax;
 }
 
 public function delete($name) {
@@ -33,12 +52,14 @@ $widgets = twidgets::instance();
 $widgets->delete($this->items[$namre]['id']);
 unset($this->items[$name]);
 $this->save();
+$this->updateajax();
 }
 
 public function widgetdeleted($id) {
 if ($name = $this->getname($id)) {
 unset($this->items[$name]);
 $this->save();
+$this->updateajax();
 }
 }
 
@@ -90,7 +111,7 @@ return '';
 public function getcontent($name) {
 global $paths, $classes;
 if ($name == 'meta') return $this->meta;
-$id = $This->items[$name]['id'];
+$id = isset($this->items[$name]) ? $This->items[$name]['id'] : $name;
 $file = $paths['cache'] . 'widget$id.php';
 if (file_exists($file) return file_get_contents($file);
 

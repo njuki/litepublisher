@@ -1,6 +1,7 @@
 <?php
 
-class THomepage extends TEventClass implements  ITemplate {
+class thomepage extends TEventClass implements  ITemplate {
+private $sitebars;
   
   public static function instance() {
     return getinstance(__class__);
@@ -12,6 +13,7 @@ class THomepage extends TEventClass implements  ITemplate {
 $this->data['idurl'] = 0;
     $this->data['text'] = '';
     $this->data['hideposts'] = false;
+$this->data['showwidgets'] = true;
   }
   
   //ITemplate
@@ -41,24 +43,63 @@ public function getdescription() {}
   }
   
   public function settext($s) {
-    global $options;
-    if ($this->text != $s) {
-      $this->data['text'] = $s;
-      $this->save();
-      $urlmap = turlmap::instance();
-      $urlmap->setexpired($this->idurl);
-    }
-  }
-  
+$this->setvalue('text', $s);
+}
+
   public function sethideposts($value) {
-    global $options;
-    if ($this->hideposts != $value) {
-      $this->data['hideposts'] = $value;
+$this->setvalue('hideposts', $value);
+}
+
+public function setshowwidgets($value) {
+$this->setvalue('showwidgets', $value);
+}
+
+private function setvalue($name, $value) {
+    if ($this->data[$name] != $value) {
+      $this->data[$name] = $value;
       $this->save();
       $urlmap = turlmap::instance();
       $urlmap->setexpired($this->idurl);
     }
   }
+
+public function getsitebar($index, &$s) {
+if (!$this->showwidgets) return;
+if ($index == 0) $this->sortwidgets();
+$before  = '';
+$theme = ttheme::instance();
+$std = tstdwidgets::instance();
+foreach ($this->sitebars[$index] as $name => $ajax) {
+$content = $std->getcontent($name);
+if ($ajax) {
+$i = strpos($s, "widget$name");
+$i = strpos($s, '>', $i);
+      $s = substr_replace($s, $content, $i+ 1, 0);
+} else {
+$before .= $theme->getwidget($std->items[$name]['title'], $content, $name, $index);
+}
+}
+$s = $before . $s;
+}
+
+
+//распределить между сайтбарами стандартные виджеты
+private function sortwidgets() {
+$sitebars = tsitebars::instance();
+$last = $sitebars->count - 1;
+$this->sitebars = array(0 => array());
+$std = tstdwidgets::instance();
+foreach ($std->names as $name) {
+if (!isset($std->items[$name])) {
+$classic[] = $name;
+} else {
+if ($std->items[$name]['ajax']) $this->ajaxwidgets[] = $name;
+}
+}
+
+
+
+}
   
 }//class
 
