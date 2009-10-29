@@ -126,6 +126,17 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
+
+public function geticon() {
+global $options;
+if ($this->contextHasProp('icon')) {
+$icon = $this->context->icon;
+$icons = ticons::instance();
+$result = $icons->geturl($icon);
+}
+    if ($result == '')  return "$options->files/favicon.ico";
+    return $result;
+}
   public function getkeywords() {
     global $options;
     $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';

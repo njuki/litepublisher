@@ -61,5 +61,10 @@ if ($login == $item['login']) && ($password = $item['password'])) return $id;
 return  false;
 }
 
+public function getgroupname($id) {
+$groups = tusergroups::instance();
+return $groups->items[$this->items[$id]['group']]['name'];
+}
+
 }//class
 ?>

@@ -13,9 +13,9 @@ class TXMLRPCAbstract extends TEventClass {
   }
   
   public function CanLogin(&$args, $LoginIndex = 1) {
-    global $Options;
-    if (!$Options->CheckLogin($args[$LoginIndex], $args[$LoginIndex + 1])) {
-      $this->Error = new IXR_Error(403, 'Bad login/pass combination.');
+    global $options;
+    if (!$options->auth($args[$LoginIndex], $args[$LoginIndex + 1])) {
+      $this->error = new IXR_Error(403, 'Bad login/pass combination.');
       return false;
     }
     return true;

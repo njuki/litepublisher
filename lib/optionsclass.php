@@ -1,6 +1,8 @@
 <?php
 
 class TOptions extends TEventClass {
+public $user;
+public $group;
   
   public static function instance() {
     return getinstance(__class__);
@@ -64,15 +66,19 @@ $this->save();
     $this->unlock();
   }
   
-  public function CheckLogin($login, $password) {
-    return $this->password == md5("$login:$this->realm:$password");
-  }
-  
-  public function Auth(){
-    if (isset($_SERVER['PHP_AUTH_USER'])) {
-      return $this->CheckLogin($_SERVER['PHP_AUTH_USER'] , $_SERVER['PHP_AUTH_PW']);
-    }
-    return false;
+  public function auth($login, $password) {
+if ($this->password == md5("$login:$this->realm:$password")) {
+$this->user = 0;
+$this->group = 'admin';
+return true;
+}
+
+$users = tusers::instance();
+if ($this->user = $users->auth($logn, $pasword)) {
+$this->group = $users->getgroupname($this->user);
+return true;
+}
+return false;
   }
   
   public function SetPassword($value) {

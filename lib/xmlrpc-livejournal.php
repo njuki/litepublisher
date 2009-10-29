@@ -13,7 +13,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   }
   
   private function CheckLogin(&$struct) {
-    global $Options;
+    global $options;
     extract($struct);
     if ($username != $Options->login) return false;
     
