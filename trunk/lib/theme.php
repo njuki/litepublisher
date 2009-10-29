@@ -13,6 +13,7 @@ return getinstance(__class__);
 
 protected function create() {
 parent::create();
+$this->data['ajax'] = false;
 $template = ttemplate::instance();
 $this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->tml";
 $this->data['tml'] = 'index';
@@ -39,6 +40,24 @@ parent::load();
 $template = ttemplate::instance();
 $parser = tthemeparser::instance();
 $parser->parse("$template->path$template->tml.tml", $this);
+$this->save();
+}
+}
+
+protected function setajax($value) {
+global $paths;
+if ($this->ajax != $value) {
+if ($value) {
+//insert
+$s = file_get_content($paths['libinclude'] . 'ajax.txt');
+$s = "<!--ajaxscript-->\n$s\n<!--/ajaxscript-->\n</head>";
+$this->main = str_replace('</head>', $s, $this->main);
+} else {
+//delete
+$parser = tthemeparser::instance();
+$parser->parsetag($this->data['main'], 'ajaxscript', '');
+}
+$this->data['ajax'] = $value;
 $this->save();
 }
 }
