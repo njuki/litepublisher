@@ -6,8 +6,8 @@ public $tml;
   public $url;
   public $context;
   public $itemplate;
+public $javascripts;
   //public $footer;
-  //public $submenuinwidget;
 
   public static function instance() {
     return getinstance(__class__);
@@ -21,8 +21,9 @@ $this->tml = 'index';
     $this->addevents('BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
     $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
-    $this->data['submenuinwidget'] = true;
+    $this->data['hovermenu'] = false;
     $this->data['sitebars'] = array(0 => array(), 1 => array(), 2 => array()));
+$this->addmap('javascripts', array());
   }
   
   public function __get($name) {
@@ -63,7 +64,7 @@ $this->themechanged();
   public function getsitebar() {
 $sitebars = tsitebars::instance();
     $result = '';
-    if (($sitebars->current == 0) && $this->submenuinwidget) $result .= $this->Getsubmenuwidget();
+    if (($sitebars->current == 0) && !$this->hovermenu) $result .= $this->Getsubmenuwidget();
     $result .= $sitebars->getcurrent();
     return $result;
   }
@@ -153,7 +154,8 @@ $sitebars = tsitebars::instance();
   }
   
   private function GetMenuItems() {
-    $jsmenu = !$this->submenuinwidget && isset($this->theme['menu']['id']);
+$theme = ttheme::instance();
+    $jsmenu = $this->hovermenu && isset($thememenu['id']);
     $Menu = TMenu::instance();
     $items = $Menu->GetMenuList();
     if (count($items) == 0) return '';
@@ -191,34 +193,51 @@ $sitebars = tsitebars::instance();
     $result .= $this->GetAfterWidget();
     return $result;
   }
-  
-  public function setsubmenuinwidget($value) {
-    if ($value != $this->submenuinwidget) {
-      $this->data['submenuinwidget'] = $value;
-      $this->Save();
-      $urlmap = &TUrlmap::instance();
-      $urlmap->ClearCache();
+
+
+public function gethovermenu() {
+return isset($this->javascripts['hovermenu']);
+}  
+
+  public function sethovermenu($value) {
+    if ($value != $this->hovermenu) {
+if ($value) {
+$this->addjavascript('hovermenu', $paths['libinclude'] . 'hovermenu.js');
+} else {
+$this->deletejavascript('hovermenu');
+}
+
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache();
     }
   }
-  
-  public function getarchives() {
-    global $paths;
-    $filename = $paths['cache'] . 'archives.php';
-    if (@file_exists($filename)) return file_get_contents($filename);
-    $arch = TArchives::instance();
-    $result = $arch->GetHeadLinks();
-    @file_put_contents($filename, $result);
-    return $result;
-  }
-  
+
+public function addjavascript($name, $filename) {
+if (!isset($this->javascripts[$name])) {
+$this->javascripts[$name] = file_get_contents($filename);
+$this->save();
+}
+}  
+
+public function deletejavascript($name) {
+if (isset($this->javascripts[$name])) {
+$thiunset(s->javascripts[$name]);
+$this->save();
+}
+}
+
   public function gethead() {
-    global $paths;
     $result = '';
     if ($this->itemplate) $result .= $this->context->gethead();
-    if (!$this->submenuinwidget && isset($this->theme['menu']['id'])) {
-      $java = file_get_contents($paths['libinclude'] . 'javasubmenu.txt');
-      $result .= sprintf($java, $this->theme['menu']['id'], $this->theme['menu']['tag']);
+foreach ($this->javascripts as $name => $script) {
+if ($name == 'hovermenu' {
+$theme = ttheme::instance();
+if (isset($theme->menu['id'])) $result .= sprintf($script, $theme->menu['id'], $theme->menu['tag']);
     }
+$result .=$script;
+$result .= "\n";
+}
+
     $result .= $this->Onhead();
     $Urlmap = TUrlmap::instance();
     if ($Urlmap->IsAdminPanel) $result .= $this->OnAdminHead();
