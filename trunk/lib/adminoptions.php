@@ -44,7 +44,7 @@ class TAdminOptions extends TAdminPage {
       case 'view':
       $ContentFilter = &TContentFilter::Instance();
       $automore = $ContentFilter->automore ? $checked: '';
-      $submenuinwidget = $Template->submenuinwidget ? $checked : '';
+      $hovermenu = $Template->hovermenu ? $checked : '';
       $formname = 'viewform';
       break;
       
@@ -201,7 +201,7 @@ class TAdminOptions extends TAdminPage {
       $ContentFilter->automorelength = (int) $automorelength;
       $ContentFilter->Save();
       $Template = &TTemplate::Instance();
-      $Template->submenuinwidget = isset($submenuinwidget);
+      $Template->hovermenu = isset($hovermenu);
       break;
       
       case 'comments':

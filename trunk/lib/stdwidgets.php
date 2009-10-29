@@ -42,8 +42,8 @@ $ajax = true;
 break;
 }
 }
-$theme = ttheme::instance();
-$theme->ajax = $ajax;
+$template = ttemplate::instance();
+$template->addjavascript('ajax', $paths['libinclude']. 'ajax.js');
 }
 
 public function delete($name) {

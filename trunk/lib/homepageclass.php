@@ -66,6 +66,7 @@ private function setvalue($name, $value) {
 public function getsitebar($index, &$s) {
 if (!$this->showwidgets) return;
 if ($index == 0) $this->sortwidgets();
+if (!isset($this->sitebars[$index]) || count($this->sitebars[$index]) == 0) return;
 $before  = '';
 $theme = ttheme::instance();
 $std = tstdwidgets::instance();
@@ -82,23 +83,27 @@ $before .= $theme->getwidget($std->items[$name]['title'], $content, $name, $inde
 $s = $before . $s;
 }
 
-
 //распределить между сайтбарами стандартные виджеты
 private function sortwidgets() {
 $sitebars = tsitebars::instance();
 $last = $sitebars->count - 1;
 $this->sitebars = array(0 => array());
+$this->sitebars[$last] = array();
+
 $std = tstdwidgets::instance();
 foreach ($std->names as $name) {
+if ($name == 'tags') continue;
 if (!isset($std->items[$name])) {
-$classic[] = $name;
+if ($name == 'posts') || ($name == 'meta')) {
+$this->sitebars[$last][$name] = false;
 } else {
-if ($std->items[$name]['ajax']) $this->ajaxwidgets[] = $name;
+$this->sitebars[0][$name] = false;
+}
+} elseif ($std->items[$name]['ajax']){
+$sitebar = $sitebars->find($std->items[$name]['id']);
+ $this->sitebars[$sitebar][$name] = true;
 }
 }
-
-
-
 }
   
 }//class
