@@ -45,7 +45,7 @@ class TAdminLogin extends TAdminPage {
   
   public function ProcessForm() {
     global $Options;
-    if ($Options->CheckLogin($_POST['login'], $_POST['password'])) {
+    if ($Options->auth($_POST['login'], $_POST['password'])) {
       $expired = isset($_POST['remember']) ? time() + 1210000 : 0;
       $auth = &TAuthDigest::Instance();
       $auth->cookie = md5(secret. uniqid( microtime()));

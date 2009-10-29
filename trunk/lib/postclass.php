@@ -192,6 +192,17 @@ return self::instance($id);
   public function getdescription() {
     return $this->data['description'];
   }
+
+public function geticonurl() {
+if ($this->icon == 0) return '';
+$icons = ticons::instance();
+return $icons->geturl($this->icon);
+}
+
+public function geticontag() {
+if ($this->icon == 0) return '';
+return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
+}
   
   public function GetTemplateContent() {
     $GLOBALS['post'] = $this;
