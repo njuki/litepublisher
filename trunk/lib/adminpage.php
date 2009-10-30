@@ -5,6 +5,7 @@ class TAdminPage extends TEventClass {
   public $menu;
   public $formresult;
   public $arg;
+public $group;
 
   public static function instance() {
     return getinstance(__class__);
@@ -68,39 +69,39 @@ $this->basename = strtolower(get_class($this));
   }
   
   public function auth() {
-    global $options, $urlmap, $paths;
+    global $options, $urlmap;
     $auth = tauthdigest::instance();
-    if (($auth->cookieenabled)) {
+    if ($auth->cookieenabled) {
 if ($s = $auth->checkattack()) return $s;
 if (!$auth->authcookie()) return $urlmap->redir301('/admin/login/');
       } 
 elseif (!$auth->Auth())  return $auth->headers();      
 
-      $html = THtmlResource::instance();
-      $html->section = 'login';
-      $lang = tlocal::instance();
-      eval('$this->menu .= "'. $html->logout . '\n";');
-    }
+if ($options->group != 'admin') {
+$groups = tusergroups::instance();
+if ($groups->hasright($options->group, $this->group)) return 404;
+}
   }
   
   public function request($arg) {
     if ($s = $this->auth()) return $s;
     $this->arg = $arg;
     tlocal::loadlang('admin');
-    $this->title = tlcal::$data[$this->basename]['title'];
+    $this->title = tlocal::$data[$this->basename]['title'];
+
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {
         foreach ($_POST as $name => $value) {
           $_POST[$name] = stripslashes($_POST[$name]);
         }
       }
-      $this->formresult.= $this->ProcessForm();
+      $this->formresult.= $this->processform();
     }
   }
   
   public function GetTemplateContent() {
     global $options;
-    $Template = ttemplate::instance();
+    $template = ttemplate::instance();
     $result = $this->Ggetmenu();
     $result = str_replace("'", '"', $result);
     $GLOBALS['post'] = &$this;
@@ -108,7 +109,7 @@ elseif (!$auth->Auth())  return $auth->headers();
     return $result;
   }
   
-  public function ProcessForm() {
+  public function processform() {
     return '';
   }
   
@@ -116,10 +117,10 @@ elseif (!$auth->Auth())  return $auth->headers();
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
   }
   
-
 public function gethtml() {
 $result = THtmlResource::instance();
-$result->section = $this-->basename;
+$result->section = $this->basename;
+$lang = tlocal::instance($this->basename);
 return $result;
 }
 
@@ -132,11 +133,7 @@ return $result;
   }
   
   public function notfound() {
-    $html = THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = tlocal::instance();
-    eval('$result = "'. $html->notfound  . '\n";');
-    return $result;
+return $this->html->notfound();
   }
   
   public function Getadminurl($section, $arg) {

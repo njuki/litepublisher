@@ -1,7 +1,7 @@
 <?php
 
 class TAdminLogin extends TAdminPage {
-  private $loged;
+  private $logonresult;
   
   public static function instance() {
     return getinstance(__class__);
@@ -26,7 +26,7 @@ $auth->logout();
       }
     }
     $result = parent::request($arg);
-    if ($this->loged) return $this->loged;
+    if ($this->logonresult) return $this->logonresult;
   }
   
   public function getcontent() {
@@ -39,15 +39,13 @@ return $this->html->form($args);
   public function processform() {
     global $options;
     if (!$options->auth($_POST['login'], $_POST['password']))  return $this->html->error();
-      $expired = isset($_POST['remember']) ? time() + 1210000 : 0;
+      $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+$cookie = md5uniq();
       $auth = tauthigest::instance();
-      $auth->cookie = md5(secret. uniqid( microtime()));
-      $auth->cookieexpired = $expired == 0 ? time() + 24*3600 : $expired;
-      $auth->save();
-      
+      $auth->setcookies($cookie, $expired);
       $secure = 'false'; //true for sssl
-      $this->loged = "<?php
-      @setcookie('admin', '$cookie', $expired,  '$options-subdir/admin', false, $secure, true);
+      $this->logonresult = "<?php
+      @setcookie('admin', '$cookie', $expired,  '$options->subdir/admin', false, $secure, true);
       @header('Location: $options->url/admin/');
       ?>";
   }

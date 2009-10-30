@@ -58,14 +58,12 @@ class THtmlResource  {
       throw new Exception("the requested $name item not found in $this->section section");
     }
 
-    $s = strtr ($s, $args[0]->data);    
-return $this->parse($s, $args);
+if ($args == null) $args = new targs();
+    $s = strtr ($s, $args->data);    
+$theme = ttheme::instance();
+return $theme->parse($s);
   }
 
-private function parse($s, $args) {
-      $s = strtr ($s, $keys);
-}
-  
   public function load($FileName) {
     global $paths;
     $PartFileName = $paths['languages']. $FileName;
