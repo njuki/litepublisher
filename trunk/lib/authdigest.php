@@ -1,33 +1,33 @@
 <?php
 
-class TAuthDigest extends TEventClass {
+class tauthdigest extends TEventClass {
   public $stale;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function Create() {
+    parent::create();
     $this->basename = 'authdigest';
-    $this->Data['nonce'] = '';
-    $this->Data['time'] = 0;
-    $this->Data['cookie'] = '';
-    $this->Data['cookieenabled'] = false;
-    $this->Data['cookieexpired'] = 0;
-    $this->Data['xxxcheck'] = true;
+    $this->data['nonce'] = '';
+    $this->data['time'] = 0;
+    $this->data['cookie'] = '';
+    $this->data['cookieenabled'] = false;
+    $this->data['cookieexpired'] = 0;
+    $this->data['xxxcheck'] = true;
     $this->stale = false;
   }
   
-  public function AfterLoad() {
-    parent::AfterLoad();
-    if ($this->time + 600 < time()) $this->NewNonce();
+  public function afterload() {
+    parent::afterload();
+    if ($this->time + 600 < time()) $this->newnonce();
   }
   
-  private function NewNonce() {
-    $this->Data['nonce'] = md5(secret. uniqid( microtime(), true));
-    $this->Data['time'] = time();
-    $this->Save();
+  private function newnonce() {
+    $this->data['nonce'] = md5(mt_rand() . secret. microtime());
+    $this->data['time'] = time();
+    $this->save();
   }
   
   private function GetDigestHeader() {
@@ -56,8 +56,8 @@ class TAuthDigest extends TEventClass {
   }
   
   public function auth() {
-    global $Options;
-    if ($this->nonce == '') $this->NewNonce();
+    global $options;
+    if ($this->nonce == '') $this->newnonce();
     if ($digest  = $this->GetDigestHeader()) {
       $digest  = substr($digest,0,7) == 'Digest ' ?  substr($digest, strpos($digest, ' ') + 1) : $digest ;
       preg_match_all('/(\w+)=(?:"([^"]+)"|([^\s,]+))/', $digest, $mtx, PREG_SET_ORDER);
@@ -68,8 +68,10 @@ class TAuthDigest extends TEventClass {
         $this->stale  = true;
         return false;
       }
-      if ($Options->login != $hdr['username']) return false;
-      $a1 = strtolower($Options->password);
+$users = tusers::instance();
+if (!($options->user  =$users->loginexists($hdr['username']))) return false;
+$options->updategroup();
+      $a1 = strtolower($options->password);
       $a2 = md5($_SERVER['REQUEST_METHOD'] .':' . $hdr['uri']);
       return $hdr['response'] == md5("$a1:$this->nonce:$a2");
     }
@@ -77,19 +79,37 @@ class TAuthDigest extends TEventClass {
   }
   
   public function Headers() {
-    global $Options;
+    global $options;
     $protocol = $_SERVER["SERVER_PROTOCOL"];
     if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
     $stale = $this->stale ? 'true' : 'false';
     
     $result = "<?php
-    @header('WWW-Authenticate: Digest realm=\"$Options->realm\", nonce=\"$this->nonce\", stale=\"$stale\"');
+    @header('WWW-Authenticate: Digest realm=\"$options->realm\", nonce=\"$this->nonce\", stale=\"$stale\"');
     @header('$protocol 401 Unauthorized', true, 401);
     echo '401 Unauthorized';
     ?>";
     return $result;
   }
   
+
+public function isattack() {
+$host = '';
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+          $p = parse_url($_SERVER['HTTP_REFERER']);
+          $host = $p['host'];
+        }
+
+return $host == $_SERVER['HTTP_HOST'] );
+}
+
+public function checkattack() {
+      if ($this->xxxcheck)  && $this->isattack()) {
+          if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
+      if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
+}
+}
+
 }//class
 
 ?>

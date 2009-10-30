@@ -5,8 +5,7 @@ class TAdminPage extends TEventClass {
   public $menu;
   public $formresult;
   public $arg;
-  public $id = 1;//for menu item template
-  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -70,24 +69,13 @@ $this->basename = strtolower(get_class($this));
   
   public function auth() {
     global $options, $urlmap, $paths;
-    $auth = TAuthDigest::instance();
-    if (!($auth->cookieenabled && $urlmap->mobile)) {
-      if (!$auth->Auth())  return $auth->headers();
-    } else {
-      if ($auth->xxxcheck) {
-        if (empty($_SERVER['HTTP_REFERER'])) {
-          $p = '';
-        } else {
-          $p = parse_url($_SERVER['HTTP_REFERER']);
-          $p = $p['host'];
-        }
-        if ( $p != $_SERVER['HTTP_HOST'] ) {
-          if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
-      if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
-        }
-      }
-      if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin']) || ($auth->cookieexpired < time())) return "<?php @header('Location: $options->url/admin/login/'); ?>";
-      
+    $auth = tauthdigest::instance();
+    if (($auth->cookieenabled)) {
+$auth->checkattack();
+      if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin']) || ($auth->cookieexpired < time())) 
+return "<?php @header('Location: $options->url/admin/login/'); ?>";
+      } elseif (!$auth->Auth())  return $auth->headers();      
+
       $html = THtmlResource::instance();
       $html->section = 'login';
       $lang = tlocal::instance();
