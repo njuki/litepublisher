@@ -43,18 +43,28 @@ $this->save();
 }
 }
 
-  public function parse($s) {
-    global $options, $urlmap, $template, $context, $user, $post, $item, $tabindex, $lang;
-    $Template = ttemplate::instance();
-    $lang = tlocal::instance();
-    try {
-      eval('$result = "'. $s '";');
+public static function parsecallback($var) {
+    global $options, $urlmap, $template, $context, $post, $item, $lang;
+try {
+return ${$var[1]}->{$var[2]};
     } catch (Exception $e) {
       $options->HandleException($e);
     }
-    
-    return $result;
-  }
+return '';
+}
+
+  public function parse($s) {
+    global $template, $lang;
+    $Template = ttemplate::instance();
+    $lang = tlocal::instance();
+    try {
+//      eval('$result = "'. $s '";');
+return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
+    } catch (Exception $e) {
+      $options->HandleException($e);
+    }
+        return '';
+}
 
 public function getwidget($title, $content, $template, $sitebar) {
 $tml = $this->getwidgettemplate($template, $sitebar);

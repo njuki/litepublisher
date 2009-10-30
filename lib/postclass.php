@@ -130,7 +130,7 @@ return self::instance($id);
     if (isset($this->dateformater)){
     $this->dateformater->date = $this->posted;
 } else {
- $this->dateformater = new tdate($this->posted);
+ $this->dateformater = new tdateformater($this->posted);
 }
     return $this->dateformater;
   }
