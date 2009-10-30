@@ -10,6 +10,7 @@ class tusers extends TItems {
     parent::create();
     $this->basename = 'users';
 $this->table = 'users';
+$this->autoid = 1;
 }
 
 public function add($group, $login,$password, $name, $email, $url) {
@@ -22,6 +23,8 @@ $item = array(
 'group' => $gid,
 'login' => $login,
 'password' => $password,
+'cookie' =>  md5(mt_rand() . secret. microtime()),
+'cookieexpired' => 0,
 'name' => $name,
 'email' => $email
 'url' => $url
@@ -37,6 +40,8 @@ return $this->autoid;
 }
 
 ppublic function loginexists($login) {
+global $options;
+if ($login == $options->login) return 1;
 if (dbversion) {
 return $this->db->findid('login = '. dbquote($login));
 } else {
@@ -46,6 +51,10 @@ if ($login == $item['login']) return true;
 return false;
 }
 }
+
+public function getpassword($id) {
+global $options;
+return $id == 1 ? $options->password : $this->getvalue($id, 'password');
 
 public function auth($login,$password) {
 global $options;

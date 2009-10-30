@@ -59,34 +59,12 @@ class THtmlResource  {
     }
 
     $s = strtr ($s, $args[0]->data);    
-    $s = $this->replacelang($s);
 return $this->parse($s, $args);
-
   }
 
 private function parse($s, $args) {
       $s = strtr ($s, $keys);
 }
-  
-  private function replacelang($s) {
-    global $Options;
-    $s = str_replace('$Options->url', $Options->url, $s);
-  $s = str_replace('{$Options->q}', $Options->q, $s);
-  if (preg_match_all('/\$lang-\>([a-zA-Z0-9_]{1,})/', $s, $m)) {
-      $lang = TLocal::instance();
-      $lang->section = $this->section;
-      $keys = array();
-      for ($i = count($m[0]) - 1; $i >=0; $i--) {
-        $key = $m[0][$i];
-        if (!isset($keys[$key]))
-      $keys[$key] = $lang->{$m[1][$i]};
-      }
-      ksort ($keys, SORT_STRING);
-      $keys = array_reverse($keys, true);
-      $s = str_replace(array_keys($keys), array_values($keys), $s);
-    }
-    return $s;
-      }
   
   public function load($FileName) {
     global $paths;

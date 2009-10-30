@@ -44,7 +44,7 @@ $this->save();
 }
 
 public static function parsecallback($var) {
-    global $options, $urlmap, $template, $context, $post, $item, $lang;
+    global $options, $urlmap, $template, $context, $post, $item, $lang, $comment;
 try {
 return ${$var[1]}->{$var[2]};
     } catch (Exception $e) {
@@ -54,11 +54,11 @@ return '';
 }
 
   public function parse($s) {
-    global $template, $lang;
+    global $$options, template, $lang;
     $Template = ttemplate::instance();
     $lang = tlocal::instance();
+$s = str_replace('$options->url', $options->url, $s);
     try {
-//      eval('$result = "'. $s '";');
 return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
     } catch (Exception $e) {
       $options->HandleException($e);

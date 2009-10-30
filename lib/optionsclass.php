@@ -67,19 +67,32 @@ $this->save();
   }
   
   public function auth($login, $password) {
-if ($this->password == md5("$login:$this->realm:$password")) {
-$this->user = 0;
-$this->group = 'admin';
-return true;
+if ($login == $this->login) {
+$this->user = 1;
+} else {
+$users = tusers::instance();
+if (!($this->user = $users->loginexists($login)) return false;
 }
 
-$users = tusers::instance();
-if ($this->user = $users->auth($logn, $pasword)) {
-$this->group = $users->getgroupname($this->user);
+if ($this->password != md5("$login:$this->realm:$password"))  return false;
+$this->updategroup();
 return true;
-}
-return false;
   }
+
+public function updategroup() {
+if ($this->user == 1) {
+$this->group = 'admin';
+} else {
+$users = tusers::instance();
+$this->group = $users->getgroupname($this->user);
+}
+}
+
+public function getpassword() {
+if ($this->user <= 1) return $this->data['password'];
+$users = tusers::instance();
+return $users->getvalue($this->user, 'password');
+}
   
   public function SetPassword($value) {
     $this->password = md5("$this->login:$this->realm:$value");
