@@ -237,9 +237,9 @@ class TFoafManager extends TItems {
   public function CheckFriendship() {
     global $Options;
     $result = '';
-    TLocal::LoadLangFile('admin');
-    $lang = &TLocal::$data['foaf'];
-    $foaf = &TFoaf::instance();
+    tlocal::loadlang('admin');
+    $lang = tlocal::$data['foaf'];
+    $foaf = tfoaf::instance();
     foreach ($foaf->items as $id => $item) {
       $found = false;
       $url = $item['foaf'];

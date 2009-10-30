@@ -254,7 +254,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     $Options->q = '?';
     
     $Options->language = $this->language;
-    TLocal::LoadLangFile('admin');
+    tlocal::loadlang('admin');
     $Options->timezone = TLocal::$data['installation']['timezone'];
     $Options->dateformat = '';
     $Options->keywords = "blog";
@@ -410,7 +410,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   
   public static function SendEmail($password) {
     global $Options;
-    TLocal::LoadLangFile('admin');
+    tlocal::loadlang('admin');
     $lang = &TLocal::$data['installation'];
     $url = $Options->url . $Options->home;
     $login = $Options->login;
@@ -445,7 +445,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     require_once($paths['lib'] . 'filerclass.php');
     require_once($paths['lib'] . 'localclass.php');
     require_once($paths['lib'] . 'htmlresource.php');
-    TLocal::LoadLangFile('admin');
+    tlocal::loadlang('admin');
   }
   
   private function GetBrowserLang() {

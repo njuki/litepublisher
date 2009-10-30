@@ -1,8 +1,8 @@
 <?php
 
 function TLinksWidgetInstall(&$self) {
-  TLocal::LoadLangFile('admin');
-  $lang = TLocal::$data['installation'];
+  tlocal::loadlang('admin');
+  $lang = tlocal::$data['installation'];
   $self->Add($lang['homeurl'], $lang['homedescription'], $lang['homename']);
   
   $Urlmap = &TUrlmap::Instance();

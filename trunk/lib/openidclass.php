@@ -51,7 +51,7 @@ class TOpenid extends TEventClass {
       TFiler::log(var_export($_REQUEST, true));
     }
     $this->LoadBigMath();
-    TLocal::LoadLangFile('admin');
+    tlocal::loadlang('admin');
     ini_set('arg_separator.output', '&');
     
     if (!isset($_REQUEST['openid_mode'])) return $this->nomode();

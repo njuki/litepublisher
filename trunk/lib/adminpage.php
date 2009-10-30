@@ -98,7 +98,7 @@ $this->basename = strtolower(get_class($this));
   public function request($arg) {
     if ($s = $this->auth()) return $s;
     $this->arg = $arg;
-    tlocal::LoadLangFile('admin');
+    tlocal::loadlang('admin');
     $this->title = tlcal::$data[$this->basename]['title'];
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {
@@ -128,6 +128,13 @@ $this->basename = strtolower(get_class($this));
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
   }
   
+
+public function gethtml() {
+$result = THtmlResource::instance();
+$result->section = $this-->basename;
+return $result;
+}
+
   public function Getconfirmed() {
     return !empty($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
   }

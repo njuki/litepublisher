@@ -42,13 +42,13 @@ $menu['tag'] = $t[1];
 private function parsecontent(&$s) {
 $theme = $this->theme;
 $ content = $this->parsetag($s, 'content', '$template->content');
-$theme->excerpt = str_replace('"', '\"', $this->parsetag($content, 'excerpt', ''));
+$theme->excerpt = $this->parsetag($content, 'excerpt', '');
 $post = $this->parsetag($content, 'post', '');
 $comments = $this->parsetag($post, 'templatecomments', '$post->templatecomments');
 $this->parsecomments($comments);
-$theme->post = str_replace('"', '\"', $post);
+$theme->post = $post;
 
-$theme->menucontent = str_replace('"', '\"', $this->parsetag($content, 'menucontent', ''));
+$theme->menucontent = $this->parsetag($content, 'menucontent', '');
 
 $navi = $this->parsetag($content, 'navi', '');
 $theme->navi['prev'] = $this->parsetag($navi, 'prev', '%s');

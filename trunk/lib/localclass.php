@@ -1,6 +1,6 @@
 <?php
 
-class TLocal {
+class tlocal {
   public static $data;
   private static $files;
   public $section;
@@ -13,19 +13,19 @@ class TLocal {
   }
   
   public static function instance($section = '') {
-    $result = instance(__class__);
+    $result = getinstance(__class__);
     if ($section != '') $result->section = $section;
     return $result;
   }
   
   public static function date($date, $format = '') {
-    if (empty($format)) $format = self::GetDateFormat();
+    if (empty($format)) $format = self::getdateformat();
     return self::translate(strftime ($format, $date), 'datetime');
   }
   
   public static function getddateformat() {
-    global $Options;
-    return $Options->dateformat != ''? $Options->dateformat : self::$data['datetime']['dateformat'];
+    global $options;
+    return $options->dateformat != ''? $options->dateformat : self::$data['datetime']['dateformat'];
   }
   
   public static function translate($s, $section = 'default') {
@@ -34,55 +34,47 @@ class TLocal {
   
   public static function checkload() {
     if (!isset(self::$data)) {
-      self::LoadLangFile('');
+      self::loadlang('');
     }
   }
   
-  public static function LoadLangFile($FileName) {
-    global $Options, $paths;
-    if ($Options->language != '') {
-      self::LoadFile($paths['languages']. $FileName. $Options->language);
+  public static function loadlang($FileName) {
+    global $options, $paths;
+    if ($options->language != '') {
+      self::load($paths['languages']. $FileName. $options->language);
     }
   }
   
-  public static function LoadFile($PartFileName) {
+  public static function load($partialname) {
     if (!isset(self::$data)) self::$data = array();
     if (!isset(self::$files)) self::$files = array();
-    if (in_array($PartFileName , self::$files)) return
-    self::$files[] = $PartFileName ;
-    if (!TFiler::UnserializeFromFile($PartFileName . '.php', $v) || !is_array($v)) {
-      $v = parse_ini_file($PartFileName . '.ini', true);
-      TFiler::SerializeToFile($PartFileName . '.php', $v);
+    if (in_array($partialname , self::$files)) return;
+    self::$files[] = $partialname ;
+    if (!TFiler::UnserializeFromFile($partialname . '.php', $v) || !is_array($v)) {
+      $v = parse_ini_file($partialname . '.ini', true);
+      TFiler::SerializeToFile($partialname . '.php', $v);
     }
     self::$data = $v + self::$data ;
   }
   
-  public static function LoadIni($filename) {
+  public static function loadini($filename) {
     if (@file_exists($filename) && ($v = parse_ini_file($filename, true))) {
       self::$data = $v + self::$data ;
     }
   }
   
-  public static function Install() {
+  public static function install() {
     self::checkload();
   }
   
 }//class
 
-class TDate {
+class tdateformater {
   public  $date;
-  
-  public function __construct($date) {
-    $this->date = $date;
+    public function __construct($date) { $this->date = $date; }
+    public function __get($name) { return tlocal::translate(date($name, $this->date), 'datetime'); }
   }
-  
-  public function __get($name) {
-    return TLocal::translate(date($name, $this->date), 'datetime');
-  }
-  
-}
 
 //init
-TLocal::checkload();
-
+tlocal::checkload();
 ?>
