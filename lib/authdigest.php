@@ -92,7 +92,6 @@ $options->updategroup();
     return $result;
   }
   
-
 public function isattack() {
 $host = '';
         if (!empty($_SERVER['HTTP_REFERER'])) {
@@ -108,6 +107,26 @@ public function checkattack() {
           if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
       if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
 }
+return false;
+}
+
+public function authcookie() {
+global $options;
+      if (empty($_COOKIE['admin']) ) return false;
+if ($auth->cookie == $_COOKIE['admin'])) {
+if ($auth->cookieexpired < time()) return  false;
+$options->user = 1;
+$options->group = 'admin';
+return true;
+}
+
+$users = tusers::instance();
+if($options->user = $users->IndexOf('cookie',$_COOKIE['admin'])) {
+if ($users->getvalue($options->user, 'cookieexpired') < time()) return  false;
+$options->updategroup();
+return;
+}
+return false;
 }
 
 }//class

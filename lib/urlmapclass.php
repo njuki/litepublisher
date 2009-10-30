@@ -309,21 +309,13 @@ tfiler::DeleteFilesRegexp($paths['cache'], "/($name-$id\\.php\$)/");
   
   public function redir301($to) {
     global $options;
-    if ( php_sapi_name() != 'cgi-fcgi' ) {
-      $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
-      $protocol = 'HTTP/1.0';
-      @header( "$protocol 301 Moved Permanently", true, 301);
-    }
-    @header("Location: $options->url$to");
-    exit();
+self::redir($options->url . $to);
   }
   
   public static function redir($url) {
     if ( php_sapi_name() != 'cgi-fcgi' ) {
       $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
-      $protocol = 'HTTP/1.0';
+      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
       @header( "$protocol 301 Moved Permanently", true, 301);
     }
     

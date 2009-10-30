@@ -3,68 +3,55 @@
 class TAdminLogin extends TAdminPage {
   private $loged;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'login';
   }
   
-  public function Auth() {
-  }
+  public function auth() { }
   
   public function GetMenu() {
     return '';
   }
   
-  public function Request($arg) {
+  public function request($arg) {
     if ($arg == 'out') {
-      if (!parent::Auth()) {
-        $auth = &TAuthDigest::Instance();
+      if (!parent::auth()) {
+        $auth = tauthdigest::instance();
         $auth->cookie = '';
         $auth->cookieexpired = 0;
-        $auth->Save();
+        $auth->save();
       }
     }
-    $result = parent::Request($arg);
+    $result = parent::request($arg);
     if ($this->loged) return $this->loged;
   }
   
   public function Getcontent() {
-    global $Options;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    $login = '';$password = '';
-    eval('$result = "'.  $html->form . '\n";');
-    $result = str_replace("'", '"', $result);
-    return $result;
+$args = new targs:();
+    $args->login = '';
+$args->password = '';
+return $this->html->form($args);
   }
   
   public function ProcessForm() {
-    global $Options;
-    if ($Options->auth($_POST['login'], $_POST['password'])) {
+    global $options;
+    if (!$options->auth($_POST['login'], $_POST['password']))  return $this->html->error();
       $expired = isset($_POST['remember']) ? time() + 1210000 : 0;
-      $auth = &TAuthDigest::Instance();
+      $auth = tauthigest::instance();
       $auth->cookie = md5(secret. uniqid( microtime()));
       $auth->cookieexpired = $expired == 0 ? time() + 24*3600 : $expired;
-      $auth->Save();
+      $auth->save();
       
       $secure = 'false'; //true for sssl
       $this->loged = "<?php
-      @setcookie('admin', '$auth->cookie', $expired,  '$Options->subdir/pda/admin', false, $secure, true);
-      @header('Location: $Options->url/admin/');
+      @setcookie('admin', '$auth->cookie', $expired,  '$options->subdir/pda/admin', false, $secure, true);
+      @header('Location: $options->url/admin/');
       ?>";
-    } else {
-      $html = &THtmlResource::Instance();
-      $html->section = $this->basename;
-      $lang = &TLocal::Instance();
-      
-      eval('$result = "'. $html->error . '\n";');
-      return $result;
-    }
   }
   
 }//class

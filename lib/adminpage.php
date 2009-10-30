@@ -71,10 +71,10 @@ $this->basename = strtolower(get_class($this));
     global $options, $urlmap, $paths;
     $auth = tauthdigest::instance();
     if (($auth->cookieenabled)) {
-$auth->checkattack();
-      if (empty($_COOKIE['admin']) || ($auth->cookie != $_COOKIE['admin']) || ($auth->cookieexpired < time())) 
-return "<?php @header('Location: $options->url/admin/login/'); ?>";
-      } elseif (!$auth->Auth())  return $auth->headers();      
+if ($s = $auth->checkattack()) return $s;
+if (!$auth->authcookie()) return $urlmap->redir301('/admin/login/');
+      } 
+elseif (!$auth->Auth())  return $auth->headers();      
 
       $html = THtmlResource::instance();
       $html->section = 'login';
