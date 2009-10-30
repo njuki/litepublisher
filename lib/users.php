@@ -24,7 +24,7 @@ $item = array(
 'login' => $login,
 'password' => $password,
 'cookie' =>  md5(mt_rand() . secret. microtime()),
-'cookieexpired' => 0,
+'expired' => 0,
 'name' => $name,
 'email' => $email
 'url' => $url
@@ -75,5 +75,23 @@ $groups = tusergroups::instance();
 return $groups->items[$this->items[$id]['group']]['name'];
 }
 
+
+public function clearcookie($id) {
+$this->setcookies($id, '', 0);
+}
+
+public function setcookies($id, $cookie, $xpired) {
+if (dbversion) {
+$this->db->updateassoc(array(
+'id' => $id',
+'cookie' => $cookie,
+'expired' => $expired
+));
+} else {
+$this->items[$id]['cookie'] = $cookie;
+$this->items[$id]['expired'] = $expired;
+$this->save();
+}
+}
 }//class
 ?>
