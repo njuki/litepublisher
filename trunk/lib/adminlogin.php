@@ -22,23 +22,21 @@ class TAdminLogin extends TAdminPage {
     if ($arg == 'out') {
       if (!parent::auth()) {
         $auth = tauthdigest::instance();
-        $auth->cookie = '';
-        $auth->cookieexpired = 0;
-        $auth->save();
+$auth->logout();
       }
     }
     $result = parent::request($arg);
     if ($this->loged) return $this->loged;
   }
   
-  public function Getcontent() {
+  public function getcontent() {
 $args = new targs:();
     $args->login = '';
 $args->password = '';
 return $this->html->form($args);
   }
   
-  public function ProcessForm() {
+  public function processform() {
     global $options;
     if (!$options->auth($_POST['login'], $_POST['password']))  return $this->html->error();
       $expired = isset($_POST['remember']) ? time() + 1210000 : 0;
@@ -49,7 +47,7 @@ return $this->html->form($args);
       
       $secure = 'false'; //true for sssl
       $this->loged = "<?php
-      @setcookie('admin', '$auth->cookie', $expired,  '$options->subdir/pda/admin', false, $secure, true);
+      @setcookie('admin', '$cookie', $expired,  '$options-subdir/admin', false, $secure, true);
       @header('Location: $options->url/admin/');
       ?>";
   }

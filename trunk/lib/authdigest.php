@@ -129,6 +129,23 @@ return;
 return false;
 }
 
+public function logout() {
+global $options;
+if (!$this->cookieenabled) {
+$this->newnonce();
+return;
+}
+
+if ($options->user == 1) {
+        $this->cookie = '';
+        $this->cookieexpired = 0;
+        $this->save();
+} else {
+$users = tusers::instance();
+$users->clearcookie($options->user);
+}
+}
+
 }//class
 
 ?>
