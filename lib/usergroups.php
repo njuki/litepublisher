@@ -26,5 +26,16 @@ if ($name == $item['name']) return $id;
 return false;
 }
 
+public function hasright($who, $group) {
+if ($who == $group) return  true;
+switch ($who) {
+case 'admin': return true;
+case 'editor: return $group == 'author';
+case 'moderator': return $group == 'subscriber';
+}
+return false;
+}
+}
+
 }//class
 ?>

@@ -204,4 +204,8 @@ global $db;
 return $db->quote($s);
 }
 
+function md5uniq() {
+return md5(mt_rand() . secret. microtime());
+}
+
 ?>
