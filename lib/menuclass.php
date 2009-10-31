@@ -1,110 +1,106 @@
 <?php
 
 class TMenu extends TItems {
+public $tree;
   protected $home;
-  public $AcceptGet;
-  
-  public static function instance() {
+
+    public static function instance() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
-    $this->AddDataMap('home', array());
-    $this->addevents('BeforeAdd', 'Edited');
+    $this->addmap('home', array());
+$this->addmap('tree', array());
+    $this->addevents('edited');
   }
   
-  public function Add(&$Item) {
-    //$this->Error("cantadd");
-    global $paths;
-    $this->Lock();
-    $Item->Lock();
-    $Item->id = ++$this->autoid;
-    @mkdir($paths['data'] . 'menus'. DIRECTORY_SEPARATOR . $Item->id, 0777);
-    @chmod($paths['data'] . 'menus'. DIRECTORY_SEPARATOR . $Item->id, 0777);
-    
-    $this->BeforeAdd($Item->id);
-    if ($Item->date == 0) $Item->date = time();
-    
-    $Linkgen = &TLinkGenerator::instance();
-    if ($Item->url == '') {
-      $Item->url = $Linkgen->Create($Item, 'post');
+  public function add(tmenuitem $item) {
+    $Linkgen = TLinkGenerator::instance();
+    if ($item->url == '' ) {
+      $item->url = $Linkgen->createlink($item, 'post');
     } else {
       $title = $item->title;
-      $item->title = trim($item->url, '/');
-      $item->url = $Linkgen->Create($item, 'post');
+      $item->title = trim($post->url, '/');
+      $item->url = $Linkgen ->createlink($item, 'post');
       $item->title = $title;
     }
-    
-    $this->UpdateInfo($Item);
-    $Item->Unlock();
-    $this->Unlock();
-    
-    $Urlmap = TUrlmap::instance();
-    if ($this->AcceptGet) {
-      $Urlmap->AddGet($Item->url, get_class($Item), $Item->id);
-    } else {
-      $Urlmap->Add($Item->url, get_class($Item), $Item->id);
-    }
-    
-    $this->Added($Item->id);
-    $Urlmap->ClearCache();
-    return $Item->id;
+
+        $urlmap = turlmap::instance();
+
+      $item->id = ++$this->autoid;
+    $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
+}      
+      $this->lock();
+      $this->updated($item);
+      $item->save();
+      $this->unlock();
+    $this->Added($post->id);
+    $urlmap->ClearCache();
+    return $item->id;
   }
-  
-  public function Edit(&$item) {
-    $Urlmap = TUrlmap::instance();
-    $Urlmap->Lock();
-    
-    $this->Lock();
-    
-    $oldurl = $Urlmap->Find(get_class($item), $item->id);
+
+public function getdir() {
+global $paths;
+return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
+}
+   
+public function edit(tmenuitem $item) {
+    $urlmap = turlmap::instance();
+        $oldurl = $urlmap->gitidurl($item->idurl);
     if ($oldurl != $item->url) {
-      $Urlmap->Delete($oldurl);
-      $Linkgen = &TLinkGenerator::instance();
+      $Linkgen = TLinkGenerator::instance();
       if ($item->url == '') {
-        $item->url = $Linkgen->Create($item, 'post');
+        $item->url = $Linkgen->createlink($item, 'item', false);
       } else {
         $title = $item->title;
         $item->title = trim($item->url, '/');
-        $item->url = $Linkgen->Create($item, 'post');
+        $item->url = $Linkgen->Create($item, 'item', false);
         $item->title = $title;
       }
-      $Urlmap->Add($item->url, get_class($item), $item->id);
-    }
-    
+
     if ($oldurl != $item->url) {
-      $Urlmap->AddRedir($oldurl, $item->url);
+//check unique url
+if (($idurl = $urlmap->idfind($item->url) && ($idurl != $item->idurl)) {
+$item->url = $linkgen->MakeUnique($item->url);
+}
+$urlmap->setidurl($item->idurl, $item->url);
+      $urlmap->addredir($oldurl, $item->url);
     }
-    
-    $this->UpdateInfo($item);
-    $item->Unlock();
-    $this->Unlock();
-    
-    $Urlmap->Unlock();
-    $Urlmap->ClearCache();
-    
-    
-    $this->Edited($Item->id);
+
+    $this->lock();    
+    $this->updated($item);
+    $item->save();
+    $this->unlock();
+        $this->edited($item->id);
+
+    $urlmap->clearcache();
   }
-  
-  public function UpdateInfo(&$item) {
-    $this->items[$item->id] = array(
-    'id' => $item->id,
-    'date' => $item->date,
-    'status' => $item->status,
-    'parent' =>$item->parent,
-    'order' => $item->order,
-    'childs' => array(),
-    'title' => $item->title,
-    'url' => $item->url,
-    'class' => get_class($item)
-    );
+
+  public function  delete($id) {
+    if (!$this->itemexists($id)) return false;
+    if ($this->GetChildsCount($id) > 0) return false;
+
+    $urlmap = turlmap::instance();
+$urmap->DeleteClassArg($classes->classes['post'], $id);
+
+    $this->lock();
+    unset($this->items[$id]);
     $this->Sort();
+    $this->unlock();
+    $this->deleted($id);
+@unlink($this->dir . "$id.php");
+@unlink($this->dir . "$id.bak.php");
+    $urlmap->clearcache();
+    return true;
   }
   
-  public function Sort() {
+   public function updated(tmenuitem $item) {
+    $this->sort();
+  }
+  
+  public function sort() {
     global $paths;
     $this->home = array();
     
@@ -163,25 +159,12 @@ class TMenu extends TItems {
     return $this->items[$id]['title'];
   }
   
-  public function  Delete($id) {
-    global $paths;
-    if (!$this->ItemExists($id)) return false;
-    if ($this->GetChildsCount($id) > 0) return false;
-    $this->Lock();
-    $Urlmap = TUrlmap::instance();
-    $Urlmap->Delete($this->items[$id]['url']);
-    TItem::DeleteItemDir($paths['data']. 'menus'. DIRECTORY_SEPARATOR  . $id. DIRECTORY_SEPARATOR );
-    unset($this->items[$id]);
-    $this->Sort();
-    $this->Unlock();
-    $this->Deleted($id);
-    $Urlmap->ClearCache();
-    return true;
-  }
-  
   private function GetChildsCount($id) {
     return count($this->items[$id]['childs']);
   }
   
+}//class
+
+class tmenuitem extends Titem {
 }
 ?>

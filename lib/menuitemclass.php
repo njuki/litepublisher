@@ -1,73 +1,70 @@
 <?php
 
-class TMenuItem extends TItem implements  ITemplate {
+class tmenuitem extends TItem implements  ITemplate {
+const ownerprops = array('title', 'url', 'idur', 'parent', 'order');l
   
-  public function GetBaseName() {
-    return 'menus' . DIRECTORY_SEPARATOR . $this->id. DIRECTORY_SEPARATOR. 'index';
+  public function getbasename() {
+    return 'menus' . DIRECTORY_SEPARATOR . $this->id;
   }
   
-  public static function &Instance($id = 0) {
-    if ($id == 0) {
-      $classname= __class__;
-    } else {
-      $menu = &TMenu::Instance();
-      $classname = $menu->GetValue($id, 'class');
-    }
-    return parent::Instance($classname, $id);
+  public static function instance($id = 0) {
+    return parent::instance(__class__, $id);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->Data= array(
+  protected function create() {
+    parent::create();
+    $this->data= array(
+'id' => 0,
     'author' => 0, //not supported
-    'order' => 0,
-    'parent' => 0,
-    'date' => 0,
-    'title' => '',
-    'url' => '',
     'content' => '',
     'rawcontent' => '',
     'keywords' => '',
     'description' => '',
-    'status' => 'published',
     'password' => '',
     'template' => '',
     'theme' => '',
     );
   }
+
+public function __get($name) {
+if (in_array($name, self::ownerprops))return $this->owner->items[$id][$name];
+return parent::__get($name);
+}
+
+public function __set($name, $value) {
+if (in_array($name, self::ownerprops))return $this->owner->setvalue($this->id, $name, $value);
+parent::__set($name, $value);
+}
   
-  //ITemplate
+
+public function getowner() {
+return tmenu::instance();
   //ITemplate
 //public function request($id) {}
 public function gethead() {}
   
   public function gettitle() {
-    return $this->Data['title'];
+    return $this->data['title'];
   }
   
   public function getkeywords() {
-    return $this->Data['keywords'];
+    return $this->data['keywords'];
   }
   
   public function getdescription() {
-    return $this->Data['description'];
+    return $this->data['description'];
   }
   
   public function GetTemplateContent() {
-    $Template = TTemplate::Instance();
-    
-    $GLOBALS['post'] = &$this;
-    $tml = 'menuitem.tml';
-    if ($this->theme <> '') {
-      if (@file_exists($Template->path . $this->theme)) $tml = $this->theme;
-    }
-    return $Template->ParseFile($tml);
+        $GLOBALS['post'] = &$this;
+$theme = ttheme::instance();
+    return $theme->parse($theme->menucontent);
   }
   
   public function &Getsubmenu() {
     global $Options;
     $result = array();
-    $menu = TMenu::Instance();
+    $menu = TMenu::instance();
     $Childs = $menu->items[$this->id]['childs'];
     if (count($Childs) > 0) {
       $Items = &$menu->items;

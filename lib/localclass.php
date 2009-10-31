@@ -50,9 +50,9 @@ class tlocal {
     if (!isset(self::$files)) self::$files = array();
     if (in_array($partialname , self::$files)) return;
     self::$files[] = $partialname ;
-    if (!TFiler::UnserializeFromFile($partialname . '.php', $v) || !is_array($v)) {
+    if (!tfiler::unserialize($partialname . '.php', $v) || !is_array($v)) {
       $v = parse_ini_file($partialname . '.ini', true);
-      TFiler::SerializeToFile($partialname . '.php', $v);
+      tfiler::serialize($partialname . '.php', $v);
     }
     self::$data = $v + self::$data ;
   }

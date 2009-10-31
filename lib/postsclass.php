@@ -87,7 +87,7 @@ $post->db->setvalue($post->id, 'idurl', $post->idurl);
     $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
 }      
       $this->lock();
-      $this->Updated($post);
+      $this->updated($post);
       $post->save();
       $this->unlock();
     $this->Added($post->id);
@@ -126,7 +126,7 @@ $urlmap->setidurl($post->idurl, $post->url);
     $this->unlock();
         $this->edited($post->id);
     $this->changed();
-    $urlmap->ClearCache();
+    $urlmap->clearcache();
   }
   
   public function delete($id) {

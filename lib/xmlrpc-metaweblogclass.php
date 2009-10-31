@@ -2,12 +2,12 @@
 
 class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function MWSetPingCommentStatus(&$Struct, &$Item) {
-    global $Options;
+    global $options;
     if(isset($Struct["mt_allow_comments"])) {
       if(!is_numeric($Struct["mt_allow_comments"])) {
         switch($Struct["mt_allow_comments"]) {
@@ -18,7 +18,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $Item->commentsenabled = true;
           break;
           default:
-          $Item->commentsenabled = $Options->commentsenabled;
+          $Item->commentsenabled = $options->commentsenabled;
           break;
         }
       }
@@ -31,13 +31,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $Item->commentsenabled = true;
           break;
           default:
-          $Item->commentsenabled = $Options->commentsenabled;
+          $Item->commentsenabled = $options->commentsenabled;
           break;
         }
       }
     }
     else {
-      $Item->commentsenabled = $Options->commentsenabled;
+      $Item->commentsenabled = $options->commentsenabled;
     }
     
     if(isset($Struct["mt_allow_pings"])) {
@@ -50,7 +50,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $Item->pingenabled = true;
           break;
           default:
-          $Item->pingenabled = $Options->pingenabled;
+          $Item->pingenabled = $options->pingenabled;
           break;
         }
       }
@@ -63,32 +63,32 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $Item->pingenabled = true;
           break;
           default:
-          $Item->pingenabled = $Options->pingenabled;
+          $Item->pingenabled = $options->pingenabled;
           break;
         }
       }
     }
     else {
-      $Item->pingenabled = $Options->pingenabled;
+      $Item->pingenabled = $options->pingenabled;
     }
   }
   
   protected function MWSetDate(&$Struct, &$item) {
     if (empty($Struct['dateCreated'])) {
-      $item->date = time();
+      $item->posted = time();
     } else {
-      $item->date = $Struct['dateCreated']->getTimestamp();
+      $item->posted = $Struct['dateCreated']->getTimestamp();
     }
   }
   
   //forward implementation
   public function wp_newPage(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 1)) {
+      return $this->error;
     }
     
-    $Menu = &TMenu::Instance();
-    $Item = &TMenuItem::Instance(0);
+    $Menu = &TMenu::instance();
+    $Item = &TMenuItem::instance(0);
     $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
     $Struct = &$args[3];
     $this->WPAssignPage($Struct, $item);
@@ -160,12 +160,12 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $id	= (int) $args[1];
-    $Menu = &TMenu::Instance();
+    $Menu = &TMenu::instance();
     if (!$Menu->ItemExists($id)) {
       return new IXR_Error(404, "Sorry, no such page.");
     }
     
-    $Item = &TMenuItem::Instance($id);
+    $Item = &TMenuItem::instance($id);
     $Struct	= &$args[4];
     $Item->status = $args[5] == 'publish' ? 'published' : 'draft';
     $this->WPAssignPage($Struct, $item);
@@ -174,11 +174,11 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   public function getCategories(&$args) {
-    global $Options;
+    global $options;
     if (!$this->CanLogin($args,1)) {
       return $this->Error;
     }
-    $Categories = &TCategories::Instance();
+    $Categories = &TCategories::instance();
     $Items = &$Categories->items;
     $Result = array();
     foreach ( $Items as $id => $Item) {
@@ -188,8 +188,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       'description' => $Item['name'],
       'categoryName' => $Item['name'],
       'title' => $Item['name'],
-      'htmlUrl' => $Options->url . $Item['url'],
-      'rssUrl' =>  $Options->url . $Item['url']
+      'htmlUrl' => $options->url . $Item['url'],
+      'rssUrl' =>  $options->url . $Item['url']
       );
     }
     
@@ -206,8 +206,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return $this->Error;
     }
     
-    $Posts = &TPosts::Instance();
-    $Item = &TPost::Instance(0);
+    $Posts = &TPosts::instance();
+    $Item = &TPost::instance(0);
     $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
     $this->MWSetPost($Struct, $Item);
     $Posts->Add($Item);
@@ -225,12 +225,12 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $id=(int) $args[0];
-    $Posts = &TPosts::Instance();
+    $Posts = &TPosts::instance();
     if (!$Posts->ItemExists($id)) {
       return new IXR_Error(404, "Invalid post id.");
     }
     
-    $Item = &TPost::Instance($id);
+    $Item = &TPost::instance($id);
     $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
     $this->MWSetPost($Struct, $Item);
     $Posts->Edit($Item);
@@ -243,25 +243,25 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $id=(int) $args[0];
-    $Posts = &TPosts::Instance();
+    $Posts = &TPosts::instance();
     if (!$Posts->ItemExists($id)) {
       return new IXR_Error(404, "Invalid post id.");
     }
     
-    $Item = &TPost::Instance($id);
+    $Item = &TPost::instance($id);
     return $this->GetStruct($Item);;
   }
   
   private function GetStruct(&$Item) {
-    global $Options;
+    global $options;
     return array(
     'dateCreated' => new IXR_Date($Item->date),
     'userid' => '1',
     'postid' =>  (string) $Item->id,
     'description' => $Item->rawcontent,
     'title' => $Item->title,
-    'link' => $Options->url . $Item->url,
-    'permaLink' => $Options->url . $Item->url,
+    'link' => $options->url . $Item->url,
+    'permaLink' => $options->url . $Item->url,
     'categories' => $Item->catnames,
     'mt_excerpt' => $Item->excerpt,
     'mt_text_more' => '',
@@ -283,11 +283,11 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $count = (int) $args[3];
-    $Posts = &TPosts::Instance();
+    $Posts = &TPosts::instance();
     $list = $Posts->GetRecent($count);
     $Result = array();
     foreach ($list as $id) {
-      $Item = &TPost::Instance($id);
+      $Item = &TPost::instance($id);
       $Result[] = $this->GetStruct($Item);
     }
     
@@ -295,7 +295,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   public function newMediaObject(&$args) {
-    global $Options;
+    global $options;
     if (!$this->CanLogin($args, 1)) {
       return $this->Error;
     }
@@ -309,7 +309,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return new IXR_Error(500, "Empty filename");
     }
     
-    $files = &TFiles::Instance();
+    $files = &TFiles::instance();
     $id = $files->AddFile($filename, $data['bits'], '', $overwrite );
     if (!$id) {
       return new IXR_Error(500, "Could not write file $name");
@@ -317,7 +317,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     return array(
     'file' => $files->items[$id]['filename'],
-    'url' => $Options->url . $files->Geturl($id),
+    'url' => $options->url . $files->Geturl($id),
     'type' => $mimetype
     );
   }
