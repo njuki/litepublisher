@@ -21,6 +21,10 @@ $value = $value ? 'checked="checked"' : '';
 }
  $this->data['$'.$name] = $value; 
 }
+
+public function add(array $a) {
+foreach ($a as $key => $value) $this->__set($key, $value);
+}
 }
 
 class THtmlResource  {
@@ -59,8 +63,9 @@ class THtmlResource  {
     }
 
 if ($args == null) $args = new targs();
-    $s = strtr ($s, $args->data);    
 $theme = ttheme::instance();
+$s = preg_replace('/\[area:(\w*+)\]/i', $theme->admin['area'],  $s);
+    $s = strtr ($s, $args->data);    
 return $theme->parse($s);
   }
 

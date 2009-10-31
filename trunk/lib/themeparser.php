@@ -50,14 +50,23 @@ $theme->post = $post;
 
 $theme->menucontent = $this->parsetag($content, 'menucontent', '');
 
-$navi = $this->parsetag($content, 'navi', '');
-$theme->navi['prev'] = $this->parsetag($navi, 'prev', '%s');
-$theme->navi['next'] = $this->parsetag($navi, 'next', '');
-$theme->navi['link'] = $this->parsetag($navi, 'link', '');
-$theme->navi['current'] = $this->parsetag($navi, 'current', '');
-$theme->navi['navi'] = $navi;
+$this->parsenavi($this->parsetag($content, 'navi', ''));
+$this->parseadmin($this->parsetag($content, 'admin', '');
 }
 
+private function parsenavi($s) {
+$theme = $this->theme;
+$theme->navi['prev'] = $this->parsetag($s, 'prev', '%s');
+$theme->navi['next'] = $this->parsetag($s, 'next', '');
+$theme->navi['link'] = $this->parsetag($s, 'link', '');
+$theme->navi['current'] = $this->parsetag($s, 'current', '');
+$theme->navi['navi'] = $s;
+}
+
+private function parseadmin($s) {
+$theme = $this->theme;
+$theme->admin['area'] = trim($this->parsetag($s, 'area', ''));
+}
 private function parsecomments($s) {
 $theme = $this->theme;
     $comments = $this->parsetag($s, 'comments', '');

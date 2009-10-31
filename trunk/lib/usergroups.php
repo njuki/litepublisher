@@ -28,8 +28,8 @@ return false;
 
 public function hasright($who, $group) {
 if ($who == $group) return  true;
+if (($who == 'admin') || ($group == 'nobody')) return true;
 switch ($who) {
-case 'admin': return true;
 case 'editor: return $group == 'author';
 case 'moderator': return $group == 'subscriber';
 }
