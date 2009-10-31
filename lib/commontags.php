@@ -1,6 +1,7 @@
 <?php
 
 class TCommonTags extends TItems implements  ITemplate {
+  public $contents;
   //public $sortname;
   //public $showcount;
   public $PermalinkIndex;
@@ -18,6 +19,7 @@ class TCommonTags extends TItems implements  ITemplate {
     
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
+    $this->contents = new TTagContent($this);
   }
 
 protected function gettableitems() {
@@ -25,7 +27,8 @@ global $db;
 return $db->prefix . $this->table . 'items';
 }
 
-public function getitem($id) {
+public 
+function getitem($id) {
 $result = parent::getitem($id);
 if (dbversion && empty($result['url'])) {
 $urlmap = turlmap::instance();
@@ -153,8 +156,6 @@ $urlmap->clearcache();
     'title' => $title,
     'url' =>$url,
 'idurl' =>         $urlmap->Add($url, get_class($this),  $this->autoid),
-    'description ' => '',
-    'keywords' => '',
     'items' => array()
     );
     $this->unlock();
@@ -217,11 +218,12 @@ return;
       }
       unset($this->items[$id]);
       $this->Save();
-      $urlmap = &turlmap::instance();
+      $urlmap = turlmap::instance();
       $urlmap->DeleteClassArg(get_class($this), $id);
-      $urlmap->ClearCache();
-      $this->Deleted($id);
+      $urlmap->clearcache();
+      $this->deleted($id);
     }
+$this->contents->delete($id);
   }
   
   public function createnames($list) {
@@ -320,23 +322,27 @@ if ($this->id == '') return $this->newname;
   }
   
   public function getkeywords() {
-    return $this->title;
+$result = $this->contents->getvalue($this->id, 'keywords');
+if ($result == '') $result = $this->title;
+    return $result;
   }
   
   public function getdescription() {
-    return $this->items[$this->id]['description'];
+$result = $this->contents->getvalue($this->id, 'description');
+if ($result == '') $result = $this->title;
+    return $result;
   }
   
   public function GetTemplateContent() {
     global $classes, $options, $urlmap;
-    $result = '';
+$result = '';
     if ($this->id == 0) {
       $result .= "<ul>\n";
 $result .= $this->GetSortedList($this->sortname, 0);
       $result .= "</ul>\n";
       return $result;
     }
-    
+        $result .= $this->contents->getcontent($this->id);
 if (dbversion) {
 $res = $this->db->query("select post from $this->itemstable where tag = $this->id");
 $items = $db->res2array($res);
@@ -381,5 +387,89 @@ $items = $db->res2array($res);
   }
   
 }//class
+
+class TTagContent extends TDataClass {
+private $owner;
+
+public function __construct(TCommonTags $owner) {
+parent::__construct();
+$this->owner = $owner;
+}
+
+ private function getfilename($id) {
+    global $paths;
+    return $paths['data'] . $this->owner->basename . DIRECTORY_SEPARATOR . $id . '.php';
+  }
+
+public function getitem($id) {
+if (!isset($this->items[$id])) {
+$item = array(
+'description' => '',
+'content' => '',
+'rawcontent' => ''
+);
+
+if (dbversion) {
+if ($r = $this->db->getitem($id)) $item = $r;
+} else {
+tfiler::unserialize($this->getfilename($id), $item);
+}
+$this->items[$id] = $item;
+}
+return $this->items[$id];
+}
+
+public function setitem($id, $item) {
+if (isset($this->items[$id]) && ($this->items[$id] == $item)) return;
+$this->items[$id] = $item;
+if (dbversion) {
+$this->db->updateassoc($item);
+} else {
+    tfiler::serialize($this->getfilename($id), $item);
+}
+}
+
+public function edit($id, $content, $description, $keywords) {
+      $filter = TContentFilter::instance();
+$item =array(
+'content' => $filter->GetPostContent($content),
+'rawcontent' => $content;
+'description' => $description,
+'keywords' => $keywords
+)
+$this->setitem($id, $item);
+}
+
+  public function delete($id) {
+if (dbversion) {
+$this->db->iddelete($id);
+} else {
+    @unlink($this->getfilename($id));
+}
+  }
+  
+public function getvalue($id, $name) {
+$item = $this->getitem($id);
+return $item[$name];
+}
+
+  public function getcontent($id) {
+return $this->getvalue($id, 'content');
+  }
+  
+  public function setcontent($id, $content) {
+$item = $this->getitem($id);
+      $filter = TContentFilter::instance();
+    $item['rawcontent'] = $content,
+$item['content'] = $filter->GetPostContent($content);
+    $item['description'] = TContentFilter::GetExcerpt($content, 80);
+$this->setitem($id, $item);
+  }
+  
+  public function getdescription() {
+return $this->getvalue($id, 'description');
+  }
+  
+  }//class
 
 ?>
