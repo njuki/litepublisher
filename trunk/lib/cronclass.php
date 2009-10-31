@@ -231,10 +231,10 @@ $this->table = 'cron';
     global $domain;
     $host = $domain;
     $filename = $this->path .'cronchain.php';
-    if(!TFiler::UnserializeFromFile($filename, $list))  return;
+    if(!tfiler::unserialize($filename, $list))  return;
     if (isset($list[$host]))  unset($list[$host]);
     $item = array_splice($list, 0, 1);
-    TFiler::SerializeToFile($filename, $list);
+    tfiler::serialize($filename, $list);
     if ($item) {
       $this->PingHost(key($item), $item[key($item)]);
     }
@@ -242,12 +242,12 @@ $this->table = 'cron';
   
   private function AddToChain($host, $path) {
     $filename = $this->path .'cronchain.php';
-    if(!TFiler::UnserializeFromFile($filename, $list)) {
+    if(!tfiler::unserialize($filename, $list)) {
       $list = array();
     }
     if (!isset($list[$host])) {
       $list[$host] = $path;
-      TFiler::SerializeToFile($filename, $list);
+      tfiler::serialize($filename, $list);
     }
   }
   

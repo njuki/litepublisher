@@ -72,9 +72,9 @@ return $theme->parse($s);
   public function load($FileName) {
     global $paths;
     $PartFileName = $paths['languages']. $FileName;
-    if (!TFiler::UnserializeFromFile($PartFileName . '.php', $v) || !is_array($v)) {
+    if (!tfiler::unserialize($PartFileName . '.php', $v) || !is_array($v)) {
       $v = parse_ini_file($PartFileName . '.ini', true);
-      TFiler::SerializeToFile($PartFileName . '.php', $v);
+      tfiler::serialize($PartFileName . '.php', $v);
     }
     $this->ini = $v + $this->ini;
   }

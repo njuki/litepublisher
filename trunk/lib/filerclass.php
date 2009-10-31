@@ -72,7 +72,7 @@ self::DeleteFilesRegexp($filename. DIRECTORY_SEPARATOR, $regexp);
     return $result;
   }
   
-  public static function UnserializeFromFile($FileName, &$v) {
+  public static function unserialize($FileName, &$v) {
     if ($s = @file_get_contents($FileName)) {
       $s =PHPUncomment($s);
       if (!empty($s)) {
@@ -83,7 +83,7 @@ self::DeleteFilesRegexp($filename. DIRECTORY_SEPARATOR, $regexp);
     return false;
   }
   
-  public static function SerializeToFile($FileName, &$v) {
+  public static function serialize($FileName, &$v) {
     $s = serialize($v);
     $s =  PHPComment($s);
     file_put_contents($FileName, $s);
