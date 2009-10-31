@@ -6,6 +6,7 @@ public $menu;
 public $navi;
 public $widgets;
 public $comments;
+public $admin;
 
 public static function instance() {
 return getinstance(__class__);
@@ -28,6 +29,7 @@ $this->addmap('menu', array());
 $this->addmap('content', array());
 $this->addmap('widgets', array());
 $this->addmap('comments', array());
+$this->addmap('admin', array());
 }
 
 public function load() {

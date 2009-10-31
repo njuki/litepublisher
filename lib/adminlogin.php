@@ -10,6 +10,7 @@ class TAdminLogin extends TAdminPage {
   protected function create() {
     parent::create();
     $this->basename = 'login';
+$this->group = 'nobody';
   }
   
   public function auth() { }
