@@ -1,13 +1,13 @@
 <?php
 
-class TAdminMenu extends TAdminPage {
+class tadminmenumanager extends tadminmenuitem {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'menu';
   }
   

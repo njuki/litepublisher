@@ -158,12 +158,15 @@ $result = $icons->geturl($icon);
   
   public function getmenu() {
     global $paths;
-if ($this->isadmin) return $this->getadminmenu();
-    $filename = $paths['cache'] . "$this->tml.menu.php";
-    if (@file_exists($filename)) return file_get_contents($filename);
-
+if ($this->isadmin) {
 $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && isset($theme->menu['id']);
+$adminmenu = tadminmenu::instance();
+return $adminmenu->getmenu($hovermenu);
+}
+
+    $filename = $paths['cache'] . "$this->tml.menu.php";
+    if (@file_exists($filename)) return file_get_contents($filename);
 
 $menu = tmenu::instance();
     $result = $menu->getmenu($hovermenu);
