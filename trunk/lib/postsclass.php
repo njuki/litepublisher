@@ -31,6 +31,22 @@ if ($result = tpost::instance($id)) return $result;
     }
     return $this->error("Item $id not found in class ". get_class($this));
   }
+
+public function getcount() {
+    if (dbversion) {
+      return $this->db->getcount("status<> 'deleted'");
+    } else {
+      return count($this->items);
+    }
+}
+
+public function getrange($from, $count) {
+if (dbversion) {
+return $this->db->idslect("status <> 'deleted' order by posted desc limit 
+} else {
+return    array_slice($this->items, $from, $count, true);
+}
+}
   
  public function GetWidgetContent($id, $sitebar) {
     global $options;

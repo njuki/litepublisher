@@ -5,41 +5,45 @@ class tadminposts extends tadminmenuitem {
   public static function instance() {
     return getinstance(__class__);
   }
-  
-  public function getcontent() {
-    global $options;
-    if (!isset($_GET['action'])) return $this->getlist();
+
+ public function getcontent() {
+if (isset($_GET['action']) && in_array($_GET['action'], 'array('delete', 'setdraft', 'publish')) {
+$action = $_GET['action'];
+} else {
+return $this->getlist();
+}
+
        $id = (int) $_GET['postid'];
     $posts= tposts::instance();
     if (!$posts->itemexists($id)) return $this->notfound;
     $post = tpost::instance($id);
-    
-    $result ='';
-if ($this->confirmed) {
+
+if (!$this->confirmed) {
+$args = new targs()
+$args->id = $id;
+$args->action = $action;
+$lang = $this->lang;
+$args->confirm = sprintf($lang->confirm, $lang->$action, "<a href='$post->link'>$post->title</a>");
+return $this->html->confirmform($args);
+}
+
+$h2 = $this->html->h2; 
       switch ($_GET['action']) {
         case 'delete' :
         $posts->delete($id);
-        break;
+return $h2->confirmeddelete;
         
         case 'setdraft':
         $post->status = 'draft';
         $posts->edit($post);
-        break;
+return $h2->confirmedsetdraft;
         
         case 'publish':
         $post->status = 'published';
         $posts->edit($post);
-        break;
+return $h2->confirmedpublish;
       }
 
-$s = $this->html->h2->confirmed;
-      $result .= sprintf($s, tlocal::$data['poststatus'][$_GET['action']], "<a href='$options->url$post->url'>$post->title</a>");
-    } else {
-
-    $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$options->url$post->url'>$post->title</a>");
-      eval('$result .= "'. $html->confirmform . '\n";');
-    }
-    return $result;
   }
   
   private function getlist() {
@@ -47,14 +51,15 @@ $s = $this->html->h2->confirmed;
     $result = '';
     
     $posts = tposts::instance();
-    $from = max(0, count($posts->items) - $urlmap->pagenumber * 100);
-    $items = array_slice($posts->items, $from, 100, true);
+$count = 20;
+    $from = max(0, $posts->count - $urlmap->page * $count);
+    $items = $posts->getrange($from, $count);
     eval('$s = "'. $html->count . '\n";');
     $result .=sprintf($s, $from, $from + count($items), count($posts->items));
     eval('$result .= "' . $html->listhead . '\n";');
     $list = '';
     foreach ($items  as $id => $item) {
-      $post = &TPost::instance($id);
+      $post = tpost::instance($id);
       $status = TLocal::$data['poststatus'][$post->status];
       eval('$list="\n' . $html->itemlist . '" . $list;');
     }

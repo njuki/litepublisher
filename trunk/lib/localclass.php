@@ -1,5 +1,32 @@
 <?php
 
+class targs {
+public $data;
+
+public function __construct($thisthis = null) {
+global $options;
+ $this->data = array(
+'$options->url' => $options->url,
+'{$options->q}' => $options->q,
+'$options->files' => $options->files
+);
+if (isset($thisthis)) $this->data['$this' => $thisthis;
+ }
+
+public function __get($name) { return $this->data[$name]; }
+
+public function __set($name, $value) {
+if (is_bool($value)) {
+$value = $value ? 'checked="checked"' : '';
+}
+ $this->data['$'.$name] = $value; 
+}
+
+public function add(array $a) {
+foreach ($a as $key => $value) $this->__set($key, $value);
+}
+}
+
 class tlocal {
   public static $data;
   private static $files;
@@ -11,6 +38,10 @@ class tlocal {
     if (isset(self::$data['default'][$name])) return self::$data['default'][$name];
     return '';
   }
+
+public function __call($name, $args) {
+return strtr ($this->__get($name), $args->data);    
+}
   
   public static function instance($section = '') {
     $result = getinstance(__class__);
