@@ -1,7 +1,7 @@
 <?php
 
 class tmenuitem extends TItem implements  ITemplate {
-const ownerprops = array('title', 'url', 'idur', 'parent', 'order');l
+const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');l
   
   public function getbasename() {
     return 'menus' . DIRECTORY_SEPARATOR . $this->id;
@@ -36,9 +36,10 @@ if (in_array($name, self::ownerprops))return $this->owner->setvalue($this->id, $
 parent::__set($name, $value);
 }
   
-
 public function getowner() {
 return tmenu::instance();
+}
+
   //ITemplate
 //public function request($id) {}
 public function gethead() {}
@@ -61,24 +62,10 @@ $theme = ttheme::instance();
     return $theme->parse($theme->menucontent);
   }
   
-  public function &Getsubmenu() {
-    global $Options;
-    $result = array();
-    $menu = TMenu::instance();
-    $Childs = $menu->items[$this->id]['childs'];
-    if (count($Childs) > 0) {
-      $Items = &$menu->items;
-      foreach ($Childs as $id) {
-        $result[] = array(
-        'url' =>       $Options->url . $Items[$id]['url'],
-        'title' =>  $Items[$id]['title'],
-        'subitems' => array()
-        );
-      }
-    }
-    return $result;
-  }
-  
+  public function getsubmenuwidget() {
+return $this->owner->getsubmenuwidget($this->id);
+}
+
 }
 
 ?>

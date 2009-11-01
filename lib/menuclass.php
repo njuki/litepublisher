@@ -2,7 +2,6 @@
 
 class TMenu extends TItems {
 public $tree;
-  protected $home;
 
     public static function instance() {
     return getinstance(__class__);
@@ -11,11 +10,15 @@ public $tree;
   protected function create() {
     parent::create();
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
-    $this->addmap('home', array());
 $this->addmap('tree', array());
     $this->addevents('edited');
   }
-  
+
+public function getdir() {
+global $paths;
+return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
+}
+   
   public function add(tmenuitem $item) {
     $Linkgen = TLinkGenerator::instance();
     if ($item->url == '' ) {
@@ -28,12 +31,12 @@ $this->addmap('tree', array());
     }
 
         $urlmap = turlmap::instance();
-
       $item->id = ++$this->autoid;
     $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
-}      
       $this->lock();
-      $this->updated($item);
+$this->items[$this->autoid[ = $this->items[0];
+unset($this->items[0]);
+      $this->sort();
       $item->save();
       $this->unlock();
     $this->Added($post->id);
@@ -41,11 +44,6 @@ $this->addmap('tree', array());
     return $item->id;
   }
 
-public function getdir() {
-global $paths;
-return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
-}
-   
 public function edit(tmenuitem $item) {
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($item->idurl);
@@ -70,24 +68,23 @@ $urlmap->setidurl($item->idurl, $item->url);
     }
 
     $this->lock();    
-    $this->updated($item);
+    $this->sort();
     $item->save();
     $this->unlock();
         $this->edited($item->id);
-
     $urlmap->clearcache();
   }
 
   public function  delete($id) {
     if (!$this->itemexists($id)) return false;
-    if ($this->GetChildsCount($id) > 0) return false;
+    if ($this->haschilds($id)) return false;
 
     $urlmap = turlmap::instance();
-$urmap->DeleteClassArg($classes->classes['post'], $id);
+$urmap->delete($this->items[$id]['url']);
 
     $this->lock();
     unset($this->items[$id]);
-    $this->Sort();
+    $this->sort();
     $this->unlock();
     $this->deleted($id);
 @unlink($this->dir . "$id.php");
@@ -96,71 +93,103 @@ $urmap->DeleteClassArg($classes->classes['post'], $id);
     return true;
   }
   
-   public function updated(tmenuitem $item) {
-    $this->sort();
-  }
-  
   public function sort() {
-    global $paths;
-    $this->home = array();
-    
+$this->tree = $this->getsubtree(0);
+}
+
+private function getsubtree($parent) {
+$result = array();
+// первый шаг найти всех детей и отсортировать
+$sort= array();
     foreach ($this->items as $id => $item) {
-      $this->items[$id]['childs'] = array();
-      if (($item['parent'] == 0)  && ($item['status'] == 'published') && ($item['date'] <= time()) ) {
-        $this->home[$id] = (int) $item['order'];
+      if (($item['parent'] == $parent) && ($item['status'] == 'published') 
+$sort[$id] = (int) $item['order'];
       }
-    }
-    
-    foreach ($this->items as $id => $item) {
-      if ($item['parent'] > 0) {
-        $this->items[$item['parent']]['childs'][] = $id;
-      }
-    }
-    
-    arsort($this->home,  SORT_NUMERIC);
-    $this->home = array_reverse($this->home, true);
-    $this->Save();
+       arsort($sort, SORT_NUMERIC);
+$sort = array_reverse($sort, true);
+
+foreach ($sort as $id => $order) {
+$item = $this->items[$id];
+$item['subitems'] = $this->getsubtree($id);
+$result[]  = $item;
+}
+return $result;
   }
-  
-  public function GetHomeLinks() {
-    global $Options;
-    $Result = array();
-    foreach ($this->home as $id => $order) {
-      $title =  $this->items[$id]['title'];
-      $Result[] = "<a href='". $Options->url . $this->items[$id]['url'] . "' title='$title'>$title</a>";
+
+private function geparents($id) {
+$result = array();
+$id = $this->items[$id]['parent'];
+while ($id != 0) {
+array_unshift ($result, $id);
+$id = $this->items[$id]['parent'];
+}
+return $result;
+}  
+
+private function getchilds($id) {
+if ($id == 0) return $this->tree;
+$parents = $this->getparents($id);
+$parents[] = $id;
+$result = $this->tree;
+foreach ($parents as $parent) {
+foreach ($tree as $item) {
+if ($item['id'] == $parent) {
+$result = $item['subitems'];
+continue;
+}
+}
+}
+return $result;
+}
+
+public function getsubmenuwidget($id) {
+global $options;
+$result = '';
+$childs = $this->getchilds($id);
+    if (count($childs) == 0) return '';
+
+$theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('menu');
+$tml .= "\n";
+    foreach ($childs as $item) {
+      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
     }
-    return $Result;
+
+$sitebars = tsitebars::instance();    
+    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $sitebars->current);
   }
-  
-  public function GetMenuList() {
-    global $Options;
-    $result = array();
-    foreach ($this->home as $id => $order) {
-      $subitems = array();
-      if ($this->GetChildsCount($id) > 0) {
-        foreach ($this->items[$id]['childs'] as $idchild) {
-          $subitems[] = array(
-          'url' => $Options->url . $this->items[$idchild]['url'],
-          'title' =>  $this->items[$idchild]['title']
-          );
-        }
-      }
-      
-      $result[] = array(
-      'url' =>       $Options->url . $this->items[$id]['url'],
-      'title' =>  $this->items[$id]['title'],
-      'subitems' => $subitems
-      );
+
+public function getmenu($hover) {
+global $options;
+    if (count($this->tree) == 0) return '';
+if ($hover) return $this->getsubmenu($this->tree);
+
+    $result = '';
+$theme = ttheme::instance();
+    $tml = $theme->menu['item'];
+    foreach ($this->tree as $item) {
+      $result .= sprintf($tml, $options. $item['url'], $item['title'], '');
     }
     return $result;
   }
-  
-  public function GetTitle($id) {
-    return $this->items[$id]['title'];
+
+private function getsubmenu(&$tree) {
+    $result = '';
+$theme = ttheme::instance();
+    $tml = $theme->menu['item'];
+    foreach ($tree as $item) {
+      $subitems = count($item['subitems']) > 0 ? $this->getsubmenu($item['subitems'] : '';
+      $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
+    }
+    return $result;
   }
-  
-  private function GetChildsCount($id) {
-    return count($this->items[$id]['childs']);
+
+    public function haschilds($id) {
+foreach ($this->items as $id => $item) {
+if ($item['parent'] == $id) return true;
+}
+return false;
+
   }
   
 }//class

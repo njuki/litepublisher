@@ -64,7 +64,8 @@ $this->themechanged();
   public function getsitebar() {
 $sitebars = tsitebars::instance();
     $result = '';
-    if (($sitebars->current == 0) && !$this->hovermenu) $result .= $this->Getsubmenuwidget();
+    if (($sitebars->current == 0) && !$this->hovermenu && $this->contextHasProp('submenuwidget')) $result .= $this->context->submenuwidget;
+
     $result .= $sitebars->getcurrent();
     return $result;
   }
@@ -108,6 +109,11 @@ $sitebars = tsitebars::instance();
     @header('X-Pingback: $options->url/rpc.xml');
     ?>";
   }
+
+public function getisadmin() {
+    $Urlmap = TUrlmap::instance();
+return $Urlmap->admin;
+}
   
   //html tags
   public function gettitle() {
@@ -126,7 +132,6 @@ $sitebars = tsitebars::instance();
     return $result;
   }
   
-
 public function geticon() {
 global $options;
 if ($this->contextHasProp('icon')) {
@@ -153,59 +158,20 @@ $result = $icons->geturl($icon);
   
   public function getmenu() {
     global $paths;
-    $filename = $paths['cache'] . 'menu.php';
-    if (@file_exists($filename)) {
-      return file_get_contents($filename);
-    }
-    
-    $result = $this->GetMenuItems();
+if ($this->isadmin) return $this->getadminmenu();
+    $filename = $paths['cache'] . "$this->tml.menu.php";
+    if (@file_exists($filename)) return file_get_contents($filename);
+
+$theme = ttheme::instance();
+    $hovermenu = $this->hovermenu && isset($theme->menu['id']);
+
+$menu = tmenu::instance();
+    $result = $menu->getmenu($hovermenu);
     file_put_contents($filename, $result);
     @chmod($filename, 0666);
     return $result;
   }
   
-  private function GetMenuItems() {
-$theme = ttheme::instance();
-    $jsmenu = $this->hovermenu && isset($thememenu['id']);
-    $Menu = TMenu::instance();
-    $items = $Menu->GetMenuList();
-    if (count($items) == 0) return '';
-    $menuitem = $this->theme['menu']['item'];
-    $result = '';
-    foreach ($items as $item) {
-      $subitems = '';
-      if ($jsmenu &&(count($item['subitems']) > 0)) {
-        foreach ($item['subitems'] as $subitem) {
-          $subitems .= sprintf($menuitem , $subitem['url'], $subitem['title'], '') . "\n";
-        }
-        $subitems = sprintf($this->theme['menu']['subitems'], $subitems) . "\n";
-      }
-      
-      $result .= sprintf($menuitem , $item['url'], $item['title'], $subitems) . "\n";
-    }
-    $result = str_replace("'", '"', $result);
-    return $result;
-  }
-  
-  public function getsubmenuwidget() {
-    if (!method_exists($this->context, 'Getsubmenu'))  return '';
-    
-    $items = $this->context->Getsubmenu();
-    if (count($items) == 0) return '';
-    $menuitem = $this->theme['menu']['item'];
-    $content = '';
-    foreach ($items as $item) {
-      $content .= sprintf($menuitem , $item['url'], $item['title'], '') . "\n";
-    }
-    $content = str_replace("'", '"', $content);
-    
-    $result = $this->GetBeforeWidget ('submenu');
-    $result .= $content;
-    $result .= $this->GetAfterWidget();
-    return $result;
-  }
-
-
 public function gethovermenu() {
 return isset($this->javascripts['hovermenu']);
 }  
@@ -232,7 +198,7 @@ $this->save();
 
 public function deletejavascript($name) {
 if (isset($this->javascripts[$name])) {
-$thiunset(s->javascripts[$name]);
+unset($this->javascripts[$name]);
 $this->save();
 }
 }
@@ -250,8 +216,7 @@ $result .= "\n";
 }
 
     $result .= $this->Onhead();
-    $Urlmap = TUrlmap::instance();
-    if ($Urlmap->IsAdminPanel) $result .= $this->OnAdminHead();
+    if ($this->isadmin) $result .= $this->OnAdminHead();
     return $result;
   }
   
