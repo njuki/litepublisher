@@ -9,9 +9,10 @@ public $tree;
   
   protected function create() {
     parent::create();
+    $this->addevents('edited', 'onprocessform');
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
 $this->addmap('tree', array());
-    $this->addevents('edited');
+
   }
 
 public function getdir() {
@@ -78,10 +79,8 @@ $urlmap->setidurl($item->idurl, $item->url);
   public function  delete($id) {
     if (!$this->itemexists($id)) return false;
     if ($this->haschilds($id)) return false;
-
     $urlmap = turlmap::instance();
 $urmap->delete($this->items[$id]['url']);
-
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
@@ -91,6 +90,14 @@ $urmap->delete($this->items[$id]['url']);
 @unlink($this->dir . "$id.bak.php");
     $urlmap->clearcache();
     return true;
+  }
+
+    public function haschilds($id) {
+foreach ($this->items as $id => $item) {
+if ($item['parent'] == $id) return true;
+}
+return false;
+
   }
   
   public function sort() {
@@ -184,22 +191,11 @@ $theme = ttheme::instance();
     return $result;
   }
 
-    public function haschilds($id) {
-foreach ($this->items as $id => $item) {
-if ($item['parent'] == $id) return true;
-}
-return false;
-
-  }
-  
 }//class
 
 class tmenuitem extends TItem implements  ITemplate {
 const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');l
-  
-  public function getbasename() {
-    return 'menus' . DIRECTORY_SEPARATOR . $this->id;
-  }
+  public $formresult;
   
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
@@ -220,12 +216,13 @@ const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');l
     );
   }
 
-public function getbasename() {
-return 'menus' . DIRECTORY_SEPARATOR. $this->id;
-}
-
+  public function getbasename() {
+    return 'menus' . DIRECTORY_SEPARATOR . $this->id;
+  }
+  
 public function __get($name) {
-if (in_array($name, self::ownerprops))return $this->owner->items[$id][$name];
+    if ($name == 'content') return $this->formresult . $this->getcontent();
+if (in_array($name, self::ownerprops))return $this->owner->items[$this->id][$name];
 return parent::__get($name);
 }
 
@@ -239,7 +236,23 @@ return tmenu::instance();
 }
 
   //ITemplate
-//public function request($id) {}
+public function request($id) {
+parent::request(4id);
+    if (isset($_POST) && (count($_POST) > 0)) {
+      if (get_magic_quotes_gpc()) {
+        foreach ($_POST as $name => $value) {
+          $_POST[$name] = stripslashes($_POST[$name]);
+        }
+      }
+      $this->formresult.= $this->processform();
+    }
+}
+
+
+public function processform() {
+return $this->owner->onprocessform($this->id);
+}
+
 public function gethead() {}
   
   public function gettitle() {
@@ -253,12 +266,18 @@ public function gethead() {}
   public function getdescription() {
     return $this->data['description'];
   }
+
+public function getcontent() {
+return $this->data['content');
+}
   
   public function GetTemplateContent() {
         $GLOBALS['post'] = &$this;
 $theme = ttheme::instance();
     return $theme->parse($theme->menucontent);
   }
+
+
   
   public function getsubmenuwidget() {
 return $this->owner->getsubmenuwidget($this->id);

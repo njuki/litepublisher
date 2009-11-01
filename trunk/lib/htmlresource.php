@@ -65,6 +65,13 @@ class THtmlResource  {
 if ($args == null) $args = new targs();
 $theme = ttheme::instance();
 $s = preg_replace('/\[area:(\w*+)\]/i', $theme->admin['area'],  $s);
+/*
+ğåàëèçîâàòü ïàğñèíã ÷åğåç callback
+    $s = htmlspecialchars($s);
+    $s = str_replace('"', '&quot;', $s);
+    $s = str_replace("'", '&#39;', $s);
+
+*/
     $s = strtr ($s, $args->data);    
 return $theme->parse($s);
   }

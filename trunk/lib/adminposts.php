@@ -1,20 +1,15 @@
 <?php
 
-class TAdminPosts extends TAdminPage {
+class tadminposts extends tadminmenuitem {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'posts';
-  }
-  
-  public function Getcontent() {
-    global $Options;
+  public function getcontent() {
+    global $options;
     if (!isset($_GET) || !isset($_GET['action'])) {
-      return $this->GetPostsList();
+      return $this->getlist();
     }
     
     $id = (int) $_GET['postid'];
@@ -46,17 +41,17 @@ class TAdminPosts extends TAdminPage {
         break;
       }
       eval('$s ="'. $html->confirmed. '\n";');
-      $result .= sprintf($s, TLocal::$data['poststatus'][$_GET['action']], "<a href='$Options->url$post->url'>$post->title</a>");
+      $result .= sprintf($s, TLocal::$data['poststatus'][$_GET['action']], "<a href='$options->url$post->url'>$post->title</a>");
     } else {
       $lang->section = $this->basename;
-    $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$Options->url$post->url'>$post->title</a>");
+    $confirm = sprintf($lang->confirm, $lang->{$_GET['action']}, "<a href='$options->url$post->url'>$post->title</a>");
       eval('$result .= "'. $html->confirmform . '\n";');
     }
     return $result;
   }
   
   public function GetPostsList() {
-    global $Options, $Urlmap;
+    global $options, $Urlmap;
     $result = '';
     $html = &THtmlResource::Instance();
     $html->section = $this->basename;
