@@ -142,6 +142,10 @@ $lang = tlocal::instance($this->name);
 return $result;
 }
 
+public function getlang() {
+return tlocal::instance($this->name);
+}
+
   public function Getconfirmed() {
     return !isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
   }
@@ -150,8 +154,8 @@ return $result;
     return str_replace('checkAll(document.getElementById("form"));', "checkAll(document.getElementById('form'));",    str_replace("'", '"', $s));
   }
   
-  public function notfound() {
-return $this->html->notfound();
+  public function getnotfound() {
+return $this->html->h2->notfound;
   }
   
   public function Getadminurl($section, $arg) {
