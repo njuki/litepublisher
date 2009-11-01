@@ -6,6 +6,8 @@ class turlmap extends TItems {
   public $urlid;
   public $page;
   public $uripath;
+public $itemrequested;
+public $argtree;
   public $is404;
   public $admin;
   public $mobile;
@@ -50,7 +52,7 @@ $this->prepareurl($host, $url);
   }
   
   protected function DoRequest($url) {
-    if ($item = $this->finditem($url)) return $this->PrintContent($item);
+    if ($this->itemreqested = $this->finditem($url)) return $this->PrintContent($this->itemreqested);
     $this->NotFound404();
   }
 
@@ -112,7 +114,7 @@ $url = trim($url, '/');
 $j = -1;
 while($i = strrpos($url, '/', $j)) {
 if ($result = $this->query('/' . substr($url, 0, $i + 1))) {
-$result['arg'] = substr($url, $i +1);
+$this->argtree = substr($url, $i +1);
 return $result;
 }
 $j = - (strlen($url) - $i + 1);
