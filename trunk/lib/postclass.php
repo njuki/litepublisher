@@ -199,7 +199,7 @@ $icons = ticons::instance();
 return $icons->geturl($this->icon);
 }
 
-public function geticontag() {
+public function geticonlink() {
 if ($this->icon == 0) return '';
 return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
 }

@@ -201,12 +201,10 @@ return $item['id'];
   public function delete($url) {
 if (dbversion) {
 $this->db->delete('url = '. $this->db->quote($url));
-} else {
-if (isset($this->items[$url])) {
+} elseif (isset($this->items[$url])) {
 unset($this->items[$url]);
 $this->save();
 }
-  }
 }
   
   public function DeleteClassArg($class, $arg) {

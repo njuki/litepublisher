@@ -8,6 +8,8 @@ public $widgets;
 public $comments;
 public $admin;
 
+private $deftemplates;
+
 public static function instance() {
 return getinstance(__class__);
 }
@@ -27,9 +29,11 @@ $this->data['menucontent'] = '';
 $this->addmap('navi', array());
 $this->addmap('menu', array());
 $this->addmap('content', array());
-$this->addmap('widgets', array());
+$this->addmap('widgets', array());$this->addmap('widgets', array());
 $this->addmap('comments', array());
 $this->addmap('admin', array());
+
+$this->deftemplates = null;
 }
 
 public function load() {
@@ -74,13 +78,20 @@ return sprintf($tml, $title, $content);
   }
   
 public function getwidgettemplate($name, $sitebar) {
-if (isset($this->widgets[$sitebar][$name]) return $this->widgets[$sitebar][$name];
-switch ($name) {
-case 'postitem': return '<li><strong><a href=\"$post->link\" rel=\"bookmark\" title=\"Permalink to $post->title\">$post->title</a></strong><br />
-    <small>$post->localdate</small></li>';
+if (!isset($this->widgets[$sitebar][$name]) $name = 'widget';
+return $this->widgets[$sitebar][$name];
+}
 
+public function  getwidgetitem($name) {
+if (isset($this->widgets[$name)) return $this->widgets[$name];
+switch ($name) {
+case 'post': 
+return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />
+    <small>$post->localdate</small></li>';
 }
-return '';
+
+return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
 }
+
 }//class
 ?>
