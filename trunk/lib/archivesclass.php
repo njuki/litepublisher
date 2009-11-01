@@ -1,6 +1,6 @@
 <?php
 
-class TArchives extends TItems implements  ITemplate {
+class tarchives extends TItems implements  ITemplate {
   public $date;
   
   public static function instance() {

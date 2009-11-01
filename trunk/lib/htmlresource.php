@@ -27,7 +27,18 @@ foreach ($a as $key => $value) $this->__set($key, $value);
 }
 }
 
+class ttag {
+public $tag;
+public function __construct($tag) { $this->tag = $tag; }
+public function __get($name) { 
+$lang = tlocal::instance();
+return "<$this->tag>{$lang->$name}</$this->tag>\n";
+}
+
+}//class
+
 class THtmlResource  {
+const tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
   public $section;
   public $ini;
   private $map;
@@ -43,6 +54,7 @@ class THtmlResource  {
   }
   
   public function __get($name) {
+if (in_array($name, self::tags)) return new ttag($name);
     if (isset($this->ini[$this->section][$name]))  {
       $s = $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
@@ -70,7 +82,6 @@ $s = preg_replace('/\[area:(\w*+)\]/i', $theme->admin['area'],  $s);
     $s = htmlspecialchars($s);
     $s = str_replace('"', '&quot;', $s);
     $s = str_replace("'", '&#39;', $s);
-
 */
     $s = strtr ($s, $args->data);    
 return $theme->parse($s);

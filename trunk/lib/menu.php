@@ -21,6 +21,14 @@ return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
 }
    
   public function add(tmenuitem $item) {
+//fix null fields
+$zero = &$this->items[0];
+if (!isset($zero['url']) $zero['url'] = '';
+if (!isset($zero['parent']) $zero['parent'] = 0;
+if (!isset($zero['order']) $zero['order'] = 0;
+if (!isset($zero['title']) $zero['title'] = '';
+if (!isset($zero['status']) $zero['status'] = 'published';
+
     $Linkgen = TLinkGenerator::instance();
     if ($item->url == '' ) {
       $item->url = $Linkgen->createlink($item, 'post');
@@ -194,7 +202,7 @@ $theme = ttheme::instance();
 }//class
 
 class tmenuitem extends TItem implements  ITemplate {
-const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');l
+const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
   public static function instance($id = 0) {
@@ -203,6 +211,7 @@ const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');l
   
   protected function create() {
     parent::create();
+    $this->formresult = '';
     $this->data= array(
 'id' => 0,
     'author' => 0, //not supported
@@ -238,6 +247,10 @@ return tmenu::instance();
   //ITemplate
 public function request($id) {
 parent::request(4id);
+$this->checkform();
+}
+
+protected function checkform() {
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {
         foreach ($_POST as $name => $value) {
@@ -247,7 +260,6 @@ parent::request(4id);
       $this->formresult.= $this->processform();
     }
 }
-
 
 public function processform() {
 return $this->owner->onprocessform($this->id);
