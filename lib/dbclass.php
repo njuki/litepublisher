@@ -32,6 +32,7 @@ return $this->prefix . $name;
 }
   
   public function query($sql, $mode = null) {
+if ($sql == $this->sql) return $this->result;
     $this->sql = $sql;
     if (defined('debug')) {
 $this->history[] = array(

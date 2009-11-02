@@ -47,28 +47,34 @@ return $h2->confirmedpublish;
   }
   
   private function getlist() {
-    global $options, $urlmap;
+    global $options, $urlmap, $post;
     $result = '';
-    
-    $posts = tposts::instance();
-$count = 20;
-    $from = max(0, $posts->count - $urlmap->page * $count);
-    $items = $posts->getrange($from, $count);
-    eval('$s = "'. $html->count . '\n";');
-    $result .=sprintf($s, $from, $from + count($items), count($posts->items));
-    eval('$result .= "' . $html->listhead . '\n";');
+        $posts = tposts::instance();
+$perpage = 20;
+$count = $posts->count;
+    $from = max(0, $count - $urlmap->page * $perpage);
+
+if (dbversion) {
+$items = $this->db->idselect("not status = 'deleted' order by posted desc limit $from, $perpage");
+} else {
+$items = array_slice(array_keys($this->items), $from, $perpage);
+}
+
+    $result .=sprintf($this->html->h2->count, $from, $from + count($items), $count);
+    $result .= $this->html->listhead();
     $list = '';
-    foreach ($items  as $id => $item) {
+$args = new targs();
+    foreach ($items  as $id ) {
       $post = tpost::instance($id);
-      $status = TLocal::$data['poststatus'][$post->status];
-      eval('$list="\n' . $html->itemlist . '" . $list;');
+      $args->status = tlocal::$data['poststatus'][$post->status];
+$list.= $this->html->itemlist($args);
     }
     $result .= $list;
-    eval('$result .= "'. $html->listfooter . '\n";');;
+$result .= $this->html->listfooter();
     $result = str_replace("'", '"', $result);
     
     $TemplatePost = TTemplatePost::instance();
-    $result .= $TemplatePost ->PrintNaviPages('/admin/posts/', $urlmap->pagenumber, ceil(count($posts->items)/100));
+    $result .= $TemplatePost ->PrintNaviPages('/admin/posts/', $urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
