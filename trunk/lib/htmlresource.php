@@ -49,13 +49,19 @@ if (in_array($name, self::tags)) return new ttag($name);
 
 if ($args == null) $args = new targs();
 $theme = ttheme::instance();
-$s = preg_replace('/\[area:(\w*+)\]/i', $theme->admin['area'],  $s);
-/*
-ğåàëèçîâàòü ïàğñèíã ÷åğåç callback
-    $s = htmlspecialchars($s);
-    $s = str_replace('"', '&quot;', $s);
-    $s = str_replace("'", '&#39;', $s);
-*/
+if (preg_match_all('/\[area:(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+foreach ($m as $item) {
+//ñêîíâåğòèğîâàòü ñïåöñèìâîëû äëÿ ğåäàêòîğà
+$str = &$args->data[item[1]];
+    $str = htmlspecialchars($str);
+    $str = str_replace('"', '&quot;', $str);
+    $str = str_replace("'", '&#39;', $str);
+
+$repl = str_replace('$name', $item[1], $theme->admin['area']);
+$repl = str_replace('$content', '$'. $item[1], $repl);
+$s = str_replace($item[0], $repl, $s);
+}
+}
     $s = strtr ($s, $args->data);    
 return $theme->parse($s);
   }

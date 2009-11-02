@@ -11,7 +11,7 @@ class tadminmenu extends tmenu {
 }
 
 public function add($parent, $name, $group, $class) {
-$url = "/admin/$name/";
+$url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
 $urlmap = turlmap::instance();
 $this->items[++$this->autoid] = array(
 'id' = $this->autoid,
@@ -19,7 +19,7 @@ $this->items[++$this->autoid] = array(
 'order' => $this->autoid,
 'url' => $url,
 'idurl' => $urlmap->add($url, $class, null, 'tree'),
-'title' => $tlocal::$data[$name]['title'],
+'title' => tlocal::$data[$name]['title'],
 'status' => 'published',
 'name' => $name,
 'group' => $group

@@ -57,19 +57,18 @@ $count = $posts->count;
 if (dbversion) {
 $items = $this->db->idselect("not status = 'deleted' order by posted desc limit $from, $perpage");
 } else {
-$items = array_slice(array_keys($this->items), $from, $perpage);
+$items = array_slice($this->items, $from, $perpage, true);
+$items = array_reverse (array_keys($items));
 }
 
     $result .=sprintf($this->html->h2->count, $from, $from + count($items), $count);
     $result .= $this->html->listhead();
-    $list = '';
 $args = new targs();
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
       $args->status = tlocal::$data['poststatus'][$post->status];
-$list.= $this->html->itemlist($args);
+$result .= $this->html->itemlist($args);
     }
-    $result .= $list;
 $result .= $this->html->listfooter();
     $result = str_replace("'", '"', $result);
     
