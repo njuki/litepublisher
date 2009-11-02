@@ -40,14 +40,6 @@ public function getcount() {
     }
 }
 
-public function getrange($from, $count) {
-if (dbversion) {
-return $this->db->idslect("status <> 'deleted' order by posted desc limit 
-} else {
-return    array_slice($this->items, $from, $count, true);
-}
-}
-  
  public function GetWidgetContent($id, $sitebar) {
     global $options;
     $theme = ttheme::instance();

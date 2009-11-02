@@ -50,9 +50,8 @@ $this->save();
 }
 
 public static function parsecallback($var) {
-    global $options, $urlmap, $template, $context, $post, $item, $lang, $comment;
 try {
-return ${$var[1]}->{$var[2]};
+return {$GLOBALS[$var[1]]}->{$var[2]};
     } catch (Exception $e) {
       $options->HandleException($e);
     }
@@ -60,7 +59,7 @@ return '';
 }
 
   public function parse($s) {
-    global $$options, template, $lang;
+    global $options, template, $lang;
     $Template = ttemplate::instance();
     $lang = tlocal::instance();
 $s = str_replace('$options->url', $options->url, $s);
