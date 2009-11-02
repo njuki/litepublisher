@@ -1,70 +1,68 @@
 <?php
 
-class TPostEditor extends TAdminPage {
+class tposteditor extends tadminmenuitem {
   public $postid;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'posteditor';
-  }
-  
-  public function Getcategories() {
-    global $Options;
-    $post = &TPost::Instance($this->postid);
-    $categories = &TCategories::Instance();
+  public function getcategories() {
+    global $options;
+    $post = tpost::instance($this->postid);
+    $categories = tcategories::instance();
     if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
-    $result = "<p>\n<a href=\"$Options->url/admin/categories\">" . TLocal::$data['default']['categories'] . "</a>:\n";
+    $result = "<p>\n<a href=\"$options->url/admin/posts/categories/\">" . TLocal::$data['default']['categories'] . "</a>:\n";
     
     foreach ($categories->items as $id => $item) {
       $checked = in_array($id, $post->categories) ? "checked='checked'" : '';
       $result .= "<input type='checkbox' name='category-$id' id='category-$id' $checked />
-  <label for='category-$id'><a href='$Options->url{$item['url']}'>{$item['name']}</a></label>\n";
+  <label for='category-$id'><a href='$options->url{$item['url']}'>{$item['name']}</a></label>\n";
     }
     $result .= "</p>\n";
     $result = str_replace("'", '"', $result);
     return $result;
   }
-  
-  public function Getcontent() {
-    global $Options;
-    $result = '';
-    $html = THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = TLocal::Instance();
-    
+
+public function request($id) {
+global $options;
+if ($s = parent::request($id)) return $s;
     $this->postid = isset($_GET['postid']) ? (int) $_GET['postid'] : (isset($_POST['postid']) ? (int) $_POST['postid'] : 0);
-    $post = TPost::Instance($this->postid);
+$posts = tposts::instance();
+if (!$posts->itemexists($this->postid)) return 404;
+    $post = tpost::instance($this->postid);
+if (($options->group == 'author') && ($options->user != $post->author)) return 404;
+}
+  
+  public function getcontent() {
+    global $options, $post;
+    $result = '';
+    $post = tpost::instance($this->postid);
+$args = new targs();
     if ($post->id != 0) {
-  $result .= $html->formhead("<a href='$Options->url$post->url'>$post->title</a>", "$Options->url/admin/posteditor/{$Options->q}postid=$post->id", "$Options->url/admin/posteditor/full/{$Options->q}postid=$post->id");
+  $result .= $this->html->formhead("<a href='$options->url$post->url'>$post->title</a>", "$options->url/admin/posteditor/{$options->q}postid=$post->id", "$options->url/admin/posteditor/full/{$options->q}postid=$post->id");
     }
-    $raw = $this->ContentToForm($post->rawcontent);
-    $commentsenabled = $post->commentsenabled ? 'checked' : '';
-    $pingenabled = $post->pingenabled ? 'checked' : '';
-    $published = $post->status != 'draft' ? 'selected' : '';
-    $draft = $post->status == 'draft' ? 'selected' : '';
+    $args->raw = $this->ContentToForm($post->rawcontent);
+    $args->commentsenabled = $post->commentsenabled;
+    $args->pingenabled = $post->pingenabled;
+    $args->published = $post->status != 'draft' ? 'selected' : '';
+    $args->draft = $post->status == 'draft' ? 'selected' : '';
     if ($this->arg == null) {
-      eval('$result .= "' . $html->form . '\n";');
+$result .= $this->html->form($args);
     } else {
-      $date = $post->date != 0 ?date('d-m-Y', $post->date) : '';
-      $time  = $post->date != 0 ?date('H:i', $post->date) : '';
-      $content = $this->ContentToForm($post->filtered);
-      $excerpt = $this->ContentToForm($post->excerpt);
-      $rss = $this->ContentToForm($post->rss);
-      eval('$result .= "' . $html->fullform . '\n";');
+      $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
+      $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+      $args->content = $post->filtered;
+      $args->excerpt = $post->excerpt;
+      $args->rss = $post->rss;
+      $result .= $this->html->fullform($args);
     }
     return $result;
   }
   
-  public function ProcessForm() {
-    global $Options;
-    $html = THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = TLocal::Instance();
-    
+  public function processform() {
+    global $options;
+  
     $cats = array();
     $cat = 'category-';
     foreach ($_POST as $key => $value) {
@@ -75,12 +73,8 @@ class TPostEditor extends TAdminPage {
     }
     
     extract($_POST);
-    if (empty($title)){
-      eval('$result = "'. $html->emptytitle . '\n";');
-      return $result;
-    }
-    
-    $post = TPost::Instance($postid);
+    if (empty($title))return $this->html->emptytitle;
+    $post = tpost::instance($postid);
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
@@ -99,19 +93,19 @@ class TPostEditor extends TAdminPage {
       $post->rss = $rss;
       $post->moretitle = $moretitle;
       if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
-        $post->date = mktime($h,$min,0, $m, $d, $y);
+        $post->posted = mktime($h,$min,0, $m, $d, $y);
       }
     }
     
-    $posts = TPosts::Instance();
+    $posts = tposts::instance();
     if ($postid == 0) {
-      $posts->Add($post);
+      $posts->add($post);
     } else {
-      $posts->Edit($post);
+      $posts->edit($post);
     }
     
-    eval('$s = "'. $html->success  . '\n";');
-    return sprintf($s,"<a href=\"$Options->url$post->url\">$post->title</a>");
+$s = $this->html->success;
+    return sprintf($s,"<a href=\"$options->url$post->url\">$post->title</a>");
   }
   
 }//class
