@@ -2,16 +2,17 @@
 
 class TContentFilter extends TEventClass {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'contentfilter';
-    $this->AddEvents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt', 'BeforeSetPostContent', 'AfterSetPostContent');
-    $this->Data['automore'] = true;
-    $this->Data['automorelength'] = 250;
+    $this->addevents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt', 'BeforeSetPostContent', 'AfterSetPostContent');
+    $this->data['automore'] = true;
+    $this->data['automorelength'] = 250;
+$this->data['phpcode'] = true;
   }
   
   public function GetCommentContent($content) {
@@ -27,7 +28,7 @@ class TContentFilter extends TEventClass {
     return $result;
   }
   
-  public function SetPostContent(&$post, $s) {
+  public function SetPostContent(tpost $post, $s) {
     $this->BeforeSetPostContent($post->id);
     $s = $this->FilterInternalLinks($s);
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
@@ -58,7 +59,7 @@ class TContentFilter extends TEventClass {
     $this->AfterSetPostContent($post->id);
   }
   
-  public function ExtractPages(&$post, $s) {
+  public function ExtractPages(tpost $post, $s) {
     $tag = '<!--nextpage-->';
     $post->deletepages();
     if (!strpos( $s, $tag) )  return $this->GetPostContent($s);
@@ -72,7 +73,7 @@ class TContentFilter extends TEventClass {
     return $post->GetPage(0);
   }
   
-  private function DoFilterEvents(&$post) {
+  private function DoFilterEvents(tpost $post) {
     $s = $this->OnPost(    $post->filtered);
     if ($s != '') $post->filtered =  $s;
     
@@ -93,7 +94,7 @@ class TContentFilter extends TEventClass {
   
   public function GetPostContent($content) {
     $result = trim($content);
-    $result = self::ReplaceCode($result);
+    $result = $this->replacecode($result);
     
     $result = str_replace("\r\n", "\n", $result);
     $result = str_replace("\r", "\n", $result);
@@ -104,7 +105,7 @@ class TContentFilter extends TEventClass {
     //замена разрывов строк на <br /> до и после тегов a|img|b|i|u
     $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
     $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
-    $result = preg_replace('/\n<(b|i|u|strong|emm)>/im', "<br />\n<$1>", $result);
+    $result = preg_replace('/\n<(b|i|u|strong|em)>/im', "<br />\n<$1>", $result);
     $result = preg_replace('/<\/(a|b|i|u|strong|emm)>\n/im', "</$1><br/>\n", $result);
     //переводы строки если нет в конце тегов
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
@@ -112,8 +113,10 @@ class TContentFilter extends TEventClass {
     return '<p>' . $result . '</p>';
   }
   
-  public static function ReplaceCode($s) {
+  public function replacecode($s) {
+if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', 'TContentFilter::CallbackReplaceCode', $s);
     return preg_replace_callback('/<code>(.*?)<\/code>/ims', 'TContentFilter::CallbackReplaceCode', $s);
+
   }
   
   public static function CallbackReplaceCode($found) {
@@ -146,15 +149,15 @@ class TContentFilter extends TEventClass {
     }
     
     if (strpos($s, '[prevpost]')) {
-      $posts = &TPosts::Instance();
+      $posts = &TPosts::instance();
       $last = $posts->GetRecent(1);
-      $post = &TPost::Instance($last[0]);
+      $post = &TPost::instance($last[0]);
       $link = "<a href=\"$Options->url$post->url\">$post->title</a>";
       $s = str_replace('[lastpost]', $link, $s);
     }
     
     if (strpos($s, '[file]')) {
-      $files = &TFiles::Instance();
+      $files = &TFiles::instance();
       $s = str_replace('[file]', $files->Getlink($files->autoid), $s);
     }
     

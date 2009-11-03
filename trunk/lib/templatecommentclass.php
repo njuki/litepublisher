@@ -26,29 +26,15 @@ $l = &tlocal::$data['comment'];
     return "<a href=\"$options->url$url#comments\">$count</a>";
   }
   
-  public function gettemplatecomments($idpost) {
-global $paths;
-$filename = $paths[cache'] . "comments-$idpost->$urlmap->page.php";
-if (file_exists($filename)) {
-$result = file_get_contents($filename);
-} else {
-$result = $this->getcomments($idpost);
-file_put_contents($filename, $result);
-@chmod($filename, 0666);
-}
-
-return $result;
-}
-
   public function getcomments($idpost) {
-    global $urlmap, $options, $post;
+    global $options;
     $result = '';
+$urlmap = turlmap::instance();
 $idpost = (int) $idpost;
-/*
 $post = tpost::instance($idpost);
     if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
-*/
+
 $args = new targs();
 $theme = ttheme::instance();
     $lang = tlocal::instance('comment');
@@ -59,7 +45,7 @@ $c = $comments->db->getcount("post = $idpost and status = 'approved' and pingbac
     $count = $this->getcount($c);
 $db = $comments->db;
 $items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
-where $db->comments.post = $post->id and $db->comments.status = 'approved' and $db->comments.pingback = false and $db->comusers.id = $db->comments.author
+where $db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and $db->comusers.id = $db->comments.author
 sort by $db->comments.posted asc limit $from, $options->commentsperpage");
 } else {
     $items = $comments->getapproved();
@@ -74,33 +60,51 @@ $result .= $theme->parsearg($theme->comments['count'], $args);
       $result .= $this->getlist($items, $idpost, '', $from);
     }
     
-    if ($urlmap->page == 1) {
-      $items = $comments->getapproved('pingback');
-      if (count($items) > 0) {
-        $list = '';
-        $comtempl = $theme->comments['pingback'];
-        foreach  ($items as $id) {
-          $comment->id = $id;
-          eval('$list .= "'. $comtempl  . '"; ');
-        }
-        $pingbacks = str_replace('%1$', '%1\$', $theme->comments['pingbacks']);
-        $pingbacks = str_replace('%2$', '%2\$', $pingbacks);
-        eval('$pingbacks = "'. $pingbacks . '";');
-        
-        $result .= sprintf($pingbacks, $list, 1);
-      }
-    }
+    if ($urlmap->page == 1)  $result .= $this->getpingbacks($idpost);
     if (!$options->commentsdisabled && $post->commentsenabled) {
-      $result .=  "<?php  echo tcommentform::printform($post->id); ?>\n";
+      $result .=  "<?php  echo tcommentform::printform($idpost); ?>\n";
     } else {
-      eval('$result .= "'. $theme->comments['closed'] . '";');
+$result .= $theme->parse($theme->comments['closed']);
     }
     return $result;
   }
-  
-  private function getlist(array &$items, $idpost, $hold, $from) {
-    global $comment;
+
+private function getpingbacks($idpost) {
+global $comment;
+    $comments = tcomments::instance($postid);
+if (dbversion) {
+$db = $comments->db;
+$items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
+where $db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'true' and $db->comusers.id = $db->comments.author
+sort by $db->comments.posted asc");
+} else {
+      $items = $comments->getapproved('pingback');
+}
+
+      if (count($items) == 0) return '';
+
     $result = '';
+    $comment = new TComment($comments);
+    $lang = tlocal::instance('comment');
+$theme = ttheme::instance();
+    $comtempl = $theme->comments['pingback'];
+    foreach  ($items as $iddata) {
+//трюк: в бд items это комменты целиком, а в файлах только id
+if (dbversion)  {
+      $comment->data = $iddata;
+} else {
+      $comment->id = $iddata;
+}
+$result .= $theme->parse($comtempl);
+    }
+    
+    return sprintf($theme->comments['pingbacks'], $result);
+}
+
+  private function getlist(array &$items, $idpost, $hold, $from) {
+    global $comment, $post;
+    $result = '';
+$post = tpost::instance($idpost);
 $args = new targs();
 $args->hold = $hold;
 $args->from = $from;
@@ -129,7 +133,8 @@ $result .= $theme->parsearg($comtempl, $args);
   public function gethold(array &$items, $idpost) {
     if (count($items) == 0) return '';
 $theme = ttheme::instance();
-    eval('$hold = "'. $theme->comments['hold'] . '";');
+    $lang = tlocal::instance('comment');
+$hold = $theme->parse($thme->comments['hold']);
     return $this->getlist($items, $idpost, $hold, 0);
   }
   
