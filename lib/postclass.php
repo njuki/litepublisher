@@ -211,13 +211,13 @@ $theme = ttheme::instance();
   }
 
 public function getcommentslink() {
-$t = ttemplatecomment::instance();
+$t = ttemplatecomments::instance();
 return $t->getcommentslink($this);
 }
 
 public function  gettemplatecomments() {
-$t = ttemplatecomment::instance();
-return $t->getcomments($this);
+    if (($this->commentscount == 0) && !$this->commentsenabled) return '';
+return "<?php ttemplatecomment::getcomments($this->id); ?>";
 }
   
   public function getcontent() {
