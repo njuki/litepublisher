@@ -70,21 +70,19 @@ $theme->admin['area'] = trim($this->parsetag($s, 'area', ''));
 private function parsecomments($s) {
 $theme = $this->theme;
     $comments = $this->parsetag($s, 'comments', '');
-    $count= $this->parsetag($comments, 'count', '');
-    $theme->comments['count'] = str_replace('"', '\"', ltrim($count));
-    
+    $theme->comments['count'] = $this->parsetag($comments, 'count', '');
     $comment = $this->parsetag($comments, 'comment', '%1$s');
     $theme->comments['comments'] = $comments;
     $theme->comments['class1'] = $this->parsetag($comment, 'class1', '$class');
     $theme->comments['class2'] = $this->parsetag($comment, 'class2', '');
     $theme->comments['hold'] = $this->parsetag($comment, 'hold', '$hold');
-    $theme->comments['comment'] = str_replace('"', '\"', ltrim($comment));
+    $theme->comments['comment'] = $comment;
     
-    $pingbacks = str_replace('"', '\"', $this->parsetag($s, 'pingbacks', ''));
+    $pingbacks = $this->parsetag($s, 'pingbacks', '');
     $theme->comments['pingback'] = $this->parsetag($pingbacks, 'pingback', '%1$s');
     $theme->comments['pingbacks'] = $pingbacks;
     
-    $theme->comments['closed'] = str_replace('"', '\"', $this->parsetag($s, 'closed', ''));
+    $theme->comments['closed'] = $this->parsetag($s, 'closed', '');
 $theme->commentform = $this->parsetag($s, 'form', '');
   }
 

@@ -7,19 +7,20 @@ class tposteditor extends tadminmenuitem {
     return getinstance(__class__);
   }
   
-  public function getcategories() {
+  private function getcategories(tpost $post) {
     global $options;
-    $post = tpost::instance($this->postid);
+$result = '';
     $categories = tcategories::instance();
     if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
-    $result = "<p>\n<a href=\"$options->url/admin/posts/categories/\">" . TLocal::$data['default']['categories'] . "</a>:\n";
-    
-    foreach ($categories->items as $id => $item) {
-      $checked = in_array($id, $post->categories) ? "checked='checked'" : '';
-      $result .= "<input type='checkbox' name='category-$id' id='category-$id' $checked />
-  <label for='category-$id'><a href='$options->url{$item['url']}'>{$item['name']}</a></label>\n";
+$args = new targs();
+        foreach ($categories->items as $id => $item) {
+$args->id = $id;
+      $args->checked = in_array($id, $post->categories);
+$args->url = $options->url . $item['url'];
+$args->name = {$item['name']}
+      $result .= $this->html->category($args);
     }
-    $result .= "</p>\n";
+$result = sprintf($this->html->categories(), $result);
     $result = str_replace("'", '"', $result);
     return $result;
   }
@@ -42,7 +43,8 @@ $args = new targs();
     if ($post->id != 0) {
   $result .= $this->html->formhead("<a href='$options->url$post->url'>$post->title</a>", "$options->url/admin/posteditor/{$options->q}postid=$post->id", "$options->url/admin/posteditor/full/{$options->q}postid=$post->id");
     }
-    $args->raw = $this->ContentToForm($post->rawcontent);
+$args->categories = $this->getcategories($post);
+    $args->raw = $post->rawcontent;
     $args->commentsenabled = $post->commentsenabled;
     $args->pingenabled = $post->pingenabled;
     $args->published = $post->status != 'draft' ? 'selected' : '';
