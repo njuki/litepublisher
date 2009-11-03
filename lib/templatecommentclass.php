@@ -1,6 +1,6 @@
 <?php
 
-class ttemplatecomments extends TEventClass {
+class ttemplatecomment extends TEventClass {
 
   public static function instance() {
     return getinstance(__class__);
@@ -9,30 +9,43 @@ class ttemplatecomments extends TEventClass {
 public function load() {}
 public function save() {}  
 
-  public function GetCommentCountStr($count) {
+  public function getcount($count) {
+$l = &tlocal::$data['comment'];
     switch($count) {
-      case 0: return TLocal::$data['comment'][0];
-      case 1: return TLocal::$data['comment'][1];
-      default: return sprintf(TLocal::$data['comment'][2], $count);
+      case 0: return $l[0];
+      case 1: return $l[1];
+      default: return sprintf($l[2], $count);
     }
   }
   
   public function getcommentslink(tpost $post) {
     global $options;
     $comments = $post->comments;
-    $CountStr = $this->GetCommentCountStr($comments->GetCountApproved());
+    $count = $this->getcount($comments->GetCountApproved());
     $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->countpages/" : $post->url;
-    return "<a href=\"$options->url$url#comments\">$CountStr</a>";
+    return "<a href=\"$options->url$url#comments\">$count</a>";
   }
   
-  public function getcomments($idpost) {
-    global $paths, $template, $urlmap, $options, $post;
+  public function gettemplatecomments($idpost) {
+global $paths;
 $filename = $paths[cache'] . "comments-$idpost->$urlmap->page.php";
-if (file_exists($filename)) return file_get_contents($filename);
+if (file_exists($filename)) {
+$result = file_get_contents($filename);
+} else {
+$result = $this->getcomments($idpost);
+file_put_contents($filename, $result);
+@chmod($filename, 0666);
+}
+
+return $result;
+}
+
+  public function getcomments($idpost) {
+    global $template, $urlmap, $options, $post;
 $post = tpost::instance($idpost);
     if (($post->commentscount == 0) && !$post->commentsenabled) return '';
+    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
     $comments = $post->comments;
-    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->GetCommentsCountLink('');
 $args = new targs();
 $theme = ttheme::instance();
     $lang = tlocal::instance('comment');
@@ -41,14 +54,14 @@ $theme = ttheme::instance();
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 if (dbversion) {
 $c = $comments->db->getcount("post = $post->id and status = 'approved' and pingback = false");
-    $count = $this->GetCommentCountStr($c);
+    $count = $this->getcount($c);
 $db = $comments->db;
 $items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
 where $db->comments.post = $post->id and $db->comments.status = 'approved' and $db->comments.pingback = false and $db->comusers.id = $db->comments.author
 sort by $db->comments.posted asc limit $from, $options->commentsperpage");
 } else {
     $items = $comments->getapproved();
-    $count = $this->GetCommentCountStr(count($items));
+    $count = $this->getcount(count($items));
     if ($options->commentpages ) {
       $items = array_slice($items, $from, $options->commentsperpage, true);
     }
@@ -85,7 +98,7 @@ $result .= $theme->comments['count'];
   private function GetCommentsList(array &$items, &$comment, $hold, $from) {
     global $options, $post, $template;
 $theme = ttheme::instance();
-    $lang = TLocal::instance('comment');
+    $lang = tlocal::instance('comment');
     $result = '';
     $comtempl = $theme->comments['comment'];
     $class1 = $theme->comments['class1'];
@@ -110,7 +123,7 @@ if (dbversion)  {
 $theme = ttheme::instance();
     $comments = tcomments::instance($postid);
     $comment = new TComment($comments);
-    $lang = TLocal::instance('comment');
+    $lang = tlocal::instance('comment');
     eval('$hold = "'. $theme->comments['hold'] . '";');
     return $this->GetCommentsList($items, $comment, $hold, 0);
   }

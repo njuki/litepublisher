@@ -217,7 +217,13 @@ return $t->getcommentslink($this);
 
 public function  gettemplatecomments() {
     if (($this->commentscount == 0) && !$this->commentsenabled) return '';
-return "<?php ttemplatecomment::getcomments($this->id); ?>";
+$urlmap = turlmap::instance();
+    if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
+if ($this->commentsenabled) {
+return "<?php echo ttemplatecomment::gettemplatecomments($this->id); ?>";
+} else {
+return ttemplatecomment::gettemplatecomments($this->id);
+}
 }
   
   public function getcontent() {
