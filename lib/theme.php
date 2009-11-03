@@ -59,7 +59,7 @@ return '';
 }
 
   public function parse($s) {
-    global $options, template, $lang;
+    global $options, $template, $lang;
     $Template = ttemplate::instance();
     $lang = tlocal::instance();
 $s = str_replace('$options->url', $options->url, $s);
@@ -71,6 +71,10 @@ return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback
         return '';
 }
 
+  public function parsearg($s, targs $args) {
+    $s = strtr ($s, $args->data);    
+return $this->parse($s);
+}
 public function getwidget($title, $content, $template, $sitebar) {
 $tml = $this->getwidgettemplate($template, $sitebar);
 return sprintf($tml, $title, $content);
