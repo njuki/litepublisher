@@ -106,8 +106,8 @@ class TCommentForm extends TEventClass{
         $comments = tcomments::instance($postid);
         $items = $comments->gethold($user['id']);
         if (count($items) > 0) {
-          $TemplateComment = TTemplateComment::instance();
-          $result .= $TemplateComment->GetHoldList($items, $postid);
+          $tc = TTemplateComment::instance();
+          $result .= $tc->gethold($items, $postid);
         }
       }
     }

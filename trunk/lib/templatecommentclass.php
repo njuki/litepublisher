@@ -41,19 +41,21 @@ return $result;
 }
 
   public function getcomments($idpost) {
-    global $template, $urlmap, $options, $post;
+    global $urlmap, $options, $post;
+    $result = '';
+$idpost = (int) $idpost;
+/*
 $post = tpost::instance($idpost);
     if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
-    $comments = $post->comments;
+*/
 $args = new targs();
 $theme = ttheme::instance();
     $lang = tlocal::instance('comment');
-    $result = '';
-    $comment = new TComment($comments);
+    $comments = tcomments::instance($idpost);
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 if (dbversion) {
-$c = $comments->db->getcount("post = $post->id and status = 'approved' and pingback = false");
+$c = $comments->db->getcount("post = $idpost and status = 'approved' and pingback = 'false'");
     $count = $this->getcount($c);
 $db = $comments->db;
 $items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
@@ -66,9 +68,10 @@ sort by $db->comments.posted asc limit $from, $options->commentsperpage");
       $items = array_slice($items, $from, $options->commentsperpage, true);
     }
 }
+
     if (count($items)  > 0) {
-$result .= $theme->comments['count'];
-      $result .= $this->GetcommentsList($items, $comment, '', $from);
+$result .= $theme->parsearg($theme->comments['count'], $args);
+      $result .= $this->getlist($items, $idpost, '', $from);
     }
     
     if ($urlmap->page == 1) {
@@ -95,37 +98,39 @@ $result .= $theme->comments['count'];
     return $result;
   }
   
-  private function GetCommentsList(array &$items, &$comment, $hold, $from) {
-    global $options, $post, $template;
-$theme = ttheme::instance();
-    $lang = tlocal::instance('comment');
+  private function getlist(array &$items, $idpost, $hold, $from) {
+    global $comment;
     $result = '';
+$args = new targs();
+$args->hold = $hold;
+$args->from = $from;
+    $comments = tcomments::instance($postid);
+    $comment = new TComment($comments);
+    $lang = tlocal::instance('comment');
+$theme = ttheme::instance();
     $comtempl = $theme->comments['comment'];
     $class1 = $theme->comments['class1'];
     $class2 = $theme->comments['class2'];
     $i = 1;
-
-    foreach  ($items as $id) {
+    foreach  ($items as $iddata) {
+//трюк: в бд items это комменты целиком, а в файлах только id
 if (dbversion)  {
-      $comment->data = $id;
+      $comment->data = $iddata;
 } else {
-      $comment->id = $id;
+      $comment->id = $iddata;
 }
-      $class = (++$i % 2) == 0 ? $class1 : $class2;
-      eval('$result .= "'. $comtempl . '\n"; ');
+      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
+$result .= $theme->parsearg($comtempl, $args);
     }
     
     return sprintf($theme->comments['comments'], $result, $from + 1);
   }
   
-  public function GetHoldList(&$items, $postid) {
+  public function gethold(array &$items, $idpost) {
     if (count($items) == 0) return '';
 $theme = ttheme::instance();
-    $comments = tcomments::instance($postid);
-    $comment = new TComment($comments);
-    $lang = tlocal::instance('comment');
     eval('$hold = "'. $theme->comments['hold'] . '";');
-    return $this->GetCommentsList($items, $comment, $hold, 0);
+    return $this->getlist($items, $idpost, $hold, 0);
   }
   
 } //class
