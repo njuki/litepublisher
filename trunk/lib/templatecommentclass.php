@@ -1,6 +1,6 @@
 <?php
 
-class ttemplatecomment extends TEventClass {
+class ttemplatecomments extends TEventClass {
 
   public static function instance() {
     return getinstance(__class__);
@@ -25,11 +25,15 @@ public function save() {}
     return "<a href=\"$options->url$url#comments\">$CountStr</a>";
   }
   
-  public function getcomments(tpost $post) {
-    global $template, $urlmap, $options;
+  public function getcomments($idpost) {
+    global $paths, $template, $urlmap, $options, $post;
+$filename = $paths[cache'] . "comments-$idpost->$urlmap->page.php";
+if (file_exists($filename)) return file_get_contents($filename);
+$post = tpost::instance($idpost);
+    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     $comments = $post->comments;
-    if (($comments->count == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->GetCommentsCountLink('');
+$args = new targs();
 $theme = ttheme::instance();
     $lang = tlocal::instance('comment');
     $result = '';
@@ -50,7 +54,7 @@ sort by $db->comments.posted asc limit $from, $options->commentsperpage");
     }
 }
     if (count($items)  > 0) {
-      eval('$result .= "'. $theme->comments['count'] . '";');
+$result .= $theme->comments['count'];
       $result .= $this->GetcommentsList($items, $comment, '', $from);
     }
     
