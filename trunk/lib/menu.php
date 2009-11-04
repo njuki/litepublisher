@@ -12,8 +12,12 @@ public $tree;
     $this->addevents('edited', 'onprocessform');
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
 $this->addmap('tree', array());
-
   }
+
+public function getlink($id) {
+global $options;
+return sprintf('<a href="%1$s%2$s" title="%3$s">%3$s</a>', $options->url, $this->items[$id]['url'], $this->items[$id]['title']);
+}
 
 public function getdir() {
 global $paths;
