@@ -1,37 +1,25 @@
 <?php
 
-global $classes;
-return is_a($instance, $classes->classes['tags']);
-}
-
-class tadmincategories extends tadminmenuitem {
+class tadmintags extends tadminmenuitem {
 
   public static function instance() {
     return getinstance(__class__);
   }
 
-private function gettags() {
-global $classes;
-if (isset($_GET['class']) && ($_GET['class'] == 'tag')){
-return $classes->tags;
-} else {
-return $classes->categories;
-}
-}
-  
   public function getcontent() {
     global $options, $classes;
 $result = '';
-$tags = $this->gettags();
+$istags = $this->name == 'tags';
+$tags = $istags  ? $classes->tags : $classes->categories;
 $html = $this->html;
 $h2 = $html->h2;
     $id = $this->idget();
 $args = new targs();
 $args->id = $id;
-$args->class = istags($tags) ? 'tag' : 'cat';
+$args->adminurl = $options->url . $this->url . $options->q . 'id=';
     if ($id ==  0) {
       $args->title = '';
-$result .= istags($tags) ? $h2->addtag : $h2->addcategory;
+$result .= $istags ? $h2->addtag : $h2->addcategory;
 $result .= $html->tagform($args);
     } elseif (!$tags->ItemExists($id)) {
 return $this->notfound;
@@ -48,7 +36,7 @@ return $html->confirmdelete($args);
 }
         }
 
-$result .= istags($tags) ? $h2->edittag : $h2->editcategory;
+$result .= $istags ? $h2->edittag : $h2->editcategory;
     if (isset($_GET['full'])) {        
         $args->url = $item['url'];
 $args->keywords = $tags->contents->getkeywords($id);
@@ -78,7 +66,8 @@ $result .= $html->listfooter;
     global $options, $classes;
     if (empty($_POST['title'])) return '';
 extract($_POST);
-$tags = $this->gettags();    
+$istags = $this->name == 'tags';
+$tags = $istags  ? $classes->tags : $classes->categories;
         $id = $this->idget();
     if ($id == 0) {
       $id = $tags->add($title);
@@ -94,5 +83,5 @@ $tags->contents->edit($id, $content, $description, $keywords);
   
 }//class
 
-function istags($instance) {
+
 ?>

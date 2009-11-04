@@ -158,7 +158,7 @@ return tlocal::instance($this->name);
 return $this->html->h2->notfound;
   }
   
-  public function Getadminurl($section, $arg) {
+  public function getadminurl($section, $arg) {
     global $options;
     return "$options->url/admin/$section/$options->q$arg";
 }
