@@ -14,6 +14,7 @@ $menu = $self->add(0, 'menu', 'editor', 'tadminmenumanager');
 {
 $self->add($menu, 'edit', 'editor', 'tadminmenumanager'); 
 }
+
 $self->unlock();
 }
 

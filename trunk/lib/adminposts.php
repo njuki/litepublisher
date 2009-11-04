@@ -22,8 +22,7 @@ if (!$this->confirmed) {
 $args = new targs()
 $args->id = $id;
 $args->action = $action;
-$lang = $this->lang;
-$args->confirm = sprintf($lang->confirm, $lang->$action, "<a href='$post->link'>$post->title</a>");
+$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], "<a href='$post->link'>$post->title</a>");
 return $this->html->confirmform($args);
 }
 
