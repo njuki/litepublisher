@@ -1,26 +1,34 @@
 <?php
 
-function TCommonTagsInstall(&$self) {
+function TCommonTagsInstall(TCommonTags $self) {
   if ('TCommonTags' == get_class($self)) return;
-  $Posts= &GetInstance($self->postsclass);
-  $Posts->Lock();
-  $Posts->Added = $self->PostEdit;
-  $Posts->Edited = $self->PostEdit;
-  $Posts->Deleted = $self->PostDeleted;
-  $Posts->Unlock();
+  $posts= tposts::instance();
+  $posts->lock();
+  $posts->added = $self->postedited;
+  $posts->edited = $self->postedited;
+  $Posts->deleted = $self->postdeleted;
+  $posts->unlock();
   
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->AddNode($self->PermalinkIndex, get_class($self), 0);
+  $urlmap = turlmap::instance();
+  $urlmap->add("/$self->PermalinkIndex/", get_class($self), 0);
+if (dbversion) {
+    $manager = TDBManager ::instance();
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
+    $manager->CreateTable($self->table, file_get_contents($dir .'tags.sql'));
+    $manager->CreateTable($self->itemstable, file_get_contents($dir .'tagsitems.sql'));
+    $manager->CreateTable($self->table, file_get_contents($dir .'tagscontent.sql'));
+} else {
+}
+
+}
 }
 
 function TCommonTagsUninstall(&$self) {
-  $posts = &GetInstance($self->postsclass);
-  $posts->UnsubscribeClass($self);
+tposts::unsub($self);
+    tulmap::unsub($self);
   
-  TUrlmap::unsub($self);
-  
-  $Template = &TTemplate::Instance();
-  $Template->DeleteWidget(get_class($self));
+$widgets = twidgets::instance();
+$widgets->deleteclass(get_class($self));
 }
 
 ?>
