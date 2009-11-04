@@ -1,23 +1,13 @@
 <?php
 
-class TAdminLogin extends TAdminPage {
+class tadminlogin extends tadminmenuitem {
   private $logonresult;
   
   public static function instance() {
     return getinstance(__class__);
   }
   
-  protected function create() {
-    parent::create();
-    $this->basename = 'login';
-$this->group = 'nobody';
-  }
-  
   public function auth() { }
-  
-  public function GetMenu() {
-    return '';
-  }
   
   public function request($arg) {
     if ($arg == 'out') {

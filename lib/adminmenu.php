@@ -6,59 +6,54 @@ class tadminmenumanager extends tadminmenuitem {
     return getinstance(__class__);
   }
   
-  protected function create() {
-    parent::create();
-    $this->basename = 'menu';
-  }
-  
-  public function Getcontent() {
-    global $Options;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    
+  public function getcontent() {
+    global $options;
+      $menu = tmenu::instance();
+$html = $this->html;   
+$args = new targs();
+$args->adminurl = $options->url . $this->url . $options->q . 'id';
+$args->editurl = $options->url . '/admin/menu/edit/' . $options->q . 'id';
+
     switch ($this->arg) {
       case null:
-      if (isset($_GET['action'])) return $this->ProcessAction();
-      $menu = &TMenu::Instance();
-      eval('$result = "'. $html->listhead . '\n";');
+      if (isset($_GET['action'])) return $this->doaction($_GET['action']);
+$result = $html->listhead();
       foreach ($menu->items as $id => $item) {
-        $post = &TMenuItem::Instance($id);
-        $status = TLocal::$data['poststatus'][$post->status];
+$args->id = $id;
+$args->link = $menu->getlink($id);
+$args->order = $item['order'];
+        $args->status = TLocal::$data['poststatus'][$item['status']];
+
         if ($item['parent'] == 0) {
-          $parent = '---';
+          $args->parent = '---';
         } else {
-          $parent = "<a href='" . $Options->url . $menu->items[$item['parent']]['url'] . "'>". $menu->items[$item['parent']]['title'] . '</a>';
+          $args->parent = $menu->getlink($id);
         }
-        eval('$result .="' . $html->itemlist . '\n" ;');
+$result .=$html->itemlist($args);
       }
-      eval('$result .= "'. $html->listfooter. '\n";');;
-      $result = str_replace("'", '"', $result);
-      break;
-      
+$result .= $html->listfooter;
+return str_replace("'", '"', $result);
+
       case 'edit':
-      $id = !empty($_GET['postid']) ? (int) $_GET['postid'] : (!empty($_POST['postid']) ? (int) $_POST['postid'] : 0);
-      $post = &TMenuItem::Instance($id);
-      $content = $this->ContentToForm($post->content);
-      $menu = &TMenu::Instance();
-      $selected = $post->parent  == 0 ? 'selected' : '';
-      $parentcombo = "<option value='0' $selected>---</option>\n";
+      $id = $this->idget();
+      $menuitem = tmenuitem::instance($id);
+$args->id = $id;
+      $args->content = $menuitem->content;
+      $selected = $menuitem->parent  == 0 ? 'selected' : '';
+$parentcombo = "<option value='0' $selected>---</option>\n";
       foreach ($menu->items as $id => $item) {
-        if ($id != $post->id) {
-          $selected = $post->parent  == $id ? 'selected' : '';
-          $parentcombo .= "<option value='$id' $selected>$item[title]</option>\n";
+        if ($id != $menuitem->id) {
+          $selected = $menuitem->parent  == $id ? 'selected' : '';
+          $parentcombo .= "<option value='$id' $selected>{$item['title']}</option>\n";
         }
-        
-      }
-      eval('$result = "' . $html->editform . '\n";');
-      break;
+              }
+$args->parentcombo = $parentcombo;
+return $html->editform($args);
     }
-    
-    return $result;
-  }
+      }
   
-  public function ProcessForm() {
-    global $Options;
+  public function processform() {
+    global $options;
     extract($_POST);
     switch ($this->arg) {
       case null:
@@ -66,39 +61,30 @@ class tadminmenumanager extends tadminmenuitem {
       
       case 'edit':
       if (empty($title) || empty($content)) return '';
-      $id = !empty($_GET['postid']) ? (int) $_GET['postid'] : (!empty($_POST['postid']) ? (int) $_POST['postid'] : 0);
-      $post = &TMenuItem::Instance($id);
-      $post->title = $title;
-      $post->order = (int) $order;
-      $post->parent = (int) $parent;
-      $post->content = $content;
+      $id = $this->idget();
+      $menuitem = tmenuitem::instance($id);
+      $menuitem->title = $title;
+      $menuitem->order = (int) $order;
+      $menuitem->parent = (int) $parent;
+      $menuitem->content = $content;
       
-      $menu = &TMenu::Instance();
+      $menu = tmenu::instance();
       if ($id == 0) {
-        $menu->Add($post);
+        $menu->add($menuitem);
       } else  {
-        $menu->Edit($post);
+        $menu->edit($menuitem);
       }
-      break;
     }
     return '';
   }
   
-  public function ProcessAction() {
-    global $Options;
-    $id = (int) $_GET['postid'];
-    $html = THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = TLocal::Instance();
-    
-    $menu = TMenu::Instance();
-    if (!$menu->ItemExists($id)) {
-      eval('$result = "'. $html->notfound  . '\n";');
-      return $result;
-    }
-    
-    $post = TMenuItem::Instance($id);
-    
+  public function doaction($action) {
+    global $options;
+    $id = $this->idget();
+    $html = $this->html;
+        $menu = tmenu::instance();
+    if (!$menu->itemexists($id))  return $this->notfound;
+    $menuitem = tmenuitem::instance($id);
     $result ='';
     $actionname = TLocal::$data['poststatus'][$_GET['action']];
     if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
@@ -108,20 +94,20 @@ class tadminmenumanager extends tadminmenuitem {
         break;
         
         case 'setdraft':
-        $post->status = 'draft';
-        $menu->Edit($post);
+        $menuitem->status = 'draft';
+        $menu->Edit($menuitem);
         break;
         
         case 'publish':
-        $post->status = 'published';
-        $menu->Edit($post);
+        $menuitem->status = 'published';
+        $menu->Edit($menuitem);
         break;
       }
       eval('$s =  "'. $html->confirmed . '\n";');
-      $result .=  sprintf($s, $actionname, "<a href='$Options->url$post->url'>$post->title</a>");
+      $result .=  sprintf($s, $actionname, "<a href='$options->url$menuitem->url'>$menuitem->title</a>");
     } else {
       $lang->section = $this->basename;
-      $confirm = sprintf($lang->confirm, $actionname, "<a href='$Options->url$post->url'>$post->title</a>");
+      $confirm = sprintf($lang->confirm, $actionname, "<a href='$options->url$menuitem->url'>$menuitem->title</a>");
       eval('$result .= "'. $html->confirmform . '\n";');
     }
     return $result;
