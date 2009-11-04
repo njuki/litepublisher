@@ -12,15 +12,16 @@ class tposteditor extends tadminmenuitem {
 $result = '';
     $categories = tcategories::instance();
     if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
+$html = $this->html;
 $args = new targs();
-        foreach ($categories->items as $id => $item) {
-$args->id = $id;
-      $args->checked = in_array($id, $post->categories);
+        foreach ($categories->getitems() as $item) {
+$args->id = $item['id'];
+      $args->checked = in_array($items['id'], $post->categories);
 $args->url = $options->url . $item['url'];
-$args->name = {$item['name']}
-      $result .= $this->html->category($args);
+$args->title = $item['title'];
+      $result .= $html->category($args);
     }
-$result = sprintf($this->html->categories(), $result);
+$result = sprintf($html->categories(), $result);
     $result = str_replace("'", '"', $result);
     return $result;
   }

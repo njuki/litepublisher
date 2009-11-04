@@ -27,14 +27,25 @@ global $db;
 return $db->prefix . $this->table . 'items';
 }
 
-public 
-function getitem($id) {
+public function getitem($id) {
 $result = parent::getitem($id);
 if (dbversion && empty($result['url'])) {
 $urlmap = turlmap::instance();
 $result['url'] = $urlmap->getidurl($result['idurl']);
 }
 return $result;
+}
+
+public function &getitems() {
+if (dbversion) {
+$db = $this->db;
+$table = $this->thistable;
+$res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
+where $table.idurl = $db->urlmap.id");
+return $res->fetchAll(PDO::FETCH_ASSOC);
+} else {
+return $this->items;
+}
 }
   
   public function save() {
@@ -72,14 +83,14 @@ $this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
 return $this->items[$id]['url'];
 }
   
-  public function PostEdit($postid) {
-    $post = $tpost::instance($postid);
+  public function postedited($idpost) {
+    $post = $tpost::instance($idpost);
       $list = $post->{$this->PostPropname};
 if (dbversion) {
 $items = implode(', ', $list);
-$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'postid' and not tag in (items)");
+$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'idpost' and not tag in (items)");
 $this->getdb->$this->itemstable)->delete("tag in (items)");
-$this->db->query("insert into $this->itemstable ($postid, idtag)
+$this->db->query("insert into $this->itemstable ($idpost, idtag)
 select $this->thistable.id as idtag  from $this->thistable  where idtag in ($items)");
 //update count
 $poststable = $this->db->prefix . 'posts';
@@ -92,12 +103,12 @@ where id in ($items)";
     $this->lock();
     foreach ($this->items as $id => $Item) {
       $toadd = in_array($id, $list);
-      $i = array_search($postid, $Item['items']);
+      $i = array_search($idpost, $Item['items']);
       if (is_int($i) && !$toadd) {
         array_splice($this->items[$id]['items'], $i, 1);
       }
       if ($toadd && !is_int($i)) {
-        $this->items[$id]['items'][] = $postid;
+        $this->items[$id]['items'][] = $idpost;
       }
       
             $publ = $posts->stripdrafts($this->items[$id]['items']);
@@ -107,17 +118,17 @@ where id in ($items)";
 }
   }
   
-  public function PostDeleted($postid) {
-$postid = (int) $postid;
+  public function postdeleted($idpost) {
+$idpost = (int) $idpost;
 if (dbversion) {
-$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'postid' and not tag in (items)");
+$db = $this->db;
+$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'idpost' and not tag in (items)");
 if (count($exclude) > 0) {
-$this->getdb($this->itemstable)->delete("post = $postid");
-$poststable = $this->db->prefix . 'posts';
+$this->getdb($this->itemstable)->delete("post = $idpost");
 $items = implode(', ', $exclude);
 $this->db->query("update $this->thistable set itemscount = postscount 
-(select count($this->itemstable.post) as postscount  from $this->itemstable, $poststable 
-where tag in ($items) and post = $poststable.id and $poststable.status = 'published' group by post)
+(select count($this->itemstable.post) as postscount  from $this->itemstable, $db->posts
+where tag in ($items) and post = $db->posts.id and $db->posts.status = 'published' group by post)
 where id in ($items)";
 }
 return;
@@ -125,7 +136,7 @@ return;
 
     $this->lock();
     foreach ($this->items as $id => $item) {
-      $i = array_search($postid, $this->items[$id]['items']);
+      $i = array_search($idpost, $this->items[$id]['items']);
       if (is_int($i)) {
         array_splice($this->items[$id]['items'], $i, 1);
         $this->items[$id]['itemscount'] = count($this->items[$id]['items']);
@@ -147,22 +158,23 @@ if (dbversion)  {
 $id = $this->db->InsertAssoc(array('title' => $title));
 $idurl =         $urlmap->add($url, get_class($this),  $id);
 $this->db->setvalue($id, 'idurl', $idurl);
-$urlmap->clearcache();
-}
+} else {
     $this->lock();
-    $this->items[++$this->autoid] = array(
-    'id' => $this->autoid,
-    'itemscount' => 0,
-    'title' => $title,
-    'url' =>$url,
+$id = ++$this->autoid;
+    $this->items[$id] = array(
+    'id' => $id,
 'idurl' =>         $urlmap->Add($url, get_class($this),  $this->autoid),
+    'url' =>$url,
+    'title' => $title,
+'icon' => 0,
+    'itemscount' => 0,
     'items' => array()
     );
     $this->unlock();
+}
     $this->added($this->autoid);
 $urlmap->clearcache();
-    return $this->autoid;
-}
+    return $id;
   }
   
  public function edit($id, $title, $url) {
@@ -255,7 +267,12 @@ return $this->db->res2array($this->db->query("select title from $this->thistable
   public function getlink($id) {
     global $options;
 $item = $this->getitem($id);
-      return '<a href="'. $options->url . $item['url'] . '">' . $item['title'] . '</a>';
+$icon = '';
+if ($item['icon'] > 0) {
+$icons = ticons::instance();
+$icon = $icons->getlink($item['icon']);
+}
+      return "<a href=\"$options->url{$item['url']}" title=\"{$item['title']}\">{$icon{$item['title']}</a>";
  }
   
   public function getsorted($sortname, $count) {
@@ -469,6 +486,10 @@ $this->setitem($id, $item);
   public function getdescription() {
 return $this->getvalue($id, 'description');
   }
+
+public function getkeywords($id) {
+return $this->getvalue($id, 'keywords');
+}
   
   }//class
 
