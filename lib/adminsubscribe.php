@@ -1,6 +1,6 @@
 <?php
 
-class TAdminSubscribe extends TAdminPage {
+class tadminsubscribe extends tadminmenuitem {
 
   public static function instance() {
     return getinstance(__class__);
@@ -12,8 +12,7 @@ $this->table = 'subscribe';
     $this->basename = 'subscribe';
   }
  
-  public function Auth() { }
-    public function getmenu() { return ''; }
+  public function auth() { }
 
   public function getcontent() {
     global $options;
@@ -24,7 +23,7 @@ $this->table = 'subscribe';
     $comusers = tcomusers::instance();
     if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return $this->notfount();
 $subscribers=  tsubscribers::instance();
-$items = $subscribers->getitems($user['id']);
+$items = $subscribers->getposts($user['id']);
       if (count($items) == 0) return $html->nosubscribtions();
         $email = $user['email'];
         eval('$result .="'. $html->formhead . '\n";');
@@ -37,7 +36,7 @@ $items = $subscribers->getitems($user['id']);
 return $this->FixCheckall($result);
   }
   
-  public function ProcessForm() {
+  public function processform() {
     $result = '';
     $comusers = tcomusers::instance();
     if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return '';

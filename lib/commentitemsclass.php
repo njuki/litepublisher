@@ -95,17 +95,6 @@ $self = new $class();
     return $this->items[$id]['type'] == 'pingback';
   }
   
-  public function &GetSubscribers() {
-    $result = array();
-    $users = &tcomusers::instance();
-    foreach ($this->items as $id => $item) {
-      if (($item['status'] == 'approved') && ($item['type'] == '') && $users->Subscribed($item['uid'], $this->pid)) {
-        if (!in_array($item['uid'], $result)) $result[] = $item['uid'];
-      }
-    }
-    return $result;
-  }
-  
 }//class
 
 //wrapper for simple acces to single comment

@@ -8,30 +8,31 @@ class tadminmoderator extends tadminmenuitem {
   }
   
   private function getsubscribed($authorid) {
-    global $options, $classes;
+    global $options, $classes, $post;
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';
-    $result = $this->html->checkallscript;
-        $author = $comusers->getitem($authorid);
-    $manager = $classes->commentmanager;
-    $list = array();
-    foreach ($manager->items as $id => $item) {
-      if ($authorid != $item['uid'])  continue;
-      $pid = $item['pid'];
-      if (isset($list[$pid]))  {
-        $list[$pid]['count']++;
-      } else {
-        $list[$pid] = array('count' => 1);
-      }
-      $list[$pid]['subscribed'] = in_array($pid, $author['subscribe']);
-    }
+$html = $this->gethtml('moderator');
+    $result = $html->checkallscript;
+$manager = $classes->commentmanager;
+if (dbversion) {
+$posted = $manager->db->res2array($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
+} else { 
+$posted = array();
+foreach ($manager->items as $id => $item) {
+if ($item['uid'] == $authorid) {
+if (!in_array($item['pid'], $posted)) $posted[] =$item['pid'];
+}
+}
+}
+
+    $subscribers = $tsubscribers::instance();
+    $subscribed = $subscribers->getposts($authorid);
     
-    $checked = "checked='checked'";
-    $subcribeitem = $html->subscribeitem;
-    foreach ($list as $id => $item) {
-      $subscribed = $item['subscribed'] ? $checked : '';
-      $post = &TPost::instance($id);
-      eval('$result .= "'. $subcribeitem . '\n";');
+$args = new targs();
+    foreach ($posted as $idpost) {
+$post = tpost::instance($idpost);
+      $args->subscribed = in_array($idpost, $subscribed);
+$result .= $html->subscribeitem($args);
     }
     
     return $this->FixCheckall($result);
@@ -45,7 +46,8 @@ class tadminmoderator extends tadminmenuitem {
     switch ($this->name) {
       case 'moderator':
       case 'hold':
-      if (!empty($_GET['action']))    return $this->SingleModerate();
+      if (isset($_GET['action']))    return $this->SingleModerate();
+
       $perpage = 20;
       $from = max(0, count($manager->items) - $urlmap->pagenumber * $perpage);
       if ($this->arg == 'hold') {
@@ -121,9 +123,6 @@ $result .= $this->html->authorheader($args);
   
   public function SingleModerate() {
     global $options;
-    $html = &THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = &TLocal::instance();
     
     $id = (int) $_GET['commentid'];
     $manager = &TCommentManager::instance();

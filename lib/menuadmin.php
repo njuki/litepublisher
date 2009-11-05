@@ -135,10 +135,11 @@ $this->checkform();
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
   }
   
-public function gethtml() {
+public function gethtml($name = '') {
+if ($name == '') $name = $this->name;
 $result = THtmlResource::instance();
-$result->section = $this->name;
-$lang = tlocal::instance($this->name);
+$result->section = $name;
+$lang = tlocal::instance($name);
 return $result;
 }
 
