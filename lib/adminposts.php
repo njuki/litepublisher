@@ -13,7 +13,7 @@ $action = $_GET['action'];
 return $this->getlist();
 }
 
-       $id = (int) $_GET['postid'];
+       $id = $this->idget();
     $posts= tposts::instance();
     if (!$posts->itemexists($id)) return $this->notfound;
     $post = tpost::instance($id);
@@ -21,8 +21,9 @@ return $this->getlist();
 if (!$this->confirmed) {
 $args = new targs()
 $args->id = $id;
+$args->adminurl = $options->url . $this->url . $options->q . 'id';
 $args->action = $action;
-$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], "<a href='$post->link'>$post->title</a>");
+$args->confirm = sprintf($this->lang->confirm, $this->lang->$action, "<a href='$post->link'>$post->title</a>");
 return $this->html->confirmform($args);
 }
 
@@ -54,7 +55,7 @@ $count = $posts->count;
     $from = max(0, $count - $urlmap->page * $perpage);
 
 if (dbversion) {
-$items = $this->db->idselect("not status = 'deleted' order by posted desc limit $from, $perpage");
+$items = $this->db->idselect("status <> 'deleted' order by posted desc limit $from, $perpage");
 } else {
 $items = array_slice($this->items, $from, $perpage, true);
 $items = array_reverse (array_keys($items));
@@ -65,7 +66,7 @@ $items = array_reverse (array_keys($items));
 $args = new targs();
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
-      $args->status = tlocal::$data['poststatus'][$post->status];
+      $args->status = $this->lang->{$post->status};
 $result .= $this->html->itemlist($args);
     }
 $result .= $this->html->listfooter();
