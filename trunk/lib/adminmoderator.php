@@ -9,6 +9,7 @@ class tadminmoderator extends tadminmenuitem {
   
   private function getsubscribed($authorid) {
     global $options, $classes, $post;
+$authorid = (int) $authorid;
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';
 $html = $this->gethtml('moderator');
@@ -37,48 +38,62 @@ $result .= $html->subscribeitem($args);
     
     return $this->FixCheckall($result);
   }
-  
-  public function getcontent() {
-    global $classes, $options, $urlmap;
-    $result = '';
-       $manager = $classes->commentmanager;
-   
-    switch ($this->name) {
-      case 'moderator':
-      case 'hold':
-      if (isset($_GET['action']))    return $this->SingleModerate();
 
-      $perpage = 20;
-      $from = max(0, count($manager->items) - $urlmap->pagenumber * $perpage);
-      if ($this->arg == 'hold') {
-        $list = array_slice($manager->holditems, $from, $perpage, true);
-      } else {
-        $list = array_slice($manager->items, $from, $perpage, true);
-      }
-      eval('$s = "'. $html->listhead. '\n";');
-      $result .= sprintf($s, $from, $from + count($list), count($manager->items));
+private function getcomments($kind) {
+global $comment;
+
+      $result .= sprintf($html->h2->listhead, $from, $from + count($list), count($manager->items));
       $result = $html->checkallscript;
-      eval('$result .= "'. $html->tableheader . '\n";');
-      $itemlist = $html->itemlist;
+$result .= $html->tableheader();
       foreach ($list as $id => $item) {
+if (dbversion) {
+$comment->data = $item;
+} else {
         //repair
         $comments = &TComments::instance($item['pid']);
         if (!isset($comments->items[$id])) {
-          $manager->Delete($id);
+          $manager->delete($id);
           continue;
         }
+
         $comment = new TComment($comments);
         $comment->id = $id;
-        $excerpt = TContentFilter::GetExcerpt($comment->content, 120);
-        $onhold = $comment->status == 'hold' ? "checked='checked'" : '';
-        eval('$result .="' . $itemlist . '\n";');
+}
+$args->id = $comment->id;
+        $args->excerpt = TContentFilter::GetExcerpt($comment->content, 120);
+        $args->onhold = $comment->status == 'hold';
+$result .=$html->itemlist($args);
       }
-      eval('$result .= "'. $html->tablefooter . '\n";');;
+$result .= $html->tablefooter;
       $result = $this->FixCheckall($result);
       
       $tp = TTemplatePost::instance();
       $result .= $tp->PrintNaviPages('/admin/moderator/', $urlmap->page, ceil(count($manager->items)/$perpage));
       return $result;
+}  
+
+  public function getcontent() {
+    global $classes, $options, $urlmap, $comment;
+    $result = '';
+       $manager = $classes->commentmanager;
+   $html = $this->html;
+    switch ($this->name) {
+      case 'moderator':
+      case 'hold':
+case 'pingback':
+
+      if (isset($_GET['action']))    return $this->dosingle($_GET['action'], $this->idget());
+
+      $perpage = 20;
+      $from = max(0, $manager->count - $urlmap->page * $perpage);
+      if ($this->name == 'hold') {
+        $list = array_slice($manager->holditems, $from, $perpage, true);
+      } elseif (dbversion) {
+        $list = $manager->getitems("status <> 'deleted'", $from, $perpage);
+} else {
+        $list = array_slice($manager->items, $from, $perpage, true);
+      }
+
       
       case 'authors':
       $comusers = tcomusers::instance();
@@ -121,43 +136,44 @@ $result .= $this->html->authorheader($args);
     return $result;
   }
   
-  public function SingleModerate() {
-    global $options;
+  public function dosingle($id, $action) {
+    global $classes, $options, $comment;
+        $manager = $classes->commentmanager;
+    if (!$manager->itemexists($id)) return $this->notfound;
+    if ($action == 'edit') return $this->editcomment($id);
     
-    $id = (int) $_GET['commentid'];
-    $manager = &TCommentManager::instance();
-    if (!$manager->ItemExists($id)) return $this->notfound;
-    if ($_GET['action'] == 'edit') return $this->EditComment($id);
-    
-    $comment = &TComments::GetComment($manager->items[$id]['pid'], $id);
-    $result ='';
-    switch ($_GET['action']) {
+    $comment = $manager->getcomment($id);
+    switch ($action) {
       case 'delete' :
-      if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
-        $manager->Delete($id);
-        eval('$result = "'. $html->successmoderated . '\n";');
-        return $result;
+      if  ($this->confirmed) {
+        $manager->delete($id);
+return $this->html->h2->successmoderated ;
       } else {
-        eval('$result .= "'. $html->confirmform . '\n";');
-        eval('$result .= "'. $html->info . '\n"; ');
+$args = new targs();
+$args->action = $action;
+$args->adminurl = $options->url . '/admin/moderate/' . $options->q . 'id';
+$args->id = $id;
+$args->confirm = $this->lang->confirmdelete;
+$result = $html->confirmform($args);
+$result .= $html->info();
         return $result;
       }
-      break;
-      
-      case 'hold':
-      $manager->SetStatus($id, 'hold');
+
+            case 'hold':
+      $manager->setstatus($id, 'hold');
       break;
       
       case 'approve':
-      $manager->SetStatus($id, 'approved');
+      $manager->setstatus($id, 'approved');
       break;
     }
-    eval('$result = "'. $result .= $html->successmoderated . '\n";');
-    eval('$result .= "'. $html->info . '\n"; ');
+
+$result = $this->html->h2->successmoderated;
+$result .= $this->html->info();
     return $result;
   }
   
-  public function ProcessForm() {
+  public function processform() {
     global $options, $urlmap;
     $html = &THtmlResource::instance();
     $html->section = 'moderator';

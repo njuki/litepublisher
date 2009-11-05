@@ -44,9 +44,7 @@ if (dbversion) {
 $c = $comments->db->getcount("post = $idpost and status = 'approved' and pingback = 'false'");
     $count = $this->getcount($c);
 $db = $comments->db;
-$items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
-where $db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and $db->comusers.id = $db->comments.author
-sort by $db->comments.posted asc limit $from, $options->commentsperpage");
+$items = $comments->getitems("$db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and $db->comusers.id = $db->comments.author", $from, $options->commentsperpage);
 } else {
     $items = $comments->getapproved();
     $count = $this->getcount(count($items));

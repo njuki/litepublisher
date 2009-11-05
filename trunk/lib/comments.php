@@ -71,8 +71,7 @@ $this->db->setvalue($id, 'status', 'deleted');
 $this->db->update("status = 'deleted'", "post = $postid");
 }
   
-  
-  public function setstatus($id, $value) {
+    public function setstatus($id, $value) {
     if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
 $this->db->setvalue($id, 'status', $value);
     $this->dochanged($item['pid']);
@@ -86,6 +85,13 @@ return $this->db->idselect("post = $this->pid and author = $author and status = 
 return $this->db->idselect("status = 'hold' and pingback = false"));
   }
 
+
+public function getitems($where, $from, $count) {
+$db = $this->db;
+$res = $db->query("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
+where  $where sort by $db->comments.posted asc limit $from, $count");
+return $res->fetchAll(PDO::FETCH_ASSOC);
+}
 
   public function IndexOfRawContent($s) {
 $id = $this->getdb('rawcomments')->findid('rawcontent', $s);
