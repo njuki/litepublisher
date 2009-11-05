@@ -99,7 +99,7 @@ global $classes;
     }
   }
 
-public function getitems($uid) {
+public function getposts($uid) {
 if (dbversion) {
 return $this->db->res2array($this->db->query("select post from $this->thistable where author = $uid"));
 } else {
