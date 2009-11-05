@@ -55,7 +55,6 @@ $args->id = $id;
 $args->link = $menu->getlink($id);
 $args->order = $item['order'];
         $args->status = TLocal::$data['poststatus'][$item['status']];
-
         if ($item['parent'] == 0) {
           $args->parent = '---';
         } else {
@@ -71,6 +70,11 @@ return str_replace("'", '"', $result);
 if (!$menu->itemexists($id)) return $this->notfound;
       $menuitem = tmenuitem::instance($id);
 $args->id = $id;
+$args->title = $menuitem->title;
+$args->url = $menuitem->url;
+$args->order = $menuitem->order;
+    $args->published = $menuitem->status != 'draft' ? 'selected' : '';
+    $args->draft = $menuitem->status == 'draft' ? 'selected' : '';
       $args->content = $menuitem->content;
       $selected = $menuitem->parent  == 0 ? 'selected' : '';
 $parentcombo = "<option value='0' $selected>---</option>\n";
@@ -98,6 +102,7 @@ if (!$menu->itemexists($id)) return $this->notfound;
 $menuitem->url = $url;
       $menuitem->order = (int) $order;
       $menuitem->parent = (int) $parent;
+    $menuitem->status = $status == 'draft' ? 'draft' : 'published';
       $menuitem->content = $content;
 
       if ($id == 0) {
