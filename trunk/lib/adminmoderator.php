@@ -1,31 +1,19 @@
 <?php
 
-class TAdminModerator extends TAdminPage {
+class tadminmoderator extends tadminmenuitem {
   private $user;
   
-  public static function &Instance() {
+  public static function instance() {
     return GetInstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'moderator';
-  }
-  
-  private function GetSubscribed($authorid) {
-    global $Options;
-    $authors = tcomusers::Instance();
-    if (!$authors->ItemExists($authorid)) {
-      return '';
-    }
-    
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    $result = $html->checkallscript;
-    
-    $author = $authors->items[$authorid];
-    $manager = &TCommentManager::Instance();
+  private function getsubscribed($authorid) {
+    global $options, $classes;
+    $comusers = tcomusers::instance();
+    if (!$comusers->itemexists($authorid))  return '';
+    $result = $this->html->checkallscript;
+        $author = $comusers->getitem($authorid);
+    $manager = $classes->commentmanager;
     $list = array();
     foreach ($manager->items as $id => $item) {
       if ($authorid != $item['uid'])  continue;
@@ -42,44 +30,39 @@ class TAdminModerator extends TAdminPage {
     $subcribeitem = $html->subscribeitem;
     foreach ($list as $id => $item) {
       $subscribed = $item['subscribed'] ? $checked : '';
-      $post = &TPost::Instance($id);
+      $post = &TPost::instance($id);
       eval('$result .= "'. $subcribeitem . '\n";');
     }
     
     return $this->FixCheckall($result);
   }
   
-  public function Getcontent() {
-    global $Options, $Urlmap;
+  public function getcontent() {
+    global $classes, $options, $urlmap;
     $result = '';
-    $html = &THtmlResource::Instance();
-    $html->section = 'moderator';
-    $lang = &TLocal::Instance();
-    
-    $checked = "checked='checked'";
-    $CommentManager = &TCommentManager::Instance();
-    
-    switch ($this->arg) {
-      case null:
+       $manager = $classes->commentmanager;
+   
+    switch ($this->name) {
+      case 'moderator':
       case 'hold':
       if (!empty($_GET['action']))    return $this->SingleModerate();
       $perpage = 20;
-      $from = max(0, count($CommentManager->items) - $Urlmap->pagenumber * $perpage);
+      $from = max(0, count($manager->items) - $urlmap->pagenumber * $perpage);
       if ($this->arg == 'hold') {
-        $list = array_slice($CommentManager->holditems, $from, $perpage, true);
+        $list = array_slice($manager->holditems, $from, $perpage, true);
       } else {
-        $list = array_slice($CommentManager->items, $from, $perpage, true);
+        $list = array_slice($manager->items, $from, $perpage, true);
       }
       eval('$s = "'. $html->listhead. '\n";');
-      $result .= sprintf($s, $from, $from + count($list), count($CommentManager->items));
+      $result .= sprintf($s, $from, $from + count($list), count($manager->items));
       $result = $html->checkallscript;
       eval('$result .= "'. $html->tableheader . '\n";');
       $itemlist = $html->itemlist;
       foreach ($list as $id => $item) {
         //repair
-        $comments = &TComments::Instance($item['pid']);
+        $comments = &TComments::instance($item['pid']);
         if (!isset($comments->items[$id])) {
-          $CommentManager->Delete($id);
+          $manager->Delete($id);
           continue;
         }
         $comment = new TComment($comments);
@@ -91,28 +74,33 @@ class TAdminModerator extends TAdminPage {
       eval('$result .= "'. $html->tablefooter . '\n";');;
       $result = $this->FixCheckall($result);
       
-      $TemplatePost = &TTemplatePost::Instance();
-      $result .= $TemplatePost ->PrintNaviPages('/admin/moderator/', $Urlmap->pagenumber, ceil(count($CommentManager->items)/$perpage));
+      $tp = TTemplatePost::instance();
+      $result .= $tp->PrintNaviPages('/admin/moderator/', $urlmap->page, ceil(count($manager->items)/$perpage));
       return $result;
       
       case 'authors':
-      $authors = tcomusers::Instance();
+      $comusers = tcomusers::instance();
       $id = $this->idget();
-      if ($authors->ItemExists($id)) {
-        extract($authors->items[$id]);
+      if ($comusers->itemexists($id)) {
+$author = $comusers->getitem($id);
+$args->id = $id;
+$args->name = $author['name'];
+$args->url = $author['url'];
+$args->email = $author['email'];
         if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete')) {
           $result .= $html->authorconfirmdelete($id, $name, $url, $email);
           return str_replace("'", '"', $result);
         }
       } else {
-        $id = 0;
-        $name = '';
-        $email = '';
-        $url = '';
+        $args->id = 0;
+        $args->name = '';
+        $args->email = '';
+        $args->url = '';
       }
-      $subscribed = $this->GetSubscribed($id);
-      eval('$result .= "' . $html->authorheader . '\n";');
-      foreach ($authors->items as $id => $item) {
+      $args->subscribed = $this->getsubscribed($id);
+$result .= $this->html->authorheader($args);
+
+      foreach ($comusers->items as $id => $item) {
         if (is_array($item['ip'])) $ip = implode('; ', $item['ip']);
         eval('$result .= "'. $html->authoritem . '\n";');
       }
@@ -122,8 +110,8 @@ class TAdminModerator extends TAdminPage {
       
       case 'reply':
       $id = $this->idget();
-      if (!$CommentManager ->ItemExists($id))return $this->notfound();
-      $comment = &$CommentManager->Getcomment($id);
+      if (!$manager ->ItemExists($id))return $this->notfound();
+      $comment = &$manager->Getcomment($id);
       eval('$result .= "'. $html->replyform . '\n";');
       break;
     }
@@ -132,22 +120,22 @@ class TAdminModerator extends TAdminPage {
   }
   
   public function SingleModerate() {
-    global $Options;
-    $html = &THtmlResource::Instance();
+    global $options;
+    $html = &THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     $id = (int) $_GET['commentid'];
-    $CommentManager = &TCommentManager::Instance();
-    if (!$CommentManager->ItemExists($id)) return $this->notfound;
+    $manager = &TCommentManager::instance();
+    if (!$manager->ItemExists($id)) return $this->notfound;
     if ($_GET['action'] == 'edit') return $this->EditComment($id);
     
-    $comment = &TComments::GetComment($CommentManager->items[$id]['pid'], $id);
+    $comment = &TComments::GetComment($manager->items[$id]['pid'], $id);
     $result ='';
     switch ($_GET['action']) {
       case 'delete' :
       if  (isset($_GET['confirm']) && ($_GET['confirm'] == 1)) {
-        $CommentManager->Delete($id);
+        $manager->Delete($id);
         eval('$result = "'. $html->successmoderated . '\n";');
         return $result;
       } else {
@@ -158,11 +146,11 @@ class TAdminModerator extends TAdminPage {
       break;
       
       case 'hold':
-      $CommentManager->SetStatus($id, 'hold');
+      $manager->SetStatus($id, 'hold');
       break;
       
       case 'approve':
-      $CommentManager->SetStatus($id, 'approved');
+      $manager->SetStatus($id, 'approved');
       break;
     }
     eval('$result = "'. $result .= $html->successmoderated . '\n";');
@@ -171,10 +159,10 @@ class TAdminModerator extends TAdminPage {
   }
   
   public function ProcessForm() {
-    global $Options, $Urlmap;
-    $html = &THtmlResource::Instance();
+    global $options, $urlmap;
+    $html = &THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     switch ($this->arg) {
       case null:
@@ -188,99 +176,99 @@ class TAdminModerator extends TAdminPage {
       } else {
         return '';
       }
-      $CommentManager = &TCommentManager::Instance();
-      $CommentManager->Lock();
+      $manager = &TCommentManager::instance();
+      $manager->Lock();
       foreach ($_POST as $id => $value) {
         if (!is_numeric($id))  continue;
         $id = (int) $id;
-        if (!$CommentManager->ItemExists($id)) continue;
-        $comment = &TComments::GetComment($CommentManager->items[$id]['pid'], $id);
+        if (!$manager->ItemExists($id)) continue;
+        $comment = &TComments::GetComment($manager->items[$id]['pid'], $id);
         switch ($action) {
           case 'delete' :
-          $CommentManager->Delete($id);
+          $manager->Delete($id);
           break;
           
           case 'hold':
-          $CommentManager->SetStatus($id, 'hold');
+          $manager->SetStatus($id, 'hold');
           break;
           
           case 'approve':
-          $CommentManager->SetStatus($id, 'approved');
+          $manager->SetStatus($id, 'approved');
           break;
         }
       }
-      $CommentManager->Unlock();
+      $manager->Unlock();
       eval('$result = "'. $html->successmoderated . '\n";');
       break;
       
       case 'authors':
       $authorid = $this->idget();
-      $authors = &tcomusers::Instance();
-      if (!$authors->ItemExists($authorid)) return $this->notfound;
+      $comusers = &tcomusers::instance();
+      if (!$comusers->ItemExists($authorid)) return $this->notfound;
       if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete') &&!empty($_REQUEST['confirm'])  ) {
-        $CommentManager = &TCommentManager::Instance();
-        $CommentManager->Lock();
-        foreach ($CommentManager->items as $id => $item) {
-          if ($authorid == $item['uid']) $CommentManager->Delete($id);
+        $manager = &TCommentManager::instance();
+        $manager->Lock();
+        foreach ($manager->items as $id => $item) {
+          if ($authorid == $item['uid']) $manager->Delete($id);
         }
-        $authors->Delete($authorid);
-        $CommentManager->Unlock();
+        $comusers->Delete($authorid);
+        $manager->Unlock();
         eval('$result = "'. $html->authordeleted . '\n";');
       } else {
-        $authors->items[$authorid]['name'] = $_POST['name'];
-        $authors->items[$authorid]['url'] = $_POST['url'];
-        $authors->items[$authorid]['email'] = $_POST['email'];
-        $authors->items[$authorid]['subscribe'] = array();
+        $comusers->items[$authorid]['name'] = $_POST['name'];
+        $comusers->items[$authorid]['url'] = $_POST['url'];
+        $comusers->items[$authorid]['email'] = $_POST['email'];
+        $comusers->items[$authorid]['subscribe'] = array();
         foreach ($_POST as $postid => $value) {
           if (!is_numeric($postid))  continue;
-          $authors->items[$authorid]['subscribe'][]  = (int) $postid;
+          $comusers->items[$authorid]['subscribe'][]  = (int) $postid;
         }
-        $authors->Save();
+        $comusers->Save();
         eval('$result = "'. $html->authoredited . '\n";');
       }
       break;
       
       case 'reply':
       $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-      $manager = &TCommentManager::Instance();
+      $manager = &TCommentManager::instance();
       if (!$manager->ItemExists($id)) return $this->notfound;
       $email = $this->GetAdminEmail();
-      $site = $Options->url . $Options->home;
-      $profile = &TProfile::Instance();
-      $authors = &tcomusers ::Instance();
-      $authorid = $authors->Add($profile->nick, $email, $site);
+      $site = $options->url . $options->home;
+      $profile = &TProfile::instance();
+      $comusers = &tcomusers ::instance();
+      $authorid = $comusers->Add($profile->nick, $email, $site);
 $post = tpost::instance($manager->items[$id]['pid']);
       $manager->AddToPost($post->id, $authorid, $_POST['content']);
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
-      @header("Location: $Options->url$posturl");
+      @header("Location: $options->url$posturl");
       exit();
       
     }
     
-    $Urlmap->ClearCache();
+    $urlmap->ClearCache();
     return $result;
   }
   
   private function GetAdminEmail() {
-    global $Options;
-    $profile = &TProfile::Instance();
+    global $options;
+    $profile = &TProfile::instance();
     if ($profile->mbox!= '') return $profile->mbox;
-    return $Options->fromemail;
+    return $options->fromemail;
   }
   
   public function EditComment($id) {
-    global $Options;
-    $CommentManager =&TCommentManager::Instance();
-    $comment = $CommentManager->GetComment($id);
+    global $options;
+    $manager =&TCommentManager::instance();
+    $comment = $manager->GetComment($id);
     if (isset($_POST['submit'])) {
       $comment->content = $_POST['content'];
       //$comment->Save();
     }
     $content = $this->ContentToForm($comment->content);
     $result = '';
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'moderator';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     eval('$result .= "'. $html->info . '\n";');
     eval('$result .= "'. $html->editform . '\n";');
