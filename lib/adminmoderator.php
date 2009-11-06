@@ -45,6 +45,7 @@ global $comment;
       $result .= sprintf($html->h2->listhead, $from, $from + count($list), count($manager->items));
       $result = $html->checkallscript;
 $result .= $html->tableheader();
+$args->adminurl = $options->url . $this->url . . $options->q. 'id';
       foreach ($list as $id => $item) {
 if (dbversion) {
 $comment->data = $item;
@@ -62,6 +63,8 @@ $comment->data = $item;
 $args->id = $comment->id;
         $args->excerpt = TContentFilter::GetExcerpt($comment->content, 120);
         $args->onhold = $comment->status == 'hold';
+$args->email = $comment->email == '' ? '' "<a href='mailto:$comment->email'>$comment->email</a>";
+$args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
 $result .=$html->itemlist($args);
       }
 $result .= $html->tablefooter;
@@ -82,7 +85,7 @@ $result .= $html->tablefooter;
       case 'hold':
 case 'pingback':
 
-      if (isset($_GET['action']))    return $this->dosingle($_GET['action'], $this->idget());
+      if (isset($_GET['action']))    return $this->dosingle($this->idget(), $_GET['action']);
 
       $perpage = 20;
       $from = max(0, $manager->count - $urlmap->page * $perpage);
@@ -140,18 +143,20 @@ $result .= $this->html->authorheader($args);
     global $classes, $options, $comment;
         $manager = $classes->commentmanager;
     if (!$manager->itemexists($id)) return $this->notfound;
-    if ($action == 'edit') return $this->editcomment($id);
-    
+
     $comment = $manager->getcomment($id);
     switch ($action) {
+case 'edit': 
+return $this->editcomment($id);
+
       case 'delete' :
       if  ($this->confirmed) {
         $manager->delete($id);
 return $this->html->h2->successmoderated ;
       } else {
 $args = new targs();
-$args->action = $action;
-$args->adminurl = $options->url . '/admin/moderate/' . $options->q . 'id';
+$args->action = 'delete';
+$args->adminurl = $options->url . $this->url . $options->q . 'id';
 $args->id = $id;
 $args->confirm = $this->lang->confirmdelete;
 $result = $html->confirmform($args);
@@ -174,14 +179,13 @@ $result .= $this->html->info();
   }
   
   public function processform() {
-    global $options, $urlmap;
-    $html = &THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = &TLocal::instance();
+    global $classes, $options, $urlmap;
+      $manager = $classes->commentmanager;
     
-    switch ($this->arg) {
-      case null:
+    switch ($this->name) {
+      case 'moderate':
       case 'hold':
+case 'pingback':
       if (!empty($_POST['approve'])) {
         $action = 'approve';
       } elseif (!empty($_POST['hold'])) {
@@ -191,44 +195,48 @@ $result .= $this->html->info();
       } else {
         return '';
       }
-      $manager = &TCommentManager::instance();
+
       $manager->Lock();
       foreach ($_POST as $id => $value) {
         if (!is_numeric($id))  continue;
         $id = (int) $id;
-        if (!$manager->ItemExists($id)) continue;
-        $comment = &TComments::GetComment($manager->items[$id]['pid'], $id);
+        if (!$manager->itemexists($id)) continue;
+        $comment = $manager->getcomment($id);
         switch ($action) {
           case 'delete' :
-          $manager->Delete($id);
+          $manager->delete($id);
           break;
           
           case 'hold':
-          $manager->SetStatus($id, 'hold');
+          $manager->setstatus($id, 'hold');
           break;
           
           case 'approve':
-          $manager->SetStatus($id, 'approved');
+          $manager->setstatus($id, 'approved');
           break;
         }
       }
-      $manager->Unlock();
-      eval('$result = "'. $html->successmoderated . '\n";');
+      $manager->unlock();
+$result = $this->html->h2->successmoderated;
       break;
       
       case 'authors':
       $authorid = $this->idget();
-      $comusers = &tcomusers::instance();
-      if (!$comusers->ItemExists($authorid)) return $this->notfound;
+      $comusers = tcomusers::instance();
+      if (!$comusers->itemexists($authorid)) return $this->notfound;
       if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete') &&!empty($_REQUEST['confirm'])  ) {
-        $manager = &TCommentManager::instance();
-        $manager->Lock();
+if (dbversion) {
+$manager->db->delete("author = $author");
+        $comusers->delete($authorid);
+} else {
+        $manager->lock();
         foreach ($manager->items as $id => $item) {
           if ($authorid == $item['uid']) $manager->Delete($id);
         }
-        $comusers->Delete($authorid);
-        $manager->Unlock();
-        eval('$result = "'. $html->authordeleted . '\n";');
+        $comusers->delete($authorid);
+        $manager->unlock();
+}
+return $html->h2->authordeleted;
       } else {
         $comusers->items[$authorid]['name'] = $_POST['name'];
         $comusers->items[$authorid]['url'] = $_POST['url'];

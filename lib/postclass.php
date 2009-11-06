@@ -24,6 +24,7 @@ $this->table = 'posts';
     'modified' => 0,
     'url' => '',
     'title' => '',
+'title2' => '',
     'filtered' => '',
     'excerpt' => '',
     'rss' => '',
@@ -171,6 +172,7 @@ return self::instance($id);
   }
   
   public function gettitle() {
+if ($this->data['title2'] != '') return $this->data['title2'];
     return $this->data['title'];
   }
   
