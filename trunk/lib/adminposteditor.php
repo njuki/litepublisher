@@ -50,7 +50,7 @@ $args->categories = $this->getcategories($post);
     $args->pingenabled = $post->pingenabled;
     $args->published = $post->status != 'draft' ? 'selected' : '';
     $args->draft = $post->status == 'draft' ? 'selected' : '';
-    if ($this->arg == null) {
+    if (!isset($_GET['full'])) {
 $result .= $this->html->form($args);
     } else {
       $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
@@ -85,9 +85,10 @@ $result .= $this->html->form($args);
     $post->pingenabled = isset($pingenabled);
     $post->status = $status == 'draft' ? 'draft' : 'published';
     
-    if ($this->arg == null) {
+    if (!isset($_GET['full'])) {
       $post->content = $raw;
     } else {
+    $post->title2 = $title2;
       $post->url = $url;
       $post->description = $description;
       $post->rawcontent = $raw;

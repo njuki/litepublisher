@@ -60,20 +60,22 @@ $items = $this->db->idselect("status <> 'deleted' order by posted desc limit $fr
 $items = array_slice($this->items, $from, $perpage, true);
 $items = array_reverse (array_keys($items));
 }
-
-    $result .=sprintf($this->html->h2->count, $from, $from + count($items), $count);
-    $result .= $this->html->listhead();
+$html = $this->html;
+    $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
+    $result .= $html->listhead();
 $args = new targs();
+$args->adminurl = $options->url . $this->url . $options->q . 'id';
+$args->editurl = $options->url . $this->url . 'editor/' . $options->q . 'id';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
       $args->status = $this->lang->{$post->status};
-$result .= $this->html->itemlist($args);
+$result .= $html->itemlist($args);
     }
-$result .= $this->html->listfooter();
+$result .= $html->listfooter();
     $result = str_replace("'", '"', $result);
     
-    $TemplatePost = TTemplatePost::instance();
-    $result .= $TemplatePost ->PrintNaviPages('/admin/posts/', $urlmap->page, ceil($count/$perpage));
+    $tp = TTemplatePost::instance();
+    $result .= $tp->PrintNaviPages('/admin/posts/', $urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
