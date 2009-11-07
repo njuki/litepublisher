@@ -6,15 +6,20 @@ class tadminmoderator extends tadminmenuitem {
   public static function instance() {
     return GetInstance(__class__);
   }
+
+protected function getmanager() }
+global $classes;
+return $classes->commentmanager;
+}
   
   private function getsubscribed($authorid) {
-    global $options, $classes, $post;
+    global $options, $post;
 $authorid = (int) $authorid;
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';
 $html = $this->gethtml('moderator');
     $result = $html->checkallscript;
-$manager = $classes->commentmanager;
+$manager = $this->manager;
 if (dbversion) {
 $posted = $manager->db->res2array($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
 } else { 
@@ -39,19 +44,88 @@ $result .= $html->subscribeitem($args);
     return $this->FixCheckall($result);
   }
 
-private function getcomments($kind) {
-global $comment;
+private function getwherekind($kind) {
+switch ($kind) {
+case moderate':
+return "status <> 'deleted' and pingback <> true";
 
-      $result .= sprintf($html->h2->listhead, $from, $from + count($list), count($manager->items));
+case 'hold':
+return "status = 'hold'";
+
+case pingback':
+return "status <> 'deleted' and pingback = true";
+}
+}
+
+private function getlist($kind) {
+    global $options, $urlmap, $comment;
+$manager = $this->manager;
+      $perpage = 20;
+// подсчитать количество комментариев во всех случаях
+if (dbversion ) {
+$where = $this->getwherekind($kind);
+$total = $manager->getcount($where);
+} else {
+switch ($kind) {
+case moderate':
+$total = $manager->count;
+break;
+
+case 'hold':
+    $holditems = array();
+    foreach($manager->items as $id => $item) {
+      if (!empty($item['status']) && ($item['status'] == 'hold')) {
+        $holditems[$id] = $item;
+      }
+    }
+$total = count($holditems);
+break;
+  
+case pingback':
+    $pingbacks = array();
+    foreach($manager->items as $id => $item) {
+      if (!empty($item['type']) && ($item['type'] == 'pingback')) {
+        $pingbacks[$id] = $item;
+      }
+    }
+$total = count($pingbacks);
+break;
+}
+}
+
+      $from = max(0, $total - $urlmap->page * $perpage);
+
+if (dbversion ) {
+//$where = $this->getwherekind($kind);
+        $list = $manager->getitems($where,  $from, $perpage);
+} else {
+switch ($kind) {
+case moderate':
+        $list = array_slice($manager->items, $from, $perpage, true);
+break;
+
+case 'hold':
+        $list = array_slice($holditems, $from, $perpage, true);
+break;
+
+case 'pingback':
+        $list = array_slice($pingbacks, $from, $perpage, true);
+break;
+      }
+}
+
+$html = $this->html;
+      $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
       $result = $html->checkallscript;
 $result .= $html->tableheader();
-$args->adminurl = $options->url . $this->url . . $options->q. 'id';
-      foreach ($list as $id => $item) {
+$args->adminurl = $options->url . $this->url . $options->q. 'id';
+      foreach ($list as $id => $data) {
+//трюк - в db уже готовые комменты, а на файлах только id;
 if (dbversion) {
-$comment->data = $item;
+$comment->data = $data;
 } else {
         //repair
-        $comments = &TComments::instance($item['pid']);
+        $comments = &TComments::instance($data['pid']);
         if (!isset($comments->items[$id])) {
           $manager->delete($id);
           continue;
@@ -60,6 +134,7 @@ $comment->data = $item;
         $comment = new TComment($comments);
         $comment->id = $id;
 }
+
 $args->id = $comment->id;
         $args->excerpt = TContentFilter::GetExcerpt($comment->content, 120);
         $args->onhold = $comment->status == 'hold';
@@ -71,34 +146,33 @@ $result .= $html->tablefooter;
       $result = $this->FixCheckall($result);
       
       $tp = TTemplatePost::instance();
-      $result .= $tp->PrintNaviPages('/admin/moderator/', $urlmap->page, ceil(count($manager->items)/$perpage));
+      $result .= $tp->PrintNaviPages($this->url, $urlmap->page, ceil($total/$perpage));
       return $result;
 }  
 
   public function getcontent() {
-    global $classes, $options, $urlmap, $comment;
+    global $options, $urlmap, $comment;
     $result = '';
-       $manager = $classes->commentmanager;
+$manager = $this->manager;
    $html = $this->html;
+
     switch ($this->name) {
       case 'moderator':
       case 'hold':
 case 'pingback':
 
-      if (isset($_GET['action']))    return $this->dosingle($this->idget(), $_GET['action']);
+      if (isset($_GET['action'])) {
+$id = $this->idget();
+$action = $_GET['action'];
+if (($action == 'delete') && !$this->confirmed) return $this->confirmdelete($id);
+if (!$this->doaction($id, $action)) return $this->notfount;
+$result .= $this->getactionresult($id, $action);
+}
 
-      $perpage = 20;
-      $from = max(0, $manager->count - $urlmap->page * $perpage);
-      if ($this->name == 'hold') {
-        $list = array_slice($manager->holditems, $from, $perpage, true);
-      } elseif (dbversion) {
-        $list = $manager->getitems("status <> 'deleted'", $from, $perpage);
-} else {
-        $list = array_slice($manager->items, $from, $perpage, true);
-      }
+$result .= $this->getlist(4this->name);
+return $result;
 
-      
-      case 'authors':
+            case 'authors':
       $comusers = tcomusers::instance();
       $id = $this->idget();
       if ($comusers->itemexists($id)) {
@@ -139,30 +213,13 @@ $result .= $this->html->authorheader($args);
     return $result;
   }
   
-  public function dosingle($id, $action) {
-    global $classes, $options, $comment;
-        $manager = $classes->commentmanager;
-    if (!$manager->itemexists($id)) return $this->notfound;
-
-    $comment = $manager->getcomment($id);
+  private function doaction($id, $action) {
+$manager = $this->manager;
+    if (!$manager->itemexists($id)) return false;
     switch ($action) {
-case 'edit': 
-return $this->editcomment($id);
-
       case 'delete' :
-      if  ($this->confirmed) {
         $manager->delete($id);
-return $this->html->h2->successmoderated ;
-      } else {
-$args = new targs();
-$args->action = 'delete';
-$args->adminurl = $options->url . $this->url . $options->q . 'id';
-$args->id = $id;
-$args->confirm = $this->lang->confirmdelete;
-$result = $html->confirmform($args);
-$result .= $html->info();
-        return $result;
-      }
+break;
 
             case 'hold':
       $manager->setstatus($id, 'hold');
@@ -171,30 +228,68 @@ $result .= $html->info();
       case 'approve':
       $manager->setstatus($id, 'approved');
       break;
-    }
+case 'edit': 
+$this->editcomment($id);
+break;
 
-$result = $this->html->h2->successmoderated;
-$result .= $this->html->info();
-    return $result;
+case 'reply': 
+$this->reply($id);
+break;
+    }
+    return true;
   }
   
+private function getactionresult($id, $action) {
+$result = $this->html->h2->successmoderated;
+    switch ($action) {
+      case 'delete' :
+return $result;
+
+            case 'hold':
+     case 'approve':
+$result .= $this->getinfo($id);
+return $result;
+
+case 'edit': 
+return $this->editcomment($id);
+
+case 'reply': 
+return $this->editcomment($id);
+    }
+}
+
+private function getinfo($id) {
+global $comment;
+$manager = $this->manager;
+    $comment = $manager->getcomment($id);
+return $this->html->info();
+}
+
+private function confirmdelete($id) {
+global $options;
+$args = new targs();
+$args->id = $id;
+$args->action = $action;
+$args->adminurl = $options->url . $this->url . $options->q . 'id';
+$args->confirm = $this->lang->confirmdelete;
+$result = $this->html->confirmform($args);
+$result .= $this->getiinfo($id);
+return $result;
+      }
+
   public function processform() {
-    global $classes, $options, $urlmap;
-      $manager = $classes->commentmanager;
-    
+    global $options, $urlmap;
+$manager = $this->manager;
+/*
+обрабатываются все формы, в том числе и потдверждения. Потдверждение требуется только для удаления, для всего остального (одобрить, задержать) не требуется, поэтому простые клики по ссылки приведет сразу к обработке комментария.
+*/    
+
     switch ($this->name) {
       case 'moderate':
       case 'hold':
 case 'pingback':
-      if (!empty($_POST['approve'])) {
-        $action = 'approve';
-      } elseif (!empty($_POST['hold'])) {
-        $action = 'hold';
-      } elseif (!empty($_POST['delete'])) {
-        $action = 'delete';
-      } else {
-        return '';
-      }
+
+switch ($_REQEST['action']) {
 
       $manager->Lock();
       foreach ($_POST as $id => $value) {
@@ -214,8 +309,20 @@ case 'pingback':
           case 'approve':
           $manager->setstatus($id, 'approved');
           break;
-        }
+
+      case 'reply':
+      $email = $this->getadminemail();
+      $site = $options->url . $options->home;
+      $profile = tprofile::instance();
+      $comusers = tccomusers ::instance();
+      $authorid = $comusers->add($profile->nick, $email, $site);
+$post = tpost::instance($manager->items[$id]['pid']);
+      $manager->addcomment($post->id, $authorid, $_POST['content']);
+    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
+      @header("Location: $options->url$posturl");
+      exit();
       }
+
       $manager->unlock();
 $result = $this->html->h2->successmoderated;
       break;
@@ -250,29 +357,13 @@ return $html->h2->authordeleted;
         eval('$result = "'. $html->authoredited . '\n";');
       }
       break;
-      
-      case 'reply':
-      $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-      $manager = &TCommentManager::instance();
-      if (!$manager->ItemExists($id)) return $this->notfound;
-      $email = $this->GetAdminEmail();
-      $site = $options->url . $options->home;
-      $profile = &TProfile::instance();
-      $comusers = &tcomusers ::instance();
-      $authorid = $comusers->Add($profile->nick, $email, $site);
-$post = tpost::instance($manager->items[$id]['pid']);
-      $manager->AddToPost($post->id, $authorid, $_POST['content']);
-    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
-      @header("Location: $options->url$posturl");
-      exit();
-      
     }
     
     $urlmap->ClearCache();
     return $result;
   }
   
-  private function GetAdminEmail() {
+  private function getadminemail() {
     global $options;
     $profile = &TProfile::instance();
     if ($profile->mbox!= '') return $profile->mbox;
@@ -281,7 +372,7 @@ $post = tpost::instance($manager->items[$id]['pid']);
   
   public function EditComment($id) {
     global $options;
-    $manager =&TCommentManager::instance();
+$manager = $this->manager;
     $comment = $manager->GetComment($id);
     if (isset($_POST['submit'])) {
       $comment->content = $_POST['content'];

@@ -10,9 +10,10 @@ $self->add($posts, 'categories', 'editor', 'tadmintags');
 $self->add($posts, 'tags', 'editor', 'tadmintags'); 
 }
 
-$moder = $self->add(0, 'comments', 'moderator', 'tadminmoderator'); 
+$moder = $self->add(0, 'moderate', 'moderator', 'tadminmoderator'); 
 {
 $self->add($moder, 'hold', 'moderator', 'tadminmoderator'); 
+$self->add($moder, 'pingback', 'moderator', 'tadminmoderator'); 
 $self->add($moder, 'authors', 'moderator', 'tadminmoderator'); 
 }
 

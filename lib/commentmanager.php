@@ -115,16 +115,6 @@ $comusers->save();
     $this->dochanged($item['pid']);
   }
   
-  public function Getholditems() {
-    $result = array();
-    foreach($this->items as $id => $item) {
-      if (!empty($item['status']) && ($item['status'] == 'hold')) {
-        $result[$id] = $item;
-      }
-    }
-    return $result;
-  }
-  
 }//class
 
 ?>
