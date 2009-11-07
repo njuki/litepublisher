@@ -81,10 +81,9 @@ $this->db->setvalue($id, 'status', $value);
 return $this->db->idselect("post = $this->pid and author = $author and status = 'hold' and pingback = false");
 }
 
-  public function getholditems() {
-return $this->db->idselect("status = 'hold' and pingback = false"));
-  }
-
+public function getitems($where = '') {
+return $this->db->getcount($where);
+}
 
 public function getitems($where, $from, $count) {
 $db = $this->db;

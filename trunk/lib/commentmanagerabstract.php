@@ -8,7 +8,6 @@ abstract   public function addpingback($pid, $url, $title);
 abstract   public function delete($id);
 abstract   public function postdeleted($postid);
 abstract   public function setstatus($id, $value);
-abstract   public function Getholditems();
 
   protected function create() {
     parent::create();
