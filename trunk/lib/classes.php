@@ -8,6 +8,7 @@ $classes->_autoload($class);
 class TClasses extends TItems {
   public $classes;
 public $interfaces;
+public $remap;
   public $instances;
   
   public static function instance() {
@@ -19,16 +20,22 @@ public function getinstance($class) {
     $this->error("Class $class not found");
   }
   if (!isset($this->instances[$class])) {
-    $this->instances[$class] = new $class();
+    $this->instances[$class] = $this->newinstance($class);
   }
   return $this->instances[$class];
+}
+
+public function newinstance($class) {
+if (!empty($this->remap[$class])) $class = $this->remap[$class];
+return new $class();
 }
   
   protected function create() {
     parent::create();
     $this->basename = 'classes';
-    $this->AddDataMap('classes', array());
-    $this->AddDataMap('interfaces', array());
+    $this->addmap('classes', array());
+    $this->addmap('interfaces', array());
+    $this->addmap('remap', array());
     $this->instances = array();
   }
 
@@ -69,6 +76,7 @@ return parent::__get($name);
       $this->unlock();
     }
   }
+
 public function _autoload($class) {
 global $paths;
   if ($path =$this->getpath($class)) {
