@@ -6,10 +6,10 @@ class TItem extends TDataClass {
   protected $aliases;
   
   public static function instance($class, $id = 0) {
+global $classes;
     if (!isset(self::$instances)) self::$instances = array();
-    if (!isset(self::$instances[$class]))  self::$instances[$class] = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
-    $self = new $class();
+    $self = $classes->newinstance($class);
     $self->id = $id;
     if ($id != 0) {
       if (!$self->load()) {

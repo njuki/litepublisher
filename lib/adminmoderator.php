@@ -11,38 +11,52 @@ protected function getmanager() }
 global $classes;
 return $classes->commentmanager;
 }
-  
-  private function getsubscribed($authorid) {
-    global $options, $post;
-$authorid = (int) $authorid;
-    $comusers = tcomusers::instance();
-    if (!$comusers->itemexists($authorid))  return '';
-$html = $this->gethtml('moderator');
-    $result = $html->checkallscript;
-$manager = $this->manager;
-if (dbversion) {
-$posted = $manager->db->res2array($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
-} else { 
-$posted = array();
-foreach ($manager->items as $id => $item) {
-if ($item['uid'] == $authorid) {
-if (!in_array($item['pid'], $posted)) $posted[] =$item['pid'];
+
+  public function getcontent() {
+    $result = '';
+    switch ($this->name) {
+      case 'moderate':
+      case 'hold':
+case 'pingback':
+
+      if (isset($_GET['action'])) {
+$id = $this->idget();
+$action = $_GET['action'];
+if (($action == 'delete') && !$this->confirmed) return $this->confirmdelete($id);
+if (!$this->doaction($id, $action)) return $this->notfount;
+$result .= $this->getactionresult($id, $action);
 }
+
+$result .= $this->getlist($this->name);
+return $result;
+
+            case 'authors':
+      if (isset($_GET['action'])) {
+$id = $this->idget();
+$action = $_GET['action'];
+switch ($action) {
+case 'delete':
+if (!$this->confirmed) return $this->confirmdeleteauthor($id);
+if (!$this->deleteauthor($id)) return $this->notfount;
+$result .= $this->html->h2->authordeleted; 
+break;
+
+case 'edit':
+$result .= $this->editauthor($id);
 }
 }
 
-    $subscribers = $tsubscribers::instance();
-    $subscribed = $subscribers->getposts($authorid);
-    
-$args = new targs();
-    foreach ($posted as $idpost) {
-$post = tpost::instance($idpost);
-      $args->subscribed = in_array($idpost, $subscribed);
-$result .= $html->subscribeitem($args);
+$result .= $this->getauthorslist();
+return $result;
     }
-    
-    return $this->FixCheckall($result);
+
   }
+
+private function reply($id) {
+global $comment;
+      $comment = $this->manager->getcomment($id);
+return $this->html->replyform();
+}  
 
 private function getwherekind($kind) {
 switch ($kind) {
@@ -150,68 +164,6 @@ $result .= $html->tablefooter;
       return $result;
 }  
 
-  public function getcontent() {
-    global $options, $urlmap, $comment;
-    $result = '';
-$manager = $this->manager;
-   $html = $this->html;
-
-    switch ($this->name) {
-      case 'moderator':
-      case 'hold':
-case 'pingback':
-
-      if (isset($_GET['action'])) {
-$id = $this->idget();
-$action = $_GET['action'];
-if (($action == 'delete') && !$this->confirmed) return $this->confirmdelete($id);
-if (!$this->doaction($id, $action)) return $this->notfount;
-$result .= $this->getactionresult($id, $action);
-}
-
-$result .= $this->getlist(4this->name);
-return $result;
-
-            case 'authors':
-      $comusers = tcomusers::instance();
-      $id = $this->idget();
-      if ($comusers->itemexists($id)) {
-$author = $comusers->getitem($id);
-$args->id = $id;
-$args->name = $author['name'];
-$args->url = $author['url'];
-$args->email = $author['email'];
-        if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete')) {
-          $result .= $html->authorconfirmdelete($id, $name, $url, $email);
-          return str_replace("'", '"', $result);
-        }
-      } else {
-        $args->id = 0;
-        $args->name = '';
-        $args->email = '';
-        $args->url = '';
-      }
-      $args->subscribed = $this->getsubscribed($id);
-$result .= $this->html->authorheader($args);
-
-      foreach ($comusers->items as $id => $item) {
-        if (is_array($item['ip'])) $ip = implode('; ', $item['ip']);
-        eval('$result .= "'. $html->authoritem . '\n";');
-      }
-      eval('$result .= "'. $html->authorfooter . '\n";');;
-      $result = $this->FixCheckall($result);
-      break;
-      
-      case 'reply':
-      $id = $this->idget();
-      if (!$manager ->ItemExists($id))return $this->notfound();
-      $comment = &$manager->Getcomment($id);
-      eval('$result .= "'. $html->replyform . '\n";');
-      break;
-    }
-    
-    return $result;
-  }
   
   private function doaction($id, $action) {
 $manager = $this->manager;
@@ -266,17 +218,118 @@ return $this->html->info();
 }
 
 private function confirmdelete($id) {
+$result = $this->getconfirmform($id, $this->lang->confirmdelete);
+$result .= $this->getinfo($id);
+return $result;
+}
+
+private function getconfirmform($id, $confirm) {
 global $options;
 $args = new targs();
 $args->id = $id;
-$args->action = $action;
+$args->action = 'delete';
 $args->adminurl = $options->url . $this->url . $options->q . 'id';
-$args->confirm = $this->lang->confirmdelete;
-$result = $this->html->confirmform($args);
-$result .= $this->getiinfo($id);
-return $result;
+$args->confirm = $confirm;
+return $this->html->confirmform($args);
       }
 
+private function confirmdeleteauthor($id) {
+return $this->getconfirmform($id, $this->lang->authorconfirmdelete);
+}
+
+  private function doauthoraction($id, $action) {
+      $comusers = tcomusers::instance();
+    if (!$comusers->itemexists($id)) return false;
+    switch ($action) {
+      case 'delete' :
+  private function deleteauthor($uid, $action) {
+      $comusers = tcomusers::instance();
+    if (!$comusers->itemexists($uid)) return false;
+$manager = $this->manager;
+if (dbversion) {
+$manager->db->delete("author = $uid");
+        $comusers->delete($uid);
+} else {
+        $manager->lock();
+        foreach ($manager->items as $id => $item) {
+          if ($uid == $item['uid']) $manager->Delete($id);
+        }
+        $comusers->delete($uid);
+        $manager->unlock();
+}
+    return true;
+  }
+
+private function editauthor($id) {
+$args = new targs();
+if ($id == 0) {
+        $args->id = 0;
+        $args->name = '';
+        $args->email = '';
+        $args->url = '';
+      $args->subscribed '';
+} else {
+$comusers = tcomusers::instance();
+if (!$comusers->itemexists($id)) return $this->notfound;
+$author = $comusers->getitem($id);
+$args->id = $id;
+$args->name = $author['name'];
+$args->url = $author['url'];
+$args->email = $author['email'];
+      $args->subscribed = $this->getsubscribed($id);
+}
+return $this->html->authorform($args);
+}
+
+private function getauthorslist() {
+$comusers = tcomusers::instance();
+$html = $this->html;
+$args = new targs();
+$result = html->authorheader($args);
+if (dbversion) {
+} else {
+      foreach ($comusers->items as $id => $item) {
+        if (is_array($item['ip'])) $ip = implode('; ', $item['ip']);
+$result .= $html->authoritem($args);
+      }
+}
+$result .= $html->authorfooter;
+      $result = $this->FixCheckall($result);
+return $result;
+     }
+
+  private function getsubscribed($authorid) {
+    global $options, $post;
+$authorid = (int) $authorid;
+    $comusers = tcomusers::instance();
+    if (!$comusers->itemexists($authorid))  return '';
+$html = $this->gethtml('moderator');
+    $result = $html->checkallscript;
+$manager = $this->manager;
+if (dbversion) {
+$posted = $manager->db->res2array($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
+} else { 
+$posted = array();
+foreach ($manager->items as $id => $item) {
+if ($item['uid'] == $authorid) {
+if (!in_array($item['pid'], $posted)) $posted[] =$item['pid'];
+}
+}
+}
+
+    $subscribers = $tsubscribers::instance();
+    $subscribed = $subscribers->getposts($authorid);
+    
+$args = new targs();
+    foreach ($posted as $idpost) {
+$post = tpost::instance($idpost);
+      $args->subscribed = in_array($idpost, $subscribed);
+$result .= $html->subscribeitem($args);
+    }
+    
+    return $this->FixCheckall($result);
+  }
+  
   public function processform() {
     global $options, $urlmap;
 $manager = $this->manager;
