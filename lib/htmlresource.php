@@ -52,11 +52,14 @@ $theme = ttheme::instance();
 if (preg_match_all('/\[area:(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
 foreach ($m as $item) {
 //сконвертировать спецсимволы для редактора
+if (isset($args->data[item[1]])) {
 $str = &$args->data[item[1]];
     $str = htmlspecialchars($str);
     $str = str_replace('"', '&quot;', $str);
     $str = str_replace("'", '&#39;', $str);
-
+} else {
+$args->data[item[1]] = '';
+}
 $repl = str_replace('$name', $item[1], $theme->admin['area']);
 $repl = str_replace('$content', '$'. $item[1], $repl);
 $s = str_replace($item[0], $repl, $s);

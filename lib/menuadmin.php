@@ -159,9 +159,9 @@ return tlocal::instance($this->name);
 return $this->html->h2->notfound;
   }
   
-  public function getadminurl($section, $arg) {
+  public function getadminurl() {
     global $options;
-    return "$options->url/admin/$section/$options->q$arg";
+return $options->url .$this->url . $options->q . '=';
 }
 
  }//class

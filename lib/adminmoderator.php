@@ -44,6 +44,8 @@ break;
 case 'edit':
 $result .= $this->editauthor($id);
 }
+} else {
+$result .= $this->editauthor(0);
 }
 
 $result .= $this->getauthorslist();
@@ -180,6 +182,7 @@ break;
       case 'approve':
       $manager->setstatus($id, 'approved');
       break;
+
 case 'edit': 
 $this->editcomment($id);
 break;
@@ -194,20 +197,12 @@ break;
 private function getactionresult($id, $action) {
 $result = $this->html->h2->successmoderated;
     switch ($action) {
-      case 'delete' :
-return $result;
-
             case 'hold':
      case 'approve':
 $result .= $this->getinfo($id);
-return $result;
-
-case 'edit': 
-return $this->editcomment($id);
-
-case 'reply': 
-return $this->editcomment($id);
+break;
     }
+return $result;
 }
 
 private function getinfo($id) {
@@ -282,19 +277,38 @@ return $this->html->authorform($args);
 }
 
 private function getauthorslist() {
+global $urlmap;
 $comusers = tcomusers::instance();
-$html = $this->html;
 $args = new targs();
-$result = html->authorheader($args);
+      $perpage = 20;
+$total = $comusers->count;
+      $from = max(0, $total - $urlmap->page * $perpage);
 if (dbversion) {
+$res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
+$items = $res->fetchAll(PDO::FETCH_ASSOC);
 } else {
-      foreach ($comusers->items as $id => $item) {
+        $items = array_slice($comusers->items, $from, $perpage, true);
+}
+$html = $this->html;
+      $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
+$result .= html->authorheader();
+$args->adminurl = $this->adminurl;
+      foreach ($items as $id => $item) {
+if (dbversion) {
+$args->id = $item['id'];
+} else {
+$args->id = $id;
         if (is_array($item['ip'])) $ip = implode('; ', $item['ip']);
+}
+$args->name = $item['name'];
+$args->url = $item['url'] == '' ? '' : "<a href=\"{$item['url']}\">{$item['url']}</a>";
+$args->email = $item['email'] == '' ? '' : "<a href=\"mailto:{$item['email']}\">{$item['email']}</a>";
 $result .= $html->authoritem($args);
-      }
 }
 $result .= $html->authorfooter;
-      $result = $this->FixCheckall($result);
+
+      $tp = TTemplatePost::instance();
+      $result .= $tp->PrintNaviPages($this->url, $urlmap->page, ceil($total/$perpage));
 return $result;
      }
 
@@ -333,82 +347,58 @@ $result .= $html->subscribeitem($args);
   public function processform() {
     global $options, $urlmap;
 $manager = $this->manager;
-/*
-обрабатываютс€ все формы, в том числе и потдверждени€. ѕотдверждение требуетс€ только дл€ удалени€, дл€ всего остального (одобрить, задержать) не требуетс€, поэтому простые клики по ссылки приведет сразу к обработке комментари€.
-*/    
-
     switch ($this->name) {
       case 'moderate':
       case 'hold':
 case 'pingback':
 
-switch ($_REQEST['action']) {
-
-      $manager->Lock();
-      foreach ($_POST as $id => $value) {
-        if (!is_numeric($id))  continue;
-        $id = (int) $id;
-        if (!$manager->itemexists($id)) continue;
-        $comment = $manager->getcomment($id);
-        switch ($action) {
-          case 'delete' :
-          $manager->delete($id);
-          break;
-          
-          case 'hold':
-          $manager->setstatus($id, 'hold');
-          break;
-          
-          case 'approve':
-          $manager->setstatus($id, 'approved');
-          break;
-
-      case 'reply':
+$action = $_REQEST['action'];
+if ($action == 'reply') {
       $email = $this->getadminemail();
       $site = $options->url . $options->home;
       $profile = tprofile::instance();
       $comusers = tccomusers ::instance();
       $authorid = $comusers->add($profile->nick, $email, $site);
-$post = tpost::instance($manager->items[$id]['pid']);
+$post = tpost::instance( (int) $_PoST['pid']);
       $manager->addcomment($post->id, $authorid, $_POST['content']);
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
       @header("Location: $options->url$posturl");
       exit();
-      }
+}
 
+      $manager->Lock();
+      foreach ($_POST as $id => $value) {
+        if (!is_numeric($id))  continue;
+        $id = (int) $id;
+$this->doaction($id, $action);
+}
       $manager->unlock();
 $result = $this->html->h2->successmoderated;
       break;
       
       case 'authors':
-      $authorid = $this->idget();
+      if (isset($_REQUEST['action'])  && ($_REQUEST['action'] == 'edit')) {
+      $id = $this->idget();
       $comusers = tcomusers::instance();
-      if (!$comusers->itemexists($authorid)) return $this->notfound;
-      if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'delete') &&!empty($_REQUEST['confirm'])  ) {
-if (dbversion) {
-$manager->db->delete("author = $author");
-        $comusers->delete($authorid);
-} else {
-        $manager->lock();
-        foreach ($manager->items as $id => $item) {
-          if ($authorid == $item['uid']) $manager->Delete($id);
+      if (!$comusers->itemexists($id)) return $this->notfound;
+$comusers->edit($id, $_POST['name'], $_POST['url'], $_POST['email'], $_POST['ip']);
+$subscribers = tsubscribers::instance();
+$subscribed = $subscribers->getposts($id);
+$checked = array();
+        foreach ($_POST as $idpost => $value) {
+          if (!is_numeric($idpost))  continue;
+$checked [] = $idpost;
         }
-        $comusers->delete($authorid);
-        $manager->unlock();
+$unsub = array_diff($subscribed, $checked);
+if (count($unsub) > 0) {
+$subscribers->lock();
+foreach ($unsub as $idpost) {
+$subscribers->delete($idpost, $id);
 }
-return $html->h2->authordeleted;
-      } else {
-        $comusers->items[$authorid]['name'] = $_POST['name'];
-        $comusers->items[$authorid]['url'] = $_POST['url'];
-        $comusers->items[$authorid]['email'] = $_POST['email'];
-        $comusers->items[$authorid]['subscribe'] = array();
-        foreach ($_POST as $postid => $value) {
-          if (!is_numeric($postid))  continue;
-          $comusers->items[$authorid]['subscribe'][]  = (int) $postid;
-        }
-        $comusers->Save();
-        eval('$result = "'. $html->authoredited . '\n";');
-      }
+$subscribers->unlock();
+}
+
+$result =  $html->h2->authoredited;
       break;
     }
     
@@ -423,7 +413,7 @@ return $html->h2->authordeleted;
     return $options->fromemail;
   }
   
-  public function EditComment($id) {
+  private function EditComment($id) {
     global $options;
 $manager = $this->manager;
     $comment = $manager->GetComment($id);
