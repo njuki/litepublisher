@@ -33,13 +33,13 @@ if (!isset($zero['order']) $zero['order'] = 0;
 if (!isset($zero['title']) $zero['title'] = '';
 if (!isset($zero['status']) $zero['status'] = 'published';
 
-    $Linkgen = TLinkGenerator::instance();
+    $linkgen = tlinkgenerator::instance();
     if ($item->url == '' ) {
-      $item->url = $Linkgen->createlink($item, 'post');
+      $item->url = $linkgen->createlink($item, 'post');
     } else {
       $title = $item->title;
       $item->title = trim($post->url, '/');
-      $item->url = $Linkgen ->createlink($item, 'post');
+      $item->url = $linkgen ->createlink($item, 'post');
       $item->title = $title;
     }
 
@@ -61,13 +61,13 @@ public function edit(tmenuitem $item) {
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($item->idurl);
     if ($oldurl != $item->url) {
-      $Linkgen = TLinkGenerator::instance();
+      $linkgen = tlinkgenerator::instance();
       if ($item->url == '') {
-        $item->url = $Linkgen->createlink($item, 'item', false);
+        $item->url = $linkgen->createlink($item, 'item', false);
       } else {
         $title = $item->title;
         $item->title = trim($item->url, '/');
-        $item->url = $Linkgen->Create($item, 'item', false);
+        $item->url = $linkgen->Create($item, 'item', false);
         $item->title = $title;
       }
 

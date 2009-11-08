@@ -6,34 +6,31 @@ class tadminoptions extends tadminmenuitem {
   }
   
   public function getcontent() {
-    global $classes, $options, $template, $paths, $home, $rss, $pinger, $linkgen;
+    global $classes, $options, $template, $mailer, $subscribers, $home, $rss, $pinger, $linkgen;
     $result = '';
     $args = targs::instance();
 
     switch ($this->name) {
       case 'options':
       $args->description = $options->description;
-      $args->footer = $$template->footer;
-      $formname = 'descriptionform';
+      $args->footer = $template->footer;
       break;
       
       case 'home':
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
       $args->text = $$home->text;
-      $formname = 'home';
-      break;
+     break;
       
       case 'mail':
-      $subscribe = tsubscribers::instance();
+      $subscribers = tsubscribers::instance();
       $mailer = TSMTPMailer ::instance();
       $args->mailerchecked = $options->mailer == 'smtp';
-      $formname = 'mailform';
       break;
       
       case 'rss':
       $rss = trss::instance();
-      $formname = 'rssform';
+$args->content = $rss->template;
       break;
       
       case 'view':
@@ -41,7 +38,6 @@ class tadminoptions extends tadminmenuitem {
       $args->automore = $filter->automore;
 $args->phpcode = $filter->phpcode;
       $args->hovermenu = $template->hovermenu;
-      $formname = 'viewform';
       break;
       
       case 'comments':
@@ -58,21 +54,18 @@ $args->phpcode = $filter->phpcode;
       $args->redir = $comusers->redir;
       $args->nofollow = $comusers->nofollow;
       
-      $subscribtion = tsubscribers::instance();
-      $args->locklist = $subscribtion ->locklist;
-      
-      $formname = 'commentsform';
+      $subscribers = tsubscribers::instance();
+      $args->locklist = $subscribers->locklist;
       break;
       
       case 'ping':
       $pinger = tpinger::instance();
       $args->pingenabled  = $pinger->enabled  ? $checked: '';
-      $formname = 'pingform';
+$args->content = $pinger->services;
       break;
       
       case 'links':
-      $linkgen = TLikGenerator::instance();
-      $formname = 'linksform';
+      $linkgen = tlinkgenerator::instance();
       break;
       
       case 'openid':
@@ -80,12 +73,10 @@ $args->phpcode = $filter->phpcode;
       $args->confirm = $openid->confirm ? $checked : '';
       $args->usebigmath = $openid->usebigmath ? $checked : '';
       $args->trusted = implode("\n", $openid->trusted);
-      $formname = 'openidform';
       break;
       
       case 'cache':
       $args->cacheenabled = $options->CacheEnabled;
-      $formname = 'cacheform';
       break;
       
       case 'lite':
@@ -95,39 +86,32 @@ $args->phpcode = $filter->phpcode;
       $args->litecategories = $categories->lite;
       $tags = ttags::instance();
       $args->litetags = $tags->lite;
-      $formname = 'liteform';
       break;
       
       case 'secure':
       $auth = tauthdigest::instance();
       $args->cookie = $auth->cookieenabled;
       $args->xxxcheck = $auth->xxxcheck;
-      $ssl = false;
-      $formname = 'secureform';
-      break;
+     break;
       
       case 'robots':
-      $robotstxt = &TRobotstxt::instance();
-      $args->content = implode("\n", $robotstxt->items);
-      $formname = 'robotstxtform';
+      $robots = trobots::instance();
+      $args->content = implode("\n", $robots->items);
       break;
       
       case 'local':
       $args->timezones = $this->gettimezones();
-      $formname = 'localform';
       break;
       
-      case '404':
+      case 'notfound404':
       $err = tfnotfound404 ::instance();
       $args->content = $err->text;
-      $formname = 'form404';
       break;
       
     }
     
-$result  = $this->html->{$formname($args);
-    $result = str_replace("'", '"', $result);
-    return $result;
+$result  = $this->html->__call($this->name, $args);
+return str_replace("'", '"', $result);
   }
   
   public function processform() {
@@ -169,7 +153,7 @@ $result  = $this->html->{$formname($args);
         $subscribe->save();
       }
       
-      $mailer = &TSMTPMailer ::instance();
+      $mailer = TSMTPMailer ::instance();
       $mailer->lock();
       $mailer->host = $host;
       $mailer->login = $login;
@@ -191,6 +175,7 @@ $result  = $this->html->{$formname($args);
       $filter = tcontentfilter::instance();
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;
+$filter->phpcode = isset($phpcode);
       $filter->save();
       $template = ttemplate::instance();
       $template->hovermenu = isset($hovermenu);
@@ -232,7 +217,7 @@ $result  = $this->html->{$formname($args);
       break;
       
       case 'links':
-      $linkgen = TLinkGenerator::instance();
+      $linkgen = tlinkgenerator::instance();
       if (!empty($post)) $linkgen->post = $post;
       if (!empty($category)) $linkgen->category = $category;
       if (!empty($tag)) $linkgen->tag = $tag;
@@ -275,27 +260,26 @@ $result  = $this->html->{$formname($args);
       break;
       
       case 'robots':
-      $robotstxt = trobotstxt::instance();
-      $robotstxt->items = explode("\n", $content);
-      $robotstxt->save();
+      $robots = trobotstxt::instance();
+      $robots->items = explode("\n", $content);
+      $robots->save();
       break;
       
       case 'local':
       $options->lock();
       $options->dateformat = $dateformat;
       $options->language = $language;
-      $options->unlock();
       if ($options->timezone != $timezone) {
         $options->timezone = $timezone;
         $archives = tarchives::instance();
         TUrlmap::unsub($archives);
         $archives->PostsChanged();
       }
-      
+      $options->unlock();      
       $urlmap->clearcache();
       break;
       
-      case '404':
+      case 'notfound404':
       $err = tnotfound404 ::instance();
       $err->text = $content;
       $err->save();

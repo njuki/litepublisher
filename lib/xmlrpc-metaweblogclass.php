@@ -98,7 +98,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   protected function  WPAssignPage(&$Struct, &$Item) {
     if(isset($Struct["wp_slug"])) {
-      $Item->url = TLinkGenerator::AddSlashes($Struct['wp_slug']);
+      $Item->url = tlinkgenerator::AddSlashes($Struct['wp_slug']);
     }
     
     if(isset($Struct["wp_password"])) {
@@ -124,7 +124,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   protected function  MWSetPost(&$Struct, &$Item) {
     if(isset($Struct["wp_slug"])) {
-      $Item->url = TLinkGenerator::AddSlashes($Struct["wp_slug"] . '/');
+      $Item->url = tlinkgenerator::AddSlashes($Struct["wp_slug"] . '/');
     }
     
     if(isset($Struct["wp_password"])) {

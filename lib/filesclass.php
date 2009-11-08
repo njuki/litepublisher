@@ -45,7 +45,7 @@ class TFiles extends TItems {
   
   public function AddFile($filename, $content, $title, $overwrite = true) {
     if ($title == '') $title = $filename;
-    $linkgen = &TLinkGenerator::Instance();
+    $linkgen = tlinkgenerator::Instance();
     $filename = $linkgen->FilterFileName($filename);
     $filename = $this->Upload($filename, $content, $overwrite);
     return $this->Add($filename, $title);

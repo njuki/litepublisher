@@ -151,8 +151,8 @@ return;
     if ($id > 0) return $id;
     $this->newname = $slug == '' ? $title : $slug;
     $urlmap =turlmap::instance();
-    $Linkgen = TLinkGenerator::instance();
-    $url = $Linkgen->createlink($this, $this->PermalinkIndex );
+    $linkgen = tlinkgenerator::instance();
+    $url = $linkgen->createlink($this, $this->PermalinkIndex );
 
 if (dbversion)  {
 $id = $this->db->InsertAssoc(array('title' => $title));
@@ -189,8 +189,8 @@ if ($item['url'] != $url) {
         if ($url == '') {
           $url = trim($url, '/');
           $this->newname = $url == '' ? $title : $url;
-          $Linkgen = TLinkGenerator::instance();
-          $url = $Linkgen->createlink($this, $this->PermalinkIndex, false);
+          $linkgen = tlinkgenerator::instance();
+          $url = $linkgen->createlink($this, $this->PermalinkIndex, false);
         }
 
         if ($item['url'] != $url) {
