@@ -1,7 +1,16 @@
 <?php
 
 function TCommonTagsInstall(TCommonTags $self) {
+global $options;
+
   if ('TCommonTags' == get_class($self)) return;
+$self->options = array(
+'lite' >= false,
+'sortname' => 'count',
+'showcount' => true,
+'maxcount' => 0
+);
+
   $posts= tposts::instance();
   $posts->lock();
   $posts->added = $self->postedited;

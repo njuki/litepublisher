@@ -68,19 +68,25 @@ $this->save();
 }
 
   public function update($pid, $uid, $subscribed) {
+if ($subscribed == $this->subscribed($pid, $uid)) return;
 if (dbversion) {
 $this->delete($pid, $uid);
 if ($subscribed) $this->add($pid, $uid);
 } elseif ($subscribed) {
-if (!isset($this->items[$pid]))  $this->items[$pid] = array();
-if (!in_array($uid, $this->items[$pid])) {
 $this->items[$pid][] =$uid;
 $this->save();
-}
 } else {
 $this->delete($pid, $uid);
 }
   }
+
+public function subscribed($pid, $uid) {
+if (dbversion) {
+return $this->db->exists("post = $pid and author = $uid");
+ } else {
+return isset($this->items[$pid]) && in_array($uid, $this->items[$pid]);
+}
+}
   
    public function setenabled($value) {
 global $classes;

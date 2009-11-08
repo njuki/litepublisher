@@ -96,11 +96,15 @@ while ($sitebar = $this->parsetag($s, 'sitebar', '$template->sitebar')) {
 $theme->widgets[$index] = array();
 $widgets = &$theme->widgets[$index];
 $widgets['widget'] = $this->parsetag($sitebar, 'widget', '');
-if ($categories =$this->parsetag($sitebar, 'categories', '')) $widgets['categories'] = $categories;
+if ($categories =$this->parsetag($sitebar, 'categories', ''))  {
+if ($item = $this->parsetag($categories, 'item', '%s')) $widgets['tag'] = $item;
+$widgets['categories'] = $categories;
+}
+
 if ($archives =$this->parsetag($sitebar, 'archives', '')) $widgets['archives'] = $archives;
 if ($links =$this->parsetag($sitebar, 'links', '')) $widgets['links'] = $links;
 if ($posts =$this->parsetag($sitebar, 'posts', '')) {
-if ($item = $this->parsetag($posts, 'item', '%s')) $widgets['post'] = str_replace('"', '\"', $item);
+if ($item = $this->parsetag($posts, 'item', '%s')) $widgets['post'] = $item;
 $widgets['posts'] = $posts;
 }
 if ($comments =$this->parsetag($sitebar, 'comments', '')) {

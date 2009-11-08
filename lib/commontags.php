@@ -2,8 +2,6 @@
 
 class TCommonTags extends TItems implements  ITemplate {
   public $contents;
-  //public $sortname;
-  //public $showcount;
   public $PermalinkIndex;
   public $PostPropname;
   protected $id;
@@ -11,12 +9,6 @@ class TCommonTags extends TItems implements  ITemplate {
   
   protected function create() {
     parent::create();
-    //$this->AddEvents();
-    $this->data['lite'] = false;
-    $this->data['sortname'] = 'count';
-    $this->data['showcount'] = true;
-    $this->data['maxcount'] =0;
-    
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
     $this->contents = new TTagContent($this);
@@ -56,19 +48,20 @@ return $this->items;
   }
   
   public function getwidgetcontent($id) {
-return $this->GetSortedList($this->sortname, $this->maxcount);
+$thisoptions = $this->options;
+return $this->GetSortedList($thisoptions->sortname, $thisoptions->maxcount);
 }
 
 private function GetSortedList($sortname, $count) {
     global $options;
     $result = '';
-$templ = "<li><a href=\"$options->url%1\$s\" title=\"%2\$s\">%2\$s</a>";
-      if ($this->showcount) $templ .= ' (%3$s)';
-$templ .= "</li>\n";
-
+$theme = ttheme::instance();
+$tml = theme->getwidgetitem('tag');
+$showcount = $this->options->showcount;
         $Sorted = $this->getsorted($sortname, $count);
     foreach($Sorted as $item) {
-  $result .= sprintf($item['url'], $item['title'], $item['itemscount']);
+$count = $showcount ? " ({$item['itemscount']}" : '';
+  $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
     }
     return $result;
   }
@@ -277,7 +270,7 @@ $icon = $icons->getlink($item['icon']);
   
   public function getsorted($sortname, $count) {
 $count = (int) $count;
-if (!in_array($sortname, array('title', 'count', 'id')) $sortname = 'name';
+if (!in_array($sortname, array('title', 'count', 'id')) $sortname = 'title';
 if (dbversion) {
 $q = "select $this->thistable.*, $this->urltable.url from $this->thistable
 $this->joinurl where parent = 0 sort by ";
@@ -355,7 +348,7 @@ if ($result == '') $result = $this->title;
 $result = '';
     if ($this->id == 0) {
       $result .= "<ul>\n";
-$result .= $this->GetSortedList($this->sortname, 0);
+$result .= $this->GetSortedList($this->options->sortname, 0);
       $result .= "</ul>\n";
       return $result;
     }
@@ -368,8 +361,8 @@ $items = $db->res2array($res);
 }
     $Posts = $classes->posts;
     $items = $Posts->SortAsArchive($items);
-    $TemplatePost = &TTemplatePost::instance();
-    if ($this->lite) {
+    $TemplatePost = TTemplatePost::instance();
+    if ($this->options->lite) {
       $postsperpage = 1000;
       $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
       $result .= $TemplatePost->LitePrintPosts($list);
@@ -386,23 +379,13 @@ $theme = ttheme::instance();
     }
   }
   
-  public function GetParams() {
-    return array(
-    'lite' => $this->lite,
-    'sortname' => $this->sortname,
-    'showcount' => $this->showcount,
-    'maxcount' => $this->maxcount
-    );
-  }
-  
   public function SetParams($lite, $sortname, $showcount, $maxcount) {
-    if (($lite != $this->lite) || ($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
-      $this->lite = $lite;
-      $this->sortname = $sortname;
-      $this->showcount = $showcount;
-      $this->maxcount = $maxcount;
-      $this->save();
-    }
+$this->options = array(
+'lite' >= $lite,
+'sortname' => $sortname,
+'showcount' => $showcount,
+'maxcount' => (int) $maxcount
+);
   }
   
 }//class

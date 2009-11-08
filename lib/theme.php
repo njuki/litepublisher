@@ -108,6 +108,10 @@ switch ($name) {
 case 'post': 
 return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />
     <small>$post->localdate</small></li>';
+
+case 'tag':
+return'<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
+
 }
 
 return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';

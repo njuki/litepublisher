@@ -82,10 +82,10 @@ $args->content = $pinger->services;
       case 'lite':
       $archives = tarchives::instance();
       $args->litearchives = $archives->lite;
-      $categories= &tctegories::instance();
-      $args->litecategories = $categories->lite;
+      $categories= tcategories::instance();
+      $args->litecategories = $categories->options->lite;
       $tags = ttags::instance();
-      $args->litetags = $tags->lite;
+      $args->litetags = $tags->options->lite;
       break;
       
       case 'secure':
@@ -244,12 +244,14 @@ $filter->phpcode = isset($phpcode);
       break;
       
       case 'lite':
+$options->lock();
       $archives = taArchives::instance();
       $archives->lite = isset($litearchives);
-      $categories= tcCategories::instance();
-      $categories->SetParams(isset($litecategories), $categories->sortname, $categories->showcount, $categories->maxcount);
+      $categories= tcategories::instance();
+      $categories->options->lite = isset($litecategories);
       $tags = ttags::instance();
-      $tags->SetParams(isset($litetags), $tags->sortname, $tags->showcount, $tags->maxcount);
+      $tags->options->lite = isset($litetags);
+$options->unlock();
       break;
       
       case 'secure':
