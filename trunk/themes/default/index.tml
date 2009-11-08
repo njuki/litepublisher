@@ -143,6 +143,7 @@ $comment->content
 <!--next--><span class='"next-entries">%s</span><!--/next-->
 <!--link--><a href="%1$s">%2$</a><!--/link-->
 <!--current-->%2$s<!--/current-->
+<!--divider--> | <!--/divider-->
 </div>
 <!--/navi-->
 
@@ -155,10 +156,17 @@ $post->content
     </div>
 <!--/menucontent-->
 
+
 <!--admin-->
+
+<!--edit-->
+<input type="text" name="$name" id="$name" value="$content" size="22" />
+<!--/edit-->
+
 <!--area-->
-<textarea name="$name" cols="57%" rows="10">$content</textarea>
+<textarea name="$name" id="$name" cols="57%" rows="10">$content</textarea>
 <!--/area-->
+
 <!--/admin-->
 
 <!--/content-->
