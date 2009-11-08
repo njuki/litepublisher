@@ -60,13 +60,16 @@ $theme->navi['prev'] = $this->parsetag($s, 'prev', '%s');
 $theme->navi['next'] = $this->parsetag($s, 'next', '');
 $theme->navi['link'] = $this->parsetag($s, 'link', '');
 $theme->navi['current'] = $this->parsetag($s, 'current', '');
+$theme->navi['divider'] = $this->parsetag($s, 'divider', '');
 $theme->navi['navi'] = $s;
 }
 
 private function parseadmin($s) {
 $theme = $this->theme;
 $theme->admin['area'] = trim($this->parsetag($s, 'area', ''));
+$theme->admin['edit'] = trim($this->parsetag($s, 'edit', ''));
 }
+
 private function parsecomments($s) {
 $theme = $this->theme;
     $comments = $this->parsetag($s, 'comments', '');

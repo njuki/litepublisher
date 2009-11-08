@@ -13,7 +13,7 @@ $result = '';
     $categories = tcategories::instance();
     if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
 $html = $this->html;
-$args = new targs();
+$args = targs::instance();
         foreach ($categories->getitems() as $item) {
 $args->id = $item['id'];
       $args->checked = in_array($items['id'], $post->categories);
@@ -40,7 +40,7 @@ if (($options->group == 'author') && ($options->user != $post->author)) return 4
     global $options, $post;
     $result = '';
     $post = tpost::instance($this->postid);
-$args = new targs();
+$args = targs::instance();
     if ($post->id != 0) {
   $result .= $this->html->formhead("<a href='$options->url$post->url'>$post->title</a>", "$options->url/admin/posteditor/{$options->q}postid=$post->id", "$options->url/admin/posteditor/full/{$options->q}postid=$post->id");
     }

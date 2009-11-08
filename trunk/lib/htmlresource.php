@@ -47,21 +47,24 @@ if (in_array($name, self::tags)) return new ttag($name);
       throw new Exception("the requested $name item not found in $this->section section");
     }
 
-if ($args == null) $args = new targs();
+if ($args == null) $args = targs::instance();
 $theme = ttheme::instance();
-if (preg_match_all('/\[area:(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+if (preg_match_all('/\[(area|edit):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
 foreach ($m as $item) {
+$type = $item[1];
+$name = $item[2];
 //сконвертировать спецсимволы для редактора
-if (isset($args->data[item[1]])) {
-$str = &$args->data[item[1]];
+if (isset($args->data[$name])) {
+$str = &$args->data[$name];
     $str = htmlspecialchars($str);
     $str = str_replace('"', '&quot;', $str);
     $str = str_replace("'", '&#39;', $str);
 } else {
-$args->data[item[1]] = '';
+$args->data[$name] = '';
 }
-$repl = str_replace('$name', $item[1], $theme->admin['area']);
-$repl = str_replace('$content', '$'. $item[1], $repl);
+
+$tag = str_replace('$name', $name, $theme->admin[$type]);
+$tag = str_replace('$content', '$'. $name, $tag);
 $s = str_replace($item[0], $repl, $s);
 }
 }

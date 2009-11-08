@@ -11,8 +11,8 @@ class tadminmenumanager extends tadminmenuitem {
 $result = '';
       $menu = tmenu::instance();
 $html = $this->html;   
-$args = new targs();
-$args->adminurl = $options->url . $this->url . $options->q . 'id';
+$args = targs::instance();
+$args->adminurl = $this->adminurl;
 $args->editurl = $options->url . $this->url . 'edit/' . $options->q . 'id';
 
     switch ($this->name) {

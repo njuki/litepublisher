@@ -75,6 +75,23 @@ return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback
     $s = strtr ($s, $args->data);    
 return $this->parse($s);
 }
+
+  public function getpages($url, $page, $count) {
+    global  $options;
+    if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
+    $link =$this->navi['link'];
+    $suburl = rtrim($url, '/');
+    $a = array();
+    for ($i = 1; $i <= $count; $i++) {
+      $pageurl = $i == 1 ? $options->url . $url : "$options->url$suburl/page/$i/";
+      $a[] = sprintf($i == $page ? $this->navi['current'] : $link, $pageurl, $i);
+    }
+    
+    $result = implode($this->navi['divider'], $a);
+    $result = sprintf($this->navi['navi'], $result);
+    return $result;
+  }
+  
 public function getwidget($title, $content, $template, $sitebar) {
 $tml = $this->getwidgettemplate($template, $sitebar);
 return sprintf($tml, $title, $content);

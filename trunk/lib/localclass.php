@@ -3,6 +3,11 @@
 class targs {
 public $data;
 
+public static function instance() {
+global $classes;
+return $classes->newinstance(__class__);
+}
+
 public function __construct($thisthis = null) {
 global $options;
  $this->data = array(

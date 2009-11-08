@@ -14,9 +14,9 @@ $tags = $istags  ? $classes->tags : $classes->categories;
 $html = $this->html;
 $h2 = $html->h2;
     $id = $this->idget();
-$args = new targs();
+$args = targs::instance();
 $args->id = $id;
-$args->adminurl = $options->url . $this->url . $options->q . 'id=';
+$args->adminurl = $this->adminurl;
     if ($id ==  0) {
       $args->title = '';
 $result .= $istags ? $h2->addtag : $h2->addcategory;
