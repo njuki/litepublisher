@@ -182,7 +182,7 @@ return isset($this->javascripts['hovermenu']);
   public function sethovermenu($value) {
     if ($value != $this->hovermenu) {
 if ($value) {
-$this->addjavascript('hovermenu', $paths['libinclude'] . 'hovermenu.js');
+$this->addjavascript('hovermenu', file_get_contents($paths['libinclude'] . 'hovermenu.js'));
 } else {
 $this->deletejavascript('hovermenu');
 }
@@ -192,9 +192,9 @@ $this->deletejavascript('hovermenu');
     }
   }
 
-public function addjavascript($name, $filename) {
+public function addjavascript($name, $script) {
 if (!isset($this->javascripts[$name])) {
-$this->javascripts[$name] = file_get_contents($filename);
+$this->javascripts[$name] = $script;
 $this->save();
 }
 }  

@@ -43,7 +43,7 @@ break;
 }
 }
 $template = ttemplate::instance();
-$template->addjavascript('ajax', $paths['libinclude']. 'ajax.js');
+$template->addjavascript('ajax', file_get_contents($paths['libinclude']. 'ajax.js'));
 }
 
 public function delete($name) {

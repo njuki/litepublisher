@@ -84,23 +84,23 @@ class TCommentForm extends TEventClass{
     global $options;
     $result = '';
     $self = self::instance();
-    $values = array(
-    'name' => '',
-    'email' => '',
-    'url' => '',
-    'subscribe' => 'checked',
-    'content' => '',
-    'postid' => $postid,
-    'antispam' => '_Value' . strtotime ("+1 hour")
-    );
-    
+$args = targs::instance();
+    $args->name = '';
+    $args->email = '';
+    $args->url = '';
+   $args->subscribe = true;
+    $args->content = '';
+    $args->postid = $postid;
+    $args->antispam = '_Value' . strtotime ("+1 hour");
+
     if (!empty($_COOKIE["userid"])) {
-      $users = tcomusers::instance();
+      $comusers = tcomusers::instance();
       if ($user = $users->GetItemFromCookie($_COOKIE['userid'])) {
-        $values['name'] = $user['name'];
-        $values['email'] = $user['email'];
-        $values['url'] = $user['url'];
-        $values['subscribe'] = $users->subscribed($user['id'], $postid) ? 'checked' : '';
+        $args->name = $user['name'];
+        $args->email = $user['email'];
+        $args->url = $user['url'];
+$subscribers = tsubscribers::instance();
+        $args->subscribe = $subscribers->subscribed($postid, $user['id']);
         
         //hold comment list
         $comments = tcomments::instance($postid);
@@ -111,11 +111,13 @@ class TCommentForm extends TEventClass{
         }
       }
     }
+
     $lang = TLocal::instance('comment');
-    eval('$result .= "'. $self->form . '\n";');
-    return $result;
-    
-  }
+
+$theme = ttheme::instance();
+$result .= $theme->parsearg($theme->comments['form'], $args);
+return $result;
+ }
   
   private function CheckSpam($s) {
     $TimeKey = (int) substr($s, strlen('_Value'));
