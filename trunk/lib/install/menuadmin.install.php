@@ -37,7 +37,7 @@ $self->add($opt, 'lite', 'admin', 'tadminoptions');
 $self->add($opt, 'secure', 'admin', 'tadminoptions'); 
 $self->add($opt, 'robots', 'admin', 'tadminoptions'); 
 $self->add($opt, 'local', 'admin', 'tadminoptions'); 
-$self->add($opt, '404', 'admin', 'tadminoptions'); 
+$self->add($opt, 'notfound404', 'admin', 'tadminoptions'); 
 }
 
 $self->unlock();

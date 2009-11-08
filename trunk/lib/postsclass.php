@@ -70,13 +70,13 @@ return parent::save();
     $post->modified = time();
       $post->pagescount = count($post->pages);
     
-    $Linkgen = TLinkGenerator::instance();
+    $linkgen = tlinkgenerator::instance();
     if ($post->url == '' ) {
-      $post->url = $Linkgen->createlink($post, 'post');
+      $post->url = $linkgen->createlink($post, 'post');
     } else {
       $title = $post->title;
       $post->title = trim($post->url, '/');
-      $post->url = $Linkgen ->createlink($post, 'post');
+      $post->url = $linkgen ->createlink($post, 'post');
       $Post->title = $title;
     }
 
@@ -108,13 +108,13 @@ $post->db->setvalue($post->id, 'idurl', $post->idurl);
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($post->idurl);
     if ($oldurl != $post->url) {
-      $Linkgen = TLinkGenerator::instance();
+      $linkgen = tlinkgenerator::instance();
       if ($post->url == '') {
-        $post->url = $Linkgen->createlink($post, 'post', false);
+        $post->url = $linkgen->createlink($post, 'post', false);
       } else {
         $title = $post->title;
         $post->title = trim($post->url, '/');
-        $post->url = $Linkgen->Create($post, 'post', false);
+        $post->url = $linkgen->Create($post, 'post', false);
         $post->title = $title;
       }
 

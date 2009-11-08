@@ -49,7 +49,7 @@ class tarchives extends TItems implements  ITemplate {
     $this->lock();
     $this->items = array();
     //sort archive by months
-    $Linkgen = TLinkGenerator::instance();
+    $linkgen = tlinkgenerator::instance();
     if (dbversion) {
 global $db
     $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
@@ -58,7 +58,7 @@ global $db
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
 'idurl => 0,
-        'url' => $Linkgen->Create($this, 'archive', false),
+        'url' => $linkgen->Create($this, 'archive', false),
         'title' => tlocal::date($this->date, 'F Y'),
         'year' => $r['year'],
         'month' => $r['month'],
@@ -72,7 +72,7 @@ global $db
         if (!isset($this->items[$this->date])) {
           $this->items[$this->date] = array(
 'idurl' => 0,
-          'url' => $Linkgen->Create($this, 'archive', false),
+          'url' => $linkgen->Create($this, 'archive', false),
           'title' => TLocal::date($this->date, 'F Y'),
           'year' => $d['year'],
           'month' =>$d['mon'],
