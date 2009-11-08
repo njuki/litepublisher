@@ -19,9 +19,9 @@ return $this->getlist();
     $post = tpost::instance($id);
 
 if (!$this->confirmed) {
-$args = new targs()
+$args = targs::instance();
 $args->id = $id;
-$args->adminurl = $options->url . $this->url . $options->q . 'id';
+$args->adminurl = $this->adminurl;
 $args->action = $action;
 $args->confirm = sprintf($this->lang->confirm, $this->lang->$action, "<a href='$post->link'>$post->title</a>");
 return $this->html->confirmform($args);
@@ -63,8 +63,8 @@ $items = array_reverse (array_keys($items));
 $html = $this->html;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
-$args = new targs();
-$args->adminurl = $options->url . $this->url . $options->q . 'id';
+$args = targs::instance();
+$args->adminurl = $this->adminurl;
 $args->editurl = $options->url . $this->url . 'editor/' . $options->q . 'id';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
@@ -74,8 +74,8 @@ $result .= $html->itemlist($args);
 $result .= $html->listfooter();
     $result = str_replace("'", '"', $result);
     
-    $tp = TTemplatePost::instance();
-    $result .= $tp->PrintNaviPages('/admin/posts/', $urlmap->page, ceil($count/$perpage));
+$theme = ttheme::instance();
+    $result .= $theme->getpages('/admin/posts/', $urlmap->page, ceil($count/$perpage));
     return $result;
   }
   

@@ -136,16 +136,17 @@ public function getdescription() {}
       $items = &$this->items[$this->date]['posts'];
     }
     $TemplatePost = TTemplatePost::instance();
+$theme = ttheme::instance();
     if ($this->lite) {
       $postsperpage = 1000;
       $list = array_slice($items, ($urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
       $result = $TemplatePost->LitePrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $urlmap->pagenumber, ceil(count($items)/ $postsperpage));
+      $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->pagenumber, ceil(count($items)/ $postsperpage));
       return $result;
     } else {
       $list = array_slice($items, ($urlmap->pagenumber - 1) * $options->postsperpage, $options->postsperpage);
       $result = $TemplatePost->PrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->date]['url'], $urlmap->pagenumber, ceil(count($items)/ $options->postsperpage));
+      $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->page, ceil(count($items)/ $options->postsperpage));
       return $result;
     }
   }

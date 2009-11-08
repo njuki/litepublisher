@@ -109,8 +109,10 @@ $this->data['phpcode'] = true;
     $result = preg_replace('/<\/(a|b|i|u|strong|emm)>\n/im', "</$1><br/>\n", $result);
     //переводы строки если нет в конце тегов
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
-    
-    return '<p>' . $result . '</p>';
+
+if (!preg_match('/^<p>/i', $result, $m)) $result = '<p>'. $result;
+if (!preg_match('/<\/p>$/i', $result, $m)) $result .= '</p>';
+        return $result;
   }
   
   public function replacecode($s) {

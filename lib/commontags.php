@@ -373,13 +373,15 @@ $items = $db->res2array($res);
       $postsperpage = 1000;
       $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
       $result .= $TemplatePost->LitePrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
+$theme = ttheme::instance();
+      $result .=$theme->getpages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
       return $result;
     } else{
       $list = array_slice($items, ($urlmap->page - 1) * $options->postsperpage, $options->postsperpage);
       $TemplatePost = TTemplatePost::instance();
       $result .= $TemplatePost->PrintPosts($list);
-      $result .=$TemplatePost->PrintNaviPages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $options->postsperpage));
+$theme = ttheme::instance();
+      $result .=$theme->getpages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $options->postsperpage));
       return $result;
     }
   }

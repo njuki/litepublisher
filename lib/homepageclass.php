@@ -29,10 +29,11 @@ public function getdescription() {}
     if ($urlmap->pagenumber == 1) $result .= $this->text;
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
-    $TemplatePost = &TTemplatePost::instance();
+    $TemplatePost = TTemplatePost::instance();
     $result .= $TemplatePost->PrintPosts($items);
     $Posts = tposts::instance();
-    $result .=$TemplatePost->PrintNaviPages($options->home, $urlmap->pagenumber, ceil($Posts->archivescount / $options->postsperpage));
+$theme = ttheme::instance();
+    $result .=$theme->getpages($options->home, $urlmap->page, ceil($Posts->archivescount / $options->postsperpage));
     return $result;
   }
   

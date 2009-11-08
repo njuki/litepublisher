@@ -24,7 +24,10 @@ class TTemplatePost extends TEventClass {
   private function GetPostFooter(&$post) {
     global $Urlmap;
     $result = '';
-    if ($post->haspages) $result .= $this->PrintNaviPages($post->url, $Urlmap->pagenumber, $post->countpages);
+    if ($post->haspages) {
+$theme = ttheme::instance();
+$result .= $theme->getpages($post->url, $urlmap->page, $post->countpages);
+}
     if ($post->commentsenabled && ($post->commentscount > 0)) {
       $lang = tlocal::instance();
       $result .= "<p><a href=\"$post->rsslink\">$lang->commentsrss</a></p>\n";
@@ -80,28 +83,6 @@ class TTemplatePost extends TEventClass {
       $result .= "<li>$post->localdate <a href=\"$Options->url$post->url\">$post->title</a></li>\n";
     }
     $result .= "</ul>\n";
-    return $result;
-  }
-  
-  public function PrintNaviPages($url, $page, $count) {
-    global  $Options;
-    if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $Template = TTemplate::instance();
-    //подготовка шаблонов ссылок
-    $navi =isset($Template->theme['navilinks']['navi']) ? $Template->theme['navilinks']['navi'] : '<p>%s</p>';
-    $link =isset($Template->theme['navilinks']['link']) ? $Template->theme['navilinks']['link'] : '<a href="%1$s">%2$s</a>';
-    $current= isset($Template->theme['navilinks']['current']) ? $Template->theme['navilinks']['current'] : '%2$s';
-    $separator =isset($Template->theme['navilinks']['separator']) ? $Template->theme['navilinks']['separator'] : ' | ';
-    
-    $suburl = rtrim($url, '/');
-    $a = array();
-    for ($i = 1; $i <= $count; $i++) {
-      $pageurl = $i == 1 ? $Options->url . $url : "$Options->url$suburl/page/$i/";
-      $a[] = sprintf($i == $page ? $current : $link, $pageurl, $i);
-    }
-    
-    $result = implode($separator, $a);
-    $result = sprintf($navi, $result);
     return $result;
   }
   

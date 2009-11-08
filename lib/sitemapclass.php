@@ -29,7 +29,7 @@ class TSitemap extends TItems {
   public function GetTemplateContent() {
     global $Options, $Urlmap;
     $posts = &TPosts::Instance();
-    $TemplatePost = &TTemplatePost::Instance();
+$theme = ttheme::instance();
     $postsperpage = 1000;
     $list = array_slice(array_keys($posts->archives), ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
     $result = $TemplatePost->LitePrintPosts($list);
@@ -43,7 +43,7 @@ class TSitemap extends TItems {
       $result .= "</ul>\n";
     }
     
-    $result .=$TemplatePost->PrintNaviPages('/sitemap/', $Urlmap->pagenumber, ceil(count($posts->archives)/ $postsperpage));
+    $result .=$theme->getpages('/sitemap/', $urlmap->page, ceil(count($posts->archives)/ $postsperpage));
     return $result;
   }
   

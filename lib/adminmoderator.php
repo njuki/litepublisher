@@ -161,8 +161,8 @@ $result .=$html->itemlist($args);
 $result .= $html->tablefooter;
       $result = $this->FixCheckall($result);
       
-      $tp = TTemplatePost::instance();
-      $result .= $tp->PrintNaviPages($this->url, $urlmap->page, ceil($total/$perpage));
+$theme = ttheme::instance();
+      $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
       return $result;
 }  
 
@@ -199,6 +199,7 @@ $result = $this->html->h2->successmoderated;
     switch ($action) {
             case 'hold':
      case 'approve':
+case 'edit':
 $result .= $this->getinfo($id);
 break;
     }
@@ -220,7 +221,7 @@ return $result;
 
 private function getconfirmform($id, $confirm) {
 global $options;
-$args = new targs();
+$args = targs::instance();
 $args->id = $id;
 $args->action = 'delete';
 $args->adminurl = $options->url . $this->url . $options->q . 'id';
@@ -256,7 +257,7 @@ $manager->db->delete("author = $uid");
   }
 
 private function editauthor($id) {
-$args = new targs();
+$args = targs::instance();
 if ($id == 0) {
         $args->id = 0;
         $args->name = '';
@@ -279,7 +280,7 @@ return $this->html->authorform($args);
 private function getauthorslist() {
 global $urlmap;
 $comusers = tcomusers::instance();
-$args = new targs();
+$args = targs::instance();
       $perpage = 20;
 $total = $comusers->count;
       $from = max(0, $total - $urlmap->page * $perpage);
@@ -307,8 +308,8 @@ $result .= $html->authoritem($args);
 }
 $result .= $html->authorfooter;
 
-      $tp = TTemplatePost::instance();
-      $result .= $tp->PrintNaviPages($this->url, $urlmap->page, ceil($total/$perpage));
+$theme = ttheme::instance();
+      $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
 return $result;
      }
 
@@ -334,7 +335,7 @@ if (!in_array($item['pid'], $posted)) $posted[] =$item['pid'];
     $subscribers = $tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
     
-$args = new targs();
+$args = targs::instance();
     foreach ($posted as $idpost) {
 $post = tpost::instance($idpost);
       $args->subscribed = in_array($idpost, $subscribed);
@@ -353,19 +354,25 @@ $manager = $this->manager;
 case 'pingback':
 
 $action = $_REQEST['action'];
-if ($action == 'reply') {
+switch ($action) {
+case 'reply':
       $email = $this->getadminemail();
       $site = $options->url . $options->home;
       $profile = tprofile::instance();
       $comusers = tccomusers ::instance();
       $authorid = $comusers->add($profile->nick, $email, $site);
-$post = tpost::instance( (int) $_PoST['pid']);
+$post = tpost::instance( (int) $_POST['pid']);
       $manager->addcomment($post->id, $authorid, $_POST['content']);
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
       @header("Location: $options->url$posturl");
       exit();
-}
 
+case 'edit':
+$comment = $manager->getcomment($this->idget());
+      $comment->content = $_POST['content'];
+break;
+
+default:
       $manager->Lock();
       foreach ($_POST as $id => $value) {
         if (!is_numeric($id))  continue;
@@ -374,6 +381,7 @@ $this->doaction($id, $action);
 }
       $manager->unlock();
 $result = $this->html->h2->successmoderated;
+}
       break;
       
       case 'authors':
@@ -408,28 +416,16 @@ $result =  $html->h2->authoredited;
   
   private function getadminemail() {
     global $options;
-    $profile = &TProfile::instance();
+    $profile = tprofile::instance();
     if ($profile->mbox!= '') return $profile->mbox;
     return $options->fromemail;
   }
   
-  private function EditComment($id) {
-    global $options;
-$manager = $this->manager;
-    $comment = $manager->GetComment($id);
-    if (isset($_POST['submit'])) {
-      $comment->content = $_POST['content'];
-      //$comment->Save();
-    }
-    $content = $this->ContentToForm($comment->content);
-    $result = '';
-    $html = &THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = &TLocal::instance();
-    
-    eval('$result .= "'. $html->info . '\n";');
-    eval('$result .= "'. $html->editform . '\n";');
-    return $result;
+  private function editcomment($id) {
+    $comment = $this->manager->GetComment($id);
+$args = targs::instance();
+    $args->content = $comment->content;
+return $this->html->editform($args);
   }
   
 }//class

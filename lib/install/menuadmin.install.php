@@ -22,6 +22,24 @@ $menu = $self->add(0, 'menu', 'editor', 'tadminmenumanager');
 $self->add($menu, 'edit', 'editor', 'tadminmenumanager'); 
 }
 
+$opt = $self->add(0, 'options', 'admin', 'tadminoptions'); 
+{
+$self->add($opt, 'home', 'admin', 'tadminoptions'); 
+$self->add($opt, 'mail', 'admin', 'tadminoptions'); 
+$self->add($opt, 'rss', 'admin', 'tadminoptions'); 
+$self->add($opt, 'view', 'admin', 'tadminoptions'); 
+$self->add($opt, 'comments', 'admin', 'tadminoptions'); 
+$self->add($opt, 'ping', 'admin', 'tadminoptions'); 
+$self->add($opt, 'link', 'admin', 'tadminoptions'); 
+$self->add($opt, 'openid', 'admin', 'tadminoptions'); 
+$self->add($opt, 'cache', 'admin', 'tadminoptions'); 
+$self->add($opt, 'lite', 'admin', 'tadminoptions'); 
+$self->add($opt, 'secure', 'admin', 'tadminoptions'); 
+$self->add($opt, 'robots', 'admin', 'tadminoptions'); 
+$self->add($opt, 'local', 'admin', 'tadminoptions'); 
+$self->add($opt, '404', 'admin', 'tadminoptions'); 
+}
+
 $self->unlock();
 
 $redir = tredirector::instance();

@@ -1,312 +1,304 @@
 <?php
 
-class TAdminOptions extends TAdminPage {
-  public static function &Instance() {
-    return GetInstance(__class__);
+class tadminoptions extends tadminmenuitem {
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'options';
-  }
-  
-  public function Getcontent() {
-    global $Options, $Template, $paths;
-    $checked = "checked='checked'";
+  public function getcontent() {
+    global $classes, $options, $template, $paths, $home, $rss, $pinger, $linkgen;
     $result = '';
-    
-    switch ($this->arg) {
-      case null:
-      $description = $this->ContentToForm($Options->description);
-      $footer = $this->ContentToForm($Template->footer);
+    $args = targs::instance();
+
+    switch ($this->name) {
+      case 'options':
+      $args->description = $options->description;
+      $args->footer = $$template->footer;
       $formname = 'descriptionform';
       break;
       
       case 'home':
-      $home = &THomepage::Instance();
-      $hideposts = $home->hideposts  ? 'checked' : '';
-      $text = $this->ContentToForm($home->text);
+      $home = thomepage::instance();
+      $args->hideposts = $home->hideposts;
+      $args->text = $$home->text;
       $formname = 'home';
       break;
       
       case 'mail':
-      $subscribe = &TSubscribe ::Instance();
-      $mailer = &TSMTPMailer ::Instance();
-      $mailerchecked = $Options->mailer == 'smtp' ? $checked : '';
+      $subscribe = tsubscribers::instance();
+      $mailer = TSMTPMailer ::instance();
+      $args->mailerchecked = $options->mailer == 'smtp';
       $formname = 'mailform';
       break;
       
       case 'rss':
-      $rss = &TRSS::Instance();
+      $rss = trss::instance();
       $formname = 'rssform';
       break;
       
       case 'view':
-      $ContentFilter = &TContentFilter::Instance();
-      $automore = $ContentFilter->automore ? $checked: '';
-      $hovermenu = $Template->hovermenu ? $checked : '';
+      $filter = tcontentfilter::instance();
+      $args->automore = $filter->automore;
+$args->phpcode = $filter->phpcode;
+      $args->hovermenu = $template->hovermenu;
       $formname = 'viewform';
       break;
       
       case 'comments':
-      $status = $Options->DefaultCommentStatus  == 'approved' ? $checked: '';
-      $commentsdisabled = $Options->commentsdisabled ? $checked : '';
-      $commentsenabled = $Options->commentsenabled ? $checked: '';
-      $pingenabled  = $Options->pingenabled  ? $checked: '';
-      $commentpages  = $Options->commentpages  ? $checked : '';
-      $CommentManager = TCommentManager::Instance();
-      $sendnotification = $CommentManager->SendNotification ? $checked : '';
+      $args->status = $options->DefaultCommentStatus  == 'approved';
+      $args->commentsdisabled = $options->commentsdisabled;
+      $args->commentsenabled = $options->commentsenabled;
+      $args->pingenabled  = $options->pingenabled;
+      $args->commentpages  = $options->commentpages;
+      $manager = $classes->commentmanager;
+      $args->sendnotification = $manager->SendNotification;
       
-      $authors = tcomusers ::Instance();
-      $hidelink = $authors->hidelink ? $checked : '';
-      $redir = $authors->redir ? $checked : '';
-      $nofollow = $authors->nofollow ? $checked : '';
+      $comusers= tcomusers ::instance();
+      $args->hidelink = $comusers->hidelink;
+      $args->redir = $comusers->redir;
+      $args->nofollow = $comusers->nofollow;
       
-      $subscribtion = TSubscribe::Instance();
-      $locklist = $subscribtion ->locklist;
+      $subscribtion = tsubscribers::instance();
+      $args->locklist = $subscribtion ->locklist;
       
       $formname = 'commentsform';
       break;
       
       case 'ping':
-      $pinger = &TPinger::Instance();
-      $pingenabled  = $pinger->enabled  ? $checked: '';
+      $pinger = tpinger::instance();
+      $args->pingenabled  = $pinger->enabled  ? $checked: '';
       $formname = 'pingform';
       break;
       
       case 'links':
-      $linkgen = &TLinkGenerator::Instance();
+      $linkgen = TLikGenerator::instance();
       $formname = 'linksform';
       break;
       
       case 'openid':
-      $openid = &TOpenid::Instance();
-      $confirm = $openid->confirm ? $checked : '';
-      $usebigmath = $openid->usebigmath ? $checked : '';
-      $trusted = $this->ContentToForm(implode("\n", $openid->trusted));
+      $openid = topenid::instance();
+      $args->confirm = $openid->confirm ? $checked : '';
+      $args->usebigmath = $openid->usebigmath ? $checked : '';
+      $args->trusted = implode("\n", $openid->trusted);
       $formname = 'openidform';
       break;
       
       case 'cache':
-      $cacheenabled = $Options->CacheEnabled ? $checked : '';
+      $args->cacheenabled = $options->CacheEnabled;
       $formname = 'cacheform';
       break;
       
       case 'lite':
-      $archives = &TArchives::Instance();
-      $litearchives = $archives->lite ? $checked : '';
-      $categories= &TCategories::Instance();
-      $litecategories = $categories->lite ? $checked : '';
-      $tags = &TTags::Instance();
-      $litetags = $tags->lite ? $checked : '';
+      $archives = tarchives::instance();
+      $args->litearchives = $archives->lite;
+      $categories= &tctegories::instance();
+      $args->litecategories = $categories->lite;
+      $tags = ttags::instance();
+      $args->litetags = $tags->lite;
       $formname = 'liteform';
       break;
       
       case 'secure':
-      $auth = &TAuthDigest::Instance();
-      $cookie = $auth->cookieenabled ? $checked : '';
-      $xxxcheck = $auth->xxxcheck ? $checked : '';
+      $auth = tauthdigest::instance();
+      $args->cookie = $auth->cookieenabled;
+      $args->xxxcheck = $auth->xxxcheck;
       $ssl = false;
       $formname = 'secureform';
       break;
       
-      case 'robotstxt':
-      $robotstxt = &TRobotstxt::Instance();
-      $content = implode("\n", $robotstxt->items);
-      $content = $this->ContentToForm($content);
+      case 'robots':
+      $robotstxt = &TRobotstxt::instance();
+      $args->content = implode("\n", $robotstxt->items);
       $formname = 'robotstxtform';
       break;
       
       case 'local':
-      $timezones = $this->GetTimezones();
+      $args->timezones = $this->gettimezones();
       $formname = 'localform';
       break;
       
       case '404':
-      $err = &TNotFound404 ::Instance();
-      $content = $this->ContentToForm($err->text);
+      $err = tfnotfound404 ::instance();
+      $args->content = $err->text;
       $formname = 'form404';
       break;
       
     }
     
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-  eval('$result .= "'. $html->{$formname} . '\n";');
+$result  = $this->html->{$formname($args);
     $result = str_replace("'", '"', $result);
     return $result;
   }
   
-  public function ProcessForm() {
-    global $Options, $Urlmap, $paths;
+  public function processform() {
+    global $options, $urlmap, $paths;
     
     extract($_POST);
     
-    switch ($this->arg) {
-      case null:
-      $Template = &TTemplate::Instance();
-      $Options->Lock();
-      if (!empty($url) && ($url != $Options->url))  $Options->Seturl($url);
-      if (!empty($name)) $Options->name = $name;
-      if (!empty($description)) $Options->description = $description;
-      if (!empty($keywords)) $Options->keywords = $keywords;
-      $Options->Unlock();
+    switch ($this->name) {
+      case 'options':
+      $template = ttemplate::instance();
+      $options->lock();
+      if (!empty($url) && ($url != $options->url))  $options->seturl($url);
+      if (!empty($name)) $options->name = $name;
+      if (!empty($description)) $options->description = $description;
+      if (!empty($keywords)) $options->keywords = $keywords;
+      $options->unlock();
       
-      if (!empty($footer)) $Template->footer = $footer;
-      $Urlmap->ClearCache();
+      if (!empty($footer)) $template->footer = $footer;
+      $urlmap->clearcache();
       break;
       
       case 'home':
-      $home = &THomepage::Instance();
-      $home->Lock();
+      $home = thomepage::instance();
+      $home->lock();
       $home->text = $text;
       $home->hideposts = isset($hideposts);
-      $home->Unlock();
+      $home->unlock();
       break;
       
       case 'mail':
-      $Options->Lock();
-      if(!empty($email)) $Options->email = $email;
-      if(!empty($fromemail)) $Options->fromemail = $fromemail;
-      $Options->mailer = empty($mailer) ? '': 'smtp';
-      $Options->Unlock();
+      $options->lock();
+      if(!empty($email)) $options->email = $email;
+      if(!empty($fromemail)) $options->fromemail = $fromemail;
+      $options->mailer = empty($mailer) ? '': 'smtp';
+      $options->unlock();
       if (!empty($subscribeemail)) {
-        $subscribe = &TSubscribe ::Instance();
+        $subscribe = tsubscribers::instance();
         $subscribe->fromemail = $subscribeemail;
-        $subscribe->Save();
+        $subscribe->save();
       }
       
-      $mailer = &TSMTPMailer ::Instance();
-      $mailer->Lock();
+      $mailer = &TSMTPMailer ::instance();
+      $mailer->lock();
       $mailer->host = $host;
       $mailer->login = $login;
       $mailer->password = $password;
       $mailer->port= (int) $port;
-      $mailer->Unlock();
+      $mailer->unlock();
       break;
       
       case 'rss':
-      $rss = &TRSS::Instance();
-      $rss->Lock();
+      $rss = trss::instance();
+      $rss->lock();
       $rss->SetFeedburnerLinks($feedburner, $feedburnercomments);
       $rss->template = $content;
-      $rss->Unlock();
+      $rss->unlock();
       break;
       
       case 'view':
-      if (!empty($postsperpage)) $Options->postsperpage = (int) $postsperpage;
-      $ContentFilter = &TContentFilter::Instance();
-      $ContentFilter->automore = isset($automore);
-      $ContentFilter->automorelength = (int) $automorelength;
-      $ContentFilter->Save();
-      $Template = &TTemplate::Instance();
-      $Template->hovermenu = isset($hovermenu);
+      if (!empty($postsperpage)) $options->postsperpage = (int) $postsperpage;
+      $filter = tcontentfilter::instance();
+      $filter->automore = isset($automore);
+      $filter->automorelength = (int) $automorelength;
+      $filter->save();
+      $template = ttemplate::instance();
+      $template->hovermenu = isset($hovermenu);
       break;
       
       case 'comments':
-      $Options->Lock();
-      $Options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
-      $Options->commentsdisabled = isset($commentsdisabled);
-      $Options->commentsenabled = isset($commentsenabled);
-      $Options->pingenabled  = isset($pingenabled );
-      $Options->commentpages = isset($commentpages);
-      $Options->commentsperpage = $commentsperpage;
-      $Options->Unlock();
+      $options->lock();
+      $options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
+      $options->commentsdisabled = isset($commentsdisabled);
+      $options->commentsenabled = isset($commentsenabled);
+      $options->pingenabled  = isset($pingenabled );
+      $options->commentpages = isset($commentpages);
+      $options->commentsperpage = $commentsperpage;
+      $options->unlock();
       
-      $CommentManager = &TCommentManager::Instance();
-      $CommentManager->SendNotification = isset($sendnotification);
+      $manager = $classes->commentmanager;
+      $manager->SendNotification = isset($sendnotification);
       
-      $authors = tcomusers ::Instance();
-      $authors->hidelink = isset($hidelink);
-      $authors->redir = isset($redir);
-      $authors->nofollow = isset($nofollow);
-      $authors->save();
+      $comusers = tcomusers ::instance();
+      $comusers->hidelink = isset($hidelink);
+      $comusers->redir = isset($redir);
+      $comusers->nofollow = isset($nofollow);
+      $comusers->save();
       
-      $subscribtion = TSubscribe::Instance();
+      $subscribtion = tsubscribers::instance();
       if ($locklist != $subscribtion->locklist) {
         $subscribtion->locklist = $locklist;
         $subscribtion->save();
       }
-      $Urlmap->ClearCache();
+      $urlmap->clearcache();
       break;
       
       case 'ping':
-      $pinger = &TPinger::Instance();
-      $pinger->Lock();
+      $pinger = tpinger::instance();
+      $pinger->lock();
       $pinger->services = $content;
       $pinger->enabled = isset($pingenabled);
-      $pinger->Unlock();
+      $pinger->unlock();
       break;
       
       case 'links':
-      $linkgen = &TLinkGenerator::Instance();
+      $linkgen = TLinkGenerator::instance();
       if (!empty($post)) $linkgen->post = $post;
       if (!empty($category)) $linkgen->category = $category;
       if (!empty($tag)) $linkgen->tag = $tag;
-      $linkgen->Save();
+      $linkgen->save();
       break;
       
       case 'openid':
-      $openid = &TOpenid::Instance();
+      $openid = topenid::instance();
       $openid->confirm = isset($confirm);
       $openid->usebigmath = isset($usebigmath);
       $openid->trusted = explode("\n", trim($trusted));
-      $openid->Save();
+      $openid->save();
       break;
       
       case 'cache':
       if (isset($clearcache)) {
-        $Urlmap->ClearCache();
+        $urlmap->clearcache();
       } else {
-        $Options->lock();
-        $Options->CacheEnabled  = isset($cacheenabled);
-        if (!empty($cacheexpired)) $Options->CacheExpired = (int) $cacheexpired;
-        $Options->unlock();
+        $options->lock();
+        $options->CacheEnabled  = isset($cacheenabled);
+        if (!empty($cacheexpired)) $options->CacheExpired = (int) $cacheexpired;
+        $options->unlock();
       }
       break;
       
       case 'lite':
-      $archives = &TArchives::Instance();
+      $archives = taArchives::instance();
       $archives->lite = isset($litearchives);
-      $categories= &TCategories::Instance();
+      $categories= tcCategories::instance();
       $categories->SetParams(isset($litecategories), $categories->sortname, $categories->showcount, $categories->maxcount);
-      $tags = &TTags::Instance();
+      $tags = ttags::instance();
       $tags->SetParams(isset($litetags), $tags->sortname, $tags->showcount, $tags->maxcount);
       break;
       
       case 'secure':
-      $auth = &TAuthDigest::Instance();
+      $auth = tauthigest::instance();
       $auth->cookieenabled = isset($cookie);
       $auth->xxxcheck = isset($xxxcheck);
-      $auth->Save();
+      $auth->save();
       break;
       
-      case 'robotstxt':
-      $robotstxt = &TRobotstxt::Instance();
+      case 'robots':
+      $robotstxt = trobotstxt::instance();
       $robotstxt->items = explode("\n", $content);
-      $robotstxt->Save();
+      $robotstxt->save();
       break;
       
       case 'local':
-      $Options->lock();
-      $Options->dateformat = $dateformat;
-      $Options->language = $language;
-      $Options->unlock();
-      if ($Options->timezone != $timezone) {
-        $Options->timezone = $timezone;
-        $archives = &TArchives::Instance();
+      $options->lock();
+      $options->dateformat = $dateformat;
+      $options->language = $language;
+      $options->unlock();
+      if ($options->timezone != $timezone) {
+        $options->timezone = $timezone;
+        $archives = tarchives::instance();
         TUrlmap::unsub($archives);
         $archives->PostsChanged();
       }
       
-      $Urlmap->ClearCache();
+      $urlmap->clearcache();
       break;
       
       case '404':
-      $err = &TNotFound404 ::Instance();
+      $err = tnotfound404 ::instance();
       $err->text = $content;
-      $err->Save();
+      $err->save();
       break;
       
     }
@@ -314,12 +306,12 @@ class TAdminOptions extends TAdminPage {
     return '';
   }
   
-  private function GetTimezones() {
-    global $Options;
+  private function gettimezones() {
+    global $options;
     $zones = timezone_identifiers_list ();
     $result = "<select name='timezone' id='timezone'>\n";
     foreach ($zones as $zone) {
-      $selected = $zone == $Options->timezone ? 'selected' : '';
+      $selected = $zone == $options->timezone ? 'selected' : '';
       $result .= "<option value='$zone' $selected>$zone</option>\n";
     }
     $result .= "</select>";
