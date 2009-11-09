@@ -17,6 +17,8 @@ $self->add($moder, 'pingback', 'moderator', 'tadminmoderator');
 $self->add($moder, 'authors', 'moderator', 'tadminmoderator'); 
 }
 
+$plugins = $self->add(0, 'plugins', 'admin', 'tadminplugins'); 
+
 $themes = $self->add(0, 'themes', 'admin', 'tadminthemes'); 
 {
 $self->add($themes, 'edit', 'admin', 'tadminthemes'); 

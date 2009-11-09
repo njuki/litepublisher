@@ -1,86 +1,107 @@
 <?php
 
-class TAdminPlugins extends TAdminPage {
-  private $submenu;
+class tadminplugins extends tadminmenuitem {
+private $abouts;
   private $adminplugins;
   private $plugin;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'plugins';
+  protected function create() {
+    parent::create();
     $this->adminplugins = array();
+$this->readabout();
   }
+
+private function readabout() {
+global $options, $paths;
+$this->abouts = array();
+$list = tfiler::getdir($paths['plugins']);
+sort($list);
+foreach ($list as $name) {
+$about = parse_ini_file($paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+//слить языковую локаль в описание
+if (isset($about[$options->language])) {
+$about['about'] = $about[$options->language] + $about['about'];
+}
+$this->abouts[$name] = $about['about'];
+    }
+
+}
   
-  public function Getcontent() {
+  public function getcontent() {
+$result = '';
+$html = $this->html;
+//сделать список ссылок на админки установленных плагинов
+$submenu = '';
+$submenuitem = $html->submenuitem . "\n";
+$url = $options->url . $this->url . $options->q . 'plugin=';
+$plugins = tplugins::instance();
+foreach ($this->abouts as $name) {
+      if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
+          $this->adminplugins[$name] = $about;
+$submenu .= sprintf($submenuitem, $url, $this->abouts[$name]['name']);
+        }
+}
+if ($submenu ! = '') $result .= sprintf($html->submenu, $submenu);
+
+if (empty($_GET['plugin'])) {
+      $result = $html->checkallscript;
+$result .= $html->formhead();
+$args = targs::instance();
+foreach ($this->abouts as $name => $about) {
+$args->name = $name;
+$args->checked = isset($plugins->items[$name]);
+$args->version = $about['version'];
+$args->short = $about['name'];
+$args->description = $about'description'];
+$args->url = $about['url'];
+$args->author = $about['author'];
+$result .= $html->item($args);
+}
+$result .= $html->formfooter();
+      $result = $this->FixCheckall($result);
+} else {
+$name = $_GET['plugin'];
+if (!isset($this->abouts[$name])) return $this->notfound;
+$plugin = 
+}
+
+      return $result;
+  }
+
+  public function processform() {
+    global $options, $Urlmap;
     switch ($this->arg) {
       case null:
-      return $this->GetPluginsMenu(true);
+      $list = array_keys($_POST);
+      array_pop($list);
+      $plugins = tplugins::instance();
+      $plugins->update($list);
+      $html = &THtmlResource::instance();
+      $html->section = $this->basename;
+      $lang = &TLocal::instance();
+      eval('$result = "'. $html->updated . '\n";');
+      break;
       
       default:
-      $result = $this->GetPluginsMenu(false);
-      $result .= $this->GetPluginContent($this->arg, 'Getcontent');
-      return $result;
+      $result = $this->GetPluginContent($this->arg, 'ProcessForm');
+      break;
     }
     
+    $Urlmap->ClearCache();
+    return $result;
   }
   
-  private function GetPluginsMenu($radio) {
-    global $Options, $paths;
-    if (!empty($this->submenu)) return $this->submenu;
-    $this->submenu ='';
-    $result = '';
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    
-    $list = tfiler::getdir($paths['plugins']);
-    sort($list);
-    $plugins = &TPlugins::Instance();
-    
-    if ($radio) {
-      $result = $html->checkallscript;
-      eval('$result .= "'. $html->formhead . '\n";');
-      $item = $html->item;
-    }
-    
-    foreach ($list as $name) {
-      $ini = parse_ini_file($paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
-      $about = $ini['about'];
-      $langini = $paths['plugins'] . $name . DIRECTORY_SEPARATOR . $Options->language . '.ini';
-      if (@file_exists($langini) && ($ini = @parse_ini_file($langini, true))) {
-        $about= $ini['about'] + $about;
-      }
-      $checked =  '';
-      if (isset($plugins->items[$name])) {
-        $checked =  "checked='checked'";
-        if (!empty($about['adminclassname'])) {
-          $this->adminplugins[$name] = $about;
-          eval('$this->submenu .= "'. $html->menuitem . '\n";');
-        }
-      }
-      if ($radio) eval('$result .= "'. $item . '\n";');
-    }
-    
-    if ($radio) {
-      eval('$result .= "'. $html->formfooter . '\n";');;
-      $result = $this->FixCheckall($result);
-    }
-    if ($this->submenu != '') $this->submenu = '<p>' . $this->submenu . "</p>\n";
-    $this->submenu = str_replace("'", '"', $this->submenu);
-    $this->submenu .= $result;
-    return $this->submenu;
-  }
-  
+
   private function GetPluginContent($name, $method) {
-    global $paths, $Options;
-    $plugins = &TPlugins::Instance();
-    $html = &THtmlResource::Instance();
+    global $paths, $options;
+    $plugins = &TPlugins::instance();
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     if (!isset($plugins->items[$name])) return $this->notfound;
     if (!isset($this->plugin)) {
@@ -99,28 +120,6 @@ class TAdminPlugins extends TAdminPage {
     return $this->plugin->$method();
   }
   
-  public function ProcessForm() {
-    global $Options, $Urlmap;
-    switch ($this->arg) {
-      case null:
-      $list = array_keys($_POST);
-      array_pop($list);
-      $plugins = tplugins::Instance();
-      $plugins->update($list);
-      $html = &THtmlResource::Instance();
-      $html->section = $this->basename;
-      $lang = &TLocal::Instance();
-      eval('$result = "'. $html->updated . '\n";');
-      break;
-      
-      default:
-      $result = $this->GetPluginContent($this->arg, 'ProcessForm');
-      break;
-    }
-    
-    $Urlmap->ClearCache();
-    return $result;
-  }
-  
+
 }//class
 ?>
