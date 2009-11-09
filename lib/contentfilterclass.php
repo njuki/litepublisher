@@ -126,7 +126,7 @@ if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', 'TCon
     return "<code>$code</code>";
   }
   
-  public static function GetExcerpt($content, $len) {
+  public static function getexcerpt($content, $len) {
     $result = strip_tags($content);
     if (strlen($result) <= $len) return $result;
     $chars = "\n ,.;!?:(";

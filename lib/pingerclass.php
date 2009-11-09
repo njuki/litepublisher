@@ -1,63 +1,62 @@
 <?php
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR  . 'include'. DIRECTORY_SEPARATOR  . 'class-IXR.php');
 
-class TPinger extends TItems {
+class tpinger extends TItems {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+global $paths;
+    parent::create();
     $this->basename = 'pinger';
-    $this->Data['services'] = '';
-    $this->Data['enabled'] = true;
+    $this->data['services'] = '';
+    $this->data['enabled'] = true;
+require_once($paths['libinclude'] . 'class-IXR.php');
   }
   
-  public function SetEnabled($value) {
-    if ($value != $this->enabled) {
-      $this->Lock();
-      $this->Data['enabled'] = $value;
+  public function setenabled($value) {
+    if ($value != $this->`enabled) {
+      $this->lock();
+      $this->data['enabled'] = $value;
       if ($value) {
-        $this->Install();
+        $this->install();
       } else {
-        TPosts::unsub($this);
+        tposts::unsub($this);
       }
-      $this->Unlock();
+      $this->unlock();
     }
   }
   
-  public function Setservices($s) {
+  public function setservices($s) {
     if ($this->services != $s) {
-      $this->Data['services'] = $s;
-      $this->Save();
+      $this->data['services'] = $s;
+      $this->save();
     }
   }
   
-  public function PostDeleted($id) {
-    $this->Delete($id);
+  public function postdeleted($id) {
+    $this->delete($id);
   }
   
-  public function PingPost($id) {
-    global $Options;
-    $post = &TPost::Instance($id);
-    $posturl = $Options->url . $post->url;
-    $this->Lock();
-    $this->PingServices($posturl);
+  public function pingpost($id) {
+    $post = tpost::instance($id);
+    $posturl = $post->link;
+    $this->lock();
+    $this->pingservices($posturl);
     
     if (!isset($this->items[$id])) $this->items[$id] = array();
-    $links = $this->GetPostLinks($post);
+    $links = $this->getlinks($post);
     foreach ($links as $link) {
       if (!in_array($link, $this->items[$id])) {
-        if ($this->Ping($link, $posturl)) $this->items[$id][] = $link;
+        if ($this->ping($link, $posturl)) $this->items[$id][] = $link;
       }
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
-  protected function GetPostLinks(&$post) {
-    global $Options;
-    $posturl = $Options->url . $post->url;
+  protected function getlinks(tpost $post) {
+    $posturl = $post->link;
     $result = array();
     $punc = '.:?\-';
     $any = '\w/#~:.?+=&%@!\-' . $punc;
@@ -73,12 +72,12 @@ class TPinger extends TItems {
     return $result;
   }
   
-  protected function Ping($link, $posturl) {
-    global $Options;
-    if ($ping = self::Discover($link)) {
+  protected function ping($link, $posturl) {
+    global $options;
+    if ($ping = self::discover($link)) {
       $client = new IXR_Client($ping);
       $client->timeout = 3;
-      $client->useragent .= " -- Lite Publisher/$Options->version";
+      $client->useragent .= " -- Lite Publisher/$options->version";
       $client->debug = false;
       
       if ( $client->query('pingback.ping', $posturl, $link) || ( isset($client->error->code) && 48 == $client->error->code ) ) return true;
@@ -86,8 +85,8 @@ class TPinger extends TItems {
     return false;
   }
   
-  public static function Discover($url, $timeout_bytes = 2048) {
-    global $Options;
+  public static function discover($url, $timeout_bytes = 2048) {
+    global $options;
     
     $byte_count = 0;
     $contents = '';
@@ -112,7 +111,7 @@ class TPinger extends TItems {
     return false;
     
     // Send the GET request
-    $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/$Options->version\r\n\r\n";
+    $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/$options->version\r\n\r\n";
     fputs($fp, $request);
     
     // Let's check for an X-Pingback header first
@@ -166,18 +165,18 @@ class TPinger extends TItems {
     return false;
   }
   
-  public function PingServices($url) {
-    global $Options;
-    $home = $Options->url . $Options->home;
+  public function pingservices($url) {
+    global $options;
+    $home = $options->url . $options->home;
     $list = explode("\n", $this->services);
     foreach ($list as $service) {
       $service = trim($service);
       $client = new IXR_Client($service);
       $client->timeout = 3;
-      $client->useragent .= ' -- Lite Publisher/'.$Options->version;
+      $client->useragent .= ' -- Lite Publisher/'.$options->version;
       $client->debug = false;
-      if ( !$client->query('weblogUpdates.extendedPing', $Options->name, $home, $url, $Options->rss) )
-      $client->query('weblogUpdates.ping', $Options->name, $url);
+      if ( !$client->query('weblogUpdates.extendedPing', $options->name, $home, $url, $options->rss) )
+      $client->query('weblogUpdates.ping', $options->name, $url);
     }
   }
   

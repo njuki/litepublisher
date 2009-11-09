@@ -152,7 +152,7 @@ $comment->data = $data;
 }
 
 $args->id = $comment->id;
-        $args->excerpt = TContentFilter::GetExcerpt($comment->content, 120);
+        $args->excerpt = tcontentfilter::getexcerpt($comment->content, 120);
         $args->onhold = $comment->status == 'hold';
 $args->email = $comment->email == '' ? '' "<a href='mailto:$comment->email'>$comment->email</a>";
 $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";

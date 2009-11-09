@@ -257,7 +257,7 @@ $path = $paths['cache'];
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
 $file = $path. $filename;
         if (@is_dir($file)) {
-TFiler::DeleteFiles($file . DIRECTORY_SEPARATOR, true, true);
+tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
         } else {
           unlink($file);
         }
@@ -270,7 +270,7 @@ TFiler::DeleteFiles($file . DIRECTORY_SEPARATOR, true, true);
   
   public function setexpired($id) {
 global $paths;
-tfiler::DeleteFilesRegexp($paths['cache'], "/($id-\\d\\.php\$)/");
+tfiler::deleteregexp($paths['cache'], "/($id-\\d\\.php\$)/");
 }
 
 public function getcachename($name, $id) {
@@ -280,7 +280,7 @@ return $paths['cache']. "$prefix-$id.php";
 
 public function expiredname($name, $id) {
 global $paths;
-tfiler::DeleteFilesRegexp($paths['cache'], "/($name-$id\\.php\$)/");
+tfiler::deleteregexp($paths['cache'], "/($name-$id\\.php\$)/");
 }
   
     public function addredir($from, $to) {

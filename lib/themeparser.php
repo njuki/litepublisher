@@ -118,13 +118,18 @@ return $index;
 }
 
 //manager
-  public function getabout($theme) {
-    global $paths;
+  public function getabout($name) {
+    global $paths, $options;
     if (!isset($this->abouts)) $this->abouts = array();
-    if (!isset($this->abouts[$theme])) {
-      $this->abouts[$theme] = @parse_ini_file($paths['themes'] . $theme . DIRECTORY_SEPARATOR    . 'about.ini', true);
+    if (!isset($this->abouts[$name])) {
+$about = parse_ini_file($paths['themes'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+//слить языковую локаль в описание
+if (isset($about[$options->language])) {
+$about['about'] = $about[$options->language] + $about['about'];
+}
+$this->abouts[$name] = $about['about'];
     }
-    return $this->abouts[$theme];
+    return $this->abouts[$name];
   }
   
 public function changetheme($old, $name) {

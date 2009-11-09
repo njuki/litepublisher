@@ -1,53 +1,54 @@
 <?php
 
-class TRemoteAdmin extends TEventClass {
+class tremoteadmin extends TEventClass {
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'remoteadmin';
   }
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  public function GetClasses() {
-    return TClasses::$items;
+  public function getclasses() {
+global $classes;
+    return $classes->items;
   }
   
-  public function ThemeExists($name) {
+  public function existstheme($name) {
     global $paths;
     return @is_dir($paths['themes'] . $name);
   }
   
-  public function PluginExists($name) {
+  public function pluginexists($name) {
     global $paths;
     return @is_dir($paths['plugins']. $name);
   }
   
-  public function GetThemesList() {
+  public function getthemes() {
     global $paths;
-    return TFiler::GetDirList($paths['themes']);
+    return tfiler::getdir($paths['themes']);
   }
   
-  public function GetPluginsList() {
+  public function getplugins() {
     global $paths;
-    return TFiler::GetDirList($paths['plugins']);
+    return tfiler::getdir($paths['plugins']);
   }
   
-  public function SetPlugins($names) {
-    $plugins = &TPlugins::Instance();
-    $plugins->SetPlugins($names);
+  public function setplugins($names) {
+    $plugins = tplugins::instance();
+    $plugins->setplugins($names);
   }
   
-  public function DeletePlugins($names) {
-    $plugins = &TPlugins::Instance();
-    $plugins->DeletePlugins($names);
+  public function deleteplugins($names) {
+    $plugins = tplugins::instance();
+    $plugins->deleteplugins($names);
   }
   
-  public function SetTheme($name) {
-    $template = &TTemplate::Instance();
-    $template->themename = $name;
+  public function settheme($name) {
+    $template = ttemplate::instance();
+    $template->theme = $name;
   }
   
   protected function  ReadDirToZip(&$zip, $path, $subdir, $prefix = '') {
@@ -108,13 +109,13 @@ class TRemoteAdmin extends TEventClass {
       $this->ReadDirToZip($zip, $paths['lib'], '', 'lib/');
     }
     if ($theme) {
-      $Template = &TTemplate::Instance();
+      $Template = &TTemplate::instance();
       $themename = $Template->themename;
       $this->ReadDirToZip($zip, $paths['themes'] . $themename, '', "themes/$themename/");
     }
     
     if ($plugins) {
-      $plugins = &TPlugins::Instance();
+      $plugins = &TPlugins::instance();
       foreach ($plugins->items as $name => $item) {
         if (@is_dir($paths['plugins'] . $name)) {
           $this->ReadDirToZip($zip, $paths['plugins'] . $name, '', "plugins/$name/");
@@ -169,7 +170,7 @@ class TRemoteAdmin extends TEventClass {
       $old = $up . basename($paths['data']) . '-old-tmp.tmp' . DIRECTORY_SEPARATOR;
       @rename($paths['data'], $old);
       @rename($tmp, $paths['data']);
-      TFiler::DeleteFiles($old, true, true);
+      tfiler::delete($old, true, true);
     }
     
     return true;
@@ -181,12 +182,12 @@ class TRemoteAdmin extends TEventClass {
     $zip = new zipfile();
     $this->ReadDirToZip($zip, $paths['data'], '', 'data/');
     
-    $items = TFiler::GetDirList($paths['plugins']);
+    $items = tfiler::getdir($paths['plugins']);
     foreach ($items as $name ) {
       $this->ReadDirToZip($zip, $paths['plugins'], $name, "plugins/");
     }
     
-    $items = TFiler::GetDirList($paths['themes']);
+    $items = tfiler::getdir($paths['themes']);
     foreach ($items as $name ) {
       $this->ReadDirToZip($zip, $paths['themes'] , $name, "themes/");
     }

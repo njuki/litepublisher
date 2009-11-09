@@ -1,75 +1,66 @@
 <?php
 
-class TAdminThemes extends TAdminPage {
-  private $adminplugin;
-  
-  public static function &Instance() {
-    return GetInstance(__class__);
+class tadminthemes extends tadminmenuitem {
+  private $plugin;
+ 
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'themes';
-  }
-  
-  public function GetMenu() {
-    global $paths, $Options;
-    $result = parent::GetMenu();
-    $Template = &TTemplate::Instance();
-    $about = $Template->GetAbout($Template->themename);
-    if (!empty($about['adminclassname'])) {
-      $themename = $Template->themename;
-      $html = &THtmlResource::Instance();
-      $html->section = $this->basename;
-      $lang = &TLocal::Instance();
-      eval('$result .= "' . $html->adminplugin . '\n";');
+  public function getcontent() {
+    global $options, $template, $paths;
+$result = '';
+$html = $this->html;
+$args = targs::instance();
+if ($plugin = $this->getplugin())  {
+    $template = ttemplate::instance();
+      $args->themename = $Template->theme;
+$args->url = $options->url . $this->url . $options->q ."plugin=$template->theme";
+$result .= $html->pluginlink($args);
     }
-    return $result;
-  }
-  
-  public function Getcontent() {
-    global $Options, $Template, $paths;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    $result = '';
-    
-    switch ($this->arg) {
-      case null:
-      if (!empty($_GET['adminplugin'])) return $this->GetAdminPlugin('Getcontent');
-      $Template = &TTemplate::Instance();
-      eval('$result = "'. $html->formheader . '\n";');
-      $item = $html->radioitem;
-      $admin = &TRemoteAdmin::Instance();
-      $list =$admin->GetThemesList();
+
+    switch ($this->name) {
+      case 'themes':
+      if ($plugin && !empty($_GET['plugin'])) {
+$result .= $plugin->getcontent();
+return $result;
+}
+      $template = ttemplate::instance();
+$result .= $html->formheader();
+      $list =    tfiler::getdir($paths['themes']);
       sort($list);
+$args->editurl = $options->url . $this->url . 'edit/' . $options->q . 'theme';
       foreach ($list as $name) {
-        $checked = $name == $Template->themename ? "checked='checked'" : '';
-        $about = $Template->GetAbout($name);
-        eval('$result .= "'. $item . '\n";');
+        $about = $this->GetAbout($name);
+$args->name = $name;
+        $args->checked = $name == $template->theme;
+$args->version = $about['version'];
+$args->url = $about['url'];
+$args->author = $about['author'];
+$args->description = $about['description'];
+$result .= $html->radioitem($args);
       }
-      eval('$result .= "' . $html->formfooter . '\n";');
-      $result = str_replace("'", '"', $result);
-      return $result;
-      
-      case 'edit':
-      $themename = !empty($_GET['themename']) ? $_GET['themename'] : $Template->themename;
-      eval('$s = "'. $html->filelist. '\n";');
-      $result = sprintf($s, $themename);
+$result .= $html->formfooter();
+return str_replace("'", '"', $result);
+
+            case 'edit':
+      $themename = !empty($_GET['theme']) ? $_GET['theme'] : $template->theme;
+if (preg_match('/\/\.\\\<\>/', $themename, $m)) return $this->notfound;
+      $result = sprintf($html->h2->filelist, $themename);
       $result .= "<ul>\n";
-      $filelist = TFiler::GetFileList($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
+      $filelist = tfiler::getfiles($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
       sort($filelist);
       foreach ($filelist as $filename) {
-      $result .= "<li><a href=\"$Options->url/admin/themes/edit/{$Options->q}themename=$themename&filename=$filename\">$filename</a></li>\n";
+      $result .= "<li><a href=\"$options->url/admin/themes/edit/{$options->q}themename=$themename&filename=$filename\">$filename</a></li>\n";
       }
       $result .= "</ul>\n";
-      if (!empty($_GET['filename'])) {
-        $content = file_get_contents($paths['themes'].$themename . DIRECTORY_SEPARATOR  . $_GET['filename']);
-        $content = $this->ContentToForm($content);
-        eval('$s = "'. $html->filename. '\n";');
+      if (!empty($_GET['file'])) {
+if (preg_match('/\/\.\\\<\>/', $_GET['file'], $m)) return $this->notfound;
+        $args->content = file_get_contents($paths['themes'].$themename . DIRECTORY_SEPARATOR  . $_GET['filename']);
+$html->filename($args);
         $result .= sprintf($s, $_GET['filename']);
       } else {
-        $content = '';
+        $args->content = '';
       }
       eval('$result .= "'. $html->editform . '\n";');
       break;
@@ -77,59 +68,53 @@ class TAdminThemes extends TAdminPage {
     return $result;
   }
   
-  public function ProcessForm() {
-    global $Options, $paths;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+  public function processform() {
+    global $options, $paths;
     
     switch ($this->arg) {
-      case null:
-      if (!empty($_GET['adminplugin'])) return $this->GetAdminPlugin('ProcessForm');
+      case 'themes':
+      if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
       
-      if (!empty($_POST['selection']))  {
-        $Template = &TTemplate::Instance();
+      if (empty($_POST['selection']))   return '';
+        $template = ttemplate::instance();
         try {
-          $Template->themename = $_POST['selection'];
+          $template->theme = $_POST['selection'];
         } catch (Exception $e) {
-          $Template->themename = 'default';
+          $template->theme = 'default';
           return 'Caught exception: '.  $e->getMessage() . "<br>\ntrace error\n<pre>\n" .  $e->getTraceAsString() . "\n</pre>\n";
         }
-        
-        eval('$result = "'. $html->success . '\n";');
-        return $result;
-      }
-      break;
-      
-      case 'edit':
-      if (!empty($_GET['filename']) && !empty($_GET['themename'])) {
-        if (file_put_contents($paths['themes'] . $_GET['themename'] . DIRECTORY_SEPARATOR . $_GET['filename'], $_POST['content'])) {
-          $Urlmap = &TUrlmap::Instance();
-          $Urlmap->ClearCache;
-        } else {
-          eval('$result = "'. $html->errorsave . '\n";');
-          return $result;
-        }
+return $this->html->h2->success;
+
+            case 'edit':
+      if (!empty($_GET['file']) && !empty($_GET['theme'])) {
+//проверка на безопасность, чтобы не указывали в запросе файлы не в теме
+if (preg_match('/\.\/\\/', $_GET['file'] . $_GET['theme'], $m)) return '';
+        if (!file_put_contents($paths['themes'] . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
+return  $this->html->h2->errorsave;
+}
+          $urlmap = turlmap::instance();
+          $urlmap->clearcache();
       }
       break;
     }
     return '';
   }
+
+private function getabout($name) {
+$parser = tthemeparser::instance();
+return $parser->getabout($name);
+}
   
-  public function  GetAdminPlugin($method) {
-    if (!isset($this->adminplugin)) {
-      $Template =  TTemplate::Instance();
-      $about = $Template->GetAbout($Template->themename);
-      if (empty($about['adminclassname']))  return '';
+  private function  getplugin() {
+    if (!isset($this->plugin)) {
+      $template =  ttemplate::instance();
+      $about = $this->GetAbout($template->name);
+      if (empty($about['adminclassname']))  return false;
       $class = $about['adminclassname'];
-      if (!class_exists($class)) {
-        require_once($Template->path . $about['adminfilename']);
-      }
-      
-      $this->adminplugin = new $class ();
+      if (!class_exists($class))  require_once($template->path . $about['adminfilename']);
+      $this->plugin = getinstance($class);
     }
-    
-    return $this->adminplugin->$method();
+return $this->plugin;
   }
   
 }//class

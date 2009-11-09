@@ -2,13 +2,13 @@
 
 class tfiler {
   
-  public static function DeleteFiles($path, $subdirs , $rmdir = false) {
+  public static function delete($path, $subdirs , $rmdir = false) {
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
 $file = $path. $filename;
         if (@is_dir($file)) {
-          if ($subdirs) self::DeleteFiles($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
+          if ($subdirs) self::delete($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
         } else {
           unlink($file);
         }
@@ -18,7 +18,7 @@ $file = $path. $filename;
     if ($rmdir) rmdir($path);
   }
   
-  public static function DeleteFilesExt($path, $ext) {
+  public static function extdelete($path, $ext) {
     if ($fp = @opendir($path )) {
       while (FALSE !== ($file = readdir($fp))) {
         if (($file == '.') || ($file == '..') || ($file == '.svn')) continue;
@@ -32,13 +32,13 @@ $file = $path. $filename;
   }
 
 //clear cache
-  public static function DeleteFilesRegexp($path, $regexp) {
+  public static function deleteregexp($path, $regexp) {
     if ($fp = @opendir($path )) {
       while (FALSE !== ($file = readdir($fp))) {
         if (($file == '.') || ($file == '..') || ($file == '.svn')) continue;
         $filename = $path . $file;
         if (@is_dir($filename)) {
-self::DeleteFilesRegexp($filename. DIRECTORY_SEPARATOR, $regexp);
+self::deleteregexp($filename. DIRECTORY_SEPARATOR, $regexp);
 } else {
         if (preg_match($regexp, $file)) {
           unlink($filename);
@@ -48,7 +48,7 @@ self::DeleteFilesRegexp($filename. DIRECTORY_SEPARATOR, $regexp);
     }
   }
   
-   public static function GetFileList($path) {
+   public static function getfiles($path) {
     $result = array();
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
@@ -60,7 +60,7 @@ self::DeleteFilesRegexp($filename. DIRECTORY_SEPARATOR, $regexp);
     return $result;
   }
   
-  public static function GetDirList($dir) {
+  public static function getdir($dir) {
     $result = array();
     if ($fp = @opendir($dir)) {
       while (FALSE !== ($file = readdir($fp))) {

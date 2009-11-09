@@ -25,7 +25,7 @@ class tupdater extends TEventClass {
     global $Options, $paths;
     $log = false;
     if ($log) TFiler::log("begin update", 'update');
-    TFiler::DeleteFilesExt($paths['languages'], 'php');
+    tfiler::extdelete($paths['languages'], 'php');
     $s = file_get_contents($paths['libinclude']. 'version.txt');
     $this->version =  (int) trim($s);
   $current = ((int) $Options->version{0}) * 100 + (int)substr($Options->version, 2);

@@ -38,7 +38,7 @@ $db->posts.id = $db->comments.post and
 $db->urlmap.class = 'tposts' and $db->urlmap.arg = $db->comments.post
 sort by $db->comments.posted desc limit ".$manager->options->recentcount); 
 while ($row = $res->fetch()) {
-         $content = TContentFilter::GetExcerpt($row['content'], 120);
+         $content = tcontentfilter::getexcerpt($row['content'], 120);
           $result .= sprintf($templ, $options->url . $posturl, $row['id], $row['title'], $row['name'], $content, $onrecent);
         }
 } else {
@@ -50,7 +50,7 @@ while ($row = $res->fetch()) {
           $count--;
           $post = tpost::instance($item['pid']);
           $content = $post->comments->getvalue($id, 'content');
-          $content = TContentFilter::GetExcerpt($content, 120);
+          $content = tcontentfilter::getexcerpt($content, 120);
           $user = $users->getitem($item['uid']);
           $result .= sprintf($templ, $options->url . $post->url, $id,$post->title, $user['name'], $content, $onrecent);
         }

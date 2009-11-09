@@ -165,7 +165,7 @@ $this->table = 'cron';
   
   private function GetFileList(&$processed) {
     $result = array();
-    $filelist = TFiler::GetFileList($this->GetDir());
+    $filelist = tfiler::getfiles($this->GetDir());
     foreach ($filelist as $filename) {
       if (!preg_match('/\d+\.php$/', $filename)) continue;
       if (in_array($filename, $processed)) continue;

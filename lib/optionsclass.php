@@ -107,12 +107,12 @@ return $users->getvalue($this->user, 'password');
     $trace =str_replace($paths['home'], '', $e->getTraceAsString());
     $message = 'Caught exception: ' . $e->getMessage();
     $log = $message . "\n" . $trace;
-    TFiler::log($log, 'exceptions.log');
+    tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();
     if (defined('debug') || $this->echoexception || $urlmap->admin) {
       echo str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
-      TFiler::log($log, 'exceptionsmail.log');
+      tfiler::log($log, 'exceptionsmail.log');
     }
   }
   
