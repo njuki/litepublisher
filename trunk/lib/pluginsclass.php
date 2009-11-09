@@ -1,14 +1,14 @@
 <?php
 
 class tplugins extends TItems {
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
-  }
-  
+
   public static function instance() {
     return getinstance(__class__);
+  }
+  
+    protected function create() {
+    parent::create();
+    $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
   }
   
   public function getabout($name) {
@@ -59,46 +59,42 @@ class tplugins extends TItems {
     }
   }
   
-  public function GetPlugins() {
+  public function getplugins() {
     return array_keys($this->items);
   }
   
-  public function UpdatePlugins($list) {
+  public function update($list) {
     global $paths;
-    $dirs = TFiler::GetDirList($paths['plugins']);
-    $names = array_keys($this->items);
-    $this->Lock();
+    $add = array_diff($list, array_keys($this->items));
+    $delete  = array_diff(array_keys($this->items), $list);
+    $delete  = array_intersect($delete, tfiler::getdir($paths['plugins']));
+    $this->lock();
+    foreach ($delete as $name) {
+$this->Delete($name);
+    }
     
+    foreach ($add as $name) {
+$this->Add($name);
+    }
+    
+    $this->unlock();
+  }
+  
+  public function setplugins($list) {
+    $names = array_diff($list, array_keys($this->items));
     foreach ($names as $name) {
-      if (!in_array($name, $list) && in_array($name, $dirs)) $this->Delete($name);
-    }
-    
-    foreach ($list as $name) {
-      if (!in_array($name, $names))  $this->Add($name);
-    }
-    
-    $this->Unlock();
-  }
-  
-  public function SetPlugins($list) {
-    $names = array_keys($this->items);
-    foreach ($list as $name) {
-      if (!in_array($name, $names)) {
         $this->Add($name);
-      }
     }
   }
   
-  public function DeletePlugins($list) {
-    $names = $this->GetPlugins();
-    foreach ($list as $name) {
-      if (in_array($name, $names)) {
+  public function deleteplugins($list) {
+$names = array_intersect(array_keys($this->items), $list);
+    foreach ($names as $name) {
         $this->Delete($name);
-      }
     }
   }
   
-  public function Upload($name, $files) {
+  public function upload($name, $files) {
     global $paths;
     if (!@file_exists($paths['plugins'] . $name)) {
       if (!@mkdir($paths['plugins'] . $name, 0777)) return $this->Error("Cant create $name folder in plugins");

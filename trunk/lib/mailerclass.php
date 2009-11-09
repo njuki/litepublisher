@@ -51,7 +51,7 @@ return tfiler::log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nConte
     $body = $textpart . "\n". $attachpart;
     
     if (defined('debug'))
-return tfiler;:log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n". $body,
+return tfiler::log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n". $body,
 'mail.log');
     
     mail($to, $subj, $body,

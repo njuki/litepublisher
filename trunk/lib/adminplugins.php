@@ -37,7 +37,7 @@ class TAdminPlugins extends TAdminPage {
     $html->section = $this->basename;
     $lang = &TLocal::Instance();
     
-    $list = TFiler::GetDirList($paths['plugins']);
+    $list = tfiler::getdir($paths['plugins']);
     sort($list);
     $plugins = &TPlugins::Instance();
     
@@ -105,8 +105,8 @@ class TAdminPlugins extends TAdminPage {
       case null:
       $list = array_keys($_POST);
       array_pop($list);
-      $plugins = &TPlugins::Instance();
-      $plugins->UpdatePlugins($list);
+      $plugins = tplugins::Instance();
+      $plugins->update($list);
       $html = &THtmlResource::Instance();
       $html->section = $this->basename;
       $lang = &TLocal::Instance();

@@ -17,6 +17,11 @@ $self->add($moder, 'pingback', 'moderator', 'tadminmoderator');
 $self->add($moder, 'authors', 'moderator', 'tadminmoderator'); 
 }
 
+$themes = $self->add(0, 'themes', 'admin', 'tadminthemes'); 
+{
+$self->add($themes, 'edit', 'admin', 'tadminthemes'); 
+}
+
 $menu = $self->add(0, 'menu', 'editor', 'tadminmenumanager'); 
 {
 $self->add($menu, 'edit', 'editor', 'tadminmenumanager'); 

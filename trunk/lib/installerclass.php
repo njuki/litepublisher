@@ -434,9 +434,9 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   
   public function Uninstall() {
     global $paths;
-    TFiler::DeleteFiles($paths['data'], true);
-    TFiler::DeleteFiles($paths['cache'], true);
-    TFiler::DeleteFiles($paths['files'], true);
+    tfiler::delete($paths['data'], true);
+    tfiler::delete($paths['cache'], true);
+    tfiler::delete($paths['files'], true);
   }
   
   private function LoadLang() {

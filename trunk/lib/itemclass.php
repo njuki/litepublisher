@@ -64,7 +64,7 @@ return false;
   public static function DeleteItemDir($dir) {
     global $paths;
     if (!@file_exists($dir)) return false;
-    TFiler::DeleteFiles($dir, true, true);
+    tfiler::delete($dir, true, true);
     @rmdir($dir);
   }
   

@@ -55,7 +55,7 @@ class TXMLRPC extends TEventClass {
       $HTTP_RAW_POST_DATA = trim($HTTP_RAW_POST_DATA);
     }
     
-    if (defined('debug')) TFiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
+    if (defined('debug')) tfiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
     //$HTTP_RAW_POST_DATA = file_get_contents('raw.txt');
     
     $this->GetMethods();
@@ -63,7 +63,7 @@ class TXMLRPC extends TEventClass {
     $this->Server->IXR_Server  ($this->methods);
     $Result = $this->Server->XMLResult;
     $this->AfterCall();
-    if (defined('debug')) TFiler::log("responnse:\n".$Result, 'xmlrpc.txt');
+    if (defined('debug')) tfiler::log("responnse:\n".$Result, 'xmlrpc.txt');
     return $Result;
   }
   

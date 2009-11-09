@@ -47,8 +47,8 @@ class TOpenid extends TEventClass {
   
   public function Request($arg) {
     if (defined('debug'))  {
-      TFiler::log($_SERVER['REQUEST_URI']);
-      TFiler::log(var_export($_REQUEST, true));
+      tfiler::log($_SERVER['REQUEST_URI']);
+      tfiler::log(var_export($_REQUEST, true));
     }
     $this->LoadBigMath();
     tlocal::loadlang('admin');

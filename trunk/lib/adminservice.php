@@ -205,7 +205,7 @@ class TAdminService extends TAdminPage {
     $lang = &TLocal::Instance();
     
     eval('$result = "'. $html->backupheader . '\n";');
-    $filelist = TFiler::GetFileList($paths['backup']);
+    $filelist = tfiler::getfiles($paths['backup']);
     foreach($filelist as $filename) {
       if (!preg_match('/\.zip$/',  $filename)) continue;
       eval('$result .= "'. $html->backupitem . '\n";');

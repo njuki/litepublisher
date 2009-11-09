@@ -1,4 +1,4 @@
-<?php
+GetExcerpt<?php
 
 class TCommonTags extends TItems implements  ITemplate {
   public $contents;
@@ -464,7 +464,7 @@ $item = $this->getitem($id);
       $filter = TContentFilter::instance();
     $item['rawcontent'] = $content,
 $item['content'] = $filter->GetPostContent($content);
-    $item['description'] = TContentFilter::GetExcerpt($content, 80);
+    $item['description'] = tcontentfilter::getexcerpt($content, 80);
 $this->setitem($id, $item);
   }
   
