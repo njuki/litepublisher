@@ -41,31 +41,35 @@ $args->description = $about['description'];
 $result .= $html->radioitem($args);
       }
 $result .= $html->formfooter();
-return str_replace("'", '"', $result);
+break;
 
             case 'edit':
       $themename = !empty($_GET['theme']) ? $_GET['theme'] : $template->theme;
 if (preg_match('/\/\.\\\<\>/', $themename, $m)) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
-      $result .= "<ul>\n";
-      $filelist = tfiler::getfiles($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
-      sort($filelist);
-      foreach ($filelist as $filename) {
-      $result .= "<li><a href=\"$options->url/admin/themes/edit/{$options->q}themename=$themename&filename=$filename\">$filename</a></li>\n";
+      $list = tfiler::getfiles($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
+      sort($list);
+$editurl = $options->url . $this->url . $options->q . "theme=$themename&file=";
+$fileitem = $html->fileitem . "\n";
+$filelist = '';
+      foreach ($list as $file) {
+      $filelist .= sprintf($fileitem, $editurl, $file);
       }
-      $result .= "</ul>\n";
+      $result .= sprintf($html->filelist, $filelist);
+
       if (!empty($_GET['file'])) {
-if (preg_match('/\/\.\\\<\>/', $_GET['file'], $m)) return $this->notfound;
-        $args->content = file_get_contents($paths['themes'].$themename . DIRECTORY_SEPARATOR  . $_GET['filename']);
-$html->filename($args);
-        $result .= sprintf($s, $_GET['filename']);
-      } else {
-        $args->content = '';
-      }
-      eval('$result .= "'. $html->editform . '\n";');
-      break;
+$file = $_GET['file']);
+if (preg_match('/\/\.\\\<\>/', $file, $m)) return $this->notfound;
+$filename = $paths['themes'].$themename . DIRECTORY_SEPARATOR  . $file;
+if (!@file_exists($filename)) return $this->notfound;
+        $args->content = file_get_contents($filename);
+        $result .= sprintf($html->h2->filename, $_GET['file']);
+$result .= $html->editform($args);
+}
+break;
     }
-    return $result;
+
+return str_replace("'", '"', $result);
   }
   
   public function processform() {
