@@ -19,6 +19,14 @@ $self->add($moder, 'authors', 'moderator', 'tadminmoderator');
 
 $plugins = $self->add(0, 'plugins', 'admin', 'tadminplugins'); 
 
+$widgets = $self->add(0, 'widgets', 'admin', 'tadminwidgets'); 
+{
+$self->add($widgets, 'std', 'admin', 'tadminwidgets'); 
+$self->add($widgets, 'stdoptions', 'admin', 'tadminwidgets'); 
+$self->add($widgets, 'links', 'admin', 'tadminwidgets'); 
+$self->add($widgets, 'custom', 'admin', 'tadminwidgets'); 
+}
+
 $themes = $self->add(0, 'themes', 'admin', 'tadminthemes'); 
 {
 $self->add($themes, 'edit', 'admin', 'tadminthemes'); 
