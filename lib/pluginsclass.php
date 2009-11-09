@@ -12,9 +12,13 @@ class tplugins extends TItems {
   }
   
   public function getabout($name) {
-    global $paths;
-    $filename = $paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini';
-    return parse_ini_file($filename);
+    global $paths, $options;
+    $about = parse_ini_file($paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+if (isset($about[$options->language])) {
+$about['about'] = $about[$options->language] + $about['about'];
+}
+
+return $about['about'];
   }
   
   public function add($name) {

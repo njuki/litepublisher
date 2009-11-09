@@ -2,9 +2,7 @@
 
 class tadminplugins extends tadminmenuitem {
 private $abouts;
-  private $adminplugins;
-  private $plugin;
-  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -28,7 +26,6 @@ $about['about'] = $about[$options->language] + $about['about'];
 }
 $this->abouts[$name] = $about['about'];
     }
-
 }
   
   public function getcontent() {
@@ -66,60 +63,42 @@ $result .= $html->formfooter();
 } else {
 $name = $_GET['plugin'];
 if (!isset($this->abouts[$name])) return $this->notfound;
-$plugin = 
+if ($admin = $this->getadmin($name)) {
+$result .= $admin->getcontent();
+}
 }
 
       return $result;
   }
 
   public function processform() {
-    global $options, $Urlmap;
-    switch ($this->arg) {
-      case null:
+    global $options, $urlmap;
+      $plugins = tplugins::instance();
+if (empty($_GET['plugin'])) {
       $list = array_keys($_POST);
       array_pop($list);
-      $plugins = tplugins::instance();
       $plugins->update($list);
-      $html = &THtmlResource::instance();
-      $html->section = $this->basename;
-      $lang = &TLocal::instance();
-      eval('$result = "'. $html->updated . '\n";');
-      break;
-      
-      default:
-      $result = $this->GetPluginContent($this->arg, 'ProcessForm');
-      break;
+$result = $this->html->h2->updated;
+} else {
+      $name = $_GET['plugin'];
+if (!isset($plugins[$name])) return $this->notfound;
+if ($admin = $this->getadmin($name)) {
+$result = $admin->processform();
+}
     }
     
-    $Urlmap->ClearCache();
+    $urlmap->clearcache();
     return $result;
   }
   
-
-  private function GetPluginContent($name, $method) {
-    global $paths, $options;
-    $plugins = &TPlugins::instance();
-    $html = &THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::instance();
-    
-    if (!isset($plugins->items[$name])) return $this->notfound;
-    if (!isset($this->plugin)) {
-      $ini = parse_ini_file($paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
-      $about = $ini['about'];
-      if (empty($about['adminclassname'])) return $this->notfound;
+  private function getadminplugin($name) {
+    global $paths;
+$about = $this->abouts[$name];
+      if (empty($about['adminclassname'])) return false;
       $class = $about['adminclassname'];
-      if (!class_exists($class)) {
-        require_once($paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
-      }
-      
-      
-      $this->plugin = GetInstance($class );
-    }
-    
-    return $this->plugin->$method();
-  }
+      if (!class_exists($class))  require_once($paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
+return  getinstance($class );
+ }
   
-
 }//class
 ?>

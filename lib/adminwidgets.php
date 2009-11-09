@@ -1,71 +1,84 @@
 <?php
 
-class TAdminWidgets extends TAdminPage {
-  public static function &Instance() {
-    return GetInstance(__class__);
-  }
-  
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'widgets';
+class tadminwidgets extends tadminmenuitem {
+
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   private function GetSortnameCombobox ($comboname, $sortname) {
     $result = "<select name='$comboname' id='$comboname'>\n";
-    foreach (TLocal::$data['sortnametags'] as $name => $value) {
+    foreach (tlocal::$data['sortnametags'] as $name => $value) {
       $selected = $sortname  == $name? 'selected' : '';
       $result .= "<option value='$name' $selected>$value</option>\n";
     }
     $result .= "</select>";
     return $result;
   }
-  
-  public function Getcontent() {
-    global $Options, $Template;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    
-    $checked = "checked='checked'";
-    switch ($this->arg) {
-      case null:
-      $result = $html->checkallscript;
-      eval('$result .= "'. $html->formhead . '\n";');
-      $item = $html->item;
-      $sitebarscount = 3;
-      for ($i = 0; $i < $sitebarscount; $i++) {
-        
-        $combolist = '';
-        for ($k = 1; $k <= $sitebarscount; $k++) {
-          $selected = $k == $i+ 1 ? 'selected' : '';
-          $combolist .= "<option $selected>$k</option>\n";
+
+private function getcombo($name, $index, $count) {
+$index++;
+          $result = "<select name='$name' id='$name'>\n"
+        for ($i = 1; $i <= $count; $i++) {
+          $selected = $i == $index  ? 'selected' : '';
+          $result .= "<option $selected>$i</option>\n";
         }
-        
-        $count = count($Template->sitebars[$i]);
-        for  ($j = 0; $j < $count; $j++) {
-          $id = $Template->sitebars[$i][$j];
-          $widget = $Template->widgets[$id];
-          if (isset(TLocal::$data['stdwidgetnames'][$widget['class']])) {
-            $name = TLocal::$data['stdwidgetnames'][$widget['class']];
-          } else {
-            $name = $this->GetWidgetName($widget['class'], $id);
+$result .= </select>\n";        
+return $result;
+}
+
+private function getwidgetname($id) {
+$widgets = twidgets::instance();
+          $widget = $widgets->items[$id];
+if !empty($widget['title'])) return $widget['title'];
+          if (isset(tlocal::$data['stdwidgetnames'][$widget['class']])) {
+return TLocal::$data['stdwidgetnames'][$widget['class']];
           }
-          $orderlist = '';
-          for ($k = 1; $k <= $count; $k++) {
-            $selected = $k == $j + 1 ? 'selected' : '';
-            $orderlist.= "<option $selected>$k</option>\n";
-          }
-          $sitebarcombo = "<select name='widgetsitebar-$id' id='widgetsitebar-$id'>\n$combolist</select>\n";
-          $ordercombo = "<select name='widgetorder-$id' id='widgetorder-$id'>\n$orderlist</select>\n";
-          eval('$result .= "'. $item . '\n";');
+$class = $widget['class'];
+    if ($class == 'tcustomwidget') {
+      $custom = tcustomwidget ::instance();
+      return $custom->items[$id]['title'];
+    }
+    
+    //if widget is plugin then get from about.ini
+    $plugins = tplugins::instance();
+    foreach ($plugins->items as $name => $item) {
+      if ($class == $item['class']) {
+        $about = $plugins->GetAbout($name);
+        return $about['name'];
+      }
+    }
+    return '';
+}
+  
+  public function getcontent() {
+    global $options;
+$result = '';
+$widgets = twidgets::instance();
+$sitebars = tsitebars::instance();
+$html = $this->html;
+$args = targs::instance();    
+
+    switch ($this->name) {
+      case 'widgets':
+      $result = $html->checkallscript;
+$result .= $html->formhead();
+// принимается что макс число сайтбаров = 3
+      for ($i = 0; $i < 3; $i++) {
+        for  ($j = 0; $j < $sitebars->getcount($i); $j++) {
+          $args->id = $sitebars->items[$i][$j];
+$args->name = $this->getwidgetname($args->id);
+          $args->sitebarcombo = $this->getcombo('"widgetsitebar-$id", $i, 3);
+          $args->ordercombo = $this->getcombo("widgetorder-$id", $j, $sitebars->getcount($i));
+$result .= $html->item($args);
         }
       }
-      eval('$result .= "'. $html->formfooter . '\n";');;
+      $result .= $html->formfooter();
       return  $this->FixCheckall($result);
       
       case 'std':
-      $Template = &TTemplate::Instance();
-      eval('$result = "'. $html->stdheader . '\n";');
+      $template = &TTemplate::instance();
+$result = $html->stdheader();
       $item = $html->stditem;
       foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
         if ($class == 'TCustomWidget') continue;
@@ -76,30 +89,30 @@ class TAdminWidgets extends TAdminPage {
       break;
       
       case 'stdoptions':
-      $archives = &TArchives::Instance();
+      $archives = tarchives::instance();
       $showcountarch = $archives->showcount ? $checked : '';
       
-      $categories = &TCategories::Instance();
-      $showcountcats = $categories->showcount ? $checked : '';
-      $catscombo= $this->GetSortnameCombobox('sortnamecats', $categories->sortname);
+      $catsoptions = $classes->categories->options;
+      $args->showcountcats = $catsoptions->showcount;
+      $args->catscombo= $this->GetSortnameCombobox('sortnamecats', $catsoptions->sortname);
       
-      $tags = &TTags::Instance();
-      $showcounttags = $tags->showcount ? $checked : '';
-      $tagscombo= $this->GetSortnameCombobox('sortnametags', $tags->sortname);
+      $tagsoptions = $classes->tags->options;
+      $args->showcounttags = $tagsoptions->showcount;
+      $args->tagscombo= $this->GetSortnameCombobox('sortnametags', $tagsoptions->sortname);
       
-      $posts = &TPosts::Instance();
-      $comments = &TCommentManager::Instance();
-      //$meta = &TMetaWidget::Instance();
-      $links = &TLinksWidget::Instance();
+      $posts = tposts::instance();
+      $comments = &TCommentManager::instance();
+      //$meta = &TMetaWidget::instance();
+      $links = &TLinksWidget::instance();
       $lwredir = $links->redir ? $checked : '';
       
-      $foaf = &TFoaf::Instance();
+      $foaf = &TFoaf::instance();
       $foafredir = $foaf->redir ? $checked : '';
-      eval('$result = "'. $html->stdoptionsform . '\n";');
+      $result = $html->stdoptionsform($args);
       break;
       
       case 'links':
-      $links = TLinksWidget::Instance();
+      $links = TLinksWidget::instance();
       eval('$result = "'. $html->linkshead . '\n";');
       $id = $this->idget();
       if ($id > 0) {
@@ -126,11 +139,11 @@ class TAdminWidgets extends TAdminPage {
       return $this->FixCheckall($result);
       
       case 'custom':
-      $widget = &TCustomWidget::Instance();
+      $widget = &TCustomWidget::instance();
       eval('$result = "'. $html->customhead . '\n";');
       $result .= "<ul>\n";
       foreach ($widget->items as $id => $item) {
-      $result .= "<li><a href='$Options->url/admin/widgets/custom/?id=$id' title='widget $id'>{$item['title']}</a></li>\n";
+      $result .= "<li><a href='$options->url/admin/widgets/custom/?id=$id' title='widget $id'>{$item['title']}</a></li>\n";
       }
       $result .= "</ul>\n";
       $id = $this->idget();
@@ -156,13 +169,13 @@ class TAdminWidgets extends TAdminPage {
   
   public function ProcessForm() {
     global $Urlmap;
-    $Template = &TTemplate::Instance();
+    $template = &TTemplate::instance();
     switch ($this->arg) {
-      case null:
+      case 'widgets':
       if (!empty($_POST['deletewidgets'])) {
         return $this->DeleteWidgets();
       }
-      $Template->lock();
+      $template->lock();
       $check = 'widgetcheck-';
       $sitebar = 'widgetsitebar-';
       $order =  'widgetorder-';
@@ -173,13 +186,13 @@ class TAdminWidgets extends TAdminPage {
           continue;
         } elseif ($sitebar == substr($key, 0, strlen($sitebar))) {
           $id = (int) substr($key, strlen($sitebar));
-          if ($id == $checkid) $Template->MoveWidget($id, $value - 1);
+          if ($id == $checkid) $template->MoveWidget($id, $value - 1);
         } elseif ($order == substr($key, 0, strlen($order))) {
           $id = (int) substr($key, strlen($order));
-          if ($id == $checkid) $Template->MoveWidgetOrder($id, $value - 1);
+          if ($id == $checkid) $template->MoveWidgetOrder($id, $value - 1);
         }
       }
-      $Template->unlock();
+      $template->unlock();
       $rname = 'success';
       break;
       
@@ -196,49 +209,49 @@ class TAdminWidgets extends TAdminPage {
       'TMetaWidget' => 'meta',
       );
       
-      $Template->lock();
+      $template->lock();
       foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
-        if (isset($_POST[$class]) && !$Template->ClassHasWidget($class)) {
-          $Template->AddWidget($class, 'echo', $names[$class], TLocal::$data['stdwidgetnames'][$class]);
+        if (isset($_POST[$class]) && !$template->ClassHasWidget($class)) {
+          $template->AddWidget($class, 'echo', $names[$class], TLocal::$data['stdwidgetnames'][$class]);
         }
       }
-      $Template->unlock();
+      $template->unlock();
       $rname = 'stdsuccess';
       break;
       
       case 'stdoptions':
       extract($_POST);
       
-      $archives = &TArchives::Instance();
+      $archives = &TArchives::instance();
       if (isset($showcountarch) != $archives->showcount) {
         $archives->showcount = isset($showcountarch);
         $archives->Save();
       }
       
-      $categories = &TCategories::Instance();
+      $categories = &TCategories::instance();
       $categories->SetParams($categories->lite, $sortnamecats, isset($showcountcats), 0);
       
-      $tags = &TTags::Instance();
+      $tags = &TTags::instance();
       $tags->SetParams($tags->lite, $sortnametags, isset($showcounttags), $maxcount);
       
-      $posts = &TPosts::Instance();
+      $posts = &TPosts::instance();
       $posts->recentcount = (int) $postscount;
       
-      $comments = &TCommentManager::Instance();
+      $comments = &TCommentManager::instance();
       $comments->recentcount = $commentscount;
       
-      $links = &TLinksWidget::Instance();
+      $links = &TLinksWidget::instance();
       $links->redir = isset($lwredir);
       $links->Save();
       
-      $foaf = &TFoaf::Instance();
+      $foaf = &TFoaf::instance();
       $foaf->SetParams($friendscount, $foafredir);
       
       $rname = 'stdoptsucces';
       break;
       
       case 'links':
-      $links = TLinksWidget::Instance();
+      $links = TLinksWidget::instance();
       $links->Lock();
       if (!empty($_POST['delete'])) {
         foreach ($_POST as $id => $value) {
@@ -262,7 +275,7 @@ class TAdminWidgets extends TAdminPage {
       
       case 'custom':
       extract($_POST);
-      $widget = &TCustomWidget::Instance();
+      $widget = &TCustomWidget::instance();
       $id = $this->idget();
       if ($id > 0) {
         $widget->Edit($id, $title, $content, isset($templ));
@@ -275,49 +288,32 @@ class TAdminWidgets extends TAdminPage {
     
     $Urlmap->ClearCache();
     
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
   eval('$result = "'. $html->{$rname} . '\n";');
     return $result;
   }
   
   protected function DeleteWidgets() {
     global $Urlmap;
-    $Template = &TTemplate::Instance();
-    $Template->Lock();
+    $template = &TTemplate::instance();
+    $template->Lock();
     $check = 'widgetcheck-';
     foreach ($_POST as $key => $value) {
       if ($check == substr($key, 0, strlen($check))){
         $id = (int) substr($key, strlen($check));
-        $Template->DeleteIdWidget($id);
+        $template->DeleteIdWidget($id);
       }
     }
-    $Template->Unlock();
+    $template->Unlock();
     $Urlmap->ClearCache();
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     eval('$result = "'. $html->successdeleted . '\n";');
     return $result;
-  }
-  
-  public function GetWidgetName($class, $id) {
-    if ($class == 'TCustomWidget') {
-      $widget = &TCustomWidget::Instance();
-      return $widget->items[$id]['title'];
-    }
-    
-    //if widget is plugin then get from about.ini
-    $plugins = &TPlugins::Instance();
-    foreach ($plugins->items as $name => $item) {
-      if ($class == $item['class']) {
-        $about = $plugins->GetAbout($name);
-        return $about['name'];
-      }
-    }
-    return '';
   }
   
 }//class
