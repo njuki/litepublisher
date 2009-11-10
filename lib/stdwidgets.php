@@ -19,7 +19,8 @@ $id = $widgets->add($this->class, 'echo', 0, -1);
 
 $this->items[$name] = array(
 'id' => $id,
-'ajax' = $ajax
+'ajax' = $ajax,
+'title' => $this->gettitle($name)
 );
 $this->save();
 $this->updateajax();
@@ -61,6 +62,10 @@ unset($this->items[$name]);
 $this->save();
 $this->updateajax();
 }
+}
+
+public function gettitle($name) {
+
 }
 
 public function getname($id) {

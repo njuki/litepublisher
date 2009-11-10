@@ -27,13 +27,19 @@ $result .= </select>\n";
 return $result;
 }
 
-private function getwidgetname($id) {
+private function getwidgettitle($id) {
 $widgets = twidgets::instance();
           $widget = $widgets->items[$id];
 if !empty($widget['title'])) return $widget['title'];
           if (isset(tlocal::$data['stdwidgetnames'][$widget['class']])) {
 return TLocal::$data['stdwidgetnames'][$widget['class']];
           }
+
+$std = tstdwidgets::instance();
+if ($name = $std->getname($id)) {
+return $std->gettitle($name);
+}
+
 $class = $widget['class'];
     if ($class == 'tcustomwidget') {
       $custom = tcustomwidget ::instance();
@@ -52,7 +58,7 @@ $class = $widget['class'];
 }
   
   public function getcontent() {
-    global $options;
+    global $classes, $options;
 $result = '';
 $widgets = twidgets::instance();
 $sitebars = tsitebars::instance();
@@ -67,9 +73,9 @@ $result .= $html->formhead();
       for ($i = 0; $i < 3; $i++) {
         for  ($j = 0; $j < $sitebars->getcount($i); $j++) {
           $args->id = $sitebars->items[$i][$j];
-$args->name = $this->getwidgetname($args->id);
-          $args->sitebarcombo = $this->getcombo('"widgetsitebar-$id", $i, 3);
-          $args->ordercombo = $this->getcombo("widgetorder-$id", $j, $sitebars->getcount($i));
+$args->title = $this->getwidgettitle($args->id);
+          $args->sitebarcombo = $this->getcombo('"sitebar-$id", $i, 3);
+          $args->ordercombo = $this->getcombo("order-$id", $j, $sitebars->getcount($i));
 $result .= $html->item($args);
         }
       }
@@ -77,22 +83,22 @@ $result .= $html->item($args);
       return  $this->FixCheckall($result);
       
       case 'std':
-      $template = &TTemplate::instance();
+$std = tstdwidgets::instance();
 $result = $html->stdheader();
-      $item = $html->stditem;
-      foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
-        if ($class == 'TCustomWidget') continue;
-        $selected = !$widgets->hasclass($class) ? $checked : '';
-        eval('$result .= "' . $item . '\n";');
+foreach ($std->names as $name) {
+$args->checked = isset($std->items[$name]);
+$args->ajax = isset($std->items[$name]) ? $std->items[$name]['ajax'] : true;
+$args->name = $name;
+$args->title = $std->gettitle($name);
+$result .= $html->stditem($args);
       }
-      eval('$result .= "'. $html->stdfooter . '\n";');;
+      $result .= $html->stdfooter();
       break;
       
       case 'stdoptions':
       $archives = tarchives::instance();
-      $showcountarch = $archives->showcount ? $checked : '';
-      
-      $catsoptions = $classes->categories->options;
+      $args->showcountarch = $archives->showcount;
+            $catsoptions = $classes->categories->options;
       $args->showcountcats = $catsoptions->showcount;
       $args->catscombo= $this->GetSortnameCombobox('sortnamecats', $catsoptions->sortname);
       
@@ -104,10 +110,10 @@ $result = $html->stdheader();
       $comments = &TCommentManager::instance();
       //$meta = &TMetaWidget::instance();
       $links = &TLinksWidget::instance();
-      $lwredir = $links->redir ? $checked : '';
+      $args->lwredir = $links->redir;
       
-      $foaf = &TFoaf::instance();
-      $foafredir = $foaf->redir ? $checked : '';
+      $foaf = tfoaf::instance();
+      $args->foafredir = $foaf->redir ? $checked : '';
       $result = $html->stdoptionsform($args);
       break;
       
@@ -169,56 +175,65 @@ $result = $html->stdheader();
   
   public function ProcessForm() {
     global $Urlmap;
-    $template = &TTemplate::instance();
+$widgets = twidgets::instance();
     switch ($this->arg) {
       case 'widgets':
       if (!empty($_POST['deletewidgets'])) {
         return $this->DeleteWidgets();
       }
-      $template->lock();
+      $widgets->lock();
+$sitebars = tsitebars::instance();
       $check = 'widgetcheck-';
-      $sitebar = 'widgetsitebar-';
-      $order =  'widgetorder-';
+      $sitebar = 'sitebar-';
+      $order =  'order-';
       $checkid =       0;
       foreach ($_POST as $key => $value) {
-        if ($check == substr($key, 0, strlen($check))){
+        if (strbegin($key, $check)){
           $checkid = (int) substr($key, strlen($check));
           continue;
-        } elseif ($sitebar == substr($key, 0, strlen($sitebar))) {
+        } elseif (strbegin($key, $sitebar)) {
           $id = (int) substr($key, strlen($sitebar));
-          if ($id == $checkid) $template->MoveWidget($id, $value - 1);
-        } elseif ($order == substr($key, 0, strlen($order))) {
+          if ($id == $checkid) $widgets->changesitebar($id, $value - 1);
+        } elseif (strbegin($key, $order)) {
           $id = (int) substr($key, strlen($order));
-          if ($id == $checkid) $template->MoveWidgetOrder($id, $value - 1);
+          if ($id == $checkid) $widgets->changeorder($id, $value - 1);
         }
       }
-      $template->unlock();
-      $rname = 'success';
-      break;
-      
+      $widgets->unlock();
+$sitebars->save();
+return $this->html->h2->success;
+
       case 'std':
-      $names = array(
-      'TCategories' => 'categories',
-      'TTags' => 'tagcloud',
-      'TArchives' => 'archives',
-      'TLinksWidget' => 'links',
-      'TFoaf' => 'myfriends',
-      
-      'TPosts' => 'recentposts',
-      'TCommentManager' => 'recentcomments',
-      'TMetaWidget' => 'meta',
-      );
-      
-      $template->lock();
-      foreach (TLocal::$data['stdwidgetnames'] as $class => $name) {
-        if (isset($_POST[$class]) && !$template->ClassHasWidget($class)) {
-          $template->AddWidget($class, 'echo', $names[$class], TLocal::$data['stdwidgetnames'][$class]);
-        }
-      }
-      $template->unlock();
-      $rname = 'stdsuccess';
-      break;
-      
+//подготовить массив с именами виджетов
+      array_pop($_POST);
+$names = array();
+foreach ($_POST as $name=> $value) {
+if (strbegin($name, 'ajax-')) {
+$name = substr($name, strlen('ajax-');
+if (isset($names[$name])) $names[$name] = true;
+} else {
+$names[$name] = false;
+}
+}
+$widgets->lock();
+      $std = tstdwidgets::instance();
+$std->lock();
+foreach ($std->names as $name) {
+if (isset($std->items[$name])) {
+if (isset($names[$name])) {
+$std->items[$name]['ajax'] = $names[$name];
+} else {
+$std->delete($name);
+}
+} elseif (isset($names[$name])) {
+$std->add($name, $names[$name]);
+}
+}
+$std->updateajax();
+$std->unlock();
+$widgets->unlock();
+return $this->html->h2->stdsuccess;
+    
       case 'stdoptions':
       extract($_POST);
       
