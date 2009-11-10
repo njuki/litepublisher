@@ -1,5 +1,5 @@
 <?php
-class tlinks extends TItems {
+class tlinkswidget extends TItems {
   public $redirlink;
 
   public static function instance() {
@@ -8,27 +8,27 @@ class tlinks extends TItems {
   
   protected function create() {
     parent::create();
-    $this->basename = 'links';
-    $this->redirlink = '/links/';
+    $this->basename = 'linkswidget';
+    $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
   }
   
   public function getwidgetcontent($id) {
-    global $options;
-    $Template = TTemplate::Instance();
-    $lang = &TLocal::$data['default'];
-    
+  global $options;
     $result = '';
-    $class = isset($Template->theme['class']['links']) ? $Template->theme['class']['rss'] : '';
-    $class = empty($class) ? '' : "class=\"$class\"";
-    
+$theme = ttheme::instance();
+$tml = $theme->getwidgetitem('link');
+$tml .= "\n";
+$args = targs::instance();
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
-      if ($this->redir &&(strncmp($url, $options->url, strlen($options->url)) != 0)) {
-      $url = "$options->url$this->redirlink{$options->q}id=$id";
+      if ($this->redir && !strbegin($url, $options->url)) {
+      $url = $options->url . $this->redirlink . $options->q . "id=$id";
       }
-      
-  $result .=   "<li $class><a href=\"$url\" title=\"{$item['title']}\">{$item['text']}</a></li>\n";
+$args->url = $url
+      $args->title = $item['title'];
+$args->text = $item['text'];
+  $result .=   $theme->parsearg($tml, $args);
     }
     
     return $result;

@@ -6,7 +6,7 @@ class tadminwidgets extends tadminmenuitem {
     return getinstance(__class__);
   }
   
-  private function GetSortnameCombobox ($comboname, $sortname) {
+  private function getcombosortname ($comboname, $sortname) {
     $result = "<select name='$comboname' id='$comboname'>\n";
     foreach (tlocal::$data['sortnametags'] as $name => $value) {
       $selected = $sortname  == $name? 'selected' : '';
@@ -102,17 +102,17 @@ $result .= $html->stditem($args);
             $catsoptions = $classes->categories->options;
       $args->showcountcats = $catsoptions->showcount;
 $args->cats
-      $args->catscombo= $this->GetSortnameCombobox('sortnamecats', $catsoptions->sortname);
+      $args->catscombo= $this->getcombosortname('sortnamecats', $catsoptions->sortname);
       
       $tagsoptions = $classes->tags->options;
       $args->showcounttags = $tagsoptions->showcount;
 $args->maxcount = $tagsoptions->maxcount;
-      $args->tagscombo= $this->GetSortnameCombobox('sortnametags', $tagsoptions->sortname);
+      $args->tagscombo= $this->getcombosortname('sortnametags', $tagsoptions->sortname);
 
 $args->postscount = $classes->posts->options->recentcount;
 $args->commentscount = $classes->commentmanager->options->recentcount;
 
-      $links = tlinks::instance();
+      $links = tlinkswidget::instance();
       $args->linksredir = $links->redir;
       
       $foaf = tfoaf::instance();
@@ -121,30 +121,34 @@ $args->commentscount = $classes->commentmanager->options->recentcount;
       break;
       
       case 'links':
-      $links = TLinksWidget::instance();
-      eval('$result = "'. $html->linkshead . '\n";');
+      $links = tlinkswidget::instance();
+$result =  $html->h2->linkswidget;
+$result .=  $html->p->linksnote;
       $id = $this->idget();
       if ($id > 0) {
-        $url = $this->ContentToForm($links->items[$id]['url']);
-        $title = $this->ContentToForm($links->items[$id]['title']);
-        $text = $this->ContentToForm($links->items[$id]['text']);
-        eval('$s= "'. $html->editlink. '\n";');
-        $result .= sprintf($s, $url);
+        $args->url = $links->items[$id]['url'];
+        $args->title = $$links->items[$id]['title'];
+        $args->text = $links->items[$id]['text'];
+        $result .= sprintf($html->h3->editlink, $args->url);
       } else {
-        eval('$result .= "'. $html->newlink . '\n";');
-        $url = '';
-        $title = '';
-        $text = '';
+        $args->url = '';
+        $args->title = '';
+        $args->text = '';
+$result .= $html->h3->newlink;
       }
-      eval('$result .= "'. $html->linkform . '\n";');
+$result .= $html->linkform($args);
       
       $result .= $html->checkallscript;
-      eval('$result .= "'. $html->linkstable . '\n";');
-      $linkitem = $html->linkitem;
+$result .= $html->linkstable();
+$args->adminurl = $this->adminurl;
       foreach ($links->items as $id => $item) {
-        eval('$result .= "' .$linkitem . '\n";');
+$args->id = $id;
+$args->url = $item['url'];
+$args->text = $item['text'];
+$args->title = $item['title'];
+$result .= $html->linkitem($args);
       }
-      eval('$result .= "'. $html->linkstablefooter . '\n";');;
+$result .= $html->linkstablefooter();
       return $this->FixCheckall($result);
       
       case 'custom':
@@ -176,14 +180,16 @@ $args->commentscount = $classes->commentmanager->options->recentcount;
     return $result;
   }
   
-  public function ProcessForm() {
-    global $Urlmap;
+  public function processform() {
+    global $classes, $options, $Urlmap;
 $widgets = twidgets::instance();
+$h2 = $this->html->h2;
     switch ($this->arg) {
       case 'widgets':
       if (!empty($_POST['deletewidgets'])) {
         return $this->DeleteWidgets();
       }
+
       $widgets->lock();
 $sitebars = tsitebars::instance();
       $check = 'widgetcheck-';
@@ -204,7 +210,7 @@ $sitebars = tsitebars::instance();
       }
       $widgets->unlock();
 $sitebars->save();
-return $this->html->h2->success;
+return $h2->success;
 
       case 'std':
 //подготовить массив с именами виджетов
@@ -235,7 +241,7 @@ $std->add($name, $names[$name]);
 $std->updateajax();
 $std->unlock();
 $widgets->unlock();
-return $this->html->h2->stdsuccess;
+return $h2->stdsuccess;
     
       case 'stdoptions':
       extract($_POST);
@@ -245,52 +251,52 @@ return $this->html->h2->stdsuccess;
         $archives->showcount = isset($showcountarch);
         $archives->Save();
       }
+
+$options->lock();
+            $catsoptions = $classes->categories->options;
+$catsoptions ->sortname = $sortnamecats;
+$catsoptions->showcount = isset($showcountcats);
+
+      $tagsoptions = $classes->tags->options;
+$tagsoptions ->sortname = $sortnametags;
+$tagsoptions->showcount = isset($showcounttags);
+$tagsoptions->maxcount = maxcount;
+
+$classes->posts->options->recentcount = $postscount;
+$classes->commentmanager->options->recentcount = $commentscount;
+
+      $links = tlinkswidget::instance();
+$links->redir = isset($linksredir);
+$links->save();
       
-      $categories = &TCategories::instance();
-      $categories->SetParams($categories->lite, $sortnamecats, isset($showcountcats), 0);
+      $foaf = tfoaf::instance();
+$foaf->redir = isset($foafredir);
+$options->unlock();
       
-      $tags = &TTags::instance();
-      $tags->SetParams($tags->lite, $sortnametags, isset($showcounttags), $maxcount);
-      
-      $posts = &TPosts::instance();
-      $posts->recentcount = (int) $postscount;
-      
-      $comments = &TCommentManager::instance();
-      $comments->recentcount = $commentscount;
-      
-      $links = &TLinksWidget::instance();
-      $links->redir = isset($lwredir);
-      $links->Save();
-      
-      $foaf = &TFoaf::instance();
-      $foaf->SetParams($friendscount, $foafredir);
-      
-      $rname = 'stdoptsucces';
-      break;
-      
+return $h2->stdoptsucces;
+     
       case 'links':
       $links = TLinksWidget::instance();
-      $links->Lock();
       if (!empty($_POST['delete'])) {
+      $links->lock();
         foreach ($_POST as $id => $value) {
-          if ($links->ItemExists($id)) {
-            $links->Delete($id);
+          if ($links->itemexists($id)) {
+            $links->delete($id);
           }
         }
-        $rname = 'linksdeleted';
-      } else {
+      $links->unlock();
+return $h2->linksdeleted;
+      }
+
         extract($_POST);
         $id = !empty($_GET['id']) ? (int)$_GET['id'] : 0;
-        if ($links->ItemExists($id)) {
-          $links->Edit($id, $url, $title, $text);
+        if ($links->itemexists($id)) {
+          $links->edit($id, $url, $title, $text);
         } else {
-          $links->Add($url, $title, $text);
+          $links->add($url, $title, $text);
         }
-        $rname = 'linkedited';
-      }
-      $links->Unlock();
-      break;
-      
+return $h2->linkedited;
+
       case 'custom':
       extract($_POST);
       $widget = &TCustomWidget::instance();
@@ -316,7 +322,7 @@ return $this->html->h2->stdsuccess;
   protected function DeleteWidgets() {
     global $Urlmap;
     $template = &TTemplate::instance();
-    $template->Lock();
+    $template->lock();
     $check = 'widgetcheck-';
     foreach ($_POST as $key => $value) {
       if ($check == substr($key, 0, strlen($check))){
@@ -324,7 +330,7 @@ return $this->html->h2->stdsuccess;
         $template->DeleteIdWidget($id);
       }
     }
-    $template->Unlock();
+    $template->unlock();
     $Urlmap->ClearCache();
     $html = &THtmlResource::instance();
     $html->section = $this->basename;
