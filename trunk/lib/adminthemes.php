@@ -45,7 +45,7 @@ break;
 
             case 'edit':
       $themename = !empty($_GET['theme']) ? $_GET['theme'] : $template->theme;
-if (preg_match('/\/\.\\\<\>/', $themename, $m)) return $this->notfound;
+if (strpbrk($themename, '/\<>')) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
       $list = tfiler::getfiles($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
@@ -59,7 +59,7 @@ $filelist = '';
 
       if (!empty($_GET['file'])) {
 $file = $_GET['file']);
-if (preg_match('/\/\.\\\<\>/', $file, $m)) return $this->notfound;
+if (strpbrk ($file, '/\<>')) return $this->notfound;
 $filename = $paths['themes'].$themename . DIRECTORY_SEPARATOR  . $file;
 if (!@file_exists($filename)) return $this->notfound;
         $args->content = file_get_contents($filename);
@@ -92,7 +92,7 @@ return $this->html->h2->success;
             case 'edit':
       if (!empty($_GET['file']) && !empty($_GET['theme'])) {
 //проверка на безопасность, чтобы не указывали в запросе файлы не в теме
-if (preg_match('/\.\/\\/', $_GET['file'] . $_GET['theme'], $m)) return '';
+if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
         if (!file_put_contents($paths['themes'] . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
 return  $this->html->h2->errorsave;
 }
