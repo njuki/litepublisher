@@ -98,22 +98,25 @@ $result .= $html->stditem($args);
       case 'stdoptions':
       $archives = tarchives::instance();
       $args->showcountarch = $archives->showcount;
+
             $catsoptions = $classes->categories->options;
       $args->showcountcats = $catsoptions->showcount;
+$args->cats
       $args->catscombo= $this->GetSortnameCombobox('sortnamecats', $catsoptions->sortname);
       
       $tagsoptions = $classes->tags->options;
       $args->showcounttags = $tagsoptions->showcount;
+$args->maxcount = $tagsoptions->maxcount;
       $args->tagscombo= $this->GetSortnameCombobox('sortnametags', $tagsoptions->sortname);
-      
-      $posts = tposts::instance();
-      $comments = &TCommentManager::instance();
-      //$meta = &TMetaWidget::instance();
-      $links = &TLinksWidget::instance();
-      $args->lwredir = $links->redir;
+
+$args->postscount = $classes->posts->options->recentcount;
+$args->commentscount = $classes->commentmanager->options->recentcount;
+
+      $links = tlinks::instance();
+      $args->linksredir = $links->redir;
       
       $foaf = tfoaf::instance();
-      $args->foafredir = $foaf->redir ? $checked : '';
+      $args->foafredir = $foaf->redir;
       $result = $html->stdoptionsform($args);
       break;
       
@@ -237,7 +240,7 @@ return $this->html->h2->stdsuccess;
       case 'stdoptions':
       extract($_POST);
       
-      $archives = &TArchives::instance();
+      $archives = tarchives::instance();
       if (isset($showcountarch) != $archives->showcount) {
         $archives->showcount = isset($showcountarch);
         $archives->Save();

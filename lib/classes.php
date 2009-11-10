@@ -133,8 +133,4 @@ function SafeSaveFile($BaseName, &$Content) {
   return rename($TmpFileName, $FileName);
 }
 
-function strbegin($s, $begin) {
-return strncmp($s, $begin, strlen($begin)) == 0;
-}
-
 ?>

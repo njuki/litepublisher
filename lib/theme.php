@@ -112,9 +112,12 @@ return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $po
 case 'tag':
 return'<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
 
-}
+case 'comment':
+ return '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
 
+default:
 return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+}
 }
 
 }//class

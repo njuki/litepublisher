@@ -97,7 +97,7 @@ $this->current = $id;
         file_put_contents($file, $result);
         @chmod($file, 0666);
       }
-      $result = "\n<?php @include(\$GLOBALS['paths']['cache']. '$file'); ?>\n";
+      $result = "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";
       break;
       
       case 'nocache':

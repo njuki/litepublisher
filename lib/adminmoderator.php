@@ -363,7 +363,7 @@ case 'reply':
       $authorid = $comusers->add($profile->nick, $email, $site);
 $post = tpost::instance( (int) $_POST['pid']);
       $manager->addcomment($post->id, $authorid, $_POST['content']);
-    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentspages/" : $post->url;
+    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
       @header("Location: $options->url$posturl");
       exit();
 
