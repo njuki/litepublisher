@@ -182,7 +182,7 @@ return $result;
     $comments = tcomments::instance($post->id);
     if ($comments->IndexOfRawContent($values['content']) >= 0) return tsimplecontent::content($lang->duplicate);
     
-    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commenspages/" : $post->url;
+    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance();
     $uid = $users->add($values['name'], $values['email'], $values['url']);
     $usercookie = $users->getcookie($uid);

@@ -111,6 +111,10 @@ class tdateformater {
     public function __get($name) { return tlocal::translate(date($name, $this->date), 'datetime'); }
   }
 
+function strbegin($s, $begin) {
+return strncmp($s, $begin, strlen($begin)) == 0;
+}
+
 //init
 tlocal::checkload();
 ?>

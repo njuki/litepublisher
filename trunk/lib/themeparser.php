@@ -103,14 +103,17 @@ $widgets['categories'] = $categories;
 
 if ($archives =$this->parsetag($sitebar, 'archives', '')) $widgets['archives'] = $archives;
 if ($links =$this->parsetag($sitebar, 'links', '')) $widgets['links'] = $links;
+
 if ($posts =$this->parsetag($sitebar, 'posts', '')) {
 if ($item = $this->parsetag($posts, 'item', '%s')) $widgets['post'] = $item;
 $widgets['posts'] = $posts;
 }
+
 if ($comments =$this->parsetag($sitebar, 'comments', '')) {
 if ($item = $this->parsetag($comments, 'item', '%s')) $widgets['comment'] = $item;
 $widgets['comments'] = $comments;
 }
+
 if ($meta =$this->parsetag($sitebar, 'meta', '')) $widgets['meta'] = $meta;
 $index++;
 }

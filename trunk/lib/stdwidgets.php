@@ -9,14 +9,13 @@ class tstdwidgets extends TItems {
 protected function create() {
 parent::create();
 $this->basename = 'stdwidgets';
-$this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'meta');
+$this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'comments', 'meta');
 }
 
 public function add($name, $ajax) {
 if (isset($this->items[$name])) return $this->error("widget  $name already exists");
 $widgets = twidgets::instance();
 $id = $widgets->add($this->class, 'echo', 0, -1);
-
 $this->items[$name] = array(
 'id' => $id,
 'ajax' = $ajax,
@@ -65,7 +64,7 @@ $this->updateajax();
 }
 
 public function gettitle($name) {
-
+return tlocal::$data['stdwidgetnames'][$name];
 }
 
 public function getname($id) {
@@ -95,8 +94,8 @@ $title = $this->items[$name]['title'];
 if ($this->items[$name]['ajax']) {
 $title = "<a onclick=\"loadcontent('widget$name', '$options->url/stdwidget/$name/')\">$title</a>";
 $content = '';
-if (!$this->ajaxincluded) $result = file_get_contents($paths['libinclude'] . 'ajax.txt');
-$this->ajaxincluded = true;
+} elseif ($name == 'comments') {
+$content = "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";
 } else {
 $content = $this->getcontent($name);
 }
@@ -113,6 +112,20 @@ return $this->getcontent($name);
 return '';
 }
 
+private function getinstance($name) {
+global $classes;
+switch ($name) {
+case 'comments':
+return TCommentsWidget::instance();
+
+case 'friends':
+return tfoaf::instance();
+
+default:
+return $classes->$name;
+}
+}
+
 public function getcontent($name) {
 global $paths, $classes;
 if ($name == 'meta') return $this->meta;
@@ -120,7 +133,7 @@ $id = isset($this->items[$name]) ? $This->items[$name]['id'] : $name;
 $file = $paths['cache'] . 'widget$id.php';
 if (file_exists($file) return file_get_contents($file);
 
-$instance = $classes->$name;
+$instance = $this->getinstance($name);
 $result = $instance->getwidgetcontent($id);
 file_put_contents($file, $result);
 return $result;
