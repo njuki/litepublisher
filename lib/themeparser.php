@@ -114,6 +114,11 @@ if ($item = $this->parsetag($comments, 'item', '%s')) $widgets['comment'] = $ite
 $widgets['comments'] = $comments;
 }
 
+if ($links =$this->parsetag($sitebar, 'links', '')) {
+if ($item = $this->parsetag($links, 'item', '%s')) $widgets['link'] = $item;
+$widgets['links'] = $links;
+}
+
 if ($meta =$this->parsetag($sitebar, 'meta', '')) $widgets['meta'] = $meta;
 $index++;
 }

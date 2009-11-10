@@ -115,6 +115,9 @@ return'<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
 case 'comment':
  return '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
 
+case 'link':
+return '<li><a href="$url" title="$title">$text</a></li>';
+
 default:
 return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
 }
