@@ -152,27 +152,33 @@ $result .= $html->linkstablefooter();
       return $this->FixCheckall($result);
       
       case 'custom':
-      $widget = &TCustomWidget::instance();
-      eval('$result = "'. $html->customhead . '\n";');
-      $result .= "<ul>\n";
-      foreach ($widget->items as $id => $item) {
-      $result .= "<li><a href='$options->url/admin/widgets/custom/?id=$id' title='widget $id'>{$item['title']}</a></li>\n";
-      }
-      $result .= "</ul>\n";
+      $custom = tcustomwidget::instance();
+$result = $html->h2->custom . $html->p->custnote;
+
       $id = $this->idget();
       if ($id > 0) {
-        $title = $this->ContentToForm($widget->items[$id]['title']);
-        $content = $this->ContentToForm($widget->items[$id]['content']);
-        $templ = $widget->items[$id]['templ']? $checked : '';
-        eval('$s = "'. $html->editcustom. '\n";');
-        $result .= sprintf($s, $title);
+        $args->title = $custom->items[$id]['title'];
+        $args->content = $custom->items[$id]['content'];
+        $args->templ = $custom->items[$id]['templ'];
+        $result .= sprintf($html->h3->editcustom, $args->title);
       } else {
-        eval('$result .= "'. $html->newcustom . '\n";');
-        $title = '';
-        $content = '';
-        $templ = $checked;
+        $args->title = '';
+        $args->content = '';
+        $args->templ = true;
+        $result .= $html->h3->newcustom;
       }
-      eval('$result .= "'. $html->customform . '\n";');
+      $result .= $html->customform($args);
+
+      $result .= "<ul>\n";
+$args->adminurl = $this->adminurl;
+      foreach ($custom->items as $id => $item) {
+$args->id = $id;
+$args->title = $item['title'];
+$args->text = $item['text'];
+      $result .= $html->customitem($args);
+$result .= "\n";
+      }
+      $result .= "</ul>\n";
       break;
     }
     
@@ -181,7 +187,8 @@ $result .= $html->linkstablefooter();
   }
   
   public function processform() {
-    global $classes, $options, $Urlmap;
+    global $classes, $options, $urlmap;
+    $urlmap->clearcache();
 $widgets = twidgets::instance();
 $h2 = $this->html->h2;
     switch ($this->arg) {
@@ -299,45 +306,34 @@ return $h2->linkedited;
 
       case 'custom':
       extract($_POST);
-      $widget = &TCustomWidget::instance();
+      $custom = tcustomwidget::instance();
       $id = $this->idget();
       if ($id > 0) {
-        $widget->Edit($id, $title, $content, isset($templ));
+        $custom->edit($id, $title, $content, isset($templ));
       } elseif (!empty($title) || !empty($content)) {
-        $widget->add($title, $content, isset($templ));
+        $custom->add($title, $content, isset($templ));
       }
-      $rname = 'customsuccess';
-      break;
-    }
-    
-    $Urlmap->ClearCache();
-    
-    $html = &THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::instance();
-  eval('$result = "'. $html->{$rname} . '\n";');
-    return $result;
-  }
-  
+return $h2->customsuccess;
+}
+}
+ 
   protected function DeleteWidgets() {
-    global $Urlmap;
-    $template = &TTemplate::instance();
-    $template->lock();
+    global $urlmap;
+$template = ttemplate::instance();
+$template->lock();
+$widgets = twidgets::instance();
+    $widgets->lock();
     $check = 'widgetcheck-';
     foreach ($_POST as $key => $value) {
-      if ($check == substr($key, 0, strlen($check))){
+      if (strbegin($key, $check)){
         $id = (int) substr($key, strlen($check));
-        $template->DeleteIdWidget($id);
+$widgets->delete($id);
       }
     }
-    $template->unlock();
-    $Urlmap->ClearCache();
-    $html = &THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::instance();
-    
-    eval('$result = "'. $html->successdeleted . '\n";');
-    return $result;
+    $widgets->unlock();
+$template->unlock();
+    $urlmap->clearcache();
+   return $this->html->h2->successdeleted;
   }
   
 }//class
