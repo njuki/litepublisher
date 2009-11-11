@@ -1,0 +1,16 @@
+id int UNSIGNED NOT NULL auto_increment,
+parent int UNSIGNED NOT NULL default 0,
+preview int UNSIGNED NOT NULL default 0,
+mediatype enum('bin', 'image', 'audio', 'video') default 'bin',
+author int UNSIGNED NOT NULL default 0,
+posted datetime NOT NULL default '2010-01-01 10:01:01',
+icon int UNSIGNED NOT NULL default 0,
+itemscount  int UNSIGNED NOT NULL default 0,
+filename varchar(255) not null,
+title varchar(255) not null,
+description varchar(255) not null,
+
+     PRIMARY KEY(id),
+key parent (parent),
+key preview (preview),
+key mediatype(mediatype)
