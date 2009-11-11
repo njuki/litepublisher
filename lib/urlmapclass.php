@@ -182,11 +182,12 @@ $this->NotFound404();
   public function add($url, $class, $arg, $type = 'nornal') {
 if (dbversion) {
 $item= array(
+'url' => $url,
     'class' => $class,
     'arg' => $arg,
 'type' => $type
     );
-$item['id'] = $this->db->InsertAssoc($item);
+$item['id'] = $this->db->add($item);
 $this->items[$item['id']] = $item;
 return $item['id'];
 }

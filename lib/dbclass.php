@@ -122,28 +122,20 @@ function UpdateProps($obj, $props) {
     return $this->lastInsertId();
   }
   
-  public function InsertAssoc(&$a) {
-    $keys =array_keys($a));
-    unset($keys['id']);
-    $Names =implode(', ', $keys);
-    
-    $vals = array();
+  public function insertassoc(array $a) {
+unset($a['id']);
+return $this->add($a);
+}
+
+  public function add(array &$a) {
+    $Names =implode(', ', array_keys($a)));
+        $vals = array();
     foreach( $a as $name => $val) {
-      if ($name == 'id') continue;
       $vals[] = $this->quote($val);
     }
-    $Values = implode(', ', $vals);
-    
-    $this->exec("INSERT INTO $this->prefix$this->table ($Names) values (" . $Values . ')');
-    return $this->lastInsertId();
-  }
   
-  public function add($a) {
-    if  ($this->IdExists($a['id'])) {
-      return $this->UpdateAssoc($a);
-    } else {
-      return $this->InsertAssoc($a);
-    }
+    $this->exec("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
+    return $this->lastInsertId();
   }
   
   public function getcount($where = '') {
@@ -197,7 +189,7 @@ if ($r = res->fetch(PDO::FETCH_NUM) return $r[0];
 return false;
 }
   
-  public function idvalue($id, $name) {
+  public function getvalue($id, $name) {
     if ($res = $this->query("select $name from $this->prefix$this->table where id = $id limit 1")) {
       $r = $res->fetch(PDO::FETCH_ASSOC);
       return $r[$name];

@@ -14,6 +14,10 @@ class TCommonTags extends TItems implements  ITemplate {
     $this->contents = new TTagContent($this);
   }
 
+protected function getpost($id) {
+return tpost::instance($id);
+}
+
 protected function gettableitems() {
 global $db;
 return $db->prefix . $this->table . 'items';
@@ -77,7 +81,7 @@ return $this->items[$id]['url'];
 }
   
   public function postedited($idpost) {
-    $post = $tpost::instance($idpost);
+    $post = $this->getpost($idpost);
       $list = $post->{$this->PostPropname};
 if (dbversion) {
 $items = implode(', ', $list);
@@ -148,7 +152,7 @@ return;
     $url = $linkgen->createlink($this, $this->PermalinkIndex );
 
 if (dbversion)  {
-$id = $this->db->InsertAssoc(array('title' => $title));
+$id = $this->db->add(array('title' => $title));
 $idurl =         $urlmap->add($url, get_class($this),  $id);
 $this->db->setvalue($id, 'idurl', $idurl);
 } else {
@@ -407,6 +411,7 @@ public function getitem($id) {
 if (!isset($this->items[$id])) {
 $item = array(
 'description' => '',
+'keywords' => '',
 'content' => '',
 'rawcontent' => ''
 );

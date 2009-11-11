@@ -31,7 +31,7 @@ $item = array(
 );
 
 if (dbversion) {
-return $this->db->insertassoc($item);
+return $this->db->add($item);
 } else {
 $this->items[++$this->autoid] = $item;
 $this->save();

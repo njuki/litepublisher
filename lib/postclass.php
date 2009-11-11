@@ -252,7 +252,7 @@ return $tc->getcomments($this->id);
   
   public function getrawcontent() {
     if (dbversion && ($this->id > 0) && empty($this->data['rawcontent'])) {
-      $this->data['rawcontent'] = $this->rawdb->idvalue($this->id, 'rawcontent');
+      $this->data['rawcontent'] = $this->rawdb->getvalue($this->id, 'rawcontent');
     }
     return $this->data['rawcontent'];
   }
