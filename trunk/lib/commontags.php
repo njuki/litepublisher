@@ -1,7 +1,8 @@
-GetExcerpt<?php
+<?php
 
 class TCommonTags extends TItems implements  ITemplate {
   public $contents;
+public $itemsposts;
   public $PermalinkIndex;
   public $PostPropname;
   protected $id;
@@ -9,9 +10,11 @@ class TCommonTags extends TItems implements  ITemplate {
   
   protected function create() {
     parent::create();
+$this->data['itemsposts'] = array();
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
     $this->contents = new TTagContent($this);
+$this->itemsposts = new ttagsitems($this);
   }
 
 protected function getpost($id) {
@@ -482,5 +485,20 @@ return $this->getvalue($id, 'keywords');
 }
   
   }//class
+
+class ttagsitems extends titemsposts {
+private $owner;
+ public function __construct($owner) {
+parent::__construct();
+$this->owner = $owner;
+$this->items = &$owner->data['itemsposts'];
+$this->table = $owner->table . 'items';
+unset($this->data);
+}
+
+public function save() { $this->owner->save(); }
+public function load() { }
+
+}//class
 
 ?>

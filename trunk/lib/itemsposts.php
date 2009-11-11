@@ -91,6 +91,17 @@ if (in_array($iditem, $item)) $result[] = $id;
 return $result;
 }
 
+
+public function getpostscount($idpost) {
+if (dbversion) {
+return $this->db->getcount("post = $idpost");
+} elseif (isset($this->items[$idpost]) {
+return count($this->items[$idpost]);
+} else {
+return 0;
+}
+}
+}
 }//class
 
 ?>
