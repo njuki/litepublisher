@@ -1,5 +1,5 @@
 <?php
-interface ITemplate {
+interface itemplate {
   public function request($arg);
   public function gettitle();
   public function gethead();
@@ -8,12 +8,12 @@ interface ITemplate {
   public function GetTemplateContent();
 }
 
-interface IAdvancedTemplate {
+interface iadvancedtemplate {
 public function getsitebar($index, &$content);
 public function afterrequest(&$content);
 }
 
-interface  IComments {
+interface  icomments {
 //comment form
   public function gethold($author);
   public function IndexOfRawContent($s);
@@ -21,6 +21,9 @@ interface  IComments {
   public function getholditems() {
 //pingback xmlrpc
  public function haspingback($url);
+}
+
+interface imultimedia {
 }
 
 ?>

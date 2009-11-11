@@ -1,6 +1,6 @@
 <?php
 
-class tsubscribers extends TItems {
+class tsubscribers extends titemsposts {
   
   public static function instance() {
     return getinstance(__class__);
@@ -14,58 +14,6 @@ $this->table = 'subscribers';
     $this->Data['enabled'] = true;
     $this->Data['locklist'] = '';
   }
-
-public function add($pid, $uid) {
-if (dbversion) {
-$this->db->add(array(
-'post' => $pid,
-'author' => $uid
-));
-} else {
-if (!isset($this->items[$pid]))  $this->items[$pid] = array();
-if (!in_array($uid, $this->items[$pid])) {
-$this->items[$pid][] =$uid;
-$this->save();
-return true;
-}
-return false;
-}
-}
-
-public function delete($pid, $uid) {
-if (dbversion) {
-return $this->db->delete("post = $pid and $author = $uid");
-} elseif (isset($this->items[$pid])) {
-    $i = array_search($uid, $this->items[$pid]);
-    if (is_int($i))  {
-array_splice($this->items[$pid], $i, 1);
-$this->save();
-return true;
-}
-return false;
-}
-}
-
-public function deletepost($pid) {
-if (dbversion) {
-$this->db->delete("post = $pid");
-} elseif (isset($this->items[$pid])) {
-unset($this->items[$pid]);
-$this->save();
-} else {
-}
-
-public function deleteauthor($uid) {
-if (dbversion) {
-$this->db->delete("author = $uid");
-} else {
-foreach ($this->items as $pid => $item) {
-    $i = array_search($uid, $item);
-    if (is_int($i))  array_splice($this->items[$pid], $i, 1);
-    }
-$this->save();
-}
-}
 
   public function update($pid, $uid, $subscribed) {
 if ($subscribed == $this->subscribed($pid, $uid)) return;
@@ -105,18 +53,6 @@ global $classes;
     }
   }
 
-public function getposts($uid) {
-if (dbversion) {
-return $this->db->res2array($this->db->query("select post from $this->thistable where author = $uid"));
-} else {
-$result = array();
-foreach ($this->items as $pid => $items) {
-if (in_array($uid, $items)) $result[] = $pid;
-}
-return $result;
-}
-}
-  
   public function geturl() {
     global $options;
     return $options->url . '/admin/subscribe/' . $options->q;

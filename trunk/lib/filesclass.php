@@ -15,23 +15,49 @@ $this->table = 'files';
   }
   
   public function geturl($id) {
-    return $this->path . $this->items[$id]['filename'];
+$item = $this->getitem($id);
+    return '/files/' . $item['filename'];
   }
   
   public function getlink($id) {
     global $options;
-    return '<a href="'. $options->url . $this->Geturl($id) . '">'. $this->items[$id]['title'] . '</a>';
+$item = $this->getitem($id);
+    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $item['description']);
   }
   
-  public function add($filename, $content, $title, $overwrite = true) {
+  public function upload($filename, $content, $title, $overwrite = true) {
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->FilterFileName($filename);
-    $filename = $this->upload($filename, $content, $overwrite);
+    $filename = $this->doupload($filename, $content, $overwrite);
     return $this->Add($filename, $title);
   }
+
+  function Add($filename, $title) {
+$item = array(
+'parent' => $parent,
+'preview' => $previe,
+'mediatype' => $mediatype,
+'author' => $options->user,
+'posted' => time(),
+'icon' =>=> $icon,
+itemscount  int => 0,
+'filename' => $filename,
+'title' => $title,
+'description' => $description
+);
+if (dbversion) {
+return $this->db->add($item);
+ } else {
+    $this->items[++$this->autoid] = $item;
+    $this->save();
+    $this->changed();
+    $this->added($this->autoid);
+    return $this->autoid;
+}
+  }
   
-  public function GetUniqueFileName($filename) {
+   public function getunique($filename) {
     global $paths;
     if (!@file_exists($paths['files']. $filename)) return $filename;
     $parts = pathinfo($filename);
@@ -43,9 +69,9 @@ $this->table = 'files';
     return $filename;
   }
   
-  protected function Upload($filename, &$content, $overwrite) {
+  private function doupload($filename, &$content, $overwrite) {
     global $paths;
-    if (!$overwrite) $filename = $this->GetUniqueFileName($filename);
+    if (!$overwrite) $filename = $this->getunique($filename);
     
     if (@file_put_contents($paths['files']. $filename, $content)) {
       $stat = @ stat($paths['files']);
@@ -58,37 +84,12 @@ $this->table = 'files';
     }
   }
   
-  function Add($filename, $title) {
-    $this->items[++$this->autoid] = array(
-    'filename' => $filename,
-    'title' => $title,
-    'posts' => array()
-    );
-    $this->downloads[$this->autoid] = 0;
-    $this->Save();
-    $this->Changed();
-    $this->Added($this->autoid);
-    return $this->autoid;
-  }
-  
-  public function AddPost($id, $postid) {
-    if (!isset($this->items[$id]))  return false;
-    if (in_array($postid, $this->items[$id]['posts'])) return  true;
-    $this->items[$id]['posts'][] = $postid;
-    $this->Save();
-    $this->Changed();
-    return true;
-  }
-  
   public function delete($id) {
     global $paths;
-    if (!isset($this->items[$id])) return false;
+    if (!$this->itemexists($id)) return false;
     @unlink($paths['files']. $this->items[$id]['filename']);
-    unset($this->items[$id]);
-    //if (isset($this->downoads[$id])) unset($this->downoads[$id]);
-    $this->Save();
-    $this->Changed();
-    $this->Deleted($id);
+parent::delete($id);
+    $this->changed();
     return true;
   }
   
