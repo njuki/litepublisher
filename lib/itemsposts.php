@@ -70,6 +70,34 @@ $this->save();
 $this->deleted();
 }
 
+public function setitems($idpost, array $items) {
+if (dbversion) {
+$db = $this->db;
+$old = $this->getitems($idpost);
+$add = array_diff($items, $old));
+$delete = array_diff($old, $items);
+
+if (count($delete) > 0) {
+$db->delete("post = $idpost and item in (" . implode(', ', $delete) . ')');
+}
+
+if (count($add) > 0) {
+$vals = array();
+foreach ($add as $iditem) {
+$vals[]= "($idpost, $iditem)";
+}
+$db->exec("INSERT INTO `$this->thistable` ('post', 'item') values " . implode(',', $vals) );
+}
+
+return array_merge($old, $add);
+} else {
+$result = array_merge($this->items[$idpost], array_diff($items, $this->items[$idpost]));
+$this->items[$idpost] = $items;
+$this->save();
+return $result;
+}
+}
+
 public function getitems($idpost) {
 if (dbversion) {
 return $this->res2array($this->db->qery("select file from $this->thistable where post = $idpost"));
@@ -91,17 +119,13 @@ if (in_array($iditem, $item)) $result[] = $id;
 return $result;
 }
 
+public function getpostscount($ititem) {
+$items = $this->getposts($iditem);
+$posts = tposts::instance()
+$items = $posts->stripdrafts($items);
+return count($items);
+}
 
-public function getpostscount($idpost) {
-if (dbversion) {
-return $this->db->getcount("post = $idpost");
-} elseif (isset($this->items[$idpost]) {
-return count($this->items[$idpost]);
-} else {
-return 0;
-}
-}
-}
 }//class
 
 ?>
