@@ -20,7 +20,7 @@ public function save() { retrn true; }
   
   public function addcomment($pid, $uid, $content) {
     $filter = TContentFilter::instance();
-$result =$this->db->InsertAssoc(array(
+$result =$this->db->add(array(
 'post' => $pid,
 'parent' => 0,
 'author' => $uid,
@@ -30,7 +30,7 @@ $result =$this->db->InsertAssoc(array(
 'pingback' => 'false'
 ));
 
-$this->getdb($this->rawtable)->InsertAssoc(array(
+$this->getdb($this->rawtable)->add(array(
 'id' => $result, 
 'created' => sqldate(),
 'modified' => sqldate(),
@@ -44,7 +44,7 @@ return $result;
     $comusers = tcomusers::instance();
     $uid = $comusers->add($title, '', $url);
 
-$result = $this->db->InsertAssoc(array(
+$result = $this->db->add(array(
 'parent' => 0,
     'author' => $uid,
     'post' => $pid,

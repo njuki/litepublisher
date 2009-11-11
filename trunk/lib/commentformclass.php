@@ -11,7 +11,7 @@ $this->db->delete("posted + INTERVAL 20 minutes < now");
 
 public function add($values) {
       $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
-$this->db->InsertAssoc(array(
+$this->db->add(array(
 'id' => $confirmid, 
 'posted' => sqldate(),
 'values' => serialize($values)

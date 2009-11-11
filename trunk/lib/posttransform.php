@@ -31,7 +31,7 @@ $self = self::instance($post);
     
     $id = $db->insertrow("($Names) values (" . implode(', ', $values) . ')');
 
-$self->post->rawdb->InsertAssoc(array(
+$self->post->rawdb->add(array(
 'id' => $id,
 'created' => sqldate(),
 'modified' => sqldate(),
@@ -40,7 +40,7 @@ $self->post->rawdb->InsertAssoc(array(
 
 $db->table = 'pages';
      foreach ($self->post->data['pages'] as $i => $content) {
-$db->InsertAssoc(array('post' => $id, 'page' => $i         'content' => $content));
+$db->add(array('post' => $id, 'page' => $i         'content' => $content));
       }
 
 return $id;

@@ -126,7 +126,7 @@ class TEventClass extends TDataClass {
       $event = &$this->events[$name][count($this->events[$name]) - 1];
       $event['name'] = $name;
       $event['owner'] = get_class($this);
-      $event['id'] = $this->getdb('events')->InsertAssoc($event);
+      $event['id'] = $this->getdb('events')->add($event);
     } else {
       $this->save();
     }

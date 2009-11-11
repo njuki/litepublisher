@@ -1,5 +1,6 @@
 id int UNSIGNED NOT NULL auto_increment,
 idurl int UNSIGNED NOT NULL default 0,
+icon int UNSIGNED NOT NULL default 0,
 parent int UNSIGNED NOT NULL default 0,
 author int UNSIGNED NOT NULL default 0,
 posted datetime NOT NULL default '2010-01-01 10:01:01',
@@ -17,7 +18,6 @@ tags text not null,
 password varchar(64) not null,
 template varchar(64) not null,
 subtheme varchar(64) not null,
-icon int UNSIGNED NOT NULL default 0,
 
 status enum('published', 'draft', 'future', 'deleted') default 'published',
 

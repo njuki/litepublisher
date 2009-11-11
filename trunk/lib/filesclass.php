@@ -1,53 +1,33 @@
 <?php
 
-class TFiles extends TItems {
-  public $downloads;
-  public $images;
+class tfiles extends TItems {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->CacheEnabled = false;
     $this->basename = 'files';
-    $this->AddEvents('Changed', 'Edited');
-    $this->AddDataMap('downloads', array());
-    $this->AddDataMap('images', array());
-    $this->Data['path'] = '/files/';
+$this->table = 'files';
+    $this->addevents('Changed', 'Edited');
   }
   
-  public function Reqest($args) {
-    global $Options, $Urlmap;
-    if (isset($_GET['fileid'])) {
-      $id = $_GET['fileid'];
-      if (isset($this->items[$id])) {
-        $this->downloads[$id]++;
-        $this->Save();
-        $url = $this->Geturl($id);
-        return "<?php @header('Location: $Options->url$url'); ?>";
-      }
-    }
-    
-    $Urlmap->NotFound404();
-    return true;
-  }
-  
-  public function Geturl($id) {
+  public function geturl($id) {
     return $this->path . $this->items[$id]['filename'];
   }
   
-  public function Getlink($id) {
-    global $Options;
-    return '<a href="'. $Options->url . $this->Geturl($id) . '">'. $this->items[$id]['title'] . '</a>';
+  public function getlink($id) {
+    global $options;
+    return '<a href="'. $options->url . $this->Geturl($id) . '">'. $this->items[$id]['title'] . '</a>';
   }
   
-  public function AddFile($filename, $content, $title, $overwrite = true) {
+  public function add($filename, $content, $title, $overwrite = true) {
     if ($title == '') $title = $filename;
-    $linkgen = tlinkgenerator::Instance();
+    $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->FilterFileName($filename);
-    $filename = $this->Upload($filename, $content, $overwrite);
+    $filename = $this->upload($filename, $content, $overwrite);
     return $this->Add($filename, $title);
   }
   
@@ -100,7 +80,7 @@ class TFiles extends TItems {
     return true;
   }
   
-  public function Delete($id) {
+  public function delete($id) {
     global $paths;
     if (!isset($this->items[$id])) return false;
     @unlink($paths['files']. $this->items[$id]['filename']);

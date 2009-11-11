@@ -23,7 +23,7 @@ $this->table = 'comusers';
     }
 
 if (dbversion) {
-return $this->db->InsertAssoc(array(
+return $this->db->add(array(
     'name' => $name,
     'url' => $url,
     'email' => $email,

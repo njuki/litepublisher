@@ -17,7 +17,7 @@ $this->table = 'subscribers';
 
 public function add($pid, $uid) {
 if (dbversion) {
-$this->db->InsertAssoc(array(
+$this->db->add(array(
 'post' => $pid,
 'author' => $uid
 ));
