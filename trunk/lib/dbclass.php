@@ -156,6 +156,10 @@ public function iddelete($id) {
     return $this->exec("delete from $this->prefix$this->table where id = $id");
 }
 
+public function deleteitems(array $items) {
+return $this->delete('id in ('. implode(', ', $items) . ')');
+}
+
 public function idexists($id) {
     if (($res = $this->query("select id  from $this->prefix$this->table where id = $id limit 1")) && ($r = $res->fetch()))  return true;
 return false;

@@ -21,11 +21,6 @@ protected function getpost($id) {
 return tpost::instance($id);
 }
 
-protected function gettableitems() {
-global $db;
-return $db->prefix . $this->table . 'items';
-}
-
 public function getitem($id) {
 $result = parent::getitem($id);
 if (dbversion && empty($result['url'])) {
@@ -84,36 +79,29 @@ return $this->items[$id]['url'];
 }
   
   public function postedited($idpost) {
+//пересчитать количество опубликованных постов
     $post = $this->getpost($idpost);
-      $list = $post->{$this->PostPropname};
+$all = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
 if (dbversion) {
-$items = implode(', ', $list);
-$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'idpost' and not tag in (items)");
-$this->getdb->$this->itemstable)->delete("tag in (items)");
-$this->db->query("insert into $this->itemstable ($idpost, idtag)
-select $this->thistable.id as idtag  from $this->thistable  where idtag in ($items)");
-//update count
-$poststable = $this->db->prefix . 'posts';
-$items = implode(', ', array_merge($list, $exclude));
 $this->db->query("update $this->thistable set itemscount = postscount 
 (select count($this->itemstable.post) as postscount  from $this->itemstable, $poststable 
 where tag in ($items) and post = $poststable.id and $poststable.status = 'published' group by post)
 where id in ($items)";
+
+
+$db->query("update $this->thistable set itemscount = •
+( select count(post) as postscount from {$this->itemsposts->thistable}
+where item in ($all) group by post)
+where id in ($all)";
+
+
+
 } else {
-    $this->lock();
-    foreach ($this->items as $id => $Item) {
-      $toadd = in_array($id, $list);
-      $i = array_search($idpost, $Item['items']);
-      if (is_int($i) && !$toadd) {
-        array_splice($this->items[$id]['items'], $i, 1);
-      }
-      if ($toadd && !is_int($i)) {
-        $this->items[$id]['items'][] = $idpost;
-      }
-      
-            $publ = $posts->stripdrafts($this->items[$id]['items']);
-      $this->items[$id]['itemscount'] = count($publ);
-    }
+$this->lock();
+$all = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
+foreach ($all as $id) {
+      $this->items[$id]['itemscount'] = $this->itemsposts->getpostscount($id);
+}
     $this->unlock();
 }
   }
