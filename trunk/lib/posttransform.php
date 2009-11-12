@@ -1,6 +1,6 @@
 <?php
 
-class TPostTransform  {
+class tposttransform  {
   public $post;
   const arrayprops = array('categories', 'tags', 'files');
   const bullprops = array('commentsenabled', pingenabled', rssenabled');
@@ -24,7 +24,7 @@ class TPostTransform  {
     global $db;
 $self = self::instance($post);
     $db->table = 'posts';
-    $names =emplode(', ', sself:props);
+    $names =implode(', ', self:props);
     $values = array();
     foreach (self::props as $name) {
       $values[] = $db->quote($self->__get($name));
@@ -94,22 +94,6 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i         'content'
   
   private function setposted($value) {
     $this->post->posted = strtotime($value);
-  }
-  
-    private function getcreated() {
-    return sqldate($this->post->date);
-  }
-  
-  private function setcreated($date) {
-    $this->post->date = strtotime($date);
-  }
-  
-  private function getmodified() {
-    return sqldate( $this->post->date);
-  }
-  
-  private function setmodified($date) {
-    $this->post->date = strtotime($date);
   }
   
 }//class
