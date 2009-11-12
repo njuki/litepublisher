@@ -2,7 +2,7 @@
 
 class tmediaparser extends TEventClass {
 
-
+  static function instance() {
     return getinstance(__class__);
   }
   
@@ -10,19 +10,30 @@ class tmediaparser extends TEventClass {
     parent::create();
     $this->basename = 'mediaprser';
   }
-  
+
 public function Add($filename) {
-$result = array();
-$result['mediatype'] = $this->getmediatype($filename);
+$result = array(  
+'medium' => $this->getmedium($filename),
+'mime' => $this->getmime($filename),
+'mime' => 'application/octet-stream',
+  'bitrate' => 0,
+'framerateint' => 0,
+'samplingrate' => '',
+'channels' => 0,
+'duration' => 0,
+'height' => 0,
+'width' => 0
+);
+
 $icons = ticons::instance();
-$result['icon'] = $icon->getmedia($result['mediatype']);
-switch ($result['mediatype']) {
+$result['icon'] = $icon->getmedium($result['medium']);
+switch ($result['medium']) {
 case 'bin':
 //$preview = $this->
 break;
 
  case 'image':
-$result[preview'] = $this->getsnapshot($filename);
+$result['preview'] = $this->getsnapshot($filename);
 break;
 
 case 'audio':
@@ -31,6 +42,12 @@ break;
 
 case 'video':
 $result['preview'] = $this->getvideopreview($filename);
+break;
+
+case 'document':
+break;
+
+case 'archive':
 break;
 }
 
@@ -81,8 +98,8 @@ $thisoptions = $this->options;
 $preview = $parts['filename'] . '.preview.jpg';
 if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $preview, $thisoptions->previewwidth, $thisoptions->previewheight)) return 0;
 
-$images = timages::instance();
-return $images->add($preview);
+$files = tfiles::instance();
+return $files->add($preview);
 }
 
 }//class
