@@ -1,6 +1,7 @@
 <?php
 
 class tfiles extends TItems {
+public $itemsposts;
   
   public static function instance() {
     return getinstance(__class__);
@@ -8,7 +9,7 @@ class tfiles extends TItems {
   
   protected function create() {
     parent::create();
-    $this->CacheEnabled = false;
+$this->itemsposts = new titemsposts();
     $this->basename = 'files';
 $this->table = 'files';
     $this->addevents('Changed', 'Edited');
@@ -22,30 +23,54 @@ $item = $this->getitem($id);
   public function getlink($id) {
     global $options;
 $item = $this->getitem($id);
-    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $item['description']);
+$icon = '';
+if ($item['icon'] != 0) {
+$icons = ticons::instance();
+$icon = sprintf('<img src="%s" alt="%s" />', $icons->geturl($item['icon']), $item['title']);
+}
+    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
   
   public function upload($filename, $content, $title, $overwrite = true) {
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
-    $filename = $linkgen->FilterFileName($filename);
+    $filename = $linkgen->filterfilename($filename);
     $filename = $this->doupload($filename, $content, $overwrite);
     return $this->Add($filename, $title);
   }
 
-  function Add($filename, $title) {
+public function Add($filename, $title) { 
+global $options;
+$mediaparser = tmediaparser::instance();
+$info = 
+$mediatype = $this->getmediatype($filename);
+$icons = ticons::instance();
+$icon = $icon->getmedia($mediatype);
+switch ($mediatype) {
+case 'bin':
+$preview = $this->
+break;
+
+ case 'image':
+case 'audio':
+case 'video':
+}
 $item = array(
-'parent' => $parent,
-'preview' => $previe,
 'mediatype' => $mediatype,
+'parent' => 0,
+'preview' => $preview,
 'author' => $options->user,
 'posted' => time(),
-'icon' =>=> $icon,
-itemscount  int => 0,
+'icon' => $icon,
 'filename' => $filename,
 'title' => $title,
-'description' => $description
+'description' => $description,
+'keywords' => ''
 );
+return $this->additem($item);
+}
+
+private function additem(array $item) {
 if (dbversion) {
 return $this->db->add($item);
  } else {
