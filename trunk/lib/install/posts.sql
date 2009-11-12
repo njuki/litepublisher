@@ -14,6 +14,7 @@ moretitle varchar(255) not null,
 
 categories text not null,
 tags text not null,
+files text not null,
 
 password varchar(64) not null,
 template varchar(64) not null,

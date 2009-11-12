@@ -2,12 +2,13 @@
 
 class TPostTransform  {
   public $post;
+  const arrayprops = array('categories', 'tags', 'files');
   const bullprops = array('commentsenabled', pingenabled', rssenabled');
   const props = array('id', 'idurl', 'parent', 'author',
   //'created', 'modified',
 'posted',
   'title', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
-  'categories', 'tags',
+  'categories', 'tags', 'files',
   'password', 'template', 'subtheme', 'icon',
   'status', 'commentsenabled', 'pingenabled', 'rssenabled',
   'commentscount', 'pagescount',
@@ -71,13 +72,16 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i         'content'
   
   public function __get($name) {
     if (method_exists$this, $get = "get$name")) return $this->$get();
+    if (in_array($name, self::arrayprops))  return implode(', ', $this->post->$name);
     if (in_array($name, self::boolprops))  return $this->post->$name ? 'true' : 'false';
     return $post->$name;
   }
   
   public function __set($name, $value) {
     if (method_exists($this, $set = "set$name)) return $this->$set($value);
-    if (in_array($name, self::boolprops)) {
+    if (in_array($name, self::arrayprops)) {
+    $this->post->$name = explode(', ', $value);
+    } elseif (in_array($name, self::boolprops)) {
       $post->$name = $value == '1';
     } else {
       $post->$name = $value;
@@ -88,12 +92,11 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i         'content'
     return sqldate($this->post->posted);
   }
   
-  private function setposted($date) {
-    $this->post->posted = strtotime($date);
+  private function setposted($value) {
+    $this->post->posted = strtotime($value);
   }
   
-  
-  private function getcreated() {
+    private function getcreated() {
     return sqldate($this->post->date);
   }
   
@@ -107,22 +110,6 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i         'content'
   
   private function setmodified($date) {
     $this->post->date = strtotime($date);
-  }
-  
-  private function gettags() {
-    return implode(', ', $this->post->tags);
-  }
-  
-  private function settags($value) {
-    $this->post->tags = explode(', ', $value);
-  }
-  
-  private function getcategories() {
-    return implode(', ', $this->post->categories);
-  }
-  
-  private function setcategories($value) {
-    $this->post->categories = explode(', ', $value);
   }
   
 }//class
