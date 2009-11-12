@@ -49,12 +49,19 @@ return false;
 
 public function deletepost($idpost) {
 if (dbversion) {
+$result = $this->db->res2array($this->db->query("select item from $this->thistable where post = $idpost"));
 $this->db->delete("post = $idpost");
-} elseif (isset($this->items[$idpost])) {
+return $result;
+} else {
+if (isset($this->items[$idpost])) {
+$result = $this->items[$idpost];
 unset($this->items[$idpost]);
 $this->save();
+return $result;
+} else {
+return array();
 }
-$this->deleted();
+}
 }
 
 public function deleteitem($iditem) {
@@ -125,6 +132,23 @@ $posts = tposts::instance()
 $items = $posts->stripdrafts($items);
 return count($items);
 }
+
+}//class
+
+class titemspostsowner extends titemsposts {
+private $owner;
+ public function __construct($owner) {
+parent::__construct();
+$this->owner = $owner;
+$this->items = &$owner->data['itemsposts'];
+$this->table = $owner->table . 'items';
+unset($this->data);
+}
+
+public function load() { }
+public function save() { $this->owner->save(); }
+public function lock() { $this->owner->lock(); }
+public function unlock() { $this->owner->unlock(); }
 
 }//class
 

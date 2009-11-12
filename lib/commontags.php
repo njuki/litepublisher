@@ -14,7 +14,7 @@ $this->data['itemsposts'] = array();
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
     $this->contents = new TTagContent($this);
-$this->itemsposts = new ttagsitems($this);
+$this->itemsposts = new titemspostsowner ($this);
   }
 
 protected function getpost($id) {
@@ -79,59 +79,39 @@ return $this->items[$id]['url'];
 }
   
   public function postedited($idpost) {
-//пересчитать количество опубликованных постов
-    $post = $this->getpost($idpost);
-$all = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
+    $post = $this->getpost((int) $idpost);
+$this->lock();
+$changed = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
+$this->updatecount($changed);
+$this->unlock();
+  }
+  
+  public function postdeleted($idpost) {
+$this->lock();
+$changed = $this->itemsposts->deletepost($idpost);
+$this->updatecount($changed);
+$this->unlock();
+  }
+
+private function updatecount(array $items) {
 if (dbversion) {
-$this->db->query("update $this->thistable set itemscount = postscount 
-(select count($this->itemstable.post) as postscount  from $this->itemstable, $poststable 
-where tag in ($items) and post = $poststable.id and $poststable.status = 'published' group by post)
-where id in ($items)";
-
-
-$db->query("update $this->thistable set itemscount = •
-( select count(post) as postscount from {$this->itemsposts->thistable}
-where item in ($all) group by post)
-where id in ($all)";
-
-
-
+$items = implode(', ', $items);
+$thistable = $this->thistable;
+$itemstable = $this->itemsposts->thistable;
+$poststable = $this->db->posts;
+$this->db->query("
+update $thistable, $itemstable set $thistable.itemscount = 
+(select count(post)from $itemstable, $poststable
+ where item in ($all)  and post = $poststable.id and $poststable.status = 'published' group by post)
+$thistable.id = $itemstable.item");
 } else {
 $this->lock();
-$all = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
-foreach ($all as $id) {
+foreach ($items as $id) {
       $this->items[$id]['itemscount'] = $this->itemsposts->getpostscount($id);
 }
     $this->unlock();
 }
-  }
-  
-  public function postdeleted($idpost) {
-$idpost = (int) $idpost;
-if (dbversion) {
-$db = $this->db;
-$exclude = $this->db->res2array($this->db->query("select tag from $this->itemstable where post = 'idpost' and not tag in (items)");
-if (count($exclude) > 0) {
-$this->getdb($this->itemstable)->delete("post = $idpost");
-$items = implode(', ', $exclude);
-$this->db->query("update $this->thistable set itemscount = postscount 
-(select count($this->itemstable.post) as postscount  from $this->itemstable, $db->posts
-where tag in ($items) and post = $db->posts.id and $db->posts.status = 'published' group by post)
-where id in ($items)";
 }
-return;
-}
-
-    $this->lock();
-    foreach ($this->items as $id => $item) {
-      $i = array_search($idpost, $this->items[$id]['items']);
-      if (is_int($i)) {
-        array_splice($this->items[$id]['items'], $i, 1);
-        $this->items[$id]['itemscount'] = count($this->items[$id]['items']);
-      }
-    }
-    $this->unlock();
-  }
   
   public function add($title, $slug = '') {
     if (empty($title)) return false;
@@ -197,17 +177,30 @@ $urlmap->setidurl($item['idurl'], $url);
     }
 
   public function delete($id) {
-global $classes;
+      $urlmap = turlmap::instance();
+      $urlmap->DeleteClassArg(get_class($this), $id);
+
+$this->lock();
+$list = $this->itemsposts->getposts($id);
+$this->contents->delete($id);
+$this->itemsposts->deleteitem($id);
+parent::delete($id);
+$this->unlock();
+$this->updateposts($list);
+     $urlmap->clearcache();
+    }
+
+private function updateposts(array $items) {
 if (dbversion) {
-$this->getdb($this->itemstable)->delete("tag = $id");
-$this->db->iddelete($id);
-return;
+$db = $this->db;
+foreach ($items as $idpost) {
+$tags = $this->itemsposts->getitems($idpost);
+$db->table = 'posts';
+$db->setvalue($idpost, $this->PostPropname, implode(', ', $tags));
 }
-    if (isset($this->items[$id])) {
-      $posts = $classes->posts;
-      $list = $this->items[$id]['items'];
-      foreach ($list as $idpost) {
-        $post = $posts->getitem($idpost);
+} else {
+foreach ($items as $idpost) {
+$post = $this->getpost($idpost);
       $postcats = $post->{$this->PostPropname};
         $i = array_search($id, $postcats);
         if (is_int($i)) {
@@ -216,15 +209,8 @@ return;
           $post->Save();
         }
       }
-      unset($this->items[$id]);
-      $this->Save();
-      $urlmap = turlmap::instance();
-      $urlmap->DeleteClassArg(get_class($this), $id);
-      $urlmap->clearcache();
-      $this->deleted($id);
-    }
-$this->contents->delete($id);
-  }
+}
+}
   
   public function createnames($list) {
     if (is_string($list)) $list = explode(',', trim($list));
@@ -267,12 +253,12 @@ $icon = $icons->getlink($item['icon']);
 $count = (int) $count;
 if (!in_array($sortname, array('title', 'count', 'id')) $sortname = 'title';
 if (dbversion) {
-$q = "select $this->thistable.*, $this->urltable.url from $this->thistable
-$this->joinurl where parent = 0 sort by ";
+$q = "select $this->thistable.*, $this->urltable.url from $this->thistable, $this->urltable
+where $this->thistable.parent = 0 and idurl = $this->urltable.id sort by ";
 $q .= $sortname == 'count' "itemscount asc" :"$sortname desc";
 if ($count > 0) $q .= " limit $count";
 $res = $this->db->query($q);
-return $res->fetchAll(PDO::FETCH_ASSOC);
+return $this->res2array($res);
 }
 
     $list = array();
@@ -474,19 +460,5 @@ return $this->getvalue($id, 'keywords');
   
   }//class
 
-class ttagsitems extends titemsposts {
-private $owner;
- public function __construct($owner) {
-parent::__construct();
-$this->owner = $owner;
-$this->items = &$owner->data['itemsposts'];
-$this->table = $owner->table . 'items';
-unset($this->data);
-}
-
-public function save() { $this->owner->save(); }
-public function load() { }
-
-}//class
 
 ?>
