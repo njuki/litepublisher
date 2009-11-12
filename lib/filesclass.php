@@ -44,17 +44,17 @@ global $options;
 $mediaparser = tmediaparser::instance();
 $info = $mediaparser->add($filename);
 
-$item = array(
-'medium' => $medium,
+$item = $info + array(
 'parent' => 0,
-'preview' => $preview,
 'author' => $options->user,
 'posted' => time(),
-'icon' => $icon,
 'filename' => $filename,
 'title' => $title,
 'description' => $description,
 'keywords' => ''
+'md5' => md5_file($paths['files'] . $filename),
+'size' => filesize($paths['files'] . $filename),
+               'lang' => ''
 );
 return $this->additem($item);
 }
