@@ -72,7 +72,7 @@ class tlinkgenerator extends TEventClass {
     return $url;
   }
   
-  public function FilterFileName($filename) {
+  public function filterfilename($filename) {
     $filename = trim($filename);
     $filename = trim($filename, '/');
     $result = basename($filename);
