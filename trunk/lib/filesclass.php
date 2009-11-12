@@ -42,21 +42,10 @@ $icon = sprintf('<img src="%s" alt="%s" />', $icons->geturl($item['icon']), $ite
 public function Add($filename, $title) { 
 global $options;
 $mediaparser = tmediaparser::instance();
-$info = 
-$mediatype = $this->getmediatype($filename);
-$icons = ticons::instance();
-$icon = $icon->getmedia($mediatype);
-switch ($mediatype) {
-case 'bin':
-$preview = $this->
-break;
+$info = $mediaparser->add($filename);
 
- case 'image':
-case 'audio':
-case 'video':
-}
 $item = array(
-'mediatype' => $mediatype,
+'medium' => $medium,
 'parent' => 0,
 'preview' => $preview,
 'author' => $options->user,
