@@ -1,6 +1,6 @@
 <?php
 
-class TItems extends TEventClass {
+class titems extends TEventClass {
   public $items;
   protected $autoid;
   

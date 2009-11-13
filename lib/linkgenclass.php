@@ -21,12 +21,12 @@ class tlinkgenerator extends TEventClass {
     $this->Save();
   }
   
-  public function createlink($Obj, $SchemaName, $uniq = true) {
-    global $options;
+  public function createlink($Obj, $schema, $uniq = true) {
     $this->DataObject= $Obj;
-    $result = $this->data[$SchemaName];
-    while (preg_match('/\[(\w+)\]/', $result, $match)) {
-      $tag = $match[1];
+    $result = $this->data[$schema];
+    if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
+foreach ($match as $item) {
+      $tag = $item[1];
       if (method_exists($this, $tag)) {
         $text = $this->$tag();
       } elseif( method_exists($Obj, $tag)) {
@@ -36,12 +36,31 @@ class tlinkgenerator extends TEventClass {
       }
       $result= str_replace("[$tag]", $text, $result);
     }
+}
     $result= $this->AfterCreate($result);
     $result= $this->validate($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
-  
+
+  public function createurl($title, $schema) {
+    $result = $this->data[$schema];
+$result = str_replace('[title]', $title, $result);
+    if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
+foreach ($match as $item) {
+      $tag = $item[1];
+      if (method_exists($this, $tag)) {
+      $result= str_replace("[$tag]", $this->$tag(), $result);
+    }
+}
+}
+
+    $result= $this->AfterCreate($result);
+    $result= $this->validate($result);
+$result = $this->MakeUnique($result);
+    return $result;
+  }
+
   public function AfterCreate($url) {
     global $options;
     if ($options->language == 'ru') $url = $this->ru2lat($url);

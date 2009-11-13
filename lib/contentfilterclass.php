@@ -36,7 +36,7 @@ $this->data['phpcode'] = true;
     preg_match('/\[cut(.*?)?\]/', $s, $matches)
     ) {
       $parts = explode($matches[0], $s, 2);
-      $post->excerpt = $this->GetPostContent($parts[0]);
+      $post->excerpt = $this->filter($parts[0]);
       $post->filtered = $post->excerpt . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $post->excerpt;
       $post->moretitle =  self::NormalizeMoreTitle($matches[1]);
@@ -62,14 +62,14 @@ $this->data['phpcode'] = true;
   public function ExtractPages(tpost $post, $s) {
     $tag = '<!--nextpage-->';
     $post->deletepages();
-    if (!strpos( $s, $tag) )  return $this->GetPostContent($s);
+    if (!strpos( $s, $tag) )  return $this->filter($s);
     
     while($i = strpos( $s, $tag) ) {
       $page = trim(substr($s, 0, $i));
-      $post->addpage($this->GetPostContent($page));
+      $post->addpage($this->filter($page));
       $s = trim(substr($s, $i + strlen($tag)));
     }
-    if ($s != '') $post->addpage($this->GetPostContent($s));
+    if ($s != '') $post->addpage($this->filter($s));
     return $post->GetPage(0);
   }
   
@@ -92,7 +92,7 @@ $this->data['phpcode'] = true;
     return trim($s);
   }
   
-  public function GetPostContent($content) {
+  public function filter($content) {
     $result = trim($content);
     $result = $this->replacecode($result);
     
