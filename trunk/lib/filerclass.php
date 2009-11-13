@@ -18,35 +18,19 @@ $file = $path. $filename;
     if ($rmdir) rmdir($path);
   }
   
-  public static function extdelete($path, $ext) {
-    if ($fp = @opendir($path )) {
-      while (FALSE !== ($file = readdir($fp))) {
-        if (($file == '.') || ($file == '..') || ($file == '.svn')) continue;
-        $filename = $path . $file;
-        if (@is_dir($filename))  continue;
-        if (preg_match("/(\\.$ext\$)/",  $file)) {
-          unlink($filename);
-        }
-      }
-    }
+  public static function deletemask($mask( {
+foreach (glob($mask) as $filename) unlink($filename);
   }
 
-//clear cache
-  public static function deleteregexp($path, $regexp) {
-    if ($fp = @opendir($path )) {
-      while (FALSE !== ($file = readdir($fp))) {
-        if (($file == '.') || ($file == '..') || ($file == '.svn')) continue;
-        $filename = $path . $file;
+ public static function deletedirmask($path, $mask) {
+foreach (glob($path. $mask) as $filename) {
         if (@is_dir($filename)) {
-self::deleteregexp($filename. DIRECTORY_SEPARATOR, $regexp);
+self::deletedirmask($filename. DIRECTORY_SEPARATOR, $mask);
 } else {
-        if (preg_match($regexp, $file)) {
           unlink($filename);
 }
-        }
-      }
-    }
   }
+}
   
    public static function getfiles($path) {
     $result = array();

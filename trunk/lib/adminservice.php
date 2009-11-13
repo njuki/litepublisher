@@ -134,8 +134,8 @@ class TAdminService extends TAdminPage {
             
             case $lang->uninstall:
             $plugins = TPlugins::Instance();
-            $plugins->DeleteClass($name);
-            $classes->Delete($name);
+            $plugins->deleteclass($name);
+            $classes->delete($name);
             break;
             
             case $lang->reinstall:

@@ -143,7 +143,7 @@ return $paths['cache']. "$id-$this->page.php";
     if (class_exists($item['class']))  {
 return $this->GenerateHTML($item);
 } else {
-        $this->DeleteClass($item['class']);
+        $this->deleteclass($item['class']);
 $this->NotFound404();
 }
   }
@@ -208,21 +208,37 @@ $this->db->delete('url = '. $this->db->quote($url));
 unset($this->items[$url]);
 $this->save();
 }
+$this->clearcache();
 }
-  
-  public function DeleteClassArg($class, $arg) {
-if (dbversion) return $this->db->delete("class = '$class' and arg = ". $this->db->quote($arg));
 
-    foreach ($this->items as  $url => $item) {
-      if (($item['class'] == $class) && ($item['arg'] == $arg)) {
-        unset($items[$url]);
-        return true;
+  public function deleteclass($class) {
+if (dbversion){
+$this->db->delete("class = `$class`");
+} else  {
+    foreach ($this->items as $url => $item) {
+      if ($item['class'] == $class) {
+        unset($this->items[$url]);
+      }
+$this->save();
+    }
+$this->clearcache();
+  }
+
+  public function deleteitem($id) {
+if (dbversion){
+$this->db->iddelete($id);
+} else  {
+    foreach ($this->items as $url => $item) {
+      if ($item['id'] == $id) {
+        unset($this->items[$url]);
+$this->save();
+break;
       }
     }
-    return false;
+$this->clearcache();
   }
   
-//for TArchives
+//for Archives
   public function GetClassUrls($class) {
 if (dbversion) {
 $res = $this->db->query("select url from $this->thistable where class = '$class'");
@@ -234,20 +250,6 @@ return $this->db->res2array($res);
       if ($item['class'] == $class) $result[] = $url;
     }
     return $result;
-  }
-  
-  public function DeleteClass($class) {
-if (dbversion){
-$list = $this->db->idselect("class = !`$class`");
-$this->db->delete("class = `$class`");
-foreach ($list as $id)         $this->setexpired($id);
-} else  {
-    foreach ($this->items as $url => $item) {
-      if ($item['class'] == $class) {
-        unset($items[$url]);
-        $this->setexpired($item['id']);
-      }
-    }
   }
   
   public function clearcache() {
@@ -271,7 +273,7 @@ tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
   
   public function setexpired($id) {
 global $paths;
-tfiler::deleteregexp($paths['cache'], "/($id-\\d\\.php\$)/");
+tfiler::deletemask($paths['cache'] . "*.$id-*.php");
 }
 
 public function getcachename($name, $id) {
@@ -281,7 +283,7 @@ return $paths['cache']. "$prefix-$id.php";
 
 public function expiredname($name, $id) {
 global $paths;
-tfiler::deleteregexp($paths['cache'], "/($name-$id\\.php\$)/");
+tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
 }
   
     public function addredir($from, $to) {

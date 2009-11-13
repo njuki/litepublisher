@@ -177,8 +177,9 @@ $urlmap->setidurl($item['idurl'], $url);
     }
 
   public function delete($id) {
+$item = $this->getitem($id);
       $urlmap = turlmap::instance();
-      $urlmap->DeleteClassArg(get_class($this), $id);
+      $urlmap->deleteitem($item['idurl']);
 
 $this->lock();
 $list = $this->itemsposts->getposts($id);
@@ -416,7 +417,7 @@ $this->db->updateassoc($item);
 public function edit($id, $content, $description, $keywords) {
       $filter = TContentFilter::instance();
 $item =array(
-'content' => $filter->GetPostContent($content),
+'content' => $filter->filter($content),
 'rawcontent' => $content;
 'description' => $description,
 'keywords' => $keywords

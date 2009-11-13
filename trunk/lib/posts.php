@@ -69,7 +69,7 @@ return parent::save();
     if ($post->posted == 0) $post->posted = time();
     $post->modified = time();
       $post->pagescount = count($post->pages);
-    
+$post->title = tcontentfilter::escape($post->title);    
     $linkgen = tlinkgenerator::instance();
     if ($post->url == '' ) {
       $post->url = $linkgen->createlink($post, 'post');
@@ -105,6 +105,7 @@ $post->db->setvalue($post->id, 'idurl', $post->idurl);
   }
   
   public function edit(tpost $post) {
+$post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($post->idurl);
     if ($oldurl != $post->url) {
@@ -142,14 +143,17 @@ global $classes;
 if (dbversion) return $this->db->setvalue($id, 'status', 'deleted');
     if (!$this->ItemExists($id)) return false;
     $urlmap = turlmap::instance();
-$urmap->DeleteClassArg($classes->classes['post'], $id);
     if (dbversion) {
+$urmap->deleteitem($this->db->getvalue($id, 'idurl'));
 /* 
       $this->db->iddelete($id);
       $this->getdb('pages')->delete("post = $id");
 $this->getdb($this->rawtable)->iddelete($id);
 */
     } else {
+$post = tpost::instance($id);
+$urmap->deleteitem($post->idurl);
+$post->free();
       global $paths;
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
       unset($this->items[$id]);
