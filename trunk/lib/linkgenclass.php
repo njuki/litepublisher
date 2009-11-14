@@ -17,7 +17,7 @@ class tlinkgenerator extends TEventClass {
     $this->data['tag'] = '/tag/[name]/';
     $this->data['category'] = '/category/[name]/';
     $this->data['archive'] ='/[year]/[month]/';
-    $this->data['file'] ='/[filename]/';
+    $this->data['file'] = '/[medium]/[filename]/';
     $this->Save();
   }
   

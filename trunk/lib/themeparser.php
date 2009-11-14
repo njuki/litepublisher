@@ -57,6 +57,8 @@ $this->parsecomments($comments);
 $theme->post = $post;
 
 $theme->menucontent = $this->parsetag($content, 'menucontent', '');
+$theme->simplecontent = $this->parsetag($content, 'simplecontent', '');
+if (theme->simplecontent == '') theme->simplecontent  = '%s';
 
 $this->parsenavi($this->parsetag($content, 'navi', ''));
 $this->parseadmin($this->parsetag($content, 'admin', '');
