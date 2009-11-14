@@ -199,6 +199,11 @@ $this->save();
 }
 }  
 
+public function editjavascript($name, $script) {
+$this->javascripts[$name] = $script;
+$this->save();
+}  
+
 public function deletejavascript($name) {
 if (isset($this->javascripts[$name])) {
 unset($this->javascripts[$name]);

@@ -26,7 +26,7 @@ function tsubscribersUninstall(&$self) {
 global $classes;
   
   $manager = $classes->commentmanager;
-  $manager->UnsubscribeClass($self);
+  $manager->unsubscribeclass($self);
 }
 
 ?>

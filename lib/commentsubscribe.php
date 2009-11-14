@@ -48,7 +48,7 @@ global $classes;
         $manager->approved = $this->sendmail;
         $manager->unlock();
       } else {
-        $manager->UnsubscribeClass($this);
+        $manager->unsubscribeclass($this);
       }
     }
   }

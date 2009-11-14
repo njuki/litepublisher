@@ -2,11 +2,11 @@
 
 class TEventClass extends TDataClass {
   protected $events;
-  protected $EventNames;
+  protected $eventnames;
   protected $map;
   
   public function __construct() {
-    $this->EventNames = array();
+    $this->eventnames = array();
     $this->map = array();
     parent::__construct();
     $this->assignmap();
@@ -28,7 +28,7 @@ class TEventClass extends TDataClass {
     }
   }
   
-  public function AfterLoad() {
+  public function afterload() {
     $this->assignmap();
   }
   
@@ -50,21 +50,21 @@ class TEventClass extends TDataClass {
   }
   
   protected function setevent($name, $value) {
-    if (in_array($name, $this->EventNames)) {
-      $this->SubscribeEvent($name, $value);
+    if (in_array($name, $this->eventnames)) {
+      $this->eventsubscribe($name, $value);
       return true;
     }
     return false;
   }
   
   public  function __call($name, $params) {
-    if (in_array($name, $this->EventNames)) return $this->CallEvent($name, $params);
+    if (in_array($name, $this->eventnames)) return $this->callevent($name, $params);
     parent::__call($name, $params);
   }
   
   protected function addevents() {
     $a = func_get_args();
-    array_splice($this->EventNames, count($this->EventNames), 0, $a);
+    array_splice($this->eventnames, count($this->eventnames), 0, $a);
   }
   
   private function getevents($name) {
@@ -78,7 +78,7 @@ class TEventClass extends TDataClass {
     return false;
   }
   
-  private function CallEvent($name, &$params) {
+  private function callevent($name, &$params) {
     $result = '';
     if (    $list = $this->getevents($name)) {
       foreach ($list as $i => $item) {
@@ -86,11 +86,11 @@ class TEventClass extends TDataClass {
           if (function_exists($item['func'])) {
             $call = $item['func'];
           } else {
-            $this->DeleteEvent($name, $i);
+            $this->eventdelete($name, $i);
             continue;
           }
         } elseif (!class_exists($item['class'])) {
-          $this->DeleteEvent();
+          $this->eventdelete();
           continue;
         } else {
           $obj = getinstance($item['class']);
@@ -104,23 +104,23 @@ class TEventClass extends TDataClass {
     return $result;
   }
   
-  private function DeleteEvent($name, $i) {
+  private function eventdelete($name, $i) {
     if (dbversion) {
       $id =           $this->events[$name][$i]['id'];
       $this->getdb('events')->iddelete($id);
+}
       array_splice($this->events[$name], $i, 1);
-    } else {
-      array_splice($this->events[$name], $i, 1);
-      $this->save();
+      if(!dbversion) $this->save();
     }
-  }
-  
-  public function SubscribeEvent($name, $params) {
+
+  public function eventsubscribe($name, $params) {
+if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
     if (!isset($this->events[$name])) $this->events[$name] =array();
-    foreach ($this->events[$name] as $event) {
+$list = $this->getevents($name);
+    foreach ($list  as $event) {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
-    
+
     $this->events[$name][] = array('class' => $params['class'], 'func' => $params['func']);
     if (dbversion) {
       $event = &$this->events[$name][count($this->events[$name]) - 1];
@@ -132,38 +132,38 @@ class TEventClass extends TDataClass {
     }
   }
   
-  public function UnsubscribeEvent($name, $class) {
-    if (isset($this->events[$name])) {
-      foreach ($this->events[$name] as $i => $item) {
+  public function eventunsubscribe($name, $class) {
+    if (    $list = $this->getevents($name)) { 
+      foreach ($list  as $i => $item) {
         if ($item['class'] == $class) {
-          $this->DeleteEvent($name, $i);
+          $this->eventdelete($name, $i);
           return true;
         }
       }
-    }
     return false;
   }
   
   public static function unsub(&$obj) {
     $self = self::instance();
-    $self->UnsubscribeClassName(get_class($obj));
+    $self->unsubscribeclassname(get_class($obj));
+}
+
+  public function unsubscribeclass($obj) {
+    $this->unsubscribeclassname(get_class($obj));
   }
   
-  public function UnsubscribeClass(&$obj) {
-    $this->UnsubscribeClassName(get_class($obj));
-  }
-  
-  public function UnsubscribeClassName($class) {
-    $this->lock();
+  public function unsubscribeclassname($class) {
+if (dbversion)  $this->getdb('events')->delete("owner = `$this->class` and class=`$class`");
+
     foreach ($this->events as $name => $events) {
       foreach ($events as $i => $item) {
-        if ($item['class'] == $class)  $this->DeleteEvent($name, $i);
+        if ($item['class'] == $class) array_splice($this->events[$name], $i, 1);
       }
     }
-    $this->unlock();
-  }
-  
 
+if (!dbversion) $this->save();
+}
+  
 public function getoptions() {
 global $options;
 if (!isset($options->data[$this->basename])) $options->data[$this->basename] = array();
