@@ -14,7 +14,6 @@ class tmediaparser extends TEventClass {
 public function Add($filename) {
 $result = array(  
 'medium' => $this->getmedium($filename),
-'mime' => $this->getmime($filename),
 'mime' => 'application/octet-stream',
   'bitrate' => 0,
 'framerateint' => 0,
@@ -33,6 +32,10 @@ case 'bin':
 break;
 
  case 'image':
+				$info = getimagesize($filename);
+$result['mime'] = $info['mime'];
+$result['width'] = $info[0];
+$result['height'] = $info[1];
 $result['preview'] = $this->getsnapshot($filename);
 break;
 
@@ -47,11 +50,27 @@ break;
 case 'document':
 break;
 
+case 'executable':
+break;
+
+case 'text':
+break;
+
 case 'archive':
 break;
 }
 
 return $result;
+}
+
+public function getmedium($filename) {
+    $parts = pathinfo($filename);
+$ext = $parts['extension'];
+if (preg_match('/jpg|gif|bmp|png|/', $ext)) return 'image';
+if (preg_match('/wav|mp3/', $ext)) return 'audio';
+if (preg_match('//', $ext)) return 'video';
+if (preg_match('//', $ext)) return 'video';
+return 'bin';
 }
 
 private function createsnapshot($srcfilename, $destfilename, $x, $y) {
@@ -69,6 +88,27 @@ if (!file_exists($srcfilename)) return false;
 					case 3:
 						$source = @imagecreatefrompng($srcfilename);
 						break;
+
+/*
+4 IMAGETYPE_SWF 
+5 IMAGETYPE_PSD 
+6 IMAGETYPE_BMP 
+7 IMAGETYPE_TIFF_II (intel byte order) 
+8 IMAGETYPE_TIFF_MM (motorola byte order)  
+9 IMAGETYPE_JPC 
+10 IMAGETYPE_JP2 
+11 IMAGETYPE_JPX 
+12  IMAGETYPE_JB2 
+13 IMAGETYPE_SWC 
+14 IMAGETYPE_IFF 
+*/
+case 15:
+$source = @imagecreatefromwbmp($srcfilename);
+break;
+
+case 16:
+$source = @imagecreatefromxbm($srcfilename);
+break;
 
 					default:
 						return false;
