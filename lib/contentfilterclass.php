@@ -103,10 +103,16 @@ $this->data['phpcode'] = true;
     //ставятся параграфы вместо двух разрывов строк
     $result = str_replace("\n\n", "</p>\n<p>", $result);
     //замена разрывов строк на <br /> до и после тегов a|img|b|i|u
+$result = preg_replace('/\n<(a|img)([^<]*)>/im', "<br />\n<$1$2>", $result);
+result = preg_replace('/<img src=([^<]*)>\n/im', "<img src=$1><br />\n", $result);
+
+/*
     $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
     $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
+*/
+
     $result = preg_replace('/\n<(b|i|u|strong|em)>/im', "<br />\n<$1>", $result);
-    $result = preg_replace('/<\/(a|b|i|u|strong|emm)>\n/im', "</$1><br/>\n", $result);
+    $result = preg_replace('/<\/(a|b|i|u|strong|em)>\n/im', "</$1><br/>\n", $result);
     //переводы строки если нет в конце тегов
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
 

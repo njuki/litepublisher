@@ -71,13 +71,6 @@ class TCommentForm extends TEventClass{
     parent::create();
     $this->basename ='commentform';
     $this->CacheEnabled = false;
-    $this->data['form'] = '';
-    $this->data['confirmtemplate'] = '';
-  }
-  
-  public function Setform($form) {
-    $this->data['form'] = str_replace('"', '\"', $form);
-    $this->save();
   }
   
   public static function PrintForm($postid) {
@@ -148,7 +141,7 @@ return $result;
       $values = $_POST;
       $values['date'] = time();
       $confirmid  = $hold->add($values);
-      return tsimplecontent::html($this->GetConfirmForm($confirmid));
+      return tsimplecontent::html($this->getconfirmform($confirmid));
     }
     
     $confirmid = $_POST['confirmid'];
@@ -199,19 +192,14 @@ $subscribers = tsubscribers::instance();
     ?>";
   }
   
-  private function GetConfirmForm($confirmid) {
-    $lang = TLocal::instance($this->basename);
-    $tml = $this->GetConfirmFormTemplate();
-    eval('$result = "'. $tml . '\n";');
-    return $result;
+  private function getconfirmform($confirmid) {
+global $lang;
+    $lang = tlocal::instance($this->basename);
+$args = targs::instance();
+$args->confirmid = $confirmid;
+$theme = ttheme::instance();
+    return $theme->parsearg($theme->comments['confirmform'], $args);
   }
-  
-  private function GetConfirmFormTemplate() {
-    global $paths;
-    $filename = $this->confirmtemplate == '' ? 'confirmform.tml' : $this->confirmtemplate;
-    return file_get_contents($paths['libinclude'] . $filename);
-  }
-  
   
 }//class
 
