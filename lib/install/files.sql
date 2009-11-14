@@ -1,5 +1,5 @@
 id int UNSIGNED NOT NULL auto_increment,
-medium enum('bin', ''image', 'audio', 'video','document', 'executable', 'archive') default 'bin',
+medium enum('bin', 'image', 'audio', 'video','document', 'executable', 'text', 'archive') default 'bin',
 parent int UNSIGNED NOT NULL default 0,
 preview int UNSIGNED NOT NULL default 0,
 icon int UNSIGNED NOT NULL default 0,
