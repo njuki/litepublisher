@@ -87,7 +87,7 @@ $template->postscript
 			<cite>$comment->authorlink</cite> $lang->says: 
 <!--hold--><em>$lang->hold</em><!--/hold--> <br />
 			<small class="commentmetadata"><a href="#comment-$comment->id" title="">$comment->localdate $lang->attime $comment->time</a></small>
-<p>
+<p id="commentcontent->$comment->id">
 $comment->content
 </p>
 		</li>
@@ -133,6 +133,17 @@ $comment->content
 <p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang->send" />
 </form>
 <!--/form-->
+<!--confirmform-->
+<h2>$lang->formhead</h2>
+<form name="preform" method="post" action="">
+  <p><input type="submit" name="submit" value="$lang->robot"/></p>
+</form>
+
+<form name="form" method="post" action="">
+<input type=hidden name="confirmid" value="$confirmid" />
+  <p><input type="submit" name="submit" value="$lang->human"/></p>
+</form>
+<!--/confirmform-->
 <!--/templatecomments-->
 	</div>
 <!--/post-->
