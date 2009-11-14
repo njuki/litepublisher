@@ -14,6 +14,13 @@ public $theme;
     }
     return $result;
   }
+
+public function getidtag($tag, $s) {
+if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {
+return $m[1];
+}
+return false;
+}
   
 public function parse($filename, $theme) {
 $this->theme = $theme;
@@ -32,8 +39,9 @@ $menu['item'] = $item;
 $menu['current'] = $this->parsetag($menus, 'current', '');
 $menu['menu'] = $menus;
 //hover
-if (preg_match('/<\w*?\s*.*?id\s*=\s*[\'"]([^"\'>]*)/i', $menus, $m)) {
-$menu['id'] = $m[1];
+if (preg_match('/<\w*?\s*.*?id\s*=\s*[\'"]([^"\'>]*)/i', 
+if ($id = $this->getidtag('*', menus)) {
+$menu['id'] = $id;
 preg_match('/\<(\w*?)\s/',$item, $t);
 $menu['tag'] = $t[1];
 }

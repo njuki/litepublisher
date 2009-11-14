@@ -14,7 +14,7 @@ function TRSSInstall(&$self) {
 function TRSSUninstall(&$self) {
   TUrlmap::unsub($self);
   $CommentManager = &TCommentManager::Instance();
-  $CommentManager->UnsubscribeClass($self);
+  $CommentManager->unsubscribeclass($self);
 }
 
 ?>

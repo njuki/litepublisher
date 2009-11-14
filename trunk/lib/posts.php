@@ -10,7 +10,7 @@ public $rawtable;
   
   public static function unsub($obj) {
     $self = self::instance();
-    $self->UnsubscribeClassName(get_class($obj));
+    $self->unsubscribeclassname(get_class($obj));
   }
   
   protected function create() {

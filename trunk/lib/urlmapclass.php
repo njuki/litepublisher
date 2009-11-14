@@ -295,8 +295,8 @@ tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
   public static function unsub(&$obj) {
     $self = self::instance();
     $self->lock();
-    $self->UnsubscribeClassName(get_class($obj));
-    $self->DeleteClass(get_class($obj));
+    $self->unsubscribeclassname(get_class($obj));
+    $self->deleteclass(get_class($obj));
     $self->unlock();
   }
   
