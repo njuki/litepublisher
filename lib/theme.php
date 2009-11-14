@@ -8,8 +8,6 @@ public $widgets;
 public $comments;
 public $admin;
 
-private $deftemplates;
-
 public static function instance() {
 return getinstance(__class__);
 }
@@ -25,6 +23,7 @@ $this->data['excerpt'] = '';
 $this->data['post'] = '';
 $this->data['commentform'] = '';
 $this->data['menucontent'] = '';
+$this->data['simplecontent'] = '%s';
 
 $this->addmap('navi', array());
 $this->addmap('menu', array());
@@ -33,7 +32,6 @@ $this->addmap('widgets', array());$this->addmap('widgets', array());
 $this->addmap('comments', array());
 $this->addmap('admin', array());
 
-$this->deftemplates = null;
 }
 
 public function load() {
