@@ -94,7 +94,19 @@ $theme = $this->theme;
     $theme->comments['pingbacks'] = $pingbacks;
     
     $theme->comments['closed'] = $this->parsetag($s, 'closed', '');
-$theme->commentform = $this->parsetag($s, 'form', '');
+$theme->comments['form'] = $this->parsetag($s, 'form', '');
+$theme->comments['confirmform'] = $this->parsetag($s, 'confirmform', '');
+if (empty($theme->comments['confirmform'])) {
+$theme->comments['confirmform'] = '<h2>$lang->formhead</h2>
+<form name="preform" method="post" action="">
+  <p><input type="submit" name="submit" value="$lang->robot"/></p>
+</form>
+
+<form name="form" method="post" action="">
+<input type=hidden name="confirmid" value="$confirmid" />
+  <p><input type="submit" name="submit" value="$lang->human"/></p>
+</form>';
+{
   }
 
 private function parse sitebars(&$s) {
@@ -104,27 +116,52 @@ while ($sitebar = $this->parsetag($s, 'sitebar', '$template->sitebar')) {
 $theme->widgets[$index] = array();
 $widgets = &$theme->widgets[$index];
 $widgets['widget'] = $this->parsetag($sitebar, 'widget', '');
+
 if ($categories =$this->parsetag($sitebar, 'categories', ''))  {
-if ($item = $this->parsetag($categories, 'item', '%s')) $widgets['tag'] = $item;
+if ($item = $this->parsetag($categories, 'item', '%s')) 
+$theme->widgets['tag'] = $item;
+}
 $widgets['categories'] = $categories;
+}
+if (empty($theme->widgets['tag'])) {
+$theme->widgets['tag'] = '<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
 }
 
 if ($archives =$this->parsetag($sitebar, 'archives', '')) $widgets['archives'] = $archives;
 if ($links =$this->parsetag($sitebar, 'links', '')) $widgets['links'] = $links;
 
 if ($posts =$this->parsetag($sitebar, 'posts', '')) {
-if ($item = $this->parsetag($posts, 'item', '%s')) $widgets['post'] = $item;
+if ($item = $this->parsetag($posts, 'item', '%s')) {
+$theme->widgets['post'] = $item;
+}
 $widgets['posts'] = $posts;
 }
 
+if (empty($theme->widgets['post'])) {
+$theme->widgets['post'] = '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />
+    <small>$post->localdate</small></li>';
+}
+
 if ($comments =$this->parsetag($sitebar, 'comments', '')) {
-if ($item = $this->parsetag($comments, 'item', '%s')) $widgets['comment'] = $item;
+if ($item = $this->parsetag($comments, 'item', '%s')) {
+$theme->widgets['comment'] = $item;
+}
 $widgets['comments'] = $comments;
 }
 
+if (empty($theme->widgets['comment'])) {
+$theme->widgets['comment'] = '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
+}
+
 if ($links =$this->parsetag($sitebar, 'links', '')) {
-if ($item = $this->parsetag($links, 'item', '%s')) $widgets['link'] = $item;
+if ($item = $this->parsetag($links, 'item', '%s')) {
+$theme->widgets['link'] = $item;
+}
 $widgets['links'] = $links;
+}
+
+if (empty($theme->widgets['link'])) {
+$theme->widgets['link'] = '<li><a href="$url" title="$title">$text</a></li>';
 }
 
 if ($meta =$this->parsetag($sitebar, 'meta', '')) $widgets['meta'] = $meta;
