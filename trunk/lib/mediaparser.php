@@ -110,6 +110,17 @@ $result['height'] = $info['1];
 return $result;
 }
 
+if (preg_match('/\.(mp3|wav)$/', $filename) && ($info = $this->getaudioinfo($filename))) {
+$result['medium'] = 'audio';
+$result['mime'] = preg_match('/\.mp3$/', $filename) ? 'audio/mpeg' : 'audio/x-wave';
+
+$result['bitrate']  = $info['bitrate'];
+$result['samplingrate'] = $info['samplingrate'];
+$result['channels'] = $info['channels'];
+$result['duration'] = $info['duration'];
+return $result;
+}
+
 }
 
 public function createpreview(array $info) }
@@ -119,7 +130,7 @@ return $this->getsnapshot($info['filename']);
 break;
 
 case 'audio':
-$result['preview'] = $this->createaudioclip($filename);
+return $this->createaudioclip($info['filename']);
 break;
 
 case 'video':
@@ -219,6 +230,54 @@ $result['medium'] = 'image';
 $result['mime'] = $info['mime'];
 $result['width'] = $info[0];
 $result['height'] = $info['1];
+return $result;
+}
+
+public function createaudioclip($filename) {
+global $paths;
+$thisoptions = $this->options;
+$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+    $parts = pathinfo($filename);
+$destfilename = $parts['filename'] . '.preview.' . $parts['extension'];
+if (!empty($parts['dirname'])) {
+$destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
+}
+
+if ($fp = fopen($paths['files'] . $filename, 'r')) {
+$content = fread($fp, 1024 * $this->options->audiosize);
+fclose($fp);
+}
+
+file_put_contents($paths['files'] . $destfilename, $content);
+@chmod($paths['files'] . $destfilename, 0666);
+$info = getimagesize($paths['files']. $filename);
+$result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
+$result['medium'] = 'audio';
+$result['mime'] = $info['mime'];
+return $result;
+}
+
+private function getaudioinfo($filename) {
+global $paths;
+$realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+
+		// Initialize getID3 engine
+		$getID3 = new getID3;
+		$getID3->option_md5_data        = true;
+		$getID3->option_md5_data_source = true;
+		$getID3->encoding               = 'UTF-8';
+
+		$info = $getID3->analyze($realfile);
+		if (isset($info['error'])) return false;
+
+		$result = array (
+'bitrate'  => @$info['audio']['bitrate']
+'samplingrate'  => @$info['audio']['sample_rate'],
+'channels'  => @$info['audio']['channels'],
+'duration'  => @$info['playtime_seconds'],
+);
+		//$result['tags']            = @$info['tags'];
+		//$result['comments']        = @$info['comments'];
 return $result;
 }
 

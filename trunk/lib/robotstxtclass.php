@@ -1,6 +1,6 @@
 <?php
 
-class TRobotstxt extends TItems {
+class trobotstxt extends titems {
 
   public static function instance() {
     return getinstance(__class__);

@@ -1,18 +1,18 @@
 <?php
 
-class TManifest extends TEventClass {
+class tmanifest extends TEventClass {
   
-  static function &Instance() {
-    return GetInstance(__class__);
+  static function instance() {
+    return getinstance(__class__);
   }
   
-  public function Request($arg) {
-    global $Options;
+  public function request($arg) {
+    global $options;
     
     $s = "<?php
     @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $Options->url/rpc.xml');
+    @header('X-Pingback: $options->url/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
     '; ?>";
     switch ($arg) {
@@ -28,12 +28,12 @@ class TManifest extends TEventClass {
       <weblog>
       <serviceName>Lite Publisher</serviceName>';
       
-      $s .= "    <homepageLinkText>$Options->name</homepageLinkText>
-      <adminLinkText>$Options->name</adminLinkText>
-      <adminUrl>$Options->url/admin/</adminUrl>
+      $s .= "    <homepageLinkText>$options->name</homepageLinkText>
+      <adminLinkText>$options->name</adminLinkText>
+      <adminUrl>$options->url/admin/</adminUrl>
       <postEditingUrl>
       <![CDATA[
-  $Options->url/admin/posteditor/{$Options->q}postid={post-id}
+  $options->url/admin/posts/editor/{$options->q}id={post-id}
       ]]>
       </postEditingUrl>
       </weblog>
@@ -45,7 +45,7 @@ class TManifest extends TEventClass {
       <imageUrl>images/wlw/wp-comments.png</imageUrl>
       <clickUrl>
       <![CDATA[
-      $Options->url/admin/moderate/
+      $options->url/admin/moderate/
       ]]>
       </clickUrl>
       </button>
@@ -59,12 +59,12 @@ class TManifest extends TEventClass {
       <service>
       <engineName>Lite Publisher</engineName>
       <engineLink>http://litepublisher.com/</engineLink>';
-      $s .= "    <homePageLink>$Options->url</homePageLink>
+      $s .= "    <homePageLink>$options->url</homePageLink>
       <apis>
-      <api name=\"WordPress\" blogID=\"1\" preferred=\"true\" apiLink=\"$Options->url/rpc.xml\" />
-      <api name=\"Movable Type\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
-      <api name=\"MetaWeblog\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
-      <api name=\"Blogger\" blogID=\"1\" preferred=\"false\" apiLink=\"$Options->url/rpc.xml\" />
+      <api name=\"WordPress\" blogID=\"1\" preferred=\"true\" apiLink=\"$options->url/rpc.xml\" />
+      <api name=\"Movable Type\" blogID=\"1\" preferred=\"false\" apiLink=\"$options->url/rpc.xml\" />
+      <api name=\"MetaWeblog\" blogID=\"1\" preferred=\"false\" apiLink=\"$options->url/rpc.xml\" />
+      <api name=\"Blogger\" blogID=\"1\" preferred=\"false\" apiLink=\"$options->url/rpc.xml\" />
       </apis>
       </service>
       </rsd>";

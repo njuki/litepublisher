@@ -1,32 +1,32 @@
 <?php
 
-class TOpenid extends TEventClass {
+class topenid extends TEventClass {
   public $keys;
   public $trusted;
   public $url;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->CacheEnabled = false;
     $this->basename = 'openidserver';
-    $this->AddDataMap('keys', array());
-    $this->AddDataMap('trusted', array());
-    $this->Data['confirm'] = false;
-    $this->Data['usebigmath'] = false;
+    $this->addmap('keys', array());
+    $this->addmap('trusted', array());
+    $this->data['confirm'] = false;
+    $this->data['usebigmath'] = false;
     $this->url = '/openid/';
   }
   
-  public function Install() {
-    $Urlmap = &TUrlmap::Instance();
-    $Urlmap->AddGet($this->url, get_class($this), null);
+  public function install() {
+    $urlmap = turlmap::instance();
+    $urlmap->add($this->url, get_class($this), null, 'get');
   }
   
-  public function AfterLoad() {
-    parent::AfterLoad();
+  public function afterload() {
+    parent::afterload();
     $time = time();
     foreach ($this->keys as $handle => $item) {
       if ($item['expired'] < $time) unset($this->keys[$handle]);
@@ -45,7 +45,7 @@ class TOpenid extends TEventClass {
     }
   }
   
-  public function Request($arg) {
+  public function request($arg) {
     if (defined('debug'))  {
       tfiler::log($_SERVER['REQUEST_URI']);
       tfiler::log(var_export($_REQUEST, true));
@@ -90,7 +90,7 @@ class TOpenid extends TEventClass {
   }
   
   private function id_res() {
-    $auth = &TAuthDigest::Instance();
+    $auth = &TAuthDigest::instance();
     if (!$auth->auth())  return $auth->Headers();
     return tsimplecontent::html(TLocal::$data['openidserver']['logged']);
   }
@@ -305,7 +305,7 @@ class TOpenid extends TEventClass {
     //join  fields
     $sreg_required .= ',' . $sreg_optional;
     
-    $auth = &TAuthDigest::Instance();
+    $auth = &TAuthDigest::instance();
     if (!$auth->auth())  return $auth->Headers();
     
     $q = strpos($return_to, '?') ? '&' : '?';
@@ -314,9 +314,9 @@ class TOpenid extends TEventClass {
     if ($wait && (!in_array($trust_root, $this->trusted) || $this->confirm)) {
       //вывести форму и проверит результат формы
       if (empty($_POST['submit'])) {
-        $html = THtmlResource::Instance();
+        $html = THtmlResource::instance();
         $html->section = 'openidserver';
-        $lang = TLocal::Instance();
+        $lang = TLocal::instance();
         eval('$form = "'. $html->trustform . '\n";');
         return tsimplecontent::html($form);
       } else {
@@ -367,7 +367,7 @@ class TOpenid extends TEventClass {
   }
   
   private function GetReg($key) {
-    $profile = &TProfile::Instance();
+    $profile = tprofile::instance();
     switch ($key) {
       case 'nickname':
       case 'fullname':
