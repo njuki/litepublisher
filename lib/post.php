@@ -138,9 +138,11 @@ return self::instance($id);
   }
   
   public function getmorelink() {
-    global $options;
+global $post;
     if ($this->moretitle == '') return '';
-    return  "<a href=\"$options->url$this->url#more-$this->id\" class=\"more-link\">$this->moretitle</a>";
+$post = $this;
+$theme = ttheme::instance();
+return $theme->parse($theme->more['link']);
   }
   
    public function gettagnames() {
@@ -226,11 +228,21 @@ return $tc->getcomments($this->id);
 }
   
   public function getcontent() {
+global $post;
     $template = ttemplatePost::instance();
     $result = $template->BeforePostContent($this->id);
     $urlmap = turlmap::instance();
     if ($urlmap->page == 1) {
       $result .= $this->filtered;
+$post = $this;
+$theme = ttheme::instance();
+$more = $theme->parse($theme->more['anchor']);
+$tag = '<!--more-->';
+if ($i =strpos($result, $tag)) {
+$result = str_replace($tag, $more, $result);
+} else {
+$result = $more . $result;
+}
     } elseif ($s = $this->getpage($urlmap->page - 1)) {
       $result .= $s;
     } elseif ($urlmap->page <= $this->commentpages) {

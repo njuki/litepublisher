@@ -8,35 +8,114 @@ class tmediaparser extends TEventClass {
   
   protected function create() {
     parent::create();
-    $this->basename = 'mediaprser';
+    $this->basename = 'mediaparser';
   }
 
-public function Add($filename) {
-$result = array(  
-'medium' => $this->getmedium($filename),
+  public function upload($filename, $content, $title, $overwrite = true) {
+    if ($title == '') $title = $filename;
+    $linkgen = tlinkgenerator::instance();
+    $filename = $linkgen->filterfilename($filename);
+    $filename = $this->doupload($filename, $content, $overwrite);
+    return $this->Add($filename, $title);
+  }
+
+   public function getunique($filename) {
+global $paths;
+$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+    $parts = pathinfo($filename);
+$base = $parts['filename'];
+if (!empty($parts['dirname'])) {
+$subdir = $paths['files'] . $parts['dirname'];
+if (!is_dir($subdir)) {
+@mkdir($subdir, 0777);
+@chmod($subdir, 0777);
+}
+$base = $parts['dirname'] . DIRECTORY_SEPARATOR . $base;
+}
+    $ext = empty($parts['extension']) ? '' : ".$parts[extension]";
+    for ($i = 2; $i < 10000; $i++) {
+      $filename = "$base$i$ext";
+      if  (!@file_exists($paths['files'] . $filename)) return str_replace(DIRECTORY_SEPARATOR, '/', $filename);
+    }
+    return $filename;
+  }
+  
+  private function doupload($filename, &$content, $overwrite) {
+    global $paths;
+    if (!$overwrite) $filename = $this->getunique($filename);
+        if (@file_put_contents($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), $content)) {
+      @ chmod($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
+      return $filename;
+    } else {
+      return false;
+  }
+  
+public function Add($filename, $title) { 
+$info = $this->getinfo($filename);
+$item = $info + array(
+'parent' => 0,
+'preview' => 0,
+'filename' => $filename,
+'title' => $title,
+'description' => $description
+);
+
+$files = tfiles::instance();
+$files->lock();
+$id = $files->additem($item);
+if ($preview = $this->createpreview($info)) {
+$preview = $preview + array(
+'parent' => $id,
+'preview' => 0,
+'filename' => $filename,
+'title' => $title,
+'description' => ''
+);
+$idpreview = $files->additem($preview);
+$files->setvalue($id, 'preview', $idpreview);
+}
+$files->unlock();
+return $id;
+}
+
+
+private function getdefaultvalues($filename) {
+return array(  
+'parent' => 0,
+'preview' => 0,
+'medium' => 'bin',
 'mime' => 'application/octet-stream',
+'filename' => $filename,
+'icon' => 0,
   'bitrate' => 0,
-'framerateint' => 0,
+'framerate' => 0,
 'samplingrate' => '',
 'channels' => 0,
 'duration' => 0,
 'height' => 0,
-'width' => 0
+'width' => 0,
+'lang' => ''
 );
+}
 
-$icons = ticons::instance();
-$result['icon'] = $icon->getmedium($result['medium']);
-switch ($result['medium']) {
-case 'bin':
-//$preview = $this->
-break;
-
- case 'image':
-				$info = getimagesize($filename);
+public function getinfo($filename) {
+global $paths;
+$realfile = $paths['files'], str_replace('/', DIRECTORY_SEPARATOR, $filename;
+$result = $this->getdefaultvalues($filename);
+				if ($info = getimagesize($realfile)) {
+$result['medium'] = 'image';
 $result['mime'] = $info['mime'];
 $result['width'] = $info[0];
-$result['height'] = $info[1];
-$result['preview'] = $this->getsnapshot($filename);
+$result['height'] = $info['1];
+return $result;
+}
+
+}
+
+public function createpreview(array $info) }
+switch ($info['medium']) {
+ case 'image':
+return $this->getsnapshot($info['filename']);
 break;
 
 case 'audio':
@@ -60,17 +139,7 @@ case 'archive':
 break;
 }
 
-return $result;
-}
-
-public function getmedium($filename) {
-    $parts = pathinfo($filename);
-$ext = $parts['extension'];
-if (preg_match('/jpg|gif|bmp|png|/', $ext)) return 'image';
-if (preg_match('/wav|mp3/', $ext)) return 'audio';
-if (preg_match('//', $ext)) return 'video';
-if (preg_match('//', $ext)) return 'video';
-return 'bin';
+return false;
 }
 
 private function createsnapshot($srcfilename, $destfilename, $x, $y) {
@@ -134,12 +203,23 @@ imagedestroy($source);
 public function getsnapshot($filename) {
 global $paths;
 $thisoptions = $this->options;
+$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $parts = pathinfo($filename);
-$preview = $parts['filename'] . '.preview.jpg';
-if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $preview, $thisoptions->previewwidth, $thisoptions->previewheight)) return 0;
+$destfilename = $parts['filename'] . '.preview.jpg';
+if (!empty($parts['dirname'])) {
+$destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
+}
 
-$files = tfiles::instance();
-return $files->add($preview);
+if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $pdestfilename, $thisoptions->previewwidth, $thisoptions->previewheight)) return false;
+
+@chmod($paths['files'] . $destfilename, 0666);
+$info = getimagesize($paths['files']. $filename);
+$result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
+$result['medium'] = 'image';
+$result['mime'] = $info['mime'];
+$result['width'] = $info[0];
+$result['height'] = $info['1];
+return $result;
 }
 
 }//class

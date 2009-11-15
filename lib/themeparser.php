@@ -50,8 +50,13 @@ $menu['tag'] = $t[1];
 private function parsecontent(&$s) {
 $theme = $this->theme;
 $ content = $this->parsetag($s, 'content', '$template->content');
-$theme->excerpt = $this->parsetag($content, 'excerpt', '');
+
+$excerpt = $this->parsetag($content, 'excerpt', '');
+$theme->more['link'] = $this->parsetag($excerpt, 'morelink', '$post->morelink');
+$theme->excerpt = $excerpt;
+
 $post = $this->parsetag($content, 'post', '');
+$theme->more['anchor'] = $this->parsetag($post, 'moreanchor', '');
 $comments = $this->parsetag($post, 'templatecomments', '$post->templatecomments');
 $this->parsecomments($comments);
 $theme->post = $post;
