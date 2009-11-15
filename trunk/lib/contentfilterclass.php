@@ -37,16 +37,16 @@ $this->data['phpcode'] = true;
     ) {
       $parts = explode($matches[0], $s, 2);
       $post->excerpt = $this->filter($parts[0]);
-      $post->filtered = $post->excerpt . $this->ExtractPages($post,$parts[1]);
+      $post->filtered = $post->excerpt . '<!--more-->' . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $post->excerpt;
       $post->moretitle =  self::NormalizeMoreTitle($matches[1]);
-      if ($post->moretitle == '')  $post->moretitle = TLocal::$data['default']['more'];
+      if ($post->moretitle == '')  $post->moretitle = tlocal::$data['default']['more'];
     } else {
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
         $post->excerpt = self::GetExcerpt($s, $this->automorelength);
         $post->rss =  $post->excerpt;
-        $post->moretitle = TLocal::$data['default']['more'];
+        $post->moretitle = tlocal::$data['default']['more'];
       } else {
         $post->excerpt = $this->ExtractPages($post, $s);
         $post->filtered = $post->excerpt;

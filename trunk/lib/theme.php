@@ -7,6 +7,7 @@ public $navi;
 public $widgets;
 public $comments;
 public $admin;
+public $more;
 
 public static function instance() {
 return getinstance(__class__);
@@ -31,7 +32,7 @@ $this->addmap('content', array());
 $this->addmap('widgets', array());$this->addmap('widgets', array());
 $this->addmap('comments', array());
 $this->addmap('admin', array());
-
+$this->addmap('more', array());
 }
 
 public function load() {

@@ -14,6 +14,14 @@ $this->itemsposts = new titemsposts();
 $this->table = 'files';
     $this->addevents('Changed', 'Edited');
   }
+
+public function load() {
+if(!dbversion) parent::load();
+}
+
+public function save() {
+if (!dbversion) parent::save();
+}
   
   public function geturl($id) {
 $item = $this->getitem($id);
@@ -31,37 +39,22 @@ $icon = sprintf('<img src="%s" alt="%s" />', $icons->geturl($item['icon']), $ite
     return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
   
-  public function upload($filename, $content, $title, $overwrite = true) {
-    if ($title == '') $title = $filename;
-    $linkgen = tlinkgenerator::instance();
-    $filename = $linkgen->filterfilename($filename);
-    $filename = $this->doupload($filename, $content, $overwrite);
-    return $this->Add($filename, $title);
-  }
-
-public function Add($filename, $title) { 
-global $options;
-$mediaparser = tmediaparser::instance();
-$info = $mediaparser->add($filename);
-
-$item = $info + array(
-'parent' => 0,
+public function additem(array $item) {
+global $options, $paths;
+$realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
+$item = $item + array(
 'author' => $options->user,
 'posted' => time(),
-'filename' => $filename,
-'title' => $title,
-'description' => $description,
 'keywords' => ''
-'md5' => md5_file($paths['files'] . $filename),
-'size' => filesize($paths['files'] . $filename),
+'md5' => md5_file($realfile),
+'size' => filesize($realfile),
                'lang' => ''
 );
-return $this->additem($item);
-}
 
-private function additem(array $item) {
 if (dbversion) {
-return $this->db->add($item);
+$id = $this->db->add($item);
+$this->items[$id] = $item;
+return $id;
  } else {
     $this->items[++$this->autoid] = $item;
     $this->save();
@@ -70,39 +63,16 @@ return $this->db->add($item);
     return $this->autoid;
 }
   }
-  
-   public function getunique($filename) {
-    global $paths;
-    if (!@file_exists($paths['files']. $filename)) return $filename;
-    $parts = pathinfo($filename);
-    $ext = empty($parts['extension']) ? '' : ".$parts[extension]";
-    for ($i = 2; $i < 10000; $i++) {
-      $filename = "$parts[filename]$i$ext";
-      if  (!@file_exists($paths['files']. $filename)) break;
-    }
-    return $filename;
-  }
-  
-  private function doupload($filename, &$content, $overwrite) {
-    global $paths;
-    if (!$overwrite) $filename = $this->getunique($filename);
-    
-    if (@file_put_contents($paths['files']. $filename, $content)) {
-      $stat = @ stat($paths['files']);
-      $perms = $stat['mode'] & 0007777;
-      $perms = $perms & 0000666;
-      @ chmod($paths['files']. $filename, $perms);
-      return $filename;
-    } else {
-      return false;
-    }
-  }
-  
+
   public function delete($id) {
     global $paths;
     if (!$this->itemexists($id)) return false;
-    @unlink($paths['files']. $this->items[$id]['filename']);
+$item = $this->getitem($id);
+    @unlink($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
+$this->lock();
 parent::delete($id);
+if ($item['preview'] > 0) $this->delete($item['preview']);
+$this->unlock();
     $this->changed();
     return true;
   }
