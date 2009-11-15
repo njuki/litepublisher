@@ -47,6 +47,10 @@ $template->head
   <div id="content">
 <!--content-->
 
+<!--simplecontent-->
+<div class="simplecontent'>%s</div>
+<!--/simplecontent-->
+
 <!--excerpt-->
 <div class="post" id="post-$post->id">
 	  <div class="entry">
@@ -55,8 +59,8 @@ $template->head
 	  </div>
 		<div class="post-content">
 $post->excerpt
-$post->morelink
-		</div>
+<!--morelink--><a href="$options->url$post->url#more-$post->id" class="more-link">$post->moretitle</a><!--/morelink-->
+	</div>
 		<div class="post-info">
 			<span class="post-cat">$lang->categories: $post->categorieslinks ; </span>
 			<span class="post-cat">$lang->tags: $post->tagslinks ; </span>
@@ -72,6 +76,7 @@ $post->morelink
 			<span class="post-cat">$lang->tags: $post->tagslinks ; </span>
 <span class="post-calendar">$post->localdate</span>
 		<div class="post-content">
+<!--moreanchor--><span id="more-$post->id"></span><!--/moreanchor-->
 $post->content
 $template->postscript
 		</div>
@@ -111,7 +116,7 @@ $comment->content
 <!--/closed-->
 
 <!--form-->
-<h3 id="respond">$lang->reply</h3>
+<h3 id="respond">$lang->leavereply</h3>
 <form action="$options->url/send-comment.php" method="post" id="commentform">
 <p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
 <label for="name"><strong>$lang->name</strong></label></p>
