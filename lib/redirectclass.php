@@ -1,19 +1,19 @@
 <?php
 
-class TRedirector extends TItems {
-  public static function &Instance() {
-    return GetInstance(__class__);
+class TRedirector extends titems {
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'redirector';
   }
   
-  public function Add($from, $to) {
+  public function add($from, $to) {
     $this->items[$from] = $to;
-    $this->Save();
-    $this->Added($from);
+    $this->save();
+    $this->added($from);
   }
   
 }

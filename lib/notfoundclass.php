@@ -1,15 +1,15 @@
 <?php
 
-class TNotFound404 extends TEventClass {
+class tnotfound404 extends TEventClass {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'notfound';
-    $this->Data['text'] = '';
+    $this->data['text'] = '';
   }
   
   public function  ServerHeader() {
@@ -23,9 +23,11 @@ class TNotFound404 extends TEventClass {
   
   function GetTemplateContent() {
     $this->CacheEnabled = false;
-    if ($this->text != '') return $this->text;
-    return 		'<h2 class="center">'. TLocal::$data['default']['notfound'] . '</h2>';
+$result = $this->text != '') ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
+$theme = ttheme::instance();
+return sprintf($theme->simplecontent, $result);
   }
+
 }
 
 ?>

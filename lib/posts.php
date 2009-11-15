@@ -1,6 +1,6 @@
 <?php
 
-class tposts extends TItems {
+class tposts extends titems {
   public $archives;
 public $rawtable;
 
