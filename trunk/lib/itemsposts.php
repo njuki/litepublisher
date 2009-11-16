@@ -133,6 +133,25 @@ $items = $posts->stripdrafts($items);
 return count($items);
 }
 
+public function updateposts(array $list, $propname) {
+if (dbversion) {
+$db = $this->db;
+foreach ($list as $idpost) {
+$items = $this->getitems($idpost);
+$db->table = 'posts';
+$db->setvalue($idpost, $Propname, implode(', ', $items));
+}
+} else {
+foreach ($list as $idpost) {
+$items = $this->items[$idpost];
+$post = tpost::instance($idpost);
+      if ($items != $post->$propname) {
+        $post->$propname = $items;
+          $post->Save();
+      }
+}
+}
+
 }//class
 
 class titemspostsowner extends titemsposts {

@@ -67,6 +67,9 @@ return $id;
   public function delete($id) {
     global $paths;
     if (!$this->itemexists($id)) return false;
+$list = $this->itemsposts->getposts($id);
+$this->itemsposts->deleteitem($id);
+$this->itemsposts->updateposts($list, 'files');
 $item = $this->getitem($id);
     @unlink($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
 $this->lock();
