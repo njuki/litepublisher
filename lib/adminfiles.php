@@ -1,107 +1,100 @@
 <?php
 
-class TAdminFiles extends TAdminPage {
-  public static function &Instance() {
-    return GetInstance(__class__);
+class tadminfiles extends tadminmenuitem {
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'files';
-  }
-  
-  public function Getcontent() {
-    global $Options, $paths;
-    $files = &TFiles::Instance();
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = TLocal::Instance();
-    $lang->section = $this->basename;
-    
+ public function getcontent() {
+    global $options, $urlmap;
     $result = '';
-    
-    switch ($this->arg) {
-      case null:
+    $files = tfiles::instance();
+$html = $this->html;
+    if (!isset($_GET['action'])) {
       $result .= $html->uploadform();
-      break;
-      
-      case 'delete':
+} else {
       $id = $this->idget();
-      if ($files->ItemExists($id)) {
-        $result .= $html->confirmform($id, sprintf($lang->confirm, $files->items[$id]['filename']));
-      } else {
-        if (!$this->confirmed) $result .=  $html->notfound;
-        $result .=  $html->uploadform();
-      }
+      if (!$files->itemexists($id)) return $this->notfound;
+switch ($_GET['action']) {
+            case 'delete':
+if ($this->confirmed) {
+$files->delete($id);
+$result .= $html->h2->deleted;
+} else {
+$item = $files->getitem($id);
+$args = targs::instance();
+$args->id = $id;
+$args->adminurl = $this->adminurl;
+$args->action = 'delete';
+$args->confirm = sprintf($this->lang->confirm, $item['filename']);
+return $html->confirmform($args);
+}
       break;
       
       case 'edit':
-      $id = $this->idget();
-      if ($files->ItemExists($id)) {
-        $result .= $html->editform($files->items[$id]['title']);
-      } else {
-        $result .= $html->notfound();
+$args = targs::instance();
+$args->add($files->getitem($id));
+        $result .= $html->editform($args);
         break;
       }
-      
     }
-    eval('$s = "'. $html->countfiles. '\n";');
-    $result .= sprintf($s, count($files->items));
-    eval('$result .= "'. $html->tableheader. '\n";');
-    $tableitem = $html->tableitem ;
-    foreach ($files->items as $id =>$item) {
-      eval('$result .= "' . $tableitem . '\n";');
+
+$perpage = 20;
+if (dbversion) {
+$sql = $options->user == 0 ? '' : "author = $options->user";
+$count = $this->db->getcount($sql);
+} elseif ($options->user == 0)  {
+$count = $files->count;
+} else {
+$list= array();
+ foreach ($files->items as $id => $item) {
+if ($options->user == $item['author']) $list[] = $id;
+}
+$count = count($list);
+}
+
+    $from = max(0, $count - $urlmap->page * $perpage);
+
+if (dbversion) {
+$items = $files->db->getitems($sql);
+} else {
+$list = array_slice($list, $from, $perpage);
+//$items = array_reverse (array_keys($items));
+$items = $files->getitems($list);
+}
+
+    $result .= sprintf($html->h2->countfiles, 
+$result .= $html->tableheader();
+$args = targs();
+$args->adminurl = $this->adminurl;
+    foreach ($items as $item) {
+$args->add($item);
+$result .= $html->tableitem ($args);
     }
-    eval('$result .= "'. $html->tablefooter . '\n";');;
-    $result = str_replace("'", '"', $result);
-    return $result;
+$result .= $html->tablefooter;
+return str_replace("'", '"', $result);
   }
   
-  public function ProcessForm() {
-    global $Options, $paths;
-    $files = &TFiles::Instance();
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    
-    switch ($this->arg) {
-      case null:
-      if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
-        eval('$s = "'. $html->attack. '\n";');
-        return sprintf($s, $_FILES["filename"]["name"]);
-      }
-      
+  public function processform() {
+    global $options, $paths;
+    $files = tfiles::instance();
+if (empty($_GET['action'])) {
+      if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
+     
       $overwrite  = isset($_POST['overwrite']);
-      
-      $files->AddFile($_FILES["filename"]["name"], file_get_contents($_FILES["filename"]["tmp_name"]),
+      $parser = tmediaparser::instance();
+$parser->upload($_FILES["filename"]["name"], file_get_contents($_FILES["filename"]["tmp_name"]),
       $_POST['title'], $overwrite);
-      eval('$result = "'. $html->success . '\n";');
-      return $result;
-      
-      case 'delete':
+return $this->html->h2->success;
+} elseif ($_GET['action'] == 'edit')) {      
       $id = $this->idget();
-      if (!$files->ItemExists($id)) return $this->notfound();
-      if ($this->confirmed) {
-        $files->Delete($id);
-        eval('$result = "'. $html->deleted . '\n";');
-        return $result;
-      }
-      
-      case 'edit':
-      $id = $this->idget();
-      if (!$files->ItemExists($id)) {
-        eval('$result = "'. $html->notfound . '\n";');
-        return $result;
-      }
-      $files->items[$id]['title'] = $_POST['title'];
-      $files->Save();
-      eval('$result = "'. $html->edited . '\n";');
-      return $result;
-    }
+      if (!$files->itemexists($id))  return $this->notfound;
+      $files->edit($id, $_POST['title']);
+return $this->html->h2->edited;
+   }
     
     return '';
-    
-  }
+      }
   
 }//class
 ?>

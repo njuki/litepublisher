@@ -18,6 +18,7 @@ $self->add($moder, 'authors', 'moderator', 'tadminmoderator');
 }
 
 $plugins = $self->add(0, 'plugins', 'admin', 'tadminplugins'); 
+$files = $self->add(0, 'files', 'author', 'tadminfiles'); 
 
 $widgets = $self->add(0, 'widgets', 'admin', 'tadminwidgets'); 
 {
