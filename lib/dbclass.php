@@ -177,6 +177,13 @@ return false;
     return false;
   }
 
+public function getitems(array $list) {
+if ($res = $this->select(sprintf('id in (%s)', implode(',', $list)))) {
+return $res->fetchAll(PDO::FETCH_ASSOC);
+}
+return false;
+}
+
 public function idprops($id, $instance) {
     if ($res = $this->select("id = $id limit 1")) {
       $res->fetch(PDO::FETCH_INTO , $instance);

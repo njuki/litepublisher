@@ -208,6 +208,19 @@ public function geticonlink() {
 if ($this->icon == 0) return '';
 return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
 }
+
+
+public function getscreenshots() {
+if (count($this->files) === 0) return '';
+$files = tfiles::instance();
+return $files->getscreenshots($this->files);
+}
+
+public function getfilelist() {
+if (count($this->files) === 0) return '';
+$files = tfiles::instance();
+return $files->getlist('$this->files, false);
+}
   
   public function GetTemplateContent() {
     $GLOBALS['post'] = $this;

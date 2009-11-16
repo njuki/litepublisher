@@ -5,6 +5,7 @@ class ttheme extends TEventClass {
 public $menu;
 public $navi;
 public $widgets;
+public $files;
 public $comments;
 public $admin;
 public $more;
@@ -33,6 +34,7 @@ $this->addmap('widgets', array());$this->addmap('widgets', array());
 $this->addmap('comments', array());
 $this->addmap('admin', array());
 $this->addmap('more', array());
+$this->addmap('files', array());
 }
 
 public function load() {

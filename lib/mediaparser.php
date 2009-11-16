@@ -19,7 +19,18 @@ class tmediaparser extends TEventClass {
     return $this->Add($filename, $title);
   }
 
-   public function getunique($filename) {
+  private function doupload($filename, &$content, $overwrite) {
+    global $paths;
+if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
+    if (!$overwrite) $filename = $this->getunique($filename);
+        if (@file_put_contents($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), $content)) {
+      @ chmod($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
+      return $filename;
+    } else {
+      return false;
+  }
+
+   private function getunique($filename) {
 global $paths;
 $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $parts = pathinfo($filename);
@@ -40,18 +51,22 @@ $base = $parts['dirname'] . DIRECTORY_SEPARATOR . $base;
     return $filename;
   }
   
-  private function doupload($filename, &$content, $overwrite) {
-    global $paths;
-    if (!$overwrite) $filename = $this->getunique($filename);
-        if (@file_put_contents($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), $content)) {
-      @ chmod($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
-      return $filename;
-    } else {
-      return false;
-  }
+private function movetofolder($filename, $medium) {
+global $paths;
+if (strbegin($filename, "$medium/") || strpos($filename, '/')) return $filename;
+$dir = $paths['files'] . $medium;
+if (!is_dir($dir)) {
+mkdir($dir, 0777);
+chmod($dir, 0777);
+}
+
+if (rename($paths['files'] . $filename, $dir . DIRECTORY_SEPARATOR . $filename)) $filename = "$medium/$filename";
+return $filename;
+}
   
 public function Add($filename, $title) { 
 $info = $this->getinfo($filename);
+$info['filename'] = $this->movetofolder($info['filename'], $info['medium']);
 $item = $info + array(
 'parent' => 0,
 'preview' => 0,
@@ -110,17 +125,19 @@ $result['height'] = $info['1];
 return $result;
 }
 
-if (preg_match('/\.(mp3|wav)$/', $filename) && ($info = $this->getaudioinfo($filename))) {
+if (preg_match('/\.(mp3|wav)$/', $filename)) {
 $result['medium'] = 'audio';
 $result['mime'] = preg_match('/\.mp3$/', $filename) ? 'audio/mpeg' : 'audio/x-wave';
-
+if ($info = $this->getaudioinfo($filename)) {
 $result['bitrate']  = $info['bitrate'];
 $result['samplingrate'] = $info['samplingrate'];
 $result['channels'] = $info['channels'];
 $result['duration'] = $info['duration'];
+}
 return $result;
 }
 
+return false;
 }
 
 public function createpreview(array $info) }
@@ -259,6 +276,7 @@ return $result;
 
 private function getaudioinfo($filename) {
 global $paths;
+if (!class_exists('getID3')) return false;
 $realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $filename);
 
 		// Initialize getID3 engine

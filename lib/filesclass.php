@@ -76,6 +76,70 @@ $this->unlock();
     $this->changed();
     return true;
   }
+
+private function getitems(array $list) {
+if (dbversion) {
+return $this->db->getitems($list);
+} else {
+$result = array();
+foreach ($list as $id) {
+$item = $this->items[$id];
+$item['id'] = $id;
+$result[] = $item;
+}
+return $result;
+}
+}
+
+private function getscreenshotitems(array $list) {
+if (dbversion) {
+$res = $this->db->select(sprintf('parent in (%s)', implode(',', $list)))) {
+return $res->fetchAll(PDO::FETCH_ASSOC);
+} else {
+$result = array();
+foreach ($list as $id) {
+$item = $this->items[$id];
+if($item['preview'] == 0) continue;
+$id = $item['preview'];
+$item = $this->items[$id];
+$item['id'] = $id;
+$result[] = $item;
+}
+return $result;
+}
+}
+
+public function getscreenshots(array $list) {
+$items = $this->getscreenshotitems($list);
+if (count($items) == 0) return '';
+$result = '';
+$theme = ttheme::instance();
+$args = targs::instance();
+foreach ($items as $item) {
+$args->add($item);
+
+$theme->files['file']
+$result .= $theme->parsearg($tml, $args);
+}
+return sprintf($theme->files['filelist'], $result);
+
+}
+
+public function getlist(array $list, $screenshots) {
+$items = $this->getitems($list);
+if (count($items) == 0) return '';
+$result = '';
+$theme = ttheme::instance();
+$args = targs::instance();
+foreach ($items as $item) {
+$args->add($item);
+
+$theme->files['file']
+$result .= $theme->parsearg($tml, $args);
+}
+return sprintf($theme->files['filelist'], $result);
+
+}
   
 }//class
 
