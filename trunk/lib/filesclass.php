@@ -77,9 +77,9 @@ $this->unlock();
     return true;
   }
 
-private function getitems(array $list) {
+public function getitems(array $list) {
 if (dbversion) {
-return $this->db->getitems($list);
+return $this->db->getlist($list);
 } else {
 $result = array();
 foreach ($list as $id) {
@@ -114,15 +114,13 @@ $items = $this->getscreenshotitems($list);
 if (count($items) == 0) return '';
 $result = '';
 $theme = ttheme::instance();
+$tml = $theme->files['screenshot'];
 $args = targs::instance();
 foreach ($items as $item) {
 $args->add($item);
-
-$theme->files['file']
 $result .= $theme->parsearg($tml, $args);
 }
-return sprintf($theme->files['filelist'], $result);
-
+return sprintf($theme->files['screenshots'], $result);
 }
 
 public function getlist(array $list, $screenshots) {
@@ -133,12 +131,10 @@ $theme = ttheme::instance();
 $args = targs::instance();
 foreach ($items as $item) {
 $args->add($item);
-
-$theme->files['file']
+$tml = ¨!empty($theme->files[$item['medium']]) ? $theme->files[$item['medium']] : $theme->files['file'];
 $result .= $theme->parsearg($tml, $args);
 }
 return sprintf($theme->files['filelist'], $result);
-
 }
   
 }//class

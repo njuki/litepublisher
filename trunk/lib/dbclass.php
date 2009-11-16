@@ -177,8 +177,16 @@ return false;
     return false;
   }
 
-public function getitems(array $list) {
+public function getlist(array $list) {
 if ($res = $this->select(sprintf('id in (%s)', implode(',', $list)))) {
+return $res->fetchAll(PDO::FETCH_ASSOC);
+}
+return false;
+
+}
+
+public function getitems($where) {
+if ($res = $this->select($where)) {
 return $res->fetchAll(PDO::FETCH_ASSOC);
 }
 return false;
