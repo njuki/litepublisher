@@ -1,6 +1,6 @@
 <?php
 
-class TCommentsWidget extends TEventClass {
+class tcommentswidget extends TEventClass {
 
 public static function instance() {
 return getinstance(__class__);
