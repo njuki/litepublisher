@@ -1,6 +1,6 @@
 <?php
 
-class tcomments extends AbstractCommentManager implements IComments {
+class tcomments extends AbstractCommentManager implements icomments {
 public $rawtable;
 private $pid;
 
