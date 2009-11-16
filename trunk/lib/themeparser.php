@@ -53,10 +53,18 @@ $ content = $this->parsetag($s, 'content', '$template->content');
 
 $excerpt = $this->parsetag($content, 'excerpt', '');
 $theme->more['link'] = $this->parsetag($excerpt, 'morelink', '$post->morelink');
+$screenshots = $this->parsetag($excerpt= , 'screenshots', '$post->screenshots);
+$theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
+$theme->files['screenshots'] = $screenshots;
 $theme->excerpt = $excerpt;
 
 $post = $this->parsetag($content, 'post', '');
 $theme->more['anchor'] = $this->parsetag($post, 'moreanchor', '');
+$files = $this->parsetag($post, 'files', '$post->filelist');
+$theme->files['file'] = $this->parsetag$files, 'file', '%s');
+$theme->files['image'] = $this->parsetag($files, 'image', '');
+$theme->files['video'] = $this->parsetag($files, 'video', '');
+$theme->files['files'] = $files;
 $comments = $this->parsetag($post, 'templatecomments', '$post->templatecomments');
 $this->parsecomments($comments);
 $theme->post = $post;
