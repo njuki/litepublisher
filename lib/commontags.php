@@ -182,37 +182,15 @@ $item = $this->getitem($id);
       $urlmap->deleteitem($item['idurl']);
 
 $this->lock();
-$list = $this->itemsposts->getposts($id);
 $this->contents->delete($id);
+$list = $this->itemsposts->getposts($id);
 $this->itemsposts->deleteitem($id);
 parent::delete($id);
 $this->unlock();
-$this->updateposts($list);
+$this->itemsposts->updateposts($list, $this->PostPropname);
      $urlmap->clearcache();
     }
 
-private function updateposts(array $items) {
-if (dbversion) {
-$db = $this->db;
-foreach ($items as $idpost) {
-$tags = $this->itemsposts->getitems($idpost);
-$db->table = 'posts';
-$db->setvalue($idpost, $this->PostPropname, implode(', ', $tags));
-}
-} else {
-foreach ($items as $idpost) {
-$post = $this->getpost($idpost);
-      $postcats = $post->{$this->PostPropname};
-        $i = array_search($id, $postcats);
-        if (is_int($i)) {
-          array_splice($postcats, $i, 1);
-        $post->{$this->PostPropname} = $postcats;
-          $post->Save();
-        }
-      }
-}
-}
-  
   public function createnames($list) {
     if (is_string($list)) $list = explode(',', trim($list));
     $result = array();
