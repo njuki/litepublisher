@@ -135,20 +135,13 @@ public function getdescription() {}
       if (!isset($this->items[$this->date]['posts'])) return '';
       $items = &$this->items[$this->date]['posts'];
     }
-    $templposts = ttemplatePosts::instance();
+
 $theme = ttheme::instance();
-    if ($this->lite) {
-      $postsperpage = 1000;
-      $list = array_slice($items, ($urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
-      $result = $templposts->getliteitems($list);
-      $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->pagenumber, ceil(count($items)/ $postsperpage));
+      $postsperpage = $this->lite ? 1000 : $options->postsperpage;
+      $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
+      $result = $theme->getposts($list, $this->lite);
+      $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
       return $result;
-    } else {
-      $list = array_slice($items, ($urlmap->pagenumber - 1) * $options->postsperpage, $options->postsperpage);
-      $result = $templposts->getitems($list);
-      $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->page, ceil(count($items)/ $options->postsperpage));
-      return $result;
-    }
   }
   
 }

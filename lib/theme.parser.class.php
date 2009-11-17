@@ -51,12 +51,19 @@ private function parsecontent(&$s) {
 $theme = $this->theme;
 $ content = $this->parsetag($s, 'content', '$template->content');
 
-$excerpt = $this->parsetag($content, 'excerpt', '');
+
+$excerpts = $this->parsetag($content, 'excerpts', '');
+$excerpt = $this->parsetag($excerpts, 'excerpt', '%s');
 $theme->more['link'] = $this->parsetag($excerpt, 'morelink', '$post->morelink');
 $screenshots = $this->parsetag($excerpt= , 'screenshots', '$post->screenshots);
 $theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
 $theme->files['screenshots'] = $screenshots;
-$theme->excerpt = $excerpt;
+$theme->excerpts['excerpt'] = $excerpt;
+$theme->excerpts['normal'] = $excerpts;
+
+$lite = $this->parsetag($content, 'lite', '');
+$theme->excerpts['liteexcerpt'] = this->parsetag($lite, 'excerpt', '%s');
+$theme->excerpts['lite'] = $lite;
 
 $post = $this->parsetag($content, 'post', '');
 $theme->more['anchor'] = $this->parsetag($post, 'moreanchor', '');

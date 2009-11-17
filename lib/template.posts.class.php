@@ -52,32 +52,7 @@ $result .= $theme->getpages($post->url, $urlmap->page, $post->countpages);
     if ($result != '') $result = "<p>$result</p>\n";
     return $result;
   }
-  
-  public function getitems(array &$Items) {
-$theme = ttheme::instance();
-        if (count($Items) == 0) return $theme->notfound;
-    $Result = '';
-    foreach($Items as $id) {
-      $GLOBALS['post'] = &TPost::instance($id);
-      $Result .=  $theme->parse($theme->excerpt);
-    }
-        return $Result;
-  }
-  
-  public function getliteitems(array &$Items) {
-    global $options;
-$theme = ttheme::instance();
-    if (count($Items) == 0) return $theme->notfound;
 
-    $result = '<p>'. TLocal::$data['default']['archivelist'] ." </p>\n<ul>\n";
-    foreach($Items as $id) {
-      $post = tpost::instance($id);
-      $result .= "<li>$post->localdate <a href=\"$options->url$post->url\">$post->title</a></li>\n";
-    }
-    $result .= "</ul>\n";
-    return $result;
-  }
-  
 }//class
 
 ?>

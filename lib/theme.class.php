@@ -2,6 +2,7 @@
 
 class ttheme extends TEventClass {
 //public $tml;
+public $excerpts;
 public $menu;
 public $navi;
 public $widgets;
@@ -21,13 +22,13 @@ $this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->
 $this->data['tml'] = 'index';
 $this->data['main'] = '';
 $this->data['sitebarscount'] = 1;
-$this->data['excerpt'] = '';
 $this->data['post'] = '';
 $this->data['commentform'] = '';
 $this->data['menucontent'] = '';
 $this->data['simplecontent'] = '%s';
 $this->data['nocontent'] = '';
 
+$this->addmap('excerpts', array());
 $this->addmap('navi', array());
 $this->addmap('menu', array());
 $this->addmap('content', array());
@@ -97,6 +98,25 @@ return $this->parse($this->nocontent);
     $result = sprintf($this->navi['navi'], $result);
     return $result;
   }
+
+public function getposts(array &$items, $lite) {
+global $post;
+if (count($items) == 0) return '';
+if (dbversion) {
+$posts = tposts::instance();
+$posts->loaditems($items);
+}
+
+$result = '';
+$tml = $this->excerpts[$lite ? 'liteexcerpt' : 'excerpt'];
+    foreach($Items as $id) {
+$post = tpost::instance($id);
+$result .= $this->parse($tml);
+}
+
+$list  = $this->parse($this->excerpts[$lite ? 'lite' : 'excerpts']);
+return sprintf($list, $result);
+}
   
 public function getwidget($title, $content, $template, $sitebar) {
 $tml = $this->getwidgettemplate($template, $sitebar);
