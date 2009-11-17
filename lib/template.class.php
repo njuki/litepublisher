@@ -1,6 +1,6 @@
 <?php
 
-class TTemplate extends TEventClass {
+class ttemplate extends tevent {
 public $tml;
   public $path;
   public $url;
@@ -18,7 +18,7 @@ public $javascripts;
     $this->basename = 'template' ;
 $this->tml = 'index';
     $this->itemplate = false;
-    $this->addevents('BeforeContent', 'AfterContent', 'Onhead', 'OnAdminHead', 'Onbody', 'ThemeChanged');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged');
     $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
@@ -223,25 +223,27 @@ $result .=$script;
 $result .= "\n";
 }
 
-    $result .= $this->Onhead();
-    if ($this->isadmin) $result .= $this->OnAdminHead();
+$this->onhead(&$result);
+    if ($this->isadmin) $this->onadminhead(&$result);
     return $result;
   }
   
   public function getbody() {
-    return $this->Onbody();
+$result = '';
+$this->onbody(&$result);
+return $result;
   }
   
   public function getcontent() {
-    $result = $this->BeforeContent();
-    if (empty($result)) $result = '';
+    $result = '';
+$this->beforecontent(&$result);
     if ($this->itemplate || method_exists($this->context, 'GetTemplateContent')) {
       $result .= $this->context->GetTemplateContent();
     } elseif ($this->contextHasProp('content')) {
       $result .= $this->context->content;
     }
     
-    $result .= $this->AfterContent();
+$this->aftercontent(&$result);
     return $result;
   }
   

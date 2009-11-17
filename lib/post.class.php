@@ -242,8 +242,9 @@ return $tc->getcomments($this->id);
   
   public function getcontent() {
 global $post;
-    $template = ttemplatePost::instance();
-    $result = $template->BeforePostContent($this->id);
+    $result = '';
+    $templ = templateposts::instance();
+$templ->before($this->id, &$result);
     $urlmap = turlmap::instance();
     if ($urlmap->page == 1) {
       $result .= $this->filtered;
@@ -264,7 +265,7 @@ $result = $more . $result;
       $lang = tlocal::instance();
       $result .= $lang->notfound;
     }
-    $result .= $template->AfterPostContent($this->id);
+$templ->after($this->id, &$result);
     return $result;
   }
   

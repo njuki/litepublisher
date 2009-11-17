@@ -307,12 +307,11 @@ if ($result == '') $result = $this->title;
     global $classes, $options, $urlmap;
 $result = '';
     if ($this->id == 0) {
-      $result .= "<ul>\n";
 $result .= $this->GetSortedList($this->options->sortname, 0);
-      $result .= "</ul>\n";
-      return $result;
+return sprintf("<ul>\n%s</ul>\n", $result);
     }
         $result .= $this->contents->getcontent($this->id);
+
 if (dbversion) {
 $res = $this->db->query("select post from $this->itemstable where tag = $this->id");
 $items = $db->res2array($res);
@@ -320,23 +319,16 @@ $items = $db->res2array($res);
     $items= $this->items[$this->id]['items'];
 }
     $Posts = $classes->posts;
-    $items = $Posts->SortAsArchive($items);
-    $templposts = ttemplatePost ::instance();
-    if ($this->options->lite) {
-      $postsperpage = 1000;
+    $items = $Posts->sortbyposted($items);
+
+$lite = $this->options->lite;
+      $postsperpage = $lite ? 1000 : $options->postsperpage;
       $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
-      $result .= $templposts->getliteitems($list);
 $theme = ttheme::instance();
-      $result .=$theme->getpages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
+      $result .= $theme->getposts($list, $lite);
+$item = $this->getitem($this->id);
+      $result .=$theme->getpages($item['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
       return $result;
-    } else{
-      $list = array_slice($items, ($urlmap->page - 1) * $options->postsperpage, $options->postsperpage);
-      $templposts = TTemplatePost::instance();
-      $result .= $templposts->getitems($list);
-$theme = ttheme::instance();
-      $result .=$theme->getpages($this->items[$this->id]['url'], $urlmap->page, ceil(count($items)/ $options->postsperpage));
-      return $result;
-    }
   }
   
   public function SetParams($lite, $sortname, $showcount, $maxcount) {
