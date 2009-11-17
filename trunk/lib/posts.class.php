@@ -267,19 +267,13 @@ return $this->db->idselect("status = 'published' and id in ($list)");
 }
   }
   
-  public function SortAsArchive(array $items) {
+  public function sortbyposted(array $items) {
 if (dbversion) {
 $list = implode(', ', $items);
 return $this->db->idselect("status = 'published' and id in ($list) order by created desc");
 }
 
-    $result = array();
-    foreach ($items as  $id) {
-      if (isset($this->archives[$id])) {
-        $result[$id] = $this->archives[$id];
-      }
-    }
-    
+    $result = array_intersect_key ($this->archives, $items);
     arsort($result,  SORT_NUMERIC);
     return array_keys($result);
   }

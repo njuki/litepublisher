@@ -1,6 +1,6 @@
 <?php
 
-class TSitemap extends TItems {
+class tsitemap extends titems {
   private $lastmod;
   private $count;
   private $fd;
@@ -31,10 +31,10 @@ class TSitemap extends TItems {
     $posts = &TPosts::Instance();
 $theme = ttheme::instance();
     $postsperpage = 1000;
-    $list = array_slice(array_keys($posts->archives), ($Urlmap->pagenumber - 1) * $postsperpage, $postsperpage);
+    $list = array_slice(array_keys($posts->archives), ($Urlmap->page - 1) * $postsperpage, $postsperpage);
     $result = $TemplatePost->LitePrintPosts($list);
     
-    if ($Urlmap->pagenumber  == 1) {
+    if ($Urlmap->page  == 1) {
       $result .= '<ul>' . TLocal::$data['default']['tags'];
       $tags = &TTags::Instance();
       foreach ($tags->items as $id => $item) {

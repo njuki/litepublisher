@@ -96,8 +96,7 @@ class tevents extends TDataClass {
           $obj = getinstance($item['class']);
           $call = array(&$obj, $item['func']);
         }
-        $lresult = call_user_func_array($call, $params);
-        if (is_string($lresult)) $result .= $lresult;
+$result = call_user_func_array($call, $params);
       }
     }
     

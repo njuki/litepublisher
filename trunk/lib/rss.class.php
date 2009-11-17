@@ -1,5 +1,6 @@
 <?php
-class TRSS extends TEventClass {
+
+class trss extends tevent {
   public $domrss;
   
   public static function &Instance() {
@@ -56,7 +57,7 @@ class TRSS extends TEventClass {
       break;
       
       case null:
-      $Urlmap->pagenumber = 0;
+      $Urlmap->page = 0;
       $this->GetRecentComments();
       break;
       
@@ -64,7 +65,7 @@ class TRSS extends TEventClass {
       $postid = (int) $args;
       $posts = &TPosts::Instance();
       if (!isset($posts->archives[$postid])) return 404;
-      $Urlmap->pagenumber = $postid;
+      $Urlmap->page = $postid;
       $this->GetRSSPostComments($postid);
     }
     

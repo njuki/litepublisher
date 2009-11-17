@@ -26,7 +26,7 @@ public function getdescription() {}
   public function GetTemplateContent() {
     global $options, $urlmap;
     $result = '';
-    if ($urlmap->pagenumber == 1) $result .= $this->text;
+    if ($urlmap->page == 1) $result .= $this->text;
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
 $theme = ttheme::instance();
@@ -39,7 +39,7 @@ $theme = ttheme::instance();
   public function getitems() {
     global $options, $urlmap;
     $Posts = tposts::instance();
-    return $Posts->GetPublishedRange($urlmap->pagenumber, $options->postsperpage);
+    return $Posts->GetPublishedRange($urlmap->page, $options->postsperpage);
   }
   
   public function settext($s) {

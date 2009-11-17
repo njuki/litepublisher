@@ -1,6 +1,6 @@
 <?php
 
-function TTemplatePostInstall(&$self) {
+function TTemplatePostInstall($self) {
   global $paths;
   $Template = &TTemplate::Instance();
   $Template->Lock();

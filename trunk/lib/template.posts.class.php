@@ -10,7 +10,7 @@ class ttemplatePosts extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'templateposts';
-    $this->addevents('BeforePostContent', 'AfterPostContent', 'Onpostscript');
+    $this->addevents('efore', 'after', 'onpostscript');
   }
   
   public function GetPostscript($tagname) {
