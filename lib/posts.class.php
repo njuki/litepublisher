@@ -32,6 +32,18 @@ if ($result = tpost::instance($id)) return $result;
     return $this->error("Item $id not found in class ". get_class($this));
   }
 
+public function loaditems(array $items) {
+global $classes, $db;
+if (!dbversion) return;
+//исключить из загрузки загруженные посты
+$class = $classes->classes['post'];
+$list = implode(',', array_diff($items, array_keys(titem::instances[$class])));
+$res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+where $db->posts.id in ($list) and  $db->urlmap.id  = $db->posts.idurl");
+
+while ($res->fetch(PDO::FETCH_INTO , TPostTransform::instance(new $class() )));
+}
+
 public function getcount() {
     if (dbversion) {
       return $this->db->getcount("status<> 'deleted'");
