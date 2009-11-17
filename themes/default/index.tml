@@ -48,8 +48,15 @@ $template->head
 <!--content-->
 
 <!--simplecontent-->
-<div class="simplecontent'>%s</div>
+<div class="simplecontent">%s</div>
 <!--/simplecontent-->
+
+<!--nocontent-->
+<div class="simplecontent">
+<h2 class="center">$lang->notfound </h2>
+<p class="center">$lang->nocontent</p>
+</div>
+<!--/nocontent-->
 
 <!--excerpt-->
 <div class="post" id="post-$post->id">
@@ -60,6 +67,13 @@ $template->head
 		<div class="post-content">
 $post->excerpt
 <!--morelink--><a href="$options->url$post->url#more-$post->id" class="more-link">$post->moretitle</a><!--/morelink-->
+<!--screenshots-->
+<ul>
+<!--screenshot-->
+<li><a href="$options->files$filename"><img src="$options->url$filename" title="$lang->screenshot $filename" /></a></li>
+<!--/screenshot-->
+</ul>
+<!--/screenshots-->
 	</div>
 		<div class="post-info">
 			<span class="post-cat">$lang->categories: $post->categorieslinks ; </span>
@@ -76,6 +90,13 @@ $post->excerpt
 			<span class="post-cat">$lang->tags: $post->tagslinks ; </span>
 <span class="post-calendar">$post->localdate</span>
 		<div class="post-content">
+<!--files-->
+<ul>
+<!--file--><li><a href="$options->files$filename" title="$title">$description</a></li><!--/file-->
+<!--image--><li><a href="$options->files$filename"><img src="$options->files$filename" alt="$title" width="$width" height="$height" /></a></li><!--/image-->
+<!--video--><!--/video-->
+</ul>
+<!--/files-->
 <!--moreanchor--><span id="more-$post->id"></span><!--/moreanchor-->
 $post->content
 $template->postscript
