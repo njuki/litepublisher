@@ -99,7 +99,7 @@ $subscribers = tsubscribers::instance();
         $comments = tcomments::instance($postid);
         $items = $comments->gethold($user['id']);
         if (count($items) > 0) {
-          $tc = TTemplateComment::instance();
+          $tc = ttemplatecomments::instance();
           $result .= $tc->gethold($items, $postid);
         }
       }

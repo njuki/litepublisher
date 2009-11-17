@@ -1,6 +1,6 @@
 <?php
 
-class turlmap extends TItems {
+class turlmap extends titems {
   public $host;
   public $url;
   public $urlid;

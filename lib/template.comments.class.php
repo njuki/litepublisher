@@ -1,6 +1,6 @@
 <?php
 
-class ttemplatecomment extends TEventClass {
+class ttemplatecomments extends tevents {
 
   public static function instance() {
     return getinstance(__class__);

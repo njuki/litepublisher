@@ -3,18 +3,18 @@ require_once(dirname(__file__) . DIRECTORY_SEPARATOR  . 'include'. DIRECTORY_SEP
 
 class TXMLRPCParser extends IXR_Server  {
   public $XMLResult;
-  private $Owner;
+  private $owner;
   
-  public function __construct(&$AOwner) {
-    $this->Owner = &$AOwner;
+  public function __construct($owner) {
+    $this->owner = $owner;
   }
   
   function call($methodname, $args) {
-    return $this->Owner->Call($methodname, $args);
+    return $this->owner->call($methodname, $args);
   }
   
   function output($xml) {
-    global $Options;
+    global $options;
     $head = '<?xml version="1.0"?>' . "\n";
     $length = strlen($xml) + strlen($head);
     $this->XMLResult = "<?php
@@ -22,32 +22,30 @@ class TXMLRPCParser extends IXR_Server  {
     @header('Content-Length: $length');
     @header('Content-Type: text/xml');
     @header('Date: ".date('r') . "');
-    @header('X-Pingback: $Options->url/rpc.xml');
+    @header('X-Pingback: $options->url/rpc.xml');
     echo'$head';
     ?>". $xml;
   }
   
 }//class
 
-class TXMLRPC extends TEventClass {
+class TXMLRPC extends titems {
   public $Server;
-  protected $methods;
-  
-  public static function &Instance() {
-    return GetInstance(__class__);
+
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'xmlrpc';
     $this->CacheEnabled = false;
-    $this->AddEvents('BeforeCall', 'AfterCall', 'GetMethods');
-    $this->AddDataMap('methods', array());
+    $this->addevents('BeforeCall', 'AfterCall', 'GetMethods');
   }
   
-  public function Request($param) {
+  public function request($param) {
     global$HTTP_RAW_POST_DATA;
-    $_COOKIE = array();
+    //$_COOKIE = array();
     if ( !isset( $HTTP_RAW_POST_DATA ) ) {
       $HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
     }
@@ -59,79 +57,64 @@ class TXMLRPC extends TEventClass {
     //$HTTP_RAW_POST_DATA = file_get_contents('raw.txt');
     
     $this->GetMethods();
-    $this->Server =&new TXMLRPCParser ($this);
-    $this->Server->IXR_Server  ($this->methods);
+    $this->Server = new TXMLRPCParser ($this);
+    $this->Server->IXR_Server  ($this->items);
     $Result = $this->Server->XMLResult;
     $this->AfterCall();
     if (defined('debug')) tfiler::log("responnse:\n".$Result, 'xmlrpc.txt');
     return $Result;
   }
   
-  public function Call($methodname, &$args) {
-    $this->BeforeCall($methodname, $args);
-    if (!isset($this->methods[$methodname])) {
-      return new IXR_Error(-32601, 'server error. requested method '.$methodname.' does not exist.');
+  public function call($method, &$args) {
+    $this->BeforeCall($method, $args);
+    if (!isset($this->items[$method])) {
+      return new IXR_Error(-32601, "server error. requested method $method does not exist.");
     }
     
-    if (count($args) == 1) {
-      $args = $args[0];
-    }
+    if (count($args) == 1) $args = $args[0];
+
+    $class = $this->items[$method]['class'];
+    $func = $this->items[$method]['func'];
     
-    $ClassName = $this->methods[$methodname]['class'];
-    $Function= $this->methods[$methodname]['func'];
-    
-    if (empty($ClassName)) {
-      if (function_exists($Function)) {
-        return call_user_func($Function, $args);
+    if (empty($class)) {
+      if (function_exists($func)) {
+        return call_user_func($func, $args);
       } else {
-        $this->Delete($methodname);
-        return new IXR_Error(-32601, "server error. requested function \"$Function\" does not exist.");
+        $this->delete($method);
+        return new IXR_Error(-32601, "server error. requested function \"$Func\" does not exist.");
       }
-      
     } else {
       //create class instance
-      if (!class_exists($ClassName)) {
-        __autoload($ClassName);
-        if (!class_exists($ClassName)) {
-          $this->Delete($methodname);
-          return new IXR_Error(-32601, "server error. requested class \"$ClassName\" does not exist.");
+      if (!class_exists($class)) {
+          $this->delete($method);
+          return new IXR_Error(-32601, "server error. requested class \"$class\" does not exist.");
         }
-      }
-      
-      $Obj = &GetInstance($ClassName);
-      
-      if (!method_exists($Obj, $Function)) {
-        $this->Delete($methodname);
+      $obj = getinstance($class);
+/*
+      if (!method_exists($Obj, $Func)) {
+        $this->delete($method);
         return new IXR_Error(-32601, "server error. requested object method \"$Function\" does not exist.");
       }
-      
-      return $Obj->$Function($args);
+      */
+      return $obj->$func($args);
     }
-    
-  }
+      }
   
-  public function  Add($method, $Function, $ClassName) {
-    $this->methods[$method] = array(
+  public function  add($method, $Function, $ClassName) {
+    $this->items[$method] = array(
     'class' => $ClassName,
     'func' => $Function
     );
-    $this->Save();
+    $this->save();
   }
   
-  public function Delete($method) {
-    if (isset($this->methods[$method])) {
-      unset($this->methods[$method]);
-      $this->Save();
-    }
-  }
-  
-  public function RemoveClass($ClassName) {
-    foreach ($this->methods as $method => $Item) {
-      if ($ClassName == $Item['class']) {
-        unset($this->methods[$method]);
+  public function deleteclass($class) {
+    foreach ($this->items as $method => $Item) {
+      if ($class == $Item['class']) {
+        unset($this->items[$method]);
       }
     }
-    $this->Save();
+    $this->save();
   }
   
   public function sayHello($args) {
@@ -144,6 +127,6 @@ class TXMLRPC extends TEventClass {
     return $number1 + $number2;
   }
   
-}
+}//class
 
 ?>

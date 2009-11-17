@@ -1,6 +1,6 @@
 <?php
 
-class tadminsubscribe extends tadminmenuitem {
+class tadminsubscribers extends tadminmenuitem {
 
   public static function instance() {
     return getinstance(__class__);

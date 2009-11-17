@@ -2,51 +2,49 @@
 
 class TXMLRPCBlogger  extends TXMLRPCAbstract {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   public function getUsersBlogs(&$args) {
-    global $Options;
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
+    global $options;
+    if (!$this->canlogin($args, 1))  return $this->error;
+
     $Result = array(
     //'isAdmin'  => true,
-    'url'      => $Options->url . $Options->home,
+    'url'      => $options->url . $options->home,
     'blogid'   => '1',
-    'blogName' => $Options->name
+    'blogName' => $options->name
     );
     return array($Result);
   }
   
   public function getUserInfo(&$args) {
-    global $Options;
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
+    global $options;
+    if (!$this->canlogin($args, 1)) {
+      return $this->error;
     }
     
     $Result= array(
     'nickname'  => 'admin',
     'userid'    => 1,
-    'url'       => $Options->url .'/',
+    'url'       => $options->url .'/',
     'lastname'  => '',
     'firstname' => ''		);
     return $Result;
   }
   
   public function getPost(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     $id    = (int) $args[1];
-    $Posts= &TPost::Instance();
-    if (!$Posts->ItemExists($id)) {
+    $posts= tposts::instance();
+    if (!$posts->itemexists($id)) {
       return new IXR_Error(404, "Sorry, no such post.");
     }
     
-    $Post = &TPost::Instance($id);
+    $Post = tpost::instance($id);
     $categories = implode(',', $Post->categories);
     
     $content  = '<title>'.$Post->title .'</title>';
@@ -54,8 +52,8 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     $content .= $Post->content;
     
     $Result= array(
-    'userid'    => 1,
-    'dateCreated' => new IXR_Date($Post->date),
+    'userid'    => $Post->author,
+    'dateCreated' => new IXR_Date($Post->posted),
     'content'     => $content,
     'postid'  => $id
     );
@@ -64,16 +62,16 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getRecentPosts(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     
     $num_posts  = $args[4];
-    $Posts = &TPosts::Instance();
+    $Posts = tposts::instance();
     $Items = $Posts->GetPublishedRange(0, $num_posts  );
     
     foreach ($Items as $id) {
-      $Post = &TPost::Instance($id);
+      $Post = tpost::instance($id);
       $categories = implode(',', $Post->categories);
       $content  = '<title>'.$Post->title . '</title>';
       $content .= '<category>'.$categories.'</category>';
@@ -91,17 +89,18 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getTemplate(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     
     $template   = $args[4]; /* could be 'main' or 'archiveIndex', but we don't use it */
     //craze method
     return '';
   }
+
   public function setTemplate(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     
     $content    = $args[4];
@@ -139,12 +138,12 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function newPost($args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     
-    $Posts = &TPosts::Instance();
-    $Post = &TPost::Instance(0);
+    $Posts = tposts::instance();
+    $Post = tpost::instance(0);
     
     $content    = $args[4];
     $publish    = $args[5];
@@ -154,23 +153,23 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     $Post->content = $this->removepostdata($content);
     $Post->categories = $this->getpostcategory($content);
     
-    $id = $Posts->Add($Post);
+    $id = $Posts->add($Post);
     return $id;
   }
   
   function editPost(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     
     $id     = (int) $args[1];
     $content     = $args[4];
     $publish     = $args[5];
-    $Posts = &TPosts::Instance();
+    $Posts = &TPosts::instance();
     if (!$Posts->itemExists($id)) {
       return new IXR_Error(404, 'Sorry, no such post.');
     }
-    $Post = &TPost::Instance($id);
+    $Post = &TPost::instance($id);
     $Post->status = ($publish) ? 'published' : 'draft';
     $Post->title = $this->getposttitle($content);
     $Post->content = $this->removepostdata($content);
@@ -180,12 +179,12 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function deletePost(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
+    if (!$this->canlogin($args, 2)) {
+      return $this->error;
     }
     
     $id     = (int) $args[1];
-    $Posts = &TPosts::Instance();
+    $Posts = &TPosts::instance();
     if (!$Posts->itemExists($id)) {
       return new IXR_Error(404, 'Sorry, no such post.');
     }
