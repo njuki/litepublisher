@@ -229,14 +229,14 @@ $theme = ttheme::instance();
   }
 
 public function getcommentslink() {
-$t = ttemplatecomments::instance();
-return $t->getcommentslink($this);
+$tc = ttemplatecomments::instance();
+return $tc->getcommentslink($this);
 }
 
 public function  gettemplatecomments() {
     if (($this->commentscount == 0) && !$this->commentsenabled) return '';
     if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
-$tc = ttemplatecomment::instance();
+$tc = ttemplatecomments::instance();
 return $tc->getcomments($this->id);
 }
   

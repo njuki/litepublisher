@@ -1,6 +1,6 @@
 <?php
 
-class TDataClass {
+class tdata {
   private $lockcount;
   public static $GlobalLock;
   public $data;

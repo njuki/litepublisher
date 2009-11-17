@@ -1,16 +1,16 @@
 <?php
 
-class TTemplatePost extends TEventClass {
+class ttemplatePosts extends tevents {
   public $ps; //postscript text
   
   public static function instance() {
     return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'templatepost';
-    $this->AddEvents('BeforePostContent', 'AfterPostContent', 'Onpostscript');
+  protected function create() {
+    parent::create();
+    $this->basename = 'templateposts';
+    $this->addevents('BeforePostContent', 'AfterPostContent', 'Onpostscript');
   }
   
   public function GetPostscript($tagname) {
@@ -21,8 +21,8 @@ class TTemplatePost extends TEventClass {
     return $this->ps;
   }
   
-  private function GetPostFooter(&$post) {
-    global $Urlmap;
+  private function GetPostFooter(tpost $post) {
+    global $urlmap;
     $result = '';
     if ($post->haspages) {
 $theme = ttheme::instance();
@@ -37,7 +37,7 @@ $result .= $theme->getpages($post->url, $urlmap->page, $post->countpages);
     return $result;
   }
   
-  public function GetPrevNextLinks(&$post) {
+  public function GetPrevNextLinks(tpost $post) {
     $result = '';
     $lang = &TLocal::instance();
     if ($prevpost = $post->prev) {
@@ -53,34 +53,26 @@ $result .= $theme->getpages($post->url, $urlmap->page, $post->countpages);
     return $result;
   }
   
-  public function PrintPosts(&$Items) {
-    $Template = TTemplate::instance();
-    
-    if (count($Items) == 0) {
-      $lang = &TLocal::instance();
-      return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
-    }
-    
+  public function getitems(array &$Items) {
+$theme = ttheme::instance();
+        if (count($Items) == 0) return $theme->notfound;
     $Result = '';
     foreach($Items as $id) {
       $GLOBALS['post'] = &TPost::instance($id);
-      $Result .=  $Template->ParseFile('postexcerpt.tml');
+      $Result .=  $theme->parse($theme->excerpt);
     }
-    
-    return $Result;
+        return $Result;
   }
   
-  public function LitePrintPosts(&$Items) {
-    global $Options;
-    if (count($Items) == 0) {
-      $lang = &TLocal::instance();
-      return 		"<h2 class=\"center\">$lang->notfound </h2>\n<p class=\"center\">$lang->nocontent</p>";
-    }
-    
+  public function getliteitems(array &$Items) {
+    global $options;
+$theme = ttheme::instance();
+    if (count($Items) == 0) return $theme->notfound;
+
     $result = '<p>'. TLocal::$data['default']['archivelist'] ." </p>\n<ul>\n";
     foreach($Items as $id) {
-      $post = TPost::instance($id);
-      $result .= "<li>$post->localdate <a href=\"$Options->url$post->url\">$post->title</a></li>\n";
+      $post = tpost::instance($id);
+      $result .= "<li>$post->localdate <a href=\"$options->url$post->url\">$post->title</a></li>\n";
     }
     $result .= "</ul>\n";
     return $result;

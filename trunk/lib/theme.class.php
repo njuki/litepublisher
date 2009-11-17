@@ -26,6 +26,7 @@ $this->data['post'] = '';
 $this->data['commentform'] = '';
 $this->data['menucontent'] = '';
 $this->data['simplecontent'] = '%s';
+$this->data['nocontent'] = '';
 
 $this->addmap('navi', array());
 $this->addmap('menu', array());
@@ -75,6 +76,10 @@ return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback
   public function parsearg($s, targs $args) {
     $s = strtr ($s, $args->data);    
 return $this->parse($s);
+}
+
+public function getnotfount() {
+return $this->parse($this->nocontent);
 }
 
   public function getpages($url, $page, $count) {

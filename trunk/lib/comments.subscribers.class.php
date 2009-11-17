@@ -55,7 +55,7 @@ global $classes;
 
   public function geturl() {
     global $options;
-    return $options->url . '/admin/subscribe/' . $options->q;
+    return $options->url . '/admin/subscribers/' . $options->q;
   }
   
   public function sendmail($id) {

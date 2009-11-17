@@ -1,18 +1,14 @@
 <?php
 
 class TXMLRPCAbstract extends TEventClass {
-  public $Error;
+  public $error;
   
-  public function GetBaseName() {
-    return 'xmlrpc-abstract';
+  public function uninstall() {
+    $aller = TXMLRPC::instance();
+    $caller->deleteclass(get_class($this));
   }
   
-  public function Uninstall() {
-    $Caller = &TXMLRPC::Instance();
-    $Caller->RemoveClass(get_class($this));
-  }
-  
-  public function CanLogin(&$args, $LoginIndex = 1) {
+  public function canlogin(&$args, $LoginIndex = 1) {
     global $options;
     if (!$options->auth($args[$LoginIndex], $args[$LoginIndex + 1])) {
       $this->error = new IXR_Error(403, 'Bad login/pass combination.');

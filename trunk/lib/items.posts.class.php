@@ -1,6 +1,6 @@
 <?php
 
-class titemsposts extends TItems {
+class titemsposts extends titems {
 
   public static function instance() {
     return getinstance(__class__);
