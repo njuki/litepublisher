@@ -1,26 +1,22 @@
 <?php
 
-class TImporter extends TPlugin {
+class timporter extends tplugin {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
-  }
-  
-  protected function CreateData() {
-    parent::CreateData();
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   public function import($s) {
   }
   
   //template
-  public function Getcontent() {
+  public function getcontent() {
     $html = THtmlResource::instance();
     $html->section = 'importer';
     return $html->form();
   }
   
-  public function ProcessForm() {
+  public function processform() {
     switch ($_POST['form']) {
       case 'upload':
       if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
@@ -44,15 +40,14 @@ class TImporter extends TPlugin {
       return 'error';
     }
     
-    if ($test) TDataClass::$GlobalLock = true;
+    if ($test) tdata::$GlobalLock = true;
     $this->import($s);
     
-    $posts = &TPosts::Instance();
+    $posts = tposts::instance();
     $items = array_slice(array_keys($posts->items), -5, 5);
     
-    
-    $TemplatePost = &TTemplatePost::Instance();
-    return  $TemplatePost->PrintPosts($items);
+    $theme = ttheme::instance();
+    return  $theme->getposts($items, false);
   }
   
 }//class
