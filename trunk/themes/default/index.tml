@@ -57,6 +57,7 @@ $template->head
 <p class="center">$lang->nocontent</p>
 </div>
 <!--/nocontent-->
+<!--excerpts-->
 
 <!--excerpt-->
 <div class="post" id="post-$post->id">
@@ -66,7 +67,7 @@ $template->head
 	  </div>
 		<div class="post-content">
 $post->excerpt
-<!--morelink--><a href="$options->url$post->url#more-$post->id" class="more-link">$post->moretitle</a><!--/morelink-->
+<!--more--><a href="$options->url$post->url#more-$post->id" class="more-link">$post->moretitle</a><!--/more-->
 <!--screenshots-->
 <ul>
 <!--screenshot-->
@@ -82,6 +83,16 @@ $post->excerpt
 		</div>
 	</div>
 <!--/excerpt-->
+<!--excerpts-->
+
+<!--lite-->
+<h1>$lang->archivelist</h1>
+<ul>
+<!--excerpt-->
+<li>$post->localdate <a href="$options->url$post->url" title="$lang->permalink $post->title">$post->title</a></li>
+<!--/excerpt-->
+</ul>
+<!--/lite-->
 
 <!--post-->
     <div class="post" id="post-$post->id">
@@ -97,9 +108,21 @@ $post->excerpt
 <!--video--><!--/video-->
 </ul>
 <!--/files-->
-<!--moreanchor--><span id="more-$post->id"></span><!--/moreanchor-->
+
+<!--more--><a name="more-$post->id"></a><!--/more-->
+
 $post->content
-$template->postscript
+
+<!--rss--><h2><a href="$post->rsslink" title="$lang->commentsrss">$lang->commentsrss</a></h2><!--/rss-->
+
+<!--prevnext-->
+<p>
+<!--prev-->$lang->prev <a rel="prev" href="$prevpost->link" title="$lang->permalink $prevpost->title">$prevpost->title</a><!--/prev-->
+|
+<!--next-->$lang->next <a rel="next" href="$nextpost->link" title="$lang->permalink $nextpost->title">$nextpost->title</a><!--/next-->
+</p>
+<!--/prevnext-->
+
 		</div>
 <!--templatecomments-->
 <!--comments-->
