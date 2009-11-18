@@ -1,6 +1,6 @@
 <?php
 
-class ttheme extends TEventClass {
+class ttheme extends tevents {
 //public $tml;
 public $excerpts;
 public $post;
@@ -33,7 +33,6 @@ $this->addmap('post', array());
 $this->addmap('comments', array());
 $this->addmap('navi', array());
 $this->addmap('menu', array());
-$this->addmap('content', array());
 $this->addmap('widgets', array());$this->addmap('widgets', array());
 $this->addmap('admin', array());
 $this->addmap('files', array());
@@ -54,7 +53,7 @@ $this->save();
 
 public static function parsecallback($var) {
 try {
-return {$GLOBALS[$var[1]]}->{$var[2]};
+return $GLOBALS[$var[1]]->{$var[2]};
     } catch (Exception $e) {
       $options->HandleException($e);
     }
@@ -124,12 +123,12 @@ return sprintf($tml, $title, $content);
   }
   
 public function getwidgettemplate($name, $sitebar) {
-if (!isset($this->widgets[$sitebar][$name]) $name = 'widget';
+if (!isset($this->widgets[$sitebar][$name])) $name = 'widget';
 return $this->widgets[$sitebar][$name];
 }
 
 public function  getwidgetitem($name) {
-if (isset($this->widgets[$name)) return $this->widgets[$name];
+if (isset($this->widgets[$name])) return $this->widgets[$name];
 return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
 }
 

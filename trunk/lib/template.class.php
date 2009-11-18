@@ -1,6 +1,6 @@
 <?php
 
-class ttemplate extends tevent {
+class ttemplate extends tevents {
 public $tml;
   public $path;
   public $url;
@@ -22,7 +22,8 @@ $this->tml = 'index';
     $this->data['theme'] = 'default';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
-    $this->data['sitebars'] = array(0 => array(), 1 => array(), 2 => array()));
+    $this->data['sitebars'] = array(0 => array(), 1 => array(), 2 => array());
+    $this->data['tags'] = array();
 $this->addmap('javascripts', array());
   }
   
@@ -215,7 +216,7 @@ $this->save();
     $result = '';
     if ($this->itemplate) $result .= $this->context->gethead();
 foreach ($this->javascripts as $name => $script) {
-if ($name == 'hovermenu' {
+if ($name == 'hovermenu') {
 $theme = ttheme::instance();
 if (isset($theme->menu['id'])) $result .= sprintf($script, $theme->menu['id'], $theme->menu['tag']);
     }
