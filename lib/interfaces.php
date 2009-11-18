@@ -18,7 +18,7 @@ interface  icomments {
   public function gethold($author);
   public function IndexOfRawContent($s);
 //holditems property used by TAdminModerator
-  public function getholditems() {
+  public function getholditems();
 //pingback xmlrpc
  public function haspingback($url);
 }

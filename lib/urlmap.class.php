@@ -216,9 +216,8 @@ if (dbversion){
 $this->db->delete("class = `$class`");
 } else  {
     foreach ($this->items as $url => $item) {
-      if ($item['class'] == $class) {
-        unset($this->items[$url]);
-      }
+      if ($item['class'] == $class) unset($this->items[$url]);
+}
 $this->save();
     }
 $this->clearcache();
@@ -235,6 +234,7 @@ $this->save();
 break;
       }
     }
+}
 $this->clearcache();
   }
   

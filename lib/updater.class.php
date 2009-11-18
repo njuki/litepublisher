@@ -1,6 +1,6 @@
 <?php
 
-class tupdater extends TEventClass {
+class tupdater extends tevents {
   public $version;
   
   public static function instance() {
@@ -47,8 +47,8 @@ class tupdater extends TEventClass {
     
     $Options->version = substr((string)$this->version, 0, 1) . '.' . substr((string)$this->version, 1);
     
-    $Urlmap = &TUrlmap::Instance();
-    $Urlmap->ClearCache();
+    $urlmap = turlmap::instance();
+    $urlmap->clearcache();
     if ($log) TFiler::log("update finished", 'update');
   }
   
@@ -77,7 +77,7 @@ class tupdater extends TEventClass {
   
   public function CreateBackup(){
     global $paths, $domain;
-    $admin = &TRemoteAdmin::Instance();
+    $admin = &TRemoteAdmin::instance();
     $s = $admin->GetPartialBackup(true, true, true);
     $date = date('Y-m-d');
     $filename = $paths['backup'] . "$domain-$date.zip";

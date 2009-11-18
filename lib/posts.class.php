@@ -18,7 +18,7 @@ public $rawtable;
 $this->table = 'posts';
 $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
-    $this->addevents('edited', changed', 'singlecron', 'beforecontent', 'aftercontent');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent');
     if (!dbversion) $this->addmap('archives' , array());
   }
   
@@ -26,6 +26,8 @@ $this->rawtable = 'rawposts';
 if (dbversion) {
     if ($res = $this->db->select("id = $id")) {
 if ($result = tpost::instance($id)) return $result;
+}
+$this->error("Item $id not found in class ". get_class($this));
 } else {
     if (isset($this->items[$id])) return tpost::instance($id);
     }
@@ -37,7 +39,7 @@ global $classes, $db;
 if (!dbversion) return;
 //исключить из загрузки загруженные посты
 $class = $classes->classes['post'];
-$list = implode(',', array_diff($items, array_keys(titem::instances[$class])));
+$list = implode(',', array_diff($items, array_keys(titem::$instances[$class])));
 $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
 where $db->posts.id in ($list) and  $db->urlmap.id  = $db->posts.idurl");
 
@@ -130,10 +132,11 @@ $post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
         $post->url = $linkgen->Create($post, 'post', false);
         $post->title = $title;
       }
+}
 
     if ($oldurl != $post->url) {
 //check unique url
-if (($idurl = $urlmap->idfind($post->url) && ($idurl != $post->idurl)) {
+if (($idurl = $urlmap->idfind($post->url)) && ($idurl != $post->idurl)) {
 $post->url = $linkgen->MakeUnique($post->url);
 }
 $urlmap->setidurl($post->idurl, $post->url);
@@ -227,7 +230,7 @@ $post = tpost::instance($id);
 
   public function PublishFuture() {
     if (dbversion) {
-if ($list = $this->db->idselect("status = 'future' and created <= now() order by created asc")) {
+if ($list = $this->db->idselect("status = 'future' and posted <= now() order by posted asc")) {
 foreach( $list as $id) $this->publish($id);
 }
 } else {
@@ -235,16 +238,17 @@ foreach( $list as $id) $this->publish($id);
       if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
     }
   }
+}
 
 public function getarchivescount() {
-if (dbversion) return $this->db->getcount("status = 'published');
+if (dbversion) return $this->db->getcount("status = 'published' and posted > now()");
 return count($this->archives);
 }
   
   public function getrecent($count) {
 if (dbversion) {
-return $this->db->idselect("status = 'published'order by created desc limit $count");
-} 
+return $this->db->idselect("status = 'published'order by posted desc limit $count");
+}  else {
     return array_slice(array_keys($this->archives), 0, $count);
 }
   }

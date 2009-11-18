@@ -3,7 +3,7 @@
 function ParseClassesIni(tclasses $self) {
   global $paths, $ini;
   $ini = parse_ini_file($paths['lib'].'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
-$section = dbversion ? db' : 'files';
+$section = dbversion ? 'db' : 'files';
   foreach ($ini[$section] as $class => $filename) {
     $self->items[$class] = array($filename, '');
   }
@@ -21,12 +21,12 @@ function tclassesInstall() {
     global  $classes, $options, $urlmap, $posts;
     $options->lock();
     $urlmap = turlmap::instance();
-    $Urlmap->Lock();
+    $urlmap->lock();
     $posts = tposts::instance();
     $posts->lock();
     foreach( $classes->items as $class => $item) {
       $obj = getinstance($class);
-      if (method_exists($obj, 'install')) $Obj->install();
+      if (method_exists($obj, 'install')) $obj->install();
     }
     $posts->unlock();
     $urlmap->unlock();
