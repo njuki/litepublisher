@@ -1,5 +1,4 @@
 <?php
-//require_once($paths['lib']. 'kernel.php');
 
 class TInstaller extends TDataClass {
   public $language;
@@ -7,8 +6,8 @@ class TInstaller extends TDataClass {
   public $lite;
   public $resulttype;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   public function DefineMode () {
@@ -48,15 +47,15 @@ class TInstaller extends TDataClass {
   }
   
   public function OutputResult($password) {
-    global $Options, $paths;
+    global $options, $paths;
     if ($this->mode == 'remote') {
       $result = array(
       'url' => strtolower($_SERVER['HTTP_HOST']) ,
-      'login' => $Options->login,
+      'login' => $options->login,
       'password' => $password,
-      'email' => $Options->email,
-      'name' => $Options->name,
-      'description' => $Options->description
+      'email' => $options->email,
+      'name' => $options->name,
+      'description' => $options->description
       );
       
       switch ($this->resulttype) {
@@ -75,7 +74,7 @@ class TInstaller extends TDataClass {
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
-        $html = &THtmlResource::Instance();
+        $html = &THtmlResource::instance();
         $html->section = 'installation';
         eval('$xml = "'. $html->xmlrpc . '\n";');
         // Send it
@@ -109,7 +108,7 @@ class TInstaller extends TDataClass {
     if ($this->mode != 'remote') {
       $this->PrintCongratulation($password);
     }
-    $Urlmap = &TUrlmap::Instance();
+    $Urlmap = &TUrlmap::instance();
     $Urlmap->Lock();
     $this->CreateWidgets();
     $this->CreateMenuItem();
@@ -127,18 +126,16 @@ class TInstaller extends TDataClass {
   public function FirstStep() {
     global $classes, $paths;
     $this->CheckFolders();
-    //$classes->Install();
-    //because TClasses cant self install
     require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
-    TClassesInstall($classes);
-    
-    //require_once($paths['lib'] . DIRECTORY_SEPARATOR . 'optionsclass.install.php');
-    $password = $this->InstallOptions();
-    $this->InstallClasses();
+ParseClassesIni($classes);
+    tclassesInstall($classes);
+        require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'options.class.install.php');
+    $password = toptionsInstall($this->language);
+tclassesInstall($classes);
     return $password;
   }
   
-  public function Install() {
+  public function install() {
     if (get_magic_quotes_gpc()) {
       if (isset($_POST) && (count($_POST) > 0)) {
         foreach ($_POST as $name => $value) {
@@ -173,16 +170,16 @@ class TInstaller extends TDataClass {
     return $this->CreateDefaultItems($password);
   }
   
-  public function ProcessForm($email, $name, $description, $rewrite) {
-    global $Options;
-    $Options->Lock();
-    $Options->email = $email;
-    $Options->name = $name;
-    $Options->description = $description;
-    $Options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
+  public function processform($email, $name, $description, $rewrite) {
+    global $options;
+    $options->Lock();
+    $options->email = $email;
+    $options->name = $name;
+    $options->description = $description;
+    $options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
 if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
-    $Options->Unlock();
+    $options->Unlock();
   }
   
   public function CheckFolders() {
@@ -220,102 +217,20 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   }
   
   public function CheckApache($rewrite) {
-    global $Options;
+    global $options;
     if ($rewrite || (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()))) {
-      $Options->q = '?';
+      $options->q = '?';
     } else {
-      $Options->q = '&';
+      $options->q = '&';
     }
-  }
-  
-  public function ExtractSubdir() {
-    if (isset($_GET) && (count($_GET) > 0) && ($i = strpos($_SERVER['REQUEST_URI'], '?'))) {
-      $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, $i);
-    }
-    
-    if (preg_match('/index\.php$/', $_SERVER['REQUEST_URI'])) {
-      $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('index.php'));
-    }
-    
-    if (preg_match('/install\.php$/', $_SERVER['REQUEST_URI'])) {
-      $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('install.php'));
-    }
-    
-    return rtrim($_SERVER['REQUEST_URI'], '/');
-  }
-  
-  public function  InstallOptions() {
-    global $paths, $Options, $domain;
-    $Options = TOptions::Instance();
-    $Options->Lock();
-    $Options->subdir = $this->ExtractSubdir();
-    $Options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $Options->subdir;
-    $Options->files =$Options->Data['url'];
-    $Options->q = '?';
-    
-    $Options->language = $this->language;
-    tlocal::loadlang('admin');
-    $Options->timezone = TLocal::$data['installation']['timezone'];
-    $Options->dateformat = '';
-    $Options->keywords = "blog";
-    $Options->login = "admin";
-    $Options->password = "";
-    $Options->realm = "Admin panel";
-    $Options->login = 'admin';
-    $password = md5(secret. uniqid( microtime()));
-    $Options->SetPassword($password);
-    
-    $Options->email = "yarrowsoft@gmail.com";
-    $Options->mailer = "";
-    $Options->Data['CacheEnabled'] = true;
-    $Options->CacheExpired	= 3600;
-    $Options->Data['postsperpage'] = 10;
-    $Options->DefaultCommentStatus = "approved";
-    $Options->commentsdisabled = false;
-    $Options->commentsenabled = true;
-    $Options->pingenabled = true;
-    $Options->commentpages = true;
-    $Options->commentsperpage = 100;
-    $Options->version = TUpdater::GetVersion();
-    $Options->echoexception = true;
-    
-    $Options->Unlock();
-    return $password;
-  }
-  
-  public function InstallClasses() {
-    global  $classes, $Options;
-    $Options->Lock();
-    $Urlmap = TUrlmap::Instance();
-    $GLOBALS['Urlmap'] = &TUrlmap::Instance();
-    $Urlmap->Lock();
-    $posts = TPosts::Instance();
-    $posts->Lock();
-    foreach( $classes->items as $ClassName => $Info) {
-      $Obj = GetInstance($ClassName);
-      if (method_exists($Obj, 'Install')) $Obj->Install();
-    }
-    $posts->Unlock();
-    $Urlmap->Unlock();
-    $Options->Unlock();
-    
-    //install pda
-    global $paths;
-    $pda = $paths['cache'] . 'pda' ;
-    copy($paths['data']. 'template.php', $paths['data'] . 'template.pda.php');
-    chmod($paths['data']. 'template.pda.php', 0666);
-    
-    copy($paths['data']. 'templatecomment.php', $paths['data'] . 'templatecomment.pda.php');
-    chmod($paths['data']. 'templatecomment.pda.php', 0666);
-    
   }
   
   public function PrintForm() {
     $this->LoadLang();
     $form = $this->GetLangForm();
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     if (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules())) {
       $checkrewrite   = '';
     } else {
@@ -347,9 +262,9 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   }
   
   public function CreateWidgets() {
-    $arch = &TArchives::Instance();
+    $arch = &TArchives::instance();
     $arch->lite = $this->lite;
-    $Template = &TTemplate::Instance();
+    $Template = &TTemplate::instance();
     $Template->Lock();
     //sitebar1
     if (!$this->lite) $Template->AddWidget('TCategories', 'echo', 'categories', TLocal::$data['default']['categories'], 0, 0);
@@ -363,9 +278,9 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     $Template->AddWidget('TMetaWidget', 'echo', 'meta', TLocal::$data['default']['meta'], 2, 1);
     
     //footer
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     eval('$Template->footer = "'. $html->footer . '";');
     $Template->footer  .= $html->stat;
@@ -373,12 +288,12 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   }
   
   public function CreateMenuItem() {
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
-    $Menu = &TMenu::Instance();
-    $Item = TContactForm::Instance();
+    $Menu = &TMenu::instance();
+    $Item = TContactForm::instance();
     $Item->order = 10;
     $Item->title =  TLocal::$data['installation']['contacttitle'];
     eval('$Item->content = "'. $html->contactform . '\n";');
@@ -387,49 +302,49 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   }
   
   public function CreateFirstPost() {
-    global $Options;
-    $html = &THtmlResource::Instance();
+    global $options;
+    $html = &THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
-    $post = TPost::Instance(0);
+    $post = TPost::instance(0);
     $post->title = $lang->posttitle;
     $post->catnames = $lang->postcategories;
     $post->tagnames = $lang->posttags;
     eval('$post->content = "'. $lang->postcontent . '";');
     
-    $posts = &TPosts::Instance();
+    $posts = &TPosts::instance();
     $posts->Add($post);
     
-    $users = &TCommentUsers::Instance();
+    $users = &TCommentUsers::instance();
     $userid = $users->Add($lang->author, $lang->email, $lang->homeurl);
     
-    $CommentManager = &TCommentManager::Instance();
+    $CommentManager = &TCommentManager::instance();
     $CommentManager->AddToPost($post, $userid,$lang->postcomment);
   }
   
   public static function SendEmail($password) {
-    global $Options;
+    global $options;
     tlocal::loadlang('admin');
     $lang = &TLocal::$data['installation'];
-    $url = $Options->url . $Options->home;
-    $login = $Options->login;
+    $url = $options->url . $options->home;
+    $login = $options->login;
     eval('$body = "' . $lang['body'] . '";');
     
-    TMailer::SendMail('', $Options->fromemail,
-    '', $Options->email, $lang['subject'], $body);
+    TMailer::SendMail('', $options->fromemail,
+    '', $options->email, $lang['subject'], $body);
   }
   
   public function PrintCongratulation($password) {
-    global $Options;
-    $html = &THtmlResource::Instance();
+    global $options;
+    $html = &THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
-    $url = $Options->url . $Options->home;
+    $url = $options->url . $options->home;
     eval('$content = "'. $html->congratulation . '";');
     
-    echo SimplyHtml($Options->name, $content);
+    echo SimplyHtml($options->name, $content);
   }
   
   public function Uninstall() {
@@ -441,7 +356,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   
   private function LoadLang() {
     global $paths;
-    $GLOBALS['Options'] = &$this;
+    $GLOBALS['options'] = &$this;
     require_once($paths['lib'] . 'filerclass.php');
     require_once($paths['lib'] . 'localclass.php');
     require_once($paths['lib'] . 'htmlresource.php');

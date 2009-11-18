@@ -5,7 +5,7 @@ function __autoload($class) {
 $classes->_autoload($class);
 }
 
-class TClasses extends TItems {
+class tclasses extends titems {
   public $classes;
 public $interfaces;
 public $remap;
