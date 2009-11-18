@@ -1,20 +1,20 @@
 <?php
 
-abstract class TAbstractCommentManager extends TItems {
+interface icommentmanager {
+public function addcomment($postid, $author, $content);
+public function addpingback($pid, $url, $title);
+public function getcomment($id);
+public function delete($id);
+public function postdeleted($postid);
+public function setstatus($id, $value);
+}
 
-abstract   public function addcomment($postid, $author, $content);
-abstract   public function addpingback($pid, $url, $title);
-  abstract   public function getcomment($id);
-abstract   public function delete($id);
-abstract   public function postdeleted($postid);
-abstract   public function setstatus($id, $value);
+class TAbstractCommentManager extends titems {
 
   protected function create() {
     parent::create();
-$this->table = 'comments';
-$this->rawtable = 'rawcomments';
     $this->basename = 'commentmanager';
-    $this->AddEvents('edited', 'changed', 'approved');
+    $this->addevents('edited', 'changed', 'approved');
   }
 
   public function add($postid, $name, $email, $url, $content) {

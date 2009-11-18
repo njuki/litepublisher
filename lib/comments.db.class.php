@@ -1,6 +1,6 @@
 <?php
 
-class tcomments extends AbstractCommentManager implements icomments {
+class tcomments extends AbstractCommentManager implements icomments, icommentmanager  {
 public $rawtable;
 private $pid;
 
@@ -12,6 +12,7 @@ return $result;
   
   protected function create() {
     parent::create();
+$this->table = 'comments';
 $this->rawtable = 'rawcomments';
   }
 

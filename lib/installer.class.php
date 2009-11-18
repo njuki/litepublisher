@@ -228,9 +228,9 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   public function PrintForm() {
     $this->loadlang();
     $form = $this->GetLangForm();
-    $html = &THtmlResource::instance();
+    $html = THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::instance();
+    $lang = tlocal::instance('installation');
     if (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules())) {
       $checkrewrite   = '';
     } else {
@@ -240,10 +240,11 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
   }
   
-  private function GetLangForm() {
+ private function GetLangForm() {
     $langs = array(
     'en' => 'English',
-    'ru' => 'Russian'
+    'ru' => 'Russian',
+'ua' => 'Ukrain'
     );
     
     $result = "<form name='langform' action='' method='get'>
