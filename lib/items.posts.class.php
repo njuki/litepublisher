@@ -17,8 +17,8 @@ if (dbversion) {
 $this->db->add(array(
 'post' => $idpost,
 'item' => $ititem
-$this->added();
 ));
+$this->added();
 } else {
 if (!isset($this->items[$idpost]))  $this->items[$idpost] = array();
 if (!in_array($iditem, $this->items[$idpost])) {
@@ -81,7 +81,7 @@ public function setitems($idpost, array $items) {
 if (dbversion) {
 $db = $this->db;
 $old = $this->getitems($idpost);
-$add = array_diff($items, $old));
+$add = array_diff($items, $old);
 $delete = array_diff($old, $items);
 
 if (count($delete) > 0) {
@@ -125,10 +125,11 @@ if (in_array($iditem, $item)) $result[] = $id;
 }
 return $result;
 }
+}
 
 public function getpostscount($ititem) {
 $items = $this->getposts($iditem);
-$posts = tposts::instance()
+$posts = tposts::instance();
 $items = $posts->stripdrafts($items);
 return count($items);
 }
@@ -149,6 +150,7 @@ $post = tpost::instance($idpost);
         $post->$propname = $items;
           $post->Save();
       }
+}
 }
 }
 

@@ -4,6 +4,10 @@ class tthemeparser {
 public $theme;
   private $abouts;
 
+public static function instance() {
+return getinstance(__class__);
+}
+
   public function parsetag(&$s, $tag, $replace) {
     $result = '';
     $opentag = "<!--$tag-->";
@@ -32,14 +36,13 @@ $theme->sitebarscount = $this->parsesitebars($s);
 
 private function parsemenu(&$s) {
 $menu = &$this->theme->menu;
-$menus = $this->parsetag($s, 'menu, '$template->menu');
+$menus = $this->parsetag($s, 'menu', '$template->menu');
 $item = $this->parsetag($menus, 'item', '%s');
 if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $menu['submenu'] = $submenu;
 $menu['item'] = $item;
 $menu['current'] = $this->parsetag($menus, 'current', '');
 $menu['menu'] = $menus;
 //hover
-if (preg_match('/<\w*?\s*.*?id\s*=\s*[\'"]([^"\'>]*)/i', 
 if ($id = $this->getidtag('*', menus)) {
 $menu['id'] = $id;
 preg_match('/\<(\w*?)\s/',$item, $t);
@@ -49,27 +52,26 @@ $menu['tag'] = $t[1];
 
 private function parsecontent(&$s) {
 $theme = $this->theme;
-$ content = $this->parsetag($s, 'content', '$template->content');
-
+$content = $this->parsetag($s, 'content', '$template->content');
 
 $excerpts = $this->parsetag($content, 'excerpts', '');
 $excerpt = $this->parsetag($excerpts, 'excerpt', '%s');
 $theme->excerpts['more'] = $this->parsetag($excerpt, 'more', '$post->morelink');
-$screenshots = $this->parsetag($excerpt= , 'screenshots', '$post->screenshots);
+$screenshots = $this->parsetag($excerpt, 'screenshots', '$post->screenshots');
 $theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
 $theme->files['screenshots'] = $screenshots;
 $theme->excerpts['excerpt'] = $excerpt;
 $theme->excerpts['normal'] = $excerpts;
 
 $lite = $this->parsetag($content, 'lite', '');
-$theme->excerpts['liteexcerpt'] = this->parsetag($lite, 'excerpt', '%s');
+$theme->excerpts['liteexcerpt'] = $this->parsetag($lite, 'excerpt', '%s');
 $theme->excerpts['lite'] = $lite;
 
 $post = $this->parsetag($content, 'post', '');
 $theme->post['more'] = $this->parsetag($post, 'more', '');
 
 $files = $this->parsetag($post, 'files', '$post->filelist');
-$theme->files['file'] = $this->parsetag$files, 'file', '%s');
+$theme->files['file'] = $this->parsetag($files, 'file', '%s');
 $theme->files['image'] = $this->parsetag($files, 'image', '');
 $theme->files['video'] = $this->parsetag($files, 'video', '');
 $theme->files['files'] = $files;
@@ -87,11 +89,11 @@ $theme->post['tml'] = $post;
 
 $theme->menucontent = $this->parsetag($content, 'menucontent', '');
 $theme->simplecontent = $this->parsetag($content, 'simplecontent', '');
-if (theme->simplecontent == '') theme->simplecontent  = '%s';
+if ($theme->simplecontent == '') $theme->simplecontent  = '%s';
 $theme->nocontent = $this->parsetag($content, 'nocontent', '');
-if (theme->nocontent == '') theme->nocontent  = '$lang->nocontent';
+if ($theme->nocontent == '') $theme->nocontent  = '$lang->nocontent';
 $this->parsenavi($this->parsetag($content, 'navi', ''));
-$this->parseadmin($this->parsetag($content, 'admin', '');
+$this->parseadmin($this->parsetag($content, 'admin', ''));
 }
 
 private function parsenavi($s) {
@@ -135,13 +137,13 @@ $theme->comments['confirmform'] = '<h2>$lang->formhead</h2>
 </form>
 
 <form name="form" method="post" action="">
-<input type=hidden name="confirmid" value="$confirmid" />
+<input type="hidden" name="confirmid" value="$confirmid" />
   <p><input type="submit" name="submit" value="$lang->human"/></p>
 </form>';
-{
-  }
+ }
+}
 
-private function parse sitebars(&$s) {
+private function parsesitebars(&$s) {
 $theme = $this->theme;
 $index = 0;
 while ($sitebar = $this->parsetag($s, 'sitebar', '$template->sitebar')) {
@@ -150,11 +152,12 @@ $widgets = &$theme->widgets[$index];
 $widgets['widget'] = $this->parsetag($sitebar, 'widget', '');
 
 if ($categories =$this->parsetag($sitebar, 'categories', ''))  {
-if ($item = $this->parsetag($categories, 'item', '%s')) 
+if ($item = $this->parsetag($categories, 'item', '%s')) {
 $theme->widgets['tag'] = $item;
 }
 $widgets['categories'] = $categories;
 }
+
 if (empty($theme->widgets['tag'])) {
 $theme->widgets['tag'] = '<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
 }
@@ -245,7 +248,7 @@ $template->save();
       }
 
       $urlmap = turlmap::instance();
-      $urlmap->clearcache);
+      $urlmap->clearcache();
   }
   
 }//class

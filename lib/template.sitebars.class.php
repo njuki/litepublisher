@@ -23,7 +23,7 @@ return count($this->items[$index]);
 }
 
 public function add($id, $index, $order) {
-    if (($order < 0) || ($order > $this->getcount($index)) $order = $this->getcount($index);
+    if (($order < 0) || ($order > $this->getcount($index))) $order = $this->getcount($index);
     array_splice($this->items[$index], $order, 0, $id);
 }
 

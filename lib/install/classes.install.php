@@ -27,7 +27,7 @@ function tclassesInstall() {
     foreach( $classes->items as $class => $item) {
 echo "$class\n";
       $obj = getinstance($class);
-      if (method_exists($obj, 'install')) $obj->install();
+//      if (method_exists($obj, 'install')) $obj->install();
     }
     $posts->unlock();
     $urlmap->unlock();

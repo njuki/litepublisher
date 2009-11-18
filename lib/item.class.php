@@ -58,7 +58,7 @@ return false;
   
   public function request($id) {
     $this->id = $id;
-    if !$this->load()) return 404;
+    if (!$this->load()) return 404;
   }
   
   public static function DeleteItemDir($dir) {
