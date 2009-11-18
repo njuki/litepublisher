@@ -1,6 +1,6 @@
 <?php
 
-class tcommentmanager extends TAbstractCommentManager {
+class tcommentmanager extends TAbstractCommentManager implements icommentmanager {
   
   public static function instance() {
     return getinstance(__class__);
