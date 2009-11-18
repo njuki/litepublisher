@@ -1,6 +1,6 @@
 <?php
 
-class TOptions extends TEventClass {
+class toptions extends tevents {
 public $user;
 public $group;
   
@@ -71,7 +71,7 @@ if ($login == $this->login) {
 $this->user = 1;
 } else {
 $users = tusers::instance();
-if (!($this->user = $users->loginexists($login)) return false;
+if (!($this->user = $users->loginexists($login))) return false;
 }
 
 if ($this->password != md5("$login:$this->realm:$password"))  return false;

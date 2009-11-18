@@ -132,13 +132,14 @@ $list = $this->getevents($name);
   }
   
   public function eventunsubscribe($name, $class) {
-    if (    $list = $this->getevents($name)) { 
+    if (    $list = $this->getevents($name)) {
       foreach ($list  as $i => $item) {
         if ($item['class'] == $class) {
           $this->eventdelete($name, $i);
           return true;
         }
       }
+}
     return false;
   }
   

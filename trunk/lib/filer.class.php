@@ -18,7 +18,7 @@ $file = $path. $filename;
     if ($rmdir) rmdir($path);
   }
   
-  public static function deletemask($mask( {
+  public static function deletemask($mask) {
 foreach (glob($mask) as $filename) unlink($filename);
   }
 

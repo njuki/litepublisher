@@ -15,7 +15,7 @@ global $options;
 '{$options->q}' => $options->q,
 '$options->files' => $options->files
 );
-if (isset($thisthis)) $this->data['$this' => $thisthis;
+if (isset($thisthis)) $this->data['$this'] = $thisthis;
  }
 
 public function __get($name) { return $this->data[$name]; }
