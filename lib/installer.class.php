@@ -1,6 +1,6 @@
 <?php
 
-class TInstaller extends TDataClass {
+class tinstaller extends tdata {
   public $language;
   public $mode;
   public $lite;
@@ -226,7 +226,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   }
   
   public function PrintForm() {
-    $this->LoadLang();
+    $this->loadlang();
     $form = $this->GetLangForm();
     $html = &THtmlResource::instance();
     $html->section = 'installation';
@@ -326,7 +326,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   public static function SendEmail($password) {
     global $options;
     tlocal::loadlang('admin');
-    $lang = &TLocal::$data['installation'];
+    $lang = &tlocal::$data['installation'];
     $url = $options->url . $options->home;
     $login = $options->login;
     eval('$body = "' . $lang['body'] . '";');
@@ -347,19 +347,19 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     echo SimplyHtml($options->name, $content);
   }
   
-  public function Uninstall() {
+  public function uninstall() {
     global $paths;
     tfiler::delete($paths['data'], true);
     tfiler::delete($paths['cache'], true);
     tfiler::delete($paths['files'], true);
   }
   
-  private function LoadLang() {
+  private function loadlang() {
     global $paths;
-    $GLOBALS['options'] = &$this;
-    require_once($paths['lib'] . 'filerclass.php');
-    require_once($paths['lib'] . 'localclass.php');
-    require_once($paths['lib'] . 'htmlresource.php');
+    $GLOBALS['options'] = $this;
+    require_once($paths['lib'] . 'filer.class.php');
+    require_once($paths['lib'] . 'local.class.php');
+    require_once($paths['lib'] . 'htmlresource.class.php');
     tlocal::loadlang('admin');
   }
   

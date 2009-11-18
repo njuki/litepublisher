@@ -10,8 +10,8 @@ return "<$this->tag>{$lang->$name}</$this->tag>\n";
 
 }//class
 
+
 class THtmlResource  {
-const tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
   public $section;
   public $ini;
   private $map;
@@ -19,15 +19,19 @@ const tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
   public static function instance() {
     return getinstance(__class__);
   }
+
+public static function tags() {
+return array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
+}
   
   public function __construct() {
     $this->ini = array();
-    $this->loadfile('adminhtml');
+    $this->load('adminhtml');
     tlocal::loadlang('admin');
   }
   
   public function __get($name) {
-if (in_array($name, self::tags)) return new ttag($name);
+if (in_array($name, self::tags())) return new ttag($name);
     if (isset($this->ini[$this->section][$name]))  {
       $s = $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
