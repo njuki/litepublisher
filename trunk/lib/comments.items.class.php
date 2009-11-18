@@ -1,6 +1,6 @@
 <?php
 
-class tcomments extends TItems implements IComments {
+class tcomments extends titems implements icomments {
   public $pid;
   private static $instances;
   
@@ -26,6 +26,8 @@ $self = new $class();
   public function getbasename() {
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments';
   }
+
+  public function getholditems() {}
   
   public function insert($id, $userid,  $Content, $status,  $type) {
     $filter = TContentFilter::instance();

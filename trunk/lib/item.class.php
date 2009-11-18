@@ -1,6 +1,6 @@
 <?php
 
-class TItem extends TDataClass {
+class titem extends tdata {
   public static $instances;
   //public $id;
   protected $aliases;
