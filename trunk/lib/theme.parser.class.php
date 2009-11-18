@@ -54,7 +54,7 @@ $ content = $this->parsetag($s, 'content', '$template->content');
 
 $excerpts = $this->parsetag($content, 'excerpts', '');
 $excerpt = $this->parsetag($excerpts, 'excerpt', '%s');
-$theme->more['link'] = $this->parsetag($excerpt, 'morelink', '$post->morelink');
+$theme->excerpts['more'] = $this->parsetag($excerpt, 'more', '$post->morelink');
 $screenshots = $this->parsetag($excerpt= , 'screenshots', '$post->screenshots);
 $theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
 $theme->files['screenshots'] = $screenshots;
@@ -66,15 +66,24 @@ $theme->excerpts['liteexcerpt'] = this->parsetag($lite, 'excerpt', '%s');
 $theme->excerpts['lite'] = $lite;
 
 $post = $this->parsetag($content, 'post', '');
-$theme->more['anchor'] = $this->parsetag($post, 'moreanchor', '');
+$theme->post['more'] = $this->parsetag($post, 'more', '');
+
 $files = $this->parsetag($post, 'files', '$post->filelist');
 $theme->files['file'] = $this->parsetag$files, 'file', '%s');
 $theme->files['image'] = $this->parsetag($files, 'image', '');
 $theme->files['video'] = $this->parsetag($files, 'video', '');
 $theme->files['files'] = $files;
+
+$theme->post['rss'] = $this->parsetag($post, 'rss', '$post->rsscomments');
+
+$prevnext = $this->parsetag($post, 'prevnext', '$post->prevnext');
+$theme->post['prev'] = $this->parsetag($prevnext, 'prev', '%s');
+$theme->post['next'] = $this->parsetag($prevnext, 'next', '');
+$theme->post['prevnext'] = $prevnext;
+
 $comments = $this->parsetag($post, 'templatecomments', '$post->templatecomments');
 $this->parsecomments($comments);
-$theme->post = $post;
+$theme->post['tml'] = $post;
 
 $theme->menucontent = $this->parsetag($content, 'menucontent', '');
 $theme->simplecontent = $this->parsetag($content, 'simplecontent', '');

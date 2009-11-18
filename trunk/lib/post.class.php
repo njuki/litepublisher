@@ -142,7 +142,7 @@ global $post;
     if ($this->moretitle == '') return '';
 $post = $this;
 $theme = ttheme::instance();
-return $theme->parse($theme->more['link']);
+return $theme->parse($theme->excerpts['more']);
   }
   
    public function gettagnames() {
@@ -223,10 +223,37 @@ return $files->getlist('$this->files, false);
 }
   
   public function GetTemplateContent() {
-    $GLOBALS['post'] = $this;
+global $post;
+$post = $this;
 $theme = ttheme::instance();
-    return $theme->parse($theme->post);
+    return $theme->parse($theme->post['tml']);
   }
+
+public function getrsscomments() }
+global $post;
+    if ($this->commentsenabled && ($this->commentscount > 0)) {
+$post = $this;
+$theme = ttheme;:instance();
+return $theme->parse($theme->post['rss']);
+}
+return '';
+}
+
+public function getprevnext() {
+global $prevpost, $nextpost;
+    $result = '';
+$theme = ttheme::instance();
+    if ($prevpost = $this->prev) {
+      $result .= $theme->parse($theme->post['prev']);
+    }
+    
+    if ($nextpost = $post->next) {
+      $result .= $theme->parse($theme->post['next']);
+    }
+    
+    if ($result != '') $result = sprintf($theme->parse($theme->post['prevnext']), $result);
+return $result;
+}
 
 public function getcommentslink() {
 $tc = ttemplatecomments::instance();
@@ -239,24 +266,28 @@ public function  gettemplatecomments() {
 $tc = ttemplatecomments::instance();
 return $tc->getcomments($this->id);
 }
+
+private function replacemore($content) {
+global $post;
+$post = $this;
+$theme = ttheme::instance();
+$more = $theme->parse($theme->post['more']);
+$tag = '<!--more-->';
+if ($i =strpos($content, $tag)) {
+return str_replace($tag, $more, $content);
+} else {
+return $more . $content;
+}
+}
   
   public function getcontent() {
-global $post;
     $result = '';
-    $templ = templateposts::instance();
-$templ->before($this->id, &$result);
+$posts = tposts::instance();
+$posts->beforecontent($this->id, &$result);
     $urlmap = turlmap::instance();
     if ($urlmap->page == 1) {
       $result .= $this->filtered;
-$post = $this;
-$theme = ttheme::instance();
-$more = $theme->parse($theme->more['anchor']);
-$tag = '<!--more-->';
-if ($i =strpos($result, $tag)) {
-$result = str_replace($tag, $more, $result);
-} else {
-$result = $more . $result;
-}
+$result = $this->replacemore($result);
     } elseif ($s = $this->getpage($urlmap->page - 1)) {
       $result .= $s;
     } elseif ($urlmap->page <= $this->commentpages) {
@@ -265,7 +296,13 @@ $result = $more . $result;
       $lang = tlocal::instance();
       $result .= $lang->notfound;
     }
-$templ->after($this->id, &$result);
+
+    if ($this->haspages) {
+$theme = theme::instance();
+$result .= $theme->getpages($this->url, $urlmap->page, $this->countpages);
+}
+
+$post->aftercontent($this->id, &$result);
     return $result;
   }
   

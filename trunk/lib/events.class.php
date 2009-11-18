@@ -1,6 +1,6 @@
 <?php
 
-class tevents extends TDataClass {
+class tevents extends tdata {
   protected $events;
   protected $eventnames;
   protected $map;

@@ -3,13 +3,13 @@
 class ttheme extends TEventClass {
 //public $tml;
 public $excerpts;
-public $menu;
-public $navi;
-public $widgets;
+public $post;
 public $files;
 public $comments;
+public $navi;
+public $menu;
+public $widgets;
 public $admin;
-public $more;
 
 public static function instance() {
 return getinstance(__class__);
@@ -29,13 +29,13 @@ $this->data['simplecontent'] = '%s';
 $this->data['nocontent'] = '';
 
 $this->addmap('excerpts', array());
+$this->addmap('post', array());
+$this->addmap('comments', array());
 $this->addmap('navi', array());
 $this->addmap('menu', array());
 $this->addmap('content', array());
 $this->addmap('widgets', array());$this->addmap('widgets', array());
-$this->addmap('comments', array());
 $this->addmap('admin', array());
-$this->addmap('more', array());
 $this->addmap('files', array());
 }
 
