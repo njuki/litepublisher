@@ -18,8 +18,8 @@ public $rawtable;
 $this->table = 'posts';
 $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
-    $this->addevents('edited', changed', 'singlecron');
-    if (!dbversion) $this->AddDataMap('archives' , array());
+    $this->addevents('edited', changed', 'singlecron', 'beforecontent', 'aftercontent');
+    if (!dbversion) $this->addmap('archives' , array());
   }
   
   public function getitem($id) {

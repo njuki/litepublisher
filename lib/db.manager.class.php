@@ -3,8 +3,8 @@
 class tdbanager  {
   private $max_allowed_packet;
   
-  public static function &instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   public function __get($name) {
@@ -18,7 +18,7 @@ class tdbanager  {
     return call_user_func_array(array(&$db, $name), $arg);
   }
   
-  public function CreateTable($name, $struct) {
+  public function createtable($name, $struct) {
     return $this->exec("
     create table $this->prefix$name
     ($struct)
@@ -26,11 +26,11 @@ class tdbanager  {
     COLLATE = utf8_general_ci");
   }
   
-  public function DeleteTable($name) {
+  public function deletetable($name) {
     $this->exec("DROP TABLE IF EXISTS $this->prefix$name");
   }
   
-  public function  DeleteAllTables( ) {
+  public function  deletealltables( ) {
     global $dbconfig;
   $res = $this->query("show tables from {$dbconfig['dbname']}");
     $sql = '';
@@ -49,21 +49,21 @@ class tdbanager  {
     return $this->exec("alter table $this->prefix$this->table $arg");
   }
   
-  public function GetDatabases() {
+  public function getdatabases() {
     if ($res = $this->query("show databases")) {
       return $this->res2array($res);
     }
     return false;
   }
   
-  public function DatabaseExists($name) {
+  public function dbexists($name) {
     if ($list = $this->GetDatabaseList()) {
       return in_array($name, $list);
     }
     return FALSE;
   }
   
-  public function GetTables() {
+  public function gettables() {
     global $dbconfig;
   if ($res = $this->query("show tables from {$dbconfig['dbname']} like '$this->prefix%'")) {
       return $this->res2array($res);
@@ -78,8 +78,8 @@ class tdbanager  {
     return false;
   }
   
-  public function CreateDatabase($name) {
-    if ( $this->DatabaseExists($name) )  return false;
+  public function createdatabase($name) {
+    if ( $this->dbexists($name) )  return false;
     return $this->exec("CREATE DATABASE $name");
   }
 
@@ -113,7 +113,7 @@ $db->exec("delete from$db->subscribers where author not in (select id from $db->
 
 public function optimize() {
 $this->DeleteDeleted();
-    $tables = $this->GetTables();
+    $tables = $this->gettables();
     foreach ($tables as $table) {
 $this->exec("optimize $table");
 }
@@ -131,15 +131,15 @@ $this->exec("optimize $table");
   $result .= "-- Database: {$options->dbconfig['dbname']}\n\n";
     $result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
     
-    $tables = $this->GetTables();
+    $tables = $this->gettables();
     foreach ($tables as $table) {
-      $result .= $this->ExportTable($table);
+      $result .= $this->exporttable($table);
     }
     $result .= "\n-- Lite Publisher dump end\n";
     return $result;
   }
   
-  public function ExportTable($name) {
+  public function exporttable($name) {
     global $db;
     
     if ($res = $this->query("show create table `$name`")) {

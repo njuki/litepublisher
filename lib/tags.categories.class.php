@@ -11,6 +11,7 @@ class TCategories extends TCommonTags {
     parent::create();
 $this->table = 'categories';
 $this->contents->table = 'catscontent';
+$this->itemsposts->table = $this->table . 'items';
     $this->basename = 'categories' ;
   }
   
