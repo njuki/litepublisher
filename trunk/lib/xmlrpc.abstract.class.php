@@ -1,6 +1,6 @@
 <?php
 
-class TXMLRPCAbstract extends TEventClass {
+class TXMLRPCAbstract extends tevents {
   public $error;
   
   public function uninstall() {

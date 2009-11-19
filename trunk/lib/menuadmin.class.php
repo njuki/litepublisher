@@ -1,7 +1,7 @@
 <?php 
 class tadminmenu extends tmenu {
 
-  public static function &Instance() {
+  public static function instance() {
     return getinstance(__class__);
   }
   
@@ -14,8 +14,8 @@ public function add($parent, $name, $group, $class) {
 $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
 $urlmap = turlmap::instance();
 $this->items[++$this->autoid] = array(
-'id' = $this->autoid,
-'parent' = $parent,
+'id' => $this->autoid,
+'parent' => $parent,
 'order' => $this->autoid,
 'url' => $url,
 'idurl' => $urlmap->add($url, $class, null, 'tree'),
@@ -40,7 +40,7 @@ $theme = ttheme::instance();
 $tml .= "\n";
 $groups = Tusergroups::instance();
     foreach ($childs as $item) {
-if ($groups->hasright($options->group, $item['group']) 
+if ($groups->hasright($options->group, $item['group'])) 
       $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
     }
 
@@ -58,7 +58,7 @@ $theme = ttheme::instance();
     $tml = $theme->menu['item'];
 $groups = Tusergroups::instance();
     foreach ($this->tree as $item) {
-if ($groups->hasright($options->group, $item['group']) 
+if ($groups->hasright($options->group, $item['group']))
       $result .= sprintf($tml, $options. $item['url'], $item['title'], '');
     }
     return $result;
@@ -70,8 +70,8 @@ $theme = ttheme::instance();
     $tml = $theme->menu['item'];
 $groups = Tusergroups::instance();
     foreach ($tree as $item) {
-if ($groups->hasright($options->group, $item['group'])  {
-      $subitems = count($item['subitems']) > 0 ? $this->getsubmenu($item['subitems'] : '';
+if ($groups->hasright($options->group, $item['group'])) {
+      $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
       $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
 }
     }
@@ -81,10 +81,10 @@ if ($groups->hasright($options->group, $item['group'])  {
 }//class
 
 class tadminmenuitem extends tmenuitem {
-const adminprops = array('name', 'group');  public $arg;
 public $arg;
 
   protected function create() {
+self::$ownerprops = array_merge(self::$ownerprops, array('name', 'group'));
     parent::create();
 $this->basename = $this->name;
     $this->CacheEnabled = false;
@@ -95,16 +95,6 @@ public function save() {}
 
 public function getowner() {
 return tadminmenu::instance();
-}
-
-public function __get($name) {
-if (in_array($name, self::adminprops))return $this->owner->items[$this->id][$name];
-return parent::__get($name);
-}
-
-public function __set($name, $value) {
-if (in_array($name, self::oadminprops))return $this->owner->setvalue($this->id, $name, $value);
-parent::__set($name, $value);
 }
 
   public function auth() {

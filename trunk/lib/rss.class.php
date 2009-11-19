@@ -1,6 +1,6 @@
 <?php
 
-class trss extends tevent {
+class trss extends tevents {
   public $domrss;
   
   public static function &Instance() {

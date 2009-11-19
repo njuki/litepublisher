@@ -1,6 +1,6 @@
 <?php
 
-class tmanifest extends TEventClass {
+class tmanifest extends tevents {
   
   static function instance() {
     return getinstance(__class__);

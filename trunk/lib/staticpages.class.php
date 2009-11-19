@@ -16,7 +16,7 @@ private $id;
 $this->id = (int)$arg;
 }
 
-private function getvalue($name0) {
+public function getvalue($name0) {
 return $this->items[$this->id][$name];
 }
 
@@ -43,7 +43,7 @@ $title = tcontentfilter::escape($title);
 $linkgen = tlinkgenerator::instance();
 $url = $linkgen->createurl($title, 'post');
 $urlmap = turlmap::instance();
-$this->items++$this->autoid] = array(
+$this->items[++$this->autoid] = array(
 'idurl' => $urlmap->add($url, get_class($this),  $this->autoid),
 'url' => $url,
 'title' => $title,

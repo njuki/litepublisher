@@ -1,6 +1,6 @@
 <?php
 
-class topenid extends TEventClass {
+class topenid extends tevents {
   public $keys;
   public $trusted;
   public $url;

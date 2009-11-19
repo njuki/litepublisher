@@ -1,6 +1,6 @@
 <?php
 
-class tusers extends TItems {
+class tusers extends titems {
 
   public static function instance() {
     return getinstance(__class__);
@@ -17,7 +17,7 @@ public function add($group, $login,$password, $name, $email, $url) {
 global $options;
 if ($this->loginexists($login)) return false;
 $groups = tusergroups::instance();
-if (!($gid = $groups->groupid($group)) return false;
+if (!($gid = $groups->groupid($group))) return false;
 $password = md5("$login:$options->realm:$password");
 $item = array(
 'group' => $gid,
@@ -26,7 +26,7 @@ $item = array(
 'cookie' =>  md5(mt_rand() . secret. microtime()),
 'expired' => 0,
 'name' => $name,
-'email' => $email
+'email' => $email,
 'url' => $url
 );
 
@@ -39,7 +39,7 @@ return $this->autoid;
 }
 }
 
-ppublic function loginexists($login) {
+public function loginexists($login) {
 global $options;
 if ($login == $options->login) return 1;
 if (dbversion) {
@@ -55,6 +55,7 @@ return false;
 public function getpassword($id) {
 global $options;
 return $id == 1 ? $options->password : $this->getvalue($id, 'password');
+}
 
 public function auth($login,$password) {
 global $options;
@@ -64,7 +65,7 @@ $login = dbquote($login);
 return $this->db->findid("login = $login and password = '$password'");
 } else {
 foreach ($this->items as $id => $item) {
-if ($login == $item['login']) && ($password = $item['password'])) return $id;
+if (($login == $item['login']) && ($password = $item['password'])) return $id;
 }
 }
 return  false;
@@ -83,7 +84,7 @@ $this->setcookies($id, '', 0);
 public function setcookies($id, $cookie, $xpired) {
 if (dbversion) {
 $this->db->updateassoc(array(
-'id' => $id',
+'id' => $id,
 'cookie' => $cookie,
 'expired' => $expired
 ));

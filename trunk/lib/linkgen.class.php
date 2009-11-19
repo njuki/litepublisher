@@ -1,6 +1,6 @@
 <?php
 
-class tlinkgenerator extends TEventClass {
+class tlinkgenerator extends tevents {
   public $DataObject;
   
   public static function instance() {

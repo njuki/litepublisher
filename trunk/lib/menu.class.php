@@ -27,11 +27,11 @@ return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
   public function add(tmenuitem $item) {
 //fix null fields
 $zero = &$this->items[0];
-if (!isset($zero['url']) $zero['url'] = '';
-if (!isset($zero['parent']) $zero['parent'] = 0;
-if (!isset($zero['order']) $zero['order'] = 0;
-if (!isset($zero['title']) $zero['title'] = '';
-if (!isset($zero['status']) $zero['status'] = 'published';
+if (!isset($zero['url'])) $zero['url'] = '';
+if (!isset($zero['parent'])) $zero['parent'] = 0;
+if (!isset($zero['order'])) $zero['order'] = 0;
+if (!isset($zero['title'])) $zero['title'] = '';
+if (!isset($zero['status'])) $zero['status'] = 'published';
 
     $linkgen = tlinkgenerator::instance();
     if ($item->url == '' ) {
@@ -47,7 +47,7 @@ if (!isset($zero['status']) $zero['status'] = 'published';
       $item->id = ++$this->autoid;
     $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
       $this->lock();
-$this->items[$this->autoid[ = $this->items[0];
+$this->items[$this->autoid] = $this->items[0];
 unset($this->items[0]);
       $this->sort();
       $item->save();
@@ -70,10 +70,11 @@ public function edit(tmenuitem $item) {
         $item->url = $linkgen->Create($item, 'item', false);
         $item->title = $title;
       }
+}
 
     if ($oldurl != $item->url) {
 //check unique url
-if (($idurl = $urlmap->idfind($item->url) && ($idurl != $item->idurl)) {
+if (($idurl = $urlmap->idfind($item->url)) && ($idurl != $item->idurl)) {
 $item->url = $linkgen->MakeUnique($item->url);
 }
 $urlmap->setidurl($item->idurl, $item->url);
@@ -121,7 +122,7 @@ $result = array();
 // первый шаг найти всех детей и отсортировать
 $sort= array();
     foreach ($this->items as $id => $item) {
-      if (($item['parent'] == $parent) && ($item['status'] == 'published') 
+      if (($item['parent'] == $parent) && ($item['status'] == 'published')) 
 $sort[$id] = (int) $item['order'];
       }
        arsort($sort, SORT_NUMERIC);
@@ -197,7 +198,7 @@ private function getsubmenu(&$tree) {
 $theme = ttheme::instance();
     $tml = $theme->menu['item'];
     foreach ($tree as $item) {
-      $subitems = count($item['subitems']) > 0 ? $this->getsubmenu($item['subitems'] : '';
+      $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
       $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
     }
     return $result;
@@ -205,8 +206,8 @@ $theme = ttheme::instance();
 
 }//class
 
-class tmenuitem extends TItem implements  ITemplate {
-const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
+class tmenuitem extends titem implements  itemplate {
+public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
   public static function instance($id = 0) {
@@ -235,12 +236,12 @@ const ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   
 public function __get($name) {
     if ($name == 'content') return $this->formresult . $this->getcontent();
-if (in_array($name, self::ownerprops))return $this->owner->items[$this->id][$name];
+if (in_array($name, self::$ownerprops))return $this->owner->items[$this->id][$name];
 return parent::__get($name);
 }
 
 public function __set($name, $value) {
-if (in_array($name, self::ownerprops))return $this->owner->setvalue($this->id, $name, $value);
+if (in_array($name, self::$ownerprops))return $this->owner->setvalue($this->id, $name, $value);
 parent::__set($name, $value);
 }
   
@@ -250,7 +251,7 @@ return tmenu::instance();
 
   //ITemplate
 public function request($id) {
-parent::request(4id);
+parent::request($id);
 $this->checkform();
 }
 
@@ -284,7 +285,7 @@ public function gethead() {}
   }
 
 public function getcontent() {
-return $this->data['content');
+return $this->data['content'];
 }
   
   public function GetTemplateContent() {

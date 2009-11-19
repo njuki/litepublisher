@@ -1,6 +1,6 @@
 <?php
 
-class TContentFilter extends TEventClass {
+class tcontentfilter extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
@@ -103,8 +103,8 @@ $this->data['phpcode'] = true;
     //ставятся параграфы вместо двух разрывов строк
     $result = str_replace("\n\n", "</p>\n<p>", $result);
     //замена разрывов строк на <br /> до и после тегов a|img|b|i|u
-$result = preg_replace('/\n<(a|img)([^<]*)>/im', "<br />\n<$1$2>", $result);
-result = preg_replace('/<img src=([^<]*)>\n/im', "<img src=$1><br />\n", $result);
+$result = preg_replace('/\n<(a|img)([^<]*)>/im', "<br />\n<\$1\$2>", $result);
+$result = preg_replace('/<img src=([^<]*)>\n/im', "<img src=\$1><br />\n", $result);
 
 /*
     $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);

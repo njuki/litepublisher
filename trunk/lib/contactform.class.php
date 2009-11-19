@@ -1,16 +1,16 @@
 <?php
 
-class TContactForm extends TMenuItem {
+class tcontactform extends tmenuitem {
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->CacheEnabled = false;
   }
   
-  public function Getcontent() {
+  public function getcontent() {
     $result = '';
     if (isset($_POST) && isset($_POST['email'])) {
-      $result .= $this->ProcessForm();
+      $result .= $this->processform();
     }
     
     $result .= $this->Data['content'];
