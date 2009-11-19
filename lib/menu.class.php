@@ -236,7 +236,7 @@ public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 's
   
 public function __get($name) {
     if ($name == 'content') return $this->formresult . $this->getcontent();
-if (in_array($name, self::$ownerprops))return $this->owner->items[$this->id][$name];
+if (in_array($name, self::$ownerprops)) return $this->owner->items[$this->id][$name];
 return parent::__get($name);
 }
 
@@ -289,13 +289,12 @@ return $this->data['content'];
 }
   
   public function GetTemplateContent() {
-        $GLOBALS['post'] = &$this;
+global $menuitem;
+$menuitem = $this;
 $theme = ttheme::instance();
     return $theme->parse($theme->menucontent);
   }
 
-
-  
   public function getsubmenuwidget() {
 return $this->owner->getsubmenuwidget($this->id);
 }
