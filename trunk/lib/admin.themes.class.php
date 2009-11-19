@@ -58,7 +58,7 @@ $filelist = '';
       $result .= sprintf($html->filelist, $filelist);
 
       if (!empty($_GET['file'])) {
-$file = $_GET['file']);
+$file = $_GET['file'];
 if (strpbrk ($file, '/\<>')) return $this->notfound;
 $filename = $paths['themes'].$themename . DIRECTORY_SEPARATOR  . $file;
 if (!@file_exists($filename)) return $this->notfound;
