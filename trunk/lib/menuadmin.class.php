@@ -8,6 +8,7 @@ class tadminmenu extends tmenu {
   protected function CreateData() {
     parent::CreateData();
     $this->basename = 'admin' . DIRECTORY_SEPARATOR   . 'menu';
+tadminmenuitem::$ownerprops = array_merge(tadminmenuitem::$ownerprops, array('name', 'group'));
 }
 
 public function add($parent, $name, $group, $class) {
@@ -84,9 +85,7 @@ class tadminmenuitem extends tmenuitem {
 public $arg;
 
   protected function create() {
-self::$ownerprops = array_merge(self::$ownerprops, array('name', 'group'));
     parent::create();
-$this->basename = $this->name;
     $this->CacheEnabled = false;
   }
   
@@ -116,6 +115,7 @@ if ($groups->hasright($options->group, $this->group)) return 404;
     if ($s = $this->auth()) return $s;
     tlocal::loadlang('admin');
       $this->data['id'] = $id;
+$this->basename = $this->name;
 $urlmap = turlmap::instance();
 $this->arg = $urlmap->argtree;
 $this->checkform();

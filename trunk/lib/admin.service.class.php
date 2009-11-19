@@ -1,37 +1,31 @@
 <?php
 
-class TAdminService extends TAdminPage {
-  public static function &Instance() {
-    return GetInstance(__class__);
+class tadminservice extends tadminmenuitem {
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'service';
-  }
-  
-  public function Getcontent() {
-    global $classes, $Options, $paths;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+
+  public function getcontent() {
+    global $classes, $options, $paths;
+    $html = $this->html;
     $result = '';
-    $checked = "checked='checked'";
+$args = targs::instance();
     
-    switch ($this->arg) {
-      case null:
+    switch ($this->name) {
+      case 'service':
       $result .= $this->HandleUpdate($_GET);
-      $posts = &TPosts::Instance();
-      $CommentManager = &TCommentManager::Instance();
-      $updater = &TUpdater::Instance();
-      eval('$result = "' . $html->info . '\n";');
+$args->postscount = $classes->posts->count;
+$args->commentscount = $classes->commentmanager->count;
+$result .= $html->info($args);
+      $updater = tupdater::instance();
       $islatest= $updater->IsLatest();
       if ($islatest === true) {
-        eval('$result .= "' . $html->islatest . '\n";');
+$result .= $html->h3->islatest;
       } elseif ($islatest === false) {
-        eval('$result .= "' . $html->requireupdate . '\n";');
+$result .= $html->requireupdate();
       } else {
-        eval('$result .= "'. $html->errorgetlatest . '\n";');
+$result .= $html->h2->errorservice;
       }
       break;
       
@@ -56,11 +50,10 @@ class TAdminService extends TAdminPage {
       return $this->FixCheckall($result);
       
       case 'backup':
-      $result= $html->partialform;
-      $result .= $html->fullbackupform;
+      $result= $html->partialform();
+      $result .= $html->fullbackupform();
       $result .=  $html->uploadform;
-      $result .= $this->GetBackupFilelist();
-      eval('$result = "'. $result . '\n";');
+      $result .= $this->getbackupfilelist();
       break;
       
       case 'download':
@@ -96,14 +89,14 @@ class TAdminService extends TAdminPage {
   }
   
   private function HandleUpdate($req) {
-    $html = THtmlResource::Instance();
-    $lang = TLocal::Instance();
+    $html = THtmlResource::instance();
+    $lang = TLocal::instance();
     if (isset($req['autoupdate'])) {
-      $updater = TUpdater::Instance();
+      $updater = TUpdater::instance();
       $result = $updater->AutoUpdate();
       return "<h2>$result</h2>\n";
     } elseif (isset($req['update'])) {
-      $updater = &TUpdater::Instance();
+      $updater = &TUpdater::instance();
       $updater->Update();
       eval('$result = "'. $html->successupdated . '\n";');
       return $result;
@@ -112,10 +105,10 @@ class TAdminService extends TAdminPage {
   }
   
   public function ProcessForm() {
-    global $classes, $Options, $Urlmap, $paths, $domain;
-    $html = &THtmlResource::Instance();
+    global $classes, $options, $Urlmap, $paths, $domain;
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     switch ($this->arg) {
       case null: return $this->HandleUpdate($_POST);
@@ -133,7 +126,7 @@ class TAdminService extends TAdminPage {
             break;
             
             case $lang->uninstall:
-            $plugins = TPlugins::Instance();
+            $plugins = TPlugins::instance();
             $plugins->deleteclass($name);
             $classes->delete($name);
             break;
@@ -148,7 +141,7 @@ class TAdminService extends TAdminPage {
       break;
       
       case 'backup':
-      $admin = &TRemoteAdmin::Instance();
+      $admin = &TRemoteAdmin::instance();
       extract($_POST);
       switch ($dest) {
         case 'upload':
@@ -156,11 +149,11 @@ class TAdminService extends TAdminPage {
           return $html->attack($_FILES["filename"]["name"]);
         }
         
-        $url = $Options->url;
+        $url = $options->url;
         $admin->Upload(file_get_contents($_FILES["filename"]["tmp_name"]));
         if (isset($saveurl)) {
-          $Options->Load();
-          $Options->Seturl($url);
+          $options->Load();
+          $options->Seturl($url);
         }
         $Urlmap->ClearCache();
         @header('Location: http://' . $_SERVER['HTTP_HOST'] .  $_SERVER['REQUEST_URI']);
@@ -198,19 +191,18 @@ class TAdminService extends TAdminPage {
     exit();
   }
   
-  private function GetBackupFilelist() {
-    global $Options, $paths;
-    $html = &THtmlResource::Instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::Instance();
-    
-    eval('$result = "'. $html->backupheader . '\n";');
-    $filelist = tfiler::getfiles($paths['backup']);
-    foreach($filelist as $filename) {
-      if (!preg_match('/\.zip$/',  $filename)) continue;
-      eval('$result .= "'. $html->backupitem . '\n";');
+  private function getbackupfilelist() {
+    global $options, $paths;
+
+    $html = $this->html;
+$result = $html->backupheader();
+$args = targs::instance();
+$args->adminurl = $this->adminurl;
+    foreach(glob($paths['backup'] . '*.zip') as $filename) {
+$args->filename = $filename;
+$result .= $html->backupitem($args);
     }
-    eval('$result .= "'. $html->backupfooter . '\n";');;
+    $result .= $html->backupfooter;
     return $result;
   }
   

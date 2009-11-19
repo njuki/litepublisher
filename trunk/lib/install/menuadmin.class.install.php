@@ -56,6 +56,13 @@ $self->add($opt, 'local', 'admin', 'tadminoptions');
 $self->add($opt, 'notfound404', 'admin', 'tadminoptions'); 
 }
 
+$serv = $self->add(0, 'service', 'admin', 'tadminservice'); 
+{
+$self->add($serv, 'backup', 'admin', 'tadminservice'); 
+$self->add($serv, 'engine', 'admin', 'tadminservice'); 
+$self->add($serv, 'run', 'admin', 'tadminservice'); 
+}
+
 $self->unlock();
 
 $redir = tredirector::instance();
