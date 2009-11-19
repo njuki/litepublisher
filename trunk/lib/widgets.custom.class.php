@@ -1,6 +1,6 @@
 <?php
 
-class tcustomwidget extends TItems {
+class tcustomwidget extends titems {
   
   public static function instance() {
     return instance(__class__);
@@ -13,9 +13,10 @@ class tcustomwidget extends TItems {
   
   public function getwidget($id, $sitebar) {
     global $options;
-    if (!$this->items[$id]['templ']) return $this->items[$id]['content'];
+$item = $this->getitem($id);
+    if (!$item['templ']) return $item['content'];
 $theme = ttheme::instance();
-return $theme->getwidget($this->items[$id]['title']), $this->items[$id]['content'], 'widget', $sitebar);
+return $theme->getwidget($item['title'], $item['content'], 'widget', $sitebar);
 }
   
   public function add($title, $content, $templ) {

@@ -1,6 +1,6 @@
 <?php
 
-class tstdwidgets extends TItems {
+class tstdwidgets extends titems {
 
   public static function instance() {
     return getinstance(__class__);
@@ -18,7 +18,7 @@ $widgets = twidgets::instance();
 $id = $widgets->add($this->class, 'echo', 0, -1);
 $this->items[$name] = array(
 'id' => $id,
-'ajax' = $ajax,
+'ajax' => $ajax,
 'title' => $this->gettitle($name)
 );
 $this->save();
@@ -27,7 +27,7 @@ return $id;
 }
 
 public function setajax($name, $ajax) {
-if (isset($this->items[$name) && ($this->items[$name]['ajax'] != $ajax)) {
+if (isset($this->items[$name]) && ($this->items[$name]['ajax'] != $ajax)) {
 $this->items[$name]['ajax'] = $ajax;
 $this->save();
 $this->updateajax();
@@ -75,6 +75,7 @@ return false;
 }
 
 public function request($arg) {
+global $options;
 if (!isset($this->items[$name])) return 404;
 $result = "<?php 
     @header('Content-Type: text/html; charset=utf-8');
@@ -86,7 +87,7 @@ $result .= $this->getcontent($name);
 return $result;
 }
 
-public function getwidget(id, $sitebar) {
+public function getwidget($id, $sitebar) {
 global $options;
 if (!($name = $this->getname($id))) return '';
 $result = '';
@@ -131,7 +132,7 @@ global $paths, $classes;
 if ($name == 'meta') return $this->meta;
 $id = isset($this->items[$name]) ? $This->items[$name]['id'] : $name;
 $file = $paths['cache'] . 'widget$id.php';
-if (file_exists($file) return file_get_contents($file);
+if (file_exists($file)) return file_get_contents($file);
 
 $instance = $this->getinstance($name);
 $result = $instance->getwidgetcontent($id);

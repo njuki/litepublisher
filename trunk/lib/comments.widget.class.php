@@ -1,6 +1,6 @@
 <?php
 
-class tcommentswidget extends TEventClass {
+class tcommentswidget extends tevents {
 
 public static function instance() {
 return getinstance(__class__);
@@ -17,7 +17,7 @@ $this->basename = 'commentswidget';
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('comment');
 $manager = $classes->commentmanager;
-    $count = manager->options->recentcount;
+    $count = $manager->options->recentcount;
 $args = targs::instance();
       $args->onrecent = tlocal::$data['comment']['onrecent'];
 
@@ -43,7 +43,7 @@ $count = ceil($row['commentscount'] / $options->commentsperpage);
 if ($count > 1) $args->posturl = rtrim($row['posturl'], '/') . "/page/$count/";
 }
 
-$args->id = $row['id];
+$args->id = $row['id'];
  $args->title = $row['title'];
 $args->name = $row['name'];
         $args->content = tcontentfilter::getexcerpt($row['content'], 120);

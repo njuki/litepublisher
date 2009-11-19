@@ -40,11 +40,12 @@ public function add($name, $class, $func) {
     $func = $this->items[$name]['func'];
     $class = $this->tags[$name]['class'];
     if (empty($class)) {
-      if (function_exists($func))  return $func($name);
+      if (function_exists($func)){
+  return $func($name);
       } else {
 $this->delete($name);
       }
-    } elseif (@class_exists($class)){
+    } elseif (class_exists($class)){
         $obj = getinstance($class);
 return  $obj->$func($name);
       } else {

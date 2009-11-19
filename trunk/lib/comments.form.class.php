@@ -1,7 +1,7 @@
 <?php
 
 if (dbversion) {
-class THoldComments extends TDataclass {
+class THoldComments extends tdata {
   
   protected function create() {
     parent::create();
@@ -30,14 +30,14 @@ return false;
 
 } else {
 
-class THoldComments extends TItems {
+class THoldComments extends titems {
   
   protected function CreateData() {
     parent::CreateData();
     $this->basename ='holdcomments';
   }
 
-protected function Afterload() {
+public function afterload() {
 parent::AfterLoad();
     foreach ($this->items as $id => $item) {
       if ($item['date']+ 600 < time()) unset($this->items[$id]);
@@ -61,7 +61,7 @@ return $this->items[$confirmid];
 
 }
 
-class TCommentForm extends TEventClass{
+class tcommentform extends tevents {
   
   public static function instance() {
     return getinstance(__class__);

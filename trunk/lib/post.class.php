@@ -1,6 +1,6 @@
 <?php
 
-class tpost extends TItem implements  ITemplate {
+class tpost extends titem implements  itemplate {
   private $dateformater;
   
   public static function instance($id = 0) {
@@ -52,9 +52,10 @@ return TComments::instance($this->id);
   
   public function getprev() {
 if (dbversion) {
-if ($id = $this->db->findid("status = 'published' and created < '$this->created' order by created desc");
+if ($id = $this->db->findid(sprintf('status = `published` and posted < `%s` order by posted desc', sqldate($this->posted)))) {
 return self::instance($id);
 }
+return null;
 } else {
     $posts = tposts::instance();
     $keys = array_keys($posts->archives);
@@ -66,9 +67,10 @@ return self::instance($id);
   
   public function getnext() {
 if (dbversion) {
-if ($id = $this->db->findid("status = 'published' and created > '$this->created' order by created asc");
+if ($id = $this->db->findid(sprintf('status = `published` and posted > `%s` order by posted desc', sqldate($this->posted)))) {
 return self::instance($id);
 }
+return null;
 } else {
     $posts = tposts::instance();
     $keys = array_keys($posts->archives);
@@ -106,22 +108,40 @@ return self::instance($id);
   }
   
   //template
-  public function Getcategorieslinks($divider = ', ') {
-    $categories = tcategories::instance();
-    $items= array();
-    foreach ($this->data['categories'] as  $id) {
-      $items[] = $categories->getlink($id);
+  public function getexcerptcategories() {
+return $this->getcommontagslinks('categories', 'category', true);
+}
+
+  public function getexcerpttags() {
+return $this->getcommontagslinks('tags', 'tag', true);
+}
+
+public function getcategorieslinks() {
+return $this->getcommontagslinks('categories', 'category', false);
+}
+
+  public function Gettagslinks() {
+return $this->getcommontagslinks('tags', 'tag', false);
+}
+
+private function getcommontagslinks($names, $name, $excerpt) {
+global $classes;
+$theme = ttheme::instance();
+$tml = $excerpt ? $theme->excerpts : $theme->post;
+    $tags= $classes->$names;
+$tags->loaditems($this->$names);
+$args = targs::instance();
+$list = array();
+    foreach ($this->$names as $id) {
+$args->add($tags->items[$id]);
+if ($item['icon'] != 0) {
+$icons = ticons::instance();
+$args->icon = $icons->getlink($item['icon']);
+}
+$list[] = $theme->parsearg($tml[$name], $args);
     }
-    return implode($divider, $items);
-  }
-  
-  public function Gettagslinks($divider = ', ') {
-    $tags= ttags::instance();
-    $items= array();
-    foreach ($this->data['tags'] as $id) {
-      $items[] = $tags->getlink($id);
-    }
-    return implode($divider, $items);
+$result = implode($tml[$name . 'dvider'], $list);
+    return sprintf($theme->parse($tml[$names]), $result);
   }
   
   public function getlocaldate() {
@@ -219,7 +239,7 @@ return $files->getscreenshots($this->files);
 public function getfilelist() {
 if (count($this->files) === 0) return '';
 $files = tfiles::instance();
-return $files->getlist('$this->files, false);
+return $files->getlist($this->files, false);
 }
   
   public function GetTemplateContent() {
@@ -229,11 +249,11 @@ $theme = ttheme::instance();
     return $theme->parse($theme->post['tml']);
   }
 
-public function getrsscomments() }
+public function getrsscomments() {
 global $post;
     if ($this->commentsenabled && ($this->commentscount > 0)) {
 $post = $this;
-$theme = ttheme;:instance();
+$theme = ttheme::instance();
 return $theme->parse($theme->post['rss']);
 }
 return '';

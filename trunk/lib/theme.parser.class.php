@@ -43,7 +43,7 @@ $menu['item'] = $item;
 $menu['current'] = $this->parsetag($menus, 'current', '');
 $menu['menu'] = $menus;
 //hover
-if ($id = $this->getidtag('*', menus)) {
+if ($id = $this->getidtag('*', $menus)) {
 $menu['id'] = $id;
 preg_match('/\<(\w*?)\s/',$item, $t);
 $menu['tag'] = $t[1];
@@ -53,39 +53,12 @@ $menu['tag'] = $t[1];
 private function parsecontent(&$s) {
 $theme = $this->theme;
 $content = $this->parsetag($s, 'content', '$template->content');
-
-$excerpts = $this->parsetag($content, 'excerpts', '');
-$excerpt = $this->parsetag($excerpts, 'excerpt', '%s');
-$theme->excerpts['more'] = $this->parsetag($excerpt, 'more', '$post->morelink');
-$screenshots = $this->parsetag($excerpt, 'screenshots', '$post->screenshots');
-$theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
-$theme->files['screenshots'] = $screenshots;
-$theme->excerpts['excerpt'] = $excerpt;
-$theme->excerpts['normal'] = $excerpts;
-
+$this->parse_excerpts($this->parsetag($content, 'excerpts', ''));
 $lite = $this->parsetag($content, 'lite', '');
-$theme->excerpts['liteexcerpt'] = $this->parsetag($lite, 'excerpt', '%s');
+$theme->excerpts['lite_excerpt'] = $this->parsetag($lite, 'excerpt', '%s');
 $theme->excerpts['lite'] = $lite;
 
-$post = $this->parsetag($content, 'post', '');
-$theme->post['more'] = $this->parsetag($post, 'more', '');
-
-$files = $this->parsetag($post, 'files', '$post->filelist');
-$theme->files['file'] = $this->parsetag($files, 'file', '%s');
-$theme->files['image'] = $this->parsetag($files, 'image', '');
-$theme->files['video'] = $this->parsetag($files, 'video', '');
-$theme->files['files'] = $files;
-
-$theme->post['rss'] = $this->parsetag($post, 'rss', '$post->rsscomments');
-
-$prevnext = $this->parsetag($post, 'prevnext', '$post->prevnext');
-$theme->post['prev'] = $this->parsetag($prevnext, 'prev', '%s');
-$theme->post['next'] = $this->parsetag($prevnext, 'next', '');
-$theme->post['prevnext'] = $prevnext;
-
-$comments = $this->parsetag($post, 'templatecomments', '$post->templatecomments');
-$this->parsecomments($comments);
-$theme->post['tml'] = $post;
+$this->parsepost($this->parsetag($content, 'post', ''));
 
 $theme->menucontent = $this->parsetag($content, 'menucontent', '');
 $theme->simplecontent = $this->parsetag($content, 'simplecontent', '');
@@ -94,6 +67,66 @@ $theme->nocontent = $this->parsetag($content, 'nocontent', '');
 if ($theme->nocontent == '') $theme->nocontent  = '$lang->nocontent';
 $this->parsenavi($this->parsetag($content, 'navi', ''));
 $this->parseadmin($this->parsetag($content, 'admin', ''));
+}
+
+private function parse_excerpts($s) {
+$excerpts = &$this->theme->excerpts;
+$theme = $this->theme;
+$excerpt = $this->parsetag($s, 'excerpt', '%s');
+
+$categories = $this->parsetag($excerpt, 'categories', '$post->excerptcategories'); 
+$excerpts['category'] = $this->parsetag($categories, 'category', '%s');
+$excerpts['categoriesdivider'] = $this->parsetag($categories, 'divider', '');
+$excerpts['categories'] = $categories;
+
+$tags = $this->parsetag($excerpt, 'tags', '$post->excerpttags'); 
+$excerpts['tag'] = $this->parsetag($tags, 'tag', '%s');
+$excerpts['tagsdivider'] = $this->parsetag($tags, 'divider', '');
+$excerpts['tags'] = $tags;
+
+$excerpts['more'] = $this->parsetag($excerpt, 'more', '$post->morelink');
+$screenshots = $this->parsetag($excerpt, 'screenshots', '$post->screenshots');
+$theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
+$theme->files['screenshots'] = $screenshots;
+
+$excerpts['excerpt'] = $excerpt;
+$theme->excerpts['normal'] = $excerpts;
+}
+
+private function parsepost($s) {
+$post = &$this->theme->post;
+
+$categories = $this->parsetag($s, 'categories', '$post->categorieslinks'); 
+$post['category'] = $this->parsetag($categories, 'category', '%s');
+$post['categoriesdivider'] = $this->parsetag($categories, 'divider', '');
+$post['categories'] = $categories;
+
+$tags = $this->parsetag($s, 'tags', '$post->tagslinks'); 
+$post['tag'] = $this->parsetag($tags, 'tag', '%s');
+$post['tagsdivider'] = $this->parsetag($tags, 'divider', '');
+$post['tags'] = $tags;
+
+$post['more'] = $this->parsetag($s, 'more', '');
+$this->parsefiles($this->parsetag($s, 'files', '$post->filelist'));
+
+$post['rss'] = $this->parsetag($s, 'rss', '$post->rsscomments');
+
+$prevnext = $this->parsetag($s, 'prevnext', '$post->prevnext');
+$post['prev'] = $this->parsetag($prevnext, 'prev', '%s');
+$post['next'] = $this->parsetag($prevnext, 'next', '');
+$post['prevnext'] = $prevnext;
+
+$this->parsecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
+
+$post['tml'] = $s;
+}
+
+private function parsefiles($s) {
+$files = &$this->theme->files;
+$files['file'] = $this->parsetag($s, 'file', '%s');
+$files['image'] = $this->parsetag($s, 'image', '');
+$files['video'] = $this->parsetag($s, 'video', '');
+$files['files'] = $s;
 }
 
 private function parsenavi($s) {

@@ -1,6 +1,6 @@
 <?php
 
-class tarchives extends TItems implements  ITemplate {
+class tarchives extends titems implements  ITemplate {
   public $date;
   
   public static function instance() {
@@ -51,13 +51,13 @@ class tarchives extends TItems implements  ITemplate {
     //sort archive by months
     $linkgen = tlinkgenerator::instance();
     if (dbversion) {
-global $db
+global $db;
     $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
       where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
       while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
-'idurl => 0,
+'idurl' => 0,
         'url' => $linkgen->Create($this, 'archive', false),
         'title' => tlocal::date($this->date, 'F Y'),
         'year' => $r['year'],
