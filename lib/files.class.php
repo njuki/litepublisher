@@ -1,6 +1,6 @@
 <?php
 
-class tfiles extends TItems {
+class tfiles extends titems {
 public $itemsposts;
   
   public static function instance() {
@@ -45,7 +45,7 @@ $realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filen
 $item = $item + array(
 'author' => $options->user,
 'posted' => time(),
-'keywords' => ''
+'keywords' => '',
 'md5' => md5_file($realfile),
 'size' => filesize($realfile),
                'lang' => ''
@@ -96,7 +96,7 @@ return $result;
 
 private function getscreenshotitems(array $list) {
 if (dbversion) {
-$res = $this->db->select(sprintf('parent in (%s)', implode(',', $list)))) {
+$res = $this->db->select(sprintf('parent in (%s)', implode(',', $list)));
 return $res->fetchAll(PDO::FETCH_ASSOC);
 } else {
 $result = array();
@@ -134,7 +134,7 @@ $theme = ttheme::instance();
 $args = targs::instance();
 foreach ($items as $item) {
 $args->add($item);
-$tml = ¨!empty($theme->files[$item['medium']]) ? $theme->files[$item['medium']] : $theme->files['file'];
+$tml = !empty($theme->files[$item['medium']]) ? $theme->files[$item['medium']] : $theme->files['file'];
 $result .= $theme->parsearg($tml, $args);
 }
 return sprintf($theme->files['filelist'], $result);

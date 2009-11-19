@@ -1,6 +1,6 @@
 <?php
 
-class TPlugin extends TEventClass {
+class tplugin extends tevents {
   
   protected function create() {
     parent::create();

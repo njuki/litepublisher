@@ -1,6 +1,6 @@
 <?php
 
-class thomepage extends TEventClass implements  ITemplate {
+class thomepage extends tevents implements  itemplate {
 private $sitebars;
   
   public static function instance() {
@@ -94,7 +94,7 @@ $std = tstdwidgets::instance();
 foreach ($std->names as $name) {
 if ($name == 'tags') continue;
 if (!isset($std->items[$name])) {
-if ($name == 'posts') || ($name == 'meta')) {
+if (($name == 'posts') || ($name == 'meta')) {
 $this->sitebars[$last][$name] = false;
 } else {
 $this->sitebars[0][$name] = false;

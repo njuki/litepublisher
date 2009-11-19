@@ -1,6 +1,6 @@
 <?php
 
-class tusergroups extends TItems {
+class tusergroups extends titems {
 
   public static function instance() {
     return getinstance(__class__);
@@ -30,12 +30,15 @@ public function hasright($who, $group) {
 if ($who == $group) return  true;
 if (($who == 'admin') || ($group == 'nobody')) return true;
 switch ($who) {
-case 'editor: return $group == 'author';
-case 'moderator': return $group == 'subscriber';
+case 'editor':
+ return $group == 'author';
+
+case 'moderator':
+ return $group == 'subscriber';
 }
 return false;
 }
-}
+
 
 }//class
 ?>

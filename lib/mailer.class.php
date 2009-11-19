@@ -60,7 +60,7 @@ return tfiler::log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-
   
 } //class
 
-class TSMTPMailer extends TEventClass {
+class TSMTPMailer extends tevents {
   //public $host;
   //public $login;
   //public $password;

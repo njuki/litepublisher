@@ -21,7 +21,7 @@ $auth->logout();
   }
   
   public function getcontent() {
-$args = new targs:();
+$args = targs::instance();
     $args->login = '';
 $args->password = '';
 return $this->html->form($args);

@@ -1,6 +1,6 @@
 <?php
 
-class tpinger extends TItems {
+class tpinger extends titems {
   
   public static function instance() {
     return getinstance(__class__);
@@ -16,7 +16,7 @@ require_once($paths['libinclude'] . 'class-IXR.php');
   }
   
   public function setenabled($value) {
-    if ($value != $this->`enabled) {
+    if ($value != $this->enabled) {
       $this->lock();
       $this->data['enabled'] = $value;
       if ($value) {

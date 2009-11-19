@@ -1,6 +1,6 @@
 <?php
 
-class tauthdigest extends TEventClass {
+class tauthdigest extends tevents {
   public $stale;
   
   public static function instance() {
@@ -99,11 +99,11 @@ $host = '';
           $host = $p['host'];
         }
 
-return $host == $_SERVER['HTTP_HOST'] );
+return $host == $_SERVER['HTTP_HOST'] ;
 }
 
 public function checkattack() {
-      if ($this->xxxcheck)  && $this->isattack()) {
+      if ($this->xxxcheck  && $this->isattack()) {
           if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
       if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
 }
@@ -113,7 +113,7 @@ return false;
 public function authcookie() {
 global $options;
       if (empty($_COOKIE['admin']) ) return false;
-if ($auth->cookie == $_COOKIE['admin'])) {
+if ($auth->cookie == $_COOKIE['admin']) {
 if ($auth->cookieexpired < time()) return  false;
 $options->user = 1;
 $options->group = 'admin';

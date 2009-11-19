@@ -1,6 +1,6 @@
 <?php
 
-class tremoteadmin extends TEventClass {
+class tremoteadmin extends tevents {
   
   protected function create() {
     parent::create();

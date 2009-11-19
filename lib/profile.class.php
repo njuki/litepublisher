@@ -1,6 +1,6 @@
 <?php
 
-class tprofile extends TEventClass {
+class tprofile extends tevents {
   
   public static function instance($id = 0) {
     return getinstance(__class__);
