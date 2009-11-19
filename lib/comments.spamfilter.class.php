@@ -1,6 +1,6 @@
 <?php
 
-class tspamfilter extends TEventClass {
+class tspamfilter extends tevents {
 
   public static function instance() {
     return getinstance(__class__);
@@ -31,18 +31,22 @@ if (($res = $manager->db->select("author = $authorid and status = 'approved' lim
 return false;
 }
 
-public function HasApprovedCount($userid, $count);
+public function HasApprovedCount($userid, $count) {
 global $classes;
 $manager= $classes->commentmanager;
 if (dbversion) {
-if (($res = $manager->db->query(select count(author) as count from $manager->thistable where author = $userid and status = 'approved' limit $count")) && ($row = $res->fetch()) return $count <= $row['count'];
+if ($approved = $manager->db->getcount("author = $userid and status = 'approved' limit $count")){
+return $approved >= $count;
+}
+return false;
 } else {
-    foreach ($manger->items as $id => $item) {
+    foreach ($manager->items as $id => $item) {
       if (($userid == $item['uid']) && !isset($item['status'])) {
         if (--$count ==0) return true;
       }
     }
     return false;
+}
 }
 
 public function UserCanAdd($userid) {

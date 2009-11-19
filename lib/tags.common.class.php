@@ -1,6 +1,6 @@
 <?php
 
-class TCommonTags extends TItems implements  ITemplate {
+class tcommontags extends TItems implements  ITemplate {
   public $contents;
 public $itemsposts;
   public $PermalinkIndex;
@@ -13,7 +13,7 @@ public $itemsposts;
 $this->data['itemsposts'] = array();
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
-    $this->contents = new TTagContent($this);
+    $this->contents = new ttagcontent($this);
 $this->itemsposts = new titemspostsowner ($this);
   }
 
@@ -30,9 +30,23 @@ $result['url'] = $urlmap->getidurl($result['idurl']);
 return $result;
 }
 
-public function &getitems() {
+public function loaditems(array $items) {
+global  $db;
+if (!dbversion) return;
+//исключить из загрузки загруженные посты
+$list = implode(',', array_diff($items, array_keys($this->items)));
+$table = $this->thistable;
+$res = $db->query("select $table.*, $db->urlmap.url as url  from $table, $db->urlmap
+where $table.id in ($list) and  $db->urlmap.id  = $table.idurl");
+
+foreach ($res->fetch(PDO::FETCH_ASSOC) as $item) {
+$this->items[$item['id']] = $item;
+}
+}
+
+public function &getallitems() {
+global $db;
 if (dbversion) {
-$db = $this->db;
 $table = $this->thistable;
 $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
 where $table.idurl = $db->urlmap.id");
@@ -58,7 +72,7 @@ private function GetSortedList($sortname, $count) {
     global $options;
     $result = '';
 $theme = ttheme::instance();
-$tml = theme->getwidgetitem('tag');
+$tml = $theme->getwidgetitem('tag');
 $showcount = $this->options->showcount;
         $Sorted = $this->getsorted($sortname, $count);
     foreach($Sorted as $item) {
@@ -69,13 +83,8 @@ $count = $showcount ? " ({$item['itemscount']}" : '';
   }
 
 public function geturl($id) {
-if (!isset($this->items[$id]) && dbversion) {
-$res = $this->db->query("select $this->thistable.*, $this->urltable.url  from $this->thistable 
-$this->joinurl where $this->thistable.id = $id  limit 1");
-$this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
-} else {
-
-return $this->items[$id]['url'];
+$item = $this->getitem($id);
+return $item['url'];
 }
   
   public function postedited($idpost) {
@@ -95,7 +104,7 @@ $this->unlock();
 
 private function updatecount(array $items) {
 if (dbversion) {
-$items = implode(', ', $items);
+$items = implode(',', $items);
 $thistable = $this->thistable;
 $itemstable = $this->itemsposts->thistable;
 $poststable = $this->db->posts;
@@ -152,6 +161,7 @@ if ($item['title'] != $title)  {
 $item['title'] = $title;
 if (dbversion) $this->db->setvalue($id, 'title', $title);
 }
+
       $urlmap = turlmap::instance();
 if ($item['url'] != $url) {
         if ($url == '') {
@@ -160,10 +170,11 @@ if ($item['url'] != $url) {
           $linkgen = tlinkgenerator::instance();
           $url = $linkgen->createlink($this, $this->PermalinkIndex, false);
         }
+}
 
         if ($item['url'] != $url) {
 //check unique url
-if (($idurl = $urlmap->idfind($url) && ($idurl != $item['idurl'])) {
+if (($idurl = $urlmap->idfind($url)) && ($idurl != $item['idurl'])) {
 $url = $linkgen->MakeUnique($url);
 }
 $urlmap->setidurl($item['idurl'], $url);
@@ -206,8 +217,8 @@ $this->itemsposts->updateposts($list, $this->PostPropname);
   
   public function getnames($list) {
 if (dbversion) {
-$items = implode(', ', $list);
-return $this->db->res2array($this->db->query("select title from $this->thistable where id in ($items)");
+$items = implode(',', $list);
+return $this->db->res2array($this->db->query("select title from $this->thistable where id in ($items)"));
 }
     $result =array();
     foreach ($list as $id) {
@@ -217,24 +228,15 @@ return $this->db->res2array($this->db->query("select title from $this->thistable
     return $result;
   }
   
-  public function getlink($id) {
-    global $options;
-$item = $this->getitem($id);
-$icon = '';
-if ($item['icon'] > 0) {
-$icons = ticons::instance();
-$icon = $icons->getlink($item['icon']);
-}
-      return "<a href=\"$options->url{$item['url']}" title=\"{$item['title']}\">{$icon{$item['title']}</a>";
- }
-  
   public function getsorted($sortname, $count) {
 $count = (int) $count;
-if (!in_array($sortname, array('title', 'count', 'id')) $sortname = 'title';
+if (!in_array($sortname, array('title', 'count', 'id'))) $sortname = 'title';
+
 if (dbversion) {
-$q = "select $this->thistable.*, $this->urltable.url from $this->thistable, $this->urltable
-where $this->thistable.parent = 0 and idurl = $this->urltable.id sort by ";
-$q .= $sortname == 'count' "itemscount asc" :"$sortname desc";
+$table = $this->thistable;
+$q = "select $table.*, $this->urltable.url from $table, $this->urltable
+where $table.parent = 0 and $this->urltable.id= $table.idurl sort by ";
+$q .= $sortname == 'count' ? "itemscount asc" :"$sortname desc";
 if ($count > 0) $q .= " limit $count";
 $res = $this->db->query($q);
 return $this->res2array($res);
@@ -333,7 +335,7 @@ $item = $this->getitem($this->id);
   
   public function SetParams($lite, $sortname, $showcount, $maxcount) {
 $this->options = array(
-'lite' >= $lite,
+'lite' => $lite,
 'sortname' => $sortname,
 'showcount' => $showcount,
 'maxcount' => (int) $maxcount
@@ -342,7 +344,7 @@ $this->options = array(
   
 }//class
 
-class TTagContent extends TDataClass {
+class ttagcontent extends tdata {
 private $owner;
 
 public function __construct(TCommonTags $owner) {
@@ -388,10 +390,10 @@ public function edit($id, $content, $description, $keywords) {
       $filter = TContentFilter::instance();
 $item =array(
 'content' => $filter->filter($content),
-'rawcontent' => $content;
+'rawcontent' => $content,
 'description' => $description,
 'keywords' => $keywords
-)
+);
 $this->setitem($id, $item);
 }
 
@@ -414,8 +416,8 @@ return $this->getvalue($id, 'content');
   
   public function setcontent($id, $content) {
 $item = $this->getitem($id);
-      $filter = TContentFilter::instance();
-    $item['rawcontent'] = $content,
+      $filter = tcontentfilter::instance();
+    $item['rawcontent'] = $content;
 $item['content'] = $filter->GetPostContent($content);
     $item['description'] = tcontentfilter::getexcerpt($content, 80);
 $this->setitem($id, $item);

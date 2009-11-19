@@ -1,6 +1,6 @@
 <?php
 
-class tcomusers extends TItems {
+class tcomusers extends titems {
   
   public static function instance() {
     return getinstance(__class__);

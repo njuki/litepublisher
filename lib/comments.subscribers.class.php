@@ -10,9 +10,9 @@ class tsubscribers extends titemsposts {
     parent::create();
 $this->table = 'subscribers';
     $this->basename = 'subscribers';
-    $this->Data['fromemail'] = '';
-    $this->Data['enabled'] = true;
-    $this->Data['locklist'] = '';
+    $this->data['fromemail'] = '';
+    $this->data['enabled'] = true;
+    $this->data['locklist'] = '';
   }
 
   public function update($pid, $uid, $subscribed) {
@@ -39,7 +39,7 @@ return isset($this->items[$pid]) && in_array($uid, $this->items[$pid]);
    public function setenabled($value) {
 global $classes;
     if ($this->enabled != $value) {
-      $this->Data['enabled'] = $value;
+      $this->data['enabled'] = $value;
       $this->save();
       $manager = $classes->commentmanager;
       if ($value) {
@@ -65,7 +65,7 @@ global $classes;
     $manager = $classes->commentmanager;
     $item = $manager->getitem($id);
 if (dbversion) {
-if ($item['status'] != 'approved') || ($item['pingback'] == '1')) return;
+if (($item['status'] != 'approved') || ($item['pingback'] == '1')) return;
 } else {
     if (isset($item['status']) || isset($item['type']))return;
 }

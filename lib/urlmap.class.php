@@ -39,6 +39,7 @@ protected function prepareurl($host, $url) {
 }
 
   public function request($host, $url) {
+global $options;
 $this->prepareurl($host, $url);
     $this->admin = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
     $this->BeforeRequest();
@@ -52,8 +53,8 @@ $this->prepareurl($host, $url);
   }
   
   protected function DoRequest($url) {
-    if ($this->itemreqested = $this->finditem($url)) return $this->PrintContent($this->itemreqested);
-    $this->NotFound404();
+    if ($this->itemrequested = $this->finditem($url)) return $this->PrintContent($this->itemreqested);
+    $this->notfound404();
   }
 
 private function query($url) {
@@ -144,7 +145,7 @@ return $paths['cache']. "$id-$this->page.php";
 return $this->GenerateHTML($item);
 } else {
         $this->deleteclass($item['class']);
-$this->NotFound404();
+$this->notfound404();
 }
   }
   
@@ -153,7 +154,7 @@ $this->NotFound404();
     $obj = getinstance($item['class']);
     //special handling for rss
     if (method_exists($obj, 'request') && ($s = $obj->request($item['arg']))) {
-      if ($s == 404) return $this->NotFound404();
+      if ($s == 404) return $this->notfound404();
     } else {
       $template = ttemplate::instance();
       $s = $template->request($obj);
@@ -166,14 +167,14 @@ $this->NotFound404();
     }
   }
   
-  public function NotFound404() {
-    $redir = TRedirector ::instance();
+  public function notfound404() {
+    $redir = tredirector::instance();
     if (isset($redir->items[$this->url])) {
       return $this->redir301($redir->items[$this->url]);
     }
     
     $this->is404 = true;
-    $obj = TNotFound404::instance();
+    $obj = tnotfound404::instance();
     $Template = ttemplate::instance();
     $s = &$Template->request($obj);
     eval('?>'. $s);

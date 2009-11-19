@@ -1,5 +1,5 @@
 <?php
-class tlinkswidget extends TItems {
+class tlinkswidget extends titems {
   public $redirlink;
 
   public static function instance() {
@@ -25,7 +25,7 @@ $args = targs::instance();
       if ($this->redir && !strbegin($url, $options->url)) {
       $url = $options->url . $this->redirlink . $options->q . "id=$id";
       }
-$args->url = $url
+$args->url = $url;
       $args->title = $item['title'];
 $args->text = $item['text'];
   $result .=   $theme->parsearg($tml, $args);

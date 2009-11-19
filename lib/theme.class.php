@@ -18,7 +18,7 @@ return getinstance(__class__);
 protected function create() {
 parent::create();
 $template = ttemplate::instance();
-$this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->tml";
+$this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme.$template->tml";
 $this->data['tml'] = 'index';
 $this->data['main'] = '';
 $this->data['sitebarscount'] = 1;
@@ -107,7 +107,7 @@ $posts->loaditems($items);
 }
 
 $result = '';
-$tml = $this->excerpts[$lite ? 'liteexcerpt' : 'excerpt'];
+$tml = $this->excerpts[$lite ? 'lite_excerpt' : 'excerpt'];
     foreach($Items as $id) {
 $post = tpost::instance($id);
 $result .= $this->parse($tml);

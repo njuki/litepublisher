@@ -124,14 +124,16 @@ class tinstaller extends tdata {
   }
   
   public function FirstStep() {
-    global $classes, $paths;
+    global $classes, $paths, $options;;
     $this->CheckFolders();
     require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
 ParseClassesIni($classes);
-    tclassesInstall($classes);
+$options = toptions::instance();
+$options->lock();
         require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'options.class.install.php');
     $password = toptionsInstall($this->language);
 tclassesInstall($classes);
+$options->unlock();
     return $password;
   }
   

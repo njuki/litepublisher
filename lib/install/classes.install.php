@@ -25,7 +25,7 @@ function tclassesInstall() {
     $posts = tposts::instance();
     $posts->lock();
     foreach( $classes->items as $class => $item) {
-echo "$class\n";
+//echo "$class\n";
       $obj = getinstance($class);
 //      if (method_exists($obj, 'install')) $obj->install();
     }

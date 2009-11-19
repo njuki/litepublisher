@@ -1,6 +1,6 @@
 <?php
 
-class twidgets extents TItems {
+class twidgets extends titems {
 public $current;
 
   public static function instance() {
@@ -38,7 +38,7 @@ $sitebars->add($this->autid, $sitebar, $order);
   public function deleteclass($class) {
     $this->lock();
     foreach ($this->items as $id => $item) {
-      if ($item['class'] == $class) { $this->delete($id);
+      if ($item['class'] == $class) $this->delete($id);
     }
     $this->unlock();
   }

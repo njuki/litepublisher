@@ -14,12 +14,14 @@ public $javascripts;
   }
   
   protected function create() {
+global $paths;
     parent::create();
     $this->basename = 'template' ;
 $this->tml = 'index';
     $this->itemplate = false;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged');
     $this->data['theme'] = 'default';
+    $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
     $this->data['sitebars'] = array(0 => array(), 1 => array(), 2 => array());

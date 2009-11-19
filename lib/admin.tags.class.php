@@ -50,7 +50,7 @@ $result .= $html->fullform($args);
     
     //table
 $result .= $html->listhead();
-    foreach ($tags->getitems() as $item) {
+    foreach ($tags->getallitems() as $item) {
 $args->id = $itm['id'];
 $args->title = $item['title'];
 $args->url = $item['url'];

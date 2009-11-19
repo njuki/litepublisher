@@ -1,6 +1,6 @@
 <?php
 
-class tnotfound404 extends TEventClass {
+class tnotfound404 extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
@@ -23,7 +23,7 @@ class tnotfound404 extends TEventClass {
   
   function GetTemplateContent() {
     $this->CacheEnabled = false;
-$result = $this->text != '') ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
+$result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
 $theme = ttheme::instance();
 return sprintf($theme->simplecontent, $result);
   }

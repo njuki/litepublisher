@@ -1,6 +1,6 @@
 <?php
 
-class tcrontask extends tdata {
+class tcrontask extends TDataClass {
   public $owner;
   
   public function __construct(&$owner) {
@@ -93,7 +93,7 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
   
 } //class
 
-class tcron extends tevents {
+class tcron extends TEventClass {
   public $writelog;
   public $disableadd;
   
