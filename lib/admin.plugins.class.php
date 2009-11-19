@@ -9,7 +9,7 @@ private $abouts;
   
   protected function create() {
     parent::create();
-    $this->adminplugins = array();
+    //$this->adminplugins = array();
 $this->readabout();
   }
 
@@ -38,11 +38,11 @@ $url = $options->url . $this->url . $options->q . 'plugin=';
 $plugins = tplugins::instance();
 foreach ($this->abouts as $name) {
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
-          $this->adminplugins[$name] = $about;
+          //$this->adminplugins[$name] = $about;
 $submenu .= sprintf($submenuitem, $url, $this->abouts[$name]['name']);
         }
 }
-if ($submenu ! = '') $result .= sprintf($html->submenu, $submenu);
+if ($submenu != '') $result .= sprintf($html->submenu, $submenu);
 
 if (empty($_GET['plugin'])) {
       $result = $html->checkallscript;
@@ -53,7 +53,7 @@ $args->name = $name;
 $args->checked = isset($plugins->items[$name]);
 $args->version = $about['version'];
 $args->short = $about['name'];
-$args->description = $about'description'];
+$args->description = $about['description'];
 $args->url = $about['url'];
 $args->author = $about['author'];
 $result .= $html->item($args);

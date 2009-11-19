@@ -4,10 +4,10 @@ class tadminmoderator extends tadminmenuitem {
   private $user;
   
   public static function instance() {
-    return GetInstance(__class__);
+    return getinstance(__class__);
   }
 
-protected function getmanager() }
+protected function getmanager() {
 global $classes;
 return $classes->commentmanager;
 }
@@ -62,13 +62,13 @@ return $this->html->replyform();
 
 private function getwherekind($kind) {
 switch ($kind) {
-case moderate':
+case 'comments':
 return "status <> 'deleted' and pingback <> true";
 
 case 'hold':
 return "status = 'hold'";
 
-case pingback':
+case 'pingback':
 return "status <> 'deleted' and pingback = true";
 }
 }
@@ -83,7 +83,7 @@ $where = $this->getwherekind($kind);
 $total = $manager->getcount($where);
 } else {
 switch ($kind) {
-case moderate':
+case 'comments':
 $total = $manager->count;
 break;
 
@@ -97,7 +97,7 @@ case 'hold':
 $total = count($holditems);
 break;
   
-case pingback':
+case 'pingback':
     $pingbacks = array();
     foreach($manager->items as $id => $item) {
       if (!empty($item['type']) && ($item['type'] == 'pingback')) {
@@ -116,7 +116,7 @@ if (dbversion ) {
         $list = $manager->getitems($where,  $from, $perpage);
 } else {
 switch ($kind) {
-case moderate':
+case 'comments':
         $list = array_slice($manager->items, $from, $perpage, true);
 break;
 
@@ -154,7 +154,7 @@ $comment->data = $data;
 $args->id = $comment->id;
         $args->excerpt = tcontentfilter::getexcerpt($comment->content, 120);
         $args->onhold = $comment->status == 'hold';
-$args->email = $comment->email == '' ? '' "<a href='mailto:$comment->email'>$comment->email</a>";
+$args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
 $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
 $result .=$html->itemlist($args);
       }
@@ -233,12 +233,7 @@ private function confirmdeleteauthor($id) {
 return $this->getconfirmform($id, $this->lang->authorconfirmdelete);
 }
 
-  private function doauthoraction($id, $action) {
-      $comusers = tcomusers::instance();
-    if (!$comusers->itemexists($id)) return false;
-    switch ($action) {
-      case 'delete' :
-  private function deleteauthor($uid, $action) {
+ private function deleteauthor($uid, $action) {
       $comusers = tcomusers::instance();
     if (!$comusers->itemexists($uid)) return false;
 $manager = $this->manager;
@@ -263,7 +258,7 @@ if ($id == 0) {
         $args->name = '';
         $args->email = '';
         $args->url = '';
-      $args->subscribed '';
+      $args->subscribed = '';
 } else {
 $comusers = tcomusers::instance();
 if (!$comusers->itemexists($id)) return $this->notfound;
@@ -292,7 +287,7 @@ $items = $res->fetchAll(PDO::FETCH_ASSOC);
 }
 $html = $this->html;
       $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
-$result .= html->authorheader();
+$result .= $html->authorheader();
 $args->adminurl = $this->adminurl;
       foreach ($items as $id => $item) {
 if (dbversion) {
@@ -332,7 +327,7 @@ if (!in_array($item['pid'], $posted)) $posted[] =$item['pid'];
 }
 }
 
-    $subscribers = $tsubscribers::instance();
+    $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
     
 $args = targs::instance();
@@ -349,7 +344,7 @@ $result .= $html->subscribeitem($args);
     global $options, $urlmap;
 $manager = $this->manager;
     switch ($this->name) {
-      case 'moderate':
+      case 'comments':
       case 'hold':
 case 'pingback':
 
@@ -407,10 +402,11 @@ $subscribers->unlock();
 }
 
 $result =  $html->h2->authoredited;
+}
       break;
     }
     
-    $urlmap->ClearCache();
+    $urlmap->clearcache();
     return $result;
   }
   

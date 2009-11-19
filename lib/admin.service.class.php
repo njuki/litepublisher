@@ -51,7 +51,7 @@ $result .= $html->engineform($args);
       return $this->FixCheckall($result);
       
       case 'backup':
-if (empty($_GET['action'])) }
+if (empty($_GET['action'])) {
       $result= $html->partialform();
       $result .= $html->fullbackupform();
       $result .=  $html->uploadform;
