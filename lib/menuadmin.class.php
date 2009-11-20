@@ -19,6 +19,19 @@ tadminmenuitem::$ownerprops = array_merge(tadminmenuitem::$ownerprops, array('na
 }
 
 public function add($parent, $name, $group, $class) {
+if (isset(tlocal::$data[$name]['title'])) {
+$title = tlocal::$data[$name]['title'];
+} elseif (isset(tlocal::$data['names'][$name])) {
+$title = tlocal::$data['names'][$name];
+} elseif (isset(tlocal::$data['default'][$name])) {
+$title = tlocal::$data['default'][$name];
+} elseif (isset(tlocal::$data['common'][$name])) {
+$title = tlocal::$data['common'][$name];
+} else {
+$title= $name;
+echo "$name not found\n";
+}
+
 $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
 $urlmap = turlmap::instance();
 $this->items[++$this->autoid] = array(
@@ -27,7 +40,7 @@ $this->items[++$this->autoid] = array(
 'order' => $this->autoid,
 'url' => $url,
 'idurl' => $urlmap->add($url, $class, null, 'tree'),
-'title' => tlocal::$data[$name]['title'],
+'title' => $title,
 'status' => 'published',
 'name' => $name,
 'group' => $group
@@ -122,7 +135,9 @@ if ($groups->hasright($options->group, $this->group)) return 404;
     if ($s = $this->auth()) return $s;
     tlocal::loadlang('admin');
       $this->data['id'] = $id;
-if ($id > 0) $this->basename = $this->name;
+if ($id > 0) {
+$this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
+}
 $urlmap = turlmap::instance();
 $this->arg = $urlmap->argtree;
 $this->checkform();
@@ -134,6 +149,10 @@ $this->checkform();
   
 public function gethtml($name = '') {
 if ($name == '') $name = $this->name;
+if (!isset(tlocal::$data[$name])) {
+$name = $this->owner->items[$this->parent]['name'];
+}
+
 $result = THtmlResource::instance();
 $result->section = $name;
 $lang = tlocal::instance($name);
