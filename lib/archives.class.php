@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 class tarchives extends titems implements  ITemplate {
   public $date;
@@ -44,7 +50,7 @@ class tarchives extends titems implements  ITemplate {
     }
   }
   
-  public function PostsChanged() {
+  public function postschanged() {
     $posts = tposts::instance();
     $this->lock();
     $this->items = array();

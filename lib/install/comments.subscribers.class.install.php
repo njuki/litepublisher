@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 function tsubscribersInstall($self) {
 global $classes;
@@ -10,10 +16,10 @@ $posts = tposts::instance();
 $posts->deleted = $self->deletepost;
 }
   $self->fromemail = 'litepublisher@' . $_SERVER['HTTP_HOST'];
-  $self->Save();
+  $self->save();
 
 $comusers = tcomusers::instance();
-$comusers->deleted = $self->deleteauthor;
+$comusers->deleted = $self->deleteitem;
 
   $manager = $classes->commentmanager;
   $manager->lock();

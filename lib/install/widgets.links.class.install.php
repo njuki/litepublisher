@@ -1,22 +1,27 @@
 <?php
-
-function TLinksWidgetInstall(&$self) {
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
+function tlinkswidgetInstall($self) {
   tlocal::loadlang('admin');
-  $lang = tlocal::$data['installation'];
-  $self->Add($lang['homeurl'], $lang['homedescription'], $lang['homename']);
+  $lang = &tlocal::$data['installation'];
+  $self->add($lang['homeurl'], $lang['homedescription'], $lang['homename']);
   
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->AddGet($self->redirlink, get_class($self), null);
+  $urlmap = turlmap::instance();
+  $urlmap->add($self->redirlink, get_class($self), null, 'get');
   
-  $robots = &TRobotstxt ::Instance();
+  $robots = trobotstxt ::instance();
   $robots->AddDisallow($self->redirlink);
-  $robots->Save();
+  $robots->save();
 }
 
-function TLinksWidgetUninstall(&$self) {
-  $Template = &TTemplate::Instance();
-  $Template->DeleteWidget(get_class($self));
-  TUrlmap::unsub($self);
+function tlinkswidgetUninstall(&$self) {
+$widgets = twidgets::instance();
+$widgets->deleteclass(get_class($self));
+  turlmap::unsub($self);
 }
 
 ?>
