@@ -44,7 +44,7 @@ $args->description = $tags->contents->getdescription($id);
 $args->content =$tags->contents->getcontent($id);
 $result .= $html->fullform($args);
       } else {
-      $result = $html->{ form($args);
+      $result = $html->form($args);
 }
     }
     

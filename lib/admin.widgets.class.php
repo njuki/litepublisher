@@ -18,19 +18,19 @@ class tadminwidgets extends tadminmenuitem {
 
 private function getcombo($name, $index, $count) {
 $index++;
-          $result = "<select name='$name' id='$name'>\n"
+          $result = "<select name='$name' id='$name'>\n";
         for ($i = 1; $i <= $count; $i++) {
           $selected = $i == $index  ? 'selected' : '';
           $result .= "<option $selected>$i</option>\n";
         }
-$result .= </select>\n";        
+$result .= "</select>\n";
 return $result;
 }
 
 private function getwidgettitle($id) {
 $widgets = twidgets::instance();
           $widget = $widgets->items[$id];
-if !empty($widget['title'])) return $widget['title'];
+if (!empty($widget['title'])) return $widget['title'];
           if (isset(tlocal::$data['stdwidgetnames'][$widget['class']])) {
 return TLocal::$data['stdwidgetnames'][$widget['class']];
           }
@@ -74,7 +74,7 @@ $result .= $html->formhead();
         for  ($j = 0; $j < $sitebars->getcount($i); $j++) {
           $args->id = $sitebars->items[$i][$j];
 $args->title = $this->getwidgettitle($args->id);
-          $args->sitebarcombo = $this->getcombo('"sitebar-$id", $i, 3);
+          $args->sitebarcombo = $this->getcombo("sitebar-$id", $i, 3);
           $args->ordercombo = $this->getcombo("order-$id", $j, $sitebars->getcount($i));
 $result .= $html->item($args);
         }
@@ -101,7 +101,6 @@ $result .= $html->stditem($args);
 
             $catsoptions = $classes->categories->options;
       $args->showcountcats = $catsoptions->showcount;
-$args->cats
       $args->catscombo= $this->getcombosortname('sortnamecats', $catsoptions->sortname);
       
       $tagsoptions = $classes->tags->options;
@@ -225,7 +224,7 @@ return $h2->success;
 $names = array();
 foreach ($_POST as $name=> $value) {
 if (strbegin($name, 'ajax-')) {
-$name = substr($name, strlen('ajax-');
+$name = substr($name, strlen('ajax-'));
 if (isset($names[$name])) $names[$name] = true;
 } else {
 $names[$name] = false;

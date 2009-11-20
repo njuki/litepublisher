@@ -7,7 +7,7 @@ class tadminposts extends tadminmenuitem {
   }
 
  public function getcontent() {
-if (isset($_GET['action']) && in_array($_GET['action'], 'array('delete', 'setdraft', 'publish')) {
+if (isset($_GET['action']) && in_array($_GET['action'], array('delete', 'setdraft', 'publish'))) {
 $action = $_GET['action'];
 } else {
 return $this->getlist();

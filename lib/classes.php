@@ -84,6 +84,7 @@ global $paths;
 } elseif (isset($this->interfaces[$class])) {
     $filename = $paths['lib'] . $this->interfaces[$class];
 }
+echo "$filename\n";
     if (@file_exists($filename)) require_once($filename);
 }
 

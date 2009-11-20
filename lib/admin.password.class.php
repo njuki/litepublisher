@@ -1,6 +1,6 @@
 <?php
 
-class TPasswordRecover extends TAdminPage {
+class tpasswordrecover extends tadminmenuitem {
   
   public static function instance() {
     return getinstance(__class__);
