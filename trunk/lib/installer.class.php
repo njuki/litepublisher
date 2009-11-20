@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 class tinstaller extends tdata {
   public $language;
@@ -124,17 +130,10 @@ class tinstaller extends tdata {
   }
   
   public function FirstStep() {
-    global $classes, $paths, $options;;
+    global $paths;
     $this->CheckFolders();
     require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
-ParseClassesIni($classes);
-$options = toptions::instance();
-$options->lock();
-        require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'options.class.install.php');
-    $password = toptionsInstall($this->language);
-tclassesInstall($classes);
-$options->unlock();
-    return $password;
+return installclasses($this->language);
   }
   
   public function install() {

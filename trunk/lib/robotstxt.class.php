@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 class trobotstxt extends titems {
 
@@ -21,7 +27,7 @@ $this->data['idurl'] = 0;
       $this->items[] = $value;
       $this->save();
       $urlmap = turlmap::instance();
-      $Urlmap->setexpired($this->idurl);
+      $urlmap->setexpired($this->idurl);
       $this->added($value);
     }
   }

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 function __autoload($class) {
   global $classes;
@@ -10,9 +16,15 @@ class tclasses extends titems {
 public $interfaces;
 public $remap;
   public $instances;
-  
+
   public static function instance() {
-    return getinstance(__class__);
+global $classes;
+if (!isset($classes)) {
+$class = __class__;
+$classes = new $class();
+$classes->instances[$class] = $classes;
+}
+return $classes;
   }
 
 public function getinstance($class) {
@@ -40,7 +52,7 @@ return new $class();
   }
 
 public function __get($name) {
-if (isset($this->classes[$name])) return getinstance($this->classes[$name]);
+if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
 return parent::__get($name);
 }
   
@@ -49,7 +61,7 @@ return parent::__get($name);
     ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
       $this->items[$class] = array($filename, $path);
       $this->save();
-      $instance = getinstance($class);
+      $instance = $this->getinstance($class);
       if (method_exists($instance, 'install')) $instance->install();
     }
     $this->added($class);
@@ -58,7 +70,7 @@ return parent::__get($name);
   public function delete($clsss) {
     if (isset($this->items[$class])) {
       if (class_exists($class)) {
-        $instance = getinstance($class);
+        $instance = $this->getinstance($class);
         if (method_exists($instance, 'uninstall')) $instance->uninstall();
       }
       unset($this->items[$class]);
@@ -84,7 +96,6 @@ global $paths;
 } elseif (isset($this->interfaces[$class])) {
     $filename = $paths['lib'] . $this->interfaces[$class];
 }
-echo "$filename\n";
     if (@file_exists($filename)) require_once($filename);
 }
 

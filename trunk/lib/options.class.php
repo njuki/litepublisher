@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 class toptions extends tevents {
 public $user;
@@ -105,7 +111,7 @@ return $users->getvalue($this->user, 'password');
   public function HandleException(&$e) {
     global $paths;
     $trace =str_replace($paths['home'], '', $e->getTraceAsString());
-    $message = 'Caught exception: ' . $e->getMessage();
+    $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
     tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();

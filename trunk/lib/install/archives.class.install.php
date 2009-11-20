@@ -1,17 +1,22 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TArchivesInstall(&$self) {
-  $posts = &TPosts::Instance();
-  $posts->Changed = $self->PostsChanged;
-  $self->PostsChanged();
+function tarchivesInstall($self) {
+  $posts = tposts::instance();
+  $posts->changed = $self->postschanged;
+  $self->postschanged();
 }
 
-function TArchivesUninstall(&$self) {
-  TUrlmap::unsub($self);
-  TPosts::unsub($self);
-  
-  $Template = &TTemplate::Instance();
-  $Template->DeleteWidget(get_class($self));
+function tarchivesUninstall($self) {
+  turlmap::unsub($self);
+  tposts::unsub($self);
+$widgets = twidgets::instance();
+$widgets->deleteclass(get_class($self));  
 }
 
 ?>
