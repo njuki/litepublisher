@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 function tdownloadcounterInstall($self) {
   if (dbversion) {
@@ -11,11 +17,12 @@ $files = tfiles::instance();
 $files->deleted = $self->delete;
 
   $urlmap = turlmap::instance();
-  $urlmap->add('/downloadcounter/'', get_class($self), 'get', null);
+  $urlmap->add('/downloadcounter/', get_class($self), 'get', null);
 }
 
-function tfilesUninstall(&$self) {
+function tdownloadcounterUninstall(&$self) {
   turlmap::unsub($self);
+$files = tfiles::instance();
 $files->unsubscribeclass($self);
 }
 

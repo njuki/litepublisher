@@ -1,22 +1,29 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TFoafInstall(&$self) {
-  global $Options;
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Lock();
-  $Urlmap->Add('/foaf.xml', get_class($self), 'xml');
-  $Urlmap->AddGet($self->redirlink, get_class($self), 'redir');
-  $Urlmap->Unlock();
+function tfoafInstall($self) {
+  global $options;
+  $urlmap = turlmap::instance();
+  $urlmap->lock();
+  $urlmap->add('/foaf.xml', get_class($self), 'xml');
+  $urlmap->add($self->redirlink, get_class($self), 'redir', 'get');
+  $urlmap->unlock();
   
-  $robots = &TRobotstxt ::Instance();
+  $robots = trobotstxt ::instance();
   $robots->AddDisallow($self->redirlink);
-  $robots->Save();
+  $robots->save();
 }
 
-function TFoafUninstall(&$self) {
-  TUrlmap::unsub($self);
-  $Template = &TTemplate::Instance();
-  $Template->DeleteWidget(get_class($self));
+function tfoafUninstall($self) {
+  turlmap::unsub($self);
+
+$widgets = twidgets::instance();
+$widgets->deleteclass(get_class($self));
 }
 
 ?>

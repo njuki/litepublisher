@@ -1,12 +1,18 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TMenuInstall(&$self) {
+function tmenuInstall($self) {
   global $paths;
   @mkdir($paths['data']. 'menus', 0777);
   @chmod($paths['data']. 'menus', 0777);
 }
 
-function  TMenuUninstall(&$self) {
+function  tmenuUninstall($self) {
   //rmdir(. 'menus');
 }
 

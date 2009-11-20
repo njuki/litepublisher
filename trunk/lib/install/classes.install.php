@@ -43,7 +43,7 @@ function doinstallclasses() {
     $posts->lock();
 tdata::$GlobalLock = true;
     foreach( $classes->items as $class => $item) {
-echo "$class\n";
+//echo "$class\n";
       $obj = getinstance($class);
       if (method_exists($obj, 'install')) $obj->install();
     }

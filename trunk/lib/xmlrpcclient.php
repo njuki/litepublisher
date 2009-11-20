@@ -1,4 +1,11 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
+
 require_once($paths['llibinclude']. 'class-IXR.php');
 
 class TXMLRPCClient  extends TDataClass {

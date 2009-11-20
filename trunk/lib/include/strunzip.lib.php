@@ -1,5 +1,12 @@
 <?php
-/* special editing for supporting zip in string by Vladmir Yushko */
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
+
+/* special editing for supporting zip in string by Vladimir Yushko */
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /* $Id: unzip.lib.php 10142 2007-03-20 10:32:13Z cybot_tm $ */
 
