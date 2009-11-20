@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 class tsitemap extends titems {
   private $lastmod;
@@ -6,29 +12,29 @@ class tsitemap extends titems {
   private $fd;
   public $title;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return Getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'sitemap';
-    $this->Data['date'] = time();
-    $this->Data['countfiles'] = 1;
+    $this->data['date'] = time();
+    $this->data['countfiles'] = 1;
   }
   
-  public function Add($class, $prio) {
+  public function add($class, $prio) {
     $this->items[$class] = (int) $prio;
     $this->Save();
   }
   
-  public function Cron() {
-    $this->CreateFiles();
+  public function cron() {
+    $this->createfiles();
   }
   
   public function GetTemplateContent() {
-    global $Options, $Urlmap;
-    $posts = &TPosts::Instance();
+    global $options, $Urlmap;
+    $posts = &TPosts::instance();
 $theme = ttheme::instance();
     $postsperpage = 1000;
     $list = array_slice(array_keys($posts->archives), ($Urlmap->page - 1) * $postsperpage, $postsperpage);
@@ -36,9 +42,9 @@ $theme = ttheme::instance();
     
     if ($Urlmap->page  == 1) {
       $result .= '<ul>' . TLocal::$data['default']['tags'];
-      $tags = &TTags::Instance();
+      $tags = &TTags::instance();
       foreach ($tags->items as $id => $item) {
-    $result .= "<li><a href=\"$Options->url{$item['url']}\">{$item['name']}</a></li>\n";
+    $result .= "<li><a href=\"$options->url{$item['url']}\">{$item['name']}</a></li>\n";
       }
       $result .= "</ul>\n";
     }
@@ -47,7 +53,7 @@ $theme = ttheme::instance();
     return $result;
   }
   
-  public function Request($arg) {
+  public function request($arg) {
     if ($arg == 'xml') {
       $s = "<?php
       @header('Content-Type: text/xml; charset=utf-8');
@@ -59,8 +65,8 @@ $theme = ttheme::instance();
     $this->title = TLocal::$data['default']['sitemap'];
   }
   
-  public function GetIndex() {
-    global $Options, $domain;
+  public function getIndex() {
+    global $options, $domain;
     $lastmod = strftime("%Y-%m-%d", $this->date);
     
     $result = '
@@ -70,7 +76,7 @@ $theme = ttheme::instance();
     
     for ($i =1; $i <= $this->countfiles; $i++) {
       $result .= "   <sitemap>
-      <loc>$Options->url/files/$domain.$i.xml.gz</loc>
+      <loc>$options->url/files/$domain.$i.xml.gz</loc>
       <lastmod>$lastmod</lastmod>
       </sitemap>\n";
     }
@@ -79,7 +85,7 @@ $theme = ttheme::instance();
     return $result;
   }
   
-  public function CreateFiles() {
+  public function createfiles() {
     $this->countfiles = 0;
     $this->count = 0;
     $this->date = time();
@@ -100,8 +106,8 @@ $theme = ttheme::instance();
   
   private function WritePosts() {
     global $classes;
-    $Urlmap = TUrlmap::Instance();
-    $posts = TPosts::Instance();
+    $Urlmap = TUrlmap::instance();
+    $posts = TPosts::instance();
     foreach ($Urlmap->items as $url => $item) {
       if (($item['class'] == $classes->classes['post']) && isset($posts->archives[$item['arg']])) {
         $this->WriteItem($url, 8);
@@ -119,7 +125,7 @@ global $classes;
   
   private function WalkUrlmap(&$items) {
     global $classes;
-    $posts = TPosts::Instance();
+    $posts = TPosts::instance();
     foreach ($items as $url => $item) {
       $class = $item['class'];
       if (($class == $classes->classes['post']) && !isset($posts->archives[$item['arg']])) continue;
@@ -145,9 +151,9 @@ global $classes;
   }
   
   private function WriteItem($url, $prio = 5) {
-    global $Options;
+    global $options;
     gzwrite($this->fd, "   <url>
-    <loc>$Options->url$url</loc>
+    <loc>$options->url$url</loc>
     <lastmod>$this->lastmod</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.$prio</priority>

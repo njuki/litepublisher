@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
 function tadminmenuInstall($self) {
 $self->lock();
@@ -69,7 +75,7 @@ $redir = tredirector::instance();
 $redir->add('/admin/', '/admin/posts/editor/');
 }
 
-function  TMenuUninstall(&$self) {
+function  tadminmenuUninstall($self) {
   //rmdir(. 'menus');
 }
 

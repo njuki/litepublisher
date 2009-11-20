@@ -1,6 +1,12 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TCommonTagsInstall(TCommonTags $self) {
+function tcommontagsInstall($self) {
 global $options, $paths;
   if ('TCommonTags' == get_class($self)) return;
 $self->options = array(

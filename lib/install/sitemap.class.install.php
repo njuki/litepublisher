@@ -1,22 +1,28 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TSitemapInstall(&$self) {
-  global $Options;
-  $cron = &TCron::Instance();
-  $cron->Add('day', get_class($self),  'Cron', null);
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Add('/sitemap.xml', get_class($self), 'xml');
-  $Urlmap->Add('/sitemap/', get_class($self), null);
+function tsitemapInstall($self) {
+  global $options;
+  $cron = tcron::instance();
+  $cron->add('day', get_class($self),  'Cron', null);
+  $urlmap = turlmap::instance();
+  $urlmap->add('/sitemap.xml', get_class($self), 'xml');
+  $urlmap->add('/sitemap/', get_class($self), null);
   
-  $robots = &TRobotstxt ::Instance();
-  array_splice($robots->items, 1, 0, "Sitemap: $Options->url/sitemap.xml");
-  $robots->Save();
+  $robots = trobotstxt ::instance();
+  array_splice($robots->items, 1, 0, "Sitemap: $options->url/sitemap.xml");
+  $robots->save();
   
-  $self->CreateFiles();
+  $self->createfiles();
 }
 
-function TSitemapUninstall(&$self) {
-  TUrlmap::unsub($self);
+function tcitemapUninstall($self) {
+  turlmap::unsub($self);
 }
 
 ?>
