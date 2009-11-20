@@ -63,7 +63,7 @@ $list = array_slice($list, $from, $perpage);
 $items = $files->getitems($list);
 }
 
-    $result .= sprintf($html->h2->countfiles, 
+    $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($items));
 $result .= $html->tableheader();
 $args = targs();
 $args->adminurl = $this->adminurl;
@@ -86,7 +86,7 @@ if (empty($_GET['action'])) {
 $parser->upload($_FILES["filename"]["name"], file_get_contents($_FILES["filename"]["tmp_name"]),
       $_POST['title'], $overwrite);
 return $this->html->h2->success;
-} elseif ($_GET['action'] == 'edit')) {      
+} elseif ($_GET['action'] == 'edit') {      
       $id = $this->idget();
       if (!$files->itemexists($id))  return $this->notfound;
       $files->edit($id, $_POST['title']);

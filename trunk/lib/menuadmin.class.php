@@ -115,7 +115,7 @@ if ($groups->hasright($options->group, $this->group)) return 404;
     if ($s = $this->auth()) return $s;
     tlocal::loadlang('admin');
       $this->data['id'] = $id;
-$this->basename = $this->name;
+if ($id > 0) $this->basename = $this->name;
 $urlmap = turlmap::instance();
 $this->arg = $urlmap->argtree;
 $this->checkform();

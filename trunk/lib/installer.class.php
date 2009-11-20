@@ -330,7 +330,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     global $options;
     tlocal::loadlang('admin');
     $lang = &tlocal::$data['installation'];
-    $url = $options->url . $options->home;
+    $url = $options->url . '/';
     $login = $options->login;
     eval('$body = "' . $lang['body'] . '";');
     
@@ -344,7 +344,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     $html->section = 'installation';
     $lang = &TLocal::instance();
     
-    $url = $options->url . $options->home;
+    $url = $options->url . '/';
     eval('$content = "'. $html->congratulation . '";');
     
     echo SimplyHtml($options->name, $content);

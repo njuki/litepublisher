@@ -18,52 +18,10 @@ $args->editurl = $options->url . $this->url . 'edit/' . $options->q . 'id';
     switch ($this->name) {
       case 'menu':
       if (isset($_GET['action']) && in_array($_GET['action'], array('delete', 'setdraft', 'publish'))) {
-$action = $_GET['action'];
-$id = /$this->idget();
-    if (!$menu->itemexists($id))  return $this->notfound;
-    $menuitem = tmenuitem::instance($id);
-    if  (!$this->confirmed) {
-$args->action = $action;
-$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], $menu->getlink($id));
-return $this->html->confirmform($args);
-} 
-
-$h2 = $html->h2;
-      switch ($action) {
-        case 'delete' :
-        $menu->delete($id);
-$result .= $h2->confirmeddelete;
+$result .= $this->doaction($this->idget(), $_GET['action']);
+}
+$result .= $this->getmenulist();
 break;
-        
-        case 'setdraft':
-        $menuitem->status = 'draft';
-        $menu->edit($menuitem);
-$result .= $h2->confirmedsetdraft;
-break;
-        
-        case 'publish':
-        $menuitem->status = 'published';
-        $menu->edit($menuitem);
-$result .= $h2->confirmedpublish;
-        break;
-      }
-
-//list
-$result .= $html->listhead();
-      foreach ($menu->items as $id => $item) {
-$args->id = $id;
-$args->link = $menu->getlink($id);
-$args->order = $item['order'];
-        $args->status = TLocal::$data['poststatus'][$item['status']];
-        if ($item['parent'] == 0) {
-          $args->parent = '---';
-        } else {
-          $args->parent = $menu->getlink($id);
-        }
-$result .=$html->itemlist($args);
-      }
-$result .= $html->listfooter;
-return str_replace("'", '"', $result);
 
       case 'edit':
       $id = $this->idget();
@@ -112,5 +70,56 @@ $menuitem->url = $url;
       }
   }
   
+
+private function getmenulist() {
+$menu = tmenu::instance();
+$args = targs::instance();
+$args->adminurl = $this->adminurl;
+$html = $this->html;
+$result = $html->listhead();
+      foreach ($menu->items as $id => $item) {
+$args->id = $id;
+$args->link = $menu->getlink($id);
+$args->order = $item['order'];
+        $args->status = TLocal::$data['poststatus'][$item['status']];
+                  $args->parent = $item['parent'] == 0 ? '---' : $menu->getlink($id);
+$result .=$html->itemlist($args);
+      }
+$result .= $html->listfooter;
+return str_replace("'", '"', $result);
+}
+
+private function doaction($id, $action) {
+$menu = tmenu::instance();
+    if (!$menu->itemexists($id))  return $this->notfound;
+$args = targs::instance();
+$html = $this->html;
+$h2 = $html->h2;
+    $menuitem = tmenuitem::instance($id);
+      switch ($action) {
+        case 'delete' :
+    if  (!$this->confirmed) {
+$args->adminurl = $this->adminurl;
+$args->action = 'delete';
+$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], $menu->getlink($id));
+return $this->html->confirmform($args);
+} else {
+        $menu->delete($id);
+return $h2->confirmeddelete;
+}
+
+        case 'setdraft':
+        $menuitem->status = 'draft';
+        $menu->edit($menuitem);
+return $h2->confirmedsetdraft;
+
+        case 'publish':
+        $menuitem->status = 'published';
+        $menu->edit($menuitem);
+return $h2->confirmedpublish;
+      }
+return '';
+}
+
 }//class
 ?>

@@ -1,17 +1,13 @@
 <?php
 
-class TAdminFoaf extends TAdminPage {
+class tadminfoaf extends tadminmenuitem {
   
   private $user;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
-  protected function CreateData() {
-    parent::CreateData();
-    $this->basename = 'foaf';
-  }
-  
+
   private function GetComboStatus($id, $status) {
     $langar = &TLocal::$data[$this->basename];
     $names = array('accepted', 'delete', 'hold', 'invated', 'rejected', 'ban');
@@ -27,10 +23,10 @@ class TAdminFoaf extends TAdminPage {
   
   public function Getcontent() {
     global $Options;
-    $foaf = &TFoaf::Instance();
-    $html = &THtmlResource::Instance();
+    $foaf = &TFoaf::instance();
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     $result = '';
     
@@ -72,7 +68,7 @@ class TAdminFoaf extends TAdminPage {
       
       case 'moderate':
       eval('$result .= "'. $html->moderheader . '\n";');
-      $manager = &TFoafManager::Instance();
+      $manager = &TFoafManager::instance();
       foreach ($manager->items as $url => $item) {
         $status = $this->GetComboStatus($item['id'], $item['status']);
         eval('$result .= "'. $html->moderitem . '\n";');
@@ -81,7 +77,7 @@ class TAdminFoaf extends TAdminPage {
       return $this->FixCheckall($result);
       
       case 'profile':
-      $profile = &TProfile::Instance();
+      $profile = &TProfile::instance();
       $gender = $profile->gender != 'female' ? "checked='checked'" : '';
       eval('$result .= "'. $html->profileform . '\n";');
       break;
@@ -92,16 +88,16 @@ class TAdminFoaf extends TAdminPage {
   
   public function ProcessForm() {
     global $Options;
-    $foaf = &TFoaf::Instance();
-    $html = &THtmlResource::Instance();
+    $foaf = &TFoaf::instance();
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     switch ($this->arg) {
       case null:
       extract($_POST);
       if (empty($url))  return '';
-      $manager = &TFoafManager::Instance();
+      $manager = &TFoafManager::instance();
       if ($manager->Add($url)) {
         return $this->success('successadd');
       } else {
@@ -120,7 +116,7 @@ class TAdminFoaf extends TAdminPage {
       return $this->success('successedit');
       
       case 'moderate':
-      $manager = &TFoafManager::Instance();
+      $manager = &TFoafManager::instance();
       $manager->Lock();
       $st = 'status-';
       $u = 'url-';
@@ -137,7 +133,7 @@ class TAdminFoaf extends TAdminPage {
       return $this->success('successmoderate');
       
       case 'profile':
-      $profile = &TProfile::Instance();
+      $profile = &TProfile::instance();
       foreach ($_POST as $key => $value) {
         if (isset($profile->Data[$key])) $profile->Data[$key] = $value;
       }
@@ -151,9 +147,9 @@ class TAdminFoaf extends TAdminPage {
   
   private function success($key) {
     global $Urlmap;
-    $html = &THtmlResource::Instance();
+    $html = &THtmlResource::instance();
     $html->section = $this->basename;
-    $lang = &TLocal::Instance();
+    $lang = &TLocal::instance();
     
     $Urlmap->ClearCache();
   eval('$result = "'. $html->{$key} . '\n";');
