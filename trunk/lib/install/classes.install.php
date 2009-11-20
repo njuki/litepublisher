@@ -32,6 +32,10 @@ $section = dbversion ? 'db' : 'files';
   $classes->classes = $ini['classes'];
 $classes->interfaces = $ini['interfaces'];
   $classes->Save();
+
+//так как ttheme при первом же обращении парсит тему
+@mkdir($paths['data'] . 'themes', 0777);
+@chmod($paths['data'] . 'themes', 0777);
 }
 
 function doinstallclasses() {
