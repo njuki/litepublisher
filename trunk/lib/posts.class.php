@@ -118,9 +118,9 @@ $post->db->setvalue($post->id, 'idurl', $post->idurl);
       $this->updated($post);
       $post->save();
       $this->unlock();
-    $this->Added($post->id);
-    $this->Changed();
-    $urlmap->ClearCache();
+    $this->added($post->id);
+    $this->changed();
+    $urlmap->clearcache();
     return $post->id;
   }
   

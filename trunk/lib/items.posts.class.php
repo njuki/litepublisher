@@ -104,10 +104,16 @@ $db->exec("INSERT INTO `$this->thistable` ('post', 'item') values " . implode(',
 
 return array_merge($old, $add);
 } else {
+if (!isset($this->items[$idpost])) {
+$this->items[$idpost] = $items;
+$this->save();
+return $items;
+} else {
 $result = array_merge($this->items[$idpost], array_diff($items, $this->items[$idpost]));
 $this->items[$idpost] = $items;
 $this->save();
 return $result;
+}
 }
 }
 
