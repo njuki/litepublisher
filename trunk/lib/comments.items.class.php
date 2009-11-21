@@ -19,7 +19,7 @@ $self = new $class();
       $self->pid = $pid;
       $self->load();
     }
-    return $self;
+    return self::$instances[$pid];
   }
   
   public static function getcomment($pid, $id) {

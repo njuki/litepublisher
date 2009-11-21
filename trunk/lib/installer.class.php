@@ -264,25 +264,23 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
   }
   
   public function CreateFirstPost() {
-    global $options;
-    $html = &THtmlResource::instance();
+    global $classes, $options;
+    $html = THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::instance();
+    $lang = tlocal::instance();
     
-    $post = TPost::instance(0);
+    $post = tpost::instance(0);
     $post->title = $lang->posttitle;
     $post->catnames = $lang->postcategories;
     $post->tagnames = $lang->posttags;
-    eval('$post->content = "'. $lang->postcontent . '";');
+$post->content = $lang->postcontent;
+        $posts = tposts::instance();
+    $posts->add($post);
     
-    $posts = &TPosts::instance();
-    $posts->Add($post);
+    $users = tcomusers::instance();
+    $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
     
-    $users = &TCommentUsers::instance();
-    $userid = $users->Add($lang->author, $lang->email, $lang->homeurl);
-    
-    $CommentManager = &TCommentManager::instance();
-    $CommentManager->AddToPost($post, $userid,$lang->postcomment);
+    $classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
   }
   
   public static function SendEmail($password) {
