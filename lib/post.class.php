@@ -26,6 +26,7 @@ $this->table = 'posts';
     'idurl' => 0,
     'parent' => 0,
     'author' => 0, 
+'icon' => 0,
     'posted' => 0,
     'modified' => 0,
     'url' => '',
@@ -47,7 +48,8 @@ $this->table = 'posts';
     'password' => '',
     'template' => '',
     'subtheme' => '',
-'icon' => 0,
+'commentscount' => 0,
+'pagescount' => 0,
     'pages' => array()
     );
   }
