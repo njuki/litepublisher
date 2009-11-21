@@ -112,14 +112,14 @@ class tinstaller extends tdata {
   
   public function CreateDefaultItems($password) {
     if ($this->mode != 'remote') {
-      $this->PrintCongratulation($password);
+//      $this->PrintCongratulation($password);
     }
-    $Urlmap = &TUrlmap::instance();
-    $Urlmap->Lock();
-    $this->createwidgets();
-    $this->createmenus();
-    if (!$this->lite) $this->CreateFirstPost();
-    $Urlmap->Unlock();
+
+    $arch = tarchives::instance();
+    $arch->lite = $this->lite;
+
+   if (!$this->lite) $this->CreateFirstPost();
+
     $this->SendEmail($password);
     return $password;
   }
@@ -261,25 +261,6 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     </form>";
     
     return $result;
-  }
-  
-  public function createwidgets() {
-    $arch = tarchives::instance();
-    $arch->lite = $this->lite;
-}
-  
-  public function createmenus() {
-    $html = &THtmlResource::instance();
-    $html->section = 'installation';
-    $lang = &TLocal::instance();
-    
-    $Menu = &TMenu::instance();
-    $Item = TContactForm::instance();
-    $Item->order = 10;
-    $Item->title =  TLocal::$data['installation']['contacttitle'];
-    eval('$Item->content = "'. $html->contactform . '\n";');
-    
-    $Menu->Add($Item);
   }
   
   public function CreateFirstPost() {

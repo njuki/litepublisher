@@ -41,6 +41,7 @@ $this->updateajax();
 }
 
 public function updateajax() {
+global $paths;
 $ajax = false;
 foreach ($this->items as $name => $item) {
 if ($item['ajax']) {

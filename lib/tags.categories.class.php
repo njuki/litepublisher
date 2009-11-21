@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class TCategories extends TCommonTags {
+class tcategories extends tcommontags {
   //public  $defaultid;
   
   public static function instance() {
@@ -20,11 +20,17 @@ $this->contents->table = 'catscontent';
 $this->itemsposts->table = $this->table . 'items';
     $this->basename = 'categories' ;
   }
+
+public function getdefaultid() {
+return $this->options->defaultid;
+}
   
   public function setdefaultid($id) {
-    if (($id != $this->defaultid) && isset($this->items[$id])) {
-      $this->data['defaultid'] = $id;
-      $this->save();
+global $options;
+$thisoptions = $this->options;
+    if (($id != $thisoptions->defaultid) && $this->itemexists($id)) {
+      $thisoptions->defaultid = $id;
+$options->save();
     }
   }
   
