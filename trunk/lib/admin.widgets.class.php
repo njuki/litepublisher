@@ -247,7 +247,7 @@ $std->items[$name]['ajax'] = $names[$name];
 $std->delete($name);
 }
 } elseif (isset($names[$name])) {
-$std->add($name, $names[$name]);
+$std->add($name, $names[$name], 0);
 }
 }
 $std->updateajax();

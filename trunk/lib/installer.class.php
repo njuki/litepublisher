@@ -116,8 +116,8 @@ class tinstaller extends tdata {
     }
     $Urlmap = &TUrlmap::instance();
     $Urlmap->Lock();
-    $this->CreateWidgets();
-    $this->CreateMenuItem();
+    $this->createwidgets();
+    $this->createmenus();
     if (!$this->lite) $this->CreateFirstPost();
     $Urlmap->Unlock();
     $this->SendEmail($password);
@@ -263,33 +263,12 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     return $result;
   }
   
-  public function CreateWidgets() {
-    $arch = &TArchives::instance();
+  public function createwidgets() {
+    $arch = tarchives::instance();
     $arch->lite = $this->lite;
-    $Template = &TTemplate::instance();
-    $Template->Lock();
-    //sitebar1
-    if (!$this->lite) $Template->AddWidget('TCategories', 'echo', 'categories', TLocal::$data['default']['categories'], 0, 0);
-    $Template->AddWidget('TLinksWidget', 'echo', 'links', TLocal::$data['default']['links'],-1, 0);
-    $Template->AddWidget('TArchives', 'echo', 'archives', TLocal::$data['default']['archives'],-1, 0);
-    $Template->AddWidget('TFoaf', 'echo', 'myfriends', TLocal::$data['default']['myfriends'],-1, 0);
-    
-    //sitebar2
-    $Template->AddWidget('TPosts', 'echo', 'recentposts', TLocal::$data['default']['recentposts'], 0, 1);
-    $Template->AddWidget('TCommentManager', 'include', 'recentcomments', TLocal::$data['default']['recentcomments'], 1, 1);
-    $Template->AddWidget('TMetaWidget', 'echo', 'meta', TLocal::$data['default']['meta'], 2, 1);
-    
-    //footer
-    $html = &THtmlResource::instance();
-    $html->section = 'installation';
-    $lang = &TLocal::instance();
-    
-    eval('$Template->footer = "'. $html->footer . '";');
-    $Template->footer  .= $html->stat;
-    $Template->Unlock();
-  }
+}
   
-  public function CreateMenuItem() {
+  public function createmenus() {
     $html = &THtmlResource::instance();
     $html->section = 'installation';
     $lang = &TLocal::instance();

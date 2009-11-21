@@ -18,10 +18,10 @@ $this->basename = 'stdwidgets';
 $this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'comments', 'meta');
 }
 
-public function add($name, $ajax) {
+public function add($name, $ajax, $sitebar) {
 if (isset($this->items[$name])) return $this->error("widget  $name already exists");
 $widgets = twidgets::instance();
-$id = $widgets->add($this->class, 'echo', 0, -1);
+$id = $widgets->add($this->class, 'echo', $sitebar, -1);
 $this->items[$name] = array(
 'id' => $id,
 'ajax' => $ajax,
