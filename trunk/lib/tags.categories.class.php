@@ -22,7 +22,9 @@ $this->itemsposts->table = $this->table . 'items';
   }
 
 public function getdefaultid() {
-return $this->options->defaultid;
+$thisoptions = $this->options;
+if (isset($thisoptions->array['defaultid'])) return $thisoptions->defaultid;
+return 0;
 }
   
   public function setdefaultid($id) {
