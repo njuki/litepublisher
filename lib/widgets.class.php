@@ -35,9 +35,9 @@ $sitebars = tsitebars::instance();
     'sitebar' => $sitebar
     );
     
-$sitebars->add($this->autid, $sitebar, $order);
+$sitebars->add($this->autoid, $sitebar, $order);
     $this->save();
-    $this->addded($this->autoid);
+    $this->added($this->autoid);
     return $this->autoid;
   }
 

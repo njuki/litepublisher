@@ -9,6 +9,10 @@
 class ttemplatetags {
 private $items;
 
+public static function instance() {
+return getinstance(__class__);
+}
+
 public function __construct() {
 $template = ttemplate::instance();
 $this->items = &$template->data['tags'];

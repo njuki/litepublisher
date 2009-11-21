@@ -57,9 +57,12 @@ $this->save();
 }
 }
 
-public static function parsecallback($var) {
+public static function parsecallback($names) {
+global $classes, $options;
+$name = $names[1];
+$var = isset($GLOBALS[$name]) ? $GLOBALS[$name] : $classes->$name;
 try {
-return $GLOBALS[$var[1]]->{$var[2]};
+return $var->{$names[2]};
     } catch (Exception $e) {
       $options->HandleException($e);
     }

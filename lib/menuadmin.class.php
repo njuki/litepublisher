@@ -148,7 +148,7 @@ $this->checkform();
   }
   
 public function gethtml($name = '') {
-if ($name == '') $name = $this->name;
+if ($name == '') $name = $this->basename;
 if (!isset(tlocal::$data[$name])) {
 $name = $this->owner->items[$this->parent]['name'];
 }

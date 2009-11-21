@@ -25,7 +25,8 @@ global $paths;
     $this->basename = 'template' ;
 $this->tml = 'index';
     $this->itemplate = false;
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
+ 'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
     $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
@@ -74,8 +75,8 @@ $this->themechanged();
 $sitebars = tsitebars::instance();
     $result = '';
     if (($sitebars->current == 0) && !$this->hovermenu && $this->contextHasProp('submenuwidget')) $result .= $this->context->submenuwidget;
-
     $result .= $sitebars->getcurrent();
+
     return $result;
   }
   

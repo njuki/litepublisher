@@ -11,6 +11,10 @@ public $current;
 public $count;
 private $items;
 
+public static function instance() {
+return getinstance(__class__);
+}
+
 public function __construct() {
 $this->current = 0;
 $template = ttemplate::instance();
@@ -53,10 +57,13 @@ $widgets = twidgets::instance();
 public function getcurrent() {
 global $paths, $template;
 $file = $paths['cache'] . "$template->tml.sitebar-$this->current.php";
-if (file_exists($file)) return file_get_contents($file);
+if (file_exists($file)) {
+$result = file_get_contents($file);
+} else {
 $result = $this->getcontent($this->current++);
 file_put_contents($result);
-
+}
+$template->onsitebar(&$result, $this->current++);
 //если закончились сайтбары, то остатки объеденить
     if ($this->count == $this->current) {
 while ($this->current < count($this->items)) $result .= $this->getcurrent();
