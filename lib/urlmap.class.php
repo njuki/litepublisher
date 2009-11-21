@@ -26,7 +26,7 @@ public $argtree;
     parent::create();
 $this->table = 'urlmap';
     $this->basename = 'urlmap';
-    $this->addevents('BeforeRequest', 'AfterRequest', 'CacheExpired');
+    $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
     $this->is404 = false;
     $this->admin = false;
     $this->mobile= false;
@@ -47,20 +47,23 @@ protected function prepareurl($host, $url) {
   public function request($host, $url) {
 global $options;
 $this->prepareurl($host, $url);
-    $this->admin = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
-    $this->BeforeRequest();
+    $this->admin = strbegin($this->url, '/admin/') ||($this->url == '/admin');
+    $this->beforerequest();
        try {
-      $this->DoRequest($this->url);
+      $this->dorequest($this->url);
     } catch (Exception $e) {
       $options->HandleException($e);
     }
-    $this->AfterRequest($this->url);
+    $this->afterrequest($this->url);
     $this->CheckSingleCron();
   }
   
-  protected function DoRequest($url) {
-    if ($this->itemrequested = $this->finditem($url)) return $this->PrintContent($this->itemreqested);
+  protected function dorequest($url) {
+    if ($this->itemrequested = $this->finditem($url)){
+ return $this->printcontent($this->itemreqested);
+} else {
     $this->notfound404();
+}
   }
 
 private function query($url) {
@@ -135,7 +138,7 @@ global $paths;
 return $paths['cache']. "$id-$this->page.php";
 }
 
-  protected function  PrintContent(array $item) {
+  protected function  printcontent(array $item) {
     global $options;
     $this->idurl = $item['id'];
     if ($options->CacheEnabled) {
@@ -281,6 +284,11 @@ tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
   public function setexpired($id) {
 global $paths;
 tfiler::deletemask($paths['cache'] . "*.$id-*.php");
+}
+
+public function setexpiredpage($id, $page) {
+global $paths;
+tfiler::deletemask($paths['cache'] . "*.$id-$page.php");
 }
 
 public function getcachename($name, $id) {

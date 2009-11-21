@@ -36,7 +36,8 @@ class TAbstractCommentManager extends titems {
   }
   
   public function dochanged($postid) {
-    ttemplate::WidgetExpired($this);
+$widgets = twidgets::instance();
+$widgets->setexpired('tcommentswidget'); 
     
     $post = tpost::instance($postid);
     $urlmap = turlmap::instance();

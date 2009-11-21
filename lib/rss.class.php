@@ -9,27 +9,28 @@
 class trss extends tevents {
   public $domrss;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function &instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'rss';
-    $this->Data['feedburner'] = '';
-    $this->Data['feedburnercomments'] = '';
-    $this->Data['template'] = '';
-    $this->AddEvents('BeforePostContent', 'AfterPostContent');
+    $this->addevents('beforepost', 'afterpost');
+    $this->data['feedburner'] = '';
+    $this->data['feedburnercomments'] = '';
+    $this->data['template'] = '';
+    $this->data['idurlcomments'] = 0;
   }
   
-  public function CommentsChanged($postid) {
-    $Urlmap = &TUrlmap::Instance();
-    $Urlmap->SubNodeExpired('comments', $postid);
-    $Urlmap->SubNodeExpired('comments', 0);
+  public function commentschanged($postid) {
+    $urlmap = turlmap::instance();
+    $urlmap->setexpiredpage($this->idurlcomments, $postid);
+    $urlmap->setexpiredpage($this->idurlcomments, 0);
   }
   
-  public function Request($args) {
-    global $Options, $Urlmap;
+  public function request($args) {
+    global $options, $urlmap;
     $result = "<?php\n";
     if (($args == 'posts') && ($this->feedburner  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
@@ -51,7 +52,7 @@ class trss extends tevents {
     
     $result .= "  @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $Options->url/rpc.xml');
+    @header('X-Pingback: $options->url/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
     
@@ -63,15 +64,17 @@ class trss extends tevents {
       break;
       
       case null:
-      $Urlmap->page = 0;
+      $urlmap->page = 0;
       $this->GetRecentComments();
       break;
       
       default:
       $postid = (int) $args;
-      $posts = &TPosts::Instance();
-      if (!isset($posts->archives[$postid])) return 404;
-      $Urlmap->page = $postid;
+      $posts = tposts::instance();
+      if (!$posts->itemexists($postid)) return 404;
+    $post = TPost::instance($postid);
+if ($post->status != 'published') return 404;
+      $urlmap->page = $postid;
       $this->GetRSSPostComments($postid);
     }
     
@@ -80,30 +83,30 @@ class trss extends tevents {
   }
   
   public function GetRSSRecentPosts() {
-    global $Options;
-    $this->domrss->CreateRoot($Options->url. '/rss/', $Options->name);
-    $posts = &TPosts::Instance();
-    $list = $posts->GetRecent($Options->postsperpage);
+    global $options;
+    $this->domrss->CreateRoot($options->url. '/rss/', $options->name);
+    $posts = &TPosts::instance();
+    $list = $posts->GetRecent($options->postsperpage);
     foreach ($list as $id ) {
-      $post = TPost::Instance($id);
+      $post = TPost::instance($id);
       $this->AddRSSPost($post);
     }
     
   }
   
   public function GetRecentComments() {
-    global $Options;
-    $this->domrss->CreateRoot($Options->url . '/comments/', TLocal::$data['comment']['onrecent'] . ' '. $Options->name);
+    global $options;
+    $this->domrss->CreateRoot($options->url . '/comments/', TLocal::$data['comment']['onrecent'] . ' '. $options->name);
     
-    $count = $Options->postsperpage;
-    $CommentManager = TCommentManager::Instance();
+    $count = $options->postsperpage;
+    $CommentManager = TCommentManager::instance();
     if ($item = end($CommentManager->items)) {
       $comment = &new TComment();
       $title = TLocal::$data['comment']['onpost'] . ' ';
       do {
         $id = key($CommentManager->items);
         if (!isset($item['status']) && !isset($item['type'])) {
-          $post = TPost::Instance($item['pid']);
+          $post = TPost::instance($item['pid']);
           if ($post->status != 'published') continue;
           $count--;
           $comment->Owner = &$post->comments;
@@ -116,11 +119,11 @@ class trss extends tevents {
   }
   
   public function GetRSSPostComments($postid) {
-    global $Options;
-    $post = TPost::Instance($postid);
-    $lang = TLocal::Instance('comment');
+    global $options;
+    $post = TPost::instance($postid);
+    $lang = TLocal::instance('comment');
     $this->domrss->CreateRoot($post->rsslink, "$lang->onpost $post->title");
-    $count = $Options->postsperpage;
+    $count = $options->postsperpage;
     $comment = new TComment($post->comments);
     $items = &$post->comments->items;
     $title = TLocal::$data['comment']['from'] . ' ';
@@ -136,7 +139,7 @@ class trss extends tevents {
   }
   
   public function AddRSSPost(&$post) {
-    global $Options;
+    global $options;
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $post->title);
     AddNodeValue($item, 'link', $post->link);
@@ -146,17 +149,17 @@ class trss extends tevents {
     $guid  = AddNodeValue($item, 'guid', $post->link);
     AddAttr($guid, 'isPermaLink', 'false');
     
-    $profile = &TProfile::Instance();
+    $profile = &TProfile::instance();
     AddNodeValue($item, 'dc:creator', $profile->nick);
     
-    $categories = TCategories::Instance();
+    $categories = TCategories::instance();
     $names = $categories->GetNames($post->categories);
     foreach ($names as $name) {
       if (empty($name)) continue;
       AddCData($item, 'category', $name);
     }
     
-    $tags = TTags::Instance();
+    $tags = TTags::instance();
     $names = $tags->GetNames($post->tags);
     foreach ($names as $name) {
       if (empty($name)) continue;
@@ -178,13 +181,13 @@ class trss extends tevents {
   }
   
   public function AddRSSComment(&$comment, $posturl, $title) {
-    global $Options;
+    global $options;
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $title);
-    AddNodeValue($item, 'link', "$Options->url$posturl#comment-$comment->id");
+    AddNodeValue($item, 'link', "$options->url$posturl#comment-$comment->id");
     AddNodeValue($item, 'dc:creator', $comment->name);
     AddNodeValue($item, 'pubDate', date('r', $comment->date));
-    AddNodeValue($item, 'guid', "$Options->url$posturl#comment-$comment->id");
+    AddNodeValue($item, 'guid', "$options->url$posturl#comment-$comment->id");
     AddCData($item, 'description', strip_tags($comment->content));
     AddCData($item, 'content:encoded', $comment->content);
   }
@@ -194,7 +197,7 @@ class trss extends tevents {
       $this->feedburner= $rss;
       $this->feedburnercomments = $comments;
       $this->Save();
-      $urlmap = &TUrlmap::Instance();
+      $urlmap = &TUrlmap::instance();
       $urlmap->ClearCache();
     }
   }
