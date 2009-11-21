@@ -7,15 +7,19 @@
 **/
 
 class tcontactform {
+
+public static function instance() {
+return getinstance(__class__);
+}
   
   public function processform($id) {
     global $options;
+    if (!isset($_POST['contactvalue'])) return  '';
     $lang = tlocal::instance('contactform');
     $error = "<p><strong>$lang->error</strong></p>\n";
-    if (!isset($_POST['FormValue'])) return  $error;
 
-    $TimeKey = substr($_POST['FormValue'], strlen('_Value'));
-    if (time() >  $TimeKey) return $error;
+   $time = substr($_POST['contactvalue'], strlen('_contactform'));
+    if (time() >  $time) return $error;
     $email = trim($_POST['email']);
     if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::$data['comment']['invalidemail'] . "</strong></p>\n";
     

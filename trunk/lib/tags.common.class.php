@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcommontags extends TItems implements  ITemplate {
+class tcommontags extends titems implements  itemplate {
   public $contents;
 public $itemsposts;
   public $PermalinkIndex;

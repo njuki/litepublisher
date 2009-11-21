@@ -191,7 +191,7 @@ return $theme->parse($theme->excerpts['more']);
   public function setcatnames($names) {
     $categories = tcategories::instance();
     $this->categories = $categories->createnames($names);
-    if (count($this->categories ) == 0) $this->dat['categories '][] = $categories->defaultid;
+    if (count($this->categories ) == 0) $this->data['categories '][] = $categories->defaultid;
   }
   
   //ITemplate
