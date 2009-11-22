@@ -14,36 +14,32 @@ class tadminsubscribers extends tadminmenuitem {
   
   protected function create() {
     parent::create();
-$this->table = 'subscribe';
-    $this->basename = 'subscribe';
+    $this->basename = 'subscribers';
   }
  
   public function auth() { }
 
   public function getcontent() {
-    global $options;
-    $html= THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = tlocal::instance();
-
+    global $options, $post;
+    $html= $this->html;
+$args = targs::instance();
     $comusers = tcomusers::instance();
     if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return $this->notfount();
 $subscribers=  tsubscribers::instance();
 $items = $subscribers->getposts($user['id']);
-      if (count($items) == 0) return $html->nosubscribtions();
-        $email = $user['email'];
-        eval('$result .="'. $html->formhead . '\n";');
+      if (count($items) == 0) return $html->h2->nosubscribtions;
+        $args->email = $user['email'];
+$result .=$html->formhead($args);
                 foreach ($items as $postid) {
           $post = tpost::instance($postid);
           if ($post->status != 'published') continue;
-          eval('$result .= "'. $html->formitem . '\n";');
+          $result .= $html->formitem($args);
         }
-        eval('$result .= "'. $html->formfooter . '\n";');
+        $result .= $html->formfooter();
 return $this->FixCheckall($result);
   }
   
   public function processform() {
-    $result = '';
     $comusers = tcomusers::instance();
     if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return '';
 $subscribers = tsubscribers::instance();
@@ -55,11 +51,7 @@ $subscribers = tsubscribers::instance();
       }
       $subscribers->unlock();
 
-      $html = THtmlResource::instance();
-      $html->section = $this->basename;
-      $lang = tlocal::instance();
-      eval('$result .= "'. $html->unsubscribed . '\n";');
-    return $result;
+return $this->html->h2->unsubscribed;
   }
   
 }//class

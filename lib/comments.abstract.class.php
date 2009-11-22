@@ -31,8 +31,8 @@ class TAbstractCommentManager extends titems {
   
  protected function doadded($id) {
     $this->dochanged($this->items[$id]['pid']);
-    $this->CommentAdded($id);
-    $this->Added($id);
+    $this->sendmail($id);
+    $this->added($id);
   }
   
   public function dochanged($postid) {
@@ -46,15 +46,16 @@ $widgets->setexpired('tcommentswidget');
     $this->changed($postid);
   }
   
-  public function CommentAdded($id) {
-    global $options;
+  public function sendmail($id) {
+    global $options, $comment;
     if (!$this->options->SendNotification) return;
     $comment = $this->getcomment($id);
     $html = THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = tlocal::instance();
-    eval('$subject = "' . $html->subject . '";');
-    eval('$body = "'. $html->body . '";');
+    $html->section = 'comments';
+$args = targs::instance();
+$args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&&action";
+$subject = $html->subject();
+$body = $html->body($args);
     tmailer::sendmail($options->name, $options->fromemail,
     'admin', $options->email,  $subject, $body);
   }

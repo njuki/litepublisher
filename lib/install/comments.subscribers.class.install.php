@@ -10,13 +10,14 @@ function tsubscribersInstall($self) {
 global $classes;
 if (dbversion) {
     $dbmanager = TDBManager ::instance();
-    $dbmanager->CreateTable('events', file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'commentsubscribe.sql'));
-} else {
-$posts = tposts::instance();
-$posts->deleted = $self->deletepost;
+    $dbmanager->CreateTable($self->table, file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'items.posts.sql'));
 }
+
   $self->fromemail = 'litepublisher@' . $_SERVER['HTTP_HOST'];
   $self->save();
+
+$posts = tposts::instance();
+$posts->deleted = $self->deletepost;
 
 $comusers = tcomusers::instance();
 $comusers->deleted = $self->deleteitem;
@@ -30,9 +31,9 @@ $comusers->deleted = $self->deleteitem;
 
 function tsubscribersUninstall(&$self) {
 global $classes;
-  
-  $manager = $classes->commentmanager;
-  $manager->unsubscribeclass($self);
+$classes->commentmanager->unsubscribeclass($self);
+$classes->comusers->unsubscribeclass($self);
+$classes->posts->unsubscribeclass($self);
 }
 
 ?>

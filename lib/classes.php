@@ -53,6 +53,8 @@ return new $class();
 
 public function __get($name) {
 if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
+$class = 't' . $name;
+if (isset($this->items[$class])) return $this->getinstance($class);
 return parent::__get($name);
 }
   

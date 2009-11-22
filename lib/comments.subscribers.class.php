@@ -59,11 +59,6 @@ global $classes;
     }
   }
 
-  public function geturl() {
-    global $options;
-    return $options->url . '/admin/subscribers/' . $options->q;
-  }
-  
   public function sendmail($id) {
 global $classes;
     if (!$this->enabled) return;
@@ -81,7 +76,7 @@ if (($item['status'] != 'approved') || ($item['pingback'] == '1')) return;
   }
   
   public function cronsendmail($id) {
-    global $options, $classes;
+    global $options, $classes, $comment;
     $manager = $classes->commentmanager;
     if (!$manager->itemexists($id)) return;
     $item = $manager->getitem($id);
@@ -95,22 +90,19 @@ if (!isset($this->items[$pid]) || (count($this->items[$pid]) == 0)) return;
     $comment = $manager->getcomment($id);
 
     $html = THtmlResource::instance();
-    $html->section = 'moderator';
-    $lang = tlocal::instance();
+    $html->section = 'comments';
     
-    eval('$subj = "'. $html->subject . '";');
-    eval('$body = "' . $html->subscriberbody . '";');
-    
-    $url = $this->Geturl();
+$subj = $html->subject();
+$body = $html->subscriberbody();
+    $body .= "\n$options->url/admin/subscribers/{$options->q}userid=";
     
     $users = tcomusers::instance();
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
-  $link = "\n{$url}userid={$user['cookie']}\n";
       tmailer::sendmail($options->name, $this->fromemail,  $user['name'], $user['email'],
-      $subj, $body . $link);
+      $subj, $body . $user['cookie']);
     }
   }
   

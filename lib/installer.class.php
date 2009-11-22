@@ -287,11 +287,9 @@ $post->content = $lang->postcontent;
     global $options;
     tlocal::loadlang('admin');
     $lang = &tlocal::$data['installation'];
-    $url = $options->url . '/';
-    $login = $options->login;
-    eval('$body = "' . $lang['body'] . '";');
+    $body = sprintf($lang['body'], $options->url, $options->login, $password);
     
-    TMailer::SendMail('', $options->fromemail,
+    tmailer::sendmail('', $options->fromemail,
     '', $options->email, $lang['subject'], $body);
   }
   

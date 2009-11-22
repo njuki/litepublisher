@@ -133,16 +133,20 @@ $j = - (strlen($url) - $i + 1);
 return false;    
   }
 
-protected function getcachefile($id) {
+private function getcachefile(array $item) {
 global $paths;
-return $paths['cache']. "$id-$this->page.php";
+if ($item['type'] == 'normal') {
+return $paths['cache']. sprintf('%s-%d.php', $item['id'], $this->page);
+} else {
+return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
+}
 }
 
   protected function  printcontent(array $item) {
     global $options;
     $this->idurl = $item['id'];
     if ($options->CacheEnabled) {
-  $cachefile = $this->getcachefile($item['id']);
+  $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
       if (($time = @filemtime ($cachefile)) && (($time  + $options->CacheExpired) >= time() )) {
         include($cachefile);
@@ -170,7 +174,7 @@ $this->notfound404();
     }
     eval('?>'. $s);
     if ($options->CacheEnabled && $obj->CacheEnabled) {
-  $cachefile = $this->getcachefile($item['id']);
+  $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);
     }
@@ -286,9 +290,8 @@ global $paths;
 tfiler::deletemask($paths['cache'] . "*.$id-*.php");
 }
 
-public function setexpiredpage($id, $page) {
-global $paths;
-tfiler::deletemask($paths['cache'] . "*.$id-$page.php");
+public function setexpiredcurrent() {
+@unlink($this->getcachefile($this->itemrequested));
 }
 
 public function getcachename($name, $id) {

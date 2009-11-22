@@ -216,6 +216,8 @@ private function getinfo($id) {
 global $comment;
 $manager = $this->manager;
     $comment = $manager->getcomment($id);
+$args = targs::instance();
+$args->adminurl =$this->adminurl . "=$id&action";
 return $this->html->info();
 }
 

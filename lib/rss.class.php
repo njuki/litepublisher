@@ -25,8 +25,7 @@ class trss extends tevents {
   
   public function commentschanged($postid) {
     $urlmap = turlmap::instance();
-    $urlmap->setexpiredpage($this->idurlcomments, $postid);
-    $urlmap->setexpiredpage($this->idurlcomments, 0);
+    $urlmap->setexpired($this->idurlcomments);
   }
   
   public function request($args) {
@@ -64,7 +63,6 @@ class trss extends tevents {
       break;
       
       case null:
-      $urlmap->page = 0;
       $this->GetRecentComments();
       break;
       
@@ -74,7 +72,6 @@ class trss extends tevents {
       if (!$posts->itemexists($postid)) return 404;
     $post = TPost::instance($postid);
 if ($post->status != 'published') return 404;
-      $urlmap->page = $postid;
       $this->GetRSSPostComments($postid);
     }
     
@@ -197,8 +194,8 @@ if ($post->status != 'published') return 404;
       $this->feedburner= $rss;
       $this->feedburnercomments = $comments;
       $this->Save();
-      $urlmap = &TUrlmap::instance();
-      $urlmap->ClearCache();
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache();
     }
   }
   
