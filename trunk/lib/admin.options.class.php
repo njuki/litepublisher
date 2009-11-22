@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tadminoptions extends tadminmenuitem {
+class tadminoptions extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
@@ -82,7 +82,7 @@ $args->content = $pinger->services;
       break;
       
       case 'cache':
-      $args->cacheenabled = $options->CacheEnabled;
+      $args->cache = $options->cache;
       break;
       
       case 'lite':
@@ -243,8 +243,8 @@ $filter->phpcode = isset($phpcode);
         $urlmap->clearcache();
       } else {
         $options->lock();
-        $options->CacheEnabled  = isset($cacheenabled);
-        if (!empty($cacheexpired)) $options->CacheExpired = (int) $cacheexpired;
+        $options->cache = isset($cache );
+        if (!empty($cacheexpired)) $options->expiredcache = (int) $cacheexpired;
         $options->unlock();
       }
       break;

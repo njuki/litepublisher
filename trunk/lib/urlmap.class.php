@@ -145,10 +145,10 @@ return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($t
   protected function  printcontent(array $item) {
     global $options;
     $this->idurl = $item['id'];
-    if ($options->CacheEnabled) {
+    if ($options->cache) {
   $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($cachefile)) && (($time  + $options->CacheExpired) >= time() )) {
+      if (($time = @filemtime ($cachefile)) && (($time  + $options->expiredcache) >= time() )) {
         include($cachefile);
         return;
       }
@@ -173,7 +173,7 @@ $this->notfound404();
       $s = $template->request($obj);
     }
     eval('?>'. $s);
-    if ($options->CacheEnabled && $obj->CacheEnabled) {
+    if ($options->cache && $obj->cache) {
   $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);

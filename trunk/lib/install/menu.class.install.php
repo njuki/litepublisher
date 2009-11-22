@@ -6,13 +6,13 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function tmenuInstall($self) {
+function tmenusInstall($self) {
   global $paths;
   @mkdir($paths['data']. 'menus', 0777);
   @chmod($paths['data']. 'menus', 0777);
 }
 
-function  tmenuUninstall($self) {
+function  tmenusUninstall($self) {
   //rmdir(. 'menus');
 }
 

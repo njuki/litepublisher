@@ -76,7 +76,7 @@ class tcommentform extends tevents {
   protected function create() {
     parent::create();
     $this->basename ='commentform';
-    $this->CacheEnabled = false;
+    $this->cache = false;
   }
   
   public static function PrintForm($postid) {

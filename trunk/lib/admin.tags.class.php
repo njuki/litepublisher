@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tadmintags extends tadminmenuitem {
+class tadmintags extends tadminmenu {
 
   public static function instance() {
     return getinstance(__class__);

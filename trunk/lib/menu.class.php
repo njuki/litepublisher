@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tmenu extends TItems {
+class tmenus extends TItems {
 public $tree;
 
     public static function instance() {
@@ -30,7 +30,7 @@ global $paths;
 return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
 }
    
-  public function add(tmenuitem $item) {
+  public function add(tmenu $item) {
 //fix null fields
 $zero = &$this->items[0];
 if (!isset($zero['url'])) $zero['url'] = '';
@@ -63,7 +63,7 @@ unset($this->items[0]);
     return $item->id;
   }
 
-public function edit(tmenuitem $item) {
+public function edit(tmenu $item) {
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($item->idurl);
     if ($oldurl != $item->url) {
@@ -212,7 +212,7 @@ $theme = ttheme::instance();
 
 }//class
 
-class tmenuitem extends titem implements  itemplate {
+class tmenu extends titem implements  itemplate {
 public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
@@ -252,7 +252,7 @@ parent::__set($name, $value);
 }
   
 public function getowner() {
-return tmenu::instance();
+return tmenus::instance();
 }
 
   //ITemplate

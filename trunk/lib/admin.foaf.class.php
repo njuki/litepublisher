@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tadminfoaf extends tadminmenuitem {
+class tadminfoaf extends tadminmenu {
   
   private $user;
   

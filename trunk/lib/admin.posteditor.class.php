@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tposteditor extends tadminmenuitem {
+class tposteditor extends tadminmenu {
   public $postid;
   
   public static function instance() {

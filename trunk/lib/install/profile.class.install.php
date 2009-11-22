@@ -6,13 +6,13 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function TProfileInstall(&$self) {
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Add('/profile/', get_class($self), null);
+function tprofileInstall($self) {
+  $Urlmap = turlmap::instance();
+  $Urlmap->add('/profile/', get_class($self), null);
 }
 
-function TProfileUninstall(&$self) {
-  TUrlmap::unsub($self);
+function tprofileUninstall($self) {
+  tulmap::unsub($self);
 }
 
 ?>

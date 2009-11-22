@@ -28,7 +28,7 @@ class tnotfound404 extends tevents {
   }
   
   function GetTemplateContent() {
-    $this->CacheEnabled = false;
+    $this->cache = false;
 $result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
 $theme = ttheme::instance();
 return sprintf($theme->simplecontent, $result);

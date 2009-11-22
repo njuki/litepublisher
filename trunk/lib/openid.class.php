@@ -17,7 +17,7 @@ class topenid extends tevents {
   
   protected function create() {
     parent::create();
-    $this->CacheEnabled = false;
+    $this->cache = false;
     $this->basename = 'openidserver';
     $this->addmap('keys', array());
     $this->addmap('trusted', array());

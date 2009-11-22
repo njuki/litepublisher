@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tadminplugins extends tadminmenuitem {
+class tadminplugins extends tadminmenu {
 private $abouts;
 
   public static function instance() {

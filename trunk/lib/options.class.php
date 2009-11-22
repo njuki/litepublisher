@@ -17,8 +17,8 @@ public $group;
   protected function create() {
     parent::create();
     $this->basename = 'options';
-    $this->addevents('changed', 'PostsPerPageChanged', 'OnGeturl');
-    unset($this->CacheEnabled);
+    $this->addevents('changed', 'PostsPerPageChanged', 'onurl');
+    unset($this->cache);
   }
   
   public function load() {
@@ -26,7 +26,7 @@ public $group;
     if($this->PropExists('timezone'))  {
       date_default_timezone_set($this->timezone);
     }
-    if (!defined('gmt_offset')) define('gmt_offset', date('Z'));
+    if (!defined('gmt_offset')) define('gmt_offset', @date('Z'));
   }
   
   public function __set($name, $value) {
@@ -45,7 +45,7 @@ public $group;
       $this->PostsPerPageChanged();
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
-    } elseif ($name == 'CacheEnabled') {
+    } elseif ($name == 'cache') {
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
     } else {

@@ -109,7 +109,7 @@ $sitebars = tsitebars::instance();
       $s= $this->context->ServerHeader();
       if (!empty($s)) return $s;
     }
-    $nocache = $this->context->CacheEnabled ? '' : "
+    $nocache = $this->context->cache ? '' : "
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');";
     
