@@ -18,6 +18,15 @@ class titemsposts extends titems {
 $this->table = 'fileitems';
   }
 
+/*
+public function load() { 
+if (!dbversion) return parent::load();
+}
+
+public function save() { $this->owner->save(); 
+if (!dbversion) return parent::save();
+}
+*/
 public function add($idpost, $iditem) {
 if (dbversion) {
 $this->db->add(array(

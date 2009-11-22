@@ -44,7 +44,7 @@ if (in_array($name, self::$tags)) return new ttag($name);
     return $s;
   }
   
-  public function __call($name, $args) {
+  public function __call($name, $params) {
     if (isset($this->ini[$this->section][$name]))  {
       $s = $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {
@@ -53,7 +53,7 @@ if (in_array($name, self::$tags)) return new ttag($name);
       throw new Exception("the requested $name item not found in $this->section section");
     }
 
-if ($args == null) $args = targs::instance();
+$args = isset($params[0]) && is_a($params[0], 'targs') ? $params[0] : targs::instance();
 $theme = ttheme::instance();
 if (preg_match_all('/\[(area|edit):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
 foreach ($m as $item) {
@@ -74,6 +74,7 @@ $tag = str_replace('$content', '$'. $name, $tag);
 $s = str_replace($item[0], $repl, $s);
 }
 }
+
     $s = strtr ($s, $args->data);    
 return $theme->parse($s);
   }
