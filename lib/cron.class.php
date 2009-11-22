@@ -68,7 +68,7 @@ class tcrontask extends tdata {
   }
   
   public function execute() {
-    global $Options;
+    global $options;
 $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
     
     $func = $this->func;
@@ -77,7 +77,7 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
       try {
         $func($this->arg);
       } catch (Exception $e) {
-        $Options->HandleException($e);
+        $options->handexception($e);
       }
     } else {
       if (!class_exists($this->class)) return $this->Delete();
@@ -85,7 +85,7 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
         $obj = &GetInstance($this->class);
         $obj->$func($this->arg);
       } catch (Exception $e) {
-        $Options->HandleException($e);
+        $options->handexception($e);
       }
     }
     
@@ -127,7 +127,7 @@ $this->table = 'cron';
     return  $paths['data'];
   }
   
-  protected function etdir() {
+  protected function getdir() {
     global $paths;
     return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
   }
@@ -171,7 +171,7 @@ $this->table = 'cron';
   
   private function GetFileList(&$processed) {
     $result = array();
-    $filelist = tfiler::getfiles($this->GetDir());
+    $filelist = tfiler::getfiles($this->getdir());
     foreach ($filelist as $filename) {
       if (!preg_match('/\d+\.php$/', $filename)) continue;
       if (in_array($filename, $processed)) continue;
@@ -212,18 +212,24 @@ $this->table = 'cron';
   }
   
   public static function SelfPing() {
-    $self = &GetInstance(__class__);
+global $options;
+try {
+    $self = getinstance(__class__);
     $cronfile =$self->dir .  'crontime.txt';
     @file_put_contents($cronfile, ' ');
     @chmod($cronfile, 0666);
     
     $self->Ping();
+    } catch (Exception $e) {
+      $options->handexception($e);
+    }
+
   }
   
   public function Ping() {
-    global $Options, $domain;
-    $this->AddToChain($domain, $Options->subdir . $this->url);
-    $this->PingHost($domain, $Options->subdir . $this->url);
+    global $options, $domain;
+    $this->AddToChain($domain, $options->subdir . $this->url);
+    $this->PingHost($domain, $options->subdir . $this->url);
   }
   
   private function PingHost($host, $path) {
@@ -258,14 +264,14 @@ $this->table = 'cron';
   }
   
   public function SendExceptions() {
-    global $paths, $Options;
+    global $paths, $options;
     //проверить, если файл логов создан более часа назад, то его отослать на почту
     $filename = $paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
     @unlink($filename);
-    TMailer::SendAttachmentToAdmin("[error] $Options->name", "See attachment", 'errors.txt', $s);
+    TMailer::SendAttachmentToAdmin("[error] $options->name", "See attachment", 'errors.txt', $s);
   }
   
   public function AppendLog($s) {

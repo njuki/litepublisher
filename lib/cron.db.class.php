@@ -77,7 +77,7 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
       try {
         $func($this->arg);
       } catch (Exception $e) {
-        $Options->HandleException($e);
+        $Options->handexception($e);
       }
     } else {
       if (!class_exists($this->class)) return $this->Delete();
@@ -85,7 +85,7 @@ $this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
         $obj = &GetInstance($this->class);
         $obj->$func($this->arg);
       } catch (Exception $e) {
-        $Options->HandleException($e);
+        $Options->handexception($e);
       }
     }
     

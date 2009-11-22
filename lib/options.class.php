@@ -108,7 +108,7 @@ return $users->getvalue($this->user, 'password');
     return isset($this->data['url']);
   }
   
-  public function HandleException(&$e) {
+  public function handexception($e) {
     global $paths;
     $trace =str_replace($paths['home'], '', $e->getTraceAsString());
     $message = "Caught exception:\n" . $e->getMessage();

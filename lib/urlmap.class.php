@@ -52,7 +52,7 @@ $this->prepareurl($host, $url);
        try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
-      $options->HandleException($e);
+      $options->handexception($e);
     }
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
