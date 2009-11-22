@@ -64,7 +64,7 @@ $var = isset($GLOBALS[$name]) ? $GLOBALS[$name] : $classes->$name;
 try {
 return $var->{$names[2]};
     } catch (Exception $e) {
-      $options->HandleException($e);
+      $options->handexception($e);
     }
 return '';
 }
@@ -77,7 +77,7 @@ $s = str_replace('$options->url', $options->url, $s);
     try {
 return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
     } catch (Exception $e) {
-      $options->HandleException($e);
+      $options->handexception($e);
     }
         return '';
 }

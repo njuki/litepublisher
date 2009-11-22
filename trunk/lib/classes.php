@@ -129,7 +129,7 @@ function PHPComment(&$s) {
   return "<?php /* $s */ ?>";
 }
 
-function PHPUncomment(&$s) {
+function PHPUncomment($s) {
   $s = substr($s, 9, strlen($s) - 9 - 6);
   return str_replace('**//*/', '*/', $s);
 }

@@ -138,7 +138,7 @@ $result = $theme->getwidget($this->widgets[$id]['title'], $widget->getwidgetcont
 $this->widgets[$id]['template'], $sitebars->current);
       }
     } catch (Exception $e) {
-      $options->HandleException($e);
+      $options->handexception($e);
     }
     return $result;
   }
