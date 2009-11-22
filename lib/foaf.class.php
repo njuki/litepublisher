@@ -57,7 +57,7 @@ class tfoaf extends TItems {
       return  $s;
       
       case 'redir':
-      $this->CacheEnabled = false;
+      $this->cache = false;
       $id = empty($_GET['friend']) ? 1 : (int) $_GET['friend'];
       if (!isset($this->items[$id])) return 404;
     return "<?php @header('Location: {$this->items[$id]['blog']}'); ?>";

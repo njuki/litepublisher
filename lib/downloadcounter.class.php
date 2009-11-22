@@ -14,7 +14,7 @@ class tdownloadcounter extends TItems {
   
   protected function create() {
     parent::create();
-    $this->CacheEnabled = false;
+    $this->cache = false;
     $this->basename = 'downloadcounter';
 $this->table = 'downloadcounter';
   }

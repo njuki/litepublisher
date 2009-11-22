@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tpasswordrecover extends tadminmenuitem {
+class tpasswordrecover extends tadminmenu {
   
   public static function instance() {
     return getinstance(__class__);

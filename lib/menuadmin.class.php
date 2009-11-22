@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tadminmenu extends tmenu {
+class tadminmenus extends tmenus {
 
   public static function instance() {
     return getinstance(__class__);
@@ -15,7 +15,7 @@ class tadminmenu extends tmenu {
   protected function CreateData() {
     parent::CreateData();
     $this->basename = 'admin' . DIRECTORY_SEPARATOR   . 'menu';
-tadminmenuitem::$ownerprops = array_merge(tadminmenuitem::$ownerprops, array('name', 'group'));
+tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
 }
 
 public function add($parent, $name, $group, $class) {
@@ -101,12 +101,12 @@ if ($groups->hasright($options->group, $item['group'])) {
 
 }//class
 
-class tadminmenuitem extends tmenuitem {
+class tadminmenu  extends tmenu {
 public $arg;
 
   protected function create() {
     parent::create();
-    $this->CacheEnabled = false;
+    $this->cache = false;
   }
   
 public function load() {}

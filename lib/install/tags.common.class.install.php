@@ -20,7 +20,7 @@ $self->options = array(
   $posts->lock();
   $posts->added = $self->postedited;
   $posts->edited = $self->postedited;
-  $Posts->deleted = $self->postdeleted;
+  $posts->deleted = $self->postdeleted;
   $posts->unlock();
   
   $urlmap = turlmap::instance();

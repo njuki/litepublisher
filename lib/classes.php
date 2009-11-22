@@ -124,7 +124,7 @@ function getinstance($class) {
 return $classes->getinstance($class);
 }
 
-function PHPComment(&$s) {
+function PHPComment($s) {
   $s = str_replace('*/', '**//*/', $s);
   return "<?php /* $s */ ?>";
 }
@@ -134,7 +134,7 @@ function PHPUncomment($s) {
   return str_replace('**//*/', '*/', $s);
 }
 
-function SafeSaveFile($BaseName, &$Content) {
+function SafeSaveFile($BaseName, $Content) {
   $TmpFileName = $BaseName.'.tmp.php';
   if(!file_put_contents($TmpFileName, $Content))  return false;
   @chmod($TmpFileName , 0666);

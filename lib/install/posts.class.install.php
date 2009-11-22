@@ -19,17 +19,16 @@ function tpostsInstall($self) {
     @mkdir($dir, 0777);
     @chmod($dir, 0777);
   }
-  $Cron = &TCron::Instance();
-  $Cron->Add('hour', get_class($self), 'HourCron');
+  $Cron = tcron::instance();
+  $Cron->add('hour', get_class($self), 'HourCron');
 }
 
 function TPostsUninstall(&$self) {
-  $Cron = &TCron::Instance();
-  $Cron->RemoveClass(get_class($self));
+  $Cron = tcron::instance();
+  $Cron->deleteclass(get_class($self));
   
-  $Template = &TTemplate::Instance();
-  $Template->DeleteWidget(get_class($self));
-  
+$widgets = twidgets::instance();
+$widgets->deleteclass($clf);  
   //@rmdir($paths['data']. 'posts');
 }
 

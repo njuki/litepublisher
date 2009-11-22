@@ -114,7 +114,7 @@ $this->table = 'cron';
     $this->data['url'] = '';
     $this->data['autoid'] = 0;
     $this->data['path'] = '';
-    $this->CacheEnabled = false;
+    $this->cache = false;
     $this->writelog = false;
     $this->disableadd = false;
   }

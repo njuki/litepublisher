@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Lite Publisher 
  * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
@@ -6,16 +7,16 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function TCommentFormInstall(&$self) {
+function tcommentformInstall($self) {
   global $Options;
   $url= '/send-comment.php';
   
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Add($url, get_class($self), null);
+  $urlmap = turlmap::instance();
+  $urlmap->Add($url, get_class($self), null);
 }
 
-function TCommentFormUninstall(&$self) {
-  TUrlmap::unsub($self);
+function tcommentformUninstall($self) {
+  turlmap::unsub($self);
 }
 
 ?>

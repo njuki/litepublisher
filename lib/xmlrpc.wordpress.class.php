@@ -16,12 +16,12 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
   }
   
   private function GetMenuItemForWP($id) {
-    $Menu= &TMenu::Instance();
+    $Menu= tmenus::Instance();
     if (!$Menu->ItemExists($id)) {
       return new IXR_Error(404, "Sorry, no such page.");
     }
     
-    $MenuItem = &TMenuItem::Instance($id);
+    $MenuItem = tmenu::Instance($id);
     
     if ($MenuItem->parent > 0) {
       $ParentTitle = $Menu->GetTitle($MenuItem->parent);
@@ -76,7 +76,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     }
     
     $Result = array();
-    $Menu = &TMenu::Instance();
+    $Menu = &tmenus::Instance();
     $Items = &$Menu->items;
     foreach ($Items as $id => $Item) {
       $Result[] = $this->GetMenuItemForWP($id);
@@ -90,7 +90,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     }
     
     $id	= (int) $args[3];
-    $Menu = &TMenu::Instance();
+    $Menu = &tmenus::Instance();
     if (!$Menu->ItemExists($id)) {
       return new IXR_Error(404, "Sorry, no such page.");
     }
@@ -102,7 +102,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
       return $this->Error;
     }
     
-    $Menu = &TMenu::Instance();
+    $Menu = &tmenus::Instance();
     $Items = &$Menu->items;
     $Result = array();
     foreach ($Items as $id =>$Item) {

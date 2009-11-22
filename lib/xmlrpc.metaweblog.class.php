@@ -93,8 +93,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return $this->error;
     }
     
-    $Menu = &TMenu::instance();
-    $Item = &TMenuItem::instance(0);
+    $Menus = tmenus::instance();
+    $Item = tmenu::instance(0);
     $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
     $Struct = &$args[3];
     $this->WPAssignPage($Struct, $item);
@@ -171,7 +171,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return new IXR_Error(404, "Sorry, no such page.");
     }
     
-    $Item = &TMenuItem::instance($id);
+    $Item = tmenu::instance($id);
     $Struct	= &$args[4];
     $Item->status = $args[5] == 'publish' ? 'published' : 'draft';
     $this->WPAssignPage($Struct, $item);

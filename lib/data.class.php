@@ -11,13 +11,13 @@ class tdata {
   public static $GlobalLock;
   public $data;
   public $basename;
-  public $CacheEnabled;
+  public $cache;
   //database
   public $table;
   
   public function __construct() {
     $this->lockcount = 0;
-    $this->CacheEnabled = true;
+    $this->cache= true;
     $this->data= array();
     $this->basename = 'data';
     $this->create();

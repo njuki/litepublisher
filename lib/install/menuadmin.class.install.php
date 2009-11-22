@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function tadminmenuInstall($self) {
+function tadminmenusInstall($self) {
 $self->lock();
 //posts
 $posts = $self->add(0, 'posts', 'author', 'tadminposts'); 
@@ -75,7 +75,7 @@ $redir = tredirector::instance();
 $redir->add('/admin/', '/admin/posts/editor/');
 }
 
-function  tadminmenuUninstall($self) {
+function  tadminmenusUninstall($self) {
   //rmdir(. 'menus');
 }
 

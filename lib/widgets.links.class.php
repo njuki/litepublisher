@@ -64,7 +64,7 @@ $args->text = $item['text'];
   }
   
   public function request($arg) {
-    $this->CacheEnabled = false;
+    $this->cache = false;
     $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
     if (!isset($this->items[$id])) return 404;
   return "<?php @header('Location: {$this->items[$id]['url']}'); ?>";

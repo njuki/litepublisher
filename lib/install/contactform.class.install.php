@@ -12,7 +12,7 @@ function tcontactformInstall($self) {
 
     $menu = tmenu::instance();
 $menu->lock();
-    $item = new tmenuitem();
+    $item = new tmenu();
     $item->order = 10;
     $item->title =  tlocal::$data['installation']['contacttitle'];
 $item->content = $html->contactform();

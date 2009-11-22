@@ -95,7 +95,7 @@ $theme = ttheme::instance();
     //home page
     $this->WriteItem('/', 9);
     $this->WritePosts();
-    $this->WriteNamed('menu', 8);
+    $this->WriteNamed('menus', 8);
     $this->WriteNamed('categories', 7);
     $this->WriteNamed('tags', 6);
     $this->WriteNamed('archives', 5);
@@ -142,7 +142,7 @@ global $classes;
       case $classes->classes['post']: return 8;
       case $classes->classes['categories']: return 6;
       case $classes->classes['tags']: return 5;
-      case 'TMenuItem': return 8;
+      case 'tmenu': return 8;
       case 'TContactForm': return 7;
       case 'TArchives': return 5;
       case 'THomepage': return 9;

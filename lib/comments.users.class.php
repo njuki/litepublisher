@@ -16,7 +16,7 @@ class tcomusers extends titems {
     parent::create();
 $this->table = 'comusers';
     $this->basename = 'comusers';
-    $this->CacheEnabled = false;
+    $this->cache = false;
   }
   
   public function add($name, $email, $url) {

@@ -8,7 +8,7 @@
 
 function ttemplateInstall($self) {
     //footer
-    $html = &THtmlResource::instance();
+    $html = THtmlResource::instance();
     $html->section = 'installation';
 $self->footer = $html->footer() . $html->stat;
 }

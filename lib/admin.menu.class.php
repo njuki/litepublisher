@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tadminmenumanager extends tadminmenuitem {
+class tadminmenumanager extends tadminmenu {
   
   public static function instance() {
     return getinstance(__class__);
@@ -15,7 +15,7 @@ class tadminmenumanager extends tadminmenuitem {
   public function getcontent() {
     global $options;
 $result = '';
-      $menu = tmenu::instance();
+      $menus = tmenus::instance();
 $html = $this->html;   
 $args = targs::instance();
 $args->adminurl = $this->adminurl;
@@ -31,8 +31,8 @@ break;
 
       case 'edit':
       $id = $this->idget();
-if (!$menu->itemexists($id)) return $this->notfound;
-      $menuitem = tmenuitem::instance($id);
+if (!$menus->itemexists($id)) return $this->notfound;
+      $menuitem = tmenu::instance($id);
 $args->id = $id;
 $args->title = $menuitem->title;
 $args->url = $menuitem->url;
@@ -42,7 +42,7 @@ $args->order = $menuitem->order;
       $args->content = $menuitem->content;
       $selected = $menuitem->parent  == 0 ? 'selected' : '';
 $parentcombo = "<option value='0' $selected>---</option>\n";
-      foreach ($menu->items as $id => $item) {
+      foreach ($menus->items as $id => $item) {
         if ($id != $menuitem->id) {
           $selected = $menuitem->parent  == $id ? 'selected' : '';
           $parentcombo .= "<option value='$id' $selected>{$item['title']}</option>\n";
@@ -59,9 +59,9 @@ if ($this->name != 'edit') return '';
     extract($_POST);
       if (empty($title) || empty($content)) return '';
       $id = $this->idget();
-$menu = tmenu::instance();
-if (!$menu->itemexists($id)) return $this->notfound;
-      $menuitem = tmenuitem::instance($id);
+$menus = tmenu::instance();
+if (!$menus->itemexists($id)) return $this->notfound;
+      $menuitem = tmenu::instance($id);
       $menuitem->title = $title;
 $menuitem->url = $url;
       $menuitem->order = (int) $order;
@@ -70,25 +70,25 @@ $menuitem->url = $url;
       $menuitem->content = $content;
 
       if ($id == 0) {
-        $menu->add($menuitem);
+        $menus->add($menuitem);
       } else  {
-        $menu->edit($menuitem);
+        $menus->edit($menuitem);
       }
   }
   
 
 private function getmenulist() {
-$menu = tmenu::instance();
+$menus = tmenus::instance();
 $args = targs::instance();
 $args->adminurl = $this->adminurl;
 $html = $this->html;
 $result = $html->listhead();
-      foreach ($menu->items as $id => $item) {
+      foreach ($menus->items as $id => $item) {
 $args->id = $id;
-$args->link = $menu->getlink($id);
+$args->link = $menus->getlink($id);
 $args->order = $item['order'];
         $args->status = TLocal::$data['poststatus'][$item['status']];
-                  $args->parent = $item['parent'] == 0 ? '---' : $menu->getlink($id);
+                  $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($id);
 $result .=$html->itemlist($args);
       }
 $result .= $html->listfooter;
@@ -96,32 +96,32 @@ return str_replace("'", '"', $result);
 }
 
 private function doaction($id, $action) {
-$menu = tmenu::instance();
-    if (!$menu->itemexists($id))  return $this->notfound;
+$menus = tmenus::instance();
+    if (!$menus->itemexists($id))  return $this->notfound;
 $args = targs::instance();
 $html = $this->html;
 $h2 = $html->h2;
-    $menuitem = tmenuitem::instance($id);
+    $menuitem = tmenu::instance($id);
       switch ($action) {
         case 'delete' :
     if  (!$this->confirmed) {
 $args->adminurl = $this->adminurl;
 $args->action = 'delete';
-$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], $menu->getlink($id));
+$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], $menus->getlink($id));
 return $this->html->confirmform($args);
 } else {
-        $menu->delete($id);
+        $menus->delete($id);
 return $h2->confirmeddelete;
 }
 
         case 'setdraft':
         $menuitem->status = 'draft';
-        $menu->edit($menuitem);
+        $menus->edit($menuitem);
 return $h2->confirmedsetdraft;
 
         case 'publish':
         $menuitem->status = 'published';
-        $menu->edit($menuitem);
+        $menus->edit($menuitem);
 return $h2->confirmedpublish;
       }
 return '';
