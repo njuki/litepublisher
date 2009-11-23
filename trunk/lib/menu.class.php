@@ -41,11 +41,11 @@ if (!isset($zero['status'])) $zero['status'] = 'published';
 
     $linkgen = tlinkgenerator::instance();
     if ($item->url == '' ) {
-      $item->url = $linkgen->createlink($item, 'post');
+      $item->url = $linkgen->createlink($item, 'post', true);
     } else {
       $title = $item->title;
       $item->title = trim($post->url, '/');
-      $item->url = $linkgen ->createlink($item, 'post');
+      $item->url = $linkgen ->createlink($item, 'post', true);
       $item->title = $title;
     }
 

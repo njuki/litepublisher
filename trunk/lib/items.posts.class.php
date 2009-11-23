@@ -149,7 +149,7 @@ return $result;
 }
 
 public function getpostscount($ititem) {
-$items = $this->getposts($iditem);
+$items = $this->getposts($ititem);
 $posts = tposts::instance();
 $items = $posts->stripdrafts($items);
 return count($items);

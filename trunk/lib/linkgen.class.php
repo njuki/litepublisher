@@ -7,8 +7,8 @@
 **/
 
 class tlinkgenerator extends tevents {
-  public $DataObject;
-  
+  public $source;
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -16,40 +16,38 @@ class tlinkgenerator extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'linkgenerator';
+    $this->data= array_merge($this->data, array(
+'post' => '/[title]/',
+'tag' => '/tag/[title]/',
+'category' => '/category/[title]/',
+'archive' => '/[year]/[month]/',
+'file' => '/[medium]/[filename]/',
+));
   }
   
-  public function install() {
-    $this->data['post'] = '/[title]/';
-    $this->data['tag'] = '/tag/[name]/';
-    $this->data['category'] = '/category/[name]/';
-    $this->data['archive'] ='/[year]/[month]/';
-    $this->data['file'] = '/[medium]/[filename]/';
-    $this->Save();
-  }
-  
-  public function createlink($Obj, $schema, $uniq = true) {
-    $this->DataObject= $Obj;
+  public function createlink($source, $schema, $uniq) {
+    $this->source= $source;
     $result = $this->data[$schema];
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
 foreach ($match as $item) {
       $tag = $item[1];
       if (method_exists($this, $tag)) {
         $text = $this->$tag();
-      } elseif( method_exists($Obj, $tag)) {
-        $text = $Obj->$tag();
+      } elseif( method_exists($source, $tag)) {
+        $text = $source->$tag();
       } else {
-        $text = $Obj->$tag;
+        $text = $source->$tag;
       }
       $result= str_replace("[$tag]", $text, $result);
     }
 }
-    $result= $this->AfterCreate($result);
+    $result= $this->aftercreate($result);
     $result= $this->validate($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
 
-  public function createurl($title, $schema) {
+  public function createurl($title, $schema, $uniq) {
     $result = $this->data[$schema];
 $result = str_replace('[title]', $title, $result);
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
@@ -61,13 +59,13 @@ foreach ($match as $item) {
 }
 }
 
-    $result= $this->AfterCreate($result);
+    $result= $this->aftercreate($result);
     $result= $this->validate($result);
-$result = $this->MakeUnique($result);
+    if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
 
-  public function AfterCreate($url) {
+  public function aftercreate($url) {
     global $options;
     if ($options->language == 'ru') $url = $this->ru2lat($url);
     return strtolower($url);
@@ -101,7 +99,7 @@ $result = $this->MakeUnique($result);
     $filename = trim($filename);
     $filename = trim($filename, '/');
     $result = basename($filename);
-    $result= $this->AfterCreate($result);
+    $result= $this->aftercreate($result);
     $result= $this->Validate($result);
     return $result;
   }
@@ -112,8 +110,8 @@ $result = $this->MakeUnique($result);
   }
   
   public function GetDate() {
-    if ($this->DataObject->propexists('date')) {
-      return $this->DataObject->date;
+    if ($this->source->propexists('date')) {
+      return $this->source->date;
     } else {
       return time();
     }

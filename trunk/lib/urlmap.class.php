@@ -60,7 +60,7 @@ $this->prepareurl($host, $url);
   
   protected function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
- return $this->printcontent($this->itemreqested);
+ return $this->printcontent($this->itemrequested);
 } else {
     $this->notfound404();
 }
@@ -144,7 +144,6 @@ return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($t
 
   protected function  printcontent(array $item) {
     global $options;
-    $this->idurl = $item['id'];
     if ($options->cache) {
   $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)

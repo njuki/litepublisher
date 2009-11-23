@@ -47,7 +47,7 @@ public function add($title, $content) {
 $filter = tcontentfilter::instance();
 $title = tcontentfilter::escape($title);
 $linkgen = tlinkgenerator::instance();
-$url = $linkgen->createurl($title, 'post');
+$url = $linkgen->createurl($title, 'post', true);
 $urlmap = turlmap::instance();
 $this->items[++$this->autoid] = array(
 'idurl' => $urlmap->add($url, get_class($this),  $this->autoid),

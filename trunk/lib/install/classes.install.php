@@ -45,7 +45,7 @@ function doinstallclasses() {
     $urlmap->lock();
     $posts = tposts::instance();
     $posts->lock();
-tdata::$GlobalLock = true;
+//tdata::$GlobalLock = true;
     foreach( $classes->items as $class => $item) {
 //echo "$class\n";
       $obj = getinstance($class);

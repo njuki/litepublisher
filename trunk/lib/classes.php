@@ -134,6 +134,10 @@ function PHPUncomment($s) {
   return str_replace('**//*/', '*/', $s);
 }
 
+function strbegin($s, $begin) {
+return strncmp($s, $begin, strlen($begin)) == 0;
+}
+
 function SafeSaveFile($BaseName, $Content) {
   $TmpFileName = $BaseName.'.tmp.php';
   if(!file_put_contents($TmpFileName, $Content))  return false;
