@@ -6,101 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcrontask extends TDataClass {
-  public $owner;
-  
-  public function __construct(&$owner) {
-    $this->owner = $owner;
-    parent::__construct();
-  }
-  
-  protected function create() {
-    $this->data= array(
-    'id' => 0,
-    'type' => 'single',
-    'time' => 0,
-    'class' => '',
-    'func' => '',
-    'arg' => ''
-    );
-  }
-  
-  public function Getclass() {
-    return $this->data['class'];
-  }
-  
-  public function add($id, $type, $class, $func, $arg) {
-    if (!in_array($type, array('single', 'hour', 'day', 'week'))) return $this->Error("unknown cron task $type");
-    $this->id = $id;
-    $this->type= $type;
-    $this->class = $class;
-    $this->func = $func;
-    $this->arg = $arg;
-    $this->time = $this->GetExpired();
-    $this->Save();
-  }
-  
-  public function getexpired() {
-    switch ($this->type) {
-      case 'single': return time() - 1;
-      case 'hour': return time() + 60*60;
-      case 'day': return time() + 3600 * 24;
-      case 'week': return time() + 3600 * 24 *7;
-      default: return time();
-    }
-  }
-  
-  protected function setid($id) {
-    $this->data['id'] = $id;
-    $this->basename = 'cron' . DIRECTORY_SEPARATOR . $id;
-  }
-  
-  protected function setfilename($filename) {
-    $this->basename = 'cron' . DIRECTORY_SEPARATOR . basename($filename, '.php');
-    $this->Load();
-  }
-  
-  public function delete() {
-    global $paths;
-    @unlink($paths['data'] . $this->GetBaseName() .'.php');
-    @unlink($paths['data'] . $this->GetBaseName() .'.bak.php');
-    $this->owner->AppendLog("task deleted ". $paths['data'] . $this->GetBaseName() .'.php');
-  }
-  
-  public function execute() {
-    global $Options;
-$this->owner->AppendLog("task started:\n{$this->class}->{$this->func}");
-    
-    $func = $this->func;
-    if ($this->class == '' ) {
-      if (!function_exists($func)) return $this->Delete();
-      try {
-        $func($this->arg);
-      } catch (Exception $e) {
-        $Options->handexception($e);
-      }
-    } else {
-      if (!class_exists($this->class)) return $this->Delete();
-      try {
-        $obj = &GetInstance($this->class);
-        $obj->$func($this->arg);
-      } catch (Exception $e) {
-        $Options->handexception($e);
-      }
-    }
-    
-    if ($this->type == 'single') {
-      $this->Delete();
-    } else {
-      $this->time  = $this->GetExpired();
-      $this->save();
-    }
-  }
-  
-} //class
-
 class tcron extends TEventClass {
-  public $writelog;
   public $disableadd;
   
   public static function instance() {
@@ -112,10 +18,8 @@ class tcron extends TEventClass {
 $this->table = 'cron';
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
     $this->data['url'] = '';
-    $this->data['autoid'] = 0;
     $this->data['path'] = '';
     $this->cache = false;
-    $this->writelog = false;
     $this->disableadd = false;
   }
   
@@ -127,113 +31,116 @@ $this->table = 'cron';
     return  $paths['data'];
   }
   
-  protected function etdir() {
-    global $paths;
-    return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
-  }
-  
-  public function request($arg) {
+ public function request($arg) {
     if ($fh = @fopen($this->path .'cron.lok', 'w')) {
       flock($fh, LOCK_EX);
       ignore_user_abort(true);
       set_time_limit(60*20);
-      $this->SendExceptions();
-      $this->AppendLog("started loop");
+      $this->sendexceptions();
+      $this->log("started loop");
       $this->execute();
       flock($fh, LOCK_UN);
       fclose($fh);
-      $this->AppendLog("finished loop");
-      $this->PopChain();
+      $this->log("finished loop");
+      $this->pop();
       return 'Ok';
     }
     return 'locked';
   }
   
   public function execute() {
+    global $options;
     @ob_end_flush ();
     echo "<pre>\n";
-    $time = time();
-    $task = new TCronTask($this);
-    $processed = array();
-    while ($filelist = $this->GetFileList($processed)) {
-      //var_dump($filelist);
-      foreach ($filelist as $filename) {
-        $processed[] = $filename;
-        $task->filename = $filename;
-        //var_dump($task->data);
-        //echo $time - $task->time;
-        //echo date("r\n", $task->time);
-        if  ($time >= $task->time)  $task->Execute();
+while ($item = $this->db->getassoc("date <= now() sort by date asc limit 1")) {
+extract($item);
+$arg = unserialize($arg);
+$this->log("task started:\n{$class}->{$func}");
+
+    if ($class == '' ) {
+      if (function_exists($func)) {
+      try {
+        $func($arg);
+      } catch (Exception $e) {
+        $options->handexception($e);
       }
+} else {
+$this->db->iddelete($id);
+continue;
+}
+    } elseif (class_exists($class)) {
+      try {
+        $obj = getinstance($class);
+        $obj->$func($arg);
+      } catch (Exception $e) {
+        $options->handexception($e);
+      }
+} else {
+$this->db->iddelete($id);
+continue;
     }
-    return true;
+if ($type == 'single') {
+$this->db->iddelete($id);
+} else {
+$date = sqldate(strtotime("+1 $type"));
+$this->db->setvalue($id, 'date', $date);
+
   }
   
-  private function GetFileList(&$processed) {
-    $result = array();
-    $filelist = tfiler::getfiles($this->GetDir());
-    foreach ($filelist as $filename) {
-      if (!preg_match('/\d+\.php$/', $filename)) continue;
-      if (in_array($filename, $processed)) continue;
-      $result[] = $filename;
-    }
-    if (count($result) == 0) return false;
-    return $result;
-  }
-  
-  public function Add($type, $class, $func, $arg = null) {
+  public function add($type, $class, $func, $arg = null) {
     if ($this->disableadd) return false;
-    ++$this->data['autoid'] ;
-    $this->Save();
-    $task = new TCronTask($this);
-    $task->Add($this->autoid, $type, $class, $func, $arg );
-    if (($type == 'single') && !defined('cronpinged')) {
+$id = $this->db->add(array(
+'date' => sqldate(),
+'type' => $type,
+'class' =>  $class, 
+'func' => $func, 
+'arg' => serialize($arg)
+));
+
+   if (($type == 'single') && !defined('cronpinged')) {
       define('cronpinged', true);
       register_shutdown_function('TCron::SelfPing');
     }
-    return $this->autoid;
+return $id;
   }
   
-  public function Remove($id) {
-    global $paths;
-    @unlink($paths['data'] . 'cron' . DIRECTORY_SEPARATOR . $id . '.php');
-    @unlink($paths['data'] . 'cron' . DIRECTORY_SEPARATOR . $id . '.bak.php');
+  public function delete($id) {
+$this->db->iddelete($id);
   }
   
-  public function RemoveClass($class) {
-    $task = new TCronTask($this);
-    $processed = array();
-    if ($filelist = $this->GetFileList($processed)) {
-      foreach ($filelist as $filename) {
-        $task->filename = $filename;
-        if ($task->class == $class) $task->Delete();
-      }
-    }
+  public function deleteclass($class) {
+$this->db->delete("class = '$class'");
   }
   
   public static function SelfPing() {
-    $self = &GetInstance(__class__);
+global $options;
+try {
+    $self = getinstance(__class__);
+
     $cronfile =$self->dir .  'crontime.txt';
     @file_put_contents($cronfile, ' ');
     @chmod($cronfile, 0666);
     
-    $self->Ping();
+    $self->ping();
+    } catch (Exception $e) {
+      $options->handexception($e);
+    }
   }
   
-  public function Ping() {
-    global $Options, $domain;
-    $this->AddToChain($domain, $Options->subdir . $this->url);
-    $this->PingHost($domain, $Options->subdir . $this->url);
+  public function ping() {
+    global $options, $domain;
+    $this->AddToChain($domain, $options->subdir . $this->url);
+    $this->PingHost($domain, $options->subdir . $this->url);
   }
   
   private function PingHost($host, $path) {
-    //$this->AppendLog("pinged host $host$path");
+    //$this->log("pinged host $host$path");
     if (		$socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
       fputs( $socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
     }
   }
   
-  private function PopChain() {
+  private function pop() {
     global $domain;
     $host = $domain;
     $filename = $this->path .'cronchain.php';
@@ -257,22 +164,21 @@ $this->table = 'cron';
     }
   }
   
-  public function SendExceptions() {
-    global $paths, $Options;
+  public function sendexceptions() {
+    global $paths, $options;
     //проверить, если файл логов создан более часа назад, то его отослать на почту
     $filename = $paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
     @unlink($filename);
-    TMailer::SendAttachmentToAdmin("[error] $Options->name", "See attachment", 'errors.txt', $s);
+    TMailer::SendAttachmentToAdmin("[error] $options->name", "See attachment", 'errors.txt', $s);
   }
   
-  public function AppendLog($s) {
+  public function log($s) {
     echo date('r') . "\n$s\n\n";
     flush();
-    if (!defined('debug') && !$this->writelog) return;
-    TFiler::log($s, 'cron.log');
+    if (defined('debug')) tfiler::log($s, 'cron.log');
   }
   
 }//class

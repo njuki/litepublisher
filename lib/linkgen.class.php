@@ -112,7 +112,7 @@ $result = $this->MakeUnique($result);
   }
   
   public function GetDate() {
-    if ($this->DataObject->PropExists('date')) {
+    if ($this->DataObject->propexists('date')) {
       return $this->DataObject->date;
     } else {
       return time();

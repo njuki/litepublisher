@@ -278,7 +278,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     'wp_password' => $Item->password,
     'wp_author_id' => 1,
     'wp_author_display_name'	=> 'admin',
-    'date_created_gmt' => new IXR_Date($Item->date - gmt_offset),
+    'date_created_gmt' => new IXR_Date($Item->date - $options->gmt),
     'publish' => $Item->status == 'published'
     );
   }

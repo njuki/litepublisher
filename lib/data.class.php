@@ -58,7 +58,7 @@ class tdata {
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   
-  public function PropExists($name) {
+  public function propexists($name) {
     return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name") || isset($this->$name);
   }
   

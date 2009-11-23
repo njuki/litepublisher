@@ -295,8 +295,8 @@ return $this->data['content'];
 }
   
   public function GetTemplateContent() {
-global $menuitem;
-$menuitem = $this;
+global $menu;
+$menu = $this;
 $theme = ttheme::instance();
     return $theme->parse($theme->menucontent);
   }

@@ -54,7 +54,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     "wp_page_order"			=> $MenuItem->order,
     "wp_author_id"			=> $MenuItem->author,
     "wp_author_display_name"	=> $Options->authorname,
-    "date_created_gmt"		=> new IXR_Date($MenuItem->date - gmt_offset)
+    "date_created_gmt"		=> new IXR_Date($MenuItem->date - $options->gmt)
     );
     
     return$Result;
@@ -111,7 +111,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
       'page_title' => $Item['title'],
       'page_parent_id' => $Item['parent'],
       'dateCreated' => new IXR_Date($Item['date'] ),
-      'date_created_gmt' => new IXR_Date($Item['date'] - gmt_offset)
+      'date_created_gmt' => new IXR_Date($Item['date'] - $options->gmt)
       );
     }
     
