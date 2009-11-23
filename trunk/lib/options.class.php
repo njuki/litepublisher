@@ -9,6 +9,8 @@
 class toptions extends tevents {
 public $user;
 public $group;
+public $gmt;
+public $errorlog;
   
   public static function instance() {
     return getinstance(__class__);
@@ -17,16 +19,18 @@ public $group;
   protected function create() {
     parent::create();
     $this->basename = 'options';
-    $this->addevents('changed', 'PostsPerPageChanged', 'onurl');
+    $this->addevents('changed', 'PostsPerPageChanged');
     unset($this->cache);
+$this->gmt = date('Z');
+$this->errorlog = '';
   }
   
   public function load() {
     parent::load();
-    if($this->PropExists('timezone'))  {
+    if($this->propexists('timezone'))  {
       date_default_timezone_set($this->timezone);
+$this->gmt = date('Z');
     }
-    if (!defined('gmt_offset')) define('gmt_offset', @date('Z'));
   }
   
   public function __set($name, $value) {
@@ -35,12 +39,12 @@ public $group;
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
       $this->save();
-      $this->FieldChanged($name, $value);
+      $this->dochanged($name, $value);
     }
     return true;
   }
   
-  private function FieldChanged($name, $value) {
+  private function dochanged($name, $value) {
     if ($name == 'postsperpage') {
       $this->PostsPerPageChanged();
       $urlmap = turlmap::instance();
@@ -107,6 +111,15 @@ return $users->getvalue($this->user, 'password');
   public function Getinstalled() {
     return isset($this->data['url']);
   }
+
+public function settimezone($value) {
+    if(!isset($this->data['timezone']) || ($this->timezone != $value)) {
+$this->data['timezone'] = $value;
+$this->save();
+      date_default_timezone_set($this->timezone);
+$this->gmt = date('Z');
+    }
+}
   
   public function handexception($e) {
     global $paths;
@@ -116,7 +129,7 @@ return $users->getvalue($this->user, 'password');
     tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();
     if (defined('debug') || $this->echoexception || $urlmap->admin) {
-      echo str_replace("\n", "<br />\n", htmlspecialchars($log));
+      $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       tfiler::log($log, 'exceptionsmail.log');
     }

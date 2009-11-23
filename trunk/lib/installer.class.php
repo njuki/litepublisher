@@ -112,7 +112,7 @@ class tinstaller extends tdata {
   
   public function CreateDefaultItems($password) {
     if ($this->mode != 'remote') {
-//      $this->PrintCongratulation($password);
+      $this->congratulation($password);
     }
 
     $arch = tarchives::instance();
@@ -293,14 +293,15 @@ $post->content = $lang->postcontent;
     '', $options->email, $lang['subject'], $body);
   }
   
-  public function PrintCongratulation($password) {
-    global $options;
-    $html = &THtmlResource::instance();
+  public function congratulation($password) {
+    global $options, $lang;
+    $html = THtmlResource::instance();
     $html->section = 'installation';
-    $lang = &TLocal::instance();
-    
-    $url = $options->url . '/';
-    eval('$content = "'. $html->congratulation . '";');
+$lang = tlocal::instance('installation');
+$args = targs::instance();
+        $args->url = $options->url . '/';
+$args->password = $password;
+$content = $html->congratulation($args);
     
     echo SimplyHtml($options->name, $content);
   }

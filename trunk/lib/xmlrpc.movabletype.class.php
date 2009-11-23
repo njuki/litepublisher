@@ -27,7 +27,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
       'userid' => 1,
       'postid' => $Item->id,
       'title' => $Item->title,
-      'date_created_gmt' => new IXR_Date($Item->date + gmt_offset)
+      'date_created_gmt' => new IXR_Date($Item->date + $options->gmt)
       );
     }
     

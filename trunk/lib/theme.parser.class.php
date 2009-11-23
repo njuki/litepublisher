@@ -66,7 +66,7 @@ $theme->excerpts['lite'] = $lite;
 
 $this->parsepost($this->parsetag($content, 'post', ''));
 
-$theme->menucontent = $this->parsetag($content, 'menucontent', '');
+$theme->menucontent = $this->parsetag($content, 'menu', '');
 $theme->simplecontent = $this->parsetag($content, 'simplecontent', '');
 if ($theme->simplecontent == '') $theme->simplecontent  = '%s';
 $theme->nocontent = $this->parsetag($content, 'nocontent', '');

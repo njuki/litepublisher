@@ -47,7 +47,7 @@ return $tags->__get($name);
   }
   
   private function contextHasProp($name) {
-    return isset($this->context) && (isset($this->context->$name) || (method_exists($this->context, 'PropExists') && $this->context->PropExists($name)));
+    return isset($this->context) && (isset($this->context->$name) || (method_exists($this->context, 'propexists') && $this->context->propexists($name)));
   }
   
   public function afterload() {
