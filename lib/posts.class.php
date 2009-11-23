@@ -92,11 +92,11 @@ return parent::save();
 $post->title = tcontentfilter::escape($post->title);    
     $linkgen = tlinkgenerator::instance();
     if ($post->url == '' ) {
-      $post->url = $linkgen->createlink($post, 'post');
+      $post->url = $linkgen->createlink($post, 'post', true);
     } else {
       $title = $post->title;
       $post->title = trim($post->url, '/');
-      $post->url = $linkgen ->createlink($post, 'post');
+      $post->url = $linkgen ->createlink($post, 'post', true);
       $Post->title = $title;
     }
 

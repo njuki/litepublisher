@@ -12,7 +12,7 @@ public $itemsposts;
   public $PermalinkIndex;
   public $PostPropname;
   protected $id;
-  private $newname;
+  private $newtitle;
   
   protected function create() {
     parent::create();
@@ -61,9 +61,13 @@ return $res->fetchAll(PDO::FETCH_ASSOC);
 return $this->items;
 }
 }
+
+public function load() {
+if (!dbversion) parent::load();
+}
   
   public function save() {
-    parent::save();
+if (!dbversion) parent::save();
     if (!$this->locked)  {
       twidgets::expired($this);
     }
@@ -128,33 +132,34 @@ foreach ($items as $id) {
 }
 }
   
-  public function add($title, $slug = '') {
+  public function add($title) {
     if (empty($title)) return false;
     $id  = $this->IndexOf('title', $title);
     if ($id > 0) return $id;
-    $this->newname = $slug == '' ? $title : $slug;
     $urlmap =turlmap::instance();
     $linkgen = tlinkgenerator::instance();
-    $url = $linkgen->createlink($this, $this->PermalinkIndex );
+    $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
 
 if (dbversion)  {
 $id = $this->db->add(array('title' => $title));
 $idurl =         $urlmap->add($url, get_class($this),  $id);
 $this->db->setvalue($id, 'idurl', $idurl);
 } else {
-    $this->lock();
 $id = ++$this->autoid;
+$idurl =         $urlmap->add($url, get_class($this),  $id);
+}
+
+    $this->lock();
     $this->items[$id] = array(
     'id' => $id,
-'idurl' =>         $urlmap->Add($url, get_class($this),  $this->autoid),
+'idurl' =>         $idurl,
     'url' =>$url,
     'title' => $title,
 'icon' => 0,
-    'itemscount' => 0,
-    'items' => array()
+    'itemscount' => 0
     );
     $this->unlock();
-}
+
     $this->added($this->autoid);
 $urlmap->clearcache();
     return $id;
@@ -170,22 +175,17 @@ if (dbversion) $this->db->setvalue($id, 'title', $title);
 
       $urlmap = turlmap::instance();
 if ($item['url'] != $url) {
-        if ($url == '') {
-          $url = trim($url, '/');
-          $this->newname = $url == '' ? $title : $url;
+$title = $url == '' ? $title : trim($url, '/');
           $linkgen = tlinkgenerator::instance();
-          $url = $linkgen->createlink($this, $this->PermalinkIndex, false);
-        }
-}
-
+          $url = $linkgen->createurl($title, $this->PermalinkIndex, false);
         if ($item['url'] != $url) {
-//check unique url
 if (($idurl = $urlmap->idfind($url)) && ($idurl != $item['idurl'])) {
 $url = $linkgen->MakeUnique($url);
 }
 $urlmap->setidurl($item['idurl'], $url);
       $urlmap->addredir($item['url'], $url);
         $item['url'] = $url;
+}
 }
 
      $this->items[$id] = $item;
@@ -291,7 +291,7 @@ $url = $item['url'];
   }
   
   public function gettitle() {
-if ($this->id == '') return $this->newname;
+if ($this->id == '') return $this->newtitle;
     return isset($this->items[$this->id]) ? $this->items[$this->id]['name'] : TLocal::$data['default']['categories'];
   }
   
