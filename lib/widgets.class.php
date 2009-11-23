@@ -91,7 +91,7 @@ $urlmap->expiredname('widget', $id);
 $this->current = $id;
     $class = $this->items[$id]['class'];
 
-    switch ( $echotype = $this->widgets[$id]['echotype']) {
+    switch ( $echotype = $this->items[$id]['echotype']) {
       case 'echo':
         $result = $this->dogetcontent($class, $id);
       break;
@@ -130,7 +130,7 @@ echo \$widget->getwidget($id, $sitebars->current);
 $sitebars = tsitebars::instance();
     $widget = GetInstance($class);
     try {
-      if (empty($this->widgets[$id]['template'])) {
+      if (empty($this->items[$id]['template'])) {
         $result =   $widget->getwidget($id, $sitebars->current);
       }else {
 $theme= ttheme::instance();

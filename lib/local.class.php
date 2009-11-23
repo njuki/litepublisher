@@ -65,7 +65,7 @@ return strtr ($this->__get($name), $args->data);
     return self::translate(strftime ($format, $date), 'datetime');
   }
   
-  public static function getddateformat() {
+  public static function getdateformat() {
     global $options;
     return $options->dateformat != ''? $options->dateformat : self::$data['datetime']['dateformat'];
   }

@@ -194,7 +194,7 @@ if ($hover) return $this->getsubmenu($this->tree);
 $theme = ttheme::instance();
     $tml = $theme->menu['item'];
     foreach ($this->tree as $item) {
-      $result .= sprintf($tml, $options. $item['url'], $item['title'], '');
+      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
     }
     return $result;
   }

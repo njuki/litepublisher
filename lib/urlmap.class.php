@@ -47,7 +47,7 @@ protected function prepareurl($host, $url) {
   public function request($host, $url) {
 global $options;
 $this->prepareurl($host, $url);
-    $this->admin = strbegin($this->url, '/admin/') ||($this->url == '/admin');
+    $this->admin = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
        try {
       $this->dorequest($this->url);
@@ -163,16 +163,16 @@ $this->notfound404();
   
   protected function GenerateHTML(array $item) {
     global $options, $template;
-    $obj = getinstance($item['class']);
+    $source = getinstance($item['class']);
     //special handling for rss
-    if (method_exists($obj, 'request') && ($s = $obj->request($item['arg']))) {
+    if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
       if ($s == 404) return $this->notfound404();
     } else {
       $template = ttemplate::instance();
-      $s = $template->request($obj);
+      $s = $template->request($source);
     }
     eval('?>'. $s);
-    if ($options->cache && $obj->cache) {
+    if ($options->cache && $source->cache) {
   $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);
@@ -192,7 +192,7 @@ $this->notfound404();
     eval('?>'. $s);
   }
   
-  public function add($url, $class, $arg, $type = 'nornal') {
+  public function add($url, $class, $arg, $type = 'normal') {
 if (dbversion) {
 $item= array(
 'url' => $url,

@@ -55,7 +55,7 @@ $this->table = 'posts';
   }
   
   public function getcomments() {
-return TComments::instance($this->id);
+return tcomments::instance($this->id);
   }
   
   public function getprev() {
@@ -141,14 +141,15 @@ $tags->loaditems($this->$names);
 $args = targs::instance();
 $list = array();
     foreach ($this->$names as $id) {
-$args->add($tags->items[$id]);
+$item = $tags->getitem($id);
+$args->add($item);
 if ($item['icon'] != 0) {
 $icons = ticons::instance();
 $args->icon = $icons->getlink($item['icon']);
 }
 $list[] = $theme->parsearg($tml[$name], $args);
     }
-$result = implode($tml[$name . 'dvider'], $list);
+$result = implode($tml[$name . 'divider'], $list);
     return sprintf($theme->parse($tml[$names]), $result);
   }
   
