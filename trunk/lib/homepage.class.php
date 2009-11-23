@@ -36,7 +36,7 @@ public function getdescription() {}
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
 $theme = ttheme::instance();
-    $result .= $theme->getposts($items);
+    $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
     $result .=$theme->getpages($options->home, $urlmap->page, ceil($Posts->archivescount / $options->postsperpage));
     return $result;

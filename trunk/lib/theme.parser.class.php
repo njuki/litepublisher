@@ -38,6 +38,7 @@ $s = file_get_contents($filename);
 $this->parsemenu($s);
 $this->parsecontent($s);
 $theme->sitebarscount = $this->parsesitebars($s);
+$theme->main = $s;
 }
 
 private function parsemenu(&$s) {
@@ -82,12 +83,12 @@ $excerpt = $this->parsetag($s, 'excerpt', '%s');
 
 $categories = $this->parsetag($excerpt, 'categories', '$post->excerptcategories'); 
 $excerpts['category'] = $this->parsetag($categories, 'category', '%s');
-$excerpts['categoriesdivider'] = $this->parsetag($categories, 'divider', '');
+$excerpts['categorydivider'] = $this->parsetag($categories, 'divider', '');
 $excerpts['categories'] = $categories;
 
 $tags = $this->parsetag($excerpt, 'tags', '$post->excerpttags'); 
 $excerpts['tag'] = $this->parsetag($tags, 'tag', '%s');
-$excerpts['tagsdivider'] = $this->parsetag($tags, 'divider', '');
+$excerpts['tagdivider'] = $this->parsetag($tags, 'divider', '');
 $excerpts['tags'] = $tags;
 
 $excerpts['more'] = $this->parsetag($excerpt, 'more', '$post->morelink');

@@ -14,7 +14,7 @@ class tadminmenus extends tmenus {
   
   protected function CreateData() {
     parent::CreateData();
-    $this->basename = 'admin' . DIRECTORY_SEPARATOR   . 'menu';
+    $this->basename = 'adminmenu';
 tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
 }
 

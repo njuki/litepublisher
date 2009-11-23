@@ -117,12 +117,13 @@ $posts->loaditems($items);
 
 $result = '';
 $tml = $this->excerpts[$lite ? 'lite_excerpt' : 'excerpt'];
-    foreach($Items as $id) {
+    foreach($items as $id) {
 $post = tpost::instance($id);
 $result .= $this->parse($tml);
 }
 
-$list  = $this->parse($this->excerpts[$lite ? 'lite' : 'excerpts']);
+var_dump($this->excerpts[$lite ? 'lite' : 'normal']);
+$list  = $this->parse($this->excerpts[$lite ? 'lite' : 'normal']);
 return sprintf($list, $result);
 }
   

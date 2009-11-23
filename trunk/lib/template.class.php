@@ -93,8 +93,9 @@ $sitebars = tsitebars::instance();
       $this->tml =  'index';
     }
 
-    $theme = ttheme::instance();
+
     $header = $this->ServerHeader();
+    $theme = ttheme::instance();
     $s = $theme->parse($theme->main);
     $s = $header .$s;
     if (method_exists($this->context, 'AfterTemplated')) {
@@ -121,8 +122,8 @@ $sitebars = tsitebars::instance();
   }
 
 public function getisadmin() {
-    $Urlmap = TUrlmap::instance();
-return $Urlmap->admin;
+    $urlmap = turlmap::instance();
+return $urlmap->admin;
 }
   
   //html tags
@@ -144,6 +145,7 @@ return $Urlmap->admin;
   
 public function geticon() {
 global $options;
+$result = '';
 if ($this->contextHasProp('icon')) {
 $icon = $this->context->icon;
 $icons = ticons::instance();
@@ -152,6 +154,7 @@ $result = $icons->geturl($icon);
     if ($result == '')  return "$options->files/favicon.ico";
     return $result;
 }
+
   public function getkeywords() {
     global $options;
     $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';
@@ -168,18 +171,18 @@ $result = $icons->geturl($icon);
   
   public function getmenu() {
     global $paths;
-if ($this->isadmin) {
 $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && isset($theme->menu['id']);
-$adminmenu = tadminmenu::instance();
-return $adminmenu->getmenu($hovermenu);
+if ($this->isadmin) {
+$adminmenus = tadminmenus::instance();
+return $adminmenus->getmenu($hovermenu);
 }
 
     $filename = $paths['cache'] . "$this->tml.menu.php";
     if (@file_exists($filename)) return file_get_contents($filename);
 
-$menu = tmenu::instance();
-    $result = $menu->getmenu($hovermenu);
+$menus = tmenus::instance();
+    $result = $menus->getmenu($hovermenu);
     file_put_contents($filename, $result);
     @chmod($filename, 0666);
     return $result;
