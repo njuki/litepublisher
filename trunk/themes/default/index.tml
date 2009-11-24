@@ -77,19 +77,15 @@ $post->excerpt
 <!--/screenshots-->
 	</div>
 		<div class="post-info">
-<!--categories-->
-			<span class="post-cat">$lang->categories: 
+<!--categories-->			<span class="post-cat">$lang->categories: 
 <!--category--><a href="$options->url$url" title="$title">$icon$title</a><!--/category-->
 <!--divider-->; <!--/divider-->
-</span>
-<!--/categories-->
+</span><!--/categories-->
 
-<!--tags-->
-			<span class="post-cat">$lang->tags: 
-<!--tag--><a href="$options->url$url" title="$title">$icon$title</a><!--/category-->
+<!--tags-->			<span class="post-cat">$lang->tags: 
+<!--tag--><a href="$options->url$url" title="$title">$icon$title</a><!--/tag-->
 <!--divider-->; <!--/divider-->
-</span>
-<!--/tags-->
+</span><!--/tags-->
 
  <span class="post-comments">$post->commentslink</span>
 		</div>
