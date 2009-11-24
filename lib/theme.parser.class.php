@@ -97,7 +97,7 @@ $theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
 $theme->files['screenshots'] = $screenshots;
 
 $excerpts['excerpt'] = $excerpt;
-$theme->excerpts['normal'] = $excerpts;
+$theme->excerpts['normal'] = $s;
 }
 
 private function parsepost($s) {

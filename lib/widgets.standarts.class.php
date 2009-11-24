@@ -82,7 +82,8 @@ return false;
 }
 
 public function request($arg) {
-global $options;
+global $options, $urlmap;
+$name = $urlmap->argtree;
 if (!isset($this->items[$name])) return 404;
 $result = "<?php 
     @header('Content-Type: text/html; charset=utf-8');
@@ -137,7 +138,7 @@ return $classes->$name;
 public function getcontent($name) {
 global $paths, $classes;
 if ($name == 'meta') return $this->meta;
-$id = isset($this->items[$name]) ? $This->items[$name]['id'] : $name;
+$id = isset($this->items[$name]) ? $this->items[$name]['id'] : $name;
 $file = $paths['cache'] . 'widget$id.php';
 if (file_exists($file)) return file_get_contents($file);
 

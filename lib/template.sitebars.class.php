@@ -55,7 +55,8 @@ $widgets = twidgets::instance();
   }
 
 public function getcurrent() {
-global $paths, $template;
+global $paths;
+$template = ttemplate::instance();
 $file = $paths['cache'] . "$template->tml.sitebar-$this->current.php";
 if (file_exists($file)) {
 $result = file_get_contents($file);

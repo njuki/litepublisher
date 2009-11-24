@@ -12,8 +12,8 @@ class TFoafManager extends TItems {
     return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'foafmanager';
   }
   

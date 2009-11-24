@@ -122,7 +122,6 @@ $post = tpost::instance($id);
 $result .= $this->parse($tml);
 }
 
-var_dump($this->excerpts[$lite ? 'lite' : 'normal']);
 $list  = $this->parse($this->excerpts[$lite ? 'lite' : 'normal']);
 return sprintf($list, $result);
 }
