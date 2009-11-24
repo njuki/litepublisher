@@ -30,14 +30,11 @@ global $paths;
 return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
 }
    
-  public function add(tmenu $item) {
+  public function add(imenu $item) {
 //fix null fields
-$zero = &$this->items[0];
-if (!isset($zero['url'])) $zero['url'] = '';
-if (!isset($zero['parent'])) $zero['parent'] = 0;
-if (!isset($zero['order'])) $zero['order'] = 0;
-if (!isset($zero['title'])) $zero['title'] = '';
-if (!isset($zero['status'])) $zero['status'] = 'published';
+foreach (tmenu::$ownerprops as $prop) {
+if (!isset($item->data[$prop])) $item->data[$prop] = '';
+}
 
     $linkgen = tlinkgenerator::instance();
     if ($item->url == '' ) {
@@ -49,21 +46,25 @@ if (!isset($zero['status'])) $zero['status'] = 'published';
       $item->title = $title;
     }
 
+$this->items[++$this->autoid] = array('id' => $this->autoid);
+//move props
+foreach (tmenu::$ownerprops as $prop) {
+$this->items[$this->autoid][$prop] = $item->$prop;
+if (isset($item->data[$prop])) unset($item->data[$prop]);
+}
+      $item->id = $this->autoid;
         $urlmap = turlmap::instance();
-      $item->id = ++$this->autoid;
     $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
       $this->lock();
-$this->items[$this->autoid] = $this->items[0];
-unset($this->items[0]);
       $this->sort();
       $item->save();
       $this->unlock();
-    $this->Added($post->id);
-    $urlmap->ClearCache();
+    $this->added($item->id);
+    $urlmap->clearcache();
     return $item->id;
   }
 
-public function edit(tmenu $item) {
+public function edit(imenu $item) {
     $urlmap = turlmap::instance();
         $oldurl = $urlmap->gitidurl($item->idurl);
     if ($oldurl != $item->url) {
@@ -212,7 +213,7 @@ $theme = ttheme::instance();
 
 }//class
 
-class tmenu extends titem implements  itemplate {
+class tmenu extends titem implements  itemplate, imenu {
 public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
@@ -242,12 +243,25 @@ public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 's
   
 public function __get($name) {
     if ($name == 'content') return $this->formresult . $this->getcontent();
-if (in_array($name, self::$ownerprops)) return $this->owner->items[$this->id][$name];
+if (in_array($name, self::$ownerprops)) {
+if ($this->id == 0) {
+return $this->data[$name];
+} else {
+return $this->owner->items[$this->id][$name];
+}
+}
 return parent::__get($name);
 }
 
 public function __set($name, $value) {
-if (in_array($name, self::$ownerprops))return $this->owner->setvalue($this->id, $name, $value);
+if (in_array($name, self::$ownerprops)) {
+if ($this->id == 0) {
+$this->data[$name] = $value;
+} else {
+$this->owner->setvalue($this->id, $name, $value);
+}
+return;
+}
 parent::__set($name, $value);
 }
   
@@ -303,6 +317,23 @@ $theme = ttheme::instance();
 
   public function getsubmenuwidget() {
 return $this->owner->getsubmenuwidget($this->id);
+}
+
+//imenu
+public function getparent() {
+return $this->__get('parent');
+}
+
+public function setparent($id) {
+$this->__set('parent', $id);
+}
+
+public function getorder() {
+return $this->__get('order');
+}
+
+public function setorder($order) {
+$this->__set('order', $order);
 }
 
 }//class

@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcontactform {
+class tcontactform extends tmenu {
 
 public static function instance() {
 return getinstance(__class__);
