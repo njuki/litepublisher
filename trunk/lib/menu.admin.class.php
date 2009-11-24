@@ -12,8 +12,8 @@ class tadminmenus extends tmenus {
     return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'adminmenu';
 tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
 }

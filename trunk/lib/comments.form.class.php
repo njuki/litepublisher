@@ -38,8 +38,8 @@ return false;
 
 class THoldComments extends titems {
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename ='holdcomments';
   }
 

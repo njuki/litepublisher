@@ -86,7 +86,7 @@ $tml = $theme->getwidgetitem('tag');
 $showcount = $this->options->showcount;
         $Sorted = $this->getsorted($sortname, $count);
     foreach($Sorted as $item) {
-$count = $showcount ? " ({$item['itemscount']}" : '';
+$count = $showcount ? " ({$item['itemscount']})" : '';
   $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
     }
     return $result;
@@ -291,8 +291,9 @@ $url = $item['url'];
   }
   
   public function gettitle() {
-if ($this->id == '') return $this->newtitle;
-    return isset($this->items[$this->id]) ? $this->items[$this->id]['name'] : TLocal::$data['default']['categories'];
+$item = $this->getitem($this->id);
+    return $item['title'];
+// : TLocal::$data['default']['categories'];
   }
   
   public function gethead() {

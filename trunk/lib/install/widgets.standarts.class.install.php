@@ -7,6 +7,9 @@
 **/
 
 function tstdwidgetsInstall($self) {
+$urlmap = turlmap::instance();
+$urlmap->add('/stdwidget/', get_class($self), null, 'tree');
+
 $self->lock();
 $widgets = twidgets::instance();
 $widgets->lock();

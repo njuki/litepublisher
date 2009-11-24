@@ -76,10 +76,10 @@ class TSMTPMailer extends tevents {
     return GetInstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'smtpmailer';
-    $this->Data = $this->Data +  array(
+    $this->data = $this->data +  array(
     'host' => '',
     'login' => '',
     'password' => '',
@@ -100,7 +100,7 @@ class TSMTPMailer extends tevents {
           $from = TMailer::CreateEmail($fromname, $fromemail);
           $to = TMailer::CreateEmail($toname, $toemail);
           
-          $smtp->Data("From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
+          $smtp->data("From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
         }
         $smtp->Quit();
         $smtp->Close();

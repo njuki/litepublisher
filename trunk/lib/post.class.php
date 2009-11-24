@@ -143,7 +143,9 @@ $list = array();
     foreach ($this->$names as $id) {
 $item = $tags->getitem($id);
 $args->add($item);
-if ($item['icon'] != 0) {
+if ($item['icon'] == 0) {
+$args->icon = '';
+} else {
 $icons = ticons::instance();
 $args->icon = $icons->getlink($item['icon']);
 }

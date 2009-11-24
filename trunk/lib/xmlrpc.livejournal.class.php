@@ -12,10 +12,10 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     return GetInstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
-    $this->Data['challenge'] = '';
-    $this->Data['expired'] = 0;
+  protected function create() {
+    parent::create();
+    $this->data['challenge'] = '';
+    $this->data['expired'] = 0;
   }
   
   private function CheckLogin(&$struct) {

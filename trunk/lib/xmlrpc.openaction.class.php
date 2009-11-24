@@ -14,10 +14,10 @@ class TXMLRPCOpenAction extends TItems {
     return GetInstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'openaction';
-    $this->AddDataMap('actions', array());
+    $this->addmap('actions', array());
   }
   
   public function send(&$action) {

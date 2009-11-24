@@ -9,6 +9,7 @@
 function tmenusInstall($self) {
   global $paths;
   @mkdir($paths['data']. 'menus', 0777);
+if (get_class($self) != 'tmenus') return;
   @chmod($paths['data']. 'menus', 0777);
 }
 
