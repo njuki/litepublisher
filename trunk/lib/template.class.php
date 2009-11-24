@@ -179,7 +179,7 @@ return $adminmenus->getmenu($hovermenu);
 }
 
     $filename = $paths['cache'] . "$this->tml.menu.php";
-    if (@file_exists($filename)) return file_get_contents($filename);
+//    if (@file_exists($filename)) return file_get_contents($filename);
 
 $menus = tmenus::instance();
     $result = $menus->getmenu($hovermenu);

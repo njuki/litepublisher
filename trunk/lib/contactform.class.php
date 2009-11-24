@@ -26,7 +26,7 @@ return getinstance(__class__);
     $content = trim($_POST['content']);
     if (strlen($content) <= 15) return '<p><strong>' .  tlocal::$data['comment']['emptycontent'] . "</strong></p>\n";
     
-    tmailer::SendMail('', $email, '', $options->email, $lang['subject'], $content);
+    tmailer::sendmail('', $email, '', $options->email, $lang->subject, $content);
 
     return "<p><strong>$lang->success</strong></p>\n";
   }

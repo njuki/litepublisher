@@ -55,6 +55,7 @@ if (isset($item->data[$prop])) unset($item->data[$prop]);
       $item->id = $this->autoid;
         $urlmap = turlmap::instance();
     $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
+if ($item->status != 'draft') $item->status = 'published';
       $this->lock();
       $this->sort();
       $item->save();
@@ -143,7 +144,8 @@ $result[]  = $item;
 return $result;
   }
 
-private function geparents($id) {
+//возвращает массив id, где следующий - это потомок
+private function getparents($id) {
 $result = array();
 $id = $this->items[$id]['parent'];
 while ($id != 0) {
@@ -153,26 +155,45 @@ $id = $this->items[$id]['parent'];
 return $result;
 }  
 
-private function getchilds($id) {
+//возвращает массив item, где вначале идут родительские меню, потом меню одного уровня, и только потом дети
+private function getwidgetchilds($id) {
 if ($id == 0) return $this->tree;
+$result = array();
+$tree = $this->tree;
 $parents = $this->getparents($id);
-$parents[] = $id;
-$result = $this->tree;
 foreach ($parents as $parent) {
+$result[] = $this->items[$parent];
 foreach ($tree as $item) {
 if ($item['id'] == $parent) {
-$result = $item['subitems'];
-continue;
+$tree = $item['subitems'];
+break;
 }
 }
 }
+
+//теперь tree содержит меню одного уровня с id
+foreach ($tree as $item) {
+if ($item['id'] == $id) {
+$childs = $item['subitems'];
+} else {
+$result[] = $this->items[$item['id']];
+}
+}
+
+$result[] = $this->items[$id];
+
+//теперь добавить собственно подменю
+foreach ($childs as $child) {
+$result[] = $this->items[$child];
+}
+
 return $result;
 }
 
 public function getsubmenuwidget($id) {
 global $options;
 $result = '';
-$childs = $this->getchilds($id);
+$childs = $this->getwidgetchilds($id);
     if (count($childs) == 0) return '';
 
 $theme = ttheme::instance();
@@ -293,7 +314,7 @@ return $this->owner->onprocessform($this->id);
 public function gethead() {}
   
   public function gettitle() {
-    return $this->data['title'];
+    return $this->__get('title');
   }
   
   public function getkeywords() {
