@@ -6,19 +6,19 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function AddAttr(&$node, $name, $value) {
+function AddAttr($node, $name, $value) {
   $attr = $node->ownerDocument->createAttribute($name);
   $attr->value = $value;
   $node->appendChild($attr);
 }
 
-function &AddNode(&$node, $name) {
+function AddNode($node, $name) {
   $result = $node->ownerDocument->createElement($name);
   $node->appendChild($result);
   return $result;
 }
 
-function &AddNodeValue(&$node, $name, $value) {
+function AddNodeValue($node, $name, $value) {
   $result = $node->ownerDocument->createElement($name);
   $textnode = $node->ownerDocument->createTextNode($value);
   $result->appendChild($textnode);
@@ -26,14 +26,13 @@ function &AddNodeValue(&$node, $name, $value) {
   Return $result;
 }
 
-function &AddCData(&$node, $name, $value) {
+function AddCData($node, $name, $value) {
   $result = $node->ownerDocument->createElement($name);
   $textnode = $node->ownerDocument->createCDATASection($value);
   $result->appendChild($textnode);
   $node->appendChild($result);
   Return $result;
 }
-
 
 function _struct_to_array(&$values, &$i)  {
   $result = array();
@@ -134,7 +133,7 @@ class Tdomrss extends domDocument {
     AddNodeValue($this->channel , 'language', 'en');
   }
   
-  public function &AddItem() {
+  public function AddItem() {
     $result = AddNode($this->channel, 'item');
     $this->items[] = $result;
     return $result;

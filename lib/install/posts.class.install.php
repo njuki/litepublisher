@@ -23,7 +23,7 @@ function tpostsInstall($self) {
   $Cron->add('hour', get_class($self), 'HourCron');
 }
 
-function TPostsUninstall(&$self) {
+function tpostsUninstall($self) {
   $Cron = tcron::instance();
   $Cron->deleteclass(get_class($self));
   

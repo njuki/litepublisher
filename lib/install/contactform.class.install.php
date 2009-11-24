@@ -10,20 +10,16 @@ function tcontactformInstall($self) {
     $html = THtmlResource::instance();
     $html->section = 'installation';
 
-    $menu = tmenu::instance();
-$menu->lock();
-    $item = new tmenu();
-    $item->order = 10;
-    $item->title =  tlocal::$data['installation']['contacttitle'];
-$item->content = $html->contactform();
-$menu->add($item);
-$menu->onprocessform = $self->processform;
-$menu->unlock();
+    $self->order = 10;
+    $self->title =  tlocal::$data['installation']['contacttitle'];
+$self->content = $html->contactform();
+    $menus = tmenus::instance();
+$menus->add($self);
   }
   
 function tcontactformUninstall($self) {
-    $menu = tmenu::instance();
-$menu->unsubscribeclass($self);
+    $menus = tmenus::instance();
+$menus->delete($self->id);
 }
 
 ?>

@@ -15,9 +15,16 @@ interface itemplate {
   public function GetTemplateContent();
 }
 
-interface iadvancedtemplate {
+interface itemplate2 {
 public function getsitebar($index, &$content);
 public function afterrequest(&$content);
+}
+
+interface imenu {
+public function getparent();
+public function setparent($id);
+public function getorder();
+public function setorder($order);
 }
 
 interface  icomments {
