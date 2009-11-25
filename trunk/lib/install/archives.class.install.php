@@ -9,7 +9,7 @@
 function tarchivesInstall($self) {
   $posts = tposts::instance();
   $posts->changed = $self->postschanged;
-  $self->postschanged();
+  if (!dbversion) $self->postschanged();
 }
 
 function tarchivesUninstall($self) {

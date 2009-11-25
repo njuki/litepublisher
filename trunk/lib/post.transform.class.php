@@ -9,7 +9,7 @@
 class tposttransform  {
   public $post;
   public static $arrayprops= array('categories', 'tags', 'files');
-  public static $bullprops= array('commentsenabled', 'pingenabled', 'rssenabled');
+  public static $boolprops= array('commentsenabled', 'pingenabled', 'rssenabled');
   public static $props = array('id', 'idurl', 'parent', 'author',
   //'created', 'modified',
 'posted',
@@ -36,13 +36,13 @@ $self = self::instance($post);
       $values[] = $db->quote($self->__get($name));
     }
     
-    $id = $db->insertrow("($Names) values (" . implode(', ', $values) . ')');
+    $id = $db->insertrow("($names) values (" . implode(', ', $values) . ')');
 
 $self->post->rawdb->add(array(
 'id' => $id,
 'created' => sqldate(),
 'modified' => sqldate(),
-'rawcontent' => $this->post->data['rawcontent']
+'rawcontent' => $self->post->data['rawcontent']
 ));
 
 $db->table = 'pages';
@@ -80,7 +80,7 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $co
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
     if (in_array($name, self::$boolprops))  return $this->post->$name ? 'true' : 'false';
-    return $post->$name;
+    return $this->post->$name;
   }
   
   public function __set($name, $value) {

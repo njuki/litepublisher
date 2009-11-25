@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcomments extends AbstractCommentManager implements icomments, icommentmanager  {
+class tcomments extends TAbstractCommentManager implements icomments, icommentmanager  {
 public $rawtable;
 private $pid;
 
@@ -23,7 +23,7 @@ $this->rawtable = 'rawcomments';
   }
 
 public function load() { return true; }
-public function save() { retrn true; }
+public function save() { return true; }
   
   public function addcomment($pid, $uid, $content) {
     $filter = TContentFilter::instance();
@@ -47,7 +47,7 @@ $this->doadded($result);
 return $result;
   }
 
- public function addpingback(tpost $post, $url, $title) {
+public function addpingback($pid, $url, $title) {
     $comusers = tcomusers::instance();
     $uid = $comusers->add($title, '', $url);
 
@@ -88,7 +88,7 @@ $this->db->setvalue($id, 'status', $value);
 return $this->db->idselect("post = $this->pid and author = $author and status = 'hold' and pingback = false");
 }
 
-public function getitems($where = '') {
+public function getcount($where = '') {
 return $this->db->getcount($where);
 }
 
@@ -108,15 +108,17 @@ return $id ? $id : -1;
 $db = $this->db;
 $url = $db->quote($url);
 if (($res = $this->db->query("select $db->comments.id from$db->comments, $db->comusers
-where $db->post = $this->pid and pingback = true and $db->comusers.id = $db->comments.author and $db->comusers->url = $url limit 1")) && ($r = $res->fetch()) return true;
+where $db->post = $this->pid and pingback = true and $db->comusers.id = $db->comments.author and $db->comusers->url = $url limit 1")
+ && ($r = $res->fetch()))) return true;
 return false;
-{
+}
 
 }//class
 
-class tcomment extends TDataClass {
+class tcomment extends tdata {
 
   public function __construct($id) {
+if (!isset($id)) return false;
 parent::__construct();
 $this->table = 'comments';
 $this->setid($id);
@@ -179,5 +181,4 @@ return $this->data['url'];
   
 }//class
 
-?>
 ?>

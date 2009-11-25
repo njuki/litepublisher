@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcron extends TEventClass {
+class tcron extends tevents {
   public $disableadd;
   
   public static function instance() {
@@ -84,8 +84,9 @@ $this->db->iddelete($id);
 } else {
 $date = sqldate(strtotime("+1 $type"));
 $this->db->setvalue($id, 'date', $date);
-
   }
+}
+}
   
   public function add($type, $class, $func, $arg = null) {
     if ($this->disableadd) return false;

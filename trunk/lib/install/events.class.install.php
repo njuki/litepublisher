@@ -9,7 +9,7 @@
 function teventsInstall($self) {
   if(get_class($self) != 'tevents') return;
   if(dbversion) {
-    $manager = TDBManager ::instance();
+    $manager = tdbmanager ::instance();
     $manager->CreateTable('events', file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'events.sql'));
   }
 }

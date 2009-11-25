@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tdbanager  {
+class tdbmanager  {
   private $max_allowed_packet;
   
   public static function instance() {
