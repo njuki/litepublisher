@@ -157,11 +157,11 @@ return installclasses($this->language);
     
     if (!isset($_POST) || (count($_POST) <= 1)) {
       $this->CanInstall();
-      return $this->PrintForm();
+      return $this->wizardform();
     }
     
     $password = $this->FirstStep();
-    $this->ProcessForm(
+    $this->processform(
     $_POST['email'],
     $_POST['name'],
     $_POST['description'],
@@ -226,7 +226,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     }
   }
   
-  public function PrintForm() {
+  public function wizardform() {
     $this->loadlang();
     $form = $this->GetLangForm();
     $html = THtmlResource::instance();
@@ -237,6 +237,8 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     } else {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
+eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
+
     eval('$form .= "'. $html->installform. '\n";');
     echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
   }

@@ -8,7 +8,7 @@
 
 function tpostsInstall($self) {
   if (dbversion) {
-    $manager = TDBManager ::instance();
+    $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'posts.sql'));
     $manager->CreateTable('pages', file_get_contents($dir .'postspages.sql'));

@@ -128,7 +128,7 @@ return $result;
 
 public function getitems($idpost) {
 if (dbversion) {
-return $this->res2array($this->db->qery("select file from $this->thistable where post = $idpost"));
+return $this->db->res2array($this->db->query("select file from $this->thistable where post = $idpost"));
 } elseif (isset($this->items[$idpost])) {
 return $this->items[$idpost];
 } else {

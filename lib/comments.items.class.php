@@ -33,8 +33,6 @@ $self = new $class();
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments';
   }
 
-  public function getholditems() {}
-  
   public function insert($id, $userid,  $Content, $status,  $type) {
     $filter = TContentFilter::instance();
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);

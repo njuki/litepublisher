@@ -23,7 +23,8 @@ class tdatabase extends PDO {
     
     try {
 parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}", $dbconfig['login'], $dbconfig['password'],
-      array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)
+      array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+//ERRMODE_WARNING
       );
     } catch (Exception $e) {
       die($e->getMessage());
@@ -134,8 +135,8 @@ unset($a['id']);
 return $this->add($a);
 }
 
-  public function add(array &$a) {
-    $Names =implode(', ', array_keys($a)));
+  public function add(array $a) {
+    $Names =implode(', ', array_keys($a));
         $vals = array();
     foreach( $a as $name => $val) {
       $vals[] = $this->quote($val);
@@ -210,7 +211,7 @@ return false;
 
 public function findid($where) {
     if($res = $this->select("select id from $this->prefix$this->table where ". $where . ' limit 1')) {
-if ($r = res->fetch(PDO::FETCH_NUM) return $r[0];
+if ($r = $res->fetch(PDO::FETCH_NUM)) return $r[0];
 }
 return false;
 }

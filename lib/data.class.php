@@ -161,7 +161,7 @@ return false;
     return get_class($this);
   }
   
-  public function Getdb($table = 'data') {
+  public function getdb($table = 'data') {
     global $db;
     $table =$table != '' ? $table : $this->table;
     if ($table != '') $db->table = $table;
