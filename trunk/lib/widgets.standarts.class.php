@@ -139,7 +139,7 @@ public function getcontent($name) {
 global $paths, $classes;
 if ($name == 'meta') return $this->meta;
 $id = isset($this->items[$name]) ? $this->items[$name]['id'] : $name;
-$file = $paths['cache'] . 'widget$id.php';
+$file = $paths['cache'] . "widget.$id.php";
 if (file_exists($file)) return file_get_contents($file);
 
 $instance = $this->getinstance($name);

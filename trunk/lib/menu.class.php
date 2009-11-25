@@ -155,10 +155,22 @@ $id = $this->items[$id]['parent'];
 return $result;
 }  
 
-//возвращает массив item, где вначале идут родительские меню, потом меню одного уровня, и только потом дети
-private function getwidgetchilds($id) {
-if ($id == 0) return $this->tree;
-$result = array();
+private function getwidgetitem($tml, $item, $subnodes) {
+global $options;
+return sprintf($tml, $options->url . $item['url'], $item['title'], $subnodes);
+}
+
+public function getsubmenuwidget($id) {
+$result = '';
+$theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('menu');
+$tml .= "\n";
+if ($id == 0) {
+   foreach ($this->tree as $node) {
+$subnodes = $node['id'] == $id ? $this->getsubnodes($id) : '';
+$result .= $this->getwidgetitem($tml, $this->items[$node['id']], $subnodes);
+    }
+} else {
 $tree = $this->tree;
 $parents = $this->getparents($id);
 foreach ($parents as $parent) {
@@ -170,6 +182,10 @@ break;
 }
 }
 }
+
+//
+
+$result = array();
 
 //теперь tree содержит меню одного уровня с id
 foreach ($tree as $item) {
@@ -190,18 +206,8 @@ $result[] = $this->items[$child];
 return $result;
 }
 
-public function getsubmenuwidget($id) {
-global $options;
-$result = '';
-$childs = $this->getwidgetchilds($id);
-    if (count($childs) == 0) return '';
-
-$theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('menu');
-$tml .= "\n";
-    foreach ($childs as $item) {
-      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
-    }
+//
+}
 
 $sitebars = tsitebars::instance();    
     return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $sitebars->current);
@@ -336,9 +342,19 @@ $theme = ttheme::instance();
     return $theme->parse($theme->menucontent);
   }
 
-  public function getsubmenuwidget() {
-return $this->owner->getsubmenuwidget($this->id);
+//itemplate2
+public function getsitebar() {
+$result = '';
+$sitebars = tsitebars::instance();
+$template = ttemplate::instance();
+if (($sitebars->current == 0) && !$template->hovermenu) {
+$result .= $this->owner->getsubmenuwidget($this->id);
 }
+    $result .= $sitebars->getcurrent();
+return $result;
+}
+
+public function afterrequest(&$content) {}
 
 //imenu
 public function getparent() {

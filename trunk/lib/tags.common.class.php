@@ -235,6 +235,7 @@ return $this->db->res2array($this->db->query("select title from $this->thistable
   }
   
   public function getsorted($sortname, $count) {
+if ($sortname == 'count') $sortname = 'itemscount';
 $count = (int) $count;
 if (!in_array($sortname, array('title', 'count', 'id'))) $sortname = 'title';
 
