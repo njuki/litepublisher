@@ -144,19 +144,49 @@ $result[]  = $item;
 return $result;
   }
 
-//возвращает массив id, где следующий - это потомок
+//возвращает массив id
 private function getparents($id) {
 $result = array();
 $id = $this->items[$id]['parent'];
 while ($id != 0) {
-array_unshift ($result, $id);
+//array_unshift ($result, $id);
+$result[] = $id;
 $id = $this->items[$id]['parent'];
 }
 return $result;
 }  
 
+//ищет в дереве список детей, так как они уже отсортированы
+private function getchilds($id) {
+if ($id == 0) {
+$result = array();
+foreach ($this->tree as $item) {
+$result[] = $item['id'];
+}
+return $result;
+}
+$parents = array($id);
+$parent = $this->items[$id]['parent'];
+while ($parent != 0) {
+array_unshift ($parents, $parent);
+$parent = $this->items[$parent]['parent'];
+}
+
+$tree = $this->tree;
+foreach ($parents as $parent) {
+foreach ($tree as $item) {
+if ($item['id'] == $parent) {
+$tree = $item['subitems'];
+break;
+}
+}
+}
+return $tree;
+}
+
 private function getwidgetitem($tml, $item, $subnodes) {
 global $options;
+if ($subnodes != '') $subnodes = "<ul>\n$subnodes</ul>\n";
 return sprintf($tml, $options->url . $item['url'], $item['title'], $subnodes);
 }
 
@@ -165,48 +195,21 @@ $result = '';
 $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('menu');
 $tml .= "\n";
-if ($id == 0) {
-   foreach ($this->tree as $node) {
-$subnodes = $node['id'] == $id ? $this->getsubnodes($id) : '';
-$result .= $this->getwidgetitem($tml, $this->items[$node['id']], $subnodes);
+// 1 вначале список подменю
+$submenu = '';
+$childs = $this->getchilds($id);
+foreach ($childs as $child) {
+$submenu .= $this->getwidgetitem($tml, $this->items[$child], '');
+}
+
+$sibling = $this->getchilds($this->items[$id]['parent']);
+   foreach ($sibling as $iditem) {
+$result .= $this->getwidgetitem($tml, $this->items[$iditem], $iditem == $id ? $submenu : '');
     }
-} else {
-$tree = $this->tree;
+
 $parents = $this->getparents($id);
 foreach ($parents as $parent) {
-$result[] = $this->items[$parent];
-foreach ($tree as $item) {
-if ($item['id'] == $parent) {
-$tree = $item['subitems'];
-break;
-}
-}
-}
-
-//
-
-$result = array();
-
-//теперь tree содержит меню одного уровня с id
-foreach ($tree as $item) {
-if ($item['id'] == $id) {
-$childs = $item['subitems'];
-} else {
-$result[] = $this->items[$item['id']];
-}
-}
-
-$result[] = $this->items[$id];
-
-//теперь добавить собственно подменю
-foreach ($childs as $child) {
-$result[] = $this->items[$child];
-}
-
-return $result;
-}
-
-//
+$result = $this->getwidgetitem($tml, $this->items[$parent], $result);
 }
 
 $sitebars = tsitebars::instance();    
@@ -240,7 +243,7 @@ $theme = ttheme::instance();
 
 }//class
 
-class tmenu extends titem implements  itemplate, imenu {
+class tmenu extends titem implements  itemplate, itemplate2, imenu {
 public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
