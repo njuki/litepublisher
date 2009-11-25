@@ -72,43 +72,48 @@ $this->themechanged();
 }
 
   public function getsitebar() {
+$result = '';
+if (is_a($this->context, 'itemplate2')) {
+$result .= $this->context->getsitebar();
+} else {
 $sitebars = tsitebars::instance();
-    $result = '';
-    if (($sitebars->current == 0) && !$this->hovermenu && $this->contextHasProp('submenuwidget')) $result .= $this->context->submenuwidget;
     $result .= $sitebars->getcurrent();
-
+}
     return $result;
   }
   
   public function request($context) {
     global $options;
+    $GLOBALS['context'] = $context;
     $this->context = $context;
     $this->itemplate = is_a($context, 'ITemplate');
-    $GLOBALS['context'] = $context;
+$itemplate2 = is_a($context, 'itemplate2');
+$this->tml = 'index';
 
-    if ($this->contextHasProp('subtheme')) {
-      $this->tml = $this->context->subtheme;
-      if (empty($this->tml)) $this->tml =  'index';
-    } else {
-      $this->tml =  'index';
-    }
+if ($itemplate2) {
+     $tml = $context->template;
+ttheme::$name = $context->theme;
+if (ttheme::$name == '') {
+if ($tml != '') $this->tml = $tml;
+} else {
+if ($tml == '') $tml = 'index';
+ttheme::$name .= '.' . $tml;
+}
+}
 
-
-    $header = $this->ServerHeader();
+    $result = $this->httpheader();
     $theme = ttheme::instance();
-    $s = $theme->parse($theme->main);
-    $s = $header .$s;
-    if (method_exists($this->context, 'AfterTemplated')) {
-      $this->context->AfterTemplated($s);
-    }
-    return $s;
+    $result  .= $theme->parse($theme->main);
+
+if ($itemplate2) $context->afterrequest($result);
+    return $result;
   }
   
-  protected function  ServerHeader() {
+  protected function  httpheader() {
     global $options;
-    if (method_exists($this->context, 'ServerHeader')) {
-      $s= $this->context->ServerHeader();
-      if (!empty($s)) return $s;
+    if (method_exists($this->context, 'httpheader')) {
+      $result= $this->context->httpheader();
+      if (!empty($result)) return $result;
     }
     $nocache = $this->context->cache ? '' : "
     @Header( 'Cache-Control: no-cache, must-revalidate');
@@ -179,7 +184,7 @@ return $adminmenus->getmenu($hovermenu);
 }
 
     $filename = $paths['cache'] . "$this->tml.menu.php";
-//    if (@file_exists($filename)) return file_get_contents($filename);
+    if (@file_exists($filename)) return file_get_contents($filename);
 
 $menus = tmenus::instance();
     $result = $menus->getmenu($hovermenu);

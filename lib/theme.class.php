@@ -7,6 +7,7 @@
 **/
 
 class ttheme extends tevents {
+public static $name;
 //public $tml;
 public $excerpts;
 public $post;
@@ -23,8 +24,11 @@ return getinstance(__class__);
 
 protected function create() {
 parent::create();
+if (empty(self::$name)) {
 $template = ttemplate::instance();
-$this->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme.$template->tml";
+self::$name = $template->theme . '.' . $template->tml;
+}
+$this->basename = 'themes' . DIRECTORY_SEPARATOR . self::$name;
 $this->data['tml'] = 'index';
 $this->data['main'] = '';
 $this->data['sitebarscount'] = 1;

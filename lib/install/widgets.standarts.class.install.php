@@ -11,6 +11,8 @@ $urlmap = turlmap::instance();
 $urlmap->add('/stdwidget/', get_class($self), null, 'tree');
 
 $self->lock();
+$template = ttemplate::instance();
+$template->lock();
 $widgets = twidgets::instance();
 $widgets->lock();
   $widgets->deleted= $self->widgetdeleted;
@@ -25,6 +27,7 @@ $self->add('comments', true, 1);
 $self->add('meta', true, 1);
 
 $widgets->unlock();
+$template->unlock();
 $self->unlock();
 }
 

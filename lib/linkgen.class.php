@@ -109,7 +109,7 @@ foreach ($match as $item) {
     return '/' . trim($url, '/') . '/';
   }
   
-  public function GetDate() {
+  public function getdate() {
     if ($this->source->propexists('date')) {
       return $this->source->date;
     } else {
@@ -118,15 +118,15 @@ foreach ($match as $item) {
   }
   
   public function year() {
-    return date('Y', $this->GetDate());
+    return date('Y', $this->getdate());
   }
   
   public function month() {
-    return date('m', $this->GetDate());
+    return date('m', $this->getdate());
   }
   
   public function monthname() {
-    return TLocal::date($this->GetDate(), 'F');
+    return tlocal::date($this->getdate(), '%F');
   }
   
   public function MakeUnique($url) {

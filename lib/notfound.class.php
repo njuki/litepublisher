@@ -18,7 +18,7 @@ class tnotfound404 extends tevents {
     $this->data['text'] = '';
   }
   
-  public function  ServerHeader() {
+  public function  httpheader() {
     return "<?php
     @Header( 'HTTP/1.0 404 Not Found');
     @Header( 'Content-Type: text/html; charset=utf-8' );

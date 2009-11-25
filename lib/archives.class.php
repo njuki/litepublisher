@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tarchives extends titems implements  ITemplate {
+class tarchives extends titems implements  itemplate {
   public $date;
   
   public static function instance() {
@@ -21,7 +21,7 @@ class tarchives extends titems implements  ITemplate {
     $this->data['showcount'] = false;
   }
   
-  public function GetWidgetContent($id) {
+  public function getwidgetcontent($id) {
     global $options;
     $result = '';
     
@@ -79,7 +79,7 @@ global $db;
           $this->items[$this->date] = array(
 'idurl' => 0,
           'url' => $linkgen->Create($this, 'archive', false),
-          'title' => TLocal::date($this->date, 'F Y'),
+          'title' => tlocal::date($this->date, '%B %Y'),
           'year' => $d['year'],
           'month' =>$d['mon'],
 'count' => 0,

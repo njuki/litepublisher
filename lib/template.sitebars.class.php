@@ -35,6 +35,7 @@ return count($this->items[$index]);
 public function add($id, $index, $order) {
     if (($order < 0) || ($order > $this->getcount($index))) $order = $this->getcount($index);
     array_splice($this->items[$index], $order, 0, $id);
+$this->save();
 }
 
 public function deletewidget($id) {
@@ -44,8 +45,7 @@ public function deletewidget($id) {
       }
 }
 
-  public function getcontent($index) {
-    $this->current = $index;
+  private function getcontent($index) {
     $result = '';
 $widgets = twidgets::instance();
     foreach ($this->items[$index] as $id) {
@@ -61,8 +61,8 @@ $file = $paths['cache'] . "$template->tml.sitebar-$this->current.php";
 if (file_exists($file)) {
 $result = file_get_contents($file);
 } else {
-$result = $this->getcontent($this->current++);
-file_put_contents($result);
+$result = $this->getcontent($this->current);
+file_put_contents($file, $result);
 }
 $template->onsitebar(&$result, $this->current++);
 //если закончились сайтбары, то остатки объеденить
