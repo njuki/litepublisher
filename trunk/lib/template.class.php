@@ -38,6 +38,7 @@ $this->addmap('javascripts', array());
   
   public function __get($name) {
     if (method_exists($this, $get = "get$name")) return $this->$get();
+    if (array_key_exists($name, $this->data)) return $this->data[$name];
     if (array_key_exists($name, $this->data['tags'])) {
 $tags = ttemplatetags::instance();
 return $tags->__get($name);
@@ -86,10 +87,8 @@ $sitebars = tsitebars::instance();
     global $options;
     $GLOBALS['context'] = $context;
     $this->context = $context;
-    $this->itemplate = is_a($context, 'ITemplate');
+    $this->itemplate = is_a($context, 'itemplate');
 $itemplate2 = is_a($context, 'itemplate2');
-$this->tml = 'index';
-
 if ($itemplate2) {
      $tml = $context->template;
 ttheme::$name = $context->theme;
