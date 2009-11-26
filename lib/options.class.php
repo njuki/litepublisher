@@ -11,6 +11,7 @@ public $user;
 public $group;
 public $gmt;
 public $errorlog;
+public $eventsdisabled; //when install database
   
   public static function instance() {
     return getinstance(__class__);
@@ -45,6 +46,7 @@ $this->gmt = date('Z');
   }
   
   private function dochanged($name, $value) {
+if ($this->eventsdisabled) return;
     if ($name == 'postsperpage') {
       $this->PostsPerPageChanged();
       $urlmap = turlmap::instance();

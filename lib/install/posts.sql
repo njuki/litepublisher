@@ -31,5 +31,5 @@ pagescount int unsigned not null default 0,
 
      PRIMARY KEY(id),
 key posted (posted),
-key status (status)
-key parent (parent),
+key status (status),
+key parent (parent)
