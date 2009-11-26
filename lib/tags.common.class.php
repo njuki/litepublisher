@@ -40,12 +40,14 @@ public function loaditems(array $items) {
 global  $db;
 if (!dbversion) return;
 //исключить из загрузки загруженные посты
-$list = implode(',', array_diff($items, array_keys($this->items)));
+$items = array_diff($items, array_keys($this->items));
+if (count($items) == 0) return;
+$list = implode(',', $items);
 $table = $this->thistable;
 $res = $db->query("select $table.*, $db->urlmap.url as url  from $table, $db->urlmap
 where $table.id in ($list) and  $db->urlmap.id  = $table.idurl");
-
-foreach ($res->fetch(PDO::FETCH_ASSOC) as $item) {
+$res->setFetchMode (PDO::FETCH_ASSOC);
+foreach ($res as $item) {
 $this->items[$item['id']] = $item;
 }
 }

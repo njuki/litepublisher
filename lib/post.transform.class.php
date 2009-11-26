@@ -9,13 +9,14 @@
 class tposttransform  {
   public $post;
   public static $arrayprops= array('categories', 'tags', 'files');
+  public static $intprops= array('id', 'idurl', 'parent', 'author', 'icon', 'commentscount', 'pagescount');
   public static $boolprops= array('commentsenabled', 'pingenabled', 'rssenabled');
   public static $props = array('id', 'idurl', 'parent', 'author',
   //'created', 'modified',
 'posted',
-  'title', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
+  'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
   'categories', 'tags', 'files',
-  'password', 'template', 'subtheme', 'icon',
+  'password', 'template', 'theme', 'icon',
   'status', 'commentsenabled', 'pingenabled', 'rssenabled',
   'commentscount', 'pagescount',
   );
@@ -89,6 +90,8 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $co
 $list = explode(',', $value);
 foreach ($list as $i => $value) $list[$i] = (int) trim($value);
     $this->post->$name = $list;
+    } elseif (in_array($name, self::$intprops)) {
+      $this->post->$name = (int) $value;
     } elseif (in_array($name, self::$boolprops)) {
       $this->post->$name = $value == '1';
     } else {
