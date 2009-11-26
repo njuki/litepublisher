@@ -13,8 +13,13 @@ class tdatabase extends PDO {
   public $prefix;
   public $history;
   
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
   public function __construct() {
     global $options;
+if (!$options->propexists('dbconfig')) return false;
     $dbconfig = $options->dbconfig;
     $this->table = '';
     $this->prefix =  $dbconfig['prefix'];
@@ -51,8 +56,11 @@ $this->history[] = array(
     if (is_object ($this->result))  {
       $this->result->closeCursor();
     }
+try {
     $this->result = parent::query($sql, $mode);
-
+    } catch (Exception $e) {
+$this->doerror($e);
+}
 if (defined('debug')) {
 $this->history[count($this->history) - 1]['finished'] = microtime();
 }
@@ -63,9 +71,27 @@ $this->history[count($this->history) - 1]['finished'] = microtime();
     $this->sql = $sql;
     if (defined('debug')) $this->history[] = $sql;
     if (is_object($this->result)) $this->result->closeCursor();
+try {
     $this->result = parent::exec($sql);
+    } catch (Exception $e) {
+$this->doerror($e);
+}
     return $this->result;
   }
+
+private function doerror($e) {
+global $options;
+if (defined('debug')) {
+global $paths;
+    $log = "exception:\n" . $e->getMessage();
+$log .= "\n$this->sql\n";
+    $log .=str_replace($paths['home'], '', $e->getTraceAsString());
+$log = str_replace("\n", "<br />\n", htmlspecialchars($log));
+die($log);
+} else {
+$options->handexception($e);
+}
+}
   
   public function SelectTableWhere($table, $where) {
     return $this->query("SELECT * FROM $this->prefix$table WHERE ($where)");
