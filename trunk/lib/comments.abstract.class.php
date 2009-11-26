@@ -29,8 +29,8 @@ class TAbstractCommentManager extends titems {
     return $this->addcomment($postid, $userid, $content);
   }
   
- protected function doadded($id) {
-    $this->dochanged($this->items[$id]['pid']);
+ protected function doadded($id, $pid) {
+    $this->dochanged($pid);
     $this->sendmail($id);
     $this->added($id);
   }

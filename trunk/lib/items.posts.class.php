@@ -108,7 +108,7 @@ $vals = array();
 foreach ($add as $iditem) {
 $vals[]= "($idpost, $iditem)";
 }
-$db->exec("INSERT INTO `$this->thistable` ('post', 'item') values " . implode(',', $vals) );
+$db->exec("INSERT INTO `$this->thistable` (post, item) values " . implode(',', $vals) );
 }
 
 return array_merge($old, $add);
@@ -128,7 +128,7 @@ return $result;
 
 public function getitems($idpost) {
 if (dbversion) {
-return $this->db->res2array($this->db->query("select file from $this->thistable where post = $idpost"));
+return $this->db->res2array($this->db->query("select item from $this->thistable where post = $idpost"));
 } elseif (isset($this->items[$idpost])) {
 return $this->items[$idpost];
 } else {

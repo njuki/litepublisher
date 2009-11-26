@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tfoaf extends TItems {
+class tfoaf extends titems {
   public $title;
   
   public static function instance() {
@@ -16,6 +16,7 @@ class tfoaf extends TItems {
   protected function create() {
     parent::create();
     $this->basename = 'foaf';
+$this->dbversion = false;
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
     $this->data['redirlink'] = '/foaflink.php';

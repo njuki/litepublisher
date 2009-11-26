@@ -26,14 +26,17 @@ public function load() { return true; }
 public function save() { return true; }
   
   public function addcomment($pid, $uid, $content) {
+global $classes;
     $filter = TContentFilter::instance();
+$filtered = $filter->GetCommentContent($content);
+$status = $classes->spamfilter->createstatus($uid, $content);
 $result =$this->db->add(array(
 'post' => $pid,
 'parent' => 0,
 'author' => $uid,
 'posted' => sqldate(),
-'content' =>$filter->GetCommentContent($Content),
-'status' => $classes->spamfilter->createstatus($uid, $content),
+'content' =>$filtered,
+'status' => $status,
 'pingback' => 'false'
 ));
 
@@ -43,7 +46,7 @@ $this->getdb($this->rawtable)->add(array(
 'modified' => sqldate(),
 'rawcontent' => $content
 ));
-$this->doadded($result);
+$this->doadded($result, $pid);
 return $result;
   }
 
@@ -60,7 +63,7 @@ $result = $this->db->add(array(
 'pingback' => 'true'
     ));
 //no add to raw
-    $this->doadded($result);
+    $this->doadded($result, $pid);
   }
   
   public function getcomment($id) {
@@ -126,9 +129,11 @@ $this->setid($id);
 
 public function setid($id) {
 $table = $this->thistable;
-$authors = $this->db->prefix . 'comusers';
-$this->data= $this->db->queryassoc("select $table.*, $authors.name, $authors.email, $authors.url $authors.ip from $table, $authors
-where $table.id = $id, $authors.id = $table.author limit 1");
+$authors = $this->db->comusers;
+$this->data= $this->db->queryassoc("select $table.*,
+ $authors.name, $authors.email, $authors.url, $authors.ip
+ from $table, $authors
+where $table.id = $id and $authors.id = $table.author limit 1");
   }
   
   public function save() {

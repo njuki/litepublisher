@@ -15,6 +15,7 @@ class trobotstxt extends titems {
   public function create() {
 parent::create();
 $this->basename = 'robots.txt';
+$this->dbversion = false;
 $this->data['idurl'] = 0;
   }
   

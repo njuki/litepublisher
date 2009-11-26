@@ -16,6 +16,8 @@ public $tree;
   protected function create() {
     parent::create();
     $this->addevents('edited', 'onprocessform');
+
+$this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
 $this->addmap('tree', array());
   }

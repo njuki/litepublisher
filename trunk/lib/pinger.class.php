@@ -16,6 +16,7 @@ class tpinger extends titems {
 global $paths;
     parent::create();
     $this->basename = 'pinger';
+$this->dbversion = false;
     $this->data['services'] = '';
     $this->data['enabled'] = true;
 require_once($paths['libinclude'] . 'class-IXR.php');

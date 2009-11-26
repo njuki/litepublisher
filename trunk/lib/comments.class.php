@@ -33,7 +33,7 @@ $self = new $class();
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments';
   }
 
-  public function insert($id, $userid,  $Content, $status,  $type) {
+  public function insert($id, $userid,  $content, $status,  $type) {
     $filter = TContentFilter::instance();
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     
@@ -43,8 +43,8 @@ $self = new $class();
     'posted' => time(),
     'status' => $status,
     'type' => $type,
-    'content' => $filter->GetCommentContent($Content),
-    'rawcontent' =>  $Content,
+    'content' => $filter->GetCommentContent($content),
+    'rawcontent' =>  $content,
     'ip' =>$ip
     );
     $this->save();

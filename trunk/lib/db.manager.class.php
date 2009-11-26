@@ -211,15 +211,21 @@ public function performance() {
 global $db;
 $result = '';
 $total = 0.0;
-foreach ($db->history as $item) {
+$max = 0.0;
+foreach ($db->history as $i => $item) {
     list($usec2, $sec2) = explode(' ', $item['started']);
     list($usec1, $sec1) = explode(' ', $item['finished']);
-$worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 4);
+$worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 8);
 $total += $worked;
-$result .= "$worked\n{$item['sql']}\n\n";
+if ($max < $worked) {
+$maxsql = $item['sql'];
+$max = $worked;
 }
-$stat = sprintf("%s total time\n$d querries\n\n", $total, count($db->history));
- $result = $stat . $result;
+$result .= "$i: $worked\n{$item['sql']}\n\n";
+}
+$result .= "maximum $max\n$maxsql\n";
+$result .= sprintf("%s total time\n%d querries\n\n", $total, count($db->history));
+
 return $result;
 }
 }//class
