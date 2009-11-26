@@ -39,7 +39,6 @@ return parent::save();
   }
   
   public function getitem($id) {
-//$this->items[$id] = $this->db->getitem($id);
     if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id);
         if (isset($this->items[$id])) return $this->items[$id];
     return $this->error("Item $id not found in class ". get_class($this));

@@ -198,6 +198,7 @@ public $array;
 public function __construct(array &$array) { $this->array = &$array; }
 public function __get($name) { return $this->array[$name]; }
 public function __set($name, $value) { $this->array[$name] = $value; }
+public function __tostring() { return $this->array[0]; }
 }//class
 
 function sqldate($date = 0) {

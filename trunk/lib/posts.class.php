@@ -50,15 +50,16 @@ $items = array_diff($items, array_keys(titem::$instances[$class]));
 }
 if (count($items) == 0) return;
 $list = implode(',', $items);
-
 $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
 where $db->posts.id in ($list) and  $db->urlmap.id  = $db->posts.idurl");
-//$res->setFetchMode (PDO::FETCH_INTO , 
-//while ($res->fetch(PDO::FETCH_INTO , tposttransform::instance(tpost::instance() )));
-$t = tposttransform::instance(tpost::instance() );
+$t = new tposttransform();
 $res->setFetchMode (PDO::FETCH_INTO , $t);
-foreach ($res as $r) ;
+do {
+$t->post = tpost::instance();
+} 
+while ($res->fetch());
 }
+
 
 public function getcount() {
     if (dbversion) {
@@ -69,15 +70,15 @@ public function getcount() {
 }
 
  public function GetWidgetContent($id, $sitebar) {
-    global $options;
+    global $options, $post;
     $theme = ttheme::instance();
-    $item = $theme->getwidget('postitem', $sitebar);
+    $tml = $theme->getwidget('post', $sitebar);
     
     $result = '';
     $list = $this->getrecent($options->recentcount);
     foreach ($list as $id) {
       $post = tpost::instance($id);
-      eval('$result .= "'. $item . '\n";');
+$result .= $theme->parse($tml);
     }
     $result = str_replace("'", '"', $result);
     return $result;

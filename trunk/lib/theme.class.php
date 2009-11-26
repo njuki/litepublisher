@@ -7,6 +7,7 @@
 **/
 
 class ttheme extends tevents {
+private $array2prop;
 public static $name;
 //public $tml;
 public $excerpts;
@@ -24,6 +25,7 @@ return getinstance(__class__);
 
 protected function create() {
 parent::create();
+$this->array2prop = new tarray2prop($this->data);
 if (empty(self::$name)) {
 $template = ttemplate::instance();
 self::$name = $template->theme . '.' . $template->tml;
@@ -60,6 +62,17 @@ $parser->parse("$template->path$template->tml.tml", $this);
 $this->save();
 }
 }
+
+/*
+public function __get($name) {
+if (is_array($this->data[$name])) {
+$this->array2prop->array = &$this->data[$name];
+return $this->array2prop;
+}
+return parent::__get($name);
+}
+
+*/
 
 public static function parsecallback($names) {
 global $classes, $options;
