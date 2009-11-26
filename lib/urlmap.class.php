@@ -191,7 +191,15 @@ $this->notfound404();
     $s = &$Template->request($obj);
     eval('?>'. $s);
   }
-  
+
+
+public function urlexists($url) {
+if (dbversion) {
+return $this->db->exists('url = '. dbquote($url));
+} else {
+return isset($this->items[$url]);
+}
+}  
   public function add($url, $class, $arg, $type = 'normal') {
 if (dbversion) {
 $item= array(
@@ -204,6 +212,7 @@ $item['id'] = $this->db->add($item);
 $this->items[$item['id']] = $item;
 return $item['id'];
 }
+
     $this->items[$url] = array(
     'id' => ++$this->autoid,
     'class' => $class,

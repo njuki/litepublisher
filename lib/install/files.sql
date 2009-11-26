@@ -12,7 +12,7 @@ description varchar(255) not null,
 keywords varchar(255) not null,
 md5 varchar(32) not null,
   bitrate int UNSIGNED NOT NULL default 128,
-framerateint UNSIGNED NOT NULL default 25,
+framerate int UNSIGNED NOT NULL default 25,
 samplingrate varchar(6) not null,
 channels int UNSIGNED NOT NULL default 1,
 duration int UNSIGNED NOT NULL default 0,
@@ -23,7 +23,6 @@ width int UNSIGNED NOT NULL default 0,
      PRIMARY KEY(id),
 key medium (medium ),
 key posted (posted),
-key author(author)
+key author(author),
 key parent (parent),
-key preview (preview),
-
+key preview (preview)

@@ -8,7 +8,7 @@
 
 function tcommontagsInstall($self) {
 global $options, $paths;
-  if ('TCommonTags' == get_class($self)) return;
+  if ('tcommontags' == get_class($self)) return;
 $self->options = array(
 'lite' >= false,
 'sortname' => 'count',
@@ -30,7 +30,7 @@ if (dbversion) {
     $manager = TDBManager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'tags.sql'));
-    $manager->CreateTable($self->itemsposts->table, file_get_contents($dir .'itemsposts.sql'));
+    $manager->CreateTable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
     $manager->CreateTable($self->contents->table, file_get_contents($dir .'tags.content.sql'));
 } else {
   $dir = $paths['data'] . $self->basename;

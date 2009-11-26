@@ -20,12 +20,13 @@ $options->unlock();
 function ParseClassesIni() {
   global $classes, $paths, $ini;
   $ini = parse_ini_file($paths['lib'].'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
-$section = dbversion ? 'db' : 'files';
-  foreach ($ini[$section] as $class => $filename) {
-    $classes->items[$class] = array($filename, '');
-  }
-
   foreach ($ini['items'] as $class => $filename) {
+if (dbversion) {
+if (strpos($filename, '.files.')) continue;
+$dbfile = str_replace('.class', '.db.class', $filename);
+if (file_exists($paths['lib'] . $dbfile)) $filename = $dbfile;
+
+}
     $classes->items[$class] = array($filename, '');
   }
 
