@@ -26,7 +26,7 @@ $comments->insert($id, $uid,  $content, $status, '');
     );
     if ($status != 'approved') $this->items[$id]['status'] = $status;
     $this->save();
-    $this->doadded($id);
+    $this->doadded($id, $pid);
   }
   
  public function addpingback($pid, $url, $title) {
@@ -45,7 +45,7 @@ $comments->insert($id, $uid, '', 'hold', 'pingback');
     'type' => 'pingback'
     );
     $this->save();
-    $this->doadded($id);
+    $this->doadded($id, $pid);
   }
 
   public function getcomment($id) {

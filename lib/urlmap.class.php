@@ -31,7 +31,17 @@ $this->table = 'urlmap';
     $this->admin = false;
     $this->mobile= false;
   }
-  
+
+public function load() {
+if (dbversion) return true;
+return parent::load();
+}
+
+public function save() {
+if (dbversion) return true;
+return parent::save();
+}
+
 protected function prepareurl($host, $url) {
     global $options;
     $this->host = $host;

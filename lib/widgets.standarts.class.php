@@ -15,6 +15,7 @@ class tstdwidgets extends titems {
 protected function create() {
 parent::create();
 $this->basename = 'stdwidgets';
+$this->dbversion = false;
 $this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'comments', 'meta');
 }
 

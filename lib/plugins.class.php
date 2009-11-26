@@ -15,6 +15,7 @@ class tplugins extends TItems {
     protected function create() {
     parent::create();
     $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
+$this->dbversion = false;
   }
   
   public function getabout($name) {

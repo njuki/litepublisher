@@ -121,8 +121,8 @@ $poststable = $this->db->posts;
 $this->db->query("
 update $thistable, $itemstable set $thistable.itemscount = 
 (select count(post)from $itemstable, $poststable
- where item in ($all)  and post = $poststable.id and $poststable.status = 'published' group by post)
-$thistable.id = $itemstable.item");
+ where item in ($items)  and post = $poststable.id and $poststable.status = 'published' group by post)
+where $thistable.id = $itemstable.item");
 } else {
 $this->lock();
 foreach ($items as $id) {

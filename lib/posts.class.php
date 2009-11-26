@@ -45,11 +45,19 @@ global $classes, $db;
 if (!dbversion) return;
 //исключить из загрузки загруженные посты
 $class = $classes->classes['post'];
-$list = implode(',', array_diff($items, array_keys(titem::$instances[$class])));
+if (isset(titem::$instances[$class])) {
+$items = array_diff($items, array_keys(titem::$instances[$class]));
+}
+if (count($items) == 0) return;
+$list = implode(',', $items);
+
 $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
 where $db->posts.id in ($list) and  $db->urlmap.id  = $db->posts.idurl");
-
-while ($res->fetch(PDO::FETCH_INTO , TPostTransform::instance(new $class() )));
+//$res->setFetchMode (PDO::FETCH_INTO , 
+//while ($res->fetch(PDO::FETCH_INTO , tposttransform::instance(tpost::instance() )));
+$t = tposttransform::instance(tpost::instance() );
+$res->setFetchMode (PDO::FETCH_INTO , $t);
+foreach ($res as $r) ;
 }
 
 public function getcount() {
@@ -74,16 +82,6 @@ public function getcount() {
     $result = str_replace("'", '"', $result);
     return $result;
   }
-
-public function load() {
-if (dbversion) return true;
-return parent::load();
-}
-
-public function save() {
-if (dbversion) return true;
-return parent::save();
-}
 
     public function add(tpost $post) {
     if ($post->posted == 0) $post->posted = time();
@@ -259,13 +257,13 @@ return $this->db->idselect("status = 'published'order by posted desc limit $coun
 }
   }
   
-  public function GetPublishedRange($PageNum, $CountPerPage) {
-    $Count = $this->archivescount;
-    $From = ($PageNum - 1) * $CountPerPage;
-    if ($From > $Count)  return array();
-if (dbversion)  return $this->db->idselect("status = 'published' order by created desc from $from limit $CountPerPage");
-    $To = min($From + $CountPerPage, $Count);
-return array_slice(array_keys($this->archives), $From, $To - $From);
+  public function GetPublishedRange($page, $perpage) {
+    $count = $this->archivescount;
+    $from = ($page - 1) * $perpage;
+    if ($from > $count)  return array();
+if (dbversion)  return $this->db->idselect("status = 'published' order by posted desc limit $from, $perpage");
+    $to = min($from + $perpage , $count);
+return array_slice(array_keys($this->archives), $from, $to - $from);
   }
   
   public function StripDrafts(array $items) {

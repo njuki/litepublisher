@@ -20,12 +20,12 @@ class tposttransform  {
   'commentscount', 'pagescount',
   );
 
-  public static function instance(TPost $post) {
+  public static function instance(tpost $post) {
     $self = getinstance(__class__);
     $self->post = $post;
     return $self;
   }
-  
+
   public static function add(tpost $post) {
     global $db;
 $self = self::instance($post);
@@ -90,9 +90,9 @@ $list = explode(',', $value);
 foreach ($list as $i => $value) $list[$i] = (int) trim($value);
     $this->post->$name = $list;
     } elseif (in_array($name, self::$boolprops)) {
-      $post->$name = $value == '1';
+      $this->post->$name = $value == '1';
     } else {
-      $post->$name = $value;
+      $this->post->$name = $value;
     }
   }
 

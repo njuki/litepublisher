@@ -44,41 +44,42 @@ public function __get ($name) {
 return $this->prefix . $name;
 }
   
-  public function query($sql, $mode = null) {
+  public function query($sql) {
+return $this->doquery($sql, true);
+}
+
+public function exec($sql) {
+return $this->doquery($sql, false);
+}
+
+private function doquery($sql, $isquery) {
 if ($sql == $this->sql) return $this->result;
     $this->sql = $sql;
     if (defined('debug')) {
 $this->history[] = array(
 'sql' => $sql,
-'started' => microtime()
+'started' => microtime(),
+'finished' => microtime()
 );
 }
     if (is_object ($this->result))  {
       $this->result->closeCursor();
     }
 try {
-    $this->result = parent::query($sql, $mode);
-    } catch (Exception $e) {
-$this->doerror($e);
+if ($isquery) {
+    $this->result = parent::query($sql);
+} else {
+    $this->result = parent::exec($sql);
 }
 if (defined('debug')) {
 $this->history[count($this->history) - 1]['finished'] = microtime();
 }
-    return $this->result;
-  }
-  
-  public function exec($sql) {
-    $this->sql = $sql;
-    if (defined('debug')) $this->history[] = $sql;
-    if (is_object($this->result)) $this->result->closeCursor();
-try {
-    $this->result = parent::exec($sql);
     } catch (Exception $e) {
 $this->doerror($e);
 }
     return $this->result;
   }
-
+  
 private function doerror($e) {
 global $options;
 if (defined('debug')) {
@@ -86,6 +87,8 @@ global $paths;
     $log = "exception:\n" . $e->getMessage();
 $log .= "\n$this->sql\n";
     $log .=str_replace($paths['home'], '', $e->getTraceAsString());
+$man = tdbmanager::instance();
+$log .= $man->performance();
 $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
 die($log);
 } else {
@@ -102,7 +105,7 @@ $options->handexception($e);
   }
   
   public function idselect($where) {
-    if($res = $this->select("select id from $this->prefix$this->table where ". $where)) {
+    if($res = $this->query("select id from $this->prefix$this->table where $where")) {
       return $this->res2array($res);
     }
     return false;
@@ -206,7 +209,10 @@ return false;
   
   public function getitem($id) {
     if ($res = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) {
-      return $res->fetch(PDO::FETCH_ASSOC);
+//      return $res->fetch(PDO::FETCH_ASSOC);
+$r =       $res->fetch(PDO::FETCH_ASSOC);
+var_dump($r);
+return $r;
     }
     return false;
   }
@@ -236,7 +242,7 @@ return false;
 }
 
 public function findid($where) {
-    if($res = $this->select("select id from $this->prefix$this->table where ". $where . ' limit 1')) {
+    if($res = $this->query("select id from $this->prefix$this->table where $where limit 1")) {
 if ($r = $res->fetch(PDO::FETCH_NUM)) return $r[0];
 }
 return false;

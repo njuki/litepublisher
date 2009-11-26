@@ -16,6 +16,7 @@ public $current;
 protected function create() {
 parent::create();
 $this->basename = 'widgets';
+$this->dbversion = false;
     $this->addevents('ongetcontent');
 }  
 

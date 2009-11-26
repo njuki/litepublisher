@@ -45,6 +45,7 @@ return new $class();
   protected function create() {
     parent::create();
     $this->basename = 'classes';
+$this->dbversion = false;
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());

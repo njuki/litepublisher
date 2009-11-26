@@ -46,6 +46,7 @@ class TXMLRPC extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'xmlrpc';
+$this->dbversion = false;
     $this->cache = false;
     $this->addevents('BeforeCall', 'AfterCall', 'GetMethods');
   }

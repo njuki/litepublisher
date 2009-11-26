@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class TFoafManager extends TItems {
+class TFoafManager extends titems {
   
   public static function instance() {
     return getinstance(__class__);
@@ -15,6 +15,7 @@ class TFoafManager extends TItems {
   protected function create() {
     parent::create();
     $this->basename = 'foafmanager';
+$this->dbversion = false;
   }
   
   public function Invate($friend) {
