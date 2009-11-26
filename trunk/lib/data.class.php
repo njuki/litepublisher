@@ -161,7 +161,7 @@ return false;
     return get_class($this);
   }
   
-  public function getdb($table = 'data') {
+  public function getdb($table = '') {
     global $db;
     $table =$table != '' ? $table : $this->table;
     if ($table != '') $db->table = $table;
@@ -205,7 +205,7 @@ if ($date == 0) $date = time();
 return date('Y-m-d H:i:s', $date);
 }
 
-function dbqote($s) {
+function dbquote($s) {
 global $db;
 return $db->quote($s);
 }

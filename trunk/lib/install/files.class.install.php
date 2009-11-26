@@ -11,7 +11,7 @@ function tfilesInstall($self) {
     $manager = TDBManager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'files.sql'));
-    $manager->CreateTable('fileitems', file_get_contents($dir .'fileitems.sql'));
+    $manager->CreateTable('fileitems', file_get_contents($dir .'items.posts.sql'));
   } else {
 }
 }

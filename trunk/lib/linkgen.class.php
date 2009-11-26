@@ -131,7 +131,7 @@ foreach ($match as $item) {
   
   public function MakeUnique($url) {
     $urlmap = turlmap::instance();
-    if(!$urlmap->ItemExists($url)) return $url;
+    if(!$urlmap->urlexists($url)) return $url;
     $l = strlen($url);
     if (substr($url, $l-1, 1) == '/') {
       $url = substr($url, 0, $l - 1);
@@ -146,7 +146,7 @@ foreach ($match as $item) {
     }
     for ($i = 2; $i < 1000; $i++) {
       $Result = "$url-$i$sufix";
-      if (!$urlmap->ItemExists($Result)) return $Result;
+      if (!$urlmap->urlexists($Result)) return $Result;
     }
     
     return "/some-wrong". time();
