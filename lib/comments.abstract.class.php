@@ -37,7 +37,7 @@ $this->data['SendNotification'] =  true;
     $this->added($id);
   }
   
-  public function dochanged($postid) {
+  protected function dochanged($postid) {
 $widgets = twidgets::instance();
 $widgets->setexpired('tcommentswidget'); 
     

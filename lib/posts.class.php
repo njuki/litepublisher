@@ -280,7 +280,7 @@ return $this->db->idselect("status = 'published' and id in ($list)");
   public function sortbyposted(array $items) {
 if (dbversion) {
 $list = implode(', ', $items);
-return $this->db->idselect("status = 'published' and id in ($list) order by created desc");
+return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
 }
 
     $result = array_intersect_key ($this->archives, $items);

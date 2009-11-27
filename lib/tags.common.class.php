@@ -34,14 +34,17 @@ return tpost::instance($id);
 }
 
 public function getitem($id) {
-$result = parent::getitem($id);
-if (dbversion && empty($result['url'])) {
-$urlmap = turlmap::instance();
-$result['url'] = $urlmap->getidurl($result['idurl']);
+global $db;
+    if ($this->dbversion && !isset($this->items[$id])) {
+if ($res = $db->query("select $this->thistable.*, $db->urlmap.url as url  from $this->thistable, $db->urlmap
+where $this->thistable.id = $id and  $db->urlmap.id  = $this->thistable.idurl limit 1")) {
+$this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
 }
-return $result;
 }
-
+        if (isset($this->items[$id])) return $this->items[$id];
+    return $this->error("Item $id not found in class ". get_class($this));
+  }
+  
 public function loaditems(array $items) {
 global  $db;
 if (!dbversion) return;
@@ -82,7 +85,7 @@ if (!dbversion) parent::save();
   }
   
   public function getwidgetcontent($id) {
-return $this->GetSortedList($thi->sortname, $this->maxcount);
+return $this->GetSortedList($this->sortname, $this->maxcount);
 }
 
 private function GetSortedList($sortname, $count) {
@@ -232,7 +235,7 @@ $this->itemsposts->updateposts($list, $this->PostPropname);
   public function getnames($list) {
 if (dbversion) {
 $items = implode(',', $list);
-return $this->db->res2array($this->db->query("select title from $this->thistable where id in ($items)"));
+return $this->db->res2id($this->db->query("select title from $this->thistable where id in ($items)"));
 }
     $result =array();
     foreach ($list as $id) {
@@ -284,9 +287,13 @@ return array_keys($list);
   //Itemplate
   public function request($id) {
     global $urlmap;
-if (!$this->itemexists($id)) return 404;
     $this->id = (int) $id;
+try {
 $item = $this->getitem((int) $id);
+    } catch (Exception $e) {
+return 404;
+}
+
 $url = $item['url'];
     if($urlmap->page != 1) $url = rtrim($url, '/') . "/page/$urlmap->page/";
     if ($urlmap->url != $url) $urlmap->redir301($url);
@@ -333,20 +340,14 @@ return sprintf("<ul>\n%s</ul>\n", $result);
     }
         $result .= $this->contents->getcontent($this->id);
 
-if (dbversion) {
-$res = $this->db->query("select post from $this->itemstable where tag = $this->id");
-$items = $db->res2array($res);
-} else {
-    $items= $this->items[$this->id]['items'];
-}
+$items = $this->itemsposts->getposts($this->id);
     $Posts = $classes->posts;
     $items = $Posts->sortbyposted($items);
 
-$lite = $this->lite;
-      $postsperpage = $lite ? 1000 : $options->postsperpage;
+      $postsperpage = $this->lite ? 1000 : $options->postsperpage;
       $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
 $theme = ttheme::instance();
-      $result .= $theme->getposts($list, $lite);
+      $result .= $theme->getposts($list, $this->lite);
 $item = $this->getitem($this->id);
       $result .=$theme->getpages($item['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
       return $result;
@@ -366,10 +367,12 @@ $item = $this->getitem($this->id);
 
 class ttagcontent extends tdata {
 private $owner;
+private $items;
 
 public function __construct(TCommonTags $owner) {
 parent::__construct();
 $this->owner = $owner;
+$this->items = array();
 }
 
  private function getfilename($id) {

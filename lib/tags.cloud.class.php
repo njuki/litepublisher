@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class ttags extends TCommonTags {
+class ttags extends tcommontags {
   
   protected function create() {
     parent::create();

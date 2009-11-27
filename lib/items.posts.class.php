@@ -14,8 +14,8 @@ class titemsposts extends titems {
   
   protected function create() {
     parent::create();
-    $this->basename = 'fileitems';
-$this->table = 'fileitems';
+    $this->basename = 'itemsposts';
+$this->table = 'itemsposts';
   }
 
 /*
@@ -63,8 +63,9 @@ return false;
 }
 
 public function deletepost($idpost) {
+global $db;
 if (dbversion) {
-$result = $this->db->res2array($this->db->query("select item from $this->thistable where post = $idpost"));
+$result = $db->res2id($db->query("select item from $this->thistable where post = $idpost"));
 $this->db->delete("post = $idpost");
 return $result;
 } else {
@@ -127,8 +128,9 @@ return $result;
 }
 
 public function getitems($idpost) {
+global $db;
 if (dbversion) {
-return $this->db->res2array($this->db->query("select item from $this->thistable where post = $idpost"));
+return $db->res2id($db->query("select item from $this->thistable where post = $idpost"));
 } elseif (isset($this->items[$idpost])) {
 return $this->items[$idpost];
 } else {
@@ -137,8 +139,9 @@ return false;
 }
 
 public function getposts($iditem) {
+global $db;
 if (dbversion) {
-return $this->res2array($this->db->qery("select post from $this->thistable where file = $iditem"));
+return $db->res2id($db->query("select post from $this->thistable where item = $iditem"));
 } else {
 $result = array();
 foreach ($this->items as $id => $item) {

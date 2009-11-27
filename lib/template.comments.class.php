@@ -26,8 +26,7 @@ $l = &tlocal::$data['comment'];
   
   public function getcommentslink(tpost $post) {
     global $options;
-    $comments = $post->comments;
-    $count = $this->getcount($comments->GetCountApproved());
+    $count = $this->getcount($post->commentscount);
     $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->countpages/" : $post->url;
     return "<a href=\"$options->url$url#comments\">$count</a>";
   }

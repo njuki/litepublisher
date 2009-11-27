@@ -58,7 +58,7 @@ if (defined('debug')) $this->deletetable($name);
   
   public function getdatabases() {
     if ($res = $this->query("show databases")) {
-      return $this->res2array($res);
+      return $this->res2id($res);
     }
     return false;
   }
@@ -73,7 +73,7 @@ if (defined('debug')) $this->deletetable($name);
   public function gettables() {
     global $dbconfig;
   if ($res = $this->query("show tables from {$dbconfig['dbname']} like '$this->prefix%'")) {
-      return $this->res2array($res);
+      return $this->res2id($res);
     }
     return false;
   }

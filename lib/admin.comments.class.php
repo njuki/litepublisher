@@ -325,7 +325,7 @@ $html = $this->gethtml('moderator');
     $result = $html->checkallscript;
 $manager = $this->manager;
 if (dbversion) {
-$posted = $manager->db->res2array($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
+$posted = $manager->db->res2id($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
 } else { 
 $posted = array();
 foreach ($manager->items as $id => $item) {

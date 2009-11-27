@@ -152,8 +152,10 @@ global $options;
 $result = '';
 if ($this->contextHasProp('icon')) {
 $icon = $this->context->icon;
+if ($icon > 0) {
 $icons = ticons::instance();
 $result = $icons->geturl($icon);
+}
 }
     if ($result == '')  return "$options->files/favicon.ico";
     return $result;
