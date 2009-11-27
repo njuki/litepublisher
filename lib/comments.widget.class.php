@@ -23,7 +23,7 @@ $this->basename = 'commentswidget';
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('comment');
 $manager = $classes->commentmanager;
-    $count = $manager->options->recentcount;
+    $count = $manager->recentcount;
 $args = targs::instance();
       $args->onrecent = tlocal::$data['comment']['onrecent'];
 

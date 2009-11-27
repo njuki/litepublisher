@@ -19,20 +19,13 @@ $this->table = 'categories';
 $this->contents->table = 'catscontent';
 $this->itemsposts->table = $this->table . 'items';
     $this->basename = 'categories' ;
+$this->data['defaultid'] = 0;
   }
 
-public function getdefaultid() {
-$thisoptions = $this->options;
-if (isset($thisoptions->array['defaultid'])) return $thisoptions->defaultid;
-return 0;
-}
-  
   public function setdefaultid($id) {
-global $options;
-$thisoptions = $this->options;
-    if (($id != $thisoptions->defaultid) && $this->itemexists($id)) {
-      $thisoptions->defaultid = $id;
-$options->save();
+    if (($id != $this->defaultid) && $this->itemexists($id)) {
+      $thisdata['defaultid'] = $id;
+$this->save();
     }
   }
   

@@ -15,6 +15,9 @@ class tmediaparser extends TEventClass {
   protected function create() {
     parent::create();
     $this->basename = 'mediaparser';
+$this->data['previewwidth'] = 120;
+$this->data['previewheight'] = 120;
+$this->data['audiosize'] = 128;
   }
 
   public function upload($filename, $content, $title, $overwrite = true) {
@@ -236,7 +239,6 @@ imagedestroy($source);
 
 public function getsnapshot($filename) {
 global $paths;
-$thisoptions = $this->options;
 $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $parts = pathinfo($filename);
 $destfilename = $parts['filename'] . '.preview.jpg';
@@ -244,7 +246,7 @@ if (!empty($parts['dirname'])) {
 $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
 }
 
-if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $pdestfilename, $thisoptions->previewwidth, $thisoptions->previewheight)) return false;
+if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $pdestfilename, $this->previewwidth, $this->previewheight)) return false;
 
 @chmod($paths['files'] . $destfilename, 0666);
 $info = getimagesize($paths['files']. $filename);
@@ -258,7 +260,6 @@ return $result;
 
 public function createaudioclip($filename) {
 global $paths;
-$thisoptions = $this->options;
 $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $parts = pathinfo($filename);
 $destfilename = $parts['filename'] . '.preview.' . $parts['extension'];
@@ -267,7 +268,7 @@ $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
 }
 
 if ($fp = fopen($paths['files'] . $filename, 'r')) {
-$content = fread($fp, 1024 * $this->options->audiosize);
+$content = fread($fp, 1024 * $this->audiosize);
 fclose($fp);
 }
 

@@ -11,8 +11,8 @@ public $user;
 public $group;
 public $gmt;
 public $errorlog;
-public $eventsdisabled; //when install database
-  
+private $modified;  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -24,17 +24,35 @@ public $eventsdisabled; //when install database
     unset($this->cache);
 $this->gmt = date('Z');
 $this->errorlog = '';
+$this->modified = false;
   }
   
   public function load() {
     parent::load();
+$this->modified = false;
     if($this->propexists('timezone'))  {
       date_default_timezone_set($this->timezone);
 $this->gmt = date('Z');
     }
   }
-  
-  public function __set($name, $value) {
+
+public function finalsave() {
+echo "before final<br>";
+if ($this->modified) parent::save();
+echo "final<br>";
+}
+
+public function save() {
+$this->modified = true;
+echo "in save<br>";
+}
+
+public function unlock() {
+$this->modified = true;
+parent::unlock();
+}
+
+    public function __set($name, $value) {
     if ($this->setevent($name, $value)) return true;
     
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
@@ -46,7 +64,6 @@ $this->gmt = date('Z');
   }
   
   private function dochanged($name, $value) {
-if ($this->eventsdisabled) return;
     if ($name == 'postsperpage') {
       $this->PostsPerPageChanged();
       $urlmap = turlmap::instance();

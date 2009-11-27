@@ -21,6 +21,8 @@ class TAbstractCommentManager extends titems {
     parent::create();
     $this->basename = 'commentmanager';
     $this->addevents('edited', 'changed', 'approved');
+$this->data['recentcount'] =  7;
+$this->data['SendNotification'] =  true;
   }
 
   public function add($postid, $name, $email, $url, $content) {
@@ -48,7 +50,7 @@ $widgets->setexpired('tcommentswidget');
   
   public function sendmail($id) {
     global $options, $comment;
-    if (!$this->options->SendNotification) return;
+    if (!$this->SendNotification) return;
     $comment = $this->getcomment($id);
     $html = THtmlResource::instance();
     $html->section = 'comments';

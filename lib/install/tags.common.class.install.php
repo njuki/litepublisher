@@ -9,12 +9,6 @@
 function tcommontagsInstall($self) {
 global $options, $paths;
   if ('tcommontags' == get_class($self)) return;
-$self->options = array(
-'lite' >= false,
-'sortname' => 'count',
-'showcount' => true,
-'maxcount' => 0
-);
 
   $posts= tposts::instance();
   $posts->lock();
