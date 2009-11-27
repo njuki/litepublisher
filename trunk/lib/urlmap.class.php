@@ -265,7 +265,7 @@ $this->clearcache();
   public function GetClassUrls($class) {
 if (dbversion) {
 $res = $this->db->query("select url from $this->thistable where class = '$class'");
-return $this->db->res2array($res);
+return $this->db->res2id($res);
 }
 
     $result = array();

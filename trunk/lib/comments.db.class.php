@@ -25,8 +25,13 @@ $this->rawtable = 'rawcomments';
 
 public function load() { return true; }
 public function save() { return true; }
-  
-  public function addcomment($pid, $uid, $content) {
+
+  protected function dochanged($postid) {
+$this->getdb('posts')->setvalue($postid, 'commentscount', $this->db->getcount("post = $postid and status = 'approved' and pingback = false"));
+parent::dochanged($postid);
+}
+
+    public function addcomment($pid, $uid, $content) {
 global $classes;
     $filter = TContentFilter::instance();
 $filtered = $filter->GetCommentContent($content);

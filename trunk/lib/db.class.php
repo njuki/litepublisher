@@ -109,7 +109,7 @@ $options->handexception($e);
   
   public function idselect($where) {
     if($res = $this->query("select id from $this->prefix$this->table where $where")) {
-      return $this->res2array($res);
+      return $this->res2id($res);
     }
     return false;
   }
@@ -212,9 +212,7 @@ return false;
   
   public function getitem($id) {
     if ($res = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) {
-//      return $res->fetch(PDO::FETCH_ASSOC);
-$r =       $res->fetch(PDO::FETCH_ASSOC);
-return $r;
+      return $res->fetch(PDO::FETCH_ASSOC);
     }
     return false;
   }
@@ -266,10 +264,19 @@ return $this->update("$name = " . $this->quote($value), "id = $id");
     $result = array();
 //    while ($row = $res->fetch(PDO::FETCH_NUM)) {
 foreach ($res as $row) {
-      $result[] = $row[0];
+      $result[] = $row;
     }
     return $result;
   }
+
+  public function res2id($res) {
+    $result = array();
+$res->setFetchMode (PDO::FETCH_NUM);
+foreach ($res as $row) {
+      $result[] = $row[0];
+    }
+return $result;
+}
   
 }//class
 ?>

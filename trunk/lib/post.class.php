@@ -60,7 +60,7 @@ return tcomments::instance($this->id);
   
   public function getprev() {
 if (dbversion) {
-if ($id = $this->db->findid(sprintf('status = `published` and posted < `%s` order by posted desc', sqldate($this->posted)))) {
+if ($id = $this->db->findid(sprintf("status = 'published' and posted < '%s' order by posted desc", sqldate($this->posted)))) {
 return self::instance($id);
 }
 return null;
@@ -75,7 +75,7 @@ return null;
   
   public function getnext() {
 if (dbversion) {
-if ($id = $this->db->findid(sprintf('status = `published` and posted > `%s` order by posted desc', sqldate($this->posted)))) {
+if ($id = $this->db->findid(sprintf("status = 'published' and posted > '%s' order by posted desc", sqldate($this->posted)))) {
 return self::instance($id);
 }
 return null;
@@ -404,7 +404,7 @@ return isset($this->data['pages']) ? count($this->data['pages']) : 1;
     if (dbversion) {
       return $this->data['commentscount'];
     } else {
-      return $this->comments->count;
+      return $this->comments->GetCountApproved;
     }
   }
   
