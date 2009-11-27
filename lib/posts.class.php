@@ -27,6 +27,7 @@ $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent');
     $this->data['recentcount'] = 10;
+$this->data['archivescount'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
   }
   
@@ -160,54 +161,56 @@ $urlmap->setidurl($post->idurl, $post->url);
   }
   
   public function delete($id) {
-global $classes;
-if (dbversion) return $this->db->setvalue($id, 'status', 'deleted');
-    if (!$this->ItemExists($id)) return false;
+global $classes, $paths;
+    if (!$this->itemexists($id)) return false;
     $urlmap = turlmap::instance();
-    if (dbversion) {
-$urmap->deleteitem($this->db->getvalue($id, 'idurl'));
-/* 
+    if ($this->dbversion) {
+$idurl = $this->db->getvalue($id, 'idurl');
+$this->db->setvalue($id, 'status', 'deleted');
+/* will be deleted indbmanager->optimize
       $this->db->iddelete($id);
       $this->getdb('pages')->delete("post = $id");
 $this->getdb($this->rawtable)->iddelete($id);
 */
     } else {
 $post = tpost::instance($id);
-$urmap->deleteitem($post->idurl);
+$idurl = $post->idurl;
 $post->free();
-      global $paths;
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
       unset($this->items[$id]);
-      $this->UpdateArchives();
 }
+$urmap->deleteitem($idurl);
 $this->lock();
     $this->PublishFuture();
+      $this->UpdateArchives();
 $this->unlock();
-    $this->deleted($post->id);
+    $this->deleted($id);
     $this->changed();
-    $urlmap->ClearCache();
+    $urlmap->clearcache();
     return true;
   }
   
   public function updated(tpost $post) {
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
-if (dbversion) $post->db->setvalue($post->id, 'status', 'future');
+if ($this->dbversion) $post->db->setvalue($post->id, 'status', 'future');
     }
     $this->PublishFuture();
-if (!dbversion) {
+if (!$this->dbversion) {
     $this->items[$post->id] = array(
     'posted' => $post->posted
     );
     if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
-    $this->UpdateArchives();
 }
-
+    $this->UpdateArchives();
     $Cron = tcron::instance();
     $Cron->add('single', get_class($this), 'DoSingleCron', $post->id);
   }
   
   public function UpdateArchives() {
+if ($this->dbversion) {
+$this->archivescount = $this->db->getcount("status = 'published' and posted <= now()");
+} else {
     $this->archives = array();
     foreach ($this->items as $id => $item) {
       if ((!isset($item['status']) || ($item['status'] == 'published')) &&(time() >= $item['posted'])) {
@@ -215,6 +218,8 @@ if (!dbversion) {
       }
     }
     arsort($this->archives,  SORT_NUMERIC);
+$this->archivescount = count($this->archives);
+}
   }
   
   public function DoSingleCron($id) {
@@ -235,7 +240,7 @@ $post = tpost::instance($id);
 }
 
   public function PublishFuture() {
-    if (dbversion) {
+    if ($this->dbversion) {
 if ($list = $this->db->idselect("status = 'future' and posted <= now() order by posted asc")) {
 foreach( $list as $id) $this->publish($id);
 }
@@ -246,11 +251,6 @@ foreach( $list as $id) $this->publish($id);
   }
 }
 
-public function getarchivescount() {
-if (dbversion) return $this->db->getcount("status = 'published' and posted > now()");
-return count($this->archives);
-}
-  
   public function getrecent($count) {
 if (dbversion) {
 return $this->db->idselect("status = 'published'order by posted desc limit $count");
