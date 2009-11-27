@@ -18,6 +18,7 @@ return $result;
   
   protected function create() {
     parent::create();
+$this->dbversion = true;
 $this->table = 'comments';
 $this->rawtable = 'rawcomments';
   }

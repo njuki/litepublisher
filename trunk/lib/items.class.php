@@ -13,7 +13,7 @@ protected $dbversion;
   
   protected function create() {
     parent::create();
-$this->dbversion = dbversion;
+$this->dbversion = false;
     $this->addevents('added', 'deleted');
     $this->addmap('items', array());
     $this->addmap('autoid', 0);

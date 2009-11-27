@@ -41,7 +41,6 @@ $classes->interfaces = $ini['interfaces'];
 
 function doinstallclasses() {
     global  $classes, $options, $urlmap, $posts;
-$options->lock();
     $urlmap = turlmap::instance();
     $urlmap->lock();
     $posts = tposts::instance();
@@ -54,8 +53,6 @@ $options->lock();
     }
     $posts->unlock();
     $urlmap->unlock();
-$options->unlock();
-    $options->finalsave();
 }
 
 ?>

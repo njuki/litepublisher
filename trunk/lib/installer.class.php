@@ -173,14 +173,14 @@ return installclasses($this->language);
   
   public function processform($email, $name, $description, $rewrite) {
     global $options;
-    $options->Lock();
+    $options->lock();
     $options->email = $email;
     $options->name = $name;
     $options->description = $description;
     $options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
 if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
-    $options->Unlock();
+    $options->unlock();
   }
   
   public function CheckFolders() {
