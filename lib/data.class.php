@@ -7,7 +7,7 @@
 **/
 
 class tdata {
-  private $lockcount;
+  public $lockcount;
   public static $GlobalLock;
   public $data;
   public $basename;

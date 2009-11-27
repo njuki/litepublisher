@@ -15,6 +15,7 @@ public $itemsposts;
   
   protected function create() {
     parent::create();
+$this->dbversion = dbversion;
 $this->itemsposts = new titemsposts();
     $this->basename = 'files';
 $this->table = 'files';

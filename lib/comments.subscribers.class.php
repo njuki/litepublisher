@@ -14,6 +14,7 @@ class tsubscribers extends titemsposts {
   
   protected function create() {
     parent::create();
+$this->dbversion = dbversion;
 $this->table = 'subscribers';
     $this->basename = 'subscribers';
     $this->data['fromemail'] = '';

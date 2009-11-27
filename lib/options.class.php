@@ -36,15 +36,12 @@ $this->gmt = date('Z');
     }
   }
 
-public function finalsave() {
-echo "before final<br>";
+public function savemodified() {
 if ($this->modified) parent::save();
-echo "final<br>";
 }
 
 public function save() {
 $this->modified = true;
-echo "in save<br>";
 }
 
 public function unlock() {

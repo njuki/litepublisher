@@ -24,6 +24,7 @@ public $argtree;
   
   protected function create() {
     parent::create();
+$this->dbversion = dbversion;
 $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
@@ -31,16 +32,6 @@ $this->table = 'urlmap';
     $this->admin = false;
     $this->mobile= false;
   }
-
-public function load() {
-if (dbversion) return true;
-return parent::load();
-}
-
-public function save() {
-if (dbversion) return true;
-return parent::save();
-}
 
 protected function prepareurl($host, $url) {
     global $options;

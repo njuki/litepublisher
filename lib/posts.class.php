@@ -21,6 +21,7 @@ public $rawtable;
   
   protected function create() {
     parent::create();
+$this->dbversion = dbversion;
 $this->table = 'posts';
 $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
