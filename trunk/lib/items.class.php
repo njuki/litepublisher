@@ -20,17 +20,30 @@ $this->dbversion = dbversion;
   }
 
 public function load() {
-if ($this->dbversion) return true;
+global $options;
+if ($this->dbversion) {
+if (!isset($options->data[get_class($this)])) {
+$options->data[get_class($this)] = &$this->data;
+} else {
+$this->data = &$options->data[get_class($this)];
+}
+return  true;
+} else {
 return parent::load();
+}
 }
 
 public function save() {
-if ($this->dbversion) return true;
+global $options;
+if ($this->dbversion) {
+unset($this->data['items']);
+return $options->save();
+} else {
 return parent::save();
 }
+}
 
-  
-  public function getcount() {
+    public function getcount() {
     if ($this->dbversion) {
       return $this->db->getcount();
     } else {

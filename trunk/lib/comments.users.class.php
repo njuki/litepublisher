@@ -17,6 +17,9 @@ class tcomusers extends titems {
 $this->table = 'comusers';
     $this->basename = 'comusers';
     $this->cache = false;
+$this->data['hidelink'] = false;
+$this->data['redir'] = true;
+$this->data['nofollow'] = false;
   }
   
   public function add($name, $email, $url) {
@@ -114,13 +117,12 @@ global $classes, $options;
 $item = $this->getitem($id);
     $name = $item['name'];
     $url = $item['url'];
-$thisoptions = $this->options;
-    if ($thisoptions->hidelink || empty($url) ) return $name;
+    if ($this->hidelink || empty($url) ) return $name;
     
     if (!$classes->commentmanager->HasApprovedCount($id, 2)) return $name;
     
-    $rel = $thisoptions->nofollow ? 'rel="nofollow noindex"' : '';
-    if ($thisoptions->redir) {
+    $rel = $this->nofollow ? 'rel="nofollow noindex"' : '';
+    if ($this->redir) {
       return "<a $rel href=\"$options->url/comusers/$id/\">$name</a>";
     } else {
       return "<a $rel href=\"$url\">$name</a>";

@@ -143,8 +143,9 @@ $id = isset($this->items[$name]) ? $this->items[$name]['id'] : $name;
 $file = $paths['cache'] . "widget.$id.php";
 if (file_exists($file)) return file_get_contents($file);
 
+$sitebars = tsitebars::instance();
 $instance = $this->getinstance($name);
-$result = $instance->getwidgetcontent($id);
+$result = $instance->getwidgetcontent($id, $sitebars->find($id));
 file_put_contents($file, $result);
 return $result;
 }

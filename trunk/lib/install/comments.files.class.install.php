@@ -9,11 +9,6 @@
 function tcommentmanagerInstall($self) {
 global $classes;
 $classes->classes['commentmanager'] = get_class($self);
-$self->options = array(
-'recentcount' =>  7,
-'SendNotification' =>  true
-);
-
   $Posts= tposts::instance();
   $Posts->deleted = $self->postdeleted;
 }

@@ -17,6 +17,11 @@ public $itemsposts;
   protected function create() {
     parent::create();
 $this->data['itemsposts'] = array();
+    $this->data['lite'] = false;
+    $this->data['sortname'] = 'count';
+    $this->data['showcount'] = true;
+    $this->data['maxcount'] =0;
+    
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
     $this->contents = new ttagcontent($this);
@@ -76,8 +81,7 @@ if (!dbversion) parent::save();
   }
   
   public function getwidgetcontent($id) {
-$thisoptions = $this->options;
-return $this->GetSortedList($thisoptions->sortname, $thisoptions->maxcount);
+return $this->GetSortedList($thi->sortname, $this->maxcount);
 }
 
 private function GetSortedList($sortname, $count) {
@@ -85,9 +89,10 @@ private function GetSortedList($sortname, $count) {
     $result = '';
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('tag');
-$showcount = $this->options->showcount;
+$showcount = $this->showcount;
         $Sorted = $this->getsorted($sortname, $count);
-    foreach($Sorted as $item) {
+    foreach($Sorted as $id) {
+$item = $this->getitem($id);
 $count = $showcount ? " ({$item['itemscount']})" : '';
   $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
     }
@@ -244,11 +249,18 @@ if (!in_array($sortname, array('title', 'count', 'id'))) $sortname = 'title';
 if (dbversion) {
 $table = $this->thistable;
 $q = "select $table.*, $this->urltable.url from $table, $this->urltable
-where $table.parent = 0 and $this->urltable.id= $table.idurl sort by ";
+where $table.parent = 0 and $this->urltable.id= $table.idurl order by $table.";
 $q .= $sortname == 'count' ? "itemscount asc" :"$sortname desc";
 if ($count > 0) $q .= " limit $count";
 $res = $this->db->query($q);
-return $this->res2array($res);
+$res->setFetchMode (PDO::FETCH_ASSOC);
+$result = array();
+foreach ($res as $item) {
+$id = $item['id'];
+$this->items[$id] = $item;
+$result[] = $id;
+}
+return $result;
 }
 
     $list = array();
@@ -265,11 +277,7 @@ return $this->res2array($res);
       $list = array_slice($list, 0, $count, true);
     }
 
-$result = array();
-foreach($list as $id => $val) {
-$result[] = $this->items[$id];
-}
-    return $result;
+return array_keys($list);
   }
   
   //Itemplate
@@ -319,7 +327,7 @@ if ($result == '') $result = $this->title;
     global $classes, $options, $urlmap;
 $result = '';
     if ($this->id == 0) {
-$result .= $this->GetSortedList($this->options->sortname, 0);
+$result .= $this->GetSortedList($this->sortname, 0);
 return sprintf("<ul>\n%s</ul>\n", $result);
     }
         $result .= $this->contents->getcontent($this->id);
@@ -333,7 +341,7 @@ $items = $db->res2array($res);
     $Posts = $classes->posts;
     $items = $Posts->sortbyposted($items);
 
-$lite = $this->options->lite;
+$lite = $this->lite;
       $postsperpage = $lite ? 1000 : $options->postsperpage;
       $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
 $theme = ttheme::instance();
@@ -344,12 +352,13 @@ $item = $this->getitem($this->id);
   }
   
   public function SetParams($lite, $sortname, $showcount, $maxcount) {
-$this->options = array(
-'lite' => $lite,
-'sortname' => $sortname,
-'showcount' => $showcount,
-'maxcount' => (int) $maxcount
-);
+    if (($lite != $this->lite) || ($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
+      $this->lite = $lite;
+      $this->sortname = $sortname;
+      $this->showcount = $showcount;
+      $this->maxcount = $maxcount;
+      $this->save();
+    }
   }
   
 }//class

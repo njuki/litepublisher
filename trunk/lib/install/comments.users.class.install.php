@@ -14,12 +14,6 @@ if (dbversion) {
 } else {
 }
 
-$self->options = array(
-'hidelink' => false,
-'redir' => true,
-'nofollow' => false
-);
-
   $urlmap = turlmap::instance();
   $urlmap->add('/comusers/', get_class($self), 'tree');
   

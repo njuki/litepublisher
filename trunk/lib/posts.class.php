@@ -25,6 +25,7 @@ $this->table = 'posts';
 $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent');
+    $this->data['recentcount'] = 10;
     if (!dbversion) $this->addmap('archives' , array());
   }
   
@@ -60,7 +61,6 @@ $t->post = tpost::instance();
 while ($res->fetch());
 }
 
-
 public function getcount() {
     if (dbversion) {
       return $this->db->getcount("status<> 'deleted'");
@@ -72,10 +72,10 @@ public function getcount() {
  public function GetWidgetContent($id, $sitebar) {
     global $options, $post;
     $theme = ttheme::instance();
-    $tml = $theme->getwidget('post', $sitebar);
+$tml = $theme->getwidgetitem('post');
     
     $result = '';
-    $list = $this->getrecent($options->recentcount);
+    $list = $this->getrecent($this->recentcount);
     foreach ($list as $id) {
       $post = tpost::instance($id);
 $result .= $theme->parse($tml);

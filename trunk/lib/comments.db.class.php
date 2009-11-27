@@ -116,6 +116,10 @@ where $db->post = $this->pid and pingback = true and $db->comusers.id = $db->com
 return false;
 }
 
+  public function GetCountApproved() {
+return $this->db->getcount("post = $this->pid and status = 'approved' and pingback = false");
+}
+
 }//class
 
 class tcomment extends tdata {

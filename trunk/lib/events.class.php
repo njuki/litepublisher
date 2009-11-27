@@ -25,7 +25,7 @@ class tevents extends tdata {
   }
   
   protected function create() {
-    if (!dbversion) $this->addmap('events', array());
+$this->addmap('events', array());
   }
   
   public function assignmap() {
@@ -75,12 +75,6 @@ class tevents extends tdata {
   
   private function getevents($name) {
     if (isset($this->events[$name])) return $this->events[$name];
-    if (dbversion) {
-      if ($res = $this->getdb('events')->select("owner = '$this->class' and name = '$name'")) {
-      $this->events[$name] = $res->fetchAll (PDO::FETCH_ASSOC);
-      return $this->events[$name];
-}
-    }
     return false;
   }
   
@@ -110,12 +104,8 @@ $result = call_user_func_array($call, $params);
   }
   
   private function eventdelete($name, $i) {
-    if (dbversion) {
-      $id =           $this->events[$name][$i]['id'];
-      $this->getdb('events')->iddelete($id);
-}
       array_splice($this->events[$name], $i, 1);
-      if(!dbversion) $this->save();
+$this->save();
     }
 
   public function eventsubscribe($name, $params) {
@@ -126,15 +116,11 @@ $list = $this->getevents($name);
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
 
-    $this->events[$name][] = array('class' => $params['class'], 'func' => $params['func']);
-    if (dbversion) {
-      $event = &$this->events[$name][count($this->events[$name]) - 1];
-      $event['name'] = $name;
-      $event['owner'] = get_class($this);
-      $event['id'] = $this->getdb('events')->add($event);
-    } else {
+    $this->events[$name][] = array(
+'class' => $params['class'],
+ 'func' => $params['func']
+);
       $this->save();
-    }
   }
   
   public function eventunsubscribe($name, $class) {
@@ -159,28 +145,15 @@ $list = $this->getevents($name);
   }
   
   public function unsubscribeclassname($class) {
-if (dbversion)  $this->getdb('events')->delete("owner = `$this->class` and class=`$class`");
-
     foreach ($this->events as $name => $events) {
       foreach ($events as $i => $item) {
         if ($item['class'] == $class) array_splice($this->events[$name], $i, 1);
       }
     }
 
-if (!dbversion) $this->save();
+$this->save();
 }
   
-public function getoptions() {
-global $options;
-if (!isset($options->data[$this->basename])) $options->data[$this->basename] = array();
-return new tarray2prop($options->data[$this->basename]);
-}
-
-public function setoptions($values) {
-global $options;
-$options->__set($this->basename, $values);
-}
-
 }//class
 
 ?>

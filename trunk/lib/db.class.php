@@ -35,9 +35,12 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
       die($e->getMessage());
     }
     $this->exec('SET NAMES utf8');
+
+/* lost performance
     $timezone = date('Z') / 3600;
     if ($timezone > 0) $timezone = "+$timezone";
     $this->exec("SET time_zone = '$timezone:00'");
+*/
   }
 
 public function __get ($name) {
@@ -211,7 +214,6 @@ return false;
     if ($res = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) {
 //      return $res->fetch(PDO::FETCH_ASSOC);
 $r =       $res->fetch(PDO::FETCH_ASSOC);
-var_dump($r);
 return $r;
     }
     return false;
@@ -262,7 +264,8 @@ return $this->update("$name = " . $this->quote($value), "id = $id");
   
   public function res2array($res) {
     $result = array();
-    while ($row = $res->fetch(PDO::FETCH_NUM)) {
+//    while ($row = $res->fetch(PDO::FETCH_NUM)) {
+foreach ($res as $row) {
       $result[] = $row[0];
     }
     return $result;
