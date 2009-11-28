@@ -35,45 +35,42 @@ return false;
 public function parse($filename, $theme) {
 $this->theme = $theme;
 $s = file_get_contents($filename);
-$this->parsemenu($s);
-$this->parsecontent($s);
-$theme->sitebarscount = $this->parsesitebars($s);
-$theme->main = $s;
+$this->parsemenu($this->parsetag($s, 'menu', '$template->menu'));
+$this->parsecontent($this->parsetag($s, 'content', '$template->content'));
+$this->parsesitebars($s);
+$theme->theme[0]= $s;
 }
 
-private function parsemenu(&$s) {
-$menu = &$this->theme->menu;
-$menus = $this->parsetag($s, 'menu', '$template->menu');
-$item = $this->parsetag($menus, 'item', '%s');
+private function parsemenu($s) {
+$menu = &$this->theme->data['menu'];
+$item = $this->parsetag($s, 'item', '%s');
 if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $menu['submenu'] = $submenu;
 $menu['item'] = $item;
-$menu['current'] = $this->parsetag($menus, 'current', '');
-$menu['menu'] = $menus;
+$menu['current'] = $this->parsetag($s, 'current', '');
+$menu[0] = $s;
 //hover
-if ($id = $this->getidtag('*', $menus)) {
+if ($id = $this->getidtag('*', $s)) {
 $menu['id'] = $id;
 preg_match('/\<(\w*?)\s/',$item, $t);
 $menu['tag'] = $t[1];
 }
+
 }
 
-private function parsecontent(&$s) {
-$theme = $this->theme;
-$content = $this->parsetag($s, 'content', '$template->content');
-$this->parse_excerpts($this->parsetag($content, 'excerpts', ''));
-$lite = $this->parsetag($content, 'lite', '');
+private function parsecontent($s) {
+$content = &$this->theme->data['content'];
+$this->parsepost($this->parsetag($s, 'post', ''));
+$this->parsenavi($this->parsetag($s, 'navi', ''));
+$this->parseadmin($this->parsetag($s, 'admin', ''));
+$this->parse_excerpts($this->parsetag($s, 'excerpts', ''));
+
+$lite = $this->parsetag($s, 'lite', '');
 $theme->excerpts['lite_excerpt'] = $this->parsetag($lite, 'excerpt', '%s');
 $theme->excerpts['lite'] = $lite;
 
-$this->parsepost($this->parsetag($content, 'post', ''));
-
-$theme->menucontent = $this->parsetag($content, 'menu', '');
-$theme->simplecontent = $this->parsetag($content, 'simplecontent', '');
-if ($theme->simplecontent == '') $theme->simplecontent  = '%s';
-$theme->nocontent = $this->parsetag($content, 'nocontent', '');
-if ($theme->nocontent == '') $theme->nocontent  = '$lang->nocontent';
-$this->parsenavi($this->parsetag($content, 'navi', ''));
-$this->parseadmin($this->parsetag($content, 'admin', ''));
+$content['menu']= $this->parsetag($s, 'menu', '');
+$content]'simple'] = $this->parsetag($s, 'simple', '');
+$content['notfound'] = $this->parsetag($s, 'notfound', '');
 }
 
 private function parse_excerpts($s) {
@@ -101,7 +98,8 @@ $theme->excerpts['normal'] = $s;
 }
 
 private function parsepost($s) {
-$post = &$this->theme->post;
+$this->theme->data['content']['post'] = array();
+$post = &$this->theme->data['content']['post'];
 
 $categories = $this->parsetag($s, 'categories', '$post->categorieslinks'); 
 $post['category'] = $this->parsetag($categories, 'category', '%s');
@@ -125,7 +123,8 @@ $post['prevnext'] = $prevnext;
 
 $this->parsecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
 
-$post['tml'] = $s;
+$post[0] = $s;
+return $s;
 }
 
 private function parsefiles($s) {
@@ -225,7 +224,7 @@ $widgets['comments'] = $comments;
 }
 
 if (empty($theme->widgets['comment'])) {
-$theme->widgets['comment'] = '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
+$theme->widgets['comment'] = '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $s...</li>';
 }
 
 if ($links =$this->parsetag($sitebar, 'links', '')) {

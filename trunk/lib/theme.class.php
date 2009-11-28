@@ -7,17 +7,15 @@
 **/
 
 class ttheme extends tevents {
-private $themeprops;
+public $themeprops;
 public static $name;
 //public $tml;
-public $excerpts;
-public $post;
-public $files;
-public $comments;
-public $navi;
+/*
 public $menu;
-public $widgets;
+public $content;
+public $sitebars;
 public $admin;
+*/
 
 public static function instance() {
 return getinstance(__class__);
@@ -32,22 +30,13 @@ self::$name = $template->theme . '.' . $template->tml;
 }
 $this->basename = 'themes' . DIRECTORY_SEPARATOR . self::$name;
 $this->data['tml'] = 'index';
-$this->data['main'] = '';
-$this->data['sitebarscount'] = 1;
-$this->data['post'] = '';
-$this->data['commentform'] = '';
-$this->data['menucontent'] = '';
-$this->data['simplecontent'] = '%s';
-$this->data['nocontent'] = '';
-
-$this->addmap('excerpts', array());
-$this->addmap('post', array());
-$this->addmap('comments', array());
-$this->addmap('navi', array());
+$this->data['theme'] = '';
+$this->data['menu'] = array();
+/*
 $this->addmap('menu', array());
-$this->addmap('widgets', array());$this->addmap('widgets', array());
-$this->addmap('admin', array());
-$this->addmap('files', array());
+$this->addmap('content', array());
+$this->addmap('sitebars', array());
+*/
 }
 
 public function load() {
@@ -62,7 +51,11 @@ $parser->parse("$template->path$template->tml.tml", $this);
 $this->save();
 }
 }
-/*
+
+public function __tostring() {
+return $this->theme;
+}
+
 public function __get($name) {
 if (is_array($this->data[$name])) {
 $this->themeprops->array = &$this->data[$name];
@@ -70,7 +63,7 @@ return $this->themeprops;
 }
 return parent::__get($name);
 }
-*/
+
 public static function parsecallback($names) {
 global $classes, $options;
 $name = $names[1];
