@@ -47,16 +47,16 @@ $template->head
   <div id="content">
 <!--content-->
 
-<!--simplecontent-->
+<!--simple-->
 <div class="simplecontent">%s</div>
-<!--/simplecontent-->
+<!--/simple-->
 
-<!--nocontent-->
+<!--notfound-->
 <div class="simplecontent">
 <h2 class="center">$lang->notfound </h2>
 <p class="center">$lang->nocontent</p>
 </div>
-<!--/nocontent-->
+<!--/notfound-->
 
 <!--excerpts-->
 <!--excerpt-->
@@ -115,7 +115,7 @@ $post->excerpt
 
 <!--tags-->
 			<span class="post-cat">$lang->tags: 
-<!--tag--><a href="$options->url$url" title="$title">$icon$title</a><!--/category-->
+<!--tag--><a href="$options->url$url" title="$title">$icon$title</a><!--/tag-->
 <!--divider-->; <!--/divider-->
 </span>
 <!--/tags-->
@@ -315,7 +315,7 @@ $menu->content
 <!--posts-->
   <div class="footer-recent-posts">
     <h4>%s</h4>
-	<ul>
+	<ul id="widgetposts">
 <!--item-->
     <li><strong><a href="$post->link" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></strong><br />
     <small>$post->localdate</small></li>
@@ -327,7 +327,7 @@ $menu->content
 <!--comments-->
     <div class="footer-recent-comments">
     <h4>%s</h4>
-	<ul>
+	<ul id="widgetcomments">
 %s
       </ul>
     </div>
