@@ -41,7 +41,7 @@ $db->comments.pingback = 'false' and
 $db->comusers.id = $db->comments.author and 
 $db->posts.id = $db->comments.post and 
 $db->urlmap.id = $db->posts.idurl 
-sort by $db->comments.posted desc limit $count");
+order by $db->comments.posted desc limit $count");
 while ($row = $res->fetch()) {
 $args->posturl = $row['posturl'];
     if ($options->commentpages) {

@@ -87,9 +87,13 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $co
   public function __set($name, $value) {
     if (method_exists($this, $set = "set$name")) return $this->$set($value);
     if (in_array($name, self::$arrayprops)) {
-$list = explode(',', $value);
-foreach ($list as $i => $value) $list[$i] = (int) trim($value);
-    $this->post->$name = $list;
+$list = array();
+foreach (explode(',', $value) as $i => $value) {
+$v = (int) trim($value);
+if ($v== 0) continue;
+$list[] = $v;
+}
+    $this->post->data[$name] = $list;
     } elseif (in_array($name, self::$intprops)) {
       $this->post->$name = (int) $value;
     } elseif (in_array($name, self::$boolprops)) {

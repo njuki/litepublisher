@@ -7,7 +7,7 @@
 **/
 
 class ttheme extends tevents {
-private $array2prop;
+private $themeprops;
 public static $name;
 //public $tml;
 public $excerpts;
@@ -25,7 +25,7 @@ return getinstance(__class__);
 
 protected function create() {
 parent::create();
-$this->array2prop = new tarray2prop($this->data);
+$this->themeprops = new tthemeprops($this->data);
 if (empty(self::$name)) {
 $template = ttemplate::instance();
 self::$name = $template->theme . '.' . $template->tml;
@@ -62,22 +62,20 @@ $parser->parse("$template->path$template->tml.tml", $this);
 $this->save();
 }
 }
-
 /*
 public function __get($name) {
 if (is_array($this->data[$name])) {
-$this->array2prop->array = &$this->data[$name];
-return $this->array2prop;
+$this->themeprops->array = &$this->data[$name];
+return $this->themeprops;
 }
 return parent::__get($name);
 }
-
 */
-
 public static function parsecallback($names) {
 global $classes, $options;
 $name = $names[1];
 $var = isset($GLOBALS[$name]) ? $GLOBALS[$name] : $classes->$name;
+//if (!isset($var)) echo "$name\n";
 try {
 return $var->{$names[2]};
     } catch (Exception $e) {
@@ -159,4 +157,22 @@ return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
 }
 
 }//class
+
+class tthemeprops {
+public $array;
+public function __construct(array &$array) { $this->array = &$array; }
+
+public function __get($name) { 
+if (is_array($this->array[$name])) {
+$this->array = &$this->array[$name];
+return $this;
+} 
+return $this->array[$name]; 
+}
+
+public function __set($name, $value) { $this->array[$name] = $value; }
+public function __tostring() { return $this->array[0]; }
+}//class
+
+
 ?>

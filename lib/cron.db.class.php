@@ -52,7 +52,7 @@ $this->table = 'cron';
     global $options;
     @ob_end_flush ();
     echo "<pre>\n";
-while ($item = $this->db->getassoc("date <= now() sort by date asc limit 1")) {
+while ($item = $this->db->getassoc("date <= now() order by date asc limit 1")) {
 extract($item);
 $arg = unserialize($arg);
 $this->log("task started:\n{$class}->{$func}");

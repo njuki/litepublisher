@@ -74,12 +74,12 @@ $result .= $theme->parse($theme->comments['closed']);
 
 private function getpingbacks($idpost) {
 global $comment;
-    $comments = tcomments::instance($postid);
+    $comments = tcomments::instance($idpost);
 if (dbversion) {
 $db = $comments->db;
 $items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
 where $db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'true' and $db->comusers.id = $db->comments.author
-sort by $db->comments.posted asc");
+order by $db->comments.posted asc");
 } else {
       $items = $comments->getapproved('pingback');
 }
@@ -111,7 +111,7 @@ $post = tpost::instance($idpost);
 $args = new targs();
 $args->hold = $hold;
 $args->from = $from;
-    $comments = tcomments::instance($postid);
+    $comments = tcomments::instance($idpost);
     $comment = new TComment($comments);
     $lang = tlocal::instance('comment');
 $theme = ttheme::instance();

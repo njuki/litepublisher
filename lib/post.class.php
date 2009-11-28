@@ -151,7 +151,7 @@ $args->icon = $icons->getlink($item['icon']);
 }
 $list[] = $theme->parsearg($tml[$name], $args);
     }
-$result = implode($tml[$name . 'divider'], $list);
+$result = implode($tml[$names . 'divider'], $list);
     return sprintf($theme->parse($tml[$names]), $result);
   }
   
@@ -204,7 +204,7 @@ if ($defaultid > 0) $this->data['categories '][] =  $dfaultid;
   
   //ITemplate
   public function request($id) {
-    parent::request($id);
+    parent::request((int) $id);
     if ($this->status != 'published') return 404;
   }
   
@@ -245,13 +245,13 @@ return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
 
 
 public function getscreenshots() {
-if (count($this->files) === 0) return '';
+if (count($this->files) == 0) return '';
 $files = tfiles::instance();
 return $files->getscreenshots($this->files);
 }
 
 public function getfilelist() {
-if (count($this->files) === 0) return '';
+if (count($this->files) == 0) return '';
 $files = tfiles::instance();
 return $files->getlist($this->files, false);
 }
@@ -281,7 +281,7 @@ $theme = ttheme::instance();
       $result .= $theme->parse($theme->post['prev']);
     }
     
-    if ($nextpost = $post->next) {
+    if ($nextpost = $this->next) {
       $result .= $theme->parse($theme->post['next']);
     }
     
@@ -295,6 +295,10 @@ return $tc->getcommentslink($this);
 }
 
 public function  gettemplatecomments() {
+//echo "<pre>\n";
+//var_dump($this->data);
+$this->commentscount = 1;
+$this->commentsenabled = true;
     if (($this->commentscount == 0) && !$this->commentsenabled) return '';
     if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
 $tc = ttemplatecomments::instance();
@@ -336,7 +340,7 @@ $theme = theme::instance();
 $result .= $theme->getpages($this->url, $urlmap->page, $this->countpages);
 }
 
-$post->aftercontent($this->id, &$result);
+$posts->aftercontent($this->id, &$result);
     return $result;
   }
   
@@ -409,11 +413,17 @@ return isset($this->data['pages']) ? count($this->data['pages']) : 1;
   }
   
   //db
+public function load() {
+if (dbversion)  return $this->LoadFromDB();
+return parent::load();
+}
+
   public function LoadFromDB() {
 global $db;
     if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
 where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
-      $res->fetch(PDO::FETCH_INTO , TPostTransform::instance($this));
+$res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));
+$res->fetch();
 return true;
     }
 return false;

@@ -104,7 +104,7 @@ return $this->db->getcount($where);
 public function getitems($where, $from, $count) {
 $db = $this->db;
 $res = $db->query("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
-where  $where sort by $db->comments.posted asc limit $from, $count");
+where  $where order by $db->comments.posted asc limit $from, $count");
 return $res->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -134,7 +134,7 @@ class tcomment extends tdata {
 if (!isset($id)) return false;
 parent::__construct();
 $this->table = 'comments';
-$this->setid($id);
+if (is_int($id)) $this->setid($id);
 }
 
 public function setid($id) {
