@@ -33,11 +33,10 @@ return false;
 }
   
 public function parse($filename, $theme) {
-$this->theme = $theme;
 $s = file_get_contents($filename);
-$this->parsemenu($this->parsetag($s, 'menu', '$template->menu'));
-$this->parsecontent($this->parsetag($s, 'content', '$template->content'));
-$this->parsesitebars($s);
+$theme->menu = $this->parsemenu($this->parsetag($s, 'menu', '$template->menu'));
+$theme->content = $this->parsecontent($this->parsetag($s, 'content', '$template->content'));
+$theme->sitebars = $this->parsesitebars($s);
 $theme->theme[0]= $s;
 }
 
@@ -58,19 +57,20 @@ $menu['tag'] = $t[1];
 }
 
 private function parsecontent($s) {
-$content = &$this->theme->data['content'];
-$this->parsepost($this->parsetag($s, 'post', ''));
-$this->parsenavi($this->parsetag($s, 'navi', ''));
-$this->parseadmin($this->parsetag($s, 'admin', ''));
-$this->parse_excerpts($this->parsetag($s, 'excerpts', ''));
+$result = array();
+$result['post']= $this->parsepost($this->parsetag($s, 'post', ''));
+$result['navi'] = $this->parsenavi($this->parsetag($s, 'navi', ''));
+$result['admin'] = $this->parseadmin($this->parsetag($s, 'admin', ''));
+$result['excerpts'] = $this->parse_excerpts($this->parsetag($s, 'excerpts', ''));
 
 $lite = $this->parsetag($s, 'lite', '');
 $theme->excerpts['lite_excerpt'] = $this->parsetag($lite, 'excerpt', '%s');
 $theme->excerpts['lite'] = $lite;
 
-$content['menu']= $this->parsetag($s, 'menu', '');
-$content]'simple'] = $this->parsetag($s, 'simple', '');
-$content['notfound'] = $this->parsetag($s, 'notfound', '');
+$result['menu']= $this->parsetag($s, 'menu', '');
+$result['simple'] = $this->parsetag($s, 'simple', '');
+$result['notfound'] = $this->parsetag($s, 'notfound', '');
+return $result;
 }
 
 private function parse_excerpts($s) {
@@ -97,42 +97,63 @@ $excerpts['excerpt'] = $excerpt;
 $theme->excerpts['normal'] = $s;
 }
 
+private function parsecommontags(&$s, $name, $replace) {
+if ($commontags = $this->parsetag($s, $name, $replace)) {
+$result = array();
+$result['item'] = $this->parsetag($commontags, 'item', '%s');
+$result['divider'] = $this->parsetag($commontags, 'divider', '');
+$result[0] = $commontags;
+return $result;
+}
+return false;
+}
+
 private function parsepost($s) {
-$this->theme->data['content']['post'] = array();
-$post = &$this->theme->data['content']['post'];
+$result = array();
+if ($commontags = $this->parsecommontags($s, 'commontags', '')) {
+$result['commontags'] = $commontags;
+}
 
-$categories = $this->parsetag($s, 'categories', '$post->categorieslinks'); 
-$post['category'] = $this->parsetag($categories, 'category', '%s');
-$post['categoriesdivider'] = $this->parsetag($categories, 'divider', '');
-$post['categories'] = $categories;
+if ($categories = $this->parsecommontags($s, 'categories', '$post->categorieslinks')) {
+$result['categories'] = $categories;
+} else {
+$result['categories'] = $commontags;
+$result['categories'][0] = str_replace('commontags', 'categories', $commontags[0]);
+}
 
-$tags = $this->parsetag($s, 'tags', '$post->tagslinks'); 
-$post['tag'] = $this->parsetag($tags, 'tag', '%s');
-$post['tagsdivider'] = $this->parsetag($tags, 'divider', '');
-$post['tags'] = $tags;
+if ($tags = $this->parsecommontags($s, 'tags', '$post->tagslinks')) {
+$result['tags'] = $tags;
+} else {
+$result['tags'] = $commontags;
+$result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
+}
 
-$post['more'] = $this->parsetag($s, 'more', '');
-$this->parsefiles($this->parsetag($s, 'files', '$post->filelist'));
-
-$post['rss'] = $this->parsetag($s, 'rss', '$post->rsscomments');
-
-$prevnext = $this->parsetag($s, 'prevnext', '$post->prevnext');
-$post['prev'] = $this->parsetag($prevnext, 'prev', '%s');
-$post['next'] = $this->parsetag($prevnext, 'next', '');
-$post['prevnext'] = $prevnext;
-
-$this->parsecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
-
-$post[0] = $s;
+$result['files'] = $this->parsefiles($this->parsetag($s, 'files', '$post->filelist'));
+$result['more'] = $this->parsetag($s, 'more', '');
+$result['rss'] = $this->parsetag($s, 'rss', '$post->rsscomments');
+$result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post->prevnext'));
+$result['comments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
+$result[0] = $s;
+echo "<pre>\n";
+var_dump($result);
+exit();
 return $s;
 }
 
 private function parsefiles($s) {
-$files = &$this->theme->files;
-$files['file'] = $this->parsetag($s, 'file', '%s');
-$files['image'] = $this->parsetag($s, 'image', '');
-$files['video'] = $this->parsetag($s, 'video', '');
-$files['files'] = $s;
+$result = array();
+$result['file'] = $this->parsetag($s, 'file', '%s');
+$result['image'] = $this->parsetag($s, 'image', '');
+$result['video'] = $this->parsetag($s, 'video', '');
+$result[0] = $s;
+return $result;
+}
+
+private function parseprevnext($s) {
+$result = array();
+$result['prev'] = $this->parsetag($s, 'prev', '%s');
+$result['next'] = $this->parsetag($s, 'next', '');
+$result[0] = $s; return $result;
 }
 
 private function parsenavi($s) {
@@ -151,26 +172,38 @@ $theme->admin['area'] = trim($this->parsetag($s, 'area', ''));
 $theme->admin['edit'] = trim($this->parsetag($s, 'edit', ''));
 }
 
+private function parsetemplatecomments($s) {
+$result = array();
+    $result['comments'] = $this->parsecomments($this->parsetag($s, 'comments', ''));
+    $result['pingbacks'] = $this->parsepingbacks($this->parsetag($s, 'pingbacks', ''));
+    $result['closed'] = $this->parsetag($s, 'closed', '');
+$result['form'] = $this->parsetag($s, 'form', '');
+$result['confirmform'] = $this->parsetag($s, 'confirmform', '');
+if ($result['confirmform'] == '') $result['confirmform'] = $this->getdefaultconfirmform();
+return $result;
+}
+
 private function parsecomments($s) {
-$theme = $this->theme;
-    $comments = $this->parsetag($s, 'comments', '');
-    $theme->comments['count'] = $this->parsetag($comments, 'count', '');
-    $comment = $this->parsetag($comments, 'comment', '%1$s');
-    $theme->comments['comments'] = $comments;
-    $theme->comments['class1'] = $this->parsetag($comment, 'class1', '$class');
-    $theme->comments['class2'] = $this->parsetag($comment, 'class2', '');
-    $theme->comments['hold'] = $this->parsetag($comment, 'hold', '$hold');
-    $theme->comments['comment'] = $comment;
-    
-    $pingbacks = $this->parsetag($s, 'pingbacks', '');
-    $theme->comments['pingback'] = $this->parsetag($pingbacks, 'pingback', '%1$s');
-    $theme->comments['pingbacks'] = $pingbacks;
-    
-    $theme->comments['closed'] = $this->parsetag($s, 'closed', '');
-$theme->comments['form'] = $this->parsetag($s, 'form', '');
-$theme->comments['confirmform'] = $this->parsetag($s, 'confirmform', '');
-if (empty($theme->comments['confirmform'])) {
-$theme->comments['confirmform'] = '<h2>$lang->formhead</h2>
+$result = array();
+    $result['count'] = $this->parsetag($s, 'count', '');
+    $comment = $this->parsetag($s, 'comment', '%1$s');
+    $result['class1'] = $this->parsetag($comment, 'class1', '$class');
+    $result['class2'] = $this->parsetag($comment, 'class2', '');
+    $result['hold'] = $this->parsetag($comment, 'hold', '$hold');
+    $result['comment'] = $comment;
+$result[0] = $s;
+return $result;
+}
+ 
+private function parsepingbacks($s) {
+   $result = array();
+    $result['pingback'] = $this->parsetag($s, 'pingback', '%1$s');
+    $result[0] = $s;
+return $result;
+}
+
+private function getdefaultconfirmform() {
+return '<h2>$lang->formhead</h2>
 <form name="preform" method="post" action="">
   <p><input type="submit" name="submit" value="$lang->robot"/></p>
 </form>
@@ -180,7 +213,6 @@ $theme->comments['confirmform'] = '<h2>$lang->formhead</h2>
   <p><input type="submit" name="submit" value="$lang->human"/></p>
 </form>';
  }
-}
 
 private function parsesitebars(&$s) {
 $theme = $this->theme;
