@@ -77,16 +77,8 @@ $post->excerpt
 <!--/screenshots-->
 	</div>
 		<div class="post-info">
-<!--categories-->			<span class="post-cat">$lang->categories: 
-<!--category--><a href="$options->url$url" title="$title">$icon$title</a><!--/category-->
-<!--divider-->; <!--/divider-->
-</span><!--/categories-->
-
-<!--tags-->			<span class="post-cat">$lang->tags: 
-<!--tag--><a href="$options->url$url" title="$title">$icon$title</a><!--/tag-->
-<!--divider-->; <!--/divider-->
-</span><!--/tags-->
-
+$post->categorieslinks
+$post->tagslinks
  <span class="post-comments">$post->commentslink</span>
 		</div>
 	</div>
@@ -105,21 +97,12 @@ $post->excerpt
 <!--post-->
     <div class="post" id="post-$post->id">
         <h2><a href="$post->link" rel="bookmark" title="$lang->permalink $post->title">$post->iconlink$post->title</a></h2>
-
-<!--categories-->
-			<span class="post-cat">$lang->categories: 
-<!--category--><a href="$options->url$url" title="$title">$icon$title</a><!--/category-->
+$post->categorieslinks
+$post->tagslinks
+<!--commontags-->			<span class="post-cat">$lang->commontags: 
+<!--item--><a href="$options->url$url" title="$title">$icon$title</a><!--/item-->
 <!--divider-->; <!--/divider-->
-</span>
-<!--/categories-->
-
-<!--tags-->
-			<span class="post-cat">$lang->tags: 
-<!--tag--><a href="$options->url$url" title="$title">$icon$title</a><!--/tag-->
-<!--divider-->; <!--/divider-->
-</span>
-<!--/tags-->
-
+</span><!--/commontags-->
 <span class="post-calendar">$post->localdate</span>
 		<div class="post-content">
 <!--files-->
