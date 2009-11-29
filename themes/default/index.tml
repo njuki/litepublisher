@@ -68,13 +68,13 @@ $template->head
 		<div class="post-content">
 $post->excerpt
 <!--more--><a href="$options->url$post->url#more-$post->id" class="more-link">$post->moretitle</a><!--/more-->
-<!--screenshots-->
+<!--previews-->
 <ul>
-<!--screenshot-->
+<!--preview-->
 <li><a href="$options->files$filename"><img src="$options->url$filename" title="$lang->screenshot $filename" /></a></li>
-<!--/screenshot-->
+<!--/preview-->
 </ul>
-<!--/screenshots-->
+<!--/previews-->
 	</div>
 		<div class="post-info">
 $post->categorieslinks
@@ -83,7 +83,6 @@ $post->tagslinks
 		</div>
 	</div>
 <!--/excerpt-->
-<!--/excerpts-->
 
 <!--lite-->
 <h1>$lang->archivelist</h1>
@@ -93,6 +92,7 @@ $post->tagslinks
 <!--/excerpt-->
 </ul>
 <!--/lite-->
+<!--/excerpts-->
 
 <!--post-->
     <div class="post" id="post-$post->id">
