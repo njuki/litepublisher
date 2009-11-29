@@ -7,7 +7,7 @@
 **/
 
 class ttheme extends tevents {
-public $themeprops;
+private $themeprops;
 public static $name;
 //public $tml;
 /*
@@ -32,6 +32,9 @@ $this->basename = 'themes' . DIRECTORY_SEPARATOR . self::$name;
 $this->data['tml'] = 'index';
 $this->data['theme'] = '';
 $this->data['menu'] = array();
+$this->data['content'] = array();
+$this->data['sitebars'] = array();
+
 /*
 $this->addmap('menu', array());
 $this->addmap('content', array());
@@ -57,11 +60,15 @@ return $this->theme;
 }
 
 public function __get($name) {
-if (is_array($this->data[$name])) {
+if (array_key_exists($name, $this->data) && is_array($this->data[$name])) {
 $this->themeprops->array = &$this->data[$name];
 return $this->themeprops;
 }
 return parent::__get($name);
+}
+
+public function getsitebarscount() {
+return count($this->data['sitebars']);
 }
 
 public static function parsecallback($names) {
@@ -81,6 +88,8 @@ return '';
     global $options, $template, $lang;
     $Template = ttemplate::instance();
     $lang = tlocal::instance();
+// important! $s can be an object of tthemeprops 
+// convert to string is automatic
 $s = str_replace('$options->url', $options->url, $s);
     try {
 return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
@@ -124,14 +133,14 @@ $posts->loaditems($items);
 }
 
 $result = '';
-$tml = $this->excerpts[$lite ? 'lite_excerpt' : 'excerpt'];
+$tml = $lite ? $this->content->excerpts->lite->excerpt : $this->content->excerpts->excerpt;
     foreach($items as $id) {
 $post = tpost::instance($id);
 $result .= $this->parse($tml);
 }
 
-$list  = $this->parse($this->excerpts[$lite ? 'lite' : 'normal']);
-return sprintf($list, $result);
+$tml = $lite ? $this->content->excerpts->lite : $this->content->excerpts;
+return sprintf($this->parse($tml), $result);
 }
   
 public function getwidget($title, $content, $template, $sitebar) {
@@ -140,12 +149,14 @@ return sprintf($tml, $title, $content);
   }
   
 public function getwidgettemplate($name, $sitebar) {
-if (!isset($this->widgets[$sitebar][$name])) $name = 'widget';
-return $this->widgets[$sitebar][$name];
+$sitebars = &$this->data['sitebars'];
+if (!isset($sitebars[$sitebar][$name])) $name = 'widget';
+return $sitebars[$sitebar][$name][0];
 }
 
-public function  getwidgetitem($name) {
-if (isset($this->widgets[$name])) return $this->widgets[$name];
+public function  getwidgetitem($name, $sitebarindex) {
+$sitebar = &$this->data['sitebars'][$sitebarindex];
+if (isset($sitebar[$name]['item'])) return $sitebar[$name]['item'];
 return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
 }
 
