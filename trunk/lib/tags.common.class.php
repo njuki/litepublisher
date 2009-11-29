@@ -84,15 +84,15 @@ if (!dbversion) parent::save();
     }
   }
   
-  public function getwidgetcontent($id) {
-return $this->GetSortedList($this->sortname, $this->maxcount);
+  public function getwidgetcontent($id, $sitebar) {
+return $this->GetSortedList($this->sortname, $this->maxcount, $sitebar);
 }
 
-private function GetSortedList($sortname, $count) {
+private function GetSortedList($sortname, $count, $sitebar) {
     global $options;
     $result = '';
 $theme = ttheme::instance();
-$tml = $theme->getwidgetitem('tag');
+$tml = $theme->getwidgetitem($this->basename, $sitebar);
 $showcount = $this->showcount;
         $Sorted = $this->getsorted($sortname, $count);
     foreach($Sorted as $id) {
@@ -335,7 +335,7 @@ if ($result == '') $result = $this->title;
     global $classes, $options, $urlmap;
 $result = '';
     if ($this->id == 0) {
-$result .= $this->GetSortedList($this->sortname, 0);
+$result .= $this->GetSortedList($this->sortname, 0, 0);
 return sprintf("<ul>\n%s</ul>\n", $result);
     }
         $result .= $this->contents->getcontent($this->id);

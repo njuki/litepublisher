@@ -20,7 +20,7 @@ $this->current = 0;
 $template = ttemplate::instance();
 $this->items = &$template->data['sitebars'];
 $theme = ttheme::instance();
-$this->count = &$theme->data['sitebarscount'];
+$this->count = $theme->sitebarscount;
 }
 
 public function save() {

@@ -71,10 +71,10 @@ public function getcount() {
     }
 }
 
- public function GetWidgetContent($id, $sitebar) {
+ public function getwidgetcontent($id, $sitebar) {
     global $options, $post;
     $theme = ttheme::instance();
-$tml = $theme->getwidgetitem('post');
+$tml = $theme->getwidgetitem('posts', $sitebar);
     
     $result = '';
     $list = $this->getrecent($this->recentcount);
