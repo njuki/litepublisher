@@ -195,7 +195,7 @@ return sprintf($tml, $options->url . $item['url'], $item['title'], $subnodes);
 public function getsubmenuwidget($id) {
 $result = '';
 $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('menu');
+    $tml = $theme->getwidgetitem('menu', 0);
 $tml .= "\n";
 // 1 вначале список подменю
 $submenu = '';
@@ -225,7 +225,7 @@ if ($hover) return $this->getsubmenu($this->tree);
 
     $result = '';
 $theme = ttheme::instance();
-    $tml = $theme->menu['item'];
+    $tml = $theme->menu->item;
     foreach ($this->tree as $item) {
       $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
     }
@@ -235,7 +235,7 @@ $theme = ttheme::instance();
 private function getsubmenu(&$tree) {
     $result = '';
 $theme = ttheme::instance();
-    $tml = $theme->menu['item'];
+    $tml = $theme->menu->item;
     foreach ($tree as $item) {
       $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
       $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
@@ -344,7 +344,7 @@ return $this->data['content'];
 global $menu;
 $menu = $this;
 $theme = ttheme::instance();
-    return $theme->parse($theme->menucontent);
+    return $theme->parse($theme->content->menu);
   }
 
 //itemplate2

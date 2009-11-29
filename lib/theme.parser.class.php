@@ -231,7 +231,7 @@ private function parsepingbacks($s) {
 return $result;
 }
 
-private function parsesitebars($s) {
+private function parsesitebars(&$s) {
 $result = array();
 while ($sitebar = $this->parsetag($s, 'sitebar', '$template->sitebar')) {
 $result[] = $this->parsesitebar($sitebar);
@@ -251,7 +251,7 @@ $widget['item'] = $item;
 } else {
 $widget['item'] = $this->GetDefaultWidgetItem($name);
 }
-$widgets[0] = $content;
+$widget[0] = $content;
 $result[$name] = $widget;
 }
 }

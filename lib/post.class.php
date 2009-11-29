@@ -260,7 +260,7 @@ return $files->getlist($this->files, false);
 global $post;
 $post = $this;
 $theme = ttheme::instance();
-    return $theme->parse($theme->post['tml']);
+    return $theme->parse($theme->content->post);
   }
 
 public function getrsscomments() {
@@ -268,7 +268,7 @@ global $post;
     if ($this->commentsenabled && ($this->commentscount > 0)) {
 $post = $this;
 $theme = ttheme::instance();
-return $theme->parse($theme->post['rss']);
+return $theme->parse($theme->content->post->rss);
 }
 return '';
 }
@@ -277,15 +277,16 @@ public function getprevnext() {
 global $prevpost, $nextpost;
     $result = '';
 $theme = ttheme::instance();
+$tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
-      $result .= $theme->parse($theme->post['prev']);
+      $result .= $theme->parse($tml->prev);
     }
     
     if ($nextpost = $this->next) {
-      $result .= $theme->parse($theme->post['next']);
+      $result .= $theme->parse($tml->next);
     }
     
-    if ($result != '') $result = sprintf($theme->parse($theme->post['prevnext']), $result);
+    if ($result != '') $result = sprintf($theme->parse($tml), $result);
 return $result;
 }
 
@@ -309,7 +310,7 @@ private function replacemore($content) {
 global $post;
 $post = $this;
 $theme = ttheme::instance();
-$more = $theme->parse($theme->post['more']);
+$more = $theme->parse($theme->content->post->more);
 $tag = '<!--more-->';
 if ($i =strpos($content, $tag)) {
 return str_replace($tag, $more, $content);

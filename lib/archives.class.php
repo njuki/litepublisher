@@ -28,7 +28,7 @@ $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('archives', $sitebar);
     foreach ($this->items as $date => $item) {
 $count = $this->showcount ? "({$item['count']})" : '';
-$result .= sprintf($tml, $options.url . $item['url'], $item['title'], $count);
+$result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
     }
     
     return $result;
