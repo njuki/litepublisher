@@ -21,14 +21,14 @@ class tarchives extends titems implements  itemplate {
     $this->data['showcount'] = false;
   }
   
-  public function getwidgetcontent($id) {
+  public function getwidgetcontent($id, $sitebar) {
     global $options;
     $result = '';
-    
+$theme = ttheme::instance();
+$tml = $theme->getwidgetitem('archives', $sitebar);
     foreach ($this->items as $date => $item) {
-  $result  .= "<li><a rel=\"archives\" href=\"$options->url{$item['url']}\">{$item['title']}</a>";
-    if ($this->showcount) $result .= "({$item['count']})";
-      $result .= "</li>\n";
+$count = $this->showcount ? "({$item['count']})" : '';
+$result .= sprintf($tml, $options.url . $item['url'], $item['title'], $count);
     }
     
     return $result;

@@ -101,7 +101,7 @@ return $result;
 }
 }
 
-private function getscreenshotitems(array $list) {
+private function getpreviewitems(array $list) {
 if (dbversion) {
 $res = $this->db->select(sprintf('parent in (%s)', implode(',', $list)));
 return $res->fetchAll(PDO::FETCH_ASSOC);
@@ -119,8 +119,8 @@ return $result;
 }
 }
 
-public function getscreenshots(array $list) {
-$items = $this->getscreenshotitems($list);
+public function getpreviews(array $list) {
+$items = $this->getpreviewitems($list);
 if (count($items) == 0) return '';
 $result = '';
 $theme = ttheme::instance();

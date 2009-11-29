@@ -135,7 +135,7 @@ return $this->getcommontagslinks('tags', 'tag', false);
 private function getcommontagslinks($names, $name, $excerpt) {
 global $classes;
 $theme = ttheme::instance();
-$tml = $excerpt ? $theme->excerpts : $theme->post;
+$tml = $excerpt ? $theme->content->excerpts->$names : $theme->content->post->$names;
     $tags= $classes->$names;
 $tags->loaditems($this->$names);
 $args = targs::instance();
@@ -149,10 +149,10 @@ $args->icon = '';
 $icons = ticons::instance();
 $args->icon = $icons->getlink($item['icon']);
 }
-$list[] = $theme->parsearg($tml[$name], $args);
+$list[] = $theme->parsearg($tml->item,  $args);
     }
-$result = implode($tml[$names . 'divider'], $list);
-    return sprintf($theme->parse($tml[$names]), $result);
+$result = implode($tml->divider, $list);
+    return sprintf($theme->parse($tml), $result);
   }
   
   public function getlocaldate() {
@@ -173,7 +173,7 @@ global $post;
     if ($this->moretitle == '') return '';
 $post = $this;
 $theme = ttheme::instance();
-return $theme->parse($theme->excerpts['more']);
+return $theme->parse($theme->content->excerpts->excerpt->more);
   }
   
    public function gettagnames() {
@@ -244,10 +244,10 @@ return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
 }
 
 
-public function getscreenshots() {
+public function getpreviews() {
 if (count($this->files) == 0) return '';
 $files = tfiles::instance();
-return $files->getscreenshots($this->files);
+return $files->getpreviews($this->files);
 }
 
 public function getfilelist() {

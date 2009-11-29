@@ -21,6 +21,7 @@ return getinstance(__class__);
     if(is_int($i = strpos($s, $opentag)) && ($j = strpos($s, $closetag))) {
       $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
       $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
+$s = str_replace("\n\n", "\n", $s);
     }
     return $result;
   }
@@ -34,67 +35,96 @@ return false;
   
 public function parse($filename, $theme) {
 $s = file_get_contents($filename);
+
+$s = str_replace("\r\n", "\n", $s);
+$s = str_replace("\r", "\n", $s);
+$s = str_replace("\n\n", "\n", $s);
+
 $theme->menu = $this->parsemenu($this->parsetag($s, 'menu', '$template->menu'));
 $theme->content = $this->parsecontent($this->parsetag($s, 'content', '$template->content'));
 $theme->sitebars = $this->parsesitebars($s);
-$theme->theme[0]= $s;
+$theme->theme= $s;
 }
 
 private function parsemenu($s) {
-$menu = &$this->theme->data['menu'];
+$result = array();
 $item = $this->parsetag($s, 'item', '%s');
-if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $menu['submenu'] = $submenu;
-$menu['item'] = $item;
-$menu['current'] = $this->parsetag($s, 'current', '');
-$menu[0] = $s;
+if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $result['submenu'] = $submenu;
+$result['item'] = $item;
+$result['current'] = $this->parsetag($s, 'current', '');
+$result[0] = $s;
 //hover
 if ($id = $this->getidtag('*', $s)) {
-$menu['id'] = $id;
+$result['id'] = $id;
 preg_match('/\<(\w*?)\s/',$item, $t);
-$menu['tag'] = $t[1];
+$result['tag'] = $t[1];
 }
-
+return $result;
 }
 
 private function parsecontent($s) {
 $result = array();
 $result['post']= $this->parsepost($this->parsetag($s, 'post', ''));
+$result['excerpts'] = $this->parse_excerpts($this->parsetag($s, 'excerpts', ''), $result['post']);
 $result['navi'] = $this->parsenavi($this->parsetag($s, 'navi', ''));
 $result['admin'] = $this->parseadmin($this->parsetag($s, 'admin', ''));
-$result['excerpts'] = $this->parse_excerpts($this->parsetag($s, 'excerpts', ''));
-
-$lite = $this->parsetag($s, 'lite', '');
-$theme->excerpts['lite_excerpt'] = $this->parsetag($lite, 'excerpt', '%s');
-$theme->excerpts['lite'] = $lite;
-
-$result['menu']= $this->parsetag($s, 'menu', '');
 $result['simple'] = $this->parsetag($s, 'simple', '');
 $result['notfound'] = $this->parsetag($s, 'notfound', '');
+$result['menu']= $this->parsetag($s, 'menu', '');
 return $result;
 }
 
-private function parse_excerpts($s) {
-$excerpts = &$this->theme->excerpts;
-$theme = $this->theme;
-$excerpt = $this->parsetag($s, 'excerpt', '%s');
+private function parse_excerpts($s, array &$post) {
+$result = array();
+$result['excerpt'] = $this->parse_excerpt($this->parsetag($s, 'excerpt', '%s'), $post);
+$result['lite'] = $this->parselite($this->parsetag($s, 'lite', ''));
+$result[0] = $s;
+return $result;
+}
 
-$categories = $this->parsetag($excerpt, 'categories', '$post->excerptcategories'); 
-$excerpts['category'] = $this->parsetag($categories, 'category', '%s');
-$excerpts['categorydivider'] = $this->parsetag($categories, 'divider', '');
-$excerpts['categories'] = $categories;
+private function parselite($s) {
+$result = array();
+$result['excerpt'] = $this->parsetag($s, 'excerpt', '%s');
+$result[0] = $s;
+return $result;
 
-$tags = $this->parsetag($excerpt, 'tags', '$post->excerpttags'); 
-$excerpts['tag'] = $this->parsetag($tags, 'tag', '%s');
-$excerpts['tagdivider'] = $this->parsetag($tags, 'divider', '');
-$excerpts['tags'] = $tags;
+}
 
-$excerpts['more'] = $this->parsetag($excerpt, 'more', '$post->morelink');
-$screenshots = $this->parsetag($excerpt, 'screenshots', '$post->screenshots');
-$theme->files['screenshot'] = $this->parsetag($screenshots, 'screenshot', '%s');
-$theme->files['screenshots'] = $screenshots;
+private function parse_excerpt($s, array &$post) {
+$result = array();
+if ($commontags = $this->parsecommontags($s, 'commontags', '')) {
+$result['commontags'] = $commontags;
+}
 
-$excerpts['excerpt'] = $excerpt;
-$theme->excerpts['normal'] = $s;
+if ($categories = $this->parsecommontags($s, 'categories', '$post->categorieslinks')) {
+$result['categories'] = $categories;
+} elseif ($commontags) {
+$result['categories'] = $commontags;
+$result['categories'][0] = str_replace('commontags', 'categories', $commontags[0]);
+} else {
+$result['categories'] = $post['categories'];
+}
+
+if ($tags = $this->parsecommontags($s, 'tags', '$post->tagslinks')) {
+$result['tags'] = $tags;
+} elseif ($commontags) {
+$result['tags'] = $commontags;
+$result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
+} else {
+$result['tags'] = $post['tags'];
+}
+
+$result['more'] = $this->parsetag($s, 'more', '$post->morelink');
+$result['previews'] = $this->parsepreviews($this->parsetag($s, 'previews', '$post->previews'));
+$result[0] = $s;
+return $result;
+}
+
+private function parsepreviews($s) {
+$result = array();
+$result['preview'] = $this->parsetag($s, 'preview', '%s');
+$result[0] = $s;
+return $result;
 }
 
 private function parsecommontags(&$s, $name, $replace) {
@@ -134,10 +164,7 @@ $result['rss'] = $this->parsetag($s, 'rss', '$post->rsscomments');
 $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post->prevnext'));
 $result['comments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
 $result[0] = $s;
-echo "<pre>\n";
-var_dump($result);
-exit();
-return $s;
+return $result;
 }
 
 private function parsefiles($s) {
@@ -157,19 +184,21 @@ $result[0] = $s; return $result;
 }
 
 private function parsenavi($s) {
-$theme = $this->theme;
-$theme->navi['prev'] = $this->parsetag($s, 'prev', '%s');
-$theme->navi['next'] = $this->parsetag($s, 'next', '');
-$theme->navi['link'] = $this->parsetag($s, 'link', '');
-$theme->navi['current'] = $this->parsetag($s, 'current', '');
-$theme->navi['divider'] = $this->parsetag($s, 'divider', '');
-$theme->navi['navi'] = $s;
+$result = array();
+$result['prev'] = $this->parsetag($s, 'prev', '%s');
+$result['next'] = $this->parsetag($s, 'next', '');
+$result['link'] = $this->parsetag($s, 'link', '');
+$result['current'] = $this->parsetag($s, 'current', '');
+$result['divider'] = $this->parsetag($s, 'divider', '');
+$result[0] = $s;
+return $result;
 }
 
 private function parseadmin($s) {
-$theme = $this->theme;
-$theme->admin['area'] = trim($this->parsetag($s, 'area', ''));
-$theme->admin['edit'] = trim($this->parsetag($s, 'edit', ''));
+$result = array();
+$result['area'] = trim($this->parsetag($s, 'area', ''));
+$result['edit'] = trim($this->parsetag($s, 'edit', ''));
+return $result;
 }
 
 private function parsetemplatecomments($s) {
@@ -202,78 +231,33 @@ private function parsepingbacks($s) {
 return $result;
 }
 
-private function getdefaultconfirmform() {
-return '<h2>$lang->formhead</h2>
-<form name="preform" method="post" action="">
-  <p><input type="submit" name="submit" value="$lang->robot"/></p>
-</form>
-
-<form name="form" method="post" action="">
-<input type="hidden" name="confirmid" value="$confirmid" />
-  <p><input type="submit" name="submit" value="$lang->human"/></p>
-</form>';
- }
-
-private function parsesitebars(&$s) {
-$theme = $this->theme;
-$index = 0;
+private function parsesitebars($s) {
+$result = array();
 while ($sitebar = $this->parsetag($s, 'sitebar', '$template->sitebar')) {
-$theme->widgets[$index] = array();
-$widgets = &$theme->widgets[$index];
-$widgets['widget'] = $this->parsetag($sitebar, 'widget', '');
-
-if ($categories =$this->parsetag($sitebar, 'categories', ''))  {
-if ($item = $this->parsetag($categories, 'item', '%s')) {
-$theme->widgets['tag'] = $item;
+$result[] = $this->parsesitebar($sitebar);
 }
-$widgets['categories'] = $categories;
+return $result;
 }
 
-if (empty($theme->widgets['tag'])) {
-$theme->widgets['tag'] = '<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
+private function parsesitebar($s) {
+$result = array();
+$result['widget'][0] = $this->parsetag($s, 'widget', '');
+
+foreach (array('categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
+if ($content =$this->parsetag($s, $name, ''))  {
+$widget = array();
+if ($item = $this->parsetag($content, 'item', '%s')) {
+$widget['item'] = $item;
+} else {
+$widget['item'] = $this->GetDefaultWidgetItem($name);
+}
+$widgets[0] = $content;
+$result[$name] = $widget;
+}
 }
 
-if ($archives =$this->parsetag($sitebar, 'archives', '')) $widgets['archives'] = $archives;
-if ($links =$this->parsetag($sitebar, 'links', '')) $widgets['links'] = $links;
-
-if ($posts =$this->parsetag($sitebar, 'posts', '')) {
-if ($item = $this->parsetag($posts, 'item', '%s')) {
-$theme->widgets['post'] = $item;
-}
-$widgets['posts'] = $posts;
-}
-
-if (empty($theme->widgets['post'])) {
-$theme->widgets['post'] = '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />
-    <small>$post->localdate</small></li>';
-}
-
-if ($comments =$this->parsetag($sitebar, 'comments', '')) {
-if ($item = $this->parsetag($comments, 'item', '%s')) {
-$theme->widgets['comment'] = $item;
-}
-$widgets['comments'] = $comments;
-}
-
-if (empty($theme->widgets['comment'])) {
-$theme->widgets['comment'] = '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $s...</li>';
-}
-
-if ($links =$this->parsetag($sitebar, 'links', '')) {
-if ($item = $this->parsetag($links, 'item', '%s')) {
-$theme->widgets['link'] = $item;
-}
-$widgets['links'] = $links;
-}
-
-if (empty($theme->widgets['link'])) {
-$theme->widgets['link'] = '<li><a href="$url" title="$title">$text</a></li>';
-}
-
-if ($meta =$this->parsetag($sitebar, 'meta', '')) $widgets['meta'] = $meta;
-$index++;
-}
-return $index;
+$result[0] = $s;
+return $result;
 }
 
 //manager
@@ -322,6 +306,41 @@ $template->save();
       $urlmap->clearcache();
   }
   
+private function getdefaultconfirmform() {
+return '<h2>$lang->formhead</h2>
+<form name="preform" method="post" action="">
+  <p><input type="submit" name="submit" value="$lang->robot"/></p>
+</form>
+
+<form name="form" method="post" action="">
+<input type="hidden" name="confirmid" value="$confirmid" />
+  <p><input type="submit" name="submit" value="$lang->human"/></p>
+</form>';
+ }
+
+private function GetDefaultWidgetItem($name) {
+switch ($name) {
+case 'categories':
+case  'tags':
+return '<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
+
+case 'archives':
+return '<li><a href="%1$s" rel="archives" title="%2$s">%2$s</a>%3$s</li>';
+
+case 'post':
+return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />     <small>$post->localdate</small></li>';
+
+case 'comments':
+return '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $s...</li>';
+
+case 'link':
+return '<li><a href="$url" title="$title">$text</a></li>';
+
+default:
+return '<li><a href="$url" title="$title">$text</a></li>';
+}
+}
+
 }//class
 
 ?>

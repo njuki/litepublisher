@@ -102,7 +102,7 @@ ttheme::$name .= '.' . $tml;
 
     $result = $this->httpheader();
     $theme = ttheme::instance();
-    $result  .= $theme->parse($theme->main);
+    $result  .= $theme->parse($theme->theme);
 
 if ($itemplate2) $context->afterrequest($result);
     return $result;
