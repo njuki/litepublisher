@@ -40,34 +40,37 @@ $post = tpost::instance($idpost);
     if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
 
-$args = new targs();
+$args = targs::instance();
 $theme = ttheme::instance();
+$tml = $theme->content->post->templatecomments->comments;
     $lang = tlocal::instance('comment');
     $comments = tcomments::instance($idpost);
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 if (dbversion) {
 $c = $comments->db->getcount("post = $idpost and status = 'approved' and pingback = 'false'");
-    $count = $this->getcount($c);
+    $args->count = $this->getcount($c);
 $db = $comments->db;
-$items = $comments->getitems("$db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and $db->comusers.id = $db->comments.author", $from, $options->commentsperpage);
+$items = $comments->getitems("$db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and 
+$db->comusers.id = $db->comments.author", $from, $options->commentsperpage);
 } else {
     $items = $comments->getapproved();
-    $count = $this->getcount(count($items));
+    $args->count = $this->getcount(count($items));
     if ($options->commentpages ) {
       $items = array_slice($items, $from, $options->commentsperpage, true);
     }
 }
 
     if (count($items)  > 0) {
-$result .= $theme->parsearg($theme->comments['count'], $args);
+$result .= $theme->parsearg($tml->count, $args);
       $result .= $this->getlist($items, $idpost, '', $from);
     }
-    
-    if ($urlmap->page == 1)  $result .= $this->getpingbacks($idpost);
+
+//    if ($urlmap->page == 1)  $result .= $this->getpingbacks($idpost);
+
     if (!$options->commentsdisabled && $post->commentsenabled) {
       $result .=  "<?php  echo tcommentform::printform($idpost); ?>\n";
     } else {
-$result .= $theme->parse($theme->comments['closed']);
+$result .= $theme->parse($theme->content->post->templatecomments->closed);
     }
     return $result;
   }
@@ -90,7 +93,7 @@ order by $db->comments.posted asc");
     $comment = new TComment($comments);
     $lang = tlocal::instance('comment');
 $theme = ttheme::instance();
-    $comtempl = $theme->comments['pingback'];
+$tml = $theme->content->post->templatecomments->pingbacks->pingback;
     foreach  ($items as $iddata) {
 //трюк: в бд items это комменты целиком, а в файлах только id
 if (dbversion)  {
@@ -98,26 +101,24 @@ if (dbversion)  {
 } else {
       $comment->id = $iddata;
 }
-$result .= $theme->parse($comtempl);
+$result .= $theme->parse($tml);
     }
     
-    return sprintf($theme->comments['pingbacks'], $result);
+    return sprintf($theme->content->post->templatecomments->pingbacks, $result);
 }
 
   private function getlist(array &$items, $idpost, $hold, $from) {
     global $comment, $post;
     $result = '';
 $post = tpost::instance($idpost);
-$args = new targs();
+$args = targs::instance();
 $args->hold = $hold;
 $args->from = $from;
     $comments = tcomments::instance($idpost);
     $comment = new TComment($comments);
     $lang = tlocal::instance('comment');
 $theme = ttheme::instance();
-    $comtempl = $theme->comments['comment'];
-    $class1 = $theme->comments['class1'];
-    $class2 = $theme->comments['class2'];
+$tml = $theme->content->post->templatecomments->comments->comment;
     $i = 1;
     foreach  ($items as $iddata) {
 //трюк: в бд items это комменты целиком, а в файлах только id
@@ -126,11 +127,11 @@ if (dbversion)  {
 } else {
       $comment->id = $iddata;
 }
-      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
-$result .= $theme->parsearg($comtempl, $args);
+      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
+$result .= $theme->parsearg($tml, $args);
     }
     
-    return sprintf($theme->comments['comments'], $result, $from + 1);
+    return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);
   }
   
   public function gethold(array &$items, $idpost) {

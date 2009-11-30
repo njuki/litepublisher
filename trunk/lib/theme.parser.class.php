@@ -162,7 +162,7 @@ $result['files'] = $this->parsefiles($this->parsetag($s, 'files', '$post->fileli
 $result['more'] = $this->parsetag($s, 'more', '');
 $result['rss'] = $this->parsetag($s, 'rss', '$post->rsscomments');
 $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post->prevnext'));
-$result['comments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
+$result['templatecomments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
 $result[0] = $s;
 return $result;
 }
@@ -215,11 +215,16 @@ return $result;
 private function parsecomments($s) {
 $result = array();
     $result['count'] = $this->parsetag($s, 'count', '');
-    $comment = $this->parsetag($s, 'comment', '%1$s');
-    $result['class1'] = $this->parsetag($comment, 'class1', '$class');
-    $result['class2'] = $this->parsetag($comment, 'class2', '');
-    $result['hold'] = $this->parsetag($comment, 'hold', '$hold');
-    $result['comment'] = $comment;
+$result['comment'] = $this->parsecomment($this->parsetag($s, 'comment', '%1$s'));
+$result[0] = $s;
+return $result;
+}
+
+private function parsecomment($s) {
+$result = array();
+    $result['class1'] = $this->parsetag($s, 'class1', '$class');
+    $result['class2'] = $this->parsetag($s, 'class2', '');
+    $result['hold'] = $this->parsetag($s, 'hold', '$hold');
 $result[0] = $s;
 return $result;
 }

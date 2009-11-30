@@ -94,7 +94,7 @@ $args = targs::instance();
 
     if (!empty($_COOKIE["userid"])) {
       $comusers = tcomusers::instance();
-      if ($user = $users->GetItemFromCookie($_COOKIE['userid'])) {
+      if ($user = $comusers->GetItemFromCookie($_COOKIE['userid'])) {
         $args->name = $user['name'];
         $args->email = $user['email'];
         $args->url = $user['url'];

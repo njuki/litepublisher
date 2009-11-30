@@ -83,8 +83,8 @@ return false;
 }
 
 public function request($arg) {
-global $options, $urlmap;
-$name = $urlmap->argtree;
+global $options;
+$name = isset($_GET['name']) ? $$_GET['name'] : '';
 if (!isset($this->items[$name])) return 404;
 $result = "<?php 
     @header('Content-Type: text/html; charset=utf-8');
@@ -102,7 +102,7 @@ if (!($name = $this->getname($id))) return '';
 $result = '';
 $title = $this->items[$name]['title'];
 if ($this->items[$name]['ajax']) {
-$title = "<a onclick=\"loadcontent('widget$name', '$options->url/stdwidget/$name/')\">$title</a>";
+$title = "<a onclick=\"loadcontent('widget$name', '$options->url/stdwidget.htm{$options->q}name=$name')\">$title</a>";
 $content = '';
 } elseif ($name == 'comments') {
 $content = "\n<?php @include(\$GLOBALS['paths']['cache']. 'widget$id.php'); ?>\n";

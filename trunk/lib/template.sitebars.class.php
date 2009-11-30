@@ -62,17 +62,19 @@ if (file_exists($file)) {
 $result = file_get_contents($file);
 } else {
 $result = $this->getcontent($this->current);
+//если закончились сайтбары, то остатки объеденить
+    if ($this->count == $this->current + 1) {
+for ($i = $this->current + 1; $i < count($this->items); $i++) {
+$result .= $this->getcontent($i);
+}
+}
+
 file_put_contents($file, $result);
 }
 $template->onsitebar(&$result, $this->current++);
-//если закончились сайтбары, то остатки объеденить
-    if ($this->count == $this->current) {
-while ($this->current < count($this->items)) $result .= $this->getcurrent();
-   }
-
 return $result;
 }
-
+	
 public function find($idwidget) {
 foreach ($this->items as $i => $widgets) {
 if (in_array($idwidget, $widgets)) return $i;

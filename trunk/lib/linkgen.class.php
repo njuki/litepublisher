@@ -17,9 +17,9 @@ class tlinkgenerator extends tevents {
     parent::create();
     $this->basename = 'linkgenerator';
     $this->data= array_merge($this->data, array(
-'post' => '/[title]/',
-'tag' => '/tag/[title]/',
-'category' => '/category/[title]/',
+'post' => '/[title].htm',
+'tag' => '/tag/[title].htm',
+'category' => '/category/[title].htm',
 'archive' => '/[year]/[month]/',
 'file' => '/[medium]/[filename]/',
 ));
