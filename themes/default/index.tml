@@ -140,7 +140,7 @@ $post->content
 			<cite>$comment->authorlink</cite> $lang->says: 
 <!--hold--><em>$lang->hold</em><!--/hold--> <br />
 			<small class="commentmetadata"><a href="#comment-$comment->id" title="">$comment->localdate $lang->attime $comment->time</a></small>
-<p id="commentcontent->$comment->id">
+<p id="commentcontent-$comment->id">
 $comment->content
 </p>
 		</li>
