@@ -2,31 +2,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>$template->title</title>
-<link rel="stylesheet" href="$template->url/style.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="$template->url/print.css" type="text/css" media="print" />
-<link rel="alternate" type="application/rss+xml" title="$options->name RSS Feed" href="$options->url/rss/" />
-<link rel="pingback" href="$options->url/rpc.xml" />
- <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options->url/rsd.xml" />
-<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options->url/wlwmanifest.xml" />
-<link rel="meta" type="application/rdf+xml" title="FOAF" href="$options->url/foaf.xml" />
-<link rel="shortcut icon" type="image/x-icon" href="$template->icon" />
-<meta name="generator" content="Lite Publisher $options->version" /> <!-- leave this for stats -->
-<meta name="keywords" content="$template->keywords" />
-<meta name="description" content="$template->description" />
-<link rel="sitemap" href="$options->url/sitemap/" />
-<link rel="openid.server" href="$options->url/openid/" />
-<link rel="openid2.provider" href="$options->url/openid/" />
-<link rel="openid.delegate" href="$options->url/openid/" />
-<link rel="openid2.local_id" href="$options->url/openid/" />
-$template->head
+<title>$template.title</title>
+<link rel="stylesheet" href="$template.url/style.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="$template.url/print.css" type="text/css" media="print" />
+<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss/" />
+<link rel="pingback" href="$options.url/rpc.xml" />
+ <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
+<link rel="meta" type="application/rdf+xml" title="FOAF" href="$options.url/foaf.xml" />
+<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
+<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
+<meta name="keywords" content="$template.keywords" />
+<meta name="description" content="$template.description" />
+<link rel="sitemap" href="$options.url/sitemap/" />
+<link rel="openid.server" href="$options.url/openid/" />
+<link rel="openid2.provider" href="$options.url/openid/" />
+<link rel="openid.delegate" href="$options.url/openid/" />
+<link rel="openid2.local_id" href="$options.url/openid/" />
+$template.head
 </head>
 <body>
   <div id="header">
     <div id="logo">
      <div id="headerimg">
-	  <div class="indent"><h1><a href="$options->url$options->home">$options->name</a></h1></div>
-	  <div class="description">$options->description</div>
+	  <div class="indent"><h1><a href="$options.url$options.home">$options.name</a></h1></div>
+	  <div class="description">$options.description</div>
 	</div>
 	<div id="navi">
 <!--menu-->
@@ -53,77 +53,77 @@ $template->head
 
 <!--notfound-->
 <div class="simplecontent">
-<h2 class="center">$lang->notfound </h2>
-<p class="center">$lang->nocontent</p>
+<h2 class="center">$lang.notfound </h2>
+<p class="center">$lang.nocontent</p>
 </div>
 <!--/notfound-->
 
 <!--excerpts-->
 <!--excerpt-->
-<div class="post" id="post-$post->id">
+<div class="post" id="post-$post.id">
 	  <div class="entry">
-        <h2><a href="$post->link" rel="bookmark" title="$lang->permalink $post->title">$post->iconlink$post->title</a></h2>
-		<span>$lang->posted $post->localdate</span>
+        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
+		<span>$lang.posted $post.date</span>
 	  </div>
 		<div class="post-content">
-$post->excerpt
-<!--more--><a href="$options->url$post->url#more-$post->id" class="more-link">$post->moretitle</a><!--/more-->
+$post.excerpt
+<!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
 <!--previews-->
 <ul>
 <!--preview-->
-<li><a href="$options->files$filename"><img src="$options->url$filename" title="$lang->screenshot $filename" /></a></li>
+<li><a href="$options.files$filename"><img src="$options.url$filename" title="$lang.screenshot $filename" /></a></li>
 <!--/preview-->
 </ul>
 <!--/previews-->
 	</div>
 		<div class="post-info">
-$post->categorieslinks
-$post->tagslinks
- <span class="post-comments">$post->commentslink</span>
+$post.categorieslinks
+$post.tagslinks
+ <span class="post-comments">$post.commentslink</span>
 		</div>
 	</div>
 <!--/excerpt-->
 
 <!--lite-->
-<h1>$lang->archivelist</h1>
+<h1>$lang.archivelist</h1>
 <ul>
 <!--excerpt-->
-<li>$post->localdate <a href="$options->url$post->url" title="$lang->permalink $post->title">$post->title</a></li>
+<li>$post.date <a href="$options.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>
 <!--/excerpt-->
 </ul>
 <!--/lite-->
 <!--/excerpts-->
 
 <!--post-->
-    <div class="post" id="post-$post->id">
-        <h2><a href="$post->link" rel="bookmark" title="$lang->permalink $post->title">$post->iconlink$post->title</a></h2>
-$post->categorieslinks
-$post->tagslinks
-<!--commontags-->			<span class="post-cat">$lang->commontags: 
-<!--item--><a href="$options->url$url" title="$title">$icon$title</a><!--/item-->
+    <div class="post" id="post-$post.id">
+        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
+$post.categorieslinks
+$post.tagslinks
+<!--commontags-->			<span class="post-cat">$lang.commontags: 
+<!--item--><a href="$options.url$url" title="$title">$icon$title</a><!--/item-->
 <!--divider-->; <!--/divider-->
 </span><!--/commontags-->
-<span class="post-calendar">$post->localdate</span>
+<span class="post-calendar">$post.date</span>
 		<div class="post-content">
 <!--files-->
 <ul>
-<!--file--><li><a href="$options->files$filename" title="$title">$description</a></li><!--/file-->
-<!--image--><li><a href="$options->files$filename"><img src="$options->files$filename" alt="$title" width="$width" height="$height" /></a></li><!--/image-->
+<!--file--><li><a href="$options.files$filename" title="$title">$description</a></li><!--/file-->
+<!--image--><li><a href="$options.files$filename"><img src="$options.files$filename" alt="$title" width="$width" height="$height" /></a></li><!--/image-->
 <!--video--><!--/video-->
 </ul>
 <!--/files-->
 
-<!--more--><a name="more-$post->id"></a><!--/more-->
+<!--more--><a name="more-$post.id"></a><!--/more-->
 
-$post->content
+$post.content
 
-<!--rss--><h2><a href="$post->rsslink" title="$lang->commentsrss">$lang->commentsrss</a></h2><!--/rss-->
+<!--rss--><h2><a href="$post.rsslink" title="$lang.commentsrss">$lang.commentsrss</a></h2><!--/rss-->
 
 <!--prevnext-->
 <p>
-<!--prev-->$lang->prev <a rel="prev" href="$prevpost->link" title="$lang->permalink $prevpost->title">$prevpost->title</a><!--/prev-->
+<!--prev-->$lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a><!--/prev-->
 |
-<!--next-->$lang->next <a rel="next" href="$nextpost->link" title="$lang->permalink $nextpost->title">$nextpost->title</a><!--/next-->
+<!--next-->$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a><!--/next-->
 </p>
 <!--/prevnext-->
 
@@ -131,17 +131,17 @@ $post->content
 <!--templatecomments-->
 <!--comments-->
 <!--count-->
-<h3 id="comments">$count $lang->topost &#8220;$post->title&#8221;</h3> 
+<h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3> 
 <!--/count-->
 	<ol class="commentlist" start="%2$d">
 <!--comment-->
-		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment->id">
-   <a name="comment-$comment->id"></a>
-			<cite>$comment->authorlink</cite> $lang->says: 
-<!--hold--><em>$lang->hold</em><!--/hold--> <br />
-			<small class="commentmetadata"><a href="#comment-$comment->id" title="">$comment->localdate $lang->attime $comment->time</a></small>
-<p id="commentcontent-$comment->id">
-$comment->content
+		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
+   <a name="comment-$comment.id"></a>
+			<cite>$comment.authorlink</cite> $lang.says: 
+<!--hold--><em>$lang.hold</em><!--/hold--> <br />
+			<small class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></small>
+<p id="commentcontent-$comment.id">
+$comment.content
 </p>
 		</li>
 <!--/comment-->
@@ -149,52 +149,52 @@ $comment->content
 <!--/comments-->
 
 <!--pingbacks-->
-	<h3 id="comments">$lang->pingbacks</h3>
+	<h3 id="comments">$lang.pingbacks</h3>
 	<ol class="commentlist" start="1">
 <!--pingback-->
-<li class="alt" id="comment-$comment->id">
-			<cite>$comment->authorlink</cite>
+<li class="alt" id="comment-$comment.id">
+			<cite>$comment.authorlink</cite>
 		</li>
 <!--/pingback-->
  </ol>
 <!--/pingbacks-->
 
 <!--closed-->
-<p class="nocomments">$lang->closed</p>
+<p class="nocomments">$lang.closed</p>
 <!--/closed-->
 
 <!--form-->
-<h3 id="respond">$lang->leavereply</h3>
-<form action="$options->url/send-comment.php" method="post" id="commentform">
+<h3 id="respond">$lang.leavereply</h3>
+<form action="$options.url/send-comment.php" method="post" id="commentform">
 <p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
-<label for="name"><strong>$lang->name</strong></label></p>
+<label for="name"><strong>$lang.name</strong></label></p>
 
 <p><input type="text" name="email" id="email" value="$email" size="22" tabindex="2" />
-<label for="email"><strong>$lang->email</strong></label></p>
+<label for="email"><strong>$lang.email</strong></label></p>
 
 <p><input type="text" name="url" id="url" value="$url" size="22" tabindex="3" />
-<label for="url"><strong>$lang->url</strong></label></p>
+<label for="url"><strong>$lang.url</strong></label></p>
 
 <p><input type="checkbox" name="subscribe" id="subscribe" checked="$subscribe" size="22" tabindex="4" />
-<label for="subscribe"><strong>$lang->subscribe</strong></label></p>
+<label for="subscribe"><strong>$lang.subscribe</strong></label></p>
 
 <p><textarea name="content" id="comment" cols="100%" rows="10" tabindex="5"></textarea></p>
 
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
 
-<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang->send" />
+<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" />
 </form>
 <!--/form-->
 <!--confirmform-->
-<h2>$lang->formhead</h2>
+<h2>$lang.formhead</h2>
 <form name="preform" method="post" action="">
-  <p><input type="submit" name="submit" value="$lang->robot"/></p>
+  <p><input type="submit" name="submit" value="$lang.robot"/></p>
 </form>
 
 <form name="form" method="post" action="">
 <input type=hidden name="confirmid" value="$confirmid" />
-  <p><input type="submit" name="submit" value="$lang->human"/></p>
+  <p><input type="submit" name="submit" value="$lang.human"/></p>
 </form>
 <!--/confirmform-->
 <!--/templatecomments-->
@@ -212,10 +212,10 @@ $comment->content
 <!--/navi-->
 
 <!--menu-->
-    <div class="post" id="menu-$menu->id">
-        <h2>$menu->title</h2>
+    <div class="post" id="menu-$menu.id">
+        <h2>$menu.title</h2>
         <div class="post-content">
-$menu->content
+$menu.content
         </div>
     </div>
 <!--/menu-->
@@ -236,7 +236,7 @@ $menu->content
   </div>
 
 <div id="sidebar">
-  <a href="$options->url/rss/"><img src="$template->url/images/rss-icon.png" alt="$lang->subscriberss" border="0" /></a>
+  <a href="$options.url/rss/"><img src="$template.url/images/rss-icon.png" alt="$lang.subscriberss" border="0" /></a>
 <ul>
 <!--sitebar-->
 
@@ -300,8 +300,8 @@ $menu->content
     <h4>%s</h4>
 	<ul id="widgetposts">
 <!--item-->
-    <li><strong><a href="$post->link" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></strong><br />
-    <small>$post->localdate</small></li>
+    <li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
+    <small>$post.date</small></li>
 <!--/item-->
       </ul>
     </div>
@@ -323,10 +323,10 @@ $menu->content
 
 <div id="credits">
 	<div class="alignleft">
-$template->footer
+$template.footer
 </div> 
 	<div class="alignright">
-<a href="$options->url$options->home">$options->name</a>
+<a href="$options.url$options.home">$options.name</a>
 </div>
 </div>
   
