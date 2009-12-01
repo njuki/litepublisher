@@ -15,13 +15,21 @@ return getinstance(__class__);
 protected function create() {
 parent::create();
 $this->basename = 'commentswidget';
+$this->data['recentcount'] =  7;
 }
 
- public function GetWidgetContent($id) {
+public function setrecentcount($value) {
+if ($value != $this->recentcount) {
+$this->data['recentcount'] = $recentcount;
+$this->save();
+}
+}
+
+ public function getwidgetcontent($id, $$sitebar) {
     global $options, $classes;
     $result = '';
 $theme = ttheme::instance();
-$tml = $theme->getwidgetitem('comment');
+$tml = $theme->getwidgetitem('comments', $sitebar);
 $manager = $classes->commentmanager;
     $count = $manager->recentcount;
 $args = targs::instance();

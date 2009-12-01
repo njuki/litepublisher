@@ -105,17 +105,16 @@ $result .= $html->stditem($args);
       $archives = tarchives::instance();
       $args->showcountarch = $archives->showcount;
 
-            $catsoptions = $classes->categories->options;
-      $args->showcountcats = $catsoptions->showcount;
-      $args->catscombo= $this->getcombosortname('sortnamecats', $catsoptions->sortname);
+      $args->showcountcats = $classes->categories->showcount;
+      $args->catscombo= $this->getcombosortname('sortnamecats', $classes->categories->sortname);
       
-      $tagsoptions = $classes->tags->options;
-      $args->showcounttags = $tagsoptions->showcount;
-$args->maxcount = $tagsoptions->maxcount;
-      $args->tagscombo= $this->getcombosortname('sortnametags', $tagsoptions->sortname);
+      $args->showcounttags = $classes->tags->showcount;
+$args->maxcount = $classes->tags->maxcount;
+      $args->tagscombo= $this->getcombosortname('sortnametags', $classes->tags->sortname);
 
-$args->postscount = $classes->posts->options->recentcount;
-$args->commentscount = $classes->commentmanager->options->recentcount;
+$args->postscount = $classes->posts->recentcount;
+$commentswidget  = tcommentswidget::instance();
+$args->commentscount = $commentswidget->recentcount;
 
       $links = tlinkswidget::instance();
       $args->linksredir = $links->redir;
@@ -265,17 +264,21 @@ return $h2->stdsuccess;
       }
 
 $options->lock();
-            $catsoptions = $classes->categories->options;
-$catsoptions ->sortname = $sortnamecats;
-$catsoptions->showcount = isset($showcountcats);
 
-      $tagsoptions = $classes->tags->options;
-$tagsoptions ->sortname = $sortnametags;
-$tagsoptions->showcount = isset($showcounttags);
-$tagsoptions->maxcount = maxcount;
+$classes->categories->sortname = $sortnamecats;
+$classes->categories->showcount = isset($showcountcats);
+classes->categories->save();
 
-$classes->posts->options->recentcount = $postscount;
-$classes->commentmanager->options->recentcount = $commentscount;
+$classes->tags->sortname = $sortnametags;
+$classes->tags->showcount = isset($showcounttags);
+$classes->tags->maxcount = maxcount;
+$classes->tags->save();
+
+$classes->posts->recentcount = $postscount;
+$classes->posts->save();
+
+$commentswidget = tcommentswidget::instance();
+$commentswidget->recentcount = $commentscount;
 
       $links = tlinkswidget::instance();
 $links->redir = isset($linksredir);
@@ -284,8 +287,7 @@ $links->save();
       $foaf = tfoaf::instance();
 $foaf->redir = isset($foafredir);
 $options->unlock();
-      
-return $h2->stdoptsucces;
+      return $h2->stdoptsucces;
      
       case 'links':
       $links = TLinksWidget::instance();

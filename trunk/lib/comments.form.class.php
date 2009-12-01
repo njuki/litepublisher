@@ -174,12 +174,11 @@ return $result;
     if (!$this->CheckSpam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
     if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
     if (empty($values['name'])) return tsimplecontent::content($lang->emptyname);
-    if (!TContentFilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
+    if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
     if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
     if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
     //check duplicates
-    $comments = tcomments::instance($post->id);
-    if ($comments->IndexOfRawContent($values['content']) >= 0) return tsimplecontent::content($lang->duplicate);
+    if ($classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance();

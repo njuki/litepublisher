@@ -22,7 +22,6 @@ class TAbstractCommentManager extends titems {
     parent::create();
     $this->basename = 'commentmanager';
     $this->addevents('edited', 'changed', 'approved');
-$this->data['recentcount'] =  7;
 $this->data['SendNotification'] =  true;
   }
 
