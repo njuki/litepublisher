@@ -77,5 +77,20 @@ extract($res->fetch());
     return true;
 }
 
+
+public function checkduplicate($idpost, $content) {
+global $classes;
+$content = trim($content);
+if (dbversion) {
+global $db;
+$db->table = $classes->commentmanager->rawtable;
+$hash = md5($content);
+return $db->findid("hash = '$hash'";
+ } else {
+$comments = tcomments(/$postid);
+    return $comments->IndexOf('rawcontent', $content) > 0;
+}
+}
+
 }//class
 ?>

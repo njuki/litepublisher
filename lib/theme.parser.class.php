@@ -256,7 +256,7 @@ private function parsesitebar($s) {
 $result = array();
 $result['widget'][0] = $this->parsetag($s, 'widget', '');
 
-foreach (array('categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
+foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
 if ($content =$this->parsetag($s, $name, ''))  {
 $widget = array();
 if ($item = $this->parsetag($content, 'item', '%s')) {
@@ -333,6 +333,7 @@ return '<h2>$lang->formhead</h2>
 
 private function GetDefaultWidgetItem($name) {
 switch ($name) {
+case 'submenu':
 case 'categories':
 case  'tags':
 return '<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';

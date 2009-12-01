@@ -167,7 +167,7 @@ global $classes, $paths;
     if ($this->dbversion) {
 $idurl = $this->db->getvalue($id, 'idurl');
 $this->db->setvalue($id, 'status', 'deleted');
-/* will be deleted indbmanager->optimize
+/* will be deleted indbmanager optimize
       $this->db->iddelete($id);
       $this->getdb('pages')->delete("post = $id");
 $this->getdb($this->rawtable)->iddelete($id);

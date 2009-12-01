@@ -195,8 +195,7 @@ return sprintf($tml, $options->url . $item['url'], $item['title'], $subnodes);
 public function getsubmenuwidget($id) {
 $result = '';
 $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('menu', 0);
-$tml .= "\n";
+    $tml = $theme->getwidgetitem('submenu', 0);
 // 1 вначале список подменю
 $submenu = '';
 $childs = $this->getchilds($id);

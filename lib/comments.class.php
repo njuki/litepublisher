@@ -88,10 +88,6 @@ $self = new $class();
     return  array_keys($Result);
   }
   
-  public function IndexOfRawContent($s) {
-    return $this->IndexOf('rawcontent', $s);
-  }
-  
  public function haspingback($url) {
     $users = tcomusers::instance();
     $userid = $users->IndexOf('url', $url);
