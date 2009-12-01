@@ -11,8 +11,9 @@ global $classes;
 $classes->classes['commentmanager'] = get_class($self);
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-    $manager->CreateTable($self->table, file_get_contents($dir .'comments.sql'));
-    $manager->CreateTable($self->rawtable, file_get_contents($dir .'raw.sql'));
+    $manager->CreateTable($self->table, file_get_contents($dir .'comments.db.sql'));
+    $manager->CreateTable($self->rawtable, file_get_contents($dir .'comments.db.raw.sql'));
+    $manager->CreateTable($self->table . 'hold', file_get_contents($dir .'comments.db.hold.sql'));
 }
 
 ?>
