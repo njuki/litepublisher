@@ -13,6 +13,7 @@ public function getcomment($id);
 public function delete($id);
 public function postdeleted($postid);
 public function setstatus($id, $value);
+public function hasapproved($uid, $count);
 }
 
 class TAbstractCommentManager extends titems {

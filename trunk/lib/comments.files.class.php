@@ -120,6 +120,15 @@ $comusers->save();
     $this->unlock();
     $this->dochanged($item['pid']);
   }
+
+public function hasapproved($uid, $count) {
+foreach ($this->items as $id => $item) {
+if (($uid == $item['uid']) && !isset(4item['status'])) {
+if (--$count == 0) return true;
+}
+}
+return false;
+}
   
 }//class
 

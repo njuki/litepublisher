@@ -40,8 +40,8 @@ $s = str_replace("\r\n", "\n", $s);
 $s = str_replace("\r", "\n", $s);
 $s = str_replace("\n\n", "\n", $s);
 
-$theme->menu = $this->parsemenu($this->parsetag($s, 'menu', '$template->menu'));
-$theme->content = $this->parsecontent($this->parsetag($s, 'content', '$template->content'));
+$theme->menu = $this->parsemenu($this->parsetag($s, 'menu', '$template.menu'));
+$theme->content = $this->parsecontent($this->parsetag($s, 'content', '$template.content'));
 $theme->sitebars = $this->parsesitebars($s);
 $theme->theme= $s;
 }
@@ -87,7 +87,6 @@ $result = array();
 $result['excerpt'] = $this->parsetag($s, 'excerpt', '%s');
 $result[0] = $s;
 return $result;
-
 }
 
 private function parse_excerpt($s, array &$post) {
@@ -96,7 +95,7 @@ if ($commontags = $this->parsecommontags($s, 'commontags', '')) {
 $result['commontags'] = $commontags;
 }
 
-if ($categories = $this->parsecommontags($s, 'categories', '$post->categorieslinks')) {
+if ($categories = $this->parsecommontags($s, 'categories', '$post.categorieslinks')) {
 $result['categories'] = $categories;
 } elseif ($commontags) {
 $result['categories'] = $commontags;
@@ -105,7 +104,7 @@ $result['categories'][0] = str_replace('commontags', 'categories', $commontags[0
 $result['categories'] = $post['categories'];
 }
 
-if ($tags = $this->parsecommontags($s, 'tags', '$post->tagslinks')) {
+if ($tags = $this->parsecommontags($s, 'tags', '$post.tagslinks')) {
 $result['tags'] = $tags;
 } elseif ($commontags) {
 $result['tags'] = $commontags;
@@ -114,8 +113,14 @@ $result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
 $result['tags'] = $post['tags'];
 }
 
-$result['more'] = $this->parsetag($s, 'more', '$post->morelink');
-$result['previews'] = $this->parsepreviews($this->parsetag($s, 'previews', '$post->previews'));
+if ($dateformat = $this->parsetag($s, 'date', '$post.date')) {
+$result['dateformat'] = $dateformat;
+} else {
+$result['dateformat'] = $post['dateformat'];
+}
+
+$result['more'] = $this->parsetag($s, 'more', '$post.morelink');
+$result['previews'] = $this->parsepreviews($this->parsetag($s, 'previews', '$post.previews'));
 $result[0] = $s;
 return $result;
 }
@@ -144,25 +149,27 @@ if ($commontags = $this->parsecommontags($s, 'commontags', '')) {
 $result['commontags'] = $commontags;
 }
 
-if ($categories = $this->parsecommontags($s, 'categories', '$post->categorieslinks')) {
+if ($categories = $this->parsecommontags($s, 'categories', '$post.categorieslinks')) {
 $result['categories'] = $categories;
 } else {
 $result['categories'] = $commontags;
 $result['categories'][0] = str_replace('commontags', 'categories', $commontags[0]);
 }
 
-if ($tags = $this->parsecommontags($s, 'tags', '$post->tagslinks')) {
+if ($tags = $this->parsecommontags($s, 'tags', '$post.tagslinks')) {
 $result['tags'] = $tags;
 } else {
 $result['tags'] = $commontags;
 $result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
 }
 
-$result['files'] = $this->parsefiles($this->parsetag($s, 'files', '$post->filelist'));
+$result['files'] = $this->parsefiles($this->parsetag($s, 'files', '$post.filelist'));
 $result['more'] = $this->parsetag($s, 'more', '');
-$result['rss'] = $this->parsetag($s, 'rss', '$post->rsscomments');
-$result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post->prevnext'));
-$result['templatecomments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post->templatecomments'));
+$result['rss'] = $this->parsetag($s, 'rss', '$post.rsscomments');
+$result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post.prevnext'));
+$result['templatecomments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post.templatecomments'));
+// после комментариев из за секции date в комментарии
+$result['dateformat'] = $this->parsetag($s, 'date', '$post.date');
 $result[0] = $s;
 return $result;
 }
@@ -225,6 +232,7 @@ $result = array();
     $result['class1'] = $this->parsetag($s, 'class1', '$class');
     $result['class2'] = $this->parsetag($s, 'class2', '');
     $result['hold'] = $this->parsetag($s, 'hold', '$hold');
+$result['dateformat'] = $this->parsetag($s, 'date', '$comment.date');
 $result[0] = $s;
 return $result;
 }
@@ -238,7 +246,7 @@ return $result;
 
 private function parsesitebars(&$s) {
 $result = array();
-while ($sitebar = $this->parsetag($s, 'sitebar', '$template->sitebar')) {
+while ($sitebar = $this->parsetag($s, 'sitebar', '$template.sitebar')) {
 $result[] = $this->parsesitebar($sitebar);
 }
 return $result;

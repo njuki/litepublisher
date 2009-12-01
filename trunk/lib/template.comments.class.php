@@ -47,11 +47,15 @@ $tml = $theme->content->post->templatecomments->comments;
     $comments = tcomments::instance($idpost);
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 if (dbversion) {
-$c = $comments->db->getcount("post = $idpost and status = 'approved' and pingback = 'false'");
+//$c = $comments->db->getcount("post = $idpost and status = 'approved' and pingback = 'false'");
+$c = $post->commentscount;
     $args->count = $this->getcount($c);
+/*
 $db = $comments->db;
 $items = $comments->getitems("$db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and 
 $db->comusers.id = $db->comments.author", $from, $options->commentsperpage);
+	*/
+    $items = $comments->getapproved($idpost, 'false', $from, $options->commentsperpage);
 } else {
     $items = $comments->getapproved();
     $args->count = $this->getcount(count($items));
@@ -123,7 +127,8 @@ $tml = $theme->content->post->templatecomments->comments->comment;
     foreach  ($items as $iddata) {
 //òğşê: â áä items ıòî êîììåíòû öåëèêîì, à â ôàéëàõ òîëüêî id
 if (dbversion)  {
-      $comment->data = $iddata;
+//      $comment->data = $iddata;
+      $comment->data = $comments->items[$iddata];
 } else {
       $comment->id = $iddata;
 }

@@ -120,7 +120,7 @@ $item = $this->getitem($id);
     $url = $item['url'];
     if ($this->hidelink || empty($url) ) return $name;
     
-    if (!$classes->commentmanager->HasApprovedCount($id, 2)) return $name;
+    if (!$classes->commentmanager->hasapproved($id, 2)) return $name;
     
     $rel = $this->nofollow ? 'rel="nofollow noindex"' : '';
     if ($this->redir) {

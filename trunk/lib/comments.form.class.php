@@ -114,7 +114,7 @@ $subscribers = tsubscribers::instance();
     $lang = TLocal::instance('comment');
 
 $theme = ttheme::instance();
-$result .= $theme->parsearg($theme->comments['form'], $args);
+$result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
 return $result;
  }
   
@@ -204,7 +204,7 @@ global $lang;
 $args = targs::instance();
 $args->confirmid = $confirmid;
 $theme = ttheme::instance();
-    return $theme->parsearg($theme->comments['confirmform'], $args);
+    return $theme->parsearg($theme->content->post->templatecomments->confirmform, $args);
   }
   
 }//class

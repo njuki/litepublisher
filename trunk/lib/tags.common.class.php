@@ -232,11 +232,8 @@ $this->itemsposts->updateposts($list, $this->PostPropname);
     return $result;
   }
   
-  public function getnames($list) {
-if (dbversion) {
-$items = implode(',', $list);
-return $this->db->res2id($this->db->query("select title from $this->thistable where id in ($items)"));
-}
+  public function getnames(array $list) {
+$this->loaditems($list);
     $result =array();
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
