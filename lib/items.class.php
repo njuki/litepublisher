@@ -43,6 +43,20 @@ return parent::save();
 }
 }
 
+public function loaditems(array $items) {
+global  $db;
+if (!dbversion) return;
+//исключить из загрузки загруженные посты
+$items = array_diff($items, array_keys($this->items));
+if (count($items) == 0) return;
+$list = implode(',', $items);
+$res = $db->query("select * from $this->thistable where id in ($list)");
+$res->setFetchMode (PDO::FETCH_ASSOC);
+foreach ($res as $item) {
+$this->items[$item['id']] = $item;
+}
+}
+
     public function getcount() {
     if ($this->dbversion) {
       return $this->db->getcount();

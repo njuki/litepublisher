@@ -17,9 +17,12 @@ return $classes->newinstance(__class__);
 public function __construct($thisthis = null) {
 global $options;
  $this->data = array(
-'$options->url' => $options->url,
-'{$options->q}' => $options->q,
-'$options->files' => $options->files
+//'$options->url' => $options->url,
+//'{$options->q}' => $options->q,
+//'$options->files' => $options->files
+'$options.url' => $options->url,
+'{$options.q}' => $options->q,
+'$options.files' => $options->files
 );
 if (isset($thisthis)) $this->data['$this'] = $thisthis;
  }

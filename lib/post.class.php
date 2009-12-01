@@ -7,7 +7,6 @@
 **/
 
 class tpost extends titem implements  itemplate {
-  private $dateformater;
   
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
@@ -155,8 +154,9 @@ $result = implode($tml->divider, $list);
     return sprintf($theme->parse($tml), $result);
   }
   
-  public function getlocaldate() {
-    return tlocal::date($this->posted);
+  public function getdate() {
+$theme = ttheme::instance();
+    return tlocal::date($this->posted, $theme->content->post->dateformat);
   }
   
   public function getdateformat() {

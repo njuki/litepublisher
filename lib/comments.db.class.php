@@ -23,9 +23,6 @@ $this->table = 'comments';
 $this->rawtable = 'rawcomments';
   }
 
-public function load() { return true; }
-public function save() { return true; }
-
   protected function dochanged($postid) {
 $this->getdb('posts')->setvalue($postid, 'commentscount', $this->db->getcount("post = $postid and status = 'approved' and pingback = false"));
 parent::dochanged($postid);
@@ -126,6 +123,29 @@ return false;
 return $this->db->getcount("post = $this->pid and status = 'approved' and pingback = false");
 }
 
+public function hasapproved($uid, $count) {
+return $count == $this->getcount("author = $uid and status = 'approved' limit $count");
+}
+
+  public function getapproved($idpost, $pingback, $from, $count) {
+$res = $this->db->query("select * from $this->thistable
+where post = $idpost and status = 'approved' and pingback = '$pingback' 
+order by posted limit $from, $count");
+
+$res->setFetchMode (PDO::FETCH_ASSOC);
+$result =  array();
+$authors = array();
+foreach ($res as $item) {
+$this->items[$item['id']] = $item;
+$result[] = $item['id'];
+$authors[$item['author']] = true;
+}
+
+$comusers = tcomusers::instance();
+$comusers->loaditems(array_keys($authors));
+    return  $result;
+}
+
 }//class
 
 class tcomment extends tdata {
@@ -160,24 +180,25 @@ $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'stat
     return $authors->getlink($this->author);
   }
   
-  public function Getlocaldate() {
-    return TLocal::date($this->date);
+  public function getdate() {
+$theme = ttheme::instance();
+    return TLocal::date($this->posted, $theme->comment->dateformat);
   }
   
   public function Getlocalstatus() {
     return tlocal::$data['commentstatus'][$this->status];
   }
 
-public function getdate() {
-return strtotime($this->posted);
+public function getposted() {
+return strtotime($this->data['posted']);
 }
 
-public function setdate($date) {
+public function setposted($date) {
 $this->data['posted'] = sqldate($date);
 }
   
   public function  gettime() {
-    return date('H:i', $this->date);
+    return date('H:i', $this->posted);
   }
   
   public function getwebsite() {

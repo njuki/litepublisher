@@ -63,7 +63,11 @@ public function __get($name) {
 if (array_key_exists($name, $this->data) && is_array($this->data[$name])) {
 $this->themeprops->array = &$this->data[$name];
 return $this->themeprops;
+} elseif ($name == 'comment') {
+$this->themeprops->array = &$this->data['content']['post']['templatecomments']['comments']['comment'];
+return $this->themeprops;
 }
+
 return parent::__get($name);
 }
 
@@ -90,9 +94,11 @@ return '';
     $lang = tlocal::instance();
 // important! $s can be an object of tthemeprops 
 // convert to string is automatic
-$s = str_replace('$options->url', $options->url, $s);
+$s = str_replace('$options.url', $options->url, $s);
+//$s = str_replace('$options->url', $options->url, $s);
     try {
-return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
+return preg_replace_callback('/\$(\w*+)\.(\w*+)/', __class__ . '::parsecallback', $s);
+//return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
     } catch (Exception $e) {
       $options->handexception($e);
     }
