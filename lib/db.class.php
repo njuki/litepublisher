@@ -27,7 +27,8 @@ if (!$options->propexists('dbconfig')) return false;
     $this->history = array();
     
     try {
-parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}", $dbconfig['login'], $dbconfig['password'],
+parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}", 
+$dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
       array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
 //ERRMODE_WARNING
       );

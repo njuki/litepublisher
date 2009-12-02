@@ -127,23 +127,24 @@ public function hasapproved($uid, $count) {
 return $count == $this->getcount("author = $uid and status = 'approved' limit $count");
 }
 
-  public function getapproved($idpost, $pingback, $from, $count) {
-$res = $this->db->query("select * from $this->thistable
-where post = $idpost and status = 'approved' and pingback = '$pingback' 
-order by posted limit $from, $count");
-
-$res->setFetchMode (PDO::FETCH_ASSOC);
-$result =  array();
-$authors = array();
-foreach ($res as $item) {
-$this->items[$item['id']] = $item;
-$result[] = $item['id'];
-$authors[$item['author']] = true;
+  public function getapproved($idpost, $from, $count) {
+global $db;
+$comusers = tcomusers::instance();
+$authors = $comusers->thistable;
+$table = $this->thistable;
+return $db->queryassoc("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
+where $table.post = $this->pid and $table.status = 'approved' and $table.pingback = 'false' and $authors.id = $table.author
+order by $table.posted asc limit $from, $count");
 }
 
+public function getpingbacks() {
+global $db;
 $comusers = tcomusers::instance();
-$comusers->loaditems(array_keys($authors));
-    return  $result;
+$authors = $comusers->thistable;
+$table = $this->thistable;
+return $db->queryassoc("select $table.*, $authors.name, $authors.url, $authors.trust from $table, $authors
+where $table.post = $this->pid and $table.status = 'approved' and $table.pingback = 'true' and $authors.id = $table.author
+order by $table.posted desc");
 }
 
 }//class
@@ -176,8 +177,8 @@ $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'stat
   return "<a href=\"{$this->website}\">{$this->name}</a>";
     }
     
-    $authors = tcomusers ::instance();
-    return $authors->getlink($this->author);
+    $comusers = tcomusers ::instance();
+    return $comusers->getlink($this->name, $this->url, $this->trust);
   }
   
   public function getdate() {

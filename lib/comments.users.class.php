@@ -113,15 +113,14 @@ if (dbversion) return true;
     }
   }
   
-  public function getlink($id) {
+  public function getidlink($id) {
 global $classes, $options;
 $item = $this->getitem($id);
-    $name = $item['name'];
-    $url = $item['url'];
-    if ($this->hidelink || empty($url) ) return $name;
-    
-    if (!$classes->commentmanager->hasapproved($id, 2)) return $name;
-    
+return $this->getlink($item['name'], $item['url'], $item['trust']);
+}
+
+public function getlink($name, $url, $trust) {
+    if (($trust < 2) || $this->hidelink || empty($url) ) return $name;
     $rel = $this->nofollow ? 'rel="nofollow noindex"' : '';
     if ($this->redir) {
       return "<a $rel href=\"$options->url/comusers/$id/\">$name</a>";

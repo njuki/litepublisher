@@ -66,6 +66,10 @@ $self = new $class();
     asort($Result);
     return  array_keys($Result);
   }
+
+public function getpingbacks() }
+return $this->getapproved('pingback');
+}
   
   public function GetCountApproved() {
     $result = 0;
@@ -165,7 +169,7 @@ private function getuser($id) {
     }
     
     $authors = tcomusers ::instance();
-    return $authors->getlink($this->owner->items[$this->id]['uid']);
+    return $authors->getidlink($this->owner->items[$this->id]['uid']);
   }
   
   public function getlocaldate() {
