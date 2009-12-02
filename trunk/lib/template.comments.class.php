@@ -47,15 +47,8 @@ $tml = $theme->content->post->templatecomments->comments;
     $comments = tcomments::instance($idpost);
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 if (dbversion) {
-//$c = $comments->db->getcount("post = $idpost and status = 'approved' and pingback = 'false'");
-$c = $post->commentscount;
-    $args->count = $this->getcount($c);
-/*
-$db = $comments->db;
-$items = $comments->getitems("$db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'false' and 
-$db->comusers.id = $db->comments.author", $from, $options->commentsperpage);
-	*/
-    $items = $comments->getapproved($idpost, 'false', $from, $options->commentsperpage);
+    $args->count = $this->getcount($post->commentscount);
+    $items = $comments->getapproved($from, $options->commentpages ? $options->commentsperpage : $post->commentscount);
 } else {
     $items = $comments->getapproved();
     $args->count = $this->getcount(count($items));
@@ -69,7 +62,10 @@ $result .= $theme->parsearg($tml->count, $args);
       $result .= $this->getlist($items, $idpost, '', $from);
     }
 
-//    if ($urlmap->page == 1)  $result .= $this->getpingbacks($idpost);
+    if ($urlmap->page == 1)  {
+$items = $comments->getpingbacks();
+$result .= $this->getpingbacks($comments, $items);
+}
 
     if (!$options->commentsdisabled && $post->commentsenabled) {
       $result .=  "<?php  echo tcommentform::printform($idpost); ?>\n";
@@ -79,31 +75,20 @@ $result .= $theme->parse($theme->content->post->templatecomments->closed);
     return $result;
   }
 
-private function getpingbacks($idpost) {
+private function getpingbacks(tcomments $comments, array &$items) {
 global $comment;
-    $comments = tcomments::instance($idpost);
-if (dbversion) {
-$db = $comments->db;
-$items = $db->queryassoc("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
-where $db->comments.post = $idpost and $db->comments.status = 'approved' and $db->comments.pingback = 'true' and $db->comusers.id = $db->comments.author
-order by $db->comments.posted asc");
-} else {
-      $items = $comments->getapproved('pingback');
-}
-
-      if (count($items) == 0) return '';
-
+if (count($items) == 0) return '';
     $result = '';
     $comment = new TComment($comments);
     $lang = tlocal::instance('comment');
 $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->pingbacks->pingback;
-    foreach  ($items as $iddata) {
+    foreach  ($items as $value) {
 //трюк: в бд items это комменты целиком, а в файлах только id
 if (dbversion)  {
-      $comment->data = $iddata;
+      $comment->data = $value;
 } else {
-      $comment->id = $iddata;
+      $comment->id = $value;
 }
 $result .= $theme->parse($tml);
     }
@@ -124,13 +109,12 @@ $args->from = $from;
 $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments->comment;
     $i = 1;
-    foreach  ($items as $iddata) {
+    foreach  ($items as $value) {
 //трюк: в бд items это комменты целиком, а в файлах только id
 if (dbversion)  {
-//      $comment->data = $iddata;
-      $comment->data = $comments->items[$iddata];
+      $comment->data = $value;
 } else {
-      $comment->id = $iddata;
+      $comment->id = $value;
 }
       $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
 $result .= $theme->parsearg($tml, $args);
