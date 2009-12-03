@@ -15,10 +15,10 @@ if (dbversion) {
 }
 
   $urlmap = turlmap::instance();
-  $urlmap->add('/comusers/', get_class($self), 'tree');
+  $urlmap->add('/comusers.htm', get_class($self), 'get');
   
   $robots = TRobotstxt ::instance();
-  $robots->AddDisallow('/comusers/');
+  $robots->AddDisallow('/comusers.htm');
 }
 
 function tcomusersUninstall($self) {

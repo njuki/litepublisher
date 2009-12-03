@@ -56,7 +56,7 @@ $this->table = 'posts';
   public function getcomments() {
 return tcomments::instance($this->id);
   }
-  
+
   public function getprev() {
 if (dbversion) {
 if ($id = $this->db->findid(sprintf("status = 'published' and posted < '%s' order by posted desc", sqldate($this->posted)))) {
@@ -404,13 +404,17 @@ return isset($this->data['pages']) ? count($this->data['pages']) : 1;
     if (!$options->commentpages) return 1;
     return ceil($this->commentscount / $options->commentsperpage);
   }
+
+public function setcommentsenabled($value) {
+if ($value != $this->commentsenabled)) {
+if (!dbversion) $this->data['commentscount'] =  $this->comments->GetCountApproved;
+$this->data['commentsenabled'] = $value;
+}
+}
   
   public function getcommentscount() {
-    if (dbversion) {
-      return $this->data['commentscount'];
-    } else {
+    if (!$this->commentsenabled || dbversion)  return $this->data['commentscount'];
       return $this->comments->GetCountApproved;
-    }
   }
   
   //db

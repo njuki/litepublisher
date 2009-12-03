@@ -75,7 +75,7 @@ $comments->insert($id, $uid, '', 'hold', 'pingback');
       }
       
       $this->deleted($id);
-      $this->dochanged($pid);
+      $this->dochanged($id, $pid);
       return true;
     }
     return false;
@@ -118,7 +118,7 @@ $comusers->save();
       $this->items[$id]['status'] = $value;
     }
     $this->unlock();
-    $this->dochanged($item['pid']);
+    $this->dochanged($id, $item['pid']);
   }
 
 public function hasapproved($uid, $count) {

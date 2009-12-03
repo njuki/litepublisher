@@ -20,11 +20,14 @@ $this->basename = 'spamfilter';
   public function createstatus($authorid, $content) {
     global $options;
     if ($options->DefaultCommentStatus == 'approved') return 'approved';
-    if ($this->AuthorHasApproved($authorid)) return  'approved';
+$comusers = tcomusers::instance();
+    if ($comusers->trusted($authorid)) return  'approved';
     return 'hold';
   }
   
-   public function AuthorHasApproved($authorid) {
+   public function trusted($authorid) {
+$comusers = tcomusers::instance();
+return
 global $classes;
 $manager = $classes->commentmanager;
 if (dbversion) {
