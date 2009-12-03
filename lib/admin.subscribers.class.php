@@ -24,7 +24,7 @@ class tadminsubscribers extends tadminmenu {
     $html= $this->html;
 $args = targs::instance();
     $comusers = tcomusers::instance();
-    if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return $this->notfount();
+    if (!($user = $comusers->fromcookie($_GET['userid']))) return $this->notfount();
 $subscribers=  tsubscribers::instance();
 $items = $subscribers->getposts($user['id']);
       if (count($items) == 0) return $html->h2->nosubscribtions;
@@ -41,7 +41,7 @@ return $this->FixCheckall($result);
   
   public function processform() {
     $comusers = tcomusers::instance();
-    if (!($user = $comusers->GetItemFromCookie($_GET['userid']))) return '';
+    if (!($user = $comusers->fromcookie($_GET['userid']))) return '';
 $subscribers = tsubscribers::instance();
       $subscribers->lock();
       foreach ($_POST as $name => $value) {

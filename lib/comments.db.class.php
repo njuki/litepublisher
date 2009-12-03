@@ -23,9 +23,12 @@ $this->table = 'comments';
 $this->rawtable = 'rawcomments';
   }
 
-  protected function dochanged($postid) {
-$this->getdb('posts')->setvalue($postid, 'commentscount', $this->db->getcount("post = $postid and status = 'approved' and pingback = false"));
-parent::dochanged($postid);
+  protected function dochanged($id, $idpost) {
+$this->getdb('posts')->setvalue($idpost, 'commentscount', $this->db->getcount("post = $postid and status = 'approved' and pingback = false"));
+parent::dochanged($id, $idpost);
+$comusers = tcomusers::instance();
+$comusers->updatetrust($item['author']);
+
 }
 
     public function addcomment($pid, $uid, $content) {
@@ -47,7 +50,8 @@ $this->getdb($this->rawtable)->add(array(
 'id' => $result, 
 'created' => sqldate(),
 'modified' => sqldate(),
-'rawcontent' => $content
+'rawcontent' => $content,
+'hash' => md5($content)
 ));
 $this->doadded($result, $pid);
 return $result;

@@ -18,6 +18,7 @@ $this->dbversion = dbversion;
 $this->table = 'comusers';
     $this->basename = 'comusers';
     $this->cache = false;
+$this->data['trustlevel'] = 2;
 $this->data['hidelink'] = false;
 $this->data['redir'] = true;
 $this->data['nofollow'] = false;
@@ -34,9 +35,11 @@ $this->data['nofollow'] = false;
 
 if (dbversion) {
 return $this->db->add(array(
+'trust' => 0,
     'name' => $name,
     'url' => $url,
     'email' => $email,
+
     'cookie' => md5(mt_rand() . secret. microtime()),
     ));
 
@@ -44,6 +47,7 @@ return $this->db->add(array(
     $this->lock();
     $this->items[++$this->autoid] = array(
     'id' => $this->autoid,
+'trust' => 0,
     'name' => $name,
     'url' => $url,
     'email' => $email,
@@ -78,7 +82,7 @@ return $this->UpdateAssoc(array(
     return $id;
   }
   
-  public function GetItemFromCookie($cookie) {
+  public function fromcookie($cookie) {
 if (dbversion) return $this->db->findid('cookie = '. dbquote($cookie));
 
     foreach ($this->items as $id => $item) {
@@ -94,14 +98,14 @@ if (dbversion) return $this->db->findid('cookie = '. dbquote($cookie));
   public function find($name, $email, $url) {
 if (dbversion) {
 return $this->db->findid('name = '. dbquote($name) . ' and email = '. dbquote($email) .' and url = '. dbquote($url));
-} 
-
+}  else {
     foreach ($this->items as $id => $item) {
       if (($name == $item['name'])  && ($email == $item['email']) && ($url == $item['url'])) {
         return $id;
       }
     }
     return false;
+}
   }
   
   public function addip($id, $ip) {
@@ -112,18 +116,27 @@ if (dbversion) return true;
       $this->save();
     }
   }
-  
+
+public function trusted($id) {
+$item =$this->getitem($id);
+return $this->checktrust($item['trust']);
+}
+
+public function checktrust($value) {
+return $value >= $this->trustlevel;
+}
+
   public function getidlink($id) {
-global $classes, $options;
 $item = $this->getitem($id);
 return $this->getlink($item['name'], $item['url'], $item['trust']);
 }
 
 public function getlink($name, $url, $trust) {
-    if (($trust < 2) || $this->hidelink || empty($url) ) return $name;
+global $options;
+    if ($this->hidelink || empty($url) || !$this->checktrust($trust)) return $name;
     $rel = $this->nofollow ? 'rel="nofollow noindex"' : '';
     if ($this->redir) {
-      return "<a $rel href=\"$options->url/comusers/$id/\">$name</a>";
+      return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$id\">$name</a>";
     } else {
       return "<a $rel href=\"$url\">$name</a>";
     }
@@ -131,9 +144,13 @@ public function getlink($name, $url, $trust) {
   
   public function request($arg) {
     global $options;
-    $id = (int) $arg;
-    if (!$this->itemexists($id)) return 404;
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
+try {
 $item = $this->getitem($id);
+    } catch (Exception $e) {
+return 404;
+}
+
 $url = $item['url'];
     if (!strpos($url, '.')) $url = $options->url . $options->home;
     if (substr($url, 0, 7) != 'http://') $url = 'http://' . $url;

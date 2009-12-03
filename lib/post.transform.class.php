@@ -97,7 +97,7 @@ $list[] = $v;
     } elseif (in_array($name, self::$intprops)) {
       $this->post->$name = (int) $value;
     } elseif (in_array($name, self::$boolprops)) {
-      $this->post->$name = $value == '1';
+      $this->post->data[$name] = $value == '1';
     } else {
       $this->post->$name = $value;
     }

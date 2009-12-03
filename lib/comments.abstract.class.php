@@ -13,7 +13,6 @@ public function getcomment($id);
 public function delete($id);
 public function postdeleted($postid);
 public function setstatus($id, $value);
-public function hasapproved($uid, $count);
 }
 
 class TAbstractCommentManager extends titems {
@@ -32,20 +31,21 @@ $this->data['SendNotification'] =  true;
   }
   
  protected function doadded($id, $pid) {
-    $this->dochanged($pid);
-    $this->sendmail($id);
+    $this->dochanged($id, $pid);
     $this->added($id);
+    $this->sendmail($id);
   }
   
-  protected function dochanged($postid) {
+  protected function dochanged($id, $idpost) {
 $widgets = twidgets::instance();
 $widgets->setexpired('tcommentswidget'); 
     
-    $post = tpost::instance($postid);
+    $post = tpost::instance($idpost);
     $urlmap = turlmap::instance();
     $urlmap->setexpired($post->idurl);
     
-    $this->changed($postid);
+$item = $this->getitem($id);
+    $this->changed($id);
   }
   
   public function sendmail($id) {
