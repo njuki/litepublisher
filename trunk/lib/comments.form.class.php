@@ -7,12 +7,12 @@
 **/
 
 if (dbversion) {
-class THoldComments extends tdata {
+class tkeptcomments extends tdata {
   
   protected function create() {
     parent::create();
-    $this->table ='holdcomments';
-$this->db->delete("posted + INTERVAL 20 minutes < now");
+    $this->table ='commentskept';
+$this->db->delete("posted < now() - INTERVAL 20 minutes ");
   }
 
 public function add($values) {
@@ -36,11 +36,11 @@ return false;
 
 } else {
 
-class THoldComments extends titems {
+class tkeptcomments extends titems {
   
   protected function create() {
     parent::create();
-    $this->basename ='holdcomments';
+    $this->basename ='comments.kept';
   }
 
 public function afterload() {
@@ -111,7 +111,7 @@ $subscribers = tsubscribers::instance();
       }
     }
 
-    $lang = TLocal::instance('comment');
+    $lang = tlocal::instance('comment');
 
 $theme = ttheme::instance();
 $result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
@@ -142,22 +142,22 @@ return $result;
       }
     }
     
-    $hold = new THoldComments();
+    $kept = new tkeptcomments();
     if (!isset($_POST['confirmid'])) {
       $values = $_POST;
       $values['date'] = time();
-      $confirmid  = $hold->add($values);
+      $confirmid  = $kept->add($values);
       return tsimplecontent::html($this->getconfirmform($confirmid));
     }
     
     $confirmid = $_POST['confirmid'];
-    if (!($values = $hold->getitem($confirmid))) {
-      return tsimplecontent::content(TLocal::$data['commentform']['notfound']);
+    if (!($values = $kept->getitem($confirmid))) {
+      return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
     }
     
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = $classes->posts;
-    if(!$posts->ItemExists($postid)) return tsimplecontent::content(TLocal::$data['default']['postnotfound']);
+    if(!$posts->ItemExists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
     $post = tpost::instance($postid);
     
     $values = array(
