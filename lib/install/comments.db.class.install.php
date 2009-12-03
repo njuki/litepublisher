@@ -13,7 +13,7 @@ $classes->classes['commentmanager'] = get_class($self);
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'comments.db.sql'));
     $manager->CreateTable($self->rawtable, file_get_contents($dir .'comments.db.raw.sql'));
-    $manager->CreateTable($self->table . 'hold', file_get_contents($dir .'comments.db.hold.sql'));
+    $manager->CreateTable($self->table . 'kept', file_get_contents($dir .'comments.db.kept.sql'));
 }
 
 ?>

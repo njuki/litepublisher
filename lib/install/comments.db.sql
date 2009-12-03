@@ -4,7 +4,6 @@ author int UNSIGNED NOT NULL default 0,
 parent int UNSIGNED NOT NULL default 0,
 posted datetime NOT NULL default '2010-01-01 10:01:01',
 status enum('approved', 'hold', 'spam', 'deleted') default 'approved',
-pingback boolean default false,
 ip varchar(15) not null,
 content text not null,
 

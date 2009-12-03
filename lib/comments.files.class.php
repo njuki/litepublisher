@@ -14,10 +14,9 @@ class tcommentmanager extends TAbstractCommentManager implements icommentmanager
   
   public function addcomment($pid, $uid, $content) {
 global $classes;
-    $id = ++  $this->autoid;
     $comments = tcomments::instance($pid);
     $status = $classes->spamfilter->createstatus($uid, $content);
-$comments->insert($id, $uid,  $content, $status, '');
+$comments->add($author,  $content, $status, '');
     
     $this->items[$id] = array(
     'uid' => (int) $uid,

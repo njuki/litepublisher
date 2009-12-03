@@ -28,7 +28,6 @@ $this->getdb('posts')->setvalue($idpost, 'commentscount', $this->db->getcount("p
 parent::dochanged($id, $idpost);
 $comusers = tcomusers::instance();
 $comusers->updatetrust($item['author']);
-
 }
 
     public function addcomment($pid, $uid, $content) {

@@ -8,18 +8,18 @@
 
 class tcomments extends titems implements icomments {
   public $pid;
+private $rawitems;
   private static $instances;
   
   public static function instance($pid) {
+global $classes;
     if (!isset(self::$instances)) self::$instances = array();
-    if (!isset(self::$instances[$pid]))  {
-$class = __class__;
-$self = new $class();
+    if (isset(self::$instances[$pid]))       return self::$instances[$pid];
+$self = $classes->newinstance(__class__);
       self::$instances[$pid]  = $self;
       $self->pid = $pid;
       $self->load();
-    }
-    return self::$instances[$pid];
+return $self;
   }
   
   public static function getcomment($pid, $id) {
@@ -33,74 +33,98 @@ $self = new $class();
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments';
   }
 
-  public function insert($id, $userid,  $content, $status,  $type) {
+public function getraw() {
+if (!isset($this->rawitems)) {
+$this->rawitems = new trawcomments($this);
+}
+return $this->rawitems;
+}
+
+  public function add($author, $content) {
     $filter = TContentFilter::instance();
-    $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
-    
-    $this->items[$id] = array(
-    'id' => $id,
-    'uid' => $userid,
+    $this->items[$++$this->autoid] = array(
+    'author' => $author,
     'posted' => time(),
-    'status' => $status,
-    'type' => $type,
-    'content' => $filter->GetCommentContent($content),
-    'rawcontent' =>  $content,
-    'ip' =>$ip
+    'content' => $filter->GetCommentContent($content)
     );
     $this->save();
-    return $id;
+
+    $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+$this->raw->add($this->autoid, $content, $ip);
+$this->added(4$this->autoid);
+    return $this->autoid;
   }
+
+public function delete($id) {
+if (!isset($this->items[$id])) return false;
+unset($this->items[$id]);
+$this->save();
+$this->raw->delete($id);
+$this->deleted($id);
+}
   
-  public function setstatus($id, $value) {
-    $this->setvalue($id, 'status', $value);
+  public function hold($id) {
+if (isset($this->itms[$id])) {
+$item = $this->items[$id];
+unset($this->items[$id]);
     $this->save();
+$hold = tholdcomments::instance();
+$hold->add($this->pid, $item['author'], $this->raw->items[$id]['content']);
+$this->raw->delete($id);
   }
+}
   
-  public function getapproved($type = '') {
-    $Result = array();
-    foreach ($this->items as $id => $item) {
-      if (($item['status'] == 'approved')  && ($type == $item['type'])) {
+  public function sort() }
         $Result[$id] = $item['posted'];
-      }
-    }
     asort($Result);
     return  array_keys($Result);
   }
 
-public function getpingbacks() }
-return $this->getapproved('pingback');
+public function getcontent() }
+    global $options, $urlmap, $comment;
+    $result = '';
+$items = array_keys($this->items);
+    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
+    if ($options->commentpages ) {
+      $items = array_slice($items, $from, $options->commentsperpage, true);
 }
-  
-  public function GetCountApproved() {
-    $result = 0;
-    foreach ($this->items as $id => $item) {
-      if (($item['status'] == 'approved')  && ('' == $item['type'])) {
-        $result++;
-      }
+$args = targs::instance();
+$args->hold = $'';
+$args->from = $from;
+    $comment = new TComment($this);
+    $lang = tlocal::instance('comment');
+$theme = ttheme::instance();
+$tml = $theme->content->post->templatecomments->comments->comment;
+    $i = 1;
+foreach ($items as $id) {
+      $comment->id = $id;
+      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
+$result .= $theme->parsearg($tml, $args);
     }
-    return $result;
-  }
-  
-  public function gethold($userid) {
-    $Result = array();
-    foreach ($this->items as $id => $item) {
-      if (($item['status'] == 'hold')  && ($userid == $item['uid'])) {
-        $Result[$id] = $item['date'];
-      }
-    }
-    asort($Result);
-    return  array_keys($Result);
-  }
-  
- public function haspingback($url) {
-    $users = tcomusers::instance();
-    $userid = $users->IndexOf('url', $url);
-    if ($userid == -1) return false;
-    $id = $this->IndexOf('uid', $userid);
-    if ($id == -1) return false;
-    return $this->items[$id]['type'] == 'pingback';
-  }
-  
+    return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);    
+}
+
+}//class
+
+class trawcomments extends titems {
+public $owner;
+
+public function getbasename() {
+    return 'posts'.  DIRECTORY_SEPARATOR . $this->owner->pid . DIRECTORY_SEPARATOR . 'comments.raw';
+}
+
+public function __construct($owner) {
+$this->owner = $owner;
+parent::__construct();
+}
+
+public function add($id, $content, $ip) {
+$this->items[$id] = array(
+'content' => $content,
+'ip' => $ip
+$this->save();
+}
+
 }//class
 
 //wrapper for simple acces to single comment
@@ -116,14 +140,14 @@ class TComment {
     if (method_exists($this,$get = "get$name")) {
       return  $this->$get();
     }
-    return $this->owner->getvalue($this->id, $name);
+    return $this->owner->items[$this->id][$name];
   }
   
   public function __set($name, $value) {
     if ($name == 'content') {
       $this->setcontent($value);
     } else {
-      $this->owner->setvalue($this->id, $name, $value);
+      $this->owner->items[$this->id][$name] = $value;
     }
   }
   
@@ -134,13 +158,14 @@ class TComment {
   private function setcontent($value) {
       $filter = TContentFilter::instance();
       $this->owner->items[$this->id]['content'] = $filter->GetCommentContent($value);
-      $this->owner->items[$this->id]['rawcontent'] =  $value;
       $this->save();
+      $this->owner->raw->items[$this->id]['content'] =  $value;
+$this->owner->raw->save();
     }
   
-private function getuser($id) {
-    $Users = tcomusers::instance();
-    return  $Users->getitem($this->owner->items[$id]['uid']);
+private function getauthor($id) {
+    $comusers = tcomusers::instance();
+    return  $comusers->getitem($this->owner->items[$id]['author']);
   }
   
   public function getname() {
@@ -164,10 +189,6 @@ private function getuser($id) {
   }
   
   public function getauthorlink() {
-    if ($this->type == 'pingback') {
-  return "<a href=\"{$this->website}\">{$this->name}</a>";
-    }
-    
     $authors = tcomusers ::instance();
     return $authors->getidlink($this->owner->items[$this->id]['uid']);
   }
