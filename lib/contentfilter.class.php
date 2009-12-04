@@ -45,7 +45,7 @@ $this->data['phpcode'] = true;
       $post->excerpt = $this->filter($parts[0]);
       $post->filtered = $post->excerpt . '<!--more-->' . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $post->excerpt;
-      $post->moretitle =  self::NormalizeMoreTitle($matches[1]);
+      $post->moretitle =  $this->gettitle($matches[1]);
       if ($post->moretitle == '')  $post->moretitle = tlocal::$data['default']['more'];
     } else {
       if ($this->automore) {
@@ -90,7 +90,7 @@ $this->data['phpcode'] = true;
     if ($s != '') $post->rss = $s;
   }
   
-  public static function NormalizeMoreTitle($s) {
+  public function gettitle($s) {
     $s = trim($s);
     $s = preg_replace('/\0+/', '', $s);
     $s = preg_replace('/(\\\\0)+/', '', $s);
