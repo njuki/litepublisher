@@ -37,7 +37,7 @@ $l = &tlocal::$data['comment'];
 $urlmap = turlmap::instance();
 $idpost = (int) $idpost;
 $post = tpost::instance($idpost);
-    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
+//    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
 
 $args = targs::instance();
@@ -45,6 +45,7 @@ $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments;
     $lang = tlocal::instance('comment');
     $comments = tcomments::instance($idpost);
+$result .= $comments->getcontent();
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 if (dbversion) {
     $args->count = $this->getcount($post->commentscount);

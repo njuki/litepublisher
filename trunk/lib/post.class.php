@@ -48,6 +48,7 @@ $this->table = 'posts';
     'template' => '',
     'theme' => '',
 'commentscount' => 0,
+'pingbackscount' => 0,
 'pagescount' => 0,
     'pages' => array()
     );
@@ -55,6 +56,10 @@ $this->table = 'posts';
   
   public function getcomments() {
 return tcomments::instance($this->id);
+  }
+
+  public function getpingbacks() {
+return tpingbackscomments::instance($this->id);
   }
 
   public function getprev() {
@@ -296,11 +301,7 @@ return $tc->getcommentslink($this);
 }
 
 public function  gettemplatecomments() {
-//echo "<pre>\n";
-//var_dump($this->data);
-$this->commentscount = 1;
-$this->commentsenabled = true;
-    if (($this->commentscount == 0) && !$this->commentsenabled) return '';
+    if (($this->commentscount == 0) && !$this->commentsenabled && ($this->pingbackscount ==0)) return '';
     if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
 $tc = ttemplatecomments::instance();
 return $tc->getcomments($this->id);
@@ -436,6 +437,11 @@ return false;
   
  protected function SaveToDB() {
 TPostTransform ::instance($this)->save();
+}
+
+public function clearcache() {
+$urlmap = turlmap::instance();
+$urlmap->setexpired($this->idurl);
 }
 
 }//class

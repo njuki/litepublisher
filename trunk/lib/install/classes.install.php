@@ -19,13 +19,16 @@ $options->unlock();
 
 function ParseClassesIni() {
   global $classes, $paths, $ini;
+$replace = dbversion ? '.class.db.' : '.class.files.';
+$exclude = !dbversion ? '.class.db.' : '.class.files.';
+
   $ini = parse_ini_file($paths['lib'].'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
   foreach ($ini['items'] as $class => $filename) {
-if (dbversion) {
-if (strpos($filename, '.files.')) continue;
-$dbfile = str_replace('.class', '.db.class', $filename);
-if (file_exists($paths['lib'] . $dbfile)) $filename = $dbfile;
-
+//исключить из списка только файлы для бд или файлов
+if (strpos($filename, $exclude)) continue;
+if (!file_exists($paths['lib'] . $filename)){
+$filename = str_replace('.class.', $replace, $filename);
+if (!file_exists($paths['lib'] . $filename))continue;
 }
     $classes->items[$class] = array($filename, '');
   }
