@@ -6,8 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tpingbacks extends titems {
-  public $pid;
+class tpingbacks extends tabstractpingbacks implements ipingbacks {
   private static $instances;
   
   public static function instance($pid) {
@@ -25,10 +24,7 @@ return $self;
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments.pingbacks';
   }
 
-  public function add($url, $title) {
-$filter = tcontentfilter::instance();
-$title = $filter->gettitle($title);
-
+  protected function doadd($url, $title) {
     $this->items[++$this->autoid] = array(
 'url' => $url,
 'title' => $title,
@@ -37,19 +33,10 @@ $title = $filter->gettitle($title);
 'approved' => false
     );
     $this->save();
-$this->added($this->autoid);
 return $this->autoid;
   }
 
-  public function hold($id) {
-return $this->setstatus($id, false);
-}
-
-public function approve($id) {
-return $this->setstatus($id, true);
-}
-
-public function setstatus($id, $approve) {
+protected function setstatus($id, $approve) {
 if (isset($this->items[$id]) && ($approve != $this->items[$id]['approved'])) {
 $this->items[$id]['approved'] = $approve;
 $this->save();
@@ -66,7 +53,7 @@ $post->clearcache();
 }
 
 public function getcontent() }
-    global $$pingback;
+    global $pingback;
     $result = '';
 $a = array();
     $pingback = new tarray2props($a);

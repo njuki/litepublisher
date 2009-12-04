@@ -6,52 +6,32 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tpingbacks extends titems {
-  public $pid;
+class tpingbacks extends tabstractpingbacks implements ipingbacks {
   private static $instances;
   
   public static function instance($pid) {
-global $classes;
-    if (!isset(self::$instances)) self::$instances = array();
-    if (isset(self::$instances[$pid]))       return self::$instances[$pid];
-$self = $classes->newinstance(__class__);
-      self::$instances[$pid]  = $self;
-      $self->pid = $pid;
-      $self->load();
-return $self;
-  }
-  
+$result = getinstance(__class__);
+$result->pid = $pid;
+return $result;
+}
+
 protected function create() }
 parent::instance();
 $this->table = 'pingbacks';
 $this->dbversion = true;
 }
 
-  public function add($url, $title) {
-$filter = tcontentfilter::instance();
-$title = $filter->gettitle($title);
-
-$id = $this->db->add(array(
+  protected function doadd($url, $title) {
+return $this->db->add(array(
 'url' => $url,
 'title' => $title,
 'post' = $this->pid,
     'posted' =>sqldate()
 'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']),
     );
-
-$this->added($id);
-return $id;
   }
 
-  public function hold($id) {
-return $this->setstatus($id, false);
-}
-
-public function approve($id) {
-return $this->setstatus($id, true);
-}
-
-public function setstatus($id, $approve) {
+protected function setstatus($id, $approve) {
 $status = $approve ? 'approved' : 'hold';
 $item = $this->getitem($id);
 if ($item['status'] == $approved) return false;
