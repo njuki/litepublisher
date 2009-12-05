@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcomments extends TAbstractCommentManager implements icomments, icommentmanager  {
+class tcomments extends , icommentmanager  {
 public $rawtable;
 private $pid;
 
