@@ -17,13 +17,6 @@ public function setstatus($id, $value);
 
 class TAbstractCommentManager extends titems {
 
-  protected function create() {
-    parent::create();
-    $this->basename = 'commentmanager';
-    $this->addevents('edited', 'changed', 'approved');
-$this->data['SendNotification'] =  true;
-  }
-
   public function add($postid, $name, $email, $url, $content) {
     $users = tcomusers ::instance();
     $userid = $users->add($name, $email, $url);

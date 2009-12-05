@@ -9,6 +9,7 @@
 class tcomments extends titems implements icomments {
   public $pid;
 private $rawitems;
+private $holtitems;
   private static $instances;
   
   public static function instance($pid) {
@@ -40,6 +41,13 @@ $this->rawitems = new trawcomments($this);
 return $this->rawitems;
 }
 
+public function gethold() {
+if (!isset($this->holditems)) {
+$this->holditems = new tholdcomments($this);
+}
+return $this->holditems;
+}
+
   public function add($author, $content) {
     $filter = TContentFilter::instance();
     $this->items[$++$this->autoid] = array(
@@ -68,12 +76,19 @@ if (isset($this->itms[$id])) {
 $item = $this->items[$id];
 unset($this->items[$id]);
     $this->save();
-$hold = tholdcomments::instance();
-$hold->add($this->pid, $item['author'], $this->raw->items[$id]['content']);
-$this->raw->delete($id);
+
+$this->hold->items[$id] = $item;
+$this->hold->save();
   }
 }
-  
+
+public function approve($id) {
+if (isset($this->hold->items[$id])) {
+$this->items[$id] = $this->hold->items[$id];
+$this->hold->delete($id);
+}
+}
+
   public function sort() }
         $Result[$id] = $item['posted'];
     asort($Result);
@@ -104,6 +119,33 @@ $result .= $theme->parsearg($tml, $args);
     return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);    
 }
 
+}//class
+
+class tholdcomments extends titems }
+public $owner;
+
+  public static function instance($pid) {
+$owner = tcomments::instance($pid);
+return $owner->hold;
+}
+
+public function __construct($owner) {
+$this->owner = $owner;
+parent::__construct();
+}
+
+  public function getbasename() {
+    return $this->owner->getbasename() . '.hold';
+  }
+
+public function delete($id) {
+if (!isset($this->items[$id])) return false;
+unset($this->items[$id]);
+$this->save();
+$this->owner->raw->delete($id);
+$this->deleted($id);
+}
+  
 }//class
 
 class trawcomments extends titems {
@@ -163,36 +205,40 @@ class TComment {
 $this->owner->raw->save();
     }
   
-private function getauthor($id) {
-    $comusers = tcomusers::instance();
-    return  $comusers->getitem($this->owner->items[$id]['author']);
+private function getauthoritem() {
+    $comusers = tcomusers::instance($this->owner->pid);
+    return  $comusers->getitem($this->author);
   }
   
   public function getname() {
-    $userinfo = $this->getuser($this->id);
-    return $userinfo['name'];
+    return $this->authoritem['name'];
   }
 
     public function getemail() {
-    $userinfo = $this->getuser($this->id);
-    return $userinfo ['email'];
+    return $this->authoritem['email'];
   }
   
   public function getwebsite() {
-    $userinfo = $this->getuser($this->id);
-    return $userinfo['url'];
+    return $this->authoritem['url'];
 }
 
-   public function getip() {
-    $userinfo = $this->getuser($this->id);
-    return $userinfo['ip'][0];
-  }
-  
-  public function getauthorlink() {
-    $authors = tcomusers ::instance();
-    return $authors->getidlink($this->owner->items[$this->id]['uid']);
-  }
-  
+ public function getauthorlink() {
+global $options;
+$idpost = $this->owner->pid;
+$comusers = tcomusers::instance($idpost);
+$item = $comusers->getitem($this->author);
+$name = $item['email'];
+$url = $item['url'];
+$manager = tcommentmanager::instance();
+    if ($manager->hidelink || empty($url)) return $name;
+    $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
+    if ($manager->redir) {
+      return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$this->author&post=$idpost\">$name</a>";
+    } else {
+      return "<a $rel href=\"$url\">$name</a>";
+    }
+}
+
   public function getlocaldate() {
     return tlocal::date($this->date);
   }
@@ -215,6 +261,6 @@ private function getauthor($id) {
     return $post->title;
   }
   
-}
+}//class
 
 ?>

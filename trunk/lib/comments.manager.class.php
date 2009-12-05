@@ -6,13 +6,23 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcommentmanager extends TAbstractCommentManager implements icommentmanager {
+class tcommentmanager extends tevents }
   
   public static function instance() {
     return getinstance(__class__);
   }
-  
-  public function addcomment($pid, $uid, $content) {
+  protected function create() {
+    parent::create();
+    $this->basename = 'commentmanager';
+    $this->addevents('edited', 'changed', 'approved');
+$this->data['SendNotification'] =  true;
+$this->data['trustlevel'] = 2;
+$this->data['hidelink'] = false;
+$this->data['redir'] = true;
+$this->data['nofollow'] = false;
+  }
+
+  public function doadded($id, $pid) {
 global $classes;
     $comments = tcomments::instance($pid);
     $status = $classes->spamfilter->createstatus($uid, $content);
