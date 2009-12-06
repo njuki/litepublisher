@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class ttemplatecomments extends tevents {
+class ttemplatecomments extends tdata {
 
   public static function instance() {
     return getinstance(__class__);
@@ -44,19 +44,9 @@ $args = targs::instance();
 $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments;
     $lang = tlocal::instance('comment');
+    $args->count = $this->getcount($post->commentscount);
     $comments = tcomments::instance($idpost);
 $result .= $comments->getcontent();
-    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
-if (dbversion) {
-    $args->count = $this->getcount($post->commentscount);
-    $items = $comments->getapproved($from, $options->commentpages ? $options->commentsperpage : $post->commentscount);
-} else {
-    $items = $comments->getapproved();
-    $args->count = $this->getcount(count($items));
-    if ($options->commentpages ) {
-      $items = array_slice($items, $from, $options->commentsperpage, true);
-    }
-}
 
     if (count($items)  > 0) {
 $result .= $theme->parsearg($tml->count, $args);

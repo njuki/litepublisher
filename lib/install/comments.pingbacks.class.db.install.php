@@ -10,6 +10,13 @@ function tpingbacksInstall($self) {
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'comments.pingbacks.sql'));
+
+$posts = tposts::instance();
+$posts->deleted = $self->postdeleted;
+}
+
+function tpingbacksUninstall($self) {
+tposts::unsub($self);
 }
 
 ?>

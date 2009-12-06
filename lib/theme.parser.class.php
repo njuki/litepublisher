@@ -231,7 +231,6 @@ private function parsecomment($s) {
 $result = array();
     $result['class1'] = $this->parsetag($s, 'class1', '$class');
     $result['class2'] = $this->parsetag($s, 'class2', '');
-    $result['hold'] = $this->parsetag($s, 'hold', '$hold');
 $result['dateformat'] = $this->parsetag($s, 'date', '$comment.date');
 $result[0] = $s;
 return $result;
