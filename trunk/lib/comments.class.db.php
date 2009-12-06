@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcomments extends , icommentmanager  {
+class tcomments extends titems {
 public $rawtable;
 private $pid;
 
@@ -23,76 +23,42 @@ $this->table = 'comments';
 $this->rawtable = 'rawcomments';
   }
 
-  protected function dochanged($id, $idpost) {
-$this->getdb('posts')->setvalue($idpost, 'commentscount', $this->db->getcount("post = $postid and status = 'approved' and pingback = false"));
-parent::dochanged($id, $idpost);
-$comusers = tcomusers::instance();
-$comusers->updatetrust($item['author']);
-}
-
-    public function addcomment($pid, $uid, $content) {
-global $classes;
+    public function add($idauthor, $content, $status) {
     $filter = TContentFilter::instance();
 $filtered = $filter->GetCommentContent($content);
-$status = $classes->spamfilter->createstatus($uid, $content);
-$result =$this->db->add(array(
-'post' => $pid,
+
+$item = array(
+'post' => $idpost,
 'parent' => 0,
-'author' => $uid,
+'author' => $idauthor,
 'posted' => sqldate(),
 'content' =>$filtered,
-'status' => $status,
-'pingback' => 'false'
-));
+'status' => $status
+);
+
+$id =$this->db->add($item);
+$item['rawcontent'] => $content;
+$this->items[$id] = $item;
 
 $this->getdb($this->rawtable)->add(array(
-'id' => $result, 
+'id' => $id, 
 'created' => sqldate(),
 'modified' => sqldate(),
 'rawcontent' => $content,
 'hash' => md5($content)
 ));
-$this->doadded($result, $pid);
-return $result;
+
+return $id;
   }
 
-public function addpingback($pid, $url, $title) {
-    $comusers = tcomusers::instance();
-    $uid = $comusers->add($title, '', $url);
-
-$result = $this->db->add(array(
-'parent' => 0,
-    'author' => $uid,
-    'post' => $pid,
-    'posted' => sqldate(),
-    'status' => 'hold',
-'pingback' => 'true'
-    ));
-//no add to raw
-    $this->doadded($result, $pid);
-  }
-  
   public function getcomment($id) {
     return new tcomment($id);
   }
   
   public function delete($id) {
 $this->db->setvalue($id, 'status', 'deleted');
-    
-      $this->deleted($id);
-      $this->dochanged($postid);
   }
 
-  public function postdeleted($postid) {
-$this->db->update("status = 'deleted'", "post = $postid");
-}
-  
-    public function setstatus($id, $value) {
-    if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
-$this->db->setvalue($id, 'status', $value);
-    $this->dochanged($item['pid']);
-  }
-  
   public function gethold($author) {
 return $this->db->idselect("post = $this->pid and author = $author and status = 'hold' and pingback = false");
 }
@@ -113,15 +79,6 @@ $id = $this->getdb('rawcomments')->findid('rawcontent', $s);
 return $id ? $id : -1;
   }
   
- public function haspingback($url) {
-$db = $this->db;
-$url = $db->quote($url);
-if (($res = $this->db->query("select $db->comments.id from$db->comments, $db->comusers
-where $db->post = $this->pid and pingback = true and $db->comusers.id = $db->comments.author and $db->comusers->url = $url limit 1")
- && ($r = $res->fetch()))) return true;
-return false;
-}
-
   public function GetCountApproved() {
 return $this->db->getcount("post = $this->pid and status = 'approved' and pingback = false");
 }

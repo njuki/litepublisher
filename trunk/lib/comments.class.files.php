@@ -48,29 +48,54 @@ $this->holditems = new tholdcomments($this);
 return $this->holditems;
 }
 
-  public function add($author, $content) {
+  public function add($author, $content, $status) {
     $filter = TContentFilter::instance();
-    $this->items[$++$this->autoid] = array(
+$item  = array(
     'author' => $author,
     'posted' => time(),
     'content' => $filter->GetCommentContent($content)
     );
+
+if ($status == 'approved') {
+    $this->items[$++$this->autoid] = $item;
+} else {
+$this->hold->items[++$this->autoid] =  $item;
+$this->hold->save();
+}
     $this->save();
 
     $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
 $this->raw->add($this->autoid, $content, $ip);
-$this->added(4$this->autoid);
+$this->added($this->autoid);
     return $this->autoid;
   }
 
 public function delete($id) {
 if (!isset($this->items[$id])) return false;
+$author = $this->items[$id]['author'];
 unset($this->items[$id]);
 $this->save();
 $this->raw->delete($id);
+
+$this->deleteauthor($author);
 $this->deleted($id);
+return true;
 }
-  
+
+public function deleteauthor($author) {
+    foreach ($this->items as $id => $item) {
+      if ($author == $item['author'])  return;
+    }
+
+    foreach ($this->hold->items as $id => $item) {
+      if ($author == $item['author'])  return;
+    }
+
+//автора не нашли
+$comusers = tcomusers::instance($this->pid);
+$comusers->delete($author);
+}
+
   public function hold($id) {
 if (isset($this->itms[$id])) {
 $item = $this->items[$id];
@@ -140,9 +165,11 @@ parent::__construct();
 
 public function delete($id) {
 if (!isset($this->items[$id])) return false;
+$author= $this->items[$id]['author'];
 unset($this->items[$id]);
 $this->save();
 $this->owner->raw->delete($id);
+$this->owner->deleteauthor($author);
 $this->deleted($id);
 }
   

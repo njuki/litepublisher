@@ -11,133 +11,101 @@ class tcommentmanager extends tevents }
   public static function instance() {
     return getinstance(__class__);
   }
+
   protected function create() {
     parent::create();
     $this->basename = 'commentmanager';
-    $this->addevents('edited', 'changed', 'approved');
-$this->data['SendNotification'] =  true;
+    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved');
+$this->data['sendnotification'] =  true;
 $this->data['trustlevel'] = 2;
 $this->data['hidelink'] = false;
 $this->data['redir'] = true;
 $this->data['nofollow'] = false;
   }
 
-  public function doadded($id, $pid) {
+  public function add($idpost, $name, $email, $url, $content) {
+    $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
+    $idauthor = $comusers->add($name, $email, $url);
+    return $this->addcomment($idpost, $idauthor, $content);
+  }
+
+public function addcomment($idpost, $idauthor, $content) {
 global $classes;
-    $comments = tcomments::instance($pid);
-    $status = $classes->spamfilter->createstatus($uid, $content);
-$comments->add($author,  $content, $status, '');
-    
-    $this->items[$id] = array(
-    'uid' => (int) $uid,
-    'pid' => (int) $pid,
-    'posted' => $comments->items[$id]['posted'],
-    );
-    if ($status != 'approved') $this->items[$id]['status'] = $status;
-    $this->save();
-    $this->doadded($id, $pid);
-  }
-  
- public function addpingback($pid, $url, $title) {
-    $id =++$this->autoid;
-    $comusers = tcomusers::instance();
-    $uid = $comusers->add($title, '', $url);
-    $comments = tcomments::instance($pid);
-$comments->insert($id, $uid, '', 'hold', 'pingback');
-    
-    $this->items[$id] = array(
-    'uid' => $uid,
-'parent' => 0,
-    'pid' => (int) $pid,
-    'posted' => time(),
-    'status' => 'hold',
-    'type' => 'pingback'
-    );
-    $this->save();
-    $this->doadded($id, $pid);
+    $status = $classes->spamfilter->createstatus($idauthor, $content);
+    $comments = tcomments::instance($idpost);
+$id = $comments->add($idauthor,  $content, $status);
+
+    $this->dochanged($id, $idpost);
+    $this->added($id);
+    $this->sendmail($id);
+
+return $id;
   }
 
-  public function getcomment($id) {
-    return tcomments::getcomment($this->items[$id]['pid'], $id);
-  }
- 
- private function hasauthor($author) {
-    foreach ($this->items as $id => $item) {
-      if ($author == $item['uid'])  return true;
-    }
-    return false;
-  }
-  
-  public function delete($id) {
-    if (isset($this->items[$id])) {
-      $this->lock();
-      $comments = tcomments::instance($this->items[$id]['pid']);
-      $comments->Delete($id);
-      $pid = $this->items[$id]['pid'];
-      $uid = $this->items[$id]['uid'];
-      unset($this->items[$id]);
-      $this->unlock();
-      
-      if (!$this->hasauthor($uid)) {
-        $comusers = tcomusers::instance();
-        $comusers->delete($uid);
-      }
-      
-      $this->deleted($id);
-      $this->dochanged($id, $pid);
-      return true;
-    }
-    return false;
-  }
-
-  public function postdeleted($pid) {
-    $this->lock();
-    foreach ($this->items as  $id => $item) {
-      if ($item['pid'] == $pid) {
-        unset($this->items[$id]);
-      }
-    }
-    $this->unlock();
-
-$users = array();
-foreach ($this->items as $id => $item) {
-$users[$item['uid']] = 1;
+  private function dochanged($id, $idpost) {
+if (dbversion) {
+$comments = tcomments($idpost);
+$count = $comments->db->getcount("post = $idpost and status = 'approved'"));
+$comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
+$this->updatetrust($id);
 }
+    
+    $post = tpost::instance($idpost);
+$post->clearcache();
+    $this->changed($id);
+  }
 
+private function updatetrust($id) {
 $comusers = tcomusers::instance();
-foreach ($comusers->items as $uid => $user) {
-if (!isset($users[$uid])) unset($comusers->items[$uid]);
+$comusers->updatetrust($item['author']);
 }
-$comusers->save();
-  }
   
-    public function setstatus($id, $value) {
-    if (!in_array($value, array('approved', 'hold', 'spam')))  return false;
-    $item = $this->items[$id];
-    if ( (($value == 'approved') && !isset($item['status']))  || ($value == $item['status'])) return false;
-    
-    $comments = tcomments::instance($item['pid']);
-    $comments->SetStatus($id, $value);
-    
-    $this->lock();
-    if ($status == 'approved') {
-      unset($this->items[$id]['status']);
-      if (!isset($item['type'])) $this->approved($id);
-    } else {
-      $this->items[$id]['status'] = $value;
-    }
-    $this->unlock();
-    $this->dochanged($id, $item['pid']);
+ public function delete($id, $idpost) {
+$comments = tcomments::instance($idpost);
+$comments->delete($id);
+$this->deleted($id);
+      $this->dochanged($id, $idpost);
   }
 
-public function hasapproved($uid, $count) {
-foreach ($this->items as $id => $item) {
-if (($uid == $item['uid']) && !isset(4item['status'])) {
-if (--$count == 0) return true;
+  public function postdeleted($idpost) {
+if (dbversion) {
+$comments = tcomments::instance($idpost);
+$comments->db->update("status = 'deleted'", "post = $idpost");
 }
 }
-return false;
+
+    public function setstatus($idpost, $id, $status) {
+    if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
+$comments = Tcomments($idpost);
+if (dbversion) {
+$comments->db->setvalue($id, 'status', $status);
+} else {
+switch ($value) {
+case 'hold': 
+$comments->hold($id);
+break;
+
+case 'approved':
+$comments->approve($id);
+break;
 }
+}
+    $this->dochanged($id, $idpost);
+  }
+
+  public function sendmail($id) {
+    global $options, $comment;
+    if (!$this->sendnotification) return;
+    $comment = $this->getcomment($id);
+    $html = THtmlResource::instance();
+    $html->section = 'comments';
+$args = targs::instance();
+$args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&&action";
+$subject = $html->subject();
+$body = $html->body($args);
+    tmailer::sendmail($options->name, $options->fromemail,
+    'admin', $options->email,  $subject, $body);
+  }
   
 }//class
 
