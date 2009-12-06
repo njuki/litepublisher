@@ -42,6 +42,10 @@ $db->table = 'posts';
 $db->setvalue($item['post'], 'pingbackscount', $approved);
 }
 
+public function postdeleted($idpost) {
+$this->db->delete("post = $idpost");
+}
+
 public function getcontent() }
     global  $pingback;
     $result = '';

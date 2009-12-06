@@ -7,8 +7,6 @@
 **/
 
 function tcommentsInstall($self) {
-global $classes;
-$classes->classes['commentmanager'] = get_class($self);
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'comments.sql'));

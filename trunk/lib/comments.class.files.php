@@ -129,7 +129,6 @@ $items = array_keys($this->items);
       $items = array_slice($items, $from, $options->commentsperpage, true);
 }
 $args = targs::instance();
-$args->hold = $'';
 $args->from = $from;
     $comment = new TComment($this);
     $lang = tlocal::instance('comment');

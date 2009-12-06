@@ -7,13 +7,6 @@
 **/
 
 function tcomusersInstall($self) {
-if (dbversion) {
-    $manager = TDBManager ::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-    $manager->CreateTable($self->table, file_get_contents($dir .'comments.users.sql'));
-} else {
-}
-
   $urlmap = turlmap::instance();
   $urlmap->add('/comusers.htm', get_class($self), 'get');
   
@@ -22,7 +15,6 @@ if (dbversion) {
 }
 
 function tcomusersUninstall($self) {
-  tposts::unsub($self);
   turlmap::unsub($self);
 }
 

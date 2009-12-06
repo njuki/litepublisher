@@ -97,16 +97,18 @@ where $table.post = $this->pid and $table.status = 'approved' and $table.pingbac
 order by $table.posted asc limit $from, $count");
 }
 
-public function getpingbacks() {
-global $db;
-$comusers = tcomusers::instance();
-$authors = $comusers->thistable;
-$table = $this->thistable;
-return $db->queryassoc("select $table.*, $authors.name, $authors.url, $authors.trust from $table, $authors
-where $table.post = $this->pid and $table.status = 'approved' and $table.pingback = 'true' and $authors.id = $table.author
-order by $table.posted desc");
-}
 
+public function getcontent() {
+    global $options, $urlmap, $comment;
+    $result = '';
+    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
+    if ($options->commentpages ) {
+$args = targs::instance();
+$args->from = $from;
+    $items = $comments->getapproved($from, $options->commentpages ? $options->commentsperpage : $post->commentscount);
+
+
+}
 }//class
 
 class tcomment extends tdata {

@@ -25,7 +25,7 @@ $this->save();
 }
 }
 
- public function getwidgetcontent($id, $$sitebar) {
+ public function getwidgetcontent($id, $sitebar) {
     global $options, $classes;
     $result = '';
 $theme = ttheme::instance();
