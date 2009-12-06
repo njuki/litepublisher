@@ -40,22 +40,21 @@ $post = tpost::instance($idpost);
 //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
 
-$args = targs::instance();
+    $comments = tcomments::instance($idpost);
+$list = $comments->getcontent();
+if ($list != '') {
+    $lang = tlocal::instance('comment');
 $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments;
-    $lang = tlocal::instance('comment');
-    $args->count = $this->getcount($post->commentscount);
-    $comments = tcomments::instance($idpost);
-$result .= $comments->getcontent();
-
-    if (count($items)  > 0) {
+$args = targs::instance();
+$args->count = $this->getcount($post->commentscount);
 $result .= $theme->parsearg($tml->count, $args);
-      $result .= $this->getlist($items, $idpost, '', $from);
+      $result .= $list;
     }
 
-    if ($urlmap->page == 1)  {
-$items = $comments->getpingbacks();
-$result .= $this->getpingbacks($comments, $items);
+    if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
+$pingbacks = tpingbacks::instance($post->id);
+$result .= $pingbacks->getcontent();
 }
 
     if (!$options->commentsdisabled && $post->commentsenabled) {
@@ -65,27 +64,6 @@ $result .= $theme->parse($theme->content->post->templatecomments->closed);
     }
     return $result;
   }
-
-private function getpingbacks(tcomments $comments, array &$items) {
-global $comment;
-if (count($items) == 0) return '';
-    $result = '';
-    $comment = new TComment($comments);
-    $lang = tlocal::instance('comment');
-$theme = ttheme::instance();
-$tml = $theme->content->post->templatecomments->pingbacks->pingback;
-    foreach  ($items as $value) {
-//трюк: в бд items это комменты целиком, а в файлах только id
-if (dbversion)  {
-      $comment->data = $value;
-} else {
-      $comment->id = $value;
-}
-$result .= $theme->parse($tml);
-    }
-    
-    return sprintf($theme->content->post->templatecomments->pingbacks, $result);
-}
 
   private function getlist(array &$items, $idpost, $hold, $from) {
     global $comment, $post;

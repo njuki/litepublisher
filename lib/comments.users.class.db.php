@@ -54,31 +54,6 @@ return $this->db->findid('cookie = '. dbquote($cookie));
 return $this->db->findid('name = '. dbquote($name) . ' and email = '. dbquote($email) .' and url = '. dbquote($url));
   }
   
-public function trusted($id) {
-$item =$this->getitem($id);
-return $this->checktrust($item['trust']);
-}
-
-public function checktrust($value) {
-return $value >= $this->trustlevel;
-}
-
-  public function getidlink($id) {
-$item = $this->getitem($id);
-return $this->getlink($item['name'], $item['url'], $item['trust']);
-}
-
-public function getlink($name, $url, $trust) {
-global $options;
-    if ($this->hidelink || empty($url) || !$this->checktrust($trust)) return $name;
-    $rel = $this->nofollow ? 'rel="nofollow noindex"' : '';
-    if ($this->redir) {
-      return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$id\">$name</a>";
-    } else {
-      return "<a $rel href=\"$url\">$name</a>";
-    }
-  }
-  
   public function request($arg) {
     global $options;
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;

@@ -55,11 +55,6 @@ $post->clearcache();
     $this->changed($id);
   }
 
-private function updatetrust($id) {
-$comusers = tcomusers::instance();
-$comusers->updatetrust($item['author']);
-}
-  
  public function delete($id, $idpost) {
 $comments = tcomments::instance($idpost);
 $comments->delete($id);
@@ -92,6 +87,15 @@ break;
 }
     $this->dochanged($id, $idpost);
   }
+
+private function updatetrust($id) {
+$comusers = tcomusers::instance();
+$comusers->updatetrust($item['author']);
+}
+
+public function checktrust($value) {
+return $value >= $this->trustlevel;
+}
 
   public function sendmail($id) {
     global $options, $comment;
