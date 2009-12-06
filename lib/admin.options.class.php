@@ -53,7 +53,7 @@ $args->phpcode = $filter->phpcode;
       $args->pingenabled  = $options->pingenabled;
       $args->commentpages  = $options->commentpages;
       $manager = $classes->commentmanager;
-      $args->sendnotification = $manager->SendNotification;
+      $args->sendnotification = $manager->sendnotification;
       
       $comusers= tcomusers ::instance();
       $args->hidelink = $comusers->hidelink;
@@ -195,7 +195,7 @@ $filter->phpcode = isset($phpcode);
       $options->unlock();
       
       $manager = $classes->commentmanager;
-      $manager->SendNotification = isset($sendnotification);
+      $manager->sendnotification = isset($sendnotification);
       
       $comusers = tcomusers ::instance();
       $comusers->hidelink = isset($hidelink);
