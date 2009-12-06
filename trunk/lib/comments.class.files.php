@@ -128,6 +128,9 @@ $items = array_keys($this->items);
     if ($options->commentpages ) {
       $items = array_slice($items, $from, $options->commentsperpage, true);
 }
+
+if (count($items) == 0) return '';
+
 $args = targs::instance();
 $args->from = $from;
     $comment = new TComment($this);

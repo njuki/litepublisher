@@ -87,28 +87,38 @@ public function hasapproved($uid, $count) {
 return $count == $this->getcount("author = $uid and status = 'approved' limit $count");
 }
 
-  public function getapproved($idpost, $from, $count) {
-global $db;
+public function getcontent() {
+    global $db, $options, $urlmap, $comment;
+    $result = '';
+$post = tpost::instance($this->pid);
+    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
+$count = $options->commentpages  ? $options->commentsperpage : $post->commentscount;
+
 $comusers = tcomusers::instance();
 $authors = $comusers->thistable;
 $table = $this->thistable;
-return $db->queryassoc("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
-where $table.post = $this->pid and $table.status = 'approved' and $table.pingback = 'false' and $authors.id = $table.author
+$res = $db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
+where $table.post = $this->pid and $table.status = 'approved' and $authors.id = $table.author
 order by $table.posted asc limit $from, $count");
-}
 
-
-public function getcontent() {
-    global $options, $urlmap, $comment;
-    $result = '';
-    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
-    if ($options->commentpages ) {
 $args = targs::instance();
 $args->from = $from;
-    $items = $comments->getapproved($from, $options->commentpages ? $options->commentsperpage : $post->commentscount);
+    $comment = new TComment($this);
+    $lang = tlocal::instance('comment');
+$theme = ttheme::instance();
+$tml = $theme->content->post->templatecomments->comments->comment;
+    $i = 1;
+$res->setFetchMode (PDO::FETCH_ASSOC);
+foreach ($res as $data) {
+      $comment->data = $data;
+      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
+$result .= $theme->parsearg($tml, $args);
+    }
 
-
+if ($result == '') return '';
+    return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);    
 }
+
 }//class
 
 class tcomment extends tdata {
@@ -135,14 +145,17 @@ $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'stat
   }
   
  public function getauthorlink() {
-    if ($this->pingback == '1') {
-  return "<a href=\"{$this->website}\">{$this->name}</a>";
+global $options;
+$manager = tcommentmanager::instance();
+    if ($manager->hidelink || ($this->url == '') || !$manager->checktrust($this->trust)) return $this->name;
+    $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
+    if ($manager->redir) {
+      return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$this->id\">$this->name</a>";
+    } else {
+      return "<a $rel href=\"$this->url\">$this->name</a>";
     }
-    
-    $comusers = tcomusers ::instance();
-    return $comusers->getlink($this->name, $this->url, $this->trust);
   }
-  
+
   public function getdate() {
 $theme = ttheme::instance();
     return TLocal::date($this->posted, $theme->comment->dateformat);
