@@ -222,6 +222,7 @@ return $result;
 private function parsecomments($s) {
 $result = array();
     $result['count'] = $this->parsetag($s, 'count', '');
+    $result['hold'] = $this->parsetag($s, 'hold', '');
 $result['comment'] = $this->parsecomment($this->parsetag($s, 'comment', '%1$s'));
 $result[0] = $s;
 return $result;

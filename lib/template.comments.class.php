@@ -65,40 +65,5 @@ $result .= $theme->parse($theme->content->post->templatecomments->closed);
     return $result;
   }
 
-  private function getlist(array &$items, $idpost, $hold, $from) {
-    global $comment, $post;
-    $result = '';
-$post = tpost::instance($idpost);
-$args = targs::instance();
-$args->hold = $hold;
-$args->from = $from;
-    $comments = tcomments::instance($idpost);
-    $comment = new TComment($comments);
-    $lang = tlocal::instance('comment');
-$theme = ttheme::instance();
-$tml = $theme->content->post->templatecomments->comments->comment;
-    $i = 1;
-    foreach  ($items as $value) {
-//трюк: в бд items это комменты целиком, а в файлах только id
-if (dbversion)  {
-      $comment->data = $value;
-} else {
-      $comment->id = $value;
-}
-      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
-$result .= $theme->parsearg($tml, $args);
-    }
-    
-    return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);
-  }
-  
-  public function gethold(array &$items, $idpost) {
-    if (count($items) == 0) return '';
-$theme = ttheme::instance();
-    $lang = tlocal::instance('comment');
-$hold = $theme->parse($thme->comments['hold']);
-    return $this->getlist($items, $idpost, $hold, 0);
-  }
-  
 } //class
 ?>
