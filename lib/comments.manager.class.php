@@ -52,7 +52,7 @@ try {
 $item = $comments->getitem($id);
 $idauthor = $item['author'];
 $comusers = tcomusers::instance($idpost);
-$comusers->db->setvalue($idauthor, 'trust', $comments->db->getcount("author = $author and status = 'approved' limit 5"));
+$comusers->db->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idauthor and status = 'approved' limit 5"));
     } catch (Exception $e) {
 }
 }
@@ -97,6 +97,13 @@ break;
 
 public function checktrust($value) {
 return $value >= $this->trustlevel;
+}
+
+public function trusted($idauthor) {
+if (!dbversion) return true;
+$comusers = tcomusers::instance(0);
+$item = $comusers->getitem($idauthor);
+return $this->checktrust($item['trust']);
 }
 
   public function sendmail($id) {

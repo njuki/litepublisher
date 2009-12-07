@@ -267,7 +267,7 @@ $options->lock();
 
 $classes->categories->sortname = $sortnamecats;
 $classes->categories->showcount = isset($showcountcats);
-classes->categories->save();
+$classes->categories->save();
 
 $classes->tags->sortname = $sortnametags;
 $classes->tags->showcount = isset($showcounttags);

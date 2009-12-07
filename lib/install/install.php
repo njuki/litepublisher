@@ -10,7 +10,7 @@ $mode = 'install';
  require_once($paths['lib'] . 'installer.class.php');
 if (defined('debug')) {
 require_once($paths['lib'] . 'filer.class.php');
-tfiler::delete($paths['data'], true, true);
+//tfiler::delete($paths['data'], true, true);
 }
  $installer = new tinstaller();
  $installer->install();

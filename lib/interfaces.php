@@ -27,14 +27,6 @@ public function getorder();
 public function setorder($order);
 }
 
-interface  icomments {
-//comment form
-  public function gethold($author);
-  public function IndexOfRawContent($s);
-//pingback xmlrpc
- public function haspingback($url);
-}
-
 interface imultimedia {
 }
 

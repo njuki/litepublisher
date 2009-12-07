@@ -27,6 +27,7 @@ pingenabled boolean default true,
 rssenabled boolean default true,
 
 commentscount int unsigned not null default 0,
+pingbackscount int unsigned not null default 0,
 pagescount int unsigned not null default 0,
 
      PRIMARY KEY(id),
