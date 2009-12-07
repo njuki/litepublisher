@@ -240,7 +240,7 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
 eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
 
     eval('$form .= "'. $html->installform. '\n";');
-    echo SimplyHtml(TLocal::$data['installation']['title'],  $form);
+    echo SimplyHtml(tlocal::$data['installation']['title'],  $form);
   }
   
  private function GetLangForm() {

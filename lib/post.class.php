@@ -407,7 +407,7 @@ return isset($this->data['pages']) ? count($this->data['pages']) : 1;
   }
 
 public function setcommentsenabled($value) {
-if ($value != $this->commentsenabled)) {
+if ($value != $this->commentsenabled) {
 if (!dbversion) $this->data['commentscount'] =  $this->comments->GetCountApproved;
 $this->data['commentsenabled'] = $value;
 }

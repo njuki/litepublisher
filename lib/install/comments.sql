@@ -11,4 +11,4 @@ content text not null,
 key post (post),
 key author (author),
 key posted(posted),
-key status (status, pingback)
+key status (status)

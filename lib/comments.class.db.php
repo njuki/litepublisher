@@ -37,7 +37,7 @@ $item = array(
 );
 
 $id =$this->db->add($item);
-$item['rawcontent'] => $content;
+$item['rawcontent'] = $content;
 $this->items[$id] = $item;
 
 $this->getdb($this->rawtable)->add(array(
