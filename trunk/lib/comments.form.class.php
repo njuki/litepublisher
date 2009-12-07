@@ -182,7 +182,7 @@ return $result;
     $users = tcomusers::instance($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url']);
     $usercookie = $users->getcookie($uid);
-    if (!$classes->spamfilter->UserCanAdd( $uid)) return tsimplecontent::content($lang->toomany);
+    if (!$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
 
 $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);

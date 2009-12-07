@@ -7,31 +7,30 @@
 **/
 
 class tpingbacks extends tabstractpingbacks implements ipingbacks {
-  private static $instances;
-  
+
   public static function instance($pid) {
 $result = getinstance(__class__);
 $result->pid = $pid;
 return $result;
 }
 
-protected function create() }
-parent::instance();
+protected function create() {
+parent::create();
 $this->table = 'pingbacks';
 $this->dbversion = true;
 }
 
-  protected function doadd($url, $title) {
+  public function doadd($url, $title) {
 return $this->db->add(array(
 'url' => $url,
 'title' => $title,
-'post' = $this->pid,
-    'posted' =>sqldate()
-'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']),
-    );
+'post' => $this->pid,
+    'posted' =>sqldate(),
+'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR'])
+    ));
   }
 
-protected function setstatus($id, $approve) {
+public function setstatus($id, $approve) {
 $status = $approve ? 'approved' : 'hold';
 $item = $this->getitem($id);
 if ($item['status'] == $approved) return false;
@@ -46,7 +45,7 @@ public function postdeleted($idpost) {
 $this->db->delete("post = $idpost");
 }
 
-public function getcontent() }
+public function getcontent() {
     global  $pingback;
     $result = '';
 $items = $this->db->getitems("post = $this->pid and status = 'approved' order by posted");

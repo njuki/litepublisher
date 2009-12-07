@@ -28,7 +28,7 @@ $this->rawtable = 'rawcomments';
 $filtered = $filter->GetCommentContent($content);
 
 $item = array(
-'post' => $idpost,
+'post' => $this->pid,
 'parent' => 0,
 'author' => $idauthor,
 'posted' => sqldate(),
@@ -59,10 +59,6 @@ return $id;
 $this->db->setvalue($id, 'status', 'deleted');
   }
 
-  public function gethold($author) {
-return $this->db->idselect("post = $this->pid and author = $author and status = 'hold' and pingback = false");
-}
-
 public function getcount($where = '') {
 return $this->db->getcount($where);
 }
@@ -74,17 +70,12 @@ where  $where order by $db->comments.posted asc limit $from, $count");
 return $res->fetchAll(PDO::FETCH_ASSOC);
 }
 
-  public function IndexOfRawContent($s) {
-$id = $this->getdb('rawcomments')->findid('rawcontent', $s);
-return $id ? $id : -1;
-  }
-  
-  public function GetCountApproved() {
-return $this->db->getcount("post = $this->pid and status = 'approved' and pingback = false");
+public function getraw() {
+return $this->getdb($this->rawtable);
 }
 
-public function hasapproved($uid, $count) {
-return $count == $this->getcount("author = $uid and status = 'approved' limit $count");
+  public function GetCountApproved() {
+return $this->db->getcount("post = $this->pid and status = 'approved'");
 }
 
 public function getcontent() {
