@@ -120,13 +120,33 @@ $this->hold->delete($id);
     return  array_keys($Result);
   }
 
+
+public function getholdcontent($idauthor) {
+$hold = $this->hold;
+foreach ($hold->items as $id => $item) {
+if ($idauthor == $item['author'])) $items[] = $id;
+}
+if ($items == 0) return '';
+//prevent save data
+$this->lock();
+$this->data = $hold->data;
+return $this->dogetcontent($items);
+}
+
 public function getcontent() }
+return $this->dogetcontent(false);
+}
+
+public function dogetcontent($items) }
     global $options, $urlmap, $comment;
     $result = '';
+$from = 0;
+if (!$items) {
 $items = array_keys($this->items);
-    $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
+if ($options->commentpages) $from = ($urlmap->page - 1) * $options->commentsperpage;
     if ($options->commentpages ) {
       $items = array_slice($items, $from, $options->commentsperpage, true);
+}
 }
 
 if (count($items) == 0) return '';

@@ -79,10 +79,12 @@ class tcommentform extends tevents {
     $this->cache = false;
   }
   
-  public static function PrintForm($postid) {
+  public static function printform($postid) {
     global $options;
     $result = '';
     $self = self::instance();
+    $lang = tlocal::instance('comment');
+$theme = ttheme::instance();
 $args = targs::instance();
     $args->name = '';
     $args->email = '';
@@ -93,32 +95,28 @@ $args = targs::instance();
     $args->antispam = '_Value' . strtotime ("+1 hour");
 
     if (!empty($_COOKIE["userid"])) {
-      $comusers = tcomusers::instance();
+      $comusers = tcomusers::instance($postid);
       if ($user = $comusers->fromcookie($_COOKIE['userid'])) {
         $args->name = $user['name'];
         $args->email = $user['email'];
         $args->url = $user['url'];
 $subscribers = tsubscribers::instance();
         $args->subscribe = $subscribers->subscribed($postid, $user['id']);
-        
-        //hold comment list
-        $comments = tcomments::instance($postid);
-        $items = $comments->gethold($user['id']);
-        if (count($items) > 0) {
-          $tc = ttemplatecomments::instance();
-          $result .= $tc->gethold($items, $postid);
-        }
+
+$comments = tcomments::instance($postid);
+$hold = $comments->getholdcontent($user['id']);
+if ($hold != '') {
+$result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
+          $result .= $hold;
+}
       }
     }
 
-    $lang = tlocal::instance('comment');
-
-$theme = ttheme::instance();
 $result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
 return $result;
  }
   
-  private function CheckSpam($s) {
+  private function checkspam($s) {
     $TimeKey = (int) substr($s, strlen('_Value'));
     return time() < $TimeKey;
   }
@@ -171,7 +169,7 @@ return $result;
     );
     
     $lang = tlocal::instance('comment');
-    if (!$this->CheckSpam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
+    if (!$this->checkspam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
     if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
     if (empty($values['name'])) return tsimplecontent::content($lang->emptyname);
     if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
@@ -181,7 +179,7 @@ return $result;
     if ($classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-    $users = tcomusers::instance();
+    $users = tcomusers::instance($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url']);
     $usercookie = $users->getcookie($uid);
     if (!$classes->spamfilter->UserCanAdd( $uid)) return tsimplecontent::content($lang->toomany);

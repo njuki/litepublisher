@@ -88,17 +88,30 @@ return $count == $this->getcount("author = $uid and status = 'approved' limit $c
 }
 
 public function getcontent() {
+return $this->getcontentwhere('status', '');
+}
+
+public function getholdcontent($idauthor) {
+return $this->getcontentwhere('hold', "and $this->thistable.author = $idauthor");
+}
+
+private function getcontentwhere($status, $whereauthor) {
     global $db, $options, $urlmap, $comment;
     $result = '';
 $post = tpost::instance($this->pid);
+if ($status == 'approved') {
     $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
 $count = $options->commentpages  ? $options->commentsperpage : $post->commentscount;
+} else {
+$from = 0;
+$count = $options->commentsperpage;
+}
 
 $comusers = tcomusers::instance();
 $authors = $comusers->thistable;
 $table = $this->thistable;
 $res = $db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
-where $table.post = $this->pid and $table.status = 'approved' and $authors.id = $table.author
+where $table.post = $this->pid and $table.status = '$status' $whereauthor and $authors.id = $table.author
 order by $table.posted asc limit $from, $count");
 
 $args = targs::instance();
