@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcommentmanager extends tevents }
+class tcommentmanager extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
@@ -44,11 +44,11 @@ return $id;
 
   private function dochanged($id, $idpost) {
 if (dbversion) {
-$comments = tcomments($idpost);
-$count = $comments->db->getcount("post = $idpost and status = 'approved'"));
+$comments = tcomments::instance($idpost);
+$count = $comments->db->getcount("post = $idpost and status = 'approved'");
 $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
 //update trust
-try
+try {
 $item = $comments->getitem($id);
 $idauthor = $item['author'];
 $comusers = tcomusers::instance($idpost);

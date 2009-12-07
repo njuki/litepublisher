@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcomments extends titems implements icomments {
+class tcomments extends titems {
   public $pid;
 private $rawitems;
 private $holtitems;
@@ -113,38 +113,26 @@ $this->items[$id] = $this->hold->items[$id];
 $this->hold->delete($id);
 }
 }
-
+/*
   public function sort() }
         $Result[$id] = $item['posted'];
     asort($Result);
     return  array_keys($Result);
   }
-
+*/
 
 public function getholdcontent($idauthor) {
-$hold = $this->hold;
-foreach ($hold->items as $id => $item) {
-if ($idauthor == $item['author'])) $items[] = $id;
-}
-if ($items == 0) return '';
-//prevent save data
-$this->lock();
-$this->data = $hold->data;
-return $this->dogetcontent($items);
+return $this->hold->getcontent($idauthor);
 }
 
-public function getcontent() }
-return $this->dogetcontent(false);
-}
-
-public function dogetcontent($items) }
+public function getcontent() {
     global $options, $urlmap, $comment;
     $result = '';
 $from = 0;
-if (!$items) {
 $items = array_keys($this->items);
-if ($options->commentpages) $from = ($urlmap->page - 1) * $options->commentsperpage;
+if (__class__ == get_class($this)) {
     if ($options->commentpages ) {
+$from = ($urlmap->page - 1) * $options->commentsperpage;
       $items = array_slice($items, $from, $options->commentsperpage, true);
 }
 }
@@ -159,6 +147,11 @@ $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments->comment;
     $i = 1;
 foreach ($items as $id) {
+//разрулить в одном месте одобренные и задержанные комменты
+if (__class__ != get_class($this)) {
+//значит задержанные
+if ($this->idauthor != $this->items[$id]['author']) continue;
+}
       $comment->id = $id;
       $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
 $result .= $theme->parsearg($tml, $args);
@@ -168,8 +161,9 @@ $result .= $theme->parsearg($tml, $args);
 
 }//class
 
-class tholdcomments extends titems }
+class tholdcomments extends tcomments {
 public $owner;
+public $idauthor;
 
   public static function instance($pid) {
 $owner = tcomments::instance($pid);
@@ -194,8 +188,13 @@ $this->owner->raw->delete($id);
 $this->owner->deleteauthor($author);
 $this->deleted($id);
 }
-  
-}//class
+
+public function getcontent($idauthor) {
+$this->idauthor = $idauthor;
+return parent::getcontent();
+}
+
+  }//class
 
 class trawcomments extends titems {
 public $owner;

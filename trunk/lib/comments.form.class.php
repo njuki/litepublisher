@@ -20,14 +20,14 @@ public function add($values) {
 $this->db->add(array(
 'id' => $confirmid, 
 'posted' => sqldate(),
-'values' => serialize($values)
+'vals' => serialize($values)
 ));
 return $confirmid;
 }  
 
 public function getitem($confirmid) {
 if ($item = $this->getitem($confirmid)) {
-return unserialize($item['values']);
+return unserialize($item['vals']);
 }
 return false;
 }
