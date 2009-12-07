@@ -47,7 +47,14 @@ if (dbversion) {
 $comments = tcomments($idpost);
 $count = $comments->db->getcount("post = $idpost and status = 'approved'"));
 $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
-$this->updatetrust($id);
+//update trust
+try
+$item = $comments->getitem($id);
+$idauthor = $item['author'];
+$comusers = tcomusers::instance($idpost);
+$comusers->db->setvalue($idauthor, 'trust', $comments->db->getcount("author = $author and status = 'approved' limit 5"));
+    } catch (Exception $e) {
+}
 }
     
     $post = tpost::instance($idpost);
@@ -87,11 +94,6 @@ break;
 }
     $this->dochanged($id, $idpost);
   }
-
-private function updatetrust($id) {
-$comusers = tcomusers::instance();
-$comusers->updatetrust($item['author']);
-}
 
 public function checktrust($value) {
 return $value >= $this->trustlevel;
