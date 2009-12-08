@@ -40,11 +40,11 @@ $post = tpost::instance($idpost);
 //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
 
+$theme = ttheme::instance();
     $comments = tcomments::instance($idpost);
 $list = $comments->getcontent();
 if ($list != '') {
     $lang = tlocal::instance('comment');
-$theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments;
 $args = targs::instance();
 $args->count = $this->getcount($post->commentscount);
