@@ -36,8 +36,8 @@ global $classes;
 $id = $comments->add($idauthor,  $content, $status);
 
     $this->dochanged($id, $idpost);
-    $this->added($id);
-    $this->sendmail($id);
+    $this->added($id, $idpost);
+    $this->sendmail($id, $idpost);
 
 return $id;
   }
@@ -52,7 +52,7 @@ try {
 $item = $comments->getitem($id);
 $idauthor = $item['author'];
 $comusers = tcomusers::instance($idpost);
-$comusers->db->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idauthor and status = 'approved' limit 5"));
+$comusers->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idauthor and status = 'approved' limit 5"));
     } catch (Exception $e) {
 }
 }
@@ -106,10 +106,11 @@ $item = $comusers->getitem($idauthor);
 return $this->checktrust($item['trust']);
 }
 
-  public function sendmail($id) {
+  public function sendmail($id, $idpost) {
     global $options, $comment;
     if (!$this->sendnotification) return;
-    $comment = $this->getcomment($id);
+$comments = tcomments::instance($idpost);
+    $comment = $comments->getcomment($id);
     $html = THtmlResource::instance();
     $html->section = 'comments';
 $args = targs::instance();

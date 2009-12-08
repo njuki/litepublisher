@@ -131,7 +131,8 @@ class tcomment extends tdata {
 if (!isset($id)) return false;
 parent::__construct();
 $this->table = 'comments';
-if (is_int($id)) $this->setid($id);
+$id = (int) $id;
+if ($id > 0) $this->setid($id);
 }
 
 public function setid($id) {

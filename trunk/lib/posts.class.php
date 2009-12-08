@@ -44,7 +44,7 @@ $this->error("Item $id not found in class ". get_class($this));
   }
 
 public function loaditems(array $items) {
-global $classes, $db;
+global $classes;
 if (!dbversion) return;
 //исключить из загрузки загруженные посты
 $class = $classes->classes['post'];
@@ -53,14 +53,26 @@ $items = array_diff($items, array_keys(titem::$instances[$class]));
 }
 if (count($items) == 0) return;
 $list = implode(',', $items);
-$res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
-where $db->posts.id in ($list) and  $db->urlmap.id  = $db->posts.idurl");
+return $this->select("$this->thistable.id in ($list)", '');
+}
+
+private function transformres($res) {
+$result = array();
 $t = new tposttransform();
 $res->setFetchMode (PDO::FETCH_INTO , $t);
 do {
+if (isset($t->post)) $result[] = $t->post->id;
 $t->post = tpost::instance();
-} 
-while ($res->fetch());
+} while ($res->fetch());
+return $result;
+}
+
+public function select($where, $limit) {
+global $db;
+$res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+where $where and  $db->urlmap.id  = $db->posts.idurl $limit");
+
+return $this->transformres($res);
 }
 
 public function getcount() {
@@ -263,9 +275,12 @@ return $this->db->idselect("status = 'published'order by posted desc limit $coun
     $count = $this->archivescount;
     $from = ($page - 1) * $perpage;
     if ($from > $count)  return array();
-if (dbversion)  return $this->db->idselect("status = 'published' order by posted desc limit $from, $perpage");
+if (dbversion)  {
+return $this->select("status = 'published'", " order by posted desc limit $from, $perpage");
+} else {
     $to = min($from + $perpage , $count);
 return array_slice(array_keys($this->archives), $from, $to - $from);
+}
   }
   
   public function StripDrafts(array $items) {
