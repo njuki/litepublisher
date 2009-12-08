@@ -107,7 +107,7 @@ order by $table.posted asc limit $from, $count");
 
 $args = targs::instance();
 $args->from = $from;
-    $comment = new TComment($this);
+    $comment = new tcomment(0);
     $lang = tlocal::instance('comment');
 $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments->comment;
