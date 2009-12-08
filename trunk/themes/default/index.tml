@@ -133,12 +133,12 @@ $post.content
 <!--count-->
 <h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3> 
 <!--/count-->
+<!--hold--><h3><em>$lang->hold</em></h3><!--/hold-->
 	<ol class="commentlist" start="%2$d">
 <!--comment-->
 		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
    <a name="comment-$comment.id"></a>
-			<cite>$comment.authorlink</cite> $lang.says: 
-<!--hold--><em>$lang.hold</em><!--/hold--> <br />
+			<cite>$comment.authorlink</cite> $lang.says:  <br />
 			<small class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></small>
 <p id="commentcontent-$comment.id">
 $comment.content
