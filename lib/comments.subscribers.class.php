@@ -60,36 +60,36 @@ global $classes;
     }
   }
 
-  public function sendmail($id) {
-global $classes;
+  public function sendmail($id, $idpost) {
     if (!$this->enabled) return;
-    
-    $manager = $classes->commentmanager;
-    $item = $manager->getitem($id);
+$comments = tcomments::instance($idpost);    
+    $item = $comments->getitem($id);
 if (dbversion) {
-if (($item['status'] != 'approved') || ($item['pingback'] == '1')) return;
-} else {
-    if (isset($item['status']) || isset($item['type']))return;
-}
-    
+if (($item['status'] != 'approved')) return;
+}    
+
     $cron = tcron::instance();
-    $cron->add('single', get_class($this),  'cronsendmail', $id);
+    $cron->add('single', get_class($this),  'cronsendmail', array($id, $idpost));
   }
   
-  public function cronsendmail($id) {
+  public function cronsendmail($arg) {
     global $options, $classes, $comment;
-    $manager = $classes->commentmanager;
-    if (!$manager->itemexists($id)) return;
-    $item = $manager->getitem($id);
-$pid = $item['pid'];
+$id = $arg[0];
+$pid = $arg[1];
+$comments = tcomments($pid);
+try {
+    $item = $comments->getitem($id);
+    } catch (Exception $e) {
+return;
+}
+
 if (dbversion) {
 if ($this->db->getcount("post = $pid") == 0) return;
 } else {
 if (!isset($this->items[$pid]) || (count($this->items[$pid]) == 0)) return;
 }
    
-    $comment = $manager->getcomment($id);
-
+    $comment = $comments->getcomment($id);
     $html = THtmlResource::instance();
     $html->section = 'comments';
     
