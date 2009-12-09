@@ -26,6 +26,7 @@ if (!isset($options->data[get_class($this)])) {
 $options->data[get_class($this)] = &$this->data;
 } else {
 $this->data = &$options->data[get_class($this)];
+      $this->afterload();
 }
 return  true;
 } else {

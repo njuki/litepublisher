@@ -20,7 +20,7 @@ class tlinkgenerator extends tevents {
 'post' => '/[title].htm',
 'tag' => '/tag/[title].htm',
 'category' => '/category/[title].htm',
-'archive' => '/[year]/[month]/',
+'archive' => '/[year]/[month].htm',
 'file' => '/[medium]/[filename]/',
 ));
   }

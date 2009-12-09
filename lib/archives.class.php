@@ -64,8 +64,8 @@ global $db;
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
 'idurl' => 0,
-        'url' => $linkgen->Create($this, 'archive', false),
-        'title' => tlocal::date($this->date, 'F Y'),
+        'url' => $linkgen->Createlink($this, 'archive', false),
+        'title' => tlocal::date($this->date, '%B %Y'),
         'year' => $r['year'],
         'month' => $r['month'],
         'count' => $r['count']
@@ -136,7 +136,7 @@ public function getdescription() {}
     global $options, $urlmap;
     if (dbversion) {
       $item = $this->items[$this->date];
-  $items = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']} ORDER BY posted DESC ");
+  $items = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
     } else {
       if (!isset($this->items[$this->date]['posts'])) return '';
       $items = &$this->items[$this->date]['posts'];
