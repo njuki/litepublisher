@@ -43,7 +43,7 @@ return $this->UpdateAssoc(array(
   }
   
   public function fromcookie($cookie) {
-return $this->db->findid('cookie = '. dbquote($cookie));
+return $this->db->finditem('cookie = '. dbquote($cookie));
 }  
 
   public function getcookie($id) {

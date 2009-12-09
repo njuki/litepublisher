@@ -12,7 +12,7 @@ class tkeptcomments extends tdata {
   protected function create() {
     parent::create();
     $this->table ='commentskept';
-$this->db->delete("posted < now() - INTERVAL 20 minutes ");
+$this->db->delete("posted < now() - INTERVAL 20 minute ");
   }
 
 public function add($values) {
@@ -26,7 +26,7 @@ return $confirmid;
 }  
 
 public function getitem($confirmid) {
-if ($item = $this->getitem($confirmid)) {
+if ($item = $this->db->getitem(dbquote($confirmid))) {
 return unserialize($item['vals']);
 }
 return false;
@@ -131,9 +131,9 @@ return $result;
       @header('Content-Type: text/plain');
       ?>";
     }
-    
-    $posturl = $options->home;
-    
+
+    $posturl = $options->url . '/';
+
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
         $_POST[$name] = stripslashes($_POST[$name]);
@@ -147,27 +147,26 @@ return $result;
       $confirmid  = $kept->add($values);
       return tsimplecontent::html($this->getconfirmform($confirmid));
     }
-    
+
     $confirmid = $_POST['confirmid'];
     if (!($values = $kept->getitem($confirmid))) {
       return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
     }
-    
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = $classes->posts;
-    if(!$posts->ItemExists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
+    if(!$posts->itemexists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
     $post = tpost::instance($postid);
-    
+   
     $values = array(
-    'name' => isset($values['name']) ? TContentFilter::escape($values['name']) : '',
+    'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
     'email' => isset($values['email']) ? trim($values['email']) : '',
-    'url' => isset($values['url']) ? TContentFilter::escape($values['url']) : '',
+    'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
     'postid' => $postid,
     'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
-    );
-    
+     ); 
+
     $lang = tlocal::instance('comment');
     if (!$this->checkspam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
     if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
