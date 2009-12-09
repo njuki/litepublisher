@@ -345,7 +345,7 @@ case 'post':
 return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />     <small>$post->localdate</small></li>';
 
 case 'comments':
-return '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $s...</li>';
+return '<li><strong><a href=" $options->url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
 
 case 'link':
 return '<li><a href="$url" title="$title">$text</a></li>';

@@ -26,45 +26,39 @@ $this->save();
 }
 
  public function getwidgetcontent($id, $sitebar) {
-    global $options, $classes;
+    global $options, $db;
     $result = '';
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('comments', $sitebar);
-$manager = $classes->commentmanager;
-    $count = $manager->recentcount;
 $args = targs::instance();
       $args->onrecent = tlocal::$data['comment']['onrecent'];
 
 if (dbversion) {
-$db =  $manager->db;
-$res = $db->query("select 
-$db->comments.*, 
+$res = $db->query("select $db->comments.*, 
 $db->comusers.name as name, 
-$db->posts.title as title,
-$db->posts.commentscount as commentscount,
+ $db->posts.title as title, $db->posts.commentscount as commentscount,
 $db->urlmap.url as posturl 
 from $db->comments, $db->comusers, $db->posts, $db->urlmap
 where $db->comments.status = 'approved' and 
-$db->comments.pingback = 'false' and
 $db->comusers.id = $db->comments.author and 
 $db->posts.id = $db->comments.post and 
 $db->urlmap.id = $db->posts.idurl 
-order by $db->comments.posted desc limit $count");
-while ($row = $res->fetch()) {
-$args->posturl = $row['posturl'];
+order by $db->comments.posted desc limit $this->recentcount");
+
+$res->setFetchMode (PDO::FETCH_ASSOC);
+foreach ($res as $item) {
+$args->add($item);
     if ($options->commentpages) {
-$count = ceil($row['commentscount'] / $options->commentsperpage);
-if ($count > 1) $args->posturl = rtrim($row['posturl'], '/') . "/page/$count/";
+$count = ceil($item['commentscount'] / $options->commentsperpage);
+if ($count > 1) $args->posturl = rtrim($item['posturl'], '/') . "/page/$count/";
 }
 
-$args->id = $row['id'];
- $args->title = $row['title'];
-$args->name = $row['name'];
-        $args->content = tcontentfilter::getexcerpt($row['content'], 120);
+        $args->content = tcontentfilter::getexcerpt($item['content'], 120);
           $result .= $theme->parsearg($tml,$args);
         }
 } else {
     if ($item = end($manager->items)) {
+$count = $this->recentcount;
       $users = tcomusers::instance();
       do {
         $id = key($manager->items);

@@ -20,22 +20,19 @@ class tlinkswidget extends titems {
     $this->data['redir'] = true;
   }
   
-  public function getwidgetcontent($id) {
+  public function getwidgetcontent($id, $sitebar) {
   global $options;
     $result = '';
 $theme = ttheme::instance();
-$tml = $theme->getwidgetitem('link');
-$tml .= "\n";
+$tml = $theme->getwidgetitem('link', $sitebar);
 $args = targs::instance();
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
       if ($this->redir && !strbegin($url, $options->url)) {
       $url = $options->url . $this->redirlink . $options->q . "id=$id";
       }
-$args->url = $url;
-      $args->title = $item['title'];
-$args->text = $item['text'];
-  $result .=   $theme->parsearg($tml, $args);
+
+  $result .=   sprintf($tml, $url, $item['title'], $item['text']);
     }
     
     return $result;
