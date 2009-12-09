@@ -85,6 +85,7 @@ return false;
 public function request($arg) {
 global $options;
 $name = isset($_GET['name']) ? $_GET['name'] : '';
+
 if (!isset($this->items[$name])) return 404;
 $result = "<?php 
     @header('Content-Type: text/html; charset=utf-8');
@@ -125,8 +126,11 @@ return '';
 private function getinstance($name) {
 global $classes;
 switch ($name) {
+case 'links':
+return tlinkswidget::instance();
+
 case 'comments':
-return TCommentsWidget::instance();
+return tcommentswidget::instance();
 
 case 'friends':
 return tfoaf::instance();
