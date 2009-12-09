@@ -84,7 +84,7 @@ return false;
 
 public function request($arg) {
 global $options;
-$name = isset($_GET['name']) ? $$_GET['name'] : '';
+$name = isset($_GET['name']) ? $_GET['name'] : '';
 if (!isset($this->items[$name])) return 404;
 $result = "<?php 
     @header('Content-Type: text/html; charset=utf-8');

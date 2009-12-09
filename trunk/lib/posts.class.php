@@ -140,7 +140,7 @@ $post->db->setvalue($post->id, 'idurl', $post->idurl);
   public function edit(tpost $post) {
 $post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
     $urlmap = turlmap::instance();
-        $oldurl = $urlmap->gitidurl($post->idurl);
+        $oldurl = $urlmap->getidurl($post->idurl);
     if ($oldurl != $post->url) {
       $linkgen = tlinkgenerator::instance();
       if ($post->url == '') {
