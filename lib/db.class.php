@@ -211,13 +211,6 @@ public function  exists($where) {
 return false;
 }
   
-  public function getitem($id) {
-    if ($res = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) {
-      return $res->fetch(PDO::FETCH_ASSOC);
-    }
-    return false;
-  }
-
 public function getlist(array $list) {
 if ($res = $this->select(sprintf('id in (%s)', implode(',', $list)))) {
 return $res->fetchAll(PDO::FETCH_ASSOC);
@@ -241,6 +234,20 @@ return true;
 return false;
 
 }
+
+  public function getitem($id) {
+    if ($res = $this->query("select * from $this->prefix$this->table where id = $id limit 1")) {
+      return $res->fetch(PDO::FETCH_ASSOC);
+    }
+    return false;
+  }
+
+  public function finditem($where) {
+    if ($res = $this->query("select * from $this->prefix$this->table where $where limit 1")) {
+      return $res->fetch(PDO::FETCH_ASSOC);
+    }
+    return false;
+  }
 
 public function findid($where) {
     if($res = $this->query("select id from $this->prefix$this->table where $where limit 1")) {

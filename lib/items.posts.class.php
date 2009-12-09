@@ -31,7 +31,7 @@ public function add($idpost, $iditem) {
 if (dbversion) {
 $this->db->add(array(
 'post' => $idpost,
-'item' => $ititem
+'item' => $iditem
 ));
 $this->added();
 } else {

@@ -21,7 +21,7 @@ class tsimplecontent  {
   function GetTemplateContent() {
 $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
 $theme =ttheme::instance();
-    return sprintf($theme->simplecontent, $result);
+    return sprintf($theme->content->simple, $result);
   }
   
   public static function html($content) {

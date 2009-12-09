@@ -80,7 +80,7 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $co
   public function __get($name) {
     if (method_exists($this, $get = "get$name")) return $this->$get();
     if (in_array($name, self::$arrayprops))  return implode(',', $this->post->$name);
-    if (in_array($name, self::$boolprops))  return $this->post->$name ? 'true' : 'false';
+    if (in_array($name, self::$boolprops))  return $this->post->$name ? 1 : 0;
     return $this->post->$name;
   }
   

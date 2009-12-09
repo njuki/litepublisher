@@ -37,7 +37,7 @@ $this->delete($pid, $uid);
 
 public function subscribed($pid, $uid) {
 if (dbversion) {
-return $this->db->exists("post = $pid and author = $uid");
+return $this->db->exists("post = $pid and item = $uid");
  } else {
 return isset($this->items[$pid]) && in_array($uid, $this->items[$pid]);
 }

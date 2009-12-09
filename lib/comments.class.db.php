@@ -79,7 +79,7 @@ return $this->db->getcount("post = $this->pid and status = 'approved'");
 }
 
 public function getcontent() {
-return $this->getcontentwhere('status', '');
+return $this->getcontentwhere('approved', '');
 }
 
 public function getholdcontent($idauthor) {
