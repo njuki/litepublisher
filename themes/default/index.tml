@@ -193,7 +193,7 @@ $comment.content
 </form>
 
 <form name="form" method="post" action="">
-<input type=hidden name="confirmid" value="$confirmid" />
+<input type="hidden" name="confirmid" value="$confirmid" />
   <p><input type="submit" name="submit" value="$lang.human"/></p>
 </form>
 <!--/confirmform-->
@@ -275,6 +275,24 @@ $menu.content
       </ul>
     </div>
 <!--/archives-->
+
+<!--links-->
+    <div class="widget">
+      <h2 class="sidebartitle">%s</h2>
+      <ul class="linkcat" id="widgetlinks">
+<!--item--><li><a href="%1$s" title="%2$s">%3$s</a></li><!--/item-->
+      </ul>
+    </div>
+<!--/links-->
+
+<!--friends-->
+    <div class="widget">
+      <h2 class="sidebartitle">%s</h2>
+      <ul class="linkcat" id="widgetfriends">
+%s
+      </ul>
+    </div>
+<!--/friends-->
 <!--/sitebar-->
  </ul>
 </div>
