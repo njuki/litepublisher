@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tpinger extends titems {
+class tpinger extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
@@ -16,16 +16,21 @@ class tpinger extends titems {
 global $paths;
     parent::create();
     $this->basename = 'pinger';
-$this->dbversion = false;
     $this->data['services'] = '';
     $this->data['enabled'] = true;
 require_once($paths['libinclude'] . 'class-IXR.php');
   }
 
 public function install() {
+global $paths;
+if (dbversion) {
+$dir = $paths['data'] . 'pingedlinks';
+@mkdir($dir, 0777);
+@chmod($dir, 0777);
+}
 $posts = tposts::instance();
 $posts->lock();
-$posts->deleted = $this->postdeleted;
+if (dbversion) $posts->deleted = $this->postdeleted;
 $posts->singlecron = $this->pingpost;
 $posts->unlock();
 }
@@ -58,17 +63,16 @@ $posts->unlock();
     $post = tpost::instance($id);
 if ($post->status != 'published') return;
     $posturl = $post->link;
-    $this->lock();
     $this->pingservices($posturl);
-    
-    if (!isset($this->items[$id])) $this->items[$id] = array();
+
+$pinged = new tpinglinks    ($id);
     $links = $this->getlinks($post);
     foreach ($links as $link) {
-      if (!in_array($link, $this->items[$id])) {
-        if ($this->ping($link, $posturl)) $this->items[$id][] = $link;
+      if (!in_array($link, $pinged->items)) {
+        if ($this->ping($link, $posturl)) $pinged->items[] = $link;
       }
     }
-    $this->unlock();
+$pinged->save();
   }
   
   protected function getlinks(tpost $post) {
@@ -196,5 +200,24 @@ if ($post->status != 'published') return;
     }
   }
   
+}//class
+
+class tpinglinks extends titems {
+public $pid;
+
+public function __construct($pid) {
+$this->pid = $pid;
+parent::__construct();
 }
+
+public function getbasename() {
+if (dbversion) {
+return 'pingedlinks' . DIRECTORY_SEPARATOR . $this->pid;
+} else {
+    return 'posts' . DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'pingedlinks';
+}
+}
+
+}//class
+
 ?>
