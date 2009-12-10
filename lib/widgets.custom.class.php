@@ -14,7 +14,7 @@ class tcustomwidget extends titems {
   
   protected function create() {
     parent::create();
-    $this->basename   = 'customwidget';
+    $this->basename   = 'widgets.custom';
   }
   
   public function getwidget($id, $sitebar) {

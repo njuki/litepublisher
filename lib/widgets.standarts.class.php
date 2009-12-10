@@ -14,7 +14,7 @@ class tstdwidgets extends titems {
 
 protected function create() {
 parent::create();
-$this->basename = 'stdwidgets';
+$this->basename = 'widgets.standarts';
 $this->dbversion = false;
 $this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'comments', 'meta');
 }
@@ -57,7 +57,7 @@ $template->addjavascript('ajax', file_get_contents($paths['libinclude']. 'ajax.j
 public function delete($name) {
 if (!isset($this->items[$name])) return;
 $widgets = twidgets::instance();
-$widgets->delete($this->items[$namre]['id']);
+$widgets->delete($this->items[$name]['id']);
 unset($this->items[$name]);
 $this->save();
 $this->updateajax();
@@ -66,9 +66,8 @@ $this->updateajax();
 public function expire($name) {
 if (!isset($this->items[$name])) return;
 $widgets = twidgets::instance();
-$widgets->itemexpired($this->items[$namre]['id']);
+$widgets->itemexpired($this->items[$name]['id']);
 }
-
 
 public function widgetdeleted($id) {
 if ($name = $this->getname($id)) {

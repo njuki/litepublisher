@@ -72,7 +72,7 @@ $std->expire('comments');
 
 if (!dbversion) {
 $comments = tcomments::instance($idpost);
-if (!$comments->itemexists($id)) }
+if (!$comments->itemexists($id)) {
 //удалить если существует
 foreach ($this->items as $i => $item) {
 if ($id == $item['id']) {
@@ -88,7 +88,7 @@ $item['id'] = $id;
 $item['idpost'] = $idpost;
           $post = tpost::instance($idpost);
 //если свежий коммент, то на последней странице
-$item[['posturl'] =     $post->url;
+$item['posturl'] =     $post->url;
     if ($options->commentpages) {
 $page = ceil($comments->count / $options->commentsperpage);
 if ($page > 1) $item['posturl'] = rtrim($item['posturl'], '/') . "/page/$page/";
@@ -103,6 +103,7 @@ $item['url'] = $author['url'];
 if (count($this->items) == $this->recentcount) array_pop($this->items);
 array_unshift($this->items, $item);
 $this->save();
+}
 }
 }
   

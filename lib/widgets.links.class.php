@@ -15,7 +15,7 @@ class tlinkswidget extends titems {
   
   protected function create() {
     parent::create();
-    $this->basename = 'linkswidget';
+    $this->basename = 'widgets.links';
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
   }
