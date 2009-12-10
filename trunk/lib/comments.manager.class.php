@@ -59,7 +59,7 @@ $comusers->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idaut
     
     $post = tpost::instance($idpost);
 $post->clearcache();
-    $this->changed($id);
+    $this->changed($id, $idpost);
   }
 
  public function delete($id, $idpost) {

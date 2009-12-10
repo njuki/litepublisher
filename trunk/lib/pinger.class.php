@@ -21,6 +21,14 @@ $this->dbversion = false;
     $this->data['enabled'] = true;
 require_once($paths['libinclude'] . 'class-IXR.php');
   }
+
+public function install() {
+$posts = tposts::instance();
+$posts->lock();
+$posts->deleted = $this->postdeleted;
+$posts->singlecron = $this->pingpost;
+$posts->unlock();
+}
   
   public function setenabled($value) {
     if ($value != $this->enabled) {
@@ -48,6 +56,7 @@ require_once($paths['libinclude'] . 'class-IXR.php');
   
   public function pingpost($id) {
     $post = tpost::instance($id);
+if ($post->status != 'published') return;
     $posturl = $post->link;
     $this->lock();
     $this->pingservices($posturl);

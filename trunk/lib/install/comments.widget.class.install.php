@@ -7,17 +7,13 @@
 **/
 
 function tcommentswidgetInstall($self) {
-if (!dbversion) {
 $manager = tcommentmanager::instance();
 $manager->changed = $self->changed;
 }
-}
 
 function tcommentswidgetUninstall($self) {
-if (!dbversion){
 $manager = tcommentmanager::instance();
 $manager->unsubscribeclass($self);
-}
 }
 
 ?>
