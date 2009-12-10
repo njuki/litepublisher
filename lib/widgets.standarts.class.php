@@ -63,6 +63,13 @@ $this->save();
 $this->updateajax();
 }
 
+public function expire($name) {
+if (!isset($this->items[$name])) return;
+$widgets = twidgets::instance();
+$widgets->itemexpired($this->items[$namre]['id']);
+}
+
+
 public function widgetdeleted($id) {
 if ($name = $this->getname($id)) {
 unset($this->items[$name]);

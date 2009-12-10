@@ -6,7 +6,7 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tcommentswidget extends tevents {
+class tcommentswidget extends titems {
 
 public static function instance() {
 return getinstance(__class__);
@@ -49,39 +49,62 @@ $res->setFetchMode (PDO::FETCH_ASSOC);
 foreach ($res as $item) {
 $args->add($item);
     if ($options->commentpages) {
-$count = ceil($item['commentscount'] / $options->commentsperpage);
-if ($count > 1) $args->posturl = rtrim($item['posturl'], '/') . "/page/$count/";
+$page = ceil($item['commentscount'] / $options->commentsperpage);
+if ($page > 1) $args->posturl = rtrim($item['posturl'], '/') . "/page/$page/";
 }
 
         $args->content = tcontentfilter::getexcerpt($item['content'], 120);
           $result .= $theme->parsearg($tml,$args);
         }
 } else {
-    if ($item = end($manager->items)) {
-$count = $this->recentcount;
-      $users = tcomusers::instance();
-      do {
-        $id = key($manager->items);
-        if (!isset($item['status']) && !isset($item['type']) ) {
-          $count--;
-          $post = tpost::instance($item['pid']);
-//если свежий коммент, то на последней странице
-$args->posturl =     $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-          $content = $post->comments->getvalue($id, 'content');
-          $args->content = tcontentfilter::getexcerpt($content, 120);
-
-$args->id = $id;
- $args->title = $post->title;
-          $user = $users->getitem($item['uid']);
-$args->name = $user['name'];
+foreach ($this->items as $item) {
+$args->add($item);
+        $args->content = tcontentfilter::getexcerpt($item['content'], 120);
           $result .= $theme->parsearg($tml,$args);
         }
-      } while (($count > 0) && ($item  = prev($manager->items)));
-    }
-    
 }
     return $result;
   }
+
+public function changed($id, $idpost) {
+$std = tstdwidgets::instance();
+$std->expire('comments');
+
+if (!dbversion) {
+$comments = tcomments::instance($idpost);
+if (!$comments->itemexists($id)) }
+//удалить если существует
+foreach ($this->items as $i => $item) {
+if ($id == $item['id']) {
+array_splice($this->items, $i, 1);
+$this->save();
+return;
+}
+}
+} else {
+//добавить комментарий в список и удалить старый
+$item = $comments->items[$id];
+$item['id'] = $id;
+$item['idpost'] = $idpost;
+          $post = tpost::instance($idpost);
+//если свежий коммент, то на последней странице
+$item[['posturl'] =     $post->url;
+    if ($options->commentpages) {
+$page = ceil($comments->count / $options->commentsperpage);
+if ($page > 1) $item['posturl'] = rtrim($item['posturl'], '/') . "/page/$page/";
+}
+
+$comusers = tcomusers::instance($idpost);
+$author = $comusers->items[$item['author']];
+$item['name'] = $author['name'];
+$item['email'] = $author['email'];
+$item['url'] = $author['url'];
+
+if (count($this->items) == $this->recentcount) array_pop($this->items);
+array_unshift($this->items, $item);
+$this->save();
+}
+}
   
 }//class
 ?>

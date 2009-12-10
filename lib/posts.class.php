@@ -216,7 +216,7 @@ if (!$this->dbversion) {
 }
     $this->UpdateArchives();
     $Cron = tcron::instance();
-    $Cron->add('single', get_class($this), 'DoSingleCron', $post->id);
+    $Cron->add('single', get_class($this), 'dosinglecron', $post->id);
   }
   
   public function UpdateArchives() {
@@ -234,11 +234,10 @@ $this->archivescount = count($this->archives);
 }
   }
   
-  public function DoSingleCron($id) {
+  public function dosinglecron($id) {
     $this->PublishFuture();
     $GLOBALS['post'] = tpost::instance($id);
     $this->singlecron($id);
-    //ping
   }
   
   public function hourcron() {
