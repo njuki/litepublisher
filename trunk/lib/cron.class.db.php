@@ -22,13 +22,18 @@ $this->table = 'cron';
     $this->cache = false;
     $this->disableadd = false;
   }
+
+  protected function getdir() {
+    global $paths;
+    return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
+  }
   
   public function getpath() {
     global $paths;
     if (($this->data['path'] != '') && is_dir($this->data['path'])) {
       return  $this->data['path'];
     }
-    return  $paths['data'];
+    return  $this->getdir();
   }
   
  public function request($arg) {
@@ -117,8 +122,7 @@ $this->db->delete("class = '$class'");
 global $options;
 try {
     $self = getinstance(__class__);
-
-    $cronfile =$self->dir .  'crontime.txt';
+    $cronfile = $self->dir .  'crontime.txt';
     @file_put_contents($cronfile, ' ');
     @chmod($cronfile, 0666);
     

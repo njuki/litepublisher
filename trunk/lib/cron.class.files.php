@@ -56,10 +56,7 @@ return strtotime("+1 $this->type");
   }
   
   public function delete() {
-    global $paths;
-    @unlink($paths['data'] . $this->GetBaseName() .'.php');
-    @unlink($paths['data'] . $this->GetBaseName() .'.bak.php');
-    $this->owner->log("task deleted ". $paths['data'] . $this->GetBaseName() .'.php');
+    $this->owner->delete($this->id);
   }
   
   public function execute() {
@@ -117,12 +114,12 @@ $this->table = 'cron';
     if (($this->data['path'] != '') && is_dir($this->data['path'])) {
       return  $this->data['path'];
     }
-    return  $paths['data'];
+    return $this->getdir();
   }
   
   protected function getdir() {
     global $paths;
-    return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
+    return  $paths['data'] . 'cron' . ;DIRECTORY_SEPARATOR);
   }
   
   public function request($arg) {
@@ -164,8 +161,7 @@ $this->table = 'cron';
   
   private function GetFileList(&$processed) {
     $result = array();
-    $filelist = tfiler::getfiles($this->getdir());
-    foreach ($filelist as $filename) {
+    foreach (glob($this->dir . '*.php') as $filename) {
       if (!preg_match('/\d+\.php$/', $filename)) continue;
       if (in_array($filename, $processed)) continue;
       $result[] = $filename;
@@ -188,9 +184,8 @@ $this->table = 'cron';
   }
   
   public function delete($id) {
-    global $paths;
-    @unlink($paths['data'] . 'cron' . DIRECTORY_SEPARATOR . $id . '.php');
-    @unlink($paths['data'] . 'cron' . DIRECTORY_SEPARATOR . $id . '.bak.php');
+    @unlink($this->dir . $id . '.php');
+    @unlink($this->dir . $id . '.bak.php');
   }
   
   public function deleteclass($class) {

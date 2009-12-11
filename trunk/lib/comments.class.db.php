@@ -195,6 +195,11 @@ return $this->data['url'];
     $post = tpost::instance($this->post);
     return $post->title;
   }
+
+public function getrawcontent() {
+$comments = tcomments::instance($this->post);
+return $comments->raw->getvalue($this->id, 'rawcontent');
+}
   
 }//class
 
