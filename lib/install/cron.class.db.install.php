@@ -7,6 +7,11 @@
 **/
 
 function tcronInstall($self) {
+  global $paths;
+  $dir = $paths['data'] . 'cron';
+  @mkdir($dir, 0777);
+  @chmod($dir, 0777);
+
     $manager = tdbmanager ::instance();
     $manager->CreateTable('cron', file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'cron.sql'));
   

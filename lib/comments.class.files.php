@@ -308,6 +308,10 @@ $manager = tcommentmanager::instance();
     $post = tpost::instance($this->owner->pid);
     return $post->title;
   }
+
+public function getrawcontent() {
+return $this->owner->raw->items[$this->id]['rawcontent'];
+}
   
 }//class
 
