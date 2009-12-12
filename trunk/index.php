@@ -6,10 +6,10 @@
 
 ob_start();
 //begin config
-define('dbversion' , false); //possible values combo, full
-$domain = strtolower(trim($_SERVER['HTTP_HOST']));
-if (substr($domain, 0, 4) == 'www.') $domain = substr($domain, 4);
-$domain = trim($domain, '.:/\,;');
+define('dbversion' , false); //valid values is combo, full
+if (!preg_match('/(www\.)?([\w\.]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
+$domain = $domain[2];
+
 $paths = array('home' => dirname(__file__). DIRECTORY_SEPARATOR);
 $paths['lib'] = $paths['home'] .'lib'. DIRECTORY_SEPARATOR;
 $paths['libinclude'] = $paths['lib'] . 'include'. DIRECTORY_SEPARATOR;
