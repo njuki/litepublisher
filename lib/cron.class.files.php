@@ -91,56 +91,14 @@ $this->owner->log("task started:\n{$this->class}->{$this->func}");
   
 } //class
 
-class tcron extends tevents {
-  public $disableadd;
+class tcron extends tabstractcron {
   
   public static function instance() {
     return getinstance(__class__);
   }
   
-  protected function create() {
-    parent::create();
-$this->table = 'cron';
-    $this->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
-    $this->data['url'] = '';
-    $this->data['autoid'] = 0;
-    $this->data['path'] = '';
-    $this->cache = false;
-    $this->disableadd = false;
-  }
-  
-  public function getpath() {
-    global $paths;
-    if (($this->data['path'] != '') && is_dir($this->data['path'])) {
-      return  $this->data['path'];
-    }
-    return $this->getdir();
-  }
-  
-  protected function getdir() {
-    global $paths;
-    return  $paths['data'] . 'cron' . ;DIRECTORY_SEPARATOR);
-  }
-  
-  public function request($arg) {
-    if ($fh = @fopen($this->path .'cron.lok', 'w')) {
-      flock($fh, LOCK_EX);
-      ignore_user_abort(true);
-      set_time_limit(60*20);
-      $this->sendexceptions();
-      $this->log("started loop");
-      $this->execute();
-      flock($fh, LOCK_UN);
-      fclose($fh);
-      $this->log("finished loop");
-      $this->pop();
-      return 'Ok';
-    }
-    return 'locked';
-  }
-  
-  public function execute() {
-    @ob_end_flush ();
+  protected function execute() {
+if (ob_get_level()) ob_end_flush ();
     echo "<pre>\n";
     $time = time();
     $task = new TCronTask($this);
@@ -170,16 +128,11 @@ $this->table = 'cron';
     return $result;
   }
   
-  public function add($type, $class, $func, $arg = null) {
-    if ($this->disableadd) return false;
+  protected function doadd($type, $class, $func, $arg) {
     ++$this->data['autoid'] ;
     $this->Save();
     $task = new TCronTask($this);
     $task->Add($this->autoid, $type, $class, $func, $arg );
-    if (($type == 'single') && !defined('cronpinged')) {
-      define('cronpinged', true);
-      register_shutdown_function('TCron::SelfPing');
-    }
     return $this->autoid;
   }
   
@@ -199,75 +152,5 @@ $this->table = 'cron';
     }
   }
   
-  public static function SelfPing() {
-global $options;
-try {
-    $self = getinstance(__class__);
-    $cronfile =$self->dir .  'crontime.txt';
-    @file_put_contents($cronfile, ' ');
-    @chmod($cronfile, 0666);
-    
-    $self->ping();
-    } catch (Exception $e) {
-      $options->handexception($e);
-    }
-
-  }
-  
-  public function ping() {
-    global $options, $domain;
-    $this->AddToChain($domain, $options->subdir . $this->url);
-    $this->PingHost($domain, $options->subdir . $this->url);
-  }
-  
-  private function PingHost($host, $path) {
-    //$this->log("pinged host $host$path");
-    if (		$socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
-      fputs( $socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
-    }
-  }
-  
-  private function pop() {
-    global $domain;
-    $host = $domain;
-    $filename = $this->path .'cronchain.php';
-    if(!tfiler::unserialize($filename, $list))  return;
-    if (isset($list[$host]))  unset($list[$host]);
-    $item = array_splice($list, 0, 1);
-    tfiler::serialize($filename, $list);
-    if ($item) {
-      $this->PingHost(key($item), $item[key($item)]);
-    }
-  }
-  
-  private function AddToChain($host, $path) {
-    $filename = $this->path .'cronchain.php';
-    if(!tfiler::unserialize($filename, $list)) {
-      $list = array();
-    }
-    if (!isset($list[$host])) {
-      $list[$host] = $path;
-      tfiler::serialize($filename, $list);
-    }
-  }
-  
-  public function sendexceptions() {
-    global $paths, $options;
-    //проверить, если файл логов создан более часа назад, то его отослать на почту
-    $filename = $paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
-    $time = @filectime ($filename);
-    if (($time === false) || ($time + 3600 > time())) return;
-    $s = file_get_contents($filename);
-    @unlink($filename);
-    tmailer::SendAttachmentToAdmin("[error] $options->name", "See attachment", 'errors.txt', $s);
-  }
-  
-  public function log($s) {
-    echo date('r') . "\n$s\n\n";
-    flush();
-    if (defined('debug')) tfiler::log($s, 'cron.log');
-  }
-  
 }//class
-
 ?>
