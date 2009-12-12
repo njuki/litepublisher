@@ -21,6 +21,11 @@ $this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags
 
 public function add($name, $ajax, $sitebar) {
 if (isset($this->items[$name])) return $this->error("widget  $name already exists");
+if ($name == 'comments') {
+$manager = tcommentmanager::instance();
+$comwidget = tcommentswidget::instance();
+$manager->changed = $comwidget->changed;
+}
 $widgets = twidgets::instance();
 $id = $widgets->add($this->class, 'echo', $sitebar, -1);
 $this->items[$name] = array(
@@ -74,6 +79,12 @@ if ($name = $this->getname($id)) {
 unset($this->items[$name]);
 $this->save();
 $this->updateajax();
+
+if ($name == 'comments') {
+$manager = tcommentmanager::instance();
+$comwidget = tcommentswidget::instance();
+$manager->unsubscribeclass($comwidget);
+}
 }
 }
 

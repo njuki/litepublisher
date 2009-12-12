@@ -6,20 +6,20 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function tcronInstall($self) {
-  global $paths;
+function tabstractcronInstall($self) {
+  global $paths, $options;
   $dir = $paths['data'] . 'cron';
   @mkdir($dir, 0777);
   @chmod($dir, 0777);
   
-  $self->url =  '/croncron.php?cronpassword=' . md5(secret. uniqid( microtime()) . 'cron');
+  $self->password =  md5uniq();
   $self->save();
   
   $urlmap  = turlmap::instance();
-  $urlmap->add($self->url, get_class($self), null);
+  $urlmap->add('/croncron.htm', get_class($self), null, 'get');
 }
 
-function tcronUninstall($self) {
+function tabstractcronUninstall($self) {
   turlmap::unsub($self);
 }
 
