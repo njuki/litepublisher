@@ -114,5 +114,31 @@ return $id ? $id : -1;
       return false;
   }
   
+}//class
+
+class tsingleitems extends titems {
+  public static $instances;
+  public $id;
+
+  public static function instance($class, $id = 0) {
+global $classes;
+    if (!isset(self::$instances)) self::$instances = array();
+    if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
+    $self = $classes->newinstance($class);
+      self::$instances[$class][$id] = $self;
+    $self->id = $id;
+      $self->load();
+    return $self;
+  }
+
+public function load() {
+if (!isset($this->id)) return false;
+return parent::load();
 }
+  
+  public function free() {
+    unset(self::$instances[get_class($this)][$this->id]);
+  }
+  
+}//class
 ?>

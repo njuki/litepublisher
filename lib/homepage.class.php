@@ -17,9 +17,9 @@ private $sitebars;
     parent::create();
     $this->basename = 'homepage' ;
 $this->data['idurl'] = 0;
-    $this->data['text'] = '';
     $this->data['hideposts'] = false;
 $this->data['showwidgets'] = true;
+    $this->data['text'] = '';
   }
   
   //ITemplate
