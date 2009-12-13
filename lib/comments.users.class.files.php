@@ -53,7 +53,6 @@ $manager->authoredited($id);
     return $id;
   }
 
-
 public function delete($id) {
 parent::delete($id);
 $manager = tcommentmanager::instance();
@@ -62,7 +61,10 @@ $manager->authordeleted($id);
 
   public function fromcookie($cookie) {
     foreach ($this->items as $id => $item) {
-      if ($cookie == $item['cookie']) return $item;
+      if ($cookie == $item['cookie']) {
+$item['id'] = $id;
+return $item;
+}
     }
     return false;
   }

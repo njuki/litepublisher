@@ -85,7 +85,7 @@ $comments->db->setvalue($id, 'status', $status);
 } else {
 switch ($value) {
 case 'hold': 
-$comments->hold($id);
+$comments->sethold($id);
 break;
 
 case 'approved':
