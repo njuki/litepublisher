@@ -30,17 +30,26 @@ $id = $this->db->add(array(
     'cookie' => md5(mt_rand() . secret. microtime())
     ));
 
-    $this->added($id);
+$manager = tcommentmanager::instance();
+$manager->authoradded($id);
     return $id;
   }
   
   public function edit($id, $name, $url, $email, $ip) {
-return $this->UpdateAssoc(array(
+$this->UpdateAssoc(array(
 'name' => $name,
 'email' => $email,
 'url' => $url
 ));
+$manager = tcommentmanager::instance();
+$manager->authoredited($id);
   }
+
+public function delete($id) {
+parent::delete($id);
+$manager = tcommentmanager::instance();
+$manager->authordeleted($id);
+}
   
   public function fromcookie($cookie) {
 return $this->db->finditem('cookie = '. dbquote($cookie));

@@ -213,8 +213,8 @@ foreach ($parents as $parent) {
 $result = $this->getwidgetitem($tml, $this->items[$parent], $result);
 }
 
-$sitebars = tsitebars::instance();    
-    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $sitebars->current);
+$widgets = twidgets::instance();
+    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $widgets->current);
   }
 
 public function getmenu($hover) {
@@ -349,12 +349,12 @@ $theme = ttheme::instance();
 //itemplate2
 public function getsitebar() {
 $result = '';
-$sitebars = tsitebars::instance();
+$widgets = twidgets::instance();
 $template = ttemplate::instance();
-if (($sitebars->current == 0) && !$template->hovermenu) {
+if (($widgets->current == 0) && !$template->hovermenu) {
 $result .= $this->owner->getsubmenuwidget($this->id);
 }
-    $result .= $sitebars->getcurrent();
+    $result .= $widgets->getcontent();
 return $result;
 }
 

@@ -36,7 +36,8 @@ return $self;
     );
     
     $this->unlock();
-    $this->added($this->autoid);
+$manager = tcommentmanager::instance();
+    $manager->authoradded($this->autoid);
     return $this->autoid;
   }
   
@@ -47,9 +48,18 @@ return $self;
     $item['url'] = $url;
     $item['email'] = $email;
     $this->unlock();
+$manager = tcommentmanager::instance();
+$manager->authoredited($id);
     return $id;
   }
-  
+
+
+public function delete($id) {
+parent::delete($id);
+$manager = tcommentmanager::instance();
+$manager->authordeleted($id);
+}  
+
   public function fromcookie($cookie) {
     foreach ($this->items as $id => $item) {
       if ($cookie == $item['cookie']) return $item;

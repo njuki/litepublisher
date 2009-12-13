@@ -72,11 +72,11 @@ $file = $paths['cache'] . "$template->tml.sitebar.$this->id.$this->current.php";
 if (file_exists($file)) {
 $result = file_get_contents($file);
 } else {
-$result = $this->getcontent($this->current);
+$result = $this->getsitebar($this->current);
 //если закончились сайтбары, то остатки объеденить
     if ($this->count == $this->current + 1) {
 for ($i = $this->current + 1; $i < count($this->items); $i++) {
-$result .= $this->getcontent($i);
+$result .= $this->getsitebar($i);
 }
 }
 
@@ -92,6 +92,7 @@ return $result;
 $template = ttemplate::instance();
 $i = 0;
     foreach ($this->items[$index] as $id => $item) {
+var_dump($item);
 $this->curwidget= $id;
 $this->curindex= $i++;
 $content = $this->getwidget($item);

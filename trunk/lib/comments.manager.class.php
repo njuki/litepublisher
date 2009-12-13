@@ -15,7 +15,8 @@ class tcommentmanager extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'commentmanager';
-    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved');
+    $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
+'authoradded', 'authordeleted', 'authoredited');
 $this->data['sendnotification'] =  true;
 $this->data['trustlevel'] = 2;
 $this->data['hidelink'] = false;
@@ -109,8 +110,7 @@ return $this->checktrust($item['trust']);
   public function sendmail($id, $idpost) {
     global $options, $comment;
     if (!$this->sendnotification) return;
-$comments = tcomments::instance($idpost);
-    $comment = $comments->getcomment($id);
+    $comment = tcomments::getcomment($idpost, $id);
     $html = THtmlResource::instance();
     $html->section = 'comments';
 $args = targs::instance();
