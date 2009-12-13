@@ -88,6 +88,7 @@ $item = $comments->items[$id];
 $item['id'] = $id;
 $item['idpost'] = $idpost;
           $post = tpost::instance($idpost);
+$item['title'] = $post->title;
 //если свежий коммент, то на последней странице
 $item['posturl'] =     $post->url;
     if ($options->commentpages) {

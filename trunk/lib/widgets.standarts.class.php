@@ -165,7 +165,7 @@ $file = $widgets->getcachefile($id);
 if (file_exists($file)) return file_get_contents($file);
 
 $instance = $this->getinstance($name);
-$result = $instance->getwidgetcontent($id, $widget->findsitebar($id));
+$result = $instance->getwidgetcontent($id, $widgets->findsitebar($id));
 file_put_contents($file, $result);
 return $result;
 }

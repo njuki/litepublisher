@@ -7,7 +7,7 @@
 **/
 
 class thomepage extends tevents implements  itemplate {
-private $sitebars;
+
   
   public static function instance() {
     return getinstance(__class__);
@@ -18,7 +18,8 @@ private $sitebars;
     $this->basename = 'homepage' ;
 $this->data['idurl'] = 0;
     $this->data['hideposts'] = false;
-$this->data['showwidgets'] = true;
+$this->data['defaultswidgets'] = true;
+$this->data['showstandartcontent'] = true;
     $this->data['text'] = '';
   }
   
@@ -56,8 +57,8 @@ $this->setvalue('text', $s);
 $this->setvalue('hideposts', $value);
 }
 
-public function setshowwidgets($value) {
-$this->setvalue('showwidgets', $value);
+public function setstedajax($value) {
+$this->setvalue('stdajx', $value);
 }
 
 private function setvalue($name, $value) {
@@ -69,49 +70,16 @@ private function setvalue($name, $value) {
     }
   }
 
-public function getsitebar($index, &$s) {
-if (!$this->showwidgets) return;
-if ($index == 0) $this->sortwidgets();
-if (!isset($this->sitebars[$index]) || count($this->sitebars[$index]) == 0) return;
-$before  = '';
-$theme = ttheme::instance();
-$std = tstdwidgets::instance();
-foreach ($this->sitebars[$index] as $name => $ajax) {
-$content = $std->getcontent($name);
-if ($ajax) {
-$i = strpos($s, "widget$name");
-$i = strpos($s, '>', $i);
-      $s = substr_replace($s, $content, $i+ 1, 0);
+public function getsitebar() {
+if ($this->specsitebars) {
+$widgets = twidgets::instance('homepage');
+return $widgets->getcontent();
 } else {
-$before .= $theme->getwidget($std->items[$name]['title'], $content, $name, $index);
-}
-}
-$s = $before . $s;
+$widgets = twidgets::instance();
+if (!$this->showstandartcontent) return $widgets->getcontent();
+
+
 }
 
-//распределить между сайтбарами стандартные виджеты
-private function sortwidgets() {
-$sitebars = tsitebars::instance();
-$last = $sitebars->count - 1;
-$this->sitebars = array(0 => array());
-$this->sitebars[$last] = array();
-
-$std = tstdwidgets::instance();
-foreach ($std->names as $name) {
-if ($name == 'tags') continue;
-if (!isset($std->items[$name])) {
-if (($name == 'posts') || ($name == 'meta')) {
-$this->sitebars[$last][$name] = false;
-} else {
-$this->sitebars[0][$name] = false;
-}
-} elseif ($std->items[$name]['ajax']){
-$sitebar = $sitebars->find($std->items[$name]['id']);
- $this->sitebars[$sitebar][$name] = true;
-}
-}
-}
-  
 }//class
-
 ?>

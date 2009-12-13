@@ -9,7 +9,7 @@
 class tcomments extends titems {
   public $pid;
 private $rawitems;
-private $holtitems;
+private $holditems;
   private static $instances;
   
   public static function instance($pid) {
@@ -100,7 +100,7 @@ $comusers = tcomusers::instance($this->pid);
 $comusers->delete($author);
 }
 
-  public function hold($id) {
+  public function sethold($id) {
 if (isset($this->itms[$id])) {
 $item = $this->items[$id];
 unset($this->items[$id]);
@@ -283,7 +283,7 @@ global $options;
 $idpost = $this->owner->pid;
 $comusers = tcomusers::instance($idpost);
 $item = $comusers->getitem($this->author);
-$name = $item['email'];
+$name = $item['name'];
 $url = $item['url'];
 $manager = tcommentmanager::instance();
     if ($manager->hidelink || empty($url)) return $name;

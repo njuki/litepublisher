@@ -92,11 +92,10 @@ return $result;
 $template = ttemplate::instance();
 $i = 0;
     foreach ($this->items[$index] as $id => $item) {
-var_dump($item);
 $this->curwidget= $id;
 $this->curindex= $i++;
 $content = $this->getwidget($item);
-$template->ongetwidget($id, &$content);
+$template->onwidget($id, &$content);
       $result .= $content;
     }
     return $result;
@@ -186,6 +185,9 @@ $this->insert($item, $sitebar, $order);
 
 private function insert($item, $sitebar, $order) {
 //вставить в массив с соблюдением пор€дка и ключей    
+if ($order == count($this->items[$sitebar])) {
+$this->items[$sitebar][$item['id']] = $item;
+} else {
 $new = array();
 $i = 0;
 foreach ($this->items[$sitebar] as $idWidget => $widget) {
@@ -193,6 +195,7 @@ if ($i++ == $order) $new[$item['id']] = $item;
 $new[$idwidget] = $widget;
 }
 $this->items[$sitebar] = $new;
+}
     $this->save();
 }
 
