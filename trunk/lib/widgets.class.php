@@ -11,9 +11,13 @@ public $current;
 public $curwidget;
 public $curindex;
 public $count;
+public static $default;
 
-public static function instance($id = 0) {
-    return parent::instance(__class__, $id);
+public static function instance($id = null) {
+if (is_null($id)) {
+$id = isset(self::$default) ? self::$default : 0;
+}
+return parent::instance(__class__, $id);
 }
 
 protected function create() {
@@ -22,7 +26,7 @@ $this->current = 0;
 $theme = ttheme::instance();
 $this->count = $theme->sitebarscount;
 $this->dbversion = false;
-    $this->addevents('ongetcontent');
+    $this->addmap('items', array(0 => array(), 1 => array(), 2 => array()));
 }
 
 public function getbasename() {
@@ -31,15 +35,20 @@ return 'sitebars' . DIRECTORY_SEPARATOR  . $this->id;
 
 public function load() {
 if (!isset($this->id)) return false;
-if ($this->id > 0) return parent::load();
+if ($this->id != 0) return parent::load();
 
 //значит id = 0 и сайтбары по умолчанию будем хранить в ttemplate
 $template = ttemplate::instance();
+if (isset($template->data['sitebars'])) {
 $this->data = &$template->data['sitebars'];
+} else {
+$template->data['sitebars'] = &$this->data;
+}
+      $this->afterload();
 }
 
 public function save() {
-if ($this->id > 0) return parent::save();
+if ($this->id != 0) return parent::save();
 
 $template = ttemplate::instance();
 $template->save();
@@ -92,8 +101,13 @@ $template->ongetwidget($id, &$content);
     return $result;
   }
 
-private function getcachefilename($item) {
-return "widget.$this->id.{$item['id']}.php";
+public function getcachefilename($id) {
+return "widget.$this->id.$id.php";
+}
+
+public function getcachefile($id) {
+global $paths;
+return $paths['cache'] . $this->getcachefilename($id);
 }
 
 private function getwidget($item) {
@@ -104,7 +118,7 @@ global $paths;
       break;
       
       case 'include':
-    $filename = $this->getcachefilename($item);
+    $filename = $this->getcachefilename($item['id']);
 $file = $paths['cache'] . $filename;
       if (!@file_exists($file)) {
         $result = $this->dogetwidget($item);
@@ -237,7 +251,6 @@ return false;
   }
   
   public function setexpired($class) {
-global $paths;
 for ($i = count($this->items) - 1; $i >= 0; $i--) {
     foreach ($this->items[$i] as $id => $item) {
       if ($class == $item['class'])  {
@@ -246,22 +259,20 @@ $urlmap = turlmap::instance();
 $urlmap->clearcache();
 return;
 } else {
-@unlink($paths['cache'] . $this->getcachefilename($item));
+@unlink($this->getcachefile($item['id']));
 }
 }
 }
 }
 }
-
 
 public function itemexpired($id) {
-global $paths;
 $item = $this->getitem($id);
 if ($item['echotype'] == 'echo') {
 $urlmap = turlmap::instance();
 $urlmap->clearcache();
 } else {
-@unlink($paths['cache'] . $this->getcachefilename($item));
+@unlink($this->getcachefile($item['id']));
 }
 }  
 

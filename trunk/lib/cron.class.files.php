@@ -96,6 +96,11 @@ class tcron extends tabstractcron {
   public static function instance() {
     return getinstance(__class__);
   }
+
+  protected function create() {
+    parent::create();
+$this->data['autoid'] = 0;
+}
   
   protected function execute() {
 if (ob_get_level()) ob_end_flush ();

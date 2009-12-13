@@ -57,7 +57,7 @@ $item  = array(
     );
 
 if ($status == 'approved') {
-    $this->items[$++$this->autoid] = $item;
+    $this->items[++$this->autoid] = $item;
 } else {
 $this->hold->items[++$this->autoid] =  $item;
 $this->hold->save();
@@ -212,6 +212,7 @@ public function add($id, $content, $ip) {
 $this->items[$id] = array(
 'content' => $content,
 'ip' => $ip
+);
 $this->save();
 }
 
