@@ -48,6 +48,10 @@ $this->holditems = new tholdcomments($this);
 return $this->holditems;
 }
 
+public function getapprovedcount() {
+return count($this->items);
+}
+
   public function add($author, $content, $status) {
     $filter = TContentFilter::instance();
 $item  = array(
@@ -142,6 +146,7 @@ if (count($items) == 0) return '';
 $args = targs::instance();
 $args->from = $from;
     $comment = new TComment($this);
+if ('tholdcomments' == get_class($this)) $comment->status = 'hold';
     $lang = tlocal::instance('comment');
 $theme = ttheme::instance();
 $tml = $theme->content->post->templatecomments->comments->comment;
@@ -222,9 +227,11 @@ $this->save();
 class TComment {
   public $id;
   public $owner;
+public $status;
   
   public function __construct($owner = null) {
     $this->owner = $owner;
+$this->status = 'approved';
   }
   
   public function __get($name) {
@@ -288,8 +295,9 @@ $manager = tcommentmanager::instance();
     }
 }
 
-  public function getlocaldate() {
-    return tlocal::date($this->date);
+  public function getdate() {
+$theme = ttheme::instance();
+    return TLocal::date($this->posted, $theme->comment->dateformat);
   }
   
   public function getlocalstatus() {
@@ -311,9 +319,13 @@ $manager = tcommentmanager::instance();
   }
 
 public function getrawcontent() {
-return $this->owner->raw->items[$this->id]['rawcontent'];
+return $this->owner->raw->items[$this->id]['content'];
 }
-  
+
+public function getip() {
+return $this->owner->raw->items[$this->id]['ip'];
+}
+
 }//class
 
 ?>

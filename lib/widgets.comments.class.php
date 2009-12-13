@@ -14,7 +14,7 @@ return getinstance(__class__);
 
 protected function create() {
 parent::create();
-$this->basename = 'commentswidget';
+$this->basename = 'widgets.comments';
 $this->data['recentcount'] =  7;
 }
 
@@ -67,6 +67,7 @@ $args->add($item);
   }
 
 public function changed($id, $idpost) {
+global $options;
 $std = tstdwidgets::instance();
 $std->expire('comments');
 

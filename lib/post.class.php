@@ -415,7 +415,7 @@ $this->data['commentsenabled'] = $value;
   
   public function getcommentscount() {
     if (!$this->commentsenabled || dbversion)  return $this->data['commentscount'];
-      return $this->comments->GetCountApproved;
+      return $this->comments->approvedcount;
   }
   
   //db

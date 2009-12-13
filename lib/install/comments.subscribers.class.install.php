@@ -19,11 +19,9 @@ if (dbversion) {
 $posts = tposts::instance();
 $posts->deleted = $self->deletepost;
 
-$comusers = tcomusers::instance();
-$comusers->deleted = $self->deleteitem;
-
-  $manager = $classes->commentmanager;
+$manager = tcommentmanager::instance();
   $manager->lock();
+$manager->authordeleted = $self->deleteitem;
   $manager->added = $self->sendmail;
   $manager->approved = $self->sendmail;
   $manager->unlock();
@@ -32,7 +30,6 @@ $comusers->deleted = $self->deleteitem;
 function tsubscribersUninstall(&$self) {
 global $classes;
 $classes->commentmanager->unsubscribeclass($self);
-$classes->comusers->unsubscribeclass($self);
 $classes->posts->unsubscribeclass($self);
 }
 

@@ -24,7 +24,7 @@ return $self;
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments.pingbacks';
   }
 
-  protected function doadd($url, $title) {
+  public function doadd($url, $title) {
     $this->items[++$this->autoid] = array(
 'url' => $url,
 'title' => $title,
@@ -36,7 +36,7 @@ return $self;
 return $this->autoid;
   }
 
-protected function setstatus($id, $approve) {
+public function setstatus($id, $approve) {
 if (isset($this->items[$id]) && ($approve != $this->items[$id]['approved'])) {
 $this->items[$id]['approved'] = $approve;
 $this->save();
@@ -52,7 +52,7 @@ $post->clearcache();
 }
 }
 
-public function getcontent() }
+public function getcontent() {
     global $pingback;
     $result = '';
 $a = array();

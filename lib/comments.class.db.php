@@ -74,7 +74,7 @@ public function getraw() {
 return $this->getdb($this->rawtable);
 }
 
-  public function GetCountApproved() {
+public function getapprovedcount() {
 return $this->db->getcount("post = $this->pid and status = 'approved'");
 }
 

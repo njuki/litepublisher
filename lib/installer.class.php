@@ -277,9 +277,9 @@ eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
     $post->tagnames = $lang->posttags;
 $post->content = $lang->postcontent;
         $posts = tposts::instance();
-    $posts->add($post);
+$posts->add($post);
     
-    $users = tcomusers::instance();
+    $users = tcomusers::instance($post->id);
     $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
     
     $classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
