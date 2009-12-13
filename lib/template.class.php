@@ -31,7 +31,7 @@ $this->tml = 'index';
     $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
-    $this->data['sitebars'] = array(0 => array(), 1 => array(), 2 => array());
+    $this->data['sitebars'] = null;
     $this->data['tags'] = array();
 $this->addmap('javascripts', array());
   }

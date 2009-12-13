@@ -158,11 +158,10 @@ return $classes->$name;
 }
 
 public function getcontent($name) {
-global $paths, $classes;
 if ($name == 'meta') return $this->meta;
 $id = isset($this->items[$name]) ? $this->items[$name]['id'] : $name;
 $widgets = twidgets::instance();
-$file = $paths['cache'] . "widget.$id.php";
+$file = $widgets->getcachefile($id);
 if (file_exists($file)) return file_get_contents($file);
 
 $instance = $this->getinstance($name);
