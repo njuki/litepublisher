@@ -77,8 +77,8 @@ $result = '';
 if (is_a($this->context, 'itemplate2')) {
 $result .= $this->context->getsitebar();
 } else {
-$sitebars = tsitebars::instance();
-    $result .= $sitebars->getcurrent();
+$widgets = twidgets::instance();
+    $result .= $widgets->getcontent();
 }
     return $result;
   }

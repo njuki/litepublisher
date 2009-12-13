@@ -1,15 +1,6 @@
-<?php
-/**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
-**/
-
-class tsitebars {
+class thomepagesitebars extends titems {
 public $current;
 public $count;
-private $items;
 
 public static function instance() {
 return getinstance(__class__);
@@ -21,11 +12,6 @@ $template = ttemplate::instance();
 $this->items = &$template->data['sitebars'];
 $theme = ttheme::instance();
 $this->count = $theme->sitebarscount;
-}
-
-public function save() {
-$template = ttemplate::instance();
-$template->save();
 }
 
 public function getcount($index) {
