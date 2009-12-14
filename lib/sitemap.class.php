@@ -129,9 +129,9 @@ $this->writeitem($url, $prio);
   private function writeposts() {
     global $options, $db;
 if (dbversion) {
-$res = $urlmap->db->query("select $db->posts.pagescount $db->posts.commentscount $db->urlmap.url from $db->posts, $db->urlmap
+$res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
 where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.id");
-$res->setFetchMode (PDO::FETCH_INTO , $t);
+$res->setFetchMode (PDO::FETCH_ASSOC);
 foreach ($res as $item) {
 $comments = $options->commentpages ? ceil($item['commentscount'] / $options->commentsperpage) : 1;
 $this->write($item['url'], max($item['pagescount'], $comments));
@@ -160,9 +160,9 @@ global $options, $db;
       $postsperpage = $tags->lite ? 1000 : $options->postsperpage;
 if (dbversion) {
 $table = $tags->thistable;
-$res = $db->query("select $table.itemscount $db->urlmap.url from $table, $db->urlmap
-where$db->urlmap.id = $table.idurl");
-$res->setFetchMode (PDO::FETCH_INTO , $t);
+$res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
+where $db->urlmap.id = $table.idurl");
+$res->setFetchMode (PDO::FETCH_ASSOC);
 foreach ($res as $item) {
 $this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
 }

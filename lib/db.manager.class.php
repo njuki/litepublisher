@@ -71,8 +71,8 @@ if (defined('debug')) $this->deletetable($name);
   }
   
   public function gettables() {
-    global $dbconfig;
-  if ($res = $this->query("show tables from {$dbconfig['dbname']} like '$this->prefix%'")) {
+    global $options;
+  if ($res = $this->query(sprintf("show tables from %s like '%s%%'", $options->dbconfig['dbname'], $options->dbconfig['prefix']))) {
       return $this->res2id($res);
     }
     return false;
@@ -158,7 +158,7 @@ $this->exec("optimize $table");
         while ($row = $res->fetch(PDO::FETCH_NUM)) {
           $values= array();
           foreach($row as $v){
-            $values[] = is_null($value) ? 'NULL' : $db->quote($value);
+            $values[] = is_null($v) ? 'NULL' : $db->quote($v);
           }
           $sql .= $sql ? ',(' : '(';
           $sql .= implode(', ', $values);
@@ -171,7 +171,7 @@ $this->exec("optimize $table");
         }
         
         if ($sql) $result .= "INSERT INTO `$name` VALUES ". $sql . ";\n";
-        $result .= "/*!40000 ALTER TABLE `$name` ENABLE KEYS */;\nUNLOCK TABLES;\n";
+        $result .= "/*!40000 ALTER TABLE `$name` ENABLE KEYS */;\nUNLOCK TABLES;\n\n";
       }
       return $result;
     }
