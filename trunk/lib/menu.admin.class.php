@@ -18,20 +18,23 @@ class tadminmenus extends tmenus {
 tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
 }
 
-public function add($parent, $name, $group, $class) {
+
+private function getadmintitle($name) {
 if (isset(tlocal::$data[$name]['title'])) {
-$title = tlocal::$data[$name]['title'];
+return tlocal::$data[$name]['title'];
 } elseif (isset(tlocal::$data['names'][$name])) {
-$title = tlocal::$data['names'][$name];
+return tlocal::$data['names'][$name];
 } elseif (isset(tlocal::$data['default'][$name])) {
-$title = tlocal::$data['default'][$name];
+return tlocal::$data['default'][$name];
 } elseif (isset(tlocal::$data['common'][$name])) {
-$title = tlocal::$data['common'][$name];
+return tlocal::$data['common'][$name];
 } else {
-$title= $name;
-echo "$name not found\n";
+return $name;
+}
 }
 
+public function add($parent, $name, $group, $class) {
+$title = $this->getadmintitle($name);
 $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
 $urlmap = turlmap::instance();
 $this->items[++$this->autoid] = array(
@@ -39,10 +42,11 @@ $this->items[++$this->autoid] = array(
 'parent' => $parent,
 'order' => $this->autoid,
 'url' => $url,
-'idurl' => $urlmap->add($url, $class, null, 'tree'),
+'idurl' => $urlmap->add($url, $class, $this->autoid, 'tree'),
 'title' => $title,
 'status' => 'published',
 'name' => $name,
+'class' => $class,
 'group' => $group
 );
 $this->sort();
@@ -134,14 +138,23 @@ if ($groups->hasright($options->group, $this->group)) return 404;
   public function request($id) {
     if ($s = $this->auth()) return $s;
     tlocal::loadlang('admin');
-      $this->data['id'] = $id;
+if (is_null($id)) $id = $this->getidbyclass();
+      $this->data['id'] = (int)$id;
 if ($id > 0) {
 $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
 }
 $urlmap = turlmap::instance();
 $this->arg = $urlmap->argtree;
-$this->checkform();
+$this->doprocessform();
   }
+
+private function getidbyclass() {
+$class = get_class($this);
+foreach($this->owner->items as $id => $item) {
+ if ($class == $item['class']) return $id;
+}
+return 0;
+}
   
   public function idget() {
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
