@@ -132,8 +132,9 @@ $result = array();
 // первый шаг найти всех детей и отсортировать
 $sort= array();
     foreach ($this->items as $id => $item) {
-      if (($item['parent'] == $parent) && ($item['status'] == 'published')) 
+      if (($item['parent'] == $parent) && ($item['status'] == 'published')) {
 $sort[$id] = (int) $item['order'];
+}
       }
        arsort($sort, SORT_NUMERIC);
 $sort = array_reverse($sort, true);
@@ -159,7 +160,7 @@ return $result;
 }  
 
 //ищет в дереве список детей, так как они уже отсортированы
-private function getchilds($id) {
+protected function getchilds($id) {
 if ($id == 0) {
 $result = array();
 foreach ($this->tree as $item) {
@@ -278,7 +279,6 @@ if (in_array($name, self::$ownerprops)) {
 if ($this->id == 0) {
 return $this->data[$name];
 } else {
-var_dump($this->owner);
 return $this->owner->items[$this->id][$name];
 }
 }

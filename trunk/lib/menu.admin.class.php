@@ -51,7 +51,7 @@ $this->items[++$this->autoid] = array(
 );
 $this->sort();
 $this->save();
-
+return $this->autoid;
 }
 
 public function getsubmenuwidget($id) {
@@ -63,7 +63,7 @@ $childs = $this->getchilds($id);
 $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('menu');
 $tml .= "\n";
-$groups = Tusergroups::instance();
+$groups = tusergroups::instance();
     foreach ($childs as $item) {
 if ($groups->hasright($options->group, $item['group'])) 
       $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
@@ -80,11 +80,12 @@ if ($hover) return $this->getsubmenu($this->tree);
 
     $result = '';
 $theme = ttheme::instance();
-    $tml = $theme->menu['item'];
-$groups = Tusergroups::instance();
+    $tml = $theme->menu->item;
+$groups = tusergroups::instance();
+//$this->sort();
     foreach ($this->tree as $item) {
 if ($groups->hasright($options->group, $item['group']))
-      $result .= sprintf($tml, $options. $item['url'], $item['title'], '');
+      $result .= sprintf($tml, $options->url. $item['url'], $item['title'], '');
     }
     return $result;
   }
@@ -93,7 +94,7 @@ private function getsubmenu(&$tree) {
     $result = '';
 $theme = ttheme::instance();
     $tml = $theme->menu['item'];
-$groups = Tusergroups::instance();
+$groups = tusergroups::instance();
     foreach ($tree as $item) {
 if ($groups->hasright($options->group, $item['group'])) {
       $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
@@ -117,7 +118,7 @@ public function load() {}
 public function save() {}
 
 public function getowner() {
-return tadminmenu::instance();
+return tadminmenus::instance();
 }
 
   public function auth() {
