@@ -278,6 +278,7 @@ if (in_array($name, self::$ownerprops)) {
 if ($this->id == 0) {
 return $this->data[$name];
 } else {
+var_dump($this->owner);
 return $this->owner->items[$this->id][$name];
 }
 }
@@ -303,10 +304,10 @@ return tmenus::instance();
   //ITemplate
 public function request($id) {
 parent::request($id);
-$this->checkform();
+$this->doprocessform();
 }
 
-protected function checkform() {
+protected function doprocessform() {
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {
         foreach ($_POST as $name => $value) {
