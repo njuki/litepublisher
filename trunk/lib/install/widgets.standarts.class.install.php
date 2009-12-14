@@ -11,6 +11,7 @@ $urlmap = turlmap::instance();
 $urlmap->add('/stdwidget.htm', get_class($self), null, 'get');
 
 $self->lock();
+$self->meta = getmetawidget();
 $template = ttemplate::instance();
 $template->lock();
 $widgets = twidgets::instance();
@@ -36,6 +37,21 @@ $self->lock();
 $widgets = twidgets::instance();
   $widgets->deleteclass(get_class($self));
 $self->unlock();
+}
+
+function getmetawidget() {
+global $options;
+$theme = ttheme::instance();
+$tml = $theme->getwidgetitem('meta', $theme->sitebarscount - 1);
+    $lang = tlocal::instance('default');
+        $result = sprintf($tml, $options->url . '/rss/', $lang->rss);
+        $result .= sprintf($tml, $options->url . '/comments/', $lang->rsscomments);
+
+$tml = '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+        $result .= sprintf($tml, $options->url . '/foaf.xml', $lang->foaf);
+        $result .= sprintf($tml, $options->url . '/profile.htm', $lang->profile);
+        $result .= sprintf($tml, $options->url . '/sitemap.htm', $lang->sitemap);
+        return $result;
 }
 
 ?>

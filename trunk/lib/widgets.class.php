@@ -68,7 +68,7 @@ return count($this->items[$index]);
 public function getcontent() {
 global $paths;
 $template = ttemplate::instance();
-$file = $paths['cache'] . "$template->tml.sitebar.$this->id.$this->current.php";
+$file = $paths['cache'] . "sitebar.$template->tml.$this->id.$this->current.php";
 if (file_exists($file)) {
 $result = file_get_contents($file);
 } else {
@@ -94,7 +94,7 @@ $i = 0;
     foreach ($this->items[$index] as $id => $item) {
 $this->curwidget= $id;
 $this->curindex= $i++;
-$content = $this->getwidget($item);
+$content = $this->getwidgetcontent($item);
 $template->onwidget($id, &$content);
       $result .= $content;
     }
@@ -110,7 +110,11 @@ global $paths;
 return $paths['cache'] . $this->getcachefilename($id);
 }
 
-private function getwidget($item) {
+public function getwidget($id) {
+return $this->getwidgetcontent($this->getitem($id));
+}
+
+private function getwidgetcontent($item) {
 global $paths;
     switch ( $item['echotype']) {
       case 'echo':

@@ -12,16 +12,17 @@ function tsitemapInstall($self) {
   $cron->add('day', get_class($self),  'Cron', null);
   $urlmap = turlmap::instance();
   $urlmap->add('/sitemap.xml', get_class($self), 'xml');
-  $urlmap->add('/sitemap/', get_class($self), null);
+  $urlmap->add('/sitemap.htm', get_class($self), null);
   
   $robots = trobotstxt ::instance();
   array_splice($robots->items, 1, 0, "Sitemap: $options->url/sitemap.xml");
   $robots->save();
   
+$self->add('/sitemap.htm', 4);
   $self->createfiles();
 }
 
-function tcitemapUninstall($self) {
+function tsitemapUninstall($self) {
   turlmap::unsub($self);
 }
 
