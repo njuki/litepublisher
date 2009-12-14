@@ -153,7 +153,7 @@ return false;
     if (--$this->lockcount <= 0) $this->save();
   }
   
-  public function Getlocked() {
+  public function getlocked() {
     return $this->lockcount  > 0;
   }
   

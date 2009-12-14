@@ -22,6 +22,20 @@ $this->table = 'subscribers';
     $this->data['locklist'] = '';
   }
 
+public function load() {
+    global $paths;
+    $filename = $paths['data'] . $this->getbasename() .'.php';
+    if (@file_exists($filename)) {
+      return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
+}
+}
+
+public function save() {
+    global $paths;
+    if (self::$GlobalLock || $this->locked) return;
+      SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
+    }
+
   public function update($pid, $uid, $subscribed) {
 if ($subscribed == $this->subscribed($pid, $uid)) return;
 if (dbversion) {
