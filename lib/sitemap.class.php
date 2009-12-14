@@ -6,12 +6,13 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class tsitemap extends titems {
+class tsitemap extends titems implements itemplate {
+public $title;
   private $lastmod;
   private $count;
   private $fd;
-  public $title;
-  
+private $prio;
+
   public static function instance() {
     return Getinstance(__class__);
   }
@@ -23,22 +24,28 @@ class tsitemap extends titems {
     $this->data['countfiles'] = 1;
   }
   
-  public function add($class, $prio) {
-    $this->items[$class] = (int) $prio;
-    $this->Save();
+  public function add($url, $prio) {
+    $this->items[$url] = (int) $prio;
+    $this->save();
   }
   
   public function cron() {
     $this->createfiles();
   }
   
+//itemplate
+public function gettitle() { return $this->title; }
+public function gethead() {}
+public function getkeywords() {}
+public function getdescription() {}
+  
   public function GetTemplateContent() {
     global $options, $Urlmap;
-    $posts = &TPosts::instance();
+    $posts = &Tposts::instance();
 $theme = ttheme::instance();
     $postsperpage = 1000;
     $list = array_slice(array_keys($posts->archives), ($Urlmap->page - 1) * $postsperpage, $postsperpage);
-    $result = $TemplatePost->LitePrintPosts($list);
+    $result = $TemplatePost->LitePrintposts($list);
     
     if ($Urlmap->page  == 1) {
       $result .= '<ul>' . TLocal::$data['default']['tags'];
@@ -62,7 +69,8 @@ $theme = ttheme::instance();
       $s .= $this->GetIndex();
       return  $s;
     }
-    $this->title = TLocal::$data['default']['sitemap'];
+
+    $this->title = tlcal::$data['default']['sitemap'];
   }
   
   public function getIndex() {
@@ -86,71 +94,109 @@ $theme = ttheme::instance();
   }
   
   public function createfiles() {
+global $classes, $options;
     $this->countfiles = 0;
     $this->count = 0;
     $this->date = time();
     $this->lastmod = strftime("%Y-%m-%d", $this->date);
-    $this->OpenFile();
+    $this->openfile();
     
     //home page
-    $this->WriteItem('/', 9);
-    $this->WritePosts();
-    $this->WriteNamed('menus', 8);
-    $this->WriteNamed('categories', 7);
-    $this->WriteNamed('tags', 6);
-    $this->WriteNamed('archives', 5);
-    
-    $this->CloseFile();
+$this->prio = 9;
+    $this->write('/', ceil($classes->posts->archivescount / $options->postsperpage));
+$this->prio = 8;
+    $this->writeposts();
+
+$this->prio = 8;
+$this->writemenus();
+
+$this->prio = 7;
+    $this->writetags($classes->categories);
+    $this->writetags($classes->tags);
+
+$this->prio = 5;
+    $this->writearchives();
+
+//урлы ккоторые добавлены в items
+foreach ($this->items as $url => $prio) {
+$this->writeitem($url, $prio);
+}    
+
+    $this->closefile();
     $this->Save();
   }
   
-  private function WritePosts() {
-    global $classes;
-    $Urlmap = TUrlmap::instance();
-    $posts = TPosts::instance();
-    foreach ($Urlmap->items as $url => $item) {
-      if (($item['class'] == $classes->classes['post']) && isset($posts->archives[$item['arg']])) {
-        $this->WriteItem($url, 8);
-      }
+  private function writeposts() {
+    global $options, $db;
+if (dbversion) {
+$res = $urlmap->db->query("select $db->posts.pagescount $db->posts.commentscount $db->urlmap.url from $db->posts, $db->urlmap
+where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.id");
+$res->setFetchMode (PDO::FETCH_INTO , $t);
+foreach ($res as $item) {
+$comments = $options->commentpages ? ceil($item['commentscount'] / $options->commentsperpage) : 1;
+$this->write($item['url'], max($item['pagescount'], $comments));
+}
+} else {
+    $posts = tposts::instance();
+foreach ($posts->archives as $id => $posted) {
+$post = tpost::instance($id);
+$this->write($post->url, $post->countpages);
+$post->free();
+}
     }
-  }
-  
-  private function WriteNamed($name, $prio = 5) {
-global $classes;
-    $instance = $classes->$name;
-    foreach ($instance->items as $id => $item) {
-      $this->WriteItem($item['url'], $prio);
-    }
-  }
-  
-  private function WalkUrlmap(&$items) {
-    global $classes;
-    $posts = TPosts::instance();
-    foreach ($items as $url => $item) {
-      $class = $item['class'];
-      if (($class == $classes->classes['post']) && !isset($posts->archives[$item['arg']])) continue;
-      $prio = $this->GetPriority($class);
-      if ($prio == 0) continue;
-      $this->WriteItem($url, $prio);
-    }
-  }
-  
-  private function GetPriority($class) {
-    global $classes;
-    if (isset($this->items[$class])) return $this->items[$class];
-    switch ($class) {
-      case $classes->classes['post']: return 8;
-      case $classes->classes['categories']: return 6;
-      case $classes->classes['tags']: return 5;
-      case 'tmenu': return 8;
-      case 'TContactForm': return 7;
-      case 'TArchives': return 5;
-      case 'THomepage': return 9;
-    }
-    return 0;
-  }
-  
-  private function WriteItem($url, $prio = 5) {
+}
+
+private function writemenus() {
+$menus = tmenus::instance();
+foreach ($menus->items as $id => $item) {
+if ($item['status'] == 'draft') continue;
+$this->writeitem($item['url'], $this->prio);
+}
+}
+
+
+private function writetags($tags) {
+global $options, $db;
+      $postsperpage = $tags->lite ? 1000 : $options->postsperpage;
+if (dbversion) {
+$table = $tags->thistable;
+$res = $db->query("select $table.itemscount $db->urlmap.url from $table, $db->urlmap
+where$db->urlmap.id = $table.idurl");
+$res->setFetchMode (PDO::FETCH_INTO , $t);
+foreach ($res as $item) {
+$this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
+}
+} else {
+foreach ($tags->items as $id => $item) {
+$this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
+}
+}
+}
+
+private function writearchives() {
+global $options;
+$arch = tarchives::instance();
+      $postsperpage = $arch->lite ? 1000 : $options->postsperpage;
+if (dbversion) $db->table = 'posts';
+foreach ($arch->items as $date => $item) {
+if (dbversion) {
+$count = $db->getcount("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}'");
+} else {
+$count = count($item['posts']);
+}
+$this->write($item['url'], ceil($count/ $postsperpage));
+}
+}
+
+private function write($url, $pages) {
+$this->writeitem($url, $this->prio);
+$url = rtrim($url, '/');
+for ($i = 2; $i < $pages; $i++) {
+$this->writeitem("$url/page/$i/", $this->prio);
+}
+}
+
+  private function writeitem($url, $prio) {
     global $options;
     gzwrite($this->fd, "   <url>
     <loc>$options->url$url</loc>
@@ -160,12 +206,12 @@ global $classes;
     </url>\n");
     
     if (++$this->count  >= 45000) {
-      $this->CloseFile();
-      $this->OpenFile();
+      $this->closefile();
+      $this->openfile();
     }
   }
   
-  private function OpenFile() {
+  private function openfile() {
     global $paths, $domain;
     $this->count = 0;
     $this->countfiles++;
@@ -177,7 +223,7 @@ global $classes;
     }
   }
   
-  private function CloseFile() {
+  private function closefile() {
     global $paths, $domain;
     $this->WriteFooter();
     gzclose($this->fd);

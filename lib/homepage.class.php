@@ -6,9 +6,8 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-class thomepage extends tevents implements  itemplate {
-
-  
+class thomepage extends tevents implements  itemplate, itemplate2 {
+ 
   public static function instance() {
     return getinstance(__class__);
   }
@@ -21,6 +20,8 @@ $this->data['idurl'] = 0;
 $this->data['defaultswidgets'] = true;
 $this->data['showstandartcontent'] = true;
     $this->data['text'] = '';
+    $this->data['template'] = '';
+    $this->data['theme'] = '';
   }
   
   //ITemplate
@@ -70,15 +71,27 @@ private function setvalue($name, $value) {
     }
   }
 
+  //ITemplate2
+public function afterrequest(&$content) {}
+
 public function getsitebar() {
-if ($this->specsitebars) {
+if ($this->defaultswidgets) {
+$widgets = twidgets::instance();
+if ($this->showstandartcontent) {
+$std = tstdwidgets::instance();
+$std->disableajax = true;
+//чтобы кеш брался из другого файла, но есть опасность сохранения виджетов негде было
+$id = $widgets->id;
+$widgets->id = 'homepage';
+$result = $widgets->getcontent();
+$widgets->id = $id;
+return $result;
+}
+return $widgets->getcontent();
+}else {
 $widgets = twidgets::instance('homepage');
 return $widgets->getcontent();
-} else {
-$widgets = twidgets::instance();
-if (!$this->showstandartcontent) return $widgets->getcontent();
-
-
+}
 }
 
 }//class
