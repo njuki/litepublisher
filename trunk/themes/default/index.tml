@@ -334,6 +334,15 @@ $menu.content
     </div>
 <!--/comments-->
 
+<!--meta-->
+	<div class="footer-meta">
+		<h4>%s</h4>
+			<ul id="widgetmeta">
+<!--item--><li class="rss"><a href="%1$s" class="rss">%2$s</a></li><!--/item-->
+      </ul>
+    </div>
+<!--/meta-->
+
 <!--/sitebar-->
 
   <hr class="clear" />
