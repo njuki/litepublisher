@@ -78,7 +78,7 @@ global $db;
         if (!isset($this->items[$this->date])) {
           $this->items[$this->date] = array(
 'idurl' => 0,
-          'url' => $linkgen->Create($this, 'archive', false),
+          'url' => $linkgen->Createlink($this, 'archive', false),
           'title' => tlocal::date($this->date, '%B %Y'),
           'year' => $d['year'],
           'month' =>$d['mon'],
