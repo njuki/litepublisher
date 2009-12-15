@@ -54,24 +54,39 @@ $this->save();
 return $this->autoid;
 }
 
-public function getsubmenuwidget($id) {
+private function hasright($group) {
 global $options;
-$result = '';
-$childs = $this->getchilds($id);
-    if (count($childs) == 0) return '';
-
-$theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('menu', 0);
-$tml .= "\n";
 $groups = tusergroups::instance();
-    foreach ($childs as $item) {
-if ($groups->hasright($options->group, $item['group'])) 
-      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
-    }
+return $groups->hasright($options->group, $group);
+}
 
-$widgets = twidgets::instance();
-    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $widgets->current);
-  }
+protected function getchilds($id) {
+if ($id == 0) {
+$result = array();
+foreach ($this->tree as $item) {
+if ($this->hasright($item['group']))
+$result[] = $item['id'];
+}
+return $result;
+}
+$parents = array($id);
+$parent = $this->items[$id]['parent'];
+while ($parent != 0) {
+array_unshift ($parents, $parent);
+$parent = $this->items[$parent]['parent'];
+}
+
+$tree = $this->tree;
+foreach ($parents as $parent) {
+foreach ($tree as $item) {
+if ($item['id'] == $parent) {
+$tree = $item['subitems'];
+break;
+}
+}
+}
+return $tree;
+}
 
 public function getmenu($hover) {
 global $options;
@@ -81,11 +96,8 @@ if ($hover) return $this->getsubmenu($this->tree);
     $result = '';
 $theme = ttheme::instance();
     $tml = $theme->menu->item;
-$groups = tusergroups::instance();
-//$this->sort();
     foreach ($this->tree as $item) {
-if ($groups->hasright($options->group, $item['group']))
-      $result .= sprintf($tml, $options->url. $item['url'], $item['title'], '');
+if ($this->hasright($item['group'])) $result .= sprintf($tml, $options->url. $item['url'], $item['title'], '');
     }
     return $result;
   }
@@ -96,7 +108,7 @@ $theme = ttheme::instance();
     $tml = $theme->menu->item;
 $groups = tusergroups::instance();
     foreach ($tree as $item) {
-if ($groups->hasright($options->group, $item['group'])) {
+if ($this->hasright($item['group'])) {
       $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
       $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
 }
@@ -132,7 +144,7 @@ elseif (!$auth->Auth())  return $auth->headers();
 
 if ($options->group != 'admin') {
 $groups = tusergroups::instance();
-if ($groups->hasright($options->group, $this->group)) return 404;
+if ($this->hasright($this->group)) return 404;
 }
   }
   

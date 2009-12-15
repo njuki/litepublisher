@@ -201,12 +201,12 @@ $theme = ttheme::instance();
 $submenu = '';
 $childs = $this->getchilds($id);
 foreach ($childs as $child) {
-$submenu .= $this->getwidgetitem($tml, $this->items[$child], '');
+$submenu .= $this->getwidgetitem($tml, $child, '');
 }
 
 $sibling = $this->getchilds($this->items[$id]['parent']);
-   foreach ($sibling as $iditem) {
-$result .= $this->getwidgetitem($tml, $this->items[$iditem], $iditem == $id ? $submenu : '');
+   foreach ($sibling as $item) {
+$result .= $this->getwidgetitem($tml, $item, $item['id'] == $id ? $submenu : '');
     }
 
 $parents = $this->getparents($id);
