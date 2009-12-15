@@ -65,7 +65,7 @@ if ($id == 0) {
 $result = array();
 foreach ($this->tree as $item) {
 if ($this->hasright($item['group']))
-$result[] = $item['id'];
+$result[] = $item;
 }
 return $result;
 }
@@ -174,12 +174,12 @@ return 0;
   }
   
 public function gethtml($name = '') {
+$result = THtmlResource ::instance();
 if ($name == '') $name = $this->basename;
-if (!isset(tlocal::$data[$name])) {
+if (!isset($result->ini[$name])) {
 $name = $this->owner->items[$this->parent]['name'];
 }
 
-$result = THtmlResource::instance();
 $result->section = $name;
 $lang = tlocal::instance($name);
 return $result;
@@ -203,7 +203,7 @@ return $this->html->h2->notfound;
   
   public function getadminurl() {
     global $options;
-return $options->url .$this->url . $options->q . '=';
+return $options->url .$this->url . $options->q . 'id';
 }
 
  }//class
