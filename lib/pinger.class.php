@@ -28,11 +28,14 @@ $dir = $paths['data'] . 'pingedlinks';
 @mkdir($dir, 0777);
 @chmod($dir, 0777);
 }
+if ($this->services == '') $this->services = file_get_contents($paths['libinclude'] . 'pingservices.txt');
 $posts = tposts::instance();
 $posts->lock();
 if (dbversion) $posts->deleted = $this->postdeleted;
 $posts->singlecron = $this->pingpost;
 $posts->unlock();
+
+
 }
   
   public function setenabled($value) {

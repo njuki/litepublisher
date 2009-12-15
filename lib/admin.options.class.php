@@ -66,7 +66,7 @@ $args->phpcode = $contentfilter->phpcode;
       
       case 'ping':
       $pinger = tpinger::instance();
-      $args->pingenabled  = $pinger->enabled  ? $checked: '';
+      $args->pingenabled  = $pinger->enabled;
 $args->content = $pinger->services;
       break;
       
@@ -107,7 +107,7 @@ $args->content = $pinger->services;
       break;
       
       case 'notfound404':
-      $err = tfnotfound404 ::instance();
+      $err = tnotfound404::instance();
       $args->content = $err->text;
       break;
       
