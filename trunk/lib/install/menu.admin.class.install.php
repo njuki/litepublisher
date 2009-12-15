@@ -52,7 +52,7 @@ $self->add($opt, 'rss', 'admin', 'tadminoptions');
 $self->add($opt, 'view', 'admin', 'tadminoptions'); 
 $self->add($opt, 'comments', 'admin', 'tadminoptions'); 
 $self->add($opt, 'ping', 'admin', 'tadminoptions'); 
-$self->add($opt, 'link', 'admin', 'tadminoptions'); 
+$self->add($opt, 'links', 'admin', 'tadminoptions'); 
 $self->add($opt, 'openid', 'admin', 'tadminoptions'); 
 $self->add($opt, 'cache', 'admin', 'tadminoptions'); 
 $self->add($opt, 'lite', 'admin', 'tadminoptions'); 

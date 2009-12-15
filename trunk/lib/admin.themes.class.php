@@ -118,7 +118,7 @@ return $parser->getabout($name);
   private function  getplugin() {
     if (!isset($this->plugin)) {
       $template =  ttemplate::instance();
-      $about = $this->GetAbout($template->name);
+      $about = $this->GetAbout($template->theme);
       if (empty($about['adminclassname']))  return false;
       $class = $about['adminclassname'];
       if (!class_exists($class))  require_once($template->path . $about['adminfilename']);
