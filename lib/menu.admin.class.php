@@ -61,7 +61,7 @@ $childs = $this->getchilds($id);
     if (count($childs) == 0) return '';
 
 $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('menu');
+    $tml = $theme->getwidgetitem('menu', 0);
 $tml .= "\n";
 $groups = tusergroups::instance();
     foreach ($childs as $item) {
@@ -69,8 +69,8 @@ if ($groups->hasright($options->group, $item['group']))
       $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
     }
 
-$sitebars = tsitebars::instance();    
-    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $sitebars->current);
+$widgets = twidgets::instance();
+    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $widgets->current);
   }
 
 public function getmenu($hover) {
@@ -93,7 +93,7 @@ if ($groups->hasright($options->group, $item['group']))
 private function getsubmenu(&$tree) {
     $result = '';
 $theme = ttheme::instance();
-    $tml = $theme->menu['item'];
+    $tml = $theme->menu->item;
 $groups = tusergroups::instance();
     foreach ($tree as $item) {
 if ($groups->hasright($options->group, $item['group'])) {

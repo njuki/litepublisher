@@ -59,19 +59,20 @@ if (preg_match_all('/\[(area|edit):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
 foreach ($m as $item) {
 $type = $item[1];
 $name = $item[2];
+$varname = '$' . $name;
 //сконвертировать спецсимволы для редактора
-if (isset($args->data[$name])) {
-$str = &$args->data[$name];
+if (isset($args->data[$varname])) {
+$str = &$args->data[$varname];
     $str = htmlspecialchars($str);
     $str = str_replace('"', '&quot;', $str);
     $str = str_replace("'", '&#39;', $str);
 } else {
-$args->data[$name] = '';
+$args->data[$varname] = '';
 }
 
-$tag = str_replace('$name', $name, $theme->admin[$type]);
-$tag = str_replace('$content', '$'. $name, $tag);
-$s = str_replace($item[0], $repl, $s);
+$tag = str_replace('$name', $name, $theme->content->admin->$type);
+$tag = str_replace('$content', $varname, $tag);
+$s = str_replace($item[0], $tag, $s);
 }
 }
 
