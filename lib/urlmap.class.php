@@ -315,7 +315,7 @@ tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
   
     public function addredir($from, $to) {
     if ($from == $to) return;
-    $Redir = &TRedirector::instance();
+    $Redir = &tredirector::instance();
     $Redir->add($from, $to);
   }
   
@@ -367,7 +367,7 @@ if ($item['id'] == $id) return $url;
 }
   }
   
-public function setidulr($id, $url) {
+public function setidurl($id, $url) {
 if (dbversion) {
 $this->db->setvalue($id, 'url', $url);
 if (isset($this->items[$id])) $this->items[$id]['url'] = $url;

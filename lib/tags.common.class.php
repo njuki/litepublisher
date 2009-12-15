@@ -190,7 +190,7 @@ $title = $url == '' ? $title : trim($url, '/');
           $linkgen = tlinkgenerator::instance();
           $url = $linkgen->createurl($title, $this->PermalinkIndex, false);
         if ($item['url'] != $url) {
-if (($idurl = $urlmap->idfind($url)) && ($idurl != $item['idurl'])) {
+if (($urlitem = $urlmap->finditem($url)) && ($urlitem['id'] != $item['idurl'])) {
 $url = $linkgen->MakeUnique($url);
 }
 $urlmap->setidurl($item['idurl'], $url);
@@ -400,6 +400,7 @@ public function setitem($id, $item) {
 if (isset($this->items[$id]) && ($this->items[$id] == $item)) return;
 $this->items[$id] = $item;
 if (dbversion) {
+$item['id'] = $id;
 $this->db->updateassoc($item);
 } else {
     tfiler::serialize($this->getfilename($id), $item);
@@ -407,7 +408,7 @@ $this->db->updateassoc($item);
 }
 
 public function edit($id, $content, $description, $keywords) {
-      $filter = TContentFilter::instance();
+      $filter = tcontentfilter::instance();
 $item =array(
 'content' => $filter->filter($content),
 'rawcontent' => $content,
@@ -443,7 +444,7 @@ $item['content'] = $filter->GetPostContent($content);
 $this->setitem($id, $item);
   }
   
-  public function getdescription() {
+  public function getdescription($id) {
 return $this->getvalue($id, 'description');
   }
 

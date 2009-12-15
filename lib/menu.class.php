@@ -164,7 +164,7 @@ protected function getchilds($id) {
 if ($id == 0) {
 $result = array();
 foreach ($this->tree as $item) {
-$result[] = $item['id'];
+$result[] = $item;
 }
 return $result;
 }

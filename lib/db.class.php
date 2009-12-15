@@ -141,7 +141,7 @@ return false;
     $list = array();
     foreach ($a As $name => $value) {
       if ($name == 'id') continue;
-      $list[] = "$Name = " . $this->quote($value);
+      $list[] = "$name = " . $this->quote($value);
     }
     
     return $this->update(implode(', ', $list), 'id = '. $a['id']);
