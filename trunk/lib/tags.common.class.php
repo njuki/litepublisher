@@ -61,15 +61,15 @@ $this->items[$item['id']] = $item;
 }
 }
 
-public function &getallitems() {
+public function loadall() {
 global $db;
-if (dbversion) {
+if (!dbversion)  return;
 $table = $this->thistable;
 $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
 where $table.idurl = $db->urlmap.id");
-return $res->fetchAll(PDO::FETCH_ASSOC);
-} else {
-return $this->items;
+$res->setFetchMode (PDO::FETCH_ASSOC);
+foreach ($res as $item) {
+$this->items[$item['id']] = $item;
 }
 }
 
@@ -224,7 +224,7 @@ $this->itemsposts->updateposts($list, $this->PostPropname);
     $result = array();
     $this->lock();
     foreach ($list as $title) {
-      $title = TContentFilter::escape($title);
+      $title = tcontentfilter::escape($title);
       if ($title == '') continue;
       $result[] = $this->add($title);
     }
