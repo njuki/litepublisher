@@ -19,7 +19,7 @@ class tfoaf extends titems {
 $this->dbversion = false;
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
-    $this->data['redirlink'] = '/foaflink.php';
+    $this->data['redirlink'] = '/foaflink.htm';
   }
   
   public function GetWidgetContent($id) {

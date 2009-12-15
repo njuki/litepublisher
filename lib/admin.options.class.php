@@ -12,7 +12,7 @@ class tadminoptions extends tadminmenu {
   }
   
   public function getcontent() {
-    global $classes, $options, $template, $mailer, $subscribers, $home, $rss, $pinger, $linkgen;
+    global $classes, $options, $template, $mailer, $subscribers, $home, $rss, $pinger, $linkgen, $contentfilter;
     $result = '';
     $args = targs::instance();
 
@@ -25,7 +25,7 @@ class tadminoptions extends tadminmenu {
       case 'home':
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
-      $args->text = $$home->text;
+      $args->text = $home->text;
      break;
       
       case 'mail':
@@ -40,9 +40,9 @@ $args->content = $rss->template;
       break;
       
       case 'view':
-      $filter = tcontentfilter::instance();
-      $args->automore = $filter->automore;
-$args->phpcode = $filter->phpcode;
+      $contentfilter = tcontentfilter::instance();
+      $args->automore = $contentfilter->automore;
+$args->phpcode = $contentfilter->phpcode;
       $args->hovermenu = $template->hovermenu;
       break;
       
@@ -98,7 +98,7 @@ $args->content = $pinger->services;
      break;
       
       case 'robots':
-      $robots = trobots::instance();
+      $robots = trobotstxt::instance();
       $args->content = implode("\n", $robots->items);
       break;
       
@@ -113,7 +113,7 @@ $args->content = $pinger->services;
       
     }
     
-$result  = $this->html->__call($this->name, $args);
+$result  = $this->html->{$this->name}($args);
 return str_replace("'", '"', $result);
   }
   

@@ -35,6 +35,7 @@ $this->abouts[$name] = $about['about'];
 }
   
   public function getcontent() {
+global $options;
 $result = '';
 $html = $this->html;
 //сделать список ссылок на админки установленных плагинов

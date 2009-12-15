@@ -72,8 +72,8 @@ class TSMTPMailer extends tevents {
   //public $password;
   //public $port;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function create() {
