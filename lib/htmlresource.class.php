@@ -53,9 +53,10 @@ if (in_array($name, self::$tags)) return new ttag($name);
       throw new Exception("the requested $name item not found in $this->section section");
     }
 $args = isset($params[0]) && is_a($params[0], 'targs') ? $params[0] : targs::instance();
-
+return $this->parsearg($s, $args);
+}
+public function parsearg($s, targs $args) {
 $theme = ttheme::instance();
-
 if (preg_match_all('/\[(area|edit):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
 foreach ($m as $item) {
 $type = $item[1];

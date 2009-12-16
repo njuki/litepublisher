@@ -42,14 +42,23 @@ if (!$posts->itemexists($this->idpost)) return 404;
 if (($options->group == 'author') && ($options->user != $post->author)) return 404;
 }
   
+private function getmode() {
+$mode = $_REQUEST['mode'];
+if (!preg_match('/short|midle|full/', $mode)) $mode = 'midle';
+return $mode;
+}
+
   public function getcontent() {
     global $options, $post;
     $result = '';
 $html = $this->html;
     $post = tpost::instance($this->idpost);
+$mode = $this->getmode();
 $args = targs::instance();
     if ($post->id != 0) {
-  $result .= $html->formhead("<a href='$options->url$post->url'>$post->title</a>", "$options->url/admin/posts/editor/{$options->q}id=$post->id", "$options->url/admin/posts/editor/{$options->q}id=$post->id&full=1");
+$adminurl = $this->adminurl . "=$post->id&mode";
+  $result .= sprintf($html->h2->formhead, "<a href='$post->link'>$post->title</a>", 
+"$adminurl=short", "$adminurl=midle", "$adminurl=full");
     }
 $args->categories = $this->getcategories($post);
     $args->raw = $post->rawcontent;
@@ -57,22 +66,25 @@ $args->categories = $this->getcategories($post);
     $args->pingenabled = $post->pingenabled;
     $args->published = $post->status != 'draft' ? 'selected' : '';
     $args->draft = $post->status == 'draft' ? 'selected' : '';
-    if (!isset($_REQUEST['full'])) {
-$result .= $html->form($args);
-    } else {
+
+if ($mode != 'short') {
       $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
       $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
       $args->content = $post->filtered;
       $args->excerpt = $post->excerpt;
       $args->rss = $post->rss;
-      $result .= $html->fullform($args);
-    }
+}
+
+      $result .= $html->$mode($args);
     return $result;
   }
   
   public function processform() {
     global $options;
   $this->basename = 'editor';
+$html = $this->html;
+$mode = $this->getmode();
+
     $cats = array();
     $cat = 'category-';
     foreach ($_POST as $key => $value) {
@@ -83,17 +95,34 @@ $result .= $html->form($args);
     }
     
     extract($_POST);
-    if (empty($title))return $this->html->emptytitle;
-    $post = tpost::instance($id);
+    if (empty($title))return $html->h2->emptytitle;
+    $post = tpost::instance((int)$id);
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
+switch ($mode) {
+case 'short':
+      $post->content = $raw;
+break;
+
+case 'midle':
+      if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
+        $post->posted = mktime($h,$min,0, $m, $d, $y);
+      }
+
+      $post->content = $raw;
     $post->commentsenabled = isset($commentsenabled);
     $post->pingenabled = isset($pingenabled);
     $post->status = $status == 'draft' ? 'draft' : 'published';
-    if (!isset($_GET['full'])) {
-      $post->content = $raw;
-    } else {
+break;
+
+case 'full':
+      if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
+        $post->posted = mktime($h,$min,0, $m, $d, $y);
+      }
+    $post->commentsenabled = isset($commentsenabled);
+    $post->pingenabled = isset($pingenabled);
+    $post->status = $status == 'draft' ? 'draft' : 'published';
     $post->title2 = $title2;
       $post->url = $url;
       $post->description = $description;
@@ -102,9 +131,7 @@ $result .= $html->form($args);
       $post->excerpt = $excerpt;
       $post->rss = $rss;
       $post->moretitle = $moretitle;
-      if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
-        $post->posted = mktime($h,$min,0, $m, $d, $y);
-      }
+break;
     }
     
     $posts = tposts::instance();
@@ -114,8 +141,7 @@ $result .= $html->form($args);
       $posts->edit($post);
     }
     
-$s = $this->html->success;
-    return sprintf($s,"<a href=\"$options->url$post->url\">$post->title</a>");
+    return sprintf($html->p->success,"<a href=\"$post->link\" title=\"$post->title\">$post->title</a>");
   }
   
 }//class
