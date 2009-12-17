@@ -63,12 +63,13 @@ return $groups->hasright($options->group, $group);
 protected function getchilds($id) {
 if ($id == 0) {
 $result = array();
-foreach ($this->tree as $item) {
-if ($this->hasright($item['group']))
-$result[] = $item;
+foreach ($this->tree as $iditem => $items) {
+if ($this->hasright($this->items[$iditem]['group']))
+$result[] = $iditem;
 }
 return $result;
 }
+
 $parents = array($id);
 $parent = $this->items[$id]['parent'];
 while ($parent != 0) {
@@ -78,14 +79,14 @@ $parent = $this->items[$parent]['parent'];
 
 $tree = $this->tree;
 foreach ($parents as $parent) {
-foreach ($tree as $item) {
-if ($item['id'] == $parent) {
-$tree = $item['subitems'];
+foreach ($tree as $iditem => $items) {
+if ($iditem == $parent) {
+$tree = $items;
 break;
 }
 }
 }
-return $tree;
+return array_keys($tree);
 }
 
 public function getmenu($hover) {
@@ -96,7 +97,8 @@ if ($hover) return $this->getsubmenu($this->tree);
     $result = '';
 $theme = ttheme::instance();
     $tml = $theme->menu->item;
-    foreach ($this->tree as $item) {
+    foreach ($this->tree as $id => $items) {
+$item = $this->items[$id];
 if ($this->hasright($item['group'])) $result .= sprintf($tml, $options->url. $item['url'], $item['title'], '');
     }
     return $result;
@@ -106,10 +108,10 @@ private function getsubmenu(&$tree) {
     $result = '';
 $theme = ttheme::instance();
     $tml = $theme->menu->item;
-$groups = tusergroups::instance();
-    foreach ($tree as $item) {
+    foreach ($tree as $id => $items) {
+$item = $this->items[$id];
 if ($this->hasright($item['group'])) {
-      $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
+      $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
       $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
 }
     }

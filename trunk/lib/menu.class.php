@@ -140,9 +140,7 @@ $sort[$id] = (int) $item['order'];
 $sort = array_reverse($sort, true);
 
 foreach ($sort as $id => $order) {
-$item = $this->items[$id];
-$item['subitems'] = $this->getsubtree($id);
-$result[]  = $item;
+$result[$id]  = $this->getsubtree($id);
 }
 return $result;
   }
@@ -163,8 +161,8 @@ return $result;
 protected function getchilds($id) {
 if ($id == 0) {
 $result = array();
-foreach ($this->tree as $item) {
-$result[] = $item;
+foreach ($this->tree as $iditem => $items) {
+$result[] = $iditem;
 }
 return $result;
 }
@@ -177,14 +175,14 @@ $parent = $this->items[$parent]['parent'];
 
 $tree = $this->tree;
 foreach ($parents as $parent) {
-foreach ($tree as $item) {
-if ($item['id'] == $parent) {
-$tree = $item['subitems'];
+foreach ($tree as $iditem => $items) {
+if ($iditem == $parent) {
+$tree = $items;
 break;
 }
 }
 }
-return $tree;
+return array_keys($tree);
 }
 
 private function getwidgetitem($tml, $item, $subnodes) {
@@ -201,12 +199,12 @@ $theme = ttheme::instance();
 $submenu = '';
 $childs = $this->getchilds($id);
 foreach ($childs as $child) {
-$submenu .= $this->getwidgetitem($tml, $child, '');
+$submenu .= $this->getwidgetitem($tml, $this->items[$child], '');
 }
 
 $sibling = $this->getchilds($this->items[$id]['parent']);
-   foreach ($sibling as $item) {
-$result .= $this->getwidgetitem($tml, $item, $item['id'] == $id ? $submenu : '');
+   foreach ($sibling as $iditem) {
+$result .= $this->getwidgetitem($tml, $this->items[$iditem], $iditem == $id ? $submenu : '');
     }
 
 $parents = $this->getparents($id);
@@ -226,7 +224,8 @@ if ($hover) return $this->getsubmenu($this->tree);
     $result = '';
 $theme = ttheme::instance();
     $tml = $theme->menu->item;
-    foreach ($this->tree as $item) {
+    foreach ($this->tree as $id => $items) {
+$item = $this->items[$id];
       $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
     }
     return $result;
@@ -236,8 +235,9 @@ private function getsubmenu(&$tree) {
     $result = '';
 $theme = ttheme::instance();
     $tml = $theme->menu->item;
-    foreach ($tree as $item) {
-      $subitems = count($item['subitems']) == 0 ? '' : $this->getsubmenu($item['subitems']);
+    foreach ($tree as $id => $items) {
+      $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
+$item = $this->items[$id];
       $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
     }
     return $result;
