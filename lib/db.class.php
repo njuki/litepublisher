@@ -168,6 +168,14 @@ unset($a['id']);
 return $this->add($a);
 }
 
+  public function insert(array $a) {
+if ($this->idexists($a['id'])) {
+$this->updateassoc($a);
+} else {
+$this->add($a);
+}
+}
+
   public function add(array $a) {
     $Names =implode(', ', array_keys($a));
         $vals = array();

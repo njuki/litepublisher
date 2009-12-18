@@ -45,9 +45,7 @@ return $html->confirmdelete($args);
 
 $result .= $istags ? $h2->edittag : $h2->editcategory;
     if (isset($_GET['full'])) {        
-$args->keywords = $tags->contents->getkeywords($id);
-$args->description = $tags->contents->getdescription($id);
-$args->content =$tags->contents->getcontent($id);
+$args->add($tags->contents->getitem($id));
 $result .= $html->fullform($args);
       } else {
       $result = $html->form($args);
@@ -77,7 +75,7 @@ $tags = $istags  ? $classes->tags : $classes->categories;
       $id = $tags->add($title);
       } elseif (isset($_GET['full'])) {
         $tags->edit($id, $title, $url);
-$tags->contents->edit($id, $content, $description, $keywords);
+$tags->contents->edit($id, $rawcontent, $description, $keywords);
       } else {
         $tags->edit($id, $title, $tags->geturl($id));
       }
