@@ -185,10 +185,13 @@ if (dbversion) $this->db->setvalue($id, 'title', $title);
 }
 
       $urlmap = turlmap::instance();
-if ($item['url'] != $url) {
-$title = $url == '' ? $title : trim($url, '/');
           $linkgen = tlinkgenerator::instance();
+$url = trim($url);
+// попытка восстановить что ли урл
+if ($url == '') {
           $url = $linkgen->createurl($title, $this->PermalinkIndex, false);
+}
+
         if ($item['url'] != $url) {
 if (($urlitem = $urlmap->finditem($url)) && ($urlitem['id'] != $item['idurl'])) {
 $url = $linkgen->MakeUnique($url);
@@ -197,7 +200,7 @@ $urlmap->setidurl($item['idurl'], $url);
       $urlmap->addredir($item['url'], $url);
         $item['url'] = $url;
 }
-}
+
 
      $this->items[$id] = $item;
       $this->save();
@@ -378,7 +381,7 @@ $this->items = array();
   }
 
 public function getitem($id) {
-if (!isset($this->items[$id])) {
+//if (isset($this->items[$id]))  return $this->items[$id];
 $item = array(
 'description' => '',
 'keywords' => '',
@@ -392,8 +395,7 @@ if ($r = $this->db->getitem($id)) $item = $r;
 tfiler::unserialize($this->getfilename($id), $item);
 }
 $this->items[$id] = $item;
-}
-return $this->items[$id];
+return $item;
 }
 
 public function setitem($id, $item) {
@@ -401,7 +403,7 @@ if (isset($this->items[$id]) && ($this->items[$id] == $item)) return;
 $this->items[$id] = $item;
 if (dbversion) {
 $item['id'] = $id;
-$this->db->updateassoc($item);
+$this->db->insert($item);
 } else {
     tfiler::serialize($this->getfilename($id), $item);
 }
