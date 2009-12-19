@@ -25,6 +25,7 @@ status enum('published', 'draft', 'future', 'deleted') default 'published',
 commentsenabled boolean default true,
 pingenabled boolean default true,
 rssenabled boolean default true,
+excerptenabled boolean default true,
 
 commentscount int unsigned not null default 0,
 pingbackscount int unsigned not null default 0,

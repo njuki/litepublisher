@@ -36,14 +36,24 @@ global $options;
 if ($s = parent::request($id)) return $s;
 $this->basename = 'editor';
     $this->idpost = $this->idget();
+if ($this->idpost > 0) {
 $posts = tposts::instance();
 if (!$posts->itemexists($this->idpost)) return 404;
+}
     $post = tpost::instance($this->idpost);
 if (($options->group == 'author') && ($options->user != $post->author)) return 404;
 }
+
+public function gettitle() {
+if ($this->idpost == 0){
+return parent::gettitle();
+} else {
+ return tlocal::$data[$this->name]['edittitle'];
+}
+}
   
 private function getmode() {
-$mode = $_REQUEST['mode'];
+$mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : 'midle';
 if (!preg_match('/short|midle|full/', $mode)) $mode = 'midle';
 return $mode;
 }

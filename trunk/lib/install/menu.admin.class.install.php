@@ -7,11 +7,19 @@
 **/
 
 function tadminmenusInstall($self) {
+global $options;
 $self->lock();
 //posts
 $posts = $self->add(0, 'posts', 'author', 'tadminposts'); 
 {
-$self->add($posts, 'editor', 'author', 'tposteditor'); 
+//добавить еще одно подменю, но без добавления урла в карту урлов, 
+$id = $self->add($posts, 'editor', 'author', 'tposteditor'); 
+$self->items[$id]['title'] = tlocal::$data['names']['midle'];
+$item = $self->items[$id];
+$item['id'] = ++$self->autoid;
+$item['url'] .= $options->q . 'mode=short';
+$item['title'] = tlocal::$data['names']['quick'];
+$self->items[$self->autoid] = $item;
 $self->add($posts, 'categories', 'editor', 'tadmintags'); 
 $self->add($posts, 'tags', 'editor', 'tadmintags'); 
 }
