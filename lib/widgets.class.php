@@ -194,7 +194,7 @@ $this->items[$sitebar][$item['id']] = $item;
 } else {
 $new = array();
 $i = 0;
-foreach ($this->items[$sitebar] as $idWidget => $widget) {
+foreach ($this->items[$sitebar] as $idwidget => $widget) {
 if ($i++ == $order) $new[$item['id']] = $item;
 $new[$idwidget] = $widget;
 }
@@ -300,7 +300,6 @@ if ($id == $idwidget) break;
 $i++;
 }
     if ($i == $order) return;
-$item = $this->items[$sitebar]['id'];
 unset($this->items[$sitebar][$id]);
 $this->insert($item, $sitebar, $order);
 }

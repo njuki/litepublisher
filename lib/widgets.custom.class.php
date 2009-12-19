@@ -9,7 +9,7 @@
 class tcustomwidget extends titems {
   
   public static function instance() {
-    return instance(__class__);
+    return getinstance(__class__);
   }
   
   protected function create() {

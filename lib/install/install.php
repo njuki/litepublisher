@@ -17,6 +17,6 @@ tfiler::delete($paths['data'], true, true);
  $installer->install();
 
 global $options;
-    $options->savemodified();
+if (is_a($options, 'toptions')) $options->savemodified();
 exit();
 ?>
