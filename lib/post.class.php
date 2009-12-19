@@ -44,6 +44,7 @@ $this->table = 'posts';
     'commentsenabled' => $options->commentsenabled,
     'pingenabled' => $options->pingenabled,
     'rssenabled' => true,
+'excerptenabled' => true,
     'password' => '',
     'template' => '',
     'theme' => '',

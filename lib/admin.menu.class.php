@@ -87,7 +87,7 @@ $result = $html->listhead();
 $args->id = $id;
 $args->link = $menus->getlink($id);
 $args->order = $item['order'];
-        $args->status = TLocal::$data['poststatus'][$item['status']];
+        $args->status = tlocal::$data['common'][$item['status']];
                   $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($id);
 $result .=$html->itemlist($args);
       }

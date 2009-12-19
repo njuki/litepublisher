@@ -267,7 +267,7 @@ $classes->categories->save();
 
 $classes->tags->sortname = $sortnametags;
 $classes->tags->showcount = isset($showcounttags);
-$classes->tags->maxcount = maxcount;
+$classes->tags->maxcount = $maxcount;
 $classes->tags->save();
 
 $classes->posts->recentcount = $postscount;
