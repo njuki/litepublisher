@@ -35,7 +35,7 @@ return $result;
 
 private function getwidgettitle($id) {
 $widgets = twidgets::instance();
-          $widget = $widgets->items[$id];
+          $widget = $widgets->getitem($id);
 if (!empty($widget['title'])) return $widget['title'];
           if (isset(tlocal::$data['stdwidgetnames'][$widget['class']])) {
 return TLocal::$data['stdwidgetnames'][$widget['class']];
@@ -67,7 +67,6 @@ $class = $widget['class'];
     global $classes, $options;
 $result = '';
 $widgets = twidgets::instance();
-$sitebars = tsitebars::instance();
 $html = $this->html;
 $args = targs::instance();    
 
@@ -77,11 +76,12 @@ $args = targs::instance();
 $result .= $html->formhead();
 // принимается что макс число сайтбаров = 3
       for ($i = 0; $i < 3; $i++) {
-        for  ($j = 0; $j < $sitebars->getcount($i); $j++) {
-          $args->id = $sitebars->items[$i][$j];
-$args->title = $this->getwidgettitle($args->id);
+$j = 0;
+foreach ($widgets->items[$i] as $id => $item) {
+          $args->id = $id;
+$args->title = $this->getwidgettitle($id);
           $args->sitebarcombo = $this->getcombo("sitebar-$id", $i, 3);
-          $args->ordercombo = $this->getcombo("order-$id", $j, $sitebars->getcount($i));
+          $args->ordercombo = $this->getcombo("order-$id", $j++, $widgets->getcount($i));
 $result .= $html->item($args);
         }
       }
@@ -130,10 +130,8 @@ $result =  $html->h2->linkswidget;
 $result .=  $html->p->linksnote;
       $id = $this->idget();
       if ($id > 0) {
-        $args->url = $links->items[$id]['url'];
-        $args->title = $$links->items[$id]['title'];
-        $args->text = $links->items[$id]['text'];
-        $result .= sprintf($html->h3->editlink, $args->url);
+        $args->add($links->items[$id]);
+        $result .= sprintf($html->h3->editlink, $links->items[$id]['url']);
       } else {
         $args->url = '';
         $args->title = '';
@@ -195,14 +193,13 @@ $result .= "\n";
     $urlmap->clearcache();
 $widgets = twidgets::instance();
 $h2 = $this->html->h2;
-    switch ($this->arg) {
+    switch ($this->name) {
       case 'widgets':
       if (!empty($_POST['deletewidgets'])) {
         return $this->DeleteWidgets();
       }
 
       $widgets->lock();
-$sitebars = tsitebars::instance();
       $check = 'widgetcheck-';
       $sitebar = 'sitebar-';
       $order =  'order-';
@@ -220,7 +217,6 @@ $sitebars = tsitebars::instance();
         }
       }
       $widgets->unlock();
-$sitebars->save();
 return $h2->success;
 
       case 'std':
@@ -290,7 +286,7 @@ $options->unlock();
       return $h2->stdoptsucces;
      
       case 'links':
-      $links = TLinksWidget::instance();
+      $links = tlinkswidget::instance();
       if (!empty($_POST['delete'])) {
       $links->lock();
         foreach ($_POST as $id => $value) {

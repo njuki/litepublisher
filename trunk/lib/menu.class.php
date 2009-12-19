@@ -191,6 +191,7 @@ if ($subnodes != '') $subnodes = "<ul>\n$subnodes</ul>\n";
 return sprintf($tml, $options->url . $item['url'], $item['title'], $subnodes);
 }
 
+/* Так как меню верхнего уровня все равно показывается в шапке, то в виджете меню ббудут начинаться с второго уровня */
 public function getsubmenuwidget($id) {
 $result = '';
 $theme = ttheme::instance();
@@ -202,10 +203,14 @@ foreach ($childs as $child) {
 $submenu .= $this->getwidgetitem($tml, $this->items[$child], '');
 }
 
+if (0 == $this->items[$id]['parent']) {
+$result = $submenu;
+} else {
 $sibling = $this->getchilds($this->items[$id]['parent']);
    foreach ($sibling as $iditem) {
 $result .= $this->getwidgetitem($tml, $this->items[$iditem], $iditem == $id ? $submenu : '');
     }
+}
 
 $parents = $this->getparents($id);
 foreach ($parents as $parent) {
