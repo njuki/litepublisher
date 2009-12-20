@@ -34,8 +34,6 @@ $posts->lock();
 if (dbversion) $posts->deleted = $this->postdeleted;
 $posts->singlecron = $this->pingpost;
 $posts->unlock();
-
-
 }
   
   public function setenabled($value) {
@@ -59,7 +57,8 @@ $posts->unlock();
   }
   
   public function postdeleted($id) {
-    $this->delete($id);
+global $paths;
+tfiler::deletemask($paths['data'] . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
   }
   
   public function pingpost($id) {

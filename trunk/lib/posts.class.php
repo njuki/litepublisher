@@ -190,8 +190,9 @@ $idurl = $post->idurl;
 $post->free();
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
       unset($this->items[$id]);
-}
 $urmap->deleteitem($idurl);
+}
+
 $this->lock();
     $this->PublishFuture();
       $this->UpdateArchives();

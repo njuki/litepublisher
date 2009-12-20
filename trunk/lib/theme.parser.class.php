@@ -318,6 +318,15 @@ $template->save();
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
   }
+
+public function reparse() {
+$template = ttemplate::instance();
+$theme = ttheme::instance();
+$this->parse($template->path . 'index.tml', $theme);
+$theme->save();
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache();
+}
   
 private function getdefaultconfirmform() {
 return '<h2>$lang->formhead</h2>

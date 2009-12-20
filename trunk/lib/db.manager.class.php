@@ -93,16 +93,19 @@ if (defined('debug')) $this->deletetable($name);
 private function DeleteDeleted() {
 global $db;
 //posts
+$db->table = 'posts';
+$deleted = $db->idselect("status = 'deleted'");
+if (count($deleted) > 0) {
+$deleted = implode(',', $deleted);
 $db->exec("delete from $db->urlmap where id in
 (select idurl from $db->posts where status = 'deleted')");
 
-$db->exec("delete from $db->rawposts where id in 
-(select id from $db->posts where status = 'deleted')");
+$db->exec("delete from $db->rawposts where id in ($selected)");
 
-$db->exec("delete from $db->pages where id in
-(select id from $db->posts where status = 'deleted')");
+$db->exec("delete from $db->pages where id in ($deleted)");
 
-$db->exec("delete from $db->posts where status = 'deleted'");
+$db->exec("delete from $db->posts where id in ($selected)");
+}
 
 //comments
 $db->exec("delete from $db->rawcomments where id in

@@ -37,13 +37,9 @@ $result .= $html->formheader();
       sort($list);
 $args->editurl = $options->url . $this->url . 'edit/' . $options->q . 'theme';
       foreach ($list as $name) {
-        $about = $this->GetAbout($name);
-$args->name = $name;
+        $about = $this->getabout($name);
+$args->add($about);
         $args->checked = $name == $template->theme;
-$args->version = $about['version'];
-$args->url = $about['url'];
-$args->author = $about['author'];
-$args->description = $about['description'];
 $result .= $html->radioitem($args);
       }
 $result .= $html->formfooter();
@@ -55,7 +51,7 @@ if (strpbrk($themename, '/\<>')) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
       $list = tfiler::getfiles($paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
-$editurl = $options->url . $this->url . $options->q . "theme=$themename&file=";
+$editurl = $options->url . $this->url . $options->q . "theme=$themename&file";
 $fileitem = $html->fileitem . "\n";
 $filelist = '';
       foreach ($list as $file) {
@@ -80,8 +76,14 @@ return str_replace("'", '"', $result);
   
   public function processform() {
     global $options, $paths;
-    
-    switch ($this->arg) {
+if  (isset($_POST['reparse'])) {
+$parser = tthemeparser::instance();
+$parser->reparse();
+return;
+}    
+
+
+    switch ($this->name) {
       case 'themes':
       if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
       
@@ -118,7 +120,7 @@ return $parser->getabout($name);
   private function  getplugin() {
     if (!isset($this->plugin)) {
       $template =  ttemplate::instance();
-      $about = $this->GetAbout($template->theme);
+      $about = $this->getabout($template->theme);
       if (empty($about['adminclassname']))  return false;
       $class = $about['adminclassname'];
       if (!class_exists($class))  require_once($template->path . $about['adminfilename']);
