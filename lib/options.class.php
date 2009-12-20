@@ -80,6 +80,11 @@ $this->save();
 }
 }
 
+public function geturl() {
+if ($this->fixedurl) return $this->data['url'];
+return 'http://'. $GLOBALS['domain'];
+}
+
   public function seturl($url) {
     $url = rtrim($url, '/');
     $this->lock();

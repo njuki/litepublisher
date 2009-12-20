@@ -48,7 +48,7 @@ public function gettitle() {
 if ($this->idpost == 0){
 return parent::gettitle();
 } else {
- return tlocal::$data[$this->name]['edittitle'];
+ return tlocal::$data[$this->name]['title'];
 }
 }
   
@@ -146,7 +146,7 @@ break;
     
     $posts = tposts::instance();
     if ($id == 0) {
-      $posts->add($post);
+      $_POST['id'] = $posts->add($post);
     } else {
       $posts->edit($post);
     }
