@@ -11,6 +11,13 @@ class tadminmenumanager extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
+
+public function gettitle() {
+if (($this->name == 'edit') && ($this->idget() != 0)) {
+return $this->lang->edit;
+}
+return parent::gettitle();
+}
   
   public function getcontent() {
     global $options;
@@ -27,10 +34,20 @@ $args->editurl = $options->url . $this->url . 'edit/' . $options->q . 'id';
 $result .= $this->doaction($this->idget(), $_GET['action']);
 }
 $result .= $this->getmenulist();
-break;
+return $result;
 
       case 'edit':
       $id = $this->idget();
+if ($id == 0) {
+$args->id = 0;
+$args->title = '';
+$args->url = '';
+$args->order = 0;
+    $args->published = 'selected';
+    $args->draft = '';
+      $args->content = '';
+$parent = 0;
+} else {
 if (!$menus->itemexists($id)) return $this->notfound;
       $menuitem = tmenu::instance($id);
 $args->id = $id;
@@ -40,12 +57,15 @@ $args->order = $menuitem->order;
     $args->published = $menuitem->status != 'draft' ? 'selected' : '';
     $args->draft = $menuitem->status == 'draft' ? 'selected' : '';
       $args->content = $menuitem->content;
-      $selected = $menuitem->parent  == 0 ? 'selected' : '';
+$parent = $menuitem->parent;
+}
+
+      $selected = $parent  == 0 ? 'selected' : '';
 $parentcombo = "<option value='0' $selected>---</option>\n";
-      foreach ($menus->items as $id => $item) {
-        if ($id != $menuitem->id) {
-          $selected = $menuitem->parent  == $id ? 'selected' : '';
-          $parentcombo .= "<option value='$id' $selected>{$item['title']}</option>\n";
+      foreach ($menus->items as $idmenu => $item) {
+        if ($id != $idmenu) {
+          $selected = $parent  == $idmenu ? 'selected' : '';
+          $parentcombo .= "<option value='$idmenu' $selected>{$item['title']}</option>\n";
         }
               }
 $args->parentcombo = $parentcombo;
@@ -59,8 +79,8 @@ if ($this->name != 'edit') return '';
     extract($_POST);
       if (empty($title) || empty($content)) return '';
       $id = $this->idget();
-$menus = tmenu::instance();
-if (!$menus->itemexists($id)) return $this->notfound;
+$menus = tmenus::instance();
+if (($id != 0) && !$menus->itemexists($id)) return $this->notfound;
       $menuitem = tmenu::instance($id);
       $menuitem->title = $title;
 $menuitem->url = $url;
@@ -76,17 +96,16 @@ $menuitem->url = $url;
       }
   }
   
-
 private function getmenulist() {
+global $options;
 $menus = tmenus::instance();
 $args = targs::instance();
-$args->adminurl = $this->adminurl;
+$args->adminurl = $options->url .$this->url . 'edit/' . $options->q . 'id';
 $html = $this->html;
 $result = $html->listhead();
       foreach ($menus->items as $id => $item) {
-$args->id = $id;
+$args->add($item);
 $args->link = $menus->getlink($id);
-$args->order = $item['order'];
         $args->status = tlocal::$data['common'][$item['status']];
                   $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($id);
 $result .=$html->itemlist($args);

@@ -191,8 +191,8 @@ public function getlang() {
 return tlocal::instance($this->name);
 }
 
-  public function Getconfirmed() {
-    return !isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
+  public function getconfirmed() {
+    return isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
   }
   
   public function FixCheckall($s) {

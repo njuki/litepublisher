@@ -49,7 +49,8 @@ $self->add($themes, 'edit', 'admin', 'tadminthemes');
 
 $menu = $self->add(0, 'menu', 'editor', 'tadminmenumanager'); 
 {
-$self->add($menu, 'edit', 'editor', 'tadminmenumanager'); 
+$id = $self->add($menu, 'edit', 'editor', 'tadminmenumanager'); 
+$self->items[$id]['title'] = tlocal::$data['menu']['addmenu'];
 }
 
 $opt = $self->add(0, 'options', 'admin', 'tadminoptions'); 

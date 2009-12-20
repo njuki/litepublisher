@@ -124,16 +124,22 @@ $this->unlock();
   }
 
 private function updatecount(array $items) {
-if (dbversion) {
+global $db;
+if (count($items) == 0) return;
+if ($this->dbversion) {
+// вначале один запрос к таблице постов, чтобы получить массив новых значений
+//следующие запросы обновляют значение в таблице тегов
 $items = implode(',', $items);
 $thistable = $this->thistable;
 $itemstable = $this->itemsposts->thistable;
-$poststable = $this->db->posts;
-$this->db->query("
-update $thistable, $itemstable set $thistable.itemscount = 
-(select count(post)from $itemstable, $poststable
- where item in ($items)  and post = $poststable.id and $poststable.status = 'published' group by post)
-where $thistable.id = $itemstable.item");
+$poststable = $db->posts;
+$res = $db->query("select $itemstable.item as id, count($itemstable.post)as itemscount from $itemstable, $poststable
+ where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published' group by $itemstable.post");
+
+$db->table = $this->table;
+foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $item) {
+$db->setvalue($item['id'], 'itemscount', $item['itemscount']);
+}
 } else {
 $this->lock();
 foreach ($items as $id) {
