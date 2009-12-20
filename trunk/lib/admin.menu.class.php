@@ -90,17 +90,19 @@ $menuitem->url = $url;
       $menuitem->content = $content;
 
       if ($id == 0) {
-        $menus->add($menuitem);
+              $_POST['id'] = $menus->add($menuitem);
       } else  {
         $menus->edit($menuitem);
       }
+    return sprintf($this->html->p->success,"<a href=\"$menuitem->link\" title=\"$menuitem->title\">$menuitem->title</a>");
   }
   
 private function getmenulist() {
 global $options;
 $menus = tmenus::instance();
 $args = targs::instance();
-$args->adminurl = $options->url .$this->url . 'edit/' . $options->q . 'id';
+$args->adminurl = $this->adminurl;
+$args->editurl = $options->url .$this->url . 'edit/' . $options->q . 'id';
 $html = $this->html;
 $result = $html->listhead();
       foreach ($menus->items as $id => $item) {
@@ -125,8 +127,9 @@ $h2 = $html->h2;
         case 'delete' :
     if  (!$this->confirmed) {
 $args->adminurl = $this->adminurl;
+$args->id = $id;
 $args->action = 'delete';
-$args->confirm = sprintf($this->lang->confirm, tlocal::$data['poststatus'][$action], $menus->getlink($id));
+$args->confirm = sprintf($this->lang->confirm, tlocal::$data['common'][$action], $menus->getlink($id));
 return $this->html->confirmform($args);
 } else {
         $menus->delete($id);

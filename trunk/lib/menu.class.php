@@ -103,7 +103,7 @@ $urlmap->setidurl($item->idurl, $item->url);
     if (!$this->itemexists($id)) return false;
     if ($this->haschilds($id)) return false;
     $urlmap = turlmap::instance();
-$urmap->delete($this->items[$id]['url']);
+$urlmap->delete($this->items[$id]['url']);
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
@@ -381,6 +381,11 @@ return $this->__get('order');
 
 public function setorder($order) {
 $this->__set('order', $order);
+}
+
+public function getlink() {
+global $options;
+return $options->url . $this->url;
 }
 
 }//class
