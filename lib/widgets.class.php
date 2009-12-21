@@ -30,12 +30,12 @@ $this->dbversion = false;
 }
 
 public function getbasename() {
-return 'sitebars' . DIRECTORY_SEPARATOR  . $this->id;
+return 'widgets' . DIRECTORY_SEPARATOR  . $this->id;
 }
 
 public function load() {
 if (!isset($this->id)) return false;
-if ($this->id != 0) return parent::load();
+if ($this->id !== 0) return parent::load();
 
 //значит id = 0 и сайтбары по умолчанию будем хранить в ttemplate
 $template = ttemplate::instance();
@@ -48,8 +48,7 @@ $template->data['sitebars'] = &$this->data;
 }
 
 public function save() {
-if ($this->id != 0) return parent::save();
-
+if ($this->id !== 0) return parent::save();
 $template = ttemplate::instance();
 $template->save();
 }

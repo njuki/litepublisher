@@ -43,6 +43,7 @@ function getmetawidget() {
 global $options;
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('meta', $theme->sitebarscount - 1);
+$tml .= "\n";
     $lang = tlocal::instance('default');
         $result = sprintf($tml, $options->url . '/rss/', $lang->rss);
         $result .= sprintf($tml, $options->url . '/comments/', $lang->rsscomments);

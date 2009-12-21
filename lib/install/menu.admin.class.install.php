@@ -40,6 +40,8 @@ $self->add($widgets, 'std', 'admin', 'tadminwidgets');
 $self->add($widgets, 'stdoptions', 'admin', 'tadminwidgets'); 
 $self->add($widgets, 'links', 'admin', 'tadminwidgets'); 
 $self->add($widgets, 'custom', 'admin', 'tadminwidgets'); 
+$self->add($widgets, 'meta', 'admin', 'tadminwidgets'); 
+$self->add($widgets, 'homepagewidgets', 'admin', 'tadminwidgets'); 
 }
 
 $themes = $self->add(0, 'themes', 'admin', 'tadminthemes'); 
