@@ -7,14 +7,14 @@
 **/
 
 class tremoteadmin extends tevents {
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'remoteadmin';
-  }
-  
+
   public static function instance() {
     return getinstance(__class__);
+  }
+  
+ protected function create() {
+    parent::create();
+    $this->basename = 'remoteadmin';
   }
   
   public function getclasses() {
@@ -110,6 +110,7 @@ global $classes;
     global $paths;
     $this->RequireZip();
     $zip = new zipfile();
+if (dbversion) $zip->addFile($this->getdump(), 'dump.sql');
     $this->ReadDirToZip($zip, $paths['data'], '', 'data/');
     if ($lib) {
       $this->ReadDirToZip($zip, $paths['lib'], '', 'lib/');
@@ -131,8 +132,14 @@ global $classes;
     
     return $zip->file();
   }
-  
-  public function Upload(&$content) {
+
+public function getdump() {
+$dbmanager = tdbmanager ::instance();
+return $dbmanager->export();
+}
+
+ 
+ public function Upload(&$content) {
     global $paths;
     $dataprefix = 'data';
     $themesprefix =  'themes/';

@@ -60,7 +60,8 @@ $result .= $html->engineform($args);
 if (empty($_GET['action'])) {
       $result= $html->partialform();
       $result .= $html->fullbackupform();
-      $result .=  $html->uploadform;
+if (dbversion) $result .= $html->sqlbackupform();
+      $result .=  $html->uploadform();
       $result .= $this->getbackupfilelist();
 } else {
         $filename = $_GET['id'];
@@ -179,9 +180,13 @@ $options->unlock();
         case 'fullbackup':
         $content = $admin->GetFullBackup();
         $this->sendfile($content);
+
+case 'sqlbackup':
+        $content = gzencode($admin->getdump());
+        $this->sendfile($content, $domain . date('-Y-m-d') . '.sql.gz');
       }
       break;
-      
+
       case 'run':
       $result = eval($_POST['content']);
       return $result;
