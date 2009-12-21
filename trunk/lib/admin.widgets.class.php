@@ -33,8 +33,7 @@ $result .= "</select>\n";
 return $result;
 }
 
-private function getwidgettitle($id) {
-$widgets = twidgets::instance();
+private function getwidgettitle(twidgets $widgets, $id) {
           $widget = $widgets->getitem($id);
 if (!empty($widget['title'])) return $widget['title'];
           if (isset(tlocal::$data['stdwidgetnames'][$widget['class']])) {
@@ -63,15 +62,9 @@ $class = $widget['class'];
     return '';
 }
   
-  public function getcontent() {
-    global $classes, $options;
-$result = '';
-$widgets = twidgets::instance();
+private function getwidgets(twidgets $widgets) {
 $html = $this->html;
-$args = targs::instance();    
-
-    switch ($this->name) {
-      case 'widgets':
+$args = targs::instance();
       $result = $html->checkallscript;
 $result .= $html->formhead();
 // принимается что макс число сайтбаров = 3
@@ -79,7 +72,7 @@ $result .= $html->formhead();
 $j = 0;
 foreach ($widgets->items[$i] as $id => $item) {
           $args->id = $id;
-$args->title = $this->getwidgettitle($id);
+$args->title = $this->getwidgettitle($widgets, $id);
           $args->sitebarcombo = $this->getcombo("sitebar-$id", $i, 3);
           $args->ordercombo = $this->getcombo("order-$id", $j++, $widgets->getcount($i));
 $result .= $html->item($args);
@@ -87,6 +80,41 @@ $result .= $html->item($args);
       }
       $result .= $html->formfooter();
       return  $this->FixCheckall($result);
+}
+
+private function setwidgets(twidgets $widgets) {
+      if (!empty($_POST['deletewidgets']))  return $this->DeleteWidgets($widgets);
+
+      $widgets->lock();
+      $check = 'widgetcheck-';
+      $sitebar = 'sitebar-';
+      $order =  'order-';
+      $checkid =       0;
+      foreach ($_POST as $key => $value) {
+        if (strbegin($key, $check)){
+          $checkid = (int) substr($key, strlen($check));
+          continue;
+        } elseif (strbegin($key, $sitebar)) {
+          $id = (int) substr($key, strlen($sitebar));
+          if ($id == $checkid) $widgets->changesitebar($id, $value - 1);
+        } elseif (strbegin($key, $order)) {
+          $id = (int) substr($key, strlen($order));
+          if ($id == $checkid) $widgets->changeorder($id, $value - 1);
+        }
+      }
+      $widgets->unlock();
+return $this->html->h2->success;
+}
+
+  public function getcontent() {
+    global $classes, $options;
+$result = '';
+$html = $this->html;
+$args = targs::instance();    
+
+    switch ($this->name) {
+      case 'widgets':
+return $this->getwidgets(twidgets::instance());
       
       case 'std':
 $std = tstdwidgets::instance();
@@ -159,10 +187,8 @@ $result = $html->h2->custom . $html->p->custnote;
 
       $id = $this->idget();
       if ($id > 0) {
-        $args->title = $custom->items[$id]['title'];
-        $args->content = $custom->items[$id]['content'];
-        $args->templ = $custom->items[$id]['templ'];
-        $result .= sprintf($html->h3->editcustom, $args->title);
+$args->add($custom->items[$id]);
+        $result .= sprintf($html->h3->editcustom, $custom->items[$id]['title']);
       } else {
         $args->title = '';
         $args->content = '';
@@ -171,53 +197,46 @@ $result = $html->h2->custom . $html->p->custnote;
       }
       $result .= $html->customform($args);
 
-      $result .= "<ul>\n";
+$list = '';
 $args->adminurl = $this->adminurl;
       foreach ($custom->items as $id => $item) {
 $args->id = $id;
-$args->title = $item['title'];
-$args->text = $item['text'];
-      $result .= $html->customitem($args);
-$result .= "\n";
+$args->add($item);
+      $list .= $html->customitem($args);
       }
-      $result .= "</ul>\n";
+      $result .= sprintf("<ul>\n%s\n</ul>\n", $list);
       break;
+
+case 'meta':
+$std = tstdwidgets::instance();
+$args->content = $std->meta;
+
+$result .= $html->metaform($args);
+break;
+
+case 'homepagewidgets':
+$home = thomepage::instance();
+$args->defaultswidgets = $home->defaultswidgets;
+$args->showstandartcontent = $home->showstandartcontent;
+$result .= $html->homepageoptions($args);
+    $result = str_replace("'", '"', $result);
+if (!$home->defaultswidgets) {
+$result .= $this->getwidgets(twidgets::instance('homepage'));
+}
+return $result;
     }
     
-    $result = str_replace("'", '"', $result);
-    return $result;
+return str_replace("'", '"', $result);
   }
   
   public function processform() {
     global $classes, $options, $urlmap;
     $urlmap->clearcache();
-$widgets = twidgets::instance();
 $h2 = $this->html->h2;
+
     switch ($this->name) {
       case 'widgets':
-      if (!empty($_POST['deletewidgets'])) {
-        return $this->DeleteWidgets();
-      }
-
-      $widgets->lock();
-      $check = 'widgetcheck-';
-      $sitebar = 'sitebar-';
-      $order =  'order-';
-      $checkid =       0;
-      foreach ($_POST as $key => $value) {
-        if (strbegin($key, $check)){
-          $checkid = (int) substr($key, strlen($check));
-          continue;
-        } elseif (strbegin($key, $sitebar)) {
-          $id = (int) substr($key, strlen($sitebar));
-          if ($id == $checkid) $widgets->changesitebar($id, $value - 1);
-        } elseif (strbegin($key, $order)) {
-          $id = (int) substr($key, strlen($order));
-          if ($id == $checkid) $widgets->changeorder($id, $value - 1);
-        }
-      }
-      $widgets->unlock();
-return $h2->success;
+return $this->setwidgets(twidgets::instance());
 
       case 'std':
 //подготовить массив с именами виджетов
@@ -317,14 +336,30 @@ return $h2->linkedited;
         $custom->add($title, $content, isset($templ));
       }
 return $h2->customsuccess;
+
+case 'meta':
+$std = tstdwidgets::instance();
+$std->meta = $_POST['content'];
+return $h2->metasuccess;
+
+case 'homepagewidgets':
+if (isset($_POST['homepageoptions'])) {
+extract($_POST);
+$home = thomepage::instance();
+$home->lock();
+$home->defaultswidgets = isset($defaultswidgets);
+$home->showstandartcontent = isset($showstandartcontent);
+$home->unlock();
+ } else {
+return $this->setwidgets(twidgets::instance('homepage'));
 }
+}//switch
 }
  
-  protected function DeleteWidgets() {
+  private function DeleteWidgets(twidgets $widgets) {
     global $urlmap;
 $template = ttemplate::instance();
 $template->lock();
-$widgets = twidgets::instance();
     $widgets->lock();
     $check = 'widgetcheck-';
     foreach ($_POST as $key => $value) {
