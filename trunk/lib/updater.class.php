@@ -28,13 +28,13 @@ class tupdater extends tevents {
   }
   
   public function Update() {
-    global $Options, $paths;
+    global $options, $paths;
     $log = false;
     if ($log) TFiler::log("begin update", 'update');
     tfiler::deletemask($paths['languages'] . '*.php');
     $s = file_get_contents($paths['libinclude']. 'version.txt');
     $this->version =  (int) trim($s);
-  $current = ((int) $Options->version{0}) * 100 + (int)substr($Options->version, 2);
+  $current = ((int) $options->version{0}) * 100 + (int)substr($options->version, 2);
     if ($log) TFiler::log("update started from $current to $this->version", 'update');
     for ($v = $current + 1; $v<= $this->version; $v++) {
       if ($log) TFiler::log("$v selected to update", 'update');
@@ -51,7 +51,7 @@ class tupdater extends tevents {
       }
     }
     
-    $Options->version = substr((string)$this->version, 0, 1) . '.' . substr((string)$this->version, 1);
+    $options->version = substr((string)$this->version, 0, 1) . '.' . substr((string)$this->version, 1);
     
     $urlmap = turlmap::instance();
     $urlmap->clearcache();
@@ -71,8 +71,8 @@ class tupdater extends tevents {
   }
   
   public function IsLatest() {
-    global $Options, $paths;
-    $current = (int) str_replace('.', '', $Options->version);
+    global $options, $paths;
+    $current = (int) str_replace('.', '', $options->version);
     include_once($paths['libinclude'] . 'utils.php');
     if (($s = GetWebPage('http://blogolet.ru/service/version.txt'))  ||
     ($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') )) {

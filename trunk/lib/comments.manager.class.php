@@ -24,6 +24,13 @@ $this->data['redir'] = true;
 $this->data['nofollow'] = false;
   }
 
+public function getcount() {
+global $db;
+if (!dbversion)  return 0;
+$db->table = 'comments';
+return $db->getcount();
+}
+
   public function add($idpost, $name, $email, $url, $content) {
     $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
     $idauthor = $comusers->add($name, $email, $url);
