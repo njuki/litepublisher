@@ -321,11 +321,10 @@ $unsigned_chksum = 0;
     }
 
 
-
 public function loadfromfile($filename) {
         if(!file_exists($filename)) return false;
         $this->filename = $filename;
-        return $this->__readTar(file_get_contents($filename));
+        return $this->loadfromstring(file_get_contents($filename));
     }
 
     // Appends a tar file to the end of the currently opened tar file
@@ -400,16 +399,16 @@ public function loadfromfile($filename) {
         $activeDir["mode"]  = $perm;
         $activeDir["time"]  = time();
         $activeDir["user_id"]   = 0;
-        $activeDir["group_id"]  = $0;
+        $activeDir["group_id"]  = 0;
         $activeDir["checksum"]  = 0;
         return true;
     }
 
     // Add a file to the tar archive
-    function add($realfile, $filename, $perm = 0666) {
+    public function add($realfile, $filename, $perm = 0666) {
         if($this->containsFile($filename)) return false;
         $file_information = stat($realfile);
-$perm = $file_information["mode"] == 0 $perm : $file_information["mode"];
+$perm = $file_information["mode"] == 0 ? $perm : $file_information["mode"];
         // Read in the file's contents
         $file_contents = file_get_contents($realfile);
         // Add file to processed data
@@ -426,6 +425,24 @@ $checksum = 0;
         $activeFile["user_name"]    = "";
         $activeFile["group_name"]   = "";
         $activeFile["file"]     = $file_contents;
+        return true;
+    }
+
+    public function addstring($s, $filename, $perm = 0666) {
+        if($this->containsFile($filename)) return false;
+        // Add file to processed data
+        $this->numFiles++;
+        $activeFile         = &$this->files[];
+        $activeFile["name"]     = $filename;
+        $activeFile["mode"]     = $perm;
+        $activeFile["user_id"]      = 0;
+        $activeFile["group_id"]     = 0;
+        $activeFile["size"]     = strlen($s);
+        $activeFile["time"]     = time();
+        $activeFile["checksum"]     = 0;
+        $activeFile["user_name"]    = "";
+        $activeFile["group_name"]   = "";
+        $activeFile["file"]     = $s;
         return true;
     }
 

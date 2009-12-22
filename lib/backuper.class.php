@@ -60,13 +60,13 @@ $tar = new tar();
     return $zip->file();
   }
   
-  public function GetPartialBackup($plugins, $theme, $lib) {
+  public function getpartial($plugins, $theme, $lib) {
     global $paths;
 $tar = new tar();
-if (dbversion) $tar->add($this->dump, 'dump.sql');
+if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, $paths['data'], '', 'data/');
     if ($lib)  $this->readdir($tar, $paths['lib'], '', 'lib/');
-    if ($theme)  
+    if ($theme)  {
       $template = ttemplate::instance();
       $themename = $template->theme;
       $this->readdir($tar, $paths['themes'] . $themename, '', "themes/$themename/");
@@ -89,46 +89,52 @@ $dbmanager = tdbmanager ::instance();
 return $dbmanager->export();
 }
 
-  public function Upload(&$content) {
+public function setdump(&$dump) {
+$dbmanager = tdbmanager ::instance();
+return $dbmanager->import($dump);
+}
+
+  public function uploaddump($s) {
+        if($s[0] == chr(31) && $s[1] == chr(139) && $s[2] == chr(8)) {
+$s = gzinflate(substr($s,10,-4));
+        }
+return $this->setdump($s);
+}
+
+  public function upload(&$content) {
     global $paths;
-    $dataprefix = 'data';
+$tmp = false;
+    $dataprefix = 'data/';
     $themesprefix =  'themes/';
     $pluginsprefix = 'plugins/';
     
 $tar = new tar();
     $tar->loadfromstring($content);
     foreach ($tar->files as $file) {
-      $dir = $entry->Path;
-      if ($dataprefix == substr($dir, 0, strlen($dataprefix))) {
-        $dir = substr($dir, strlen($dataprefix));
-        if (!isset($tmp)) {
-          $up = dirname($paths['data']) .DIRECTORY_SEPARATOR;
-          $tmp = $up . basename($paths['data']) . '-tmp.tmp' . DIRECTORY_SEPARATOR;
-          @mkdir($tmp, 0777);
-          @chmod($tmp, 0777);
-        }
+$filename = $file['name'];
+if (dbversion && $filename == 'dump.sql') $this->setdump($file['file']);
+      if (strbegin($filename, $dataprefix)) {
+        $filename = substr($filename, strlen($dataprefix));
+if (!$tmp) $tmp = $this->createtemp();
         $path = $tmp;
-      } elseif ($themesprefix == substr($dir, 0, strlen($themesprefix))) {
-        $dir = substr($dir, strlen($themesprefix));
+      } elseif (strbegin($filename, $themesprefix)) {
+        $filename = substr($filename, strlen($themesprefix));
         $path = $paths['themes'];
-      } elseif ($pluginsprefix == substr($dir, 0, strlen($pluginsprefix))) {
-        $dir = substr($dir, strlen($pluginsprefix));
+      } elseif (strbegin($filename, $pluginsprefix)) {
+        $filename = substr($filename, strlen($pluginsprefix));
         $path = $paths['plugins'];
       } else {
         //echo $dir, " is unknown dir<br>";
       }
       
-      $dir = str_replace('/', DIRECTORY_SEPARATOR  , $dir);
-      if (!$this->ForceDirectories($path, $dir)) return $this->Error("cantcreate folder $path$dir");
-      $filename = $path . $dir . DIRECTORY_SEPARATOR    . $entry->Name;
-      if (false === @file_put_contents($filename, $entry->Data)) {
-        return $this->Error("Error saving file $filename");
-      }
-      @chmod($filename, 0666);
+$filename = $path . str_replace('/', DIRECTORY_SEPARATOR  , $filename);
+      if (!tfiler::forcedir(dirname($filename))) return $this->error("error create folder " . dirname($filename));
+      if (false === @file_put_contents($filename, $file['file'])) return $this->error("Error saving file $filename");
+      @chmod($filename, $file['mode']);
     }
     
-    if (isset($tmp)) {
-      $old = $up . basename($paths['data']) . '-old-tmp.tmp' . DIRECTORY_SEPARATOR;
+    if ($tmp) {
+      $old = $up . basename($paths['data']) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
       @rename($paths['data'], $old);
       @rename($tmp, $paths['data']);
       tfiler::delete($old, true, true);
@@ -136,37 +142,32 @@ $tar = new tar();
     
     return true;
   }
+
+private function createtemp() {
+global $paths;
+          $result = dirname($paths['data']) .DIRECTORY_SEPARATOR . basename($paths['data']) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
+          @mkdir($result, 0777);
+          @chmod($result, 0777);
+return $result;
+}
   
-  public function GetFullBackup() {
+ public function getfull() {
     global $paths;
-    $this->RequireZip();
-    $tar = new zipfile();
+    $tar = new tar();
     $this->readdir($tar, $paths['data'], '', 'data/');
     
-    $items = tfiler::getdir($paths['plugins']);
-    foreach ($items as $name ) {
+    foreach (tfiler::getdir($paths['plugins']) as $name ) {
       $this->readdir($tar, $paths['plugins'], $name, "plugins/");
     }
     
-    $items = tfiler::getdir($paths['themes']);
-    foreach ($items as $name ) {
+    foreach (tfiler::getdir($paths['themes']) as $name ) {
       $this->readdir($tar, $paths['themes'] , $name, "themes/");
     }
     
     $this->readdir($tar, $paths['lib'], '', 'lib/');
     $this->readdir($tar, $paths['files'], '', 'files/');
     
-    return $tar->file();
-  }
-  
-  protected function ForceDirectories($path, $dir) {
-    if (!@is_dir($path . $dir)) {
-      $up = dirname($dir);
-      if (($up != '') || ($up != '.'))   $this->ForceDirectories($path, $up);
-      if (!@mkdir($path . $dir, 0777)) return $this->Error("cant create $dir folder");
-      @chmod($path . $dir, 0777);
-    }
-    return true;
+    return $tar->savetostring(true);
   }
   
 }//class
