@@ -19,7 +19,7 @@ class tdata {
     $this->lockcount = 0;
     $this->cache= true;
     $this->data= array();
-    $this->basename = 'data';
+    $this->basename = substr(get_class($this), 1);
     $this->create();
   }
   
