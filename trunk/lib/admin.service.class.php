@@ -151,7 +151,7 @@ return $this->doupdate($_POST);
       break;
       
       case 'backup':
-      $admin = tremoteadmin::instance();
+$backuper = tbackuper::instance();
       extract($_POST);
       switch ($dest) {
         case 'upload':
@@ -159,30 +159,34 @@ return $this->doupdate($_POST);
           return $html->attack($_FILES["filename"]["name"]);
         }
         
+if (strpos($_FILES["filename"]["name"], '.sql')) {
+$backuper->uploaddump(file_get_contents($_FILES["filename"]["tmp_name"]));
+} else {
         $url = $options->url;
 if (dbversion) $dbconfig = $options->dbconfig;
-        $admin->upload(file_get_contents($_FILES["filename"]["tmp_name"]));
+        $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]));
         if (isset($saveurl)) {
           $options->load();
 $options->lock();
-          $options->Seturl($url);
+          $options->seturl($url);
 if (dbversion) $options->dbconfig = $dbconfig;
 $options->unlock();
         }
+}
         $urlmap->clearcache();
         @header('Location: http://' . $_SERVER['HTTP_HOST'] .  $_SERVER['REQUEST_URI']);
         exit();
         
         case 'downloadpartial':
-        $content = $admin->GetPartialBackup(isset($plugins), isset($theme), isset($lib));
+        $content = $backuper->getpartial(isset($plugins), isset($theme), isset($lib));
         $this->sendfile($content);
         
         case 'fullbackup':
-        $content = $admin->GetFullBackup();
+        $content = $backuper->getfull();
         $this->sendfile($content);
 
 case 'sqlbackup':
-        $content = gzencode($admin->getdump());
+        $content = gzencode($backuper->getdump());
         $this->sendfile($content, $domain . date('-Y-m-d') . '.sql.gz');
       }
       break;
@@ -198,7 +202,7 @@ case 'sqlbackup':
   private function sendfile(&$content, $filename = '') {
     global $domain;
     //@file_put_contents("$domain.zip", $content);
-    if ($filename == '') $filename = str_replace('.', '-', $domain) . date('-Y-m-d') . '.zip';
+    if ($filename == '') $filename = str_replace('.', '-', $domain) . date('-Y-m-d') . '.tar.gz';
     @header("HTTP/1.1 200 OK");
     @header("Content-type: application/octet-stream");
     @header("Content-Disposition: attachment; filename=$filename");
@@ -211,13 +215,12 @@ case 'sqlbackup':
   
   private function getbackupfilelist() {
     global $options, $paths;
-
     $html = $this->html;
 $result = $html->backupheader();
 $args = targs::instance();
 $args->adminurl = $this->adminurl;
     foreach(glob($paths['backup'] . '*.zip') as $filename) {
-$args->filename = $filename;
+$args->filename = basename($filename);
 $result .= $html->backupitem($args);
     }
     $result .= $html->backupfooter;

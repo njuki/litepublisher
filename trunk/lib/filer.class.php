@@ -62,6 +62,16 @@ self::deletedirmask($filename. DIRECTORY_SEPARATOR, $mask);
     return $result;
   }
   
+  public static function forcedir($dir) {
+    if (!@is_dir($dir)) {
+      $up = dirname(trim($dir, DIRECTORY_SEPARATOR));
+      if (($up != '') || ($up != '.'))  self::forcedir($up);
+      if (!@mkdir($dir, 0777)) return false;
+      @chmod($dir, 0777);
+    }
+    return true;
+  }
+  
   public static function unserialize($FileName, &$v) {
     if ($s = @file_get_contents($FileName)) {
       $s =PHPUncomment($s);
