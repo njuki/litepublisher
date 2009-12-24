@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tarchives extends titems implements  itemplate {
@@ -24,11 +24,11 @@ class tarchives extends titems implements  itemplate {
   public function getwidgetcontent($id, $sitebar) {
     global $options;
     $result = '';
-$theme = ttheme::instance();
-$tml = $theme->getwidgetitem('archives', $sitebar);
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('archives', $sitebar);
     foreach ($this->items as $date => $item) {
-$count = $this->showcount ? "({$item['count']})" : '';
-$result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
+    $count = $this->showcount ? "({$item['count']})" : '';
+      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
     }
     
     return $result;
@@ -57,13 +57,13 @@ $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
     //sort archive by months
     $linkgen = tlinkgenerator::instance();
     if (dbversion) {
-global $db;
-    $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
+      global $db;
+      $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
       where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
       while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
         $this->items[$this->date] = array(
-'idurl' => 0,
+        'idurl' => 0,
         'url' => $linkgen->Createlink($this, 'archive', false),
         'title' => tlocal::date($this->date, '%B %Y'),
         'year' => $r['year'],
@@ -77,12 +77,12 @@ global $db;
         $this->date = mktime(0,0,0, $d['mon'] , 1, $d['year']);
         if (!isset($this->items[$this->date])) {
           $this->items[$this->date] = array(
-'idurl' => 0,
+          'idurl' => 0,
           'url' => $linkgen->Createlink($this, 'archive', false),
           'title' => tlocal::date($this->date, '%B %Y'),
           'year' => $d['year'],
           'month' =>$d['mon'],
-'count' => 0,
+          'count' => 0,
           'posts' => array()
           );
         }
@@ -141,13 +141,13 @@ public function getdescription() {}
       if (!isset($this->items[$this->date]['posts'])) return '';
       $items = &$this->items[$this->date]['posts'];
     }
-
-$theme = ttheme::instance();
-      $postsperpage = $this->lite ? 1000 : $options->postsperpage;
-      $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
-      $result = $theme->getposts($list, $this->lite);
-      $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
-      return $result;
+    
+    $theme = ttheme::instance();
+    $postsperpage = $this->lite ? 1000 : $options->postsperpage;
+    $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
+    $result = $theme->getposts($list, $this->lite);
+    $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
+    return $result;
   }
   
 }

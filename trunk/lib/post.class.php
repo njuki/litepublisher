@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tpost extends titem implements  itemplate {
@@ -11,7 +11,7 @@ class tpost extends titem implements  itemplate {
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
   }
-
+  
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
   }
@@ -19,18 +19,18 @@ class tpost extends titem implements  itemplate {
   
   protected function create() {
     global $options;
-$this->table = 'posts';
+    $this->table = 'posts';
     $this->data= array(
     'id' => 0,
     'idurl' => 0,
     'parent' => 0,
-    'author' => 0, 
-'icon' => 0,
+    'author' => 0,
+    'icon' => 0,
     'posted' => 0,
     'modified' => 0,
     'url' => '',
     'title' => '',
-'title2' => '',
+    'title2' => '',
     'filtered' => '',
     'excerpt' => '',
     'rss' => '',
@@ -39,55 +39,55 @@ $this->table = 'posts';
     'moretitle' => '',
     'categories' => array(),
     'tags' => array(),
-'files' => array(),
+    'files' => array(),
     'status' => 'published',
     'commentsenabled' => $options->commentsenabled,
     'pingenabled' => $options->pingenabled,
     'password' => '',
     'template' => '',
     'theme' => '',
-'commentscount' => 0,
-'pingbackscount' => 0,
-'pagescount' => 0,
+    'commentscount' => 0,
+    'pingbackscount' => 0,
+    'pagescount' => 0,
     'pages' => array()
     );
   }
   
   public function getcomments() {
-return tcomments::instance($this->id);
+    return tcomments::instance($this->id);
   }
-
+  
   public function getpingbacks() {
-return tpingbackscomments::instance($this->id);
+    return tpingbackscomments::instance($this->id);
   }
-
+  
   public function getprev() {
-if (dbversion) {
-if ($id = $this->db->findid(sprintf("status = 'published' and posted < '%s' order by posted desc", sqldate($this->posted)))) {
-return self::instance($id);
-}
-return null;
-} else {
-    $posts = tposts::instance();
-    $keys = array_keys($posts->archives);
-    $i = array_search($this->id, $keys);
-    if ($i < count($keys) -1) return self::instance($keys[$i + 1]);
-}
+    if (dbversion) {
+      if ($id = $this->db->findid(sprintf("status = 'published' and posted < '%s' order by posted desc", sqldate($this->posted)))) {
+        return self::instance($id);
+      }
+      return null;
+    } else {
+      $posts = tposts::instance();
+      $keys = array_keys($posts->archives);
+      $i = array_search($this->id, $keys);
+      if ($i < count($keys) -1) return self::instance($keys[$i + 1]);
+    }
     return null;
   }
   
   public function getnext() {
-if (dbversion) {
-if ($id = $this->db->findid(sprintf("status = 'published' and posted > '%s' order by posted desc", sqldate($this->posted)))) {
-return self::instance($id);
-}
-return null;
-} else {
-    $posts = tposts::instance();
-    $keys = array_keys($posts->archives);
-    $i = array_search($this->id, $keys);
-    if ($i > 0 ) return self::instance($keys[$i - 1]);
-}
+    if (dbversion) {
+      if ($id = $this->db->findid(sprintf("status = 'published' and posted > '%s' order by posted desc", sqldate($this->posted)))) {
+        return self::instance($id);
+      }
+      return null;
+    } else {
+      $posts = tposts::instance();
+      $keys = array_keys($posts->archives);
+      $i = array_search($this->id, $keys);
+      if ($i > 0 ) return self::instance($keys[$i - 1]);
+    }
     return null;
   }
   
@@ -120,67 +120,67 @@ return null;
   
   //template
   public function getexcerptcategories() {
-return $this->getcommontagslinks('categories', 'category', true);
-}
-
+    return $this->getcommontagslinks('categories', 'category', true);
+  }
+  
   public function getexcerpttags() {
-return $this->getcommontagslinks('tags', 'tag', true);
-}
-
-public function getcategorieslinks() {
-return $this->getcommontagslinks('categories', 'category', false);
-}
-
+    return $this->getcommontagslinks('tags', 'tag', true);
+  }
+  
+  public function getcategorieslinks() {
+    return $this->getcommontagslinks('categories', 'category', false);
+  }
+  
   public function Gettagslinks() {
-return $this->getcommontagslinks('tags', 'tag', false);
-}
-
-private function getcommontagslinks($names, $name, $excerpt) {
-global $classes;
-$theme = ttheme::instance();
-$tml = $excerpt ? $theme->content->excerpts->$names : $theme->content->post->$names;
+    return $this->getcommontagslinks('tags', 'tag', false);
+  }
+  
+  private function getcommontagslinks($names, $name, $excerpt) {
+    global $classes;
+    $theme = ttheme::instance();
+    $tml = $excerpt ? $theme->content->excerpts->$names : $theme->content->post->$names;
     $tags= $classes->$names;
-$tags->loaditems($this->$names);
-$args = targs::instance();
-$list = array();
+    $tags->loaditems($this->$names);
+    $args = targs::instance();
+    $list = array();
     foreach ($this->$names as $id) {
-$item = $tags->getitem($id);
-$args->add($item);
-if ($item['icon'] == 0) {
-$args->icon = '';
-} else {
-$icons = ticons::instance();
-$args->icon = $icons->getlink($item['icon']);
-}
-$list[] = $theme->parsearg($tml->item,  $args);
+      $item = $tags->getitem($id);
+      $args->add($item);
+      if ($item['icon'] == 0) {
+        $args->icon = '';
+      } else {
+        $icons = ticons::instance();
+        $args->icon = $icons->getlink($item['icon']);
+      }
+      $list[] = $theme->parsearg($tml->item,  $args);
     }
-$result = implode($tml->divider, $list);
+    $result = implode($tml->divider, $list);
     return sprintf($theme->parse($tml), $result);
   }
   
   public function getdate() {
-$theme = ttheme::instance();
+    $theme = ttheme::instance();
     return tlocal::date($this->posted, $theme->content->post->dateformat);
   }
   
   public function getdateformat() {
     if (isset($this->dateformater)){
-    $this->dateformater->date = $this->posted;
-} else {
- $this->dateformater = new tdateformater($this->posted);
-}
+      $this->dateformater->date = $this->posted;
+    } else {
+      $this->dateformater = new tdateformater($this->posted);
+    }
     return $this->dateformater;
   }
   
   public function getmorelink() {
-global $post;
+    global $post;
     if ($this->moretitle == '') return '';
-$post = $this;
-$theme = ttheme::instance();
-return $theme->parse($theme->content->excerpts->excerpt->more);
+    $post = $this;
+    $theme = ttheme::instance();
+    return $theme->parse($theme->content->excerpts->excerpt->more);
   }
   
-   public function gettagnames() {
+  public function gettagnames() {
     if (count($this->tags) == 0) return '';
     $tags = ttags::instance();
     return implode(', ', $tags->getnames($this->tags));
@@ -201,9 +201,9 @@ return $theme->parse($theme->content->excerpts->excerpt->more);
     $categories = tcategories::instance();
     $this->categories = $categories->createnames($names);
     if (count($this->categories ) == 0) {
-$defaultid = $categories->defaultid;
-if ($defaultid > 0) $this->data['categories '][] =  $dfaultid;
-}
+      $defaultid = $categories->defaultid;
+      if ($defaultid > 0) $this->data['categories '][] =  $dfaultid;
+    }
   }
   
   //ITemplate
@@ -213,7 +213,7 @@ if ($defaultid > 0) $this->data['categories '][] =  $dfaultid;
   }
   
   public function gettitle() {
-if ($this->data['title2'] != '') return $this->data['title2'];
+    if ($this->data['title2'] != '') return $this->data['title2'];
     return $this->data['title'];
   }
   
@@ -235,53 +235,53 @@ if ($this->data['title2'] != '') return $this->data['title2'];
   public function getdescription() {
     return $this->data['description'];
   }
-
-public function geticonurl() {
-if ($this->icon == 0) return '';
-$icons = ticons::instance();
-return $icons->geturl($this->icon);
-}
-
-public function geticonlink() {
-if ($this->icon == 0) return '';
-return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
-}
-
-
-public function getpreviews() {
-if (count($this->files) == 0) return '';
-$files = tfiles::instance();
-return $files->getpreviews($this->files);
-}
-
-public function getfilelist() {
-if (count($this->files) == 0) return '';
-$files = tfiles::instance();
-return $files->getlist($this->files, false);
-}
+  
+  public function geticonurl() {
+    if ($this->icon == 0) return '';
+    $icons = ticons::instance();
+    return $icons->geturl($this->icon);
+  }
+  
+  public function geticonlink() {
+    if ($this->icon == 0) return '';
+    return "<img src=\"$this->iconurl\" alt=\"$this->title\" />";
+  }
+  
+  
+  public function getpreviews() {
+    if (count($this->files) == 0) return '';
+    $files = tfiles::instance();
+    return $files->getpreviews($this->files);
+  }
+  
+  public function getfilelist() {
+    if (count($this->files) == 0) return '';
+    $files = tfiles::instance();
+    return $files->getlist($this->files, false);
+  }
   
   public function GetTemplateContent() {
-global $post;
-$post = $this;
-$theme = ttheme::instance();
+    global $post;
+    $post = $this;
+    $theme = ttheme::instance();
     return $theme->parse($theme->content->post);
   }
-
-public function getrsscomments() {
-global $post;
+  
+  public function getrsscomments() {
+    global $post;
     if ($this->commentsenabled && ($this->commentscount > 0)) {
-$post = $this;
-$theme = ttheme::instance();
-return $theme->parse($theme->content->post->rss);
-}
-return '';
-}
-
-public function getprevnext() {
-global $prevpost, $nextpost;
+      $post = $this;
+      $theme = ttheme::instance();
+      return $theme->parse($theme->content->post->rss);
+    }
+    return '';
+  }
+  
+  public function getprevnext() {
+    global $prevpost, $nextpost;
     $result = '';
-$theme = ttheme::instance();
-$tml = $theme->content->post->prevnext;
+    $theme = ttheme::instance();
+    $tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
       $result .= $theme->parse($tml->prev);
     }
@@ -291,42 +291,42 @@ $tml = $theme->content->post->prevnext;
     }
     
     if ($result != '') $result = sprintf($theme->parse($tml), $result);
-return $result;
-}
-
-public function getcommentslink() {
-$tc = ttemplatecomments::instance();
-return $tc->getcommentslink($this);
-}
-
-public function  gettemplatecomments() {
+    return $result;
+  }
+  
+  public function getcommentslink() {
+    $tc = ttemplatecomments::instance();
+    return $tc->getcommentslink($this);
+  }
+  
+  public function  gettemplatecomments() {
     if (($this->commentscount == 0) && !$this->commentsenabled && ($this->pingbackscount ==0)) return '';
     if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
-$tc = ttemplatecomments::instance();
-return $tc->getcomments($this->id);
-}
-
-private function replacemore($content) {
-global $post;
-$post = $this;
-$theme = ttheme::instance();
-$more = $theme->parse($theme->content->post->more);
-$tag = '<!--more-->';
-if ($i =strpos($content, $tag)) {
-return str_replace($tag, $more, $content);
-} else {
-return $more . $content;
-}
-}
+    $tc = ttemplatecomments::instance();
+    return $tc->getcomments($this->id);
+  }
+  
+  private function replacemore($content) {
+    global $post;
+    $post = $this;
+    $theme = ttheme::instance();
+    $more = $theme->parse($theme->content->post->more);
+    $tag = '<!--more-->';
+    if ($i =strpos($content, $tag)) {
+      return str_replace($tag, $more, $content);
+    } else {
+      return $more . $content;
+    }
+  }
   
   public function getcontent() {
     $result = '';
-$posts = tposts::instance();
-$posts->beforecontent($this->id, &$result);
+    $posts = tposts::instance();
+    $posts->beforecontent($this->id, &$result);
     $urlmap = turlmap::instance();
     if ($urlmap->page == 1) {
       $result .= $this->filtered;
-$result = $this->replacemore($result);
+      $result = $this->replacemore($result);
     } elseif ($s = $this->getpage($urlmap->page - 1)) {
       $result .= $s;
     } elseif ($urlmap->page <= $this->commentpages) {
@@ -335,13 +335,13 @@ $result = $this->replacemore($result);
       $lang = tlocal::instance();
       $result .= $lang->notfound;
     }
-
+    
     if ($this->haspages) {
-$theme = theme::instance();
-$result .= $theme->getpages($this->url, $urlmap->page, $this->countpages);
-}
-
-$posts->aftercontent($this->id, &$result);
+      $theme = theme::instance();
+      $result .= $theme->getpages($this->url, $urlmap->page, $this->countpages);
+    }
+    
+    $posts->aftercontent($this->id, &$result);
     return $result;
   }
   
@@ -360,16 +360,16 @@ $posts->aftercontent($this->id, &$result);
     return $this->data['rawcontent'];
   }
   
-protected function getrawdb() {
-global $db;
-$db->table = 'rawposts';
-return $db;
-}
+  protected function getrawdb() {
+    global $db;
+    $db->table = 'rawposts';
+    return $db;
+  }
   
   public function getpage($i) {
-if ($i == 0) return $this->filtered;
+    if ($i == 0) return $this->filtered;
     if (dbversion && ($this->id > 0)) {
-     if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
+      if ($r = $this->getdb('pages')->getassoc("(id = $this->id) and (page = $i) limit 1")) {
         return $r['content'];
       }
     } elseif ( isset($This->data['pages'][$i]))  {
@@ -389,13 +389,13 @@ if ($i == 0) return $this->filtered;
   public function gethaspages() {
     return ($this->pagescount > 1) || ($this->commentpages > 1);
   }
-
-public function getpagescount() {
-if (dbversion && ($this->id > 0)) return $this->data['pagescount'];
-return isset($this->data['pages']) ? count($this->data['pages']) : 1;
-}
-
-    public function getcountpages() {
+  
+  public function getpagescount() {
+    if (dbversion && ($this->id > 0)) return $this->data['pagescount'];
+    return isset($this->data['pages']) ? count($this->data['pages']) : 1;
+  }
+  
+  public function getcountpages() {
     return max($this->pagescount, $this->commentpages);
   }
   
@@ -404,45 +404,45 @@ return isset($this->data['pages']) ? count($this->data['pages']) : 1;
     if (!$options->commentpages) return 1;
     return ceil($this->commentscount / $options->commentsperpage);
   }
-
-public function setcommentsenabled($value) {
-if ($value != $this->commentsenabled) {
-if (!dbversion) $this->data['commentscount'] =  $this->comments->GetCountApproved;
-$this->data['commentsenabled'] = $value;
-}
-}
+  
+  public function setcommentsenabled($value) {
+    if ($value != $this->commentsenabled) {
+      if (!dbversion) $this->data['commentscount'] =  $this->comments->GetCountApproved;
+      $this->data['commentsenabled'] = $value;
+    }
+  }
   
   public function getcommentscount() {
     if (!$this->commentsenabled || dbversion)  return $this->data['commentscount'];
-      return $this->comments->approvedcount;
+    return $this->comments->approvedcount;
   }
   
   //db
-public function load() {
-if (dbversion)  return $this->LoadFromDB();
-return parent::load();
-}
-
-  public function LoadFromDB() {
-global $db;
-    if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
-where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
-$res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));
-$res->fetch();
-return true;
-    }
-return false;
+  public function load() {
+    if (dbversion)  return $this->LoadFromDB();
+    return parent::load();
   }
   
- protected function SaveToDB() {
-TPostTransform ::instance($this)->save();
-}
-
-public function clearcache() {
-$urlmap = turlmap::instance();
-$urlmap->setexpired($this->idurl);
-}
-
+  public function LoadFromDB() {
+    global $db;
+    if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
+      $res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));
+      $res->fetch();
+      return true;
+    }
+    return false;
+  }
+  
+  protected function SaveToDB() {
+    TPostTransform ::instance($this)->save();
+  }
+  
+  public function clearcache() {
+    $urlmap = turlmap::instance();
+    $urlmap->setexpired($this->idurl);
+  }
+  
 }//class
 
 ?>

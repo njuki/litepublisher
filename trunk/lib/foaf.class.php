@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tfoaf extends titems {
@@ -16,7 +16,7 @@ class tfoaf extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'foaf';
-$this->dbversion = false;
+    $this->dbversion = false;
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
     $this->data['redirlink'] = '/foaflink.htm';

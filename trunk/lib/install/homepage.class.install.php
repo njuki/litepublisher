@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 function THomepageInstall(&$self) {
@@ -11,7 +11,7 @@ function THomepageInstall(&$self) {
   $options->home = '/';
   $urlmap = turlmap::instance();
   $self->idurl = $urlmap->add($options->home, get_class($self), null);
-$self->save();
+  $self->save();
 }
 
 function THomepageUninstall(&$self) {

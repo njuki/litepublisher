@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class titem extends tdata {
@@ -12,16 +12,16 @@ class titem extends tdata {
   protected $aliases;
   
   public static function instance($class, $id = 0) {
-global $classes;
+    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
     $self = $classes->newinstance($class);
     $self->id = $id;
     if ($id != 0) {
       if (!$self->load()) {
-$self->free();
-return false;
-}
+        $self->free();
+        return false;
+      }
       self::$instances[$class][$id] = $self;
     }
     return $self;

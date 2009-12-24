@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tposttransform  {
@@ -13,23 +13,23 @@ class tposttransform  {
   public static $boolprops= array('commentsenabled', 'pingenabled');
   public static $props = array('id', 'idurl', 'parent', 'author',
   //'created', 'modified',
-'posted',
+  'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'template', 'theme', 'icon',
   'status', 'commentsenabled', 'pingenabled',
   'commentscount', 'pingbackscount', 'pagescount',
   );
-
+  
   public static function instance(tpost $post) {
     $self = getinstance(__class__);
     $self->post = $post;
     return $self;
   }
-
+  
   public static function add(tpost $post) {
     global $db;
-$self = self::instance($post);
+    $self = self::instance($post);
     $db->table = 'posts';
     $names =implode(', ', self::$props);
     $values = array();
@@ -38,20 +38,20 @@ $self = self::instance($post);
     }
     
     $id = $db->insertrow("($names) values (" . implode(', ', $values) . ')');
-
-$self->post->rawdb->add(array(
-'id' => $id,
-'created' => sqldate(),
-'modified' => sqldate(),
-'rawcontent' => $self->post->data['rawcontent']
-));
-
-$db->table = 'pages';
-     foreach ($self->post->data['pages'] as $i => $content) {
-$db->add(array('post' => $id, 'page' => $i,         'content' => $content));
-      }
-
-return $id;
+    
+    $self->post->rawdb->add(array(
+    'id' => $id,
+    'created' => sqldate(),
+    'modified' => sqldate(),
+    'rawcontent' => $self->post->data['rawcontent']
+    ));
+    
+    $db->table = 'pages';
+    foreach ($self->post->data['pages'] as $i => $content) {
+      $db->add(array('post' => $id, 'page' => $i,         'content' => $content));
+    }
+    
+    return $id;
   }
   
   public function save() {
@@ -63,18 +63,18 @@ return $id;
     }
     
     $db->idupdate($this->post->id, implode(', ', $list));
-
-$this->post->rawdb->updateassoc(array(
-'id' => $this->post->id,
-'modified' => sqldate(),
-'rawcontent' => $this->post->data['rawcontent']
-));
-
-$db->table = 'pages';
-$db->iddelete($this->post->id);
-     foreach ($this->post->data['pages'] as $i => $content) {
-$db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $content));
-      }
+    
+    $this->post->rawdb->updateassoc(array(
+    'id' => $this->post->id,
+    'modified' => sqldate(),
+    'rawcontent' => $this->post->data['rawcontent']
+    ));
+    
+    $db->table = 'pages';
+    $db->iddelete($this->post->id);
+    foreach ($this->post->data['pages'] as $i => $content) {
+      $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $content));
+    }
   }
   
   public function __get($name) {
@@ -87,13 +87,13 @@ $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $co
   public function __set($name, $value) {
     if (method_exists($this, $set = "set$name")) return $this->$set($value);
     if (in_array($name, self::$arrayprops)) {
-$list = array();
-foreach (explode(',', $value) as $i => $value) {
-$v = (int) trim($value);
-if ($v== 0) continue;
-$list[] = $v;
-}
-    $this->post->data[$name] = $list;
+      $list = array();
+      foreach (explode(',', $value) as $i => $value) {
+        $v = (int) trim($value);
+        if ($v== 0) continue;
+        $list[] = $v;
+      }
+      $this->post->data[$name] = $list;
     } elseif (in_array($name, self::$intprops)) {
       $this->post->$name = (int) $value;
     } elseif (in_array($name, self::$boolprops)) {
@@ -102,7 +102,7 @@ $list[] = $v;
       $this->post->$name = $value;
     }
   }
-
+  
   private function getposted() {
     return sqldate($this->post->posted);
   }

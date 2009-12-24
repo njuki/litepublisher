@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class TFoafManager extends titems {
@@ -15,7 +15,7 @@ class TFoafManager extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'foafmanager';
-$this->dbversion = false;
+    $this->dbversion = false;
   }
   
   public function Invate($friend) {

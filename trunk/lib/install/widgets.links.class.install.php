@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 function tlinkswidgetInstall($self) {
   tlocal::loadlang('admin');
@@ -19,8 +19,8 @@ function tlinkswidgetInstall($self) {
 }
 
 function tlinkswidgetUninstall(&$self) {
-$widgets = twidgets::instance();
-$widgets->deleteclass(get_class($self));
+  $widgets = twidgets::instance();
+  $widgets->deleteclass(get_class($self));
   turlmap::unsub($self);
 }
 

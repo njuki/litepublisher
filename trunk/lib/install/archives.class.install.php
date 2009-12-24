@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 function tarchivesInstall($self) {
@@ -15,8 +15,8 @@ function tarchivesInstall($self) {
 function tarchivesUninstall($self) {
   turlmap::unsub($self);
   tposts::unsub($self);
-$widgets = twidgets::instance();
-$widgets->deleteclass(get_class($self));  
+  $widgets = twidgets::instance();
+  $widgets->deleteclass(get_class($self));
 }
 
 ?>

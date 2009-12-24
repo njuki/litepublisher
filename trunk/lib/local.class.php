@@ -1,44 +1,44 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class targs {
-public $data;
-
-public static function instance() {
-global $classes;
-return $classes->newinstance(__class__);
-}
-
-public function __construct($thisthis = null) {
-global $options;
- $this->data = array(
-//'$options->url' => $options->url,
-//'{$options->q}' => $options->q,
-//'$options->files' => $options->files
-'$options.url' => $options->url,
-'{$options.q}' => $options->q,
-'$options.files' => $options->files
-);
-if (isset($thisthis)) $this->data['$this'] = $thisthis;
- }
-
+  public $data;
+  
+  public static function instance() {
+    global $classes;
+    return $classes->newinstance(__class__);
+  }
+  
+  public function __construct($thisthis = null) {
+    global $options;
+    $this->data = array(
+    //'$options->url' => $options->url,
+  //'{$options->q}' => $options->q,
+    //'$options->files' => $options->files
+    '$options.url' => $options->url,
+  '{$options.q}' => $options->q,
+    '$options.files' => $options->files
+    );
+    if (isset($thisthis)) $this->data['$this'] = $thisthis;
+  }
+  
 public function __get($name) { return $this->data[$name]; }
-
-public function __set($name, $value) {
-if (is_bool($value)) {
-$value = $value ? 'checked="checked"' : '';
-}
- $this->data['$'.$name] = $value; 
-}
-
-public function add(array $a) {
-foreach ($a as $key => $value) $this->__set($key, $value);
-}
+  
+  public function __set($name, $value) {
+    if (is_bool($value)) {
+      $value = $value ? 'checked="checked"' : '';
+    }
+    $this->data['$'.$name] = $value;
+  }
+  
+  public function add(array $a) {
+    foreach ($a as $key => $value) $this->__set($key, $value);
+  }
 }
 
 class tlocal {
@@ -52,10 +52,10 @@ class tlocal {
     if (isset(self::$data['default'][$name])) return self::$data['default'][$name];
     return '';
   }
-
-public function __call($name, $args) {
-return strtr ($this->__get($name), $args->data);    
-}
+  
+  public function __call($name, $args) {
+    return strtr ($this->__get($name), $args->data);
+  }
   
   public static function instance($section = '') {
     $result = getinstance(__class__);
@@ -116,9 +116,9 @@ return strtr ($this->__get($name), $args->data);
 
 class tdateformater {
   public  $date;
-    public function __construct($date) { $this->date = $date; }
-    public function __get($name) { return tlocal::translate(date($name, $this->date), 'datetime'); }
-  }
+public function __construct($date) { $this->date = $date; }
+public function __get($name) { return tlocal::translate(date($name, $this->date), 'datetime'); }
+}
 
 //init
 tlocal::checkload();

@@ -1,45 +1,51 @@
 <?php
 
-//dataclass.php
-class TDataClass {
-  private $LockCount;
+//data.class.php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+class tdata {
+  public $lockcount;
   public static $GlobalLock;
-  public $Data;
+  public $data;
   public $basename;
-  public $CacheEnabled;
+  public $cache;
   //database
   public $table;
   
   public function __construct() {
-    $this->LockCount = 0;
-    $this->CacheEnabled = true;
-    $this->Data= array();
-    $this->basename = 'data';
-    $this->CreateData();
+    $this->lockcount = 0;
+    $this->cache= true;
+    $this->data= array();
+    $this->basename = substr(get_class($this), 1);
+    $this->create();
   }
   
-  protected function CreateData() {
+  protected function create() {
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "Get$name") ||
-    method_exists($this, $get = "get$name")) {
+    if (method_exists($this, $get = "get$name"))  {
       return $this->$get();
-    } elseif (array_key_exists($name, $this->Data)) {
-      return $this->Data[$name];
+    } elseif (array_key_exists($name, $this->data)) {
+      return $this->data[$name];
     } else {
-      return    $this->Error("The requested property $name not found in class ". get_class($this));
+      return    $this->error("The requested property $name not found in class ". get_class($this));
     }
   }
   
   public function __set($name, $value) {
-    if (method_exists($this, $set = "Set$name")) {
+    if (method_exists($this, $set = "set$name")) {
       $this->$set($value);
       return true;
     }
     
-    if (key_exists($name, $this->Data)) {
-      $this->Data[$name] = $value;
+    if (key_exists($name, $this->data)) {
+      $this->data[$name] = $value;
       return true;
     }
     
@@ -50,43 +56,44 @@ class TDataClass {
     if (method_exists($this, strtolower($name))) {
       return call_user_func_array(array(&$this, strtolower($name)), $params);
     }
-    $this->Error("The requested method $name not found in class " . get_class($this));
+    $this->error("The requested method $name not found in class " . get_class($this));
   }
   
-  public function PropExists($name) {
-    return array_key_exists($name, $this->Data) || method_exists($this, "Get$name") | method_exists($this, "get$name") || isset($this->$name);
+  public function propexists($name) {
+    return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name") || isset($this->$name);
   }
   
   public function supported($interface) {
     return is_a($this, $interface);
   }
   
-  public function Error($Msg) {
+  public function error($Msg) {
     throw new Exception($Msg);
   }
   
-  public function GetBaseName() {
+  public function getbasename() {
     return $this->basename;
   }
   
-  public function Install() {
-    $this->CallSatellite('Install');
+  public function install() {
+    $this->CallSatellite('install');
   }
   
-  public function Uninstall() {
-    $this->CallSatellite('Uninstall');
+  public function uninstall() {
+    $this->CallSatellite('uninstall');
   }
   
-  public function Validate($repair = false) {
-    $this->CallSatellite('Validate', $repair);
+  public function validate($repair = false) {
+    $this->CallSatellite('validate', $repair);
   }
   
   protected function CallSatellite($func, $arg = null) {
     global $classes, $paths;
+$func{0} = strtoupper($func{0});
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = $classes->GetPath($class)) {
+      if ($path = $classes->getpath($class)) {
         $filename = basename($classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
         if (!@file_exists($file)) {
@@ -104,88 +111,58 @@ class TDataClass {
   
   public function load() {
     global $paths;
-    if ($this->dbversion == 'full') return $this->LoadFromDB();
-    $FileName = $paths['data'] . $this->GetBaseName() .'.php';
-    if (@file_exists($FileName)) {
-      return $this->LoadFromString(PHPUncomment(file_get_contents($FileName)));
+    if (dbversion == 'full') return $this->LoadFromDB();
+    $filename = $paths['data'] . $this->getbasename() .'.php';
+    if (@file_exists($filename)) {
+      return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }
   
   public function save() {
     global $paths;
-    if (self::$GlobalLock || ($this->LockCount > 0)) return;
-    if ($this->dbversion == 'full') {
+    if (self::$GlobalLock || ($this->lockcount > 0)) return;
+    if (dbversion == 'full') {
       $this->SaveToDB();
     } else {
-      SafeSaveFile($paths['data'].$this->GetBaseName(), $this->SaveToString());
+      SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
     }
-  }
-  
-  public function SaveToFile($FileName) {
-    if ($fh = fopen($FileName, 'w+')) {
-      $this->SaveToStream($fh);
-      fclose($fh);
-    } else {
-      $this->Error("Cannt open $FileName to write");
-    }
-  }
-  
-  public function SaveToStream($handle) {
-    $s = $this->SaveToString();
-    fwrite($handle, $s);
-  }
-  
-  public function LoadFromFile($FileName) {
-    if ($fh = fopen($FileName, 'r')) {
-      $this->LoadFromStream($fh, filesize($FileName));
-      fclose($fh);
-    } else {
-      $this->Error("Cant open $FileName to read");
-    }
-  }
-  
-  public function  LoadFromStream($handle, $length) {
-    $s = fread($handle,  $length);
-    $this->LoadFromString($s);
   }
   
   public function SaveToString() {
-    return PHPComment(serialize($this->Data));
+    return serialize($this->data);
   }
   
   public function LoadFromString($s) {
     try {
-      if (!empty($s)) $this->Data = unserialize($s) + $this->Data;
-      $this->AfterLoad();
+      if (!empty($s)) $this->data = unserialize($s) + $this->data;
+      $this->afterload();
+      return true;
     } catch (Exception $e) {
       echo 'Caught exception: '.  $e->getMessage() ;
+      return false;
     }
   }
   
-  public function AfterLoad() {
+  public function afterload() {
   }
   
   public function lock() {
-    $this->LockCount++;
+    $this->lockcount++;
   }
   
-  public function Unlock() {
-    if (--$this->LockCount <= 0) $this->Save();
+  public function unlock() {
+    if (--$this->lockcount <= 0) $this->save();
   }
   
-  public function Getlocked() {
-    return $this->LockCount  > 0;
-  }
-  
-  public function Getdbversion() {
-    return false;
+  public function getlocked() {
+    return $this->lockcount  > 0;
   }
   
   public function Getclass() {
     return get_class($this);
   }
   
-  public function Getdb($table = 'data') {
+  public function getdb($table = '') {
     global $db;
     $table =$table != '' ? $table : $this->table;
     if ($table != '') $db->table = $table;
@@ -193,28 +170,70 @@ class TDataClass {
   }
   
   protected function SaveToDB() {
-    $db->add($this->GetBaseName(), $this->SaveToString());
+    $db->add($this->getbasename(), $this->SaveToString());
   }
   
   protected function LoadFromDB() {
-    if ($r = $this->db->select('basename = '. $this->GetBaseName() . "'")) {
+    if ($r = $this->db->select('basename = '. $this->getbasename() . "'")) {
       return $this->LoadFromString($r['data']);
     }
   }
   
+  protected function getthistable() {
+    global $db;
+    return $db->prefix . $this->table;
+  }
+  
+  protected function geturltable() {
+    global $db;
+    return $db->prefix .'urlmap';
+  }
+  
+  protected function getjoinurl() {
+    return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
+  }
 }//class
 
-//eventclass.php
-class TEventClass extends TDataClass {
+class tarray2prop {
+  public $array;
+public function __construct(array &$array) { $this->array = &$array; }
+public function __get($name) { return $this->array[$name]; }
+public function __set($name, $value) { $this->array[$name] = $value; }
+public function __tostring() { return $this->array[0]; }
+}//class
+
+function sqldate($date = 0) {
+  if ($date == 0) $date = time();
+  return date('Y-m-d H:i:s', $date);
+}
+
+function dbquote($s) {
+  global $db;
+  return $db->quote($s);
+}
+
+function md5uniq() {
+  return md5(mt_rand() . secret. microtime());
+}
+
+//events.class.php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+class tevents extends tdata {
   protected $events;
-  protected $EventNames;
-  protected $DataMap;
+  protected $eventnames;
+  protected $map;
   
   public function __construct() {
-    $this->EventNames = array();
-    $this->DataMap = array();
+    $this->eventnames = array();
+    $this->map = array();
     parent::__construct();
-    $this->AssignDataMap();
+    $this->assignmap();
     $this->load();
   }
   
@@ -223,115 +242,95 @@ class TEventClass extends TDataClass {
     unset($classes->instances[get_class($this)]);
   }
   
-  protected function CreateData() {
-    if (!$this->dbversion) $this->AddDataMap('events', array());
+  protected function create() {
+    $this->addmap('events', array());
   }
   
-  public function AssignDataMap() {
-    foreach ($this->DataMap as $propname => $key) {
-      $this->$propname = &$this->Data[$key];
+  public function assignmap() {
+    foreach ($this->map as $propname => $key) {
+      $this->$propname = &$this->data[$key];
     }
   }
   
-  public function AfterLoad() {
-    $this->AssignDataMap();
+  public function afterload() {
+    $this->assignmap();
   }
   
-  protected function AddDataMap($name, $value) {
-    $this->DataMap[$name] = $name;
-    $this->Data[$name] = $value;
-    $this->$name = &$this->Data[$name];
+  protected function addmap($name, $value) {
+    $this->map[$name] = $name;
+    $this->data[$name] = $value;
+    $this->$name = &$this->data[$name];
   }
   
   public function __get($name) {
-    if (method_exists($this, $name)) {
-      return array(
-      'class' =>get_class($this),
-      'func' => $name
-      );
-    }
-    
+    if (method_exists($this, $name)) return array('class' =>get_class($this), 'func' => $name);
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
-    if ($this->SetEvent($name, $value)) return true;
-    $this->Error("Unknown property $name in class ". get_class($this));
+    if ($this->setevent($name, $value)) return true;
+    $this->error("Unknown property $name in class ". get_class($this));
   }
   
-  protected function SetEvent($name, $value) {
-    if (in_array($name, $this->EventNames)) {
-      $this->SubscribeEvent($name, $value);
+  protected function setevent($name, $value) {
+    if (in_array($name, $this->eventnames)) {
+      $this->eventsubscribe($name, $value);
       return true;
     }
     return false;
   }
   
   public  function __call($name, $params) {
-    if (in_array($name, $this->EventNames)) {
-      return $this->CallEvent($name, $params);
-    }
-    
+    if (in_array($name, $this->eventnames)) return $this->callevent($name, $params);
     parent::__call($name, $params);
   }
   
-  protected function AddEvents() {
+  protected function addevents() {
     $a = func_get_args();
-    array_splice($this->EventNames, count($this->EventNames), 0, $a);
+    array_splice($this->eventnames, count($this->eventnames), 0, $a);
   }
   
-  private function GetEvents($name) {
+  private function getevents($name) {
     if (isset($this->events[$name])) return $this->events[$name];
-    if ($this->dbversion) {
-      $r = $this->db->SelectTableWhere('events', "owner = '$this->class' and name = '$name'");
-      $this->events[$name] = $r->fetchAll (PDO::FETCH_ASSOC);
-      return $this->events[$name];
-    }
     return false;
   }
   
-  private function CallEvent($name, &$params) {
-    $Result = '';
-    if (    $list = $this->GetEvents($name)) {
+  private function callevent($name, &$params) {
+    $result = '';
+    if (    $list = $this->getevents($name)) {
       foreach ($list as $i => $item) {
         if (empty($item['class'])) {
           if (function_exists($item['func'])) {
             $call = $item['func'];
           } else {
-            $this->DeleteEvent($name, $i);
+            $this->eventdelete($name, $i);
             continue;
           }
         } elseif (!class_exists($item['class'])) {
-          $this->DeleteEvent();
+          $this->eventdelete();
           continue;
         } else {
-          $obj = &GetInstance($item['class']);
+          $obj = getinstance($item['class']);
           $call = array(&$obj, $item['func']);
         }
-        $lResult = call_user_func_array($call, $params);
-        if (is_string($lResult)) $Result .= $lResult;
+        $result = call_user_func_array($call, $params);
       }
     }
     
-    return $Result;
+    return $result;
   }
   
-  private function DeleteEvent($name, $i) {
-    if ($this->dbversion) {
-      $id =           $this->events[$name][$i]['id'];
-      $db = $this->Getdb('events');
-      $db->deleteid($id);
-      array_splice($this->events[$name], $i, 1);
-    } else {
-      array_splice($this->events[$name], $i, 1);
-      $this->save();
-    }
+  private function eventdelete($name, $i) {
+    array_splice($this->events[$name], $i, 1);
+    $this->save();
   }
   
-  public function SubscribeEvent($name, $params) {
+  public function eventsubscribe($name, $params) {
+    if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
     if (!isset($this->events[$name])) $this->events[$name] =array();
-    foreach ($this->events[$name] as $event) {
+    $list = $this->getevents($name);
+    foreach ($list  as $event) {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
     
@@ -339,22 +338,14 @@ class TEventClass extends TDataClass {
     'class' => $params['class'],
     'func' => $params['func']
     );
-    if ($this->dbversion) {
-      $event = &$this->events[$name][count($this->events[$name]) - 1];
-      $event['name'] = $name;
-      $event['owner'] = get_class($this);
-      $db = $this->Getdb('events');
-      $event['id'] = $db->InsertAssoc($event);
-    } else {
-      $this->save();
-    }
+    $this->save();
   }
   
-  public function UnsubscribeEvent($name, $class) {
-    if (isset($this->events[$name])) {
-      foreach ($this->events[$name] as $i => $item) {
+  public function eventunsubscribe($name, $class) {
+    if (    $list = $this->getevents($name)) {
+      foreach ($list  as $i => $item) {
         if ($item['class'] == $class) {
-          $this->DeleteEvent($name, $i);
+          $this->eventdelete($name, $i);
           return true;
         }
       }
@@ -363,45 +354,87 @@ class TEventClass extends TDataClass {
   }
   
   public static function unsub(&$obj) {
-    $self = self::Instance();
-    $self->UnsubscribeClassName(get_class($obj));
+    $self = self::instance();
+    $self->unsubscribeclassname(get_class($obj));
   }
   
-  public function UnsubscribeClass(&$obj) {
-    $this->UnsubscribeClassName(get_class($obj));
+  public function unsubscribeclass($obj) {
+    $this->unsubscribeclassname(get_class($obj));
   }
   
-  public function UnsubscribeClassName($class) {
-    $this->lock();
+  public function unsubscribeclassname($class) {
     foreach ($this->events as $name => $events) {
       foreach ($events as $i => $item) {
-        if ($item['class'] == $class)  $this->DeleteEvent($name, $i);
+        if ($item['class'] == $class) array_splice($this->events[$name], $i, 1);
       }
     }
-    $this->unlock();
+    
+    $this->save();
   }
   
-  public function Validate() {
-    foreach ($this->EventNames as $name) {
-      if (Method_exists($this, $name)) $this->Error("the virtual method $name cannt be exist in class". get_class($this));
+}//class
+
+//items.class.php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+class titems extends tevents {
+  public $items;
+  protected $autoid;
+  protected $dbversion;
+  
+  protected function create() {
+    parent::create();
+    $this->dbversion = false;
+    $this->addevents('added', 'deleted');
+    $this->addmap('items', array());
+    $this->addmap('autoid', 0);
+  }
+  
+  public function load() {
+    global $options;
+    if ($this->dbversion) {
+      if (!isset($options->data[get_class($this)])) {
+        $options->data[get_class($this)] = &$this->data;
+      } else {
+        $this->data = &$options->data[get_class($this)];
+        $this->afterload();
+      }
+      return  true;
+    } else {
+      return parent::load();
     }
   }
   
-}
-
-//itemsclass.php
-class TItems extends TEventClass {
-  public $items;
-  protected $lastid;
-  
-  protected function CreateData() {
-    parent::CreateData();
-    $this->AddEvents('Added', 'Deleted');
-    $this->AddDataMap('items', array());
-    $this->AddDataMap('lastid', 0);
+  public function save() {
+    global $options;
+    if ($this->dbversion) {
+      unset($this->data['items']);
+      return $options->save();
+    } else {
+      return parent::save();
+    }
   }
   
-  public function Getcount() {
+  public function loaditems(array $items) {
+    global  $db;
+    if (!dbversion) return;
+    //исключить из загрузки загруженные посты
+    $items = array_diff($items, array_keys($this->items));
+    if (count($items) == 0) return;
+    $list = implode(',', $items);
+    $res = $db->query("select * from $this->thistable where id in ($list)");
+    $res->setFetchMode (PDO::FETCH_ASSOC);
+    foreach ($res as $item) {
+      $this->items[$item['id']] = $item;
+    }
+  }
+  
+  public function getcount() {
     if ($this->dbversion) {
       return $this->db->getcount();
     } else {
@@ -409,32 +442,35 @@ class TItems extends TEventClass {
     }
   }
   
-  public function GetItem($id) {
-    if ($this->dbversion && !isset($this->items[$id])) {
-      if ($res = $this->db->select("id = $id")) {
-        $this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
-      }
-    }
-    
-    if (isset($this->items[$id])) {
-      return $this->items[$id];
-    }
-    return $this->Error("Item $id not found in class ". get_class($this));
+  public function getitem($id) {
+    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id);
+    if (isset($this->items[$id])) return $this->items[$id];
+    return $this->error("Item $id not found in class ". get_class($this));
   }
   
-  public function GetValue($id, $name) {
+  public function getvalue($id, $name) {
+    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id);
     return $this->items[$id][$name];
   }
   
-  public function SetValue($id, $name, $value) {
+  public function setvalue($id, $name, $value) {
     $this->items[$id][$name] = $value;
+    if ($this->dbversion) {
+      $this->db->setvalue($id, $name, $value);
+    }
   }
   
-  public function ItemExists($id) {
+  public function itemexists($id) {
+    if ($this->dbversion) return $this->db->idexists($id);
     return isset($this->items[$id]);
   }
   
   public function IndexOf($name, $value) {
+    if ($this->dbversion){
+      $id = $this->db->findid("$name = ". dbquote($value));
+      return $id ? $id : -1;
+    }
+    
     foreach ($this->items as $id => $item) {
       if ($item[$name] == $value) {
         return $id;
@@ -444,82 +480,152 @@ class TItems extends TEventClass {
   }
   
   public function delete($id) {
-    if ($this->dbversion) {
-      $this->db->delete("id = $id");
-      if (isset($this->items[$id])) unset($this->items[$id]);
-    } else {
-      if (isset($this->items[$id])) {
-        unset($this->items[$id]);
-        $this->save();
-        $this->Deleted($id);
-        return true;
-      }
-      return false;
+    if ($this->dbversion) $this->db->delete("id = $id");
+    if (isset($this->items[$id])) {
+      unset($this->items[$id]);
+      if (!$this->dbversion) $this->save();
+      $this->deleted($id);
+      return true;
     }
+    return false;
   }
   
-}
+}//class
+
+class tsingleitems extends titems {
+  public static $instances;
+  public $id;
+  
+  public static function instance($class, $id = 0) {
+    global $classes;
+    if (!isset(self::$instances)) self::$instances = array();
+    if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
+    $self = $classes->newinstance($class);
+    self::$instances[$class][$id] = $self;
+    $self->id = $id;
+    $self->load();
+    return $self;
+  }
+  
+  public function load() {
+    if (!isset($this->id)) return false;
+    return parent::load();
+  }
+  
+  public function free() {
+    unset(self::$instances[get_class($this)][$this->id]);
+  }
+  
+}//class
 
 //classes.php
-function __autoload($ClassName) {
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+function __autoload($class) {
   global $classes;
-  if ($path =$classes->GetPath($ClassName)) {
-    $filename = $path . $classes->items[$ClassName][0];
-    if (@file_exists($filename)) {
-      require_once($filename);
-    }
-  }
+  $classes->_autoload($class);
 }
 
-class TClasses extends TItems {
+class tclasses extends titems {
   public $classes;
+  public $interfaces;
+  public $remap;
   public $instances;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    global $classes;
+    if (!isset($classes)) {
+      $class = __class__;
+      $classes = new $class();
+      $classes->instances[$class] = $classes;
+    }
+    return $classes;
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  public function getinstance($class) {
+    if (!class_exists($class)) {
+      $this->error("Class $class not found");
+    }
+    if (!isset($this->instances[$class])) {
+      $this->instances[$class] = $this->newinstance($class);
+    }
+    return $this->instances[$class];
+  }
+  
+  public function newinstance($class) {
+    if (!empty($this->remap[$class])) $class = $this->remap[$class];
+    return new $class();
+  }
+  
+  protected function create() {
+    parent::create();
     $this->basename = 'classes';
-    $this->AddDataMap('classes', array());
+    $this->dbversion = false;
+    $this->addmap('classes', array());
+    $this->addmap('interfaces', array());
+    $this->addmap('remap', array());
     $this->instances = array();
   }
   
-  public function Add($ClassName, $FileName, $Path = '') {
-    if (!isset($this->items[$ClassName]) ||
-    ($this->items[$ClassName][0] != $FileName) || ($this->items[$ClassName][1] != $Path)) {
-      $this->items[$ClassName] = array($FileName, $Path);
-      $this->Save();
-      $instance = &GetInstance($ClassName);
-      if (method_exists($instance, 'Install')) $instance->Install();
-    }
-    $this->Added($ClassName);
+  public function __get($name) {
+    if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
+    $class = 't' . $name;
+    if (isset($this->items[$class])) return $this->getinstance($class);
+    return parent::__get($name);
   }
   
-  public function Delete($ClassName) {
-    if (isset($this->items[$ClassName])) {
-      if (class_exists($ClassName)) {
-        $instance = &GetInstance($ClassName);
-        if (method_exists($instance, 'Uninstall')) $instance->Uninstall();
-      }
-      unset($this->items[$ClassName]);
-      $this->Save();
-      $this->Deleted($ClassName);
+  public function add($class, $filename, $path = '') {
+    if (!isset($this->items[$class]) ||
+    ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
+      $this->items[$class] = array($filename, $path);
+      $this->save();
+      $instance = $this->getinstance($class);
+      if (method_exists($instance, 'install')) $instance->install();
     }
+    $this->added($class);
   }
   
-  public function Reinstall($class) {
+  public function delete($clsss) {
     if (isset($this->items[$class])) {
-      $this->Lock();
-      $item = $this->items[$class];
-      $this->Delete($class);
-      $this->Add($class, $item[0], $item[1]);
-      $this->Unlock();
+      if (class_exists($class)) {
+        $instance = $this->getinstance($class);
+        if (method_exists($instance, 'uninstall')) $instance->uninstall();
+      }
+      unset($this->items[$class]);
+      $this->save();
+      $this->deleted($ClassName);
     }
   }
   
-  public function GetPath($class) {
+  public function reinstall($class) {
+    if (isset($this->items[$class])) {
+      $this->lock();
+      $item = $this->items[$class];
+      $this->delete($class);
+      $this->add($class, $item[0], $item[1]);
+      $this->unlock();
+    }
+  }
+  
+  public function _autoload($class) {
+    global $paths;
+    if ($path =$this->getpath($class)) {
+      $filename = $path . $this->items[$class][0];
+    } elseif (isset($this->interfaces[$class])) {
+      $filename = $paths['lib'] . $this->interfaces[$class];
+    } else {
+      //$this->error("$class class not found");
+      return false;
+    }
+    if (@file_exists($filename)) require_once($filename);
+  }
+  
+  public function getpath($class) {
     global  $paths;
     if (!isset($this->items[$class])) return false;
     if (empty($this->items[$class][1])) return $paths['lib'];
@@ -537,34 +643,26 @@ class TClasses extends TItems {
   
 }//class
 
-function &GetInstance($ClassName) {
+function getinstance($class) {
   global $classes;
-  if (!class_exists($ClassName)) {
-    $classes->Error("Class $ClassName not found");
-  }
-  if (!isset($classes->instances[$ClassName])) {
-    $classes->instances[$ClassName] = &new $ClassName ();
-  }
-  return $classes->instances[$ClassName];
+  return $classes->getinstance($class);
 }
 
-function &GetNamedInstance($name, $defclass) {
-  global $classes;
-  $class = !empty($classes->classes[$name]) ? $classes->classes[$name] : $defclass;
-  return GetInstance($class);
-}
-
-function PHPComment(&$s) {
+function PHPComment($s) {
   $s = str_replace('*/', '**//*/', $s);
   return "<?php /* $s */ ?>";
 }
 
-function PHPUncomment(&$s) {
+function PHPUncomment($s) {
   $s = substr($s, 9, strlen($s) - 9 - 6);
   return str_replace('**//*/', '*/', $s);
 }
 
-function SafeSaveFile($BaseName, &$Content) {
+function strbegin($s, $begin) {
+  return strncmp($s, $begin, strlen($begin)) == 0;
+}
+
+function SafeSaveFile($BaseName, $Content) {
   $TmpFileName = $BaseName.'.tmp.php';
   if(!file_put_contents($TmpFileName, $Content))  return false;
   @chmod($TmpFileName , 0666);
@@ -577,84 +675,131 @@ function SafeSaveFile($BaseName, &$Content) {
   return rename($TmpFileName, $FileName);
 }
 
-//optionsclass.php
-class TOptions extends TEventClass {
+//options.class.php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+class toptions extends tevents {
+  public $user;
+  public $group;
+  public $gmt;
+  public $errorlog;
+  private $modified;
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
     $this->basename = 'options';
-    $this->AddEvents('Changed', 'PostsPerPageChanged', 'OnGeturl');
-    unset($this->CacheEnabled);
+    $this->addevents('changed', 'PostsPerPageChanged');
+    unset($this->cache);
+    $this->gmt = date('Z');
+    $this->errorlog = '';
+    $this->modified = false;
   }
   
-  public function Load() {
-    parent::Load();
-    if($this->PropExists('timezone'))  {
+  public function load() {
+    parent::load();
+    $this->modified = false;
+    if($this->propexists('timezone'))  {
       date_default_timezone_set($this->timezone);
-      //if ($this->dbversion) $this->db->exec("SET time_zone = '$this->timezone'");
+      $this->gmt = date('Z');
     }
-    if (!defined('gmt_offset')) define('gmt_offset', date('Z'));
+  }
+  
+  public function savemodified() {
+    if ($this->modified) parent::save();
+  }
+  
+  public function save() {
+    $this->modified = true;
+  }
+  
+  public function unlock() {
+    $this->modified = true;
+    parent::unlock();
   }
   
   public function __set($name, $value) {
-    if ($this->SetEvent($name, $value)) return true;
+    if ($this->setevent($name, $value)) return true;
     
-    if (!isset($this->Data[$name]) || ($this->Data[$name] != $value)) {
-      $this->Data[$name] = $value;
-      $this->Save();
-      $this->FieldChanged($name, $value);
+    if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
+      $this->data[$name] = $value;
+      $this->save();
+      $this->dochanged($name, $value);
     }
     return true;
   }
   
-  private function FieldChanged($name, $value) {
+  private function dochanged($name, $value) {
     if ($name == 'postsperpage') {
       $this->PostsPerPageChanged();
-      $urlmap = &TUrlmap::Instance();
-      $urlmap->ClearCache();
-    } elseif ($name == 'CacheEnabled') {
-      $urlmap = &TUrlmap::Instance();
-      $urlmap->ClearCache();
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache();
+    } elseif ($name == 'cache') {
+      $urlmap = turlmap::instance();
+      $urlmap->clearcache();
     } else {
-      $this->Changed($name, $value);
+      $this->changed($name, $value);
     }
   }
   
-  public function Geturl() {
-    $result = $this->OnGeturl();
-    if (!empty($result)) return $result;
-    $result = $this->Data['url'];
-    if ($this->q == '&') $result .= '/index.php?url=';
-    $urlmap = TUrlmap::Instance();
-    if ($urlmap->Ispda) $result .= '/pda';
-    return $result;
+  public function delete($name) {
+    if (array_key_exists($name, $this->data)) {
+      unset($this->data);
+      $this->save();
+    }
   }
   
-  public function Seturl($url) {
+  public function geturl() {
+    if ($this->fixedurl) return $this->data['url'];
+    return 'http://'. $GLOBALS['domain'];
+  }
+  
+  public function seturl($url) {
     $url = rtrim($url, '/');
-    $this->Lock();
-    $this->Data['url'] = $url;
+    $this->lock();
+    $this->data['url'] = $url;
     $this->files= $url;
     $this->subdir = '';
     if ($i = strpos($url, '/', 10)) {
       $this->subdir = substr($url, $i);
     }
-    $this->Unlock();
+    $this->unlock();
   }
   
-  public function CheckLogin($login, $password) {
-    return $this->password == md5("$login:$this->realm:$password");
-  }
-  
-  public function Auth(){
-    if (isset($_SERVER['PHP_AUTH_USER'])) {
-      return $this->CheckLogin($_SERVER['PHP_AUTH_USER'] , $_SERVER['PHP_AUTH_PW']);
+  public function auth($login, $password) {
+    if ($login == $this->login) {
+      $this->user = 1;
+    } else {
+      $users = tusers::instance();
+      if (!($this->user = $users->loginexists($login))) return false;
     }
-    return false;
+    
+    if ($this->password != md5("$login:$this->realm:$password"))  return false;
+    $this->updategroup();
+    return true;
+  }
+  
+  public function updategroup() {
+    if ($this->user == 1) {
+      $this->group = 'admin';
+    } else {
+      $users = tusers::instance();
+      $this->group = $users->getgroupname($this->user);
+    }
+  }
+  
+  public function getpassword() {
+    if ($this->user <= 1) return $this->data['password'];
+    $users = tusers::instance();
+    return $users->getvalue($this->user, 'password');
   }
   
   public function SetPassword($value) {
@@ -662,339 +807,304 @@ class TOptions extends TEventClass {
   }
   
   public function Getinstalled() {
-    return isset($this->Data['url']);
+    return isset($this->data['url']);
   }
   
-  public function HandleException(&$e) {
+  public function settimezone($value) {
+    if(!isset($this->data['timezone']) || ($this->timezone != $value)) {
+      $this->data['timezone'] = $value;
+      $this->save();
+      date_default_timezone_set($this->timezone);
+      $this->gmt = date('Z');
+    }
+  }
+  
+  public function handexception($e) {
     global $paths;
     $trace =str_replace($paths['home'], '', $e->getTraceAsString());
-    $message = 'Caught exception: ' . $e->getMessage();
+    $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
-    TFiler::log($log, 'exceptions.log');
-    $urlmap = TUrlmap::Instance();
-    if (defined('debug') || $this->echoexception || $urlmap->IsAdminPanel) {
-      echo str_replace("\n", "<br />\n", htmlspecialchars($log));
+    tfiler::log($log, 'exceptions.log');
+    $urlmap = turlmap::instance();
+    if (defined('debug') || $this->echoexception || $urlmap->admin) {
+      $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
-      TFiler::log($log, 'exceptionsmail.log');
+      tfiler::log($log, 'exceptionsmail.log');
     }
   }
   
 }//class
 
-//urlmapclass.php
-class TUrlmap extends TItems {
+//urlmap.class.php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+class turlmap extends titems {
   public $host;
   public $url;
   public $urlid;
+  public $page;
   public $uripath;
-  public $pagenumber;
-  public $get;
-  public $tree;
+  public $itemrequested;
+  public $argtree;
   public $is404;
-  public $IsAdminPanel;
-  public $Ispda;
-  private $argfinal;
+  public $admin;
+  public $mobile;
   
-  public static function &Instance() {
-    return GetNamedInstance('urlmap', __class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  protected function CreateData() {
-    parent::CreateData();
+  protected function create() {
+    parent::create();
+    $this->dbversion = dbversion;
+    $this->table = 'urlmap';
     $this->basename = 'urlmap';
-    $this->AddEvents('BeforeRequest', 'AfterRequest', 'CacheExpired');
-    $this->AddDataMap('get', array());
-    $this->AddDataMap('tree', array());
+    $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
     $this->is404 = false;
-    $this->IsAdminPanel = false;
-    $this->Ispda= false;
+    $this->admin = false;
+    $this->mobile= false;
   }
   
-  public function Request($host, $url) {
-    global $Options, $paths;
+  protected function prepareurl($host, $url) {
+    global $options;
     $this->host = $host;
-    $this->pagenumber = 1;
-    if ($Options->q == '?') {
-      $this->url = substr($url, strlen($Options->subdir));
+    $this->page = 1;
+    $this->uripath = array();
+    if ($options->q == '?') {
+      $this->url = substr($url, strlen($options->subdir));
     } else {
       $this->url = $_GET['url'];
     }
-    $this->BeforeRequest();
-    if ($this->Ispda = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
-      if ($this->url == '/pda') {
-        $this->url = '/';
-      } else {
-        $this->url = substr($this->url, strlen('/pda'));
-      }
-      $paths['cache'] .= 'pda' . DIRECTORY_SEPARATOR;
-    }
-    $this->IsAdminPanel = (strncmp('/admin/', $this->url, strlen('/admin/')) == 0) || ($this->url == '/admin');
-    
+  }
+  
+  public function request($host, $url) {
+    global $options;
+    $this->prepareurl($host, $url);
+    $this->admin = strbegin($this->url, '/admin/') || ($this->url == '/admin');
+    $this->beforerequest();
     try {
-      $this->DoRequest($this->url);
+      $this->dorequest($this->url);
     } catch (Exception $e) {
-      $Options->HandleException($e);
+      $options->handexception($e);
     }
-    $this->AfterRequest($this->url);
+    $this->afterrequest($this->url);
     $this->CheckSingleCron();
   }
   
-  protected function ParseUriPath($url) {
-    $url = trim($url, '/');
-    $result = array();
-    while ($i = strpos($url, '/')) {
-      $result[] = substr($url, 0, $i);
-      $url = substr($url, $i + 1);
+  protected function dorequest($url) {
+    if ($this->itemrequested = $this->finditem($url)){
+      return $this->printcontent($this->itemrequested);
+    } else {
+      $this->notfound404();
     }
-    $result[] = $url;
-    return $result;
   }
   
-  protected function DoRequest($url) {
-    if ($item = &$this->FindItem($url)) {
-      return $this->PrintContent($item);
-    }
-    $this->NotFound404();
-  }
-  
-  public function &FindItem($url) {
-    global $Options;
-    //redir multi slashed
-    if ('//' == substr($url, strlen($url) - 3)) $this->Redir301(rtrim($url, '/') . '/');
-    
-    if ($this->dbversion) {
+  private function query($url) {
+    if (dbversion) {
       if ($res = $this->db->select('url = '. $this->db->quote($url). ' limit 1')) {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
       }
-      return false;
-    }
-    
-    //4 steps: items, get, pagenumber, tree
-    if (isset($this->items[$url])) return $this->items[$url];
-    $slashed = rtrim($url, '/');
-    if (isset($this->items[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
-      } else {
-        return $this->items[$slashed];
-      }
-    }
-    
-    $slashed  .= '/';
-    if (isset($this->items[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
-      } else {
-        return $this->items[$slashed];
-      }
-    }
-    
-    if (($Options->q == '?') && ($i = strpos($url, '?')) ) {
-      $url = substr($url, 0, $i);
-    }
-    
-    if (isset($this->get[$url])) return $this->get[$url];
-    
-    $slashed = rtrim($url, '/');
-    if (isset($this->get[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
-      } else {
-        return $this->get[$slashed];
-      }
-    }
-    
-    $slashed  .= '/';
-    if (isset($this->get[$slashed])) {
-      if ($this->pagenumber == 1) {
-        return $this->Redir301($slashed);
-      } else {
-        return $this->get[$slashed];
-      }
-    }
-    
-    //check page number as  /page/pagenumber/
-    $this->uripath = $this->ParseUriPath($url);
-    $c = count($this->uripath);
-    if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
-      $this->pagenumber = (int) $this->uripath[$c - 1];
-      $url = substr($url, 0, strpos($url, "page/$this->pagenumber"));
-      array_splice($this->uripath, $c - 2, 2);
-      return $this->FindItem($url);
-    }
-    
-    $null = null;
-    
-    if (isset($this->tree[$this->uripath[0]])) {
-      //walk on tree
-      $item = &$this->tree[$this->uripath[0]];
-      for ($i = 1; $i <  count($this->uripath); $i++ ) {
-        if (isset($item['items'][$this->uripath[$i]])) {
-          $item = &$item['items'][$this->uripath[$i]];
-        } elseif (isset($item['final'])) {
-          $this->argfinal = implode('/', array_slice($this->uripath, $i));
-          return $item;
-        } else {
-          return $null;
-        }
-      }
-      return $item;
-    }
-    
-    return $null;
+    } elseif (isset($this->items[$url])) return $this->items[$url];
+    return false;
   }
   
-  protected function  PrintContent(&$item) {
-    global $Options, $paths;
-    $this->urlid = $item['id'];
-    if ($Options->CacheEnabled) {
-  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
+  public function finditem($url) {
+    global $options;
+    //redir multi slashed
+    if ('//' == substr($url, strlen($url) - 3)) $this->redir301(rtrim($url, '/') . '/');
+    
+    if ($result = $this->query($url)) return $result;
+    
+    $slashed = rtrim($url, '/');
+    if ($result = $this->query($slashed)) {
+      if ($this->page == 1) {
+        return $this->redir301($slashed);
+      } else {
+        return $result;
+      }
+    }
+    
+    $slashed  .= '/';
+    if ($result = $this->query($slashed)) {
+      if ($this->page == 1) {
+        return $this->redir301($slashed);
+      } else {
+        return $result;
+      }
+    }
+    
+    if (($options->q == '?') && ($i = strpos($url, '?')) ) {
+      $url = substr($url, 0, $i);
+      return $this->finditem($url);
+    }
+    
+    //check page number as  /page/page/
+    if (count($this->uripath) == 0) {
+      $this->uripath = explode('/', trim($url, '/'));
+      $c = count($this->uripath);
+      if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
+        $this->page = (int) $this->uripath[$c - 1];
+        $url = substr($url, 0, strpos($url, "page/$this->page"));
+        array_splice($this->uripath, $c - 2, 2);
+        return $this->finditem($url);
+      }
+    }
+    
+    //tree обрезаю окончание урла в аргумент
+    $url = trim($url, '/');
+    $j = -1;
+    while($i = strrpos($url, '/', $j)) {
+      if ($result = $this->query('/' . substr($url, 0, $i + 1))) {
+        $this->argtree = substr($url, $i +1);
+        return $result;
+      }
+      $j = - (strlen($url) - $i + 1);
+    }
+    
+    return false;
+  }
+  
+  private function getcachefile(array $item) {
+    global $paths;
+    if ($item['type'] == 'normal') {
+      return $paths['cache']. sprintf('%s-%d.php', $item['id'], $this->page);
+    } else {
+      return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
+    }
+  }
+  
+  protected function  printcontent(array $item) {
+    global $options;
+    if ($options->cache) {
+      $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($CacheFileName)) && (($time  + $Options->CacheExpired) >= time() )) {
-        include($CacheFileName);
+      if (($time = @filemtime ($cachefile)) && (($time  + $options->expiredcache) >= time() )) {
+        include($cachefile);
         return;
       }
     }
     
-    $ClassName = $item['class'];
-    if (!class_exists($ClassName)) {
-      __autoload($ClassName);
-      if (!@class_exists($ClassName)) {
-        $this->DeleteClass($ClassName);
-        return $this->NotFound404();
-      }
+    if (class_exists($item['class']))  {
+      return $this->GenerateHTML($item);
+    } else {
+      $this->deleteclass($item['class']);
+      $this->notfound404();
     }
-    $this->PrintClassContent($ClassName, $item);
   }
   
-  protected function PrintClassContent($ClassName, &$item) {
-    global $Options, $paths, $Template;
-    $obj = &GetInstance($ClassName);
-    $arg = isset($this->argfinal)  ? $this->argfinal : $item['arg'];
+  protected function GenerateHTML(array $item) {
+    global $options, $template;
+    $source = getinstance($item['class']);
     //special handling for rss
-    if (method_exists($obj, 'Request') && ($s = $obj->Request($arg))) {
-      if ($s == 404) return $this->NotFound404();
+    if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
+      if ($s == 404) return $this->notfound404();
     } else {
-      $Template = TTemplate::Instance();
-      $s = $Template->request($obj);
+      $template = ttemplate::instance();
+      $s = $template->request($source);
     }
     eval('?>'. $s);
-    if ($Options->CacheEnabled && $obj->CacheEnabled) {
-  $CacheFileName = "{$paths['cache']}{$item['id']}-$this->pagenumber.php";
-      file_put_contents($CacheFileName, $s);
-      @chmod($CacheFileName, 0666);
+    if ($options->cache && $source->cache) {
+      $cachefile = $this->getcachefile($item);
+      file_put_contents($cachefile, $s);
+      @chmod($cachefile, 0666);
     }
   }
   
-  public function NotFound404() {
-    $redir = &TRedirector ::Instance();
+  public function notfound404() {
+    $redir = tredirector::instance();
     if (isset($redir->items[$this->url])) {
-      return $this->Redir301($redir->items[$this->url]);
+      return $this->redir301($redir->items[$this->url]);
     }
     
     $this->is404 = true;
-    $obj = &TNotFound404::Instance();
-    $Template = &TTemplate::Instance();
-    $s = &$Template->Request($obj);
+    $obj = tnotfound404::instance();
+    $Template = ttemplate::instance();
+    $s = &$Template->request($obj);
     eval('?>'. $s);
   }
   
-  protected function AddItem(&$items, $url, $class, $arg) {
-    $items[$url] = array(
-    'id' => ++$this->lastid,
+  
+  public function urlexists($url) {
+    if (dbversion) {
+      return $this->db->exists('url = '. dbquote($url));
+    } else {
+      return isset($this->items[$url]);
+    }
+  }
+  public function add($url, $class, $arg, $type = 'normal') {
+    if (dbversion) {
+      $item= array(
+      'url' => $url,
+      'class' => $class,
+      'arg' => $arg,
+      'type' => $type
+      );
+      $item['id'] = $this->db->add($item);
+      $this->items[$item['id']] = $item;
+      return $item['id'];
+    }
+    
+    $this->items[$url] = array(
+    'id' => ++$this->autoid,
     'class' => $class,
-    'arg' => $arg
+    'arg' => $arg,
+    'type' => $type
     );
     $this->save();
-    return $this->lastid;
+    return $this->autoid;
   }
   
-  public function Add($url, $class, $arg) {
-    return $this->AddItem($this->items, $url, $class, $arg);
-  }
-  
-  public function AddGet($url, $class, $arg) {
-    return $this->AddItem($this->get, $url, $class, $arg);
-  }
-  
-  public function AddNode($url, $class, $arg) {
-    return $this->AddItem($this->tree, $url, $class, $arg);
-  }
-  
-  public function AddSubNode($nodeurl, $url, $class, $arg) {
-    if (!isset($this->tree[$nodeurl])) $this->AddNode($nodeurl, $class, null);
-    if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
-    return $this->AddItem($this->tree[$nodeurl]['items'], $url, $class, $arg);
-  }
-  
-  public function AddFinalNode($nodeurl, $url, $class) {
-    if (!isset($this->tree[$nodeurl])) $this->Error("node $nodeurl is not exists!");
-    if (!isset($this->tree[$nodeurl]['items'])) $this->tree[$nodeurl]['items'] = array();
-    $this->tree[$nodeurl]['items'][$url] = array(
-    'id' => ++$this->lastid,
-    'class' => $class,
-    'arg' => null,
-    'final' => true
-    );
-    $this->Save();
-    return $this->lastid;
-  }
-  
-  public function AddFinal($url, $class) {
-    $this->tree[$url] = array(
-    'id' => ++$this->lastid,
-    'class' => $class,
-    'arg' => null,
-    'final' => true
-    );
-    $this->Save();
-    return $this->lastid;
-  }
-  
-  private function DeleteItem(&$items, $url) {
-    if (isset($items[$url])) {
-      $this->unlink($items[$url]['id'] . '-1.php');
-      unset($items[$url]);
-      return true;
+  public function delete($url) {
+    if (dbversion) {
+      $this->db->delete('url = '. $this->db->quote($url));
+    } elseif (isset($this->items[$url])) {
+      unset($this->items[$url]);
+      $this->save();
     }
-    return false;
+    $this->clearcache();
   }
   
-  public function Delete($url) {
-    if ($this->DeleteItem($this->items, $url) || $this->DeleteItem($this->get, $url) || $this->DeleteItem($this->tree, $url)) {
-      $this->Save();
+  public function deleteclass($class) {
+    if (dbversion){
+      $this->db->delete("class = `$class`");
+    } else  {
+      foreach ($this->items as $url => $item) {
+        if ($item['class'] == $class) unset($this->items[$url]);
+      }
+      $this->save();
     }
+    $this->clearcache();
   }
   
-  private function DeleteClassArgItem(&$items, $class, $arg) {
-    foreach ($items as  $url => $item) {
-      if (($item['class'] == $class) && ($item['arg'] == $arg)) {
-        unset($items[$url]);
-        return true;
+  public function deleteitem($id) {
+    if (dbversion){
+      $this->db->iddelete($id);
+    } else  {
+      foreach ($this->items as $url => $item) {
+        if ($item['id'] == $id) {
+          unset($this->items[$url]);
+          $this->save();
+          break;
+        }
       }
     }
-    return false;
+    $this->clearcache();
   }
   
-  public function DeleteClassArg($class, $arg) {
-    if (!($this->DeleteClassArgItem($this->items, $class, $arg) || $this->DeleteClassArgItem($this->get, $class, $arg))) {
-      foreach ($this->tree as $url => $item) {
-        if (!isset($this->tree[$url]['items'])) continue;
-        if ($this->DeleteClassArgItem($this->tree[$url]['items'], $class, $arg)) break;
-      }
+  //for Archives
+  public function GetClassUrls($class) {
+    if (dbversion) {
+      $res = $this->db->query("select url from $this->thistable where class = '$class'");
+      return $this->db->res2id($res);
     }
-    $this->Save();
-  }
-  
-  public function DeleteSubNode($node, $subnode) {
-    if ($this->DeleteItem($this->tree[$node]['items'], $subnode)) {
-      $this->Save();
-    }
-  }
-  
-  public function &GetClassItems($class) {
+    
     $result = array();
     foreach ($this->items as $url => $item) {
       if ($item['class'] == $class) $result[] = $url;
@@ -1002,114 +1112,55 @@ class TUrlmap extends TItems {
     return $result;
   }
   
-  private function RemoveItems(&$items, $class) {
-    foreach ($items as $url => $item) {
-      if ($item['class'] == $class) {
-        $this->unlink($item['id']. '-1.php');
-        unset($items[$url]);
-      }
-    }
-  }
-  
-  public function DeleteClass($class) {
-    $this->lock();
-    
-    $this->RemoveItems($this->items, $class);
-    $this->RemoveItems($this->get, $class);
-    $this->RemoveItems($this->tree, $class);
-    foreach ($this->tree as $url => $item) {
-      if (isset($item['items'])) {
-        $this->RemoveItems($this->tree[$url]['items'], $class);
-      }
-    }
-    
-    $this->unlock();
-  }
-  
-  public function Find($class, $params) {
-    foreach ($this->items as $url => $item) {
-      if (($item['class']== $class) && ($item['arg'] == $params)) {
-        return $url;
-      }
-    }
-    return false;
-  }
-  
-  public function Edit($class, $params, $newurl) {
-    if ($url = $this->Find($class, $params)) {
-      if ($url == $url) return true;
-      if (isset($this->items[$newurl]))  {
-        $newurl = TLinkGenerator ::MakeUnique($newurl);
-      }
-      $this->Replace($url, $newurl);
-      return true;
-    }
-    return false;
-  }
-  
-  public function ClearCache() {
+  public function clearcache() {
     global $paths;
-    if ($this->Ispda) {
-      TFiler::DeleteFiles(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR, true, false);
-    } else {
-      TFiler::DeleteFiles($paths['cache'], true, false);
+    $path = $paths['cache'];
+    if ( $h = @opendir($path)) {
+      while(FALSE !== ($filename = @readdir($h))) {
+        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
+        $file = $path. $filename;
+        if (@is_dir($file)) {
+          tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
+        } else {
+          unlink($file);
+        }
+      }
+      @closedir($h);
     }
+    
     $this->CacheExpired();
   }
   
-  private function unlink($filename) {
+  public function setexpired($id) {
     global $paths;
-    @unlink($paths['cache'] . $filename);
-    if ($this->Ispda) {
-      @unlink(dirname(dirname($paths['cache'])) . DIRECTORY_SEPARATOR . $filename);
-    } else {
-      @unlink($paths['cache'] . 'pda'. DIRECTORY_SEPARATOR . $filename);
-    }
+    tfiler::deletemask($paths['cache'] . "*.$id-*.php");
   }
   
-  public function SetExpired($url) {
-    if (isset($this->items[$url])) {
-      $id = $this->items[$url]['id'];
-      for ($i = 1; $i <=10; $i++) {
-        $this->unlink("$id-$i.php");
-      }
-    }
+  public function setexpiredcurrent() {
+    @unlink($this->getcachefile($this->itemrequested));
   }
   
-  public function SubNodeExpired($node, $subnode) {
-    if (isset($this->tree[$node]['items'][$subnode])) {
-      $this->unlink($this->tree[$node]['items'][$subnode]['id'] . "-$this->pagenumber.php");
-    } elseif (isset($this->tree[$node]['final'])) {
-      $this->unlink($this->tree[$node]['id']. "-$subnode.php");
-    }
+  public function getcachename($name, $id) {
+    global $paths;
+    return $paths['cache']. "$prefix-$id.php";
   }
   
-  public function Replace($old, $new) {
-    if ($old == $new) return;
-    $this->lock();
-    $Redir = &TRedirector::Instance();
-    $Redir->Add($old, $new);
-    $this->items[$new] = $this->items[$old];
-    $this->unlink($this->items[$old]['id'] . '.php');
-    unset($this->items[$old]);
-    $this->Add($old, get_class($Redir), null);
-    $this->unlock();
+  public function expiredname($name, $id) {
+    global $paths;
+    tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
   }
   
-  public function AddRedir($from, $to) {
+  public function addredir($from, $to) {
     if ($from == $to) return;
-    $this->lock();
-    $Redir = &TRedirector::Instance();
-    $Redir->Add($from, $to);
-    $this->Add($from, get_class($Redir), null);
-    $this->unlock();
+    $Redir = &tredirector::instance();
+    $Redir->add($from, $to);
   }
   
   public static function unsub(&$obj) {
-    $self = self::Instance();
+    $self = self::instance();
     $self->lock();
-    $self->UnsubscribeClassName(get_class($obj));
-    $self->DeleteClass(get_class($obj));
+    $self->unsubscribeclassname(get_class($obj));
+    $self->deleteclass(get_class($obj));
     $self->unlock();
   }
   
@@ -1119,27 +1170,19 @@ class TUrlmap extends TItems {
     $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
     $time = @filemtime($cronfile);
     if (($time === false) || ($time + 3600 < time())) {
-      register_shutdown_function('TCron::SelfPing');
+      register_shutdown_function('tcron::selfping');
     }
   }
   
-  public function Redir301($to) {
-    global $Options;
-    if ( php_sapi_name() != 'cgi-fcgi' ) {
-      $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
-      $protocol = 'HTTP/1.0';
-      @header( "$protocol 301 Moved Permanently", true, 301);
-    }
-    @header("Location: $Options->url$to");
-    exit();
+  public function redir301($to) {
+    global $options;
+    self::redir($options->url . $to);
   }
   
   public static function redir($url) {
     if ( php_sapi_name() != 'cgi-fcgi' ) {
       $protocol = $_SERVER["SERVER_PROTOCOL"];
-      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
-      $protocol = 'HTTP/1.0';
+      if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
       @header( "$protocol 301 Moved Permanently", true, 301);
     }
     
@@ -1147,25 +1190,68 @@ class TUrlmap extends TItems {
     exit();
   }
   
-  
   //db
   public function getidurl($id) {
-    if (!isset($this->items[$id])) {
-      $this->items[$id] = $this->db->getitem($id);
+    if (dbversion) {
+      if (!isset($this->items[$id])) {
+        $this->items[$id] = $this->db->getitem($id);
+      }
+      return $this->items[$id]['url'];
+    } else {
+      foreach ($this->items as $url => $item) {
+        if ($item['id'] == $id) return $url;
+      }
     }
-    return $this->items[$id]['url'];
+  }
+  
+  public function setidurl($id, $url) {
+    if (dbversion) {
+      $this->db->setvalue($id, 'url', $url);
+      if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
+    } else {
+      foreach ($this->items as $u => $item) {
+        if ($id == $item['id']) {
+          unset($this->items[$u]);
+          $this->items[$url] = $item;
+          $this->save();
+          return;
+        }
+      }
+    }
   }
   
 }//class
 
 //interfaces.php
-interface ITemplate {
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
+interface itemplate {
   public function request($arg);
   public function gettitle();
   public function gethead();
   public function getkeywords();
   public function getdescription();
   public function GetTemplateContent();
+}
+
+interface itemplate2 {
+  public function getsitebar();
+  public function afterrequest(&$content);
+}
+
+interface imenu {
+  public function getparent();
+  public function setparent($id);
+  public function getorder();
+  public function setorder($order);
+}
+
+interface imultimedia {
 }
 
 ?>

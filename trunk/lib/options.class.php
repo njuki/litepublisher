@@ -1,18 +1,18 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class toptions extends tevents {
-public $user;
-public $group;
-public $gmt;
-public $errorlog;
-private $modified;  
-
+  public $user;
+  public $group;
+  public $gmt;
+  public $errorlog;
+  private $modified;
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -22,34 +22,34 @@ private $modified;
     $this->basename = 'options';
     $this->addevents('changed', 'PostsPerPageChanged');
     unset($this->cache);
-$this->gmt = date('Z');
-$this->errorlog = '';
-$this->modified = false;
+    $this->gmt = date('Z');
+    $this->errorlog = '';
+    $this->modified = false;
   }
   
   public function load() {
     parent::load();
-$this->modified = false;
+    $this->modified = false;
     if($this->propexists('timezone'))  {
       date_default_timezone_set($this->timezone);
-$this->gmt = date('Z');
+      $this->gmt = date('Z');
     }
   }
-
-public function savemodified() {
-if ($this->modified) parent::save();
-}
-
-public function save() {
-$this->modified = true;
-}
-
-public function unlock() {
-$this->modified = true;
-parent::unlock();
-}
-
-    public function __set($name, $value) {
+  
+  public function savemodified() {
+    if ($this->modified) parent::save();
+  }
+  
+  public function save() {
+    $this->modified = true;
+  }
+  
+  public function unlock() {
+    $this->modified = true;
+    parent::unlock();
+  }
+  
+  public function __set($name, $value) {
     if ($this->setevent($name, $value)) return true;
     
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
@@ -73,18 +73,18 @@ parent::unlock();
     }
   }
   
-public function delete($name) {
-if (array_key_exists($name, $this->data)) {
-unset($this->data);
-$this->save();
-}
-}
-
-public function geturl() {
-if ($this->fixedurl) return $this->data['url'];
-return 'http://'. $GLOBALS['domain'];
-}
-
+  public function delete($name) {
+    if (array_key_exists($name, $this->data)) {
+      unset($this->data);
+      $this->save();
+    }
+  }
+  
+  public function geturl() {
+    if ($this->fixedurl) return $this->data['url'];
+    return 'http://'. $GLOBALS['domain'];
+  }
+  
   public function seturl($url) {
     $url = rtrim($url, '/');
     $this->lock();
@@ -98,32 +98,32 @@ return 'http://'. $GLOBALS['domain'];
   }
   
   public function auth($login, $password) {
-if ($login == $this->login) {
-$this->user = 1;
-} else {
-$users = tusers::instance();
-if (!($this->user = $users->loginexists($login))) return false;
-}
-
-if ($this->password != md5("$login:$this->realm:$password"))  return false;
-$this->updategroup();
-return true;
+    if ($login == $this->login) {
+      $this->user = 1;
+    } else {
+      $users = tusers::instance();
+      if (!($this->user = $users->loginexists($login))) return false;
+    }
+    
+    if ($this->password != md5("$login:$this->realm:$password"))  return false;
+    $this->updategroup();
+    return true;
   }
-
-public function updategroup() {
-if ($this->user == 1) {
-$this->group = 'admin';
-} else {
-$users = tusers::instance();
-$this->group = $users->getgroupname($this->user);
-}
-}
-
-public function getpassword() {
-if ($this->user <= 1) return $this->data['password'];
-$users = tusers::instance();
-return $users->getvalue($this->user, 'password');
-}
+  
+  public function updategroup() {
+    if ($this->user == 1) {
+      $this->group = 'admin';
+    } else {
+      $users = tusers::instance();
+      $this->group = $users->getgroupname($this->user);
+    }
+  }
+  
+  public function getpassword() {
+    if ($this->user <= 1) return $this->data['password'];
+    $users = tusers::instance();
+    return $users->getvalue($this->user, 'password');
+  }
   
   public function SetPassword($value) {
     $this->password = md5("$this->login:$this->realm:$value");
@@ -132,15 +132,15 @@ return $users->getvalue($this->user, 'password');
   public function Getinstalled() {
     return isset($this->data['url']);
   }
-
-public function settimezone($value) {
+  
+  public function settimezone($value) {
     if(!isset($this->data['timezone']) || ($this->timezone != $value)) {
-$this->data['timezone'] = $value;
-$this->save();
+      $this->data['timezone'] = $value;
+      $this->save();
       date_default_timezone_set($this->timezone);
-$this->gmt = date('Z');
+      $this->gmt = date('Z');
     }
-}
+  }
   
   public function handexception($e) {
     global $paths;

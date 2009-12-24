@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tadminservice extends tadminmenu {
@@ -11,27 +11,27 @@ class tadminservice extends tadminmenu {
     return getinstance(__class__);
   }
   
-
+  
   public function getcontent() {
     global $classes, $options, $paths;
     $html = $this->html;
     $result = '';
-$args = targs::instance();
+    $args = targs::instance();
     
     switch ($this->name) {
       case 'service':
       $result .= $this->doupdate($_GET);
-$args->postscount = $classes->posts->count;
-$args->commentscount = $classes->commentmanager->count;
-$result .= $html->info($args);
+      $args->postscount = $classes->posts->count;
+      $args->commentscount = $classes->commentmanager->count;
+      $result .= $html->info($args);
       $updater = tupdater::instance();
       $islatest= $updater->IsLatest();
       if ($islatest === true) {
-$result .= $html->h3->islatest;
+        $result .= $html->h3->islatest;
       } elseif ($islatest === false) {
-$result .= $html->requireupdate();
+        $result .= $html->requireupdate();
       } else {
-$result .= $html->h2->errorservice;
+        $result .= $html->h2->errorservice;
       }
       break;
       
@@ -52,43 +52,43 @@ $result .= $html->h2->errorservice;
         $checkboxes .= sprintf($item, $name, $value[0], '');
       }
       
-$args->checkboxes = $checkboxes;
-$result .= $html->engineform($args);
+      $args->checkboxes = $checkboxes;
+      $result .= $html->engineform($args);
       return $this->FixCheckall($result);
       
       case 'backup':
-if (empty($_GET['action'])) {
-      $result= $html->partialform();
-      $result .= $html->fullbackupform();
-if (dbversion) $result .= $html->sqlbackupform();
-      $result .=  $html->uploadform();
-      $result .= $this->getbackupfilelist();
-} else {
-        $filename = $_GET['id'];
-if (strpbrk ($filename, '/\<>')) return $this->notfound;
-if (!file_exists($paths['backup'] . $filename)) return $this->notfound;
-      switch ($_GET['action']) {
-      case 'download':
-        if ($s = @file_get_contents($paths['backup'] . $filename)) {
-          $this->sendfile($s, $filename);
-        } else {
-return $this->notfound;
-}
-      break;
-      
-      case 'delete':
-if ($this->confirmed) {
-        @unlink($paths['backup'] . $filename);
-return $html->h2->backupdeleted;
+      if (empty($_GET['action'])) {
+        $result= $html->partialform();
+        $result .= $html->fullbackupform();
+        if (dbversion) $result .= $html->sqlbackupform();
+        $result .=  $html->uploadform();
+        $result .= $this->getbackupfilelist();
       } else {
-$args->adminurl = $this->adminurl;
-$args->id=$_GET['id'];
-$args->action = 'delete';
-$args->confirm = sprintf('%s %s?', $this->lang->confirmdelete, $_GET['id']);
-$result .= $html->confirmdelete($args);
+        $filename = $_GET['id'];
+        if (strpbrk ($filename, '/\<>')) return $this->notfound;
+        if (!file_exists($paths['backup'] . $filename)) return $this->notfound;
+        switch ($_GET['action']) {
+          case 'download':
+          if ($s = @file_get_contents($paths['backup'] . $filename)) {
+            $this->sendfile($s, $filename);
+          } else {
+            return $this->notfound;
+          }
+          break;
+          
+          case 'delete':
+          if ($this->confirmed) {
+            @unlink($paths['backup'] . $filename);
+            return $html->h2->backupdeleted;
+          } else {
+            $args->adminurl = $this->adminurl;
+            $args->id=$_GET['id'];
+            $args->action = 'delete';
+            $args->confirm = sprintf('%s %s?', $this->lang->confirmdelete, $_GET['id']);
+            $result .= $html->confirmdelete($args);
+          }
+        }
       }
-}
-}
       break;
       
       case 'run':
@@ -110,7 +110,7 @@ $result .= $html->confirmdelete($args);
     } elseif (isset($req['update'])) {
       $updater = tupdater::instance();
       $updater->update();
-return $html->h2->successupdated;
+      return $html->h2->successupdated;
     }
     return '';
   }
@@ -120,10 +120,10 @@ return $html->h2->successupdated;
     $html = $this->html;
     
     switch ($this->name) {
-      case 'service': 
-return $this->doupdate($_POST);
-
-            case 'engine':
+      case 'service':
+      return $this->doupdate($_POST);
+      
+      case 'engine':
       $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       $lang = $this->lang;
@@ -151,7 +151,7 @@ return $this->doupdate($_POST);
       break;
       
       case 'backup':
-$backuper = tbackuper::instance();
+      $backuper = tbackuper::instance();
       extract($_POST);
       switch ($dest) {
         case 'upload':
@@ -159,20 +159,20 @@ $backuper = tbackuper::instance();
           return $html->attack($_FILES["filename"]["name"]);
         }
         
-if (strpos($_FILES["filename"]["name"], '.sql')) {
-$backuper->uploaddump(file_get_contents($_FILES["filename"]["tmp_name"]));
-} else {
-        $url = $options->url;
-if (dbversion) $dbconfig = $options->dbconfig;
-        $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]));
-        if (isset($saveurl)) {
-          $options->load();
-$options->lock();
-          $options->seturl($url);
-if (dbversion) $options->dbconfig = $dbconfig;
-$options->unlock();
+        if (strpos($_FILES["filename"]["name"], '.sql')) {
+          $backuper->uploaddump(file_get_contents($_FILES["filename"]["tmp_name"]));
+        } else {
+          $url = $options->url;
+          if (dbversion) $dbconfig = $options->dbconfig;
+          $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]));
+          if (isset($saveurl)) {
+            $options->load();
+            $options->lock();
+            $options->seturl($url);
+            if (dbversion) $options->dbconfig = $dbconfig;
+            $options->unlock();
+          }
         }
-}
         $urlmap->clearcache();
         @header('Location: http://' . $_SERVER['HTTP_HOST'] .  $_SERVER['REQUEST_URI']);
         exit();
@@ -184,13 +184,13 @@ $options->unlock();
         case 'fullbackup':
         $content = $backuper->getfull();
         $this->sendfile($content);
-
-case 'sqlbackup':
+        
+        case 'sqlbackup':
         $content = gzencode($backuper->getdump());
         $this->sendfile($content, $domain . date('-Y-m-d') . '.sql.gz');
       }
       break;
-
+      
       case 'run':
       $result = eval($_POST['content']);
       return $result;
@@ -216,12 +216,12 @@ case 'sqlbackup':
   private function getbackupfilelist() {
     global $options, $paths;
     $html = $this->html;
-$result = $html->backupheader();
-$args = targs::instance();
-$args->adminurl = $this->adminurl;
+    $result = $html->backupheader();
+    $args = targs::instance();
+    $args->adminurl = $this->adminurl;
     foreach(glob($paths['backup'] . '*.zip') as $filename) {
-$args->filename = basename($filename);
-$result .= $html->backupitem($args);
+      $args->filename = basename($filename);
+      $result .= $html->backupitem($args);
     }
     $result .= $html->backupfooter;
     return $result;

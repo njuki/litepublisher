@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tadminlogin extends tadminmenu {
@@ -13,13 +13,13 @@ class tadminlogin extends tadminmenu {
     return getinstance(__class__);
   }
   
-  public function auth() { }
+public function auth() { }
   
   public function request($arg) {
     if ($arg == 'out') {
       if (!parent::auth()) {
         $auth = tauthdigest::instance();
-$auth->logout();
+        $auth->logout();
       }
     }
     $result = parent::request($arg);
@@ -27,24 +27,24 @@ $auth->logout();
   }
   
   public function getcontent() {
-$args = targs::instance();
+    $args = targs::instance();
     $args->login = '';
-$args->password = '';
-return $this->html->form($args);
+    $args->password = '';
+    return $this->html->form($args);
   }
   
   public function processform() {
     global $options;
     if (!$options->auth($_POST['login'], $_POST['password']))  return $this->html->error();
-      $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
-$cookie = md5uniq();
-      $auth = tauthigest::instance();
-      $auth->setcookies($cookie, $expired);
-      $secure = 'false'; //true for sssl
-      $this->logonresult = "<?php
-      @setcookie('admin', '$cookie', $expired,  '$options->subdir/admin', false, $secure, true);
-      @header('Location: $options->url/admin/');
-      ?>";
+    $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+    $cookie = md5uniq();
+    $auth = tauthigest::instance();
+    $auth->setcookies($cookie, $expired);
+    $secure = 'false'; //true for sssl
+    $this->logonresult = "<?php
+    @setcookie('admin', '$cookie', $expired,  '$options->subdir/admin', false, $secure, true);
+    @header('Location: $options->url/admin/');
+    ?>";
   }
   
 }//class

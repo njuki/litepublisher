@@ -1,26 +1,26 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 function trssInstall($self) {
-global $classes;
+  global $classes;
   $urlmap = turlmap::instance();
   $urlmap->lock();
   $urlmap->add('/rss/', get_class($self), 'posts');
   $self->idurlcomments = $urlmap->add('comments', get_class($self), 'comments', 'tree');
   $urlmap->unlock();
   
-$classes->commentmanager->changed = $self->commentschanged;
-
-$self->save();
+  $classes->commentmanager->changed = $self->commentschanged;
+  
+  $self->save();
 }
 
 function trssUninstall($self) {
-global $classes;
+  global $classes;
   turlmap::unsub($self);
   $classes->commentmanager->unsubscribeclass($self);
 }

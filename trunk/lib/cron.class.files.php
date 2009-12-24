@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tcrontask extends tdata {
@@ -42,7 +42,7 @@ class tcrontask extends tdata {
   
   public function getexpired() {
     if ($this->type == 'single') return time() - 1;
-return strtotime("+1 $this->type");
+    return strtotime("+1 $this->type");
   }
   
   protected function setid($id) {
@@ -96,14 +96,14 @@ class tcron extends tabstractcron {
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   protected function create() {
     parent::create();
-$this->data['autoid'] = 0;
-}
+    $this->data['autoid'] = 0;
+  }
   
   protected function execute() {
-if (ob_get_level()) ob_end_flush ();
+    if (ob_get_level()) ob_end_flush ();
     echo "<pre>\n";
     $time = time();
     $task = new TCronTask($this);

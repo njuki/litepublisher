@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 function tpostsInstall($self) {
@@ -27,8 +27,8 @@ function tpostsUninstall($self) {
   $Cron = tcron::instance();
   $Cron->deleteclass(get_class($self));
   
-$widgets = twidgets::instance();
-$widgets->deleteclass($clf);  
+  $widgets = twidgets::instance();
+  $widgets->deleteclass($clf);
   //@rmdir($paths['data']. 'posts');
 }
 

@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tredirector extends titems {
@@ -14,7 +14,7 @@ class tredirector extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'redirector';
-$this->dbversion = false;
+    $this->dbversion = false;
   }
   
   public function add($from, $to) {
