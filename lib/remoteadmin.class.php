@@ -1,24 +1,24 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tremoteadmin extends tevents {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
- protected function create() {
+  protected function create() {
     parent::create();
     $this->basename = 'remoteadmin';
   }
   
   public function getclasses() {
-global $classes;
+    global $classes;
     return $classes->items;
   }
   
@@ -110,7 +110,7 @@ global $classes;
     global $paths;
     $this->RequireZip();
     $zip = new zipfile();
-if (dbversion) $zip->addFile($this->getdump(), 'dump.sql');
+    if (dbversion) $zip->addFile($this->getdump(), 'dump.sql');
     $this->ReadDirToZip($zip, $paths['data'], '', 'data/');
     if ($lib) {
       $this->ReadDirToZip($zip, $paths['lib'], '', 'lib/');
@@ -132,14 +132,14 @@ if (dbversion) $zip->addFile($this->getdump(), 'dump.sql');
     
     return $zip->file();
   }
-
-public function getdump() {
-$dbmanager = tdbmanager ::instance();
-return $dbmanager->export();
-}
-
- 
- public function Upload(&$content) {
+  
+  public function getdump() {
+    $dbmanager = tdbmanager ::instance();
+    return $dbmanager->export();
+  }
+  
+  
+  public function Upload(&$content) {
     global $paths;
     $dataprefix = 'data';
     $themesprefix =  'themes/';

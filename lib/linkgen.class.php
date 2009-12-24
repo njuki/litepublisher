@@ -1,14 +1,14 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tlinkgenerator extends tevents {
   public $source;
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -17,54 +17,54 @@ class tlinkgenerator extends tevents {
     parent::create();
     $this->basename = 'linkgenerator';
     $this->data= array_merge($this->data, array(
-'post' => '/[title].htm',
-'tag' => '/tag/[title].htm',
-'category' => '/category/[title].htm',
-'archive' => '/[year]/[month].htm',
-'file' => '/[medium]/[filename]/',
-));
+    'post' => '/[title].htm',
+    'tag' => '/tag/[title].htm',
+    'category' => '/category/[title].htm',
+    'archive' => '/[year]/[month].htm',
+    'file' => '/[medium]/[filename]/',
+    ));
   }
   
   public function createlink($source, $schema, $uniq) {
     $this->source= $source;
     $result = $this->data[$schema];
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
-foreach ($match as $item) {
-      $tag = $item[1];
-      if (method_exists($this, $tag)) {
-        $text = $this->$tag();
-      } elseif( method_exists($source, $tag)) {
-        $text = $source->$tag();
-      } else {
-        $text = $source->$tag;
+      foreach ($match as $item) {
+        $tag = $item[1];
+        if (method_exists($this, $tag)) {
+          $text = $this->$tag();
+        } elseif( method_exists($source, $tag)) {
+          $text = $source->$tag();
+        } else {
+          $text = $source->$tag;
+        }
+        $result= str_replace("[$tag]", $text, $result);
       }
-      $result= str_replace("[$tag]", $text, $result);
     }
-}
     $result= $this->aftercreate($result);
     $result= $this->validate($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
-
+  
   public function createurl($title, $schema, $uniq) {
     $result = $this->data[$schema];
-$result = str_replace('[title]', $title, $result);
+    $result = str_replace('[title]', $title, $result);
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
-foreach ($match as $item) {
-      $tag = $item[1];
-      if (method_exists($this, $tag)) {
-      $result= str_replace("[$tag]", $this->$tag(), $result);
+      foreach ($match as $item) {
+        $tag = $item[1];
+        if (method_exists($this, $tag)) {
+          $result= str_replace("[$tag]", $this->$tag(), $result);
+        }
+      }
     }
-}
-}
-
+    
     $result= $this->aftercreate($result);
     $result= $this->validate($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
-
+  
   public function aftercreate($url) {
     global $options;
     if ($options->language == 'ru') $url = $this->ru2lat($url);

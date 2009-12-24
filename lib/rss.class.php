@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class trss extends tevents {
@@ -70,8 +70,8 @@ class trss extends tevents {
       $postid = (int) $args;
       $posts = tposts::instance();
       if (!$posts->itemexists($postid)) return 404;
-    $post = TPost::instance($postid);
-if ($post->status != 'published') return 404;
+      $post = TPost::instance($postid);
+      if ($post->status != 'published') return 404;
       $this->GetRSSPostComments($postid);
     }
     

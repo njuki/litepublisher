@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tfiler {
@@ -12,7 +12,7 @@ class tfiler {
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
-$file = $path. $filename;
+        $file = $path. $filename;
         if (@is_dir($file)) {
           if ($subdirs) self::delete($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
         } else {
@@ -25,20 +25,20 @@ $file = $path. $filename;
   }
   
   public static function deletemask($mask) {
-foreach (glob($mask) as $filename) unlink($filename);
+    foreach (glob($mask) as $filename) unlink($filename);
   }
-
- public static function deletedirmask($path, $mask) {
-foreach (glob($path. $mask) as $filename) {
-        if (@is_dir($filename)) {
-self::deletedirmask($filename. DIRECTORY_SEPARATOR, $mask);
-} else {
-          unlink($filename);
-}
-  }
-}
   
-   public static function getfiles($path) {
+  public static function deletedirmask($path, $mask) {
+    foreach (glob($path. $mask) as $filename) {
+      if (@is_dir($filename)) {
+        self::deletedirmask($filename. DIRECTORY_SEPARATOR, $mask);
+      } else {
+        unlink($filename);
+      }
+    }
+  }
+  
+  public static function getfiles($path) {
     $result = array();
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {

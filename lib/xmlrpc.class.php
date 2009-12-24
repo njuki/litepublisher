@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 require_once(dirname(__file__) . DIRECTORY_SEPARATOR  . 'include'. DIRECTORY_SEPARATOR  . 'class-IXR.php');
@@ -38,7 +38,7 @@ class TXMLRPCParser extends IXR_Server  {
 
 class TXMLRPC extends titems {
   public $Server;
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -46,7 +46,7 @@ class TXMLRPC extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'xmlrpc';
-$this->dbversion = false;
+    $this->dbversion = false;
     $this->cache = false;
     $this->addevents('BeforeCall', 'AfterCall', 'GetMethods');
   }
@@ -80,7 +80,7 @@ $this->dbversion = false;
     }
     
     if (count($args) == 1) $args = $args[0];
-
+    
     $class = $this->items[$method]['class'];
     $func = $this->items[$method]['func'];
     
@@ -94,11 +94,11 @@ $this->dbversion = false;
     } else {
       //create class instance
       if (!class_exists($class)) {
-          $this->delete($method);
-          return new IXR_Error(-32601, "server error. requested class \"$class\" does not exist.");
-        }
+        $this->delete($method);
+        return new IXR_Error(-32601, "server error. requested class \"$class\" does not exist.");
+      }
       $obj = getinstance($class);
-/*
+      /*
       if (!method_exists($Obj, $Func)) {
         $this->delete($method);
         return new IXR_Error(-32601, "server error. requested object method \"$Function\" does not exist.");
@@ -106,7 +106,7 @@ $this->dbversion = false;
       */
       return $obj->$func($args);
     }
-      }
+  }
   
   public function  add($method, $Function, $ClassName) {
     $this->items[$method] = array(

@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 interface itemplate {
@@ -16,15 +16,15 @@ interface itemplate {
 }
 
 interface itemplate2 {
-public function getsitebar();
-public function afterrequest(&$content);
+  public function getsitebar();
+  public function afterrequest(&$content);
 }
 
 interface imenu {
-public function getparent();
-public function setparent($id);
-public function getorder();
-public function setorder($order);
+  public function getparent();
+  public function setparent($id);
+  public function getorder();
+  public function setorder($order);
 }
 
 interface imultimedia {

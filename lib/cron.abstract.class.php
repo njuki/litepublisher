@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tabstractcron extends tevents {
@@ -17,7 +17,7 @@ class tabstractcron extends tevents {
     $this->cache = false;
     $this->disableadd = false;
   }
-
+  
   protected function getdir() {
     global $paths;
     return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
@@ -30,14 +30,14 @@ class tabstractcron extends tevents {
     }
     return  $this->getdir();
   }
-
-protected function geturl() {
-global $options;
-return "/croncron.htm{$options->q}cronpass=$this->password";
-}
   
- public function request($arg) {
-if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 404;
+  protected function geturl() {
+    global $options;
+  return "/croncron.htm{$options->q}cronpass=$this->password";
+  }
+  
+  public function request($arg) {
+    if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 404;
     if ($fh = @fopen($this->path .'cron.lok', 'w')) {
       flock($fh, LOCK_EX);
       ignore_user_abort(true);
@@ -53,36 +53,36 @@ if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 
     }
     return 'locked';
   }
-
+  
   protected function execute() {
-$this->error('call abstract method execute');
-}
-
-protected function doadd($type, $class, $func, $arg)  {
-$this->error('call abstract method doadd');
-}
-
+    $this->error('call abstract method execute');
+  }
+  
+  protected function doadd($type, $class, $func, $arg)  {
+    $this->error('call abstract method doadd');
+  }
+  
   public function add($type, $class, $func, $arg = null) {
-if (!preg_match('/single|hour|day|week/', $type)) $this->error("Unknown cron type $type");
+    if (!preg_match('/single|hour|day|week/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
-$id = $this->doadd($type, $class, $func, $arg);
-
-   if (($type == 'single') && !defined('cronpinged')) {
+    $id = $this->doadd($type, $class, $func, $arg);
+    
+    if (($type == 'single') && !defined('cronpinged')) {
       define('cronpinged', true);
       register_shutdown_function('TCron::SelfPing');
     }
-return $id;
+    return $id;
   }
   
   public static function SelfPing() {
-global $options;
-try {
-    $self = getinstance(__class__);
-    $cronfile = $self->dir .  'crontime.txt';
-    @file_put_contents($cronfile, ' ');
-    @chmod($cronfile, 0666);
-    
-    $self->ping();
+    global $options;
+    try {
+      $self = getinstance(__class__);
+      $cronfile = $self->dir .  'crontime.txt';
+      @file_put_contents($cronfile, ' ');
+      @chmod($cronfile, 0666);
+      
+      $self->ping();
     } catch (Exception $e) {
       $options->handexception($e);
     }

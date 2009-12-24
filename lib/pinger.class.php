@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tpinger extends tevents {
@@ -13,28 +13,28 @@ class tpinger extends tevents {
   }
   
   protected function create() {
-global $paths;
+    global $paths;
     parent::create();
     $this->basename = 'pinger';
     $this->data['services'] = '';
     $this->data['enabled'] = true;
-require_once($paths['libinclude'] . 'class-IXR.php');
+    require_once($paths['libinclude'] . 'class-IXR.php');
   }
-
-public function install() {
-global $paths;
-if (dbversion) {
-$dir = $paths['data'] . 'pingedlinks';
-@mkdir($dir, 0777);
-@chmod($dir, 0777);
-}
-if ($this->services == '') $this->services = file_get_contents($paths['libinclude'] . 'pingservices.txt');
-$posts = tposts::instance();
-$posts->lock();
-if (dbversion) $posts->deleted = $this->postdeleted;
-$posts->singlecron = $this->pingpost;
-$posts->unlock();
-}
+  
+  public function install() {
+    global $paths;
+    if (dbversion) {
+      $dir = $paths['data'] . 'pingedlinks';
+      @mkdir($dir, 0777);
+      @chmod($dir, 0777);
+    }
+    if ($this->services == '') $this->services = file_get_contents($paths['libinclude'] . 'pingservices.txt');
+    $posts = tposts::instance();
+    $posts->lock();
+    if (dbversion) $posts->deleted = $this->postdeleted;
+    $posts->singlecron = $this->pingpost;
+    $posts->unlock();
+  }
   
   public function setenabled($value) {
     if ($value != $this->enabled) {
@@ -57,24 +57,24 @@ $posts->unlock();
   }
   
   public function postdeleted($id) {
-global $paths;
-tfiler::deletemask($paths['data'] . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
+    global $paths;
+    tfiler::deletemask($paths['data'] . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
   }
   
   public function pingpost($id) {
     $post = tpost::instance($id);
-if ($post->status != 'published') return;
+    if ($post->status != 'published') return;
     $posturl = $post->link;
     $this->pingservices($posturl);
-
-$pinged = new tpinglinks    ($id);
+    
+    $pinged = new tpinglinks    ($id);
     $links = $this->getlinks($post);
     foreach ($links as $link) {
       if (!in_array($link, $pinged->items)) {
         if ($this->ping($link, $posturl)) $pinged->items[] = $link;
       }
     }
-$pinged->save();
+    $pinged->save();
   }
   
   protected function getlinks(tpost $post) {
@@ -205,21 +205,21 @@ $pinged->save();
 }//class
 
 class tpinglinks extends titems {
-public $pid;
-
-public function __construct($pid) {
-$this->pid = $pid;
-parent::__construct();
-}
-
-public function getbasename() {
-if (dbversion) {
-return 'pingedlinks' . DIRECTORY_SEPARATOR . $this->pid;
-} else {
-    return 'posts' . DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'pingedlinks';
-}
-}
-
+  public $pid;
+  
+  public function __construct($pid) {
+    $this->pid = $pid;
+    parent::__construct();
+  }
+  
+  public function getbasename() {
+    if (dbversion) {
+      return 'pingedlinks' . DIRECTORY_SEPARATOR . $this->pid;
+    } else {
+      return 'posts' . DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'pingedlinks';
+    }
+  }
+  
 }//class
 
 ?>

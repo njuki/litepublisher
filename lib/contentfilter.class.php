@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tcontentfilter extends tevents {
@@ -18,7 +18,7 @@ class tcontentfilter extends tevents {
     $this->addevents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt', 'BeforeSetPostContent', 'AfterSetPostContent');
     $this->data['automore'] = true;
     $this->data['automorelength'] = 250;
-$this->data['phpcode'] = true;
+    $this->data['phpcode'] = true;
   }
   
   public function GetCommentContent($content) {
@@ -109,28 +109,28 @@ $this->data['phpcode'] = true;
     //ставятся параграфы вместо двух разрывов строк
     $result = str_replace("\n\n", "</p>\n<p>", $result);
     //замена разрывов строк на <br /> до и после тегов a|img|b|i|u
-$result = preg_replace('/\n<(a|img)([^<]*)>/im', "<br />\n<\$1\$2>", $result);
-$result = preg_replace('/<img src=([^<]*)>\n/im', "<img src=\$1><br />\n", $result);
-
-/*
+    $result = preg_replace('/\n<(a|img)([^<]*)>/im', "<br />\n<\$1\$2>", $result);
+    $result = preg_replace('/<img src=([^<]*)>\n/im', "<img src=\$1><br />\n", $result);
+    
+    /*
     $result = preg_replace('/\n<(a|img)(.*)>/im', "<br />\n<$1$2>", $result);
     $result = preg_replace('/<img src=(.*)>\n/im', "<img src=$1><br />\n", $result);
-*/
-
+    */
+    
     $result = preg_replace('/\n<(b|i|u|strong|em)>/im', "<br />\n<$1>", $result);
     $result = preg_replace('/<\/(a|b|i|u|strong|em)>\n/im', "</$1><br/>\n", $result);
     //переводы строки если нет в конце тегов
     $result = preg_replace('/(?<!\>)\n(?!\s*\<)/im', "<br />\n", $result);
-
-if (!preg_match('/^<p>/i', $result, $m)) $result = '<p>'. $result;
-if (!preg_match('/<\/p>$/i', $result, $m)) $result .= '</p>';
-        return $result;
+    
+    if (!preg_match('/^<p>/i', $result, $m)) $result = '<p>'. $result;
+    if (!preg_match('/<\/p>$/i', $result, $m)) $result .= '</p>';
+    return $result;
   }
   
   public function replacecode($s) {
-if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', 'TContentFilter::CallbackReplaceCode', $s);
+    if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', 'TContentFilter::CallbackReplaceCode', $s);
     return preg_replace_callback('/<code>(.*?)<\/code>/ims', 'TContentFilter::CallbackReplaceCode', $s);
-
+    
   }
   
   public static function CallbackReplaceCode($found) {

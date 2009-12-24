@@ -1,31 +1,31 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tplugins extends TItems {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
-    protected function create() {
+  protected function create() {
     parent::create();
     $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
-$this->dbversion = false;
+    $this->dbversion = false;
   }
   
   public function getabout($name) {
     global $paths, $options;
     $about = parse_ini_file($paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
-if (isset($about[$options->language])) {
-$about['about'] = $about[$options->language] + $about['about'];
-}
-
-return $about['about'];
+    if (isset($about[$options->language])) {
+      $about['about'] = $about[$options->language] + $about['about'];
+    }
+    
+    return $about['about'];
   }
   
   public function add($name) {
@@ -81,11 +81,11 @@ return $about['about'];
     $delete  = array_intersect($delete, tfiler::getdir($paths['plugins']));
     $this->lock();
     foreach ($delete as $name) {
-$this->Delete($name);
+      $this->Delete($name);
     }
     
     foreach ($add as $name) {
-$this->Add($name);
+      $this->Add($name);
     }
     
     $this->unlock();
@@ -94,14 +94,14 @@ $this->Add($name);
   public function setplugins($list) {
     $names = array_diff($list, array_keys($this->items));
     foreach ($names as $name) {
-        $this->Add($name);
+      $this->Add($name);
     }
   }
   
   public function deleteplugins($list) {
-$names = array_intersect(array_keys($this->items), $list);
+    $names = array_intersect(array_keys($this->items), $list);
     foreach ($names as $name) {
-        $this->Delete($name);
+      $this->Delete($name);
     }
   }
   

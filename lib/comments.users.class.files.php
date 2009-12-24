@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tcomusers extends titems {
@@ -11,20 +11,20 @@ class tcomusers extends titems {
   private static $instances;
   
   public static function instance($pid) {
-global $classes;
+    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
-$self = $classes->newinstance(__class__);
-      self::$instances[$pid]  = $self;
-      $self->pid = $pid;
-      $self->load();
-return $self;
+    $self = $classes->newinstance(__class__);
+    self::$instances[$pid]  = $self;
+    $self->pid = $pid;
+    $self->load();
+    return $self;
   }
- 
+  
   public function getbasename() {
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments.authors';
   }
- 
+  
   public function add($name, $email, $url) {
     if ($id = $this->find($name, $email, $url)) return $id;
     $this->lock();
@@ -36,7 +36,7 @@ return $self;
     );
     
     $this->unlock();
-$manager = tcommentmanager::instance();
+    $manager = tcommentmanager::instance();
     $manager->authoradded($this->autoid);
     return $this->autoid;
   }
@@ -48,23 +48,23 @@ $manager = tcommentmanager::instance();
     $item['url'] = $url;
     $item['email'] = $email;
     $this->unlock();
-$manager = tcommentmanager::instance();
-$manager->authoredited($id);
+    $manager = tcommentmanager::instance();
+    $manager->authoredited($id);
     return $id;
   }
-
-public function delete($id) {
-parent::delete($id);
-$manager = tcommentmanager::instance();
-$manager->authordeleted($id);
-}  
-
+  
+  public function delete($id) {
+    parent::delete($id);
+    $manager = tcommentmanager::instance();
+    $manager->authordeleted($id);
+  }
+  
   public function fromcookie($cookie) {
     foreach ($this->items as $id => $item) {
       if ($cookie == $item['cookie']) {
-$item['id'] = $id;
-return $item;
-}
+        $item['id'] = $id;
+        return $item;
+      }
     }
     return false;
   }
@@ -87,18 +87,18 @@ return $item;
     $this->cache = false;
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
     $idpost = isset($_GET['post']) ? (int) $_GET['post'] : 1;
-if ($idpost != $this->pid) {
-$this->pid = $idpost;
-$this->load();
-}
-
-try {
-$item = $this->getitem($id);
+    if ($idpost != $this->pid) {
+      $this->pid = $idpost;
+      $this->load();
+    }
+    
+    try {
+      $item = $this->getitem($id);
     } catch (Exception $e) {
-return 404;
-}
-
-$url = $item['url'];
+      return 404;
+    }
+    
+    $url = $item['url'];
     if (!strpos($url, '.')) $url = $options->url . $options->home;
     if (substr($url, 0, 7) != 'http://') $url = 'http://' . $url;
     TUrlmap::redir($url);

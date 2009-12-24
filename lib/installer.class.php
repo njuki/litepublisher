@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tinstaller extends tdata {
@@ -114,12 +114,12 @@ class tinstaller extends tdata {
     if ($this->mode != 'remote') {
       $this->congratulation($password);
     }
-
+    
     $arch = tarchives::instance();
     $arch->lite = $this->lite;
-
-   if (!$this->lite) $this->CreateFirstPost();
-
+    
+    if (!$this->lite) $this->CreateFirstPost();
+    
     $this->SendEmail($password);
     return $password;
   }
@@ -133,7 +133,7 @@ class tinstaller extends tdata {
     global $paths;
     $this->CheckFolders();
     require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
-return installclasses($this->language);
+    return installclasses($this->language);
   }
   
   public function install() {
@@ -179,7 +179,7 @@ return installclasses($this->language);
     $options->description = $description;
     $options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
-if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
+    if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     $options->unlock();
   }
   
@@ -237,17 +237,17 @@ if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
     } else {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
-eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
-
+    eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
+    
     eval('$form .= "'. $html->installform. '\n";');
     echo SimplyHtml(tlocal::$data['installation']['title'],  $form);
   }
   
- private function GetLangForm() {
+  private function GetLangForm() {
     $langs = array(
     'en' => 'English',
     'ru' => 'Russian',
-'ua' => 'Ukrain'
+    'ua' => 'Ukrain'
     );
     
     $result = "<form name='langform' action='' method='get'>
@@ -275,9 +275,9 @@ eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
     $post->title = $lang->posttitle;
     $post->catnames = $lang->postcategories;
     $post->tagnames = $lang->posttags;
-$post->content = $lang->postcontent;
-        $posts = tposts::instance();
-$posts->add($post);
+    $post->content = $lang->postcontent;
+    $posts = tposts::instance();
+    $posts->add($post);
     
     $users = tcomusers::instance($post->id);
     $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
@@ -299,11 +299,11 @@ $posts->add($post);
     global $options, $lang;
     $html = THtmlResource::instance();
     $html->section = 'installation';
-$lang = tlocal::instance('installation');
-$args = targs::instance();
-        $args->url = $options->url . '/';
-$args->password = $password;
-$content = $html->congratulation($args);
+    $lang = tlocal::instance('installation');
+    $args = targs::instance();
+    $args->url = $options->url . '/';
+    $args->password = $password;
+    $content = $html->congratulation($args);
     
     echo SimplyHtml($options->name, $content);
   }

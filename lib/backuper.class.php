@@ -1,23 +1,23 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tbackuper extends tevents {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
- protected function create() {
-global $paths;
+  protected function create() {
+    global $paths;
     parent::create();
-require_once($paths['libinclude'] . 'tar.class.php');
+    require_once($paths['libinclude'] . 'tar.class.php');
   }
-
+  
   private function  readdir(tar $tar, $path, $subdir, $prefix = '') {
     $subdirslashed = str_replace(DIRECTORY_SEPARATOR   , '/', $subdir) . '/';
     $subdirslashed  = ltrim($subdirslashed , '/');
@@ -39,7 +39,7 @@ require_once($paths['libinclude'] . 'tar.class.php');
   }
   
   private function dirtotar($dir, $gz) {
-$tar = new tar();
+    $tar = new tar();
     $this->readdir($tar, $dir, '');
     return $tar->savetostring($gz);
   }
@@ -62,8 +62,8 @@ $tar = new tar();
   
   public function getpartial($plugins, $theme, $lib) {
     global $paths;
-$tar = new tar();
-if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
+    $tar = new tar();
+    if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, $paths['data'], '', 'data/');
     if ($lib)  $this->readdir($tar, $paths['lib'], '', 'lib/');
     if ($theme)  {
@@ -83,39 +83,39 @@ if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     
     return $tar->savetostring(true);
   }
-
-public function getdump() {
-$dbmanager = tdbmanager ::instance();
-return $dbmanager->export();
-}
-
-public function setdump(&$dump) {
-$dbmanager = tdbmanager ::instance();
-return $dbmanager->import($dump);
-}
-
+  
+  public function getdump() {
+    $dbmanager = tdbmanager ::instance();
+    return $dbmanager->export();
+  }
+  
+  public function setdump(&$dump) {
+    $dbmanager = tdbmanager ::instance();
+    return $dbmanager->import($dump);
+  }
+  
   public function uploaddump($s) {
-        if($s[0] == chr(31) && $s[1] == chr(139) && $s[2] == chr(8)) {
-$s = gzinflate(substr($s,10,-4));
-        }
-return $this->setdump($s);
-}
-
+    if($s[0] == chr(31) && $s[1] == chr(139) && $s[2] == chr(8)) {
+      $s = gzinflate(substr($s,10,-4));
+    }
+    return $this->setdump($s);
+  }
+  
   public function upload(&$content) {
     global $paths;
-$tmp = false;
+    $tmp = false;
     $dataprefix = 'data/';
     $themesprefix =  'themes/';
     $pluginsprefix = 'plugins/';
     
-$tar = new tar();
+    $tar = new tar();
     $tar->loadfromstring($content);
     foreach ($tar->files as $file) {
-$filename = $file['name'];
-if (dbversion && $filename == 'dump.sql') $this->setdump($file['file']);
+      $filename = $file['name'];
+      if (dbversion && $filename == 'dump.sql') $this->setdump($file['file']);
       if (strbegin($filename, $dataprefix)) {
         $filename = substr($filename, strlen($dataprefix));
-if (!$tmp) $tmp = $this->createtemp();
+        if (!$tmp) $tmp = $this->createtemp();
         $path = $tmp;
       } elseif (strbegin($filename, $themesprefix)) {
         $filename = substr($filename, strlen($themesprefix));
@@ -127,7 +127,7 @@ if (!$tmp) $tmp = $this->createtemp();
         //echo $dir, " is unknown dir<br>";
       }
       
-$filename = $path . str_replace('/', DIRECTORY_SEPARATOR  , $filename);
+      $filename = $path . str_replace('/', DIRECTORY_SEPARATOR  , $filename);
       if (!tfiler::forcedir(dirname($filename))) return $this->error("error create folder " . dirname($filename));
       if (false === @file_put_contents($filename, $file['file'])) return $this->error("Error saving file $filename");
       @chmod($filename, $file['mode']);
@@ -142,16 +142,16 @@ $filename = $path . str_replace('/', DIRECTORY_SEPARATOR  , $filename);
     
     return true;
   }
-
-private function createtemp() {
-global $paths;
-          $result = dirname($paths['data']) .DIRECTORY_SEPARATOR . basename($paths['data']) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
-          @mkdir($result, 0777);
-          @chmod($result, 0777);
-return $result;
-}
   
- public function getfull() {
+  private function createtemp() {
+    global $paths;
+    $result = dirname($paths['data']) .DIRECTORY_SEPARATOR . basename($paths['data']) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
+    @mkdir($result, 0777);
+    @chmod($result, 0777);
+    return $result;
+  }
+  
+  public function getfull() {
     global $paths;
     $tar = new tar();
     $this->readdir($tar, $paths['data'], '', 'data/');

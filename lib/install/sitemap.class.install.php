@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 function tsitemapInstall($self) {
@@ -18,7 +18,7 @@ function tsitemapInstall($self) {
   array_splice($robots->items, 1, 0, "Sitemap: $options->url/sitemap.xml");
   $robots->save();
   
-$self->add('/sitemap.htm', 4);
+  $self->add('/sitemap.htm', 4);
   $self->createfiles();
 }
 

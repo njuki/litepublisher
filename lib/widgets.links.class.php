@@ -1,14 +1,14 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tlinkswidget extends titems {
   public $redirlink;
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -21,18 +21,18 @@ class tlinkswidget extends titems {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-  global $options;
+    global $options;
     $result = '';
-$theme = ttheme::instance();
-$tml = $theme->getwidgetitem('link', $sitebar);
-$args = targs::instance();
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('link', $sitebar);
+    $args = targs::instance();
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
       if ($this->redir && !strbegin($url, $options->url)) {
-      $url = $options->url . $this->redirlink . $options->q . "id=$id";
+        $url = $options->url . $this->redirlink . $options->q . "id=$id";
       }
-
-  $result .=   sprintf($tml, $url, $item['title'], $item['text']);
+      
+      $result .=   sprintf($tml, $url, $item['title'], $item['text']);
     }
     
     return $result;

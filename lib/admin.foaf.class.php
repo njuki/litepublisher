@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tadminfoaf extends tadminmenu {
@@ -13,7 +13,7 @@ class tadminfoaf extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   private function GetComboStatus($id, $status) {
     $langar = &TLocal::$data[$this->basename];
     $names = array('accepted', 'delete', 'hold', 'invated', 'rejected', 'ban');

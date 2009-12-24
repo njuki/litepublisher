@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class turlmap extends titems {
@@ -12,8 +12,8 @@ class turlmap extends titems {
   public $urlid;
   public $page;
   public $uripath;
-public $itemrequested;
-public $argtree;
+  public $itemrequested;
+  public $argtree;
   public $is404;
   public $admin;
   public $mobile;
@@ -24,33 +24,33 @@ public $argtree;
   
   protected function create() {
     parent::create();
-$this->dbversion = dbversion;
-$this->table = 'urlmap';
+    $this->dbversion = dbversion;
+    $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
     $this->is404 = false;
     $this->admin = false;
     $this->mobile= false;
   }
-
-protected function prepareurl($host, $url) {
+  
+  protected function prepareurl($host, $url) {
     global $options;
     $this->host = $host;
     $this->page = 1;
-  $this->uripath = array();
+    $this->uripath = array();
     if ($options->q == '?') {
       $this->url = substr($url, strlen($options->subdir));
     } else {
       $this->url = $_GET['url'];
     }
-}
-
+  }
+  
   public function request($host, $url) {
-global $options;
-$this->prepareurl($host, $url);
+    global $options;
+    $this->prepareurl($host, $url);
     $this->admin = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
-       try {
+    try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
       $options->handexception($e);
@@ -61,32 +61,32 @@ $this->prepareurl($host, $url);
   
   protected function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
- return $this->printcontent($this->itemrequested);
-} else {
-    $this->notfound404();
-}
+      return $this->printcontent($this->itemrequested);
+    } else {
+      $this->notfound404();
+    }
   }
-
-private function query($url) {
-if (dbversion) {
+  
+  private function query($url) {
+    if (dbversion) {
       if ($res = $this->db->select('url = '. $this->db->quote($url). ' limit 1')) {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
-}
-} elseif (isset($this->items[$url])) return $this->items[$url];
-return false;
-}
+      }
+    } elseif (isset($this->items[$url])) return $this->items[$url];
+    return false;
+  }
   
   public function finditem($url) {
     global $options;
     //redir multi slashed
     if ('//' == substr($url, strlen($url) - 3)) $this->redir301(rtrim($url, '/') . '/');
     
-if ($result = $this->query($url)) return $result;
-  
-   $slashed = rtrim($url, '/');
-if ($result = $this->query($slashed)) {
+    if ($result = $this->query($url)) return $result;
+    
+    $slashed = rtrim($url, '/');
+    if ($result = $this->query($slashed)) {
       if ($this->page == 1) {
         return $this->redir301($slashed);
       } else {
@@ -95,7 +95,7 @@ if ($result = $this->query($slashed)) {
     }
     
     $slashed  .= '/';
-if ($result = $this->query($slashed)) {
+    if ($result = $this->query($slashed)) {
       if ($this->page == 1) {
         return $this->redir301($slashed);
       } else {
@@ -105,48 +105,48 @@ if ($result = $this->query($slashed)) {
     
     if (($options->q == '?') && ($i = strpos($url, '?')) ) {
       $url = substr($url, 0, $i);
-return $this->finditem($url);
+      return $this->finditem($url);
     }
     
     //check page number as  /page/page/
-if (count($this->uripath) == 0) {
-    $this->uripath = explode('/', trim($url, '/'));
-    $c = count($this->uripath);
-    if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
-      $this->page = (int) $this->uripath[$c - 1];
-      $url = substr($url, 0, strpos($url, "page/$this->page"));
-      array_splice($this->uripath, $c - 2, 2);
-      return $this->finditem($url);
+    if (count($this->uripath) == 0) {
+      $this->uripath = explode('/', trim($url, '/'));
+      $c = count($this->uripath);
+      if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
+        $this->page = (int) $this->uripath[$c - 1];
+        $url = substr($url, 0, strpos($url, "page/$this->page"));
+        array_splice($this->uripath, $c - 2, 2);
+        return $this->finditem($url);
+      }
     }
-}
-
-//tree обрезаю окончание урла в аргумент
-$url = trim($url, '/');
-$j = -1;
-while($i = strrpos($url, '/', $j)) {
-if ($result = $this->query('/' . substr($url, 0, $i + 1))) {
-$this->argtree = substr($url, $i +1);
-return $result;
-}
-$j = - (strlen($url) - $i + 1);
-}
-
-return false;    
+    
+    //tree обрезаю окончание урла в аргумент
+    $url = trim($url, '/');
+    $j = -1;
+    while($i = strrpos($url, '/', $j)) {
+      if ($result = $this->query('/' . substr($url, 0, $i + 1))) {
+        $this->argtree = substr($url, $i +1);
+        return $result;
+      }
+      $j = - (strlen($url) - $i + 1);
+    }
+    
+    return false;
   }
-
-private function getcachefile(array $item) {
-global $paths;
-if ($item['type'] == 'normal') {
-return $paths['cache']. sprintf('%s-%d.php', $item['id'], $this->page);
-} else {
-return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
-}
-}
-
+  
+  private function getcachefile(array $item) {
+    global $paths;
+    if ($item['type'] == 'normal') {
+      return $paths['cache']. sprintf('%s-%d.php', $item['id'], $this->page);
+    } else {
+      return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
+    }
+  }
+  
   protected function  printcontent(array $item) {
     global $options;
     if ($options->cache) {
-  $cachefile = $this->getcachefile($item);
+      $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
       if (($time = @filemtime ($cachefile)) && (($time  + $options->expiredcache) >= time() )) {
         include($cachefile);
@@ -155,11 +155,11 @@ return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($t
     }
     
     if (class_exists($item['class']))  {
-return $this->GenerateHTML($item);
-} else {
-        $this->deleteclass($item['class']);
-$this->notfound404();
-}
+      return $this->GenerateHTML($item);
+    } else {
+      $this->deleteclass($item['class']);
+      $this->notfound404();
+    }
   }
   
   protected function GenerateHTML(array $item) {
@@ -174,7 +174,7 @@ $this->notfound404();
     }
     eval('?>'. $s);
     if ($options->cache && $source->cache) {
-  $cachefile = $this->getcachefile($item);
+      $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);
     }
@@ -192,82 +192,82 @@ $this->notfound404();
     $s = &$Template->request($obj);
     eval('?>'. $s);
   }
-
-
-public function urlexists($url) {
-if (dbversion) {
-return $this->db->exists('url = '. dbquote($url));
-} else {
-return isset($this->items[$url]);
-}
-}  
+  
+  
+  public function urlexists($url) {
+    if (dbversion) {
+      return $this->db->exists('url = '. dbquote($url));
+    } else {
+      return isset($this->items[$url]);
+    }
+  }
   public function add($url, $class, $arg, $type = 'normal') {
-if (dbversion) {
-$item= array(
-'url' => $url,
-    'class' => $class,
-    'arg' => $arg,
-'type' => $type
-    );
-$item['id'] = $this->db->add($item);
-$this->items[$item['id']] = $item;
-return $item['id'];
-}
-
+    if (dbversion) {
+      $item= array(
+      'url' => $url,
+      'class' => $class,
+      'arg' => $arg,
+      'type' => $type
+      );
+      $item['id'] = $this->db->add($item);
+      $this->items[$item['id']] = $item;
+      return $item['id'];
+    }
+    
     $this->items[$url] = array(
     'id' => ++$this->autoid,
     'class' => $class,
     'arg' => $arg,
-'type' => $type
+    'type' => $type
     );
     $this->save();
     return $this->autoid;
   }
- 
+  
   public function delete($url) {
-if (dbversion) {
-$this->db->delete('url = '. $this->db->quote($url));
-} elseif (isset($this->items[$url])) {
-unset($this->items[$url]);
-$this->save();
-}
-$this->clearcache();
-}
-
-  public function deleteclass($class) {
-if (dbversion){
-$this->db->delete("class = `$class`");
-} else  {
-    foreach ($this->items as $url => $item) {
-      if ($item['class'] == $class) unset($this->items[$url]);
-}
-$this->save();
+    if (dbversion) {
+      $this->db->delete('url = '. $this->db->quote($url));
+    } elseif (isset($this->items[$url])) {
+      unset($this->items[$url]);
+      $this->save();
     }
-$this->clearcache();
-  }
-
-  public function deleteitem($id) {
-if (dbversion){
-$this->db->iddelete($id);
-} else  {
-    foreach ($this->items as $url => $item) {
-      if ($item['id'] == $id) {
-        unset($this->items[$url]);
-$this->save();
-break;
-      }
-    }
-}
-$this->clearcache();
+    $this->clearcache();
   }
   
-//for Archives
+  public function deleteclass($class) {
+    if (dbversion){
+      $this->db->delete("class = `$class`");
+    } else  {
+      foreach ($this->items as $url => $item) {
+        if ($item['class'] == $class) unset($this->items[$url]);
+      }
+      $this->save();
+    }
+    $this->clearcache();
+  }
+  
+  public function deleteitem($id) {
+    if (dbversion){
+      $this->db->iddelete($id);
+    } else  {
+      foreach ($this->items as $url => $item) {
+        if ($item['id'] == $id) {
+          unset($this->items[$url]);
+          $this->save();
+          break;
+        }
+      }
+    }
+    $this->clearcache();
+  }
+  
+  //for Archives
   public function GetClassUrls($class) {
-if (dbversion) {
-$res = $this->db->query("select url from $this->thistable where class = '$class'");
-return $this->db->res2id($res);
-}
-
+    if (dbversion) {
+      $res = $this->db->query("select url from $this->thistable where class = '$class'");
+      return $this->db->res2id($res);
+    }
+    
     $result = array();
     foreach ($this->items as $url => $item) {
       if ($item['class'] == $class) $result[] = $url;
@@ -277,43 +277,43 @@ return $this->db->res2id($res);
   
   public function clearcache() {
     global $paths;
-$path = $paths['cache'];
+    $path = $paths['cache'];
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
-$file = $path. $filename;
+        $file = $path. $filename;
         if (@is_dir($file)) {
-tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
+          tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
         } else {
           unlink($file);
         }
       }
       @closedir($h);
     }
-
+    
     $this->CacheExpired();
   }
   
   public function setexpired($id) {
-global $paths;
-tfiler::deletemask($paths['cache'] . "*.$id-*.php");
-}
-
-public function setexpiredcurrent() {
-@unlink($this->getcachefile($this->itemrequested));
-}
-
-public function getcachename($name, $id) {
-global $paths;
-return $paths['cache']. "$prefix-$id.php";
-}
-
-public function expiredname($name, $id) {
-global $paths;
-tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
-}
+    global $paths;
+    tfiler::deletemask($paths['cache'] . "*.$id-*.php");
+  }
   
-    public function addredir($from, $to) {
+  public function setexpiredcurrent() {
+    @unlink($this->getcachefile($this->itemrequested));
+  }
+  
+  public function getcachename($name, $id) {
+    global $paths;
+    return $paths['cache']. "$prefix-$id.php";
+  }
+  
+  public function expiredname($name, $id) {
+    global $paths;
+    tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
+  }
+  
+  public function addredir($from, $to) {
     if ($from == $to) return;
     $Redir = &tredirector::instance();
     $Redir->add($from, $to);
@@ -339,7 +339,7 @@ tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
   
   public function redir301($to) {
     global $options;
-self::redir($options->url . $to);
+    self::redir($options->url . $to);
   }
   
   public static function redir($url) {
@@ -353,36 +353,36 @@ self::redir($options->url . $to);
     exit();
   }
   
-    //db
+  //db
   public function getidurl($id) {
-if (dbversion) {
-    if (!isset($this->items[$id])) {
-      $this->items[$id] = $this->db->getitem($id);
+    if (dbversion) {
+      if (!isset($this->items[$id])) {
+        $this->items[$id] = $this->db->getitem($id);
+      }
+      return $this->items[$id]['url'];
+    } else {
+      foreach ($this->items as $url => $item) {
+        if ($item['id'] == $id) return $url;
+      }
     }
-    return $this->items[$id]['url'];
-} else {
-foreach ($this->items as $url => $item) {
-if ($item['id'] == $id) return $url;
-}
-}
   }
   
-public function setidurl($id, $url) {
-if (dbversion) {
-$this->db->setvalue($id, 'url', $url);
-if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
-} else {
-foreach ($this->items as $u => $item) {
-if ($id == $item['id']) {
-unset($this->items[$u]);
-$this->items[$url] = $item;
-$this->save();
-return;
-}
-}
-}
-}
-
+  public function setidurl($id, $url) {
+    if (dbversion) {
+      $this->db->setvalue($id, 'url', $url);
+      if (isset($this->items[$id])) $this->items[$id]['url'] = $url;
+    } else {
+      foreach ($this->items as $u => $item) {
+        if ($id == $item['id']) {
+          unset($this->items[$u]);
+          $this->items[$url] = $item;
+          $this->save();
+          return;
+        }
+      }
+    }
+  }
+  
 }//class
 
 ?>

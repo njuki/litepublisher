@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tcustomwidget extends titems {
@@ -19,14 +19,14 @@ class tcustomwidget extends titems {
   
   public function getwidget($id, $sitebar) {
     global $options;
-$item = $this->getitem($id);
+    $item = $this->getitem($id);
     if (!$item['templ']) return $item['content'];
-$theme = ttheme::instance();
-return $theme->getwidget($item['title'], $item['content'], 'widget', $sitebar);
-}
+    $theme = ttheme::instance();
+    return $theme->getwidget($item['title'], $item['content'], 'widget', $sitebar);
+  }
   
   public function add($title, $content, $templ) {
-$widgets = twidgets::instance();
+    $widgets = twidgets::instance();
     $id = $widgets->add(get_class($this), 'echo', '', '');
     $this->items[$id] = array(
     'title' => $title,
@@ -47,8 +47,8 @@ $widgets = twidgets::instance();
     );
     
     $this->save();
-$widgets = twidgets::instance();
-$widgets->itemexpired($id);
+    $widgets = twidgets::instance();
+    $widgets->itemexpired($id);
   }
   
   public function delete($id) {
@@ -56,7 +56,7 @@ $widgets->itemexpired($id);
       unset($this->items[$id]);
       $this->save();
       
-$widgets = twidgets::instance();
+      $widgets = twidgets::instance();
       $widgets->delete($id);
       $this->deleted($id);
     }
@@ -68,6 +68,6 @@ $widgets = twidgets::instance();
       $this->save();
     }
   }
-
+  
 } //class
 ?>

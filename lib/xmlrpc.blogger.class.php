@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class TXMLRPCBlogger  extends TXMLRPCAbstract {
@@ -15,7 +15,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   public function getUsersBlogs(&$args) {
     global $options;
     if (!$this->canlogin($args, 1))  return $this->error;
-
+    
     $Result = array(
     //'isAdmin'  => true,
     'url'      => $options->url . $options->home,
@@ -103,7 +103,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     //craze method
     return '';
   }
-
+  
   public function setTemplate(&$args) {
     if (!$this->canlogin($args, 2)) {
       return $this->error;

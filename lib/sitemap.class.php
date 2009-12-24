@@ -1,18 +1,18 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tsitemap extends titems implements itemplate {
-public $title;
+  public $title;
   private $lastmod;
   private $count;
   private $fd;
-private $prio;
-
+  private $prio;
+  
   public static function instance() {
     return Getinstance(__class__);
   }
@@ -33,7 +33,7 @@ private $prio;
     $this->createfiles();
   }
   
-//itemplate
+  //itemplate
 public function gettitle() { return $this->title; }
 public function gethead() {}
 public function getkeywords() {}
@@ -42,7 +42,7 @@ public function getdescription() {}
   public function GetTemplateContent() {
     global $options, $Urlmap;
     $posts = &Tposts::instance();
-$theme = ttheme::instance();
+    $theme = ttheme::instance();
     $postsperpage = 1000;
     $list = array_slice(array_keys($posts->archives), ($Urlmap->page - 1) * $postsperpage, $postsperpage);
     $result = $TemplatePost->LitePrintposts($list);
@@ -69,7 +69,7 @@ $theme = ttheme::instance();
       $s .= $this->GetIndex();
       return  $s;
     }
-
+    
     $this->title = tlcal::$data['default']['sitemap'];
   }
   
@@ -94,7 +94,7 @@ $theme = ttheme::instance();
   }
   
   public function createfiles() {
-global $classes, $options;
+    global $classes, $options;
     $this->countfiles = 0;
     $this->count = 0;
     $this->date = time();
@@ -102,100 +102,100 @@ global $classes, $options;
     $this->openfile();
     
     //home page
-$this->prio = 9;
+    $this->prio = 9;
     $this->write('/', ceil($classes->posts->archivescount / $options->postsperpage));
-$this->prio = 8;
+    $this->prio = 8;
     $this->writeposts();
-
-$this->prio = 8;
-$this->writemenus();
-
-$this->prio = 7;
+    
+    $this->prio = 8;
+    $this->writemenus();
+    
+    $this->prio = 7;
     $this->writetags($classes->categories);
     $this->writetags($classes->tags);
-
-$this->prio = 5;
+    
+    $this->prio = 5;
     $this->writearchives();
-
-//урлы ккоторые добавлены в items
-foreach ($this->items as $url => $prio) {
-$this->writeitem($url, $prio);
-}    
-
+    
+    //урлы ккоторые добавлены в items
+    foreach ($this->items as $url => $prio) {
+      $this->writeitem($url, $prio);
+    }
+    
     $this->closefile();
     $this->Save();
   }
   
   private function writeposts() {
     global $options, $db;
-if (dbversion) {
-$res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
-where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.id");
-$res->setFetchMode (PDO::FETCH_ASSOC);
-foreach ($res as $item) {
-$comments = $options->commentpages ? ceil($item['commentscount'] / $options->commentsperpage) : 1;
-$this->write($item['url'], max($item['pagescount'], $comments));
-}
-} else {
-    $posts = tposts::instance();
-foreach ($posts->archives as $id => $posted) {
-$post = tpost::instance($id);
-$this->write($post->url, $post->countpages);
-$post->free();
-}
+    if (dbversion) {
+      $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
+      where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.id");
+      $res->setFetchMode (PDO::FETCH_ASSOC);
+      foreach ($res as $item) {
+        $comments = $options->commentpages ? ceil($item['commentscount'] / $options->commentsperpage) : 1;
+        $this->write($item['url'], max($item['pagescount'], $comments));
+      }
+    } else {
+      $posts = tposts::instance();
+      foreach ($posts->archives as $id => $posted) {
+        $post = tpost::instance($id);
+        $this->write($post->url, $post->countpages);
+        $post->free();
+      }
     }
-}
-
-private function writemenus() {
-$menus = tmenus::instance();
-foreach ($menus->items as $id => $item) {
-if ($item['status'] == 'draft') continue;
-$this->writeitem($item['url'], $this->prio);
-}
-}
-
-
-private function writetags($tags) {
-global $options, $db;
-      $postsperpage = $tags->lite ? 1000 : $options->postsperpage;
-if (dbversion) {
-$table = $tags->thistable;
-$res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
-where $db->urlmap.id = $table.idurl");
-$res->setFetchMode (PDO::FETCH_ASSOC);
-foreach ($res as $item) {
-$this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
-}
-} else {
-foreach ($tags->items as $id => $item) {
-$this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
-}
-}
-}
-
-private function writearchives() {
-global $options;
-$arch = tarchives::instance();
-      $postsperpage = $arch->lite ? 1000 : $options->postsperpage;
-if (dbversion) $db->table = 'posts';
-foreach ($arch->items as $date => $item) {
-if (dbversion) {
-$count = $db->getcount("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}'");
-} else {
-$count = count($item['posts']);
-}
-$this->write($item['url'], ceil($count/ $postsperpage));
-}
-}
-
-private function write($url, $pages) {
-$this->writeitem($url, $this->prio);
-$url = rtrim($url, '/');
-for ($i = 2; $i < $pages; $i++) {
-$this->writeitem("$url/page/$i/", $this->prio);
-}
-}
-
+  }
+  
+  private function writemenus() {
+    $menus = tmenus::instance();
+    foreach ($menus->items as $id => $item) {
+      if ($item['status'] == 'draft') continue;
+      $this->writeitem($item['url'], $this->prio);
+    }
+  }
+  
+  
+  private function writetags($tags) {
+    global $options, $db;
+    $postsperpage = $tags->lite ? 1000 : $options->postsperpage;
+    if (dbversion) {
+      $table = $tags->thistable;
+      $res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
+      where $db->urlmap.id = $table.idurl");
+      $res->setFetchMode (PDO::FETCH_ASSOC);
+      foreach ($res as $item) {
+        $this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
+      }
+    } else {
+      foreach ($tags->items as $id => $item) {
+        $this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
+      }
+    }
+  }
+  
+  private function writearchives() {
+    global $options;
+    $arch = tarchives::instance();
+    $postsperpage = $arch->lite ? 1000 : $options->postsperpage;
+    if (dbversion) $db->table = 'posts';
+    foreach ($arch->items as $date => $item) {
+      if (dbversion) {
+    $count = $db->getcount("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}'");
+      } else {
+        $count = count($item['posts']);
+      }
+      $this->write($item['url'], ceil($count/ $postsperpage));
+    }
+  }
+  
+  private function write($url, $pages) {
+    $this->writeitem($url, $this->prio);
+    $url = rtrim($url, '/');
+    for ($i = 2; $i < $pages; $i++) {
+      $this->writeitem("$url/page/$i/", $this->prio);
+    }
+  }
+  
   private function writeitem($url, $prio) {
     global $options;
     gzwrite($this->fd, "   <url>

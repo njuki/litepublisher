@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tnotfound404 extends tevents {
@@ -29,11 +29,11 @@ class tnotfound404 extends tevents {
   
   function GetTemplateContent() {
     $this->cache = false;
-$result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
-$theme = ttheme::instance();
-return sprintf($theme->content->simple, $result);
+    $result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
+    $theme = ttheme::instance();
+    return sprintf($theme->content->simple, $result);
   }
-
+  
 }
 
 ?>

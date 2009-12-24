@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tadminoptions extends tadminmenu {
@@ -15,7 +15,7 @@ class tadminoptions extends tadminmenu {
     global $classes, $options, $template, $mailer, $subscribers, $home, $rss, $pinger, $linkgen, $contentfilter;
     $result = '';
     $args = targs::instance();
-
+    
     switch ($this->name) {
       case 'options':
       $args->description = $options->description;
@@ -26,7 +26,7 @@ class tadminoptions extends tadminmenu {
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
       $args->text = $home->text;
-     break;
+      break;
       
       case 'mail':
       $subscribers = tsubscribers::instance();
@@ -36,13 +36,13 @@ class tadminoptions extends tadminmenu {
       
       case 'rss':
       $rss = trss::instance();
-$args->content = $rss->template;
+      $args->content = $rss->template;
       break;
       
       case 'view':
       $contentfilter = tcontentfilter::instance();
       $args->automore = $contentfilter->automore;
-$args->phpcode = $contentfilter->phpcode;
+      $args->phpcode = $contentfilter->phpcode;
       $args->hovermenu = $template->hovermenu;
       break;
       
@@ -67,7 +67,7 @@ $args->phpcode = $contentfilter->phpcode;
       case 'ping':
       $pinger = tpinger::instance();
       $args->pingenabled  = $pinger->enabled;
-$args->content = $pinger->services;
+      $args->content = $pinger->services;
       break;
       
       case 'links':
@@ -95,7 +95,7 @@ $args->content = $pinger->services;
       $auth = tauthdigest::instance();
       $args->cookie = $auth->cookieenabled;
       $args->xxxcheck = $auth->xxxcheck;
-     break;
+      break;
       
       case 'robots':
       $robots = trobotstxt::instance();
@@ -113,8 +113,8 @@ $args->content = $pinger->services;
       
     }
     
-$result  = $this->html->{$this->name}($args);
-return str_replace("'", '"', $result);
+  $result  = $this->html->{$this->name}($args);
+    return str_replace("'", '"', $result);
   }
   
   public function processform() {
@@ -178,7 +178,7 @@ return str_replace("'", '"', $result);
       $filter = tcontentfilter::instance();
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;
-$filter->phpcode = isset($phpcode);
+      $filter->phpcode = isset($phpcode);
       $filter->save();
       $template = ttemplate::instance();
       $template->hovermenu = isset($hovermenu);
@@ -247,11 +247,11 @@ $filter->phpcode = isset($phpcode);
       break;
       
       case 'lite':
-$options->lock();
+      $options->lock();
       $classes->archives->lite = isset($litearchives);
       $classes->categories->lite = isset($litecategories);
       $classes->tags->lite = isset($litetags);
-$options->unlock();
+      $options->unlock();
       break;
       
       case 'secure':
@@ -277,7 +277,7 @@ $options->unlock();
         TUrlmap::unsub($archives);
         $archives->PostsChanged();
       }
-      $options->unlock();      
+      $options->unlock();
       $urlmap->clearcache();
       break;
       

@@ -1,25 +1,25 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class trobotstxt extends titems {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   public function create() {
-parent::create();
-$this->basename = 'robots.txt';
-$this->dbversion = false;
-$this->data['idurl'] = 0;
+    parent::create();
+    $this->basename = 'robots.txt';
+    $this->dbversion = false;
+    $this->data['idurl'] = 0;
   }
   
-    public function AddDisallow($url) {
+  public function AddDisallow($url) {
     return $this->add("Disallow: $url");
   }
   

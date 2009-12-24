@@ -1,36 +1,36 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class ttemplatetags {
-private $items;
-
-public static function instance() {
-return getinstance(__class__);
-}
-
-public function __construct() {
-$template = ttemplate::instance();
-$this->items = &$template->data['tags'];
-}
-
-public function save() {
-$template = ttemplate::instance();
-$template->save();
-}
-
-public function add($name, $class, $func) {
+  private $items;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  public function __construct() {
+    $template = ttemplate::instance();
+    $this->items = &$template->data['tags'];
+  }
+  
+  public function save() {
+    $template = ttemplate::instance();
+    $template->save();
+  }
+  
+  public function add($name, $class, $func) {
     $this->items[$name] = array(
     'class' => $classname,
     'func' => $func
     );
     $this->save();
   }
-
+  
   public function delete($name) {
     if (isset($this->items[$name])) {
       unset($this->items[$name]);
@@ -38,7 +38,7 @@ public function add($name, $class, $func) {
     }
   }
   
-    public function deleteclass($class) {
+  public function deleteclass($class) {
     foreach ($this->items as$name => $item) {
       if ($item['class'] == $class) unset($this->items[$name]);
     }
@@ -51,18 +51,18 @@ public function add($name, $class, $func) {
     $class = $this->tags[$name]['class'];
     if (empty($class)) {
       if (function_exists($func)){
-  return $func($name);
+        return $func($name);
       } else {
-$this->delete($name);
+        $this->delete($name);
       }
     } elseif (class_exists($class)){
-        $obj = getinstance($class);
-return  $obj->$func($name);
-      } else {
-$this->delete($name);
+      $obj = getinstance($class);
+      return  $obj->$func($name);
+    } else {
+      $this->delete($name);
     }
-}
-    
-  }//class
+  }
+  
+}//class
 
 ?>

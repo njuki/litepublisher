@@ -1,63 +1,63 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 function __autoload($class) {
   global $classes;
-$classes->_autoload($class);
+  $classes->_autoload($class);
 }
 
 class tclasses extends titems {
   public $classes;
-public $interfaces;
-public $remap;
+  public $interfaces;
+  public $remap;
   public $instances;
-
+  
   public static function instance() {
-global $classes;
-if (!isset($classes)) {
-$class = __class__;
-$classes = new $class();
-$classes->instances[$class] = $classes;
-}
-return $classes;
+    global $classes;
+    if (!isset($classes)) {
+      $class = __class__;
+      $classes = new $class();
+      $classes->instances[$class] = $classes;
+    }
+    return $classes;
   }
-
-public function getinstance($class) {
-  if (!class_exists($class)) {
-    $this->error("Class $class not found");
+  
+  public function getinstance($class) {
+    if (!class_exists($class)) {
+      $this->error("Class $class not found");
+    }
+    if (!isset($this->instances[$class])) {
+      $this->instances[$class] = $this->newinstance($class);
+    }
+    return $this->instances[$class];
   }
-  if (!isset($this->instances[$class])) {
-    $this->instances[$class] = $this->newinstance($class);
+  
+  public function newinstance($class) {
+    if (!empty($this->remap[$class])) $class = $this->remap[$class];
+    return new $class();
   }
-  return $this->instances[$class];
-}
-
-public function newinstance($class) {
-if (!empty($this->remap[$class])) $class = $this->remap[$class];
-return new $class();
-}
   
   protected function create() {
     parent::create();
     $this->basename = 'classes';
-$this->dbversion = false;
+    $this->dbversion = false;
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
   }
-
-public function __get($name) {
-if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
-$class = 't' . $name;
-if (isset($this->items[$class])) return $this->getinstance($class);
-return parent::__get($name);
-}
+  
+  public function __get($name) {
+    if (isset($this->classes[$name])) return $this->getinstance($this->classes[$name]);
+    $class = 't' . $name;
+    if (isset($this->items[$class])) return $this->getinstance($class);
+    return parent::__get($name);
+  }
   
   public function add($class, $filename, $path = '') {
     if (!isset($this->items[$class]) ||
@@ -91,20 +91,20 @@ return parent::__get($name);
       $this->unlock();
     }
   }
-
-public function _autoload($class) {
-global $paths;
-  if ($path =$this->getpath($class)) {
-    $filename = $path . $this->items[$class][0];
-} elseif (isset($this->interfaces[$class])) {
-    $filename = $paths['lib'] . $this->interfaces[$class];
-} else {
-//$this->error("$class class not found");
-return false;
-}
+  
+  public function _autoload($class) {
+    global $paths;
+    if ($path =$this->getpath($class)) {
+      $filename = $path . $this->items[$class][0];
+    } elseif (isset($this->interfaces[$class])) {
+      $filename = $paths['lib'] . $this->interfaces[$class];
+    } else {
+      //$this->error("$class class not found");
+      return false;
+    }
     if (@file_exists($filename)) require_once($filename);
-}
-
+  }
+  
   public function getpath($class) {
     global  $paths;
     if (!isset($this->items[$class])) return false;
@@ -125,7 +125,7 @@ return false;
 
 function getinstance($class) {
   global $classes;
-return $classes->getinstance($class);
+  return $classes->getinstance($class);
 }
 
 function PHPComment($s) {
@@ -139,7 +139,7 @@ function PHPUncomment($s) {
 }
 
 function strbegin($s, $begin) {
-return strncmp($s, $begin, strlen($begin)) == 0;
+  return strncmp($s, $begin, strlen($begin)) == 0;
 }
 
 function SafeSaveFile($BaseName, $Content) {

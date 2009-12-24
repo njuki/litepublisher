@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tsimplecontent  {
@@ -19,13 +19,13 @@ class tsimplecontent  {
   }
   
   function GetTemplateContent() {
-$result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
-$theme =ttheme::instance();
+    $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
+    $theme =ttheme::instance();
     return sprintf($theme->content->simple, $result);
   }
   
   public static function html($content) {
-$class = __class__;
+    $class = __class__;
     $self = new $class();
     $self->html = $content;
     $template = ttemplate::instance();
@@ -33,13 +33,13 @@ $class = __class__;
   }
   
   public static function content($content) {
-$class = __class__;
+    $class = __class__;
     $self = new $class();
     $self->text = $content;
     $template = ttemplate::instance();
     return $template->request($self);
   }
-
+  
 }//class
 
 ?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tevents extends tdata {
@@ -25,7 +25,7 @@ class tevents extends tdata {
   }
   
   protected function create() {
-$this->addmap('events', array());
+    $this->addmap('events', array());
   }
   
   public function assignmap() {
@@ -96,7 +96,7 @@ $this->addmap('events', array());
           $obj = getinstance($item['class']);
           $call = array(&$obj, $item['func']);
         }
-$result = call_user_func_array($call, $params);
+        $result = call_user_func_array($call, $params);
       }
     }
     
@@ -104,23 +104,23 @@ $result = call_user_func_array($call, $params);
   }
   
   private function eventdelete($name, $i) {
-      array_splice($this->events[$name], $i, 1);
-$this->save();
-    }
-
+    array_splice($this->events[$name], $i, 1);
+    $this->save();
+  }
+  
   public function eventsubscribe($name, $params) {
-if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
+    if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
     if (!isset($this->events[$name])) $this->events[$name] =array();
-$list = $this->getevents($name);
+    $list = $this->getevents($name);
     foreach ($list  as $event) {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
-
+    
     $this->events[$name][] = array(
-'class' => $params['class'],
- 'func' => $params['func']
-);
-      $this->save();
+    'class' => $params['class'],
+    'func' => $params['func']
+    );
+    $this->save();
   }
   
   public function eventunsubscribe($name, $class) {
@@ -131,15 +131,15 @@ $list = $this->getevents($name);
           return true;
         }
       }
-}
+    }
     return false;
   }
   
   public static function unsub(&$obj) {
     $self = self::instance();
     $self->unsubscribeclassname(get_class($obj));
-}
-
+  }
+  
   public function unsubscribeclass($obj) {
     $this->unsubscribeclassname(get_class($obj));
   }
@@ -150,9 +150,9 @@ $list = $this->getevents($name);
         if ($item['class'] == $class) array_splice($this->events[$name], $i, 1);
       }
     }
-
-$this->save();
-}
+    
+    $this->save();
+  }
   
 }//class
 

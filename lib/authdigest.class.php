@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tauthdigest extends tevents {
@@ -74,9 +74,9 @@ class tauthdigest extends tevents {
         $this->stale  = true;
         return false;
       }
-$users = tusers::instance();
-if (!($options->user  =$users->loginexists($hdr['username']))) return false;
-$options->updategroup();
+      $users = tusers::instance();
+      if (!($options->user  =$users->loginexists($hdr['username']))) return false;
+      $options->updategroup();
       $a1 = strtolower($options->password);
       $a2 = md5($_SERVER['REQUEST_METHOD'] .':' . $hdr['uri']);
       return $hdr['response'] == md5("$a1:$this->nonce:$a2");
@@ -98,64 +98,64 @@ $options->updategroup();
     return $result;
   }
   
-public function isattack() {
-$host = '';
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-          $p = parse_url($_SERVER['HTTP_REFERER']);
-          $host = $p['host'];
-        }
-
-return $host == $_SERVER['HTTP_HOST'] ;
-}
-
-public function checkattack() {
-      if ($this->xxxcheck  && $this->isattack()) {
-          if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
-      if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
-}
-return false;
-}
-
-public function authcookie() {
-global $options;
-      if (empty($_COOKIE['admin']) ) return false;
-if ($auth->cookie == $_COOKIE['admin']) {
-if ($auth->cookieexpired < time()) return  false;
-$options->user = 1;
-$options->group = 'admin';
-return true;
-}
-
-$users = tusers::instance();
-if($options->user = $users->IndexOf('cookie',$_COOKIE['admin'])) {
-if ($users->getvalue($options->user, 'cookieexpired') < time()) return  false;
-$options->updategroup();
-return;
-}
-return false;
-}
-
-public function logout() {
-global $options;
-if ($this->cookieenabled) {
-$this->setcookies('', 0);
-} else {
-$this->newnonce();
-}
-}
-
-public function setcookies($cookie, $expired) {
-global $options;
-if ($options->user == 1) {
-$this->cookie = $cookie;
-$this->expired = $expired;
-$this->save();
-} else {
-$users = tusers::instance();
-$users->setcookie($options->user, $cookie, $expired);
-}
-}
-
+  public function isattack() {
+    $host = '';
+    if (!empty($_SERVER['HTTP_REFERER'])) {
+      $p = parse_url($_SERVER['HTTP_REFERER']);
+      $host = $p['host'];
+    }
+    
+    return $host == $_SERVER['HTTP_HOST'] ;
+  }
+  
+  public function checkattack() {
+    if ($this->xxxcheck  && $this->isattack()) {
+      if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
+  if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
+    }
+    return false;
+  }
+  
+  public function authcookie() {
+    global $options;
+    if (empty($_COOKIE['admin']) ) return false;
+    if ($auth->cookie == $_COOKIE['admin']) {
+      if ($auth->cookieexpired < time()) return  false;
+      $options->user = 1;
+      $options->group = 'admin';
+      return true;
+    }
+    
+    $users = tusers::instance();
+    if($options->user = $users->IndexOf('cookie',$_COOKIE['admin'])) {
+      if ($users->getvalue($options->user, 'cookieexpired') < time()) return  false;
+      $options->updategroup();
+      return;
+    }
+    return false;
+  }
+  
+  public function logout() {
+    global $options;
+    if ($this->cookieenabled) {
+      $this->setcookies('', 0);
+    } else {
+      $this->newnonce();
+    }
+  }
+  
+  public function setcookies($cookie, $expired) {
+    global $options;
+    if ($options->user == 1) {
+      $this->cookie = $cookie;
+      $this->expired = $expired;
+      $this->save();
+    } else {
+      $users = tusers::instance();
+      $users->setcookie($options->user, $cookie, $expired);
+    }
+  }
+  
 }//class
 
 ?>

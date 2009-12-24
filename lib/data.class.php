@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tdata {
@@ -134,10 +134,10 @@ $func{0} = strtoupper($func{0});
     try {
       if (!empty($s)) $this->data = unserialize($s) + $this->data;
       $this->afterload();
-return true;
+      return true;
     } catch (Exception $e) {
       echo 'Caught exception: '.  $e->getMessage() ;
-return false;
+      return false;
     }
   }
   
@@ -177,23 +177,23 @@ return false;
     }
   }
   
-protected function getthistable() {
-global $db;
-return $db->prefix . $this->table;
-}
-
-protected function geturltable() {
-global $db;
-return $db->prefix .'urlmap';
-}
-
-protected function getjoinurl() {
-  return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
-}
+  protected function getthistable() {
+    global $db;
+    return $db->prefix . $this->table;
+  }
+  
+  protected function geturltable() {
+    global $db;
+    return $db->prefix .'urlmap';
+  }
+  
+  protected function getjoinurl() {
+    return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
+  }
 }//class
 
 class tarray2prop {
-public $array;
+  public $array;
 public function __construct(array &$array) { $this->array = &$array; }
 public function __get($name) { return $this->array[$name]; }
 public function __set($name, $value) { $this->array[$name] = $value; }
@@ -201,17 +201,17 @@ public function __tostring() { return $this->array[0]; }
 }//class
 
 function sqldate($date = 0) {
-if ($date == 0) $date = time();
-return date('Y-m-d H:i:s', $date);
+  if ($date == 0) $date = time();
+  return date('Y-m-d H:i:s', $date);
 }
 
 function dbquote($s) {
-global $db;
-return $db->quote($s);
+  global $db;
+  return $db->quote($s);
 }
 
 function md5uniq() {
-return md5(mt_rand() . secret. microtime());
+  return md5(mt_rand() . secret. microtime());
 }
 
 ?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tdbmanager  {
@@ -25,7 +25,7 @@ class tdbmanager  {
   }
   
   public function createtable($name, $struct) {
-if (defined('debug')) $this->deletetable($name);
+    if (defined('debug')) $this->deletetable($name);
     return $this->exec("
     create table $this->prefix$name
     ($struct)
@@ -72,7 +72,7 @@ if (defined('debug')) $this->deletetable($name);
   
   public function gettables() {
     global $options;
-  if ($res = $this->query(sprintf("show tables from %s like '%s%%'", $options->dbconfig['dbname'], $options->dbconfig['prefix']))) {
+    if ($res = $this->query(sprintf("show tables from %s like '%s%%'", $options->dbconfig['dbname'], $options->dbconfig['prefix']))) {
       return $this->res2id($res);
     }
     return false;
@@ -89,45 +89,45 @@ if (defined('debug')) $this->deletetable($name);
     if ( $this->dbexists($name) )  return false;
     return $this->exec("CREATE DATABASE $name");
   }
-
-private function DeleteDeleted() {
-global $db;
-//posts
-$db->table = 'posts';
-$deleted = $db->idselect("status = 'deleted'");
-if (count($deleted) > 0) {
-$deleted = implode(',', $deleted);
-$db->exec("delete from $db->urlmap where id in
-(select idurl from $db->posts where status = 'deleted')");
-
-$db->exec("delete from $db->rawposts where id in ($selected)");
-
-$db->exec("delete from $db->pages where id in ($deleted)");
-
-$db->exec("delete from $db->posts where id in ($selected)");
-}
-
-//comments
-$db->exec("delete from $db->rawcomments where id in
-(select id from $db->comments where status = 'deleted')");
-
-$db->exec("delete from $db->comments where status = 'deleted'");
-
-$db->exec("delete from $db->authors where id not in
-(select DISTINCT author from $db->comments)");
-
-//subscribtions
-$db->exec("delete from$db->subscribers where post not in (select id from $db->posts)");
-$db->exec("delete from$db->subscribers where author not in (select id from $db->comusers)");
-}
-
-public function optimize() {
-$this->DeleteDeleted();
+  
+  private function DeleteDeleted() {
+    global $db;
+    //posts
+    $db->table = 'posts';
+    $deleted = $db->idselect("status = 'deleted'");
+    if (count($deleted) > 0) {
+      $deleted = implode(',', $deleted);
+      $db->exec("delete from $db->urlmap where id in
+      (select idurl from $db->posts where status = 'deleted')");
+      
+      $db->exec("delete from $db->rawposts where id in ($selected)");
+      
+      $db->exec("delete from $db->pages where id in ($deleted)");
+      
+      $db->exec("delete from $db->posts where id in ($selected)");
+    }
+    
+    //comments
+    $db->exec("delete from $db->rawcomments where id in
+    (select id from $db->comments where status = 'deleted')");
+    
+    $db->exec("delete from $db->comments where status = 'deleted'");
+    
+    $db->exec("delete from $db->authors where id not in
+    (select DISTINCT author from $db->comments)");
+    
+    //subscribtions
+    $db->exec("delete from$db->subscribers where post not in (select id from $db->posts)");
+    $db->exec("delete from$db->subscribers where author not in (select id from $db->comusers)");
+  }
+  
+  public function optimize() {
+    $this->DeleteDeleted();
     $tables = $this->gettables();
     foreach ($tables as $table) {
-$this->exec("optimize $table");
-}
-}
+      $this->exec("optimize $table");
+    }
+  }
   
   public function export() {
     global $options;
@@ -210,26 +210,26 @@ $this->exec("optimize $table");
     return false;
   }
   
-public function performance() {
-global $db;
-$result = '';
-$total = 0.0;
-$max = 0.0;
-foreach ($db->history as $i => $item) {
-    list($usec2, $sec2) = explode(' ', $item['started']);
-    list($usec1, $sec1) = explode(' ', $item['finished']);
-$worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 8);
-$total += $worked;
-if ($max < $worked) {
-$maxsql = $item['sql'];
-$max = $worked;
-}
-$result .= "$i: $worked\n{$item['sql']}\n\n";
-}
-$result .= "maximum $max\n$maxsql\n";
-$result .= sprintf("%s total time\n%d querries\n\n", $total, count($db->history));
-
-return $result;
-}
+  public function performance() {
+    global $db;
+    $result = '';
+    $total = 0.0;
+    $max = 0.0;
+    foreach ($db->history as $i => $item) {
+      list($usec2, $sec2) = explode(' ', $item['started']);
+      list($usec1, $sec1) = explode(' ', $item['finished']);
+      $worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 8);
+      $total += $worked;
+      if ($max < $worked) {
+        $maxsql = $item['sql'];
+        $max = $worked;
+      }
+    $result .= "$i: $worked\n{$item['sql']}\n\n";
+    }
+    $result .= "maximum $max\n$maxsql\n";
+    $result .= sprintf("%s total time\n%d querries\n\n", $total, count($db->history));
+    
+    return $result;
+  }
 }//class
 ?>
