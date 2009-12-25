@@ -29,6 +29,7 @@ class tadminfiles extends tadminmenu {
         } else {
           $item = $files->getitem($id);
           $args = targs::instance();
+$args->add($item);
           $args->id = $id;
           $args->adminurl = $this->adminurl;
           $args->action = 'delete';
@@ -47,8 +48,8 @@ class tadminfiles extends tadminmenu {
     
     $perpage = 20;
     if (dbversion) {
-      $sql = $options->user == 0 ? '' : "author = $options->user";
-      $count = $this->db->getcount($sql);
+      $sql = $options->user <= 1 ? '' : "author = $options->user";
+      $count = $files->db->getcount($sql);
     } elseif ($options->user == 0)  {
       $count = $files->count;
     } else {
@@ -71,7 +72,7 @@ class tadminfiles extends tadminmenu {
     
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($items));
     $result .= $html->tableheader();
-    $args = targs();
+    $args = targs::instance();
     $args->adminurl = $this->adminurl;
     foreach ($items as $item) {
       $args->add($item);
