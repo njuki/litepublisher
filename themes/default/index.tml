@@ -262,7 +262,9 @@ $menu.content
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
       <ul class="list-cat" id="widgetcategories">
-%s
+<!--item-->
+<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>
+<!--/item-->
       </ul>
     </div>
 <!--/categories-->
@@ -271,7 +273,9 @@ $menu.content
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
       <ul class="list-archives" id="widgetarchives">
-%s
+<!--item-->
+<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>
+<!--/item-->
       </ul>
     </div>
 <!--/archives-->
