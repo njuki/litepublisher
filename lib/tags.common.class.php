@@ -93,12 +93,19 @@ class tcommontags extends titems implements  itemplate {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->basename, $sitebar);
+$args = targs::instance();
     $showcount = $this->showcount;
     $Sorted = $this->getsorted($sortname, $count);
     foreach($Sorted as $id) {
       $item = $this->getitem($id);
-    $count = $showcount ? " ({$item['itemscount']})" : '';
-      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
+$args->add($item);
+$args->icon = '';
+if ($item['icon'] != 0) {
+$files = tfiles::instance();
+$args->icon = $files->geticon($item['icon'], $item['title']);
+}
+    $args->count = $showcount ? " ({$item['itemscount']})" : '';
+      $result .= $theme->parsearg($tml,$args);
     }
     return $result;
   }

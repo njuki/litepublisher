@@ -31,20 +31,24 @@ class tfiles extends titems {
   }
   
   public function geturl($id) {
+global $options;
     $item = $this->getitem($id);
-    return '/files/' . $item['filename'];
+    return $options->files . '/files/' . $item['filename'];
   }
   
   public function getlink($id) {
     global $options;
     $item = $this->getitem($id);
     $icon = '';
-    if ($item['icon'] != 0) {
-      $icons = ticons::instance();
-      $icon = sprintf('<img src="%s" alt="%s" />', $icons->geturl($item['icon']), $item['title']);
+    if (($item['icon'] != 0) && ($item['medium'] != 'icon')) {
+      $icon = $this->geticon($item['icon']);
     }
     return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
+
+public function geticon($id, $title) {
+return sprintf('<img src="%s" />', $this->geturl($id));
+}
   
   public function additem(array $item) {
     global $options, $paths;
@@ -124,13 +128,13 @@ class tfiles extends titems {
     if (count($items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->files['screenshot'];
+    $tml = $theme->content->excerpts->excerpt->previews->preview;
     $args = targs::instance();
     foreach ($items as $item) {
       $args->add($item);
       $result .= $theme->parsearg($tml, $args);
     }
-    return sprintf($theme->files['screenshots'], $result);
+    return sprintf($theme->content->excerpts->excerpt->previews, $result);
   }
   
   public function getlist(array $list, $screenshots) {
@@ -138,13 +142,14 @@ class tfiles extends titems {
     if (count($items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
+$tml = $themes->content->post->files;
     $args = targs::instance();
     foreach ($items as $item) {
       $args->add($item);
-      $tml = !empty($theme->files[$item['medium']]) ? $theme->files[$item['medium']] : $theme->files['file'];
-      $result .= $theme->parsearg($tml, $args);
+      $tmlitem= empty($tml->array[$item['medium']]) ? $tml->file : $tml->array[$item['medium']];$theme->files['file'];
+      $result .= $theme->parsearg($tmlitem, $args);
     }
-    return sprintf($theme->files['filelist'], $result);
+    return sprintf($tml, $result);
   }
   
 }//class

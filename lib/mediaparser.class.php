@@ -6,9 +6,9 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tmediaparser extends TEventClass {
+class tmediaparser extends tevents {
   
-  static function instance() {
+public   static function instance() {
     return getinstance(__class__);
   }
   
@@ -20,12 +20,19 @@ class tmediaparser extends TEventClass {
     $this->data['audiosize'] = 128;
   }
   
-  public function upload($filename, $content, $title, $overwrite = true) {
+  public function upload($filename, $content, $title, $overwrite ) {
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
     $filename = $this->doupload($filename, $content, $overwrite);
     return $this->Add($filename, $title);
+  }
+
+  public function uploadicon($filename, $content, $overwrite ) {
+    $linkgen = tlinkgenerator::instance();
+    $filename = $linkgen->filterfilename($filename);
+    $filename = $this->doupload($filename, $content, $overwrite);
+    return $this->Addicon($filename);
   }
   
   private function doupload($filename, &$content, $overwrite) {
@@ -35,7 +42,7 @@ class tmediaparser extends TEventClass {
     if (@file_put_contents($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), $content)) {
       @ chmod($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
       return $filename;
-    } else {
+    } 
       return false;
     }
     
@@ -77,8 +84,6 @@ class tmediaparser extends TEventClass {
       $info = $this->getinfo($filename);
       $info['filename'] = $this->movetofolder($info['filename'], $info['medium']);
       $item = $info + array(
-      'parent' => 0,
-      'preview' => 0,
       'filename' => $filename,
       'title' => $title,
       'description' => $description
@@ -101,7 +106,21 @@ class tmediaparser extends TEventClass {
       $files->unlock();
       return $id;
     }
-    
+
+public function addicon($filename) {
+      $info = $this->getinfo($filename);
+if ($info['medium'] != 'image') $this->error('Invalid icon file format '. $info['medium']);
+$info['medium'] = 'icon';
+      $info['filename'] = $this->movetofolder($info['filename'], 'icon');
+      $item = $info + array(
+      'filename' => $filename,
+      'title' => '',
+      'description' => ''
+      );
+      
+      $files = tfiles::instance();
+return $files->additem($item);
+}
     
     private function getdefaultvalues($filename) {
       return array(
@@ -124,13 +143,13 @@ class tmediaparser extends TEventClass {
     
     public function getinfo($filename) {
       global $paths;
-      $realfile = $paths['files'], str_replace('/', DIRECTORY_SEPARATOR, $filename;
+      $realfile = $paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename);
       $result = $this->getdefaultvalues($filename);
       if ($info = getimagesize($realfile)) {
         $result['medium'] = 'image';
         $result['mime'] = $info['mime'];
         $result['width'] = $info[0];
-        $result['height'] = $info['1];
+        $result['height'] = $info[1];
         return $result;
       }
       
@@ -149,7 +168,7 @@ class tmediaparser extends TEventClass {
       return false;
     }
     
-  public function createpreview(array $info) }
+  public function createpreview(array $info) {
   switch ($info['medium']) {
     case 'image':
     return $this->getsnapshot($info['filename']);
@@ -254,7 +273,7 @@ public function getsnapshot($filename) {
   $result['medium'] = 'image';
   $result['mime'] = $info['mime'];
   $result['width'] = $info[0];
-  $result['height'] = $info['1];
+  $result['height'] = $info[1];
   return $result;
 }
 
@@ -262,7 +281,7 @@ public function createaudioclip($filename) {
   global $paths;
   $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
   $parts = pathinfo($filename);
-  $destfilename = $parts['filename'] . '.preview.' . $parts['extension'];
+  $destfilename = sprintf('%s.preview.%s', $parts['filename'],$parts['extension']);
   if (!empty($parts['dirname'])) {
     $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
   }
@@ -296,7 +315,7 @@ private function getaudioinfo($filename) {
   if (isset($info['error'])) return false;
   
   $result = array (
-  'bitrate'  => @$info['audio']['bitrate']
+  'bitrate'  => @$info['audio']['bitrate'],
   'samplingrate'  => @$info['audio']['sample_rate'],
   'channels'  => @$info['audio']['channels'],
   'duration'  => @$info['playtime_seconds'],
