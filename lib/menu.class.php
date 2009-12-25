@@ -186,9 +186,13 @@ class tmenus extends TItems {
   }
   
   private function getwidgetitem($tml, $item, $subnodes) {
-    global $options;
+$args = targs::instance();
     if ($subnodes != '') $subnodes = "<ul>\n$subnodes</ul>\n";
-    return sprintf($tml, $options->url . $item['url'], $item['title'], $subnodes);
+$args->add($item);
+$args->count = $subnodes;
+$args->icon = '';
+$theme = ttheme::instance();
+    return $theme->parsearg($tml, $args);
   }
   
   /* Так как меню верхнего уровня все равно показывается в шапке, то в виджете меню ббудут начинаться с второго уровня */
