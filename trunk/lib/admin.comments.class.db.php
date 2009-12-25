@@ -60,7 +60,7 @@ class tadminmoderator extends tadminmenu {
     
   }
   
-  private function reply($tcomment $comment) {
+  private function reply(tcomment $comment) {
     global $comment;
     return $this->html->replyform();
   }

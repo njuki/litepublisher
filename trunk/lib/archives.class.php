@@ -26,9 +26,12 @@ class tarchives extends titems implements  itemplate {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('archives', $sitebar);
+$args = targs::instance();
     foreach ($this->items as $date => $item) {
-    $count = $this->showcount ? "({$item['count']})" : '';
-      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], $count);
+$args->add($item);
+$args->icon = '';
+    $args->count = $this->showcount ? "({$item['count']})" : '';
+      $result .= $theme->parsearg($tml, $args);
     }
     
     return $result;

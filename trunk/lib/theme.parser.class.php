@@ -345,10 +345,10 @@ class tthemeparser {
       case 'submenu':
       case 'categories':
       case  'tags':
-      return '<li><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>';
+      return '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
       
       case 'archives':
-      return '<li><a href="%1$s" rel="archives" title="%2$s">%2$s</a>%3$s</li>';
+      return '<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>';
       
       case 'post':
       return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />     <small>$post->localdate</small></li>';

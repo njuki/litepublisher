@@ -153,8 +153,8 @@ class ttemplate extends tevents {
     if ($this->contextHasProp('icon')) {
       $icon = $this->context->icon;
       if ($icon > 0) {
-        $icons = ticons::instance();
-        $result = $icons->geturl($icon);
+$files = tfiles::instance();
+        $result = $files->geturl($icon);
       }
     }
     if ($result == '')  return "$options->files/favicon.ico";
