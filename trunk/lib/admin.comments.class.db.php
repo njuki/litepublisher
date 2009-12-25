@@ -27,9 +27,35 @@ class tadminmoderator extends tadminmenu {
       
       if (isset($_GET['action'])) {
         $id = $this->idget();
-        $action = $_GET['action'];
-        if (($action == 'delete') && !$this->confirmed) return $this->confirmdelete($id);
-        if (!$this->doaction($id, $action)) return $this->notfount;
+$comments = tcomments::instance();
+if (!$comments->itemexists($id)) return $this->notfound;
+$action = $_GET['action'];
+switch($action) {
+case 'delete':
+if($this->confirmed) {
+      $this->manager->delete($id);
+} else {
+return $this->confirmdelete($id);
+}
+      break;
+      
+      case 'hold':
+      $this->manager->setstatus(0, $id, 'hold');
+      break;
+      
+      case 'approve':
+      $this->manager->setstatus($id, 'approved');
+      break;
+      
+      case 'edit':
+      $result .= $this->editcomment($id);
+      break;
+      
+      case 'reply':
+      $result .= $this->reply($id);
+      break;
+    }
+
         $result .= $this->getactionresult($id, $action);
       }
       
@@ -60,8 +86,9 @@ class tadminmoderator extends tadminmenu {
     
   }
   
-  private function reply(tcomment $comment) {
+  private function reply($id) {
     global $comment;
+    $comment = new tcomment($id);
     return $this->html->replyform();
   }
   
@@ -112,34 +139,7 @@ $comment = new tcomment(null);
     return $result;
   }
   
-    private function doaction($id, $action) {
-$comments = tcomments::instance(0);
 
-    if (!$comments->itemexists($id)) return false;
-    switch ($action) {
-      case 'delete' :
-      $this->manager->delete($id);
-      break;
-      
-      case 'hold':
-      $this->manager->setstatus(0, $id, 'hold');
-      break;
-      
-      case 'approve':
-      $manager->setstatus($id, 'approved');
-      break;
-      
-      case 'edit':
-      $this->editcomment($id);
-      break;
-      
-      case 'reply':
-      $this->reply($id);
-      break;
-    }
-    return true;
-  }
-  
   private function getactionresult($id, $action) {
     $result = $this->html->h2->successmoderated;
     switch ($action) {
@@ -154,8 +154,7 @@ $comments = tcomments::instance(0);
   
   private function getinfo($id) {
     global $comment;
-    $manager = $this->manager;
-    $comment = $manager->getcomment($id);
+    $comment = new tcomment($id);
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
     return $this->html->info();
