@@ -78,6 +78,7 @@ $args->add($item);
       $args->add($item);
       $result .= $html->tableitem ($args);
     }
+
     $result .= $html->tablefooter;
     return str_replace("'", '"', $result);
   }
