@@ -9,6 +9,7 @@
 function ticonsInstall($self) {
 $files = tfiles::instance();
 $files->lock();
+$files->deleted = $self->filedeleted;
 $mparser = tmediaparser::instance();
 $self->items['post'] = $mparser->addicon('icon/document-list.png');
 $self->items['categories'] = $mparser->addicon('icon/asterisk.png');

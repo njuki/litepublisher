@@ -32,5 +32,14 @@ return $files->geticon($this->items[$name]);
 return '';
 }
 
+public function filedeleted($idfile) {
+foreach ($this->items as $name => $id) {
+if ($id == $idfile) {
+$this->delete($name);
+return true;
+}
+}
+}
+
 }//class
 ?>

@@ -105,7 +105,8 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
   }
   
   public function select($where) {
-    return $this->query("SELECT * FROM $this->prefix$this->table WHERE  $where");
+if ($where != '') $where = 'where '. $where;
+    return $this->query("SELECT * FROM $this->prefix$this->table $where");
   }
   
   public function idselect($where) {

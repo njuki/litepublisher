@@ -67,22 +67,22 @@ public   static function instance() {
       return $filename;
     }
     
-    private function movetofolder($filename, $medium) {
+    private function movetofolder($filename, $media) {
       global $paths;
-      if (strbegin($filename, "$medium/") || strpos($filename, '/')) return $filename;
-      $dir = $paths['files'] . $medium;
+      if (strbegin($filename, "$media/") || strpos($filename, '/')) return $filename;
+      $dir = $paths['files'] . $media;
       if (!is_dir($dir)) {
         mkdir($dir, 0777);
         chmod($dir, 0777);
       }
       
-      if (rename($paths['files'] . $filename, $dir . DIRECTORY_SEPARATOR . $filename)) $filename = "$medium/$filename";
+      if (rename($paths['files'] . $filename, $dir . DIRECTORY_SEPARATOR . $filename)) $filename = "$media/$filename";
       return $filename;
     }
     
     public function Add($filename, $title) {
       $info = $this->getinfo($filename);
-      $info['filename'] = $this->movetofolder($info['filename'], $info['medium']);
+      $info['filename'] = $this->movetofolder($info['filename'], $info['media']);
       $item = $info + array(
       'filename' => $filename,
       'title' => $title,
@@ -109,8 +109,8 @@ public   static function instance() {
 
 public function addicon($filename) {
       $info = $this->getinfo($filename);
-if ($info['medium'] != 'image') $this->error('Invalid icon file format '. $info['medium']);
-$info['medium'] = 'icon';
+if ($info['media'] != 'image') $this->error('Invalid icon file format '. $info['media']);
+$info['media'] = 'icon';
       $info['filename'] = $this->movetofolder($info['filename'], 'icon');
       $item = $info + array(
       'filename' => $filename,
@@ -126,7 +126,7 @@ return $files->additem($item);
       return array(
       'parent' => 0,
       'preview' => 0,
-      'medium' => 'bin',
+      'media' => 'bin',
       'mime' => 'application/octet-stream',
       'filename' => $filename,
       'icon' => 0,
@@ -136,8 +136,7 @@ return $files->additem($item);
       'channels' => 0,
       'duration' => 0,
       'height' => 0,
-      'width' => 0,
-      'lang' => ''
+      'width' => 0
       );
     }
     
@@ -146,7 +145,7 @@ return $files->additem($item);
       $realfile = $paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename);
       $result = $this->getdefaultvalues($filename);
       if ($info = getimagesize($realfile)) {
-        $result['medium'] = 'image';
+        $result['media'] = 'image';
         $result['mime'] = $info['mime'];
         $result['width'] = $info[0];
         $result['height'] = $info[1];
@@ -154,7 +153,7 @@ return $files->additem($item);
       }
       
       if (preg_match('/\.(mp3|wav)$/', $filename)) {
-        $result['medium'] = 'audio';
+        $result['media'] = 'audio';
         $result['mime'] = preg_match('/\.mp3$/', $filename) ? 'audio/mpeg' : 'audio/x-wave';
         if ($info = $this->getaudioinfo($filename)) {
           $result['bitrate']  = $info['bitrate'];
@@ -169,7 +168,7 @@ return $files->additem($item);
     }
     
   public function createpreview(array $info) {
-  switch ($info['medium']) {
+  switch ($info['media']) {
     case 'image':
     return $this->getsnapshot($info['filename']);
     break;
@@ -270,7 +269,7 @@ public function getsnapshot($filename) {
   @chmod($paths['files'] . $destfilename, 0666);
   $info = getimagesize($paths['files']. $filename);
   $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
-  $result['medium'] = 'image';
+  $result['media'] = 'image';
   $result['mime'] = $info['mime'];
   $result['width'] = $info[0];
   $result['height'] = $info[1];
@@ -295,7 +294,7 @@ public function createaudioclip($filename) {
   @chmod($paths['files'] . $destfilename, 0666);
   $info = getimagesize($paths['files']. $filename);
   $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
-  $result['medium'] = 'audio';
+  $result['media'] = 'audio';
   $result['mime'] = $info['mime'];
   return $result;
 }

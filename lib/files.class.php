@@ -40,7 +40,7 @@ global $options;
     global $options;
     $item = $this->getitem($id);
     $icon = '';
-    if (($item['icon'] != 0) && ($item['medium'] != 'icon')) {
+    if (($item['icon'] != 0) && ($item['media'] != 'icon')) {
       $icon = $this->geticon($item['icon']);
     }
     return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
@@ -55,11 +55,10 @@ return sprintf('<img src="%s" />', $this->geturl($id));
     $realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
     $item = $item + array(
     'author' => $options->user,
-    'posted' => time(),
+    'posted' => sqldate(),
     'keywords' => '',
     'md5' => md5_file($realfile),
-    'size' => filesize($realfile),
-    'lang' => ''
+    'size' => filesize($realfile)
     );
     
     if (dbversion) {
@@ -146,7 +145,7 @@ $tml = $themes->content->post->files;
     $args = targs::instance();
     foreach ($items as $item) {
       $args->add($item);
-      $tmlitem= empty($tml->array[$item['medium']]) ? $tml->file : $tml->array[$item['medium']];$theme->files['file'];
+      $tmlitem= empty($tml->array[$item['media']]) ? $tml->file : $tml->array[$item['media']];$theme->files['file'];
       $result .= $theme->parsearg($tmlitem, $args);
     }
     return sprintf($tml, $result);
