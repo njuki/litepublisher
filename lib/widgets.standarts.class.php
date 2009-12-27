@@ -120,9 +120,9 @@ class tstdwidgets extends titems {
   public function getwidget($id, $sitebar) {
     global $options;
     if (!($name = $this->getname($id))) return '';
-$icons = ticons::instance();
-$icon = $icons->geticon($name);
-
+    $icons = ticons::instance();
+    $icon = $icons->geticon($name);
+    
     $result = '';
     $title = $this->items[$name]['title'];
     if ($this->items[$name]['ajax'] && !$this->disableajax) {

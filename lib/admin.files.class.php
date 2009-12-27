@@ -29,7 +29,7 @@ class tadminfiles extends tadminmenu {
         } else {
           $item = $files->getitem($id);
           $args = targs::instance();
-$args->add($item);
+          $args->add($item);
           $args->id = $id;
           $args->adminurl = $this->adminurl;
           $args->action = 'delete';
@@ -78,7 +78,7 @@ $args->add($item);
       $args->add($item);
       $result .= $html->tableitem ($args);
     }
-
+    
     $result .= $html->tablefooter;
     return str_replace("'", '"', $result);
   }

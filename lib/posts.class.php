@@ -99,9 +99,9 @@ class tposts extends titems {
   }
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
-$icons = ticons::instance();
-$post->icon = $icons->getid('post');
-
+    $icons = ticons::instance();
+    $post->icon = $icons->getid('post');
+    
     $post->modified = time();
     $post->pagescount = count($post->pages);
     $post->title = tcontentfilter::escape($post->title);

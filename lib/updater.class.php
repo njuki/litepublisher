@@ -14,134 +14,125 @@ class tupdater extends tevents {
   }
   
   protected function create() {
-    global $paths;
     parent::create();
-    $this->basename = 'updater';
-    $s = file_get_contents($paths['libinclude']. 'version.txt');
-    $this->version =  (int) trim($s);
+    $this->version =  self::getversion();
   }
   
   public static function GetVersion() {
     global $paths;
-    $s = file_get_contents($paths['libinclude']. 'version.txt');
-    return substr($s, 0, 1) . '.' . substr($s, 1);
+return trim(file_get_contents($paths['libinclude']. 'version.txt'));
   }
   
-  public function Update() {
+  public function update() {
     global $options, $paths;
     $log = false;
-    if ($log) TFiler::log("begin update", 'update');
+    if ($log) tfiler::log("begin update", 'update');
     tfiler::deletemask($paths['languages'] . '*.php');
-    $s = file_get_contents($paths['libinclude']. 'version.txt');
-    $this->version =  (int) trim($s);
-  $current = ((int) $options->version{0}) * 100 + (int)substr($options->version, 2);
-    if ($log) TFiler::log("update started from $current to $this->version", 'update');
-    for ($v = $current + 1; $v<= $this->version; $v++) {
-      if ($log) TFiler::log("$v selected to update", 'update');
-      $dir = $v >= 264 ? $paths['lib'] . 'update' . DIRECTORY_SEPARATOR : $paths['libinclude'];
-      $filename = $dir . "update$v.php";
+    $this->version =  self::getversion();
+    if ($log) tfiler::log("update started from $options->version to $this->version", 'update');
+      $dir = $paths['lib'] . 'update' . DIRECTORY_SEPARATOR;
+$v = $options->version + 0.01;
+while ( $v<= $this->version) {
+      if ($log) tfiler::log("$v selected to update", 'update');
+      $filename = $dir . "update.$v.php";
       if (@file_exists($filename)) {
         require_once($filename);
-        if ($log) TFiler::log("$filename is required file", 'update');
-        $func = "Update$v";
+        if ($log) tfiler::log("$filename is required file", 'update');
+        $func = 'update' . str_replace('.', '', $v);
         if (function_exists($func)) {
           $func();
-          if ($log) TFiler::log("$func is called", 'update');
+          if ($log) tfiler::log("$func is called", 'update');
         }
       }
+$v = $v + 0.01;
     }
     
-    $options->version = substr((string)$this->version, 0, 1) . '.' . substr((string)$this->version, 1);
+    $options->version = $v;
     
     $urlmap = turlmap::instance();
     $urlmap->clearcache();
-    if ($log) TFiler::log("update finished", 'update');
+    if ($log) tfiler::log("update finished", 'update');
   }
   
-  public function AutoUpdate() {
-    $lang = &TLocal::$data['service'];
-    $this->CreateBackup();
-    $result = $this->DownloadLatest();
+  public function autoupdate() {
+    $lang = tlocal::instance('service');
+    $this->createbackup();
+    $result = $this->download($this->latest);
     if ($result === true) {
-      $result = $lang['successdownloadlatest'];
-      $this->Update();
-      $result .= $lang['successupdated'];
+      $result = $lang->successdownload;
+      $this->update($result);
+      $result .= $lang->successupdated;
     }
     return $result;
   }
   
-  public function IsLatest() {
-    global $options, $paths;
-    $current = (int) str_replace('.', '', $options->version);
+  public function islatest() {
+    global $options;
+if ($latest = $this->getlatest()) {
+return $options->version >= $latest;
+}
+    return 'error';
+}
+
+public function getlatest() {
+    global $paths;
     include_once($paths['libinclude'] . 'utils.php');
     if (($s = GetWebPage('http://blogolet.ru/service/version.txt'))  ||
     ($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') )) {
-      return $current >= (int)$s;
+return $s;
     }
-    return 'error';
+return false;
   }
   
-  public function CreateBackup(){
+  public function createbackup(){
     global $paths, $domain;
-    $admin = &TRemoteAdmin::instance();
-    $s = $admin->GetPartialBackup(true, true, true);
+$backuper = tbackuper::instance();
+    $s = $backuper->getpartial(true, true, true);
     $date = date('Y-m-d');
-    $filename = $paths['backup'] . "$domain-$date.zip";
+    $filename = $paths['backup'] . "$domain-$date.'.tar.gz";
     @file_put_contents($filename, $s);
     @chmod($filename, 0666);
   }
   
-  public function DownloadLatest() {
+  public function download($version) {
     global $paths;
-    $lang = &TLocal::$data['service'];
+    $lang = tlocal::instance('service');
     //test write
     if (!@file_put_contents($paths['lib'] . 'index.htm', ' ')) {
-      return sprintf($lang['errorwrite'], $paths['lib']);
+      return sprintf($lang->errorwrite, $paths['lib']);
     }
     
-    include_once($paths['libinclude'] . 'utils.php');
-    if (!($s = GetWebPage('http://litepublisher.googlecode.com/files/litepublisher.zip')) &&
-    !($s = GetWebPage('http://blogolet.ru/service/blogolet.zip') )) {
-      return $lang['erordownloadlatest'];
+    require_once($paths['libinclude'] . 'utils.php');
+    if (!($s = GetWebPage("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) &&
+    !($s = GetWebPage("http://blogolet.ru/service/litepublisher.$version.tar.gz") )) {
+      return $lang->erordownload;
     }
     
-    require_once($paths['libinclude'] . 'strunzip.lib.php');
-    $unzip = new StrSimpleUnzip ();
-    $unzip->ReadData($s);
-    foreach ($unzip->Entries as  $entry) {
-      if ($entry->Error != 0) {
-        echo $entry->Path, $entry->Name, " error: ", $entry->ErrorMsg, "<br>\n";
-        if ($entry->Error== 4) echo sprintf("%u = crc32<br>\n", crc32($entry->Data));
-        continue;
-      }
-      $dir = $entry->Path;
-      $root = 'lib';
-      if (strncmp($root, $dir, strlen($root)) == 0) {
-        $dir = substr($dir, strlen($root));
-      } else {
-        $root = 'plugins';
-        if (strncmp($root, $dir, strlen($root)) == 0) {
-          $dir = substr($dir, strlen($root));
-        } else {
-          continue;
-        }
-      }
-      $dir = trim($dir, '/');
-      if (!empty($dir)) $dir .= '/';
-      $dir = str_replace('/', DIRECTORY_SEPARATOR  , $dir);
-      $dir = $paths[$root] . $dir;
-      if (!@is_dir($dir)) {
-        @mkdir($dir, 0777);
-        @chmod($dir, 0777);
-      }
-      $filename = $dir . $entry->Name;
-      if (false === @file_put_contents($filename, $entry->Data)) {
-        return sprintf($lang['errorwritefile'], $filename);
+    require_once($paths['libinclude'] . 'tar.class.php');
+$tar = new tar();
+    $tar->loadfromstring($s);
+    foreach ($tar->files as $file) {
+if (      $filename = $this->fixfilename($file['name'])) {
+      if (!tfiler::forcedir(dirname($filename))) return $this->error("error create folder " . dirname($filename));
+      if (false === @file_put_contents($filename, $file['file'])) {
+        return sprintf($lang->errorwritefile, $filename);
       }
       @chmod($filename, 0666);
+}
     }
     return true;
   }
+
+private function fixfilename($filename, $root) {
+global $paths;
+foreach (array('lib', 'plugins') as $dir) {
+if (strbegin($filename, $dir . '/')) {
+$filename = substr($filename, strlen($dir) + 1);
+return $paths[$dir] . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+}
+}
+return false;
+}
   
 }//class
 ?>

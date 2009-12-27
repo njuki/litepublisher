@@ -8,7 +8,7 @@
 
 function tabstractcronInstall($self) {
   global $paths, $options;
-if (get_class($self) == 'tabstractcron') return;
+  if (get_class($self) == 'tabstractcron') return;
   $dir = $paths['data'] . 'cron';
   @mkdir($dir, 0777);
   @chmod($dir, 0777);

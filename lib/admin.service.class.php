@@ -25,7 +25,7 @@ class tadminservice extends tadminmenu {
       $args->commentscount = $classes->commentmanager->count;
       $result .= $html->info($args);
       $updater = tupdater::instance();
-      $islatest= $updater->IsLatest();
+      $islatest= $updater->islatest();
       if ($islatest === true) {
         $result .= $html->h3->islatest;
       } elseif ($islatest === false) {

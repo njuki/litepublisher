@@ -27,35 +27,35 @@ class tadminmoderator extends tadminmenu {
       
       if (isset($_GET['action'])) {
         $id = $this->idget();
-$comments = tcomments::instance();
-if (!$comments->itemexists($id)) return $this->notfound;
-$action = $_GET['action'];
-switch($action) {
-case 'delete':
-if($this->confirmed) {
-      $this->manager->delete($id);
-} else {
-return $this->confirmdelete($id);
-}
-      break;
-      
-      case 'hold':
-      $this->manager->setstatus(0, $id, 'hold');
-      break;
-      
-      case 'approve':
-      $this->manager->setstatus($id, 'approved');
-      break;
-      
-      case 'edit':
-      $result .= $this->editcomment($id);
-      break;
-      
-      case 'reply':
-      $result .= $this->reply($id);
-      break;
-    }
-
+        $comments = tcomments::instance();
+        if (!$comments->itemexists($id)) return $this->notfound;
+        $action = $_GET['action'];
+        switch($action) {
+          case 'delete':
+          if($this->confirmed) {
+            $this->manager->delete($id);
+          } else {
+            return $this->confirmdelete($id);
+          }
+          break;
+          
+          case 'hold':
+          $this->manager->setstatus(0, $id, 'hold');
+          break;
+          
+          case 'approve':
+          $this->manager->setstatus($id, 'approved');
+          break;
+          
+          case 'edit':
+          $result .= $this->editcomment($id);
+          break;
+          
+          case 'reply':
+          $result .= $this->reply($id);
+          break;
+        }
+        
         $result .= $this->getactionresult($id, $action);
       }
       
@@ -107,29 +107,29 @@ return $this->confirmdelete($id);
   
   private function getlist($kind) {
     global $options, $urlmap, $comment;
-$result = '';
-$comments = tcomments::instance(0);
+    $result = '';
+    $comments = tcomments::instance(0);
     $perpage = 20;
     // подсчитать количество комментариев во всех случаях
-$status = $kind == 'hold' ? 'hold' : 'approved';
-      $total = $comments->db->getcount("status = '$status'");
+    $status = $kind == 'hold' ? 'hold' : 'approved';
+    $total = $comments->db->getcount("status = '$status'");
     $from = max(0, $total - $urlmap->page * $perpage);
-      $list = $comments->getitems("status = '$status'",  $from, $perpage);
+    $list = $comments->getitems("status = '$status'",  $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $result .= $html->checkallscript;
     $result .= $html->tableheader();
-$args = targs::instance();
+    $args = targs::instance();
     $args->adminurl = $this->adminurl;
-$comment = new tcomment(null);
+    $comment = new tcomment(null);
     foreach ($list as $data) {
-        $comment->data = $data;
+      $comment->data = $data;
       $args->id = $comment->id;
       $args->excerpt = tcontentfilter::getexcerpt($comment->content, 120);
       $args->onhold = $comment->status == 'hold';
       $args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
       $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
-     $result .=$html->itemlist($args);
+      $result .=$html->itemlist($args);
     }
     $result .= $html->tablefooter();
     $result = $this->FixCheckall($result);
@@ -139,7 +139,7 @@ $comment = new tcomment(null);
     return $result;
   }
   
-
+  
   private function getactionresult($id, $action) {
     $result = $this->html->h2->successmoderated;
     switch ($action) {
