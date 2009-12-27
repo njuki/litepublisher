@@ -153,7 +153,7 @@ class ttemplate extends tevents {
     if ($this->contextHasProp('icon')) {
       $icon = $this->context->icon;
       if ($icon > 0) {
-$files = tfiles::instance();
+        $files = tfiles::instance();
         $result = $files->geturl($icon);
       }
     }

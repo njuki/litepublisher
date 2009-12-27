@@ -31,7 +31,7 @@ class tfiles extends titems {
   }
   
   public function geturl($id) {
-global $options;
+    global $options;
     $item = $this->getitem($id);
     return $options->files . '/files/' . $item['filename'];
   }
@@ -45,10 +45,10 @@ global $options;
     }
     return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
-
-public function geticon($id, $title) {
-return sprintf('<img src="%s" />', $this->geturl($id));
-}
+  
+  public function geticon($id, $title) {
+    return sprintf('<img src="%s" />', $this->geturl($id));
+  }
   
   public function additem(array $item) {
     global $options, $paths;
@@ -141,7 +141,7 @@ return sprintf('<img src="%s" />', $this->geturl($id));
     if (count($items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-$tml = $themes->content->post->files;
+    $tml = $themes->content->post->files;
     $args = targs::instance();
     foreach ($items as $item) {
       $args->add($item);

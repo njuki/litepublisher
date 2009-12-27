@@ -186,12 +186,12 @@ class tmenus extends TItems {
   }
   
   private function getwidgetitem($tml, $item, $subnodes) {
-$args = targs::instance();
+    $args = targs::instance();
     if ($subnodes != '') $subnodes = "<ul>\n$subnodes</ul>\n";
-$args->add($item);
-$args->count = $subnodes;
-$args->icon = '';
-$theme = ttheme::instance();
+    $args->add($item);
+    $args->count = $subnodes;
+    $args->icon = '';
+    $theme = ttheme::instance();
     return $theme->parsearg($tml, $args);
   }
   

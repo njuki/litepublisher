@@ -149,7 +149,7 @@ class tpost extends titem implements  itemplate {
       if ($item['icon'] == 0) {
         $args->icon = '';
       } else {
-$files = tfiles::instance();
+        $files = tfiles::instance();
         $args->icon = $files->geticon($item['icon']);
       }
       $list[] = $theme->parsearg($tml->item,  $args);
@@ -238,17 +238,17 @@ $files = tfiles::instance();
   
   public function geticonurl() {
     if ($this->icon == 0) return '';
-$files = tfiles::instance();
+    $files = tfiles::instance();
     return $files->geturl($this->icon);
   }
   
   public function geticonlink() {
     if ($this->icon == 0) return '';
-$files = tfiles::instance();
+    $files = tfiles::instance();
     return $files->geticon($this->icon);
   }
   
-    public function getpreviews() {
+  public function getpreviews() {
     if (count($this->files) == 0) return '';
     $files = tfiles::instance();
     return $files->getpreviews($this->files);
