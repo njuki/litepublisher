@@ -1,7 +1,6 @@
 <?php
   if (version_compare(PHP_VERSION, '5.2', '<')) {
-   echo 'Lite Publisher requires PHP 5.2 or later. You are using PHP ' . PHP_VERSION ;
-   exit;
+die('Lite Publisher requires PHP 5.2 or later. You are using PHP ' . PHP_VERSION) ;
   }
 
 ob_start();
@@ -24,16 +23,17 @@ $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
 $microtime = microtime();
 require_once($paths['lib'] . 'kernel.php');
-$classes = TClasses::instance();
-$options = TOptions::instance();
+$classes = tclasses::instance();
+$options = toptions::instance();
+if (!$options->installed) require_once($paths['lib'] .'install' . DIRECTORY_SEPARATOR . 'install.php');
 
-if (!$options->installed) require_once($paths['libinclude'] . 'install.php');
+if (dbversion) $db = new tdatabase();
 //end config
 
 if (!isset($mode)) {
 $urlmap = turlmap::instance();
 $urlmap->Request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
-
+$options->savemodified();
 ob_end_flush ();
 ?>
