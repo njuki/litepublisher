@@ -133,7 +133,8 @@ $post.content
 <!--count-->
 <h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3> 
 <!--/count-->
-<!--hold--><h3><em>$lang->hold</em></h3><!--/hold-->
+<!--hold--><h3><em>$lang.hold</em></h3><!--/hold-->
+   <a name="comments"></a>
 	<ol class="commentlist" start="%2$d">
 <!--comment-->
 		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
