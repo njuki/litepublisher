@@ -174,6 +174,11 @@ public function save() {}
   public function idget() {
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
   }
+
+public function getaction() {
+if (isset($_REQUEST['action']))  return $_REQUEST['action'];
+return false;
+}
   
   public function gethtml($name = '') {
     $result = THtmlResource ::instance();
