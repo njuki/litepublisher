@@ -23,28 +23,26 @@ class tadminmoderator extends tadminmenu {
     switch ($this->name) {
       case 'comments':
       case 'hold':
-      case 'pingback':
       
-      if (isset($_GET['action'])) {
+      if ($action = $this->action) {
         $id = $this->idget();
         $comments = tcomments::instance();
         if (!$comments->itemexists($id)) return $this->notfound;
-        $action = $_GET['action'];
         switch($action) {
           case 'delete':
-          if($this->confirmed) {
+          if(!$this->confirmed) return $this->confirmdelete($id);
             $this->manager->delete($id);
-          } else {
-            return $this->confirmdelete($id);
-          }
+    $result .= $this->html->h2->successmoderated;
           break;
           
           case 'hold':
           $this->manager->setstatus(0, $id, 'hold');
+        $result .= $this->moderated($id);
           break;
           
           case 'approve':
           $this->manager->setstatus($id, 'approved');
+        $result .= $this->moderated($id);
           break;
           
           case 'edit':
@@ -55,12 +53,13 @@ class tadminmoderator extends tadminmenu {
           $result .= $this->reply($id);
           break;
         }
-        
-        $result .= $this->getactionresult($id, $action);
       }
       
       $result .= $this->getlist($this->name);
       return $result;
+
+case 'pingback':
+break;
       
       case 'authors':
       if (isset($_GET['action'])) {
@@ -89,7 +88,11 @@ class tadminmoderator extends tadminmenu {
   private function reply($id) {
     global $comment;
     $comment = new tcomment($id);
-    return $this->html->replyform();
+$args = targs::instance();
+    $args->adminurl =$this->adminurl . "=$id&action";
+$result = $this->html->info($args);
+$result .= $this->html->replyform();
+return $result;
   }
   
   private function getwherekind($kind) {
@@ -139,25 +142,18 @@ class tadminmoderator extends tadminmenu {
     return $result;
   }
   
-  
-  private function getactionresult($id, $action) {
+  private function moderated($id) {
     $result = $this->html->h2->successmoderated;
-    switch ($action) {
-      case 'hold':
-      case 'approve':
-      case 'edit':
-      $result .= $this->getinfo($id);
-      break;
-    }
+$result .= $this->getinfo($id);
     return $result;
   }
   
   private function getinfo($id) {
     global $comment;
-    $comment = new tcomment($id);
+if (!isset($comment)) $comment = new tcomment($id);
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
-    return $this->html->info();
+    return $this->html->info($args);
   }
   
   private function confirmdelete($id) {
@@ -365,10 +361,13 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function editcomment($id) {
-    $comment = $this->manager->GetComment($id);
+    $comment = new tcomment($id);
     $args = targs::instance();
     $args->content = $comment->content;
-    return $this->html->editform($args);
+    $args->adminurl =$this->adminurl . "=$id&action";
+$result = $this->html->info($args);
+$result .= $this->html->editform($args);
+return $result;
   }
   
 }//class
