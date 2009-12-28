@@ -133,6 +133,7 @@ class tabstractcron extends tevents {
     $s = file_get_contents($filename);
     @unlink($filename);
     TMailer::SendAttachmentToAdmin("[error] $options->name", "See attachment", 'errors.txt', $s);
+sleep(2);
   }
   
   public function log($s) {

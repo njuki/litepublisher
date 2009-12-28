@@ -8,7 +8,7 @@
 
 class tpingbacks extends tabstractpingbacks implements ipingbacks {
   
-  public static function instance($pid) {
+  public static function instance($pid = 0) {
     $result = getinstance(__class__);
     $result->pid = $pid;
     return $result;

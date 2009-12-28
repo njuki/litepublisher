@@ -61,6 +61,7 @@ class tcrontask extends tdata {
   
   public function execute() {
     global $options;
+sleep(2);
 $this->owner->log("task started:\n{$this->class}->{$this->func}");
     
     $func = $this->func;
@@ -109,13 +110,11 @@ class tcron extends tabstractcron {
     $task = new TCronTask($this);
     $processed = array();
     while ($filelist = $this->GetFileList($processed)) {
+sleep(2);
       //var_dump($filelist);
       foreach ($filelist as $filename) {
         $processed[] = $filename;
         $task->filename = $filename;
-        //var_dump($task->data);
-        //echo $time - $task->time;
-        //echo date("r\n", $task->time);
         if  ($time >= $task->time)  $task->Execute();
       }
     }
@@ -125,6 +124,7 @@ class tcron extends tabstractcron {
   private function GetFileList(&$processed) {
     $result = array();
     foreach (glob($this->dir . '*.php') as $filename) {
+echo "$filename<br>";
       if (!preg_match('/\d+\.php$/', $filename)) continue;
       if (in_array($filename, $processed)) continue;
       $result[] = $filename;
