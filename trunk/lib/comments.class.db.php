@@ -187,7 +187,6 @@ class tcomment extends tdata {
   }
   
   public function geturl() {
-var_dump($this->data);
     $post = tpost::instance($this->post);
     return $post->link . "#comment-$this->id";
   }
