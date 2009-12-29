@@ -163,7 +163,7 @@ class tcomment extends tdata {
   
   public function getdate() {
     $theme = ttheme::instance();
-    return TLocal::date($this->posted, $theme->comment->dateformat);
+    return tlocal::date($this->posted, $theme->comment->dateformat);
   }
   
   public function Getlocalstatus() {
