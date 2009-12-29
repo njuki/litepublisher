@@ -197,7 +197,7 @@ class tpinger extends tevents {
       $client->timeout = 3;
       $client->useragent .= ' -- Lite Publisher/'.$options->version;
       $client->debug = false;
-      if ( !$client->query('weblogUpdates.extendedPing', $options->name, $home, $url, $options->rss) )
+      if ( !$client->query('weblogUpdates.extendedPing', $options->name, $home, $url, "$options->url/rss/") )
       $client->query('weblogUpdates.ping', $options->name, $url);
     }
   }

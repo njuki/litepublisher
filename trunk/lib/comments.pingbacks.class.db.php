@@ -21,13 +21,17 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
   }
   
   public function doadd($url, $title) {
-    return $this->db->add(array(
+$item = array(
     'url' => $url,
     'title' => $title,
     'post' => $this->pid,
     'posted' =>sqldate(),
     'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR'])
-    ));
+    );
+$id =     $this->db->add($item);
+$item['id'] = $id;
+$this->items[$id] = $item;
+return $id;
   }
   
   public function setstatus($id, $approve) {

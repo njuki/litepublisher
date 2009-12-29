@@ -118,12 +118,11 @@ class tcommentmanager extends tevents {
     global $options, $comment;
     if (!$this->sendnotification) return;
     $comment = tcomments::getcomment($idpost, $id);
-    $html = THtmlResource::instance();
-    $html->section = 'comments';
     $args = targs::instance();
-    $args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&&action";
-    $subject = $html->subject();
-    $body = $html->body($args);
+    $args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&post=$idpost&action";
+$mailtemplate = tmailtemplate::instance('comments');
+    $subject = $mailtemplate->subject($args);
+    $body = $mailtemplate->body($args);
     tmailer::sendmail($options->name, $options->fromemail,
     'admin', $options->email,  $subject, $body);
   }

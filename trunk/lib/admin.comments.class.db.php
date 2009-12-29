@@ -81,14 +81,13 @@ $pingbacks->setstatus($id, true);
           break;
           
           case 'edit':
-          $result .= $this->editcomment($id);
+          $result .= $this->editpingback($id);
           break;
        }
       }
 $result .= $this->getpingbackslist();
 return $result;
 
-      
       case 'authors':
       if ($action = $this->action) {
         $id = $this->idget();
@@ -174,23 +173,22 @@ $pingbacks = tpingbacks::instance();
     $perpage = 20;
     $total = $pingbacks->getcount();
     $from = max(0, $total - $urlmap->page * $perpage);
-    $list = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
-    $a = array();
-    $pingback = new tarray2props($a);
-
+    $items = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
     $html = $this->html;
-    $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
+    $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
     $result .= $html->checkallscript;
-    $result .= $html->tableheader();
+    $result .= $html->pingbackheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    foreach ($list as $item) {
-      $pingback->array = $item;
-      $args->id = $comment->id;
-      $args->onhold = $comment->status == 'hold';
-      $args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
-      $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
-      $result .=$html->itemlist($args);
+    foreach ($items as $item) {
+      $args->add($item);
+      $args->website = sprintf("<a href='%s'>%s</a>", $item['url']);
+$args->localstatus = tlocal::$data['commentstatus'][$item['status']];
+$args->date = tlocal::date(strtotime($pingback->posted));
+$post = tpost::instance($item['post']);
+$args->posttitle =$post->title;
+$args->postlink = $post->link;
+      $result .=$html->pingbackitem($args);
     }
     $result .= $html->tablefooter();
     $result = $this->FixCheckall($result);
@@ -199,7 +197,14 @@ $pingbacks = tpingbacks::instance();
     $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
     return $result;
   }
-  
+
+  private function editpingback($id) {
+$pingbacks = tpingbacks::instance();
+    $args = targs::instance();
+$args->add($pingbacks->getitem($id));
+return $this->html->pingbackedit($args);
+  }
+
   private function moderated($id) {
     $result = $this->html->h2->successmoderated;
 $result .= $this->getinfo($id);
