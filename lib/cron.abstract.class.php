@@ -102,9 +102,9 @@ class tabstractcron extends tevents {
   }
   
   private function pop() {
-    global $urlmap;
     $filename = $this->path .'cronchain.php';
     if(!tfiler::unserialize($filename, $list))  return;
+$urlmap = turlmap::instance();
     if (isset($list[$urlmap->host]))  unset($list[$urlmap->host]);
     $item = array_splice($list, 0, 1);
     tfiler::serialize($filename, $list);

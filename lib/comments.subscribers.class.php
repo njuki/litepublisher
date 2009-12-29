@@ -83,14 +83,14 @@ class tsubscribers extends titemsposts {
     }
     
     $cron = tcron::instance();
-    $cron->add('single', get_class($this),  'cronsendmail', array($id, $idpost));
+    $cron->add('single', get_class($this),  'cronsendmail', array((int) $id, (int) $idpost));
   }
   
   public function cronsendmail($arg) {
     global $options, $classes, $comment;
     $id = $arg[0];
     $pid = $arg[1];
-    $comments = tcomments($pid);
+    $comments = tcomments::instance($pid);
     try {
       $item = $comments->getitem($id);
     } catch (Exception $e) {

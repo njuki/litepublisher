@@ -24,9 +24,8 @@ class tcron extends tabstractcron {
     while ($item = $this->db->getassoc("date <= now() order by date asc limit 1")) {
 sleep(2);
       extract($item);
-      $arg = unserialize($arg);
-  $this->log("task started:\n{$class}->{$func}");
-      
+  $this->log("task started:\n{$class}->{$func}($arg)");
+      $arg = unserialize($arg);      
       if ($class == '' ) {
         if (function_exists($func)) {
           try {
