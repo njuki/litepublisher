@@ -16,7 +16,6 @@ class tpost extends titem implements  itemplate {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
   }
   
-  
   protected function create() {
     global $options;
     $this->table = 'posts';
@@ -51,6 +50,14 @@ class tpost extends titem implements  itemplate {
     'pagescount' => 0,
     'pages' => array()
     );
+  }
+
+public function getdbversion() {
+return dbversion;
+}
+
+  protected function SaveToDB() {
+    TPostTransform ::instance($this)->save();
   }
   
   public function getcomments() {
@@ -432,10 +439,6 @@ class tpost extends titem implements  itemplate {
       return true;
     }
     return false;
-  }
-  
-  protected function SaveToDB() {
-    TPostTransform ::instance($this)->save();
   }
   
   public function clearcache() {
