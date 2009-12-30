@@ -93,8 +93,6 @@ class tposteditor extends tadminmenu {
     global $options;
     $this->basename = 'editor';
     $html = $this->html;
-    $mode = $this->getmode();
-    
     $cats = array();
     $cat = 'category-';
     foreach ($_POST as $key => $value) {
@@ -110,7 +108,7 @@ class tposteditor extends tadminmenu {
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
-    switch ($mode) {
+    switch ($this->getmode()) {
       case 'short':
       $post->content = $raw;
       break;

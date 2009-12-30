@@ -119,7 +119,7 @@ $func{0} = strtoupper($func{0});
   public function save() {
     global $paths;
     if (self::$GlobalLock || ($this->lockcount > 0)) return;
-    if (dbversion == 'full') {
+    if ($this->dbversion) {
       $this->SaveToDB();
     } else {
       SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
@@ -159,7 +159,11 @@ $func{0} = strtoupper($func{0});
   public function Getclass() {
     return get_class($this);
   }
-  
+
+public function getdbversion() {
+return dbversion == 'full';
+}
+
   public function getdb($table = '') {
     global $db;
     $table =$table != '' ? $table : $this->table;

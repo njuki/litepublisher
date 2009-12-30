@@ -65,7 +65,8 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
       'started' => microtime(),
       'finished' => microtime()
       );
-    }
+}
+
     if (is_object ($this->result))  {
       $this->result->closeCursor();
     }
