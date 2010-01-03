@@ -167,7 +167,7 @@ return $result;
   }
 
   private function getpingbackslist() {
-    global $options, $urlmap;
+    global $options, $urlmap, $post;
     $result = '';
 $pingbacks = tpingbacks::instance();
     $perpage = 20;
@@ -182,9 +182,12 @@ $pingbacks = tpingbacks::instance();
     $args->adminurl = $this->adminurl;
     foreach ($items as $item) {
       $args->add($item);
+
+$args->idpost = $item['post'];
+unset($args->data['$post']);
       $args->website = sprintf("<a href='%s'>%s</a>", $item['url']);
 $args->localstatus = tlocal::$data['commentstatus'][$item['status']];
-$args->date = tlocal::date(strtotime($pingback->posted));
+$args->date = tlocal::date(strtotime($item['posted']));
 $post = tpost::instance($item['post']);
 $args->posttitle =$post->title;
 $args->postlink = $post->link;
@@ -351,9 +354,26 @@ $manager->setstatus(0, $id, $status);
       break;
 
 case 'pingback':
-break;
-      
-      case 'authors':
+$pingbacks = tpingbacks::instance();
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
+extract($_POST);
+$pingbacks->edit($this->idget(), $title, $url);
+} else {
+$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
+        foreach ($_POST as $id => $value) {
+          if (!is_numeric($id))  continue;
+$id = (int) $id;
+if ($status == 'delete') {
+$pingbacks->delete($id);
+} else {
+$pingbacks->setstatus($id, $status == 'approve');
+}
+        }
+}
+        $result = $this->html->h2->successmoderated;
+      break;
+
+           case 'authors':
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
         $comusers = tcomusers::instance();

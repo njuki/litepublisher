@@ -21,7 +21,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return new IXR_Error(0, 'Is there no link to us?');
     }
     
-    $url = substr($to, strlen($Options->url) );
+    $url = substr($to, strlen($options->url) );
     $urlmap = turlmap::instance();
     if (!($item = $urlmap->finditem($url))) {
       return new IXR_Error(0, 'Is there no link to us?');
