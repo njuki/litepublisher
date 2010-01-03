@@ -34,6 +34,10 @@ $this->items[$id] = $item;
 return $id;
   }
 
+
+public function edit($id, $title, $url) {
+$this->db->updateassoc(compact('id', 'title', 'url'));
+}
   public function exists($url) {
 return $this->db->finditem('url =' . dbquote($url));
 }
@@ -41,7 +45,7 @@ return $this->db->finditem('url =' . dbquote($url));
   public function setstatus($id, $approve) {
     $status = $approve ? 'approved' : 'hold';
     $item = $this->getitem($id);
-    if ($item['status'] == $approved) return false;
+    if ($item['status'] == $status) return false;
     $db = $this->db;
     $db->setvalue($id, 'status', $status);
     $approved = $db->getcount("post = $this->pid and status = 'approved'");
