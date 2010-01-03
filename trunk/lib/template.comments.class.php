@@ -27,8 +27,7 @@ public function save() {}
   public function getcommentslink(tpost $post) {
     global $options;
     $count = $this->getcount($post->commentscount);
-    $url = $post->haspages ? rtrim($post->url, '/') . "/page/$post->countpages/" : $post->url;
-    return "<a href=\"$options->url$url#comments\">$count</a>";
+   return "<a href=\"$options->url$post->lastcommenturl#comments\">$count</a>";
   }
   
   public function getcomments($idpost) {

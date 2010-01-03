@@ -313,45 +313,46 @@ $args->add($comusers->getitem($id));
   
   public function processform() {
     global $options, $urlmap;
-    $manager = $this->manager;
+$comments = tcomments::instance();
     switch ($this->name) {
       case 'comments':
       case 'hold':
-      case 'pingback':
-      
-      $action = $_REQEST['action'];
-      switch ($action) {
+
+if (isset($_REQUEST['action'])) {
+      switch ($_REQUEST['action']) {
         case 'reply':
         $email = $this->getadminemail();
         $site = $options->url . $options->home;
         $profile = tprofile::instance();
-        $comusers = tccomusers ::instance();
-        $authorid = $comusers->add($profile->nick, $email, $site);
+        $this->manager->add($idpost, $profile->nick, $email, $site, $_POST['content']);
         $post = tpost::instance( (int) $_POST['pid']);
-        $manager->addcomment($post->id, $authorid, $_POST['content']);
-        $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-        @header("Location: $options->url$posturl");
+        @header("Location: $options->url$post->lastcommenturl");
         exit();
         
         case 'edit':
-        $comment = $manager->getcomment($this->idget());
+        $comment = $comments->getcomment($this->idget);
         $comment->content = $_POST['content'];
         break;
-        
-        default:
-        $manager->Lock();
+}
+} else {
+$items = array();
         foreach ($_POST as $id => $value) {
           if (!is_numeric($id))  continue;
-          $id = (int) $id;
-          $this->doaction($id, $action);
+$items[] = (int) $id;
         }
-        $manager->unlock();
+if (count($items) > 0) {
+$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
+$comments->db->update("status = '$status'", sprintf('id in (%s)', implode(',', $items)));
+}
+}
         $result = $this->html->h2->successmoderated;
-      }
       break;
+
+case 'pingback':
+break;
       
       case 'authors':
-      if (isset($_REQUEST['action'])  && ($_REQUEST['action'] == 'edit')) {
+      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
         $comusers = tcomusers::instance();
         if (!$comusers->itemexists($id)) return $this->notfound;

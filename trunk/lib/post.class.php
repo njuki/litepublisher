@@ -411,6 +411,11 @@ return dbversion;
     if (!$options->commentpages) return 1;
     return ceil($this->commentscount / $options->commentsperpage);
   }
+
+public function getlastcommenturl() {
+$c = $this->commentpages;
+return $c > 1 ? rtrim($this->url, '/') . "/page/$c/" : $this->url;
+}
   
   public function setcommentsenabled($value) {
     if ($value != $this->commentsenabled) {
