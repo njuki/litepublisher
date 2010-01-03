@@ -33,6 +33,10 @@ $item['id'] = $id;
 $this->items[$id] = $item;
 return $id;
   }
+
+  public function exists($url) {
+return $this->db->finditem('url =' . dbquote($url));
+}
   
   public function setstatus($id, $approve) {
     $status = $approve ? 'approved' : 'hold';

@@ -25,7 +25,7 @@ class tcomments extends titems {
   
   public function add($idauthor, $content, $status) {
     $filter = TContentFilter::instance();
-    $filtered = $filter->GetCommentContent($content);
+    $filtered = $filter->filtercomment($content);
     
     $item = array(
     'post' => $this->pid,

@@ -31,7 +31,7 @@ class tadminmoderator extends tadminmenu {
         switch($action) {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
-            $this->manager->delete($id);
+            $this->manager->delete($id, 0);
     $result .= $this->html->h2->successmoderated;
           break;
           
@@ -41,7 +41,7 @@ class tadminmoderator extends tadminmenu {
           break;
           
           case 'approve':
-          $this->manager->setstatus($id, 'approved');
+          $this->manager->setstatus(0, $id, 'approved');
         $result .= $this->moderated($id);
           break;
           
@@ -72,12 +72,12 @@ $pingbacks->delete($id);
           
           case 'hold':
 $pingbacks->setstatus($id, false);
-        $result .= $this->moderated($id);
+    $result .= $this->html->h2->successmoderated;
           break;
           
           case 'approve':
 $pingbacks->setstatus($id, true);
-        $result .= $this->moderated($id);
+    $result .= $this->html->h2->successmoderated;
           break;
           
           case 'edit':
