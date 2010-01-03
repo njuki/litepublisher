@@ -335,15 +335,17 @@ if (isset($_REQUEST['action'])) {
         break;
 }
 } else {
-$items = array();
+$manager = $this->manager;
+$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $id => $value) {
           if (!is_numeric($id))  continue;
-$items[] = (int) $id;
-        }
-if (count($items) > 0) {
-$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
-$comments->db->update("status = '$status'", sprintf('id in (%s)', implode(',', $items)));
+$id = (int) $id;
+if ($status == 'delete') {
+$manager->delete($id);
+} else {
+$manager->setstatus(0, $id, $status);
 }
+        }
 }
         $result = $this->html->h2->successmoderated;
       break;

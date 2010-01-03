@@ -37,6 +37,7 @@ public function getdescription() {}
     if ($urlmap->page == 1) $result .= $this->text;
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
+
     $theme = ttheme::instance();
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
