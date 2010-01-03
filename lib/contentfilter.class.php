@@ -15,15 +15,14 @@ class tcontentfilter extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'contentfilter';
-    $this->addevents('OnComment', 'OnPost', 'OnRSS', 'OnExcerpt', 'BeforeSetPostContent', 'AfterSetPostContent');
+    $this->addevents('oncomment', 'onpost', 'onrss', 'onexcerpt', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter');
     $this->data['automore'] = true;
     $this->data['automorelength'] = 250;
     $this->data['phpcode'] = true;
   }
   
-  public function GetCommentContent($content) {
-    $s = $this->OnComment($content);
-    if ($s != '') $content  = $s;
+  public function filtercomment($content) {
+if ($this->oncomment(&$content)) return $content;
     $result = trim($content);
     $result = htmlspecialchars($result);
     $result = str_replace("\r\n", "\n", $result);
@@ -35,7 +34,7 @@ class tcontentfilter extends tevents {
   }
   
   public function SetPostContent(tpost $post, $s) {
-    $this->BeforeSetPostContent($post->id);
+    $this->beforecontent($post->id);
     $s = $this->FilterInternalLinks($s);
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
@@ -62,7 +61,7 @@ class tcontentfilter extends tevents {
     }
     $post->description = self::GetExcerpt($post->excerpt, 80);
     $this->DoFilterEvents($post);
-    $this->AfterSetPostContent($post->id);
+    $this->aftercontent($post->id);
   }
   
   public function ExtractPages(tpost $post, $s) {
@@ -80,13 +79,13 @@ class tcontentfilter extends tevents {
   }
   
   private function DoFilterEvents(tpost $post) {
-    $s = $this->OnPost(    $post->filtered);
+    $s = $this->onpost(    $post->filtered);
     if ($s != '') $post->filtered =  $s;
     
-    $s = $this->OnExcerpt($post->excerpt);
+    $s = $this->onexcerpt($post->excerpt);
     if ($s != '') $post->excerpt = $s;
     
-    $s = $this->OnRSS($post->rss);
+    $s = $this->onrss($post->rss);
     if ($s != '') $post->rss = $s;
   }
   
@@ -99,6 +98,11 @@ class tcontentfilter extends tevents {
   }
   
   public function filter($content) {
+if ($this->beforefilter(&$content)) {
+$this->afterfilter(&$content);
+return $content;
+}
+
     $result = trim($content);
     $result = $this->replacecode($result);
     
@@ -124,6 +128,8 @@ class tcontentfilter extends tevents {
     
     if (!preg_match('/^<p>/i', $result, $m)) $result = '<p>'. $result;
     if (!preg_match('/<\/p>$/i', $result, $m)) $result .= '</p>';
+
+$this->afterfilter(&$result);
     return $result;
   }
   

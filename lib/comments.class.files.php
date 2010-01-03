@@ -57,7 +57,7 @@ class tcomments extends titems {
     $item  = array(
     'author' => $author,
     'posted' => time(),
-    'content' => $filter->GetCommentContent($content)
+    'content' => $filter->filtercomment($content)
     );
     
     if ($status == 'approved') {
@@ -255,7 +255,7 @@ $this->owner->save();
 
 private function setcontent($value) {
 $filter = TContentFilter::instance();
-$this->owner->items[$this->id]['content'] = $filter->GetCommentContent($value);
+$this->owner->items[$this->id]['content'] = $filter->filtercomment($value);
 $this->save();
 $this->owner->raw->items[$this->id]['content'] =  $value;
 $this->owner->raw->save();

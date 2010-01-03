@@ -65,7 +65,7 @@ return dbversion;
   }
   
   public function getpingbacks() {
-    return tpingbackscomments::instance($this->id);
+    return tpingbacks::instance($this->id);
   }
   
   public function getprev() {

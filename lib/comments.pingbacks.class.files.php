@@ -35,6 +35,13 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     $this->save();
     return $this->autoid;
   }
+
+  public function exists($url) {
+foreach ($this->items as $id => $item) {
+if ($url == $item['url']) return $id;
+}
+return false;
+}
   
   public function setstatus($id, $approve) {
     if (isset($this->items[$id]) && ($approve != $this->items[$id]['approved'])) {

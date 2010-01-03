@@ -8,8 +8,8 @@
 
 class TXMLRPCPingback extends TXMLRPCAbstract {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   public function ping(&$args) {
@@ -17,13 +17,12 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     
     $from = $args[0];
     $to   = $args[1];
-    $home = $Options->url;
-    if ($home != substr($to, 0, strlen($home))) {
+    if (!strbegin($to, $options->url)) {
       return new IXR_Error(0, 'Is there no link to us?');
     }
     
     $url = substr($to, strlen($Options->url) );
-    $urlmap = turlmap::Instance();
+    $urlmap = turlmap::instance();
     if (!($item = $urlmap->finditem($url))) {
       return new IXR_Error(0, 'Is there no link to us?');
     }
@@ -37,8 +36,8 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return new IXR_Error(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
-    $comments = $post->comments;
-    if ($comments->haspingback($from)) {
+    $pingbacks = $post->pingbacks;
+    if ($pingbacks->exists($from)) {
       return new IXR_Error(48, 'The pingback has already been registered.');
     }
     
@@ -63,8 +62,8 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     if (preg_match('/nofollow|noindex/is', $match[1])) {
       return new IXR_Error(32, 'The source URL contain nofollow or noindex atribute');
     }
-    $CommentManager = &TCommentManager::Instance();
-    $CommentManager->AddPingback($post->id, $from, $matchtitle[1]);
+
+    $pingbacks->add($from, $matchtitle[1]);
     
     return "Pingback from $from to $to registered. Keep the web talking! :-)";
   }

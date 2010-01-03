@@ -63,7 +63,7 @@ class tadminposts extends tadminmenu {
     if (dbversion) {
       $items = $this->db->idselect("status <> 'deleted' order by posted desc limit $from, $perpage");
     } else {
-      $items = array_slice($this->items, $from, $perpage, true);
+      $items = array_slice($posts->items, $from, $perpage, true);
       $items = array_reverse (array_keys($items));
     }
     $html = $this->html;
