@@ -50,7 +50,6 @@ public function save() {}
       $result .= $theme->parsearg($tml->count, $args);
       $result .= $list;
 
-    
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
       $pingbacks = tpingbacks::instance($post->id);
       $result .= $pingbacks->getcontent();

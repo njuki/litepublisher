@@ -26,18 +26,25 @@ $item = array(
     'title' => $title,
     'post' => $this->pid,
     'posted' =>sqldate(),
+'status' => 'hold',
     'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR'])
     );
 $id =     $this->db->add($item);
 $item['id'] = $id;
 $this->items[$id] = $item;
+$this->updatecount($this->pid);
 return $id;
   }
 
+private function updatecount($idpost) {
+    $count= $this->db->getcount("post = $idpost and status = 'approved'");
+    $this->getdb('posts')->setvalue($idpost, 'pingbackscount', $count);
+}
 
 public function edit($id, $title, $url) {
 $this->db->updateassoc(compact('id', 'title', 'url'));
 }
+
   public function exists($url) {
 return $this->db->finditem('url =' . dbquote($url));
 }
@@ -48,9 +55,7 @@ return $this->db->finditem('url =' . dbquote($url));
     if ($item['status'] == $status) return false;
     $db = $this->db;
     $db->setvalue($id, 'status', $status);
-    $approved = $db->getcount("post = $this->pid and status = 'approved'");
-    $db->table = 'posts';
-    $db->setvalue($item['post'], 'pingbackscount', $approved);
+$this->updatecount($item['post']);
   }
   
   public function postdeleted($idpost) {
@@ -62,7 +67,7 @@ return $this->db->finditem('url =' . dbquote($url));
     $result = '';
     $items = $this->db->getitems("post = $this->pid and status = 'approved' order by posted");
     $a = array();
-    $pingback = new tarray2props($a);
+    $pingback = new tarray2prop($a);
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->pingbacks->pingback;
@@ -70,7 +75,7 @@ return $this->db->finditem('url =' . dbquote($url));
       $pingback->array = $item;
       $result .= $theme->parse($tml);
     }
-    return sprintf($theme->content->post->templatecomments->pingbacks, $result);
+    return sprintf($theme->parse($theme->content->post->templatecomments->pingbacks), $result);
   }
   
 }//class
