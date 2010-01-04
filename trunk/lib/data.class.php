@@ -10,6 +10,8 @@ class tdata {
   public $lockcount;
   public static $GlobalLock;
   public $data;
+public $coinstances;
+public $coclasses;
   public $basename;
   public $cache;
   //database
@@ -19,6 +21,8 @@ class tdata {
     $this->lockcount = 0;
     $this->cache= true;
     $this->data= array();
+$this->coinstances = array();
+$this->coclasses = array();
     $this->basename = substr(get_class($this), 1);
     $this->create();
   }
@@ -32,6 +36,9 @@ class tdata {
     } elseif (array_key_exists($name, $this->data)) {
       return $this->data[$name];
     } else {
+foreach ($this->coinstances as $coinstance) {
+if ($coinstance->propexists($name)) return $coinstance->$name;
+}
       return    $this->error("The requested property $name not found in class ". get_class($this));
     }
   }
@@ -46,14 +53,26 @@ class tdata {
       $this->data[$name] = $value;
       return true;
     }
-    
-    return false;
+
+foreach ($this->coinstances as $coinstance) {
+if ($coinstance->propexists($name)) {
+$coinstance->$name = $value;
+return true;
+}
+}
+
+        return false;
   }
   
   public  function __call($name, $params) {
     if (method_exists($this, strtolower($name))) {
       return call_user_func_array(array(&$this, strtolower($name)), $params);
     }
+
+foreach ($this->coinstances as $coinstance) {
+if (method_exists($coinstance, $name)) return call_user_func_array(array($coinstance, $name), $params);
+}
+
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   

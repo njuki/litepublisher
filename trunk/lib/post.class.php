@@ -50,6 +50,13 @@ class tpost extends titem implements  itemplate {
     'pagescount' => 0,
     'pages' => array()
     );
+
+$posts = tposts::instance();
+foreach ($posts->itemcoclasses as $class) {
+$coinstance = getinstance($class);
+$coinstance->post = $this;
+$this->instances[]  = $coinstance;
+}
   }
 
 public function getdbversion() {

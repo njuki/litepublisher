@@ -22,10 +22,12 @@ class tevents extends tdata {
   public function free() {
     global $classes;
     unset($classes->instances[get_class($this)]);
+foreach ($this->coinstances as $coinstance) $coinstance->free();
   }
   
   protected function create() {
     $this->addmap('events', array());
+    $this->addmap('coclasses', array());
   }
   
   public function assignmap() {
@@ -36,6 +38,9 @@ class tevents extends tdata {
   
   public function afterload() {
     $this->assignmap();
+foreach ($this->coclasses as $coclass) {
+$this->coinstances[] = getinstance($coclass);
+}
   }
   
   protected function addmap($name, $value) {
@@ -153,6 +158,26 @@ class tevents extends tdata {
     
     $this->save();
   }
+
+private function indexofcoclass($class) {
+return array_search($class, $this->coclasses);
+}
+
+public function addcoclass($class) {
+if ($this->indexofcoclass($class) === false) {
+$this->coclasses[] = $class;
+$this->save();
+$this->coinstances = getinstance($class);
+}
+}
+
+public function deletecoclass($class) {
+$i = $this->indexofcoclass($class);
+if (is_int($i)) {
+array_splice($this->coclasses, $i, 1);
+$this->save();
+}
+}
   
 }//class
 
