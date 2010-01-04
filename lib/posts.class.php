@@ -7,6 +7,7 @@
 **/
 
 class tposts extends titems {
+public $itemcoclasses;
   public $archives;
   public $rawtable;
   
@@ -29,6 +30,7 @@ class tposts extends titems {
     $this->data['recentcount'] = 10;
     $this->data['archivescount'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
+$this->addmap('itemcoclasses', array());
   }
   
   public function getitem($id) {
