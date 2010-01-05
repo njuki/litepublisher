@@ -329,7 +329,7 @@ $args->id = "$id&post=$idpost";
   }
   
   private function getsubscribed($authorid, $idpost) {
-    global $options, $post;
+    global $options;
     $authorid = (int) $authorid;
     $comusers = tcomusers::instance($idpost);
     if (!$comusers->itemexists($authorid))  return '';
@@ -337,67 +337,75 @@ $args->id = "$id&post=$idpost";
     $subscribers = tsubscribers::instance();
         $args = targs::instance();
       $post = tpost::instance($idpost);
+$args->title = $post->title;
+$args->url = $post->url;
       $args->subscribed = $subscribers->subscribed($idpost, $authorid);
 return $this->html->subscribeitem($args);
   }
   
   public function processform() {
     global $options, $urlmap;
-    $manager = $this->manager;
-$idpost = $this->idpost;
+
     switch ($this->name) {
       case 'comments':
-$instance = tcomments::instance($idpost);
-break;
-
       case 'hold':
-$instance = tcomments::instance($idpost)->hold;
-break;
 
-      case 'pingback':
-$instance = tpingbacks::instance($idpost);
-break;
-
-case 'author':
-$instance = tcomusers::instance($idpost);
-break;
-}
-      
-      $action = $_REQEST['action'];
-      switch ($action) {
+if (isset($_REQUEST['action'])) {
+      switch ($_REQUEST['action']) {
         case 'reply':
         $email = $this->getadminemail();
         $site = $options->url . $options->home;
         $profile = tprofile::instance();
-        $comusers = tccomusers ::instance();
-        $authorid = $comusers->add($profile->nick, $email, $site);
-        $post = tpost::instance($idpost);
-        $manager->addcomment($post->id, $authorid, $_POST['content']);
-        $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-        @header("Location: $options->url$posturl");
+        $post = tpost::instance( (int) $_REQUEST['post']);
+        $this->manager->add($post->id, $profile->nick, $email, $site, $_POST['content']);
+        @header("Location: $options->url$post->lastcommenturl");
         exit();
         
         case 'edit':
-        $comment = $manager->getcomment($this->idget());
+        $comment = tcomments::getcomment($this->idpost, $this->idget);
         $comment->content = $_POST['content'];
         break;
-        
-        default:
-        $manager->Lock();
+}
+} else {
+$manager = $this->manager;
+$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $id => $value) {
           if (!is_numeric($id))  continue;
-          $id = (int) $id;
-          $this->doaction($id, $action);
+$id = (int) $id;
+if ($status == 'delete') {
+$manager->delete($id);
+} else {
+$manager->setstatus(0, $id, $status);
+}
         }
-        $manager->unlock();
+}
         $result = $this->html->h2->successmoderated;
-      }
       break;
-      
-      case 'authors':
-      if (isset($_REQUEST['action'])  && ($_REQUEST['action'] == 'edit')) {
+
+case 'pingback':
+$pingbacks = tpingbacks::instance($this->idpost);
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
+extract($_POST);
+$pingbacks->edit($this->idget(), $title, $url);
+} else {
+$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
+        foreach ($_POST as $id => $value) {
+          if (!is_numeric($id))  continue;
+$id = (int) $id;
+if ($status == 'delete') {
+$pingbacks->delete($id);
+} else {
+$pingbacks->setstatus($id, $status == 'approve');
+}
+        }
+}
+        $result = $this->html->h2->successmoderated;
+      break;
+
+           case 'authors':
+      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
-        $comusers = tcomusers::instance();
+        $comusers = tcomusers::instance($this->idpost);
         if (!$comusers->itemexists($id)) return $this->notfound;
         $comusers->edit($id, $_POST['name'], $_POST['url'], $_POST['email'], $_POST['ip']);
         $subscribers = tsubscribers::instance();

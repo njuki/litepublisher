@@ -17,8 +17,8 @@ class tcomments extends titems {
   }
   
   protected function create() {
-    parent::create();
     $this->dbversion = true;
+    parent::create();
     $this->table = 'comments';
     $this->rawtable = 'rawcomments';
   }

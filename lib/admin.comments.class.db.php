@@ -293,20 +293,24 @@ $args->add($comusers->getitem($id));
   }
   
   private function getsubscribed($authorid) {
-    global $options, $post;
+    global $db, $options;
     $authorid = (int) $authorid;
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';
     $html = $this->gethtml('moderator');
     $result = $html->checkallscript;
-    $manager = $this->manager;
-      $posted = $manager->db->res2id($manager->db->query("select DISTINCT post from $manager->thistable where author = $author"));
+$res = $db->query("select $db->posts.id as id, $db->posts.title as title, $db->urlmap.url as url
+from $db->posts, $db->urlmap
+where $db->posts.id in (select DISTINCT $db->comments.post from $db->comments where author = $authorid)
+and $db->urlmap.id = $db->posts.idurl
+order by $db->posts.posted desc");
+      $res->setFetchMode (PDO::FETCH_ASSOC);
+
     $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
-    
-    $args = targs::instance();
-    foreach ($posted as $idpost) {
-      $post = tpost::instance($idpost);
+        $args = targs::instance();
+    foreach ($res as $item) {
+$args->add($item);
       $args->subscribed = in_array($idpost, $subscribed);
       $result .= $html->subscribeitem($args);
     }
@@ -316,7 +320,7 @@ $args->add($comusers->getitem($id));
   
   public function processform() {
     global $options, $urlmap;
-$comments = tcomments::instance();
+
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -327,12 +331,13 @@ if (isset($_REQUEST['action'])) {
         $email = $this->getadminemail();
         $site = $options->url . $options->home;
         $profile = tprofile::instance();
-        $this->manager->add($idpost, $profile->nick, $email, $site, $_POST['content']);
-        $post = tpost::instance( (int) $_POST['pid']);
+        $post = tpost::instance( (int) $_REQUEST['post']);
+        $this->manager->add($post->id, $profile->nick, $email, $site, $_POST['content']);
         @header("Location: $options->url$post->lastcommenturl");
         exit();
         
         case 'edit':
+$comments = tcomments::instance();
         $comment = $comments->getcomment($this->idget);
         $comment->content = $_POST['content'];
         break;

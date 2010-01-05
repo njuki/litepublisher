@@ -21,8 +21,8 @@ public $itemcoclasses;
   }
   
   protected function create() {
-    parent::create();
     $this->dbversion = dbversion;
+    parent::create();
     $this->table = 'posts';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';

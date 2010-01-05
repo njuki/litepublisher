@@ -33,8 +33,29 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     'approved' => false
     );
     $this->save();
+$this->updatecount();
     return $this->autoid;
   }
+
+private function updatecount() {
+    $count= 0;
+foreach ($this->items as $id => $item) {
+if ($item['approved']) $count++;
+}
+
+$post = tpost::instance($this->pid);
+$post->pingbackscount = $count);
+$post->save();
+      $post->clearcache();
+}
+
+public function edit($id, $title, $url) {
+if (isset($this->items[$id])) {
+$this->items[$id]['title'] = $title;
+$this->items[$id]['url'] = $url;
+$this->save();
+}
+}
 
   public function exists($url) {
 foreach ($this->items as $id => $item) {
@@ -47,15 +68,8 @@ return false;
     if (isset($this->items[$id]) && ($approve != $this->items[$id]['approved'])) {
       $this->items[$id]['approved'] = $approve;
       $this->save();
-      $approved = 0;
-      foreach ($this->items as $id) {
-        if ($item['approved']) $approved++;
-      }
-      
-      $post = tpost::instance($this->pid);
-      $post->pingbackscount = $approved;
-      $post->save();
-      $post->clearcache();
+
+$this->updatecount();
     }
   }
   
