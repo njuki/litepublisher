@@ -304,14 +304,14 @@ from $db->posts, $db->urlmap
 where $db->posts.id in (select DISTINCT $db->comments.post from $db->comments where author = $authorid)
 and $db->urlmap.id = $db->posts.idurl
 order by $db->posts.posted desc");
-      $res->setFetchMode (PDO::FETCH_ASSOC);
+$items = $res->fetchAll(PDO::FETCH_ASSOC);        $args = targs::instance();
 
     $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
-        $args = targs::instance();
-    foreach ($res as $item) {
+
+foreach ($items as $item) {
 $args->add($item);
-      $args->subscribed = in_array($idpost, $subscribed);
+      $args->subscribed = in_array($item['id'], $subscribed);
       $result .= $html->subscribeitem($args);
     }
     

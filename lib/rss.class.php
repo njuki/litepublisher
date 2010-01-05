@@ -9,7 +9,7 @@
 class trss extends tevents {
   public $domrss;
   
-  public static function &instance() {
+  public static function instance() {
     return getinstance(__class__);
   }
   
@@ -70,7 +70,7 @@ class trss extends tevents {
       $postid = (int) $args;
       $posts = tposts::instance();
       if (!$posts->itemexists($postid)) return 404;
-      $post = TPost::instance($postid);
+      $post = tpost::instance($postid);
       if ($post->status != 'published') return 404;
       $this->GetRSSPostComments($postid);
     }
@@ -82,10 +82,10 @@ class trss extends tevents {
   public function GetRSSRecentPosts() {
     global $options;
     $this->domrss->CreateRoot($options->url. '/rss/', $options->name);
-    $posts = &TPosts::instance();
-    $list = $posts->GetRecent($options->postsperpage);
+    $posts = tposts::instance();
+    $list = $posts->getrecent($options->postsperpage);
     foreach ($list as $id ) {
-      $post = TPost::instance($id);
+      $post = tpost::instance($id);
       $this->AddRSSPost($post);
     }
     
@@ -103,7 +103,7 @@ class trss extends tevents {
       do {
         $id = key($CommentManager->items);
         if (!isset($item['status']) && !isset($item['type'])) {
-          $post = TPost::instance($item['pid']);
+          $post = tpost::instance($item['pid']);
           if ($post->status != 'published') continue;
           $count--;
           $comment->Owner = &$post->comments;
@@ -117,7 +117,7 @@ class trss extends tevents {
   
   public function GetRSSPostComments($postid) {
     global $options;
-    $post = TPost::instance($postid);
+    $post = tpost::instance($postid);
     $lang = TLocal::instance('comment');
     $this->domrss->CreateRoot($post->rsslink, "$lang->onpost $post->title");
     $count = $options->postsperpage;
@@ -146,31 +146,32 @@ class trss extends tevents {
     $guid  = AddNodeValue($item, 'guid', $post->link);
     AddAttr($guid, 'isPermaLink', 'false');
     
-    $profile = &TProfile::instance();
+    $profile = tprofile::instance();
     AddNodeValue($item, 'dc:creator', $profile->nick);
     
-    $categories = TCategories::instance();
+    $categories = tcategories::instance();
     $names = $categories->GetNames($post->categories);
     foreach ($names as $name) {
       if (empty($name)) continue;
       AddCData($item, 'category', $name);
     }
     
-    $tags = TTags::instance();
+    $tags = ttags::instance();
     $names = $tags->GetNames($post->tags);
     foreach ($names as $name) {
       if (empty($name)) continue;
       AddCData($item, 'category', $name);
     }
     
-    $content = $this->BeforePostContent($post->id);
+    $content = '';
+$this->beforepost($post->id, &$$content);
     if ($this->template == '') {
       $content .=$post->rss;
       $content .= $post->morelink;
     } else {
       eval('$content .= "'. $this->template . '";');
     }
-    $content .= $this->AfterPostContent($post->id);
+$this->afterpost($post->id, &$content);
     
     AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);
