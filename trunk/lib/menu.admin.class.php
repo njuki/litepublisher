@@ -36,19 +36,23 @@ class tadminmenus extends tmenus {
   public function add($parent, $name, $group, $class) {
     $title = $this->getadmintitle($name);
     $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
-    $urlmap = turlmap::instance();
-    $this->items[++$this->autoid] = array(
-    'id' => $this->autoid,
+return $this->additem(array(
     'parent' => $parent,
-    'order' => $this->autoid,
     'url' => $url,
-    'idurl' => $urlmap->add($url, $class, $this->autoid, 'tree'),
     'title' => $title,
-    'status' => 'published',
     'name' => $name,
     'class' => $class,
     'group' => $group
-    );
+    ));
+}
+
+public function additem(array $item) {
+$item['id'] = ++$this->autoid;
+    $item[''order'] = $this->autoid;
+$item[    'status'] = 'published';
+    $urlmap = turlmap::instance();
+$item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'tree');
+    $this->items[$this->autoid] = $item;
     $this->sort();
     $this->save();
     return $this->autoid;

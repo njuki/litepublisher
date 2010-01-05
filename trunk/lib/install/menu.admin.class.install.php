@@ -9,6 +9,15 @@
 function tadminmenusInstall($self) {
   global $options;
   $self->lock();
+$board = $self->additem(array(
+    'parent' => 0,
+    'url' => '/admin/',
+    'title' => tlocal::$data['names']['board'],
+    'name' => 'board',
+    'class' => 'tadminboard',
+    'group' => 'author'
+    );
+
   //posts
   $posts = $self->add(0, 'posts', 'author', 'tadminposts');
   {
