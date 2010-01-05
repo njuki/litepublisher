@@ -57,6 +57,13 @@ class tposteditor extends tadminmenu {
     if (!preg_match('/short|midle|full/', $mode)) $mode = 'midle';
     return $mode;
   }
+
+public function shorteditor() {
+$_REQUEST['mode'] = 'short';
+    $this->basename = 'editor';
+$this->idpost = 0;
+return $this->getcontent();
+}
   
   public function getcontent() {
     global $options, $post;

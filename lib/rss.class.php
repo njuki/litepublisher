@@ -39,7 +39,7 @@ class trss extends tevents {
         return;
       }
       ";
-    }elseif (($args == null) && ($this->feedburnercomments  != '')) {
+    }elseif (($args == 'comments') && ($this->feedburnercomments  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburnercomments');
@@ -62,12 +62,13 @@ class trss extends tevents {
       $this->GetRSSRecentPosts();
       break;
       
-      case null:
+      case 'comments':
       $this->GetRecentComments();
       break;
       
       default:
-      $postid = (int) $args;
+if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404
+      $postid = (int) $match[1];
       $posts = tposts::instance();
       if (!$posts->itemexists($postid)) return 404;
       $post = tpost::instance($postid);

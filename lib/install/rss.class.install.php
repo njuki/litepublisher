@@ -10,13 +10,13 @@ function trssInstall($self) {
   global $classes;
   $urlmap = turlmap::instance();
   $urlmap->lock();
-  $urlmap->add('/rss/', get_class($self), 'posts');
-  $self->idurlcomments = $urlmap->add('comments', get_class($self), 'comments', 'tree');
+  $urlmap->add('/rss.xml', get_class($self), 'posts');
+  $urlmap->add('/rss/', get_class($self), 'post', 'tree');
+  $self->idurlcomments = $urlmap->add('/comments.xml', get_class($self), 'comments');
   $urlmap->unlock();
   
   $classes->commentmanager->changed = $self->commentschanged;
-  
-  $self->save();
+    $self->save();
 }
 
 function trssUninstall($self) {
