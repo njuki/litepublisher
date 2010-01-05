@@ -23,8 +23,9 @@ class turlmap extends titems {
   }
   
   protected function create() {
-    parent::create();
     $this->dbversion = dbversion;
+    parent::create();
+
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');

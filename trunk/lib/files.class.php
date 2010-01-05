@@ -14,8 +14,9 @@ class tfiles extends titems {
   }
   
   protected function create() {
-    parent::create();
     $this->dbversion = dbversion;
+    parent::create();
+
     $this->itemsposts = new titemsposts();
     $this->basename = 'files';
     $this->table = 'files';

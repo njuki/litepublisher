@@ -15,9 +15,10 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
   }
   
   protected function create() {
+    $this->dbversion = true;
     parent::create();
     $this->table = 'pingbacks';
-    $this->dbversion = true;
+
   }
   
   public function doadd($url, $title) {

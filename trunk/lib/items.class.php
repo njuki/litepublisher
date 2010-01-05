@@ -13,10 +13,11 @@ class titems extends tevents {
   
   protected function create() {
     parent::create();
-    $this->dbversion = false;
     $this->addevents('added', 'deleted');
+if (!$this->dbversion) {
     $this->addmap('items', array());
     $this->addmap('autoid', 0);
+}
   }
   
   public function load() {
@@ -27,6 +28,7 @@ class titems extends tevents {
       } else {
         $this->data = &$options->data[get_class($this)];
         $this->afterload();
+
       }
       return  true;
     } else {
@@ -37,8 +39,7 @@ class titems extends tevents {
   public function save() {
     global $options;
     if ($this->dbversion) {
-      unset($this->data['items']);
-      return $options->save();
+     return $options->save();
     } else {
       return parent::save();
     }
