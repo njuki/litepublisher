@@ -20,18 +20,20 @@ class trss extends tevents {
     $this->data['feedburner'] = '';
     $this->data['feedburnercomments'] = '';
     $this->data['template'] = '';
-    $this->data['idurlcomments'] = 0;
+    $this->data['idcomments'] = 0;
+    $this->data['idpostcomments'] = 0;
   }
   
-  public function commentschanged($postid) {
+  public function commentschanged($idpost) {
     $urlmap = turlmap::instance();
-    $urlmap->setexpired($this->idurlcomments);
+    $urlmap->setexpired($this->idcomments);
+    $urlmap->setexpired($this->idpostcomments);
   }
   
-  public function request($args) {
+  public function request($arg) {
     global $options, $urlmap;
     $result = "<?php\n";
-    if (($args == 'posts') && ($this->feedburner  != '')) {
+    if (($arg == 'posts') && ($this->feedburner  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburner');
@@ -39,7 +41,7 @@ class trss extends tevents {
         return;
       }
       ";
-    }elseif (($args == 'comments') && ($this->feedburnercomments  != '')) {
+    }elseif (($arg == 'comments') && ($this->feedburnercomments  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburnercomments');
@@ -57,7 +59,7 @@ class trss extends tevents {
     
     $this->domrss = new Tdomrss;
     
-    switch ($args) {
+    switch ($arg) {
       case 'posts':
       $this->GetRSSRecentPosts();
       break;
@@ -68,12 +70,12 @@ class trss extends tevents {
       
       default:
 if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404
-      $postid = (int) $match[1];
+      $idpost = (int) $match[1];
       $posts = tposts::instance();
-      if (!$posts->itemexists($postid)) return 404;
-      $post = tpost::instance($postid);
+      if (!$posts->itemexists($idpost)) return 404;
+      $post = tpost::instance($idpost);
       if ($post->status != 'published') return 404;
-      $this->GetRSSPostComments($postid);
+      $this->GetRSSPostComments($idpost);
     }
     
     $result .= $this->domrss->GetStripedXML();
@@ -116,11 +118,11 @@ if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404
     
   }
   
-  public function GetRSSPostComments($postid) {
+  public function GetRSSPostComments($idpost) {
     global $options;
-    $post = tpost::instance($postid);
+    $post = tpost::instance($idpost);
     $lang = TLocal::instance('comment');
-    $this->domrss->CreateRoot($post->rsslink, "$lang->onpost $post->title");
+    $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
     $count = $options->postsperpage;
     $comment = new TComment($post->comments);
     $items = &$post->comments->items;
@@ -176,7 +178,7 @@ $this->afterpost($post->id, &$content);
     
     AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);
-    AddNodeValue($item, 'wfw:commentRss', $post->rsslink);
+    AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
   }
   
   public function AddRSSComment(&$comment, $posturl, $title) {

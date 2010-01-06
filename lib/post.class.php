@@ -119,9 +119,9 @@ return dbversion;
     }
   }
   
-  public function getrsslink() {
+  public function getrsscomments() {
     global $options;
-    return "$options->url/comments/$this->id/";
+    return "$options->url/comments/$this->id.xml";
   }
   
   public function Getpubdate() {
@@ -237,7 +237,7 @@ return dbversion;
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
     if ($this->commentsenabled && ($this->commentscount > 0))  {
       $lang = tlocal::instance('comment');
-      $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsslink\" />\n";
+      $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
     }
     return $result;
   }
@@ -281,7 +281,7 @@ return dbversion;
     return $theme->parse($theme->content->post);
   }
   
-  public function getrsscomments() {
+  public function getrsscommentslink() {
     global $post;
     if ($this->commentsenabled && ($this->commentscount > 0)) {
       $post = $this;
