@@ -25,7 +25,7 @@ class turlmap extends titems {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-
+    
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
@@ -74,10 +74,10 @@ class turlmap extends titems {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
-}
-} elseif (isset($this->items[$url])) {
-return $this->items[$url];
-}
+      }
+    } elseif (isset($this->items[$url])) {
+      return $this->items[$url];
+    }
     return false;
   }
   
@@ -85,25 +85,25 @@ return $this->items[$url];
     if ($i = strpos($url, '?'))  {
       $url = substr($url, 0, $i);
     }
-
+    
     if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
-
-//extract page number
-if (preg_match('/(.*?)\/page\/(\d*?)\/+$/', $url, $m)) {
-if ('/' != substr($url, -1))  return $this->redir301($url . '/');
-$url = $m[1];
-if ($url == '') $url = '/';
-$this->page = (int) $m[2];
-}
+    
+    //extract page number
+    if (preg_match('/(.*?)\/page\/(\d*?)\/+$/', $url, $m)) {
+      if ('/' != substr($url, -1))  return $this->redir301($url . '/');
+      $url = $m[1];
+      if ($url == '') $url = '/';
+      $this->page = (int) $m[2];
+    }
     
     if ($result = $this->query($url)) return $result;
-$url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
+    $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
     if ($result = $this->query($url)) {
-if ($result['type'] == 'normal') return $this->redir301($url);
-return $result;
-}
-
-      $this->uripath = explode('/', trim($url, '/'));
+      if ($result['type'] == 'normal') return $this->redir301($url);
+      return $result;
+    }
+    
+    $this->uripath = explode('/', trim($url, '/'));
     //tree обрезаю окончание урла в аргумент
     $url = trim($url, '/');
     $j = -1;

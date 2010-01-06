@@ -69,7 +69,7 @@ class trss extends tevents {
       break;
       
       default:
-if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404
+      if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404;
       $idpost = (int) $match[1];
       $posts = tposts::instance();
       if (!$posts->itemexists($idpost)) return 404;
@@ -167,14 +167,14 @@ if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404
     }
     
     $content = '';
-$this->beforepost($post->id, &$$content);
+    $this->beforepost($post->id, &$$content);
     if ($this->template == '') {
       $content .=$post->rss;
       $content .= $post->morelink;
     } else {
       eval('$content .= "'. $this->template . '";');
     }
-$this->afterpost($post->id, &$content);
+    $this->afterpost($post->id, &$content);
     
     AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);

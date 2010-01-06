@@ -33,43 +33,43 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     'approved' => false
     );
     $this->save();
-$this->updatecount();
+    $this->updatecount();
     return $this->autoid;
   }
-
-private function updatecount() {
+  
+  private function updatecount() {
     $count= 0;
-foreach ($this->items as $id => $item) {
-if ($item['approved']) $count++;
-}
-
-$post = tpost::instance($this->pid);
-$post->pingbackscount = $count);
-$post->save();
-      $post->clearcache();
-}
-
-public function edit($id, $title, $url) {
-if (isset($this->items[$id])) {
-$this->items[$id]['title'] = $title;
-$this->items[$id]['url'] = $url;
-$this->save();
-}
-}
-
+    foreach ($this->items as $id => $item) {
+      if ($item['approved']) $count++;
+    }
+    
+    $post = tpost::instance($this->pid);
+    $post->pingbackscount = $count;
+    $post->save();
+    $post->clearcache();
+  }
+  
+  public function edit($id, $title, $url) {
+    if (isset($this->items[$id])) {
+      $this->items[$id]['title'] = $title;
+      $this->items[$id]['url'] = $url;
+      $this->save();
+    }
+  }
+  
   public function exists($url) {
-foreach ($this->items as $id => $item) {
-if ($url == $item['url']) return $id;
-}
-return false;
-}
+    foreach ($this->items as $id => $item) {
+      if ($url == $item['url']) return $id;
+    }
+    return false;
+  }
   
   public function setstatus($id, $approve) {
     if (isset($this->items[$id]) && ($approve != $this->items[$id]['approved'])) {
       $this->items[$id]['approved'] = $approve;
       $this->save();
-
-$this->updatecount();
+      
+      $this->updatecount();
     }
   }
   

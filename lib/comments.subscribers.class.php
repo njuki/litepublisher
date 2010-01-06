@@ -104,7 +104,7 @@ class tsubscribers extends titemsposts {
     }
     
     $comment = $comments->getcomment($id);
-$mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
   $body .= "\n$options->url/admin/subscribers/{$options->q}userid=";

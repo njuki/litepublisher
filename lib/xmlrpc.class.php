@@ -62,9 +62,9 @@ class TXMLRPC extends titems {
     }
     
     if (defined('debug')) {
-tfiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
-    //$HTTP_RAW_POST_DATA = file_get_contents($GLOBALS['paths']['home'] . 'raw.txt');
-}
+      tfiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
+      //$HTTP_RAW_POST_DATA = file_get_contents($GLOBALS['paths']['home'] . 'raw.txt');
+    }
     
     $this->GetMethods();
     $this->Server = new TXMLRPCParser ($this);
