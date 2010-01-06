@@ -48,7 +48,7 @@ return $this->additem(array(
 
 public function additem(array $item) {
 $item['id'] = ++$this->autoid;
-    $item[''order'] = $this->autoid;
+    $item['order'] = $this->autoid;
 $item[    'status'] = 'published';
     $urlmap = turlmap::instance();
 $item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'tree');
