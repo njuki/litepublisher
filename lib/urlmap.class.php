@@ -70,15 +70,13 @@ class turlmap extends titems {
   
   private function query($url) {
     if (dbversion) {
-      if ($res = $this->db->select('url like '. dbquote($url . '%'). ' limit 1')) {
+      if ($res = $this->db->select('url = '. dbquote($url). ' limit 1')) {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
-      }
-    } else {
-if (isset($this->items[$url])) return $this->items[$url];
-$url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
-if (isset($this->items[$url])) return $this->items[$url];
+}
+} elseif (isset($this->items[$url])) {
+return $this->items[$url];
 }
     return false;
   }
@@ -94,24 +92,17 @@ if (isset($this->items[$url])) return $this->items[$url];
 if (preg_match('/(.*?)\/page\/(\d*?)\/+$/', $url, $m)) {
 if ('/' != substr($url, -1))  return $this->redir301($url . '/');
 $url = $m[1];
+if ($url == '') $url = '/';
 $this->page = (int) $m[2];
 }
     
-    if ($result = $this->query($url)) {
-if (dbversion) {
-if (($url != $result['url']) && ($result['type'] == 'normal'))  {
-return $this->redir301($result['url']);
-}
-return $result;
-} else {
-if (($result['type'] == 'normal') && !isset($this->items[$url])) {
+    if ($result = $this->query($url)) return $result;
 $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
-return $this->redir301($url);
-}
+    if ($result = $this->query($url)) {
+if ($result['type'] == 'normal') return $this->redir301($url);
 return $result;
 }
-}
-    
+
       $this->uripath = explode('/', trim($url, '/'));
     //tree обрезаю окончание урла в аргумент
     $url = trim($url, '/');
