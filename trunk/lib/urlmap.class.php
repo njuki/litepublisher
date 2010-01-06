@@ -70,57 +70,49 @@ class turlmap extends titems {
   
   private function query($url) {
     if (dbversion) {
-      if ($res = $this->db->select('url = '. $this->db->quote($url). ' limit 1')) {
+      if ($res = $this->db->select('url like '. dbquote($url . '%'). ' limit 1')) {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
       }
-    } elseif (isset($this->items[$url])) return $this->items[$url];
+    } else {
+if (isset($this->items[$url])) return $this->items[$url];
+$url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
+if (isset($this->items[$url])) return $this->items[$url];
+}
     return false;
   }
   
   public function finditem($url) {
-    global $options;
-    //redir multi slashed
-    if ('//' == substr($url, strlen($url) - 3)) $this->redir301(rtrim($url, '/') . '/');
-    
-    if ($result = $this->query($url)) return $result;
-    
-    $slashed = rtrim($url, '/');
-    if ($result = $this->query($slashed)) {
-      if ($this->page == 1) {
-        return $this->redir301($slashed);
-      } else {
-        return $result;
-      }
-    }
-    
-    $slashed  .= '/';
-    if ($result = $this->query($slashed)) {
-      if ($this->page == 1) {
-        return $this->redir301($slashed);
-      } else {
-        return $result;
-      }
-    }
-    
-    if (($options->q == '?') && ($i = strpos($url, '?')) ) {
+    if ($i = strpos($url, '?'))  {
       $url = substr($url, 0, $i);
-      return $this->finditem($url);
     }
+
+    if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
+
+//extract page number
+if (preg_match('/(.*?)\/page\/(\d*?)\/+$/', $url, $m)) {
+if ('/' != substr($url, -1))  return $this->redir301($url . '/');
+$url = $m[1];
+$this->page = (int) $m[2];
+}
     
-    //check page number as  /page/page/
-    if (count($this->uripath) == 0) {
+    if ($result = $this->query($url)) {
+if (dbversion) {
+if (($url != $result['url']) && ($result['type'] == 'normal'))  {
+return $this->redir301($result['url']);
+}
+return $result;
+} else {
+if (($result['type'] == 'normal') && !isset($this->items[$url])) {
+$url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
+return $this->redir301($url);
+}
+return $result;
+}
+}
+    
       $this->uripath = explode('/', trim($url, '/'));
-      $c = count($this->uripath);
-      if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
-        $this->page = (int) $this->uripath[$c - 1];
-        $url = substr($url, 0, strpos($url, "page/$this->page"));
-        array_splice($this->uripath, $c - 2, 2);
-        return $this->finditem($url);
-      }
-    }
-    
     //tree обрезаю окончание урла в аргумент
     $url = trim($url, '/');
     $j = -1;
@@ -306,7 +298,7 @@ class turlmap extends titems {
   
   public function getcachename($name, $id) {
     global $paths;
-    return $paths['cache']. "$prefix-$id.php";
+    return $paths['cache']. "$name-$id.php";
   }
   
   public function expiredname($name, $id) {

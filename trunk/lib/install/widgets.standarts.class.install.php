@@ -45,8 +45,8 @@ function getmetawidget() {
   $tml = $theme->getwidgetitem('meta', $theme->sitebarscount - 1);
   $tml .= "\n";
   $lang = tlocal::instance('default');
-  $result = sprintf($tml, $options->url . '/rss/', $lang->rss);
-  $result .= sprintf($tml, $options->url . '/comments/', $lang->rsscomments);
+  $result = sprintf($tml, $options->url . '/rss.xml', $lang->rss);
+  $result .= sprintf($tml, $options->url . '/comments.xml', $lang->rsscomments);
   
   $tml = '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
   $result .= sprintf($tml, $options->url . '/foaf.xml', $lang->foaf);

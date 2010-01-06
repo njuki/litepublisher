@@ -13,7 +13,8 @@ function TRobotstxtInstall($self) {
   
   $self->add("#$options->url/");
   $self->add('User-agent: *');
-  $self->AddDisallow('/rss/');
+  $self->AddDisallow('/rss.xml');
+  $self->AddDisallow('/comments.xml');
   $self->AddDisallow('/comments/');
   $self->AddDisallow('/admin/');
   $self->AddDisallow('/pda/');
