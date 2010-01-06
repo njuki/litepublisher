@@ -50,19 +50,19 @@ class tpost extends titem implements  itemplate {
     'pagescount' => 0,
     'pages' => array()
     );
-
-$posts = tposts::instance();
-foreach ($posts->itemcoclasses as $class) {
-$coinstance = getinstance($class);
-$coinstance->post = $this;
-$this->instances[]  = $coinstance;
-}
+    
+    $posts = tposts::instance();
+    foreach ($posts->itemcoclasses as $class) {
+      $coinstance = getinstance($class);
+      $coinstance->post = $this;
+      $this->instances[]  = $coinstance;
+    }
   }
-
-public function getdbversion() {
-return dbversion;
-}
-
+  
+  public function getdbversion() {
+    return dbversion;
+  }
+  
   protected function SaveToDB() {
     TPostTransform ::instance($this)->save();
   }
@@ -281,7 +281,7 @@ return dbversion;
     return $theme->parse($theme->content->post);
   }
   
-  public function getrsscommentslink() {
+  public function getsubscriberss() {
     global $post;
     if ($this->commentsenabled && ($this->commentscount > 0)) {
       $post = $this;
@@ -418,11 +418,11 @@ return dbversion;
     if (!$options->commentpages) return 1;
     return ceil($this->commentscount / $options->commentsperpage);
   }
-
-public function getlastcommenturl() {
-$c = $this->commentpages;
-return $c > 1 ? rtrim($this->url, '/') . "/page/$c/" : $this->url;
-}
+  
+  public function getlastcommenturl() {
+    $c = $this->commentpages;
+    return $c > 1 ? rtrim($this->url, '/') . "/page/$c/" : $this->url;
+  }
   
   public function setcommentsenabled($value) {
     if ($value != $this->commentsenabled) {

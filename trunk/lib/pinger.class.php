@@ -193,7 +193,7 @@ class tpinger extends tevents {
     $list = explode("\n", $this->services);
     foreach ($list as $service) {
       $service = trim($service);
-sleep(1);
+      sleep(1);
       $client = new IXR_Client($service);
       $client->timeout = 3;
       $client->useragent .= ' -- Lite Publisher/'.$options->version;

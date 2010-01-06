@@ -155,14 +155,14 @@ class toptions extends tevents {
       tfiler::log($log, 'exceptionsmail.log');
     }
   }
-
-public function trace($msg) {
-try {
- throw new Exception($msg);
-          } catch (Exception $e) {
-            $this->handexception($e);
-          }
-}
+  
+  public function trace($msg) {
+    try {
+      throw new Exception($msg);
+    } catch (Exception $e) {
+      $this->handexception($e);
+    }
+  }
   
 }//class
 

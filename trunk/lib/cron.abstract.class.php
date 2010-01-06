@@ -104,7 +104,7 @@ class tabstractcron extends tevents {
   private function pop() {
     $filename = $this->path .'cronchain.php';
     if(!tfiler::unserialize($filename, $list))  return;
-$urlmap = turlmap::instance();
+    $urlmap = turlmap::instance();
     if (isset($list[$urlmap->host]))  unset($list[$urlmap->host]);
     $item = array_splice($list, 0, 1);
     tfiler::serialize($filename, $list);
@@ -133,7 +133,7 @@ $urlmap = turlmap::instance();
     $s = file_get_contents($filename);
     @unlink($filename);
     TMailer::SendAttachmentToAdmin("[error] $options->name", "See attachment", 'errors.txt', $s);
-sleep(2);
+    sleep(2);
   }
   
   public function log($s) {

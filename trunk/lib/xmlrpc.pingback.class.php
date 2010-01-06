@@ -62,7 +62,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     if (preg_match('/nofollow|noindex/is', $match[1])) {
       return new IXR_Error(32, 'The source URL contain nofollow or noindex atribute');
     }
-
+    
     $pingbacks->add($from, $matchtitle[1]);
     
     return "Pingback from $from to $to registered. Keep the web talking! :-)";

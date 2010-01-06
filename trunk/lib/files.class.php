@@ -16,11 +16,11 @@ class tfiles extends titems {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-
+    
     $this->itemsposts = new titemsposts();
     $this->basename = 'files';
     $this->table = 'files';
-    $this->addevents('Changed', 'Edited');
+    $this->addevents('changed', 'edited');
   }
   
   public function load() {

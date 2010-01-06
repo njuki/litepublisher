@@ -18,37 +18,37 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     $this->dbversion = true;
     parent::create();
     $this->table = 'pingbacks';
-
+    
   }
   
   public function doadd($url, $title) {
-$item = array(
+    $item = array(
     'url' => $url,
     'title' => $title,
     'post' => $this->pid,
     'posted' =>sqldate(),
-'status' => 'hold',
+    'status' => 'hold',
     'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR'])
     );
-$id =     $this->db->add($item);
-$item['id'] = $id;
-$this->items[$id] = $item;
-$this->updatecount($this->pid);
-return $id;
+    $id =     $this->db->add($item);
+    $item['id'] = $id;
+    $this->items[$id] = $item;
+    $this->updatecount($this->pid);
+    return $id;
   }
-
-private function updatecount($idpost) {
+  
+  private function updatecount($idpost) {
     $count= $this->db->getcount("post = $idpost and status = 'approved'");
     $this->getdb('posts')->setvalue($idpost, 'pingbackscount', $count);
-}
-
-public function edit($id, $title, $url) {
-$this->db->updateassoc(compact('id', 'title', 'url'));
-}
-
+  }
+  
+  public function edit($id, $title, $url) {
+    $this->db->updateassoc(compact('id', 'title', 'url'));
+  }
+  
   public function exists($url) {
-return $this->db->finditem('url =' . dbquote($url));
-}
+    return $this->db->finditem('url =' . dbquote($url));
+  }
   
   public function setstatus($id, $approve) {
     $status = $approve ? 'approved' : 'hold';
@@ -56,7 +56,7 @@ return $this->db->finditem('url =' . dbquote($url));
     if ($item['status'] == $status) return false;
     $db = $this->db;
     $db->setvalue($id, 'status', $status);
-$this->updatecount($item['post']);
+    $this->updatecount($item['post']);
   }
   
   public function postdeleted($idpost) {

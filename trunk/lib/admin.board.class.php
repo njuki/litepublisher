@@ -11,13 +11,13 @@ class tadminboard extends tadminmenu {
     return getinstance(__class__);
   }
   
-    public function getcontent() {
-$editor = tposteditor::instance();
-return $editor->shorteditor();
-}
-
+  public function getcontent() {
+    $editor = tposteditor::instance();
+    return $editor->shorteditor();
+  }
+  
   public function processfosrm() {
-}
-
+  }
+  
 }//class
 ?>

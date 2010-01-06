@@ -12,6 +12,8 @@ class tdata {
   public $lockcount;
   public static $GlobalLock;
   public $data;
+  public $coinstances;
+  public $coclasses;
   public $basename;
   public $cache;
   //database
@@ -21,6 +23,8 @@ class tdata {
     $this->lockcount = 0;
     $this->cache= true;
     $this->data= array();
+    $this->coinstances = array();
+    $this->coclasses = array();
     $this->basename = substr(get_class($this), 1);
     $this->create();
   }
@@ -34,6 +38,9 @@ class tdata {
     } elseif (array_key_exists($name, $this->data)) {
       return $this->data[$name];
     } else {
+      foreach ($this->coinstances as $coinstance) {
+        if ($coinstance->propexists($name)) return $coinstance->$name;
+      }
       return    $this->error("The requested property $name not found in class ". get_class($this));
     }
   }
@@ -49,6 +56,13 @@ class tdata {
       return true;
     }
     
+    foreach ($this->coinstances as $coinstance) {
+      if ($coinstance->propexists($name)) {
+        $coinstance->$name = $value;
+        return true;
+      }
+    }
+    
     return false;
   }
   
@@ -56,6 +70,11 @@ class tdata {
     if (method_exists($this, strtolower($name))) {
       return call_user_func_array(array(&$this, strtolower($name)), $params);
     }
+    
+    foreach ($this->coinstances as $coinstance) {
+      if (method_exists($coinstance, $name)) return call_user_func_array(array($coinstance, $name), $params);
+    }
+    
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   
@@ -121,7 +140,7 @@ $func{0} = strtoupper($func{0});
   public function save() {
     global $paths;
     if (self::$GlobalLock || ($this->lockcount > 0)) return;
-    if (dbversion == 'full') {
+    if ($this->dbversion) {
       $this->SaveToDB();
     } else {
       SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
@@ -160,6 +179,10 @@ $func{0} = strtoupper($func{0});
   
   public function Getclass() {
     return get_class($this);
+  }
+  
+  public function getdbversion() {
+    return dbversion == 'full';
   }
   
   public function getdb($table = '') {
@@ -240,10 +263,12 @@ class tevents extends tdata {
   public function free() {
     global $classes;
     unset($classes->instances[get_class($this)]);
+    foreach ($this->coinstances as $coinstance) $coinstance->free();
   }
   
   protected function create() {
     $this->addmap('events', array());
+    $this->addmap('coclasses', array());
   }
   
   public function assignmap() {
@@ -254,6 +279,9 @@ class tevents extends tdata {
   
   public function afterload() {
     $this->assignmap();
+    foreach ($this->coclasses as $coclass) {
+      $this->coinstances[] = getinstance($coclass);
+    }
   }
   
   protected function addmap($name, $value) {
@@ -372,6 +400,26 @@ class tevents extends tdata {
     $this->save();
   }
   
+  private function indexofcoclass($class) {
+    return array_search($class, $this->coclasses);
+  }
+  
+  public function addcoclass($class) {
+    if ($this->indexofcoclass($class) === false) {
+      $this->coclasses[] = $class;
+      $this->save();
+      $this->coinstances = getinstance($class);
+    }
+  }
+  
+  public function deletecoclass($class) {
+    $i = $this->indexofcoclass($class);
+    if (is_int($i)) {
+      array_splice($this->coclasses, $i, 1);
+      $this->save();
+    }
+  }
+  
 }//class
 
 //items.class.php
@@ -389,10 +437,11 @@ class titems extends tevents {
   
   protected function create() {
     parent::create();
-    $this->dbversion = false;
     $this->addevents('added', 'deleted');
-    $this->addmap('items', array());
-    $this->addmap('autoid', 0);
+    if (!$this->dbversion) {
+      $this->addmap('items', array());
+      $this->addmap('autoid', 0);
+    }
   }
   
   public function load() {
@@ -403,6 +452,7 @@ class titems extends tevents {
       } else {
         $this->data = &$options->data[get_class($this)];
         $this->afterload();
+        
       }
       return  true;
     } else {
@@ -413,7 +463,6 @@ class titems extends tevents {
   public function save() {
     global $options;
     if ($this->dbversion) {
-      unset($this->data['items']);
       return $options->save();
     } else {
       return parent::save();
@@ -662,6 +711,10 @@ function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }
 
+function strend($s, $end) {
+  return $end == substr($s, 0 - strlen($end));
+}
+
 function SafeSaveFile($BaseName, $Content) {
   $TmpFileName = $BaseName.'.tmp.php';
   if(!file_put_contents($TmpFileName, $Content))  return false;
@@ -833,6 +886,14 @@ class toptions extends tevents {
     }
   }
   
+  public function trace($msg) {
+    try {
+      throw new Exception($msg);
+    } catch (Exception $e) {
+      $this->handexception($e);
+    }
+  }
+  
 }//class
 
 //urlmap.class.php
@@ -860,8 +921,9 @@ class turlmap extends titems {
   }
   
   protected function create() {
-    parent::create();
     $this->dbversion = dbversion;
+    parent::create();
+    
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
@@ -906,57 +968,40 @@ class turlmap extends titems {
   
   private function query($url) {
     if (dbversion) {
-      if ($res = $this->db->select('url = '. $this->db->quote($url). ' limit 1')) {
+      if ($res = $this->db->select('url = '. dbquote($url). ' limit 1')) {
         $item = $res->fetch(PDO::FETCH_ASSOC);
         $this->items[$item['id']] = $item;
         return $item;
       }
-    } elseif (isset($this->items[$url])) return $this->items[$url];
+    } elseif (isset($this->items[$url])) {
+      return $this->items[$url];
+    }
     return false;
   }
   
   public function finditem($url) {
-    global $options;
-    //redir multi slashed
-    if ('//' == substr($url, strlen($url) - 3)) $this->redir301(rtrim($url, '/') . '/');
+    if ($i = strpos($url, '?'))  {
+      $url = substr($url, 0, $i);
+    }
+    
+    if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
+    
+    //extract page number
+    if (preg_match('/(.*?)\/page\/(\d*?)\/+$/', $url, $m)) {
+      if ('/' != substr($url, -1))  return $this->redir301($url . '/');
+      $url = $m[1];
+      if ($url == '') $url = '/';
+      $this->page = (int) $m[2];
+    }
     
     if ($result = $this->query($url)) return $result;
-    
-    $slashed = rtrim($url, '/');
-    if ($result = $this->query($slashed)) {
-      if ($this->page == 1) {
-        return $this->redir301($slashed);
-      } else {
-        return $result;
-      }
+    $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
+    if ($result = $this->query($url)) {
+      if ($result['type'] == 'normal') return $this->redir301($url);
+      return $result;
     }
     
-    $slashed  .= '/';
-    if ($result = $this->query($slashed)) {
-      if ($this->page == 1) {
-        return $this->redir301($slashed);
-      } else {
-        return $result;
-      }
-    }
-    
-    if (($options->q == '?') && ($i = strpos($url, '?')) ) {
-      $url = substr($url, 0, $i);
-      return $this->finditem($url);
-    }
-    
-    //check page number as  /page/page/
-    if (count($this->uripath) == 0) {
-      $this->uripath = explode('/', trim($url, '/'));
-      $c = count($this->uripath);
-      if (($c >=2) && ($this->uripath[$c - 2] == 'page') && is_numeric($this->uripath[$c - 1])) {
-        $this->page = (int) $this->uripath[$c - 1];
-        $url = substr($url, 0, strpos($url, "page/$this->page"));
-        array_splice($this->uripath, $c - 2, 2);
-        return $this->finditem($url);
-      }
-    }
-    
+    $this->uripath = explode('/', trim($url, '/'));
     //tree обрезаю окончание урла в аргумент
     $url = trim($url, '/');
     $j = -1;
@@ -1142,7 +1187,7 @@ class turlmap extends titems {
   
   public function getcachename($name, $id) {
     global $paths;
-    return $paths['cache']. "$prefix-$id.php";
+    return $paths['cache']. "$name-$id.php";
   }
   
   public function expiredname($name, $id) {

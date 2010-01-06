@@ -36,7 +36,7 @@ class tadminmenus extends tmenus {
   public function add($parent, $name, $group, $class) {
     $title = $this->getadmintitle($name);
     $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
-return $this->additem(array(
+    return $this->additem(array(
     'parent' => $parent,
     'url' => $url,
     'title' => $title,
@@ -44,14 +44,14 @@ return $this->additem(array(
     'class' => $class,
     'group' => $group
     ));
-}
-
-public function additem(array $item) {
-$item['id'] = ++$this->autoid;
+  }
+  
+  public function additem(array $item) {
+    $item['id'] = ++$this->autoid;
     $item['order'] = $this->autoid;
-$item[    'status'] = 'published';
+    $item[    'status'] = 'published';
     $urlmap = turlmap::instance();
-$item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'tree');
+    $item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'tree');
     $this->items[$this->autoid] = $item;
     $this->sort();
     $this->save();
@@ -178,11 +178,11 @@ public function save() {}
   public function idget() {
     return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
   }
-
-public function getaction() {
-if (isset($_REQUEST['action']))  return $_REQUEST['action'];
-return false;
-}
+  
+  public function getaction() {
+    if (isset($_REQUEST['action']))  return $_REQUEST['action'];
+    return false;
+  }
   
   public function gethtml($name = '') {
     $result = THtmlResource ::instance();

@@ -120,7 +120,7 @@ class tcommentmanager extends tevents {
     $comment = tcomments::getcomment($idpost, $id);
     $args = targs::instance();
     $args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&post=$idpost&action";
-$mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendmail($options->name, $options->fromemail,

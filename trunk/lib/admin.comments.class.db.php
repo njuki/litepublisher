@@ -31,18 +31,18 @@ class tadminmoderator extends tadminmenu {
         switch($action) {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
-            $this->manager->delete($id, 0);
-    $result .= $this->html->h2->successmoderated;
+          $this->manager->delete($id, 0);
+          $result .= $this->html->h2->successmoderated;
           break;
           
           case 'hold':
           $this->manager->setstatus(0, $id, 'hold');
-        $result .= $this->moderated($id);
+          $result .= $this->moderated($id);
           break;
           
           case 'approve':
           $this->manager->setstatus(0, $id, 'approved');
-        $result .= $this->moderated($id);
+          $result .= $this->moderated($id);
           break;
           
           case 'edit':
@@ -57,37 +57,37 @@ class tadminmoderator extends tadminmenu {
       
       $result .= $this->getlist($this->name);
       return $result;
-
-case 'pingback':
+      
+      case 'pingback':
       if ($action = $this->action) {
         $id = $this->idget();
-$pingbacks = tpingbacks::instance();
+        $pingbacks = tpingbacks::instance();
         if (!$pingbacks->itemexists($id)) return $this->notfound;
         switch($action) {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
-$pingbacks->delete($id);
-    $result .= $this->html->h2->successmoderated;
+          $pingbacks->delete($id);
+          $result .= $this->html->h2->successmoderated;
           break;
           
           case 'hold':
-$pingbacks->setstatus($id, false);
-    $result .= $this->html->h2->successmoderated;
+          $pingbacks->setstatus($id, false);
+          $result .= $this->html->h2->successmoderated;
           break;
           
           case 'approve':
-$pingbacks->setstatus($id, true);
-    $result .= $this->html->h2->successmoderated;
+          $pingbacks->setstatus($id, true);
+          $result .= $this->html->h2->successmoderated;
           break;
           
           case 'edit':
           $result .= $this->editpingback($id);
           break;
-       }
+        }
       }
-$result .= $this->getpingbackslist();
-return $result;
-
+      $result .= $this->getpingbackslist();
+      return $result;
+      
       case 'authors':
       if ($action = $this->action) {
         $id = $this->idget();
@@ -110,26 +110,26 @@ return $result;
     }
     
   }
-
+  
   private function editcomment($id) {
-global $comment;
+    global $comment;
     $comment = new tcomment($id);
     $args = targs::instance();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&action";
-$result = $this->html->info($args);
-$result .= $this->html->editform($args);
-return $result;
+    $result = $this->html->info($args);
+    $result .= $this->html->editform($args);
+    return $result;
   }
-
+  
   private function reply($id) {
     global $comment;
     $comment = new tcomment($id);
-$args = targs::instance();
+    $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
-$result = $this->html->info($args);
-$result .= $this->html->replyform();
-return $result;
+    $result = $this->html->info($args);
+    $result .= $this->html->replyform();
+    return $result;
   }
   
   private function getlist($kind) {
@@ -165,11 +165,11 @@ return $result;
     $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
     return $result;
   }
-
+  
   private function getpingbackslist() {
     global $options, $urlmap, $post;
     $result = '';
-$pingbacks = tpingbacks::instance();
+    $pingbacks = tpingbacks::instance();
     $perpage = 20;
     $total = $pingbacks->getcount();
     $from = max(0, $total - $urlmap->page * $perpage);
@@ -182,15 +182,15 @@ $pingbacks = tpingbacks::instance();
     $args->adminurl = $this->adminurl;
     foreach ($items as $item) {
       $args->add($item);
-
-$args->idpost = $item['post'];
-unset($args->data['$post']);
+      
+      $args->idpost = $item['post'];
+      unset($args->data['$post']);
       $args->website = sprintf("<a href='%s'>%s</a>", $item['url']);
-$args->localstatus = tlocal::$data['commentstatus'][$item['status']];
-$args->date = tlocal::date(strtotime($item['posted']));
-$post = tpost::instance($item['post']);
-$args->posttitle =$post->title;
-$args->postlink = $post->link;
+      $args->localstatus = tlocal::$data['commentstatus'][$item['status']];
+      $args->date = tlocal::date(strtotime($item['posted']));
+      $post = tpost::instance($item['post']);
+      $args->posttitle =$post->title;
+      $args->postlink = $post->link;
       $result .=$html->pingbackitem($args);
     }
     $result .= $html->tablefooter();
@@ -200,23 +200,23 @@ $args->postlink = $post->link;
     $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
     return $result;
   }
-
+  
   private function editpingback($id) {
-$pingbacks = tpingbacks::instance();
+    $pingbacks = tpingbacks::instance();
     $args = targs::instance();
-$args->add($pingbacks->getitem($id));
-return $this->html->pingbackedit($args);
+    $args->add($pingbacks->getitem($id));
+    return $this->html->pingbackedit($args);
   }
-
+  
   private function moderated($id) {
     $result = $this->html->h2->successmoderated;
-$result .= $this->getinfo($id);
+    $result .= $this->getinfo($id);
     return $result;
   }
   
   private function getinfo($id) {
     global $comment;
-if (!isset($comment)) $comment = new tcomment($id);
+    if (!isset($comment)) $comment = new tcomment($id);
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
     return $this->html->info($args);
@@ -245,11 +245,11 @@ if (!isset($comment)) $comment = new tcomment($id);
   private function deleteauthor($uid) {
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($uid)) return false;
-$comments = tcomments::instance();
-      $comments->db->delete("author = $uid");
-      $comusers->delete($uid);
-return true;
-}
+    $comments = tcomments::instance();
+    $comments->db->delete("author = $uid");
+    $comusers->delete($uid);
+    return true;
+  }
   
   private function editauthor($id) {
     $args = targs::instance();
@@ -262,7 +262,7 @@ return true;
     } else {
       $comusers = tcomusers::instance();
       if (!$comusers->itemexists($id)) return $this->notfound;
-$args->add($comusers->getitem($id));
+      $args->add($comusers->getitem($id));
       $args->subscribed = $this->getsubscribed($id);
     }
     return $this->html->authorform($args);
@@ -275,14 +275,14 @@ $args->add($comusers->getitem($id));
     $perpage = 20;
     $total = $comusers->count;
     $from = max(0, $total - $urlmap->page * $perpage);
-      $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
-      $items = $res->fetchAll(PDO::FETCH_ASSOC);
+    $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
+    $items = $res->fetchAll(PDO::FETCH_ASSOC);
     $html = $this->html;
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
     $args->adminurl = $this->adminurl;
     foreach ($items as $id => $item) {
-        $args->add($item);
+      $args->add($item);
       $result .= $html->authoritem($args);
     }
     $result .= $html->authorfooter;
@@ -299,18 +299,18 @@ $args->add($comusers->getitem($id));
     if (!$comusers->itemexists($authorid))  return '';
     $html = $this->gethtml('moderator');
     $result = $html->checkallscript;
-$res = $db->query("select $db->posts.id as id, $db->posts.title as title, $db->urlmap.url as url
-from $db->posts, $db->urlmap
-where $db->posts.id in (select DISTINCT $db->comments.post from $db->comments where author = $authorid)
-and $db->urlmap.id = $db->posts.idurl
-order by $db->posts.posted desc");
-$items = $res->fetchAll(PDO::FETCH_ASSOC);        $args = targs::instance();
-
+    $res = $db->query("select $db->posts.id as id, $db->posts.title as title, $db->urlmap.url as url
+    from $db->posts, $db->urlmap
+    where $db->posts.id in (select DISTINCT $db->comments.post from $db->comments where author = $authorid)
+    and $db->urlmap.id = $db->posts.idurl
+    order by $db->posts.posted desc");
+    $items = $res->fetchAll(PDO::FETCH_ASSOC);        $args = targs::instance();
+    
     $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
-
-foreach ($items as $item) {
-$args->add($item);
+    
+    foreach ($items as $item) {
+      $args->add($item);
       $args->subscribed = in_array($item['id'], $subscribed);
       $result .= $html->subscribeitem($args);
     }
@@ -320,65 +320,65 @@ $args->add($item);
   
   public function processform() {
     global $options, $urlmap;
-
+    
     switch ($this->name) {
       case 'comments':
       case 'hold':
-
-if (isset($_REQUEST['action'])) {
-      switch ($_REQUEST['action']) {
-        case 'reply':
-        $email = $this->getadminemail();
-        $site = $options->url . $options->home;
-        $profile = tprofile::instance();
-        $post = tpost::instance( (int) $_REQUEST['post']);
-        $this->manager->add($post->id, $profile->nick, $email, $site, $_POST['content']);
-        @header("Location: $options->url$post->lastcommenturl");
-        exit();
-        
-        case 'edit':
-$comments = tcomments::instance();
-        $comment = $comments->getcomment($this->idget);
-        $comment->content = $_POST['content'];
-        break;
-}
-} else {
-$manager = $this->manager;
-$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
+      
+      if (isset($_REQUEST['action'])) {
+        switch ($_REQUEST['action']) {
+          case 'reply':
+          $email = $this->getadminemail();
+          $site = $options->url . $options->home;
+          $profile = tprofile::instance();
+          $post = tpost::instance( (int) $_REQUEST['post']);
+          $this->manager->add($post->id, $profile->nick, $email, $site, $_POST['content']);
+          @header("Location: $options->url$post->lastcommenturl");
+          exit();
+          
+          case 'edit':
+          $comments = tcomments::instance();
+          $comment = $comments->getcomment($this->idget);
+          $comment->content = $_POST['content'];
+          break;
+        }
+      } else {
+        $manager = $this->manager;
+        $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $id => $value) {
           if (!is_numeric($id))  continue;
-$id = (int) $id;
-if ($status == 'delete') {
-$manager->delete($id);
-} else {
-$manager->setstatus(0, $id, $status);
-}
+          $id = (int) $id;
+          if ($status == 'delete') {
+            $manager->delete($id);
+          } else {
+            $manager->setstatus(0, $id, $status);
+          }
         }
-}
-        $result = $this->html->h2->successmoderated;
+      }
+      $result = $this->html->h2->successmoderated;
       break;
-
-case 'pingback':
-$pingbacks = tpingbacks::instance();
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
-extract($_POST);
-$pingbacks->edit($this->idget(), $title, $url);
-} else {
-$status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
+      
+      case 'pingback':
+      $pingbacks = tpingbacks::instance();
+      if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
+        extract($_POST);
+        $pingbacks->edit($this->idget(), $title, $url);
+      } else {
+        $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $id => $value) {
           if (!is_numeric($id))  continue;
-$id = (int) $id;
-if ($status == 'delete') {
-$pingbacks->delete($id);
-} else {
-$pingbacks->setstatus($id, $status == 'approve');
-}
+          $id = (int) $id;
+          if ($status == 'delete') {
+            $pingbacks->delete($id);
+          } else {
+            $pingbacks->setstatus($id, $status == 'approve');
+          }
         }
-}
-        $result = $this->html->h2->successmoderated;
+      }
+      $result = $this->html->h2->successmoderated;
       break;
-
-           case 'authors':
+      
+      case 'authors':
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
         $comusers = tcomusers::instance();

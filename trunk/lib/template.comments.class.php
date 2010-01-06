@@ -27,7 +27,7 @@ public function save() {}
   public function getcommentslink(tpost $post) {
     global $options;
     $count = $this->getcount($post->commentscount);
-   return "<a href=\"$options->url$post->lastcommenturl#comments\">$count</a>";
+    return "<a href=\"$options->url$post->lastcommenturl#comments\">$count</a>";
   }
   
   public function getcomments($idpost) {
@@ -42,14 +42,14 @@ public function save() {}
     $theme = ttheme::instance();
     $comments = tcomments::instance($idpost);
     $list = $comments->getcontent();
-
-      $lang = tlocal::instance('comment');
-      $tml = $theme->content->post->templatecomments->comments;
-      $args = targs::instance();
-      $args->count = $this->getcount($post->commentscount);
-      $result .= $theme->parsearg($tml->count, $args);
-      $result .= $list;
-
+    
+    $lang = tlocal::instance('comment');
+    $tml = $theme->content->post->templatecomments->comments;
+    $args = targs::instance();
+    $args->count = $this->getcount($post->commentscount);
+    $result .= $theme->parsearg($tml->count, $args);
+    $result .= $list;
+    
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
       $pingbacks = tpingbacks::instance($post->id);
       $result .= $pingbacks->getcontent();

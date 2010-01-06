@@ -165,7 +165,7 @@ class tthemeparser {
     
     $result['files'] = $this->parsefiles($this->parsetag($s, 'files', '$post.filelist'));
     $result['more'] = $this->parsetag($s, 'more', '');
-    $result['rss'] = $this->parsetag($s, 'rss', '$post.rsscomments');
+    $result['rss'] = $this->parsetag($s, 'rss', '$post.subscriberss');
     $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post.prevnext'));
     $result['templatecomments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post.templatecomments'));
     // после комментариев из за секции date в комментарии

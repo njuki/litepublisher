@@ -22,7 +22,7 @@ class tcontentfilter extends tevents {
   }
   
   public function filtercomment($content) {
-if ($this->oncomment(&$content)) return $content;
+    if ($this->oncomment(&$content)) return $content;
     $result = trim($content);
     $result = htmlspecialchars($result);
     $result = str_replace("\r\n", "\n", $result);
@@ -98,11 +98,11 @@ if ($this->oncomment(&$content)) return $content;
   }
   
   public function filter($content) {
-if ($this->beforefilter(&$content)) {
-$this->afterfilter(&$content);
-return $content;
-}
-
+    if ($this->beforefilter(&$content)) {
+      $this->afterfilter(&$content);
+      return $content;
+    }
+    
     $result = trim($content);
     $result = $this->replacecode($result);
     
@@ -128,8 +128,8 @@ return $content;
     
     if (!preg_match('/^<p>/i', $result, $m)) $result = '<p>'. $result;
     if (!preg_match('/<\/p>$/i', $result, $m)) $result .= '</p>';
-
-$this->afterfilter(&$result);
+    
+    $this->afterfilter(&$result);
     return $result;
   }
   

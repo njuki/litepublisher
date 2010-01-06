@@ -16,7 +16,7 @@ function trssInstall($self) {
   $urlmap->unlock();
   
   $classes->commentmanager->changed = $self->commentschanged;
-    $self->save();
+  $self->save();
 }
 
 function trssUninstall($self) {

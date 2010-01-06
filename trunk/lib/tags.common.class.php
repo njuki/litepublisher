@@ -18,7 +18,7 @@ class tcommontags extends titems implements  itemplate {
     $this->dbversion = dbversion;
     parent::create();
     $this->data['itemsposts'] = array();
-
+    
     $this->data['lite'] = false;
     $this->data['sortname'] = 'count';
     $this->data['showcount'] = true;
@@ -142,8 +142,8 @@ class tcommontags extends titems implements  itemplate {
       $itemstable = $this->itemsposts->thistable;
       $poststable = $db->posts;
       $res = $db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
-      where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published' 
-group by $itemstable.item");
+      where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published'
+      group by $itemstable.item");
       
       $db->table = $this->table;
       foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $item) {

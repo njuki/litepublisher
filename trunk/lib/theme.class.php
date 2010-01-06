@@ -140,7 +140,7 @@ class ttheme extends tevents {
     
     $result = '';
     $tml = $lite ? $this->content->excerpts->lite->excerpt : $this->content->excerpts->excerpt;
-if (is_object($tml)) $tml = $tml->__tostring();
+    if (is_object($tml)) $tml = $tml->__tostring();
     foreach($items as $id) {
       $post = tpost::instance($id);
       $result .= $this->parse($tml);

@@ -59,7 +59,7 @@ class tposttransform  {
     $db->table = 'posts';
     $list = array();
     foreach (self::$props  As $name) {
-if ($name == 'id') continue;
+      if ($name == 'id') continue;
       $list[] = "$name = " . $db->quote($this->__get($name));
     }
     
