@@ -5,7 +5,7 @@
 <title>$template.title</title>
 <link rel="stylesheet" href="$template.url/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="$template.url/print.css" type="text/css" media="print" />
-<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss/" />
+<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
 <link rel="pingback" href="$options.url/rpc.xml" />
  <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
 <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
@@ -117,8 +117,7 @@ $post.tagslinks
 
 $post.content
 
-<!--rss--><h2><a href="$post.rsslink" title="$lang.commentsrss">$lang.commentsrss</a></h2><!--/rss-->
-
+<!--rss--><h2><a href="$post.rsscomments" title="$lang.subscribetorsscomments">$lang.subscribetorsscomments</a></h2><!--/rss-->
 <!--prevnext-->
 <p>
 <!--prev-->$lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a><!--/prev-->
@@ -237,7 +236,7 @@ $menu.content
   </div>
 
 <div id="sidebar">
-  <a href="$options.url/rss/"><img src="$template.url/images/rss-icon.png" alt="$lang.subscriberss" border="0" /></a>
+  <a href="$options.url/rss.xml"><img src="$template.url/images/rss-icon.png" alt="$lang.subscriberss" border="0" /></a>
 <ul>
 <!--sitebar-->
 
