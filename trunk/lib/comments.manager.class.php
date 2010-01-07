@@ -51,11 +51,13 @@ $this->save();
   
 private function addrecent($id, $idpost) {
 if ($i = $this->indexofrecent($id, $idpost))  return;
+        $post = tpost::instance($idpost);
+            if ($post->status != 'published') return
+
       $comments = tcomments::instance($idpost);
         $item = $comments->items[$id];
         $item['id'] = $id;
         $item['idpost'] = $idpost;
-        $post = tpost::instance($idpost);
         $item['title'] = $post->title;
         $item['posturl'] =     $post->lastcommenturl;
         

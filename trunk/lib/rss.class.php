@@ -97,30 +97,15 @@ class trss extends tevents {
   public function GetRecentComments() {
     global $options;
     $this->domrss->CreateRoot($options->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. $options->name);
-    
-    $count = $options->postsperpage;
-    
-    if (dbversion) {
-      
-    } else {
-      $manager= tcommentmanager::instance();
-      if ($item = end($CommentManager->items)) {
-        $comment = &new TComment();
+$manager = tcommentmanager::instance();    
+$recent = $manager->getrecent($options->postsperpage);
         $title = tlocal::$data['comment']['onpost'] . ' ';
-        do {
-          $id = key($CommentManager->items);
-          if (!isset($item['status']) && !isset($item['type'])) {
-            $post = tpost::instance($item['pid']);
-            if ($post->status != 'published') continue;
-            $count--;
-            $comment->Owner = &$post->comments;
-            $comment->id = $id;
-            $this->AddRSSComment($comment, $post->url, $title . $post->title);
+$comment = new tarray2prop();
+foreach ($recent  as $item) {
+$comment->array = $item;
+            $this->AddRSSComment($comment, $title . $comment->title);
           }
-        } while (($count > 0) && ($item = prev($CommentManager->items)));
-      }
-      
-    }
+}
     
     public function GetRSSPostComments($idpost) {
       global $options;
@@ -185,14 +170,15 @@ class trss extends tevents {
       AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
     }
     
-    public function AddRSSComment(&$comment, $posturl, $title) {
+    public function AddRSSComment($comment, $title) {
       global $options;
+$link = "$options->url$comment->posturl#comment-$comment->id";
       $item = $this->domrss->AddItem();
       AddNodeValue($item, 'title', $title);
-      AddNodeValue($item, 'link', "$options->url$posturl#comment-$comment->id");
+      AddNodeValue($item, 'link', $link);
       AddNodeValue($item, 'dc:creator', $comment->name);
       AddNodeValue($item, 'pubDate', date('r', $comment->date));
-      AddNodeValue($item, 'guid', "$options->url$posturl#comment-$comment->id");
+      AddNodeValue($item, 'guid', $link);
       AddCData($item, 'description', strip_tags($comment->content));
       AddCData($item, 'content:encoded', $comment->content);
     }
