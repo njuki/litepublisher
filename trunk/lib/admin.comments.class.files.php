@@ -18,7 +18,7 @@ class tadminmoderator extends tadminmenu {
     return $classes->commentmanager;
   }
   
-  private function getidpost() {
+  protected function getidpost() {
     return isset($_REQUEST['post']) ? (int) $_REQUEST['post'] : 0;
   }
   

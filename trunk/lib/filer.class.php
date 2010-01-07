@@ -21,7 +21,7 @@ class tfiler {
       }
       @closedir($h);
     }
-    if ($rmdir) rmdir($path);
+    if ($rmdir) @rmdir($path);
   }
   
   public static function deletemask($mask) {

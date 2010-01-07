@@ -47,7 +47,7 @@ class tfiles extends titems {
     return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
   
-  public function geticon($id, $title) {
+  public function geticon($id) {
     return sprintf('<img src="%s" />', $this->geturl($id));
   }
   
