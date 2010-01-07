@@ -5,7 +5,7 @@ die('Lite Publisher requires PHP 5.2 or later. You are using PHP ' . PHP_VERSION
 
 ob_start();
 //begin config
-define('dbversion' , false); //valid values is combo, full
+define('dbversion' , 'combo'); //valid values false, combo, full
 if (!preg_match('/(www\.)?([\w\.]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
 $domain = $domain[2];
 
