@@ -51,6 +51,7 @@ function doinstallclasses() {
   //tdata::$GlobalLock = true;
   foreach( $classes->items as $class => $item) {
     //echo "$class\n";
+    if (preg_match('/titemspostsowner|tcomment/', $class)) continue;
     $obj = getinstance($class);
     if (method_exists($obj, 'install')) $obj->install();
   }

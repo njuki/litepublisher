@@ -96,113 +96,117 @@ class trss extends tevents {
   
   public function GetRecentComments() {
     global $options;
-    $this->domrss->CreateRoot($options->url . '/comments/', TLocal::$data['comment']['onrecent'] . ' '. $options->name);
+    $this->domrss->CreateRoot($options->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. $options->name);
     
     $count = $options->postsperpage;
-    $CommentManager = TCommentManager::instance();
-    if ($item = end($CommentManager->items)) {
-      $comment = &new TComment();
-      $title = TLocal::$data['comment']['onpost'] . ' ';
-      do {
-        $id = key($CommentManager->items);
-        if (!isset($item['status']) && !isset($item['type'])) {
-          $post = tpost::instance($item['pid']);
-          if ($post->status != 'published') continue;
-          $count--;
-          $comment->Owner = &$post->comments;
-          $comment->id = $id;
-          $this->AddRSSComment($comment, $post->url, $title . $post->title);
-        }
-      } while (($count > 0) && ($item = prev($CommentManager->items)));
-    }
     
-  }
-  
-  public function GetRSSPostComments($idpost) {
-    global $options;
-    $post = tpost::instance($idpost);
-    $lang = TLocal::instance('comment');
-    $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
-    $count = $options->postsperpage;
-    $comment = new TComment($post->comments);
-    $items = &$post->comments->items;
-    $title = TLocal::$data['comment']['from'] . ' ';
-    foreach ($items as $id => $item) {
-      if (($item['status'] == 'approved') && ($item['type'] == '')) {
-        $count--;
-        $comment->id = $id;
-        $this->AddRSSComment($comment, $post->url, $title . $comment->name);
-      }
-      if ($count ==0) break;
-    }
-    
-  }
-  
-  public function AddRSSPost(&$post) {
-    global $options;
-    $item = $this->domrss->AddItem();
-    AddNodeValue($item, 'title', $post->title);
-    AddNodeValue($item, 'link', $post->link);
-    AddNodeValue($item, 'comments', $post->link . '#comments');
-    AddNodeValue($item, 'pubDate', $post->pubdate);
-    
-    $guid  = AddNodeValue($item, 'guid', $post->link);
-    AddAttr($guid, 'isPermaLink', 'false');
-    
-    $profile = tprofile::instance();
-    AddNodeValue($item, 'dc:creator', $profile->nick);
-    
-    $categories = tcategories::instance();
-    $names = $categories->GetNames($post->categories);
-    foreach ($names as $name) {
-      if (empty($name)) continue;
-      AddCData($item, 'category', $name);
-    }
-    
-    $tags = ttags::instance();
-    $names = $tags->GetNames($post->tags);
-    foreach ($names as $name) {
-      if (empty($name)) continue;
-      AddCData($item, 'category', $name);
-    }
-    
-    $content = '';
-    $this->beforepost($post->id, &$$content);
-    if ($this->template == '') {
-      $content .=$post->rss;
-      $content .= $post->morelink;
+    if (dbversion) {
+      
     } else {
-      eval('$content .= "'. $this->template . '";');
+      $manager= tcommentmanager::instance();
+      if ($item = end($CommentManager->items)) {
+        $comment = &new TComment();
+        $title = tlocal::$data['comment']['onpost'] . ' ';
+        do {
+          $id = key($CommentManager->items);
+          if (!isset($item['status']) && !isset($item['type'])) {
+            $post = tpost::instance($item['pid']);
+            if ($post->status != 'published') continue;
+            $count--;
+            $comment->Owner = &$post->comments;
+            $comment->id = $id;
+            $this->AddRSSComment($comment, $post->url, $title . $post->title);
+          }
+        } while (($count > 0) && ($item = prev($CommentManager->items)));
+      }
+      
     }
-    $this->afterpost($post->id, &$content);
     
-    AddCData($item, 'description', strip_tags($content));
-    AddCData($item, 'content:encoded', $content);
-    AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
-  }
-  
-  public function AddRSSComment(&$comment, $posturl, $title) {
-    global $options;
-    $item = $this->domrss->AddItem();
-    AddNodeValue($item, 'title', $title);
-    AddNodeValue($item, 'link', "$options->url$posturl#comment-$comment->id");
-    AddNodeValue($item, 'dc:creator', $comment->name);
-    AddNodeValue($item, 'pubDate', date('r', $comment->date));
-    AddNodeValue($item, 'guid', "$options->url$posturl#comment-$comment->id");
-    AddCData($item, 'description', strip_tags($comment->content));
-    AddCData($item, 'content:encoded', $comment->content);
-  }
-  
-  public function SetFeedburnerLinks($rss, $comments) {
-    if (($this->feedburner != $rss) || ($this->feedburnercomments != $comments)) {
-      $this->feedburner= $rss;
-      $this->feedburnercomments = $comments;
-      $this->Save();
-      $urlmap = turlmap::instance();
-      $urlmap->clearcache();
+    public function GetRSSPostComments($idpost) {
+      global $options;
+      $post = tpost::instance($idpost);
+      $lang = tlocal::instance('comment');
+      $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
+      $count = $options->postsperpage;
+      $comment = new TComment($post->comments);
+      $items = &$post->comments->items;
+      $title = tlocal::$data['comment']['from'] . ' ';
+      foreach ($items as $id => $item) {
+        if (($item['status'] == 'approved') && ($item['type'] == '')) {
+          $count--;
+          $comment->id = $id;
+          $this->AddRSSComment($comment, $post->url, $title . $comment->name);
+        }
+        if ($count ==0) break;
+      }
+      
     }
-  }
+    
+    public function AddRSSPost(&$post) {
+      global $options;
+      $item = $this->domrss->AddItem();
+      AddNodeValue($item, 'title', $post->title);
+      AddNodeValue($item, 'link', $post->link);
+      AddNodeValue($item, 'comments', $post->link . '#comments');
+      AddNodeValue($item, 'pubDate', $post->pubdate);
+      
+      $guid  = AddNodeValue($item, 'guid', $post->link);
+      AddAttr($guid, 'isPermaLink', 'false');
+      
+      $profile = tprofile::instance();
+      AddNodeValue($item, 'dc:creator', $profile->nick);
+      
+      $categories = tcategories::instance();
+      $names = $categories->GetNames($post->categories);
+      foreach ($names as $name) {
+        if (empty($name)) continue;
+        AddCData($item, 'category', $name);
+      }
+      
+      $tags = ttags::instance();
+      $names = $tags->GetNames($post->tags);
+      foreach ($names as $name) {
+        if (empty($name)) continue;
+        AddCData($item, 'category', $name);
+      }
+      
+      $content = '';
+      $this->beforepost($post->id, &$$content);
+      if ($this->template == '') {
+        $content .=$post->rss;
+        $content .= $post->morelink;
+      } else {
+        eval('$content .= "'. $this->template . '";');
+      }
+      $this->afterpost($post->id, &$content);
+      
+      AddCData($item, 'description', strip_tags($content));
+      AddCData($item, 'content:encoded', $content);
+      AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
+    }
+    
+    public function AddRSSComment(&$comment, $posturl, $title) {
+      global $options;
+      $item = $this->domrss->AddItem();
+      AddNodeValue($item, 'title', $title);
+      AddNodeValue($item, 'link', "$options->url$posturl#comment-$comment->id");
+      AddNodeValue($item, 'dc:creator', $comment->name);
+      AddNodeValue($item, 'pubDate', date('r', $comment->date));
+      AddNodeValue($item, 'guid', "$options->url$posturl#comment-$comment->id");
+      AddCData($item, 'description', strip_tags($comment->content));
+      AddCData($item, 'content:encoded', $comment->content);
+    }
+    
+    public function SetFeedburnerLinks($rss, $comments) {
+      if (($this->feedburner != $rss) || ($this->feedburnercomments != $comments)) {
+        $this->feedburner= $rss;
+        $this->feedburnercomments = $comments;
+        $this->Save();
+        $urlmap = turlmap::instance();
+        $urlmap->clearcache();
+      }
+    }
+    
+  }//class
   
-}//class
-
-?>
+  ?>

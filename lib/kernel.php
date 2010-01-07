@@ -438,7 +438,9 @@ class titems extends tevents {
   protected function create() {
     parent::create();
     $this->addevents('added', 'deleted');
-    if (!$this->dbversion) {
+    if ($this->dbversion) {
+      $this->items = array();
+    } else {
       $this->addmap('items', array());
       $this->addmap('autoid', 0);
     }
