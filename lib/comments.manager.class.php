@@ -7,7 +7,7 @@
 **/
 
 class tcommentmanager extends tevents {
-public $items;
+  public $items;
   
   public static function instance() {
     return getinstance(__class__);
@@ -18,7 +18,7 @@ public $items;
     $this->basename = 'commentmanager';
     $this->addevents('added', 'deleted', 'edited', 'changed', 'approved',
     'authoradded', 'authordeleted', 'authoredited');
-if (!dbversion) $this->addmap('items', array());
+    if (!dbversion) $this->addmap('items', array());
     $this->data['sendnotification'] =  true;
     $this->data['trustlevel'] = 2;
     $this->data['hidelink'] = false;
@@ -34,44 +34,44 @@ if (!dbversion) $this->addmap('items', array());
     $db->table = 'comments';
     return $db->getcount();
   }
-
-private function indexofrecent($id, $idpost) {
-foreach ($this->items as $i => $item) {
-if ($id == $item['id'] && $idpost == $item['idpost')  return $i;
-}
-return false;
-}
-
-private function deleterecent($id, $idpost) {
-if ($i = $this->indexofrecent(4id, $idpost)) {
-            array_splice($this->items, $i, 1);
-$this->save();
-}
-}
   
-private function addrecent($id, $idpost) {
-if ($i = $this->indexofrecent($id, $idpost))  return;
-        $post = tpost::instance($idpost);
-            if ($post->status != 'published') return
-
-      $comments = tcomments::instance($idpost);
-        $item = $comments->items[$id];
-        $item['id'] = $id;
-        $item['idpost'] = $idpost;
-        $item['title'] = $post->title;
-        $item['posturl'] =     $post->lastcommenturl;
-        
-        $comusers = tcomusers::instance($idpost);
-        $author = $comusers->items[$item['author']];
-        $item['name'] = $author['name'];
-        $item['email'] = $author['email'];
-        $item['url'] = $author['url'];
-        
-        if (count($this->items) >= $this->maxrecent) array_pop($this->items);
-        array_unshift($this->items, $item);
-        $this->save();
- }
-
+  private function indexofrecent($id, $idpost) {
+    foreach ($this->items as $i => $item) {
+      if ($id == $item['id'] && $idpost == $item['idpost']) return $i;
+    }
+    return false;
+  }
+  
+  private function deleterecent($id, $idpost) {
+    if ($i = $this->indexofrecent($id, $idpost)) {
+      array_splice($this->items, $i, 1);
+      $this->save();
+    }
+  }
+  
+  private function addrecent($id, $idpost) {
+    if ($i = $this->indexofrecent($id, $idpost))  return;
+    $post = tpost::instance($idpost);
+    if ($post->status != 'published') return
+    
+    $comments = tcomments::instance($idpost);
+    $item = $comments->items[$id];
+    $item['id'] = $id;
+    $item['idpost'] = $idpost;
+    $item['title'] = $post->title;
+    $item['posturl'] =     $post->lastcommenturl;
+    
+    $comusers = tcomusers::instance($idpost);
+    $author = $comusers->items[$item['author']];
+    $item['name'] = $author['name'];
+    $item['email'] = $author['email'];
+    $item['url'] = $author['url'];
+    
+    if (count($this->items) >= $this->maxrecent) array_pop($this->items);
+    array_unshift($this->items, $item);
+    $this->save();
+  }
+  
   public function add($idpost, $name, $email, $url, $content) {
     $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
     $idauthor = $comusers->add($name, $email, $url);
@@ -83,8 +83,8 @@ if ($i = $this->indexofrecent($id, $idpost))  return;
     $status = $classes->spamfilter->createstatus($idauthor, $content);
     $comments = tcomments::instance($idpost);
     $id = $comments->add($idauthor,  $content, $status);
-
-if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
+    
+    if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
     
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
@@ -116,28 +116,28 @@ if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
   public function delete($id, $idpost) {
     $comments = tcomments::instance($idpost);
     $comments->delete($id);
-if (!dbversion) $this->deleterecent($id, $idpost);
+    if (!dbversion) $this->deleterecent($id, $idpost);
     $this->deleted($id);
     $this->dochanged($id, $idpost);
   }
-
+  
   public function postdeleted($idpost) {
     if (dbversion) {
       $comments = tcomments::instance($idpost);
       $comments->db->update("status = 'deleted'", "post = $idpost");
     } else {
-$deleted = false;
-foreach ($this->items as $i => $item) {
-if ($idpost == $item['idpost']) {
-            array_splice($this->items, $i, 1);
-$deleted = true;
-}
-}
-if ($deleted) {
-$this->save();
-$this->changed();
-}
-}
+      $deleted = false;
+      foreach ($this->items as $i => $item) {
+        if ($idpost == $item['idpost']) {
+          array_splice($this->items, $i, 1);
+          $deleted = true;
+        }
+      }
+      if ($deleted) {
+        $this->save();
+        $this->changed();
+      }
+    }
   }
   
   public function setstatus($idpost, $id, $status) {
@@ -149,12 +149,12 @@ $this->changed();
       switch ($value) {
         case 'hold':
         $comments->sethold($id);
-$this->deleterecent($id, $idpost);
+        $this->deleterecent($id, $idpost);
         break;
         
         case 'approved':
         $comments->approve($id);
-$this->addrecent($id, $idpost);
+        $this->addrecent($id, $idpost);
         break;
       }
     }
@@ -184,9 +184,9 @@ $this->addrecent($id, $idpost);
     tmailer::sendmail($options->name, $options->fromemail,
     'admin', $options->email,  $subject, $body);
   }
-
-public function getrecent($count) {
-global $db, $options;
+  
+  public function getrecent($count) {
+    global $db, $options;
     if (dbversion) {
       $res = $db->query("select $db->comments.*,
       $db->comusers.name as name,
@@ -200,19 +200,19 @@ global $db, $options;
       order by $db->comments.posted desc limit $count");
       
       $result = $res->fetchAll(PDO::FETCH_ASSOC);
-        if ($options->commentpages) {
-      foreach ($result as $i => $item) {
+      if ($options->commentpages) {
+        foreach ($result as $i => $item) {
           $page = ceil($item['commentscount'] / $options->commentsperpage);
           if ($page > 1) $result[$i]['posturl']= rtrim($item['posturl'], '/') . "/page/$page/";
         }
-              }
-return $result;
+      }
+      return $result;
     } else {
-if ($count <= count($this->items)) return $this->items;
-return array_slice($this->items, 0, $count);
-}
-}
-
+      if ($count <= count($this->items)) return $this->items;
+      return array_slice($this->items, 0, $count);
+    }
+  }
+  
 }//class
 
 ?>

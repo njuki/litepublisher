@@ -17,6 +17,6 @@ $installer = new tinstaller();
 $installer->install();
 
 global $options;
-if (is_a($options, 'toptions')) $options->savemodified();
+if ($options instanceof toptions) $options->savemodified();
 exit();
 ?>
