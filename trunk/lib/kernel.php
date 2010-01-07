@@ -82,10 +82,6 @@ class tdata {
     return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name") || isset($this->$name);
   }
   
-  public function supported($interface) {
-    return is_a($this, $interface);
-  }
-  
   public function error($Msg) {
     throw new Exception($Msg);
   }

@@ -74,7 +74,7 @@ class ttemplate extends tevents {
   
   public function getsitebar() {
     $result = '';
-    if (is_a($this->context, 'itemplate2')) {
+    if ($this->context instanceof itemplate2) {
       $result .= $this->context->getsitebar();
     } else {
       $widgets = twidgets::instance();
@@ -87,8 +87,8 @@ class ttemplate extends tevents {
     global $options;
     $GLOBALS['context'] = $context;
     $this->context = $context;
-    $this->itemplate = is_a($context, 'itemplate');
-    $itemplate2 = is_a($context, 'itemplate2');
+    $this->itemplate = $context instanceof itemplate;
+    $itemplate2 = $context instanceof itemplate2;
     if ($itemplate2) {
       $tml = $context->template;
       ttheme::$name = $context->theme;

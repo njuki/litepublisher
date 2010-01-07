@@ -19,15 +19,15 @@ class tcommentswidget extends tevents {
     $tml = $theme->getwidgetitem('comments', $sitebar);
     $args = targs::instance();
     $args->onrecent = tlocal::$data['comment']['onrecent'];
-
-$manager = tcommentmanager::instance();
-$recent = $manager->getrecent($manager->recentcount);
-foreach ($recent as $item) {
-        $args->add($item);
-        $args->content = tcontentfilter::getexcerpt($item['content'], 120);
-        $result .= $theme->parsearg($tml,$args);
-}
-return $result;
+    
+    $manager = tcommentmanager::instance();
+    $recent = $manager->getrecent($manager->recentcount);
+    foreach ($recent as $item) {
+      $args->add($item);
+      $args->content = tcontentfilter::getexcerpt($item['content'], 120);
+      $result .= $theme->parsearg($tml,$args);
+    }
+    return $result;
   }
   
   public function changed($id, $idpost) {

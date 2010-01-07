@@ -52,7 +52,7 @@ class THtmlResource  {
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
-    $args = isset($params[0]) && is_a($params[0], 'targs') ? $params[0] : targs::instance();
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::instance();
     return $this->parsearg($s, $args);
   }
   
