@@ -227,6 +227,7 @@ class tinstaller extends tdata {
   }
   
   public function wizardform() {
+global $domain;
     $this->loadlang();
     $form = $this->GetLangForm();
     $html = THtmlResource::instance();
@@ -237,6 +238,7 @@ class tinstaller extends tdata {
     } else {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
+$dbprefix = strtolower(str_replace('.', '', $domain)) . '_';
     eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
     
     eval('$form .= "'. $html->installform. '\n";');
@@ -285,7 +287,6 @@ class tinstaller extends tdata {
     
     $users = tcomusers::instance($post->id);
     $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
-    
     $classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
   }
   

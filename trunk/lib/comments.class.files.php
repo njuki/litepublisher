@@ -117,215 +117,216 @@ class tcomments extends titems {
       $this->hold->delete($id);
     }
   }
+  
   /*
-public function sort() }
-$Result[$id] = $item['posted'];
-asort($Result);
-return  array_keys($Result);
-}
-*/
-
-public function getholdcontent($idauthor) {
-return $this->hold->getcontent($idauthor);
-}
-
-public function getcontent() {
-global $options, $urlmap, $comment;
-$result = '';
-$from = 0;
-$items = array_keys($this->items);
-if (__class__ == get_class($this)) {
-  if ($options->commentpages ) {
-    $from = ($urlmap->page - 1) * $options->commentsperpage;
-    $items = array_slice($items, $from, $options->commentsperpage, true);
+  public function sort() {
+    $Result[$id] = $item['posted'];
+    asort($Result);
+    return  array_keys($Result);
   }
-}
-
-if (count($items) == 0) return '';
-
-$args = targs::instance();
-$args->from = $from;
-$comment = new TComment($this);
-if ('tholdcomments' == get_class($this)) $comment->status = 'hold';
-$lang = tlocal::instance('comment');
-$theme = ttheme::instance();
-$tml = $theme->content->post->templatecomments->comments->comment;
-$i = 1;
-foreach ($items as $id) {
-  //разрулить в одном месте одобренные и задержанные комменты
-  if (__class__ != get_class($this)) {
-    //значит задержанные
-    if ($this->idauthor != $this->items[$id]['author']) continue;
+  */
+  
+  public function getholdcontent($idauthor) {
+    return $this->hold->getcontent($idauthor);
   }
-  $comment->id = $id;
-  $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
-  $result .= $theme->parsearg($tml, $args);
-}
-return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);
-}
-
+  
+  public function getcontent() {
+    global $options, $urlmap, $comment;
+    $result = '';
+    $from = 0;
+    $items = array_keys($this->items);
+    if (__class__ == get_class($this)) {
+      if ($options->commentpages ) {
+        $from = ($urlmap->page - 1) * $options->commentsperpage;
+        $items = array_slice($items, $from, $options->commentsperpage, true);
+      }
+    }
+    
+    if (count($items) == 0) return '';
+    
+    $args = targs::instance();
+    $args->from = $from;
+    $comment = new TComment($this);
+    if ('tholdcomments' == get_class($this)) $comment->status = 'hold';
+    $lang = tlocal::instance('comment');
+    $theme = ttheme::instance();
+    $tml = $theme->content->post->templatecomments->comments->comment;
+    $i = 1;
+    foreach ($items as $id) {
+      //разрулить в одном месте одобренные и задержанные комменты
+      if (__class__ != get_class($this)) {
+        //значит задержанные
+        if ($this->idauthor != $this->items[$id]['author']) continue;
+      }
+      $comment->id = $id;
+      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
+      $result .= $theme->parsearg($tml, $args);
+    }
+    return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);
+  }
+  
 }//class
 
 class tholdcomments extends tcomments {
-public $owner;
-public $idauthor;
-
-public static function instance($pid) {
-$owner = tcomments::instance($pid);
-return $owner->hold;
-}
-
-public function __construct($owner) {
-$this->owner = $owner;
-parent::__construct();
-}
-
-public function getbasename() {
-return $this->owner->getbasename() . '.hold';
-}
-
-public function delete($id) {
-if (!isset($this->items[$id])) return false;
-$author= $this->items[$id]['author'];
-unset($this->items[$id]);
-$this->save();
-$this->owner->raw->delete($id);
-$this->owner->deleteauthor($author);
-$this->deleted($id);
-}
-
-public function getcontent($idauthor) {
-$this->idauthor = $idauthor;
-return parent::getcontent();
-}
-
+  public $owner;
+  public $idauthor;
+  
+  public static function instance($pid) {
+    $owner = tcomments::instance($pid);
+    return $owner->hold;
+  }
+  
+  public function __construct($owner) {
+    $this->owner = $owner;
+    parent::__construct();
+  }
+  
+  public function getbasename() {
+    return $this->owner->getbasename() . '.hold';
+  }
+  
+  public function delete($id) {
+    if (!isset($this->items[$id])) return false;
+    $author= $this->items[$id]['author'];
+    unset($this->items[$id]);
+    $this->save();
+    $this->owner->raw->delete($id);
+    $this->owner->deleteauthor($author);
+    $this->deleted($id);
+  }
+  
+  public function getcontent($idauthor) {
+    $this->idauthor = $idauthor;
+    return parent::getcontent();
+  }
+  
 }//class
 
 class trawcomments extends titems {
-public $owner;
-
-public function getbasename() {
-return 'posts'.  DIRECTORY_SEPARATOR . $this->owner->pid . DIRECTORY_SEPARATOR . 'comments.raw';
-}
-
-public function __construct($owner) {
-$this->owner = $owner;
-parent::__construct();
-}
-
-public function add($id, $content, $ip) {
-$this->items[$id] = array(
-'content' => $content,
-'ip' => $ip
-);
-$this->save();
-}
-
+  public $owner;
+  
+  public function getbasename() {
+    return 'posts'.  DIRECTORY_SEPARATOR . $this->owner->pid . DIRECTORY_SEPARATOR . 'comments.raw';
+  }
+  
+  public function __construct($owner) {
+    $this->owner = $owner;
+    parent::__construct();
+  }
+  
+  public function add($id, $content, $ip) {
+    $this->items[$id] = array(
+    'content' => $content,
+    'ip' => $ip
+    );
+    $this->save();
+  }
+  
 }//class
 
 //wrapper for simple acces to single comment
 class TComment {
-public $id;
-public $owner;
-public $status;
-
-public function __construct($owner = null) {
-$this->owner = $owner;
-$this->status = 'approved';
-}
-
-public function __get($name) {
-if (method_exists($this,$get = "get$name")) {
-  return  $this->$get();
-}
-return $this->owner->items[$this->id][$name];
-}
-
-public function __set($name, $value) {
-if ($name == 'content') {
-  $this->setcontent($value);
-} else {
-  $this->owner->items[$this->id][$name] = $value;
-}
-}
-
-public function save() {
-$this->owner->save();
-}
-
-private function setcontent($value) {
-$filter = TContentFilter::instance();
-$this->owner->items[$this->id]['content'] = $filter->filtercomment($value);
-$this->save();
-$this->owner->raw->items[$this->id]['content'] =  $value;
-$this->owner->raw->save();
-}
-
-private function getauthoritem() {
-$comusers = tcomusers::instance($this->owner->pid);
-return  $comusers->getitem($this->author);
-}
-
-public function getname() {
-return $this->authoritem['name'];
-}
-
-public function getemail() {
-return $this->authoritem['email'];
-}
-
-public function getwebsite() {
-return $this->authoritem['url'];
-}
-
-public function getauthorlink() {
-global $options;
-$idpost = $this->owner->pid;
-$comusers = tcomusers::instance($idpost);
-$item = $comusers->getitem($this->author);
-$name = $item['name'];
-$url = $item['url'];
-$manager = tcommentmanager::instance();
-if ($manager->hidelink || empty($url)) return $name;
-$rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
-if ($manager->redir) {
-return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$this->author&post=$idpost\">$name</a>";
-} else {
-  return "<a $rel href=\"$url\">$name</a>";
-}
-}
-
-public function getdate() {
-$theme = ttheme::instance();
-return TLocal::date($this->posted, $theme->comment->dateformat);
-}
-
-public function getlocalstatus() {
-return tlocal::$data['commentstatus'][$this->status];
-}
-
-public function  gettime() {
-return date('H:i', $this->posted);
-}
-
-public function geturl() {
-$post = tpost::instance($this->owner->pid);
-return "$post->link#comment-$this->id";
-}
-
-public function getposttitle() {
-$post = tpost::instance($this->owner->pid);
-return $post->title;
-}
-
-public function getrawcontent() {
-return $this->owner->raw->items[$this->id]['content'];
-}
-
-public function getip() {
-return $this->owner->raw->items[$this->id]['ip'];
-}
-
+  public $id;
+  public $owner;
+  public $status;
+  
+  public function __construct($owner = null) {
+    $this->owner = $owner;
+    $this->status = 'approved';
+  }
+  
+  public function __get($name) {
+    if (method_exists($this,$get = "get$name")) {
+      return  $this->$get();
+    }
+    return $this->owner->items[$this->id][$name];
+  }
+  
+  public function __set($name, $value) {
+    if ($name == 'content') {
+      $this->setcontent($value);
+    } else {
+      $this->owner->items[$this->id][$name] = $value;
+    }
+  }
+  
+  public function save() {
+    $this->owner->save();
+  }
+  
+  private function setcontent($value) {
+    $filter = TContentFilter::instance();
+    $this->owner->items[$this->id]['content'] = $filter->filtercomment($value);
+    $this->save();
+    $this->owner->raw->items[$this->id]['content'] =  $value;
+    $this->owner->raw->save();
+  }
+  
+  private function getauthoritem() {
+    $comusers = tcomusers::instance($this->owner->pid);
+    return  $comusers->getitem($this->author);
+  }
+  
+  public function getname() {
+    return $this->authoritem['name'];
+  }
+  
+  public function getemail() {
+    return $this->authoritem['email'];
+  }
+  
+  public function getwebsite() {
+    return $this->authoritem['url'];
+  }
+  
+  public function getauthorlink() {
+    global $options;
+    $idpost = $this->owner->pid;
+    $comusers = tcomusers::instance($idpost);
+    $item = $comusers->getitem($this->author);
+    $name = $item['name'];
+    $url = $item['url'];
+    $manager = tcommentmanager::instance();
+    if ($manager->hidelink || empty($url)) return $name;
+    $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
+    if ($manager->redir) {
+    return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$this->author&post=$idpost\">$name</a>";
+    } else {
+      return "<a $rel href=\"$url\">$name</a>";
+    }
+  }
+  
+  public function getdate() {
+    $theme = ttheme::instance();
+    return TLocal::date($this->posted, $theme->comment->dateformat);
+  }
+  
+  public function getlocalstatus() {
+    return tlocal::$data['commentstatus'][$this->status];
+  }
+  
+  public function  gettime() {
+    return date('H:i', $this->posted);
+  }
+  
+  public function geturl() {
+    $post = tpost::instance($this->owner->pid);
+    return "$post->link#comment-$this->id";
+  }
+  
+  public function getposttitle() {
+    $post = tpost::instance($this->owner->pid);
+    return $post->title;
+  }
+  
+  public function getrawcontent() {
+    return $this->owner->raw->items[$this->id]['content'];
+  }
+  
+  public function getip() {
+    return $this->owner->raw->items[$this->id]['ip'];
+  }
+  
 }//class
 
 ?>
