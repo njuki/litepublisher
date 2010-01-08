@@ -52,12 +52,10 @@ class tcommentmanager extends tevents {
   private function addrecent($id, $idpost) {
     if ($i = $this->indexofrecent($id, $idpost))  return;
     $post = tpost::instance($idpost);
-    if ($post->status != 'published') return
-    
-    $comments = tcomments::instance($idpost);
-    $item = $comments->items[$id];
+    if ($post->status != 'published') return;
+    $item = $post->comments->items[$id];
     $item['id'] = $id;
-
+    
     $item['idpost'] = $idpost;
     $item['title'] = $post->title;
     $item['posturl'] =     $post->lastcommenturl;

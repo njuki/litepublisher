@@ -14,6 +14,7 @@ class tcomments extends titems {
   
   public static function instance($pid) {
     global $classes;
+    $pid = (int) $pid;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
     $self = $classes->newinstance(__class__);
