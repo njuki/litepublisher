@@ -57,6 +57,7 @@ class tcommentmanager extends tevents {
     $comments = tcomments::instance($idpost);
     $item = $comments->items[$id];
     $item['id'] = $id;
+
     $item['idpost'] = $idpost;
     $item['title'] = $post->title;
     $item['posturl'] =     $post->lastcommenturl;
