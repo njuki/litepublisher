@@ -227,7 +227,7 @@ class tinstaller extends tdata {
   }
   
   public function wizardform() {
-global $domain;
+    global $domain;
     $this->loadlang();
     $form = $this->GetLangForm();
     $html = THtmlResource::instance();
@@ -238,7 +238,7 @@ global $domain;
     } else {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
-$dbprefix = strtolower(str_replace('.', '', $domain)) . '_';
+    $dbprefix = strtolower(str_replace('.', '', $domain)) . '_';
     eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
     
     eval('$form .= "'. $html->installform. '\n";');
