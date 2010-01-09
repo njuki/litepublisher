@@ -272,12 +272,13 @@ class tinstaller extends tdata {
     $html = THtmlResource::instance();
     $html->section = 'installation';
     $lang = tlocal::instance();
+    $theme = ttheme::instance();
     
     $post = tpost::instance(0);
     $post->title = $lang->posttitle;
     $post->catnames = $lang->postcategories;
     $post->tagnames = $lang->posttags;
-    $post->content = $lang->postcontent;
+    $post->content = $theme->parse($lang->postcontent);
     $posts = tposts::instance();
     $posts->add($post);
     

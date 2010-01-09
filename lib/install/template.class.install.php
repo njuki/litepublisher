@@ -10,6 +10,7 @@ function ttemplateInstall($self) {
   //footer
   $html = THtmlResource::instance();
   $html->section = 'installation';
+$lang = tlocal::instance('installation');
   $self->footer = $html->footer() . $html->stat;
 }
 
