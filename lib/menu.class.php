@@ -69,7 +69,7 @@ class tmenus extends TItems {
   
   public function edit(imenu $item) {
     $urlmap = turlmap::instance();
-    $oldurl = $urlmap->gitidurl($item->idurl);
+    $oldurl = $urlmap->getidurl($item->idurl);
     if ($oldurl != $item->url) {
       $linkgen = tlinkgenerator::instance();
       if ($item->url == '') {

@@ -70,7 +70,7 @@ public function getdescription() {}
       return  $s;
     }
     
-    $this->title = tlcal::$data['default']['sitemap'];
+    $this->title = tlocal::$data['default']['sitemap'];
   }
   
   public function getIndex() {
