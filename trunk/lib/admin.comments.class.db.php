@@ -141,7 +141,9 @@ class tadminmoderator extends tadminmenu {
     $status = $kind == 'hold' ? 'hold' : 'approved';
     $total = $comments->db->getcount("status = '$status'");
     $from = max(0, $total - $urlmap->page * $perpage);
-    $list = $comments->getitems("status = '$status'",  $from, $perpage);
+    $list = $comments->getitems("status = '$status'
+    order by $comments->thistable.posted asc limit $from, $count");
+    $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $result .= $html->checkallscript;

@@ -112,18 +112,38 @@ class trss extends tevents {
     global $options;
     $post = tpost::instance($idpost);
     $lang = tlocal::instance('comment');
+    $title = $lang->from . ' ';
     $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
-    $count = $options->postsperpage;
-    $comment = new TComment($post->comments);
-    $items = &$post->comments->items;
-    $title = tlocal::$data['comment']['from'] . ' ';
-    foreach ($items as $id => $item) {
-      if (($item['status'] == 'approved') && ($item['type'] == '')) {
-        $count--;
-        $comment->id = $id;
-        $this->AddRSSComment($comment, $post->url, $title . $comment->name);
+    $comments = tcomments::instance($idpost);
+    $a = array();
+    $comment = new tarray2prop($a);
+    if (dbversion) {
+      $recent = $comments->getitems("post = $idpost and status = 'approved'
+      order by $comments->thistable.posted desc limit $options->postsperpage");
+      
+    } else {
+      $from =max(0, count($comments->items) - $options->postsperpage);
+      $items = array_slice(array_keys($comments->items), $from, $options->postsperpage);
+      $recent = array();
+      $comusers = tcomusers::instance($idpost);
+      foreach ($items as $id) {
+        $item = $comments->items[$id];
+        $item['id'] = $id;
+        $item['posturl'] =
+        
+        $author = $comusers->items[$item['author']];
+        $item['name'] = $author['name'];
+        $item['email'] = $author['email'];
+        $item['url'] = $author['url'];
+        array_push($recent, $item);
       }
-      if ($count ==0) break;
+    }
+    
+    foreach ($recent  as $item) {
+      $comment->array = $item;
+      $comment->posturl = $post->url;
+      $comment->title = $post->title;
+      $this->AddRSSComment($comment, $title . $comment->name);
     }
     
   }
