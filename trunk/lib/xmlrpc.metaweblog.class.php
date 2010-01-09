@@ -12,300 +12,287 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     return getinstance(__class__);
   }
   
-  protected function MWSetPingCommentStatus(&$Struct, &$Item) {
+  protected function MWSetPingCommentStatus(array &$Struct, tpost $post) {
     global $options;
-    if(isset($Struct["mt_allow_comments"])) {
-      if(!is_numeric($Struct["mt_allow_comments"])) {
-        switch($Struct["mt_allow_comments"]) {
+    if(isset($struct["mt_allow_comments"])) {
+      if(!is_numeric($struct["mt_allow_comments"])) {
+        switch($struct["mt_allow_comments"]) {
           case "closed":
-          $Item->commentsenabled = false;
+          $post->commentsenabled = false;
           break;
           case "open":
-          $Item->commentsenabled = true;
+          $post->commentsenabled = true;
           break;
           default:
-          $Item->commentsenabled = $options->commentsenabled;
+          $post->commentsenabled = $options->commentsenabled;
           break;
         }
       }
       else {
-        switch((int) $Struct["mt_allow_comments"]) {
+        switch((int) $struct["mt_allow_comments"]) {
           case 0:
-          $Item->commentsenabled = false;
+          $post->commentsenabled = false;
           break;
           case 1:
-          $Item->commentsenabled = true;
+          $post->commentsenabled = true;
           break;
           default:
-          $Item->commentsenabled = $options->commentsenabled;
+          $post->commentsenabled = $options->commentsenabled;
           break;
         }
       }
     }
     else {
-      $Item->commentsenabled = $options->commentsenabled;
+      $post->commentsenabled = $options->commentsenabled;
     }
     
-    if(isset($Struct["mt_allow_pings"])) {
-      if(!is_numeric($Struct["mt_allow_pings"])) {
-        switch($Struct['mt_allow_pings']) {
+    if(isset($struct["mt_allow_pings"])) {
+      if(!is_numeric($struct["mt_allow_pings"])) {
+        switch($struct['mt_allow_pings']) {
           case "closed":
-          $Item->pingenabled = false;
+          $post->pingenabled = false;
           break;
           case "open":
-          $Item->pingenabled = true;
+          $post->pingenabled = true;
           break;
           default:
-          $Item->pingenabled = $options->pingenabled;
+          $post->pingenabled = $options->pingenabled;
           break;
         }
       }
       else {
-        switch((int) $Struct["mt_allow_pings"]) {
+        switch((int) $struct["mt_allow_pings"]) {
           case 0:
-          $Item->pingenabled = false;
+          $post->pingenabled = false;
           break;
           case 1:
-          $Item->pingenabled = true;
+          $post->pingenabled = true;
           break;
           default:
-          $Item->pingenabled = $options->pingenabled;
+          $post->pingenabled = $options->pingenabled;
           break;
         }
       }
     }
     else {
-      $Item->pingenabled = $options->pingenabled;
+      $post->pingenabled = $options->pingenabled;
     }
   }
   
-  protected function MWSetDate(&$Struct, &$item) {
-    if (empty($Struct['dateCreated'])) {
-      $item->posted = time();
+  protected function MWSetDate(array &$struct, $post) {
+    if (empty($struct['dateCreated'])) {
+      $post->posted = time();
     } else {
-      $item->posted = $Struct['dateCreated']->getTimestamp();
+      $post->posted = $struct['dateCreated']->getTimestamp();
     }
   }
   
   //forward implementation
   public function wp_newPage(&$args) {
-    if (!$this->canlogin($args, 1)) {
-      return $this->error;
-    }
-    
-    $Menus = tmenus::instance();
-    $Item = tmenu::instance(0);
-    $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
-    $Struct = &$args[3];
-    $this->WPAssignPage($Struct, $item);
-    $Menu->Add($Item);
-    return  $Item->id;
+    if (!$this->canlogin($args, 1))  return $this->error;
+
+    $menus = tmenus::instance();
+    $menu = tmenu::instance(0);
+    $menu->status = $args[4] == 'publish' ? 'published' : 'draft';
+    $struct = &$args[3];
+    $this->WPAssignPage($struct, $menu);
+    return (int) $menus->add($menu);
   }
   
-  protected function  WPAssignPage(&$Struct, &$Item) {
-    if(isset($Struct["wp_slug"])) {
-      $Item->url = tlinkgenerator::AddSlashes($Struct['wp_slug']);
+  protected function  WPAssignPage(array &$struct, tmenu $menu) {
+    if(isset($struct["wp_slug"])) {
+$linkgen = tlinkgenerator::instance();
+      $menu->url = $linkgen->AddSlashes($struct['wp_slug']);
     }
     
-    if(isset($Struct["wp_password"])) {
-      $Item->password = $Struct["wp_password"];
+    if(isset($struct["wp_password"])) {
+      $menu->password = $struct["wp_password"];
     }
     
-    if(isset($Struct["wp_page_parent_id"])) {
-      $Item->parent = $Struct["wp_page_parent_id"];
+    if(isset($struct["wp_page_parent_id"])) {
+      $menu->parent = (int) $struct["wp_page_parent_id"];
     }
     
-    if(isset($Struct["wp_page_order"])) {
-      $item->order = $Struct["wp_page_order"];
+    if(isset($struct["wp_page_order"])) {
+      $menu->order = (int) $struct["wp_page_order"];
     }
-    $Item->title = $Struct['title'];
-    $Item->content = $Struct['description'];
-    if ($Struct['mt_text_more']) {
-      $Item->content = $Item->rawcontent . "\n[more " . TLocal::$data['post']['more'] . "]\n".  $Struct['mt_text_more'];
+    $menu->title = $struct['title'];
+    $menu->content = $struct['description'];
+    if ($struct['mt_text_more']) {
+      $menu->content = $post->rawcontent . "\n[more " . TLocal::$data['post']['more'] . "]\n".  $struct['mt_text_more'];
     }
     
-    $this->MWSetPingCommentStatus($Struct, $Item);
-    $this->MWSetDate($Struct, $Item);
+    $this->MWSetDate($struct, $post);
   }
   
-  protected function  MWSetPost(&$Struct, &$Item) {
-    if(isset($Struct["wp_slug"])) {
-      $Item->url = tlinkgenerator::AddSlashes($Struct["wp_slug"] . '/');
+  protected function  MWSetPost(array &$struct, tpost $post) {
+    if(isset($struct["wp_slug"])) {
+$linkgen = tlinkgenerator::instance();
+      $post->url = $linkgen->AddSlashes($struct["wp_slug"] . '/');
     }
     
-    if(isset($Struct["wp_password"])) {
-      $Item->password = $Struct["wp_password"];
+    if(isset($struct["wp_password"])) {
+      $post->password = $struct["wp_password"];
     }
     
-    $Item->title = $Struct['title'];
+    $post->title = $struct['title'];
     
-    $more = isset($Struct['mt_text_more']) ? trim($Struct['mt_text_more']) : '';
+    $more = isset($struct['mt_text_more']) ? trim($struct['mt_text_more']) : '';
     if ($more == '') {
-      $Item->content = $Struct['description'];
+      $post->content = $struct['description'];
     } else {
-      $Item->content = $Struct['description']. '[more '. TLocal::$data['post']['more'] ."]\n". $more;
+      $post->content = $struct['description']. '[more '. TLocal::$data['post']['more'] ."]\n". $more;
     }
     
-    $excerpt =isset($Struct['mt_excerpt']) ? trim($Struct['mt_excerpt']) : '';
-    if ($excerpt != '') $Item->excerpt = $excerpt;
+    $excerpt =isset($struct['mt_excerpt']) ? trim($struct['mt_excerpt']) : '';
+    if ($excerpt != '') $post->excerpt = $excerpt;
     
-    $this->MWSetDate($Struct, $Item);
+    $this->MWSetDate($struct, $post);
     
-    if (!empty($Struct['mt_keywords'])) {
-      $Item->tagnames = $Struct['mt_keywords'];
+    if (!empty($struct['mt_keywords'])) {
+      $post->tagnames = $struct['mt_keywords'];
     }
     
-    if (isset($Struct['categories']) && is_array($Struct['categories'])) {
-      $Item->catnames = $Struct['categories'];
+    if (isset($struct['categories']) && is_array($struct['categories'])) {
+      $post->catnames = $struct['categories'];
     }
   }
   
   public function wp_editPage(&$args) {
-    if (!$this->CanLogin($args, 2)) {
-      return $this->Error;
-    }
-    
+    if (!$this->canlogin($args, 2)) return $this->Error;
+
     $id	= (int) $args[1];
-    $Menu = &TMenu::instance();
-    if (!$Menu->ItemExists($id)) {
-      return new IXR_Error(404, "Sorry, no such page.");
-    }
-    
-    $Item = tmenu::instance($id);
-    $Struct	= &$args[4];
-    $Item->status = $args[5] == 'publish' ? 'published' : 'draft';
-    $this->WPAssignPage($Struct, $item);
-    $Menu->Edit($Item);
+    $menus = tmenus::instance();
+    if (!$menus->itemexists($id))  return new IXR_Error(404, "Sorry, no such page.");
+
+    $menu= tmenu::instance($id);
+    $struct	= &$args[4];
+    $menu->status = $args[5] == 'publish' ? 'published' : 'draft';
+    $this->WPAssignPage($struct, $post);
+    $menus->edit($post);
     return true;
   }
   
   public function getCategories(&$args) {
     global $options;
-    if (!$this->CanLogin($args,1)) {
-      return $this->Error;
-    }
-    $Categories = &TCategories::instance();
-    $Items = &$Categories->items;
-    $Result = array();
-    foreach ( $Items as $id => $Item) {
-      $Result[] = array(
-      'categoryId' => $id,
-      'parentId' => 0,
-      'description' => $Item['name'],
-      'categoryName' => $Item['name'],
-      'title' => $Item['name'],
-      'htmlUrl' => $options->url . $Item['url'],
-      'rssUrl' =>  $options->url . $Item['url']
+    if (!$this->canlogin($args,1)) return $this->Error;
+
+    $categories = tcategories::instance();
+if (dbversion) {
+global $db;
+$res = $db->query("select $categories->thistable.*, $db->urlmap.url as url  from $categories->thistable,  $db->urlmap
+      where $db->urlmap.id  = $categories->thistable.idurl");
+$items =  $res->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $Items = &$categories->items;
+}
+    $result = array();
+    foreach ( $Items as $item) {
+      $result[] = array(
+      'categoryId' => $item['id'],
+      'parentId' => $item['parent'],
+      'description' => $categories->contents->getdescription($item['id']),
+      'categoryName' => $item['title'],
+      'title' => $item['title'],
+      'htmlUrl' => $options->url . $item['url'],
+      'rssUrl' =>  $options->url . $item['url']
       );
     }
     
-    return $Result;
+    return $result;
   }
   
   public function newPost(&$args) {
-    $Struct = &$args[3];
-    if(!empty($Struct["post_type"]) && ($Struct["post_type"] == "page")) {
+    $struct = &$args[3];
+    if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
       return (string) $this->wp_newPage($args);
     }
     
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
-    $Posts = &TPosts::instance();
-    $Item = &TPost::instance(0);
-    $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
-    $this->MWSetPost($Struct, $Item);
-    $Posts->Add($Item);
-    return (string) $Item->id;
+    if (!$this->canlogin($args, 1))  return $this->Error;
+
+    $posts = tposts::instance();
+    $post = tpost::instance(0);
+    $post->status = $args[4] == 'publish' ? 'published' : 'draft';
+    $this->MWSetPost($struct, $post);
+    $posts->add($post);
+    return (string) $post->id;
   }
   
   public function editPost(&$args) {
-    $Struct = &$args[3];
-    if(!empty($Struct["post_type"]) && ($Struct["post_type"] == "page")) {
+    $struct = &$args[3];
+    if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
       return (string) $this->wp_editPage($args);
     }
     
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
+    if (!$this->canlogin($args, 1))  return $this->Error;
+
     $id=(int) $args[0];
-    $Posts = &TPosts::instance();
-    if (!$Posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    
-    $Item = &TPost::instance($id);
-    $Item->status = $args[4] == 'publish' ? 'published' : 'draft';
-    $this->MWSetPost($Struct, $Item);
-    $Posts->Edit($Item);
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id))  return new IXR_Error(404, "Invalid post id.");
+
+    $post = tpost::instance($id);
+    $post->status = $args[4] == 'publish' ? 'published' : 'draft';
+    $this->MWSetPost($struct, $post);
+    $posts->edit($post);
     return true;
   }
   
   public function getPost(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
+    if (!$this->canlogin($args, 1))  return $this->Error;
+
     $id=(int) $args[0];
-    $Posts = &TPosts::instance();
-    if (!$Posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    
-    $Item = &TPost::instance($id);
-    return $this->GetStruct($Item);;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id))  return new IXR_Error(404, "Invalid post id.");
+
+    $post = tpost::instance($id);
+    return $this->GetStruct($post);;
   }
   
-  private function GetStruct(&$Item) {
-    global $options;
+  private function GetStruct(tpost $post) {
+global $options;
     return array(
-    'dateCreated' => new IXR_Date($Item->date),
-    'userid' => '1',
-    'postid' =>  (string) $Item->id,
-    'description' => $Item->rawcontent,
-    'title' => $Item->title,
-    'link' => $options->url . $Item->url,
-    'permaLink' => $options->url . $Item->url,
-    'categories' => $Item->catnames,
-    'mt_excerpt' => $Item->excerpt,
+    'dateCreated' => new IXR_Date($post->date),
+    'userid' => (string) $post->author,
+    'postid' =>  (string) $post->id,
+    'description' => $post->rawcontent,
+    'title' => $post->title,
+    'link' => $post->link,
+    'permaLink' => $post->link,
+    'categories' => $post->catnames,
+    'mt_excerpt' => $post->excerpt,
     'mt_text_more' => '',
-    'mt_allow_comments' => $Item->commentsenabled ? 1 : 0,
-    'mt_allow_pings' => $Item->pingenabled ? 1 : 0,
-    'mt_keywords' => $Item->tagnames,
-    'wp_slug' => $Item->url,
-    'wp_password' => $Item->password,
-    'wp_author_id' => 1,
+    'mt_allow_comments' => $post->commentsenabled ? 1 : 0,
+    'mt_allow_pings' => $post->pingenabled ? 1 : 0,
+    'mt_keywords' => $post->tagnames,
+    'wp_slug' => $post->url,
+    'wp_password' => $post->password,
+    'wp_author_id' => $post->author,
     'wp_author_display_name'	=> 'admin',
-    'date_created_gmt' => new IXR_Date($Item->date - $options->gmt),
-    'publish' => $Item->status == 'published'
+    'date_created_gmt' => new IXR_Date($post->posted- $options->gmt),
+    'publish' => $post->status == 'published'
     );
   }
   
   public function getRecentPosts(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
+    if (!$this->canlogin($args, 1))  return $this->Error;
+
     $count = (int) $args[3];
-    $Posts = &TPosts::instance();
-    $list = $Posts->GetRecent($count);
-    $Result = array();
+    $posts = tposts::instance();
+    $list = $posts->getrecent($count);
+$posts->loaditems($list);
+    $result = array();
     foreach ($list as $id) {
-      $Item = &TPost::instance($id);
-      $Result[] = $this->GetStruct($Item);
+      $post = tpost::instance($id);
+      $result[] = $this->GetStruct($post);
     }
     
-    return $Result;
+    return $result;
   }
   
   public function newMediaObject(&$args) {
     global $options;
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
+    if (!$this->canlogin($args, 1))  return $this->Error;
+
     $data        = &$args[3];
     $filename = $data['name'] ;
     $mimetype =$data['type'];
@@ -315,16 +302,16 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return new IXR_Error(500, "Empty filename");
     }
     
-    $files = &TFiles::instance();
-    $id = $files->AddFile($filename, $data['bits'], '', $overwrite );
-    if (!$id) {
-      return new IXR_Error(500, "Could not write file $name");
-    }
+      $parser = tmediaparser::instance();
+    $id = $parser->upload($filename, $data['bits'], '', $overwrite );
+    if (!$id)  return new IXR_Error(500, "Could not write file $name");
+$files = tfiles::instance();
+$item = $files->getitem($id);
     
     return array(
-    'file' => $files->items[$id]['filename'],
-    'url' => $options->url . $files->Geturl($id),
-    'type' => $mimetype
+    'file' => $item['filename'],
+    'url' => $files->geturl($id),
+    'type' => $item['mime']
     );
   }
   
