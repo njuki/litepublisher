@@ -96,7 +96,13 @@ class tcommentform extends tevents {
     
     if (!empty($_COOKIE["userid"])) {
       $comusers = tcomusers::instance($postid);
-      if ($user = $comusers->fromcookie($_COOKIE['userid'])) {
+      $user = $comusers->fromcookie($_COOKIE['userid']);
+      if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
+        $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
+        $user = $comusers2->fromcookie($_COOKIE['userid']);
+      }
+      
+      if ($user) {
         $args->name = $user['name'];
         $args->email = $user['email'];
         $args->url = $user['url'];
@@ -188,8 +194,10 @@ class tcommentform extends tevents {
     
     $classes->commentmanager->addcomment($post->id, $uid, $values['content']);
     
+    $idpostcookie = dbversion ? '' : "@setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
+    $idpostcookie
     @header('Location: $options->url$posturl');
     ?>";
   }

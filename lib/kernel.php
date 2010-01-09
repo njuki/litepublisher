@@ -909,6 +909,7 @@ class turlmap extends titems {
   public $page;
   public $uripath;
   public $itemrequested;
+  public $cachefilename;
   public $argtree;
   public $is404;
   public $admin;
@@ -921,13 +922,13 @@ class turlmap extends titems {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-    
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
     $this->is404 = false;
     $this->admin = false;
     $this->mobile= false;
+    $this->cachefilename = false;
   }
   
   protected function prepareurl($host, $url) {
@@ -1016,11 +1017,14 @@ class turlmap extends titems {
   
   private function getcachefile(array $item) {
     global $paths;
-    if ($item['type'] == 'normal') {
-      return $paths['cache']. sprintf('%s-%d.php', $item['id'], $this->page);
-    } else {
-      return $paths['cache']. sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
+    if (!$this->cachefilename) {
+      if ($item['type'] == 'normal') {
+        $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
+      } else {
+        $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
+      }
     }
+    return $paths['cache'] . $this->cachefilename;
   }
   
   protected function  printcontent(array $item) {
@@ -1073,7 +1077,6 @@ class turlmap extends titems {
     eval('?>'. $s);
   }
   
-  
   public function urlexists($url) {
     if (dbversion) {
       return $this->db->exists('url = '. dbquote($url));
@@ -1081,6 +1084,7 @@ class turlmap extends titems {
       return isset($this->items[$url]);
     }
   }
+  
   public function add($url, $class, $arg, $type = 'normal') {
     if (dbversion) {
       $item= array(

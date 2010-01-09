@@ -63,10 +63,10 @@ class tcomments extends titems {
     return $this->db->getcount($where);
   }
   
-  public function getitems($where, $from, $count) {
+  public function getitems($where) {
     $db = $this->db;
     $res = $db->query("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
-    where  $where order by $db->comments.posted asc limit $from, $count");
+    where  $where");
     return $res->fetchAll(PDO::FETCH_ASSOC);
   }
   
