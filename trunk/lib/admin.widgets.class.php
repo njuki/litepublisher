@@ -141,15 +141,17 @@ class tadminwidgets extends tadminmenu {
       $args->tagscombo= $this->getcombosortname('sortnametags', $classes->tags->sortname);
       
       $args->postscount = $classes->posts->recentcount;
-      $commentswidget  = tcommentswidget::instance();
-      $args->commentscount = $commentswidget->recentcount;
+      $manager = tcommentmanager::instance();
+      $args->commentscount = $manager->recentcount;
       
       $links = tlinkswidget::instance();
       $args->linksredir = $links->redir;
       
       $foaf = tfoaf::instance();
       $args->foafredir = $foaf->redir;
+      
       $result = $html->stdoptionsform($args);
+      
       break;
       
       case 'links':

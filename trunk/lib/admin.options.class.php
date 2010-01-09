@@ -55,10 +55,10 @@ class tadminoptions extends tadminmenu {
       $manager = $classes->commentmanager;
       $args->sendnotification = $manager->sendnotification;
       
-      $comusers= tcomusers ::instance();
-      $args->hidelink = $comusers->hidelink;
-      $args->redir = $comusers->redir;
-      $args->nofollow = $comusers->nofollow;
+      $manager = tcommentmanager::instance();
+      $args->hidelink = $manager->hidelink;
+      $args->redir = $manager->redir;
+      $args->nofollow = $manager->nofollow;
       
       $subscribers = tsubscribers::instance();
       $args->locklist = $subscribers->locklist;
@@ -118,7 +118,7 @@ class tadminoptions extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $urlmap, $paths;
+    global $options, $urlmap, $paths, $classes;
     
     extract($_POST);
     
@@ -247,11 +247,16 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'lite':
-      $options->lock();
       $classes->archives->lite = isset($litearchives);
       $classes->categories->lite = isset($litecategories);
       $classes->tags->lite = isset($litetags);
-      $options->unlock();
+      if (dbversion) {
+        $options->save();
+      } else {
+        $classes->archives->save();
+        $classes->categories->save();
+        $classes->tags->save();
+      }
       break;
       
       case 'secure':
