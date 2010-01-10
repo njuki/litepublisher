@@ -12,11 +12,14 @@ class tadminboard extends tadminmenu {
   }
   
   public function getcontent() {
+global $options;
+$result = sprintf('<h2><a href="%s/admin/logout/">logout</a></h2>', $options->url);
     $editor = tposteditor::instance();
-    return $editor->shorteditor();
+    $result .= $editor->shorteditor();
+return $result;
   }
   
-  public function processfosrm() {
+  public function processform() {
   }
   
 }//class

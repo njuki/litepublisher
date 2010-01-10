@@ -22,6 +22,7 @@ class tauthdigest extends tevents {
     $this->data['cookieenabled'] = false;
     $this->data['cookieexpired'] = 0;
     $this->data['xxxcheck'] = true;
+    $this->data['logoutneeded'] = false;
     $this->stale = false;
   }
   
@@ -63,6 +64,12 @@ class tauthdigest extends tevents {
   
   public function auth() {
     global $options;
+if ($this->logoutneeded) {
+$this->logoutneeded = false;
+$this->save();
+return false;
+}
+
     if ($this->nonce == '') $this->newnonce();
     if ($digest  = $this->GetDigestHeader()) {
       $digest  = substr($digest,0,7) == 'Digest ' ?  substr($digest, strpos($digest, ' ') + 1) : $digest ;
@@ -140,7 +147,10 @@ class tauthdigest extends tevents {
     if ($this->cookieenabled) {
       $this->setcookies('', 0);
     } else {
+$this->lock();
       $this->newnonce();
+$this->logoutneeded = true;
+$this->unlock();
     }
   }
   

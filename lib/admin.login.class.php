@@ -12,7 +12,13 @@ class tadminlogin extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
-  
+
+public function gettitle() {
+return tlocal::$data['login']['title'];
+}  
+
+  public function getkeywords() {}
+  public function getdescription() {}
 public function auth() { }
   
   public function request($arg) {

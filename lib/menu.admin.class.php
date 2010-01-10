@@ -51,7 +51,7 @@ class tadminmenus extends tmenus {
     $item['order'] = $this->autoid;
     $item[    'status'] = 'published';
     $urlmap = turlmap::instance();
-    $item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'tree');
+    $item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
     $this->items[$this->autoid] = $item;
     $this->sort();
     $this->save();
