@@ -102,24 +102,24 @@ class tcomments extends titems {
   }
   
   public function sethold($id) {
-    if (isset($this->itms[$id])) {
+    if (!isset($this->items[$id]))  return false;
       $item = $this->items[$id];
       unset($this->items[$id]);
       $this->save();
       
       $this->hold->items[$id] = $item;
       $this->hold->save();
-    }
+return true;
   }
   
   public function approve($id) {
-    if (isset($this->hold->items[$id])) {
+    if (!isset($this->hold->items[$id]))  return false;
       $this->items[$id] = $this->hold->items[$id];
       $this->hold->delete($id);
+return true;
     }
-  }
-  
-  /*
+
+    /*
   public function sort() {
     $Result[$id] = $item['posted'];
     asort($Result);

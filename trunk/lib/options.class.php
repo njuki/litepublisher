@@ -96,6 +96,15 @@ class toptions extends tevents {
     }
     $this->unlock();
   }
+
+  public function getauthcookie() {
+if (!empty($_COOKIE['admin') && ($this->cookie == $_COOKIE['admin']) {
+$this->user = 1;
+    $this->updategroup();
+return true;
+}
+return false;
+}
   
   public function auth($login, $password) {
     if ($login == $this->login) {

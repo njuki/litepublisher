@@ -114,10 +114,13 @@ class tcommentmanager extends tevents {
   
   public function delete($id, $idpost) {
     $comments = tcomments::instance($idpost);
-    $comments->delete($id);
+    if ($comments->delete($id)) {
     if (!dbversion) $this->deleterecent($id, $idpost);
     $this->deleted($id);
     $this->dochanged($id, $idpost);
+return true;
+}
+return false;
   }
   
   public function postdeleted($idpost) {
@@ -143,21 +146,22 @@ class tcommentmanager extends tevents {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
     $comments = Tcomments($idpost);
     if (dbversion) {
-      $comments->db->setvalue($id, 'status', $status);
+      $result = $comments->db->setvalue($id, 'status', $status);
     } else {
       switch ($value) {
         case 'hold':
-        $comments->sethold($id);
+        $result = $comments->sethold($id);
         $this->deleterecent($id, $idpost);
         break;
         
         case 'approved':
-        $comments->approve($id);
+        $result = $comments->approve($id);
         $this->addrecent($id, $idpost);
         break;
       }
     }
     $this->dochanged($id, $idpost);
+return $result;
   }
   
   public function checktrust($value) {
