@@ -25,17 +25,50 @@ class tadminajax extends tevents {
   
   public function request($arg) {
 global $options;
+if (!$options->authcookie) return "<?php
+    @header('HTTP/1.0 401 Unauthorized', true, 401);
+    echo '401 Unauthorized';
+    ?>";
 
     $result = "<?php
     @header('Content-Type: text/html; charset=utf-8');
     @ header('Last-Modified: ' . date('r'));
     @header('X-Pingback: $options->url/rpc.xml');
     ?>";
-    
-    $result .= $this->getcontent($name);
-    return $result;
 
+$id = !empty($_GET['id']) ? $_GET['id'] : 0;
+$action = !empty($_GET[['action']) ? $_GET['action'] : '';
+
+switch ($arg) {
+case 'comments':
+$result .= $this->moderate($id, $action);
+break;
+
+default:
+return 404;
+}    
+
+    return $result;
   }
+
+private function moderate() {
+$idpost = !empty($_GET['idpost']) ? $_GET['idpost'] : 0;
+$manager = tcommentmanger::instance();
+
+switch ($action) {
+case'delete':
+return $manager->delete($id, $idpost);
+
+case 'hold':
+return $manager->setstatus($idpost, $id, 'hold');
+
+case 'approve':
+return $manager->setstatus($idpost, $id, 'approved');
+
+default:
+return false;
+}
+}
   
   public function processform() {
   }

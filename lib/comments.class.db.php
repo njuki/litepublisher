@@ -56,7 +56,7 @@ class tcomments extends titems {
   }
   
   public function delete($id) {
-    $this->db->setvalue($id, 'status', 'deleted');
+    return $this->db->setvalue($id, 'status', 'deleted');
   }
   
   public function getcount($where = '') {
