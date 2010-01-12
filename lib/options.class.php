@@ -9,6 +9,7 @@
 class toptions extends tevents {
   public $user;
   public $group;
+public $admincookie;
   public $gmt;
   public $errorlog;
   private $modified;
@@ -25,15 +26,16 @@ class toptions extends tevents {
     $this->gmt = date('Z');
     $this->errorlog = '';
     $this->modified = false;
+$this->admincookie = false;
   }
   
   public function load() {
-    parent::load();
+if (!parent::load()) return false;
     $this->modified = false;
-    if($this->propexists('timezone'))  {
+$this->admincookie = $this->getadmincookie();
       date_default_timezone_set($this->timezone);
       $this->gmt = date('Z');
-    }
+return true;
   }
   
   public function savemodified() {
@@ -98,7 +100,7 @@ class toptions extends tevents {
   }
 
   public function getauthcookie() {
-if (!empty($_COOKIE['admin') && ($this->cookie == $_COOKIE['admin']) {
+if (!empty($_COOKIE['admin']) && ($this->cookie == $_COOKIE['admin'])) {
 $this->user = 1;
     $this->updategroup();
 return true;

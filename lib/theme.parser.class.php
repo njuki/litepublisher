@@ -232,10 +232,19 @@ class tthemeparser {
     $result = array();
     $result['class1'] = $this->parsetag($s, 'class1', '$class');
     $result['class2'] = $this->parsetag($s, 'class2', '');
+    $result['moderate'] = $this->parsemoderate($this->parsetag($s, 'moderate', '$moderate'));
+
     $result['dateformat'] = $this->parsetag($s, 'date', '$comment.date');
     $result[0] = $s;
     return $result;
   }
+
+private function parsemoderate($s) {
+$result['hold'] = $this->parsetag($s, 'hold', '%s');
+$result['approve'] = $this->parsetag($s, 'approve', '%s');
+    $result[0] = $s;
+    return $result;
+}
   
   private function parsepingbacks($s) {
     $result = array();
