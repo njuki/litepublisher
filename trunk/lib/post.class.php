@@ -232,6 +232,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
+global $options, $paths;
     $result = '';
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
@@ -239,6 +240,10 @@ class tpost extends titem implements  itemplate {
       $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
     }
+if ($options->admincookie) {
+$script = file_get_contents($paths['libinclude'] . 'moderate.js');
+$result .= sprintf($script, $options->url, $options->q);
+}
     return $result;
   }
   

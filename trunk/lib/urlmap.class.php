@@ -61,7 +61,7 @@ class turlmap extends titems {
     $this->CheckSingleCron();
   }
   
-  protected function dorequest($url) {
+  private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
       return $this->printcontent($this->itemrequested);
     } else {
@@ -120,18 +120,19 @@ class turlmap extends titems {
   }
   
   private function getcachefile(array $item) {
-    global $paths;
+    global $paths, $options;
     if (!$this->cachefilename) {
       if ($item['type'] == 'normal') {
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
       } else {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
+if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
     }
     return $paths['cache'] . $this->cachefilename;
   }
   
-  protected function  printcontent(array $item) {
+  private function  printcontent(array $item) {
     global $options;
     if ($options->cache) {
       $cachefile = $this->getcachefile($item);

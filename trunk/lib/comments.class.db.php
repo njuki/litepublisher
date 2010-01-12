@@ -110,7 +110,16 @@ class tcomments extends titems {
     $comment = new tcomment(0);
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
-    $tml = $theme->content->post->templatecomments->comments->comment;
+    $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
+if ($options->admincookie) {
+$moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, $status == 'approved' ?
+$theme->content->post->templatecomments->comments->comment->moderate->hold :
+$theme->content->post->templatecomments->comments->comment->moderate->approve);
+$tml = str_replace($tml, '$moderate', $moderate);
+}  else {
+$tml = str_replace($tml, '$moderate', '');
+}
+
     $i = 1;
     $res->setFetchMode (PDO::FETCH_ASSOC);
     foreach ($res as $data) {
