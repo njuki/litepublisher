@@ -138,6 +138,13 @@ $post.content
 <!--comment-->
 		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
    <a name="comment-$comment.id"></a>
+<!--moderate-->
+			<span class="moderationbuttons">
+<input type="button" value="$lang.delete" onclick="moderate('$comment.id','$comment.post', 'delete');" />
+<!--hold--><input type="button" value="$lang.hold" onclick="moderate('$comment.id','$comment.post', 'hold');" /><!--/hold-->
+<!--approve--><input type="button" value="$lang.approve" onclick="moderate('$comment.id','$comment.post', 'approve');" /><!--/approve-->
+</span>
+<!--/moderate-->
 			<cite>$comment.authorlink</cite> $lang.says:  <br />
 			<small class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></small>
 <p id="commentcontent-$comment.id">
