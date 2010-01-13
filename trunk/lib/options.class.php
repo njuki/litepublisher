@@ -99,7 +99,7 @@ return true;
     $this->unlock();
   }
 
-  public function getauthcookie() {
+  public function getadmincookie() {
 if (!empty($_COOKIE['admin']) && ($this->cookie == $_COOKIE['admin'])) {
 $this->user = 1;
     $this->updategroup();
