@@ -19,6 +19,7 @@
 <link rel="openid2.provider" href="$options.url/openid/" />
 <link rel="openid.delegate" href="$options.url/openid/" />
 <link rel="openid2.local_id" href="$options.url/openid/" />
+	<script type="text/javascript" src="$options.files/js/tw-sack.js"></script>
 $template.head
 </head>
 <body>
