@@ -28,6 +28,7 @@ class ttemplate extends tevents {
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
+$this->data['hovermenu'] = false;
     $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
@@ -194,21 +195,13 @@ class ttemplate extends tevents {
     return $result;
   }
   
-  public function gethovermenu() {
-    return isset($this->javascripts['hovermenu']);
-  }
-  
   public function sethovermenu($value) {
-    if ($value != $this->hovermenu) {
-      if ($value) {
-        $this->addjavascript('hovermenu', file_get_contents($paths['libinclude'] . 'hovermenu.js'));
-      } else {
-        $this->deletejavascript('hovermenu');
-      }
-      
+    if ($value == $this->hovermenu)  return;
+$this->data['hovermenu'] = $vlue;
+$this->save();
+
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
-    }
   }
   
   public function addjavascript($name, $script) {
@@ -231,7 +224,9 @@ class ttemplate extends tevents {
   }
   
   public function gethead() {
+global $options;
     $result = '';
+if ($this->hovermenu) $result .=  <script type=\"text/javascript\" src=\"$options->files/js/hovermenu.js\"></script>\n";
     if ($this->itemplate) $result .= $this->context->gethead();
     foreach ($this->javascripts as $name => $script) {
       if ($name == 'hovermenu') {
