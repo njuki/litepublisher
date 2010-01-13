@@ -128,15 +128,24 @@ return true;
   */
   
   public function getholdcontent($idauthor) {
-    return $this->hold->getcontent($idauthor);
+    return $this->hold->dogetcontent(true, $idauthor);
   }
   
   public function getcontent() {
+global $options;
+$result = $this->dogetcontent(false, 0);
+if ($options->admincookie) {
+$result .= $this->hold->dogetcontent(true, 0);
+}
+return $result;
+}
+
+  public function dogetcontent($hold, $idauthor) {
     global $options, $urlmap, $comment;
     $result = '';
     $from = 0;
     $items = array_keys($this->items);
-    if (__class__ == get_class($this)) {
+    if (!$hold) {
       if ($options->commentpages ) {
         $from = ($urlmap->page - 1) * $options->commentsperpage;
         $items = array_slice($items, $from, $options->commentsperpage, true);
@@ -148,12 +157,12 @@ return true;
     $args = targs::instance();
     $args->from = $from;
     $comment = new TComment($this);
-    if ('tholdcomments' == get_class($this)) $comment->status = 'hold';
+if ($hold) $comment->status = 'hold';
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
 if ($options->admincookie) {
-$moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, $status == 'approved' ?
+$moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, !$hold ?
 $theme->content->post->templatecomments->comments->comment->moderate->hold :
 $theme->content->post->templatecomments->comments->comment->moderate->approve);
 $tml = str_replace($tml, '$moderate', $moderate);
@@ -164,14 +173,15 @@ $tml = str_replace($tml, '$moderate', '');
     $i = 1;
     foreach ($items as $id) {
       //разрулить в одном месте одобренные и задержанные комменты
-      if (__class__ != get_class($this)) {
-        //значит задержанные
-        if ($this->idauthor != $this->items[$id]['author']) continue;
+      if (!$options->admincookie && $hold) {
+        if ($idauthor != $this->items[$id]['author']) continue;
       }
       $comment->id = $id;
       $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
       $result .= $theme->parsearg($tml, $args);
     }
+
+if ($result == '') return '';
     return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);
   }
   

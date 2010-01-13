@@ -37,7 +37,6 @@ class tstdwidgets extends titems {
     'title' => $this->gettitle($name)
     );
     $this->save();
-    $this->updateajax();
     return $id;
   }
   
@@ -45,21 +44,7 @@ class tstdwidgets extends titems {
     if (isset($this->items[$name]) && ($this->items[$name]['ajax'] != $ajax)) {
       $this->items[$name]['ajax'] = $ajax;
       $this->save();
-      $this->updateajax();
     }
-  }
-  
-  public function updateajax() {
-    global $paths;
-    $ajax = false;
-    foreach ($this->items as $name => $item) {
-      if ($item['ajax']) {
-        $ajax = true;
-        break;
-      }
-    }
-    $template = ttemplate::instance();
-    $template->addjavascript('ajax', file_get_contents($paths['libinclude']. 'ajax.js'));
   }
   
   public function delete($name) {
@@ -68,7 +53,6 @@ class tstdwidgets extends titems {
     $widgets->delete($this->items[$name]['id']);
     unset($this->items[$name]);
     $this->save();
-    $this->updateajax();
   }
   
   public function expire($name) {
@@ -81,7 +65,6 @@ class tstdwidgets extends titems {
     if ($name = $this->getname($id)) {
       unset($this->items[$name]);
       $this->save();
-      $this->updateajax();
       
       if ($name == 'comments') {
         $manager = tcommentmanager::instance();

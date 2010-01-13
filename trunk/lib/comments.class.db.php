@@ -79,7 +79,12 @@ class tcomments extends titems {
   }
   
   public function getcontent() {
-    return $this->getcontentwhere('approved', '');
+global $options;
+    $result = $this->getcontentwhere('approved', '');
+if ($options->admincookie) {
+    $result .= $this->getcontentwhere('hold', '');
+}
+return $result;
   }
   
   public function getholdcontent($idauthor) {
