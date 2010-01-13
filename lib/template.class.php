@@ -226,16 +226,15 @@ $this->save();
   public function gethead() {
 global $options;
     $result = '';
-if ($this->hovermenu) $result .=  <script type=\"text/javascript\" src=\"$options->files/js/hovermenu.js\"></script>\n";
-    if ($this->itemplate) $result .= $this->context->gethead();
-    foreach ($this->javascripts as $name => $script) {
-      if ($name == 'hovermenu') {
+if ($this->hovermenu) {
         $theme = ttheme::instance();
-        if (isset($theme->menu['id'])) $result .= sprintf($script, $theme->menu['id'], $theme->menu['tag']);
-      }
-      $result .=$script;
-      $result .= "\n";
-    }
+        if (isset($theme->menu['id'])) {
+$result .= sprintf("<script type=\"text/javascript\">\nvar idmenu = \"%s\";\nvar tagmenu = \"%s\";\n</script>\n", $theme->menu['id'], $theme->menu['tag']);
+$result .=  "<script type=\"text/javascript\" src=\"$options->files/js/hovermenu.js\"></script>\n";
+}
+}
+    if ($this->itemplate) $result .= $this->context->gethead();
+    foreach ($this->javascripts as $name => $script)  $result .=$script . "\n";
     
     $this->onhead(&$result);
     if ($this->isadmin) $this->onadminhead(&$result);
