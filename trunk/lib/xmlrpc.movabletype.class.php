@@ -99,11 +99,6 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     return true;
   }
   
-  public function supportedMethods(&$args) {
-    $Caller = &TXMLRPC::Instance();
-    return array_keys($Caller->methods);
-  }
-  
   public function supportedTextFilters(&$args) {
     return array();
   }
