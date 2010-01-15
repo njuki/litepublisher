@@ -25,14 +25,14 @@ if ($item['class'] != __class__) {
 $obj = getinstance($item['class']);
 if (method_exists($obj, 'getsignature')) {
 return $obj->getsignature($name);
-else {
+} else {
 return new IXR_Error(-32601, "server error. requested signature of $name method does not exist.");
 }
 
 }
 
 switch ($name) {
-case 'system.listMethods',
+case 'system.listMethods':
 case 'mt.listMethods':
 return array('array');
 
@@ -68,7 +68,7 @@ public function multicall(array $items) {
 $result = array();
 $caller = TXMLRPC::instance();
 foreach ($items as $item) {
-$r = $caller->call($item['methodName'], isset($item['params']) ? $item['params'] : array());
+$r = $caller->call($item['methodName'], isset($item['params']) ? $item['params'] : null);
 if ($r instanceof IXR_Error) {
 $result[] = array(
 'faultCode' => $r->code,
