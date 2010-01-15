@@ -87,7 +87,7 @@ class tstdwidgets extends titems {
   
   public function request($arg) {
     global $options;
-    $name = isset($_GET['name']) ? $_GET['name'] : '';
+    $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : '';
     
     if (!isset($this->items[$name])) return 404;
     $result = "<?php
@@ -109,7 +109,7 @@ class tstdwidgets extends titems {
     $result = '';
     $title = $this->items[$name]['title'];
     if ($this->items[$name]['ajax'] && !$this->disableajax) {
-    $title = "<a onclick=\"loadcontent('widget$name', '$options->url/stdwidget.htm{$options->q}name=$name')\">$title</a>";
+    $title = "<a onclick=\"loadwidget('widget$name', '$options->url/stdwidget.htm{$options->q}name=$name')\">$title</a>";
       $content = '';
     } elseif ($name == 'comments') {
       $content = $this->getcommentswidget($id);

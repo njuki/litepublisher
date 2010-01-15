@@ -48,12 +48,11 @@ class TXMLRPC extends titems {
     $this->basename = 'xmlrpc';
     $this->dbversion = false;
     $this->cache = false;
-    $this->addevents('BeforeCall', 'AfterCall', 'GetMethods');
+    $this->addevents('beforecall', 'aftercall', 'getmethods');
   }
   
   public function request($param) {
     global$HTTP_RAW_POST_DATA;
-    //$_COOKIE = array();
     if ( !isset( $HTTP_RAW_POST_DATA ) ) {
       $HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
     }
@@ -66,22 +65,20 @@ class TXMLRPC extends titems {
       //$HTTP_RAW_POST_DATA = file_get_contents($GLOBALS['paths']['home'] . 'raw.txt');
     }
     
-    $this->GetMethods();
+    $this->getmethods();
     $this->Server = new TXMLRPCParser ($this);
     $this->Server->IXR_Server  ($this->items);
     $Result = $this->Server->XMLResult;
-    $this->AfterCall();
+    $this->aftercall();
     if (defined('debug')) tfiler::log("responnse:\n".$Result, 'xmlrpc.txt');
     return $Result;
   }
   
-  public function call($method, &$args) {
-    $this->BeforeCall($method, $args);
+  public function call($method, array $args) {
+    $this->beforecall($method, &$args);
     if (!isset($this->items[$method])) {
       return new IXR_Error(-32601, "server error. requested method $method does not exist.");
     }
-    
-    if (count($args) == 1) $args = $args[0];
     
     $class = $this->items[$method]['class'];
     $func = $this->items[$method]['func'];
@@ -106,7 +103,8 @@ class TXMLRPC extends titems {
         return new IXR_Error(-32601, "server error. requested object method \"$Function\" does not exist.");
       }
       */
-      return $obj->$func($args);
+      //return $obj->$func($args);
+        return call_user_func(array($obj, $func), $args);
     }
   }
   
@@ -125,16 +123,6 @@ class TXMLRPC extends titems {
       }
     }
     $this->save();
-  }
-  
-  public function sayHello($args) {
-    return 'Hello!';
-  }
-  
-  public function addTwoNumbers($args) {
-    $number1 = $args[0];
-    $number2 = $args[1];
-    return $number1 + $number2;
   }
   
 }//class

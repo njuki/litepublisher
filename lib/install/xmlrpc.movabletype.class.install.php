@@ -6,21 +6,20 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCMovableTypeInstall(&$self) {
-  $Caller = &TXMLRPC::Instance();
-  $Caller->Lock();
+function TXMLRPCMovableTypeInstall($self) {
+  $caller = TXMLRPC::instance();
+  $caller->lock();
   
   // MovableType API
-  $Caller->Add('mt.getCategoryList' , 'getCategoryList', get_class($self));
-  $Caller->Add('mt.getRecentPostTitles' , 'getRecentPostTitles', get_class($self));
-  $Caller->Add('mt.getPostCategories' , 'getPostCategories', get_class($self));
-  $Caller->Add('mt.setPostCategories' , 'setPostCategories', get_class($self));
-  $Caller->Add('mt.supportedMethods' , 'supportedMethods', get_class($self));
-  $Caller->Add('mt.supportedTextFilters' , 'supportedTextFilters', get_class($self));
-  $Caller->Add('mt.getTrackbackPings' , 'getTrackbackPings', get_class($self));
-  $Caller->Add('mt.publishPost' , 'publishPost', get_class($self));
+  $caller->add('mt.getCategoryList' , 'getCategoryList', get_class($self));
+  $caller->add('mt.getRecentPostTitles' , 'getRecentPostTitles', get_class($self));
+  $caller->add('mt.getPostCategories' , 'getPostCategories', get_class($self));
+  $caller->add('mt.setPostCategories' , 'setPostCategories', get_class($self));
+  $caller->add('mt.supportedTextFilters' , 'supportedTextFilters', get_class($self));
+  $caller->add('mt.getTrackbackPings' , 'getTrackbackPings', get_class($self));
+  $caller->add('mt.publishPost' , 'publishPost', get_class($self));
   
-  $Caller->Unlock();
+  $caller->unlock();
 }
 
 ?>
