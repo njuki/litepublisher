@@ -74,7 +74,7 @@ class TXMLRPC extends titems {
     return $Result;
   }
   
-  public function call($method, array $args) {
+  public function call($method, $args) {
     $this->beforecall($method, &$args);
     if (!isset($this->items[$method])) {
       return new IXR_Error(-32601, "server error. requested method $method does not exist.");
@@ -85,7 +85,7 @@ class TXMLRPC extends titems {
     
     if (empty($class)) {
       if (function_exists($func)) {
-        return call_user_func($func, $args);
+        return call_user_func_array($func, $args);
       } else {
         $this->delete($method);
         return new IXR_Error(-32601, "server error. requested function \"$Func\" does not exist.");
@@ -104,7 +104,7 @@ class TXMLRPC extends titems {
       }
       */
       //return $obj->$func($args);
-        return call_user_func(array($obj, $func), $args);
+        return call_user_func_array(array($obj, $func), $args);
     }
   }
   
@@ -123,6 +123,25 @@ class TXMLRPC extends titems {
       }
     }
     $this->save();
+  }
+  
+}//class
+
+class TXMLRPCAbstract extends tevents {
+  public $error;
+  
+  public function uninstall() {
+    $aller = TXMLRPC::instance();
+    $caller->deleteclass(get_class($this));
+  }
+  
+  public function canlogin(&$args, $LoginIndex = 1) {
+    global $options;
+    if (!$options->auth($args[$LoginIndex], $args[$LoginIndex + 1])) {
+      $this->error = new IXR_Error(403, 'Bad login/pass combination.');
+      return false;
+    }
+    return true;
   }
   
 }//class
