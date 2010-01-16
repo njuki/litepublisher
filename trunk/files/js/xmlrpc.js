@@ -1,4 +1,7 @@
 /*
+* modified by Vladmir Yushko
+* http://litepublisher.com/
+*
 *	Mimic (XML-RPC Client for JavaScript) v2.0.1
 *	Copyright (C) 2005-2009 Carlos Eduardo Goncalves (cadu.goncalves@gmail.com)
 *
@@ -6,24 +9,9 @@
 * 	and GPLv3 (http://opensource.org/licenses/gpl-3.0.html) licenses.
 */
 
-
-/** 
- * XmlRpc
- */
  function XmlRpc(){
- 	
  };
  
-XmlRpc.PROLOG = "<?xml version=\"1.0\"?>\n";
-XmlRpc.REQUEST = "<methodCall>\n<methodName>${METHOD}</methodName>\n<params>\n${DATA}</params>\n</methodCall>";
-XmlRpc.PARAM = "<param>\n<value>\n${DATA}</value>\n</param>\n";
-XmlRpc.ARRAY = "<array>\n<data>\n${DATA}</data>\n</array>\n";
-XmlRpc.STRUCT = "<struct>\n${DATA}</struct>\n";
-XmlRpc.MEMBER = "<member>\n${DATA}</member>\n";
-XmlRpc.NAME = "<name>${DATA}</name>\n";
-XmlRpc.VALUE = "<value>\n${DATA}</value>\n";
-XmlRpc.SCALAR = "<${TYPE}>${DATA}</${TYPE}>\n"; 
-
 XmlRpc.getDataTag = function(data) {
   try {
     var tag = typeof data;
@@ -119,12 +107,22 @@ XmlRpcRequest.prototype.clearParams = function() {
   this.params.splice(0, this.params.length);
 };
 
+XmlRpcRequest.prototype.getxml = function() {
+var result ="<?xml version=\"1.0\"?>\n<methodCall>\n<methodName>";
+result += this.methodName;
+result += </methodName>\n<params>\n";
+
+  for(var i = 0; i < this.params.length; i++) {
+result += "<param>\n<value>\n" 
+result += this.marshal(this.params[i]);
+result += "</value>\n</param>\n";
+}
+
+result += "</params>\n</methodCall>";
+return result;
+}
+
 XmlRpcRequest.prototype.send = function() {
-  var xml_params = "";
-  for(var i = 0; i < this.params.length; i++)
-    xml_params += XmlRpc.PARAM.replace("${DATA}", this.marshal(this.params[i]));	
-  var xml_call = XmlRpc.REQUEST.replace("${METHOD}", this.methodName);	
-  xml_call = XmlRpc.PROLOG + xml_call.replace("${DATA}", xml_params); 
   var xhr = Builder.buildXHR();
   xhr.open("POST", this.serviceUrl, false);   
   xhr.send(Builder.buildDOM(xml_call));
@@ -133,45 +131,40 @@ XmlRpcRequest.prototype.send = function() {
 
 XmlRpcRequest.prototype.marshal = function(data) {
   var type = XmlRpc.getDataTag(data);
-  var scalar_type = XmlRpc.SCALAR.replace(/\$\{TYPE\}/g, type);
-  var xml = "";
+  var scalar_type = "<" + type + ">${DATA}</" + type + ">\n"; 
+
   switch(type) {
     case "struct":
-      var member = "";	  
+      var result = 	  "<struct>\n";
       for(var i in data) {
-        var value = "";
-        value += XmlRpc.NAME.replace("${DATA}", i);
-        value += XmlRpc.VALUE.replace("${DATA}", this.marshal(data[i]));
-        member += XmlRpc.MEMBER.replace("${DATA}", value);		 
+result += "<member>";
+        result += "<name>" + i + "</name>\n";
+result += "<value>\n" +this.marshal(data[i]) + "</value>\n";
+        result += </member>\n";
 	  }
-	  xml = XmlRpc.STRUCT.replace("${DATA}", member); 
-	  break;	  
+result += "</struct>\n";
+return result;
 
 	case "array":
-	  var value = "";
+	  var result = "<array>\n<data>\n";
 	  for(var i = 0; i < data.length; i++) {
-        value += XmlRpc.VALUE.replace("${DATA}", this.marshal(data[i])); 
+result += "<value>\n" +this.marshal(data[i]) + "</value>\n";
 	  }
-      xml = XmlRpc.ARRAY.replace("${DATA}", value); 
-      break;
+result += "</data>\n</array>\n";
+return result;
 
 	case "dateTime.iso8601":     
-	  xml = scalar_type.replace("${DATA}", data.toIso8601()); 
-	  break;	
+return scalar_type.replace("${DATA}", data.toIso8601()); 
 
 	case "boolean": 
-	  xml = scalar_type.replace("${DATA}", (data == true) ? 1 : 0); 
-	  break;
+ return scalar_type.replace("${DATA}", (data == true) ? 1 : 0); 
 
 	case "base64":
-	  xml = scalar_type.replace("${DATA}", data.encode()); 
-	  break;	
+	  return scalar_type.replace("${DATA}", data.encode()); 
 
     default : 
-	  xml = scalar_type.replace("${DATA}", data); 
-	  break;
+	  return scalar_type.replace("${DATA}", data); 
   }
-  return xml;
 };
 
 function XmlRpcResponse(xml) {	
