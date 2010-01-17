@@ -29,6 +29,8 @@ class TXMLRPCParser extends IXR_Server  {
     @header('Content-Length: $length');
     @header('Content-Type: text/xml');
     @header('Date: ".date('r') . "');
+    @Header( 'Cache-Control: no-cache, must-revalidate');
+    @Header( 'Pragma: no-cache');
     @header('X-Pingback: $options->url/rpc.xml');
     echo'$head';
     ?>". $xml;
