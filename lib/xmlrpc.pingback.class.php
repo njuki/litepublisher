@@ -12,11 +12,9 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     return getinstance(__class__);
   }
   
-  public function ping(&$args) {
+  public function ping($from, $to) {
     global $options, $paths, $classes;
     
-    $from = $args[0];
-    $to   = $args[1];
     if (!strbegin($to, $options->url)) {
       return new IXR_Error(0, 'Is there no link to us?');
     }
