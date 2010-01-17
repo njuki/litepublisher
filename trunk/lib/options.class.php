@@ -32,7 +32,7 @@ $this->admincookie = false;
   public function load() {
 if (!parent::load()) return false;
     $this->modified = false;
-$this->admincookie = $this->getadmincookie();
+$this->admincookie = $this->cookieenabled && $this->authcookie();
       date_default_timezone_set($this->timezone);
       $this->gmt = date('Z');
 return true;
@@ -99,9 +99,16 @@ return true;
     $this->unlock();
   }
 
-  public function getadmincookie() {
-if (!empty($_COOKIE['admin']) && ($this->cookie == $_COOKIE['admin'])) {
+  public function authcookie() {
+if (empty($_COOKIE['admin']))  return false;
+if ($this->cookie == $_COOKIE['admin'])) {
+if ($this->cookieexpired < time()) return false;
 $this->user = 1;
+    } else {
+      $users = tusers::instance();
+      if (!($this->user = $users->loginexists($login))) return false;
+    }
+    
     $this->updategroup();
 return true;
 }
@@ -109,15 +116,15 @@ return false;
 }
   
   public function auth($login, $password) {
+if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
     if ($login == $this->login) {
+    if ($this->password != md5("$login:$this->realm:$password"))  return false;
       $this->user = 1;
     } else {
       $users = tusers::instance();
-      if (!($this->user = $users->loginexists($login))) return false;
+      if (!($this->user = $users->auth($login, $password))) return false;
     }
-    
-    if ($this->password != md5("$login:$this->realm:$password"))  return false;
-    $this->updategroup();
+        $this->updategroup();
     return true;
   }
   

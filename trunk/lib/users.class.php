@@ -29,14 +29,14 @@ class tusers extends titems {
     'group' => $gid,
     'login' => $login,
     'password' => $password,
-    'cookie' =>  md5(mt_rand() . secret. microtime()),
+    'cookie' =>  md5uniq(),
     'expired' => 0,
     'name' => $name,
     'email' => $email,
     'url' => $url
     );
     
-    if (dbversion) {
+    if ($this->dbversion) {
       return $this->db->add($item);
     } else {
       $this->items[++$this->autoid] = $item;
@@ -48,7 +48,7 @@ class tusers extends titems {
   public function loginexists($login) {
     global $options;
     if ($login == $options->login) return 1;
-    if (dbversion) {
+    if ($this->dbversion) {
       return $this->db->findid('login = '. dbquote($login));
     } else {
       foreach ($this->items as $id => $item) {
@@ -66,7 +66,7 @@ class tusers extends titems {
   public function auth($login,$password) {
     global $options;
     $password = md5("$login:$options->realm:$password");
-    if (dbversion) {
+    if ($this->dbversion) {
       $login = dbquote($login);
       return $this->db->findid("login = $login and password = '$password'");
     } else {
@@ -76,19 +76,29 @@ class tusers extends titems {
     }
     return  false;
   }
+
+public function authcookie($cookie) {
+if (empty($cookie)) return false;
+foreach ($this->items as $id => $item) {
+if ($cookie == $item['cookie']) {
+if ($item['expired'] < time()) return  false;
+return $id;
+}
+}
+return false;
+}
   
   public function getgroupname($id) {
     $groups = tusergroups::instance();
     return $groups->items[$this->items[$id]['group']]['name'];
   }
   
-  
-  public function clearcookie($id) {
+    public function clearcookie($id) {
     $this->setcookies($id, '', 0);
   }
   
-  public function setcookies($id, $cookie, $xpired) {
-    if (dbversion) {
+  public function setcookies($id, $cookie, $expired) {
+    if ($this->dbversion) {
       $this->db->updateassoc(array(
       'id' => $id,
       'cookie' => $cookie,
