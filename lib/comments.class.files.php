@@ -24,9 +24,8 @@ class tcomments extends titems {
     return $self;
   }
   
-  public static function getcomment($pid, $id) {
-    $self = self::instance($pid);
-    $result = new tcomment($self);
+  public function getcomment($id) {
+    $result = new tcomment($this);
     $result->id = $id;
     return $result;
   }

@@ -144,11 +144,15 @@ class TXMLRPCAbstract extends tevents {
     $caller->deleteclass(get_class($this));
   }
   
-  public function auth($login, $password) {
+  public function auth($login, $password, $group) {
     global $options;
-    if (!$options->auth($login, $password))  throw new Exception('Bad login/pass combination.', 403);
-return true;
-  }
+    if ($options->auth($login, $password))  {
+if (($options->group == 'admin') || ($options->group == $group) || ($group == 'nobody')) return true;
+    $groups = tusergroups::instance();
+if ($groups->hasright($options->group, $group)) return true;
+}
+throw new Exception('Bad login/pass combination.', 403);
+}
   
 public function xerror($code, $msg) {
 return new IXR_Error($code, $msg);
