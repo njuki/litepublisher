@@ -13,7 +13,7 @@ class tthemeparser {
   public static function instance() {
     return getinstance(__class__);
   }
-  
+
   public function parsetag(&$s, $tag, $replace) {
     $result = '';
     $opentag = "<!--$tag-->";
@@ -24,13 +24,6 @@ class tthemeparser {
       $s = str_replace("\n\n", "\n", $s);
     }
     return $result;
-  }
-  
-  public function getidtag($tag, $s) {
-    if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {
-      return $m[1];
-    }
-    return false;
   }
   
   public function parse($filename, $theme) {
@@ -54,7 +47,7 @@ class tthemeparser {
     $result['current'] = $this->parsetag($s, 'current', '');
     $result[0] = $s;
     //hover
-    if ($id = $this->getidtag('*', $s)) {
+    if ($id = tcontentfilter::getidtag('*', $s)) {
       $result['id'] = $id;
       preg_match('/\<(\w*?)\s/',$item, $t);
       $result['tag'] = $t[1];
