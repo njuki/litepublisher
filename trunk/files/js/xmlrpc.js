@@ -92,7 +92,7 @@ function XmlRpcRequest(url, method) {
   this.params = [];
 };
 
-XmlRpcRequest.prototype.addParam = function(data) {
+XmlRpcRequest.add = function(data) {
   var type = typeof data;
   switch(type.toLowerCase()) {
     case "function":
@@ -103,11 +103,11 @@ XmlRpcRequest.prototype.addParam = function(data) {
   this.params.push(data);	
 };
 
-XmlRpcRequest.prototype.clearParams = function() {
+XmlRpcRequest.clear = function() {
   this.params.splice(0, this.params.length);
 };
 
-XmlRpcRequest.prototype.getxml = function() {
+XmlRpcRequest.getxml = function() {
 var result ="<?xml version=\"1.0\"?>\n<methodCall>\n<methodName>";
 result += this.methodName;
 result += </methodName>\n<params>\n";
@@ -122,14 +122,14 @@ result += "</params>\n</methodCall>";
 return result;
 }
 
-XmlRpcRequest.prototype.send = function() {
+XmlRpcRequest.send = function() {
   var xhr = Builder.buildXHR();
   xhr.open("POST", this.serviceUrl, false);   
   xhr.send(Builder.buildDOM(xml_call));
   return new XmlRpcResponse(xhr.responseXML);  	   	     
 };
 
-XmlRpcRequest.prototype.marshal = function(data) {
+XmlRpcRequest.marshal = function(data) {
   var type = XmlRpc.getDataTag(data);
   var scalar_type = "<" + type + ">${DATA}</" + type + ">\n"; 
 
@@ -171,11 +171,11 @@ function XmlRpcResponse(xml) {
   this.xmlData = xml;
 };
 
-XmlRpcResponse.prototype.isFault = function() {
+XmlRpcResponse.isFault = function() {
   return this.faultValue;
 };
 
-XmlRpcResponse.prototype.parseXML = function() {    	
+XmlRpcResponse.parse = function() {    	
   this.faultValue = undefined;
   this.currentIsName = false;
   this.propertyName = "";
@@ -185,7 +185,7 @@ XmlRpcResponse.prototype.parseXML = function() {
   return this.params[0];
 };
 
-XmlRpcResponse.prototype.unmarshal = function(node, parent) { 
+XmlRpcResponse.unmarshal = function(node, parent) { 
   if(node.nodeType == 1) {
 	var obj = null;
 	var tag = node.tagName.toLowerCase();
@@ -297,7 +297,7 @@ Builder.buildDOM = function(xml) {
   return null;
 };
 
-Date.prototype.toIso8601 = function() {
+Date.toIso8601 = function() {
   year = this.getYear();
   if (year < 1900) year += 1900;   
   month = this.getMonth() + 1;
@@ -319,10 +319,10 @@ Date.fromIso8601 = function(value) {
 };
 
 function Base64(value) {	
-  Base64.prototype.bytes = value;
+  Base64.bytes = value;
 };
 
-Base64.prototype.encode = function() {
+Base64.encode = function() {
   if(typeof btoa == "function")
     this.bytes = btoa(this.bytes);
   else {
@@ -349,7 +349,7 @@ Base64.prototype.encode = function() {
   return this.bytes;
 };
 
-Base64.prototype.decode = function() {
+Base64.decode = function() {
   if(typeof atob == "function")	
     this.bytes = atob(this.bytes);
   else {
