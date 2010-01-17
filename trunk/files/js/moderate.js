@@ -1,31 +1,64 @@
-<script type="text/javascript">
-function moderate(id, idpost, action) {
+function createmoderator() {
+return new rpc.ServiceProxy(ltoptions.xmlrpc, {
+asynchronous: true,
+protocol: 'XML-RPC',
+sanitize: false,     
+methods: [
+'litepublisher.moderate',
+'litepublisher.deletecomment', 
+'litepublisher.setcommentstatus',
+'litepublisher.addcomment',
+'litepublisher.getcomment',
+'litepublisher.getrecentcomments'
+],
+//callbackParamName: 'callback'
+}); 
+}
+
+function singlemoderate(id, action) {
 if (action == 'delete') {
-if (!if !confirm("Do you realy want to delete comment?")) return;
+if (!confirm("Do you realy want to delete comment?")) return;
 }
+
 var item =document.getElementById("comment-" + id);
+var client = createmoderator();
+if (action == 'delete') {
+client.litepublisher.deletecomment( {
+params:['', '', id, ltoptions.idpost],
 
-var link = "%s/admin/ajax/comments/%sid=" + id + "&idpost=" + idpost + "&action=" + action;
-		var http = createRequestObject();				
-		if( http ) {
-			http.open('get', link);
-			http.onreadystatechange = function () {
-				if((http.readyState == 4) && (http.status == '200') && (http.responseText == 'ok')) {
- switch(action) {
-case 'delete':
+                 onSuccess:function(result){                     
+if (result) {
     item.parentNode.removeChild(item);
-break;
-
-case 'hold':
-break;
-
-case 'approve':
-break;
+} else {
+                    alert(ltoptions.lang.commentnotdeleted);
 }
-				}
-			}
-			http.send(null);    
-		}
-	}
+},
 
-</script>
+                  onException:function(errorObj){ 
+                    alert(ltoptions.lang.commentnotdeleted);
+},
+
+onComplete:function(responseObj){ }
+} );
+} else {
+client.litepublisher.setcommentstatus( {
+params:['', '', id, ltoptions.idpost, action],
+
+                 onSuccess:function(result){                     
+if (result) {
+    item.parentNode.removeChild(item);
+//добавитьэтот коммент в нужный список, а списки надо разрулить в теме, а id списков добавить в передаваемые опции
+} else {
+                    alert(ltoptions.lang.commentnotmoderated);
+}
+},
+
+                  onException:function(errorObj){ 
+                    alert(ltoptions.lang.commentnotmoderated);
+},
+
+onComplete:function(responseObj){ }
+} );
+} 
+
+}
