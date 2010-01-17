@@ -178,7 +178,8 @@ return $result;
   public function sendmail($id, $idpost) {
     global $options, $comment;
     if (!$this->sendnotification) return;
-    $comment = tcomments::getcomment($idpost, $id);
+$comments = tcomments::instance($idpost);
+    $comment = $comments->getcomment($id);
     $args = targs::instance();
     $args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&post=$idpost&action";
     $mailtemplate = tmailtemplate::instance('comments');

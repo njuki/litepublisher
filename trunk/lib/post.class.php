@@ -232,8 +232,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-global $options, $paths;
-    $result = '';
+global $options;
+$result = "<script type=\"text/javascript\">\nltoptions.idpost = $this->id;\n</script>\n";
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
     if ($this->commentsenabled && ($this->commentscount > 0))  {
@@ -241,8 +241,7 @@ global $options, $paths;
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
     }
 if ($options->admincookie) {
-$script = file_get_contents($paths['libinclude'] . 'moderate.js');
-$result .= sprintf($script, $options->url, $options->q);
+$result .=  "<script type=\"text/javascript\" src=\"$options->files/js/moderate.js\"></script>\n";
 }
     return $result;
   }

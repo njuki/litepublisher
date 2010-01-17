@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCWordpressInstall(&$self) {
+function TXMLRPCWordpressInstall($self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
   // WordPress API

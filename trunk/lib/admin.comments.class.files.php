@@ -131,7 +131,8 @@ class tadminmoderator extends tadminmenu {
   
   private function editcomment($id, $idpost) {
     global $comment;
-    $comment = tcomments::getcomment($idpost, $id);
+$comments = tcomments::instance($idpost);
+    $comment = $comments->getcomment($id);
     $args = targs::instance();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&post=$idpost&action";
@@ -263,7 +264,11 @@ class tadminmoderator extends tadminmenu {
   
   private function getinfo($id, $idpost) {
     global $comment;
-    if (!isset($comment)) $comment = tcomments::getcomment($idpost, $id);
+    if (!isset($comment)) {
+$comments = tcomments::instance($idpost);
+    $comment = $comments->getcomment($id);
+}
+
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&post=$idpost&action";
     return $this->html->info($args);
@@ -364,7 +369,8 @@ class tadminmoderator extends tadminmenu {
           exit();
           
           case 'edit':
-          $comment = tcomments::getcomment($this->idpost, $this->idget);
+$comments = tcomments::instance($this->idpost);
+    $comment = $comments->getcomment($this->idget);
           $comment->content = $_POST['content'];
           break;
         }
