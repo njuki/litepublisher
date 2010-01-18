@@ -19,7 +19,8 @@
 <link rel="openid2.provider" href="$options.url/openid/" />
 <link rel="openid.delegate" href="$options.url/openid/" />
 <link rel="openid2.local_id" href="$options.url/openid/" />
-	<script type="text/javascript" src="$options.files/js/tw-sack.js"></script>
+	<script type="text/javascript" src="$options.files/js/rpc.js"></script>
+	<script type="text/javascript" src="$options.files/js/widgetcontent.js"></script>
 $template.head
 </head>
 <body>
@@ -141,9 +142,10 @@ $post.content
    <a name="comment-$comment.id"></a>
 <!--moderate-->
 			<span class="moderationbuttons">
-<input type="button" value="$lang.delete" onclick="moderate('$comment.id','$comment.post', 'delete');" />
-<!--hold--><input type="button" value="$lang.hold" onclick="moderate('$comment.id','$comment.post', 'hold');" /><!--/hold-->
-<!--approve--><input type="button" value="$lang.approve" onclick="moderate('$comment.id','$comment.post', 'approve');" /><!--/approve-->
+<input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
+<input type="button" value="$lang.delete" onclick="singlemoderate('$comment.id','delete');" />
+<!--hold--><input type="button" value="$lang.hold" onclick="singlemoderate('$comment.id', 'hold');" /><!--/hold-->
+<!--approve--><input type="button" value="$lang.approve" onclick="singlemoderate('$comment.id', 'approve');" /><!--/approve-->
 </span>
 <!--/moderate-->
 			<cite>$comment.authorlink</cite> $lang.says:  <br />
@@ -155,6 +157,17 @@ $comment.content
 <!--/comment-->
  </ol>
 <!--/comments-->
+
+<!--moderateform-->
+<form name="moderateform" action="$options.url/admin/comments/" method="post">
+$comments
+<p>
+<input type="submit" name="delete" value="$lang.delete" onclick="submitmoderateform('delete');" />
+<input type="submit" name="hold" value="$lang.hold" onclick="submitmoderateform('hold');" />
+<input type="submit" name="approve" value="$lang.approve" onclick="submitmoderateform('approved');" />
+</p>
+</form>
+<!--/moderateform-->
 
 <!--pingbacks-->
 	<h3 id="comments">$lang.pingbacks</h3>
