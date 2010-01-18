@@ -179,36 +179,46 @@ return true;
 
 
 public function wpnewComment($blog_id, $login, $password, $idpost, $struct) {
+global $classes;
 $this->auth($login, $password, 'moderator');
-$idpost = (int) $idpost;
-$comments = tcomments::instance();
-if (!$comments->itemexists($id)) return $this->xerror(404, 'Invalid comment ID.');
-$comment = $comment->getcomment($id);
 
-if ( isset($struct['status'])) {
-if (!preg_match('/^hold|approve|spam$/', $struct['status'])) return $this->xerror(401, 'Invalid comment status.');
-$comment->status = $struct['status'] == 'approve' ? 'approved' : $struct['status'];
-}
+		if ( is_numeric($idpost) ) {
+			$idpost = absint($idpost);
+		} else {
+   $urlmap = turlmap::instance();
+    if (!($item = $urlmap->finditem($url))) {
+      return $this->xerror(404, 'Invalid post ID.');
+    }
+    
+    if ($item['class'] != $classes->classes['post'])  {
+      return $this->xerror(404, 'Invalid post ID.');
+    }
+$idpost = $item['arg'];
+    }
 
-$comusers = tcomusers::instance();
-$comment->author = $comusers->add(
-isset($struct['author']) ? $struct['author'] : $comment->name,
-isset($struct['author_email']) ? $struct['author_email'] : $comment->email,
-isset($struct['author_url'] ? ['author_url'] : $comment->url
+    $post = tpost::instance($idpost);
+    if (!$post->commentenabled || ($post->status != 'published')) {
+      return $this->xerror(403, 'The specified post cannot be used to commenting');pingback-enabled resource.');
+    }
+
+$manager = tcommentmanager::instance();
+return $manager->add($idpost,
+isset($struct['author']) ? $struct['author'] : '',
+isset($struct['author_email']) ? $struct['author_email'] : '',
+isset($struct['author_url'] ? ['author_url'] : '',
+$struct['content']
 );
-
-		if ( !empty( $struct['date_created_gmt'] ) ) {
-$comment->posted = $struct['date_created_gmt']->getTimestamp();
-		}
-
-		if ( isset($struct['content']) ) {
-			$comment->rawcontent = $struct['content']);
 }
 
-$comment->save();
-return true;
-}
 
+public function wpgetCommentStatusList($blog_id, $login, $password) {
+$this->auth($login, $password, 'moderator');
+return array(
+		'hold'		=> 'Unapproved',
+		'approve'	=> 'Approved',
+		'spam'		=> 'Spam', 
+	);
+}
 
 }//class
 ?>
