@@ -618,6 +618,7 @@ class IXR_Date {
         $this->second = date('s', $timestamp);
         $this->timezone = '';
     }
+
     function parseIso($iso) {
         $this->year = substr($iso, 0, 4);
         $this->month = substr($iso, 4, 2);
@@ -627,17 +628,20 @@ class IXR_Date {
         $this->second = substr($iso, 15, 2);
         $this->timezone = substr($iso, 17);
     }
+
     function getIso() {
         return $this->year.$this->month.$this->day.'T'.$this->hour.':'.$this->minute.':'.$this->second.$this->timezone;
     }
+
     function getXml() {
         return '<dateTime.iso8601>'.$this->getIso().'</dateTime.iso8601>';
     }
+
     function getTimestamp() {
         return mktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year);
     }
-}
 
+}
 
 class IXR_Base64 {
     var $data;

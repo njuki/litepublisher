@@ -24,7 +24,7 @@ class tcomments extends titems {
   }
   
   public function add($idauthor, $content, $status) {
-    $filter = TContentFilter::instance();
+    $filter = tcontentfilter::instance();
     $filtered = $filter->filtercomment($content);
     
     $item = array(
@@ -50,6 +50,10 @@ class tcomments extends titems {
     
     return $id;
   }
+
+public function edit(tcomment $comment) {
+
+}
   
   public function getcomment($id) {
     return new tcomment($id);
@@ -161,6 +165,13 @@ class tcomment extends tdata {
   public function save() {
     extract($this->data);
     $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'status', 'content'));
+
+    $this->getdb($this->rawtable)->UpdateAssoc(array(
+    'id' => $id,
+    'modified' => sqldate(),
+    'rawcontent' => $rawcontent,
+    'hash' => md5($rawcontent)
+    ));
   }
   
   public function getauthorlink() {
@@ -211,9 +222,16 @@ class tcomment extends tdata {
   }
   
   public function getrawcontent() {
+if (isset($this->data['rawcontent'])) return $this->data['rawcontent']);
     $comments = tcomments::instance($this->post);
     return $comments->raw->getvalue($this->id, 'rawcontent');
   }
+
+public function setrawcontent($s) {
+$this->data['rawcontent'] = $s;
+    $filter = tcontentfilter::instance();
+    $this->data['content'] = $filter->filtercomment($s);
+}
   
 }//class
 

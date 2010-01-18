@@ -146,6 +146,69 @@ $manager = tcommentmanager::instance();
 return $manager->delete($id);
 }
 
+public function wpeditComment($blog_id, $login, $password, $id, $struct) {
+$this->auth($login, $password, 'moderator');
+$id = (int) $id;
+$comments = tcomments::instance();
+if (!$comments->itemexists($id)) return $this->xerror(404, 'Invalid comment ID.');
+$comment = $comment->getcomment($id);
+
+if ( isset($struct['status'])) {
+if (!preg_match('/^hold|approve|spam$/', $struct['status'])) return $this->xerror(401, 'Invalid comment status.');
+$comment->status = $struct['status'] == 'approve' ? 'approved' : $struct['status'];
+}
+
+$comusers = tcomusers::instance();
+$comment->author = $comusers->add(
+isset($struct['author']) ? $struct['author'] : $comment->name,
+isset($struct['author_email']) ? $struct['author_email'] : $comment->email,
+isset($struct['author_url'] ? ['author_url'] : $comment->url
+);
+
+		if ( !empty( $struct['date_created_gmt'] ) ) {
+$comment->posted = $struct['date_created_gmt']->getTimestamp();
+		}
+
+		if ( isset($struct['content']) ) {
+			$comment->rawcontent = $struct['content']);
+}
+
+$comment->save();
+return true;
+}
+
+
+public function wpnewComment($blog_id, $login, $password, $idpost, $struct) {
+$this->auth($login, $password, 'moderator');
+$idpost = (int) $idpost;
+$comments = tcomments::instance();
+if (!$comments->itemexists($id)) return $this->xerror(404, 'Invalid comment ID.');
+$comment = $comment->getcomment($id);
+
+if ( isset($struct['status'])) {
+if (!preg_match('/^hold|approve|spam$/', $struct['status'])) return $this->xerror(401, 'Invalid comment status.');
+$comment->status = $struct['status'] == 'approve' ? 'approved' : $struct['status'];
+}
+
+$comusers = tcomusers::instance();
+$comment->author = $comusers->add(
+isset($struct['author']) ? $struct['author'] : $comment->name,
+isset($struct['author_email']) ? $struct['author_email'] : $comment->email,
+isset($struct['author_url'] ? ['author_url'] : $comment->url
+);
+
+		if ( !empty( $struct['date_created_gmt'] ) ) {
+$comment->posted = $struct['date_created_gmt']->getTimestamp();
+		}
+
+		if ( isset($struct['content']) ) {
+			$comment->rawcontent = $struct['content']);
+}
+
+$comment->save();
+return true;
+}
+
 
 }//class
 ?>
