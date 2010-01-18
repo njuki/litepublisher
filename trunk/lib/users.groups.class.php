@@ -40,7 +40,7 @@ class tusergroups extends titems {
       return $group == 'author';
       
       case 'moderator':
-      return $group == 'subscriber';
+      return ($group == 'subscriber') || ($group == 'author');
     }
     return false;
   }
