@@ -22,16 +22,16 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     $url = substr($to, strlen($options->url) );
     $urlmap = turlmap::instance();
     if (!($item = $urlmap->finditem($url))) {
-      return new IXR_Error(0, 'Is there no link to us?');
+      return $this->xerror(0, 'Is there no link to us?');
     }
     
     if ($item['class'] != $classes->classes['post'])  {
-      return new IXR_Error(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
+      return $this->xerror(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
     $post = tpost::instance($item['arg']);
-    if (!$post->pingenabled) {
-      return new IXR_Error(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
+    if (!$post->pingenabled || ($post->status != 'published')) {
+      return $this->xerror(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
     $pingbacks = $post->pingbacks;

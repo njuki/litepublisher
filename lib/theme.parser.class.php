@@ -204,6 +204,7 @@ class tthemeparser {
   private function parsetemplatecomments($s) {
     $result = array();
     $result['comments'] = $this->parsecomments($this->parsetag($s, 'comments', ''));
+    $result['moderateform'] = $this->parsemoderateform($this->parsetag($s, 'moderateform', ''));
     $result['pingbacks'] = $this->parsepingbacks($this->parsetag($s, 'pingbacks', ''));
     $result['closed'] = $this->parsetag($s, 'closed', '');
     $result['form'] = $this->parsetag($s, 'form', '');
@@ -239,6 +240,15 @@ $result['approve'] = $this->parsetag($s, 'approve', '%s');
     return $result;
 }
   
+private function parsemoderateform($s) {
+return $s;
+/*
+    $result = array();
+    $result[0] = $s;
+    return $result;
+*/
+}
+
   private function parsepingbacks($s) {
     $result = array();
     $result['pingback'] = $this->parsetag($s, 'pingback', '%1$s');
