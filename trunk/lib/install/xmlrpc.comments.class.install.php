@@ -23,9 +23,10 @@ if (dbversion) {
   $caller->add('wp.getComment', 'wpgetComment', get_class($self));
   $caller->add('wp.getComments', 'wpgetComments', get_class($self));
   $caller->add('wp.deleteComment', 'wpdeleteComment', get_class($self));
+  $caller->add('wp.editComment','wpeditComment', get_class($self));
+  $caller->add('wp.newComment','wpnewComment', get_class($self));
 
-			'wp.editComment'		=> 'this:wp_editComment',
-			'wp.newComment'			=> 'this:wp_newComment',
+			=> 'this:wp_newComment',
 			'wp.getCommentStatusList' => 'this:wp_getCommentStatusList',
 
 
