@@ -62,3 +62,46 @@ onComplete:function(responseObj){ }
 } 
 
 }
+
+function moderate(list, action) {
+if (action == 'delete') {
+if (!confirm("Do you realy want to delete comment?")) return;
+}
+
+var client = createmoderator();
+client.litepublisher.moderate( {
+params:['', '', ltoptions.idpost, list, action],
+
+                 onSuccess:function(result){                     
+if (result) {
+for (var i = 0, n = list.length; i <n; i++) {
+var id = list[i];
+var item =document.getElementById("comment-" + id);
+//или переместить
+    item.parentNode.removeChild(item);
+}
+} else {
+                    alert(ltoptions.lang.commentnotmoderated);
+}
+},
+
+                  onException:function(errorObj){ 
+                    alert(ltoptions.lang.commentnotmoderated);
+},
+
+onComplete:function(responseObj){ }
+} );
+
+}
+
+function submitmoderateform(form, action) {
+var list [];
+	for (var i = 0, n = form.elements.length; i < n; i++) {
+var elem = form.elements[i];
+		if((elem.type == 'checkbox') && (elem.checked == true)) {
+list.push(parseint(elem.value));
+		}
+	}
+
+moderate(list, action);
+}
