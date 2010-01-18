@@ -17,6 +17,18 @@ function TXMLRPCComments($self) {
   $caller->add('litepublisher.getrecentcomments',		'getrecent', get_class($self));
   $caller->add('litepublisher.moderate',		'moderate', get_class($self));
   
+//wordpress api
+  $caller->add('wp.getCommentCount',	'wpgetCommentCount', get_class($self));
+if (dbversion) {
+  $caller->add('wp.getComment', 'wpgetComment', get_class($self));
+  $caller->add('wp.getComments', 'wpgetComments', get_class($self));
+  $caller->add('wp.deleteComment', 'wpdeleteComment', get_class($self));
+
+			'wp.editComment'		=> 'this:wp_editComment',
+			'wp.newComment'			=> 'this:wp_newComment',
+			'wp.getCommentStatusList' => 'this:wp_getCommentStatusList',
+
+
   $caller->unlock();
 }
 
