@@ -136,7 +136,7 @@ $post.content
 <!--/count-->
 <!--hold--><h3><em>$lang.hold</em></h3><!--/hold-->
    <a name="comments"></a>
-	<ol class="commentlist" start="%2$d">
+	<ol class="commentlist" id="<!--commentsid-->commentlist<!--/commentsid-->" start="%2$d">
 <!--comment-->
 		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
    <a name="comment-$comment.id"></a>
@@ -162,9 +162,9 @@ $comment.content
 <form name="moderateform" action="$options.url/admin/comments/" method="post">
 $comments
 <p>
-<input type="submit" name="delete" value="$lang.delete" onclick="submitmoderateform('delete');" />
-<input type="submit" name="hold" value="$lang.hold" onclick="submitmoderateform('hold');" />
-<input type="submit" name="approve" value="$lang.approve" onclick="submitmoderateform('approved');" />
+<input type="submit" name="approve" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
+<input type="submit" name="delete" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
+<input type="submit" name="hold" value="$lang.hold" onclick="submitmoderateform(this.form, 'hold');" />
 </p>
 </form>
 <!--/moderateform-->
