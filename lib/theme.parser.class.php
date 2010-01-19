@@ -20,7 +20,9 @@ class tthemeparser {
     $closetag = "<!--/$tag-->";
     if(is_int($i = strpos($s, $opentag)) && ($j = strpos($s, $closetag))) {
       $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
+if ($replace === false) $replace = $result;
       $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
+}
       $s = str_replace("\n\n", "\n", $s);
     }
     return $result;
@@ -218,6 +220,7 @@ class tthemeparser {
     $result['count'] = $this->parsetag($s, 'count', '');
     $result['hold'] = $this->parsetag($s, 'hold', '');
     $result['comment'] = $this->parsecomment($this->parsetag($s, 'comment', '%1$s'));
+    $result['commentsid'] = $this->parsetag($s, 'commentsid', false);
     $result[0] = $s;
     return $result;
   }

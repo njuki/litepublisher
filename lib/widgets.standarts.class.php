@@ -85,19 +85,9 @@ class tstdwidgets extends titems {
     return false;
   }
   
-  public function request($arg) {
-    global $options;
-    $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : '';
-    
-    if (!isset($this->items[$name])) return 404;
-    $result = "<?php
-    @header('Content-Type: text/html; charset=utf-8');
-    @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: $options->url/rpc.xml');
-    ?>";
-    
-    $result .= $this->getcontent($name);
-    return $result;
+  public function xmlrpcgetwidget($name) {
+    if (!isset($this->items[$name])) throw new Exception('Widget not found.', 404);
+return $this->getcontent($name);
   }
   
   public function getwidget($id, $sitebar) {

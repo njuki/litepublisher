@@ -135,6 +135,10 @@ global $options;
 $result = $this->dogetcontent(false, 0);
 if ($options->admincookie) {
 $result .= $this->hold->dogetcontent(true, 0);
+$theme = theme::instance();
+$args = targs::instance();
+$args->comments = $result;
+$result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
 }
 return $result;
 }
@@ -181,7 +185,12 @@ $tml = str_replace($tml, '$moderate', '');
     }
 
 if ($result == '') return '';
-    return sprintf($theme->content->post->templatecomments->comments, $result, $from + 1);
+$tml = $theme->content->post->templatecomments->comments;
+if ($options->admincookie && ($status == 'hold')) {
+$commentsid = $theme->content->post->templatecomments->comments->commentsid;
+$tml = str_replace($tml, $commentsid, 'hold' . $commentsid);
+}
+    return sprintf($tml, $result, $from + 1);
   }
   
 }//class
