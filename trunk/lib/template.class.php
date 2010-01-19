@@ -13,6 +13,7 @@ class ttemplate extends tevents {
   public $context;
   public $itemplate;
   public $javascripts;
+public $javaoptions;
   //public $footer;
   
   public static function instance() {
@@ -20,11 +21,13 @@ class ttemplate extends tevents {
   }
   
   protected function create() {
-    global $paths;
+    global $paths, $options;
     parent::create();
     $this->basename = 'template' ;
     $this->tml = 'index';
     $this->itemplate = false;
+$this->javaoptions = array(0 => "baseurl': '$options->url',\npingback: '$options->url . '/rpc.xml',\nfiles: '$options->files'");
+);
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
@@ -222,16 +225,16 @@ $this->save();
       $this->save();
     }
   }
+
+private function getjavaoptions() {
+result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
+$result .= implode(",\n", $this->javaoptions);
+$result .= "\n};\n</script>\n";
+return $result;
+}
   
   public function gethead() {
-global $options;
-$result = "<script type=\"text/javascript\">
-var ltoptions = {
-url : '$options->url',
-xmlrpc : '$options->url/rpc.xml',
-files : '$options->files'
-};
-</script>\n";
+$result = '';
 if ($this->hovermenu) {
         $theme = ttheme::instance();
         if (isset($theme->menu['id'])) {
@@ -245,6 +248,7 @@ $result .=  "<script type=\"text/javascript\" src=\"$options->files/js/hovermenu
     if ($this->itemplate) $result .= $this->context->gethead();    
     $this->onhead(&$result);
     if ($this->isadmin) $this->onadminhead(&$result);
+$result = $this->getjavaoptions() . $result;
     return $result;
   }
   
