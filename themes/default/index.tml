@@ -3,6 +3,7 @@
 <head profile="http://gmpg.org/xfn/11">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>$template.title</title>
+<base href="$options.url" />
 <link rel="stylesheet" href="$template.url/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="$template.url/print.css" type="text/css" media="print" />
 <link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
@@ -27,7 +28,7 @@ $template.head
   <div id="header">
     <div id="logo">
      <div id="headerimg">
-	  <div class="indent"><h1><a href="$options.url$options.home">$options.name</a></h1></div>
+	  <div class="indent"><h1><a href="$options.url/">$options.name</a></h1></div>
 	  <div class="description">$options.description</div>
 	</div>
 	<div id="navi">
@@ -44,6 +45,7 @@ $template.head
 	</div>
    </div>
 </div>
+
 <div id="wrapper">
 <div id="page">
   <div id="content">
