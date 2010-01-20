@@ -20,8 +20,8 @@
 <link rel="openid2.provider" href="$options.url/openid/" />
 <link rel="openid.delegate" href="$options.url/openid/" />
 <link rel="openid2.local_id" href="$options.url/openid/" />
-	<script type="text/javascript" src="$options.files/js/rpc.js"></script>
-	<script type="text/javascript" src="$options.files/js/widgetcontent.js"></script>
+	<script type="text/javascript" src="$options.files/files/js/rpc.js"></script>
+	<script type="text/javascript" src="$options.files/files/js/widgetcontent.js"></script>
 $template.head
 </head>
 <body>
