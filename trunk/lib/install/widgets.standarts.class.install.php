@@ -7,9 +7,6 @@
 **/
 
 function tstdwidgetsInstall($self) {
-  $urlmap = turlmap::instance();
-  $urlmap->add('/stdwidget.htm', get_class($self), null, 'get');
-  
   $self->lock();
   $self->meta = getmetawidget();
   $template = ttemplate::instance();

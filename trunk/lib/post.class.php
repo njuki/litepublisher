@@ -233,7 +233,7 @@ class tpost extends titem implements  itemplate {
   
   public function gethead() {
 global $options, $template;
-$template->javaoptions[] = "idpost: $this->idpost";
+$template->javaoptions[] = "idpost: $this->id";
 $result = '';
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
