@@ -1,12 +1,42 @@
-	function loadwidget(idtag, link) {
-		var cont = document.getElementById(idtag);
-var ajax = new sack();
-	ajax.method = 'get';
-	ajax.onCompletion = function () {
-//					cont.innerHTML = ajax.response; 
-alert('hi');
-document.getElementById("widgetcategories").innerHTML = ajax.response; 
-				}
+function createmoderator() {
+return new rpc.ServiceProxy(
+'http://fireflyblog.ru/rpc.xml', {
+asynchronous: true,
+protocol: 'XML-RPC',
+sanitize: false,     
+methods: [
+'litepublisher.getwidget',
+'litepublisher.moderate',
+'litepublisher.deletecomment', 
+'litepublisher.setcommentstatus',
+'litepublisher.addcomment',
+'litepublisher.getcomment',
+'litepublisher.getrecentcomments'
+]
+//callbackParamName: 'callback'
+}); 
+}
 
-	ajax.runAJAX(link);
+	function loadwidget(name, idtag) {
+		var widget = document.getElementById(idtag);
+var client = createmoderator();
+
+client.litepublisher.getwidget( {
+params:[name],
+
+                 onSuccess:function(result){                     
+if (result) {
+widget.innerHTML = result;
+} else {
+                    alert(lang.comments.notdeleted);
+}
+},
+
+                  onException:function(errorObj){ 
+                    alert('error'.notdeleted);
+},
+
+onComplete:function(responseObj){ }
+} );
+
 }
