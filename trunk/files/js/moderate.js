@@ -1,5 +1,5 @@
 function createmoderator() {
-return new rpc.ServiceProxy(ltoptions.xmlrpc, {
+return new rpc.ServiceProxy(ltoptions.pingback, {
 asynchronous: true,
 protocol: 'XML-RPC',
 sanitize: false,     
@@ -17,7 +17,7 @@ methods: [
 
 function singlemoderate(id, action) {
 if (action == 'delete') {
-if (!confirm("Do you realy want to delete comment?")) return;
+if (!confirm(lang.comments.confirmdelete)) return;
 }
 
 var item =document.getElementById("comment-" + id);
@@ -30,12 +30,12 @@ params:['', '', id, ltoptions.idpost],
 if (result) {
     item.parentNode.removeChild(item);
 } else {
-                    alert(ltoptions.lang.commentnotdeleted);
+                    alert(lang.comments.notdeleted);
 }
 },
 
                   onException:function(errorObj){ 
-                    alert(ltoptions.lang.commentnotdeleted);
+                    alert(lang.comments.notdeleted);
 },
 
 onComplete:function(responseObj){ }
@@ -49,12 +49,12 @@ if (result) {
     item.parentNode.removeChild(item);
 //добавитьэтот коммент в нужный список, а списки надо разрулить в теме, а id списков добавить в передаваемые опции
 } else {
-                    alert(ltoptions.lang.commentnotmoderated);
+                    alert(lang.comments.notmoderated);
 }
 },
 
                   onException:function(errorObj){ 
-                    alert(ltoptions.lang.commentnotmoderated);
+                    alert(lang.comments.notmoderated);
 },
 
 onComplete:function(responseObj){ }
