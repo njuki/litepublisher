@@ -41,12 +41,15 @@ public function auth() { }
   
   public function processform() {
     global $options;
+if (empty($_POST['login']) || empty($_POST['password']))  return $this->html->error();
     if (!$options->auth($_POST['login'], $_POST['password']))  return $this->html->error();
-    $options->cookieexpired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
-    $options->cookie = md5uniq();
+    $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+    $cookie = md5uniq();
+$auth = tauthdigest::instance();
+$auth->setcookie($cookie, $expired);
     $secure = 'false'; //true for sssl
     $this->logonresult = "<?php
-    @setcookie('admin', '$options->cookie', $options->expired,  '$options->subdir/admin', false, $secure, true);
+    @setcookie('admin', '$cookie', $expired,  '$options->subdir/admin', false, $secure, true);
     @header('Location: $options->url/admin/');
     ?>";
   }
