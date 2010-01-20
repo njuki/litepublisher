@@ -22,7 +22,6 @@ class tthemeparser {
       $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
 if ($replace === false) $replace = $result;
       $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
-}
       $s = str_replace("\n\n", "\n", $s);
     }
     return $result;
@@ -272,21 +271,41 @@ return $s;
     $result['widget'][0] = $this->parsetag($s, 'widget', '');
     
     foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
-      if ($content =$this->parsetag($s, $name, ''))  {
-        $widget = array();
-        if ($item = $this->parsetag($content, 'item', '%s')) {
-          $widget['item'] = $item;
-        } else {
-          $widget['item'] = $this->GetDefaultWidgetItem($name);
-        }
-        $widget[0] = $content;
-        $result[$name] = $widget;
+      if ($widget =$this->parsetag($s, $name, ''))  {
+        $result[$name] = $this->parsewidget($widget, $name);
       }
     }
     
     $result[0] = $s;
     return $result;
   }
+
+private function parsewidget($s, $name) {
+$result = array();
+$result['id'] = $this->extractwidgetid($s);
+        if ($item = $this->parsetag($s, 'item', '%s')) {
+          $result['item'] = $item;
+        } else {
+          $result['item'] = $this->GetDefaultWidgetItem($name);
+        }
+        $result[0] = $s;
+return $result;
+}
+
+private function extractwidgetid($s) {
+    $result = '';
+$tag = '<!--item-->';
+    if(is_int($i = strpos($s, $tag))) {
+$s = substr($s, 0, $i);
+if (is_int($i = strrpos($s, '<'))) {
+$s = substr($s, $i);
+    if ($id = tcontentfilter::getidtag('*', $s)) { 
+      $result = $id;
+}
+}
+}
+    return $result;
+}
   
   //manager
   public function getabout($name) {

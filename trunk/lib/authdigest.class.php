@@ -18,9 +18,6 @@ class tauthdigest extends tevents {
     $this->basename = 'authdigest';
     $this->data['nonce'] = '';
     $this->data['time'] = 0;
-    $this->data['cookie'] = '';
-    $this->data['cookieenabled'] = false;
-    $this->data['cookieexpired'] = 0;
     $this->data['xxxcheck'] = true;
     $this->data['logoutneeded'] = false;
     $this->stale = false;
@@ -123,29 +120,11 @@ return false;
     return false;
   }
   
-  public function authcookie() {
-    global $options;
-    if (empty($_COOKIE['admin']) ) return false;
-    if ($auth->cookie == $_COOKIE['admin']) {
-      if ($auth->cookieexpired < time()) return  false;
-      $options->user = 1;
-      $options->group = 'admin';
-      return true;
-    }
-    
-    $users = tusers::instance();
-    if($options->user = $users->IndexOf('cookie',$_COOKIE['admin'])) {
-      if ($users->getvalue($options->user, 'cookieexpired') < time()) return  false;
-      $options->updategroup();
-      return;
-    }
-    return false;
-  }
-  
   public function logout() {
     global $options;
-    if ($this->cookieenabled) {
-      $this->setcookies('', 0);
+    if ($options->cookieenabled) {
+      $options->cookie = '';
+$options->cookieexpired = 0;
     } else {
 $this->lock();
       $this->newnonce();

@@ -27,7 +27,6 @@ public $javaoptions;
     $this->tml = 'index';
     $this->itemplate = false;
 $this->javaoptions = array(0 => "baseurl': '$options->url',\npingback: '$options->url . '/rpc.xml',\nfiles: '$options->files'");
-);
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
@@ -227,7 +226,7 @@ $this->save();
   }
 
 private function getjavaoptions() {
-result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
+$result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
 $result .= implode(",\n", $this->javaoptions);
 $result .= "\n};\n</script>\n";
 return $result;

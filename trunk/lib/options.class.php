@@ -101,18 +101,16 @@ return true;
 
   public function authcookie() {
 if (empty($_COOKIE['admin']))  return false;
-if ($this->cookie == $_COOKIE['admin'])) {
+if ($this->cookie == $_COOKIE['admin']) {
 if ($this->cookieexpired < time()) return false;
 $this->user = 1;
     } else {
       $users = tusers::instance();
-      if (!($this->user = $users->loginexists($login))) return false;
+      if (!($this->user = $users->authcookie($_COOKIE['admin']))) return false;
     }
     
     $this->updategroup();
 return true;
-}
-return false;
 }
   
   public function auth($login, $password) {

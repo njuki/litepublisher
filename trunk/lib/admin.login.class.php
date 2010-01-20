@@ -42,13 +42,11 @@ public function auth() { }
   public function processform() {
     global $options;
     if (!$options->auth($_POST['login'], $_POST['password']))  return $this->html->error();
-    $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
-    $cookie = md5uniq();
-    $auth = tauthigest::instance();
-    $auth->setcookies($cookie, $expired);
+    $options->cookieexpired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+    $options->cookie = md5uniq();
     $secure = 'false'; //true for sssl
     $this->logonresult = "<?php
-    @setcookie('admin', '$cookie', $expired,  '$options->subdir/admin', false, $secure, true);
+    @setcookie('admin', '$options->cookie', $options->expired,  '$options->subdir/admin', false, $secure, true);
     @header('Location: $options->url/admin/');
     ?>";
   }

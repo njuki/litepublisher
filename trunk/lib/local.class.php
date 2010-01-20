@@ -91,6 +91,7 @@ class tlocal {
   }
   
   public static function load($partialname) {
+global $paths;
     if (!isset(self::$data)) self::$data = array();
     if (!isset(self::$files)) self::$files = array();
     if (in_array($partialname , self::$files)) return;
@@ -98,6 +99,7 @@ class tlocal {
     if (!tfiler::unserialize($partialname . '.php', $v) || !is_array($v)) {
       $v = parse_ini_file($partialname . '.ini', true);
       tfiler::serialize($partialname . '.php', $v);
+tfiler::ini2js($v + self::$data , $paths['files'] . 'js' . DIRECTORY_SEPARATOR . basename($partialname) . '.js');
     }
     self::$data = $v + self::$data ;
   }
