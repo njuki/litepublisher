@@ -99,7 +99,9 @@ return $this->getcontent($name);
     $result = '';
     $title = $this->items[$name]['title'];
     if ($this->items[$name]['ajax'] && !$this->disableajax) {
-    $title = "<a onclick=\"loadwidget('widget$name', '$options->url/stdwidget.htm{$options->q}name=$name')\">$title</a>";
+$theme = ttheme::instance();
+$id = $theme->sitebars->$sitebar->$name->id;
+    $title = "<a onclick=\"loadwidget('$name', '$id')\">$title</a>";
       $content = '';
     } elseif ($name == 'comments') {
       $content = $this->getcommentswidget($id);

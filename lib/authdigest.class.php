@@ -123,22 +123,19 @@ return false;
   public function logout() {
     global $options;
     if ($options->cookieenabled) {
-      $options->cookie = '';
-$options->cookieexpired = 0;
-    } else {
+$this->setcookie('', 0);
+    } 
 $this->lock();
       $this->newnonce();
 $this->logoutneeded = true;
 $this->unlock();
-    }
   }
   
   public function setcookies($cookie, $expired) {
     global $options;
     if ($options->user == 1) {
-      $this->cookie = $cookie;
-      $this->expired = $expired;
-      $this->save();
+      $options->cookie = $cookie;
+      $options->cookieexpired = $expired;
     } else {
       $users = tusers::instance();
       $users->setcookie($options->user, $cookie, $expired);
