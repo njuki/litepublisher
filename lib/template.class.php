@@ -26,7 +26,7 @@ public $javaoptions;
     $this->basename = 'template' ;
     $this->tml = 'index';
     $this->itemplate = false;
-$this->javaoptions = array(0 => "baseurl': '$options->url',\npingback: '$options->url . '/rpc.xml',\nfiles: '$options->files'");
+$this->javaoptions = array(0 => "baseurl: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files/files'");
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
@@ -238,7 +238,7 @@ if ($this->hovermenu) {
         $theme = ttheme::instance();
         if (isset($theme->menu['id'])) {
 $result .= sprintf("<script type=\"text/javascript\">\nvar idmenu = \"%s\";\nvar tagmenu = \"%s\";\n</script>\n", $theme->menu['id'], $theme->menu['tag']);
-$result .=  "<script type=\"text/javascript\" src=\"$options->files/js/hovermenu.js\"></script>\n";
+$result .=  "<script type=\"text/javascript\" src=\"$options->files/files/js/hovermenu.js\"></script>\n";
 }
 }
 

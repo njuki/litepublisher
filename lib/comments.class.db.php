@@ -134,10 +134,12 @@ $tml = str_replace($tml, '$moderate', '');
 }
 
     $i = 1;
+    $class1 = $theme->content->post->templatecomments->comments->comment->class1;
+    $class2 = $theme->content->post->templatecomments->comments->comment->class2;
     $res->setFetchMode (PDO::FETCH_ASSOC);
     foreach ($res as $data) {
       $comment->data = $data;
-      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
+      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
     

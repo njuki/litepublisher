@@ -174,13 +174,15 @@ $tml = str_replace($tml, '$moderate', '');
 }
 
     $i = 1;
+    $class1 = $theme->content->post->templatecomments->comments->comment->class1;
+    $class2 = $theme->content->post->templatecomments->comments->comment->class2;
     foreach ($items as $id) {
       //разрулить в одном месте одобренные и задержанные комменты
       if (!$options->admincookie && $hold) {
         if ($idauthor != $this->items[$id]['author']) continue;
       }
       $comment->id = $id;
-      $args->class = (++$i % 2) == 0 ? $tml->class1 : $tml->class2;
+      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
 
