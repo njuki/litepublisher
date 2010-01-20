@@ -46,6 +46,8 @@ return $manager->getrecent($count);
 public function moderate($login, $password, $idpost, $list, $action) {
 $this->auth($login, $password, 'moderator');
 $idpost = (int) $idpost;
+$comments = tcomments::instance($idpost);
+$comments->lock();
 $manager = tcommentmanager::instance();
 $delete = $action == 'delete';
 foreach ($list as $id) {
@@ -56,7 +58,7 @@ $manager->delete($id, $idpost);
 $manager->setstatus($id, $idpost, $action);
 }
 }
-}
+$comments->unlock();
 return true;
 }
 
@@ -121,7 +123,7 @@ public function wpgetComments($blog_id, $login, $password, $struct) {
 $this->auth($login, $password, 'moderator');
 $where = '';
 $where .= isset($struct['status']) ? ' status = '. dbquote($struct['status']) : '';
-$where .= isset($struct['post_id']) ? (' post = ' . int) $struct['post_id'] : '';
+$where .= isset($struct['post_id']) ? ' post = ' . (int) $struct['post_id'] : '';
 $offset = isset($struct['offset']) ? (int) $struct['offset'] : 0;
 $count= isset($struct['number']) ? (int) $struct['number'] : 10;
 $where .= " limit $offset, $count order by posted";
@@ -162,7 +164,7 @@ $comusers = tcomusers::instance();
 $comment->author = $comusers->add(
 isset($struct['author']) ? $struct['author'] : $comment->name,
 isset($struct['author_email']) ? $struct['author_email'] : $comment->email,
-isset($struct['author_url'] ? ['author_url'] : $comment->url
+isset($struct['author_url']) ? $struct['author_url'] : $comment->url
 );
 
 		if ( !empty( $struct['date_created_gmt'] ) ) {
@@ -170,7 +172,7 @@ $comment->posted = $struct['date_created_gmt']->getTimestamp();
 		}
 
 		if ( isset($struct['content']) ) {
-			$comment->rawcontent = $struct['content']);
+			$comment->rawcontent = $struct['content'];
 }
 
 $comment->save();
@@ -198,14 +200,14 @@ $idpost = $item['arg'];
 
     $post = tpost::instance($idpost);
     if (!$post->commentenabled || ($post->status != 'published')) {
-      return $this->xerror(403, 'The specified post cannot be used to commenting');pingback-enabled resource.');
+      return $this->xerror(403, 'The specified post cannot be used to commenting');
     }
 
 $manager = tcommentmanager::instance();
 return $manager->add($idpost,
 isset($struct['author']) ? $struct['author'] : '',
 isset($struct['author_email']) ? $struct['author_email'] : '',
-isset($struct['author_url'] ? ['author_url'] : '',
+isset($struct['author_url']) ? $struct['author_url'] : '',
 $struct['content']
 );
 }

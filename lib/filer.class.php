@@ -89,6 +89,19 @@ class tfiler {
     file_put_contents($FileName, $s);
     @chmod($FileName, 0666);
   }
+
+public static function ini2js(array $a, $filename) {
+$sections = array();
+foreach ($a as $name => $section) {
+$list = array();
+foreach ($section as $key => $value) {
+$list[] = "$key:\"$value\"";
+}
+$sections[] = sprintf("$name:{%s}", implode(",", $list));
+}
+$s = sprintf("lang: {\n%s\n}\n", implode(",", $sections));
+file_put_contents($filename, $s);
+}
   
   public static function log($s, $filename = '') {
     global $paths;

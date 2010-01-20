@@ -15,6 +15,13 @@ class ttemplatecomments extends tdata {
 public function load() {}
 public function save() {}
   
+
+public function getadminhead() {
+global $options;
+return "<script type=\"text/javascript\" src=\"$options->files/js/admin{$options->language}.js\"></script>
+<script type=\"text/javascript\" src=\"$options->files/js/moderate.js\"></script>\n";
+}
+
   public function getcount($count) {
     $l = &tlocal::$data['comment'];
     switch($count) {
