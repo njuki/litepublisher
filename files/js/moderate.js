@@ -1,27 +1,10 @@
-function createmoderator() {
-return new rpc.ServiceProxy(ltoptions.pingback, {
-asynchronous: true,
-protocol: 'XML-RPC',
-sanitize: false,     
-methods: [
-'litepublisher.moderate',
-'litepublisher.deletecomment', 
-'litepublisher.setcommentstatus',
-'litepublisher.addcomment',
-'litepublisher.getcomment',
-'litepublisher.getrecentcomments'
-],
-//callbackParamName: 'callback'
-}); 
-}
-
 function singlemoderate(id, action) {
 if (action == 'delete') {
 if (!confirm(lang.comments.confirmdelete)) return;
 }
 
 var item =document.getElementById("comment-" + id);
-var client = createmoderator();
+if (!client) client = createclient();
 if (action == 'delete') {
 client.litepublisher.deletecomment( {
 params:['', '', id, ltoptions.idpost],
@@ -68,7 +51,7 @@ if (action == 'delete') {
 if (!confirm("Do you realy want to delete comment?")) return;
 }
 
-var client = createmoderator();
+if (!client) client = createclient();
 client.litepublisher.moderate( {
 params:['', '', ltoptions.idpost, list, action],
 
