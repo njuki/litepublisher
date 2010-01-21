@@ -1,6 +1,7 @@
-function createmoderator() {
-return new rpc.ServiceProxy(
-'http://fireflyblog.ru/rpc.xml', {
+var client;
+
+function createclient() {
+return new rpc.ServiceProxy(ltoptions.pingback, {
 asynchronous: true,
 protocol: 'XML-RPC',
 sanitize: false,     
@@ -19,7 +20,7 @@ methods: [
 
 	function loadwidget(name, idtag) {
 		var widget = document.getElementById(idtag);
-var client = createmoderator();
+if (!client) client = createclient();
 
 client.litepublisher.getwidget( {
 params:[name],
@@ -28,12 +29,12 @@ params:[name],
 if (result) {
 widget.innerHTML = result;
 } else {
-                    alert(lang.comments.notdeleted);
+                    //alert('problem');
 }
 },
 
                   onException:function(errorObj){ 
-                    alert('error'.notdeleted);
+//                    alert('error'.notdeleted);
 },
 
 onComplete:function(responseObj){ }
