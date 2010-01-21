@@ -135,7 +135,7 @@ global $options;
 $result = $this->dogetcontent(false, 0);
 if ($options->admincookie) {
 $result .= $this->hold->dogetcontent(true, 0);
-$theme = theme::instance();
+$theme = ttheme::instance();
 $args = targs::instance();
 $args->comments = $result;
 $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);

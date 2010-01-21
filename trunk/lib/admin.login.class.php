@@ -26,7 +26,7 @@ public function gethead() {}
     $auth = tauthdigest::instance();
     if ($options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-if (!$options->authcookie()) return $urlmap->redir301('/admin/login/');
+if (!$options->authcookie()) return $urlmap->redir301('/adminlogin.htm');
     }
     elseif (!$auth->Auth())  return $auth->headers();
 }    
@@ -40,11 +40,12 @@ if ($options->authcookie()) $auth->logout();
         $auth->logout();
       }
 
-return $urlmap->redir301('/admin/login/');
+return $urlmap->redir301('/adminlogin.htm');
 }
 
   public function request($arg) {
 global $options, $urlmap;
+$this->cache = false;
     if ($arg == 'out')   return $this->logout();
     tlocal::loadlang('admin');
 $this->formresult = '';
@@ -72,7 +73,7 @@ $auth = tauthdigest::instance();
 $auth->setcookies($cookie, $expired);
     $secure = 'false'; //true for sssl
 return "<?php
-    @setcookie('admin', '$cookie', $expired,  '$options->subdir/admin', false, $secure, true);
+    @setcookie('admin', '$cookie', $expired, '$options->subdir/', false, $secure, true);
     @header('Location: $options->url/admin/');
     ?>";
   }

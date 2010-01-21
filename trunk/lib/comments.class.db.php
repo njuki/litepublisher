@@ -87,7 +87,7 @@ global $options;
     $result = $this->getcontentwhere('approved', '');
 if ($options->admincookie) {
     $result .= $this->getcontentwhere('hold', '');
-$theme = theme::instance();
+$theme = ttheme::instance();
 $args = targs::instance();
 $args->comments = $result;
 $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
