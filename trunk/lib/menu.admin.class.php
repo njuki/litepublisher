@@ -144,7 +144,7 @@ public function save() {}
     $auth = tauthdigest::instance();
     if ($options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-      if (!$options->authcookie()) return $urlmap->redir301('/adminlogin.htm');
+      if (!$options->authcookie()) return $urlmap->redir301('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
     

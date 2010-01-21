@@ -26,7 +26,7 @@ public function gethead() {}
     $auth = tauthdigest::instance();
     if ($options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-if (!$options->authcookie()) return $urlmap->redir301('/adminlogin.htm');
+if (!$options->authcookie()) return $urlmap->redir301('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
 }    
@@ -40,7 +40,7 @@ if ($options->authcookie()) $auth->logout();
         $auth->logout();
       }
 
-return $urlmap->redir301('/adminlogin.htm');
+return $urlmap->redir301('/admin/login/');
 }
 
   public function request($arg) {

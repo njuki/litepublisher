@@ -165,12 +165,13 @@ if ($hold) $comment->status = 'hold';
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
 if ($options->admincookie) {
+tlocal::loadlang('admin');
 $moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, !$hold ?
 $theme->content->post->templatecomments->comments->comment->moderate->hold :
 $theme->content->post->templatecomments->comments->comment->moderate->approve);
-$tml = str_replace($tml, '$moderate', $moderate);
+$tml = str_replace('$moderate', $moderate, $tml);
 }  else {
-$tml = str_replace($tml, '$moderate', '');
+$tml = str_replace('$moderate', '', $tml);
 }
 
     $i = 1;
@@ -188,7 +189,7 @@ $tml = str_replace($tml, '$moderate', '');
 
 if ($result == '') return '';
 $tml = $theme->content->post->templatecomments->comments;
-if ($options->admincookie && ($status == 'hold')) {
+if ($options->admincookie && $hold) {
 $commentsid = $theme->content->post->templatecomments->comments->commentsid;
 $tml = str_replace($tml, $commentsid, 'hold' . $commentsid);
 }

@@ -125,12 +125,13 @@ return $result;
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
 if ($options->admincookie) {
+tlocal::loadlang('admin');
 $moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, $status == 'approved' ?
 $theme->content->post->templatecomments->comments->comment->moderate->hold :
 $theme->content->post->templatecomments->comments->comment->moderate->approve);
-$tml = str_replace($tml, '$moderate', $moderate);
+$tml = str_replace('$moderate', $moderate, $tml);
 }  else {
-$tml = str_replace($tml, '$moderate', '');
+$tml = str_replace('$moderate', '', $tml);
 }
 
     $i = 1;

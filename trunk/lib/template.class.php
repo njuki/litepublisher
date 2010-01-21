@@ -237,7 +237,8 @@ $result = '';
 if ($this->hovermenu) {
         $theme = ttheme::instance();
         if (isset($theme->menu['id'])) {
-$result .= sprintf("<script type=\"text/javascript\">\nvar idmenu = \"%s\";\nvar tagmenu = \"%s\";\n</script>\n", $theme->menu['id'], $theme->menu['tag']);
+$this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu['id']);
+$this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu['tag']);
 $result .=  "<script type=\"text/javascript\" src=\"$options->files/files/js/hovermenu.js\"></script>\n";
 }
 }
@@ -245,9 +246,9 @@ $result .=  "<script type=\"text/javascript\" src=\"$options->files/files/js/hov
     foreach ($this->javascripts as $name => $script)  $result .=$script . "\n";
 
     if ($this->itemplate) $result .= $this->context->gethead();    
-    $this->onhead(&$result);
     if ($this->isadmin) $this->onadminhead(&$result);
 $result = $this->getjavaoptions() . $result;
+    $this->onhead(&$result);
     return $result;
   }
   
