@@ -123,7 +123,7 @@ return false;
   public function logout() {
     global $options;
     if ($options->cookieenabled) {
-$this->setcookie('', 0);
+$this->setcookies('', 0);
     } 
 $this->lock();
       $this->newnonce();
