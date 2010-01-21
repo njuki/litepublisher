@@ -142,9 +142,9 @@ public function save() {}
   public function auth() {
     global $options, $urlmap;
     $auth = tauthdigest::instance();
-    if ($auth->cookieenabled) {
+    if ($options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-      if (!$auth->authcookie()) return $urlmap->redir301('/admin/login/');
+      if (!$options->authcookie()) return $urlmap->redir301('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
     
