@@ -95,12 +95,15 @@ $sections = array();
 foreach ($a as $name => $section) {
 $list = array();
 foreach ($section as $key => $value) {
+$value = str_replace("\r\n", '\n', $value);
+$value = str_replace("\n", '\n', $value);
 $list[] = "$key:\"$value\"";
 }
-$sections[] = sprintf("$name:{%s}", implode(",", $list));
+$sections[] = sprintf("$name:{%s}", implode(",\n", $list));
 }
-$s = sprintf("lang: {\n%s\n}\n", implode(",", $sections));
+$s = sprintf("var lang= {\n%s\n};\n", implode(",\n", $sections));
 file_put_contents($filename, $s);
+      @chmod($filename, 0666);
 }
   
   public static function log($s, $filename = '') {
