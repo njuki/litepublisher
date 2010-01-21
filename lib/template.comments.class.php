@@ -18,8 +18,8 @@ public function save() {}
 
 public function getadminhead() {
 global $options;
-return "<script type=\"text/javascript\" src=\"$options->files/files/js/admin{$options->language}.js\"></script>
-<script type=\"text/javascript\" src=\"$options->files/files/js/moderate.js\"></script>\n";
+return "<script type=\"text/javascript\" src=\"$options->files/files/js/moderate.js\"></script>
+<script type=\"text/javascript\" src=\"$options->files/files/js/admin{$options->language}.js\"></script>\n";
 }
 
   public function getcount($count) {

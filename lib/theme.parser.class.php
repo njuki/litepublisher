@@ -236,8 +236,10 @@ if ($replace === false) $replace = $result;
   }
 
 private function parsemoderate($s) {
-$result['hold'] = $this->parsetag($s, 'hold', '%s');
+$result = array();
 $result['approve'] = $this->parsetag($s, 'approve', '%s');
+$result['hold'] = $this->parsetag($s, 'hold', '');
+
     $result[0] = $s;
     return $result;
 }
