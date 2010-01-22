@@ -118,7 +118,7 @@ class tadminservice extends tadminmenu {
   public function processform() {
     global $classes, $options, $urlmap, $paths, $domain;
     $html = $this->html;
-    
+
     switch ($this->name) {
       case 'service':
       return $this->doupdate($_POST);
@@ -126,7 +126,7 @@ class tadminservice extends tadminmenu {
       case 'engine':
       $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
-      $lang = $this->lang;
+      $lang = tlocal::instance('service');
       $classes->lock();
       foreach ($_POST as $name => $value) {
         if ( isset($ini[$name]) || isset($classes->items[$name])) {

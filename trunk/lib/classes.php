@@ -70,7 +70,7 @@ class tclasses extends titems {
     $this->added($class);
   }
   
-  public function delete($clsss) {
+  public function delete($class) {
     if (isset($this->items[$class])) {
       if (class_exists($class)) {
         $instance = $this->getinstance($class);
@@ -78,7 +78,7 @@ class tclasses extends titems {
       }
       unset($this->items[$class]);
       $this->save();
-      $this->deleted($ClassName);
+      $this->deleted($class);
     }
   }
   

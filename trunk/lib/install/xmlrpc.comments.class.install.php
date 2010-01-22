@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCComments($self) {
+function TXMLRPCCommentsInstall($self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
 
