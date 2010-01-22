@@ -144,11 +144,13 @@ $tml = str_replace('$moderate', '', $tml);
       $result .= $theme->parsearg($tml, $args);
     }
     
-    if ($result == '') return '';
-$tml = $theme->content->post->templatecomments->comments;
+
+$tml = $theme->content->post->templatecomments->comments->__tostring();
 if ($options->admincookie && ($status == 'hold')) {
 $commentsid = $theme->content->post->templatecomments->comments->commentsid;
-$tml = str_replace($tml, $commentsid, 'hold' . $commentsid);
+$tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+} else }
+    if ($result == '') return '';
 }
     return sprintf($tml, $result, $from + 1);
   }

@@ -154,15 +154,15 @@ return $result;
         $items = array_slice($items, $from, $options->commentsperpage, true);
       }
     }
-    
-    if (count($items) == 0) return '';
-    
-    $args = targs::instance();
+
+    $theme = ttheme::instance();    
+    if (count($items) > 0) {
+        $args = targs::instance();
     $args->from = $from;
     $comment = new TComment($this);
 if ($hold) $comment->status = 'hold';
     $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
+
     $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
 if ($options->admincookie) {
 tlocal::loadlang('admin');
@@ -186,12 +186,13 @@ $tml = str_replace('$moderate', '', $tml);
       $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
-
-if ($result == '') return '';
-$tml = $theme->content->post->templatecomments->comments;
+}//if count
+$tml = $theme->content->post->templatecomments->comments->__tostring();
 if ($options->admincookie && $hold) {
 $commentsid = $theme->content->post->templatecomments->comments->commentsid;
-$tml = str_replace($tml, $commentsid, 'hold' . $commentsid);
+$tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+} else {
+if ($result == '') return '';
 }
     return sprintf($tml, $result, $from + 1);
   }
@@ -224,11 +225,6 @@ class tholdcomments extends tcomments {
     $this->owner->raw->delete($id);
     $this->owner->deleteauthor($author);
     $this->deleted($id);
-  }
-  
-  public function getcontent($idauthor) {
-    $this->idauthor = $idauthor;
-    return parent::getcontent();
   }
   
 }//class
