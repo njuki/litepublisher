@@ -144,11 +144,11 @@ return false;
   
   public function setstatus($idpost, $id, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
-    $comments = Tcomments($idpost);
+    $comments = tcomments::instance($idpost);
     if (dbversion) {
       $result = $comments->db->setvalue($id, 'status', $status);
     } else {
-      switch ($value) {
+      switch ($status) {
         case 'hold':
         $result = $comments->sethold($id);
         $this->deleterecent($id, $idpost);

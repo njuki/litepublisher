@@ -108,8 +108,7 @@ return false;
       $p = parse_url($_SERVER['HTTP_REFERER']);
       $host = $p['host'];
     }
-    
-    return $host == $_SERVER['HTTP_HOST'] ;
+    return $host != $_SERVER['HTTP_HOST'] ;
   }
   
   public function checkattack() {
