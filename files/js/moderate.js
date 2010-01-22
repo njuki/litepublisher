@@ -1,9 +1,18 @@
+function movecomment(id, status) {
+var item =document.getElementById("comment-" + id);
+item.parentNode.removeChild(item);
+//var idparent = parent.attributes.getNamedItem('id').nodeValue;
+var idnewparent = ltoptions.commentsid;
+if (status == 'hold') idnewparent = 'hold' + ltoptions.commentsid;
+var newparent = document.getElementById(idnewparent);
+newparent.appendChild(item);
+}
+
 function singlemoderate(id, action) {
 if (action == 'delete') {
 if (!confirm(lang.comments.confirmdelete)) return;
 }
 
-var item =document.getElementById("comment-" + id);
 if (!client) client = createclient();
 if (action == 'delete') {
 client.litepublisher.deletecomment( {
@@ -11,6 +20,7 @@ params:['', '', id, ltoptions.idpost],
 
                  onSuccess:function(result){                     
 if (result) {
+var item =document.getElementById("comment-" + id);
     item.parentNode.removeChild(item);
 } else {
                     alert(lang.comments.notdeleted);
@@ -29,8 +39,7 @@ params:['', '', id, ltoptions.idpost, action],
 
                  onSuccess:function(result){                     
 if (result) {
-    item.parentNode.removeChild(item);
-//добавитьэтот коммент в нужный список, а списки надо разрулить в теме, а id списков добавить в передаваемые опции
+movecomment(id, action);
 } else {
                     alert(lang.comments.notmoderated);
 }
