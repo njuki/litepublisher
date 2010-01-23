@@ -15,16 +15,15 @@ class TXMLRPCComments extends TXMLRPCAbstract {
   public function delete($login, $password, $id, $idpost) {
 $this->auth($login, $password, 'moderator');
 $manager = tcommentmanager::instance();
-return $manager->delete((int) $id, (int) $idpost);
+if (!$manager->delete((int) $id, (int) $idpost)) return $this->xerror(404, "Comment not deleted");
+return true;
 }
 
   public function setstatus($login, $password, $id, $idpost, $status) {
-return 'true';
-return $this->xerror(404, 'error');
-
 $this->auth($login, $password, 'moderator');
 $manager = tcommentmanager::instance();
-return $manager->setstatus((int) $id, (int) $idpost, $status);
+if (!$manager->setstatus((int) $id, (int) $idpost, $status)) return $this->xerror(404, "Comment status not changed");
+return true;
 }
 
   public function add($login, $password, $idpost, $name, $email, $url, $content) {
