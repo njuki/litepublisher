@@ -151,16 +151,17 @@ return false;
       switch ($status) {
         case 'hold':
         $result = $comments->sethold($id);
-        $this->deleterecent($id, $idpost);
+        if ($result) $this->deleterecent($id, $idpost);
         break;
         
         case 'approved':
         $result = $comments->approve($id);
-        $this->addrecent($id, $idpost);
+        if ($result) $this->addrecent($id, $idpost);
         break;
       }
     }
-    $this->dochanged($id, $idpost);
+
+    if ($result) $this->dochanged($id, $idpost);
 return $result;
   }
   

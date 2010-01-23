@@ -101,8 +101,12 @@ class tcomments extends titems {
   }
   
   public function sethold($id) {
+echo "<pre>\n";
+var_dump($this->items);
+exit();
     if (!isset($this->items[$id]))  return false;
       $item = $this->items[$id];
+
       unset($this->items[$id]);
       $this->save();
       
@@ -112,6 +116,10 @@ return true;
   }
   
   public function approve($id) {
+echo "<pre>\n";
+var_dump($this->hold->items);
+exit();
+
     if (!isset($this->hold->items[$id]))  return false;
       $this->items[$id] = $this->hold->items[$id];
       $this->hold->delete($id);
