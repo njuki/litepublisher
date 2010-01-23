@@ -289,7 +289,7 @@ class IXR_Server {
         $result = $this->call($this->message->methodName, $this->message->params);
         // Is the result an error?
         if ($result instanceof IXR_Error) {
-            $this->error($result);
+            return $this->error($result);
         }
         // Encode the result
         $r = new IXR_Value($result);
@@ -310,6 +310,7 @@ EOD;
         // Send it
         $this->output($xml);
     }
+
     function call($methodname, $args) {
         if (!$this->hasMethod($methodname)) {
             return new IXR_Error(-32601, 'server error. requested method '.$methodname.' does not exist.');

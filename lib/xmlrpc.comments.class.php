@@ -19,6 +19,9 @@ return $manager->delete((int) $id, (int) $idpost);
 }
 
   public function setstatus($login, $password, $id, $idpost, $status) {
+return 'true';
+return $this->xerror(404, 'error');
+
 $this->auth($login, $password, 'moderator');
 $manager = tcommentmanager::instance();
 return $manager->setstatus((int) $id, (int) $idpost, $status);
