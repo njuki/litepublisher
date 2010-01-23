@@ -8,23 +8,15 @@ var newparent = document.getElementById(idnewparent);
 newparent.appendChild(item);
 }
 
-function singlemoderate(id, action) {
-if (action == 'delete') {
+function deletecomment(id) {
 if (!confirm(lang.comments.confirmdelete)) return;
-}
-
-if (!client) client = createclient();
-if (action == 'delete') {
+if (client == undefined) client = createclient();
 client.litepublisher.deletecomment( {
 params:['', '', id, ltoptions.idpost],
 
                  onSuccess:function(result){                     
-if (result) {
 var item =document.getElementById("comment-" + id);
     item.parentNode.removeChild(item);
-} else {
-                    alert(lang.comments.notdeleted);
-}
 },
 
                   onException:function(errorObj){ 
@@ -33,16 +25,16 @@ var item =document.getElementById("comment-" + id);
 
 onComplete:function(responseObj){ }
 } );
-} else {
+}
+
+function setcommentstatus(id, status) {
+if (client == undefined) client = createclient();
 client.litepublisher.setcommentstatus( {
-params:['', '', id, ltoptions.idpost, action],
+params:['', '', id, ltoptions.idpost, status],
 
                  onSuccess:function(result){                     
-if (result) {
-movecomment(id, action);
-} else {
-                    alert(lang.comments.notmoderated);
-}
+alert('sucess');
+//movecomment(id, status);
 },
 
                   onException:function(errorObj){ 
@@ -51,8 +43,6 @@ movecomment(id, action);
 
 onComplete:function(responseObj){ }
 } );
-} 
-
 }
 
 function moderate(list, action) {
@@ -60,7 +50,7 @@ if (action == 'delete') {
 if (!confirm("Do you realy want to delete comment?")) return;
 }
 
-if (!client) client = createclient();
+if (client == undefined) client = createclient();
 client.litepublisher.moderate( {
 params:['', '', ltoptions.idpost, list, action],
 
