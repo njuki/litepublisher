@@ -12,6 +12,7 @@ methods: [
 'litepublisher.setcommentstatus',
 'litepublisher.addcomment',
 'litepublisher.getcomment',
+'litepublisher.editcomment',
 'litepublisher.getrecentcomments'
 ]
 //callbackParamName: 'callback'
