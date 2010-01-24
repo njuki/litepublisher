@@ -32,6 +32,12 @@ $manager = tcommentmanager::instance();
 return $manager->add((int) $idpost, $name, $email, $url, $content);
 }
 
+  public function reply($login, $password, $id, $idpost, $content) {
+$this->auth($login, $password, 'moderator');
+$manager = tcommentmanager::instance();
+return $manager->reply((int) $id, (int) $idpost, $content);
+}
+
   public function getcomment($login, $password, $id, $idpost) {
 $this->auth($login, $password, 'moderator');
 $comments = tcomments::instance((int) $idpost);

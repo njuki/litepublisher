@@ -19,7 +19,7 @@ class tadminmoderator extends tadminmenu {
   }
   
   protected function getidpost() {
-    return isset($_REQUEST['post']) ? (int) $_REQUEST['post'] : 0;
+    return isset($_REQUEST['idpost']) ? (int) $_REQUEST['idpost'] : 0;
   }
   
   public function getcontent() {
@@ -40,12 +40,12 @@ class tadminmoderator extends tadminmenu {
           break;
           
           case 'hold':
-          $this->manager->setstatus($this->idpost, $id, 'hold');
+          $this->manager->setstatus($id, $this->idpost, 'hold');
           $result .= $this->moderated($id, $this->idpost);
           break;
           
           case 'approve':
-          $this->manager->setstatus($this->idpost, $id, 'approved');
+          $this->manager->setstatus($id, $this->idpost, 'approved');
           $result .= $this->moderated($id, $this->idpost);
           break;
           
@@ -360,11 +360,8 @@ $comments = tcomments::instance($idpost);
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
-          $email = $this->getadminemail();
-          $site = $options->url . $options->home;
-          $profile = tprofile::instance();
           $post = tpost::instance( (int) $_REQUEST['post']);
-          $this->manager->add($post->id, $profile->nick, $email, $site, $_POST['content']);
+          $this->manager->reply($this->idget(), $post->id, $_POST['content']);
           @header("Location: $options->url$post->lastcommenturl");
           exit();
           
@@ -383,7 +380,7 @@ $comments = tcomments::instance($this->idpost);
           if ($status == 'delete') {
             $manager->delete($id);
           } else {
-            $manager->setstatus(0, $id, $status);
+            $manager->setstatus($id,$this->idpost,  $status);
           }
         }
       }

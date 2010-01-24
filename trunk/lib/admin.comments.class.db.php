@@ -36,12 +36,12 @@ class tadminmoderator extends tadminmenu {
           break;
           
           case 'hold':
-          $this->manager->setstatus(0, $id, 'hold');
+          $this->manager->setstatus($id, 0, 'hold');
           $result .= $this->moderated($id);
           break;
           
           case 'approve':
-          $this->manager->setstatus(0, $id, 'approved');
+          $this->manager->setstatus($id, 0, 'approved');
           $result .= $this->moderated($id);
           break;
           
@@ -330,11 +330,8 @@ class tadminmoderator extends tadminmenu {
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
-          $email = $this->getadminemail();
-          $site = $options->url . $options->home;
-          $profile = tprofile::instance();
           $post = tpost::instance( (int) $_REQUEST['post']);
-          $this->manager->add($post->id, $profile->nick, $email, $site, $_POST['content']);
+          $this->manager->reply($this->idget(), $post->id, $_POST['content']);
           @header("Location: $options->url$post->lastcommenturl");
           exit();
           
@@ -353,7 +350,7 @@ class tadminmoderator extends tadminmenu {
           if ($status == 'delete') {
             $manager->delete($id);
           } else {
-            $manager->setstatus(0, $id, $status);
+            $manager->setstatus($id, 0, $status);
           }
         }
       }
@@ -409,13 +406,6 @@ class tadminmoderator extends tadminmenu {
     
     $urlmap->clearcache();
     return $result;
-  }
-  
-  private function getadminemail() {
-    global $options;
-    $profile = tprofile::instance();
-    if ($profile->mbox!= '') return $profile->mbox;
-    return $options->fromemail;
   }
   
 }//class
