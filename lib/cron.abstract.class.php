@@ -63,21 +63,21 @@ class tabstractcron extends tevents {
   }
   
   public function add($type, $class, $func, $arg = null) {
-    if (!preg_match('/single|hour|day|week/', $type)) $this->error("Unknown cron type $type");
+    if (!preg_match('/^single|hour|day|week$/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
     $id = $this->doadd($type, $class, $func, $arg);
     
     if (($type == 'single') && !defined('cronpinged')) {
       define('cronpinged', true);
-      register_shutdown_function('TCron::SelfPing');
+      register_shutdown_function('tcron::selfping');
     }
     return $id;
   }
   
-  public static function SelfPing() {
+  public static function selfping() {
     global $options;
     try {
-      $self = getinstance(__class__);
+      $self = tcron::instance();
       $cronfile = $self->dir .  'crontime.txt';
       @file_put_contents($cronfile, ' ');
       @chmod($cronfile, 0666);
@@ -89,7 +89,8 @@ class tabstractcron extends tevents {
   }
   
   public function ping() {
-    global $options, $urlmap;
+    global $options;
+$urlmap = turlmap::instance();
     $this->AddToChain($urlmap->host, $options->subdir . $this->url);
     $this->PingHost($urlmap->host, $options->subdir . $this->url);
   }

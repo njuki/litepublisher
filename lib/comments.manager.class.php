@@ -91,6 +91,26 @@ class tcommentmanager extends tevents {
     
     return $id;
   }
+
+  public function reply($idreply, $idpost, $content) {
+    global $options;
+    $status = 'approved';
+$idpost = (int) $idpost;
+          $profile = tprofile::instance();
+          $email = $profile->mbox!= '' ? $profile->mbox : $options->fromemail;
+          $site = $options->url . $options->home;
+$comusers = tcomusers::instance($idpost);
+$idauthor = $comusers->add($profile->nick, $email, $site);
+    $comments = tcomments::instance($idpost);
+    $id = $comments->add($idauthor,  $content, $status);
+    
+    if (!dbversion) $this->addrecent($id, $idpost);
+    
+    $this->dochanged($id, $idpost);
+    $this->added($id, $idpost);
+    //$this->sendmail($id, $idpost);
+        return $id;
+  }
   
   private function dochanged($id, $idpost) {
     if (dbversion) {
@@ -142,7 +162,7 @@ return false;
     }
   }
   
-  public function setstatus($idpost, $id, $status) {
+  public function setstatus($id, $idpost, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
     $comments = tcomments::instance($idpost);
     if (dbversion) {

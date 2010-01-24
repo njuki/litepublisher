@@ -53,7 +53,7 @@ class tcomments extends titems {
   }
   
   public function add($author, $content, $status) {
-    $filter = TContentFilter::instance();
+    $filter = tcontentfilter::instance();
     $item  = array(
     'author' => $author,
     'posted' => time(),
@@ -99,11 +99,8 @@ class tcomments extends titems {
     $comusers = tcomusers::instance($this->pid);
     $comusers->delete($author);
   }
-  
+
   public function sethold($id) {
-echo "<pre>\n";
-var_dump($this->items);
-exit();
     if (!isset($this->items[$id]))  return false;
       $item = $this->items[$id];
 
@@ -116,12 +113,9 @@ return true;
   }
   
   public function approve($id) {
-echo "<pre>\n";
-var_dump($this->hold->items);
-exit();
-
     if (!isset($this->hold->items[$id]))  return false;
       $this->items[$id] = $this->hold->items[$id];
+$this->save();
       $this->hold->delete($id);
 return true;
     }
@@ -290,7 +284,7 @@ class TComment {
   }
   
   private function setcontent($value) {
-    $filter = TContentFilter::instance();
+    $filter = tcontentfilter::instance();
     $this->owner->items[$this->id]['content'] = $filter->filtercomment($value);
     $this->save();
     $this->owner->raw->items[$this->id]['content'] =  $value;
