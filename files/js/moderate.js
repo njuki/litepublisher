@@ -1,11 +1,11 @@
 function movecomment(id, status) {
 var item =document.getElementById("comment-" + id);
-item.parentNode.removeChild(item);
 //var idparent = parent.attributes.getNamedItem('id').nodeValue;
 var idnewparent = ltoptions.commentsid;
 if (status == 'hold') idnewparent = 'hold' + ltoptions.commentsid;
 var newparent = document.getElementById(idnewparent);
-newparent.appendChild(item);
+newparent.appendChild(item.cloneNode(true));
+item.parentNode.removeChild(item);
 }
 
 function deletecomment(id) {
@@ -33,8 +33,7 @@ client.litepublisher.setcommentstatus( {
 params:['', '', id, ltoptions.idpost, status],
 
                  onSuccess:function(result){                     
-alert('sucess');
-//movecomment(id, status);
+movecomment(id, status);
 },
 
                   onException:function(errorObj){ 
