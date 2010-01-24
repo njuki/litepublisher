@@ -145,9 +145,10 @@ $post.content
 <!--moderate-->
 			<span class="moderationbuttons">
 <input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
+<input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
+<input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
 <input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
-<!--approve--><input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" /><!--/approve-->
-<!--hold--><input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" /><!--/hold-->
+<input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
 </span>
 <!--/moderate-->
 			<cite>$comment.authorlink</cite> $lang.says:  <br />
@@ -164,9 +165,9 @@ $comment.content
 <form name="moderateform" action="$options.url/admin/comments/" method="post">
 $comments
 <p>
-<input type="submit" name="approve" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
-<input type="submit" name="delete" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
-<input type="submit" name="hold" value="$lang.holdbutton" onclick="submitmoderateform(this.form, 'hold');" />
+<input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
+<input type="button" name="deletebutton" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
+<input type="button" name="holdbutton" value="$lang.holdbutton" onclick="submitmoderateform(this.form, 'hold');" />
 </p>
 </form>
 <!--/moderateform-->
