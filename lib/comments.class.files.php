@@ -75,12 +75,18 @@ class tcomments extends titems {
   }
   
   public function delete($id) {
-    if (!isset($this->items[$id])) return false;
+    if (isset($this->items[$id])) {
     $author = $this->items[$id]['author'];
     unset($this->items[$id]);
     $this->save();
+} else {
+    if (!isset($this->hold->items[$id])) return false;
+    $author = $this->hold->items[$id]['author'];
+    unset($this->hold->items[$id]);
+    $this->hold->save();
+}
+
     $this->raw->delete($id);
-    
     $this->deleteauthor($author);
     $this->deleted($id);
     return true;
@@ -116,7 +122,8 @@ return true;
     if (!isset($this->hold->items[$id]))  return false;
       $this->items[$id] = $this->hold->items[$id];
 $this->save();
-      $this->hold->delete($id);
+      unset($this->hold->items[$id]);
+$this->hold->save();
 return true;
     }
 
@@ -136,6 +143,7 @@ return true;
 global $options;
 $result = $this->dogetcontent(false, 0);
 if ($options->admincookie) {
+tlocal::loadlang('admin');
 $result .= $this->hold->dogetcontent(true, 0);
 $theme = ttheme::instance();
 $args = targs::instance();
@@ -165,16 +173,13 @@ return $result;
 if ($hold) $comment->status = 'hold';
     $lang = tlocal::instance('comment');
 
-    $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
 if ($options->admincookie) {
 tlocal::loadlang('admin');
-$moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, !$hold ?
-$theme->content->post->templatecomments->comments->comment->moderate->hold :
-$theme->content->post->templatecomments->comments->comment->moderate->approve);
-$tml = str_replace('$moderate', $moderate, $tml);
-}  else {
-$tml = str_replace('$moderate', '', $tml);
+$moderate =$theme->content->post->templatecomments->comments->comment->moderate;
+} else {
+$moderate = '';
 }
+$tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
 
     $i = 1;
     $class1 = $theme->content->post->templatecomments->comments->comment->class1;
