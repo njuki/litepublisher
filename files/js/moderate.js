@@ -76,8 +76,8 @@ onComplete:function(responseObj){ }
 }
 
 function submitmoderateform(form, action) {
-var list = new array();
-	for (i = 0, n = form.elements.length; i < n; i++) {
+var list = new Array();
+	for (var i = 0, n = form.elements.length; i < n; i++) {
 var elem = form.elements[i];
 		if((elem.type == 'checkbox') && (elem.checked == true)) {
 list.push(parseint(elem.value));
