@@ -54,15 +54,13 @@ client.litepublisher.moderate( {
 params:['', '', ltoptions.idpost, list, action],
 
                  onSuccess:function(result){                     
-if (result) {
 for (var i = 0, n = list.length; i <n; i++) {
-var id = list[i];
-var item =document.getElementById("comment-" + id);
-//или переместить
+if (action == 'delete') {
+var item =document.getElementById("comment-" + list[i]);
     item.parentNode.removeChild(item);
-}
 } else {
-                    alert(ltoptions.lang.commentnotmoderated);
+movecomment(list[id], action);
+}
 }
 },
 
@@ -85,4 +83,48 @@ list.push(parseint(elem.value));
 	}
 
 moderate(list, action);
+}
+
+function editcomment(id) {
+if (client == undefined) client = createclient();
+client.litepublisher.getcomment( {
+params:['', '', id, ltoptions.idpost],
+
+                 onSuccess:function(result){                     
+document.getElementById('name').value = result.name;
+document.getElementById('email').value = result.email;
+document.getElementById('url').value = result.url;
+document.getElementById('comment').value = result.content;
+
+document.getElementById('commentform').onsubmit = submiteditcomment(id);
+},
+
+                  onException:function(errorObj){ 
+                    alert('err');
+},
+
+onComplete:function(responseObj){ }
+} );
+}
+
+function submiteditcomment(id) {
+client.litepublisher.editcomment( {
+params:['', '', id, ltoptions.idpost, {
+name: document.getElementById('name').value,
+email: document.getElementById('email').value,
+url: document.getElementById('url').value,
+content: document.getElementById('comment').value
+}],
+
+                 onSuccess:function(result){                     
+alert('edited');
+},
+
+                  onException:function(errorObj){ 
+                    alert('err');
+},
+
+onComplete:function(responseObj){ }
+} );//litepublisher.editcomment
+return false;
 }
