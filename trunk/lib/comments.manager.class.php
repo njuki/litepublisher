@@ -92,6 +92,23 @@ class tcommentmanager extends tevents {
     return $id;
   }
 
+  public function edit($idpost, $name, $email, $url, $content) {
+    $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
+    $idauthor = $comusers->add($name, $email, $url);
+    return $this->editcomment($id, $idpost, $idauthor, $content);
+  }
+  
+  public function editcomment($id, $idpost, $idauthor, $content) {
+    $comments = tcomments::instance($idpost);
+if (!$comments->edit($id, $idauthor,  $content)) return false;
+    //if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
+   
+    $this->dochanged($id, $idpost);
+    $this->edited($id, $idpost);
+    return true;
+  }
+
+
   public function reply($idreply, $idpost, $content) {
     global $options;
     $status = 'approved';

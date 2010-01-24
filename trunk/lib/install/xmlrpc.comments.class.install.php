@@ -13,6 +13,7 @@ function TXMLRPCCommentsInstall($self) {
   $caller->add('litepublisher.deletecomment',		'delete', get_class($self));
   $caller->add('litepublisher.setcommentstatus',		'setstatus', get_class($self));
   $caller->add('litepublisher.addcomment',		'add', get_class($self));
+  $caller->add('litepublisher.editcomment',		'edit', get_class($self));
   $caller->add('litepublisher.replycomment',		'reply', get_class($self));
   $caller->add('litepublisher.getcomment',	'getcomment', get_class($self));
   $caller->add('litepublisher.getrecentcomments',		'getrecent', get_class($self));

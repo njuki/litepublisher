@@ -73,8 +73,36 @@ class tcomments extends titems {
     $this->added($this->autoid);
     return $this->autoid;
   }
+
+  public function edit($id, $author, $content) {
+if (isset($this->items[$id])) {
+$item = &$this->items[$id];
+$approved = true;
+} elseif (isset($this->hold->items[$id])) {
+$item = &$this->hold->items[$id];
+$approved = false;
+} else {
+return false;
+}
+
+    $filter = tcontentfilter::instance();
+
+    $item['author'] = $author;
+    $item['content'] = $filter->filtercomment($content);
+
+if ($approved) {
+$this->save();
+} else {
+      $this->hold->save();
+    }
+
+    $this->raw->items[$id]['content'] = $content;
+$this->raw->save();
+    $this->edited($id);
+    return true;
+  }
   
-  public function delete($id) {
+    public function delete($id) {
     if (isset($this->items[$id])) {
     $author = $this->items[$id]['author'];
     unset($this->items[$id]);

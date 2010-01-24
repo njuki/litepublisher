@@ -32,6 +32,15 @@ $manager = tcommentmanager::instance();
 return $manager->add((int) $idpost, $name, $email, $url, $content);
 }
 
+  public function edit($login, $password, $id, $idpost, $comment) {
+$this->auth($login, $password, 'moderator');
+$manager = tcommentmanager::instance();
+if (!$manager->edit((int) $id, (int) $idpost, $comment['name'], $comment['email'], $comment['url'], $ccomment['rawcontent'])) {
+return $this->xerror(404, 'Comment not edited');
+}
+return true;
+}
+
   public function reply($login, $password, $id, $idpost, $content) {
 $this->auth($login, $password, 'moderator');
 $manager = tcommentmanager::instance();
@@ -42,7 +51,17 @@ return $manager->reply((int) $id, (int) $idpost, $content);
 $this->auth($login, $password, 'moderator');
 $comments = tcomments::instance((int) $idpost);
 $comment = $comments->getcomment((int) $id);
-return $comment->data;
+$result = array(
+'id' => (int) $comment->id,
+'author' => $comment->author,
+'name' => $comment->name,
+'email' => $comment->email,
+'url' => $comment->website,
+'content' => $comment->content,
+'rawcontent' => $comment->rawcontent
+);
+tfiler::log(var_export($result, true));
+return $result;
 }
 
   public function getrecent($login, $password, $count) {
