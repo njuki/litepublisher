@@ -108,6 +108,7 @@ onComplete:function(responseObj){ }
 }
 
 function submiteditcomment(id) {
+return function() {
 client.litepublisher.editcomment( {
 params:['', '', id, ltoptions.idpost, {
 name: document.getElementById('name').value,
@@ -117,7 +118,8 @@ content: document.getElementById('comment').value
 }],
 
                  onSuccess:function(result){                     
-alert('edited');
+document.getElementById('commentform').onsubmit = null;
+alert('edited ' + id);
 },
 
                   onException:function(errorObj){ 
@@ -125,6 +127,8 @@ alert('edited');
 },
 
 onComplete:function(responseObj){ }
-} );//litepublisher.editcomment
+} );
+
 return false;
+};
 }
