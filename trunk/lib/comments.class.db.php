@@ -86,6 +86,7 @@ public function edit(tcomment $comment) {
 global $options;
     $result = $this->getcontentwhere('approved', '');
 if ($options->admincookie) {
+tlocal::loadlang('admin');
     $result .= $this->getcontentwhere('hold', '');
 $theme = ttheme::instance();
 $args = targs::instance();
@@ -123,16 +124,13 @@ return $result;
     $comment = new tcomment(0);
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
-    $tml = $theme->content->post->templatecomments->comments->comment->__tostring();
 if ($options->admincookie) {
 tlocal::loadlang('admin');
-$moderate =sprintf($theme->content->post->templatecomments->comments->comment->moderate, $status == 'approved' ?
-$theme->content->post->templatecomments->comments->comment->moderate->hold :
-$theme->content->post->templatecomments->comments->comment->moderate->approve);
-$tml = str_replace('$moderate', $moderate, $tml);
-}  else {
-$tml = str_replace('$moderate', '', $tml);
+$moderate =$theme->content->post->templatecomments->comments->comment->moderate;
+} else {
+$moderate = '';
 }
+$tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
 
     $i = 1;
     $class1 = $theme->content->post->templatecomments->comments->comment->class1;

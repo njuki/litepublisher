@@ -136,7 +136,7 @@ $idauthor = $comusers->add($profile->nick, $email, $site);
     $comments = tcomments::instance($idpost);
     if ($comments->delete($id)) {
     if (!dbversion) $this->deleterecent($id, $idpost);
-    $this->deleted($id);
+    $this->deleted($id, $idpost);
     $this->dochanged($id, $idpost);
 return true;
 }
