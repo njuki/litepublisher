@@ -97,10 +97,11 @@ document.getElementById('url').value = result.url;
 document.getElementById('comment').value = result.content;
 
 document.getElementById('commentform').onsubmit = submiteditcomment(id);
+document.getElementById('name').focus();
 },
 
                   onException:function(errorObj){ 
-                    alert('err');
+                    alert(lang.comments.errorrecieved);
 },
 
 onComplete:function(responseObj){ }
@@ -118,12 +119,20 @@ content: document.getElementById('comment').value
 }],
 
                  onSuccess:function(result){                     
+document.getElementById('name').value = '';
+document.getElementById('email').value = '';
+document.getElementById('url').value = '';
+var content = document.getElementById('comment').value;
+document.getElementById('comment').value = '';
 document.getElementById('commentform').onsubmit = null;
-alert('edited ' + id);
+
+var p = document.getElementById('commentcontent-' + id);
+p.innerHTML = content;
+document.getElementById('checkbox-comment-' + id).focus();
 },
 
                   onException:function(errorObj){ 
-                    alert('err');
+                    alert(lang.comments.notedited);
 },
 
 onComplete:function(responseObj){ }
