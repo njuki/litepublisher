@@ -24,6 +24,11 @@ class tcomments extends titems {
     return $self;
   }
   
+  protected function create() {
+    parent::create();
+    $this->addevents('edited');
+  }
+  
   public function getcomment($id) {
     $result = new tcomment($this);
     $result->id = $id;
@@ -73,47 +78,47 @@ class tcomments extends titems {
     $this->added($this->autoid);
     return $this->autoid;
   }
-
+  
   public function edit($id, $author, $content) {
-if (isset($this->items[$id])) {
-$item = &$this->items[$id];
-$approved = true;
-} elseif (isset($this->hold->items[$id])) {
-$item = &$this->hold->items[$id];
-$approved = false;
-} else {
-return false;
-}
-
+    if (isset($this->items[$id])) {
+      $item = &$this->items[$id];
+      $approved = true;
+    } elseif (isset($this->hold->items[$id])) {
+      $item = &$this->hold->items[$id];
+      $approved = false;
+    } else {
+      return false;
+    }
+    
     $filter = tcontentfilter::instance();
-
+    
     $item['author'] = $author;
     $item['content'] = $filter->filtercomment($content);
-
-if ($approved) {
-$this->save();
-} else {
+    
+    if ($approved) {
+      $this->save();
+    } else {
       $this->hold->save();
     }
-
+    
     $this->raw->items[$id]['content'] = $content;
-$this->raw->save();
+    $this->raw->save();
     $this->edited($id);
     return true;
   }
   
-    public function delete($id) {
+  public function delete($id) {
     if (isset($this->items[$id])) {
-    $author = $this->items[$id]['author'];
-    unset($this->items[$id]);
-    $this->save();
-} else {
-    if (!isset($this->hold->items[$id])) return false;
-    $author = $this->hold->items[$id]['author'];
-    unset($this->hold->items[$id]);
-    $this->hold->save();
-}
-
+      $author = $this->items[$id]['author'];
+      unset($this->items[$id]);
+      $this->save();
+    } else {
+      if (!isset($this->hold->items[$id])) return false;
+      $author = $this->hold->items[$id]['author'];
+      unset($this->hold->items[$id]);
+      $this->hold->save();
+    }
+    
     $this->raw->delete($id);
     $this->deleteauthor($author);
     $this->deleted($id);
@@ -133,29 +138,29 @@ $this->raw->save();
     $comusers = tcomusers::instance($this->pid);
     $comusers->delete($author);
   }
-
+  
   public function sethold($id) {
     if (!isset($this->items[$id]))  return false;
-      $item = $this->items[$id];
-
-      unset($this->items[$id]);
-      $this->save();
-      
-      $this->hold->items[$id] = $item;
-      $this->hold->save();
-return true;
+    $item = $this->items[$id];
+    
+    unset($this->items[$id]);
+    $this->save();
+    
+    $this->hold->items[$id] = $item;
+    $this->hold->save();
+    return true;
   }
   
   public function approve($id) {
     if (!isset($this->hold->items[$id]))  return false;
-      $this->items[$id] = $this->hold->items[$id];
-$this->save();
-      unset($this->hold->items[$id]);
-$this->hold->save();
-return true;
-    }
-
-    /*
+    $this->items[$id] = $this->hold->items[$id];
+    $this->save();
+    unset($this->hold->items[$id]);
+    $this->hold->save();
+    return true;
+  }
+  
+  /*
   public function sort() {
     $Result[$id] = $item['posted'];
     asort($Result);
@@ -168,19 +173,27 @@ return true;
   }
   
   public function getcontent() {
-global $options;
-$result = $this->dogetcontent(false, 0);
-if ($options->admincookie) {
-tlocal::loadlang('admin');
-$result .= $this->hold->dogetcontent(true, 0);
-$theme = ttheme::instance();
-$args = targs::instance();
-$args->comments = $result;
-$result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
-}
-return $result;
-}
-
+    global $options, $urlmap;
+    $result = $this->dogetcontent(false, 0);
+    if ($options->admincookie) {
+      $theme = ttheme::instance();
+      tlocal::loadlang('admin');
+      $post = tpost::instance($this->pid);
+      if ($post->commentpages == $urlmap->page) {
+        $result .= $this->hold->dogetcontent(true, 0);
+      } else {
+        //добавить пустой список задержанных
+        $commentsid = $theme->content->post->templatecomments->comments->commentsid;
+        $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+        $result .= sprintf($tml, '', 1);
+      }
+      $args = targs::instance();
+      $args->comments = $result;
+      $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
+    }
+    return $result;
+  }
+  
   public function dogetcontent($hold, $idauthor) {
     global $options, $urlmap, $comment;
     $result = '';
@@ -192,43 +205,43 @@ return $result;
         $items = array_slice($items, $from, $options->commentsperpage, true);
       }
     }
-
-    $theme = ttheme::instance();    
+    
+    $theme = ttheme::instance();
     if (count($items) > 0) {
-        $args = targs::instance();
-    $args->from = $from;
-    $comment = new TComment($this);
-if ($hold) $comment->status = 'hold';
-    $lang = tlocal::instance('comment');
-
-if ($options->admincookie) {
-tlocal::loadlang('admin');
-$moderate =$theme->content->post->templatecomments->comments->comment->moderate;
-} else {
-$moderate = '';
-}
-$tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
-
-    $i = 1;
-    $class1 = $theme->content->post->templatecomments->comments->comment->class1;
-    $class2 = $theme->content->post->templatecomments->comments->comment->class2;
-    foreach ($items as $id) {
-      //разрулить в одном месте одобренные и задержанные комменты
-      if (!$options->admincookie && $hold) {
-        if ($idauthor != $this->items[$id]['author']) continue;
+      $args = targs::instance();
+      $args->from = $from;
+      $comment = new TComment($this);
+      if ($hold) $comment->status = 'hold';
+      $lang = tlocal::instance('comment');
+      
+      if ($options->admincookie) {
+        tlocal::loadlang('admin');
+        $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
+      } else {
+        $moderate = '';
       }
-      $comment->id = $id;
-      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
-      $result .= $theme->parsearg($tml, $args);
+      $tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
+      
+      $i = 1;
+      $class1 = $theme->content->post->templatecomments->comments->comment->class1;
+      $class2 = $theme->content->post->templatecomments->comments->comment->class2;
+      foreach ($items as $id) {
+        //разрулить в одном месте одобренные и задержанные комменты
+        if (!$options->admincookie && $hold) {
+          if ($idauthor != $this->items[$id]['author']) continue;
+        }
+        $comment->id = $id;
+        $args->class = (++$i % 2) == 0 ? $class1 : $class2;
+        $result .= $theme->parsearg($tml, $args);
+      }
+    }//if count
+    $tml = $theme->content->post->templatecomments->comments->__tostring();
+    if ($options->admincookie && $hold) {
+      $commentsid = $theme->content->post->templatecomments->comments->commentsid;
+      $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+    } else {
+      if ($result == '') return '';
     }
-}//if count
-$tml = $theme->content->post->templatecomments->comments->__tostring();
-if ($options->admincookie && $hold) {
-$commentsid = $theme->content->post->templatecomments->comments->commentsid;
-$tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
-} else {
-if ($result == '') return '';
-}
     return sprintf($tml, $result, $from + 1);
   }
   

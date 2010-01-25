@@ -637,7 +637,7 @@ class tclasses extends titems {
     $this->added($class);
   }
   
-  public function delete($clsss) {
+  public function delete($class) {
     if (isset($this->items[$class])) {
       if (class_exists($class)) {
         $instance = $this->getinstance($class);
@@ -645,7 +645,7 @@ class tclasses extends titems {
       }
       unset($this->items[$class]);
       $this->save();
-      $this->deleted($ClassName);
+      $this->deleted($class);
     }
   }
   
@@ -737,6 +737,7 @@ function SafeSaveFile($BaseName, $Content) {
 class toptions extends tevents {
   public $user;
   public $group;
+  public $admincookie;
   public $gmt;
   public $errorlog;
   private $modified;
@@ -753,15 +754,16 @@ class toptions extends tevents {
     $this->gmt = date('Z');
     $this->errorlog = '';
     $this->modified = false;
+    $this->admincookie = false;
   }
   
   public function load() {
-    parent::load();
+    if (!parent::load()) return false;
     $this->modified = false;
-    if($this->propexists('timezone'))  {
-      date_default_timezone_set($this->timezone);
-      $this->gmt = date('Z');
-    }
+    $this->admincookie = $this->cookieenabled && $this->authcookie();
+    date_default_timezone_set($this->timezone);
+    $this->gmt = date('Z');
+    return true;
   }
   
   public function savemodified() {
@@ -825,15 +827,29 @@ class toptions extends tevents {
     $this->unlock();
   }
   
-  public function auth($login, $password) {
-    if ($login == $this->login) {
+  public function authcookie() {
+    if (empty($_COOKIE['admin']))  return false;
+    if ($this->cookie == $_COOKIE['admin']) {
+      if ($this->cookieexpired < time()) return false;
       $this->user = 1;
     } else {
       $users = tusers::instance();
-      if (!($this->user = $users->loginexists($login))) return false;
+      if (!($this->user = $users->authcookie($_COOKIE['admin']))) return false;
     }
     
-    if ($this->password != md5("$login:$this->realm:$password"))  return false;
+    $this->updategroup();
+    return true;
+  }
+  
+  public function auth($login, $password) {
+    if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
+    if ($login == $this->login) {
+      if ($this->password != md5("$login:$this->realm:$password"))  return false;
+      $this->user = 1;
+    } else {
+      $users = tusers::instance();
+      if (!($this->user = $users->auth($login, $password))) return false;
+    }
     $this->updategroup();
     return true;
   }
@@ -957,7 +973,7 @@ class turlmap extends titems {
     $this->CheckSingleCron();
   }
   
-  protected function dorequest($url) {
+  private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
       return $this->printcontent($this->itemrequested);
     } else {
@@ -1016,18 +1032,19 @@ class turlmap extends titems {
   }
   
   private function getcachefile(array $item) {
-    global $paths;
+    global $paths, $options;
     if (!$this->cachefilename) {
       if ($item['type'] == 'normal') {
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
       } else {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
+      if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
     }
     return $paths['cache'] . $this->cachefilename;
   }
   
-  protected function  printcontent(array $item) {
+  private function  printcontent(array $item) {
     global $options;
     if ($options->cache) {
       $cachefile = $this->getcachefile($item);
@@ -1051,6 +1068,7 @@ class turlmap extends titems {
     $source = getinstance($item['class']);
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
+      //tfiler::log($s);
       if ($s == 404) return $this->notfound404();
     } else {
       $template = ttemplate::instance();
@@ -1223,6 +1241,8 @@ class turlmap extends titems {
   
   public function redir301($to) {
     global $options;
+    //tfiler::log($to);
+    //tfiler::log(var_export($_COOKIE, true));
     self::redir($options->url . $to);
   }
   

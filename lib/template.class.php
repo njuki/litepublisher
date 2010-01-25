@@ -13,7 +13,7 @@ class ttemplate extends tevents {
   public $context;
   public $itemplate;
   public $javascripts;
-public $javaoptions;
+  public $javaoptions;
   //public $footer;
   
   public static function instance() {
@@ -26,11 +26,11 @@ public $javaoptions;
     $this->basename = 'template' ;
     $this->tml = 'index';
     $this->itemplate = false;
-$this->javaoptions = array(0 => "baseurl: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files/files'");
+    $this->javaoptions = array(0 => "baseurl: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files/files'");
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
-$this->data['hovermenu'] = false;
+    $this->data['hovermenu'] = false;
     $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
@@ -199,11 +199,11 @@ $this->data['hovermenu'] = false;
   
   public function sethovermenu($value) {
     if ($value == $this->hovermenu)  return;
-$this->data['hovermenu'] = $vlue;
-$this->save();
-
-      $urlmap = turlmap::instance();
-      $urlmap->clearcache();
+    $this->data['hovermenu'] = $vlue;
+    $this->save();
+    
+    $urlmap = turlmap::instance();
+    $urlmap->clearcache();
   }
   
   public function addjavascript($name, $script) {
@@ -224,30 +224,30 @@ $this->save();
       $this->save();
     }
   }
-
-private function getjavaoptions() {
-$result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
-$result .= implode(",\n", $this->javaoptions);
-$result .= "\n};\n</script>\n";
-return $result;
-}
+  
+  private function getjavaoptions() {
+    $result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
+      $result .= implode(",\n", $this->javaoptions);
+    $result .= "\n};\n</script>\n";
+    return $result;
+  }
   
   public function gethead() {
-$result = '';
-if ($this->hovermenu) {
-        $theme = ttheme::instance();
-        if (isset($theme->menu['id'])) {
-$this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu['id']);
-$this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu['tag']);
-$result .=  "<script type=\"text/javascript\" src=\"$options->files/files/js/hovermenu.js\"></script>\n";
-}
-}
-
+    $result = '';
+    if ($this->hovermenu) {
+      $theme = ttheme::instance();
+      if (isset($theme->menu['id'])) {
+        $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu['id']);
+        $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu['tag']);
+        $result .=  "<script type=\"text/javascript\" src=\"$options->files/files/js/hovermenu.js\"></script>\n";
+      }
+    }
+    
     foreach ($this->javascripts as $name => $script)  $result .=$script . "\n";
-
-    if ($this->itemplate) $result .= $this->context->gethead();    
+    
+    if ($this->itemplate) $result .= $this->context->gethead();
     if ($this->isadmin) $this->onadminhead(&$result);
-$result = $this->getjavaoptions() . $result;
+    $result = $this->getjavaoptions() . $result;
     $this->onhead(&$result);
     return $result;
   }

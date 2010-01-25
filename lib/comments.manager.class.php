@@ -91,8 +91,8 @@ class tcommentmanager extends tevents {
     
     return $id;
   }
-
-  public function edit($idpost, $name, $email, $url, $content) {
+  
+  public function edit($id, $idpost, $name, $email, $url, $content) {
     $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
     $idauthor = $comusers->add($name, $email, $url);
     return $this->editcomment($id, $idpost, $idauthor, $content);
@@ -100,24 +100,24 @@ class tcommentmanager extends tevents {
   
   public function editcomment($id, $idpost, $idauthor, $content) {
     $comments = tcomments::instance($idpost);
-if (!$comments->edit($id, $idauthor,  $content)) return false;
+    if (!$comments->edit($id, $idauthor,  $content)) return false;
     //if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
-   
+    
     $this->dochanged($id, $idpost);
     $this->edited($id, $idpost);
     return true;
   }
-
-
+  
+  
   public function reply($idreply, $idpost, $content) {
     global $options;
     $status = 'approved';
-$idpost = (int) $idpost;
-          $profile = tprofile::instance();
-          $email = $profile->mbox!= '' ? $profile->mbox : $options->fromemail;
-          $site = $options->url . $options->home;
-$comusers = tcomusers::instance($idpost);
-$idauthor = $comusers->add($profile->nick, $email, $site);
+    $idpost = (int) $idpost;
+    $profile = tprofile::instance();
+    $email = $profile->mbox!= '' ? $profile->mbox : $options->fromemail;
+    $site = $options->url . $options->home;
+    $comusers = tcomusers::instance($idpost);
+    $idauthor = $comusers->add($profile->nick, $email, $site);
     $comments = tcomments::instance($idpost);
     $id = $comments->add($idauthor,  $content, $status);
     
@@ -126,7 +126,7 @@ $idauthor = $comusers->add($profile->nick, $email, $site);
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
     //$this->sendmail($id, $idpost);
-        return $id;
+    return $id;
   }
   
   private function dochanged($id, $idpost) {
@@ -152,12 +152,12 @@ $idauthor = $comusers->add($profile->nick, $email, $site);
   public function delete($id, $idpost) {
     $comments = tcomments::instance($idpost);
     if ($comments->delete($id)) {
-    if (!dbversion) $this->deleterecent($id, $idpost);
-    $this->deleted($id, $idpost);
-    $this->dochanged($id, $idpost);
-return true;
-}
-return false;
+      if (!dbversion) $this->deleterecent($id, $idpost);
+      $this->deleted($id, $idpost);
+      $this->dochanged($id, $idpost);
+      return true;
+    }
+    return false;
   }
   
   public function postdeleted($idpost) {
@@ -197,9 +197,9 @@ return false;
         break;
       }
     }
-
+    
     if ($result) $this->dochanged($id, $idpost);
-return $result;
+    return $result;
   }
   
   public function checktrust($value) {
@@ -216,7 +216,7 @@ return $result;
   public function sendmail($id, $idpost) {
     global $options, $comment;
     if (!$this->sendnotification) return;
-$comments = tcomments::instance($idpost);
+    $comments = tcomments::instance($idpost);
     $comment = $comments->getcomment($id);
     $args = targs::instance();
     $args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&post=$idpost&action";

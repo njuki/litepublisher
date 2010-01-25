@@ -118,7 +118,7 @@ class tadminservice extends tadminmenu {
   public function processform() {
     global $classes, $options, $urlmap, $paths, $domain;
     $html = $this->html;
-
+    
     switch ($this->name) {
       case 'service':
       return $this->doupdate($_POST);

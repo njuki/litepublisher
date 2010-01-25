@@ -21,6 +21,7 @@ class tcomments extends titems {
     parent::create();
     $this->table = 'comments';
     $this->rawtable = 'rawcomments';
+    $this->addevents('edited');
   }
   
   public function add($idauthor, $content, $status) {
@@ -50,10 +51,31 @@ class tcomments extends titems {
     
     return $id;
   }
-
-public function edit(tcomment $comment) {
-
-}
+  
+  public function edit($id, $idauthor, $content) {
+    try {
+      $item = $this->getitem((int) $id);
+    } catch (Exception $e) {
+      return false;
+    }
+    $filter = tcontentfilter::instance();
+    $item['author'] = (int)$idauthor;
+    $item['content'] =$filter->filtercomment($content);
+    
+    $this->db->updateassoc($item);
+    
+    $item['rawcontent'] = $content;
+    $this->items[$id] = $item;
+    
+    $this->getdb($this->rawtable)->updateassoc(array(
+    'id' => $id,
+    'modified' => sqldate(),
+    'rawcontent' => $content,
+    'hash' => md5($content)
+    ));
+    
+    return true;
+  }
   
   public function getcomment($id) {
     return new tcomment($id);
@@ -83,17 +105,26 @@ public function edit(tcomment $comment) {
   }
   
   public function getcontent() {
-global $options;
+    global $options, $urlmap;
     $result = $this->getcontentwhere('approved', '');
-if ($options->admincookie) {
-tlocal::loadlang('admin');
-    $result .= $this->getcontentwhere('hold', '');
-$theme = ttheme::instance();
-$args = targs::instance();
-$args->comments = $result;
-$result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
-}
-return $result;
+    if ($options->admincookie) {
+      $theme = ttheme::instance();
+      tlocal::loadlang('admin');
+      $post = tpost::instance($this->pid);
+      if ($post->commentpages == $urlmap->page) {
+        $result .= $this->getcontentwhere('hold', '');
+      } else {
+        //добавить пустой список задержанных
+        $commentsid = $theme->content->post->templatecomments->comments->commentsid;
+        $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+        $result .= sprintf($tml, '', 1);
+      }
+      
+      $args = targs::instance();
+      $args->comments = $result;
+      $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
+    }
+    return $result;
   }
   
   public function getholdcontent($idauthor) {
@@ -124,14 +155,14 @@ return $result;
     $comment = new tcomment(0);
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
-if ($options->admincookie) {
-tlocal::loadlang('admin');
-$moderate =$theme->content->post->templatecomments->comments->comment->moderate;
-} else {
-$moderate = '';
-}
-$tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
-
+    if ($options->admincookie) {
+      tlocal::loadlang('admin');
+      $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
+    } else {
+      $moderate = '';
+    }
+    $tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
+    
     $i = 1;
     $class1 = $theme->content->post->templatecomments->comments->comment->class1;
     $class2 = $theme->content->post->templatecomments->comments->comment->class2;
@@ -142,14 +173,14 @@ $tml = str_replace('$moderate', $moderate, $theme->content->post->templatecommen
       $result .= $theme->parsearg($tml, $args);
     }
     
-
-$tml = $theme->content->post->templatecomments->comments->__tostring();
-if ($options->admincookie && ($status == 'hold')) {
-$commentsid = $theme->content->post->templatecomments->comments->commentsid;
-$tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
-} else }
-    if ($result == '') return '';
-}
+    
+    $tml = $theme->content->post->templatecomments->comments->__tostring();
+    if ($options->admincookie && ($status == 'hold')) {
+      $commentsid = $theme->content->post->templatecomments->comments->commentsid;
+      $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+    } else {
+      if ($result == '') return '';
+    }
     return sprintf($tml, $result, $from + 1);
   }
   
@@ -177,7 +208,7 @@ class tcomment extends tdata {
   public function save() {
     extract($this->data);
     $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'status', 'content'));
-
+    
     $this->getdb($this->rawtable)->UpdateAssoc(array(
     'id' => $id,
     'modified' => sqldate(),
@@ -234,16 +265,16 @@ class tcomment extends tdata {
   }
   
   public function getrawcontent() {
-if (isset($this->data['rawcontent'])) return $this->data['rawcontent']);
+    if (isset($this->data['rawcontent'])) return $this->data['rawcontent'];
     $comments = tcomments::instance($this->post);
     return $comments->raw->getvalue($this->id, 'rawcontent');
   }
-
-public function setrawcontent($s) {
-$this->data['rawcontent'] = $s;
+  
+  public function setrawcontent($s) {
+    $this->data['rawcontent'] = $s;
     $filter = tcontentfilter::instance();
     $this->data['content'] = $filter->filtercomment($s);
-}
+  }
   
 }//class
 

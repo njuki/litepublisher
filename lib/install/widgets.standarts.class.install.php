@@ -27,9 +27,9 @@ function tstdwidgetsInstall($self) {
   $widgets->unlock();
   $template->unlock();
   $self->unlock();
-
-$xmlrpc = TXMLRPC::instance();
-$xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($self));
+  
+  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($self));
 }
 
 function tstdwidgetsUninstall($self) {
@@ -37,8 +37,8 @@ function tstdwidgetsUninstall($self) {
   $widgets = twidgets::instance();
   $widgets->deleteclass(get_class($self));
   $self->unlock();
-$xmlrpc = TXMLRPC::instance();
-$xmlrpc->deleteclass(get_class($self));
+  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc->deleteclass(get_class($self));
 }
 
 function getmetawidget() {

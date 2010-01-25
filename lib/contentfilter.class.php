@@ -191,8 +191,8 @@ class tcontentfilter extends tevents {
   public static function escape($s) {
     return self::quote(htmlspecialchars(trim(strip_tags($s))));
   }
-
-// uset in tthemeparser
+  
+  // uset in tthemeparser
   
   public static function getidtag($tag, $s) {
     if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {

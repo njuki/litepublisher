@@ -13,14 +13,14 @@ class tthemeparser {
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   public function parsetag(&$s, $tag, $replace) {
     $result = '';
     $opentag = "<!--$tag-->";
     $closetag = "<!--/$tag-->";
     if(is_int($i = strpos($s, $opentag)) && ($j = strpos($s, $closetag))) {
       $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
-if ($replace === false) $replace = $result;
+      if ($replace === false) $replace = $result;
       $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
       $s = str_replace("\n\n", "\n", $s);
     }
@@ -229,21 +229,21 @@ if ($replace === false) $replace = $result;
     $result['class1'] = $this->parsetag($s, 'class1', '$class');
     $result['class2'] = $this->parsetag($s, 'class2', '');
     $result['moderate'] = $this->parsetag($s, 'moderate', '$moderate');
-
+    
     $result['dateformat'] = $this->parsetag($s, 'date', '$comment.date');
     $result[0] = $s;
     return $result;
   }
-
-private function parsemoderateform($s) {
-return $s;
-/*
+  
+  private function parsemoderateform($s) {
+    return $s;
+    /*
     $result = array();
     $result[0] = $s;
     return $result;
-*/
-}
-
+    */
+  }
+  
   private function parsepingbacks($s) {
     $result = array();
     $result['pingback'] = $this->parsetag($s, 'pingback', '%1$s');
@@ -272,33 +272,33 @@ return $s;
     $result[0] = $s;
     return $result;
   }
-
-private function parsewidget($s, $name) {
-$result = array();
-$result['id'] = $this->extractwidgetid($s);
-        if ($item = $this->parsetag($s, 'item', '%s')) {
-          $result['item'] = $item;
-        } else {
-          $result['item'] = $this->GetDefaultWidgetItem($name);
-        }
-        $result[0] = $s;
-return $result;
-}
-
-private function extractwidgetid($s) {
-    $result = '';
-$tag = '<!--item-->';
-    if(is_int($i = strpos($s, $tag))) {
-$s = substr($s, 0, $i);
-if (is_int($i = strrpos($s, '<'))) {
-$s = substr($s, $i);
-    if ($id = tcontentfilter::getidtag('*', $s)) { 
-      $result = $id;
-}
-}
-}
+  
+  private function parsewidget($s, $name) {
+    $result = array();
+    $result['id'] = $this->extractwidgetid($s);
+    if ($item = $this->parsetag($s, 'item', '%s')) {
+      $result['item'] = $item;
+    } else {
+      $result['item'] = $this->GetDefaultWidgetItem($name);
+    }
+    $result[0] = $s;
     return $result;
-}
+  }
+  
+  private function extractwidgetid($s) {
+    $result = '';
+    $tag = '<!--item-->';
+    if(is_int($i = strpos($s, $tag))) {
+      $s = substr($s, 0, $i);
+      if (is_int($i = strrpos($s, '<'))) {
+        $s = substr($s, $i);
+        if ($id = tcontentfilter::getidtag('*', $s)) {
+          $result = $id;
+        }
+      }
+    }
+    return $result;
+  }
   
   //manager
   public function getabout($name) {

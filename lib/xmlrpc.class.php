@@ -87,11 +87,11 @@ class TXMLRPC extends titems {
     
     if (empty($class)) {
       if (function_exists($func)) {
-try {
-        return call_user_func_array($func, $args);
-    } catch (Exception $e) {
-return new IXR_Error($e->getCode(), $e->getMessage());
-}
+        try {
+          return call_user_func_array($func, $args);
+        } catch (Exception $e) {
+          return new IXR_Error($e->getCode(), $e->getMessage());
+        }
       } else {
         $this->delete($method);
         return new IXR_Error(-32601, "server error. requested function \"$Func\" does not exist.");
@@ -110,11 +110,11 @@ return new IXR_Error($e->getCode(), $e->getMessage());
       }
       */
       //return $obj->$func($args);
-try {
+      try {
         return call_user_func_array(array($obj, $func), $args);
-    } catch (Exception $e) {
-return new IXR_Error($e->getCode(), $e->getMessage());
-}
+      } catch (Exception $e) {
+        return new IXR_Error($e->getCode(), $e->getMessage());
+      }
     }
   }
   
@@ -147,17 +147,17 @@ class TXMLRPCAbstract extends tevents {
   public function auth($login, $password, $group) {
     global $options;
     if ($options->auth($login, $password))  {
-if (($options->group == 'admin') || ($options->group == $group) || ($group == 'nobody')) return true;
-    $groups = tusergroups::instance();
-if ($groups->hasright($options->group, $group)) return true;
-}
-throw new Exception('Bad login/pass combination.', 403);
-}
+      if (($options->group == 'admin') || ($options->group == $group) || ($group == 'nobody')) return true;
+      $groups = tusergroups::instance();
+      if ($groups->hasright($options->group, $group)) return true;
+    }
+    throw new Exception('Bad login/pass combination.', 403);
+  }
   
-public function xerror($code, $msg) {
-return new IXR_Error($code, $msg);
-}
-
+  public function xerror($code, $msg) {
+    return new IXR_Error($code, $msg);
+  }
+  
 }//class
 
 ?>

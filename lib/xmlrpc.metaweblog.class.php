@@ -90,7 +90,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   //forward implementation
   public function wp_newPage(&$args) {
     if (!$this->canlogin($args, 1))  return $this->error;
-
+    
     $menus = tmenus::instance();
     $menu = tmenu::instance(0);
     $menu->status = $args[4] == 'publish' ? 'published' : 'draft';
@@ -101,7 +101,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   protected function  WPAssignPage(array &$struct, tmenu $menu) {
     if(isset($struct["wp_slug"])) {
-$linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::instance();
       $menu->url = $linkgen->AddSlashes($struct['wp_slug']);
     }
     
@@ -127,7 +127,7 @@ $linkgen = tlinkgenerator::instance();
   
   protected function  MWSetPost(array &$struct, tpost $post) {
     if(isset($struct["wp_slug"])) {
-$linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::instance();
       $post->url = $linkgen->AddSlashes($struct["wp_slug"] . '/');
     }
     
@@ -160,11 +160,11 @@ $linkgen = tlinkgenerator::instance();
   
   public function wp_editPage(&$args) {
     if (!$this->canlogin($args, 2)) return $this->Error;
-
+    
     $id	= (int) $args[1];
     $menus = tmenus::instance();
     if (!$menus->itemexists($id))  return new IXR_Error(404, "Sorry, no such page.");
-
+    
     $menu= tmenu::instance($id);
     $struct	= &$args[4];
     $menu->status = $args[5] == 'publish' ? 'published' : 'draft';
@@ -176,16 +176,16 @@ $linkgen = tlinkgenerator::instance();
   public function getCategories(&$args) {
     global $options;
     if (!$this->canlogin($args,1)) return $this->Error;
-
+    
     $categories = tcategories::instance();
-if (dbversion) {
-global $db;
-$res = $db->query("select $categories->thistable.*, $db->urlmap.url as url  from $categories->thistable,  $db->urlmap
+    if (dbversion) {
+      global $db;
+      $res = $db->query("select $categories->thistable.*, $db->urlmap.url as url  from $categories->thistable,  $db->urlmap
       where $db->urlmap.id  = $categories->thistable.idurl");
-$items =  $res->fetchAll(PDO::FETCH_ASSOC);
-} else {
-    $Items = &$categories->items;
-}
+      $items =  $res->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+      $Items = &$categories->items;
+    }
     $result = array();
     foreach ( $Items as $item) {
       $result[] = array(
@@ -209,7 +209,7 @@ $items =  $res->fetchAll(PDO::FETCH_ASSOC);
     }
     
     if (!$this->canlogin($args, 1))  return $this->Error;
-
+    
     $posts = tposts::instance();
     $post = tpost::instance(0);
     $post->status = $args[4] == 'publish' ? 'published' : 'draft';
@@ -225,11 +225,11 @@ $items =  $res->fetchAll(PDO::FETCH_ASSOC);
     }
     
     if (!$this->canlogin($args, 1))  return $this->Error;
-
+    
     $id=(int) $args[0];
     $posts = tposts::instance();
     if (!$posts->itemexists($id))  return new IXR_Error(404, "Invalid post id.");
-
+    
     $post = tpost::instance($id);
     $post->status = $args[4] == 'publish' ? 'published' : 'draft';
     $this->MWSetPost($struct, $post);
@@ -239,17 +239,17 @@ $items =  $res->fetchAll(PDO::FETCH_ASSOC);
   
   public function getPost(&$args) {
     if (!$this->canlogin($args, 1))  return $this->Error;
-
+    
     $id=(int) $args[0];
     $posts = tposts::instance();
     if (!$posts->itemexists($id))  return new IXR_Error(404, "Invalid post id.");
-
+    
     $post = tpost::instance($id);
     return $this->GetStruct($post);;
   }
   
   private function GetStruct(tpost $post) {
-global $options;
+    global $options;
     return array(
     'dateCreated' => new IXR_Date($post->date),
     'userid' => (string) $post->author,
@@ -275,11 +275,11 @@ global $options;
   
   public function getRecentPosts(&$args) {
     if (!$this->canlogin($args, 1))  return $this->Error;
-
+    
     $count = (int) $args[3];
     $posts = tposts::instance();
     $list = $posts->getrecent($count);
-$posts->loaditems($list);
+    $posts->loaditems($list);
     $result = array();
     foreach ($list as $id) {
       $post = tpost::instance($id);
@@ -292,7 +292,7 @@ $posts->loaditems($list);
   public function newMediaObject(&$args) {
     global $options;
     if (!$this->canlogin($args, 1))  return $this->Error;
-
+    
     $data        = &$args[3];
     $filename = $data['name'] ;
     $mimetype =$data['type'];
@@ -302,11 +302,11 @@ $posts->loaditems($list);
       return new IXR_Error(500, "Empty filename");
     }
     
-      $parser = tmediaparser::instance();
+    $parser = tmediaparser::instance();
     $id = $parser->upload($filename, $data['bits'], '', $overwrite );
     if (!$id)  return new IXR_Error(500, "Could not write file $name");
-$files = tfiles::instance();
-$item = $files->getitem($id);
+    $files = tfiles::instance();
+    $item = $files->getitem($id);
     
     return array(
     'file' => $item['filename'],
