@@ -9,7 +9,7 @@
 class toptions extends tevents {
   public $user;
   public $group;
-public $admincookie;
+  public $admincookie;
   public $gmt;
   public $errorlog;
   private $modified;
@@ -26,16 +26,16 @@ public $admincookie;
     $this->gmt = date('Z');
     $this->errorlog = '';
     $this->modified = false;
-$this->admincookie = false;
+    $this->admincookie = false;
   }
   
   public function load() {
-if (!parent::load()) return false;
+    if (!parent::load()) return false;
     $this->modified = false;
-$this->admincookie = $this->cookieenabled && $this->authcookie();
-      date_default_timezone_set($this->timezone);
-      $this->gmt = date('Z');
-return true;
+    $this->admincookie = $this->cookieenabled && $this->authcookie();
+    date_default_timezone_set($this->timezone);
+    $this->gmt = date('Z');
+    return true;
   }
   
   public function savemodified() {
@@ -98,31 +98,31 @@ return true;
     }
     $this->unlock();
   }
-
+  
   public function authcookie() {
-if (empty($_COOKIE['admin']))  return false;
-if ($this->cookie == $_COOKIE['admin']) {
-if ($this->cookieexpired < time()) return false;
-$this->user = 1;
+    if (empty($_COOKIE['admin']))  return false;
+    if ($this->cookie == $_COOKIE['admin']) {
+      if ($this->cookieexpired < time()) return false;
+      $this->user = 1;
     } else {
       $users = tusers::instance();
       if (!($this->user = $users->authcookie($_COOKIE['admin']))) return false;
     }
     
     $this->updategroup();
-return true;
-}
+    return true;
+  }
   
   public function auth($login, $password) {
-if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
+    if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
     if ($login == $this->login) {
-    if ($this->password != md5("$login:$this->realm:$password"))  return false;
+      if ($this->password != md5("$login:$this->realm:$password"))  return false;
       $this->user = 1;
     } else {
       $users = tusers::instance();
       if (!($this->user = $users->auth($login, $password))) return false;
     }
-        $this->updategroup();
+    $this->updategroup();
     return true;
   }
   

@@ -149,8 +149,7 @@ parent::__construct("{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbc
     return $this->update(implode(', ', $list), 'id = '. $a['id']);
   }
   
-  public
-  function UpdateProps($obj, $props) {
+  public function UpdateProps($obj, $props) {
     $list = array();
     foreach ($props  As $name) {
       if ($name == 'id') continue;

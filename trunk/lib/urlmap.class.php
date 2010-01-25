@@ -127,7 +127,7 @@ class turlmap extends titems {
       } else {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
-if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
+      if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
     }
     return $paths['cache'] . $this->cachefilename;
   }
@@ -156,7 +156,7 @@ if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
     $source = getinstance($item['class']);
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
-//tfiler::log($s);
+      //tfiler::log($s);
       if ($s == 404) return $this->notfound404();
     } else {
       $template = ttemplate::instance();
@@ -329,8 +329,8 @@ if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
   
   public function redir301($to) {
     global $options;
-//tfiler::log($to);
-//tfiler::log(var_export($_COOKIE, true));
+    //tfiler::log($to);
+    //tfiler::log(var_export($_COOKIE, true));
     self::redir($options->url . $to);
   }
   

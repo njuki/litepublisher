@@ -15,15 +15,15 @@ class ttemplatecomments extends tdata {
 public function load() {}
 public function save() {}
   
-
-public function getadminhead() {
-global $options, $template;
-$theme = ttheme::instance();
-$template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
-return "<script type=\"text/javascript\" src=\"$options->files/files/js/moderate.js\"></script>
-<script type=\"text/javascript\" src=\"$options->files/files/js/admin{$options->language}.js\"></script>\n";
-}
-
+  
+  public function getadminhead() {
+    global $options, $template;
+    $theme = ttheme::instance();
+  $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
+    return "<script type=\"text/javascript\" src=\"$options->files/files/js/moderate.js\"></script>
+  <script type=\"text/javascript\" src=\"$options->files/files/js/admin{$options->language}.js\"></script>\n";
+  }
+  
   public function getcount($count) {
     $l = &tlocal::$data['comment'];
     switch($count) {

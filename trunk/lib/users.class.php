@@ -76,24 +76,24 @@ class tusers extends titems {
     }
     return  false;
   }
-
-public function authcookie($cookie) {
-if (empty($cookie)) return false;
-foreach ($this->items as $id => $item) {
-if ($cookie == $item['cookie']) {
-if ($item['expired'] < time()) return  false;
-return $id;
-}
-}
-return false;
-}
+  
+  public function authcookie($cookie) {
+    if (empty($cookie)) return false;
+    foreach ($this->items as $id => $item) {
+      if ($cookie == $item['cookie']) {
+        if ($item['expired'] < time()) return  false;
+        return $id;
+      }
+    }
+    return false;
+  }
   
   public function getgroupname($id) {
     $groups = tusergroups::instance();
     return $groups->items[$this->items[$id]['group']]['name'];
   }
   
-    public function clearcookie($id) {
+  public function clearcookie($id) {
     $this->setcookies($id, '', 0);
   }
   

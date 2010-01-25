@@ -61,12 +61,12 @@ class tauthdigest extends tevents {
   
   public function auth() {
     global $options;
-if ($this->logoutneeded) {
-$this->logoutneeded = false;
-$this->save();
-return false;
-}
-
+    if ($this->logoutneeded) {
+      $this->logoutneeded = false;
+      $this->save();
+      return false;
+    }
+    
     if ($this->nonce == '') $this->newnonce();
     if ($digest  = $this->GetDigestHeader()) {
       $digest  = substr($digest,0,7) == 'Digest ' ?  substr($digest, strpos($digest, ' ') + 1) : $digest ;
@@ -122,12 +122,12 @@ return false;
   public function logout() {
     global $options;
     if ($options->cookieenabled) {
-$this->setcookies('', 0);
-    } 
-$this->lock();
-      $this->newnonce();
-$this->logoutneeded = true;
-$this->unlock();
+      $this->setcookies('', 0);
+    }
+    $this->lock();
+    $this->newnonce();
+    $this->logoutneeded = true;
+    $this->unlock();
   }
   
   public function setcookies($cookie, $expired) {

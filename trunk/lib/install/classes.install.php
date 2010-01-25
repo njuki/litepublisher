@@ -48,9 +48,9 @@ function doinstallclasses() {
   $urlmap->lock();
   $posts = tposts::instance();
   $posts->lock();
-
-$xmlrpc = TXMLRPC::instance();
-$xmlrpc->lock();
+  
+  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc->lock();
   //tdata::$GlobalLock = true;
   foreach( $classes->items as $class => $item) {
     //echo "$class\n";
@@ -58,8 +58,8 @@ $xmlrpc->lock();
     $obj = getinstance($class);
     if (method_exists($obj, 'install')) $obj->install();
   }
-
-$xmlrpc->unlock();
+  
+  $xmlrpc->unlock();
   $posts->unlock();
   $urlmap->unlock();
 }

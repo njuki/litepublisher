@@ -90,7 +90,7 @@ class tabstractcron extends tevents {
   
   public function ping() {
     global $options;
-$urlmap = turlmap::instance();
+    $urlmap = turlmap::instance();
     $this->AddToChain($urlmap->host, $options->subdir . $this->url);
     $this->PingHost($urlmap->host, $options->subdir . $this->url);
   }

@@ -87,7 +87,7 @@ class tstdwidgets extends titems {
   
   public function xmlrpcgetwidget($name) {
     if (!isset($this->items[$name])) throw new Exception('Widget not found.', 404);
-return $this->getcontent($name);
+    return $this->getcontent($name);
   }
   
   public function getwidget($id, $sitebar) {
@@ -99,9 +99,9 @@ return $this->getcontent($name);
     $result = '';
     $title = $this->items[$name]['title'];
     if ($this->items[$name]['ajax'] && !$this->disableajax) {
-$theme = ttheme::instance();
-$id = $theme->sitebars->$sitebar->$name->id;
-    $title = "<a onclick=\"loadwidget('$name', '$id')\">$title</a>";
+      $theme = ttheme::instance();
+      $id = $theme->sitebars->$sitebar->$name->id;
+      $title = "<a onclick=\"loadwidget('$name', '$id')\">$title</a>";
       $content = '';
     } elseif ($name == 'comments') {
       $content = $this->getcommentswidget($id);

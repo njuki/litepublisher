@@ -9,7 +9,7 @@
 function tcontactformInstall($self) {
   $html = THtmlResource::instance();
   $html->section = 'installation';
-$lang = tlocal::instance('installation');
+  $lang = tlocal::instance('installation');
   
   $self->order = 10;
   $self->title =  tlocal::$data['installation']['contacttitle'];
