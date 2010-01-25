@@ -289,7 +289,11 @@ rpc.ServiceProxy.prototype.__callMethod = function(methodName, params, successHa
 					if(xhr.readyState == 4){
 						//XML-RPC
 						if(instance.__protocol == 'XML-RPC'){
+try {
 							var response = instance.__getXMLRPCResponse(xhr, requestInfo.id);
+ } catch(e) {
+alert('Error! ' + e.message);
+}
 							instance.__doCallback(response);
 						}
 						//JSON-RPC
