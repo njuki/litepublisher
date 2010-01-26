@@ -80,10 +80,17 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   protected function MWSetDate(array &$struct, $post) {
-    if (empty($struct['dateCreated'])) {
-      $post->posted = time();
-    } else {
+    if (!empty($struct['dateCreated'])) {
       $post->posted = $struct['dateCreated']->getTimestamp();
+} elseif (!empty($struct['pubDate'])) {
+if (is_object($struct['pubDate'])) {
+      $post->posted = $struct['pubDate']->getTimestamp();
+} else {
+      $post->pubdate = $struct['pubDate'];
+}
+} else {
+      $post->posted = time();
+}
     }
   }
   
@@ -124,38 +131,66 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     $this->MWSetDate($struct, $post);
   }
-  
+
+/* <item> in RSS 2.0, providing a rich variety of item-level metadata, with well-understood applications. 
+The three basic elements are title, link and description.  */
   protected function  MWSetPost(array &$struct, tpost $post) {
-    if(isset($struct["wp_slug"])) {
-      $linkgen = tlinkgenerator::instance();
-      $post->url = $linkgen->AddSlashes($struct["wp_slug"] . '/');
-    }
-    
-    if(isset($struct["wp_password"])) {
-      $post->password = $struct["wp_password"];
-    }
-    
     $post->title = $struct['title'];
-    
     $more = isset($struct['mt_text_more']) ? trim($struct['mt_text_more']) : '';
     if ($more == '') {
       $post->content = $struct['description'];
     } else {
-      $post->content = $struct['description']. '[more '. TLocal::$data['post']['more'] ."]\n". $more;
+$morelink = sprintf("\n<!--more %s-->\n", tlocal::$data['post']['more']);
+      $post->content = $struct['description']. $morelink . $more;
     }
-    
+
     $excerpt =isset($struct['mt_excerpt']) ? trim($struct['mt_excerpt']) : '';
     if ($excerpt != '') $post->excerpt = $excerpt;
-    
-    $this->MWSetDate($struct, $post);
-    
-    if (!empty($struct['mt_keywords'])) {
-      $post->tagnames = $struct['mt_keywords'];
-    }
     
     if (isset($struct['categories']) && is_array($struct['categories'])) {
       $post->catnames = $struct['categories'];
     }
+
+    if(isset($struct["wp_slug"])) {
+      $linkgen = tlinkgenerator::instance();
+      $post->url = $linkgen->AddSlashes($struct["wp_slug"] . '/');
+     elseif (!empty($struct['link'])) {
+$post->link = $struct['link'];
+     elseif (!empty($struct['guid'])) {
+$post->link = $struct['guid'];
+     elseif (!empty($struct['permaLink'])) {
+$post->link = $struct['permaLink'];
+}
+
+        if(isset($struct["wp_password"])) {
+      $post->password = $struct["wp_password"];
+    }
+    
+    if (!empty($struct['mt_keywords'])) {
+      $post->tagnames = $struct['mt_keywords'];
+    }
+
+    $this->MWSetDate($struct, $post);    
+
+/* not supported yet
+if (isset($struct['flNotOnHomePage']) && $struct['flNotOnHomePage']) {
+//exclude post from homepage
+}
+
+if (!empty($struct['enclosure'])) {
+//enclosure Describes a media object that is attached to the item.  
+<enclosure> is an optional sub-element of <item>.
+
+It has three required attributes. url says where the enclosure is located, length says how big it is in bytes, and type says what its type is, a standard MIME type.
+
+The url must be an http url.
+
+<enclosure url="http://www.scripting.com/mp3s/weatherReportSuite.mp3" length="12216320" type="audio/mpeg" />
+
+A use-case narrative for this element is here.
+}
+
+*/
   }
   
   public function wp_editPage(&$args) {
@@ -172,10 +207,12 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $menus->edit($post);
     return true;
   }
-  
-  public function getCategories(&$args) {
+  /* returns struct. 
+The struct returned contains one struct for each category, containing the following elements: description, htmlUrl and rssUrl. */
+
+  public function getCategories($blogid, $username, $password) {
     global $options;
-    if (!$this->canlogin($args,1)) return $this->Error;
+$this->auth($username, $password, 'editor');
     
     $categories = tcategories::instance();
     if (dbversion) {
@@ -202,47 +239,68 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     return $result;
   }
   
-  public function newPost(&$args) {
-    $struct = &$args[3];
+//returns string
+  public function newPost($blogid, $username, $password, $struct, $publish) {
+$this->auth($username, $password, 'editor');
+
     if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
       return (string) $this->wp_newPage($args);
     }
     
-    if (!$this->canlogin($args, 1))  return $this->Error;
-    
     $posts = tposts::instance();
     $post = tpost::instance(0);
-    $post->status = $args[4] == 'publish' ? 'published' : 'draft';
+
+switch ($publish) {
+case 1:
+case true:
+case 'publish':
+    $post->status = 'published';
+break;
+
+default:
+    $post->status =  'draft';
+}
+
     $this->MWSetPost($struct, $post);
-    $posts->add($post);
-    return (string) $post->id;
+    $id = $posts->add($post);
+    return (string) $id;
   }
   
-  public function editPost(&$args) {
-    $struct = &$args[3];
+// returns true
+  public function editPost($postid, $username, $password, $struct, $publish) {
+$this->auth($username, $password, 'editor');
+
     if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
       return (string) $this->wp_editPage($args);
     }
-    
-    if (!$this->canlogin($args, 1))  return $this->Error;
-    
-    $id=(int) $args[0];
+
+$postid = (int)$postid;    
     $posts = tposts::instance();
-    if (!$posts->itemexists($id))  return new IXR_Error(404, "Invalid post id.");
+    if (!$posts->itemexists($postid))  return $this->xerror(404, "Invalid post id.");
     
-    $post = tpost::instance($id);
-    $post->status = $args[4] == 'publish' ? 'published' : 'draft';
+    $post = tpost::instance($postid);
+switch ($publish) {
+case 1:
+case true:
+case 'publish':
+    $post->status = 'published';
+break;
+
+default:
+    $post->status =  'draft';
+}
+
     $this->MWSetPost($struct, $post);
     $posts->edit($post);
     return true;
   }
   
-  public function getPost(&$args) {
-    if (!$this->canlogin($args, 1))  return $this->Error;
-    
-    $id=(int) $args[0];
+// returns struct
+  public function getPost($id, $username, $password) {
+$this->auth($username, $password, 'editor');
+    $id=(int) $id;
     $posts = tposts::instance();
-    if (!$posts->itemexists($id))  return new IXR_Error(404, "Invalid post id.");
+    if (!$posts->itemexists($id))  return $this->xerror(404, "Invalid post id.");
     
     $post = tpost::instance($id);
     return $this->GetStruct($post);;
@@ -251,7 +309,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   private function GetStruct(tpost $post) {
     global $options;
     return array(
-    'dateCreated' => new IXR_Date($post->date),
+    'dateCreated' => new IXR_Date($post->posted),
     'userid' => (string) $post->author,
     'postid' =>  (string) $post->id,
     'description' => $post->rawcontent,
@@ -269,14 +327,14 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     'wp_author_id' => $post->author,
     'wp_author_display_name'	=> 'admin',
     'date_created_gmt' => new IXR_Date($post->posted- $options->gmt),
-    'publish' => $post->status == 'published'
+    'publish' => $post->status == 'published' ? 1 : 0
     );
   }
   
-  public function getRecentPosts(&$args) {
-    if (!$this->canlogin($args, 1))  return $this->Error;
-    
-    $count = (int) $args[3];
+// returns array of structs
+  public function getRecentPosts($blogid, $username, $password, $numberOfPosts) {
+$this->auth($username, $password, 'editor');
+    $count = (int) $numberOfPosts;
     $posts = tposts::instance();
     $list = $posts->getrecent($count);
     $posts->loaditems($list);
@@ -289,22 +347,22 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     return $result;
   }
   
-  public function newMediaObject(&$args) {
+// returns struct
+  public function newMediaObject($blogid, $username, $password, $struct) {
     global $options;
-    if (!$this->canlogin($args, 1))  return $this->Error;
+$this->auth($username, $password, 'editor');
+
+//The struct must contain at least three elements, name, type and bits.
+    $filename = $struct['name'] ;
+    $mimetype =$struct['type'];
+    $overwrite = isset($struct["overwrite"]) && $struct["overwrite"]  ? true : false;
     
-    $data        = &$args[3];
-    $filename = $data['name'] ;
-    $mimetype =$data['type'];
-    $overwrite = isset($data["overwrite"]) && ($data["overwrite"] == true) ? true : false;
-    
-    if (empty($filename)) {
-      return new IXR_Error(500, "Empty filename");
-    }
+    if (empty($filename)) return $this->xerror(500, "Empty filename");
+
     
     $parser = tmediaparser::instance();
-    $id = $parser->upload($filename, $data['bits'], '', $overwrite );
-    if (!$id)  return new IXR_Error(500, "Could not write file $name");
+    $id = $parser->upload($filename, $struct['bits'], '', $overwrite );
+    if (!$id)  return $this->xerror(500, "Could not write file $name");
     $files = tfiles::instance();
     $item = $files->getitem($id);
     
@@ -315,6 +373,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     );
   }
   
-}
+}//class
 
 ?>

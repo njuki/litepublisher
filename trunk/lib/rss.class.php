@@ -148,7 +148,7 @@ class trss extends tevents {
     
   }
   
-  public function AddRSSPost(&$post) {
+  public function AddRSSPost(tpost $post) {
     global $options;
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $post->title);
