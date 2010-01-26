@@ -127,14 +127,13 @@ class turlmap extends titems {
       } else {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
-      if ($options->admincookie) $this->cachefilename = 'admin.' . $this->cachefilename;
     }
     return $paths['cache'] . $this->cachefilename;
   }
   
   private function  printcontent(array $item) {
     global $options;
-    if ($options->cache) {
+    if ($options->cache && !$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
       if (($time = @filemtime ($cachefile)) && (($time  + $options->expiredcache) >= time() )) {
@@ -163,7 +162,7 @@ class turlmap extends titems {
       $s = $template->request($source);
     }
     eval('?>'. $s);
-    if ($options->cache && $source->cache) {
+    if ($options->cache && $source->cache &&!$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);
