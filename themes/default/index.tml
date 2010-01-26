@@ -357,7 +357,9 @@ $menu.content
     <div class="footer-recent-comments">
     <h4>%s</h4>
 	<ul id="widgetcomments">
-%s
+<!--item-->
+<li><strong><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>
+<!--/item-->
       </ul>
     </div>
 <!--/comments-->
