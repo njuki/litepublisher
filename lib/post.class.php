@@ -421,7 +421,7 @@ class tpost extends titem implements  itemplate {
   
   public function getcommentpages() {
     global $options;
-    if (!$options->commentpages) return 1;
+    if (!$options->commentpages || ($this->commentscount <= $options->commentsperpage)) return 1;
     return ceil($this->commentscount / $options->commentsperpage);
   }
   

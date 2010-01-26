@@ -110,13 +110,16 @@ class tcomments extends titems {
     if ($options->admincookie) {
       $theme = ttheme::instance();
       tlocal::loadlang('admin');
+      $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
       $post = tpost::instance($this->pid);
       if ($post->commentpages == $urlmap->page) {
         $result .= $this->getcontentwhere('hold', '');
       } else {
         //добавить пустой список задержанных
         $commentsid = $theme->content->post->templatecomments->comments->commentsid;
+        $tml = $theme->content->post->templatecomments->comments->__tostring();
         $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+        $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
         $result .= sprintf($tml, '', 1);
       }
       
@@ -128,6 +131,8 @@ class tcomments extends titems {
   }
   
   public function getholdcontent($idauthor) {
+    global $options;
+    if ($options->admincookie) return '';
     return $this->getcontentwhere('hold', "and $this->thistable.author = $idauthor");
   }
   
@@ -175,10 +180,13 @@ class tcomments extends titems {
     
     
     $tml = $theme->content->post->templatecomments->comments->__tostring();
-    if ($options->admincookie && ($status == 'hold')) {
+    if ($status == 'hold') {
+      $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
       $commentsid = $theme->content->post->templatecomments->comments->commentsid;
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
-    } else {
+    }
+    
+    if (!$options->admincookie) {
       if ($result == '') return '';
     }
     return sprintf($tml, $result, $from + 1);
