@@ -80,33 +80,37 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   protected function MWSetDate(array &$struct, $post) {
-    if (!empty($struct['dateCreated'])) {
-      $post->posted = $struct['dateCreated']->getTimestamp();
-} elseif (!empty($struct['pubDate'])) {
-if (is_object($struct['pubDate'])) {
-      $post->posted = $struct['pubDate']->getTimestamp();
+foreach (array('dateCreated', 'pubDate') as $name) {
+    if (!empty($struct[$name])) {
+if (is_object($struct[$name])) {
+      $post->posted = $struct[$name]->getTimestamp();
 } else {
-      $post->pubdate = $struct['pubDate'];
+      $post->pubdate  = $struct[$name]
 }
+return;
+}}
 } else {
-      $post->posted = time();
-}
-    }
+$post->postede = time();
   }
   
   //forward implementation
-  public function wp_newPage(&$args) {
-    if (!$this->canlogin($args, 1))  return $this->error;
-    
-    $menus = tmenus::instance();
+  public function wp_newPage($blogid, $username, $password, $struct, $publish) {
+$this->auth($username, $password, 'editor');
+        $menus = tmenus::instance();
     $menu = tmenu::instance(0);
-    $menu->status = $args[4] == 'publish' ? 'published' : 'draft';
-    $struct = &$args[3];
+    $menu->status = $publish ? 'published' : 'draft';
     $this->WPAssignPage($struct, $menu);
     return (int) $menus->add($menu);
   }
   
   protected function  WPAssignPage(array &$struct, tmenu $menu) {
+    $menu->title = $struct['title'];
+    if (empty($struct['mt_text_more'])) {
+    $menu->content = $struct['description'];
+} else {
+      $menu->content = $struct['description'] . $struct['mt_text_more'];
+    }
+    
     if(isset($struct["wp_slug"])) {
       $linkgen = tlinkgenerator::instance();
       $menu->url = $linkgen->AddSlashes($struct['wp_slug']);
@@ -123,13 +127,10 @@ if (is_object($struct['pubDate'])) {
     if(isset($struct["wp_page_order"])) {
       $menu->order = (int) $struct["wp_page_order"];
     }
-    $menu->title = $struct['title'];
-    $menu->content = $struct['description'];
-    if ($struct['mt_text_more']) {
-      $menu->content = $post->rawcontent . "\n[more " . TLocal::$data['post']['more'] . "]\n".  $struct['mt_text_more'];
-    }
-    
-    $this->MWSetDate($struct, $post);
+
+    $this->MWSetDate($struct, $menu);
+
+/* custom_fields is not supported */
   }
 
 /* <item> in RSS 2.0, providing a rich variety of item-level metadata, with well-understood applications. 
@@ -171,6 +172,7 @@ $post->link = $struct['permaLink'];
     }
 
     $this->MWSetDate($struct, $post);    
+$this->MWSetPingCommentStatus($struct, $post);
 
 /* not supported yet
 if (isset($struct['flNotOnHomePage']) && $struct['flNotOnHomePage']) {
@@ -193,20 +195,18 @@ A use-case narrative for this element is here.
 */
   }
   
-  public function wp_editPage(&$args) {
-    if (!$this->canlogin($args, 2)) return $this->Error;
-    
-    $id	= (int) $args[1];
-    $menus = tmenus::instance();
-    if (!$menus->itemexists($id))  return new IXR_Error(404, "Sorry, no such page.");
-    
-    $menu= tmenu::instance($id);
-    $struct	= &$args[4];
-    $menu->status = $args[5] == 'publish' ? 'published' : 'draft';
-    $this->WPAssignPage($struct, $post);
-    $menus->edit($post);
+  public function wp_editPage($blogid, $id, $username, $password, $struct, $publish) {
+$this->auth($username, $password, 'editor');
+$id = (int) $id;
+        $menus = tmenus::instance();
+    if (!$menus->itemexists($id))  return xerror(404, "Sorry, no such page.");
+    $menu = tmenu::instance($id);
+    $menu->status = $publish ? 'published' : 'draft';
+    $this->WPAssignPage($struct, $menu);
+$menus->edit($menu);
     return true;
   }
+
   /* returns struct. 
 The struct returned contains one struct for each category, containing the following elements: description, htmlUrl and rssUrl. */
 
@@ -241,12 +241,11 @@ $this->auth($username, $password, 'editor');
   
 //returns string
   public function newPost($blogid, $username, $password, $struct, $publish) {
-$this->auth($username, $password, 'editor');
-
     if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
-      return (string) $this->wp_newPage($args);
+      return 'menu_' .  $this->wp_newPage($blogid, $username, $password, $struct, $publish);
     }
-    
+
+$this->auth($username, $password, 'editor');    
     $posts = tposts::instance();
     $post = tpost::instance(0);
 
@@ -268,12 +267,11 @@ default:
   
 // returns true
   public function editPost($postid, $username, $password, $struct, $publish) {
-$this->auth($username, $password, 'editor');
-
     if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
-      return (string) $this->wp_editPage($args);
+      return  $this->wp_editPage(0, $postid, $username, $password, $struct, $publish);
     }
 
+$this->auth($username, $password, 'editor');
 $postid = (int)$postid;    
     $posts = tposts::instance();
     if (!$posts->itemexists($postid))  return $this->xerror(404, "Invalid post id.");
