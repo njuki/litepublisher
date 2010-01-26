@@ -1039,7 +1039,7 @@ class turlmap extends titems {
       } else {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
-      if ($options->admincookie) $this->cachefilename = 'admin.' . cachefilename;
+      if ($options->admincookie) $this->cachefilename = 'admin.' . $this->cachefilename;
     }
     return $paths['cache'] . $this->cachefilename;
   }
