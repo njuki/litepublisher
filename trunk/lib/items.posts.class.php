@@ -186,9 +186,9 @@ class titemspostsowner extends titemsposts {
     if (!isset($owner)) return;
     parent::__construct();
     $this->owner = $owner;
+    unset($this->data);
     $this->items = &$owner->data['itemsposts'];
     $this->table = $owner->table . 'items';
-    unset($this->data);
   }
   
 public function load() { }

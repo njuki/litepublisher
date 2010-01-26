@@ -195,7 +195,14 @@ class tinstaller extends tdata {
   }
   
   public function CheckFolder($FolderName) {
-    if(!@file_exists($FolderName)) @mkdir($FolderName, 0777);
+    if(!@file_exists($FolderName)) {
+      $up = dirname($FolderName);
+      if(!@file_exists($up)) {
+        @mkdir($up, 0777);
+        @chmod($up, 0777);
+      }
+      @mkdir($FolderName, 0777);
+    }
     @chmod($FolderName, 0777);
     if(!@file_exists($FolderName) && !@is_dir($FolderName)) {
       echo "directory $FolderName is not exists. Please create directory and set permisions to 0777";

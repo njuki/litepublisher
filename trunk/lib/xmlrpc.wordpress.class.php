@@ -13,12 +13,12 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
   
   private function menutostruct($ID) {
     $id	= (int) $ID;
-        $menus = tmenus::instance();
+    $menus = tmenus::instance();
     if (!$menus->itemexists($id))  return xerror(404, "Sorry, no such page.");
     $menu = tmenu::instance($id);
-
+    
     if ($MENU->parent > 0) {
-$parent= tmenu::instance($menu->parent);
+      $parent= tmenu::instance($menu->parent);
       $ParentTitle = $parent->title;
     } else {
       $ParentTitle = "";
@@ -55,9 +55,9 @@ $parent= tmenu::instance($menu->parent);
     return$Result;
   }
   
-// return struct
+  // return struct
   public function wp_getPage($blogid, $id, $username, $password) {
-$this->auth($username, $password, 'editor');
+    $this->auth($username, $password, 'editor');
     return $this->menutostruct($id);
   }
   
@@ -70,7 +70,7 @@ $this->auth($username, $password, 'editor');
     }
     return $result;
   }
-
+  
   public function wp_getPageList($blogid, $username, $password) {
     $this->auth($username, $password, 'editor');
     $result = array();
@@ -89,11 +89,11 @@ $this->auth($username, $password, 'editor');
   
   public function wp_deletePage($blogid, $username, $password, $id) {
     $this->auth($username, $password, 'editor');
-$id = (int) $id;
+    $id = (int) $id;
     $menus = tmenus::instance();
     if (!$menus->itemexists($id))  return xerror(404, "Sorry, no such page.");
     $menus->delete($id);
-return true;
+    return true;
   }
   
   public function wp_newCategory($blogid, $username, $password, $struct) {
@@ -101,16 +101,16 @@ return true;
     $categories = tcategories::instance();
     return(int) $categories->add($struct["name"], $category["slug"]);
   }
-
+  
   public function deleteCategory ($blogid, $username, $password, $id) {
     $this->auth($username, $password, 'editor');
-$id = (int) $id;
+    $id = (int) $id;
     $categories = tcategories::instance();
-     if (!$categories->itemexists($id))  return xerror(404, "Sorry, no such page.");
-$categories->delete($id);
-return true;
+    if (!$categories->itemexists($id))  return xerror(404, "Sorry, no such page.");
+    $categories->delete($id);
+    return true;
   }
-
+  
 }//class
 
 ?>
