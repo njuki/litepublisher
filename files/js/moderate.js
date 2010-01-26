@@ -46,7 +46,7 @@ onComplete:function(responseObj){ }
 
 function moderate(list, action) {
 if (action == 'delete') {
-if (!confirm("Do you realy want to delete comment?")) return;
+if (!confirm(lang.comments.confirmdelete)) return;
 }
 
 if (client == undefined) client = createclient();
@@ -59,7 +59,7 @@ if (action == 'delete') {
 var item =document.getElementById("comment-" + list[i]);
     item.parentNode.removeChild(item);
 } else {
-movecomment(list[id], action);
+movecomment(list[i], action);
 }
 }
 },
@@ -78,10 +78,9 @@ var list = new Array();
 	for (var i = 0, n = form.elements.length; i < n; i++) {
 var elem = form.elements[i];
 		if((elem.type == 'checkbox') && (elem.checked == true)) {
-list.push(parseint(elem.value));
+list.push(parseInt(elem.value));
 		}
 	}
-
 moderate(list, action);
 }
 
