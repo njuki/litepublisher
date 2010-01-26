@@ -18,15 +18,6 @@ class titemsposts extends titems {
     $this->table = 'itemsposts';
   }
   
-  /*
-  public function load() {
-    if (!dbversion) return parent::load();
-  }
-  
-  public function save() { $this->owner->save();
-    if (!dbversion) return parent::save();
-  }
-  */
   public function add($idpost, $iditem) {
     if (dbversion) {
       $this->db->add(array(
@@ -184,11 +175,10 @@ class titemspostsowner extends titemsposts {
   private $owner;
   public function __construct($owner) {
     if (!isset($owner)) return;
-    parent::__construct();
     $this->owner = $owner;
-    unset($this->data);
     $this->items = &$owner->data['itemsposts'];
     $this->table = $owner->table . 'items';
+    $this->dbversion = $owner->dbversion;
   }
   
 public function load() { }

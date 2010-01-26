@@ -240,6 +240,8 @@ class tpost extends titem implements  itemplate {
     if ($this->commentsenabled && ($this->commentscount > 0))  {
       $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
+      $result .= "<script type=\"text/javascript\" src=\"$options->files/files/js/comments.js\"></script>
+      <script type=\"text/javascript\" src=\"$options->files/files/js/$options->language.js\"></script>\n";
     }
     if ($options->admincookie) {
       $tc = ttemplatecomments::instance();
