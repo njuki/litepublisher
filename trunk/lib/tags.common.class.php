@@ -48,7 +48,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function loaditems(array $items) {
     global  $db;
-    if (!dbversion) return;
+    if (!$this->dbversion) return;
     //исключить из загрузки загруженные посты
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
@@ -64,7 +64,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function loadall() {
     global $db;
-    if (!dbversion)  return;
+    if (!$this->dbversion)  return;
     $table = $this->thistable;
     $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
     where $table.idurl = $db->urlmap.id");
@@ -75,11 +75,15 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function load() {
-    if (!dbversion) parent::load();
+    if (!$this->dbversion) {
+      if (parent::load()) {
+        $this->itemsposts->items = &$this->data['itemsposts'];
+      }
+    }
   }
   
   public function save() {
-    if (!dbversion) parent::save();
+    if (!$this->dbversion) parent::save();
     if (!$this->locked)  {
       twidgets::expired($this);
     }
@@ -166,7 +170,7 @@ class tcommontags extends titems implements  itemplate {
     $linkgen = tlinkgenerator::instance();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
     
-    if (dbversion)  {
+    if ($this->dbversion)  {
       $id = $this->db->add(array('title' => $title));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
@@ -196,7 +200,7 @@ class tcommontags extends titems implements  itemplate {
     if (($item['title'] == $title) && ($item['url'] == $url)) return;
     if ($item['title'] != $title)  {
       $item['title'] = $title;
-      if (dbversion) $this->db->setvalue($id, 'title', $title);
+      if ($this->dbversion) $this->db->setvalue($id, 'title', $title);
     }
     
     $urlmap = turlmap::instance();
@@ -265,7 +269,7 @@ class tcommontags extends titems implements  itemplate {
     $count = (int) $count;
     if (!in_array($sortname, array('title', 'count', 'id'))) $sortname = 'title';
     
-    if (dbversion) {
+    if ($this->dbversion) {
       $table = $this->thistable;
       $q = "select $table.*, $this->urltable.url from $table, $this->urltable
       where $table.parent = 0 and $this->urltable.id= $table.idurl order by $table.";
@@ -358,7 +362,6 @@ class tcommontags extends titems implements  itemplate {
     $items = $this->itemsposts->getposts($this->id);
     $Posts = $classes->posts;
     $items = $Posts->sortbyposted($items);
-    
     $postsperpage = $this->lite ? 1000 : $options->postsperpage;
     $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
     $theme = ttheme::instance();
@@ -404,7 +407,7 @@ class ttagcontent extends tdata {
     'rawcontent' => ''
     );
     
-    if (dbversion) {
+    if ($this->owner->dbversion) {
       if ($r = $this->db->getitem($id)) $item = $r;
     } else {
       tfiler::unserialize($this->getfilename($id), $item);
@@ -416,7 +419,7 @@ class ttagcontent extends tdata {
   public function setitem($id, $item) {
     if (isset($this->items[$id]) && ($this->items[$id] == $item)) return;
     $this->items[$id] = $item;
-    if (dbversion) {
+    if ($this->owner->dbversion) {
       $item['id'] = $id;
       $this->db->insert($item);
     } else {
@@ -436,7 +439,7 @@ class ttagcontent extends tdata {
   }
   
   public function delete($id) {
-    if (dbversion) {
+    if ($this->owner->dbversion) {
       $this->db->iddelete($id);
     } else {
       @unlink($this->getfilename($id));

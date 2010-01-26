@@ -301,8 +301,8 @@ class tposts extends titems {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
     }
-    
-    $result = array_intersect_key ($this->archives, $items);
+    /* надо выбрать опубликованные посты из items, потом отсортировать */
+    $result = array_intersect_key ($this->archives, array_combine($items, $items));
     arsort($result,  SORT_NUMERIC);
     return array_keys($result);
   }

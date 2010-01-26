@@ -25,7 +25,8 @@ class tdbmanager  {
   }
   
   public function createtable($name, $struct) {
-    if (defined('debug')) $this->deletetable($name);
+    //    if (defined('debug'))
+    $this->deletetable($name);
     return $this->exec("
     create table $this->prefix$name
     ($struct)
