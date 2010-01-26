@@ -153,6 +153,10 @@ $post.content
 <!--/moderate-->
 			<cite>$comment.authorlink</cite> $lang.says:  <br />
 			<small class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></small>
+			<span class="replyquotebuttons">
+<input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
+<input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
+</span>
 <p id="commentcontent-$comment.id">
 $comment.content
 </p>
