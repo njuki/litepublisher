@@ -11,14 +11,14 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   public static function instance() {
     return getinstance(__class__);
   }
-
-// on success, array of structs containing ISO.8601 dateCreated, String userid, String postid, String title; on failure, fault  
+  
+  // on success, array of structs containing ISO.8601 dateCreated, String userid, String postid, String title; on failure, fault
   public function getRecentPostTitles($blogid , $username, $password, $count) {
     $this->auth($username, $password, 'editor');
-   $count =(int) $count;
+    $count =(int) $count;
     $posts = tposts::instance();
     $list = $posts->GetRecent($count);
-$posts->loaditems($list);
+    $posts->loaditems($list);
     $result = array();
     foreach ($list as $id) {
       $post = tpost::instance($id);
@@ -32,11 +32,11 @@ $posts->loaditems($list);
     
     return $result;
   }
-// On success, an array of structs containing String categoryId and String categoryName; on failure, fault.  
+  // On success, an array of structs containing String categoryId and String categoryName; on failure, fault.
   public function getCategoryList($blogid, $username, $password) {
     $this->auth($username, $password, 'editor');
     $categories = tcategories::instance();
-$categories->loadall();
+    $categories->loadall();
     $result = array();
     foreach ($categories->items as $id => $item) {
       $result[] = array(
@@ -49,16 +49,16 @@ $categories->loadall();
   // on success, an array of structs containing String categoryName, String categoryId, and boolean isPrimary; on failure, fault.
   public function getPostCategories($id, $username, $password) {
     $this->auth($username, $password, 'editor');
-        $id = (int) $id;
+    $id = (int) $id;
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);
     $categories = tcategories::instance();
-$categories->loaditems($post->categories);
+    $categories->loaditems($post->categories);
     $isPrimary = true;
     $result = array();
     foreach ($post->categories as $idcat) {
-$item = $categories->getitem($idcat);
+      $item = $categories->getitem($idcat);
       $result[] =array(
       'categoryName' => $Item['title'],
       'categoryId' => (string) $idcat,
@@ -69,13 +69,13 @@ $item = $categories->getitem($idcat);
     return $result;
   }
   
-// on success, boolean true value; on failure, fault
+  // on success, boolean true value; on failure, fault
   public function setPostCategories($id, $username, $password, $catlist) {
     $this->auth($username, $password, 'editor');
-        $id = (int) $id;
+    $id = (int) $id;
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
-$post = tpost::instance($id);   
+    $post = tpost::instance($id);
     $list = array();
     foreach ($CatList as  $Cat) {
       $list[] = $Cat['categoryId'];
@@ -94,34 +94,34 @@ $post = tpost::instance($id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);
-if ($post->status != 'published') return $this->xerror(403, 'Target post not published');
-$result = array();
-$pingbacks = tpingbacks::instance($id);
-if (dbversion) {
-    $items = $tpingbacks->db->getitems("post = $id and status = 'approved' order by posted");
-    foreach ($items as $item) {
-$result[] = array(
-'pingIP' => $item['ip'],
-'pingURL' => $item['url'],
-'pingTitle' => $item['title']
-);
-}
-} else {
-    foreach ($pingbacks->items as $url => $item) {
-      if (!$item['approved']) continue;
-$result[] = array(
-'pingIP' => $item['ip'],
-'pingURL' => $item['url'],
-'pingTitle' => $item['title']
-);
-}
-}
+    if ($post->status != 'published') return $this->xerror(403, 'Target post not published');
+    $result = array();
+    $pingbacks = tpingbacks::instance($id);
+    if (dbversion) {
+      $items = $tpingbacks->db->getitems("post = $id and status = 'approved' order by posted");
+      foreach ($items as $item) {
+        $result[] = array(
+        'pingIP' => $item['ip'],
+        'pingURL' => $item['url'],
+        'pingTitle' => $item['title']
+        );
+      }
+    } else {
+      foreach ($pingbacks->items as $url => $item) {
+        if (!$item['approved']) continue;
+        $result[] = array(
+        'pingIP' => $item['ip'],
+        'pingURL' => $item['url'],
+        'pingTitle' => $item['title']
+        );
+      }
+    }
     return $result;
   }
   
   public function publishPost($id, $username, $password) {
     $this->auth($username, $password, 'editor');
-        $id = (int) $id;
+    $id = (int) $id;
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);

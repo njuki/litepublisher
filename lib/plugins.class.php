@@ -44,7 +44,7 @@ class tplugins extends TItems {
     );
     $this->Save();
     $classes->Add($classname, $filename, $name);
-    $this->Added($name);return $this->autoid;
+    $this->added($name);return $this->autoid;
   }
   
   public function delete($name) {
@@ -79,6 +79,7 @@ class tplugins extends TItems {
     $add = array_diff($list, array_keys($this->items));
     $delete  = array_diff(array_keys($this->items), $list);
     $delete  = array_intersect($delete, tfiler::getdir($paths['plugins']));
+    
     $this->lock();
     foreach ($delete as $name) {
       $this->Delete($name);
