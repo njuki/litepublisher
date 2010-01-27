@@ -342,17 +342,13 @@ class SAPE_client extends SAPE_base {
      * Ccылки можно показывать по частям
      */
     function return_links($n = null, $offset = 0) {
-
         if (is_array($this->_links_page)) {
-
             $total_page_links = count($this->_links_page);
-
             if (!is_numeric($n) || $n > $total_page_links) {
                 $n = $total_page_links;
             }
 
             $links = array();
-
             for ($i = 1; $i <= $n; $i++) {
                 if ($offset > 0 && $i <= $offset) {
                     array_shift($this->_links_page);
