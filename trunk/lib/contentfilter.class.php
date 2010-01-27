@@ -6,7 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcontentfilter extends tevents {
+class tcontentfilter extends tevents 
+{
   
   public static function instance() {
     return getinstance(__class__);
@@ -176,27 +177,21 @@ $result = self::auto_p($result);
   }
 
 public static function bbcode2tag($s, $code, $tag) {
-  if (eregi("[ /$code]", $s)) {
-$up = strtoupper($code);
+  if (strpos($s, "[/$code]") !== false) {
 $low = strtolower($s);
-  $array_test_beg = split("[ $code]", $low) + split("[ $up]",$low);
-  $array_test_end = split("[ /$code]",$low) + split("[ /$up]", $low);
-  if (count($array_test_beg) == count($array_test_end)) {
-  $s = preg_replace("#[ $code]#i", "<$TAG>", $s);
-    $s = preg_replace("#[ /$code]#i", "</TAG>", $s);
+  if (substr_count($low, "[$code]") == substr_count($low, "[/$code]")) {
+  $s = str_replace("[$code]", "<$tag>", $s);
+    $s = str_replace("[/$code]", "</tag>", $s);
  }
  } 
 RETURN $s;
 }
 
 public static function simplebbcode($s){ 
-//  $s = str_replace('  ','&nbsp; ', TRIM(stripslashes($s))); 
-//  $s = preg_replace("#n#i", '<br>', $s); 
-
- $s = bbcode2tag($s, 'b', 'strong');
-  $s = bbcode2tag($s, 'I', 'EM');
-  $s = bbcode2tag($s, 'code', 'code');
-  $s = bbcode2tag($s, 'quote', 'bblockquote');
+ $s = self::bbcode2tag($s, 'b', 'strong');
+  $s = self::bbcode2tag($s, 'I', 'EM');
+  $s = self::bbcode2tag($s, 'code', 'code');
+  $s = self::bbcode2tag($s, 'quote', 'bblockquote');
   return$s; 
 } 
   
@@ -212,7 +207,7 @@ $str = preg_replace('~^[ \t]+~m', '', $str);
 $str = preg_replace('~[ \t]+$~m', '', $str);
 
 // The following regexes only need to be executed if the string contains html
-if ($html_found = (strpos($str, '<') !== FALSE) {
+if ($html_found = (strpos($str, '<') !== FALSE)) {
 // Elements that should not be surrounded by p tags
 $no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th))';
 
@@ -226,7 +221,7 @@ $str = '<p>'.trim($str).'</p>';
 $str = preg_replace('~\n{2,}~', "</p>\n\n<p>", $str);
 
 // The following regexes only need to be executed if the string contains html
-if ($html_found !== FALSE {
+if ($html_found !== FALSE) {
 // Remove p tags around $no_p elements
 $str = preg_replace('~<p>(?=</?'.$no_p.'[^>]*+>)~i', '', $str);
 $str = preg_replace('~(</?'.$no_p.'[^>]*+>)</p>~i', '$1', $str);
