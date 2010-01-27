@@ -1,7 +1,7 @@
 <?php
 
 class TAdminSapePlugin {
-private $widgets = array('TCategories', 'TArchives', 'TLinksWidget', 'TPosts', 'TMetaWidget');
+private $widgets = array('TCategories', 'TArchives', 'TLinksWidget', 'TFoaf', 'TPosts', 'TMetaWidget');
 
 public function Getcontent() {
 $plugin = &TSapePlugin::Instance();
