@@ -8,129 +8,128 @@
 
 class TXMLRPCMovableType extends TXMLRPCAbstract {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
-  
-  public function getRecentPostTitles(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    $count =(int) $args[3];
-    $Posts = &TPosts::Instance();
-    $list = $Posts->GetRecent($count);
-    $Result = array();
+
+// on success, array of structs containing ISO.8601 dateCreated, String userid, String postid, String title; on failure, fault  
+  public function getRecentPostTitles($blogid , $username, $password, $count) {
+    $this->auth($username, $password, 'editor');
+   $count =(int) $count;
+    $posts = tposts::instance();
+    $list = $posts->GetRecent($count);
+$posts->loaditems($list);
+    $result = array();
     foreach ($list as $id) {
-      $Item = &TPost::Instance($id);
-      $Result[] = array(
-      'dateCreated' => new IXR_Date($Item->date),
-      'userid' => 1,
-      'postid' => $Item->id,
-      'title' => $Item->title,
-      'date_created_gmt' => new IXR_Date($Item->date + $options->gmt)
+      $post = tpost::instance($id);
+      $result[] = array(
+      'dateCreated' => new IXR_Date($post->posted),
+      'userid' => (string) $post->author,
+      'postid' => (string) $post->id,
+      'title' => $post->title
       );
     }
     
-    return $Result;
+    return $result;
   }
-  
-  public function getCategoryList(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
-    $Categories = &TCategories::Instance();
-    $Items = &$Categories->items;
-    $Result = array();
-    foreach ($Items as $id => $Item) {
-      $Result[] = array(
+// On success, an array of structs containing String categoryId and String categoryName; on failure, fault.  
+  public function getCategoryList($blogid, $username, $password) {
+    $this->auth($username, $password, 'editor');
+    $categories = tcategories::instance();
+$categories->loadall();
+    $result = array();
+    foreach ($categories->items as $id => $item) {
+      $result[] = array(
       'categoryId' => (string) $id,
-      'categoryName' => $Item['name']
+      'categoryName' => $item['title']
       );
     }
-    return $Result;
+    return $result;
   }
-  
-  public function getPostCategories(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
-    $id = (int) $args[0];
-    $Posts = &TPosts::Instance();
-    if (!$Posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    $Post = &TPost::Instance($id);
-    $Categories = &TCategories::Instance();
-    $Items = &$Categories->items;
+  // on success, an array of structs containing String categoryName, String categoryId, and boolean isPrimary; on failure, fault.
+  public function getPostCategories($id, $username, $password) {
+    $this->auth($username, $password, 'editor');
+        $id = (int) $id;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
+    $post = tpost::instance($id);
+    $categories = tcategories::instance();
+$categories->loaditems($post->categories);
     $isPrimary = true;
-    $Result = array();
-    foreach ($Post->categories as $id) {
-      $Result =array(
-      'categoryName' => $Items[$id]['name'],
-      'categoryId' => (string) $id,
+    $result = array();
+    foreach ($post->categories as $idcat) {
+$item = $categories->getitem($idcat);
+      $result[] =array(
+      'categoryName' => $Item['title'],
+      'categoryId' => (string) $idcat,
       'isPrimary' => 			$isPrimary
       );
       $isPrimary = false;
     }
-    return $Result;
+    return $result;
   }
   
-  public function setPostCategories(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
-    $id = (int) $args[0];
-    $Posts = &TPosts::Instance();
-    if (!$Posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    
-    $CatList = $args[3];
+// on success, boolean true value; on failure, fault
+  public function setPostCategories($id, $username, $password, $catlist) {
+    $this->auth($username, $password, 'editor');
+        $id = (int) $id;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
+$post = tpost::instance($id);   
     $list = array();
     foreach ($CatList as  $Cat) {
       $list[] = $Cat['categoryId'];
     }
-    $Post = &TPost::Instance($id);
-    $Post->categories = $list;
-    $Posts->Edit($Post);
+    $post->categories = $list;
+    $posts->edit($post);
     return true;
   }
   
-  public function supportedTextFilters(&$args) {
+  public function supportedTextFilters() {
     return array();
   }
   
-  public function getTrackbackPings(&$args) {
-    $id = intval($args);
-    $Posts = &TPosts::Instance();
-    if (!$Posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    $Post = &TPost::Instance($id);
-    //not implemeted
-    return $Result;
+  public function getTrackbackPings($id) {
+    $id = (int) $id;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
+    $post = tpost::instance($id);
+if ($post->status != 'published') return $this->xerror(403, 'Target post not published');
+$result = array();
+$pingbacks = tpingbacks::instance($id);
+if (dbversion) {
+    $items = $tpingbacks->db->getitems("post = $id and status = 'approved' order by posted");
+    foreach ($items as $item) {
+$result[] = array(
+'pingIP' => $item['ip'],
+'pingURL' => $item['url'],
+'pingTitle' => $item['title']
+);
+}
+} else {
+    foreach ($pingbacks->items as $url => $item) {
+      if (!$item['approved']) continue;
+$result[] = array(
+'pingIP' => $item['ip'],
+'pingURL' => $item['url'],
+'pingTitle' => $item['title']
+);
+}
+}
+    return $result;
   }
   
-  public function publishPost(&$args) {
-    if (!$this->CanLogin($args, 1)) {
-      return $this->Error;
-    }
-    
-    $id = (int) $args[0];
-    $Posts = &TPosts::Instance();
-    if (!$Posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    
-    $Post = &TPost::Instance($id);
-    $Post->status = 'published';
-    $Posts->Edit($Post);
+  public function publishPost($id, $username, $password) {
+    $this->auth($username, $password, 'editor');
+        $id = (int) $id;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
+    $post = tpost::instance($id);
+    $post->status = 'published';
+    $posts->edit($post);
     return true;
   }
   
-}
+}//class
 
 ?>
