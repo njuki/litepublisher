@@ -43,7 +43,7 @@ class tadminplugins extends tadminmenu {
     $submenuitem = $html->submenuitem . "\n";
     $url = $options->url . $this->url . $options->q . 'plugin=';
     $plugins = tplugins::instance();
-    foreach ($this->abouts as $name) {
+    foreach ($this->abouts as $name => $about) {
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
         //$this->adminplugins[$name] = $about;
         $submenu .= sprintf($submenuitem, $url, $this->abouts[$name]['name']);
@@ -56,13 +56,10 @@ class tadminplugins extends tadminmenu {
       $result .= $html->formhead();
       $args = targs::instance();
       foreach ($this->abouts as $name => $about) {
+        $args->add($about);
         $args->name = $name;
         $args->checked = isset($plugins->items[$name]);
-        $args->version = $about['version'];
         $args->short = $about['name'];
-        $args->description = $about['description'];
-        $args->url = $about['url'];
-        $args->author = $about['author'];
         $result .= $html->item($args);
       }
       $result .= $html->formfooter();

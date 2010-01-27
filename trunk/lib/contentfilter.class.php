@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcontentfilter extends tevents 
+class tcontentfilter extends tevents
 {
   
   public static function instance() {
@@ -26,9 +26,10 @@ class tcontentfilter extends tevents
     if ($this->oncomment(&$content)) return $content;
     $result = trim($content);
     $result = htmlspecialchars($result);
-$result = self::simplebbcode($result);
-$result = self::auto_p($result);
-        return $result;
+    $result = self::simplebbcode($result);
+    $result = str_replace(array("\r\n", "\r"), "\n", $result);
+    $result = str_replace("\n", "<br />\n", $result);
+    return $result;
   }
   
   public function SetPostContent(tpost $post, $s) {
@@ -103,7 +104,7 @@ $result = self::auto_p($result);
     
     $result = trim($content);
     $result = $this->replacecode($result);
-$result = self::auto_p($result);    
+    $result = self::auto_p($result);
     $this->afterfilter(&$result);
     return $result;
   }
@@ -175,63 +176,63 @@ $result = self::auto_p($result);
     }
     return false;
   }
-
-public static function bbcode2tag($s, $code, $tag) {
-  if (strpos($s, "[/$code]") !== false) {
-$low = strtolower($s);
-  if (substr_count($low, "[$code]") == substr_count($low, "[/$code]")) {
-  $s = str_replace("[$code]", "<$tag>", $s);
-    $s = str_replace("[/$code]", "</tag>", $s);
- }
- } 
-RETURN $s;
-}
-
-public static function simplebbcode($s){ 
- $s = self::bbcode2tag($s, 'b', 'strong');
-  $s = self::bbcode2tag($s, 'I', 'EM');
-  $s = self::bbcode2tag($s, 'code', 'code');
-  $s = self::bbcode2tag($s, 'quote', 'bblockquote');
-  return$s; 
-} 
   
-public static function auto_p($str) {
-// Trim whitespace
-if (($str = trim($str)) === '') return '';
-
-// Standardize newlines
-$str = str_replace(array("\r\n", "\r"), "\n", $str);
-
-// Trim whitespace on each line
-$str = preg_replace('~^[ \t]+~m', '', $str);
-$str = preg_replace('~[ \t]+$~m', '', $str);
-
-// The following regexes only need to be executed if the string contains html
-if ($html_found = (strpos($str, '<') !== FALSE)) {
-// Elements that should not be surrounded by p tags
-$no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th))';
-
-// Put at least two linebreaks before and after $no_p elements
-$str = preg_replace('~^<'.$no_p.'[^>]*+>~im', "\n$0", $str);
-$str = preg_replace('~</'.$no_p.'\s*+>$~im', "$0\n", $str);
-}
-
-// Do the <p> magic!
-$str = '<p>'.trim($str).'</p>';
-$str = preg_replace('~\n{2,}~', "</p>\n\n<p>", $str);
-
-// The following regexes only need to be executed if the string contains html
-if ($html_found !== FALSE) {
-// Remove p tags around $no_p elements
-$str = preg_replace('~<p>(?=</?'.$no_p.'[^>]*+>)~i', '', $str);
-$str = preg_replace('~(</?'.$no_p.'[^>]*+>)</p>~i', '$1', $str);
-}
-
-// Convert single linebreaks to <br />
-$str = preg_replace('~(?<!\n)\n(?!\n)~', "<br />\n", $str);
-
-return $str;
-} 
-
+  public static function bbcode2tag($s, $code, $tag) {
+    if (strpos($s, "[/$code]") !== false) {
+      $low = strtolower($s);
+      if (substr_count($low, "[$code]") == substr_count($low, "[/$code]")) {
+        $s = str_replace("[$code]", "<$tag>", $s);
+        $s = str_replace("[/$code]", "</$tag>", $s);
+      }
+    }
+    RETURN $s;
+  }
+  
+  public static function simplebbcode($s){
+    $s = self::bbcode2tag($s, 'b', 'strong');
+    $s = self::bbcode2tag($s, 'I', 'EM');
+    $s = self::bbcode2tag($s, 'code', 'code');
+    $s = self::bbcode2tag($s, 'quote', 'bblockquote');
+    return$s;
+  }
+  
+  public static function auto_p($str) {
+    // Trim whitespace
+    if (($str = trim($str)) === '') return '';
+    
+    // Standardize newlines
+    $str = str_replace(array("\r\n", "\r"), "\n", $str);
+    
+    // Trim whitespace on each line
+    $str = preg_replace('~^[ \t]+~m', '', $str);
+    $str = preg_replace('~[ \t]+$~m', '', $str);
+    
+    // The following regexes only need to be executed if the string contains html
+    if ($html_found = (strpos($str, '<') !== FALSE)) {
+      // Elements that should not be surrounded by p tags
+      $no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th))';
+      
+      // Put at least two linebreaks before and after $no_p elements
+      $str = preg_replace('~^<'.$no_p.'[^>]*+>~im', "\n$0", $str);
+      $str = preg_replace('~</'.$no_p.'\s*+>$~im', "$0\n", $str);
+    }
+    
+    // Do the <p> magic!
+    $str = '<p>'.trim($str).'</p>';
+  $str = preg_replace('~\n{2,}~', "</p>\n\n<p>", $str);
+    
+    // The following regexes only need to be executed if the string contains html
+    if ($html_found !== FALSE) {
+      // Remove p tags around $no_p elements
+      $str = preg_replace('~<p>(?=</?'.$no_p.'[^>]*+>)~i', '', $str);
+      $str = preg_replace('~(</?'.$no_p.'[^>]*+>)</p>~i', '$1', $str);
+    }
+    
+    // Convert single linebreaks to <br />
+    $str = preg_replace('~(?<!\n)\n(?!\n)~', "<br />\n", $str);
+    
+    return $str;
+  }
+  
 }//class
 ?>
