@@ -408,7 +408,7 @@ public function loadfromfile($filename) {
     public function add($realfile, $filename, $perm = 0666) {
         if($this->containsFile($filename)) return false;
         $file_information = stat($realfile);
-$perm = $file_information["mode"] == 0 ? $perm : $file_information["mode"];
+if (DIRECTORY_SEPARATOR == '/') $perm = $file_information["mode"] == 0 ? $perm : $file_information["mode"];
         // Read in the file's contents
         $file_contents = file_get_contents($realfile);
         // Add file to processed data
