@@ -24,9 +24,24 @@ class tmediaparser extends tevents {
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
+    if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $tempfilename = $this->doupload($filename, $content);
     return $this->addfile($filename, $tempfilename, $title, $overwrite);
   }
+
+  public function uploadfile($filename, $tempfilename, $title, $overwrite ) {
+global $paths;
+    if ($title == '') $title = $filename;
+    $linkgen = tlinkgenerator::instance();
+    $filename = $linkgen->filterfilename($filename);
+    if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
+$parts = pathinfo($filename);
+    $newtemp = 'tmp.' . md5uniq() . '.' . $parts['filename'];
+$newtemp .= empty($parts['extension']) ? '' : '.' . $parts['extension'];
+if (!move_uploaded_file($tempfilename, $paths['files'] . $newtemp)) return $this->error("Error access to uploaded file");
+    return $this->addfile($filename, $newtemp, $title, $overwrite);
+  }
+  
   
   public function uploadicon($filename, $content, $overwrite ) {
     $linkgen = tlinkgenerator::instance();
