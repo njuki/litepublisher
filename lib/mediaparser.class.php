@@ -24,71 +24,67 @@ class tmediaparser extends tevents {
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
-    $filename = $this->doupload($filename, $content, $overwrite);
-    return $this->Add($filename, $title);
+    $tempfilename = $this->doupload($filename, $content);
+    return $this->addfile($filename, $tempfilename, $title, $overwrite);
   }
   
   public function uploadicon($filename, $content, $overwrite ) {
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
-    $filename = $this->doupload($filename, $content, $overwrite);
-    return $this->Addicon($filename);
+    $tempfilename = $this->doupload($filename, $content, $overwrite);
+    return $this->Addicon($filename, $tempfilename);
   }
   
-  private function doupload($filename, &$content, $overwrite) {
+  private function doupload($filename, &$content) {
     global $paths;
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
-    if (!$overwrite) $filename = $this->getunique($filename);
-    if (@file_put_contents($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), $content)) {
+    $parts = pathinfo($filename);
+    $filename = 'tmp.' . md5uniq() . '.' . $parts['filename'] .(empty($parts['extension']) ? '' : '.' . $parts['extension']);
+    if (@file_put_contents($paths['files']. $filename, $content)) {
       @ chmod($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
       return $filename;
     }
     return false;
   }
   
-  private function getunique($filename) {
-    global $paths;
-    $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+  private function getunique($dir, $filename) {
+     if  (!@file_exists($dir . $filename)) return $filename;
     $parts = pathinfo($filename);
     $base = $parts['filename'];
-    if (!empty($parts['dirname'])) {
-      $subdir = $paths['files'] . $parts['dirname'];
-      if (!is_dir($subdir)) {
-        @mkdir($subdir, 0777);
-        @chmod($subdir, 0777);
-      }
-      $base = $parts['dirname'] . DIRECTORY_SEPARATOR . $base;
-    }
     $ext = empty($parts['extension']) ? '' : ".$parts[extension]";
     for ($i = 2; $i < 10000; $i++) {
       $filename = "$base$i$ext";
-      if  (!@file_exists($paths['files'] . $filename)) return str_replace(DIRECTORY_SEPARATOR, '/', $filename);
+      if  (!@file_exists($dir . $filename)) return $filename;
     }
     return $filename;
   }
   
-  private function movetofolder($filename, $media) {
+  private function movetofolder($filename, $tempfilename, $media, $overwrite) {
     global $paths;
-    if (strbegin($filename, "$media/") || strpos($filename, '/')) return $filename;
     $dir = $paths['files'] . $media;
     if (!is_dir($dir)) {
       mkdir($dir, 0777);
       chmod($dir, 0777);
     }
-    
-    if (rename($paths['files'] . $filename, $dir . DIRECTORY_SEPARATOR . $filename)) $filename = "$media/$filename";
-    return $filename;
+if ($media) $dir .= DIRECTORY_SEPARATOR;
+if (!$overwrite  )  $filename = $this->getunique($dir, $filename);
+    if (!rename($paths['files'] . $tempfilename, $dir . $filename)) return $this->error("Error rename file $tempfile to $dir$filename");
+return "$media/$filename";
   }
-  
-  public function Add($filename, $title) {
-    $info = $this->getinfo($filename);
-    $info['filename'] = $this->movetofolder($info['filename'], $info['media']);
+/*  
+  public function add($filename, $tempfilename, $title) {
+return $this->addfile($filename, $tempfilename, $title, true);
+}
+*/
+
+  public function addfile($filename, $tempfilename, $title, $overwrite) {
+    $info = $this->getinfo($tempfilename);
+    $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], $overwrite);
     $item = $info + array(
     'filename' => $filename,
     'title' => $title,
-    'description' => $description
+    'description' => ''
     );
-    
     $files = tfiles::instance();
     $files->lock();
     $id = $files->additem($item);
@@ -253,6 +249,7 @@ class tmediaparser extends tevents {
     imagejpeg($dest, $destfilename, 100);
     imagedestroy($dest);
     imagedestroy($source);
+return true;
   }
   
   public function getsnapshot($filename) {
@@ -260,11 +257,11 @@ class tmediaparser extends tevents {
     $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $parts = pathinfo($filename);
     $destfilename = $parts['filename'] . '.preview.jpg';
-    if (!empty($parts['dirname'])) {
+    if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) {
       $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
     }
     
-    if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $pdestfilename, $this->previewwidth, $this->previewheight)) return false;
+    if (!$this->createsnapshot($paths['files'] . $filename, $paths['files'] . $destfilename, $this->previewwidth, $this->previewheight)) return false;
     
     @chmod($paths['files'] . $destfilename, 0666);
     $info = getimagesize($paths['files']. $filename);
