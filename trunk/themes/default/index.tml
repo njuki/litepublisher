@@ -22,6 +22,10 @@
 <link rel="openid2.local_id" href="$options.url/openid/" />
 	<script type="text/javascript" src="$options.files/files/js/rpc.js"></script>
 	<script type="text/javascript" src="$options.files/files/js/widgetcontent.js"></script>
+	<script type="text/javascript" src="$options.files/files/lightbox/js/prototype.js"></script>
+<script type="text/javascript" src="$options.files/files/lightbox/js/scriptaculous.js?load=effects,builder"></script>
+<script type="text/javascript" src="$options.files/files/lightbox/js/lightbox.js"></script>
+<link rel="stylesheet" href="$options.files/files/lightbox/css/lightbox.css" type="text/css" media="screen" />
 $template.head
 </head>
 <body>
@@ -72,13 +76,7 @@ $template.head
 		<div class="post-content">
 $post.excerpt
 <!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
-<!--previews-->
-<ul>
-<!--preview-->
-<li><a href="$options.files$filename"><img src="$options.url$filename" title="$lang.screenshot $filename" /></a></li>
-<!--/preview-->
-</ul>
-<!--/previews-->
+$post.filelist
 	</div>
 		<div class="post-info">
 $post.categorieslinks
@@ -112,7 +110,9 @@ $post.tagslinks
 <!--files-->
 <ul>
 <!--file--><li><a href="$options.files$filename" title="$title">$description</a></li><!--/file-->
-<!--image--><li><a href="$options.files$filename"><img src="$options.files$filename" alt="$title" width="$width" height="$height" /></a></li><!--/image-->
+<!--image-->
+<li><a rel="lightbox" href="$options.files/$filename" title="$title">$preview$description</a></li>
+<!--/image-->
 <!--video--><!--/video-->
 </ul>
 <!--/files-->
