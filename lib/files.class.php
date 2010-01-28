@@ -105,7 +105,7 @@ class tfiles extends titems {
     }
   }
   
-  private function getpreviewitems(array $list) {
+  private function getpreviews(array $list) {
     if (dbversion) {
       $res = $this->db->select(sprintf('parent in (%s)', implode(',', $list)));
       return $res->fetchAll(PDO::FETCH_ASSOC);
@@ -123,31 +123,28 @@ class tfiles extends titems {
     }
   }
   
-  public function getpreviews(array $list) {
-    $items = $this->getpreviewitems($list);
-    if (count($items) == 0) return '';
-    $result = '';
-    $theme = ttheme::instance();
-    $tml = $theme->content->excerpts->excerpt->previews->preview;
-    $args = targs::instance();
-    foreach ($items as $item) {
-      $args->add($item);
-      $result .= $theme->parsearg($tml, $args);
-    }
-    return sprintf($theme->content->excerpts->excerpt->previews, $result);
-  }
-  
-  public function getlist(array $list, $screenshots) {
+  public function getlist(array $list) {
     $items = $this->getitems($list);
     if (count($items) == 0) return '';
     $result = '';
+    $previews = $this->getpreviews($list);
     $theme = ttheme::instance();
     $tml = $themes->content->post->files;
     $args = targs::instance();
+$img = '<img src="$options.files$filename" title="$filename" />';
     foreach ($items as $item) {
       $args->add($item);
-      $tmlitem= empty($tml->array[$item['media']]) ? $tml->file : $tml->array[$item['media']];$theme->files['file'];
-      $result .= $theme->parsearg($tmlitem, $args);
+$type = $item['media'];
+      $itemtml = empty($tml->array[$type]) ? $tml->file : $tml->array[$type];
+if ($item['parent'] == 0) {
+$args->preview = '';
+} else {
+$preview = $this->getitem($item['parent']);
+$imgarg = new targs();
+$imgarg->add($preview);
+$args->preview =$theme->parsearg($img, $imgarg);
+}
+      $result .= $theme->parsearg(itemtml , $args);
     }
     return sprintf($tml, $result);
   }

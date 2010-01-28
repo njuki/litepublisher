@@ -8,8 +8,8 @@
 
 class TXMLRPCLivejournal extends TXMLRPCAbstract {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function create() {
@@ -18,7 +18,12 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     $this->data['expired'] = 0;
   }
   
-  private function CheckLogin(&$struct) {
+  private function lj_auth(array $struct) {
+if ($this->_auth($struct)) return true;
+return $this->error('Bad login/pass combination.', 403);
+}
+
+  private function _auth(array $struct) {
     global $options;
     extract($struct);
     if ($username != $Options->login) return false;
@@ -34,15 +39,12 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
       
     }
     
-    return false;
+return false;
   }
   
-  public function login(&$args) {
-    if (!$this->CheckLogin($args[0])) {
-      return new IXR_Error(403, 'Bad login/pass combination.');
-    }
-    
-    $profile = &TProfile::Instance();
+  public function login($struct) {
+$this->_auth($struct);
+    $profile = tprofile::instance();
     $result = array(
     'userid' => 1,
     'fullname' => $profile->nick,
@@ -51,28 +53,31 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     return $result;
   }
   
-  public function getchallenge(&$args) {
-    $this->challenge =md5(secret. uniqid( microtime()) . 'challenge');
+  public function getchallenge() {
+if (time() >=  $this->expired) {
+    $this->challenge =md5unique();
     $this->expired = time() + 3600;
-    $this->Save();
-    
+    $this->save();
+    }
     return array(
     'auth_scheme' => 'c0',
     'challenge' => $this->challenge,
     'expire_time' => $this-> expired,
-    'server_time' => time()
+    'server_time' => $this->expired - 3600
     );;
   }
   
-  public function postevent(&$args) {
-    if (!$this->CheckLogin($args[0])) {
-      return new IXR_Error(403, 'Bad login/pass combination.');
-    }
-    return $this->EditPost($args[0], 0);
+  public function postevent($struct) {
+$this->lj_auth($struct);
+    return $this->EditPost(0, $struct);
   }
   
-  private function EditPost(&$struct, $id) {
-    $post = &TPost::Instance($id);
+  private function EditPost($id, $struct) {
+$posts = tposts::instance();
+if ($id > 0) {
+if ($posts->itemexists(4id)) return $this->xerror(403, 'Post not found');
+}
+    $post = tpost::instance($id);
     $post->content = $struct['event'];
     //$lineendings = $struct['lineendings']; canbe \n \r \r\n
     $post->title = $struct['subject'];
@@ -95,13 +100,13 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     }
     */
     
-    $post->date = mktime($struct['hour'], $struct['min'], 0, $struct['mon'], $struct['day'], $struct['year']);
+    $post->posted = mktime($struct['hour'], $struct['min'], 0, $struct['mon'], $struct['day'], $struct['year']);
     
     if (isset($struct['props'])) {
       $props = &$struct['props'];
       $post->commentsenabled = $props['opt_nocomments'] ? false : true;
       if ($props['opt_preformatted']) {
-        $post->filtered = $args[0]['event'];
+        $post->filtered = $struct['event'];
       }
       
       if (isset($props['taglist'])) {
@@ -121,11 +126,10 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     }
     */
     
-    $posts = &TPosts::Instance();
     if ($id == 0) {
-      $id = $posts->Add($post);
+      $id = $posts->add($post);
     } else {
-      $posts->Edit($post);
+      $posts->edit($post);
     }
     
     return array(
@@ -135,19 +139,15 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     );;
   }
   
-  public function editevent (&$args) {
-    if (!$this->CheckLogin($args[0])) {
-      return new IXR_Error(403, 'Bad login/pass combination.');
-    }
-    $id = (int) $args[0]['itemid'];
-    $posts = &TPosts::Instance();
-    if (!$posts->ItemExists($id)) {
-      return new IXR_Error(404, "Invalid post id.");
-    }
-    if (empty($args[0]['event'])) {
-      $post = &TPost::Instance($id);
+  public function editevent ($struct) {
+$this->lj_auth($struct);
+    $id = (int) $struct['itemid'];
+    if (empty($struct['event'])) {
+$posts = tposts::instance();
+if (!$posts->itemexists(4id)) return $this->xerror(404, 'Post not found');
+      $post = tpost::instance($id);
       $url = $post->url;
-      $posts->Delete($id);
+      $posts->delete($id);
       return array(
       'itemid' => $id,
       'anum' => $url,
@@ -155,12 +155,12 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
       );;
     }
     
-    return $this->EditPost($args[0]);
+    return $this->EditPost($id, $struct);
   }
   
   /*
   public function checkfriends ($args) {
-    if (!$this->CheckLogin($args[0])) {
+    if (!$this->lj_auth($args[0])) {
       return new IXR_Error(403, 'Bad login/pass combination.');
     }
   }

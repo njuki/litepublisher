@@ -6,17 +6,17 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCLivejournalInstall(&$self) {
-  $Caller = &TXMLRPC::Instance();
-  $Caller->Lock();
+function TXMLRPCLivejournalInstall($self) {
+  $caller = TXMLRPC::instance();
+  $caller->lock();
   
   //Live journal api
-  $Caller->Add('LJ.XMLRPC.login' , 'login', get_class($self));
-  $Caller->Add('LJ.XMLRPC.getchallenge', 'getchallenge', get_class($self));
-  $Caller->Add('LJ.XMLRPC.editevent', 'editevent', get_class($self));
-  $Caller->Add('LJ.XMLRPC.postevent', 'postevent', get_class($self));
-  //$Caller->Add('LJ.XMLRPC.checkfriends', 'checkfriends', get_class($self));
-  $Caller->Unlock();
+  $caller->add('LJ.XMLRPC.login' , 'login', get_class($self));
+  $caller->add('LJ.XMLRPC.getchallenge', 'getchallenge', get_class($self));
+  $caller->add('LJ.XMLRPC.editevent', 'editevent', get_class($self));
+  $caller->add('LJ.XMLRPC.postevent', 'postevent', get_class($self));
+  //$caller->add('LJ.XMLRPC.checkfriends', 'checkfriends', get_class($self));
+  $caller->unlock();
 }
 
 ?>
