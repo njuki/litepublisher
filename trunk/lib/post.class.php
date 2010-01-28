@@ -270,16 +270,10 @@ class tpost extends titem implements  itemplate {
     return $files->geticon($this->icon);
   }
   
-  public function getpreviews() {
-    if (count($this->files) == 0) return '';
-    $files = tfiles::instance();
-    return $files->getpreviews($this->files);
-  }
-  
   public function getfilelist() {
     if (count($this->files) == 0) return '';
     $files = tfiles::instance();
-    return $files->getlist($this->files, false);
+    return $files->getlist($this->files);
   }
   
   public function GetTemplateContent() {
