@@ -91,8 +91,7 @@ class tadminfiles extends tadminmenu {
       
       $overwrite  = isset($_POST['overwrite']);
       $parser = tmediaparser::instance();
-      $parser->upload($_FILES["filename"]["name"], file_get_contents($_FILES["filename"]["tmp_name"]),
-      $_POST['title'], $overwrite);
+      $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $overwrite);
       return $this->html->h2->success;
     } elseif ($_GET['action'] == 'edit') {
       $id = $this->idget();

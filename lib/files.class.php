@@ -131,7 +131,7 @@ class tfiles extends titems {
     $theme = ttheme::instance();
     $tml = $themes->content->post->files;
     $args = targs::instance();
-$img = '<img src="$options.files$filename" title="$filename" />';
+$img = '<img src="$options.files/files/$filename" title="$filename" />';
     foreach ($items as $item) {
       $args->add($item);
 $type = $item['media'];
