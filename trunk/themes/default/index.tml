@@ -110,9 +110,7 @@ $post.tagslinks
 <!--files-->
 <ul>
 <!--file--><li><a href="$options.files$filename" title="$title">$description</a></li><!--/file-->
-<!--image-->
-<li><a rel="lightbox" href="$options.files/$filename" title="$title">$preview$description</a></li>
-<!--/image-->
+<!--image--><li><a rel="lightbox" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
 <!--video--><!--/video-->
 </ul>
 <!--/files-->
