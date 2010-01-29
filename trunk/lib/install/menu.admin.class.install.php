@@ -42,6 +42,13 @@ function tadminmenusInstall($self) {
   
   $plugins = $self->add(0, 'plugins', 'admin', 'tadminplugins');
   $files = $self->add(0, 'files', 'author', 'tadminfiles');
+  {
+    $self->add($files, 'image', 'editor', 'tadminfiles');
+    $self->add($files, 'video', 'editor', 'tadminfiles');
+    $self->add($files, 'audio', 'editor', 'tadminfiles');
+    $self->add($files, 'icon', 'editor', 'tadminfiles');
+    $self->add($files, 'bin', 'editor', 'tadminfiles');
+  }
   
   $widgets = $self->add(0, 'widgets', 'admin', 'tadminwidgets');
   {

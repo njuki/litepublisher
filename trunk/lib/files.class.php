@@ -129,22 +129,22 @@ class tfiles extends titems {
     $result = '';
     $previews = $this->getpreviews($list);
     $theme = ttheme::instance();
-    $tml = $themes->content->post->files;
+    $tml = $theme->content->post->files;
     $args = targs::instance();
-$img = '<img src="$options.files/files/$filename" title="$filename" />';
+    $img = '<img src="$options.files/files/$filename" title="$filename" />';
     foreach ($items as $item) {
       $args->add($item);
-$type = $item['media'];
+      $type = $item['media'];
       $itemtml = empty($tml->array[$type]) ? $tml->file : $tml->array[$type];
-if ($item['parent'] == 0) {
-$args->preview = '';
-} else {
-$preview = $this->getitem($item['parent']);
-$imgarg = new targs();
-$imgarg->add($preview);
-$args->preview =$theme->parsearg($img, $imgarg);
-}
-      $result .= $theme->parsearg(itemtml , $args);
+      if ($item['parent'] == 0) {
+        $args->preview = '';
+      } else {
+        $preview = $this->getitem($item['parent']);
+        $imgarg = new targs();
+        $imgarg->add($preview);
+        $args->preview =$theme->parsearg($img, $imgarg);
+      }
+      $result .= $theme->parsearg($itemtml , $args);
     }
     return sprintf($tml, $result);
   }

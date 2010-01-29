@@ -17,7 +17,9 @@ class tadminfiles extends tadminmenu {
     $files = tfiles::instance();
     $html = $this->html;
     if (!isset($_GET['action'])) {
-      $result .= $html->uploadform();
+      $args = targs::instance();
+      $args->adminurl = $this->url;
+      $result .= $html->uploadform($args);
     } else {
       $id = $this->idget();
       if (!$files->itemexists($id)) return $this->notfound;
@@ -47,15 +49,19 @@ class tadminfiles extends tadminmenu {
     }
     
     $perpage = 20;
+    $type = $this->name == 'files' ? '' : $this->name;
     if (dbversion) {
-      $sql = $options->user <= 1 ? '' : "author = $options->user";
+      $sql = 'parent =0';
+      $sql .= $options->user <= 1 ? '' : " and author = $options->user";
+      $sql .= $type == '' ? '' : " and media = '$type'";
       $count = $files->db->getcount($sql);
-    } elseif ($options->user == 0)  {
-      $count = $files->count;
     } else {
       $list= array();
       foreach ($files->items as $id => $item) {
-        if ($options->user == $item['author']) $list[] = $id;
+        if ($item['parent'] != 0) continue;
+        if ($options->user > 1 && $options->user != $item['author']) continue;
+        if (($type != '') && ($item['media'] != $type)) continue;
+        $list[] = $id;
       }
       $count = count($list);
     }
@@ -63,7 +69,7 @@ class tadminfiles extends tadminmenu {
     $from = max(0, $count - $urlmap->page * $perpage);
     
     if (dbversion) {
-      $items = $files->db->getitems($sql);
+      $items = $files->db->getitems($sql . " limit $from, $perpage");
     } else {
       $list = array_slice($list, $from, $perpage);
       //$items = array_reverse (array_keys($items));
@@ -71,6 +77,7 @@ class tadminfiles extends tadminmenu {
     }
     
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($items));
+    $result .= $files->getlist($list);
     $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
