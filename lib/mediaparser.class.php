@@ -28,17 +28,17 @@ class tmediaparser extends tevents {
     $tempfilename = $this->doupload($filename, $content);
     return $this->addfile($filename, $tempfilename, $title, $overwrite);
   }
-
+  
   public function uploadfile($filename, $tempfilename, $title, $overwrite ) {
-global $paths;
+    global $paths;
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
-$parts = pathinfo($filename);
+    $parts = pathinfo($filename);
     $newtemp = 'tmp.' . md5uniq() . '.' . $parts['filename'];
-$newtemp .= empty($parts['extension']) ? '' : '.' . $parts['extension'];
-if (!move_uploaded_file($tempfilename, $paths['files'] . $newtemp)) return $this->error("Error access to uploaded file");
+    $newtemp .= empty($parts['extension']) ? '' : '.' . $parts['extension'];
+    if (!move_uploaded_file($tempfilename, $paths['files'] . $newtemp)) return $this->error("Error access to uploaded file");
     return $this->addfile($filename, $newtemp, $title, $overwrite);
   }
   
@@ -63,7 +63,7 @@ if (!move_uploaded_file($tempfilename, $paths['files'] . $newtemp)) return $this
   }
   
   private function getunique($dir, $filename) {
-     if  (!@file_exists($dir . $filename)) return $filename;
+    if  (!@file_exists($dir . $filename)) return $filename;
     $parts = pathinfo($filename);
     $base = $parts['filename'];
     $ext = empty($parts['extension']) ? '' : ".$parts[extension]";
@@ -81,17 +81,17 @@ if (!move_uploaded_file($tempfilename, $paths['files'] . $newtemp)) return $this
       mkdir($dir, 0777);
       chmod($dir, 0777);
     }
-if ($media) $dir .= DIRECTORY_SEPARATOR;
-if (!$overwrite  )  $filename = $this->getunique($dir, $filename);
+    if ($media) $dir .= DIRECTORY_SEPARATOR;
+    if (!$overwrite  )  $filename = $this->getunique($dir, $filename);
     if (!rename($paths['files'] . $tempfilename, $dir . $filename)) return $this->error("Error rename file $tempfile to $dir$filename");
-return "$media/$filename";
+    return "$media/$filename";
   }
-/*  
+  /*
   public function add($filename, $tempfilename, $title) {
-return $this->addfile($filename, $tempfilename, $title, true);
-}
-*/
-
+    return $this->addfile($filename, $tempfilename, $title, true);
+  }
+  */
+  
   public function addfile($filename, $tempfilename, $title, $overwrite) {
     $info = $this->getinfo($tempfilename);
     $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], $overwrite);
@@ -111,7 +111,9 @@ return $this->addfile($filename, $tempfilename, $title, true);
       'title' => $title,
       'description' => ''
       );
+      $preview['parent'] = $id;
       $idpreview = $files->additem($preview);
+      
       $files->setvalue($id, 'preview', $idpreview);
     }
     $files->unlock();
@@ -122,7 +124,6 @@ return $this->addfile($filename, $tempfilename, $title, true);
     $info = $this->getinfo($filename);
     if ($info['media'] != 'image') $this->error('Invalid icon file format '. $info['media']);
     $info['media'] = 'icon';
-    $info['filename'] = $this->movetofolder($info['filename'], 'icon');
     $item = $info + array(
     'filename' => $filename,
     'title' => '',
@@ -264,7 +265,7 @@ return $this->addfile($filename, $tempfilename, $title, true);
     imagejpeg($dest, $destfilename, 100);
     imagedestroy($dest);
     imagedestroy($source);
-return true;
+    return true;
   }
   
   public function getsnapshot($filename) {

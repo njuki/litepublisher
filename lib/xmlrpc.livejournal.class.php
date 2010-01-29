@@ -19,10 +19,10 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   }
   
   private function lj_auth(array $struct) {
-if ($this->_auth($struct)) return true;
-return $this->error('Bad login/pass combination.', 403);
-}
-
+    if ($this->_auth($struct)) return true;
+    return $this->error('Bad login/pass combination.', 403);
+  }
+  
   private function _auth(array $struct) {
     global $options;
     extract($struct);
@@ -39,11 +39,11 @@ return $this->error('Bad login/pass combination.', 403);
       
     }
     
-return false;
+    return false;
   }
   
   public function login($struct) {
-$this->_auth($struct);
+    $this->_auth($struct);
     $profile = tprofile::instance();
     $result = array(
     'userid' => 1,
@@ -54,10 +54,10 @@ $this->_auth($struct);
   }
   
   public function getchallenge() {
-if (time() >=  $this->expired) {
-    $this->challenge =md5unique();
-    $this->expired = time() + 3600;
-    $this->save();
+    if (time() >=  $this->expired) {
+      $this->challenge =md5unique();
+      $this->expired = time() + 3600;
+      $this->save();
     }
     return array(
     'auth_scheme' => 'c0',
@@ -68,15 +68,15 @@ if (time() >=  $this->expired) {
   }
   
   public function postevent($struct) {
-$this->lj_auth($struct);
+    $this->lj_auth($struct);
     return $this->EditPost(0, $struct);
   }
   
   private function EditPost($id, $struct) {
-$posts = tposts::instance();
-if ($id > 0) {
-if ($posts->itemexists(4id)) return $this->xerror(403, 'Post not found');
-}
+    $posts = tposts::instance();
+    if ($id > 0) {
+      if ($posts->itemexists($id)) return $this->xerror(403, 'Post not found');
+    }
     $post = tpost::instance($id);
     $post->content = $struct['event'];
     //$lineendings = $struct['lineendings']; canbe \n \r \r\n
@@ -140,11 +140,11 @@ if ($posts->itemexists(4id)) return $this->xerror(403, 'Post not found');
   }
   
   public function editevent ($struct) {
-$this->lj_auth($struct);
+    $this->lj_auth($struct);
     $id = (int) $struct['itemid'];
     if (empty($struct['event'])) {
-$posts = tposts::instance();
-if (!$posts->itemexists(4id)) return $this->xerror(404, 'Post not found');
+      $posts = tposts::instance();
+      if (!$posts->itemexists($id)) return $this->xerror(404, 'Post not found');
       $post = tpost::instance($id);
       $url = $post->url;
       $posts->delete($id);
