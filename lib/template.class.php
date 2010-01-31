@@ -239,7 +239,7 @@ class ttemplate extends tevents {
       if (isset($theme->menu['id'])) {
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu['id']);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu['tag']);
-        $result .=  "<script type=\"text/javascript\" src=\"$options->files/files/js/hovermenu.js\"></script>\n";
+        $result .=  "<script type=\"text/javascript\" src=\"$options->files/js/litepublisher/hovermenu.js\"></script>\n";
       }
     }
     

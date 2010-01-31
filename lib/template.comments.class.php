@@ -20,8 +20,8 @@ public function save() {}
     global $options, $template;
     $theme = ttheme::instance();
   $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
-    return "<script type=\"text/javascript\" src=\"$options->files/files/js/moderate.js\"></script>
-  <script type=\"text/javascript\" src=\"$options->files/files/js/admin{$options->language}.js\"></script>\n";
+    return "<script type=\"text/javascript\" src=\"$options->files/js/litepublisher/moderate.js\"></script>
+  <script type=\"text/javascript\" src=\"$options->files/files/admin{$options->language}.js\"></script>\n";
   }
   
   public function getcount($count) {
