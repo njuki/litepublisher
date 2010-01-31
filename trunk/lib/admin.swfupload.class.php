@@ -30,7 +30,7 @@ return $groups->hasright($options->group, 'editor');
 }
 
   public function request() {
-    global $options;
+$this->cache = false;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
       @header('Allow: POST');
@@ -41,12 +41,15 @@ return $groups->hasright($options->group, 'editor');
 
 if (!$this->auth()) return $this->error500('Unauthorized');
 
-    $files = tfiles::instance();
-      if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
-      
-      $overwrite  = isset($_POST['overwrite']);
+	if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data");
+
       $parser = tmediaparser::instance();
-      $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $overwrite);
+      $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', false);
+/*
+$this->items[$_FILES["Filedata"]["name"]] = array(
+'id' => $id,
+*/
+return "<?php echo $id; ?>";
 }
 
 }//class
