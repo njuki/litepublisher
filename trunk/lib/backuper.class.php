@@ -65,7 +65,10 @@ class tbackuper extends tevents {
     $tar = new tar();
     if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, $paths['data'], '', 'data/');
-    if ($lib)  $this->readdir($tar, $paths['lib'], '', 'lib/');
+    if ($lib)  {
+$this->readdir($tar, $paths['lib'], '', 'lib/');
+$this->readdir($tar, $paths['js'], '', 'js/');
+}
     if ($theme)  {
       $template = ttemplate::instance();
       $themename = $template->theme;
@@ -107,12 +110,16 @@ class tbackuper extends tevents {
     $dataprefix = 'data/';
     $themesprefix =  'themes/';
     $pluginsprefix = 'plugins/';
+$jsprefix = 'js/';
     
     $tar = new tar();
     $tar->loadfromstring($content);
     foreach ($tar->files as $file) {
       $filename = $file['name'];
-      if (dbversion && $filename == 'dump.sql') $this->setdump($file['file']);
+      if (dbversion && $filename == 'dump.sql') {
+$this->setdump($file['file']);
+continue;
+}
       if (strbegin($filename, $dataprefix)) {
         $filename = substr($filename, strlen($dataprefix));
         if (!$tmp) $tmp = $this->createtemp();
@@ -123,6 +130,9 @@ class tbackuper extends tevents {
       } elseif (strbegin($filename, $pluginsprefix)) {
         $filename = substr($filename, strlen($pluginsprefix));
         $path = $paths['plugins'];
+      } elseif (strbegin($filename, $jsprefix)) {
+        $filename = substr($filename, strlen($jsprefix));
+        $path = $paths['js'];
       } else {
         //echo $dir, " is unknown dir<br>";
       }
@@ -165,6 +175,7 @@ class tbackuper extends tevents {
     }
     
     $this->readdir($tar, $paths['lib'], '', 'lib/');
+    $this->readdir($tar, $paths['js'], '', 'js/');
     $this->readdir($tar, $paths['files'], '', 'files/');
     
     return $tar->savetostring(true);
