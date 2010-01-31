@@ -5,7 +5,7 @@ die('Lite Publisher requires PHP 5.2 or later. You are using PHP ' . PHP_VERSION
 
 ob_start();
 //begin config
-define('dbversion' , 'combo'); //valid values false, combo, full
+define('dbversion' , 'combo'); //valid values false, 'combo', 'full'
 if (!preg_match('/(www\.)?([\w\.]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
 $domain = $domain[2];
 
@@ -19,6 +19,7 @@ $paths['data'] = $paths['home'] . 'data'. DIRECTORY_SEPARATOR . $domain . DIRECT
 $paths['cache'] = $paths['home'] . 'cache'. DIRECTORY_SEPARATOR . $domain . DIRECTORY_SEPARATOR;
 $paths['files'] = $paths['home'] . 'files' . DIRECTORY_SEPARATOR;
 $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
+$paths['js'] = $paths['home'] . 'js' . DIRECTORY_SEPARATOR;
 
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
 $microtime = microtime();
