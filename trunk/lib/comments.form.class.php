@@ -133,7 +133,7 @@ class tcommentform extends tevents {
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
       @header('Allow: POST');
-      @header('HTTP/1.1 405 Method Not Allowed');
+      @header('HTTP/1.1 405 Method Not Allowed', true, 405);
       @header('Content-Type: text/plain');
       ?>";
     }
