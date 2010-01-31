@@ -20,12 +20,12 @@
 <link rel="openid2.provider" href="$options.url/openid/" />
 <link rel="openid.delegate" href="$options.url/openid/" />
 <link rel="openid2.local_id" href="$options.url/openid/" />
-	<script type="text/javascript" src="$options.files/files/js/rpc.js"></script>
-	<script type="text/javascript" src="$options.files/files/js/widgetcontent.js"></script>
-	<script type="text/javascript" src="$options.files/files/lightbox/js/prototype.js"></script>
-<script type="text/javascript" src="$options.files/files/lightbox/js/scriptaculous.js?load=effects,builder"></script>
-<script type="text/javascript" src="$options.files/files/lightbox/js/lightbox.js"></script>
-<link rel="stylesheet" href="$options.files/files/lightbox/css/lightbox.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="$options.files/js/litepublisher/rpc.js"></script>
+	<script type="text/javascript" src="$options.files/js/litepublisher/widgetcontent.js"></script>
+	<script type="text/javascript" src="$options.files/js/lightbox/js/prototype.js"></script>
+<script type="text/javascript" src="$options.files/js/lightbox/js/scriptaculous.js?load=effects,builder"></script>
+<script type="text/javascript" src="$options.files/js/lightbox/js/lightbox.js"></script>
+<link rel="stylesheet" href="$options.files/js/lightbox/css/lightbox.css" type="text/css" media="screen" />
 $template.head
 </head>
 <body>
