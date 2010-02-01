@@ -11,7 +11,7 @@ item.parentNode.removeChild(item);
 function deletecomment(id) {
 if (!confirm(lang.comments.confirmdelete)) return;
 if (client == undefined) client = createclient();
-client.litepublisher.deletecomment( {
+client.litepublisher.comments.delete( {
 params:['', '', id, ltoptions.idpost],
 
                  onSuccess:function(result){                     
@@ -29,7 +29,7 @@ onComplete:function(responseObj){ }
 
 function setcommentstatus(id, status) {
 if (client == undefined) client = createclient();
-client.litepublisher.setcommentstatus( {
+client.litepublisher.comments.setstatus( {
 params:['', '', id, ltoptions.idpost, status],
 
                  onSuccess:function(result){                     
@@ -86,7 +86,7 @@ moderate(list, action);
 
 function editcomment(id) {
 if (client == undefined) client = createclient();
-client.litepublisher.getcomment( {
+client.litepublisher.comments.get( {
 params:['', '', id, ltoptions.idpost],
 
                  onSuccess:function(result){                     
@@ -109,7 +109,7 @@ onComplete:function(responseObj){ }
 
 function submiteditcomment(id) {
 return function() {
-client.litepublisher.editcomment( {
+client.litepublisher.comments.edit( {
 params:['', '', id, ltoptions.idpost, {
 name: document.getElementById('name').value,
 email: document.getElementById('email').value,

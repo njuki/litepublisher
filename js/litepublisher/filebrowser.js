@@ -56,3 +56,14 @@ function getcookie(name) {
 	return(setStr);
 }
 
+var post = {
+id: ltoptions.idpost,
+files: []
+};
+
+post.addfile = function(id, filename, html) {
+
+}
+
+post.deletefile = function(id) {
+}

@@ -8,13 +8,13 @@ sanitize: false,
 methods: [
 'litepublisher.getwidget',
 'litepublisher.moderate',
-'litepublisher.deletecomment', 
-'litepublisher.setcommentstatus',
-'litepublisher.addcomment',
-'litepublisher.getcomment',
-'litepublisher.editcomment',
+'litepublisher.comments.delete', 
+'litepublisher.comments.setstatus',
+'litepublisher.comments.add',
+'litepublisher.comments.get',
+'litepublisher.comments.edit',
 'litepublisher.getrecentcomments',
-'litepublisher.getfilebrowser'
+'litepublisher.files.getbrowser'
 ]
 //callbackParamName: 'callback'
 }); 
