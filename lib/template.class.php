@@ -26,7 +26,7 @@ class ttemplate extends tevents {
     $this->basename = 'template' ;
     $this->tml = 'index';
     $this->itemplate = false;
-    $this->javaoptions = array(0 => "baseurl: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files/files'");
+    $this->javaoptions = array(0 => "url: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files'");
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';

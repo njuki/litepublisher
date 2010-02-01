@@ -12,6 +12,14 @@ class tposteditor extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
+
+public function gethead() {
+global $options;
+    return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
+  <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
+<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
+', $options->files, $options->language);
+}
   
   private function getcategories(tpost $post) {
     global $options;
