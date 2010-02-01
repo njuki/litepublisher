@@ -1,11 +1,27 @@
-function browsefiles() {
+function filebrowser() {
+if (ltoptions.filebrowser != undefined) return;
+ltoptions.filebrowser = true;
 loadjavascript('/js/swfupload/swfupload.js');
 //loadjavascript('/js/swfupload/
 
-var div = document.getElementById("browsefiles");
-div.innerHTML  = getHtmlUploader();
+if (client == undefined) client = createclient();
+client.litepublisher.getfilebrowser( {
+params:['', '', ltoptions.idpost],
+
+                 onSuccess:function(result){                     
+var div = document.getElementById("filebrowser");
+div.innerHTML  = result;
 
 createswfu();
+},
+
+                  onException:function(errorObj){ 
+                    alert("Server error");
+},
+
+onComplete:function(responseObj){ }
+} );
+
 }
 
 function loadjavascript(filename) {
