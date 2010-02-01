@@ -30,6 +30,7 @@ return $groups->hasright($options->group, 'editor');
 }
 
   public function request() {
+global $options;
 $this->cache = false;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
@@ -45,11 +46,18 @@ if (!$this->auth()) return $this->error500('Unauthorized');
 
       $parser = tmediaparser::instance();
       $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', false);
-/*
-$this->items[$_FILES["Filedata"]["name"]] = array(
-'id' => $id,
-*/
-return "<?php echo $id; ?>";
+$files = tfiles::instance();
+$item = $files->getitem($id);
+$result = "$id\n{$item['filename']}\n";
+$result .= str_replace(
+
+return "<?php
+    @Header( 'Cache-Control: no-cache, must-revalidate');
+    @Header( 'Pragma: no-cache');
+        @header('Content-Type: text/plain; charset=utf-8');
+    @ header('Last-Modified: ' . date('r'));
+    @header('X-Pingback: $options->url/rpc.xml');
+?>" . $result;
 }
 
 }//class
