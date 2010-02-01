@@ -10,8 +10,9 @@ function TXMLRPCFilesInstall($self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
   
-  $caller->add('litepublisher.deletefile',		'delete', get_class($self));
-  $caller->add('litepublisher.getfilebrowser',		'getfilebrowser', get_class($self));
+  $caller->add('litepublisher.files.delete',		'delete', get_class($self));
+  $caller->add('litepublisher.files.getbrowser',		'getbrowser', get_class($self));
+  $caller->add('litepublisher.files. getpage',		'getpage', get_class($self));
 
    $caller->unlock();
 }

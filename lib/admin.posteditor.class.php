@@ -15,7 +15,7 @@ class tposteditor extends tadminmenu {
 
 public function gethead() {
 global $options, $template;
-  $template->javaoptions[] = "idpost: $this->idpost";
+  $template->javaoptions[] = 'idpost: ' . $this->idget();
     return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
   <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
 <script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
