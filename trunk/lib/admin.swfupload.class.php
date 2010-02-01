@@ -24,7 +24,7 @@ if (empty($_POST['admincookie'])) return false;
 $_COOKIE['admin'] = $_POST['admincookie'];
     $options->admincookie = $options->cookieenabled && $options->authcookie();
 if (!$options->admincookie) return false;
-      if (($options->group == 'admin') || ($options->group == 'editor') return true;
+      if (($options->group == 'admin') || ($options->group == 'editor')) return true;
       $groups = tusergroups::instance();
 return $groups->hasright($options->group, 'editor');
 }
@@ -42,14 +42,15 @@ $this->cache = false;
 
 if (!$this->auth()) return $this->error500('Unauthorized');
 
-	if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data");
+	if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data');
 
       $parser = tmediaparser::instance();
       $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', false);
 $files = tfiles::instance();
 $item = $files->getitem($id);
 $result = "$id\n{$item['filename']}\n";
-$result .= str_replace(
+
+//$result .= str_replace(
 
 return "<?php
     @Header( 'Cache-Control: no-cache, must-revalidate');
