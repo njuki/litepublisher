@@ -9,11 +9,16 @@ client.litepublisher.files.getbrowser( {
 params:['', '', ltoptions.idpost],
 
                  onSuccess:function(result){                     
-alert('su');
 var div = document.getElementById("filebrowser");
 div.innerHTML  = result;
 
-document.getElementById("form").onsubmit = submitform;
+var form = document.getElementById("form");
+form.onsubmit = submitform;
+      var hidden = document.createElement('input');
+      hidden.type= 'hidden';
+      hidden.name = 'fileschanged';
+hidden.value = '1';
+      form.appendChild(hidden);
 
 ltoptions.idfilepages = "filepages";
 ltoptions.idfilepage = "filepage";
@@ -114,16 +119,17 @@ onComplete:function(responseObj){ }
 
 var submitform = function() {
 var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
+
 for (var i =0, n = elems.length; i < n; i++) {
 		if(elems[i].type == 'checkbox') {
-elems[i].checked == true;
+elems[i].checked = true;
 }
 }
 
 var elems = document.getElementById(ltoptions.idfilepage).getElementsByTagName("input");
 for (var i =0, n = elems.length; i < n; i++) {
 		if(elems[i].type == 'checkbox') {
-elems[i].checked == false;
+elems[i].checked = false;
 }
 }
 

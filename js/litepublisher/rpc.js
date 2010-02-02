@@ -292,7 +292,7 @@ rpc.ServiceProxy.prototype.__callMethod = function(methodName, params, successHa
 try {
 							var response = instance.__getXMLRPCResponse(xhr, requestInfo.id);
  } catch(e) {
-alert('Error! ' + e.message);
+alert('XML-RPC Error! ' + e.message);
 }
 							instance.__doCallback(response);
 						}
