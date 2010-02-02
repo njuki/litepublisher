@@ -9,6 +9,7 @@ client.litepublisher.files.getbrowser( {
 params:['', '', ltoptions.idpost],
 
                  onSuccess:function(result){                     
+alert('su');
 var div = document.getElementById("filebrowser");
 div.innerHTML  = result;
 
@@ -82,7 +83,7 @@ document.getElementById(ltoptions.idcurrentfiles).appendChild(elem.cloneNode(tru
 }
 }
 
-post.delete= function() {
+post.deletechecked = function() {
 var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
 for (var i =0, n = elems.length; i < n; i++) {
 		if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
