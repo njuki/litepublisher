@@ -64,6 +64,9 @@ class TXMLRPC extends titems {
     
     if (defined('debug')) {
       tfiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
+$reqname = $GLOBALS['paths']['data'] . 'logs' . DIRECTORY_SEPARATOR  . 'request.xml';
+file_put_contents($reqname, $HTTP_RAW_POST_DATA);
+@chmod($reqname, 0666);
       //$HTTP_RAW_POST_DATA = file_get_contents($GLOBALS['paths']['home'] . 'raw.txt');
     }
     

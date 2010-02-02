@@ -42,6 +42,7 @@ return sprintf($result, implode(' | ', $list));
 }
 
 private function get_page($index) {
+global $options;
 $result = '';
 $files = tfiles::instance();
     $perpage = 20;
@@ -68,12 +69,12 @@ foreach ($items as $item) $files->items[$item['id']] = $item;
       $list = array_slice($list, $from, $perpage);
     }
     
-    $result .= sprintf($this->html->h2->countfiles, $count, $from, $from + count($items));
+    $result .= sprintf($this->html->h2->countfiles, $count, $from, $from + count($list));
 $result .= $this->getpagelinks($index, ceil($count / $perpage));
 $page = '';
     $args = targs::instance();
     foreach ($list as $id) {
-      $page = $this->getfileitem($id);
+      $page .= $this->getfileitem($id);
     }
     
     $result .= sprintf($this->html->page, $page);
