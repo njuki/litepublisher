@@ -13,8 +13,9 @@ methods: [
 'litepublisher.comments.add',
 'litepublisher.comments.get',
 'litepublisher.comments.edit',
-'litepublisher.getrecentcomments',
-'litepublisher.files.getbrowser'
+'litepublisher.comments.getrecent',
+'litepublisher.files.getbrowser',
+'litepublisher.files.getpage'
 ]
 //callbackParamName: 'callback'
 }); 
