@@ -34,7 +34,7 @@ for ($i = 1; $i <= $count; $i++) {
 if ($i == $current) {
 $list[] = "$i";
 } else {
-$list[] = "<a onclick='post.getpage($i);'>$i</a>";
+$list[] = "<a onclick='post.getpage($i);' title='$i'>$i</a>";
 }
 }
 $result = $this->html->pagelinks();
@@ -45,7 +45,7 @@ private function get_page($index) {
 global $options;
 $result = '';
 $files = tfiles::instance();
-    $perpage = 20;
+    $perpage = 10;
     if (dbversion) {
       $sql = 'parent =0';
       $sql .= $options->user <= 1 ? '' : " and author = $options->user";
@@ -53,7 +53,6 @@ $files = tfiles::instance();
     } else {
       $list= array();
       foreach ($files->items as $id => $item) {
-if (!isset($item['parent'])) var_dump($item);
         if ($item['parent'] != 0) continue;
         if ($options->user > 1 && $options->user != $item['author']) continue;
         $list[] = $id;
@@ -61,7 +60,7 @@ if (!isset($item['parent'])) var_dump($item);
       $count = count($list);
     }
     
-    $from = max(0, $count - $index * $perpage);
+    $from = ($index -1)  * $perpage;
     
     if (dbversion) {
       $items = $files->db->getitems($sql . " limit $from, $perpage");
@@ -79,6 +78,7 @@ $result .= $this->getpagelinks($index, ceil($count / $perpage));
 $page = '';
     foreach ($list as $id) {
       $page .= $this->getfileitem($id);
+$page .= "\n";
     }
     
     $result .= sprintf($this->html->page, $page);
@@ -161,6 +161,7 @@ $this->cache = false;
       ?>";
     }
 
+//$_POST['admincookie'] = $_COOKIE['admin'];
 if (!$this->postauth()) return $this->error500('Unauthorized');
 
 	if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data');

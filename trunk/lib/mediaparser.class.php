@@ -42,7 +42,6 @@ class tmediaparser extends tevents {
     return $this->addfile($filename, $newtemp, $title, $overwrite);
   }
   
-  
   public function uploadicon($filename, $content, $overwrite ) {
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
@@ -175,8 +174,9 @@ class tmediaparser extends tevents {
       }
       return $result;
     }
-    
-    return false;
+
+
+      return $result;
   }
   
   public function createpreview(array $info) {

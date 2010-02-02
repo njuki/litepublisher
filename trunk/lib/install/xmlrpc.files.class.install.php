@@ -12,7 +12,7 @@ function TXMLRPCFilesInstall($self) {
   
   $caller->add('litepublisher.files.delete',		'delete', get_class($self));
   $caller->add('litepublisher.files.getbrowser',		'getbrowser', get_class($self));
-  $caller->add('litepublisher.files. getpage',		'getpage', get_class($self));
+  $caller->add('litepublisher.files.getpage',		'getpage', get_class($self));
 
    $caller->unlock();
 
