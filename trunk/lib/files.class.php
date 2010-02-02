@@ -136,10 +136,10 @@ class tfiles extends titems {
       $args->add($item);
       $type = $item['media'];
       $itemtml = empty($tml->array[$type]) ? $tml->file : $tml->array[$type];
-      if ($item['parent'] == 0) {
+      if ($item['preview'] == 0) {
         $args->preview = '';
       } else {
-        $preview = $this->getitem($item['parent']);
+        $preview = $this->getitem($item['preview']);
         $imgarg = new targs();
         $imgarg->add($preview);
         $args->preview =$theme->parsearg($img, $imgarg);

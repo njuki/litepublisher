@@ -15,6 +15,10 @@ function TXMLRPCFilesInstall($self) {
   $caller->add('litepublisher.files. getpage',		'getpage', get_class($self));
 
    $caller->unlock();
+
+//swupload
+  $urlmap = turlmap::instance();
+  $urlmap->add('/admin/swfupload.htm', get_class($self), null, 'normal');
 }
 
 ?>
