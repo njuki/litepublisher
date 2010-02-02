@@ -108,7 +108,7 @@ $item = $files->getitem($id);
 
 $args = targs::instance();
       $args->add($item);
-if ($item['media'] == 'image') }
+if ($item['media'] == 'image') {
     $img = '<img src="$options.files/files/$filename" title="$filename" />';
       if ($item['preview'] == 0) {
         $args->preview = '';
