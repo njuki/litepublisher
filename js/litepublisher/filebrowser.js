@@ -5,12 +5,18 @@ loadjavascript('/js/swfupload/swfupload.js');
 //loadjavascript('/js/swfupload/
 
 if (client == undefined) client = createclient();
-client.litepublisher.getfilebrowser( {
+client.litepublisher.files.getbrowser( {
 params:['', '', ltoptions.idpost],
 
                  onSuccess:function(result){                     
 var div = document.getElementById("filebrowser");
 div.innerHTML  = result;
+
+document.getElementById("form").onsubmit = submitform;
+
+ltoptions.idfilepages = "filepages";
+ltoptions.idfilepage = "filepage";
+ltoptions.idcurrentfiles = "currentfiles";
 
 createswfu();
 },
@@ -57,13 +63,68 @@ function getcookie(name) {
 }
 
 var post = {
-id: ltoptions.idpost,
-files: []
+id: ltoptions.idpost
 };
 
-post.addfile = function(id, filename, html) {
-
+post.add= function(html) {
+document.getElementById(ltoptions.idcurrentfiles).innerHTML += html;
 }
 
-post.deletefile = function(id) {
+post.addfrompage = function() {
+var elems = document.getElementById(ltoptions.idfilepage).getElementsByTagName("input");
+for (var i =0, n = elems.length; i < n; i++) {
+		if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
+elems[i].checked = false;
+var id = elems[i].value;
+var elem = document.getElementById("fileitem-" + id);
+document.getElementById(ltoptions.idcurrentfiles).appendChild(elem.cloneNode(true));
 }
+}
+}
+
+post.delete= function() {
+var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
+for (var i =0, n = elems.length; i < n; i++) {
+		if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
+var id = elems[i].value;
+var elem = elems.getElementById("fileitem-" + id);
+elem.parentNode.removeChild(elem);
+}
+}
+}
+
+post.getpage = function(page) {
+if (client == undefined) client = createclient();
+client.litepublisher.files.getpage( {
+params:['','', page],
+
+                 onSuccess:function(result){                     
+var div = document.getElementById(ltoptions.idfilepages);
+div.innerHTML  = result;
+},
+
+                  onException:function(errorObj){ 
+                    alert("Server error");
+},
+
+onComplete:function(responseObj){ }
+} );
+}
+
+var submitform = function() {
+var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
+for (var i =0, n = elems.length; i < n; i++) {
+		if(elems[i].type == 'checkbox') {
+elems[i].checked == true;
+}
+}
+
+var elems = document.getElementById(ltoptions.idfilepage).getElementsByTagName("input");
+for (var i =0, n = elems.length; i < n; i++) {
+		if(elems[i].type == 'checkbox') {
+elems[i].checked == false;
+}
+}
+
+return true;
+};
