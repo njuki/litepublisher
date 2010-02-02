@@ -53,6 +53,7 @@ $files = tfiles::instance();
     } else {
       $list= array();
       foreach ($files->items as $id => $item) {
+if (!isset($item['parent'])) var_dump($item);
         if ($item['parent'] != 0) continue;
         if ($options->user > 1 && $options->user != $item['author']) continue;
         $list[] = $id;
@@ -64,7 +65,11 @@ $files = tfiles::instance();
     
     if (dbversion) {
       $items = $files->db->getitems($sql . " limit $from, $perpage");
-foreach ($items as $item) $files->items[$item['id']] = $item;
+foreach ($items as $item){
+$id = $item['id'];
+$list[] = $id;
+ $files->items[$id] = $item;
+}
     } else {
       $list = array_slice($list, $from, $perpage);
     }
@@ -72,7 +77,6 @@ foreach ($items as $item) $files->items[$item['id']] = $item;
     $result .= sprintf($this->html->h2->countfiles, $count, $from, $from + count($list));
 $result .= $this->getpagelinks($index, ceil($count / $perpage));
 $page = '';
-    $args = targs::instance();
     foreach ($list as $id) {
       $page .= $this->getfileitem($id);
     }
@@ -106,9 +110,9 @@ return $result;
 private function getfileitem($id) {
 $files = tfiles::instance();
 $item = $files->getitem($id);
-
 $args = targs::instance();
       $args->add($item);
+$args->id = $id;
 if ($item['media'] == 'image') {
     $img = '<img src="$options.files/files/$filename" title="$filename" />';
       if ($item['preview'] == 0) {
@@ -117,6 +121,7 @@ if ($item['media'] == 'image') {
         $preview = $this->getitem($item['preview']);
         $imgarg = new targs();
         $imgarg->add($preview);
+$theme = ttheme::instance();
         $args->preview =$theme->parsearg($img, $imgarg);
       }
 return $this->html->image($args);

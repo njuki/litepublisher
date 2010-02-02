@@ -110,20 +110,28 @@ global $options, $template;
     $this->basename = 'editor';
     $html = $this->html;
     $cats = array();
-    $cat = 'category-';
     foreach ($_POST as $key => $value) {
-      if ($cat == substr($key, 0, strlen($cat))) {
-        $id = (int) substr($key, strlen($cat));
-        $cats[] = $id;
+      if (strbegin($key, 'category-')) {
+        $cats[] = (int) $value;
       }
     }
-    
+
+if (isset($fileschanged))  {
+    $files = array();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'filecheckbox-')) {
+        $files[] = (int) $value;
+      }
+    }
+}
+
     extract($_POST);
     if (empty($title))return $html->h2->emptytitle;
     $post = tpost::instance((int)$id);
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
+if (isset($fileschanged)) $post->files = $files;
     switch ($this->getmode()) {
       case 'short':
       $post->content = $raw;
