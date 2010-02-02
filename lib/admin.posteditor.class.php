@@ -116,6 +116,13 @@ global $options, $template;
       }
     }
 
+    extract($_POST);
+    if (empty($title))return $html->h2->emptytitle;
+    $post = tpost::instance((int)$id);
+    $post->title = $title;
+    $post->categories = $cats;
+    $post->tagnames = $tags;
+
 if (isset($fileschanged))  {
     $files = array();
     foreach ($_POST as $key => $value) {
@@ -123,15 +130,9 @@ if (isset($fileschanged))  {
         $files[] = (int) $value;
       }
     }
+$post->files = $files;
 }
 
-    extract($_POST);
-    if (empty($title))return $html->h2->emptytitle;
-    $post = tpost::instance((int)$id);
-    $post->title = $title;
-    $post->categories = $cats;
-    $post->tagnames = $tags;
-if (isset($fileschanged)) $post->files = $files;
     switch ($this->getmode()) {
       case 'short':
       $post->content = $raw;

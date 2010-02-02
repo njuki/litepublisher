@@ -66,7 +66,7 @@ class tadminfiles extends tadminmenu {
       $count = count($list);
     }
     
-    $from = max(0, $count - $urlmap->page * $perpage);
+    $from = ($urlmap->page - 1) * $perpage;
     
     if (dbversion) {
       $items = $files->db->getitems($sql . " limit $from, $perpage");
