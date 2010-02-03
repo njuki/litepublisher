@@ -174,9 +174,9 @@ class tmediaparser extends tevents {
       }
       return $result;
     }
-
-
-      return $result;
+    
+    
+    return $result;
   }
   
   public function createpreview(array $info) {

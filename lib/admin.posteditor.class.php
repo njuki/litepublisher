@@ -12,15 +12,15 @@ class tposteditor extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
-
-public function gethead() {
-global $options, $template;
-  $template->javaoptions[] = 'idpost: ' . $this->idget();
+  
+  public function gethead() {
+    global $options, $template;
+    $template->javaoptions[] = 'idpost: ' . $this->idget();
     return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
-  <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
-<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
-', $options->files, $options->language);
-}
+    <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
+    <script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
+    ', $options->files, $options->language);
+  }
   
   private function getcategories(tpost $post) {
     global $options;
@@ -115,24 +115,24 @@ global $options, $template;
         $cats[] = (int) $value;
       }
     }
-
+    
     extract($_POST);
     if (empty($title))return $html->h2->emptytitle;
     $post = tpost::instance((int)$id);
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
-
-if (isset($fileschanged))  {
-    $files = array();
-    foreach ($_POST as $key => $value) {
-      if (strbegin($key, 'filecheckbox-')) {
-        $files[] = (int) $value;
+    
+    if (isset($fileschanged))  {
+      $files = array();
+      foreach ($_POST as $key => $value) {
+        if (strbegin($key, 'filecheckbox-')) {
+          $files[] = (int) $value;
+        }
       }
+      $post->files = $files;
     }
-$post->files = $files;
-}
-
+    
     switch ($this->getmode()) {
       case 'short':
       $post->content = $raw;

@@ -25,7 +25,9 @@ class tfiler {
   }
   
   public static function deletemask($mask) {
-    foreach (glob($mask) as $filename) unlink($filename);
+    if ($list = glob($mask)) {
+      foreach ($list as $filename) unlink($filename);
+    }
   }
   
   public static function deletedirmask($path, $mask) {

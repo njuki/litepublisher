@@ -66,9 +66,9 @@ class tbackuper extends tevents {
     if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, $paths['data'], '', 'data/');
     if ($lib)  {
-$this->readdir($tar, $paths['lib'], '', 'lib/');
-$this->readdir($tar, $paths['js'], '', 'js/');
-}
+      $this->readdir($tar, $paths['lib'], '', 'lib/');
+      $this->readdir($tar, $paths['js'], '', 'js/');
+    }
     if ($theme)  {
       $template = ttemplate::instance();
       $themename = $template->theme;
@@ -110,16 +110,16 @@ $this->readdir($tar, $paths['js'], '', 'js/');
     $dataprefix = 'data/';
     $themesprefix =  'themes/';
     $pluginsprefix = 'plugins/';
-$jsprefix = 'js/';
+    $jsprefix = 'js/';
     
     $tar = new tar();
     $tar->loadfromstring($content);
     foreach ($tar->files as $file) {
       $filename = $file['name'];
       if (dbversion && $filename == 'dump.sql') {
-$this->setdump($file['file']);
-continue;
-}
+        $this->setdump($file['file']);
+        continue;
+      }
       if (strbegin($filename, $dataprefix)) {
         $filename = substr($filename, strlen($dataprefix));
         if (!$tmp) $tmp = $this->createtemp();

@@ -7,44 +7,44 @@
 **/
 
 class TXMLRPCFiles extends TXMLRPCAbstract {
-private $html;
+  private $html;
   
   public static function instance() {
     return getinstance(__class__);
   }
-
-protected function create() {
-parent::create();
-$this->html = THtmlResource::instance();
-$this->html->section ='files';
-$lang = tlocal::instance('files');
-}
+  
+  protected function create() {
+    parent::create();
+    $this->html = THtmlResource::instance();
+    $this->html->section ='files';
+    $lang = tlocal::instance('files');
+  }
   
   public function delete($login, $password, $id) {
     $this->auth($login, $password, 'editor');
-$files = tfiles::instance();
+    $files = tfiles::instance();
     if (!$files->delete((int) $id)) return $this->xerror(404, "File not deleted");
     return true;
   }
-
-private function getpagelinks($current, $count) {
-
-$links = array();
-for ($i = 1; $i <= $count; $i++) {
-if ($i == $current) {
-$list[] = "$i";
-} else {
-$list[] = "<a onclick='post.getpage($i);' title='$i'>$i</a>";
-}
-}
-$result = $this->html->pagelinks();
-return sprintf($result, implode(' | ', $list));
-}
-
-private function get_page($index) {
-global $options;
-$result = '';
-$files = tfiles::instance();
+  
+  private function getpagelinks($current, $count) {
+    
+    $links = array();
+    for ($i = 1; $i <= $count; $i++) {
+      if ($i == $current) {
+        $list[] = "$i";
+      } else {
+        $list[] = "<a onclick='post.getpage($i);' title='$i'>$i</a>";
+      }
+    }
+    $result = $this->html->pagelinks();
+    return sprintf($result, implode(' | ', $list));
+  }
+  
+  private function get_page($index) {
+    global $options;
+    $result = '';
+    $files = tfiles::instance();
     $perpage = 10;
     if (dbversion) {
       $sql = 'parent =0';
@@ -64,95 +64,97 @@ $files = tfiles::instance();
     
     if (dbversion) {
       $items = $files->db->getitems($sql . " limit $from, $perpage");
-foreach ($items as $item){
-$id = $item['id'];
-$list[] = $id;
- $files->items[$id] = $item;
-}
+      foreach ($items as $item){
+        $id = $item['id'];
+        $list[] = $id;
+        $files->items[$id] = $item;
+      }
     } else {
       $list = array_slice($list, $from, $perpage);
     }
     
     $result .= sprintf($this->html->h2->countfiles, $count, $from, $from + count($list));
-$result .= $this->getpagelinks($index, ceil($count / $perpage));
-$page = '';
+    $result .= $this->getpagelinks($index, ceil($count / $perpage));
+    $page = '';
     foreach ($list as $id) {
-      $page .= $this->getfileitem($id);
-$page .= "\n";
+      $page .= $this->getfileitem($id, 'pages');
+      $page .= "\n";
     }
     
     $result .= sprintf($this->html->page, $page);
     return str_replace("'", '"', $result);
-}
-
+  }
+  
   public function getpage($login, $password, $index) {
     $this->auth($login, $password, 'editor');
-return $this->get_page((int) $index);
-}
-
+    return $this->get_page((int) $index);
+  }
+  
   public function getbrowser($login, $password, $idpost) {
     $this->auth($login, $password, 'editor');
-$args = targs::instance();
-$args->pages = $this->get_page(1);
-$args->currentfiles = $this->getpostfiles((int) $idpost);
-return $this->html->browser($args);
-}
-
-private function getpostfiles($idpost) {
-$result = '';
-$post = tpost::instance((int) $idpost);
-foreach ($post->files as $id) {
-$result .= $this->getfileitem($id);
-}
-return $result;
-} 
-
-private function getfileitem($id) {
-$files = tfiles::instance();
-$item = $files->getitem($id);
-$args = targs::instance();
-      $args->add($item);
-$args->id = $id;
-if ($item['media'] == 'image') {
-    $img = '<img src="$options.files/files/$filename" title="$filename" />';
+    $args = targs::instance();
+    $args->pages = $this->get_page(1);
+    $args->currentfiles = $this->getpostfiles((int) $idpost);
+    return $this->html->browser($args);
+  }
+  
+  private function getpostfiles($idpost) {
+    $result = '';
+    $post = tpost::instance((int) $idpost);
+    foreach ($post->files as $id) {
+      $result .= $this->getfileitem($id, 'curr');
+    }
+    return $result;
+  }
+  
+  private function getfileitem($id, $part) {
+    $files = tfiles::instance();
+    $item = $files->getitem($id);
+    $args = targs::instance();
+    $args->add($item);
+    $args->idtag = "$part-$id";
+    $args->part = $part;
+    $args->id = $id;
+    if ($item['media'] == 'image') {
+      $img = '<img src="$options.files/files/$filename" title="$filename" />';
       if ($item['preview'] == 0) {
         $args->preview = '';
       } else {
         $preview = $this->getitem($item['preview']);
         $imgarg = new targs();
         $imgarg->add($preview);
-$theme = ttheme::instance();
+        $theme = ttheme::instance();
         $args->preview =$theme->parsearg($img, $imgarg);
       }
-return $this->html->image($args);
-} else {
-return $this->html->fileitem($args);
-}
-}
-
-
-// swfupload
-private function error500($msg) {
-      return "<?php
-      @header('HTTP/1.1 500 Internal Server Error', true, 500);
-      @header('Content-Type: text/plain');
-      ?>" . $msg;
-}
-
-private function postauth() {
-global $options;
-if (empty($_POST['admincookie'])) return false;
-$_COOKIE['admin'] = $_POST['admincookie'];
+      return $this->html->image($args);
+    } else {
+      return $this->html->fileitem($args);
+    }
+  }
+  
+  
+  // swfupload
+  private function error500($msg) {
+    return "<?php
+    @header('HTTP/1.1 500 Internal Server Error', true, 500);
+    @header('Content-Type: text/plain');
+    ?>" . $msg;
+  }
+  
+  private function postauth() {
+    global $options;
+    if (empty($_POST['admincookie'])) return false;
+    $_COOKIE['admin'] = $_POST['admincookie'];
     $options->admincookie = $options->cookieenabled && $options->authcookie();
-if (!$options->admincookie) return false;
-      if (($options->group == 'admin') || ($options->group == 'editor')) return true;
-      $groups = tusergroups::instance();
-return $groups->hasright($options->group, 'editor');
-}
-
+    if (!$options->admincookie) return false;
+    if (($options->group == 'admin') || ($options->group == 'editor')) return true;
+    $groups = tusergroups::instance();
+    return $groups->hasright($options->group, 'editor');
+  }
+  
   public function request() {
-global $options;
-$this->cache = false;
+    global $options;
+    $this->cache = false;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
       @header('Allow: POST');
@@ -160,24 +162,24 @@ $this->cache = false;
       @header('Content-Type: text/plain');
       ?>";
     }
-
-//$_POST['admincookie'] = $_COOKIE['admin'];
-if (!$this->postauth()) return $this->error500('Unauthorized');
-
-	if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data');
-
-      $parser = tmediaparser::instance();
-      $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', false);
-$result = $this->getfileitem($id);
-
-return "<?php
+    
+    //$_POST['admincookie'] = $_COOKIE['admin'];
+    if (!$this->postauth()) return $this->error500('Unauthorized');
+    
+    if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data');
+    
+    $parser = tmediaparser::instance();
+    $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', false);
+    $result = $this->getfileitem($id, 'curr');
+    
+    return "<?php
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');
-        @header('Content-Type: text/html; charset=utf-8');
+    @header('Content-Type: text/html; charset=utf-8');
     @ header('Last-Modified: ' . date('r'));
     @header('X-Pingback: $options->url/rpc.xml');
-?>" . $result;
-}
-
+    ?>" . $result;
+  }
+  
 }//class
 ?>

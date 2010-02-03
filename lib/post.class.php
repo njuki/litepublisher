@@ -241,7 +241,7 @@ class tpost extends titem implements  itemplate {
       $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
       $result .= "<script type=\"text/javascript\" src=\"$options->files/js/litepublisher/comments.js\"></script>\n";
-if (!$options->admincookie) $result .= " <script type=\"text/javascript\" src=\"$options->files/files/js/$options->language.js\"></script>\n";
+      if (!$options->admincookie) $result .= " <script type=\"text/javascript\" src=\"$options->files/files/js/$options->language.js\"></script>\n";
     }
     if ($options->admincookie) {
       $tc = ttemplatecomments::instance();

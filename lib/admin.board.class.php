@@ -10,11 +10,11 @@ class tadminboard extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
-
-public function gethead() {
+  
+  public function gethead() {
     $editor = tposteditor::instance();
-return $editor->gethead();
-}
+    return $editor->gethead();
+  }
   
   public function getcontent() {
     global $options;
