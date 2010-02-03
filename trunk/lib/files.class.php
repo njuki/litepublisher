@@ -54,14 +54,12 @@ class tfiles extends titems {
   public function additem(array $item) {
     global $options, $paths;
     $realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
-    $item = $item + array(
-    'author' => $options->user,
-    'posted' => sqldate(),
-    'keywords' => '',
-    'md5' => md5_file($realfile),
-    'size' => filesize($realfile)
-    );
-    
+    $item['author'] = $options->user;
+        $item['posted'] = sqldate();
+        $item['keywords'] = '';
+        $item['md5'] = md5_file($realfile);
+        $item['size'] = filesize($realfile);
+
     if (dbversion) {
       $id = $this->db->add($item);
       $this->items[$id] = $item;
