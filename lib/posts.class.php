@@ -35,9 +35,7 @@ class tposts extends titems {
   
   public function getitem($id) {
     if (dbversion) {
-      if ($res = $this->db->select("id = $id")) {
-        if ($result = tpost::instance($id)) return $result;
-      }
+      if ($result = tpost::instance($id)) return $result;
       $this->error("Item $id not found in class ". get_class($this));
     } else {
       if (isset($this->items[$id])) return tpost::instance($id);

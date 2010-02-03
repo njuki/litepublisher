@@ -69,19 +69,18 @@ class tadminfiles extends tadminmenu {
     $from = ($urlmap->page - 1) * $perpage;
     
     if (dbversion) {
-      $items = $files->db->getitems($sql . " limit $from, $perpage");
+      $list = $files->select($sql . " limit $from, $perpage");
     } else {
       $list = array_slice($list, $from, $perpage);
-      //$items = array_reverse (array_keys($items));
-      $items = $files->getitems($list);
     }
     
-    $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($items));
+    $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
     $result .= $files->getlist($list);
     $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    foreach ($items as $item) {
+    foreach ($list as $id) {
+      $item = $files->items[$id];
       $args->add($item);
       $result .= $html->tableitem ($args);
     }

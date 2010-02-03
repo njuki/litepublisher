@@ -133,6 +133,32 @@ class Tdomrss extends domDocument {
     AddNodeValue($this->channel , 'language', 'en');
   }
   
+  public function CreateRootMultimedia($url, $title) {
+    global $options;
+    $this->encoding = 'utf-8';
+    $this->appendChild($this->createComment("generator=\"Lite Publisher/$options->version version\""));
+    $this->rss = $this->createElement('rss');
+    $this->appendChild($this->rss);
+    
+    AddAttr($this->rss, 'version', '2.0');
+    AddAttr($this->rss, 'xmlns:media', "http://video.search.yahoo.com/mrss");
+    AddAttr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
+    
+    $this->channel = AddNode($this->rss, 'channel');
+    
+    $link = AddNode($this->channel, 'atom:link');
+    AddAttr($link, 'href', $url);
+    AddAttr($link, 'rel', "self");
+    AddAttr($link,'type', "application/rss+xml");
+    
+    AddNodeValue($this->channel , 'title', $title);
+    AddNodeValue($this->channel , 'link', $url);
+    AddNodeValue($this->channel , 'description', $options->description);
+    AddNodeValue($this->channel , 'pubDate', date('r'));
+    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator/?version=' . $options->version);
+    AddNodeValue($this->channel , 'language', 'en');
+  }
+  
   public function AddItem() {
     $result = AddNode($this->channel, 'item');
     $this->items[] = $result;

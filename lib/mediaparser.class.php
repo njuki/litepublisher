@@ -140,7 +140,7 @@ class tmediaparser extends tevents {
     'media' => 'bin',
     'mime' => 'application/octet-stream',
     'filename' => $filename,
-'size' => 0,
+    'size' => 0,
     'icon' => 0,
     'bitrate' => 0,
     'framerate' => 0,
@@ -156,7 +156,7 @@ class tmediaparser extends tevents {
     global $paths;
     $realfile = $paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
-
+    
     if ($info = getimagesize($realfile)) {
       $result['media'] = 'image';
       $result['mime'] = $info['mime'];
