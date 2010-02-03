@@ -105,6 +105,7 @@ class tadminmenus extends tmenus {
       $item = $this->items[$id];
       if ($this->hasright($item['group'])) $result .= sprintf($tml, $options->url. $item['url'], $item['title'], '');
     }
+    $result = sprintf($theme->menu, $result);
     return $result;
   }
   

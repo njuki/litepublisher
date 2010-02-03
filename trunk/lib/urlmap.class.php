@@ -301,6 +301,16 @@ class turlmap extends titems {
     global $paths;
     tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
   }
+
+public function expiredclass($class) {
+if (dbversion) {
+$items = $this->db->idselect("class = '$class'");
+foreach ($items as $id) $this->setexpired($id);
+} else {
+foreach ($this->items as $url => $item) {
+if ($class == $item['class']) $this->setexpired($item['id']);
+}
+}
   
   public function addredir($from, $to) {
     if ($from == $to) return;

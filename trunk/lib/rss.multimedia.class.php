@@ -8,7 +8,7 @@
 
 class trssMultimedia extends tevents {
   public $domrss;
-  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -16,13 +16,13 @@ class trssMultimedia extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'rssmultimedia';
-    $this->addevents('beforepost', 'afterpost');
     $this->data['feedburner'] = '';
   }
   
   public function fileschanged($idpost) {
     $urlmap = turlmap::instance();
-    //    $urlmap->setexpired($this->idcomments);
+       $urlmap->expiredclass(get_class($this));
+}
   }
   
   public function request($arg) {
@@ -135,11 +135,10 @@ class trssMultimedia extends tevents {
     
   }
   
-  public function SetFeedburnerLinks($rss, $comments) {
-    if (($this->feedburner != $rss) || ($this->feedburnercomments != $comments)) {
-      $this->feedburner= $rss;
-      $this->feedburnercomments = $comments;
-      $this->Save();
+  public function setfeedburner($url) {
+    if (($this->feedburner != $url)) {
+      $this->data['feedburner'] = $url;
+      $this->save();
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
     }

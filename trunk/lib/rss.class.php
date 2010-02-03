@@ -221,7 +221,7 @@ class trss extends tevents {
     if (($this->feedburner != $rss) || ($this->feedburnercomments != $comments)) {
       $this->feedburner= $rss;
       $this->feedburnercomments = $comments;
-      $this->Save();
+      $this->save();
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
     }
