@@ -189,18 +189,18 @@ class trss extends tevents {
     AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);
     AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
-
-if (count($post->files) > 0) {
-$files = tfiles::instance();
-$fileitems = $files->getitems($post->files);
-foreach ($fileitems as $file) {
-$enclosure = AddNode($item, 'enclosure');
-    AddAttr($enclosure , 'url', $options->files . '/files/' . $file['filename']);
-    AddAttr($enclosure , 'length', $file['size']);
-    AddAttr($enclosure , 'type', $file['mime']);
-}
-}
-
+    
+    if (count($post->files) > 0) {
+      $files = tfiles::instance();
+      $fileitems = $files->getitems($post->files);
+      foreach ($fileitems as $file) {
+        $enclosure = AddNode($item, 'enclosure');
+        AddAttr($enclosure , 'url', $options->files . '/files/' . $file['filename']);
+        AddAttr($enclosure , 'length', $file['size']);
+        AddAttr($enclosure , 'type', $file['mime']);
+      }
+    }
+    
   }
   
   public function AddRSSComment($comment, $title) {

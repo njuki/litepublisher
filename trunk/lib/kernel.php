@@ -481,6 +481,20 @@ class titems extends tevents {
     }
   }
   
+  public function select($where) {
+    if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
+    if (      $items = $this->db->getitems($where)) {
+      $result = array();
+      foreach ($items as $item){
+        $id = $item['id'];
+        $result[] = $id;
+        $this->items[$id] = $item;
+      }
+      return $result;
+    }
+    return false;
+  }
+  
   public function getcount() {
     if ($this->dbversion) {
       return $this->db->getcount();
@@ -508,8 +522,15 @@ class titems extends tevents {
   }
   
   public function itemexists($id) {
-    if ($this->dbversion) return $this->db->idexists($id);
-    return isset($this->items[$id]);
+    if (isset($this->items[$id])) return true;
+    if ($this->dbversion) {
+      try {
+        return $this->getitem($id);
+      } catch (Exception $e) {
+        return false;
+      }
+    }
+    return false;
   }
   
   public function IndexOf($name, $value) {

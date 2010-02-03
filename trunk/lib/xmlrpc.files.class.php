@@ -63,12 +63,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $from = ($index -1)  * $perpage;
     
     if (dbversion) {
-      $items = $files->db->getitems($sql . " limit $from, $perpage");
-      foreach ($items as $item){
-        $id = $item['id'];
-        $list[] = $id;
-        $files->items[$id] = $item;
-      }
+      $list = $files->select($sql . " limit $from, $perpage");
     } else {
       $list = array_slice($list, $from, $perpage);
     }

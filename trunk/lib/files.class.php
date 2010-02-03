@@ -24,11 +24,11 @@ class tfiles extends titems {
   }
   
   public function load() {
-    if(!dbversion) parent::load();
+    if(!$this->dbversion) parent::load();
   }
   
   public function save() {
-    if (!dbversion) parent::save();
+    if (!$this->dbversion) parent::save();
   }
   
   public function geturl($id) {
@@ -55,11 +55,11 @@ class tfiles extends titems {
     global $options, $paths;
     $realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
     $item['author'] = $options->user;
-        $item['posted'] = sqldate();
-        $item['keywords'] = '';
-        $item['md5'] = md5_file($realfile);
-        $item['size'] = filesize($realfile);
-
+    $item['posted'] = sqldate();
+    $item['keywords'] = '';
+    $item['md5'] = md5_file($realfile);
+    $item['size'] = filesize($realfile);
+    
     if (dbversion) {
       $id = $this->db->add($item);
       $this->items[$id] = $item;
@@ -89,55 +89,30 @@ class tfiles extends titems {
     return true;
   }
   
-  public function getitems(array $list) {
-    if (dbversion) {
-      return $this->db->getlist($list);
-    } else {
-      $result = array();
-      foreach ($list as $id) {
-        $item = $this->items[$id];
-        $item['id'] = $id;
-        $result[] = $item;
-      }
-      return $result;
-    }
-  }
-  
-  private function getpreviews(array $list) {
-    if (dbversion) {
-      $res = $this->db->select(sprintf('parent in (%s)', implode(',', $list)));
-      return $res->fetchAll(PDO::FETCH_ASSOC);
-    } else {
-      $result = array();
-      foreach ($list as $id) {
-        $item = $this->items[$id];
-        if($item['preview'] == 0) continue;
-        $id = $item['preview'];
-        $item = $this->items[$id];
-        $item['id'] = $id;
-        $result[] = $item;
-      }
-      return $result;
-    }
-  }
-  
   public function getlist(array $list) {
-    $items = $this->getitems($list);
-    if (count($items) == 0) return '';
+    if (count($list) == 0) return '';
     $result = '';
-    $previews = $this->getpreviews($list);
+    if ($this->dbversion) {
+      $this->loaditems($list);
+      $this->select(sprintf('parent in (%s)', implode(',', $list)));
+    }
+    
     $theme = ttheme::instance();
     $tml = $theme->content->post->files;
     $args = targs::instance();
     $img = '<img src="$options.files/files/$filename" title="$filename" />';
-    foreach ($items as $item) {
+    foreach ($list as $id) {
+      if (!isset($this->items[$id])) continue;
+      $item = $this->items[$id];
       $args->add($item);
       $type = $item['media'];
       $itemtml = empty($tml->array[$type]) ? $tml->file : $tml->array[$type];
       if ($item['preview'] == 0) {
         $args->preview = '';
+      } elseif (!isset($this->items[$id])) {
+        $args->preview = '';
       } else {
-        $preview = $this->getitem($item['preview']);
+        $preview = $this->items[$item['preview']];
         $imgarg = new targs();
         $imgarg->add($preview);
         $args->preview =$theme->parsearg($img, $imgarg);
