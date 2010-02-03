@@ -1,6 +1,5 @@
 function movecomment(id, status) {
 var item =document.getElementById("comment-" + id);
-//var idparent = parent.attributes.getNamedItem('id').nodeValue;
 var idnewparent = ltoptions.commentsid;
 if (status == 'hold') idnewparent = 'hold' + ltoptions.commentsid;
 var newparent = document.getElementById(idnewparent);
@@ -11,7 +10,8 @@ item.parentNode.removeChild(item);
 function deletecomment(id) {
 if (!confirm(lang.comments.confirmdelete)) return;
 if (client == undefined) client = createclient();
-client.litepublisher.comments.delete( {
+client.litepublisher.deletecomment( {
+
 params:['', '', id, ltoptions.idpost],
 
                  onSuccess:function(result){                     
