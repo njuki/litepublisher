@@ -8,7 +8,7 @@ sanitize: false,
 methods: [
 'litepublisher.getwidget',
 'litepublisher.moderate',
-'litepublisher.comments.delete', 
+'litepublisher.deletecomment', 
 'litepublisher.comments.setstatus',
 'litepublisher.comments.add',
 'litepublisher.comments.get',

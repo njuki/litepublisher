@@ -82,24 +82,13 @@ for (var i =0, n = elems.length; i < n; i++) {
 		if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
 elems[i].checked = false;
 var id = elems[i].value;
-try {
-var elem = document.getElementById("fileitem-" + id);
-var clone = elem.cloneNode(true);
-clone.id += "-clone";
-
-var clonecheck = clone.getElementById(elems[i].id);
-try {
-
-clonecheck.id += "-clone";
-} catch(e) {
-alert('clone ' + e.message);
-}
-
-document.getElementById(ltoptions.idcurrentfiles).appendChild(clone);
-} catch(e) {
-alert('befor clone ' + e.message);
-}
-
+if (elem = document.getElementById("fileitem-curr-" + id)) continue;
+var elem = document.getElementById("fileitem-pages-" + id);
+var li = elem.cloneNode(true);
+li.id = "fileitem-curr-" + id;
+var check = li.getElementsByTagName("input")[0];
+check.id = "filecheckbox-" + id;
+document.getElementById(ltoptions.idcurrentfiles).appendChild(li);
 }
 }
 }
@@ -109,8 +98,7 @@ var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagNa
 for (var i =0, n = elems.length; i < n; i++) {
 		if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
 var id = elems[i].value;
-var elem = document.getElementById("fileitem-" + id + "-curr");
-alert(elem.id);
+var elem = document.getElementById("fileitem-curr-" + id);
 elem.parentNode.removeChild(elem);
 }
 }
@@ -136,8 +124,9 @@ onComplete:function(responseObj){ }
 }
 
 var submitform = function() {
+//disable delete button
+document.getElementById("deletechecked").disabled = "disabled";
 var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
-
 for (var i =0, n = elems.length; i < n; i++) {
 		if(elems[i].type == 'checkbox') {
 elems[i].checked = true;
