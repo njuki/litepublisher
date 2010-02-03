@@ -10,13 +10,13 @@ function TXMLRPCFilesInstall($self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
   
-  $caller->add('litepublisher.files.delete',		'delete', get_class($self));
+  $caller->add('litepublisher.deletefile',		'delete', get_class($self));
   $caller->add('litepublisher.files.getbrowser',		'getbrowser', get_class($self));
   $caller->add('litepublisher.files.getpage',		'getpage', get_class($self));
-
-   $caller->unlock();
-
-//swupload
+  
+  $caller->unlock();
+  
+  //swupload
   $urlmap = turlmap::instance();
   $urlmap->add('/admin/swfupload.htm', get_class($self), null, 'normal');
 }

@@ -173,7 +173,7 @@ class tthemeparser {
     $result['file'] = $this->parsetag($s, 'file', '%s');
     $result['image'] = $this->parsetag($s, 'image', '');
     $result['video'] = $this->parsetag($s, 'video', '');
-$result['id'] = tcontentfilter::getidtag('*', $s);
+    $result['id'] = tcontentfilter::getidtag('*', $s);
     $result[0] = $s;
     return $result;
   }

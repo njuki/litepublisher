@@ -10,7 +10,7 @@ function TXMLRPCCommentsInstall($self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
   
-  $caller->add('litepublisher.comments.delete',		'delete', get_class($self));
+  $caller->add('litepublisher.deletecomment',		'delete', get_class($self));
   $caller->add('litepublisher.comments.setstatus',		'setstatus', get_class($self));
   $caller->add('litepublisher.comments.add',		'add', get_class($self));
   $caller->add('litepublisher.comments.edit',		'edit', get_class($self));
