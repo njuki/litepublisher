@@ -1,14 +1,21 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TBackup2emailInstall(&$self) {$Template = &TTemplate::Instance();
-$cron = &TCron::Instance();
-$self->idcron = $cron->Add('week', get_class($self), 'SendBackup', null);
-$self->Save();
+
+function tbackup2emailInstall($self) {$Template = &TTemplate::Instance();
+$cron = tcron::instance();
+$self->idcron = $cron->add('week', get_class($self), 'send', null);
+$self->save();
  }
  
-function TBackup2emailUninstall(&$self) {
-$cron = &TCron::Instance();
-$cron->Remove($self->idcron);
+function tbackup2emailUninstall(&$self) {
+$cron = tcron::instance();
+$cron->remove($self->idcron);
  }
 
 ?>
