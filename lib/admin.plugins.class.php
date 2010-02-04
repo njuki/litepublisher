@@ -77,11 +77,16 @@ class tadminplugins extends tadminmenu {
   
   public function processform() {
     global $options, $urlmap;
-    $plugins = tplugins::instance();
+    
     if (empty($_GET['plugin'])) {
       $list = array_keys($_POST);
       array_pop($list);
-      $plugins->update($list);
+      $plugins = tplugins::instance();
+      try {
+        $plugins->update($list);
+      } catch (Exception $e) {
+        $options->handexception($e);
+      }
       $result = $this->html->h2->updated;
     } else {
       $name = $_GET['plugin'];

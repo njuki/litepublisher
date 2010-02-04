@@ -364,7 +364,7 @@ class tpost extends titem implements  itemplate {
   public function setcontent($s) {
     if ($s <> $this->rawcontent) {
       $this->rawcontent = $s;
-      $filter = TContentFilter::instance();
+      $filter = tcontentfilter::instance();
       $filter->SetPostContent($this,$s);
     }
   }
