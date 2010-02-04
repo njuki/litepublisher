@@ -14,7 +14,7 @@ class ttemplate extends tevents {
   public $itemplate;
   public $javascripts;
   public $javaoptions;
-public $cursitebar;
+  public $cursitebar;
   //public $footer;
   
   public static function instance() {
@@ -28,7 +28,7 @@ public $cursitebar;
     $this->tml = 'index';
     $this->itemplate = false;
     $this->javaoptions = array(0 => "url: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files'");
-$this->cursitebar = 0;
+    $this->cursitebar = 0;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
@@ -78,7 +78,7 @@ $this->cursitebar = 0;
   }
   
   public function getsitebar() {
-global $options, $urlmap;
+    global $options, $urlmap;
     $result = '';
     if ($this->context instanceof itemplate2) {
       $result .= $this->context->getsitebar();
@@ -86,11 +86,11 @@ global $options, $urlmap;
       $widgets = twidgets::instance();
       $result .= $widgets->getcontent();
     }
-
+    
     $this->onsitebar(&$result, $this->cursitebar);
-if ($options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
-if ($urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
-$this->cursitebar++;
+    if ($options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
+    if ($urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
+    $this->cursitebar++;
     return $result;
   }
   
@@ -185,7 +185,7 @@ $this->cursitebar++;
     global $paths;
     $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && isset($theme->menu['id']);
-$urlmap = turlmap::instance();
+    $urlmap = turlmap::instance();
     if ($urlmap->adminpanel) {
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($hovermenu);
@@ -250,8 +250,8 @@ $urlmap = turlmap::instance();
     foreach ($this->javascripts as $name => $script)  $result .=$script . "\n";
     
     if ($this->itemplate) $result .= $this->context->gethead();
-
-$urlmap = turlmap::instance();
+    
+    $urlmap = turlmap::instance();
     if ($urlmap->adminpanel) $this->onadminhead(&$result);
     $result = $this->getjavaoptions() . $result;
     $this->onhead(&$result);

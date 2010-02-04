@@ -22,7 +22,7 @@ class twidgets extends tsingleitems {
   
   protected function create() {
     parent::create();
-$this->addevents('onsitebar');
+    $this->addevents('onsitebar');
     $this->current = 0;
     $theme = ttheme::instance();
     $this->count = $theme->sitebarscount;

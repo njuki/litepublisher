@@ -63,7 +63,7 @@ class tposteditor extends tadminmenu {
   
   private function getmode() {
     $mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : 'midle';
-    if (!preg_match('/short|midle|full/', $mode)) $mode = 'midle';
+    if (!preg_match('/short|midle|full|update/', $mode)) $mode = 'midle';
     return $mode;
   }
   
@@ -107,6 +107,8 @@ class tposteditor extends tadminmenu {
   
   public function processform() {
     global $options;
+
+$mode = $this->getmode();
     $this->basename = 'editor';
     $html = $this->html;
     $cats = array();
@@ -117,12 +119,14 @@ class tposteditor extends tadminmenu {
     }
     
     extract($_POST);
-    if (empty($title))return $html->h2->emptytitle;
     $post = tpost::instance((int)$id);
+    if ($mode != 'update'){
+if (empty($title)) return $html->h2->emptytitle;
     $post->title = $title;
     $post->categories = $cats;
     $post->tagnames = $tags;
-    
+}    
+
     if (isset($fileschanged))  {
       $files = array();
       foreach ($_POST as $key => $value) {
@@ -165,6 +169,11 @@ class tposteditor extends tadminmenu {
       $post->rss = $rss;
       $post->moretitle = $moretitle;
       break;
+
+case 'update':
+$update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
+      $post->content = $post->rawcontent . "\n\n" . $update;
+break;
     }
     
     $posts = tposts::instance();
@@ -176,6 +185,6 @@ class tposteditor extends tadminmenu {
     
     return sprintf($html->p->success,"<a href=\"$post->link\" title=\"$post->title\">$post->title</a>");
   }
-  
+
 }//class
 ?>

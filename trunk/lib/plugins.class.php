@@ -53,7 +53,7 @@ class tplugins extends TItems {
     $item = $this->items[$name];
     unset($this->items[$name]);
     $this->save();
-    if (@class_exists($item['class'])) {
+    if (class_exists($item['class'])) {
       $plugin = getinstance($item['class']);
       if ($plugin instanceof tplugin) {
         @unlink($paths['data']. $plugin->getbasename() . '.php');
