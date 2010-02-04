@@ -107,8 +107,8 @@ class tposteditor extends tadminmenu {
   
   public function processform() {
     global $options;
-
-$mode = $this->getmode();
+    
+    $mode = $this->getmode();
     $this->basename = 'editor';
     $html = $this->html;
     $cats = array();
@@ -121,12 +121,12 @@ $mode = $this->getmode();
     extract($_POST);
     $post = tpost::instance((int)$id);
     if ($mode != 'update'){
-if (empty($title)) return $html->h2->emptytitle;
-    $post->title = $title;
-    $post->categories = $cats;
-    $post->tagnames = $tags;
-}    
-
+      if (empty($title)) return $html->h2->emptytitle;
+      $post->title = $title;
+      $post->categories = $cats;
+      $post->tagnames = $tags;
+    }
+    
     if (isset($fileschanged))  {
       $files = array();
       foreach ($_POST as $key => $value) {
@@ -169,11 +169,11 @@ if (empty($title)) return $html->h2->emptytitle;
       $post->rss = $rss;
       $post->moretitle = $moretitle;
       break;
-
-case 'update':
-$update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
+      
+      case 'update':
+      $update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
       $post->content = $post->rawcontent . "\n\n" . $update;
-break;
+      break;
     }
     
     $posts = tposts::instance();
@@ -185,6 +185,6 @@ break;
     
     return sprintf($html->p->success,"<a href=\"$post->link\" title=\"$post->title\">$post->title</a>");
   }
-
+  
 }//class
 ?>
