@@ -2,19 +2,19 @@
 /*
  * SAPE.ru -- Интеллектуальная система купли-продажи ссылок
  *
- * PHP-клиент, версия 1.0.3 от 27.02.2008
+ * PHP-клиент, версия 1.0.5 от 12.01.2010
  *
  * По всем вопросам обращайтесь на support@sape.ru
  *
  * Вебмастеры! Не нужно ничего менять в этом файле! Все настройки - через параметры при вызове кода.
- * Читайте: http://www.sape.ru/faq.php
+ * Читайте: http://help.sape.ru/
  *
  */
 
-//Основной класс, выполняющий всю рутину
+// Основной класс, выполняющий всю рутину
 class SAPE_base {
 
-    var $_version           = '1.0.3';
+    var $_version           = '1.0.5';
 
     var $_verbose           = false;
 
@@ -41,11 +41,11 @@ class SAPE_base {
 
     var $_force_show_code   = false;
 
-    var $_is_our_bot 		= false;           //Если наш робот
+    var $_is_our_bot        = false;           // Если наш робот
 
     var $_debug             = false;
 
-	var $_db_file     		= '';				//Путь к файлу с данными
+    var $_db_file           = '';              // Путь к файлу с данными
 
     function SAPE_base($options = null) {
 
@@ -94,6 +94,8 @@ class SAPE_base {
         // Кодировка
         if (isset($options['charset']) && strlen($options['charset'])) {
             $this->_charset = $options['charset'];
+        } else {
+            $this->_charset = 'windows-1251';
         }
 
         if (isset($options['fetch_remote_type']) && strlen($options['fetch_remote_type'])) {
@@ -127,10 +129,6 @@ class SAPE_base {
         } else {
             $this->_is_our_bot = false;
         }
-
-        //Перемешиваем список
-        srand((float)microtime() * 1000000);
-      //  shuffle($this->_server_list);
     }
 
 
@@ -155,7 +153,7 @@ class SAPE_base {
                 ini_get('allow_url_fopen') == 1
             )
         ) {
-			$this->_fetch_remote_type = 'file_get_contents';
+            $this->_fetch_remote_type = 'file_get_contents';
             if ($data = @file_get_contents('http://' . $host . $path)) {
                 return $data;
             }
@@ -169,7 +167,7 @@ class SAPE_base {
                 function_exists('curl_init')
             )
         ) {
-			$this->_fetch_remote_type = 'curl';
+            $this->_fetch_remote_type = 'curl';
             if ($ch = @curl_init()) {
 
                 @curl_setopt($ch, CURLOPT_URL,              'http://' . $host . $path);
@@ -186,7 +184,7 @@ class SAPE_base {
             }
 
         } else {
-			$this->_fetch_remote_type = 'socket';
+            $this->_fetch_remote_type = 'socket';
             $buff = '';
             $fp = @fsockopen($host, 80, $errno, $errstr, $this->_socket_timeout);
             if ($fp) {
@@ -211,7 +209,7 @@ class SAPE_base {
      * Функция чтения из локального файла
      */
     function _read($filename) {
-
+        
         $fp = @fopen($filename, 'rb');
         @flock($fp, LOCK_SH);
         if ($fp) {
@@ -289,28 +287,44 @@ class SAPE_base {
 
         @clearstatcache();
 
-        if (filemtime($this->_db_file) < (time()-$this->_cache_lifetime) || filesize($this->_db_file) == 0) {
-
+        if (
+            !$this->_is_our_bot
+            &&
+            (
+                filemtime($this->_db_file) < (time()-$this->_cache_lifetime)
+                ||
+                filesize($this->_db_file) == 0
+            )
+        ) {
             // Чтобы не повесить площадку клиента и чтобы не было одновременных запросов
             @touch($this->_db_file, (time() - $this->_cache_lifetime + $this->_cache_reloadtime));
-
+            
             $path = $this->_get_dispenser_path();
             if (strlen($this->_charset)) {
                 $path .= '&charset=' . $this->_charset;
             }
 
             foreach ($this->_server_list as $i => $server){
-	            if ($data = $this->fetch_remote_file($server, $path)) {
-	                if (substr($data, 0, 12) == 'FATAL ERROR:') {
-	                    $this->raise_error($data);
-	                } else {
-	                    // [псевдо]проверка целостности:
-	                    if (@unserialize($data) != false) {
-	                        $this->_write($this->_db_file, $data);
-	                        break;
-	                    }
-	                }
-	            }
+                if ($data = $this->fetch_remote_file($server, $path)) {
+                    if (substr($data, 0, 12) == 'FATAL ERROR:') {
+                        $this->raise_error($data);
+                    } else {
+                        // [псевдо]проверка целостности:
+                        $hash = @unserialize($data);
+                        if ($hash != false) {
+                            // попытаемся записать кодировку в кеш
+                            $hash['__sape_charset__'] = $this->_charset;
+                            
+                            $data_new = @serialize($hash);
+                            if ($data_new) {
+                                $data = $data_new;
+                            }
+                            
+                            $this->_write($this->_db_file, $data);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -321,20 +335,20 @@ class SAPE_base {
         }
 
         if ($data = $this->_read($this->_db_file)) {
-        	$this->set_data(@unserialize($data));
+            $this->set_data(@unserialize($data));
         }
     }
 }
 
 class SAPE_client extends SAPE_base {
 
-	var $_links_delimiter = '';
-	var $_links = array();
-	var $_links_page = array();
-	var $_user_agent = 'SAPE_Client PHP';
+    var $_links_delimiter = '';
+    var $_links = array();
+    var $_links_page = array();
+    var $_user_agent = 'SAPE_Client PHP';
 
     function SAPE_client($options = null) {
-    	parent::SAPE_base($options);
+        parent::SAPE_base($options);
         $this->load_data();
     }
 
@@ -342,13 +356,17 @@ class SAPE_client extends SAPE_base {
      * Ccылки можно показывать по частям
      */
     function return_links($n = null, $offset = 0) {
+
         if (is_array($this->_links_page)) {
+
             $total_page_links = count($this->_links_page);
+
             if (!is_numeric($n) || $n > $total_page_links) {
                 $n = $total_page_links;
             }
 
             $links = array();
+
             for ($i = 1; $i <= $n; $i++) {
                 if ($offset > 0 && $i <= $offset) {
                     array_shift($this->_links_page);
@@ -358,6 +376,22 @@ class SAPE_client extends SAPE_base {
             }
 
             $html = join($this->_links_delimiter, $links);
+            
+            // если запрошена определенная кодировка, и известна кодировка кеша, и они разные, конвертируем в заданную
+            if (
+                strlen($this->_charset) > 0
+                &&
+                strlen($this->_sape_charset) > 0
+                &&
+                $this->_sape_charset != $this->_charset
+                &&
+                function_exists('iconv')
+            ) {
+                $new_html  = @iconv($this->_sape_charset, $this->_charset, $html);
+                if ($new_html) {
+                    $html = $new_html;
+                }
+            }
             
             if ($this->_is_our_bot) {
                 $html = '<sape_noindex>' . $html . '</sape_noindex>';
@@ -379,38 +413,41 @@ class SAPE_client extends SAPE_base {
         }
     }
 
-    function _get_dispenser_path(){
-    	return '/code.php?user=' . _SAPE_USER . '&host=' . $this->_host;
+    function _get_dispenser_path() {
+        return '/code.php?user=' . _SAPE_USER . '&host=' . $this->_host;
     }
 
-    function set_data($data){
-    	$this->_links = $data;
+    function set_data($data) {
+        $this->_links = $data;
         if (isset($this->_links['__sape_delimiter__'])) {
             $this->_links_delimiter = $this->_links['__sape_delimiter__'];
         }
-        if (array_key_exists($this->_request_uri, $this->_links) && is_array($this->_links[$this->_request_uri])) {
+        // определяем кодировку кеша
+        if (isset($this->_links['__sape_charset__'])) {
+            $this->_sape_charset = $this->_links['__sape_charset__'];
+        }
+        if (@array_key_exists($this->_request_uri, $this->_links) && is_array($this->_links[$this->_request_uri])) {
             $this->_links_page = $this->_links[$this->_request_uri];
         } else {
-        	if (isset($this->_links['__sape_new_url__']) && strlen($this->_links['__sape_new_url__'])) {
-        		if ($this->_is_our_bot || $this->_force_show_code){
-        			$this->_links_page = $this->_links['__sape_new_url__'];
-        		}
-        	}
+            if (isset($this->_links['__sape_new_url__']) && strlen($this->_links['__sape_new_url__'])) {
+                if ($this->_is_our_bot || $this->_force_show_code){
+                    $this->_links_page = $this->_links['__sape_new_url__'];
+                }
+            }
         }
     }
-
 }
 
 
 class SAPE_context extends SAPE_base {
 
-	var $_words = array();
-	var $_words_page = array();
-	var $_user_agent = 'SAPE_Context PHP';
-    var $_filter_tags = array( "a", "textarea", "select", "script", "style", "label", "noscript" , "noindex", "button" );
+    var $_words = array();
+    var $_words_page = array();
+    var $_user_agent = 'SAPE_Context PHP';
+    var $_filter_tags = array('a', 'textarea', 'select', 'script', 'style', 'label', 'noscript' , 'noindex', 'button');
 
     function SAPE_context($options = null) {
-		parent::SAPE_base($options);
+        parent::SAPE_base($options);
         $this->load_data();
     }
 
@@ -449,18 +486,18 @@ class SAPE_context extends SAPE_base {
                 //Квотируем
                 $sentence = preg_quote($sentence, '/');
                 $replace_array = array();
-            	if (preg_match_all('/(&[#a-zA-Z0-9]{2,6};)/isU', $sentence, $out)){
-            		for ($i=0; $i<count($out[1]); $i++){
-            			$unspec = $special_chars[$out[1][$i]];
-            			$real = $out[1][$i];
-            		    $replace_array[$unspec] = $real;
-            		}
-            	}                 
-            	//Заменяем сущности на ИЛИ (сущность|символ)
-            	foreach ($replace_array as $unspec => $real){
+                if (preg_match_all('/(&[#a-zA-Z0-9]{2,6};)/isU', $sentence, $out)){
+                    for ($i=0; $i<count($out[1]); $i++){
+                        $unspec = $special_chars[$out[1][$i]];
+                        $real = $out[1][$i];
+                        $replace_array[$unspec] = $real;
+                    }
+                }                 
+                //Заменяем сущности на ИЛИ (сущность|символ)
+                foreach ($replace_array as $unspec => $real){
                     $sentence = str_replace($real, '(('.$real.')|('.$unspec.'))', $sentence);    
-            	}
-            	//Заменяем пробелы на переносы или сущности пробелов
+                }
+                //Заменяем пробелы на переносы или сущности пробелов
                 $source_sentences[$n] = str_replace(' ','((\s)|(&nbsp;))+',$sentence);
                 
                 if ($this->_debug) {
@@ -585,24 +622,24 @@ class SAPE_context extends SAPE_base {
                 unset($content);
             }
     } else {
-        if ($this->_debug){
+        if ($this->_debug) {
             $debug .= '<!-- No word`s for page -->';
         }
     }
 
-    if ($this->_debug){
+    if ($this->_debug) {
         $debug .= '<!-- END: work of replace_in_text_segment() -->';
     }
 
-    if ($this->_is_our_bot || $this->_force_show_code || $this->_debug){
+    if ($this->_is_our_bot || $this->_force_show_code || $this->_debug) {
         $text = '<sape_index>'.$text.'</sape_index>';
         if (isset($this->_words['__sape_new_url__']) && strlen($this->_words['__sape_new_url__'])){
                 $text .= $this->_words['__sape_new_url__'];
         }
     }
 
-    if ($this->_debug){
-        if (count($this->_words_page) > 0){
+    if ($this->_debug) {
+        if (count($this->_words_page) > 0) {
             $text .= '<!-- Not replaced: '."\r\n";
            foreach ($this->_words_page as $n => $value){
                $text .= $value."\r\n\r\n";
@@ -612,7 +649,7 @@ class SAPE_context extends SAPE_base {
         
         $text .= $debug;
     }
-             return $text;
+        return $text;
     }
 
     /*
@@ -681,17 +718,17 @@ class SAPE_context extends SAPE_base {
             return dirname(__FILE__) . '/words.db';
         }
     }
+    
     function _get_dispenser_path() {
-    	return '/code_context.php?user=' . _SAPE_USER . '&host=' . $this->_host;
+        return '/code_context.php?user=' . _SAPE_USER . '&host=' . $this->_host;
     }
-
-	 function set_data($data) {
-	 	$this->_words = $data;
-	    if (array_key_exists($this->_request_uri, $this->_words) && is_array($this->_words[$this->_request_uri])) {
-	        $this->_words_page = $this->_words[$this->_request_uri];
-	    }
-	 }
+    
+    function set_data($data) {
+        $this->_words = $data;
+        if (@array_key_exists($this->_request_uri, $this->_words) && is_array($this->_words[$this->_request_uri])) {
+            $this->_words_page = $this->_words[$this->_request_uri];
+        }
+    }
 }
-
 
 ?>
