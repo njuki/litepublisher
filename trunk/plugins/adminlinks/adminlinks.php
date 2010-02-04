@@ -13,19 +13,21 @@ class tadminlinksplugin extends tplugin {
  }
 
  public function onsitebar(&$content, $index) {
-  global $Options, $template;
+  global $options, $template;
 if ($index > 0) return;
 if ($template->context instanceof tpost) {
 $post = $template->context;
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('widget', $index);
     tlocal::loadlang('admin');
- $lang = tlocal::instance('posts);
+ $lang = tlocal::instance('posts');
 $editurl = $options->url . "/admin/posts/editor/" . $options->q . "id=$post->id";
+$action = $options->url . "/admin/posts/" . $options->q . "id=$post->id&action";
 $links = sprintf($tml, "$editurl&mode=short", $lang->edit);
 $links .= sprintf($tml, "$editurl&mode=midle", $lang->midledit);
 $links .= sprintf($tml, "$editurl&mode=full", $lang->fulledit);
-$links .= sprintf($tml, "$editurl&action=delete", $lang->delete);
+$links .= sprintf($tml, "$editurl&mode=update", $lang->updatepost);
+$links .= sprintf($tml, "$action=delete", $lang->delete);
 $links .= sprintf($tml, $options->url . "/admin/logout/", tlocal::$data['login']['logout']);
 
 $widget = $theme->getwidget($lang->adminpost, $links, 'widget', $index);
