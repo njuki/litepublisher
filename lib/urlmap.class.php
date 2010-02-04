@@ -16,7 +16,7 @@ class turlmap extends titems {
   public $cachefilename;
   public $argtree;
   public $is404;
-  public $admin;
+  public $adminpanel;
   public $mobile;
   
   public static function instance() {
@@ -30,7 +30,7 @@ class turlmap extends titems {
     $this->basename = 'urlmap';
     $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
     $this->is404 = false;
-    $this->admin = false;
+    $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
   }
@@ -50,7 +50,7 @@ class turlmap extends titems {
   public function request($host, $url) {
     global $options;
     $this->prepareurl($host, $url);
-    $this->admin = strbegin($this->url, '/admin/') || ($this->url == '/admin');
+    $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
     try {
       $this->dorequest($this->url);
@@ -309,6 +309,7 @@ foreach ($items as $id) $this->setexpired($id);
 } else {
 foreach ($this->items as $url => $item) {
 if ($class == $item['class']) $this->setexpired($item['id']);
+}
 }
 }
   

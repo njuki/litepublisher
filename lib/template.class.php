@@ -14,6 +14,7 @@ class ttemplate extends tevents {
   public $itemplate;
   public $javascripts;
   public $javaoptions;
+public $cursitebar;
   //public $footer;
   
   public static function instance() {
@@ -27,8 +28,9 @@ class ttemplate extends tevents {
     $this->tml = 'index';
     $this->itemplate = false;
     $this->javaoptions = array(0 => "url: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files'");
+$this->cursitebar = 0;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
-    'onsitebar', 'onwidget', 'onwidgetcontent');
+    'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
     $this->data['hovermenu'] = false;
     $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
@@ -76,6 +78,7 @@ class ttemplate extends tevents {
   }
   
   public function getsitebar() {
+global $options, $urlmap;
     $result = '';
     if ($this->context instanceof itemplate2) {
       $result .= $this->context->getsitebar();
@@ -83,6 +86,11 @@ class ttemplate extends tevents {
       $widgets = twidgets::instance();
       $result .= $widgets->getcontent();
     }
+
+    $this->onsitebar(&$result, $this->cursitebar);
+if ($options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
+if ($urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
+$this->cursitebar++;
     return $result;
   }
   
@@ -126,11 +134,6 @@ class ttemplate extends tevents {
     @ header('Last-Modified: ' . date('r'));
     @header('X-Pingback: $options->url/rpc.xml');
     ?>";
-  }
-  
-  public function getisadmin() {
-    $urlmap = turlmap::instance();
-    return $urlmap->admin;
   }
   
   //html tags
@@ -182,7 +185,8 @@ class ttemplate extends tevents {
     global $paths;
     $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && isset($theme->menu['id']);
-    if ($this->isadmin) {
+$urlmap = turlmap::instance();
+    if ($urlmap->adminpanel) {
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($hovermenu);
     }
@@ -246,7 +250,9 @@ class ttemplate extends tevents {
     foreach ($this->javascripts as $name => $script)  $result .=$script . "\n";
     
     if ($this->itemplate) $result .= $this->context->gethead();
-    if ($this->isadmin) $this->onadminhead(&$result);
+
+$urlmap = turlmap::instance();
+    if ($urlmap->adminpanel) $this->onadminhead(&$result);
     $result = $this->getjavaoptions() . $result;
     $this->onhead(&$result);
     return $result;
