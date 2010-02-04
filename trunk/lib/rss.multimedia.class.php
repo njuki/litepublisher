@@ -22,7 +22,6 @@ class trssMultimedia extends tevents {
   public function fileschanged($idpost) {
     $urlmap = turlmap::instance();
     $urlmap->expiredclass(get_class($this));
-  }
 }
 
 public function request($arg) {
