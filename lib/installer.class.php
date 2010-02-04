@@ -296,9 +296,9 @@ class tinstaller extends tdata {
     $users = tcomusers::instance($post->id);
     $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
     $classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
-
-$plugins = tplugins::instance();
-$plugins->add('adminlinks');
+    
+    $plugins = tplugins::instance();
+    $plugins->add('adminlinks');
   }
   
   public static function SendEmail($password) {
