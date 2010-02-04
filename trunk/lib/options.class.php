@@ -165,7 +165,7 @@ class toptions extends tevents {
     $log = $message . "\n" . $trace;
     tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();
-    if (defined('debug') || $this->echoexception || $urlmap->admin) {
+    if (defined('debug') || $this->echoexception || $urlmap->adminpanel) {
       $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       tfiler::log($log, 'exceptionsmail.log');

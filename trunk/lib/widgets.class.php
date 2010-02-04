@@ -22,6 +22,7 @@ class twidgets extends tsingleitems {
   
   protected function create() {
     parent::create();
+$this->addevents('onsitebar');
     $this->current = 0;
     $theme = ttheme::instance();
     $this->count = $theme->sitebarscount;
@@ -82,7 +83,7 @@ class twidgets extends tsingleitems {
       file_put_contents($file, $result);
       @chmod($file, 0666);
     }
-    $template->onsitebar(&$result, $this->current++);
+    $this->onsitebar(&$result, $this->current++);
     return $result;
   }
   
