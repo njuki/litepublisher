@@ -1,44 +1,54 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TAdminSapePlugin {
-private $widgets = array('TCategories', 'TArchives', 'TLinksWidget', 'TFoaf', 'TPosts', 'TMetaWidget');
+class tadminsapeplugin {
+private $widgets = array('ategories', 'TArchives', 'TLinksWidget', 'TFoaf', 'TPosts', 'TMetaWidget');
 
-public function Getcontent() {
-$plugin = &TSapePlugin::Instance();
-$lang = &TLocal::$data['stdwidgetnames'];
-$checkbox = '<p><input type=\'checkbox\' name=\'$name\' id=\'$name\' $checked/>
-<label for=\'$name\'>$value</label></p>';
+public function getcontent() {
+$plugin = tsapeplugin::instance();
+$std = tstdwidgets::instance();
+$theme = ttheme::instance();
+$checkbox = '<p><input type="checkbox" name="widget-$id" id="widget-$id" value="$id" $checked/>
+<label for="widget-$id">$name</label></p>';
 
 $checkboxes = '';
-foreach ($this->widgets as $name) {
-$value = $lang[$name];
-$checked = in_array($name, $plugin->widgets) ? "checked='checked'" : '';
-eval('$checkboxes .= "'. $checkbox . '\n";');
+$args = targs::instance();
+foreach ($std->items as $name => $item) {
+if ($item['ajax']) continue;
+$args->id = $item['id'];
+$args->checked = in_array($item['id'], $plugin->widgets);
+$args->name = $std->gettitle($name);
+$checkboxes .= $theme->parsearg($checkbox, $args);
 }
 
-$force = $plugin->force ? "checked='checked'" : '';
-$optimize = $plugin->optimize ? "checked='checked'" : '';
+$args->checkboxes = $checkboxes;
+$args->user = $plugin->user;
+$args->count = $plugin->count;
+$args->force = $plugin->force;
 $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'sapeform.tml');
-eval('$result = "'. $tml . '\n";');
-$result = str_replace("'", '"', $result);
-return $result;
+return $theme->parsearg($tml, $args);
 }
 
-public function ProcessForm() {
-$plugin = &TSapePlugin::Instance();
-$plugin->Lock();
+public function processform() {
+$plugin = tsapeplugin::instance();
+$plugin->lock();
 $plugin->widgets = array();
 foreach ($_POST as $name => $value) {
-if (in_array($name, $this->widgets)) $plugin->widgets[] = $name;
+if (strbegin($name, 'widget-')) $plugin->widgets[] = (int) $value;
 }
 extract($_POST);
-$plugin->count = $count;
+$plugin->count = (int) $count;
 $plugin->user = $user;
 $plugin->force = isset($force);
-$plugin->optimize = $optimize;
-$plugin->Unlock();		
+
+$plugin->unlock();		
 return '';
 }
 
-}
+}//class
 ?>

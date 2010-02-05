@@ -12,7 +12,7 @@ class tbackup2email extends tplugin {
   return getinstance(__class__);
  }
 
- protected function CreateDatacreate) {
+ protected function create() {
   parent::create();
 $this->data['idcron'] = 0;
 }
