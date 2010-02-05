@@ -187,12 +187,13 @@ class tposts extends titems {
       $this->getdb($this->rawtable)->iddelete($id);
       */
     } else {
-      $post = tpost::instance($id);
-      $idurl = $post->idurl;
-      $post->free();
+      if ($post = tpost::instance($id)) {
+        $idurl = $post->idurl;
+        $post->free();
+      }
       TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
       unset($this->items[$id]);
-      $urmap->deleteitem($idurl);
+      $urlmap->deleteitem($idurl);
     }
     
     $this->lock();
