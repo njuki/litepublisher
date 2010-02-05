@@ -26,6 +26,7 @@ class tdatabase extends PDO {
     $this->sql = '';
     $this->history = array();
     
+    $init =$dbconfig['port'] > 0 ?
     try {
       parent::__construct($init, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
       array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
