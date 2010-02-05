@@ -25,9 +25,12 @@ class tdatabase extends PDO {
     $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
     $this->history = array();
-    
-    $init =$dbconfig['port'] > 0 ?
     try {
+{
+    $init =$dbconfig['port'] > 0 ?
+"{$dbconfig['driver']}:host={$dbconfig['host']};port={$dbconfig['port']};dbname={$dbconfig['dbname']}" :
+"{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}";
+}
       parent::__construct($init, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
       array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
       //ERRMODE_WARNING
