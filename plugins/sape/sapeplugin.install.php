@@ -1,19 +1,37 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TSapePluginInstall(&$self) {$Template = &TTemplate::Instance();
-$Template = &TTemplate::Instance();
-$Template->Lock();
-$Template->AddWidget(get_class($self), 'nocache', '', '', -1, 0);
-$Template->AfterWidget = $self->AfterWidget;
-$Template->Unlock();
- }
+function tsapepluginInstall($self) {
+$self->data['optcode'] = md5unique();
+$self->save();
+
+$template = ttemplate::instance();
+$template->lock();
+$template->onsitebar= $this->onsitebar;
+$template->onwidgetcontent = $self->onwidgetcontent;
+$template->unlock();
+
+$widgets = twidgets::instance();
+$widgets->addext(get_class($self), 'echo', 'links', tlocal::$data['default']['links'], 0, -1);
+
+$urlmap = turlmap::instance();
+$urlmap->clearcache();
+}
  
-function TSapePluginUninstall(&$self) {
-$Template = &TTemplate::Instance();
-$Template->Lock();
-$Template->UnsubscribeClassName(get_class($self));
-  $Template->DeleteWidget(get_class($self));
-$Template->Unlock();
- }
+function tsapepluginUninstall($self) {
+$widgets = twidgets::instance();
+$widgets->deleteclass($self);
+
+$template = ttemplate::instance();
+$template->unsubscribeclass($self);
+
+$urlmap = turlmap::instance();
+$urlmap->clearcache();
+}
 
 ?>

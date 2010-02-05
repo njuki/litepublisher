@@ -1,25 +1,29 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TSapePlugin extends TPlugin {
+class tsapeplugin extends tplugin {
 public $sape;
 public $widgets;
  
- public static function &Instance() {
-  return GetInstance(__class__);
+ public static function instance() {
+  return getinstance(__class__);
  }
 
- protected function CreateData() {
-  parent::CreateData();
-$this->Data['user'] = '';
-$this->Data['count'] = 2;
-$this->Data['force'] = false;
-$this->Data['optimize'] = false;
-$this->Data['optcode'] = '';
-$this->AddDataMap('widgets', array());
+ protected function create() {
+  parent::create();
+$this->data['user'] = '';
+$this->data['count'] = 2;
+$this->data['force'] = false;
+$this->data['optcode'] = '';
+$this->addmap('widgets', array());
 }
 
- public function AfterLoad() {
-parent::AfterLoad();
+ private function createsape() {
      if (!defined('_SAPE_USER')){
        define('_SAPE_USER', $this->user);
  require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'sape.php');
@@ -30,65 +34,40 @@ $this->sape = new SAPE_client($o);
 }
 }
 
-public static function PrintLinks($count = null) {
-$self = &GetInstance(__class__);
-echo $self->GetLinks($count);
+public static function echolinks($count = null) {
+$self = getinstance(__class__);
+echo $self->getlinks($count);
 }
 
-public function GetLinks($count = null) {
-global $Urlmap;
-if ($Urlmap->is404 || $Urlmap->IsAdminPanel) return '';
-if (isset($this->sape)) {
+public function getlinks($count = null) {
+global $urlmap;
+if ($urlmap->is404 || $urlmap->adminpanel) return '';
+if (!isset($this->sape)) $this->createsape();
  $Links = $this->sape->return_links($count);
-if (!empty($Links)) {
+if (empty($Links)) return '';
 return "<li>$Links</li>\n";
 }
-}
-return '';
-}
 
- public function getwidget($id) {
-$Template = TTemplate::Instance();
-
-    $result = $Template->GetBeforeWidget('links');
-$result .= $this->GetLinks($this->count);
-  $result .= $Template->GetAfterWidget();
-  return $result;
+protected function gettag() {
+return "<!--$this->optcode-->";
 }
 
-public function AfterWidget($id) {
-$Template = TTemplate::Instance();
-if (!isset($Template->widgets[$id]) || !in_array($Template->widgets[$id]['class'], $this->widgets))  return '';
-if ($this->optimize) {
-return "<!--$this->optcode-->\n";
-} else {
-return '<?php '. get_class($this) . "::PrintLinks($this->count); ?>\n";
+ public function getwidgetcontent($id, $sitebar) {
+return $this->tag;
+}
+
+public function onwidgetcontent($id, &$content) {
+if (in_array($id, $this->widgets)) {
+$content .= "\n<!--$this->optcode-->\n";
 }
 }
 
-public function Setoptimize($value) {
-global $Urlmap;
-if ($this->optimize != $value) {
-$this->Data['optimize'] = $value;
-$this->Data['optcode'] = md5(secret. uniqid( microtime()) . 'sapeplugin optimize');
-$this->Save();
-
-$Template = &TTemplate::Instance();
-if  ($value) {
-$Template->OnWidgetContent = $this->OnWidgetContent;
-} else {
-$Template->UnsubscribeEvent('OnWidgetContent', get_class($this));
+public function onsitebar(&$content, $index) {
+$code = $this->tag;
+while ($i = strpos($content, $code)) {
+$links = $this->getlinks($this->count);
+      $content = substr_replace($content, $code, $i, strlen($code));
 }
-$Urlmap->ClearCache();
-}
-}
-
-public function OnWidgetContent($s) {
-$code = "<!--$this->optcode-->";
-if (strpos($s, $code) !== false) {
-return str_replace($code, $this->GetLinks($this->count), $s);
-}
-return '';
 }
  
 }//class
