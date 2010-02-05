@@ -45,14 +45,13 @@ class tadminplugins extends tadminmenu {
     $plugins = tplugins::instance();
     foreach ($this->abouts as $name => $about) {
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
-        //$this->adminplugins[$name] = $about;
-        $submenu .= sprintf($submenuitem, $url, $this->abouts[$name]['name']);
+        $submenu .= sprintf($submenuitem, $url, $name, $about['name']);
       }
     }
     if ($submenu != '') $result .= sprintf($html->submenu, $submenu);
     
     if (empty($_GET['plugin'])) {
-      $result = $html->checkallscript;
+      $result .= $html->checkallscript;
       $result .= $html->formhead();
       $args = targs::instance();
       foreach ($this->abouts as $name => $about) {
@@ -67,7 +66,7 @@ class tadminplugins extends tadminmenu {
     } else {
       $name = $_GET['plugin'];
       if (!isset($this->abouts[$name])) return $this->notfound;
-      if ($admin = $this->getadmin($name)) {
+      if ($admin = $this->getadminplugin($name)) {
         $result .= $admin->getcontent();
       }
     }
@@ -91,7 +90,7 @@ class tadminplugins extends tadminmenu {
     } else {
       $name = $_GET['plugin'];
       if (!isset($plugins[$name])) return $this->notfound;
-      if ($admin = $this->getadmin($name)) {
+      if ($admin = $this->getadminplugin($name)) {
         $result = $admin->processform();
       }
     }

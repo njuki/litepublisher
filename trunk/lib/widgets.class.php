@@ -151,12 +151,14 @@ class twidgets extends tsingleitems {
     }
     
     $result = '';
+$template = ttemplate::instance();
     $widget = GetInstance($item['class']);
     try {
       if (empty($item['template'])) {
         $result =   $widget->getwidget($item['id'], $this->current);
       }else {
         $content = $widget->getwidgetcontent($item['id'], $this->current);
+$template->onwidgetcontent($id, &$content);
         $theme= ttheme::instance();
         $result = $theme->getwidget($item['title'], $content, $item['template'], $this->current);
       }
@@ -165,6 +167,7 @@ class twidgets extends tsingleitems {
     }
     return $result;
   }
+
   public function add($class, $echotype, $sitebar, $order) {
     return $this->addext($class, $echotype, '', '', $sitebar, $order);
   }
