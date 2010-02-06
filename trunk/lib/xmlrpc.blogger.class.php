@@ -12,43 +12,43 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     return getinstance(__class__);
   }
   
-  public function getUsersBlogs(&$args) {
+  /*
+  appkey (string): Unique identifier/passcode of the application sending the post. (See access info.)
+  username (string): Login for the Blogger user who's blogs will be retrieved.
+  password (string): Password for said username.
+  */
+  public function getUsersBlogs($appkey, $login, $password) {
     global $options;
-    if (!$this->canlogin($args, 1))  return $this->error;
+    $this->auth($login, $password, 'editor');
     
-    $Result = array(
+    $result = array(
     //'isAdmin'  => true,
-    'url'      => $options->url . $options->home,
+    'url'      => $options->url . '/',
     'blogid'   => '1',
     'blogName' => $options->name
     );
-    return array($Result);
+    return array($result);
   }
   
-  public function getUserInfo(&$args) {
+  public function getUserInfo($appkey, $login, $password) {
     global $options;
-    if (!$this->canlogin($args, 1)) {
-      return $this->error;
-    }
+    $this->auth($login, $password, 'editor');
     
-    $Result= array(
-    'nickname'  => 'admin',
-    'userid'    => 1,
+    $result= array(
+    'nickname'  => $login,
+    'userid'    => $options->user,
     'url'       => $options->url .'/',
     'lastname'  => '',
     'firstname' => ''		);
-    return $Result;
+    return $result;
   }
   
-  public function getPost(&$args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
-    $id    = (int) $args[1];
+  public function getPost($appkey, $id, $login, $password) {
+    global $options;
+    $this->auth($login, $password, 'editor');
+    $id    = (int) $id;
     $posts= tposts::instance();
-    if (!$posts->itemexists($id)) {
-      return new IXR_Error(404, "Sorry, no such post.");
-    }
+    if (!$posts->itemexists($id)) return $this->xerror(404, "Sorry, no such post.");
     
     $Post = tpost::instance($id);
     $categories = implode(',', $Post->categories);
@@ -57,24 +57,22 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     $content .= '<category>'.$categories.'</category>';
     $content .= $Post->content;
     
-    $Result= array(
-    'userid'    => $Post->author,
+    $result= array(
+    'userid'    => $Post->user,
     'dateCreated' => new IXR_Date($Post->posted),
     'content'     => $content,
     'postid'  => $id
     );
     
-    return $Result;
+    return $result;
   }
   
-  public function getRecentPosts(&$args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
+  public function getRecentPosts($appkey, $blogid, $login, $password, $count) {
+    global $options;
+    $this->auth($login, $password, 'editor');
     
-    $num_posts  = $args[4];
-    $Posts = tposts::instance();
-    $Items = $Posts->GetPublishedRange(0, $num_posts  );
+    $posts = tposts::instance();
+    $Items = $Posts->GetPublishedRange(0, (int) $count);
     
     foreach ($Items as $id) {
       $Post = tpost::instance($id);
@@ -83,57 +81,36 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
       $content .= '<category>'.$categories.'</category>';
       $content .= $Post->content;
       
-      $Result[] = array(
-      'userid' => 1,
+      $result[] = array(
+      'userid' => $options->user,
       'dateCreated' => new IXR_Date($Post->date),
       'content' => $content,
       'postid' => $Post->id,
       );
     }
     
-    return $Result;
-  }
-  
-  public function getTemplate(&$args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
-    
-    $template   = $args[4]; /* could be 'main' or 'archiveIndex', but we don't use it */
-    //craze method
-    return '';
-  }
-  
-  public function setTemplate(&$args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
-    
-    $content    = $args[4];
-    $template   = $args[5]; /* could be 'main' or 'archiveIndex', but we don't use it */
-    //not supported
-    return true;
+    return $result;
   }
   
   private function getposttitle($content) {
     if ( preg_match('/<title>(.+?)<\/title>/is', $content, $matchtitle) ) {
-      $Result = $matchtitle[0];
-      $Result = preg_replace('/<title>/si', '', $Result);
-      $Result = preg_replace('/<\/title>/si', '', $Result);
+      $result = $matchtitle[0];
+      $result = preg_replace('/<title>/si', '', $result);
+      $result = preg_replace('/<\/title>/si', '', $result);
     } else {
-      $Result = 'no title';
+      $result = 'no title';
     }
-    return $Result;
+    return $result;
   }
   
   private function getpostcategory($content) {
     if ( preg_match('/<category>(.+?)<\/category>/is', $content, $matchcat) ) {
-      $Result = trim($matchcat[1], ',');
-      $Result = explode(',', $Result);
+      $result = trim($matchcat[1], ',');
+      $result = explode(',', $result);
     } else {
-      $Result = array(1);
+      $result = array(1);
     }
-    return $Result;
+    return $result;
   }
   
   private function removepostdata($content) {
@@ -143,58 +120,50 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     return $content;
   }
   
-  public function newPost($args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
+  /*
+  appkey (string): Unique identifier/passcode of the application sending the post. (See access info.)
+  blogid (string): Unique identifier of the blog the post will be added to.
+  username (string): Login for a Blogger user who has permission to post to the blog.
+  password (string): Password for said username.
+  content (string): Contents of the post.
+  publish (boolean): If true, the blog will be published immediately after the post is made.
+  */
+  public function newPost($appkey, $blogid, $login, $password, $content, $publish) {
+    global $options;
+    $this->auth($login, $password, 'editor');
     
-    $Posts = tposts::instance();
-    $Post = tpost::instance(0);
+    $posts = tposts::instance();
+    $post = tpost::instance(0);
+    $post->status = $publish ? 'published' : 'draft';
+    $post->title = $this->getposttitle($content);
+    $post->content = $this->removepostdata($content);
+    $post->categories = $this->getpostcategory($content);
     
-    $content    = $args[4];
-    $publish    = $args[5];
-    $Post->status = ($publish) ? 'published' : 'draft';
-    
-    $Post->title = $this->getposttitle($content);
-    $Post->content = $this->removepostdata($content);
-    $Post->categories = $this->getpostcategory($content);
-    
-    $id = $Posts->add($Post);
-    return $id;
+    $id = $posts->add($post);
+    return (string) $id;
   }
   
-  function editPost(&$args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
+  public function editPost($appkey, $id, $login, $password, $content, $publish) {
+    $this->auth($login, $password, 'editor');
+    $id = (int) $id;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id)) return $this->xerror(404, 'Sorry, no such post.');
+    $post = tpost::instance($id);
+    $post->status = $publish ? 'published' : 'draft';
+    $post->title = $this->getposttitle($content);
+    $post->content = $this->removepostdata($content);
+    $post->categories = $this->getpostcategory($content);
     
-    $id     = (int) $args[1];
-    $content     = $args[4];
-    $publish     = $args[5];
-    $Posts = &TPosts::instance();
-    if (!$Posts->itemExists($id)) {
-      return new IXR_Error(404, 'Sorry, no such post.');
-    }
-    $Post = &TPost::instance($id);
-    $Post->status = ($publish) ? 'published' : 'draft';
-    $Post->title = $this->getposttitle($content);
-    $Post->content = $this->removepostdata($content);
-    $Post->categories = $this->getpostcategory($content);
-    $Posts->Edit($Post);
+    $posts->edit($post);
     return true;
   }
   
-  public function deletePost(&$args) {
-    if (!$this->canlogin($args, 2)) {
-      return $this->error;
-    }
-    
-    $id     = (int) $args[1];
-    $Posts = &TPosts::instance();
-    if (!$Posts->itemExists($id)) {
-      return new IXR_Error(404, 'Sorry, no such post.');
-    }
-    $Posts->Delete($id);
+  public function deletePost($appkey, $id, $login, $password) {
+    $this->auth($login, $password, 'editor');
+    $id = (int) $id;
+    $posts = tposts::instance();
+    if (!$posts->itemexists($id)) return $this->xerror(404, 'Sorry, no such post.');
+    $posts->delete($id);
     return true;
   }
   

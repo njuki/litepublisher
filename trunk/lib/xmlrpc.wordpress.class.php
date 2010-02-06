@@ -111,6 +111,25 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     return true;
   }
   
+  public function getTags($blogid, $username, $password) {
+    global $options;
+    $this->auth($username, $password, 'editor');
+    $tags = ttags::instance();
+    $result = array();
+    $tags->loadall();
+    foreach ($tags->items as $id => $item) {
+      $result[] = array(
+      'tag_id'		 => (string) $id,
+      'name' => $item['title'],
+      'count' => $item['itemscount'],
+      'slug' => '',
+      'html_url' => $options->url . $item['url'],
+      'rss_url' => $options->url . $item['url']
+      );
+    }
+    return $result;
+  }
+  
 }//class
 
 ?>
