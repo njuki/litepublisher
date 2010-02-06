@@ -1,25 +1,22 @@
 <?php
 
-class TNicedit extends TPlugin {
+class tnicedit extends tplugin {
 
- public static function &Instance() {
-  return GetInstance(__class__);
+ public static function instance() {
+  return getinstance(__class__);
  }
 
-public function Onhead() {
-global $Options;
-$url = $Options->url . '/plugins/nicedit';
-
-$result =<<<i_C
-<script type="text/javascript" src="$url/nicEdit.js"></script>
+public function onhead(&$head) {
+global $options;
+$head .= sprintf('<script type="text/javascript" src="%s/plugins/nicedit/nicEdit.js"></script>', $options->files);
+$head .= '
 <script type="text/javascript">
-   bkLib.onDomLoaded(function()
-{ nicEditors.allTextAreas({fullPanel : true});
+   bkLib.onDomLoaded( function() {
+ nicEditors.allTextAreas({fullPanel : true});
 });
 </script>
-i_C;
-
-return $result;
+';
 }
+
 }//class
 ?>

@@ -13,34 +13,55 @@ class tadminlinksplugin extends tplugin {
  }
 
  public function onsitebar(&$content, $index) {
-  global $options, $template;
-if ($index > 0) return;
-if ($template->context instanceof tpost) {
-$post = $template->context;
+  global $options, $template, $urlmap;
+if ($index > 0 || $urlmap->adminpanel) return;
 $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('widget', $index);
     tlocal::loadlang('admin');
+
+switch (get_class($template->context)) {
+case 'tpost':
+$post = $template->context;
  $lang = tlocal::instance('posts');
+$title = $lang->adminpost;
 $editurl = $options->url . "/admin/posts/editor/" . $options->q . "id=$post->id";
 $action = $options->url . "/admin/posts/" . $options->q . "id=$post->id&action";
-$links = sprintf($tml, "$editurl&mode=short", $lang->edit);
+$links = sprintf($tml, $options->url . "/admin/posts/editor/" . $options->q . "mode=short", tlocal::$data['names']['quick']);
+$links .= sprintf($tml, "$editurl&mode=short", $lang->edit);
 $links .= sprintf($tml, "$editurl&mode=midle", $lang->midledit);
 $links .= sprintf($tml, "$editurl&mode=full", $lang->fulledit);
 $links .= sprintf($tml, "$editurl&mode=update", $lang->updatepost);
 $links .= sprintf($tml, "$action=delete", $lang->delete);
-$links .= sprintf($tml, $options->url . "/admin/logout/", tlocal::$data['login']['logout']);
+break;
 
-$widget = $theme->getwidget($lang->adminpost, $links, 'widget', $index);
-$content = $widget . $content;
-return true;
-}
+case 'tcategories':
+case 'ttags':
+$tags = $template->context;
+$name = $tags instanceof ttags ? 'tags' : 'categories';
+$adminurl = $options->url . "/admin/posts/$name/";
+$lang = tlocal::instance('tags');
+$title = $lang->{$name};
+$links = sprintf($tml,$adminurl, $lang->add);
+$adminurl .= $options->q . "id=$tags->id";
+$links .= sprintf($tml,$adminurl, $lang->edit);
+$links .= sprintf($tml, "$adminurl&action=delete", $lang->delete);
+$links .= sprintf($tml, "$adminurl&full=1", $lang->fulledit);
+break;
 
-if ($template->context instanceof tcategories) {
+case 'thomepage':
+$lang = tlocal::instance('options');
+$title = $lang->home;
+$links = sprintf($tml, $options->url . "/admin/options/home/", $lang->title);
+$links .= sprintf($tml, $options->url . "/admin/widgets/homepagewidgets/", tlocal::$data['names']['homepagewidgets']);
+break;
 
-$content = $widget . $content;
+default:
 return;
 }
 
+$links .= sprintf($tml, $options->url . "/admin/logout/", tlocal::$data['login']['logout']);
+$widget = $theme->getwidget($title, $links, 'widget', $index);
+$content = $widget . $content;
 }
 
 }//class

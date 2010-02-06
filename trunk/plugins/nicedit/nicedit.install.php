@@ -1,13 +1,13 @@
 <?php
 
-function TNiceditInstall(&$self) {$Template = &TTemplate::Instance();
-$Template = &TTemplate::Instance();
-$Template->OnAdminHead = $self->Onhead;
+function tniceditInstall($self) {
+$template = ttemplate::instance();
+$template->onadminhead = $self->onhead;
 }
 
-function TNiceditUninstall(&$self) {
-$Template = &TTemplate::Instance();
-  $Template->UnsubscribeClass($self);
+function tniceditUninstall($self) {
+$template = ttemplate::instance();
+  $template->unsubscribeclass($self);
 }
 
 ?>
