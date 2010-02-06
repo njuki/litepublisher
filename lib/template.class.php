@@ -255,7 +255,7 @@ class ttemplate extends tevents {
     if ($urlmap->adminpanel) $this->onadminhead(&$result);
     $result = $this->getjavaoptions() . $result;
     $this->onhead(&$result);
-    return $result;
+    return trim($result);
   }
   
   public function getbody() {

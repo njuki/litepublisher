@@ -82,6 +82,7 @@ class tadminfiles extends tadminmenu {
     foreach ($list as $id) {
       $item = $files->items[$id];
       $args->add($item);
+      $args->id = $id;
       $result .= $html->tableitem ($args);
     }
     

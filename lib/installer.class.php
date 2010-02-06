@@ -298,7 +298,10 @@ class tinstaller extends tdata {
     $classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
     
     $plugins = tplugins::instance();
+    $plugins->lock();
     $plugins->add('adminlinks');
+    $plugins->add('nicedit');
+    $plugins->unlock();
   }
   
   public static function SendEmail($password) {
