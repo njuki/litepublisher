@@ -11,7 +11,7 @@ class tcommontags extends titems implements  itemplate {
   public $itemsposts;
   public $PermalinkIndex;
   public $PostPropname;
-  protected $id;
+  public $id;
   private $newtitle;
   
   protected function create() {
