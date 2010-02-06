@@ -260,7 +260,7 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'secure':
-      $auth = tauthigest::instance();
+      $auth = tauthdigest::instance();
       $options->cookieenabled = isset($cookie);
       $auth->xxxcheck = isset($xxxcheck);
       $auth->save();

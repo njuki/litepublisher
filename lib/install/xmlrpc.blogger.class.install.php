@@ -6,29 +6,25 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCBloggerInstall(&$self) {
-  $Caller = &TXMLRPC::Instance();
-  $Caller->Lock();
+function TXMLRPCBloggerInstall($self) {
+  $caller = TXMLRPC::instance();
+  $caller->lock();
   
   // Blogger API
-  $Caller->Add('blogger.getUsersBlogs', 'getUsersBlogs', get_class($self));
-  $Caller->Add('blogger.getUserInfo', 'getUserInfo', get_class($self));
-  $Caller->Add('blogger.getPost', 'getPost', get_class($self));
-  $Caller->Add('blogger.getRecentPosts', 'getRecentPosts', get_class($self));
-  $Caller->Add('blogger.getTemplate', 'getTemplate', get_class($self));
-  $Caller->Add('blogger.setTemplate', 'setTemplate', get_class($self));
-  $Caller->Add('blogger.newPost', 'newPost', get_class($self));
-  $Caller->Add('blogger.editPost', 'editPost', get_class($self));
-  $Caller->Add('blogger.deletePost', 'deletePost', get_class($self));
+  $caller->add('blogger.getUsersBlogs', 'getUsersBlogs', get_class($self));
+  $caller->add('blogger.getUserInfo', 'getUserInfo', get_class($self));
+  $caller->add('blogger.getPost', 'getPost', get_class($self));
+  $caller->add('blogger.getRecentPosts', 'getRecentPosts', get_class($self));
+  $caller->add('blogger.newPost', 'newPost', get_class($self));
+  $caller->add('blogger.editPost', 'editPost', get_class($self));
+  $caller->add('blogger.deletePost', 'deletePost', get_class($self));
   
   // MetaWeblog API aliases for Blogger API
   // see http://www.xmlrpc.com/stories/storyReader$2460
-  $Caller->Add('metaWeblog.deletePost', 'deletePost', get_class($self));
-  $Caller->Add('metaWeblog.getTemplate', 'getTemplate', get_class($self));
-  $Caller->Add('metaWeblog.setTemplate', 'setTemplate', get_class($self));
-  $Caller->Add('metaWeblog.getUsersBlogs', 'getUsersBlogs', get_class($self));
+  $caller->add('metaWeblog.deletePost', 'deletePost', get_class($self));
+  $caller->add('metaWeblog.getUsersBlogs', 'getUsersBlogs', get_class($self));
   
-  $Caller->Unlock();
+  $caller->unlock();
 }
 
 ?>

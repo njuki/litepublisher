@@ -16,6 +16,7 @@ function TXMLRPCWordpressInstall($self) {
   $caller->add('wp.getPageList',	'wp_getPageList', get_class($self));
   $caller->add('wp.newCategory',		'wp_newCategory', get_class($self));
   $caller->add('wp.deleteCategory ',		'deleteCategory ', get_class($self));
+  $caller->add('wp.getTags',		'getTags', get_class($self));
   
   $caller->unlock();
 }

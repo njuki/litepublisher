@@ -215,19 +215,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $this->auth($username, $password, 'editor');
     
     $categories = tcategories::instance();
-    if (dbversion) {
-      global $db;
-      $res = $db->query("select $categories->thistable.*, $db->urlmap.url as url  from $categories->thistable,  $db->urlmap
-      where $db->urlmap.id  = $categories->thistable.idurl");
-      $items =  $res->fetchAll(PDO::FETCH_ASSOC);
-    } else {
-      $Items = &$categories->items;
-    }
+    $categories->loadall();
     $result = array();
-    foreach ( $Items as $item) {
+    foreach ( $categories->items as $id => $item) {
       $result[] = array(
-      'categoryId' => $item['id'],
-      'parentId' => $item['parent'],
+      'categoryId' =>   $id,
+      'parentId' => 0,
+      //$item['parent'],
       'description' => $categories->contents->getdescription($item['id']),
       'categoryName' => $item['title'],
       'title' => $item['title'],
