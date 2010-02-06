@@ -1,33 +1,32 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class THomepageInvert extends THomepage {
+class thomepageInvert extends thomepage {
  
- public static function &Instance() {
-  return GetInstance(__class__);
+ public static function instance() {
+  return getinstance(__class__);
  }
 
- public function GetItems() { 
-  global $Options, $Urlmap;
-  $posts = &TPosts::Instance();
+ public function getitems() { 
+  global $options, $urlmap;
+  $posts = tposts::instance();
+//    return $Posts->GetPublishedRange($urlmap->page, $options->postsperpage);
+    $count = $this->archivescount;
+    $from = ($page - 1) * $perpage;
+    if ($from > $count)  return array();
+    if (dbversion)  {
+      return $posts->select("status = 'published'", " order by posted asc limit $from, $perpage");
+    } else {
+      $to = min($from + $perpage , $count);
   $arch = array_reverse(array_keys($posts->archives));
-  $Count = count($arch);
-  $From = ($Urlmap->pagenumber - 1) * $Options->postsperpage;
-  if ($From > $Count)  return array();
-  $To = min($From + $Options->postsperpage, $Count);
-return array_slice($arch, $From, $To - $From);
-}
-
-public function Install() {
- $Urlmap = &TUrlmap::Instance();
- $Urlmap->items['/']['class'] = get_class($this);
-$Urlmap->Save();
- }
-
-public function Uninstall() {
- $Urlmap = &TUrlmap::Instance();
- $Urlmap->items['/']['class'] = get_parent_class($this);
-$Urlmap->Save();
-}
-
+      return array_slice($arch, $from, $to - $from);
+    }
+  }
+  
 }//class
 ?>
