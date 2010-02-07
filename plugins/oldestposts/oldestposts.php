@@ -14,14 +14,14 @@ class toldestposts extends tplugin {
  
  public function onsitebar(&$content, $index) {
 if ($index > 0) return;
-$links = $this->getoldposts();
+$links = $this->getoldposts($index);
 if ($links == '') return;
 $theme = ttheme::instance();
 $widget = $theme->getwidget(tlocal::$data['default']['prev'], $links, 'widget', $index);
 $content = $widget . $content;
  }
 
-private function getoldposts() {
+private function getoldposts($index) {
 global $post;
 $posts = tposts::instance();
 
