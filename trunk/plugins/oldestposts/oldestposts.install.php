@@ -1,13 +1,22 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TOldestPostsInstall(&$self) {$Template = &TTemplate::Instance();
-  $templ = &TTemplatePost::Instance();
-  $templ->Onpostscript = $self->postscript;
+function toldestpostsInstall($self) {
+global $classes;
+  $template = ttemplate::instance();
+$template->addsitebarclass($classes->classes['post'], $self->onsitebar);
+
  }
  
-function TOldestPostsUninstall(&$self) {
-  $templ = &TTemplatePost::Instance();
-  $templ->UnsubscribeClass($self);
+function toldestpostsUninstall($self) {
+global $classes;
+  $template = ttemplate::instance();
+$template->deletesitebarclass($classes->classes['post'], $self);
  }
 
 ?>

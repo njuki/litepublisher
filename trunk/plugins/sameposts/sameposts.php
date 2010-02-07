@@ -1,28 +1,41 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TSamePosts extends TPlugin {
- public $items;
- 
- public static function &Instance() {
-  return GetInstance(__class__);
+class tsameposts extends tplugin {
+
+ public static function instance() {
+  return getinstance(__class__);
  }
  
- protected function CreateData() {
-  parent::CreateData();
-  $this->AddDataMap('items', array());
+ protected function CreateDatacreate) {
+  parent::create();
+if (dbversion) {
+} else {
+$this->data['rlease'] = 1;
+}
  }
  
- public function PostChanged() {
-  $this->items = array();
-  $this->Save();
+ public function postchanged() {
+if (dbversion) {
+} else {
+  $this->release += 1;
+  $this->save();
+}
  }
  
- public function Find($postid) {
+ public function findsame($id) {
+if (dbversion) {
+} else {
   $result = array();
-  $post = &TPost::Instance($postid);
-$posts = TPosts::Instance();
+  $post = tpost::instance($id);
+$posts = tposts::instance();
   $list = $post->categories;
-  $cats = &TCategories::Instance();
+  $cats = &TCategories::instance();
   $same = array();
   foreach ($list as $id) {
 if (!isset($cats->items[$id])) continue;
@@ -38,24 +51,23 @@ if (!isset($cats->items[$id])) continue;
   
   arsort($same);
   $result = array_keys($same);
-  $posts = &TPosts::Instance();
+  $posts = &TPosts::instance();
   $posts->StripDrafts($result);
   $result = array_slice($result, 0, 7);
   $this->items[$postid] = $result;
   $this->Save();
  }
  
- public function postscript($id) {
-  global $classes, $Options, $post;
-    if (!is_a($post, $classes->classes['post'])) return '';
+ public function onsitebar(&$content, $index) {
+  global $classes, $options, $post;
   $result = '';
-  if (!isset($this->items[$id])) $this->Find($id);
+  if (!isset($this->items[$id])) $this->findsame($id);
   if (count($this->items[$id]) == 0) return $result;
   $result = TLocal::$data['default']['sameposts'];
   $result = "<ul>$result\n";
   foreach ($this->items[$id] as $postid) {
-   $post = &TPost::Instance($postid);
-   $result .= "<li><a href=\"$Options->url$post->url\">$post->title</a></li>\n";
+   $post = &TPost::instance($postid);
+   $result .= "<li><a href=\"$options->url$post->url\">$post->title</a></li>\n";
   }
   $result .= "</ul>\n";
   
