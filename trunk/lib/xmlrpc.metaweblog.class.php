@@ -100,7 +100,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $menu = tmenu::instance(0);
     $menu->status = $publish ? 'published' : 'draft';
     $this->WPAssignPage($struct, $menu);
-    return (int) $menus->add($menu);
+    return "menu_" . $menus->add($menu);
   }
   
   protected function  WPAssignPage(array &$struct, tmenu $menu) {
@@ -111,7 +111,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $menu->content = $struct['description'] . $struct['mt_text_more'];
     }
     
-    if(isset($struct["wp_slug"])) {
+    if(!empty($struct["wp_slug"])) {
       $linkgen = tlinkgenerator::instance();
       $menu->url = $linkgen->AddSlashes($struct['wp_slug']);
     }
@@ -128,14 +128,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $menu->order = (int) $struct["wp_page_order"];
     }
     
-    $this->MWSetDate($struct, $menu);
-    
     /* custom_fields is not supported */
   }
   
   /* <item> in RSS 2.0, providing a rich variety of item-level metadata, with well-understood applications.
   The three basic elements are title, link and description.  */
   protected function  MWSetPost(array &$struct, tpost $post) {
+    var_dump($struct);
     $post->title = $struct['title'];
     $more = isset($struct['mt_text_more']) ? trim($struct['mt_text_more']) : '';
     if ($more == '') {
@@ -152,7 +151,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $post->catnames = $struct['categories'];
     }
     
-    if(isset($struct["wp_slug"])) {
+    if(!empty($struct["wp_slug"])) {
       $linkgen = tlinkgenerator::instance();
       $post->url = $linkgen->AddSlashes($struct["wp_slug"] . '/');
     } elseif (!empty($struct['link'])) {
@@ -197,9 +196,10 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   public function wp_editPage($blogid, $id, $username, $password, $struct, $publish) {
     $this->auth($username, $password, 'editor');
+    if (strbegin($id, 'menu_')) $id = substr($id, strlen('menu_'));
     $id = (int) $id;
     $menus = tmenus::instance();
-    if (!$menus->itemexists($id))  return xerror(404, "Sorry, no such page.");
+    if (!$menus->itemexists($id))  return $this->xerror(404, "Sorry, no such page.");
     $menu = tmenu::instance($id);
     $menu->status = $publish ? 'published' : 'draft';
     $this->WPAssignPage($struct, $menu);
@@ -236,7 +236,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   //returns string
   public function newPost($blogid, $username, $password, $struct, $publish) {
     if(isset($struct["post_type"]) && ($struct["post_type"] == "page")) {
-      return 'menu_' .  $this->wp_newPage($blogid, $username, $password, $struct, $publish);
+      return  $this->wp_newPage($blogid, $username, $password, $struct, $publish);
     }
     
     $this->auth($username, $password, 'editor');
@@ -262,7 +262,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   // returns true
   public function editPost($postid, $username, $password, $struct, $publish) {
     if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
-      if (strbegin($postid, 'menu_')) $postid = substr($postid, strlen('menu_'));
       return  $this->wp_editPage(0, $postid, $username, $password, $struct, $publish);
     }
     

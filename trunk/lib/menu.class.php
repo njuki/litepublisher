@@ -43,7 +43,7 @@ class tmenus extends TItems {
       $item->url = $linkgen->createlink($item, 'post', true);
     } else {
       $title = $item->title;
-      $item->title = trim($post->url, '/');
+      $item->title = trim($item->url, '/');
       $item->url = $linkgen ->createlink($item, 'post', true);
       $item->title = $title;
     }
@@ -84,7 +84,7 @@ class tmenus extends TItems {
     
     if ($oldurl != $item->url) {
       //check unique url
-      if (($idurl = $urlmap->idfind($item->url)) && ($idurl != $item->idurl)) {
+      if (($urlitem = $urlmap->findurl($item->url)) && ($urlitem['id'] != $item->idurl)) {
         $item->url = $linkgen->MakeUnique($item->url);
       }
       $urlmap->setidurl($item->idurl, $item->url);

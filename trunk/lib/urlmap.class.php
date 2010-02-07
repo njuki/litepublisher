@@ -119,6 +119,15 @@ class turlmap extends titems {
     return false;
   }
   
+  public function findurl($url) {
+    if (dbversion) {
+      if ($result = $this->db->finditem('url = '. dbquote($url))) return $result;
+    } else {
+      if (isset($this->items[$url])) return $this->items[$url];
+    }
+    return false;
+  }
+  
   private function getcachefile(array $item) {
     global $paths, $options;
     if (!$this->cachefilename) {
