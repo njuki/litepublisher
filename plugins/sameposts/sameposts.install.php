@@ -1,16 +1,23 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-function TSamePostsInstall(&$self) {$Template = &TTemplate::Instance();
-  $templ = &TTemplatePost::Instance();
-  $templ->Onpostscript = $self->postscript;
-  $Posts= &TPosts::Instance();
-  $Posts->Changed = $self->PostChanged;
+function tsamepostsInstall($self) {$Template = &TTemplate::Instance();
+$template = ttemplate::instance();
+$template->AddOnSitebarClass('tpost', $self->onsitebar);
+
+  $posts= tposts::instance();
+  $posts->changed = $self->postschanged;
  }
  
-function TSamePostsUninstall(&$self) {
-  TPosts::unsub($self);
-  $templ = &TTemplatePost::Instance();
-  $templ->UnsubscribeClass($self);
+function tsamepostsUninstall($self) {
+  tposts::unsub($self);
+$template = ttemplate::instance();
+$template->DeleteClassSitebar($self);
  }
 
 ?>

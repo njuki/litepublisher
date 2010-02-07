@@ -1,32 +1,50 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TOldestPosts extends TPlugin {
- public $items;
- 
- public static function &Instance() {
-  return GetInstance(__class__);
+class toldestposts extends tplugin {
+
+ public static function instance() {
+  return getinstance(__class__);
  }
  
- public function postscript($id) {
-  global $classes, $post, $Options;
-    if (!is_a($post, $classes->classes['post'])) return '';
-  $result = '';
-$posts = TPosts::Instance();
+ public function onsitebar(&$content, $index) {
+if ($index > 0) return;
+$links = $this->getoldposts();
+if ($links == '') return;
+$theme = ttheme::instance();
+$widget = $theme->getwidget(tlocal::$data['default']['prev'], $links, 'widget', $index);
+$content = $widget . $content;
+ }
+
+private function getoldposts() {
+global $post;
+$posts = tposts::instance();
+
+if (dbversion) {
+$items = $posts->select("status = 'published' and posted < '$post->sqldate' order by posted desc",10);
+} else {
 $arch = array_keys($posts->archives);
-$i = array_search($id, $arch);
+$i = array_search($post->id, $arch);
 if (!is_int($i)) return '';
 $items = array_slice($arch, $i + 1, 10);
-  if (count($items) == 0) return $result;
-  $result = TLocal::$data['default']['prev'];
-  $result = "<ul>$result\n";
-  foreach ($items as $postid) {
-   $post = &TPost::Instance($postid);
-   $result .= "<li><a href=\"$Options->url$post->url\">$post->title</a></li>\n";
+}
+
+  if (count($items) == 0) return '';
+
+$theme = ttheme::instance();
+$tml = $theme->getwidgetitem('widget', $index);
+$result = '';
+  foreach ($items as $id) {
+   $post = tpost::instance($id);
+$result .= sprintf($tml, $post->link, $post->title);
   }
-  $result .= "</ul>\n";
-  
-  return $result;
- }
- 
+return $result;
+} 
+
 }//class
 ?>
