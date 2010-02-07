@@ -18,6 +18,9 @@ function TXMLRPCBloggerInstall($self) {
   $caller->add('blogger.newPost', 'newPost', get_class($self));
   $caller->add('blogger.editPost', 'editPost', get_class($self));
   $caller->add('blogger.deletePost', 'deletePost', get_class($self));
+  $caller->add('blogger.getTemplate', 'getTemplate', get_class($self));
+  $caller->add('blogger.setTemplate', 'setTemplate', get_class($self));
+
   
   // MetaWeblog API aliases for Blogger API
   // see http://www.xmlrpc.com/stories/storyReader$2460
