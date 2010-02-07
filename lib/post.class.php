@@ -77,7 +77,7 @@ class tpost extends titem implements  itemplate {
   
   public function getprev() {
     if (dbversion) {
-      if ($id = $this->db->findid(sprintf("status = 'published' and posted < '%s' order by posted desc", sqldate($this->posted)))) {
+      if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
         return self::instance($id);
       }
       return null;
@@ -92,7 +92,7 @@ class tpost extends titem implements  itemplate {
   
   public function getnext() {
     if (dbversion) {
-      if ($id = $this->db->findid(sprintf("status = 'published' and posted > '%s' order by posted desc", sqldate($this->posted)))) {
+      if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
         return self::instance($id);
       }
       return null;
@@ -131,6 +131,10 @@ class tpost extends titem implements  itemplate {
   public function Setpubdate($date) {
     $this->data['posted'] = strtotime($date);
   }
+
+public function getsqldate() {
+return sqldate($this->posted);
+}
   
   //template
   public function getexcerptcategories() {

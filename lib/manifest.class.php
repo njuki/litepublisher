@@ -51,7 +51,7 @@ class tmanifest extends tevents {
       <imageUrl>images/wlw/wp-comments.png</imageUrl>
       <clickUrl>
       <![CDATA[
-      $options->url/admin/moderate/
+      $options->url/admin/comments/
       ]]>
       </clickUrl>
       </button>
