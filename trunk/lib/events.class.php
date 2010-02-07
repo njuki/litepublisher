@@ -115,9 +115,9 @@ class tevents extends tdata {
   
   public function eventsubscribe($name, $params) {
     if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
-return $this->doeventsubscribe($name, $params);
-}
-
+    return $this->doeventsubscribe($name, $params);
+  }
+  
   protected function doeventsubscribe($name, $params) {
     if (!isset($this->events[$name])) $this->events[$name] =array();
     $list = $this->getevents($name);

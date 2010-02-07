@@ -168,12 +168,12 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getTemplate($appkey, $blogid, $login, $password, $templateType) {
-return '';
-}
-
+    return '';
+  }
+  
   public function setTemplate($appkey, $blogid, $login, $password, $template , $templateType) {
-return true;
-}
+    return true;
+  }
 }
 
 ?>

@@ -177,7 +177,7 @@ class trss extends tevents {
     }
     
     $content = '';
-    $this->beforepost($post->id, &$$content);
+    $this->beforepost($post->id, &$content);
     if ($this->template == '') {
       $content .=$post->rss;
       $content .= $post->morelink;

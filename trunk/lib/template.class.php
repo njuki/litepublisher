@@ -85,8 +85,8 @@ class ttemplate extends tevents {
       $widgets = twidgets::instance();
       $result = $widgets->getcontent();
     }
-
-$this->dositebarclass(&$result, get_class($this->context));
+    
+    $this->dositebarclass(&$result, get_class($this->context));
     
     $this->onsitebar(&$result, $this->cursitebar);
     if ($options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
@@ -285,38 +285,38 @@ $this->dositebarclass(&$result, get_class($this->context));
     }
   }
   
-private function dositebarclass(&$content, $class) {
-if (isset($this->events["sitebar_$class"])) {
-$this->callevent("sitebar_$class", array(&$content, $this->cursitebar));
-}
-}
-
-public function addsitebarclass($class, $handler) {
-if (!class_exists($class)) return $this->error("Class $class not found", 404);
-$this->lock();
-$this->doeventsubscribe("sitebar_$class", $handler);
-$this->optimizeevents();
-$this->unlock();
-}
-
-public function  deletesitebarclass($sitebarclass, $instance) {
-$this->lock();
-$this->eventunsubscribe("sitebar_$sitebarclass", get_class($instance));
-$this->optimizeevents();
-$this->unlock();
-}
-
-private function optimizeevents() {
-foreach ($this->events as $name => $list) {
-if (count($list) == 0) {
-unset($this->events[$name]);
-} elseif (strbegin($name, 'sitebar_')) {
-$class = substr($name, strlen('sitebar_'));
-if (!class_exists($class)) unset($this->events[$name]);
-}
-}
-}
-
+  private function dositebarclass(&$content, $class) {
+    if (isset($this->events["sitebar_$class"])) {
+      $this->callevent("sitebar_$class", array(&$content, $this->cursitebar));
+    }
+  }
+  
+  public function addsitebarclass($class, $handler) {
+    if (!class_exists($class)) return $this->error("Class $class not found", 404);
+    $this->lock();
+    $this->doeventsubscribe("sitebar_$class", $handler);
+    $this->optimizeevents();
+    $this->unlock();
+  }
+  
+  public function  deletesitebarclass($sitebarclass, $instance) {
+    $this->lock();
+    $this->eventunsubscribe("sitebar_$sitebarclass", get_class($instance));
+    $this->optimizeevents();
+    $this->unlock();
+  }
+  
+  private function optimizeevents() {
+    foreach ($this->events as $name => $list) {
+      if (count($list) == 0) {
+        unset($this->events[$name]);
+      } elseif (strbegin($name, 'sitebar_')) {
+        $class = substr($name, strlen('sitebar_'));
+        if (!class_exists($class)) unset($this->events[$name]);
+      }
+    }
+  }
+  
 }//class
 
 ?>

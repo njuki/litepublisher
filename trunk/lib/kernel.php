@@ -299,7 +299,7 @@ class tevents extends tdata {
   
   protected function setevent($name, $value) {
     if (in_array($name, $this->eventnames)) {
-      $this->eventsubscribe($name, $value);
+      $this->doeventsubscribe($name, $value);
       return true;
     }
     return false;
@@ -320,7 +320,7 @@ class tevents extends tdata {
     return false;
   }
   
-  private function callevent($name, &$params) {
+  protected function callevent($name, $params) {
     $result = '';
     if (    $list = $this->getevents($name)) {
       foreach ($list as $i => $item) {
@@ -332,7 +332,7 @@ class tevents extends tdata {
             continue;
           }
         } elseif (!class_exists($item['class'])) {
-          $this->eventdelete();
+          $this->eventdelete($name, $i);
           continue;
         } else {
           $obj = getinstance($item['class']);
@@ -352,6 +352,10 @@ class tevents extends tdata {
   
   public function eventsubscribe($name, $params) {
     if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
+    return $this->doeventsubscribe($name, $params);
+  }
+  
+  protected function doeventsubscribe($name, $params) {
     if (!isset($this->events[$name])) $this->events[$name] =array();
     $list = $this->getevents($name);
     foreach ($list  as $event) {
@@ -377,7 +381,7 @@ class tevents extends tdata {
     return false;
   }
   
-  public static function unsub(&$obj) {
+  public static function unsub($obj) {
     $self = self::instance();
     $self->unsubscribeclassname(get_class($obj));
   }

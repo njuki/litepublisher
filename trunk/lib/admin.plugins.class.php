@@ -77,7 +77,7 @@ class tadminplugins extends tadminmenu {
   public function processform() {
     global $options, $urlmap;
     
-    if (empty($_GET['plugin'])) {
+    if (!isset($_GET['plugin'])) {
       $list = array_keys($_POST);
       array_pop($list);
       $plugins = tplugins::instance();
@@ -89,7 +89,7 @@ class tadminplugins extends tadminmenu {
       $result = $this->html->h2->updated;
     } else {
       $name = $_GET['plugin'];
-      if (!isset($plugins[$name])) return $this->notfound;
+      if (!isset($this->abouts[$name])) return $this->notfound;
       if ($admin = $this->getadminplugin($name)) {
         $result = $admin->processform();
       }

@@ -262,7 +262,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   // returns true
   public function editPost($postid, $username, $password, $struct, $publish) {
     if(!empty($struct["post_type"]) && ($struct["post_type"] == "page")) {
-if (strbegin($postid, 'menu_')) $postid = substr($postid, strlen('menu_'));
+      if (strbegin($postid, 'menu_')) $postid = substr($postid, strlen('menu_'));
       return  $this->wp_editPage(0, $postid, $username, $password, $struct, $publish);
     }
     
