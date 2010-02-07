@@ -1,24 +1,30 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TPostContentPlugin extends TPlugin {
+class tpostcontentplugin extends tplugin {
 
- public static function &Instance() {
-  return GetInstance(__class__);
+ public static function instance() {
+  return getinstance(__class__);
  }
  
- protected function CreateData() {
-  parent::CreateData();
-$this->Data['before'] = '';
-$this->Data['after'] = '';
+ protected function create() {
+  parent::create();
+$this->data['before'] = '';
+$this->data['after'] = '';
  }
 
-public function BeforePostContent($id) {
-return $this->before;
+public function beforecontent($id, &$content) {
+$content = $this->before . $content;
 }
 
-public function AfterPostContent($id) {
-return $this->after;
+public function aftercontent($id, &$content) {
+$content .= $this->after;
 }
  
-}
+}//class
 ?>

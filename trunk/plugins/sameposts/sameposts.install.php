@@ -6,7 +6,8 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function tsamepostsInstall($self) {$Template = &TTemplate::Instance();
+function tsamepostsInstall($self) {
+
 $template = ttemplate::instance();
 $template->AddOnSitebarClass('tpost', $self->onsitebar);
 

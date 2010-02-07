@@ -1,14 +1,20 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TRSSPrevNext extends TPlugin {
+class TRSSPrevNext extends tplugin {
  
- public static function &Instance() {
-  return GetInstance(__class__);
+ public static function instance() {
+  return getinstance(__class__);
  }
  
- public function BeforePostContent($id) {
-$tp = TTemplatePost::Instance();
-return $tp->GetPrevNextLinks(TPost::Instance($id));
+ public function beforepost($id, &$content) {
+$post = tpost::instance($id);
+$content .= $post->prevnext;
 }
 
 }//class

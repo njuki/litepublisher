@@ -1,24 +1,32 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TAdminPostContentPlugin  {
 
+class tadminpostcontentplugin {
 
-public function Getcontent() {
-global $Options;
-$plugin = &TPostContentPlugin ::Instance();
-$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "postcontent$Options->language.tml");
-eval('$result = "'. $tml . '\n";');
-$result = str_replace("'", '"', $result);
-return $result;
+public function getcontent() {
+global $options;
+$plugin = tpostcontentplugin ::instance();
+$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "postcontent$options->language.tml");
+$html = THtmlResource::instance();
+$args = targs::instance();
+$args->before = $plugin->before;
+$args->after = $plugin->after;
+return $html->parsearg($tml, $args);
 }
 
-public function ProcessForm() {
+public function processform() {
 extract($_POST);
-$plugin = &TPostContentPlugin ::Instance();
-$plugin->Lock();
+$plugin = tpostcontentplugin ::instance();
+$plugin->lock();
 $plugin->before = $before;
 $plugin->after = $after;
-$plugin->Unlock();		
+$plugin->unlock();		
 return '';
 }
 

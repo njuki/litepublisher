@@ -16,17 +16,40 @@ class thomepageInvert extends thomepage {
   global $options, $urlmap;
   $posts = tposts::instance();
 //    return $Posts->GetPublishedRange($urlmap->page, $options->postsperpage);
-    $count = $this->archivescount;
-    $from = ($page - 1) * $perpage;
+    $count = $posts->archivescount;
+    $from = ($urlmap->page - 1) * $options->postsperpage;
     if ($from > $count)  return array();
     if (dbversion)  {
-      return $posts->select("status = 'published'", " order by posted asc limit $from, $perpage");
+      return $posts->select("status = 'published'", " order by posted asc limit $from, $options->postsperpage");
     } else {
-      $to = min($from + $perpage , $count);
+      $to = min($from + $options->postsperpage , $count);
   $arch = array_reverse(array_keys($posts->archives));
       return array_slice($arch, $from, $to - $from);
     }
   }
-  
+
+function install() {
+ $urlmap = turlmap::instance();
+if (dbversion) {
+$item = $urlmap->db->finditem("url = '/'");
+$urlmap->setvalue($item['id'], 'class', get_class($this));
+} else {
+ $urlmap->items['/']['class'] = get_class($this);
+$urlmap->save();
+}
+}
+
+function uninstall() {
+$parent = get_parent_class($this);
+ $urlmap = turlmap::instance();
+if (dbversion) {
+$item = $urlmap->db->finditem("url = '/'");
+$urlmap->setvalue($item['id'], 'class', $parent);
+} else {
+ $urlmap->items['/']['class'] = $parent;
+$urlmap->save();
+}
+}
+
 }//class
 ?>
