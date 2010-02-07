@@ -131,10 +131,10 @@ class tpost extends titem implements  itemplate {
   public function Setpubdate($date) {
     $this->data['posted'] = strtotime($date);
   }
-
-public function getsqldate() {
-return sqldate($this->posted);
-}
+  
+  public function getsqldate() {
+    return sqldate($this->posted);
+  }
   
   //template
   public function getexcerptcategories() {
