@@ -49,6 +49,7 @@ class tcontentfilter extends tevents
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
         $post->excerpt = self::GetExcerpt($s, $this->automorelength);
+        $post->excerpt = $this->filter($post->excerpt);
         $post->rss =  $post->excerpt;
         $post->moretitle = tlocal::$data['default']['more'];
       } else {

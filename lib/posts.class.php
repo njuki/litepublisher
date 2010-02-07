@@ -157,7 +157,7 @@ class tposts extends titems {
     
     if ($oldurl != $post->url) {
       //check unique url
-      if (($idurl = $urlmap->idfind($post->url)) && ($idurl != $post->idurl)) {
+      if (($urlitem = $urlmap->findurl($post->url)) && ($urlitem['id'] != $post->idurl)) {
         $post->url = $linkgen->MakeUnique($post->url);
       }
       $urlmap->setidurl($post->idurl, $post->url);
