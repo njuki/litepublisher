@@ -1,6 +1,6 @@
 <?php
 
-function TSamePostsExcerptInstall(&$self) {$Template = &TTemplate::Instance();
+function TSamePostsExcerptInstall(&$self) {
   $templ = &TTemplatePost::Instance();
   $templ->Onpostscript = $self->postscript;
   $Posts= &TPosts::Instance();

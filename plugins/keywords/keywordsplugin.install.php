@@ -1,11 +1,10 @@
 <?php
 
-function TKeywordsPluginInstall(&$self) {$Template = &TTemplate::Instance();
+function TKeywordsPluginInstall(&$self) {
   global $paths;
   @mkdir($paths['data'] . 'keywords', 0777);
   @chmod($paths['data'] . 'keywords', 0777);
   
-  $Template = &TTemplate::Instance();
   $Template->AddWidget(get_class($self), 'nocache', '', '',  -1, $Template->sitebarcount - 1);
   $Urlmap = &TUrlmap::Instance();
   $Urlmap->AfterRequest = $self->ParseRef;

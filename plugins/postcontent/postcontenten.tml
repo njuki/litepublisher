@@ -1,10 +1,10 @@
 <h2>Edit blocks before and after post content</h2>
-<form name='form' action='' method='post' >
+<form name="form" action="" method="post" >
 <p><strong>Text before:</strong><br />
-<textarea  name='before' cols='100%' rows='10'>$plugin->before</textarea  ></p>
+[area:before]</p>
 
 <p><strong>Text after:</strong><br />
-<textarea  name='after' cols='100%' rows='10'>$plugin->after</textarea  ></p>
+[area:after]</p>
 
- <p><input type='submit' name='Submit' value='Update'/></p>
+ <p><input type="submit" name="Submit" value="Update"/></p>
 </form>

@@ -63,6 +63,10 @@ $content .= "\n<!--$this->optcode-->\n";
 }
 
 public function onsitebar(&$content, $index) {
+$this->replacecode($content);
+}
+
+private function replacecode(&$content) {
 $code = $this->tag;
 while ($i = strpos($content, $code)) {
 $links = $this->getlinks($this->count);

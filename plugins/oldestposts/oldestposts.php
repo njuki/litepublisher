@@ -26,7 +26,7 @@ global $post;
 $posts = tposts::instance();
 
 if (dbversion) {
-$items = $posts->select("status = 'published' and posted < '$post->sqldate' order by posted desc",10);
+$items = $posts->select("status = 'published' and posted < '$post->sqldate' ",' order by posted desc limit 10');
 } else {
 $arch = array_keys($posts->archives);
 $i = array_search($post->id, $arch);

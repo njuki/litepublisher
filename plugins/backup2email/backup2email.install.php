@@ -7,7 +7,7 @@
 **/
 
 
-function tbackup2emailInstall($self) {$Template = &TTemplate::Instance();
+function tbackup2emailInstall($self) {
 $cron = tcron::instance();
 $self->idcron = $cron->add('week', get_class($self), 'send', null);
 $self->save();
