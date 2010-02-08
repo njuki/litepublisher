@@ -7,6 +7,8 @@
 **/
 
 class tpost extends titem implements  itemplate {
+  private $aprev;
+  private $anext;
   
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
@@ -76,33 +78,37 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getprev() {
+    if (!is_null($this->aprev)) return $this->aprev;
+    $this->aprev = false;
     if (dbversion) {
       if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
-        return self::instance($id);
+        $this->aprev = self::instance($id);
       }
-      return null;
+      return false;
     } else {
       $posts = tposts::instance();
       $keys = array_keys($posts->archives);
       $i = array_search($this->id, $keys);
-      if ($i < count($keys) -1) return self::instance($keys[$i + 1]);
+      if ($i < count($keys) -1) $this->aprev = self::instance($keys[$i + 1]);
     }
-    return null;
+    return $this->aprev;
   }
   
   public function getnext() {
+    if (!is_null($this->anext)) return $this->anext;
+    $this->anext = false;
     if (dbversion) {
       if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
-        return self::instance($id);
+        $this->anext = self::instance($id);
       }
-      return null;
     } else {
       $posts = tposts::instance();
       $keys = array_keys($posts->archives);
       $i = array_search($this->id, $keys);
-      if ($i > 0 ) return self::instance($keys[$i - 1]);
+      if ($i > 0 ) $this->anext = self::instance($keys[$i - 1]);
+      
     }
-    return null;
+    return $this->anext;
   }
   
   public function Getlink() {

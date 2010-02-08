@@ -130,7 +130,7 @@ class ttheme extends tevents {
     return $result;
   }
   
-  public function getposts(array &$items, $lite) {
+  public function getposts(array $items, $lite) {
     global $post;
     if (count($items) == 0) return '';
     if (dbversion) {
@@ -150,6 +150,17 @@ class ttheme extends tevents {
     return sprintf($this->parse($tml), $result);
   }
   
+  public function getpostswidgetcontent(array $items, $tml) {
+    global $post;
+    $result = '';
+    foreach ($items as $id) {
+      $post = tpost::instance($id);
+      $result .= $this->parse($tml);
+    }
+    $result = str_replace("'", '"', $result);
+    return $result;
+  }
+  
   public function getwidget($title, $content, $template, $sitebar) {
     $tml = $this->getwidgettemplate($template, $sitebar);
     return sprintf($tml, $title, $content);
@@ -161,9 +172,12 @@ class ttheme extends tevents {
     return $sitebars[$sitebar][$name][0];
   }
   
-  public function  getwidgetitem($name, $sitebarindex) {
-    $sitebar = &$this->data['sitebars'][$sitebarindex];
+  public function  getwidgetitem($name, $index) {
+    $sitebar = &$this->data['sitebars'][$index];
     if (isset($sitebar[$name]['item'])) return $sitebar[$name]['item'];
+    foreach ($this->data['sitebars'] as $sitebar) {
+      if (isset($sitebar[$name]['item'])) return $sitebar[$name]['item'];
+    }
     return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
   }
   

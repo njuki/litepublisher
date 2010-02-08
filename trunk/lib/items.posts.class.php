@@ -37,7 +37,6 @@ class titemsposts extends titems {
     }
   }
   
-  
   public function delete($idpost, $iditem) {
     if (dbversion) {
       return $this->db->delete("post = $idpost and item = $iditem");

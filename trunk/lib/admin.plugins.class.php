@@ -7,7 +7,7 @@
 **/
 
 class tadminplugins extends tadminmenu {
-  private $abouts;
+  public $abouts;
   
   public static function instance() {
     return getinstance(__class__);
@@ -34,10 +34,36 @@ class tadminplugins extends tadminmenu {
     }
   }
   
+  public function getsitebar() {
+    global $options;
+    $widgets = twidgets::instance();
+    if ($widgets->current > 0) return $widgets->getcontent();
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('submenu', 0);
+    $args = targs::instance();
+    $args->count = '';
+    $url = $this->url . $options->q . 'plugin=';
+    $content = '';
+    $plugins = tplugins::instance();
+    foreach ($this->abouts as $name => $about) {
+      if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
+        $args->url = $url . $name;
+        $args->title = $about['name'];
+        $args->icon = '';
+        $content .= $theme->parsearg($tml, $args);
+      }
+    }
+    
+    $result =     $theme->getwidget($this->title, $content, 'submenu', $widgets->current);
+    $result .= $widgets->getcontent();
+    return $result;
+  }
+  
   public function getcontent() {
     global $options;
     $result = '';
     $html = $this->html;
+    
     //сделать список ссылок на админки установленных плагинов
     $submenu = '';
     $submenuitem = $html->submenuitem . "\n";
@@ -48,7 +74,7 @@ class tadminplugins extends tadminmenu {
         $submenu .= sprintf($submenuitem, $url, $name, $about['name']);
       }
     }
-    if ($submenu != '') $result .= sprintf($html->submenu, $submenu);
+    //    if ($submenu != '') $result .= sprintf($html->submenu, $submenu);
     
     if (empty($_GET['plugin'])) {
       $result .= $html->checkallscript;
