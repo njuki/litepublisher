@@ -11,13 +11,15 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     return getinstance(__class__);
   }
   
-  private function menutostruct($ID) {
-    $id	= (int) $ID;
+  private function menutostruct($id) {
+    global $options;
+    if (strbegin($id, 'menu_')) $id = substr($id, strlen('menu_'));
+    $id	= (int) $id;
     $menus = tmenus::instance();
     if (!$menus->itemexists($id))  return xerror(404, "Sorry, no such page.");
     $menu = tmenu::instance($id);
     
-    if ($MENU->parent > 0) {
+    if ($menu->parent > 0) {
       $parent= tmenu::instance($menu->parent);
       $ParentTitle = $parent->title;
     } else {
@@ -25,31 +27,31 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     }
     
     $Result = array(
-    "dateCreated"			=> new IXR_Date($MENU->date),
-    "userid"				=> $MENU->author,
-    "page_id"				=> $MENU->id,
-    "page_status"			=> $MENU->status == 'published' ? 'publish' : 'draft',
-    "description"			=> $MENU->content,
-    "title"					=> $MENU->title,
-    "link"					=> $MENU->url,
-    "permaLink"				=> $MENU->url,
+    "dateCreated"			=> new IXR_Date(time()),
+    "userid"				=> $menu->author,
+    "page_id"				=> "menu_" . $menu->id,
+    "page_status"			=> $menu->status == 'published' ? 'publish' : 'draft',
+    "description"			=> $menu->content,
+    "title"					=> $menu->title,
+    "link"					=> $menu->url,
+    "permaLink"				=> $menu->url,
     "categories"			=> array(),
     "excerpt"				=> '',
     "text_more"				=> '',
-    //"mt_allow_comments"		=> $MENU->commentsenabled ? 1 : 0,
+    //"mt_allow_comments"		=> $menu->commentsenabled ? 1 : 0,
     "mt_allow_comments"		=> 0,
-    //"mt_allow_pings"		=> $MENU->pingenabled ? 1 : 0,
+    //"mt_allow_pings"		=> $menu->pingenabled ? 1 : 0,
     "mt_allow_pings"		=> 0,
     
-    "wp_slug"				=> $MENU->url,
-    "wp_password"			=> $MENU->password,
+    "wp_slug"				=> $menu->url,
+    "wp_password"			=> $menu->password,
     "wp_author"				=> 'ADMIN',
-    "wp_page_parent_id"		=> $MENU->parent,
+    "wp_page_parent_id"		=> "menu_" . $menu->parent,
     "wp_page_ParentTitle"	=> $ParentTitle,
-    "wp_page_order"			=> $MENU->order,
-    "wp_author_id"			=> $MENU->author,
+    "wp_page_order"			=> $menu->order,
+    "wp_author_id"			=> $menu->author,
     "wp_author_display_name"	=> 'ADMIN',
-    "date_created_gmt"		=> new IXR_Date($MENU->date - $options->gmt)
+    "date_created_gmt"		=> new IXR_Date(time() - $options->gmt)
     );
     
     return$Result;
@@ -65,7 +67,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     $this->auth($username, $password, 'editor');
     $result = array();
     $menus = tmenus::instance();
-    foreach ($menus->Items as $id => $item) {
+    foreach ($menus->items as $id => $item) {
       $result[] = $this->menutostruct($id);
     }
     return $result;
@@ -75,11 +77,11 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     $this->auth($username, $password, 'editor');
     $result = array();
     $menus = tmenus::instance();
-    foreach ($menus->Items as $id => $item) {
+    foreach ($menus->items as $id => $item) {
       $result[] = array(
-      'page_id' => $id,
+      'page_id' => "menu_" . $id,
       'page_title' => $item['title'],
-      'page_parent_id' => $item['parent'],
+      'page_parent_id' => "menu_" . $item['parent'],
       'dateCreated' => new IXR_Date(time()),
       );
     }
@@ -89,6 +91,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
   
   public function wp_deletePage($blogid, $username, $password, $id) {
     $this->auth($username, $password, 'editor');
+    if (strbegin($id, 'menu_')) $id = substr($id, strlen('menu_'));
     $id = (int) $id;
     $menus = tmenus::instance();
     if (!$menus->itemexists($id))  return xerror(404, "Sorry, no such page.");

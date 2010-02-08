@@ -77,7 +77,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);
     $list = array();
-    foreach ($CatList as  $Cat) {
+    foreach ($catlist as  $Cat) {
       $list[] = $Cat['categoryId'];
     }
     $post->categories = $list;

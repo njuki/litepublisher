@@ -63,19 +63,7 @@ class tadminplugins extends tadminmenu {
     global $options;
     $result = '';
     $html = $this->html;
-    
-    //сделать список ссылок на админки установленных плагинов
-    $submenu = '';
-    $submenuitem = $html->submenuitem . "\n";
-    $url = $options->url . $this->url . $options->q . 'plugin=';
     $plugins = tplugins::instance();
-    foreach ($this->abouts as $name => $about) {
-      if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
-        $submenu .= sprintf($submenuitem, $url, $name, $about['name']);
-      }
-    }
-    //    if ($submenu != '') $result .= sprintf($html->submenu, $submenu);
-    
     if (empty($_GET['plugin'])) {
       $result .= $html->checkallscript;
       $result .= $html->formhead();

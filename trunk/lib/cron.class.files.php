@@ -111,7 +111,6 @@ class tcron extends tabstractcron {
     $processed = array();
     while ($filelist = $this->GetFileList($processed)) {
       sleep(2);
-      //var_dump($filelist);
       foreach ($filelist as $filename) {
         $processed[] = $filename;
         $task->filename = $filename;
