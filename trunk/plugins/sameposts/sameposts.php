@@ -12,7 +12,7 @@ class tsameposts extends tplugin {
   return getinstance(__class__);
  }
  
- protected function create) {
+  protected function create() {
   parent::create();
 $this->data['tml'] = '';
 if (dbversion) {
@@ -22,7 +22,7 @@ $this->data['revision'] = 1;
 }
  }
  
- public function postchanged() {
+ public function postschanged() {
 if (dbversion) {
 $this->db->exec("truncate $this->thistable");
 } else {
@@ -35,6 +35,7 @@ $this->db->exec("truncate $this->thistable");
 $posts = tposts::instance();
   $post = tpost::instance($idpost);
   $list = $post->categories;
+if (count($list) == 0) return array();
   $cats = tcategories::instance();
 $cats->loadall();
   $same = array();
@@ -61,15 +62,17 @@ return $result;
 private function getsame($id) {
 global $paths;
 if (dbversion) {
-if ($items = $this->db->getvalue($id, 'items')) {
-return explode(',', $items);
+$items = $this->db->getvalue($id, 'items');
+if (is_string($items)) {
+return $items == '' ? array() : explode(',', $items);
 } else {
+
 $result = $this->findsame($id);
-$this->db->setvalue($id, 'items', implode(',', $result);
+$this->db->add(array('id' => $id, 'items' => implode(',', $result)));
 return $result;
 }
 } else {
-$filename = $paths['data'] . 'posts' . DIRECTORY_SEPARATOR . $id .DIRECTORY_SEPARATOR . 'same.php');
+$filename = $paths['data'] . 'posts' . DIRECTORY_SEPARATOR . $id .DIRECTORY_SEPARATOR . 'same.php';
 $data = null;
 if (tfiler::unserialize($filename, $data)) {
 if ($data['revision'] == $this->revision) return $data['items'];
@@ -91,10 +94,12 @@ if ($index > 0) return;
 $post = $template->context;
 $list = $this->getsame($post->id);
 if (count($list) == 0) return;
+$posts = tposts::instance();
+$posts->loaditems($list);
 $theme = ttheme::instance();
 $tml = $this->tml != '' ? $this->tml : $theme->getwidgetitem('posts', $index);
 $links = $theme->getpostswidgetcontent($list, $tml);
-$widget = $theme->getwidget(TLocal::$data['default']['sameposts']], $links, 'widget', $index);
+$widget = $theme->getwidget(tlocal::$data['default']['sameposts'], $links, 'widget', $index);
 $content = $widget . $content;
  }
  
