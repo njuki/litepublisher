@@ -37,6 +37,7 @@ $paths['data'] = $paths['home'] . 'data'. DIRECTORY_SEPARATOR . $domain . DIRECT
 $paths['cache'] = $paths['home'] . 'cache'. DIRECTORY_SEPARATOR . $domain . DIRECTORY_SEPARATOR;
 $paths['files'] = $paths['home'] . 'files' . DIRECTORY_SEPARATOR;
 $paths['backup'] = $paths['home'] . 'backup' . DIRECTORY_SEPARATOR;
+$paths['js'] = $paths['home'] . 'js' . DIRECTORY_SEPARATOR;
 
 define('secret', 'сорок тыс€ч обезъ€н в жопу сунули банан');
 $microtime = microtime();
@@ -65,12 +66,11 @@ $options->savemodified();
 
     if (!empty($options->errorlog) && (defined('debug') || $options->echoexception || $urlmap->admin)) {
       echo $options->errorlog;
-} elseif (dbversion && ('/rpc.xml' != $_SERVER['REQUEST_URI'])){
+} elseif (dbversion && !preg_match('/^\/rpc\.xml|\/rss|\/comments\./', $_SERVER['REQUEST_URI'])){
 echo "<pre>\n";
 $man = tdbmanager::instance();
 echo  $man->performance();
 //file_put_contents($paths['home']. "$domain.sql", $man->export());
 }
 //
-
 ?>
