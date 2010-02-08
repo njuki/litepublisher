@@ -12,35 +12,38 @@ class tsameposts extends tplugin {
   return getinstance(__class__);
  }
  
- protected function CreateDatacreate) {
+ protected function create) {
   parent::create();
+$this->data['tml'] = '';
 if (dbversion) {
+$this->table = 'sameposts';
 } else {
-$this->data['rlease'] = 1;
+$this->data['revision'] = 1;
 }
  }
  
  public function postchanged() {
 if (dbversion) {
+$this->db->exec("truncate $this->thistable");
 } else {
-  $this->release += 1;
+  $this->revision += 1;
   $this->save();
 }
  }
  
- public function findsame($id) {
-if (dbversion) {
-} else {
-  $result = array();
-  $post = tpost::instance($id);
+ private function findsame($idpost) {
 $posts = tposts::instance();
+  $post = tpost::instance($idpost);
   $list = $post->categories;
-  $cats = &TCategories::instance();
+  $cats = tcategories::instance();
+$cats->loadall();
   $same = array();
   foreach ($list as $id) {
 if (!isset($cats->items[$id])) continue;
-   foreach ($cats->items[$id]['items'] as $i) {
-    if (($i == $postid) || !isset($posts->archives[$i])) continue;
+$itemsposts = $cats->itemsposts->getposts($id);
+$posts->stripdrafts($itemsposts);
+   foreach ($itemsposts as $i) {
+    if ($i == $idpost) continue;
     if (isset($same[$i])) {
      $same[$i]++;
     } else {
@@ -51,27 +54,48 @@ if (!isset($cats->items[$id])) continue;
   
   arsort($same);
   $result = array_keys($same);
-  $posts = &TPosts::instance();
-  $posts->StripDrafts($result);
-  $result = array_slice($result, 0, 7);
-  $this->items[$postid] = $result;
-  $this->Save();
+  $result = array_slice($result, 0, 10);
+return $result;
  }
- 
+
+private function getsame($id) {
+global $paths;
+if (dbversion) {
+if ($items = $this->db->getvalue($id, 'items')) {
+return explode(',', $items);
+} else {
+$result = $this->findsame($id);
+$this->db->setvalue($id, 'items', implode(',', $result);
+return $result;
+}
+} else {
+$filename = $paths['data'] . 'posts' . DIRECTORY_SEPARATOR . $id .DIRECTORY_SEPARATOR . 'same.php');
+$data = null;
+if (tfiler::unserialize($filename, $data)) {
+if ($data['revision'] == $this->revision) return $data['items'];
+}
+
+$result= $this->findsame($id);
+$data = array(
+'revision' => $this->revision,
+'items' => $result
+);
+tfiler::serialize($filename, $data);
+return $result;
+}
+} 
+
  public function onsitebar(&$content, $index) {
-  global $classes, $options, $post;
-  $result = '';
-  if (!isset($this->items[$id])) $this->findsame($id);
-  if (count($this->items[$id]) == 0) return $result;
-  $result = TLocal::$data['default']['sameposts'];
-  $result = "<ul>$result\n";
-  foreach ($this->items[$id] as $postid) {
-   $post = &TPost::instance($postid);
-   $result .= "<li><a href=\"$options->url$post->url\">$post->title</a></li>\n";
-  }
-  $result .= "</ul>\n";
-  
-  return $result;
+global $template;
+if ($index > 0) return;
+$post = $template->context;
+$list = $this->getsame($post->id);
+if (count($list) == 0) return;
+$theme = ttheme::instance();
+$tml = $this->tml != '' ? $this->tml : $theme->getwidgetitem('posts', $index);
+$links = $theme->getpostswidgetcontent($list, $tml);
+$widget = $theme->getwidget(TLocal::$data['default']['sameposts']], $links, 'widget', $index);
+$content = $widget . $content;
  }
  
 }//class
