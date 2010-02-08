@@ -45,7 +45,7 @@ class tposts extends titems {
   
   public function loaditems(array $items) {
     global $classes;
-    if (!dbversion) return;
+    if (!dbversion || count($items) == 0) return;
     //исключить из загрузки загруженные посты
     $class = $classes->classes['post'];
     if (isset(titem::$instances[$class])) {
@@ -84,18 +84,10 @@ class tposts extends titems {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-    global $options, $post;
+    $list = $this->getrecent($this->recentcount);
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('posts', $sitebar);
-    
-    $result = '';
-    $list = $this->getrecent($this->recentcount);
-    foreach ($list as $id) {
-      $post = tpost::instance($id);
-      $result .= $theme->parse($tml);
-    }
-    $result = str_replace("'", '"', $result);
-    return $result;
+    return $theme->getpostswidgetcontent($list, $tml);
   }
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
@@ -286,7 +278,7 @@ class tposts extends titems {
     }
   }
   
-  public function StripDrafts(array $items) {
+  public function stripdrafts(array $items) {
     if (dbversion) {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list)");

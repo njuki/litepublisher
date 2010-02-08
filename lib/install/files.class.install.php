@@ -8,10 +8,10 @@
 
 function tfilesInstall($self) {
   if (dbversion) {
-    $manager = TDBManager ::instance();
+    $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-    $manager->CreateTable($self->table, file_get_contents($dir .'files.sql'));
-    $manager->CreateTable('fileitems', file_get_contents($dir .'items.posts.sql'));
+    $manager->createtable($self->table, file_get_contents($dir .'files.sql'));
+    $manager->createtable('fileitems', file_get_contents($dir .'items.posts.sql'));
   } else {
   }
 }
