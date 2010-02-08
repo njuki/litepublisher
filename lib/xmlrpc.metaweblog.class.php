@@ -121,7 +121,9 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     if(isset($struct["wp_page_parent_id"])) {
-      $menu->parent = (int) $struct["wp_page_parent_id"];
+      $parent = $struct["wp_page_parent_id"];
+      if (strbegin($parent, 'menu_')) $parent = substr($parent, strlen('menu_'));
+      $menu->parent = (int) $parent;
     }
     
     if(isset($struct["wp_page_order"])) {
@@ -134,7 +136,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   /* <item> in RSS 2.0, providing a rich variety of item-level metadata, with well-understood applications.
   The three basic elements are title, link and description.  */
   protected function  MWSetPost(array &$struct, tpost $post) {
-    var_dump($struct);
     $post->title = $struct['title'];
     $more = isset($struct['mt_text_more']) ? trim($struct['mt_text_more']) : '';
     if ($more == '') {
