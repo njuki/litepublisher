@@ -10,12 +10,13 @@ function tkeywordspluginInstall($self) {
   global $paths, $classes;
   @mkdir($paths['data'] . 'keywords', 0777);
   @chmod($paths['data'] . 'keywords', 0777);
-  
-$widgets = twidgets::instance();
-$widgets->addext(get_class($self), 'nocache', '', '', -1, $widgets->count - 1);
 
-$classes->add('tkeywordsevents'
-$handler = tkeywordsevents::instance();
+$item = $classes->items[get_class($self)];
+$classes->add('tkeywordswidget','keywords.widget.php', $item[1]);
+
+$widgets = twidgets::instance();
+$widgets->addext('tkeywordswidget', 'nocache', '', '', $widgets->count - 1, -1);
+
   $urlmap = turlmap::instance();
 $urlmap->lock();
   $Urlmap->afterrequest = $self->parseref;
@@ -24,8 +25,9 @@ $urlmap->unlock();
  }
  
 function tkeywordspluginUninstall($self) {
-  global $paths;
+  global $paths, $classes;
   turlmap::unsub($self);
+$classes->delete('tkeywordswidget');
   //TFiler::DeleteFiles($paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  , true);
  }
 

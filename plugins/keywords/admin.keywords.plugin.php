@@ -1,70 +1,112 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TAdminKeywords {
+class tadminkeywords {
 
-public function Getcontent() {
-global $Options, $paths;
+public function getcontent() {
+global $options, $paths;
 $result = '';
 $dir = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
 $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
-$admin = TAdminPlugins::Instance();
-$html = THtmlResource::Instance();
-$html->LoadIni($selfdir . 'templates.ini');
-$html->section = 'keywords';
-TLocal::LoadIni($selfdir . 'about.ini');
-TLocal::LoadIni($selfdir . "$Options->language.ini");
-$lang = TLocal::Instance();
-$lang->section = 'keywords';
-
+$tml = parse_ini_file($selfdir . 'keywords.templates.ini', false);
+$admin = tadminplugins::instance();
+$about = $admin->abouts[$_GET['plugin']];
+$html = THtmlResource::instance();
+$lang = tlocal::instance();
+$args = targs::instance();
 if (isset($_GET['filename'])) {
 $filename = $_GET['filename'];
-if (@file_exists($dir . $filename)) {
-$content =file_get_contents($dir . $filename);
-$content =$admin->ContentToForm($content);
-eval('$result .= "'. $html->editform . '\n";');
-return $result;
-} else {
-return $admin->notfound();
-}
+if (!@file_exists($dir . $filename)) return $admin->notfound();
+$args->filename = $filename;
+$args->content =file_get_contents($dir . $filename);
+$args->edithead = $about['edithead'];
+return $html->parsearg($tml['editform'], $args);
 }
 
 $page = isset($_GET['page'])  ? (int) $_GET['page'] : 1;
+$result = '';
+if ($page == 1) {
+$widget = tkeywordswidget::instance();
+$args->count = $widget->count;
+$args->trace = $widget->trace;
+$args->notify = $widget->notify;
+$args->countlabel = $about['countlabel'];
+$args->tracelabel = $about['tracelabel'];
+$args->notifylabel = $about['notifylabel'];
+$result .= $html->parsearg($tml['optionsform'], $args);
+}
+
 $from = 100 * ($page - 1);
-   $filelist = TFiler::GetFileList($dir);
+   $filelist = tfiler::getfiles($dir);
 sort($filelist);
 $count = ceil(count($filelist)/ 100);
-eval('$s = "'. $html->pages . '\n";');
-$pages = sprintf($s, $page, $count, count($filelist));
-$pages .= $this->GetPages($page, $count);
+$links = $this->getlinkpages($page, $count);
+$result .= $links;
+$result .= $html->checkallscript;
 
     $filelist = array_slice($filelist, $from, 100, true);
-$items = '';
-$item = $html->item;
+$list = '';
+$args->url = $options->url. '/admin/plugins/' . $options->q . 'plugin=' . $_GET['plugin'];
    foreach ($filelist as $filename) {
-if (!preg_match('/^\d+?-\d+?\.php$/', $filename)) continue;
-$content = file_get_contents($dir . $filename);
-eval('$items .= "'. $item . '\n";');
+if (!preg_match('/^\d+?\.\d+?\.php$/', $filename)) continue;
+$args->filename = $filename;
+$args->content = file_get_contents($dir . $filename);
+$list .= $html->parsearg($tml['item'], $args);
    }
-eval('$result .= "'. $html->form . '\n";');
+
+$args->list = $list;
+$result .= $html->parsearg($tml['form'], $args);
+$result .= $links;
 return $admin->FixCheckall($result);
 }
 
-private function GetPages($page, $count) {
-global $Options;
-$result = "<p><a href='$Options->url/admin/plugins/keywords/'>1</a>\n";
+private function getlinkpages($page, $count) {
+global $options;
+$url = $options->url. '/admin/plugins/' . $options->q . 'plugin=' . $_GET['plugin'];
+$result = "<a href='$url'>1</a>\n";
 for ($i = 2; $i <= $count; $i++) {
-$result .= "<a href='$Options->url/admin/plugins/keywords/{$Options->q}page=$i'>$i</a>|\n";
+$result .= "<a href='$url&page=$i'>$i</a>|\n";
 }
-$result .= "</p>\n";
-return $result;
+return sprintf("<p>\n%s</p>\n", $result);
 }
 
-public function ProcessForm() {
-global $Options, $paths;
+public function processform() {
+global $options, $paths;
 $dir = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
+if (isset($_POST['pluginoptions'])) {
+extract($_POST);
+$widget = tkeywordswidget::instance();
+$widget->count = (int) $count;
+$widget->notify = isset($notify);
+$trace = isset($trace);
+if ($widget->trace != $trace) {
+$plugin = tkeywordsplugin::instance();
+$urlmap = turlmap::instance();
+if ($trace) {
+$urlmap->afterrequest = $plugin->parseref;
+} else {
+$urlmap->eventunsubscribe('afterrequest', get_class($plugin));
+}
+}
+
+$widget->trace = $trace;
+$widget->save();
+return;
+}
+
 if (isset($_GET['filename'])) {
 $filename = str_replace('_php', '.php', $_GET['filename']);
-file_put_contents($dir . $filename, $_POST['content']);
+$content = trim($_POST['content']);
+if ($content = '') {
+@unlink($dir . $filename);
+} else {
+file_put_contents($dir . $filename, $content);
+}
 } else {
 foreach ($_POST as $filename => $value) {
 $filename = str_replace('_php', '.php', $filename);
