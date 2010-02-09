@@ -108,13 +108,19 @@ class tauthdigest extends tevents {
       $p = parse_url($_SERVER['HTTP_REFERER']);
       $host = $p['host'];
     }
-    return $host != $_SERVER['HTTP_HOST'] ;
+    return $host != $_SERVER['HTTP_HOST'];
   }
   
   public function checkattack() {
     if ($this->xxxcheck  && $this->isattack()) {
-      if ($_POST) die('<b><font color="red">Achtung! XSS attack!</font></b>');
-  if ($_GET)  die("<b><font color=\"maroon\">Achtung! XSS attack?</font></b><br>Confirm transition: <a href=\"{$_SERVER['REQUEST_URI']}\">{$_SERVER['REQUEST_URI']}</a>");
+      tlocal::loadlang('admin');
+      if ($_POST) {
+        die(tlocal::$data['login']['xxxattack']);
+      }
+      if ($_GET) {
+        die(tlocal::$data['login']['confirmxxxattack'] .
+        sprintf(' <a href="%1$s">%1$s</a>', $_SERVER['REQUEST_URI']));
+      }
     }
     return false;
   }
