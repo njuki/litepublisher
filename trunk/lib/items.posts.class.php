@@ -99,7 +99,7 @@ class titemsposts extends titems {
         foreach ($add as $iditem) {
           $vals[]= "($idpost, $iditem)";
         }
-        $db->exec("INSERT INTO '$this->thistable' (post, item) values " . implode(',', $vals) );
+        $db->exec("INSERT INTO $this->thistable (post, item) values " . implode(',', $vals) );
       }
       
       return array_merge($old, $add);
