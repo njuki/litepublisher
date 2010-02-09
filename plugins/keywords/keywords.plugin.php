@@ -66,7 +66,19 @@ private function hasru($s) {
  }
 
 public function added($filename, $content) {
+global $options, $url;
+$subject ="[$options->name] new keywords added";
+$body = "The new widget has been added on
+$options->url{$_SERVER['REQUEST_URI']}
+links:
+$content
 
+You can edit this links at:
+$options->url/admin/plugins/{$options->q}plugin=keywords&filename=$filename
+";
+
+    tmailer::sendmail($options->name, $options->fromemail,
+    'admin', $options->email,  $subject, $body);
 }
  
 }//class
