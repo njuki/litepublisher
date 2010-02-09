@@ -7,7 +7,7 @@
 **/
 
 class tsimpleimporter extends timporter {
-public $items;
+public $tagsmap;
 
   public static function instance() {
   return getinstance(__class__);
@@ -15,8 +15,8 @@ public $items;
 
  protected function create() {
   parent::create();
-$this->data['extra'] = '';
-$this->addmap('items', array(
+$this->data['script'] = '';
+$this->addmap('tagsmap', array(
 'title' => 'title',
 'link' => 'link',
 'pubDate' => 'pubdate',
@@ -27,41 +27,40 @@ $this->addmap('items', array(
 public function getcontent() {
 global $options;
 $result = parent::getcontent();
-//$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'simpleimporter.tml';
-$dir = dirname(__file__) . DIRECTORY_SEPARATOR;
+$tagsmap = '';
+foreach ($this->tagsmap as $key => $val) {
+$tagsmap .= "$key = $val\n";
+}
+$args = targs::instance();
+$args->tagsmap = $tagsmap;
+$args->script = $this->script;
+$admin = tadminplugins::instance();
+$about = $admin->abouts[$_GET['plugin']];
+$args->maplabel = $about['maplabel'];
+$args->scriptlabel = $about['scriptlabel'];
+$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
 $html = THtmlResource::instance();
-$html->loadini($dir . 'simpleimporter.ini');
-$html->section = 'simpleimporter';
-
-$result .= $html->options($this->GetItemsStr(), $this->extra);
+$result .= $html->parsearg($tml, $args);
 return $result;
 }
 
 public function processform() {
 if ($_POST['form'] != 'options')  return parent::ProcessForm();
-$this->ParseItems($_POST['items']);
-$this->extra = $_POST['extra'];
+$this->parsemap($_POST['tagsmap']);
+$this->script = $_POST['script'];
 $this->save();
 }
 
-public function ParseItems($s) {
-$this->items = array();
+public function parsemap($s) {
+$this->tagsmap = array();
 $lines = explode("\n", $s);
 foreach ($lines as $line) {
 if ($i = strpos($line, '=')) {
 $key = trim(substr($line, 0, $i));
 $val = trim(substr($line, $i + 1));
-$this->items[$key] = $val;
+$this->tagsmap[$key] = $val;
 }
 }
-}
-
-public function GetItemsStr() {
-$result = '';
-foreach ($this->items as $key => $val) {
-$result .= "$key = $val\n";
-}
-return $result;
 }
 
 public function import($s) {
@@ -69,19 +68,19 @@ global $paths;
 require_once($paths['lib'] . 'domrss.php');
 $a = xml2array($s);
 
-$urlmap = TUrlmap::instance();
+$urlmap = turlmap::instance();
 $urlmap->lock();
-$cats = TCategories::instance();
+$cats = tcategories::instance();
 $cats->lock();
-$tags = TTags::instance();
+$tags = ttags::instance();
 $tags->lock();
-$posts = TPosts::instance();
+$posts = tposts::instance();
 $posts->lock();
 foreach ($a['rss']['channel'][0]['item'] as $item) {
 $post = $this->add($item);
-$posts->Add($post);
+$posts->add($post);
 //echo $post->id, "<br>\n";
-if (!TDataClass::$GlobalLock) $post->free();
+if (!tdata::$GlobalLock) $post->free();
 //echo "<pre>\n";
 //var_dump($post->data);
 }
@@ -91,14 +90,14 @@ $cats->unlock();
 $urlmap->unlock();
 }
 
-public function add($item) {
-$post = TPost::instance();
-foreach ($this->items as $key => $val) {
+public function add(array $item) {
+$post = tpost::instance();
+foreach ($this->tagsmap as $key => $val) {
 if (isset($item[$key])) {
 $post->{$val} = $item[$key];
 }
 }
-if ($this->extra != '') eval($this->extra);
+if ($this->script != '') eval($this->script);
 return $post;
 }
 
