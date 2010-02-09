@@ -9,7 +9,6 @@
 class turlmap extends titems {
   public $host;
   public $url;
-  public $urlid;
   public $page;
   public $uripath;
   public $itemrequested;
@@ -224,20 +223,38 @@ class turlmap extends titems {
   
   public function delete($url) {
     if (dbversion) {
-      $this->db->delete('url = '. $this->db->quote($url));
+      $url = $dbquote($url);
+      if ($item = $this->db->getitem("url = $url")) {
+        $this->db->delete("url = $url");
+      } else {
+        return false;
+      }
     } elseif (isset($this->items[$url])) {
+      $item = $this->items[$url];
       unset($this->items[$url]);
       $this->save();
+    } else {
+      return false;
     }
     $this->clearcache();
+    $this->deleted($item);
+    return true;
   }
   
   public function deleteclass($class) {
     if (dbversion){
-      $this->db->delete("class = `$class`");
+      if ($items =
+      $this->db->getitems("class = '$class'")) {
+        $this->db->delete("class = '$class'");
+        foreach ($items as $item) $this->deleted($item);
+      }
     } else  {
       foreach ($this->items as $url => $item) {
-        if ($item['class'] == $class) unset($this->items[$url]);
+        if ($item['class'] == $class) {
+          $item = $this->items[$url];
+          unset($this->items[$url]);
+          $this->deleted($item);
+        }
       }
       $this->save();
     }
@@ -246,12 +263,17 @@ class turlmap extends titems {
   
   public function deleteitem($id) {
     if (dbversion){
-      $this->db->iddelete($id);
+      if ($item = $this->db->getitem($id)) {
+        $this->db->iddelete($id);
+        $this->deleted($item);
+      }
     } else  {
       foreach ($this->items as $url => $item) {
         if ($item['id'] == $id) {
+          $item = $this->items[$url];
           unset($this->items[$url]);
           $this->save();
+          $this->deleted($item);
           break;
         }
       }

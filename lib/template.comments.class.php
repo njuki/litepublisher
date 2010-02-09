@@ -15,7 +15,6 @@ class ttemplatecomments extends tdata {
 public function load() {}
 public function save() {}
   
-  
   public function getadminhead() {
     global $options, $template;
     $theme = ttheme::instance();
