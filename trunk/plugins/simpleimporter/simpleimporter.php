@@ -1,16 +1,22 @@
 <?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
 
-class TSimpleImporter extends TImporter {
+class tsimpleimporter extends timporter {
 public $items;
 
-  public static function &Instance() {
-  return GetInstance(__class__);
+  public static function instance() {
+  return getinstance(__class__);
  }
 
- protected function CreateData() {
-  parent::CreateData();
-$this->Data['extra'] = '';
-$this->AddDataMap('items', array(
+ protected function create() {
+  parent::create();
+$this->data['extra'] = '';
+$this->addmap('items', array(
 'title' => 'title',
 'link' => 'link',
 'pubDate' => 'pubdate',
@@ -18,24 +24,20 @@ $this->AddDataMap('items', array(
 ));
 }
 
-public function Getcontent() {
-global $Options;
-$result = parent::Getcontent();
+public function getcontent() {
+global $options;
+$result = parent::getcontent();
 //$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'simpleimporter.tml';
 $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-$html = THtmlResource::Instance();
-$html->LoadIni($dir . 'simpleimporter.ini');
+$html = THtmlResource::instance();
+$html->loadini($dir . 'simpleimporter.ini');
 $html->section = 'simpleimporter';
-TLocal::LoadIni($dir . 'about.ini');
-TLocal::LoadIni($dir . "$Options->language.ini");
-$lang = TLocal::Instance();
-$lang->section = 'simpleimporter';
 
 $result .= $html->options($this->GetItemsStr(), $this->extra);
 return $result;
 }
 
-public function ProcessForm() {
+public function processform() {
 if ($_POST['form'] != 'options')  return parent::ProcessForm();
 $this->ParseItems($_POST['items']);
 $this->extra = $_POST['extra'];
@@ -67,13 +69,13 @@ global $paths;
 require_once($paths['lib'] . 'domrss.php');
 $a = xml2array($s);
 
-$urlmap = TUrlmap::Instance();
+$urlmap = TUrlmap::instance();
 $urlmap->lock();
-$cats = TCategories::Instance();
+$cats = TCategories::instance();
 $cats->lock();
-$tags = TTags::Instance();
+$tags = TTags::instance();
 $tags->lock();
-$posts = TPosts::Instance();
+$posts = TPosts::instance();
 $posts->lock();
 foreach ($a['rss']['channel'][0]['item'] as $item) {
 $post = $this->add($item);
@@ -81,7 +83,7 @@ $posts->Add($post);
 //echo $post->id, "<br>\n";
 if (!TDataClass::$GlobalLock) $post->free();
 //echo "<pre>\n";
-//var_dump($post->Data);
+//var_dump($post->data);
 }
 $posts->unlock();
 $tags->unlock();
@@ -90,7 +92,7 @@ $urlmap->unlock();
 }
 
 public function add($item) {
-$post = TPost::Instance();
+$post = TPost::instance();
 foreach ($this->items as $key => $val) {
 if (isset($item[$key])) {
 $post->{$val} = $item[$key];
