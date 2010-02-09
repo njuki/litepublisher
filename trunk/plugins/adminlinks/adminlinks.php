@@ -56,7 +56,17 @@ $links .= sprintf($tml, $options->url . "/admin/widgets/homepagewidgets/", tloca
 break;
 
 default:
+if ($template->context instanceof tmenu) {
+$menu = $template->context;
+$lang = tlocal::instance('menu');
+$title = $lang->title;
+$adminurl = $options->url . "/admin/menu/edit/";
+$links = sprintf($tml,$adminurl, $lang->addmenu);
+$links .= sprintf($tml, $adminurl . $options->q . "id=$menu->id", $lang->edit);
+} else {
 return;
+}
+break;
 }
 
 $links .= sprintf($tml, $options->url . "/admin/logout/", tlocal::$data['login']['logout']);
