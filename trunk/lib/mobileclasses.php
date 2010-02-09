@@ -6,23 +6,24 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class TMobileClasses extends TClasses {
-  const remap = array(
-  'TClasses' => __class__,
-  'TOptions' => 'TMobileOptions',
-  'turlmap' => 'tmobileurlmap',
-  'ttemplate' => 'tmobiletemplate',
-  'TTemplateComment' => 'TMobileTemplateComment'
-  );
+class tmobileclasses extends tclasses {
   
-  public function getinstance($class) {
-    if (isset(self::remap[$class])) $class = self::remap[$class];
-    return parent::getinstance($class);
+  protected function create() {
+    global $paths;
+    $paths['cache'] .= 'pda.';
+    parent::create();
+    $this->remap = array(
+    'tclasses' => __class__,
+    'toptions' => 'tmobileoptions',
+    'turlmap' => 'tmobileurlmap',
+    'ttemplate' => 'tmobiletemplate',
+    'TTemplateComment' => 'TMobileTemplateComment'
+    );
   }
   
 }//class
 
-class TMobileOptions  extends TOptions {
+class tmobileoptions  extends toptions {
   public function geturl() {
     $result = parent::geturl();
     return $result . '/pda';
@@ -38,20 +39,10 @@ class tmobiletemplate extends ttemplate {
   
 }//class
 
-class TMobileTemplateComment extends TTemplateComment {
-  protected function create() {
-    parent::create();
-    $this->basename = 'templatecomment.pda';
-  }
-  
-}
-
 class tmobileurlmap extends turlmap {
-  
   protected function prepareurl($host, $url) {
     parent::prepareurl($host, $url);
-    
-    if ($this->mobile = (strncmp('/pda/', $this->url, strlen('/pda/')) == 0) || ($this->url == '/pda')) {
+    if ($this->mobile = strbegin($this->url, '/pda/') || ($this->url == '/pda')) {
       if ($this->url == '/pda') {
         $this->url = '/';
       } else {
@@ -59,11 +50,7 @@ class tmobileurlmap extends turlmap {
       }
     }
     
-    protected function getcachefile($id) {
-      global $paths;
-      return $paths['cache']. "pda.$id-$this->page.php";
-    }
-    
   }
-  
-  ?>
+}
+
+?>

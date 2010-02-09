@@ -174,6 +174,7 @@ class twidgets extends tsingleitems {
   
   public function addext($class, $echotype, $template, $title, $sitebar, $order) {
     if ($sitebar >= $this->count) return $this->error("sitebar index $sitebar cant more than sitebars count in theme");
+    if (!isset($this->items]$sitebar])) return $this->error("Unknown sitebar $sitebar");
     if (($order < 0) || ($order > $this->getcount($sitebar))) $order = $this->getcount($sitebar);
     if (!preg_match('/echo|include|nocache/', $echotype)) $echotype = 'echo';
     $id = ++$this->autoid;
