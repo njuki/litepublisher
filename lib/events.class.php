@@ -20,8 +20,7 @@ class tevents extends tdata {
   }
   
   public function free() {
-    global $classes;
-    unset($classes->instances[get_class($this)]);
+    unset(litepublisher::$classes->instances[get_class($this)]);
     foreach ($this->coinstances as $coinstance) $coinstance->free();
   }
   

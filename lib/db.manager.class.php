@@ -14,14 +14,12 @@ class tdbmanager  {
   }
   
   public function __get($name) {
-    global $db;
-    if ($name == 'db') return $db;
-    return $db->$name;
+    if ($name == 'db') return litepublisher::$db;
+    return litepublisher::$db->$name;
   }
   
   public function __call($name, $arg) {
-    global $db;
-    return call_user_func_array(array(&$db, $name), $arg);
+    return call_user_func_array(array(&litepublisher::$db, $name), $arg);
   }
   
   public function createtable($name, $struct) {
@@ -39,8 +37,7 @@ class tdbmanager  {
   }
   
   public function  deletealltables( ) {
-    global $dbconfig;
-  $res = $this->query("show tables from {$dbconfig['dbname']}");
+  $res = $this->query("show tables from " . litepublisher::$options->dbconfig['dbname']);
     $sql = '';
     while ($row = $res->fetch()) {
       //if (array_key_exists($row[0],$th)) do_export_table($row[0],1,$MAXI);
@@ -72,8 +69,7 @@ class tdbmanager  {
   }
   
   public function gettables() {
-    global $options;
-    if ($res = $this->query(sprintf("show tables from %s like '%s%%'", $options->dbconfig['dbname'], $options->dbconfig['prefix']))) {
+    if ($res = $this->query(sprintf("show tables from %s like '%s%%'", litepublisher::$options->dbconfig['dbname'], litepublisher::$options->dbconfig['prefix']))) {
       return $this->res2id($res);
     }
     return false;
@@ -92,34 +88,33 @@ class tdbmanager  {
   }
   
   private function DeleteDeleted() {
-    global $db;
     //posts
-    $db->table = 'posts';
-    $deleted = $db->idselect("status = 'deleted'");
+    litepublisher::$db->table = 'posts';
+    $deleted = litepublisher::$db->idselect("status = 'deleted'");
     if (count($deleted) > 0) {
       $deleted = implode(',', $deleted);
-      $db->exec("delete from $db->urlmap where id in
-      (select idurl from $db->posts where status = 'deleted')");
+      litepublisher::$db->exec("delete from litepublisher::$db->urlmap where id in
+      (select idurl from litepublisher::$db->posts where status = 'deleted')");
       
-      $db->exec("delete from $db->rawposts where id in ($selected)");
+      litepublisher::$db->exec("delete from litepublisher::$db->rawposts where id in ($selected)");
       
-      $db->exec("delete from $db->pages where id in ($deleted)");
+      litepublisher::$db->exec("delete from litepublisher::$db->pages where id in ($deleted)");
       
-      $db->exec("delete from $db->posts where id in ($selected)");
+      litepublisher::$db->exec("delete from litepublisher::$db->posts where id in ($selected)");
     }
     
     //comments
-    $db->exec("delete from $db->rawcomments where id in
-    (select id from $db->comments where status = 'deleted')");
+    litepublisher::$db->exec("delete from litepublisher::$db->rawcomments where id in
+    (select id from litepublisher::$db->comments where status = 'deleted')");
     
-    $db->exec("delete from $db->comments where status = 'deleted'");
+    litepublisher::$db->exec("delete from litepublisher::$db->comments where status = 'deleted'");
     
-    $db->exec("delete from $db->authors where id not in
-    (select DISTINCT author from $db->comments)");
+    litepublisher::$db->exec("delete from litepublisher::$db->authors where id not in
+    (select DISTINCT author from litepublisher::$db->comments)");
     
     //subscribtions
-    $db->exec("delete from$db->subscribers where post not in (select id from $db->posts)");
-    $db->exec("delete from$db->subscribers where author not in (select id from $db->comusers)");
+    litepublisher::$db->exec("delete fromlitepublisher::$db->subscribers where post not in (select id from litepublisher::$db->posts)");
+    litepublisher::$db->exec("delete fromlitepublisher::$db->subscribers where author not in (select id from litepublisher::$db->comusers)");
   }
   
   public function optimize() {
@@ -131,15 +126,14 @@ class tdbmanager  {
   }
   
   public function export() {
-    global $options;
     $res = $this->query("show variables like 'max_allowed_packet'");
     $v = $res->fetch();
     $this->max_allowed_packet =floor($v['Value']*0.8);
     
-    $result = "-- Lite Publisher dump $options->version\n";
+    $result = "-- Lite Publisher dump litepublisher::$options->version\n";
     $result .= "-- Datetime: ".date('Y-m-d H:i:s') . "\n";
-  $result .= "-- Host: {$options->dbconfig['host']}\n";
-  $result .= "-- Database: {$options->dbconfig['dbname']}\n\n";
+  $result .= "-- Host: {litepublisher::$options->dbconfig['host']}\n";
+  $result .= "-- Database: {litepublisher::$options->dbconfig['dbname']}\n\n";
     $result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
     
     $tables = $this->gettables();
@@ -151,8 +145,6 @@ class tdbmanager  {
   }
   
   public function exporttable($name) {
-    global $db;
-    
     if ($res = $this->query("show create table `$name`")) {
       $row=$res->fetch();
       $result = "DROP TABLE IF EXISTS `$name`;\n$row[1];\n\n";
@@ -162,7 +154,7 @@ class tdbmanager  {
         while ($row = $res->fetch(PDO::FETCH_NUM)) {
           $values= array();
           foreach($row as $v){
-            $values[] = is_null($v) ? 'NULL' : $db->quote($v);
+            $values[] = is_null($v) ? 'NULL' : litepublisher::$db->quote($v);
           }
           $sql .= $sql ? ',(' : '(';
           $sql .= implode(', ', $values);
@@ -182,7 +174,6 @@ class tdbmanager  {
   }
   
   public function import(&$dump) {
-    global $db;
     $sql = '';
     $i = 0;
     while ($j = strpos($dump, "\n", $i)) {
@@ -191,13 +182,13 @@ class tdbmanager  {
       if ($this->iscomment($s)) continue;
       $sql .= $s . "\n";
       if ($s[strlen($s) - 1] != ';') continue;
-      $db->exec($sql);
+      litepublisher::$db->exec($sql);
       $sql = '';
     }
     
     $s = substr($dump, $i);
     if (!$this->iscomment($s))  $sql .= $s;
-    if ($sql != '') $db->exec($sql);
+    if ($sql != '') litepublisher::$db->exec($sql);
   }
   
   private function iscomment(&$s) {
@@ -212,11 +203,10 @@ class tdbmanager  {
   }
   
   public function performance() {
-    global $db;
     $result = '';
     $total = 0.0;
     $max = 0.0;
-    foreach ($db->history as $i => $item) {
+    foreach (litepublisher::$db->history as $i => $item) {
       list($usec2, $sec2) = explode(' ', $item['started']);
       list($usec1, $sec1) = explode(' ', $item['finished']);
       $worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 8);
@@ -228,7 +218,7 @@ class tdbmanager  {
     $result .= "$i: $worked\n{$item['sql']}\n\n";
     }
     $result .= "maximum $max\n$maxsql\n";
-    $result .= sprintf("%s total time\n%d querries\n\n", $total, count($db->history));
+    $result .= sprintf("%s total time\n%d querries\n\n", $total, count(litepublisher::$db->history));
     
     return $result;
   }

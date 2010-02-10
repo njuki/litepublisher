@@ -60,7 +60,6 @@ class tcrontask extends tdata {
   }
   
   public function execute() {
-    global $options;
     sleep(2);
 $this->owner->log("task started:\n{$this->class}->{$this->func}");
     
@@ -70,7 +69,7 @@ $this->owner->log("task started:\n{$this->class}->{$this->func}");
       try {
         $func($this->arg);
       } catch (Exception $e) {
-        $options->handexception($e);
+        litepublisher::$options->handexception($e);
       }
     } else {
       if (!class_exists($this->class)) return $this->Delete();
@@ -78,7 +77,7 @@ $this->owner->log("task started:\n{$this->class}->{$this->func}");
         $obj = getinstance($this->class);
         $obj->$func($this->arg);
       } catch (Exception $e) {
-        $options->handexception($e);
+        litepublisher::$options->handexception($e);
       }
     }
     

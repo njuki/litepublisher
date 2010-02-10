@@ -18,9 +18,8 @@ class tdatabase extends PDO {
   }
   
   public function __construct() {
-    global $options;
-    if (!$options->propexists('dbconfig')) return false;
-    $dbconfig = $options->dbconfig;
+    if (!litepublisher::$options->propexists('dbconfig')) return false;
+    $dbconfig = litepublisher::$options->dbconfig;
     $this->table = '';
     $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
@@ -89,18 +88,16 @@ class tdatabase extends PDO {
   }
   
   private function doerror($e) {
-    global $options;
     if (defined('debug')) {
-      global $paths;
       $log = "exception:\n" . $e->getMessage();
       $log .= "\n$this->sql\n";
-      $log .=str_replace($paths['home'], '', $e->getTraceAsString());
+      $log .=str_replace(litepublisher::$paths['home'], '', $e->getTraceAsString());
       $man = tdbmanager::instance();
       $log .= $man->performance();
       $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
       die($log);
     } else {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
   }
   

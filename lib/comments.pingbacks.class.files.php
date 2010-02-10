@@ -10,10 +10,9 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
   private static $instances;
   
   public static function instance($pid) {
-    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
-    $self = $classes->newinstance(__class__);
+    $self = litepublisher::$classes->newinstance(__class__);
     self::$instances[$pid]  = $self;
     $self->pid = $pid;
     $self->load();

@@ -29,10 +29,9 @@ class tcommentmanager extends tevents {
   }
   
   public function getcount() {
-    global $db;
     if (!dbversion)  return 0;
-    $db->table = 'comments';
-    return $db->getcount();
+    litepublisher::$db->table = 'comments';
+    return litepublisher::$db->getcount();
   }
   
   private function indexofrecent($id, $idpost) {
@@ -78,8 +77,7 @@ class tcommentmanager extends tevents {
   }
   
   public function addcomment($idpost, $idauthor, $content) {
-    global $classes;
-    $status = $classes->spamfilter->createstatus($idauthor, $content);
+    $status = litepublisher::$classes->spamfilter->createstatus($idauthor, $content);
     $comments = tcomments::instance($idpost);
     $id = $comments->add($idauthor,  $content, $status);
     
@@ -110,12 +108,11 @@ class tcommentmanager extends tevents {
   
   
   public function reply($idreply, $idpost, $content) {
-    global $options;
     $status = 'approved';
     $idpost = (int) $idpost;
     $profile = tprofile::instance();
-    $email = $profile->mbox!= '' ? $profile->mbox : $options->fromemail;
-    $site = $options->url . $options->home;
+    $email = $profile->mbox!= '' ? $profile->mbox : litepublisher::$options->fromemail;
+    $site = litepublisher::$options->url . litepublisher::$options->home;
     $comusers = tcomusers::instance($idpost);
     $idauthor = $comusers->add($profile->nick, $email, $site);
     $comments = tcomments::instance($idpost);
@@ -214,22 +211,22 @@ class tcommentmanager extends tevents {
   }
   
   public function sendmail($id, $idpost) {
-    global $options, $comment;
+    global $comment;
     if (!$this->sendnotification) return;
     $comments = tcomments::instance($idpost);
     $comment = $comments->getcomment($id);
     $args = targs::instance();
-    $args->adminurl = $options->url . '/admin/comments/'. $options->q . "id=$id&post=$idpost&action";
+    $args->adminurl = litepublisher::$options->url . '/admin/comments/'. litepublisher::$options->q . "id=$id&post=$idpost&action";
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
-    tmailer::sendmail($options->name, $options->fromemail,
-    'admin', $options->email,  $subject, $body);
+    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
+    'admin', litepublisher::$options->email,  $subject, $body);
   }
   
   public function getrecent($count) {
-    global $db, $options;
     if (dbversion) {
+$db = litepublisher::$db;
       $res = $db->query("select $db->comments.*,
       $db->comusers.name as name,
       $db->posts.title as title, $db->posts.commentscount as commentscount,
@@ -242,9 +239,9 @@ class tcommentmanager extends tevents {
       order by $db->comments.posted desc limit $count");
       
       $result = $res->fetchAll(PDO::FETCH_ASSOC);
-      if ($options->commentpages) {
+      if (litepublisher::$options->commentpages) {
         foreach ($result as $i => $item) {
-          $page = ceil($item['commentscount'] / $options->commentsperpage);
+          $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
           if ($page > 1) $result[$i]['posturl']= rtrim($item['posturl'], '/') . "/page/$page/";
         }
       }

@@ -18,7 +18,6 @@ class tcron extends tabstractcron {
   }
   
   protected function execute() {
-    global $options;
     if (ob_get_level()) ob_end_flush ();
     echo "<pre>\n";
     while ($item = $this->db->getassoc("date <= now() order by date asc limit 1")) {
@@ -31,7 +30,7 @@ class tcron extends tabstractcron {
           try {
             $func($arg);
           } catch (Exception $e) {
-            $options->handexception($e);
+            litepublisher::$options->handexception($e);
           }
         } else {
           $this->db->iddelete($id);
@@ -42,7 +41,7 @@ class tcron extends tabstractcron {
           $obj = getinstance($class);
           $obj->$func($arg);
         } catch (Exception $e) {
-          $options->handexception($e);
+          litepublisher::$options->handexception($e);
         }
       } else {
         $this->db->iddelete($id);

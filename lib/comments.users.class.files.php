@@ -11,10 +11,9 @@ class tcomusers extends titems {
   private static $instances;
   
   public static function instance($pid) {
-    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
-    $self = $classes->newinstance(__class__);
+    $self = litepublisher::$classes->newinstance(__class__);
     self::$instances[$pid]  = $self;
     $self->pid = $pid;
     $self->load();
@@ -83,7 +82,6 @@ class tcomusers extends titems {
   }
   
   public function request($arg) {
-    global $options;
     $this->cache = false;
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
     $idpost = isset($_GET['post']) ? (int) $_GET['post'] : 1;
@@ -99,7 +97,7 @@ class tcomusers extends titems {
     }
     
     $url = $item['url'];
-    if (!strpos($url, '.')) $url = $options->url . $options->home;
+    if (!strpos($url, '.')) $url = ->url . ->home;
     if (substr($url, 0, 7) != 'http://') $url = 'http://' . $url;
     TUrlmap::redir($url);
   }

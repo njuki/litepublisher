@@ -139,9 +139,8 @@ class tcontentfilter extends tevents
   }
   
   public function FilterInternalLinks($s) {
-    global $Options;
     if (strpos($s, '[bloglink]')) {
-      $bloglink = "<a href=\"$Options->url$Options->home\">$Options->name</a>";
+      $bloglink = "<a href=\"litepublisher::$options->urllitepublisher::$options->home\">litepublisher::$options->name</a>";
       $s = str_replace('[bloglink]', $bloglink, $s);
     }
     
@@ -149,7 +148,7 @@ class tcontentfilter extends tevents
       $posts = &TPosts::instance();
       $last = $posts->GetRecent(1);
       $post = &TPost::instance($last[0]);
-      $link = "<a href=\"$Options->url$post->url\">$post->title</a>";
+      $link = "<a href=\"litepublisher::$options->url$post->url\">$post->title</a>";
       $s = str_replace('[lastpost]', $link, $s);
     }
     

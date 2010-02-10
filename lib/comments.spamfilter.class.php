@@ -18,8 +18,7 @@ class tspamfilter extends tevents {
   }
   
   public function createstatus($idauthor, $content) {
-    global $options;
-    if ($options->DefaultCommentStatus == 'approved') return 'approved';
+    if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
     $manager = tcommentmanager::instance();
     if ($manager->trusted($idauthor)) return  'approved';
     return 'hold';

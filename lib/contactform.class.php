@@ -13,7 +13,6 @@ class tcontactform extends tmenu {
   }
   
   public function processform($id) {
-    global $options;
     if (!isset($_POST['contactvalue'])) return  '';
     $lang = tlocal::instance('contactform');
     $error = "<p><strong>$lang->error</strong></p>\n";
@@ -26,7 +25,7 @@ class tcontactform extends tmenu {
     $content = trim($_POST['content']);
     if (strlen($content) <= 15) return '<p><strong>' .  tlocal::$data['comment']['emptycontent'] . "</strong></p>\n";
     
-    tmailer::sendmail('', $email, '', $options->email, $lang->subject, $content);
+    tmailer::sendmail('', $email, '', litepublisher::$options->email, $lang->subject, $content);
     
     return "<p><strong>$lang->success</strong></p>\n";
   }
