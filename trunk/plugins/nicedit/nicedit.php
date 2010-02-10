@@ -7,8 +7,7 @@ class tnicedit extends tplugin {
  }
 
 public function onhead(&$head) {
-global $options;
-$head .= sprintf('<script type="text/javascript" src="%s/plugins/nicedit/nicEdit.js"></script>', $options->files);
+$head .= sprintf('<script type="text/javascript" src="%s/plugins/nicedit/nicEdit.js"></script>', litepublisher::$options->files);
 $head .= '
 <script type="text/javascript">
    bkLib.onDomLoaded( function() {

@@ -60,7 +60,6 @@ return $result;
  }
 
 private function getsame($id) {
-global $paths;
 if (dbversion) {
 $items = $this->db->getvalue($id, 'items');
 if (is_string($items)) {
@@ -89,8 +88,8 @@ return $result;
 } 
 
  public function onsitebar(&$content, $index) {
-global $template;
 if ($index > 0) return;
+$template = ttemplate::instance();
 $post = $template->context;
 $list = $this->getsame($post->id);
 if (count($list) == 0) return;

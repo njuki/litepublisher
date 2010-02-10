@@ -7,7 +7,6 @@
 **/
 
 function tsamepostsInstall($self) {
-global $classes;
 if (dbversion) {
     $manager = tdbmanager ::instance();
 $manager->createtable($self->table, 
@@ -17,16 +16,15 @@ items text NOT NULL,
 }
 
   $template = ttemplate::instance();
-$template->addsitebarclass($classes->classes['post'], $self->onsitebar);
+$template->addsitebarclass(litepublisher::$classes->classes['post'], $self->onsitebar);
 
   $posts= tposts::instance();
   $posts->changed = $self->postschanged;
  }
  
 function tsamepostsUninstall($self) {
-global $classes;
   $template = ttemplate::instance();
-$template->deletesitebarclass($classes->classes['post'], $self);
+$template->deletesitebarclass(litepublisher::$classes->classes['post'], $self);
 
   tposts::unsub($self);
 if (dbversion) {
@@ -34,7 +32,7 @@ if (dbversion) {
 $manager->deletetable($self->table);
 } else {
 $posts = tposts::instance();
-$dir = $paths['data'] . 'posts' . DIRECTORY_SEPARATOR;
+$dir = litepublisher::$paths['data'] . 'posts' . DIRECTORY_SEPARATOR;
 foreach ($posts->items as $id => $item) {
 @unlink($dir . $id .DIRECTORY_SEPARATOR . 'same.php');
 }
