@@ -10,9 +10,8 @@
 class tadminpostcontentplugin {
 
 public function getcontent() {
-global $options;
 $plugin = tpostcontentplugin ::instance();
-$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "postcontent$options->language.tml");
+$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "postcontentlitepublisher::$options->language.tml");
 $html = THtmlResource::instance();
 $args = targs::instance();
 $args->before = $plugin->before;

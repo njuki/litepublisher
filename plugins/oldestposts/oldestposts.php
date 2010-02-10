@@ -22,7 +22,8 @@ $content = $widget . $content;
  }
 
 private function getoldposts($index) {
-global $post;
+$template = ttemplate::instance();
+$post = $template->context;
 $posts = tposts::instance();
 
 if (dbversion) {
@@ -40,7 +41,7 @@ $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('widget', $index);
 $result = '';
   foreach ($items as $id) {
-   $post = tpost::instance($id);
+   $theme->vars['post'] = tpost::instance($id);
 $result .= sprintf($tml, $post->link, $post->title);
   }
 return $result;

@@ -7,16 +7,13 @@
 **/
 
 function toldestpostsInstall($self) {
-global $classes;
   $template = ttemplate::instance();
-$template->addsitebarclass($classes->classes['post'], $self->onsitebar);
-
+$template->addsitebarclass(litepublisher::$classes->classes['post'], $self->onsitebar);
  }
  
 function toldestpostsUninstall($self) {
-global $classes;
   $template = ttemplate::instance();
-$template->deletesitebarclass($classes->classes['post'], $self);
+$template->deletesitebarclass(litepublisher::$classes->classes['post'], $self);
  }
 
 ?>
