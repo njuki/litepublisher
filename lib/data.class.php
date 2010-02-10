@@ -219,12 +219,11 @@ function sqldate($date = 0) {
 }
 
 function dbquote($s) {
-  global $db;
-  return $db->quote($s);
+  return litepublisher::$db->quote($s);
 }
 
 function md5uniq() {
-  return md5(mt_rand() . secret. microtime());
+  return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
 ?>

@@ -7,7 +7,6 @@
 **/
 
 function tadminmenusInstall($self) {
-  global $options;
   $self->lock();
   $board = $self->additem(array(
   'parent' => 0,
@@ -26,7 +25,7 @@ function tadminmenusInstall($self) {
     $self->items[$id]['title'] = tlocal::$data['names']['midle'];
     $item = $self->items[$id];
     $item['id'] = ++$self->autoid;
-    $item['url'] .= $options->q . 'mode=short';
+    $item['url'] .= litepublisher::$options->q . 'mode=short';
     $item['title'] = tlocal::$data['names']['quick'];
     $self->items[$self->autoid] = $item;
     $self->add($posts, 'categories', 'editor', 'tadmintags');

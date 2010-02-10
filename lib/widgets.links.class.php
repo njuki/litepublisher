@@ -21,15 +21,14 @@ class tlinkswidget extends titems {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-    global $options;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('link', $sitebar);
     $args = targs::instance();
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
-      if ($this->redir && !strbegin($url, $options->url)) {
-        $url = $options->url . $this->redirlink . $options->q . "id=$id";
+      if ($this->redir && !strbegin($url, litepublisher::$options->url)) {
+        $url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
       }
       
       $result .=   sprintf($tml, $url, $item['title'], $item['text']);

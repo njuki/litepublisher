@@ -7,10 +7,9 @@
 **/
 
 function THomepageInstall(&$self) {
-  global $options;
-  $options->home = '/';
+  litepublisher::$options->home = '/';
   $urlmap = turlmap::instance();
-  $self->idurl = $urlmap->add($options->home, get_class($self), null);
+  $self->idurl = $urlmap->add(litepublisher::$options->home, get_class($self), null);
   $self->save();
 }
 

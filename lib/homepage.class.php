@@ -32,23 +32,21 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function GetTemplateContent() {
-    global $options, $urlmap;
     $result = '';
-    if ($urlmap->page == 1) $result .= $this->text;
+    if (litepublisher::$urlmap->page == 1) $result .= $this->text;
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
     
     $theme = ttheme::instance();
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
-    $result .=$theme->getpages($options->home, $urlmap->page, ceil($Posts->archivescount / $options->postsperpage));
+    $result .=$theme->getpages(litepublisher::$options->home, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->postsperpage));
     return $result;
   }
   
   public function getitems() {
-    global $options, $urlmap;
     $Posts = tposts::instance();
-    return $Posts->GetPublishedRange($urlmap->page, $options->postsperpage);
+    return $Posts->GetPublishedRange(litepublisher::$urlmap->page, litepublisher::$options->postsperpage);
   }
   
   public function settext($s) {
@@ -67,8 +65,8 @@ public function getdescription() {}
     if ($this->data[$name] != $value) {
       $this->data[$name] = $value;
       $this->save();
-      $urlmap = turlmap::instance();
-      $urlmap->setexpired($this->idurl);
+      litepublisher::$urlmap = turlmap::instance();
+      litepublisher::$urlmap->setexpired($this->idurl);
     }
   }
   

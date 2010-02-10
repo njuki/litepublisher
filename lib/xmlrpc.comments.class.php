@@ -124,11 +124,10 @@ class TXMLRPCComments extends TXMLRPCAbstract {
   }
   
   private function _wpgetcomment(tcomment $comment) {
-    global $options;
     $data = $comment->data;
     
     return array(
-    "date_created_gmt"		=> new IXR_Date($comment->posted - $options.gmt),
+    "date_created_gmt"		=> new IXR_Date($comment->posted - litepublisher::$options.gmt),
     "user_id"				=> $data['author'],
     "comment_id"			=> $id,
     "parent"				=> $data['parent'],
@@ -207,7 +206,6 @@ class TXMLRPCComments extends TXMLRPCAbstract {
   
   
   public function wpnewComment($blog_id, $login, $password, $idpost, $struct) {
-    global $classes;
     $this->auth($login, $password, 'moderator');
     
     if ( is_numeric($idpost) ) {
@@ -218,7 +216,7 @@ class TXMLRPCComments extends TXMLRPCAbstract {
         return $this->xerror(404, 'Invalid post ID.');
       }
       
-      if ($item['class'] != $classes->classes['post'])  {
+      if ($item['class'] != litepublisher::$classes->classes['post'])  {
         return $this->xerror(404, 'Invalid post ID.');
       }
       $idpost = $item['arg'];

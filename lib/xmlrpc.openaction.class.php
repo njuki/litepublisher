@@ -42,14 +42,13 @@ class TXMLRPCOpenAction extends TItems {
   }
   
   public function confirm(&$action) {
-    global $Options;
     $this->DeleteExpired();
     extract($action);
     if (!$this->HasAction($id)) {
       return new IXR_Error(403, 'Action not found');
     }
     
-    if ($server != $Options->url . '/rpc.xml') {
+    if ($server != litepublisher::$options->url . '/rpc.xml') {
       return new IXR_Error(403, 'Bad xmlrpc server');
     }
     
@@ -83,7 +82,6 @@ class TXMLRPCOpenAction extends TItems {
   }
   
   public function CallAction($to, $name, $arg) {
-    global $Options;
     $this->Lock();
     $this->DeleteExpired();
     $id = md5(mt_rand() . secret. uniqid( microtime()));
@@ -97,7 +95,7 @@ class TXMLRPCOpenAction extends TItems {
     
     $action =array(
     'id' => $id,
-    'server' => $Options->url . '/rpc.xml',
+    'server' => litepublisher::$options->url . '/rpc.xml',
     'name' => $name,
     'arg' => $arg
     );
@@ -110,9 +108,8 @@ class TXMLRPCOpenAction extends TItems {
   }
   
   private function DeleteExpired() {
-    global $Options;
     $this->Lock();
-    $expired = time() - $Options->CacheExpired;
+    $expired = time() - litepublisher::$options->CacheExpired;
     foreach ($this->actions as $id => $item) {
       if ($item['date'] < $expired) unset($this->actions[$id]);
     }

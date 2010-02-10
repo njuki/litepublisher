@@ -12,7 +12,6 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
   }
   
   private function menutostruct($id) {
-    global $options;
     if (strbegin($id, 'menu_')) $id = substr($id, strlen('menu_'));
     $id	= (int) $id;
     $menus = tmenus::instance();
@@ -51,7 +50,7 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
     "wp_page_order"			=> $menu->order,
     "wp_author_id"			=> $menu->author,
     "wp_author_display_name"	=> 'ADMIN',
-    "date_created_gmt"		=> new IXR_Date(time() - $options->gmt)
+    "date_created_gmt"		=> new IXR_Date(time() - litepublisher::$options->gmt)
     );
     
     return$Result;
@@ -115,7 +114,6 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
   }
   
   public function getTags($blogid, $username, $password) {
-    global $options;
     $this->auth($username, $password, 'editor');
     $tags = ttags::instance();
     $result = array();
@@ -126,8 +124,8 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
       'name' => $item['title'],
       'count' => $item['itemscount'],
       'slug' => '',
-      'html_url' => $options->url . $item['url'],
-      'rss_url' => $options->url . $item['url']
+      'html_url' => litepublisher::$options->url . $item['url'],
+      'rss_url' => litepublisher::$options->url . $item['url']
       );
     }
     return $result;

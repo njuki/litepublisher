@@ -64,7 +64,6 @@ class TFoafManager extends titems {
   }
   
   public function Add($url) {
-    global $Options;
     if ($ping = TPinger::Discover($url)) {
       $actions =&TXMLRPCOpenAction::instance();
       if ($actions->CallAction($ping, 'friend.invate', $this->GetProfile())) {
@@ -80,7 +79,6 @@ class TFoafManager extends titems {
   }
   
   public function AcceptInvate($url) {
-    global $Options;
     if (!isset($this->items[$url])) return false;
     if ($ping = TPinger::Discover($url)) {
       $actions =&TXMLRPCOpenAction::instance();
@@ -96,7 +94,6 @@ class TFoafManager extends titems {
   }
   
   public function RejectInvate($url) {
-    global $Options;
     if (!isset($this->items[$url])) return false;
     $this->items[$url]['status'] = 'rejected';
     $this->Save();
@@ -116,12 +113,11 @@ class TFoafManager extends titems {
   }
   
   private function GetProfile() {
-    global $Options;
     $profile = &TProfile::instance();
     return array(
     'nick' => $profile->nick,
-    'foaf' => $Options->foaf,
-    'blog' => $Options->url . $Options->home
+    'foaf' => litepublisher::$options->foaf,
+    'blog' => litepublisher::$options->url . litepublisher::$options->home
     );
   }
   
@@ -140,8 +136,7 @@ class TFoafManager extends titems {
   }
   
   public function GetFoaf(&$url) {
-    global $paths;
-    require_once($paths['libinclude'] . 'utils.php');
+    require_once(litepublisher::$paths['libinclude'] . 'utils.php');
     if ($s = GetWebPage($url)) {
       if ($this->IsFoaf($s)) {
         return $this->ParseFoaf($s);
@@ -192,10 +187,9 @@ class TFoafManager extends titems {
   }
   
   private function SameDomain($friend) {
-    global $Options;
     $actions = &TXMLRPCOpenAction ::instance();
     if (($foaf = $this->ExtractDomain($friend['foaf'])) && ($blog = $this->ExtractDomain($friend['blog'])) &&($from = $this->ExtractDomain($actions->from))) {
-      $self = $this->ExtractDomain($Options->url);
+      $self = $this->ExtractDomain(litepublisher::$options->url);
       if (($foaf == $blog) && ($blog == $from) && ($from != $self)) return true;
     }
     return false;
@@ -242,7 +236,6 @@ class TFoafManager extends titems {
   }
   
   public function CheckFriendship() {
-    global $Options;
     $result = '';
     tlocal::loadlang('admin');
     $lang = tlocal::$data['foaf'];
@@ -255,7 +248,7 @@ class TFoafManager extends titems {
         foreach ($knows  as $node) {
           $blog = $node->getElementsByTagName('Person')->item(0)->getElementsByTagName('weblog')->item(0)->attributes->getNamedItem('resource')->nodeValue;
           $seealso = $node->getElementsByTagName('Person')->item(0)->getElementsByTagName('seeAlso')->item(0)->attributes->getNamedItem('resource')->nodeValue;
-          if (($blog == $Options->url . $Options->home) && ($seealso == $Options->foaf)) {
+          if (($blog == litepublisher::$options->url . litepublisher::$options->home) && ($seealso == litepublisher::$options->foaf)) {
             $found = true;
             break;
           }
@@ -271,8 +264,7 @@ class TFoafManager extends titems {
   }
   
   private function NotifyModerator($url, $type) {
-    global $Options;
-    $html = &THtmlResource::instance();
+    $html = THtmlResource::instance();
     $html->section = 'foaf';
     $lang = &TLocal::instance();
     
@@ -285,7 +277,7 @@ class TFoafManager extends titems {
       eval('$body = "'. $html->body . '\n";');
     }
     
-    TMailer::SendMail($Options->name, $Options->fromemail, 'admin', $Options->email,  $subject, $body);
+    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail, 'admin', litepublisher::$options->email,  $subject, $body);
   }
   
 }//class

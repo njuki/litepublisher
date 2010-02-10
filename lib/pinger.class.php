@@ -13,22 +13,20 @@ class tpinger extends tevents {
   }
   
   protected function create() {
-    global $paths;
     parent::create();
     $this->basename = 'pinger';
     $this->data['services'] = '';
     $this->data['enabled'] = true;
-    require_once($paths['libinclude'] . 'class-IXR.php');
+    require_once(litepublisher::$paths['libinclude'] . 'class-IXR.php');
   }
   
   public function install() {
-    global $paths;
     if (dbversion) {
-      $dir = $paths['data'] . 'pingedlinks';
+      $dir = litepublisher::$paths['data'] . 'pingedlinks';
       @mkdir($dir, 0777);
       @chmod($dir, 0777);
     }
-    if ($this->services == '') $this->services = file_get_contents($paths['libinclude'] . 'pingservices.txt');
+    if ($this->services == '') $this->services = file_get_contents(litepublisher::$paths['libinclude'] . 'pingservices.txt');
     $posts = tposts::instance();
     $posts->lock();
     if (dbversion) $posts->deleted = $this->postdeleted;
@@ -57,8 +55,7 @@ class tpinger extends tevents {
   }
   
   public function postdeleted($id) {
-    global $paths;
-    tfiler::deletemask($paths['data'] . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
+    tfiler::deletemask(litepublisher::$paths['data'] . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
   }
   
   public function pingpost($id) {
@@ -95,11 +92,10 @@ class tpinger extends tevents {
   }
   
   protected function ping($link, $posturl) {
-    global $options;
     if ($ping = self::discover($link)) {
       $client = new IXR_Client($ping);
       $client->timeout = 3;
-      $client->useragent .= " -- Lite Publisher/$options->version";
+      $client->useragent .= " -- Lite Publisher/litepublisher::$options->version";
       $client->debug = false;
       
       if ( $client->query('pingback.ping', $posturl, $link) || ( isset($client->error->code) && 48 == $client->error->code ) ) return true;
@@ -108,8 +104,6 @@ class tpinger extends tevents {
   }
   
   public static function discover($url, $timeout_bytes = 2048) {
-    global $options;
-    
     $byte_count = 0;
     $contents = '';
     $headers = '';
@@ -133,7 +127,7 @@ class tpinger extends tevents {
     return false;
     
     // Send the GET request
-    $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/$options->version\r\n\r\n";
+    $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/litepublisher::$options->version\r\n\r\n";
     fputs($fp, $request);
     
     // Let's check for an X-Pingback header first
@@ -188,18 +182,17 @@ class tpinger extends tevents {
   }
   
   public function pingservices($url) {
-    global $options;
-    $home = $options->url . $options->home;
+    $home = litepublisher::$options->url . litepublisher::$options->home;
     $list = explode("\n", $this->services);
     foreach ($list as $service) {
       $service = trim($service);
       sleep(1);
       $client = new IXR_Client($service);
       $client->timeout = 3;
-      $client->useragent .= ' -- Lite Publisher/'.$options->version;
+      $client->useragent .= ' -- Lite Publisher/'.litepublisher::$options->version;
       $client->debug = false;
-      if ( !$client->query('weblogUpdates.extendedPing', $options->name, $home, $url, "$options->url/rss/") )
-      $client->query('weblogUpdates.ping', $options->name, $url);
+      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$options->name, $home, $url, "litepublisher::$options->url/rss/") )
+      $client->query('weblogUpdates.ping', litepublisher::$options->name, $url);
     }
   }
   

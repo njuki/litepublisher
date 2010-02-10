@@ -7,7 +7,6 @@
 **/
 
 function tcommontagsInstall($self) {
-  global $options, $paths;
   if ('tcommontags' == get_class($self)) return;
   
   $posts= tposts::instance();
@@ -27,7 +26,7 @@ function tcommontagsInstall($self) {
     $manager->CreateTable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
     $manager->CreateTable($self->contents->table, file_get_contents($dir .'tags.content.sql'));
   } else {
-    $dir = $paths['data'] . $self->basename;
+    $dir = litepublisher::$paths['data'] . $self->basename;
     @mkdir($dir, 0777);
     @chmod($dir, 0777);
   }

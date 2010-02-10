@@ -35,8 +35,8 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function getitem($id) {
-    global $db;
     if ($this->dbversion && !isset($this->items[$id])) {
+$db = litepublisher::$db;
       if ($res = $db->query("select $this->thistable.*, $db->urlmap.url as url  from $this->thistable, $db->urlmap
       where $this->thistable.id = $id and  $db->urlmap.id  = $this->thistable.idurl limit 1")) {
         $this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
@@ -47,13 +47,13 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function loaditems(array $items) {
-    global  $db;
     if (!$this->dbversion) return;
     //исключить из загрузки загруженные посты
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
     $table = $this->thistable;
+$db = litepublisher::$db;
     $res = $db->query("select $table.*, $db->urlmap.url as url  from $table, $db->urlmap
     where $table.id in ($list) and  $db->urlmap.id  = $table.idurl");
     $res->setFetchMode (PDO::FETCH_ASSOC);
@@ -63,8 +63,8 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function loadall() {
-    global $db;
     if (!$this->dbversion)  return;
+$db = litepublisher::$db;
     $table = $this->thistable;
     $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
     where $table.idurl = $db->urlmap.id");
@@ -94,7 +94,6 @@ class tcommontags extends titems implements  itemplate {
   }
   
   private function GetSortedList($sortname, $count, $sitebar) {
-    global $options;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->basename, $sitebar);
@@ -136,9 +135,9 @@ class tcommontags extends titems implements  itemplate {
   }
   
   private function updatecount(array $items) {
-    global $db;
     if (count($items) == 0) return;
     if ($this->dbversion) {
+$db = litepublisher::$db;
       // вначале один запрос к таблице постов, чтобы получить массив новых значений
       //следующие запросы обновляют значение в таблице тегов
       $items = implode(',', $items);
@@ -305,7 +304,6 @@ class tcommontags extends titems implements  itemplate {
   
   //Itemplate
   public function request($id) {
-    global $urlmap;
     $this->id = (int) $id;
     try {
       $item = $this->getitem((int) $id);
@@ -314,16 +312,15 @@ class tcommontags extends titems implements  itemplate {
     }
     
     $url = $item['url'];
-    if($urlmap->page != 1) $url = rtrim($url, '/') . "/page/$urlmap->page/";
-    if ($urlmap->url != $url) $urlmap->redir301($url);
+    if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . "/page/$urlmap->page/";
+    if (litepublisher::$urlmap->url != $url) $urlmap->redir301($url);
   }
   
   public function AfterTemplated(&$s) {
     $redir = "<?php
-    global \$urlmap;
   \$url = '{$this->items[$this->id]['url']}';
-    if(\$urlmap->page != 1) \$url = rtrim(\$url, '/') . \"/page/\$urlmap->page/\";
-    if (\$urlmap->url != \$url) \$urlmap->redir301(\$url);
+    if(litepublisher::\$urlmap->page != 1) \$url = rtrim(\$url, '/') . \"/page/\$urlmap->page/\";
+    if (litepublisher::\$urlmap->url != \$url) litepublisher::\$urlmap->redir301(\$url);
     ?>";
     $s = $redir.$s;
   }
@@ -351,7 +348,6 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function GetTemplateContent() {
-    global $classes, $options, $urlmap;
     $result = '';
     if ($this->id == 0) {
       $result .= $this->GetSortedList($this->sortname, 0, 0);
@@ -360,10 +356,10 @@ class tcommontags extends titems implements  itemplate {
     $result .= $this->contents->getcontent($this->id);
     
     $items = $this->itemsposts->getposts($this->id);
-    $Posts = $classes->posts;
+    $Posts = litepublisher::$classes->posts;
     $items = $Posts->sortbyposted($items);
-    $postsperpage = $this->lite ? 1000 : $options->postsperpage;
-    $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
+    $postsperpage = $this->lite ? 1000 : litepublisher::$options->postsperpage;
+    $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
     $theme = ttheme::instance();
     $result .= $theme->getposts($list, $this->lite);
     $item = $this->getitem($this->id);
@@ -394,8 +390,7 @@ class ttagcontent extends tdata {
   }
   
   private function getfilename($id) {
-    global $paths;
-    return $paths['data'] . $this->owner->basename . DIRECTORY_SEPARATOR . $id . '.php';
+    return litepublisher::$paths['data'] . $this->owner->basename . DIRECTORY_SEPARATOR . $id . '.php';
   }
   
   public function getitem($id) {

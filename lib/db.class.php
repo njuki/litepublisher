@@ -61,7 +61,7 @@ class tdatabase extends PDO {
   private function doquery($sql, $isquery) {
     if ($sql == $this->sql) return $this->result;
     $this->sql = $sql;
-    if (defined('debug')) {
+    if (litepublisher::$debug) {
       $this->history[] = array(
       'sql' => $sql,
       'started' => microtime(),
@@ -78,7 +78,7 @@ class tdatabase extends PDO {
       } else {
         $this->result = parent::exec($sql);
       }
-      if (defined('debug')) {
+      if (litepublisher::$debug) {
         $this->history[count($this->history) - 1]['finished'] = microtime();
       }
     } catch (Exception $e) {
@@ -88,7 +88,7 @@ class tdatabase extends PDO {
   }
   
   private function doerror($e) {
-    if (defined('debug')) {
+    if (litepublisher::$debug) {
       $log = "exception:\n" . $e->getMessage();
       $log .= "\n$this->sql\n";
       $log .=str_replace(litepublisher::$paths['home'], '', $e->getTraceAsString());

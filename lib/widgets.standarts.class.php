@@ -91,7 +91,6 @@ class tstdwidgets extends titems {
   }
   
   public function getwidget($id, $sitebar) {
-    global $options;
     if (!($name = $this->getname($id))) return '';
     $icons = ticons::instance();
     $icon = $icons->geticon($name);
@@ -122,7 +121,6 @@ class tstdwidgets extends titems {
   }
   
   private function getinstance($name) {
-    global $classes;
     switch ($name) {
       case 'links':
       return tlinkswidget::instance();
@@ -134,7 +132,7 @@ class tstdwidgets extends titems {
       return tfoaf::instance();
       
       default:
-      return $classes->$name;
+      return litepublisher::$classes->$name;
     }
   }
   
@@ -160,14 +158,13 @@ class tstdwidgets extends titems {
   }
   
   private function getcommentswidget($id) {
-    global $paths;
     $widgets = twidgets::instance();
     $filename = $widgets->getcachefilename($id);
-    $file = $paths['cache'] . $filename;
+    $file = litepublisher::$paths['cache'] . $filename;
     if (!@file_exists($file)) {
       $this->getcontent('comments');
     }
-    return "\n<?php @include(\$GLOBALS['paths']['cache']. '$filename'); ?>\n";
+    return "\n<?php @include(litepublisher::\$paths['cache']. '$filename'); ?>\n";
   }
   
 }//class

@@ -5,13 +5,12 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-function TRobotstxtInstall($self) {
-  global $options;
+function trobotstxtInstall($self) {
   $self->lock();
   $urlmap = turlmap::instance();
   $self->idurl = $urlmap->add('/robots.txt', get_class($self), null);
   
-  $self->add("#$options->url/");
+  $self->add("#" . litepublisher::$options->url . "/");
   $self->add('User-agent: *');
   $self->AddDisallow('/rss.xml');
   $self->AddDisallow('/comments.xml');

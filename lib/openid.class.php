@@ -40,8 +40,7 @@ class topenid extends tevents {
   }
   
   private function LoadBigMath() {
-    global $paths;
-    require_once($paths['libinclude'] . 'bigmath.php');
+    require_once(litepublisher::$paths['libinclude'] . 'bigmath.php');
     if (!extension_loaded('bcmath')) {
       if (!@dl('bcmath.'. PHP_SHLIB_SUFFIX) && !@dl('php_bcmath.'. PHP_SHLIB_SUFFIX)) {
         if (!extension_loaded('gmp')) {
@@ -89,9 +88,9 @@ class topenid extends tevents {
   }
   
   private function nomode() {
-    global $Options;
-    $result = tsimplecontent::html(TLocal::$data['openidserver']['nomode']);
-    $result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$Options->url$Options->home\">\n</head>", $result);
+$options = litepublisher::$options;
+    $result = tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
+    $result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$options->url$options->home\">\n</head>", $result);
     return $result;
   }
   
@@ -292,13 +291,12 @@ class topenid extends tevents {
   }
   
   private function checkid ( $wait ) {
-    global $Options;
     if (empty($_REQUEST['openid_return_to'])) return $this->error400('return_to');
     $return_to = $_REQUEST['openid_return_to'];
     
     if (empty($_REQUEST['openid_identity'])) return $this->error_get($return_to, 'identity');
     $identity = $_REQUEST['openid_identity'];
-    if ($identity != $Options->url. $this->url)  return $this->error_get($return_to, 'identity');
+    if ($identity != litepublisher::$options->url. $this->url)  return $this->error_get($return_to, 'identity');
     
     $trust_root = !empty($_REQUEST['openid_trust_root']) ? $_REQUEST['openid_trust_root'] : $return_to;
     if ($trust_root != $return_to) {
@@ -344,7 +342,7 @@ class topenid extends tevents {
     
     $keys = array(
     'mode' => 'id_res',
-    'identity' => $Options->url . $this->url,
+    'identity' => litepublisher::$options->url . $this->url,
     'return_to' => $return_to
     );
     

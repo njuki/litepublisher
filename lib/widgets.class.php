@@ -66,9 +66,8 @@ class twidgets extends tsingleitems {
   }
   
   public function getcontent() {
-    global $paths;
     $template = ttemplate::instance();
-    $file = $paths['cache'] . "sitebar.$template->tml.$this->id.$this->current.php";
+    $file = litepublisher::$paths['cache'] . "sitebar.$template->tml.$this->id.$this->current.php";
     if (file_exists($file)) {
       $result = file_get_contents($file);
     } else {
@@ -106,8 +105,7 @@ class twidgets extends tsingleitems {
   }
   
   public function getcachefile($id) {
-    global $paths;
-    return $paths['cache'] . $this->getcachefilename($id);
+    return litepublisher::$paths['cache'] . $this->getcachefilename($id);
   }
   
   public function getwidget($id) {
@@ -115,7 +113,6 @@ class twidgets extends tsingleitems {
   }
   
   private function getwidgetcontent($item) {
-    global $paths;
     switch ( $item['echotype']) {
       case 'echo':
       $result = $this->dogetwidget($item);
@@ -123,13 +120,13 @@ class twidgets extends tsingleitems {
       
       case 'include':
       $filename = $this->getcachefilename($item['id']);
-      $file = $paths['cache'] . $filename;
+      $file = litepublisher::$paths['cache'] . $filename;
       if (!@file_exists($file)) {
         $result = $this->dogetwidget($item);
         file_put_contents($file, $result);
         @chmod($file, 0666);
       }
-      $result = "\n<?php @include(\$GLOBALS['paths']['cache']. '$filename'); ?>\n";
+      $result = "\n<?php @include(litepublisher::\$paths['cache']. '$filename'); ?>\n";
       break;
       
       case 'nocache':
@@ -144,7 +141,6 @@ class twidgets extends tsingleitems {
   }
   
   private function dogetwidget($item) {
-    global $options;
     if (!@class_exists($item['class'])) {
       $this->deleteclass($item['class']);
       return '';
@@ -163,7 +159,7 @@ class twidgets extends tsingleitems {
         $result = $theme->getwidget($item['title'], $content, $item['template'], $this->current);
       }
     } catch (Exception $e) {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
     return $result;
   }

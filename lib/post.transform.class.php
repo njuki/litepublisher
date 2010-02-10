@@ -28,7 +28,7 @@ class tposttransform  {
   }
   
   public static function add(tpost $post) {
-    global $db;
+    $db = litepublisher::$db;
     $self = self::instance($post);
     $db->table = 'posts';
     $names =implode(', ', self::$props);
@@ -55,7 +55,7 @@ class tposttransform  {
   }
   
   public function save() {
-    global $db;
+$db = litepublisher::$db;
     $db->table = 'posts';
     $list = array();
     foreach (self::$props  As $name) {

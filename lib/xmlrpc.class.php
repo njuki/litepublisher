@@ -21,7 +21,6 @@ class TXMLRPCParser extends IXR_Server  {
   }
   
   function output($xml) {
-    global $options;
     $head = '<?xml version="1.0"?>' . "\n";
     $length = strlen($xml) + strlen($head);
     $this->XMLResult = "<?php
@@ -31,7 +30,7 @@ class TXMLRPCParser extends IXR_Server  {
     @header('Date: ".date('r') . "');
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');
-    @header('X-Pingback: $options->url/rpc.xml');
+    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
     echo'$head';
     ?>". $xml;
   }
@@ -64,7 +63,7 @@ class TXMLRPC extends titems {
     
     if (defined('debug')) {
       tfiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
-      $reqname = $GLOBALS['paths']['data'] . 'logs' . DIRECTORY_SEPARATOR  . 'request.xml';
+      $reqname = litepublisher::$paths['data'] . 'logs' . DIRECTORY_SEPARATOR  . 'request.xml';
       file_put_contents($reqname, $HTTP_RAW_POST_DATA);
       @chmod($reqname, 0666);
       //$HTTP_RAW_POST_DATA = file_get_contents($GLOBALS['paths']['home'] . 'raw.txt');
@@ -148,11 +147,10 @@ class TXMLRPCAbstract extends tevents {
   }
   
   public function auth($login, $password, $group) {
-    global $options;
-    if ($options->auth($login, $password))  {
-      if (($options->group == 'admin') || ($options->group == $group) || ($group == 'nobody')) return true;
+    if (litepublisher::$options->auth($login, $password))  {
+      if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == $group) || ($group == 'nobody')) return true;
       $groups = tusergroups::instance();
-      if ($groups->hasright($options->group, $group)) return true;
+      if ($groups->hasright(litepublisher::$options->group, $group)) return true;
     }
     throw new Exception('Bad login/pass combination.', 403);
   }

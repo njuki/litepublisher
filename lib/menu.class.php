@@ -23,12 +23,10 @@ class tmenus extends TItems {
   }
   
   public function getlink($id) {
-    global $options;
-    return sprintf('<a href="%1$s%2$s" title="%3$s">%3$s</a>', $options->url, $this->items[$id]['url'], $this->items[$id]['title']);
+    return sprintf('<a href="%1$s%2$s" title="%3$s">%3$s</a>', litepublisher::$options->url, $this->items[$id]['url'], $this->items[$id]['title']);
   }
   
   public function getdir() {
-    global $paths;
     return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
   }
   
@@ -226,7 +224,6 @@ class tmenus extends TItems {
   }
   
   public function getmenu($hover) {
-    global $options;
     if (count($this->tree) == 0) return '';
     if ($hover) return $this->getsubmenu($this->tree);
     
@@ -235,7 +232,7 @@ class tmenus extends TItems {
     $tml = $theme->menu->item;
     foreach ($this->tree as $id => $items) {
       $item = $this->items[$id];
-      $result .= sprintf($tml, $options->url . $item['url'], $item['title'], '');
+      $result .= sprintf($tml, litepublisher::$options->url . $item['url'], $item['title'], '');
     }
     $result = sprintf($theme->menu, $result);
     return $result;
@@ -248,7 +245,7 @@ class tmenus extends TItems {
     foreach ($tree as $id => $items) {
       $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
       $item = $this->items[$id];
-      $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
+      $result .= sprintf($tml,litepublisher::$options.url . $item['url'], $item['title'], $subitems);
     }
     return $result;
   }
@@ -351,9 +348,8 @@ public function gethead() {}
   }
   
   public function GetTemplateContent() {
-    global $menu;
-    $menu = $this;
     $theme = ttheme::instance();
+    $theme->vars['menu'] = $this;
     return $theme->parse($theme->content->menu);
   }
   
@@ -389,8 +385,7 @@ public function afterrequest(&$content) {}
   }
   
   public function getlink() {
-    global $options;
-    return $options->url . $this->url;
+    return litepublisher::$options->url . $this->url;
   }
   
 }//class

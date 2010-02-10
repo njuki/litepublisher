@@ -8,7 +8,6 @@
 **/
 
 function tcommentformInstall($self) {
-  global $Options;
   $url= '/send-comment.php';
   
   $urlmap = turlmap::instance();

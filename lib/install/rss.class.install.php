@@ -7,7 +7,6 @@
 **/
 
 function trssInstall($self) {
-  global $classes;
   $urlmap = turlmap::instance();
   $urlmap->lock();
   $urlmap->add('/rss.xml', get_class($self), 'posts');
@@ -15,14 +14,13 @@ function trssInstall($self) {
   $self->idpostcomments =   $urlmap->add('/comments/', get_class($self), null, 'tree');
   $urlmap->unlock();
   
-  $classes->commentmanager->changed = $self->commentschanged;
+  litepublisher::$classes->commentmanager->changed = $self->commentschanged;
   $self->save();
 }
 
 function trssUninstall($self) {
-  global $classes;
   turlmap::unsub($self);
-  $classes->commentmanager->unsubscribeclass($self);
+  litepublisher::$classes->commentmanager->unsubscribeclass($self);
 }
 
 ?>

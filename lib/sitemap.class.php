@@ -40,23 +40,22 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function GetTemplateContent() {
-    global $options, $Urlmap;
-    $posts = &Tposts::instance();
+    $posts = tposts::instance();
     $theme = ttheme::instance();
     $postsperpage = 1000;
-    $list = array_slice(array_keys($posts->archives), ($Urlmap->page - 1) * $postsperpage, $postsperpage);
+    $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
     $result = $TemplatePost->LitePrintposts($list);
     
-    if ($Urlmap->page  == 1) {
+    if (litepublisher::$urlmap->page  == 1) {
       $result .= '<ul>' . TLocal::$data['default']['tags'];
       $tags = &TTags::instance();
       foreach ($tags->items as $id => $item) {
-    $result .= "<li><a href=\"$options->url{$item['url']}\">{$item['name']}</a></li>\n";
+    $result .= "<li><a href=\"litepublisher::$options->url{$item['url']}\">{$item['name']}</a></li>\n";
       }
       $result .= "</ul>\n";
     }
     
-    $result .=$theme->getpages('/sitemap/', $urlmap->page, ceil(count($posts->archives)/ $postsperpage));
+    $result .=$theme->getpages('/sitemap/', litepublisher::$urlmap->page, ceil(count($posts->archives)/ $postsperpage));
     return $result;
   }
   
@@ -74,17 +73,16 @@ public function getdescription() {}
   }
   
   public function getIndex() {
-    global $options, $domain;
     $lastmod = strftime("%Y-%m-%d", $this->date);
     
     $result = '
     
     <sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
     ';
-    
+    $url = litepublisher::$options->files . '/files/' . litepublisher::$domain;
     for ($i =1; $i <= $this->countfiles; $i++) {
       $result .= "   <sitemap>
-      <loc>$options->url/files/$domain.$i.xml.gz</loc>
+      <loc>$url.$i.xml.gz</loc>
       <lastmod>$lastmod</lastmod>
       </sitemap>\n";
     }
@@ -94,7 +92,6 @@ public function getdescription() {}
   }
   
   public function createfiles() {
-    global $classes, $options;
     $this->countfiles = 0;
     $this->count = 0;
     $this->date = time();
@@ -103,7 +100,7 @@ public function getdescription() {}
     
     //home page
     $this->prio = 9;
-    $this->write('/', ceil($classes->posts->archivescount / $options->postsperpage));
+    $this->write('/', ceil(litepublisher::$classes->posts->archivescount / litepublisher::$options->postsperpage));
     $this->prio = 8;
     $this->writeposts();
     
@@ -111,8 +108,8 @@ public function getdescription() {}
     $this->writemenus();
     
     $this->prio = 7;
-    $this->writetags($classes->categories);
-    $this->writetags($classes->tags);
+    $this->writetags(litepublisher::$classes->categories);
+    $this->writetags(litepublisher::$classes->tags);
     
     $this->prio = 5;
     $this->writearchives();
@@ -127,13 +124,13 @@ public function getdescription() {}
   }
   
   private function writeposts() {
-    global $options, $db;
     if (dbversion) {
+$db = litepublisher::$db;
       $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
       where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.idurl");
       $res->setFetchMode (PDO::FETCH_ASSOC);
       foreach ($res as $item) {
-        $comments = $options->commentpages ? ceil($item['commentscount'] / $options->commentsperpage) : 1;
+        $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
         $this->write($item['url'], max($item['pagescount'], $comments));
       }
     } else {
@@ -156,9 +153,9 @@ public function getdescription() {}
   
   
   private function writetags($tags) {
-    global $options, $db;
-    $postsperpage = $tags->lite ? 1000 : $options->postsperpage;
+    $postsperpage = $tags->lite ? 1000 : litepublisher::$options->postsperpage;
     if (dbversion) {
+$db = litepublisher::$db;
       $table = $tags->thistable;
       $res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
       where $db->urlmap.id = $table.idurl");
@@ -174,9 +171,9 @@ public function getdescription() {}
   }
   
   private function writearchives() {
-    global $options, $db;
+$db = litepublisher::$db;
     $arch = tarchives::instance();
-    $postsperpage = $arch->lite ? 1000 : $options->postsperpage;
+    $postsperpage = $arch->lite ? 1000 : litepublisher::$options->postsperpage;
     if (dbversion) $db->table = 'posts';
     foreach ($arch->items as $date => $item) {
       if (dbversion) {
@@ -197,9 +194,9 @@ public function getdescription() {}
   }
   
   private function writeitem($url, $prio) {
-    global $options;
+$url = litepublisher::$options->url . $url;
     gzwrite($this->fd, "   <url>
-    <loc>$options->url$url</loc>
+    <loc>$url</loc>
     <lastmod>$this->lastmod</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.$prio</priority>
@@ -212,22 +209,20 @@ public function getdescription() {}
   }
   
   private function openfile() {
-    global $paths, $domain;
     $this->count = 0;
     $this->countfiles++;
-    if ($this->fd = gzopen($paths['files'] . "$domain.$this->countfiles.xml.gz", 'w')) {
+    if ($this->fd = gzopen(litepublisher::$paths['files'] . litepublisher::$domain . ".$this->countfiles.xml.gz", 'w')) {
       $this->WriteHeader();
     } else {
-      echo "error write file to folder $paths[files]";
+      tfiler::log("error write file to folder " . litepublisher::$paths[files]);
       exit();
     }
   }
   
   private function closefile() {
-    global $paths, $domain;
     $this->WriteFooter();
     gzclose($this->fd);
-    @chmod($paths['files'] . "$domain.$this->countfiles.xml.gz", 0666);
+    @chmod(litepublisher::$paths['files'] . litepublisher::$domain . ".$this->countfiles.xml.gz", 0666);
     $this->fd = false;
   }
   

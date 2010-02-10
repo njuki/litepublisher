@@ -24,16 +24,15 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   }
   
   private function _auth(array $struct) {
-    global $options;
     extract($struct);
-    if ($username != $Options->login) return false;
+    if ($username != litepublisher::$options->login) return false;
     
     switch ($auth_method) {
       case 'challenge':
-      return ($this->challenge == $auth_challenge) && ($auth_response == md5($this->challenge . $Options->password));
+      return ($this->challenge == $auth_challenge) && ($auth_response == md5($this->challenge . litepublisher::$options->password));
       
       case 'clear':
-      return $this->password == md5("$Options->login:$Options->realm:$password");
+      return $this->password == md5("litepublisher::$options->login:litepublisher::$options->realm:$password");
       
       case 'cookie':
       

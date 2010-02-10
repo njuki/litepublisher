@@ -32,19 +32,17 @@ class tfiles extends titems {
   }
   
   public function geturl($id) {
-    global $options;
     $item = $this->getitem($id);
-    return $options->files . '/files/' . $item['filename'];
+    return litepublisher::$options->files . '/files/' . $item['filename'];
   }
   
   public function getlink($id) {
-    global $options;
     $item = $this->getitem($id);
     $icon = '';
     if (($item['icon'] != 0) && ($item['media'] != 'icon')) {
       $icon = $this->geticon($item['icon']);
     }
-    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', $options->files. $item['filename'], $item['title'], $icon . $item['description']);
+    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', litepublisher::$options->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
   
   public function geticon($id) {
@@ -52,9 +50,8 @@ class tfiles extends titems {
   }
   
   public function additem(array $item) {
-    global $options, $paths;
-    $realfile = $paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
-    $item['author'] = $options->user;
+    $realfile = litepublisher::$paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
+    $item['author'] = litepublisher::$options->user;
     $item['posted'] = sqldate();
     $item['keywords'] = '';
     $item['md5'] = md5_file($realfile);
@@ -74,13 +71,12 @@ class tfiles extends titems {
   }
   
   public function delete($id) {
-    global $paths;
     if (!$this->itemexists($id)) return false;
     $list = $this->itemsposts->getposts($id);
     $this->itemsposts->deleteitem($id);
     $this->itemsposts->updateposts($list, 'files');
     $item = $this->getitem($id);
-    @unlink($paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
+    @unlink(litepublisher::$paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
     $this->lock();
     parent::delete($id);
     if ($item['preview'] > 0) $this->delete($item['preview']);
@@ -100,7 +96,7 @@ class tfiles extends titems {
     $theme = ttheme::instance();
     $tml = $theme->content->post->files;
     $args = targs::instance();
-    $img = '<img src="$options.files/files/$filename" title="$filename" />';
+    $img = '<img src="litepublisher::$options.files/files/$filename" title="$filename" />';
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];

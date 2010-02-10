@@ -12,10 +12,9 @@ class titem extends tdata {
   protected $aliases;
   
   public static function instance($class, $id = 0) {
-    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
-    $self = $classes->newinstance($class);
+    $self = litepublisher::$classes->newinstance($class);
     $self->id = $id;
     if ($id != 0) {
       if (!$self->load()) {
@@ -67,8 +66,7 @@ class titem extends tdata {
     if (!$this->load()) return 404;
   }
   
-  public static function DeleteItemDir($dir) {
-    global $paths;
+  public static function deletedir($dir) {
     if (!@file_exists($dir)) return false;
     tfiler::delete($dir, true, true);
     @rmdir($dir);

@@ -25,13 +25,12 @@ class trss extends tevents {
   }
   
   public function commentschanged($idpost) {
-    $urlmap = turlmap::instance();
-    $urlmap->setexpired($this->idcomments);
-    $urlmap->setexpired($this->idpostcomments);
+    litepublisher::$urlmap = turlmap::instance();
+    litepublisher::$urlmap->setexpired($this->idcomments);
+    litepublisher::$urlmap->setexpired($this->idpostcomments);
   }
   
   public function request($arg) {
-    global $options, $urlmap;
     $result = "<?php\n";
     if (($arg == 'posts') && ($this->feedburner  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
@@ -53,7 +52,7 @@ class trss extends tevents {
     
     $result .= "  @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $options->url/rpc.xml');
+    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
     
@@ -69,7 +68,7 @@ class trss extends tevents {
       break;
       
       default:
-      if (!preg_match('/\/(\d*?)\.xml$/', $urlmap->url, $match)) return 404;
+      if (!preg_match('/\/(\d*?)\.xml$/', litepublisher::$urlmap->url, $match)) return 404;
       $idpost = (int) $match[1];
       $posts = tposts::instance();
       if (!$posts->itemexists($idpost)) return 404;
@@ -83,10 +82,9 @@ class trss extends tevents {
   }
   
   public function GetRSSRecentPosts() {
-    global $options;
-    $this->domrss->CreateRoot($options->url. '/rss/', $options->name);
+    $this->domrss->CreateRoot(litepublisher::$options->url. '/rss/', litepublisher::$options->name);
     $posts = tposts::instance();
-    $list = $posts->getrecent($options->postsperpage);
+    $list = $posts->getrecent(litepublisher::$options->postsperpage);
     foreach ($list as $id ) {
       $post = tpost::instance($id);
       $this->AddRSSPost($post);
@@ -95,10 +93,9 @@ class trss extends tevents {
   }
   
   public function GetRecentComments() {
-    global $options;
-    $this->domrss->CreateRoot($options->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. $options->name);
+    $this->domrss->CreateRoot(litepublisher::$options->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
     $manager = tcommentmanager::instance();
-    $recent = $manager->getrecent($options->postsperpage);
+    $recent = $manager->getrecent(litepublisher::$options->postsperpage);
     $title = tlocal::$data['comment']['onpost'] . ' ';
     $a = array();
     $comment = new tarray2prop($a);
@@ -109,7 +106,6 @@ class trss extends tevents {
   }
   
   public function GetRSSPostComments($idpost) {
-    global $options;
     $post = tpost::instance($idpost);
     $lang = tlocal::instance('comment');
     $title = $lang->from . ' ';
@@ -119,11 +115,11 @@ class trss extends tevents {
     $comment = new tarray2prop($a);
     if (dbversion) {
       $recent = $comments->getitems("post = $idpost and status = 'approved'
-      order by $comments->thistable.posted desc limit $options->postsperpage");
+      order by $comments->thistable.posted desc limit litepublisher::$options->postsperpage");
       
     } else {
-      $from =max(0, count($comments->items) - $options->postsperpage);
-      $items = array_slice(array_keys($comments->items), $from, $options->postsperpage);
+      $from =max(0, count($comments->items) - litepublisher::$options->postsperpage);
+      $items = array_slice(array_keys($comments->items), $from, litepublisher::$options->postsperpage);
       $recent = array();
       $comusers = tcomusers::instance($idpost);
       foreach ($items as $id) {
@@ -149,7 +145,6 @@ class trss extends tevents {
   }
   
   public function AddRSSPost(tpost $post) {
-    global $options;
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $post->title);
     AddNodeValue($item, 'link', $post->link);
@@ -195,7 +190,7 @@ class trss extends tevents {
       $fileitems = $files->getitems($post->files);
       foreach ($fileitems as $file) {
         $enclosure = AddNode($item, 'enclosure');
-        AddAttr($enclosure , 'url', $options->files . '/files/' . $file['filename']);
+        AddAttr($enclosure , 'url', litepublisher::$options->files . '/files/' . $file['filename']);
         AddAttr($enclosure , 'length', $file['size']);
         AddAttr($enclosure , 'type', $file['mime']);
       }
@@ -204,8 +199,7 @@ class trss extends tevents {
   }
   
   public function AddRSSComment($comment, $title) {
-    global $options;
-    $link = "$options->url$comment->posturl#comment-$comment->id";
+    $link = "litepublisher::$options->url$comment->posturl#comment-$comment->id";
     $date = is_int($comment->posted) ? $comment->posted : strtotime($comment->posted);
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $title);
@@ -222,8 +216,8 @@ class trss extends tevents {
       $this->feedburner= $rss;
       $this->feedburnercomments = $comments;
       $this->save();
-      $urlmap = turlmap::instance();
-      $urlmap->clearcache();
+      litepublisher::$urlmap = turlmap::instance();
+      litepublisher::$urlmap->clearcache();
     }
   }
   
