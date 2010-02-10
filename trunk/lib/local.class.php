@@ -10,19 +10,14 @@ class targs {
   public $data;
   
   public static function instance() {
-    global $classes;
-    return $classes->newinstance(__class__);
+    return litepublisher::$classes->newinstance(__class__);
   }
   
   public function __construct($thisthis = null) {
-    global $options;
     $this->data = array(
-    //'$options->url' => $options->url,
-  //'{$options->q}' => $options->q,
-    //'$options->files' => $options->files
-    '$options.url' => $options->url,
-  '{$options.q}' => $options->q,
-    '$options.files' => $options->files
+    '$options.url' => litepublisher::$options->url,
+  '{$options.q}' => litepublisher::$options->q,
+    '$options.files' => litepublisher::$options->files
     );
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
@@ -69,8 +64,7 @@ class tlocal {
   }
   
   public static function getdateformat() {
-    global $options;
-    return $options->dateformat != ''? $options->dateformat : self::$data['datetime']['dateformat'];
+    return litepublisher::$options->dateformat != ''? litepublisher::$options->dateformat : self::$data['datetime']['dateformat'];
   }
   
   public static function translate($s, $section = 'default') {
@@ -84,14 +78,12 @@ class tlocal {
   }
   
   public static function loadlang($FileName) {
-    global $options, $paths;
-    if ($options->language != '') {
-      self::load($paths['languages']. $FileName. $options->language);
+    if (litepublisher::$options->language != '') {
+      self::load(litepublisher::$paths['languages']. $FileName. litepublisher::$options->language);
     }
   }
   
   public static function load($partialname) {
-    global $paths;
     if (!isset(self::$data)) self::$data = array();
     if (!isset(self::$files)) self::$files = array();
     if (in_array($partialname , self::$files)) return;
@@ -99,7 +91,7 @@ class tlocal {
     if (!tfiler::unserialize($partialname . '.php', $v) || !is_array($v)) {
       $v = parse_ini_file($partialname . '.ini', true);
       tfiler::serialize($partialname . '.php', $v);
-      tfiler::ini2js($v + self::$data , $paths['files'] . basename($partialname) . '.js');
+      tfiler::ini2js($v + self::$data , litepublisher::$paths['files'] . basename($partialname) . '.js');
     }
     self::$data = $v + self::$data ;
   }

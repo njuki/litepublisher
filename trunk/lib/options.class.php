@@ -84,7 +84,7 @@ class toptions extends tevents {
   
   public function geturl() {
     if ($this->fixedurl) return $this->data['url'];
-    return 'http://'. $GLOBALS['domain'];
+    return 'http://'. litepublisher::$domain;
   }
   
   public function seturl($url) {
@@ -159,13 +159,12 @@ class toptions extends tevents {
   }
   
   public function handexception($e) {
-    global $paths;
-    $trace =str_replace($paths['home'], '', $e->getTraceAsString());
+    $trace =str_replace(litepublisher::$paths['home'], '', $e->getTraceAsString());
     $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
     tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();
-    if (defined('debug') || $this->echoexception || $urlmap->adminpanel) {
+    if (litepublisher::$debug || $this->echoexception || $urlmap->adminpanel) {
       $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       tfiler::log($log, 'exceptionsmail.log');

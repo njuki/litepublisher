@@ -84,8 +84,7 @@ class THtmlResource  {
   }
   
   public function load($FileName) {
-    global $paths;
-    $PartFileName = $paths['languages']. $FileName;
+    $PartFileName = litepublisher::$paths['languages']. $FileName;
     if (!tfiler::unserialize($PartFileName . '.php', $v) || !is_array($v)) {
       $v = parse_ini_file($PartFileName . '.ini', true);
       tfiler::serialize($PartFileName . '.php', $v);

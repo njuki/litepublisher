@@ -13,11 +13,10 @@ class tcomments extends titems {
   private static $instances;
   
   public static function instance($pid) {
-    global $classes;
     $pid = (int) $pid;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
-    $self = $classes->newinstance(__class__);
+    $self = litepublisher::$classes->newinstance(__class__);
     self::$instances[$pid]  = $self;
     $self->pid = $pid;
     $self->load();
@@ -169,21 +168,19 @@ class tcomments extends titems {
   */
   
   public function getholdcontent($idauthor) {
-    global $options;
-    if ($options->admincookie) return '';
+    if (litepublisher::$options->admincookie) return '';
     return $this->hold->dogetcontent(true, $idauthor);
   }
   
   public function getcontent() {
-    global $options, $urlmap;
     $result = $this->dogetcontent(false, 0);
-    if ($options->admincookie) {
+    if (litepublisher::$options->admincookie) {
       $theme = ttheme::instance();
       tlocal::loadlang('admin');
       $lang = tlocal::instance('comment');
       $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
       $post = tpost::instance($this->pid);
-      if ($post->commentpages == $urlmap->page) {
+      if ($post->commentpages == litepublisher::$urlmap->page) {
         $result .= $this->hold->dogetcontent(true, 0);
       } else {
         //добавить пустой список задержанных
@@ -201,14 +198,14 @@ class tcomments extends titems {
   }
   
   public function dogetcontent($hold, $idauthor) {
-    global $options, $urlmap, $comment;
+    global $comment;
     $result = '';
     $from = 0;
     $items = array_keys($this->items);
     if (!$hold) {
-      if ($options->commentpages ) {
-        $from = ($urlmap->page - 1) * $options->commentsperpage;
-        $items = array_slice($items, $from, $options->commentsperpage, true);
+      if (litepublisher::$options->commentpages ) {
+        $from = (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage;
+        $items = array_slice($items, $from, litepublisher::$options->commentsperpage, true);
       }
     }
     
@@ -220,7 +217,7 @@ class tcomments extends titems {
       if ($hold) $comment->status = 'hold';
       $lang = tlocal::instance('comment');
       
-      if ($options->admincookie) {
+      if (litepublisher::$options->admincookie) {
         tlocal::loadlang('admin');
         $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
       } else {
@@ -233,7 +230,7 @@ class tcomments extends titems {
       $class2 = $theme->content->post->templatecomments->comments->comment->class2;
       foreach ($items as $id) {
         //разрулить в одном месте одобренные и задержанные комменты
-        if (!$options->admincookie && $hold) {
+        if (!litepublisher::$options->admincookie && $hold) {
           if ($idauthor != $this->items[$id]['author']) continue;
         }
         $comment->id = $id;
@@ -248,7 +245,7 @@ class tcomments extends titems {
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
     }
     
-    if (!$options->admincookie) {
+    if (!litepublisher::$options->admincookie) {
       if ($result == '') return '';
     }
     return sprintf($tml, $result, $from + 1);
@@ -365,7 +362,6 @@ class TComment {
   }
   
   public function getauthorlink() {
-    global $options;
     $idpost = $this->owner->pid;
     $comusers = tcomusers::instance($idpost);
     $item = $comusers->getitem($this->author);
@@ -375,7 +371,7 @@ class TComment {
     if ($manager->hidelink || empty($url)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
-    return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$this->author&post=$idpost\">$name</a>";
+    return "<a $rel href=\"litepublisher::$options->url/comusers.htm{litepublisher::$options->q}id=$this->author&post=$idpost\">$name</a>";
     } else {
       return "<a $rel href=\"$url\">$name</a>";
     }

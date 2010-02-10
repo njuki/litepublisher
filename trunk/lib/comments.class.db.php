@@ -105,14 +105,13 @@ class tcomments extends titems {
   }
   
   public function getcontent() {
-    global $options, $urlmap;
     $result = $this->getcontentwhere('approved', '');
-    if ($options->admincookie) {
+    if (litepublisher::$options->admincookie) {
       $theme = ttheme::instance();
       tlocal::loadlang('admin');
       $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
       $post = tpost::instance($this->pid);
-      if ($post->commentpages == $urlmap->page) {
+      if ($post->commentpages == litepublisher::$urlmap->page) {
         $result .= $this->getcontentwhere('hold', '');
       } else {
         //добавить пустой список задержанных
@@ -131,27 +130,26 @@ class tcomments extends titems {
   }
   
   public function getholdcontent($idauthor) {
-    global $options;
-    if ($options->admincookie) return '';
+    if (litepublisher::$options->admincookie) return '';
     return $this->getcontentwhere('hold', "and $this->thistable.author = $idauthor");
   }
   
   private function getcontentwhere($status, $whereauthor) {
-    global $db, $options, $urlmap, $comment;
+    global $comment;
     $result = '';
     $post = tpost::instance($this->pid);
     if ($status == 'approved') {
-      $from = $options->commentpages  ? ($urlmap->page - 1) * $options->commentsperpage : 0;
-      $count = $options->commentpages  ? $options->commentsperpage : $post->commentscount;
+      $from = litepublisher::$options->commentpages  ? (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage : 0;
+      $count = litepublisher::$options->commentpages  ? litepublisher::$options->commentsperpage : $post->commentscount;
     } else {
       $from = 0;
-      $count = $options->commentsperpage;
+      $count = litepublisher::$options->commentsperpage;
     }
     
     $comusers = tcomusers::instance();
     $authors = $comusers->thistable;
     $table = $this->thistable;
-    $res = $db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
+    $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
     where $table.post = $this->pid and $table.status = '$status' $whereauthor and $authors.id = $table.author
     order by $table.posted asc limit $from, $count");
     
@@ -160,7 +158,7 @@ class tcomments extends titems {
     $comment = new tcomment(0);
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
-    if ($options->admincookie) {
+    if (litepublisher::$options->admincookie) {
       tlocal::loadlang('admin');
       $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
     } else {
@@ -186,7 +184,7 @@ class tcomments extends titems {
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
     }
     
-    if (!$options->admincookie) {
+    if (!litepublisher::$options->admincookie) {
       if ($result == '') return '';
     }
     return sprintf($tml, $result, $from + 1);
@@ -226,12 +224,11 @@ class tcomment extends tdata {
   }
   
   public function getauthorlink() {
-    global $options;
     $manager = tcommentmanager::instance();
     if ($manager->hidelink || ($this->url == '') || !$manager->checktrust($this->trust)) return $this->name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
-    return "<a $rel href=\"$options->url/comusers.htm{$options->q}id=$this->id\">$this->name</a>";
+    return "<a $rel href=\"litepublisher::$options->url/comusers.htm{litepublisher::$options->q}id=$this->id\">$this->name</a>";
     } else {
       return "<a $rel href=\"$this->url\">$this->name</a>";
     }

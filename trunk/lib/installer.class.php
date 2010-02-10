@@ -26,8 +26,7 @@ class tinstaller extends tdata {
     }
     
     if (!empty($_GET['lang']))  {
-      global $paths;
-      if (@file_exists($paths['languages']. $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
+      if (@file_exists(litepublisher::$paths['languages']. $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
     }
     
     if (!empty($_GET['mode'])) $this->mode = $_GET['mode'];
@@ -53,15 +52,14 @@ class tinstaller extends tdata {
   }
   
   public function OutputResult($password) {
-    global $options, $paths;
     if ($this->mode == 'remote') {
       $result = array(
       'url' => strtolower($_SERVER['HTTP_HOST']) ,
-      'login' => $options->login,
+      'login' => litepublisher::$options->login,
       'password' => $password,
-      'email' => $options->email,
-      'name' => $options->name,
-      'description' => $options->description
+      'email' => litepublisher::$options->email,
+      'name' => litepublisher::$options->name,
+      'description' => litepublisher::$options->description
       );
       
       switch ($this->resulttype) {
@@ -76,7 +74,7 @@ class tinstaller extends tdata {
         exit();
         
         case 'xmlrpc':
-        require_once($paths['libinclude'] . 'class-IXR.php');
+        require_once(litepublisher::$paths['libinclude'] . 'class-IXR.php');
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
@@ -130,9 +128,8 @@ class tinstaller extends tdata {
   }
   
   public function FirstStep() {
-    global $paths;
     $this->CheckFolders();
-    require_once($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
+    require_once(litepublisher::$paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
     return installclasses($this->language);
   }
   
@@ -172,26 +169,24 @@ class tinstaller extends tdata {
   }
   
   public function processform($email, $name, $description, $rewrite) {
-    global $options;
-    $options->lock();
-    $options->email = $email;
-    $options->name = $name;
-    $options->description = $description;
-    $options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
+    litepublisher::$options->lock();
+    litepublisher::$options->email = $email;
+    litepublisher::$options->name = $name;
+    litepublisher::$options->description = $description;
+    litepublisher::$options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
-    if ($options->q == '&') $options->data['url'] .= '/index.php?url=';
-    $options->unlock();
+    if (litepublisher::$options->q == '&') litepublisher::$options->data['url'] .= '/index.php?url=';
+    litepublisher::$options->unlock();
   }
   
   public function CheckFolders() {
-    global $paths;
-    $this->checkFolder($paths['data']);
-    $this->CheckFolder($paths['cache']);
-    $this->CheckFolder($paths['cache'] . 'pda' . DIRECTORY_SEPARATOR);
-    $this->CheckFolder($paths['files']);
-    $this->CheckFolder($paths['languages']);
-    $this->CheckFolder($paths['plugins']);
-    $this->CheckFolder($paths['themes']);
+    $this->checkFolder(litepublisher::$paths['data']);
+    $this->CheckFolder(litepublisher::$paths['cache']);
+    $this->CheckFolder(litepublisher::$paths['cache'] . 'pda' . DIRECTORY_SEPARATOR);
+    $this->CheckFolder(litepublisher::$paths['files']);
+    $this->CheckFolder(litepublisher::$paths['languages']);
+    $this->CheckFolder(litepublisher::$paths['plugins']);
+    $this->CheckFolder(litepublisher::$paths['themes']);
   }
   
   public function CheckFolder($FolderName) {
@@ -225,16 +220,14 @@ class tinstaller extends tdata {
   }
   
   public function CheckApache($rewrite) {
-    global $options;
     if ($rewrite || (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()))) {
-      $options->q = '?';
+      litepublisher::$options->q = '?';
     } else {
-      $options->q = '&';
+      litepublisher::$options->q = '&';
     }
   }
   
   public function wizardform() {
-    global $domain;
     $this->loadlang();
     $form = $this->GetLangForm();
     $html = THtmlResource::instance();
@@ -245,7 +238,7 @@ class tinstaller extends tdata {
     } else {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
-    $dbprefix = strtolower(str_replace('.', '', $domain)) . '_';
+    $dbprefix = strtolower(str_replace('.', '', litepublisher::$domain)) . '_';
     eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
     
     eval('$form .= "'. $html->installform. '\n";');
@@ -275,7 +268,6 @@ class tinstaller extends tdata {
   }
   
   public function CreateFirstPost() {
-    global $classes, $options;
     $html = THtmlResource::instance();
     $html->section = 'installation';
     $lang = tlocal::instance();
@@ -295,7 +287,7 @@ class tinstaller extends tdata {
     
     $users = tcomusers::instance($post->id);
     $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
-    $classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
+    litepublisher::$classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
     
     $plugins = tplugins::instance();
     $plugins->lock();
@@ -306,50 +298,46 @@ class tinstaller extends tdata {
   }
   
   public static function SendEmail($password) {
-    global $options;
     tlocal::loadlang('admin');
     $lang = &tlocal::$data['installation'];
-    $body = sprintf($lang['body'], $options->url, $options->login, $password);
+    $body = sprintf($lang['body'], litepublisher::$options->url, litepublisher::$options->login, $password);
     
-    tmailer::sendmail('', $options->fromemail,
-    '', $options->email, $lang['subject'], $body);
+    tmailer::sendmail('', litepublisher::$options->fromemail,
+    '', litepublisher::$options->email, $lang['subject'], $body);
   }
   
   public function congratulation($password) {
-    global $options, $lang;
+    global  $lang;
     $html = THtmlResource::instance();
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
     $args = targs::instance();
-    $args->url = $options->url . '/';
+    $args->url = litepublisher::$options->url . '/';
     $args->password = $password;
     $content = $html->congratulation($args);
     
-    echo SimplyHtml($options->name, $content);
+    echo SimplyHtml(litepublisher::$options->name, $content);
   }
   
   public function uninstall() {
-    global $paths;
-    tfiler::delete($paths['data'], true);
-    tfiler::delete($paths['cache'], true);
-    tfiler::delete($paths['files'], true);
+    tfiler::delete(litepublisher::$paths['data'], true);
+    tfiler::delete(litepublisher::$paths['cache'], true);
+    tfiler::delete(litepublisher::$paths['files'], true);
   }
   
   private function loadlang() {
-    global $paths;
-    $GLOBALS['options'] = $this;
-    require_once($paths['lib'] . 'filer.class.php');
-    require_once($paths['lib'] . 'local.class.php');
-    require_once($paths['lib'] . 'htmlresource.class.php');
+    litepublisher::$options = $this;
+    require_once(litepublisher::$paths['lib'] . 'filer.class.php');
+    require_once(litepublisher::$paths['lib'] . 'local.class.php');
+    require_once(litepublisher::$paths['lib'] . 'htmlresource.class.php');
     tlocal::loadlang('admin');
   }
   
   private function GetBrowserLang() {
-    global $paths;
     if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
       $result = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
       $result = substr($result, 0, 2);
-      if (@file_exists($paths['languages']. "$result.ini")) return $result;
+      if (@file_exists(litepublisher::$paths['languages']. "$result.ini")) return $result;
     }
     return 'en';
   }

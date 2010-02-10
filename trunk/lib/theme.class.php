@@ -117,16 +117,16 @@ class ttheme extends tevents {
   public function getpages($url, $page, $count) {
     global  $options;
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $link =$this->navi['link'];
+    $link =$this->content->navi->link;
     $suburl = rtrim($url, '/');
     $a = array();
     for ($i = 1; $i <= $count; $i++) {
       $pageurl = $i == 1 ? $options->url . $url : "$options->url$suburl/page/$i/";
-      $a[] = sprintf($i == $page ? $this->navi['current'] : $link, $pageurl, $i);
+      $a[] = sprintf($i == $page ? $this->content->navi->current : $link, $pageurl, $i);
     }
     
-    $result = implode($this->navi['divider'], $a);
-    $result = sprintf($this->navi['navi'], $result);
+    $result = implode($this->content->navi->divider, $a);
+    $result = sprintf($this->content->navi, $result);
     return $result;
   }
   

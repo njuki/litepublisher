@@ -101,13 +101,12 @@ class tdata {
   }
   
   protected function CallSatellite($func, $arg = null) {
-    global $classes, $paths;
 $func{0} = strtoupper($func{0});
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = $classes->getpath($class)) {
-        $filename = basename($classes->items[$class][0], '.php') . '.install.php';
+      if ($path = litepublisher::$classes->getpath($class)) {
+        $filename = basename(litepublisher::$classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
         if (!@file_exists($file)) {
           $file =$path .  $filename;
@@ -123,21 +122,19 @@ $func{0} = strtoupper($func{0});
   }
   
   public function load() {
-    global $paths;
     if (dbversion == 'full') return $this->LoadFromDB();
-    $filename = $paths['data'] . $this->getbasename() .'.php';
+    $filename = litepublisher::$paths['data'] . $this->getbasename() .'.php';
     if (@file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }
   
   public function save() {
-    global $paths;
     if (self::$GlobalLock || ($this->lockcount > 0)) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
-      SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
+      SafeSaveFile(litepublisher::$paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
     }
   }
   
@@ -180,14 +177,13 @@ $func{0} = strtoupper($func{0});
   }
   
   public function getdb($table = '') {
-    global $db;
     $table =$table != '' ? $table : $this->table;
-    if ($table != '') $db->table = $table;
-    return $db;
+    if ($table != '') litepublisher::$db->table = $table;
+    return litepublisher::$db;
   }
   
   protected function SaveToDB() {
-    $db->add($this->getbasename(), $this->SaveToString());
+    $this->db->add($this->getbasename(), $this->SaveToString());
   }
   
   protected function LoadFromDB() {
@@ -197,13 +193,11 @@ $func{0} = strtoupper($func{0});
   }
   
   protected function getthistable() {
-    global $db;
-    return $db->prefix . $this->table;
+    return litepublisher::$db->prefix . $this->table;
   }
   
   protected function geturltable() {
-    global $db;
-    return $db->prefix .'urlmap';
+    return litepublisher::$db->prefix .'urlmap';
   }
   
   protected function getjoinurl() {
