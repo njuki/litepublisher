@@ -19,12 +19,10 @@ class tabstractcron extends tevents {
   }
   
   protected function getdir() {
-    global $paths;
-    return $paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
+    return litepublisher::$paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
   }
   
   protected function getpath() {
-    global $paths;
     if (($this->data['path'] != '') && is_dir($this->data['path'])) {
       return  $this->data['path'];
     }
@@ -32,8 +30,7 @@ class tabstractcron extends tevents {
   }
   
   protected function geturl() {
-    global $options;
-  return "/croncron.htm{$options->q}cronpass=$this->password";
+  return "/croncron.htm{litepublisher::$options->q}cronpass=$this->password";
   }
   
   public function request($arg) {
@@ -75,7 +72,6 @@ class tabstractcron extends tevents {
   }
   
   public static function selfping() {
-    global $options;
     try {
       $self = tcron::instance();
       $cronfile = $self->dir .  'crontime.txt';
@@ -84,15 +80,14 @@ class tabstractcron extends tevents {
       
       $self->ping();
     } catch (Exception $e) {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
   }
   
   public function ping() {
-    global $options;
     $urlmap = turlmap::instance();
-    $this->AddToChain($urlmap->host, $options->subdir . $this->url);
-    $this->PingHost($urlmap->host, $options->subdir . $this->url);
+    $this->AddToChain($urlmap->host, litepublisher::$options->subdir . $this->url);
+    $this->PingHost($urlmap->host, litepublisher::$options->subdir . $this->url);
   }
   
   private function PingHost($host, $path) {
@@ -126,14 +121,13 @@ class tabstractcron extends tevents {
   }
   
   public function sendexceptions() {
-    global $paths, $options;
     //проверить, если файл логов создан более часа назад, то его отослать на почту
-    $filename = $paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
+    $filename = litepublisher::$paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
     @unlink($filename);
-    TMailer::SendAttachmentToAdmin("[error] $options->name", "See attachment", 'errors.txt', $s);
+    TMailer::SendAttachmentToAdmin("[error] litepublisher::$options->name", "See attachment", 'errors.txt', $s);
     sleep(2);
   }
   

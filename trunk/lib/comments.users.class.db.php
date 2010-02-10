@@ -64,7 +64,6 @@ class tcomusers extends titems {
   }
   
   public function request($arg) {
-    global $options;
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
     try {
       $item = $this->getitem($id);
@@ -73,9 +72,9 @@ class tcomusers extends titems {
     }
     
     $url = $item['url'];
-    if (!strpos($url, '.')) $url = $options->url . $options->home;
+    if (!strpos($url, '.')) $url = litepublisher::$options->url . litepublisher::$options->home;
     if (substr($url, 0, 7) != 'http://') $url = 'http://' . $url;
-    TUrlmap::redir($url);
+    turlmap::redir($url);
   }
   
 }//class

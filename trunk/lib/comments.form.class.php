@@ -80,7 +80,6 @@ class tcommentform extends tevents {
   }
   
   public static function printform($postid) {
-    global $options;
     $result = '';
     $self = self::instance();
     $lang = tlocal::instance('comment');
@@ -128,8 +127,7 @@ class tcommentform extends tevents {
   }
   
   public function request($arg) {
-    global $classes, $options;
-    if ($options->commentsdisabled) return 404;
+    if (litepublisher::$options->commentsdisabled) return 404;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
       @header('Allow: POST');
@@ -138,7 +136,7 @@ class tcommentform extends tevents {
       ?>";
     }
     
-    $posturl = $options->url . '/';
+    $posturl = litepublisher::$options->url . '/';
     
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
@@ -159,7 +157,7 @@ class tcommentform extends tevents {
       return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
     }
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
-    $posts = $classes->posts;
+    $posts = litepublisher::$classes->posts;
     if(!$posts->itemexists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
     $post = tpost::instance($postid);
     
@@ -181,24 +179,24 @@ class tcommentform extends tevents {
     if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
     if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
     //check duplicates
-    if ($classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
+    if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url']);
     $usercookie = $users->getcookie($uid);
-    if (!$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
+    if (!litepublisher::$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
     
     $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
-    $classes->commentmanager->addcomment($post->id, $uid, $values['content']);
+    litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content']);
     
     $idpostcookie = dbversion ? '' : "@setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
     $idpostcookie
-    @header('Location: $options->url$posturl');
+    @header('Location: litepublisher::$options->url$posturl');
     ?>";
   }
   

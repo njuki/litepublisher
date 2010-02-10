@@ -23,17 +23,15 @@ class tsubscribers extends titemsposts {
   }
   
   public function load() {
-    global $paths;
-    $filename = $paths['data'] . $this->getbasename() .'.php';
+    $filename = litepublisher::$paths['data'] . $this->getbasename() .'.php';
     if (@file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }
   
   public function save() {
-    global $paths;
     if (self::$GlobalLock || $this->locked) return;
-    SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
+    SafeSaveFile(litepublisher::$paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
   }
   
   public function update($pid, $uid, $subscribed) {
@@ -58,11 +56,10 @@ class tsubscribers extends titemsposts {
   }
   
   public function setenabled($value) {
-    global $classes;
     if ($this->enabled != $value) {
       $this->data['enabled'] = $value;
       $this->save();
-      $manager = $classes->commentmanager;
+      $manager = litepublisher::$classes->commentmanager;
       if ($value) {
         $manager->lock();
         $manager->added = $this->sendmail;
@@ -87,7 +84,7 @@ class tsubscribers extends titemsposts {
   }
   
   public function cronsendmail($arg) {
-    global $options, $classes, $comment;
+    global $comment;
     $id = $arg[0];
     $pid = $arg[1];
     $comments = tcomments::instance($pid);
@@ -107,14 +104,14 @@ class tsubscribers extends titemsposts {
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
-  $body .= "\n$options->url/admin/subscribers/{$options->q}userid=";
+  $body .= "\nlitepublisher::$options->url/admin/subscribers/{litepublisher::$options->q}userid=";
     
     $users = tcomusers::instance();
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
-      tmailer::sendmail($options->name, $this->fromemail,  $user['name'], $user['email'],
+      tmailer::sendmail(litepublisher::$options->name, $this->fromemail,  $user['name'], $user['email'],
       $subj, $body . $user['cookie']);
     }
   }
