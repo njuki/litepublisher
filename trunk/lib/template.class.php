@@ -22,18 +22,19 @@ class ttemplate extends tevents {
   }
   
   protected function create() {
-    global $paths, $options;
     parent::create();
     $this->basename = 'template' ;
     $this->tml = 'index';
     $this->itemplate = false;
-    $this->javaoptions = array(0 => "url: '$options->url',\npingback: '$options->url/rpc.xml',\nfiles: '$options->files'");
+    $this->javaoptions = array(0 => 
+sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
+litepublisher::$options->url, litepublisher::$options->files));
     $this->cursitebar = 0;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
     $this->data['hovermenu'] = false;
-    $this->path = $paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
+    $this->path = litepublisher::$paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
     $this->data['sitebars'] = null;
@@ -57,16 +58,14 @@ class ttemplate extends tevents {
   }
   
   public function afterload() {
-    global $options, $paths;
     parent::afterload();
     if (!$this->themeexists($this->theme))  $this->theme = 'default';
-    $this->path = $paths['themes'] . $this->theme  . DIRECTORY_SEPARATOR ;
-    $this->url = $options->files . '/themes/'. $this->theme;
+    $this->path = litepublisher::$paths['themes'] . $this->theme  . DIRECTORY_SEPARATOR ;
+    $this->url = litepublisher::$options->files . '/themes/'. $this->theme;
   }
   
   public function themeexists($name) {
-    global $paths;
-    return ($name != '') && @file_exists($paths['themes']. $name . DIRECTORY_SEPARATOR   . 'index.tml');
+    return ($name != '') && @file_exists(litepublisher::$paths['themes']. $name . DIRECTORY_SEPARATOR   . 'index.tml');
   }
   
   protected function settheme($name) {
@@ -78,7 +77,6 @@ class ttemplate extends tevents {
   }
   
   public function getsitebar() {
-    global $options, $urlmap;
     if ($this->context instanceof itemplate2) {
       $result = $this->context->getsitebar();
     } else {
@@ -89,15 +87,13 @@ class ttemplate extends tevents {
     $this->dositebarclass(&$result, get_class($this->context));
     
     $this->onsitebar(&$result, $this->cursitebar);
-    if ($options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
-    if ($urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
+    if (litepublisher::$options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
+    if (litepublisher::$urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
     $this->cursitebar++;
     return $result;
   }
   
   public function request($context) {
-    global $options;
-    $GLOBALS['context'] = $context;
     $this->context = $context;
     $this->itemplate = $context instanceof itemplate;
     $itemplate2 = $context instanceof itemplate2;
@@ -114,6 +110,7 @@ class ttemplate extends tevents {
     
     $result = $this->httpheader();
     $theme = ttheme::instance();
+$theme->vars['context'] = $context;
     $result  .= $theme->parse($theme->theme);
     
     if ($itemplate2) $context->afterrequest($result);
@@ -121,7 +118,6 @@ class ttemplate extends tevents {
   }
   
   protected function  httpheader() {
-    global $options;
     if (method_exists($this->context, 'httpheader')) {
       $result= $this->context->httpheader();
       if (!empty($result)) return $result;
@@ -133,13 +129,12 @@ class ttemplate extends tevents {
     return "<?php $nocache
     @header('Content-Type: text/html; charset=utf-8');
     @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: $options->url/rpc.xml');
+    @header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
     ?>";
   }
   
   //html tags
   public function gettitle() {
-    global $options;
     $result = '';
     if ($this->itemplate) {
       $result = $this->context->gettitle();
@@ -147,15 +142,14 @@ class ttemplate extends tevents {
       $result = $this->context->title;
     }
     if (empty($result)) {
-      $result = $options->name;
+      $result = litepublisher::$options->name;
     } else {
-      $result = "$result | $options->name";
+      $result = "$result | " . litepublisher::$options->name;
     }
     return $result;
   }
   
   public function geticon() {
-    global $options;
     $result = '';
     if ($this->contextHasProp('icon')) {
       $icon = $this->context->icon;
@@ -164,35 +158,31 @@ class ttemplate extends tevents {
         $result = $files->geturl($icon);
       }
     }
-    if ($result == '')  return "$options->files/favicon.ico";
+    if ($result == '')  return litepublisher::$options->files . '/favicon.ico';
     return $result;
   }
   
   public function getkeywords() {
-    global $options;
     $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';
-    if ($result == '')  return $options->keywords;
+    if ($result == '')  return litepublisher::$options->keywords;
     return $result;
   }
   
   public function getdescription() {
-    global $options;
     $result = $this->contextHasProp('description') ? $this->context->description : '';
-    if ($result =='') return $options->description;
+    if ($result =='') return litepublisher::$options->description;
     return $result;
   }
   
   public function getmenu() {
-    global $paths;
     $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && isset($theme->menu['id']);
-    $urlmap = turlmap::instance();
-    if ($urlmap->adminpanel) {
+    if (litepublisher::$urlmap->adminpanel) {
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($hovermenu);
     }
     
-    $filename = $paths['cache'] . "$this->tml.menu.php";
+    $filename = litepublisher::$paths['cache'] . "$this->tml.menu.php";
     if (@file_exists($filename)) return file_get_contents($filename);
     
     $menus = tmenus::instance();
@@ -207,8 +197,7 @@ class ttemplate extends tevents {
     $this->data['hovermenu'] = $vlue;
     $this->save();
     
-    $urlmap = turlmap::instance();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function addjavascript($name, $script) {
@@ -244,7 +233,7 @@ class ttemplate extends tevents {
       if (isset($theme->menu['id'])) {
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu['id']);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu['tag']);
-        $result .=  "<script type=\"text/javascript\" src=\"$options->files/js/litepublisher/hovermenu.js\"></script>\n";
+        $result .=  "<script type=\"text/javascript\" src=\"litepublisher::$options->files/js/litepublisher/hovermenu.js\"></script>\n";
       }
     }
     
@@ -252,8 +241,7 @@ class ttemplate extends tevents {
     
     if ($this->itemplate) $result .= $this->context->gethead();
     
-    $urlmap = turlmap::instance();
-    if ($urlmap->adminpanel) $this->onadminhead(&$result);
+    if (litepublisher::$urlmap->adminpanel) $this->onadminhead(&$result);
     $result = $this->getjavaoptions() . $result;
     $this->onhead(&$result);
     return trim($result);

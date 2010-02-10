@@ -53,9 +53,8 @@ class titemsposts extends titems {
   }
   
   public function deletepost($idpost) {
-    global $db;
     if (dbversion) {
-      $result = $db->res2id($db->query("select item from $this->thistable where post = $idpost"));
+      $result = litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
       $this->db->delete("post = $idpost");
       return $result;
     } else {
@@ -118,9 +117,8 @@ class titemsposts extends titems {
   }
   
   public function getitems($idpost) {
-    global $db;
     if (dbversion) {
-      return $db->res2id($db->query("select item from $this->thistable where post = $idpost"));
+      return litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
     } elseif (isset($this->items[$idpost])) {
       return $this->items[$idpost];
     } else {
@@ -129,9 +127,8 @@ class titemsposts extends titems {
   }
   
   public function getposts($iditem) {
-    global $db;
     if (dbversion) {
-      return $db->res2id($db->query("select post from $this->thistable where item = $iditem"));
+      return litepublisher::$db->res2id(litepublisher::$db->query("select post from $this->thistable where item = $iditem"));
     } else {
       $result = array();
       foreach ($this->items as $id => $item) {

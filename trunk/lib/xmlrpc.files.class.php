@@ -42,19 +42,18 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
   }
   
   private function get_page($index) {
-    global $options;
     $result = '';
     $files = tfiles::instance();
     $perpage = 10;
     if (dbversion) {
       $sql = 'parent =0';
-      $sql .= $options->user <= 1 ? '' : " and author = $options->user";
+      $sql .= litepublisher::$options->user <= 1 ? '' : " and author = litepublisher::$options->user";
       $count = $files->db->getcount($sql);
     } else {
       $list= array();
       foreach ($files->items as $id => $item) {
         if ($item['parent'] != 0) continue;
-        if ($options->user > 1 && $options->user != $item['author']) continue;
+        if (litepublisher::$options->user > 1 && litepublisher::$options->user != $item['author']) continue;
         $list[] = $id;
       }
       $count = count($list);
@@ -111,7 +110,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $args->part = $part;
     $args->id = $id;
     if ($item['media'] == 'image') {
-      $img = '<img src="$options.files/files/$filename" title="$filename" />';
+      $img = '<img src="litepublisher::$options.files/files/$filename" title="$filename" />';
       if ($item['preview'] == 0) {
         $args->preview = '';
       } else {
@@ -137,18 +136,16 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
   }
   
   private function postauth() {
-    global $options;
     if (empty($_POST['admincookie'])) return false;
     $_COOKIE['admin'] = $_POST['admincookie'];
-    $options->admincookie = $options->cookieenabled && $options->authcookie();
-    if (!$options->admincookie) return false;
-    if (($options->group == 'admin') || ($options->group == 'editor')) return true;
+    litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
+    if (!litepublisher::$options->admincookie) return false;
+    if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == 'editor')) return true;
     $groups = tusergroups::instance();
-    return $groups->hasright($options->group, 'editor');
+    return $groups->hasright(litepublisher::$options->group, 'editor');
   }
   
   public function request() {
-    global $options;
     $this->cache = false;
     if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
       return "<?php
@@ -172,7 +169,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     @Header( 'Pragma: no-cache');
     @header('Content-Type: text/html; charset=utf-8');
     @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: $options->url/rpc.xml');
+    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
     ?>" . $result;
   }
   

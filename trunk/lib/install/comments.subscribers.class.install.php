@@ -7,7 +7,6 @@
 **/
 
 function tsubscribersInstall($self) {
-  global $classes;
   if (dbversion) {
     $dbmanager = TDBManager ::instance();
     $dbmanager->CreateTable($self->table, file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'items.posts.sql'));
@@ -28,9 +27,8 @@ function tsubscribersInstall($self) {
 }
 
 function tsubscribersUninstall(&$self) {
-  global $classes;
-  $classes->commentmanager->unsubscribeclass($self);
-  $classes->posts->unsubscribeclass($self);
+  litepublisher::$classes->commentmanager->unsubscribeclass($self);
+  litepublisher::$classes->posts->unsubscribeclass($self);
 }
 
 ?>

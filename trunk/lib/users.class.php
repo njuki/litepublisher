@@ -20,11 +20,10 @@ class tusers extends titems {
   }
   
   public function add($group, $login,$password, $name, $email, $url) {
-    global $options;
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::instance();
     if (!($gid = $groups->groupid($group))) return false;
-    $password = md5("$login:$options->realm:$password");
+    $password = md5("$login:litepublisher::$options->realm:$password");
     $item = array(
     'group' => $gid,
     'login' => $login,
@@ -46,8 +45,7 @@ class tusers extends titems {
   }
   
   public function loginexists($login) {
-    global $options;
-    if ($login == $options->login) return 1;
+    if ($login == litepublisher::$options->login) return 1;
     if ($this->dbversion) {
       return $this->db->findid('login = '. dbquote($login));
     } else {
@@ -59,13 +57,11 @@ class tusers extends titems {
   }
   
   public function getpassword($id) {
-    global $options;
-    return $id == 1 ? $options->password : $this->getvalue($id, 'password');
+    return $id == 1 ? litepublisher::$options->password : $this->getvalue($id, 'password');
   }
   
   public function auth($login,$password) {
-    global $options;
-    $password = md5("$login:$options->realm:$password");
+    $password = md5("$login:litepublisher::$options->realm:$password");
     if ($this->dbversion) {
       $login = dbquote($login);
       return $this->db->findid("login = $login and password = '$password'");

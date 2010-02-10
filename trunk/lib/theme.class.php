@@ -7,6 +7,7 @@
 **/
 
 class ttheme extends tevents {
+public $vars;
   private $themeprops;
   public static $name;
   //public $tml;
@@ -23,6 +24,7 @@ class ttheme extends tevents {
   
   protected function create() {
     parent::create();
+$this->vars = array();
     $this->themeprops = new tthemeprops($this->data);
     if (empty(self::$name)) {
       $template = ttemplate::instance();
@@ -43,8 +45,7 @@ class ttheme extends tevents {
   }
   
   public function load() {
-    global $paths;
-    $filename = $paths['data'] . $this->getbasename() .'.php';
+    $filename = litepublisher::$paths['data'] . $this->getbasename() .'.php';
     if (file_exists($filename)) {
       parent::load();
     } else {
@@ -76,31 +77,36 @@ class ttheme extends tevents {
   }
   
   public static function parsecallback($names) {
-    global $classes, $options;
     $name = $names[1];
-    $var = isset($GLOBALS[$name]) ? $GLOBALS[$name] : $classes->$name;
+if ($name == 'options') {
+$var = litepublisher::$options;
+} else {
+$self = self::instance();
+if (isset($self->vars[$name])) {
+  $var =  $self->vars[$name];
+} elseif (isset($GLOBALS[$name])) {
+  $var =  $GLOBALS[$name];
+} else {
+  $var =  litepublisher::$classes->$name;
+}
+}
     //if (!isset($var)) echo "$name\n";
     try {
     return $var->{$names[2]};
     } catch (Exception $e) {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
     return '';
   }
   
   public function parse($s) {
-    global $options, $template, $lang;
-    $Template = ttemplate::instance();
-    $lang = tlocal::instance();
     // important! $s can be an object of tthemeprops
     // convert to string is automatic
-    $s = str_replace('$options.url', $options->url, $s);
-    //$s = str_replace('$options->url', $options->url, $s);
+    $s = str_replace('$options.url', litepublisher::$options->url, $s);
     try {
       return preg_replace_callback('/\$(\w*+)\.(\w*+)/', __class__ . '::parsecallback', $s);
-      //return preg_replace_callback('/\$(\w*+)-\>(\w*+)/', __class__ . '::parsecallback', $s);
     } catch (Exception $e) {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
     return '';
   }
@@ -115,13 +121,12 @@ class ttheme extends tevents {
   }
   
   public function getpages($url, $page, $count) {
-    global  $options;
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $link =$this->content->navi->link;
     $suburl = rtrim($url, '/');
     $a = array();
     for ($i = 1; $i <= $count; $i++) {
-      $pageurl = $i == 1 ? $options->url . $url : "$options->url$suburl/page/$i/";
+      $pageurl = $i == 1 ? litepublisher::$options->url . $url : "litepublisher::$options->url$suburl/page/$i/";
       $a[] = sprintf($i == $page ? $this->content->navi->current : $link, $pageurl, $i);
     }
     
@@ -131,7 +136,6 @@ class ttheme extends tevents {
   }
   
   public function getposts(array $items, $lite) {
-    global $post;
     if (count($items) == 0) return '';
     if (dbversion) {
       $posts = tposts::instance();
@@ -142,7 +146,7 @@ class ttheme extends tevents {
     $tml = $lite ? $this->content->excerpts->lite->excerpt : $this->content->excerpts->excerpt;
     if (is_object($tml)) $tml = $tml->__tostring();
     foreach($items as $id) {
-      $post = tpost::instance($id);
+      $this->vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     
@@ -151,10 +155,9 @@ class ttheme extends tevents {
   }
   
   public function getpostswidgetcontent(array $items, $tml) {
-    global $post;
     $result = '';
     foreach ($items as $id) {
-      $post = tpost::instance($id);
+      $this->vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     $result = str_replace("'", '"', $result);

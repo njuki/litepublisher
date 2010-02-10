@@ -18,33 +18,30 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   password (string): Password for said username.
   */
   public function getUsersBlogs($appkey, $login, $password) {
-    global $options;
     $this->auth($login, $password, 'editor');
     
     $result = array(
     //'isAdmin'  => true,
-    'url'      => $options->url . '/',
+    'url'      => litepublisher::$options->url . '/',
     'blogid'   => '1',
-    'blogName' => $options->name
+    'blogName' => litepublisher::$options->name
     );
     return array($result);
   }
   
   public function getUserInfo($appkey, $login, $password) {
-    global $options;
     $this->auth($login, $password, 'editor');
     
     $result= array(
     'nickname'  => $login,
-    'userid'    => $options->user,
-    'url'       => $options->url .'/',
+    'userid'    => litepublisher::$options->user,
+    'url'       => litepublisher::$options->url .'/',
     'lastname'  => '',
     'firstname' => ''		);
     return $result;
   }
   
   public function getPost($appkey, $id, $login, $password) {
-    global $options;
     $this->auth($login, $password, 'editor');
     $id    = (int) $id;
     $posts= tposts::instance();
@@ -68,7 +65,6 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getRecentPosts($appkey, $blogid, $login, $password, $count) {
-    global $options;
     $this->auth($login, $password, 'editor');
     
     $posts = tposts::instance();
@@ -82,7 +78,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
       $content .= $Post->content;
       
       $result[] = array(
-      'userid' => $options->user,
+      'userid' => litepublisher::$options->user,
       'dateCreated' => new IXR_Date($Post->date),
       'content' => $content,
       'postid' => $Post->id,
@@ -129,7 +125,6 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   publish (boolean): If true, the blog will be published immediately after the post is made.
   */
   public function newPost($appkey, $blogid, $login, $password, $content, $publish) {
-    global $options;
     $this->auth($login, $password, 'editor');
     
     $posts = tposts::instance();

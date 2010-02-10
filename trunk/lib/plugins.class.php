@@ -19,36 +19,32 @@ class tplugins extends TItems {
   }
   
   public function getabout($name) {
-    global $paths, $options;
-    $about = parse_ini_file($paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
-    if (isset($about[$options->language])) {
-      $about['about'] = $about[$options->language] + $about['about'];
+    $about = parse_ini_file(litepublisher::$paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+    if (isset($about[litepublisher::$options->language])) {
+      $about['about'] = $about[litepublisher::$options->language] + $about['about'];
     }
     
     return $about['about'];
   }
   
   public function add($name) {
-    global $paths;
-    if (!@is_dir($paths['plugins'] . $name)) return false;
+    if (!@is_dir(litepublisher::$paths['plugins'] . $name)) return false;
     $about = $this->GetAbout($name);
     return $this->AddExt($name, $about['classname'], $about['filename']);
   }
   
   public function AddExt($name, $classname, $filename) {
-    global $classes;
     $this->items[$name] = array(
     'id' => ++$this->autoid,
     'class' => $classname,
     'file' => $filename
     );
     $this->Save();
-    $classes->Add($classname, $filename, $name);
+    litepublisher::$classes->Add($classname, $filename, $name);
     $this->added($name);return $this->autoid;
   }
   
   public function delete($name) {
-    global $classes, $paths;
     if (!isset($this->items[$name])) return false;
     $item = $this->items[$name];
     unset($this->items[$name]);
@@ -56,11 +52,11 @@ class tplugins extends TItems {
     if (class_exists($item['class'])) {
       $plugin = getinstance($item['class']);
       if ($plugin instanceof tplugin) {
-        @unlink($paths['data']. $plugin->getbasename() . '.php');
-        @unlink($paths['data']. $plugin->getbasename() . 'bak..php');
+        @unlink(litepublisher::$paths['data']. $plugin->getbasename() . '.php');
+        @unlink(litepublisher::$paths['data']. $plugin->getbasename() . 'bak..php');
       }
     }
-    $classes->delete($item['class']);
+    litepublisher::$classes->delete($item['class']);
     $this->deleted($name);
   }
   
@@ -75,10 +71,9 @@ class tplugins extends TItems {
   }
   
   public function update($list) {
-    global $paths;
     $add = array_diff($list, array_keys($this->items));
     $delete  = array_diff(array_keys($this->items), $list);
-    $delete  = array_intersect($delete, tfiler::getdir($paths['plugins']));
+    $delete  = array_intersect($delete, tfiler::getdir(litepublisher::$paths['plugins']));
     
     $this->lock();
     foreach ($delete as $name) {
@@ -107,12 +102,11 @@ class tplugins extends TItems {
   }
   
   public function upload($name, $files) {
-    global $paths;
-    if (!@file_exists($paths['plugins'] . $name)) {
-      if (!@mkdir($paths['plugins'] . $name, 0777)) return $this->Error("Cant create $name folder in plugins");
-      @chmod($paths['plugins'] . $name, 0777);
+    if (!@file_exists(litepublisher::$paths['plugins'] . $name)) {
+      if (!@mkdir(litepublisher::$paths['plugins'] . $name, 0777)) return $this->Error("Cant create $name folder in plugins");
+      @chmod(litepublisher::$paths['plugins'] . $name, 0777);
     }
-    $dir = $paths['plugins'] . $name . DIRECTORY_SEPARATOR  ;
+    $dir = litepublisher::$paths['plugins'] . $name . DIRECTORY_SEPARATOR  ;
     foreach ($files as $filename => $content) {
       file_put_contents($dir . $filename, base64_decode($content));
     }

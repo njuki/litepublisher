@@ -13,7 +13,6 @@ class tprofile extends tevents {
   }
   
   protected function create() {
-    global $options;
     parent::create();
     $this->basename = 'profile';
     $this->data = $this->data + array(
@@ -29,7 +28,7 @@ class tprofile extends tevents {
     'yahooChatID' => '',
     'mbox' => '',
     
-    'country' => $options->language,
+    'country' => litepublisher::$options->language,
     'region' => '',
     'city' => '',
     'geourl' => 'http://beta-maps.yandex.ru/?text=',
@@ -40,10 +39,9 @@ class tprofile extends tevents {
   }
   
   public function getfoaf() {
-    global $options, $classes;
     $posts = tposts::instance();
     $postscount = $posts->archivescount;
-    $manager = $classes->commentmanager;
+    $manager = litepublisher::$classes->commentmanager;
     
     $result = "<foaf:nick>$this->nick</foaf:nick>
     <foaf:name>$this->nick</foaf:name>
@@ -55,27 +53,27 @@ class tprofile extends tevents {
     <foaf:jabberID>$this->jabberID</foaf:jabberID>
     <foaf:msnChatID>$this->msnChatID</foaf:msnChatID>
     <foaf:yahooChatID>$this->yahooChatID</foaf:yahooChatID>
-    <foaf:homepage>$options->url$options->home</foaf:homepage>
+    <foaf:homepage>litepublisher::$options->urllitepublisher::$options->home</foaf:homepage>
     <foaf:mbox>$this->mbox</foaf:mbox>
     <foaf:weblog
-    dc:title=\"$options->name\"
-    rdf:resource=\"$options->url$options->home\"/>
+    dc:title=\"litepublisher::$options->name\"
+    rdf:resource=\"litepublisher::$options->urllitepublisher::$options->home\"/>
     
     <foaf:page>
-    <foaf:Document rdf:about=\"$options->url/profile/\">
-    <dc:title>$options->name Profile</dc:title>
+    <foaf:Document rdf:about=\"litepublisher::$options->url/profile/\">
+    <dc:title>litepublisher::$options->name Profile</dc:title>
     <dc:description>Full profile, including information such as interests and bio.</dc:description>
     </foaf:Document>
     </foaf:page>
     
-    <lj:journaltitle>$options->name</lj:journaltitle>
-    <lj:journalsubtitle>$options->description</lj:journalsubtitle>
+    <lj:journaltitle>litepublisher::$options->name</lj:journaltitle>
+    <lj:journalsubtitle>litepublisher::$options->description</lj:journalsubtitle>
     
     <ya:blogActivity>
     <ya:Posts>
     <ya:feed
     dc:type=\"application/rss+xml\"
-    rdf:resource=\"$options->url/rss/\"/>
+    rdf:resource=\"litepublisher::$options->url/rss/\"/>
     <ya:posted>$postscount</ya:posted>
     </ya:Posts>
     </ya:blogActivity>
@@ -84,7 +82,7 @@ class tprofile extends tevents {
     <ya:Comments>
     <ya:feed
     dc:type=\"application/rss+xml\"
-    rdf:resource=\"$options->url/comments/\"/>
+    rdf:resource=\"litepublisher::$options->url/comments/\"/>
     <ya:posted>$postscount</ya:posted>
     <ya:received>$manager->count</ya:received>
     </ya:Comments>
@@ -134,7 +132,6 @@ class tprofile extends tevents {
   }
   
   public function GetTemplateContent() {
-    global $options;
     $lang = &TLocal::$data['profile'];
   $result = "<h2>{$lang['myprofile']}</h2>\n";
     $result .= $this->GetStat();
@@ -226,11 +223,10 @@ class tprofile extends tevents {
   }
   
   private function GetFriendsList() {
-    global $options;
     $result = "<p>\n";
     $foaf = &TFoaf::instance();
     foreach ($foaf->items As $id => $friend) {
-    $url = $foaf->redir ?"$options->url$foaf->redirlink{$options->q}friend=$id" : $friend['blog'];
+    $url = $foaf->redir ?"litepublisher::$options->url$foaf->redirlink{litepublisher::$options->q}friend=$id" : $friend['blog'];
     $result .= "<a href=\"$url\" rel=\"friend\">{$friend['nick']}</a>,\n";
     }
     $result .= "</p>\n";

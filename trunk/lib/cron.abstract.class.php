@@ -30,7 +30,7 @@ class tabstractcron extends tevents {
   }
   
   protected function geturl() {
-  return "/croncron.htm{litepublisher::$options->q}cronpass=$this->password";
+  return "/croncron.htm" . litepublisher::$options->q . "cronpass=$this->password";
   }
   
   public function request($arg) {
@@ -127,7 +127,7 @@ class tabstractcron extends tevents {
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
     @unlink($filename);
-    TMailer::SendAttachmentToAdmin("[error] litepublisher::$options->name", "See attachment", 'errors.txt', $s);
+    tmailer::SendAttachmentToAdmin("[error] litepublisher::$options->name", "See attachment", 'errors.txt', $s);
     sleep(2);
   }
   

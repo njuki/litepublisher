@@ -13,7 +13,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   protected function MWSetPingCommentStatus(array &$Struct, tpost $post) {
-    global $options;
     if(isset($struct["mt_allow_comments"])) {
       if(!is_numeric($struct["mt_allow_comments"])) {
         switch($struct["mt_allow_comments"]) {
@@ -24,7 +23,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $post->commentsenabled = true;
           break;
           default:
-          $post->commentsenabled = $options->commentsenabled;
+          $post->commentsenabled = litepublisher::$options->commentsenabled;
           break;
         }
       }
@@ -37,13 +36,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $post->commentsenabled = true;
           break;
           default:
-          $post->commentsenabled = $options->commentsenabled;
+          $post->commentsenabled = litepublisher::$options->commentsenabled;
           break;
         }
       }
     }
     else {
-      $post->commentsenabled = $options->commentsenabled;
+      $post->commentsenabled = litepublisher::$options->commentsenabled;
     }
     
     if(isset($struct["mt_allow_pings"])) {
@@ -56,7 +55,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $post->pingenabled = true;
           break;
           default:
-          $post->pingenabled = $options->pingenabled;
+          $post->pingenabled = litepublisher::$options->pingenabled;
           break;
         }
       }
@@ -69,13 +68,13 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
           $post->pingenabled = true;
           break;
           default:
-          $post->pingenabled = $options->pingenabled;
+          $post->pingenabled = litepublisher::$options->pingenabled;
           break;
         }
       }
     }
     else {
-      $post->pingenabled = $options->pingenabled;
+      $post->pingenabled = litepublisher::$options->pingenabled;
     }
   }
   
@@ -212,7 +211,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   The struct returned contains one struct for each category, containing the following elements: description, htmlUrl and rssUrl. */
   
   public function getCategories($blogid, $username, $password) {
-    global $options;
     $this->auth($username, $password, 'editor');
     
     $categories = tcategories::instance();
@@ -226,8 +224,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       'description' => $categories->contents->getdescription($item['id']),
       'categoryName' => $item['title'],
       'title' => $item['title'],
-      'htmlUrl' => $options->url . $item['url'],
-      'rssUrl' =>  $options->url . $item['url']
+      'htmlUrl' => litepublisher::$options->url . $item['url'],
+      'rssUrl' =>  litepublisher::$options->url . $item['url']
       );
     }
     
@@ -300,7 +298,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   private function GetStruct(tpost $post) {
-    global $options;
     return array(
     'dateCreated' => new IXR_Date($post->posted),
     'userid' => (string) $post->author,
@@ -319,7 +316,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     'wp_password' => $post->password,
     'wp_author_id' => $post->author,
     'wp_author_display_name'	=> 'admin',
-    'date_created_gmt' => new IXR_Date($post->posted- $options->gmt),
+    'date_created_gmt' => new IXR_Date($post->posted- litepublisher::$options->gmt),
     'publish' => $post->status == 'published' ? 1 : 0
     );
   }
@@ -342,7 +339,6 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   // returns struct
   public function newMediaObject($blogid, $username, $password, $struct) {
-    global $options;
     $this->auth($username, $password, 'editor');
     
     //The struct must contain at least three elements, name, type and bits.

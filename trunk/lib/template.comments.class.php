@@ -16,11 +16,11 @@ public function load() {}
 public function save() {}
   
   public function getadminhead() {
-    global $options, $template;
+$template = ttemplate::instance();
     $theme = ttheme::instance();
   $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
-    return "<script type=\"text/javascript\" src=\"$options->files/js/litepublisher/moderate.js\"></script>
-  <script type=\"text/javascript\" src=\"$options->files/files/admin{$options->language}.js\"></script>\n";
+    return "<script type=\"text/javascript\" src=\"". litepublisher::$options->files . "/js/litepublisher/moderate.js\"></script>
+  <script type=\"text/javascript\" src=\"" . litepublisher::$options->files . "/files/admin{litepublisher::$options->language}.js\"></script>\n";
   }
   
   public function getcount($count) {
@@ -33,13 +33,11 @@ public function save() {}
   }
   
   public function getcommentslink(tpost $post) {
-    global $options;
     $count = $this->getcount($post->commentscount);
-    return "<a href=\"$options->url$post->lastcommenturl#comments\">$count</a>";
+    return "<a href=\"" . litepublisher::$options->url . "$post->lastcommenturl#comments\">$count</a>";
   }
   
   public function getcomments($idpost) {
-    global $options;
     $result = '';
     $urlmap = turlmap::instance();
     $idpost = (int) $idpost;
@@ -63,7 +61,7 @@ public function save() {}
       $result .= $pingbacks->getcontent();
     }
     
-    if (!$options->commentsdisabled && $post->commentsenabled) {
+    if (!litepublisher::$options->commentsdisabled && $post->commentsenabled) {
       $result .=  "<?php  echo tcommentform::printform($idpost); ?>\n";
     } else {
       $result .= $theme->parse($theme->content->post->templatecomments->closed);

@@ -18,17 +18,17 @@ function installclasses($language) {
 }
 
 function ParseClassesIni() {
-  global $classes, $paths, $ini;
+$classes = litepublisher::$classes;
   $replace = dbversion ? '.class.db.' : '.class.files.';
   $exclude = !dbversion ? '.class.db.' : '.class.files.';
   
-  $ini = parse_ini_file($paths['lib'].'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+  $ini = parse_ini_file(litepublisher::$paths['lib'].'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
   foreach ($ini['items'] as $class => $filename) {
     //исключить из списка только файлы для бд или файлов
     if (strpos($filename, $exclude)) continue;
-    if (!file_exists($paths['lib'] . $filename)){
+    if (!file_exists(litepublisher::$paths['lib'] . $filename)){
       $filename = str_replace('.class.', $replace, $filename);
-      if (!file_exists($paths['lib'] . $filename))continue;
+      if (!file_exists(litepublisher::$paths['lib'] . $filename))continue;
     }
     $classes->items[$class] = array($filename, '');
   }
@@ -38,12 +38,11 @@ function ParseClassesIni() {
   $classes->Save();
   
   //так как ttheme при первом же обращении парсит тему
-  @mkdir($paths['data'] . 'themes', 0777);
-  @chmod($paths['data'] . 'themes', 0777);
+  @mkdir(litepublisher::$paths['data'] . 'themes', 0777);
+  @chmod(litepublisher::$paths['data'] . 'themes', 0777);
 }
 
 function doinstallclasses() {
-  global  $classes, $options, $urlmap, $posts;
   $urlmap = turlmap::instance();
   $urlmap->lock();
   $posts = tposts::instance();
@@ -51,8 +50,7 @@ function doinstallclasses() {
   
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->lock();
-  //tdata::$GlobalLock = true;
-  foreach( $classes->items as $class => $item) {
+  foreach(litepublisher::$classes->items as $class => $item) {
     //echo "$class\n";
     if (preg_match('/^titemspostsowner|tcomment$/', $class)) continue;
     $obj = getinstance($class);

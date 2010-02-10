@@ -20,12 +20,11 @@ class trssMultimedia extends tevents {
   }
   
   public function fileschanged($idpost) {
-    $urlmap = turlmap::instance();
-    $urlmap->expiredclass(get_class($this));
+    litepublisher::$urlmap = turlmap::instance();
+    litepublisher::$urlmap->expiredclass(get_class($this));
   }
   
   public function request($arg) {
-    global $options, $urlmap;
     $result = "<?php\n";
     if (($arg == null) && ($this->feedburner  != '')) {
       $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
@@ -40,14 +39,14 @@ class trssMultimedia extends tevents {
     
     $result .= "  @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $options->url/rpc.xml');
+    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
     
     $this->domrss = new Tdomrss;
-    $this->domrss->CreateRootMultimedia($urlmap->url, 'media');
+    $this->domrss->CreateRootMultimedia(litepublisher::$urlmap->url, 'media');
     
-    $list = $this->getrecent($arg, $options->postsperpage);
+    $list = $this->getrecent($arg, litepublisher::$options->postsperpage);
     foreach ($list as $id) {
       $this->addfile($id);
     }
@@ -76,12 +75,11 @@ class trssMultimedia extends tevents {
   }
   
   public function addfile($id) {
-    global $options;
     $files = tfiles::instance();
     $file = $files->items[$id];
     $posts = $files->itemsposts->getposts($id);
     if (count($posts) == 0) {
-      $postlink = $options->url . '/';
+      $postlink = litepublisher::$options->url . '/';
     } else {
       $post = Tpost::instance($posts[0]);
       $postllink = $post->link;
@@ -138,8 +136,8 @@ class trssMultimedia extends tevents {
     if (($this->feedburner != $url)) {
       $this->data['feedburner'] = $url;
       $this->save();
-      $urlmap = turlmap::instance();
-      $urlmap->clearcache();
+      litepublisher::$urlmap = turlmap::instance();
+      litepublisher::$urlmap->clearcache();
     }
   }
   

@@ -13,7 +13,6 @@ class tcommentswidget extends tevents {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-    global $options, $db;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('comments', $sitebar);
@@ -31,7 +30,6 @@ class tcommentswidget extends tevents {
   }
   
   public function changed($id, $idpost) {
-    global $options;
     $std = tstdwidgets::instance();
     $std->expire('comments');
   }

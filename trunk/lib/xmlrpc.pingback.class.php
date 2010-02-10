@@ -13,19 +13,17 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
   }
   
   public function ping($from, $to) {
-    global $options, $paths, $classes;
-    
-    if (!strbegin($to, $options->url)) {
+    if (!strbegin($to, litepublisher::$options->url)) {
       return new IXR_Error(0, 'Is there no link to us?');
     }
     
-    $url = substr($to, strlen($options->url) );
+    $url = substr($to, strlen(litepublisher::$options->url) );
     $urlmap = turlmap::instance();
     if (!($item = $urlmap->finditem($url))) {
       return $this->xerror(0, 'Is there no link to us?');
     }
     
-    if ($item['class'] != $classes->classes['post'])  {
+    if ($item['class'] != litepublisher::$classes->classes['post'])  {
       return $this->xerror(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
@@ -39,7 +37,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return new IXR_Error(48, 'The pingback has already been registered.');
     }
     
-    require_once($paths['libinclude'] . 'utils.php');
+    require_once(litepublisher::$paths['libinclude'] . 'utils.php');
     
     if (!($s = GetWebPage($from))) {
       return new IXR_Error(16, 'The source URL does not exist.');

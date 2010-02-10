@@ -35,26 +35,24 @@ class turlmap extends titems {
   }
   
   protected function prepareurl($host, $url) {
-    global $options;
     $this->host = $host;
     $this->page = 1;
     $this->uripath = array();
-    if ($options->q == '?') {
-      $this->url = substr($url, strlen($options->subdir));
+    if (litepublisher::$options->q == '?') {
+      $this->url = substr($url, strlen(litepublisher::$options->subdir));
     } else {
       $this->url = $_GET['url'];
     }
   }
   
   public function request($host, $url) {
-    global $options;
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
@@ -128,7 +126,6 @@ class turlmap extends titems {
   }
   
   private function getcachefile(array $item) {
-    global $paths, $options;
     if (!$this->cachefilename) {
       if ($item['type'] == 'normal') {
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
@@ -136,15 +133,14 @@ class turlmap extends titems {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
     }
-    return $paths['cache'] . $this->cachefilename;
+    return litepublisher::$paths['cache'] . $this->cachefilename;
   }
   
   private function  printcontent(array $item) {
-    global $options;
-    if ($options->cache && !$options->admincookie) {
+    if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($cachefile)) && (($time  + $options->expiredcache) >= time() )) {
+      if (($time = @filemtime ($cachefile)) && (($time  + litepublisher::$options->expiredcache) >= time() )) {
         include($cachefile);
         return;
       }
@@ -159,7 +155,6 @@ class turlmap extends titems {
   }
   
   protected function GenerateHTML(array $item) {
-    global $options, $template;
     $source = getinstance($item['class']);
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
@@ -170,7 +165,7 @@ class turlmap extends titems {
       $s = $template->request($source);
     }
     eval('?>'. $s);
-    if ($options->cache && $source->cache &&!$options->admincookie) {
+    if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);
@@ -296,8 +291,7 @@ class turlmap extends titems {
   }
   
   public function clearcache() {
-    global $paths;
-    $path = $paths['cache'];
+    $path = litepublisher::$paths['cache'];
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
@@ -315,8 +309,7 @@ class turlmap extends titems {
   }
   
   public function setexpired($id) {
-    global $paths;
-    tfiler::deletemask($paths['cache'] . "*.$id-*.php");
+    tfiler::deletemask(litepublisher::$paths['cache'] . "*.$id-*.php");
   }
   
   public function setexpiredcurrent() {
@@ -324,13 +317,11 @@ class turlmap extends titems {
   }
   
   public function getcachename($name, $id) {
-    global $paths;
-    return $paths['cache']. "$name-$id.php";
+    return litepublisher::$paths['cache']. "$name-$id.php";
   }
   
   public function expiredname($name, $id) {
-    global $paths;
-    tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
+    tfiler::deletedirmask(litepublisher::$paths['cache'], "*$name-$id.php");
   }
   
   public function expiredclass($class) {
@@ -360,8 +351,7 @@ class turlmap extends titems {
   
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
-    global $paths;
-    $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+    $cronfile =litepublisher::$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
     $time = @filemtime($cronfile);
     if (($time === false) || ($time + 3600 < time())) {
       register_shutdown_function('tcron::selfping');
@@ -369,10 +359,9 @@ class turlmap extends titems {
   }
   
   public function redir301($to) {
-    global $options;
     //tfiler::log($to);
     //tfiler::log(var_export($_COOKIE, true));
-    self::redir($options->url . $to);
+    self::redir(litepublisher::$options->url . $to);
   }
   
   public static function redir($url) {

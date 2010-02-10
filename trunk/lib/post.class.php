@@ -19,7 +19,6 @@ class tpost extends titem implements  itemplate {
   }
   
   protected function create() {
-    global $options;
     $this->table = 'posts';
     $this->data= array(
     'id' => 0,
@@ -42,8 +41,8 @@ class tpost extends titem implements  itemplate {
     'tags' => array(),
     'files' => array(),
     'status' => 'published',
-    'commentsenabled' => $options->commentsenabled,
-    'pingenabled' => $options->pingenabled,
+    'commentsenabled' => litepublisher::$options->commentsenabled,
+    'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
     'template' => '',
     'theme' => '',
@@ -112,12 +111,10 @@ class tpost extends titem implements  itemplate {
   }
   
   public function Getlink() {
-    global $options;
-    return $options->url . $this->url;
+    return litepublisher::$options->url . $this->url;
   }
   
   public function Setlink($link) {
-    global $options;
     if ($UrlArray = parse_url($link)) {
       $url = $UrlArray['path'];
       if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
@@ -126,8 +123,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getrsscomments() {
-    global $options;
-    return "$options->url/comments/$this->id.xml";
+    return litepublisher::$options->url . "/comments/$this->id.xml";
   }
   
   public function Getpubdate() {
@@ -160,10 +156,9 @@ class tpost extends titem implements  itemplate {
   }
   
   private function getcommontagslinks($names, $name, $excerpt) {
-    global $classes;
     $theme = ttheme::instance();
     $tml = $excerpt ? $theme->content->excerpts->$names : $theme->content->post->$names;
-    $tags= $classes->$names;
+    $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
     $args = targs::instance();
     $list = array();
@@ -197,10 +192,9 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getmorelink() {
-    global $post;
     if ($this->moretitle == '') return '';
-    $post = $this;
     $theme = ttheme::instance();
+$theme->vars['post'] = $this;
     return $theme->parse($theme->content->excerpts->excerpt->more);
   }
   
@@ -242,7 +236,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    global $options, $template;
+$options = litepublisher::$options;
+$template = ttemplate::instance();
     $template->javaoptions[] = "idpost: $this->id";
     $result = '';
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
@@ -287,32 +282,31 @@ class tpost extends titem implements  itemplate {
   }
   
   public function GetTemplateContent() {
-    global $post;
-    $post = $this;
     $theme = ttheme::instance();
+$theme->vars['post'] = $this;
     return $theme->parse($theme->content->post);
   }
   
   public function getsubscriberss() {
-    global $post;
     if ($this->commentsenabled && ($this->commentscount > 0)) {
-      $post = $this;
       $theme = ttheme::instance();
+$theme->vars['post'] = $this;
       return $theme->parse($theme->content->post->rss);
     }
     return '';
   }
   
   public function getprevnext() {
-    global $prevpost, $nextpost;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
+$theme->vars['prevpost'] = $prevpost;
       $result .= $theme->parse($tml->prev);
     }
     
     if ($nextpost = $this->next) {
+$theme->vars['nextpost'] = $nextpost;
       $result .= $theme->parse($tml->next);
     }
     
@@ -333,9 +327,8 @@ class tpost extends titem implements  itemplate {
   }
   
   private function replacemore($content) {
-    global $post;
-    $post = $this;
     $theme = ttheme::instance();
+$theme->vars['post'] = $this;
     $more = $theme->parse($theme->content->post->more);
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {
@@ -387,9 +380,8 @@ class tpost extends titem implements  itemplate {
   }
   
   protected function getrawdb() {
-    global $db;
-    $db->table = 'rawposts';
-    return $db;
+    litepublisher::$db->table = 'rawposts';
+    return litepublisher::$db;
   }
   
   public function getpage($i) {
@@ -426,9 +418,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcommentpages() {
-    global $options;
-    if (!$options->commentpages || ($this->commentscount <= $options->commentsperpage)) return 1;
-    return ceil($this->commentscount / $options->commentsperpage);
+    if (!litepublisher::$options->commentpages || ($this->commentscount <= litepublisher::$options->commentsperpage)) return 1;
+    return ceil($this->commentscount / litepublisher::$options->commentsperpage);
   }
   
   public function getlastcommenturl() {
@@ -455,7 +446,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function LoadFromDB() {
-    global $db;
+$db = litepublisher::$db;
     if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
       $res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));

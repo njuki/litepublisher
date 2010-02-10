@@ -44,10 +44,9 @@ class tposts extends titems {
   }
   
   public function loaditems(array $items) {
-    global $classes;
     if (!dbversion || count($items) == 0) return;
     //исключить из загрузки загруженные посты
-    $class = $classes->classes['post'];
+    $class = litepublisher::$classes->classes['post'];
     if (isset(titem::$instances[$class])) {
       $items = array_diff($items, array_keys(titem::$instances[$class]));
     }
@@ -68,7 +67,7 @@ class tposts extends titems {
   }
   
   public function select($where, $limit) {
-    global $db;
+$db = litepublisher::$db;
     $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit");
     
@@ -114,9 +113,8 @@ class tposts extends titems {
       $post->db->setvalue($post->id, 'idurl', $post->idurl);
       
     } else {
-      global $paths;
       $post->id = ++$this->autoid;
-      $dir =$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
+      $dir =litepublisher::$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
       @mkdir($dir, 0777);
       @chmod($dir, 0777);
       $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
@@ -167,7 +165,6 @@ class tposts extends titems {
   }
   
   public function delete($id) {
-    global $classes, $paths;
     if (!$this->itemexists($id)) return false;
     $urlmap = turlmap::instance();
     if ($this->dbversion) {
@@ -183,7 +180,7 @@ class tposts extends titems {
         $idurl = $post->idurl;
         $post->free();
       }
-      TItem::DeleteItemDir($paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
+      titem::deletedir(litepublisher::$paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
       unset($this->items[$id]);
       $urlmap->deleteitem($idurl);
     }
@@ -232,7 +229,8 @@ class tposts extends titems {
   
   public function dosinglecron($id) {
     $this->PublishFuture();
-    $GLOBALS['post'] = tpost::instance($id);
+$theme = ttheme::instance;
+$theme->vars['post'] = tpost::instance($id);
     $this->singlecron($id);
   }
   

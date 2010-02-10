@@ -66,16 +66,14 @@ class tlinkgenerator extends tevents {
   }
   
   public function aftercreate($url) {
-    global $options;
-    if ($options->language == 'ru') $url = $this->ru2lat($url);
+    if (litepublisher::$options->language == 'ru') $url = $this->ru2lat($url);
     return strtolower($url);
   }
   
   public function ru2lat($s) {
     static $ru2lat_iso;
     if (!isset($ru2lat_iso)) {
-      global  $paths;
-      require_once($paths['libinclude'] . 'ru2lat-iso.php');
+      require_once(litepublisher::$paths['libinclude'] . 'ru2lat-iso.php');
     }
     return strtr($s, $ru2lat_iso);
   }

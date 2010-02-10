@@ -23,7 +23,6 @@ class tfoaf extends titems {
   }
   
   public function GetWidgetContent($id) {
-    global $options;
     $Template = TTemplate::instance();
     $item = !empty($Template->theme['widget']['myfriends']) ? $Template->theme['widget']['myfriends'] :
   '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
@@ -36,7 +35,7 @@ class tfoaf extends titems {
     }
     
     foreach ($list as $id => $friend) {
-    $url = $this->redir ?"$options->url$this->redirlink{$options->q}friend=$id" : $friend['blog'];
+    $url = $this->redir ?"litepublisher::$options->url$this->redirlink{litepublisher::$options->q}friend=$id" : $friend['blog'];
       eval('$result .= "'. $item . '\n";');
     }
     $result = str_replace("'", '"', $result);
@@ -44,14 +43,12 @@ class tfoaf extends titems {
   }
   
   public function request($arg) {
-    global $options;
-    
     switch($arg) {
       case 'xml':
       $s = "<?php
       @header('Content-Type: text/xml; charset=utf-8');
       @ header('Last-Modified: " . date('r') ."');
-      @header('X-Pingback: $options->url/rpc.xml');
+      @header('X-Pingback: litepublisher::$options->url/rpc.xml');
       echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
       '; ?>";
       $s .= $this->getfoaf();

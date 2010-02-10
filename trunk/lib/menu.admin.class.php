@@ -50,8 +50,8 @@ class tadminmenus extends tmenus {
     $item['id'] = ++$this->autoid;
     $item['order'] = $this->autoid;
     $item[    'status'] = 'published';
-    $urlmap = turlmap::instance();
-    $item['idurl'] =     $urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
+    litepublisher::$urlmap = turlmap::instance();
+    $item['idurl'] =     litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
     $this->items[$this->autoid] = $item;
     $this->sort();
     $this->save();
@@ -59,9 +59,8 @@ class tadminmenus extends tmenus {
   }
   
   private function hasright($group) {
-    global $options;
     $groups = tusergroups::instance();
-    return $groups->hasright($options->group, $group);
+    return $groups->hasright(litepublisher::$options->group, $group);
   }
   
   protected function getchilds($id) {
@@ -94,7 +93,6 @@ class tadminmenus extends tmenus {
   }
   
   public function getmenu($hover) {
-    global $options;
     if (count($this->tree) == 0) return '';
     if ($hover) return $this->getsubmenu($this->tree);
     
@@ -103,7 +101,7 @@ class tadminmenus extends tmenus {
     $tml = $theme->menu->item;
     foreach ($this->tree as $id => $items) {
       $item = $this->items[$id];
-      if ($this->hasright($item['group'])) $result .= sprintf($tml, $options->url. $item['url'], $item['title'], '');
+      if ($this->hasright($item['group'])) $result .= sprintf($tml, litepublisher::$options->url. $item['url'], $item['title'], '');
     }
     $result = sprintf($theme->menu, $result);
     return $result;
@@ -117,7 +115,7 @@ class tadminmenus extends tmenus {
       $item = $this->items[$id];
       if ($this->hasright($item['group'])) {
         $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
-        $result .= sprintf($tml,$options.url . $item['url'], $item['title'], $subitems);
+        $result .= sprintf($tml,litepublisher::$options.url . $item['url'], $item['title'], $subitems);
       }
     }
     return $result;
@@ -141,15 +139,14 @@ public function save() {}
   }
   
   public function auth() {
-    global $options, $urlmap;
     $auth = tauthdigest::instance();
-    if ($options->cookieenabled) {
+    if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-      if (!$options->authcookie()) return $urlmap->redir301('/admin/login/');
+      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
     
-    if ($options->group != 'admin') {
+    if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::instance();
       if ($this->hasright($this->group)) return 404;
     }
@@ -163,8 +160,8 @@ public function save() {}
     if ($id > 0) {
       $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
     }
-    $urlmap = turlmap::instance();
-    $this->arg = $urlmap->argtree;
+    litepublisher::$urlmap = turlmap::instance();
+    $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();
   }
   
@@ -214,8 +211,7 @@ public function save() {}
   }
   
   public function getadminurl() {
-    global $options;
-    return $options->url .$this->url . $options->q . 'id';
+    return litepublisher::$options->url .$this->url . litepublisher::$options->q . 'id';
   }
   
 }//class

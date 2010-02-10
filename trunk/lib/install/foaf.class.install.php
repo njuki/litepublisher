@@ -7,7 +7,6 @@
 **/
 
 function tfoafInstall($self) {
-  global $options;
   $urlmap = turlmap::instance();
   $urlmap->lock();
   $urlmap->add('/foaf.xml', get_class($self), 'xml');

@@ -7,10 +7,9 @@
 **/
 
 function tmenusInstall($self) {
-  global $paths;
-  @mkdir($paths['data']. 'menus', 0777);
+  @mkdir(litepublisher::$paths['data']. 'menus', 0777);
   if (get_class($self) != 'tmenus') return;
-  @chmod($paths['data']. 'menus', 0777);
+  @chmod(litepublisher::$paths['data']. 'menus', 0777);
 }
 
 function  tmenusUninstall($self) {
