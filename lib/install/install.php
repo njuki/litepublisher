@@ -6,17 +6,15 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-$mode = 'install';
-require_once($paths['lib'] . 'installer.class.php');
-if (defined('debug')) {
-  global $paths;
-  require_once($paths['lib'] . 'filer.class.php');
-  tfiler::delete($paths['data'], true, true);
+if (!defined('litepublisher_mode')) define('litepublisher_mode', 'install');
+require_once(litepublisher::$paths['lib'] . 'installer.class.php');
+if (litepublisher::$debug) {
+  require_once(litepublisher::$paths['lib'] . 'filer.class.php');
+  tfiler::delete(litepublisher::$paths['data'], true, true);
 }
 $installer = new tinstaller();
 $installer->install();
 
-global $options;
-if ($options instanceof toptions) $options->savemodified();
+if (litepublisher::$options instanceof toptions) litepublisher::$options->savemodified();
 exit();
 ?>

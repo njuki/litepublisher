@@ -22,7 +22,6 @@ class tarchives extends titems implements  itemplate {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-    global $options;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('archives', $sitebar);
@@ -38,10 +37,9 @@ class tarchives extends titems implements  itemplate {
   }
   
   public function GetHeadLinks() {
-    global $options;
     $result = '';
     foreach ($this->items as $date => $item) {
-  $result  .= "<link rel=\"archives\" title=\"{$item['title']}\" href=\"$options->url{$item['url']}\" />\n";
+  $result  .= "<link rel=\"archives\" title=\"{$item['title']}\" href=\"litepublisher::$options->url{$item['url']}\" />\n";
     }
     return $result;
   }
@@ -60,8 +58,7 @@ class tarchives extends titems implements  itemplate {
     //sort archive by months
     $linkgen = tlinkgenerator::instance();
     if (dbversion) {
-      global $db;
-      $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
+      $res = litepublisher::$db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
       where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
       while ($r = $res->fetch(PDO::FETCH_ASSOC)) {
         $this->date = mktime(0,0,0, $r['month'] , 1, $r['year']);
@@ -98,26 +95,24 @@ class tarchives extends titems implements  itemplate {
   }
   
   public function CreatePageLinks() {
-    global $options;
-    $urlmap = turlmap::instance();
-    $urlmap->lock();
+    litepublisher::$urlmap->lock();
     $this->lock();
     //Compare links
-    $old = $urlmap->GetClassUrls(get_class($this));
+    $old = litepublisher::$urlmap->GetClassUrls(get_class($this));
     foreach ($this->items as $date => $item) {
       $j = array_search($item['url'], $old);
       if (is_int($j))  {
         array_splice($old, $j, 1);
       } else {
-        $this->items[$date]['idurl'] = $urlmap->Add($item['url'], get_class($this), $date);
+        $this->items[$date]['idurl'] = litepublisher::$urlmap->Add($item['url'], get_class($this), $date);
       }
     }
     foreach ($old as $url) {
-      $urlmap->delete($url);
+      litepublisher::$urlmap->delete($url);
     }
     
     $this->unlock();
-    $urlmap->unlock();
+    litepublisher::$urlmap->unlock();
   }
   
   //ITemplate
@@ -136,7 +131,6 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function GetTemplateContent() {
-    global $options, $urlmap;
     if (dbversion) {
       $item = $this->items[$this->date];
   $items = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
@@ -146,10 +140,10 @@ public function getdescription() {}
     }
     
     $theme = ttheme::instance();
-    $postsperpage = $this->lite ? 1000 : $options->postsperpage;
-    $list = array_slice($items, ($urlmap->page - 1) * $postsperpage, $postsperpage);
+    $postsperpage = $this->lite ? 1000 : litepublisher::$options->postsperpage;
+    $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
     $result = $theme->getposts($list, $this->lite);
-    $result .=$theme->getpages($this->items[$this->date]['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
+    $result .=$theme->getpages($this->items[$this->date]['url'], litepublisher::$urlmap->page, ceil(count($items)/ $postsperpage));
     return $result;
   }
   

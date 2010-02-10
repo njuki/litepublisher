@@ -7,8 +7,7 @@
 **/
 
 function __autoload($class) {
-  global $classes;
-  $classes->_autoload($class);
+  litepublisher::$classes->_autoload($class);
 }
 
 class tclasses extends titems {
@@ -18,13 +17,12 @@ class tclasses extends titems {
   public $instances;
   
   public static function instance() {
-    global $classes;
-    if (!isset($classes)) {
+    if (!isset(litepublisher::$classes)) {
       $class = __class__;
-      $classes = new $class();
-      $classes->instances[$class] = $classes;
+      litepublisher::$classes = new $class();
+      litepublisher::$classes->instances[$class] = litepublisher::$classes;
     }
-    return $classes;
+    return litepublisher::$classes;
   }
   
   public function getinstance($class) {
@@ -93,11 +91,10 @@ class tclasses extends titems {
   }
   
   public function _autoload($class) {
-    global $paths;
     if ($path =$this->getpath($class)) {
       $filename = $path . $this->items[$class][0];
     } elseif (isset($this->interfaces[$class])) {
-      $filename = $paths['lib'] . $this->interfaces[$class];
+      $filename = litepublisher::$paths['lib'] . $this->interfaces[$class];
     } else {
       //$this->error("$class class not found");
       return false;
@@ -106,26 +103,21 @@ class tclasses extends titems {
   }
   
   public function getpath($class) {
-    global  $paths;
     if (!isset($this->items[$class])) return false;
-    if (empty($this->items[$class][1])) return $paths['lib'];
-    
-    $result = rtrim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    if (empty($this->items[$class][1])) return litepublisher::$paths['lib'];
+        $result = rtrim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if (@is_dir($result))  return $result;
-    
-    //may be is subdir?
-    if (@is_dir($paths['plugins']. $result)) return $paths['plugins']. $result;
-    if (@is_dir($paths['themes']. $result)) return $paths['themes']. $result;
-    if  (@is_dir($paths['home'] . $result)) return  $paths['home'] . $result;
-    
-    return false;
+        //may be is subdir?
+    if (@is_dir(litepublisher::$paths['plugins']. $result)) return litepublisher::$paths['plugins']. $result;
+    if (@is_dir(litepublisher::$paths['themes']. $result)) return litepublisher::$paths['themes']. $result;
+    if  (@is_dir(litepublisher::$paths['home'] . $result)) return  litepublisher::$paths['home'] . $result;
+        return false;
   }
   
 }//class
 
 function getinstance($class) {
-  global $classes;
-  return $classes->getinstance($class);
+  return litepublisher::$classes->getinstance($class);
 }
 
 function PHPComment($s) {

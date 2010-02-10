@@ -23,12 +23,11 @@ class titems extends tevents {
   }
   
   public function load() {
-    global $options;
     if ($this->dbversion) {
-      if (!isset($options->data[get_class($this)])) {
-        $options->data[get_class($this)] = &$this->data;
+      if (!isset(litepublisher::$options->data[get_class($this)])) {
+        litepublisher::$options->data[get_class($this)] = &$this->data;
       } else {
-        $this->data = &$options->data[get_class($this)];
+        $this->data = &litepublisher::$options->data[get_class($this)];
         $this->afterload();
         
       }
@@ -39,22 +38,20 @@ class titems extends tevents {
   }
   
   public function save() {
-    global $options;
     if ($this->dbversion) {
-      return $options->save();
+      return litepublisher::$options->save();
     } else {
       return parent::save();
     }
   }
   
   public function loaditems(array $items) {
-    global  $db;
-    if (!dbversion) return;
+    if (!$this->dbversion) return;
     //исключить из загрузки загруженные посты
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
-    $res = $db->query("select * from $this->thistable where id in ($list)");
+    $res = litepublisher::$db->query("select * from $this->thistable where id in ($list)");
     $res->setFetchMode (PDO::FETCH_ASSOC);
     foreach ($res as $item) {
       $this->items[$item['id']] = $item;
@@ -145,10 +142,9 @@ class tsingleitems extends titems {
   public $id;
   
   public static function instance($class, $id = 0) {
-    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
-    $self = $classes->newinstance($class);
+    $self = litepublisher::$classes->newinstance($class);
     self::$instances[$class][$id] = $self;
     $self->id = $id;
     $self->load();
