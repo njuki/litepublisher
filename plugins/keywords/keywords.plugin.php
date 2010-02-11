@@ -13,8 +13,7 @@ class tkeywordsplugin  extends tplugin {
  }
 
 public function urldeleted($item) {
-global $paths;
-tfiler::deletemask($paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. $item['id'] . ".*.php");
+tfiler::deletemask(litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. $item['id'] . ".*.php");
 }
 
  public function parseref($url) {
@@ -66,7 +65,7 @@ private function hasru($s) {
  }
 
 public function added($filename, $content) {
-global $options, $url;
+$options = litepublisher::$options;
 $subject ="[$options->name] new keywords added";
 $body = "The new widget has been added on
 $options->url{$_SERVER['REQUEST_URI']}

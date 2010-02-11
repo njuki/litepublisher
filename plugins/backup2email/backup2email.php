@@ -18,11 +18,10 @@ $this->data['idcron'] = 0;
 }
 
  public function send() {
-global $options, $domain;
 $backuper = tbackuper::instance();
   $s = $backuper->getpartial(false, false, false);
   $date = date('d-m-Y');
-  $filename = "$domain-$date.zip";
+  $filename = litepublisher::$domain . ".$date.zip";
 
 $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
 $ini = parse_ini_file($dir . 'about.ini');

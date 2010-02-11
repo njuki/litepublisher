@@ -7,12 +7,11 @@
 **/
 
 function tkeywordspluginInstall($self) {
-  global $paths, $classes;
-  @mkdir($paths['data'] . 'keywords', 0777);
-  @chmod($paths['data'] . 'keywords', 0777);
+  @mkdir(litepublisher::$paths['data'] . 'keywords', 0777);
+  @chmod(litepublisher::$paths['data'] . 'keywords', 0777);
 
-$item = $classes->items[get_class($self)];
-$classes->add('tkeywordswidget','keywords.widget.php', $item[1]);
+$item = litepublisher::$classes->items[get_class($self)];
+litepublisher::$classes->add('tkeywordswidget','keywords.widget.php', $item[1]);
 
 $widgets = twidgets::instance();
 $widgets->addext('tkeywordswidget', 'nocache', '', '', $widgets->count - 1, -1);
@@ -25,10 +24,9 @@ $urlmap->unlock();
  }
  
 function tkeywordspluginUninstall($self) {
-  global $paths, $classes;
   turlmap::unsub($self);
-$classes->delete('tkeywordswidget');
-  //TFiler::DeleteFiles($paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  , true);
+litepublisher::$classes->delete('tkeywordswidget');
+  //TFiler::DeleteFiles(litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  , true);
  }
 
 ?>

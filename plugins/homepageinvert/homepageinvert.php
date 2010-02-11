@@ -13,41 +13,40 @@ class thomepageInvert extends thomepage {
  }
 
  public function getitems() { 
-  global $options, $urlmap;
   $posts = tposts::instance();
-//    return $Posts->GetPublishedRange($urlmap->page, $options->postsperpage);
+//    return $Posts->GetPublishedRange(litepublisher::$urlmap->page, litepublisher::$options->postsperpage);
     $count = $posts->archivescount;
-    $from = ($urlmap->page - 1) * $options->postsperpage;
+    $from = (litepublisher::$urlmap->page - 1) * litepublisher::$options->postsperpage;
     if ($from > $count)  return array();
     if (dbversion)  {
-      return $posts->select("status = 'published'", " order by posted asc limit $from, $options->postsperpage");
+      return $posts->select("status = 'published'", " order by posted asc limit $from, litepublisher::$options->postsperpage");
     } else {
-      $to = min($from + $options->postsperpage , $count);
+      $to = min($from + litepublisher::$options->postsperpage , $count);
   $arch = array_reverse(array_keys($posts->archives));
       return array_slice($arch, $from, $to - $from);
     }
   }
 
 function install() {
- $urlmap = turlmap::instance();
+ litepublisher::$urlmap = turlmap::instance();
 if (dbversion) {
-$item = $urlmap->db->finditem("url = '/'");
-$urlmap->setvalue($item['id'], 'class', get_class($this));
+$item = litepublisher::$urlmap->db->finditem("url = '/'");
+litepublisher::$urlmap->setvalue($item['id'], 'class', get_class($this));
 } else {
- $urlmap->items['/']['class'] = get_class($this);
-$urlmap->save();
+ litepublisher::$urlmap->items['/']['class'] = get_class($this);
+litepublisher::$urlmap->save();
 }
 }
 
 function uninstall() {
 $parent = get_parent_class($this);
- $urlmap = turlmap::instance();
+ litepublisher::$urlmap = turlmap::instance();
 if (dbversion) {
-$item = $urlmap->db->finditem("url = '/'");
-$urlmap->setvalue($item['id'], 'class', $parent);
+$item = litepublisher::$urlmap->db->finditem("url = '/'");
+litepublisher::$urlmap->setvalue($item['id'], 'class', $parent);
 } else {
- $urlmap->items['/']['class'] = $parent;
-$urlmap->save();
+ litepublisher::$urlmap->items['/']['class'] = $parent;
+litepublisher::$urlmap->save();
 }
 }
 

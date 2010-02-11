@@ -9,9 +9,8 @@
 class tadminkeywords {
 
 public function getcontent() {
-global $options, $paths;
 $result = '';
-$dir = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
+$dir = litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
 $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
 $tml = parse_ini_file($selfdir . 'keywords.templates.ini', false);
 $admin = tadminplugins::instance();
@@ -51,7 +50,7 @@ $result .= $html->checkallscript;
 
     $filelist = array_slice($filelist, $from, 100, true);
 $list = '';
-$args->url = $options->url. '/admin/plugins/' . $options->q . 'plugin=' . $_GET['plugin'];
+$args->url = litepublisher::$options->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];
    foreach ($filelist as $filename) {
 if (!preg_match('/^\d+?\.\d+?\.php$/', $filename)) continue;
 $args->filename = $filename;
@@ -66,8 +65,7 @@ return $admin->FixCheckall($result);
 }
 
 private function getlinkpages($page, $count) {
-global $options;
-$url = $options->url. '/admin/plugins/' . $options->q . 'plugin=' . $_GET['plugin'];
+$url = litepublisher::$options->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];
 $result = "<a href='$url'>1</a>\n";
 for ($i = 2; $i <= $count; $i++) {
 $result .= "<a href='$url&page=$i'>$i</a>|\n";
@@ -76,8 +74,7 @@ return sprintf("<p>\n%s</p>\n", $result);
 }
 
 public function processform() {
-global $options, $paths;
-$dir = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
+$dir = litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
 if (isset($_POST['pluginoptions'])) {
 extract($_POST);
 $widget = tkeywordswidget::instance();
