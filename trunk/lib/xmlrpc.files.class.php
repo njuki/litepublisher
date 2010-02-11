@@ -46,7 +46,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $files = tfiles::instance();
     $perpage = 10;
     if (dbversion) {
-      $sql = 'parent =0';
+      $sql = "parent =0 and media <> 'icon'";
       $sql .= litepublisher::$options->user <= 1 ? '' : " and author = litepublisher::$options->user";
       $count = $files->db->getcount($sql);
     } else {
@@ -54,6 +54,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
       foreach ($files->items as $id => $item) {
         if ($item['parent'] != 0) continue;
         if (litepublisher::$options->user > 1 && litepublisher::$options->user != $item['author']) continue;
+        if ($item['media'] == 'icon') continue;
         $list[] = $id;
       }
       $count = count($list);

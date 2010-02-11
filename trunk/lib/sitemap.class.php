@@ -125,7 +125,7 @@ public function getdescription() {}
   
   private function writeposts() {
     if (dbversion) {
-$db = litepublisher::$db;
+      $db = litepublisher::$db;
       $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
       where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.idurl");
       $res->setFetchMode (PDO::FETCH_ASSOC);
@@ -155,7 +155,7 @@ $db = litepublisher::$db;
   private function writetags($tags) {
     $postsperpage = $tags->lite ? 1000 : litepublisher::$options->postsperpage;
     if (dbversion) {
-$db = litepublisher::$db;
+      $db = litepublisher::$db;
       $table = $tags->thistable;
       $res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
       where $db->urlmap.id = $table.idurl");
@@ -171,7 +171,7 @@ $db = litepublisher::$db;
   }
   
   private function writearchives() {
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     $arch = tarchives::instance();
     $postsperpage = $arch->lite ? 1000 : litepublisher::$options->postsperpage;
     if (dbversion) $db->table = 'posts';
@@ -194,7 +194,7 @@ $db = litepublisher::$db;
   }
   
   private function writeitem($url, $prio) {
-$url = litepublisher::$options->url . $url;
+    $url = litepublisher::$options->url . $url;
     gzwrite($this->fd, "   <url>
     <loc>$url</loc>
     <lastmod>$this->lastmod</lastmod>

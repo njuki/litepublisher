@@ -7,7 +7,7 @@
 **/
 
 class ttheme extends tevents {
-public static $vars = array();
+  public static $vars = array();
   private $themeprops;
   public static $name;
   //public $tml;
@@ -77,16 +77,16 @@ public static $vars = array();
   
   public static function parsecallback($names) {
     $name = $names[1];
-if ($name == 'options') {
-$var = litepublisher::$options;
-} elseif (isset(self::$vars[$name])) {
-  $var =  self::$vars[$name];
-} elseif (isset($GLOBALS[$name])) {
-  $var =  $GLOBALS[$name];
-} else {
-  $var =  litepublisher::$classes->$name;
-}
-
+    if ($name == 'options') {
+      $var = litepublisher::$options;
+    } elseif (isset(self::$vars[$name])) {
+      $var =  self::$vars[$name];
+    } elseif (isset($GLOBALS[$name])) {
+      $var =  $GLOBALS[$name];
+    } else {
+      $var =  litepublisher::$classes->$name;
+    }
+    
     //if (!isset($var)) echo "$name\n";
     try {
     return $var->{$names[2]};

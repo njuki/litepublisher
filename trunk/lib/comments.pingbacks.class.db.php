@@ -68,7 +68,7 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     $items = $this->db->getitems("post = $this->pid and status = 'approved' order by posted");
     $a = array();
     $pingback = new tarray2prop($a);
-ttheme::$vars['pingback'] = $pingback;
+    ttheme::$vars['pingback'] = $pingback;
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->pingbacks->pingback;

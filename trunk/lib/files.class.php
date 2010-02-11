@@ -19,7 +19,7 @@ class tfiles extends titems {
     $this->basename = 'files';
     $this->table = 'files';
     $this->addevents('changed', 'edited');
-if (!$this->dbversion)  $this->data['itemsposts'] = array();
+    if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
   }
   

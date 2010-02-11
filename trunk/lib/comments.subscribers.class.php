@@ -100,7 +100,7 @@ class tsubscribers extends titemsposts {
     }
     
     $comment = $comments->getcomment($id);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();

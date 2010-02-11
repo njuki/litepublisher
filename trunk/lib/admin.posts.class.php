@@ -73,7 +73,7 @@ class tadminposts extends tadminmenu {
     $args->editurl = litepublisher::$options->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
-ttheme::$vars['post'] = $post;
+      ttheme::$vars['post'] = $post;
     $args->status = $this->lang->{$post->status};
       $result .= $html->itemlist($args);
     }

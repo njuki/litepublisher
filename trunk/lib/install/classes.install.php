@@ -18,7 +18,7 @@ function installclasses($language) {
 }
 
 function ParseClassesIni() {
-$classes = litepublisher::$classes;
+  $classes = litepublisher::$classes;
   $replace = dbversion ? '.class.db.' : '.class.files.';
   $exclude = !dbversion ? '.class.db.' : '.class.files.';
   

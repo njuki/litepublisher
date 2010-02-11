@@ -214,7 +214,7 @@ class tcommentmanager extends tevents {
     if (!$this->sendnotification) return;
     $comments = tcomments::instance($idpost);
     $comment = $comments->getcomment($id);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl = litepublisher::$options->url . '/admin/comments/'. litepublisher::$options->q . "id=$id&post=$idpost&action";
     $mailtemplate = tmailtemplate::instance('comments');
@@ -226,7 +226,7 @@ ttheme::$vars['comment'] = $comment;
   
   public function getrecent($count) {
     if (dbversion) {
-$db = litepublisher::$db;
+      $db = litepublisher::$db;
       $res = $db->query("select $db->comments.*,
       $db->comusers.name as name,
       $db->posts.title as title, $db->posts.commentscount as commentscount,

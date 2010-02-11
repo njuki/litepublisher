@@ -88,7 +88,7 @@ class topenid extends tevents {
   }
   
   private function nomode() {
-$options = litepublisher::$options;
+    $options = litepublisher::$options;
     $result = tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
     $result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$options->url$options->home\">\n</head>", $result);
     return $result;
@@ -224,7 +224,7 @@ $options = litepublisher::$options;
   
   private function NewKeys(&$assoc_handle,&$shared_secret, &$lifetime) {
     $assoc_handle = md5uniq();
-
+    
     $shared_secret = new_secret();
     $lifetime = time() + 1200;
     

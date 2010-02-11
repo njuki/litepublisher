@@ -155,7 +155,7 @@ class tcomments extends titems {
     $args = targs::instance();
     $args->from = $from;
     $comment = new tcomment(0);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     if (litepublisher::$options->admincookie) {
