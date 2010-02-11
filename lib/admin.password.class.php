@@ -21,7 +21,6 @@ public function Auth() { }
 public function getmenu() { return ''; }
   
   public function getcontent() {
-    global $options;
     $html = THtmlResource::instance();
     $html->section = $this->basename;
     $lang = tlocal::instance();
@@ -31,13 +30,12 @@ public function getmenu() { return ''; }
   }
   
   public function ProcessForm() {
-    global $options;
     $html = THtmlResource::instance();
     $html->section = $this->basename;
     $lang = tlocal::instance();
-    if (strtolower(trim($_POST['email'])) == strtolower(trim($options->email))) {
+    if (strtolower(trim($_POST['email'])) == strtolower(trim(litepublisher::$options->email))) {
       $password = md5(mt_rand() . secret. microtime());
-      $options->setpassword($password);
+      litepublisher::$options->setpassword($password);
       eval('$subject = "'. $html->subject . '";');
       eval('$body = "'. $html->body . '";');
       tmiler::sendtoadmin(subject, $body);

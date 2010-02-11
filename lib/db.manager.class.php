@@ -23,7 +23,7 @@ class tdbmanager  {
   }
   
   public function createtable($name, $struct) {
-    //    if (defined('debug'))
+    //    if (litepublisher::$debug)
     $this->deletetable($name);
     return $this->exec("
     create table $this->prefix$name

@@ -14,8 +14,7 @@ class tadminmoderator extends tadminmenu {
   }
   
   protected function getmanager() {
-    global $classes;
-    return $classes->commentmanager;
+    return litepublisher::$classes->commentmanager;
   }
   
   public function getcontent() {
@@ -112,8 +111,8 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function editcomment($id) {
-    global $comment;
     $comment = new tcomment($id);
+ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&action";
@@ -123,8 +122,8 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function reply($id) {
-    global $comment;
     $comment = new tcomment($id);
+ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
     $result = $this->html->info($args);
@@ -133,14 +132,13 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getlist($kind) {
-    global $options, $urlmap, $comment;
     $result = '';
     $comments = tcomments::instance(0);
     $perpage = 20;
     // подсчитать количество комментариев во всех случаях
     $status = $kind == 'hold' ? 'hold' : 'approved';
     $total = $comments->db->getcount("status = '$status'");
-    $from = max(0, $total - $urlmap->page * $perpage);
+    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
     $list = $comments->getitems("status = '$status'
     order by $comments->thistable.posted asc limit $from, $perpage");
     
@@ -151,6 +149,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $comment = new tcomment(null);
+ttheme::$vars['comment'] = $comment;
     foreach ($list as $data) {
       $comment->data = $data;
       $args->id = $comment->id;
@@ -164,17 +163,16 @@ class tadminmoderator extends tadminmenu {
     $result = $this->FixCheckall($result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   private function getpingbackslist() {
-    global $options, $urlmap, $post;
     $result = '';
     $pingbacks = tpingbacks::instance();
     $perpage = 20;
     $total = $pingbacks->getcount();
-    $from = max(0, $total - $urlmap->page * $perpage);
+    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
     $items = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
@@ -191,6 +189,7 @@ class tadminmoderator extends tadminmenu {
       $args->localstatus = tlocal::$data['commentstatus'][$item['status']];
       $args->date = tlocal::date(strtotime($item['posted']));
       $post = tpost::instance($item['post']);
+ttheme::$vars['post'] = $post;
       $args->posttitle =$post->title;
       $args->postlink = $post->link;
       $result .=$html->pingbackitem($args);
@@ -199,7 +198,7 @@ class tadminmoderator extends tadminmenu {
     $result = $this->FixCheckall($result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
@@ -217,8 +216,7 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getinfo($id) {
-    global $comment;
-    if (!isset($comment)) $comment = new tcomment($id);
+if (!isset(ttheme::$vars['comment'])) ttheme::$vars['comment'] = new tcomment($id);
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
     return $this->html->info($args);
@@ -231,11 +229,10 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getconfirmform($id, $confirm) {
-    global $options;
     $args = targs::instance();
     $args->id = $id;
     $args->action = 'delete';
-    $args->adminurl = $options->url . $this->url . $options->q . 'id';
+    $args->adminurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . 'id';
     $args->confirm = $confirm;
     return $this->html->confirmform($args);
   }
@@ -271,12 +268,11 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getauthorslist() {
-    global $urlmap;
     $comusers = tcomusers::instance();
     $args = targs::instance();
     $perpage = 20;
     $total = $comusers->count;
-    $from = max(0, $total - $urlmap->page * $perpage);
+    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
     $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
     $items = $res->fetchAll(PDO::FETCH_ASSOC);
     $html = $this->html;
@@ -290,12 +286,12 @@ class tadminmoderator extends tadminmenu {
     $result .= $html->authorfooter;
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   private function getsubscribed($authorid) {
-    global $db, $options;
+$db = litepublisher::$db;
     $authorid = (int) $authorid;
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';
@@ -321,8 +317,6 @@ class tadminmoderator extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $urlmap;
-    
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -332,7 +326,7 @@ class tadminmoderator extends tadminmenu {
           case 'reply':
           $post = tpost::instance( (int) $_REQUEST['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
-          @header("Location: $options->url$post->lastcommenturl");
+          @header("Location: litepublisher::$options->url$post->lastcommenturl");
           exit();
           
           case 'edit':
@@ -404,7 +398,7 @@ class tadminmoderator extends tadminmenu {
       break;
     }
     
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $result;
   }
   

@@ -60,7 +60,6 @@ class tauthdigest extends tevents {
   }
   
   public function auth() {
-    global $options;
     if ($this->logoutneeded) {
       $this->logoutneeded = false;
       $this->save();
@@ -79,9 +78,9 @@ class tauthdigest extends tevents {
         return false;
       }
       $users = tusers::instance();
-      if (!($options->user  =$users->loginexists($hdr['username']))) return false;
-      $options->updategroup();
-      $a1 = strtolower($options->password);
+      if (!(litepublisher::$options->user  =$users->loginexists($hdr['username']))) return false;
+      litepublisher::$options->updategroup();
+      $a1 = strtolower(litepublisher::$options->password);
       $a2 = md5($_SERVER['REQUEST_METHOD'] .':' . $hdr['uri']);
       return $hdr['response'] == md5("$a1:$this->nonce:$a2");
     }
@@ -89,13 +88,12 @@ class tauthdigest extends tevents {
   }
   
   public function Headers() {
-    global $options;
     $protocol = $_SERVER["SERVER_PROTOCOL"];
     if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
     $stale = $this->stale ? 'true' : 'false';
     
     $result = "<?php
-    @header('WWW-Authenticate: Digest realm=\"$options->realm\", nonce=\"$this->nonce\", stale=\"$stale\"');
+    @header('WWW-Authenticate: Digest realm=\"litepublisher::$options->realm\", nonce=\"$this->nonce\", stale=\"$stale\"');
     @header('$protocol 401 Unauthorized', true, 401);
     echo '401 Unauthorized';
     ?>";
@@ -126,8 +124,7 @@ class tauthdigest extends tevents {
   }
   
   public function logout() {
-    global $options;
-    if ($options->cookieenabled) {
+    if (litepublisher::$options->cookieenabled) {
       $this->setcookies('', 0);
     }
     $this->lock();
@@ -137,13 +134,12 @@ class tauthdigest extends tevents {
   }
   
   public function setcookies($cookie, $expired) {
-    global $options;
-    if ($options->user == 1) {
-      $options->cookie = $cookie;
-      $options->cookieexpired = $expired;
+    if (litepublisher::$options->user == 1) {
+      litepublisher::$options->cookie = $cookie;
+      litepublisher::$options->cookieexpired = $expired;
     } else {
       $users = tusers::instance();
-      $users->setcookie($options->user, $cookie, $expired);
+      $users->setcookie(litepublisher::$options->user, $cookie, $expired);
     }
   }
   

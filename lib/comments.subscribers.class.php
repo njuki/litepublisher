@@ -84,7 +84,6 @@ class tsubscribers extends titemsposts {
   }
   
   public function cronsendmail($arg) {
-    global $comment;
     $id = $arg[0];
     $pid = $arg[1];
     $comments = tcomments::instance($pid);
@@ -101,6 +100,7 @@ class tsubscribers extends titemsposts {
     }
     
     $comment = $comments->getcomment($id);
+ttheme::$vars['comment'] = $comment;
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();

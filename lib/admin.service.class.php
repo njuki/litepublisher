@@ -13,7 +13,6 @@ class tadminservice extends tadminmenu {
   
   
   public function getcontent() {
-    global $classes, $options, $paths;
     $html = $this->html;
     $result = '';
     $args = targs::instance();
@@ -21,8 +20,8 @@ class tadminservice extends tadminmenu {
     switch ($this->name) {
       case 'service':
       $result .= $this->doupdate($_GET);
-      $args->postscount = $classes->posts->count;
-      $args->commentscount = $classes->commentmanager->count;
+      $args->postscount = litepublisher::$classes->posts->count;
+      $args->commentscount = litepublisher::$classes->commentmanager->count;
       $result .= $html->info($args);
       $updater = tupdater::instance();
       $islatest= $updater->islatest();
@@ -41,13 +40,13 @@ class tadminservice extends tadminmenu {
       $item = $html->engineitem;
       $item .= "\n";
       
-      $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+      $inifile = parse_ini_file(litepublisher::$paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       foreach ($ini as $name => $value) {
-        $checkboxes .= sprintf($item, $name, $value, !isset($classes->items[$name]) ? "checked='checked'" : '');
+        $checkboxes .= sprintf($item, $name, $value, !isset(litepublisher::$classes->items[$name]) ? "checked='checked'" : '');
       }
       
-      foreach ($classes->items as $name => $value) {
+      foreach (litepublisher::$classes->items as $name => $value) {
         if (isset($ini[$name])) continue;
         $checkboxes .= sprintf($item, $name, $value[0], '');
       }
@@ -66,10 +65,10 @@ class tadminservice extends tadminmenu {
       } else {
         $filename = $_GET['id'];
         if (strpbrk ($filename, '/\<>')) return $this->notfound;
-        if (!file_exists($paths['backup'] . $filename)) return $this->notfound;
+        if (!file_exists(litepublisher::$paths['backup'] . $filename)) return $this->notfound;
         switch ($_GET['action']) {
           case 'download':
-          if ($s = @file_get_contents($paths['backup'] . $filename)) {
+          if ($s = @file_get_contents(litepublisher::$paths['backup'] . $filename)) {
             $this->sendfile($s, $filename);
           } else {
             return $this->notfound;
@@ -78,7 +77,7 @@ class tadminservice extends tadminmenu {
           
           case 'delete':
           if ($this->confirmed) {
-            @unlink($paths['backup'] . $filename);
+            @unlink(litepublisher::$paths['backup'] . $filename);
             return $html->h2->backupdeleted;
           } else {
             $args->adminurl = $this->adminurl;
@@ -116,7 +115,6 @@ class tadminservice extends tadminmenu {
   }
   
   public function processform() {
-    global $classes, $options, $urlmap, $paths, $domain;
     $html = $this->html;
     
     switch ($this->name) {
@@ -124,30 +122,30 @@ class tadminservice extends tadminmenu {
       return $this->doupdate($_POST);
       
       case 'engine':
-      $inifile = parse_ini_file($paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+      $inifile = parse_ini_file(litepublisher::$paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       $lang = tlocal::instance('service');
-      $classes->lock();
+      litepublisher::$classes->lock();
       foreach ($_POST as $name => $value) {
-        if ( isset($ini[$name]) || isset($classes->items[$name])) {
+        if ( isset($ini[$name]) || isset(litepublisher::$classes->items[$name])) {
           switch ($_POST['submit']) {
             case $lang->install:
-            $classes->add($name, $ini[$name]);
+            litepublisher::$classes->add($name, $ini[$name]);
             break;
             
             case $lang->uninstall:
             $plugins = tplugins::instance();
             $plugins->deleteclass($name);
-            $classes->delete($name);
+            litepublisher::$classes->delete($name);
             break;
             
             case $lang->reinstall:
-            $classes->reinstall($name);
+            litepublisher::$classes->reinstall($name);
             break;
           }
         }
       }
-      $classes->unlock();
+      litepublisher::$classes->unlock();
       break;
       
       case 'backup':
@@ -162,18 +160,18 @@ class tadminservice extends tadminmenu {
         if (strpos($_FILES["filename"]["name"], '.sql')) {
           $backuper->uploaddump(file_get_contents($_FILES["filename"]["tmp_name"]));
         } else {
-          $url = $options->url;
-          if (dbversion) $dbconfig = $options->dbconfig;
+          $url = litepublisher::$options->url;
+          if (dbversion) $dbconfig = litepublisher::$options->dbconfig;
           $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]));
           if (isset($saveurl)) {
-            $options->load();
-            $options->lock();
-            $options->seturl($url);
-            if (dbversion) $options->dbconfig = $dbconfig;
-            $options->unlock();
+            litepublisher::$options->load();
+            litepublisher::$options->lock();
+            litepublisher::$options->seturl($url);
+            if (dbversion) litepublisher::$options->dbconfig = $dbconfig;
+            litepublisher::$options->unlock();
           }
         }
-        $urlmap->clearcache();
+        litepublisher::$urlmap->clearcache();
         @header('Location: http://' . $_SERVER['HTTP_HOST'] .  $_SERVER['REQUEST_URI']);
         exit();
         
@@ -187,7 +185,7 @@ class tadminservice extends tadminmenu {
         
         case 'sqlbackup':
         $content = gzencode($backuper->getdump());
-        $this->sendfile($content, $domain . date('-Y-m-d') . '.sql.gz');
+        $this->sendfile($content, litepublisher::$domain . date('-Y-m-d') . '.sql.gz');
       }
       break;
       
@@ -200,9 +198,8 @@ class tadminservice extends tadminmenu {
   }
   
   private function sendfile(&$content, $filename = '') {
-    global $domain;
-    //@file_put_contents("$domain.zip", $content);
-    if ($filename == '') $filename = str_replace('.', '-', $domain) . date('-Y-m-d') . '.tar.gz';
+    //@file_put_contents(litepublisher::$domain . ".zip", $content);
+    if ($filename == '') $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . '.tar.gz';
     @header("HTTP/1.1 200 OK");
     @header("Content-type: application/octet-stream");
     @header("Content-Disposition: attachment; filename=$filename");
@@ -214,12 +211,11 @@ class tadminservice extends tadminmenu {
   }
   
   private function getbackupfilelist() {
-    global $options, $paths;
     $html = $this->html;
     $result = $html->backupheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    foreach(glob($paths['backup'] . '*.zip') as $filename) {
+    foreach(glob(litepublisher::$paths['backup'] . '*.zip') as $filename) {
       $args->filename = basename($filename);
       $result .= $html->backupitem($args);
     }

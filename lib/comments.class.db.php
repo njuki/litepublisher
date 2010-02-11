@@ -135,7 +135,6 @@ class tcomments extends titems {
   }
   
   private function getcontentwhere($status, $whereauthor) {
-    global $comment;
     $result = '';
     $post = tpost::instance($this->pid);
     if ($status == 'approved') {
@@ -156,6 +155,7 @@ class tcomments extends titems {
     $args = targs::instance();
     $args->from = $from;
     $comment = new tcomment(0);
+ttheme::$vars['comment'] = $comment;
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     if (litepublisher::$options->admincookie) {

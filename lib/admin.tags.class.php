@@ -13,10 +13,9 @@ class tadmintags extends tadminmenu {
   }
   
   public function getcontent() {
-    global $options, $classes;
     $result = '';
     $istags = $this->name == 'tags';
-    $tags = $istags  ? $classes->tags : $classes->categories;
+    $tags = $istags  ? litepublisher::$classes->tags : litepublisher::$classes->categories;
     $this->basename = 'categories';
     $html = $this->html;
     $h2 = $html->h2;
@@ -65,11 +64,10 @@ class tadmintags extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $classes;
     if (empty($_POST['title'])) return '';
     extract($_POST);
     $istags = $this->name == 'tags';
-    $tags = $istags  ? $classes->tags : $classes->categories;
+    $tags = $istags  ? litepublisher::$classes->tags : litepublisher::$classes->categories;
     $id = $this->idget();
     if ($id == 0) {
       $id = $tags->add($title);

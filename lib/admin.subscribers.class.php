@@ -20,7 +20,6 @@ class tadminsubscribers extends tadminmenu {
 public function auth() { }
   
   public function getcontent() {
-    global $options, $post;
     $html= $this->html;
     $args = targs::instance();
     $comusers = tcomusers::instance();
@@ -32,6 +31,7 @@ public function auth() { }
     $result .=$html->formhead($args);
     foreach ($items as $postid) {
       $post = tpost::instance($postid);
+ttheme::$vars['post'] = $post;
       if ($post->status != 'published') continue;
       $result .= $html->formitem($args);
     }

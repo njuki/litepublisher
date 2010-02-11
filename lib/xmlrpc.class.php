@@ -30,7 +30,7 @@ class TXMLRPCParser extends IXR_Server  {
     @header('Date: ".date('r') . "');
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');
-    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
+    @header('X-Pingback: ". litepublisher::$options->url . "/rpc.xml');
     echo'$head';
     ?>". $xml;
   }
@@ -61,7 +61,7 @@ class TXMLRPC extends titems {
       $HTTP_RAW_POST_DATA = trim($HTTP_RAW_POST_DATA);
     }
     
-    if (defined('debug')) {
+    if (litepublisher::$debug) {
       tfiler::log("request:\n" . $HTTP_RAW_POST_DATA, 'xmlrpc.txt');
       $reqname = litepublisher::$paths['data'] . 'logs' . DIRECTORY_SEPARATOR  . 'request.xml';
       file_put_contents($reqname, $HTTP_RAW_POST_DATA);
@@ -74,7 +74,7 @@ class TXMLRPC extends titems {
     $this->Server->IXR_Server  ($this->items);
     $Result = $this->Server->XMLResult;
     $this->aftercall();
-    if (defined('debug')) tfiler::log("responnse:\n".$Result, 'xmlrpc.txt');
+    if (litepublisher::$debug) tfiler::log("responnse:\n".$Result, 'xmlrpc.txt');
     return $Result;
   }
   

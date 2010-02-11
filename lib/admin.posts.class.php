@@ -53,12 +53,11 @@ class tadminposts extends tadminmenu {
   }
   
   private function getlist() {
-    global $options, $urlmap, $post;
     $result = '';
     $posts = tposts::instance();
     $perpage = 20;
     $count = $posts->count;
-    $from = max(0, $count - $urlmap->page * $perpage);
+    $from = max(0, $count - litepublisher::$urlmap->page * $perpage);
     
     if (dbversion) {
       $items = $this->db->idselect("status <> 'deleted' order by posted desc limit $from, $perpage");
@@ -71,9 +70,10 @@ class tadminposts extends tadminmenu {
     $result .= $html->listhead();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = $options->url . $this->url . 'editor/' . $options->q . 'id';
+    $args->editurl = litepublisher::$options->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
+ttheme::$vars['post'] = $post;
     $args->status = $this->lang->{$post->status};
       $result .= $html->itemlist($args);
     }
@@ -81,7 +81,7 @@ class tadminposts extends tadminmenu {
     $result = str_replace("'", '"', $result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages('/admin/posts/', $urlmap->page, ceil($count/$perpage));
+    $result .= $theme->getpages('/admin/posts/', litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
