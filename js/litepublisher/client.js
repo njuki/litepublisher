@@ -44,3 +44,16 @@ onComplete:function(responseObj){ }
 } );
 
 }
+
+function loadjavascript(filename) {
+// check loaded scripts
+if (ltoptions.scripts == undefined) ltoptions.scripts = '';
+if (ltoptions.scripts.indexOf(filename) >= 0) return false;
+ltoptions.scripts += filename + "\n";
+      var head= document.getElementsByTagName('head')[0];
+      var script= document.createElement('script');
+      script.type= 'text/javascript';
+      script.src= ltoptions.files + filename;
+      head.appendChild(script);
+   }
+
