@@ -57,8 +57,8 @@ if (!$options->installed) require_once($paths['lib'] .'install' . DIRECTORY_SEPA
 if (dbversion) $db = new tdatabase();
 //end config
 
-if (!isset($mode)) {
 $urlmap = turlmap::instance();
+if (!defined('litepublisher_mode')) {
 $urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
 $options->cache = false;
