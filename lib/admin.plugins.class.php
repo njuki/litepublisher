@@ -21,10 +21,10 @@ class tadminplugins extends tadminmenu {
   
   private function readabout() {
     $this->abouts = array();
-    $list = tfiler::getdir(litepublisher::$paths['plugins']);
+    $list = tfiler::getdir(litepublisher::$paths->plugins);
     sort($list);
     foreach ($list as $name) {
-      $about = parse_ini_file(litepublisher::$paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+      $about = parse_ini_file(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
       //слить языковую локаль в описание
       if (isset($about[litepublisher::$options->language])) {
         $about['about'] = $about[litepublisher::$options->language] + $about['about'];
@@ -112,7 +112,7 @@ class tadminplugins extends tadminmenu {
     $about = $this->abouts[$name];
     if (empty($about['adminclassname'])) return false;
     $class = $about['adminclassname'];
-    if (!class_exists($class))  require_once(litepublisher::$paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
+    if (!class_exists($class))  require_once(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
     return  getinstance($class );
   }
   

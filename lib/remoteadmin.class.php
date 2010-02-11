@@ -22,19 +22,19 @@ class tremoteadmin extends tevents {
   }
   
   public function existstheme($name) {
-    return @is_dir(litepublisher::$paths['themes'] . $name);
+    return @is_dir(litepublisher::$paths->themes . $name);
   }
   
   public function pluginexists($name) {
-    return @is_dir(litepublisher::$paths['plugins']. $name);
+    return @is_dir(litepublisher::$paths->plugins . $name);
   }
   
   public function getthemes() {
-    return tfiler::getdir(litepublisher::$paths['themes']);
+    return tfiler::getdir(litepublisher::$paths->themes);
   }
   
   public function getplugins() {
-    return tfiler::getdir(litepublisher::$paths['plugins']);
+    return tfiler::getdir(litepublisher::$paths->plugins);
   }
   
   public function setplugins($names) {
@@ -73,27 +73,27 @@ class tremoteadmin extends tevents {
   }
   
   protected function GetDirAsZip($dir) {
-        require_once(litepublisher::$paths['libinclude'] . 'zip.lib.php');
+        require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
     $zip = new zipfile();
     $this->ReadDirToZip($zip, $dir, '');
     return $zip->file();
   }
   
   protected function RequireZip() {
-    require_once(litepublisher::$paths['libinclude'] . 'zip.lib.php');
+    require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
   }
   
   public function DownloadPlugin($name) {
     $this->RequireZip();
     $zip = new zipfile();
-    $this->ReadDirToZip($zip, litepublisher::$paths['plugins'] . $name, '', "plugins/$name/");
+    $this->ReadDirToZip($zip, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
     return $zip->file();
   }
   
   public function DownloadTheme($name) {
     $this->RequireZip();
     $zip = new zipfile();
-    $this->ReadDirToZip($zip, litepublisher::$paths['themes'] . $name, '', "themes/$name/");
+    $this->ReadDirToZip($zip, litepublisher::$paths->themes . $name, '', "themes/$name/");
     return $zip->file();
   }
   
@@ -101,21 +101,21 @@ class tremoteadmin extends tevents {
     $this->RequireZip();
     $zip = new zipfile();
     if (dbversion) $zip->addFile($this->getdump(), 'dump.sql');
-    $this->ReadDirToZip($zip, litepublisher::$paths['data'], '', 'data/');
+    $this->ReadDirToZip($zip, litepublisher::$paths->data, '', 'data/');
     if ($lib) {
-      $this->ReadDirToZip($zip, litepublisher::$paths['lib'], '', 'lib/');
+      $this->ReadDirToZip($zip, litepublisher::$paths->lib, '', 'lib/');
     }
     if ($theme) {
       $Template = &TTemplate::instance();
       $themename = $Template->themename;
-      $this->ReadDirToZip($zip, litepublisher::$paths['themes'] . $themename, '', "themes/$themename/");
+      $this->ReadDirToZip($zip, litepublisher::$paths->themes . $themename, '', "themes/$themename/");
     }
     
     if ($plugins) {
       $plugins = &TPlugins::instance();
       foreach ($plugins->items as $name => $item) {
-        if (@is_dir(litepublisher::$paths['plugins'] . $name)) {
-          $this->ReadDirToZip($zip, litepublisher::$paths['plugins'] . $name, '', "plugins/$name/");
+        if (@is_dir(litepublisher::$paths->plugins . $name)) {
+          $this->ReadDirToZip($zip, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
         }
       }
     }
@@ -134,7 +134,7 @@ class tremoteadmin extends tevents {
     $themesprefix =  'themes/';
     $pluginsprefix = 'plugins/';
     
-    require_once(litepublisher::$paths['libinclude'] . 'strunzip.lib.php');
+    require_once(litepublisher::$paths->libinclude . 'strunzip.lib.php');
     $unzip = new StrSimpleUnzip ();
     $unzip->ReadData($content);
     foreach ($unzip->Entries as  $entry) {
@@ -143,18 +143,18 @@ class tremoteadmin extends tevents {
       if ($dataprefix == substr($dir, 0, strlen($dataprefix))) {
         $dir = substr($dir, strlen($dataprefix));
         if (!isset($tmp)) {
-          $up = dirname(litepublisher::$paths['data']) .DIRECTORY_SEPARATOR;
-          $tmp = $up . basename(litepublisher::$paths['data']) . '-tmp.tmp' . DIRECTORY_SEPARATOR;
+          $up = dirname(litepublisher::$paths->data']) .DIRECTORY_SEPARATOR;
+          $tmp = $up . basename(litepublisher::$paths->data) . '-tmp.tmp' . DIRECTORY_SEPARATOR;
           @mkdir($tmp, 0777);
           @chmod($tmp, 0777);
         }
         $path = $tmp;
       } elseif ($themesprefix == substr($dir, 0, strlen($themesprefix))) {
         $dir = substr($dir, strlen($themesprefix));
-        $path = litepublisher::$paths['themes'];
+        $path = litepublisher::$paths->themes;
       } elseif ($pluginsprefix == substr($dir, 0, strlen($pluginsprefix))) {
         $dir = substr($dir, strlen($pluginsprefix));
-        $path = litepublisher::$paths['plugins'];
+        $path = litepublisher::$paths->plugins;
       } else {
         //echo $dir, " is unknown dir<br>";
       }
@@ -169,9 +169,9 @@ class tremoteadmin extends tevents {
     }
     
     if (isset($tmp)) {
-      $old = $up . basename(litepublisher::$paths['data']) . '-old-tmp.tmp' . DIRECTORY_SEPARATOR;
-      @rename(litepublisher::$paths['data'], $old);
-      @rename($tmp, litepublisher::$paths['data']);
+      $old = $up . basename(litepublisher::$paths->data) . '-old-tmp.tmp' . DIRECTORY_SEPARATOR;
+      @rename(litepublisher::$paths->data, $old);
+      @rename($tmp, litepublisher::$paths->data);
       tfiler::delete($old, true, true);
     }
     
@@ -181,20 +181,20 @@ class tremoteadmin extends tevents {
   public function GetFullBackup() {
     $this->RequireZip();
     $zip = new zipfile();
-    $this->ReadDirToZip($zip, litepublisher::$paths['data'], '', 'data/');
+    $this->ReadDirToZip($zip, litepublisher::$paths->data, '', 'data/');
     
-    $items = tfiler::getdir(litepublisher::$paths['plugins']);
+    $items = tfiler::getdir(litepublisher::$paths->plugins);
     foreach ($items as $name ) {
-      $this->ReadDirToZip($zip, litepublisher::$paths['plugins'], $name, "plugins/");
+      $this->ReadDirToZip($zip, litepublisher::$paths->plugins, $name, "plugins/");
     }
     
-    $items = tfiler::getdir(litepublisher::$paths['themes']);
+    $items = tfiler::getdir(litepublisher::$paths->themes);
     foreach ($items as $name ) {
-      $this->ReadDirToZip($zip, litepublisher::$paths['themes'] , $name, "themes/");
+      $this->ReadDirToZip($zip, litepublisher::$paths->themes , $name, "themes/");
     }
     
-    $this->ReadDirToZip($zip, litepublisher::$paths['lib'], '', 'lib/');
-    $this->ReadDirToZip($zip, litepublisher::$paths['files'], '', 'files/');
+    $this->ReadDirToZip($zip, litepublisher::$paths->lib, '', 'lib/');
+    $this->ReadDirToZip($zip, litepublisher::$paths->files, '', 'files/');
     
     return $zip->file();
   }

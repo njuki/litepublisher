@@ -16,7 +16,7 @@ if (dbversion) {
     }
     
     public function add($values) {
-      $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
+      $confirmid = md5uniq();
       $this->db->add(array(
       'id' => $confirmid,
       'posted' => sqldate(),
@@ -51,7 +51,7 @@ if (dbversion) {
     }
     
     public function add($values) {
-      $confirmid = md5(mt_rand() . secret. uniqid( microtime()));
+      $confirmid = md5uniq();
       $this->items[$confirmid] =$values;
       $this->save();
       return $confirmid;

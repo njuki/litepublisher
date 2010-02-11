@@ -211,10 +211,10 @@ $url = litepublisher::$options->url . $url;
   private function openfile() {
     $this->count = 0;
     $this->countfiles++;
-    if ($this->fd = gzopen(litepublisher::$paths['files'] . litepublisher::$domain . ".$this->countfiles.xml.gz", 'w')) {
+    if ($this->fd = gzopen(litepublisher::$paths->files . litepublisher::$domain . ".$this->countfiles.xml.gz", 'w')) {
       $this->WriteHeader();
     } else {
-      tfiler::log("error write file to folder " . litepublisher::$paths[files]);
+      tfiler::log("error write file to folder " . litepublisher::$paths->files);
       exit();
     }
   }
@@ -222,7 +222,7 @@ $url = litepublisher::$options->url . $url;
   private function closefile() {
     $this->WriteFooter();
     gzclose($this->fd);
-    @chmod(litepublisher::$paths['files'] . litepublisher::$domain . ".$this->countfiles.xml.gz", 0666);
+    @chmod(litepublisher::$paths->files . litepublisher::$domain . ".$this->countfiles.xml.gz", 0666);
     $this->fd = false;
   }
   

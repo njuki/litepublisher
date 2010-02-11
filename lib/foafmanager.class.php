@@ -136,7 +136,7 @@ class TFoafManager extends titems {
   }
   
   public function GetFoaf(&$url) {
-    require_once(litepublisher::$paths['libinclude'] . 'utils.php');
+    require_once(litepublisher::$paths->libinclude . 'utils.php');
     if ($s = GetWebPage($url)) {
       if ($this->IsFoaf($s)) {
         return $this->ParseFoaf($s);

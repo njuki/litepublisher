@@ -26,7 +26,7 @@ class tinstaller extends tdata {
     }
     
     if (!empty($_GET['lang']))  {
-      if (@file_exists(litepublisher::$paths['languages']. $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
+      if (@file_exists(litepublisher::$paths->languages . $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
     }
     
     if (!empty($_GET['mode'])) $this->mode = $_GET['mode'];
@@ -74,7 +74,7 @@ class tinstaller extends tdata {
         exit();
         
         case 'xmlrpc':
-        require_once(litepublisher::$paths['libinclude'] . 'class-IXR.php');
+        require_once(litepublisher::$paths->libinclude . 'class-IXR.php');
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
@@ -129,7 +129,7 @@ class tinstaller extends tdata {
   
   public function FirstStep() {
     $this->CheckFolders();
-    require_once(litepublisher::$paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
+    require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
     return installclasses($this->language);
   }
   
@@ -180,13 +180,12 @@ class tinstaller extends tdata {
   }
   
   public function CheckFolders() {
-    $this->checkFolder(litepublisher::$paths['data']);
-    $this->CheckFolder(litepublisher::$paths['cache']);
-    $this->CheckFolder(litepublisher::$paths['cache'] . 'pda' . DIRECTORY_SEPARATOR);
-    $this->CheckFolder(litepublisher::$paths['files']);
-    $this->CheckFolder(litepublisher::$paths['languages']);
-    $this->CheckFolder(litepublisher::$paths['plugins']);
-    $this->CheckFolder(litepublisher::$paths['themes']);
+    $this->checkFolder(litepublisher::$paths->data);
+    $this->CheckFolder(litepublisher::$paths->cache);
+    $this->CheckFolder(litepublisher::$paths->files);
+    $this->CheckFolder(litepublisher::$paths->languages);
+    $this->CheckFolder(litepublisher::$paths->plugins);
+    $this->CheckFolder(litepublisher::$paths->themes);
   }
   
   public function CheckFolder($FolderName) {
@@ -320,16 +319,16 @@ class tinstaller extends tdata {
   }
   
   public function uninstall() {
-    tfiler::delete(litepublisher::$paths['data'], true);
-    tfiler::delete(litepublisher::$paths['cache'], true);
-    tfiler::delete(litepublisher::$paths['files'], true);
+    tfiler::delete(litepublisher::$paths->data, true);
+    tfiler::delete(litepublisher::$paths->cache, true);
+    tfiler::delete(litepublisher::$pathsfiles, true);
   }
   
   private function loadlang() {
     litepublisher::$options = $this;
-    require_once(litepublisher::$paths['lib'] . 'filer.class.php');
-    require_once(litepublisher::$paths['lib'] . 'local.class.php');
-    require_once(litepublisher::$paths['lib'] . 'htmlresource.class.php');
+    require_once(litepublisher::$paths->lib . 'filer.class.php');
+    require_once(litepublisher::$paths->lib . 'local.class.php');
+    require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
     tlocal::loadlang('admin');
   }
   
@@ -337,7 +336,7 @@ class tinstaller extends tdata {
     if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
       $result = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
       $result = substr($result, 0, 2);
-      if (@file_exists(litepublisher::$paths['languages']. "$result.ini")) return $result;
+      if (@file_exists(litepublisher::$paths->languages . "$result.ini")) return $result;
     }
     return 'en';
   }

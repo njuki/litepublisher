@@ -7,8 +7,8 @@
 **/
 
 function TPluginsInstall(&$self) {
-  @mkdir(litepublisher::$paths['data']. 'plugins', 0777);
-  @chmod(litepublisher::$paths['data']. 'plugins', 0777);
+  @mkdir(litepublisher::$paths->data . 'plugins', 0777);
+  @chmod(litepublisher::$paths->data . 'plugins', 0777);
 }
 
 ?>

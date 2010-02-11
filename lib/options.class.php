@@ -159,7 +159,7 @@ class toptions extends tevents {
   }
   
   public function handexception($e) {
-    $trace =str_replace(litepublisher::$paths['home'], '', $e->getTraceAsString());
+    $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
     $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
     tfiler::log($log, 'exceptions.log');

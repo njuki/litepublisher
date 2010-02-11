@@ -40,7 +40,7 @@ class tadminservice extends tadminmenu {
       $item = $html->engineitem;
       $item .= "\n";
       
-      $inifile = parse_ini_file(litepublisher::$paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+      $inifile = parse_ini_file(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       foreach ($ini as $name => $value) {
         $checkboxes .= sprintf($item, $name, $value, !isset(litepublisher::$classes->items[$name]) ? "checked='checked'" : '');
@@ -65,10 +65,10 @@ class tadminservice extends tadminmenu {
       } else {
         $filename = $_GET['id'];
         if (strpbrk ($filename, '/\<>')) return $this->notfound;
-        if (!file_exists(litepublisher::$paths['backup'] . $filename)) return $this->notfound;
+        if (!file_exists(litepublisher::$paths->backup . $filename)) return $this->notfound;
         switch ($_GET['action']) {
           case 'download':
-          if ($s = @file_get_contents(litepublisher::$paths['backup'] . $filename)) {
+          if ($s = @file_get_contents(litepublisher::$paths->backup . $filename)) {
             $this->sendfile($s, $filename);
           } else {
             return $this->notfound;
@@ -77,7 +77,7 @@ class tadminservice extends tadminmenu {
           
           case 'delete':
           if ($this->confirmed) {
-            @unlink(litepublisher::$paths['backup'] . $filename);
+            @unlink(litepublisher::$paths->backup . $filename);
             return $html->h2->backupdeleted;
           } else {
             $args->adminurl = $this->adminurl;
@@ -122,7 +122,7 @@ class tadminservice extends tadminmenu {
       return $this->doupdate($_POST);
       
       case 'engine':
-      $inifile = parse_ini_file(litepublisher::$paths['lib'] . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+      $inifile = parse_ini_file(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
       $lang = tlocal::instance('service');
       litepublisher::$classes->lock();
@@ -215,7 +215,7 @@ class tadminservice extends tadminmenu {
     $result = $html->backupheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    foreach(glob(litepublisher::$paths['backup'] . '*.zip') as $filename) {
+    foreach(glob(litepublisher::$paths->backup . '*.zip') as $filename) {
       $args->filename = basename($filename);
       $result .= $html->backupitem($args);
     }

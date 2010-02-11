@@ -29,7 +29,7 @@ class tauthdigest extends tevents {
   }
   
   private function newnonce() {
-    $this->data['nonce'] = md5(mt_rand() . secret. microtime());
+    $this->data['nonce'] = md5uniq();
     $this->data['time'] = time();
     $this->save();
   }

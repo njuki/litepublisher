@@ -27,7 +27,7 @@ class tmenus extends TItems {
   }
   
   public function getdir() {
-    return $paths['data'] . 'menus' . DIRECTORY_SEPARATOR;
+    return litepublisher::$paths->data . 'menus' . DIRECTORY_SEPARATOR;
   }
   
   public function add(imenu $item) {

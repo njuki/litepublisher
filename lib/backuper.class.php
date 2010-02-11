@@ -14,7 +14,7 @@ class tbackuper extends tevents {
   
   protected function create() {
     parent::create();
-    require_once(litepublisher::$paths['libinclude'] . 'tar.class.php');
+    require_once(litepublisher::$paths->libinclude . 'tar.class.php');
   }
   
   private function  readdir(tar $tar, $path, $subdir, $prefix = '') {
@@ -46,36 +46,36 @@ class tbackuper extends tevents {
   public function DownloadPlugin($name) {
     $this->RequireZip();
     $zip = new zipfile();
-    $this->readdir($zip, litepublisher::$paths['plugins'] . $name, '', "plugins/$name/");
+    $this->readdir($zip, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
     return $zip->file();
   }
   
   public function DownloadTheme($name) {
     $this->RequireZip();
     $zip = new zipfile();
-    $this->readdir($zip, litepublisher::$paths['themes'] . $name, '', "themes/$name/");
+    $this->readdir($zip, litepublisher::$paths->themes . $name, '', "themes/$name/");
     return $zip->file();
   }
   
   public function getpartial($plugins, $theme, $lib) {
     $tar = new tar();
     if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
-    $this->readdir($tar, litepublisher::$paths['data'], '', 'data/');
+    $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
     if ($lib)  {
-      $this->readdir($tar, litepublisher::$paths['lib'], '', 'lib/');
-      $this->readdir($tar, litepublisher::$paths['js'], '', 'js/');
+      $this->readdir($tar, litepublisher::$paths->lib, '', 'lib/');
+      $this->readdir($tar, litepublisher::$paths->js, '', 'js/');
     }
     if ($theme)  {
       $template = ttemplate::instance();
       $themename = $template->theme;
-      $this->readdir($tar, litepublisher::$paths['themes'] . $themename, '', "themes/$themename/");
+      $this->readdir($tar, litepublisher::$paths->themes . $themename, '', "themes/$themename/");
     }
     
     if ($plugins) {
       $plugins = tplugins::instance();
       foreach ($plugins->items as $name => $item) {
-        if (@is_dir(litepublisher::$paths['plugins'] . $name)) {
-          $this->readdir($tar, litepublisher::$paths['plugins'] . $name, '', "plugins/$name/");
+        if (@is_dir(litepublisher::$paths->plugins . $name)) {
+          $this->readdir($tar, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
         }
       }
     }
@@ -121,13 +121,13 @@ class tbackuper extends tevents {
         $path = $tmp;
       } elseif (strbegin($filename, $themesprefix)) {
         $filename = substr($filename, strlen($themesprefix));
-        $path = litepublisher::$paths['themes'];
+        $path = litepublisher::$paths->themes;
       } elseif (strbegin($filename, $pluginsprefix)) {
         $filename = substr($filename, strlen($pluginsprefix));
-        $path = litepublisher::$paths['plugins'];
+        $path = litepublisher::$paths->plugins;
       } elseif (strbegin($filename, $jsprefix)) {
         $filename = substr($filename, strlen($jsprefix));
-        $path = litepublisher::$paths['js'];
+        $path = litepublisher::$paths->js;
       } else {
         //echo $dir, " is unknown dir<br>";
       }
@@ -139,9 +139,9 @@ class tbackuper extends tevents {
     }
     
     if ($tmp) {
-      $old = $up . basename(litepublisher::$paths['data']) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
-      @rename(litepublisher::$paths['data'], $old);
-      @rename($tmp, litepublisher::$paths['data']);
+      $old = $up . basename(litepublisher::$paths->data) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
+      @rename(litepublisher::$paths->data, $old);
+      @rename($tmp, litepublisher::$paths->data);
       tfiler::delete($old, true, true);
     }
     
@@ -149,7 +149,7 @@ class tbackuper extends tevents {
   }
   
   private function createtemp() {
-    $result = dirname(litepublisher::$paths['data']) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths['data']) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
+    $result = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths->data) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
     @mkdir($result, 0777);
     @chmod($result, 0777);
     return $result;
@@ -157,19 +157,19 @@ class tbackuper extends tevents {
   
   public function getfull() {
     $tar = new tar();
-    $this->readdir($tar, litepublisher::$paths['data'], '', 'data/');
+    $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
     
-    foreach (tfiler::getdir(litepublisher::$paths['plugins']) as $name ) {
-      $this->readdir($tar, litepublisher::$paths['plugins'], $name, "plugins/");
+    foreach (tfiler::getdir(litepublisher::$paths->plugins) as $name ) {
+      $this->readdir($tar, litepublisher::$paths->plugins, $name, "plugins/");
     }
     
-    foreach (tfiler::getdir(litepublisher::$paths['themes']) as $name ) {
-      $this->readdir($tar, litepublisher::$paths['themes'] , $name, "themes/");
+    foreach (tfiler::getdir(litepublisher::$paths->themes) as $name ) {
+      $this->readdir($tar, litepublisher::$paths->themes , $name, "themes/");
     }
     
-    $this->readdir($tar, litepublisher::$paths['lib'], '', 'lib/');
-    $this->readdir($tar, litepublisher::$paths['js'], '', 'js/');
-    $this->readdir($tar, litepublisher::$paths['files'], '', 'files/');
+    $this->readdir($tar, litepublisher::$pathslib, '', 'lib/');
+    $this->readdir($tar, litepublisher::$pathsjs, '', 'js/');
+    $this->readdir($tar, litepublisher::$paths->files, '', 'files/');
     
     return $tar->savetostring(true);
   }

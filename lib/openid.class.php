@@ -40,7 +40,7 @@ class topenid extends tevents {
   }
   
   private function LoadBigMath() {
-    require_once(litepublisher::$paths['libinclude'] . 'bigmath.php');
+    require_once(litepublisher::$paths->libinclude . 'bigmath.php');
     if (!extension_loaded('bcmath')) {
       if (!@dl('bcmath.'. PHP_SHLIB_SUFFIX) && !@dl('php_bcmath.'. PHP_SHLIB_SUFFIX)) {
         if (!extension_loaded('gmp')) {
@@ -223,7 +223,8 @@ $options = litepublisher::$options;
   }
   
   private function NewKeys(&$assoc_handle,&$shared_secret, &$lifetime) {
-    $assoc_handle = md5(mt_rand() . secret);
+    $assoc_handle = md5uniq();
+
     $shared_secret = new_secret();
     $lifetime = time() + 1200;
     

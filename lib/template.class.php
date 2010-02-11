@@ -34,7 +34,7 @@ litepublisher::$options->url, litepublisher::$options->files));
     'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
     $this->data['hovermenu'] = false;
-    $this->path = litepublisher::$paths['themes'] . 'default' . DIRECTORY_SEPARATOR ;
+    $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
     $this->data['sitebars'] = null;
@@ -60,12 +60,12 @@ litepublisher::$options->url, litepublisher::$options->files));
   public function afterload() {
     parent::afterload();
     if (!$this->themeexists($this->theme))  $this->theme = 'default';
-    $this->path = litepublisher::$paths['themes'] . $this->theme  . DIRECTORY_SEPARATOR ;
+    $this->path = litepublisher::$paths->themes . $this->theme  . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$options->files . '/themes/'. $this->theme;
   }
   
   public function themeexists($name) {
-    return ($name != '') && @file_exists(litepublisher::$paths['themes']. $name . DIRECTORY_SEPARATOR   . 'index.tml');
+    return ($name != '') && @file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR   . 'index.tml');
   }
   
   protected function settheme($name) {
@@ -182,7 +182,7 @@ ttheme::$vars['context'] = $context;
       return $adminmenus->getmenu($hovermenu);
     }
     
-    $filename = litepublisher::$paths['cache'] . "$this->tml.menu.php";
+    $filename = litepublisher::$paths->cache . "$this->tml.menu.php";
     if (@file_exists($filename)) return file_get_contents($filename);
     
     $menus = tmenus::instance();

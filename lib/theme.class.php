@@ -44,7 +44,7 @@ public static $vars = array();
   }
   
   public function load() {
-    $filename = litepublisher::$paths['data'] . $this->getbasename() .'.php';
+    $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (file_exists($filename)) {
       parent::load();
     } else {

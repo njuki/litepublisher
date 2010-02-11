@@ -67,7 +67,7 @@ class twidgets extends tsingleitems {
   
   public function getcontent() {
     $template = ttemplate::instance();
-    $file = litepublisher::$paths['cache'] . "sitebar.$template->tml.$this->id.$this->current.php";
+    $file = litepublisher::$paths->cache . "sitebar.$template->tml.$this->id.$this->current.php";
     if (file_exists($file)) {
       $result = file_get_contents($file);
     } else {
@@ -105,7 +105,7 @@ class twidgets extends tsingleitems {
   }
   
   public function getcachefile($id) {
-    return litepublisher::$paths['cache'] . $this->getcachefilename($id);
+    return litepublisher::$paths->cache . $this->getcachefilename($id);
   }
   
   public function getwidget($id) {
@@ -120,13 +120,13 @@ class twidgets extends tsingleitems {
       
       case 'include':
       $filename = $this->getcachefilename($item['id']);
-      $file = litepublisher::$paths['cache'] . $filename;
+      $file = litepublisher::$paths->cache . $filename;
       if (!@file_exists($file)) {
         $result = $this->dogetwidget($item);
         file_put_contents($file, $result);
         @chmod($file, 0666);
       }
-      $result = "\n<?php @include(litepublisher::\$paths['cache']. '$filename'); ?>\n";
+      $result = "\n<?php @include(litepublisher::\$paths->cache . '$filename'); ?>\n";
       break;
       
       case 'nocache':

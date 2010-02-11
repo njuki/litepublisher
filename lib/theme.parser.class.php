@@ -305,7 +305,7 @@ class tthemeparser {
   public function getabout($name) {
     if (!isset($this->abouts)) $this->abouts = array();
     if (!isset($this->abouts[$name])) {
-      $about = parse_ini_file(litepublisher::$paths['themes'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+      $about = parse_ini_file(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
       //слить языковую локаль в описание
       if (isset($about[litepublisher::$options->language])) {
         $about['about'] = $about[litepublisher::$options->language] + $about['about'];
@@ -326,7 +326,7 @@ class tthemeparser {
     }
     
     $template->data['theme'] = $name;
-    $template->path = litepublisher::$paths['themes'] . $name . DIRECTORY_SEPARATOR  ;
+    $template->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  ;
     $template->url = litepublisher::$options->url  . '/themes/'. $template->theme;
     
     $theme = ttheme::instance();
@@ -371,16 +371,16 @@ class tthemeparser {
       case 'submenu':
       case 'categories':
       case  'tags':
-      return '<li><a href="litepublisher::$options.url$url" title="$title">$icon$title</a>$count</li>';
+      return '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
       
       case 'archives':
-      return '<li><a href="litepublisher::$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>';
+      return '<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>';
       
       case 'post':
       return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />     <small>$post->localdate</small></li>';
       
       case 'comments':
-      return '<li><strong><a href=" litepublisher::$options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
+      return '<li><strong><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
       
       case 'link':
       return '<li><a href="$url" title="$title">$text</a></li>';

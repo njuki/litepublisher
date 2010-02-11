@@ -73,7 +73,7 @@ class tlinkgenerator extends tevents {
   public function ru2lat($s) {
     static $ru2lat_iso;
     if (!isset($ru2lat_iso)) {
-      require_once(litepublisher::$paths['libinclude'] . 'ru2lat-iso.php');
+      require_once(litepublisher::$paths->libinclude . 'ru2lat-iso.php');
     }
     return strtr($s, $ru2lat_iso);
   }

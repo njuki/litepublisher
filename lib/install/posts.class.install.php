@@ -14,7 +14,7 @@ function tpostsInstall($self) {
     $manager->CreateTable('pages', file_get_contents($dir .'postspages.sql'));
     $manager->CreateTable($self->rawtable, file_get_contents($dir .'raw.sql'));
   } else {
-    $dir = litepublisher::$paths['data'] . 'posts';
+    $dir = litepublisher::$paths->data . 'posts';
     @mkdir($dir, 0777);
     @chmod($dir, 0777);
   }
@@ -28,7 +28,7 @@ function tpostsUninstall($self) {
   
   $widgets = twidgets::instance();
   $widgets->deleteclass($clf);
-  //@rmdir(litepublisher::$paths['data']. 'posts');
+  //@rmdir(litepublisher::$paths->data . 'posts');
 }
 
 ?>

@@ -160,11 +160,11 @@ class tstdwidgets extends titems {
   private function getcommentswidget($id) {
     $widgets = twidgets::instance();
     $filename = $widgets->getcachefilename($id);
-    $file = litepublisher::$paths['cache'] . $filename;
+    $file = litepublisher::$paths->cache . $filename;
     if (!@file_exists($file)) {
       $this->getcontent('comments');
     }
-    return "\n<?php @include(litepublisher::\$paths['cache']. '$filename'); ?>\n";
+    return "\n<?php @include(litepublisher::\$paths->cache . '$filename'); ?>\n";
   }
   
 }//class

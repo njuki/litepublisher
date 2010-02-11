@@ -31,7 +31,7 @@ class tcomusers extends titems {
     'name' => $name,
     'url' => $url,
     'email' => $email,
-    'cookie' => md5(mt_rand() . secret. microtime())
+    'cookie' => md5uniq()
     );
     
     $this->unlock();

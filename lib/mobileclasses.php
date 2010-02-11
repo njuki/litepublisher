@@ -9,7 +9,7 @@
 class tmobileclasses extends tclasses {
   
   protected function create() {
-    litepublisher$paths['cache'] .= 'pda.';
+    litepublisher::$paths->cache .= 'pda.';
     parent::create();
     $this->remap = array(
     'tclasses' => __class__,
