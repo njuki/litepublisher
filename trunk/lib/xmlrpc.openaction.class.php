@@ -84,7 +84,7 @@ class TXMLRPCOpenAction extends TItems {
   public function CallAction($to, $name, $arg) {
     $this->Lock();
     $this->DeleteExpired();
-    $id = md5(mt_rand() . secret. uniqid( microtime()));
+    $id = md5uniq();
     $this->actions[$id] = array(
     'date' => time(),
     'to' => $to,

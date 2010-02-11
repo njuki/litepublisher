@@ -55,10 +55,8 @@ ttheme::$vars['rss'] = $rss;
       $args->commentsenabled = $options->commentsenabled;
       $args->pingenabled  = $options->pingenabled;
       $args->commentpages  = $options->commentpages;
-      $manager = $classes->commentmanager;
+      $manager = litepublisher::$classes->commentmanager;
       $args->sendnotification = $manager->sendnotification;
-      
-      $manager = tcommentmanager::instance();
       $args->hidelink = $manager->hidelink;
       $args->redir = $manager->redir;
       $args->nofollow = $manager->nofollow;
@@ -79,8 +77,8 @@ ttheme::$vars['rss'] = $rss;
       
       case 'openid':
       $openid = topenid::instance();
-      $args->confirm = $openid->confirm ? $checked : '';
-      $args->usebigmath = $openid->usebigmath ? $checked : '';
+      $args->confirm = $openid->confirm;
+      $args->usebigmath = $openid->usebigmath;
       $args->trusted = implode("\n", $openid->trusted);
       break;
       
@@ -89,9 +87,9 @@ ttheme::$vars['rss'] = $rss;
       break;
       
       case 'lite':
-      $args->litearchives = $classes->archives->lite;
-      $args->litecategories = $classes->categories->lite;
-      $args->litetags = $classes->tags->lite;
+      $args->litearchives = litepublisher::$classes->archives->lite;
+      $args->litecategories = litepublisher::$classes->categories->lite;
+      $args->litetags = litepublisher::$classes->tags->lite;
       break;
       
       case 'secure':
@@ -196,14 +194,12 @@ ttheme::$vars['rss'] = $rss;
       $options->commentsperpage = $commentsperpage;
       $options->unlock();
       
-      $manager = $classes->commentmanager;
+      $manager = litepublisher::$classes->commentmanager;
       $manager->sendnotification = isset($sendnotification);
-      
-      $comusers = tcomusers ::instance();
-      $comusers->hidelink = isset($hidelink);
-      $comusers->redir = isset($redir);
-      $comusers->nofollow = isset($nofollow);
-      $comusers->save();
+      $manager->hidelink = isset($hidelink);
+      $manager->redir = isset($redir);
+      $manager->nofollow = isset($nofollow);
+      $manager->save();
       
       $subscribtion = tsubscribers::instance();
       if ($locklist != $subscribtion->locklist) {
@@ -249,15 +245,15 @@ ttheme::$vars['rss'] = $rss;
       break;
       
       case 'lite':
-      $classes->archives->lite = isset($litearchives);
-      $classes->categories->lite = isset($litecategories);
-      $classes->tags->lite = isset($litetags);
+      litepublisher::$classes->archives->lite = isset($litearchives);
+      litepublisher::$classes->categories->lite = isset($litecategories);
+      litepublisher::$classes->tags->lite = isset($litetags);
       if (dbversion) {
         $options->save();
       } else {
-        $classes->archives->save();
-        $classes->categories->save();
-        $classes->tags->save();
+        litepublisher::$classes->archives->save();
+        litepublisher::$classes->categories->save();
+        litepublisher::$classes->tags->save();
       }
       break;
       
@@ -303,7 +299,7 @@ ttheme::$vars['rss'] = $rss;
     $zones = timezone_identifiers_list ();
     $result = "<select name='timezone' id='timezone'>\n";
     foreach ($zones as $zone) {
-      $selected = $zone == $options->timezone ? 'selected' : '';
+      $selected = $zone == litepublisher::$options->timezone ? 'selected' : '';
       $result .= "<option value='$zone' $selected>$zone</option>\n";
     }
     $result .= "</select>";

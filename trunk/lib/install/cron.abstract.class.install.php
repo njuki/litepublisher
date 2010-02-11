@@ -8,7 +8,7 @@
 
 function tabstractcronInstall($self) {
   if (get_class($self) == 'tabstractcron') return;
-  $dir = litepublisher::$paths['data'] . 'cron';
+  $dir = litepublisher::$paths->data . 'cron';
   @mkdir($dir, 0777);
   @chmod($dir, 0777);
   

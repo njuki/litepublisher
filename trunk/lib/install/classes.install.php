@@ -22,13 +22,13 @@ $classes = litepublisher::$classes;
   $replace = dbversion ? '.class.db.' : '.class.files.';
   $exclude = !dbversion ? '.class.db.' : '.class.files.';
   
-  $ini = parse_ini_file(litepublisher::$paths['lib'].'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
+  $ini = parse_ini_file(litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
   foreach ($ini['items'] as $class => $filename) {
     //исключить из списка только файлы для бд или файлов
     if (strpos($filename, $exclude)) continue;
-    if (!file_exists(litepublisher::$paths['lib'] . $filename)){
+    if (!file_exists(litepublisher::$paths->lib . $filename)){
       $filename = str_replace('.class.', $replace, $filename);
-      if (!file_exists(litepublisher::$paths['lib'] . $filename))continue;
+      if (!file_exists(litepublisher::$paths->lib . $filename))continue;
     }
     $classes->items[$class] = array($filename, '');
   }
@@ -38,8 +38,8 @@ $classes = litepublisher::$classes;
   $classes->Save();
   
   //так как ttheme при первом же обращении парсит тему
-  @mkdir(litepublisher::$paths['data'] . 'themes', 0777);
-  @chmod(litepublisher::$paths['data'] . 'themes', 0777);
+  @mkdir(litepublisher::$paths->data . 'themes', 0777);
+  @chmod(litepublisher::$paths->data . 'themes', 0777);
 }
 
 function doinstallclasses() {

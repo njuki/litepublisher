@@ -114,7 +114,7 @@ $db = litepublisher::$db;
       
     } else {
       $post->id = ++$this->autoid;
-      $dir =litepublisher::$paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
+      $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
       @mkdir($dir, 0777);
       @chmod($dir, 0777);
       $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
@@ -180,7 +180,7 @@ $db = litepublisher::$db;
         $idurl = $post->idurl;
         $post->free();
       }
-      titem::deletedir(litepublisher::$paths['data']. 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
+      titem::deletedir(litepublisher::$paths->data . 'posts'. DIRECTORY_SEPARATOR   . $id . DIRECTORY_SEPARATOR  );
       unset($this->items[$id]);
       $urlmap->deleteitem($idurl);
     }

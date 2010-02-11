@@ -32,7 +32,7 @@ class tadminthemes extends tadminmenu {
       }
       $template = ttemplate::instance();
       $result .= $html->formheader();
-      $list =    tfiler::getdir(litepublisher::$paths['themes']);
+      $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
       $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'theme';
       foreach ($list as $name) {
@@ -48,7 +48,7 @@ class tadminthemes extends tadminmenu {
       $themename = !empty($_GET['theme']) ? $_GET['theme'] : $template->theme;
       if (strpbrk($themename, '/\<>')) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
-      $list = tfiler::getfiles(litepublisher::$paths['themes'] . $themename . DIRECTORY_SEPARATOR  );
+      $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
       $editurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . "theme=$themename&file";
       $fileitem = $html->fileitem . "\n";
@@ -61,7 +61,7 @@ class tadminthemes extends tadminmenu {
       if (!empty($_GET['file'])) {
         $file = $_GET['file'];
         if (strpbrk ($file, '/\<>')) return $this->notfound;
-        $filename = litepublisher::$paths['themes'].$themename . DIRECTORY_SEPARATOR  . $file;
+        $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
         if (!@file_exists($filename)) return $this->notfound;
         $args->content = file_get_contents($filename);
         $result .= sprintf($html->h2->filename, $_GET['file']);
@@ -99,7 +99,7 @@ class tadminthemes extends tadminmenu {
       if (!empty($_GET['file']) && !empty($_GET['theme'])) {
         //проверка на безопасность, чтобы не указывали в запросе файлы не в теме
         if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
-        if (!file_put_contents(litepublisher::$paths['themes'] . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
+        if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
           return  $this->html->h2->errorsave;
         }
         $urlmap = turlmap::instance();

@@ -19,16 +19,16 @@ class tupdater extends tevents {
   }
   
   public static function GetVersion() {
-    return trim(file_get_contents(litepublisher::$paths['libinclude']. 'version.txt'));
+    return trim(file_get_contents(litepublisher::$paths->libinclude . 'version.txt'));
   }
   
   public function update() {
     $log = false;
     if ($log) tfiler::log("begin update", 'update');
-    tfiler::deletemask(litepublisher::$paths['languages'] . '*.php');
+    tfiler::deletemask(litepublisher::$paths->languages . '*.php');
     $this->version =  self::getversion();
     if ($log) tfiler::log("update started from litepublisher::$options->version to $this->version", 'update');
-    $dir = litepublisher::$paths['lib'] . 'update' . DIRECTORY_SEPARATOR;
+    $dir = litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR;
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= $this->version) {
       if ($log) tfiler::log("$v selected to update", 'update');
@@ -72,7 +72,7 @@ class tupdater extends tevents {
   }
   
   public function getlatest() {
-    include_once(litepublisher::$paths['libinclude'] . 'utils.php');
+    include_once(litepublisher::$paths->libinclude . 'utils.php');
     if (($s = GetWebPage('http://blogolet.ru/service/version.txt'))  ||
     ($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') )) {
       return $s;
@@ -84,7 +84,7 @@ class tupdater extends tevents {
     $backuper = tbackuper::instance();
     $s = $backuper->getpartial(true, true, true);
     $date = date('Y-m-d');
-    $filename = litepublisher::$paths['backup'] . litepublisher::$domain . "-$date.'.tar.gz";
+    $filename = litepublisher::$paths->backup . litepublisher::$domain . "-$date.'.tar.gz";
     @file_put_contents($filename, $s);
     @chmod($filename, 0666);
   }
@@ -92,17 +92,17 @@ class tupdater extends tevents {
   public function download($version) {
     $lang = tlocal::instance('service');
     //test write
-    if (!@file_put_contents(litepublisher::$paths['lib'] . 'index.htm', ' ')) {
-      return sprintf($lang->errorwrite, litepublisher::$paths['lib']);
+    if (!@file_put_contents(litepublisher::$paths->lib . 'index.htm', ' ')) {
+      return sprintf($lang->errorwrite, litepublisher::$paths->lib);
     }
     
-    require_once(litepublisher::$paths['libinclude'] . 'utils.php');
+    require_once(litepublisher::$paths->libinclude . 'utils.php');
     if (!($s = GetWebPage("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) &&
     !($s = GetWebPage("http://blogolet.ru/service/litepublisher.$version.tar.gz") )) {
       return $lang->erordownload;
     }
     
-    require_once(litepublisher::$paths['libinclude'] . 'tar.class.php');
+    require_once(litepublisher::$paths->libinclude . 'tar.class.php');
     $tar = new tar();
     $tar->loadfromstring($s);
     foreach ($tar->files as $file) {
@@ -121,7 +121,7 @@ class tupdater extends tevents {
     foreach (array('lib', 'plugins') as $dir) {
       if (strbegin($filename, $dir . '/')) {
         $filename = substr($filename, strlen($dir) + 1);
-        return litepublisher::$paths[$dir] . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+        return litepublisher::$paths->$dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
       }
     }
     return false;

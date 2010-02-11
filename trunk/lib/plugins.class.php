@@ -19,7 +19,7 @@ class tplugins extends TItems {
   }
   
   public function getabout($name) {
-    $about = parse_ini_file(litepublisher::$paths['plugins'] .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+    $about = parse_ini_file(litepublisher::$paths->plugins .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
     if (isset($about[litepublisher::$options->language])) {
       $about['about'] = $about[litepublisher::$options->language] + $about['about'];
     }
@@ -28,7 +28,7 @@ class tplugins extends TItems {
   }
   
   public function add($name) {
-    if (!@is_dir(litepublisher::$paths['plugins'] . $name)) return false;
+    if (!@is_dir(litepublisher::$paths->plugins . $name)) return false;
     $about = $this->GetAbout($name);
     return $this->AddExt($name, $about['classname'], $about['filename']);
   }
@@ -52,8 +52,8 @@ class tplugins extends TItems {
     if (class_exists($item['class'])) {
       $plugin = getinstance($item['class']);
       if ($plugin instanceof tplugin) {
-        @unlink(litepublisher::$paths['data']. $plugin->getbasename() . '.php');
-        @unlink(litepublisher::$paths['data']. $plugin->getbasename() . 'bak..php');
+        @unlink(litepublisher::$paths->data. $plugin->getbasename() . '.php');
+        @unlink(litepublisher::$paths->data . $plugin->getbasename() . 'bak..php');
       }
     }
     litepublisher::$classes->delete($item['class']);
@@ -73,7 +73,7 @@ class tplugins extends TItems {
   public function update($list) {
     $add = array_diff($list, array_keys($this->items));
     $delete  = array_diff(array_keys($this->items), $list);
-    $delete  = array_intersect($delete, tfiler::getdir(litepublisher::$paths['plugins']));
+    $delete  = array_intersect($delete, tfiler::getdir(litepublisher::$paths->plugins));
     
     $this->lock();
     foreach ($delete as $name) {
@@ -102,11 +102,11 @@ class tplugins extends TItems {
   }
   
   public function upload($name, $files) {
-    if (!@file_exists(litepublisher::$paths['plugins'] . $name)) {
-      if (!@mkdir(litepublisher::$paths['plugins'] . $name, 0777)) return $this->Error("Cant create $name folder in plugins");
-      @chmod(litepublisher::$paths['plugins'] . $name, 0777);
+    if (!@file_exists(litepublisher::$paths->plugins . $name)) {
+      if (!@mkdir(litepublisher::$paths->plugins . $name, 0777)) return $this->Error("Cant create $name folder in plugins");
+      @chmod(litepublisher::$paths->plugins . $name, 0777);
     }
-    $dir = litepublisher::$paths['plugins'] . $name . DIRECTORY_SEPARATOR  ;
+    $dir = litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR  ;
     foreach ($files as $filename => $content) {
       file_put_contents($dir . $filename, base64_decode($content));
     }

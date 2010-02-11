@@ -50,7 +50,7 @@ class tfiles extends titems {
   }
   
   public function additem(array $item) {
-    $realfile = litepublisher::$paths['files'] . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
+    $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
     $item['author'] = litepublisher::$options->user;
     $item['posted'] = sqldate();
     $item['keywords'] = '';
@@ -76,7 +76,7 @@ class tfiles extends titems {
     $this->itemsposts->deleteitem($id);
     $this->itemsposts->updateposts($list, 'files');
     $item = $this->getitem($id);
-    @unlink(litepublisher::$paths['files']. str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
+    @unlink(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']));
     $this->lock();
     parent::delete($id);
     if ($item['preview'] > 0) $this->delete($item['preview']);

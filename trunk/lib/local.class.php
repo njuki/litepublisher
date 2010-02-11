@@ -79,7 +79,7 @@ class tlocal {
   
   public static function loadlang($FileName) {
     if (litepublisher::$options->language != '') {
-      self::load(litepublisher::$paths['languages']. $FileName. litepublisher::$options->language);
+      self::load(litepublisher::$paths->languages . $FileName. litepublisher::$options->language);
     }
   }
   
@@ -91,7 +91,7 @@ class tlocal {
     if (!tfiler::unserialize($partialname . '.php', $v) || !is_array($v)) {
       $v = parse_ini_file($partialname . '.ini', true);
       tfiler::serialize($partialname . '.php', $v);
-      tfiler::ini2js($v + self::$data , litepublisher::$paths['files'] . basename($partialname) . '.js');
+      tfiler::ini2js($v + self::$data , litepublisher::$paths->files . basename($partialname) . '.js');
     }
     self::$data = $v + self::$data ;
   }

@@ -390,7 +390,7 @@ class ttagcontent extends tdata {
   }
   
   private function getfilename($id) {
-    return litepublisher::$paths['data'] . $this->owner->basename . DIRECTORY_SEPARATOR . $id . '.php';
+    return litepublisher::$paths->data . $this->owner->basename . DIRECTORY_SEPARATOR . $id . '.php';
   }
   
   public function getitem($id) {

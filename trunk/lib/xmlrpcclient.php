@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-require_once($paths['llibinclude']. 'class-IXR.php');
+require_once(litepublisher::$paths->llibinclude. 'class-IXR.php');
 
 class TXMLRPCClient  extends TDataClass {
   protected $client;

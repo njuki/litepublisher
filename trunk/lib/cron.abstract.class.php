@@ -19,7 +19,7 @@ class tabstractcron extends tevents {
   }
   
   protected function getdir() {
-    return litepublisher::$paths['data'] . 'cron' . DIRECTORY_SEPARATOR;
+    return litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR;
   }
   
   protected function getpath() {
@@ -122,7 +122,7 @@ class tabstractcron extends tevents {
   
   public function sendexceptions() {
     //проверить, если файл логов создан более часа назад, то его отослать на почту
-    $filename = litepublisher::$paths['data'] . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
+    $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);

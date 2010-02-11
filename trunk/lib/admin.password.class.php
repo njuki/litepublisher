@@ -34,7 +34,7 @@ public function getmenu() { return ''; }
     $html->section = $this->basename;
     $lang = tlocal::instance();
     if (strtolower(trim($_POST['email'])) == strtolower(trim(litepublisher::$options->email))) {
-      $password = md5(mt_rand() . secret. microtime());
+      $password = md5uniq();
       litepublisher::$options->setpassword($password);
       eval('$subject = "'. $html->subject . '";');
       eval('$body = "'. $html->body . '";');

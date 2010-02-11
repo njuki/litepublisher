@@ -111,7 +111,7 @@ class tfiler {
   }
   
   public static function log($s, $filename = '') {
-    $dir = litepublisher::$paths['data'] . 'logs' . DIRECTORY_SEPARATOR;
+    $dir = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR;
     if (!is_dir($dir)) {
       @mkdir($dir, 0777);
       @chmod($dir, 0777);

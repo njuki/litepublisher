@@ -17,16 +17,16 @@ class tpinger extends tevents {
     $this->basename = 'pinger';
     $this->data['services'] = '';
     $this->data['enabled'] = true;
-    require_once(litepublisher::$paths['libinclude'] . 'class-IXR.php');
+    require_once(litepublisher::$paths->libinclude . 'class-IXR.php');
   }
   
   public function install() {
     if (dbversion) {
-      $dir = litepublisher::$paths['data'] . 'pingedlinks';
+      $dir = litepublisher::$paths->data . 'pingedlinks';
       @mkdir($dir, 0777);
       @chmod($dir, 0777);
     }
-    if ($this->services == '') $this->services = file_get_contents(litepublisher::$paths['libinclude'] . 'pingservices.txt');
+    if ($this->services == '') $this->services = file_get_contents(litepublisher::$paths->libinclude . 'pingservices.txt');
     $posts = tposts::instance();
     $posts->lock();
     if (dbversion) $posts->deleted = $this->postdeleted;
@@ -55,7 +55,7 @@ class tpinger extends tevents {
   }
   
   public function postdeleted($id) {
-    tfiler::deletemask(litepublisher::$paths['data'] . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
+    tfiler::deletemask(litepublisher::$paths->data . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
   }
   
   public function pingpost($id) {

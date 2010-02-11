@@ -133,7 +133,7 @@ class turlmap extends titems {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
     }
-    return litepublisher::$paths['cache'] . $this->cachefilename;
+    return litepublisher::$paths->cache . $this->cachefilename;
   }
   
   private function  printcontent(array $item) {
@@ -291,7 +291,7 @@ class turlmap extends titems {
   }
   
   public function clearcache() {
-    $path = litepublisher::$paths['cache'];
+    $path = litepublisher::$paths->cache;
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
@@ -309,7 +309,7 @@ class turlmap extends titems {
   }
   
   public function setexpired($id) {
-    tfiler::deletemask(litepublisher::$paths['cache'] . "*.$id-*.php");
+    tfiler::deletemask(litepublisher::$paths->cache . "*.$id-*.php");
   }
   
   public function setexpiredcurrent() {
@@ -317,11 +317,11 @@ class turlmap extends titems {
   }
   
   public function getcachename($name, $id) {
-    return litepublisher::$paths['cache']. "$name-$id.php";
+    return litepublisher::$paths->cache. "$name-$id.php";
   }
   
   public function expiredname($name, $id) {
-    tfiler::deletedirmask(litepublisher::$paths['cache'], "*$name-$id.php");
+    tfiler::deletedirmask(litepublisher::$paths->cache, "*$name-$id.php");
   }
   
   public function expiredclass($class) {
@@ -351,7 +351,7 @@ class turlmap extends titems {
   
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
-    $cronfile =litepublisher::$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+    $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
     $time = @filemtime($cronfile);
     if (($time === false) || ($time + 3600 < time())) {
       register_shutdown_function('tcron::selfping');
