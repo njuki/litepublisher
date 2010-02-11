@@ -23,9 +23,8 @@ $this->data['trace'] = true;
  }
  
 public function getwidget($id, $sitebar) {
-  global $options, $urlmap, $paths;
-  if ($urlmap->adminpanel || strbegin($urlmap->url, '/croncron.php')) return '';
-  $filename = $paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. $urlmap->itemrequested['id'] . ".$urlmap->page .php";
+  if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
+  $filename = litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. litepublisher::$urlmap->itemrequested['id'] . ".litepublisher::$urlmap->page .php";
     if (@file_exists($filename)) {
    $links = file_get_contents($filename);
   } else {

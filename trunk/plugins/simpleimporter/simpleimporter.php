@@ -25,7 +25,6 @@ $this->addmap('tagsmap', array(
 }
 
 public function getcontent() {
-global $options;
 $result = parent::getcontent();
 $tagsmap = '';
 foreach ($this->tagsmap as $key => $val) {
@@ -64,8 +63,7 @@ $this->tagsmap[$key] = $val;
 }
 
 public function import($s) {
-global $paths;
-require_once($paths['lib'] . 'domrss.class.php');
+require_once(litepublisher::$paths['lib'] . 'domrss.class.php');
 $a = xml2array($s);
 
 $urlmap = turlmap::instance();

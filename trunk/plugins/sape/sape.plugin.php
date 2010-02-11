@@ -40,8 +40,7 @@ echo $self->getlinks($count);
 }
 
 public function getlinks($count = null) {
-global $urlmap;
-if ($urlmap->is404 || $urlmap->adminpanel) return '';
+if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
 if (!isset($this->sape)) $this->createsape();
  $Links = $this->sape->return_links($count);
 if (empty($Links)) return '';
