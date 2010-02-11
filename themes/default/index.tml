@@ -20,7 +20,7 @@
 <link rel="openid.delegate" href="$options.url/openid/" />
 <link rel="openid2.local_id" href="$options.url/openid/" />
 	<script type="text/javascript" src="$options.files/js/litepublisher/rpc.js"></script>
-	<script type="text/javascript" src="$options.files/js/litepublisher/widgetcontent.js"></script>
+	<script type="text/javascript" src="$options.files/js/litepublisher/client.js"></script>
 	<script type="text/javascript" src="$options.files/js/lightbox/js/prototype.js"></script>
 <script type="text/javascript" src="$options.files/js/lightbox/js/scriptaculous.js?load=effects,builder"></script>
 <script type="text/javascript" src="$options.files/js/lightbox/js/lightbox.js"></script>
