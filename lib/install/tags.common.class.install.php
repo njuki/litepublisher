@@ -22,9 +22,9 @@ function tcommontagsInstall($self) {
   if (dbversion) {
     $manager = TDBManager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-    $manager->CreateTable($self->table, file_get_contents($dir .'tags.sql'));
-    $manager->CreateTable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
-    $manager->CreateTable($self->contents->table, file_get_contents($dir .'tags.content.sql'));
+    $manager->createtable($self->table, file_get_contents($dir .'tags.sql'));
+    $manager->createtable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
+    $manager->createtable($self->contents->table, file_get_contents($dir .'tags.content.sql'));
   } else {
     $dir = litepublisher::$paths->data . $self->basename;
     @mkdir($dir, 0777);

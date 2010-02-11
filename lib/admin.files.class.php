@@ -68,7 +68,8 @@ class tadminfiles extends tadminmenu {
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     
     if (dbversion) {
-      $list = $files->select($sql . " limit $from, $perpage");
+      $list = $files->select($sql . " order by posted desc limit $from, $perpage");
+if (!$list) $list = array();
     } else {
       $list = array_slice($list, $from, $perpage);
     }
@@ -92,6 +93,10 @@ class tadminfiles extends tadminmenu {
   public function processform() {
     $files = tfiles::instance();
     if (empty($_GET['action'])) {
+if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
+$error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
+return "<h2>$error</h2>\n";
+}
       if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
       
       $overwrite  = isset($_POST['overwrite']);
