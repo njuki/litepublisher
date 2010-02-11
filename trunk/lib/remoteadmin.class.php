@@ -143,7 +143,7 @@ class tremoteadmin extends tevents {
       if ($dataprefix == substr($dir, 0, strlen($dataprefix))) {
         $dir = substr($dir, strlen($dataprefix));
         if (!isset($tmp)) {
-          $up = dirname(litepublisher::$paths->data']) .DIRECTORY_SEPARATOR;
+          $up = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR;
           $tmp = $up . basename(litepublisher::$paths->data) . '-tmp.tmp' . DIRECTORY_SEPARATOR;
           @mkdir($tmp, 0777);
           @chmod($tmp, 0777);

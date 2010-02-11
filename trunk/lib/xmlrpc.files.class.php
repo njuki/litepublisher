@@ -62,7 +62,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $from = ($index -1)  * $perpage;
     
     if (dbversion) {
-      $list = $files->select($sql . " limit $from, $perpage");
+      $list = $files->select($sql . " order by posted desc limit $from, $perpage");
     } else {
       $list = array_slice($list, $from, $perpage);
     }

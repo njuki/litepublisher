@@ -171,9 +171,14 @@ class titemspostsowner extends titemsposts {
   private $owner;
   public function __construct($owner) {
     if (!isset($owner)) return;
+    parent::__construct();
     $this->owner = $owner;
-    $this->items = &$owner->data['itemsposts'];
+if ($owner->dbversion) {
     $this->table = $owner->table . 'items';
+} else {
+$this->items = &$owner->data['itemsposts'];
+}
+
     $this->dbversion = $owner->dbversion;
   }
   

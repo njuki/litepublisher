@@ -17,8 +17,7 @@ class tcommontags extends titems implements  itemplate {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-    $this->data['itemsposts'] = array();
-    
+if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->data['lite'] = false;
     $this->data['sortname'] = 'count';
     $this->data['showcount'] = true;

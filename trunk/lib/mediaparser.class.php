@@ -152,8 +152,7 @@ class tmediaparser extends tevents {
   public function getinfo($filename) {
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
-    
-    if ($info = getimagesize($realfile)) {
+    if ($info = @getimagesize($realfile)) {
       $result['media'] = 'image';
       $result['mime'] = $info['mime'];
       $result['width'] = $info[0];
