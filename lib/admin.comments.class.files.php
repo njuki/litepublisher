@@ -131,7 +131,7 @@ class tadminmoderator extends tadminmenu {
   private function editcomment($id, $idpost) {
     $comments = tcomments::instance($idpost);
     $comment = $comments->getcomment($id);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&post=$idpost&action";
@@ -142,7 +142,7 @@ ttheme::$vars['comment'] = $comment;
   
   private function reply($id, $idpost) {
     $comment = tcomments::instance($idpost, $id);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&post=$idpost&action";
     $result = $this->html->info($args);
@@ -166,7 +166,7 @@ ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl = $this->adminurl ."post=$idpost&id";
     $comment = new TComment($comments);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
@@ -199,7 +199,7 @@ ttheme::$vars['comment'] = $comment;
     $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . 'post';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
-ttheme::$vars['post'] = $post;
+      ttheme::$vars['post'] = $post;
       $result .= $html->postitem($args);
       $result .= "\n";
     }
@@ -264,7 +264,7 @@ ttheme::$vars['post'] = $post;
     if (!isset(ttheme::$vars['comment'])) {
       $comments = tcomments::instance($idpost);
       $comment = $comments->getcomment($id);
-ttheme::$vars['comment'] = $comment;
+      ttheme::$vars['comment'] = $comment;
     }
     
     $args = targs::instance();

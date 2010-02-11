@@ -31,7 +31,7 @@ public function auth() { }
     $result .=$html->formhead($args);
     foreach ($items as $postid) {
       $post = tpost::instance($postid);
-ttheme::$vars['post'] = $post;
+      ttheme::$vars['post'] = $post;
       if ($post->status != 'published') continue;
       $result .= $html->formitem($args);
     }

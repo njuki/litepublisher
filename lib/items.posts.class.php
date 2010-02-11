@@ -173,12 +173,12 @@ class titemspostsowner extends titemsposts {
     if (!isset($owner)) return;
     parent::__construct();
     $this->owner = $owner;
-if ($owner->dbversion) {
-    $this->table = $owner->table . 'items';
-} else {
-$this->items = &$owner->data['itemsposts'];
-}
-
+    if ($owner->dbversion) {
+      $this->table = $owner->table . 'items';
+    } else {
+      $this->items = &$owner->data['itemsposts'];
+    }
+    
     $this->dbversion = $owner->dbversion;
   }
   

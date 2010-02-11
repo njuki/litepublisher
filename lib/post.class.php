@@ -194,7 +194,7 @@ class tpost extends titem implements  itemplate {
   public function getmorelink() {
     if ($this->moretitle == '') return '';
     $theme = ttheme::instance();
-ttheme::$vars['post'] = $this;
+    ttheme::$vars['post'] = $this;
     return $theme->parse($theme->content->excerpts->excerpt->more);
   }
   
@@ -236,8 +236,8 @@ ttheme::$vars['post'] = $this;
   }
   
   public function gethead() {
-$options = litepublisher::$options;
-$template = ttemplate::instance();
+    $options = litepublisher::$options;
+    $template = ttemplate::instance();
     $template->javaoptions[] = "idpost: $this->id";
     $result = '';
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
@@ -283,14 +283,14 @@ $template = ttemplate::instance();
   
   public function GetTemplateContent() {
     $theme = ttheme::instance();
-ttheme::$vars['post'] = $this;
+    ttheme::$vars['post'] = $this;
     return $theme->parse($theme->content->post);
   }
   
   public function getsubscriberss() {
     if ($this->commentsenabled && ($this->commentscount > 0)) {
       $theme = ttheme::instance();
-ttheme::$vars['post'] = $this;
+      ttheme::$vars['post'] = $this;
       return $theme->parse($theme->content->post->rss);
     }
     return '';
@@ -301,12 +301,12 @@ ttheme::$vars['post'] = $this;
     $theme = ttheme::instance();
     $tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
-ttheme::$vars['prevpost'] = $prevpost;
+      ttheme::$vars['prevpost'] = $prevpost;
       $result .= $theme->parse($tml->prev);
     }
     
     if ($nextpost = $this->next) {
-ttheme::$vars['nextpost'] = $nextpost;
+      ttheme::$vars['nextpost'] = $nextpost;
       $result .= $theme->parse($tml->next);
     }
     
@@ -328,7 +328,7 @@ ttheme::$vars['nextpost'] = $nextpost;
   
   private function replacemore($content) {
     $theme = ttheme::instance();
-ttheme::$vars['post'] = $this;
+    ttheme::$vars['post'] = $this;
     $more = $theme->parse($theme->content->post->more);
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {
@@ -446,7 +446,7 @@ ttheme::$vars['post'] = $this;
   }
   
   public function LoadFromDB() {
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
       $res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));

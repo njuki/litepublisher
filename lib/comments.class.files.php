@@ -213,7 +213,7 @@ class tcomments extends titems {
       $args = targs::instance();
       $args->from = $from;
       $comment = new TComment($this);
-ttheme::$vars['comment'] = $comment;
+      ttheme::$vars['comment'] = $comment;
       if ($hold) $comment->status = 'hold';
       $lang = tlocal::instance('comment');
       

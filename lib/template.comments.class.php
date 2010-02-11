@@ -16,11 +16,11 @@ public function load() {}
 public function save() {}
   
   public function getadminhead() {
-$template = ttemplate::instance();
+    $template = ttemplate::instance();
     $theme = ttheme::instance();
   $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
     return "<script type=\"text/javascript\" src=\"". litepublisher::$options->files . "/js/litepublisher/moderate.js\"></script>
-  <script type=\"text/javascript\" src=\"" . litepublisher::$options->files . "/files/admin" . litepublisher::$options->language . ".js\"></script>\n";
+    <script type=\"text/javascript\" src=\"" . litepublisher::$options->files . "/files/admin" . litepublisher::$options->language . ".js\"></script>\n";
   }
   
   public function getcount($count) {

@@ -17,7 +17,7 @@ class tcommontags extends titems implements  itemplate {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-if (!$this->dbversion)  $this->data['itemsposts'] = array();
+    if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->data['lite'] = false;
     $this->data['sortname'] = 'count';
     $this->data['showcount'] = true;
@@ -35,7 +35,7 @@ if (!$this->dbversion)  $this->data['itemsposts'] = array();
   
   public function getitem($id) {
     if ($this->dbversion && !isset($this->items[$id])) {
-$db = litepublisher::$db;
+      $db = litepublisher::$db;
       if ($res = $db->query("select $this->thistable.*, $db->urlmap.url as url  from $this->thistable, $db->urlmap
       where $this->thistable.id = $id and  $db->urlmap.id  = $this->thistable.idurl limit 1")) {
         $this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
@@ -52,7 +52,7 @@ $db = litepublisher::$db;
     if (count($items) == 0) return;
     $list = implode(',', $items);
     $table = $this->thistable;
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     $res = $db->query("select $table.*, $db->urlmap.url as url  from $table, $db->urlmap
     where $table.id in ($list) and  $db->urlmap.id  = $table.idurl");
     $res->setFetchMode (PDO::FETCH_ASSOC);
@@ -63,7 +63,7 @@ $db = litepublisher::$db;
   
   public function loadall() {
     if (!$this->dbversion)  return;
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     $table = $this->thistable;
     $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
     where $table.idurl = $db->urlmap.id");
@@ -136,7 +136,7 @@ $db = litepublisher::$db;
   private function updatecount(array $items) {
     if (count($items) == 0) return;
     if ($this->dbversion) {
-$db = litepublisher::$db;
+      $db = litepublisher::$db;
       // вначале один запрос к таблице постов, чтобы получить массив новых значений
       //следующие запросы обновляют значение в таблице тегов
       $items = implode(',', $items);

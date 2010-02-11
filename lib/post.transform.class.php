@@ -55,7 +55,7 @@ class tposttransform  {
   }
   
   public function save() {
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     $db->table = 'posts';
     $list = array();
     foreach (self::$props  As $name) {

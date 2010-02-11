@@ -9,13 +9,13 @@
 class tmailer {
   
   protected static function  send($from, $to, $subj, $body) {
-$options =     litepublisher::$options;
+    $options =     litepublisher::$options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = gmdate ("M d Y H:i:s");
     if (litepublisher::$debug)
     return tfiler::log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: LitePublisher mailer\n\n$body",
     'mail.log');
-
+    
     mail($to, $subj, $body,
     "From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version");
   }
@@ -40,7 +40,7 @@ $options =     litepublisher::$options;
   }
   
   public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
-$options =     litepublisher::$options;
+    $options =     litepublisher::$options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = gmdate ("M d Y H:i:s", time());
     $from = self::CreateEmail($options->name, $options->fromemail);
@@ -86,7 +86,7 @@ class TSMTPMailer extends tevents {
   }
   
   public function Mail($fromname,  $toname, $toemail, $subj, $body) {
-$options =     litepublisher::$options;
+    $options =     litepublisher::$options;
     include_once(litepublisher::$paths->libinclude . 'class-smtp.php');
     $smtp = new SMTP();
     if($smtp->Connect($this->host, $this->port, 10)) {

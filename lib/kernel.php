@@ -103,13 +103,12 @@ class tdata {
   }
   
   protected function CallSatellite($func, $arg = null) {
-    global $classes, $paths;
 $func{0} = strtoupper($func{0});
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = $classes->getpath($class)) {
-        $filename = basename($classes->items[$class][0], '.php') . '.install.php';
+      if ($path = litepublisher::$classes->getpath($class)) {
+        $filename = basename(litepublisher::$classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
         if (!@file_exists($file)) {
           $file =$path .  $filename;
@@ -125,21 +124,19 @@ $func{0} = strtoupper($func{0});
   }
   
   public function load() {
-    global $paths;
     if (dbversion == 'full') return $this->LoadFromDB();
-    $filename = $paths['data'] . $this->getbasename() .'.php';
+    $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (@file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }
   
   public function save() {
-    global $paths;
     if (self::$GlobalLock || ($this->lockcount > 0)) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
-      SafeSaveFile($paths['data'].$this->getbasename(), PHPComment($this->SaveToString()));
+      SafeSaveFile(litepublisher::$paths->data .$this->getbasename(), PHPComment($this->SaveToString()));
     }
   }
   
@@ -182,14 +179,13 @@ $func{0} = strtoupper($func{0});
   }
   
   public function getdb($table = '') {
-    global $db;
     $table =$table != '' ? $table : $this->table;
-    if ($table != '') $db->table = $table;
-    return $db;
+    if ($table != '') litepublisher::$db->table = $table;
+    return litepublisher::$db;
   }
   
   protected function SaveToDB() {
-    $db->add($this->getbasename(), $this->SaveToString());
+    $this->db->add($this->getbasename(), $this->SaveToString());
   }
   
   protected function LoadFromDB() {
@@ -199,13 +195,11 @@ $func{0} = strtoupper($func{0});
   }
   
   protected function getthistable() {
-    global $db;
-    return $db->prefix . $this->table;
+    return litepublisher::$db->prefix . $this->table;
   }
   
   protected function geturltable() {
-    global $db;
-    return $db->prefix .'urlmap';
+    return litepublisher::$db->prefix .'urlmap';
   }
   
   protected function getjoinurl() {
@@ -227,12 +221,11 @@ function sqldate($date = 0) {
 }
 
 function dbquote($s) {
-  global $db;
-  return $db->quote($s);
+  return litepublisher::$db->quote($s);
 }
 
 function md5uniq() {
-  return md5(mt_rand() . secret. microtime());
+  return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
 //events.class.php
@@ -257,8 +250,7 @@ class tevents extends tdata {
   }
   
   public function free() {
-    global $classes;
-    unset($classes->instances[get_class($this)]);
+    unset(litepublisher::$classes->instances[get_class($this)]);
     foreach ($this->coinstances as $coinstance) $coinstance->free();
   }
   
@@ -447,12 +439,11 @@ class titems extends tevents {
   }
   
   public function load() {
-    global $options;
     if ($this->dbversion) {
-      if (!isset($options->data[get_class($this)])) {
-        $options->data[get_class($this)] = &$this->data;
+      if (!isset(litepublisher::$options->data[get_class($this)])) {
+        litepublisher::$options->data[get_class($this)] = &$this->data;
       } else {
-        $this->data = &$options->data[get_class($this)];
+        $this->data = &litepublisher::$options->data[get_class($this)];
         $this->afterload();
         
       }
@@ -463,22 +454,20 @@ class titems extends tevents {
   }
   
   public function save() {
-    global $options;
     if ($this->dbversion) {
-      return $options->save();
+      return litepublisher::$options->save();
     } else {
       return parent::save();
     }
   }
   
   public function loaditems(array $items) {
-    global  $db;
-    if (!dbversion) return;
+    if (!$this->dbversion) return;
     //исключить из загрузки загруженные посты
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
-    $res = $db->query("select * from $this->thistable where id in ($list)");
+    $res = litepublisher::$db->query("select * from $this->thistable where id in ($list)");
     $res->setFetchMode (PDO::FETCH_ASSOC);
     foreach ($res as $item) {
       $this->items[$item['id']] = $item;
@@ -569,10 +558,9 @@ class tsingleitems extends titems {
   public $id;
   
   public static function instance($class, $id = 0) {
-    global $classes;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
-    $self = $classes->newinstance($class);
+    $self = litepublisher::$classes->newinstance($class);
     self::$instances[$class][$id] = $self;
     $self->id = $id;
     $self->load();
@@ -599,8 +587,7 @@ class tsingleitems extends titems {
 **/
 
 function __autoload($class) {
-  global $classes;
-  $classes->_autoload($class);
+  litepublisher::$classes->_autoload($class);
 }
 
 class tclasses extends titems {
@@ -610,13 +597,12 @@ class tclasses extends titems {
   public $instances;
   
   public static function instance() {
-    global $classes;
-    if (!isset($classes)) {
+    if (!isset(litepublisher::$classes)) {
       $class = __class__;
-      $classes = new $class();
-      $classes->instances[$class] = $classes;
+      litepublisher::$classes = new $class();
+      litepublisher::$classes->instances[$class] = litepublisher::$classes;
     }
-    return $classes;
+    return litepublisher::$classes;
   }
   
   public function getinstance($class) {
@@ -685,11 +671,10 @@ class tclasses extends titems {
   }
   
   public function _autoload($class) {
-    global $paths;
     if ($path =$this->getpath($class)) {
       $filename = $path . $this->items[$class][0];
     } elseif (isset($this->interfaces[$class])) {
-      $filename = $paths['lib'] . $this->interfaces[$class];
+      $filename = litepublisher::$paths->lib . $this->interfaces[$class];
     } else {
       //$this->error("$class class not found");
       return false;
@@ -698,26 +683,21 @@ class tclasses extends titems {
   }
   
   public function getpath($class) {
-    global  $paths;
     if (!isset($this->items[$class])) return false;
-    if (empty($this->items[$class][1])) return $paths['lib'];
-    
+    if (empty($this->items[$class][1])) return litepublisher::$paths->lib;
     $result = rtrim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if (@is_dir($result))  return $result;
-    
     //may be is subdir?
-    if (@is_dir($paths['plugins']. $result)) return $paths['plugins']. $result;
-    if (@is_dir($paths['themes']. $result)) return $paths['themes']. $result;
-    if  (@is_dir($paths['home'] . $result)) return  $paths['home'] . $result;
-    
+    if (@is_dir(litepublisher::$paths->plugins . $result)) return litepublisher::$paths->plugins . $result;
+    if (@is_dir(litepublisher::$paths->themes . $result)) return litepublisher::$paths->themes . $result;
+    if  (@is_dir(litepublisher::$paths->home . $result)) return  litepublisher::$paths->home . $result;
     return false;
   }
   
 }//class
 
 function getinstance($class) {
-  global $classes;
-  return $classes->getinstance($class);
+  return litepublisher::$classes->getinstance($class);
 }
 
 function PHPComment($s) {
@@ -837,7 +817,7 @@ class toptions extends tevents {
   
   public function geturl() {
     if ($this->fixedurl) return $this->data['url'];
-    return 'http://'. $GLOBALS['domain'];
+    return 'http://'. litepublisher::$domain;
   }
   
   public function seturl($url) {
@@ -912,13 +892,12 @@ class toptions extends tevents {
   }
   
   public function handexception($e) {
-    global $paths;
-    $trace =str_replace($paths['home'], '', $e->getTraceAsString());
+    $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
     $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
     tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();
-    if (defined('debug') || $this->echoexception || $urlmap->adminpanel) {
+    if (litepublisher::$debug || $this->echoexception || $urlmap->adminpanel) {
       $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     } else {
       tfiler::log($log, 'exceptionsmail.log');
@@ -972,26 +951,24 @@ class turlmap extends titems {
   }
   
   protected function prepareurl($host, $url) {
-    global $options;
     $this->host = $host;
     $this->page = 1;
     $this->uripath = array();
-    if ($options->q == '?') {
-      $this->url = substr($url, strlen($options->subdir));
+    if (litepublisher::$options->q == '?') {
+      $this->url = substr($url, strlen(litepublisher::$options->subdir));
     } else {
       $this->url = $_GET['url'];
     }
   }
   
   public function request($host, $url) {
-    global $options;
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
-      $options->handexception($e);
+      litepublisher::$options->handexception($e);
     }
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
@@ -1065,7 +1042,6 @@ class turlmap extends titems {
   }
   
   private function getcachefile(array $item) {
-    global $paths, $options;
     if (!$this->cachefilename) {
       if ($item['type'] == 'normal') {
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
@@ -1073,15 +1049,14 @@ class turlmap extends titems {
         $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
       }
     }
-    return $paths['cache'] . $this->cachefilename;
+    return litepublisher::$paths->cache . $this->cachefilename;
   }
   
   private function  printcontent(array $item) {
-    global $options;
-    if ($options->cache && !$options->admincookie) {
+    if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($cachefile)) && (($time  + $options->expiredcache) >= time() )) {
+      if (($time = @filemtime ($cachefile)) && (($time  + litepublisher::$options->expiredcache) >= time() )) {
         include($cachefile);
         return;
       }
@@ -1096,7 +1071,6 @@ class turlmap extends titems {
   }
   
   protected function GenerateHTML(array $item) {
-    global $options, $template;
     $source = getinstance($item['class']);
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
@@ -1107,7 +1081,7 @@ class turlmap extends titems {
       $s = $template->request($source);
     }
     eval('?>'. $s);
-    if ($options->cache && $source->cache &&!$options->admincookie) {
+    if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       @chmod($cachefile, 0666);
@@ -1233,8 +1207,7 @@ class turlmap extends titems {
   }
   
   public function clearcache() {
-    global $paths;
-    $path = $paths['cache'];
+    $path = litepublisher::$paths->cache;
     if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
@@ -1252,8 +1225,7 @@ class turlmap extends titems {
   }
   
   public function setexpired($id) {
-    global $paths;
-    tfiler::deletemask($paths['cache'] . "*.$id-*.php");
+    tfiler::deletemask(litepublisher::$paths->cache . "*.$id-*.php");
   }
   
   public function setexpiredcurrent() {
@@ -1261,13 +1233,11 @@ class turlmap extends titems {
   }
   
   public function getcachename($name, $id) {
-    global $paths;
-    return $paths['cache']. "$name-$id.php";
+    return litepublisher::$paths->cache. "$name-$id.php";
   }
   
   public function expiredname($name, $id) {
-    global $paths;
-    tfiler::deletedirmask($paths['cache'], "*$name-$id.php");
+    tfiler::deletedirmask(litepublisher::$paths->cache, "*$name-$id.php");
   }
   
   public function expiredclass($class) {
@@ -1297,8 +1267,7 @@ class turlmap extends titems {
   
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
-    global $paths;
-    $cronfile =$paths['data'] . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
+    $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
     $time = @filemtime($cronfile);
     if (($time === false) || ($time + 3600 < time())) {
       register_shutdown_function('tcron::selfping');
@@ -1306,10 +1275,9 @@ class turlmap extends titems {
   }
   
   public function redir301($to) {
-    global $options;
     //tfiler::log($to);
     //tfiler::log(var_export($_COOKIE, true));
-    self::redir($options->url . $to);
+    self::redir(litepublisher::$options->url . $to);
   }
   
   public static function redir($url) {

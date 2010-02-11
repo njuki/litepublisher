@@ -52,7 +52,7 @@ class tadminfiles extends tadminmenu {
     if (dbversion) {
       $sql = 'parent =0';
       $sql .= litepublisher::$options->user <= 1 ? '' : " and author = litepublisher::$options->user";
-      $sql .= $type == '' ? '' : " and media = '$type'";
+      $sql .= $type == '' ? " and media<> 'icon'" : " and media = '$type'";
       $count = $files->db->getcount($sql);
     } else {
       $list= array();
@@ -60,6 +60,7 @@ class tadminfiles extends tadminmenu {
         if ($item['parent'] != 0) continue;
         if (litepublisher::$options->user > 1 && litepublisher::$options->user != $item['author']) continue;
         if (($type != '') && ($item['media'] != $type)) continue;
+        if (($type == '') && ($item['media'] == 'icon')) continue;
         $list[] = $id;
       }
       $count = count($list);
@@ -69,7 +70,7 @@ class tadminfiles extends tadminmenu {
     
     if (dbversion) {
       $list = $files->select($sql . " order by posted desc limit $from, $perpage");
-if (!$list) $list = array();
+      if (!$list) $list = array();
     } else {
       $list = array_slice($list, $from, $perpage);
     }
@@ -93,10 +94,10 @@ if (!$list) $list = array();
   public function processform() {
     $files = tfiles::instance();
     if (empty($_GET['action'])) {
-if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
-$error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
-return "<h2>$error</h2>\n";
-}
+      if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
+        $error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
+        return "<h2>$error</h2>\n";
+      }
       if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
       
       $overwrite  = isset($_POST['overwrite']);

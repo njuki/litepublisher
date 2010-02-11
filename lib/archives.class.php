@@ -58,7 +58,7 @@ class tarchives extends titems implements  itemplate {
     //sort archive by months
     $linkgen = tlinkgenerator::instance();
     if (dbversion) {
-$db = litepublisher::$db;
+      $db = litepublisher::$db;
       $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
       where status = 'published' GROUP BY YEAR(posted), MONTH(posted) ORDER BY posted DESC ");
       while ($r = $res->fetch(PDO::FETCH_ASSOC)) {

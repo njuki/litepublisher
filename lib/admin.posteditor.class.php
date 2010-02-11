@@ -14,7 +14,7 @@ class tposteditor extends tadminmenu {
   }
   
   public function gethead() {
-$template = ttemplate::instance();
+    $template = ttemplate::instance();
     $template->javaoptions[] = 'idpost: ' . $this->idget();
     return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
     <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
@@ -76,7 +76,7 @@ $template = ttemplate::instance();
     $result = '';
     $html = $this->html;
     $post = tpost::instance($this->idpost);
-ttheme::$vars['post'] = $post;
+    ttheme::$vars['post'] = $post;
     $mode = $this->getmode();
     $args = targs::instance();
     if ($post->id != 0) {

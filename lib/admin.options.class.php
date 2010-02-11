@@ -12,9 +12,9 @@ class tadminoptions extends tadminmenu {
   }
   
   public function getcontent() {
-$options = litepublisher::$options;
-      $template = ttemplate::instance();
-ttheme::$vars['template'] = $template;
+    $options = litepublisher::$options;
+    $template = ttemplate::instance();
+    ttheme::$vars['template'] = $template;
     $result = '';
     $args = targs::instance();
     
@@ -38,7 +38,7 @@ ttheme::$vars['template'] = $template;
       
       case 'rss':
       $rss = trss::instance();
-ttheme::$vars['rss'] = $rss;
+      ttheme::$vars['rss'] = $rss;
       $args->content = $rss->template;
       break;
       
@@ -121,7 +121,7 @@ ttheme::$vars['rss'] = $rss;
   public function processform() {
     extract($_POST);
     $options = litepublisher::$options;
-
+    
     switch ($this->name) {
       case 'options':
       $template = ttemplate::instance();

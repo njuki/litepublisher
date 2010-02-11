@@ -26,9 +26,9 @@ class ttemplate extends tevents {
     $this->basename = 'template' ;
     $this->tml = 'index';
     $this->itemplate = false;
-    $this->javaoptions = array(0 => 
-sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
-litepublisher::$options->url, litepublisher::$options->files));
+    $this->javaoptions = array(0 =>
+    sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
+    litepublisher::$options->url, litepublisher::$options->files));
     $this->cursitebar = 0;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent');
@@ -95,7 +95,7 @@ litepublisher::$options->url, litepublisher::$options->files));
   
   public function request($context) {
     $this->context = $context;
-ttheme::$vars['context'] = $context;
+    ttheme::$vars['context'] = $context;
     $this->itemplate = $context instanceof itemplate;
     $itemplate2 = $context instanceof itemplate2;
     if ($itemplate2) {

@@ -112,7 +112,7 @@ class tadminmoderator extends tadminmenu {
   
   private function editcomment($id) {
     $comment = new tcomment($id);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&action";
@@ -123,7 +123,7 @@ ttheme::$vars['comment'] = $comment;
   
   private function reply($id) {
     $comment = new tcomment($id);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
     $result = $this->html->info($args);
@@ -149,7 +149,7 @@ ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $comment = new tcomment(null);
-ttheme::$vars['comment'] = $comment;
+    ttheme::$vars['comment'] = $comment;
     foreach ($list as $data) {
       $comment->data = $data;
       $args->id = $comment->id;
@@ -189,7 +189,7 @@ ttheme::$vars['comment'] = $comment;
       $args->localstatus = tlocal::$data['commentstatus'][$item['status']];
       $args->date = tlocal::date(strtotime($item['posted']));
       $post = tpost::instance($item['post']);
-ttheme::$vars['post'] = $post;
+      ttheme::$vars['post'] = $post;
       $args->posttitle =$post->title;
       $args->postlink = $post->link;
       $result .=$html->pingbackitem($args);
@@ -216,7 +216,7 @@ ttheme::$vars['post'] = $post;
   }
   
   private function getinfo($id) {
-if (!isset(ttheme::$vars['comment'])) ttheme::$vars['comment'] = new tcomment($id);
+    if (!isset(ttheme::$vars['comment'])) ttheme::$vars['comment'] = new tcomment($id);
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&action";
     return $this->html->info($args);
@@ -291,7 +291,7 @@ if (!isset(ttheme::$vars['comment'])) ttheme::$vars['comment'] = new tcomment($i
   }
   
   private function getsubscribed($authorid) {
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     $authorid = (int) $authorid;
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';

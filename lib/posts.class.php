@@ -67,7 +67,7 @@ class tposts extends titems {
   }
   
   public function select($where, $limit) {
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit");
     
@@ -229,8 +229,8 @@ $db = litepublisher::$db;
   
   public function dosinglecron($id) {
     $this->PublishFuture();
-$theme = ttheme::instance;
-ttheme::$vars['post'] = tpost::instance($id);
+    $theme = ttheme::instance;
+    ttheme::$vars['post'] = tpost::instance($id);
     $this->singlecron($id);
   }
   

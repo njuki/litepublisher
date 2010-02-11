@@ -68,7 +68,7 @@ public function getdescription() {}
       $cookie = md5uniq();
       $auth = tauthdigest::instance();
       $auth->setcookies($cookie, $expired);
-$options = litepublisher::$options;
+      $options = litepublisher::$options;
       return "<?php
       @setcookie('admin', '$cookie', $expired, '$options->subdir/', false);
       @header('Location: $options->url/admin/');

@@ -73,7 +73,7 @@ class tremoteadmin extends tevents {
   }
   
   protected function GetDirAsZip($dir) {
-        require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
+    require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
     $zip = new zipfile();
     $this->ReadDirToZip($zip, $dir, '');
     return $zip->file();

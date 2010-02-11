@@ -37,7 +37,7 @@ class tdbmanager  {
   }
   
   public function  deletealltables( ) {
-  $res = $this->query("show tables from " . litepublisher::$options->dbconfig['dbname']);
+    $res = $this->query("show tables from " . litepublisher::$options->dbconfig['dbname']);
     $sql = '';
     while ($row = $res->fetch()) {
       //if (array_key_exists($row[0],$th)) do_export_table($row[0],1,$MAXI);
