@@ -14,8 +14,7 @@ class tadminmoderator extends tadminmenu {
   }
   
   protected function getmanager() {
-    global $classes;
-    return $classes->commentmanager;
+    return litepublisher::$classes->commentmanager;
   }
   
   protected function getidpost() {
@@ -130,9 +129,9 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function editcomment($id, $idpost) {
-    global $comment;
     $comments = tcomments::instance($idpost);
     $comment = $comments->getcomment($id);
+ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&post=$idpost&action";
@@ -142,8 +141,8 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function reply($id, $idpost) {
-    global $comment;
     $comment = tcomments::instance($idpost, $id);
+ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl =$this->adminurl . "=$id&post=$idpost&action";
     $result = $this->html->info($args);
@@ -152,14 +151,13 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getlist($status, $idpost) {
-    global $options, $urlmap, $comment;
     $result = '';
     $comments = tcomments::instance($idpost);
     if ($status == 'hold') $comments = $comments->hold;
     $perpage = 20;
     // подсчитать количество комментариев во всех случаях
     $total = $comments->count;
-    $from = max(0, $total - $urlmap->page * $perpage);
+    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
     $list = array_slice(array_keys($comments->items), $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
@@ -168,6 +166,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $args->adminurl = $this->adminurl ."post=$idpost&id";
     $comment = new TComment($comments);
+ttheme::$vars['comment'] = $comment;
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
@@ -181,26 +180,26 @@ class tadminmoderator extends tadminmenu {
     $result = $this->FixCheckall($result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   private function getpostlist($status) {
-    global $options, $urlmap, $post;
     $result = '';
     $posts = tposts::instance();
     $perpage = 20;
     $count = $posts->count;
-    $from = max(0, $count - $urlmap->page * $perpage);
+    $from = max(0, $count - litepublisher::$urlmap->page * $perpage);
     $items = array_slice($posts->items, $from, $perpage, true);
     $items = array_reverse (array_keys($items));
     
     $html = $this->html;
     $head =sprintf($html->h2->postscount, $from, $from + count($items), $count);
     $args = targs::instance();
-    $args->adminurl = $options->url .$this->url . $options->q . 'post';
+    $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . 'post';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
+ttheme::$vars['post'] = $post;
       $result .= $html->postitem($args);
       $result .= "\n";
     }
@@ -209,24 +208,23 @@ class tadminmoderator extends tadminmenu {
     $result = str_replace("'", '"', $result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($count/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
   private function getpingbackslist($idpost) {
-    global $options, $urlmap;
     $result = '';
     $pingbacks = tpingbacks::instance($idpost);
     $perpage = 20;
     $total = $pingbacks->getcount();
-    $from = max(0, $total - $urlmap->page * $perpage);
+    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
     $list = array_slice(array_keys($pingbacks->items), $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
     $result .= $html->checkallscript;
     $result .= $html->pingbackheader();
     $args = targs::instance();
-    $args->adminurl = $options->url .$this->url . $options->q . "post=$idpost&id";
+    $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . "post=$idpost&id";
     $post = tpost::instance($idpost);
     $args->posttitle =$post->title;
     $args->postlink = $post->link;
@@ -245,7 +243,7 @@ class tadminmoderator extends tadminmenu {
     $result = $this->FixCheckall($result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
@@ -263,10 +261,10 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getinfo($id, $idpost) {
-    global $comment;
-    if (!isset($comment)) {
+    if (!isset(ttheme::$vars['comment'])) {
       $comments = tcomments::instance($idpost);
       $comment = $comments->getcomment($id);
+ttheme::$vars['comment'] = $comment;
     }
     
     $args = targs::instance();
@@ -281,11 +279,10 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getconfirmform($id, $idpost, $confirm) {
-    global $options;
     $args = targs::instance();
     $args->id = "$id&post=$idpost";
     $args->action = 'delete';
-    $args->adminurl = $options->url . $this->url . $options->q . 'id';
+    $args->adminurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . 'id';
     $args->confirm = $confirm;
     return $this->html->confirmform($args);
   }
@@ -313,12 +310,11 @@ class tadminmoderator extends tadminmenu {
   }
   
   private function getauthorslist($idpost) {
-    global $urlmap;
     $comusers = tcomusers::instance($idpost);
     $args = targs::instance();
     $perpage = 20;
     $total = $comusers->count;
-    $from = max(0, $total - $urlmap->page * $perpage);
+    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
     $items =array_slice(array_keys($comusers->items), $from, $perpage);
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
@@ -331,12 +327,11 @@ class tadminmoderator extends tadminmenu {
     $result .= $html->authorfooter;
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages($this->url, $urlmap->page, ceil($total/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   private function getsubscribed($authorid, $idpost) {
-    global $options;
     $authorid = (int) $authorid;
     $comusers = tcomusers::instance($idpost);
     if (!$comusers->itemexists($authorid))  return '';
@@ -351,8 +346,6 @@ class tadminmoderator extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $urlmap;
-    
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -362,7 +355,7 @@ class tadminmoderator extends tadminmenu {
           case 'reply':
           $post = tpost::instance( (int) $_REQUEST['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
-          @header("Location: $options->url$post->lastcommenturl");
+          @header("Location: litepublisher::$options->url$post->lastcommenturl");
           exit();
           
           case 'edit':
@@ -434,15 +427,14 @@ class tadminmoderator extends tadminmenu {
       break;
     }
     
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $result;
   }
   
   private function getadminemail() {
-    global $options;
     $profile = tprofile::instance();
     if ($profile->mbox!= '') return $profile->mbox;
-    return $options->fromemail;
+    return litepublisher::$options->fromemail;
   }
   
 }//class

@@ -73,10 +73,10 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
   }
   
   public function getcontent() {
-    global $pingback;
     $result = '';
     $a = array();
     $pingback = new tarray2props($a);
+ttheme::$vars['pingback'] = $pingback;
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->pingbacks->pingback;

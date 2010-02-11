@@ -349,7 +349,7 @@ public function gethead() {}
   
   public function GetTemplateContent() {
     $theme = ttheme::instance();
-    $theme->vars['menu'] = $this;
+    ttheme::$vars['menu'] = $this;
     return $theme->parse($theme->content->menu);
   }
   

@@ -198,7 +198,6 @@ class tcomments extends titems {
   }
   
   public function dogetcontent($hold, $idauthor) {
-    global $comment;
     $result = '';
     $from = 0;
     $items = array_keys($this->items);
@@ -214,6 +213,7 @@ class tcomments extends titems {
       $args = targs::instance();
       $args->from = $from;
       $comment = new TComment($this);
+ttheme::$vars['comment'] = $comment;
       if ($hold) $comment->status = 'hold';
       $lang = tlocal::instance('comment');
       

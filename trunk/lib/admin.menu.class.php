@@ -20,13 +20,12 @@ class tadminmenumanager extends tadminmenu {
   }
   
   public function getcontent() {
-    global $options;
     $result = '';
     $menus = tmenus::instance();
     $html = $this->html;
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = $options->url . $this->url . 'edit/' . $options->q . 'id';
+    $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'id';
     
     switch ($this->name) {
       case 'menu':
@@ -74,7 +73,6 @@ class tadminmenumanager extends tadminmenu {
   }
   
   public function processform() {
-    global $options;
     if ($this->name != 'edit') return '';
     extract($_POST);
     if (empty($title) || empty($content)) return '';
@@ -98,11 +96,10 @@ class tadminmenumanager extends tadminmenu {
   }
   
   private function getmenulist() {
-    global $options;
     $menus = tmenus::instance();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = $options->url .$this->url . 'edit/' . $options->q . 'id';
+    $args->editurl = litepublisher::$options->url .$this->url . 'edit/' . litepublisher::$options->q . 'id';
     $html = $this->html;
     $result = $html->listhead();
     foreach ($menus->items as $id => $item) {

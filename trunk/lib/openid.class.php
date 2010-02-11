@@ -51,7 +51,7 @@ class topenid extends tevents {
   }
   
   public function request($arg) {
-    if (defined('debug'))  {
+    if (litepublisher::$debug)  {
       tfiler::log($_SERVER['REQUEST_URI']);
       tfiler::log(var_export($_REQUEST, true));
     }

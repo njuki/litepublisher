@@ -107,7 +107,6 @@ class tadminwidgets extends tadminmenu {
   }
   
   public function getcontent() {
-    global $classes, $options;
     $result = '';
     $html = $this->html;
     $args = targs::instance();
@@ -133,14 +132,14 @@ class tadminwidgets extends tadminmenu {
       $archives = tarchives::instance();
       $args->showcountarch = $archives->showcount;
       
-      $args->showcountcats = $classes->categories->showcount;
-      $args->catscombo= $this->getcombosortname('sortnamecats', $classes->categories->sortname);
+      $args->showcountcats = litepublisher::$classes->categories->showcount;
+      $args->catscombo= $this->getcombosortname('sortnamecats', litepublisher::$classes->categories->sortname);
       
-      $args->showcounttags = $classes->tags->showcount;
-      $args->maxcount = $classes->tags->maxcount;
-      $args->tagscombo= $this->getcombosortname('sortnametags', $classes->tags->sortname);
+      $args->showcounttags = litepublisher::$classes->tags->showcount;
+      $args->maxcount = litepublisher::$classes->tags->maxcount;
+      $args->tagscombo= $this->getcombosortname('sortnametags', litepublisher::$classes->tags->sortname);
       
-      $args->postscount = $classes->posts->recentcount;
+      $args->postscount = litepublisher::$classes->posts->recentcount;
       $manager = tcommentmanager::instance();
       $args->commentscount = $manager->recentcount;
       
@@ -232,8 +231,7 @@ class tadminwidgets extends tadminmenu {
   }
   
   public function processform() {
-    global $classes, $options, $urlmap;
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     $h2 = $this->html->h2;
     
     switch ($this->name) {
@@ -280,19 +278,19 @@ class tadminwidgets extends tadminmenu {
         $archives->Save();
       }
       
-      $options->lock();
+      litepublisher::$options->lock();
       
-      $classes->categories->sortname = $sortnamecats;
-      $classes->categories->showcount = isset($showcountcats);
-      $classes->categories->save();
+      litepublisher::$classes->categories->sortname = $sortnamecats;
+      litepublisher::$classes->categories->showcount = isset($showcountcats);
+      litepublisher::$classes->categories->save();
       
-      $classes->tags->sortname = $sortnametags;
-      $classes->tags->showcount = isset($showcounttags);
-      $classes->tags->maxcount = $maxcount;
-      $classes->tags->save();
+      litepublisher::$classes->tags->sortname = $sortnametags;
+      litepublisher::$classes->tags->showcount = isset($showcounttags);
+      litepublisher::$classes->tags->maxcount = $maxcount;
+      litepublisher::$classes->tags->save();
       
-      $classes->posts->recentcount = $postscount;
-      $classes->posts->save();
+      litepublisher::$classes->posts->recentcount = $postscount;
+      litepublisher::$classes->posts->save();
       
       $commentswidget = tcommentswidget::instance();
       $commentswidget->recentcount = $commentscount;
@@ -303,7 +301,7 @@ class tadminwidgets extends tadminmenu {
       
       $foaf = tfoaf::instance();
       $foaf->redir = isset($foafredir);
-      $options->unlock();
+      litepublisher::$options->unlock();
       return $h2->stdoptsucces;
       
       case 'links':
@@ -359,7 +357,6 @@ class tadminwidgets extends tadminmenu {
   }
   
   private function DeleteWidgets(twidgets $widgets) {
-    global $urlmap;
     $template = ttemplate::instance();
     $template->lock();
     $widgets->lock();
@@ -372,7 +369,7 @@ class tadminwidgets extends tadminmenu {
     }
     $widgets->unlock();
     $template->unlock();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $this->html->h2->successdeleted;
   }
   

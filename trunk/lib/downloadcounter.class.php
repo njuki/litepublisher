@@ -20,7 +20,6 @@ class tdownloadcounter extends TItems {
   }
   
   public function reqest($args) {
-    global  $urlmap;
     if (!isset($_GET['id']))  return 404;
     $id = (int) $_GET['fileid'];
     $files = tfiles::instance();

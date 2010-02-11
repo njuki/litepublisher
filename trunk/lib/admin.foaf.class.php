@@ -28,7 +28,6 @@ class tadminfoaf extends tadminmenu {
   }
   
   public function Getcontent() {
-    global $Options;
     $foaf = &TFoaf::instance();
     $html = &THtmlResource::instance();
     $html->section = $this->basename;
@@ -93,7 +92,6 @@ class tadminfoaf extends tadminmenu {
   }
   
   public function ProcessForm() {
-    global $Options;
     $foaf = &TFoaf::instance();
     $html = &THtmlResource::instance();
     $html->section = $this->basename;
@@ -152,12 +150,11 @@ class tadminfoaf extends tadminmenu {
   }
   
   private function success($key) {
-    global $Urlmap;
-    $html = &THtmlResource::instance();
+    $html = THtmlResource::instance();
     $html->section = $this->basename;
     $lang = &TLocal::instance();
     
-    $Urlmap->ClearCache();
+    litepublisher::$urlmap->ClearCache();
   eval('$result = "'. $html->{$key} . '\n";');
     return $result;
   }

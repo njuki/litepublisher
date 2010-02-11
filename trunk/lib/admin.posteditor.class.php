@@ -14,16 +14,15 @@ class tposteditor extends tadminmenu {
   }
   
   public function gethead() {
-    global $options, $template;
+$template = ttemplate::instance();
     $template->javaoptions[] = 'idpost: ' . $this->idget();
     return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
     <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
     <script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
-    ', $options->files, $options->language);
+    ', litepublisher::$options->files, litepublisher::$options->language);
   }
   
   private function getcategories(tpost $post) {
-    global $options;
     $result = '';
     $categories = tcategories::instance();
     if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
@@ -41,7 +40,6 @@ class tposteditor extends tadminmenu {
   }
   
   public function request($id) {
-    global $options;
     if ($s = parent::request($id)) return $s;
     $this->basename = 'editor';
     $this->idpost = $this->idget();
@@ -50,7 +48,7 @@ class tposteditor extends tadminmenu {
       if (!$posts->itemexists($this->idpost)) return 404;
     }
     $post = tpost::instance($this->idpost);
-    if (($options->group == 'author') && ($options->user != $post->author)) return 404;
+    if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return 404;
   }
   
   public function gettitle() {
@@ -75,10 +73,10 @@ class tposteditor extends tadminmenu {
   }
   
   public function getcontent() {
-    global $options, $post;
     $result = '';
     $html = $this->html;
     $post = tpost::instance($this->idpost);
+ttheme::$vars['post'] = $post;
     $mode = $this->getmode();
     $args = targs::instance();
     if ($post->id != 0) {
@@ -106,8 +104,6 @@ class tposteditor extends tadminmenu {
   }
   
   public function processform() {
-    global $options;
-    
     $mode = $this->getmode();
     $this->basename = 'editor';
     $html = $this->html;

@@ -7,7 +7,7 @@
 **/
 
 class ttheme extends tevents {
-public $vars;
+public static $vars = array();
   private $themeprops;
   public static $name;
   //public $tml;
@@ -24,7 +24,6 @@ public $vars;
   
   protected function create() {
     parent::create();
-$this->vars = array();
     $this->themeprops = new tthemeprops($this->data);
     if (empty(self::$name)) {
       $template = ttemplate::instance();
@@ -80,16 +79,14 @@ $this->vars = array();
     $name = $names[1];
 if ($name == 'options') {
 $var = litepublisher::$options;
-} else {
-$self = self::instance();
-if (isset($self->vars[$name])) {
-  $var =  $self->vars[$name];
+} elseif (isset(self::$vars[$name])) {
+  $var =  self::$vars[$name];
 } elseif (isset($GLOBALS[$name])) {
   $var =  $GLOBALS[$name];
 } else {
   $var =  litepublisher::$classes->$name;
 }
-}
+
     //if (!isset($var)) echo "$name\n";
     try {
     return $var->{$names[2]};
@@ -146,7 +143,7 @@ if (isset($self->vars[$name])) {
     $tml = $lite ? $this->content->excerpts->lite->excerpt : $this->content->excerpts->excerpt;
     if (is_object($tml)) $tml = $tml->__tostring();
     foreach($items as $id) {
-      $this->vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     
@@ -157,7 +154,7 @@ if (isset($self->vars[$name])) {
   public function getpostswidgetcontent(array $items, $tml) {
     $result = '';
     foreach ($items as $id) {
-      $this->vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     $result = str_replace("'", '"', $result);

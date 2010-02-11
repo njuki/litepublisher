@@ -194,7 +194,7 @@ class tpost extends titem implements  itemplate {
   public function getmorelink() {
     if ($this->moretitle == '') return '';
     $theme = ttheme::instance();
-$theme->vars['post'] = $this;
+ttheme::$vars['post'] = $this;
     return $theme->parse($theme->content->excerpts->excerpt->more);
   }
   
@@ -283,14 +283,14 @@ $template = ttemplate::instance();
   
   public function GetTemplateContent() {
     $theme = ttheme::instance();
-$theme->vars['post'] = $this;
+ttheme::$vars['post'] = $this;
     return $theme->parse($theme->content->post);
   }
   
   public function getsubscriberss() {
     if ($this->commentsenabled && ($this->commentscount > 0)) {
       $theme = ttheme::instance();
-$theme->vars['post'] = $this;
+ttheme::$vars['post'] = $this;
       return $theme->parse($theme->content->post->rss);
     }
     return '';
@@ -301,12 +301,12 @@ $theme->vars['post'] = $this;
     $theme = ttheme::instance();
     $tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
-$theme->vars['prevpost'] = $prevpost;
+ttheme::$vars['prevpost'] = $prevpost;
       $result .= $theme->parse($tml->prev);
     }
     
     if ($nextpost = $this->next) {
-$theme->vars['nextpost'] = $nextpost;
+ttheme::$vars['nextpost'] = $nextpost;
       $result .= $theme->parse($tml->next);
     }
     
@@ -328,7 +328,7 @@ $theme->vars['nextpost'] = $nextpost;
   
   private function replacemore($content) {
     $theme = ttheme::instance();
-$theme->vars['post'] = $this;
+ttheme::$vars['post'] = $this;
     $more = $theme->parse($theme->content->post->more);
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {

@@ -95,6 +95,7 @@ litepublisher::$options->url, litepublisher::$options->files));
   
   public function request($context) {
     $this->context = $context;
+ttheme::$vars['context'] = $context;
     $this->itemplate = $context instanceof itemplate;
     $itemplate2 = $context instanceof itemplate2;
     if ($itemplate2) {
@@ -110,7 +111,6 @@ litepublisher::$options->url, litepublisher::$options->files));
     
     $result = $this->httpheader();
     $theme = ttheme::instance();
-$theme->vars['context'] = $context;
     $result  .= $theme->parse($theme->theme);
     
     if ($itemplate2) $context->afterrequest($result);

@@ -12,7 +12,9 @@ class tadminoptions extends tadminmenu {
   }
   
   public function getcontent() {
-    global $classes, $options, $template, $mailer, $subscribers, $home, $rss, $pinger, $linkgen, $contentfilter;
+$options = litepublisher::$options;
+      $template = ttemplate::instance();
+ttheme::$vars['template'] = $template;
     $result = '';
     $args = targs::instance();
     
@@ -29,13 +31,14 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'mail':
-      $subscribers = tsubscribers::instance();
-      $mailer = TSMTPMailer ::instance();
+      ttheme::$vars['subscribers'] = tsubscribers::instance();
+      ttheme::$vars['mailer'] = TSMTPMailer ::instance();
       $args->mailerchecked = $options->mailer == 'smtp';
       break;
       
       case 'rss':
       $rss = trss::instance();
+ttheme::$vars['rss'] = $rss;
       $args->content = $rss->template;
       break;
       
@@ -71,7 +74,7 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'links':
-      $linkgen = tlinkgenerator::instance();
+      ttheme::$vars['linkgen'] = tlinkgenerator::instance();
       break;
       
       case 'openid':
@@ -118,10 +121,9 @@ class tadminoptions extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $urlmap, $paths, $classes;
-    
     extract($_POST);
-    
+    $options = litepublisher::$options;
+
     switch ($this->name) {
       case 'options':
       $template = ttemplate::instance();
@@ -133,7 +135,7 @@ class tadminoptions extends tadminmenu {
       $options->unlock();
       
       if (!empty($footer)) $template->footer = $footer;
-      $urlmap->clearcache();
+      litepublisher::$urlmap->clearcache();
       break;
       
       case 'home':
@@ -208,7 +210,7 @@ class tadminoptions extends tadminmenu {
         $subscribtion->locklist = $locklist;
         $subscribtion->save();
       }
-      $urlmap->clearcache();
+      litepublisher::$urlmap->clearcache();
       break;
       
       case 'ping':
@@ -237,7 +239,7 @@ class tadminoptions extends tadminmenu {
       
       case 'cache':
       if (isset($clearcache)) {
-        $urlmap->clearcache();
+        litepublisher::$urlmap->clearcache();
       } else {
         $options->lock();
         $options->cache = isset($cache );
@@ -283,7 +285,7 @@ class tadminoptions extends tadminmenu {
         $archives->PostsChanged();
       }
       $options->unlock();
-      $urlmap->clearcache();
+      litepublisher::$urlmap->clearcache();
       break;
       
       case 'notfound404':
@@ -298,7 +300,6 @@ class tadminoptions extends tadminmenu {
   }
   
   private function gettimezones() {
-    global $options;
     $zones = timezone_identifiers_list ();
     $result = "<select name='timezone' id='timezone'>\n";
     foreach ($zones as $zone) {

@@ -363,7 +363,7 @@ $db = litepublisher::$db;
     $theme = ttheme::instance();
     $result .= $theme->getposts($list, $this->lite);
     $item = $this->getitem($this->id);
-    $result .=$theme->getpages($item['url'], $urlmap->page, ceil(count($items)/ $postsperpage));
+    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil(count($items)/ $postsperpage));
     return $result;
   }
   

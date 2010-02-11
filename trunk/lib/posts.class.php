@@ -230,7 +230,7 @@ $db = litepublisher::$db;
   public function dosinglecron($id) {
     $this->PublishFuture();
 $theme = ttheme::instance;
-$theme->vars['post'] = tpost::instance($id);
+ttheme::$vars['post'] = tpost::instance($id);
     $this->singlecron($id);
   }
   

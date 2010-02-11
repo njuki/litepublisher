@@ -20,29 +20,27 @@ class tadminplugins extends tadminmenu {
   }
   
   private function readabout() {
-    global $options, $paths;
     $this->abouts = array();
-    $list = tfiler::getdir($paths['plugins']);
+    $list = tfiler::getdir(litepublisher::$paths['plugins']);
     sort($list);
     foreach ($list as $name) {
-      $about = parse_ini_file($paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+      $about = parse_ini_file(litepublisher::$paths['plugins'] . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
       //слить языковую локаль в описание
-      if (isset($about[$options->language])) {
-        $about['about'] = $about[$options->language] + $about['about'];
+      if (isset($about[litepublisher::$options->language])) {
+        $about['about'] = $about[litepublisher::$options->language] + $about['about'];
       }
       $this->abouts[$name] = $about['about'];
     }
   }
   
   public function getsitebar() {
-    global $options;
     $widgets = twidgets::instance();
     if ($widgets->current > 0) return $widgets->getcontent();
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('submenu', 0);
     $args = targs::instance();
     $args->count = '';
-    $url = $this->url . $options->q . 'plugin=';
+    $url = $this->url . litepublisher::$options->q . 'plugin=';
     $content = '';
     $plugins = tplugins::instance();
     foreach ($this->abouts as $name => $about) {
@@ -60,7 +58,6 @@ class tadminplugins extends tadminmenu {
   }
   
   public function getcontent() {
-    global $options;
     $result = '';
     $html = $this->html;
     $plugins = tplugins::instance();
@@ -89,8 +86,6 @@ class tadminplugins extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $urlmap;
-    
     if (!isset($_GET['plugin'])) {
       $list = array_keys($_POST);
       array_pop($list);
@@ -98,7 +93,7 @@ class tadminplugins extends tadminmenu {
       try {
         $plugins->update($list);
       } catch (Exception $e) {
-        $options->handexception($e);
+        litepublisher::$options->handexception($e);
       }
       $result = $this->html->h2->updated;
     } else {
@@ -109,16 +104,15 @@ class tadminplugins extends tadminmenu {
       }
     }
     
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $result;
   }
   
   private function getadminplugin($name) {
-    global $paths;
     $about = $this->abouts[$name];
     if (empty($about['adminclassname'])) return false;
     $class = $about['adminclassname'];
-    if (!class_exists($class))  require_once($paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
+    if (!class_exists($class))  require_once(litepublisher::$paths['plugins'] . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
     return  getinstance($class );
   }
   

@@ -17,7 +17,6 @@ class tadminboard extends tadminmenu {
   }
   
   public function getcontent() {
-    global $options;
     $result = $this->logoutlink;
     $editor = tposteditor::instance();
     $result .= $editor->shorteditor();

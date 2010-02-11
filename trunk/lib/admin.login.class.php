@@ -22,29 +22,26 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function auth() {
-    global $options, $urlmap;
     $auth = tauthdigest::instance();
-    if ($options->cookieenabled) {
+    if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
-      if (!$options->authcookie()) return $urlmap->redir301('/admin/login/');
+      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
     }
     elseif (!$auth->Auth())  return $auth->headers();
   }
   
   private function logout() {
-    global $options, $urlmap;
     $auth = tauthdigest::instance();
-    if ($options->cookieenabled) {
-      if ($options->authcookie()) $auth->logout();
+    if (litepublisher::$options->cookieenabled) {
+      if (litepublisher::$options->authcookie()) $auth->logout();
     } elseif ($auth->auth()) {
       $auth->logout();
     }
     
-    return $urlmap->redir301('/admin/login/');
+    return litepublisher::$urlmap->redir301('/admin/login/');
   }
   
   public function request($arg) {
-    global $options, $urlmap;
     $this->cache = false;
     if ($arg == 'out')   return $this->logout();
     tlocal::loadlang('admin');
@@ -57,12 +54,12 @@ public function getdescription() {}
         }
       }
       
-      if (!$options->cookieenabled) {
+      if (!litepublisher::$options->cookieenabled) {
         $this->formresult = $this->html->h2->cookiedisabled;
         return;
       }
       
-      if (empty($_POST['login']) || empty($_POST['password']) || !$options->auth($_POST['login'], $_POST['password'])) {
+      if (empty($_POST['login']) || empty($_POST['password']) || !litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
         $this->formresult = $this->html->h2->error;
         return;
       }
@@ -71,6 +68,7 @@ public function getdescription() {}
       $cookie = md5uniq();
       $auth = tauthdigest::instance();
       $auth->setcookies($cookie, $expired);
+$options = litepublisher::$options;
       return "<?php
       @setcookie('admin', '$cookie', $expired, '$options->subdir/', false);
       @header('Location: $options->url/admin/');

@@ -134,7 +134,7 @@ class tabstractcron extends tevents {
   public function log($s) {
     echo date('r') . "\n$s\n\n";
     flush();
-    if (defined('debug')) tfiler::log($s, 'cron.log');
+    if (litepublisher::$debug) tfiler::log($s, 'cron.log');
   }
   
 }//class

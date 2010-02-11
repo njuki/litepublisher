@@ -12,7 +12,6 @@ class tadminfiles extends tadminmenu {
   }
   
   public function getcontent() {
-    global $options, $urlmap;
     $result = '';
     $files = tfiles::instance();
     $html = $this->html;
@@ -52,21 +51,21 @@ class tadminfiles extends tadminmenu {
     $type = $this->name == 'files' ? '' : $this->name;
     if (dbversion) {
       $sql = 'parent =0';
-      $sql .= $options->user <= 1 ? '' : " and author = $options->user";
+      $sql .= litepublisher::$options->user <= 1 ? '' : " and author = litepublisher::$options->user";
       $sql .= $type == '' ? '' : " and media = '$type'";
       $count = $files->db->getcount($sql);
     } else {
       $list= array();
       foreach ($files->items as $id => $item) {
         if ($item['parent'] != 0) continue;
-        if ($options->user > 1 && $options->user != $item['author']) continue;
+        if (litepublisher::$options->user > 1 && litepublisher::$options->user != $item['author']) continue;
         if (($type != '') && ($item['media'] != $type)) continue;
         $list[] = $id;
       }
       $count = count($list);
     }
     
-    $from = ($urlmap->page - 1) * $perpage;
+    $from = (litepublisher::$urlmap->page - 1) * $perpage;
     
     if (dbversion) {
       $list = $files->select($sql . " limit $from, $perpage");
@@ -91,7 +90,6 @@ class tadminfiles extends tadminmenu {
   }
   
   public function processform() {
-    global $options, $paths;
     $files = tfiles::instance();
     if (empty($_GET['action'])) {
       if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);

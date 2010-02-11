@@ -201,8 +201,8 @@ class tcommentform extends tevents {
   }
   
   private function getconfirmform($confirmid) {
-    global $lang;
     $lang = tlocal::instance($this->basename);
+ttheme::$vars['lang'] = $lang;
     $args = targs::instance();
     $args->confirmid = $confirmid;
     $theme = ttheme::instance();
