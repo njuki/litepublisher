@@ -28,8 +28,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
   }
   
   private function getpagelinks($current, $count) {
-    
-    $links = array();
+    $list = array();
     for ($i = 1; $i <= $count; $i++) {
       if ($i == $current) {
         $list[] = "$i";
@@ -64,6 +63,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     
     if (dbversion) {
       $list = $files->select($sql . " order by posted desc limit $from, $perpage");
+if (!$list) $list = array();
     } else {
       $list = array_slice($list, $from, $perpage);
     }
@@ -92,7 +92,40 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $args->currentfiles = $this->getpostfiles((int) $idpost);
     return $this->html->browser($args);
   }
-  
+
+  public function geticons($login, $password, $idicon) {
+    $this->auth($login, $password, 'editor');
+    $result = '';
+    $args = targs::instance();
+$files = tfiles::instance();
+    if (dbversion) {
+      $list = $files->select("media = 'icon' order by posted");
+if (!$list) $list = array();
+    } else {
+      $list= array();
+      foreach ($files->items as $id => $item) {
+        if ($item['media'] == 'icon') $list[] = $id;
+      }
+    }
+
+//добавить пустую иконку, то есть отсутствие иконки
+    $args->id = 0;
+$args->checked = 0 == $idicon;
+$args->filename = '';
+$args->title = tlocal::$data['common']['empty'];
+      $result .= $this->html->radioicon($args);
+
+    foreach ($list as $id) {
+    $item = $files->getitem($id);
+    $args->add($item);
+    $args->id = $id;
+$args->checked = $id == $idicon;
+      $result .= $this->html->radioicon($args);
+}
+
+return str_replace("'", '"', $result);
+  }
+    
   private function getpostfiles($idpost) {
     $result = '';
     $post = tpost::instance((int) $idpost);

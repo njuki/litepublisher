@@ -11,8 +11,15 @@ class tadmintags extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
+
+  public function gethead() {
+      if (isset($_GET['full'])) {
+    return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>', litepublisher::$options->files);
+}
+return '';
+  }
   
-  public function getcontent() {
+    public function getcontent() {
     $result = '';
     $istags = $this->name == 'tags';
     $tags = $istags  ? litepublisher::$classes->tags : litepublisher::$classes->categories;
@@ -45,6 +52,7 @@ class tadmintags extends tadminmenu {
       $result .= $istags ? $h2->edittag : $h2->editcategory;
       if (isset($_GET['full'])) {
         $args->add($tags->contents->getitem($id));
+$args->iconlink = $tags->geticon($id);
         $result .= $html->fullform($args);
       } else {
         $result = $html->form($args);
@@ -72,7 +80,9 @@ class tadmintags extends tadminmenu {
     if ($id == 0) {
       $id = $tags->add($title);
     } elseif (isset($_GET['full'])) {
-      $tags->edit($id, $title, $url);
+$item = $tags->getitem($id);
+$icon = isset($icon) ? $icon : $item['icon'];
+      $tags->edit($id, $title, $url, $icon);
       $tags->contents->edit($id, $rawcontent, $description, $keywords);
     } else {
       $tags->edit($id, $title, $tags->geturl($id));
