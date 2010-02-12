@@ -130,3 +130,24 @@ elems[i].checked = false;
 
 return true;
 };
+
+function iconbrowser(idicon) {
+if (ltoptions.iconbrowser != undefined) return;
+ltoptions.iconbrowser = true;
+if (client == undefined) client = createclient();
+client.litepublisher.files.geticons( {
+params:['', '', idicon],
+
+                 onSuccess:function(result){                     
+var div = document.getElementById("iconbrowser");
+div.innerHTML  += result;
+},
+
+                  onException:function(errorObj){ 
+                    alert("XMLRPC server error");
+},
+
+onComplete:function(responseObj){ }
+} );
+
+}

@@ -15,7 +15,8 @@ methods: [
 'litepublisher.comments.edit',
 'litepublisher.comments.getrecent',
 'litepublisher.files.getbrowser',
-'litepublisher.files.getpage'
+'litepublisher.files.getpage',
+'litepublisher.files.geticons'
 ]
 //callbackParamName: 'callback'
 }); 
