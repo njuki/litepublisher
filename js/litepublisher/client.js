@@ -56,5 +56,32 @@ ltoptions.scripts += filename + "\n";
       script.type= 'text/javascript';
       script.src= ltoptions.files + filename;
       head.appendChild(script);
+return true;
    }
 
+function audioplayerloaded() {
+            AudioPlayer.setup(ltoptions.files + "/js/audio-player/player.swf", {   
+                width: 290   
+            });   
+
+if (ltoptions.audiofile != undefined) {
+AudioPlayer.embed(ltoptions.audiofile[0], {   
+    soundFile: ltoptions.audiofile[1],
+    autostart: "yes"   
+});   
+} else {
+ltoptions.audiofile = true;
+}
+}
+
+function playaudiofile(id, filename) {
+loadjavascript('/js/audio-player/audio-player.js');
+if (ltoptions.audiofile == undefined) {
+ltoptions.audiofile = new Array(id, filename);
+} else {
+AudioPlayer.embed(id, {   
+    soundFile: filename,
+    autostart: "yes"   
+});   
+}
+}
