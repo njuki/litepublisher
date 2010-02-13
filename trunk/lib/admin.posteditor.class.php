@@ -121,7 +121,7 @@ class tposteditor extends tadminmenu {
       $post->title = $title;
       $post->categories = $cats;
       $post->tagnames = $tags;
-if (isset($icon)) $post->icon = (int) $icon;
+      if (isset($icon)) $post->icon = (int) $icon;
     }
     
     if (isset($fileschanged))  {

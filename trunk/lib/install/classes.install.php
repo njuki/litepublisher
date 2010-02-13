@@ -43,8 +43,8 @@ function ParseClassesIni() {
 }
 
 function doinstallclasses() {
-  $urlmap = turlmap::instance();
-  $urlmap->lock();
+  litepublisher::$urlmap = turlmap::instance();
+  litepublisher::$urlmap->lock();
   $posts = tposts::instance();
   $posts->lock();
   
@@ -59,7 +59,7 @@ function doinstallclasses() {
   
   $xmlrpc->unlock();
   $posts->unlock();
-  $urlmap->unlock();
+  litepublisher::$urlmap->unlock();
 }
 
 ?>

@@ -9,7 +9,7 @@
 class titems extends tevents {
   public $items;
   protected $autoid;
-  protected $dbversion;
+  public $dbversion;
   
   protected function create() {
     parent::create();
