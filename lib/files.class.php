@@ -93,29 +93,39 @@ class tfiles extends titems {
       $this->select(sprintf('parent in (%s)', implode(',', $list)));
     }
     
-    $theme = ttheme::instance();
-    $tml = $theme->content->post->files;
-    $args = targs::instance();
-    $img = '<img src="litepublisher::$options.files/files/$filename" title="$filename" />';
+    //отсортировать по типам
+    $items = array();
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
-      $args->add($item);
-      $type = $item['media'];
-      $itemtml = empty($tml->array[$type]) ? $tml->file : $tml->array[$type];
-      if ($item['preview'] == 0) {
-        $args->preview = '';
-      } elseif (!isset($this->items[$id])) {
-        $args->preview = '';
-      } else {
-        $preview = $this->items[$item['preview']];
-        $imgarg = new targs();
-        $imgarg->add($preview);
-        $args->preview =$theme->parsearg($img, $imgarg);
-      }
-      $result .= $theme->parsearg($itemtml , $args);
+      $items[$item['media']][] = $id;
     }
-    return sprintf($tml, $result);
+    
+    $theme = ttheme::instance();
+    $tml = $theme->content->post->files;
+    $args = targs::instance();
+    
+    foreach ($items as $type => $subitems) {
+      foreach ($subitems as $id) {
+        $item = $this->items[$id];
+        $args->add($item);
+        $itemtml = empty($tml->array[$type]) ? $tml->array['file'] : $tml->array[$type];
+        $args->preview = $this->getpreview($item['preview']);
+        $result .= $theme->parsearg($itemtml , $args);
+      }
+    }
+    
+    return sprintf($theme->parse($tml), $result);
+  }
+  
+  private function getpreview($id) {
+    if ($id == 0) return '';
+    $item = $this->getitem($id);
+    if ($item['media'] === 'image') {
+      return sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$options->files, $item['filename']);
+    } else {
+      return '';
+    }
   }
   
 }//class

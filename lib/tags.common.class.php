@@ -108,13 +108,13 @@ class tcommontags extends titems implements  itemplate {
     }
     return $result;
   }
-
-public function geticon($id) {
-$item = $this->getitem($id);
-      if ($item['icon'] == 0)  return '';
-        $files = tfiles::instance();
-return $files->geticon($item['icon'], $item['title']);
-}
+  
+  public function geticon($id) {
+    $item = $this->getitem($id);
+    if ($item['icon'] == 0)  return '';
+    $files = tfiles::instance();
+    return $files->geticon($item['icon'], $item['title']);
+  }
   
   public function geturl($id) {
     $item = $this->getitem($id);
@@ -199,17 +199,17 @@ return $files->geticon($item['icon'], $item['title']);
   public function edit($id, $title, $url, $icon) {
     $item = $this->getitem($id);
     if (($item['title'] == $title) && ($item['url'] == $url) && ($item['icon'] == $icon)) return;
-      $item['title'] = $title;
-$item['icon'] = $icon;
-      if ($this->dbversion) {
-$this->db->updateassoc(array(
-'id' => $id,
-'title' => $title,
-'icon' => $icon
-));
-}
-
-        $urlmap = turlmap::instance();
+    $item['title'] = $title;
+    $item['icon'] = $icon;
+    if ($this->dbversion) {
+      $this->db->updateassoc(array(
+      'id' => $id,
+      'title' => $title,
+      'icon' => $icon
+      ));
+    }
+    
+    $urlmap = turlmap::instance();
     $linkgen = tlinkgenerator::instance();
     $url = trim($url);
     // попытка восстановить что ли урл
