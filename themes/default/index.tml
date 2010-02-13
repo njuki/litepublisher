@@ -107,9 +107,13 @@ $post.tagslinks
 <span class="post-calendar">$post.date</span>
 		<div class="post-content">
 <!--files-->
-<ul id="files">
+<ul id="files-$post.id">
 <!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
 <!--image--><li><a rel="lightbox" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
+<!--audio-->
+<li><a href="$options.files/files/$filename" title="$title">$title</a>
+<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
+</li><!--/audio-->
 <!--video--><!--/video-->
 </ul>
 <!--/files-->
