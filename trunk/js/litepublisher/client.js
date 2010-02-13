@@ -65,23 +65,21 @@ function audioplayerloaded() {
             });   
 
 if (ltoptions.audiofile != undefined) {
-AudioPlayer.embed(ltoptions.audiofile[0], {   
-    soundFile: ltoptions.audiofile[1],
-    autostart: "yes"   
-});   
+playaudiofile(ltoptions.audiofile[0],ltoptions.audiofile[1]);
 } else {
 ltoptions.audiofile = true;
 }
 }
 
 function playaudiofile(id, filename) {
-loadjavascript('/js/audio-player/audio-player.js');
 if (ltoptions.audiofile == undefined) {
 ltoptions.audiofile = new Array(id, filename);
+loadjavascript('/js/audio-player/audio-player.js');
 } else {
 AudioPlayer.embed(id, {   
     soundFile: filename,
-    autostart: "yes"   
+    autostart: "yes",
+ initialvolume : 100
 });   
 }
 }
