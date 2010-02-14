@@ -71,7 +71,20 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
       $this->updatecount();
     }
   }
-  
+
+public function import($url, $title, $posted, $ip, $status) {
+if ($this->exists($url)) return false;
+    $this->items[++$this->autoid] = array(
+    'url' => $url,
+    'title' => $title,
+    'posted' => $posted,
+    'ip' => $ip,
+    'approved' => $status == 'approved'
+    );
+$this->save();
+return $this->autoid;
+}
+
   public function getcontent() {
     $result = '';
     $a = array();

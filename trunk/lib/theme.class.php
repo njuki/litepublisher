@@ -123,7 +123,7 @@ class ttheme extends tevents {
     $suburl = rtrim($url, '/');
     $a = array();
     for ($i = 1; $i <= $count; $i++) {
-      $pageurl = $i == 1 ? litepublisher::$options->url . $url : "litepublisher::$options->url$suburl/page/$i/";
+      $pageurl = $i == 1 ? litepublisher::$options->url . $url : litepublisher::$options->url . "$suburl/page/$i/";
       $a[] = sprintf($i == $page ? $this->content->navi->current : $link, $pageurl, $i);
     }
     
