@@ -32,9 +32,9 @@ class tdatabase extends PDO {
       }
       parent::__construct($init, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
       array(
-PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION       //ERRMODE_WARNING
-//PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL
-)
+      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION       //ERRMODE_WARNING
+      //PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL
+      )
       );
     } catch (Exception $e) {
       die($e->getMessage());
@@ -263,8 +263,8 @@ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION       //ERRMODE_WARNING
   public function findid($where) {
     if($res = $this->query("select id from $this->prefix$this->table where $where limit 1")) {
       if ($r = $res->fetch(PDO:: FETCH_NUM)) {
-return $r[0];
-}
+        return $r[0];
+      }
     }
     return false;
   }

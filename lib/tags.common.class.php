@@ -115,11 +115,11 @@ class tcommontags extends titems implements  itemplate {
     $files = tfiles::instance();
     return $files->geticon($item['icon'], $item['title']);
   }
-
-public function geticon() {
-$item = $this->getitem($this->id);
-return $item['icon'];
-}
+  
+  public function geticon() {
+    $item = $this->getitem($this->id);
+    return $item['icon'];
+  }
   
   public function geturl($id) {
     $item = $this->getitem($id);

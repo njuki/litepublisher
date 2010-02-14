@@ -103,11 +103,11 @@ class tcomments extends titems {
   public function getapprovedcount() {
     return $this->db->getcount("post = $this->pid and status = 'approved'");
   }
-
+  
   public function insert($idauthor, $content, $ip, $posted, $status) {
     $filter = tcontentfilter::instance();
     $filtered = $filter->filtercomment($content);
-        $item = array(
+    $item = array(
     'post' => $this->pid,
     'parent' => 0,
     'author' => $idauthor,
@@ -129,8 +129,8 @@ class tcomments extends titems {
     ));
     
     return $id;
-}  
-
+  }
+  
   public function getcontent() {
     $result = $this->getcontentwhere('approved', '');
     if (litepublisher::$options->admincookie) {

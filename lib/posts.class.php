@@ -90,8 +90,10 @@ class tposts extends titems {
   }
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
-    $icons = ticons::instance();
-    $post->icon = $icons->getid('post');
+    if ($post->icon == 0) {
+      $icons = ticons::instance();
+      $post->icon = $icons->getid('post');
+    }
     
     $post->modified = time();
     $post->pagescount = count($post->pages);
@@ -103,7 +105,7 @@ class tposts extends titems {
       $title = $post->title;
       $post->title = trim($post->url, '/');
       $post->url = $linkgen ->createlink($post, 'post', true);
-      $Post->title = $title;
+      $post->title = $title;
     }
     
     $urlmap = turlmap::instance();
@@ -111,7 +113,6 @@ class tposts extends titems {
       $post->id = tposttransform ::add($post);
       $post->idurl = $urlmap->add($post->url, get_class($post), $post->id);
       $post->db->setvalue($post->id, 'idurl', $post->idurl);
-      
     } else {
       $post->id = ++$this->autoid;
       $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
