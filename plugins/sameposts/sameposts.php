@@ -71,7 +71,7 @@ $this->db->add(array('id' => $id, 'items' => implode(',', $result)));
 return $result;
 }
 } else {
-$filename = $paths['data'] . 'posts' . DIRECTORY_SEPARATOR . $id .DIRECTORY_SEPARATOR . 'same.php';
+$filename = $paths->data . 'posts' . DIRECTORY_SEPARATOR . $id .DIRECTORY_SEPARATOR . 'same.php';
 $data = null;
 if (tfiler::unserialize($filename, $data)) {
 if ($data['revision'] == $this->revision) return $data['items'];

@@ -63,7 +63,7 @@ $this->tagsmap[$key] = $val;
 }
 
 public function import($s) {
-require_once(litepublisher::$paths['lib'] . 'domrss.class.php');
+require_once(litepublisher::$paths->lib . 'domrss.class.php');
 $a = xml2array($s);
 
 $urlmap = turlmap::instance();

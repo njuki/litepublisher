@@ -41,7 +41,7 @@ $theme = ttheme::instance();
 $tml = $theme->getwidgetitem('widget', $index);
 $result = '';
   foreach ($items as $id) {
-   $theme->vars['post'] = tpost::instance($id);
+   ttheme::$vars['post'] = tpost::instance($id);
 $result .= sprintf($tml, $post->link, $post->title);
   }
 return $result;
