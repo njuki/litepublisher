@@ -62,8 +62,8 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
   public function postdeleted($idpost) {
     $this->db->delete("post = $idpost");
   }
-
-public function import($url, $title, $posted, $ip, $status) {
+  
+  public function import($url, $title, $posted, $ip, $status) {
     $item = array(
     'url' => $url,
     'title' => $title,
@@ -77,7 +77,7 @@ public function import($url, $title, $posted, $ip, $status) {
     $this->items[$id] = $item;
     $this->updatecount($this->pid);
     return $id;
-}  
+  }
   public function getcontent() {
     $result = '';
     $items = $this->db->getitems("post = $this->pid and status = 'approved' order by posted");

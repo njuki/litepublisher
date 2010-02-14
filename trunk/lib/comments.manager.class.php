@@ -124,8 +124,8 @@ class tcommentmanager extends tevents {
     //$this->sendmail($id, $idpost);
     return $id;
   }
-
-   private function dochanged($id, $idpost) {
+  
+  private function dochanged($id, $idpost) {
     if (dbversion) {
       $comments = tcomments::instance($idpost);
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");

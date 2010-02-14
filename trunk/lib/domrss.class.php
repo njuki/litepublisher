@@ -61,13 +61,13 @@ function _struct_to_array(&$values, &$i)  {
         } else {
           $val = '';
         }
-if (!isset($result[$name])) {
-$result[$name]= $val;
-} elseif(is_array($result[$name])) {
-$result[$name][] = $val;
-} else {
-$result[$name] = array($result[$name], $val);
-}
+        if (!isset($result[$name])) {
+          $result[$name]= $val;
+        } elseif(is_array($result[$name])) {
+          $result[$name][] = $val;
+        } else {
+          $result[$name] = array($result[$name], $val);
+        }
       }
       break;
       
