@@ -31,8 +31,10 @@ class tdatabase extends PDO {
   "{$dbconfig['driver']}:host={$dbconfig['host']};dbname={$dbconfig['dbname']}";
       }
       parent::__construct($init, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
-      array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
-      //ERRMODE_WARNING
+      array(
+PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION       //ERRMODE_WARNING
+//PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL
+)
       );
     } catch (Exception $e) {
       die($e->getMessage());
@@ -59,7 +61,7 @@ class tdatabase extends PDO {
   }
   
   private function doquery($sql, $isquery) {
-    if ($sql == $this->sql) return $this->result;
+    //if ($sql == $this->sql) return $this->result;
     $this->sql = $sql;
     if (litepublisher::$debug) {
       $this->history[] = array(
@@ -260,7 +262,9 @@ class tdatabase extends PDO {
   
   public function findid($where) {
     if($res = $this->query("select id from $this->prefix$this->table where $where limit 1")) {
-      if ($r = $res->fetch(PDO::FETCH_NUM)) return $r[0];
+      if ($r = $res->fetch(PDO:: FETCH_NUM)) {
+return $r[0];
+}
     }
     return false;
   }

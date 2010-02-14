@@ -102,19 +102,24 @@ class tcommontags extends titems implements  itemplate {
     foreach($Sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
-      $args->icon = $this->geticon($id);
+      $args->icon = $this->geticonlink($id);
     $args->count = $showcount ? " ({$item['itemscount']})" : '';
       $result .= $theme->parsearg($tml,$args);
     }
     return $result;
   }
   
-  public function geticon($id) {
+  public function geticonlink($id) {
     $item = $this->getitem($id);
     if ($item['icon'] == 0)  return '';
     $files = tfiles::instance();
     return $files->geticon($item['icon'], $item['title']);
   }
+
+public function geticon() {
+$item = $this->getitem($this->id);
+return $item['icon'];
+}
   
   public function geturl($id) {
     $item = $this->getitem($id);
