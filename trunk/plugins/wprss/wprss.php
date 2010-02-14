@@ -16,9 +16,9 @@ private $tagsmap;
  protected function create() {
   parent::create();
 $this->data['script'] = '';
+$this->data['ignorelink'] = false;
 $this->tagsmap = array(
 'title' => 'title',
-'link' => 'link',
 'pubDate' => 'pubdate',
 'content:encoded' => 'content',
 //'wp:post_id' => 'id',
@@ -31,9 +31,11 @@ public function getcontent() {
 $result = parent::getcontent();
 $args = targs::instance();
 $args->script = $this->script;
+$args->ignorelink = $this->ignorelink;
 $admin = tadminplugins::instance();
 $about = $admin->abouts[$_GET['plugin']];
 $args->scriptlabel = $about['scriptlabel'];
+$args->ignorelinklabel = $about['ignorelink'];
 $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
 $html = THtmlResource::instance();
 $result .= $html->parsearg($tml, $args);
@@ -42,7 +44,8 @@ return $result;
 
 public function processform() {
 if ($_POST['form'] != 'options')  return parent::ProcessForm();
-$this->script = $_POST['script'];
+$this->data['script'] = $_POST['script'];
+$this->data['ignorelink'] = isset($_POST['ignorelink']);
 $this->save();
 }
 
@@ -82,6 +85,7 @@ $post->{$val} = $item[$key];
 }
 }
 
+if (!$this->ignorelink && isset($item['link'])) $post->link = $item['link'];
 if (isset($item['wp:status'])) {
 $post->status = $item['wp:status'] == 'publish' ? 'published' : 'draft';
 }
