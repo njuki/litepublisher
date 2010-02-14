@@ -1,4 +1,7 @@
 <form name="options" method="post" action="">
+<p><input type='checkbox' name='ignorelink' id='ignorelink' $ignorelink/>
+<label for='ignorelink'>$ignorelinklabel</label></p>
+
 <p><strong>$scriptlabel:</strong><br />
 [area:script]</p>
 
