@@ -115,9 +115,9 @@ class tpost extends titem implements  itemplate {
   }
   
   public function Setlink($link) {
-    if ($UrlArray = parse_url($link)) {
-      $url = $UrlArray['path'];
-      if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
+    if ($a = @parse_url($link)) {
+      $url = $a['path'];
+      if (!empty($a['query'])) $url .= '?' . $a['query'];
       $this->url = $url;
     }
   }

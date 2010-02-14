@@ -52,7 +52,7 @@ class tadmintags extends tadminmenu {
       $result .= $istags ? $h2->edittag : $h2->editcategory;
       if (isset($_GET['full'])) {
         $args->add($tags->contents->getitem($id));
-        $args->iconlink = $tags->geticon($id);
+        $args->iconlink = $tags->geticonlink($id);
         $result .= $html->fullform($args);
       } else {
         $result = $html->form($args);
