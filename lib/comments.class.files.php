@@ -165,6 +165,27 @@ class tcomments extends titems {
     asort($Result);
     return  array_keys($Result);
   }
+
+  public function insert($author, $content, $ip, $posted, $status) {
+    $filter = tcontentfilter::instance();
+    $item  = array(
+    'author' => $author,
+    'posted' => $posted,
+    'content' => $filter->filtercomment($content)
+    );
+    
+    if ($status == 'approved') {
+      $this->items[++$this->autoid] = $item;
+    } else {
+      $this->hold->items[++$this->autoid] =  $item;
+      $this->hold->save();
+    }
+    $this->save();
+    
+    $this->raw->add($this->autoid, $content, $ip);
+    return $this->autoid;
+  }
+
   */
   
   public function getholdcontent($idauthor) {

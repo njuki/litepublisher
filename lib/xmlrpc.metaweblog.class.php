@@ -134,7 +134,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   /* <item> in RSS 2.0, providing a rich variety of item-level metadata, with well-understood applications.
   The three basic elements are title, link and description.  */
-  protected function  MWSetPost(array &$struct, tpost $post) {
+  public function  setpost(array &$struct, tpost $post) {
     $post->title = $struct['title'];
     $more = isset($struct['mt_text_more']) ? trim($struct['mt_text_more']) : '';
     if ($more == '') {
@@ -253,7 +253,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $post->status =  'draft';
     }
     
-    $this->MWSetPost($struct, $post);
+    $this->setpost($struct, $post);
     $id = $posts->add($post);
     return (string) $id;
   }
@@ -281,7 +281,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $post->status =  'draft';
     }
     
-    $this->MWSetPost($struct, $post);
+    $this->setpost($struct, $post);
     $posts->edit($post);
     return true;
   }
