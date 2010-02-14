@@ -13,7 +13,7 @@ class tkeywordsplugin  extends tplugin {
  }
 
 public function urldeleted($item) {
-tfiler::deletemask(litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. $item['id'] . ".*.php");
+tfiler::deletemask(litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR. $item['id'] . ".*.php");
 }
 
  public function parseref($url) {

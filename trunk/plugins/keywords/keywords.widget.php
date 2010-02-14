@@ -20,11 +20,12 @@ class tkeywordswidget extends tevents {
 $this->data['notify'] = true;
 $this->data['trace'] = true;
   $this->addmap('links', array());
+$this->data['title'] = '';
  }
  
 public function getwidget($id, $sitebar) {
   if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
-  $filename = litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR. litepublisher::$urlmap->itemrequested['id'] . ".litepublisher::$urlmap->page .php";
+  $filename = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR. litepublisher::$urlmap->itemrequested['id'] . ".litepublisher::$urlmap->page .php";
     if (@file_exists($filename)) {
    $links = file_get_contents($filename);
   } else {
@@ -40,7 +41,7 @@ $plugin->added($filename, $links);
 }
   }
 $theme = ttheme::instance();
-  return $theme->getwidget(tlocal::$data['default']['keywords'], $links, 'widget', $sitebar);
+  return $theme->getwidget($this->title, $links, 'widget', $sitebar);
  }
  
 }

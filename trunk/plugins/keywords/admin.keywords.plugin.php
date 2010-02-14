@@ -10,7 +10,7 @@ class tadminkeywords {
 
 public function getcontent() {
 $result = '';
-$dir = litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
+$dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
 $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
 $tml = parse_ini_file($selfdir . 'keywords.templates.ini', false);
 $admin = tadminplugins::instance();
@@ -34,9 +34,11 @@ $widget = tkeywordswidget::instance();
 $args->count = $widget->count;
 $args->trace = $widget->trace;
 $args->notify = $widget->notify;
+$args->title = $widget->title;
 $args->countlabel = $about['countlabel'];
 $args->tracelabel = $about['tracelabel'];
 $args->notifylabel = $about['notifylabel'];
+$args->titlelabel = $about['titlelabel'];
 $result .= $html->parsearg($tml['optionsform'], $args);
 }
 
@@ -74,10 +76,11 @@ return sprintf("<p>\n%s</p>\n", $result);
 }
 
 public function processform() {
-$dir = litepublisher::$paths['data'] . 'keywords' . DIRECTORY_SEPARATOR  ;
+$dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
 if (isset($_POST['pluginoptions'])) {
 extract($_POST);
 $widget = tkeywordswidget::instance();
+$widget->title = $title;
 $widget->count = (int) $count;
 $widget->notify = isset($notify);
 $trace = isset($trace);

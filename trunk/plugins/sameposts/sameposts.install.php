@@ -32,7 +32,7 @@ if (dbversion) {
 $manager->deletetable($self->table);
 } else {
 $posts = tposts::instance();
-$dir = litepublisher::$paths['data'] . 'posts' . DIRECTORY_SEPARATOR;
+$dir = litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR;
 foreach ($posts->items as $id => $item) {
 @unlink($dir . $id .DIRECTORY_SEPARATOR . 'same.php');
 }

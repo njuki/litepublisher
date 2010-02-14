@@ -1,0 +1,152 @@
+<?php
+/**
+ * Lite Publisher 
+ * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+ * Dual licensed under the MIT (mit.txt) 
+ * and GPL (gpl.txt) licenses.
+**/
+
+class twprssimporter extends timporter {
+private $tagsmap;
+
+  public static function instance() {
+  return getinstance(__class__);
+ }
+
+ protected function create() {
+  parent::create();
+$this->data['script'] = '';
+$this->tagsmap = array(
+'title' => 'title',
+'link' => 'link',
+'pubDate' => 'pubdate',
+'content:encoded' => 'content',
+//'wp:post_id' => 'id',
+'wp:post_parent' => 'parent'
+);
+
+}
+
+public function getcontent() {
+$result = parent::getcontent();
+$args = targs::instance();
+$args->script = $this->script;
+$admin = tadminplugins::instance();
+$about = $admin->abouts[$_GET['plugin']];
+$args->scriptlabel = $about['scriptlabel'];
+$tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
+$html = THtmlResource::instance();
+$result .= $html->parsearg($tml, $args);
+return $result;
+}
+
+public function processform() {
+if ($_POST['form'] != 'options')  return parent::ProcessForm();
+$this->script = $_POST['script'];
+$this->save();
+}
+
+public function import($s) {
+require_once(litepublisher::$paths->lib . 'domrss.class.php');
+$a = xml2array($s);
+
+$urlmap = turlmap::instance();
+$urlmap->lock();
+$cats = tcategories::instance();
+$cats->lock();
+$tags = ttags::instance();
+$tags->lock();
+$posts = tposts::instance();
+$posts->lock();
+foreach ($a['rss']['channel'][0]['item'] as $item) {
+if ($post = $this->add($item)) {
+$posts->add($post);
+if (isset($item['wp:comment']) && is_array($item['wp:comment'])) {
+$this->importcomments($item['wp:comment'], $post->id);
+}
+if (!tdata::$GlobalLock) $post->free();
+}
+}
+$posts->unlock();
+$tags->unlock();
+$cats->unlock();
+$urlmap->unlock();
+}
+
+public function add(array $item) {
+if (isset($item['wp:post_type']) && ($item['wp:post_type'] != 'post')) return false;
+$post = tpost::instance();
+foreach ($this->tagsmap as $key => $val) {
+if (isset($item[$key])) {
+$post->{$val} = $item[$key];
+}
+}
+
+if (isset($item['wp:status'])) {
+$post->status = $item['wp:status'] == 'publish' ? 'published' : 'draft';
+}
+
+if (isset($item['wp:comment_status'])) {
+$post->commentsenabled = $item['wp:comment_status'] == 'open';
+}
+
+if (isset($item['wp:ping_status'])) {
+$post->pingenabled = $item['wp:ping_status'] == 'open';
+}
+
+    if (isset($item['category'])) {
+      $post->categories = $this->getcategories($item['category'], 'category');
+      $post->tags = $this->getcategories($item['category'], 'tag');
+    }
+
+if ($this->script != '') eval($this->script);
+return $post;
+}
+
+private function getcategories($values, $type) {
+$result = array();
+$tags = $type == 'tag' ? ttags::instance() : tcategories::instance();
+if (!is_array($values)) {
+if ($type == 'tag') return $result;
+$result[] = $tags->add($values);
+return $result;
+}
+
+foreach ($values as $item) {
+if (is_array($item)) {
+if (!isset($item['attributes']['domain']) || ($item['attributes']['domain'] != $type)) continue;
+$id = $tags->add($item[0]);
+} else {
+if ($type == 'tag') continue;
+$id = $tags->add($item);
+}
+if (!in_array($id, $result)) $result[] = $id;
+}
+
+return $result;
+}
+
+private function importcomments(array $items, $idpost) {
+$comments = tcomments::instance($idpost);
+$comments->lock();
+$comusers = tcomusers::instance($idpost);
+$comusers->lock();
+foreach ($items as $item) {
+$status = $item['wp:comment_approved'] == '1' ? 'approved' : 'hold';
+$posted = strtotime($item['wp:comment_date']);
+if ($item['wp:comment_type'] == 'pingback') {
+$pingbacks = tpingbacks::instance($idpost);
+$pingbacks->import( $item['wp:comment_author_url'], $item['wp:comment_author'], $posted, $item['wp:comment_author_IP'], $status);
+continue;
+}
+
+$idauthor = $comusers->add($item['wp:comment_author'], $item['wp:comment_author_email'], $item['wp:comment_author_url']);
+$comments->add($idpost, $idauthor,  $item['wp:comment_content'], $item['wp:comment_author_IP'], $status, $posted);
+}
+$comusers->unlock();
+$comments->unlock();
+}
+
+}//class
+
+?>
