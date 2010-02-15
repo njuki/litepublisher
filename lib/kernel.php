@@ -307,14 +307,14 @@ class tevents extends tdata {
     array_splice($this->eventnames, count($this->eventnames), 0, $a);
   }
   
-  private function getevents($name) {
+  private function get_events($name) {
     if (isset($this->events[$name])) return $this->events[$name];
     return false;
   }
   
   protected function callevent($name, $params) {
     $result = '';
-    if (    $list = $this->getevents($name)) {
+    if (    $list = $this->get_events($name)) {
       foreach ($list as $i => $item) {
         if (empty($item['class'])) {
           if (function_exists($item['func'])) {
@@ -348,8 +348,9 @@ class tevents extends tdata {
   }
   
   protected function doeventsubscribe($name, $params) {
+    if (!isset($params['func'])) return false;
     if (!isset($this->events[$name])) $this->events[$name] =array();
-    $list = $this->getevents($name);
+    $list = $this->get_events($name);
     foreach ($list  as $event) {
       if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
     }
@@ -362,7 +363,7 @@ class tevents extends tdata {
   }
   
   public function eventunsubscribe($name, $class) {
-    if (    $list = $this->getevents($name)) {
+    if (    $list = $this->get_events($name)) {
       foreach ($list  as $i => $item) {
         if ($item['class'] == $class) {
           $this->eventdelete($name, $i);

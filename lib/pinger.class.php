@@ -49,11 +49,14 @@ class tpinger extends tevents {
   public function pingpost($id) {
     $post = tpost::instance($id);
     if ($post->status != 'published') return;
-    $posturl = $post->link;
-    $this->pingservices($posturl);
-    
     $meta = $post->meta;
-    $pinged = isset($meta->data['pinged']) ? unserialize($meta->pinged) : array();
+    if (!$meta->propexists('lastpinged') || ($meta->lastpinged + 3600*24 < time())) {
+      $posturl = $post->link;
+      $this->pingservices($posturl);
+      $meta->lastpinged = time();
+    }
+    
+    $pinged = $meta->propexists('pinged') ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
     foreach ($links as $link) {
       if (!in_array($link, $pinged)) {
@@ -180,7 +183,7 @@ class tpinger extends tevents {
       $client->timeout = 3;
       $client->useragent .= ' -- Lite Publisher/'.litepublisher::$options->version;
       $client->debug = false;
-      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$options->name, $home, $url, "litepublisher::$options->url/rss/") )
+      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$options->name, $home, $url, litepublisher::$options->url . "/rss/") )
       $client->query('weblogUpdates.ping', litepublisher::$options->name, $url);
     }
   }
