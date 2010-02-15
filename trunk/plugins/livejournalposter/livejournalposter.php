@@ -36,7 +36,10 @@ $meta = $post->meta;
 
 	$client = new IXR_Client($this->host, '/interface/xmlrpc');
 	//$client = new IXR_Client($this->host, '/rpc.xml');
-	if (!$client->query('LJ.XMLRPC.getchallenge'))  return false;
+	if (!$client->query('LJ.XMLRPC.getchallenge'))  {
+if (litepublisher::$debug) tfiler::log('live journal: error challenge');
+return false;
+}
 	$response = $client->getResponse();
 	$challenge = $response['challenge'];
 
@@ -74,7 +77,6 @@ $meta = $post->meta;
 
 	if($this->community != '') $args['usejournal'] = $this->community;
 
-
 if ($meta->propexists('ljid') ) {
 		$method = 'LJ.XMLRPC.editevent';
 		$args['itemid'] = $meta->ljid;
@@ -83,6 +85,7 @@ if ($meta->propexists('ljid') ) {
 }
 
 	if (!$client->query($method, $args)) {
+if (litepublisher::$debug) tfiler::log('Something went wrong - '.$client->getErrorCode().' : '.$client->getErrorMessage());
 return  false;
 	}
 
