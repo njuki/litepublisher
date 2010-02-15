@@ -1,1 +1,5 @@
-$post.filtered
+<p>Originally published at <a href="$options.url/" title="$options.name">$options.name</a>
+where it was originally posted
+$post.excerpt
+$post.morelink
+<p>Please leave comments $post.commentslink</p>

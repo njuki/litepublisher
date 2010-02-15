@@ -11,7 +11,7 @@ class tadminlivejournalposter {
 public function getcontent() {
 $plugin = tlivejournalposter::instance();
 $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-if ($plugin->template == '') $plugin->template = file_get_contents($dir, livejournal.tml');
+if ($plugin->template == '') $plugin->template = file_get_contents($dir. 'livejournalposter.tml');
 $form = file_get_contents($dir . 'form.tml');
 $html = THtmlResource::instance();
 $args = targs::instance();
@@ -19,6 +19,9 @@ $admin = tadminplugins::instance();
 $about = $admin->abouts[$_GET['plugin']];
 $args->add($about);
 $args->add($plugin->data);
+$args->publicchecked = 'public' == $plugin->privacy;
+$args->privatechecked = 'private' == $plugin->privacy;
+$args->friendschecked = 'friends' == $plugin->privacy;
 return $html->parsearg($form, $args);
 }
 
