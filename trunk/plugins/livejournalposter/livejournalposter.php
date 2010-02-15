@@ -24,18 +24,18 @@ $this->data['template'] = '';
   }
   
 public function sendpost($id) {
-if ($this->host == '' || $this->login == '') retrn false;
+if ($this->host == '' || $this->login == '') return false;
     $post = tpost::instance($id);
 ttheme::$vars['post'] = $post;
 $theme = ttheme::instance();
 $content = $theme->parse($this->template);
 $date = getdate($post->posted);
+
     if ($post->status != 'published') return;
 $meta = $post->meta;
-$ljid = $meta->hasprop('ljid') : $meta->ljid : 0;
-$meta->ljid = $ljid;
 
 	$client = new IXR_Client($this->host, '/interface/xmlrpc');
+	//$client = new IXR_Client($this->host, '/rpc.xml');
 	if (!$client->query('LJ.XMLRPC.getchallenge'))  return false;
 	$response = $client->getResponse();
 	$challenge = $response['challenge'];
@@ -50,13 +50,13 @@ $meta->ljid = $ljid;
 	'subject' => $post->title,
 	'year' => $date['year'],
 	'mon' => $date['mon'],
-	'day' => $date['day'],
-	'hour'] = d> $date['hour'],
-	'min' => $date['min'],
+	'day' => $date['mday'],
+	'hour' => $date['hours'],
+	'min' => $date['minutes'],
 	'props' => array(
 'opt_nocomments' => !$post->commentsenabled,
 						'opt_preformatted' => true,
-'taglist' => $post->catnames
+'taglist' => $post->tagnames
 )
 );
 
@@ -75,23 +75,22 @@ $meta->ljid = $ljid;
 	if($this->community != '') $args['usejournal'] = $this->community;
 
 
-if (ljid == 0) {
-	$method = 'LJ.XMLRPC.postevent';
-} else {
+if ($meta->propexists('ljid') ) {
 		$method = 'LJ.XMLRPC.editevent';
-		$args['itemid'] = ljid;
+		$args['itemid'] = $meta->ljid;
+} else {
+	$method = 'LJ.XMLRPC.postevent';
 }
 
 	if (!$client->query($method, $args)) {
 return  false;
 	}
 
-if (ljid == 0) {
+if (!$meta->propexists('ljid')) {
 		$response = $client->getResponse();
-$ljid = $response['itemid'];
-$meta->ljid = $ljid;
+$meta->ljid = $response['itemid'];
 	}
-return ljid;
+return $meta->ljid;
 		}
 
  }//class
