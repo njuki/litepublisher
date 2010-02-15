@@ -398,8 +398,10 @@ public function loadfromfile($filename) {
         $activeDir["name"]  = $dirname;
         $activeDir["mode"]  = $perm;
         $activeDir["time"]  = time();
-        $activeDir["user_id"]   = 33;
-        $activeDir["group_id"]  = 33;
+        $activeDir["user_id"]   = 0;
+        $activeDir["group_id"]  = 0;
+        $activeDir["user_name"]    = "";
+        $activeDir["group_name"]   = "";
         $activeDir["checksum"]  = 0;
         return true;
     }
@@ -417,13 +419,14 @@ $checksum = 0;
         $activeFile         = &$this->files[];
         $activeFile["name"]     = $filename;
         $activeFile["mode"]     = $perm;
-        $activeFile["user_id"]      = $file_information["uid"] == 0 ? 33 : $file_information["uid"];
-        $activeFile["group_id"]     = $file_information["gid"] == 0 ? 33 : $file_information["gid"];
+        $activeFile["user_id"]      = $file_information["uid"]; // == 0 ? 33 : $file_information["uid"];
+        $activeFile["group_id"]     = $file_information["gid"]; // == 0 ? 33 : $file_information["gid"];
+        $activeFile["user_name"]    = "";
+        $activeFile["group_name"]   = "";
+
         $activeFile["size"]     = strlen($file_contents);
         $activeFile["time"]     = $file_information["mtime"];
         $activeFile["checksum"]     = 0;
-        $activeFile["user_name"]    = "www-data";
-        $activeFile["group_name"]   = "www-data";
         $activeFile["file"]     = $file_contents;
         return true;
     }

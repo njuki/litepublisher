@@ -21,17 +21,9 @@ class tpinger extends tevents {
   }
   
   public function install() {
-    if (dbversion) {
-      $dir = litepublisher::$paths->data . 'pingedlinks';
-      @mkdir($dir, 0777);
-      @chmod($dir, 0777);
-    }
     if ($this->services == '') $this->services = file_get_contents(litepublisher::$paths->libinclude . 'pingservices.txt');
     $posts = tposts::instance();
-    $posts->lock();
-    if (dbversion) $posts->deleted = $this->postdeleted;
     $posts->singlecron = $this->pingpost;
-    $posts->unlock();
   }
   
   public function setenabled($value) {
@@ -54,24 +46,21 @@ class tpinger extends tevents {
     }
   }
   
-  public function postdeleted($id) {
-    tfiler::deletemask(litepublisher::$paths->data . 'pingedlinks' . DIRECTORY_SEPARATOR . "$id.*");
-  }
-  
   public function pingpost($id) {
     $post = tpost::instance($id);
     if ($post->status != 'published') return;
     $posturl = $post->link;
     $this->pingservices($posturl);
     
-    $pinged = new tpinglinks    ($id);
+$meta = $post->meta;
+$pinged = isset($meta->data['pinged']) ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
     foreach ($links as $link) {
-      if (!in_array($link, $pinged->items)) {
-        if ($this->ping($link, $posturl)) $pinged->items[] = $link;
+      if (!in_array($link, $pinged)) {
+        if ($this->ping($link, $posturl)) $pinged[] = $link;
       }
     }
-    $pinged->save();
+    $meta->pinged = serialize($pinged);
   }
   
   protected function getlinks(tpost $post) {
@@ -193,24 +182,6 @@ class tpinger extends tevents {
       $client->debug = false;
       if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$options->name, $home, $url, "litepublisher::$options->url/rss/") )
       $client->query('weblogUpdates.ping', litepublisher::$options->name, $url);
-    }
-  }
-  
-}//class
-
-class tpinglinks extends titems {
-  public $pid;
-  
-  public function __construct($pid) {
-    $this->pid = $pid;
-    parent::__construct();
-  }
-  
-  public function getbasename() {
-    if (dbversion) {
-      return 'pingedlinks' . DIRECTORY_SEPARATOR . $this->pid;
-    } else {
-      return 'posts' . DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'pingedlinks';
     }
   }
   

@@ -19,8 +19,7 @@ class tfiles extends titems {
     $this->basename = 'files';
     $this->table = 'files';
     $this->addevents('changed', 'edited');
-    if (!$this->dbversion)  $this->data['itemsposts'] = array();
-    $this->itemsposts = new titemspostsowner ($this);
+    $this->itemsposts = tfileitems ::instance();
   }
   
   public function load() {
@@ -129,5 +128,20 @@ class tfiles extends titems {
   }
   
 }//class
+
+class tfileitems extends titemsposts {
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
+protected function create() {
+$this->dbversion = dbversion;
+parent::create();
+$this->basename = 'fileitems';'
+$this->table = 'filesitemsposts';
+}
+
+}
 
 ?>
