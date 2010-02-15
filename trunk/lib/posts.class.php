@@ -230,7 +230,6 @@ class tposts extends titems {
   
   public function dosinglecron($id) {
     $this->PublishFuture();
-    $theme = ttheme::instance;
     ttheme::$vars['post'] = tpost::instance($id);
     $this->singlecron($id);
   }

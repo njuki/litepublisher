@@ -30,7 +30,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     
     switch ($auth_method) {
       case 'challenge':
-      //if (litepublisher::$debug) return ($this->_challenge == $auth_challenge);
+      if (litepublisher::$debug) return ($this->_challenge == $auth_challenge);
       return ($this->_challenge == $auth_challenge) && ($auth_response == md5($this->challenge . $options->password));
       
       case 'clear':
