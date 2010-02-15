@@ -88,7 +88,7 @@ class tdbmanager  {
   }
   
   private function DeleteDeleted() {
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     //posts
     $db->table = 'posts';
     $deleted = $db->idselect("status = 'deleted'");
@@ -98,8 +98,8 @@ $db = litepublisher::$db;
       (select idurl from $db->posts where status = 'deleted')");
       
       $db->exec("delete from $db->rawposts where id in ($selected)");
-            $db->exec("delete from $db->pages where id in ($deleted)");
-            $db->exec("delete from $db->postsmeta where id in ($selected)");
+      $db->exec("delete from $db->pages where id in ($deleted)");
+      $db->exec("delete from $db->postsmeta where id in ($selected)");
       $db->exec("delete from $db->posts where id in ($selected)");
     }
     
@@ -126,7 +126,7 @@ $db = litepublisher::$db;
   }
   
   public function export() {
-$options = litepublisher::$options;
+    $options = litepublisher::$options;
     $res = $this->query("show variables like 'max_allowed_packet'");
     $v = $res->fetch();
     $this->max_allowed_packet =floor($v['Value']*0.8);

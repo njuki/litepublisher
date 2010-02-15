@@ -17,6 +17,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     parent::create();
     $this->html = THtmlResource::instance();
     $this->html->section ='files';
+    tlocal::loadlang('admin');
     $lang = tlocal::instance('files');
   }
   

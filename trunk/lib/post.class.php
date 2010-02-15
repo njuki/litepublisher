@@ -9,7 +9,7 @@
 class tpost extends titem implements  itemplate {
   private $aprev;
   private $anext;
-private $ameta;
+  private $ameta;
   
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
@@ -64,7 +64,7 @@ private $ameta;
   public function getdbversion() {
     return dbversion;
   }
-
+  
   //db
   public function load() {
     if (dbversion)  return $this->LoadFromDB();
@@ -128,13 +128,13 @@ private $ameta;
     }
     return $this->anext;
   }
-
-public function getmeta() {
-if (!isset($this->ameta)) {
-$this->ameta = tmetapost::instance($this->id);
-}
-return $this->ameta;
-}
+  
+  public function getmeta() {
+    if (!isset($this->ameta)) {
+      $this->ameta = tmetapost::instance($this->id);
+    }
+    return $this->ameta;
+  }
   
   public function Getlink() {
     return litepublisher::$options->url . $this->url;
@@ -457,7 +457,7 @@ return $this->ameta;
   
   public function setcommentsenabled($value) {
     if ($value != $this->commentsenabled) {
-      if (!dbversion) $this->data['commentscount'] =  $this->comments->GetCountApproved;
+      if (!dbversion) $this->data['commentscount'] =  $this->comments->count;
       $this->data['commentsenabled'] = $value;
     }
   }

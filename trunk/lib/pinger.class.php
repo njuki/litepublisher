@@ -52,8 +52,8 @@ class tpinger extends tevents {
     $posturl = $post->link;
     $this->pingservices($posturl);
     
-$meta = $post->meta;
-$pinged = isset($meta->data['pinged']) ? unserialize($meta->pinged) : array();
+    $meta = $post->meta;
+    $pinged = isset($meta->data['pinged']) ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
     foreach ($links as $link) {
       if (!in_array($link, $pinged)) {

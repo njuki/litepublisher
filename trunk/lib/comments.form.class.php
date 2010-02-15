@@ -12,7 +12,7 @@ if (dbversion) {
     protected function create() {
       parent::create();
       $this->table ='commentskept';
-      $this->db->delete("posted < now() - INTERVAL 20 minute ");
+      $this->db->delete(sprintf("posted < '%s' - INTERVAL 20 minute ", sqldate()));
     }
     
     public function add($values) {
@@ -196,7 +196,7 @@ class tcommentform extends tevents {
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
     $idpostcookie
-    @header('Location: litepublisher::$options->url$posturl');
+    @header('Location: " . litepublisher::$options->url . "$posturl');
     ?>";
   }
   

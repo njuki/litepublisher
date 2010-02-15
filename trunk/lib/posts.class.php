@@ -215,7 +215,7 @@ class tposts extends titems {
   
   public function UpdateArchives() {
     if ($this->dbversion) {
-      $this->archivescount = $this->db->getcount("status = 'published' and posted <= now()");
+      $this->archivescount = $this->db->getcount("status = 'published' and posted <= '" . sqldate() . "'");
     } else {
       $this->archives = array();
       foreach ($this->items as $id => $item) {
@@ -247,7 +247,7 @@ class tposts extends titems {
   
   public function PublishFuture() {
     if ($this->dbversion) {
-      if ($list = $this->db->idselect("status = 'future' and posted <= now() order by posted asc")) {
+      if ($list = $this->db->idselect(sprintf("status = 'future' and posted <= '%s' order by posted asc", sqldate()))) {
         foreach( $list as $id) $this->publish($id);
       }
     } else {
