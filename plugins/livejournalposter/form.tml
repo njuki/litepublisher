@@ -29,5 +29,5 @@ $friendslabel</label>
 <p><strong>$templatelabel:</strong><br />
 [area:template]</p>
 
- <p><input type="submit" name="Submit" value="$lang.pdate"/></p>
+ <p><input type="submit" name="Submit" value="$lang.update"/></p>
 </form>
