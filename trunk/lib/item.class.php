@@ -9,7 +9,6 @@
 class titem extends tdata {
   public static $instances;
   //public $id;
-  protected $aliases;
   
   public static function instance($class, $id = 0) {
     if (!isset(self::$instances)) self::$instances = array();
@@ -34,24 +33,12 @@ class titem extends tdata {
     parent::__construct();
     $this->data['id'] = 0;
   }
-  
-  public function __get($name) {
-    if (isset($this->aliases[$name])) {
-      return $this->data[$this->aliases[$name]];
-    }
-    return parent::__get($name);
-  }
-  
+
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
-    
-    if (isset($this->aliases[$name])) {
-      return $this->__set($this->aliases[$name],  $value);
-    }
-    
     return  $this->Error("Field $name not exists in class " . get_class($this));
   }
-  
+
   public function setid($id) {
     if ($id != $this->id) {
       $class = get_class($this);

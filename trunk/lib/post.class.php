@@ -9,6 +9,7 @@
 class tpost extends titem implements  itemplate {
   private $aprev;
   private $anext;
+private $ameta;
   
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
@@ -63,6 +64,24 @@ class tpost extends titem implements  itemplate {
   public function getdbversion() {
     return dbversion;
   }
+
+  //db
+  public function load() {
+    if (dbversion)  return $this->LoadFromDB();
+    return parent::load();
+  }
+  
+  protected function LoadFromDB() {
+    $db = litepublisher::$db;
+    if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
+      $res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));
+      $res->fetch();
+      return true;
+    }
+    return false;
+  }
+  
   
   protected function SaveToDB() {
     TPostTransform ::instance($this)->save();
@@ -109,6 +128,13 @@ class tpost extends titem implements  itemplate {
     }
     return $this->anext;
   }
+
+public function getmeta() {
+if (!isset($this->ameta)) {
+$this->ameta = tmetapost::instance($this->id);
+}
+return $this->ameta;
+}
   
   public function Getlink() {
     return litepublisher::$options->url . $this->url;
@@ -439,23 +465,6 @@ class tpost extends titem implements  itemplate {
   public function getcommentscount() {
     if (!$this->commentsenabled || dbversion)  return $this->data['commentscount'];
     return $this->comments->approvedcount;
-  }
-  
-  //db
-  public function load() {
-    if (dbversion)  return $this->LoadFromDB();
-    return parent::load();
-  }
-  
-  public function LoadFromDB() {
-    $db = litepublisher::$db;
-    if ($res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
-    where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
-      $res->setFetchMode (PDO::FETCH_INTO , tposttransform::instance($this));
-      $res->fetch();
-      return true;
-    }
-    return false;
   }
   
   public function clearcache() {

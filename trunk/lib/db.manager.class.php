@@ -88,19 +88,19 @@ class tdbmanager  {
   }
   
   private function DeleteDeleted() {
+$db = litepublisher::$db;
     //posts
-    litepublisher::$db->table = 'posts';
-    $deleted = litepublisher::$db->idselect("status = 'deleted'");
+    $db->table = 'posts';
+    $deleted = $db->idselect("status = 'deleted'");
     if (count($deleted) > 0) {
       $deleted = implode(',', $deleted);
-      litepublisher::$db->exec("delete from litepublisher::$db->urlmap where id in
-      (select idurl from litepublisher::$db->posts where status = 'deleted')");
+      $db->exec("delete from $db->urlmap where id in
+      (select idurl from $db->posts where status = 'deleted')");
       
-      litepublisher::$db->exec("delete from litepublisher::$db->rawposts where id in ($selected)");
-      
-      litepublisher::$db->exec("delete from litepublisher::$db->pages where id in ($deleted)");
-      
-      litepublisher::$db->exec("delete from litepublisher::$db->posts where id in ($selected)");
+      $db->exec("delete from $db->rawposts where id in ($selected)");
+            $db->exec("delete from $db->pages where id in ($deleted)");
+            $db->exec("delete from $db->postsmeta where id in ($selected)");
+      $db->exec("delete from $db->posts where id in ($selected)");
     }
     
     //comments
@@ -126,14 +126,15 @@ class tdbmanager  {
   }
   
   public function export() {
+$options = litepublisher::$options;
     $res = $this->query("show variables like 'max_allowed_packet'");
     $v = $res->fetch();
     $this->max_allowed_packet =floor($v['Value']*0.8);
     
-    $result = "-- Lite Publisher dump litepublisher::$options->version\n";
+    $result = "-- Lite Publisher dump $options->version\n";
     $result .= "-- Datetime: ".date('Y-m-d H:i:s') . "\n";
-  $result .= "-- Host: {litepublisher::$options->dbconfig['host']}\n";
-  $result .= "-- Database: {litepublisher::$options->dbconfig['dbname']}\n\n";
+  $result .= "-- Host: {$options->dbconfig['host']}\n";
+  $result .= "-- Database: {$options->dbconfig['dbname']}\n\n";
     $result .= "/*!40030 SET max_allowed_packet=$this->max_allowed_packet */;\n\n";
     
     $tables = $this->gettables();
