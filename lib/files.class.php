@@ -130,18 +130,18 @@ class tfiles extends titems {
 }//class
 
 class tfileitems extends titemsposts {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
-
-protected function create() {
-$this->dbversion = dbversion;
-parent::create();
-$this->basename = 'fileitems';'
-$this->table = 'filesitemsposts';
-}
-
+  
+  protected function create() {
+    $this->dbversion = dbversion;
+    parent::create();
+    $this->basename = 'fileitems';
+    $this->table = 'filesitemsposts';
+  }
+  
 }
 
 ?>

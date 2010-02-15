@@ -33,12 +33,12 @@ class titem extends tdata {
     parent::__construct();
     $this->data['id'] = 0;
   }
-
+  
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
     return  $this->Error("Field $name not exists in class " . get_class($this));
   }
-
+  
   public function setid($id) {
     if ($id != $this->id) {
       $class = get_class($this);

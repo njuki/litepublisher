@@ -23,25 +23,25 @@ class tmetapost extends titem {
   public function getdbversion() {
     return dbversion;
   }
-
+  
   public function __set($name, $value) {
-if ($name == 'id') return $this->setid($value);
-if (isset($this->data[$name]) && ($this->data[$name] == $value)) return true;
-$this->data[$name] = $value;
-if ($this->locked) return true;
-if (dbversion) {
-$name = dbquote($name);
-$value = dbquote($value);
-if (isset($this->data[$name])) {
-$this->db->update("value = $value", "id = $this->id and name = $name");
-} else {
-$this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
-}
-} else {
-$this->save();
-}
+    if ($name == 'id') return $this->setid($value);
+    if (isset($this->data[$name]) && ($this->data[$name] == $value)) return true;
+    $this->data[$name] = $value;
+    if ($this->locked) return true;
+    if (dbversion) {
+      $name = dbquote($name);
+      $value = dbquote($value);
+      if (isset($this->data[$name])) {
+        $this->db->update("value = $value", "id = $this->id and name = $name");
+      } else {
+        $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
+      }
+    } else {
+      $this->save();
+    }
   }
-
+  
   //db
   public function load() {
     if (dbversion)  return $this->LoadFromDB();
@@ -51,23 +51,23 @@ $this->save();
   protected function LoadFromDB() {
     if ($res = $this->db->select("id = $this->id")) {
       $res->setFetchMode (PDO::FETCH_ASSOC);
-foreach ($res as $row) {
-$this->data[$row['name']] = $row['value'];
-}
+      foreach ($res as $row) {
+        $this->data[$row['name']] = $row['value'];
+      }
       return true;
     }
     return false;
   }
   
-    protected function SaveToDB() {
-$db = $this->db;
-$db->delete("id = $this->id");
-foreach ($this->data as $name => $value) {
-if ($name == 'id') continue;
-$name = dbquote($name);
-$value = dbquote($value);
-$this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
-}
+  protected function SaveToDB() {
+    $db = $this->db;
+    $db->delete("id = $this->id");
+    foreach ($this->data as $name => $value) {
+      if ($name == 'id') continue;
+      $name = dbquote($name);
+      $value = dbquote($value);
+      $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
+    }
   }
   
 }//class

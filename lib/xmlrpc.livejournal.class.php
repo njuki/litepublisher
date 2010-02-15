@@ -14,7 +14,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   
   protected function create() {
     parent::create();
-    $this->data['challenge'] = '';
+    $this->data['_challenge'] = '';
     $this->data['expired'] = 0;
   }
   
@@ -25,17 +25,19 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   
   private function _auth(array $struct) {
     extract($struct);
-    if ($username != litepublisher::$options->login) return false;
+    $options = litepublisher::$options;
+    if ($username != $options->login) return false;
     
     switch ($auth_method) {
       case 'challenge':
-      return ($this->challenge == $auth_challenge) && ($auth_response == md5($this->challenge . litepublisher::$options->password));
+      //if (litepublisher::$debug) return ($this->_challenge == $auth_challenge);
+      return ($this->_challenge == $auth_challenge) && ($auth_response == md5($this->challenge . $options->password));
       
       case 'clear':
-      return $this->password == md5("litepublisher::$options->login:litepublisher::$options->realm:$password");
+      return $this->password == md5("$options->login:$options->realm:$password");
       
       case 'cookie':
-      
+      return false;
     }
     
     return false;
@@ -54,13 +56,13 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   
   public function getchallenge() {
     if (time() >=  $this->expired) {
-      $this->challenge =md5unique();
+      $this->_challenge =md5uniq();
       $this->expired = time() + 3600;
       $this->save();
     }
     return array(
     'auth_scheme' => 'c0',
-    'challenge' => $this->challenge,
+    'challenge' => $this->_challenge,
     'expire_time' => $this-> expired,
     'server_time' => $this->expired - 3600
     );;

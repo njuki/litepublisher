@@ -126,8 +126,9 @@ public function getdescription() {}
   private function writeposts() {
     if (dbversion) {
       $db = litepublisher::$db;
+      $now = sqldate();
       $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
-      where $db->posts.status = 'published' and $db->posts.posted < now() and $db->urlmap.id = $db->posts.idurl");
+      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl");
       $res->setFetchMode (PDO::FETCH_ASSOC);
       foreach ($res as $item) {
         $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;

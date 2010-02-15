@@ -67,8 +67,10 @@ class THtmlResource  {
         if (isset($args->data[$varname])) {
           $str = &$args->data[$varname];
           $str = htmlspecialchars($str);
-          $str = str_replace('"', '&quot;', $str);
-          $str = str_replace("'", '&#39;', $str);
+          $str = str_replace(
+          array('"', "'", '$'),
+          array('&quot;', '&#39;', '&#36;'),
+          $str);
         } else {
           $args->data[$varname] = '';
         }
