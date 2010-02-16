@@ -53,6 +53,10 @@ class tdbmanager  {
   public function alter($arg) {
     return $this->exec("alter table $this->prefix$this->table $arg");
   }
+
+public function setautoincrement($table, $value) {
+$this->exec("ALTER TABLE $this->prefix$table AUTO_INCREMENT = $value");
+}
   
   public function getdatabases() {
     if ($res = $this->query("show databases")) {

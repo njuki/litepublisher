@@ -6,20 +6,11 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminlogin extends tevents implements itemplate {
-  private $formresult;
-  
+class tadminlogin extends tadminform {
+
   public static function instance() {
     return getinstance(__class__);
   }
-  
-  public function gettitle() {
-    return tlocal::$data['login']['title'];
-  }
-  
-public function gethead() {}
-public function getkeywords() {}
-public function getdescription() {}
   
   public function auth() {
     $auth = tauthdigest::instance();
@@ -42,18 +33,9 @@ public function getdescription() {}
   }
   
   public function request($arg) {
-    $this->cache = false;
     if ($arg == 'out')   return $this->logout();
-    tlocal::loadlang('admin');
-    $this->formresult = '';
-    
-    if (isset($_POST) && (count($_POST) > 0)) {
-      if (get_magic_quotes_gpc()) {
-        foreach ($_POST as $name => $value) {
-          $_POST[$name] = stripslashes($_POST[$name]);
-        }
-      }
-      
+parent::request();
+$this->section = 'login';
       if (!litepublisher::$options->cookieenabled) {
         $this->formresult = $this->html->h2->cookiedisabled;
         return;
@@ -78,22 +60,13 @@ public function getdescription() {}
     //    if ($s = $this->auth()) return $s;
   }
   
-  public function gettemplatecontent() {
-    $result = $this->formresult;
+  public function getcontent() {
     $args = targs::instance();
     $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
-    $result .=$this->html->form($args);
-    return $result;
+return $this->html->form($args);
   }
-  
-  public function gethtml() {
-    $result = THtmlResource ::instance();
-    $result->section = 'login';
-    $lang = tlocal::instance('login');
-    return $result;
-  }
-  
+
 }//class
 
 ?>

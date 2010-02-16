@@ -219,8 +219,7 @@ class tcommentmanager extends tevents {
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
-    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
-    'admin', litepublisher::$options->email,  $subject, $body);
+    tmailer::sendtoadmin($subject, $body);
   }
   
   public function getrecent($count) {
