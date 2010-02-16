@@ -54,6 +54,7 @@ class titems extends tevents {
     $res = litepublisher::$db->query("select * from $this->thistable where id in ($list)");
     $res->setFetchMode (PDO::FETCH_ASSOC);
     foreach ($res as $item) {
+      $item['id'] = (int) $item['id'];
       $this->items[$item['id']] = $item;
     }
   }

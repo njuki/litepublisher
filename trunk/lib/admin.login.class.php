@@ -7,7 +7,7 @@
 **/
 
 class tadminlogin extends tadminform {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -34,39 +34,36 @@ class tadminlogin extends tadminform {
   
   public function request($arg) {
     if ($arg == 'out')   return $this->logout();
-parent::request();
-$this->section = 'login';
-      if (!litepublisher::$options->cookieenabled) {
-        $this->formresult = $this->html->h2->cookiedisabled;
-        return;
-      }
-      
-      if (empty($_POST['login']) || empty($_POST['password']) || !litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
-        $this->formresult = $this->html->h2->error;
-        return;
-      }
-      
-      $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
-      $cookie = md5uniq();
-      $auth = tauthdigest::instance();
-      $auth->setcookies($cookie, $expired);
-      $options = litepublisher::$options;
-      return "<?php
-      @setcookie('admin', '$cookie', $expired, '$options->subdir/', false);
-      @header('Location: $options->url/admin/');
-      ?>";
+    parent::request();
+    $this->section = 'login';
+    if (!litepublisher::$options->cookieenabled) {
+      $this->formresult = $this->html->h2->cookiedisabled;
+      return;
     }
     
-    //    if ($s = $this->auth()) return $s;
+    if (empty($_POST['login']) || empty($_POST['password']) || !litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
+      $this->formresult = $this->html->h2->error;
+      return;
+    }
+    
+    $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
+    $cookie = md5uniq();
+    $auth = tauthdigest::instance();
+    $auth->setcookies($cookie, $expired);
+    $options = litepublisher::$options;
+    return "<?php
+    @setcookie('admin', '$cookie', $expired, '$options->subdir/', false);
+    @header('Location: $options->url/admin/');
+    ?>";
   }
   
   public function getcontent() {
     $args = targs::instance();
     $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
-return $this->html->form($args);
+    return $this->html->form($args);
   }
-
+  
 }//class
 
 ?>

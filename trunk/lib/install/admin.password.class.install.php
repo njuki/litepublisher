@@ -12,7 +12,7 @@ function tadminpasswordInstall($self) {
 }
 
 function tadminpasswordUninstall($self) {
-turlmap::unsub($self);
+  turlmap::unsub($self);
 }
 
 ?>

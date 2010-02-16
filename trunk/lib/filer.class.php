@@ -111,15 +111,19 @@ class tfiler {
   }
   
   public static function log($s, $filename = '') {
-    $dir = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR;
+    if ($filename == '') $filename = 'log.txt';
+    self::append(date('r') . "\n$s\n\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . $filename);
+  }
+  
+  public static function append($s, $filename) {
+    $dir = dirname($filename);
     if (!is_dir($dir)) {
       @mkdir($dir, 0777);
       @chmod($dir, 0777);
     }
-    if ($filename == '') $filename = 'log.txt';
-    $filename = $dir . $filename;
+    
     if ($fp = fopen($filename,"a+")) {
-      fwrite($fp, date('r') . "\n$s\n\n");
+      fwrite($fp, $s);
       fclose($fp);
       @chmod($filename, 0666);
     }
