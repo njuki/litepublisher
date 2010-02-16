@@ -7,10 +7,10 @@
 **/
 
 class tadminform extends tevents implements itemplate {
-  protected $formresult;  
-protected $title;
-protected $section;
-
+  protected $formresult;
+  protected $title;
+  protected $section;
+  
   public function gettitle() {
     return tlocal::$data[$this->section]['title'];
   }
@@ -28,27 +28,27 @@ public function getdescription() {}
         foreach ($_POST as $name => $value) {
           $_POST[$name] = stripslashes($_POST[$name]);
         }
-}
-$this->formresult = $this->processform();
       }
-}
-
-public function processform() {
-return '';
-}
-
+      $this->formresult = $this->processform();
+    }
+  }
+  
+  public function processform() {
+    return '';
+  }
+  
   public function gettemplatecontent() {
     $result = $this->formresult;
-$result .= $this->getcontent();
-return $result;
-}
-
+    $result .= $this->getcontent();
+    return $result;
+  }
+  
   public function gethtml() {
     $result = THtmlResource ::instance();
     $result->section = $this->section;
     $lang = tlocal::instance($this->section);
     return $result;
   }
-
+  
 }//class
 ?>

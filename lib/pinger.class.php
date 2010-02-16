@@ -66,7 +66,7 @@ class tpinger extends tevents {
     $meta->pinged = serialize($pinged);
   }
   
-  protected function getlinks(tpost $post) {
+  private function getlinks(tpost $post) {
     $posturl = $post->link;
     $result = array();
     $punc = '.:?\-';

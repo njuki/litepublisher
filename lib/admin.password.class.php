@@ -7,8 +7,8 @@
 **/
 
 class tadminpassword extends tadminform {
-
-
+  
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -19,20 +19,20 @@ class tadminpassword extends tadminform {
   }
   
   public function getcontent() {
-return $this->html->form();
+    return $this->html->form();
   }
   
   public function processform() {
     if (strtolower(trim($_POST['email'])) != strtolower(trim(litepublisher::$options->email))) return $this->html->h2->error;
-      $password = md5uniq();
-      litepublisher::$options->setpassword($password);
+    $password = md5uniq();
+    litepublisher::$options->setpassword($password);
     $args = targs::instance();
     $args->password = $password;
     $mailtemplate = tmailtemplate::instance($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body);
-return $this->html->h2->success;
+    return $this->html->h2->success;
   }
   
 }//class
