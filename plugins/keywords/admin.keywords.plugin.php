@@ -1,120 +1,120 @@
 <?php
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 class tadminkeywords {
-
-public function getcontent() {
-$result = '';
-$dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
-$selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
-$tml = parse_ini_file($selfdir . 'keywords.templates.ini', false);
-$admin = tadminplugins::instance();
-$about = $admin->abouts[$_GET['plugin']];
-$html = THtmlResource::instance();
-$lang = tlocal::instance();
-$args = targs::instance();
-if (isset($_GET['filename'])) {
-$filename = $_GET['filename'];
-if (!@file_exists($dir . $filename)) return $admin->notfound();
-$args->filename = $filename;
-$args->content =file_get_contents($dir . $filename);
-$args->edithead = $about['edithead'];
-return $html->parsearg($tml['editform'], $args);
-}
-
-$page = isset($_GET['page'])  ? (int) $_GET['page'] : 1;
-$result = '';
-if ($page == 1) {
-$widget = tkeywordswidget::instance();
-$args->count = $widget->count;
-$args->trace = $widget->trace;
-$args->notify = $widget->notify;
-$args->title = $widget->title;
-$args->countlabel = $about['countlabel'];
-$args->tracelabel = $about['tracelabel'];
-$args->notifylabel = $about['notifylabel'];
-$args->titlelabel = $about['titlelabel'];
-$result .= $html->parsearg($tml['optionsform'], $args);
-}
-
-$from = 100 * ($page - 1);
-   $filelist = tfiler::getfiles($dir);
-sort($filelist);
-$count = ceil(count($filelist)/ 100);
-$links = $this->getlinkpages($page, $count);
-$result .= $links;
-$result .= $html->checkallscript;
-
+  
+  public function getcontent() {
+    $result = '';
+    $dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
+    $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
+    $tml = parse_ini_file($selfdir . 'keywords.templates.ini', false);
+    $admin = tadminplugins::instance();
+    $about = $admin->abouts[$_GET['plugin']];
+    $html = THtmlResource::instance();
+    $lang = tlocal::instance();
+    $args = targs::instance();
+    if (isset($_GET['filename'])) {
+      $filename = $_GET['filename'];
+      if (!@file_exists($dir . $filename)) return $admin->notfound();
+      $args->filename = $filename;
+      $args->content =file_get_contents($dir . $filename);
+      $args->edithead = $about['edithead'];
+      return $html->parsearg($tml['editform'], $args);
+    }
+    
+    $page = isset($_GET['page'])  ? (int) $_GET['page'] : 1;
+    $result = '';
+    if ($page == 1) {
+      $widget = tkeywordswidget::instance();
+      $args->count = $widget->count;
+      $args->trace = $widget->trace;
+      $args->notify = $widget->notify;
+      $args->title = $widget->title;
+      $args->countlabel = $about['countlabel'];
+      $args->tracelabel = $about['tracelabel'];
+      $args->notifylabel = $about['notifylabel'];
+      $args->titlelabel = $about['titlelabel'];
+      $result .= $html->parsearg($tml['optionsform'], $args);
+    }
+    
+    $from = 100 * ($page - 1);
+    $filelist = tfiler::getfiles($dir);
+    sort($filelist);
+    $count = ceil(count($filelist)/ 100);
+    $links = $this->getlinkpages($page, $count);
+    $result .= $links;
+    $result .= $html->checkallscript;
+    
     $filelist = array_slice($filelist, $from, 100, true);
-$list = '';
-$args->url = litepublisher::$options->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];
-   foreach ($filelist as $filename) {
-if (!preg_match('/^\d+?\.\d+?\.php$/', $filename)) continue;
-$args->filename = $filename;
-$args->content = file_get_contents($dir . $filename);
-$list .= $html->parsearg($tml['item'], $args);
-   }
-
-$args->list = $list;
-$result .= $html->parsearg($tml['form'], $args);
-$result .= $links;
-return $admin->FixCheckall($result);
-}
-
-private function getlinkpages($page, $count) {
-$url = litepublisher::$options->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];
-$result = "<a href='$url'>1</a>\n";
-for ($i = 2; $i <= $count; $i++) {
-$result .= "<a href='$url&page=$i'>$i</a>|\n";
-}
-return sprintf("<p>\n%s</p>\n", $result);
-}
-
-public function processform() {
-$dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
-if (isset($_POST['pluginoptions'])) {
-extract($_POST);
-$widget = tkeywordswidget::instance();
-$widget->title = $title;
-$widget->count = (int) $count;
-$widget->notify = isset($notify);
-$trace = isset($trace);
-if ($widget->trace != $trace) {
-$plugin = tkeywordsplugin::instance();
-$urlmap = turlmap::instance();
-if ($trace) {
-$urlmap->afterrequest = $plugin->parseref;
-} else {
-$urlmap->eventunsubscribe('afterrequest', get_class($plugin));
-}
-}
-
-$widget->trace = $trace;
-$widget->save();
-return;
-}
-
-if (isset($_GET['filename'])) {
-$filename = str_replace('_php', '.php', $_GET['filename']);
-$content = trim($_POST['content']);
-if ($content = '') {
-@unlink($dir . $filename);
-} else {
-file_put_contents($dir . $filename, $content);
-}
-} else {
-foreach ($_POST as $filename => $value) {
-$filename = str_replace('_php', '.php', $filename);
-if (preg_match('/^\d+?-\d+?\.php$/', $filename)) unlink($dir . $filename);
-}
-}
-}
-
+    $list = '';
+    $args->url = litepublisher::$options->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];
+    foreach ($filelist as $filename) {
+      if (!preg_match('/^\d+?\.\d+?\.php$/', $filename)) continue;
+      $args->filename = $filename;
+      $args->content = file_get_contents($dir . $filename);
+      $list .= $html->parsearg($tml['item'], $args);
+    }
+    
+    $args->list = $list;
+    $result .= $html->parsearg($tml['form'], $args);
+    $result .= $links;
+    return $admin->FixCheckall($result);
+  }
+  
+  private function getlinkpages($page, $count) {
+    $url = litepublisher::$options->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];
+    $result = "<a href='$url'>1</a>\n";
+    for ($i = 2; $i <= $count; $i++) {
+      $result .= "<a href='$url&page=$i'>$i</a>|\n";
+    }
+    return sprintf("<p>\n%s</p>\n", $result);
+  }
+  
+  public function processform() {
+    $dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
+    if (isset($_POST['pluginoptions'])) {
+      extract($_POST);
+      $widget = tkeywordswidget::instance();
+      $widget->title = $title;
+      $widget->count = (int) $count;
+      $widget->notify = isset($notify);
+      $trace = isset($trace);
+      if ($widget->trace != $trace) {
+        $plugin = tkeywordsplugin::instance();
+        $urlmap = turlmap::instance();
+        if ($trace) {
+          $urlmap->afterrequest = $plugin->parseref;
+        } else {
+          $urlmap->eventunsubscribe('afterrequest', get_class($plugin));
+        }
+      }
+      
+      $widget->trace = $trace;
+      $widget->save();
+      return;
+    }
+    
+    if (isset($_GET['filename'])) {
+      $filename = str_replace('_php', '.php', $_GET['filename']);
+      $content = trim($_POST['content']);
+      if ($content = '') {
+        @unlink($dir . $filename);
+      } else {
+        file_put_contents($dir . $filename, $content);
+      }
+    } else {
+      foreach ($_POST as $filename => $value) {
+        $filename = str_replace('_php', '.php', $filename);
+        if (preg_match('/^\d+?-\d+?\.php$/', $filename)) unlink($dir . $filename);
+      }
+    }
+  }
+  
 }//class
 
 ?>
