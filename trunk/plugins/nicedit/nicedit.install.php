@@ -1,12 +1,12 @@
 <?php
 
 function tniceditInstall($self) {
-$template = ttemplate::instance();
-$template->onadminhead = $self->onhead;
+  $template = ttemplate::instance();
+  $template->onadminhead = $self->onhead;
 }
 
 function tniceditUninstall($self) {
-$template = ttemplate::instance();
+  $template = ttemplate::instance();
   $template->unsubscribeclass($self);
 }
 
