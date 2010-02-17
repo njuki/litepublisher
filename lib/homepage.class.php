@@ -20,7 +20,7 @@ class thomepage extends tevents implements  itemplate, itemplate2 {
     $this->data['defaultswidgets'] = true;
     $this->data['showstandartcontent'] = true;
     $this->data['text'] = '';
-    $this->data['template'] = '';
+    $this->data['tmlfile'] = '';
     $this->data['theme'] = '';
   }
   
