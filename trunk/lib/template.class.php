@@ -7,7 +7,6 @@
 **/
 
 class ttemplate extends tevents {
-  public $tml;
   public $path;
   public $url;
   public $context;
@@ -24,17 +23,18 @@ class ttemplate extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'template' ;
-    $this->tml = 'index';
+    $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
+    $this->url = litepublisher::$options->files . '/themes/default';
     $this->itemplate = false;
+    $this->cursitebar = 0;
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
     litepublisher::$options->url, litepublisher::$options->files));
-    $this->cursitebar = 0;
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
     'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent');
     $this->data['theme'] = 'default';
+    $this->data['admintheme'] = '';
     $this->data['hovermenu'] = false;
-    $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['hovermenu'] = false;
     $this->data['sitebars'] = null;
@@ -76,44 +76,43 @@ class ttemplate extends tevents {
     }
   }
   
-  public function getsitebar() {
-    if ($this->context instanceof itemplate2) {
-      $result = $this->context->getsitebar();
-    } else {
-      $widgets = twidgets::instance();
-      $result = $widgets->getcontent();
+  private function loadtheme($name, $tmlfile) {
+    $this->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR ;
+    if (!@file_exists($this->path . "$tmlfile.tml")) {
+      if (($tmlfile != 'index') && @file_exists($this->path . "index.tml")) {
+        $tmlfile = 'index';
+      } else {
+        //not exists "/theme/$name/index.tml"
+        $tmlfile = 'index';
+        if ($name != $this->theme) {
+          $name = $this->theme;
+          $this->path = litepublisher::$paths->themes . $this->theme . DIRECTORY_SEPARATOR;
+        }
+        
+        if (!@file_exists($this->path . 'index.tml')) {
+          $this->theme = 'default';
+          $name = 'default';
+        }
+      }
     }
     
-    $this->dositebarclass(&$result, get_class($this->context));
-    
-    $this->onsitebar(&$result, $this->cursitebar);
-    if (litepublisher::$options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
-    if (litepublisher::$urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
-    $this->cursitebar++;
-    return $result;
+    $this->url = litepublisher::$options->files . "/themes/$name";
+    return ttheme::getinstance($name, $tmlfile);
   }
   
   public function request($context) {
     $this->context = $context;
-    ttheme::$vars['context'] = $context;
     $this->itemplate = $context instanceof itemplate;
-    $itemplate2 = $context instanceof itemplate2;
-    if ($itemplate2) {
-      $tml = $context->template;
-      ttheme::$name = $context->theme;
-      if (ttheme::$name == '') {
-        if ($tml != '') $this->tml = $tml;
-      } else {
-        if ($tml == '') $tml = 'index';
-        ttheme::$name .= '.' . $tml;
-      }
-    }
-    
+    ttheme::$vars['context'] = $context;
+    $themename = $this->theme;
+    if (litepublisher::$urlmap->adminpanel)       $themename = $this->admintheme;
+    if ($context->propexists('theme') && ($context->theme != '')) $themename = $context->theme;
+    $tmlfile = 'index';
+    if ($context->propexists('tmlfile') && ($context->tmlfile != '')) $ttmlfile = $context->tmlfile;
+    $theme = $this->loadtheme($themename, $tmlfile);
     $result = $this->httpheader();
-    $theme = ttheme::instance();
     $result  .= $theme->parse($theme->theme);
-    
-    if ($itemplate2) $context->afterrequest($result);
+    if ($context instanceof itemplate2) $context->afterrequest($result);
     return $result;
   }
   
@@ -134,6 +133,23 @@ class ttemplate extends tevents {
   }
   
   //html tags
+  public function getsitebar() {
+    if ($this->context instanceof itemplate2) {
+      $result = $this->context->getsitebar();
+    } else {
+      $widgets = twidgets::instance();
+      $result = $widgets->getcontent();
+    }
+    
+    $this->dositebarclass(&$result, get_class($this->context));
+    
+    $this->onsitebar(&$result, $this->cursitebar);
+    if (litepublisher::$options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
+    if (litepublisher::$urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
+    $this->cursitebar++;
+    return $result;
+  }
+  
   public function gettitle() {
     $result = '';
     if ($this->itemplate) {
@@ -182,7 +198,7 @@ class ttemplate extends tevents {
       return $adminmenus->getmenu($hovermenu);
     }
     
-    $filename = litepublisher::$paths->cache . "$this->tml.menu.php";
+    $filename = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.menu.php";
     if (@file_exists($filename)) return file_get_contents($filename);
     
     $menus = tmenus::instance();
