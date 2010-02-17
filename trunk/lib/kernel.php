@@ -722,7 +722,10 @@ function strend($s, $end) {
 
 function SafeSaveFile($BaseName, $Content) {
   $TmpFileName = $BaseName.'.tmp.php';
-  if(!file_put_contents($TmpFileName, $Content))  return false;
+  if(!file_put_contents($TmpFileName, $Content)) {
+    litepublisher::$options->trace("Error write to file $TmpFileName");
+    return false;
+  }
   @chmod($TmpFileName , 0666);
   $FileName = $BaseName.'.php';
   if (@file_exists($FileName)) {
@@ -730,7 +733,11 @@ function SafeSaveFile($BaseName, $Content) {
     @unlink($BakFileName);
     rename($FileName, $BakFileName);
   }
-  return rename($TmpFileName, $FileName);
+  if (!rename($TmpFileName, $FileName)) {
+    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
+    return false;
+  }
+  return true;
 }
 
 //options.class.php
@@ -898,10 +905,9 @@ class toptions extends tevents {
     $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
     tfiler::log($log, 'exceptions.log');
+    $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     $urlmap = turlmap::instance();
-    if (litepublisher::$debug || $this->echoexception || $urlmap->adminpanel) {
-      $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
-    } else {
+    if (!(litepublisher::$debug || $this->echoexception || $urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }
   }
@@ -1340,6 +1346,8 @@ interface itemplate {
   public function getkeywords();
   public function getdescription();
   public function GetTemplateContent();
+  // property theme;
+  // property $tmlfile;
 }
 
 interface itemplate2 {
@@ -1352,9 +1360,6 @@ interface imenu {
   public function setparent($id);
   public function getorder();
   public function setorder($order);
-}
-
-interface imultimedia {
 }
 
 //plugin.class.php

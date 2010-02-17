@@ -13,6 +13,8 @@ interface itemplate {
   public function getkeywords();
   public function getdescription();
   public function GetTemplateContent();
+  // property theme;
+  // property $tmlfile;
 }
 
 interface itemplate2 {
@@ -25,9 +27,6 @@ interface imenu {
   public function setparent($id);
   public function getorder();
   public function setorder($order);
-}
-
-interface imultimedia {
 }
 
 ?>

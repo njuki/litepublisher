@@ -67,7 +67,7 @@ class tadmintags extends tadminmenu {
       $result .= $html->itemlist($args);
     }
     $result .= $html->listfooter;
-    $result = str_replace("'", '"', $result);
+    $result = $html->fixquote($result);
     return $result;
   }
   
@@ -84,6 +84,7 @@ class tadmintags extends tadminmenu {
       $icon = isset($icon) ? $icon : $item['icon'];
       $tags->edit($id, $title, $url, $icon);
       $tags->contents->edit($id, $rawcontent, $description, $keywords);
+      if (isset($theme)) $tags->contents->setvalue($id, 'theme', $theme);
     } else {
       $item = $tags->getitem($id);
       $tags->edit($id, $title, $item['url'], $item['icon']);

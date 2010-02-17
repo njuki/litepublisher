@@ -33,8 +33,8 @@ class tadminlogin extends tadminform {
   }
   
   public function request($arg) {
-    if ($arg == 'out')   return $this->logout();
-    parent::request();
+    if ($arg == 'out')   return $this->logout($arg);
+    parent::request($arg);
     $this->section = 'login';
     if (!litepublisher::$options->cookieenabled) {
       $this->formresult = $this->html->h2->cookiedisabled;

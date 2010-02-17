@@ -17,8 +17,8 @@ tags text not null,
 files text not null,
 
 password varchar(64) not null,
-template varchar(64) not null,
 theme varchar(64) not null,
+tmlfile varchar(64) not null,
 
 status enum('published', 'draft', 'future', 'deleted') default 'published',
 

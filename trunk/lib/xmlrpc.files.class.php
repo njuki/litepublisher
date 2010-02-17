@@ -127,6 +127,33 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     return str_replace("'", '"', $result);
   }
   
+  public function getthemes($login, $password, $themename) {
+    $this->auth($login, $password, 'editor');
+    $result = '';
+    $args = targs::instance();
+    //добавить пустую тему, то есть без отсутствие темы
+    $args->checked = '' == $themename;
+    $result .= $this->html->emptytheme($args);
+    
+    $list =    tfiler::getdir(litepublisher::$paths->themes);
+    sort($list);
+    $parser = tthemeparser::instance();
+    foreach ($list as $name) {
+      $about = $parser->getabout($name);
+      $args->add($about);
+      $args->checked = $name == $themename;
+      $result .= $this->html->radiotheme($args);
+    }
+    
+    /*  времено запретил - надоделать браузер файлов *.tml выбранной в форме темы ви имя в комбобоксе, а иначе будут бесконечные проблемы
+    $args->tmlfile = $tmlfile;
+    $result .= $this->html->tmlfile($args);
+    */
+    
+    return str_replace("'", '"', $result);
+  }
+  
+  
   private function getpostfiles($idpost) {
     $result = '';
     $post = tpost::instance((int) $idpost);

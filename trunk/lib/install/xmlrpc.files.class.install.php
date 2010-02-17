@@ -14,6 +14,7 @@ function TXMLRPCFilesInstall($self) {
   $caller->add('litepublisher.files.getbrowser',		'getbrowser', get_class($self));
   $caller->add('litepublisher.files.getpage',		'getpage', get_class($self));
   $caller->add('litepublisher.files.geticons',		'geticons', get_class($self));
+  $caller->add('litepublisher.files.getthemes',		'getthemes', get_class($self));
   $caller->unlock();
   
   //swupload

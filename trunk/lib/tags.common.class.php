@@ -325,7 +325,7 @@ class tcommontags extends titems implements  itemplate {
     
     $url = $item['url'];
     if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . "/page/$urlmap->page/";
-    if (litepublisher::$urlmap->url != $url) $urlmap->redir301($url);
+    if (litepublisher::$urlmap->url != $url) litepublisher::$urlmap->redir301($url);
   }
   
   public function AfterTemplated(&$s) {
@@ -340,7 +340,6 @@ class tcommontags extends titems implements  itemplate {
   public function gettitle() {
     $item = $this->getitem($this->id);
     return $item['title'];
-    // : TLocal::$data['default']['categories'];
   }
   
   public function gethead() {
@@ -379,6 +378,14 @@ class tcommontags extends titems implements  itemplate {
     return $result;
   }
   
+  public function gettheme() {
+    $result = $this->contents->getvalue($this->id, 'theme');
+  }
+  
+  public function gettmlfile() {
+    $result = $this->contents->getvalue($this->id, 'tmlfile');
+  }
+  
   public function SetParams($lite, $sortname, $showcount, $maxcount) {
     if (($lite != $this->lite) || ($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
       $this->lite = $lite;
@@ -408,6 +415,8 @@ class ttagcontent extends tdata {
   public function getitem($id) {
     //if (isset($this->items[$id]))  return $this->items[$id];
     $item = array(
+    'theme' => '',
+    'tmlfile' => '',
     'description' => '',
     'keywords' => '',
     'content' => '',
@@ -435,8 +444,11 @@ class ttagcontent extends tdata {
   }
   
   public function edit($id, $content, $description, $keywords) {
+    $item = $this->getitem($id);
     $filter = tcontentfilter::instance();
     $item =array(
+    'theme' => $item['theme'],
+    'tmlfile' => $item['tmlfile'],
     'content' => $filter->filter($content),
     'rawcontent' => $content,
     'description' => $description,
@@ -456,6 +468,12 @@ class ttagcontent extends tdata {
   public function getvalue($id, $name) {
     $item = $this->getitem($id);
     return $item[$name];
+  }
+  
+  public function setvalue($id, $name, $value) {
+    $item = $this->getitem($id);
+    $item[$name] = $value;
+    $this->setitem($id, $item);
   }
   
   public function getcontent($id) {
