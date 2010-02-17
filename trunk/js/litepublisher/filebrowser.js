@@ -151,3 +151,24 @@ onComplete:function(responseObj){ }
 } );
 
 }
+
+function themebrowser(themename) {
+if (ltoptions.themebrowser != undefined) return;
+ltoptions.themebrowser = true;
+if (client == undefined) client = createclient();
+client.litepublisher.files.getthemes( {
+params:['', '', themename],
+
+                 onSuccess:function(result){                     
+var div = document.getElementById("themebrowser");
+div.innerHTML  += result;
+},
+
+                  onException:function(errorObj){ 
+                    alert("XMLRPC server error");
+},
+
+onComplete:function(responseObj){ }
+} );
+
+}
