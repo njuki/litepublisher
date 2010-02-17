@@ -7,10 +7,12 @@
 **/
 
 class ttheme extends tevents {
+  public static $instances = array();
   public static $vars = array();
+  public $name;
+  public $tmlfile;
   private $themeprops;
-  public static $name;
-  //public $tml;
+  
   /*
   public $menu;
   public $content;
@@ -19,40 +21,52 @@ class ttheme extends tevents {
   */
   
   public static function instance() {
-    return getinstance(__class__);
+    $result = getinstance(__class__);
+    if ($result->name == '') {
+      $template = ttemplate::instance();
+      $result->loaddata($template->theme, 'index');
+    }
+    return $result;
+  }
+  
+  public static function getinstance($name, $tmlfile) {
+    if (isset(self::$instances[$name][$tmlfile])) {
+      return self::$instances[$name][$tmlfile];
+    }
+    
+    $result = isset(litepublisher::$classes->instances[__class__]) ? litepublisher::$classes->newinstance(__class__) : getinstance(__class__);
+    $result->loaddata($name, $tmlfile);
+    return $result;
   }
   
   protected function create() {
     parent::create();
     $this->themeprops = new tthemeprops($this->data);
-    if (empty(self::$name)) {
-      $template = ttemplate::instance();
-      self::$name = $template->theme . '.' . $template->tml;
-    }
-    $this->basename = 'themes' . DIRECTORY_SEPARATOR . self::$name;
-    $this->data['tml'] = 'index';
+    $this->name = '';
+    $this->tmlfile = 'index';
     $this->data['theme'] = '';
     $this->data['menu'] = array();
     $this->data['content'] = array();
     $this->data['sitebars'] = array();
-    
-    /*
-    $this->addmap('menu', array());
-    $this->addmap('content', array());
-    $this->addmap('sitebars', array());
-    */
   }
   
   public function load() {
-    $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
-    if (file_exists($filename)) {
-      parent::load();
-    } else {
-      $template = ttemplate::instance();
-      $parser = tthemeparser::instance();
-      $parser->parse("$template->path$template->tml.tml", $this);
-      $this->save();
-    }
+    if ($this->name != '') return $this->loaddata($this->name, $this->tmlfile);
+  }
+  
+  public function loaddata($name, $tmlfile) {
+    $this->name = $name;
+    $this->tmlfile = $tmlfile;
+    $this->basename = 'themes' . DIRECTORY_SEPARATOR . "$name.$tmlfile";
+    self::$instances[$name][$tmlfile] = $this;
+    $datafile = litepublisher::$paths->data . $this->getbasename() .'.php';
+    if (file_exists($datafile))  return parent::load();
+    
+    $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . "$tmlfile.tml";
+    if (!@file_exists($filename)) $this->error("Theme file $filename not exists");
+    $parser = tthemeparser::instance();
+    $parser->parse($filename, $this);
+    $this->save();
   }
   
   public function __tostring() {

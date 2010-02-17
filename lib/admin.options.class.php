@@ -47,6 +47,7 @@ class tadminoptions extends tadminmenu {
       $args->automore = $contentfilter->automore;
       $args->phpcode = $contentfilter->phpcode;
       $args->hovermenu = $template->hovermenu;
+      $args->admintheme = $template->admintheme;
       break;
       
       case 'comments':
@@ -115,7 +116,7 @@ class tadminoptions extends tadminmenu {
     }
     
   $result  = $this->html->{$this->name}($args);
-    return str_replace("'", '"', $result);
+    return $this->html->fixquote($result);
   }
   
   public function processform() {
@@ -181,7 +182,10 @@ class tadminoptions extends tadminmenu {
       $filter->phpcode = isset($phpcode);
       $filter->save();
       $template = ttemplate::instance();
+      $template->lock();
       $template->hovermenu = isset($hovermenu);
+      if (isset($theme)) $template->admintheme = $theme;
+      $template->unlock();
       break;
       
       case 'comments':

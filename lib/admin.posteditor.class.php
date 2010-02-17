@@ -100,6 +100,7 @@ class tposteditor extends tadminmenu {
     }
     
     $result .= $html->$mode($args);
+    $result = $html->fixquote($result);
     return $result;
   }
   
@@ -122,6 +123,8 @@ class tposteditor extends tadminmenu {
       $post->categories = $cats;
       $post->tagnames = $tags;
       if (isset($icon)) $post->icon = (int) $icon;
+      if (isset($theme)) $post->theme = $theme;
+      if (isset($tmlfile)) $post->tmlfile = $tmlfile;
     }
     
     if (isset($fileschanged))  {

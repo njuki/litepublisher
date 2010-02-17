@@ -16,7 +16,7 @@ class tposttransform  {
   'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
   'categories', 'tags', 'files',
-  'password', 'template', 'theme', 'icon',
+  'password', 'tmlfile', 'theme', 'icon',
   'status', 'commentsenabled', 'pingenabled',
   'commentscount', 'pingbackscount', 'pagescount',
   );

@@ -66,8 +66,8 @@ class twidgets extends tsingleitems {
   }
   
   public function getcontent() {
-    $template = ttemplate::instance();
-    $file = litepublisher::$paths->cache . "sitebar.$template->tml.$this->id.$this->current.php";
+    $theme = ttheme::instance();
+    $file = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.sitebar.$this->id.$this->current.php";
     if (file_exists($file)) {
       $result = file_get_contents($file);
     } else {

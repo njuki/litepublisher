@@ -140,7 +140,10 @@ function strend($s, $end) {
 
 function SafeSaveFile($BaseName, $Content) {
   $TmpFileName = $BaseName.'.tmp.php';
-  if(!file_put_contents($TmpFileName, $Content))  return false;
+  if(!file_put_contents($TmpFileName, $Content)) {
+    litepublisher::$options->trace("Error write to file $TmpFileName");
+    return false;
+  }
   @chmod($TmpFileName , 0666);
   $FileName = $BaseName.'.php';
   if (@file_exists($FileName)) {
@@ -148,7 +151,11 @@ function SafeSaveFile($BaseName, $Content) {
     @unlink($BakFileName);
     rename($FileName, $BakFileName);
   }
-  return rename($TmpFileName, $FileName);
+  if (!rename($TmpFileName, $FileName)) {
+    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
+    return false;
+  }
+  return true;
 }
 
 ?>

@@ -19,6 +19,8 @@ class tarchives extends titems implements  itemplate {
     $this->table = 'posts';
     $this->data['lite'] = false;
     $this->data['showcount'] = false;
+    $this->data['tmlfile'] = '';
+    $this->data['theme'] = '';
   }
   
   public function getwidgetcontent($id, $sitebar) {

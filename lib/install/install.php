@@ -15,6 +15,11 @@ if (litepublisher::$debug) {
 $installer = new tinstaller();
 $installer->install();
 
-if (litepublisher::$options instanceof toptions) litepublisher::$options->savemodified();
+if (litepublisher::$options instanceof toptions) {
+  litepublisher::$options->savemodified();
+  if (!empty(litepublisher::$options->errorlog)) {
+    echo litepublisher::$options->errorlog;
+  }
+}
 exit();
 ?>

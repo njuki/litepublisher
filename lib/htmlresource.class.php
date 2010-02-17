@@ -85,6 +85,12 @@ class THtmlResource  {
     return $theme->parse($s);
   }
   
+  public function fixquote($s) {
+    $s = str_replace("\\'", '\"', $s);
+    $s = str_replace("'", '"', $s);
+    return str_replace('\"', "'", $s);
+  }
+  
   public function load($FileName) {
     $PartFileName = litepublisher::$paths->languages . $FileName;
     if (!tfiler::unserialize($PartFileName . '.php', $v) || !is_array($v)) {
