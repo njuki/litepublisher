@@ -22,6 +22,8 @@ class tsitemap extends titems implements itemplate {
     $this->basename = 'sitemap';
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
+$this->data['tmlfile'] = '';
+$this->data['theme'] = '';
   }
   
   public function add($url, $prio) {
@@ -40,22 +42,47 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function GetTemplateContent() {
+$result = '';
     $posts = tposts::instance();
     $theme = ttheme::instance();
-    $postsperpage = 1000;
+    $perpage = 1000;
+$from = (litepublisher::$urlmap->page - 1) * $perpage;
+if (dbversion) {
+      $db = litepublisher::$db;
+      $now = sqldate();
+      $res = $db->query("select $db->posts.title, $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url 
+from $db->posts, $db->urlmap
+      where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl
+order by $db->posts.posted desc limit $from, $perpage");
+      $res->setFetchMode (PDO::FETCH_ASSOC);
+      foreach ($res as $item) {
+        $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
+$pages = max($item['pagescount'], $comments);
+$postpages = '';
+if ($pages > 1) {
+    $url = rtrim($item['url'], '/');
+    for ($i = 2; $i < $pages; $i++) {
+$postpages .= '<a href="' . litepublisher::$options->url . "$url/page/$i/\">$i</a>,";
+    }
+}
+$result .= sprintf("<li><a href=\"%s%s\">%s</a>%s</li>\n", litepublisher::$options->url, $item['url'], $item['title'], $postpages);
+      }
+    } else {
     $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
-    $result = $TemplatePost->LitePrintposts($list);
-    
+    $result = $theme->getposts($list, true);
+}    
+
     if (litepublisher::$urlmap->page  == 1) {
       $result .= '<ul>' . TLocal::$data['default']['tags'];
-      $tags = &TTags::instance();
+      $tags = ttags::instance();
+$tags->loadall();
       foreach ($tags->items as $id => $item) {
-    $result .= "<li><a href=\"litepublisher::$options->url{$item['url']}\">{$item['name']}</a></li>\n";
+    $result .= "<li><a href=\"".  litepublisher::$options->url. $item['url'] . "\">{$item['title']}</a></li>\n";
       }
       $result .= "</ul>\n";
     }
     
-    $result .=$theme->getpages('/sitemap/', litepublisher::$urlmap->page, ceil(count($posts->archives)/ $postsperpage));
+    $result .=$theme->getpages('/sitemap/', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
     return $result;
   }
   

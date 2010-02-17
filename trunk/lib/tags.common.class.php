@@ -188,6 +188,7 @@ class tcommontags extends titems implements  itemplate {
     $this->lock();
     $this->items[$id] = array(
     'id' => $id,
+'parent' => $parent,
     'idurl' =>         $idurl,
     'url' =>$url,
     'title' => $title,
