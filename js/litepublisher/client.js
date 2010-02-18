@@ -24,8 +24,8 @@ methods: [
 }
 
 	function loadwidget(name, idtag) {
-		var widget = document.getElementById(idtag);
-if (!client) client = createclient();
+		var widget = resolvetag(idtag, 'ul');
+if (client == undefined) client = createclient();
 
 client.litepublisher.getwidget( {
 params:[name],
@@ -45,6 +45,28 @@ widget.innerHTML = result;
 onComplete:function(responseObj){ }
 } );
 
+}
+
+function findnexttag(node, tag) {
+while (node = node.nextSibling) {
+if (node.tagName.toLowerCase() == tag) return node;
+}
+return false;
+}
+
+function resolvetag(id, tag) {
+try {
+if (typeof(id) == 'string') {
+return document.getElementById(id);
+} else {
+if (result = findnexttag(id, tag)) return  result;
+if (result = findnexttag(id.parentNode,tag)) return  result;
+if (result = findnexttag(id.parentNode.parentNode, tag)) return  result;
+}
+return false;
+} catch (e) {
+return false;
+}
 }
 
 function loadjavascript(filename) {
