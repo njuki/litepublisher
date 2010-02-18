@@ -1,0 +1,79 @@
+<script type='text/javascript'>
+<!--
+
+function changedbversion(db) {
+if (db == 1) {
+document.getElementById('dbform').style.visibility = 'visible'; 
+} else {
+document.getElementById('dbform').style.visibility = 'hidden'; 
+}
+return true;
+}
+
+function showdbhost() {
+document.getElementById('divhost').style.visibility = 'visible'; 
+document.getElementById('showhost').style.visibility = 'hidden'; 
+document.getElementById('usehost').value = '1';
+}
+
+//-->
+</script>
+
+<p>$lang->formhead</p>
+    <form method='post' action='' name='form'>
+    <br clear='all' />
+    <p>E-Mail:</p>
+    <input name='email' type='text' id='email' value='' />
+    <br clear='all' />
+    <p>$lang->blogname:</p>
+    <input name='name' type='text' id='name' value='' />
+    <br clear='all' />
+    <p>$lang->blogdescription:</p>
+    <input name='description' type='text' id='description' value='' />
+    <br clear='all' />
+$checkrewrite 
+    <br clear='all' />
+
+<p><label>
+<input id='dbversion' name='dbversion' type='radio' value='1' onclick='changedbversion(1);' checked='checked'/>
+$lang->dbversion</label></p>
+
+<p><label>
+<input id='fileversion' name='dbversion' type='radio' value='0' onclick='changedbversion(0);' />
+$lang->fileversion</label></p>
+
+<div id='dbform'>
+    <p>$lang->dbname:</p>
+    <input name='dbname' type='text' id='dbname' value='' />
+    <br clear='all' />
+
+    <p>$lang->dblogin:</p>
+    <input name='dblogin' type='text' id='dblogin' value='' />
+    <br clear='all' />
+
+    <p>$lang->dbpassword</p>
+    <input name='dbpassword' type='password' id='dbpassword' value='' />
+    <br clear='all' />
+
+    <p>$lang->dbprefix:</p>
+    <input name='dbprefix' type='text' id='dbprefix' value='$dbprefix' />
+    <br clear='all' />
+
+<h3 id='showhost'><a onclick='showdbhost();'>$lang->showdbhost</a></h3>
+<div id='divhost' style='visibility : hidden;'>
+    <p>$lang->dbhost:</p>
+    <input name='dbhost' type='text' id='dbhost' value='localhost' />
+    <br clear='all' />
+
+    <p>$lang->dbport:</p>
+    <input name='dbport' type='text' id='dbport' />
+    <br clear='all' />
+
+<input type='hidden' name='usehost' id='usehost' value='0' />
+</div>
+</div>
+
+<br clear='all' />
+    <input type='submit' name='submit' value='$lang->createblog' />
+    </form>
+

@@ -34,7 +34,7 @@ class tthemeparser {
     $s = str_replace("\r", "\n", $s);
     $s = str_replace("\n\n", "\n", $s);
     
-    $theme->menu = $this->parsemenu($this->parsetag($s, 'menu', '$template.menu'));
+    $theme->menu = $this->parsemenu($this->parsetag($s, 'menulist', '$template.menu'));
     $theme->content = $this->parsecontent($this->parsetag($s, 'content', '$template.content'));
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
@@ -331,7 +331,7 @@ class tthemeparser {
     
     $theme = ttheme::instance();
     $this->parse($template->path . 'index.tml', $theme);
-    $theme->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme-$template->tml";
+    $theme->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme.index";
     $theme->save();
     $template->save();
     

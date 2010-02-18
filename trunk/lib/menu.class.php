@@ -271,7 +271,7 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
     'keywords' => '',
     'description' => '',
     'password' => '',
-    'template' => '',
+    'tmlfile' => '',
     'theme' => '',
     );
   }
