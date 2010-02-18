@@ -182,7 +182,7 @@ class ttheme extends tevents {
   
   public function getwidgettemplate($name, $sitebar) {
     $sitebars = &$this->data['sitebars'];
-    if (!isset($sitebars[$sitebar][$name])) $name = 'widget';
+    if (!isset($sitebars[$sitebar][$name][0])) $name = 'widget';
     return $sitebars[$sitebar][$name][0];
   }
   

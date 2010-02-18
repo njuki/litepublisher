@@ -37,6 +37,7 @@ class tadminthemes extends tadminmenu {
       $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'theme';
       foreach ($list as $name) {
         $about = $this->getabout($name);
+$about['name'] = $name;
         $args->add($about);
         $args->checked = $name == $template->theme;
         $result .= $html->radioitem($args);

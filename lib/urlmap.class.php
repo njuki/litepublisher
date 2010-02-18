@@ -158,7 +158,7 @@ class turlmap extends titems {
     $source = getinstance($item['class']);
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
-      //tfiler::log($s);
+      //tfiler::log($s, 'content.log');
       if ($s == 404) return $this->notfound404();
     } else {
       $template = ttemplate::instance();

@@ -35,9 +35,9 @@ class toptions extends tevents {
     $this->admincookie = $this->cookieenabled && $this->authcookie();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
-if (!defined('dbversion')) {
-define('dbversion', isset($this->data['dbconfig']));
-}
+    if (!defined('dbversion')) {
+      define('dbversion', isset($this->data['dbconfig']));
+    }
     return true;
   }
   
@@ -180,12 +180,12 @@ define('dbversion', isset($this->data['dbconfig']));
       $this->handexception($e);
     }
   }
-
-public function showerrors() {
+  
+  public function showerrors() {
     if (!empty($this->errorlog) && (litepublisher::$debug || $this->echoexception || $this->admincookie || litepublisher::$urlmap->adminpanel)) {
       echo $this->errorlog;
-}
-}
+    }
+  }
   
 }//class
 

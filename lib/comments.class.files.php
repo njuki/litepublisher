@@ -392,7 +392,7 @@ class TComment {
     if ($manager->hidelink || empty($url)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
-    return "<a $rel href=\"" . litepublisher::$options->url . "/comusers.htm" . litepublisher::$options->q . "id=$this->author&post=$idpost\">$name</a>";
+      return "<a $rel href=\"" . litepublisher::$options->url . "/comusers.htm" . litepublisher::$options->q . "id=$this->author&post=$idpost\">$name</a>";
     } else {
       return "<a $rel href=\"$url\">$name</a>";
     }
