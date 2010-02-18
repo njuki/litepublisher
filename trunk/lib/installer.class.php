@@ -129,14 +129,14 @@ class tinstaller extends tdata {
   
   public function FirstStep() {
     $this->CheckFolders();
-if (!defined('dbversion')) {
-if (isset($_REQUEST['dbversion'])) {
-define('dbversion', $_REQUEST['dbversion'] == '1');
-} else {
-define('dbversion', true);
-}
-}
-
+    if (!defined('dbversion')) {
+      if (isset($_REQUEST['dbversion'])) {
+        define('dbversion', $_REQUEST['dbversion'] == '1');
+      } else {
+        define('dbversion', true);
+      }
+    }
+    
     require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
     return installclasses($this->language);
   }
@@ -246,7 +246,7 @@ define('dbversion', true);
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
     $dbprefix = strtolower(str_replace('.', '', litepublisher::$domain)) . '_';
-
+    
     $installform = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
     eval('$form .= "'. $installform. '\n";');
     echo SimplyHtml(tlocal::$data['installation']['title'],  $form);

@@ -267,10 +267,12 @@ class tthemeparser {
     foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
+      } else {
+        $result[$name] ['item'] = $this->GetDefaultWidgetItem($name);
       }
     }
     
-    $result[0] = $s;
+    $result[0] = trim($s);
     return $result;
   }
   

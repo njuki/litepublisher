@@ -124,7 +124,7 @@ $func{0} = strtoupper($func{0});
   }
   
   public function load() {
-    if (dbversion == 'full') return $this->LoadFromDB();
+    if ($this->dbversion == 'full') return $this->LoadFromDB();
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (@file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
@@ -175,7 +175,7 @@ $func{0} = strtoupper($func{0});
   }
   
   public function getdbversion() {
-    return dbversion == 'full';
+    return false; // dbversion == 'full';
   }
   
   public function getdb($table = '') {
@@ -777,6 +777,9 @@ class toptions extends tevents {
     $this->admincookie = $this->cookieenabled && $this->authcookie();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
+    if (!defined('dbversion')) {
+      define('dbversion', isset($this->data['dbconfig']));
+    }
     return true;
   }
   
@@ -904,10 +907,10 @@ class toptions extends tevents {
     $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
     $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
-    tfiler::log($log, 'exceptions.log');
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
+    tfiler::log($log, 'exceptions.log');
     $urlmap = turlmap::instance();
-    if (!(litepublisher::$debug || $this->echoexception || $urlmap->adminpanel)) {
+    if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || $urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }
   }
@@ -917,6 +920,12 @@ class toptions extends tevents {
       throw new Exception($msg);
     } catch (Exception $e) {
       $this->handexception($e);
+    }
+  }
+  
+  public function showerrors() {
+    if (!empty($this->errorlog) && (litepublisher::$debug || $this->echoexception || $this->admincookie || litepublisher::$urlmap->adminpanel)) {
+      echo $this->errorlog;
     }
   }
   

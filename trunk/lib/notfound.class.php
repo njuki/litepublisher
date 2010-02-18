@@ -16,8 +16,8 @@ class tnotfound404 extends tevents {
     parent::create();
     $this->basename = 'notfound';
     $this->data['text'] = '';
-$this->data['tmlfile'] = '';
-$this->data['theme'] = '';
+    $this->data['tmlfile'] = '';
+    $this->data['theme'] = '';
   }
   
   public function  httpheader() {
