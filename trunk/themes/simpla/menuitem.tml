@@ -1,14 +1,14 @@
-	<div class="entry entry-$post->id">
+	<div class="entry entry-$menu.id">
 		<div class="entrytitle">
-        <h2><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h2>
+        <h2><a href="$Options.url$menu.url" rel="bookmark" title="$lang.permalink $menu.title">$menu.title</a></h2>
 		</div>
 		<div class="entrybody">
-$post->content
+$menu.content
 		</div>
 		
 		<div class="entrymeta">
 		<div class="postinfo">
-$Template->postscript
+$Template.postscript
 		</div>
 		</div>
 		
