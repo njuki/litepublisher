@@ -54,7 +54,7 @@ class tinstaller extends tdata {
   public function OutputResult($password) {
     if ($this->mode == 'remote') {
       $result = array(
-      'url' => strtolower($_SERVER['HTTP_HOST']) ,
+      'url' => litepublisher::$options->url,
       'login' => litepublisher::$options->login,
       'password' => $password,
       'email' => litepublisher::$options->email,
@@ -78,7 +78,7 @@ class tinstaller extends tdata {
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
-        $html = &THtmlResource::instance();
+        $html = THtmlResource::instance();
         $html->section = 'installation';
         eval('$xml = "'. $html->xmlrpc . '\n";');
         // Send it
@@ -129,6 +129,14 @@ class tinstaller extends tdata {
   
   public function FirstStep() {
     $this->CheckFolders();
+if (!defined('dbversion')) {
+if (isset($_REQUEST['dbversion'])) {
+define('dbversion', $_REQUEST['dbversion'] == '1');
+} else {
+define('dbversion', true);
+}
+}
+
     require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.install.php');
     return installclasses($this->language);
   }
@@ -238,9 +246,9 @@ class tinstaller extends tdata {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
     $dbprefix = strtolower(str_replace('.', '', litepublisher::$domain)) . '_';
-    eval('$dbform = "'. (dbversion ? $html->dbform : '')  . '";');
-    
-    eval('$form .= "'. $html->installform. '\n";');
+
+    $installform = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
+    eval('$form .= "'. $installform. '\n";');
     echo SimplyHtml(tlocal::$data['installation']['title'],  $form);
   }
   

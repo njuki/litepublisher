@@ -122,7 +122,7 @@ $func{0} = strtoupper($func{0});
   }
   
   public function load() {
-    if (dbversion == 'full') return $this->LoadFromDB();
+    if ($this->dbversion == 'full') return $this->LoadFromDB();
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (@file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
@@ -173,7 +173,7 @@ $func{0} = strtoupper($func{0});
   }
   
   public function getdbversion() {
-    return dbversion == 'full';
+    return false; // dbversion == 'full';
   }
   
   public function getdb($table = '') {
