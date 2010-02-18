@@ -90,6 +90,7 @@ client.litepublisher.comments.get( {
 params:['', '', id, ltoptions.idpost],
 
                  onSuccess:function(result){                     
+try {
 document.getElementById('name').value = result.name;
 document.getElementById('email').value = result.email;
 document.getElementById('url').value = result.url;
@@ -97,6 +98,9 @@ document.getElementById('comment').value = result.content;
 
 document.getElementById('commentform').onsubmit = submiteditcomment(id);
 document.getElementById('name').focus();
+} catch (e) {
+alert(e.message);
+}
 },
 
                   onException:function(errorObj){ 
