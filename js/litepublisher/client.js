@@ -13,6 +13,7 @@ methods: [
 'litepublisher.comments.add',
 'litepublisher.comments.get',
 'litepublisher.comments.edit',
+'litepublisher.comments.reply',
 'litepublisher.comments.getrecent',
 'litepublisher.files.getbrowser',
 'litepublisher.files.getpage',
