@@ -17,7 +17,7 @@ class tadminthemes extends tadminmenu {
     $result = '';
     $html = $this->html;
     $args = targs::instance();
-            $template = ttemplate::instance();
+    $template = ttemplate::instance();
     if ($plugin = $this->getplugin())  {
       $args->themename = $Template->theme;
       $args->url = litepublisher::$options->url . $this->url . litepublisher::$options->q ."plugin=$template->theme";
@@ -70,10 +70,10 @@ class tadminthemes extends tadminmenu {
       break;
       
       case 'options':
-     $home = thomepage::instance();
-     $args->hometheme = $home->theme;
-           $arch = tarchives::instance();
-           $args->archtheme = $arch->theme;
+      $home = thomepage::instance();
+      $args->hometheme = $home->theme;
+      $arch = tarchives::instance();
+      $args->archtheme = $arch->theme;
       $notfound = tnotfound404::instance();
       $args->theme404 = $notfound->theme;
       $sitemap = tsitemap::instance();
@@ -87,7 +87,7 @@ class tadminthemes extends tadminmenu {
   }
   
   public function processform() {
-  $result = '';
+    $result = '';
     if  (isset($_POST['reparse'])) {
       $parser = tthemeparser::instance();
       try {
@@ -97,67 +97,67 @@ class tadminthemes extends tadminmenu {
       }
       $result = implode("<br />\n", $parser->warnings);
     } else {
-        switch ($this->name) {
-      case 'themes':
-      if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
-      
-      if (empty($_POST['selection']))   return '';
-      $template = ttemplate::instance();
-      try {
-        $template->theme = $_POST['selection'];
-      } catch (Exception $e) {
-        $template->theme = 'default';
-        return $e->getMessage();
-      }
-      $result = $this->html->h2->success;
-      $parser = tthemeparser::instance();
-      if (isset($parser->warnings)) $result .=implode("<br />\n", $parser->warnings);
-break;
-      
-      case 'edit':
-      if (!empty($_GET['file']) && !empty($_GET['theme'])) {
-        //проверка на безопасность, чтобы не указывали в запросе файлы не в теме
-        if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
-        if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
-          return  $this->html->h2->errorsave;
+      switch ($this->name) {
+        case 'themes':
+        if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
+        
+        if (empty($_POST['selection']))   return '';
+        $template = ttemplate::instance();
+        try {
+          $template->theme = $_POST['selection'];
+        } catch (Exception $e) {
+          $template->theme = 'default';
+          return $e->getMessage();
         }
+        $result = $this->html->h2->success;
+        $parser = tthemeparser::instance();
+        if (isset($parser->warnings)) $result .=implode("<br />\n", $parser->warnings);
+        break;
+        
+        case 'edit':
+        if (!empty($_GET['file']) && !empty($_GET['theme'])) {
+          //проверка на безопасность, чтобы не указывали в запросе файлы не в теме
+          if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
+          if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
+            return  $this->html->h2->errorsave;
+          }
+        }
+        break;
+        
+        case 'options':
+        extract($_POST);
+        if (isset($hometheme)) {
+          $home = thomepage::instance();
+          $home->theme = $hometheme;
+          $home->save();
+        }
+        
+        if (isset($archtheme)) {
+          $arch = tarchives::instance();
+          $arch->theme = $archtheme;
+          $arch->save();
+        }
+        
+        if (isset($theme404)) {
+          $notfound = tnotfound404::instance();
+          $notfound->theme = $theme404;
+          $notfound->save();
+        }
+        
+        if (isset($sitemaptheme)) {
+          $sitemap = tsitemap::instance();
+          $sitemap->theme = $sitemaptheme;
+          $sitemap->save();
+        }
+        
+        if (isset($admintheme)) {
+          $template = ttemplate::instance();
+          $template->admintheme = $admintheme;
+          $template->save();
+        }
+        $result = $this->html->h2->themeschanged;
+        break;
       }
-      break;
-      
-      case 'options':
-      extract($_POST);
-      if (isset($hometheme)) {
-           $home = thomepage::instance();
-$home->theme = $hometheme;
-$home->save();
-}
-
-if (isset($archtheme)) {
-           $arch = tarchives::instance();
-$arch->theme = $archtheme;
-$arch->save();
-}
-
-if (isset($theme404)) {
-      $notfound = tnotfound404::instance();
-$notfound->theme = $theme404;
-$notfound->save();
-}
-
-if (isset($sitemaptheme)) {
-      $sitemap = tsitemap::instance();
-$sitemap->theme = $sitemaptheme;
-$sitemap->save();
-}
-
-            if (isset($admintheme)) {
-                  $template = ttemplate::instance();
-            $template->admintheme = $admintheme;
-            $template->save();
-            }
-            $result = $this->html->h2->themeschanged;
-break;
-    }
     }
     
     litepublisher::$urlmap->clearcache();
