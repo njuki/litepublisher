@@ -171,6 +171,7 @@ $comments
 <input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
 <input type="button" name="deletebutton" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
 <input type="button" name="holdbutton" value="$lang.holdbutton" onclick="submitmoderateform(this.form, 'hold');" />
+<input type="button" value="$lang.sendreply" onclick="sendreply();" />
 </p>
 </form>
 <!--/moderateform-->
@@ -267,7 +268,7 @@ $menu.content
 
 <div id="sidebar">
 
-<h2>Страницы</h2>
+<h2>$lang.menu</h2>
 <!--menulist-->
 <ul>
 <!--item-->
