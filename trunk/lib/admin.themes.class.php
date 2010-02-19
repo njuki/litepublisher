@@ -17,8 +17,8 @@ class tadminthemes extends tadminmenu {
     $result = '';
     $html = $this->html;
     $args = targs::instance();
+            $template = ttemplate::instance();
     if ($plugin = $this->getplugin())  {
-      $template = ttemplate::instance();
       $args->themename = $Template->theme;
       $args->url = litepublisher::$options->url . $this->url . litepublisher::$options->q ."plugin=$template->theme";
       $result .= $html->pluginlink($args);
@@ -30,7 +30,6 @@ class tadminthemes extends tadminmenu {
         $result .= $plugin->getcontent();
         return $result;
       }
-      $template = ttemplate::instance();
       $result .= $html->formheader();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
@@ -69,12 +68,26 @@ class tadminthemes extends tadminmenu {
         $result .= $html->editform($args);
       }
       break;
+      
+      case 'options':
+     $home = thomepage::instance();
+     $args->hometheme = $home->theme;
+           $arch = tarchives::instance();
+           $args->archtheme = $arch->theme;
+      $notfount = tnotfound404::instance();
+      $args->theme404 = $notfound->theme;
+      $sitemap = tsitemap::instance();
+      $args->sitemaptheme = $sitemap->theme;
+      $args->admintheme = $template->admintheme;
+      $result = $html->optionsform($args);
+      break;
     }
     
-    return str_replace("'", '"', $result);
+    return $html->fixquote($result);
   }
   
   public function processform() {
+  $result = '';
     if  (isset($_POST['reparse'])) {
       $parser = tthemeparser::instance();
       try {
@@ -82,10 +95,9 @@ class tadminthemes extends tadminmenu {
       } catch (Exception $e) {
         return $e->getMessage();
       }
-      return implode("<br />\n", $parser->warnings);
-    }
-    
-    switch ($this->name) {
+      $result = implode("<br />\n", $parser->warnings);
+    } else {
+        switch ($this->name) {
       case 'themes':
       if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
       
@@ -100,7 +112,7 @@ class tadminthemes extends tadminmenu {
       $result = $this->html->h2->success;
       $parser = tthemeparser::instance();
       if (isset($parser->warnings)) $result .=implode("<br />\n", $parser->warnings);
-      return $result;
+break;
       
       case 'edit':
       if (!empty($_GET['file']) && !empty($_GET['theme'])) {
@@ -109,12 +121,46 @@ class tadminthemes extends tadminmenu {
         if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
           return  $this->html->h2->errorsave;
         }
-        $urlmap = turlmap::instance();
-        $urlmap->clearcache();
       }
       break;
+      
+      case 'options':
+      extract($_POST);
+      if (isset(hometheme)) {
+           $home = thomepage::instance();
+$home->theme = hometheme;
+$home->save();
+}
+
+if (isset($archtheme)) {
+           $arch = tarchives::instance();
+$arch->theme = $archtheme;
+$arch->save();
+}
+
+if (isset($theme404)) {
+      $notfount = tnotfound404::instance();
+$notfound->theme = $theme404;
+$notfound->save();
+{
+if (isset($sitemaptheme)) {
+      $sitemap = tsitemap::instance();
+$sitemap->theme = $sitemaptheme;
+$sitemap->save();
+}
+
+            if (isset($admintheme)) {
+                  $template = ttemplate::instance();
+            $template->admintheme = $admintheme;
+            $template->save();
+            }
+            $result = $html->h2->themeschanged;
+break;
     }
-    return '';
+    }
+    
+    litepublisher::$urlmap->clearcache();
+    return $result;
   }
   
   private function getabout($name) {

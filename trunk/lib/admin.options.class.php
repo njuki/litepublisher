@@ -47,7 +47,6 @@ class tadminoptions extends tadminmenu {
       $args->automore = $contentfilter->automore;
       $args->phpcode = $contentfilter->phpcode;
       $args->hovermenu = $template->hovermenu;
-      $args->admintheme = $template->admintheme;
       break;
       
       case 'comments':
@@ -184,7 +183,6 @@ class tadminoptions extends tadminmenu {
       $template = ttemplate::instance();
       $template->lock();
       $template->hovermenu = isset($hovermenu);
-      if (isset($theme)) $template->admintheme = $theme;
       $template->unlock();
       break;
       
