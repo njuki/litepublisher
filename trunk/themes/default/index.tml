@@ -35,7 +35,7 @@ $template.head
 	  <div class="description">$options.description</div>
 	</div>
 	<div id="navi">
-<!--menu-->
+<!--menulist-->
 		<ul id="nav">
 <!--item-->
 		  <li class="page_item"><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>
@@ -44,7 +44,7 @@ $template.head
 		  <li class="current_page_item"><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>
 <!--/current-->
 		</ul>
-<!--/menu-->
+<!--/menulist-->
 	</div>
    </div>
 </div>
