@@ -74,7 +74,7 @@ class tadminthemes extends tadminmenu {
      $args->hometheme = $home->theme;
            $arch = tarchives::instance();
            $args->archtheme = $arch->theme;
-      $notfount = tnotfound404::instance();
+      $notfound = tnotfound404::instance();
       $args->theme404 = $notfound->theme;
       $sitemap = tsitemap::instance();
       $args->sitemaptheme = $sitemap->theme;
@@ -126,9 +126,9 @@ break;
       
       case 'options':
       extract($_POST);
-      if (isset(hometheme)) {
+      if (isset($hometheme)) {
            $home = thomepage::instance();
-$home->theme = hometheme;
+$home->theme = $hometheme;
 $home->save();
 }
 
@@ -139,10 +139,11 @@ $arch->save();
 }
 
 if (isset($theme404)) {
-      $notfount = tnotfound404::instance();
+      $notfound = tnotfound404::instance();
 $notfound->theme = $theme404;
 $notfound->save();
-{
+}
+
 if (isset($sitemaptheme)) {
       $sitemap = tsitemap::instance();
 $sitemap->theme = $sitemaptheme;
@@ -154,7 +155,7 @@ $sitemap->save();
             $template->admintheme = $admintheme;
             $template->save();
             }
-            $result = $html->h2->themeschanged;
+            $result = $this->html->h2->themeschanged;
 break;
     }
     }
