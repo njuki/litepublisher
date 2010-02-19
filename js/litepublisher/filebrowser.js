@@ -172,3 +172,23 @@ onComplete:function(responseObj){ }
 } );
 
 }
+
+function selecttheme(themename, name) {
+if (client == undefined) client = createclient();
+client.litepublisher.files.getthemes( {
+params:['', '', themename],
+
+                 onSuccess:function(result){                     
+result = result.replace(new RegExp('"theme"','g'), '"' + name + '"');
+var div = document.getElementById(name);
+div.innerHTML  += result;
+},
+
+                  onException:function(errorObj){ 
+                    alert("XMLRPC server error");
+},
+
+onComplete:function(responseObj){ }
+} );
+
+}
