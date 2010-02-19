@@ -99,12 +99,12 @@ class tstdwidgets extends titems {
     $title = $this->items[$name]['title'];
     if ($this->items[$name]['ajax'] && !$this->disableajax) {
       $theme = ttheme::instance();
-if (isset($theme->sitebars->array[$sitebar][$name]['id'])) {
-      $id = $theme->sitebars->array[$sitebar][$name]['id'];
-$id = "'$id'";
-} else {
-$id = 'this';
-}
+      if (isset($theme->sitebars->array[$sitebar][$name]['id'])) {
+        $id = $theme->sitebars->array[$sitebar][$name]['id'];
+        $id = "'$id'";
+      } else {
+        $id = 'this';
+      }
       $title = "<a onclick=\"loadwidget('$name', $id)\">$title</a>";
       $content = '';
     } elseif ($name == 'comments') {

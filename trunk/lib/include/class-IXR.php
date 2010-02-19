@@ -461,6 +461,10 @@ class IXR_Client {
 	var $timeout;
     // Storage place for an error message
     var $error = false;
+//lite Publisher addons
+    var $RequestHeaders;
+    var $ResponseHeaders;
+
     function IXR_Client($server, $path = false, $port = 80, $timeout = false) {
         if (!$path) {
             // Assume we have been given a URL instead
@@ -477,9 +481,13 @@ class IXR_Client {
             $this->path = $path;
             $this->port = $port;
         }
-        $this->useragent = 'Incutio XML-RPC';
+        //$this->useragent = 'Incutio XML-RPC';
+        $this->useragent = 'Lite Publisher ';
 		$this->timeout = $timeout;
+$this->RequestHeaders = '';
+$this->ResponseHeaders = '';
     }
+
     function query() {
         $args = func_get_args();
         $method = array_shift($args);
@@ -491,6 +499,7 @@ class IXR_Client {
         $request .= "Host: {$this->server}$r";
         $request .= "Content-Type: text/xml$r";
         $request .= "User-Agent: {$this->useragent}$r";
+        $request .= $this->RequestHeaders;
         $request .= "Content-length: {$length}$r$r";
         $request .= $xml;
         // Now send the request
@@ -508,6 +517,7 @@ class IXR_Client {
         }
         fputs($fp, $request);
         $contents = '';
+        $this->ResponseHeaders = '';
         $gotFirstLine = false;
         $gettingHeaders = true;
         while (!feof($fp)) {
@@ -525,7 +535,9 @@ class IXR_Client {
             }
             if (!$gettingHeaders) {
                 $contents .= trim($line)."\n";
-            }
+            } else {
+                                        $this->ResponseHeaders .= $line;
+                                        }
         }
         if ($this->debug) {
             echo '<pre>'.htmlspecialchars($contents)."\n</pre>\n\n";

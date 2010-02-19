@@ -6,8 +6,9 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tthemeparser {
+class tthemeparser extends tdata {
   public $theme;
+  public $warnings;
   private $abouts;
   
   public static function instance() {
@@ -27,15 +28,29 @@ class tthemeparser {
     return $result;
   }
   
+  public function requiretag(&$s, $tag, $replace) {
+    if ($result = $this->parsetag($s, $tag, $replace)) return $result;
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('themes');
+    $this->error(sprintf($lang->error, $tag));
+  }
+  
+  public function gettag(&$s, $tag, $replace) {
+    if ($result = $this->parsetag($s, $tag, $replace)) return $result;
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('themes');
+    $this->warnings[] = sprintf($lang->warning, $tag);
+    return $result;
+  }
+  
   public function parse($filename, $theme) {
+    $this->warnings = array();
+    
     $s = file_get_contents($filename);
+    $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
     
-    $s = str_replace("\r\n", "\n", $s);
-    $s = str_replace("\r", "\n", $s);
-    $s = str_replace("\n\n", "\n", $s);
-    
-    $theme->menu = $this->parsemenu($this->parsetag($s, 'menulist', '$template.menu'));
-    $theme->content = $this->parsecontent($this->parsetag($s, 'content', '$template.content'));
+    $theme->menu = $this->parsemenu($this->gettag($s, 'menulist', '$template.menu'));
+    $theme->content = $this->parsecontent($this->requiretag($s, 'content', '$template.content'));
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
   }
@@ -58,20 +73,20 @@ class tthemeparser {
   
   private function parsecontent($s) {
     $result = array();
-    $result['post']= $this->parsepost($this->parsetag($s, 'post', ''));
-    $result['excerpts'] = $this->parse_excerpts($this->parsetag($s, 'excerpts', ''), $result['post']);
-    $result['navi'] = $this->parsenavi($this->parsetag($s, 'navi', ''));
+    $result['post']= $this->parsepost($this->requiretag($s, 'post', ''));
+    $result['excerpts'] = $this->parse_excerpts($this->requiretag($s, 'excerpts', ''), $result['post']);
+    $result['navi'] = $this->parsenavi($this->requiretag($s, 'navi', ''));
     $result['admin'] = $this->parseadmin($this->parsetag($s, 'admin', ''));
-    $result['simple'] = $this->parsetag($s, 'simple', '');
-    $result['notfound'] = $this->parsetag($s, 'notfound', '');
-    $result['menu']= $this->parsetag($s, 'menu', '');
+    $result['simple'] = $this->requiretag($s, 'simple', '');
+    $result['notfound'] = $this->requiretag($s, 'notfound', '');
+    $result['menu']= $this->requiretag($s, 'menu', '');
     return $result;
   }
   
   private function parse_excerpts($s, array &$post) {
     $result = array();
-    $result['excerpt'] = $this->parse_excerpt($this->parsetag($s, 'excerpt', '%s'), $post);
-    $result['lite'] = $this->parselite($this->parsetag($s, 'lite', ''));
+    $result['excerpt'] = $this->parse_excerpt($this->requiretag($s, 'excerpt', '%s'), $post);
+    $result['lite'] = $this->parselite($this->gettag($s, 'lite', ''));
     $result[0] = $s;
     return $result;
   }
@@ -113,7 +128,7 @@ class tthemeparser {
       $result['dateformat'] = $post['dateformat'];
     }
     
-    $result['more'] = $this->parsetag($s, 'more', '$post.morelink');
+    $result['more'] = $this->gettag($s, 'more', '$post.morelink');
     $result['previews'] = $this->parsepreviews($this->parsetag($s, 'previews', '$post.previews'));
     $result[0] = $s;
     return $result;
@@ -157,11 +172,11 @@ class tthemeparser {
       $result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
     }
     
-    $result['files'] = $this->parsefiles($this->parsetag($s, 'files', '$post.filelist'));
-    $result['more'] = $this->parsetag($s, 'more', '');
-    $result['rss'] = $this->parsetag($s, 'rss', '$post.subscriberss');
+    $result['files'] = $this->parsefiles($this->requiretag($s, 'files', '$post.filelist'));
+    $result['more'] = $this->gettag($s, 'more', '');
+    $result['rss'] = $this->gettag($s, 'rss', '$post.subscriberss');
     $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post.prevnext'));
-    $result['templatecomments'] = $this->parsetemplatecomments($this->parsetag($s, 'templatecomments', '$post.templatecomments'));
+    $result['templatecomments'] = $this->parsetemplatecomments($this->requiretag($s, 'templatecomments', '$post.templatecomments'));
     // после комментариев из за секции date в комментарии
     $result['dateformat'] = $this->parsetag($s, 'date', '$post.date');
     $result[0] = $s;
@@ -170,9 +185,9 @@ class tthemeparser {
   
   private function parsefiles($s) {
     $result = array();
-    $result['file'] = $this->parsetag($s, 'file', '%s');
-    $result['image'] = $this->parsetag($s, 'image', '');
-    $result['audio'] = $this->parsetag($s, 'audio', '');
+    $result['file'] = $this->requiretag($s, 'file', '%s');
+    $result['image'] = $this->gettag($s, 'image', '');
+    $result['audio'] = $this->gettag($s, 'audio', '');
     $result['video'] = $this->parsetag($s, 'video', '');
     $result[0] = $s;
     return $result;
@@ -205,22 +220,22 @@ class tthemeparser {
   
   private function parsetemplatecomments($s) {
     $result = array();
-    $result['comments'] = $this->parsecomments($this->parsetag($s, 'comments', ''));
-    $result['moderateform'] = $this->parsemoderateform($this->parsetag($s, 'moderateform', ''));
-    $result['pingbacks'] = $this->parsepingbacks($this->parsetag($s, 'pingbacks', ''));
-    $result['closed'] = $this->parsetag($s, 'closed', '');
-    $result['form'] = $this->parsetag($s, 'form', '');
-    $result['confirmform'] = $this->parsetag($s, 'confirmform', '');
+    $result['comments'] = $this->parsecomments($this->requiretag($s, 'comments', ''));
+    $result['moderateform'] = $this->parsemoderateform($this->requiretag($s, 'moderateform', ''));
+    $result['pingbacks'] = $this->parsepingbacks($this->gettag($s, 'pingbacks', ''));
+    $result['closed'] = $this->requiretag($s, 'closed', '');
+    $result['form'] = $this->requiretag($s, 'form', '');
+    $result['confirmform'] = $this->gettag($s, 'confirmform', '');
     if ($result['confirmform'] == '') $result['confirmform'] = $this->getdefaultconfirmform();
     return $result;
   }
   
   private function parsecomments($s) {
     $result = array();
-    $result['count'] = $this->parsetag($s, 'count', '');
-    $result['hold'] = $this->parsetag($s, 'hold', '');
-    $result['comment'] = $this->parsecomment($this->parsetag($s, 'comment', '%1$s'));
-    $result['commentsid'] = $this->parsetag($s, 'commentsid', false);
+    $result['count'] = $this->gettag($s, 'count', '');
+    $result['hold'] = $this->gettag($s, 'hold', '');
+    $result['comment'] = $this->parsecomment($this->requiretag($s, 'comment', '%1$s'));
+    $result['commentsid'] = $this->requiretag($s, 'commentsid', false);
     $result[0] = $s;
     return $result;
   }
@@ -229,7 +244,7 @@ class tthemeparser {
     $result = array();
     $result['class1'] = $this->parsetag($s, 'class1', '$class');
     $result['class2'] = $this->parsetag($s, 'class2', '');
-    $result['moderate'] = $this->parsetag($s, 'moderate', '$moderate');
+    $result['moderate'] = $this->gettag($s, 'moderate', '$moderate');
     
     $result['dateformat'] = $this->parsetag($s, 'date', '$comment.date');
     $result[0] = $s;
@@ -262,7 +277,7 @@ class tthemeparser {
   
   private function parsesitebar($s) {
     $result = array();
-    $result['widget'][0] = $this->parsetag($s, 'widget', '');
+    $result['widget'][0] = $this->requiretag($s, 'widget', '');
     
     foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
@@ -378,8 +393,9 @@ class tthemeparser {
       case 'archives':
       return '<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>';
       
-      case 'post':
-      return '<li><strong><a href="$post->link" rel="bookmark" title="Permalink to $post->title">$post->iconlink$post->title</a></strong><br />     <small>$post->localdate</small></li>';
+      case 'posts':
+      return '<li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
+      <small>$post.date</small></li>';
       
       case 'comments':
       return '<li><strong><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';

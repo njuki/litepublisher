@@ -37,7 +37,7 @@ class tadminthemes extends tadminmenu {
       $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'theme';
       foreach ($list as $name) {
         $about = $this->getabout($name);
-$about['name'] = $name;
+        $about['name'] = $name;
         $args->add($about);
         $args->checked = $name == $template->theme;
         $result .= $html->radioitem($args);
@@ -77,10 +77,13 @@ $about['name'] = $name;
   public function processform() {
     if  (isset($_POST['reparse'])) {
       $parser = tthemeparser::instance();
-      $parser->reparse();
-      return;
+      try {
+        $parser->reparse();
+      } catch (Exception $e) {
+        return $e->getMessage();
+      }
+      return implode("<br />\n", $parser->warnings);
     }
-    
     
     switch ($this->name) {
       case 'themes':
@@ -92,9 +95,12 @@ $about['name'] = $name;
         $template->theme = $_POST['selection'];
       } catch (Exception $e) {
         $template->theme = 'default';
-        return 'Caught exception: '.  $e->getMessage() . "<br>\ntrace error\n<pre>\n" .  $e->getTraceAsString() . "\n</pre>\n";
+        return $e->getMessage();
       }
-      return $this->html->h2->success;
+      $result = $this->html->h2->success;
+      $parser = tthemeparser::instance();
+      if (isset($parser->warnings)) $result .=implode("<br />\n", $parser->warnings);
+      return $result;
       
       case 'edit':
       if (!empty($_GET['file']) && !empty($_GET['theme'])) {
