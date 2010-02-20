@@ -236,7 +236,7 @@ $comments
 <div class="navigation">
 <!--prev--><span class="previous-entries">%s</span><!--/prev-->
 <!--next--><span class='"next-entries">%s</span><!--/next-->
-<!--link--><a href="%1$s">%2$</a><!--/link-->
+<!--link--><a href="%1$s">%2$s</a><!--/link-->
 <!--current-->%2$s<!--/current-->
 <!--divider--> | <!--/divider-->
 </div>
