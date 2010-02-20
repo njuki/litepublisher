@@ -18,7 +18,7 @@ public static $urlmap;
 public static $paths;
 public static $_paths;
 public static $domain;
-public static $debug = true;
+public static $debug = false;
 public static $secret = '8r7j7hbt8iik//pt7hUy5/e/7FQvVBoh7/Zt8sCg8+ibVBUt7rQ';
 public static $microtime;
 
@@ -53,18 +53,19 @@ public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 }
 
 ob_start();
-define('dbversion' , 'combo');
 litepublisher::init();
 require_once(litepublisher::$paths->lib . 'kernel.php');
 litepublisher::$classes = tclasses::instance();
 litepublisher::$options = toptions::instance();
 if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
 if (dbversion) litepublisher::$db = new tdatabase();
+
 litepublisher::$urlmap = turlmap::instance();
 if (!defined('litepublisher_mode')) {
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
+
 ob_end_flush ();
 litepublisher::$options->savemodified();
-
+litepublisher::$options->showerrors();
 ?>
