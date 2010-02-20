@@ -275,7 +275,9 @@ class tadminoptions extends tadminmenu {
       case 'local':
       $options->lock();
       $options->dateformat = $dateformat;
-      $options->language = $language;
+      if ($options->language != $language) {
+        if (file_exists(litepublisher::$paths->languages . "$language.ini")) $options->language = $language;
+      }
       if ($options->timezone != $timezone) {
         $options->timezone = $timezone;
         $archives = tarchives::instance();

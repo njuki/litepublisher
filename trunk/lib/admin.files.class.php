@@ -77,7 +77,7 @@ class tadminfiles extends tadminmenu {
     
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
     $result .= $files->getlist($list);
-    $result .= $html->tableheader();
+s    $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     foreach ($list as $id) {
@@ -88,7 +88,7 @@ class tadminfiles extends tadminmenu {
     }
     
     $result .= $html->tablefooter;
-    return str_replace("'", '"', $result);
+    return $result;
   }
   
   public function processform() {
