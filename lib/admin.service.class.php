@@ -53,7 +53,7 @@ class tadminservice extends tadminmenu {
       
       $args->checkboxes = $checkboxes;
       $result .= $html->engineform($args);
-      return $this->FixCheckall($result);
+      return $html->fixquote($result);
       
       case 'backup':
       if (empty($_GET['action'])) {

@@ -63,8 +63,8 @@ class tadminwidgets extends tadminmenu {
   }
   
   private function getwidgets(twidgets $widgets) {
-    $html = $this->html;
     $args = targs::instance();
+    $html = $this->html;
     $result = $html->checkallscript;
     $result .= $html->formhead();
     // принимается что макс число сайтбаров = 3
@@ -79,7 +79,7 @@ class tadminwidgets extends tadminmenu {
       }
     }
     $result .= $html->formfooter();
-    return  $this->FixCheckall($result);
+    return  $html->fixquote($result);
   }
   
   private function setwidgets(twidgets $widgets) {
@@ -180,7 +180,7 @@ class tadminwidgets extends tadminmenu {
         $result .= $html->linkitem($args);
       }
       $result .= $html->linkstablefooter();
-      return $this->FixCheckall($result);
+      return $html->fixquote($result);
       
       case 'custom':
       $custom = tcustomwidget::instance();

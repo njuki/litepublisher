@@ -202,10 +202,6 @@ public function save() {}
     return isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
   }
   
-  public function FixCheckall($s) {
-    return str_replace('checkAll(document.getElementById("form"));', "checkAll(document.getElementById('form'));",    str_replace("'", '"', $s));
-  }
-  
   public function getnotfound() {
     return $this->html->h2->notfound;
   }

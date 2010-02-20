@@ -57,15 +57,17 @@ class tadminposts extends tadminmenu {
     $posts = tposts::instance();
     $perpage = 20;
     $count = $posts->count;
-    $from = max(0, $count - litepublisher::$urlmap->page * $perpage);
+    $from = max(0, $count - (litepublisher::$urlmap->page - 1) * $perpage);
     
     if (dbversion) {
-      $items = $this->db->idselect("status <> 'deleted' order by posted desc limit $from, $perpage");
+      $items = $posts->select("status <> 'deleted'", " order by posted desc limit $from, $perpage");
+      if (!$items) $items = array();
     } else {
       $items = array_slice($posts->items, $from, $perpage, true);
       $items = array_reverse (array_keys($items));
     }
     $html = $this->html;
+    $result .= $html->checkallscript;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
     $args = targs::instance();
@@ -78,11 +80,29 @@ class tadminposts extends tadminmenu {
       $result .= $html->itemlist($args);
     }
     $result .= $html->listfooter();
-    $result = str_replace("'", '"', $result);
+    $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
     $result .= $theme->getpages('/admin/posts/', litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
+  }
+  
+  public function processform() {
+    $posts = tposts::instance();
+    $posts->lock();
+    $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');
+    foreach ($_POST as $key => $id) {
+      if (!is_numeric($id))  continue;
+      $id = (int) $id;
+      if ($status == 'delete') {
+        $posts->delete($id);
+      } else {
+        $post = tpost::instance($id);
+        $post->status = $status;
+        $posts->edit($post);
+      }
+    }
+    $posts->unlock();
   }
   
 }//class

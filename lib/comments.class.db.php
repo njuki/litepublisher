@@ -90,9 +90,12 @@ class tcomments extends titems {
   }
   
   public function getitems($where) {
-    $db = $this->db;
-    $res = $db->query("select $db->comments.*, $db->comusers.name, $db->comusers.email, $db->comusers.url from $db->comments, $db->comusers
-    where  $where");
+    $comusers = tcomusers::instance();
+    $authors = $comusers->thistable;
+    $table = $this->thistable;
+    $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
+    where $authors.id = $table.author and $where");
+    
     return $res->fetchAll(PDO::FETCH_ASSOC);
   }
   

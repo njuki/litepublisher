@@ -1151,7 +1151,7 @@ class turlmap extends titems {
   
   public function delete($url) {
     if (dbversion) {
-      $url = $dbquote($url);
+      $url = dbquote($url);
       if ($item = $this->db->getitem("url = $url")) {
         $this->db->delete("url = $url");
       } else {
