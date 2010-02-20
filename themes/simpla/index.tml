@@ -232,7 +232,7 @@ $comments
 <div class="navigation">
 <!--prev--><div class="alignleft">%s</div><!--/prev-->
 <!--next--><div class="alignright">%s</div><!--/next-->
-<!--link--><a href="%1$s">%2$</a><!--/link-->
+<!--link--><a href="%1$s">%2$s</a><!--/link-->
 <!--current-->%2$s<!--/current-->
 <!--divider--> | <!--/divider-->
 </div>
