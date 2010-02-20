@@ -108,6 +108,7 @@ class tfiles extends titems {
       foreach ($subitems as $id) {
         $item = $this->items[$id];
         $args->add($item);
+        $args->id = $id;
         $itemtml = empty($tml->array[$type]) ? $tml->array['file'] : $tml->array[$type];
         $args->preview = $this->getpreview($item['preview']);
         $result .= $theme->parsearg($itemtml , $args);
