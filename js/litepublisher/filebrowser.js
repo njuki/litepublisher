@@ -1,16 +1,19 @@
+//ansync load javascripts
+var swfumutex = {creator: false, uploader: false };
+
 function filebrowser() {
 if (ltoptions.filebrowser != undefined) return;
 ltoptions.filebrowser = true;
-loadjavascript('/js/swfupload/swfupload.js');
-//loadjavascript('/js/swfupload/
-
 if (client == undefined) client = createclient();
 client.litepublisher.files.getbrowser( {
 params:['', '', ltoptions.idpost],
 
                  onSuccess:function(result){                     
-var div = document.getElementById("filebrowser");
-div.innerHTML  = result;
+try {
+	var div = document.createElement("div");
+	div.innerHTML = result;
+var browser = document.getElementById("filebrowser");
+	browser.parentNode.replaceChild(div, browser);
 
 var form = document.getElementById("form");
 form.onsubmit = submitform;
@@ -24,7 +27,12 @@ ltoptions.idfilepages = "filepages";
 ltoptions.idfilepage = "filepage";
 ltoptions.idcurrentfiles = "currentfiles";
 
-createswfu();
+//createswfu();
+loadjavascript('/js/swfupload/swfupload.js');
+loadjavascript('/js/litepublisher/swfuploader.js');
+} catch (e) {
+alert('Error ' + e.message);
+}
 },
 
                   onException:function(errorObj){ 
