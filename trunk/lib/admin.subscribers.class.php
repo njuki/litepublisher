@@ -36,7 +36,7 @@ public function auth() { }
       $result .= $html->formitem($args);
     }
     $result .= $html->formfooter();
-    return $this->FixCheckall($result);
+    return $html->fixquote($result);
   }
   
   public function processform() {

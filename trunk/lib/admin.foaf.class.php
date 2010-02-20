@@ -79,7 +79,7 @@ class tadminfoaf extends tadminmenu {
         eval('$result .= "'. $html->moderitem . '\n";');
       }
       eval('$result .= "'. $html->moderfooter . '\n";');;
-      return $this->FixCheckall($result);
+      return $html->fixquote($result);
       
       case 'profile':
       $profile = &TProfile::instance();

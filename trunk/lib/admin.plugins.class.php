@@ -73,7 +73,7 @@ class tadminplugins extends tadminmenu {
         $result .= $html->item($args);
       }
       $result .= $html->formfooter();
-      $result = $this->FixCheckall($result);
+      $result = $html->fixquote($result);
     } else {
       $name = $_GET['plugin'];
       if (!isset($this->abouts[$name])) return $this->notfound;

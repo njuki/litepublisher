@@ -138,10 +138,9 @@ class tadminmoderator extends tadminmenu {
     // подсчитать количество комментариев во всех случаях
     $status = $kind == 'hold' ? 'hold' : 'approved';
     $total = $comments->db->getcount("status = '$status'");
-    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
-    $list = $comments->getitems("status = '$status'
+    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
+    $list = $comments->getitems("$comments->thistable.status = '$status'
     order by $comments->thistable.posted asc limit $from, $perpage");
-    
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $result .= $html->checkallscript;
@@ -160,7 +159,7 @@ class tadminmoderator extends tadminmenu {
       $result .=$html->itemlist($args);
     }
     $result .= $html->tablefooter();
-    $result = $this->FixCheckall($result);
+    $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
@@ -172,7 +171,7 @@ class tadminmoderator extends tadminmenu {
     $pingbacks = tpingbacks::instance();
     $perpage = 20;
     $total = $pingbacks->getcount();
-    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
+    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
     $items = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
@@ -195,7 +194,7 @@ class tadminmoderator extends tadminmenu {
       $result .=$html->pingbackitem($args);
     }
     $result .= $html->tablefooter();
-    $result = $this->FixCheckall($result);
+    $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
@@ -272,7 +271,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $perpage = 20;
     $total = $comusers->count;
-    $from = max(0, $total - litepublisher::$urlmap->page * $perpage);
+    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
     $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
     $items = $res->fetchAll(PDO::FETCH_ASSOC);
     $html = $this->html;
@@ -313,7 +312,7 @@ class tadminmoderator extends tadminmenu {
       $result .= $html->subscribeitem($args);
     }
     
-    return $this->FixCheckall($result);
+    return $html->fixquote($result);
   }
   
   public function processform() {
@@ -337,14 +336,16 @@ class tadminmoderator extends tadminmenu {
         }
       } else {
         $manager = $this->manager;
+        $comments = tcomments::instance(0);
         $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $id => $value) {
           if (!is_numeric($id))  continue;
           $id = (int) $id;
+          $idpost = $comments->getvalue($id, 'post');
           if ($status == 'delete') {
-            $manager->delete($id);
+            $manager->delete($id, $idpost);
           } else {
-            $manager->setstatus($id, 0, $status);
+            $manager->setstatus($id, $idpost, $status);
           }
         }
       }
