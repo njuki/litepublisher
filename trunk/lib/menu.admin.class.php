@@ -210,5 +210,10 @@ public function save() {}
     return litepublisher::$options->url .$this->url . litepublisher::$options->q . 'id';
   }
   
+  public function getfrom($perpage, $count) {
+    if (litepublisher::$urlmap->page <= 1) return 0;
+    return min($count, (litepublisher::$urlmap->page - 1) * $perpage);
+  }
+  
 }//class
 ?>

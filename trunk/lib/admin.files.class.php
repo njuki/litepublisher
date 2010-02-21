@@ -66,7 +66,7 @@ class tadminfiles extends tadminmenu {
       $count = count($list);
     }
     
-    $from = (litepublisher::$urlmap->page - 1) * $perpage;
+    $from = $this->getfrom($perpage, $count);
     
     if (dbversion) {
       $list = $files->select($sql . " order by posted desc limit $from, $perpage");
@@ -77,7 +77,7 @@ class tadminfiles extends tadminmenu {
     
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
     $result .= $files->getlist($list);
-s    $result .= $html->tableheader();
+    s    $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     foreach ($list as $id) {

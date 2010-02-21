@@ -157,7 +157,7 @@ class tadminmoderator extends tadminmenu {
     $perpage = 20;
     // подсчитать количество комментариев во всех случаях
     $total = $comments->count;
-    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $total);
     $list = array_slice(array_keys($comments->items), $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
@@ -189,7 +189,7 @@ class tadminmoderator extends tadminmenu {
     $posts = tposts::instance();
     $perpage = 20;
     $count = $posts->count;
-    $from = max(0, $count - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $count);
     $items = array_slice($posts->items, $from, $perpage, true);
     $items = array_reverse (array_keys($items));
     
@@ -217,7 +217,7 @@ class tadminmoderator extends tadminmenu {
     $pingbacks = tpingbacks::instance($idpost);
     $perpage = 20;
     $total = $pingbacks->getcount();
-    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $total);
     $list = array_slice(array_keys($pingbacks->items), $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
@@ -314,7 +314,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $perpage = 20;
     $total = $comusers->count;
-    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $total);
     $items =array_slice(array_keys($comusers->items), $from, $perpage);
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();

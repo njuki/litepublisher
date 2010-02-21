@@ -60,14 +60,29 @@ class tadmintags extends tadminmenu {
     }
     
     //table
+    $perpage = 20;
+    $count = $tags->count;
+    $from = $this->getfrom($perpage, $count);
+    
+    if (dbversion) {
+      $items = $tags->select('', " order by id asc limit $from, $perpage");
+      if (!$items) $items = array();
+    } else {
+      $items = array_slice($tags->items, $from, $perpage, true);
+      //      $items = array_reverse (array_keys($items));
+    }
+    
     $result .= $html->listhead();
-    $tags->loadall();
-    foreach ($tags->items as $id => $item) {
+    foreach ($items as $id) {
+      $item = $tags->items[$id];
       $args->add($item);
       $result .= $html->itemlist($args);
     }
     $result .= $html->listfooter;
     $result = $html->fixquote($result);
+    
+    $theme = ttheme::instance();
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   

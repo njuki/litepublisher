@@ -89,14 +89,15 @@ class tcomments extends titems {
     return $this->db->getcount($where);
   }
   
-  public function getitems($where) {
+  public function select($where, $limit) {
+    if ($where != '') $where .= ' and ';
     $comusers = tcomusers::instance();
     $authors = $comusers->thistable;
     $table = $this->thistable;
     $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
-    where $authors.id = $table.author and $where");
+    where $where $authors.id = $table.author $limit");
     
-    return $res->fetchAll(PDO::FETCH_ASSOC);
+    return $this->res2items($res);
   }
   
   public function getraw() {
@@ -175,12 +176,9 @@ class tcomments extends titems {
       $count = litepublisher::$options->commentsperpage;
     }
     
-    $comusers = tcomusers::instance();
-    $authors = $comusers->thistable;
     $table = $this->thistable;
-    $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
-    where $table.post = $this->pid and $table.status = '$status' $whereauthor and $authors.id = $table.author
-    order by $table.posted asc limit $from, $count");
+    $items = $this->select("$table.post = $this->pid and $table.status = '$status' $whereauthor",
+    "order by $table.posted asc limit $from, $count");
     
     $args = targs::instance();
     $args->from = $from;
@@ -199,13 +197,11 @@ class tcomments extends titems {
     $i = 1;
     $class1 = $theme->content->post->templatecomments->comments->comment->class1;
     $class2 = $theme->content->post->templatecomments->comments->comment->class2;
-    $res->setFetchMode (PDO::FETCH_ASSOC);
-    foreach ($res as $data) {
-      $comment->data = $data;
+    foreach ($items as $id) {
+      $comment->id = $id;
       $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
-    
     
     $tml = $theme->content->post->templatecomments->comments->__tostring();
     if ($status == 'hold') {
@@ -233,12 +229,8 @@ class tcomment extends tdata {
   }
   
   public function setid($id) {
-    $table = $this->thistable;
-    $authors = $this->db->comusers;
-    $this->data= $this->db->queryassoc("select $table.*,
-    $authors.name, $authors.email, $authors.url, $authors.ip
-    from $table, $authors
-    where $table.id = $id and $authors.id = $table.author limit 1");
+    $comments = tcomments::instance();
+    $this->data = $comments->getitem($id);
   }
   
   public function save() {

@@ -138,9 +138,8 @@ class tadminmoderator extends tadminmenu {
     // подсчитать количество комментариев во всех случаях
     $status = $kind == 'hold' ? 'hold' : 'approved';
     $total = $comments->db->getcount("status = '$status'");
-    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
-    $list = $comments->getitems("$comments->thistable.status = '$status'
-    order by $comments->thistable.posted asc limit $from, $perpage");
+    $from = $this->getfrom($perpage, $total);
+    $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted asc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $result .= $html->checkallscript;
@@ -149,9 +148,9 @@ class tadminmoderator extends tadminmenu {
     $args->adminurl = $this->adminurl;
     $comment = new tcomment(null);
     ttheme::$vars['comment'] = $comment;
-    foreach ($list as $data) {
-      $comment->data = $data;
-      $args->id = $comment->id;
+    foreach ($list as $id) {
+      $comment->id = $id;
+      $args->id = $id;
       $args->excerpt = tcontentfilter::getexcerpt($comment->content, 120);
       $args->onhold = $comment->status == 'hold';
       $args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
@@ -171,7 +170,7 @@ class tadminmoderator extends tadminmenu {
     $pingbacks = tpingbacks::instance();
     $perpage = 20;
     $total = $pingbacks->getcount();
-    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $total);
     $items = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
@@ -271,7 +270,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $perpage = 20;
     $total = $comusers->count;
-    $from = max(0, $total - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $total);
     $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
     $items = $res->fetchAll(PDO::FETCH_ASSOC);
     $html = $this->html;
@@ -323,9 +322,11 @@ class tadminmoderator extends tadminmenu {
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
-          $post = tpost::instance( (int) $_REQUEST['post']);
+          $comments = tcomments::instance();
+          $item = $comments->getitem($this->idget() );
+          $post = tpost::instance( (int) $item['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
-          @header("Location: litepublisher::$options->url$post->lastcommenturl");
+          header("Location: " . litepublisher::$options->url . $post->lastcommenturl);
           exit();
           
           case 'edit':
