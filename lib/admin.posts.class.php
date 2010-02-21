@@ -57,7 +57,7 @@ class tadminposts extends tadminmenu {
     $posts = tposts::instance();
     $perpage = 20;
     $count = $posts->count;
-    $from = max(0, $count - (litepublisher::$urlmap->page - 1) * $perpage);
+    $from = $this->getfrom($perpage, $count);
     
     if (dbversion) {
       $items = $posts->select("status <> 'deleted'", " order by posted desc limit $from, $perpage");

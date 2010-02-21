@@ -45,32 +45,19 @@ class tcommontags extends titems implements  itemplate {
     return $this->error("Item $id not found in class ". get_class($this));
   }
   
-  public function loaditems(array $items) {
-    if (!$this->dbversion) return;
-    //исключить из загрузки загруженные посты
-    $items = array_diff($items, array_keys($this->items));
-    if (count($items) == 0) return;
-    $list = implode(',', $items);
-    $table = $this->thistable;
+  public function select($where, $limit) {
+    if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
+    if ($where != '') $where .= ' and ';
     $db = litepublisher::$db;
-    $res = $db->query("select $table.*, $db->urlmap.url as url  from $table, $db->urlmap
-    where $table.id in ($list) and  $db->urlmap.id  = $table.idurl");
-    $res->setFetchMode (PDO::FETCH_ASSOC);
-    foreach ($res as $item) {
-      $this->items[$item['id']] = $item;
-    }
+    $table = $this->thistable;
+    $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
+    where $where $table.idurl = $db->urlmap.id $limit");
+    return $this->res2items($res);
   }
   
   public function loadall() {
     if (!$this->dbversion)  return;
-    $db = litepublisher::$db;
-    $table = $this->thistable;
-    $res = $db->query("select $table.*, $db->urlmap.url from $table, $db->urlmap
-    where $table.idurl = $db->urlmap.id");
-    $res->setFetchMode (PDO::FETCH_ASSOC);
-    foreach ($res as $item) {
-      $this->items[$item['id']] = $item;
-    }
+    return $this->select('', '');
   }
   
   public function load() {

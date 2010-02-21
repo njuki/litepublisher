@@ -51,26 +51,26 @@ class titems extends tevents {
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
-    $res = litepublisher::$db->query("select * from $this->thistable where id in ($list)");
-    $res->setFetchMode (PDO::FETCH_ASSOC);
-    foreach ($res as $item) {
-      $item['id'] = (int) $item['id'];
-      $this->items[$item['id']] = $item;
-    }
+    $this->select("$this->thistable.id in ($list)", '');
   }
   
-  public function select($where) {
+  public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
-    if (      $items = $this->db->getitems($where)) {
-      $result = array();
-      foreach ($items as $item){
-        $id = $item['id'];
-        $result[] = $id;
-        $this->items[$id] = $item;
-      }
-      return $result;
+    if ($where != '') $where = 'where '. $where;
+    $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
+    return $this->res2items($res);
+  }
+  
+  public function res2items($res) {
+    if (!$res) return false;
+    $result = array();
+    $res->setFetchMode (PDO::FETCH_ASSOC);
+    foreach ($res as $item){
+      $id = $item['id'];
+      $result[] = $id;
+      $this->items[$id] = $item;
     }
-    return false;
+    return $result;
   }
   
   public function getcount() {
@@ -82,8 +82,10 @@ class titems extends tevents {
   }
   
   public function getitem($id) {
-    if ($this->dbversion && !isset($this->items[$id])) $this->items[$id] = $this->db->getitem($id);
     if (isset($this->items[$id])) return $this->items[$id];
+    if ($this->dbversion) {
+      if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
+    }
     return $this->error("Item $id not found in class ". get_class($this));
   }
   

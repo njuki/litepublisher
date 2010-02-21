@@ -151,14 +151,14 @@ class TXMLRPCComments extends TXMLRPCAbstract {
     $where .= isset($struct['post_id']) ? ' post = ' . (int) $struct['post_id'] : '';
     $offset = isset($struct['offset']) ? (int) $struct['offset'] : 0;
     $count= isset($struct['number']) ? (int) $struct['number'] : 10;
-    $where .= " limit $offset, $count order by posted";
+    $limit = " order by posted limit $offset, $count";
     
     $comments = tcomments::instance();
-    $items = $comments->getitems($where);
+    $items = $comments->select($where, $limit);
     $result = array();
     $comment = new tcomment();
-    foreach ($items as $item) {
-      $comment->data = $item;
+    foreach ($items as $id) {
+      $comment->id = $id;
       $result[] = $this->_getcomment($comment);
     }
     return $result;
