@@ -14,35 +14,42 @@ class tfoaf extends titems {
   }
   
   protected function create() {
+      $this->dbversion = dbversion;
     parent::create();
     $this->basename = 'foaf';
-    $this->dbversion = false;
+$this->table = 'foaf';
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
     $this->data['redirlink'] = '/foaflink.htm';
   }
   
-  public function GetWidgetContent($id) {
-    $Template = TTemplate::instance();
-    $item = !empty($Template->theme['widget']['myfriends']) ? $Template->theme['widget']['myfriends'] :
-  '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
-    
+  public function getwidgetcontent($id, $sitebar) {
+    '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
     $result = '';
+        $result = '';
     if ($this->maxcount == 0) {
       $list = $this->items;
     } else {
       $list = array_slice($this->items, 0, $this->maxcount, true);
     }
     
-    foreach ($list as $id => $friend) {
-    $url = $this->redir ?"litepublisher::$options->url$this->redirlink{litepublisher::$options->q}friend=$id" : $friend['blog'];
-      eval('$result .= "'. $item . '\n";');
+
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('foaf', $sitebar);
+    $args = targs::instance();
+    foreach ($this->items as $id => $item) {
+      $url =  $item['url'];
+      if ($this->redir && !strbegin($url, litepublisher::$options->url)) {
+        $url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
+      }
+      
+      $result .=   sprintf($tml, $url, $item['title'], $item['text']);
     }
-    $result = str_replace("'", '"', $result);
+    
     return $result;
   }
-  
-  public function request($arg) {
+
+    public function request($arg) {
     switch($arg) {
       case 'xml':
       $s = "<?php
@@ -51,7 +58,7 @@ class tfoaf extends titems {
       @header('X-Pingback: litepublisher::$options->url/rpc.xml');
       echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
       '; ?>";
-      $s .= $this->getfoaf();
+      $s .= $this->getfoafxml();
       return  $s;
       
       case 'redir':
@@ -63,34 +70,45 @@ class tfoaf extends titems {
   }
   
   public function add($nick,$foaf, $blog) {
-    $this->items[++$this->autoid] = array(
-    'nick' => $nick,
-    'foaf' => $foaf,
-    'blog' => $blog
+  $item = array(
+      'url' => $blog,
+      'foafurl' => $foaf,
+    'nick' => $nick
     );
+
+if ($this->dbversion) {
+$id = $this->db->add($item);
+} else {
+$it = ++$this->autoid;
+}
+    $this->items[$id] = $item;
     $this->save();
-    $this->added($this->autoid);
+    $this->added($id);
     $urlmap = turlmap::instance();
     $urlmap->clearcache();
-    return $this->autoid;
+    return $id;
   }
   
   public function delete($id) {
-    if (isset($this->items[$id])) {
-      unset($this->items[$id]);
-      $this->save();
+if (  parent::delete($id)) {
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
+      return true;
+      }
+      return false;
     }
   }
   
   public function deleteurl($url) {
+  if ($this->dbversion) {
+  $this->db->delete('url = ' . dbquote($url));
+  } else {
     foreach ($this->items as $id => $item) {
-      if ($url == $item['blog'])  return $this->Delete($id);
+      if ($url == $item['url'])  return $this->Delete($id);
     }
   }
   
-  private function getfoaf() {
+  private function getfoafxml() {
     $result = '<rdf:RDF
     xml:lang="en"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -129,10 +147,14 @@ class tfoaf extends titems {
   }
   
   public function hasfriend($url) {
+  if ($this->dbversion) {
+  return $this->select('url = ' . dbquote($url), 'limit 1');
+  } else {
     foreach ($this->items as $id => $item) {
-      if ($url == $item['blog']) return true;
+      if ($url == $item['url']) return $id;
     }
     return false;
+  }
   }
   
   public function setparams($maxcount, $redir) {

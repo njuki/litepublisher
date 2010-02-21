@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsimplecontent  {
+class tsimplecontent  extends tdata {
   public $text;
   public $html;
   

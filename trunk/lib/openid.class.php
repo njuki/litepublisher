@@ -51,9 +51,27 @@ class topenid extends tevents {
   }
   
   public function request($arg) {
-    if (litepublisher::$debug)  {
-      tfiler::log($_SERVER['REQUEST_URI']);
-      tfiler::log(var_export($_REQUEST, true));
+        if (isset($_POST['submit']) && isset($_POST['assoc_handle'])) {
+        $h = $_POST['assoc_handle'];
+if (isset($this->keys[$h]['request'])) {
+$_REQUEST= $this->keys[$h]['request'];
+}
+}
+
+//    if (litepublisher::$debug)  {
+{
+$log = $_SERVER['REQUEST_URI'];
+$log .=       var_export($_REQUEST, true);
+$log .= "\nget:\n";
+$log .=       var_export($_GET, true);
+$log .= "\npost:\n";
+$log .=       var_export($_POST, true);
+$log .= "\nkeys:\n";
+$log .=       var_export($this->keys, true);
+$log .= "\nhas key\n";
+$log .= isset($this->keys[$_REQUEST['openid_assoc_handle']])
+? "true\n\n" : "false\n\n";
+      tfiler::log($log, 'openid.log');
     }
     $this->LoadBigMath();
     tlocal::loadlang('admin');
@@ -90,7 +108,7 @@ class topenid extends tevents {
   private function nomode() {
     $options = litepublisher::$options;
     $result = tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
-    $result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$options->url$options->home\">\n</head>", $result);
+    //$result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$options->url$options->home\">\n</head>", $result);
     return $result;
   }
   
@@ -105,7 +123,7 @@ class topenid extends tevents {
   }
   
   private function GetMessage($key, $defkey) {
-    $lang = &TLocal::$data['openidserver'];
+    $lang = &tlocal::$data['openidserver'];
     return empty($lang[$key]) ? $lang[$defkey] : $lang[$key];
   }
   
@@ -232,7 +250,7 @@ class topenid extends tevents {
     'secret' => $shared_secret ,
     'expired' => 	$lifetime
     );
-    $this->Save();
+    $this->save();
   }
   
   private function check_authentication() {
@@ -252,7 +270,7 @@ class topenid extends tevents {
     if (!empty($_REQUEST['openid_invalidate_handle'])) {
       if (isset($this->keys[$_REQUEST['openid_invalidate_handle']]) ){
         unset($this->keys[$_REQUEST['openid_invalidate_handle']]);
-        $this->Save();
+        $this->save();
       }
       $keys['invalidate_handle'] = $_REQUEST['openid_invalidate_handle'];
     }
@@ -310,19 +328,32 @@ class topenid extends tevents {
     //join  fields
     $sreg_required .= ',' . $sreg_optional;
     
-    $auth = &TAuthDigest::instance();
-    if (!$auth->auth())  return $auth->Headers();
-    
+    $auth = tauthdigest::instance();
+    if (litepublisher::$options->cookieenabled) {
+      //if ($s = $auth->checkattack()) return $s;
+      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
+    }
+    elseif (!$auth->Auth())  return $auth->headers();
+    if (litepublisher::$options->group != 'admin') return 404;
+  
     $q = strpos($return_to, '?') ? '&' : '?';
     $cancel_url = $return_to . $q . 'openid.mode=cancel';
     
     if ($wait && (!in_array($trust_root, $this->trusted) || $this->confirm)) {
       //вывести форму и проверит результат формы
       if (empty($_POST['submit'])) {
+if (!empty($_REQUEST['openid_assoc_handle']) && isset($this->keys[$_REQUEST['openid_assoc_handle']])) {
+$this->keys[$_REQUEST['openid_assoc_handle']]['request'] = $_REQUEST;
+$this->save();
+}
+
         $html = THtmlResource::instance();
         $html->section = 'openidserver';
-        $lang = TLocal::instance();
-        eval('$form = "'. $html->trustform . '\n";');
+        $lang = tlocal::instance('openidserver');
+        $args = targs::instance();
+        $args->trust_root = $trust_root;
+        $args->assoc_handle = $assoc_handle;
+        $form = $html->trustform($args);
         return tsimplecontent::html($form);
       } else {
         switch ($_POST['accept']) {
@@ -331,7 +362,7 @@ class topenid extends tevents {
           
           case 'yesall':
           $this->trusted[] = $trust_root;
-          $this->Save();
+          $this->save();
           break;
           
           default:

@@ -109,8 +109,7 @@ class tprofile extends tevents {
   }
   
   public function GetFoafOpenid() {
-    return '';
-    //    <foaf:openid rdf:resource="http://dr-piliulkin.livejournal.com/" />
+    return '<foaf:openid rdf:resource="'. litepublisher::$options->url . '/" />';
   }
   
   public function GetFoafCountry() {
@@ -127,12 +126,12 @@ class tprofile extends tevents {
     return $result;
   }
   
-  public function Gettitle() {
+  public function gettitle() {
     return TLocal::$data['profile']['myprofile'];
   }
   
   public function GetTemplateContent() {
-    $lang = &TLocal::$data['profile'];
+    $lang = &tlocal::$data['profile'];
   $result = "<h2>{$lang['myprofile']}</h2>\n";
     $result .= $this->GetStat();
     
@@ -154,13 +153,13 @@ class tprofile extends tevents {
   }
   
   private function GetStat() {
-    $posts = &TPosts::instance();
-    $CommentManager = &TCommentManager::instance();
-    return sprintf(TLocal::$data['profile']['statistic'], count($posts->archives), $CommentManager->count) . "\n";
+    $posts = tposts::instance();
+    $manager = tcommentmanager::instance();
+    return sprintf(tlocal::$data['profile']['statistic'], count($posts->archives), $CommentManager->count) . "\n";
   }
   
   private function GetMyself() {
-    $lang = TLocal::$data['profile'];
+    $lang = tlocal::$data['profile'];
     $result = array();
     if ($this->img != '') $result[] = "<img src=\"$this->img\" />";
   if ($this->nick != '') $result[] = "{$lang['nick']} $this->nick";
