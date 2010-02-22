@@ -213,6 +213,7 @@ class tcommentmanager extends tevents {
     if (!$this->sendnotification) return;
     $comments = tcomments::instance($idpost);
     $comment = $comments->getcomment($id);
+    echo "<pre>\n";
     ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
     $args->adminurl = litepublisher::$options->url . '/admin/comments/'. litepublisher::$options->q . "id=$id&post=$idpost&action";

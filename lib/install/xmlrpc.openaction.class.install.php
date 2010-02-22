@@ -9,8 +9,8 @@
 function TXMLRPCOpenActionInstall(&$self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
-  $caller->add('openaction.send', 'send', get_class($self));
-  $caller->add('openaction.confirm', 'confirm', get_class($self));
+  $caller->add('litepublisher.action.send', 'send', get_class($self));
+  $caller->add('litepublisher.action.confirm', 'confirm', get_class($self));
   $caller->unlock();
 }
 

@@ -89,7 +89,7 @@ class tfiles extends titems {
     $result = '';
     if ($this->dbversion) {
       $this->loaditems($list);
-      $this->select(sprintf('parent in (%s)', implode(',', $list)));
+      $this->select(sprintf('parent in (%s)', implode(',', $list)), '');
     }
     
     //отсортировать по типам

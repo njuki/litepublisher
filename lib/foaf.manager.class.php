@@ -6,76 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class TFoafManager extends titems {
+class tfoafmanager extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
-  }
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'foafmanager';
-    $this->dbversion = false;
-  }
-  
-  public function Invate($friend) {
-    if (!$this->SameDomain($friend)) return false;
-    $url = (string) $friend['blog'];
-    if ($this->HasFriend($url)) return false;
-    $this->items[$url] =  array(
-    'id' => ++$this->autoid,
-    'nick' => $friend['nick'],
-    'foaf' => (string) $friend['foaf'],
-    'status' => 'hold'
-    );
-    $this->Save();
-    $this->NotifyModerator($url, 'invated');
-    return true;
-  }
-  
-  public function Accept($friend) {
-    if (!$this->SameDomain($friend)) return false;
-    $url = (string) $friend['blog'];
-    $foaf = &TFoaf::instance();
-    if ($foaf->HasFriend($url)) return true;
-    if (!isset($this->items[$url]) || ($this->items[$url]['status'] != 'invated')) return false;
-    $foaf->Add($this->items[$url]['nick'], $this->items[$url]['foaf'], $url);
-    unset($this->items[$url]);
-    $this->Save();
-    $this->NotifyModerator($url, 'accepted');
-    return true;
-  }
-  
-  public function Reject($friend) {
-    if (!$this->SameDomain($friend)) return false;
-    $url = (string) $friend['blog'];
-    $foaf = &TFoaf::instance();
-    if ($foaf->HasFriend($url))  {
-      $foaf->DeleteUrl($url);
-      $this->NotifyModerator($url, 'rejected');
-      return true;
-    } elseif (isset($this->items[$url])) {
-      unset($this->items[$url]);
-      $this->Save();
-      $this->NotifyModerator($url, 'reject');
-      return true;
-    }
-    return false;
-  }
-  
-  public function Add($url) {
-    if ($ping = TPinger::Discover($url)) {
-      $actions =&TXMLRPCOpenAction::instance();
-      if ($actions->CallAction($ping, 'friend.invate', $this->GetProfile())) {
-        if ($friend = $this->GetFriendInfo($url)) {
-          $friend['status'] = 'invated';
-          $this->items[$url] = $friend;
-          $this->Save();
-          return true;
-        }
-      }
-    }
-    return false;
   }
   
   public function AcceptInvate($url) {
@@ -186,7 +120,7 @@ class TFoafManager extends titems {
     return false;
   }
   
-  private function SameDomain($friend) {
+  private function samedomain($friend) {
     $actions = &TXMLRPCOpenAction ::instance();
     if (($foaf = $this->ExtractDomain($friend['foaf'])) && ($blog = $this->ExtractDomain($friend['blog'])) &&($from = $this->ExtractDomain($actions->from))) {
       $self = $this->ExtractDomain(litepublisher::$options->url);

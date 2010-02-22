@@ -279,7 +279,7 @@ class tthemeparser extends tdata {
     $result = array();
     $result['widget'][0] = $this->requiretag($s, 'widget', '');
     
-    foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
+    foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'foaf', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
       } else {
@@ -402,6 +402,9 @@ class tthemeparser extends tdata {
       
       case 'link':
       return '<li><a href="$url" title="$title">$text</a></li>';
+      
+      case 'foaf':
+return '<li><a href="$url" rel="friend" title="$nick">$nick</a></li>';
       
       default:
       return '<li><a href="$url" title="$title">$text</a></li>';
