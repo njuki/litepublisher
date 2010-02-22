@@ -27,6 +27,9 @@ function texternallinksInstall($self) {
   
   $urlmap = turlmap::instance();
   $urlmap->add('/externallink.htm', get_class($self), 'get');
+  
+  $robot = trobotstxt::instance();
+  $robot->AddDisallow('/externallink.htm');
 }
 
 function texternallinksUninstall($self) {

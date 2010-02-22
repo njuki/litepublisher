@@ -20,7 +20,6 @@ class tlivejournalposter extends tplugin {
     $this->data['community'] = '';
     $this->data['privacy'] = 'public';
     $this->data['template'] = '';
-    require_once(litepublisher::$paths->libinclude . 'class-IXR.php');
   }
   
   public function sendpost($id) {
