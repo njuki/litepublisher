@@ -17,7 +17,6 @@ class tpinger extends tevents {
     $this->basename = 'pinger';
     $this->data['services'] = '';
     $this->data['enabled'] = true;
-    require_once(litepublisher::$paths->libinclude . 'class-IXR.php');
   }
   
   public function install() {

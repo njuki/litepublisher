@@ -6,14 +6,11 @@
  * and GPL (gpl.txt) licenses.
 **/
 
-function GetWebPage($url) {
+class http {
+public static function get($url) {
  $timeout = 10;
  $parsed = @parse_url($url);
- 
- if ( !$parsed || !is_array($parsed) ) {
-  return false;
- }
- 
+  if ( !$parsed || !is_array($parsed) ) return false;
  if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
   $url = 'http://' . $url;
  }
@@ -40,5 +37,7 @@ function GetWebPage($url) {
   return false;
  }
 }
+
+}//class
 
 ?>
