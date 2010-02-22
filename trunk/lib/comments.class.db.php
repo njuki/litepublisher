@@ -31,14 +31,18 @@ class tcomments extends titems {
     $item = array(
     'post' => $this->pid,
     'parent' => 0,
-    'author' => $idauthor,
+    'author' => (int) $idauthor,
     'posted' => sqldate(),
     'content' =>$filtered,
     'status' => $status
     );
     
-    $id =$this->db->add($item);
+    $id = (int) $this->db->add($item);
     $item['rawcontent'] = $content;
+
+    $comusers = tcomusers::instance();
+    $item = $item + $comusers->getitem($idauthor);
+        $item['id'] = $id;
     $this->items[$id] = $item;
     
     $this->getdb($this->rawtable)->add(array(

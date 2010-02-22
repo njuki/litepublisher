@@ -63,7 +63,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $from = ($index -1)  * $perpage;
     
     if (dbversion) {
-      $list = $files->select($sql . " order by posted desc limit $from, $perpage");
+      $list = $files->select($sql, " order by posted desc limit $from, $perpage");
       if (!$list) $list = array();
     } else {
       $list = array_slice($list, $from, $perpage);
@@ -176,7 +176,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
       if ($item['preview'] == 0) {
         $args->preview = '';
       } else {
-        $preview = $this->getitem($item['preview']);
+        $preview = $files->getitem($item['preview']);
         $imgarg = new targs();
         $imgarg->add($preview);
         $theme = ttheme::instance();
@@ -188,8 +188,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     }
   }
   
-  
-  // swfupload
+    // swfupload
   private function error500($msg) {
     return "<?php
     @header('HTTP/1.1 500 Internal Server Error', true, 500);

@@ -24,29 +24,31 @@ $this->table = 'foaf';
   }
   
   public function getwidgetcontent($id, $sitebar) {
-    '<li><a href=\'$url\' rel=\'friend\'>{$friend[\'nick\']}</a></li>';
     $result = '';
-        $result = '';
-    if ($this->maxcount == 0) {
-      $list = $this->items;
+    if ($this->dbversion) {
+   $limit = $this->maxcount == 0 ? '' : " limit0, $this->maxcount";
+    $items = $this->select("status = 'approved'", "order by added desc" . $limit);
+    if (!$items) return '';
     } else {
-      $list = array_slice($this->items, 0, $this->maxcount, true);
+      $items = array_keys($this->items);
+if ($this->maxcount != 0) {
+      $items = array_slice($items, 0, $this->maxcount);
+    }
     }
     
-
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('foaf', $sitebar);
     $args = targs::instance();
-    foreach ($this->items as $id => $item) {
-      $url =  $item['url'];
+    foreach ($items as $id) {
+    $item = $this->getitem($id);
+    $args->add($item);
       if ($this->redir && !strbegin($url, litepublisher::$options->url)) {
-        $url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
+        $args->url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
       }
       
-      $result .=   sprintf($tml, $url, $item['title'], $item['text']);
+      $result .=   $theme->parsearg($tml, $args);
     }
-    
-    return $result;
+        return $result;
   }
 
     public function request($arg) {
@@ -69,11 +71,12 @@ $this->table = 'foaf';
     }
   }
   
-  public function add($nick,$foaf, $blog) {
+  public function add($nick,$url, $foafurl, $status) {
   $item = array(
-      'url' => $blog,
-      'foafurl' => $foaf,
-    'nick' => $nick
+      'url' => $url,
+      'foafurl' => $foafurl,
+    'nick' => $nick,
+    $status => $status
     );
 
 if ($this->dbversion) {
@@ -96,7 +99,6 @@ if (  parent::delete($id)) {
       return true;
       }
       return false;
-    }
   }
   
   public function deleteurl($url) {
@@ -165,6 +167,58 @@ if (  parent::delete($id)) {
     }
   }
   
+  public function setstatus($id, $value) {
+  if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
+  }
+  
+    public function invate(array $info) {
+    if (!$this->samedomain($url)) return false;
+    $url = (string) $info['url'];
+    if ($this->hasfriend($url)) return false;
+    $id = $this->add($info['nick'], $url, (string) $info['foaf'],'hold');
+    $this->NotifyModerator($url, 'invated');
+    return true;
+  }
+  
+  public function accept(array $info) {
+    if (!$this->samedomain($info)) return false;
+    $url = (string) $info['blog'];
+$id = hasfriend($url));
+if (!$id) return false;
+$item = $this->getitem($id);
+if ($item['status']) == 'approved') return true;
+if ($item['status'] != 'invated') return false;
+$this->setstatus($id, 'approved');
+    $this->NotifyModerator($url, 'accepted');
+    return true;
+  }
+  
+    public function reject(array $info) {
+    if (!$this->samedomain($info)) return false;
+    $url = (string) $info['blog'];
+    if ($id = $this->hasfriend($url))  {
+$this->delete($id);
+      $this->NotifyModerator($url, 'rejected');
+      return true;
+      }
+    return false;
+  }
+  
+  public function addurl($url) {
+    if ($ping = tpinger::discover($url)) {
+      $actions = TXMLRPCOpenAction::instance();
+      if ($actions->invatefriend($ping, $this->GetProfile()) {
+        if ($friend = $this->GetFriendInfo($url)) {
+          $friend['status'] = 'invated';
+          $this->items[$url] = $friend;
+          $this->Save();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
 }//class
 
 ?>
