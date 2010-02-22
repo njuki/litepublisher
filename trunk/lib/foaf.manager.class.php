@@ -76,8 +76,8 @@ class tfoafmanager extends tevents {
     return false;
   }
   
-  private function samedomain($friend) {
-    $actions = &TXMLRPCOpenAction ::instance();
+  private function samedomain($url, $foafurl) {
+    $actions = TXMLRPCOpenAction ::instance();
     if (($foaf = $this->ExtractDomain($friend['foaf'])) && ($blog = $this->ExtractDomain($friend['blog'])) &&($from = $this->ExtractDomain($actions->from))) {
       $self = $this->ExtractDomain(litepublisher::$options->url);
       if (($foaf == $blog) && ($blog == $from) && ($from != $self)) return true;

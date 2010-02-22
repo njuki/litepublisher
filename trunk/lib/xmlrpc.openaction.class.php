@@ -73,8 +73,7 @@ $confirmed = false;
   
   public function __call($name, $args) {
   if (isset($this->items[$name])) {
-  $to = array_shift($args);
-    return $this->callaction($name, $to, $args);
+    return $this->callaction($name, $args[0], $args[1]);
   }
   return parent::__call(4name, $args);
   }

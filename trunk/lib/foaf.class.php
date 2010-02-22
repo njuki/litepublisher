@@ -171,18 +171,16 @@ if (  parent::delete($id)) {
   if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
   }
   
-    public function invate(array $info) {
-    if (!$this->samedomain($url)) return false;
-    $url = (string) $info['url'];
+    public function invate($nick,$url, $foafurl) {
+    if (!$this->samedomain($url, $foafurl)) return false;
     if ($this->hasfriend($url)) return false;
-    $id = $this->add($info['nick'], $url, (string) $info['foaf'],'hold');
+    $id = $this->add($nick,$url, $foafurl, 'hold');
     $this->NotifyModerator($url, 'invated');
     return true;
   }
   
-  public function accept(array $info) {
-    if (!$this->samedomain($info)) return false;
-    $url = (string) $info['blog'];
+  public function accept($nick,$url, $foafurl) {
+    if (!$this->samedomain($url, $foafurl)) return false;
 $id = hasfriend($url));
 if (!$id) return false;
 $item = $this->getitem($id);
@@ -193,8 +191,8 @@ $this->setstatus($id, 'approved');
     return true;
   }
   
-    public function reject(array $info) {
-    if (!$this->samedomain($info)) return false;
+    public function reject($nick,$url, $foafurl) {
+    if (!$this->samedomain($url, $foafurl)) return false;
     $url = (string) $info['blog'];
     if ($id = $this->hasfriend($url))  {
 $this->delete($id);
@@ -207,9 +205,9 @@ $this->delete($id);
       private function getprofile() {
     $profile = tprofile::instance();
     return array(
+        'nick' => $profile->nick,
         'url' => litepublisher::$options->url . litepublisher::$options->home,
-            'foafurl' => litepublisher::$options->url . '/foaf.xml',
-    'nick' => $profile->nick
+            'foafurl' => litepublisher::$options->url . '/foaf.xml'
     );
   }
   
