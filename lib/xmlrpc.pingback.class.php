@@ -37,9 +37,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return new IXR_Error(48, 'The pingback has already been registered.');
     }
     
-    require_once(litepublisher::$paths->libinclude . 'utils.php');
-    
-    if (!($s = GetWebPage($from))) {
+    if (!($s = http::get($from))) {
       return new IXR_Error(16, 'The source URL does not exist.');
     }
     

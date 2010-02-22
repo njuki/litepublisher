@@ -12,72 +12,28 @@ class tfoafmanager extends tevents {
     return getinstance(__class__);
   }
   
-  public function AcceptInvate($url) {
-    if (!isset($this->items[$url])) return false;
-    if ($ping = TPinger::Discover($url)) {
-      $actions =&TXMLRPCOpenAction::instance();
-      if ($actions->CallAction($ping, 'friend.accept', $this->GetProfile())) {
-        $foaf = &TFoaf::instance();
-        $foaf->Add($this->items[$url]['nick'], $this->items[$url]['foaf'], $url);
-        unset($this->items[$url]);
-        $this->Save();
-        return true;
-      }
-    }
-    return false;
-  }
-  
-  public function RejectInvate($url) {
-    if (!isset($this->items[$url])) return false;
-    $this->items[$url]['status'] = 'rejected';
-    $this->Save();
-    
-    if ($ping = TPinger::Discover($url)) {
-      $actions =&TXMLRPCOpenAction::instance();
-      if ($actions->CallAction($ping, 'friend.reject', $this->GetProfile())) {
-        return true;
-      }
-    }
-    return false;
-  }
-  
-  public function Ban($url) {
-    $this->items[$url]['status'] = 'ban';
-    $this->Save();
-  }
-  
-  private function GetProfile() {
-    $profile = &TProfile::instance();
-    return array(
-    'nick' => $profile->nick,
-    'foaf' => litepublisher::$options->foaf,
-    'blog' => litepublisher::$options->url . litepublisher::$options->home
-    );
-  }
-  
-  private function GetFriendInfo($url) {
-    if ($dom= $this->GetFoaf($url)) {
+  public function getinfo($url) {
+    if ($dom= $this->getfoafdocument($url)) {
       $person = $dom->getElementsByTagName('RDF')->item(0)->getElementsByTagName('Person')->item(0);
       $result = array(
-      'id' => ++$this->autoid,
       'nick' =>$person->getElementsByTagName('nick')->item(0)->nodeValue,
-      //'blog' =>$person->getElementsByTagName('weblog')->item(0)->attributes->getNamedItem('resource')->nodeValue
-      'foaf' =>$url
+      //'url' =>$person->getElementsByTagName('weblog')->item(0)->attributes->getNamedItem('resource')->nodeValue,
+      'url' => $url,
+      'foafurl' =>$url
       );
       return $result;
     }
     return false;
   }
-  
-  public function GetFoaf(&$url) {
-    require_once(litepublisher::$paths->libinclude . 'utils.php');
-    if ($s = GetWebPage($url)) {
-      if ($this->IsFoaf($s)) {
-        return $this->ParseFoaf($s);
-      } elseif ($url = $this->GetFoafUrl($s)) {
-        if ($s = GetWebPage($url)) {
-          if ($this->IsFoaf($s)) {
-            return $this->ParseFoaf($s);
+
+    public function getfoafdocument($url) {
+    if ($s = http::get($url)) {
+      if ($this->isfoaf($s)) {
+        return $this->parse($s);
+      } elseif ($url = $this->discoverfoafurl($s)) {
+        if ($s = http::get($url)) {
+          if ($this->isfoaf($s)) {
+            return $this->parse($s);
           }
         }
       }
@@ -85,11 +41,11 @@ class tfoafmanager extends tevents {
     return false;
   }
   
-  private function IsFoaf(&$s) {
+  private function isfoaf(&$s) {
     return strpos($s, '<rdf:RDF') > 0;
   }
   
-  private function GetFoafUrl(&$s) {
+  private function discoverfoafurl(&$s) {
     $tag = '<link rel="meta" type="application/rdf+xml" title="FOAF" href="';
     if ($i = strpos($s, $tag)) {
       $i = $i + strlen($tag);
@@ -106,7 +62,7 @@ class tfoafmanager extends tevents {
     return false;
   }
   
-  private function &ParseFoaf(&$s) {
+  private function parse(&$s) {
     $dom = new domDocument;
     $dom->loadXML($s);
     return $dom;
@@ -126,13 +82,6 @@ class tfoafmanager extends tevents {
       $self = $this->ExtractDomain(litepublisher::$options->url);
       if (($foaf == $blog) && ($blog == $from) && ($from != $self)) return true;
     }
-    return false;
-  }
-  
-  private function HasFriend($url) {
-    if (isset($this->items[$url])) return true;
-    $foaf = &TFoaf::instance();
-    if ($foaf->HasFriend($url)) return true;
     return false;
   }
   
@@ -177,7 +126,7 @@ class tfoafmanager extends tevents {
     foreach ($foaf->items as $id => $item) {
       $found = false;
       $url = $item['foaf'];
-      if ($dom = $this->GetFoaf($url)) {
+      if ($dom = $this->getfoafdocument($url)) {
         $knows = $dom->getElementsByTagName('knows');
         foreach ($knows  as $node) {
           $blog = $node->getElementsByTagName('Person')->item(0)->getElementsByTagName('weblog')->item(0)->attributes->getNamedItem('resource')->nodeValue;

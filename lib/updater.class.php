@@ -72,9 +72,8 @@ class tupdater extends tevents {
   }
   
   public function getlatest() {
-    include_once(litepublisher::$paths->libinclude . 'utils.php');
-    if (($s = GetWebPage('http://blogolet.ru/service/version.txt'))  ||
-    ($s = GetWebPage('http://litepublisher.googlecode.com/files/version.txt') )) {
+    if (($s = http::get('http://blogolet.ru/service/version.txt'))  ||
+    ($s = http::get('http://litepublisher.googlecode.com/files/version.txt') )) {
       return $s;
     }
     return false;
@@ -96,9 +95,8 @@ class tupdater extends tevents {
       return sprintf($lang->errorwrite, litepublisher::$paths->lib);
     }
     
-    require_once(litepublisher::$paths->libinclude . 'utils.php');
-    if (!($s = GetWebPage("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) &&
-    !($s = GetWebPage("http://blogolet.ru/service/litepublisher.$version.tar.gz") )) {
+    if (!($s = http::get("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) &&
+    !($s = http::get("http://blogolet.ru/service/litepublisher.$version.tar.gz") )) {
       return $lang->erordownload;
     }
     

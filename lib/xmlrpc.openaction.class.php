@@ -17,7 +17,6 @@ class TXMLRPCOpenAction extends titems {
     parent::create();
     $this->basename = 'openaction';
     $this->addmap('actions', array());
-        require_once(litepublisher::$paths->libinclude . 'class-IXR.php');
   }
   
   public function send($id, $from, $name, $args) {

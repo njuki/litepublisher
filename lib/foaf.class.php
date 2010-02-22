@@ -204,21 +204,54 @@ $this->delete($id);
     return false;
   }
   
+      private function getprofile() {
+    $profile = tprofile::instance();
+    return array(
+        'url' => litepublisher::$options->url . litepublisher::$options->home,
+            'foafurl' => litepublisher::$options->url . '/foaf.xml',
+    'nick' => $profile->nick
+    );
+  }
+  
   public function addurl($url) {
     if ($ping = tpinger::discover($url)) {
       $actions = TXMLRPCOpenAction::instance();
-      if ($actions->invatefriend($ping, $this->GetProfile()) {
-        if ($friend = $this->GetFriendInfo($url)) {
-          $friend['status'] = 'invated';
-          $this->items[$url] = $friend;
-          $this->Save();
-          return true;
+      if ($actions->invatefriend($ping, $this->profile)) {
+      $manager = tfoafmanager::instance();
+        if ($info = $manager->getinfo($url)) {
+          return $this->add($info['nick'], $info['url'], $info['foafurl'], 'invated');
         }
       }
     }
     return false;
   }
-
+  
+    public function acceptinvate($url) {
+$id = $this->hasfriend($url);
+if (!$id) return false;
+    if ($ping = tpinger::discover($url)) {
+      $actions =  TXMLRPCOpenAction::instance();
+      if ($actions->acceptfriend($ping, $this->profile)) {
+$this->setstatus($id, 'approved');
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public function rejectinvate($url) {
+$id = $this->hasfriend($url);
+if (!$id) return false;
+$this->setstatus($id, 'rejected');
+        if ($ping = TPinger::Discover($url)) {
+      $actions = TXMLRPCOpenAction::instance();
+      if ($actions->rejectfriend($ping, $this->profile)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
 }//class
 
 ?>
