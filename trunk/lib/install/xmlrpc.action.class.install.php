@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TXMLRPCOpenActionInstall(&$self) {
+function TXMLRPCActionInstall($self) {
   $caller = TXMLRPC::instance();
   $caller->lock();
   $caller->add('litepublisher.action.send', 'send', get_class($self));
@@ -14,7 +14,7 @@ function TXMLRPCOpenActionInstall(&$self) {
   $caller->unlock();
 }
 
-function TXMLRPCOpenActionUninstall($self) {
+function TXMLRPCActionUninstall($self) {
   $caller = TXMLRPC::instance();
   $caller->deleteclass(get_class($self));
 }

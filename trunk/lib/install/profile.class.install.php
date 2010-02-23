@@ -8,10 +8,10 @@
 
 function tprofileInstall($self) {
   $Urlmap = turlmap::instance();
-  $Urlmap->add('/profile.htm', get_class($self), null);
+  $Urlmap->add($self->url, get_class($self), null);
   
   $sitemap = tsitemap::instance();
-  $sitemap->add('/profile.htm', 7);
+  $sitemap->add($self->url, 7);
 }
 
 function tprofileUninstall($self) {

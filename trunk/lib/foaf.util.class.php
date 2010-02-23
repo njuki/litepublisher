@@ -83,37 +83,28 @@ return true;
     $foaf = tfoaf::instance();
 $items = $foaf->getapproved(0);
     foreach ($items as $id) {
-    $item = $foaf->getitem(4item);
+    $item = $foaf->getitem($item);
 if (!$this->checkfriend($item['foafurl'])) {
-        $result.= sprintf($lang['error'], $item['nick'], $item['blog'], $url);
+        $result.= sprintf($lang->error, $item['nick'], $item['blog'], $item['url']);
 $foaf->lock();
 $foaf->setvalue($id, 'errors', ++$item['errors']);
 if ($item['errors'] > 3) {
 $foaf->setstatus($id, 'error');
-        $result.= sprintf($lang['error'], $item['nick'], $item['blog'], $url);
+        $result.= sprintf($lang->manyerrors, $item['errors']);
 }
 $foaf->unlock();
     }
-    
-    if ($result != '')
-    $this->NotifyModerator(str_replace('\n', "\n", $result), 'error');
-  }
-  
-  private function NotifyModerator($url, $type) {
-    $html = THtmlResource::instance();
-    $html->section = 'foaf';
-    $lang = &TLocal::instance();
-    
-    if ($type == 'error') {
-      eval('$subject = "'. $html->errorsubj . '";');
-      eval('$body = "'. $html->errorbody . '\n";');
-    } else {
-      $status = sprintf($lang->notify, TLocal::$data['foaf'][$type]);
-      eval('$subject = "'. $html->subject . '";');
-      eval('$body = "'. $html->body . '\n";');
     }
-    
-    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail, 'admin', litepublisher::$options->email,  $subject, $body);
+
+if($result != '') {    
+$result = str_replace('\n', "\n", $result);
+    $args = targs::instance();
+    $args->errors = $result;
+    $mailtemplate = tmailtemplate::instance('foaf');
+    $subject = $mailtemplate->errorsubj($args);
+    $body = $mailtemplate->errorbody ($args);
+    tmailer::sendtoadmin($subject, $body);
+}
   }
   
 }//class
