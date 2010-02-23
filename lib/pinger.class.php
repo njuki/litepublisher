@@ -118,7 +118,8 @@ class tpinger extends tevents {
     return false;
     
     // Send the GET request
-    $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/litepublisher::$options->version\r\n\r\n";
+    $version = litepublisher::$options->version;
+    $request = "GET $path HTTP/1.1\r\nHost: $host\r\nUser-Agent: Lite Publisher/$version\r\n\r\n";
     fputs($fp, $request);
     
     // Let's check for an X-Pingback header first

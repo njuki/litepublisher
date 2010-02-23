@@ -70,7 +70,13 @@ function tadminmenusInstall($self) {
     $id = $self->add($menu, 'edit', 'editor', 'tadminmenumanager');
     $self->items[$id]['title'] = tlocal::$data['menu']['addmenu'];
   }
-  
+
+  $foaf = $self->add(0, 'foaf', 'admin', 'tadminfoaf');
+  {
+    $self->add($foaf, 'profile', 'admin', 'tadminfoaf');
+        $self->add($foaf, 'profiletemplate', 'admin', 'tadminfoaf');
+}  
+
   $opt = $self->add(0, 'options', 'admin', 'tadminoptions');
   {
     $self->add($opt, 'home', 'admin', 'tadminoptions');

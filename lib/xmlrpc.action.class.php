@@ -100,7 +100,7 @@ $confirmed = false;
   
   private function DeleteExpired() {
     $this->lock();
-    $expired = time() - litepublisher::$options->cacheexpired;
+    $expired = time() - litepublisher::$options->expiredcache;
     foreach ($this->actions as $id => $item) {
       if ($item['date'] < $expired) unset($this->actions[$id]);
     }

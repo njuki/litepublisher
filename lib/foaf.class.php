@@ -88,7 +88,7 @@ if ($count > 0) {
 if ($this->dbversion) {
 $id = $this->db->add($item);
 } else {
-$it = ++$this->autoid;
+$id = ++$this->autoid;
 }
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
@@ -97,8 +97,26 @@ $it = ++$this->autoid;
     $urlmap->clearcache();
     return $id;
   }
+
+  public function edit($id, $nick,$url, $foafurl, $status) {
+  $item = $this->getitem($id);
+      $item['nick'] = $nick;
+      $item['url'] = $url;
+      $item['foafurl'] = $foafurl;
+    $item['status'] = $status;
+
+if ($this->dbversion) {
+$this->db->updateassoc($item);
+}
+    $this->items[$id] = $item;
+    if (!$this->dbversion) $this->save();
+    $this->edited($id);
+    $urlmap = turlmap::instance();
+    $urlmap->clearcache();
+    return true;
+  }
   
-  public function delete($id) {
+    public function delete($id) {
 if (  parent::delete($id)) {
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
@@ -178,16 +196,16 @@ if (  parent::delete($id)) {
   if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
   }
 
-  private function getdomain($Url) {
-    $Url = strtolower(trim($Url));
-    if (preg_match('/(http:\/\/|https:\/\/|)(www\.|)([-\.\w]+)\/?/', $Url, $Found)) {
-      return isset($Found[3]) && !empty($Found[3]) ? $Found[3] : false;
+  private function getdomain($url) {
+    $url = strtolower(trim($url));
+    if (preg_match('/(http:\/\/|https:\/\/|)(www\.|)([-\.\w]+)\/?/', $url, $found)) {
+      return isset($found[3]) && !empty($found[3]) ? $found[3] : false;
     }
     return false;
   }
   
     private function validateurl($url, $foafurl) {
-      if ($url = $this->getdomain($url) && $foafurl = $this->getdomain($foafurl)) {
+      if (($url = $this->getdomain($url)) && ($foafurl = $this->getdomain($foafurl))) {
       $self = $this->getdomain(litepublisher::$options->url);
       return ($url == $foafurl) && ($url != $self);
     }
@@ -237,7 +255,7 @@ $this->delete($id);
     tmailer::sendtoadmin($subject, $body);
   }
   
-      private function getprofile() {
+      protected function getprofile() {
     $profile = tprofile::instance();
     return array(
         'nick' => $profile->nick,
@@ -250,8 +268,10 @@ $this->delete($id);
     if ($ping = tpinger::discover($url)) {
       $actions = TXMLRPCAction::instance();
       if ($actions->invatefriend($ping, $this->profile)) {
+      echo "invated<br>";
       $util = tfoafutil::instance();
         if ($info = $util->getinfo($url)) {
+        var_dump($info);
           return $this->add($info['nick'], $info['url'], $info['foafurl'], 'invated');
         }
       }
