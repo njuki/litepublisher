@@ -23,6 +23,7 @@ if (!$s) return false;
           if (!$this->isfoaf($s)) return false;
         }
 
+
         $dom = new domDocument;
     $dom->loadXML($s);
     return $dom;

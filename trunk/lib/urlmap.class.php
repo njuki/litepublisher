@@ -352,8 +352,8 @@ class turlmap extends titems {
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-    $time = @filemtime($cronfile);
-    if (($time === false) || ($time + 3600 < time())) {
+    $time = file_exists($cronfile) ? (int) file_get_contents($cronfile) : 0;
+    if ($time + 3600 < time()) {
       register_shutdown_function('tcron::selfping');
     }
   }

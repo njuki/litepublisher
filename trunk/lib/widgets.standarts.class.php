@@ -150,6 +150,8 @@ class tstdwidgets extends titems {
     
     $instance = $this->getinstance($name);
     $result = $instance->getwidgetcontent($id, $widgets->findsitebar($id));
+    //fix for javascript xmlrpc
+    if ($result = '') $result = ' ';
     file_put_contents($file, $result);
     @chmod($file, 0666);
     return $result;

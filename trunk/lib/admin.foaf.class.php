@@ -32,13 +32,12 @@ $title = $lang->$name;
 $foaf = tfoaf::instance();
 $perpage = 20;
     $total = $foaf->getcount();
-    echo "$total<br>";
     $from = $this->getfrom($perpage, $total);
     if ($foaf->dbversion) {
       $items = $foaf->select('', " order by status asc, added desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
-      $items = array_slice($foaf->items, $from, $perpage);
+      $items = array_slice(array_keys($foaf->items), $from, $perpage);
     }
 $html = $this->html;
 $result = $html->checkallscript;
@@ -46,7 +45,6 @@ $result .= $html->tableheader();
 $args = targs::instance();
 $args->adminurl = $this->adminurl;
       foreach ($items as $id )  {
-      var_dump($id);
       $item = $foaf->getitem($id);
       $args->add($item);
       $args->status = tlocal::$data['foaf'][$item['status']];
