@@ -23,19 +23,24 @@ $this->table = 'foaf';
     $this->data['redirlink'] = '/foaflink.htm';
   }
   
-  public function getwidgetcontent($id, $sitebar) {
-    $result = '';
-    if ($this->dbversion) {
-   $limit = $this->maxcount == 0 ? '' : " limit0, $this->maxcount";
-    $items = $this->select("status = 'approved'", "order by added desc" . $limit);
-    if (!$items) return '';
+  public function getapproved($count) {
+      if ($this->dbversion) {
+   $limit = $count == 0 ? '' : " limit0, $count";
+    if ($result = $this->select("status = 'approved'", "order by added desc" . $limit)) return $result;
+    return array();
     } else {
-      $items = array_keys($this->items);
-if ($this->maxcount != 0) {
-      $items = array_slice($items, 0, $this->maxcount);
+      $iresult = array_keys($this->items);
+if ($count > 0) {
+      $result = array_slice($items, 0, $this->maxcount);
+    }
+    return $result;
     }
     }
-    
+  
+  public function getwidgetcontent($id, $sitebar) {
+    $items = $this->getapproved($this->maxcount);
+    if (count($items) == 0) return '';
+        $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('foaf', $sitebar);
     $args = targs::instance();
@@ -45,8 +50,7 @@ if ($this->maxcount != 0) {
       if ($this->redir && !strbegin($url, litepublisher::$options->url)) {
         $args->url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
       }
-      
-      $result .=   $theme->parsearg($tml, $args);
+            $result .=   $theme->parsearg($tml, $args);
     }
         return $result;
   }
@@ -73,10 +77,12 @@ if ($this->maxcount != 0) {
   
   public function add($nick,$url, $foafurl, $status) {
   $item = array(
+      'nick' => $nick,
       'url' => $url,
       'foafurl' => $foafurl,
-    'nick' => $nick,
-    $status => $status
+'added' => sqldate(),
+'errors' => 0,
+    'status' => $status
     );
 
 if ($this->dbversion) {
@@ -85,7 +91,7 @@ $id = $this->db->add($item);
 $it = ++$this->autoid;
 }
     $this->items[$id] = $item;
-    $this->save();
+    if (!$this->dbversion) $this->save();
     $this->added($id);
     $urlmap = turlmap::instance();
     $urlmap->clearcache();
@@ -170,17 +176,34 @@ if (  parent::delete($id)) {
   public function setstatus($id, $value) {
   if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
   }
+
+  private function getdomain($Url) {
+    $Url = strtolower(trim($Url));
+    if (preg_match('/(http:\/\/|https:\/\/|)(www\.|)([-\.\w]+)\/?/', $Url, $Found)) {
+      return isset($Found[3]) && !empty($Found[3]) ? $Found[3] : false;
+    }
+    return false;
+  }
+  
+    private function validateurl($url, $foafurl) {
+      if ($url = $this->getdomain($url) && $foafurl = $this->getdomain($foafurl)) {
+      $self = $this->getdomain(litepublisher::$options->url);
+      return ($url == $foafurl) && ($url != $self);
+    }
+return false;
+  }
   
     public function invate($nick,$url, $foafurl) {
-    if (!$this->samedomain($url, $foafurl)) return false;
+    if (!$this->validateurl($url, $foafurl)) return false;
     if ($this->hasfriend($url)) return false;
     $id = $this->add($nick,$url, $foafurl, 'hold');
-    $this->NotifyModerator($url, 'invated');
+    $util = tfoafutil::instance();
+    $util->NotifyModerator($url, 'invated');
     return true;
   }
   
   public function accept($nick,$url, $foafurl) {
-    if (!$this->samedomain($url, $foafurl)) return false;
+    if (!$this->validateurl($url, $foafurl)) return false;
 $id = hasfriend($url));
 if (!$id) return false;
 $item = $this->getitem($id);
@@ -192,8 +215,7 @@ $this->setstatus($id, 'approved');
   }
   
     public function reject($nick,$url, $foafurl) {
-    if (!$this->samedomain($url, $foafurl)) return false;
-    $url = (string) $info['blog'];
+    if (!$this->validateurl($url, $foafurl)) return false;
     if ($id = $this->hasfriend($url))  {
 $this->delete($id);
       $this->NotifyModerator($url, 'rejected');
@@ -215,8 +237,8 @@ $this->delete($id);
     if ($ping = tpinger::discover($url)) {
       $actions = TXMLRPCOpenAction::instance();
       if ($actions->invatefriend($ping, $this->profile)) {
-      $manager = tfoafmanager::instance();
-        if ($info = $manager->getinfo($url)) {
+      $util = tfoafutil::instance();
+        if ($info = $util->getinfo($url)) {
           return $this->add($info['nick'], $info['url'], $info['foafurl'], 'invated');
         }
       }
@@ -224,10 +246,10 @@ $this->delete($id);
     return false;
   }
   
-    public function acceptinvate($url) {
-$id = $this->hasfriend($url);
-if (!$id) return false;
-    if ($ping = tpinger::discover($url)) {
+    public function acceptinvate($id) {
+if (!$this->itemexists($id)) return false;
+$item = $this->getitem($id);
+        if ($ping = tpinger::Discover($item['url'])) {
       $actions =  TXMLRPCOpenAction::instance();
       if ($actions->acceptfriend($ping, $this->profile)) {
 $this->setstatus($id, 'approved');
@@ -237,12 +259,12 @@ $this->setstatus($id, 'approved');
     return false;
   }
   
-  public function rejectinvate($url) {
-$id = $this->hasfriend($url);
-if (!$id) return false;
+  public function rejectinvate($id) {
+if (!$this->itemexists($id)) return false;
+$item = $this->getitem($id);
 $this->setstatus($id, 'rejected');
-        if ($ping = TPinger::Discover($url)) {
-      $actions = TXMLRPCOpenAction::instance();
+        if ($ping = tpinger::Discover($item['url'])) {
+      $actions =  TXMLRPCOpenAction::instance();
       if ($actions->rejectfriend($ping, $this->profile)) {
         return true;
       }

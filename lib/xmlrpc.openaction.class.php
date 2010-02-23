@@ -39,7 +39,8 @@ $confirmed = false;
     return true;
   }
   
-  private function doaction($name, array $args) {
+  private function doaction($name, $args) {
+  if (!is_array($args)) $args = array(0 => $args);
     $class = $this->items[$name]['class'];
     $func = $this->items[$name]['func'];
     if (empty($class)) {
