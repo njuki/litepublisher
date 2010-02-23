@@ -338,8 +338,8 @@ class tadminmoderator extends tadminmenu {
       } else {
         $manager = $this->manager;
         $comments = tcomments::instance(0);
-        $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
-        foreach ($_POST as $id => $value) {
+        $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
+        foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
           $id = (int) $id;
           $idpost = $comments->getvalue($id, 'post');

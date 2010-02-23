@@ -32,6 +32,7 @@ $title = $lang->$name;
 $foaf = tfoaf::instance();
 $perpage = 20;
     $total = $foaf->getcount();
+    echo "$total<br>";
     $from = $this->getfrom($perpage, $total);
     if ($foaf->dbversion) {
       $items = $foaf->select('', " order by status asc, added desc limit $from, $perpage");
@@ -45,9 +46,10 @@ $result .= $html->tableheader();
 $args = targs::instance();
 $args->adminurl = $this->adminurl;
       foreach ($items as $id )  {
+      var_dump($id);
       $item = $foaf->getitem($id);
       $args->add($item);
-      $args->status = tlocal::$data['foaf'][$item['status']}];
+      $args->status = tlocal::$data['foaf'][$item['status']];
 $result .= $html->itemlist($args);
       }
       $result .= $html->tablefooter();
@@ -72,17 +74,17 @@ case false:
       
       case 'edit':
 $id = $this->idget();
-      if (!$foaf->itemexists($id))) return $this->notfount;
+      if (!$foaf->itemexists($id)) return $this->notfount;
       $item = $foaf->getitem($id);
       $args = targs::instance();
 $args->add($item);
-$args->combo = $this->getcombo($id, $item['status']);
+$args->status = $this->getcombo($id, $item['status']);
       $result .= $html->editform($args);
       break;
       
       case 'delete':
 $id = $this->idget();
-      if (!$foaf->itemexists($id))) return $this->notfount;
+      if (!$foaf->itemexists($id)) return $this->notfount;
 if ($this->confirmed) {
         $foaf->delete($id);
 $result .= $html->h2->deleted;
@@ -102,9 +104,18 @@ break;
 
       case 'profile':
       $profile = tprofile::instance();
-      $gender = $profile->gender != 'female' ? "checked='checked'" : '';
-      eval('$result .= "'. $html->profileform . '\n";');
+      ttheme::$vars['profile '] = $profile;
+      $args = targs::instance();
+      $args->gender = $profile->gender != 'female';
+      $result .= $html->profileform($args);
       break;
+      
+            case 'profiletemplate':
+      $profile = tprofile::instance();
+      $args = targs::instance();
+      $args->template = $profile->template;
+      $result .= $html->profiletemplate($args);
+break;
     }
     
     return $html->fixquote($result);
@@ -113,66 +124,56 @@ break;
   public function processform() {
     $foaf = tfoaf::instance();
     $html = $this->html;
-
+    
     switch ($this->name) {
       case 'foaf':
-      if (!isset($_POST[['foaftable'])) {
-
+      if (!isset($_POST['foaftable'])) {
       extract($_POST);
+      if ($this->action == 'edit') {
+            $id = $this->idget();
+if (!$foaf->itemexists($id)) return '';
+$status = $_POST["status-$id"];
+$foaf->edit($id, $nick, $url, $foafurl, $status);
+      return $html->h2->successedit;
+      } else {
       if (empty($url))  return '';
       if ($foaf->hasfriend($url)) return $html->h2->erroradd;
-$foaf->add($url;
+$foaf->addurl($url);
         return $html->h2->successadd;
-      
-      case 'edit':
-      extract($_POST);
-      $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-      if (!isset($foaf->items[$id])) return '';
-      $friend = &$foaf->items[$id];
-      $friend['nick'] = $nick;
-      $friend['blog'] = $url;
-      $friend['foaf'] = $foafurl;
-      $foaf->Save();
-      return $this->success('successedit');
-      
-      case 'moderate':
-      $manager = &TFoafManager::instance();
-      $manager->Lock();
-      $st = 'status-';
-      $u = 'url-';
-      $id = false;
-      foreach ($_POST as $key => $value) {
-        if(strncmp($key, $u, strlen($u)) == 0) {
-          $id = (int) substr($key, strlen($u));
-        } elseif ((strncmp($key, $st, strlen($st)) == 0) && ($id == substr($key, strlen($st))) &&
-        ($url = $manager->GetUrlByID($id))) {
-          $manager->SetStatus($url, $value);
-        }
       }
-      $manager->Unlock();
-      return $this->success('successmoderate');
+} else {      
+        $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
+        $foaf->lock();
+        foreach ($_POST as $key => $id) {
+          if (!is_numeric($id))  continue;
+          $id = (int) $id;
+          if ($status == 'delete') {
+          $foaf->delete($id);
+          } else {
+          $foaf->setstatus($id, $status);
+          }
+      }
+$foaf->unlock();
+      return $html->h2->successmoderate;
+      }
       
       case 'profile':
-      $profile = &TProfile::instance();
+      $profile = tprofile::instance();
       foreach ($_POST as $key => $value) {
-        if (isset($profile->Data[$key])) $profile->Data[$key] = $value;
+        if (isset($profile->data[$key])) $profile->data[$key] = $value;
       }
       $profile->gender = isset($_POST['gender']) ? 'male' : 'female';
-      $profile->Save();
-      return $this->success('successprofile');
+      $profile->save();
+      return $html->h2->successprofile;
+      
+                  case 'profiletemplate':
+      $profile = tprofile::instance();
+$profile->template = $_POST['template'];
+      $profile->save();
+      return $html->h2->successprofile;
     }
     
     return '';
-  }
-  
-  private function success($key) {
-    $html = THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::instance();
-    
-    litepublisher::$urlmap->ClearCache();
-  eval('$result = "'. $html->{$key} . '\n";');
-    return $result;
   }
   
 }//class
