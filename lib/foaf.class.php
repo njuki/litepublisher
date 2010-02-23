@@ -29,7 +29,7 @@ $this->table = 'foaf';
     if ($result = $this->select("status = 'approved'", "order by added desc" . $limit)) return $result;
     return array();
     } else {
-      $iresult = array_keys($this->items);
+      $result = array_keys($this->items);
 if ($count > 0) {
       $result = array_slice($items, 0, $this->maxcount);
     }
@@ -47,7 +47,7 @@ if ($count > 0) {
     foreach ($items as $id) {
     $item = $this->getitem($id);
     $args->add($item);
-      if ($this->redir && !strbegin($url, litepublisher::$options->url)) {
+      if ($this->redir && !strbegin($item['url'], litepublisher::$options->url)) {
         $args->url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
       }
             $result .=   $theme->parsearg($tml, $args);
@@ -164,8 +164,8 @@ if (  parent::delete($id)) {
       $result .= "<foaf:knows>
       <foaf:Person>
     <foaf:nick>{$item['nick']}</foaf:nick>
-    <rdfs:seeAlso rdf:resource=\"{$item['foaf']}\"/>
-    <foaf:weblog rdf:resource=\"{$item['blog']}\"/>
+    <rdfs:seeAlso rdf:resource=\"{$item['foafurl']}\"/>
+    <foaf:weblog rdf:resource=\"{$item['url']}\"/>
       </foaf:Person>
       </foaf:knows>\n";
     }
@@ -268,10 +268,8 @@ $this->delete($id);
     if ($ping = tpinger::discover($url)) {
       $actions = TXMLRPCAction::instance();
       if ($actions->invatefriend($ping, $this->profile)) {
-      echo "invated<br>";
       $util = tfoafutil::instance();
         if ($info = $util->getinfo($url)) {
-        var_dump($info);
           return $this->add($info['nick'], $info['url'], $info['foafurl'], 'invated');
         }
       }
