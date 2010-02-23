@@ -17,6 +17,9 @@ class tprofile extends tevents {
     $this->basename = 'profile';
     $this->data = $this->data + array(
     'url' => '/profile.htm',
+    'template' => '',
+    'tmlfile' => '',
+    'theme' => '',
     'nick' => 'admin',
     'dateOfBirth' => date('Y-m-d'),
     'gender' => 'male',
