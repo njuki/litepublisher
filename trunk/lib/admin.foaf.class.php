@@ -14,99 +14,115 @@ class tadminfoaf extends tadminmenu {
     return getinstance(__class__);
   }
   
-  private function GetComboStatus($id, $status) {
-    $langar = &TLocal::$data[$this->basename];
-    $names = array('accepted', 'delete', 'hold', 'invated', 'rejected', 'ban');
+  private function getcombo($id, $status) {
+    $lang = tlocal::$instance('foaf');
+    $names = array('approved', 'hold', 'invated', 'rejected', 'spam', 'error');
     $result = "<select name='status-$id' >\n";
     
     foreach ($names as $name) {
+$title = $lang->$name;
       $selected = $status == $name ? 'selected' : '';
-    $result .= "<option value='$name' $selected>{$langar[$name]}</option>\n";
+    $result .= "<option value='$name' $selected>$title</option>\n";
     }
     $result .= "</select>";
     return $result;
   }
   
-  public function Getcontent() {
-    $foaf = &TFoaf::instance();
-    $html = &THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::instance();
-    
-    $result = '';
-    
-    switch ($this->arg) {
-      case null:
-      eval('$result .= "'. $html->addform . '\n";');
-      eval('$result .= "'. $html->tableheader . '\n";');
-      foreach ($foaf->items as $id => $item) {
-        eval('$result .= "'. $html->itemlist . '\n";');
+  private function getlist() {
+$foaf = tfoaf::instance();
+$perpage = 20;
+    $total = $foaf->getcount();
+    $from = $this->getfrom($perpage, $total);
+    if ($foaf->dbversion) {
+      $items = $foaf->select('', " order by status asc, added desc limit $from, $perpage");
+      if (!$items) $items = array();
+    } else {
+      $items = array_slice($foaf->items, $from, $perpage);
+    }
+$html = $this->html;
+$result = $html->checkallscript;
+$result .= $html->tableheader();
+$args = targs::instance();
+$args->adminurl = $this->adminurl;
+      foreach ($items as $id )  {
+      $item = $foaf->getitem($id);
+      $args->add($item);
+      $args->status = tlocal::$data['foaf'][$item['status']}];
+$result .= $html->itemlist($args);
       }
-      eval('$result .= "'. $html->tablefooter. '\n";');;
+      $result .= $html->tablefooter();
+      
+    $theme = ttheme::instance();
+    $result .= $theme->getpages('/admin/foaf/', litepublisher::$urlmap->page, ceil($total/$perpage));
+return $result;
+}
+  
+  
+  public function getcontent() {
+      $result = '';
+    $foaf = tfoaf::instance();
+    $html = $this->html;
+
+    switch ($this->name) {
+      case 'foaf':
+switch ($this->action) {
+case false:
+  $result = $html->addform();
       break;
       
       case 'edit':
-      $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-      if (!isset($foaf->items[$id])) {
-        eval('$result = "'. $html->notfound  . '\n";');
-        return $result;
-      }
-      $friend = $foaf->items[$id];
-      $status = '';
-      eval('$result .= "' . $html->editform . '\n";');
+$id = $this->idget();
+      if (!$foaf->itemexists($id))) return $this->notfount;
+      $item = $foaf->getitem($id);
+      $args = targs::instance();
+$args->add($item);
+$args->combo = $this->getcombo($id, $item['status']);
+      $result .= $html->editform($args);
       break;
       
       case 'delete':
-      $id = !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
-      if (!isset($foaf->items[$id])) {
-        eval('$result = "'. $html->notfound  . '\n";');
-        return $result;
-      }
-      $friend = $foaf->items[$id];
-      if (!empty($_GET['confirm']) && ($_GET['confirm'] == 1)) {
-        $foaf->Delete($id);
-        eval('$result = "'. $html->deleted . '\n";');
+$id = $this->idget();
+      if (!$foaf->itemexists($id))) return $this->notfount;
+if ($this->confirmed) {
+        $foaf->delete($id);
+$result .= $html->h2->deleted;
       } else {
-        eval('$result .= "'. $html->confirmdelete . '\n";');
+      $item = $foaf->getitem($id);
+      $args = targs::instance();
+      $args->add($item);
+      $args->adminurl = $this->adminurl;
+      $args->action = 'delete';
+      $args->confirm = $html->confirmdelete($args);
+        $result .= $html->confirmform($args);
       }
       break;
-      
-      case 'moderate':
-      eval('$result .= "'. $html->moderheader . '\n";');
-      $manager = &TFoafManager::instance();
-      foreach ($manager->items as $url => $item) {
-        $status = $this->GetComboStatus($item['id'], $item['status']);
-        eval('$result .= "'. $html->moderitem . '\n";');
-      }
-      eval('$result .= "'. $html->moderfooter . '\n";');;
-      return $html->fixquote($result);
-      
+}
+  $result .= $this->getlist();
+break;      
+
       case 'profile':
-      $profile = &TProfile::instance();
+      $profile = tprofile::instance();
       $gender = $profile->gender != 'female' ? "checked='checked'" : '';
       eval('$result .= "'. $html->profileform . '\n";');
       break;
     }
     
-    return str_replace("'", '"', $result);
+    return $html->fixquote($result);
   }
   
-  public function ProcessForm() {
-    $foaf = &TFoaf::instance();
-    $html = &THtmlResource::instance();
-    $html->section = $this->basename;
-    $lang = &TLocal::instance();
-    
-    switch ($this->arg) {
-      case null:
+  public function processform() {
+    $foaf = tfoaf::instance();
+    $html = $this->html;
+
+    switch ($this->name) {
+      case 'foaf':
+      if (!isset($_POST[['foaftable'])) {
+
       extract($_POST);
       if (empty($url))  return '';
-      $manager = &TFoafManager::instance();
-      if ($manager->Add($url)) {
-        return $this->success('successadd');
-      } else {
-        return $this->success('erroradd');
-      }
+      if ($foaf->hasfriend($url)) return $html->h2->erroradd;
+$foaf->add($url;
+        return $html->h2->successadd;
       
       case 'edit':
       extract($_POST);
