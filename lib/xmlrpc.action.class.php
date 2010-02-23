@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class TXMLRPCOpenAction extends titems {
+class TXMLRPCAction extends titems {
   public $actions;
 
   public static function instance() {
@@ -76,7 +76,7 @@ $confirmed = false;
   if (isset($this->items[$name])) {
     return $this->callaction($name, $args[0], $args[1]);
   }
-  return parent::__call(4name, $args);
+  return parent::__call($name, $args);
   }
   
   public function callaction($name, $to, $args) {

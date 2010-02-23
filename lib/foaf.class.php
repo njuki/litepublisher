@@ -61,7 +61,7 @@ if ($count > 0) {
       $s = "<?php
       @header('Content-Type: text/xml; charset=utf-8');
       @ header('Last-Modified: " . date('r') ."');
-      @header('X-Pingback: litepublisher::$options->url/rpc.xml');
+      @header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
       echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
       '; ?>";
       $s .= $this->getfoafxml();
@@ -113,6 +113,7 @@ if (  parent::delete($id)) {
   } else {
     foreach ($this->items as $id => $item) {
       if ($url == $item['url'])  return $this->Delete($id);
+    }
     }
   }
   
@@ -197,31 +198,43 @@ return false;
     if (!$this->validateurl($url, $foafurl)) return false;
     if ($this->hasfriend($url)) return false;
     $id = $this->add($nick,$url, $foafurl, 'hold');
-    $util = tfoafutil::instance();
-    $util->NotifyModerator($url, 'invated');
+$this->sendmail($id, 'invated');
     return true;
   }
   
   public function accept($nick,$url, $foafurl) {
     if (!$this->validateurl($url, $foafurl)) return false;
-$id = hasfriend($url));
+$id = $this->hasfriend($url);
 if (!$id) return false;
 $item = $this->getitem($id);
-if ($item['status']) == 'approved') return true;
+if ($item['status'] == 'approved') return true;
 if ($item['status'] != 'invated') return false;
 $this->setstatus($id, 'approved');
-    $this->NotifyModerator($url, 'accepted');
+$this->sendmail($id, 'accepted');
     return true;
   }
   
     public function reject($nick,$url, $foafurl) {
     if (!$this->validateurl($url, $foafurl)) return false;
     if ($id = $this->hasfriend($url))  {
+$this->sendmail($id, 'rejected');
 $this->delete($id);
-      $this->NotifyModerator($url, 'rejected');
       return true;
       }
     return false;
+  }
+  
+  private function sendmail($id, $event) {
+  $item = $this->getitem($id);
+      $args = targs::instance();
+      $args->add($item);
+      tlocal::loadlang('admin');
+      $lang = tlocal::instance('foaf');
+    $args->event = $lang->$event;
+    $mailtemplate = tmailtemplate::instance('foaf');
+    $subject = $mailtemplate->subject($args);
+    $body = $mailtemplate->body($args);
+    tmailer::sendtoadmin($subject, $body);
   }
   
       private function getprofile() {
@@ -235,7 +248,7 @@ $this->delete($id);
   
   public function addurl($url) {
     if ($ping = tpinger::discover($url)) {
-      $actions = TXMLRPCOpenAction::instance();
+      $actions = TXMLRPCAction::instance();
       if ($actions->invatefriend($ping, $this->profile)) {
       $util = tfoafutil::instance();
         if ($info = $util->getinfo($url)) {
@@ -250,7 +263,7 @@ $this->delete($id);
 if (!$this->itemexists($id)) return false;
 $item = $this->getitem($id);
         if ($ping = tpinger::Discover($item['url'])) {
-      $actions =  TXMLRPCOpenAction::instance();
+      $actions =  TXMLRPCAction::instance();
       if ($actions->acceptfriend($ping, $this->profile)) {
 $this->setstatus($id, 'approved');
         return true;
@@ -264,7 +277,7 @@ if (!$this->itemexists($id)) return false;
 $item = $this->getitem($id);
 $this->setstatus($id, 'rejected');
         if ($ping = tpinger::Discover($item['url'])) {
-      $actions =  TXMLRPCOpenAction::instance();
+      $actions =  TXMLRPCAction::instance();
       if ($actions->rejectfriend($ping, $this->profile)) {
         return true;
       }

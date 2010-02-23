@@ -16,6 +16,7 @@ class tprofile extends tevents {
     parent::create();
     $this->basename = 'profile';
     $this->data = $this->data + array(
+    'url' => '/profile.htm',
     'nick' => 'admin',
     'dateOfBirth' => date('Y-m-d'),
     'gender' => 'male',
@@ -39,6 +40,7 @@ class tprofile extends tevents {
   }
   
   public function getfoaf() {
+  $options = litepublisher::$options;
     $posts = tposts::instance();
     $postscount = $posts->archivescount;
     $manager = litepublisher::$classes->commentmanager;
@@ -53,15 +55,15 @@ class tprofile extends tevents {
     <foaf:jabberID>$this->jabberID</foaf:jabberID>
     <foaf:msnChatID>$this->msnChatID</foaf:msnChatID>
     <foaf:yahooChatID>$this->yahooChatID</foaf:yahooChatID>
-    <foaf:homepage>litepublisher::$options->urllitepublisher::$options->home</foaf:homepage>
+    <foaf:homepage>$options->url/</foaf:homepage>
     <foaf:mbox>$this->mbox</foaf:mbox>
     <foaf:weblog
-    dc:title=\"litepublisher::$options->name\"
-    rdf:resource=\"litepublisher::$options->urllitepublisher::$options->home\"/>
+    dc:title=\"$options->name\"
+    rdf:resource=\"$options->url/\"/>
     
     <foaf:page>
-    <foaf:Document rdf:about=\"litepublisher::$options->url/profile/\">
-    <dc:title>litepublisher::$options->name Profile</dc:title>
+    <foaf:Document rdf:about=\"$options->url$this->url\">
+    <dc:title>$options->name Profile</dc:title>
     <dc:description>Full profile, including information such as interests and bio.</dc:description>
     </foaf:Document>
     </foaf:page>
