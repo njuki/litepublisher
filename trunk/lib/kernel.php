@@ -462,6 +462,11 @@ class titems extends tevents {
     }
   }
   
+  public function loadall() {
+    if (!$this->dbversion)  return;
+    return $this->select('', '');
+  }
+  
   public function loaditems(array $items) {
     if (!$this->dbversion) return;
     //исключить из загрузки загруженные посты
@@ -1075,7 +1080,7 @@ class turlmap extends titems {
     if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       //@file_exists($CacheFileName)
-      if (($time = @filemtime ($cachefile)) && (($time  + litepublisher::$options->expiredcache) >= time() )) {
+      if (($time = @filemtime ($cachefile)) && (($time  + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time() )) {
         include($cachefile);
         return;
       }
@@ -1287,8 +1292,8 @@ class turlmap extends titems {
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-    $time = @filemtime($cronfile);
-    if (($time === false) || ($time + 3600 < time())) {
+    $time = file_exists($cronfile) ? @filemtime($cronfile) : 0;
+    if ($time + 3600 - litepublisher::$options->filetime_offset < time()) {
       register_shutdown_function('tcron::selfping');
     }
   }

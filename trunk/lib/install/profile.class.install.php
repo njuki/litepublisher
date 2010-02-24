@@ -12,6 +12,11 @@ function tprofileInstall($self) {
   
   $sitemap = tsitemap::instance();
   $sitemap->add($self->url, 7);
+  
+  $html = THtmlResource::instance();
+  $html->section = 'profile';
+  $self->template = $html->template;
+  $self->save();
 }
 
 function tprofileUninstall($self) {

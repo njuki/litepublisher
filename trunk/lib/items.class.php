@@ -45,6 +45,11 @@ class titems extends tevents {
     }
   }
   
+  public function loadall() {
+    if (!$this->dbversion)  return;
+    return $this->select('', '');
+  }
+  
   public function loaditems(array $items) {
     if (!$this->dbversion) return;
     //исключить из загрузки загруженные посты

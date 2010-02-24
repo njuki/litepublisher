@@ -39,10 +39,10 @@ class tcomments extends titems {
     
     $id = (int) $this->db->add($item);
     $item['rawcontent'] = $content;
-
+    
     $comusers = tcomusers::instance();
     $item = $item + $comusers->getitem($idauthor);
-        $item['id'] = $id;
+    $item['id'] = $id;
     $this->items[$id] = $item;
     
     $this->getdb($this->rawtable)->add(array(

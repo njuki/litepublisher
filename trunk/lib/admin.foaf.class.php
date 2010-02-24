@@ -15,22 +15,22 @@ class tadminfoaf extends tadminmenu {
   }
   
   private function getcombo($id, $status) {
-    $lang = tlocal::$instance('foaf');
+    $lang = tlocal::instance('foaf');
     $names = array('approved', 'hold', 'invated', 'rejected', 'spam', 'error');
     $result = "<select name='status-$id' >\n";
     
     foreach ($names as $name) {
-$title = $lang->$name;
+      $title = $lang->$name;
       $selected = $status == $name ? 'selected' : '';
-    $result .= "<option value='$name' $selected>$title</option>\n";
+      $result .= "<option value='$name' $selected>$title</option>\n";
     }
     $result .= "</select>";
     return $result;
   }
   
   private function getlist() {
-$foaf = tfoaf::instance();
-$perpage = 20;
+    $foaf = tfoaf::instance();
+    $perpage = 20;
     $total = $foaf->getcount();
     $from = $this->getfrom($perpage, $total);
     if ($foaf->dbversion) {
@@ -39,67 +39,68 @@ $perpage = 20;
     } else {
       $items = array_slice(array_keys($foaf->items), $from, $perpage);
     }
-$html = $this->html;
-$result = $html->checkallscript;
-$result .= $html->tableheader();
-$args = targs::instance();
-$args->adminurl = $this->adminurl;
-      foreach ($items as $id )  {
+    $html = $this->html;
+    $result = $html->checkallscript;
+    $result .= $html->tableheader();
+    $args = targs::instance();
+    $args->adminurl = $this->adminurl;
+    foreach ($items as $id )  {
       $item = $foaf->getitem($id);
       $args->add($item);
+      $args->id = $id;
       $args->status = tlocal::$data['foaf'][$item['status']];
-$result .= $html->itemlist($args);
-      }
-      $result .= $html->tablefooter();
-      
+      $result .= $html->itemlist($args);
+    }
+    $result .= $html->tablefooter();
+    
     $theme = ttheme::instance();
     $result .= $theme->getpages('/admin/foaf/', litepublisher::$urlmap->page, ceil($total/$perpage));
-return $result;
-}
+    return $result;
+  }
   
   
   public function getcontent() {
-      $result = '';
+    $result = '';
     $foaf = tfoaf::instance();
     $html = $this->html;
-
+    
     switch ($this->name) {
       case 'foaf':
-switch ($this->action) {
-case false:
-  $result = $html->addform();
-      break;
-      
-      case 'edit':
-$id = $this->idget();
-      if (!$foaf->itemexists($id)) return $this->notfount;
-      $item = $foaf->getitem($id);
-      $args = targs::instance();
-$args->add($item);
-$args->status = $this->getcombo($id, $item['status']);
-      $result .= $html->editform($args);
-      break;
-      
-      case 'delete':
-$id = $this->idget();
-      if (!$foaf->itemexists($id)) return $this->notfount;
-if ($this->confirmed) {
-        $foaf->delete($id);
-$result .= $html->h2->deleted;
-      } else {
-      $item = $foaf->getitem($id);
-      $args = targs::instance();
-      $args->add($item);
-      $args->adminurl = $this->adminurl;
-      $args->action = 'delete';
-      $args->confirm = $html->confirmdelete($args);
-        $result .= $html->confirmform($args);
+      switch ($this->action) {
+        case false:
+        $result = $html->addform();
+        break;
+        
+        case 'edit':
+        $id = $this->idget();
+        if (!$foaf->itemexists($id)) return $this->notfound;
+        $item = $foaf->getitem($id);
+        $args = targs::instance();
+        $args->add($item);
+        $args->status = $this->getcombo($id, $item['status']);
+        $result .= $html->editform($args);
+        break;
+        
+        case 'delete':
+        $id = $this->idget();
+        if (!$foaf->itemexists($id)) return $this->notfound;
+        if ($this->confirmed) {
+          $foaf->delete($id);
+          $result .= $html->h2->deleted;
+        } else {
+          $item = $foaf->getitem($id);
+          $args = targs::instance();
+          $args->add($item);
+          $args->adminurl = $this->adminurl;
+          $args->action = 'delete';
+          $args->confirm = $html->confirmdelete($args);
+          $result .= $html->confirmform($args);
+        }
+        break;
       }
+      $result .= $this->getlist();
       break;
-}
-  $result .= $this->getlist();
-break;      
-
+      
       case 'profile':
       $profile = tprofile::instance();
       ttheme::$vars['profile '] = $profile;
@@ -108,12 +109,12 @@ break;
       $result .= $html->profileform($args);
       break;
       
-            case 'profiletemplate':
+      case 'profiletemplate':
       $profile = tprofile::instance();
       $args = targs::instance();
       $args->template = $profile->template;
       $result .= $html->profiletemplate($args);
-break;
+      break;
     }
     
     return $html->fixquote($result);
@@ -126,33 +127,33 @@ break;
     switch ($this->name) {
       case 'foaf':
       if (!isset($_POST['foaftable'])) {
-      extract($_POST);
-      if ($this->action == 'edit') {
-            $id = $this->idget();
-if (!$foaf->itemexists($id)) return '';
-$status = $_POST["status-$id"];
-$foaf->edit($id, $nick, $url, $foafurl, $status);
-      return $html->h2->successedit;
+        extract($_POST);
+        if ($this->action == 'edit') {
+          $id = $this->idget();
+          if (!$foaf->itemexists($id)) return '';
+          $status = $_POST["status-$id"];
+          $foaf->edit($id, $nick, $url, $foafurl, $status);
+          return $html->h2->successedit;
+        } else {
+          if (empty($url))  return '';
+          if ($foaf->hasfriend($url)) return $html->h2->erroradd;
+          $foaf->addurl($url);
+          return $html->h2->successadd;
+        }
       } else {
-      if (empty($url))  return '';
-      if ($foaf->hasfriend($url)) return $html->h2->erroradd;
-$foaf->addurl($url);
-        return $html->h2->successadd;
-      }
-} else {      
         $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
         $foaf->lock();
         foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
           $id = (int) $id;
           if ($status == 'delete') {
-          $foaf->delete($id);
+            $foaf->delete($id);
           } else {
-          $foaf->setstatus($id, $status);
+            $foaf->changestatus($id, $status);
           }
-      }
-$foaf->unlock();
-      return $html->h2->successmoderate;
+        }
+        $foaf->unlock();
+        return $html->h2->successmoderate;
       }
       
       case 'profile':
@@ -164,9 +165,9 @@ $foaf->unlock();
       $profile->save();
       return $html->h2->successprofile;
       
-                  case 'profiletemplate':
+      case 'profiletemplate':
       $profile = tprofile::instance();
-$profile->template = $_POST['template'];
+      $profile->template = $_POST['template'];
       $profile->save();
       return $html->h2->successprofile;
     }

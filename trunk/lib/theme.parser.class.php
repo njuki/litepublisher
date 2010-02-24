@@ -404,7 +404,7 @@ class tthemeparser extends tdata {
       return '<li><a href="$url" title="$title">$text</a></li>';
       
       case 'foaf':
-return '<li><a href="$url" rel="friend" title="$nick">$nick</a></li>';
+      return '<li><a href="$url" rel="friend" title="$nick">$nick</a></li>';
       
       default:
       return '<li><a href="$url" title="$title">$text</a></li>';

@@ -14,12 +14,12 @@ function tfoafInstall($self) {
   $urlmap->unlock();
   
   if ($self->dbversion) {
-      $manager = tdbmanager ::instance();
+    $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->createtable($self->table, file_get_contents($dir .'foaf.sql'));
   }
   
-    $actions = TXMLRPCAction ::instance();
+  $actions = TXMLRPCAction ::instance();
   $actions->lock();
   $actions->add('invatefriend', get_class($self), 'Invate');
   $actions->add('rejectfriend', get_class($self), 'Reject');
@@ -30,15 +30,15 @@ function tfoafInstall($self) {
 function tfoafUninstall($self) {
   $actions = TXMLRPCAction ::instance();
   $actions->deleteclass(get_class($self));
-
+  
   turlmap::unsub($self);
   
-    if ($self->dbversion) {
-      $manager = tdbmanager ::instance();
+  if ($self->dbversion) {
+    $manager = tdbmanager ::instance();
     $manager->deletetable($self->table);
-}    
-
-$std = tstdwidgets::instance();
+  }
+  
+  $std = tstdwidgets::instance();
   $std->delete('friends');
 }
 

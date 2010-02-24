@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tprofile extends tevents {
+class tprofile extends tevents implements itemplate {
   
   public static function instance($id = 0) {
     return getinstance(__class__);
@@ -43,7 +43,7 @@ class tprofile extends tevents {
   }
   
   public function getfoaf() {
-  $options = litepublisher::$options;
+    $options = litepublisher::$options;
     $posts = tposts::instance();
     $postscount = $posts->archivescount;
     $manager = litepublisher::$classes->commentmanager;
@@ -131,50 +131,48 @@ class tprofile extends tevents {
     return $result;
   }
   
+public function request($arg) { }
+  
   public function gettitle() {
-    return TLocal::$data['profile']['myprofile'];
+    return tlocal::$data['default']['profile'];
+  }
+public function gethead() { }
+  
+  public function getkeywords() {
+    return $this->interests;
+  }
+  
+  public function getdescription() {
+    return tcontentfilter::getexcerpt($this->bio, 128);
   }
   
   public function GetTemplateContent() {
-    $lang = &tlocal::$data['profile'];
-  $result = "<h2>{$lang['myprofile']}</h2>\n";
-    $result .= $this->GetStat();
-    
-  $result .= "<h2>{$lang['myself']}</h2>\n";
-    $result .= $this->GetMyself();
-    
-  $result .= "<h2>{$lang['contact']}</h2>\n";
-    $result .= $this->GetContacts();
-    
-  if ($this->bio != '') $result .= "<h2>{$lang['bio']}</h2>\n
-    <p>$this->bio</p>\n";
-    
-  $result .= "<h2>{$lang['interests']}</h2>\n";
-    $result .= $this->GetMyInterests();
-    
-    $result .= "<h2>" . TLocal::$data['default']['myfriends'] . "</h2>\n";
-    $result .= $this->GetFriendsList();
-    return $result;
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('profile');
+    ttheme::$vars['profile'] = $this;
+    $theme = ttheme::instance();
+    return $theme->parse($this->template);
   }
   
-  private function GetStat() {
+  protected function getstat() {
     $posts = tposts::instance();
     $manager = tcommentmanager::instance();
-    return sprintf(tlocal::$data['profile']['statistic'], count($posts->archives), $CommentManager->count) . "\n";
+    $lang = tlocal::instance('profile');
+    return sprintf($lang->statistic, $posts->archivescount, $manager->count);
   }
   
-  private function GetMyself() {
-    $lang = tlocal::$data['profile'];
+  protected function getmyself() {
+    $lang = tlocal::instance('profile');
     $result = array();
     if ($this->img != '') $result[] = "<img src=\"$this->img\" />";
-  if ($this->nick != '') $result[] = "{$lang['nick']} $this->nick";
+    if ($this->nick != '') $result[] = "$lang->nick $this->nick";
     if (($this->dateOfBirth != '')  && @sscanf($this->dateOfBirth , '%d-%d-%d', $y, $m, $d)) {
       $date = mktime(0,0,0, $m, $d, $y);
       $ldate = TLocal::date($date);
-      $result[] = sprintf($lang['birthday'], $ldate);
+      $result[] = sprintf($lang->birthday, $ldate);
     }
     
-    $result[] = $this->gender == 'female' ? $lang['female'] : $lang['male'];
+    $result[] = $this->gender == 'female' ? $lang->female : $lang->male;
     
     if (!$this->country != '') $result[] = $this->country;
     if (!$this->region != '') $result[] = $this->region;
@@ -182,7 +180,7 @@ class tprofile extends tevents {
     return "<p>\n" . implode(", ", $result) . "</p>\n";
   }
   
-  private function GetContacts() {
+  protected function getcontacts() {
     $contacts = array(
     'icqChatID' => 'ICQ',
     'aimChatID' => 'AIM',
@@ -191,21 +189,22 @@ class tprofile extends tevents {
     'yahooChatID' => 'Yahoo',
     'mbox' => 'E-Mail'
     );
-    $lang = TLocal::$data['profile'];
+    $lang = tlocal::instance('profile');
     $result = "<table>
     <thead>
     <tr>
-  <th align=\"left\">{$lang['contactname']}</th>
-  <th align=\"left\">{$lang['value']}</th>
+    <th align=\"left\">$lang->contactname</th>
+    <th align=\"left\">$lang->value</th>
     </tr>
     </thead>
     <tbody>\n";
     
     foreach ($contacts as $contact => $name) {
-      if ($this->data[$contact] == '') continue;
+      $value = $this->data[$contact];
+      if ($value == '') continue;
       $result .= "<tr>
       <td align=\"left\">$name</td>
-    <td align=\"left\">{$this->data[$contact]}</td>
+      <td align=\"left\">$value</td>
       </tr>\n";
     }
     
@@ -214,7 +213,7 @@ class tprofile extends tevents {
     return $result;
   }
   
-  private function GetMyInterests() {
+  protected function getmyinterests() {
     $result = "<p>\n";
     $list = explode(',', $this->interests);
     foreach ($list as $name) {
@@ -226,12 +225,13 @@ class tprofile extends tevents {
     return $result;
   }
   
-  private function GetFriendsList() {
+  protected function getfriendslist() {
     $result = "<p>\n";
-    $foaf = &TFoaf::instance();
-    foreach ($foaf->items As $id => $friend) {
-    $url = $foaf->redir ?"litepublisher::$options->url$foaf->redirlink{litepublisher::$options->q}friend=$id" : $friend['blog'];
-    $result .= "<a href=\"$url\" rel=\"friend\">{$friend['nick']}</a>,\n";
+    $foaf = tfoaf::instance();
+    $foaf->loadall();
+    foreach ($foaf->items As $id => $item) {
+    $url = $foaf->redir ?"litepublisher::$options->url$foaf->redirlink{litepublisher::$options->q}friend=$id" : $item['url'];
+    $result .= "<a href=\"$url\" rel=\"friend\">{$item['nick']}</a>,\n";
     }
     $result .= "</p>\n";
     return $result;
