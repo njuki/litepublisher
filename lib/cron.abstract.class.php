@@ -75,7 +75,7 @@ class tabstractcron extends tevents {
     try {
       $self = tcron::instance();
       $cronfile = $self->dir .  'crontime.txt';
-      @file_put_contents($cronfile, time());
+      @touch($cronfile, time());
       @chmod($cronfile, 0666);
       
       $self->ping();

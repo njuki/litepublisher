@@ -55,11 +55,6 @@ class tcommontags extends titems implements  itemplate {
     return $this->res2items($res);
   }
   
-  public function loadall() {
-    if (!$this->dbversion)  return;
-    return $this->select('', '');
-  }
-  
   public function load() {
     if (!$this->dbversion) {
       if (parent::load()) {

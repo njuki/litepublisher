@@ -129,5 +129,15 @@ class tfiler {
     }
   }
   
+  public static function get_filetime_offset() {
+    $filename = litepublisher::$paths->data . md5uniq() . '.tmp';
+    $t = time();
+    touch($filename, $t, $t);
+    clearstatcache  ();
+    $t2 = filemtime($filename);
+    unlink($filename);
+    return $t2  - $t;
+  }
+  
 }//class
 ?>

@@ -14,48 +14,48 @@ class tfoaf extends titems {
   }
   
   protected function create() {
-      $this->dbversion = dbversion;
+    $this->dbversion = dbversion;
     parent::create();
     $this->basename = 'foaf';
-$this->table = 'foaf';
+    $this->table = 'foaf';
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
     $this->data['redirlink'] = '/foaflink.htm';
   }
   
   public function getapproved($count) {
-      if ($this->dbversion) {
-   $limit = $count == 0 ? '' : " limit0, $count";
-    if ($result = $this->select("status = 'approved'", "order by added desc" . $limit)) return $result;
-    return array();
+    if ($this->dbversion) {
+      $limit = $count == 0 ? '' : " limit0, $count";
+      if ($result = $this->select("status = 'approved'", "order by added desc" . $limit)) return $result;
+      return array();
     } else {
       $result = array_keys($this->items);
-if ($count > 0) {
-      $result = array_slice($items, 0, $this->maxcount);
+      if ($count > 0) {
+        $result = array_slice($items, 0, $this->maxcount);
+      }
+      return $result;
     }
-    return $result;
-    }
-    }
+  }
   
   public function getwidgetcontent($id, $sitebar) {
     $items = $this->getapproved($this->maxcount);
     if (count($items) == 0) return '';
-        $result = '';
+    $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('foaf', $sitebar);
     $args = targs::instance();
     foreach ($items as $id) {
-    $item = $this->getitem($id);
-    $args->add($item);
+      $item = $this->getitem($id);
+      $args->add($item);
       if ($this->redir && !strbegin($item['url'], litepublisher::$options->url)) {
         $args->url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
       }
-            $result .=   $theme->parsearg($tml, $args);
+      $result .=   $theme->parsearg($tml, $args);
     }
-        return $result;
+    return $result;
   }
-
-    public function request($arg) {
+  
+  public function request($arg) {
     switch($arg) {
       case 'xml':
       $s = "<?php
@@ -76,20 +76,20 @@ if ($count > 0) {
   }
   
   public function add($nick,$url, $foafurl, $status) {
-  $item = array(
-      'nick' => $nick,
-      'url' => $url,
-      'foafurl' => $foafurl,
-'added' => sqldate(),
-'errors' => 0,
+    $item = array(
+    'nick' => $nick,
+    'url' => $url,
+    'foafurl' => $foafurl,
+    'added' => sqldate(),
+    'errors' => 0,
     'status' => $status
     );
-
-if ($this->dbversion) {
-$id = $this->db->add($item);
-} else {
-$id = ++$this->autoid;
-}
+    
+    if ($this->dbversion) {
+      $id = $this->db->add($item);
+    } else {
+      $id = ++$this->autoid;
+    }
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
     $this->added($id);
@@ -97,17 +97,18 @@ $id = ++$this->autoid;
     $urlmap->clearcache();
     return $id;
   }
-
+  
   public function edit($id, $nick,$url, $foafurl, $status) {
-  $item = $this->getitem($id);
-      $item['nick'] = $nick;
-      $item['url'] = $url;
-      $item['foafurl'] = $foafurl;
+    $item = $this->getitem($id);
+    $item['nick'] = $nick;
+    $item['url'] = $url;
+    $item['foafurl'] = $foafurl;
     $item['status'] = $status;
-
-if ($this->dbversion) {
-$this->db->updateassoc($item);
-}
+    $this->changestatus($id, $status);
+    
+    if ($this->dbversion) {
+      $this->db->updateassoc($item);
+    }
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
     $this->edited($id);
@@ -116,22 +117,22 @@ $this->db->updateassoc($item);
     return true;
   }
   
-    public function delete($id) {
-if (  parent::delete($id)) {
+  public function delete($id) {
+    if (  parent::delete($id)) {
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
       return true;
-      }
-      return false;
+    }
+    return false;
   }
   
   public function deleteurl($url) {
-  if ($this->dbversion) {
-  $this->db->delete('url = ' . dbquote($url));
-  } else {
-    foreach ($this->items as $id => $item) {
-      if ($url == $item['url'])  return $this->Delete($id);
-    }
+    if ($this->dbversion) {
+      $this->db->delete('url = ' . dbquote($url));
+    } else {
+      foreach ($this->items as $id => $item) {
+        if ($url == $item['url'])  return $this->Delete($id);
+      }
     }
   }
   
@@ -174,14 +175,14 @@ if (  parent::delete($id)) {
   }
   
   public function hasfriend($url) {
-  if ($this->dbversion) {
-  return $this->select('url = ' . dbquote($url), 'limit 1');
-  } else {
-    foreach ($this->items as $id => $item) {
-      if ($url == $item['url']) return $id;
+    if ($this->dbversion) {
+      return $this->select('url = ' . dbquote($url), 'limit 1');
+    } else {
+      foreach ($this->items as $id => $item) {
+        if ($url == $item['url']) return $id;
+      }
+      return false;
     }
-    return false;
-  }
   }
   
   public function setparams($maxcount, $redir) {
@@ -193,9 +194,24 @@ if (  parent::delete($id)) {
   }
   
   public function setstatus($id, $value) {
-  if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
+    if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
+    if (!$this->dbversion) $this->save();
   }
-
+  
+  public function changestatus($id, $value) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    if ($item['status'] == $value) return false;
+    $this->setvalue($id, 'status', $value);
+    if ($item['status'] == 'hold') {
+      if ($value == 'approved')  {
+        $this->acceptinvate($id);
+      } elseif ($value == 'rejected') {
+        $this->rejectinvate($id);
+      }
+    }
+  }
+  
   private function getdomain($url) {
     $url = strtolower(trim($url));
     if (preg_match('/(http:\/\/|https:\/\/|)(www\.|)([-\.\w]+)\/?/', $url, $found)) {
@@ -204,50 +220,54 @@ if (  parent::delete($id)) {
     return false;
   }
   
-    private function validateurl($url, $foafurl) {
-      if (($url = $this->getdomain($url)) && ($foafurl = $this->getdomain($foafurl))) {
+  private function validateurl($url, $foafurl) {
+    if (($url = $this->getdomain($url)) && ($foafurl = $this->getdomain($foafurl))) {
       $self = $this->getdomain(litepublisher::$options->url);
       return ($url == $foafurl) && ($url != $self);
     }
-return false;
+    return false;
   }
   
-    public function invate($nick,$url, $foafurl) {
+  /* begin remote calls */
+  public function invate($nick,$url, $foafurl) {
     if (!$this->validateurl($url, $foafurl)) return false;
     if ($this->hasfriend($url)) return false;
     $id = $this->add($nick,$url, $foafurl, 'hold');
-$this->sendmail($id, 'invated');
+    $this->sendmail($id, 'invated');
     return true;
   }
   
   public function accept($nick,$url, $foafurl) {
     if (!$this->validateurl($url, $foafurl)) return false;
-$id = $this->hasfriend($url);
-if (!$id) return false;
-$item = $this->getitem($id);
-if ($item['status'] == 'approved') return true;
-if ($item['status'] != 'invated') return false;
-$this->setstatus($id, 'approved');
-$this->sendmail($id, 'accepted');
+    $id = $this->hasfriend($url);
+    if (!$id) return false;
+    $item = $this->getitem($id);
+    if ($item['status'] == 'approved') return true;
+    if (!(($item['status'] == 'invated') || ($item['status'] == 'hold'))) return false;
+    $this->setstatus($id, 'approved');
+    $this->sendmail($id, 'accepted');
+    var_dump($this->items[$id]);
     return true;
   }
   
-    public function reject($nick,$url, $foafurl) {
+  public function reject($nick,$url, $foafurl) {
     if (!$this->validateurl($url, $foafurl)) return false;
     if ($id = $this->hasfriend($url))  {
-$this->sendmail($id, 'rejected');
-$this->delete($id);
+      $this->sendmail($id, 'rejected');
+      //$this->delete($id);
+      $this->setstatus($id, 'rejected');
       return true;
-      }
+    }
     return false;
   }
-  
+  /* end remote calls */
   private function sendmail($id, $event) {
-  $item = $this->getitem($id);
-      $args = targs::instance();
-      $args->add($item);
-      tlocal::loadlang('admin');
-      $lang = tlocal::instance('foaf');
+    $item = $this->getitem($id);
+    $args = targs::instance();
+    $args->add($item);
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('foaf');
+    $event = 'mail' . $event;
     $args->event = $lang->$event;
     $mailtemplate = tmailtemplate::instance('foaf');
     $subject = $mailtemplate->subject($args);
@@ -255,12 +275,12 @@ $this->delete($id);
     tmailer::sendtoadmin($subject, $body);
   }
   
-      protected function getprofile() {
+  protected function getprofile() {
     $profile = tprofile::instance();
     return array(
-        'nick' => $profile->nick,
-        'url' => litepublisher::$options->url . litepublisher::$options->home,
-            'foafurl' => litepublisher::$options->url . '/foaf.xml'
+    'nick' => $profile->nick,
+    'url' => litepublisher::$options->url . litepublisher::$options->home,
+    'foafurl' => litepublisher::$options->url . '/foaf.xml'
     );
   }
   
@@ -268,7 +288,7 @@ $this->delete($id);
     if ($ping = tpinger::discover($url)) {
       $actions = TXMLRPCAction::instance();
       if ($actions->invatefriend($ping, $this->profile)) {
-      $util = tfoafutil::instance();
+        $util = tfoafutil::instance();
         if ($info = $util->getinfo($url)) {
           return $this->add($info['nick'], $info['url'], $info['foafurl'], 'invated');
         }
@@ -277,13 +297,13 @@ $this->delete($id);
     return false;
   }
   
-    public function acceptinvate($id) {
-if (!$this->itemexists($id)) return false;
-$item = $this->getitem($id);
-        if ($ping = tpinger::Discover($item['url'])) {
+  public function acceptinvate($id) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    if ($ping = tpinger::Discover($item['url'])) {
       $actions =  TXMLRPCAction::instance();
       if ($actions->acceptfriend($ping, $this->profile)) {
-$this->setstatus($id, 'approved');
+        $this->setstatus($id, 'approved');
         return true;
       }
     }
@@ -291,10 +311,10 @@ $this->setstatus($id, 'approved');
   }
   
   public function rejectinvate($id) {
-if (!$this->itemexists($id)) return false;
-$item = $this->getitem($id);
-$this->setstatus($id, 'rejected');
-        if ($ping = tpinger::Discover($item['url'])) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    $this->setstatus($id, 'rejected');
+    if ($ping = tpinger::Discover($item['url'])) {
       $actions =  TXMLRPCAction::instance();
       if ($actions->rejectfriend($ping, $this->profile)) {
         return true;

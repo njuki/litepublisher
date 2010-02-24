@@ -114,7 +114,7 @@ class TXMLRPC extends titems {
       try {
         return call_user_func_array(array($obj, $func), $args);
       } catch (Exception $e) {
-              //litepublisher::$options->handexception($e);
+        //litepublisher::$options->handexception($e);
         //echo (litepublisher::$options->errorlog);
         return new IXR_Error($e->getCode(), $e->getMessage());
       }

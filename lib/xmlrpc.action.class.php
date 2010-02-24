@@ -8,7 +8,7 @@
 
 class TXMLRPCAction extends titems {
   public $actions;
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -20,15 +20,15 @@ class TXMLRPCAction extends titems {
   }
   
   public function send($id, $from, $name, $args) {
-if (!isset($this->items[$name])) return new IXR_Error(404, "The $name action not registered");
-// confirm callback
+    if (!isset($this->items[$name])) return new IXR_Error(404, "The $name action not registered");
+    // confirm callback
     $Client  = new IXR_Client($from);
     if ($Client->query('litepublisher.action.confirm', $id, $from, $name, $args)) {
       $confirmed = $Client->getResponse();
     } else {
-$confirmed = false;
-}
-        if (!$confirmed) return new IXR_Error(403, 'Action not confirmed');
+      $confirmed = false;
+    }
+    if (!$confirmed) return new IXR_Error(403, 'Action not confirmed');
     return $this->doaction($name, $args);
   }
   
@@ -40,30 +40,30 @@ $confirmed = false;
   }
   
   private function doaction($name, $args) {
-  if (!is_array($args)) $args = array(0 => $args);
+    if (!is_array($args)) $args = array(0 => $args);
     $class = $this->items[$name]['class'];
     $func = $this->items[$name]['func'];
     if (empty($class)) {
       if (!function_exists($func)) {
-              unset($this->items[$name]);$this->Save();
+        unset($this->items[$name]);$this->Save();
         return new IXR_Error(404, 'The requested function not found');
       }
-        //return $func($arg);
-                try {
-          return call_user_func_array($func, $args);
-        } catch (Exception $e) {
-          return new IXR_Error($e->getCode(), $e->getMessage());
-        }
-
+      //return $func($arg);
+      try {
+        return call_user_func_array($func, $args);
+      } catch (Exception $e) {
+        return new IXR_Error($e->getCode(), $e->getMessage());
+      }
+      
     } else {
       if (!class_exists($class)) {
-              unset($this->items[$name]);
+        unset($this->items[$name]);
         $this->save();
         return new IXR_Error(404, 'The requested class not found');
       }
-        $obj = getinstance($class);
-        //return $obj->$func($arg);
-              try {
+      $obj = getinstance($class);
+      //return $obj->$func($arg);
+      try {
         return call_user_func_array(array($obj, $func), $args);
       } catch (Exception $e) {
         return new IXR_Error($e->getCode(), $e->getMessage());
@@ -73,10 +73,10 @@ $confirmed = false;
   
   
   public function __call($name, $args) {
-  if (isset($this->items[$name])) {
-    return $this->callaction($name, $args[0], $args[1]);
-  }
-  return parent::__call($name, $args);
+    if (isset($this->items[$name])) {
+      return $this->callaction($name, $args[0], $args[1]);
+    }
+    return parent::__call($name, $args);
   }
   
   public function callaction($name, $to, $args) {

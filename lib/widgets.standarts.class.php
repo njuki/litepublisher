@@ -87,7 +87,10 @@ class tstdwidgets extends titems {
   
   public function xmlrpcgetwidget($name) {
     if (!isset($this->items[$name])) throw new Exception('Widget not found.', 404);
-    return $this->getcontent($name);
+    $result = $this->getcontent($name);
+    //fix for javascript xmlrpc
+    if ($result == '') return 1;
+    return $result;
   }
   
   public function getwidget($id, $sitebar) {
@@ -150,8 +153,6 @@ class tstdwidgets extends titems {
     
     $instance = $this->getinstance($name);
     $result = $instance->getwidgetcontent($id, $widgets->findsitebar($id));
-    //fix for javascript xmlrpc
-    if ($result = '') $result = ' ';
     file_put_contents($file, $result);
     @chmod($file, 0666);
     return $result;
