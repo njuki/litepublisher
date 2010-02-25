@@ -51,8 +51,8 @@ function doinstallclasses() {
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->lock();
   foreach(litepublisher::$classes->items as $class => $item) {
-    //echo "$class\n";
-    if (preg_match('/^titemspostsowner|tcomment|IXR_Client|IXR_Server$/', $class)) continue;
+    //echo "$class<br>\n";
+    if (preg_match('/^(titemspostsowner|tcomment|IXR_Client|IXR_Server)$/', $class)) continue;
     $obj = getinstance($class);
     if (method_exists($obj, 'install')) $obj->install();
   }
