@@ -12,9 +12,8 @@ function tpollsInstall($self) {
     $manager->createtable($self->table,
     'id int UNSIGNED NOT NULL auto_increment,
     post int UNSIGNED NOT NULL default 0,
-    refcount int UNSIGNED NOT NULL default 0,
 status enum('opened', 'closed') default  'opened',
-result text not null,
+votes text not null,
 
     PRIMARY KEY(id),
 key post (post)
@@ -29,10 +28,10 @@ key cookie(cookie)
 ');
 
     $manager->createtable($self->resulttable,
-pol int UNSIGNED NOT NULL default 0,
+poll int UNSIGNED NOT NULL default 0,
 user int UNSIGNED NOT NULL default 0,
 vote int UNSIGNED NOT NULL default 0,
-    PRIMARY KEY(pol, user)
+    PRIMARY KEY(poll, user)
 ');
 
 $posts = tposts::instance();
