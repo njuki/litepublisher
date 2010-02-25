@@ -69,8 +69,8 @@ class titems extends tevents {
   public function res2items($res) {
     if (!$res) return false;
     $result = array();
-    $res->setFetchMode (PDO::FETCH_ASSOC);
-    foreach ($res as $item){
+
+while ($item = litepublisher::$db->fetchassoc($res)) {
       $id = $item['id'];
       $result[] = $id;
       $this->items[$id] = $item;

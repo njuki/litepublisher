@@ -68,8 +68,7 @@ class turlmap extends titems {
   
   private function query($url) {
     if (dbversion) {
-      if ($res = $this->db->select('url = '. dbquote($url). ' limit 1')) {
-        $item = $res->fetch(PDO::FETCH_ASSOC);
+      if ($item = $this->db->getassoc('url = '. dbquote($url). ' limit 1')) {
         $this->items[$item['id']] = $item;
         return $item;
       }

@@ -236,7 +236,7 @@ class tcommentmanager extends tevents {
       $db->urlmap.id = $db->posts.idurl
       order by $db->comments.posted desc limit $count");
       
-      $result = $res->fetchAll(PDO::FETCH_ASSOC);
+      $result = $db->res2assoc($res);
       if (litepublisher::$options->commentpages) {
         foreach ($result as $i => $item) {
           $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
