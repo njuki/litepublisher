@@ -58,11 +58,11 @@ class tposts extends titems {
   private function transformres($res) {
     $result = array();
     $t = new tposttransform();
-while ($a = litepublisher::$db->fetchassoc($res)) {
+    while ($a = litepublisher::$db->fetchassoc($res)) {
       $t->post = tpost::instance();
-$t->setassoc($a);
-$result[] = $t->post->id;
-}
+      $t->setassoc($a);
+      $result[] = $t->post->id;
+    }
     return $result;
   }
   

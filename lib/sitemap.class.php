@@ -54,7 +54,7 @@ public function getdescription() {}
       from $db->posts, $db->urlmap
       where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl
       order by $db->posts.posted desc limit $from, $perpage");
-while ($item = $db->fetchassoc($res)) {
+      while ($item = $db->fetchassoc($res)) {
         $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
         $pages = max($item['pagescount'], $comments);
         $postpages = '';
@@ -155,7 +155,7 @@ while ($item = $db->fetchassoc($res)) {
       $now = sqldate();
       $res = $db->query("select $db->posts.pagescount, $db->posts.commentscount, $db->urlmap.url from $db->posts, $db->urlmap
       where $db->posts.status = 'published' and $db->posts.posted < '$now' and $db->urlmap.id = $db->posts.idurl");
-while ($item = $db->fetchassoc($res)) {
+      while ($item = $db->fetchassoc($res)) {
         $comments = litepublisher::$options->commentpages ? ceil($item['commentscount'] / litepublisher::$options->commentsperpage) : 1;
         $this->write($item['url'], max($item['pagescount'], $comments));
       }
@@ -185,8 +185,8 @@ while ($item = $db->fetchassoc($res)) {
       $table = $tags->thistable;
       $res = $db->query("select $table.itemscount, $db->urlmap.url from $table, $db->urlmap
       where $db->urlmap.id = $table.idurl");
-
-while ($item = $db->fetchassoc($res)) {
+      
+      while ($item = $db->fetchassoc($res)) {
         $this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
       }
     } else {

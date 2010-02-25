@@ -37,9 +37,9 @@ class tdbmanager  {
   }
   
   public function  deletealltables( ) {
-$list = $this->res2assoc($this->query("show tables from " . litepublisher::$options->dbconfig['dbname']));
-foreach ($list as $row) {
-    $this->exec("DROP TABLE IF EXISTS ". $row['name']);
+    $list = $this->res2assoc($this->query("show tables from " . litepublisher::$options->dbconfig['dbname']));
+    foreach ($list as $row) {
+      $this->exec("DROP TABLE IF EXISTS ". $row['name']);
     }
   }
   
@@ -128,8 +128,7 @@ foreach ($list as $row) {
   
   public function export() {
     $options = litepublisher::$options;
-    $res = $this->query("show variables like 'max_allowed_packet'");
-    $v = $res->fetch();
+    $v = $this->fetchassoc($this->query("show variables like 'max_allowed_packet'"));
     $this->max_allowed_packet =floor($v['Value']*0.8);
     
     $result = "-- Lite Publisher dump $options->version\n";
@@ -147,13 +146,13 @@ foreach ($list as $row) {
   }
   
   public function exporttable($name) {
-    if ($res = $this->query("show create table `$name`")) {
-      $row=$res->fetch();
+    if ($row=$this->fetchnum($this->query("show create table `$name`"))) {
       $result = "DROP TABLE IF EXISTS `$name`;\n$row[1];\n\n";
-      if ($res =$this->query("select * from `$name`")) {
+      $res =$this->query("select * from `$name`");
+      if ($this->countof($res) > 0) {
         $result .= "LOCK TABLES `$name` WRITE;\n/*!40000 ALTER TABLE `$name` DISABLE KEYS */;\n";
         $sql = '';
-        while ($row = $res->fetch(PDO::FETCH_NUM)) {
+        while ($row = $this->fetchnum($res)) {
           $values= array();
           foreach($row as $v){
             $values[] = is_null($v) ? 'NULL' : litepublisher::$db->quote($v);
