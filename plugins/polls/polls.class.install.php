@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tpolsInstall($self) {
+function tpollsInstall($self) {
   if (dbversion) {
     $manager = tdbmanager::instance();
     $manager->createtable($self->table,
@@ -46,7 +46,7 @@ $filter->beforefilter = $self->filter;
 $filter->unlock();
 }
 
-function tpolsUninstall($self) {
+function tpollsUninstall($self) {
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
   

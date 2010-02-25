@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tpols extends titems {
+class tpolls extends titems {
 public $userstable;
 public $resulttable;
   
