@@ -46,7 +46,7 @@ class tdatabase {
   }
   
   public function __destruct() {
-    if ($this->handle) mysql_close($this->handle);
+    if ($this->handle) @mysql_close($this->handle);
     $this->handle = false;
   }
   
