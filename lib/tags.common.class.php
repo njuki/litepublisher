@@ -33,18 +33,6 @@ class tcommontags extends titems implements  itemplate {
     return tpost::instance($id);
   }
   
-  public function getitem($id) {
-    if ($this->dbversion && !isset($this->items[$id])) {
-      $db = litepublisher::$db;
-      if ($res = $db->query("select $this->thistable.*, $db->urlmap.url as url  from $this->thistable, $db->urlmap
-      where $this->thistable.id = $id and  $db->urlmap.id  = $this->thistable.idurl limit 1")) {
-        $this->items[$id] = $res->fetch(PDO::FETCH_ASSOC);
-      }
-    }
-    if (isset($this->items[$id])) return $this->items[$id];
-    return $this->error("Item $id not found in class ". get_class($this));
-  }
-  
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
     if ($where != '') $where .= ' and ';
@@ -133,12 +121,12 @@ class tcommontags extends titems implements  itemplate {
       $thistable = $this->thistable;
       $itemstable = $this->itemsposts->thistable;
       $poststable = $db->posts;
-      $res = $db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
+      $list = $db->res2assoc($db->query("select $itemstable.item as id, count($itemstable.item)as itemscount from $itemstable, $poststable
       where $itemstable.item in ($items)  and $itemstable.post = $poststable.id and $poststable.status = 'published'
-      group by $itemstable.item");
+      group by $itemstable.item"));
       
       $db->table = $this->table;
-      foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $item) {
+      foreach ($list as $item) {
         $db->setvalue($item['id'], 'itemscount', $item['itemscount']);
       }
     } else {
@@ -264,20 +252,9 @@ class tcommontags extends titems implements  itemplate {
     if (!in_array($sortname, array('title', 'count', 'id'))) $sortname = 'title';
     
     if ($this->dbversion) {
-      $table = $this->thistable;
-      $q = "select $table.*, $this->urltable.url from $table, $this->urltable
-      where $table.parent = 0 and $this->urltable.id= $table.idurl order by $table.";
-      $q .= $sortname == 'count' ? "itemscount asc" :"$sortname desc";
-      if ($count > 0) $q .= " limit $count";
-      $res = $this->db->query($q);
-      $res->setFetchMode (PDO::FETCH_ASSOC);
-      $result = array();
-      foreach ($res as $item) {
-        $id = $item['id'];
-        $this->items[$id] = $item;
-        $result[] = $id;
-      }
-      return $result;
+      $limit  = $sortname == 'count' ? "order by $this->thistable.itemscount asc" :"order by $this->thistable.$sortname desc";
+      if ($count > 0) $limit .= " limit $count";
+return $this->select("$this->thistable.parent = 0", $limit);
     }
     
     $list = array();
@@ -396,7 +373,7 @@ class ttagcontent extends tdata {
   }
   
   public function getitem($id) {
-    //if (isset($this->items[$id]))  return $this->items[$id];
+    if (isset($this->items[$id]))  return $this->items[$id];
     $item = array(
     'theme' => '',
     'tmlfile' => '',

@@ -58,11 +58,11 @@ class tposts extends titems {
   private function transformres($res) {
     $result = array();
     $t = new tposttransform();
-    $res->setFetchMode (PDO::FETCH_INTO , $t);
-    do {
-      if (isset($t->post)) $result[] = $t->post->id;
+while ($a = litepublisher::$db->fetchassoc($res)) {
       $t->post = tpost::instance();
-    } while ($res->fetch());
+$t->setassoc($a);
+$result[] = $t->post->id;
+}
     return $result;
   }
   

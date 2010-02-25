@@ -68,13 +68,12 @@ class tadmintags extends tadminmenu {
       $items = $tags->select('', " order by id asc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
-      $items = array_slice($tags->items, $from, $perpage, true);
-      //      $items = array_reverse (array_keys($items));
+      $items = array_slice(array_keys($tags->items), $from, $perpage);
     }
     
     $result .= $html->listhead();
     foreach ($items as $id) {
-      $item = $tags->items[$id];
+      $item = $tags->getitem($id);
       $args->add($item);
       $result .= $html->itemlist($args);
     }

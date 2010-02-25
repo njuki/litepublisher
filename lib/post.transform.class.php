@@ -77,6 +77,16 @@ class tposttransform  {
       $db->updateassoc(array('post' => $this->post->id, 'page' => $i, 'content' => $content));
     }
   }
+
+public function getassoc() {
+
+}
+
+public function setassoc(array $a) {
+foreach ($a as $name => $value) {
+$this->__set($name, $value);
+}
+}
   
   public function __get($name) {
     if (method_exists($this, $get = "get$name")) return $this->$get();

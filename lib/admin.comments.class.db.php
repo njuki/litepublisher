@@ -272,7 +272,7 @@ class tadminmoderator extends tadminmenu {
     $total = $comusers->count;
     $from = $this->getfrom($perpage, $total);
     $res = $comusers->db->query("select * from $comusers->thistable limit $from, $perpage");
-    $items = $res->fetchAll(PDO::FETCH_ASSOC);
+    $items = litepublisher::$db->res2assoc($res);
     $html = $this->html;
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
@@ -300,7 +300,7 @@ class tadminmoderator extends tadminmenu {
     where $db->posts.id in (select DISTINCT $db->comments.post from $db->comments where author = $authorid)
     and $db->urlmap.id = $db->posts.idurl
     order by $db->posts.posted desc");
-    $items = $res->fetchAll(PDO::FETCH_ASSOC);        $args = targs::instance();
+    $items = $db->res2assoc($res);
     
     $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);

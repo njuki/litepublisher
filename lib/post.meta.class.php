@@ -49,14 +49,11 @@ class tmetapost extends titem {
   }
   
   protected function LoadFromDB() {
-    if ($res = $this->db->select("id = $this->id")) {
-      $res->setFetchMode (PDO::FETCH_ASSOC);
-      foreach ($res as $row) {
+$res = $this->db->select("id = $this->id");
+while ($row = litepublisher::$db->fetchassoc($res)) {
         $this->data[$row['name']] = $row['value'];
       }
-      return true;
-    }
-    return false;
+return true;
   }
   
   protected function SaveToDB() {
