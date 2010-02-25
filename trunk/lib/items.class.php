@@ -69,8 +69,8 @@ class titems extends tevents {
   public function res2items($res) {
     if (!$res) return false;
     $result = array();
-
-while ($item = litepublisher::$db->fetchassoc($res)) {
+    
+    while ($item = litepublisher::$db->fetchassoc($res)) {
       $id = $item['id'];
       $result[] = $id;
       $this->items[$id] = $item;

@@ -49,11 +49,11 @@ class tmetapost extends titem {
   }
   
   protected function LoadFromDB() {
-$res = $this->db->select("id = $this->id");
-while ($row = litepublisher::$db->fetchassoc($res)) {
-        $this->data[$row['name']] = $row['value'];
-      }
-return true;
+    $res = $this->db->select("id = $this->id");
+    while ($row = litepublisher::$db->fetchassoc($res)) {
+      $this->data[$row['name']] = $row['value'];
+    }
+    return true;
   }
   
   protected function SaveToDB() {

@@ -12,7 +12,7 @@ class tdatabase {
   public $table;
   public $prefix;
   public $history;
-public $handle;
+  public $handle;
   
   public static function instance() {
     return getinstance(__class__);
@@ -25,17 +25,17 @@ public $handle;
     $this->prefix =  $dbconfig['prefix'];
     $this->sql = '';
     $this->history = array();
-
-        $host= $dbconfig['host'];
-if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
+    
+    $host= $dbconfig['host'];
+    if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
     $this->handle = @mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
     if (! $this->handle) {
-die(@mysql_error());
-}
-      if (!@        mysql_select_db($dbconfig['dbname'], $this->handle)) {
-die(@mysql_error($this->handle));
-}
-
+      die(@mysql_error());
+    }
+    if (!@        mysql_select_db($dbconfig['dbname'], $this->handle)) {
+      die(@mysql_error($this->handle));
+    }
+    
     $this->exec('SET NAMES utf8');
     
     /* lost performance
@@ -44,11 +44,11 @@ die(@mysql_error($this->handle));
     $this->exec("SET time_zone = '$timezone:00'");
     */
   }
-
-public function __destruct() {
-if ($this->handle) mysql_close($this->handle);
-$this->handle = false;
-}
+  
+  public function __destruct() {
+    if ($this->handle) mysql_close($this->handle);
+    $this->handle = false;
+  }
   
   public function __get ($name) {
     return $this->prefix . $name;
@@ -63,12 +63,12 @@ $this->handle = false;
   }
   
   private function doquery($sql, $isquery) {
-/*
+    /*
     if ($sql == $this->sql) {
-if ($this->result && @mysql_num_rows($this->result)) mysql_data_seek($this->result, 0);
-return $this->result;
-}
-*/
+      if ($this->result && @mysql_num_rows($this->result)) mysql_data_seek($this->result, 0);
+      return $this->result;
+    }
+    */
     $this->sql = $sql;
     if (litepublisher::$debug) {
       $this->history[] = array(
@@ -79,27 +79,27 @@ return $this->result;
     }
     
     if ($this->result)  {
-@mysql_free_result($this->result);
+      @mysql_free_result($this->result);
     }
-
-        $this->result = @mysql_query($sql, $this->handle);
-      if (litepublisher::$debug) {
-        $this->history[count($this->history) - 1]['finished'] = microtime();
-      }
+    
+    $this->result = @mysql_query($sql, $this->handle);
+    if (litepublisher::$debug) {
+      $this->history[count($this->history) - 1]['finished'] = microtime();
+    }
     if ($this->result == false) {
-$this->doerror(@mysql_error($this->handle));
-}
+      $this->doerror(@mysql_error($this->handle));
+    }
     return $this->result;
   }
   
   private function doerror($mesg) {
     if (litepublisher::$debug) {
       $log = "exception:\n$mesg\n$this->sql\n";
-try {
-      throw new Exception();
-    } catch (Exception $e) {
-      $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
-}
+      try {
+        throw new Exception();
+      } catch (Exception $e) {
+        $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
+      }
       $man = tdbmanager::instance();
       $log .= $man->performance();
       $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
@@ -108,10 +108,10 @@ try {
       litepublisher::$options->trace($mesg);
     }
   }
-
-public function quote($s) {
-return "'" . mysql_escape_string($s) . "'";
-}
+  
+  public function quote($s) {
+    return "'" . mysql_escape_string($s) . "'";
+  }
   
   public function SelectTableWhere($table, $where) {
     return $this->query("SELECT * FROM $this->prefix$table WHERE ($where)");
@@ -123,16 +123,16 @@ return "'" . mysql_escape_string($s) . "'";
   }
   
   public function idselect($where) {
-      return $this->res2id($this->query("select id from $this->prefix$this->table where $where"));
+    return $this->res2id($this->query("select id from $this->prefix$this->table where $where"));
   }
   
   public function queryassoc($sql) {
-if ($r = mysql_fetch_assoc($this->query($sql))) return $r;
+    if ($r = mysql_fetch_assoc($this->query($sql))) return $r;
     return false;
   }
   
   public function getassoc($where) {
-return mysql_fetch_assoc($this->select($where));
+    return mysql_fetch_assoc($this->select($where));
   }
   
   public function update($values, $where) {
@@ -224,19 +224,19 @@ return mysql_fetch_assoc($this->select($where));
   }
   
   public function getlist(array $list) {
-return $this->res2assoc($this->select(sprintf('id in (%s)', implode(',', $list))));
+    return $this->res2assoc($this->select(sprintf('id in (%s)', implode(',', $list))));
   }
   
   public function getitems($where) {
-return $this->res2assoc($this->select($where));
+    return $this->res2assoc($this->select($where));
   }
   
   public function getitem($id) {
-return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where id = $id limit 1"));
+    return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where id = $id limit 1"));
   }
   
   public function finditem($where) {
-return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where $where limit 1"));
+    return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table where $where limit 1"));
   }
   
   public function findid($where) {
@@ -255,31 +255,39 @@ return mysql_fetch_assoc($this->query("select * from $this->prefix$this->table w
   
   public function res2array($res) {
     $result = array();
-while ($row = mysql_fetch_row($res)) {
-         $result[] = $row;
-      }
-      return $result;
+    while ($row = mysql_fetch_row($res)) {
+      $result[] = $row;
     }
-
-    public function res2id($res) {
-      $result = array();
-while ($row = mysql_fetch_row($res)) {
-        $result[] = $row[0];
-      }
-      return $result;
+    return $result;
+  }
+  
+  public function res2id($res) {
+    $result = array();
+    while ($row = mysql_fetch_row($res)) {
+      $result[] = $row[0];
     }
-
-public function res2assoc($res) {
-$result = array();
-while ($r = mysql_fetch_assoc($res)) {
-$result[] = $r;
-}
-return $result;
-}
-    
-public function fetchassoc($res) {
-return mysql_fetch_assoc($res);
-}
-    
-  }//class
-  ?>
+    return $result;
+  }
+  
+  public function res2assoc($res) {
+    $result = array();
+    while ($r = mysql_fetch_assoc($res)) {
+      $result[] = $r;
+    }
+    return $result;
+  }
+  
+  public function fetchassoc($res) {
+    return mysql_fetch_assoc($res);
+  }
+  
+  public function fetchnum($res) {
+    return mysql_fetch_row($res);
+  }
+  
+  public function countof($res) {
+    return  mysql_num_rows($res);
+  }
+  
+}//class
+?>

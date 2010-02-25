@@ -32,7 +32,7 @@ class tdatabase extends PDO {
       }
       parent::__construct($init, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])),
       array(
-PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+      PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION       //ERRMODE_WARNING
       //PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL
       )
@@ -290,14 +290,22 @@ PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
       }
       return $result;
     }
-
-public function res2assoc($res) {
-      return $res->fetchAll(PDO::FETCH_ASSOC);
-}
     
-public function fetchassoc($res) {
-return $res->fetch(PDO::FETCH_ASSOC);
-}
-
+    public function res2assoc($res) {
+      return $res ? $res->fetchAll(PDO::FETCH_ASSOC) : false;
+    }
+    
+    public function fetchassoc($res) {
+      return $res ? $res->fetch(PDO::FETCH_ASSOC) : false;
+    }
+    
+    public function fetchnum($res) {
+      return $res ? $res->fetch(PDO::FETCH_NUM) : false;
+    }
+    
+    public function countof($res) {
+      return $res ? $res->rowCount() : false;
+    }
+    
   }//class
   ?>
