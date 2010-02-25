@@ -33,7 +33,7 @@ class tcontentfilter extends tevents
   }
   
   public function SetPostContent(tpost $post, $s) {
-    $this->beforecontent($post->id);
+    $this->beforecontent($post->id, &$s);
     $s = $this->FilterInternalLinks($s);
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
