@@ -42,44 +42,6 @@ $this->resulttable = 'polsresult';'
     }
   }
   
-  public function updatestat() {
-    $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'externallinks.txt';
-    if (@file_exists($filename) && ($s = @file_get_contents($filename))) {
-      @unlink($filename);
-      $stat = array();
-      $a = explode("\n", $s);
-      foreach ($a as $id) {
-        $id = (int) $id;
-        if ($id == 0) continue;
-        if (isset($stat[$id])) {
-          $stat[$id]++;
-        } else {
-          $stat[$id] = 1;
-        }
-      }
-      
-      if (count($stat) == 0) return;
-      $this->loaditems(array_keys($stat));
-      foreach ($stat as $id => $clicked) {
-        if ($this->dbversion) {
-          $this->db->setvalue($id, 'clicked', $clicked + $this->items[$id]['clicked']);
-        } else {
-          $this->items[$id]['clicked'] += $clicked;
-        }
-      }
-      $this->save();
-    }
-  }
-  
-  public function request($arg) {
-    $this->cache = false;
-    $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-    if (!$this->itemexists($id)) return 404;
-    $item = $this->getitem($id);
-    tfiler::append("$id\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'externallinks.txt');
-    return turlmap::redir($item['url']);
-  }
-  
   public function createpol($id, &$content) {
 while (is_int($i = strpos($content, '[pol]'))) {
 $j = strpos($content, '[/pol]', $i);
@@ -93,8 +55,19 @@ if ($j === false) {
 
   public function filter(&$content) {
 }
+
 public function postdeleted($id) {
-$this->db->delete("post = $id");
+$list = $this->db->idselect("post = $id");
+if (count($list) == 0) return;
+$items = sprintf('(%s)', implode(',', $list));
+$this->db->delete("id in $items");
+$this->getdb($this->resulttable)->delete("id in $items");
+$db = $this->getdb($this->userstable);
+$db->delete("id not in (
+select DISTINCT user from $db->prefix.$this->resulttable)");
+}
+
+public function xmlrpcpol($idpol, $vote) {
 }
 
 }//class
