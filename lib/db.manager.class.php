@@ -106,24 +106,25 @@ class tdbmanager  {
     }
     
     //comments
-    litepublisher::$db->exec("delete from litepublisher::$db->rawcomments where id in
-    (select id from litepublisher::$db->comments where status = 'deleted')");
+    $db->exec("delete from $db->rawcomments where id in
+    (select id from $db->comments where status = 'deleted')");
     
-    litepublisher::$db->exec("delete from litepublisher::$db->comments where status = 'deleted'");
+    $db->exec("delete from $db->comments where status = 'deleted'");
     
-    litepublisher::$db->exec("delete from litepublisher::$db->authors where id not in
-    (select DISTINCT author from litepublisher::$db->comments)");
+    $db->exec("delete from $db->authors where id not in
+    (select DISTINCT author from $db->comments)");
     
     //subscribtions
-    litepublisher::$db->exec("delete fromlitepublisher::$db->subscribers where post not in (select id from litepublisher::$db->posts)");
-    litepublisher::$db->exec("delete fromlitepublisher::$db->subscribers where author not in (select id from litepublisher::$db->comusers)");
+    $db->exec("delete from $db->subscribers where post not in (select id from $db->posts)");
+    $db->exec("delete from $db->subscribers where author not in (select id from $db->comusers)");
   }
   
   public function optimize() {
     $this->DeleteDeleted();
+$prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $this->gettables();
     foreach ($tables as $table) {
-      $this->exec("optimize $table");
+if (strbegin(strtolower($table), $prefix)) $this->exec("optimize $table");
     }
   }
   
@@ -156,7 +157,7 @@ class tdbmanager  {
         while ($row = $this->fetchnum($res)) {
           $values= array();
           foreach($row as $v){
-            $values[] = is_null($v) ? 'NULL' : litepublisher::$db->quote($v);
+            $values[] = is_null($v) ? 'NULL' : dbquote($v);
           }
           $sql .= $sql ? ',(' : '(';
           $sql .= implode(', ', $values);
