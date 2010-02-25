@@ -14,10 +14,10 @@ function tpolsInstall($self) {
     post int UNSIGNED NOT NULL default 0,
     refcount int UNSIGNED NOT NULL default 0,
 status enum('opened', 'closed') default  'opened',
+result text not null,
 
     PRIMARY KEY(id),
 key post (post)
-
     ');
 
     $manager->createtable($self->userstable,
@@ -31,7 +31,7 @@ key cookie(cookie)
     $manager->createtable($self->resulttable,
 pol int UNSIGNED NOT NULL default 0,
 user int UNSIGNED NOT NULL default 0,
-value int UNSIGNED NOT NULL default 0,
+vote int UNSIGNED NOT NULL default 0,
     PRIMARY KEY(pol, user)
 ');
 
