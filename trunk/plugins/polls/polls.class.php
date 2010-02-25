@@ -22,6 +22,28 @@ public $resulttable;
 $this->userstable = 'polusers';
 $this->resulttable = 'polsresult';'
   }
+
+public function addvote($idpoll, $iduser, $vote) {
+if (!$this->itemexists($id)) return  false;
+$vote = (int) $vote;
+$db = $this->getdb($this->resulttable)
+$db->add(array(
+'poll' => $idpoll, 
+'user' => $iduser,
+'vote' => $vote
+));
+$table = $db->prefix . $this->votestable;
+$res = $db->query("select vote as vote, count(user) as count from $table
+where poll = $idpoll  group by vote order by vote asc");
+
+$votes = array();
+while($item = $db->fetchassoc($res)) {
+$votes[$item['vote']] = $item['count'];
+}
+
+$this->db->setvalue($idpoll, 'votes', implode(',', $votes));
+return $votes;
+}
   
   public function add($url) {
     $id = $this->IndexOf('url', $url);
@@ -67,7 +89,23 @@ $db->delete("id not in (
 select DISTINCT user from $db->prefix.$this->resulttable)");
 }
 
-public function xmlrpcpol($idpol, $vote) {
+public function xmlrpcpol($idpoll, $vote) {
+if (!$this->itemexists($idpoll)) return $this->error("Poll not found', 404);
+$cookie = isset($_COOKIE['polluser']) ? $_COOKIE['polluser'] : '';
+if ($cookie == '') {
+$cookie = md5uniq();
+$this->getdb($this->userstable)->add(array('cookie' => $cookie));
+return array('cookie' => $cookie);
+} elseif( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie))) {
+if ($this->hasvote($idpoll, $iduser)) return $this->error('You already vote'), 403);
+$this->addvote($idpoll, $iduser, $vote);
+return array();
+} else {
+}
+$cookie = md5uniq();
+$this->getdb($this->userstable)->add(array('cookie' => $cookie));
+return array('cookie' => $cookie);
+}
 }
 
 }//class
