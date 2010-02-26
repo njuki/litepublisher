@@ -19,7 +19,12 @@ class tplugins extends TItems {
   }
   
   public function getabout($name) {
-    $about = parse_ini_file(litepublisher::$paths->plugins .  $name . DIRECTORY_SEPARATOR . 'about.ini', true);
+return self::localabout(litepublisher::$paths->plugins .  $name );
+}
+
+public static function localabout($dir) {
+$filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
+    $about = parse_ini_file($$filename, true);
     if (isset($about[litepublisher::$options->language])) {
       $about['about'] = $about[litepublisher::$options->language] + $about['about'];
     }
