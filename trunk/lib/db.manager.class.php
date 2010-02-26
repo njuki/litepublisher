@@ -121,6 +121,7 @@ class tdbmanager  {
   
   public function optimize() {
     $this->DeleteDeleted();
+sleep(2);
 $prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $this->gettables();
     foreach ($tables as $table) {
