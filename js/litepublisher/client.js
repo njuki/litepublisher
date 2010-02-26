@@ -32,7 +32,7 @@ client.litepublisher.getwidget( {
 params:[name],
 
                  onSuccess:function(result){                     
-if (result) {
+if (result && (result != 'false')) {
 widget.innerHTML = result;
 } else {
                     //alert('problem');
