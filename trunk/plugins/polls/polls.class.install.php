@@ -36,8 +36,8 @@ vote int UNSIGNED NOT NULL default 0,
     PRIMARY KEY(poll, user)
 ');
 
-$posts = tposts::instance();
-$posts->deleted = $self->postdeleted;
+$cron = tcron::instance();
+$cron->addweekly(get_class($self), 'optimize', null);
   }
   
   $filter = tcontentfilter::instance();
@@ -45,12 +45,20 @@ $filter->lock();
   $filter->beforecontent = $self->beforefilter;
 $filter->beforefilter = $self->filter;
 $filter->unlock();
+$xmlrpc = TXMLRPC::instance();
+$xmlrpc->lock();
+$xmlrpc->add('litepublisher.poll.sendvote', get_class($self), 'sendvote');
+$xmlrpc->add('litepublisher.poll.getcookie', get_class($self), 'getcookie');
+$xmlrpc->unlock();
 }
 
 function tpollsUninstall($self) {
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
   
+$xmlrpc = TXMLRPC::instance();
+$xmlrpc->deleteclass(get_class($self));
+
   if ($self->dbversion) {
     $manager = tdbmanager::instance();
     $manager->deletetable($self->table);

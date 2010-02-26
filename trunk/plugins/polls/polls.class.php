@@ -92,6 +92,12 @@ $this->db->updateassoc($item);
 return true;
 }
 
+public function hasvote($idpoll, $iduser) {
+$idpoll = (int) $idpoll;
+$iduser = (int) $iduser;
+return $this->getdb($this->votestable)->findid("poll = $idpoll and user = $iduser");
+}
+
 public function optimize() {
 $signs = $this->db->queryassoc("select id, sign from $this->thistable");
 $db = litepublisher::$db;
@@ -100,8 +106,7 @@ $db->table = $posts->rawtable;
 $deleted = array();
 foreach ($signs as $item) {
 $sign = $item['sign'];
-if (!$db->findid("
-$deleted[] = $item['id'];
+if (!$db->findid("LOCATE('$sign', rawcontent) > 0")) $deleted[] = $item['id'];
 sleep(2);
 }
 
@@ -109,6 +114,7 @@ if (count($deleted) > 0) {
 $items = sprintf('(%s)', implode(',', $deleted));
 $this->db->delete("id in $items");
 $this->getdb($this->resulttable)->delete("id in $items");
+sleep(2);
 }
 
 $db = $this->getdb($this->userstable);
@@ -192,23 +198,21 @@ $i = min($j, strlen($content));
 // здесь только заменить код голосовалки на html
 }
 
-public function xmlrpcpol($idpoll, $vote) {
+public function getcookie($cookie) {
+if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie)))) {
+return $cookie;
+}
+$cookie = md5uniq();
+$this->getdb($this->userstable)->add(array('cookie' => $cookie));
+return $cookie;
+}
+
+public function sendvote($idpoll, $vote, $cookie) {
 if (!$this->itemexists($idpoll)) return $this->error("Poll not found', 404);
-$cookie = isset($_COOKIE['polluser']) ? $_COOKIE['polluser'] : '';
-if ($cookie == '') {
-$cookie = md5uniq();
-$this->getdb($this->userstable)->add(array('cookie' => $cookie));
-return array('cookie' => $cookie);
-} elseif( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie))) {
-if ($this->hasvote($idpoll, $iduser)) return $this->error('You already vote'), 403);
-$this->addvote($idpoll, $iduser, $vote);
-return array();
-} else {
-}
-$cookie = md5uniq();
-$this->getdb($this->userstable)->add(array('cookie' => $cookie));
-return array('cookie' => $cookie);
-}
+$iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie));
+if (!$iduser) return $this->error"Cookie not found", 404);
+if ($this->hasvote($idpoll, $iduser)) return $this->error('Already you have vote'), 403);
+return $this->addvote($idpoll, $iduser, (int) $vote);
 }
 
 }//class
