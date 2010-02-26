@@ -89,7 +89,7 @@ class tstdwidgets extends titems {
     if (!isset($this->items[$name])) throw new Exception('Widget not found.', 404);
     $result = $this->getcontent($name);
     //fix for javascript xmlrpc
-    if ($result == '') return 1;
+    if ($result == '') return 'false';
     return $result;
   }
   
