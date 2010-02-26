@@ -40,7 +40,7 @@ $posts->deleted = $self->postdeleted;
   
   $filter = tcontentfilter::instance();
 $filter->lock();
-  $filter->beforecontent = $self->createpol;
+  $filter->beforecontent = $self->beforefilter;
 $filter->beforefilter = $self->filter;
 $filter->unlock();
 }

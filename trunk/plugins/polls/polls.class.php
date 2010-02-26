@@ -63,19 +63,81 @@ return $votes;
       return $this->autoid;
     }
   }
-  
-  public function createpol($id, &$content) {
-while (is_int($i = strpos($content, '[pol]'))) {
-$j = strpos($content, '[/pol]', $i);
-if ($j === false) {
+
+
+private function extractitems($s) {
+$result = array();
+$lines = explode("\n", $s);
+foreach ($lines as $name) {
+$name = trim($name);
+if (($name == '')  || ($name[0] == '[')) continue;
+$result[] = $name;
+}
+return $result;
+}
+
+private function extractvalues($s) {
+$result = array();
+$lines = explode("\n", $s);
+foreach ($lines as $line) {
+$line = trim($line);
+if (($line == '')  || ($line[0] == '[')) continue;
+      if ($i = strpos($line, '=')) {
+        $name = trim(substr($line, 0, $i));
+        $value = trim(substr($line, $i + 1));
+if (($name != '') && ($value != '')) $result[$name] = $value;
+}
+}
+return $result;
+}
+
+ public function beforefilter($idpost, &$content) {
+    $content = str_replace(array("\r\n", "\r"), "\n", $content);
+$i = 0;
+while (is_int($i = strpos($content, '[poll]', $i))) {
+$j = strpos($content, '[/poll]', $i);
+if ($j == false) {
 // значит простая форма и надо найти первую пустую строку
-
+$j = strpos($content, "\n\n", $i);
+$s = substr($content, $i, $j - $i);
+$items = $this->extractitems($s);
+$id = $this->add('', $items);
+$item = $this->getitem($id);
+$stritems = implode("\n", $items);
+$replace = "[poll]\nid=$id\nstatus={$item['status']}\ntitle={$item['title']}\n[items]\n$stritems\n[/items]\n[/poll]";
+$content = substr_replace($content, $replace, $i, $j - $i);
+$i = min($j, strlen($content));
 } else {
+// проверить, если id у голосования
+$j += strlen("[/poll]");
+$s = substr($content, $i, $j - $i);
+// вычленить секцию items
+$k = strpos($s, '[items]');
+$l = strpos($s, '[/items]');
+$items = $this->extractitems(substr($s, $k, $l));
+$s = substr_replace($s, '', $k, $l - $k);
+$values = $this->extractvalues($s);
+$title = isset($values['title'] ? $values['title'] : '';
+$status = isset($values['status'] ? $values['status'] : '';
+if (!isset($values['id'])) {
+$id = $this->add($title, $items);
+} else {
+if (!$this->edit($values['id'], $title, $items, $status)){
+$i = min($j, strlen($content));
+continue;
+}
+}
+$item = $this->getitem($id);
+$stritems = implode("\n", $items);
+$replace = "[poll]\nid=$id\nstatus={$item['status']}\ntitle={$item['title']}\n[items]\n$stritems\n[/items]\n[/poll]";
+$content = substr_replace($content, $replace, $i, $j - $i);
+$i = min($j, strlen($content));
 }
 }
 }
-
+ 
   public function filter(&$content) {
+// здесь только заменить код голосовалки на html
 }
 
 public function postdeleted($id) {
