@@ -7,6 +7,8 @@
 **/
 
 function tpollsInstall($self) {
+$about = tplugins::localabout(dirname(__file__));
+$self->title = $about['title'];
   if (dbversion) {
     $manager = tdbmanager::instance();
     $manager->createtable($self->table,
@@ -45,6 +47,7 @@ $filter->lock();
   $filter->beforecontent = $self->beforefilter;
 $filter->beforefilter = $self->filter;
 $filter->unlock();
+
 $xmlrpc = TXMLRPC::instance();
 $xmlrpc->lock();
 $xmlrpc->add('litepublisher.poll.sendvote', get_class($self), 'sendvote');
@@ -53,6 +56,9 @@ $xmlrpc->unlock();
 }
 
 function tpollsUninstall($self) {
+$cron = tcron::instance();
+$cron->deleteclass(get_class($this));
+
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
   
