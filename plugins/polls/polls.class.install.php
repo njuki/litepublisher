@@ -11,12 +11,14 @@ function tpollsInstall($self) {
     $manager = tdbmanager::instance();
     $manager->createtable($self->table,
     'id int UNSIGNED NOT NULL auto_increment,
-    post int UNSIGNED NOT NULL default 0,
 status enum('opened', 'closed') default  'opened',
+sign varchar(32) not null,
+title text not null,
+items text not null,
 votes text not null,
 
     PRIMARY KEY(id),
-key post (post)
+key sign(sign)
     ');
 
     $manager->createtable($self->userstable,
