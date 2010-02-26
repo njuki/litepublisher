@@ -8,26 +8,33 @@
 
 class tpolls extends titems {
 public $userstable;
-public $resulttable;
+public $votestable;
+public $templateitems;
+public $templates;
+private $types;
   
   public static function instance() {
     return getinstance(__class__);
   }
   
   protected function create() {
-    $this->dbversion = dbversion;
+    $this->dbversion = true;
     parent::create();
-    $this->table = 'pols';
-    $this->basename = 'pols';
-$this->userstable = 'polusers';
-$this->resulttable = 'polsresult';'
-$this->data['deftitle'] = 'New poll';
+    $this->table = 'polls';
+    $this->basename = 'polls';
+$this->userstable = 'pollusers';
+$this->votestable = 'pollvotes';
+$this->data['deftitle'] = 'new poll';
+$this->types = array('radio', 'button', 'link', 'custom');
+$a = array_combine($this->types, array_fill(0, count($this->types), ''));
+$this->addmap('templateitems', $a);
+$this->addmap('templates', $a);
   }
 
 public function addvote($idpoll, $iduser, $vote) {
 if (!$this->itemexists($id)) return  false;
 $vote = (int) $vote;
-$db = $this->getdb($this->resulttable)
+$db = $this->getdb($this->votestable)
 $db->add(array(
 'poll' => $idpoll, 
 'user' => $iduser,
@@ -46,13 +53,15 @@ $this->db->setvalue($idpoll, 'votes', implode(',', $votes));
 return $votes;
 }
   
-  public function add($title, $status, array $items) {
+  public function add($title, $status, $type, array $items) {
 if ($title == '') $title = $this->deftitle;
 if (($status != 'opened') || ($status != 'closed')) $status = 'opened';
+if (!in_array($type, $this->types)) $type = 'radio';
     $item = array(
 'sign' => md5uniq(),
 'title' => $title,
 'status' => $status,
+'type' => $type,
 'items' => implode("\n", $items)
 votes' => implode(',', array_fill(0, count($items), 0))
     );
@@ -63,13 +72,14 @@ $this->added($id);
       return $id;
   }
 
-public function edit($id, $title, $status, array $items) {
+public function edit($id, $title, $status, $type, array $items) {
 if (!$this->itemexists)) return false;
 $item = $this->getitem($id);
 $votes = explode(',', $item['votes']);
 if ($title == '') $title = $item['title'];
 if (($status != 'opened') || ($status != 'closed')) $status = $item['status'];
-if ($title == $item['title']) || ($status == $item['status'])) {
+if (!in_array($type, $this->types)) $type = $item['type'];
+if ($title == $item['title']) || ($status == $item['status']) && ($type == $item['type'])) {
 // если равны еще и списки то ничего не менять и вернут false
 $old = explode("\n", $item['items']);
 if ($old == $items) return false;
@@ -84,6 +94,7 @@ $votes = array_slice($votes, 0, count($items));
 'sign' => $item['sign'],
 'title' => $title,
 'status' => $status,
+'type' => $type,
 'items' => implode("\n", $items)
 'votes' => implode(',', $votes)
     );
@@ -106,20 +117,20 @@ $db->table = $posts->rawtable;
 $deleted = array();
 foreach ($signs as $item) {
 $sign = $item['sign'];
-if (!$db->findid("LOCATE('$sign', rawcontent) > 0")) $deleted[] = $item['id'];
+if (!$db->findid("locate('$sign', rawcontent) > 0")) $deleted[] = $item['id'];
 sleep(2);
 }
 
 if (count($deleted) > 0) {
 $items = sprintf('(%s)', implode(',', $deleted));
 $this->db->delete("id in $items");
-$this->getdb($this->resulttable)->delete("id in $items");
+$this->getdb($this->votestable)->delete("id in $items");
 sleep(2);
 }
 
 $db = $this->getdb($this->userstable);
 $db->delete("id not in (
-select DISTINCT user from $db->prefix.$this->resulttable)");
+select distinct user from $db->prefix.$this->votestable)");
 }
 
 private function extractitems($s) {
@@ -158,12 +169,7 @@ if ($j == false) {
 $j = strpos($content, "\n\n", $i);
 $s = substr($content, $i, $j - $i);
 $items = $this->extractitems($s);
-$id = $this->add('', '', $items);
-$item = $this->getitem($id);
-$stritems = implode("\n", $items);
-$replace = "[poll]\nid={$item['sign']}\nstatus={$item['status']}\ntitle={$item['title']}\n[items]\n$stritems\n[/items]\n[/poll]";
-$content = substr_replace($content, $replace, $i, $j - $i);
-$i = min($j, strlen($content));
+$id = $this->add('', '', '', $items);
 } else {
 // проверить, если id у голосования
 $j += strlen("[/poll]");
@@ -176,26 +182,69 @@ $s = substr_replace($s, '', $k, $l - $k);
 $values = $this->extractvalues($s);
 $title = isset($values['title'] ? $values['title'] : '';
 $status = isset($values['status'] ? $values['status'] : '';
+$type = isset($values['type'] ? $values['type'] : '';
 $id = isset($values['id'] ? $this->db->findid("sign = " . dbquote($values['id'])) : false;
 if (!$id) {
-$id = $this->add($title, $status, $items);
+$id = $this->add($title, $status, $type, $items);
 } else {
-if (!$this->edit($id, $title, $$status, $items)){
+if (!$this->edit($id, $title, $$status, $type, $items)){
 $i = min($j, strlen($content));
 continue;
 }
 }
+}
+//общая для обоих случаев концовка
 $item = $this->getitem($id);
 $stritems = implode("\n", $items);
-$replace = "[poll]\nid={$item['sign']}\nstatus={$item['status']}\ntitle={$item['title']}\n[items]\n$stritems\n[/items]\n[/poll]";
+$replace = "[poll]\nid={$item['sign']}\n";
+$replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title']}\n";
+$replace .= "[items]\n$stritems\n[/items]\n[/poll]";
 $content = substr_replace($content, $replace, $i, $j - $i);
 $i = min($j, strlen($content));
-}
 }
 }
  
   public function filter(&$content) {
 // здесь только заменить код голосовалки на html
+    $content = str_replace(array("\r\n", "\r"), "\n", $content);
+$i = 0;
+while (is_int($i = strpos($content, '[poll]', $i))) {
+$j = strpos($content, '[/poll]', $i);
+$j += strlen("[/poll]");
+$s = substr($content, $i, $j - $i);
+// вычленить секцию items
+$k = strpos($s, '[items]');
+$l = strpos($s, '[/items]');
+$s = substr_replace($s, '', $k, $l - $k);
+$values = $this->extractvalues($s);
+$id = isset($values['id'] ? $this->db->findid("sign = " . dbquote($values['id'])) : false;
+if ($id) {
+$replace = $this->gethtml($id);
+$content = substr_replace($content, $replace, $i, $j - $i);
+}
+$i = min($j, strlen($content));
+}
+}
+
+private function gethtml($id) {
+$result = '';
+$poll = $this->getitem($id);
+$items = explode("\n", $poll['items']);
+$votes = explode(',', $poll['votes']);
+$theme = ttheme::instance();
+$args = targs::instance();
+$args->id = $id;
+$args->title = $poll['title'];
+$tml = $this->templateitems[$poll['type']];
+foreach ($items as $index => $item) {
+$args->index = $index;
+$args->item = $item;
+$args->votes = $votes[$index];
+$result .= $theme->parsearg($tml, $args);
+}
+$tml = $this->templates[$poll['type']];
+$result = sprintf($theme->parsearg($tml, $args), $result);
+return $result;
 }
 
 public function getcookie($cookie) {
@@ -208,10 +257,10 @@ return $cookie;
 }
 
 public function sendvote($idpoll, $vote, $cookie) {
-if (!$this->itemexists($idpoll)) return $this->error("Poll not found', 404);
+if (!$this->itemexists($idpoll)) return $this->error("poll not found', 404);
 $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie));
-if (!$iduser) return $this->error"Cookie not found", 404);
-if ($this->hasvote($idpoll, $iduser)) return $this->error('Already you have vote'), 403);
+if (!$iduser) return $this->error"cookie not found", 404);
+if ($this->hasvote($idpoll, $iduser)) return $this->error('already you have vote'), 403);
 return $this->addvote($idpoll, $iduser, (int) $vote);
 }
 
