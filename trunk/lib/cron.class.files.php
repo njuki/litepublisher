@@ -106,7 +106,7 @@ class tcron extends tabstractcron {
     if (ob_get_level()) ob_end_flush ();
     echo "<pre>\n";
     $time = time();
-    $task = new TCronTask($this);
+    $task = new tcrontask($this);
     $processed = array();
     while ($filelist = $this->GetFileList($processed)) {
       sleep(2);
@@ -134,8 +134,32 @@ class tcron extends tabstractcron {
   protected function doadd($type, $class, $func, $arg) {
     ++$this->data['autoid'] ;
     $this->Save();
-    $task = new TCronTask($this);
+    $task = new tcrontask($this);
     $task->Add($this->autoid, $type, $class, $func, $arg );
+    return $this->autoid;
+  }
+
+  public function addnightly($class, $func, $arg) {
+    ++$this->data['autoid'] ;
+    $this->Save();
+    $task = new tcrontask($this);
+$task->lock();
+   $task->Add($this->autoid, 'day', $class, $func, $arg );
+        $d = getdate(time());
+    $task->time = mktime(3,4,0, $d['mon'] , $d['mday'] + 1, $d['year']);
+$task->unlock();
+    return $this->autoid;
+  }
+  
+  public function addweekly($class, $func, $arg) {
+    ++$this->data['autoid'] ;
+    $this->Save();
+    $task = new tcrontask($this);
+$task->lock();
+   $task->Add($this->autoid, 'week', $class, $func, $arg );
+        $d = getdate(time());
+    $task->time = mktime(3,4,0, $d['mon'] , $d['mday'] + 1, $d['year']);
+$task->unlock();
     return $this->autoid;
   }
   
@@ -145,7 +169,7 @@ class tcron extends tabstractcron {
   }
   
   public function deleteclass($class) {
-    $task = new TCronTask($this);
+    $task = new tcrontask($this);
     $processed = array();
     if ($filelist = $this->GetFileList($processed)) {
       foreach ($filelist as $filename) {
