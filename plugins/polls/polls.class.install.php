@@ -9,11 +9,17 @@
 function tpollsInstall($self) {
 $about = tplugins::localabout(dirname(__file__));
 $self->title = $about['title'];
+$templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
+$this->templateitems = $templates['item'];
+$this->templates = $templates['items'];
+$self->save();
+
   if (dbversion) {
     $manager = tdbmanager::instance();
     $manager->createtable($self->table,
     'id int UNSIGNED NOT NULL auto_increment,
 status enum('opened', 'closed') default  'opened',
+type enum('radio', button', 'link', 'custom') default 'radio',
 sign varchar(32) not null,
 title text not null,
 items text not null,
