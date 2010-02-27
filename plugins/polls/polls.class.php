@@ -6,7 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tpolls extends titems {
+class tpolls extends tplugin {
+public $items;
 public $userstable;
 public $votestable;
 public $templateitems;
@@ -18,23 +19,57 @@ private $types;
   }
   
   protected function create() {
-    $this->dbversion = true;
     parent::create();
+$this->items = array();
     $this->table = 'polls';
     $this->basename = 'polls';
 $this->userstable = 'pollusers';
 $this->votestable = 'pollvotes';
-$this->data['deftitle'] = 'new poll';
+$this->addevents('added', 'deleted', 'edited');
+$this->data['title'] = 'new poll';
 $this->types = array('radio', 'button', 'link', 'custom');
 $a = array_combine($this->types, array_fill(0, count($this->types), ''));
 $this->addmap('templateitems', $a);
 $this->addmap('templates', $a);
   }
 
+  public function getitem($id) {
+    if (isset($this->items[$id])) return $this->items[$id];
+      if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
+    return $this->error("Item $id not found in class ". get_class($this));
+  }
+  public function select($where, $limit) {
+    if ($where != '') $where = 'where '. $where;
+    $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
+    return $this->res2items($res);
+  }
+  
+  public function res2items($res) {
+    if (!$res) return false;
+    $result = array();
+    
+    while ($item = litepublisher::$db->fetchassoc($res)) {
+      $id = $item['id'];
+      $result[] = $id;
+      $this->items[$id] = $item;
+    }
+    return $result;
+  }
+  
+  public function itemexists($id) {
+    if (isset($this->items[$id])) return true;
+      try {
+        return $this->getitem($id);
+      } catch (Exception $e) {
+        return false;
+    }
+    return false;
+  }
+  
 public function addvote($idpoll, $iduser, $vote) {
 if (!$this->itemexists($id)) return  false;
 $vote = (int) $vote;
-$db = $this->getdb($this->votestable)
+$db = $this->getdb($this->votestable);
 $db->add(array(
 'poll' => $idpoll, 
 'user' => $iduser,
@@ -54,16 +89,17 @@ return $votes;
 }
   
   public function add($title, $status, $type, array $items) {
-if ($title == '') $title = $this->deftitle;
+if ($title == '') $title = $this->title;
 if (($status != 'opened') || ($status != 'closed')) $status = 'opened';
 if (!in_array($type, $this->types)) $type = 'radio';
+$votes = implode(',', array_fill(0, count($items), 0));
     $item = array(
-'sign' => md5uniq(),
+'hash' => md5uniq(),
 'title' => $title,
 'status' => $status,
 'type' => $type,
-'items' => implode("\n", $items)
-votes' => implode(',', array_fill(0, count($items), 0))
+'items' => implode("\n", $items),
+'votes' => $votes
     );
     
       $id = $this->db->add($item);
@@ -73,13 +109,13 @@ $this->added($id);
   }
 
 public function edit($id, $title, $status, $type, array $items) {
-if (!$this->itemexists)) return false;
+if (!$this->itemexists($id)) return false;
 $item = $this->getitem($id);
 $votes = explode(',', $item['votes']);
 if ($title == '') $title = $item['title'];
 if (($status != 'opened') || ($status != 'closed')) $status = $item['status'];
 if (!in_array($type, $this->types)) $type = $item['type'];
-if ($title == $item['title']) || ($status == $item['status']) && ($type == $item['type'])) {
+if (($title == $item['title']) && ($status == $item['status']) && ($type == $item['type'])) {
 // если равны еще и списки то ничего не менять и вернут false
 $old = explode("\n", $item['items']);
 if ($old == $items) return false;
@@ -91,11 +127,11 @@ $votes = array_slice($votes, 0, count($items));
 }
 
     $item = array(
-'sign' => $item['sign'],
+'hash' => $item['hash'],
 'title' => $title,
 'status' => $status,
 'type' => $type,
-'items' => implode("\n", $items)
+'items' => implode("\n", $items),
 'votes' => implode(',', $votes)
     );
 
@@ -110,14 +146,14 @@ return $this->getdb($this->votestable)->findid("poll = $idpoll and user = $iduse
 }
 
 public function optimize() {
-$signs = $this->db->queryassoc("select id, sign from $this->thistable");
+$signs = $this->db->queryassoc("select id, hash from $this->thistable");
 $db = litepublisher::$db;
 $posts = tposts::instance();
 $db->table = $posts->rawtable;
 $deleted = array();
 foreach ($signs as $item) {
-$sign = $item['sign'];
-if (!$db->findid("locate('$sign', rawcontent) > 0")) $deleted[] = $item['id'];
+$hash = $item['hash'];
+if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
 sleep(2);
 }
 
@@ -159,7 +195,7 @@ if (($name != '') && ($value != '')) $result[$name] = $value;
 return $result;
 }
 
- public function beforefilter($idpost, &$content) {
+ public function beforefilter($post, &$content) {
     $content = str_replace(array("\r\n", "\r"), "\n", $content);
 $i = 0;
 while (is_int($i = strpos($content, '[poll]', $i))) {
@@ -180,10 +216,10 @@ $l = strpos($s, '[/items]');
 $items = $this->extractitems(substr($s, $k, $l));
 $s = substr_replace($s, '', $k, $l - $k);
 $values = $this->extractvalues($s);
-$title = isset($values['title'] ? $values['title'] : '';
-$status = isset($values['status'] ? $values['status'] : '';
-$type = isset($values['type'] ? $values['type'] : '';
-$id = isset($values['id'] ? $this->db->findid("sign = " . dbquote($values['id'])) : false;
+$title = isset($values['title']) ? $values['title'] : '';
+$status = isset($values['status']) ? $values['status'] : '';
+$type = isset($values['type']) ? $values['type'] : '';
+$id = isset($values['id']) ? $this->db->findid("hash = " . dbquote($values['id'])) : false;
 if (!$id) {
 $id = $this->add($title, $status, $type, $items);
 } else {
@@ -196,12 +232,13 @@ continue;
 //общая для обоих случаев концовка
 $item = $this->getitem($id);
 $stritems = implode("\n", $items);
-$replace = "[poll]\nid={$item['sign']}\n";
+$replace = "[poll]\nid={$item['hash']}\n";
 $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title']}\n";
 $replace .= "[items]\n$stritems\n[/items]\n[/poll]";
 $content = substr_replace($content, $replace, $i, $j - $i);
 $i = min($j, strlen($content));
 }
+      $post->rawcontent = $content;
 }
  
   public function filter(&$content) {
@@ -217,7 +254,7 @@ $k = strpos($s, '[items]');
 $l = strpos($s, '[/items]');
 $s = substr_replace($s, '', $k, $l - $k);
 $values = $this->extractvalues($s);
-$id = isset($values['id'] ? $this->db->findid("sign = " . dbquote($values['id'])) : false;
+$id = isset($values['id']) ? $this->db->findid("hash = " . dbquote($values['id'])) : false;
 if ($id) {
 $replace = $this->gethtml($id);
 $content = substr_replace($content, $replace, $i, $j - $i);
@@ -237,6 +274,7 @@ $args->id = $id;
 $args->title = $poll['title'];
 $tml = $this->templateitems[$poll['type']];
 foreach ($items as $index => $item) {
+$args->checked = 0 == $index;
 $args->index = $index;
 $args->item = $item;
 $args->votes = $votes[$index];
@@ -257,10 +295,10 @@ return $cookie;
 }
 
 public function sendvote($idpoll, $vote, $cookie) {
-if (!$this->itemexists($idpoll)) return $this->error("poll not found', 404);
+if (!$this->itemexists($idpoll)) return $this->error("poll not found", 404);
 $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie));
-if (!$iduser) return $this->error"cookie not found", 404);
-if ($this->hasvote($idpoll, $iduser)) return $this->error('already you have vote'), 403);
+if (!$iduser) return $this->error("User not found", 404);
+if ($this->hasvote($idpoll, $iduser)) return $this->error('already you have vote', 403);
 return $this->addvote($idpoll, $iduser, (int) $vote);
 }
 

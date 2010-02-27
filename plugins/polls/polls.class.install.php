@@ -7,27 +7,27 @@
 **/
 
 function tpollsInstall($self) {
+if (!dbversion) die("Plugin can be installed only on database version");
 $about = tplugins::localabout(dirname(__file__));
 $self->title = $about['title'];
 $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
-$this->templateitems = $templates['item'];
-$this->templates = $templates['items'];
+$self->templateitems = $templates['item'];
+$self->templates = $templates['items'];
 $self->save();
 
-  if (dbversion) {
     $manager = tdbmanager::instance();
     $manager->createtable($self->table,
-    'id int UNSIGNED NOT NULL auto_increment,
+    "id int UNSIGNED NOT NULL auto_increment,
 status enum('opened', 'closed') default  'opened',
-type enum('radio', button', 'link', 'custom') default 'radio',
-sign varchar(32) not null,
+type enum('radio', 'button', 'link', 'custom') default 'radio',
+hash varchar(32) not null,
 title text not null,
 items text not null,
 votes text not null,
 
     PRIMARY KEY(id),
-key sign(sign)
-    ');
+key hash(hash)
+    ");
 
     $manager->createtable($self->userstable,
     'id int UNSIGNED NOT NULL auto_increment,
@@ -37,8 +37,8 @@ cookie varchar(32) NOT NULL,
 key cookie(cookie)
 ');
 
-    $manager->createtable($self->resulttable,
-poll int UNSIGNED NOT NULL default 0,
+    $manager->createtable($self->votestable,
+'poll int UNSIGNED NOT NULL default 0,
 user int UNSIGNED NOT NULL default 0,
 vote int UNSIGNED NOT NULL default 0,
     PRIMARY KEY(poll, user)
@@ -46,9 +46,8 @@ vote int UNSIGNED NOT NULL default 0,
 
 $cron = tcron::instance();
 $cron->addweekly(get_class($self), 'optimize', null);
-  }
-  
-  $filter = tcontentfilter::instance();
+
+    $filter = tcontentfilter::instance();
 $filter->lock();
   $filter->beforecontent = $self->beforefilter;
 $filter->beforefilter = $self->filter;
@@ -56,14 +55,14 @@ $filter->unlock();
 
 $xmlrpc = TXMLRPC::instance();
 $xmlrpc->lock();
-$xmlrpc->add('litepublisher.poll.sendvote', get_class($self), 'sendvote');
-$xmlrpc->add('litepublisher.poll.getcookie', get_class($self), 'getcookie');
+$xmlrpc->add('litepublisher.poll.sendvote', 'sendvote', get_class($self));
+$xmlrpc->add('litepublisher.poll.getcookie', 'getcookie', get_class($self));
 $xmlrpc->unlock();
 }
 
 function tpollsUninstall($self) {
 $cron = tcron::instance();
-$cron->deleteclass(get_class($this));
+$cron->deleteclass(get_class($self));
 
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
@@ -71,12 +70,10 @@ $cron->deleteclass(get_class($this));
 $xmlrpc = TXMLRPC::instance();
 $xmlrpc->deleteclass(get_class($self));
 
-  if ($self->dbversion) {
     $manager = tdbmanager::instance();
     $manager->deletetable($self->table);
     $manager->deletetable($self->userstable);
-    $manager->deletetable($self->resulttable);
-  }
+    $manager->deletetable($self->votestable);
 }
 
 ?>
