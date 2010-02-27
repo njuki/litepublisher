@@ -66,18 +66,18 @@ $this->addmap('templates', $a);
     return false;
   }
   
-public function addvote($idpoll, $iduser, $vote) {
+public function addvote($id, $iduser, $vote) {
 if (!$this->itemexists($id)) return  false;
 $vote = (int) $vote;
 $db = $this->getdb($this->votestable);
 $db->add(array(
-'poll' => $idpoll, 
+'id' => $id, 
 'user' => $iduser,
 'vote' => $vote
 ));
 $table = $db->prefix . $this->votestable;
 $res = $db->query("select vote as vote, count(user) as count from $table
-where poll = $idpoll  group by vote order by vote asc");
+where id = $id group by vote order by vote asc");
 
 $votes = array();
 while($item = $db->fetchassoc($res)) {
@@ -142,7 +142,7 @@ return true;
 public function hasvote($idpoll, $iduser) {
 $idpoll = (int) $idpoll;
 $iduser = (int) $iduser;
-return $this->getdb($this->votestable)->findid("poll = $idpoll and user = $iduser");
+return $this->getdb($this->votestable)->findid("id = $idpoll and user = $iduser");
 }
 
 public function optimize() {
@@ -280,9 +280,10 @@ $args->item = $item;
 $args->votes = $votes[$index];
 $result .= $theme->parsearg($tml, $args);
 }
+$args->items = $result;
 $tml = $this->templates[$poll['type']];
-$result = sprintf($theme->parsearg($tml, $args), $result);
-return $result;
+$result = $theme->parsearg($tml, $args);
+return str_replace("'", '"', $result);
 }
 
 public function getcookie($cookie) {
