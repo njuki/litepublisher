@@ -24,7 +24,7 @@ return self::localabout(litepublisher::$paths->plugins .  $name );
 
 public static function localabout($dir) {
 $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
-    $about = parse_ini_file($$filename, true);
+    $about = parse_ini_file($filename, true);
     if (isset($about[litepublisher::$options->language])) {
       $about['about'] = $about[litepublisher::$options->language] + $about['about'];
     }
@@ -44,8 +44,9 @@ $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
     'class' => $classname,
     'file' => $filename
     );
-    $this->Save();
+
     litepublisher::$classes->Add($classname, $filename, $name);
+    $this->Save();
     $this->added($name);return $this->autoid;
   }
   
@@ -54,6 +55,7 @@ $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
     $item = $this->items[$name];
     unset($this->items[$name]);
     $this->save();
+
     if (class_exists($item['class'])) {
       $plugin = getinstance($item['class']);
       if ($plugin instanceof tplugin) {
@@ -79,7 +81,6 @@ $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
     $add = array_diff($list, array_keys($this->items));
     $delete  = array_diff(array_keys($this->items), $list);
     $delete  = array_intersect($delete, tfiler::getdir(litepublisher::$paths->plugins));
-    
     $this->lock();
     foreach ($delete as $name) {
       $this->Delete($name);

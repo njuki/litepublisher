@@ -6,8 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcontentfilter extends tevents
-{
+class tcontentfilter extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
@@ -33,8 +32,7 @@ class tcontentfilter extends tevents
   }
   
   public function SetPostContent(tpost $post, $s) {
-    $this->beforecontent($post->id, &$s);
-    $s = $this->FilterInternalLinks($s);
+    $this->beforecontent($post, &$s);
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
     preg_match('/\[cut(.*?)?\]/', $s, $matches)
@@ -136,28 +134,6 @@ class tcontentfilter extends tevents
   
   public static function ValidateEmail($email) {
   return  preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $email);
-  }
-  
-  public function FilterInternalLinks($s) {
-    if (strpos($s, '[bloglink]')) {
-      $bloglink = "<a href=\"litepublisher::$options->urllitepublisher::$options->home\">litepublisher::$options->name</a>";
-      $s = str_replace('[bloglink]', $bloglink, $s);
-    }
-    
-    if (strpos($s, '[prevpost]')) {
-      $posts = &TPosts::instance();
-      $last = $posts->GetRecent(1);
-      $post = &TPost::instance($last[0]);
-      $link = "<a href=\"litepublisher::$options->url$post->url\">$post->title</a>";
-      $s = str_replace('[lastpost]', $link, $s);
-    }
-    
-    if (strpos($s, '[file]')) {
-      $files = &TFiles::instance();
-      $s = str_replace('[file]', $files->Getlink($files->autoid), $s);
-    }
-    
-    return $s;
   }
   
   public static function quote($s) {
