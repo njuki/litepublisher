@@ -61,10 +61,11 @@ class tclasses extends titems {
     if (!isset($this->items[$class]) ||
     ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
       $this->items[$class] = array($filename, $path);
-      $this->save();
+      //$this->save();
       $instance = $this->getinstance($class);
       if (method_exists($instance, 'install')) $instance->install();
     }
+      $this->save();
     $this->added($class);
   }
   
