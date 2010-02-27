@@ -58,11 +58,9 @@ pollclient.getcookie = function() {
 this.create();
 this.client.litepublisher.poll.getcookie( {
 params:[this.cookie],
-
-                 onSuccess:function(result){                     
-this.setcookie(result);
+                 onSuccess:function(result) {
+pollclient.setcookie(result);
 },
-
                   onException:function(errorObj){ 
                     alert(errorObj.message);
 },
@@ -73,12 +71,15 @@ onComplete:function(responseObj){ }
 }
 
 pollclient.setcookie = function(cookie) {
+try {
 if (cookie != this.cookie) {
 this.set_cookie('polluser', cookie, false);
 this.cookie = cookie;
 }
+
 this.cookierequested = true;
 if (this.oncookie) this.oncookie();
+} catch (e) { alert(e.message); }
 }
 
 pollclient.sendvote = function (idpoll, vote) {
@@ -115,9 +116,9 @@ this.sendvote(idpoll, vote);
 };
 }
 
-pollclient.radiovote = function(idpoll, form) {
+pollclient.radiovote = function(idpoll, btn) {
 try {
-var elems =  form.elements;
+var elems =  btn.form.elements;
 	for (var i = 0, n = elems.length; i < n; i++) {
 		if((elems[i].type == 'radio') && (elems[i].checked = true)) {
 var vote = elems[i].value;

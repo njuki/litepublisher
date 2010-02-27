@@ -38,10 +38,10 @@ key cookie(cookie)
 ');
 
     $manager->createtable($self->votestable,
-'poll int UNSIGNED NOT NULL default 0,
+'id int UNSIGNED NOT NULL default 0,
 user int UNSIGNED NOT NULL default 0,
 vote int UNSIGNED NOT NULL default 0,
-    PRIMARY KEY(poll, user)
+    PRIMARY KEY(id, user)
 ');
 
 $cron = tcron::instance();
