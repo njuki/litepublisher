@@ -10,6 +10,7 @@ function tpollsInstall($self) {
 if (!dbversion) die("Plugin can be installed only on database version");
 $about = tplugins::localabout(dirname(__file__));
 $self->title = $about['title'];
+$self->voted = $about['voted'];
 $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
 $self->templateitems = $templates['item'];
 $self->templates = $templates['items'];
@@ -58,9 +59,17 @@ $xmlrpc->lock();
 $xmlrpc->add('litepublisher.poll.sendvote', 'sendvote', get_class($self));
 $xmlrpc->add('litepublisher.poll.getcookie', 'getcookie', get_class($self));
 $xmlrpc->unlock();
+
+litepublisher::$classes->classes['poll'] = get_class($self);
+litepublisher::$classes->save();
+
+litepublisher::$options->parsepost = true;
 }
 
 function tpollsUninstall($self) {
+unset(litepublisher::$classes->classes['poll']);
+litepublisher::$classes->save();
+
 $cron = tcron::instance();
 $cron->deleteclass(get_class($self));
 

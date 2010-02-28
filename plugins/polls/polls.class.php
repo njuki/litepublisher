@@ -13,6 +13,8 @@ public $votestable;
 public $templateitems;
 public $templates;
 private $types;
+private $id;
+private $curvote;
   
   public static function instance() {
     return getinstance(__class__);
@@ -27,11 +29,37 @@ $this->userstable = 'pollusers';
 $this->votestable = 'pollvotes';
 $this->addevents('added', 'deleted', 'edited');
 $this->data['title'] = 'new poll';
+$this->data['voted'] = '';
 $this->types = array('radio', 'button', 'link', 'custom');
 $a = array_combine($this->types, array_fill(0, count($this->types), ''));
 $this->addmap('templateitems', $a);
 $this->addmap('templates', $a);
+
+$this->id = 0;
+$this->curvote = 0;
   }
+
+public function __get($name) {
+if (strbegin($name, 'start_')) {
+$id = (int) substr($name, strlen('start_'));
+if (($id > 0) && $this->itemexists($id)) {
+$this->id = $id;
+$this->curvote = 0;
+ttheme::$vars['pull'] = $this;
+}
+return '';
+}
+if ($name == 'end') return '';
+
+return parent::__get($name);
+}
+
+public function getvotes() {
+$item = $this->getitem($this->id);
+$votes = explode(',', $item['votes']);
+if ($this->curvote >= count($votes)) return 0;
+return $votes[$this->curvote++];
+}
 
   public function getitem($id) {
     if (isset($this->items[$id])) return $this->items[$id];
@@ -75,16 +103,20 @@ $db->add(array(
 'user' => $iduser,
 'vote' => $vote
 ));
+
+// потому что после подсчета в запросе будут только не нулевые результаты
+$item = $this->getitem($id);
+$votes = explode(',', $item['votes']);
+
 $table = $db->prefix . $this->votestable;
 $res = $db->query("select vote as vote, count(user) as count from $table
 where id = $id group by vote order by vote asc");
 
-$votes = array();
 while($item = $db->fetchassoc($res)) {
 $votes[$item['vote']] = $item['count'];
 }
 
-$this->db->setvalue($idpoll, 'votes', implode(',', $votes));
+$this->db->setvalue($id, 'votes', implode(',', $votes));
 return $votes;
 }
   
@@ -267,23 +299,22 @@ private function gethtml($id) {
 $result = '';
 $poll = $this->getitem($id);
 $items = explode("\n", $poll['items']);
-$votes = explode(',', $poll['votes']);
 $theme = ttheme::instance();
 $args = targs::instance();
 $args->id = $id;
 $args->title = $poll['title'];
+$args->votes = '&#36;poll.votes';
 $tml = $this->templateitems[$poll['type']];
 foreach ($items as $index => $item) {
 $args->checked = 0 == $index;
 $args->index = $index;
 $args->item = $item;
-$args->votes = $votes[$index];
 $result .= $theme->parsearg($tml, $args);
 }
-$args->items = $result;
+$args->items = "&#36;poll.start_$id $result &#36;poll.end";
 $tml = $this->templates[$poll['type']];
 $result = $theme->parsearg($tml, $args);
-return str_replace("'", '"', $result);
+return str_replace(array("'", '&#36;'), array('"', '$'), $result);
 }
 
 public function getcookie($cookie) {
@@ -299,7 +330,7 @@ public function sendvote($idpoll, $vote, $cookie) {
 if (!$this->itemexists($idpoll)) return $this->error("poll not found", 404);
 $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie));
 if (!$iduser) return $this->error("User not found", 404);
-if ($this->hasvote($idpoll, $iduser)) return $this->error('already you have vote', 403);
+if ($this->hasvote($idpoll, $iduser)) return $this->error($this->voted, 403);
 return $this->addvote($idpoll, $iduser, (int) $vote);
 }
 

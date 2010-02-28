@@ -107,7 +107,7 @@ onComplete:function(responseObj){ }
 
 }
 
-pollclient.send_vote = function(idpoll, vote) {
+pollclient.clickvote = function(idpoll, vote) {
 this.create();
 if (this.cookierequested) return this.sendvote(idpoll, vote);
 
@@ -127,5 +127,5 @@ break;
 }
 } catch (e) { alert(e.message); }
 
-this.send_vote(idpoll, vote);
+this.clickvote(idpoll, vote);
 }
