@@ -232,6 +232,7 @@ class tadminwidgets extends tadminmenu {
   
   public function processform() {
     litepublisher::$urlmap->clearcache();
+$widgets = twidgets::instance();
     $h2 = $this->html->h2;
     
     switch ($this->name) {
@@ -264,7 +265,6 @@ class tadminwidgets extends tadminmenu {
           $std->add($name, $names[$name], 0);
         }
       }
-      $std->updateajax();
       $std->unlock();
       $widgets->unlock();
       return $h2->stdsuccess;

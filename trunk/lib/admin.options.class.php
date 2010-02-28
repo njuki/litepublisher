@@ -174,7 +174,7 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'view':
-      if (!empty($postsperpage)) $options->postsperpage = (int) $postsperpage;
+      if (!empty($perpage)) $options->perpage = (int) $perpage;
       $filter = tcontentfilter::instance();
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;

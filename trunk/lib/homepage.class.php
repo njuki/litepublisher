@@ -40,13 +40,13 @@ public function getdescription() {}
     $theme = ttheme::instance();
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
-    $result .=$theme->getpages(litepublisher::$options->home, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->postsperpage));
+    $result .=$theme->getpages(litepublisher::$options->home, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
     return $result;
   }
   
   public function getitems() {
     $Posts = tposts::instance();
-    return $Posts->GetPublishedRange(litepublisher::$urlmap->page, litepublisher::$options->postsperpage);
+    return $Posts->GetPublishedRange(litepublisher::$urlmap->page, litepublisher::$options->perpage);
   }
   
   public function settext($s) {

@@ -84,7 +84,7 @@ class trss extends tevents {
   public function GetRSSRecentPosts() {
     $this->domrss->CreateRoot(litepublisher::$options->url. '/rss/', litepublisher::$options->name);
     $posts = tposts::instance();
-    $list = $posts->getrecent(litepublisher::$options->postsperpage);
+    $list = $posts->getrecent(litepublisher::$options->perpage);
     foreach ($list as $id ) {
       $post = tpost::instance($id);
       $this->AddRSSPost($post);
@@ -95,7 +95,7 @@ class trss extends tevents {
   public function GetRecentComments() {
     $this->domrss->CreateRoot(litepublisher::$options->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
     $manager = tcommentmanager::instance();
-    $recent = $manager->getrecent(litepublisher::$options->postsperpage);
+    $recent = $manager->getrecent(litepublisher::$options->perpage);
     $title = tlocal::$data['comment']['onpost'] . ' ';
     $a = array();
     $comment = new tarray2prop($a);
@@ -115,11 +115,11 @@ class trss extends tevents {
     $comment = new tarray2prop($a);
     if (dbversion) {
       $recent = $comments->getitems("post = $idpost and status = 'approved'
-      order by $comments->thistable.posted desc limit litepublisher::$options->postsperpage");
+      order by $comments->thistable.posted desc limit litepublisher::$options->perpage");
       
     } else {
-      $from =max(0, count($comments->items) - litepublisher::$options->postsperpage);
-      $items = array_slice(array_keys($comments->items), $from, litepublisher::$options->postsperpage);
+      $from =max(0, count($comments->items) - litepublisher::$options->perpage);
+      $items = array_slice(array_keys($comments->items), $from, litepublisher::$options->perpage);
       $recent = array();
       $comusers = tcomusers::instance($idpost);
       foreach ($items as $id) {

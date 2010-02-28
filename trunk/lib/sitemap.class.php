@@ -67,7 +67,7 @@ public function getdescription() {}
         $result .= sprintf("<li><a href=\"%s%s\">%s</a>%s</li>\n", litepublisher::$options->url, $item['url'], $item['title'], $postpages);
       }
     } else {
-      $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
+      $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);
     }
     
@@ -126,7 +126,7 @@ public function getdescription() {}
     
     //home page
     $this->prio = 9;
-    $this->write('/', ceil(litepublisher::$classes->posts->archivescount / litepublisher::$options->postsperpage));
+    $this->write('/', ceil(litepublisher::$classes->posts->archivescount / litepublisher::$options->perpage));
     $this->prio = 8;
     $this->writeposts();
     
@@ -179,7 +179,7 @@ public function getdescription() {}
   
   
   private function writetags($tags) {
-    $postsperpage = $tags->lite ? 1000 : litepublisher::$options->postsperpage;
+    $perpage = $tags->lite ? 1000 : litepublisher::$options->perpage;
     if (dbversion) {
       $db = litepublisher::$db;
       $table = $tags->thistable;
@@ -187,11 +187,11 @@ public function getdescription() {}
       where $db->urlmap.id = $table.idurl");
       
       while ($item = $db->fetchassoc($res)) {
-        $this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
+        $this->write($item['url'], ceil($item['itemscount']/ $perpage));
       }
     } else {
       foreach ($tags->items as $id => $item) {
-        $this->write($item['url'], ceil($item['itemscount']/ $postsperpage));
+        $this->write($item['url'], ceil($item['itemscount']/ $perpage));
       }
     }
   }
@@ -199,7 +199,7 @@ public function getdescription() {}
   private function writearchives() {
     $db = litepublisher::$db;
     $arch = tarchives::instance();
-    $postsperpage = $arch->lite ? 1000 : litepublisher::$options->postsperpage;
+    $perpage = $arch->lite ? 1000 : litepublisher::$options->perpage;
     if (dbversion) $db->table = 'posts';
     foreach ($arch->items as $date => $item) {
       if (dbversion) {
@@ -207,7 +207,7 @@ public function getdescription() {}
       } else {
         $count = count($item['posts']);
       }
-      $this->write($item['url'], ceil($count/ $postsperpage));
+      $this->write($item['url'], ceil($count/ $perpage));
     }
   }
   
