@@ -11,6 +11,7 @@ class ttheme extends tevents {
   public static $vars = array();
   public $name;
   public $tmlfile;
+public $parsing;
   private $themeprops;
   
   /*
@@ -44,6 +45,7 @@ class ttheme extends tevents {
     $this->themeprops = new tthemeprops($this->data);
     $this->name = '';
     $this->tmlfile = 'index';
+$this->parsing = array();
     $this->data['theme'] = '';
     $this->data['menu'] = array();
     $this->data['content'] = array();
@@ -131,12 +133,16 @@ return '';
     // important! $s can be an object of tthemeprops
     // convert to string is automatic
     $s = str_replace('$options.url', litepublisher::$options->url, $s);
+array_push($this->parsing, $s);
+
     try {
-      return preg_replace_callback('/\$(\w*+)\.(\w*+)/', __class__ . '::parsecallback', $s);
+      $result = preg_replace_callback('/\$(\w*+)\.(\w*+)/', __class__ . '::parsecallback', $s);
     } catch (Exception $e) {
+$result = '';
       litepublisher::$options->handexception($e);
     }
-    return '';
+array_pop($this->parsing);
+    return $result;
   }
   
   public function parsearg($s, targs $args) {
