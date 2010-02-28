@@ -1,4 +1,5 @@
 var client;
+var widgets = { items: [] };
 
 function createclient() {
 return new rpc.ServiceProxy(ltoptions.pingback, {
@@ -24,8 +25,12 @@ methods: [
 }); 
 }
 
-	function loadwidget(name, idtag) {
+widgets.load = function (node, name, idtag) {
 		var widget = resolvetag(idtag, 'ul');
+if (! widget) return alert('Widget not found');
+node.onclick = widgets.hide;
+widgets.items.push([node, widget]);
+
 if (client == undefined) client = createclient();
 
 client.litepublisher.getwidget( {
@@ -48,7 +53,35 @@ onComplete:function(responseObj){ }
 
 }
 
-function findnexttag(node, tag) {
+widgets.setvisible = function(node, value) {
+try {
+for (var i = widgets.items.length - 1; i >= 0; i--) {
+if (node == widgets.items[i][0]) {
+var widget = widgets.items[i][1];
+break;
+}
+}
+
+if (value) {
+widget.style.visibility = 'visible'; 
+node.onclick = widgets.hide;
+} else {
+widget.style.visibility = 'hidden'; 
+node.onclick = widgets.show;
+}
+
+} catch (e) { alert(e.message); }
+}
+
+widgets.hide = function() {
+widgets.setvisible(this, false);
+}
+
+widgets.show = function(node) {
+widgets.setvisible(this, true);
+}
+
+function findnexttag (node, tag) {
 while (node = node.nextSibling) {
 if (node.tagName.toLowerCase() == tag) return node;
 }
