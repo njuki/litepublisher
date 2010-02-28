@@ -91,19 +91,36 @@ class ttheme extends tevents {
   
   public static function parsecallback($names) {
     $name = $names[1];
+$prop = $names[2];
     if ($name == 'options') {
+if (($prop == 'password') || ($prop == 'cookie')) return '';
       $var = litepublisher::$options;
     } elseif (isset(self::$vars[$name])) {
       $var =  self::$vars[$name];
     } elseif (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
-      $var =  litepublisher::$classes->$name;
+$classes = litepublisher::$classes;
+    if (isset($classes->classes[$name])) {
+$var = $classes->getinstance($classes->classes[$name]);
+} else {
+    $class = 't' . $name;
+    if (isset($classes->items[$class])) $var = $classes->getinstance($class);
+}
     }
     
-    //if (!isset($var)) echo "$name\n";
+    if (!isset($var)) {
+$template = ttemplate::instance();
+$var = $template->ondemand($name);
+}
+
+    if (!isset($var)) {
+litepublisher::$options->trace("Object $name not found");
+return '';
+}
+
     try {
-    return $var->{$names[2]};
+    return $var->{$prop};
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }

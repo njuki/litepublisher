@@ -21,7 +21,7 @@ class toptions extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'options';
-    $this->addevents('changed', 'PostsPerPageChanged');
+    $this->addevents('changed', 'perpagechanged');
     unset($this->cache);
     $this->gmt = date('Z');
     $this->errorlog = '';
@@ -66,8 +66,8 @@ class toptions extends tevents {
   }
   
   private function dochanged($name, $value) {
-    if ($name == 'postsperpage') {
-      $this->PostsPerPageChanged();
+    if ($name == 'perpage') {
+      $this->perpagechanged();
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
     } elseif ($name == 'cache') {

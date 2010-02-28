@@ -12,7 +12,7 @@ class tcontactform extends tmenu {
     return getinstance(__class__);
   }
   
-  public function processform($id) {
+  public function processform() {
     if (!isset($_POST['contactvalue'])) return  '';
     $lang = tlocal::instance('contactform');
     $error = "<p><strong>$lang->error</strong></p>\n";

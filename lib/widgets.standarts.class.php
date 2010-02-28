@@ -108,7 +108,7 @@ class tstdwidgets extends titems {
       } else {
         $id = 'this';
       }
-      $title = "<a onclick=\"loadwidget('$name', $id)\">$title</a>";
+      $title = "<a onclick=\"widgets.load(this, '$name', $id)\">$title</a>";
       $content = '';
     } elseif ($name == 'comments') {
       $content = $this->getcommentswidget($id);

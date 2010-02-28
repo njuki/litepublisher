@@ -143,10 +143,10 @@ public function getdescription() {}
     }
     
     $theme = ttheme::instance();
-    $postsperpage = $this->lite ? 1000 : litepublisher::$options->postsperpage;
-    $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
+    $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
+    $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     $result = $theme->getposts($list, $this->lite);
-    $result .=$theme->getpages($this->items[$this->date]['url'], litepublisher::$urlmap->page, ceil(count($items)/ $postsperpage));
+    $result .=$theme->getpages($this->items[$this->date]['url'], litepublisher::$urlmap->page, ceil(count($items)/ $perpage));
     return $result;
   }
   

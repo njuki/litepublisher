@@ -329,12 +329,12 @@ class tcommontags extends titems implements  itemplate {
     $items = $this->itemsposts->getposts($this->id);
     $Posts = litepublisher::$classes->posts;
     $items = $Posts->sortbyposted($items);
-    $postsperpage = $this->lite ? 1000 : litepublisher::$options->postsperpage;
-    $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $postsperpage, $postsperpage);
+    $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
+    $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     $theme = ttheme::instance();
     $result .= $theme->getposts($list, $this->lite);
     $item = $this->getitem($this->id);
-    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil(count($items)/ $postsperpage));
+    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil(count($items)/ $perpage));
     return $result;
   }
   

@@ -46,7 +46,7 @@ class trssMultimedia extends tevents {
     $this->domrss = new Tdomrss;
     $this->domrss->CreateRootMultimedia(litepublisher::$urlmap->url, 'media');
     
-    $list = $this->getrecent($arg, litepublisher::$options->postsperpage);
+    $list = $this->getrecent($arg, litepublisher::$options->perpage);
     foreach ($list as $id) {
       $this->addfile($id);
     }
