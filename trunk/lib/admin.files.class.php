@@ -10,7 +10,7 @@ class tadminfiles extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
-  
+
   public function getcontent() {
     $result = '';
     $files = tfiles::instance();

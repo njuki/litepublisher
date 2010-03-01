@@ -111,12 +111,12 @@ class tdbmanager  {
     
     $db->exec("delete from $db->comments where status = 'deleted'");
     
-    $db->exec("delete from $db->authors where id not in
+    $db->exec("delete from $db->comusers where id not in
     (select DISTINCT author from $db->comments)");
     
     //subscribtions
     $db->exec("delete from $db->subscribers where post not in (select id from $db->posts)");
-    $db->exec("delete from $db->subscribers where author not in (select id from $db->comusers)");
+    $db->exec("delete from $db->subscribers where item not in (select id from $db->comusers)");
   }
   
   public function optimize() {
@@ -125,7 +125,7 @@ class tdbmanager  {
     $prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $this->gettables();
     foreach ($tables as $table) {
-      if (strbegin(strtolower($table), $prefix)) $this->exec("optimize $table");
+      if (strbegin(strtolower($table), $prefix)) $this->exec("OPTIMIZE TABLE $table");
     }
   }
   
