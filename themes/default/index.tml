@@ -19,12 +19,9 @@
 <link rel="openid2.provider" href="$options.url/openid/" />
 <link rel="openid.delegate" href="$options.url/openid/" />
 <link rel="openid2.local_id" href="$options.url/openid/" />
-	<script type="text/javascript" src="$options.files/js/litepublisher/rpc.js"></script>
-	<script type="text/javascript" src="$options.files/js/litepublisher/client.js"></script>
-	<script type="text/javascript" src="$options.files/js/lightbox/js/prototype.js"></script>
-<script type="text/javascript" src="$options.files/js/lightbox/js/scriptaculous.js?load=effects,builder"></script>
-<script type="text/javascript" src="$options.files/js/lightbox/js/lightbox.js"></script>
-<link rel="stylesheet" href="$options.files/js/lightbox/css/lightbox.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="$options.files/js/litepublisher/rpc.min.js"></script>
+	<script type="text/javascript" src="$options.files/js/litepublisher/client.min.js"></script>
+	<script type="text/javascript" src="$options.files/js/jsibox/jsibox_basic.js"></script>
 $template.head
 </head>
 <body>
@@ -109,7 +106,7 @@ $post.tagslinks
 <!--files-->
 <ul id="files-$post.id">
 <!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
-<!--image--><li><a rel="lightbox" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
+<!--image--><li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
 <!--audio-->
 <li><a href="$options.files/files/$filename" title="$title">$title</a>
 <span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
