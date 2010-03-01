@@ -1,0 +1,36 @@
+<h2>$lang.options</h2>
+<form name="form" action="" method="post" >
+<p><input type='text' name='title' id='title' value='$title' size='22' />
+<label for='title'><strong>$langdeftitle</strong></label></p>
+
+
+<p><input type='text' name='voted' id='voted' value='$voted' size='22' />
+<label for='voted'><strong>$langvotedmesg</strong></label></p>
+
+<p><strong>$langradioitem:</strong><br />
+[area:radioitem]</p>
+
+
+<p><strong>$langradioitems:</strong><br />
+[area:radioitems]</p>
+
+<p><strong>$langbutton:</strong><br />
+[area:buttonitem]</p>
+
+<p><strong>$langbuttons:</strong><br />
+[area:buttonitems]</p>
+
+<p><strong>$langlink:</strong><br />
+[area:linkitem]</p>
+
+<p><strong>$langlinks:</strong><br />
+[area:linkitems]</p>
+
+<p><strong>$langcustom:</strong><br />
+[area:customitem]</p>
+
+<p><strong>$langcustoms:</strong><br />
+[area:customitems]</p>
+
+ <p><input type="submit" name="Submit" value="$lang.update"/></p>
+</form>

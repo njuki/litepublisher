@@ -1,10 +1,10 @@
 var pollclient = {
-created: false,
 client: null,
-cookie: '',
+created: false,
 cookierequested: false,
+cookie: '',
 oncookie: null,
-type: ''
+items: []
 };
 
 pollclient.create= function () {
@@ -84,6 +84,11 @@ if (this.oncookie) this.oncookie();
 
 pollclient.sendvote = function (idpoll, vote) {
 this.create();
+for (var i = this.items.length -1; i >= 0; i--) {
+if (idpoll == this.items[i]) return false;
+}
+this.items.push(idpoll);
+
 this.client.litepublisher.poll.sendvote( {
 params:[idpoll, vote, this.cookie],
 
@@ -120,7 +125,7 @@ pollclient.radiovote = function(idpoll, btn) {
 try {
 var elems =  btn.form.elements;
 	for (var i = 0, n = elems.length; i < n; i++) {
-		if((elems[i].type == 'radio') && (elems[i].checked = true)) {
+		if((elems[i].type == 'radio') && (elems[i].checked == true)) {
 var vote = elems[i].value;
 break;
 	}
