@@ -44,8 +44,12 @@ class tmetapost extends titem {
   
   //db
   public function load() {
-    if (dbversion)  return $this->LoadFromDB();
-    return parent::load();
+    if ($this->dbversion)  {
+      $this->LoadFromDB();
+    } else {
+      parent::load();
+    }
+    return true;
   }
   
   protected function LoadFromDB() {
