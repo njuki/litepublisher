@@ -100,7 +100,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $args = targs::instance();
     $files = tfiles::instance();
     if (dbversion) {
-      $list = $files->select("media = 'icon' order by posted");
+      $list = $files->select("media = 'icon'", " order by posted");
       if (!$list) $list = array();
     } else {
       $list= array();

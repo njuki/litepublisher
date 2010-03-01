@@ -64,12 +64,12 @@ class tcron extends tabstractcron {
     'func' => $func,
     'arg' => serialize($arg)
     ));
-
-$this->added($id);    
+    
+    $this->added($id);
     return $id;
   }
-
-public function addnightly($class, $func, $arg) {
+  
+  public function addnightly($class, $func, $arg) {
     $id = $this->db->add(array(
     'date' => date('Y-m-d 03:15:00', time()),
     'type' => 'day',
@@ -77,11 +77,11 @@ public function addnightly($class, $func, $arg) {
     'func' => $func,
     'arg' => serialize($arg)
     ));
-        $this->added($id);
+    $this->added($id);
     return $id;
-}
-
-public function addweekly($class, $func, $arg) {
+  }
+  
+  public function addweekly($class, $func, $arg) {
     $id = $this->db->add(array(
     'date' => date('Y-m-d 03:15:00', time()),
     'type' => 'week',
@@ -89,14 +89,14 @@ public function addweekly($class, $func, $arg) {
     'func' => $func,
     'arg' => serialize($arg)
     ));
-
+    
     $this->added($id);
-return $id;
-}
+    return $id;
+  }
   
   public function delete($id) {
     $this->db->iddelete($id);
-$this->deleted($id);
+    $this->deleted($id);
   }
   
   public function deleteclass($class) {

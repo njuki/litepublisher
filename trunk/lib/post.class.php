@@ -387,10 +387,10 @@ class tpost extends titem implements  itemplate {
       $result .= $theme->getpages($this->url, $urlmap->page, $this->countpages);
     }
     
-if (litepublisher::$options->parsepost) {
-$theme = ttheme::instance();
-$result = $theme->parse($result);
-}
+    if (litepublisher::$options->parsepost) {
+      $theme = ttheme::instance();
+      $result = $theme->parse($result);
+    }
     $posts->aftercontent($this->id, &$result);
     return $result;
   }

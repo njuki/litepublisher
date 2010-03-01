@@ -136,20 +136,20 @@ class tcron extends tabstractcron {
     $this->Save();
     $task = new tcrontask($this);
     $task->Add($id, $type, $class, $func, $arg );
-$this->added($id);    
+    $this->added($id);
     return $id;
   }
-
+  
   public function addnightly($class, $func, $arg) {
     $id = ++$this->data['autoid'] ;
     $this->Save();
     $task = new tcrontask($this);
-$task->lock();
-   $task->Add($id, 'day', $class, $func, $arg );
-        $d = getdate(time());
+    $task->lock();
+    $task->Add($id, 'day', $class, $func, $arg );
+    $d = getdate(time());
     $task->time = mktime(3,4,0, $d['mon'] , $d['mday'] + 1, $d['year']);
-$task->unlock();
-$this->added($id);    
+    $task->unlock();
+    $this->added($id);
     return $id;
   }
   
@@ -157,19 +157,19 @@ $this->added($id);
     $id= ++$this->data['autoid'] ;
     $this->Save();
     $task = new tcrontask($this);
-$task->lock();
-   $task->Add($id, 'week', $class, $func, $arg );
-        $d = getdate(time());
+    $task->lock();
+    $task->Add($id, 'week', $class, $func, $arg );
+    $d = getdate(time());
     $task->time = mktime(3,4,0, $d['mon'] , $d['mday'] + 1, $d['year']);
-$task->unlock();
-$this->added($id);    
+    $task->unlock();
+    $this->added($id);
     return $id;
   }
   
   public function delete($id) {
     @unlink($this->dir . $id . '.php');
     @unlink($this->dir . $id . '.bak.php');
-$this->deleted($id);
+    $this->deleted($id);
   }
   
   public function deleteclass($class) {

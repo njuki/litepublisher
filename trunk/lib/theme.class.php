@@ -11,7 +11,7 @@ class ttheme extends tevents {
   public static $vars = array();
   public $name;
   public $tmlfile;
-public $parsing;
+  public $parsing;
   private $themeprops;
   
   /*
@@ -45,7 +45,7 @@ public $parsing;
     $this->themeprops = new tthemeprops($this->data);
     $this->name = '';
     $this->tmlfile = 'index';
-$this->parsing = array();
+    $this->parsing = array();
     $this->data['theme'] = '';
     $this->data['menu'] = array();
     $this->data['content'] = array();
@@ -93,34 +93,34 @@ $this->parsing = array();
   
   public static function parsecallback($names) {
     $name = $names[1];
-$prop = $names[2];
+    $prop = $names[2];
     if ($name == 'options') {
-if (($prop == 'password') || ($prop == 'cookie')) return '';
+      if (($prop == 'password') || ($prop == 'cookie')) return '';
       $var = litepublisher::$options;
     } elseif (isset(self::$vars[$name])) {
       $var =  self::$vars[$name];
     } elseif (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
-$classes = litepublisher::$classes;
-    if (isset($classes->classes[$name])) {
-$var = $classes->getinstance($classes->classes[$name]);
-} else {
-    $class = 't' . $name;
-    if (isset($classes->items[$class])) $var = $classes->getinstance($class);
-}
+      $classes = litepublisher::$classes;
+      if (isset($classes->classes[$name])) {
+        $var = $classes->getinstance($classes->classes[$name]);
+      } else {
+        $class = 't' . $name;
+        if (isset($classes->items[$class])) $var = $classes->getinstance($class);
+      }
     }
     
     if (!isset($var)) {
-$template = ttemplate::instance();
-$var = $template->ondemand($name);
-}
-
+      $template = ttemplate::instance();
+      $var = $template->ondemand($name);
+    }
+    
     if (!isset($var)) {
-litepublisher::$options->trace("Object $name not found");
-return '';
-}
-
+      litepublisher::$options->trace("Object $name not found");
+      return '';
+    }
+    
     try {
     return $var->{$prop};
     } catch (Exception $e) {
@@ -133,15 +133,15 @@ return '';
     // important! $s can be an object of tthemeprops
     // convert to string is automatic
     $s = str_replace('$options.url', litepublisher::$options->url, $s);
-array_push($this->parsing, $s);
-
+    array_push($this->parsing, $s);
+    
     try {
       $result = preg_replace_callback('/\$(\w*+)\.(\w*+)/', __class__ . '::parsecallback', $s);
     } catch (Exception $e) {
-$result = '';
+      $result = '';
       litepublisher::$options->handexception($e);
     }
-array_pop($this->parsing);
+    array_pop($this->parsing);
     return $result;
   }
   

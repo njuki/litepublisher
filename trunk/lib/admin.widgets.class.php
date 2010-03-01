@@ -232,7 +232,7 @@ class tadminwidgets extends tadminmenu {
   
   public function processform() {
     litepublisher::$urlmap->clearcache();
-$widgets = twidgets::instance();
+    $widgets = twidgets::instance();
     $h2 = $this->html->h2;
     
     switch ($this->name) {
