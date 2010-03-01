@@ -14,14 +14,14 @@ class thomepageInvert extends thomepage {
   
   public function getitems() {
     $posts = tposts::instance();
-    //    return $Posts->GetPublishedRange(litepublisher::$urlmap->page, litepublisher::$options->postsperpage);
+    //    return $Posts->GetPublishedRange(litepublisher::$urlmap->page, litepublisher::$options->perpage);
     $count = $posts->archivescount;
-    $from = (litepublisher::$urlmap->page - 1) * litepublisher::$options->postsperpage;
+    $from = (litepublisher::$urlmap->page - 1) * litepublisher::$options->perpage;
     if ($from > $count)  return array();
     if (dbversion)  {
-      return $posts->select("status = 'published'", " order by posted asc limit $from, litepublisher::$options->postsperpage");
+      return $posts->select("status = 'published'", " order by posted asc limit $from, litepublisher::$options->perpage");
     } else {
-      $to = min($from + litepublisher::$options->postsperpage , $count);
+      $to = min($from + litepublisher::$options->perpage , $count);
       $arch = array_reverse(array_keys($posts->archives));
       return array_slice($arch, $from, $to - $from);
     }
