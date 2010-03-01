@@ -178,26 +178,26 @@ class tpolls extends tplugin {
   
   public function optimize() {
     $signs = $this->db->queryassoc("select id, hash from $this->thistable");
-    $db = litepublisher::$db;
-    $posts = tposts::instance();
-    $db->table = $posts->rawtable;
-    $deleted = array();
-    foreach ($signs as $item) {
-      $hash = $item['hash'];
-      if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
-      sleep(2);
+    if ($signs) {
+      $db = litepublisher::$db;
+      $posts = tposts::instance();
+      $db->table = $posts->rawtable;
+      $deleted = array();
+      foreach ($signs as $item) {
+        $hash = $item['hash'];
+        if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
+        sleep(2);
+      }
+      
+      if (count($deleted) > 0) {
+        $items = sprintf('(%s)', implode(',', $deleted));
+        $this->db->delete("id in $items");
+        $this->getdb($this->votestable)->delete("id in $items");
+        sleep(2);
+      }
     }
-    
-    if (count($deleted) > 0) {
-      $items = sprintf('(%s)', implode(',', $deleted));
-      $this->db->delete("id in $items");
-      $this->getdb($this->votestable)->delete("id in $items");
-      sleep(2);
-    }
-    
     $db = $this->getdb($this->userstable);
-    $db->delete("id not in (
-    select distinct user from $db->prefix.$this->votestable)");
+    $db->delete("id not in (select distinct user from $db->prefix$this->votestable)");
   }
   
   private function extractitems($s) {
