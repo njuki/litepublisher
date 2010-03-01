@@ -12,7 +12,7 @@ public $userstable;
 public $votestable;
 public $templateitems;
 public $templates;
-private $types;
+public $types;
 private $id;
 private $curvote;
   
@@ -24,7 +24,6 @@ private $curvote;
     parent::create();
 $this->items = array();
     $this->table = 'polls';
-    $this->basename = 'polls';
 $this->userstable = 'pollusers';
 $this->votestable = 'pollvotes';
 $this->addevents('added', 'deleted', 'edited');
@@ -314,6 +313,7 @@ $result .= $theme->parsearg($tml, $args);
 $args->items = "&#36;poll.start_$id $result &#36;poll.end";
 $tml = $this->templates[$poll['type']];
 $result = $theme->parsearg($tml, $args);
+$result = "<script type='text/javascript'>loadjavascript('/plugins/polls/polls.client.js');</script>" . $result;
 return str_replace(array("'", '&#36;'), array('"', '$'), $result);
 }
 
