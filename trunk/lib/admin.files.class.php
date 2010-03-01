@@ -67,9 +67,8 @@ class tadminfiles extends tadminmenu {
     }
     
     $from = $this->getfrom($perpage, $count);
-    
     if (dbversion) {
-      $list = $files->select($sql . " order by posted desc limit $from, $perpage");
+      $list = $files->select($sql, " order by posted desc limit $from, $perpage");
       if (!$list) $list = array();
     } else {
       $list = array_slice($list, $from, $perpage);
@@ -102,12 +101,12 @@ class tadminfiles extends tadminmenu {
       
       $overwrite  = isset($_POST['overwrite']);
       $parser = tmediaparser::instance();
-      $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $overwrite);
+      $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
       return $this->html->h2->success;
     } elseif ($_GET['action'] == 'edit') {
       $id = $this->idget();
       if (!$files->itemexists($id))  return $this->notfound;
-      $files->edit($id, $_POST['title']);
+      $files->edit($id, $_POST['title'], $_POST['description'], $_POST['keywords']);
       return $this->html->h2->edited;
     }
     

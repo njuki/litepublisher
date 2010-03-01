@@ -52,7 +52,6 @@ class tfiles extends titems {
     $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
     $item['author'] = litepublisher::$options->user;
     $item['posted'] = sqldate();
-    $item['keywords'] = '';
     $item['md5'] = md5_file($realfile);
     $item['size'] = filesize($realfile);
     
@@ -67,6 +66,24 @@ class tfiles extends titems {
       $this->added($this->autoid);
       return $this->autoid;
     }
+  }
+  
+  public function edit($id, $title, $description, $keywords) {
+    $item = $this->getitem($id);
+    if (($item['title'] == $title) && ($item['description'] == $description) && ($item['keywords'] == $keywords)) return false;
+    
+    $item['title'] = $title;
+    $item['description'] = $description;
+    $item['keywords'] = $keywords;
+    $this->items[$id] = $item;
+    if ($this->dbversion) {
+      $this->db->updateassoc($item);
+    } else {
+      $this->save();
+    }
+    $this->changed();
+    $this->edited($id);
+    return true;
   }
   
   public function delete($id) {

@@ -26,11 +26,12 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $tempfilename = $this->doupload($filename, $content);
-    return $this->addfile($filename, $tempfilename, $title, $overwrite);
+    return $this->addfile($filename, $tempfilename, $title, '', '', $overwrite);
   }
   
-  public function uploadfile($filename, $tempfilename, $title, $overwrite ) {
+  public function uploadfile($filename, $tempfilename, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
+    if ($description == '') $description = $title;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
@@ -38,7 +39,7 @@ class tmediaparser extends tevents {
     $newtemp = 'tmp.' . md5uniq() . '.' . $parts['filename'];
     $newtemp .= empty($parts['extension']) ? '' : '.' . $parts['extension'];
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
-    return $this->addfile($filename, $newtemp, $title, $overwrite);
+    return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
   }
   
   public function uploadicon($filename, $content, $overwrite ) {
@@ -84,17 +85,18 @@ class tmediaparser extends tevents {
   }
   /*
   public function add($filename, $tempfilename, $title) {
-    return $this->addfile($filename, $tempfilename, $title, true);
+    return $this->addfile($filename, $tempfilename, $title, '', '', true);
   }
   */
   
-  public function addfile($filename, $tempfilename, $title, $overwrite) {
+  public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $info = $this->getinfo($tempfilename);
     $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], $overwrite);
     $item = $info + array(
     'filename' => $filename,
     'title' => $title,
-    'description' => ''
+    'description' => $description,
+    'keywords' => $keywords
     );
     $files = tfiles::instance();
     $files->lock();
