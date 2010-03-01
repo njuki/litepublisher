@@ -1,9 +1,7 @@
 //ansync load javascripts
 var swfumutex = {creator: false, uploader: false };
 
-function filebrowser() {
-if (ltoptions.filebrowser != undefined) return;
-ltoptions.filebrowser = true;
+function filebrowser(link) {
 if (client == undefined) client = createclient();
 client.litepublisher.files.getbrowser( {
 params:['', '', ltoptions.idpost],
@@ -14,7 +12,7 @@ try {
 	div.innerHTML = result;
 var browser = document.getElementById("filebrowser");
 	browser.parentNode.replaceChild(div, browser);
-
+widgets.add(link, div);
 var form = document.getElementById("form");
 form.onsubmit = submitform;
       var hidden = document.createElement('input');
@@ -139,16 +137,16 @@ elems[i].checked = false;
 return true;
 };
 
-function iconbrowser(idicon) {
-if (ltoptions.iconbrowser != undefined) return;
-ltoptions.iconbrowser = true;
+function iconbrowser(link, idicon) {
+var span = document.getElementById("iconbrowser");
+if (!span) return alert('Tag not found');
+widgets.add(link, span);
 if (client == undefined) client = createclient();
 client.litepublisher.files.geticons( {
 params:['', '', idicon],
 
                  onSuccess:function(result){                     
-var div = document.getElementById("iconbrowser");
-div.innerHTML  += result;
+span.innerHTML  = result;
 },
 
                   onException:function(errorObj){ 
@@ -157,18 +155,16 @@ div.innerHTML  += result;
 
 onComplete:function(responseObj){ }
 } );
-
 }
 
-function themebrowser(themename) {
-if (ltoptions.themebrowser != undefined) return;
-ltoptions.themebrowser = true;
+function themebrowser(link, themename) {
+var div = document.getElementById("themebrowser");
+widgets.add(link, div);
 if (client == undefined) client = createclient();
 client.litepublisher.files.getthemes( {
 params:['', '', themename],
 
                  onSuccess:function(result){                     
-var div = document.getElementById("themebrowser");
 div.innerHTML  += result;
 },
 
@@ -181,14 +177,15 @@ onComplete:function(responseObj){ }
 
 }
 
-function selecttheme(themename, name) {
+function selecttheme(link, themename, name) {
+var div = document.getElementById(name);
+widgets.add(link, div);
 if (client == undefined) client = createclient();
 client.litepublisher.files.getthemes( {
 params:['', '', themename],
 
                  onSuccess:function(result){                     
 result = result.replace(new RegExp('"theme"','g'), '"' + name + '"');
-var div = document.getElementById(name);
 div.innerHTML  += result;
 },
 

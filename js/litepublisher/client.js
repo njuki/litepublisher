@@ -28,8 +28,7 @@ methods: [
 widgets.load = function (node, name, idtag) {
 		var widget = resolvetag(idtag, 'ul');
 if (! widget) return alert('Widget not found');
-node.onclick = widgets.hide;
-widgets.items.push([node, widget]);
+widgets.add(node, widget);
 
 if (client == undefined) client = createclient();
 
@@ -51,6 +50,11 @@ widget.innerHTML = result;
 onComplete:function(responseObj){ }
 } );
 
+}
+
+widgets.add = function(node, widget) {
+node.onclick = widgets.hide;
+widgets.items.push([node, widget]);
 }
 
 widgets.setvisible = function(node, value) {
