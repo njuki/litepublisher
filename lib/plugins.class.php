@@ -19,11 +19,11 @@ class tplugins extends TItems {
   }
   
   public function getabout($name) {
-return self::localabout(litepublisher::$paths->plugins .  $name );
-}
-
-public static function localabout($dir) {
-$filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
+    return self::localabout(litepublisher::$paths->plugins .  $name );
+  }
+  
+  public static function localabout($dir) {
+    $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
     $about = parse_ini_file($filename, true);
     if (isset($about[litepublisher::$options->language])) {
       $about['about'] = $about[litepublisher::$options->language] + $about['about'];
@@ -44,7 +44,7 @@ $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
     'class' => $classname,
     'file' => $filename
     );
-
+    
     litepublisher::$classes->Add($classname, $filename, $name);
     $this->Save();
     $this->added($name);return $this->autoid;
@@ -55,7 +55,7 @@ $filename = trim($dir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR  . 'about.ini';
     $item = $this->items[$name];
     unset($this->items[$name]);
     $this->save();
-
+    
     if (class_exists($item['class'])) {
       $plugin = getinstance($item['class']);
       if ($plugin instanceof tplugin) {

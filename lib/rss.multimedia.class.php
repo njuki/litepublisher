@@ -19,8 +19,7 @@ class trssMultimedia extends tevents {
     $this->data['feedburner'] = '';
   }
   
-  public function fileschanged($idpost) {
-    litepublisher::$urlmap = turlmap::instance();
+  public function fileschanged() {
     litepublisher::$urlmap->expiredclass(get_class($this));
   }
   

@@ -121,11 +121,11 @@ class tdbmanager  {
   
   public function optimize() {
     $this->DeleteDeleted();
-sleep(2);
-$prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
+    sleep(2);
+    $prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $this->gettables();
     foreach ($tables as $table) {
-if (strbegin(strtolower($table), $prefix)) $this->exec("optimize $table");
+      if (strbegin(strtolower($table), $prefix)) $this->exec("optimize $table");
     }
   }
   

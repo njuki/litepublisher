@@ -650,10 +650,11 @@ class tclasses extends titems {
     if (!isset($this->items[$class]) ||
     ($this->items[$class][0] != $filename) || ($this->items[$class][1] != $path)) {
       $this->items[$class] = array($filename, $path);
-      $this->save();
+      //$this->save();
       $instance = $this->getinstance($class);
       if (method_exists($instance, 'install')) $instance->install();
     }
+    $this->save();
     $this->added($class);
   }
   
@@ -770,7 +771,7 @@ class toptions extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'options';
-    $this->addevents('changed', 'PostsPerPageChanged');
+    $this->addevents('changed', 'perpagechanged');
     unset($this->cache);
     $this->gmt = date('Z');
     $this->errorlog = '';
@@ -815,8 +816,8 @@ class toptions extends tevents {
   }
   
   private function dochanged($name, $value) {
-    if ($name == 'postsperpage') {
-      $this->PostsPerPageChanged();
+    if ($name == 'perpage') {
+      $this->perpagechanged();
       $urlmap = turlmap::instance();
       $urlmap->clearcache();
     } elseif ($name == 'cache') {

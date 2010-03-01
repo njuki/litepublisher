@@ -12,7 +12,7 @@ class tabstractcron extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'cron' . DIRECTORY_SEPARATOR . 'index';
-$this->addevents('added', 'deleted');
+    $this->addevents('added', 'deleted');
     $this->data['password'] = '';
     $this->data['path'] = '';
     $this->cache = false;

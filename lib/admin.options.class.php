@@ -43,10 +43,14 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'view':
-      $contentfilter = tcontentfilter::instance();
-      $args->automore = $contentfilter->automore;
-      $args->phpcode = $contentfilter->phpcode;
+      $filter = tcontentfilter::instance();
+      $args->automore = $filter->automore;
+      $args->automorelength = $filter->automorelength;
       $args->hovermenu = $template->hovermenu;
+      
+      $parser = tmediaparser::instance();
+      $args->previewwidth = $parser->previewwidth;
+      $args->previewheight = $parser->previewheight;
       break;
       
       case 'comments':
@@ -95,7 +99,10 @@ class tadminoptions extends tadminmenu {
       case 'secure':
       $auth = tauthdigest::instance();
       $args->cookie = $options->cookieenabled;
+      $args->parsepost = $options->parsepost;
       $args->xxxcheck = $auth->xxxcheck;
+      $filter = tcontentfilter::instance();
+      $args->phpcode = $filter->phpcode;
       break;
       
       case 'robots':
@@ -178,12 +185,17 @@ class tadminoptions extends tadminmenu {
       $filter = tcontentfilter::instance();
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;
-      $filter->phpcode = isset($phpcode);
+      
       $filter->save();
       $template = ttemplate::instance();
       $template->lock();
       $template->hovermenu = isset($hovermenu);
       $template->unlock();
+      
+      $parser = tmediaparser::instance();
+      $parser->previewwidth = $previewwidth;
+      $parser->previewheight = $previewheight;
+      $parser->save();
       break;
       
       case 'comments':
@@ -260,10 +272,14 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'secure':
-      $auth = tauthdigest::instance();
       $options->cookieenabled = isset($cookie);
+      $options->parsepost = isset($parsepost);
+      $auth = tauthdigest::instance();
       $auth->xxxcheck = isset($xxxcheck);
       $auth->save();
+      $filter = tcontentfilter::instance();
+      $filter->phpcode = isset($phpcode);
+      $filter->save();
       break;
       
       case 'robots':

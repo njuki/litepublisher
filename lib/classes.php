@@ -65,7 +65,7 @@ class tclasses extends titems {
       $instance = $this->getinstance($class);
       if (method_exists($instance, 'install')) $instance->install();
     }
-      $this->save();
+    $this->save();
     $this->added($class);
   }
   
