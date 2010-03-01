@@ -222,7 +222,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) return $this->error500('Something wrong in post data');
     
     $parser = tmediaparser::instance();
-    $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', false);
+    $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
     $result = $this->getfileitem($id, 'curr');
     
     return "<?php
