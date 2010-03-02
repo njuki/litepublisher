@@ -46,6 +46,7 @@ function tadminmenusInstall($self) {
     $self->add($files, 'video', 'editor', 'tadminfiles');
     $self->add($files, 'audio', 'editor', 'tadminfiles');
     $self->add($files, 'icon', 'editor', 'tadminfiles');
+    $self->add($files, 'deficons', 'editor', 'tadminicons');
     $self->add($files, 'bin', 'editor', 'tadminfiles');
   }
   

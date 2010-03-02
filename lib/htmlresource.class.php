@@ -106,15 +106,15 @@ class THtmlResource  {
     }
   }
   
-}
-
 public function array2combo(array $items, $selname) {
 $result = '';
-foreach ($items as $name => $value) {
+foreach ($items as $name => $title) {
       $selected = $selname == $name ? 'selected' : '';
-      $result .= "<option value='$name' $selected>$value</option>\n";
+      $result .= "<option value='$name' $selected>$title</option>\n";
     }
 return $result;
 }
+
+}//class
 
 ?>
