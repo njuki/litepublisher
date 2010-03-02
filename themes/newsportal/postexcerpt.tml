@@ -1,16 +1,14 @@
-<div class="post" id="post-$post->id">
-
-        <h3><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h3>
-
-$post->localdate
+<div class="post" id="post-$post.id">
+        <h3><a href="$options.url$post.url" rel="bookmark" title="$lang.permalink $post.title">$post.iconurl$post.title</a></h3>
+$post.date
 <div class="entry">
-$post->excerpt
-$post->morelink
+$post.excerpt
+$post.morelink
 </div>
 
 <p class="info">
-$lang->categories: $post->categorieslinks | 
-$lang->tags: $post->tagslinks | 
-$Template->CommentsCountLink
+$lang.categories: $post.categorieslinks | 
+$lang.tags: $post.tagslinks | 
+$Template.CommentsCountLink
 </p>
 </div>

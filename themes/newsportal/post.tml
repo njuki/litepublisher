@@ -1,18 +1,39 @@
-<div class="post" id="post-$post->id">
+<div class="post" id="post-$post.id">
 
-        <h3><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h3>
+        <h3><a href="$options.url$post.url" rel="bookmark" title="$lang.permalink $post.title">$post.iconurl$post.title</a></h3>
 
-$post->localdate
+$post.date
 <div class="entry">
-$post->content
-</div>
+<!--files-->
+<ul id="files-$post.id">
+<!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
+<!--image--><li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
+<!--audio-->
+<li><a href="$options.files/files/$filename" title="$title">$title</a>
+<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
+</li><!--/audio-->
+<!--video-->
+<!--/video-->
+</ul>
+<!--/files-->
 
-<p class="info">
-$lang->categories: $post->categorieslinks | 
-$lang->tags: $post->tagslinks 
+<!--more--><a name="more-$post.id"></a><!--/more-->
+$post.content
+
+</div>
+$post.categorieslinks
+$post.tagslinks
+<!--commontags-->			<p class="info">$lang.commontags: 
+<!--item--><a href="$options.url$url" title="$title">$icon$title</a><!--/item-->
+<!--divider-->| <!--/divider-->
+</p><!--/commontags-->
+
+<!--rss--><h2><a href="$post.rsscomments" title="$lang.subscribetorsscomments">$lang.subscribetorsscomments</a></h2><!--/rss-->
+<!--prevnext-->
+<p>
+<!--prev-->$lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a><!--/prev-->
+|
+<!--next-->$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a><!--/next-->
 </p>
+<!--/prevnext-->
 </div>
-
-$Template->postscript
-
-$Template->comments

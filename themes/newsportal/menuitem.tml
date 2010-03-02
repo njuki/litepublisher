@@ -1,17 +1,16 @@
     <div>
-	
 	</div>
         
     <div class="tabs"></div>
-            <!-- begin content --><div id="first-time">
+<div id="first-time">
 			
-<div class="post" id="post-$post->id">
-        <h3><a href="$Options->url$post->url" rel="bookmark" title="$lang->permalink $post->title">$post->title</a></h3>
+<div class="post" id="post-$menu.id">
+        <h3><a href="$options.url$menu.url" rel="bookmark" title="$lang.permalink $menu.title">$menu.title</a></h3>
 
 <div class="entry">
-$post->content
+$menu.content
 </div>
 
 </div>
 
-	  </div><!-- end content --> 
+	  </div><!-- end content -. 
