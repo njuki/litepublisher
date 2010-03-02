@@ -208,7 +208,7 @@ class tmediaparser extends tevents {
     return false;
   }
   
-  private function createsnapshot($srcfilename, $destfilename, $x, $y) {
+  public function createsnapshot($srcfilename, $destfilename, $x, $y) {
     if (!file_exists($srcfilename)) return false;
     $info = getimagesize($srcfilename);
     switch ($info[2]) {

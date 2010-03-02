@@ -15,7 +15,7 @@ class tcontentfilter extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'contentfilter';
-    $this->addevents('oncomment', 'onpost', 'onrss', 'onexcerpt', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter');
+    $this->addevents('oncomment', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter');
     $this->data['automore'] = true;
     $this->data['automorelength'] = 250;
     $this->data['phpcode'] = true;
@@ -58,8 +58,7 @@ class tcontentfilter extends tevents {
       }
     }
     $post->description = self::GetExcerpt($post->excerpt, 80);
-    $this->DoFilterEvents($post);
-    $this->aftercontent($post->id);
+    $this->aftercontent($post);
   }
   
   public function ExtractPages(tpost $post, $s) {
@@ -74,17 +73,6 @@ class tcontentfilter extends tevents {
     }
     if ($s != '') $post->addpage($this->filter($s));
     return $post->GetPage(0);
-  }
-  
-  private function DoFilterEvents(tpost $post) {
-    $s = $this->onpost(    $post->filtered);
-    if ($s != '') $post->filtered =  $s;
-    
-    $s = $this->onexcerpt($post->excerpt);
-    if ($s != '') $post->excerpt = $s;
-    
-    $s = $this->onrss($post->rss);
-    if ($s != '') $post->rss = $s;
   }
   
   public function gettitle($s) {

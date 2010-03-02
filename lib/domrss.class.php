@@ -114,7 +114,7 @@ class Tdomrss extends domDocument {
   
   public function CreateRoot($url, $title) {
     $this->encoding = 'utf-8';
-    $this->appendChild($this->createComment("generator=\"Lite Publisher/litepublisher::$options->version version\""));
+    $this->appendChild($this->createComment('generator="Lite Publisher/' . litepublisher::$options->version . ' version"'));
     $this->rss = $this->createElement('rss');
     $this->appendChild($this->rss);
     
@@ -135,13 +135,13 @@ class Tdomrss extends domDocument {
     AddNodeValue($this->channel , 'link', $url);
     AddNodeValue($this->channel , 'description', litepublisher::$options->description);
     AddNodeValue($this->channel , 'pubDate', date('r'));
-    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator/?version=' . litepublisher::$options->version);
+    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
     AddNodeValue($this->channel , 'language', 'en');
   }
   
   public function CreateRootMultimedia($url, $title) {
     $this->encoding = 'utf-8';
-    $this->appendChild($this->createComment("generator=\"Lite Publisher/litepublisher::$options->version version\""));
+    $this->appendChild($this->createComment('generator="Lite Publisher/' . litepublisher::$options->version . ' version"'));
     $this->rss = $this->createElement('rss');
     $this->appendChild($this->rss);
     
@@ -160,7 +160,7 @@ class Tdomrss extends domDocument {
     AddNodeValue($this->channel , 'link', $url);
     AddNodeValue($this->channel , 'description', litepublisher::$options->description);
     AddNodeValue($this->channel , 'pubDate', date('r'));
-    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator/?version=' . litepublisher::$options->version);
+    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
     AddNodeValue($this->channel , 'language', 'en');
   }
   

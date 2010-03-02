@@ -86,7 +86,7 @@ class tpinger extends tevents {
     if ($ping = self::discover($link)) {
       $client = new IXR_Client($ping);
       $client->timeout = 3;
-      $client->useragent .= " -- Lite Publisher/litepublisher::$options->version";
+      $client->useragent .= " -- Lite Publisher/" . litepublisher::$options->version;
       $client->debug = false;
       
       if ( $client->query('pingback.ping', $posturl, $link) || ( isset($client->error->code) && 48 == $client->error->code ) ) return true;
