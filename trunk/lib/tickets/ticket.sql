@@ -1,0 +1,16 @@
+id int UNSIGNED NOT NULL default 0,
+type enum ('bug', 'feature', 'task', 'support') default 'bug',
+assignto int unsigned not null default 0,
+closed datetime NOT NULL default '2010-01-01 10:01:01',
+version varchar(5) not null,
+votes int unsigned not null default 0,
+os varchar(32) not null,
+reproduced boolean default false,
+reproduce_code longtext not null,
+ticketstatus enum('opened', 'closed', 'hold', 'accepted', 'fixed', 'invalid', 'wontfix', 'duplicate', 'worksforme', 'reassign') default 'hold',
+resolution enum('hold', 'accepted', 'fixed', 'invalid', 'wontfix', 'duplicate', 'worksforme', 'reassign') default 'hold',
+prio enum('trivial', 'minor', 'major', 'critical', 'blocker') default 'major',
+
+     PRIMARY KEY(id, type),
+key ticketstatus (ticketstatus),
+key prio (prio)

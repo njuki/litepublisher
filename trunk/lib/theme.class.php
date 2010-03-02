@@ -116,7 +116,7 @@ class ttheme extends tevents {
       $var = $template->ondemand($name);
     }
     
-    if (!isset($var)) {
+    if (!is_object($var)) {
       litepublisher::$options->trace("Object $name not found");
       return '';
     }
