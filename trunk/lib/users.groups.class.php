@@ -15,7 +15,7 @@ class tusergroups extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'usergroups';
-$this->data['defaultgroup'] = 'nobody';
+    $this->data['defaultgroup'] = 'nobody';
   }
   
   function add($name) {

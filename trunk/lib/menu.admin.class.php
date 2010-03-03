@@ -57,14 +57,14 @@ class tadminmenus extends tmenus {
     $this->save();
     return $this->autoid;
   }
-
-public function deleteurl($url) {
-foreach ($this->items as $id => $item) {
-if ($url == $item['url']) return $this->delete($id);
-}
-}
   
-  private function hasright($group) {
+  public function deleteurl($url) {
+    foreach ($this->items as $id => $item) {
+      if ($url == $item['url']) return $this->delete($id);
+    }
+  }
+  
+  public function hasright($group) {
     $groups = tusergroups::instance();
     return $groups->hasright(litepublisher::$options->group, $group);
   }
@@ -154,19 +154,18 @@ public function save() {}
     
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::instance();
-      if ($this->hasright($this->group)) return 404;
+      if (!$groups->hasright(litepublisher::$options->group, $this->group)) return 404;
     }
   }
   
   public function request($id) {
-    if ($s = $this->auth()) return $s;
-    tlocal::loadlang('admin');
     if (is_null($id)) $id = $this->getidbyclass();
     $this->data['id'] = (int)$id;
     if ($id > 0) {
       $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
     }
-    litepublisher::$urlmap = turlmap::instance();
+    if ($s = $this->auth()) return $s;
+    tlocal::loadlang('admin');
     $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();
   }

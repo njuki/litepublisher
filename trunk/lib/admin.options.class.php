@@ -99,8 +99,8 @@ class tadminoptions extends tadminmenu {
       case 'secure':
       $auth = tauthdigest::instance();
       $args->cookie = $options->cookieenabled;
-$args->usersenabled = $options->usersenabled;
-$args->reguser = $options->reguser;
+      $args->usersenabled = $options->usersenabled;
+      $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
       $args->xxxcheck = $auth->xxxcheck;
       $filter = tcontentfilter::instance();
@@ -275,20 +275,20 @@ $args->reguser = $options->reguser;
       
       case 'secure':
       $options->cookieenabled = isset($cookie);
-$options->reguser = isset($reguser);
-if ($options->usersenabled != isset($usersenabled)) {
-$options->usersenabled = isset($usersenabled);
-$menus = tadminmenus::instance();
-$menus->lock();
-if ($options->usersenabled) {
-$menus->add(0, 'users', 'admin', 'tadminusers');
-} else {
-$menus->deleteurl('/admin/users/');
-}
-$menus->unlock();
-
-}
-
+      $options->reguser = isset($reguser);
+      if ($options->usersenabled != isset($usersenabled)) {
+        $options->usersenabled = isset($usersenabled);
+        $menus = tadminmenus::instance();
+        $menus->lock();
+        if ($options->usersenabled) {
+          $menus->add(0, 'users', 'admin', 'tadminusers');
+        } else {
+          $menus->deleteurl('/admin/users/');
+        }
+        $menus->unlock();
+        
+      }
+      
       $options->parsepost = isset($parsepost);
       $auth = tauthdigest::instance();
       $auth->xxxcheck = isset($xxxcheck);

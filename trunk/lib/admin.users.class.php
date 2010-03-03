@@ -14,81 +14,83 @@ class tadminusers extends tadminmenu {
   
   public function getcontent() {
     $result = '';
+    $lang = $this->lang;
     $users = tusers::instance();
-$groups = tusergroups::instance();
-$a = array();
-foreach ($groups->items as $id => $item) {
-$a[$id] = $item['name'];
-}
-
-$lang = $this->lang;
-$statuses = array();
-foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
-$statuses[$name] = $lang->$name;
-}
-
+    $groups = tusergroups::instance();
+    $a = array();
+    foreach ($groups->items as $id => $item) {
+    $a[$id] = $lang->{$item['name']};
+    }
+    
+    $statuses = array();
+    foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
+      $statuses[$name] = $lang->$name;
+    }
+    
     $html = $this->html;
     $args = targs::instance();
     $id = $this->idget();
-if ($users->itemexists($id)) {
-$item = $users->getitem($id);
-$args->add($item);
+    if ($users->itemexists($id)) {
+      $item = $users->getitem($id);
+      $args->add($item);
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
           $users->delete($id);
           $result .= $html->h2->successdeleted;
         } else {
-$args->id = $id;
-$args->adminurl = $this->adminurl;
-$args->action = 'delete';
-$args->confirm = $this->lang->confirmdelete;
+          $args->id = $id;
+          $args->adminurl = $this->adminurl;
+          $args->action = 'delete';
+          $args->confirm = $this->lang->confirmdelete;
           $result .=$html->confirmform($args);
         }
       } else {
-$args->groupcombo = $html->array2combo($a, $item['gid']);
-$args->statuscombo = $html->array2combo($statuses, $item['status']);
-      $result .= $html->form($args);
-}
+        $args->groupcombo = $html->array2combo($a, $item['gid']);
+        $args->statuscombo = $html->array2combo($statuses, $item['status']);
+        $result .= $html->form($args);
+      }
       
-} else {
-    $item = array(
-    'login' => '',
-    'password' => '',
-    'cookie' =>  '',
-    'expired' => sqldate(),
-'registered' => sqldate(),
-    'gid' => 'nobody',
-'trust' => 0,
-'status' => 'hold',
-    'name' => '',
-    'email' => '',
-    'url' => '',
-'ip' => '',
-'avatar' => 0
-    );
-$args->groupcombo = $html->array2combo($a, $item['gid']);
-$args->statuscombo = $html->array2combo($statuses, $item['status']);
-$args->add($item);
+    } else {
+      $item = array(
+      'login' => '',
+      'password' => '',
+      'cookie' =>  '',
+      'expired' => sqldate(),
+      'registered' => sqldate(),
+      'gid' => 'nobody',
+      'trust' => 0,
+      'status' => 'hold',
+      'name' => '',
+      'email' => '',
+      'url' => '',
+      'ip' => '',
+      'avatar' => 0
+      );
+      $args->groupcombo = $html->array2combo($a, $item['gid']);
+      $args->statuscombo = $html->array2combo($statuses, $item['status']);
+      $args->add($item);
       $result .= $html->form($args);
-}
-
+    }
+    
     //table
     $perpage = 20;
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
-        if ($users->dbversion) {
+    if ($users->dbversion) {
       $items = $users->select('', " order by registered desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
       $items = array_slice(array_keys($users->items), $from, $perpage);
     }
     
-$args->adminurl = $this->adminurl;
+    $args->adminurl = $this->adminurl;
     $result .= $html->tableheader ();
     foreach ($items as $id) {
       $item = $users->getitem($id);
       $args->add($item);
-$args->id = $id;
+      $args->id = $id;
+      $args->group = $a[$item['gid']];
+      $args->status = $statuses[$item['status']];
       $result .= $html->item($args);
     }
     $result .= $html->tablefooter();
@@ -100,41 +102,45 @@ $args->id = $id;
   }
   
   public function processform() {
-$users = tusers::instance();
-
-if (isset($_POST['table'])) {
-$users->lock();
-foreach ($_POST as $key => $value) {
-if (!is_numeric($value)) continue;
-$id = (int) $value;
-$users->delete($id);
-}
-$users->unlock();
-return $this->html->h2->successdeleted;
-}
-
+    $users = tusers::instance();
+    
+    if (isset($_POST['table'])) {
+      $users->lock();
+      foreach ($_POST as $key => $value) {
+        if (!is_numeric($value)) continue;
+        $id = (int) $value;
+        $users->delete($id);
+      }
+      $users->unlock();
+      return $this->html->h2->successdeleted;
+    }
+    
     $id = $this->idget();
     if ($id == 0) {
-extract($_POST);
-$id = $users->add($group, $login,$password, $name, $email, $url);
-if (!$id) return $this->html->h2->invalidregdata;
-} else {
-if (!$users->itemexists($id)) return $this->notfound;
-}
-
-      $item = $users->getitem($id);
-foreach ($_POST as $key => $value) {
-if (isset($item[$key])) $item[$key] = $value;
-}
-$users->items[$id] = $item;
-$item['id'] = $id;
-if ($users->dbversion) {
-$users->db->updateassoc($item);
-} else {
-$users->save();
-}
-}
-
+      extract($_POST);
+      $id = $users->add($group, $login,$password, $name, $email, $url);
+      if (!$id) return $this->html->h2->invalidregdata;
+    } else {
+      if (!$users->itemexists($id)) return $this->notfound;
+    }
+    
+    $item = $users->getitem($id);
+    foreach ($_POST as $key => $value) {
+      if ($key == 'password')     {
+        if ($value != '') $item['password'] = md5(sprintf('%s:%s:%s', $_POST['login'],  litepublisher::$options->realm, $value));
+        continue;
+      }
+      if (isset($item[$key])) $item[$key] = $value;
+    }
+    $users->items[$id] = $item;
+    $item['id'] = $id;
+    if ($users->dbversion) {
+      $users->db->updateassoc($item);
+    } else {
+      $users->save();
+    }
+  }
+  
 }//class
 
 
