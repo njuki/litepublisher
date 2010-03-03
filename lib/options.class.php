@@ -107,8 +107,8 @@ class toptions extends tevents {
       if ($this->cookieexpired < time()) return false;
       $this->user = 1;
     } elseif (!$this->usersenabled)  {
-return false;
-} else {
+      return false;
+    } else {
       $users = tusers::instance();
       if (!($this->user = $users->authcookie($_COOKIE['admin']))) return false;
     }
@@ -122,8 +122,8 @@ return false;
     if ($login == $this->login) {
       if ($this->password != md5("$login:$this->realm:$password"))  return false;
       $this->user = 1;
-} elseif(!$this->usersenabled) {
-return false;
+    } elseif(!$this->usersenabled) {
+      return false;
     } else {
       $users = tusers::instance();
       if (!($this->user = $users->auth($login, $password))) return false;

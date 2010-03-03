@@ -22,38 +22,38 @@ class tadminpassword extends tadminform {
   }
   
   public function processform() {
-$email = strtolower(trim($_POST['email']));
-if (litepublisher::$options->usersenabled) {
-$users = tusers::instance();
-$id = $users->emailexists($email);
-} else {
-$id = $email == strtolower(trim(litepublisher::$options->email))  ? 1 : false;
-}
-if (!$id) return $this->html->h2->error;
+    $email = strtolower(trim($_POST['email']));
+    if (litepublisher::$options->usersenabled) {
+      $users = tusers::instance();
+      $id = $users->emailexists($email);
+    } else {
+      $id = $email == strtolower(trim(litepublisher::$options->email))  ? 1 : false;
+    }
+    if (!$id) return $this->html->h2->error;
     $password = md5uniq();
-if ($id == 1) {
-    litepublisher::$options->setpassword($password);
-} else {
-$users->setpassword($id, $password);
-}
-
+    if ($id == 1) {
+      litepublisher::$options->setpassword($password);
+    } else {
+      $users->setpassword($id, $password);
+    }
+    
     $args = targs::instance();
-if ($id == 1) {
-} else {
-$name = 'admin';
-$args->login = $name;
-$args->
-$item = $users->getitem($id);
-$args->add($item);
-$name = $item['name'];
-}
+    if ($id == 1) {
+    } else {
+      $name = 'admin';
+      $args->login = $name;
+      $args->
+      $item = $users->getitem($id);
+      $args->add($item);
+      $name = $item['name'];
+    }
     $args->password = $password;
     $mailtemplate = tmailtemplate::instance($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
-
+    
     tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
-$name, $email, $subject, $body);
+    $name, $email, $subject, $body);
     return $this->html->h2->success;
   }
   

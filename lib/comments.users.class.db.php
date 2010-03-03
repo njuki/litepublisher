@@ -65,8 +65,8 @@ class tcomusers extends titems {
   
   public function request($arg) {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-if (!$this->itemexists($id)) return 404;
-      $item = $this->getitem($id);
+    if (!$this->itemexists($id)) return 404;
+    $item = $this->getitem($id);
     $url = $item['url'];
     if (!strpos($url, '.')) $url = litepublisher::$options->url . litepublisher::$options->home;
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;

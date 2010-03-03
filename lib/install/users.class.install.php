@@ -7,13 +7,13 @@
 **/
 
 function tusersInstall($self) {
-if ($self->dbversion) {
-  $manager = TDBManager ::instance();
-  $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-  $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
-$manager->setautoincrement($self->table, 2);
+  if ($self->dbversion) {
+    $manager = TDBManager ::instance();
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
+    $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
+    $manager->setautoincrement($self->table, 2);
   }
-
+  
   $urlmap = turlmap::instance();
   $urlmap->add('/users.htm', get_class($self), 'get');
   

@@ -11,6 +11,12 @@ class tadminboard extends tadminmenu {
     return getinstance(__class__);
   }
   
+  public function getgroup() {
+    return 'editor';
+  }
+  
+  
+  
   public function gethead() {
     $editor = tposteditor::instance();
     return $editor->gethead();

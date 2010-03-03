@@ -30,10 +30,10 @@ interface imenu {
 }
 
 interface iposts {
-public function add(tpost $post);
-public function edit(tpost $post);
-public function delete($id);
-public function deletedeleted($deleted);
+  public function add(tpost $post);
+  public function edit(tpost $post);
+  public function delete($id);
+  public function deletedeleted($deleted);
 }
 
 ?>

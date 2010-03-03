@@ -782,7 +782,6 @@ class toptions extends tevents {
   public function load() {
     if (!parent::load()) return false;
     $this->modified = false;
-    $this->admincookie = $this->cookieenabled && $this->authcookie();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
     if (!defined('dbversion')) {
@@ -857,6 +856,8 @@ class toptions extends tevents {
     if ($this->cookie == $_COOKIE['admin']) {
       if ($this->cookieexpired < time()) return false;
       $this->user = 1;
+    } elseif (!$this->usersenabled)  {
+      return false;
     } else {
       $users = tusers::instance();
       if (!($this->user = $users->authcookie($_COOKIE['admin']))) return false;
@@ -871,6 +872,8 @@ class toptions extends tevents {
     if ($login == $this->login) {
       if ($this->password != md5("$login:$this->realm:$password"))  return false;
       $this->user = 1;
+    } elseif(!$this->usersenabled) {
+      return false;
     } else {
       $users = tusers::instance();
       if (!($this->user = $users->auth($login, $password))) return false;
@@ -1376,6 +1379,13 @@ interface imenu {
   public function setparent($id);
   public function getorder();
   public function setorder($order);
+}
+
+interface iposts {
+  public function add(tpost $post);
+  public function edit(tpost $post);
+  public function delete($id);
+  public function deletedeleted($deleted);
 }
 
 //plugin.class.php

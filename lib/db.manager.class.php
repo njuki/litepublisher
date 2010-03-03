@@ -90,9 +90,9 @@ class tdbmanager  {
   }
   
   private function deletedeleted() {
-$posts = tposts::instance();
-$posts->deletedeleted();
-
+    $posts = tposts::instance();
+    $posts->deletedeleted();
+    
     $db = litepublisher::$db;
     //comments
     $db->exec("delete from $db->rawcomments where id in
