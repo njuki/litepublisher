@@ -27,14 +27,14 @@ if (litepublisher::$options->usersenabled) {
 $users = tusers::instance();
 $id = $users->emailexists($email);
 } else {
-$id = $email == strtolower(trim(litepublisher::$options->email)))  ? 1 : false;
+$id = $email == strtolower(trim(litepublisher::$options->email))  ? 1 : false;
 }
 if (!$id) return $this->html->h2->error;
     $password = md5uniq();
 if ($id == 1) {
     litepublisher::$options->setpassword($password);
 } else {
-$users->setpassword(4id, $password);
+$users->setpassword($id, $password);
 }
 
     $args = targs::instance();

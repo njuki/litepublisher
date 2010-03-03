@@ -18,7 +18,13 @@ class tadminusers extends tadminmenu {
 $groups = tusergroups::instance();
 $a = array();
 foreach ($groups->items as $id => $item) {
-$a['$id] = $item['name'];
+$a[$id] = $item['name'];
+}
+
+$lang = $this->lang;
+$statuses = array();
+foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
+$statuses[$name] = $lang->$name;
 }
 
     $html = $this->html;
@@ -26,63 +32,66 @@ $a['$id] = $item['name'];
     $id = $this->idget();
 if ($users->itemexists($id)) {
 $item = $users->getitem($id);
+$args->add($item);
+      if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
+        if  ($this->confirmed) {
+          $users->delete($id);
+          $result .= $html->h2->successdeleted;
+        } else {
+$args->id = $id;
+$args->adminurl = $this->adminurl;
+$args->action = 'delete';
+$args->confirm = $this->lang->confirmdelete;
+          $result .=$html->confirmform($args);
+        }
+      } else {
+$args->groupcombo = $html->array2combo($a, $item['gid']);
+$args->statuscombo = $html->array2combo($statuses, $item['status']);
+      $result .= $html->form($args);
+}
+      
 } else {
     $item = array(
     'login' => '',
     'password' => '',
     'cookie' =>  '',
     'expired' => sqldate(),
+'registered' => sqldate(),
     'gid' => 'nobody',
 'trust' => 0,
-'status' => 'wait',
+'status' => 'hold',
     'name' => '',
     'email' => '',
     'url' => '',
 'ip' => '',
 'avatar' => 0
     );
-}
+$args->groupcombo = $html->array2combo($a, $item['gid']);
+$args->statuscombo = $html->array2combo($statuses, $item['status']);
 $args->add($item);
       $result .= $html->form($args);
+}
 
-      if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
-        if  ($this->confirmed) {
-          $users->delete($id);
-          return $h2->successdeleted;
-        } else {
-          return $html->confirmdelete($args);
-        }
-      }
-      
-      $result .= $isusers ? $h2->edittag : $h2->editcategory;
-      if (isset($_GET['full'])) {
-        $args->add($users->contents->getitem($id));
-        $args->iconlink = $users->geticonlink($id);
-        $result .= $html->fullform($args);
-      } else {
-        $result = $html->form($args);
-      }
-    }
-    
     //table
     $perpage = 20;
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
-    
-    if (dbversion) {
-      $items = $users->select('', " order by id asc limit $from, $perpage");
+        if ($users->dbversion) {
+      $items = $users->select('', " order by registered desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
       $items = array_slice(array_keys($users->items), $from, $perpage);
     }
     
-    $result .= $html->listhead();
+$args->adminurl = $this->adminurl;
+    $result .= $html->tableheader ();
     foreach ($items as $id) {
       $item = $users->getitem($id);
       $args->add($item);
-      $result .= $html->itemlist($args);
+$args->id = $id;
+      $result .= $html->item($args);
     }
-    $result .= $html->listfooter;
+    $result .= $html->tablefooter();
     $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
@@ -91,27 +100,41 @@ $args->add($item);
   }
   
   public function processform() {
-    if (empty($_POST['title'])) return '';
-    extract($_POST);
-    $isusers = $this->name == 'users';
-    $users = $isusers  ? litepublisher::$classes->users : litepublisher::$classes->categories;
+$users = tusers::instance();
+
+if (isset($_POST['table'])) {
+$users->lock();
+foreach ($_POST as $key => $value) {
+if (!is_numeric($value)) continue;
+$id = (int) $value;
+$users->delete($id);
+}
+$users->unlock();
+return $this->html->h2->successdeleted;
+}
+
     $id = $this->idget();
     if ($id == 0) {
-      $id = $users->add($title);
-    } elseif (isset($_GET['full'])) {
+extract($_POST);
+$id = $users->add($group, $login,$password, $name, $email, $url);
+if (!$id) return $this->html->h2->invalidregdata;
+} else {
+if (!$users->itemexists($id)) return $this->notfound;
+}
+
       $item = $users->getitem($id);
-      $icon = isset($icon) ? $icon : $item['icon'];
-      $users->edit($id, $title, $url, $icon);
-      $users->contents->edit($id, $rawcontent, $description, $keywords);
-      if (isset($theme)) $users->contents->setvalue($id, 'theme', $theme);
-    } else {
-      $item = $users->getitem($id);
-      $users->edit($id, $title, $item['url'], $item['icon']);
-    }
-    
-    return sprintf($this->html->h2->success, $title);
-  }
-  
+foreach ($_POST as $key => $value) {
+if (isset($item[$key])) $item[$key] = $value;
+}
+$users->items[$id] = $item;
+$item['id'] = $id;
+if ($users->dbversion) {
+$users->db->updateassoc($item);
+} else {
+$users->save();
+}
+}
+
 }//class
 
 

@@ -57,6 +57,12 @@ class tadminmenus extends tmenus {
     $this->save();
     return $this->autoid;
   }
+
+public function deleteurl($url) {
+foreach ($this->items as $id => $item) {
+if ($url == $item['url']) return $this->delete($id);
+}
+}
   
   private function hasright($group) {
     $groups = tusergroups::instance();

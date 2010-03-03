@@ -47,7 +47,7 @@ $args->adminurl = litepublisher::$options->url . '/admin/users/' . litepublisher
 tmailer::sendtoadmin($subject, $adminbody);
     tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
 $name, $email, $subject, $body);
-    return $this->html->h2->registered;
+    return $this->html->h2->successreg;
   }
   
 }//class
