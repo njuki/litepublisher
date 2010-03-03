@@ -26,17 +26,18 @@ $this->dbversion = dbversion;
     if (!($gid = $groups->groupid($group))) return false;
     $password = md5("$login:litepublisher::$options->realm:$password");
     $item = array(
-    'gid' => $gid,
     'login' => $login,
     'password' => $password,
     'cookie' =>  md5uniq(),
     'expired' => sqldate(),
+    'gid' => $gid,
+'trust' => 0,
+'status' => 'wait',
     'name' => $name,
     'email' => $email,
     'url' => $url,
 'ip' => '',
-'avatar' => 0,
-'trust' => 0
+'avatar' => 0
     );
     
 $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
@@ -57,10 +58,27 @@ $this->added($id);
       return false;
     }
   }
+
+  public function emailexists($email) {
+    if ($email == litepublisher::$options->email) return 1;
+    if ($this->dbversion) {
+      return $this->db->findid('email = '. dbquote($email));
+    } else {
+      foreach ($this->items as $id => $item) {
+        if ($email == $item['email']) return true;
+      }
+      return false;
+    }
+  }
   
-  public function getpassword($id) {
+    public function getpassword($id) {
     return $id == 1 ? litepublisher::$options->password : $this->getvalue($id, 'password');
   }
+
+public function setpassword($id, $password) {
+$item = $this->getitem(4id);
+$this->setvalue($id, 'password, md5($item['login'] . ':'. litepublisher::$options->realm .  ":$password"));
+}
   
   public function auth($login,$password) {
     $password = md5("$login:litepublisher::$options->realm:$password");

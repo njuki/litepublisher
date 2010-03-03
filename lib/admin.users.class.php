@@ -22,20 +22,29 @@ $a['$id] = $item['name'];
 }
 
     $html = $this->html;
-    $id = $this->idget();
     $args = targs::instance();
-    $args->id = $id;
-    $args->adminurl = $this->adminurl;
-    if ($id ==  0) {
-      $args->title = '';
-      $result .= $isusers ? $h2->addtag : $h2->addcategory;
+    $id = $this->idget();
+if ($users->itemexists($id)) {
+$item = $users->getitem($id);
+} else {
+    $item = array(
+    'login' => '',
+    'password' => '',
+    'cookie' =>  '',
+    'expired' => sqldate(),
+    'gid' => 'nobody',
+'trust' => 0,
+'status' => 'wait',
+    'name' => '',
+    'email' => '',
+    'url' => '',
+'ip' => '',
+'avatar' => 0
+    );
+}
+$args->add($item);
       $result .= $html->form($args);
-    } elseif (!$users->ItemExists($id)) {
-      return $this->notfound;
-    } else {
-      $item = $users->getitem($id);
-      $args->add($item);
-      
+
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
           $users->delete($id);
