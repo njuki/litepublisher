@@ -275,8 +275,20 @@ $args->reguser = $options->reguser;
       
       case 'secure':
       $options->cookieenabled = isset($cookie);
-$options->usersenabled = isset($usersenabled);
 $options->reguser = isset($reguser);
+if ($options->usersenabled != isset($usersenabled)) {
+$options->usersenabled = isset($usersenabled);
+$menus = tadminmenus::instance();
+$menus->lock();
+if ($options->usersenabled) {
+$menus->add(0, 'users', 'admin', 'tadminusers');
+} else {
+$menus->deleteurl('/admin/users/');
+}
+$menus->unlock();
+
+}
+
       $options->parsepost = isset($parsepost);
       $auth = tauthdigest::instance();
       $auth->xxxcheck = isset($xxxcheck);

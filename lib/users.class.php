@@ -23,13 +23,20 @@ $this->dbversion = dbversion;
   public function add($group, $login,$password, $name, $email, $url) {
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::instance();
+if (is_numeric($group)) {
+$gid = (int) $group;
+if (!$groups->itemexists($gid)) return false;
+} else {
     if (!($gid = $groups->groupid($group))) return false;
-    $password = md5("$login:litepublisher::$options->realm:$password");
+}
+    $password = md5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+
     $item = array(
     'login' => $login,
     'password' => $password,
     'cookie' =>  md5uniq(),
     'expired' => sqldate(),
+'registered' => sqldate(),
     'gid' => $gid,
 'trust' => 0,
 'status' => 'wait',
@@ -76,8 +83,8 @@ $this->added($id);
   }
 
 public function setpassword($id, $password) {
-$item = $this->getitem(4id);
-$this->setvalue($id, 'password, md5($item['login'] . ':'. litepublisher::$options->realm .  ":$password"));
+$item = $this->getitem($id);
+$this->setvalue($id, 'password', md5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
 }
   
   public function auth($login,$password) {
