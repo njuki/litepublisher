@@ -13,6 +13,7 @@ class tusers extends titems {
   }
   
   protected function create() {
+$this->dbversion = dbversion;
     parent::create();
     $this->basename = 'users';
     $this->table = 'users';
@@ -25,23 +26,24 @@ class tusers extends titems {
     if (!($gid = $groups->groupid($group))) return false;
     $password = md5("$login:litepublisher::$options->realm:$password");
     $item = array(
-    'group' => $gid,
+    'gid' => $gid,
     'login' => $login,
     'password' => $password,
     'cookie' =>  md5uniq(),
-    'expired' => 0,
+    'expired' => sqldate(),
     'name' => $name,
     'email' => $email,
-    'url' => $url
+    'url' => $url,
+'ip' => '',
+'avatar' => 0,
+'trust' => 0
     );
     
-    if ($this->dbversion) {
-      return $this->db->add($item);
-    } else {
-      $this->items[++$this->autoid] = $item;
-      $this->save();
-      return $this->autoid;
-    }
+$id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+$this->items[$id] = $item;
+      if ($this->dbversion) $this->save();
+$this->added($id);
+      return $id;
   }
   
   public function loginexists($login) {
@@ -75,18 +77,27 @@ class tusers extends titems {
   
   public function authcookie($cookie) {
     if (empty($cookie)) return false;
+if ($this->dbversion) {
+if (($a = $this->select('cookie = '. dbquote($cookie), 'limit 1')) && (count($a) > 0)) {
+$item = $this->getitem($a[0]);
+        if (strtotime($item['expired']) < time()) return  false;
+return (int) $item['id'];
+}
+} else {
     foreach ($this->items as $id => $item) {
       if ($cookie == $item['cookie']) {
-        if ($item['expired'] < time()) return  false;
+        if (strtotime($item['expired']) < time()) return  false;
         return $id;
       }
     }
+}
     return false;
   }
   
   public function getgroupname($id) {
+$item = $this->getitem($id);
     $groups = tusergroups::instance();
-    return $groups->items[$this->items[$id]['group']]['name'];
+    return $groups->items[$item['gid']]['name'];
   }
   
   public function clearcookie($id) {
@@ -94,6 +105,10 @@ class tusers extends titems {
   }
   
   public function setcookies($id, $cookie, $expired) {
+$expired = sqldate($expired);
+if (isset($this->items[$id])) {      $this->items[$id]['cookie'] = $cookie;
+      $this->items[$id]['expired'] = $expired;
+}
     if ($this->dbversion) {
       $this->db->updateassoc(array(
       'id' => $id,
@@ -101,10 +116,19 @@ class tusers extends titems {
       'expired' => $expired
       ));
     } else {
-      $this->items[$id]['cookie'] = $cookie;
-      $this->items[$id]['expired'] = $expired;
       $this->save();
     }
   }
+
+  public function request($arg) {
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
+if (!$this->itemexists($id)) return 404;
+      $item = $this->getitem($id);
+    $url = $item['url'];
+    if (!strpos($url, '.')) $url = litepublisher::$options->url . litepublisher::$options->home;
+    if (!strbegin($url, 'http://')) $url = 'http://' . $url;
+    turlmap::redir($url);
+  }
+  
 }//class
 ?>

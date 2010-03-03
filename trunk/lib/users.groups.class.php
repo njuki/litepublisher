@@ -19,7 +19,7 @@ class tusergroups extends titems {
   
   function add($name) {
     $this->items[++$this->autoid] = array(
-    'name' => $name,
+    'name' => $name
     );
     $this->save();
     return $this->autoid;
@@ -44,7 +44,6 @@ class tusergroups extends titems {
     }
     return false;
   }
-  
   
 }//class
 ?>

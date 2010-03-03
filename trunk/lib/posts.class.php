@@ -122,6 +122,7 @@ class tposts extends titems {
     }
     $this->lock();
     $this->updated($post);
+$this->cointerface('add', $post);
     $post->save();
     $this->unlock();
     $this->added($post->id);
@@ -158,6 +159,7 @@ class tposts extends titems {
     $post->modified = time();
     $this->lock();
     $this->updated($post);
+$this->cointerface('edit', $post);
     $post->save();
     $this->unlock();
     $this->edited($post->id);
@@ -171,11 +173,7 @@ class tposts extends titems {
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
-      /* will be deleted indbmanager optimize
-      $this->db->iddelete($id);
-      $this->getdb('pages')->delete("post = $id");
-      $this->getdb($this->rawtable)->iddelete($id);
-      */
+//$this->deletedeleted();
     } else {
       if ($post = tpost::instance($id)) {
         $idurl = $post->idurl;
@@ -189,12 +187,29 @@ class tposts extends titems {
     $this->lock();
     $this->PublishFuture();
     $this->UpdateArchives();
+$this->cointerface('delete', $id);
     $this->unlock();
     $this->deleted($id);
     $this->changed();
     $urlmap->clearcache();
     return true;
   }
+
+public function deletedeleted() {
+    $deleted = $this->db->idselect("status = 'deleted'");
+    if (count($deleted) == 0) return;
+      $deleted = implode(',', $deleted);
+    $db = litepublisher::$db;
+      $db->exec("delete from $db->urlmap where id in
+      (select idurl from $this->thistable where id in ($deleted))");
+      
+      $this->getdb($this->rawtable)->delete("id in ($deleted)");
+      $this->getdb('pages')->delete("id in ($deleted)");
+
+      $db->exec("delete from $db->postsmeta where id in ($deleted)");
+      $this->db->delete("id in ($deleted)");
+$this->cointerface('deletedeleted', $deleted);
+}
   
   public function updated(tpost $post) {
     if (($post->status == 'published') && ($post->posted > time())) {
@@ -296,6 +311,13 @@ class tposts extends titems {
     return array_keys($result);
   }
   
+//coclasses
+private function cointerface($method, $arg) {
+foreach ($this->coinstances as $coinstance) {
+if ($coinstance instanceof  ipost) $coinstance->$method($arg);
+}
+}
+
 }//class
 
 ?>
