@@ -31,13 +31,24 @@ $post->status = 'draft';
 $this->db->delete("id in ($deleted)");
 }
 
+public function checklang() {
+if (!isset(tlocal::$data['ticket'])) {
+      $v = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . '.ini');
+    tlocal::$data = $v + tlocal::$data ;
+      tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
+      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
+    }
+}
+
 public function aftercontent($id, &$content) {
 if (litepublisher::$urlmap->page > 1) return;
+$this->checklang();
 $post = tpost::instance($id);
 ttheme::$vars['ticket'] = $post;
 $theme = ttheme::instance();
 $info = $theme->parse($this->infotml);
 $content = $info . $content;
+$reproduced = $post->reproduced ? $lang->reproduced : $lang->notreproduced;
 $code = str_replace(
           array('"', "'", '$'),
           array('&quot;', '&#39;', '&#36;'),
