@@ -67,8 +67,11 @@ class tpost extends titem implements  itemplate {
   
   //db
   public function load() {
-    if (dbversion)  return $this->LoadFromDB();
-    return parent::load();
+$result = dbversion? $this->LoadFromDB() : parent::load();
+if ($result) {
+foreach ($this->coinstances as $coinstance) $coinstance->load();
+}
+return $result;
   }
   
   protected function LoadFromDB() {
@@ -81,9 +84,19 @@ class tpost extends titem implements  itemplate {
     }
     return false;
   }
-  
+
+public function save() {
+parent::save();
+foreach ($this->coinstances as $coinstance) $coinstance->save();
+}
+
   protected function SaveToDB() {
     TPostTransform ::instance($this)->save();
+  }
+
+  public function free() {
+foreach ($this->coinstances as $coinstance) $coinstance->free();
+parent::free();
   }
   
   public function getcomments() {
