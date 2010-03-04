@@ -43,10 +43,27 @@ if (!isset(tlocal::$data['ticket'])) {
 public function aftercontent($id, &$content) {
 if (litepublisher::$urlmap->page > 1) return;
 $this->checklang();
+$lang = tlocal::instance('ticket');
 $post = tpost::instance($id);
-ttheme::$vars['ticket'] = $post;
+$ticket = $post->ticket;
+$args = targs::instance();
+foreach (array('type', 'state', 'prio') as $prop) {
+$value = $ticket->$prop;
+$args->$prop = $lang->$value;
+}
+
+if ($ticket.assignto <= 1) {
+$profile = tprofile::instance();
+$args->assignto = $profile->nick;
+} else {
+$users = tusers::instance();
+$account = $users->getaccount($ticket->assignto);
+$args->assignto = $this->$account['name'];
+}
+
+ttheme::$vars['ticket'] = $ticket;
 $theme = ttheme::instance();
-$info = $theme->parse($this->infotml);
+$info = $theme->parsearg($this->infotml, $args);
 $content = $info . $content;
 $reproduced = $post->reproduced ? $lang->reproduced : $lang->notreproduced;
 $code = str_replace(

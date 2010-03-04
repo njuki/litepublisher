@@ -70,6 +70,10 @@ $this->db->add($this->data);
 }
 }
 
+protected function getticket() {
+return $this;
+}
+
   protected function getclosed() {
     return strtotime($this->data['closed']);
   }
