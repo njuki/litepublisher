@@ -8,7 +8,14 @@
 
 function tticketsInstall($self) {
 $self->infotml = '
+status: $ticket.state
+closed: $ticket.closed
+assigned to: $ticket.assignedto
+priorety: $ticket.prio
+version: $ticket.version
+OS: $ticket.os
 ';
+
 $self->save();
 
   if ($self->dbversion) {
