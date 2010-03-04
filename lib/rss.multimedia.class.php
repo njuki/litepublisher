@@ -135,7 +135,6 @@ class trssMultimedia extends tevents {
     if (($this->feedburner != $url)) {
       $this->data['feedburner'] = $url;
       $this->save();
-      litepublisher::$urlmap = turlmap::instance();
       litepublisher::$urlmap->clearcache();
     }
   }

@@ -304,10 +304,15 @@ class tinstaller extends tdata {
     $plugins->unlock();
   }
   
-  public static function SendEmail($password) {
+  public function SendEmail($password) {
+    define('mailpassword', $password);
+    register_shutdown_function(__class__ . '::sendmail');
+  }
+  
+  public static function sendmail() {
     tlocal::loadlang('admin');
     $lang = &tlocal::$data['installation'];
-    $body = sprintf($lang['body'], litepublisher::$options->url, litepublisher::$options->login, $password);
+    $body = sprintf($lang['body'], litepublisher::$options->url, litepublisher::$options->login, mailpassword);
     
     tmailer::sendmail('', litepublisher::$options->fromemail,
     '', litepublisher::$options->email, $lang['subject'], $body);
@@ -324,6 +329,7 @@ class tinstaller extends tdata {
     $content = $html->congratulation($args);
     
     echo SimplyHtml(litepublisher::$options->name, $content);
+    if (ob_get_level()) ob_end_flush ();
   }
   
   public function uninstall() {

@@ -65,7 +65,6 @@ public function getdescription() {}
     if ($this->data[$name] != $value) {
       $this->data[$name] = $value;
       $this->save();
-      litepublisher::$urlmap = turlmap::instance();
       litepublisher::$urlmap->setexpired($this->idurl);
     }
   }
