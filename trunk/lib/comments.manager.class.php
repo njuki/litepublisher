@@ -221,6 +221,7 @@ class tcommentmanager extends tevents {
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     //tmailer::sendtoadmin($subject, $body);
+if (!isset(self::$mail)) self::$mail = array();
     self::$mail[] = array('subject' => $subject, 'body' => $body);
     register_shutdown_function(__class__ . '::sendtoadmin');
   }
