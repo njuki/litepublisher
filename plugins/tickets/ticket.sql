@@ -8,7 +8,7 @@ version varchar(5) not null,
 votes int unsigned not null default 0,
 os varchar(32) not null,
 reproduced boolean default false,
-reproduce_code longtext not null,
+code longtext not null,
 
      PRIMARY KEY(id, type),
 key state (state),
