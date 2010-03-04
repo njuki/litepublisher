@@ -7,7 +7,9 @@
 **/
 
 function tticketsInstall($self) {
-$self->infotml = '
+$self->infotml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'ticket.tml');
+$self->save();
+'
 status: $ticket.state
 closed: $ticket.closed
 assigned to: $ticket.assignedto
@@ -16,7 +18,7 @@ version: $ticket.version
 OS: $ticket.os
 ';
 
-$self->save();
+
 
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
@@ -32,6 +34,10 @@ $posts->addcoclass(get_class($self));
 $class = 'tticket';
     litepublisher::$classes->Add($class, 'ticket.class.php', basename(dirname(__file__) ));
 $posts->unlock();
+
+$linkgen = tlinkgenerator::instance();
+$linkgen->post = '/[type]/[title].htm';
+$linkgen->save();
 }
 
 function tticketsUninstall($self) {
