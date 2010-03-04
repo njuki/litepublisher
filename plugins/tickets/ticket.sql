@@ -1,0 +1,15 @@
+id int UNSIGNED NOT NULL default 0,
+type enum ('bug', 'feature', 'support', 'task') default 'bug',
+state enum('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') default 'opened',
+prio enum('trivial', 'minor', 'major', 'critical', 'blocker') default 'major',
+assignto int unsigned not null default 0,
+closed datetime NOT NULL default '2010-01-01 10:01:01',
+version varchar(5) not null,
+votes int unsigned not null default 0,
+os varchar(32) not null,
+reproduced boolean default false,
+reproduce_code longtext not null,
+
+     PRIMARY KEY(id, type),
+key state (state),
+key prio (prio)
