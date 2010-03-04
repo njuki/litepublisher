@@ -42,6 +42,7 @@ $this->selfexists = false;
   
   //db
   public function load() {
+if ($this->post->id == 0) return false;
 $result = dbversion? $this->LoadFromDB() : parent::load();
 if ($result) {
 $this->selfexists = true;
@@ -61,6 +62,7 @@ $this->data['reproduced'] = $a['reproduced'] == '1';
   
   protected function SaveToDB() {
 if ($this->data['closed'] == '') $this->data['closed'] = sqldate();
+$this->data['id'] = $this->post->id;
 if ($this->selfexists) {
 $this->db->updateassoc($this->data);
 } else {
@@ -68,11 +70,11 @@ $this->db->add($this->data);
 }
 }
 
-  private function getclosed() {
+  protected function getclosed() {
     return strtotime($this->data['closed']);
   }
   
-  private function setclosed($value) {
+  protected function setclosed($value) {
 $this->data['closed'] = sqldate($value);
   }
   

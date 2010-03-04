@@ -7,6 +7,10 @@
 **/
 
 function tticketsInstall($self) {
+$self->infotml = '
+';
+$self->save();
+
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
@@ -16,11 +20,20 @@ function tticketsInstall($self) {
 $posts = tposts::instance();
 $posts->lock();
 $posts->coclasses[] = get_class($self);
-$posts->itemcoclasses[] = 'tticket';
+$posts->addcoclass(get_class($self));
+//install tticket
+$class = 'tticket';
+    litepublisher::$classes->Add($class, 'ticket.class.php', basename(dirname(__file__) ));
 $posts->unlock();
 }
 
 function tticketsUninstall($self) {
+$posts->coclasses[] = get_class($self);
+$posts->deletecoclass(get_class($self));
+//install tticket
+$class = 'tticket';
+    litepublisher::$classes->delete($class);
+$posts->unlock();
 
 }
 
