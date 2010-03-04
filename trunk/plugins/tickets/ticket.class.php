@@ -8,6 +8,7 @@
 
 class tticket extends titem {
 public $post;
+private $selfexists; // flagto add
 
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
@@ -19,6 +20,7 @@ public $post;
   
   protected function create() {
     $this->table = 'tickets';
+$this->selfexists = false;
     $this->data= array(
 'id' => 0,
 'type' => 'bug',
@@ -30,7 +32,7 @@ public $post;
 'votes' => 0,
 'os'=> '*',
 'reproduced' => false,
-'reproduce_code' => ''
+'code' => ''
 );    
   }
   
@@ -42,6 +44,7 @@ public $post;
   public function load() {
 $result = dbversion? $this->LoadFromDB() : parent::load();
 if ($result) {
+$this->selfexists = true;
       self::$instances[get_class($this)][$this->post->id] = $this;
     }
 return $result;
@@ -50,16 +53,28 @@ return $result;
   protected function LoadFromDB() {
     if ($a = $this->db->getitem($this->post->id)) {
 $this->data = $a;
+$this->data['reproduced'] = $a['reproduced'] == '1';
       return true;
     }
     return false;
   }
   
   protected function SaveToDB() {
+if ($this->data['closed'] == '') $this->data['closed'] = sqldate();
+if ($this->selfexists) {
 $this->db->updateassoc($this->data);
+} else {
+$this->db->add($this->data);
+}
 }
 
-
-
+  private function getclosed() {
+    return strtotime($this->data['closed']);
+  }
+  
+  private function setclosed($value) {
+$this->data['closed'] = sqldate($value);
+  }
+  
 }//class
 ?>
