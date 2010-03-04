@@ -25,7 +25,6 @@ class trss extends tevents {
   }
   
   public function commentschanged($idpost) {
-    litepublisher::$urlmap = turlmap::instance();
     litepublisher::$urlmap->setexpired($this->idcomments);
     litepublisher::$urlmap->setexpired($this->idpostcomments);
   }
@@ -216,7 +215,6 @@ class trss extends tevents {
       $this->feedburner= $rss;
       $this->feedburnercomments = $comments;
       $this->save();
-      litepublisher::$urlmap = turlmap::instance();
       litepublisher::$urlmap->clearcache();
     }
   }

@@ -139,28 +139,35 @@ class tcomments extends titems {
     return $id;
   }
   
+  
+  public function getmoderator() {
+    if (!litepublisher::$options->admincookie) return false;
+    if (litepublisher::$options->group == 'admin') return true;
+    $groups = tusergroups::instance();
+    return $groups->hasrigt(litepublisher::$options->group, 'moderator');
+  }
+  
   public function getcontent() {
     $result = $this->getcontentwhere('approved', '');
-    if (litepublisher::$options->admincookie) {
-      $theme = ttheme::instance();
-      tlocal::loadlang('admin');
-      $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
-      $post = tpost::instance($this->pid);
-      if ($post->commentpages == litepublisher::$urlmap->page) {
-        $result .= $this->getcontentwhere('hold', '');
-      } else {
-        //добавить пустой список задержанных
-        $commentsid = $theme->content->post->templatecomments->comments->commentsid;
-        $tml = $theme->content->post->templatecomments->comments->__tostring();
-        $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
-        $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
-        $result .= sprintf($tml, '', 1);
-      }
-      
-      $args = targs::instance();
-      $args->comments = $result;
-      $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
+    if (!$this->moderator) return $result;
+    $theme = ttheme::instance();
+    tlocal::loadlang('admin');
+    $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
+    $post = tpost::instance($this->pid);
+    if ($post->commentpages == litepublisher::$urlmap->page) {
+      $result .= $this->getcontentwhere('hold', '');
+    } else {
+      //добавить пустой список задержанных
+      $commentsid = $theme->content->post->templatecomments->comments->commentsid;
+      $tml = $theme->content->post->templatecomments->comments->__tostring();
+      $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
+      $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
+      $result .= sprintf($tml, '', 1);
     }
+    
+    $args = targs::instance();
+    $args->comments = $result;
+    $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
     return $result;
   }
   
@@ -190,7 +197,7 @@ class tcomments extends titems {
     ttheme::$vars['comment'] = $comment;
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
-    if (litepublisher::$options->admincookie) {
+    if ($ismoder = $this->moderator) {
       tlocal::loadlang('admin');
       $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
     } else {
@@ -214,7 +221,7 @@ class tcomments extends titems {
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
     }
     
-    if (!litepublisher::$options->admincookie) {
+    if (!$ismoder) {
       if ($result == '') return '';
     }
     return sprintf($tml, $result, $from + 1);

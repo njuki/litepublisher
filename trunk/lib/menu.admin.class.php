@@ -50,7 +50,6 @@ class tadminmenus extends tmenus {
     $item['id'] = ++$this->autoid;
     $item['order'] = $this->autoid;
     $item[    'status'] = 'published';
-    litepublisher::$urlmap = turlmap::instance();
     $item['idurl'] =     litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
     $this->items[$this->autoid] = $item;
     $this->sort();
