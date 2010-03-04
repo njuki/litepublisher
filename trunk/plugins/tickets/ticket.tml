@@ -1,0 +1,16 @@
+<table>
+	<thead>
+	<tr>
+		<th align='left'>$lang.type</th>
+</tr>
+	</thead>
+<tbody>
+
+<tr>
+		<td  align='left'><a href='$options.url$url'>$title</a></td>
+</tr>
+
+
+</tbody >
+</table>
+
