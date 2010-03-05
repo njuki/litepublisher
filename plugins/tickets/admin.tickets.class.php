@@ -12,10 +12,10 @@ class tadmintickets extends tadminmenu {
     return getinstance(__class__);
   }
 
-protected function gethtml() {
+public function gethtml($name = '') {
 $tickets = ttickets::instance();
 $tickets->checkhtml();
-return parent::gethtml();
+return parent::gethtml($name);
 }
   
   public function getcontent() {
@@ -23,12 +23,12 @@ return parent::gethtml();
     $posts = tposts::instance();
     $perpage = 20;
     if (dbversion) {
-$sql = "status <> 'deleted'";
-$sql = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
-    $count = $posts->db->getcount($sql);
+$where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
+$tickets = ttickets::instance();
+$count = $tickets->getcount($where);
     $from = $this->getfrom($perpage, $count);
 if ($count > 0) {
-$items = $posts->select($sql, " order by posted desc limit $from, $perpage");
+$items = $posts->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
       if (!$items) $items = array();
 }  else {
 $items = array();
@@ -42,7 +42,7 @@ if (litepublisher::$options->user == 1) {
 } else {
 $items = array();
 foreach ($posts->items as $item) {
-if (isset($item['author']) && $item['author'] == litepublisher->$options->user)) $items[] = $id;
+if (isset($item['author']) && ($item['author'] == litepublisher::$options->user)) $items[] = $id;
 }
 
     $count = count($items);
@@ -59,12 +59,13 @@ if (isset($item['author']) && $item['author'] == litepublisher->$options->user))
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $args->editurl = litepublisher::$options->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
+$lang = tlocal::instance('tickets');
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
 $ticket = $post->ticket;
       ttheme::$vars['post'] = $post;
       ttheme::$vars['ticket'] = $ticket;
-$args->status = tlocal::$data['posts'][$post->status];
+$args->status = $lang->{$post->status};
 $args->type = tlocal::$data['ticket'][$ticket->type];
 $args->prio = tlocal::$data['ticket'][$ticket->prio];
 $args->state = tlocal::$data['ticket'][$ticket->state];
