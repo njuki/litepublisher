@@ -7,12 +7,12 @@
 **/
 
 function tticketsInstall($self) {
-$self->infotml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'ticket.tml');
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+$self->infotml = file_get_contents($dir . 'ticket.tml');
 $self->save();
 
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'tickets.sql'));
   }
 
