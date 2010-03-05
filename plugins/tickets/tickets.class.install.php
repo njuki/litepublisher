@@ -10,12 +10,15 @@ function tticketsInstall($self) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
 $self->infotml = file_get_contents($dir . 'ticket.tml');
 $self->save();
+$self->checklang();
+$self->checkadminlang();
 
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
     $manager->CreateTable($self->table, file_get_contents($dir .'tickets.sql'));
   }
 
+litepublisher::$classes->lock();
 $posts = tposts::instance();
 $posts->lock();
 $posts->coclasses[] = get_class($self);
@@ -24,10 +27,6 @@ $posts->addcoclass(get_class($self));
 $class = 'tticket';
     litepublisher::$classes->Add($class, 'ticket.class.php', basename(dirname(__file__) ));
 $posts->unlock();
-
-$linkgen = tlinkgenerator::instance();
-$linkgen->post = '/[type]/[title].htm';
-$linkgen->save();
 
 //install polls if its needed
 $plugins = tplugins::instance();
@@ -39,13 +38,27 @@ $polls->save();
 }
 if (!isset($plugins->items['markdown'])) $plugins->add('markdown');
 
+    litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
+    litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
+
+        $menus = tadminmenus::instance();
+          $idmenu = $menus->add(0, 'tickets', 'ticket', 'tadmintickets');
+$menus->add($idmenu, 'editor', 'ticket', 'tticketeditor');
+        $menus->unlock();
+litepublisher::$classes->unlock();
+
 $filter = tcontentfilter::instance();
 $filter->phpcode =  true;
 $filter->save();
+
+$linkgen = tlinkgenerator::instance();
+$linkgen->post = '/[type]/[title].htm';
+$linkgen->save();
 }
 
 function tticketsUninstall($self) {
 die("Warning! You can lost all tickets!");
+litepublisher::$classes->lock();
 $posts->coclasses[] = get_class($self);
 $posts->deletecoclass(get_class($self));
 //install tticket
@@ -53,6 +66,15 @@ $class = 'tticket';
     litepublisher::$classes->delete($class);
 $posts->unlock();
 
+    litepublisher::$classes->delete('tticketeditor');
+    litepublisher::$classes->delete('tadmintickets');
+
+        $menus = tadminmenus::instance();
+$menus->lock();
+$menus->deleteurl('/admin/tickets/editor/');
+$menus->deleteurl('/admin/tickets/');
+        $menus->unlock();
+litepublisher::$classes->unlock();
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
     $manager->deletetable($self->table);
@@ -65,8 +87,6 @@ $polls->save();
 $linkgen = tlinkgenerator::instance();
 $linkgen->post = '/[title].htm';
 $linkgen->save();
-
-
 }
 
 ?>
