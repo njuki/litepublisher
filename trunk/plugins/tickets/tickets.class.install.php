@@ -10,7 +10,6 @@ function tticketsInstall($self) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
 $self->infotml = file_get_contents($dir . 'ticket.tml');
 $self->save();
-$self->checklang();
 $self->checkadminlang();
 
   if ($self->dbversion) {
@@ -43,7 +42,9 @@ if (!isset($plugins->items['markdown'])) $plugins->add('markdown');
 
         $menus = tadminmenus::instance();
           $idmenu = $menus->add(0, 'tickets', 'ticket', 'tadmintickets');
-$menus->add($idmenu, 'editor', 'ticket', 'tticketeditor');
+    $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
+$idmenu = $menus->add($idmenu, 'editor', 'ticket', 'tticketeditor');
+    $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
         $menus->unlock();
 litepublisher::$classes->unlock();
 

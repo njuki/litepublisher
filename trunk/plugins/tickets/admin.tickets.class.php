@@ -11,61 +11,47 @@ class tadmintickets extends tadminmenu {
   public static function instance() {
     return getinstance(__class__);
   }
+
+protected function gethtml() {
+$tickets = ttickets::instance();
+$tickets->checkhtml();
+return parent::gethtml();
+}
   
   public function getcontent() {
-    if (isset($_GET['action']) && in_array($_GET['action'], array('delete', 'setdraft', 'publish'))) {
-      $action = $_GET['action'];
-    } else {
-      return $this->getlist();
-    }
-    
-    $id = $this->idget();
-    $posts= tposts::instance();
-    if (!$posts->itemexists($id)) return $this->notfound;
-    $post = tpost::instance($id);
-    
-    if (!$this->confirmed) {
-      $args = targs::instance();
-      $args->id = $id;
-      $args->adminurl = $this->adminurl;
-      $args->action = $action;
-      $args->confirm = sprintf($this->lang->confirm, $this->lang->$action, "<a href='$post->link'>$post->title</a>");
-      return $this->html->confirmform($args);
-    }
-    
-    $h2 = $this->html->h2;
-    switch ($_GET['action']) {
-      case 'delete' :
-      $posts->delete($id);
-      return $h2->confirmeddelete;
-      
-      case 'setdraft':
-      $post->status = 'draft';
-      $posts->edit($post);
-      return $h2->confirmedsetdraft;
-      
-      case 'publish':
-      $post->status = 'published';
-      $posts->edit($post);
-      return $h2->confirmedpublish;
-    }
-    
-  }
-  
-  private function getlist() {
     $result = '';
     $posts = tposts::instance();
     $perpage = 20;
+    if (dbversion) {
+$sql = "status <> 'deleted'";
+$sql = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
+    $count = $posts->db->getcount($sql);
+    $from = $this->getfrom($perpage, $count);
+if ($count > 0) {
+$items = $posts->select($sql, " order by posted desc limit $from, $perpage");
+      if (!$items) $items = array();
+}  else {
+$items = array();
+}
+    } else {
+if (litepublisher::$options->user == 1) {
     $count = $posts->count;
     $from = $this->getfrom($perpage, $count);
-    
-    if (dbversion) {
-      $items = $posts->select("status <> 'deleted'", " order by posted desc limit $from, $perpage");
-      if (!$items) $items = array();
-    } else {
       $items = array_slice($posts->items, $from, $perpage, true);
       $items = array_reverse (array_keys($items));
+} else {
+$items = array();
+foreach ($posts->items as $item) {
+if (isset($item['author']) && $item['author'] == litepublisher->$options->user)) $items[] = $id;
+}
+
+    $count = count($items);
+    $from = $this->getfrom($perpage, $count);
+      $items = array_slice($items, $from, $perpage);
+      $items = array_reverse ($items);
+}
     }
+
     $html = $this->html;
     $result .= $html->checkallscript;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
@@ -75,11 +61,20 @@ class tadmintickets extends tadminmenu {
     $args->editurl = litepublisher::$options->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
+$ticket = $post->ticket;
       ttheme::$vars['post'] = $post;
-    $args->status = $this->lang->{$post->status};
+      ttheme::$vars['ticket'] = $ticket;
+$args->status = tlocal::$data['posts'][$post->status];
+$args->type = tlocal::$data['ticket'][$ticket->type];
+$args->prio = tlocal::$data['ticket'][$ticket->prio];
+$args->state = tlocal::$data['ticket'][$ticket->state];
       $result .= $html->itemlist($args);
     }
+    $result .= $html->footer();
+if (litepublisher::$options->group != 'ticket') {
+$result  = "<form name='form' action='' method='post'>" . $result;
     $result .= $html->listfooter();
+}
     $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
@@ -88,6 +83,7 @@ class tadmintickets extends tadminmenu {
   }
   
   public function processform() {
+if (litepublisher::$options->group == 'ticket') return '';
     $posts = tposts::instance();
     $posts->lock();
     $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');

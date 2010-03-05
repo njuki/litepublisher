@@ -27,14 +27,23 @@ $post->status = 'draft';
   public function edit(tpost $post) { }
   public function delete($id) {}
 
+protected function getresource() {
+return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+}
+
+public function checkhtml() {
+$html = THtmlResource::instance();
+if (!isset($html->ini['tickets'])) {
+$html->loadini($this->resource . 'html.ini');
+      tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $html->ini);
+}
+}
+
 public function checkadminlang() {
 if (!isset(tlocal::$data['tickets'])) {
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-      $v = parse_ini_file($dir . litepublisher::$options->language . '.admin.ini');
-    tlocal::$data = $v + tlocal::$data ;
+    tlocal::loadini($this->resource . litepublisher::$options->language . '.admin.ini');
 if (!isset(tlocal::$data['ticket'])) {
-      $v = parse_ini_file($dir . litepublisher::$options->language . '.ini');
-    tlocal::$data = $v + tlocal::$data ;
+    tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
 }
       tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
@@ -43,9 +52,7 @@ if (!isset(tlocal::$data['ticket'])) {
 
 public function checklang() {
 if (!isset(tlocal::$data['ticket'])) {
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-      $v = parse_ini_file($dir . litepublisher::$options->language . '.ini');
-    tlocal::$data = $v + tlocal::$data ;
+    tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
       tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
     }
