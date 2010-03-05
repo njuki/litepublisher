@@ -55,7 +55,7 @@ class tposts extends titems {
     return $this->select("$this->thistable.id in ($list)", '');
   }
   
-  private function transformres($res) {
+  public function transformres($res) {
     $result = array();
     $t = new tposttransform();
     while ($a = litepublisher::$db->fetchassoc($res)) {
@@ -222,6 +222,7 @@ class tposts extends titems {
       'posted' => $post->posted
       );
       if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
+      if   ($post->author > 1) $this->items[$post->id]['author'] = $post->author;
     }
     $this->UpdateArchives();
     $Cron = tcron::instance();

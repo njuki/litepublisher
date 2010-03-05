@@ -22,7 +22,7 @@ class tposteditor extends tadminmenu {
     //<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
   }
   
-  private function getcategories(tpost $post) {
+  protected function getcategories(tpost $post) {
     $result = '';
     $categories = tcategories::instance();
     if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
@@ -103,40 +103,46 @@ class tposteditor extends tadminmenu {
     $result = $html->fixquote($result);
     return $result;
   }
-  
+
+
+protected function getcats() {
+    $result = array();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'category-')) {
+        $result[] = (int) $value;
+      }
+    }
+return $result;
+}  
+
+protected function getfiles() {
+      $result = array();
+      foreach ($_POST as $key => $value) {
+        if (strbegin($key, 'filecheckbox-')) {
+          $result[] = (int) $value;
+        }
+      }
+return $result;
+}
+
   public function processform() {
+    extract($_POST);
     $mode = $this->getmode();
     $this->basename = 'editor';
     $html = $this->html;
-    $cats = array();
-    foreach ($_POST as $key => $value) {
-      if (strbegin($key, 'category-')) {
-        $cats[] = (int) $value;
-      }
-    }
-    
-    extract($_POST);
     $post = tpost::instance((int)$id);
     if ($mode != 'update'){
       if (empty($title)) return $html->h2->emptytitle;
       $post->title = $title;
-      $post->categories = $cats;
+      $post->categories = $this->getcats();
       $post->tagnames = $tags;
       if (isset($icon)) $post->icon = (int) $icon;
       if (isset($theme)) $post->theme = $theme;
       if (isset($tmlfile)) $post->tmlfile = $tmlfile;
     }
     
-    if (isset($fileschanged))  {
-      $files = array();
-      foreach ($_POST as $key => $value) {
-        if (strbegin($key, 'filecheckbox-')) {
-          $files[] = (int) $value;
-        }
-      }
-      $post->files = $files;
-    }
-    
+    if (isset($fileschanged))  $post->files = $this->getfiles();
+
     switch ($this->getmode()) {
       case 'short':
       $post->content = $raw;

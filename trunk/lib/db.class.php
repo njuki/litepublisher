@@ -113,10 +113,6 @@ class tdatabase {
     return "'" . mysql_escape_string($s) . "'";
   }
   
-  public function SelectTableWhere($table, $where) {
-    return $this->query("SELECT * FROM $this->prefix$table WHERE ($where)");
-  }
-  
   public function select($where) {
     if ($where != '') $where = 'where '. $where;
     return $this->query("SELECT * FROM $this->prefix$this->table $where");
@@ -147,7 +143,7 @@ class tdatabase {
     $list = array();
     foreach ($a As $name => $value) {
       if ($name == 'id') continue;
-if (is_bool($value) {
+if (is_bool($value)) {
 $value =$value ? '1' : '0';
       $list[] = "$name = " . $value;
 continue;
@@ -190,7 +186,7 @@ continue;
     $Names =implode(', ', array_keys($a));
     $vals = array();
     foreach( $a as $name => $val) {
-if (is_bool($val) {
+if (is_bool($val)) {
       $vals[] = $val ? '1' : '0';
 } else {
       $vals[] = $this->quote($val);
