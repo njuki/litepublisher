@@ -9,16 +9,6 @@
 function tticketsInstall($self) {
 $self->infotml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'ticket.tml');
 $self->save();
-'
-status: $ticket.state
-closed: $ticket.closed
-assigned to: $ticket.assignedto
-priorety: $ticket.prio
-version: $ticket.version
-OS: $ticket.os
-';
-
-
 
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
@@ -38,15 +28,44 @@ $posts->unlock();
 $linkgen = tlinkgenerator::instance();
 $linkgen->post = '/[type]/[title].htm';
 $linkgen->save();
+
+//install polls if its needed
+$plugins = tplugins::instance();
+if (dbversion) {
+if (!isset($plugins->items['polls'])) $polls->add('polls');
+$polls = tpolls::instance();
+$polls->finddeleted = false;
+$polls->save();
+}
+if (!isset($plugins->items['markdown'])) $plugins->add('markdown');
+
+$filter = tcontentfilter::instance();
+$filter->phpcode =  true;
+$filter->save();
 }
 
 function tticketsUninstall($self) {
+die("Warning! You can lost all tickets!");
 $posts->coclasses[] = get_class($self);
 $posts->deletecoclass(get_class($self));
 //install tticket
 $class = 'tticket';
     litepublisher::$classes->delete($class);
 $posts->unlock();
+
+  if ($self->dbversion) {
+    $manager = tdbmanager ::instance();
+    $manager->deletetable($self->table);
+
+$polls = tpolls::instance();
+$polls->finddeleted = true;
+$polls->save();
+  }
+
+$linkgen = tlinkgenerator::instance();
+$linkgen->post = '/[title].htm';
+$linkgen->save();
+
 
 }
 

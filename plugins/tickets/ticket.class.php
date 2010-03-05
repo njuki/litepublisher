@@ -30,6 +30,7 @@ $this->selfexists = false;
 'closed' = '',
 'version'=> litepublisher::$options->version,
 'votes' => 0,
+'poll' => 0,
 'os'=> '*',
 'reproduced' => false,
 'code' => ''

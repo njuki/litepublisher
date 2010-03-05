@@ -4,6 +4,10 @@
 		<th align='left'>$lang.type</th>
 		<th align='left'>$lang.state</th>
 		<th align='left'>$lang.prio</th>
+		<th align='left'>$lang.votes</th>
+		<th align='left'>$lang.version</th>
+		<th align='left'>$lang.os</th>
+		<th align='left'>$lang.reproduced</th>
 		<th align='left'>$lang.assignto</th>
 </tr>
 	</thead>
@@ -13,9 +17,12 @@
 		<td  align='left'><a href='$options.url/$ticket.type/'>$type</a></td>
 		<dd align='left'>$state</td>
 		<td align='left'>$prio</td>
+		<td align='left'>$ticket.votes</td>
+		<td align='left'>$ticket.version</td>
+		<td align='left'>$ticket.os</td>
+		<td align='left'>$reproduced</td>
 		<td align='left'>$assignto</td>
 </tr>
 
 </tbody >
 </table>
-
