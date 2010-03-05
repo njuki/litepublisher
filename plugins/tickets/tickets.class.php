@@ -29,10 +29,11 @@ $post->status = 'draft';
 
 public function checkadminlang() {
 if (!isset(tlocal::$data['tickets'])) {
-      $v = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . '.admin.ini');
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+      $v = parse_ini_file($dir . litepublisher::$options->language . '.admin.ini');
     tlocal::$data = $v + tlocal::$data ;
 if (!isset(tlocal::$data['ticket'])) {
-      $v = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . '.ini');
+      $v = parse_ini_file($dir . litepublisher::$options->language . '.ini');
     tlocal::$data = $v + tlocal::$data ;
 }
       tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
@@ -42,7 +43,8 @@ if (!isset(tlocal::$data['ticket'])) {
 
 public function checklang() {
 if (!isset(tlocal::$data['ticket'])) {
-      $v = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . '.ini');
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+      $v = parse_ini_file($dir . litepublisher::$options->language . '.ini');
     tlocal::$data = $v + tlocal::$data ;
       tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
