@@ -67,11 +67,11 @@ class tpost extends titem implements  itemplate {
   
   //db
   public function load() {
-$result = dbversion? $this->LoadFromDB() : parent::load();
-if ($result) {
-foreach ($this->coinstances as $coinstance) $coinstance->load();
-}
-return $result;
+    $result = dbversion? $this->LoadFromDB() : parent::load();
+    if ($result) {
+      foreach ($this->coinstances as $coinstance) $coinstance->load();
+    }
+    return $result;
   }
   
   protected function LoadFromDB() {
@@ -84,19 +84,19 @@ return $result;
     }
     return false;
   }
-
-public function save() {
-parent::save();
-foreach ($this->coinstances as $coinstance) $coinstance->save();
-}
-
+  
+  public function save() {
+    parent::save();
+    foreach ($this->coinstances as $coinstance) $coinstance->save();
+  }
+  
   protected function SaveToDB() {
     TPostTransform ::instance($this)->save();
   }
-
+  
   public function free() {
-foreach ($this->coinstances as $coinstance) $coinstance->free();
-parent::free();
+    foreach ($this->coinstances as $coinstance) $coinstance->free();
+    parent::free();
   }
   
   public function getcomments() {
@@ -286,7 +286,7 @@ parent::free();
       $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
       $result .= "<script type=\"text/javascript\" src=\"$options->files/js/litepublisher/comments.min.js\"></script>\n";
-      if (!$options->admincookie) $result .= " <script type=\"text/javascript\" src=\"$options->files/files/js/$options->language.js\"></script>\n";
+      if (!$options->admincookie) $result .= " <script type=\"text/javascript\" src=\"$options->files/files/$options->language.js\"></script>\n";
     }
     if ($options->admincookie) {
       $tc = ttemplatecomments::instance();

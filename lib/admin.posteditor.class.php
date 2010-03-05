@@ -103,28 +103,28 @@ class tposteditor extends tadminmenu {
     $result = $html->fixquote($result);
     return $result;
   }
-
-
-protected function getcats() {
+  
+  
+  protected function getcats() {
     $result = array();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, 'category-')) {
         $result[] = (int) $value;
       }
     }
-return $result;
-}  
-
-protected function getfiles() {
-      $result = array();
-      foreach ($_POST as $key => $value) {
-        if (strbegin($key, 'filecheckbox-')) {
-          $result[] = (int) $value;
-        }
+    return $result;
+  }
+  
+  protected function getfiles() {
+    $result = array();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'filecheckbox-')) {
+        $result[] = (int) $value;
       }
-return $result;
-}
-
+    }
+    return $result;
+  }
+  
   public function processform() {
     extract($_POST);
     $mode = $this->getmode();
@@ -142,7 +142,7 @@ return $result;
     }
     
     if (isset($fileschanged))  $post->files = $this->getfiles();
-
+    
     switch ($this->getmode()) {
       case 'short':
       $post->content = $raw;

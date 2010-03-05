@@ -143,11 +143,11 @@ class tdatabase {
     $list = array();
     foreach ($a As $name => $value) {
       if ($name == 'id') continue;
-if (is_bool($value)) {
-$value =$value ? '1' : '0';
-      $list[] = "$name = " . $value;
-continue;
-}
+      if (is_bool($value)) {
+        $value =$value ? '1' : '0';
+        $list[] = "$name = " . $value;
+        continue;
+      }
       $list[] = "$name = " . $this->quote($value);
     }
     
@@ -186,11 +186,11 @@ continue;
     $Names =implode(', ', array_keys($a));
     $vals = array();
     foreach( $a as $name => $val) {
-if (is_bool($val)) {
-      $vals[] = $val ? '1' : '0';
-} else {
-      $vals[] = $this->quote($val);
-}
+      if (is_bool($val)) {
+        $vals[] = $val ? '1' : '0';
+      } else {
+        $vals[] = $this->quote($val);
+      }
     }
     
     $this->exec("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
