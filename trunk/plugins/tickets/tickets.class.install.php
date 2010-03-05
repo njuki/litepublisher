@@ -12,9 +12,9 @@ $self->infotml = file_get_contents($dir . 'ticket.tml');
 $self->save();
 $self->checkadminlang();
 
-  if ($self->dbversion) {
+  if (dbversion) {
     $manager = tdbmanager ::instance();
-    $manager->CreateTable($self->table, file_get_contents($dir .'tickets.sql'));
+    $manager->CreateTable($self->table, file_get_contents($dir .'ticket.sql'));
   }
 
 litepublisher::$classes->lock();
@@ -22,6 +22,7 @@ $posts = tposts::instance();
 $posts->lock();
 $posts->coclasses[] = get_class($self);
 $posts->addcoclass(get_class($self));
+$posts->aftercontent = $self->aftercontent;
 //install tticket
 $class = 'tticket';
     litepublisher::$classes->Add($class, 'ticket.class.php', basename(dirname(__file__) ));
@@ -30,7 +31,7 @@ $posts->unlock();
 //install polls if its needed
 $plugins = tplugins::instance();
 if (dbversion) {
-if (!isset($plugins->items['polls'])) $polls->add('polls');
+if (!isset($plugins->items['polls'])) $plugins->add('polls');
 $polls = tpolls::instance();
 $polls->finddeleted = false;
 $polls->save();
@@ -58,11 +59,12 @@ $linkgen->save();
 }
 
 function tticketsUninstall($self) {
-die("Warning! You can lost all tickets!");
+//die("Warning! You can lost all tickets!");
 litepublisher::$classes->lock();
-$posts->coclasses[] = get_class($self);
+$posts = tposts::instance();
+$posts->lock();
 $posts->deletecoclass(get_class($self));
-//install tticket
+$posts->unsubscribeclass($self);
 $class = 'tticket';
     litepublisher::$classes->delete($class);
 $posts->unlock();

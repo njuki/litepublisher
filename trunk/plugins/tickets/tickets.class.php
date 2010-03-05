@@ -15,9 +15,28 @@ class ttickets extends tplugin implements iposts {
   protected function create() {
     parent::create();
     $this->table = 'tickets';
-    $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'tickets';
-$this->data['infottml'] = '';
+$this->data['infotml'] = '';
   }
+
+public function getcount($where) {
+    $db = litepublisher::$db;
+if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $db->tickets 
+where $db->posts.status <> 'deleted' and $db->tickets.id = $db->posts.id $where")) {
+if ($r = $db->fetchassoc($res)) return $r['count'];
+}
+return 0;
+
+}
+
+public function select($where, $limit) {
+    $db = litepublisher::$db;
+    $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $db->tickets.*
+from $db->posts, $db->urlmap, $db->tickets
+    where $where and  $db->posts.id = $db->tickets.id and $db->urlmap.id  = $db->posts.idurl $limit");
+    
+$posts = tposts::instance();
+    return $posts->transformres($res);
+}
 
   public function add(tpost $post) {
 $post->status = 'draft';
@@ -70,7 +89,7 @@ $value = $ticket->$prop;
 $args->$prop = $lang->$value;
 }
 $args->reproduced = $ticket->reproduced ? $lang->yesword : $lang->noword;
-if ($ticket.assignto <= 1) {
+if ($ticket->assignto <= 1) {
 $profile = tprofile::instance();
 $args->assignto = $profile->nick;
 } else {
@@ -82,7 +101,7 @@ $args->assignto = $this->$account['name'];
 ttheme::$vars['ticket'] = $ticket;
 $theme = ttheme::instance();
 $info = $theme->parsearg($this->infotml, $args);
-if (dbversion && ($ticket.poll > 1)) {
+if (dbversion && ($ticket->poll > 1)) {
 $polls = tpolls::instance();
 $info .= $polls->gethtml($ticket->poll);
 }
