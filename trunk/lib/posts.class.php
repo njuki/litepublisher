@@ -135,14 +135,18 @@ class tposts extends titems {
     $post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
     $urlmap = turlmap::instance();
     $oldurl = $urlmap->getidurl($post->idurl);
-    if ($oldurl != $post->url) {
+    if (($oldurl != $post->url) || ($post->url == '') ) {
       $linkgen = tlinkgenerator::instance();
       if ($post->url == '') {
         $post->url = $linkgen->createlink($post, 'post', false);
       } else {
         $title = $post->title;
         $post->title = trim($post->url, '/');
-        $post->url = $linkgen->Create($post, 'post', false);
+        if (is_int($i = strrpos($post->title, '.'))) $post->title = substr($post->title, 0, $i);
+        $post->title = trim($post->title, '.');
+        if ($post->title == '') $post->title = $title;
+        $post->url = $linkgen->Createlink($post, 'post', false);
+        
         $post->title = $title;
       }
     }
@@ -173,6 +177,7 @@ class tposts extends titems {
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
+      $this->getdb('comments')->update("status = 'delete'", "post = $id");
       //$this->deletedeleted();
     } else {
       if ($post = tpost::instance($id)) {

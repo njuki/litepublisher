@@ -28,7 +28,7 @@ class tadminlogin extends tadminform {
     } elseif ($auth->auth()) {
       $auth->logout();
     }
-    
+    litepublisher::$options->savemodified();
     return litepublisher::$urlmap->redir301('/admin/login/');
   }
   
@@ -51,6 +51,7 @@ class tadminlogin extends tadminform {
     $auth = tauthdigest::instance();
     $auth->setcookies($cookie, $expired);
     $options = litepublisher::$options;
+    $options->savemodified();
     return "<?php
     @setcookie('admin', '$cookie', $expired, '$options->subdir/', false);
     @header('Location: $options->url/admin/');

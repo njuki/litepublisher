@@ -26,7 +26,7 @@ class tcustomwidget extends titems {
   
   public function add($title, $content, $templ) {
     $widgets = twidgets::instance();
-    $id = $widgets->add(get_class($this), 'echo', '', '');
+    $id = $widgets->add(get_class($this), 'echo', 0, -1);
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,

@@ -42,6 +42,7 @@ class toptions extends tevents {
   
   public function savemodified() {
     if ($this->modified) parent::save();
+    $this->modified = false;
   }
   
   public function save() {
