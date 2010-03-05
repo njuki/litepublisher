@@ -104,10 +104,6 @@ class tdatabase extends PDO {
     }
   }
   
-  public function SelectTableWhere($table, $where) {
-    return $this->query("SELECT * FROM $this->prefix$table WHERE ($where)");
-  }
-  
   public function select($where) {
     if ($where != '') $where = 'where '. $where;
     return $this->query("SELECT * FROM $this->prefix$this->table $where");

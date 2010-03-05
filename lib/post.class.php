@@ -57,7 +57,7 @@ class tpost extends titem implements  itemplate {
     foreach ($posts->itemcoclasses as $class) {
       $coinstance = litepublisher::$classes->newinstance($class);
       $coinstance->post = $this;
-      $this->instances[]  = $coinstance;
+      $this->coinstances[]  = $coinstance;
     }
   }
   
