@@ -54,7 +54,7 @@ class ttemplate extends tevents {
   }
   
   private function contextHasProp($name) {
-    return isset($this->context) && (isset($this->context->$name) || (method_exists($this->context, 'propexists') && $this->context->propexists($name)));
+    return isset($this->context) && isset($this->context->$name);
   }
   
   public function afterload() {
@@ -106,9 +106,9 @@ class ttemplate extends tevents {
     ttheme::$vars['context'] = $context;
     $themename = $this->theme;
     if (litepublisher::$urlmap->adminpanel)       $themename = $this->admintheme;
-    if ($context->propexists('theme') && ($context->theme != '')) $themename = $context->theme;
+    if (isset($context->theme) && ($context->theme != '')) $themename = $context->theme;
     $tmlfile = 'index';
-    if ($context->propexists('tmlfile') && ($context->tmlfile != '')) $ttmlfile = $context->tmlfile;
+    if (isset($context->tmlfile) && ($context->tmlfile != '')) $ttmlfile = $context->tmlfile;
     $theme = $this->loadtheme($themename, $tmlfile);
     $result = $this->httpheader();
     $result  .= $theme->parse($theme->theme);

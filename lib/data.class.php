@@ -37,7 +37,7 @@ class tdata {
       return $this->data[$name];
     } else {
       foreach ($this->coinstances as $coinstance) {
-        if ($coinstance->propexists($name)) return $coinstance->$name;
+        if (isset($coinstance->$name)) return $coinstance->$name;
       }
       return    $this->error("The requested property $name not found in class ". get_class($this));
     }
@@ -55,7 +55,7 @@ class tdata {
     }
     
     foreach ($this->coinstances as $coinstance) {
-      if ($coinstance->propexists($name)) {
+      if (isset($coinstance->$name)) {
         $coinstance->$name = $value;
         return true;
       }
@@ -64,9 +64,9 @@ class tdata {
     return false;
   }
   
-  public  function __call($name, $params) {
+  public  function __call($name, array $params) {
     if (method_exists($this, strtolower($name))) {
-      return call_user_func_array(array(&$this, strtolower($name)), $params);
+      return call_user_func_array(array($this, strtolower($name)), $params);
     }
     
     foreach ($this->coinstances as $coinstance) {
@@ -76,8 +76,8 @@ class tdata {
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   
-  public function propexists($name) {
-    return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name") || isset($this->$name);
+  public function __isset($name) {
+    return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name");
   }
   
   public function error($Msg) {
