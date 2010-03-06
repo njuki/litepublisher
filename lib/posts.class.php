@@ -177,7 +177,6 @@ class tposts extends titems {
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
-      $this->getdb('comments')->update("status = 'delete'", "post = $id");
       //$this->deletedeleted();
     } else {
       if ($post = tpost::instance($id)) {

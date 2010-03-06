@@ -165,7 +165,8 @@ class tcommentmanager extends tevents {
       $deleted = false;
       foreach ($this->items as $i => $item) {
         if ($idpost == $item['idpost']) {
-          array_splice($this->items, $i, 1);
+unset($this->items[$i]);
+          //array_splice($this->items, $i, 1);
           $deleted = true;
         }
       }
@@ -243,7 +244,8 @@ class tcommentmanager extends tevents {
       where $db->comments.status = 'approved' and
       $db->comusers.id = $db->comments.author and
       $db->posts.id = $db->comments.post and
-      $db->urlmap.id = $db->posts.idurl
+      $db->urlmap.id = $db->posts.idurl and
+      $db->posts.status = 'published'
       order by $db->comments.posted desc limit $count");
       
       $result = $db->res2assoc($res);
