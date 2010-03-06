@@ -108,7 +108,7 @@ class tlinkgenerator extends tevents {
   }
   
   public function getdate() {
-    if ($this->source->propexists('date')) {
+    if (isset($this->source->date)) {
       return $this->source->date;
     } else {
       return time();

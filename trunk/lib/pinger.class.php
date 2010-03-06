@@ -49,13 +49,13 @@ class tpinger extends tevents {
     $post = tpost::instance($id);
     if ($post->status != 'published') return;
     $meta = $post->meta;
-    if (!$meta->propexists('lastpinged') || ($meta->lastpinged + 3600*24 < time())) {
+    if (!isset($meta->lastpinged) || ($meta->lastpinged + 3600*24 < time())) {
       $posturl = $post->link;
       $this->pingservices($posturl);
       $meta->lastpinged = time();
     }
     
-    $pinged = $meta->propexists('pinged') ? unserialize($meta->pinged) : array();
+    $pinged = isset($meta->pinged) ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
     foreach ($links as $link) {
       if (!in_array($link, $pinged)) {

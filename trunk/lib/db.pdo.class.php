@@ -18,7 +18,7 @@ class tdatabase extends PDO {
   }
   
   public function __construct() {
-    if (!litepublisher::$options->propexists('dbconfig')) return false;
+    if (!isset(litepublisher::$options->dbconfig)) return false;
     $dbconfig = litepublisher::$options->dbconfig;
     $this->table = '';
     $this->prefix =  $dbconfig['prefix'];

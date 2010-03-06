@@ -115,7 +115,7 @@ class tcontentfilter extends tevents {
     $chars = "\n ,.;!?:(";
     $p = strlen($result);
     for ($i = strlen($chars) - 1; $i >= 0; $i--) {
-    if($pos = strpos($result, $chars{$i}, $len)) {
+    if($pos = strpos($result, $chars[$i], $len)) {
         $p = min($p, $pos + 1);
       }
     }
