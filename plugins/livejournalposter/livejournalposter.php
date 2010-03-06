@@ -76,7 +76,7 @@ class tlivejournalposter extends tplugin {
     
     if($this->community != '') $args['usejournal'] = $this->community;
     
-    if ($meta->propexists('ljid') ) {
+    if (isset($meta->ljid) ) {
       $method = 'LJ.XMLRPC.editevent';
       $args['itemid'] = $meta->ljid;
     } else {
