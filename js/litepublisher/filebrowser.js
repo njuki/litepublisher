@@ -1,8 +1,8 @@
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 //ansync load javascripts
@@ -206,4 +206,48 @@ function selecttheme(link, themename, name) {
   onComplete:function(responseObj){ }
   } );
   
+}
+
+function tagsbrowser(link) {
+  var editparent = document.getElementById("tags").parentNode;
+  if (!editparent) return alert('Parent Edit not found');
+        var p = document.createElement("p");
+     editparent.parentNode.insertBefore(p, editparent.nextSibling);  
+        widgets.add(link, p);
+
+  if (client == undefined) client = createclient();
+  client.litepublisher.files.gettags( {
+    params:['', ''],
+    
+    onSuccess:function(result){
+      p.innerHTML  = result;
+    },
+    
+    onException:function(errorObj){
+      alert("XMLRPC server error");
+    },
+    
+  onComplete:function(responseObj){ }
+  } );
+}
+
+function tagclicked(link) {
+try {
+var newtag  = link.innerHTML ;
+var edit = document.getElementById("tags");
+  var tags = edit.value;
+if (tags == '') {
+edit.value = newtag;
+return;
+}
+
+var re = /\s*,\s*/;
+var list = tags.split(re);
+for (var i = list.length; i >= 0; i--) {
+if (newtag == list[i]) return;
+}
+
+edit.value += ', ' + newtag;
+
+} catch(e) { alert(e.message); }
 }
