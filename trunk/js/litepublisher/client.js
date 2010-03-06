@@ -1,8 +1,8 @@
 /**
- * Lite Publisher 
- * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
- * Dual licensed under the MIT (mit.txt) 
- * and GPL (gpl.txt) licenses.
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
 **/
 
 var client;
@@ -28,7 +28,8 @@ function createclient() {
     'litepublisher.files.getbrowser',
     'litepublisher.files.getpage',
     'litepublisher.files.geticons',
-    'litepublisher.files.getthemes'
+    'litepublisher.files.getthemes',
+    'litepublisher.files.gettags'
     ]
     //callbackParamName: 'callback'
   });
