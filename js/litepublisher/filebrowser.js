@@ -211,10 +211,10 @@ function selecttheme(link, themename, name) {
 function tagsbrowser(link) {
   var editparent = document.getElementById("tags").parentNode;
   if (!editparent) return alert('Parent Edit not found');
-        var p = document.createElement("p");
-     editparent.parentNode.insertBefore(p, editparent.nextSibling);  
-        widgets.add(link, p);
-
+  var p = document.createElement("p");
+  editparent.parentNode.insertBefore(p, editparent.nextSibling);
+  widgets.add(link, p);
+  
   if (client == undefined) client = createclient();
   client.litepublisher.files.gettags( {
     params:['', ''],
@@ -232,22 +232,22 @@ function tagsbrowser(link) {
 }
 
 function tagclicked(link) {
-try {
-var newtag  = link.innerHTML ;
-var edit = document.getElementById("tags");
-  var tags = edit.value;
-if (tags == '') {
-edit.value = newtag;
-return;
-}
-
-var re = /\s*,\s*/;
-var list = tags.split(re);
-for (var i = list.length; i >= 0; i--) {
-if (newtag == list[i]) return;
-}
-
-edit.value += ', ' + newtag;
-
+  try {
+    var newtag  = link.innerHTML ;
+    var edit = document.getElementById("tags");
+    var tags = edit.value;
+    if (tags == '') {
+      edit.value = newtag;
+      return;
+    }
+    
+    var re = /\s*,\s*/;
+    var list = tags.split(re);
+    for (var i = list.length; i >= 0; i--) {
+      if (newtag == list[i]) return;
+    }
+    
+    edit.value += ', ' + newtag;
+    
 } catch(e) { alert(e.message); }
 }
