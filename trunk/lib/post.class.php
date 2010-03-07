@@ -93,6 +93,11 @@ class tpost extends titem implements  itemplate {
   protected function SaveToDB() {
     TPostTransform ::instance($this)->save();
   }
+
+public function addtodb() {
+      $this->id = tposttransform ::add($this);
+return $this->id;
+}
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
@@ -377,18 +382,15 @@ class tpost extends titem implements  itemplate {
       return $more . $content;
     }
   }
-  
-  public function getcontent() {
-    $result = '';
-    $posts = tposts::instance();
-    $posts->beforecontent($this->id, &$result);
-    $urlmap = turlmap::instance();
-    if ($urlmap->page == 1) {
+
+protected function getcontentpage($page) {
+$result = '';
+    if ($page == 1) {
       $result .= $this->filtered;
       $result = $this->replacemore($result);
-    } elseif ($s = $this->getpage($urlmap->page - 1)) {
+    } elseif ($s = $this->getpage($page - 1)) {
       $result .= $s;
-    } elseif ($urlmap->page <= $this->commentpages) {
+    } elseif ($page <= $this->commentpages) {
       //$result .= '';
     } else {
       $lang = tlocal::instance();
@@ -397,9 +399,16 @@ class tpost extends titem implements  itemplate {
     
     if ($this->haspages) {
       $theme = theme::instance();
-      $result .= $theme->getpages($this->url, $urlmap->page, $this->countpages);
+      $result .= $theme->getpages($this->url, $page, $this->countpages);
     }
-    
+return $result;
+}    
+
+    public function getcontent() {
+    $result = '';
+    $posts = tposts::instance();
+    $posts->beforecontent($this->id, &$result);
+$result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $result = $theme->parse($result);
