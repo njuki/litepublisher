@@ -22,15 +22,15 @@ class tadmintickets extends tadminmenu {
     $result = '';
     $tickets = ttickets::instance();
     $perpage = 20;
-      $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
-      $count = $tickets->getcount($where);
-      $from = $this->getfrom($perpage, $count);
-      if ($count > 0) {
-        $items = $tickets->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
-        if (!$items) $items = array();
-      }  else {
-        $items = array();
-      }
+    $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
+    $count = $tickets->getcount($where);
+    $from = $this->getfrom($perpage, $count);
+    if ($count > 0) {
+      $items = $tickets->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
+      if (!$items) $items = array();
+    }  else {
+      $items = array();
+    }
     
     $html = $this->html;
     $result .= $html->checkallscript;
