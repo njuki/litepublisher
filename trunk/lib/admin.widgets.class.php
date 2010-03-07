@@ -283,9 +283,9 @@ $widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
       
       litepublisher::$classes->posts->recentcount = $postscount;
       litepublisher::$classes->posts->save();
-      
-      $commentswidget = tcommentswidget::instance();
-      $commentswidget->recentcount = $commentscount;
+$manager = tcommentmanager::instance();      
+      $manager->recentcount = $commentscount;
+$manager->save();
       
       $links = tlinkswidget::instance();
       $links->redir = isset($linksredir);
@@ -293,6 +293,7 @@ $widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
       
       $foaf = tfoaf::instance();
       $foaf->redir = isset($foafredir);
+$foaf->maxcount =$friendscount;
       litepublisher::$options->unlock();
       return $h2->stdoptsucces;
       
