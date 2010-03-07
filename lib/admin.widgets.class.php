@@ -84,16 +84,16 @@ class tadminwidgets extends tadminmenu {
   
   private function setwidgets(twidgets $widgets) {
     if (!empty($_POST['deletewidgets']))  return $this->DeleteWidgets($widgets);
-// собрать все значения id чекбоксов
-$items = array();
+    // собрать все значения id чекбоксов
+    $items = array();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, 'widgetcheck-'))$items[] = (int) $value;
-}
+    }
     
     $widgets->lock();
-foreach ($items as $id) {
-$widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
-      }
+    foreach ($items as $id) {
+      $widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
+    }
     $widgets->unlock();
     return $this->html->h2->success;
   }
@@ -278,14 +278,14 @@ $widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
       
       litepublisher::$classes->tags->sortname = $sortnametags;
       litepublisher::$classes->tags->showcount = isset($showcounttags);
-      litepublisher::$classes->tags->maxcount = $maxcount;
+      litepublisher::$classes->tags->maxcount = (int) $maxcount;
       litepublisher::$classes->tags->save();
       
-      litepublisher::$classes->posts->recentcount = $postscount;
+      litepublisher::$classes->posts->recentcount = (int) $postscount;
       litepublisher::$classes->posts->save();
-$manager = tcommentmanager::instance();      
-      $manager->recentcount = $commentscount;
-$manager->save();
+      $manager = tcommentmanager::instance();
+      $manager->recentcount = (int) $commentscount;
+      $manager->save();
       
       $links = tlinkswidget::instance();
       $links->redir = isset($linksredir);
@@ -293,7 +293,7 @@ $manager->save();
       
       $foaf = tfoaf::instance();
       $foaf->redir = isset($foafredir);
-$foaf->maxcount =$friendscount;
+      $foaf->maxcount =(int) $friendscount;
       litepublisher::$options->unlock();
       return $h2->stdoptsucces;
       

@@ -7,12 +7,12 @@
 **/
 
 function tcommentmanagerInstall($self) {
-    $Posts= tposts::instance();
-    $Posts->deleted = $self->postdeleted;
+  $Posts= tposts::instance();
+  $Posts->deleted = $self->postdeleted;
 }
 
 function tcommentmanagerUninstall(&$self) {
-tposts::unsub($self);
+  tposts::unsub($self);
   
   $template = ttemplate::instance();
   $template->DeleteWidget(get_class($self));

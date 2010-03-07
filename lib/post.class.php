@@ -93,11 +93,11 @@ class tpost extends titem implements  itemplate {
   protected function SaveToDB() {
     TPostTransform ::instance($this)->save();
   }
-
-public function addtodb() {
-      $this->id = tposttransform ::add($this);
-return $this->id;
-}
+  
+  public function addtodb() {
+    $this->id = tposttransform ::add($this);
+    return $this->id;
+  }
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
@@ -382,9 +382,9 @@ return $this->id;
       return $more . $content;
     }
   }
-
-protected function getcontentpage($page) {
-$result = '';
+  
+  protected function getcontentpage($page) {
+    $result = '';
     if ($page == 1) {
       $result .= $this->filtered;
       $result = $this->replacemore($result);
@@ -401,14 +401,14 @@ $result = '';
       $theme = theme::instance();
       $result .= $theme->getpages($this->url, $page, $this->countpages);
     }
-return $result;
-}    
-
-    public function getcontent() {
+    return $result;
+  }
+  
+  public function getcontent() {
     $result = '';
     $posts = tposts::instance();
     $posts->beforecontent($this->id, &$result);
-$result .= $this->getcontentpage(litepublisher::$urlmap->page);
+    $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $result = $theme->parse($result);

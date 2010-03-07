@@ -166,19 +166,19 @@ class toptions extends tevents {
   }
   
   public function handexception($e) {
-/*
-echo "<pre>\n";
-$debug = debug_backtrace();
-foreach ($debug as $error) {
-echo $error['function'] ;
-echo "\n";
-}
-//array_shift($debug);
-//var_dump($debug);
-echo "</pre>\n";
-*/
-   $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
-
+    /*
+    echo "<pre>\n";
+    $debug = debug_backtrace();
+    foreach ($debug as $error) {
+      echo $error['function'] ;
+      echo "\n";
+    }
+    //array_shift($debug);
+    //var_dump($debug);
+    echo "</pre>\n";
+    */
+    $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
+    
     $message = "Caught exception:\n" . $e->getMessage();
     $log = $message . "\n" . $trace;
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));

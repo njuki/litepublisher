@@ -188,10 +188,10 @@ class twidgets extends tsingleitems {
   }
   
   private function insert($item, $sitebar, $order) {
-$id = $item['id'];
+    $id = $item['id'];
     //вставить в массив с соблюдением пор€дка и ключей
-if (!isset($this->items[$sitebar])) $sitebar = count($this->items) - 1;
-if ($order < 0) $order = 0;
+    if (!isset($this->items[$sitebar])) $sitebar = count($this->items) - 1;
+    if ($order < 0) $order = 0;
     if ($order >= count($this->items[$sitebar])) {
       $this->items[$sitebar][$id] = $item;
     } else {
@@ -255,16 +255,16 @@ if ($order < 0) $order = 0;
     }
     return false;
   }
-
-public function getorder($id) {
+  
+  public function getorder($id) {
     $result = 0;
-$sitebar = $this->findsitebar($id);
+    $sitebar = $this->findsitebar($id);
     foreach ($this->items[$sitebar] as $idwidget => $item) {
       if ($id == $idwidget) break;
       $result++;
     }
-return $result;
-}
+    return $result;
+  }
   
   public static function  expired($instance) {
     $self = self::instance(0);
@@ -298,18 +298,18 @@ return $result;
   }
   
   public function changesitebar($id, $sitebar) {
-$this->setpos($id, $sitebar, $this->getorder($id));
-}
-
+    $this->setpos($id, $sitebar, $this->getorder($id));
+  }
+  
   public function changeorder($id, $order) {
-$this->setpos($id, $this->findsitebar($id), $order);
-}
-
-public function setpos($id, $sitebar, $order) {
+    $this->setpos($id, $this->findsitebar($id), $order);
+  }
+  
+  public function setpos($id, $sitebar, $order) {
     $oldsitebar = $this->findsitebar($id);
-$oldorder = $this->getorder($id);
+    $oldorder = $this->getorder($id);
     if (($oldsitebar == $sitebar) && ($oldorder == $order)) return;
- $item = $this->items[$oldsitebar][$id];
+    $item = $this->items[$oldsitebar][$id];
     unset($this->items[$oldsitebar][$id]);
     $this->insert($item, $sitebar, $order);
   }

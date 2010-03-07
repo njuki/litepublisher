@@ -110,9 +110,8 @@ class tposts extends titems {
     
     $urlmap = turlmap::instance();
     if (dbversion) {
-$post->addtodb();
-      $post->id = tposttransform ::add($post);
-      $post->idurl = $urlmap->add($post->url, get_class($post), $post->id);
+      $post->addtodb();
+      $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
       $post->db->setvalue($post->id, 'idurl', $post->idurl);
     } else {
       $post->id = ++$this->autoid;
