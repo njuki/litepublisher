@@ -188,14 +188,17 @@ class twidgets extends tsingleitems {
   }
   
   private function insert($item, $sitebar, $order) {
+$id = $item['id'];
     //вставить в массив с соблюдением пор€дка и ключей
-    if ($order == count($this->items[$sitebar])) {
-      $this->items[$sitebar][$item['id']] = $item;
+if (!isset($this->items[$sitebar])) $sitebar = count($this->items) - 1;
+if ($order < 0) $order = 0;
+    if ($order >= count($this->items[$sitebar])) {
+      $this->items[$sitebar][$id] = $item;
     } else {
-      $new = array();
       $i = 0;
+      $new = array();
       foreach ($this->items[$sitebar] as $idwidget => $widget) {
-        if ($i++ == $order) $new[$item['id']] = $item;
+        if ($i++ == $order) $new[$id] = $item;
         $new[$idwidget] = $widget;
       }
       $this->items[$sitebar] = $new;
@@ -252,6 +255,16 @@ class twidgets extends tsingleitems {
     }
     return false;
   }
+
+public function getorder($id) {
+    $result = 0;
+$sitebar = $this->findsitebar($id);
+    foreach ($this->items[$sitebar] as $idwidget => $item) {
+      if ($id == $idwidget) break;
+      $result++;
+    }
+return $result;
+}
   
   public static function  expired($instance) {
     $self = self::instance(0);
@@ -285,22 +298,19 @@ class twidgets extends tsingleitems {
   }
   
   public function changesitebar($id, $sitebar) {
-    $oldsitebar = $this->findsitebar($id);
-    if ($oldsitebar == $sitebar) return;
-    $this->items[$sitebar][$id] = $this->items[$oldsitebar][$id];
-    unset($this->items[$oldsitebar][$id]);
-    $this->save();
-  }
-  
+$this->setpos($id, $sitebar, $this->getorder($id));
+}
+
   public function changeorder($id, $order) {
-    $sitebar = $this->findsitebar($id);
-    $i = 0;
-    foreach ($this->items[$sitebar] as $idwidget => $item) {
-      if ($id == $idwidget) break;
-      $i++;
-    }
-    if ($i == $order) return;
-    unset($this->items[$sitebar][$id]);
+$this->setpos($id, $this->findsitebar($id), $order);
+}
+
+public function setpos($id, $sitebar, $order) {
+    $oldsitebar = $this->findsitebar($id);
+$oldorder = $this->getorder($id);
+    if (($oldsitebar == $sitebar) && ($oldorder == $order)) return;
+ $item = $this->items[$oldsitebar][$id];
+    unset($this->items[$oldsitebar][$id]);
     $this->insert($item, $sitebar, $order);
   }
   
