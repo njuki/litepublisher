@@ -292,8 +292,8 @@ class tinstaller extends tdata {
     $cats = tcategories::instance();
     $cats->setvalue($post->categories[0], 'icon', $icons->getid('news'));
     
-    $users = tcomusers::instance($post->id);
-    $userid = $users->add($lang->author, $lang->email, $lang->homeurl);
+    $comusers = tcomusers::instance($post->id);
+    $userid = $comusers->add($lang->author, $lang->email, $lang->homeurl);
     litepublisher::$classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment);
     
     $plugins = tplugins::instance();

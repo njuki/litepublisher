@@ -60,7 +60,8 @@ class tcomusers extends titems {
   }
   
   public function find($name, $email, $url) {
-    return $this->db->findid('name = '. dbquote($name) . ' and email = '. dbquote($email) .' and url = '. dbquote($url));
+    $id = $this->db->findid('name = '. dbquote($name) . ' and email = '. dbquote($email) .' and url = '. dbquote($url));
+    return $id == '0' ? false : (int) $id;
   }
   
   public function request($arg) {

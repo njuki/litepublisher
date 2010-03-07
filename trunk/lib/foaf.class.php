@@ -24,8 +24,9 @@ class tfoaf extends titems {
   }
   
   public function getapproved($count) {
+    $count = (int) $count;
     if ($this->dbversion) {
-      $limit = $count == 0 ? '' : " limit0, $count";
+      $limit = $count == 0 ? '' : " limit 0, $count";
       if ($result = $this->select("status = 'approved'", "order by added desc" . $limit)) return $result;
       return array();
     } else {

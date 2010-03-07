@@ -165,7 +165,7 @@ class tcommentmanager extends tevents {
       $deleted = false;
       foreach ($this->items as $i => $item) {
         if ($idpost == $item['idpost']) {
-unset($this->items[$i]);
+          unset($this->items[$i]);
           //array_splice($this->items, $i, 1);
           $deleted = true;
         }
