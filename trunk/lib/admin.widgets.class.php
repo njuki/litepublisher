@@ -84,24 +84,16 @@ class tadminwidgets extends tadminmenu {
   
   private function setwidgets(twidgets $widgets) {
     if (!empty($_POST['deletewidgets']))  return $this->DeleteWidgets($widgets);
+// собрать все значения id чекбоксов
+$items = array();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'widgetcheck-'))$items[] = (int) $value;
+}
     
     $widgets->lock();
-    $check = 'widgetcheck-';
-    $sitebar = 'sitebar-';
-    $order =  'order-';
-    $checkid =       0;
-    foreach ($_POST as $key => $value) {
-      if (strbegin($key, $check)){
-        $checkid = (int) substr($key, strlen($check));
-        continue;
-      } elseif (strbegin($key, $sitebar)) {
-        $id = (int) substr($key, strlen($sitebar));
-        if ($id == $checkid) $widgets->changesitebar($id, $value - 1);
-      } elseif (strbegin($key, $order)) {
-        $id = (int) substr($key, strlen($order));
-        if ($id == $checkid) $widgets->changeorder($id, $value - 1);
+foreach ($items as $id) {
+$widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
       }
-    }
     $widgets->unlock();
     return $this->html->h2->success;
   }
