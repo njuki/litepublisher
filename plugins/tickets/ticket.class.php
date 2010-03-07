@@ -7,18 +7,18 @@
 **/
 
 class tticket extends tpost {
-public $ticket;
-public $ticketstable;
-
+  public $ticket;
+  public $ticketstable;
+  
   public static function instance($id = 0) {
-    return parent::instance(__class__, $id);
+    return titem::instance(__class__, $id);
   }
   
   protected function create() {
-parent::create();
+    parent::create();
     $this->ticketstable = 'tickets';
-    $this->addmap('ticket', array();
-$this->ticket = array(
+    $this->data['ticket'] = &$this->ticket;
+    $this->ticket = array(
     'id' => 0,
     'type' => 'bug',
     'state'  => 'opened',
@@ -33,48 +33,48 @@ $this->ticket = array(
     'code' => ''
     );
   }
-
-public function __get($name) {
-if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
-return parent::__get($name);
-}
-
-public function __set($name, $value) {
-if (array_key_exists($name, $this->ticket)) {
-$this->ticket[$name] = $value;
-return true;
-}
-return parent::__set($name, $value);
-}
-
-public function __isset($name) {
-return array_key_exists($name, $this->ticket) || parent__isset($name);
-}
+  
+  public function __get($name) {
+    if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
+    return parent::__get($name);
+  }
+  
+  public function __set($name, $value) {
+    if (array_key_exists($name, $this->ticket)) {
+      $this->ticket[$name] = $value;
+      return true;
+    }
+    return parent::__set($name, $value);
+  }
+  
+  public function __isset($name) {
+    return array_key_exists($name, $this->ticket) || parent::__isset($name);
+  }
   
   protected function LoadFromDB() {
-if (!parent::LoadFromDB())  return false;
+    if (!parent::LoadFromDB())  return false;
     if ($a = $this->getdb($this->ticketstable)->getitem($this->id)) {
       $this->ticket = $a;
       $this->ticket['reproduced'] = $a['reproduced'] == '1';
       return true;
-}
+    }
     return false;
   }
   
   protected function SaveToDB() {
-parent::SaveToDB();
+    parent::SaveToDB();
     if ($this->ticket['closed'] == '') $this->ticket['closed'] = sqldate();
     $this->ticket['id'] = $this->id;
-      $this->getdb($this->ticketstable)->updateassoc($this->ticket);
+    $this->getdb($this->ticketstable)->updateassoc($this->ticket);
   }
   
-public function addtodb() {
-$id = parent::addtodb();
-$this->ticket['id'] = $id;
-      $this->getdb($this->ticketstable)->add($this->ticket);
-return $this->id;
-}
-
+  public function addtodb() {
+    $id = parent::addtodb();
+    $this->ticket['id'] = $id;
+    $this->getdb($this->ticketstable)->add($this->ticket);
+    return $this->id;
+  }
+  
   protected function getclosed() {
     return strtotime($this->ticket['closed']);
   }
@@ -82,19 +82,19 @@ return $this->id;
   protected function setclosed($value) {
     $this->ticket['closed'] = sqldate($value);
   }
-
-protected function getcontentpage($page) {
-$result = '';
-if ($page == 1) $result .= $this->getticketcontent();
-$result .= parent::getcontentpage($page);
-if (($page == 1) && !empty($this->ticket['code'])) {
-    $code = str_replace(array('"', "'", '$'), array('&quot;', '&#39;', '&#36;'), htmlspecialchars($this->code));
-$result .= "\n<code><pre>\n$code\n</pre></code>\n";
-}
-return $result;
-}
-
-public function getticketcontent() {
+  
+  protected function getcontentpage($page) {
+    $result = '';
+    if ($page == 1) $result .= $this->getticketcontent();
+    $result .= parent::getcontentpage($page);
+    if (($page == 1) && !empty($this->ticket['code'])) {
+      $code = str_replace(array('"', "'", '$'), array('&quot;', '&#39;', '&#36;'), htmlspecialchars($this->code));
+      $result .= "\n<code><pre>\n$code\n</pre></code>\n";
+    }
+    return $result;
+  }
+  
+  public function getticketcontent() {
     $this->checklang();
     $lang = tlocal::instance('ticket');
     $args = targs::instance();
@@ -114,19 +114,19 @@ public function getticketcontent() {
     
     ttheme::$vars['ticket'] = $this;
     $theme = ttheme::instance();
-$tml = file_get_contents($this->resource . 'ticket.tml');
+    $tml = file_get_contents($this->resource . 'ticket.tml');
     $result = $theme->parsearg($tml, $args);
     if ($this->poll > 1) {
       $polls = tpolls::instance();
       $result .= $polls->gethtml($this->poll);
     }
-return $result;
+    return $result;
   }
-
+  
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
-
+  
   public function checklang() {
     if (!isset(tlocal::$data['ticket'])) {
       tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');

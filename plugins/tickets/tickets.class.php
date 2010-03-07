@@ -7,7 +7,7 @@
 **/
 
 class ttickets extends tposts {
-public $ticketstable;
+  public $ticketstable;
   
   public static function instance() {
     return getinstance(__class__);
@@ -32,12 +32,12 @@ public $ticketstable;
     $result = array();
     $t = new tposttransform();
     while ($a = litepublisher::$db->fetchassoc($res)) {
-$ticket = tticket::instance();
+      $ticket = tticket::instance();
       $t->post  = $ticket;
       $t->setassoc($a);
-foreach ($ticket->ticket as $name => $value) {
-if (isset($a[$name]) $ticket->ticket[$name = $value;
-}
+      foreach ($ticket->ticket as $name => $value) {
+        if (isset($a[$name])) $ticket->ticket[$name] = $value;
+      }
       $ticket->ticket['reproduced'] = $a['reproduced'] == '1';
       $result[] = $ticket->id;
     }
@@ -55,21 +55,32 @@ if (isset($a[$name]) $ticket->ticket[$name = $value;
   
   public function add(tpost $post) {
     $post->status = 'draft';
-$id = parent::add($post);
-$this->notify($post);
+    $id = parent::add($post);
+    $this->notify($post);
+    return $id;
   }
   
-public function postdeleted($id) {
-$db = $this->getdb($this->ticketstable);
-$idpoll = $tb->getvalue($id, 'poll');
-$db->delete("id = $id");
-if ($idpoll > 0) {
+  private function notify(tticket $ticket) {
+    ttheme::$vars['ticket'] = $ticket;
+    $args = targs::instance();
+    $args->adminurl = litepublisher::$options->url . '/admin/tickets/editor/'. litepublisher::$options->q . 'id=' . $ticket->id;
+    $mailtemplate = tmailtemplate::instance('tickets');
+    $subject = $mailtemplate->subject($args);
+    $body = $mailtemplate->body($args);
+    tmailer::sendtoadmin($subject, $body);
+  }
+  
+  public function postdeleted($id) {
+    $db = $this->getdb($this->ticketstable);
+    $idpoll = $tb->getvalue($id, 'poll');
+    $db->delete("id = $id");
+    if ($idpoll > 0) {
       $polls = tpolls::instance();
       $pols->delete($id);
     }
   }
   
-    protected function getresource() {
+  protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
   
