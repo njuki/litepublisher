@@ -20,37 +20,17 @@ class tadmintickets extends tadminmenu {
   
   public function getcontent() {
     $result = '';
-    $posts = tposts::instance();
+    $tickets = ttickets::instance();
     $perpage = 20;
-    if (dbversion) {
       $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
-      $tickets = ttickets::instance();
       $count = $tickets->getcount($where);
       $from = $this->getfrom($perpage, $count);
       if ($count > 0) {
-        $items = $posts->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
+        $items = $tickets->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
         if (!$items) $items = array();
       }  else {
         $items = array();
       }
-    } else {
-      if (litepublisher::$options->user == 1) {
-        $count = $posts->count;
-        $from = $this->getfrom($perpage, $count);
-        $items = array_slice($posts->items, $from, $perpage, true);
-        $items = array_reverse (array_keys($items));
-      } else {
-        $items = array();
-        foreach ($posts->items as $item) {
-          if (isset($item['author']) && ($item['author'] == litepublisher::$options->user)) $items[] = $id;
-        }
-        
-        $count = count($items);
-        $from = $this->getfrom($perpage, $count);
-        $items = array_slice($items, $from, $perpage);
-        $items = array_reverse ($items);
-      }
-    }
     
     $html = $this->html;
     $result .= $html->checkallscript;
@@ -61,11 +41,9 @@ class tadmintickets extends tadminmenu {
     $args->editurl = litepublisher::$options->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
     $lang = tlocal::instance('tickets');
     foreach ($items  as $id ) {
-      $post = tpost::instance($id);
-      $ticket = $post->ticket;
-      ttheme::$vars['post'] = $post;
+      $ticket = tticket::instance($id);
       ttheme::$vars['ticket'] = $ticket;
-    $args->status = $lang->{$post->status};
+    $args->status = $lang->{$ticket->status};
       $args->type = tlocal::$data['ticket'][$ticket->type];
       $args->prio = tlocal::$data['ticket'][$ticket->prio];
       $args->state = tlocal::$data['ticket'][$ticket->state];
@@ -85,21 +63,19 @@ class tadmintickets extends tadminmenu {
   
   public function processform() {
     if (litepublisher::$options->group == 'ticket') return '';
-    $posts = tposts::instance();
-    $posts->lock();
+    $tickets = ttickets::instance();
     $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
       if ($status == 'delete') {
-        $posts->delete($id);
+        $tickets->delete($id);
       } else {
-        $post = tpost::instance($id);
-        $post->status = $status;
-        $posts->edit($post);
+        $ticket = tticket::instance($id);
+        $ticket->status = $status;
+        $tickets->edit($ticket);
       }
     }
-    $posts->unlock();
   }
   
 }//class

@@ -6,7 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttickets extends tplugin implements iposts {
+class ttickets extends tposts {
+public $ticketstable;
   
   public static function instance() {
     return getinstance(__class__);
@@ -14,8 +15,7 @@ class ttickets extends tplugin implements iposts {
   
   protected function create() {
     parent::create();
-    $this->table = 'tickets';
-    $this->data['infotml'] = '';
+    $this->ticketstable = 'tickets';
   }
   
   public function getcount($where) {
@@ -28,25 +28,48 @@ class ttickets extends tplugin implements iposts {
     
   }
   
+  public function transformres($res) {
+    $result = array();
+    $t = new tposttransform();
+    while ($a = litepublisher::$db->fetchassoc($res)) {
+$ticket = tticket::instance();
+      $t->post  = $ticket;
+      $t->setassoc($a);
+foreach ($ticket->ticket as $name => $value) {
+if (isset($a[$name]) $ticket->ticket[$name = $value;
+}
+      $ticket->ticket['reproduced'] = $a['reproduced'] == '1';
+      $result[] = $ticket->id;
+    }
+    return $result;
+  }
+  
   public function select($where, $limit) {
     $db = litepublisher::$db;
     $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $db->tickets.*
     from $db->posts, $db->urlmap, $db->tickets
     where $where and  $db->posts.id = $db->tickets.id and $db->urlmap.id  = $db->posts.idurl $limit");
     
-    $posts = tposts::instance();
-    return $posts->transformres($res);
+    return $this->transformres($res);
   }
   
   public function add(tpost $post) {
     $post->status = 'draft';
-    // just send notify to admin
+$id = parent::add($post);
+$this->notify($post);
   }
   
-public function edit(tpost $post) { }
-public function delete($id) {}
+public function postdeleted($id) {
+$db = $this->getdb($this->ticketstable);
+$idpoll = $tb->getvalue($id, 'poll');
+$db->delete("id = $id");
+if ($idpoll > 0) {
+      $polls = tpolls::instance();
+      $pols->delete($id);
+    }
+  }
   
-  protected function getresource() {
+    protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
   
@@ -66,59 +89,6 @@ public function delete($id) {}
       }
       tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
-    }
-  }
-  
-  public function checklang() {
-    if (!isset(tlocal::$data['ticket'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
-      tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
-    }
-  }
-  
-  public function aftercontent($id, &$content) {
-    if (litepublisher::$urlmap->page > 1) return;
-    $this->checklang();
-    $lang = tlocal::instance('ticket');
-    $post = tpost::instance($id);
-    $ticket = $post->ticket;
-    $args = targs::instance();
-    foreach (array('type', 'state', 'prio') as $prop) {
-      $value = $ticket->$prop;
-      $args->$prop = $lang->$value;
-    }
-    $args->reproduced = $ticket->reproduced ? $lang->yesword : $lang->noword;
-    if ($ticket->assignto <= 1) {
-      $profile = tprofile::instance();
-      $args->assignto = $profile->nick;
-    } else {
-      $users = tusers::instance();
-      $account = $users->getaccount($ticket->assignto);
-      $args->assignto = $this->$account['name'];
-    }
-    
-    ttheme::$vars['ticket'] = $ticket;
-    $theme = ttheme::instance();
-    $info = $theme->parsearg($this->infotml, $args);
-    if (dbversion && ($ticket->poll > 1)) {
-      $polls = tpolls::instance();
-      $info .= $polls->gethtml($ticket->poll);
-    }
-    $content = $info . $content;
-    $code = str_replace(
-    array('"', "'", '$'),
-    array('&quot;', '&#39;', '&#36;'),
-    htmlspecialchars($post->code));
-    if ($code != '') $content .= "\n<code><pre>\n$code\n</pre></code>\n";
-  }
-  
-  public function deletedeleted($deleted) {
-    $idpolls = litepublisher::$db->res2id(litepublisher::$db->query("select poll from $this->thistable where id in $deleted and poll > 0"));
-    $this->db->delete("id in $deleted");
-    if (count($idpoll) > 0) {
-      $polls = tpolls::instance();
-      $pols->deletedeleted($idpolls);
     }
   }
   

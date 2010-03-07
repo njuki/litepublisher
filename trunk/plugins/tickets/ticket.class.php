@@ -6,22 +6,19 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tticket extends titem {
-  public $post;
-  private $selfexists; // flagto add
-  
+class tticket extends tpost {
+public $ticket;
+public $ticketstable;
+
   public static function instance($id = 0) {
     return parent::instance(__class__, $id);
   }
   
-  public function getbasename() {
-    return 'posts' . DIRECTORY_SEPARATOR . $this->post->id  . DIRECTORY_SEPARATOR . 'ticket';
-  }
-  
   protected function create() {
-    $this->table = 'tickets';
-    $this->selfexists = false;
-    $this->data= array(
+parent::create();
+    $this->ticketstable = 'tickets';
+    $this->addmap('ticket', array();
+$this->ticket = array(
     'id' => 0,
     'type' => 'bug',
     'state'  => 'opened',
@@ -36,51 +33,106 @@ class tticket extends titem {
     'code' => ''
     );
   }
-  
-  public function getdbversion() {
-    return dbversion;
-  }
-  
-  //db
-  public function load() {
-    if ($this->post->id == 0) return false;
-    $result = dbversion? $this->LoadFromDB() : parent::load();
-    if ($result) {
-      $this->selfexists = true;
-      self::$instances[get_class($this)][$this->post->id] = $this;
-    }
-    return $result;
-  }
+
+public function __get($name) {
+if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
+return parent::__get($name);
+}
+
+public function __set($name, $value) {
+if (array_key_exists($name, $this->ticket)) {
+$this->ticket[$name] = $value;
+return true;
+}
+return parent::__set($name, $value);
+}
+
+public function __isset($name) {
+return array_key_exists($name, $this->ticket) || parent__isset($name);
+}
   
   protected function LoadFromDB() {
-    if ($a = $this->db->getitem($this->post->id)) {
-      $this->data = $a;
-      $this->data['reproduced'] = $a['reproduced'] == '1';
+if (!parent::LoadFromDB())  return false;
+    if ($a = $this->getdb($this->ticketstable)->getitem($this->id)) {
+      $this->ticket = $a;
+      $this->ticket['reproduced'] = $a['reproduced'] == '1';
       return true;
-    }
+}
     return false;
   }
   
   protected function SaveToDB() {
-    if ($this->data['closed'] == '') $this->data['closed'] = sqldate();
-    $this->data['id'] = $this->post->id;
-    if ($this->selfexists) {
-      $this->db->updateassoc($this->data);
-    } else {
-      $this->db->add($this->data);
-    }
+parent::SaveToDB();
+    if ($this->ticket['closed'] == '') $this->ticket['closed'] = sqldate();
+    $this->ticket['id'] = $this->id;
+      $this->getdb($this->ticketstable)->updateassoc($this->ticket);
   }
   
-  protected function getticket() {
-    return $this;
-  }
-  
+public function addtodb() {
+$id = parent::addtodb();
+$this->ticket['id'] = $id;
+      $this->getdb($this->ticketstable)->add($this->ticket);
+return $this->id;
+}
+
   protected function getclosed() {
-    return strtotime($this->data['closed']);
+    return strtotime($this->ticket['closed']);
   }
   
   protected function setclosed($value) {
-    $this->data['closed'] = sqldate($value);
+    $this->ticket['closed'] = sqldate($value);
+  }
+
+protected function getcontentpage($page) {
+$result = '';
+if ($page == 1) $result .= $this->getticketcontent();
+$result .= parent::getcontentpage($page);
+if (($page == 1) && !empty($this->ticket['code'])) {
+    $code = str_replace(array('"', "'", '$'), array('&quot;', '&#39;', '&#36;'), htmlspecialchars($this->code));
+$result .= "\n<code><pre>\n$code\n</pre></code>\n";
+}
+return $result;
+}
+
+public function getticketcontent() {
+    $this->checklang();
+    $lang = tlocal::instance('ticket');
+    $args = targs::instance();
+    foreach (array('type', 'state', 'prio') as $prop) {
+      $value = $this->$prop;
+      $args->$prop = $lang->$value;
+    }
+    $args->reproduced = $this->reproduced ? $lang->yesword : $lang->noword;
+    if ($this->assignto <= 1) {
+      $profile = tprofile::instance();
+      $args->assignto = $profile->nick;
+    } else {
+      $users = tusers::instance();
+      $account = $users->getaccount($this->assignto);
+      $args->assignto = $account['name'];
+    }
+    
+    ttheme::$vars['ticket'] = $this;
+    $theme = ttheme::instance();
+$tml = file_get_contents($this->resource . 'ticket.tml');
+    $result = $theme->parsearg($tml, $args);
+    if ($this->poll > 1) {
+      $polls = tpolls::instance();
+      $result .= $polls->gethtml($this->poll);
+    }
+return $result;
+  }
+
+  protected function getresource() {
+    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+  }
+
+  public function checklang() {
+    if (!isset(tlocal::$data['ticket'])) {
+      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
+      tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
+      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
+    }
   }
   
 }//class
