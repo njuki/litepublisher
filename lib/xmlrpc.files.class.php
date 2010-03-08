@@ -150,7 +150,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $result .= $this->html->tmlfile($args);
     */
     
-    return $html->fixquote($result);
+    return $this->html->fixquote($result);
   }
   
   public function gettags($login, $password) {

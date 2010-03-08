@@ -49,6 +49,7 @@ class tadminoptions extends tadminmenu {
       $args->hovermenu = $template->hovermenu;
       
       $parser = tmediaparser::instance();
+      $args->ratio = $parser->ratio;
       $args->previewwidth = $parser->previewwidth;
       $args->previewheight = $parser->previewheight;
       break;
@@ -195,6 +196,7 @@ class tadminoptions extends tadminmenu {
       $template->unlock();
       
       $parser = tmediaparser::instance();
+      $parser->ratio = isset($ratio);
       $parser->previewwidth = $previewwidth;
       $parser->previewheight = $previewheight;
       $parser->save();

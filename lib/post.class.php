@@ -201,6 +201,7 @@ class tpost extends titem implements  itemplate {
   }
   
   private function getcommontagslinks($names, $name, $excerpt) {
+    if (count($this->$names) == 0) return '';
     $theme = ttheme::instance();
     $tml = $excerpt ? $theme->content->excerpts->$names : $theme->content->post->$names;
     $tags= litepublisher::$classes->$names;
@@ -360,6 +361,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcommentslink() {
+    if (($this->commentscount == 0) && !$this->commentsenabled) return '';
     $tc = ttemplatecomments::instance();
     return $tc->getcommentslink($this);
   }
