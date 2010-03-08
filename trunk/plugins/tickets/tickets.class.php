@@ -80,6 +80,27 @@ class ttickets extends tposts {
     }
   }
   
+  public function optimize() {
+    $db = $this->getdb($this->ticketstable);
+    $items = $db->res2assoc($db->query("select id, poll from $this.thistable where id not in
+    (select$db.posts.id from $db.posts)");
+    if (count($items) == 0) return;
+    $deleted = array();
+    $idpolls = array();
+    foreach ($items as $item) {
+      $deleted[] = $item['id'];
+      if ($item['poll'] > 0) $idpolls[] = $item['poll'];
+    }
+    
+    $db->deleteitems($deleted);
+    
+    if (count($idpolls) > 0) {
+      $polls = tpolls::instance();
+      foreach ($idpolls as $idpoll)       $pols->delete($idpoll);
+    }
+    
+  }
+  
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
