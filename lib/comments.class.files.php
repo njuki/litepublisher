@@ -137,14 +137,20 @@ class tcomments extends titems {
     $comusers = tcomusers::instance($this->pid);
     $comusers->delete($author);
   }
+
+public function setstatus($id, $status) {
+if ($status == 'approved') {
+return $this->approve($id);
+} else {
+return $this->sethold($id);
+}
+}
   
   public function sethold($id) {
     if (!isset($this->items[$id]))  return false;
     $item = $this->items[$id];
-    
     unset($this->items[$id]);
     $this->save();
-    
     $this->hold->items[$id] = $item;
     $this->hold->save();
     return true;

@@ -43,14 +43,14 @@ class tcommentmanager extends tevents {
   }
   
   private function deleterecent($id, $idpost) {
-    if ($i = $this->indexofrecent($id, $idpost)) {
+    if (is_int($i = $this->indexofrecent($id, $idpost))) {
       array_splice($this->items, $i, 1);
       $this->save();
     }
   }
   
   private function addrecent($id, $idpost) {
-    if ($i = $this->indexofrecent($id, $idpost))  return;
+    if (is_int($i = $this->indexofrecent($id, $idpost)))  return;
     $post = tpost::instance($idpost);
     if ($post->status != 'published') return;
     $item = $post->comments->items[$id];
@@ -180,24 +180,18 @@ class tcommentmanager extends tevents {
   public function setstatus($id, $idpost, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
     $comments = tcomments::instance($idpost);
-    if (dbversion) {
-      $result = $comments->db->setvalue($id, 'status', $status);
-    } else {
-      switch ($status) {
-        case 'hold':
-        $result = $comments->sethold($id);
-        if ($result) $this->deleterecent($id, $idpost);
-        break;
-        
-        case 'approved':
-        $result = $comments->approve($id);
-        if ($result) $this->addrecent($id, $idpost);
-        break;
-      }
-    }
-    
-    if ($result) $this->dochanged($id, $idpost);
-    return $result;
+if ($comments->setstatus($id, $status)) {
+if (!dbversion){
+if ($status == 'approved') {
+$this->addrecent($id, $idpost);
+} else {
+$this->deleterecent($id, $idpost);
+}
+}
+$this->dochanged($id, $idpost);
+return true;
+}
+return false;
   }
   
   public function checktrust($value) {
