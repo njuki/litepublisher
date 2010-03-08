@@ -21,7 +21,7 @@ class TXMLRPCParser extends IXR_Server  {
   
   function output($xml) {
     $head = '<?xml version="1.0"?>' . "\n";
-    $length = strlen($xml) + strlen($head);
+    $length = strlen($head) + strlen($xml);
     $this->XMLResult = "<?php
     @header('Connection: close');
     @header('Content-Length: $length');
@@ -31,7 +31,7 @@ class TXMLRPCParser extends IXR_Server  {
     @Header( 'Pragma: no-cache');
     @header('X-Pingback: ". litepublisher::$options->url . "/rpc.xml');
     echo'$head';
-    ?>". $xml;
+    ?>" . $xml;
   }
   
 }//class
