@@ -15,6 +15,7 @@ class tmediaparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'mediaparser';
+    $this->data['ratio'] = true;
     $this->data['previewwidth'] = 120;
     $this->data['previewheight'] = 120;
     $this->data['audiosize'] = 128;
@@ -252,11 +253,13 @@ class tmediaparser extends tevents {
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;
-    $ratio = $sourcex / $sourcey;
-    if ($x/$y > $ratio) {
-      $x = $y *$ratio;
-    } else {
-      $y = $x /$ratio;
+    if ($this->ratio) {
+      $ratio = $sourcex / $sourcey;
+      if ($x/$y > $ratio) {
+        $x = $y *$ratio;
+      } else {
+        $y = $x /$ratio;
+      }
     }
     
     $dest = imagecreatetruecolor($x, $y);

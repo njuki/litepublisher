@@ -284,6 +284,7 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
   //ITemplate
   public function request($id) {
     parent::request($id);
+    if ($this->status == 'draft') return 404;
     $this->doprocessform();
   }
   
