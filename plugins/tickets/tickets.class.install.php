@@ -42,10 +42,16 @@ function tticketsInstall($self) {
   $linkgen = tlinkgenerator::instance();
   $linkgen->post = '/[type]/[title].htm';
   $linkgen->save();
+  
+  $cron = tcron::instance();
+  $cron->addweekly(get_class($self), 'optimize', null);
 }
 
 function tticketsUninstall($self) {
   //die("Warning! You can lost all tickets!");
+  $cron = tcron::instance();
+  $cron->deleteclass(get_class($self));
+  
   litepublisher::$classes->lock();
   tposts::unsub($self);
   
