@@ -174,7 +174,6 @@ class toptions extends tevents {
       echo "\n";
     }
     //array_shift($debug);
-    //var_dump($debug);
     echo "</pre>\n";
     */
     $trace =str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());

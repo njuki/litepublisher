@@ -247,7 +247,6 @@ class tfoaf extends titems {
     if (!(($item['status'] == 'invated') || ($item['status'] == 'hold'))) return false;
     $this->setstatus($id, 'approved');
     $this->sendmail($id, 'accepted');
-    var_dump($this->items[$id]);
     return true;
   }
   

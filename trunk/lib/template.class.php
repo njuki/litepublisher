@@ -141,11 +141,11 @@ class ttemplate extends tevents {
       $result = $widgets->getcontent();
     }
     
-    $this->dositebarclass(&$result, get_class($this->context));
+    $this->dositebarclass($result, get_class($this->context));
     
-    $this->onsitebar(&$result, $this->cursitebar);
-    if (litepublisher::$options->admincookie) $this->onadminsitebar(&$result, $this->cursitebar);
-    if (litepublisher::$urlmap->adminpanel) $this->onadminpanelsitebar(&$result, $this->cursitebar);
+    $this->callevent('onsitebar', array(&$result, $this->cursitebar));
+    if (litepublisher::$options->admincookie) $this->callevent('onadminsitebar', array(&$result, $this->cursitebar));
+    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanelsitebar', array(&$result, $this->cursitebar));
     $this->cursitebar++;
     return $result;
   }
@@ -257,28 +257,28 @@ class ttemplate extends tevents {
     
     if ($this->itemplate) $result .= $this->context->gethead();
     
-    if (litepublisher::$urlmap->adminpanel) $this->onadminhead(&$result);
+    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminhead', array(&$result));
     $result = $this->getjavaoptions() . $result;
-    $this->onhead(&$result);
+    $this->callevent('onhead', array(&$result));
     return trim($result);
   }
   
   public function getbody() {
     $result = '';
-    $this->onbody(&$result);
+    $this->callevent('onbody', array(&$result));
     return $result;
   }
   
   public function getcontent() {
     $result = '';
-    $this->beforecontent(&$result);
+    $this->callevent('beforecontent', array(&$result));
     if ($this->itemplate || method_exists($this->context, 'GetTemplateContent')) {
       $result .= $this->context->GetTemplateContent();
     } elseif ($this->contextHasProp('content')) {
       $result .= $this->context->content;
     }
     
-    $this->aftercontent(&$result);
+    $this->callevent('aftercontent', array(&$result));
     return $result;
   }
   
@@ -319,6 +319,14 @@ class ttemplate extends tevents {
         if (!class_exists($class)) unset($this->events[$name]);
       }
     }
+  }
+  
+  public function onwidget($id, &$content) {
+    $this->callevent('onwidget', array($id, &$content));
+  }
+  
+  public function onwidgetcontent($id, &$content) {
+    $this->callevent('onwidgetcontent', array($id, &$content));
   }
   
 }//class

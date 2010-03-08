@@ -39,7 +39,6 @@ class tdbmanager  {
   public function  deletealltables( ) {
     $list = $this->res2array($this->query("show tables from " . litepublisher::$options->dbconfig['dbname']));
     foreach ($list as $row) {
-      var_dump($row);
       $this->exec("DROP TABLE IF EXISTS ". $row[0]);
     }
   }

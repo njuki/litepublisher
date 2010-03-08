@@ -22,7 +22,7 @@ class tcontentfilter extends tevents {
   }
   
   public function filtercomment($content) {
-    if ($this->oncomment(&$content)) return $content;
+    if ($this->callevent('oncomment', array(&$content))) return $content;
     $result = trim($content);
     $result = htmlspecialchars($result);
     $result = self::simplebbcode($result);
@@ -32,7 +32,7 @@ class tcontentfilter extends tevents {
   }
   
   public function SetPostContent(tpost $post, $s) {
-    $this->beforecontent($post, &$s);
+    $this->callevent('beforecontent', array($post, &$s));
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
     preg_match('/\[cut(.*?)?\]/', $s, $matches)
@@ -84,15 +84,15 @@ class tcontentfilter extends tevents {
   }
   
   public function filter($content) {
-    if ($this->beforefilter(&$content)) {
-      $this->afterfilter(&$content);
+    if ($this->callevent('beforefilter', array(&$content))) {
+      $this->callevent('afterfilter', array(&$content));
       return $content;
     }
     
     $result = trim($content);
     $result = $this->replacecode($result);
     $result = self::auto_p($result);
-    $this->afterfilter(&$result);
+    $this->callevent('afterfilter', array(&$result));
     return $result;
   }
   
@@ -158,7 +158,7 @@ class tcontentfilter extends tevents {
     $s = self::bbcode2tag($s, 'b', 'strong');
     $s = self::bbcode2tag($s, 'I', 'EM');
     $s = self::bbcode2tag($s, 'code', 'code');
-    $s = self::bbcode2tag($s, 'quote', 'bblockquote');
+    $s = self::bbcode2tag($s, 'quote', 'blockquote');
     return$s;
   }
   

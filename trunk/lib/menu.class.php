@@ -37,14 +37,7 @@ class tmenus extends TItems {
     }
     
     $linkgen = tlinkgenerator::instance();
-    if ($item->url == '' ) {
-      $item->url = $linkgen->createlink($item, 'post', true);
-    } else {
-      $title = $item->title;
-      $item->title = trim($item->url, '/');
-      $item->url = $linkgen ->createlink($item, 'post', true);
-      $item->title = $title;
-    }
+    $item->url = $linkgen->addurl($item, 'menu');
     
     $this->items[++$this->autoid] = array('id' => $this->autoid);
     //move props
@@ -66,37 +59,15 @@ class tmenus extends TItems {
   }
   
   public function edit(imenu $item) {
-    $urlmap = turlmap::instance();
-    $oldurl = $urlmap->getidurl($item->idurl);
-    if (($oldurl != $item->url) || ($item->url == '')) {
-      $linkgen = tlinkgenerator::instance();
-      if ($item->url == '') {
-        $item->url = $linkgen->createlink($item, 'item', false);
-      } else {
-        $title = $item->title;
-        $item->title = trim($item->url, '/');
-        if (is_int($i = strrpos($item->title, '.'))) $item->title = substr($item->title, 0, $i);
-        if ($item->title == '') $item->title = $title;
-        $item->url = $linkgen->Createlink($item, 'item', false);
-        $item->title = $title;
-      }
-    }
-    
-    if ($oldurl != $item->url) {
-      //check unique url
-      if (($urlitem = $urlmap->findurl($item->url)) && ($urlitem['id'] != $item->idurl)) {
-        $item->url = $linkgen->MakeUnique($item->url);
-      }
-      $urlmap->setidurl($item->idurl, $item->url);
-      $urlmap->addredir($oldurl, $item->url);
-    }
+    $linkgen = tlinkgenerator::instance();
+    $linkgen->editurl($item, 'menu');
     
     $this->lock();
     $this->sort();
     $item->save();
     $this->unlock();
     $this->edited($item->id);
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function  delete($id) {

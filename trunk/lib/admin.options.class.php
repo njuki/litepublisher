@@ -236,6 +236,7 @@ class tadminoptions extends tadminmenu {
       case 'links':
       $linkgen = tlinkgenerator::instance();
       if (!empty($post)) $linkgen->post = $post;
+      if (!empty($menu)) $linkgen->menu = $menu;
       if (!empty($category)) $linkgen->category = $category;
       if (!empty($tag)) $linkgen->tag = $tag;
       $linkgen->save();
@@ -274,28 +275,38 @@ class tadminoptions extends tadminmenu {
       break;
       
       case 'secure':
-      $options->cookieenabled = isset($cookie);
-      $options->reguser = isset($reguser);
-      if ($options->usersenabled != isset($usersenabled)) {
-        $options->usersenabled = isset($usersenabled);
-        $menus = tadminmenus::instance();
-        $menus->lock();
-        if ($options->usersenabled) {
-          $menus->add(0, 'users', 'admin', 'tadminusers');
-        } else {
-          $menus->deleteurl('/admin/users/');
+      if (isset($_POST['oldpassword'])) {
+        $h2 = $this->html->h2;
+        if ($oldpassword == '') return $h2->badpassword;
+        if (($newpassword == '') || ($newpassword != $repassword))  return $h2->difpassword;
+        if (!$options->auth($options->login, $oldpassword)) return $h2->badpassword;
+        $options->SetPassword($newpassword);
+        $auth = tauthdigest::instance();
+        $auth->logout();
+        return $h2->passwordchanged;
+      } else {
+        $options->cookieenabled = isset($cookie);
+        $options->reguser = isset($reguser);
+        if ($options->usersenabled != isset($usersenabled)) {
+          $options->usersenabled = isset($usersenabled);
+          $menus = tadminmenus::instance();
+          $menus->lock();
+          if ($options->usersenabled) {
+            $menus->add(0, 'users', 'admin', 'tadminusers');
+          } else {
+            $menus->deleteurl('/admin/users/');
+          }
+          $menus->unlock();
         }
-        $menus->unlock();
         
+        $options->parsepost = isset($parsepost);
+        $auth = tauthdigest::instance();
+        $auth->xxxcheck = isset($xxxcheck);
+        $auth->save();
+        $filter = tcontentfilter::instance();
+        $filter->phpcode = isset($phpcode);
+        $filter->save();
       }
-      
-      $options->parsepost = isset($parsepost);
-      $auth = tauthdigest::instance();
-      $auth->xxxcheck = isset($xxxcheck);
-      $auth->save();
-      $filter = tcontentfilter::instance();
-      $filter->phpcode = isset($phpcode);
-      $filter->save();
       break;
       
       case 'robots':
