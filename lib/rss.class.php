@@ -171,14 +171,14 @@ class trss extends tevents {
     }
     
     $content = '';
-    $this->beforepost($post->id, &$content);
+    $this->callevent('beforepost', array($post->id, &$content));
     if ($this->template == '') {
       $content .=$post->rss;
       $content .= $post->morelink;
     } else {
       eval('$content .= "'. $this->template . '";');
     }
-    $this->afterpost($post->id, &$content);
+    $this->callevent('afterpost', array($post->id, &$content));
     
     AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);

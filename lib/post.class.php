@@ -407,13 +407,13 @@ class tpost extends titem implements  itemplate {
   public function getcontent() {
     $result = '';
     $posts = tposts::instance();
-    $posts->beforecontent($this->id, &$result);
+    $posts->beforecontent($this->id, $result);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $result = $theme->parse($result);
     }
-    $posts->aftercontent($this->id, &$result);
+    $posts->aftercontent($this->id, $result);
     return $result;
   }
   

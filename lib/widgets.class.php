@@ -82,7 +82,7 @@ class twidgets extends tsingleitems {
       file_put_contents($file, $result);
       @chmod($file, 0666);
     }
-    $this->onsitebar(&$result, $this->current++);
+    $this->callevent('onsitebar', array(&$result, $this->current++));
     return $result;
   }
   
@@ -94,7 +94,7 @@ class twidgets extends tsingleitems {
       $this->curwidget= $id;
       $this->curindex= $i++;
       $content = $this->getwidgetcontent($item);
-      $template->onwidget($id, &$content);
+      $template->onwidget($id, $content);
       $result .= $content;
     }
     return $result;
@@ -154,7 +154,7 @@ class twidgets extends tsingleitems {
         $result =   $widget->getwidget($item['id'], $this->current);
       }else {
         $content = $widget->getwidgetcontent($item['id'], $this->current);
-        $template->onwidgetcontent($id, &$content);
+        $template->onwidgetcontent($id, $content);
         $theme= ttheme::instance();
         $result = $theme->getwidget($item['title'], $content, $item['template'], $this->current);
       }

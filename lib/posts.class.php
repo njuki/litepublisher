@@ -99,15 +99,7 @@ class tposts extends titems {
     $post->pagescount = count($post->pages);
     $post->title = tcontentfilter::escape($post->title);
     $linkgen = tlinkgenerator::instance();
-    if ($post->url == '' ) {
-      $post->url = $linkgen->createlink($post, 'post', true);
-    } else {
-      $title = $post->title;
-      $post->title = trim($post->url, '/');
-      $post->url = $linkgen ->createlink($post, 'post', true);
-      $post->title = $title;
-    }
-    
+    $post->url = $linkgen->addurl($post, 'post');
     $urlmap = turlmap::instance();
     if (dbversion) {
       $post->addtodb();
@@ -133,33 +125,8 @@ class tposts extends titems {
   
   public function edit(tpost $post) {
     $post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
-    $urlmap = turlmap::instance();
-    $oldurl = $urlmap->getidurl($post->idurl);
-    if (($oldurl != $post->url) || ($post->url == '') ) {
-      $linkgen = tlinkgenerator::instance();
-      if ($post->url == '') {
-        $post->url = $linkgen->createlink($post, 'post', false);
-      } else {
-        $title = $post->title;
-        $post->title = trim($post->url, '/');
-        if (is_int($i = strrpos($post->title, '.'))) $post->title = substr($post->title, 0, $i);
-        $post->title = trim($post->title, '.');
-        if ($post->title == '') $post->title = $title;
-        $post->url = $linkgen->Createlink($post, 'post', false);
-        
-        $post->title = $title;
-      }
-    }
-    
-    if ($oldurl != $post->url) {
-      //check unique url
-      if (($urlitem = $urlmap->findurl($post->url)) && ($urlitem['id'] != $post->idurl)) {
-        $post->url = $linkgen->MakeUnique($post->url);
-      }
-      $urlmap->setidurl($post->idurl, $post->url);
-      $urlmap->addredir($oldurl, $post->url);
-    }
-    
+    $linkgen = tlinkgenerator::instance();
+    $linkgen->editurl($post, 'post');
     $post->modified = time();
     $this->lock();
     $this->updated($post);
@@ -168,7 +135,7 @@ class tposts extends titems {
     $this->unlock();
     $this->edited($post->id);
     $this->changed();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function delete($id) {
@@ -321,6 +288,16 @@ class tposts extends titems {
     foreach ($this->coinstances as $coinstance) {
       if ($coinstance instanceof  ipost) $coinstance->$method($arg);
     }
+  }
+  
+  
+  //fix call reference
+  public function beforecontent($id, &$result) {
+    $this->callevent('beforecontent', array($id, &$result));
+  }
+  
+  public function aftercontent($id, &$result) {
+    $this->callevent('aftercontent', array($id, &$result));
   }
   
 }//class

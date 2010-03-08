@@ -78,7 +78,7 @@ class TXMLRPC extends titems {
   }
   
   public function call($method, $args) {
-    $this->beforecall($method, &$args);
+    $this->callevent('beforecall', array($method, &$args));
     if (!isset($this->items[$method])) {
       return new IXR_Error(-32601, "server error. requested method $method does not exist.");
     }

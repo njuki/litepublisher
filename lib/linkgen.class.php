@@ -18,6 +18,7 @@ class tlinkgenerator extends tevents {
     $this->basename = 'linkgenerator';
     $this->data= array_merge($this->data, array(
     'post' => '/[title].htm',
+    'menu' => '/[title].htm',
     'tag' => '/tag/[title].htm',
     'category' => '/category/[title].htm',
     'archive' => '/[year]/[month].htm',
@@ -87,8 +88,7 @@ class tlinkgenerator extends tevents {
     $url = preg_replace('/[^%a-z0-9\.\/ _-]/', '', $url);
     $url = preg_replace('/\s+/', '-', $url);
     $url = preg_replace('|-+|', '-', $url);
-    $url = trim($url, '-');
-    $url = trim($url, '. ');
+    $url = trim($url, '-.');
     $url = str_replace('..', '-', $url);
     return $url;
   }
@@ -150,6 +150,62 @@ class tlinkgenerator extends tevents {
     return "/some-wrong". time();
   }
   
-}
+  // $obj is tpost or tmenu
+  public function addurl($obj, $schema) {
+    if (!isset($obj->url)) return $this->error("The properties url and title not found");
+    if ($obj->url == '' )  return $this->createlink($obj, $schema, true);
+    $url = trim(strip_tags($obj->url), "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
+    if ($url == '') return $this->createlink($obj, $schema, true);
+    $result = '/' . $url;
+    if (strend($obj->url, '/')) $result .= '/';
+    $result= $this->aftercreate($result);
+    $result= $this->validate($result);
+    $result = $this->MakeUnique($result);
+    return $result;
+  }
+  
+  public function editurl($obj, $schema) {
+    if (!isset($obj->url) || !isset($obj->idurl) || !isset($obj->url)) return $this->error("The properties url and title not found");
+    $urlmap = turlmap::instance();
+    $oldurl = $urlmap->getidurl($obj->idurl);
+    if ($oldurl == $obj->url)return;
+    if ($obj->url == '') {
+      $obj->url = $this->createlink($obj, $schema, false);
+      if ($oldurl == $obj->url)return;
+    }
+    
+    $url = trim(strip_tags($obj->url), "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
+    if ($url == '') {
+      $obj->url = $this->createlink($obj, $schema, false);
+      if ($oldurl == $obj->url)return;
+    }
+    
+    $url = '/' . $url;
+    if (strend($obj->url, '/')) $url .= '/';
+    if ($oldurl == $url){
+      $obj->url = $oldurl;
+      return;
+    }
+    
+    
+    $url = $this->aftercreate($url);
+    $url = $this->validate($url);
+    
+    if ($oldurl == $url){
+      $obj->url = $oldurl;
+      return;
+    }
+    
+    //check unique url
+    if ($urlitem = $urlmap->findurl($url)) {
+      $url = $this->MakeUnique($url);
+    }
+    
+    $obj->url = $url;
+    $urlmap->setidurl($obj->idurl, $obj->url);
+    $urlmap->addredir($oldurl, $obj->url);
+  }
+  
+}//class
 
 ?>

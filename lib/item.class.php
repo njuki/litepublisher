@@ -50,7 +50,6 @@ class titem extends tdata {
   
   public function request($id) {
     $this->id = $id;
-    var_dump($id);
     if (!$this->load()) return 404;
   }
   
