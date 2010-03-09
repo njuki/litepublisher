@@ -8,15 +8,6 @@
 
 function tadminmenusInstall($self) {
   $self->lock();
-  $board = $self->additem(array(
-  'parent' => 0,
-  'url' => '/admin/',
-  'title' => tlocal::$data['names']['board'],
-  'name' => 'board',
-  'class' => 'tadminboard',
-  'group' => 'author'
-  ));
-  
   //posts
   $posts = $self->createitem(0, 'posts', 'author', 'tadminposts');
   {
@@ -103,6 +94,15 @@ function tadminmenusInstall($self) {
     $self->createitem($service, 'engine', 'admin', 'tadminservice');
     $self->createitem($service, 'run', 'admin', 'tadminservice');
   }
+  
+  $board = $self->additem(array(
+  'parent' => 0,
+  'url' => '/admin/',
+  'title' => tlocal::$data['names']['board'],
+  'name' => 'board',
+  'class' => 'tadminboard',
+  'group' => 'author'
+  ));
   
   $self->unlock();
   
