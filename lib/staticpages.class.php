@@ -22,25 +22,25 @@ class tstaticpages extends titems implements itemplate {
     $this->id = (int)$arg;
   }
   
-  public function getvalue($name0) {
+  public function getval($name) {
     return $this->items[$this->id][$name];
   }
   
   public function gettitle() {
-    return $this->getvalue('title');
+    return $this->getval('title');
   }
   
 public function gethead() { }
   public function getkeywords() {
-    return $this->getvalue('keywords');
+    return $this->getval('keywords');
   }
   
   public function getdescription() {
-    return $this->getvalue('description');
+    return $this->getval('description');
   }
   
   public function GetTemplateContent() {
-    return $this->getvalue('filtered');
+    return $this->getval('filtered');
   }
   
   public function add($title, $content) {

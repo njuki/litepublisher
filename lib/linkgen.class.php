@@ -43,7 +43,7 @@ class tlinkgenerator extends tevents {
       }
     }
     $result= $this->aftercreate($result);
-    $result= $this->validate($result);
+    $result= $this->clean($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
@@ -61,7 +61,7 @@ class tlinkgenerator extends tevents {
     }
     
     $result= $this->aftercreate($result);
-    $result= $this->validate($result);
+    $result= $this->clean($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
@@ -79,7 +79,7 @@ class tlinkgenerator extends tevents {
     return strtr($s, $ru2lat_iso);
   }
   
-  public function Validate($url) {
+  public function clean($url) {
     $url = strip_tags($url);
     $url = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $url);
     $url = str_replace('%', '', $url);
@@ -98,7 +98,7 @@ class tlinkgenerator extends tevents {
     $filename = trim($filename, '/');
     $result = basename($filename);
     $result= $this->aftercreate($result);
-    $result= $this->Validate($result);
+    $result= $this->clean($result);
     return $result;
   }
   
@@ -159,7 +159,7 @@ class tlinkgenerator extends tevents {
     $result = '/' . $url;
     if (strend($obj->url, '/')) $result .= '/';
     $result= $this->aftercreate($result);
-    $result= $this->validate($result);
+    $result= $this->clean($result);
     $result = $this->MakeUnique($result);
     return $result;
   }
@@ -189,7 +189,7 @@ class tlinkgenerator extends tevents {
     
     
     $url = $this->aftercreate($url);
-    $url = $this->validate($url);
+    $url = $this->clean($url);
     
     if ($oldurl == $url){
       $obj->url = $oldurl;

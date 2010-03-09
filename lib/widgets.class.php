@@ -17,7 +17,7 @@ class twidgets extends tsingleitems {
     if (is_null($id)) {
       $id = isset(self::$default) ? self::$default : 0;
     }
-    return parent::instance(__class__, $id);
+    return parent::singleinstance(__class__, $id);
   }
   
   protected function create() {
@@ -61,8 +61,8 @@ class twidgets extends tsingleitems {
     return false;
   }
   
-  public function getcount($index) {
-    return count($this->items[$index]);
+  public function sitebarcount($sitebar) {
+    return count($this->items[$sitebar]);
   }
   
   public function getcontent() {
@@ -171,7 +171,7 @@ class twidgets extends tsingleitems {
   public function addext($class, $echotype, $template, $title, $sitebar, $order) {
     if ($sitebar >= $this->count) return $this->error("sitebar index $sitebar cant more than sitebars count in theme");
     if (!isset($this->items[$sitebar])) return $this->error("Unknown sitebar $sitebar");
-    if (($order < 0) || ($order > $this->getcount($sitebar))) $order = $this->getcount($sitebar);
+    if (($order < 0) || ($order > $this->sitebarcount($sitebar))) $order = $this->sitebarcount($sitebar);
     if (!preg_match('/echo|include|nocache/', $echotype)) $echotype = 'echo';
     $id = ++$this->autoid;
     $item =  array(

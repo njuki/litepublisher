@@ -8,7 +8,7 @@
 
 class tadminwidgets extends tadminmenu {
   
-  public static function instance() {
+  public static function instance($id = 0) {
     return getinstance(__class__);
   }
   
@@ -74,7 +74,7 @@ class tadminwidgets extends tadminmenu {
         $args->id = $id;
         $args->title = $this->getwidgettitle($widgets, $id);
         $args->sitebarcombo = $this->getcombo("sitebar-$id", $i, 3);
-        $args->ordercombo = $this->getcombo("order-$id", $j++, $widgets->getcount($i));
+        $args->ordercombo = $this->getcombo("order-$id", $j++, $widgets->sitebarcount($i));
         $result .= $html->item($args);
       }
     }

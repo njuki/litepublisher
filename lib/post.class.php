@@ -12,7 +12,7 @@ class tpost extends titem implements  itemplate {
   private $ameta;
   
   public static function instance($id = 0) {
-    return parent::instance(__class__, $id);
+    return parent::iteminstance(__class__, $id);
   }
   
   public function getbasename() {

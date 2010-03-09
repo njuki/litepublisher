@@ -37,13 +37,13 @@ class tsubscribers extends titemsposts {
   public function update($pid, $uid, $subscribed) {
     if ($subscribed == $this->subscribed($pid, $uid)) return;
     if (dbversion) {
-      $this->delete($pid, $uid);
+      $this->remove($pid, $uid);
       if ($subscribed) $this->add($pid, $uid);
     } elseif ($subscribed) {
       $this->items[$pid][] =$uid;
       $this->save();
     } else {
-      $this->delete($pid, $uid);
+      $this->remove($pid, $uid);
     }
   }
   

@@ -64,7 +64,7 @@ class tdata {
     return false;
   }
   
-  public  function __call($name, array $params) {
+  public  function __call($name, $params) {
     if (method_exists($this, strtolower($name))) {
       return call_user_func_array(array($this, strtolower($name)), $params);
     }

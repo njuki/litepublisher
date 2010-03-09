@@ -37,7 +37,7 @@ class titemsposts extends titems {
     }
   }
   
-  public function delete($idpost, $iditem) {
+  public function remove($idpost, $iditem) {
     if (dbversion) {
       return $this->db->delete("post = $idpost and item = $iditem");
     } elseif (isset($this->items[$idpost])) {
@@ -51,6 +51,11 @@ class titemsposts extends titems {
       return false;
     }
   }
+  
+  public function delete($idpost) {
+    return $this->deletepost($idpost);
+  }
+  
   
   public function deletepost($idpost) {
     if (dbversion) {

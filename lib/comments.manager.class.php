@@ -180,18 +180,18 @@ class tcommentmanager extends tevents {
   public function setstatus($id, $idpost, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
     $comments = tcomments::instance($idpost);
-if ($comments->setstatus($id, $status)) {
-if (!dbversion){
-if ($status == 'approved') {
-$this->addrecent($id, $idpost);
-} else {
-$this->deleterecent($id, $idpost);
-}
-}
-$this->dochanged($id, $idpost);
-return true;
-}
-return false;
+    if ($comments->setstatus($id, $status)) {
+      if (!dbversion){
+        if ($status == 'approved') {
+          $this->addrecent($id, $idpost);
+        } else {
+          $this->deleterecent($id, $idpost);
+        }
+      }
+      $this->dochanged($id, $idpost);
+      return true;
+    }
+    return false;
   }
   
   public function checktrust($value) {

@@ -33,7 +33,7 @@ class tadminmenus extends tmenus {
     }
   }
   
-  public function add($parent, $name, $group, $class) {
+  public function createitem($parent, $name, $group, $class) {
     $title = $this->getadmintitle($name);
     $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
     return $this->additem(array(
