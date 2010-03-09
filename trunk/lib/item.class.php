@@ -10,7 +10,7 @@ class titem extends tdata {
   public static $instances;
   //public $id;
   
-  public static function instance($class, $id = 0) {
+  public static function iteminstance($class, $id = 0) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
     $self = litepublisher::$classes->newinstance($class);

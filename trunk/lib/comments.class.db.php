@@ -88,10 +88,10 @@ class tcomments extends titems {
   public function delete($id) {
     return $this->db->setvalue($id, 'status', 'deleted');
   }
-
-public function setstatus($id, $status) {
-return $this->db->setvalue($id, 'status', $status);
-}
+  
+  public function setstatus($id, $status) {
+    return $this->db->setvalue($id, 'status', $status);
+  }
   
   public function getcount($where = '') {
     return $this->db->getcount($where);

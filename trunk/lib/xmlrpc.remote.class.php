@@ -13,7 +13,7 @@ class TXMLRPCRemoteAdmin extends TXMLRPCAbstract {
   }
   
   public function Install() {
-    $Caller = &TXMLRPC::Instance();
+    $Caller = TXMLRPC::Instance();
     $Caller->Lock();
     $Caller->Add('litepublisher.call', 'LitePublisherCall', get_class($this));
     $Caller->Add('litepublisher.set', 'LitePublisherSet', get_class($this));

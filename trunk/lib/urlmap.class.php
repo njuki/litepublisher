@@ -340,7 +340,7 @@ class turlmap extends titems {
     $Redir->add($from, $to);
   }
   
-  public static function unsub(&$obj) {
+  public static function unsub($obj) {
     $self = self::instance();
     $self->lock();
     $self->unsubscribeclassname(get_class($obj));

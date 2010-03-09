@@ -8,7 +8,7 @@
 
 class tadminusers extends tadminmenu {
   
-  public static function instance() {
+  public static function instance($id = 0) {
     return getinstance(__class__);
   }
   

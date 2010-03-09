@@ -6,8 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminoptions extends tadminmenu {
-  public static function instance() {
+class Tadminoptions extends tadminmenu {
+  public static function instance($id = 0) {
     return getinstance(__class__);
   }
   
@@ -294,7 +294,7 @@ class tadminoptions extends tadminmenu {
           $menus = tadminmenus::instance();
           $menus->lock();
           if ($options->usersenabled) {
-            $menus->add(0, 'users', 'admin', 'tadminusers');
+            $menus->createitem(0, 'users', 'admin', 'tadminusers');
           } else {
             $menus->deleteurl('/admin/users/');
           }

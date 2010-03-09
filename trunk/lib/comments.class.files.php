@@ -137,14 +137,14 @@ class tcomments extends titems {
     $comusers = tcomusers::instance($this->pid);
     $comusers->delete($author);
   }
-
-public function setstatus($id, $status) {
-if ($status == 'approved') {
-return $this->approve($id);
-} else {
-return $this->sethold($id);
-}
-}
+  
+  public function setstatus($id, $status) {
+    if ($status == 'approved') {
+      return $this->approve($id);
+    } else {
+      return $this->sethold($id);
+    }
+  }
   
   public function sethold($id) {
     if (!isset($this->items[$id]))  return false;
@@ -241,6 +241,7 @@ return $this->sethold($id);
       }
     }
     
+    $ismoder = $this->moderator;
     $theme = ttheme::instance();
     if (count($items) > 0) {
       $args = targs::instance();
@@ -250,7 +251,7 @@ return $this->sethold($id);
       if ($hold) $comment->status = 'hold';
       $lang = tlocal::instance('comment');
       
-      if ($ismoder = $this->moderator) {
+      if ($ismoder) {
         tlocal::loadlang('admin');
         $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
       } else {

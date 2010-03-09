@@ -66,7 +66,7 @@ class tdata {
     return false;
   }
   
-  public  function __call($name, array $params) {
+  public  function __call($name, $params) {
     if (method_exists($this, strtolower($name))) {
       return call_user_func_array(array($this, strtolower($name)), $params);
     }
@@ -566,7 +566,7 @@ class tsingleitems extends titems {
   public static $instances;
   public $id;
   
-  public static function instance($class, $id = 0) {
+  public static function singleinstance($class, $id = 0) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
     $self = litepublisher::$classes->newinstance($class);
@@ -1296,7 +1296,7 @@ class turlmap extends titems {
     $Redir->add($from, $to);
   }
   
-  public static function unsub(&$obj) {
+  public static function unsub($obj) {
     $self = self::instance();
     $self->lock();
     $self->unsubscribeclassname(get_class($obj));
