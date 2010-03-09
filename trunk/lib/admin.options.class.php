@@ -20,6 +20,7 @@ class Tadminoptions extends tadminmenu {
     
     switch ($this->name) {
       case 'options':
+      $args->fixedurl = $options->fixedurl;
       $args->description = $options->description;
       $args->footer = $template->footer;
       break;
@@ -136,6 +137,7 @@ class Tadminoptions extends tadminmenu {
       case 'options':
       $template = ttemplate::instance();
       $options->lock();
+      $options->fixedurl = isset($fixedurl);
       if (!empty($url) && ($url != $options->url))  $options->seturl($url);
       if (!empty($name)) $options->name = $name;
       if (!empty($description)) $options->description = $description;

@@ -99,7 +99,11 @@ class tadminmenus extends tmenus {
   
   public function getmenu($hover) {
     if (count($this->tree) == 0) return '';
-    if ($hover) return $this->getsubmenu($this->tree);
+    if ($hover) {
+      $result = $this->getsubmenu($this->tree);
+      $theme = ttheme::instance();
+      return sprintf($theme->menu, $result);
+    }
     
     $result = '';
     $theme = ttheme::instance();
@@ -119,8 +123,8 @@ class tadminmenus extends tmenus {
     foreach ($tree as $id => $items) {
       $item = $this->items[$id];
       if ($this->hasright($item['group'])) {
-        $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
-        $result .= sprintf($tml,litepublisher::$options.url . $item['url'], $item['title'], $subitems);
+        $subitems = count($items) == 0 ? '' : sprintf($theme->menu->submenu, $this->getsubmenu($items));
+        $result .= sprintf($tml,litepublisher::$options->url . $item['url'], $item['title'], $subitems);
       }
     }
     return $result;
