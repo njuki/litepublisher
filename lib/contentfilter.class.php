@@ -97,11 +97,11 @@ class tcontentfilter extends tevents {
   }
   
   public function replacecode($s) {
-    if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', 'tcontentfilter::CallbackReplaceCode', $s);
-    return preg_replace_callback('/<code>(.*?)<\/code>/ims', 'tcontentfilter::CallbackReplaceCode', $s);
+    if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', array(&$this, 'CallbackReplaceCode'), $s);
+    return preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'CallbackReplaceCode'), $s);
   }
   
-  public static function CallbackReplaceCode($found) {
+  public function CallbackReplaceCode($found) {
     $code = str_replace(
     array('"', "'", '$'),
     array('&quot;', '&#39;', '&#36;'),

@@ -43,11 +43,11 @@ public function gethead() { }
     return $this->getval('filtered');
   }
   
-  public function add($title, $content) {
+  public function add($title, $description, $keywords, $content) {
     $filter = tcontentfilter::instance();
     $title = tcontentfilter::escape($title);
     $linkgen = tlinkgenerator::instance();
-    $url = $linkgen->createurl($title, 'post', true);
+    $url = $linkgen->createurl($title, 'menu', true);
     $urlmap = turlmap::instance();
     $this->items[++$this->autoid] = array(
     'idurl' => $urlmap->add($url, get_class($this),  $this->autoid),
@@ -55,14 +55,16 @@ public function gethead() { }
     'title' => $title,
     'filtered' => $filter->filter($content),
     'rawcontent' => $content,
-    'description' => '',
-    'keywords' => ''
+    'description' => tcontentfilter::escape($description),
+    'keywords' => tcontentfilter::escape($keywords)
     );
     $this->save();
     return $this->autoid;
   }
   
-  public function edit($id, $title, $content, $description, $keywords) {
+  public function edit($id, $title, $description, $keywords, $content) {
+    if (!$this->itemexists($id)) return false;
+    $filter = tcontentfilter::instance();
     $item = $this->items[$id];
     $this->items[$id] = array(
     'idurl' => $item['idurl'],
@@ -70,12 +72,11 @@ public function gethead() { }
     'title' => $title,
     'filtered' => $filter->filter($content),
     'rawcontent' => $content,
-    'description' => $description,
-    'keywords' => $keywords
+    'description' => tcontentfilter::escape($description),
+    'keywords' => tcontentfilter::escape($keywords)
     );
     $this->save();
-    $urlmap = turlmap::instance();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function delete($id) {
@@ -83,7 +84,6 @@ public function gethead() { }
     $urlmap->deleteitem($this->items[$id]['idurl']);
     parent::delete($id);
   }
-  
   
 }//class
 ?>
