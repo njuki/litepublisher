@@ -192,7 +192,7 @@ class ttemplate extends tevents {
   
   public function getmenu() {
     $theme = ttheme::instance();
-    $hovermenu = $this->hovermenu && isset($theme->menu['id']);
+    $hovermenu = $this->hovermenu && isset($theme->menu->id);
     if (litepublisher::$urlmap->adminpanel) {
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($hovermenu);
@@ -210,7 +210,7 @@ class ttemplate extends tevents {
   
   public function sethovermenu($value) {
     if ($value == $this->hovermenu)  return;
-    $this->data['hovermenu'] = $vlue;
+    $this->data['hovermenu'] = $value;
     $this->save();
     
     litepublisher::$urlmap->clearcache();
@@ -246,10 +246,10 @@ class ttemplate extends tevents {
     $result = '';
     if ($this->hovermenu) {
       $theme = ttheme::instance();
-      if (isset($theme->menu['id'])) {
-        $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu['id']);
-        $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu['tag']);
-        $result .=  "<script type=\"text/javascript\" src=\"litepublisher::$options->files/js/litepublisher/hovermenu.js\"></script>\n";
+      if (isset($theme->menu->id)) {
+        $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
+        $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
+        $result .=  '<script type="text/javascript" src="' . litepublisher::$options->files . '/js/litepublisher/hovermenu.js"></script>' . "\n";
       }
     }
     
