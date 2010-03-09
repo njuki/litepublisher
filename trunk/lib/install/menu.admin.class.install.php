@@ -30,6 +30,7 @@ function tadminmenusInstall($self) {
     $self->items[$self->autoid] = $item;
     $self->createitem($posts, 'categories', 'editor', 'tadmintags');
     $self->createitem($posts, 'tags', 'editor', 'tadmintags');
+    $self->createitem($posts, 'staticpages', 'editor', 'tadminstaticpages');
   }
   
   $moder = $self->createitem(0, 'comments', 'moderator', 'tadminmoderator');

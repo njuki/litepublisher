@@ -34,7 +34,7 @@ class tadmintags extends tadminmenu {
       $args->title = '';
       $result .= $istags ? $h2->addtag : $h2->addcategory;
       $result .= $html->form($args);
-    } elseif (!$tags->ItemExists($id)) {
+    } elseif (!$tags->itemexists($id)) {
       return $this->notfound;
     } else {
       $item = $tags->getitem($id);

@@ -91,7 +91,7 @@ class ttheme extends tevents {
     return count($this->data['sitebars']);
   }
   
-  public static function parsecallback($names) {
+  public function parsecallback($names) {
     $name = $names[1];
     $prop = $names[2];
     if ($name == 'options') {
@@ -136,7 +136,7 @@ class ttheme extends tevents {
     array_push($this->parsing, $s);
     
     try {
-      $result = preg_replace_callback('/\$(\w*+)\.(\w*+)/', __class__ . '::parsecallback', $s);
+      $result = preg_replace_callback('/\$(\w*+)\.(\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);
