@@ -10,7 +10,7 @@
 <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
 <link rel="meta" type="application/rdf+xml" title="FOAF" href="$options.url/foaf.xml" />
 <link rel="shortcut icon" type="image/x-icon" href="$options.files/favicon.ico" />
-<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -.
+<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
 <meta name="keywords" content="$template.keywords" />
 <meta name="description" content="$template.description" />
 <link rel="sitemap" href="$options.url/sitemap/" />
