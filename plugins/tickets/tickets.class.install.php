@@ -32,9 +32,9 @@ function tticketsInstall($self) {
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
   $menus = tadminmenus::instance();
-  $idmenu = $menus->add(0, 'tickets', 'ticket', 'tadmintickets');
+  $idmenu = $menus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
   $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
-  $idmenu = $menus->add($idmenu, 'editor', 'ticket', 'tticketeditor');
+  $idmenu = $menus->createitem($idmenu, 'editor', 'ticket', 'tticketeditor');
   $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
   $menus->unlock();
   litepublisher::$classes->unlock();
