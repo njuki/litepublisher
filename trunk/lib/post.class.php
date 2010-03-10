@@ -211,7 +211,7 @@ class tpost extends titem implements  itemplate {
     foreach ($this->$names as $id) {
       $item = $tags->getitem($id);
       $args->add($item);
-      if ($item['icon'] == 0) {
+      if (($item['icon'] == 0) || litepublisher::$options->icondisabled) {
         $args->icon = '';
       } else {
         $files = tfiles::instance();
@@ -316,7 +316,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function geticonlink() {
-    if ($this->icon == 0) return '';
+    if (($this->icon == 0) || litepublisher::$options->icondisabled) return '';
     $files = tfiles::instance();
     return $files->geticon($this->icon);
   }

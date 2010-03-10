@@ -48,6 +48,7 @@ class Tadminoptions extends tadminmenu {
       $args->automore = $filter->automore;
       $args->automorelength = $filter->automorelength;
       $args->hovermenu = $template->hovermenu;
+      $args->icondisabled = $options->icondisabled;
       
       $parser = tmediaparser::instance();
       $args->ratio = $parser->ratio;
@@ -186,6 +187,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'view':
+      $options->icondisabled = isset($icondisabled);
       if (!empty($perpage)) $options->perpage = (int) $perpage;
       $filter = tcontentfilter::instance();
       $filter->automore = isset($automore);

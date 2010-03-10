@@ -139,7 +139,7 @@ class tbackuper extends tevents {
     }
     
     if ($tmp) {
-      $old = $up . basename(litepublisher::$paths->data) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
+      $old = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths->data) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
       @rename(litepublisher::$paths->data, $old);
       @rename($tmp, litepublisher::$paths->data);
       tfiler::delete($old, true, true);
