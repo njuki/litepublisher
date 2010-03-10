@@ -57,5 +57,5 @@ define('debug', '');
 RewriteCond %{HTTP_HOST} ^www.site.ru$ [NC]
 RewriteRule ^(.*)$ http://site.ru/$1 [R=301,L]
 
-wget http://litepublisher.googlecode.com/files/litepublisher.3.11.tar.gz
-tar -xf litepublisher.3.11.tar.gz
+wget http://litepublisher.googlecode.com/files/litepublisher.3.22.tar.gz
+tar -xf litepublisher.3.22.tar.gz -p
