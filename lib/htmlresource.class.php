@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttag {
+class thtmltag {
   public $tag;
 public function __construct($tag) { $this->tag = $tag; }
   public function __get($name) {
@@ -33,7 +33,7 @@ class THtmlResource  {
   }
   
   public function __get($name) {
-    if (in_array($name, self::$tags)) return new ttag($name);
+    if (in_array($name, self::$tags)) return new thtmltag($name);
     if (isset($this->ini[$this->section][$name]))  {
       $s = $this->ini[$this->section][$name];
     } elseif (isset($this->ini['common'][$name]))  {

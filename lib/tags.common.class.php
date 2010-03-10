@@ -458,6 +458,4 @@ class ttagcontent extends tdata {
   }
   
 }//class
-
-
 ?>

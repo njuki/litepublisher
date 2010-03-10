@@ -95,8 +95,12 @@ class tstdwidgets extends titems {
   
   public function getwidget($id, $sitebar) {
     if (!($name = $this->getname($id))) return '';
-    $icons = ticons::instance();
-    $icon = $icons->geticon($name);
+    if (litepublisher::$options->icondisabled) {
+      $icon = '';
+    } else {
+      $icons = ticons::instance();
+      $icon = $icons->geticon($name);
+    }
     
     $result = '';
     $title = $this->items[$name]['title'];
