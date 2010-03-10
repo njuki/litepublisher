@@ -46,7 +46,7 @@ class tdatabase {
   }
   
   public function __destruct() {
-    if ($this->handle) @mysql_close($this->handle);
+    if (is_resource($this->handle)) @mysql_close($this->handle);
     $this->handle = false;
   }
   
@@ -78,8 +78,8 @@ class tdatabase {
       );
     }
     
-    if ($this->result)  {
-      @mysql_free_result($this->result);
+    if (is_resource ($this->result))  {
+      mysql_free_result($this->result);
     }
     
     $this->result = @mysql_query($sql, $this->handle);

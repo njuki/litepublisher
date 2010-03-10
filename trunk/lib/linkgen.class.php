@@ -24,6 +24,7 @@ class tlinkgenerator extends tevents {
     'archive' => '/[year]/[month].htm',
     'file' => '/[medium]/[filename]/',
     ));
+$this->data['urlencode'] = false;
   }
   
   public function createlink($source, $schema, $uniq) {
@@ -39,16 +40,18 @@ class tlinkgenerator extends tevents {
         } else {
           $text = $source->$tag;
         }
+$text = $this->encode($text);
         $result= str_replace("[$tag]", $text, $result);
       }
     }
-    $result= $this->aftercreate($result);
+
     $result= $this->clean($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
   
   public function createurl($title, $schema, $uniq) {
+$title = $this->encode($title);
     $result = $this->data[$schema];
     $result = str_replace('[title]', $title, $result);
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
@@ -60,15 +63,15 @@ class tlinkgenerator extends tevents {
       }
     }
     
-    $result= $this->aftercreate($result);
     $result= $this->clean($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
-  
-  public function aftercreate($url) {
-    if (litepublisher::$options->language == 'ru') $url = $this->ru2lat($url);
-    return strtolower($url);
+
+public function encode($s) {
+if ($this->urlencode) return rawurlencode($s);
+    if (litepublisher::$options->language == 'ru') $s = $this->ru2lat($s);
+    return strtolower($s);
   }
   
   public function ru2lat($s) {
@@ -90,6 +93,7 @@ class tlinkgenerator extends tevents {
     $url = preg_replace('|-+|', '-', $url);
     $url = trim($url, '-.');
     $url = str_replace('..', '-', $url);
+$url = '/' . ltrim($url, '/');
     return $url;
   }
   
@@ -97,7 +101,7 @@ class tlinkgenerator extends tevents {
     $filename = trim($filename);
     $filename = trim($filename, '/');
     $result = basename($filename);
-    $result= $this->aftercreate($result);
+    $result= $this->encode($result);
     $result= $this->clean($result);
     return $result;
   }
@@ -158,7 +162,7 @@ class tlinkgenerator extends tevents {
     if ($url == '') return $this->createlink($obj, $schema, true);
     $result = '/' . $url;
     if (strend($obj->url, '/')) $result .= '/';
-    $result= $this->aftercreate($result);
+    $result= $this->encode($result);
     $result= $this->clean($result);
     $result = $this->MakeUnique($result);
     return $result;
@@ -188,7 +192,7 @@ class tlinkgenerator extends tevents {
     }
     
     
-    $url = $this->aftercreate($url);
+    $url = $this->encode($url);
     $url = $this->clean($url);
     
     if ($oldurl == $url){

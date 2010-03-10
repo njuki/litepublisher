@@ -79,7 +79,9 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'links':
-      ttheme::$vars['linkgen'] = tlinkgenerator::instance();
+$linkgen = tlinkgenerator::instance();
+      ttheme::$vars['linkgen'] = $linkgen;
+$args->urlencode = $linkgen->urlencode;
       break;
       
       case 'openid':
@@ -241,6 +243,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'links':
       $linkgen = tlinkgenerator::instance();
+$linkgen->urlencode = isset($urlencode);
       if (!empty($post)) $linkgen->post = $post;
       if (!empty($menu)) $linkgen->menu = $menu;
       if (!empty($category)) $linkgen->category = $category;
