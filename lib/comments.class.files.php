@@ -31,6 +31,7 @@ class tcomments extends titems {
   public function getcomment($id) {
     $result = new tcomment($this);
     $result->id = $id;
+if (!isset($this->items[$id]) && isset($this->hold->items[$id])) $result->owner = $this->hold;
     return $result;
   }
   
