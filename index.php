@@ -23,7 +23,7 @@ public static $secret = '8r7j7hbt8iik//pt7hUy5/e/7FQvVBoh7/Zt8sCg8+ibVBUt7rQ';
 public static $microtime;
 
 public static function init() {
-if (!preg_match('/(www\.)?([\w\.]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
+if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
 self::$domain = $domain[2];
 
 $home = dirname(__file__). DIRECTORY_SEPARATOR;
@@ -59,7 +59,7 @@ litepublisher::$classes = tclasses::instance();
 litepublisher::$options = toptions::instance();
 if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
 if (dbversion) litepublisher::$db = new tdatabase();
-
+    litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
 litepublisher::$urlmap = turlmap::instance();
 if (!defined('litepublisher_mode')) {
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
