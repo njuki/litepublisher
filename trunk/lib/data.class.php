@@ -226,4 +226,8 @@ function md5uniq() {
   return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
+function dumpstr($s) {
+  echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
+}
+
 ?>

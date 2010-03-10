@@ -212,8 +212,8 @@ class ttheme extends tevents {
   public function  getwidgetitem($name, $index) {
     $sitebar = &$this->data['sitebars'][$index];
     if (isset($sitebar[$name]['item'])) return $sitebar[$name]['item'];
-    foreach ($this->data['sitebars'] as $sitebar) {
-      if (isset($sitebar[$name]['item'])) return $sitebar[$name]['item'];
+    foreach ($this->data['sitebars'] as $widgets) {
+      if (isset($widgets[$name]['item'])) return $widget[$name]['item'];
     }
     return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
   }
@@ -232,7 +232,10 @@ public function __construct(array &$array) { $this->array = &$array; }
     return $this->array[$name];
   }
   
-public function __set($name, $value) { $this->array[$name] = $value; }
+  public function __set($name, $value) {
+    throw new Exception("try to set $name");
+    //$this->array[$name] = $value;
+  }
 public function __tostring() { return $this->array[0]; }
   public function __isset($name) {
     return array_key_exists($name, $this->array);
