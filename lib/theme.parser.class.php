@@ -278,7 +278,6 @@ class tthemeparser extends tdata {
   private function parsesitebar($s) {
     $result = array();
     $result['widget'][0] = $this->requiretag($s, 'widget', '');
-    
     foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'foaf', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
