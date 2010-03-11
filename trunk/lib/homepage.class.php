@@ -31,7 +31,7 @@ public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
   
-  public function GetTemplateContent() {
+  public function getcont() {
     $result = '';
     if (litepublisher::$urlmap->page == 1) $result .= $this->text;
     if ($this->hideposts) return $result;

@@ -124,7 +124,7 @@ class tabstractcron extends tevents {
   public function sendexceptions() {
     //проверить, если файл логов создан более часа назад, то его отослать на почту
     $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'exceptionsmail.log';
-if (!file_exists($filename)) return;
+    if (!file_exists($filename)) return;
     $time = @filectime ($filename);
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);

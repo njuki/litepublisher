@@ -37,7 +37,7 @@ public function getdescription() {}
     return '';
   }
   
-  public function gettemplatecontent() {
+  public function getcont() {
     $result = $this->formresult;
     $result .= $this->getcontent();
     return $result;

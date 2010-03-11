@@ -321,7 +321,7 @@ public function gethead() {}
     return $this->data['content'];
   }
   
-  public function GetTemplateContent() {
+  public function getcont() {
     $theme = ttheme::instance();
     ttheme::$vars['menu'] = $this;
     return $theme->parse($theme->content->menu);

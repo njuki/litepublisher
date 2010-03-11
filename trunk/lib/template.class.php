@@ -272,8 +272,8 @@ class ttemplate extends tevents {
   public function getcontent() {
     $result = '';
     $this->callevent('beforecontent', array(&$result));
-    if ($this->itemplate || method_exists($this->context, 'GetTemplateContent')) {
-      $result .= $this->context->GetTemplateContent();
+    if ($this->itemplate || method_exists($this->context, 'getcont')) {
+      $result .= $this->context->getcont();
     } elseif ($this->contextHasProp('content')) {
       $result .= $this->context->content;
     }

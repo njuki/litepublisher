@@ -327,7 +327,7 @@ class tpost extends titem implements  itemplate {
     return $files->getlist($this->files);
   }
   
-  public function GetTemplateContent() {
+  public function getcont() {
     $theme = ttheme::instance();
     ttheme::$vars['post'] = $this;
     return $theme->parse($theme->content->post);

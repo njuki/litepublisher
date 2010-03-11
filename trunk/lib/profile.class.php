@@ -146,7 +146,7 @@ public function gethead() { }
     return tcontentfilter::getexcerpt($this->bio, 128);
   }
   
-  public function GetTemplateContent() {
+  public function getcont() {
     tlocal::loadlang('admin');
     $lang = tlocal::instance('profile');
     ttheme::$vars['profile'] = $this;

@@ -41,7 +41,7 @@ public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
   
-  public function GetTemplateContent() {
+  public function getcont() {
     $result = '';
     $posts = tposts::instance();
     $theme = ttheme::instance();

@@ -133,7 +133,7 @@ public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
   
-  public function GetTemplateContent() {
+  public function getcont() {
     if (dbversion) {
       $item = $this->items[$this->date];
   $items = $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
