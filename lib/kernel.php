@@ -68,6 +68,7 @@ class tdata {
   
   public  function __call($name, $params) {
     if (method_exists($this, strtolower($name))) {
+      echo "$name called<br>\n";
       return call_user_func_array(array($this, strtolower($name)), $params);
     }
     
@@ -1378,12 +1379,12 @@ class turlmap extends titems {
 interface itemplate {
   public function request($arg);
   public function gettitle();
-  public function gethead();
   public function getkeywords();
   public function getdescription();
-  public function GetTemplateContent();
+  public function gethead();
+  public function getcont();
   // property theme;
-  // property $tmlfile;
+  // property tmlfile;
 }
 
 interface itemplate2 {

@@ -9,12 +9,12 @@
 interface itemplate {
   public function request($arg);
   public function gettitle();
-  public function gethead();
   public function getkeywords();
   public function getdescription();
-  public function GetTemplateContent();
+  public function gethead();
+  public function getcont();
   // property theme;
-  // property $tmlfile;
+  // property tmlfile;
 }
 
 interface itemplate2 {

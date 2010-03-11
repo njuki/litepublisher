@@ -29,7 +29,7 @@ class tnotfound404 extends tevents {
     ?>";
   }
   
-  function GetTemplateContent() {
+  function getcont() {
     $this->cache = false;
     $result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
     $theme = ttheme::instance();

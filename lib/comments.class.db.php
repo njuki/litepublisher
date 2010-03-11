@@ -57,19 +57,18 @@ class tcomments extends titems {
   }
   
   public function edit($id, $idauthor, $content) {
-    try {
-      $item = $this->getitem((int) $id);
-    } catch (Exception $e) {
-      return false;
-    }
+    if (!$this->itemexists($id)) return false;
     $filter = tcontentfilter::instance();
-    $item['author'] = (int)$idauthor;
-    $item['content'] =$filter->filtercomment($content);
+    $item = array(
+    'id' => (int) $id,
+    'author' => (int)$idauthor,
+    'content' => $filter->filtercomment($content)
+    );
     
     $this->db->updateassoc($item);
     
     $item['rawcontent'] = $content;
-    $this->items[$id] = $item;
+    $this->items[$id] = $item + $this->items[$id];
     
     $this->getdb($this->rawtable)->updateassoc(array(
     'id' => $id,

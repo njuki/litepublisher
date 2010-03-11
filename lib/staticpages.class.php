@@ -39,7 +39,7 @@ public function gethead() { }
     return $this->getval('description');
   }
   
-  public function GetTemplateContent() {
+  public function getcont() {
     return $this->getval('filtered');
   }
   

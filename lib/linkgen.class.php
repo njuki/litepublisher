@@ -24,7 +24,7 @@ class tlinkgenerator extends tevents {
     'archive' => '/[year]/[month].htm',
     'file' => '/[medium]/[filename]/',
     ));
-$this->data['urlencode'] = false;
+    $this->data['urlencode'] = false;
   }
   
   public function createlink($source, $schema, $uniq) {
@@ -40,18 +40,18 @@ $this->data['urlencode'] = false;
         } else {
           $text = $source->$tag;
         }
-$text = $this->encode($text);
+        $text = $this->encode($text);
         $result= str_replace("[$tag]", $text, $result);
       }
     }
-
+    
     $result= $this->clean($result);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
   
   public function createurl($title, $schema, $uniq) {
-$title = $this->encode($title);
+    $title = $this->encode($title);
     $result = $this->data[$schema];
     $result = str_replace('[title]', $title, $result);
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
@@ -67,9 +67,9 @@ $title = $this->encode($title);
     if ($uniq) $result = $this->MakeUnique($result);
     return $result;
   }
-
-public function encode($s) {
-if ($this->urlencode) return rawurlencode($s);
+  
+  public function encode($s) {
+    if ($this->urlencode) return rawurlencode($s);
     if (litepublisher::$options->language == 'ru') $s = $this->ru2lat($s);
     return strtolower($s);
   }
@@ -93,7 +93,7 @@ if ($this->urlencode) return rawurlencode($s);
     $url = preg_replace('|-+|', '-', $url);
     $url = trim($url, '-.');
     $url = str_replace('..', '-', $url);
-$url = '/' . ltrim($url, '/');
+    $url = '/' . ltrim($url, '/');
     return $url;
   }
   

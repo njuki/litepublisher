@@ -318,7 +318,7 @@ class tcommontags extends titems implements  itemplate {
     return $result;
   }
   
-  public function GetTemplateContent() {
+  public function getcont() {
     $result = '';
     if ($this->id == 0) {
       $result .= $this->GetSortedList($this->sortname, 0, 0);
