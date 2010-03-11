@@ -1,396 +1,374 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head profile="http://gmpg.org/xfn/11">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>$template.title</title>
-<link rel="stylesheet" href="$template.url/style.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="$template.url/print.css" type="text/css" media="print" />
-<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
-<link rel="pingback" href="$options.url/rpc.xml" />
- <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
-<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
-<link rel="meta" type="application/rdf+xml" title="FOAF" href="$options.url/foaf.xml" />
-<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
-<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
-<meta name="keywords" content="$template.keywords" />
-<meta name="description" content="$template.description" />
-<link rel="sitemap" href="$options.url/sitemap/" />
-<link rel="openid.server" href="$options.url/openid/" />
-<link rel="openid2.provider" href="$options.url/openid/" />
-<link rel="openid.delegate" href="$options.url/openid/" />
-<link rel="openid2.local_id" href="$options.url/openid/" />
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+	<title>$template.title</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" href="$template.url/css/style.css" type="text/css" media="all" />
+	<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
+	<link rel="pingback" href="$options.url/rpc.xml" />
+	 <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
+	<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
+	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$options.url/foaf.xml" />
+	<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
+	<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
+	<meta name="keywords" content="$template.keywords" />
+	<meta name="description" content="$template.description" />
+	<link rel="sitemap" href="$options.url/sitemap/" />
+	<link rel="openid.server" href="$options.url/openid/" />
+	<link rel="openid2.provider" href="$options.url/openid/" />
+	<link rel="openid.delegate" href="$options.url/openid/" />
+	<link rel="openid2.local_id" href="$options.url/openid/" />
+	<!--[if IE 6]>
+		<script src="$template.url/css/DD_belatedPNG.js"></script>
+		<script>		
+		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, #lastcomments li, #lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
+		 </script>
+	<![endif]--> 
 	<script type="text/javascript" src="$options.files/js/litepublisher/rpc.min.js"></script>
 	<script type="text/javascript" src="$options.files/js/litepublisher/client.min.js"></script>
 	<script type="text/javascript" src="$options.files/js/jsibox/jsibox_basic.js"></script>
-$template.head
+	$template.head
 </head>
 <body>
-  <div id="header">
-    <div id="logo">
-     <div id="headerimg">
-	  <div class="indent"><h1><a href="$options.url/">$options.name</a></h1></div>
-	  <div class="description">$options.description</div>
-	</div>
-	<div id="navi">
-<!--menulist-->
-		<ul id="nav">
-<!--item-->
-		  <li class="page_item"><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>
-<!--/item-->
-<!--current-->
-		  <li class="current_page_item"><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>
-<!--/current-->
-		</ul>
-<!--/menulist-->
-	</div>
-   </div>
+	<div id="header"><div id="logo"><span class="name"><a href="$options.url/">$options.name</a></span><span class="slogan">$options.description</span>
+</div></div>
+	<div id="topmenu">
+	<!--menulist-->
+	<ul id="nav">
+		<!--item-->
+		<li><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>
+		<!--/item-->
+		<!--current-->
+		<li class="current_page_item"><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>
+		<!--/current-->	
+	</ul>
+	<!--/menulist-->
 </div>
-
-<div id="wrapper">
-<div id="page">
-  <div id="content">
-<!--content-->
-
-<!--simple-->
-<div class="simplecontent">%s</div>
-<!--/simple-->
-
-<!--notfound-->
-<div class="simplecontent">
-<h2 class="center">$lang.notfound </h2>
-<p class="center">$lang.nocontent</p>
-</div>
-<!--/notfound-->
-
-<!--excerpts-->
-<!--excerpt-->
-<div class="post" id="post-$post.id">
-	  <div class="entry">
-        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-		<span>$lang.posted $post.date</span>
-	  </div>
-		<div class="post-content">
-$post.excerpt
-<!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
-$post.filelist
-	</div>
-		<div class="post-info">
-$post.categorieslinks
-$post.tagslinks
- <span class="post-comments">$post.commentslink</span>
+<div id="out">
+<div id="middle">
+	<div id="content">
+		<!--content-->
+		
+			<!--simple-->
+			<div class="simplecontent">%s</div>
+			<!--/simple-->
+		
+			<!--notfound-->
+			<div class="simplecontent">
+				<h2 class="center">$lang.notfound </h2>
+				<p class="center">$lang.nocontent</p>
+			</div>
+			<!--/notfound-->
+		
+		<!--excerpts-->
+		<!--excerpt-->
+		<div class="post" id="post-$post.id">
+			<h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
+				<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
+				<span class="post-tags">$post.tagslinks</span>
+			<div class="post-content">$post.excerpt 
+				<!--more--> <a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
+				$post.filelist
+			</div>
+			<div class="post-info">
+				<span class="post-comments">$post.commentslink</span>
+				<span class="post-cat">$post.categorieslinks</span>	
+			</div>
 		</div>
+		<!--/excerpt-->
+			<!--lite-->
+			<h1>$lang.archivelist</h1>
+			<ul>
+				<!--excerpt-->
+				<li>$post.date <a href="$options.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>
+				<!--/excerpt-->
+			</ul>
+			<!--/lite-->
+		<!--/excerpts-->
+		<!--post-->
+			<div class="post" id="post-$post.id">
+		        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
+					<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
+					<span class="post-tags">$post.tagslinks</span>
+						<!--commontags-->
+							$lang.commontags: 
+								<!--item-->
+								<a href="$options.url$url" title="$title">$icon$title</a>
+								<!--/item-->
+								<!--divider-->, <!--/divider-->
+							
+						<!--/commontags-->
+						
+						
+						<div class="post-content">
+							<!--files-->
+								<ul id="files-$post.id">
+								<!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
+								<!--image--><li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
+								<!--audio-->
+								<li><a href="$options.files/files/$filename" title="$title">$title</a>
+								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
+								</li><!--/audio-->
+								<!--video-->
+								<!--/video-->
+								</ul>
+							<!--/files-->
+							<!--more--><a name="more-$post.id"></a><!--/more-->
+							$post.content
+						
+							<!--prevnext-->
+								<p>
+								<!--prev-->$lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a><!--/prev-->
+								|
+								<!--next-->$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a><!--/next-->
+								</p>
+							<!--/prevnext-->
+						</div>
+						<div class="post-info">
+							<!--rss--><span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span><!--/rss-->
+							<span class="post-cat">$post.categorieslinks</span>	
+						</div>
+						
+						<!--templatecomments-->
+							<!--comments-->
+								<!--count-->
+								<p id="comments">$count $lang.topost &#8220;$post.title&#8221;</p> 
+								<!--/count-->
+									<!--hold--><p class="hold"><em>$lang.hold</em></p><!--/hold-->
+									   <a name="comments"></a>
+										<ol class="commentlist" id="<!--commentsid-->commentlist<!--/commentsid-->" start="%2$d">
+											<!--comment--><li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
+													<a name="comment-$comment.id"></a>
+														<div class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></div>
+														<span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
+														
+														<!--moderate-->
+															<div class="moderationbuttons">
+																<input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
+																<input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
+																<input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
+																<input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
+																<input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
+															</div>
+														<!--/moderate-->
+														
+														<p id="commentcontent-$comment.id">
+															$comment.content
+														</p>
+														<div class="replyquotebuttons">
+															<input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
+															<input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
+														</div>
+												</li><!--/comment-->
+										</ol>
+							<!--/comments-->
+							<!--moderateform-->
+								<form name="moderateform" action="$options.url/admin/comments/" method="post">
+								$comments
+								<p>
+								<input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
+								<input type="button" name="deletebutton" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
+								<input type="button" name="holdbutton" value="$lang.holdbutton" onclick="submitmoderateform(this.form, 'hold');" />
+								<input type="button" value="$lang.sendreply" onclick="sendreply();" />
+								</p>
+								</form>
+							<!--/moderateform-->
+							<!--pingbacks-->
+								<p id="comments">$lang.pingbacks</p>
+								<ol class="commentlist" start="1">
+									<!--pingback-->
+									<li class="alt" id="pingback-$pingback.id">
+										<cite><a href="$pingback.url">$pingback.title</a></cite>
+									</li>
+									<!--/pingback-->
+								</ol>
+							<!--/pingbacks-->
+
+							<!--closed-->
+							<p class="nocomments">$lang.closed</p>
+							<!--/closed-->
+							
+							<!--form-->
+								<p id="respond">$lang.leavereply</p>
+								<form action="$options.url/send-comment.php" method="post" id="commentform">
+									<p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
+									<label for="name">$lang.name</label></p>
+
+									<p><input type="text" name="email" id="email" value="$email" size="22" tabindex="2" />
+									<label for="email">$lang.email</label></p>
+
+									<p><input type="text" name="url" id="url" value="$url" size="22" tabindex="3" />
+									<label for="url">$lang.url</label></p>
+
+									<p><input type="checkbox" name="subscribe" id="subscribe" checked="$subscribe" size="22" tabindex="4" />
+									<label for="subscribe">$lang.subscribe</label></p>
+
+									<p><textarea name="content" id="comment" rows="10" tabindex="5"></textarea></p>
+
+									<input type="hidden" name="postid" value="$postid" />
+									<input type="hidden" name="antispam" value="$antispam" />
+
+									<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" />
+								</form>
+							<!--/form-->
+							<!--confirmform-->
+								<h2>$lang.formhead</h2>
+								<form name="preform" method="post" action="">
+								  <p><input type="submit" name="submit" value="$lang.robot"/></p>
+								</form>
+
+								<form name="form" method="post" action="">
+								<input type="hidden" name="confirmid" value="$confirmid" />
+								  <p><input type="submit" name="submit" value="$lang.human"/></p>
+								</form>
+							<!--/confirmform-->
+						<!--/templatecomments-->
+			</div>
+		<!--/post-->
+		<!--navi-->
+			<div class="navigation">
+			<!--prev--><span class="previous-entries">%s</span><!--/prev-->
+			<!--next--><span class='"next-entries">%s</span><!--/next-->
+			<!--link--><a href="%1$s">%2$s</a><!--/link-->
+			<!--current-->%2$s<!--/current-->
+			<!--divider--> | <!--/divider-->
+			</div>
+		<!--/navi-->
+		<!--menu-->
+			<div class="post" id="menu-$menu.id">
+		        <h2>$menu.title</h2>
+		        <div class="post-content">
+					$menu.content
+		        </div>
+			</div>
+		<!--/menu-->
+		<!--admin-->
+			<!--edit-->
+			<input type="text" name="$name" id="$name" value="$content" size="22" />
+			<!--/edit-->
+
+			<!--area-->
+			<textarea name="$name" id="$name" cols="57%" rows="10">$content</textarea>
+			<!--/area-->
+
+		<!--/admin-->
+		<!--/content-->
 	</div>
-<!--/excerpt-->
-
-<!--lite-->
-<h1>$lang.archivelist</h1>
-<ul>
-<!--excerpt-->
-<li>$post.date <a href="$options.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>
-<!--/excerpt-->
-</ul>
-<!--/lite-->
-<!--/excerpts-->
-
-<!--post-->
-    <div class="post" id="post-$post.id">
-        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-$post.categorieslinks
-$post.tagslinks
-<!--commontags-->			<span class="post-cat">$lang.commontags: 
-<!--item--><a href="$options.url$url" title="$title">$icon$title</a><!--/item-->
-<!--divider-->; <!--/divider-->
-</span><!--/commontags-->
-<span class="post-calendar">$post.date</span>
-		<div class="post-content">
-<!--files-->
-<ul id="files-$post.id">
-<!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
-<!--image--><li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
-<!--audio-->
-<li><a href="$options.files/files/$filename" title="$title">$title</a>
-<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
-</li><!--/audio-->
-<!--video-->
-<!--/video-->
-</ul>
-<!--/files-->
-
-<!--more--><a name="more-$post.id"></a><!--/more-->
-
-$post.content
-
-<!--rss--><h2><a href="$post.rsscomments" title="$lang.subscribetorsscomments">$lang.subscribetorsscomments</a></h2><!--/rss-->
-<!--prevnext-->
-<p>
-<!--prev-->$lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a><!--/prev-->
-|
-<!--next-->$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a><!--/next-->
-</p>
-<!--/prevnext-->
-
-		</div>
-<!--templatecomments-->
-<!--comments-->
-<!--count-->
-<h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3> 
-<!--/count-->
-<!--hold--><h3><em>$lang.hold</em></h3><!--/hold-->
-   <a name="comments"></a>
-	<ol class="commentlist" id="<!--commentsid-->commentlist<!--/commentsid-->" start="%2$d">
-<!--comment-->
-		<li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
-   <a name="comment-$comment.id"></a>
-<!--moderate-->
-			<span class="moderationbuttons">
-<input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
-<input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
-<input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
-<input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
-<input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
-</span>
-<!--/moderate-->
-			<cite>$comment.authorlink</cite> $lang.says:  <br />
-			<small class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></small>
-			<span class="replyquotebuttons">
-<input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
-<input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
-</span>
-<p id="commentcontent-$comment.id">
-$comment.content
-</p>
-		</li>
-<!--/comment-->
- </ol>
-<!--/comments-->
-
-<!--moderateform-->
-<form name="moderateform" action="$options.url/admin/comments/" method="post">
-$comments
-<p>
-<input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
-<input type="button" name="deletebutton" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
-<input type="button" name="holdbutton" value="$lang.holdbutton" onclick="submitmoderateform(this.form, 'hold');" />
-<input type="button" value="$lang.sendreply" onclick="sendreply();" />
-</p>
-</form>
-<!--/moderateform-->
-
-<!--pingbacks-->
-	<h3 id="comments">$lang.pingbacks</h3>
-	<ol class="commentlist" start="1">
-<!--pingback-->
-<li class="alt" id="pingback-$pingback.id">
-			<cite><a href="$pingback.url">$pingback.title</a></cite>
-		</li>
-<!--/pingback-->
- </ol>
-<!--/pingbacks-->
-
-<!--closed-->
-<p class="nocomments">$lang.closed</p>
-<!--/closed-->
-
-<!--form-->
-<h3 id="respond">$lang.leavereply</h3>
-<form action="$options.url/send-comment.php" method="post" id="commentform">
-<p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
-<label for="name"><strong>$lang.name</strong></label></p>
-
-<p><input type="text" name="email" id="email" value="$email" size="22" tabindex="2" />
-<label for="email"><strong>$lang.email</strong></label></p>
-
-<p><input type="text" name="url" id="url" value="$url" size="22" tabindex="3" />
-<label for="url"><strong>$lang.url</strong></label></p>
-
-<p><input type="checkbox" name="subscribe" id="subscribe" checked="$subscribe" size="22" tabindex="4" />
-<label for="subscribe"><strong>$lang.subscribe</strong></label></p>
-
-<p><textarea name="content" id="comment" cols="100%" rows="10" tabindex="5"></textarea></p>
-
-<input type="hidden" name="postid" value="$postid" />
-<input type="hidden" name="antispam" value="$antispam" />
-
-<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" />
-</form>
-<!--/form-->
-<!--confirmform-->
-<h2>$lang.formhead</h2>
-<form name="preform" method="post" action="">
-  <p><input type="submit" name="submit" value="$lang.robot"/></p>
-</form>
-
-<form name="form" method="post" action="">
-<input type="hidden" name="confirmid" value="$confirmid" />
-  <p><input type="submit" name="submit" value="$lang.human"/></p>
-</form>
-<!--/confirmform-->
-<!--/templatecomments-->
+	<div id="sidebar">
+			<!--widget-->	
+			<div class="widget">
+		      <div class="rubric">%s</div>
+<!--items-->
+		      <ul class="linkcat">
+				%s
+		      </ul>
+<!--/items-->
+		    </div>
+			<!--/widget-->
+			<!--submenu-->
+				<div class="widget">
+			      <div class="rubric">%s</div>
+			      <ul class="list-page">
+					%s
+			      </ul>
+				</div>
+			<!--/submenu-->
+			<!--categories-->
+				<div class="widget">
+			      <div class="rubric">%s</div>
+			      <ul class="list-cat" id="widgetcategories">
+					<!--item-->
+					<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>
+					<!--/item-->
+			      </ul>
+			    </div>
+			<!--/categories-->
+			<!--archives-->
+				<div class="widget">
+			      <div class="rubric">%s</div>
+			      <ul class="list-archives" id="widgetarchives">
+					<!--item-->
+					<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>
+					<!--/item-->
+			      </ul>
+			    </div>
+			<!--/archives-->
+			<!--links-->
+				<div class="widget">
+			      <div class="rubric">%s</div>
+			      <ul class="linkcat" id="widgetlinks">
+					<!--item-->
+					<li><a href="%1$s" title="%2$s">%3$s</a></li>
+					<!--/item-->
+			      </ul>
+			    </div>
+			<!--/links-->
+			<!--friends-->
+				<div class="widget">
+			      <div class="rubric">%s</div>
+			      <ul class="linkcat" id="widgetfriends">
+					%s
+			      </ul>
+			    </div>
+			<!--/friends-->
+		<!--/sitebar-->
 	</div>
-<!--/post-->
+		
+	
 
-<!--navi-->
-<div class="navigation">
-<!--prev--><span class="previous-entries">%s</span><!--/prev-->
-<!--next--><span class='"next-entries">%s</span><!--/next-->
-<!--link--><a href="%1$s">%2$s</a><!--/link-->
-<!--current-->%2$s<!--/current-->
-<!--divider--> | <!--/divider-->
-</div>
-<!--/navi-->
 
-<!--menu-->
-    <div class="post" id="menu-$menu.id">
-        <h2>$menu.title</h2>
-        <div class="post-content">
-$menu.content
-        </div>
-    </div>
-<!--/menu-->
+<div id="footer">
+	<div id="bottom">
+	
+	<ul id="footerbar">
+		<!--sitebar-->
+		
+		<!--posts-->
+		<li id="lastposts">
+			<div class="rubric">%s</div>
+				<ul id="widgetposts">
+					<!--item-->
+						<li>
+							<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a><br />
+							<small>$post.date</small>
+						</li>
+					<!--/item-->
+			    </ul>
+		
+		</li>
+		<!--/posts-->
+		<!--comments-->
+		<li id="lastcomments">
+			<div class="rubric">%s</div>
 
-<!--admin-->
+				<ul id="widgetcomments">
+					<!--item-->
+						<li><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>
+					<!--/item-->
+				</ul>
 
-<!--edit-->
-<input type="text" name="$name" id="$name" value="$content" size="22" />
-<!--/edit-->
-
-<!--area-->
-<textarea name="$name" id="$name" cols="57%" rows="10">$content</textarea>
-<!--/area-->
-
-<!--/admin-->
-
-<!--/content-->
-  </div>
-
-<div id="sidebar">
-  <a href="$options.url/rss.xml"><img src="$template.url/images/rss-icon.png" alt="$lang.subscriberss" border="0" /></a>
-<ul>
-<!--sitebar-->
-
-<!--widget-->
-    <div class="widget">
-      <h2 class="sidebartitle">%s</h2>
-      <ul class="linkcat">
-%s
-      </ul>
-    </div>
-<!--/widget-->
-
-<!--submenu-->
-    <div class="widget">
-      <h2 class="sidebartitle">%s</h2>
-      <ul class="list-page">
-%s
-      </ul>
-    </div>
-<!--/submenu-->
-
-<!--categories-->
-    <div class="widget">
-      <h2 class="sidebartitle">%s</h2>
-      <ul class="list-cat" id="widgetcategories">
-<!--item-->
-<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>
-<!--/item-->
-      </ul>
-    </div>
-<!--/categories-->
-
-<!--archives-->
-    <div class="widget">
-      <h2 class="sidebartitle">%s</h2>
-      <ul class="list-archives" id="widgetarchives">
-<!--item-->
-<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>
-<!--/item-->
-      </ul>
-    </div>
-<!--/archives-->
-
-<!--links-->
-    <div class="widget">
-      <h2 class="sidebartitle">%s</h2>
-      <ul class="linkcat" id="widgetlinks">
-<!--item--><li><a href="%1$s" title="%2$s">%3$s</a></li><!--/item-->
-      </ul>
-    </div>
-<!--/links-->
-
-<!--friends-->
-    <div class="widget">
-      <h2 class="sidebartitle">%s</h2>
-      <ul class="linkcat" id="widgetfriends">
-%s
-      </ul>
-    </div>
-<!--/friends-->
-<!--/sitebar-->
- </ul>
-</div>
-
-  <hr class="clear" />
-</div><!--/page -->
-</div><!--/wrapper -->
-
-<div id="footerbg">
-  <div id="footer">
-<!--sitebar-->
-<!--widget-->
-	<div class="footer-meta">
-		<h4>%s</h4>
-			<ul id="widgetmeta">
-%s
-      </ul>
-    </div>
-<!--/widget-->
-
-<!--posts-->
-  <div class="footer-recent-posts">
-    <h4>%s</h4>
-	<ul id="widgetposts">
-<!--item-->
-    <li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
-    <small>$post.date</small></li>
-<!--/item-->
-      </ul>
-    </div>
-<!--/posts-->
-
-<!--comments-->
-    <div class="footer-recent-comments">
-    <h4>%s</h4>
-	<ul id="widgetcomments">
-<!--item-->
-<li><strong><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>
-<!--/item-->
-      </ul>
-    </div>
-<!--/comments-->
-
-<!--meta-->
-	<div class="footer-meta">
-		<h4>%s</h4>
-			<ul id="widgetmeta">
-<!--item--><li class="rss"><a href="%1$s" class="rss">%2$s</a></li><!--/item-->
-      </ul>
-    </div>
-<!--/meta-->
-
-<!--/sitebar-->
-
-  <hr class="clear" />
-  </div>
-
-<div id="credits">
-	<div class="alignleft">
-$template.footer
-</div> 
-	<div class="alignright">
-<a href="$options.url$options.home">$options.name</a>
+		</li>
+		<!--/comments-->
+		<!--widget-->
+			<div class="rubric">%s</div>
+				<ul>
+					%s
+				</ul>
+			<!--/widget-->
+	<!--meta-->	<li id="meta">
+				<div class="rubric">%s</div>
+				<ul id="widgetmeta">
+				<!--item--><li class="rss"><a href="%1$s" >%2$s</a></li><!--/item-->
+				</ul>
+			</li>
+	</ul><!--/meta--><!--/sitebar-->
+		
+	
+	
+	<div id="copyright"><span class="blogolet"><a href="$options.url$options.home">$options.name</a></span>$template.footer</div>
+	</div>
 </div>
 </div>
-  
-</div>
+</div>	
 </body>
 </html>
