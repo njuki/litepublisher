@@ -373,6 +373,9 @@ $items = $this->requiretag($s, 'items', '%s');
   
   private function GetDefaultWidgetItem($name) {
     switch ($name) {
+case 'widget':
+    return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+
       case 'submenu':
       case 'categories':
       case  'tags':

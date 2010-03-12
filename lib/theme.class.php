@@ -225,7 +225,7 @@ return $this->getwidgettml($index, $name, 'items');
     foreach ($this->data['sitebars'] as $widgets) {
       if (isset($widgets[$name][$tml])) return $widget[$name][$tml];
     }
-    return '';
+return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
   }
   
 }//class

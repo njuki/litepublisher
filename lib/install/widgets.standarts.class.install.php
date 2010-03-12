@@ -8,7 +8,6 @@
 
 function tstdwidgetsInstall($self) {
   $self->lock();
-  $self->meta = getmetawidget();
   $template = ttemplate::instance();
   $template->lock();
   $widgets = twidgets::instance();
@@ -39,21 +38,6 @@ function tstdwidgetsUninstall($self) {
   $self->unlock();
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->deleteclass(get_class($self));
-}
-
-function getmetawidget() {
-  $theme = ttheme::instance();
-  $tml = $theme->getwidgetitem('meta', $theme->sitebarscount - 1);
-  $tml .= "\n";
-  $lang = tlocal::instance('default');
-  $result = sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss);
-  $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments);
-  
-  $tml = '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-  $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf);
-  $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile);
-  $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap);
-  return $result;
 }
 
 ?>
