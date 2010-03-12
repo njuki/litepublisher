@@ -202,7 +202,7 @@ class tadminwidgets extends tadminmenu {
       
       case 'meta':
       $std = tstdwidgets::instance();
-      $args->content = $std->meta;
+foreach ($std->meta as $name => $value) $args->$name = $value;
       
       $result .= $html->metaform($args);
       break;
@@ -332,7 +332,9 @@ class tadminwidgets extends tadminmenu {
       
       case 'meta':
       $std = tstdwidgets::instance();
-      $std->meta = $_POST['content'];
+      $std = tstdwidgets::instance();
+foreach ($std->meta as $name => $value) $std->data['meta'][$name] = isset($_POST[$name]);
+$std->save();
       return $h2->metasuccess;
       
       case 'homepagewidgets':
