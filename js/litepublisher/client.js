@@ -35,19 +35,24 @@ function createclient() {
   });
 }
 
-widgets.load = function (node, name, idtag) {
-  var widget = resolvetag(idtag, 'ul');
-  if (! widget) return alert('Widget not found');
-  widgets.add(node, widget);
+widgets.load = function (node, id) {
+  var comment = findcomment(node, id);
+  if (! comment) return alert('Widget not found');
+  var i = widgets.add(node, comment);
   
   if (client == undefined) client = createclient();
   
   client.litepublisher.getwidget( {
-    params:[name],
+    params:[id],
     
     onSuccess:function(result){
       if (result && (result != 'false')) {
-        widget.innerHTML = result;
+        var tmp = document.createElement("div");
+        tmp.innerHTML =result;
+        var content = tmp.firstChild;
+        content.parentNode.removeChild(content);
+        comment.parentNode.replaceChild(content, comment);
+        widgets.items[i][1] = content;
       } else {
         //alert('problem');
       }
@@ -65,6 +70,17 @@ widgets.load = function (node, name, idtag) {
 widgets.add = function(node, widget) {
   node.onclick = widgets.hide;
   widgets.items.push([node, widget]);
+  return widgets.items.length - 1;
+}
+
+widgets.setitem = function(node, value) {
+  for (var i = widgets.items.length - 1; i >= 0; i--) {
+    if (node == widgets.items[i][0]) {
+      widgets.items[i][1] = value;
+      return;
+    }
+  }
+  widgets.add(node, value);
 }
 
 widgets.setvisible = function(node, value) {
@@ -97,26 +113,20 @@ widgets.show = function(node) {
   widgets.setvisible(this, true);
 }
 
-function findnexttag (node, tag) {
+function findnextnode(node, name, value) {
   while (node = node.nextSibling) {
-    if (node.tagName.toLowerCase() == tag) return node;
+    if ((node.nodeName == name) && (node.nodeValue == value)) return node;
   }
   return false;
 }
 
-function resolvetag(id, tag) {
-  try {
-    if (typeof(id) == 'string') {
-      return document.getElementById(id);
-    } else {
-      if (result = findnexttag(id, tag)) return  result;
-      if (result = findnexttag(id.parentNode,tag)) return  result;
-      if (result = findnexttag(id.parentNode.parentNode, tag)) return  result;
-    }
-    return false;
-  } catch (e) {
-    return false;
-  }
+function findcomment(node, id) {
+  var name = String.fromCharCode(35) + 'comment';
+  var value = 'widgetcontent-' + id;
+  if (result = findnextnode(node, name, value)) return  result;
+  if (result = findnextnode(node.parentNode,name, value)) return  result;
+  if (result = findnextnode(node.parentNode.parentNode, name, value)) return  result;
+  return false;
 }
 
 function loadjavascript(filename) {
