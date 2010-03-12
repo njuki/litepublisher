@@ -155,7 +155,7 @@ class tcontentfilter extends tevents {
   }
   
   public static function simplebbcode($s){
-    $s = self::bbcode2tag($s, 'b', 'strong');
+    $s = self::bbcode2tag($s, 'b', 'cite');
     $s = self::bbcode2tag($s, 'I', 'EM');
     $s = self::bbcode2tag($s, 'code', 'code');
     $s = self::bbcode2tag($s, 'quote', 'blockquote');

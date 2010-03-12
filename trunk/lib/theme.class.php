@@ -188,14 +188,16 @@ class ttheme extends tevents {
     return sprintf($this->parse($tml), $result);
   }
   
-  public function getpostswidgetcontent(array $items, $tml) {
+  public function getpostswidgetcontent(array $items, $sitebar, $tml) {
+if (count($items) == 0) return '';
     $result = '';
+if ($tml == '') $tml = $this->getwidgetitem('posts', $sitebar);
     foreach ($items as $id) {
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     $result = str_replace("'", '"', $result);
-    return $result;
+    return sprintf($this->getwidgetitems('posts', $sitebar), $result);
   }
   
   public function getwidget($title, $content, $template, $sitebar) {
@@ -210,12 +212,20 @@ class ttheme extends tevents {
   }
   
   public function  getwidgetitem($name, $index) {
+return $this->getwidgettml($index, $name, 'item');
+}
+
+  public function  getwidgetitems($name, $index) {
+return $this->getwidgettml($index, $name, 'items');
+}
+
+  public function  getwidgettml($index, $name, $tml) {
     $sitebar = &$this->data['sitebars'][$index];
-    if (isset($sitebar[$name]['item'])) return $sitebar[$name]['item'];
+    if (isset($sitebar[$name][$tml])) return $sitebar[$name][$tml];
     foreach ($this->data['sitebars'] as $widgets) {
-      if (isset($widgets[$name]['item'])) return $widget[$name]['item'];
+      if (isset($widgets[$name][$tml])) return $widget[$name][$tml];
     }
-    return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+    return '';
   }
   
 }//class

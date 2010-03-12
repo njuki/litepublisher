@@ -63,20 +63,22 @@ class tcommontags extends titems implements  itemplate {
   }
   
   private function GetSortedList($sortname, $count, $sitebar) {
+    $Sorted = $this->getsorted($sortname, $count);
+var_dump($sorted);
+if (count($sorted) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->basename, $sitebar);
     $args = targs::instance();
     $showcount = $this->showcount;
-    $Sorted = $this->getsorted($sortname, $count);
     foreach($Sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
-      $args->icon = $this->geticonlink($id);
+      $args->icon = litepublisher::$options->icondisabled ? '' : $this->geticonlink($id);
     $args->count = $showcount ? " ({$item['itemscount']})" : '';
       $result .= $theme->parsearg($tml,$args);
     }
-    return $result;
+return sprintf($theme->getwidgetitems($this->basename, $sitebar), $result);
   }
   
   public function geticonlink($id) {
