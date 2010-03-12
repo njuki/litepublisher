@@ -78,9 +78,11 @@ widgets.setvisible = function(node, value) {
     
     if (value) {
       widget.style.visibility = 'visible';
+      widget.style.display= 'block';
       node.onclick = widgets.hide;
     } else {
       widget.style.visibility = 'hidden';
+      widget.style.display= 'none';
       node.onclick = widgets.show;
     }
     
