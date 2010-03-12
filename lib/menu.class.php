@@ -191,7 +191,7 @@ class tmenus extends TItems {
     foreach ($parents as $parent) {
       $result = $this->getwidgetitem($tml, $this->items[$parent], $result);
     }
-$result = sprintf($theme->getwidgetitems('submenu', 0), $result);
+    $result = sprintf($theme->getwidgetitems('submenu', 0), $result);
     $widgets = twidgets::instance();
     return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $widgets->current);
   }

@@ -64,7 +64,7 @@ class tcommontags extends titems implements  itemplate {
   
   private function GetSortedList($sortname, $count, $sitebar) {
     $sorted = $this->getsorted($sortname, $count);
-if (count($sorted) == 0) return '';
+    if (count($sorted) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->basename, $sitebar);
@@ -77,7 +77,7 @@ if (count($sorted) == 0) return '';
     $args->count = $showcount ? " ({$item['itemscount']})" : '';
       $result .= $theme->parsearg($tml,$args);
     }
-return sprintf($theme->getwidgetitems($this->basename, $sitebar), $result);
+    return sprintf($theme->getwidgetitems($this->basename, $sitebar), $result);
   }
   
   public function geticonlink($id) {

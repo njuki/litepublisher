@@ -24,7 +24,7 @@ class tarchives extends titems implements  itemplate {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-if (count($this->items) == 0) return '';
+    if (count($this->items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('archives', $sitebar);
@@ -36,7 +36,7 @@ if (count($this->items) == 0) return '';
       $result .= $theme->parsearg($tml, $args);
     }
     
-return sprintf($theme->getwidgetitems('archives', $sitebar), $result);
+    return sprintf($theme->getwidgetitems('archives', $sitebar), $result);
   }
   
   public function GetHeadLinks() {
