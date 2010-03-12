@@ -45,7 +45,7 @@ class tfiles extends titems {
   }
   
   public function geticon($id) {
-    return sprintf('<img src="%s" />', $this->geturl($id));
+    return sprintf('<img src="%s" alt="icon" />', $this->geturl($id));
   }
   
   public function additem(array $item) {
@@ -129,7 +129,7 @@ class tfiles extends titems {
         $itemtml = empty($tml->array[$type]) ? $tml->array['file'] : $tml->array[$type];
         $preview = $this->getpreview($item['preview']);
         if (($preview == '') && ($type == 'image')) {
-          $preview = sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$options->files, $item['filename']);
+          $preview = sprintf('<img src="%1$/files/%2$s" title="%2$s" alt="%2$s"/>', litepublisher::$options->files, $item['filename']);
         }
         $args->preview  = $preview;
         $result .= $theme->parsearg($itemtml , $args);
@@ -143,7 +143,7 @@ class tfiles extends titems {
     if ($id == 0) return '';
     $item = $this->getitem($id);
     if ($item['media'] === 'image') {
-      return sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$options->files, $item['filename']);
+      return sprintf('<img src="%1$s/files/%2$s" title="%2$s" alt="%2$s"/>', litepublisher::$options->files, $item['filename']);
     } else {
       return '';
     }

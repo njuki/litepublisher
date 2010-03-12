@@ -85,8 +85,7 @@ class tposts extends titems {
   public function getwidgetcontent($id, $sitebar) {
     $list = $this->getrecent($this->recentcount);
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('posts', $sitebar);
-    return $theme->getpostswidgetcontent($list, $tml);
+    return $theme->getpostswidgetcontent($list, $sitebar, '');
   }
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();

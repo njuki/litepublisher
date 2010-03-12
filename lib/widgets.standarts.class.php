@@ -85,8 +85,8 @@ class tstdwidgets extends titems {
     return false;
   }
   
-  public function xmlrpcgetwidget($name) {
-    if (!isset($this->items[$name])) throw new Exception('Widget not found.', 404);
+  public function xmlrpcgetwidget($id) {
+    if (!($name = $this->getname($id))) throw new Exception('Widget not found.', 404);
     $result = $this->getcontent($name);
     //fix for javascript xmlrpc
     if ($result == '') return 'false';
@@ -106,14 +106,8 @@ class tstdwidgets extends titems {
     $title = $this->items[$name]['title'];
     if ($this->items[$name]['ajax'] && !$this->disableajax) {
       $theme = ttheme::instance();
-      if (isset($theme->sitebars->array[$sitebar][$name]['id'])) {
-        $id = $theme->sitebars->array[$sitebar][$name]['id'];
-        $id = "'$id'";
-      } else {
-        $id = 'this';
-      }
-      $title = "<a onclick=\"widgets.load(this, '$name', $id)\">$title</a>";
-      $content = '';
+      $title = "<a onclick=\"widgets.load(this, $id)\">$title</a>";
+      $content = "<!--widgetcontent-$id-->";
     } elseif ($name == 'comments') {
       $content = $this->getcommentswidget($id);
     } else {

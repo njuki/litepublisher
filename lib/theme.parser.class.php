@@ -277,7 +277,9 @@ class tthemeparser extends tdata {
   
   private function parsesitebar($s) {
     $result = array();
-    $result['widget'][0] = $this->requiretag($s, 'widget', '');
+$widget = $this->requiretag($s, 'widget', '');
+    $result['widget'] = $this->parsewidget($widget, 'widget');
+
     foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'foaf', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
@@ -292,28 +294,15 @@ class tthemeparser extends tdata {
   
   private function parsewidget($s, $name) {
     $result = array();
-    $result['id'] = $this->extractwidgetid($s);
-    if ($item = $this->parsetag($s, 'item', '%s')) {
+$items = $this->requiretag($s, 'items', '%s');
+    if ($item = $this->parsetag($items, 'item', '%s')) {
       $result['item'] = $item;
     } else {
       $result['item'] = $this->GetDefaultWidgetItem($name);
     }
-    $result[0] = $s;
-    return $result;
-  }
-  
-  private function extractwidgetid($s) {
-    $result = '';
-    $tag = '<!--item-->';
-    if(is_int($i = strpos($s, $tag))) {
-      $s = substr($s, 0, $i);
-      if (is_int($i = strrpos($s, '<'))) {
-        $s = substr($s, $i);
-        if ($id = tcontentfilter::getidtag('*', $s)) {
-          $result = $id;
-        }
-      }
-    }
+
+      $result['items'] = trim($items);
+    $result[0] = trim($s);
     return $result;
   }
   
