@@ -12,12 +12,12 @@ class tstdwidgets extends titems {
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   private function getinstance($name) {
     switch ($name) {
-case 'meta':
-return $this;
-
+      case 'meta':
+      return $this;
+      
       case 'links':
       return tlinkswidget::instance();
       
@@ -31,7 +31,7 @@ return $this;
       return litepublisher::$classes->$name;
     }
   }
-
+  
   protected function create() {
     parent::create();
     $this->basename = 'widgets.standarts';
@@ -39,12 +39,12 @@ return $this;
     $this->disableajax = false;
     $this->data['names'] = array('categories', 'archives', 'links', 'friends', 'tags', 'posts', 'comments', 'meta');
     $this->data['meta'] = array(
-'rss' => true,
-'comments' => true,
-'foaf' => true,
-'profile' => true,
-'sitemap' => true
-);
+    'rss' => true,
+    'comments' => true,
+    'foaf' => true,
+    'profile' => true,
+    'sitemap' => true
+    );
   }
   
   public function add($name, $ajax, $sitebar) {
@@ -98,7 +98,7 @@ return $this;
       }
     }
   }
-
+  
   public function gettitle($name) {
     return tlocal::$data['stdwidgetnames'][$name];
   }
@@ -113,8 +113,8 @@ return $this;
   public function xmlrpcgetwidget($id) {
     if (!($name = $this->getname($id))) throw new Exception('Widget not found.', 404);
     $widgets = twidgets::instance();
-$result = $this->getwidgetcontent($id, $widgets->findsitebar($id));
-if ($name == 'comments') $result = file_get_contents($widgets->getcachefile($id));
+    $result = $this->getwidgetcontent($id, $widgets->findsitebar($id));
+    if ($name == 'comments') $result = file_get_contents($widgets->getcachefile($id));
     //fix for javascript xmlrpc
     if ($result == '') return 'false';
     return $result;
@@ -148,40 +148,40 @@ if ($name == 'comments') $result = file_get_contents($widgets->getcachefile($id)
     $widgets = twidgets::instance();
     $file = $widgets->getcachefile($id);
     if (!file_exists($file)){
-    if ($name == 'meta') {
-    $result = $this->getmetacontent($id, $sitebar);
-} else {
-    $instance = $this->getinstance($name);
-    $result = $instance->getwidgetcontent($id, $sitebar);
-}
-    file_put_contents($file, $result);
-    @chmod($file, 0666);
-} else {
-if ($name != 'comments') return file_get_contents($file);
-}
-
-if ($name == 'comments')     return "\n<?php @include('$file'); ?>\n";
+      if ($name == 'meta') {
+        $result = $this->getmetacontent($id, $sitebar);
+      } else {
+        $instance = $this->getinstance($name);
+        $result = $instance->getwidgetcontent($id, $sitebar);
+      }
+      file_put_contents($file, $result);
+      @chmod($file, 0666);
+    } else {
+      if ($name != 'comments') return file_get_contents($file);
+    }
+    
+    if ($name == 'comments')     return "\n<?php @include('$file'); ?>\n";
     return $result;
   }
-
-public function getmetacontent($id, $sitebar) {
-extract($this->data['meta']);
-$result = '';
-  $theme = ttheme::instance();
-  $tml = $theme->getwidgetitem('meta', $sitebar);
-  $tml .= "\n";
-  $lang = tlocal::instance('default');
-  if ($rss) $result = sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss);
-  if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments);
   
-  $tml = '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-  if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf);
-  if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile);
-  if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap);
-
-if ($result == '') return $result;
-return sprintf($theme->getwidgetitems('meta', $sitebar), $result);
-}
+  public function getmetacontent($id, $sitebar) {
+    extract($this->data['meta']);
+    $result = '';
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('meta', $sitebar);
+    $tml .= "\n";
+    $lang = tlocal::instance('default');
+    if ($rss) $result = sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss);
+    if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments);
+    
+    $tml = '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+    if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf);
+    if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile);
+    if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap);
+    
+    if ($result == '') return $result;
+    return sprintf($theme->getwidgetitems('meta', $sitebar), $result);
+  }
   
 }//class
 ?>

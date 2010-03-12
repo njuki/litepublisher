@@ -21,7 +21,7 @@ class tlinkswidget extends titems {
   }
   
   public function getwidgetcontent($id, $sitebar) {
-if (count($this->items) == 0) return '';
+    if (count($this->items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('link', $sitebar);
@@ -35,7 +35,7 @@ if (count($this->items) == 0) return '';
       $result .=   sprintf($tml, $url, $item['title'], $item['text']);
     }
     
-return sprintf($theme->getwidgetitems('link', $sitebar), $result);
+    return sprintf($theme->getwidgetitems('link', $sitebar), $result);
   }
   
   public function add($url, $title, $text) {

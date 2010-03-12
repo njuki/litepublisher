@@ -277,9 +277,9 @@ class tthemeparser extends tdata {
   
   private function parsesitebar($s) {
     $result = array();
-$widget = $this->requiretag($s, 'widget', '');
+    $widget = $this->requiretag($s, 'widget', '');
     $result['widget'] = $this->parsewidget($widget, 'widget');
-
+    
     foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'foaf', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
@@ -294,14 +294,14 @@ $widget = $this->requiretag($s, 'widget', '');
   
   private function parsewidget($s, $name) {
     $result = array();
-$items = $this->requiretag($s, 'items', '%s');
+    $items = $this->requiretag($s, 'items', '%s');
     if ($item = $this->parsetag($items, 'item', '%s')) {
       $result['item'] = $item;
     } else {
       $result['item'] = $this->GetDefaultWidgetItem($name);
     }
-
-      $result['items'] = trim($items);
+    
+    $result['items'] = trim($items);
     $result[0] = trim($s);
     return $result;
   }
@@ -373,9 +373,9 @@ $items = $this->requiretag($s, 'items', '%s');
   
   private function GetDefaultWidgetItem($name) {
     switch ($name) {
-case 'widget':
-    return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-
+      case 'widget':
+      return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+      
       case 'submenu':
       case 'categories':
       case  'tags':
