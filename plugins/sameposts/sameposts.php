@@ -96,8 +96,7 @@ class tsameposts extends tplugin {
     $posts = tposts::instance();
     $posts->loaditems($list);
     $theme = ttheme::instance();
-    $tml = $this->tml != '' ? $this->tml : $theme->getwidgetitem('posts', $index);
-    $links = $theme->getpostswidgetcontent($list, $tml);
+    $links = $theme->getpostswidgetcontent($list, $index, $this->tml);
     $widget = $theme->getwidget(tlocal::$data['default']['sameposts'], $links, 'widget', $index);
     $content = $widget . $content;
   }
