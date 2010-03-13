@@ -56,7 +56,6 @@ class tadminstaticpages extends tadminmenu {
   }
   
   public function processform() {
-    var_dump($_POST);
     if (empty($_POST['title'])) return '';
     extract($_POST);
     $pages = tstaticpages::instance();

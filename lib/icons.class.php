@@ -25,7 +25,7 @@ class ticons extends titems {
   }
   
   public function geticon($name) {
-    if (isset($this->items[$name])) {
+    if (isset($this->items[$name]) && ($this->items[$name] > 0)) {
       $files = tfiles::instance();
       return $files->geticon($this->items[$name]);
     }

@@ -98,12 +98,11 @@ class tlinkgenerator extends tevents {
   }
   
   public function filterfilename($filename) {
-    $filename = trim($filename);
-    $filename = trim($filename, '/');
+    $filename = trim($filename, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
     $result = basename($filename);
     $result= $this->encode($result);
     $result= $this->clean($result);
-    return $result;
+    return trim($result, '/');
   }
   
   public function AddSlashes($url) {

@@ -47,8 +47,33 @@ class tmediaparser extends tevents {
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content, $overwrite);
-    return $this->Addicon($filename, $tempfilename);
+    $info = $this->getinfo($tempfilename);
+    if ($info['media'] != 'image') $this->error('Invalid icon file format '. $info['media']);
+    $info['media'] = 'icon';
+    $info['filename'] = $this->movetofolder($filename, $tempfilename, 'icon', $overwrite);
+    $item = $info + array(
+    'title' => '',
+    'description' => ''
+    );
+    
+    $files = tfiles::instance();
+    return $files->additem($item);
   }
+  
+  public function addicon($filename) {
+    $info = $this->getinfo($filename);
+    if ($info['media'] != 'image') $this->error('Invalid icon file format '. $info['media']);
+    $info['media'] = 'icon';
+    $item = $info + array(
+    'filename' => $filename,
+    'title' => '',
+    'description' => ''
+    );
+    
+    $files = tfiles::instance();
+    return $files->additem($item);
+  }
+  
   
   private function doupload($filename, &$content) {
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
@@ -117,20 +142,6 @@ class tmediaparser extends tevents {
     }
     $files->unlock();
     return $id;
-  }
-  
-  public function addicon($filename) {
-    $info = $this->getinfo($filename);
-    if ($info['media'] != 'image') $this->error('Invalid icon file format '. $info['media']);
-    $info['media'] = 'icon';
-    $item = $info + array(
-    'filename' => $filename,
-    'title' => '',
-    'description' => ''
-    );
-    
-    $files = tfiles::instance();
-    return $files->additem($item);
   }
   
   private function getdefaultvalues($filename) {
