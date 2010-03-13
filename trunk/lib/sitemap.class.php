@@ -66,13 +66,14 @@ public function getdescription() {}
         }
         $result .= sprintf("<li><a href=\"%s%s\">%s</a>%s</li>\n", litepublisher::$options->url, $item['url'], $item['title'], $postpages);
       }
+      if ($result != '') $result = "<ul>\n" . $result . "\n</ul>\n";
     } else {
       $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);
     }
     
     if (litepublisher::$urlmap->page  == 1) {
-      $result .= '<ul>' . TLocal::$data['default']['tags'];
+      $result .= '<h3>' . tlocal::$data['default']['tags'] . "</h3>\n<ul>\n";
       $tags = ttags::instance();
       $tags->loadall();
       foreach ($tags->items as $id => $item) {
