@@ -211,7 +211,7 @@ $comments
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
 
-<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" />
+<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" /></p>
 </form>
 <!--/form-->
 <!--confirmform-->

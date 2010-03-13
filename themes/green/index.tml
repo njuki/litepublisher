@@ -271,58 +271,70 @@ $menu.content
 <!--widget-->
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
+    <!--items-->
       <ul class="linkcat">
 %s
       </ul>
+    <!--/items-->
     </div>
 <!--/widget-->
 
 <!--submenu-->
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
+    <!--items-->
       <ul class="list-page">
 %s
       </ul>
+    <!--/items-->
     </div>
 <!--/submenu-->
 
 <!--categories-->
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
+    <!--items-->
       <ul class="list-cat" id="widgetcategories">
 <!--item-->
 <li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>
 <!--/item-->
       </ul>
+    <!--/items-->
     </div>
 <!--/categories-->
 
 <!--archives-->
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
+    <!--items-->
       <ul class="list-archives" id="widgetarchives">
 <!--item-->
 <li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>
 <!--/item-->
       </ul>
+    <!--/items-->
     </div>
 <!--/archives-->
 
 <!--links-->
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
+    <!--items-->
       <ul class="linkcat" id="widgetlinks">
 <!--item--><li><a href="%1$s" title="%2$s">%3$s</a></li><!--/item-->
       </ul>
+    <!--/items-->
     </div>
 <!--/links-->
 
 <!--friends-->
     <div class="widget">
       <h2 class="sidebartitle">%s</h2>
+    <!--items-->
       <ul class="linkcat" id="widgetfriends">
 %s
       </ul>
+    <!--/items-->
     </div>
 <!--/friends-->
 <!--/sitebar-->
@@ -339,41 +351,49 @@ $menu.content
 <!--widget-->
 	<div class="footer-meta">
 		<h4>%s</h4>
+    <!--items-->
 			<ul>
 %s
       </ul>
+    <!--/items-->
     </div>
 <!--/widget-->
 
 <!--posts-->
   <div class="footer-recent-posts">
     <h4>%s</h4>
+    <!--items-->
 	<ul id="widgetposts">
 <!--item-->
     <li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
     <small>$post.date</small></li>
 <!--/item-->
       </ul>
+    <!--/items-->
     </div>
 <!--/posts-->
 
 <!--comments-->
     <div class="footer-recent-comments">
     <h4>%s</h4>
+    <!--items-->
 	<ul id="widgetcomments">
 <!--item-->
 <li><strong><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>
 <!--/item-->
       </ul>
+    <!--/items-->
     </div>
 <!--/comments-->
 
 <!--meta-->
 	<div class="footer-meta">
 		<h4>%s</h4>
+    <!--items-->
 			<ul id="widgetmeta">
 <!--item--><li class="rss"><a href="%1$s" class="rss">%2$s</a></li><!--/item-->
       </ul>
+    <!--/items-->
     </div>
 <!--/meta-->
 
