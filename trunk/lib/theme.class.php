@@ -222,6 +222,7 @@ class ttheme extends tevents {
   public function  getwidgettml($index, $name, $tml) {
     $sitebar = &$this->data['sitebars'][$index];
     if (isset($sitebar[$name][$tml])) return $sitebar[$name][$tml];
+    if ($tml == 'items') return $sitebar['widget']['items'];
     foreach ($this->data['sitebars'] as $widgets) {
       if (isset($widgets[$name][$tml])) return $widget[$name][$tml];
     }

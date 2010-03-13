@@ -28,7 +28,7 @@ class tdatabase {
     
     $host= $dbconfig['host'];
     if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
-    $this->handle = @mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
+    $this->handle = mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
     if (! $this->handle) {
       die(@mysql_error());
     }
