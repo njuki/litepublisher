@@ -373,9 +373,6 @@ class tthemeparser extends tdata {
   
   private function GetDefaultWidgetItem($name) {
     switch ($name) {
-      case 'widget':
-      return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-      
       case 'submenu':
       case 'categories':
       case  'tags':
@@ -397,8 +394,9 @@ class tthemeparser extends tdata {
       case 'foaf':
       return '<li><a href="$url" rel="friend" title="$nick">$nick</a></li>';
       
+      //case 'widget':
       default:
-      return '<li><a href="$url" title="$title">$text</a></li>';
+      return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
     }
   }
   

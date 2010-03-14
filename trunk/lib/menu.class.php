@@ -277,6 +277,11 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
     parent::__set($name, $value);
   }
   
+  public function __isset($name) {
+    if (in_array($name, self::$ownerprops)) return true;
+    return parent::__isset($name);
+  }
+  
   public function getowner() {
     return tmenus::instance();
   }
