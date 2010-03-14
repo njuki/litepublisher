@@ -72,6 +72,7 @@ class twidgets extends tsingleitems {
       $result = file_get_contents($file);
     } else {
       $result = $this->getsitebar($this->current);
+      var_dump($result);
       //если закончились сайтбары, то остатки объеденить
       if ($this->count == $this->current + 1) {
         for ($i = $this->current + 1; $i < count($this->items); $i++) {
