@@ -21,6 +21,7 @@ class tmobiletemplate extends ttemplate {
   protected function create() {
     parent::create();
     $this->basename = 'template.mobile' ;
+    $this->data['theme'] = 'default.mobile';
   }
   
 }//class
