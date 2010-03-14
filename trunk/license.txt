@@ -1,4 +1,4 @@
-License
+ License
 From Lite Publisher CMS
 
 You may use Lite Publisher under the terms of either the MIT License or the Gnu General Public License (GPL) Version 2. 
