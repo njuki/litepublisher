@@ -26,14 +26,14 @@ class litepublisher {
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
     self::$domain = $domain[2];
     
-    $home = dirname(__file__). DIRECTORY_SEPARATOR;
+    $home = dirname(dirname(__file__)). DIRECTORY_SEPARATOR;
     self::$_paths = array(
     'home' => $home,
     'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
     'libinclude' => $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR,
     'languages' => $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR,
     'data' => $home . 'data'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR,
-    'cache' => $home . 'cache'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR,
+    'cache' => $home . 'cache'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR . 'mobile.',
     'plugins' =>  $home . 'plugins' . DIRECTORY_SEPARATOR,
     'themes' => $home . 'themes'. DIRECTORY_SEPARATOR,
     'files' => $home . 'files' . DIRECTORY_SEPARATOR,
@@ -56,11 +56,15 @@ ob_start();
 litepublisher::init();
 require_once(litepublisher::$paths->lib . 'kernel.php');
 litepublisher::$classes = tclasses::instance();
-litepublisher::$options = toptions::instance();
+    litepublisher::$classes->remap['toptions'] = 'tmobileoptions';
+        litepublisher::$classes->remap['turlmap'] = 'tmobileurlmap';
+        litepublisher::$classes->remap['ttemplate'] = 'tmobiletemplate';
+require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'mobile.classes.php');
+litepublisher::$options = tmobileoptions::instance();
 if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
 if (dbversion) litepublisher::$db = new tdatabase();
 litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
-litepublisher::$urlmap = turlmap::instance();
+litepublisher::$urlmap = tmobileurlmap::instance();
 if (!defined('litepublisher_mode')) {
   litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
