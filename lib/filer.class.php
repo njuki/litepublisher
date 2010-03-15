@@ -65,13 +65,12 @@ class tfiler {
   }
   
   public static function forcedir($dir) {
-    if (!@is_dir($dir)) {
-      $up = dirname(trim($dir, DIRECTORY_SEPARATOR));
-      if (($up != '') || ($up != '.'))  self::forcedir($up);
-      if (!@mkdir($dir, 0777)) return false;
-      @chmod($dir, 0777);
-    }
-    return true;
+    if (@is_dir($dir)) return true;
+    $up = dirname(trim($dir, DIRECTORY_SEPARATOR));
+    if (($up != '') || ($up != '.'))  self::forcedir($up);
+    @mkdir($dir, 0777);
+    @chmod($dir, 0777);
+    return @is_dir($dir);
   }
   
   public static function unserialize($FileName, &$v) {

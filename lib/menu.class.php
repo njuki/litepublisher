@@ -58,6 +58,27 @@ class tmenus extends TItems {
     return $item->id;
   }
   
+  
+  public function additem(array $item) {
+    $item['id'] = ++$this->autoid;
+    $item['order'] = $this->autoid;
+    $item[    'status'] = 'published';
+    $item['idurl'] =     litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
+    $this->items[$this->autoid] = $item;
+    $this->sort();
+    $this->save();
+    return $this->autoid;
+  }
+  
+  public function insert($class, $parent, $title, $url) {
+    return $this->additem(array(
+    'parent' => (int)$parent,
+    'title' => $title,
+    'url' => $url,
+    'class' => $class
+    ));
+  }
+  
   public function edit(imenu $item) {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($item, 'menu');
@@ -84,6 +105,12 @@ class tmenus extends TItems {
     @unlink($this->dir . "$id.bak.php");
     $urlmap->clearcache();
     return true;
+  }
+  
+  public function deleteurl($url) {
+    foreach ($this->items as $id => $item) {
+      if ($url == $item['url']) return $this->delete($id);
+    }
   }
   
   public function haschilds($id) {
