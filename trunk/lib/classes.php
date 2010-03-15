@@ -106,12 +106,13 @@ class tclasses extends titems {
   public function getpath($class) {
     if (!isset($this->items[$class])) return false;
     if (empty($this->items[$class][1])) return litepublisher::$paths->lib;
-    $result = rtrim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-    if (@is_dir($result))  return $result;
+    $result = trim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    $filename = $result . $this->items[$class][0];
+    if (@file_exists($filename))  return $result;
     //may be is subdir?
-    if (@is_dir(litepublisher::$paths->plugins . $result)) return litepublisher::$paths->plugins . $result;
-    if (@is_dir(litepublisher::$paths->themes . $result)) return litepublisher::$paths->themes . $result;
-    if  (@is_dir(litepublisher::$paths->home . $result)) return  litepublisher::$paths->home . $result;
+    if (@file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
+    if (@file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
+    if  (@file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
     return false;
   }
   

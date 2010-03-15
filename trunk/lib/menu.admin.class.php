@@ -46,23 +46,6 @@ class tadminmenus extends tmenus {
     ));
   }
   
-  public function additem(array $item) {
-    $item['id'] = ++$this->autoid;
-    $item['order'] = $this->autoid;
-    $item[    'status'] = 'published';
-    $item['idurl'] =     litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
-    $this->items[$this->autoid] = $item;
-    $this->sort();
-    $this->save();
-    return $this->autoid;
-  }
-  
-  public function deleteurl($url) {
-    foreach ($this->items as $id => $item) {
-      if ($url == $item['url']) return $this->delete($id);
-    }
-  }
-  
   public function hasright($group) {
     $groups = tusergroups::instance();
     return $groups->hasright(litepublisher::$options->group, $group);

@@ -220,11 +220,15 @@ class ttheme extends tevents {
   }
   
   public function  getwidgettml($index, $name, $tml) {
-    $sitebar = &$this->data['sitebars'][$index];
-    if (isset($sitebar[$name][$tml])) return $sitebar[$name][$tml];
-    if ($tml == 'items') return $sitebar['widget']['items'];
-    foreach ($this->data['sitebars'] as $widgets) {
-      if (isset($widgets[$name][$tml])) return $widget[$name][$tml];
+    $sitebars = &$this->data['sitebars'];
+    if (isset($sitebars[$index][$name][$tml])) return $sitebars[$index][$name][$tml];
+    if ($tml == 'items'){
+      if (isset($sitebars[$index])) return $sitebars[$index]['widget']['items'];
+      return $sitebars[0]['widget']['items'];
+    }
+    
+    foreach ($sitebars as $widgets) {
+      if (isset($widgets[$name][$tml])) return $widgets[$name][$tml];
     }
     return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
   }
@@ -243,10 +247,7 @@ public function __construct(array &$array) { $this->array = &$array; }
     return $this->array[$name];
   }
   
-  public function __set($name, $value) {
-    throw new Exception("try to set $name");
-    //$this->array[$name] = $value;
-  }
+public function __set($name, $value) {$this->array[$name] = $value; }
 public function __tostring() { return $this->array[0]; }
   public function __isset($name) {
     return array_key_exists($name, $this->array);

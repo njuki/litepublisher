@@ -16,7 +16,6 @@ function trobotstxtInstall($self) {
   $self->AddDisallow('/comments.xml');
   $self->AddDisallow('/comments/');
   $self->AddDisallow('/admin/');
-  $self->AddDisallow('/pda/');
   $self->unlock();
 }
 
