@@ -13,6 +13,7 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 #out {width:960px;margin:11px auto 10px;background-color:#fff;position:relative;padding:1px;}
 #middle {width:950px;position:relative;display:block;background-color:#fff;border:5px solid #f3f3f3;overflow: hidden;}
 #content {width:650px;padding:22px 0 30px 30px;position:relative;float:left;font-size:14px;line-height:1.3;color:#303030;}
+#content p {margin:0 0 10px 0}
 .post {position:relative;margin:0px 0 0 0;}
 .post h2, .simplecontent  h2 {font:28px Georgia,"Times New Roman",Times,serif;margin:0 0 5px 0;}
 .post-tags {background: url(../images/tag.png) no-repeat left top;padding:0 0 1px 20px;font-size:12px;}

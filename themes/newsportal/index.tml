@@ -96,8 +96,10 @@ $post.filelist
 $post.excerpt
 <!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
 </div>
+			<p class="info">
 $post.categorieslinks
 $post.tagslinks
+</p>
 $post.commentslink
 </div>
 <!--/excerpt-->
@@ -135,12 +137,14 @@ $post.date
 $post.content
 
 </div>
+			<p class="info">
 $post.categorieslinks
 $post.tagslinks
-<!--commontags-->			<p class="info">$lang.commontags: 
+</p>
+<!--commontags--> $lang.commontags: 
 <!--item--><a href="$options.url$url" title="$title">$icon$title</a><!--/item-->
-<!--divider-->| <!--/divider-->
-</p><!--/commontags-->
+<!--divider-->, <!--/divider-->
+<!--/commontags-->
 
 <!--rss--><h2><a href="$post.rsscomments" title="$lang.subscribetorsscomments">$lang.subscribetorsscomments</a></h2><!--/rss-->
 <!--prevnext-->
