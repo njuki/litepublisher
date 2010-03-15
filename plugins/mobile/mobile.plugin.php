@@ -7,52 +7,53 @@
 **/
 
 class tmobileplugin extends tplugin {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
-
-public function install() {
-$filename = 'mobile.classes.php';
-$dir =  basename(dirname(__file__) );
-litepublisher::$classes->lock();
-  litepublisher::$classes->Add('tmobileoptions', $filename, $dir);
-  litepublisher::$classes->Add('tmobiletemplate', $filename, $dir);
-  litepublisher::$classes->Add('tmobileurlmap', $filename, $dir);
-litepublisher::$classes->unlock();
-
-$template = ttemplate::instance();
-$mtemplate = tmobiletemplate::instance();
-$mtemplate->data = $template->data;
-$mtemplate->data['theme'] = 'default.mobile';
-$mtemplate->save();
-
-$menus = tmenus::instance();
-$menu = tmenu::instance();
-$menu->parent = 0;
-$menu->order = $menus->count;
-$about = tplugins::localabout(dirname(__file__));
-$menu->title = $about['menutitle'];
-$menu->url = '/mobile/';
-$menus->add($menu);
-$robot = trobotstxt::instance();
-  $robot->AddDisallow('/mobile/');
-
-litepublisher::$urlmap->clearcache();
-}
-
-public function uninstall() {
-$menus = tmenus::instance();
-$menus->deleteurl('/mobile/');
-
-litepublisher::$classes->lock();
-  litepublisher::$classes->delete('tmobileoptions');
-  litepublisher::$classes->delete('tmobiletemplate');
-  litepublisher::$classes->delete('tmobileurlmap');
-litepublisher::$classes->unlock();
-
-litepublisher::$urlmap->clearcache();
-}
+  
+  public function install() {
+    if (!file_exists(litepublisher::$paths->home . 'mobile' .DIRECTORY_SEPARATOR . 'index.php')) die("folder 'mobile' with requried files not exists");
+    $filename = 'mobile.classes.php';
+    $dir =  basename(dirname(__file__) );
+    litepublisher::$classes->lock();
+    litepublisher::$classes->Add('tmobileoptions', $filename, $dir);
+    litepublisher::$classes->Add('tmobiletemplate', $filename, $dir);
+    litepublisher::$classes->Add('tmobileurlmap', $filename, $dir);
+    litepublisher::$classes->unlock();
+    
+    $template = ttemplate::instance();
+    $mtemplate = tmobiletemplate::instance();
+    $mtemplate->data = $template->data;
+    $mtemplate->data['theme'] = 'default.mobile';
+    $mtemplate->save();
+    
+    $menus = tmenus::instance();
+    $menu = tmenu::instance();
+    $menu->parent = 0;
+    $menu->order = $menus->count;
+    $about = tplugins::localabout(dirname(__file__));
+    $menu->title = $about['menutitle'];
+    $menu->url = '/mobile/';
+    $menus->add($menu);
+    $robot = trobotstxt::instance();
+    $robot->AddDisallow('/mobile/');
+    
+    litepublisher::$urlmap->clearcache();
+  }
+  
+  public function uninstall() {
+    $menus = tmenus::instance();
+    $menus->deleteurl('/mobile/');
+    
+    litepublisher::$classes->lock();
+    litepublisher::$classes->delete('tmobileoptions');
+    litepublisher::$classes->delete('tmobiletemplate');
+    litepublisher::$classes->delete('tmobileurlmap');
+    litepublisher::$classes->unlock();
+    
+    litepublisher::$urlmap->clearcache();
+  }
   
 }//class
 ?>

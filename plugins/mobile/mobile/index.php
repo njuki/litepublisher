@@ -59,7 +59,7 @@ litepublisher::$classes = tclasses::instance();
     litepublisher::$classes->remap['toptions'] = 'tmobileoptions';
         litepublisher::$classes->remap['turlmap'] = 'tmobileurlmap';
         litepublisher::$classes->remap['ttemplate'] = 'tmobiletemplate';
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'mobile.classes.php');
+
 litepublisher::$options = tmobileoptions::instance();
 if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
 if (dbversion) litepublisher::$db = new tdatabase();

@@ -11,7 +11,7 @@ class tmobileoptions  extends toptions {
     $result = parent::geturl();
     return $result . '/mobile';
   }
-
+  
 public function install() {}
 public function uninstall() {}
 }//class
@@ -38,10 +38,10 @@ class tmobileurlmap extends turlmap {
     }
     
   }
-
+  
 public function install() {}
 public function uninstall() {}
-
+  
 }//class
 
 ?>
