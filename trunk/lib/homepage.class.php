@@ -33,11 +33,12 @@ public function getdescription() {}
   
   public function getcont() {
     $result = '';
-    if (litepublisher::$urlmap->page == 1) $result .= $this->text;
+    $theme = ttheme::instance();
+    if (litepublisher::$urlmap->page == 1) $result .= sprintf($theme->content->simple, $this->text);
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
     
-    $theme = ttheme::instance();
+
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
     $result .=$theme->getpages(litepublisher::$options->home, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
