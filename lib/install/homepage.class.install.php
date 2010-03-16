@@ -6,14 +6,14 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function THomepageInstall(&$self) {
+function thomepageInstall($self) {
   litepublisher::$options->home = '/';
   $urlmap = turlmap::instance();
   $self->idurl = $urlmap->add(litepublisher::$options->home, get_class($self), null);
   $self->save();
 }
 
-function THomepageUninstall(&$self) {
+function thomepageUninstall($self) {
   turlmap::unsub($self);
 }
 
