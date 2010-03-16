@@ -1033,8 +1033,6 @@ class turlmap extends titems {
         $this->items[$item['id']] = $item;
         return $item;
       }
-var_dump($this->db->result);
-var_dump($this->db->sql);
     } elseif (isset($this->items[$url])) {
       return $this->items[$url];
     }
@@ -1321,7 +1319,7 @@ var_dump($this->db->sql);
   }
   
   public function redir301($to) {
-    //tfiler::log($to);
+    //    tfiler::log($to. "\n" . $this->url);
     litepublisher::$options->savemodified();
     //tfiler::log(var_export($_COOKIE, true));
     self::redir(litepublisher::$options->url . $to);

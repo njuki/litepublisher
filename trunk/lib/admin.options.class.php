@@ -248,6 +248,7 @@ class Tadminoptions extends tadminmenu {
       if (!empty($menu)) $linkgen->menu = $menu;
       if (!empty($category)) $linkgen->category = $category;
       if (!empty($tag)) $linkgen->tag = $tag;
+      if (!empty($archive)) $linkgen->archive = $archive;
       $linkgen->save();
       break;
       

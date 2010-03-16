@@ -172,7 +172,7 @@ class tstdwidgets extends titems {
     $tml = $theme->getwidgetitem('meta', $sitebar);
     $tml .= "\n";
     $lang = tlocal::instance('default');
-$result = '';
+    $result = '';
     if ($rss) $result .= sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss);
     if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments);
     if ($media) $result .= sprintf($tml, litepublisher::$options->url . '/rss/multimedia.xml', $lang->rssmedia);
