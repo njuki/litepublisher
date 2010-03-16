@@ -27,21 +27,20 @@ class tmobiletemplate extends ttemplate {
 }//class
 
 class tmobileurlmap extends turlmap {
+  public function install() {}
+public function uninstall() {}
+  
   protected function prepareurl($host, $url) {
     parent::prepareurl($host, $url);
-    if ($this->mobile = strbegin($this->url, '/mobile/') || ($this->url == '/mobile')) {
+    if (strbegin($this->url, '/mobile/') || ($this->url == '/mobile')) {
       if ($this->url == '/mobile') {
         $this->url = '/';
       } else {
         $this->url = substr($this->url, strlen('/mobile'));
       }
     }
-    
-  }
-  
-public function install() {}
-public function uninstall() {}
-  
+}
+
 }//class
 
 ?>

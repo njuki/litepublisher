@@ -13,7 +13,7 @@ class tmobileplugin extends tplugin {
   }
   
   public function install() {
-    if (!file_exists(litepublisher::$paths->home . 'mobile' .DIRECTORY_SEPARATOR . 'index.php')) die("folder 'mobile' with requried files not exists");
+    if (!file_exists(litepublisher::$paths->home . 'mobile' .DIRECTORY_SEPARATOR . 'index.php')) die("folder 'mobile' with requried files not exists. Please copy required folder from plugin.");
     $filename = 'mobile.classes.php';
     $dir =  basename(dirname(__file__) );
     litepublisher::$classes->lock();
