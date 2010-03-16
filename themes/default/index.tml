@@ -115,19 +115,22 @@
 							<!--/files-->
 							<!--more--><a name="more-$post.id"></a><!--/more-->
 							$post.content
+							
+							<div class="post-info">
+								<!--rss--><span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span><!--/rss-->
+								<span class="post-cat">$post.categorieslinks</span>	
+							</div>
 						
 							<!--prevnext-->
-								<p>
-								<!--prev-->$lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a><!--/prev-->
-								|
-								<!--next-->$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a><!--/next-->
-								</p>
+								<div id="prevnext">
+								<!--prev--><p id="prev">&larr; $lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a></p><!--/prev-->
+								
+								
+								<!--next--><p id="next">$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a> &rarr;</p><!--/next-->
+								</div>
 							<!--/prevnext-->
 						</div>
-						<div class="post-info">
-							<!--rss--><span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span><!--/rss-->
-							<span class="post-cat">$post.categorieslinks</span>	
-						</div>
+						
 						
 						<!--templatecomments-->
 							<!--comments-->
@@ -203,7 +206,7 @@
 									<p><input type="checkbox" name="subscribe" id="subscribe" $subscribe size="22" tabindex="4" />
 									<label for="subscribe">$lang.subscribe</label></p>
 
-									<p><textarea name="content" id="comment" rows="10" tabindex="5"></textarea></p>
+									<p><textarea name="content" id="comment" rows="10" cols="60%" tabindex="5"></textarea></p>
 
 									<input type="hidden" name="postid" value="$postid" />
 									<input type="hidden" name="antispam" value="$antispam" />

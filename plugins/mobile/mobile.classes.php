@@ -27,7 +27,7 @@ class tmobiletemplate extends ttemplate {
 }//class
 
 class tmobileurlmap extends turlmap {
-  public function install() {}
+public function install() {}
 public function uninstall() {}
   
   protected function prepareurl($host, $url) {
@@ -39,8 +39,8 @@ public function uninstall() {}
         $this->url = substr($this->url, strlen('/mobile'));
       }
     }
-}
-
+  }
+  
 }//class
 
 ?>
