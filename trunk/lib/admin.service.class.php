@@ -215,9 +215,11 @@ class tadminservice extends tadminmenu {
     $result = $html->backupheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    foreach(glob(litepublisher::$paths->backup . '*.zip') as $filename) {
-      $args->filename = basename($filename);
-      $result .= $html->backupitem($args);
+    if ($list = glob(litepublisher::$paths->backup . '*.gz')) {
+      foreach($list as $filename) {
+        $args->filename = basename($filename);
+        $result .= $html->backupitem($args);
+      }
     }
     $result .= $html->backupfooter;
     return $result;

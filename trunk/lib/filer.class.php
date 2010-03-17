@@ -65,8 +65,9 @@ class tfiler {
   }
   
   public static function forcedir($dir) {
+    $dir = rtrim($dir, DIRECTORY_SEPARATOR);
     if (@is_dir($dir)) return true;
-    $up = dirname(trim($dir, DIRECTORY_SEPARATOR));
+    $up = rtrim(dirname($dir), DIRECTORY_SEPARATOR);
     if (($up != '') || ($up != '.'))  self::forcedir($up);
     @mkdir($dir, 0777);
     @chmod($dir, 0777);
