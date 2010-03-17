@@ -1,9 +1,9 @@
-id int UNSIGNED NOT NULL auto_increment,
-parent int UNSIGNED NOT NULL default 0,
-idurl int UNSIGNED NOT NULL default 0,
-itemscount  int UNSIGNED NOT NULL default 0,
-icon int UNSIGNED NOT NULL default 0,
-title varchar(255) not null,
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `parent` int(10) unsigned NOT NULL default '0',
+  `idurl` int(10) unsigned NOT NULL default '0',
+  `itemscount` int(10) unsigned NOT NULL default '0',
+  `icon` int(10) unsigned NOT NULL default '0',
+  `title` varchar(255) NOT NULL,
 
-     PRIMARY KEY(id),
-key parent (parent)
+  PRIMARY KEY  (`id`),
+  KEY `parent` (`parent`)

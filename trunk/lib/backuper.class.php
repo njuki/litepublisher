@@ -157,6 +157,7 @@ class tbackuper extends tevents {
   
   public function getfull() {
     $tar = new tar();
+    if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
     
     foreach (tfiler::getdir(litepublisher::$paths->plugins) as $name ) {
@@ -167,8 +168,8 @@ class tbackuper extends tevents {
       $this->readdir($tar, litepublisher::$paths->themes , $name, "themes/");
     }
     
-    $this->readdir($tar, litepublisher::$pathslib, '', 'lib/');
-    $this->readdir($tar, litepublisher::$pathsjs, '', 'js/');
+    $this->readdir($tar, litepublisher::$paths->lib, '', 'lib/');
+    $this->readdir($tar, litepublisher::$paths->js, '', 'js/');
     $this->readdir($tar, litepublisher::$paths->files, '', 'files/');
     
     return $tar->savetostring(true);

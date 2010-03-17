@@ -1,7 +1,7 @@
-id int UNSIGNED NOT NULL,
-created datetime NOT NULL default '2010-01-01 10:01:01',
-modified datetime NOT NULL default '2010-01-01 10:01:01',
-rawcontent longtext not null,
-hash varchar(32),
+  `id` int(10) unsigned NOT NULL,
+  `created` datetime NOT NULL default '2010-01-01 10:01:01',
+  `modified` datetime NOT NULL default '2010-01-01 10:01:01',
+  `rawcontent` longtext NOT NULL,
+  `hash` varchar(32) default NULL,
 
-primary key id (id)
+  PRIMARY KEY  (`id`)

@@ -33,6 +33,7 @@ if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_H
 self::$domain = $domain[2];
 
 $home = dirname(__file__). DIRECTORY_SEPARATOR;
+//$home = '/home/dest/www/';
 self::$_paths = array(
 'home' => $home,
 'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
@@ -97,5 +98,5 @@ echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
 //
-
+//var_dump(litepublisher::$_paths);
 ?>

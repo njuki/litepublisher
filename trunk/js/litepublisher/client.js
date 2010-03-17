@@ -181,11 +181,11 @@ function playvideofile(id, filename) {
     loadjavascript('/js/flowplayer/flowplayer-3.1.4.min.js');
   } else {
     flowplayer(id, ltoptions.files + "/js/flowplayer/flowplayer-3.1.5.swf", {
-    clip:  {         
-autoPlay: true,
-         autoBuffering: true,
-bufferLength : 5
-}
- }); 
+      clip:  {
+        autoPlay: true,
+        autoBuffering: true,
+        bufferLength : 5
+      }
+    });
   }
 }
