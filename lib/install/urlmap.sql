@@ -1,9 +1,9 @@
-id int UNSIGNED NOT NULL auto_increment,
-url varchar(255) not null,
-class varchar(64) not null,
-arg varchar(32) not null,
-type enum('normal', 'get', 'tree') default 'normal',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `url` varchar(255) NOT NULL,
+  `class` varchar(64) NOT NULL,
+  `arg` varchar(32) NOT NULL,
+  `type` enum('normal','get','tree') default 'normal',
 
-     PRIMARY KEY(id), 
-key url (url),
-key class (class)
+  PRIMARY KEY  (`id`),
+  KEY `url` (`url`),
+  KEY `class` (`class`)

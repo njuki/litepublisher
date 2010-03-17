@@ -18,16 +18,16 @@ function tpollsInstall($self) {
   
   $manager = tdbmanager::instance();
   $manager->createtable($self->table,
-  "id int UNSIGNED NOT NULL auto_increment,
-  status enum('opened', 'closed') default  'opened',
-  type enum('radio', 'button', 'link', 'custom') default 'radio',
-  hash varchar(32) not null,
-  title text not null,
-  items text not null,
-  votes text not null,
+  "  `id` int(10) unsigned NOT NULL auto_increment,
+  `status` enum('opened','closed') default 'opened',
+  `type` enum('radio','button','link','custom') default 'radio',
+  `hash` varchar(32) NOT NULL,
+  `title` text NOT NULL,
+  `items` text NOT NULL,
+  `votes` text NOT NULL,
   
-  PRIMARY KEY(id),
-  key hash(hash)
+  PRIMARY KEY  (`id`),
+  KEY `hash` (`hash`)
   ");
   
   $manager->createtable($self->userstable,

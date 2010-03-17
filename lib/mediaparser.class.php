@@ -166,6 +166,13 @@ class tmediaparser extends tevents {
   public function getinfo($filename) {
     $realfile = litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename);
     $result = $this->getdefaultvalues($filename);
+    if (preg_match('/\.(mp4|f4b|f4p|f4v|flv|avi)$/', $filename)) {
+      $result['media'] = 'video';
+      //todo get mime type
+      $result['mime'] = 'unknown';
+      return $result;
+    }
+    
     if ($info = @getimagesize($realfile)) {
       $result['media'] = 'image';
       $result['mime'] = $info['mime'];
@@ -185,7 +192,6 @@ class tmediaparser extends tevents {
       }
       return $result;
     }
-    
     
     return $result;
   }
@@ -345,6 +351,10 @@ class tmediaparser extends tevents {
     //$result['tags']            = @$info['tags'];
     //$result['comments']        = @$info['comments'];
     return $result;
+  }
+  
+  public function getvideopreview($filename) {
+    return 0;
   }
   
 }//class

@@ -1,9 +1,9 @@
-id int UNSIGNED NOT NULL,
-theme varchar(64) not null,
-tmlfile varchar(64) not null,
-content text not null,
-rawcontent text not null,
-description text not null,
-keywords varchar(255) not null,
+  `id` int(10) unsigned NOT NULL,
+  `theme` varchar(64) NOT NULL,
+  `tmlfile` varchar(64) NOT NULL,
+  `content` text NOT NULL,
+  `rawcontent` text NOT NULL,
+  `description` text NOT NULL,
+  `keywords` varchar(255) NOT NULL,
 
-     PRIMARY KEY(id)
+  PRIMARY KEY  (`id`)

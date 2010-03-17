@@ -41,6 +41,7 @@ class tlinkgenerator extends tevents {
           $text = $source->$tag;
         }
         $text = $this->encode($text);
+        $text = str_replace('.', '-', $text);
         $result= str_replace("[$tag]", $text, $result);
       }
     }
@@ -71,7 +72,6 @@ class tlinkgenerator extends tevents {
   public function encode($s) {
     if ($this->urlencode) return rawurlencode($s);
     $s = trim($s, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
-$s = str_replace('.', '-', $s);
     if (litepublisher::$options->language == 'ru') $s = $this->ru2lat($s);
     return strtolower($s);
   }

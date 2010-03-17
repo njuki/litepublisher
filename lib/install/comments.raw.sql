@@ -1,8 +1,8 @@
-id int UNSIGNED NOT NULL,
-created datetime NOT NULL default '2010-01-01 10:01:01',
-modified datetime NOT NULL default '2010-01-01 10:01:01',
-rawcontent longtext not null,
-hash char(32) not null,
+  `id` int(10) unsigned NOT NULL,
+  `created` datetime NOT NULL default '2010-01-01 10:01:01',
+  `modified` datetime NOT NULL default '2010-01-01 10:01:01',
+  `rawcontent` longtext NOT NULL,
+  `hash` char(32) NOT NULL,
 
-primary key id (id),
-key hash(hash)
+  PRIMARY KEY  (`id`),
+  KEY `hash` (`hash`)

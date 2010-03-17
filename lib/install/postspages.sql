@@ -1,5 +1,5 @@
-id int UNSIGNED NOT NULL,
-page int unsigned not null,
-content text not null,
+  `id` int(10) unsigned NOT NULL,
+  `page` int(10) unsigned NOT NULL,
+  `content` text NOT NULL,
 
-     PRIMARY KEY(id, page)
+  PRIMARY KEY  (`id`,`page`)

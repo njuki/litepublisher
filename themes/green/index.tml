@@ -111,8 +111,10 @@ $post.tagslinks
 <li><a href="$options.files/files/$filename" title="$title">$title</a>
 <span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
 </li><!--/audio-->
-<!--video-->
-<!--/video-->
+								<!--video-->
+								<li><a href="$options.files/files/$filename" title="$title" id="videofile-$id">$title</a>
+<a onclick="playvideofile('videofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a>
+								</li><!--/video-->
 </ul>
 <!--/files-->
 
@@ -211,7 +213,7 @@ $comments
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
 
-<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" />
+<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" /></p>
 </form>
 <!--/form-->
 <!--confirmform-->
