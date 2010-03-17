@@ -166,3 +166,26 @@ function playaudiofile(id, filename) {
     });
   }
 }
+
+function videoplayerloaded() {
+  if (ltoptions.videofile != undefined) {
+    playvideofile(ltoptions.videofile[0],ltoptions.videofile[1]);
+  } else {
+    ltoptions.videofile = true;
+  }
+}
+
+function playvideofile(id, filename) {
+  if (ltoptions.videofile == undefined) {
+    ltoptions.videofile = new Array(id, filename);
+    loadjavascript('/js/flowplayer/flowplayer-3.1.4.min.js');
+  } else {
+    flowplayer(id, ltoptions.files + "/js/flowplayer/flowplayer-3.1.5.swf", {
+    clip:  {         
+autoPlay: true,
+         autoBuffering: true,
+bufferLength : 5
+}
+ }); 
+  }
+}

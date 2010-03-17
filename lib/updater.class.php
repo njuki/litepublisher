@@ -73,7 +73,7 @@ class tupdater extends tevents {
   
   public function getlatest() {
     if (($s = http::get('http://litepublisher.com/service/version.txt'))  ||
-    ($s = http::get('http://litepublisher.googlecode.com/files/ver.txt') )) {
+    ($s = http::get('http://litepublisher.googlecode.com/files/version.txt') )) {
       return $s;
     }
     return false;

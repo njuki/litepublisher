@@ -110,7 +110,9 @@
 								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
 								</li><!--/audio-->
 								<!--video-->
-								<!--/video-->
+								<li><a href="$options.files/files/$filename" title="$title" id="videofile-$id">$title</a>
+<a onclick="playvideofile('videofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a>
+								</li><!--/video-->
 								</ul>
 							<!--/files-->
 							<!--more--><a name="more-$post.id"></a><!--/more-->
