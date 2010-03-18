@@ -26,13 +26,13 @@ class tmetapost extends titem {
   
   public function __set($name, $value) {
     if ($name == 'id') return $this->setid($value);
-    if (isset($this->data[$name]) && ($this->data[$name] == $value)) return true;
+$exists = isset($this->data[$name]);
+    if ($exists && ($this->data[$name] == $value)) return true;
     $this->data[$name] = $value;
-    if ($this->locked) return true;
     if (dbversion) {
       $name = dbquote($name);
       $value = dbquote($value);
-      if (isset($this->data[$name])) {
+      if ($exists) {
         $this->db->update("value = $value", "id = $this->id and name = $name");
       } else {
         $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
