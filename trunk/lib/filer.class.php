@@ -106,6 +106,12 @@ class tfiler {
     $sections[] = sprintf("$name:{\n%s\n}", implode(",\n", $list));
     }
   $s = sprintf("var lang= {\n%s\n};\n", implode(",\n", $sections));
+/*
+if (strbegin(basename($filename), 'admin')) {
+$s = gzencode($s);
+$filename .= '.gz';
+}
+*/
     file_put_contents($filename, $s);
     @chmod($filename, 0666);
   }
