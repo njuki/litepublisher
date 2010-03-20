@@ -6,83 +6,68 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tpollsInstall($self) {
-  if (!dbversion) die("Plugin can be installed only on database version");
-  $about = tplugins::localabout(dirname(__file__));
-  $self->title = $about['title'];
-  $self->voted = $about['voted'];
-  $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
-  $self->templateitems = $templates['item'];
-  $self->templates = $templates['items'];
-  $self->save();
-  
+function twikiwordsInstall($self) {
+if ($self->dbversion) {
   $manager = tdbmanager::instance();
   $manager->createtable($self->table,
   "  `id` int(10) unsigned NOT NULL auto_increment,
-  `status` enum('opened','closed') default 'opened',
-  `type` enum('radio','button','link','custom') default 'radio',
-  `hash` varchar(32) NOT NULL,
-  `title` text NOT NULL,
-  `items` text NOT NULL,
-  `votes` text NOT NULL,
-  
+  `post` int(10) unsigned NOT NULL default '0',
+  `word` text NOT NULL,
+
   PRIMARY KEY  (`id`),
-  KEY `hash` (`hash`)
+  KEY `post` (`post`)
   ");
-  
-  $manager->createtable($self->userstable,
-  'id int UNSIGNED NOT NULL auto_increment,
-  cookie varchar(32) NOT NULL,
-  
-  PRIMARY KEY(id),
-  key cookie(cookie)
-  ');
-  
-  $manager->createtable($self->votestable,
-  'id int UNSIGNED NOT NULL default 0,
-  user int UNSIGNED NOT NULL default 0,
-  vote int UNSIGNED NOT NULL default 0,
-  PRIMARY KEY(id, user)
-  ');
   
   $cron = tcron::instance();
   $cron->addweekly(get_class($self), 'optimize', null);
-  
+}  
+
   $filter = tcontentfilter::instance();
   $filter->lock();
   $filter->beforecontent = $self->beforefilter;
   $filter->beforefilter = $self->filter;
   $filter->unlock();
   
-  $xmlrpc = TXMLRPC::instance();
-  $xmlrpc->lock();
-  $xmlrpc->add('litepublisher.poll.sendvote', 'sendvote', get_class($self));
-  $xmlrpc->add('litepublisher.poll.getcookie', 'getcookie', get_class($self));
-  $xmlrpc->unlock();
-  
-  litepublisher::$classes->classes['poll'] = get_class($self);
+
+  litepublisher::$classes->classes['wikiwords'] = get_class($self);
   litepublisher::$classes->save();
   
   litepublisher::$options->parsepost = true;
 }
 
-function tpollsUninstall($self) {
-  unset(litepublisher::$classes->classes['poll']);
+function twikiwordsUninstall($self) {
+  unset(litepublisher::$classes->classes['wikiword']);
   litepublisher::$classes->save();
-  
-  $cron = tcron::instance();
-  $cron->deleteclass(get_class($self));
   
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
   
-  $xmlrpc = TXMLRPC::instance();
-  $xmlrpc->deleteclass(get_class($self));
-  
+if ($self->dbversion) {  
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);
-  $manager->deletetable($self->userstable);
-  $manager->deletetable($self->votestable);
+
+  $cron = tcron::instance();
+  $cron->deleteclass(get_class($self));
+}
+}
+ 
+function twikiwordsOptimize($self) {
+$items = $self->db->idselect('post = 0');
+if (count($items) == 0) return;
+    $db = litepublisher::$db;
+    $posts = tposts::instance();
+    $db->table = $posts->table;
+$deleted = array();
+foreach ($items as $id) {
+    $deleted = array();
+    foreach ($signs as $item) {
+      if (!$db->findid("locate('\$wikiwords.word_$id', filtered) > 0")) $deleted[] = $id;
+      sleep(2);
+    }
+
+      $items = sprintf('(%s)', implode(',', $deleted));
+      $self->db->delete("id in $items");
 }
 
+?>
 ?>

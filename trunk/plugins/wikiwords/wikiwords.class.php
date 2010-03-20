@@ -41,9 +41,17 @@ return "<a href=\"$post->link#wikiword-$id\" title=\"{$item['word']}\">{$item['w
 }
   
     public function add($word, $idpost) {
-$word = trim($word);
+$word = trim(strip_tags($word));
+if ($word == '') return false;
 $id = $this->IndexOf('word', $word);
-if ($id > 0) return $id;
+if ($id > 0) {
+$item = $this->getitem($id);
+if (($item['post'] == 0) && ($item['post'] != $idpost)) {
+$this->setvalue($id, 'post', $idpost);
+if (!$this->dbversion) $this->save();
+}
+return $id;
+}
 return $this->additem(array(
 'post' => $idpost,
 'word' => $word
@@ -56,42 +64,32 @@ return $this->setvalue($id, 'word', $word);
 
 public function postadded($idpost) {
 if (count($this->fix) == 0) return;
+$this->lock();
 foreach ($this->fix as $id => $post) {
 if ($idpost == $post->id) $this->setvalue($id, 'post', $idpost);
 }
+$this->unlock();
+}
+
+public function postdeleted($idpost) {
+if ($this->dbversion) {
+$this->db->update("post = 0", "post = $idpost");
+} else {
+$changed = false;
+foreach ($this->items as $id => $item) {
+if ($idpost == $item['post']) {
+$this->items[$id]['post'] = 0;
+$changed = true;
+}
+}
+if ($changed) $this->save();
+}
 }
   
-  public function finddeleted() {
-    $signs = $this->db->queryassoc("select id, hash from $this->thistable");
-    if (!$signs) return array();
-    $db = litepublisher::$db;
-    $posts = tposts::instance();
-    $db->table = $posts->rawtable;
-    $deleted = array();
-    foreach ($signs as $item) {
-      $hash = $item['hash'];
-      if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
-      sleep(2);
-    }
-    
-    return $deleted;
-  }
-  
-  public function deletedeleted(array $deleted) {
-    if (count($deleted) > 0) {
-      $items = sprintf('(%s)', implode(',', $deleted));
-      $this->db->delete("id in $items");
-      $this->getdb($this->votestable)->delete("id in $items");
-      sleep(2);
-    }
-  }
-  
   public function optimize() {
-    if ($this->finddeleted) $this->deletedeleted($this->finddeleted());
-    $db = $this->getdb($this->userstable);
-    $db->delete("id not in (select distinct user from $db->prefix$this->votestable)");
+$this->CallSatellite('optimize');
   }
-
+  
   public function beforefilter($post, &$content) {
     if (preg_match_all('/\[wiki:(.*?)\]/i', $content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
