@@ -131,6 +131,15 @@ class titems extends tevents {
     }
     return -1;
   }
+
+public function additem(array $item) {
+$id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+$item['id'] = $id;
+$this->items[$id] = $item;
+if (!$this->dbversion) $this->save();
+$this->added($id);
+return $id;
+}
   
   public function delete($id) {
     if ($this->dbversion) $this->db->delete("id = $id");
