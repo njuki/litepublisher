@@ -29,7 +29,6 @@ class tpolls extends tplugin {
     $this->addevents('added', 'deleted', 'edited');
     $this->data['title'] = 'new poll';
     $this->data['voted'] = '';
-    $this->data['finddeleted'] = true;
     $this->types = array('radio', 'button', 'link', 'custom');
     $a = array_combine($this->types, array_fill(0, count($this->types), ''));
     $this->addmap('templateitems', $a);
@@ -177,35 +176,8 @@ class tpolls extends tplugin {
     return $this->getdb($this->votestable)->findid("id = $idpoll and user = $iduser");
   }
   
-  public function finddeleted() {
-    $signs = $this->db->queryassoc("select id, hash from $this->thistable");
-    if (!$signs) return array();
-    $db = litepublisher::$db;
-    $posts = tposts::instance();
-    $db->table = $posts->rawtable;
-    $deleted = array();
-    foreach ($signs as $item) {
-      $hash = $item['hash'];
-      if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
-      sleep(2);
-    }
-    
-    return $deleted;
-  }
-  
-  public function deletedeleted(array $deleted) {
-    if (count($deleted) > 0) {
-      $items = sprintf('(%s)', implode(',', $deleted));
-      $this->db->delete("id in $items");
-      $this->getdb($this->votestable)->delete("id in $items");
-      sleep(2);
-    }
-  }
-  
   public function optimize() {
-    if ($this->finddeleted) $this->deletedeleted($this->finddeleted());
-    $db = $this->getdb($this->userstable);
-    $db->delete("id not in (select distinct user from $db->prefix$this->votestable)");
+$this->CallSatellite('optimize');
   }
   
   private function extractitems($s) {

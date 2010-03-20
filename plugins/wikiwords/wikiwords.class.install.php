@@ -85,36 +85,4 @@ function tpollsUninstall($self) {
   $manager->deletetable($self->votestable);
 }
 
-  function finddeletedpols($self) {
-    $signs = $self->db->queryassoc("select id, hash from $self->thistable");
-    if (!$signs) return array();
-    $db = litepublisher::$db;
-    $posts = tposts::instance();
-    $db->table = $posts->rawtable;
-    $deleted = array();
-    foreach ($signs as $item) {
-      $hash = $item['hash'];
-      if (!$db->findid("locate('$hash', rawcontent) > 0")) $deleted[] = $item['id'];
-      sleep(2);
-    }
-    
-    return $deleted;
-  }
-  
-function tpollsDeletedeleted($self, array $deleted) {
-    if (count($deleted) > 0) {
-      $items = sprintf('(%s)', implode(',', $deleted));
-      $self->db->delete("id in $items");
-      $self->getdb($self->votestable)->delete("id in $items");
-      sleep(2);
-    }
-  }
-  
-function tpollsOptimize($self) {
-$deleted = finddeletedpols($self);
-    if (count($deleted) > 0) tpollsDeletedeleted($self, $deleted);
-    $db = $self->getdb($self->userstable);
-    $db->delete("id not in (select distinct user from $db->prefix$self->votestable)");
-}
-
 ?>
