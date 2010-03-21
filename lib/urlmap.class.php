@@ -138,13 +138,11 @@ class turlmap extends titems {
   private function  printcontent(array $item) {
     if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
-      //@file_exists($CacheFileName)
-      if (($time = @filemtime ($cachefile)) && (($time  + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time() )) {
+      if (file_exists($cachefile) && (filemtime ($cachefile) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time() )) {
         include($cachefile);
         return;
       }
-    }
-    
+
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
@@ -167,7 +165,7 @@ class turlmap extends titems {
     if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
-      @chmod($cachefile, 0666);
+      chmod($cachefile, 0666);
     }
   }
   
@@ -291,17 +289,17 @@ class turlmap extends titems {
   
   public function clearcache() {
     $path = litepublisher::$paths->cache;
-    if ( $h = @opendir($path)) {
+    if ( $h = opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
         $file = $path. $filename;
-        if (@is_dir($file)) {
+        if (is_dir($file)) {
           tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
         } else {
           unlink($file);
         }
       }
-      @closedir($h);
+      closedir($h);
     }
     
     $this->CacheExpired();
@@ -312,7 +310,8 @@ class turlmap extends titems {
   }
   
   public function setexpiredcurrent() {
-    @unlink($this->getcachefile($this->itemrequested));
+$filename = $this->getcachefile($this->itemrequested);
+if (file_exists($filename)) unlink($filename);
   }
   
   public function getcachename($name, $id) {
@@ -351,7 +350,7 @@ class turlmap extends titems {
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-    $time = file_exists($cronfile) ? @filemtime($cronfile) : 0;
+    $time = file_exists($cronfile) ? filemtime($cronfile) : 0;
     if ($time + 3600 - litepublisher::$options->filetime_offset < time()) {
       register_shutdown_function('tcron::selfping');
     }
@@ -368,10 +367,10 @@ class turlmap extends titems {
     if ( php_sapi_name() != 'cgi-fcgi' ) {
       $protocol = $_SERVER["SERVER_PROTOCOL"];
       if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
-      @header( "$protocol 301 Moved Permanently", true, 301);
+      header( "$protocol 301 Moved Permanently", true, 301);
     }
     
-    @header("Location: $url");
+    header("Location: $url");
     exit();
   }
   

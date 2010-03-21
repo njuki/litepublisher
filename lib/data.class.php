@@ -108,9 +108,9 @@ $func[0] = strtoupper($func[0]);
       if ($path = litepublisher::$classes->getpath($class)) {
         $filename = basename(litepublisher::$classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
-        if (!@file_exists($file)) {
+        if (!file_exists($file)) {
           $file =$path .  $filename;
-          if (!@file_exists($file)) continue;
+          if (!file_exists($file)) continue;
         }
         
         include_once($file);
@@ -124,7 +124,7 @@ $func[0] = strtoupper($func[0]);
   public function load() {
     if ($this->dbversion == 'full') return $this->LoadFromDB();
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
-    if (@file_exists($filename)) {
+    if (file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }

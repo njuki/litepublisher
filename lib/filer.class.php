@@ -9,19 +9,19 @@
 class tfiler {
   
   public static function delete($path, $subdirs , $rmdir = false) {
-    if ( $h = @opendir($path)) {
-      while(FALSE !== ($filename = @readdir($h))) {
+    if ( $h = opendir($path)) {
+      while(FALSE !== ($filename = readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
         $file = $path. $filename;
-        if (@is_dir($file)) {
+        if (is_dir($file)) {
           if ($subdirs) self::delete($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
         } else {
           unlink($file);
         }
       }
-      @closedir($h);
+      closedir($h);
     }
-    if ($rmdir) @rmdir($path);
+    if ($rmdir) rmdir($path);
   }
   
   public static function deletemask($mask) {
@@ -32,7 +32,7 @@ class tfiler {
   
   public static function deletedirmask($path, $mask) {
     foreach (glob($path. $mask) as $filename) {
-      if (@is_dir($filename)) {
+      if (is_dir($filename)) {
         self::deletedirmask($filename. DIRECTORY_SEPARATOR, $mask);
       } else {
         unlink($filename);
@@ -42,21 +42,21 @@ class tfiler {
   
   public static function getfiles($path) {
     $result = array();
-    if ( $h = @opendir($path)) {
-      while(FALSE !== ($filename = @readdir($h))) {
+    if ( $h = opendir($path)) {
+      while(FALSE !== ($filename = readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
-        if (!@is_dir($path . $filename)) $result[] = $filename;
+        if (!is_dir($path . $filename)) $result[] = $filename;
       }
-      @closedir($h);
+      closedir($h);
     }
     return $result;
   }
   
   public static function getdir($dir) {
     $result = array();
-    if ($fp = @opendir($dir)) {
+    if ($fp = opendir($dir)) {
       while (FALSE !== ($file = readdir($fp))) {
-        if (@is_dir($dir.$file)  && ($file != '.') && ($file != '..') && ($file != '.svn')){
+        if (is_dir($dir.$file)  && ($file != '.') && ($file != '..') && ($file != '.svn')){
           $result[] = $file;
         }
       }
@@ -66,16 +66,16 @@ class tfiler {
   
   public static function forcedir($dir) {
     $dir = rtrim($dir, DIRECTORY_SEPARATOR);
-    if (@is_dir($dir)) return true;
+    if (is_dir($dir)) return true;
     $up = rtrim(dirname($dir), DIRECTORY_SEPARATOR);
     if (($up != '') || ($up != '.'))  self::forcedir($up);
-    @mkdir($dir, 0777);
-    @chmod($dir, 0777);
-    return @is_dir($dir);
+    if (!is_dir($dir)) mkdir($dir, 0777);
+    chmod($dir, 0777);
+    return is_dir($dir);
   }
   
   public static function unserialize($FileName, &$v) {
-    if ($s = @file_get_contents($FileName)) {
+    if (file_exists($FileName) && ($s = file_get_contents($FileName))) {
       $s =PHPUncomment($s);
       if (!empty($s)) {
         $v = unserialize($s);
@@ -89,7 +89,7 @@ class tfiler {
     $s = serialize($v);
     $s =  PHPComment($s);
     file_put_contents($FileName, $s);
-    @chmod($FileName, 0666);
+    chmod($FileName, 0666);
   }
   
   public static function ini2js(array $a, $filename) {
@@ -113,7 +113,7 @@ $filename .= '.gz';
 }
 */
     file_put_contents($filename, $s);
-    @chmod($filename, 0666);
+    chmod($filename, 0666);
   }
   
   public static function log($s, $filename = '') {
@@ -124,14 +124,14 @@ $filename .= '.gz';
   public static function append($s, $filename) {
     $dir = dirname($filename);
     if (!is_dir($dir)) {
-      @mkdir($dir, 0777);
-      @chmod($dir, 0777);
+      if (!is_dir($dir))mkdir($dir, 0777);
+      chmod($dir, 0777);
     }
     
     if ($fp = fopen($filename,"a+")) {
       fwrite($fp, $s);
       fclose($fp);
-      @chmod($filename, 0666);
+      chmod($filename, 0666);
     }
   }
   

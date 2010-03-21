@@ -6,10 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminpolls {
+class tadminwikiwords {
   
   public function getcontent() {
-    $plugin = tpolls::instance();
+    $plugin = twikiwords::instance();
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "adminform.tml");
     $html = THtmlResource::instance();
     $args = targs::instance();

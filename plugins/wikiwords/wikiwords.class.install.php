@@ -11,17 +11,10 @@ if ($self->dbversion) {
   $manager = tdbmanager::instance();
   $manager->createtable($self->table,
   "  `id` int(10) unsigned NOT NULL auto_increment,
-  `parent` int(10) unsigned NOT NULL default '0',
-  `post` int(10) unsigned NOT NULL default '0',
   `word` text NOT NULL,
-
-  PRIMARY KEY  (`id`),
-  KEY `parent` (`parent`),
-  KEY `post` (`post`)
-  ");
+  PRIMARY KEY  (`id`)");
   
-  $cron = tcron::instance();
-  $cron->addweekly(get_class($self), 'optimize', null);
+$manager->createtable($self->itemsposts->table, file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'items.posts.sql'));
 }  
 
   $filter = tcontentfilter::instance();
@@ -29,7 +22,12 @@ if ($self->dbversion) {
   $filter->beforecontent = $self->beforefilter;
   $filter->beforefilter = $self->filter;
   $filter->unlock();
-  
+
+$posts = tposts::instance();
+$posts->lock();
+$posts->added = $self->postadded;
+$posts->deleted = $self->postdeleted;
+$posts->unlock();  
 
   litepublisher::$classes->classes['wikiwords'] = get_class($self);
   litepublisher::$classes->save();
@@ -44,32 +42,12 @@ function twikiwordsUninstall($self) {
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
   
+tposts::unsub($self);
 if ($self->dbversion) {  
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);
-
-  $cron = tcron::instance();
-  $cron->deleteclass(get_class($self));
+  $manager->deletetable($self->itemsposts->table);
 }
 }
  
-function twikiwordsOptimize($self) {
-$items = $self->db->idselect('post = 0');
-if (count($items) == 0) return;
-    $db = litepublisher::$db;
-    $posts = tposts::instance();
-    $db->table = $posts->table;
-$deleted = array();
-foreach ($items as $id) {
-    $deleted = array();
-    foreach ($signs as $item) {
-      if (!$db->findid("locate('\$wikiwords.word_$id', filtered) > 0")) $deleted[] = $id;
-      sleep(2);
-    }
-
-      $items = sprintf('(%s)', implode(',', $deleted));
-      $self->db->delete("id in $items");
-}
-
-?>
 ?>

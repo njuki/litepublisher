@@ -107,8 +107,8 @@ class tposts extends titems {
     } else {
       $post->id = ++$this->autoid;
       $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
-      @mkdir($dir, 0777);
-      @chmod($dir, 0777);
+      if (!is_dir($dir)) mkdir($dir, 0777);
+      chmod($dir, 0777);
       $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
     }
     $this->lock();
