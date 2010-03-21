@@ -272,6 +272,7 @@ class tposts extends titems {
   }
   
   public function sortbyposted(array $items) {
+if (count($items) <= 1) return $items;
     if (dbversion) {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");

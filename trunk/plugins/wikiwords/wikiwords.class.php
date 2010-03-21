@@ -42,21 +42,22 @@ $word = $item['word'];
 $items = $this->itemsposts->getposts($id);
 switch (count($items)) {
 case 0: 
-return $word;
+return sprintf('<strong>%s</strong>', $word);
 
 case 1: 
 $post = tpost::instance($items[0]);
-return "<a href=\"$post->link#wikiword-$id\" title=\"{$item['word']}\">{$item['word']}</a>";
+return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
 
 default:
 $links = array();
 $posts = tposts::instance();
 $posts->loaditems($items);
 foreach ($items as $idpost) {
-$links[] = sprintf('<a href="%s">%s</a>', $post->link, $post->title);
+$post = tpost::instance($idpost);
+$links[] = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $post->title, $id);
 }
 
-return sprintf($word . ' (%s)', implode(', ', $links));
+return sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
 }
 }
   
@@ -107,7 +108,7 @@ $this->createwords($post, $content);
 }
 
   public function filter(&$content) {
-$this->replacewords($content) {
+$this->replacewords($content);
 }
 
 public function createwords($post, &$content) {
@@ -132,9 +133,9 @@ $result = array();
     if (preg_match_all('/\[\[(.*?)\]\]/i', $content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
 $word = $item[1];
-$if (id =$this->add($word, 0)) {
+if ($id =$this->add($word, 0)) {
 $result[] = $id;
-$content = str_replace($item[0], "\$wikiwords->word_$id", $content);
+$content = str_replace($item[0], "\$wikiwords.word_$id", $content);
 }
 }
 }

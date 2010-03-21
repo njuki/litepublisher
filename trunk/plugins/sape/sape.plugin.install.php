@@ -7,12 +7,12 @@
 **/
 
 function tsapepluginInstall($self) {
-  $self->data['optcode'] = md5unique();
+  $self->data['optcode'] = md5uniq();
   $self->save();
   
   $template = ttemplate::instance();
   $template->lock();
-  $template->onsitebar= $this->onsitebar;
+  $template->onsitebar= $self->onsitebar;
   $template->onwidgetcontent = $self->onwidgetcontent;
   $template->unlock();
   

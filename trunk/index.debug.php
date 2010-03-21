@@ -1,7 +1,8 @@
 <?php
-error_reporting(E_ALL)
- @Header( 'Cache-Control: no-cache, must-revalidate');
-  @Header( 'Pragma: no-cache');
+//set_time_limit(1);
+error_reporting(E_ALL);
+ Header( 'Cache-Control: no-cache, must-revalidate');
+  Header( 'Pragma: no-cache');
 
 function exception_error_handler($errno, $errstr, $errfile, $errline ) {
 if (strpos($errstr, 'timezone')) return;

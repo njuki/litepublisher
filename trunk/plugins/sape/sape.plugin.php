@@ -40,6 +40,7 @@ class tsapeplugin extends tplugin {
   }
   
   public function getlinks($count = null) {
+if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
     if (!isset($this->sape)) $this->createsape();
     $Links = $this->sape->return_links($count);
@@ -48,7 +49,7 @@ class tsapeplugin extends tplugin {
   }
   
   protected function gettag() {
-    return "<!--$this->optcode-->";
+    return sprintf('<!--%s-->', $this->optcode);
   }
   
   public function getwidgetcontent($id, $sitebar) {
@@ -69,7 +70,7 @@ class tsapeplugin extends tplugin {
     $code = $this->tag;
     while ($i = strpos($content, $code)) {
       $links = $this->getlinks($this->count);
-      $content = substr_replace($content, $code, $i, strlen($code));
+      $content = substr_replace($content, $links, $i, strlen($code));
     }
   }
   
