@@ -11,10 +11,12 @@ if ($self->dbversion) {
   $manager = tdbmanager::instance();
   $manager->createtable($self->table,
   "  `id` int(10) unsigned NOT NULL auto_increment,
+  `parent` int(10) unsigned NOT NULL default '0',
   `post` int(10) unsigned NOT NULL default '0',
   `word` text NOT NULL,
 
   PRIMARY KEY  (`id`),
+  KEY `parent` (`parent`),
   KEY `post` (`post`)
   ");
   

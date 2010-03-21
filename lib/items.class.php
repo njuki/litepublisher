@@ -62,15 +62,13 @@ class titems extends tevents {
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
     if ($where != '') $where = 'where '. $where;
-    $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
-    return $this->res2items($res);
+    return $this->res2items($this->db->query("SELECT * FROM $this->thistable $where $limit"));
   }
   
   public function res2items($res) {
-    if (!$res) return false;
+    if (!$res) return array();
     $result = array();
-    
-    while ($item = litepublisher::$db->fetchassoc($res)) {
+        while ($item = litepublisher::$db->fetchassoc($res)) {
       $id = $item['id'];
       $result[] = $id;
       $this->items[$id] = $item;
