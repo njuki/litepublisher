@@ -372,6 +372,18 @@ class tpost extends titem implements  itemplate {
     $tc = ttemplatecomments::instance();
     return $tc->getcomments($this->id);
   }
+
+public function getexcerpt() {
+    $result = $this->data['excerpt'];
+    $posts = tposts::instance();
+    $posts->beforeexcerpt($this, $result);
+    if (litepublisher::$options->parsepost) {
+      $theme = ttheme::instance();
+      $result = $theme->parse($result);
+    }
+    $posts->afterexcerpt($this, $result);
+return $result;
+}
   
   private function replacemore($content) {
     $theme = ttheme::instance();
@@ -409,13 +421,13 @@ class tpost extends titem implements  itemplate {
   public function getcontent() {
     $result = '';
     $posts = tposts::instance();
-    $posts->beforecontent($this->id, $result);
+    $posts->beforecontent($this, $result);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $result = $theme->parse($result);
     }
-    $posts->aftercontent($this->id, $result);
+    $posts->aftercontent($this, $result);
     return $result;
   }
   

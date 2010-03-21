@@ -95,7 +95,7 @@ class tposteditor extends tadminmenu {
       $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
       $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
       $args->content = $post->filtered;
-      $args->excerpt = $post->excerpt;
+      $args->excerpt = $post->data['excerpt'];
       $args->rss = $post->rss;
     }
     

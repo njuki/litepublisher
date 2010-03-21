@@ -26,7 +26,7 @@ class tposts extends titems {
     $this->table = 'posts';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
-    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
     $this->data['recentcount'] = 10;
     $this->data['archivescount'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
@@ -292,12 +292,20 @@ if (count($items) <= 1) return $items;
   
   
   //fix call reference
-  public function beforecontent($id, &$result) {
-    $this->callevent('beforecontent', array($id, &$result));
+  public function beforecontent($post, &$result) {
+    $this->callevent('beforecontent', array($post, &$result));
   }
   
-  public function aftercontent($id, &$result) {
-    $this->callevent('aftercontent', array($id, &$result));
+  public function aftercontent($post, &$result) {
+    $this->callevent('aftercontent', array($post, &$result));
+  }
+
+  public function beforeexcerpt($post, &$result) {
+    $this->callevent('beforeexcerpt', array($post, &$result));
+  }
+  
+  public function afterexcerpt($post, &$result) {
+    $this->callevent('afterexcerpt', array($post, &$result));
   }
   
 }//class
