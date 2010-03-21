@@ -103,7 +103,7 @@ if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this
       //$this->error("$class class not found");
       return false;
     }
-    if (@file_exists($filename)) require_once($filename);
+    if (file_exists($filename)) require_once($filename);
   }
   
   public function getpath($class) {
@@ -111,11 +111,11 @@ if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this
     if (empty($this->items[$class][1])) return litepublisher::$paths->lib;
     $result = trim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     $filename = $result . $this->items[$class][0];
-    if (@file_exists($filename))  return $result;
+    if (file_exists($filename))  return $result;
     //may be is subdir?
-    if (@file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
-    if (@file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
-    if  (@file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
+    if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
+    if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
+    if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
     return false;
   }
   
@@ -149,11 +149,11 @@ function SafeSaveFile($BaseName, $Content) {
     litepublisher::$options->trace("Error write to file $TmpFileName");
     return false;
   }
-  @chmod($TmpFileName , 0666);
+  chmod($TmpFileName , 0666);
   $FileName = $BaseName.'.php';
-  if (@file_exists($FileName)) {
+  if (file_exists($FileName)) {
     $BakFileName = $BaseName . '.bak.php';
-    @unlink($BakFileName);
+    if (file_exists($BakFileName)) unlink($BakFileName);
     rename($FileName, $BakFileName);
   }
   if (!rename($TmpFileName, $FileName)) {

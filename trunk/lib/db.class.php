@@ -30,10 +30,10 @@ class tdatabase {
     if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
     $this->handle = mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
     if (! $this->handle) {
-      die(@mysql_error());
+      die(mysql_error());
     }
-    if (!@        mysql_select_db($dbconfig['dbname'], $this->handle)) {
-      die(@mysql_error($this->handle));
+    if (!        mysql_select_db($dbconfig['dbname'], $this->handle)) {
+      die(mysql_error($this->handle));
     }
     
     $this->exec('SET NAMES utf8');
@@ -46,7 +46,7 @@ class tdatabase {
   }
   
   public function __destruct() {
-    if (is_resource($this->handle)) @mysql_close($this->handle);
+    if (is_resource($this->handle)) mysql_close($this->handle);
     $this->handle = false;
   }
   
@@ -78,16 +78,13 @@ class tdatabase {
       );
     }
     
-    if (is_resource ($this->result))  {
-      mysql_free_result($this->result);
-    }
-    
-    $this->result = @mysql_query($sql, $this->handle);
+    if (is_resource ($this->result)) mysql_free_result($this->result);
+    $this->result = mysql_query($sql, $this->handle);
     if (litepublisher::$debug) {
       $this->history[count($this->history) - 1]['finished'] = microtime();
     }
     if ($this->result == false) {
-      $this->doerror(@mysql_error($this->handle));
+      $this->doerror(mysql_error($this->handle));
     }
     return $this->result;
   }
@@ -166,7 +163,7 @@ class tdatabase {
   
   public function insertrow($row) {
     $this->exec("INSERT INTO $this->prefix$this->table $row");
-    return @mysql_insert_id($this->handle);
+    return mysql_insert_id($this->handle);
   }
   
   public function insertassoc(array $a) {
@@ -194,7 +191,7 @@ class tdatabase {
     }
     
     $this->exec("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
-    return @mysql_insert_id($this->handle);
+    return mysql_insert_id($this->handle);
   }
   
   public function getcount($where = '') {

@@ -7,6 +7,7 @@
 **/
 
 class twikiwords extends titems {
+public $itemsposts;
 private $fix;
 
   public static function instance() {
@@ -16,9 +17,11 @@ private $fix;
   protected function create() {
 $this->dbversion = dbversion;
     parent::create();
-    $this->table = 'wikiwords';
-    $this->addevents('edited');
 $this->fix = array();
+    $this->addevents('edited');
+    $this->table = 'wikiwords';
+    if (!$this->dbversion)  $this->data['itemsposts'] = array();
+    $this->itemsposts = new titemspostsowner ($this);
   }
 
   public function __get($name) {
@@ -36,22 +39,24 @@ return $this->getlink($id);
 public function getlink($id) {
 $item = $this->getitem($id);
 $word = $item['word'];
-if ($item['post'] == 0) return $word;
-// найти все посты  с одинаковыми словами
-if ($this->dbversion) {
-$items = $this->select("id <> $id and word = ". dbquote($word), '');
-} else {
-$items = array();
-foreach ($this->items as $idword => $worditem) {
-if (($word == $worditem['word']) && (4id != $idword)) $items[] = $idword;
-}
+$items = $this->itemsposts->getposts($id);
+switch (count($items)) {
+case 0: 
+return $word;
+
+case 1: 
+$post = tpost::instance($items[0]);
+return "<a href=\"$post->link#wikiword-$id\" title=\"{$item['word']}\">{$item['word']}</a>";
+
+default:
+$links = array();
+$posts = tposts::instance();
+$posts->loaditems($items);
+foreach ($items as $idpost) {
+$links[] = sprintf('<a href="%s">%s</a>', $post->link, $post->title);
 }
 
-if (count($items) == 0) {
-$post = tpost::instance($item['post']);
-return "<a href=\"$post->link#wikiword-$id\" title=\"{$item['word']}\">{$item['word']}</a>";
-} else {
-$posts = tposts::instance();
+return sprintf($word . ' (%s)', implode(', ', $links));
 }
 }
   
@@ -59,28 +64,11 @@ $posts = tposts::instance();
 $word = trim(strip_tags($word));
 if ($word == '') return false;
 $id = $this->IndexOf('word', $word);
-if ($id > 0) {
-$item = $this->getitem($id);
-if ((0 == $item['post']) && (0 != $idpost)) {
-$this->setvalue($id, 'post', $idpost);
-if (!$this->dbversion) $this->save();
-return $id;
-} elseif ($idpost == $item['post']) {
-return $id;
-} else {
-return $this->additem(array(
-'parent' => $item['post'],
-'post' => $idpost,
-'word' => ''
-    ));
+if ($id <= 0) $id = $this->additem(array('word' => $word));
+if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
+$this->itemsposts->add($idpost, $id);
 }
-}
-
-return $this->additem(array(
-'parent' => 0,
-'post' => $idpost,
-'word' => $word
-    ));
+return $id;
   }
 
   public function edit($id, $word) {
@@ -89,80 +77,68 @@ return $this->setvalue($id, 'word', $word);
 
 public function delete($id) {
 if (!$this->itemexists($id)) return false;
-$item = $this->getitem($id);
-if ($item['parent'] == 0) {
-// назначить дежателем слова первого найденного
-$idnext = $this->IndexOf('parent', $id);
-if ($idnext > 0) {
-$nextitem = $this->getitem($idnext);
-$nextitem['word'] = $item['word'];
-$nextitem['parent'] = 0;
-$this->items[$idnext] = $nextitem;
-if ($this->dbversion) {
-$this->db->updateassoc($nextitem);
-$this->db->update("parent =$idnext", "parent = $id");
-} else {
-foreach ($this->items as $idword => $itemword) {
-if ($id == $itemword['parent']) $this->items['idword]['parent'] = $idnext;
-}
-}
-}
+$this->itemsposts->deleteitem($id);
 return parent::delete($id);
 }
 
 public function deleteword($word) {
+$id = $this->IndexOf('word', $word);
+if ($id > 0) return $this->delete($id);
 }
 
 public function postadded($idpost) {
 if (count($this->fix) == 0) return;
 $this->lock();
 foreach ($this->fix as $id => $post) {
-if ($idpost == $post->id) $this->setvalue($id, 'post', $idpost);
+if ($idpost == $post->id) {
+$this->itemsposts->add($idpost, $id);
+unset($this->fix[$id]);
+}
 }
 $this->unlock();
-$this->fix = array();
 }
 
 public function postdeleted($idpost) {
-if ($this->dbversion) {
-$this->db->update('post = 0', "post = $idpost");
-} else {
-$changed = false;
-foreach ($this->items as $id => $item) {
-if ($idpost == $item['post']) {
-$this->items[$id]['post'] = 0;
-$changed = true;
+$this->itemsposts->deletepost($idpost);
 }
-}
-if ($changed) $this->save();
-}
-}
-  
-  public function optimize() {
-$this->CallSatellite('optimize');
-  }
-  
+
   public function beforefilter($post, &$content) {
+$this->createwords($post, $content);
+}
+
+  public function filter(&$content) {
+$this->replacewords($content) {
+}
+
+public function createwords($post, &$content) {
+$result = array();
     if (preg_match_all('/\[wiki:(.*?)\]/i', $content, $m, PREG_SET_ORDER)) {
 $this->lock();
       foreach ($m as $item) {
 $word = $item[1];
-$id = $this->add($word, $post->id);
+if ($id = $this->add($word, $post->id)) {
+$result[] = $id;
 if ($post->id == 0) $this->fix[$id] = $post;
 $content = str_replace($item[0], "<a name=\"wikiword-$id\">$word</a>", $content);
 }
+}
 $this->unlock();
 }
+return $result;
   }
 
-  public function filter(&$content) {
+  public function replacewords(&$content) {
+$result = array();
     if (preg_match_all('/\[\[(.*?)\]\]/i', $content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
 $word = $item[1];
-$id =$this->add($word, 0);
+$if (id =$this->add($word, 0)) {
+$result[] = $id;
 $content = str_replace($item[0], "\$wikiwords->word_$id", $content);
 }
 }
+}
+return $result;
 }
 
 }//class
