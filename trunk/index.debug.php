@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL)
  @Header( 'Cache-Control: no-cache, must-revalidate');
   @Header( 'Pragma: no-cache');
 

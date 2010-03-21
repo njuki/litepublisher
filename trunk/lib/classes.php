@@ -6,8 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+if (!function_exists( 'spl_autoload_register' ) ) {
 function __autoload($class) {
   litepublisher::$classes->_autoload($class);
+}
 }
 
 class tclasses extends titems {
@@ -48,6 +50,7 @@ class tclasses extends titems {
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
+if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
   }
   
   public function __get($name) {
