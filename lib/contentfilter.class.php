@@ -1,3 +1,4 @@
+descri
 <?php
 /**
 * Lite Publisher
@@ -41,7 +42,7 @@ class tcontentfilter extends tevents {
       $post->excerpt = $this->filter($parts[0]);
       $post->filtered = $post->excerpt . '<!--more-->' . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $post->excerpt;
-      $post->moretitle =  $this->gettitle($matches[1]);
+      $post->moretitle =  self::gettitle($matches[1]);
       if ($post->moretitle == '')  $post->moretitle = tlocal::$data['default']['more'];
     } else {
       if ($this->automore) {
@@ -57,8 +58,22 @@ class tcontentfilter extends tevents {
         $post->moretitle =  '';
       }
     }
-    $post->description = self::GetExcerpt($post->excerpt, 80);
-    $this->aftercontent($post);
+
+$post->description = self::getpostdescription($post->excerpt);
+    $this->aftercontent($post);}
+
+public static function getpostdescription($description) {
+    if (litepublisher::$options->parsepost) {
+      $theme = ttheme::instance();
+      $description = $theme->parse($description);
+    }
+$description = self::gettitle($description);
+$description = str_replace(
+    array("\r", "\n", '  ', '"', "'", '$'),
+    array(' ', ' ', ' ', '&quot;', '&#39;', '&#36;'),
+$description);
+$description =str_replace('  ', ' ', $description);
+return $description;
   }
   
   public function ExtractPages(tpost $post, $s) {
@@ -75,7 +90,7 @@ class tcontentfilter extends tevents {
     return $post->GetPage(0);
   }
   
-  public function gettitle($s) {
+  public static function gettitle($s) {
     $s = trim($s);
     $s = preg_replace('/\0+/', '', $s);
     $s = preg_replace('/(\\\\0)+/', '', $s);

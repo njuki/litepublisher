@@ -18,11 +18,11 @@ class tpostcontentplugin extends tplugin {
     $this->data['after'] = '';
   }
   
-  public function beforecontent($id, &$content) {
+  public function beforecontent($post, &$content) {
     $content = $this->before . $content;
   }
   
-  public function aftercontent($id, &$content) {
+  public function aftercontent($post, &$content) {
     $content .= $this->after;
   }
   
