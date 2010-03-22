@@ -26,7 +26,7 @@ class tmetapost extends titem {
   
   public function __set($name, $value) {
     if ($name == 'id') return $this->setid($value);
-$exists = isset($this->data[$name]);
+    $exists = isset($this->data[$name]);
     if ($exists && ($this->data[$name] == $value)) return true;
     $this->data[$name] = $value;
     if (dbversion) {

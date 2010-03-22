@@ -21,6 +21,7 @@ class tcomments extends titems {
     parent::create();
     $this->table = 'comments';
     $this->rawtable = 'rawcomments';
+    $this->basename = 'comments';
     $this->addevents('edited');
   }
   

@@ -41,7 +41,7 @@ class toldestposts extends tplugin {
     $tml = $theme->getwidgetitem('widget', $index);
     $result = '';
     foreach ($items as $id) {
-$post = tpost::instance($id);
+      $post = tpost::instance($id);
       ttheme::$vars['post'] = $post;
       $result .= sprintf($tml, $post->link, $post->title);
     }

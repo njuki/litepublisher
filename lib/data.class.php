@@ -101,7 +101,7 @@ class tdata {
   }
   
   protected function CallSatellite($func, $arg = null) {
-$func[0] = strtoupper($func[0]);
+    $func[0] = strtoupper($func[0]);
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {

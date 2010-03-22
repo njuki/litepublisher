@@ -103,16 +103,16 @@ class tdata {
   }
   
   protected function CallSatellite($func, $arg = null) {
-$func{0} = strtoupper($func{0});
+    $func[0] = strtoupper($func[0]);
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
       if ($path = litepublisher::$classes->getpath($class)) {
         $filename = basename(litepublisher::$classes->items[$class][0], '.php') . '.install.php';
         $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
-        if (!@file_exists($file)) {
+        if (!file_exists($file)) {
           $file =$path .  $filename;
-          if (!@file_exists($file)) continue;
+          if (!file_exists($file)) continue;
         }
         
         include_once($file);
@@ -126,7 +126,7 @@ $func{0} = strtoupper($func{0});
   public function load() {
     if ($this->dbversion == 'full') return $this->LoadFromDB();
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
-    if (@file_exists($filename)) {
+    if (file_exists($filename)) {
       return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
     }
   }
@@ -445,12 +445,11 @@ class titems extends tevents {
   
   public function load() {
     if ($this->dbversion) {
-      if (!isset(litepublisher::$options->data[get_class($this)])) {
-        litepublisher::$options->data[get_class($this)] = &$this->data;
+      if (!isset(litepublisher::$options->data[$this->table])) {
+        litepublisher::$options->data[$this->table] = &$this->data;
       } else {
-        $this->data = &litepublisher::$options->data[get_class($this)];
+        $this->data = &litepublisher::$options->data[$this->table];
         $this->afterload();
-        
       }
       return  true;
     } else {
@@ -483,14 +482,12 @@ class titems extends tevents {
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
     if ($where != '') $where = 'where '. $where;
-    $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
-    return $this->res2items($res);
+    return $this->res2items($this->db->query("SELECT * FROM $this->thistable $where $limit"));
   }
   
   public function res2items($res) {
-    if (!$res) return false;
+    if (!$res) return array();
     $result = array();
-    
     while ($item = litepublisher::$db->fetchassoc($res)) {
       $id = $item['id'];
       $result[] = $id;
@@ -553,6 +550,15 @@ class titems extends tevents {
     return -1;
   }
   
+  public function additem(array $item) {
+    $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+    $item['id'] = $id;
+    $this->items[$id] = $item;
+    if (!$this->dbversion) $this->save();
+    $this->added($id);
+    return $id;
+  }
+  
   public function delete($id) {
     if ($this->dbversion) $this->db->delete("id = $id");
     if (isset($this->items[$id])) {
@@ -599,8 +605,10 @@ class tsingleitems extends titems {
 * and GPL (gpl.txt) licenses.
 **/
 
-function __autoload($class) {
-  litepublisher::$classes->_autoload($class);
+if (!function_exists( 'spl_autoload_register' ) ) {
+  function __autoload($class) {
+    litepublisher::$classes->_autoload($class);
+  }
 }
 
 class tclasses extends titems {
@@ -641,6 +649,7 @@ class tclasses extends titems {
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
+    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
   }
   
   public function __get($name) {
@@ -693,7 +702,7 @@ class tclasses extends titems {
       //$this->error("$class class not found");
       return false;
     }
-    if (@file_exists($filename)) require_once($filename);
+    if (file_exists($filename)) require_once($filename);
   }
   
   public function getpath($class) {
@@ -701,11 +710,11 @@ class tclasses extends titems {
     if (empty($this->items[$class][1])) return litepublisher::$paths->lib;
     $result = trim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     $filename = $result . $this->items[$class][0];
-    if (@file_exists($filename))  return $result;
+    if (file_exists($filename))  return $result;
     //may be is subdir?
-    if (@file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
-    if (@file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
-    if  (@file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
+    if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
+    if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
+    if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
     return false;
   }
   
@@ -739,11 +748,11 @@ function SafeSaveFile($BaseName, $Content) {
     litepublisher::$options->trace("Error write to file $TmpFileName");
     return false;
   }
-  @chmod($TmpFileName , 0666);
+  chmod($TmpFileName , 0666);
   $FileName = $BaseName.'.php';
-  if (@file_exists($FileName)) {
+  if (file_exists($FileName)) {
     $BakFileName = $BaseName . '.bak.php';
-    @unlink($BakFileName);
+    if (file_exists($BakFileName)) unlink($BakFileName);
     rename($FileName, $BakFileName);
   }
   if (!rename($TmpFileName, $FileName)) {
@@ -1097,10 +1106,10 @@ class turlmap extends titems {
   }
   
   private function  printcontent(array $item) {
-    if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
+    $options = litepublisher::$options;
+    if ($options->cache && !$options->admincookie) {
       $cachefile = $this->getcachefile($item);
-      //@file_exists($CacheFileName)
-      if (($time = @filemtime ($cachefile)) && (($time  + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time() )) {
+      if (file_exists($cachefile) && ((filemtime ($cachefile) + $options->expiredcache - $options->filetime_offset) >= time())) {
         include($cachefile);
         return;
       }
@@ -1128,7 +1137,7 @@ class turlmap extends titems {
     if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
-      @chmod($cachefile, 0666);
+      chmod($cachefile, 0666);
     }
   }
   
@@ -1252,17 +1261,17 @@ class turlmap extends titems {
   
   public function clearcache() {
     $path = litepublisher::$paths->cache;
-    if ( $h = @opendir($path)) {
+    if ( $h = opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
         $file = $path. $filename;
-        if (@is_dir($file)) {
+        if (is_dir($file)) {
           tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
         } else {
           unlink($file);
         }
       }
-      @closedir($h);
+      closedir($h);
     }
     
     $this->CacheExpired();
@@ -1273,7 +1282,8 @@ class turlmap extends titems {
   }
   
   public function setexpiredcurrent() {
-    @unlink($this->getcachefile($this->itemrequested));
+    $filename = $this->getcachefile($this->itemrequested);
+    if (file_exists($filename)) unlink($filename);
   }
   
   public function getcachename($name, $id) {
@@ -1312,7 +1322,7 @@ class turlmap extends titems {
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-    $time = file_exists($cronfile) ? @filemtime($cronfile) : 0;
+    $time = file_exists($cronfile) ? filemtime($cronfile) : 0;
     if ($time + 3600 - litepublisher::$options->filetime_offset < time()) {
       register_shutdown_function('tcron::selfping');
     }
@@ -1329,10 +1339,10 @@ class turlmap extends titems {
     if ( php_sapi_name() != 'cgi-fcgi' ) {
       $protocol = $_SERVER["SERVER_PROTOCOL"];
       if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
-      @header( "$protocol 301 Moved Permanently", true, 301);
+      header( "$protocol 301 Moved Permanently", true, 301);
     }
     
-    @header("Location: $url");
+    header("Location: $url");
     exit();
   }
   

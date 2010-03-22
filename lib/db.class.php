@@ -82,7 +82,7 @@ class tdatabase {
     $this->result = mysql_query($sql, $this->handle);
     if (litepublisher::$debug) {
       $this->history[count($this->history) - 1]['finished'] = microtime();
-//if (count($this->history) > 100) $this->error("too many queries");
+      //if (count($this->history) > 100) $this->error("too many queries");
     }
     if ($this->result == false) {
       $this->doerror(mysql_error($this->handle));

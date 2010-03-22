@@ -16,7 +16,10 @@ class tfiler {
         if (is_dir($file)) {
           if ($subdirs) self::delete($file . DIRECTORY_SEPARATOR, $subdirs, $rmdir);
         } else {
-          unlink($file);
+          if (!unlink($file)) {
+            chmod($file, 0666);
+            unlink($file);
+          }
         }
       }
       closedir($h);
@@ -88,6 +91,7 @@ class tfiler {
   public static function serialize($FileName, &$v) {
     $s = serialize($v);
     $s =  PHPComment($s);
+    if (file_exists($FileName)) chmod($FileName, 0666);
     file_put_contents($FileName, $s);
     chmod($FileName, 0666);
   }
@@ -106,12 +110,12 @@ class tfiler {
     $sections[] = sprintf("$name:{\n%s\n}", implode(",\n", $list));
     }
   $s = sprintf("var lang= {\n%s\n};\n", implode(",\n", $sections));
-/*
-if (strbegin(basename($filename), 'admin')) {
-$s = gzencode($s);
-$filename .= '.gz';
-}
-*/
+    /*
+    if (strbegin(basename($filename), 'admin')) {
+      $s = gzencode($s);
+      $filename .= '.gz';
+    }
+    */
     file_put_contents($filename, $s);
     chmod($filename, 0666);
   }

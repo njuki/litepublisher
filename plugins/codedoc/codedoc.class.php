@@ -11,7 +11,7 @@ class tcodedoc extends tpost {
   public $doctable;
   
   public static function instance($id = 0) {
-    return parent::iteminstance(__class__, $id);
+    return parent::iteminstance('post', __class__, $id);
   }
   
   protected function create() {

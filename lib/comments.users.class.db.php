@@ -16,6 +16,7 @@ class tcomusers extends titems {
     $this->dbversion = dbversion;
     parent::create();
     $this->table = 'comusers';
+    $this->basename = 'comusers';
     $this->cache = false;
   }
   

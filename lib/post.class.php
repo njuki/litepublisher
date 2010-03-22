@@ -12,7 +12,7 @@ class tpost extends titem implements  itemplate {
   private $ameta;
   
   public static function instance($id = 0) {
-    return parent::iteminstance(__class__, $id);
+    return parent::iteminstance('post', __class__, $id);
   }
   
   public function getbasename() {
@@ -372,8 +372,8 @@ class tpost extends titem implements  itemplate {
     $tc = ttemplatecomments::instance();
     return $tc->getcomments($this->id);
   }
-
-public function getexcerpt() {
+  
+  public function getexcerpt() {
     $result = $this->data['excerpt'];
     $posts = tposts::instance();
     $posts->beforeexcerpt($this, $result);
@@ -382,8 +382,8 @@ public function getexcerpt() {
       $result = $theme->parse($result);
     }
     $posts->afterexcerpt($this, $result);
-return $result;
-}
+    return $result;
+  }
   
   private function replacemore($content) {
     $theme = ttheme::instance();
