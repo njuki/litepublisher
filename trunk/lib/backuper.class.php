@@ -21,11 +21,12 @@ class tbackuper extends tevents {
     $subdirslashed = str_replace(DIRECTORY_SEPARATOR   , '/', $subdir) . '/';
     $subdirslashed  = ltrim($subdirslashed , '/');
     $hasindex = false;
-    if ($fp = @opendir($path . $subdir)) {
+    if ($fp = opendir($path . $subdir)) {
+      $tar->adddir($prefix. $subdirslashed, 0777);
       while (FALSE !== ($file = readdir($fp))) {
         if (($file == '.') || ($file == '..')) continue;
         $filename = $path . $subdir .DIRECTORY_SEPARATOR . $file;
-        if (@is_dir($filename)) {
+        if (is_dir($filename)) {
           $this->readdir($tar, $path, $subdir . DIRECTORY_SEPARATOR   . $file, $prefix);
         } 			else {
           if (preg_match('/(\.bak\.php$)|(\.lok$)/',  $file)) continue;
@@ -134,8 +135,10 @@ class tbackuper extends tevents {
       
       $filename = $path . str_replace('/', DIRECTORY_SEPARATOR  , $filename);
       if (!tfiler::forcedir(dirname($filename))) return $this->error("error create folder " . dirname($filename));
-      if (false === @file_put_contents($filename, $file['file'])) return $this->error("Error saving file $filename");
-      @chmod($filename, $file['mode']);
+      if (false === file_put_contents($filename, $file['file'])) return $this->error("Error saving file $filename");
+      
+      //chmod($filename, $file['mode']);
+      chmod($filename, 0666);
     }
     
     if ($tmp) {
@@ -144,14 +147,13 @@ class tbackuper extends tevents {
       @rename($tmp, litepublisher::$paths->data);
       tfiler::delete($old, true, true);
     }
-    
     return true;
   }
   
   private function createtemp() {
     $result = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths->data) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
-    @mkdir($result, 0777);
-    @chmod($result, 0777);
+    if (!is_dir($result)) mkdir($result, 0777);
+    chmod($result, 0777);
     return $result;
   }
   

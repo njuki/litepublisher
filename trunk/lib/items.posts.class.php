@@ -36,14 +36,14 @@ class titemsposts extends titems {
       return false;
     }
   }
-
-public function exists($idpost, $iditem) {
-if ($this->dbversion) {
-return $this->db->exists("post = $idpost and item = $iditem");
-} else {
-return isset($this->items[$idpost]) && is_int(array_search($iditem, $this->items[$idpost]));
-}
-}
+  
+  public function exists($idpost, $iditem) {
+    if ($this->dbversion) {
+      return $this->db->exists("post = $idpost and item = $iditem");
+    } else {
+      return isset($this->items[$idpost]) && is_int(array_search($iditem, $this->items[$idpost]));
+    }
+  }
   
   public function remove($idpost, $iditem) {
     if (dbversion) {
@@ -64,7 +64,7 @@ return isset($this->items[$idpost]) && is_int(array_search($iditem, $this->items
     return $this->deletepost($idpost);
   }
   
-    public function deletepost($idpost) {
+  public function deletepost($idpost) {
     if (dbversion) {
       $result = litepublisher::$db->res2id(litepublisher::$db->query("select item from $this->thistable where post = $idpost"));
       $this->db->delete("post = $idpost");

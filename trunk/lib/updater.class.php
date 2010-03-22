@@ -33,7 +33,7 @@ class tupdater extends tevents {
     while ( $v<= $this->version) {
       if ($log) tfiler::log("$v selected to update", 'update');
       $filename = $dir . "update.$v.php";
-      if (@file_exists($filename)) {
+      if (file_exists($filename)) {
         require_once($filename);
         if ($log) tfiler::log("$filename is required file", 'update');
         $func = 'update' . str_replace('.', '', $v);
@@ -109,7 +109,7 @@ class tupdater extends tevents {
         if (false === @file_put_contents($filename, $file['file'])) {
           return sprintf($lang->errorwritefile, $filename);
         }
-        @chmod($filename, 0666);
+        chmod($filename, 0666);
       }
     }
     return true;

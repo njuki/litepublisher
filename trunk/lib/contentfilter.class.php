@@ -58,22 +58,22 @@ class tcontentfilter extends tevents {
         $post->moretitle =  '';
       }
     }
-
-$post->description = self::getpostdescription($post->excerpt);
-    $this->aftercontent($post);}
-
-public static function getpostdescription($description) {
+    
+    $post->description = self::getpostdescription($post->excerpt);
+  $this->aftercontent($post);}
+  
+  public static function getpostdescription($description) {
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $description = $theme->parse($description);
     }
-$description = self::gettitle($description);
-$description = str_replace(
+    $description = self::gettitle($description);
+    $description = str_replace(
     array("\r", "\n", '  ', '"', "'", '$'),
     array(' ', ' ', ' ', '&quot;', '&#39;', '&#36;'),
-$description);
-$description =str_replace('  ', ' ', $description);
-return $description;
+    $description);
+    $description =str_replace('  ', ' ', $description);
+    return $description;
   }
   
   public function ExtractPages(tpost $post, $s) {

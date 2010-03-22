@@ -8,25 +8,27 @@
 
 class titem extends tdata {
   public static $instances;
+  public $instancename;
   //public $id;
   
-  public static function iteminstance($class, $id = 0) {
+  public static function iteminstance($name, $class, $id = 0) {
     if (!isset(self::$instances)) self::$instances = array();
-    if (isset(self::$instances[$class][$id]))     return self::$instances[$class][$id];
+    if (isset(self::$instances[$name][$id]))     return self::$instances[$name][$id];
     $self = litepublisher::$classes->newinstance($class);
+    $self->instancename = $name;
     $self->id = $id;
     if ($id != 0) {
       if (!$self->load()) {
         $self->free();
         return false;
       }
-      self::$instances[$class][$id] = $self;
+      self::$instances[$name][$id] = $self;
     }
     return $self;
   }
   
   public function free() {
-    unset(self::$instances[get_class($this)][$this->id]);
+    unset(self::$instances[$this->instancename][$this->id]);
   }
   
   public function __construct() {
@@ -41,9 +43,8 @@ class titem extends tdata {
   
   public function setid($id) {
     if ($id != $this->id) {
-      $class = get_class($this);
-      self::$instances[$class][$id] = $this;
-      if (isset(   self::$instances[$class][$this->id])) unset(self::$instances[$class][$this->id]);
+      self::$instances[$this->instancename][$id] = $this;
+      if (isset(   self::$instances[$this->instancename][$this->id])) unset(self::$instances[$this->instancename][$this->id]);
       $this->data['id'] = $id;
     }
   }

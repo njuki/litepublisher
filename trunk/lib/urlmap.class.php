@@ -136,15 +136,15 @@ class turlmap extends titems {
   }
   
   private function  printcontent(array $item) {
-$options = litepublisher::$options;
+    $options = litepublisher::$options;
     if ($options->cache && !$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       if (file_exists($cachefile) && ((filemtime ($cachefile) + $options->expiredcache - $options->filetime_offset) >= time())) {
         include($cachefile);
         return;
       }
-}
-
+    }
+    
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
@@ -312,8 +312,8 @@ $options = litepublisher::$options;
   }
   
   public function setexpiredcurrent() {
-$filename = $this->getcachefile($this->itemrequested);
-if (file_exists($filename)) unlink($filename);
+    $filename = $this->getcachefile($this->itemrequested);
+    if (file_exists($filename)) unlink($filename);
   }
   
   public function getcachename($name, $id) {

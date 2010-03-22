@@ -1,4 +1,4 @@
-•<?php
+<?php
 /**
 * Lite Publisher
 * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
@@ -18,7 +18,7 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     $this->dbversion = true;
     parent::create();
     $this->table = 'pingbacks';
-    
+    $this->basename = 'pingbacks';
   }
   
   public function doadd($url, $title) {

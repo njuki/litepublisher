@@ -257,7 +257,7 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
   public $formresult;
   
   public static function instance($id = 0) {
-    return parent::iteminstance(__class__, $id);
+    return parent::iteminstance('menu', __class__, $id);
   }
   
   protected function create() {

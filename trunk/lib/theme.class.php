@@ -130,7 +130,7 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
-if (is_object($s)) $s = $s->__tostring();
+    if (is_object($s)) $s = $s->__tostring();
     $s = str_replace('$options.url', litepublisher::$options->url, $s);
     array_push($this->parsing, $s);
     

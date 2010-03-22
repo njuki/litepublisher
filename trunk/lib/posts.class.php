@@ -46,9 +46,8 @@ class tposts extends titems {
   public function loaditems(array $items) {
     if (!dbversion || count($items) == 0) return;
     //исключить из загрузки загруженные посты
-    $class = litepublisher::$classes->classes['post'];
-    if (isset(titem::$instances[$class])) {
-      $items = array_diff($items, array_keys(titem::$instances[$class]));
+    if (isset(titem::$instances['post'])) {
+      $items = array_diff($items, array_keys(titem::$instances['post']));
     }
     if (count($items) == 0) return;
     $list = implode(',', $items);
@@ -272,7 +271,7 @@ class tposts extends titems {
   }
   
   public function sortbyposted(array $items) {
-if (count($items) <= 1) return $items;
+    if (count($items) <= 1) return $items;
     if (dbversion) {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list) order by posted desc");
@@ -299,7 +298,7 @@ if (count($items) <= 1) return $items;
   public function aftercontent($post, &$result) {
     $this->callevent('aftercontent', array($post, &$result));
   }
-
+  
   public function beforeexcerpt($post, &$result) {
     $this->callevent('beforeexcerpt', array($post, &$result));
   }

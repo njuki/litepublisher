@@ -24,12 +24,11 @@ class titems extends tevents {
   
   public function load() {
     if ($this->dbversion) {
-      if (!isset(litepublisher::$options->data[get_class($this)])) {
-        litepublisher::$options->data[get_class($this)] = &$this->data;
+      if (!isset(litepublisher::$options->data[$this->table])) {
+        litepublisher::$options->data[$this->table] = &$this->data;
       } else {
-        $this->data = &litepublisher::$options->data[get_class($this)];
+        $this->data = &litepublisher::$options->data[$this->table];
         $this->afterload();
-        
       }
       return  true;
     } else {
@@ -68,7 +67,7 @@ class titems extends tevents {
   public function res2items($res) {
     if (!$res) return array();
     $result = array();
-        while ($item = litepublisher::$db->fetchassoc($res)) {
+    while ($item = litepublisher::$db->fetchassoc($res)) {
       $id = $item['id'];
       $result[] = $id;
       $this->items[$id] = $item;
@@ -129,15 +128,15 @@ class titems extends tevents {
     }
     return -1;
   }
-
-public function additem(array $item) {
-$id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
-$item['id'] = $id;
-$this->items[$id] = $item;
-if (!$this->dbversion) $this->save();
-$this->added($id);
-return $id;
-}
+  
+  public function additem(array $item) {
+    $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+    $item['id'] = $id;
+    $this->items[$id] = $item;
+    if (!$this->dbversion) $this->save();
+    $this->added($id);
+    return $id;
+  }
   
   public function delete($id) {
     if ($this->dbversion) $this->db->delete("id = $id");
