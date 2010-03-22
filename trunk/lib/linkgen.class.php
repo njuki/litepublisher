@@ -127,6 +127,10 @@ class tlinkgenerator extends tevents {
   public function month() {
     return date('m', $this->getdate());
   }
+
+  public function day() {
+    return date('d', $this->getdate());
+  }
   
   public function monthname() {
     return tlocal::date($this->getdate(), '%F');

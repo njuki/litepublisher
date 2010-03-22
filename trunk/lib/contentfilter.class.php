@@ -1,4 +1,3 @@
-descri
 <?php
 /**
 * Lite Publisher
