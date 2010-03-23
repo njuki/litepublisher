@@ -510,6 +510,10 @@ class tpost extends titem implements  itemplate {
     $urlmap = turlmap::instance();
     $urlmap->setexpired($this->idurl);
   }
+
+public function getschemalink() {
+return 'post';
+}
   
 }//class
 

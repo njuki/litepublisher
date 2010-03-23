@@ -97,7 +97,7 @@ class tposts extends titems {
     $post->pagescount = count($post->pages);
     $post->title = tcontentfilter::escape($post->title);
     $linkgen = tlinkgenerator::instance();
-    $post->url = $linkgen->addurl($post, 'post');
+    $post->url = $linkgen->addurl($post, $post->schemalink);
     $urlmap = turlmap::instance();
     if (dbversion) {
       $post->addtodb();
@@ -124,7 +124,7 @@ class tposts extends titems {
   public function edit(tpost $post) {
     $post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
     $linkgen = tlinkgenerator::instance();
-    $linkgen->editurl($post, 'post');
+    $linkgen->editurl($post, $post->schemalink);
     $post->modified = time();
     $this->lock();
     $this->updated($post);
