@@ -7,79 +7,33 @@
 **/
 
 function tsourcefilesInstall($self) {
-  if (!dbversion) die("Ticket  system only for database version");
-  tfiler::deletemask(litepublisher::$paths->languages . '*.php');
-  $self->checkadminlang();
-  
+  if (!dbversion) die("Sourcefiles plugin only for database version");
+
+
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->table, file_get_contents($self->resource .'ticket.sql'));
-  
-  litepublisher::$classes->lock();
-  $posts = tposts::instance();
-  $posts->deleted = $self->postdeleted;
-  
-  $class = 'tticket';
-  litepublisher::$classes->Add($class, 'ticket.class.php', basename(dirname(__file__) ));
-  
-  //install polls if its needed
-  $plugins = tplugins::instance();
-  if (!isset($plugins->items['polls'])) $plugins->add('polls');
-  $polls = tpolls::instance();
-  $polls->finddeleted = false;
-  $polls->save();
-  
-  litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
-  litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
-  
-  $menus = tadminmenus::instance();
-  $idmenu = $menus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
-  $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
-  $idmenu = $menus->createitem($idmenu, 'editor', 'ticket', 'tticketeditor');
-  $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
-  $menus->unlock();
-  litepublisher::$classes->unlock();
-  
-  $linkgen = tlinkgenerator::instance();
-  $linkgen->post = '/[type]/[title].htm';
-  $linkgen->save();
-  
-  $cron = tcron::instance();
-  $cron->addweekly(get_class($self), 'optimize', null);
-}
+  $manager->CreateTable($self->table, "
+  `id` int unsigned NOT NULL auto_increment,
+  `idurl` int unsigned NOT NULL default '0',
+  `filename` varchar(128) NOT NULL,
+  `dir` varchar(128) NOT NULL,
+  `hash` varchar(32) NOT NULL,
+  `content` longtext NOT NULL,
+
+  PRIMARY KEY  (`id`)
+");
+
+$self->adddir('lib');
+ }
 
 function tsourcefilesUninstall($self) {
   //die("Warning! You can lost all tickets!");
   $cron = tcron::instance();
   $cron->deleteclass(get_class($self));
   
-  litepublisher::$classes->lock();
-  tposts::unsub($self);
-  
-  $class = 'tticket';
-  litepublisher::$classes->delete($class);
-  
-  
-  litepublisher::$classes->delete('tticketeditor');
-  litepublisher::$classes->delete('tadmintickets');
-  
-  $menus = tadminmenus::instance();
-  $menus->lock();
-  $menus->deleteurl('/admin/tickets/editor/');
-  $menus->deleteurl('/admin/tickets/');
-  $menus->unlock();
-  litepublisher::$classes->unlock();
-  
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->table);
-  
-  $polls = tpolls::instance();
-  $polls->finddeleted = true;
-  $polls->save();
-  
-  $linkgen = tlinkgenerator::instance();
-  $linkgen->post = '/[title].htm';
-  $linkgen->save();
-  tfiler::deletemask(litepublisher::$paths->languages . '*.php');
+
+Turlmap::unsub($self);  
 }
 
 ?>

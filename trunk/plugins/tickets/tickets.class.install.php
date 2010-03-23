@@ -12,7 +12,7 @@ function tticketsInstall($self) {
   $self->checkadminlang();
   
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->table, file_get_contents($self->resource .'ticket.sql'));
+  $manager->CreateTable($self->ticketstable, file_get_contents($self->resource .'ticket.sql'));
   
   litepublisher::$classes->lock();
   $posts = tposts::instance();
@@ -40,7 +40,7 @@ function tticketsInstall($self) {
   litepublisher::$classes->unlock();
   
   $linkgen = tlinkgenerator::instance();
-  $linkgen->post = '/[type]/[title].htm';
+  $linkgen->data['ticket'] = '/[type]/[title].htm';
   $linkgen->save();
   
   $cron = tcron::instance();
@@ -70,15 +70,12 @@ function tticketsUninstall($self) {
   litepublisher::$classes->unlock();
   
   $manager = tdbmanager ::instance();
-  $manager->deletetable($self->table);
+  $manager->deletetable($self->tickettable);
   
   $polls = tpolls::instance();
   $polls->finddeleted = true;
   $polls->save();
   
-  $linkgen = tlinkgenerator::instance();
-  $linkgen->post = '/[title].htm';
-  $linkgen->save();
   tfiler::deletemask(litepublisher::$paths->languages . '*.php');
 }
 
