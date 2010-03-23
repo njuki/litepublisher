@@ -34,8 +34,9 @@ return $this->item['filename'];
   public function getdescription() { }
   public function gethead() { }
   public function getcont() {
+$updir = sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li>', litepublisher::$options->url, $this->item['dir']);
 $theme = ttheme::instance();
-return sprintf($theme->content->simple, $this->item['content']);
+return sprintf($theme->content->simple, $updir . $this->item['content']);
 }
 
 public function add($dir, $filename) {
@@ -59,6 +60,7 @@ $item = array(
 'hash' => $hash,
 'content' => $this->syntax($realfile)
 );
+if (strlen($item['content']) > 100000) $item['content'] = 'big';
 $id =$this->db->add($item);
 $idurl = litepublisher::$urlmap->add("/source/$dir/$filename", get_class($this), $id);
 $this->db->setvalue($id, 'idurl', $idurl);
@@ -92,20 +94,22 @@ $dirs = array();
 $files = array();
 $content = '';
 $dircontent = '';
-if ($list = glob($realdir . '*')) {
+if ($list = scandir ($realdir)) {
 $url = litepublisher::$options->url;
 foreach ($list as $filename) {
-$filename = basename($filename);
-if (preg_match('/^(\.|\.\.|index\.htm|\.svn)$/', $filename)) continue;
+//$filename = basename($filename);
+if (preg_match('/^(\.|\.\.|\.htaccess|index\.htm|\.svn)$/', $filename)) continue;
 if (is_dir($realdir . $filename)) {
 $newdir = $dir . '/' . $filename;
 $dirs[] = dbquote($newdir);
-$id = $this->adddir(newdir);
-$dircontent .= sprintf('<li><a href="%1$s/source/%2$s/" title="%3$s">%3$s</a></li>', $url, $newdir , strtoupper($filename));
+$id = $this->adddir($newdir);
+$dircontent .= sprintf('<li><a href="%1$s/source/%2$s/" title="%3$s"><strong>%3$s</strong></a></li>', $url, $newdir , strtoupper($filename));
 $dircontent .= "\n";
 } else {
 if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
+if (strend($filename, '.min.js') || (($dir == 'lib/languages') && strend($filename, '.php'))) continue;
 $files[] = dbquote($filename);
+
 $id = $this->add($dir, $filename);
 $content .= sprintf('<li><a href="%1$s/source/%2$s/%3$s" title="%3$s">%3$s</a></li>', $url, $dir, $filename);
 } elseif (preg_match('/\.(jpg|gif|png|bmp)$/', $filename)) {

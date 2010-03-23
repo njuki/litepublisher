@@ -95,6 +95,7 @@ litepublisher::$options->showerrors();
 if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){
 echo "<pre>\n";
 $man = tdbmanager::instance();
+//$man->optimize();
 //$man->deletealltables();
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());

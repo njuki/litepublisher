@@ -9,8 +9,12 @@
 class tadminsourcefiles  {
 
 public function getcontent() {
+$filename = dirname(__file__) . DIRECTORY_SEPARATOR . 'files.dat';
 $plugin = tsourcefiles::instance();
 $plugin->adddir('lib');
+$plugin->adddir('themes');
+$plugin->adddir('js');
+$plugin->adddir('plugins');
 }
 
 public function processform() {
