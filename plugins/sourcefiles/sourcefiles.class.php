@@ -92,15 +92,16 @@ $dirs = array();
 $files = array();
 $content = '';
 $dircontent = '';
-if ($list = glob($realdir . '*.*')) {
+if ($list = glob($realdir . '*')) {
 $url = litepublisher::$options->url;
 foreach ($list as $filename) {
 $filename = basename($filename);
 if (preg_match('/^(\.|\.\.|index\.htm|\.svn)$/', $filename)) continue;
 if (is_dir($realdir . $filename)) {
-$dirs[] = dbquote($filename);
-$id = $this->adddir($dir . '/' . $filename);
-$dircontent .= sprintf('<li><a href="%1$s/source/%2$s/" title="%2$s">%2$s</a></li>', $url, $filename);
+$newdir = $dir . '/' . $filename;
+$dirs[] = dbquote($newdir);
+$id = $this->adddir(newdir);
+$dircontent .= sprintf('<li><a href="%1$s/source/%2$s/" title="%3$s">%3$s</a></li>', $url, $newdir , strtoupper($filename));
 $dircontent .= "\n";
 } else {
 if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
@@ -120,7 +121,7 @@ $content = sprintf("<ul>\n%s\n%s\n</ul>\n", $dircontent, $content);
 $sqlfiles = sprintf("(dir = %s and filename <> '' ", dbquote($dir));
 $sqlfiles .= count($files) == 0 ?  ')' : sprintf(' and filename not in (%s))', implode(',', $files));
 $sqldirs = sprintf(' or (filename = \'\' and dir <> %1$s and left(dir, %2$d) = %1$s', dbquote($dir), strlen($dir));
-$sqldirs .= count($dirs) == 0 ? ')' : sprintf(' and not in (%s))', implode(',', $dirs));
+$sqldirs .= count($dirs) == 0 ? ')' : sprintf(' and dir not in (%s))', implode(',', $dirs));
 if ($deleted = $this->db->getitems($sqlfiles . $sqldirs)) {
 $items = array();
 $idurls = array();
@@ -128,16 +129,17 @@ foreach ($deleted as $item) {
 $items[] = $item['id'];
 $idurls[] = $item['idurl'];
 }
-$urls = litepublisher::$urlmap->db->getitems($idurls);
-litepublisher::$urlmap->db->deleteitems($idurls);
-$this->db->deleteitems($items);
-
+litepublisher::$urlmap->loaditems($idurls);
 $robot = trobotstxt::instance();
 $robot->lock();
-foreach ($urls as $item) {
-$robot->AddDisallow($urls['url']);
+foreach ($idurls as $idurl) {
+$robot->AddDisallow(litepublisher::$urlmap->getvalue($idurl, 'url'));
 }
 $robot->unlock();
+
+
+litepublisher::$urlmap->db->deleteitems($idurls);
+$this->db->deleteitems($items);
 }
 
 if ($item = $this->db->finditem("filename = '' and dir = ". dbquote($dir))) {

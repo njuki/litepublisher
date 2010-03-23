@@ -96,7 +96,7 @@ if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SE
 echo "<pre>\n";
 $man = tdbmanager::instance();
 //$man->deletealltables();
-echo  $man->performance();
+//echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
 //
