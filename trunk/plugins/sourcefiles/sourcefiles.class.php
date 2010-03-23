@@ -7,6 +7,7 @@
 **/
 
 class tsourcefiles extends tplugin {
+public $ignore;
 private $item;
 private $geshi;
 
@@ -17,6 +18,7 @@ private $geshi;
   protected function create() {
     parent::create();
 $this->table = 'sourcefiles';
+$this->addmap('ignore', array());
   }
 
   public function request($arg) {
@@ -24,7 +26,9 @@ $this->item = $this->db->getitem($arg);
 }
 
   public function gettitle() {
-return $this->item['dir'] . '/'. $this->item['filename'];
+$result = $this->item['dir'];
+$result .= $this->item['filename'] == '' ?  '' : '/'. $this->item['filename'];
+return $result;
 }
 
   public function getkeywords() {
@@ -39,8 +43,9 @@ $theme = ttheme::instance();
 return sprintf($theme->content->simple, $updir . $this->item['content']);
 }
 
-public function add($dir, $filename) {
-$realfile = litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR . $filename;
+public function add($dir, $filename, $realdir = '') {
+$realdir = $realdir == '' ? litepublisher::$paths->home : $realdir;
+$realfile = $realdir . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR . $filename;
 $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
 $dir = trim($dir, '/');
 $hash = md5_file ($realfile);
@@ -62,7 +67,8 @@ $item = array(
 );
 if (strlen($item['content']) > 100000) $item['content'] = 'big';
 $id =$this->db->add($item);
-$idurl = litepublisher::$urlmap->add("/source/$dir/$filename", get_class($this), $id);
+if ($dir != '') $dir .= '/';
+$idurl = litepublisher::$urlmap->add("/source/$dir$filename", get_class($this), $id);
 $this->db->setvalue($id, 'idurl', $idurl);
 
 return $id;
@@ -97,8 +103,8 @@ $dircontent = '';
 if ($list = scandir ($realdir)) {
 $url = litepublisher::$options->url;
 foreach ($list as $filename) {
-//$filename = basename($filename);
 if (preg_match('/^(\.|\.\.|\.htaccess|index\.htm|\.svn)$/', $filename)) continue;
+if (in_array($dir . '/' . $filename, $this->ignore)) continue;
 if (is_dir($realdir . $filename)) {
 $newdir = $dir . '/' . $filename;
 $dirs[] = dbquote($newdir);
@@ -109,10 +115,9 @@ $dircontent .= "\n";
 if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
 if (strend($filename, '.min.js') || (($dir == 'lib/languages') && strend($filename, '.php'))) continue;
 $files[] = dbquote($filename);
-
 $id = $this->add($dir, $filename);
 $content .= sprintf('<li><a href="%1$s/source/%2$s/%3$s" title="%3$s">%3$s</a></li>', $url, $dir, $filename);
-} elseif (preg_match('/\.(jpg|gif|png|bmp)$/', $filename)) {
+} elseif (preg_match('/\.(jpg|gif|png|bmp|ico)$/', $filename)) {
 $content .= sprintf('<li><img src="%1$s/%2$s/%3$s" alt="%3$s" /></li>', $url, $dir, $filename);
 }
 $content .= "\n";
