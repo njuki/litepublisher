@@ -9,7 +9,7 @@
 class tmetapost extends titem {
   
   public static function instance($id = 0) {
-    return parent::instance(__class__, (int) $id);
+    return parent::iteminstance('postmeta', __class__, (int) $id);
   }
   
   public function getbasename() {
