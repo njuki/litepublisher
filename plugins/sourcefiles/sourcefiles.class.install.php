@@ -7,9 +7,7 @@
 **/
 
 function tsourcefilesInstall($self) {
-  if (!dbversion) die("Sourcefiles plugin only for database version");
-
-
+  if (!dbversion) die("Plugin required data base");
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->table, "
   `id` int unsigned NOT NULL auto_increment,
@@ -21,15 +19,10 @@ function tsourcefilesInstall($self) {
 
   PRIMARY KEY  (`id`)
 ");
-
-$self->adddir('lib');
  }
 
 function tsourcefilesUninstall($self) {
   //die("Warning! You can lost all tickets!");
-  $cron = tcron::instance();
-  $cron->deleteclass(get_class($self));
-  
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->table);
 
