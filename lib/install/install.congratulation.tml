@@ -21,24 +21,6 @@
 	#showhost a {border-bottom:1px dashed #737373; cursor:pointer;}
 	
 	</style>
-		<script type="text/javascript">
-function changedbversion(db) {
-var form = document.getElementById("dbform");
-if (db == 1) {
-form.style.display = "block"; 
-} else {
-form.style.display = "none"; 
-}
-return true;
-}
-
-function showdbhost() {
-document.getElementById("divhost").style.visibility = "visible"; 
-document.getElementById("showhost").style.visibility = "hidden"; 
-document.getElementById("usehost").value = "1";
-}
-
-</script>
   </head>
   <body>
 

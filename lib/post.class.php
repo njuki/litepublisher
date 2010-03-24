@@ -433,6 +433,7 @@ class tpost extends titem implements  itemplate {
   
   public function setcontent($s) {
     if ($s <> $this->rawcontent) {
+if (!is_string($s)) $this->error('Error! Post content must be string');
       $this->rawcontent = $s;
       $filter = tcontentfilter::instance();
       $filter->SetPostContent($this,$s);

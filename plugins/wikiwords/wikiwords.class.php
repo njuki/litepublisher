@@ -65,7 +65,7 @@ class twikiwords extends titems {
     $word = trim(strip_tags($word));
     if ($word == '') return false;
     $id = $this->IndexOf('word', $word);
-    if ($id <= 0) $id = $this->additem(array('word' => $word));
+    if (!$id) $id = $this->additem(array('word' => $word));
     if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
       $this->itemsposts->add($idpost, $id);
     }
@@ -83,8 +83,7 @@ class twikiwords extends titems {
   }
   
   public function deleteword($word) {
-    $id = $this->IndexOf('word', $word);
-    if ($id > 0) return $this->delete($id);
+    if ($id = $this->IndexOf('word', $word)) return $this->delete($id);
   }
   
   public function postadded($idpost) {

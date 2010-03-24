@@ -39,14 +39,13 @@ class tadminpassword extends tadminform {
     
     $args = targs::instance();
     if ($id == 1) {
-    } else {
       $name = 'admin';
-      $args->login = $name;
-      $args->
+    } else {
       $item = $users->getitem($id);
       $args->add($item);
       $name = $item['name'];
     }
+      $args->login = $name;
     $args->password = $password;
     $mailtemplate = tmailtemplate::instance($this->section);
     $subject = $mailtemplate->subject($args);
