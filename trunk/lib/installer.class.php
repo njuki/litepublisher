@@ -236,7 +236,7 @@ class tinstaller extends tdata {
   
   public function wizardform() {
     $this->loadlang();
-    $form = $this->GetLangForm();
+    $combobox = $this->getlangcombo();
     $html = THtmlResource::instance();
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
@@ -246,31 +246,25 @@ class tinstaller extends tdata {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
     $dbprefix = strtolower(str_replace('.', '', litepublisher::$domain)) . '_';
-    
-    $installform = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
-    eval('$form .= "'. $installform. '\n";');
-    echo SimplyHtml(tlocal::$data['installation']['title'],  $form);
+    $title = tlocal::$data['installation']['title'];
+    $form = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
+$form = str_replace('"', '\"', $form);
+    eval('$form = "'. $form . '\n";');
+    $this->echohtml(  $form);
   }
   
-  private function GetLangForm() {
+  private function getlangcombo() {
     $langs = array(
     'en' => 'English',
     'ru' => 'Russian',
     'ua' => 'Ukrain'
     );
     
-    $result = "<form name='langform' action='' method='get'>
-    <p><select name='lang' id='lang'>\n";
-    
-    foreach ($langs as $lang => $value) {
+    $result = '';
+        foreach ($langs as $lang => $value) {
       $selected = $lang == $this->language ? 'selected' : '';
       $result .= "<option value='$lang' $selected>$value</option>\n";
     }
-    
-    $result .= "</select>
-    <input type='submit' name='submit' value='Change language' /></p>
-    </form>";
-    
     return $result;
   }
   
@@ -320,16 +314,16 @@ class tinstaller extends tdata {
   
   public function congratulation($password) {
     global  $lang;
+    $tml = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.congratulation.tml');
     $html = THtmlResource::instance();
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
     $args = targs::instance();
+$args->title = litepublisher::$options->name;
     $args->url = litepublisher::$options->url . '/';
     $args->password = $password;
-    $content = $html->congratulation($args);
-    
-    echo SimplyHtml(litepublisher::$options->name, $content);
-    if (ob_get_level()) ob_end_flush ();
+    $content = $html->parsearg($tml, $args);
+        $this->echohtml($content);
   }
   
   public function uninstall() {
@@ -354,23 +348,15 @@ class tinstaller extends tdata {
     }
     return 'en';
   }
-  
-}//class
-
-function SimplyHtml($title, $content) {
+ 
+public function echohtml($html) {
   @header('Content-Type: text/html; charset=utf-8');
   @Header( 'Cache-Control: no-cache, must-revalidate');
   @Header( 'Pragma: no-cache');
-  
-  return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-  <html xmlns="http://www.w3.org/1999/xhtml">
-  <head profile="http://gmpg.org/xfn/11">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>'. $title . '</title>
-  </head>
-  <body> ' .$content .'</body>
-  </html>
-  ';
+  echo $html;
+    if (ob_get_level()) ob_end_flush ();
 }
+
+ }//class
 
 ?>
