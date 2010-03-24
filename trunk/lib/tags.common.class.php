@@ -141,8 +141,8 @@ class tcommontags extends titems implements  itemplate {
   
   public function add($title) {
     if (empty($title)) return false;
-    $id  = $this->IndexOf('title', $title);
-    if ($id > 0) return $id;
+    if ($id  = $this->IndexOf('title', $title)) return $id;
+
     $urlmap =turlmap::instance();
     $linkgen = tlinkgenerator::instance();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
