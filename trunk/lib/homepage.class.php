@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class thomepage extends tevents implements  itemplate, itemplate2 {
+class thomepage extends tevents implements  itemplate, itemplate2, imenu  {
   
   public static function instance() {
     return getinstance(__class__);
@@ -92,6 +92,11 @@ public function afterrequest(&$content) {}
       return $widgets->getcontent();
     }
   }
-  
+// imenu  
+  public function getparent() { return 0; }
+  public function setparent($id) {}
+  public function getorder() { return 0; }
+  public function setorder($order) {}
+
 }//class
 ?>

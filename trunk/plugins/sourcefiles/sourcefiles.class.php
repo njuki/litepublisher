@@ -38,7 +38,7 @@ return $this->item['filename'];
   public function getdescription() { }
   public function gethead() { }
   public function getcont() {
-$updir = sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li>', litepublisher::$options->url, $this->item['dir']);
+$updir = $this->item['filename'] == '' ? '' : sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li>', litepublisher::$options->url, $this->item['dir']);
 $theme = ttheme::instance();
 return sprintf($theme->content->simple, $updir . $this->item['content']);
 }
@@ -70,7 +70,6 @@ $id =$this->db->add($item);
 if ($dir != '') $dir .= '/';
 $idurl = litepublisher::$urlmap->add("/source/$dir$filename", get_class($this), $id);
 $this->db->setvalue($id, 'idurl', $idurl);
-
 return $id;
 }
 
@@ -99,9 +98,11 @@ $realdir = litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $
 $dirs = array();
 $files = array();
 $content = '';
-$dircontent = '';
-if ($list = scandir ($realdir)) {
 $url = litepublisher::$options->url;
+$updir = dirname($dir);
+$updir = $updir == '.' ? '' : $updir . '/';
+$dircontent = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);
+if ($list = scandir ($realdir)) {
 foreach ($list as $filename) {
 if (preg_match('/^(\.|\.\.|\.htaccess|index\.htm|\.svn)$/', $filename)) continue;
 if (in_array($dir . '/' . $filename, $this->ignore)) continue;

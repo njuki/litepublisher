@@ -145,7 +145,7 @@ public function save() {}
   }
   
   public function request($id) {
-    if (is_null($id)) $id = $this->getidbyclass();
+    if (is_null($id)) $id = $this->owner->class2id(get_class($this));
     $this->data['id'] = (int)$id;
     if ($id > 0) {
       $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
@@ -154,14 +154,6 @@ public function save() {}
     tlocal::loadlang('admin');
     $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();
-  }
-  
-  private function getidbyclass() {
-    $class = get_class($this);
-    foreach($this->owner->items as $id => $item) {
-      if ($class == $item['class']) return $id;
-    }
-    return 0;
   }
   
   public function idget() {

@@ -29,6 +29,8 @@ class Tadminoptions extends tadminmenu {
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
       $args->text = $home->text;
+$menus = tmenus::instance();
+      $args->homemenu = $menus->class2id(get_class($home)) > 0;
       break;
       
       case 'mail':
@@ -157,6 +159,20 @@ class Tadminoptions extends tadminmenu {
       $home->text = $text;
       $home->hideposts = isset($hideposts);
       $home->unlock();
+$menus = tmenus::instance();
+$id =$menus->class2id(get_class($home));
+$homemenu = isset($homemenu);
+if ($homemenu != ($id > 0)) {
+if ($homemenu) {
+$menus->lock();
+$id = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
+$menus->items[$id]['order'] = 0;
+$menus->sort();
+$menus->unlock();
+} else {
+$menus->remove($id);
+}
+}
       break;
       
       case 'mail':

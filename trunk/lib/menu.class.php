@@ -39,13 +39,17 @@ class tmenus extends TItems {
     $linkgen = tlinkgenerator::instance();
     $item->url = $linkgen->addurl($item, 'menu');
     
-    $this->items[++$this->autoid] = array('id' => $this->autoid);
+$id = ++$this->autoid;
+    $this->items[$id] = array(
+'id' => $id,
+'class' => get_class($item)
+);
     //move props
     foreach (tmenu::$ownerprops as $prop) {
-      $this->items[$this->autoid][$prop] = $item->$prop;
+      $this->items[$id][$prop] = $item->$prop;
       if (isset($item->data[$prop])) unset($item->data[$prop]);
     }
-    $item->id = $this->autoid;
+    $item->id = $id;
     $urlmap = turlmap::instance();
     $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
     if ($item->status != 'draft') $item->status = 'published';
@@ -53,20 +57,25 @@ class tmenus extends TItems {
     $this->sort();
     $item->save();
     $this->unlock();
-    $this->added($item->id);
+    $this->added($id);
     $urlmap->clearcache();
-    return $item->id;
+    return $id;
   }
-  
   
   public function additem(array $item) {
     $item['id'] = ++$this->autoid;
     $item['order'] = $this->autoid;
     $item[    'status'] = 'published';
-    $item['idurl'] =     litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
+if ($idurl = litepublisher::$urlmap->urlexists($item['url'])) {
+$item['idurl'] =  $idurl;
+} else {
+$item['idurl'] =litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
+}
+
     $this->items[$this->autoid] = $item;
     $this->sort();
     $this->save();
+litepublisher::$urlmap->clearcache();
     return $this->autoid;
   }
   
@@ -78,7 +87,7 @@ class tmenus extends TItems {
     'class' => $class
     ));
   }
-  
+
   public function edit(imenu $item) {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($item, 'menu');
@@ -111,6 +120,18 @@ class tmenus extends TItems {
     foreach ($this->items as $id => $item) {
       if ($url == $item['url']) return $this->delete($id);
     }
+  }
+
+  public function  remove($id) {
+    if (!$this->itemexists($id)) return false;
+    if ($this->haschilds($id)) return false;
+    $this->lock();
+    unset($this->items[$id]);
+    $this->sort();
+    $this->unlock();
+    $this->deleted($id);
+    litepublisher::$urlmap->clearcache();
+    return true;
   }
   
   public function haschilds($id) {
@@ -248,6 +269,13 @@ class tmenus extends TItems {
       $result .= sprintf($tml,litepublisher::$options.url . $item['url'], $item['title'], $subitems);
     }
     return $result;
+  }
+  
+ public function class2id($class) {
+    foreach($this->items as $id => $item) {
+      if ($class == $item['class']) return $id;
+    }
+    return 0;
   }
   
 }//class

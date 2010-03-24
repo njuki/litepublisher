@@ -15,6 +15,8 @@ class tupdater extends tevents {
   
   protected function create() {
     parent::create();
+$this->addevents('onupdated');
+$this->basename = 'updater';
     $this->version =  self::getversion();
   }
   
@@ -84,8 +86,8 @@ class tupdater extends tevents {
     $s = $backuper->getpartial(true, true, true);
     $date = date('Y-m-d');
     $filename = litepublisher::$paths->backup . litepublisher::$domain . "-$date.'.tar.gz";
-    @file_put_contents($filename, $s);
-    @chmod($filename, 0666);
+    file_put_contents($filename, $s);
+    chmod($filename, 0666);
   }
   
   public function download($version) {
@@ -112,10 +114,11 @@ class tupdater extends tevents {
         chmod($filename, 0666);
       }
     }
+$this->onupdated($tar);
     return true;
   }
   
-  private function fixfilename($filename, $root) {
+  private function fixfilename($filename) {
     foreach (array('lib', 'plugins') as $dir) {
       if (strbegin($filename, $dir . '/')) {
         $filename = substr($filename, strlen($dir) + 1);
