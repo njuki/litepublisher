@@ -186,9 +186,9 @@ class turlmap extends titems {
   
   public function urlexists($url) {
     if (dbversion) {
-      return $this->db->exists('url = '. dbquote($url));
+      return $this->db->findid('url = '. dbquote($url));
     } else {
-      return isset($this->items[$url]);
+      return isset($this->items[$url]) ? $this->items[$url]['id'] : false;
     }
   }
   

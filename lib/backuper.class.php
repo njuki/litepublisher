@@ -35,7 +35,7 @@ class tbackuper extends tevents {
         }
       }
     }
-    if (!$hasindex) $tar->add('', $prefix . $subdirslashed. 'index.htm', 0666);
+    if (!$hasindex) $tar->addstring('', $prefix . $subdirslashed. 'index.htm', 0666);
   }
   
   private function dirtotar($dir, $gz) {
