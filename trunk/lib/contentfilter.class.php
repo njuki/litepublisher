@@ -104,23 +104,40 @@ class tcontentfilter extends tevents {
     }
     
     $result = trim($content);
-    $result = $this->replacecode($result);
     $result = self::auto_p($result);
+    $result = $this->replacecode($result);
     $this->callevent('afterfilter', array(&$result));
     return $result;
   }
   
   public function replacecode($s) {
-    if ($this->phpcode) $s = preg_replace_callback('/\<\?(php)?(.*?)\?\>/ims', array(&$this, 'CallbackReplaceCode'), $s);
-    return preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'CallbackReplaceCode'), $s);
+    $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'CallbackReplaceCode'), $s);
+    if ($this->phpcode) {
+$s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_replace_php'), $s);
+} else {
+$s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_fix_php'), $s);
+}
+return $s;
   }
-  
-  public function CallbackReplaceCode($found) {
-    $code = str_replace(
+
+public function callback_fix_php($m) {
+return str_replace("<br />\n", "\n", $m[0]);
+}
+
+public static function specchars($s) {    
+$s = str_replace("<br />\n", "\n", $s);
+return str_replace(
     array('"', "'", '$'),
     array('&quot;', '&#39;', '&#36;'),
-    htmlspecialchars($found[1]));
-    return "<code><pre>\n$code\n</pre></code>";
+    htmlspecialchars($s));
+}
+  
+  public function CallbackReplaceCode($found) {
+    return sprintf('<code><pre>%s</pre></code>', self::specchars($found[1]));
+  }
+
+  public function callback_replace_php($found) {
+    return sprintf('<code><pre>%s</pre></code>', self::specchars($found[0]));
   }
   
   public static function getexcerpt($content, $len) {
@@ -190,7 +207,7 @@ class tcontentfilter extends tevents {
     // The following regexes only need to be executed if the string contains html
     if ($html_found = (strpos($str, '<') !== FALSE)) {
       // Elements that should not be surrounded by p tags
-      $no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th)|script)';
+      $no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th)|script|code|\?)';
       
       // Put at least two linebreaks before and after $no_p elements
       $str = preg_replace('~^<'.$no_p.'[^>]*+>~im', "\n$0", $str);
