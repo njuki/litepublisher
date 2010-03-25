@@ -285,7 +285,7 @@ class tcommontags extends titems implements  itemplate {
     }
     
     $url = $item['url'];
-    if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . "/page/$urlmap->page/";
+    if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . '/page/'. litepublisher::$urlmap->page . '/';
     if (litepublisher::$urlmap->url != $url) litepublisher::$urlmap->redir301($url);
   }
   
