@@ -248,7 +248,7 @@ class tinstaller extends tdata {
     $dbprefix = strtolower(str_replace('.', '', litepublisher::$domain)) . '_';
     $title = tlocal::$data['installation']['title'];
     $form = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
-$form = str_replace('"', '\"', $form);
+    $form = str_replace('"', '\"', $form);
     eval('$form = "'. $form . '\n";');
     $this->echohtml(  $form);
   }
@@ -261,7 +261,7 @@ $form = str_replace('"', '\"', $form);
     );
     
     $result = '';
-        foreach ($langs as $lang => $value) {
+    foreach ($langs as $lang => $value) {
       $selected = $lang == $this->language ? 'selected' : '';
       $result .= "<option value='$lang' $selected>$value</option>\n";
     }
@@ -319,11 +319,11 @@ $form = str_replace('"', '\"', $form);
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
     $args = targs::instance();
-$args->title = litepublisher::$options->name;
+    $args->title = litepublisher::$options->name;
     $args->url = litepublisher::$options->url . '/';
     $args->password = $password;
     $content = $html->parsearg($tml, $args);
-        $this->echohtml($content);
+    $this->echohtml($content);
   }
   
   public function uninstall() {
@@ -348,15 +348,15 @@ $args->title = litepublisher::$options->name;
     }
     return 'en';
   }
- 
-public function echohtml($html) {
-  @header('Content-Type: text/html; charset=utf-8');
-  @Header( 'Cache-Control: no-cache, must-revalidate');
-  @Header( 'Pragma: no-cache');
-  echo $html;
+  
+  public function echohtml($html) {
+    @header('Content-Type: text/html; charset=utf-8');
+    @Header( 'Cache-Control: no-cache, must-revalidate');
+    @Header( 'Pragma: no-cache');
+    echo $html;
     if (ob_get_level()) ob_end_flush ();
-}
-
- }//class
+  }
+  
+}//class
 
 ?>

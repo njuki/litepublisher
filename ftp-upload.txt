@@ -1,0 +1,1435 @@
+open example.com
+user login passwword
+cd public_html
+binary
+send .htaccess .htaccess
+quote site chmod 644 .htaccess
+send favicon.ico favicon.ico
+quote site chmod 644 favicon.ico
+send index.php index.php
+quote site chmod 644 index.php
+send readmeru.txt readmeru.txt
+quote site chmod 644 readmeru.txt
+send license.txt license.txt
+quote site chmod 644 license.txt
+send mit.txt mit.txt
+quote site chmod 644 mit.txt
+send gpl.txt gpl.txt
+quote site chmod 644 gpl.txt
+mkdir backup
+quote site chmod 777 backup
+send build\htaccess.txt backup/.htaccess
+quote site chmod 666 backup/.htaccess
+send build\indexfile.htm backup/index.htm
+quote site chmod 666 backup/index.htm
+mkdir cache
+quote site chmod 777 cache
+send build\htaccess.txt cache/.htaccess
+quote site chmod 666 cache/.htaccess
+send build\indexfile.htm cache/index.htm
+quote site chmod 666 cache/index.htm
+mkdir data
+quote site chmod 777 data
+send build\htaccess.txt data/.htaccess
+quote site chmod 666 data/.htaccess
+send build\indexfile.htm data/index.htm
+quote site chmod 666 data/index.htm
+mkdir files
+quote site chmod 777 files
+send build\indexfile.htm files/index.htm
+quote site chmod 666 files/index.htm
+mkdir lib
+quote site chmod 777 lib
+send lib\.htaccess lib/.htaccess
+quote site chmod 666 lib/.htaccess
+send lib\admin.board.class.php lib/admin.board.class.php
+quote site chmod 666 lib/admin.board.class.php
+send lib\admin.comments.class.db.php lib/admin.comments.class.db.php
+quote site chmod 666 lib/admin.comments.class.db.php
+send lib\admin.comments.class.files.php lib/admin.comments.class.files.php
+quote site chmod 666 lib/admin.comments.class.files.php
+send lib\admin.files.class.php lib/admin.files.class.php
+quote site chmod 666 lib/admin.files.class.php
+send lib\admin.foaf.class.php lib/admin.foaf.class.php
+quote site chmod 666 lib/admin.foaf.class.php
+send lib\admin.form.class.php lib/admin.form.class.php
+quote site chmod 666 lib/admin.form.class.php
+send lib\admin.icons.class.php lib/admin.icons.class.php
+quote site chmod 666 lib/admin.icons.class.php
+send lib\admin.login.class.php lib/admin.login.class.php
+quote site chmod 666 lib/admin.login.class.php
+send lib\admin.menu.class.php lib/admin.menu.class.php
+quote site chmod 666 lib/admin.menu.class.php
+send lib\admin.options.class.php lib/admin.options.class.php
+quote site chmod 666 lib/admin.options.class.php
+send lib\admin.password.class.php lib/admin.password.class.php
+quote site chmod 666 lib/admin.password.class.php
+send lib\admin.plugins.class.php lib/admin.plugins.class.php
+quote site chmod 666 lib/admin.plugins.class.php
+send lib\admin.posteditor.class.php lib/admin.posteditor.class.php
+quote site chmod 666 lib/admin.posteditor.class.php
+send lib\admin.posts.class.php lib/admin.posts.class.php
+quote site chmod 666 lib/admin.posts.class.php
+send lib\admin.reguser.class.php lib/admin.reguser.class.php
+quote site chmod 666 lib/admin.reguser.class.php
+send lib\admin.service.class.php lib/admin.service.class.php
+quote site chmod 666 lib/admin.service.class.php
+send lib\admin.staticpages.class.php lib/admin.staticpages.class.php
+quote site chmod 666 lib/admin.staticpages.class.php
+send lib\admin.subscribers.class.php lib/admin.subscribers.class.php
+quote site chmod 666 lib/admin.subscribers.class.php
+send lib\admin.tags.class.php lib/admin.tags.class.php
+quote site chmod 666 lib/admin.tags.class.php
+send lib\admin.themes.class.php lib/admin.themes.class.php
+quote site chmod 666 lib/admin.themes.class.php
+send lib\admin.users.class.php lib/admin.users.class.php
+quote site chmod 666 lib/admin.users.class.php
+send lib\admin.widgets.class.php lib/admin.widgets.class.php
+quote site chmod 666 lib/admin.widgets.class.php
+send lib\archives.class.php lib/archives.class.php
+quote site chmod 666 lib/archives.class.php
+send lib\authdigest.class.php lib/authdigest.class.php
+quote site chmod 666 lib/authdigest.class.php
+send lib\backuper.class.php lib/backuper.class.php
+quote site chmod 666 lib/backuper.class.php
+send lib\class-IXR.php lib/class-IXR.php
+quote site chmod 666 lib/class-IXR.php
+send lib\classes.php lib/classes.php
+quote site chmod 666 lib/classes.php
+send lib\comments.class.db.php lib/comments.class.db.php
+quote site chmod 666 lib/comments.class.db.php
+send lib\comments.class.files.php lib/comments.class.files.php
+quote site chmod 666 lib/comments.class.files.php
+send lib\comments.form.class.php lib/comments.form.class.php
+quote site chmod 666 lib/comments.form.class.php
+send lib\comments.manager.class.php lib/comments.manager.class.php
+quote site chmod 666 lib/comments.manager.class.php
+send lib\comments.pingbacks.abstract.class.php lib/comments.pingbacks.abstract.class.php
+quote site chmod 666 lib/comments.pingbacks.abstract.class.php
+send lib\comments.pingbacks.class.db.php lib/comments.pingbacks.class.db.php
+quote site chmod 666 lib/comments.pingbacks.class.db.php
+send lib\comments.pingbacks.class.files.php lib/comments.pingbacks.class.files.php
+quote site chmod 666 lib/comments.pingbacks.class.files.php
+send lib\comments.spamfilter.class.php lib/comments.spamfilter.class.php
+quote site chmod 666 lib/comments.spamfilter.class.php
+send lib\comments.subscribers.class.php lib/comments.subscribers.class.php
+quote site chmod 666 lib/comments.subscribers.class.php
+send lib\comments.users.class.db.php lib/comments.users.class.db.php
+quote site chmod 666 lib/comments.users.class.db.php
+send lib\comments.users.class.files.php lib/comments.users.class.files.php
+quote site chmod 666 lib/comments.users.class.files.php
+send lib\contactform.class.php lib/contactform.class.php
+quote site chmod 666 lib/contactform.class.php
+send lib\contentfilter.class.php lib/contentfilter.class.php
+quote site chmod 666 lib/contentfilter.class.php
+send lib\cron.abstract.class.php lib/cron.abstract.class.php
+quote site chmod 666 lib/cron.abstract.class.php
+send lib\cron.class.db.php lib/cron.class.db.php
+quote site chmod 666 lib/cron.class.db.php
+send lib\cron.class.files.php lib/cron.class.files.php
+quote site chmod 666 lib/cron.class.files.php
+send lib\data.class.php lib/data.class.php
+quote site chmod 666 lib/data.class.php
+send lib\db.class.php lib/db.class.php
+quote site chmod 666 lib/db.class.php
+send lib\db.manager.class.php lib/db.manager.class.php
+quote site chmod 666 lib/db.manager.class.php
+send lib\db.pdo.class.php lib/db.pdo.class.php
+quote site chmod 666 lib/db.pdo.class.php
+send lib\domrss.class.php lib/domrss.class.php
+quote site chmod 666 lib/domrss.class.php
+send lib\downloadcounter.class.php lib/downloadcounter.class.php
+quote site chmod 666 lib/downloadcounter.class.php
+send lib\events.class.php lib/events.class.php
+quote site chmod 666 lib/events.class.php
+send lib\filer.class.php lib/filer.class.php
+quote site chmod 666 lib/filer.class.php
+send lib\files.class.php lib/files.class.php
+quote site chmod 666 lib/files.class.php
+send lib\foaf.class.php lib/foaf.class.php
+quote site chmod 666 lib/foaf.class.php
+send lib\foaf.util.class.php lib/foaf.util.class.php
+quote site chmod 666 lib/foaf.util.class.php
+send lib\homepage.class.php lib/homepage.class.php
+quote site chmod 666 lib/homepage.class.php
+send lib\htmlresource.class.php lib/htmlresource.class.php
+quote site chmod 666 lib/htmlresource.class.php
+send lib\http.class.php lib/http.class.php
+quote site chmod 666 lib/http.class.php
+send lib\icons.class.php lib/icons.class.php
+quote site chmod 666 lib/icons.class.php
+send lib\importer.class.php lib/importer.class.php
+quote site chmod 666 lib/importer.class.php
+send lib\index.htm lib/index.htm
+quote site chmod 666 lib/index.htm
+send lib\installer.class.php lib/installer.class.php
+quote site chmod 666 lib/installer.class.php
+send lib\interfaces.php lib/interfaces.php
+quote site chmod 666 lib/interfaces.php
+send lib\item.class.php lib/item.class.php
+quote site chmod 666 lib/item.class.php
+send lib\items.class.php lib/items.class.php
+quote site chmod 666 lib/items.class.php
+send lib\items.posts.class.php lib/items.posts.class.php
+quote site chmod 666 lib/items.posts.class.php
+send lib\kernel.php lib/kernel.php
+quote site chmod 666 lib/kernel.php
+send lib\linkgen.class.php lib/linkgen.class.php
+quote site chmod 666 lib/linkgen.class.php
+send lib\local.class.php lib/local.class.php
+quote site chmod 666 lib/local.class.php
+send lib\mailer.class.php lib/mailer.class.php
+quote site chmod 666 lib/mailer.class.php
+send lib\manifest.class.php lib/manifest.class.php
+quote site chmod 666 lib/manifest.class.php
+send lib\mediaparser.class.php lib/mediaparser.class.php
+quote site chmod 666 lib/mediaparser.class.php
+send lib\menu.admin.class.php lib/menu.admin.class.php
+quote site chmod 666 lib/menu.admin.class.php
+send lib\menu.class.php lib/menu.class.php
+quote site chmod 666 lib/menu.class.php
+send lib\notfound.class.php lib/notfound.class.php
+quote site chmod 666 lib/notfound.class.php
+send lib\openid.class.php lib/openid.class.php
+quote site chmod 666 lib/openid.class.php
+send lib\options.class.php lib/options.class.php
+quote site chmod 666 lib/options.class.php
+send lib\pinger.class.php lib/pinger.class.php
+quote site chmod 666 lib/pinger.class.php
+send lib\plugin.class.php lib/plugin.class.php
+quote site chmod 666 lib/plugin.class.php
+send lib\plugins.class.php lib/plugins.class.php
+quote site chmod 666 lib/plugins.class.php
+send lib\post.class.php lib/post.class.php
+quote site chmod 666 lib/post.class.php
+send lib\post.meta.class.php lib/post.meta.class.php
+quote site chmod 666 lib/post.meta.class.php
+send lib\post.transform.class.php lib/post.transform.class.php
+quote site chmod 666 lib/post.transform.class.php
+send lib\posts.class.php lib/posts.class.php
+quote site chmod 666 lib/posts.class.php
+send lib\profile.class.php lib/profile.class.php
+quote site chmod 666 lib/profile.class.php
+send lib\redirect.class.php lib/redirect.class.php
+quote site chmod 666 lib/redirect.class.php
+send lib\remoteadmin.class.php lib/remoteadmin.class.php
+quote site chmod 666 lib/remoteadmin.class.php
+send lib\robotstxt.class.php lib/robotstxt.class.php
+quote site chmod 666 lib/robotstxt.class.php
+send lib\rss.class.php lib/rss.class.php
+quote site chmod 666 lib/rss.class.php
+send lib\rss.multimedia.class.php lib/rss.multimedia.class.php
+quote site chmod 666 lib/rss.multimedia.class.php
+send lib\simplecontent.class.php lib/simplecontent.class.php
+quote site chmod 666 lib/simplecontent.class.php
+send lib\sitemap.class.php lib/sitemap.class.php
+quote site chmod 666 lib/sitemap.class.php
+send lib\staticpages.class.php lib/staticpages.class.php
+quote site chmod 666 lib/staticpages.class.php
+send lib\tags.categories.class.php lib/tags.categories.class.php
+quote site chmod 666 lib/tags.categories.class.php
+send lib\tags.cloud.class.php lib/tags.cloud.class.php
+quote site chmod 666 lib/tags.cloud.class.php
+send lib\tags.common.class.php lib/tags.common.class.php
+quote site chmod 666 lib/tags.common.class.php
+send lib\template.class.php lib/template.class.php
+quote site chmod 666 lib/template.class.php
+send lib\template.comments.class.php lib/template.comments.class.php
+quote site chmod 666 lib/template.comments.class.php
+send lib\template.mail.class.php lib/template.mail.class.php
+quote site chmod 666 lib/template.mail.class.php
+send lib\template.tags.class.php lib/template.tags.class.php
+quote site chmod 666 lib/template.tags.class.php
+send lib\theme.class.php lib/theme.class.php
+quote site chmod 666 lib/theme.class.php
+send lib\theme.parser.class.php lib/theme.parser.class.php
+quote site chmod 666 lib/theme.parser.class.php
+send lib\updater.class.php lib/updater.class.php
+quote site chmod 666 lib/updater.class.php
+send lib\urlmap.class.php lib/urlmap.class.php
+quote site chmod 666 lib/urlmap.class.php
+send lib\users.class.php lib/users.class.php
+quote site chmod 666 lib/users.class.php
+send lib\users.groups.class.php lib/users.groups.class.php
+quote site chmod 666 lib/users.groups.class.php
+send lib\widgets.class.php lib/widgets.class.php
+quote site chmod 666 lib/widgets.class.php
+send lib\widgets.comments.class.php lib/widgets.comments.class.php
+quote site chmod 666 lib/widgets.comments.class.php
+send lib\widgets.custom.class.php lib/widgets.custom.class.php
+quote site chmod 666 lib/widgets.custom.class.php
+send lib\widgets.links.class.php lib/widgets.links.class.php
+quote site chmod 666 lib/widgets.links.class.php
+send lib\widgets.standarts.class.php lib/widgets.standarts.class.php
+quote site chmod 666 lib/widgets.standarts.class.php
+send lib\xmlrpc.action.class.php lib/xmlrpc.action.class.php
+quote site chmod 666 lib/xmlrpc.action.class.php
+send lib\xmlrpc.blogger.class.php lib/xmlrpc.blogger.class.php
+quote site chmod 666 lib/xmlrpc.blogger.class.php
+send lib\xmlrpc.class.php lib/xmlrpc.class.php
+quote site chmod 666 lib/xmlrpc.class.php
+send lib\xmlrpc.comments.class.php lib/xmlrpc.comments.class.php
+quote site chmod 666 lib/xmlrpc.comments.class.php
+send lib\xmlrpc.files.class.php lib/xmlrpc.files.class.php
+quote site chmod 666 lib/xmlrpc.files.class.php
+send lib\xmlrpc.livejournal.class.php lib/xmlrpc.livejournal.class.php
+quote site chmod 666 lib/xmlrpc.livejournal.class.php
+send lib\xmlrpc.metaweblog.class.php lib/xmlrpc.metaweblog.class.php
+quote site chmod 666 lib/xmlrpc.metaweblog.class.php
+send lib\xmlrpc.movabletype.class.php lib/xmlrpc.movabletype.class.php
+quote site chmod 666 lib/xmlrpc.movabletype.class.php
+send lib\xmlrpc.pingback.class.php lib/xmlrpc.pingback.class.php
+quote site chmod 666 lib/xmlrpc.pingback.class.php
+send lib\xmlrpc.remote.class.php lib/xmlrpc.remote.class.php
+quote site chmod 666 lib/xmlrpc.remote.class.php
+send lib\xmlrpc.system.class.php lib/xmlrpc.system.class.php
+quote site chmod 666 lib/xmlrpc.system.class.php
+send lib\xmlrpc.wordpress.class.php lib/xmlrpc.wordpress.class.php
+quote site chmod 666 lib/xmlrpc.wordpress.class.php
+send lib\xmlrpcclient.php lib/xmlrpcclient.php
+quote site chmod 666 lib/xmlrpcclient.php
+cd lib
+mkdir include
+quote site chmod 777 include
+cd ../
+send lib\include\bigmath.php lib/include/bigmath.php
+quote site chmod 666 lib/include/bigmath.php
+send lib\include\class-phpmailer.php lib/include/class-phpmailer.php
+quote site chmod 666 lib/include/class-phpmailer.php
+send lib\include\class-pop3.php lib/include/class-pop3.php
+quote site chmod 666 lib/include/class-pop3.php
+send lib\include\class-smtp.php lib/include/class-smtp.php
+quote site chmod 666 lib/include/class-smtp.php
+send lib\include\index.htm lib/include/index.htm
+quote site chmod 666 lib/include/index.htm
+send lib\include\pingservices.txt lib/include/pingservices.txt
+quote site chmod 666 lib/include/pingservices.txt
+send lib\include\ru2lat-gost.php lib/include/ru2lat-gost.php
+quote site chmod 666 lib/include/ru2lat-gost.php
+send lib\include\ru2lat-iso.php lib/include/ru2lat-iso.php
+quote site chmod 666 lib/include/ru2lat-iso.php
+send lib\include\simplespamprotection-check.php lib/include/simplespamprotection-check.php
+quote site chmod 666 lib/include/simplespamprotection-check.php
+send lib\include\simplespamprotection.php lib/include/simplespamprotection.php
+quote site chmod 666 lib/include/simplespamprotection.php
+send lib\include\strunzip.lib.php lib/include/strunzip.lib.php
+quote site chmod 666 lib/include/strunzip.lib.php
+send lib\include\tar.class.php lib/include/tar.class.php
+quote site chmod 666 lib/include/tar.class.php
+send lib\include\unzip.lib.php lib/include/unzip.lib.php
+quote site chmod 666 lib/include/unzip.lib.php
+send lib\include\version.txt lib/include/version.txt
+quote site chmod 666 lib/include/version.txt
+send lib\include\zip.lib.php lib/include/zip.lib.php
+quote site chmod 666 lib/include/zip.lib.php
+cd lib
+mkdir install
+quote site chmod 777 install
+cd ../
+send lib\install\admin.login.class.install.php lib/install/admin.login.class.install.php
+quote site chmod 666 lib/install/admin.login.class.install.php
+send lib\install\admin.password.class.install.php lib/install/admin.password.class.install.php
+quote site chmod 666 lib/install/admin.password.class.install.php
+send lib\install\admin.reguser.class.install.php lib/install/admin.reguser.class.install.php
+quote site chmod 666 lib/install/admin.reguser.class.install.php
+send lib\install\archives.class.install.php lib/install/archives.class.install.php
+quote site chmod 666 lib/install/archives.class.install.php
+send lib\install\classes.ini lib/install/classes.ini
+quote site chmod 666 lib/install/classes.ini
+send lib\install\classes.install.php lib/install/classes.install.php
+quote site chmod 666 lib/install/classes.install.php
+send lib\install\comments.class.db.install.php lib/install/comments.class.db.install.php
+quote site chmod 666 lib/install/comments.class.db.install.php
+send lib\install\comments.form.class.install.php lib/install/comments.form.class.install.php
+quote site chmod 666 lib/install/comments.form.class.install.php
+send lib\install\comments.kept.sql lib/install/comments.kept.sql
+quote site chmod 666 lib/install/comments.kept.sql
+send lib\install\comments.manager.class.install.php lib/install/comments.manager.class.install.php
+quote site chmod 666 lib/install/comments.manager.class.install.php
+send lib\install\comments.pingbacks.class.db.install.php lib/install/comments.pingbacks.class.db.install.php
+quote site chmod 666 lib/install/comments.pingbacks.class.db.install.php
+send lib\install\comments.pingbacks.sql lib/install/comments.pingbacks.sql
+quote site chmod 666 lib/install/comments.pingbacks.sql
+send lib\install\comments.raw.sql lib/install/comments.raw.sql
+quote site chmod 666 lib/install/comments.raw.sql
+send lib\install\comments.sql lib/install/comments.sql
+quote site chmod 666 lib/install/comments.sql
+send lib\install\comments.subscribers.class.install.php lib/install/comments.subscribers.class.install.php
+quote site chmod 666 lib/install/comments.subscribers.class.install.php
+send lib\install\comments.users.class.db.install.php lib/install/comments.users.class.db.install.php
+quote site chmod 666 lib/install/comments.users.class.db.install.php
+send lib\install\comments.users.class.files.install.php lib/install/comments.users.class.files.install.php
+quote site chmod 666 lib/install/comments.users.class.files.install.php
+send lib\install\comments.users.sql lib/install/comments.users.sql
+quote site chmod 666 lib/install/comments.users.sql
+send lib\install\contactform.class.install.php lib/install/contactform.class.install.php
+quote site chmod 666 lib/install/contactform.class.install.php
+send lib\install\cron.abstract.class.install.php lib/install/cron.abstract.class.install.php
+quote site chmod 666 lib/install/cron.abstract.class.install.php
+send lib\install\cron.class.db.install.php lib/install/cron.class.db.install.php
+quote site chmod 666 lib/install/cron.class.db.install.php
+send lib\install\cron.sql lib/install/cron.sql
+quote site chmod 666 lib/install/cron.sql
+send lib\install\DATA.SQL lib/install/DATA.SQL
+quote site chmod 666 lib/install/DATA.SQL
+send lib\install\downloadcounter.class.install.php lib/install/downloadcounter.class.install.php
+quote site chmod 666 lib/install/downloadcounter.class.install.php
+send lib\install\downloadcounter.sql lib/install/downloadcounter.sql
+quote site chmod 666 lib/install/downloadcounter.sql
+send lib\install\files.class.install.php lib/install/files.class.install.php
+quote site chmod 666 lib/install/files.class.install.php
+send lib\install\files.sql lib/install/files.sql
+quote site chmod 666 lib/install/files.sql
+send lib\install\foaf.class.install.php lib/install/foaf.class.install.php
+quote site chmod 666 lib/install/foaf.class.install.php
+send lib\install\foaf.sql lib/install/foaf.sql
+quote site chmod 666 lib/install/foaf.sql
+send lib\install\foaf.util.install.php lib/install/foaf.util.install.php
+quote site chmod 666 lib/install/foaf.util.install.php
+send lib\install\homepage.class.install.php lib/install/homepage.class.install.php
+quote site chmod 666 lib/install/homepage.class.install.php
+send lib\install\icons.class.install.php lib/install/icons.class.install.php
+quote site chmod 666 lib/install/icons.class.install.php
+send lib\install\index.htm lib/install/index.htm
+quote site chmod 666 lib/install/index.htm
+send lib\install\install.congratulation.tml lib/install/install.congratulation.tml
+quote site chmod 666 lib/install/install.congratulation.tml
+send lib\install\install.php lib/install/install.php
+quote site chmod 666 lib/install/install.php
+send lib\install\installform.tml lib/install/installform.tml
+quote site chmod 666 lib/install/installform.tml
+send lib\install\items.posts.sql lib/install/items.posts.sql
+quote site chmod 666 lib/install/items.posts.sql
+send lib\install\manifest.class.install.php lib/install/manifest.class.install.php
+quote site chmod 666 lib/install/manifest.class.install.php
+send lib\install\menu.admin.class.install.php lib/install/menu.admin.class.install.php
+quote site chmod 666 lib/install/menu.admin.class.install.php
+send lib\install\menu.class.install.php lib/install/menu.class.install.php
+quote site chmod 666 lib/install/menu.class.install.php
+send lib\install\options.class.install.php lib/install/options.class.install.php
+quote site chmod 666 lib/install/options.class.install.php
+send lib\install\plugins.class.install.php lib/install/plugins.class.install.php
+quote site chmod 666 lib/install/plugins.class.install.php
+send lib\install\post.meta.class.install.php lib/install/post.meta.class.install.php
+quote site chmod 666 lib/install/post.meta.class.install.php
+send lib\install\post.meta.sql lib/install/post.meta.sql
+quote site chmod 666 lib/install/post.meta.sql
+send lib\install\posts.class.install.php lib/install/posts.class.install.php
+quote site chmod 666 lib/install/posts.class.install.php
+send lib\install\posts.sql lib/install/posts.sql
+quote site chmod 666 lib/install/posts.sql
+send lib\install\postspages.sql lib/install/postspages.sql
+quote site chmod 666 lib/install/postspages.sql
+send lib\install\profile.class.install.php lib/install/profile.class.install.php
+quote site chmod 666 lib/install/profile.class.install.php
+send lib\install\raw.sql lib/install/raw.sql
+quote site chmod 666 lib/install/raw.sql
+send lib\install\robotstxt.class.install.php lib/install/robotstxt.class.install.php
+quote site chmod 666 lib/install/robotstxt.class.install.php
+send lib\install\rss.class.install.php lib/install/rss.class.install.php
+quote site chmod 666 lib/install/rss.class.install.php
+send lib\install\rss.multimedia.class.install.php lib/install/rss.multimedia.class.install.php
+quote site chmod 666 lib/install/rss.multimedia.class.install.php
+send lib\install\sitemap.class.install.php lib/install/sitemap.class.install.php
+quote site chmod 666 lib/install/sitemap.class.install.php
+send lib\install\tags.common.class.install.php lib/install/tags.common.class.install.php
+quote site chmod 666 lib/install/tags.common.class.install.php
+send lib\install\tags.content.sql lib/install/tags.content.sql
+quote site chmod 666 lib/install/tags.content.sql
+send lib\install\tags.sql lib/install/tags.sql
+quote site chmod 666 lib/install/tags.sql
+send lib\install\template.class.install.php lib/install/template.class.install.php
+quote site chmod 666 lib/install/template.class.install.php
+send lib\install\urlmap.class.install.php lib/install/urlmap.class.install.php
+quote site chmod 666 lib/install/urlmap.class.install.php
+send lib\install\urlmap.sql lib/install/urlmap.sql
+quote site chmod 666 lib/install/urlmap.sql
+send lib\install\users.class.install.php lib/install/users.class.install.php
+quote site chmod 666 lib/install/users.class.install.php
+send lib\install\users.groups.class.install.php lib/install/users.groups.class.install.php
+quote site chmod 666 lib/install/users.groups.class.install.php
+send lib\install\users.sql lib/install/users.sql
+quote site chmod 666 lib/install/users.sql
+send lib\install\widgets.class.install.php lib/install/widgets.class.install.php
+quote site chmod 666 lib/install/widgets.class.install.php
+send lib\install\widgets.custom.class.install.php lib/install/widgets.custom.class.install.php
+quote site chmod 666 lib/install/widgets.custom.class.install.php
+send lib\install\widgets.links.class.install.php lib/install/widgets.links.class.install.php
+quote site chmod 666 lib/install/widgets.links.class.install.php
+send lib\install\widgets.standarts.class.install.php lib/install/widgets.standarts.class.install.php
+quote site chmod 666 lib/install/widgets.standarts.class.install.php
+send lib\install\xmlrpc.action.class.install.php lib/install/xmlrpc.action.class.install.php
+quote site chmod 666 lib/install/xmlrpc.action.class.install.php
+send lib\install\xmlrpc.blogger.class.install.php lib/install/xmlrpc.blogger.class.install.php
+quote site chmod 666 lib/install/xmlrpc.blogger.class.install.php
+send lib\install\xmlrpc.class.install.php lib/install/xmlrpc.class.install.php
+quote site chmod 666 lib/install/xmlrpc.class.install.php
+send lib\install\xmlrpc.comments.class.install.php lib/install/xmlrpc.comments.class.install.php
+quote site chmod 666 lib/install/xmlrpc.comments.class.install.php
+send lib\install\xmlrpc.files.class.install.php lib/install/xmlrpc.files.class.install.php
+quote site chmod 666 lib/install/xmlrpc.files.class.install.php
+send lib\install\xmlrpc.livejournal.class.install.php lib/install/xmlrpc.livejournal.class.install.php
+quote site chmod 666 lib/install/xmlrpc.livejournal.class.install.php
+send lib\install\xmlrpc.metaweblog.class.install.php lib/install/xmlrpc.metaweblog.class.install.php
+quote site chmod 666 lib/install/xmlrpc.metaweblog.class.install.php
+send lib\install\xmlrpc.movabletype.class.install.php lib/install/xmlrpc.movabletype.class.install.php
+quote site chmod 666 lib/install/xmlrpc.movabletype.class.install.php
+send lib\install\xmlrpc.pingback.class.install.php lib/install/xmlrpc.pingback.class.install.php
+quote site chmod 666 lib/install/xmlrpc.pingback.class.install.php
+send lib\install\xmlrpc.system.class.install.php lib/install/xmlrpc.system.class.install.php
+quote site chmod 666 lib/install/xmlrpc.system.class.install.php
+send lib\install\xmlrpc.wordpress.class.install.php lib/install/xmlrpc.wordpress.class.install.php
+quote site chmod 666 lib/install/xmlrpc.wordpress.class.install.php
+cd lib
+mkdir update
+quote site chmod 777 update
+cd ../
+send lib\update\dbversion.php lib/update/dbversion.php
+quote site chmod 666 lib/update/dbversion.php
+send lib\update\ini2tml.php lib/update/ini2tml.php
+quote site chmod 666 lib/update/ini2tml.php
+send lib\update\update.3.34.php lib/update/update.3.34.php
+quote site chmod 666 lib/update/update.3.34.php
+send lib\update\update.3.35.php lib/update/update.3.35.php
+quote site chmod 666 lib/update/update.3.35.php
+cd lib
+mkdir languages
+quote site chmod 777 languages
+cd ../
+send lib\languages\adminen.ini lib/languages/adminen.ini
+quote site chmod 666 lib/languages/adminen.ini
+send lib\languages\adminhtml.ini lib/languages/adminhtml.ini
+quote site chmod 666 lib/languages/adminhtml.ini
+send lib\languages\adminru.ini lib/languages/adminru.ini
+quote site chmod 666 lib/languages/adminru.ini
+send lib\languages\adminua.ini lib/languages/adminua.ini
+quote site chmod 666 lib/languages/adminua.ini
+send lib\languages\en.ini lib/languages/en.ini
+quote site chmod 666 lib/languages/en.ini
+send lib\languages\ru.ini lib/languages/ru.ini
+quote site chmod 666 lib/languages/ru.ini
+send lib\languages\ua.ini lib/languages/ua.ini
+quote site chmod 666 lib/languages/ua.ini
+mkdir plugins
+quote site chmod 777 plugins
+send plugins\.htaccess plugins/.htaccess
+quote site chmod 666 plugins/.htaccess
+cd plugins
+mkdir adminlinks
+quote site chmod 777 adminlinks
+cd ../
+send plugins\adminlinks\.htaccess plugins/adminlinks/.htaccess
+quote site chmod 666 plugins/adminlinks/.htaccess
+send plugins\adminlinks\about.ini plugins/adminlinks/about.ini
+quote site chmod 666 plugins/adminlinks/about.ini
+send plugins\adminlinks\adminlinks.install.php plugins/adminlinks/adminlinks.install.php
+quote site chmod 666 plugins/adminlinks/adminlinks.install.php
+send plugins\adminlinks\adminlinks.php plugins/adminlinks/adminlinks.php
+quote site chmod 666 plugins/adminlinks/adminlinks.php
+send plugins\adminlinks\index.htm plugins/adminlinks/index.htm
+quote site chmod 666 plugins/adminlinks/index.htm
+cd plugins
+mkdir backup2email
+quote site chmod 777 backup2email
+cd ../
+send plugins\backup2email\.htaccess plugins/backup2email/.htaccess
+quote site chmod 666 plugins/backup2email/.htaccess
+send plugins\backup2email\about.ini plugins/backup2email/about.ini
+quote site chmod 666 plugins/backup2email/about.ini
+send plugins\backup2email\backup2email.install.php plugins/backup2email/backup2email.install.php
+quote site chmod 666 plugins/backup2email/backup2email.install.php
+send plugins\backup2email\backup2email.php plugins/backup2email/backup2email.php
+quote site chmod 666 plugins/backup2email/backup2email.php
+send plugins\backup2email\index.htm plugins/backup2email/index.htm
+quote site chmod 666 plugins/backup2email/index.htm
+cd plugins
+mkdir codedoc
+quote site chmod 777 codedoc
+cd ../
+send plugins\codedoc\.htaccess plugins/codedoc/.htaccess
+quote site chmod 666 plugins/codedoc/.htaccess
+send plugins\codedoc\about.ini plugins/codedoc/about.ini
+quote site chmod 666 plugins/codedoc/about.ini
+send plugins\codedoc\admin.codedoc.class.php plugins/codedoc/admin.codedoc.class.php
+quote site chmod 666 plugins/codedoc/admin.codedoc.class.php
+send plugins\codedoc\codedoc.class.php plugins/codedoc/codedoc.class.php
+quote site chmod 666 plugins/codedoc/codedoc.class.php
+send plugins\codedoc\codedocs.class.install.php plugins/codedoc/codedocs.class.install.php
+quote site chmod 666 plugins/codedoc/codedocs.class.install.php
+send plugins\codedoc\codedocs.class.php plugins/codedoc/codedocs.class.php
+quote site chmod 666 plugins/codedoc/codedocs.class.php
+send plugins\codedoc\index.htm plugins/codedoc/index.htm
+quote site chmod 666 plugins/codedoc/index.htm
+cd plugins/codedoc
+mkdir resource
+quote site chmod 777 resource
+cd ../../
+send plugins\codedoc\resource\codedoc.sql plugins/codedoc/resource/codedoc.sql
+quote site chmod 666 plugins/codedoc/resource/codedoc.sql
+send plugins\codedoc\resource\codedoc.tml plugins/codedoc/resource/codedoc.tml
+quote site chmod 666 plugins/codedoc/resource/codedoc.tml
+send plugins\codedoc\resource\en.admin.ini plugins/codedoc/resource/en.admin.ini
+quote site chmod 666 plugins/codedoc/resource/en.admin.ini
+send plugins\codedoc\resource\en.ini plugins/codedoc/resource/en.ini
+quote site chmod 666 plugins/codedoc/resource/en.ini
+send plugins\codedoc\resource\html.ini plugins/codedoc/resource/html.ini
+quote site chmod 666 plugins/codedoc/resource/html.ini
+send plugins\codedoc\resource\ru.admin.ini plugins/codedoc/resource/ru.admin.ini
+quote site chmod 666 plugins/codedoc/resource/ru.admin.ini
+send plugins\codedoc\resource\ru.ini plugins/codedoc/resource/ru.ini
+quote site chmod 666 plugins/codedoc/resource/ru.ini
+send build\indexfile.htm plugins/codedoc/resource/index.htm
+quote site chmod 666 plugins/codedoc/resource/index.htm
+cd plugins
+mkdir externallinks
+quote site chmod 777 externallinks
+cd ../
+send plugins\externallinks\.htaccess plugins/externallinks/.htaccess
+quote site chmod 666 plugins/externallinks/.htaccess
+send plugins\externallinks\about.ini plugins/externallinks/about.ini
+quote site chmod 666 plugins/externallinks/about.ini
+send plugins\externallinks\externallinks.plugin.install.php plugins/externallinks/externallinks.plugin.install.php
+quote site chmod 666 plugins/externallinks/externallinks.plugin.install.php
+send plugins\externallinks\externallinks.plugin.php plugins/externallinks/externallinks.plugin.php
+quote site chmod 666 plugins/externallinks/externallinks.plugin.php
+send plugins\externallinks\index.htm plugins/externallinks/index.htm
+quote site chmod 666 plugins/externallinks/index.htm
+cd plugins
+mkdir homepageinvert
+quote site chmod 777 homepageinvert
+cd ../
+send plugins\homepageinvert\.htaccess plugins/homepageinvert/.htaccess
+quote site chmod 666 plugins/homepageinvert/.htaccess
+send plugins\homepageinvert\about.ini plugins/homepageinvert/about.ini
+quote site chmod 666 plugins/homepageinvert/about.ini
+send plugins\homepageinvert\homepageinvert.php plugins/homepageinvert/homepageinvert.php
+quote site chmod 666 plugins/homepageinvert/homepageinvert.php
+send plugins\homepageinvert\index.htm plugins/homepageinvert/index.htm
+quote site chmod 666 plugins/homepageinvert/index.htm
+cd plugins
+mkdir iconset
+quote site chmod 777 iconset
+cd ../
+send plugins\iconset\.htaccess plugins/iconset/.htaccess
+quote site chmod 666 plugins/iconset/.htaccess
+send plugins\iconset\about.ini plugins/iconset/about.ini
+quote site chmod 666 plugins/iconset/about.ini
+send plugins\iconset\iconset.plugin.php plugins/iconset/iconset.plugin.php
+quote site chmod 666 plugins/iconset/iconset.plugin.php
+cd plugins/iconset
+mkdir images
+quote site chmod 777 images
+cd ../../
+send plugins\iconset\images\asterisk.png plugins/iconset/images/asterisk.png
+quote site chmod 666 plugins/iconset/images/asterisk.png
+send plugins\iconset\images\blog-blue.png plugins/iconset/images/blog-blue.png
+quote site chmod 666 plugins/iconset/images/blog-blue.png
+send plugins\iconset\images\book.png plugins/iconset/images/book.png
+quote site chmod 666 plugins/iconset/images/book.png
+send plugins\iconset\images\document-binary.png plugins/iconset/images/document-binary.png
+quote site chmod 666 plugins/iconset/images/document-binary.png
+send plugins\iconset\images\document-list.png plugins/iconset/images/document-list.png
+quote site chmod 666 plugins/iconset/images/document-list.png
+send plugins\iconset\images\document-music.png plugins/iconset/images/document-music.png
+quote site chmod 666 plugins/iconset/images/document-music.png
+send plugins\iconset\images\document-text.png plugins/iconset/images/document-text.png
+quote site chmod 666 plugins/iconset/images/document-text.png
+send plugins\iconset\images\film.png plugins/iconset/images/film.png
+quote site chmod 666 plugins/iconset/images/film.png
+send plugins\iconset\images\index.htm plugins/iconset/images/index.htm
+quote site chmod 666 plugins/iconset/images/index.htm
+send plugins\iconset\images\tag-label.png plugins/iconset/images/tag-label.png
+quote site chmod 666 plugins/iconset/images/tag-label.png
+send plugins\iconset\index.htm plugins/iconset/index.htm
+quote site chmod 666 plugins/iconset/index.htm
+send plugins\iconset\license.txt plugins/iconset/license.txt
+quote site chmod 666 plugins/iconset/license.txt
+send plugins\index.htm plugins/index.htm
+quote site chmod 666 plugins/index.htm
+cd plugins
+mkdir keywords
+quote site chmod 777 keywords
+cd ../
+send plugins\keywords\.htaccess plugins/keywords/.htaccess
+quote site chmod 666 plugins/keywords/.htaccess
+send plugins\keywords\about.ini plugins/keywords/about.ini
+quote site chmod 666 plugins/keywords/about.ini
+send plugins\keywords\admin.keywords.plugin.php plugins/keywords/admin.keywords.plugin.php
+quote site chmod 666 plugins/keywords/admin.keywords.plugin.php
+send plugins\keywords\index.htm plugins/keywords/index.htm
+quote site chmod 666 plugins/keywords/index.htm
+send plugins\keywords\keywords.plugin.install.php plugins/keywords/keywords.plugin.install.php
+quote site chmod 666 plugins/keywords/keywords.plugin.install.php
+send plugins\keywords\keywords.plugin.php plugins/keywords/keywords.plugin.php
+quote site chmod 666 plugins/keywords/keywords.plugin.php
+send plugins\keywords\keywords.templates.ini plugins/keywords/keywords.templates.ini
+quote site chmod 666 plugins/keywords/keywords.templates.ini
+send plugins\keywords\keywords.widget.php plugins/keywords/keywords.widget.php
+quote site chmod 666 plugins/keywords/keywords.widget.php
+cd plugins
+mkdir livejournalposter
+quote site chmod 777 livejournalposter
+cd ../
+send plugins\livejournalposter\.htaccess plugins/livejournalposter/.htaccess
+quote site chmod 666 plugins/livejournalposter/.htaccess
+send plugins\livejournalposter\about.ini plugins/livejournalposter/about.ini
+quote site chmod 666 plugins/livejournalposter/about.ini
+send plugins\livejournalposter\admin.livejournalposter.php plugins/livejournalposter/admin.livejournalposter.php
+quote site chmod 666 plugins/livejournalposter/admin.livejournalposter.php
+send plugins\livejournalposter\form.tml plugins/livejournalposter/form.tml
+quote site chmod 666 plugins/livejournalposter/form.tml
+send plugins\livejournalposter\index.htm plugins/livejournalposter/index.htm
+quote site chmod 666 plugins/livejournalposter/index.htm
+send plugins\livejournalposter\livejournalposter.install.php plugins/livejournalposter/livejournalposter.install.php
+quote site chmod 666 plugins/livejournalposter/livejournalposter.install.php
+send plugins\livejournalposter\livejournalposter.php plugins/livejournalposter/livejournalposter.php
+quote site chmod 666 plugins/livejournalposter/livejournalposter.php
+send plugins\livejournalposter\livejournalposter.tml plugins/livejournalposter/livejournalposter.tml
+quote site chmod 666 plugins/livejournalposter/livejournalposter.tml
+cd plugins
+mkdir markdown
+quote site chmod 777 markdown
+cd ../
+send plugins\markdown\.htaccess plugins/markdown/.htaccess
+quote site chmod 666 plugins/markdown/.htaccess
+send plugins\markdown\about.ini plugins/markdown/about.ini
+quote site chmod 666 plugins/markdown/about.ini
+send plugins\markdown\index.htm plugins/markdown/index.htm
+quote site chmod 666 plugins/markdown/index.htm
+send plugins\markdown\markdown.parser.class.php plugins/markdown/markdown.parser.class.php
+quote site chmod 666 plugins/markdown/markdown.parser.class.php
+send plugins\markdown\markdown.plugin.class.php plugins/markdown/markdown.plugin.class.php
+quote site chmod 666 plugins/markdown/markdown.plugin.class.php
+cd plugins
+mkdir mobile
+quote site chmod 777 mobile
+cd ../
+send plugins\mobile\.htaccess plugins/mobile/.htaccess
+quote site chmod 666 plugins/mobile/.htaccess
+send plugins\mobile\about.ini plugins/mobile/about.ini
+quote site chmod 666 plugins/mobile/about.ini
+send plugins\mobile\index.htm plugins/mobile/index.htm
+quote site chmod 666 plugins/mobile/index.htm
+cd plugins/mobile
+mkdir mobile
+quote site chmod 777 mobile
+cd ../../
+send plugins\mobile\mobile\.htaccess plugins/mobile/mobile/.htaccess
+quote site chmod 666 plugins/mobile/mobile/.htaccess
+send plugins\mobile\mobile\index.php plugins/mobile/mobile/index.php
+quote site chmod 666 plugins/mobile/mobile/index.php
+send plugins\mobile\mobile.classes.php plugins/mobile/mobile.classes.php
+quote site chmod 666 plugins/mobile/mobile.classes.php
+send plugins\mobile\mobile.plugin.php plugins/mobile/mobile.plugin.php
+quote site chmod 666 plugins/mobile/mobile.plugin.php
+cd plugins
+mkdir nicedit
+quote site chmod 777 nicedit
+cd ../
+send plugins\nicedit\about.ini plugins/nicedit/about.ini
+quote site chmod 666 plugins/nicedit/about.ini
+send plugins\nicedit\index.htm plugins/nicedit/index.htm
+quote site chmod 666 plugins/nicedit/index.htm
+send plugins\nicedit\nicedit.install.php plugins/nicedit/nicedit.install.php
+quote site chmod 666 plugins/nicedit/nicedit.install.php
+send plugins\nicedit\nicEdit.js plugins/nicedit/nicEdit.js
+quote site chmod 666 plugins/nicedit/nicEdit.js
+send plugins\nicedit\nicedit.php plugins/nicedit/nicedit.php
+quote site chmod 666 plugins/nicedit/nicedit.php
+send plugins\nicedit\nicEditorIcons.gif plugins/nicedit/nicEditorIcons.gif
+quote site chmod 666 plugins/nicedit/nicEditorIcons.gif
+cd plugins
+mkdir oldestposts
+quote site chmod 777 oldestposts
+cd ../
+send plugins\oldestposts\.htaccess plugins/oldestposts/.htaccess
+quote site chmod 666 plugins/oldestposts/.htaccess
+send plugins\oldestposts\about.ini plugins/oldestposts/about.ini
+quote site chmod 666 plugins/oldestposts/about.ini
+send plugins\oldestposts\index.htm plugins/oldestposts/index.htm
+quote site chmod 666 plugins/oldestposts/index.htm
+send plugins\oldestposts\oldestposts.install.php plugins/oldestposts/oldestposts.install.php
+quote site chmod 666 plugins/oldestposts/oldestposts.install.php
+send plugins\oldestposts\oldestposts.php plugins/oldestposts/oldestposts.php
+quote site chmod 666 plugins/oldestposts/oldestposts.php
+cd plugins
+mkdir polls
+quote site chmod 777 polls
+cd ../
+send plugins\polls\.htaccess plugins/polls/.htaccess
+quote site chmod 666 plugins/polls/.htaccess
+send plugins\polls\about.ini plugins/polls/about.ini
+quote site chmod 666 plugins/polls/about.ini
+send plugins\polls\admin.polls.class.php plugins/polls/admin.polls.class.php
+quote site chmod 666 plugins/polls/admin.polls.class.php
+send plugins\polls\adminform.tml plugins/polls/adminform.tml
+quote site chmod 666 plugins/polls/adminform.tml
+send plugins\polls\index.htm plugins/polls/index.htm
+quote site chmod 666 plugins/polls/index.htm
+send plugins\polls\polls.class.install.php plugins/polls/polls.class.install.php
+quote site chmod 666 plugins/polls/polls.class.install.php
+send plugins\polls\polls.class.php plugins/polls/polls.class.php
+quote site chmod 666 plugins/polls/polls.class.php
+send plugins\polls\polls.client.js plugins/polls/polls.client.js
+quote site chmod 666 plugins/polls/polls.client.js
+send plugins\polls\templates.ini plugins/polls/templates.ini
+quote site chmod 666 plugins/polls/templates.ini
+cd plugins
+mkdir postcontent
+quote site chmod 777 postcontent
+cd ../
+send plugins\postcontent\.htaccess plugins/postcontent/.htaccess
+quote site chmod 666 plugins/postcontent/.htaccess
+send plugins\postcontent\about.ini plugins/postcontent/about.ini
+quote site chmod 666 plugins/postcontent/about.ini
+send plugins\postcontent\admin.postcontent.php plugins/postcontent/admin.postcontent.php
+quote site chmod 666 plugins/postcontent/admin.postcontent.php
+send plugins\postcontent\index.htm plugins/postcontent/index.htm
+quote site chmod 666 plugins/postcontent/index.htm
+send plugins\postcontent\postcontent.install.php plugins/postcontent/postcontent.install.php
+quote site chmod 666 plugins/postcontent/postcontent.install.php
+send plugins\postcontent\postcontent.php plugins/postcontent/postcontent.php
+quote site chmod 666 plugins/postcontent/postcontent.php
+send plugins\postcontent\postcontenten.tml plugins/postcontent/postcontenten.tml
+quote site chmod 666 plugins/postcontent/postcontenten.tml
+send plugins\postcontent\postcontentru.tml plugins/postcontent/postcontentru.tml
+quote site chmod 666 plugins/postcontent/postcontentru.tml
+cd plugins
+mkdir rss-prev-next
+quote site chmod 777 rss-prev-next
+cd ../
+send plugins\rss-prev-next\.htaccess plugins/rss-prev-next/.htaccess
+quote site chmod 666 plugins/rss-prev-next/.htaccess
+send plugins\rss-prev-next\about.ini plugins/rss-prev-next/about.ini
+quote site chmod 666 plugins/rss-prev-next/about.ini
+send plugins\rss-prev-next\index.htm plugins/rss-prev-next/index.htm
+quote site chmod 666 plugins/rss-prev-next/index.htm
+send plugins\rss-prev-next\rssprevnext.install.php plugins/rss-prev-next/rssprevnext.install.php
+quote site chmod 666 plugins/rss-prev-next/rssprevnext.install.php
+send plugins\rss-prev-next\rssprevnext.php plugins/rss-prev-next/rssprevnext.php
+quote site chmod 666 plugins/rss-prev-next/rssprevnext.php
+cd plugins
+mkdir sameposts
+quote site chmod 777 sameposts
+cd ../
+send plugins\sameposts\.htaccess plugins/sameposts/.htaccess
+quote site chmod 666 plugins/sameposts/.htaccess
+send plugins\sameposts\about.ini plugins/sameposts/about.ini
+quote site chmod 666 plugins/sameposts/about.ini
+send plugins\sameposts\admin.sameposts.php plugins/sameposts/admin.sameposts.php
+quote site chmod 666 plugins/sameposts/admin.sameposts.php
+send plugins\sameposts\index.htm plugins/sameposts/index.htm
+quote site chmod 666 plugins/sameposts/index.htm
+send plugins\sameposts\sameposts.install.php plugins/sameposts/sameposts.install.php
+quote site chmod 666 plugins/sameposts/sameposts.install.php
+send plugins\sameposts\sameposts.php plugins/sameposts/sameposts.php
+quote site chmod 666 plugins/sameposts/sameposts.php
+cd plugins
+mkdir sape
+quote site chmod 777 sape
+cd ../
+send plugins\sape\.htaccess plugins/sape/.htaccess
+quote site chmod 666 plugins/sape/.htaccess
+send plugins\sape\about.ini plugins/sape/about.ini
+quote site chmod 666 plugins/sape/about.ini
+send plugins\sape\admin.sape.plugin.php plugins/sape/admin.sape.plugin.php
+quote site chmod 666 plugins/sape/admin.sape.plugin.php
+send plugins\sape\index.htm plugins/sape/index.htm
+quote site chmod 666 plugins/sape/index.htm
+send plugins\sape\sape.php plugins/sape/sape.php
+quote site chmod 666 plugins/sape/sape.php
+send plugins\sape\sape.plugin.install.php plugins/sape/sape.plugin.install.php
+quote site chmod 666 plugins/sape/sape.plugin.install.php
+send plugins\sape\sape.plugin.php plugins/sape/sape.plugin.php
+quote site chmod 666 plugins/sape/sape.plugin.php
+send plugins\sape\sapeform.tml plugins/sape/sapeform.tml
+quote site chmod 666 plugins/sape/sapeform.tml
+cd plugins
+mkdir simpleimporter
+quote site chmod 777 simpleimporter
+cd ../
+send plugins\simpleimporter\.htaccess plugins/simpleimporter/.htaccess
+quote site chmod 666 plugins/simpleimporter/.htaccess
+send plugins\simpleimporter\about.ini plugins/simpleimporter/about.ini
+quote site chmod 666 plugins/simpleimporter/about.ini
+send plugins\simpleimporter\form.tml plugins/simpleimporter/form.tml
+quote site chmod 666 plugins/simpleimporter/form.tml
+send plugins\simpleimporter\index.htm plugins/simpleimporter/index.htm
+quote site chmod 666 plugins/simpleimporter/index.htm
+send plugins\simpleimporter\simpleimporter.php plugins/simpleimporter/simpleimporter.php
+quote site chmod 666 plugins/simpleimporter/simpleimporter.php
+cd plugins
+mkdir sourcefiles
+quote site chmod 777 sourcefiles
+cd ../
+send plugins\sourcefiles\.htaccess plugins/sourcefiles/.htaccess
+quote site chmod 666 plugins/sourcefiles/.htaccess
+send plugins\sourcefiles\about.ini plugins/sourcefiles/about.ini
+quote site chmod 666 plugins/sourcefiles/about.ini
+cd plugins/sourcefiles
+mkdir geshi
+quote site chmod 777 geshi
+cd ../../
+send plugins\sourcefiles\geshi\css.php plugins/sourcefiles/geshi/css.php
+quote site chmod 666 plugins/sourcefiles/geshi/css.php
+send plugins\sourcefiles\geshi\html4strict.php plugins/sourcefiles/geshi/html4strict.php
+quote site chmod 666 plugins/sourcefiles/geshi/html4strict.php
+send plugins\sourcefiles\geshi\ini.php plugins/sourcefiles/geshi/ini.php
+quote site chmod 666 plugins/sourcefiles/geshi/ini.php
+send plugins\sourcefiles\geshi\javascript.php plugins/sourcefiles/geshi/javascript.php
+quote site chmod 666 plugins/sourcefiles/geshi/javascript.php
+send plugins\sourcefiles\geshi\mysql.php plugins/sourcefiles/geshi/mysql.php
+quote site chmod 666 plugins/sourcefiles/geshi/mysql.php
+send plugins\sourcefiles\geshi\robots.php plugins/sourcefiles/geshi/robots.php
+quote site chmod 666 plugins/sourcefiles/geshi/robots.php
+send plugins\sourcefiles\geshi\sql.php plugins/sourcefiles/geshi/sql.php
+quote site chmod 666 plugins/sourcefiles/geshi/sql.php
+send plugins\sourcefiles\geshi\text.php plugins/sourcefiles/geshi/text.php
+quote site chmod 666 plugins/sourcefiles/geshi/text.php
+send plugins\sourcefiles\geshi\xml.php plugins/sourcefiles/geshi/xml.php
+quote site chmod 666 plugins/sourcefiles/geshi/xml.php
+send build\indexfile.htm plugins/sourcefiles/geshi/index.htm
+quote site chmod 666 plugins/sourcefiles/geshi/index.htm
+send plugins\sourcefiles\geshi.php plugins/sourcefiles/geshi.php
+quote site chmod 666 plugins/sourcefiles/geshi.php
+send plugins\sourcefiles\index.htm plugins/sourcefiles/index.htm
+quote site chmod 666 plugins/sourcefiles/index.htm
+send plugins\sourcefiles\sourcefiles.class.install.php plugins/sourcefiles/sourcefiles.class.install.php
+quote site chmod 666 plugins/sourcefiles/sourcefiles.class.install.php
+send plugins\sourcefiles\sourcefiles.class.php plugins/sourcefiles/sourcefiles.class.php
+quote site chmod 666 plugins/sourcefiles/sourcefiles.class.php
+cd plugins
+mkdir tickets
+quote site chmod 777 tickets
+cd ../
+send plugins\tickets\.htaccess plugins/tickets/.htaccess
+quote site chmod 666 plugins/tickets/.htaccess
+send plugins\tickets\about.ini plugins/tickets/about.ini
+quote site chmod 666 plugins/tickets/about.ini
+send plugins\tickets\admin.tickets.class.php plugins/tickets/admin.tickets.class.php
+quote site chmod 666 plugins/tickets/admin.tickets.class.php
+send plugins\tickets\index.htm plugins/tickets/index.htm
+quote site chmod 666 plugins/tickets/index.htm
+cd plugins/tickets
+mkdir resource
+quote site chmod 777 resource
+cd ../../
+send plugins\tickets\resource\en.admin.ini plugins/tickets/resource/en.admin.ini
+quote site chmod 666 plugins/tickets/resource/en.admin.ini
+send plugins\tickets\resource\en.ini plugins/tickets/resource/en.ini
+quote site chmod 666 plugins/tickets/resource/en.ini
+send plugins\tickets\resource\html.ini plugins/tickets/resource/html.ini
+quote site chmod 666 plugins/tickets/resource/html.ini
+send plugins\tickets\resource\ru.admin.ini plugins/tickets/resource/ru.admin.ini
+quote site chmod 666 plugins/tickets/resource/ru.admin.ini
+send plugins\tickets\resource\ru.ini plugins/tickets/resource/ru.ini
+quote site chmod 666 plugins/tickets/resource/ru.ini
+send plugins\tickets\resource\ticket.sql plugins/tickets/resource/ticket.sql
+quote site chmod 666 plugins/tickets/resource/ticket.sql
+send plugins\tickets\resource\ticket.tml plugins/tickets/resource/ticket.tml
+quote site chmod 666 plugins/tickets/resource/ticket.tml
+send build\indexfile.htm plugins/tickets/resource/index.htm
+quote site chmod 666 plugins/tickets/resource/index.htm
+send plugins\tickets\ticket.class.php plugins/tickets/ticket.class.php
+quote site chmod 666 plugins/tickets/ticket.class.php
+send plugins\tickets\tickets.class.install.php plugins/tickets/tickets.class.install.php
+quote site chmod 666 plugins/tickets/tickets.class.install.php
+send plugins\tickets\tickets.class.php plugins/tickets/tickets.class.php
+quote site chmod 666 plugins/tickets/tickets.class.php
+send plugins\tickets\ztodo.txt plugins/tickets/ztodo.txt
+quote site chmod 666 plugins/tickets/ztodo.txt
+cd plugins
+mkdir wikiwords
+quote site chmod 777 wikiwords
+cd ../
+send plugins\wikiwords\.htaccess plugins/wikiwords/.htaccess
+quote site chmod 666 plugins/wikiwords/.htaccess
+send plugins\wikiwords\about.ini plugins/wikiwords/about.ini
+quote site chmod 666 plugins/wikiwords/about.ini
+send plugins\wikiwords\index.htm plugins/wikiwords/index.htm
+quote site chmod 666 plugins/wikiwords/index.htm
+send plugins\wikiwords\wikiwords.class.install.php plugins/wikiwords/wikiwords.class.install.php
+quote site chmod 666 plugins/wikiwords/wikiwords.class.install.php
+send plugins\wikiwords\wikiwords.class.php plugins/wikiwords/wikiwords.class.php
+quote site chmod 666 plugins/wikiwords/wikiwords.class.php
+cd plugins
+mkdir wprss
+quote site chmod 777 wprss
+cd ../
+send plugins\wprss\.htaccess plugins/wprss/.htaccess
+quote site chmod 666 plugins/wprss/.htaccess
+send plugins\wprss\about.ini plugins/wprss/about.ini
+quote site chmod 666 plugins/wprss/about.ini
+send plugins\wprss\form.tml plugins/wprss/form.tml
+quote site chmod 666 plugins/wprss/form.tml
+send plugins\wprss\index.htm plugins/wprss/index.htm
+quote site chmod 666 plugins/wprss/index.htm
+send plugins\wprss\wprss.php plugins/wprss/wprss.php
+quote site chmod 666 plugins/wprss/wprss.php
+mkdir themes
+quote site chmod 777 themes
+cd themes
+mkdir default
+quote site chmod 777 default
+cd ../
+send themes\default\about.ini themes/default/about.ini
+quote site chmod 666 themes/default/about.ini
+cd themes/default
+mkdir css
+quote site chmod 777 css
+cd ../../
+send themes\default\css\DD_belatedPNG.js themes/default/css/DD_belatedPNG.js
+quote site chmod 666 themes/default/css/DD_belatedPNG.js
+send themes\default\css\index.htm themes/default/css/index.htm
+quote site chmod 666 themes/default/css/index.htm
+send themes\default\css\style.css themes/default/css/style.css
+quote site chmod 666 themes/default/css/style.css
+cd themes/default
+mkdir images
+quote site chmod 777 images
+cd ../../
+send themes\default\images\balloon-small.png themes/default/images/balloon-small.png
+quote site chmod 666 themes/default/images/balloon-small.png
+send themes\default\images\balloon.png themes/default/images/balloon.png
+quote site chmod 666 themes/default/images/balloon.png
+send themes\default\images\bg.png themes/default/images/bg.png
+quote site chmod 666 themes/default/images/bg.png
+send themes\default\images\bg7.png themes/default/images/bg7.png
+quote site chmod 666 themes/default/images/bg7.png
+send themes\default\images\bgf.png themes/default/images/bgf.png
+quote site chmod 666 themes/default/images/bgf.png
+send themes\default\images\btn-bg.gif themes/default/images/btn-bg.gif
+quote site chmod 666 themes/default/images/btn-bg.gif
+send themes\default\images\bullet.gif themes/default/images/bullet.gif
+quote site chmod 666 themes/default/images/bullet.gif
+send themes\default\images\clock.png themes/default/images/clock.png
+quote site chmod 666 themes/default/images/clock.png
+send themes\default\images\content-bg.gif themes/default/images/content-bg.gif
+quote site chmod 666 themes/default/images/content-bg.gif
+send themes\default\images\document-small.png themes/default/images/document-small.png
+quote site chmod 666 themes/default/images/document-small.png
+send themes\default\images\feed-balloon.png themes/default/images/feed-balloon.png
+quote site chmod 666 themes/default/images/feed-balloon.png
+send themes\default\images\feed.png themes/default/images/feed.png
+quote site chmod 666 themes/default/images/feed.png
+send themes\default\images\foaf.png themes/default/images/foaf.png
+quote site chmod 666 themes/default/images/foaf.png
+send themes\default\images\folder-horizontal.png themes/default/images/folder-horizontal.png
+quote site chmod 666 themes/default/images/folder-horizontal.png
+send themes\default\images\footer-bg.gif themes/default/images/footer-bg.gif
+quote site chmod 666 themes/default/images/footer-bg.gif
+send themes\default\images\form-bg.gif themes/default/images/form-bg.gif
+quote site chmod 666 themes/default/images/form-bg.gif
+send themes\default\images\head-bg.gif themes/default/images/head-bg.gif
+quote site chmod 666 themes/default/images/head-bg.gif
+send themes\default\images\header.gif themes/default/images/header.gif
+quote site chmod 666 themes/default/images/header.gif
+send themes\default\images\index.htm themes/default/images/index.htm
+quote site chmod 666 themes/default/images/index.htm
+send themes\default\images\logo.gif themes/default/images/logo.gif
+quote site chmod 666 themes/default/images/logo.gif
+send themes\default\images\logo.png themes/default/images/logo.png
+quote site chmod 666 themes/default/images/logo.png
+send themes\default\images\mini-blogroll.gif themes/default/images/mini-blogroll.gif
+quote site chmod 666 themes/default/images/mini-blogroll.gif
+send themes\default\images\mini-calendar.gif themes/default/images/mini-calendar.gif
+quote site chmod 666 themes/default/images/mini-calendar.gif
+send themes\default\images\mini-category.gif themes/default/images/mini-category.gif
+quote site chmod 666 themes/default/images/mini-category.gif
+send themes\default\images\mini-comments.gif themes/default/images/mini-comments.gif
+quote site chmod 666 themes/default/images/mini-comments.gif
+send themes\default\images\mini-footer-comments.gif themes/default/images/mini-footer-comments.gif
+quote site chmod 666 themes/default/images/mini-footer-comments.gif
+send themes\default\images\mini-footer-icon.gif themes/default/images/mini-footer-icon.gif
+quote site chmod 666 themes/default/images/mini-footer-icon.gif
+send themes\default\images\mini-nav-left.gif themes/default/images/mini-nav-left.gif
+quote site chmod 666 themes/default/images/mini-nav-left.gif
+send themes\default\images\mini-nav-right.gif themes/default/images/mini-nav-right.gif
+quote site chmod 666 themes/default/images/mini-nav-right.gif
+send themes\default\images\mini-page.gif themes/default/images/mini-page.gif
+quote site chmod 666 themes/default/images/mini-page.gif
+send themes\default\images\mini-rss.gif themes/default/images/mini-rss.gif
+quote site chmod 666 themes/default/images/mini-rss.gif
+send themes\default\images\navtabactivel.png themes/default/images/navtabactivel.png
+quote site chmod 666 themes/default/images/navtabactivel.png
+send themes\default\images\navtabactiver.png themes/default/images/navtabactiver.png
+quote site chmod 666 themes/default/images/navtabactiver.png
+send themes\default\images\navtabl.png themes/default/images/navtabl.png
+quote site chmod 666 themes/default/images/navtabl.png
+send themes\default\images\navtabr.png themes/default/images/navtabr.png
+quote site chmod 666 themes/default/images/navtabr.png
+send themes\default\images\rss-icon.png themes/default/images/rss-icon.png
+quote site chmod 666 themes/default/images/rss-icon.png
+send themes\default\images\search-bg.png themes/default/images/search-bg.png
+quote site chmod 666 themes/default/images/search-bg.png
+send themes\default\images\search-btn-bg.gif themes/default/images/search-btn-bg.gif
+quote site chmod 666 themes/default/images/search-btn-bg.gif
+send themes\default\images\search-icon.gif themes/default/images/search-icon.gif
+quote site chmod 666 themes/default/images/search-icon.gif
+send themes\default\images\search_button_arrow.png themes/default/images/search_button_arrow.png
+quote site chmod 666 themes/default/images/search_button_arrow.png
+send themes\default\images\spacer.gif themes/default/images/spacer.gif
+quote site chmod 666 themes/default/images/spacer.gif
+send themes\default\images\tag.png themes/default/images/tag.png
+quote site chmod 666 themes/default/images/tag.png
+send themes\default\images\Thumbs.db themes/default/images/Thumbs.db
+quote site chmod 666 themes/default/images/Thumbs.db
+send themes\default\images\widget-bg.gif themes/default/images/widget-bg.gif
+quote site chmod 666 themes/default/images/widget-bg.gif
+send themes\default\images\widget-border.gif themes/default/images/widget-border.gif
+quote site chmod 666 themes/default/images/widget-border.gif
+send themes\default\images\widget_foot.gif themes/default/images/widget_foot.gif
+quote site chmod 666 themes/default/images/widget_foot.gif
+send themes\default\index.htm themes/default/index.htm
+quote site chmod 666 themes/default/index.htm
+send themes\default\index.tml themes/default/index.tml
+quote site chmod 666 themes/default/index.tml
+send themes\default\screenshot.png themes/default/screenshot.png
+quote site chmod 666 themes/default/screenshot.png
+cd themes
+mkdir web-blue
+quote site chmod 777 web-blue
+cd ../
+send themes\web-blue\about.ini themes/web-blue/about.ini
+quote site chmod 666 themes/web-blue/about.ini
+cd themes/web-blue
+mkdir images
+quote site chmod 777 images
+cd ../../
+send themes\web-blue\images\btn-bg.gif themes/web-blue/images/btn-bg.gif
+quote site chmod 666 themes/web-blue/images/btn-bg.gif
+send themes\web-blue\images\content-bg.gif themes/web-blue/images/content-bg.gif
+quote site chmod 666 themes/web-blue/images/content-bg.gif
+send themes\web-blue\images\footer-bg.gif themes/web-blue/images/footer-bg.gif
+quote site chmod 666 themes/web-blue/images/footer-bg.gif
+send themes\web-blue\images\form-bg.gif themes/web-blue/images/form-bg.gif
+quote site chmod 666 themes/web-blue/images/form-bg.gif
+send themes\web-blue\images\head-bg.gif themes/web-blue/images/head-bg.gif
+quote site chmod 666 themes/web-blue/images/head-bg.gif
+send themes\web-blue\images\header.gif themes/web-blue/images/header.gif
+quote site chmod 666 themes/web-blue/images/header.gif
+send themes\web-blue\images\index.htm themes/web-blue/images/index.htm
+quote site chmod 666 themes/web-blue/images/index.htm
+send themes\web-blue\images\logo.gif themes/web-blue/images/logo.gif
+quote site chmod 666 themes/web-blue/images/logo.gif
+send themes\web-blue\images\mini-blogroll.gif themes/web-blue/images/mini-blogroll.gif
+quote site chmod 666 themes/web-blue/images/mini-blogroll.gif
+send themes\web-blue\images\mini-calendar.gif themes/web-blue/images/mini-calendar.gif
+quote site chmod 666 themes/web-blue/images/mini-calendar.gif
+send themes\web-blue\images\mini-category.gif themes/web-blue/images/mini-category.gif
+quote site chmod 666 themes/web-blue/images/mini-category.gif
+send themes\web-blue\images\mini-comments.gif themes/web-blue/images/mini-comments.gif
+quote site chmod 666 themes/web-blue/images/mini-comments.gif
+send themes\web-blue\images\mini-footer-comments.gif themes/web-blue/images/mini-footer-comments.gif
+quote site chmod 666 themes/web-blue/images/mini-footer-comments.gif
+send themes\web-blue\images\mini-footer-icon.gif themes/web-blue/images/mini-footer-icon.gif
+quote site chmod 666 themes/web-blue/images/mini-footer-icon.gif
+send themes\web-blue\images\mini-nav-left.gif themes/web-blue/images/mini-nav-left.gif
+quote site chmod 666 themes/web-blue/images/mini-nav-left.gif
+send themes\web-blue\images\mini-nav-right.gif themes/web-blue/images/mini-nav-right.gif
+quote site chmod 666 themes/web-blue/images/mini-nav-right.gif
+send themes\web-blue\images\mini-page.gif themes/web-blue/images/mini-page.gif
+quote site chmod 666 themes/web-blue/images/mini-page.gif
+send themes\web-blue\images\mini-rss.gif themes/web-blue/images/mini-rss.gif
+quote site chmod 666 themes/web-blue/images/mini-rss.gif
+send themes\web-blue\images\navtabactivel.png themes/web-blue/images/navtabactivel.png
+quote site chmod 666 themes/web-blue/images/navtabactivel.png
+send themes\web-blue\images\navtabactiver.png themes/web-blue/images/navtabactiver.png
+quote site chmod 666 themes/web-blue/images/navtabactiver.png
+send themes\web-blue\images\navtabl.png themes/web-blue/images/navtabl.png
+quote site chmod 666 themes/web-blue/images/navtabl.png
+send themes\web-blue\images\navtabr.png themes/web-blue/images/navtabr.png
+quote site chmod 666 themes/web-blue/images/navtabr.png
+send themes\web-blue\images\rss-icon.png themes/web-blue/images/rss-icon.png
+quote site chmod 666 themes/web-blue/images/rss-icon.png
+send themes\web-blue\images\search-bg.png themes/web-blue/images/search-bg.png
+quote site chmod 666 themes/web-blue/images/search-bg.png
+send themes\web-blue\images\search-btn-bg.gif themes/web-blue/images/search-btn-bg.gif
+quote site chmod 666 themes/web-blue/images/search-btn-bg.gif
+send themes\web-blue\images\search-icon.gif themes/web-blue/images/search-icon.gif
+quote site chmod 666 themes/web-blue/images/search-icon.gif
+send themes\web-blue\images\search_button_arrow.png themes/web-blue/images/search_button_arrow.png
+quote site chmod 666 themes/web-blue/images/search_button_arrow.png
+send themes\web-blue\images\spacer.gif themes/web-blue/images/spacer.gif
+quote site chmod 666 themes/web-blue/images/spacer.gif
+send themes\web-blue\images\widget-bg.gif themes/web-blue/images/widget-bg.gif
+quote site chmod 666 themes/web-blue/images/widget-bg.gif
+send themes\web-blue\images\widget-border.gif themes/web-blue/images/widget-border.gif
+quote site chmod 666 themes/web-blue/images/widget-border.gif
+send themes\web-blue\images\widget_foot.gif themes/web-blue/images/widget_foot.gif
+quote site chmod 666 themes/web-blue/images/widget_foot.gif
+send themes\web-blue\index.htm themes/web-blue/index.htm
+quote site chmod 666 themes/web-blue/index.htm
+send themes\web-blue\index.tml themes/web-blue/index.tml
+quote site chmod 666 themes/web-blue/index.tml
+send themes\web-blue\print.css themes/web-blue/print.css
+quote site chmod 666 themes/web-blue/print.css
+send themes\web-blue\screenshot.png themes/web-blue/screenshot.png
+quote site chmod 666 themes/web-blue/screenshot.png
+send themes\web-blue\style.css themes/web-blue/style.css
+quote site chmod 666 themes/web-blue/style.css
+cd themes
+mkdir green
+quote site chmod 777 green
+cd ../
+send themes\green\about.ini themes/green/about.ini
+quote site chmod 666 themes/green/about.ini
+cd themes/green
+mkdir images
+quote site chmod 777 images
+cd ../../
+send themes\green\images\btn-bg.gif themes/green/images/btn-bg.gif
+quote site chmod 666 themes/green/images/btn-bg.gif
+send themes\green\images\content-bg.gif themes/green/images/content-bg.gif
+quote site chmod 666 themes/green/images/content-bg.gif
+send themes\green\images\footer-bg.gif themes/green/images/footer-bg.gif
+quote site chmod 666 themes/green/images/footer-bg.gif
+send themes\green\images\form-bg.gif themes/green/images/form-bg.gif
+quote site chmod 666 themes/green/images/form-bg.gif
+send themes\green\images\head-bg.gif themes/green/images/head-bg.gif
+quote site chmod 666 themes/green/images/head-bg.gif
+send themes\green\images\mini-blogroll.gif themes/green/images/mini-blogroll.gif
+quote site chmod 666 themes/green/images/mini-blogroll.gif
+send themes\green\images\mini-calendar.gif themes/green/images/mini-calendar.gif
+quote site chmod 666 themes/green/images/mini-calendar.gif
+send themes\green\images\mini-category.gif themes/green/images/mini-category.gif
+quote site chmod 666 themes/green/images/mini-category.gif
+send themes\green\images\mini-comments.gif themes/green/images/mini-comments.gif
+quote site chmod 666 themes/green/images/mini-comments.gif
+send themes\green\images\mini-footer-comments.gif themes/green/images/mini-footer-comments.gif
+quote site chmod 666 themes/green/images/mini-footer-comments.gif
+send themes\green\images\mini-footer-icon.gif themes/green/images/mini-footer-icon.gif
+quote site chmod 666 themes/green/images/mini-footer-icon.gif
+send themes\green\images\mini-nav-left.gif themes/green/images/mini-nav-left.gif
+quote site chmod 666 themes/green/images/mini-nav-left.gif
+send themes\green\images\mini-nav-right.gif themes/green/images/mini-nav-right.gif
+quote site chmod 666 themes/green/images/mini-nav-right.gif
+send themes\green\images\mini-page.gif themes/green/images/mini-page.gif
+quote site chmod 666 themes/green/images/mini-page.gif
+send themes\green\images\mini-rss.gif themes/green/images/mini-rss.gif
+quote site chmod 666 themes/green/images/mini-rss.gif
+send themes\green\images\navtabactivel.png themes/green/images/navtabactivel.png
+quote site chmod 666 themes/green/images/navtabactivel.png
+send themes\green\images\navtabactiver.png themes/green/images/navtabactiver.png
+quote site chmod 666 themes/green/images/navtabactiver.png
+send themes\green\images\navtabl.png themes/green/images/navtabl.png
+quote site chmod 666 themes/green/images/navtabl.png
+send themes\green\images\navtabr.png themes/green/images/navtabr.png
+quote site chmod 666 themes/green/images/navtabr.png
+send themes\green\images\rss-icon.png themes/green/images/rss-icon.png
+quote site chmod 666 themes/green/images/rss-icon.png
+send themes\green\images\search-bg.png themes/green/images/search-bg.png
+quote site chmod 666 themes/green/images/search-bg.png
+send themes\green\images\search-btn-bg.gif themes/green/images/search-btn-bg.gif
+quote site chmod 666 themes/green/images/search-btn-bg.gif
+send themes\green\images\search-icon.gif themes/green/images/search-icon.gif
+quote site chmod 666 themes/green/images/search-icon.gif
+send themes\green\images\search_button_arrow.png themes/green/images/search_button_arrow.png
+quote site chmod 666 themes/green/images/search_button_arrow.png
+send themes\green\images\spacer.gif themes/green/images/spacer.gif
+quote site chmod 666 themes/green/images/spacer.gif
+send themes\green\images\widget-bg.gif themes/green/images/widget-bg.gif
+quote site chmod 666 themes/green/images/widget-bg.gif
+send themes\green\images\widget-border.gif themes/green/images/widget-border.gif
+quote site chmod 666 themes/green/images/widget-border.gif
+send themes\green\images\widget_foot.gif themes/green/images/widget_foot.gif
+quote site chmod 666 themes/green/images/widget_foot.gif
+send build\indexfile.htm themes/green/images/index.htm
+quote site chmod 666 themes/green/images/index.htm
+send themes\green\index.htm themes/green/index.htm
+quote site chmod 666 themes/green/index.htm
+send themes\green\index.tml themes/green/index.tml
+quote site chmod 666 themes/green/index.tml
+send themes\green\print.css themes/green/print.css
+quote site chmod 666 themes/green/print.css
+send themes\green\screenshot.png themes/green/screenshot.png
+quote site chmod 666 themes/green/screenshot.png
+send themes\green\style.css themes/green/style.css
+quote site chmod 666 themes/green/style.css
+cd themes
+mkdir newsportal
+quote site chmod 777 newsportal
+cd ../
+send themes\newsportal\about.ini themes/newsportal/about.ini
+quote site chmod 666 themes/newsportal/about.ini
+cd themes/newsportal
+mkdir images
+quote site chmod 777 images
+cd ../../
+send themes\newsportal\images\header_bg.gif themes/newsportal/images/header_bg.gif
+quote site chmod 666 themes/newsportal/images/header_bg.gif
+send themes\newsportal\images\menu_bg.gif themes/newsportal/images/menu_bg.gif
+quote site chmod 666 themes/newsportal/images/menu_bg.gif
+send themes\newsportal\images\side_bg.gif themes/newsportal/images/side_bg.gif
+quote site chmod 666 themes/newsportal/images/side_bg.gif
+send themes\newsportal\images\tab_bg.gif themes/newsportal/images/tab_bg.gif
+quote site chmod 666 themes/newsportal/images/tab_bg.gif
+send build\indexfile.htm themes/newsportal/images/index.htm
+quote site chmod 666 themes/newsportal/images/index.htm
+send themes\newsportal\index.htm themes/newsportal/index.htm
+quote site chmod 666 themes/newsportal/index.htm
+send themes\newsportal\index.tml themes/newsportal/index.tml
+quote site chmod 666 themes/newsportal/index.tml
+send themes\newsportal\screenshot.png themes/newsportal/screenshot.png
+quote site chmod 666 themes/newsportal/screenshot.png
+send themes\newsportal\style.css themes/newsportal/style.css
+quote site chmod 666 themes/newsportal/style.css
+cd themes
+mkdir simpla
+quote site chmod 777 simpla
+cd ../
+send themes\simpla\about.ini themes/simpla/about.ini
+quote site chmod 666 themes/simpla/about.ini
+cd themes/simpla
+mkdir images
+quote site chmod 777 images
+cd ../../
+send themes\simpla\images\bg.png themes/simpla/images/bg.png
+quote site chmod 666 themes/simpla/images/bg.png
+send themes\simpla\images\bullet.gif themes/simpla/images/bullet.gif
+quote site chmod 666 themes/simpla/images/bullet.gif
+send themes\simpla\images\packaged.gif themes/simpla/images/packaged.gif
+quote site chmod 666 themes/simpla/images/packaged.gif
+send themes\simpla\images\post.gif themes/simpla/images/post.gif
+quote site chmod 666 themes/simpla/images/post.gif
+send themes\simpla\images\user.gif themes/simpla/images/user.gif
+quote site chmod 666 themes/simpla/images/user.gif
+send build\indexfile.htm themes/simpla/images/index.htm
+quote site chmod 666 themes/simpla/images/index.htm
+send themes\simpla\index.htm themes/simpla/index.htm
+quote site chmod 666 themes/simpla/index.htm
+send themes\simpla\index.tml themes/simpla/index.tml
+quote site chmod 666 themes/simpla/index.tml
+send themes\simpla\screenshot.png themes/simpla/screenshot.png
+quote site chmod 666 themes/simpla/screenshot.png
+send themes\simpla\style.css themes/simpla/style.css
+quote site chmod 666 themes/simpla/style.css
+mkdir js
+quote site chmod 777 js
+cd js
+mkdir audio-player
+quote site chmod 777 audio-player
+cd ../
+send js\audio-player\audio-player-noswfobject.js js/audio-player/audio-player-noswfobject.js
+quote site chmod 666 js/audio-player/audio-player-noswfobject.js
+send js\audio-player\audio-player-uncompressed.js js/audio-player/audio-player-uncompressed.js
+quote site chmod 666 js/audio-player/audio-player-uncompressed.js
+send js\audio-player\audio-player.js js/audio-player/audio-player.js
+quote site chmod 666 js/audio-player/audio-player.js
+send js\audio-player\index.htm js/audio-player/index.htm
+quote site chmod 666 js/audio-player/index.htm
+send js\audio-player\license.txt js/audio-player/license.txt
+quote site chmod 666 js/audio-player/license.txt
+send js\audio-player\player.swf js/audio-player/player.swf
+quote site chmod 666 js/audio-player/player.swf
+cd js
+mkdir flowplayer
+quote site chmod 777 flowplayer
+cd ../
+send js\flowplayer\flowplayer-3.1.4.min.js js/flowplayer/flowplayer-3.1.4.min.js
+quote site chmod 666 js/flowplayer/flowplayer-3.1.4.min.js
+send js\flowplayer\flowplayer-3.1.5.swf js/flowplayer/flowplayer-3.1.5.swf
+quote site chmod 666 js/flowplayer/flowplayer-3.1.5.swf
+send js\flowplayer\flowplayer.controls-3.1.5.swf js/flowplayer/flowplayer.controls-3.1.5.swf
+quote site chmod 666 js/flowplayer/flowplayer.controls-3.1.5.swf
+send js\flowplayer\index.htm js/flowplayer/index.htm
+quote site chmod 666 js/flowplayer/index.htm
+send js\flowplayer\LICENSE.txt js/flowplayer/LICENSE.txt
+quote site chmod 666 js/flowplayer/LICENSE.txt
+send js\index.htm js/index.htm
+quote site chmod 666 js/index.htm
+cd js
+mkdir jsibox
+quote site chmod 777 jsibox
+cd ../
+cd js/jsibox
+mkdir img
+quote site chmod 777 img
+cd ../../
+send js\jsibox\img\ajax-loader2.gif js/jsibox/img/ajax-loader2.gif
+quote site chmod 666 js/jsibox/img/ajax-loader2.gif
+send js\jsibox\img\blank.gif js/jsibox/img/blank.gif
+quote site chmod 666 js/jsibox/img/blank.gif
+send build\indexfile.htm js/jsibox/img/index.htm
+quote site chmod 666 js/jsibox/img/index.htm
+send js\jsibox\jsibox_basic.js js/jsibox/jsibox_basic.js
+quote site chmod 666 js/jsibox/jsibox_basic.js
+send build\indexfile.htm js/jsibox/index.htm
+quote site chmod 666 js/jsibox/index.htm
+cd js
+mkdir litepublisher
+quote site chmod 777 litepublisher
+cd ../
+send js\litepublisher\client.js js/litepublisher/client.js
+quote site chmod 666 js/litepublisher/client.js
+send js\litepublisher\client.min.js js/litepublisher/client.min.js
+quote site chmod 666 js/litepublisher/client.min.js
+send js\litepublisher\comments.js js/litepublisher/comments.js
+quote site chmod 666 js/litepublisher/comments.js
+send js\litepublisher\comments.min.js js/litepublisher/comments.min.js
+quote site chmod 666 js/litepublisher/comments.min.js
+send js\litepublisher\debug.js js/litepublisher/debug.js
+quote site chmod 666 js/litepublisher/debug.js
+send js\litepublisher\filebrowser.js js/litepublisher/filebrowser.js
+quote site chmod 666 js/litepublisher/filebrowser.js
+send js\litepublisher\hovermenu.js js/litepublisher/hovermenu.js
+quote site chmod 666 js/litepublisher/hovermenu.js
+send js\litepublisher\hovermenu.min.js js/litepublisher/hovermenu.min.js
+quote site chmod 666 js/litepublisher/hovermenu.min.js
+send js\litepublisher\index.htm js/litepublisher/index.htm
+quote site chmod 666 js/litepublisher/index.htm
+send js\litepublisher\moderate.js js/litepublisher/moderate.js
+quote site chmod 666 js/litepublisher/moderate.js
+send js\litepublisher\moderate.min.js js/litepublisher/moderate.min.js
+quote site chmod 666 js/litepublisher/moderate.min.js
+send js\litepublisher\rpc.js js/litepublisher/rpc.js
+quote site chmod 666 js/litepublisher/rpc.js
+send js\litepublisher\rpc.min.js js/litepublisher/rpc.min.js
+quote site chmod 666 js/litepublisher/rpc.min.js
+cd js
+mkdir swfupload
+quote site chmod 777 swfupload
+cd ../
+cd js/swfupload
+mkdir css
+quote site chmod 777 css
+cd ../../
+send js\swfupload\css\default.css js/swfupload/css/default.css
+quote site chmod 666 js/swfupload/css/default.css
+send build\indexfile.htm js/swfupload/css/index.htm
+quote site chmod 666 js/swfupload/css/index.htm
+cd js/swfupload
+mkdir images
+quote site chmod 777 images
+cd ../../
+send js\swfupload\images\cancelbutton.gif js/swfupload/images/cancelbutton.gif
+quote site chmod 666 js/swfupload/images/cancelbutton.gif
+send js\swfupload\images\header-bg.jpg js/swfupload/images/header-bg.jpg
+quote site chmod 666 js/swfupload/images/header-bg.jpg
+send js\swfupload\images\XPButtonUploadText_61x22.png js/swfupload/images/XPButtonUploadText_61x22.png
+quote site chmod 666 js/swfupload/images/XPButtonUploadText_61x22.png
+send build\indexfile.htm js/swfupload/images/index.htm
+quote site chmod 666 js/swfupload/images/index.htm
+send js\swfupload\index.htm js/swfupload/index.htm
+quote site chmod 666 js/swfupload/index.htm
+cd js/swfupload
+mkdir plugins
+quote site chmod 777 plugins
+cd ../../
+send js\swfupload\plugins\SWFObject License.txt js/swfupload/plugins/SWFObject License.txt
+quote site chmod 666 js/swfupload/plugins/SWFObject License.txt
+send js\swfupload\plugins\swfupload.cookies.js js/swfupload/plugins/swfupload.cookies.js
+quote site chmod 666 js/swfupload/plugins/swfupload.cookies.js
+send js\swfupload\plugins\swfupload.queue.js js/swfupload/plugins/swfupload.queue.js
+quote site chmod 666 js/swfupload/plugins/swfupload.queue.js
+send js\swfupload\plugins\swfupload.speed.js js/swfupload/plugins/swfupload.speed.js
+quote site chmod 666 js/swfupload/plugins/swfupload.speed.js
+send js\swfupload\plugins\swfupload.swfobject.js js/swfupload/plugins/swfupload.swfobject.js
+quote site chmod 666 js/swfupload/plugins/swfupload.swfobject.js
+send build\indexfile.htm js/swfupload/plugins/index.htm
+quote site chmod 666 js/swfupload/plugins/index.htm
+send js\swfupload\swfupload.js js/swfupload/swfupload.js
+quote site chmod 666 js/swfupload/swfupload.js
+send js\swfupload\swfupload.swf js/swfupload/swfupload.swf
+quote site chmod 666 js/swfupload/swfupload.swf
+by

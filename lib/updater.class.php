@@ -15,8 +15,8 @@ class tupdater extends tevents {
   
   protected function create() {
     parent::create();
-$this->addevents('onupdated');
-$this->basename = 'updater';
+    $this->addevents('onupdated');
+    $this->basename = 'updater';
     $this->version =  self::getversion();
   }
   
@@ -114,7 +114,7 @@ $this->basename = 'updater';
         chmod($filename, 0666);
       }
     }
-$this->onupdated($tar);
+    $this->onupdated($tar);
     return true;
   }
   

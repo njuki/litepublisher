@@ -43,6 +43,13 @@ class tthemeparser extends tdata {
     return $result;
   }
   
+  public function deletespaces($s) {
+    return trim(str_replace(
+    array('   ', '  ', "\r", " \n", "\n\n"),
+    array(' ', ' ', "\n", "\n", "\n"),
+    $s));
+  }
+  
   public function parse($filename, $theme) {
     $this->warnings = array();
     
@@ -277,10 +284,10 @@ class tthemeparser extends tdata {
   
   private function parsesitebar($s) {
     $result = array();
-    $widget = $this->requiretag($s, 'widget', '');
+    $widget = $this->requiretag($s, 'widget', '%s');
     $result['widget'] = $this->parsewidget($widget, 'widget');
     
-    foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'foaf', 'meta') as $name) {
+    foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
       } else {
@@ -288,7 +295,7 @@ class tthemeparser extends tdata {
       }
     }
     
-    $result[0] = trim($s);
+    $result[0] = $this->deletespaces($s);
     return $result;
   }
   
@@ -301,8 +308,22 @@ class tthemeparser extends tdata {
       $result['item'] = $this->GetDefaultWidgetItem($name);
     }
     
-    $result['items'] = trim($items);
-    $result[0] = trim($s);
+    if ($name == 'meta') {
+      $result['classes'] = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
+      if ($classes = $this->parsetag($items, 'metaclasses', '')) {
+        $classes = explode(',', $classes);
+        foreach ($classes as $class) {
+          if ($i = strpos($class, '=')) {
+            $classname = trim(substr($class, 0, $i));
+            $value = trim(substr($class, $i + 1));
+            if ($value != '') $result['classes'][$classname] = sprintf('class="%s"', $value);
+          }
+        }
+      }
+    }
+    
+    $result['items'] = $this->deletespaces($items);
+    $result[0] = $this->deletespaces($s);
     return $result;
   }
   

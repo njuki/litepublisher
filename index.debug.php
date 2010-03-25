@@ -102,4 +102,5 @@ $man = tdbmanager::instance();
 }
 //
 //var_dump(litepublisher::$_paths);
+//litepublisher::$urlmap->clearcache();
 ?>

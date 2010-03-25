@@ -16,17 +16,17 @@ function tsourcefilesInstall($self) {
   `dir` varchar(128) NOT NULL,
   `hash` varchar(32) NOT NULL,
   `content` longtext NOT NULL,
-
+  
   PRIMARY KEY  (`id`)
-");
- }
+  ");
+}
 
 function tsourcefilesUninstall($self) {
   //die("Warning! You can lost all tickets!");
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->table);
-
-Turlmap::unsub($self);  
+  
+  Turlmap::unsub($self);
 }
 
 ?>

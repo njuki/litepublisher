@@ -332,10 +332,9 @@
 		
 	<div id="footer">
 	<div id="bottom">
-	
 	<ul id="footerbar">
 		<!--sitebar-->
-		
+
 		<!--posts-->
 		<li id="lastposts">
 			<div class="rubric">%s</div>
@@ -375,14 +374,16 @@
 				<div class="rubric">%s</div>
     <!--items-->
 				<ul id="widgetmeta">
-				<!--item--><li class="rss"><a href="%1$s" >%2$s</a></li><!--/item-->
+				<!--item--><li %3$s><a href="%1$s" >%2$s</a></li><!--/item-->
+    <!--metaclasses-->rss=rss,comments=rss-comments,foaf=foaf<!--/metaclasses-->
 				</ul>
     <!--/items-->
 			</li>
-	</ul><!--/meta--><!--/sitebar-->
+<!--/meta-->
+<!--/sitebar-->
+	</ul>
 		
-	
-		<div id="copyright"><span class="blogolet"><a href="$options.url$options.home">$options.name</a></span>$template.footer</div>
+			<div id="copyright"><span class="blogolet"><a href="$options.url$options.home">$options.name</a></span>$template.footer</div>
 	</div>
 </div>
 </div>

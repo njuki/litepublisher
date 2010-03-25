@@ -538,8 +538,7 @@ class titems extends tevents {
   
   public function IndexOf($name, $value) {
     if ($this->dbversion){
-      $id = $this->db->findid("$name = ". dbquote($value));
-      return $id ? $id : -1;
+      return $this->db->findid("$name = ". dbquote($value));
     }
     
     foreach ($this->items as $id => $item) {
@@ -547,7 +546,7 @@ class titems extends tevents {
         return $id;
       }
     }
-    return -1;
+    return false;
   }
   
   public function additem(array $item) {
@@ -1156,9 +1155,9 @@ class turlmap extends titems {
   
   public function urlexists($url) {
     if (dbversion) {
-      return $this->db->exists('url = '. dbquote($url));
+      return $this->db->findid('url = '. dbquote($url));
     } else {
-      return isset($this->items[$url]);
+      return isset($this->items[$url]) ? $this->items[$url]['id'] : false;
     }
   }
   

@@ -135,9 +135,9 @@ class tticket extends tpost {
     }
   }
   
-public function getschemalink() {
-return 'ticket';
-}
-
+  public function getschemalink() {
+    return 'ticket';
+  }
+  
 }//class
 ?>
