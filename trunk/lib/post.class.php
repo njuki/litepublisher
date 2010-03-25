@@ -433,7 +433,7 @@ class tpost extends titem implements  itemplate {
   
   public function setcontent($s) {
     if ($s <> $this->rawcontent) {
-if (!is_string($s)) $this->error('Error! Post content must be string');
+      if (!is_string($s)) $this->error('Error! Post content must be string');
       $this->rawcontent = $s;
       $filter = tcontentfilter::instance();
       $filter->SetPostContent($this,$s);
@@ -511,10 +511,10 @@ if (!is_string($s)) $this->error('Error! Post content must be string');
     $urlmap = turlmap::instance();
     $urlmap->setexpired($this->idurl);
   }
-
-public function getschemalink() {
-return 'post';
-}
+  
+  public function getschemalink() {
+    return 'post';
+  }
   
 }//class
 

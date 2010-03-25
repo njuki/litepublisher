@@ -171,18 +171,18 @@ class tstdwidgets extends titems {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('meta', $sitebar);
     $tml .= "\n";
+    $metaclasses = isset($theme->data['sitebars'][$sitebar]['meta']) ? $theme->data['sitebars'][$sitebar]['meta']['classes'] :
+    array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
     $lang = tlocal::instance('default');
     $result = '';
-    if ($rss) $result .= sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss);
-    if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments);
-    if ($media) $result .= sprintf($tml, litepublisher::$options->url . '/rss/multimedia.xml', $lang->rssmedia);
+    if ($rss) $result .= sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss, $metaclasses['rss']);
+    if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
+    if ($media) $result .= sprintf($tml, litepublisher::$options->url . '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
+    if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
+    if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile, $metaclasses['profile']);
+    if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
     
-    $tml = '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-    if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf);
-    if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile);
-    if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap);
-    
-    if ($result == '') return $result;
+    if ($result == '') return '';
     return sprintf($theme->getwidgetitems('meta', $sitebar), $result);
   }
   

@@ -39,11 +39,11 @@ class tmenus extends TItems {
     $linkgen = tlinkgenerator::instance();
     $item->url = $linkgen->addurl($item, 'menu');
     
-$id = ++$this->autoid;
+    $id = ++$this->autoid;
     $this->items[$id] = array(
-'id' => $id,
-'class' => get_class($item)
-);
+    'id' => $id,
+    'class' => get_class($item)
+    );
     //move props
     foreach (tmenu::$ownerprops as $prop) {
       $this->items[$id][$prop] = $item->$prop;
@@ -66,16 +66,16 @@ $id = ++$this->autoid;
     $item['id'] = ++$this->autoid;
     $item['order'] = $this->autoid;
     $item[    'status'] = 'published';
-if ($idurl = litepublisher::$urlmap->urlexists($item['url'])) {
-$item['idurl'] =  $idurl;
-} else {
-$item['idurl'] =litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
-}
-
+    if ($idurl = litepublisher::$urlmap->urlexists($item['url'])) {
+      $item['idurl'] =  $idurl;
+    } else {
+      $item['idurl'] =litepublisher::$urlmap->add($item['url'], $item['class'], $this->autoid, 'get');
+    }
+    
     $this->items[$this->autoid] = $item;
     $this->sort();
     $this->save();
-litepublisher::$urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return $this->autoid;
   }
   
@@ -87,7 +87,7 @@ litepublisher::$urlmap->clearcache();
     'class' => $class
     ));
   }
-
+  
   public function edit(imenu $item) {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($item, 'menu');
@@ -121,7 +121,7 @@ litepublisher::$urlmap->clearcache();
       if ($url == $item['url']) return $this->delete($id);
     }
   }
-
+  
   public function  remove($id) {
     if (!$this->itemexists($id)) return false;
     if ($this->haschilds($id)) return false;
@@ -271,7 +271,7 @@ litepublisher::$urlmap->clearcache();
     return $result;
   }
   
- public function class2id($class) {
+  public function class2id($class) {
     foreach($this->items as $id => $item) {
       if ($class == $item['class']) return $id;
     }

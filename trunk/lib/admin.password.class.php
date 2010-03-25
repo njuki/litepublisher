@@ -45,7 +45,7 @@ class tadminpassword extends tadminform {
       $args->add($item);
       $name = $item['name'];
     }
-      $args->login = $name;
+    $args->login = $name;
     $args->password = $password;
     $mailtemplate = tmailtemplate::instance($this->section);
     $subject = $mailtemplate->subject($args);

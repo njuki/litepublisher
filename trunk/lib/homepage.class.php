@@ -92,11 +92,11 @@ public function afterrequest(&$content) {}
       return $widgets->getcontent();
     }
   }
-// imenu  
-  public function getparent() { return 0; }
-  public function setparent($id) {}
-  public function getorder() { return 0; }
-  public function setorder($order) {}
-
+  // imenu
+public function getparent() { return 0; }
+public function setparent($id) {}
+public function getorder() { return 0; }
+public function setorder($order) {}
+  
 }//class
 ?>

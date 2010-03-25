@@ -43,7 +43,7 @@ class tfoaf extends titems {
     if (count($items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('foaf', $sitebar);
+    $tml = $theme->getwidgetitem('friends', $sitebar);
     $args = targs::instance();
     foreach ($items as $id) {
       $item = $this->getitem($id);
