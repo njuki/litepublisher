@@ -111,7 +111,7 @@ class tupdater extends tevents {
         if (false === @file_put_contents($filename, $file['file'])) {
           return sprintf($lang->errorwritefile, $filename);
         }
-        chmod($filename, 0666);
+        @chmod($filename, 0666);
       }
     }
     $this->onupdated($tar);

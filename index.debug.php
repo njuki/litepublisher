@@ -1,4 +1,5 @@
 <?php
+
 //set_time_limit(1);
 error_reporting(E_ALL);
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -84,6 +85,7 @@ litepublisher::$options = toptions::instance();
 if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
 if (dbversion) litepublisher::$db = new tdatabase();
     litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
+
 litepublisher::$urlmap = turlmap::instance();
 if (!defined('litepublisher_mode')) {
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);

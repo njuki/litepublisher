@@ -94,6 +94,12 @@ class tposts extends titems {
     }
     
     $post->modified = time();
+    if (($post->status == 'published') && ($post->posted > time())) {
+      $post->status = 'future';
+} elseif (($post->status == 'future') && ($post->posted <= time())) {
+      $post->status = 'published';
+}
+
     $post->pagescount = count($post->pages);
     $post->title = tcontentfilter::escape($post->title);
     $linkgen = tlinkgenerator::instance();
@@ -113,7 +119,7 @@ class tposts extends titems {
     $this->lock();
     $this->updated($post);
     $this->cointerface('add', $post);
-    $post->save();
+    if (!$this->dbversion) $post->save();
     $this->unlock();
     $this->added($post->id);
     $this->changed();
@@ -126,6 +132,12 @@ class tposts extends titems {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($post, $post->schemalink);
     $post->modified = time();
+    if (($post->status == 'published') && ($post->posted > time())) {
+      $post->status = 'future';
+} elseif (($post->status == 'future') && ($post->posted <= time())) {
+      $post->status = 'published';
+}
+
     $this->lock();
     $this->updated($post);
     $this->cointerface('edit', $post);
@@ -181,11 +193,6 @@ class tposts extends titems {
   }
   
   public function updated(tpost $post) {
-    if (($post->status == 'published') && ($post->posted > time())) {
-      $post->status = 'future';
-      if ($this->dbversion) $post->db->setvalue($post->id, 'status', 'future');
-    }
-    $this->PublishFuture();
     if (!$this->dbversion) {
       $this->items[$post->id] = array(
       'posted' => $post->posted
@@ -193,6 +200,7 @@ class tposts extends titems {
       if   ($post->status != 'published') $this->items[$post->id]['status'] = $post->status;
       if   ($post->author > 1) $this->items[$post->id]['author'] = $post->author;
     }
+    $this->PublishFuture();
     $this->UpdateArchives();
     $Cron = tcron::instance();
     $Cron->add('single', get_class($this), 'dosinglecron', $post->id);
@@ -236,7 +244,7 @@ class tposts extends titems {
       }
     } else {
       foreach ($this->items as $id => $item) {
-        if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
+       if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
       }
     }
   }
