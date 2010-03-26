@@ -20,42 +20,39 @@ class tcodedoc extends tpost {
     $this->data['doc'] = &$this->doc;
     $this->doc = array(
     'id' => 0,
-    'type' => 'bug',
-    'state'  => 'opened',
-    'prio' => 'major',
-    'assignto' => 0,
-    'closed' => '',
-    'version'=> litepublisher::$options->version,
-    'votes' => 0,
-    'poll' => 0,
-    'os'=> '*',
-    'reproduced' => false,
-    'code' => ''
+    'class'  => '',
+  'parentclass' => '',
+  'childs' => '',
+  'interfaces' => '',
+  'dependent' => '',
+  'methods' => '',
+  'properties' => '',
+  'classevents' => '',
+  'example' => ''
     );
   }
   
   public function __get($name) {
-    if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
+    if (array_key_exists($name, $this->doc)) return $this->doc[$name];
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
-    if (array_key_exists($name, $this->ticket)) {
-      $this->ticket[$name] = $value;
+    if (array_key_exists($name, $this->doc)) {
+      $this->doc[$name] = $value;
       return true;
     }
     return parent::__set($name, $value);
   }
   
   public function __isset($name) {
-    return array_key_exists($name, $this->ticket) || parent::__isset($name);
+    return array_key_exists($name, $this->doc) || parent::__isset($name);
   }
   
   protected function LoadFromDB() {
     if (!parent::LoadFromDB())  return false;
-    if ($a = $this->getdb($this->ticketstable)->getitem($this->id)) {
-      $this->ticket = $a;
-      $this->ticket['reproduced'] = $a['reproduced'] == '1';
+    if ($a = $this->getdb($this->doctable)->getitem($this->id)) {
+      $this->doc = $a;
       return true;
     }
     return false;
@@ -63,40 +60,31 @@ class tcodedoc extends tpost {
   
   protected function SaveToDB() {
     parent::SaveToDB();
-    if ($this->ticket['closed'] == '') $this->ticket['closed'] = sqldate();
-    $this->ticket['id'] = $this->id;
-    $this->getdb($this->ticketstable)->updateassoc($this->ticket);
+    $this->doc['id'] = $this->id;
+    $this->getdb($this->doctable)->updateassoc($this->doc);
   }
   
   public function addtodb() {
     $id = parent::addtodb();
-    $this->ticket['id'] = $id;
-    $this->getdb($this->ticketstable)->add($this->ticket);
+    $this->doc['id'] = $id;
+    $this->getdb($this->doctable)->add($this->doc);
     return $this->id;
-  }
-  
-  protected function getclosed() {
-    return strtotime($this->ticket['closed']);
-  }
-  
-  protected function setclosed($value) {
-    $this->ticket['closed'] = sqldate($value);
   }
   
   protected function getcontentpage($page) {
     $result = '';
-    if ($page == 1) $result .= $this->getticketcontent();
+    if ($page == 1) $result .= $this->getdoccontent();
     $result .= parent::getcontentpage($page);
-    if (($page == 1) && !empty($this->ticket['code'])) {
+    if (($page == 1) && !empty($this->doc['code'])) {
       $code = str_replace(array('"', "'", '$'), array('&quot;', '&#39;', '&#36;'), htmlspecialchars($this->code));
       $result .= "\n<code><pre>\n$code\n</pre></code>\n";
     }
     return $result;
   }
   
-  public function getticketcontent() {
+  public function getdoccontent() {
     $this->checklang();
-    $lang = tlocal::instance('ticket');
+    $lang = tlocal::instance('doc');
     $args = targs::instance();
     foreach (array('type', 'state', 'prio') as $prop) {
       $value = $this->$prop;
@@ -112,9 +100,9 @@ class tcodedoc extends tpost {
       $args->assignto = $account['name'];
     }
     
-    ttheme::$vars['ticket'] = $this;
+    ttheme::$vars['doc'] = $this;
     $theme = ttheme::instance();
-    $tml = file_get_contents($this->resource . 'ticket.tml');
+    $tml = file_get_contents($this->resource . 'doc.tml');
     $result = $theme->parsearg($tml, $args);
     if ($this->poll > 1) {
       $polls = tpolls::instance();
@@ -128,7 +116,7 @@ class tcodedoc extends tpost {
   }
   
   public function checklang() {
-    if (!isset(tlocal::$data['ticket'])) {
+    if (!isset(tlocal::$data['doc'])) {
       tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
       tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
