@@ -144,7 +144,7 @@ class turlmap extends titems {
         return;
       }
     }
-
+    
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
@@ -359,7 +359,7 @@ class turlmap extends titems {
   }
   
   public function redir301($to) {
-        tfiler::log($to. "\n" . $this->url);
+    tfiler::log($to. "\n" . $this->url);
     litepublisher::$options->savemodified();
     tfiler::log(var_export($_COOKIE, true));
     self::redir(litepublisher::$options->url . $to);

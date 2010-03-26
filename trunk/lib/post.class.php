@@ -76,7 +76,7 @@ class tpost extends titem implements  itemplate {
   
   protected function LoadFromDB() {
     $db = litepublisher::$db;
-    if ($a = $db->queryassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    if ($a = $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
       $trans = tposttransform::instance($this);
       $trans->setassoc($a);

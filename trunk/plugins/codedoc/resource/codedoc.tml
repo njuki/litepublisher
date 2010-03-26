@@ -1,27 +1,43 @@
 <table>
 	<thead>
 	<tr>
-		<th align='left'>$lang.type</th>
-		<th align='left'>$lang.state</th>
-		<th align='left'>$lang.prio</th>
-		<th align='left'>$lang.votes</th>
-		<th align='left'>$lang.version</th>
-		<th align='left'>$lang.os</th>
-		<th align='left'>$lang.reproduced</th>
-		<th align='left'>$lang.assignto</th>
+		<th align='left'>$lang.namevalue</th>
+		<th align='left'>$lang.value</th>
 </tr>
 	</thead>
 <tbody>
 
 <tr>
-		<td  align='left'><a href='$options.url/$ticket.type/'>$type</a></td>
-		<dd align='left'>$state</td>
-		<td align='left'>$prio</td>
-		<td align='left'>$ticket.votes</td>
-		<td align='left'>$ticket.version</td>
-		<td align='left'>$ticket.os</td>
-		<td align='left'>$reproduced</td>
-		<td align='left'>$assignto</td>
+		<td  align='left'>$lang.class</td>
+		<dd align='left'>$post.class</td>
+</tr>
+<tr>
+		<td  align='left'>$lang.parentclass</td>
+		<dd align='left'>$post.parentclasslink</td>
+</tr>
+
+<tr>
+		<td  align='left'>$lang.childs</td>
+		<dd align='left'>$post.childlinks</td>
+</tr>
+
+<tr>
+		<td  align='left'>$lang.source</td>
+		<dd align='left'>$post.sourcelink</td>
+</tr>
+
+<tr>
+		<td  align='left'>$lang.class</td>
+		<dd align='left'>$post.class</td>
+</tr>
+<tr>
+		<td  align='left'>$lang.interfaces</td>
+		<dd align='left'>$post.interfacelinks</td>
+</tr>
+
+<tr>
+		<td  align='left'>$lang.dependent</td>
+		<dd align='left'>$post.dependentlinks</td>
 </tr>
 
 </tbody >

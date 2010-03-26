@@ -86,6 +86,13 @@ class twikiwords extends titems {
     if ($id = $this->IndexOf('word', $word)) return $this->delete($id);
   }
   
+  public function getword($word) {
+    if ($id =$this->add($word, 0)) {
+      return '$wikiwords.word_' . $id;
+    }
+    return '';
+  }
+  
   public function postadded($idpost) {
     if (count($this->fix) == 0) return;
     $this->lock();

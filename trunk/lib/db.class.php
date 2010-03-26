@@ -120,9 +120,8 @@ class tdatabase {
     return $this->res2id($this->query("select id from $this->prefix$this->table where $where"));
   }
   
-  public function queryassoc($sql) {
-    if ($r = mysql_fetch_assoc($this->query($sql))) return $r;
-    return false;
+  public function selectassoc($sql) {
+    return mysql_fetch_assoc($this->query($sql));
   }
   
   public function getassoc($where) {
@@ -290,6 +289,16 @@ class tdatabase {
   
   public function countof($res) {
     return  mysql_num_rows($res);
+  }
+  
+  public static function str2array($s) {
+    $result = array();
+    foreach (explode(',', $s) as $i => $value) {
+      $v = (int) trim($value);
+      if ($v== 0) continue;
+      $result[] = $v;
+    }
+    return $result;
   }
   
 }//class

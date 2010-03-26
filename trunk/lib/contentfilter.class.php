@@ -113,29 +113,29 @@ class tcontentfilter extends tevents {
   public function replacecode($s) {
     $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'CallbackReplaceCode'), $s);
     if ($this->phpcode) {
-$s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_replace_php'), $s);
-} else {
-$s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_fix_php'), $s);
-}
-return $s;
+      $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_replace_php'), $s);
+    } else {
+      $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_fix_php'), $s);
+    }
+    return $s;
   }
-
-public function callback_fix_php($m) {
-return str_replace("<br />\n", "\n", $m[0]);
-}
-
-public static function specchars($s) {    
-$s = str_replace("<br />\n", "\n", $s);
-return str_replace(
+  
+  public function callback_fix_php($m) {
+    return str_replace("<br />\n", "\n", $m[0]);
+  }
+  
+  public static function specchars($s) {
+    $s = str_replace("<br />\n", "\n", $s);
+    return str_replace(
     array('"', "'", '$'),
     array('&quot;', '&#39;', '&#36;'),
     htmlspecialchars($s));
-}
+  }
   
   public function CallbackReplaceCode($found) {
     return sprintf('<code><pre>%s</pre></code>', self::specchars($found[1]));
   }
-
+  
   public function callback_replace_php($found) {
     return sprintf('<code><pre>%s</pre></code>', self::specchars($found[0]));
   }
