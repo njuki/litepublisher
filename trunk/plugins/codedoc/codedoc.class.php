@@ -32,6 +32,10 @@ class tcodedoc extends tpost {
     'example' => ''
     );
   }
+
+  public function getschemalink() {
+    return 'codedoc';
+  }
   
   public function __get($name) {
     if (array_key_exists($name, $this->doc)) return $this->doc[$name];

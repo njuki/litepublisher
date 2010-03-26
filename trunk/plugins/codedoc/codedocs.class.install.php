@@ -40,7 +40,7 @@ function tticketsInstall($self) {
   litepublisher::$classes->unlock();
   
   $linkgen = tlinkgenerator::instance();
-  $linkgen->post = '/[type]/[title].htm';
+  $linkgen->data['codedoc'] = '/codedoc/[title].htm';
   $linkgen->save();
   
   $cron = tcron::instance();
