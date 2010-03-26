@@ -86,7 +86,7 @@ function tpollsUninstall($self) {
 }
 
 function finddeletedpols($self) {
-  $signs = $self->db->queryassoc("select id, hash from $self->thistable");
+  $signs = $self->db->selectassoc("select id, hash from $self->thistable");
   if (!$signs) return array();
   $db = litepublisher::$db;
   $posts = tposts::instance();

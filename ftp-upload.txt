@@ -1,5 +1,5 @@
 open example.com
-user login passwword
+user login password
 cd public_html
 binary
 send .htaccess .htaccess
@@ -560,6 +560,8 @@ send plugins\codedoc\codedocs.class.php plugins/codedoc/codedocs.class.php
 quote site chmod 666 plugins/codedoc/codedocs.class.php
 send plugins\codedoc\index.htm plugins/codedoc/index.htm
 quote site chmod 666 plugins/codedoc/index.htm
+send plugins\codedoc\ini2doc.class.php plugins/codedoc/ini2doc.class.php
+quote site chmod 666 plugins/codedoc/ini2doc.class.php
 cd plugins/codedoc
 mkdir resource
 quote site chmod 777 resource

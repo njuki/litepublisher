@@ -96,10 +96,10 @@ class tposts extends titems {
     $post->modified = time();
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
-} elseif (($post->status == 'future') && ($post->posted <= time())) {
+    } elseif (($post->status == 'future') && ($post->posted <= time())) {
       $post->status = 'published';
-}
-
+    }
+    
     $post->pagescount = count($post->pages);
     $post->title = tcontentfilter::escape($post->title);
     $linkgen = tlinkgenerator::instance();
@@ -134,10 +134,10 @@ class tposts extends titems {
     $post->modified = time();
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
-} elseif (($post->status == 'future') && ($post->posted <= time())) {
+    } elseif (($post->status == 'future') && ($post->posted <= time())) {
       $post->status = 'published';
-}
-
+    }
+    
     $this->lock();
     $this->updated($post);
     $this->cointerface('edit', $post);
@@ -244,7 +244,7 @@ class tposts extends titems {
       }
     } else {
       foreach ($this->items as $id => $item) {
-       if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
+        if (isset($item['status']) && ($item['status'] == 'future') && ($item['posted'] <= time())) $this->publish($id);
       }
     }
   }

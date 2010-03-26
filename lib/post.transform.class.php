@@ -98,13 +98,7 @@ class tposttransform  {
   public function __set($name, $value) {
     if (method_exists($this, $set = "set$name")) return $this->$set($value);
     if (in_array($name, self::$arrayprops)) {
-      $list = array();
-      foreach (explode(',', $value) as $i => $value) {
-        $v = (int) trim($value);
-        if ($v== 0) continue;
-        $list[] = $v;
-      }
-      $this->post->data[$name] = $list;
+      $this->post->data[$name] = tdatabase::str2array($value);
     } elseif (in_array($name, self::$intprops)) {
       $this->post->$name = (int) $value;
     } elseif (in_array($name, self::$boolprops)) {

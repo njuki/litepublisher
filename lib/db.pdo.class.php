@@ -116,7 +116,7 @@ class tdatabase extends PDO {
     return false;
   }
   
-  public function queryassoc($sql) {
+  public function selectassoc($sql) {
     if ($res = $this->query($sql)) {
       return $res->fetch(PDO::FETCH_ASSOC);
     }
@@ -301,6 +301,16 @@ class tdatabase extends PDO {
     
     public function countof($res) {
       return $res ? $res->rowCount() : false;
+    }
+    
+    public static function str2array($s) {
+      $result = array();
+      foreach (explode(',', $s) as $i => $value) {
+        $v = (int) trim($value);
+        if ($v== 0) continue;
+        $result[] = $v;
+      }
+      return $result;
     }
     
   }//class
