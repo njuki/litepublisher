@@ -54,6 +54,7 @@ function tticketsUninstall($self) {
   $cron->deleteclass(get_class($self));
   
   litepublisher::$classes->lock();
+  if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
   $class = 'tticket';
@@ -62,7 +63,8 @@ function tticketsUninstall($self) {
   
   litepublisher::$classes->delete('tticketeditor');
   litepublisher::$classes->delete('tadmintickets');
-  
+
+ 
   $menus = tadminmenus::instance();
   $menus->lock();
   $menus->deleteurl('/admin/tickets/editor/');
@@ -71,10 +73,10 @@ function tticketsUninstall($self) {
   litepublisher::$classes->unlock();
   
   $manager = tdbmanager ::instance();
-  $manager->deletetable($self->tickettable);
+  $manager->deletetable($self->ticketstable);
   
   $polls = tpolls::instance();
-  $polls->finddeleted = true;
+  $polls->garbage = true;
   $polls->save();
   
   tfiler::deletemask(litepublisher::$paths->languages . '*.php');

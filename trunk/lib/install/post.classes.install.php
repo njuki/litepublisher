@@ -30,7 +30,7 @@ function tpostclassesUninstall($self) {
 
 litepublisher::$classes->unsubscribeclass($self);
 
-tposts::uunsub($self);
+tposts::unsub($self);
 }
 
 ?>

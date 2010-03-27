@@ -14,6 +14,7 @@ public $classes;
   }
 
   protected function create() {
+$this->dbversion = dbversion;
     parent::create();
     $this->basename = 'postclasses';
     $this->table = 'postclasses';
@@ -21,7 +22,7 @@ $this->addmap('classes', array());
   }
 
 public function newitem($name, &$class, $id) {
-if ($name !== 'post') return;
+if (($name != 'post') || ($id == 0)) return;
 if ($idclass = $this->getclassname($id)) {
 if ($idclass > 0) $class = $this->classes[$idclass];
 }
@@ -37,6 +38,7 @@ return false;
 }
 
 public function postadded($id) {
+if ($id == 0) return; //fix possible bugs
 $post = tpost::instance($id);
 $idclass = $this->addclass(get_class($post));
 $this->add($id, $idclass);
