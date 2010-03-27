@@ -42,9 +42,9 @@ class tclasses extends titems {
     return new $class();
   }
 
-  public function newitem($class, $id) {
+  public function newitem($name, $class, $id) {
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
-$this->callevent('onnewitem', array(&$class, $id));
+$this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();
   }
   
@@ -130,44 +130,6 @@ $this->addevents('onnewitem');
 
 function getinstance($class) {
   return litepublisher::$classes->getinstance($class);
-}
-
-function PHPComment($s) {
-  $s = str_replace('*/', '**//*/', $s);
-  return "<?php /* $s */ ?>";
-}
-
-function PHPUncomment($s) {
-  $s = substr($s, 9, strlen($s) - 9 - 6);
-  return str_replace('**//*/', '*/', $s);
-}
-
-function strbegin($s, $begin) {
-  return strncmp($s, $begin, strlen($begin)) == 0;
-}
-
-function strend($s, $end) {
-  return $end == substr($s, 0 - strlen($end));
-}
-
-function SafeSaveFile($BaseName, $Content) {
-  $TmpFileName = $BaseName.'.tmp.php';
-  if(!file_put_contents($TmpFileName, $Content)) {
-    litepublisher::$options->trace("Error write to file $TmpFileName");
-    return false;
-  }
-  chmod($TmpFileName , 0666);
-  $FileName = $BaseName.'.php';
-  if (file_exists($FileName)) {
-    $BakFileName = $BaseName . '.bak.php';
-    if (file_exists($BakFileName)) unlink($BakFileName);
-    rename($FileName, $BakFileName);
-  }
-  if (!rename($TmpFileName, $FileName)) {
-    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
-    return false;
-  }
-  return true;
 }
 
 ?>

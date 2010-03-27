@@ -14,7 +14,7 @@ class titem extends tdata {
   public static function iteminstance($name, $class, $id = 0) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$name][$id]))     return self::$instances[$name][$id];
-    $self = litepublisher::$classes->newitem($class, $id);
+    $self = litepublisher::$classes->newitem($name, $class, $id);
     $self->instancename = $name;
     $self->id = $id;
     if ($id != 0) {
