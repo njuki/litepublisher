@@ -35,11 +35,13 @@ class tticket extends tpost {
   }
   
   public function __get($name) {
+if ($name == 'id') return $this->data['id'];
     if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
+if ($name == 'id') return $this->setid($value);
     if (array_key_exists($name, $this->ticket)) {
       $this->ticket[$name] = $value;
       return true;

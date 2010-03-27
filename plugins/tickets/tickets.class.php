@@ -123,6 +123,16 @@ class ttickets extends tposts {
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
     }
   }
+
+public function install() {
+require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
+tticketsInstall($this);
+}
+
+public function uninstall() {
+require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
+tticketsUninstall($this);
+}
   
 }//class
 ?>

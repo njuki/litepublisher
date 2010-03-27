@@ -106,7 +106,7 @@ class tposts extends titems {
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $urlmap = turlmap::instance();
     if (dbversion) {
-      $post->addtodb();
+      $id = $post->addtodb();
       $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
       $post->db->setvalue($post->id, 'idurl', $post->idurl);
     } else {
