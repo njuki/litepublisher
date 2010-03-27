@@ -15,6 +15,7 @@ function tticketsInstall($self) {
   $manager->CreateTable($self->ticketstable, file_get_contents($self->resource .'ticket.sql'));
   
   litepublisher::$classes->lock();
+litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $posts = tposts::instance();
   $posts->deleted = $self->postdeleted;
   
@@ -25,7 +26,7 @@ function tticketsInstall($self) {
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
   $polls = tpolls::instance();
-  $polls->finddeleted = false;
+  $polls->garbage = false;
   $polls->save();
   
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));

@@ -15,6 +15,7 @@ function tticketsInstall($self) {
   $manager->CreateTable($self->table, file_get_contents($self->resource .'ticket.sql'));
   
   litepublisher::$classes->lock();
+litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $posts = tposts::instance();
   $posts->deleted = $self->postdeleted;
   

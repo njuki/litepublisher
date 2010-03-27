@@ -83,7 +83,7 @@ class ttickets extends tposts {
   public function optimize() {
     $db = $this->getdb($this->ticketstable);
     $items = $db->res2assoc($db->query("select id, poll from $this.thistable where id not in
-    (select$db.posts.id from $db.posts)");
+    (select$db.posts.id from $db.posts)"));
     if (count($items) == 0) return;
     $deleted = array();
     $idpolls = array();

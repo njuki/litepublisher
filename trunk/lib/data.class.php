@@ -226,6 +226,44 @@ function md5uniq() {
   return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
+function PHPComment($s) {
+  $s = str_replace('*/', '**//*/', $s);
+  return "<?php /* $s */ ?>";
+}
+
+function PHPUncomment($s) {
+  $s = substr($s, 9, strlen($s) - 9 - 6);
+  return str_replace('**//*/', '*/', $s);
+}
+
+function strbegin($s, $begin) {
+  return strncmp($s, $begin, strlen($begin)) == 0;
+}
+
+function strend($s, $end) {
+  return $end == substr($s, 0 - strlen($end));
+}
+
+function SafeSaveFile($BaseName, $Content) {
+  $TmpFileName = $BaseName.'.tmp.php';
+  if(!file_put_contents($TmpFileName, $Content)) {
+    litepublisher::$options->trace("Error write to file $TmpFileName");
+    return false;
+  }
+  chmod($TmpFileName , 0666);
+  $FileName = $BaseName.'.php';
+  if (file_exists($FileName)) {
+    $BakFileName = $BaseName . '.bak.php';
+    if (file_exists($BakFileName)) unlink($BakFileName);
+    rename($FileName, $BakFileName);
+  }
+  if (!rename($TmpFileName, $FileName)) {
+    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
+    return false;
+  }
+  return true;
+}
+
 function dumpstr($s) {
   echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
 }

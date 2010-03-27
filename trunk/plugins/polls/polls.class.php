@@ -27,6 +27,7 @@ class tpolls extends tplugin {
     $this->userstable = 'pollusers';
     $this->votestable = 'pollvotes';
     $this->addevents('added', 'deleted', 'edited');
+$this->data['garbage'] = true;
     $this->data['title'] = 'new poll';
     $this->data['voted'] = '';
     $this->types = array('radio', 'button', 'link', 'custom');
