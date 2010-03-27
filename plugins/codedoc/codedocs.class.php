@@ -124,5 +124,15 @@ class tcodedocs extends tposts {
     }
   }
   
+public function install() {
+require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'codedocs.class.install.php');
+tcodedocsInstall($this);
+}
+
+public function uninstall() {
+require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'codedocs.class.install.php');
+tcodedocsUninstall($this);
+}
+
 }//class
 ?>

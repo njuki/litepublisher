@@ -38,11 +38,13 @@ class tcodedoc extends tpost {
   }
   
   public function __get($name) {
+if ($name == 'id') return $this->data['id'];
     if (array_key_exists($name, $this->doc)) return $this->doc[$name];
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
+if ($name == 'id') return $this->setid($value);
     if (array_key_exists($name, $this->doc)) {
       $this->doc[$name] = $value;
       return true;

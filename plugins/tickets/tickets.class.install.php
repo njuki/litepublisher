@@ -11,6 +11,10 @@ function tticketsInstall($self) {
   tfiler::deletemask(litepublisher::$paths->languages . '*.php');
   $self->checkadminlang();
   
+        $filter = tcontentfilter::instance();
+        $filter->phpcode = true;
+        $filter->save();
+
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->ticketstable, file_get_contents($self->resource .'ticket.sql'));
   
@@ -33,6 +37,10 @@ litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
   $menus = tadminmenus::instance();
+        litepublisher::$options->reguser = true;
+$adminoptions = tadminoptions::instance();
+$adminoptions->usersenabled = true;
+
   $idmenu = $menus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
   $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
   $idmenu = $menus->createitem($idmenu, 'editor', 'ticket', 'tticketeditor');
@@ -43,7 +51,10 @@ litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $linkgen = tlinkgenerator::instance();
   $linkgen->data['ticket'] = '/[type]/[title].htm';
   $linkgen->save();
-  
+
+$groups = tusergroups  ::instance();
+$groups->add('ticket');
+
   $cron = tcron::instance();
   $cron->addweekly(get_class($self), 'optimize', null);
 }
@@ -54,7 +65,7 @@ function tticketsUninstall($self) {
   $cron->deleteclass(get_class($self));
   
   litepublisher::$classes->lock();
-  if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
+  //if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
   $class = 'tticket';

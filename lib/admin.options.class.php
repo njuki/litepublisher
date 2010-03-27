@@ -313,18 +313,7 @@ class Tadminoptions extends tadminmenu {
       } else {
         $options->cookieenabled = isset($cookie);
         $options->reguser = isset($reguser);
-        if ($options->usersenabled != isset($usersenabled)) {
-          $options->usersenabled = isset($usersenabled);
-          $menus = tadminmenus::instance();
-          $menus->lock();
-          if ($options->usersenabled) {
-            $menus->createitem(0, 'users', 'admin', 'tadminusers');
-          } else {
-            $menus->deleteurl('/admin/users/');
-          }
-          $menus->unlock();
-        }
-        
+$this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);
         $auth = tauthdigest::instance();
         $auth->xxxcheck = isset($xxxcheck);
@@ -378,5 +367,19 @@ class Tadminoptions extends tadminmenu {
     $result .= "</select>";
     return $result;
   }
+
+public function setusersenabled($value) {
+if (litepublisher::$options->usersenabled == $value) return;
+          litepublisher::$options->usersenabled = $value;
+          $menus = tadminmenus::instance();
+          $menus->lock();
+          if ($value) {
+            $menus->createitem(0, 'users', 'admin', 'tadminusers');
+          } else {
+            $menus->deleteurl('/admin/users/');
+          }
+          $menus->unlock();
+}
+
 }//class
 ?>
