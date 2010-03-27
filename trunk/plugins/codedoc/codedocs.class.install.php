@@ -48,12 +48,13 @@ litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $cron->addweekly(get_class($self), 'optimize', null);
 }
 
-function tticketsUninstall($self) {
+function tcodedocsUninstall($self) {
   //die("Warning! You can lost all tickets!");
   $cron = tcron::instance();
   $cron->deleteclass(get_class($self));
   
   litepublisher::$classes->lock();
+  if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
   $class = 'tticket';

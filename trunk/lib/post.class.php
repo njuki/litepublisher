@@ -95,9 +95,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function addtodb() {
-$id=    tposttransform ::add($this);
-echo get_class($this), " $id add to db<br>";
-$this->setid($id);
+$this->setid(tposttransform ::add($this));
     return $this->id;
   }
   
