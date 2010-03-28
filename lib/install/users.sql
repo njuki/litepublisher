@@ -1,4 +1,4 @@
-  `id` int(10) unsigned NOT NULL auto_increment,
+  `id` int unsigned NOT NULL auto_increment,
   `login` varchar(32) NOT NULL,
   `password` varchar(64) NOT NULL,
   `cookie` varchar(32) NOT NULL,

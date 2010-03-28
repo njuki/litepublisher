@@ -7,30 +7,46 @@
 **/
 
 class tadminreguser extends tadminform {
+private $registered;
+
   public static function instance() {
     return getinstance(__class__);
   }
   
-  
-  public function gettitle() {
-    return tlocal::$data['users']['adduser'];
-  }
   protected function create() {
     parent::create();
     $this->section = 'users';
+$this->registered = false;
   }
   
   public function request($arg) {
     if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 404;
     return parent::request($arg);
   }
-  
+
+  public function gettitle() {
+    return tlocal::$data['users']['adduser'];
+  }
+
+public function getlogged() {
+    if (litepublisher::$options->cookieenabled) {
+return litepublisher::$options->authcookie();
+    } else {
+    $auth = tauthdigest::instance();
+return $auth->auth();
+    }
+}
+
   public function getcontent() {
+$html = $this->html;
+if ($this->registered) return $html->waitconfirm();
+if ($this->logged) return $html->logged();
+
     $args = targs::instance();
     foreach (array('login', 'email', 'name', 'url') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
     }
-    return $this->html->regform($args);
+    return $html->regform($args);
   }
   
   public function processform() {
@@ -46,6 +62,7 @@ class tadminreguser extends tadminform {
     
     $args = targs::instance();
     $args->add($users->getitem($id));
+$args->id = $id;
     $args->password = $password;
     $args->adminurl = litepublisher::$options->url . '/admin/users/' . litepublisher::$options->q . 'id';
     $mailtemplate = tmailtemplate::instance($this->section);
@@ -55,6 +72,7 @@ class tadminreguser extends tadminform {
     tmailer::sendtoadmin($subject, $adminbody);
     tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
+$this->registered = true;
     return $this->html->h2->successreg;
   }
   
