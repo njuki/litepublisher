@@ -92,12 +92,22 @@ class tusers extends titems {
     $password = md5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
     if ($this->dbversion) {
       $login = dbquote($login);
-      return $this->db->findid("login = $login and password = '$password'");
+      if (($a = $this->select("login = $login and password = '$password'", 'limit 1')) && (count($a) > 0)) {
+        $item = $this->getitem($a[0]);
+        if ($item['status'] == 'wait') $this->db->setvalue($item['id'], 'status', 'approved');
+        return (int) $item['id'];
+}
     } else {
       foreach ($this->items as $id => $item) {
-        if (($login == $item['login']) && ($password = $item['password'])) return $id;
+        if (($login == $item['login']) && ($password = $item['password'])) {
+        if ($item['status'] == 'wait') {
+$this->items[$id]['status'] = 'approved';
+$this->save();
+}
+return $id;
+}
+}
       }
-    }
     return  false;
   }
   
@@ -156,5 +166,23 @@ class tusers extends titems {
     turlmap::redir($url);
   }
   
+
+public function optimize() {
+if ($this->dbversion) {
+$time = sqldate(strtotime('-1 day'));
+$this->db->delete("status = 'wait' and registered < '$time'");
+} else {
+$time = strtotime('-1 day');
+$deleted = false;
+foreach ($this->items as $id => $item) {
+if (($item['status'] == 'wait') && ($item['registered'] < $time)) {
+unset($this->items[$id]);
+$deleted = true;
+}
+}
+if ($deleted) $this->save();
+}
+}
+
 }//class
 ?>
