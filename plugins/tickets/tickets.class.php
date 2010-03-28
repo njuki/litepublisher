@@ -54,7 +54,7 @@ class ttickets extends tposts {
   }
   
   public function add(tpost $post) {
-    $post->status = 'draft';
+    //$post->status = 'draft';
     $id = parent::add($post);
     $this->notify($post);
     return $id;
