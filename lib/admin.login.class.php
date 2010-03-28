@@ -53,9 +53,15 @@ class tadminlogin extends tadminform {
     $auth->setcookies($cookie, $expired);
     $options = litepublisher::$options;
     $options->savemodified();
+$url = '/admin/';
+if ($options->group != 'admin') {
+$groups = tusergroups::instance();
+$url = $groups->gethome($options->group);
+}
+
     return "<?php
     @setcookie('admin', '$cookie', $expired, '$options->subdir/', false);
-    @header('Location: $options->url/admin/');
+    @header('Location: $options->url$url');
     ?>";
   }
   
