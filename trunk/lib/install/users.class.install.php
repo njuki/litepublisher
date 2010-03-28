@@ -15,7 +15,7 @@ function tusersInstall($self) {
   }
 
 $cron = tcron::instance();
-$cron->addnightly(get_class($self), 'optimize');(  
+$cron->addnightly(get_class($self), 'optimize');
 
   $urlmap = turlmap::instance();
   $urlmap->add('/users.htm', get_class($self), 'get');

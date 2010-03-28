@@ -54,7 +54,7 @@ $adminoptions->usersenabled = true;
 
 $groups = tusergroups  ::instance();
 $groups->lock();
-$groups->add('ticket');
+$groups->add('ticket', '/admin/tickets/editor/');
 $groups->defaultgroup = 'ticket';
 $groups->unlock();
 

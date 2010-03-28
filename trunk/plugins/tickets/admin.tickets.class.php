@@ -17,9 +17,13 @@ class tadmintickets extends tadminmenu {
     $tickets->checkhtml();
     return parent::gethtml($name);
   }
+
+  protected function getlogoutlink() {
+    return $this->gethtml('login')->logout();
+  }
   
   public function getcontent() {
-    $result = '';
+    $result = $this->logoutlink;
     $tickets = ttickets::instance();
     $perpage = 20;
     $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';

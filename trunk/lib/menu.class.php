@@ -382,8 +382,8 @@ public function gethead() {}
   }
   
   public function getcont() {
-    $theme = ttheme::instance();
     ttheme::$vars['menu'] = $this;
+    $theme = ttheme::instance();
     return $theme->parse($theme->content->menu);
   }
   

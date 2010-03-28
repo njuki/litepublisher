@@ -18,9 +18,10 @@ class tusergroups extends titems {
     $this->data['defaultgroup'] = 'nobody';
   }
   
-  function add($name) {
+  function add($name, $home = '/ADMIN/') {
     $this->items[++$this->autoid] = array(
-    'name' => $name
+    'name' => $name,
+'home' => $home
     );
     $this->save();
     return $this->autoid;
@@ -45,6 +46,13 @@ class tusergroups extends titems {
     }
     return false;
   }
+
+public function gethome($name) {
+if ($id = $this->groupid($name)) {
+return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
+}
+return '/admin/';
+}
   
 }//class
 ?>

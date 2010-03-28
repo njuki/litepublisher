@@ -47,7 +47,7 @@ class tupdater extends tevents {
       $v = $v + 0.01;
     }
     
-    litepublisher::$options->version = $v;
+    litepublisher::$options->version = $this->version;
     
     $urlmap = turlmap::instance();
     $urlmap->clearcache();

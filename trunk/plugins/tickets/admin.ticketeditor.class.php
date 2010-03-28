@@ -27,13 +27,16 @@ class tticketeditor extends tposteditor {
     $tickets->checkadminlang();
     return parent::gethtml($name);
   }
-  
+
+  protected function getlogoutlink() {
+    return $this->gethtml('login')->logout();
+  }
+
   public function getcontent() {
-    $result = '';
+    $result = $this->logoutlink;
     $this->basename = 'tickets';
     $html = $this->html;
     $ticket = tticket::instance($this->idpost);
-echo get_class($ticked), " class ticket<br>";
     ttheme::$vars['ticket'] = $ticket;
     $args = targs::instance();
     if ($ticket->id > 0) $result .= $html->headeditor ();
