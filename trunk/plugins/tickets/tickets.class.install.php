@@ -53,7 +53,10 @@ $adminoptions->usersenabled = true;
   $linkgen->save();
 
 $groups = tusergroups  ::instance();
+$groups->lock();
 $groups->add('ticket');
+$groups->defaultgroup = 'ticket';
+$groups->unlock();
 
   $cron = tcron::instance();
   $cron->addweekly(get_class($self), 'optimize', null);
