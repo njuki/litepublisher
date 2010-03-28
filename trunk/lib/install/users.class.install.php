@@ -13,7 +13,10 @@ function tusersInstall($self) {
     $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
     $manager->setautoincrement($self->table, 2);
   }
-  
+
+$cron = tcron::instance();
+$cron->addnightly(get_class($self), 'optimize');(  
+
   $urlmap = turlmap::instance();
   $urlmap->add('/users.htm', get_class($self), 'get');
   
@@ -23,6 +26,8 @@ function tusersInstall($self) {
 
 function tusersUninstall($self) {
   turlmap::unsub($self);
+$cron = tcron::instance();
+  $cron->deleteclass(get_class($self));
 }
 
 ?>
