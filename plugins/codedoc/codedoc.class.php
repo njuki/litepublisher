@@ -143,55 +143,21 @@ if ($name == 'id') return $this->setid($value);
   }
   
   protected function getcontentpage($page) {
-    $result = '';
-    if ($page == 1) $result .= $this->getdoccontent();
-    $result .= parent::getcontentpage($page);
-    
-    if (($page == 1) && !empty($this->doc['example'])) {
-      $example = str_replace(array('"', "'", '$'), array('&quot;', '&#39;', '&#36;'), htmlspecialchars($this->example));
-      $result .= "sprintf('<code><pre>%s</pre></code>', $example);
-    }
-    return $result;
+    $result = parent::getcontentpage($page);
+    if ($result == '') && ($page == 1)) {
+$filter = tcodedocfilter::instance();
+$result = $filter->convert($this->rawcontent);
+$this->db->setvalue($this->id, 'filtered', $result);
+}
+return $result;
   }
   
-  public function getdoccontent() {
-    $this->checklang();
-    $lang = tlocal::instance('doc');
-    $args = targs::instance();
-    foreach (array('type', 'state', 'prio') as $prop) {
-      $value = $this->$prop;
-      $args->$prop = $lang->$value;
-    }
-    $args->reproduced = $this->reproduced ? $lang->yesword : $lang->noword;
-    if ($this->assignto <= 1) {
-      $profile = tprofile::instance();
-      $args->assignto = $profile->nick;
-    } else {
-      $users = tusers::instance();
-      $account = $users->getaccount($this->assignto);
-      $args->assignto = $account['name'];
-    }
-    
-    ttheme::$vars['doc'] = $this;
-    $theme = ttheme::instance();
-    $tml = file_get_contents($this->resource . 'doc.tml');
-    $result = $theme->parsearg($tml, $args);
-    if ($this->poll > 1) {
-      $polls = tpolls::instance();
-      $result .= $polls->gethtml($this->poll);
-    }
-    return $result;
-  }
-  
-  protected function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  }
-  
-  public function checklang() {
-    if (!isset(tlocal::$data['doc'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
-      tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
+  public function setcontent($s) {
+    if ($s <> $this->rawcontent) {
+      if (!is_string($s)) $this->error('Error! Post content must be string');
+      $this->rawcontent = $s;
+      $filter = tcodedocfilter::instance();
+$filter->convert($this,$s);
     }
   }
   

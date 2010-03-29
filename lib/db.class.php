@@ -36,12 +36,12 @@ class tdatabase {
       die(mysql_error($this->handle));
     }
     
-    $this->exec('SET NAMES utf8');
+    $this->query('SET NAMES utf8');
     
     /* lost performance
     $timezone = date('Z') / 3600;
     if ($timezone > 0) $timezone = "+$timezone";
-    $this->exec("SET time_zone = '$timezone:00'");
+    $this->query("SET time_zone = '$timezone:00'");
     */
   }
   
@@ -55,14 +55,6 @@ class tdatabase {
   }
   
   public function query($sql) {
-    return $this->doquery($sql, true);
-  }
-  
-  public function exec($sql) {
-    return $this->doquery($sql, false);
-  }
-  
-  private function doquery($sql, $isquery) {
     /*
     if ($sql == $this->sql) {
       if ($this->result && @mysql_num_rows($this->result)) mysql_data_seek($this->result, 0);
@@ -129,7 +121,7 @@ class tdatabase {
   }
   
   public function update($values, $where) {
-    return $this->exec("update $this->prefix$this->table set " . $values  ." where $where");
+    return $this->query("update $this->prefix$this->table set " . $values  ." where $where");
   }
   
   public function idupdate($id, $values) {
@@ -162,7 +154,7 @@ class tdatabase {
   }
   
   public function insertrow($row) {
-    $this->exec("INSERT INTO $this->prefix$this->table $row");
+    $this->query("INSERT INTO $this->prefix$this->table $row");
     return mysql_insert_id($this->handle);
   }
   
@@ -190,7 +182,7 @@ class tdatabase {
       }
     }
     
-    $this->exec("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
+    $this->query("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
     return mysql_insert_id($this->handle);
   }
   
@@ -204,11 +196,11 @@ class tdatabase {
   }
   
   public function delete($where) {
-    return $this->exec("delete from $this->prefix$this->table where $where");
+    return $this->query("delete from $this->prefix$this->table where $where");
   }
   
   public function iddelete($id) {
-    return $this->exec("delete from $this->prefix$this->table where id = $id");
+    return $this->query("delete from $this->prefix$this->table where id = $id");
   }
   
   public function deleteitems(array $items) {
