@@ -87,13 +87,10 @@ $this->data['revision'] = 0;
     $theme = ttheme::instance();
     return $theme->getpostswidgetcontent($list, $sitebar, '');
   }
-  
-  public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
-    if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
-      $icons = ticons::instance();
-      $post->icon = $icons->getid('post');
-    }
-    
+
+
+private function beforechange($post) {
+    $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
 $post->revision = $this->revision;
     if (($post->status == 'published') && ($post->posted > time())) {
@@ -101,9 +98,16 @@ $post->revision = $this->revision;
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
       $post->status = 'published';
     }
+}    
+  
+  public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
+$this->beforechange($post);
+    if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
+      $icons = ticons::instance();
+      $post->icon = $icons->getid('post');
+    }
     
     $post->pagescount = count($post->pages);
-    $post->title = tcontentfilter::escape($post->title);
     $linkgen = tlinkgenerator::instance();
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $urlmap = turlmap::instance();
@@ -130,17 +134,10 @@ $post->revision = $this->revision;
   }
   
   public function edit(tpost $post) {
-    $post->title = tcontentfilter::quote(trim(strip_tags($post->title)));
+$this->beforechange($post);
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($post, $post->schemalink);
-    $post->modified = time();
-$post->revision = $this->revision;
-    if (($post->status == 'published') && ($post->posted > time())) {
-      $post->status = 'future';
-    } elseif (($post->status == 'future') && ($post->posted <= time())) {
-      $post->status = 'published';
-    }
-    
+
     $this->lock();
     $this->updated($post);
     $this->cointerface('edit', $post);

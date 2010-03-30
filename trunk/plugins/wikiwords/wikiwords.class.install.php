@@ -20,7 +20,6 @@ function twikiwordsInstall($self) {
   $filter = tcontentfilter::instance();
   $filter->lock();
   $filter->beforecontent = $self->beforefilter;
-  $filter->beforefilter = $self->filter;
   $filter->unlock();
   
   $posts = tposts::instance();
@@ -31,8 +30,6 @@ function twikiwordsInstall($self) {
   
   litepublisher::$classes->classes['wikiwords'] = get_class($self);
   litepublisher::$classes->save();
-  
-  litepublisher::$options->parsepost = true;
 }
 
 function twikiwordsUninstall($self) {
