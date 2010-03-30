@@ -165,7 +165,8 @@ $posts->addrevision();
         $word = $item[1];
         if ($id =$this->add($word, 0)) {
           $result[] = $id;
-          $content = str_replace($item[0], "\$wikiwords.word_$id", $content);
+          //$content = str_replace($item[0], "\$wikiwords.word_$id", $content);
+$content = str_replace($item[0], $this->getlink($id), $content);
         }
       }
     }
