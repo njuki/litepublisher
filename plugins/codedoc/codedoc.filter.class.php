@@ -34,24 +34,27 @@ private function getdescription(tpost $post, $s) {
 $wiki = twikiwords::instance();
 $wiki->createwords($post, $s);
 $this->
-$this->classname2wiki($post, $s);
+$this->classtowiki($post, $s);
 $wiki->replacewords($s);
 return $s;
 }
 
-private function classname2wiki($s) {
+private function classtowiki($s) {
     if (preg_match_all('/\[\[(\w*?)::(.*?)\]\]/', $s, $m, PREG_SET_ORDER)) {
 $wiki = twikiwords::instance();
       foreach ($m as $item) {
-        $class = $item[1];
-        $word = $item[2];
-$idpost = $this->IndexOf('class', $class);
+        $class = trim($item[1]);
+        $word = trim($item[2]);
+$link = $word;
+if ($idpost = $this->IndexOf('class', $class)) {
+$post = tpost::instance();
         if ($id =$wiki->add($word, 0)) {
+$link = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
+} else {
 }
 $s = str_replace($item[0], $link, $s);
       }
     }
-
 return $s;
 }
 
@@ -59,7 +62,7 @@ return $s;
 $result = '';
     $this->checklang();
 $ini = tini2array::parse($s);
-$doc = $ini['document'];
+$doc = &$ini['document'];
 switch ($doc['type']) {
 case 'class':
 $result = $this->convertclass($post, $ini);
@@ -82,6 +85,10 @@ $example = highlight_string($doc['example'], true);
 $post->filtered = $result;
 $post->title = 'class ' . $doc['name'];
 $post->excerpt = '';
+if ($post->id == 0) {
+    $linkgen = tlinkgenerator::instance();
+    $post->url = $linkgen->addurl($post, 'codedoc');
+}
   }
 
 private function convertclass(tpost $post, array &$ini) {

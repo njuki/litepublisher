@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcodedoc extends tplugin {
+class tcodedocplugin extends tplugin {
   public $doc;
   public $doctable;
   
@@ -18,6 +18,7 @@ public function filter($post, $content) {
 if (!strbegin($content, '[document]')) return;
 $filter = tcodedocfilter::instance();
 $filter->convert($post, $content);
+if ($post->id == 0) $this->fix[] = $post;
 return true;
 }
 

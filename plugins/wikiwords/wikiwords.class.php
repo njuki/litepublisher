@@ -135,9 +135,6 @@ $posts->addrevision();
   
   public function beforefilter($post, &$content) {
     $this->createwords($post, $content);
-  }
-  
-  public function filter(&$content) {
     $this->replacewords($content);
   }
   
