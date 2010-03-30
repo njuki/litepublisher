@@ -30,6 +30,31 @@ $links[] = $wiki->getwordlink($word);
 return implode(', ', $links);
 }  
 
+private function getdescription(tpost $post, $s) {
+$wiki = twikiwords::instance();
+$wiki->createwords($post, $s);
+$this->
+$this->classname2wiki($post, $s);
+$wiki->replacewords($s);
+return $s;
+}
+
+private function classname2wiki($s) {
+    if (preg_match_all('/\[\[(\w*?)::(.*?)\]\]/', $s, $m, PREG_SET_ORDER)) {
+$wiki = twikiwords::instance();
+      foreach ($m as $item) {
+        $class = $item[1];
+        $word = $item[2];
+$idpost = $this->IndexOf('class', $class);
+        if ($id =$wiki->add($word, 0)) {
+}
+$s = str_replace($item[0], $link, $s);
+      }
+    }
+
+return $s;
+}
+
   public function convert(tpost $post, $s) {
 $result = '';
     $this->checklang();
@@ -57,52 +82,66 @@ $example = highlight_string($doc['example'], true);
 $post->filtered = $result;
 $post->title = 'class ' . $doc['name'];
 $post->excerpt = '';
-
-
   }
 
 private function convertclass(tpost $post, array &$ini) {
 $doc = $ini['document'];
 $args = targs::instance();
 $args->dependent = $this->getclasses($doc['dependent']);
-
-$theme = ttheme::instance();
-return $$theme->parsearg($html->class, $args);
+$result .= $this->convertitems($post, $ini, 'method');
+return $html->class($args);
 }
 
-  public function getdoccontent() {
-    $lang = tlocal::instance('doc');
-    $args = targs::instance();
-    foreach (array('type', 'state', 'prio') as $prop) {
-      $value = $this->$prop;
-      $args->$prop = $lang->$value;
-    }
-    $args->reproduced = $this->reproduced ? $lang->yesword : $lang->noword;
-    if ($this->assignto <= 1) {
-      $profile = tprofile::instance();
-      $args->assignto = $profile->nick;
-    } else {
-      $users = tusers::instance();
-      $account = $users->getaccount($this->assignto);
-      $args->assignto = $account['name'];
-    }
-    
-    ttheme::$vars['doc'] = $this;
-    $theme = ttheme::instance();
-    $tml = file_get_contents($this->resource . 'doc.tml');
-    $result = $theme->parsearg($tml, $args);
-    if ($this->poll > 1) {
-      $polls = tpolls::instance();
-      $result .= $polls->gethtml($this->poll);
-    }
-    return $result;
-  }
-  
+private function convertitems(tpost $post, array &$ini, $name) {
+$result = '';
+if (isset($ini[$name])) {
+$items = &$ini[$name];
+if (isset($items[0])) {
+foreach ($items as $item) {
+$result .= $this->convertitem($post, $item, $name);
+}
+} else {
+$result .= $this->convertitem($post, $items, $name);
+}
+}
+return $result;
+}
+
+private function convertitem(tpost $post, array $item, $name) {
+$result = '';
+$args = targs::instance();
+$args->add($item);
+$args->description = $this->getdescription($post, $item]['description']);
+$html = $this->html;
+return $html->$name($args);
+}
+
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
-  
-  public function checklang() {
+
+  public function gethtml($name = '') {
+    if ($name == '') $name = 'doc';
+    $this->checkadminlang();
+    $result = THtmlResource ::instance();
+    if (!isset($result->ini['doc'])) {
+      $result->loadini($this->resource . 'html.ini');
+      tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $result->ini);
+    }
+    $result->section = $name;
+    $lang = tlocal::instance($name);
+    return $result;
+  }
+
+  public function checkadminlang() {
+    if (!isset(tlocal::$data['doc'])) {
+      tlocal::loadini($this->resource . litepublisher::$options->language . '.admin.ini');
+      tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
+      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
+    }
+  }
+
+    public function checklang() {
     if (!isset(tlocal::$data['doc'])) {
       tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
       tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
@@ -110,6 +149,5 @@ return $$theme->parsearg($html->class, $args);
     }
   }
   
-  
-}//class
+  }//class
 ?>
