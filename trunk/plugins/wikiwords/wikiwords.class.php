@@ -9,6 +9,7 @@
 class twikiwords extends titems {
   public $itemsposts;
   private $fix;
+private $words;
   
   public static function instance() {
     return getinstance(__class__);
@@ -22,6 +23,7 @@ class twikiwords extends titems {
     $this->table = 'wikiwords';
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
+$this->words = array();
   }
   
   public function __get($name) {
@@ -39,14 +41,17 @@ class twikiwords extends titems {
   public function getlink($id) {
     $item = $this->getitem($id);
     $word = $item['word'];
+if (isset($this->words[$word])) return $this->words[$word];
     $items = $this->itemsposts->getposts($id);
     switch (count($items)) {
       case 0:
-      return sprintf('<strong>%s</strong>', $word);
+      $result = sprintf('<strong>%s</strong>', $word);
+break;
       
       case 1:
       $post = tpost::instance($items[0]);
-      return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
+      $result = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
+break;
       
       default:
       $links = array();
@@ -56,9 +61,11 @@ class twikiwords extends titems {
         $post = tpost::instance($idpost);
         $links[] = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $post->title, $id);
       }
-      
-      return sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
+            $result = sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
+break;
     }
+$this->words[$word] = $result;
+return $result;
   }
   
   public function add($word, $idpost) {
@@ -68,6 +75,9 @@ class twikiwords extends titems {
     if (!$id) $id = $this->additem(array('word' => $word));
     if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
       $this->itemsposts->add($idpost, $id);
+if (isset($this->words[$word])) unset($this->words[$word]);
+$posts = tposts::instance();
+$posts->addrevision();
     }
     return $id;
   }
@@ -92,8 +102,17 @@ class twikiwords extends titems {
     }
     return '';
   }
+
+  public function getwordlink($word) {
+$word = trim($word);
+if (isset($this->words[$word])) return $this->words[$word];
+    if ($id =$this->add($word, 0)) {
+      return $this->getlink($id);
+    }
+    return $word;
+  }
   
-  public function postadded($idpost) {
+    public function postadded($idpost) {
     if (count($this->fix) == 0) return;
     $this->lock();
     foreach ($this->fix as $id => $post) {
@@ -103,10 +122,15 @@ class twikiwords extends titems {
       }
     }
     $this->unlock();
+$posts = tposts::instance();
+$posts->addrevision();
   }
   
   public function postdeleted($idpost) {
-    $this->itemsposts->deletepost($idpost);
+    if (count($this->itemsposts->deletepost($idpost) > 0) {
+$posts = tposts::instance();
+$posts->addrevision();
+}
   }
   
   public function beforefilter($post, &$content) {

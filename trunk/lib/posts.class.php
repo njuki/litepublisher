@@ -29,6 +29,7 @@ class tposts extends titems {
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
     $this->data['recentcount'] = 10;
     $this->data['archivescount'] = 0;
+$this->data['revision'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
@@ -88,12 +89,13 @@ class tposts extends titems {
   }
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
-    if ($post->icon == 0) {
+    if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
       $icons = ticons::instance();
       $post->icon = $icons->getid('post');
     }
     
     $post->modified = time();
+$post->revision = $this->revision;
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -132,6 +134,7 @@ class tposts extends titems {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($post, $post->schemalink);
     $post->modified = time();
+$post->revision = $this->revision;
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -297,6 +300,10 @@ class tposts extends titems {
     }
   }
   
+public function addrevision() {
+$this->data['revision']++;$this->save();
+litepublisher::$urlmap->clearcache();
+}
   
   //fix call reference
   public function beforecontent($post, &$result) {

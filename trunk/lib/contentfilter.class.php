@@ -31,7 +31,7 @@ class tcontentfilter extends tevents {
     return $result;
   }
   
-  public function SetPostContent(tpost $post, $s) {
+  public function filterpost(tpost $post, $s) {
     $this->callevent('beforecontent', array($post, &$s));
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||

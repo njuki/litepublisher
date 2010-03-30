@@ -26,6 +26,7 @@ class tpost extends titem implements  itemplate {
     'idurl' => 0,
     'parent' => 0,
     'author' => 0,
+'revision' => 0,
     'icon' => 0,
     'posted' => 0,
     'modified' => 0,
@@ -422,6 +423,7 @@ $this->setid(tposttransform ::add($this));
     $result = '';
     $posts = tposts::instance();
     $posts->beforecontent($this, $result);
+if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
@@ -436,9 +438,17 @@ $this->setid(tposttransform ::add($this));
       if (!is_string($s)) $this->error('Error! Post content must be string');
       $this->rawcontent = $s;
       $filter = tcontentfilter::instance();
-      $filter->SetPostContent($this,$s);
+      $filter->filterpost($this,$s);
     }
   }
+
+public function setrevision($value) {
+if ($value != $this->data['revision']) {
+$this->data['revision'] = $value;
+      $filter = tcontentfilter::instance();
+      $filter->filterpost($this,$this->rawcontent);
+}
+}
   
   public function getrawcontent() {
     if (dbversion && ($this->id > 0) && empty($this->data['rawcontent'])) {
