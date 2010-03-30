@@ -16,6 +16,9 @@ class tcodedoc extends tplugin {
   
 public function filter($post, $content) {
 if (!strbegin($content, '[document]')) return;
+$filter = tcodedocfilter::instance();
+$filter->convert($post, $content);
+return true;
 }
 
 }//class

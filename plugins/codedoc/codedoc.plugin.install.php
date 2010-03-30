@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tticketsInstall($self) {
+function tcodedocpluginInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
   tfiler::deletemask(litepublisher::$paths->languages . '*.php');
   $self->checkadminlang();
@@ -48,7 +48,7 @@ litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $cron->addweekly(get_class($self), 'optimize', null);
 }
 
-function tcodedocsUninstall($self) {
+function tcodedocUninstall($self) {
   //die("Warning! You can lost all tickets!");
   $cron = tcron::instance();
   $cron->deleteclass(get_class($self));
