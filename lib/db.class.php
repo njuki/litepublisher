@@ -53,6 +53,10 @@ class tdatabase {
   public function __get ($name) {
     return $this->prefix . $name;
   }
+
+public function  exec($sql) {
+return $this->query($sql);
+}
   
   public function query($sql) {
     /*

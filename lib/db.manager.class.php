@@ -47,8 +47,8 @@ class tdbmanager  {
     return $this->exec("truncate $this->prefix$name");
   }
   
-  public function alter($arg) {
-    return $this->exec("alter table $this->prefix$this->table $arg");
+  public function alter($table, $arg) {
+    return $this->exec("alter table $this->prefix$table $arg");
   }
   
   public function setautoincrement($table, $value) {

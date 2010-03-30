@@ -9,7 +9,7 @@
 class tposttransform  {
   public $post;
   public static $arrayprops= array('categories', 'tags', 'files');
-  public static $intprops= array('id', 'idurl', 'parent', 'author', 'icon', 'commentscount', 'pingbackscount', 'pagescount');
+  public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount');
   public static $boolprops= array('commentsenabled', 'pingenabled');
   public static $props = array('id', 'idurl', 'parent', 'author',
   //'created', 'modified',
