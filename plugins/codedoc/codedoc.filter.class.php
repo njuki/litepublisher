@@ -36,7 +36,8 @@ $wiki->createwords($post, $s);
 $this->
 $this->classtowiki($post, $s);
 $wiki->replacewords($s);
-return $s;
+$filter = tcontentfilter::instance();
+return $filter->filter($s);
 }
 
 private function classtowiki($s) {
@@ -59,49 +60,88 @@ return $s;
 }
 
   public function convert(tpost $post, $s) {
-$result = '';
     $this->checklang();
 $ini = tini2array::parse($s);
 $doc = &$ini['document'];
-switch ($doc['type']) {
-case 'class':
-$result = $this->convertclass($post, $ini);
-break;
+$result = array(
+'parent' => 0,
+'class' => $doc['name']
+);
 
-case 'interface':
-$result .= $this->getinterface($post, $ini);
-bbreak;
-
-case 'manual':
-$result .= $this->getmanual($post, $ini);
-break;
-}
-
-    if ((!empty($doc['example'])) {
-$example = highlight_string($doc['example'], true);
-      $result .= sprintf('$html->example, $example);
-    }
-
-$post->filtered = $result;
-$post->title = 'class ' . $doc['name'];
-$post->excerpt = '';
 if ($post->id == 0) {
+$post->title = $doc['name'];
     $linkgen = tlinkgenerator::instance();
     $post->url = $linkgen->addurl($post, 'codedoc');
 }
+
+switch ($doc['type']) {
+case 'class':
+$result['parent'] = $this->filterclass($post, $ini);
+break;
+
+case 'interface':
+$this->getinterface($post, $ini);
+bbreak;
+
+case 'manual':
+$this->getmanual($post, $ini);
+break;
+}
+
+$post->rss = $post->excerpt;
+return $result;
   }
 
-private function convertclass(tpost $post, array &$ini) {
+private function filterclass(tpost $post, array &$ini) {
 $doc = $ini['document'];
+$wiki = twikiwords::instance();
 $args = targs::instance();
-$args->dependent = $this->getclasses($doc['dependent']);
-$result .= $this->convertitems($post, $ini, 'method');
-return $html->class($args);
+$class = $doc['name'];
+$id = $wiki->add($class, $post->id);
+$args->class = sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
+
+$idparent = 0;
+$parent = isset($doc['parent']) ? trim($doc['parent']) : '';
+if ($parent == '') {
+$args->parent = '';
+} else {
+$args->parent = $this->getclasslink($parent);
+if ($idparent = $this->db->findid('class = ' .dbquote($parent)) {
+if ($post->id > 0) $this->db->setvalue($post->id, 'parent', $idparent);
+} else {
+$idparent = 0;
+}
+}
+
+$args->childs = $this->getchilds($post->id);
+$args->source = sprintf('<a href="%1$s/source/%2$s title="%2$s">%2$s</a>', $doc['source']);
+$args->interfaces = $this->getclasses($doc, 'interface');
+$args->dependent = $this->getclasses($doc, 'dependent');
+
+$description = $this->getdescription($doc['description']);
+$post->excerpt = $description;
+$args->description = $description;
+
+$args->methods = $this->convertitems($post, $ini, 'method');
+$args->properties = $this->convertitems($post, $ini, 'property');
+$args->events = $this->convertitems($post, $ini, 'event');
+
+    if ((!empty($doc['example'])) {
+$args->example = highlight_string($doc['example'], true);
+    } else {
+$args->example = '';
+}
+
+$tml = file_get_contents($this->resource . 'class.tml');
+$theme = ttheme::instance();
+$post->filtered = $theme->parsearg($tml, $args);
+$post->title = $html->classtitle($doc['name']);
+return $idparent;
 }
 
 private function convertitems(tpost $post, array &$ini, $name) {
+if (!isset($ini[$name])) return '';
 $result = '';
-if (isset($ini[$name])) {
 $items = &$ini[$name];
 if (isset($items[0])) {
 foreach ($items as $item) {
@@ -111,16 +151,57 @@ $result .= $this->convertitem($post, $item, $name);
 $result .= $this->convertitem($post, $items, $name);
 }
 }
-return $result;
+
+if ($result == '') return '';
+return sprintf($this->html->items, $result);
 }
 
 private function convertitem(tpost $post, array $item, $name) {
-$result = '';
+$wiki = twikiwords::instance();
 $args = targs::instance();
 $args->add($item);
 $args->description = $this->getdescription($post, $item]['description']);
-$html = $this->html;
-return $html->$name($args);
+$args->idwiki = $wiki->add($item['name'], $post->id);
+if (isset(tlocal::$data['codedoc'][$item['access']]))  $args->access = tlocal::$data['codedoc'][$item['access']];
+return $this->html->item($args);
+}
+
+public function getchilds($idpost) {
+IF ($idpost == 0) return '__childs__';
+$items = $this->db->select('parent = ' . $idparent, '');
+if (count($items) == 0) return '';
+$links = array();
+$posts = tposts::instance();
+$posts->loaditems($items);
+foreach ($items as $id) {
+$item = $this->getitem($id);
+$post = tpost::instance($id);
+$links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, item['class'], $id);
+}
+return implode(', ', $links);
+}
+
+private function getclasses(array $doc, $name) {
+if (empty($doc[$name])) return '';
+$links = array();
+foreach (explode(',', $doc[$name]) as $class) {
+$class = trim($class);
+if ($class == '') continue;;
+$links = $this->getclasslink($class);
+}
+return implode(', ', $links);
+}
+
+private function getclasslink($class) {
+if ($idpost = $this->db->findid('class = ' .dbquote($class)) {
+$post = tpost::instance($idpost);
+if ($id = $wiki->IndexOf('word', $class)) {
+return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $class, $id);
+} else {
+return sprintf('<a href="%1$s" title="%2$s">%2$s</a>', $post->link, $class);
+}
+}
+return $class;
 }
 
   protected function getresource() {
@@ -128,10 +209,10 @@ return $html->$name($args);
   }
 
   public function gethtml($name = '') {
-    if ($name == '') $name = 'doc';
+    if ($name == '') $name = 'codedoc';
     $this->checkadminlang();
     $result = THtmlResource ::instance();
-    if (!isset($result->ini['doc'])) {
+    if (!isset($result->ini['codedoc'])) {
       $result->loadini($this->resource . 'html.ini');
       tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $result->ini);
     }
@@ -141,20 +222,13 @@ return $html->$name($args);
   }
 
   public function checkadminlang() {
-    if (!isset(tlocal::$data['doc'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.admin.ini');
+    tlocal::loadlang('admin');
+    if (!isset(tlocal::$data['codedoc'])) {
+      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
       tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
     }
   }
 
-    public function checklang() {
-    if (!isset(tlocal::$data['doc'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
-      tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
-    }
-  }
-  
   }//class
 ?>
