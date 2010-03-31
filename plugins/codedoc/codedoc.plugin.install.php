@@ -23,7 +23,7 @@ $posts->added = $self->postadded;
 $posts->unlock();
 
   litepublisher::$classes->lock();  
-  litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.php', basename(dirname(__file__) ));
+  litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
   $plugins = tplugins::instance();
   if (!isset($plugins->items['wikiwords'])) $plugins->add('wikiwords');
   litepublisher::$classes->unlock();
@@ -34,6 +34,7 @@ $posts->unlock();
 
   $filter = tcontentfilter::instance();
   $filter->beforecontent = $self->beforefilter;
+// передвинуть вики плагин в фильтрах
 }  
 
 function tcodedocpluginUninstall($self) {

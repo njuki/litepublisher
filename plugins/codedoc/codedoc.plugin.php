@@ -19,7 +19,8 @@ $this->table = 'codedoc';
 $this->fix = array();
 }
 
-public function filter($post, $content) {
+public function beforefilter($post, $content) {
+$content = trim($content);
 if (!strbegin($content, '[document]')) return;
 $filter = tcodedocfilter::instance();
 $result = $filter->convert($post, $content);
@@ -45,7 +46,7 @@ $this->db->add(array(
 $filter = tcodedocfilter::instance();
 $filtered = str_replace('__childs__', $filter->getchilds($post->id), $post->filtered);
 $post->db->setvalue($post->id, 'filtered', $filtered);
-unset($this->fix[$i];
+unset($this->fix[$i]);
 
 $posts = tposts::instance();
 $posts->addrevision();

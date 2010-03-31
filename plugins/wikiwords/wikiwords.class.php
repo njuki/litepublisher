@@ -10,6 +10,7 @@ class twikiwords extends titems {
   public $itemsposts;
   private $fix;
 private $words;
+private $links;
   
   public static function instance() {
     return getinstance(__class__);
@@ -24,6 +25,7 @@ private $words;
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
 $this->words = array();
+$this->links = array();
   }
   
   public function __get($name) {
@@ -41,7 +43,7 @@ $this->words = array();
   public function getlink($id) {
     $item = $this->getitem($id);
     $word = $item['word'];
-if (isset($this->words[$word])) return $this->words[$word];
+if (isset($this->links[$word])) return $this->links[$word];
     $items = $this->itemsposts->getposts($id);
     switch (count($items)) {
       case 0:
@@ -64,21 +66,28 @@ break;
             $result = sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
 break;
     }
-$this->words[$word] = $result;
+$this->links[$word] = $result;
 return $result;
   }
   
   public function add($word, $idpost) {
     $word = trim(strip_tags($word));
     if ($word == '') return false;
+if (isset($this->words[$word])) {
+$id = $this->words[$word];
+} else {
     $id = $this->IndexOf('word', $word);
     if (!$id) $id = $this->additem(array('word' => $word));
+$this->words[$word] = $id;
+}
+
     if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
       $this->itemsposts->add($idpost, $id);
-if (isset($this->words[$word])) unset($this->words[$word]);
+if (isset($this->links[$word])) unset($this->links[$word]);
 $posts = tposts::instance();
 $posts->addrevision();
     }
+
     return $id;
   }
   
@@ -105,7 +114,7 @@ $posts->addrevision();
 
   public function getwordlink($word) {
 $word = trim($word);
-if (isset($this->words[$word])) return $this->words[$word];
+if (isset($this->links[$word])) return $this->links[$word];
     if ($id =$this->add($word, 0)) {
       return $this->getlink($id);
     }
@@ -127,7 +136,7 @@ $posts->addrevision();
   }
   
   public function postdeleted($idpost) {
-    if (count($this->itemsposts->deletepost($idpost) > 0) {
+    if (count($this->itemsposts->deletepost($idpost)) > 0) {
 $posts = tposts::instance();
 $posts->addrevision();
 }
