@@ -1,0 +1,64 @@
+<h1>
+<a href="#description">$lang.description</a>
+<a href="#methods">$lang.methods</a>
+<a href="#properties">$lang.properties</a>
+<a href="#events">$lang.events</a>
+<a href="#example">$lang.example</a>
+</h1>
+
+<table>
+	<thead>
+	<tr>
+		<th align="left">$lang.namevalue</th>
+		<th align="left">$lang.value</th>
+</tr>
+	</thead>
+<tbody>
+
+<tr>
+		<td  align="left">$lang.class</td>
+		<dd align="left">$class</td>
+</tr>
+
+<tr>
+		<td  align="left">$lang.parent</td>
+		<dd align="left">$parent</td>
+</tr>
+
+<tr>
+		<td  align="left">$lang.childs</td>
+		<dd align="left">$childs</td>
+</tr>
+
+<tr>
+		<td  align="left">$lang.source</td>
+		<dd align="left">$source</td>
+</tr>
+
+<tr>
+		<td  align="left">$lang.interfaces</td>
+		<dd align="left">$interfaces</td>
+</tr>
+
+<tr>
+		<td  align="left">$lang.dependent</td>
+		<dd align="left">$dependent</td>
+</tr>
+
+</tbody >
+</table>
+
+<h2><a name="description"></a>$lang.description</h2>
+$description
+
+<h2><a name="methods"></a>$lang.methods</h2>
+$methods
+
+<h2><a name="properties"></a>$lang.properties</h2>
+$properties
+
+<h2><a name="events"></a>$lang.events</h2>
+$events
+
+<h2><a name="example"></a>$lang.example</h2>
+$example

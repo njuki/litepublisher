@@ -23,16 +23,14 @@ litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $posts = tposts::instance();
   $posts->deleted = $self->postdeleted;
   
-  $class = 'tticket';
-  litepublisher::$classes->Add($class, 'ticket.class.php', basename(dirname(__file__) ));
-  
   //install polls if its needed
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
   $polls = tpolls::instance();
   $polls->garbage = false;
   $polls->save();
-  
+
+  litepublisher::$classes->Add('tticket', 'ticket.class.php', basename(dirname(__file__) ));  
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
@@ -78,8 +76,7 @@ function tticketsUninstall($self) {
   litepublisher::$classes->delete('tticketeditor');
   litepublisher::$classes->delete('tadmintickets');
 
- 
-  $menus = tadminmenus::instance();
+   $menus = tadminmenus::instance();
   $menus->lock();
   $menus->deleteurl('/admin/tickets/editor/');
   $menus->deleteurl('/admin/tickets/');

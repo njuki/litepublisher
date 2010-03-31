@@ -147,7 +147,7 @@ $posts->addrevision();
         if ($id = $this->add($word, $post->id)) {
           $result[] = $id;
           if ($post->id == 0) $this->fix[$id] = $post;
-          $content = str_replace($item[0], "<a name=\"wikiword-$id\">$word</a>", $content);
+          $content = str_replace($item[0], "<a name=\"wikiword-$id\"></a><strong>$word</strong>", $content);
         }
       }
       $this->unlock();
