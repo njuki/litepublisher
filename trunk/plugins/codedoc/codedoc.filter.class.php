@@ -33,7 +33,6 @@ return implode(', ', $links);
 private function getdescription(tpost $post, $s) {
 $wiki = twikiwords::instance();
 $wiki->createwords($post, $s);
-$this->
 $this->classtowiki($post, $s);
 $wiki->replacewords($s);
 $filter = tcontentfilter::instance();
@@ -52,6 +51,8 @@ $post = tpost::instance();
         if ($id =$wiki->add($word, 0)) {
 $link = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
 } else {
+$link = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $post->id);
+}
 }
 $s = str_replace($item[0], $link, $s);
       }
@@ -60,9 +61,10 @@ return $s;
 }
 
   public function convert(tpost $post, $s) {
-    $this->checklang();
+    $this->checkadminlang();
+$lang = tlocal::instance('codedoc');
 $ini = tini2array::parse($s);
-$doc = &$ini['document'];
+$doc = $ini['document'];
 $result = array(
 'parent' => 0,
 'class' => $doc['name']
@@ -89,14 +91,20 @@ break;
 }
 
 $post->rss = $post->excerpt;
+$post->description = tcontentfilter::getpostdescription($post->excerpt);
+$post->moretitle = sprintf($lang->moretitle, $post->title);
 return $result;
   }
 
 private function filterclass(tpost $post, array &$ini) {
 $doc = $ini['document'];
 $wiki = twikiwords::instance();
+$headers = '';
+$content = '';
+$lang = tlocal::instance('codedoc');
 $args = targs::instance();
 $class = $doc['name'];
+$post->title = sprintf($lang->classtitle, $class);
 $id = $wiki->add($class, $post->id);
 $args->class = sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
 
@@ -106,7 +114,7 @@ if ($parent == '') {
 $args->parent = '';
 } else {
 $args->parent = $this->getclasslink($parent);
-if ($idparent = $this->db->findid('class = ' .dbquote($parent)) {
+if ($idparent = $this->db->findid('class = ' .dbquote($parent))) {
 if ($post->id > 0) $this->db->setvalue($post->id, 'parent', $idparent);
 } else {
 $idparent = 0;
@@ -114,53 +122,71 @@ $idparent = 0;
 }
 
 $args->childs = $this->getchilds($post->id);
-$args->source = sprintf('<a href="%1$s/source/%2$s title="%2$s">%2$s</a>', $doc['source']);
+$args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$options->url, $doc['source']);
 $args->interfaces = $this->getclasses($doc, 'interface');
 $args->dependent = $this->getclasses($doc, 'dependent');
-
-$description = $this->getdescription($doc['description']);
+$description = $this->getdescription($post, $doc['description']);
 $post->excerpt = $description;
 $args->description = $description;
 
-$args->methods = $this->convertitems($post, $ini, 'method');
-$args->properties = $this->convertitems($post, $ini, 'property');
-$args->events = $this->convertitems($post, $ini, 'event');
+$a = array(
+'method' => 'methods',
+'property' => 'properties',
+'event' => 'events');
 
-    if ((!empty($doc['example'])) {
-$args->example = highlight_string($doc['example'], true);
-    } else {
-$args->example = '';
+foreach ($a as $name => $names) {
+if ($items = $this->convertitems($post, $ini, $name, $names)) {
+$headers .= sprintf(' <a href="#%1$s">%2$s</a>', $names, $lang->$names);
+$content .= $items;
+}
 }
 
+    if (!empty($doc['example'])) {
+$headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
+$args->example = highlight_string($doc['example'], true);
+}
+
+$args->headers = $headers;
+$args->content = $content;
 $tml = file_get_contents($this->resource . 'class.tml');
 $theme = ttheme::instance();
 $post->filtered = $theme->parsearg($tml, $args);
-$post->title = $html->classtitle($doc['name']);
 return $idparent;
 }
 
-private function convertitems(tpost $post, array &$ini, $name) {
+private function convertitems(tpost $post, array &$ini, $name, $names) {
 if (!isset($ini[$name])) return '';
-$result = '';
+$lang = tlocal::instance('codedoc');
+$headers = $lang->$names . ': ';
+$wiki = twikiwords::instance();
 $items = &$ini[$name];
 if (isset($items[0])) {
-foreach ($items as $item) {
-$result .= $this->convertitem($post, $item, $name);
+foreach ($items as $i => $item) $list[$i] = $item['name'];
+asort($list);
+
+foreach ($list as $i => $itemname) {
+$item = $items[$i];
+$headers .= sprintf('<a href="#wikiword-%1$d" title="%2$s">%2$s</a> ', $wiki->add($itemname, $post->id), $itemname);
+$content .= $this->convertitem($post, $item, $name);
 }
 } else {
-$result .= $this->convertitem($post, $items, $name);
-}
+$headers .= sprintf('<a href="#wikiword-%1$d" title="%2$s">%2$s</a> ', $wiki->add($items['name'], $post->id), $items['name']);
+$content = $this->convertitem($post, $items, $name);
 }
 
-if ($result == '') return '';
-return sprintf($this->html->items, $result);
+if ($content == '') return '';
+$args = targs::instance();
+$args->names = $names;
+$args->headers = $headers;
+$args->items = $content;
+return $this->html->items($args);
 }
 
 private function convertitem(tpost $post, array $item, $name) {
 $wiki = twikiwords::instance();
 $args = targs::instance();
 $args->add($item);
-$args->description = $this->getdescription($post, $item]['description']);
+$args->description = $this->getdescription($post, $item['description']);
 $args->idwiki = $wiki->add($item['name'], $post->id);
 if (isset(tlocal::$data['codedoc'][$item['access']]))  $args->access = tlocal::$data['codedoc'][$item['access']];
 return $this->html->item($args);
@@ -168,7 +194,7 @@ return $this->html->item($args);
 
 public function getchilds($idpost) {
 IF ($idpost == 0) return '__childs__';
-$items = $this->db->select('parent = ' . $idparent, '');
+$items = $this->db->select('parent = ' . $idpost, '');
 if (count($items) == 0) return '';
 $links = array();
 $posts = tposts::instance();
@@ -176,7 +202,7 @@ $posts->loaditems($items);
 foreach ($items as $id) {
 $item = $this->getitem($id);
 $post = tpost::instance($id);
-$links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, item['class'], $id);
+$links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $item['class'], $id);
 }
 return implode(', ', $links);
 }
@@ -187,13 +213,13 @@ $links = array();
 foreach (explode(',', $doc[$name]) as $class) {
 $class = trim($class);
 if ($class == '') continue;;
-$links = $this->getclasslink($class);
+$links[] = $this->getclasslink($class);
 }
 return implode(', ', $links);
 }
 
 private function getclasslink($class) {
-if ($idpost = $this->db->findid('class = ' .dbquote($class)) {
+if ($idpost = $this->db->findid('class = ' .dbquote($class))) {
 $post = tpost::instance($idpost);
 if ($id = $wiki->IndexOf('word', $class)) {
 return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $class, $id);

@@ -444,9 +444,11 @@ if ($this->revision < $posts->revision) $this->revision = $posts->revision;
 
 public function setrevision($value) {
 if ($value != $this->data['revision']) {
-$this->data['revision'] = $value;
       $filter = tcontentfilter::instance();
       $filter->filterpost($this,$this->rawcontent);
+$posts = tposts::instance();
+$this->data['revision'] = $posts->revision;
+if ($this->id > 0) $this->save();
 }
 }
   
