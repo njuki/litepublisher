@@ -50,8 +50,11 @@ class titem extends tdata {
   }
   
   public function request($id) {
-    $this->id = $id;
+    if ($id != $this->id) {
+echo "$id to $this->id<br>";
+$this->setid($id);
     if (!$this->load()) return 404;
+}
   }
   
   public static function deletedir($dir) {

@@ -35,6 +35,7 @@ $wiki = twikiwords::instance();
 $wiki->createwords($post, $s);
 $this->classtowiki($post, $s);
 $wiki->replacewords($s);
+$s = str_replace('->', '-&gt;', $s);
 $filter = tcontentfilter::instance();
 return $filter->filter($s);
 }
@@ -93,9 +94,11 @@ break;
 $post->rss = $post->excerpt;
 $post->description = tcontentfilter::getpostdescription($post->excerpt);
 $post->moretitle = sprintf($lang->moretitle, $post->title);
-$cat = tcategories::instance();
+/*
+/$cat = tcategories::instance();
 $idcat = $cat->add($lang->documentation);
 if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
+*/
 return $result;
   }
 
@@ -146,7 +149,8 @@ $content .= $items;
 
     if (!empty($doc['example'])) {
 $headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
-$args->example = highlight_string($doc['example'], true);
+$content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
+$content .= highlight_string($doc['example'], true);
 }
 
 $args->headers = $headers;
@@ -234,6 +238,57 @@ return sprintf('<a href="%1$s" title="%2$s">%2$s</a>', $post->link, $class);
 }
 return $class;
 }
+
+private function getinterface(tpost $post, array &$ini) {
+$doc = $ini['document'];
+$wiki = twikiwords::instance();
+$lang = tlocal::instance('codedoc');
+$args = targs::instance();
+$class = $doc['name'];
+$post->title = sprintf($lang->interfacetitle, $class);
+$id = $wiki->add($class, $post->id);
+$args->class = sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
+$args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$options->url, $doc['source']);
+$content = $this->getdescription($post, $doc['description']);
+$post->excerpt = $content;
+$content .= $this->convertitems($post, $ini, 'method', 'methods');
+    if (!empty($doc['example'])) {
+$headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
+$content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
+$content .= highlight_string($doc['example'], true);
+}
+
+$args->headers = $headers;
+$args->content = $content;
+$post->filtered = $this->html->interface($args);
+}
+
+private function getmanual(tpost $post, array &$ini) {
+$doc = $ini['document'];
+$wiki = twikiwords::instance();
+$lang = tlocal::instance('codedoc');
+$args = targs::instance();
+$post->title = sprintf($lang->interfacetitle, $class);
+$id = $wiki->add($class, $post->id);
+$args->interface= sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
+$args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$options->url, $doc['source']);
+
+$content = $this->getdescription($post, $doc['description']);
+$post->excerpt = $content;
+
+$content .= $this->convertitems($post, $ini, 'method', 'methods');
+
+    if (!empty($doc['example'])) {
+$headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
+$content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
+$content .= highlight_string($doc['example'], true);
+}
+
+$args->headers = $headers;
+$args->content = $content;
+$post->filtered = $this->html->interface($args);
+}
+
 
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
