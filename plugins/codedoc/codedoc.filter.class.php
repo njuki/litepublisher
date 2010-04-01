@@ -93,6 +93,9 @@ break;
 $post->rss = $post->excerpt;
 $post->description = tcontentfilter::getpostdescription($post->excerpt);
 $post->moretitle = sprintf($lang->moretitle, $post->title);
+$cat = tcategories::instance();
+$idcat = $cat->add($lang->documentation);
+if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
 return $result;
   }
 

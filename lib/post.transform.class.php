@@ -11,7 +11,7 @@ class tposttransform  {
   public static $arrayprops= array('categories', 'tags', 'files');
   public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount');
   public static $boolprops= array('commentsenabled', 'pingenabled');
-  public static $props = array('id', 'idurl', 'parent', 'author',
+  public static $props = array('id', 'idurl', 'parent', 'author', 'revision',
   //'created', 'modified',
   'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
@@ -115,6 +115,10 @@ class tposttransform  {
   private function setposted($value) {
     $this->post->posted = strtotime($value);
   }
+
+private function setrevision($value) {
+$this->post->data['revision'] = $value;
+}
   
 }//class
 ?>
