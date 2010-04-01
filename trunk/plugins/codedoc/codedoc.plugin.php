@@ -25,6 +25,7 @@ if (!strbegin($content, '[document]')) return;
 $filter = tcodedocfilter::instance();
 $result = $filter->convert($post, $content);
 if ($post->id == 0) {
+$result['post'] = $post;
 $this->fix[] = $result;
 } else {
 $result['id'] = $post->id;
@@ -37,6 +38,7 @@ public function postadded($id) {
 if (count($this->fix) == 0) return;
 foreach ($this->fix as $i => $item) {
 if ($id == $item['post']->id) {
+$post = $item['post'];
 $this->db->add(array(
 'id' => $id,
 'parent' => $item['parent'],

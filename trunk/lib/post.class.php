@@ -423,6 +423,7 @@ $this->setid(tposttransform ::add($this));
     $result = '';
     $posts = tposts::instance();
     $posts->beforecontent($this, $result);
+//$posts->addrevision();
 if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {

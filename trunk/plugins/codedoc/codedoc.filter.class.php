@@ -197,7 +197,7 @@ return $this->html->item($args);
 
 public function getchilds($idpost) {
 IF ($idpost == 0) return '__childs__';
-$items = $this->db->select('parent = ' . $idpost, '');
+$items = $this->select('parent = ' . $idpost, '');
 if (count($items) == 0) return '';
 $links = array();
 $posts = tposts::instance();
@@ -222,8 +222,10 @@ return implode(', ', $links);
 }
 
 private function getclasslink($class) {
+//var_dump($this->db->res2assoc($this->db->query("select * from $this->thistable")));
 if ($idpost = $this->db->findid('class = ' .dbquote($class))) {
 $post = tpost::instance($idpost);
+$wiki = twikiwords::instance();
 if ($id = $wiki->IndexOf('word', $class)) {
 return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $class, $id);
 } else {
