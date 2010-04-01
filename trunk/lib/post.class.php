@@ -69,6 +69,7 @@ class tpost extends titem implements  itemplate {
   //db
   public function load() {
     $result = dbversion? $this->LoadFromDB() : parent::load();
+echo "Loaded $this->id<br>";
     if ($result) {
       foreach ($this->coinstances as $coinstance) $coinstance->load();
     }
@@ -329,8 +330,8 @@ $this->setid(tposttransform ::add($this));
   }
   
   public function getcont() {
-    $theme = ttheme::instance();
     ttheme::$vars['post'] = $this;
+    $theme = ttheme::instance();
     return $theme->parse($theme->content->post);
   }
   
@@ -423,7 +424,7 @@ $this->setid(tposttransform ::add($this));
     $result = '';
     $posts = tposts::instance();
     $posts->beforecontent($this, $result);
-//$posts->addrevision();
+$posts->addrevision();
 if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
