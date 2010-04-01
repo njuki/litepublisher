@@ -30,7 +30,7 @@ $this->fix[] = $result;
 $result['id'] = $post->id;
 $this->db->updateassoc($result);
 }
-return true;
+tevents::cancelevent(true);
 }
 
 public function postadded($id) {
@@ -45,12 +45,16 @@ $this->db->add(array(
 
 $filter = tcodedocfilter::instance();
 $filtered = str_replace('__childs__', $filter->getchilds($post->id), $post->filtered);
-$post->db->setvalue($post->id, 'filtered', $filtered);
-unset($this->fix[$i]);
 
 $posts = tposts::instance();
 $posts->addrevision();
 
+$post->db->updateassoc(array(
+'id' => $post->id, 
+'filtered' => $filtered,
+'revision' => $posts->revision
+));
+unset($this->fix[$i]);
 return;
 }
 }

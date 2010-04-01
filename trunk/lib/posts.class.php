@@ -92,7 +92,7 @@ $this->data['revision'] = 0;
 private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
-$post->revision = $this->revision;
+$post->data['revision'] = $this->revision;
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -298,7 +298,8 @@ $this->beforechange($post);
   }
   
 public function addrevision() {
-$this->data['revision']++;$this->save();
+$this->data['revision']++;
+$this->save();
 litepublisher::$urlmap->clearcache();
 }
   

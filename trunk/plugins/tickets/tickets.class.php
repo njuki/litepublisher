@@ -72,7 +72,7 @@ class ttickets extends tposts {
   
   public function postdeleted($id) {
     $db = $this->getdb($this->ticketstable);
-    $idpoll = $tb->getvalue($id, 'poll');
+    $idpoll = $db->getvalue($id, 'poll');
     $db->delete("id = $id");
     if ($idpoll > 0) {
       $polls = tpolls::instance();

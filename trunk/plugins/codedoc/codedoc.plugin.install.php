@@ -8,7 +8,7 @@
 
 function tcodedocpluginInstall($self) {
  if (!dbversion) die("Ticket  system only for database version");
-  $manager = tdbmanager ::instance();
+ $manager = tdbmanager ::instance();
   $manager->CreateTable($self->table, '
   id int unsigned NOT NULL default 0,
   parent int unsigned NOT NULL default 0,
@@ -24,17 +24,18 @@ $posts->unlock();
 
   litepublisher::$classes->lock();  
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
+  $filter = tcontentfilter::instance();
+$filter->lock();
+  $filter->beforecontent = $self->beforefilter;
+$filter->seteventorder('beforecontent', $self, 0);
   $plugins = tplugins::instance();
   if (!isset($plugins->items['wikiwords'])) $plugins->add('wikiwords');
+$filter->unlock();
   litepublisher::$classes->unlock();
 
   $linkgen = tlinkgenerator::instance();
   $linkgen->data['codedoc'] = '/doc/[title].htm';
   $linkgen->save();
-
-  $filter = tcontentfilter::instance();
-  $filter->beforecontent = $self->beforefilter;
-// передвинуть вики плагин в фильтрах
 }  
 
 function tcodedocpluginUninstall($self) {
