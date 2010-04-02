@@ -27,7 +27,7 @@ class tpolls extends tplugin {
     $this->userstable = 'pollusers';
     $this->votestable = 'pollvotes';
     $this->addevents('added', 'deleted', 'edited');
-$this->data['garbage'] = true;
+    $this->data['garbage'] = true;
     $this->data['title'] = 'new poll';
     $this->data['voted'] = '';
     $this->types = array('radio', 'button', 'link', 'custom');
@@ -176,11 +176,11 @@ $this->data['garbage'] = true;
     $iduser = (int) $iduser;
     return $this->getdb($this->votestable)->findid("id = $idpoll and user = $iduser");
   }
-
-public function delete($id) {
-$this->db->iddelete($id);
+  
+  public function delete($id) {
+    $this->db->iddelete($id);
     $this->getdb($this->votestable)->iddelete($id);
-}
+  }
   
   public function optimize() {
     $this->CallSatellite('optimize');

@@ -27,11 +27,11 @@ class tticketeditor extends tposteditor {
     $tickets->checkadminlang();
     return parent::gethtml($name);
   }
-
+  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
   }
-
+  
   public function getcontent() {
     $result = $this->logoutlink;
     $this->basename = 'tickets';
@@ -76,20 +76,20 @@ class tticketeditor extends tposteditor {
     $tickets = ttickets::instance();
     $this->basename = 'tickets';
     $html = $this->html;
-
-// check spam
+    
+    // check spam
     if ($id == 0) {
-$newstatus = 'published';
-if (litepublisher::$options->group == 'ticket') {
-$hold = $tickets->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
-$approved = $tickets->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
-if ($approved < 3) {
-if ($hold - $approved >= 1) return $html->h2->noapproved;
-$newstatus = 'draft';
-}
-}
-}
-
+      $newstatus = 'published';
+      if (litepublisher::$options->group == 'ticket') {
+        $hold = $tickets->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
+        $approved = $tickets->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
+        if ($approved < 3) {
+          if ($hold - $approved >= 1) return $html->h2->noapproved;
+          $newstatus = 'draft';
+        }
+      }
+    }
+    
     if (empty($title)) return $html->h2->emptytitle;
     $ticket = tticket::instance((int)$id);
     $ticket->title = $title;
@@ -106,7 +106,7 @@ $newstatus = 'draft';
     $ticket->os = $os;
     if (litepublisher::$options->group != 'ticket') $ticket->state = $state;
     if ($id == 0) {
-$ticket->status = $newstatus;
+      $ticket->status = $newstatus;
       $ticket->type = $type;
       $_POST['id'] = $tickets->add($ticket);
     } else {

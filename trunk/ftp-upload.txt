@@ -162,6 +162,8 @@ send lib\importer.class.php lib/importer.class.php
 quote site chmod 666 lib/importer.class.php
 send lib\index.htm lib/index.htm
 quote site chmod 666 lib/index.htm
+send lib\ini2array.class.php lib/ini2array.class.php
+quote site chmod 666 lib/ini2array.class.php
 send lib\installer.class.php lib/installer.class.php
 quote site chmod 666 lib/installer.class.php
 send lib\interfaces.php lib/interfaces.php
@@ -202,6 +204,8 @@ send lib\plugins.class.php lib/plugins.class.php
 quote site chmod 666 lib/plugins.class.php
 send lib\post.class.php lib/post.class.php
 quote site chmod 666 lib/post.class.php
+send lib\post.classes.php lib/post.classes.php
+quote site chmod 666 lib/post.classes.php
 send lib\post.meta.class.php lib/post.meta.class.php
 quote site chmod 666 lib/post.meta.class.php
 send lib\post.transform.class.php lib/post.transform.class.php
@@ -410,6 +414,10 @@ send lib\install\options.class.install.php lib/install/options.class.install.php
 quote site chmod 666 lib/install/options.class.install.php
 send lib\install\plugins.class.install.php lib/install/plugins.class.install.php
 quote site chmod 666 lib/install/plugins.class.install.php
+send lib\install\post.classes.install.php lib/install/post.classes.install.php
+quote site chmod 666 lib/install/post.classes.install.php
+send lib\install\post.classes.sql lib/install/post.classes.sql
+quote site chmod 666 lib/install/post.classes.sql
 send lib\install\post.meta.class.install.php lib/install/post.meta.class.install.php
 quote site chmod 666 lib/install/post.meta.class.install.php
 send lib\install\post.meta.sql lib/install/post.meta.sql
@@ -492,6 +500,8 @@ send lib\update\update.3.34.php lib/update/update.3.34.php
 quote site chmod 666 lib/update/update.3.34.php
 send lib\update\update.3.35.php lib/update/update.3.35.php
 quote site chmod 666 lib/update/update.3.35.php
+send lib\update\update.3.38.php lib/update/update.3.38.php
+quote site chmod 666 lib/update/update.3.38.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -550,38 +560,28 @@ send plugins\codedoc\.htaccess plugins/codedoc/.htaccess
 quote site chmod 666 plugins/codedoc/.htaccess
 send plugins\codedoc\about.ini plugins/codedoc/about.ini
 quote site chmod 666 plugins/codedoc/about.ini
-send plugins\codedoc\admin.codedoc.class.php plugins/codedoc/admin.codedoc.class.php
-quote site chmod 666 plugins/codedoc/admin.codedoc.class.php
-send plugins\codedoc\codedoc.class.php plugins/codedoc/codedoc.class.php
-quote site chmod 666 plugins/codedoc/codedoc.class.php
-send plugins\codedoc\codedocs.class.install.php plugins/codedoc/codedocs.class.install.php
-quote site chmod 666 plugins/codedoc/codedocs.class.install.php
-send plugins\codedoc\codedocs.class.php plugins/codedoc/codedocs.class.php
-quote site chmod 666 plugins/codedoc/codedocs.class.php
+send plugins\codedoc\codedoc.filter.class.php plugins/codedoc/codedoc.filter.class.php
+quote site chmod 666 plugins/codedoc/codedoc.filter.class.php
+send plugins\codedoc\codedoc.plugin.install.php plugins/codedoc/codedoc.plugin.install.php
+quote site chmod 666 plugins/codedoc/codedoc.plugin.install.php
+send plugins\codedoc\codedoc.plugin.php plugins/codedoc/codedoc.plugin.php
+quote site chmod 666 plugins/codedoc/codedoc.plugin.php
 send plugins\codedoc\index.htm plugins/codedoc/index.htm
 quote site chmod 666 plugins/codedoc/index.htm
-send plugins\codedoc\ini2doc.class.php plugins/codedoc/ini2doc.class.php
-quote site chmod 666 plugins/codedoc/ini2doc.class.php
 cd plugins/codedoc
 mkdir resource
 quote site chmod 777 resource
 cd ../../
-send plugins\codedoc\resource\codedoc.sql plugins/codedoc/resource/codedoc.sql
-quote site chmod 666 plugins/codedoc/resource/codedoc.sql
-send plugins\codedoc\resource\codedoc.tml plugins/codedoc/resource/codedoc.tml
-quote site chmod 666 plugins/codedoc/resource/codedoc.tml
-send plugins\codedoc\resource\en.admin.ini plugins/codedoc/resource/en.admin.ini
-quote site chmod 666 plugins/codedoc/resource/en.admin.ini
+send plugins\codedoc\resource\class.tml plugins/codedoc/resource/class.tml
+quote site chmod 666 plugins/codedoc/resource/class.tml
 send plugins\codedoc\resource\en.ini plugins/codedoc/resource/en.ini
 quote site chmod 666 plugins/codedoc/resource/en.ini
 send plugins\codedoc\resource\html.ini plugins/codedoc/resource/html.ini
 quote site chmod 666 plugins/codedoc/resource/html.ini
-send plugins\codedoc\resource\ru.admin.ini plugins/codedoc/resource/ru.admin.ini
-quote site chmod 666 plugins/codedoc/resource/ru.admin.ini
+send plugins\codedoc\resource\index.htm plugins/codedoc/resource/index.htm
+quote site chmod 666 plugins/codedoc/resource/index.htm
 send plugins\codedoc\resource\ru.ini plugins/codedoc/resource/ru.ini
 quote site chmod 666 plugins/codedoc/resource/ru.ini
-send build\indexfile.htm plugins/codedoc/resource/index.htm
-quote site chmod 666 plugins/codedoc/resource/index.htm
 cd plugins
 mkdir externallinks
 quote site chmod 777 externallinks
@@ -908,6 +908,8 @@ send plugins\tickets\.htaccess plugins/tickets/.htaccess
 quote site chmod 666 plugins/tickets/.htaccess
 send plugins\tickets\about.ini plugins/tickets/about.ini
 quote site chmod 666 plugins/tickets/about.ini
+send plugins\tickets\admin.ticketeditor.class.php plugins/tickets/admin.ticketeditor.class.php
+quote site chmod 666 plugins/tickets/admin.ticketeditor.class.php
 send plugins\tickets\admin.tickets.class.php plugins/tickets/admin.tickets.class.php
 quote site chmod 666 plugins/tickets/admin.tickets.class.php
 send plugins\tickets\index.htm plugins/tickets/index.htm
@@ -938,6 +940,8 @@ send plugins\tickets\tickets.class.install.php plugins/tickets/tickets.class.ins
 quote site chmod 666 plugins/tickets/tickets.class.install.php
 send plugins\tickets\tickets.class.php plugins/tickets/tickets.class.php
 quote site chmod 666 plugins/tickets/tickets.class.php
+send plugins\tickets\tickets.home.class.php plugins/tickets/tickets.home.class.php
+quote site chmod 666 plugins/tickets/tickets.home.class.php
 send plugins\tickets\ztodo.txt plugins/tickets/ztodo.txt
 quote site chmod 666 plugins/tickets/ztodo.txt
 cd plugins

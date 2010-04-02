@@ -117,16 +117,16 @@ class tadminmenus extends tmenus {
 
 class tadminmenu  extends tmenu {
   public $arg;
-
-public static function getinstancename() {
-return 'adminmenu';
-}
-
+  
+  public static function getinstancename() {
+    return 'adminmenu';
+  }
+  
   public static function getowner() {
     return tadminmenus::instance();
   }
   
-    protected function create() {
+  protected function create() {
     parent::create();
     $this->cache = false;
   }
@@ -154,7 +154,7 @@ public function save() { return true; }
     if ($id > 0) {
       $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
     }
-
+    
     if ($s = $this->auth()) return $s;
     tlocal::loadlang('admin');
     $this->arg = litepublisher::$urlmap->argtree;

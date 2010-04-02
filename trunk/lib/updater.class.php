@@ -78,7 +78,7 @@ class tupdater extends tevents {
     ($s = http::get('http://litepublisher.googlecode.com/files/version.txt') )) {
       return $s;
     }
-//return litepublisher::$options->version + 0.01;
+    //return litepublisher::$options->version + 0.01;
     return false;
   }
   

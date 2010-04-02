@@ -11,10 +11,10 @@ class tmetapost extends titem {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, (int) $id);
   }
-
-public static function getinstancename() {
-return 'postmeta';
-}
+  
+  public static function getinstancename() {
+    return 'postmeta';
+  }
   
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'meta';

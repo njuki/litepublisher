@@ -12,14 +12,14 @@ function tpostclassesInstall($self) {
     $manager = tdbmanager ::instance();
     $manager->CreateTable($self->table, file_get_contents($dir .'post.classes.sql'));
   }
-
-litepublisher::$classes->onnewitem = $self->newitem;
-
-$posts = tposts::instance();
-$posts->lock();
-$posts->added = $self->postadded;
-$posts->deleted = $self->postdeleted;
-$posts->unlock();
+  
+  litepublisher::$classes->onnewitem = $self->newitem;
+  
+  $posts = tposts::instance();
+  $posts->lock();
+  $posts->added = $self->postadded;
+  $posts->deleted = $self->postdeleted;
+  $posts->unlock();
 }
 
 function tpostclassesUninstall($self) {
@@ -27,10 +27,10 @@ function tpostclassesUninstall($self) {
     $manager = tdbmanager ::instance();
     $manager->deletetable($self->table);
   }
-
-litepublisher::$classes->unsubscribeclass($self);
-
-tposts::unsub($self);
+  
+  litepublisher::$classes->unsubscribeclass($self);
+  
+  tposts::unsub($self);
 }
 
 ?>

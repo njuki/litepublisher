@@ -37,18 +37,18 @@ class tabstractcron extends tevents {
   public function request($arg) {
     if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 404;
     if (($fh = @fopen($this->path .'cron.lok', 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
-try {
-      ignore_user_abort(true);
-      set_time_limit(60*20);
-      $this->sendexceptions();
-      $this->log("started loop");
-      $this->execute();
-    } catch (Exception $e) { 
-litepublisher::$options->handexception($e);
-}
+      try {
+        ignore_user_abort(true);
+        set_time_limit(60*20);
+        $this->sendexceptions();
+        $this->log("started loop");
+        $this->execute();
+      } catch (Exception $e) {
+        litepublisher::$options->handexception($e);
+      }
       flock($fh, LOCK_UN);
       fclose($fh);
-@chmod($this->path .'cron.lok', 0666);
+      @chmod($this->path .'cron.lok', 0666);
       $this->log("finished loop");
       $this->pop();
       return 'Ok';

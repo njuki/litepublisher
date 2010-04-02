@@ -228,6 +228,44 @@ function md5uniq() {
   return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
+function PHPComment($s) {
+  $s = str_replace('*/', '**//*/', $s);
+  return "<?php /* $s */ ?>";
+}
+
+function PHPUncomment($s) {
+  $s = substr($s, 9, strlen($s) - 9 - 6);
+  return str_replace('**//*/', '*/', $s);
+}
+
+function strbegin($s, $begin) {
+  return strncmp($s, $begin, strlen($begin)) == 0;
+}
+
+function strend($s, $end) {
+  return $end == substr($s, 0 - strlen($end));
+}
+
+function SafeSaveFile($BaseName, $Content) {
+  $TmpFileName = $BaseName.'.tmp.php';
+  if(!file_put_contents($TmpFileName, $Content)) {
+    litepublisher::$options->trace("Error write to file $TmpFileName");
+    return false;
+  }
+  chmod($TmpFileName , 0666);
+  $FileName = $BaseName.'.php';
+  if (file_exists($FileName)) {
+    $BakFileName = $BaseName . '.bak.php';
+    if (file_exists($BakFileName)) unlink($BakFileName);
+    rename($FileName, $BakFileName);
+  }
+  if (!rename($TmpFileName, $FileName)) {
+    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
+    return false;
+  }
+  return true;
+}
+
 function dumpstr($s) {
   echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
 }
@@ -239,6 +277,15 @@ function dumpstr($s) {
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
+
+class ECancelEvent extends Exception {
+  public $result;
+  
+  public function __construct($message, $code = 0) {
+    $this->result = $message;
+    parent::__construct('', 0);
+  }
+}
 
 class tevents extends tdata {
   protected $events;
@@ -334,11 +381,19 @@ class tevents extends tdata {
           $obj = getinstance($item['class']);
           $call = array(&$obj, $item['func']);
         }
-        $result = call_user_func_array($call, $params);
+        try {
+          $result = call_user_func_array($call, $params);
+        } catch (ECancelEvent $e) {
+          return $e->result;
+        }
       }
     }
     
     return $result;
+  }
+  
+  public static function cancelevent($result) {
+    throw new ECancelEvent($result);
   }
   
   private function eventdelete($name, $i) {
@@ -395,6 +450,22 @@ class tevents extends tdata {
     }
     
     $this->save();
+  }
+  
+  public function seteventorder($eventname, $instance, $order) {
+    if (!isset($this->events[$eventname])) return false;
+    $class = get_class($instance);
+    $count = count($this->events[$eventname]);
+    if (($order < 0) || ($order >= $count)) $order = $count - 1;
+    foreach ($this->events[$eventname] as $i => $event) {
+      if ($class == $event['class']) {
+        if ($i == $order) return true;
+        array_splice($this->events[$eventname], $i, 1);
+        array_splice($this->events[$eventname], $order, 0, array(0 => $event));
+        $this->save();
+        return true;
+      }
+    }
   }
   
   private function indexofcoclass($class) {
@@ -640,10 +711,18 @@ class tclasses extends titems {
     return new $class();
   }
   
+  public function newitem($name, $class, $id) {
+    //echo"$name:$class:$id new<br>\n";
+    if (!empty($this->remap[$class])) $class = $this->remap[$class];
+    $this->callevent('onnewitem', array($name, &$class, $id));
+    return new $class();
+  }
+  
   protected function create() {
     parent::create();
     $this->basename = 'classes';
     $this->dbversion = false;
+    $this->addevents('onnewitem');
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
@@ -721,44 +800,6 @@ class tclasses extends titems {
 
 function getinstance($class) {
   return litepublisher::$classes->getinstance($class);
-}
-
-function PHPComment($s) {
-  $s = str_replace('*/', '**//*/', $s);
-  return "<?php /* $s */ ?>";
-}
-
-function PHPUncomment($s) {
-  $s = substr($s, 9, strlen($s) - 9 - 6);
-  return str_replace('**//*/', '*/', $s);
-}
-
-function strbegin($s, $begin) {
-  return strncmp($s, $begin, strlen($begin)) == 0;
-}
-
-function strend($s, $end) {
-  return $end == substr($s, 0 - strlen($end));
-}
-
-function SafeSaveFile($BaseName, $Content) {
-  $TmpFileName = $BaseName.'.tmp.php';
-  if(!file_put_contents($TmpFileName, $Content)) {
-    litepublisher::$options->trace("Error write to file $TmpFileName");
-    return false;
-  }
-  chmod($TmpFileName , 0666);
-  $FileName = $BaseName.'.php';
-  if (file_exists($FileName)) {
-    $BakFileName = $BaseName . '.bak.php';
-    if (file_exists($BakFileName)) unlink($BakFileName);
-    rename($FileName, $BakFileName);
-  }
-  if (!rename($TmpFileName, $FileName)) {
-    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
-    return false;
-  }
-  return true;
 }
 
 //options.class.php
@@ -1123,7 +1164,15 @@ class turlmap extends titems {
   }
   
   protected function GenerateHTML(array $item) {
-    $source = getinstance($item['class']);
+    $class = $item['class'];
+    $parents = class_parents($class);
+    if (in_array('titem', $parents)) {
+      //$source = titem::iteminstance($class, $item['arg']);
+      $source = call_user_func_array(array($class, 'instance'), array($item['arg']));
+    } else {
+      $source = getinstance($class);
+    }
+    
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
       //tfiler::log($s, 'content.log');
@@ -1328,9 +1377,9 @@ class turlmap extends titems {
   }
   
   public function redir301($to) {
-    tfiler::log($to. "\n" . $this->url);
+    //tfiler::log($to. "\n" . $this->url);
     litepublisher::$options->savemodified();
-    tfiler::log(var_export($_COOKIE, true));
+    //tfiler::log(var_export($_COOKIE, true));
     self::redir(litepublisher::$options->url . $to);
   }
   

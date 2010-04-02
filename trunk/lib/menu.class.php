@@ -287,17 +287,17 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
   public static function instance($id = 0) {
     return self::iteminstance(__class__, $id);
   }
-
+  
   public static function iteminstance($class, $id = 0) {
-$single = getinstance($class);
-if ($single->id == $id) return $single;
-if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
+    $single = getinstance($class);
+    if ($single->id == $id) return $single;
+    if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
     return parent::iteminstance($class, $id);
-}
-
-public static function getinstancename() {
-return 'menu';
-}
+  }
+  
+  public static function getinstancename() {
+    return 'menu';
+  }
   
   public static function getowner() {
     return tmenus::instance();

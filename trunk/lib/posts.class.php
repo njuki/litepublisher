@@ -29,7 +29,7 @@ class tposts extends titems {
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
     $this->data['recentcount'] = 10;
     $this->data['archivescount'] = 0;
-$this->data['revision'] = 0;
+    $this->data['revision'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
@@ -87,21 +87,21 @@ $this->data['revision'] = 0;
     $theme = ttheme::instance();
     return $theme->getpostswidgetcontent($list, $sitebar, '');
   }
-
-
-private function beforechange($post) {
+  
+  
+  private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
-$post->data['revision'] = $this->revision;
+    $post->data['revision'] = $this->revision;
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
       $post->status = 'published';
     }
-}    
+  }
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
-$this->beforechange($post);
+    $this->beforechange($post);
     if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
       $icons = ticons::instance();
       $post->icon = $icons->getid('post');
@@ -134,10 +134,10 @@ $this->beforechange($post);
   }
   
   public function edit(tpost $post) {
-$this->beforechange($post);
+    $this->beforechange($post);
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($post, $post->schemalink);
-
+    
     $this->lock();
     $this->updated($post);
     $this->cointerface('edit', $post);
@@ -297,11 +297,11 @@ $this->beforechange($post);
     }
   }
   
-public function addrevision() {
-$this->data['revision']++;
-$this->save();
-litepublisher::$urlmap->clearcache();
-}
+  public function addrevision() {
+    $this->data['revision']++;
+    $this->save();
+    litepublisher::$urlmap->clearcache();
+  }
   
   //fix call reference
   public function beforecontent($post, &$result) {

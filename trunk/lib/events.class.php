@@ -6,13 +6,13 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ECancelEvent extends Exception { 
-public $result;
-
-    public function __construct($message, $code = 0) {
-$this->result = $message;
-        parent::__construct('', 0);
-}
+class ECancelEvent extends Exception {
+  public $result;
+  
+  public function __construct($message, $code = 0) {
+    $this->result = $message;
+    parent::__construct('', 0);
+  }
 }
 
 class tevents extends tdata {
@@ -109,20 +109,20 @@ class tevents extends tdata {
           $obj = getinstance($item['class']);
           $call = array(&$obj, $item['func']);
         }
-try {
-        $result = call_user_func_array($call, $params);
-} catch (ECancelEvent $e) {
-return $e->result;
-}
+        try {
+          $result = call_user_func_array($call, $params);
+        } catch (ECancelEvent $e) {
+          return $e->result;
+        }
       }
     }
     
     return $result;
   }
-
-public static function cancelevent($result) {
-throw new ECancelEvent($result);
-}
+  
+  public static function cancelevent($result) {
+    throw new ECancelEvent($result);
+  }
   
   private function eventdelete($name, $i) {
     array_splice($this->events[$name], $i, 1);
@@ -179,22 +179,22 @@ throw new ECancelEvent($result);
     
     $this->save();
   }
-
-public function seteventorder($eventname, $instance, $order) {
-if (!isset($this->events[$eventname])) return false;
-$class = get_class($instance);
-$count = count($this->events[$eventname]);
-if (($order < 0) || ($order >= $count)) $order = $count - 1;
-foreach ($this->events[$eventname] as $i => $event) {
-if ($class == $event['class']) {
-if ($i == $order) return true;
-     array_splice($this->events[$eventname], $i, 1);
-     array_splice($this->events[$eventname], $order, 0, array(0 => $event));
-$this->save();
-return true;
-}
-}
-}
+  
+  public function seteventorder($eventname, $instance, $order) {
+    if (!isset($this->events[$eventname])) return false;
+    $class = get_class($instance);
+    $count = count($this->events[$eventname]);
+    if (($order < 0) || ($order >= $count)) $order = $count - 1;
+    foreach ($this->events[$eventname] as $i => $event) {
+      if ($class == $event['class']) {
+        if ($i == $order) return true;
+        array_splice($this->events[$eventname], $i, 1);
+        array_splice($this->events[$eventname], $order, 0, array(0 => $event));
+        $this->save();
+        return true;
+      }
+    }
+  }
   
   private function indexofcoclass($class) {
     return array_search($class, $this->coclasses);
