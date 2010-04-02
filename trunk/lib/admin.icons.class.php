@@ -8,7 +8,7 @@
 
 class tadminicons extends tadminmenu {
   public static function instance($id = 0) {
-    return getinstance(__class__);
+    return parent::iteminstance(__class__, $id);
   }
   
   private function getallicons() {

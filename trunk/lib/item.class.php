@@ -8,23 +8,27 @@
 
 class titem extends tdata {
   public static $instances;
-  public $instancename;
   //public $id;
   
-  public static function iteminstance($name, $class, $id = 0) {
+  public static function iteminstance($class, $id = 0) {
+$name = call_user_func_array(array($class, 'getinstancename'), array());
+//echo "$name:$class:$id<br>\n";
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$name][$id]))     return self::$instances[$name][$id];
     $self = litepublisher::$classes->newitem($name, $class, $id);
-    $self->instancename = $name;
-    $self->id = $id;
+return $self->loaddata($id);
+}
+
+public function loaddata($id) {
+    $this->data['id'] = $id;
     if ($id != 0) {
-      if (!$self->load()) {
-        $self->free();
+      if (!$this->load()) {
+        $this->free();
         return false;
       }
-      self::$instances[$name][$id] = $self;
+      self::$instances[$this->instancename][$id] = $this;
     }
-    return $self;
+    return $this;
   }
   
   public function free() {
@@ -51,7 +55,6 @@ class titem extends tdata {
   
   public function request($id) {
     if ($id != $this->id) {
-echo "$id to $this->id<br>";
 $this->setid($id);
     if (!$this->load()) return 404;
 }

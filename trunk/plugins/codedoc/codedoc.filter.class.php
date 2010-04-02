@@ -84,7 +84,7 @@ break;
 
 case 'interface':
 $this->getinterface($post, $ini);
-bbreak;
+break;
 
 case 'manual':
 $this->getmanual($post, $ini);

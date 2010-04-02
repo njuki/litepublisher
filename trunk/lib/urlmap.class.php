@@ -154,7 +154,15 @@ class turlmap extends titems {
   }
   
   protected function GenerateHTML(array $item) {
-    $source = getinstance($item['class']);
+$class = $item['class'];
+$parents = class_parents($class);
+if (in_array('titem', $parents)) {
+//$source = titem::iteminstance($class, $item['arg']);
+$source = call_user_func_array(array($class, 'instance'), array($item['arg']));
+} else {
+    $source = getinstance($class);
+}
+
     //special handling for rss
     if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
       //tfiler::log($s, 'content.log');

@@ -12,8 +12,12 @@ class tpost extends titem implements  itemplate {
   private $ameta;
   
   public static function instance($id = 0) {
-    return parent::iteminstance('post', __class__, $id);
+    return parent::iteminstance(__class__, $id);
   }
+
+public static function getinstancename() {
+return 'post';
+}
   
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
@@ -69,7 +73,6 @@ class tpost extends titem implements  itemplate {
   //db
   public function load() {
     $result = dbversion? $this->LoadFromDB() : parent::load();
-echo "Loaded $this->id<br>";
     if ($result) {
       foreach ($this->coinstances as $coinstance) $coinstance->load();
     }
@@ -424,7 +427,7 @@ $this->setid(tposttransform ::add($this));
     $result = '';
     $posts = tposts::instance();
     $posts->beforecontent($this, $result);
-$posts->addrevision();
+//$posts->addrevision();
 if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
@@ -446,12 +449,16 @@ if ($this->revision < $posts->revision) $this->revision = $posts->revision;
 
 public function setrevision($value) {
 if ($value != $this->data['revision']) {
-      $filter = tcontentfilter::instance();
-      $filter->filterpost($this,$this->rawcontent);
+$this->updatefiltered();
 $posts = tposts::instance();
 $this->data['revision'] = $posts->revision;
 if ($this->id > 0) $this->save();
 }
+}
+
+public function updatefiltered() {
+      $filter = tcontentfilter::instance();
+      $filter->filterpost($this,$this->rawcontent);
 }
   
   public function getrawcontent() {

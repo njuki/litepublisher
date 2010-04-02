@@ -285,7 +285,22 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
   public $formresult;
   
   public static function instance($id = 0) {
-    return parent::iteminstance('menu', __class__, $id);
+    return self::iteminstance(__class__, $id);
+  }
+
+  public static function iteminstance($class, $id = 0) {
+$single = getinstance($class);
+if ($single->id == $id) return $single;
+if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
+    return parent::iteminstance($class, $id);
+}
+
+public static function getinstancename() {
+return 'menu';
+}
+  
+  public static function getowner() {
+    return tmenus::instance();
   }
   
   protected function create() {
@@ -335,10 +350,6 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
   public function __isset($name) {
     if (in_array($name, self::$ownerprops)) return true;
     return parent::__isset($name);
-  }
-  
-  public function getowner() {
-    return tmenus::instance();
   }
   
   //ITemplate
