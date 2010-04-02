@@ -43,6 +43,7 @@ class tclasses extends titems {
   }
 
   public function newitem($name, $class, $id) {
+//echo"$name:$class:$id new<br>\n";
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
 $this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();

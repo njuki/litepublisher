@@ -52,8 +52,18 @@ class ttickets extends tposts {
     
     return $this->transformres($res);
   }
+
+public function createpoll() {
+$this->checkadminlang();
+$lang = tlocal::instance('tickets');
+$items = explode(',', $lang->pollitems);
+$polls = tpolls::instance();
+return $polls->add('', 'opened', 'button', $items);
+}
   
   public function add(tpost $post) {
+$post->poll = $this->createpoll();
+$post->updatefiltered();
     //$post->status = 'draft';
     $id = parent::add($post);
     $this->notify($post);
@@ -69,14 +79,19 @@ class ttickets extends tposts {
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body);
   }
-  
+
+public function edit(tpost $post) {
+$post->updatefiltered();
+return parent::edit($post);
+}
+
   public function postdeleted($id) {
     $db = $this->getdb($this->ticketstable);
     $idpoll = $db->getvalue($id, 'poll');
     $db->delete("id = $id");
     if ($idpoll > 0) {
       $polls = tpolls::instance();
-      $pols->delete($id);
+      $polls->delete($idpoll);
     }
   }
   

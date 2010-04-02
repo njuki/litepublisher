@@ -10,7 +10,7 @@ class tadminplugins extends tadminmenu {
   public $abouts;
   
   public static function instance($id = 0) {
-    return getinstance(__class__);
+    return parent::iteminstance(__class__, $id);
   }
   
   protected function create() {

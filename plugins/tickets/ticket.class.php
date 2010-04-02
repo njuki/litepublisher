@@ -11,7 +11,7 @@ class tticket extends tpost {
   public $ticketstable;
   
   public static function instance($id = 0) {
-    return parent::iteminstance('post', __class__, $id);
+    return parent::iteminstance(__class__, $id);
   }
   
   protected function create() {
@@ -85,15 +85,17 @@ if ($name == 'id') return $this->setid($value);
     $this->ticket['closed'] = sqldate($value);
   }
   
-  protected function getcontentpage($page) {
-    $result = '';
-    if ($page == 1) $result .= $this->getticketcontent();
-    $result .= parent::getcontentpage($page);
-    if (($page == 1) && !empty($this->ticket['code'])) {
-      $code = str_replace(array('"', "'", '$'), array('&quot;', '&#39;', '&#36;'), htmlspecialchars($this->code));
-      $result .= "\n<code><pre>\n$code\n</pre></code>\n";
+  public function updatefiltered() {
+$result = $this->getticketcontent();
+      $filter = tcontentfilter::instance();
+      $filter->filterpost($this,$this->rawcontent);
+$result .= $this->filtered;
+    if (!empty($this->ticket['code'])) {
+$lang = tlocal::instance('ticket');
+$result .= sprintf('<h2>%s</h2>', $lang->code);
+$result .= highlight_string($this->code, true);
     }
-    return $result;
+$this->filtered = $result;
   }
   
   public function getticketcontent() {
@@ -110,7 +112,7 @@ if ($name == 'id') return $this->setid($value);
       $args->assignto = $profile->nick;
     } else {
       $users = tusers::instance();
-      $account = $users->getaccount($this->assignto);
+      $account = $users->getitem($this->assignto);
       $args->assignto = $account['name'];
     }
     
@@ -118,12 +120,18 @@ if ($name == 'id') return $this->setid($value);
     $theme = ttheme::instance();
     $tml = file_get_contents($this->resource . 'ticket.tml');
     $result = $theme->parsearg($tml, $args);
-    if ($this->poll > 1) {
+
+    if ($this->poll > 0) {
       $polls = tpolls::instance();
       $result .= $polls->gethtml($this->poll);
     }
     return $result;
   }
+
+public function closepoll() {
+$polls = tpolls::instance();
+$polls->db->setvalue($this->poll, 'status', 'closed');
+}
   
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
