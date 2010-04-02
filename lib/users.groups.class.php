@@ -21,7 +21,7 @@ class tusergroups extends titems {
   function add($name, $home = '/ADMIN/') {
     $this->items[++$this->autoid] = array(
     'name' => $name,
-'home' => $home
+    'home' => $home
     );
     $this->save();
     return $this->autoid;
@@ -46,13 +46,13 @@ class tusergroups extends titems {
     }
     return false;
   }
-
-public function gethome($name) {
-if ($id = $this->groupid($name)) {
-return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
-}
-return '/admin/';
-}
+  
+  public function gethome($name) {
+    if ($id = $this->groupid($name)) {
+      return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
+    }
+    return '/admin/';
+  }
   
 }//class
 ?>

@@ -17,7 +17,7 @@ class tadmintickets extends tadminmenu {
     $tickets->checkhtml();
     return parent::gethtml($name);
   }
-
+  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
   }

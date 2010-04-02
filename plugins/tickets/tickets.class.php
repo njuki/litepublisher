@@ -52,18 +52,18 @@ class ttickets extends tposts {
     
     return $this->transformres($res);
   }
-
-public function createpoll() {
-$this->checkadminlang();
-$lang = tlocal::instance('tickets');
-$items = explode(',', $lang->pollitems);
-$polls = tpolls::instance();
-return $polls->add('', 'opened', 'button', $items);
-}
+  
+  public function createpoll() {
+    $this->checkadminlang();
+    $lang = tlocal::instance('tickets');
+    $items = explode(',', $lang->pollitems);
+    $polls = tpolls::instance();
+    return $polls->add('', 'opened', 'button', $items);
+  }
   
   public function add(tpost $post) {
-$post->poll = $this->createpoll();
-$post->updatefiltered();
+    $post->poll = $this->createpoll();
+    $post->updatefiltered();
     //$post->status = 'draft';
     $id = parent::add($post);
     $this->notify($post);
@@ -79,12 +79,12 @@ $post->updatefiltered();
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body);
   }
-
-public function edit(tpost $post) {
-$post->updatefiltered();
-return parent::edit($post);
-}
-
+  
+  public function edit(tpost $post) {
+    $post->updatefiltered();
+    return parent::edit($post);
+  }
+  
   public function postdeleted($id) {
     $db = $this->getdb($this->ticketstable);
     $idpoll = $db->getvalue($id, 'poll');
@@ -138,16 +138,16 @@ return parent::edit($post);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
     }
   }
-
-public function install() {
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
-tticketsInstall($this);
-}
-
-public function uninstall() {
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
-tticketsUninstall($this);
-}
+  
+  public function install() {
+    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
+    tticketsInstall($this);
+  }
+  
+  public function uninstall() {
+    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
+    tticketsUninstall($this);
+  }
   
 }//class
 ?>

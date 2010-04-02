@@ -115,10 +115,10 @@ class tposttransform  {
   private function setposted($value) {
     $this->post->posted = strtotime($value);
   }
-
-private function setrevision($value) {
-$this->post->data['revision'] = $value;
-}
+  
+  private function setrevision($value) {
+    $this->post->data['revision'] = $value;
+  }
   
 }//class
 ?>

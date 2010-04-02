@@ -14,10 +14,10 @@ class tpost extends titem implements  itemplate {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-public static function getinstancename() {
-return 'post';
-}
+  
+  public static function getinstancename() {
+    return 'post';
+  }
   
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
@@ -30,7 +30,7 @@ return 'post';
     'idurl' => 0,
     'parent' => 0,
     'author' => 0,
-'revision' => 0,
+    'revision' => 0,
     'icon' => 0,
     'posted' => 0,
     'modified' => 0,
@@ -100,7 +100,7 @@ return 'post';
   }
   
   public function addtodb() {
-$this->setid(tposttransform ::add($this));
+    $this->setid(tposttransform ::add($this));
     return $this->id;
   }
   
@@ -427,8 +427,8 @@ $this->setid(tposttransform ::add($this));
     $result = '';
     $posts = tposts::instance();
     $posts->beforecontent($this, $result);
-//$posts->addrevision();
-if ($this->revision < $posts->revision) $this->revision = $posts->revision;
+    //$posts->addrevision();
+    if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
@@ -446,20 +446,20 @@ if ($this->revision < $posts->revision) $this->revision = $posts->revision;
       $filter->filterpost($this,$s);
     }
   }
-
-public function setrevision($value) {
-if ($value != $this->data['revision']) {
-$this->updatefiltered();
-$posts = tposts::instance();
-$this->data['revision'] = $posts->revision;
-if ($this->id > 0) $this->save();
-}
-}
-
-public function updatefiltered() {
-      $filter = tcontentfilter::instance();
-      $filter->filterpost($this,$this->rawcontent);
-}
+  
+  public function setrevision($value) {
+    if ($value != $this->data['revision']) {
+      $this->updatefiltered();
+      $posts = tposts::instance();
+      $this->data['revision'] = $posts->revision;
+      if ($this->id > 0) $this->save();
+    }
+  }
+  
+  public function updatefiltered() {
+    $filter = tcontentfilter::instance();
+    $filter->filterpost($this,$this->rawcontent);
+  }
   
   public function getrawcontent() {
     if (dbversion && ($this->id > 0) && empty($this->data['rawcontent'])) {

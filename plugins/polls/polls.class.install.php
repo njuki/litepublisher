@@ -111,11 +111,11 @@ function tpollsDeletedeleted($self, array $deleted) {
 }
 
 function tpollsOptimize($self) {
-if ($self->garbage) {
-  $deleted = finddeletedpols($self);
-  if (count($deleted) > 0) tpollsDeletedeleted($self, $deleted);
-}
-
+  if ($self->garbage) {
+    $deleted = finddeletedpols($self);
+    if (count($deleted) > 0) tpollsDeletedeleted($self, $deleted);
+  }
+  
   $db = $self->getdb($self->userstable);
   $db->delete("id not in (select distinct user from $db->prefix$self->votestable)");
 }

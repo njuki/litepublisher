@@ -41,19 +41,19 @@ class tclasses extends titems {
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
     return new $class();
   }
-
+  
   public function newitem($name, $class, $id) {
-//echo"$name:$class:$id new<br>\n";
+    //echo"$name:$class:$id new<br>\n";
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
-$this->callevent('onnewitem', array($name, &$class, $id));
+    $this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();
   }
   
-    protected function create() {
+  protected function create() {
     parent::create();
     $this->basename = 'classes';
     $this->dbversion = false;
-$this->addevents('onnewitem');
+    $this->addevents('onnewitem');
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());

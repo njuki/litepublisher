@@ -35,13 +35,13 @@ class tticket extends tpost {
   }
   
   public function __get($name) {
-if ($name == 'id') return $this->data['id'];
+    if ($name == 'id') return $this->data['id'];
     if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
-if ($name == 'id') return $this->setid($value);
+    if ($name == 'id') return $this->setid($value);
     if (array_key_exists($name, $this->ticket)) {
       $this->ticket[$name] = $value;
       return true;
@@ -86,16 +86,16 @@ if ($name == 'id') return $this->setid($value);
   }
   
   public function updatefiltered() {
-$result = $this->getticketcontent();
-      $filter = tcontentfilter::instance();
-      $filter->filterpost($this,$this->rawcontent);
-$result .= $this->filtered;
+    $result = $this->getticketcontent();
+    $filter = tcontentfilter::instance();
+    $filter->filterpost($this,$this->rawcontent);
+    $result .= $this->filtered;
     if (!empty($this->ticket['code'])) {
-$lang = tlocal::instance('ticket');
-$result .= sprintf('<h2>%s</h2>', $lang->code);
-$result .= highlight_string($this->code, true);
+      $lang = tlocal::instance('ticket');
+      $result .= sprintf('<h2>%s</h2>', $lang->code);
+      $result .= highlight_string($this->code, true);
     }
-$this->filtered = $result;
+    $this->filtered = $result;
   }
   
   public function getticketcontent() {
@@ -120,18 +120,18 @@ $this->filtered = $result;
     $theme = ttheme::instance();
     $tml = file_get_contents($this->resource . 'ticket.tml');
     $result = $theme->parsearg($tml, $args);
-
+    
     if ($this->poll > 0) {
       $polls = tpolls::instance();
       $result .= $polls->gethtml($this->poll);
     }
     return $result;
   }
-
-public function closepoll() {
-$polls = tpolls::instance();
-$polls->db->setvalue($this->poll, 'status', 'closed');
-}
+  
+  public function closepoll() {
+    $polls = tpolls::instance();
+    $polls->db->setvalue($this->poll, 'status', 'closed');
+  }
   
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
