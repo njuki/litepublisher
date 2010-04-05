@@ -3,12 +3,12 @@
   <head profile="http://gmpg.org/xfn/11">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>$title</title>
-<style>
+	<style>
 	* { 	margin: 0; 	padding: 0; }
 	body {background:#f0f6f7 url(/themes/default/images/bg7.png) repeat-x;font:12px Arial, Verdana, sans-serif;}
 	#header {width:960px;background: url(/themes/default/images/logo.png) no-repeat 30px 20px;margin:11px auto 0;height:125px;position:relative;display:block;}
 	#logo {font:14px Trebuchet MS, Tahoma, Verdana, sans-serif;color:#fff;padding:30px 0 0 150px;}
-	#logo .name {font:48px Trebuchet MS, Tahoma, Verdana, sans-serif;width:230px;height:95px;display:inline-block;float:left;text-shadow:1px 1px 0 #5fa9c1;}
+	#logo .name {font:48px Trebuchet MS, Tahoma, Verdana, sans-serif;height:95px;display:inline-block;float:left;text-shadow:1px 1px 0 #5fa9c1;padding:0 30px 0 0;}
 	#logo .slogan {top:16px;position:relative;}
 	#out {width:960px;margin:11px auto 10px;background-color:#fff;position:relative;padding:1px;}
 	#middle {width:950px;position:relative;display:block;background-color:#fff;border:5px solid #f3f3f3;overflow: hidden;}
@@ -21,6 +21,12 @@
 	#showhost a {border-bottom:1px dashed #737373; cursor:pointer;}
 	
 	</style>
+	<!--[if IE 6]>
+		<script src="/themes/default/css/DD_belatedPNG.js"></script>
+		<script>		
+		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, #lastcomments li, #lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
+		 </script>
+	<![endif]--> 
 		<script type="text/javascript">
 function changedbversion(db) {
 var form = document.getElementById("dbform");
