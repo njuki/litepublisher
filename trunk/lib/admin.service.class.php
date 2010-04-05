@@ -91,7 +91,7 @@ class tadminservice extends tadminmenu {
       break;
       
       case 'run':
-      $args->script = isset($_POST['content']) ? $_POST['content'] : '';
+      $args->content = isset($_POST['content']) ? $_POST['content'] : '';
       $result = $html->runform($args);
       break;
     }

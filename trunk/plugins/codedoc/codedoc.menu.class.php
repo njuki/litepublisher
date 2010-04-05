@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcodedoc extends tmenu {
+class tcodedocmenu extends tmenu {
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -19,8 +19,6 @@ class tcodedoc extends tmenu {
   }
   
   public function getcontent() {
-    $page = litepublisher::$urlmap->page - 1;
-    if ($page == 0) {
       $result = parent::getcontent();
       $cachefile = litepublisher::$paths->cache . 'codedoc.php';
       if (file_exists($cachefile)) {
@@ -30,19 +28,8 @@ class tcodedoc extends tmenu {
         file_put_contents($cachefile, $s);
         $result .= $s;
       }
-    } else {
-      $perpage = litepublisher::$options->perpage;
-      $theme = ttheme::instance();
-      $count = $tickets->getcount($where);
-      $from = ($page - 1) * $perpage;
-      if ($from <= $count)  {
-        $items = $tickets->select("$pt.status = 'published' $where", " order by $pt.posted, $tt.type, $tt.state, $tt.prio, $tt.votes desc limit $from, $perpage");
-        $result .= $theme->getposts($items, false);
-      }
-      $result .=$theme->getpages($this->url, $page + 1, ceil($count / $perpage) + 1);
-    }
-    return $result;
-  }
+return $result;
+}
   
   private function getall() {
     $result = '';
@@ -51,7 +38,7 @@ class tcodedoc extends tmenu {
     $db->urlmap.url as url, $db->codedoc.class
     from $db->posts, $db->urlmap, $db->codedoc
     where $db->posts.id = $db->codedoc.id and $db->urlmap.id  = $db->posts.idurl  and $db->posts.status = 'published' 
-    order $db->codedoc->class, $db->posts.title, $db->posts.posted");
+order by $db->codedoc.class, $db->posts.title, $db->posts.posted");
     
     $count = 0;
     $url = litepublisher::$options->url;
