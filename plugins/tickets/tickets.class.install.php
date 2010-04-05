@@ -31,19 +31,43 @@ function tticketsInstall($self) {
   $polls->save();
   
   litepublisher::$classes->Add('tticket', 'ticket.class.php', basename(dirname(__file__) ));
+  litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', basename(dirname(__file__) ));
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
-  $menus = tadminmenus::instance();
+  $adminmenus = tadminmenus::instance();
   litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::instance();
   $adminoptions->usersenabled = true;
   
-  $idmenu = $menus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
-  $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
-  $idmenu = $menus->createitem($idmenu, 'editor', 'ticket', 'tticketeditor');
-  $menus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
+  $idmenu = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
+  $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
+  $idmenu = $adminmenus->createitem($idmenu, 'editor', 'ticket', 'tticketeditor');
+  $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
+  $adminmenus->unlock();
+  
+  $menus = tmenus::instance();
+  $menus->lock();
+  $ini = parse_ini_file($self->resource . litepublisher::$options->language . '.install.ini', false);
+  
+  $menu = tticketsmenu::instance();
+  $menu->type = 'tickets';
+  $menu->url = '/tickets/';
+  $menu->title = $ini['tickets'];
+  $menu->content = $ini['contenttickets'];
+  $id = $menus->add($menu);
+  
+  foreach (array('bug', 'feature', 'support', 'task') as $type) {
+    $menu = tticketsmenu::instance();
+    $menu->type = $type;
+    $menu->parent = $id;
+    $menu->url = "/$type/";
+    $menu->title = $ini[$type];
+    $menu->content = $ini["content$type"];
+    $menus->add($menu);
+  }
   $menus->unlock();
+  
   litepublisher::$classes->unlock();
   
   $linkgen = tlinkgenerator::instance();
@@ -69,18 +93,25 @@ function tticketsUninstall($self) {
   //if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
-  $class = 'tticket';
-  litepublisher::$classes->delete($class);
-  
-  
+  litepublisher::$classes->delete('tticket');
   litepublisher::$classes->delete('tticketeditor');
   litepublisher::$classes->delete('tadmintickets');
   
-  $menus = tadminmenus::instance();
+  $adminmenus = tadminmenus::instance();
+  $adminmenus->lock();
+  $adminmenus->deleteurl('/admin/tickets/editor/');
+  $adminmenus->deleteurl('/admin/tickets/');
+  $adminmenus->unlock();
+  
+  $menus = tmenus::instance();
   $menus->lock();
-  $menus->deleteurl('/admin/tickets/editor/');
-  $menus->deleteurl('/admin/tickets/');
+  foreach (array('bug', 'feature', 'support', 'task') as $type) {
+    $menus->deleteurl("/$type/");
+  }
+  $menus->deleteurl('/tickets/');
   $menus->unlock();
+  
+  litepublisher::$classes->delete('tticketsmenu');
   litepublisher::$classes->unlock();
   
   $manager = tdbmanager ::instance();

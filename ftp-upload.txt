@@ -928,6 +928,8 @@ send plugins\tickets\resource\ru.admin.ini plugins/tickets/resource/ru.admin.ini
 quote site chmod 666 plugins/tickets/resource/ru.admin.ini
 send plugins\tickets\resource\ru.ini plugins/tickets/resource/ru.ini
 quote site chmod 666 plugins/tickets/resource/ru.ini
+send plugins\tickets\resource\ru.install.ini plugins/tickets/resource/ru.install.ini
+quote site chmod 666 plugins/tickets/resource/ru.install.ini
 send plugins\tickets\resource\ticket.sql plugins/tickets/resource/ticket.sql
 quote site chmod 666 plugins/tickets/resource/ticket.sql
 send plugins\tickets\resource\ticket.tml plugins/tickets/resource/ticket.tml
@@ -940,8 +942,8 @@ send plugins\tickets\tickets.class.install.php plugins/tickets/tickets.class.ins
 quote site chmod 666 plugins/tickets/tickets.class.install.php
 send plugins\tickets\tickets.class.php plugins/tickets/tickets.class.php
 quote site chmod 666 plugins/tickets/tickets.class.php
-send plugins\tickets\tickets.home.class.php plugins/tickets/tickets.home.class.php
-quote site chmod 666 plugins/tickets/tickets.home.class.php
+send plugins\tickets\tickets.menu.class.php plugins/tickets/tickets.menu.class.php
+quote site chmod 666 plugins/tickets/tickets.menu.class.php
 send plugins\tickets\ztodo.txt plugins/tickets/ztodo.txt
 quote site chmod 666 plugins/tickets/ztodo.txt
 cd plugins

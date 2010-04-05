@@ -99,7 +99,7 @@ class tticket extends tpost {
   }
   
   public function getticketcontent() {
-    $this->checklang();
+    self::checklang();
     $lang = tlocal::instance('ticket');
     $args = targs::instance();
     foreach (array('type', 'state', 'prio') as $prop) {
@@ -133,13 +133,13 @@ class tticket extends tpost {
     $polls->db->setvalue($this->poll, 'status', 'closed');
   }
   
-  protected function getresource() {
+  public static function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
   
-  public function checklang() {
+  public static function checklang() {
     if (!isset(tlocal::$data['ticket'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
+      tlocal::loadini(self::getresource() . litepublisher::$options->language . '.ini');
       tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
     }

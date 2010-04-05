@@ -245,7 +245,7 @@ class tinstaller extends tdata {
     } else {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
-    $dbprefix = strtolower(str_replace('.', '', litepublisher::$domain)) . '_';
+    $dbprefix = strtolower(str_replace(array('.', '-'), '', litepublisher::$domain)) . '_';
     $title = tlocal::$data['installation']['title'];
     $form = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
     $form = str_replace('"', '\"', $form);
