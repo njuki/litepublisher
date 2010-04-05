@@ -155,7 +155,7 @@ class tcodedocfilter extends titems {
     
     $args->headers = $headers;
     $args->content = $content;
-    $tml = file_get_contents($this->resource . 'class.tml');
+    $tml = file_get_contents(self::getresource() . 'class.tml');
     $theme = ttheme::instance();
     $post->filtered = $theme->parsearg($tml, $args);
     return $idparent;
@@ -290,7 +290,7 @@ class tcodedocfilter extends titems {
   }
   
   
-  protected function getresource() {
+  public static function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
   
@@ -299,7 +299,7 @@ class tcodedocfilter extends titems {
     $this->checkadminlang();
     $result = THtmlResource ::instance();
     if (!isset($result->ini['codedoc'])) {
-      $result->loadini($this->resource . 'html.ini');
+      $result->loadini(self::getresource() . 'html.ini');
       tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $result->ini);
     }
     $result->section = $name;
@@ -310,7 +310,7 @@ class tcodedocfilter extends titems {
   public function checkadminlang() {
     tlocal::loadlang('admin');
     if (!isset(tlocal::$data['codedoc'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
+      tlocal::loadini(self::getresource() . litepublisher::$options->language . '.ini');
       tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
     }

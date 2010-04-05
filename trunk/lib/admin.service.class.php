@@ -169,6 +169,7 @@ class tadminservice extends tadminmenu {
             litepublisher::$options->seturl($url);
             if (dbversion) litepublisher::$options->dbconfig = $dbconfig;
             litepublisher::$options->unlock();
+            litepublisher::$options->savemodified();
           }
         }
         litepublisher::$urlmap->clearcache();
