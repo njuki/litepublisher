@@ -85,8 +85,7 @@ class tupdater extends tevents {
   public function createbackup(){
     $backuper = tbackuper::instance();
     $s = $backuper->getpartial(true, true, true);
-    $date = date('Y-m-d');
-    $filename = litepublisher::$paths->backup . litepublisher::$domain . "-$date.'.tar.gz";
+    $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d') . '.tar.gz';
     file_put_contents($filename, $s);
     chmod($filename, 0666);
   }
