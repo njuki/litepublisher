@@ -19,6 +19,8 @@ class tcodedocmenu extends tmenu {
   }
   
   public function getcontent() {
+    $page = litepublisher::$urlmap->page - 1;
+    if ($page == 0) {
       $result = parent::getcontent();
       $cachefile = litepublisher::$paths->cache . 'codedoc.php';
       if (file_exists($cachefile)) {
@@ -28,8 +30,23 @@ class tcodedocmenu extends tmenu {
         file_put_contents($cachefile, $s);
         $result .= $s;
       }
-return $result;
-}
+    } else {
+      $result = '';
+      $perpage = litepublisher::$options->perpage;
+      $theme = ttheme::instance();
+      $count = $this->getdb('codedoc')->getcount();
+      $from = ($page - 1) * $perpage;
+      if ($from <= $count)  {
+        $db = litepublisher::$db;
+        $items = $db->res2id($db->query("select $db->posts.id from $db->posts, $db->codedoc
+        where $db->posts.id = $db->codedoc.id and $db->posts.status = 'published'
+        order by $db->codedoc.class, $db->posts.title, $db->posts.posted limit $from, $perpage"));
+        $result .= $theme->getposts($items, false);
+      }
+      $result .=$theme->getpages($this->url, $page + 1, ceil($count / $perpage) + 1);
+    }
+    return $result;
+  }
   
   private function getall() {
     $result = '';
@@ -37,8 +54,8 @@ return $result;
     $res = $db->query("select $db->posts.id, $db->posts.idurl, $db->posts.title,
     $db->urlmap.url as url, $db->codedoc.class
     from $db->posts, $db->urlmap, $db->codedoc
-    where $db->posts.id = $db->codedoc.id and $db->urlmap.id  = $db->posts.idurl  and $db->posts.status = 'published' 
-order by $db->codedoc.class, $db->posts.title, $db->posts.posted");
+    where $db->posts.id = $db->codedoc.id and $db->urlmap.id  = $db->posts.idurl  and $db->posts.status = 'published'
+    order by $db->codedoc.class, $db->posts.title, $db->posts.posted");
     
     $count = 0;
     $url = litepublisher::$options->url;

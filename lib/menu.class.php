@@ -47,7 +47,7 @@ class tmenus extends TItems {
     //move props
     foreach (tmenu::$ownerprops as $prop) {
       $this->items[$id][$prop] = $item->$prop;
-      if (isset($item->data[$prop])) unset($item->data[$prop]);
+      if (array_key_exists($item->data[$prop])) unset($item->data[$prop]);
     }
     $item->id = $id;
     $urlmap = turlmap::instance();
@@ -316,6 +316,13 @@ class tmenu extends titem implements  itemplate, itemplate2, imenu {
     'password' => '',
     'tmlfile' => '',
     'theme' => '',
+    //owner props
+    'title' => '',
+    'url' => '',
+    'idurl' => 0,
+    'parent' => 0,
+    'order' => 0,
+    'status' => 'published'
     );
   }
   

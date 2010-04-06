@@ -1106,6 +1106,7 @@ class turlmap extends titems {
     if ($result = $this->query($url)) return $result;
     $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
     if ($result = $this->query($url)) {
+      if ($this->page > 1) return $result;
       if ($result['type'] == 'normal') return $this->redir301($url);
       return $result;
     }

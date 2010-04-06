@@ -156,6 +156,8 @@ class Tadminoptions extends tadminmenu {
       case 'home':
       $home = thomepage::instance();
       $home->lock();
+      //$filter = tcontentfilter::instance();
+      //$filter->filter($text);
       $home->text = $text;
       $home->hideposts = isset($hideposts);
       $home->unlock();

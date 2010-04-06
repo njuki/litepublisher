@@ -25,7 +25,7 @@ function tcodedocpluginInstall($self) {
   litepublisher::$classes->lock();
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
   litepublisher::$classes->Add('tcodedocmenu', 'codedoc.menu.class.php', basename(dirname(__file__) ));
-
+  
   $filter = tcontentfilter::instance();
   $filter->lock();
   $filter->beforecontent = $self->beforefilter;
@@ -33,14 +33,14 @@ function tcodedocpluginInstall($self) {
   $plugins = tplugins::instance();
   if (!isset($plugins->items['wikiwords'])) $plugins->add('wikiwords');
   $filter->unlock();
-
-$about = tplugins::localabout(dirname(__file__));
+  
+  $about = tplugins::localabout(dirname(__file__));
   $menu = tcodedocmenu::instance();
   $menu->url = '/doc/';
   $menu->title = $about['menutitle'];
-
+  
   $menus = tmenus::instance();
-$menus->add($menu);
+  $menus->add($menu);
   
   litepublisher::$classes->unlock();
   
@@ -54,7 +54,7 @@ function tcodedocpluginUninstall($self) {
   litepublisher::$classes->lock();
   if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
-
+  
   $menus = tmenus::instance();
   $menus->lock();
   $menus->deleteurl('/doc/');
