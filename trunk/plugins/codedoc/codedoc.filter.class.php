@@ -193,9 +193,9 @@ class tcodedocfilter extends titems {
     $wiki = twikiwords::instance();
     $args = targs::instance();
     $args->add($item);
-if (!empty($item['type']) && preg_match_all('/\[\[(.*?)\]\]/i', $item['type'], $m)) {
-if ($id = $wiki->add($m[1])) $args->type = $wiki->getlink($id);
-}
+    if (!empty($item['type']) && preg_match_all('/\[\[(.*?)\]\]/i', $item['type'], $m)) {
+      if ($id = $wiki->add($m[1])) $args->type = $wiki->getlink($id);
+    }
     $args->description = $this->getdescription($post, $item['description']);
     $args->idwiki = $wiki->add($item['name'], $post->id);
     if (isset(tlocal::$data['codedoc'][$item['access']]))  $args->access = tlocal::$data['codedoc'][$item['access']];

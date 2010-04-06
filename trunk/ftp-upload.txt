@@ -562,6 +562,8 @@ send plugins\codedoc\about.ini plugins/codedoc/about.ini
 quote site chmod 666 plugins/codedoc/about.ini
 send plugins\codedoc\codedoc.filter.class.php plugins/codedoc/codedoc.filter.class.php
 quote site chmod 666 plugins/codedoc/codedoc.filter.class.php
+send plugins\codedoc\codedoc.menu.class.php plugins/codedoc/codedoc.menu.class.php
+quote site chmod 666 plugins/codedoc/codedoc.menu.class.php
 send plugins\codedoc\codedoc.plugin.install.php plugins/codedoc/codedoc.plugin.install.php
 quote site chmod 666 plugins/codedoc/codedoc.plugin.install.php
 send plugins\codedoc\codedoc.plugin.php plugins/codedoc/codedoc.plugin.php
@@ -922,6 +924,8 @@ send plugins\tickets\resource\en.admin.ini plugins/tickets/resource/en.admin.ini
 quote site chmod 666 plugins/tickets/resource/en.admin.ini
 send plugins\tickets\resource\en.ini plugins/tickets/resource/en.ini
 quote site chmod 666 plugins/tickets/resource/en.ini
+send plugins\tickets\resource\en.install.ini plugins/tickets/resource/en.install.ini
+quote site chmod 666 plugins/tickets/resource/en.install.ini
 send plugins\tickets\resource\html.ini plugins/tickets/resource/html.ini
 quote site chmod 666 plugins/tickets/resource/html.ini
 send plugins\tickets\resource\ru.admin.ini plugins/tickets/resource/ru.admin.ini
