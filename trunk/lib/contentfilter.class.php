@@ -196,7 +196,9 @@ class tcontentfilter extends tevents {
   public static function auto_p($str) {
     // Trim whitespace
     if (($str = trim($str)) === '') return '';
-    
+//fix invalid br
+    $str = str_replace('</br>', '<br />', $str);
+
     // Standardize newlines
     $str = str_replace(array("\r\n", "\r"), "\n", $str);
     

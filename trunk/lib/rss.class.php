@@ -113,13 +113,19 @@ class trss extends tevents {
     $a = array();
     $comment = new tarray2prop($a);
     if (dbversion) {
-      $recent = $comments->getitems("post = $idpost and status = 'approved'
-      order by $comments->thistable.posted desc limit litepublisher::$options->perpage");
-      
+      $recent = $comments->select("post = $idpost and status = 'approved'", 
+"order by $comments->thistable.posted desc limit ". litepublisher::$options->perpage);
+
+    foreach ($recent  as $id) {
+      $comment->array = $comments->getitem($id);
+      $comment->posturl = $post->url;
+      $comment->title = $post->title;
+      $this->AddRSSComment($comment, $title . $comment->name);
+    }
     } else {
       $from =max(0, count($comments->items) - litepublisher::$options->perpage);
       $items = array_slice(array_keys($comments->items), $from, litepublisher::$options->perpage);
-      $recent = array();
+$items = array_reverse($items);
       $comusers = tcomusers::instance($idpost);
       foreach ($items as $id) {
         $item = $comments->items[$id];
@@ -130,16 +136,14 @@ class trss extends tevents {
         $item['name'] = $author['name'];
         $item['email'] = $author['email'];
         $item['url'] = $author['url'];
-        array_push($recent, $item);
-      }
-    }
-    
-    foreach ($recent  as $item) {
+   
       $comment->array = $item;
       $comment->posturl = $post->url;
       $comment->title = $post->title;
       $this->AddRSSComment($comment, $title . $comment->name);
     }
+      }
+
     
   }
   

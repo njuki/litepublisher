@@ -148,7 +148,7 @@ class tcomments extends titems {
     if (!litepublisher::$options->admincookie) return false;
     if (litepublisher::$options->group == 'admin') return true;
     $groups = tusergroups::instance();
-    return $groups->hasrigt(litepublisher::$options->group, 'moderator');
+    return $groups->hasright(litepublisher::$options->group, 'moderator');
   }
   
   public function getcontent() {
