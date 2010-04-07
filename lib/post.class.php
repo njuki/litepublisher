@@ -233,6 +233,11 @@ class tpost extends titem implements  itemplate {
     return tlocal::date($this->posted, $theme->content->post->dateformat);
   }
   
+  public function getexcerptdate() {
+    $theme = ttheme::instance();
+    return tlocal::date($this->posted, $theme->content->excerpts->excerpt->dateformat);
+  }
+  
   public function getdateformat() {
     if (isset($this->dateformater)){
       $this->dateformater->date = $this->posted;

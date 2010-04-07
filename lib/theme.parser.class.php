@@ -129,7 +129,7 @@ class tthemeparser extends tdata {
       $result['tags'] = $post['tags'];
     }
     
-    if ($dateformat = $this->parsetag($s, 'date', '$post.date')) {
+    if ($dateformat = $this->parsetag($s, 'date', '$post.excerptdate')) {
       $result['dateformat'] = $dateformat;
     } else {
       $result['dateformat'] = $post['dateformat'];

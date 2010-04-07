@@ -140,6 +140,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $parser = tthemeparser::instance();
     foreach ($list as $name) {
       $about = $parser->getabout($name);
+      $about['name'] = $name;
       $args->add($about);
       $args->checked = $name == $themename;
       $result .= $this->html->radiotheme($args);
