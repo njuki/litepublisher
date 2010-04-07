@@ -47,7 +47,7 @@ class tmenus extends TItems {
     //move props
     foreach (tmenu::$ownerprops as $prop) {
       $this->items[$id][$prop] = $item->$prop;
-      if (array_key_exists($item->data[$prop])) unset($item->data[$prop]);
+      if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
     }
     $item->id = $id;
     $urlmap = turlmap::instance();

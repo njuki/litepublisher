@@ -33,7 +33,7 @@ class tcodedocfilter extends titems {
   private function getdescription(tpost $post, $s) {
     $wiki = twikiwords::instance();
     $wiki->createwords($post, $s);
-    $this->classtowiki($post, $s);
+    $this->classtowiki($s);
     $wiki->replacewords($s);
     $s = str_replace('->', '-&gt;', $s);
     $filter = tcontentfilter::instance();
@@ -194,7 +194,7 @@ class tcodedocfilter extends titems {
     $args = targs::instance();
     $args->add($item);
     if (!empty($item['type']) && preg_match_all('/\[\[(.*?)\]\]/i', $item['type'], $m)) {
-      if ($id = $wiki->add($m[1])) $args->type = $wiki->getlink($id);
+      if ($id = $wiki->add($m[1], 0)) $args->type = $wiki->getlink($id);
     }
     $args->description = $this->getdescription($post, $item['description']);
     $args->idwiki = $wiki->add($item['name'], $post->id);
