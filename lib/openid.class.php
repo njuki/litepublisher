@@ -58,8 +58,7 @@ class topenid extends tevents {
       }
     }
     
-    //    if (litepublisher::$debug)  {
-      {
+        if (litepublisher::$debug)  {
         $log = $_SERVER['REQUEST_URI'];
         $log .=       var_export($_REQUEST, true);
         $log .= "\nget:\n";

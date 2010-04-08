@@ -18,8 +18,8 @@ class tadminlinksplugin extends tplugin {
     $tml = $theme->getwidgetitem('widget', $index);
     tlocal::loadlang('admin');
     $template = ttemplate::instance();
-    switch (get_class($template->context)) {
-      case 'tpost':
+
+    if ($template->context instanceof tpost) {
       $post = $template->context;
       $lang = tlocal::instance('posts');
       $title = $lang->adminpost;
@@ -31,8 +31,8 @@ class tadminlinksplugin extends tplugin {
       $links .= sprintf($tml, "$editurl&mode=full", $lang->fulledit);
       $links .= sprintf($tml, "$editurl&mode=update", $lang->updatepost);
       $links .= sprintf($tml, "$action=delete", $lang->delete);
-      break;
-      
+} else {
+    switch (get_class($template->context)) {
       case 'tcategories':
       case 'ttags':
       $tags = $template->context;
@@ -67,6 +67,7 @@ class tadminlinksplugin extends tplugin {
       }
       break;
     }
+}
     
     $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
     $widget = $theme->getwidget($title, $links, 'widget', $index);
