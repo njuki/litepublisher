@@ -140,13 +140,14 @@ public function gethead() { }
         $idurls[] = $item['idurl'];
       }
       litepublisher::$urlmap->loaditems($idurls);
+/*
       $robot = trobotstxt::instance();
       $robot->lock();
       foreach ($idurls as $idurl) {
         $robot->AddDisallow(litepublisher::$urlmap->getvalue($idurl, 'url'));
       }
       $robot->unlock();
-      
+*/
       
       litepublisher::$urlmap->db->deleteitems($idurls);
       $this->db->deleteitems($items);

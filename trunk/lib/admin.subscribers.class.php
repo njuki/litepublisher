@@ -21,7 +21,7 @@ class tadminsubscribers extends tadminform {
     $html= $this->html;
     $args = targs::instance();
     $comusers = tcomusers::instance();
-    if (!($user = $comusers->fromcookie($_GET['userid']))) return $this->notfount();
+    if (!($user = $comusers->fromcookie($_GET['userid']))) return $html->h2->nosubscribtions  ;
     $subscribers=  tsubscribers::instance();
     $items = $subscribers->getposts($user['id']);
     if (count($items) == 0) return $html->h2->nosubscribtions;
