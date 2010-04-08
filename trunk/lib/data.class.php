@@ -125,7 +125,7 @@ class tdata {
     if ($this->dbversion == 'full') return $this->LoadFromDB();
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (file_exists($filename)) {
-      return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
+      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
     }
   }
   
@@ -134,15 +134,15 @@ class tdata {
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
-      SafeSaveFile(litepublisher::$paths->data .$this->getbasename(), PHPComment($this->SaveToString()));
+      self::savetofile(litepublisher::$paths->data .$this->getbasename(), self::comment_php($this->savetostring()));
     }
   }
   
-  public function SaveToString() {
+  public function savetostring() {
     return serialize($this->data);
   }
   
-  public function LoadFromString($s) {
+  public function loadfromstring($s) {
     try {
       if (!empty($s)) $this->data = unserialize($s) + $this->data;
       $this->afterload();
@@ -183,27 +183,48 @@ class tdata {
   }
   
   protected function SaveToDB() {
-    $this->db->add($this->getbasename(), $this->SaveToString());
+    $this->db->add($this->getbasename(), $this->savetostring());
   }
   
   protected function LoadFromDB() {
     if ($r = $this->db->select('basename = '. $this->getbasename() . "'")) {
-      return $this->LoadFromString($r['data']);
+      return $this->loadfromstring($r['data']);
     }
   }
   
   protected function getthistable() {
     return litepublisher::$db->prefix . $this->table;
   }
-  
-  protected function geturltable() {
-    return litepublisher::$db->prefix .'urlmap';
+
+public static function savetofile($base, $content) {
+  $tmp = $base .'.tmp.php';
+  if(false === file_put_contents($tmp, $content)) {
+    litepublisher::$options->trace("Error write to file $tmp");
+    return false;
   }
-  
-  protected function getjoinurl() {
-    return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
+  chmod($tmp, 0666);
+  $filename = $base .'.php';
+  if (file_exists($filename)) {
+    $back = $base . '.bak.php';
+    if (file_exists($back)) unlink($back);
+    rename($filename, $back);
   }
-}//class
+  if (!rename($tmp, $filename)) {
+    litepublisher::$options->trace("Error rename file $tmp to $filename");
+    return false;
+  }
+  return true;
+}
+
+public static function comment_php($s) {
+  return sprintf('<?php /* %s */ ?>', str_replace('*/', '**//*/', $s));
+}
+
+public static function uncomment_php($s) {
+  return str_replace('**//*/', '*/', substr($s, 9, strlen($s) - 9 - 6));
+}
+
+  }//class
 
 class tarray2prop {
   public $array;
@@ -226,42 +247,12 @@ function md5uniq() {
   return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
-function PHPComment($s) {
-  $s = str_replace('*/', '**//*/', $s);
-  return "<?php /* $s */ ?>";
-}
-
-function PHPUncomment($s) {
-  $s = substr($s, 9, strlen($s) - 9 - 6);
-  return str_replace('**//*/', '*/', $s);
-}
-
 function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }
 
 function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
-}
-
-function SafeSaveFile($BaseName, $Content) {
-  $TmpFileName = $BaseName.'.tmp.php';
-  if(!file_put_contents($TmpFileName, $Content)) {
-    litepublisher::$options->trace("Error write to file $TmpFileName");
-    return false;
-  }
-  chmod($TmpFileName , 0666);
-  $FileName = $BaseName.'.php';
-  if (file_exists($FileName)) {
-    $BakFileName = $BaseName . '.bak.php';
-    if (file_exists($BakFileName)) unlink($BakFileName);
-    rename($FileName, $BakFileName);
-  }
-  if (!rename($TmpFileName, $FileName)) {
-    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
-    return false;
-  }
-  return true;
 }
 
 function dumpstr($s) {
