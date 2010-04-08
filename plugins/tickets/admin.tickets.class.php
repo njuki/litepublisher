@@ -68,7 +68,9 @@ class tadmintickets extends tadminmenu {
   public function processform() {
     if (litepublisher::$options->group == 'ticket') return '';
     $tickets = ttickets::instance();
-    $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');
+    $status = isset($_POST['publish']) ? 'published' : 
+(isset($_POST['setdraft']) ? 'draft' : 
+(isset($_POST['setfixed']) ? 'fixed' :'delete'));
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
@@ -76,7 +78,11 @@ class tadmintickets extends tadminmenu {
         $tickets->delete($id);
       } else {
         $ticket = tticket::instance($id);
+if ($status == 'fixed') {
+        $ticket->state = $status;
+} else {
         $ticket->status = $status;
+}
         $tickets->edit($ticket);
       }
     }

@@ -1,6 +1,6 @@
 <?php
 function update338() {
-llitepublisher::$classes->add('tini2array', 'ini2array.class.php');
+litepublisher::$classes->add('tini2array', 'ini2array.class.php');
 
 $posts = tposts::instance();
 $posts->data['revision'] = 0;
