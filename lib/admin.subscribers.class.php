@@ -6,18 +6,16 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminsubscribers extends tadminmenu {
+class tadminsubscribers extends tadminform {
   
-  public static function instance($id = 0) {
-    return parent::iteminstance(__class__, $id);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-    $this->basename = 'subscribers';
+    $this->section = 'subscribers';
   }
-  
-public function auth() { }
   
   public function getcontent() {
     $html= $this->html;
@@ -28,11 +26,13 @@ public function auth() { }
     $items = $subscribers->getposts($user['id']);
     if (count($items) == 0) return $html->h2->nosubscribtions;
     $args->email = $user['email'];
+    $result = $html->checkallscript;
     $result .=$html->formhead($args);
     foreach ($items as $postid) {
       $post = tpost::instance($postid);
       ttheme::$vars['post'] = $post;
       if ($post->status != 'published') continue;
+      $args->postid = $postid;
       $result .= $html->formitem($args);
     }
     $result .= $html->formfooter();
@@ -45,8 +45,8 @@ public function auth() { }
     $subscribers = tsubscribers::instance();
     $subscribers->lock();
     foreach ($_POST as $name => $value) {
-      if (substr($name, 0, 7) == 'postid-') {
-        $subscribers->delete($value, $user['id']);
+      if (strbegin($name, 'postid-')) {
+        $subscribers->remove($value, $user['id']);
       }
     }
     $subscribers->unlock();

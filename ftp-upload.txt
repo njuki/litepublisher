@@ -336,6 +336,8 @@ send lib\install\admin.password.class.install.php lib/install/admin.password.cla
 quote site chmod 666 lib/install/admin.password.class.install.php
 send lib\install\admin.reguser.class.install.php lib/install/admin.reguser.class.install.php
 quote site chmod 666 lib/install/admin.reguser.class.install.php
+send lib\install\admin.subscribers.class.install.php lib/install/admin.subscribers.class.install.php
+quote site chmod 666 lib/install/admin.subscribers.class.install.php
 send lib\install\archives.class.install.php lib/install/archives.class.install.php
 quote site chmod 666 lib/install/archives.class.install.php
 send lib\install\classes.ini lib/install/classes.ini
@@ -502,6 +504,8 @@ send lib\update\update.3.35.php lib/update/update.3.35.php
 quote site chmod 666 lib/update/update.3.35.php
 send lib\update\update.3.38.php lib/update/update.3.38.php
 quote site chmod 666 lib/update/update.3.38.php
+send lib\update\update.3.42.php lib/update/update.3.42.php
+quote site chmod 666 lib/update/update.3.42.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
