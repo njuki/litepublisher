@@ -79,7 +79,7 @@ class tfiler {
   
   public static function unserialize($FileName, &$v) {
     if (file_exists($FileName) && ($s = file_get_contents($FileName))) {
-      $s =PHPUncomment($s);
+      $s =tdata::uncomment_php($s);
       if (!empty($s)) {
         $v = unserialize($s);
         return true;
@@ -90,7 +90,7 @@ class tfiler {
   
   public static function serialize($FileName, &$v) {
     $s = serialize($v);
-    $s =  PHPComment($s);
+    $s =  tdata::comment_php($s);
     if (file_exists($FileName)) chmod($FileName, 0666);
     file_put_contents($FileName, $s);
     chmod($FileName, 0666);

@@ -25,13 +25,13 @@ class tsubscribers extends titemsposts {
   public function load() {
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (@file_exists($filename)) {
-      return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
+      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
     }
   }
   
   public function save() {
     if (self::$GlobalLock || $this->locked) return;
-    SafeSaveFile(litepublisher::$paths->data .$this->getbasename(), PHPComment($this->SaveToString()));
+    self::savetofile(litepublisher::$paths->data .$this->getbasename(), self::comment_php($this->savetostring()));
   }
   
   public function update($pid, $uid, $subscribed) {
