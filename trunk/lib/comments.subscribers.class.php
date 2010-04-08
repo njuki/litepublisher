@@ -93,26 +93,23 @@ class tsubscribers extends titemsposts {
       return;
     }
     
-    if (dbversion) {
-      if ($this->db->getcount("post = $pid") == 0) return;
-    } else {
-      if (!isset($this->items[$pid]) || (count($this->items[$pid]) == 0)) return;
-    }
-    
+    $subscribers  = $this->getitems($pid);
+    if (!$subscribers  || (count($subscribers ) == 0)) return;
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
-  $body .= "\nlitepublisher::$options->url/admin/subscribers/{litepublisher::$options->q}userid=";
+    $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$options->url, litepublisher::$options->q);
     
-    $users = tcomusers::instance();
+    $comusers = tcomusers::instance();
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;
+      if ($user['email'] == $comment->email) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
       tmailer::sendmail(litepublisher::$options->name, $this->fromemail,  $user['name'], $user['email'],
-      $subj, $body . $user['cookie']);
+      $subject, $body . $user['cookie']);
     }
   }
   
