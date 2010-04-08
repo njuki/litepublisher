@@ -24,9 +24,9 @@ class tcontentfilter extends tevents {
   public function filtercomment($content) {
     if ($this->callevent('oncomment', array(&$content))) return $content;
     $result = trim($content);
+    $result = str_replace(array("\r\n", "\r"), "\n", $result);
     $result = htmlspecialchars($result);
     $result = self::simplebbcode($result);
-    $result = str_replace(array("\r\n", "\r"), "\n", $result);
     $result = str_replace("\n", "<br />\n", $result);
     return $result;
   }

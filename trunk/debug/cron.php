@@ -1,6 +1,8 @@
 <?php
-$mode = 'cron';
+define('litepublisher_mode', 'cron');
 include('index.php');
 $cron = tcron::instance();
-$cron->request();
+$_GET['cronpass'] = $cron->password;
+$cron->request(null);
+echo "finish";
 ?>
