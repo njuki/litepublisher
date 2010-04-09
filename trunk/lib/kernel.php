@@ -9,14 +9,13 @@
 **/
 
 class tdata {
-  public $lockcount;
-  public static $GlobalLock;
-  public $data;
-  public $coinstances;
-  public $coclasses;
+  public static $savedisabled;
   public $basename;
   public $cache;
-  //database
+  public $coclasses;
+  public $coinstances;
+  public $data;
+  public $lockcount;
   public $table;
   
   public function __construct() {
@@ -91,35 +90,39 @@ class tdata {
   }
   
   public function install() {
-    $this->CallSatellite('install');
+    $this->externalchain('Install');
   }
   
   public function uninstall() {
-    $this->CallSatellite('uninstall');
+    $this->externalchain('Uninstall');
   }
   
   public function validate($repair = false) {
-    $this->CallSatellite('validate', $repair);
+    $this->externalchain('Validate', $repair);
   }
   
-  protected function CallSatellite($func, $arg = null) {
-    $func[0] = strtoupper($func[0]);
+  protected function externalchain($func, $arg = null) {
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = litepublisher::$classes->getpath($class)) {
-        $filename = basename(litepublisher::$classes->items[$class][0], '.php') . '.install.php';
-        $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
-        if (!file_exists($file)) {
-          $file =$path .  $filename;
-          if (!file_exists($file)) continue;
-        }
-        
-        include_once($file);
-        
-        $fnc = $class . $func;
-        if (function_exists($fnc)) $fnc($this, $arg);
+      $this->externalfunc($class, $func, $arg);
+    }
+  }
+  
+  protected function externalfunc($class, $func, $arg) {
+    if ($filename = litepublisher::$classes->getclassfilename($class)) {
+      $externalname = basename($filename, '.php') . '.install.php';
+      $dir = dirname($filename) . DIRECTORY_SEPARATOR;
+      $file = $dir . 'install' . DIRECTORY_SEPARATOR . $externalname;
+      if (!file_exists($file)) {
+        $file =$dir .  $externalname;
+        if (!file_exists($file)) return;
       }
+      
+      include_once($file);
+      $fnc = $class . $func;
+      if (function_exists($fnc)) $fnc($this, $arg);
+      echo "$fnc<br>\n";
     }
   }
   
@@ -127,24 +130,24 @@ class tdata {
     if ($this->dbversion == 'full') return $this->LoadFromDB();
     $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (file_exists($filename)) {
-      return $this->LoadFromString(PHPUncomment(file_get_contents($filename)));
+      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
     }
   }
   
   public function save() {
-    if (self::$GlobalLock || ($this->lockcount > 0)) return;
+    if (self::$savedisabled || ($this->lockcount > 0)) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
-      SafeSaveFile(litepublisher::$paths->data .$this->getbasename(), PHPComment($this->SaveToString()));
+      self::savetofile(litepublisher::$paths->data .$this->getbasename(), self::comment_php($this->savetostring()));
     }
   }
   
-  public function SaveToString() {
+  public function savetostring() {
     return serialize($this->data);
   }
   
-  public function LoadFromString($s) {
+  public function loadfromstring($s) {
     try {
       if (!empty($s)) $this->data = unserialize($s) + $this->data;
       $this->afterload();
@@ -185,12 +188,12 @@ class tdata {
   }
   
   protected function SaveToDB() {
-    $this->db->add($this->getbasename(), $this->SaveToString());
+    $this->db->add($this->getbasename(), $this->savetostring());
   }
   
   protected function LoadFromDB() {
     if ($r = $this->db->select('basename = '. $this->getbasename() . "'")) {
-      return $this->LoadFromString($r['data']);
+      return $this->loadfromstring($r['data']);
     }
   }
   
@@ -198,13 +201,34 @@ class tdata {
     return litepublisher::$db->prefix . $this->table;
   }
   
-  protected function geturltable() {
-    return litepublisher::$db->prefix .'urlmap';
+  public static function savetofile($base, $content) {
+    $tmp = $base .'.tmp.php';
+    if(false === file_put_contents($tmp, $content)) {
+      litepublisher::$options->trace("Error write to file $tmp");
+      return false;
+    }
+    chmod($tmp, 0666);
+    $filename = $base .'.php';
+    if (file_exists($filename)) {
+      $back = $base . '.bak.php';
+      if (file_exists($back)) unlink($back);
+      rename($filename, $back);
+    }
+    if (!rename($tmp, $filename)) {
+      litepublisher::$options->trace("Error rename file $tmp to $filename");
+      return false;
+    }
+    return true;
   }
   
-  protected function getjoinurl() {
-    return " left join $this->urltable on $this->urltable.id = $this->thistable.idurl ";
+  public static function comment_php($s) {
+    return sprintf('<?php /* %s */ ?>', str_replace('*/', '**//*/', $s));
   }
+  
+  public static function uncomment_php($s) {
+    return str_replace('**//*/', '*/', substr($s, 9, strlen($s) - 9 - 6));
+  }
+  
 }//class
 
 class tarray2prop {
@@ -228,42 +252,12 @@ function md5uniq() {
   return md5(mt_rand() . litepublisher::$secret. microtime());
 }
 
-function PHPComment($s) {
-  $s = str_replace('*/', '**//*/', $s);
-  return "<?php /* $s */ ?>";
-}
-
-function PHPUncomment($s) {
-  $s = substr($s, 9, strlen($s) - 9 - 6);
-  return str_replace('**//*/', '*/', $s);
-}
-
 function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }
 
 function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
-}
-
-function SafeSaveFile($BaseName, $Content) {
-  $TmpFileName = $BaseName.'.tmp.php';
-  if(!file_put_contents($TmpFileName, $Content)) {
-    litepublisher::$options->trace("Error write to file $TmpFileName");
-    return false;
-  }
-  chmod($TmpFileName , 0666);
-  $FileName = $BaseName.'.php';
-  if (file_exists($FileName)) {
-    $BakFileName = $BaseName . '.bak.php';
-    if (file_exists($BakFileName)) unlink($BakFileName);
-    rename($FileName, $BakFileName);
-  }
-  if (!rename($TmpFileName, $FileName)) {
-    litepublisher::$options->trace("Error rename file $TmpFileName to $FileName");
-    return false;
-  }
-  return true;
 }
 
 function dumpstr($s) {
@@ -696,6 +690,18 @@ class tclasses extends titems {
     return litepublisher::$classes;
   }
   
+  protected function create() {
+    parent::create();
+    $this->basename = 'classes';
+    $this->dbversion = false;
+    $this->addevents('onnewitem');
+    $this->addmap('classes', array());
+    $this->addmap('interfaces', array());
+    $this->addmap('remap', array());
+    $this->instances = array();
+    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
+  }
+  
   public function getinstance($class) {
     if (!class_exists($class)) {
       $this->error("Class $class not found");
@@ -716,18 +722,6 @@ class tclasses extends titems {
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
     $this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();
-  }
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'classes';
-    $this->dbversion = false;
-    $this->addevents('onnewitem');
-    $this->addmap('classes', array());
-    $this->addmap('interfaces', array());
-    $this->addmap('remap', array());
-    $this->instances = array();
-    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
   }
   
   public function __get($name) {
@@ -772,15 +766,16 @@ class tclasses extends titems {
   }
   
   public function _autoload($class) {
-    if ($path =$this->getpath($class)) {
-      $filename = $path . $this->items[$class][0];
-    } elseif (isset($this->interfaces[$class])) {
-      $filename = litepublisher::$paths->lib . $this->interfaces[$class];
-    } else {
-      //$this->error("$class class not found");
-      return false;
+    if ($filename = $this->getclassfilename($class)) {
+      if (file_exists($filename)) require_once($filename);
     }
-    if (file_exists($filename)) require_once($filename);
+    return false;
+  }
+  
+  public function getclassfilename($class) {
+    if ($path =$this->getpath($class))  return $path . $this->items[$class][0];
+    if (isset($this->interfaces[$class])) return litepublisher::$paths->lib . $this->interfaces[$class];
+    return false;
   }
   
   public function getpath($class) {

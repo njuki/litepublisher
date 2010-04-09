@@ -140,13 +140,11 @@ class ttickets extends tposts {
   }
   
   public function install() {
-    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
-    tticketsInstall($this);
+    $this->externalfunc(get_class($this), 'Install', null);
   }
   
   public function uninstall() {
-    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'tickets.class.install.php');
-    tticketsUninstall($this);
+    $this->externalfunc(get_class($this), 'Uninstall', null);
   }
   
 }//class

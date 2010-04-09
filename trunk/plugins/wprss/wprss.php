@@ -67,7 +67,7 @@ class twprssimporter extends timporter {
         if (isset($item['wp:comment']) && is_array($item['wp:comment'])) {
           $this->importcomments($item['wp:comment'], $post->id);
         }
-        if (!tdata::$GlobalLock) $post->free();
+        if (!tdata::$savedisabled) $post->free();
       }
     }
     $posts->unlock();

@@ -47,7 +47,7 @@ class timporter extends tplugin {
       return 'error';
     }
     
-    if ($test) tdata::$GlobalLock = true;
+    if ($test) tdata::$savedisabled = true;
     $this->import($s);
     
     $posts = tposts::instance();

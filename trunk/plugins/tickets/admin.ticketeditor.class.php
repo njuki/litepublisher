@@ -108,18 +108,18 @@ class tticketeditor extends tposteditor {
     if ($id == 0) {
       $ticket->status = $newstatus;
       $ticket->type = $type;
-$id = $tickets->add($ticket);
+      $id = $tickets->add($ticket);
       $_POST['id'] = $id;
-if (litepublisher::$options->group == 'ticket') {
-$users =tusers::instance();
-$user = $users->getitem(litepublisher::$options->user);
-$comusers = tcomusers::instance();
-$uid = $comusers->add($user['name'], $user['email'], $user['url']);
-$comusers->setvalue($uid, 'cookie', $user['cookie']);
+      if (litepublisher::$options->group == 'ticket') {
+        $users =tusers::instance();
+        $user = $users->getitem(litepublisher::$options->user);
+        $comusers = tcomusers::instance();
+        $uid = $comusers->add($user['name'], $user['email'], $user['url']);
+        $comusers->setvalue($uid, 'cookie', $user['cookie']);
         $subscribers = tsubscribers::instance();
-    //$subscribers->update($id, $uid, true);
-$subscribers->add($id, $uid);
-}
+        //$subscribers->update($id, $uid, true);
+        $subscribers->add($id, $uid);
+      }
     } else {
       $tickets->edit($ticket);
     }
