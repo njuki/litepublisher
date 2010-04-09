@@ -77,10 +77,7 @@ class tsimpleimporter extends timporter {
     foreach ($a['rss']['channel'][0]['item'] as $item) {
       $post = $this->add($item);
       $posts->add($post);
-      //echo $post->id, "<br>\n";
-      if (!tdata::$GlobalLock) $post->free();
-      //echo "<pre>\n";
-      //var_dump($post->data);
+      if (!tdata::$savedisabled) $post->free();
     }
     $posts->unlock();
     $tags->unlock();

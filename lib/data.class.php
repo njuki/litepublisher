@@ -7,14 +7,13 @@
 **/
 
 class tdata {
-  public $lockcount;
-  public static $GlobalLock;
-  public $data;
-  public $coinstances;
-  public $coclasses;
+  public static $savedisabled;
   public $basename;
   public $cache;
-  //database
+  public $coclasses;
+  public $coinstances;
+  public $data;
+  public $lockcount;
   public $table;
   
   public function __construct() {
@@ -89,35 +88,39 @@ class tdata {
   }
   
   public function install() {
-    $this->CallSatellite('install');
+    $this->externalchain('Install');
   }
   
   public function uninstall() {
-    $this->CallSatellite('uninstall');
+    $this->externalchain('Uninstall');
   }
   
   public function validate($repair = false) {
-    $this->CallSatellite('validate', $repair);
+    $this->externalchain('Validate', $repair);
   }
   
-  protected function CallSatellite($func, $arg = null) {
-    $func[0] = strtoupper($func[0]);
+  protected function externalchain($func, $arg = null) {
     $parents = class_parents($this);
     array_splice($parents, 0, 0, get_class($this));
     foreach ($parents as $key => $class) {
-      if ($path = litepublisher::$classes->getpath($class)) {
-        $filename = basename(litepublisher::$classes->items[$class][0], '.php') . '.install.php';
-        $file =$path . 'install' . DIRECTORY_SEPARATOR . $filename;
-        if (!file_exists($file)) {
-          $file =$path .  $filename;
-          if (!file_exists($file)) continue;
-        }
-        
-        include_once($file);
-        
-        $fnc = $class . $func;
-        if (function_exists($fnc)) $fnc($this, $arg);
+      $this->externalfunc($class, $func, $arg);
+    }
+  }
+  
+  protected function externalfunc($class, $func, $arg) {
+    if ($filename = litepublisher::$classes->getclassfilename($class)) {
+      $externalname = basename($filename, '.php') . '.install.php';
+      $dir = dirname($filename) . DIRECTORY_SEPARATOR;
+      $file = $dir . 'install' . DIRECTORY_SEPARATOR . $externalname;
+      if (!file_exists($file)) {
+        $file =$dir .  $externalname;
+        if (!file_exists($file)) return;
       }
+      
+      include_once($file);
+      $fnc = $class . $func;
+      if (function_exists($fnc)) $fnc($this, $arg);
+      echo "$fnc<br>\n";
     }
   }
   
@@ -130,7 +133,7 @@ class tdata {
   }
   
   public function save() {
-    if (self::$GlobalLock || ($this->lockcount > 0)) return;
+    if (self::$savedisabled || ($this->lockcount > 0)) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
@@ -195,36 +198,36 @@ class tdata {
   protected function getthistable() {
     return litepublisher::$db->prefix . $this->table;
   }
-
-public static function savetofile($base, $content) {
-  $tmp = $base .'.tmp.php';
-  if(false === file_put_contents($tmp, $content)) {
-    litepublisher::$options->trace("Error write to file $tmp");
-    return false;
+  
+  public static function savetofile($base, $content) {
+    $tmp = $base .'.tmp.php';
+    if(false === file_put_contents($tmp, $content)) {
+      litepublisher::$options->trace("Error write to file $tmp");
+      return false;
+    }
+    chmod($tmp, 0666);
+    $filename = $base .'.php';
+    if (file_exists($filename)) {
+      $back = $base . '.bak.php';
+      if (file_exists($back)) unlink($back);
+      rename($filename, $back);
+    }
+    if (!rename($tmp, $filename)) {
+      litepublisher::$options->trace("Error rename file $tmp to $filename");
+      return false;
+    }
+    return true;
   }
-  chmod($tmp, 0666);
-  $filename = $base .'.php';
-  if (file_exists($filename)) {
-    $back = $base . '.bak.php';
-    if (file_exists($back)) unlink($back);
-    rename($filename, $back);
+  
+  public static function comment_php($s) {
+    return sprintf('<?php /* %s */ ?>', str_replace('*/', '**//*/', $s));
   }
-  if (!rename($tmp, $filename)) {
-    litepublisher::$options->trace("Error rename file $tmp to $filename");
-    return false;
+  
+  public static function uncomment_php($s) {
+    return str_replace('**//*/', '*/', substr($s, 9, strlen($s) - 9 - 6));
   }
-  return true;
-}
-
-public static function comment_php($s) {
-  return sprintf('<?php /* %s */ ?>', str_replace('*/', '**//*/', $s));
-}
-
-public static function uncomment_php($s) {
-  return str_replace('**//*/', '*/', substr($s, 9, strlen($s) - 9 - 6));
-}
-
-  }//class
+  
+}//class
 
 class tarray2prop {
   public $array;

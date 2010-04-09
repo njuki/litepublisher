@@ -183,7 +183,7 @@ class tpolls extends tplugin {
   }
   
   public function optimize() {
-    $this->CallSatellite('optimize');
+    $this->externalfunc(get_class($this), 'Optimize', null);
   }
   
   private function extractitems($s) {

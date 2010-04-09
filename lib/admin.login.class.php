@@ -41,12 +41,12 @@ class tadminlogin extends tadminform {
       return;
     }
     
-    if (isset($_POST['login']) && isset($_POST['password']) || !litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
-      if (empty($_POST['login']) || empty($_POST['password']) || !litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
-        $this->formresult = $this->html->h2->error;
-        return;
-      }
+    if (empty($_POST['login']) || empty($_POST['password'])) return;
+    if (!litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
+      $this->formresult = $this->html->h2->error;
+      return;
     }
+    
     $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
     $cookie = md5uniq();
     $auth = tauthdigest::instance();

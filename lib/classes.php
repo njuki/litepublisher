@@ -27,6 +27,18 @@ class tclasses extends titems {
     return litepublisher::$classes;
   }
   
+  protected function create() {
+    parent::create();
+    $this->basename = 'classes';
+    $this->dbversion = false;
+    $this->addevents('onnewitem');
+    $this->addmap('classes', array());
+    $this->addmap('interfaces', array());
+    $this->addmap('remap', array());
+    $this->instances = array();
+    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
+  }
+  
   public function getinstance($class) {
     if (!class_exists($class)) {
       $this->error("Class $class not found");
@@ -47,18 +59,6 @@ class tclasses extends titems {
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
     $this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();
-  }
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'classes';
-    $this->dbversion = false;
-    $this->addevents('onnewitem');
-    $this->addmap('classes', array());
-    $this->addmap('interfaces', array());
-    $this->addmap('remap', array());
-    $this->instances = array();
-    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
   }
   
   public function __get($name) {
@@ -103,15 +103,16 @@ class tclasses extends titems {
   }
   
   public function _autoload($class) {
-    if ($path =$this->getpath($class)) {
-      $filename = $path . $this->items[$class][0];
-    } elseif (isset($this->interfaces[$class])) {
-      $filename = litepublisher::$paths->lib . $this->interfaces[$class];
-    } else {
-      //$this->error("$class class not found");
-      return false;
+    if ($filename = $this->getclassfilename($class)) {
+      if (file_exists($filename)) require_once($filename);
     }
-    if (file_exists($filename)) require_once($filename);
+    return false;
+  }
+  
+  public function getclassfilename($class) {
+    if ($path =$this->getpath($class))  return $path . $this->items[$class][0];
+    if (isset($this->interfaces[$class])) return litepublisher::$paths->lib . $this->interfaces[$class];
+    return false;
   }
   
   public function getpath($class) {
