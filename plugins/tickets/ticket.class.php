@@ -107,14 +107,8 @@ class tticket extends tpost {
       $args->$prop = $lang->$value;
     }
     $args->reproduced = $this->reproduced ? $lang->yesword : $lang->noword;
-    if ($this->assignto <= 1) {
-      $profile = tprofile::instance();
-      $args->assignto = $profile->nick;
-    } else {
-      $users = tusers::instance();
-      $account = $users->getitem($this->assignto);
-      $args->assignto = $account['name'];
-    }
+    $args->assignto = $this->assigntoname;
+    $args->author = $this->authorname;
     
     ttheme::$vars['ticket'] = $this;
     $theme = ttheme::instance();
@@ -126,6 +120,27 @@ class tticket extends tpost {
       $result .= $polls->gethtml($this->poll);
     }
     return $result;
+  }
+  
+  protected function getauthorname() {
+    return $this->getusername($this->author);
+  }
+  
+  protected function getassigntoname() {
+    return $this->getusername($this->assignto);
+  }
+  
+  private function getusername($id) {
+    if ($id == 0) return '';
+    if ($id == 1) {
+      $profile = tprofile::instance();
+      return $profile->nick;
+    } else {
+      $users = tusers::instance();
+      $account = $users->getitem($id);
+      if ($account['url'] == '') return $account['name'];
+      return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$options->url, litepublisher::$options->q, $id, $account['name']);
+    }
   }
   
   public function closepoll() {

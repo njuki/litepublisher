@@ -122,7 +122,6 @@ class tdata {
       include_once($file);
       $fnc = $class . $func;
       if (function_exists($fnc)) $fnc($this, $arg);
-      echo "$fnc<br>\n";
     }
   }
   
@@ -294,11 +293,6 @@ class tevents extends tdata {
     $this->load();
   }
   
-  public function free() {
-    unset(litepublisher::$classes->instances[get_class($this)]);
-    foreach ($this->coinstances as $coinstance) $coinstance->free();
-  }
-  
   protected function create() {
     $this->addmap('events', array());
     $this->addmap('coclasses', array());
@@ -321,6 +315,11 @@ class tevents extends tdata {
     $this->map[$name] = $name;
     $this->data[$name] = $value;
     $this->$name = &$this->data[$name];
+  }
+  
+  public function free() {
+    unset(litepublisher::$classes->instances[get_class($this)]);
+    foreach ($this->coinstances as $coinstance) $coinstance->free();
   }
   
   public function __get($name) {

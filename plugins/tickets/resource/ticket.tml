@@ -8,6 +8,7 @@
 		<th align='left'>$lang.version</th>
 		<th align='left'>$lang.os</th>
 		<th align='left'>$lang.reproduced</th>
+		<th align='left'>$lang.author</th>
 		<th align='left'>$lang.assignto</th>
 </tr>
 	</thead>
@@ -21,6 +22,7 @@
 		<td align='left'>$ticket.version</td>
 		<td align='left'>$ticket.os</td>
 		<td align='left'>$reproduced</td>
+		<td align='left'>$author</td>
 		<td align='left'>$assignto</td>
 </tr>
 

@@ -120,7 +120,6 @@ class tdata {
       include_once($file);
       $fnc = $class . $func;
       if (function_exists($fnc)) $fnc($this, $arg);
-      echo "$fnc<br>\n";
     }
   }
   
