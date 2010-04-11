@@ -298,14 +298,14 @@ class ttemplate extends tevents {
   public function addsitebarclass($class, $handler) {
     if (!class_exists($class)) return $this->error("Class $class not found", 404);
     $this->lock();
-    $this->doeventsubscribe("sitebar_$class", $handler);
+    $this->dosetevent("sitebar_$class", $handler);
     $this->optimizeevents();
     $this->unlock();
   }
   
   public function  deletesitebarclass($sitebarclass, $instance) {
     $this->lock();
-    $this->eventunsubscribe("sitebar_$sitebarclass", get_class($instance));
+    $this->delete_event_class("sitebar_$sitebarclass", get_class($instance));
     $this->optimizeevents();
     $this->unlock();
   }
