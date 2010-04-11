@@ -90,7 +90,7 @@ class tadminkeywords {
         if ($trace) {
           $urlmap->afterrequest = $plugin->parseref;
         } else {
-          $urlmap->eventunsubscribe('afterrequest', get_class($plugin));
+          $urlmap->delete_event_class('afterrequest', get_class($plugin));
         }
       }
       
