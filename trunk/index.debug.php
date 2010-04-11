@@ -90,8 +90,12 @@ litepublisher::$urlmap = turlmap::instance();
 if (!defined('litepublisher_mode')) {
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
-
+/*
 litepublisher::$options->cache = false;
+litepublisher::$options->data['dbconfig']['prefix'] = 'litepublisherru_';
+litepublisher::$options->setpassword('admin');
+litepublisher::$options->save();
+*/
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){
@@ -99,10 +103,11 @@ echo "<pre>\n";
 $man = tdbmanager::instance();
 //$man->optimize();
 //$man->deletealltables();
-echo  $man->performance();
+//echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
 //
 //var_dump(litepublisher::$_paths);
 //litepublisher::$urlmap->clearcache();
+//var_dump(litepublisher::$options->dbconfig);
 ?>

@@ -15,6 +15,7 @@ class tadmintickets extends tadminmenu {
   public function gethtml($name = '') {
     $tickets = ttickets::instance();
     $tickets->checkhtml();
+    $tickets->checkadminlang();
     return parent::gethtml($name);
   }
   
