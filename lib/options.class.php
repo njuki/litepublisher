@@ -55,7 +55,10 @@ class toptions extends tevents {
   }
   
   public function __set($name, $value) {
-    if ($this->setevent($name, $value)) return true;
+    if (in_array($name, $this->eventnames)) {
+      $this->dosetevent($name, $value);
+      return true;
+    }
     
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;

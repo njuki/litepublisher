@@ -70,11 +70,12 @@ class tcommontags extends titems implements  itemplate {
     $tml = $theme->getwidgetitem($this->basename, $sitebar);
     $args = targs::instance();
     $showcount = $this->showcount;
+$args->count = '';
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
       $args->icon = litepublisher::$options->icondisabled ? '' : $this->geticonlink($id);
-    $args->count = $showcount ? " ({$item['itemscount']})" : '';
+    if ($showcount) $args->count = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }
     return sprintf($theme->getwidgetitems($this->basename, $sitebar), $result);

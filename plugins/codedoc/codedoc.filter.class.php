@@ -33,7 +33,7 @@ class tcodedocfilter extends titems {
   private function getdescription(tpost $post, $s) {
     $wiki = twikiwords::instance();
     $wiki->createwords($post, $s);
-    $this->classtowiki($s);
+    $s = $this->classtowiki($s);
     $wiki->replacewords($s);
     $s = str_replace('->', '-&gt;', $s);
     $filter = tcontentfilter::instance();

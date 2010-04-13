@@ -329,16 +329,11 @@ class tevents extends tdata {
   
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
-    if ($this->setevent($name, $value)) return true;
-    $this->error("Unknown property $name in class ". get_class($this));
-  }
-  
-  protected function setevent($name, $value) {
     if (in_array($name, $this->eventnames)) {
-      $this->doeventsubscribe($name, $value);
+      $this->dosetevent($name, $value);
       return true;
     }
-    return false;
+    $this->error("Unknown property $name in class ". get_class($this));
   }
   
   public  function __call($name, $params) {
@@ -364,11 +359,11 @@ class tevents extends tdata {
           if (function_exists($item['func'])) {
             $call = $item['func'];
           } else {
-            $this->eventdelete($name, $i);
+            $this->delete_event_item($name, $i);
             continue;
           }
         } elseif (!class_exists($item['class'])) {
-          $this->eventdelete($name, $i);
+          $this->delete_event_item($name, $i);
           continue;
         } else {
           $obj = getinstance($item['class']);
@@ -389,17 +384,17 @@ class tevents extends tdata {
     throw new ECancelEvent($result);
   }
   
-  private function eventdelete($name, $i) {
+  private function delete_event_item($name, $i) {
     array_splice($this->events[$name], $i, 1);
     $this->save();
   }
   
-  public function eventsubscribe($name, $params) {
+  public function setevent($name, $value) {
     if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
-    return $this->doeventsubscribe($name, $params);
+    $this->dosetevent($name, $value);
   }
   
-  protected function doeventsubscribe($name, $params) {
+  protected function dosetevent($name, $params) {
     if (!isset($params['func'])) return false;
     if (!isset($this->events[$name])) $this->events[$name] =array();
     $list = $this->get_events($name);
@@ -414,21 +409,16 @@ class tevents extends tdata {
     $this->save();
   }
   
-  public function eventunsubscribe($name, $class) {
+  public function delete_event_class($name, $class) {
     if (    $list = $this->get_events($name)) {
       foreach ($list  as $i => $item) {
         if ($item['class'] == $class) {
-          $this->eventdelete($name, $i);
+          $this->delete_event_item($name, $i);
           return true;
         }
       }
     }
     return false;
-  }
-  
-  public static function unsub($obj) {
-    $self = self::instance();
-    $self->unsubscribeclassname(get_class($obj));
   }
   
   public function unsubscribeclass($obj) {
@@ -853,7 +843,10 @@ class toptions extends tevents {
   }
   
   public function __set($name, $value) {
-    if ($this->setevent($name, $value)) return true;
+    if (in_array($name, $this->eventnames)) {
+      $this->dosetevent($name, $value);
+      return true;
+    }
     
     if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
