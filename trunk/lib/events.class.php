@@ -65,9 +65,9 @@ class tevents extends tdata {
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
     if (in_array($name, $this->eventnames)) {
-$this->dosetevent($name, $value));
-return true;
-}
+      $this->dosetevent($name, $value);
+      return true;
+    }
     $this->error("Unknown property $name in class ". get_class($this));
   }
   
@@ -126,9 +126,9 @@ return true;
   
   public function setevent($name, $value) {
     if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
-      $this->dosetevent($name, $value);
+    $this->dosetevent($name, $value);
   }
-
+  
   protected function dosetevent($name, $params) {
     if (!isset($params['func'])) return false;
     if (!isset($this->events[$name])) $this->events[$name] =array();

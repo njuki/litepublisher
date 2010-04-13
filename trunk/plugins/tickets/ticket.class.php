@@ -108,7 +108,7 @@ class tticket extends tpost {
     }
     $args->reproduced = $this->reproduced ? $lang->yesword : $lang->noword;
     $args->assignto = $this->assigntoname;
-    $args->author = $this->authorname;
+    $args->author = $this->authorlink;
     
     ttheme::$vars['ticket'] = $this;
     $theme = ttheme::instance();
@@ -123,14 +123,18 @@ class tticket extends tpost {
   }
   
   protected function getauthorname() {
-    return $this->getusername($this->author);
+    return $this->getusername($this->author, false);
+  }
+  
+  protected function getauthorlink() {
+    return $this->getusername($this->author, true);
   }
   
   protected function getassigntoname() {
-    return $this->getusername($this->assignto);
+    return $this->getusername($this->assignto, true);
   }
   
-  private function getusername($id) {
+  private function getusername($id, $link) {
     if ($id == 0) return '';
     if ($id == 1) {
       $profile = tprofile::instance();
@@ -138,7 +142,7 @@ class tticket extends tpost {
     } else {
       $users = tusers::instance();
       $account = $users->getitem($id);
-      if ($account['url'] == '') return $account['name'];
+      if (!$link || ($account['url'] == '')) return $account['name'];
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$options->url, litepublisher::$options->q, $id, $account['name']);
     }
   }
