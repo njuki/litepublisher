@@ -64,15 +64,15 @@ class tthemeparser extends tdata {
   
   private function parsemenu($s) {
     $result = array();
-    $item = $this->parsetag($s, 'item', '%s');
+    $item = trim($this->parsetag($s, 'item', '%s'));
     if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $result['submenu'] = $submenu;
     $result['item'] = $item;
     $result['current'] = $this->parsetag($s, 'current', '');
-    $result[0] = $s;
+    $result[0] = $this->deletespaces($s);
     //hover
     if ($id = tcontentfilter::getidtag('*', $s)) {
       $result['id'] = $id;
-      preg_match('/\<(\w*?)\s/',$item, $t);
+      preg_match('/\<(\w*)/',$item, $t);
       $result['tag'] = $t[1];
     }
     return $result;
