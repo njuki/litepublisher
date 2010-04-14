@@ -266,7 +266,7 @@ class tmenus extends TItems {
     foreach ($tree as $id => $items) {
       $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
       $item = $this->items[$id];
-      $result .= sprintf($tml,litepublisher::$options.url . $item['url'], $item['title'], $subitems);
+      $result .= sprintf($tml,litepublisher::$options->url . $item['url'], $item['title'], $subitems);
     }
     return $result;
   }
