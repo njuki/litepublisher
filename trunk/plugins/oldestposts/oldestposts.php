@@ -45,7 +45,8 @@ class toldestposts extends tplugin {
       ttheme::$vars['post'] = $post;
       $result .= sprintf($tml, $post->link, $post->title);
     }
-    return $result;
+    
+    return sprintf($theme->getwidgetitems('widget', $index), $result);
   }
   
 }//class

@@ -81,6 +81,11 @@ class tstdwidgets extends titems {
     $this->save();
   }
   
+  public static function expired($name) {
+    $self = self::instance();
+    $self->expire($name);
+  }
+  
   public function expire($name) {
     if (!isset($this->items[$name])) return;
     $widgets = twidgets::instance();

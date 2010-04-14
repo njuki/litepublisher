@@ -44,17 +44,15 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function load() {
-    if (!$this->dbversion) {
-      if (parent::load()) {
-        $this->itemsposts->items = &$this->data['itemsposts'];
-      }
+    if (parent::load() && !$this->dbversion) {
+      $this->itemsposts->items = &$this->data['itemsposts'];
     }
   }
   
   public function save() {
-    if (!$this->dbversion) parent::save();
+    parent::save();
     if (!$this->locked)  {
-      twidgets::expired($this);
+      tstdwidgets ::expired($this->PostPropname);
     }
   }
   
@@ -70,12 +68,12 @@ class tcommontags extends titems implements  itemplate {
     $tml = $theme->getwidgetitem($this->basename, $sitebar);
     $args = targs::instance();
     $showcount = $this->showcount;
-$args->count = '';
+    $args->count = '';
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
       $args->icon = litepublisher::$options->icondisabled ? '' : $this->geticonlink($id);
-    if ($showcount) $args->count = sprintf(' (%d)', $item['itemscount']);
+      if ($showcount) $args->count = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }
     return sprintf($theme->getwidgetitems($this->basename, $sitebar), $result);
