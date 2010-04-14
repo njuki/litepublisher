@@ -13,7 +13,7 @@ class tmanifest extends tevents {
   }
   
   public function request($arg) {
-$options = litepublisher::$options;
+    $options = litepublisher::$options;
     $s = "<?php
     @header('Content-Type: text/xml; charset=utf-8');
     @ header('Last-Modified: " . date('r') ."');

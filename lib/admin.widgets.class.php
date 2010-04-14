@@ -276,10 +276,11 @@ class tadminwidgets extends tadminmenu {
       litepublisher::$classes->categories->showcount = isset($showcountcats);
       litepublisher::$classes->categories->save();
       
-      litepublisher::$classes->tags->sortname = $sortnametags;
-      litepublisher::$classes->tags->showcount = isset($showcounttags);
-      litepublisher::$classes->tags->maxcount = (int) $maxcount;
-      litepublisher::$classes->tags->save();
+      $tags = litepublisher::$classes->tags;
+      $tags->sortname = $sortnametags;
+      $tags->showcount = isset($showcounttags);
+      $tags->maxcount = (int) $maxcount;
+      $tags->save();
       
       litepublisher::$classes->posts->recentcount = (int) $postscount;
       litepublisher::$classes->posts->save();
