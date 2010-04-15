@@ -303,6 +303,19 @@ class tdatabase extends PDO {
       return $res ? $res->rowCount() : false;
     }
     
+public function assoctorow(array $a) {
+        $vals = array();
+    foreach( $a as $name => $val) {
+      if (is_bool($val)) {
+        $vals[] = $val ? '1' : '0';
+      } else {
+        $vals[] = $this->quote($val);
+      }
+    }
+return sprintf('(%s) values (%s)', implode(', ', array_keys($a)), implode(', ', $vals));
+}
+  
+
     public static function str2array($s) {
       $result = array();
       foreach (explode(',', $s) as $i => $value) {

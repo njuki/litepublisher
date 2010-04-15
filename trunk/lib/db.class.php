@@ -158,7 +158,7 @@ class tdatabase {
   }
   
   public function insertrow($row) {
-    $this->query("INSERT INTO $this->prefix$this->table $row");
+    $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
     return mysql_insert_id($this->handle);
   }
   
@@ -176,8 +176,11 @@ class tdatabase {
   }
   
   public function add(array $a) {
-    $Names =implode(', ', array_keys($a));
-    $vals = array();
+return $this->insertrow($this->assoctorow($a));
+  }
+
+public function assoctorow(array $a) {
+        $vals = array();
     foreach( $a as $name => $val) {
       if (is_bool($val)) {
         $vals[] = $val ? '1' : '0';
@@ -185,10 +188,8 @@ class tdatabase {
         $vals[] = $this->quote($val);
       }
     }
-    
-    $this->query("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
-    return mysql_insert_id($this->handle);
-  }
+return sprintf('(%s) values (%s)', implode(', ', array_keys($a)), implode(', ', $vals));
+}
   
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";

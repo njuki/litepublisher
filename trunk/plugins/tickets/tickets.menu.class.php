@@ -45,7 +45,7 @@ class tticketsmenu extends tmenu {
       $count = $tickets->getcount($where);
       $from = ($page - 1) * $perpage;
       if ($from <= $count)  {
-        $items = $tickets->select("$pt.status = 'published' $where", " order by $pt.posted, $tt.type, $tt.state, $tt.prio, $tt.votes desc limit $from, $perpage");
+        $items = $tickets->select("$pt.status = 'published' $where", " order by $pt.posted desc, $tt.type, $tt.state, $tt.prio, $tt.votes desc limit $from, $perpage");
         $result .= $theme->getposts($items, false);
       }
       $result .=$theme->getpages($this->url, $page + 1, ceil($count / $perpage) + 1);
@@ -64,7 +64,7 @@ class tticketsmenu extends tmenu {
     $db->urlmap.url as url, $tt.type, $tt.state, $tt.votes
     from $pt, $db->urlmap, $tt
     where $pt.id = $tt.id and $db->urlmap.id  = $pt.idurl  and $pt.status = 'published' $where
-    order by $pt.posted, $tt.votes, $tt.type, $tt.state, $tt.prio");
+    order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio");
     
     $count = 0;
     $url = litepublisher::$options->url;
