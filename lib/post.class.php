@@ -96,7 +96,7 @@ class tpost extends titem implements  itemplate {
   }
   
   protected function SaveToDB() {
-    TPostTransform ::instance($this)->save();
+    tposttransform ::instance($this)->save();
   }
   
   public function addtodb() {
