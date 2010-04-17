@@ -28,27 +28,24 @@ class tposttransform  {
   }
   
   public static function add(tpost $post) {
-    $db = litepublisher::$db;
     $self = self::instance($post);
-    $db->table = 'posts';
-    $names =implode(', ', self::$props);
     $values = array();
     foreach (self::$props as $name) {
-      $values[] = $db->quote($self->__get($name));
+      $values[$name] = $self->__get($name);
     }
-    
-    $id = $db->insertrow("($names) values (" . implode(', ', $values) . ')');
-    
-    $self->post->rawdb->add(array(
+    $db = litepublisher::$db;
+    $db->table = 'posts';
+    $id = $db->add($values);
+        $post->rawdb->insert_a(array(
     'id' => $id,
     'created' => sqldate(),
     'modified' => sqldate(),
-    'rawcontent' => $self->post->data['rawcontent']
+    'rawcontent' => $post->data['rawcontent']
     ));
     
     $db->table = 'pages';
-    foreach ($self->post->data['pages'] as $i => $content) {
-      $db->add(array('post' => $id, 'page' => $i,         'content' => $content));
+    foreach ($post->data['pages'] as $i => $content) {
+      $db->insert_a(array('post' => $id, 'page' => $i,         'content' => $content));
     }
     
     return $id;

@@ -159,8 +159,7 @@ class tdatabase extends PDO {
   }
   
   public function insertrow($row) {
-    $this->exec("INSERT INTO $this->prefix$this->table $row");
-    return $this->lastInsertId();
+    $this->exec(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
   }
   
   public function insertassoc(array $a) {
@@ -177,16 +176,14 @@ class tdatabase extends PDO {
   }
   
   public function add(array $a) {
-    $Names =implode(', ', array_keys($a));
-    $vals = array();
-    foreach( $a as $name => $val) {
-      $vals[] = $this->quote($val);
-    }
-    
-    $this->exec("INSERT INTO $this->prefix$this->table ($Names) values (" . implode(', ', $vals) . ')');
+$this->insertrow($this->assoctorow($a));
     return $this->lastInsertId();
   }
-  
+
+    public function insert_a(array $a) {
+$this->insertrow($this->assoctorow($a));
+}
+
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";
     if ($where != '') $sql .= ' where '. $where;

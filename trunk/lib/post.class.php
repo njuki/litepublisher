@@ -422,7 +422,7 @@ class tpost extends titem implements  itemplate {
     }
     
     if ($this->haspages) {
-      $theme = theme::instance();
+      $theme = ttheme::instance();
       $result .= $theme->getpages($this->url, $page, $this->countpages);
     }
     return $result;
