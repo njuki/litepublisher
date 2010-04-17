@@ -159,7 +159,6 @@ class tdatabase {
   
   public function insertrow($row) {
     $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
-    return mysql_insert_id($this->handle);
   }
   
   public function insertassoc(array $a) {
@@ -176,8 +175,13 @@ class tdatabase {
   }
   
   public function add(array $a) {
-return $this->insertrow($this->assoctorow($a));
+$this->insertrow($this->assoctorow($a));
+    return mysql_insert_id($this->handle);
   }
+
+  public function insert_a(array $a) {
+$this->insertrow($this->assoctorow($a));
+}
 
 public function assoctorow(array $a) {
         $vals = array();

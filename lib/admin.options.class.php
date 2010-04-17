@@ -22,7 +22,7 @@ class Tadminoptions extends tadminmenu {
       case 'options':
       $args->fixedurl = $options->fixedurl;
       $args->description = $options->description;
-      $args->footer = $template->footer;
+      $args->textfooter = $template->footer;
       break;
       
       case 'home':
@@ -149,7 +149,7 @@ class Tadminoptions extends tadminmenu {
       if (!empty($keywords)) $options->keywords = $keywords;
       $options->unlock();
       
-      if (!empty($footer)) $template->footer = $footer;
+      if (!empty($textfooter)) $template->footer = $textfooter;
       litepublisher::$urlmap->clearcache();
       break;
       
