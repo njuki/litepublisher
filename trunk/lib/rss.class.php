@@ -190,8 +190,9 @@ class trss extends tevents {
     
     if (count($post->files) > 0) {
       $files = tfiles::instance();
-      $fileitems = $files->getitems($post->files);
-      foreach ($fileitems as $file) {
+      $files->loaditems($post->files);
+      foreach ($post->files as $idfile) {
+$file = $files->getitem($idfile);
         $enclosure = AddNode($item, 'enclosure');
         AddAttr($enclosure , 'url', litepublisher::$options->files . '/files/' . $file['filename']);
         AddAttr($enclosure , 'length', $file['size']);

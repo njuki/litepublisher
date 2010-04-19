@@ -496,8 +496,8 @@ quote site chmod 777 update
 cd ../
 send lib\update\dbversion.php lib/update/dbversion.php
 quote site chmod 666 lib/update/dbversion.php
-send lib\update\ini2tml.php lib/update/ini2tml.php
-quote site chmod 666 lib/update/ini2tml.php
+send lib\update\newversion.php lib/update/newversion.php
+quote site chmod 666 lib/update/newversion.php
 send lib\update\update.3.34.php lib/update/update.3.34.php
 quote site chmod 666 lib/update/update.3.34.php
 send lib\update\update.3.35.php lib/update/update.3.35.php

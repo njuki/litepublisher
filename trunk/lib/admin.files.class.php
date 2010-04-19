@@ -76,7 +76,7 @@ class tadminfiles extends tadminmenu {
     }
     
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
-    if ($type != 'icon') $result .= $files->getlist($list);
+    //if ($type != 'icon') $result .= $files->getlist($list);
     $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
@@ -89,6 +89,9 @@ class tadminfiles extends tadminmenu {
     }
     
     $result .= $html->tablefooter;
+    
+    $theme = ttheme::instance();
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   

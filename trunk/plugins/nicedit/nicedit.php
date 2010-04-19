@@ -11,7 +11,7 @@ class tnicedit extends tplugin {
     $head .= '
     <script type="text/javascript">
     bkLib.onDomLoaded( function() {
-    nicEditors.allTextAreas({fullPanel : true});
+    nicEditors.allTextAreas({fullPanel : true, xhtml : true});
     });
     </script>
     ';
