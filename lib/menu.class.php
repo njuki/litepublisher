@@ -246,10 +246,13 @@ class tmenus extends TItems {
   
   public function getmenu($hover) {
     if (count($this->tree) == 0) return '';
-    if ($hover) return $this->getsubmenu($this->tree);
+    $theme = ttheme::instance();
+    if ($hover) {
+      $result = $this->getsubmenu($this->tree);
+      return sprintf($theme->menu, $result);
+    }
     
     $result = '';
-    $theme = ttheme::instance();
     $tml = $theme->menu->item;
     foreach ($this->tree as $id => $items) {
       $item = $this->items[$id];
@@ -264,7 +267,7 @@ class tmenus extends TItems {
     $theme = ttheme::instance();
     $tml = $theme->menu->item;
     foreach ($tree as $id => $items) {
-      $subitems = count($items) == 0 ? '' : $this->getsubmenu($items);
+      $subitems = count($items) == 0 ? '' : sprintf($theme->menu->submenu, $this->getsubmenu($items));
       $item = $this->items[$id];
       $result .= sprintf($tml,litepublisher::$options->url . $item['url'], $item['title'], $subitems);
     }

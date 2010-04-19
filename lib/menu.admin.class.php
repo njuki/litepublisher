@@ -82,14 +82,13 @@ class tadminmenus extends tmenus {
   
   public function getmenu($hover) {
     if (count($this->tree) == 0) return '';
+    $theme = ttheme::instance();
     if ($hover) {
       $result = $this->getsubmenu($this->tree);
-      $theme = ttheme::instance();
       return sprintf($theme->menu, $result);
     }
     
     $result = '';
-    $theme = ttheme::instance();
     $tml = $theme->menu->item;
     foreach ($this->tree as $id => $items) {
       $item = $this->items[$id];

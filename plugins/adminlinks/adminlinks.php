@@ -70,6 +70,7 @@ class tadminlinksplugin extends tplugin {
     }
     
     $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
+    $links = sprintf($theme->getwidgetitems('widget', $index), $links);
     $widget = $theme->getwidget($title, $links, 'widget', $index);
     $content = $widget . $content;
   }

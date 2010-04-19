@@ -175,16 +175,16 @@ class tdatabase {
   }
   
   public function add(array $a) {
-$this->insertrow($this->assoctorow($a));
+    $this->insertrow($this->assoctorow($a));
     return mysql_insert_id($this->handle);
   }
-
+  
   public function insert_a(array $a) {
-$this->insertrow($this->assoctorow($a));
-}
-
-public function assoctorow(array $a) {
-        $vals = array();
+    $this->insertrow($this->assoctorow($a));
+  }
+  
+  public function assoctorow(array $a) {
+    $vals = array();
     foreach( $a as $name => $val) {
       if (is_bool($val)) {
         $vals[] = $val ? '1' : '0';
@@ -192,8 +192,8 @@ public function assoctorow(array $a) {
         $vals[] = $this->quote($val);
       }
     }
-return sprintf('(%s) values (%s)', implode(', ', array_keys($a)), implode(', ', $vals));
-}
+    return sprintf('(%s) values (%s)', implode(', ', array_keys($a)), implode(', ', $vals));
+  }
   
   public function getcount($where = '') {
     $sql = "SELECT COUNT(*) as count FROM $this->prefix$this->table";

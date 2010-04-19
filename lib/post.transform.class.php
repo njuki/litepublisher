@@ -36,7 +36,7 @@ class tposttransform  {
     $db = litepublisher::$db;
     $db->table = 'posts';
     $id = $db->add($values);
-        $post->rawdb->insert_a(array(
+    $post->rawdb->insert_a(array(
     'id' => $id,
     'created' => sqldate(),
     'modified' => sqldate(),
