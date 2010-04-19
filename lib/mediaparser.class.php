@@ -114,8 +114,11 @@ class tmediaparser extends tevents {
     return $this->addfile($filename, $tempfilename, $title, '', '', true);
   }
   */
-  
+
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
+    $files = tfiles::instance();
+$md5 =md5_file($tempfilename);
+if ($files->IndexOf('md5', $md5)) return false;
     $info = $this->getinfo($tempfilename);
     $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], $overwrite);
     $item = $info + array(
@@ -124,7 +127,7 @@ class tmediaparser extends tevents {
     'description' => $description,
     'keywords' => $keywords
     );
-    $files = tfiles::instance();
+
     $files->lock();
     $id = $files->additem($item);
     if ($preview = $this->createpreview($info)) {
@@ -203,7 +206,6 @@ class tmediaparser extends tevents {
       break;
       
       case 'audio':
-      return $this->createaudioclip($info['filename']);
       break;
       
       case 'video':
@@ -304,28 +306,6 @@ class tmediaparser extends tevents {
     $result['mime'] = $info['mime'];
     $result['width'] = $info[0];
     $result['height'] = $info[1];
-    return $result;
-  }
-  
-  public function createaudioclip($filename) {
-    $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-    $parts = pathinfo($filename);
-    $destfilename = sprintf('%s.preview.%s', $parts['filename'],$parts['extension']);
-    if (!empty($parts['dirname'])) {
-      $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
-    }
-    
-    if ($fp = fopen(litepublisher::$paths->files . $filename, 'r')) {
-      $content = fread($fp, 1024 * $this->audiosize);
-      fclose($fp);
-    }
-    
-    file_put_contents(litepublisher::$paths->files . $destfilename, $content);
-    @chmod(litepublisher::$paths->files . $destfilename, 0666);
-    $info = getimagesize(litepublisher::$paths->files. $filename);
-    $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
-    $result['media'] = 'audio';
-    $result['mime'] = $info['mime'];
     return $result;
   }
   
