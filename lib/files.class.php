@@ -149,6 +149,11 @@ class tfiles extends titems {
     }
   }
   
+  public function postedited($idpost) {
+    $post = tpost::instance($idpost);
+    $this->itemsposts->setitems($idpost, $post->files);
+  }
+  
 }//class
 
 class tfileitems extends titemsposts {

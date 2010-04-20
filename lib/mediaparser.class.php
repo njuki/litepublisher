@@ -74,7 +74,6 @@ class tmediaparser extends tevents {
     return $files->additem($item);
   }
   
-  
   private function doupload($filename, &$content) {
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
@@ -114,11 +113,11 @@ class tmediaparser extends tevents {
     return $this->addfile($filename, $tempfilename, $title, '', '', true);
   }
   */
-
+  
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $files = tfiles::instance();
-$md5 =md5_file($tempfilename);
-if ($files->IndexOf('md5', $md5)) return false;
+    $md5 =md5_file(litepublisher::$paths->files . $tempfilename);
+    if ($id = $files->IndexOf('md5', $md5)) return $id;
     $info = $this->getinfo($tempfilename);
     $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], $overwrite);
     $item = $info + array(
@@ -127,7 +126,7 @@ if ($files->IndexOf('md5', $md5)) return false;
     'description' => $description,
     'keywords' => $keywords
     );
-
+    
     $files->lock();
     $id = $files->additem($item);
     if ($preview = $this->createpreview($info)) {

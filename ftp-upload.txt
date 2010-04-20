@@ -506,6 +506,8 @@ send lib\update\update.3.38.php lib/update/update.3.38.php
 quote site chmod 666 lib/update/update.3.38.php
 send lib\update\update.3.42.php lib/update/update.3.42.php
 quote site chmod 666 lib/update/update.3.42.php
+send lib\update\update.3.48.php lib/update/update.3.48.php
+quote site chmod 666 lib/update/update.3.48.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -1402,6 +1404,8 @@ send js\litepublisher\rpc.js js/litepublisher/rpc.js
 quote site chmod 666 js/litepublisher/rpc.js
 send js\litepublisher\rpc.min.js js/litepublisher/rpc.min.js
 quote site chmod 666 js/litepublisher/rpc.min.js
+send js\litepublisher\swfuploader.js js/litepublisher/swfuploader.js
+quote site chmod 666 js/litepublisher/swfuploader.js
 cd js
 mkdir swfupload
 quote site chmod 777 swfupload

@@ -80,7 +80,7 @@ class trssMultimedia extends tevents {
     if (count($posts) == 0) {
       $postlink = litepublisher::$options->url . '/';
     } else {
-      $post = Tpost::instance($posts[0]);
+      $post = tpost::instance($posts[0]);
       $postllink = $post->link;
     }
     
@@ -120,9 +120,10 @@ class trssMultimedia extends tevents {
     }
     
     if ($file['preview'] > 0) {
-      $preview = $files->getitem($file['preview']);
+      $idpreview = $file['preview'];
+      $preview = $files->getitem($idpreview);
       $thumbnail  = AddNode($item, 'media:thumbnail');
-      AddAttr($thumbnail, 'url', $files->geturl($preview['id']));
+      AddAttr($thumbnail, 'url', $files->geturl($idpreview));
       if ($preview['width'] > 0 && $preview['height'] > 0) {
         AddAttr($thumbnail, 'height', $preview['height']);
         AddAttr($thumbnail, 'width', $preview['width']);
