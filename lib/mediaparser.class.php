@@ -117,7 +117,11 @@ class tmediaparser extends tevents {
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $files = tfiles::instance();
     $md5 =md5_file(litepublisher::$paths->files . $tempfilename);
-    if ($id = $files->IndexOf('md5', $md5)) return $id;
+    if ($id = $files->IndexOf('md5', $md5)) {
+@unlink(litepublisher::$paths->files . $tempfilename);
+return $id;
+}
+
     $info = $this->getinfo($tempfilename);
     $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], $overwrite);
     $item = $info + array(
