@@ -202,9 +202,10 @@ class tthemeparser extends tdata {
   
   private function parseprevnext($s) {
     $result = array();
-    $result['prev'] = $this->parsetag($s, 'prev', '%s');
-    $result['next'] = $this->parsetag($s, 'next', '');
-    $result[0] = $s; return $result;
+    $result['prev'] = $this->parsetag($s, 'prev', '%1$s');
+    $result['next'] = $this->parsetag($s, 'next', '%2$s');
+    $result[0] = $s;
+    return $result;
   }
   
   private function parsenavi($s) {

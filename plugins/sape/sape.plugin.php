@@ -63,13 +63,11 @@ class tsapeplugin extends tplugin {
   }
   
   public function onsitebar(&$content, $index) {
-    $this->replacecode($content);
-  }
-  
-  private function replacecode(&$content) {
     $code = $this->tag;
+    $theme = ttheme::instance();
     while ($i = strpos($content, $code)) {
       $links = $this->getlinks($this->count);
+      if (!empty($links)) $links = sprintf($theme->getwidgetitems('widget', $index), $links);
       $content = substr_replace($content, $links, $i, strlen($code));
     }
   }

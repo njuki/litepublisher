@@ -142,6 +142,8 @@ class tstdwidgets extends titems {
       $content = "<!--widgetcontent-$id-->";
     } else {
       $content = $this->getwidgetcontent($id, $sitebar);
+      $template = ttemplate::instance();
+      $template->onwidgetcontent($id, $content);
     }
     
     $theme = ttheme::instance();

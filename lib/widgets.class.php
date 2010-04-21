@@ -141,7 +141,7 @@ class twidgets extends tsingleitems {
   }
   
   private function dogetwidget($item) {
-    if (!@class_exists($item['class'])) {
+    if (!class_exists($item['class'])) {
       $this->deleteclass($item['class']);
       return '';
     }
@@ -150,10 +150,11 @@ class twidgets extends tsingleitems {
     $template = ttemplate::instance();
     $widget = GetInstance($item['class']);
     try {
+      $id = $item['id'];
       if (empty($item['template'])) {
-        $result =   $widget->getwidget($item['id'], $this->current);
+        $result =   $widget->getwidget($id, $this->current);
       }else {
-        $content = $widget->getwidgetcontent($item['id'], $this->current);
+        $content = $widget->getwidgetcontent($id, $this->current);
         $template->onwidgetcontent($id, $content);
         $theme= ttheme::instance();
         $result = $theme->getwidget($item['title'], $content, $item['template'], $this->current);
