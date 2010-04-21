@@ -7,7 +7,6 @@ $files = tfiles::instance();
   $posts->edited = $files->postedited;
   $posts->deleted = $files->itemsposts->deletepost;
   $posts->unlock();
-
 }
 
 ?>

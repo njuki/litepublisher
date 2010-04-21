@@ -353,21 +353,22 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getprevnext() {
-    $result = '';
+    $prev = '';
+    $next = '';
     $theme = ttheme::instance();
     $tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
       ttheme::$vars['prevpost'] = $prevpost;
-      $result .= $theme->parse($tml->prev);
+      $prev = $theme->parse($tml->prev);
     }
     
     if ($nextpost = $this->next) {
       ttheme::$vars['nextpost'] = $nextpost;
-      $result .= $theme->parse($tml->next);
+      $next = $theme->parse($tml->next);
     }
     
-    if ($result != '') $result = sprintf($theme->parse($tml), $result);
-    return $result;
+    if (($prev == '') && ($next == '')) return '';
+    return sprintf($theme->parse($tml), $prev, $next);
   }
   
   public function getcommentslink() {
