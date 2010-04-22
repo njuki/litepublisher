@@ -119,7 +119,7 @@ class tupdater extends tevents {
   }
   
   private function fixfilename($filename) {
-    foreach (array('lib', 'plugins') as $dir) {
+    foreach (array('lib', 'plugins', 'js', 'themes') as $dir) {
       if (strbegin($filename, $dir . '/')) {
         $filename = substr($filename, strlen($dir) + 1);
         return litepublisher::$paths->$dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
