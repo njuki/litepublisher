@@ -1,0 +1,6 @@
+<form name="form" action="" method="post" >
+<p><input type="checkbox" name="hovermenu" id="hovermenu" $hovermenu />
+<label for="hovermenu">$langhovermenu</label></p>
+
+ <p><input type="submit" name="Submit" value="$lang.update"/></p>
+</form>

@@ -31,12 +31,11 @@ class ttemplate extends tevents {
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
     litepublisher::$options->url, litepublisher::$options->files));
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
-    'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onwidget', 'onwidgetcontent', 'ondemand');
+    'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onadminhover', 'onwidget', 'onwidgetcontent', 'ondemand');
     $this->data['theme'] = 'default';
     $this->data['admintheme'] = '';
-    $this->data['hovermenu'] = false;
+    $this->data['hovermenu'] = true;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
-    $this->data['hovermenu'] = false;
     $this->data['sitebars'] = null;
     $this->data['tags'] = array();
     $this->addmap('javascripts', array());
@@ -194,6 +193,7 @@ class ttemplate extends tevents {
     $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && isset($theme->menu->id);
     if (litepublisher::$urlmap->adminpanel) {
+      $this->callevent('onadminhover', array(&$hovermenu));
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($hovermenu);
     }
