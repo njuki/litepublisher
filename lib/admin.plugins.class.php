@@ -33,32 +33,21 @@ class tadminplugins extends tadminmenu {
     }
   }
   
-  public function getsitebar() {
-    $widgets = twidgets::instance();
-    if ($widgets->current > 0) return $widgets->getcontent();
-    $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('submenu', 0);
-    $args = targs::instance();
-    $args->count = '';
+  public function getpluginsmenu() {
+    $result = '';
     $url = $this->url . litepublisher::$options->q . 'plugin=';
-    $content = '';
     $plugins = tplugins::instance();
     foreach ($this->abouts as $name => $about) {
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
-        $args->url = $url . $name;
-        $args->title = $about['name'];
-        $args->icon = '';
-        $content .= $theme->parsearg($tml, $args);
+        $result .= sprintf('<li><a href="%s%s">%s</a></li>', $url, $name, $about['name']);
       }
     }
     
-    $result =     $theme->getwidget($this->title, $content, 'submenu', $widgets->current);
-    $result .= $widgets->getcontent();
-    return $result;
+    return sprintf('<ul>%s</ul>', $result);
   }
   
   public function getcontent() {
-    $result = '';
+    $result = $this->getpluginsmenu();
     $html = $this->html;
     $plugins = tplugins::instance();
     if (empty($_GET['plugin'])) {

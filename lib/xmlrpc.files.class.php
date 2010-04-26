@@ -214,7 +214,8 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     if (!litepublisher::$options->admincookie) return false;
     if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == 'editor')) return true;
     $groups = tusergroups::instance();
-    return $groups->hasright(litepublisher::$options->group, 'editor');
+    if ($groups->hasright(litepublisher::$options->group, 'editor')) return true;
+    return $groups->hasright(litepublisher::$options->group, 'ticket');
   }
   
   public function request() {

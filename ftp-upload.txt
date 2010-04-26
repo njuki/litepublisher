@@ -533,6 +533,24 @@ quote site chmod 777 plugins
 send plugins\.htaccess plugins/.htaccess
 quote site chmod 666 plugins/.htaccess
 cd plugins
+mkdir adminhover
+quote site chmod 777 adminhover
+cd ../
+send plugins\adminhover\.htaccess plugins/adminhover/.htaccess
+quote site chmod 666 plugins/adminhover/.htaccess
+send plugins\adminhover\about.ini plugins/adminhover/about.ini
+quote site chmod 666 plugins/adminhover/about.ini
+send plugins\adminhover\admin.adminhover.php plugins/adminhover/admin.adminhover.php
+quote site chmod 666 plugins/adminhover/admin.adminhover.php
+send plugins\adminhover\admin.adminhover.tml plugins/adminhover/admin.adminhover.tml
+quote site chmod 666 plugins/adminhover/admin.adminhover.tml
+send plugins\adminhover\adminhover.plugin.install.php plugins/adminhover/adminhover.plugin.install.php
+quote site chmod 666 plugins/adminhover/adminhover.plugin.install.php
+send plugins\adminhover\adminhover.plugin.php plugins/adminhover/adminhover.plugin.php
+quote site chmod 666 plugins/adminhover/adminhover.plugin.php
+send plugins\adminhover\index.htm plugins/adminhover/index.htm
+quote site chmod 666 plugins/adminhover/index.htm
+cd plugins
 mkdir adminlinks
 quote site chmod 777 adminlinks
 cd ../
@@ -1342,6 +1360,8 @@ send js\audio-player\license.txt js/audio-player/license.txt
 quote site chmod 666 js/audio-player/license.txt
 send js\audio-player\player.swf js/audio-player/player.swf
 quote site chmod 666 js/audio-player/player.swf
+send js\filebrowser.js js/filebrowser.js
+quote site chmod 666 js/filebrowser.js
 cd js
 mkdir flowplayer
 quote site chmod 777 flowplayer
