@@ -1022,6 +1022,8 @@ send themes\default\css\index.htm themes/default/css/index.htm
 quote site chmod 666 themes/default/css/index.htm
 send themes\default\css\style.css themes/default/css/style.css
 quote site chmod 666 themes/default/css/style.css
+send themes\default\hover.htm themes/default/hover.htm
+quote site chmod 666 themes/default/hover.htm
 cd themes/default
 mkdir images
 quote site chmod 777 images
@@ -1416,6 +1418,8 @@ send js\litepublisher\hovermenu.js js/litepublisher/hovermenu.js
 quote site chmod 666 js/litepublisher/hovermenu.js
 send js\litepublisher\hovermenu.min.js js/litepublisher/hovermenu.min.js
 quote site chmod 666 js/litepublisher/hovermenu.min.js
+send js\litepublisher\ie6.css js/litepublisher/ie6.css
+quote site chmod 666 js/litepublisher/ie6.css
 send js\litepublisher\index.htm js/litepublisher/index.htm
 quote site chmod 666 js/litepublisher/index.htm
 send js\litepublisher\moderate.js js/litepublisher/moderate.js

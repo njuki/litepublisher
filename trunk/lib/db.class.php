@@ -266,8 +266,10 @@ class tdatabase {
   
   public function res2id($res) {
     $result = array();
-    while ($row = mysql_fetch_row($res)) {
-      $result[] = $row[0];
+    if (is_resource($res)) {
+      while ($row = mysql_fetch_row($res)) {
+        $result[] = $row[0];
+      }
     }
     return $result;
   }
