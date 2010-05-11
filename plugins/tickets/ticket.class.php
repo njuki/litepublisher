@@ -84,6 +84,17 @@ class tticket extends tpost {
   protected function setclosed($value) {
     $this->ticket['closed'] = sqldate($value);
   }
+
+  protected function getcontentpage($page) {
+$result = '';
+    if ($this->poll > 0) {
+      $polls = tpolls::instance();
+      $result .= $polls->gethtml($this->poll);
+    }
+
+$result .= parent::getcontentpage($page);
+return $result;
+}
   
   public function updatefiltered() {
     $result = $this->getticketcontent();
@@ -115,10 +126,6 @@ class tticket extends tpost {
     $tml = file_get_contents($this->resource . 'ticket.tml');
     $result = $theme->parsearg($tml, $args);
     
-    if ($this->poll > 0) {
-      $polls = tpolls::instance();
-      $result .= $polls->gethtml($this->poll);
-    }
     return $result;
   }
   

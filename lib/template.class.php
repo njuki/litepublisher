@@ -159,7 +159,7 @@ class ttemplate extends tevents {
     if (empty($result)) {
       $result = litepublisher::$options->name;
     } else {
-      $result = "$result | " . litepublisher::$options->name;
+      $result .= ' | ' . litepublisher::$options->name;
     }
     return $result;
   }
