@@ -14,6 +14,8 @@ function tticketsInstall($self) {
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
   $filter->save();
+
+litepublisher::$options->parsepost = false;
   
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->ticketstable, file_get_contents($self->resource .'ticket.sql'));

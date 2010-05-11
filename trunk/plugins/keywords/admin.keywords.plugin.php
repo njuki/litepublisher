@@ -48,7 +48,7 @@ class tadminkeywords {
     $count = ceil(count($filelist)/ 100);
     $links = $this->getlinkpages($page, $count);
     $result .= $links;
-    $result .= $html->checkallscript;
+      $result .= $html->checkallscript;
     
     $filelist = array_slice($filelist, $from, 100, true);
     $list = '';
@@ -63,7 +63,7 @@ class tadminkeywords {
     $args->list = $list;
     $result .= $html->parsearg($tml['form'], $args);
     $result .= $links;
-    return $admin->FixCheckall($result);
+    return $result;
   }
   
   private function getlinkpages($page, $count) {
