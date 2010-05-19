@@ -84,17 +84,17 @@ class tticket extends tpost {
   protected function setclosed($value) {
     $this->ticket['closed'] = sqldate($value);
   }
-
+  
   protected function getcontentpage($page) {
-$result = '';
+    $result = '';
     if ($this->poll > 0) {
       $polls = tpolls::instance();
       $result .= $polls->gethtml($this->poll);
     }
-
-$result .= parent::getcontentpage($page);
-return $result;
-}
+    
+    $result .= parent::getcontentpage($page);
+    return $result;
+  }
   
   public function updatefiltered() {
     $result = $this->getticketcontent();

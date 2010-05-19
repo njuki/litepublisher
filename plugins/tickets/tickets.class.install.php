@@ -14,8 +14,8 @@ function tticketsInstall($self) {
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
   $filter->save();
-
-litepublisher::$options->parsepost = false;
+  
+  litepublisher::$options->parsepost = false;
   
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->ticketstable, file_get_contents($self->resource .'ticket.sql'));
@@ -37,15 +37,25 @@ litepublisher::$options->parsepost = false;
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
-  $adminmenus = tadminmenus::instance();
+  
   litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::instance();
   $adminoptions->usersenabled = true;
   
-  $idmenu = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['tickets'];
-  $idmenu = $adminmenus->createitem($idmenu, 'editor', 'ticket', 'tticketeditor');
+  $adminmenus = tadminmenus::instance();
+  $adminmenus->lock();
+  $parent = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
+  $adminmenus->items[$parent]['title'] = tlocal::$data['tickets']['tickets'];
+  
+  $idmenu = $adminmenus->createitem($parent, 'opened', 'ticket', 'tadmintickets');
+  $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['opened'];
+  
+  $idmenu = $adminmenus->createitem($parent, 'fixed', 'ticket', 'tadmintickets');
+  $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['fixed'];
+  
+  $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
   $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
+  
   $adminmenus->unlock();
   
   $menus = tmenus::instance();

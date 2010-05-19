@@ -510,6 +510,8 @@ send lib\update\update.3.48.php lib/update/update.3.48.php
 quote site chmod 666 lib/update/update.3.48.php
 send lib\update\update.3.49.php lib/update/update.3.49.php
 quote site chmod 666 lib/update/update.3.49.php
+send lib\update\update.3.52.php lib/update/update.3.52.php
+quote site chmod 666 lib/update/update.3.52.php
 cd lib
 mkdir languages
 quote site chmod 777 languages

@@ -28,6 +28,17 @@ class tadmintickets extends tadminmenu {
     $tickets = ttickets::instance();
     $perpage = 20;
     $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
+    
+    switch ($this->name) {
+      case 'opened':
+      $where .= " and state = 'opened' ";
+      break;
+      
+      case 'fixed':
+      $where .= " and state = 'fixed' ";
+      break;
+    }
+    
     $count = $tickets->getcount($where);
     $from = $this->getfrom($perpage, $count);
     if ($count > 0) {
