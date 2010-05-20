@@ -73,7 +73,7 @@ class tadmintickets extends tadminmenu {
     $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
-    $result .= $theme->getpages('/admin/posts/', litepublisher::$urlmap->page, ceil($count/$perpage));
+    $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
