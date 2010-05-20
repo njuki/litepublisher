@@ -89,7 +89,8 @@ class tticket extends tpost {
     $result = '';
     if ($this->poll > 0) {
       $polls = tpolls::instance();
-      $result .= $polls->gethtml($this->poll);
+      $result .= $polls->gethtml($this->poll, true);
+dumpstr($result);
     }
     
     $result .= parent::getcontentpage($page);
@@ -106,6 +107,7 @@ class tticket extends tpost {
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
     }
+var_dump($result);
     $this->filtered = $result;
   }
   
@@ -124,9 +126,7 @@ class tticket extends tpost {
     ttheme::$vars['ticket'] = $this;
     $theme = ttheme::instance();
     $tml = file_get_contents($this->resource . 'ticket.tml');
-    $result = $theme->parsearg($tml, $args);
-    
-    return $result;
+return $theme->parsearg($tml, $args);
   }
   
   protected function getauthorname() {

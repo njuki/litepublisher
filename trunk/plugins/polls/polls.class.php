@@ -273,36 +273,38 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
       $values = $this->extractvalues($s);
       $id = isset($values['id']) ? $this->db->findid("hash = " . dbquote($values['id'])) : false;
       if ($id) {
-        $replace = $this->gethtml($id);
+        $replace = $this->gethtml($id, false);
         $content = substr_replace($content, $replace, $i, $j - $i);
       }
       $i = min($j, strlen($content));
     }
   }
   
-  public function gethtml($id) {
+  public function gethtml($id, $full) {
     $result = '';
     $poll = $this->getitem($id);
     $items = explode("\n", $poll['items']);
+    $votes = explode(',', $poll['votes']);
     $theme = ttheme::instance();
     $args = targs::instance();
     $args->id = $id;
     $args->title = $poll['title'];
-    $args->votes = '&#36;poll.votes';
+    if (!$full) $args->votes = '&#36;poll.votes';
     $tml = $this->templateitems[$poll['type']];
     foreach ($items as $index => $item) {
       $args->checked = 0 == $index;
       $args->index = $index;
       $args->item = $item;
+if ($full) $args->votes = $votes[$index];
       $result .= $theme->parsearg($tml, $args);
     }
-    $args->items = "&#36;poll.start_$id $result &#36;poll.end";
+    $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
     $tml = $this->templates[$poll['type']];
     $result = $theme->parsearg($tml, $args);
-    $result = "<script type='text/javascript'>loadjavascript('/plugins/polls/polls.client.js');</script>" . $result;
+    $result = '<script type="text/javascript">loadjavascript("/plugins/polls/polls.client.js");</script>'.  $result;
     return str_replace(array("'", '&#36;'), array('"', '$'), $result);
   }
-  
+
   public function getcookie($cookie) {
     if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie)))) {
       return $cookie;
