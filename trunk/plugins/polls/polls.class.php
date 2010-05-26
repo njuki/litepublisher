@@ -295,7 +295,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
       $args->checked = 0 == $index;
       $args->index = $index;
       $args->item = $item;
-if ($full) $args->votes = $votes[$index];
+      if ($full) $args->votes = $votes[$index];
       $result .= $theme->parsearg($tml, $args);
     }
     $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
@@ -304,7 +304,7 @@ if ($full) $args->votes = $votes[$index];
     $result = '<script type="text/javascript">loadjavascript("/plugins/polls/polls.client.js");</script>'.  $result;
     return str_replace(array("'", '&#36;'), array('"', '$'), $result);
   }
-
+  
   public function getcookie($cookie) {
     if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie)))) {
       return $cookie;

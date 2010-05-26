@@ -311,6 +311,7 @@ class tadminmoderator extends tadminmenu {
   
   private function getauthorslist($idpost) {
     $comusers = tcomusers::instance($idpost);
+    $html = $this->html;
     $args = targs::instance();
     $perpage = 20;
     $total = $comusers->count;

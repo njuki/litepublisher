@@ -90,7 +90,6 @@ class tticket extends tpost {
     if ($this->poll > 0) {
       $polls = tpolls::instance();
       $result .= $polls->gethtml($this->poll, true);
-dumpstr($result);
     }
     
     $result .= parent::getcontentpage($page);
@@ -107,7 +106,6 @@ dumpstr($result);
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
     }
-var_dump($result);
     $this->filtered = $result;
   }
   
@@ -126,7 +124,7 @@ var_dump($result);
     ttheme::$vars['ticket'] = $this;
     $theme = ttheme::instance();
     $tml = file_get_contents($this->resource . 'ticket.tml');
-return $theme->parsearg($tml, $args);
+    return $theme->parsearg($tml, $args);
   }
   
   protected function getauthorname() {
