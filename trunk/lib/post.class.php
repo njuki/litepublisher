@@ -279,6 +279,12 @@ class tpost extends titem implements  itemplate {
       if ($defaultid > 0) $this->data['categories '][] =  $dfaultid;
     }
   }
+
+public function getcategory() {
+if (count($this->categories) == 0) return '';
+$cats = tcategories::instance();
+return $cats->getname($this->categories[0]);
+}
   
   //ITemplate
   public function request($id) {
