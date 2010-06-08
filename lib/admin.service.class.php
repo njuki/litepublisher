@@ -84,7 +84,7 @@ class tadminservice extends tadminmenu {
             $args->id=$_GET['id'];
             $args->action = 'delete';
             $args->confirm = sprintf('%s %s?', $this->lang->confirmdelete, $_GET['id']);
-            $result .= $html->confirmdelete($args);
+            $result .= $html->confirmform($args);
           }
         }
       }
