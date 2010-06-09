@@ -33,6 +33,7 @@ $template.head
 	</div>
 	<div id="navi">
 <!--menulist-->
+<!--nohover-->
 		<ul id="nav">
 <!--item-->
 		  <li class="page_item"><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>
