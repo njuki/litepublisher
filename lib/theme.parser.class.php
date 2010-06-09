@@ -55,12 +55,17 @@ class tthemeparser extends tdata {
     
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
-    
+$theme->title = $this->parsetitle($s);
     $theme->menu = $this->parsemenu($this->gettag($s, 'menulist', '$template.menu'));
     $theme->content = $this->parsecontent($this->requiretag($s, 'content', '$template.content'));
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
   }
+
+private function parsetitle(&$s) {
+if ($result = $this->parsetag($s, 'title', '$template.title')) return $result;
+return '$title | $options.name';
+}
   
   private function parsemenu($s) {
     $result = array();

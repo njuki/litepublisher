@@ -47,6 +47,7 @@ class ttheme extends tevents {
     $this->tmlfile = 'index';
     $this->parsing = array();
     $this->data['theme'] = '';
+$this->data['title'] = '';
     $this->data['menu'] = array();
     $this->data['content'] = array();
     $this->data['sitebars'] = array();
