@@ -269,6 +269,7 @@ $menu.content
 
 <h2>$lang.menu</h2>
 <!--menulist-->
+<!--nohover-->
 <ul>
 <!--item-->
 		  <li class="page_item"><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>

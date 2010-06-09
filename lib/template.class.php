@@ -191,7 +191,7 @@ class ttemplate extends tevents {
   
   public function getmenu() {
     $theme = ttheme::instance();
-    $hovermenu = $this->hovermenu && isset($theme->menu->id);
+    $hovermenu = $this->hovermenu && $theme->menu->hover;
     if (litepublisher::$urlmap->adminpanel) {
       $this->callevent('onadminhover', array(&$hovermenu));
       $adminmenus = tadminmenus::instance();
@@ -246,7 +246,7 @@ class ttemplate extends tevents {
     $result = '';
     if ($this->hovermenu) {
       $theme = ttheme::instance();
-      if (isset($theme->menu->id)) {
+      if ($theme->menu->hover) {
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
         $result .=  '<script type="text/javascript" src="' . litepublisher::$options->files . '/js/litepublisher/hovermenu.min.js"></script>' . "\n";

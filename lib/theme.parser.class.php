@@ -68,13 +68,20 @@ class tthemeparser extends tdata {
     if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $result['submenu'] = $submenu;
     $result['item'] = $item;
     $result['current'] = $this->parsetag($s, 'current', '');
-    $result[0] = $this->deletespaces($s);
     //hover
+$result['hover'] = false;
+$nohover = '<!--nohover-->';
+if (is_int($i = strpos($s, $nohover))) {
+      $s = substr_replace($s, '', $i, strlen($nohover));
+} else {
     if ($id = tcontentfilter::getidtag('*', $s)) {
       $result['id'] = $id;
       preg_match('/\<(\w*)/',$item, $t);
       $result['tag'] = $t[1];
+$result['hover'] = true;
     }
+}
+    $result[0] = $this->deletespaces($s);
     return $result;
   }
   
@@ -344,7 +351,6 @@ class tthemeparser extends tdata {
   
   public function changetheme($old, $name) {
     $template = ttemplate::instance();
-    
     if ($about = $this->getabout($old)) {
       if (!empty($about['about']['pluginclassname'])) {
         $plugins = tplugins::instance();

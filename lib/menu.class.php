@@ -413,7 +413,8 @@ public function gethead() {}
     $result = '';
     $widgets = twidgets::instance();
     $template = ttemplate::instance();
-    if (($widgets->current == 0) && !$template->hovermenu) {
+$theme = ttheme::instance();
+    if (($widgets->current == 0) && !($template->hovermenu && $theme->menu->hover)) {
       $result .= $this->owner->getsubmenuwidget($this->id);
     }
     $result .= $widgets->getcontent();
