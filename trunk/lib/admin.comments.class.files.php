@@ -23,6 +23,9 @@ class tadminmoderator extends tadminmenu {
   
   public function getcontent() {
     $result = '';
+$html = $this->html;
+$lang = $this->lang;
+
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -35,7 +38,7 @@ class tadminmoderator extends tadminmenu {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
           $this->manager->delete($id, $this->idpost);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'hold':
@@ -74,17 +77,17 @@ class tadminmoderator extends tadminmenu {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id, $this->idpost);
           $pingbacks->delete($id);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'hold':
           $pingbacks->setstatus($id, false);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'approve':
           $pingbacks->setstatus($id, true);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'edit':
@@ -101,14 +104,15 @@ class tadminmoderator extends tadminmenu {
       return $result;
       
       case 'authors':
+$lang->section = 'comments';
       if ($action = $this->action) {
         $id = $this->idget();
         switch ($action) {
           case 'delete':
-          if (!$this->confirmed) return $this->confirmdeleteauthor($id, $this->idpost);
+          if (!$this->confirmed) return $this->getconfirmform($id, $this->idpost, $lang->authorconfirmdelete);
           $comments = tcomments::instance($this->idpost);
           $comments->deleteauthor($id);
-          $result .= $this->html->h2->authordeleted;
+          $result .= $html->h2->authordeleted;
           break;
           
           case 'edit':
@@ -282,13 +286,9 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $args->id = "$id&post=$idpost";
     $args->action = 'delete';
-    $args->adminurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . 'id';
+    $args->adminurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . "idpost=$idpost&id";
     $args->confirm = $confirm;
     return $this->html->confirmform($args);
-  }
-  
-  private function confirmdeleteauthor($id, $idpost) {
-    return $this->getconfirmform($id, $idpost, $this->lang->authorconfirmdelete);
   }
   
   private function editauthor($id, $idpost) {
@@ -319,9 +319,10 @@ class tadminmoderator extends tadminmenu {
     $items =array_slice(array_keys($comusers->items), $from, $perpage);
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
-    $args->adminurl = $this->adminurl;
+    $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . "idpost=$idpost&id";
+$args->ip = '';
     foreach ($items as $id) {
-      $args->id = "$id&post=$idpost";
+      $args->id = $id;
       $args->add($comusers->items[$id]);
       $result .= $html->authoritem($args);
     }

@@ -19,6 +19,9 @@ class tadminmoderator extends tadminmenu {
   
   public function getcontent() {
     $result = '';
+$lang = $this->lang;
+$html = $this->html;
+
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -31,7 +34,7 @@ class tadminmoderator extends tadminmenu {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
           $this->manager->delete($id, 0);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'hold':
@@ -66,17 +69,17 @@ class tadminmoderator extends tadminmenu {
           case 'delete':
           if(!$this->confirmed) return $this->confirmdelete($id);
           $pingbacks->delete($id);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'hold':
           $pingbacks->setstatus($id, false);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'approve':
           $pingbacks->setstatus($id, true);
-          $result .= $this->html->h2->successmoderated;
+          $result .= $html->h2->successmoderated;
           break;
           
           case 'edit':
@@ -88,11 +91,12 @@ class tadminmoderator extends tadminmenu {
       return $result;
       
       case 'authors':
+$lang->section = 'comments';
       if ($action = $this->action) {
         $id = $this->idget();
         switch ($action) {
           case 'delete':
-          if (!$this->confirmed) return $this->confirmdeleteauthor($id);
+          if (!$this->confirmed) return $this->getconfirmform($id, $lang->authorconfirmdelete);
           if (!$this->deleteauthor($id)) return $this->notfount;
           $result .= $this->html->h2->authordeleted;
           break;
@@ -235,10 +239,6 @@ class tadminmoderator extends tadminmenu {
     return $this->html->confirmform($args);
   }
   
-  private function confirmdeleteauthor($id) {
-    return $this->getconfirmform($id, $this->lang->authorconfirmdelete);
-  }
-  
   private function deleteauthor($uid) {
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($uid)) return false;
@@ -304,7 +304,7 @@ class tadminmoderator extends tadminmenu {
     
     $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
-    
+$args = targs::instance();    
     foreach ($items as $item) {
       $args->add($item);
       $args->subscribed = in_array($item['id'], $subscribed);

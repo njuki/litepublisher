@@ -150,18 +150,19 @@ class ttemplate extends tevents {
   }
   
   public function gettitle() {
-    $result = '';
+    $title = '';
     if ($this->itemplate) {
-      $result = $this->context->gettitle();
+      $title = $this->context->gettitle();
     } elseif ($this->contextHasProp('title')) {
-      $result = $this->context->title;
+      $title = $this->context->title;
     }
-    if (empty($result)) {
-      $result = litepublisher::$options->name;
-    } else {
-      $result .= ' | ' . litepublisher::$options->name;
-    }
-    return $result;
+
+if (empty($title)) return litepublisher::$options->name;
+
+$args = targs::instance();
+$args->title = $title;
+$theme = ttheme::instance();
+return $theme->parsearg($theme->title, $args);
   }
   
   public function geticon() {
