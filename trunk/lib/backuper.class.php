@@ -17,17 +17,18 @@ class tbackuper extends tevents {
     require_once(litepublisher::$paths->libinclude . 'tar.class.php');
   }
   
-  private function  readdir(tar $tar, $path, $subdir, $prefix = '') {
-    $subdirslashed = str_replace(DIRECTORY_SEPARATOR   , '/', $subdir) . '/';
-    $subdirslashed  = ltrim($subdirslashed , '/');
+  public function  readdir(tar $tar, $path, $subdir, $prefix = '') {
+    $subdir = trim($subdir, DIRECTORY_SEPARATOR  );
+    if ($subdir != '') $subdir .= DIRECTORY_SEPARATOR  ;
+    $subdirslashed = str_replace(DIRECTORY_SEPARATOR   , '/', $subdir) ;
     $hasindex = false;
     if ($fp = opendir($path . $subdir)) {
       $tar->adddir($prefix. $subdirslashed, 0777);
       while (FALSE !== ($file = readdir($fp))) {
         if (($file == '.') || ($file == '..')) continue;
-        $filename = $path . $subdir .DIRECTORY_SEPARATOR . $file;
+        $filename = $path . $subdir .$file;
         if (is_dir($filename)) {
-          $this->readdir($tar, $path, $subdir . DIRECTORY_SEPARATOR   . $file, $prefix);
+          $this->readdir($tar, $path, $subdir . $file, $prefix);
         } 			else {
           if (preg_match('/(\.bak\.php$)|(\.lok$)/',  $file)) continue;
           $tar->add($filename, "$prefix$subdirslashed$file", 0666);

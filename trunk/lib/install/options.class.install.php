@@ -50,6 +50,7 @@ function installoptions($language) {
   $options->expiredcache= 3600;
   $options->filetime_offset = tfiler::get_filetime_offset();
   $options->data['perpage'] = 10;
+  $options->filtercommentstatus = true;
   $options->DefaultCommentStatus = "approved";
   $options->commentsdisabled = false;
   $options->commentsenabled = true;

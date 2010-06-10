@@ -296,11 +296,11 @@ class tcommontags extends titems implements  itemplate {
     ?>";
     $s = $redir.$s;
   }
-
-public function getname($id) {
+  
+  public function getname($id) {
     $item = $this->getitem($id);
     return $item['title'];
-}
+  }
   
   public function gettitle() {
     $item = $this->getitem($this->id);

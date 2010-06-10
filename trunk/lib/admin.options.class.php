@@ -59,6 +59,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'comments':
+      $args->filtercommentstatus = $options->filtercommentstatus;
       $args->status = $options->DefaultCommentStatus  == 'approved';
       $args->commentsdisabled = $options->commentsdisabled;
       $args->commentsenabled = $options->commentsenabled;
@@ -228,6 +229,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'comments':
       $options->lock();
+      $options->filtercommentstatus = isset($filtercommentstatus);
       $options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
       $options->commentsdisabled = isset($commentsdisabled);
       $options->commentsenabled = isset($commentsenabled);
