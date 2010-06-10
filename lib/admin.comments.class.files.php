@@ -23,9 +23,9 @@ class tadminmoderator extends tadminmenu {
   
   public function getcontent() {
     $result = '';
-$html = $this->html;
-$lang = $this->lang;
-
+    $html = $this->html;
+    $lang = $this->lang;
+    
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -104,7 +104,7 @@ $lang = $this->lang;
       return $result;
       
       case 'authors':
-$lang->section = 'comments';
+      $lang->section = 'comments';
       if ($action = $this->action) {
         $id = $this->idget();
         switch ($action) {
@@ -320,7 +320,7 @@ $lang->section = 'comments';
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
     $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . "idpost=$idpost&id";
-$args->ip = '';
+    $args->ip = '';
     foreach ($items as $id) {
       $args->id = $id;
       $args->add($comusers->items[$id]);

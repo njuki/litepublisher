@@ -55,17 +55,17 @@ class tthemeparser extends tdata {
     
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
-$theme->title = $this->parsetitle($s);
+    $theme->title = $this->parsetitle($s);
     $theme->menu = $this->parsemenu($this->gettag($s, 'menulist', '$template.menu'));
     $theme->content = $this->parsecontent($this->requiretag($s, 'content', '$template.content'));
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
   }
-
-private function parsetitle(&$s) {
-if ($result = $this->parsetag($s, 'title', '$template.title')) return $result;
-return '$title | $options.name';
-}
+  
+  private function parsetitle(&$s) {
+    if ($result = $this->parsetag($s, 'title', '$template.title')) return $result;
+    return '$title | $options.name';
+  }
   
   private function parsemenu($s) {
     $result = array();
@@ -74,18 +74,18 @@ return '$title | $options.name';
     $result['item'] = $item;
     $result['current'] = $this->parsetag($s, 'current', '');
     //hover
-$result['hover'] = false;
-$nohover = '<!--nohover-->';
-if (is_int($i = strpos($s, $nohover))) {
+    $result['hover'] = false;
+    $nohover = '<!--nohover-->';
+    if (is_int($i = strpos($s, $nohover))) {
       $s = substr_replace($s, '', $i, strlen($nohover));
-} else {
-    if ($id = tcontentfilter::getidtag('*', $s)) {
-      $result['id'] = $id;
-      preg_match('/\<(\w*)/',$item, $t);
-      $result['tag'] = $t[1];
-$result['hover'] = true;
+    } else {
+      if ($id = tcontentfilter::getidtag('*', $s)) {
+        $result['id'] = $id;
+        preg_match('/\<(\w*)/',$item, $t);
+        $result['tag'] = $t[1];
+        $result['hover'] = true;
+      }
     }
-}
     $result[0] = $this->deletespaces($s);
     return $result;
   }

@@ -85,10 +85,12 @@ if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib
 if (dbversion) litepublisher::$db = new tdatabase();
     litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
 //tfiler::log($_SERVER['REQUEST_URI']);
+
 litepublisher::$urlmap = turlmap::instance();
 if (!defined('litepublisher_mode')) {
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
+
 /*
 litepublisher::$options->cache = false;
 litepublisher::$options->data['dbconfig']['prefix'] = 'litepublisherru_';
@@ -109,4 +111,5 @@ $man = tdbmanager::instance();
 //var_dump(litepublisher::$_paths);
 //litepublisher::$urlmap->clearcache();
 //var_dump(litepublisher::$options->dbconfig);
+
 ?>

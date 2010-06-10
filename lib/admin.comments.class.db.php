@@ -19,9 +19,9 @@ class tadminmoderator extends tadminmenu {
   
   public function getcontent() {
     $result = '';
-$lang = $this->lang;
-$html = $this->html;
-
+    $lang = $this->lang;
+    $html = $this->html;
+    
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -91,7 +91,7 @@ $html = $this->html;
       return $result;
       
       case 'authors':
-$lang->section = 'comments';
+      $lang->section = 'comments';
       if ($action = $this->action) {
         $id = $this->idget();
         switch ($action) {
@@ -304,7 +304,7 @@ $lang->section = 'comments';
     
     $subscribers = tsubscribers::instance();
     $subscribed = $subscribers->getposts($authorid);
-$args = targs::instance();    
+    $args = targs::instance();
     foreach ($items as $item) {
       $args->add($item);
       $args->subscribed = in_array($item['id'], $subscribed);

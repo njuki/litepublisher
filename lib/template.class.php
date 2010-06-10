@@ -156,13 +156,13 @@ class ttemplate extends tevents {
     } elseif ($this->contextHasProp('title')) {
       $title = $this->context->title;
     }
-
-if (empty($title)) return litepublisher::$options->name;
-
-$args = targs::instance();
-$args->title = $title;
-$theme = ttheme::instance();
-return $theme->parsearg($theme->title, $args);
+    
+    if (empty($title)) return litepublisher::$options->name;
+    
+    $args = targs::instance();
+    $args->title = $title;
+    $theme = ttheme::instance();
+    return $theme->parsearg($theme->title, $args);
   }
   
   public function geticon() {
