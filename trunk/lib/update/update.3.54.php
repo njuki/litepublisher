@@ -1,5 +1,5 @@
 <?php
-function update353() {
+function update354() {
 tfiler::delete(litepublisher::$paths->data . 'themes' . DIRECTORY_SEPARATOR, false, false);
     litepublisher::$urlmap->clearcache();
 
