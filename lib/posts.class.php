@@ -270,6 +270,7 @@ class tposts extends titems {
   }
   
   public function stripdrafts(array $items) {
+if (count($items) == 0) return array();
     if (dbversion) {
       $list = implode(', ', $items);
       return $this->db->idselect("status = 'published' and id in ($list)");
