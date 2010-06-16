@@ -7,6 +7,7 @@
 **/
 
 class tmailer {
+  private static $hold;
   
   protected static function  send($from, $to, $subj, $body) {
     $options =     litepublisher::$options;
@@ -37,9 +38,25 @@ class tmailer {
     return   '=?utf-8?B?'.@base64_encode($name). '?=' . " <$email>";
   }
   
-  public static function sendtoadmin($subject, $body) {
+  public static function sendtoadmin($subject, $body, $onshutdown = false) {
+    if ($onshutdown) {
+      if (!isset(self::$hold)) {
+        self::$hold = array();
+        register_shutdown_function(__class__ . '::onshutdown');
+      }
+      self::$hold[] = array('subject' => $subject, 'body' => $body);
+      return;
+    }
+    
     self::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email, $subject, $body);
+  }
+  
+  public static function onshutdown() {
+    foreach (self::$hold as $i => $item) {
+      self::sendtoadmin($item['subject'], $item['body'], false);
+      unset(self::$hold[$i]);
+    }
   }
   
   public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
