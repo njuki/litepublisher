@@ -8,7 +8,6 @@
 
 class tcommentmanager extends tevents {
   public $items;
-  private static $mail; // send mail on shutdown
   
   public static function instance() {
     return getinstance(__class__);
@@ -87,7 +86,6 @@ class tcommentmanager extends tevents {
     $this->dochanged($id, $idpost);
     $this->added($id, $idpost);
     $this->sendmail($id, $idpost);
-    
     return $id;
   }
   
@@ -215,16 +213,7 @@ class tcommentmanager extends tevents {
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
-    //tmailer::sendtoadmin($subject, $body);
-    if (!isset(self::$mail)) self::$mail = array();
-    self::$mail[] = array('subject' => $subject, 'body' => $body);
-    register_shutdown_function(__class__ . '::sendtoadmin');
-  }
-  
-  public static function sendtoadmin() {
-    foreach (self::$mail as $item) {
-      tmailer::sendtoadmin($item['subject'], $item['body']);
-    }
+    tmailer::sendtoadmin($subject, $body, true);
   }
   
   public function getrecent($count) {

@@ -70,7 +70,7 @@ class tbackuper extends tevents {
     if ($theme)  {
       $template = ttemplate::instance();
       $themename = $template->theme;
-      $this->readdir($tar, litepublisher::$paths->themes . $themename, '', "themes/$themename/");
+      $this->readdir($tar, litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  , '', "themes/$themename/");
     }
     
     if ($plugins) {

@@ -74,6 +74,7 @@ class tsubscribers extends titemsposts {
   public function sendmail($id, $idpost) {
     if (!$this->enabled) return;
     $comments = tcomments::instance($idpost);
+    if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
     if (dbversion) {
       if (($item['status'] != 'approved')) return;

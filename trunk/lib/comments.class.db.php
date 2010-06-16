@@ -12,7 +12,7 @@ class tcomments extends titems {
   
   public static function instance($pid = 0) {
     $result = getinstance(__class__);
-    $result->pid = $pid;
+    if ($pid > 0) $result->pid = $pid;
     return $result;
   }
   
@@ -23,6 +23,7 @@ class tcomments extends titems {
     $this->rawtable = 'rawcomments';
     $this->basename = 'comments';
     $this->addevents('edited');
+    $this->pid = 0;
   }
   
   public function add($idauthor, $content, $status) {
