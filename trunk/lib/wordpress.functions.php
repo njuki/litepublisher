@@ -150,5 +150,137 @@ $template = ttemplate::instance();
 return $template->url;
 }
 
+function get_bloginfo_rss($show = '') {
+return get_bloginfo($show);
+}
+function bloginfo_rss($show = '') {
+	echo get_bloginfo($show);
+}
+
+function &get_categories( $args = '' ) {
+	$defaults = array( 'type' => 'category' );
+	$args = wp_parse_args( $args, $defaults );
+
+	$taxonomy = apply_filters( 'get_categories_taxonomy', 'category', $args );
+	if ( 'link' == $args['type'] )
+		$taxonomy = 'link_category';
+	$categories = (array) get_terms( $taxonomy, $args );
+
+	foreach ( array_keys( $categories ) as $k )
+		_make_cat_compat( $categories[$k] );
+
+	return $categories;
+}
+
+function wp_parse_args( $args, $defaults = '' ) {
+	if ( is_object( $args ) )
+		$r = get_object_vars( $args );
+	elseif ( is_array( $args ) )
+		$r =& $args;
+	else
+		wp_parse_str( $args, $r );
+
+	if ( is_array( $defaults ) )
+		return array_merge( $defaults, $r );
+	return $r;
+}
+
+function wp_parse_str( $string, &$array ) {
+	parse_str( $string, $array );
+	if ( get_magic_quotes_gpc()  $array = stripslashes_deep( $array );
+return $array 
+}
+
+function stripslashes_deep($value) {
+	$value = is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value);
+	return $value;
+}
+
+function esc_attr( $text ) {
+//return _wp_specialchars( $text, ENT_QUOTES );
+return @htmlspecialchars( $text, ENT_QUOTES)
+}
+
+function wp_list_categories( $args = '' ) {
+	$defaults = array(
+		'show_option_all' => '',
+ 'orderby' => 'name',
+		'order' => 'ASC',
+ 'show_last_update' => 0,
+		'style' => 'list',
+ 'show_count' => 0,
+		'hide_empty' => 1,
+ 'use_desc_for_title' => 1,
+		'child_of' => 0,
+ 'feed' => '',
+ 'feed_type' => '',
+		'feed_image' => '',
+ 'exclude' => '',
+ 'exclude_tree' => '',
+ 'current_category' => 0,
+		'hierarchical' => true,
+ 'title_li' => tlocal::$data['default']['categories'],
+		'echo' => 1,
+ 'depth' => 0
+	);
+
+	$r = wp_parse_args( $args, $defaults );
+
+	if ( !isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] ) {
+		$r['pad_counts'] = true;
+	}
+
+	if ( isset( $r['show_date'] ) ) {
+		$r['include_last_update_time'] = $r['show_date'];
+	}
+
+	if ( true == $r['hierarchical'] ) {
+		$r['exclude_tree'] = $r['exclude'];
+		$r['exclude'] = '';
+	}
+
+	extract( $r );
+
+	$categories = get_categories( $r );
+
+	$output = '';
+	if ( $title_li && 'list' == $style )
+			$output = '<li class="categories">' . $r['title_li'] . '<ul>';
+
+	if ( empty( $categories ) ) {
+		if ( 'list' == $style )
+			$output .= '<li>' . __( "No categories" ) . '</li>';
+		else
+			$output .= __( "No categories" );
+	} else {
+		global $wp_query;
+
+		if( !empty( $show_option_all ) )
+			if ( 'list' == $style )
+				$output .= '<li><a href="' .  get_bloginfo( 'url' )  . '">' . $show_option_all . '</a></li>';
+			else
+				$output .= '<a href="' .  get_bloginfo( 'url' )  . '">' . $show_option_all . '</a>';
+
+		if ( empty( $r['current_category'] ) && is_category() )
+			$r['current_category'] = $wp_query->get_queried_object_id();
+
+		if ( $hierarchical )
+			$depth = $r['depth'];
+		else
+			$depth = -1; // Flat.
+
+		$output .= walk_category_tree( $categories, $depth, $r );
+	}
+
+	if ( $title_li && 'list' == $style )
+		$output .= '</ul></li>';
+
+	$output = apply_filters( 'wp_list_categories', $output );
+
+	if ( $echo )
+		echo $output;
+	else
+		return $output;
+}
 
 ?>
