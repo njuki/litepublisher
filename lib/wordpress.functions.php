@@ -358,6 +358,7 @@ public static $current_post = -1;
 public static $post_count = -1;
 public static $posts;
 public static $post;
+[public static $pages;
 
 public static function have_posts() {
 		if (self::$post_count == -1) {
@@ -375,6 +376,7 @@ $items = $context->getposts();
 }
 
     $perpage = litepublisher::$options->perpage;
+self::$pages = ceil(count($items)/ $perpage);
     self::$posts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
 self::$post_count = count(self::$posts);
 }
@@ -388,6 +390,11 @@ public static 	function the_post() {
 }
 	}
 
+	function next_post() {
+		self::$current_post++;
+		self::$post = tpost::instance(self::$posts[self::$current_post]);
+		return self::$post;
+	}
 
 }//class
 
@@ -437,3 +444,79 @@ function get_the_content($more_link_text = null, $stripteaser = 0) {
 return wordpress::$post->excerpt;
 }
 
+function the_tags( $before = null, $sep = ', ', $after = '' ) {
+	if ( null === $before )
+		$before = tlocal::$data['default']['tags'];
+	echo get_the_tag_list($before, $sep, $after);
+}
+
+function get_the_tag_list( $before = '', $sep = '', $after = '' ) {
+    $tags = ttags::instance();
+$links = $tags->getlinks(wordpress::$post->tags);
+if (count($links) == 0) return false;
+	return $before . join( $sep, $links) . $after;
+}
+
+function the_category( $separator = '', $parents='', $post_id = false ) {
+	echo get_the_category_list( $separator, $parents, $post_id );
+}
+
+function get_the_category_list( $separator = '', $parents='', $post_id = false ) {
+$post = $post_id ? tpost::instance($post_id) : wordpress::$post;
+if (count($post->categories) == 0) return 'Uncategorized';
+
+	$rel = 'rel="category"';
+	$thelist = '';
+$cats = tcategories::instance();
+$cats->loaditems($post->categories);
+$links = array();
+		foreach ( $post->categories as $id) {
+$item = $cats->getitem($id);
+					$links[] = '<a href="' . litepublisher::$options->url . $item['url'] . '" title="' . esc_attr( sprintf( "View all posts in %s", $item['title']) ) . '" ' . $rel . '>' . $item['title'] .'</a>';
+}
+
+	if ( '' == $separator ) {
+		$thelist .= '<ul class="post-categories">'  . "\n\t<li>";
+$thelist .= implode("</li>\n\t<li>", $links);
+		$thelist .= '</li></ul>';
+	} else {
+$thelist .= implode($separator, $links);
+	}
+	return $thelist;
+}
+
+//empty function
+function edit_post_link() {}
+function get_search_form();
+
+function next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
+	echo get_next_posts_link( $label, $max_page );
+}
+
+function get_next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
+	if ( !$max_page ) {
+		$max_page = wordpress::$pages;
+	}
+
+	if ( !$paged )
+		$paged = litepublisher::$urlmap->page;
+
+	$nextpage = intval($paged) + 1;
+	if ( ( empty($paged) || $nextpage <= $max_page) ) {
+		return '<a href="' . litepublisher::$options->url . rtrim('/', litepublisher::$url) . "/page/$nextpage/"  . "\">". preg_replace('/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label) .'</a>';
+	}
+}
+
+function previous_posts_link( $label = '&laquo; Previous Page' ) {
+	echo get_previous_posts_link( $label );
+}
+
+function get_previous_posts_link( $label = '&laquo; Previous Page' ) {
+$page = litepublisher::$urlmap->page;
+	if ( $page > 1 ) {
+$url = litepublisher::$options->url . litepublisher::$urlmap->itemrequested['url'];
+if ($page > 2)  $url = ltrim('/', $url) . '/page/' . --$page . '/';
+		return '<a href="' . $url .
+ . "\">". preg_replace( '/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label ) .'</a>';
+	}
+}

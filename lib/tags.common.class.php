@@ -245,6 +245,18 @@ class tcommontags extends titems implements  itemplate {
     }
     return $result;
   }
+
+public function getlinks(array $list) {
+if (count($list) == 0) return array();
+    $this->loaditems($list);
+    $result =array();
+    foreach ($list as $id) {
+      if (!isset($this->items[$id])) continue;
+$item = $this->items[$id];
+      $result[] = sprintf('<a href="%1$s" title="%2$s">%2$s</a>', litepublisher::$options->url . $item['url', $item['title']);
+    }
+    return $result;
+}
   
   public function getsorted($sortname, $count) {
     $count = (int) $count;
