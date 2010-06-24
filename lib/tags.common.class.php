@@ -247,12 +247,12 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function getsorted($sortname, $count) {
-    if ($sortname == 'count') $sortname = 'itemscount';
     $count = (int) $count;
-    if (!in_array($sortname, array('title', 'count', 'id'))) $sortname = 'title';
+    if ($sortname == 'count') $sortname = 'itemscount';
+    if (!in_array($sortname, array('title', 'itemscount', 'id'))) $sortname = 'title';
     
     if ($this->dbversion) {
-      $limit  = $sortname == 'count' ? "order by $this->thistable.itemscount asc" :"order by $this->thistable.$sortname desc";
+      $limit  = $sortname == 'itemscount' ? "order by $this->thistable.itemscount asc" :"order by $this->thistable.$sortname desc";
       if ($count > 0) $limit .= " limit $count";
       return $this->select("$this->thistable.parent = 0", $limit);
     }
@@ -261,7 +261,7 @@ class tcommontags extends titems implements  itemplate {
     foreach($this->items as $id => $item) {
       $list[$id] = $item[$sortname];
     }
-    if (($sortname == 'count')) {
+    if (($sortname == 'itemscount')) {
       arsort($list);
     } else {
       asort($list);

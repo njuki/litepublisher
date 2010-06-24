@@ -153,23 +153,9 @@ return $template->url;
 function get_bloginfo_rss($show = '') {
 return get_bloginfo($show);
 }
+
 function bloginfo_rss($show = '') {
 	echo get_bloginfo($show);
-}
-
-function &get_categories( $args = '' ) {
-	$defaults = array( 'type' => 'category' );
-	$args = wp_parse_args( $args, $defaults );
-
-	$taxonomy = apply_filters( 'get_categories_taxonomy', 'category', $args );
-	if ( 'link' == $args['type'] )
-		$taxonomy = 'link_category';
-	$categories = (array) get_terms( $taxonomy, $args );
-
-	foreach ( array_keys( $categories ) as $k )
-		_make_cat_compat( $categories[$k] );
-
-	return $categories;
 }
 
 function wp_parse_args( $args, $defaults = '' ) {
@@ -226,56 +212,50 @@ function wp_list_categories( $args = '' ) {
 
 	$r = wp_parse_args( $args, $defaults );
 
-	if ( !isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] ) {
-		$r['pad_counts'] = true;
-	}
-
-	if ( isset( $r['show_date'] ) ) {
-		$r['include_last_update_time'] = $r['show_date'];
-	}
-
-	if ( true == $r['hierarchical'] ) {
-		$r['exclude_tree'] = $r['exclude'];
-		$r['exclude'] = '';
-	}
-
 	extract( $r );
 
-	$categories = get_categories( $r );
-
 	$output = '';
-	if ( $title_li && 'list' == $style )
-			$output = '<li class="categories">' . $r['title_li'] . '<ul>';
+	if ( $title_li && 'list' == $style ) $output = '<li class="categories">' . $r['title_li'] . '<ul>';
 
 	if ( empty( $categories ) ) {
 		if ( 'list' == $style )
-			$output .= '<li>' . __( "No categories" ) . '</li>';
+			$output .= '<li>No categories</li>';
 		else
-			$output .= __( "No categories" );
+			$output .= "No categories";
 	} else {
-		global $wp_query;
-
 		if( !empty( $show_option_all ) )
 			if ( 'list' == $style )
 				$output .= '<li><a href="' .  get_bloginfo( 'url' )  . '">' . $show_option_all . '</a></li>';
 			else
 				$output .= '<a href="' .  get_bloginfo( 'url' )  . '">' . $show_option_all . '</a>';
 
-		if ( empty( $r['current_category'] ) && is_category() )
-			$r['current_category'] = $wp_query->get_queried_object_id();
+		//$output .= walk_category_tree( $categories, $depth, $r );
 
-		if ( $hierarchical )
-			$depth = $r['depth'];
-		else
-			$depth = -1; // Flat.
+$sortnames = array(
+'ID' => 'id',
+'name' => 'title',
+'slug' => 'title',
+'count' => 'count',
+'term_group' => 'title'
+);
+$limit = isset($number) ? $number : 0;
+$categories = tcategories::instance();
+$items = $categories->getsorted($sortnames[$r['orderby']], $limit);
+$theme = ttheme::instance();
+    $tml = '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
+    $args = targs::instance();
+    $args->count = '';
+foreach ($items as $id) {
+$item = $categories->getitem($id);
+      $args->add($item);
+      $args->icon = litepublisher::$options->icondisabled ? '' : $this->geticonlink($id);
+      if ($show_count) $args->count = sprintf(' (%d)', $item['itemscount']);
+      $output .= $theme->parsearg($tml,$args);
+}
 
-		$output .= walk_category_tree( $categories, $depth, $r );
 	}
 
-	if ( $title_li && 'list' == $style )
-		$output .= '</ul></li>';
-
-	$output = apply_filters( 'wp_list_categories', $output );
+	if ( $title_li && 'list' == $style  $output .= '</ul></li>';
 
 	if ( $echo )
 		echo $output;
@@ -283,4 +263,7 @@ function wp_list_categories( $args = '' ) {
 		return $output;
 }
 
-?>
+function is_category ($category = '') {
+$template = ttemplate::instance();
+return $template->context instanceof tcommontags;
+}
