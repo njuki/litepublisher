@@ -38,7 +38,6 @@ public function getdescription() {}
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
     
-    
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
     $result .=$theme->getpages(litepublisher::$options->home, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
