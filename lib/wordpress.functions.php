@@ -267,3 +267,173 @@ function is_category ($category = '') {
 $template = ttemplate::instance();
 return $template->context instanceof tcommontags;
 }
+function wp_get_archives($args = '') {
+	$defaults = array(
+		'type' => 'monthly', 'limit' => '',
+		'format' => 'html', 'before' => '',
+		'after' => '', 'show_post_count' => false,
+		'echo' => 1
+	);
+
+	$r = wp_parse_args( $args, $defaults );
+	extract( $r, EXTR_SKIP );
+$output = '';
+$arch = tarchives::instance();
+
+	if ('link' == $format)
+		$tml = "\t<link rel='archives' title='\$title' href='\$options.url\$url' />\n";
+	elseif ('option' == $format)
+		$tml = "\t<option value='\$options.url\$url'>$before \$title$after</option>\n";
+	elseif ('html' == $format)
+		$tml = "\t<li>$before<a href='\$options.url\$url' title='\$title'>\$title</a>\$count$after</li>\n";
+	else // custom
+		$tml = "\t$before<a href='\$options.url\$url' title='\$title'>\$title</a>\$count$after\n";
+
+    $theme = ttheme::instance();
+    $args = targs::instance();
+    foreach ($arch->items as $date => $item) {
+      $args->add($item);
+      $args->icon = '';
+    $args->count = $show_post_count ? "({$item['count']})" : '';
+      $output .= $theme->parsearg($tml, $args);
+    }
+
+	if ( $echo )
+		echo $output;
+	else
+		return $output;
+}
+
+
+function wp_list_bookmarks($args = '') {
+	$defaults = array(
+		'orderby' => 'name', 'order' => 'ASC',
+		'limit' => -1, 'category' => '', 'exclude_category' => '',
+		'category_name' => '', 'hide_invisible' => 1,
+		'show_updated' => 0, 'echo' => 1,
+		'categorize' => 1, 'title_li' => __('Bookmarks'),
+		'title_before' => '<h2>', 'title_after' => '</h2>',
+		'category_orderby' => 'name', 'category_order' => 'ASC',
+		'class' => 'linkcat', 'category_before' => '<li id="%id" class="%class">',
+		'category_after' => '</li>',
+		'before' => '<li>', 'after' => '</li>', 'between' => "\n"
+	);
+
+	$r = wp_parse_args( $args, $defaults );
+	extract( $r, EXTR_SKIP );
+	$output = '';
+$links = tlinkswidget::instance();
+if (count($links->items) > 0) {
+			if ( !empty( $title_li ) ){
+				$output .= str_replace(array('%id', '%class'), array("linkcat-1", $class), $category_before);
+				$output .= "$title_before$title_li$title_after\n\t<ul class='xoxo blogroll'>\n";
+}
+		$tml = "$before<a href=\"%1\$s\" title=\"%2\$s\">%3\$s</a>$after\n";
+    $theme = ttheme::instance();
+    $args = targs::instance();
+    foreach ($links->items as $id => $item) {
+      $url =  $item['url'];
+      if ($links->redir && !strbegin($url, litepublisher::$options->url)) {
+        $url = litepublisher::$options->url . $links->redirlink . litepublisher::$options->q . "id=$id";
+      }
+            $output .=   sprintf($tml, $url, $item['title'], $item['text']);
+    }
+    
+			if ( !empty( $title_li ) ){
+				$output .= "\n\t</ul>\n$category_after\n";
+}
+
+		}
+
+	if ( !$echo )
+		return $output;
+	echo $output;
+}
+
+
+//posts
+
+class wordpress {
+public static $current_post = -1;
+public static $post_count = -1;
+public static $posts;
+public static $post;
+
+public static function have_posts() {
+		if (self::$post_count == -1) {
+$context = ttemplate::instance()->context;
+$items = array();
+if ($context instanceof thomepage){
+$items = $context->getitems();
+} elseif ($context instanceof tcommontags) {
+$items = $context->itemsposts->getposts($context->id);
+    $posts = litepublisher::$classes->posts;
+    $items = $posts->stripdrafts($items);
+    $items = $posts->sortbyposted($items);
+} elseif ($context instanceof tarchives) {
+$items = $context->getposts();
+}
+
+    $perpage = litepublisher::$options->perpage;
+    self::$posts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
+self::$post_count = count(self::$posts);
+}
+
+return self::$current_post + 1 < self::$post_count;
+	}
+
+public static 	function the_post() {
+		if ( self::$current_post == -1 ) // loop has just started
+		self::$post = self::next_post();
+}
+	}
+
+
+}//class
+
+function have_posts() {
+return wordpress::have_posts();
+}
+
+function the_post() {
+return wordpress::the_post();
+}
+
+function the_ID() {
+	echo wordpress::$post->id;
+}
+
+function the_permalink() {
+	echo wordpress::$post->link;
+}
+
+function the_title_attribute( $args = '' ) {
+echo wordpress::$post->title;
+}
+function the_title($before = '', $after = '', $echo = true) {
+echo wordpress::$post->title;
+}
+
+function the_time( $d = '' ) {
+	echo get_the_time( $d );
+}
+
+function get_the_time( $d = '', $post = null ) {
+	if ( '' == $d ) return wordpress::$post->localdate;
+return tlocal::translate(date($d, wordpress::$post->date), 'datetime');
+}
+
+function the_author() {
+return 'admin';
+}
+
+function the_content($more_link_text = null, $stripteaser = 0) {
+	$content = get_the_content($more_link_text, $stripteaser);
+	$content = str_replace(']]>', ']]&gt;', $content);
+	echo $content;
+}
+
+function get_the_content($more_link_text = null, $stripteaser = 0) {
+return wordpress::$post->excerpt;
+}
+
