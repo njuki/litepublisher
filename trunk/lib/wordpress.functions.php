@@ -133,8 +133,7 @@ return get_stylesheet_directory_uri();
 }
 
 function get_stylesheet_directory_uri() {
-$template = ttemplate::instance();
-return $template->url . '/style.css';
+return ttemplate::instance()->url . '/style.css';
 }
 
 function get_stylesheet() {
@@ -146,8 +145,7 @@ return litepublisher::$options->files . '/themes';
 }
 
 function get_template_directory_uri() {
-$template = ttemplate::instance();
-return $template->url;
+return ttemplate::instance()-->url;
 }
 
 function get_bloginfo_rss($show = '') {
@@ -263,10 +261,6 @@ $item = $categories->getitem($id);
 		return $output;
 }
 
-function is_category ($category = '') {
-$template = ttemplate::instance();
-return $template->context instanceof tcommontags;
-}
 function wp_get_archives($args = '') {
 	$defaults = array(
 		'type' => 'monthly', 'limit' => '',
@@ -426,8 +420,14 @@ function the_time( $d = '' ) {
 }
 
 function get_the_time( $d = '', $post = null ) {
-	if ( '' == $d ) return wordpress::$post->localdate;
-return tlocal::translate(date($d, wordpress::$post->date), 'datetime');
+if (litepublisher::$urlmap->context instanceof tpost) {
+$date = litepublisher::$urlmap->context->posted;
+elseif (litepublisher::$urlmap->context instanceof tarchives) {
+$date = litepublisher::$urlmap->context->date;
+}
+
+	if ( '' == $d ) return tlocal::date($date);
+return tlocal::translate(date($d, $date), 'datetime');
 }
 
 function the_author() {
@@ -503,7 +503,7 @@ function get_next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
 
 	$nextpage = intval($paged) + 1;
 	if ( ( empty($paged) || $nextpage <= $max_page) ) {
-		return '<a href="' . litepublisher::$options->url . rtrim('/', litepublisher::$url) . "/page/$nextpage/"  . "\">". preg_replace('/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label) .'</a>';
+		return '<a href="' . litepublisher::$urlmap->nextpage . "\">". preg_replace('/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label) .'</a>';
 	}
 }
 
@@ -512,11 +512,277 @@ function previous_posts_link( $label = '&laquo; Previous Page' ) {
 }
 
 function get_previous_posts_link( $label = '&laquo; Previous Page' ) {
-$page = litepublisher::$urlmap->page;
-	if ( $page > 1 ) {
-$url = litepublisher::$options->url . litepublisher::$urlmap->itemrequested['url'];
-if ($page > 2)  $url = ltrim('/', $url) . '/page/' . --$page . '/';
-		return '<a href="' . $url .
+	if ( litepublisher::$urlmap->page > 1 ) {
+		return '<a href="' . litepublisher::$urlmap->prevpage 
  . "\">". preg_replace( '/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label ) .'</a>';
 	}
+}
+
+function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
+$title = ttemplate::instance()->gettitle();
+	if ( $display )
+		echo $title;
+	else
+		return $title;
+}
+
+
+function wp_head() {
+echo ttemplate::instance()->gethead();
+}
+
+function is_single ($post = '') {
+return litepublisher::$urlmap->context instanceof tpost;
+}
+
+function is_singular() {
+return litepublisher::$urlmap->context instanceof tpost;
+}
+
+function is_front_page() {
+return litepublisher::$urlmap->context instanceof thomepage;
+}
+
+function is_home () {
+return litepublisher::$urlmap->context instanceof thomepage;
+}
+
+function is_archive() {
+return litepublisher::$urlmap->context instanceof tarchives;
+}
+
+function is_date () {
+return litepublisher::$urlmap->context instanceof tarchives;
+}
+
+function is_search() {
+return false;
+}
+
+function is_paged () {
+return litepublisher::$urlmap->page > 1;
+}
+
+function is_attachment() }
+return false;
+}
+
+function is_404() {
+return litepublisher::$urlmap->is404;
+}
+
+function is_author() {
+return false;
+}
+
+function is_category() {
+return litepublisher::$urlmap->context instanceof tcategories;
+}
+
+function is_tag() {
+return litepublisher::$urlmap->context instanceof ttags;
+}
+
+function is_day() {
+return false;
+}
+
+function is_year() {
+return false;
+}
+
+function is_month() {
+return is_archive();
+}
+
+function body_class( $class = '' ) {
+	// Separates classes with a single space, collates classes for body element
+	echo 'class="' . join( ' ', get_body_class( $class ) ) . '"';
+}
+
+function get_body_class( $class = '' ) {
+	$classes = array();
+
+	if ( 'rtl' == get_bloginfo('text_direction') )
+		$classes[] = 'rtl';
+
+	if ( is_front_page() )
+		$classes[] = 'home';
+	if ( is_home() )
+		$classes[] = 'blog';
+	if ( is_archive() )
+		$classes[] = 'archive';
+	if ( is_date() )
+		$classes[] = 'date';
+	if ( is_search() )
+		$classes[] = 'search';
+	if ( is_paged() )
+		$classes[] = 'paged';
+	if ( is_attachment() )
+		$classes[] = 'attachment';
+	if ( is_404() )
+		$classes[] = 'error404';
+
+	if ( is_single() ) {
+		$classes[] = 'single postid-' . litepublisher::$urlmap->context->id;
+
+		if ( is_attachment() ) {
+			$mime_type = get_post_mime_type();
+			$mime_prefix = array( 'application/', 'image/', 'text/', 'audio/', 'video/', 'music/' );
+			$classes[] = 'attachmentid-' . $postID;
+			$classes[] = 'attachment-' . str_replace($mime_prefix, '', $mime_type);
+		}
+	} elseif ( is_archive() ) {
+		if ( is_author() ) {
+			$classes[] = 'author';
+			$classes[] = 'author-' . sanitize_html_class($author->user_nicename , $author->ID);
+		} elseif ( is_category() ) {
+			$classes[] = 'category';
+			//$classes[] = 'category-' . sanitize_html_class($cat->slug, $cat->cat_ID);
+		} elseif ( is_tag() ) {
+			$classes[] = 'tag';
+			//$classes[] = 'tag-' . sanitize_html_class($tags->slug, $tags->term_id);
+		}
+	} elseif ( is_page() ) {
+		$classes[] = 'page';
+
+		$pageID = litepublisher::$urlmap->context->id;
+
+		$classes[] = 'page-id-' . $pageID;
+
+	if ( litepublisher::$urlmap->page > 1 ) {
+		$classes[] = 'paged-' . litepublisher::$urlmap->page;
+
+		if ( is_single() )
+			$classes[] = 'single-paged-' . litepublisher::$urlmap->page;
+		elseif ( is_page() )
+			$classes[] = 'page-paged-' . litepublisher::$urlmap->page;
+		elseif ( is_category() )
+			$classes[] = 'category-paged-' . litepublisher::$urlmap->page;
+		elseif ( is_tag() )
+			$classes[] = 'tag-paged-' . litepublisher::$urlmap->page;
+		elseif ( is_date() )
+			$classes[] = 'date-paged-' . litepublisher::$urlmap->page;
+		elseif ( is_author() )
+			$classes[] = 'author-paged-' . litepublisher::$urlmap->page;
+		elseif ( is_search() )
+			$classes[] = 'search-paged-' . $page;
+	}
+
+	if ( !empty($class) ) {
+		if ( !is_array( $class ) )
+			$class = preg_split('#\s+#', $class);
+		$classes = array_merge($classes, $class);
+	}
+
+return array_map('esc_attr', $classes);
+}
+
+function get_header( $name = null ) {
+	$templates = array();
+	if ( isset($name) )
+		$templates[] = "header-{$name}.php";
+
+	$templates[] = "header.php";
+
+	if ('' == locate_template($templates, true))
+		load_template( get_theme_root() . '/default/header.php');
+}
+
+
+function get_footer( $name = null ) {
+	$templates = array();
+	if ( isset($name) )
+		$templates[] = "footer-{$name}.php";
+
+	$templates[] = "footer.php";
+
+	if ('' == locate_template($templates, true))
+		load_template( get_theme_root() . '/default/footer.php');
+}
+
+function get_sidebar( $name = null ) {
+	$templates = array();
+	if ( isset($name) )
+		$templates[] = "sidebar-{$name}.php";
+
+	$templates[] = "sidebar.php";
+
+	if ('' == locate_template($templates, true))
+		load_template( get_theme_root() . '/default/sidebar.php');
+}
+
+function locate_template($template_names, $load = false) {
+	if (!is_array($template_names))
+		return '';
+
+	$located = '';
+$path = ttemplate::instance()->path;
+	foreach($template_names as $template_name) {
+		if ( file_exists($path . $template_name)) {
+			$located = $path . $template_name;
+			break;
+		}
+	}
+
+	if ($load && '' != $located)
+		load_template($located);
+
+	return $located;
+}
+
+function load_template($_template_file) {
+	require_once($_template_file);
+}
+
+function single_cat_title($prefix = '', $display = true ) {
+return litepublisher::$urlmap->context->title;
+}
+
+function wp_list_pages($args = '') {
+	$defaults = array(
+		'depth' => 0, 'show_date' => '',
+		'date_format' => get_option('date_format'),
+		'child_of' => 0, 'exclude' => '',
+		'title_li' => __('Pages'), 'echo' => 1,
+		'authors' => '', 'sort_column' => 'menu_order, post_title',
+		'link_before' => '', 'link_after' => '', 'walker' => '',
+	);
+
+	$r = wp_parse_args( $args, $defaults );
+	extract( $r, EXTR_SKIP );
+
+	$output = '';
+	$current_page = 0;
+
+	// sanitize, mostly to keep spaces out
+	$r['exclude'] = preg_replace('/[^0-9,]/', '', $r['exclude']);
+
+	// Allow plugins to filter an array of excluded pages (but don't put a nullstring into the array)
+	$exclude_array = ( $r['exclude'] ) ? explode(',', $r['exclude']) : array();
+	$r['exclude'] = implode( ',', apply_filters('wp_list_pages_excludes', $exclude_array) );
+
+	// Query pages.
+	$r['hierarchical'] = 0;
+	$pages = get_pages($r);
+
+	if ( !empty($pages) ) {
+		if ( $r['title_li'] )
+			$output .= '<li class="pagenav">' . $r['title_li'] . '<ul>';
+
+		global $wp_query;
+		if ( is_page() || is_attachment() || $wp_query->is_posts_page )
+			$current_page = $wp_query->get_queried_object_id();
+		$output .= walk_page_tree($pages, $r['depth'], $current_page, $r);
+
+		if ( $r['title_li'] )
+			$output .= '</ul></li>';
+	}
+
+	$output = apply_filters('wp_list_pages', $output, $r);
+
+	if ( $r['echo'] )
+		echo $output;
+	else
+		return $output;
 }
