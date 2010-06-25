@@ -744,7 +744,7 @@ function wp_list_pages($args = '') {
 		'depth' => 0, 'show_date' => '',
 		'date_format' => get_option('date_format'),
 		'child_of' => 0, 'exclude' => '',
-		'title_li' => __('Pages'), 'echo' => 1,
+		'title_li' => tlocal::$data['default']['menus'], 'echo' => 1,
 		'authors' => '', 'sort_column' => 'menu_order, post_title',
 		'link_before' => '', 'link_after' => '', 'walker' => '',
 	);
@@ -753,36 +753,46 @@ function wp_list_pages($args = '') {
 	extract( $r, EXTR_SKIP );
 
 	$output = '';
-	$current_page = 0;
-
-	// sanitize, mostly to keep spaces out
-	$r['exclude'] = preg_replace('/[^0-9,]/', '', $r['exclude']);
-
-	// Allow plugins to filter an array of excluded pages (but don't put a nullstring into the array)
-	$exclude_array = ( $r['exclude'] ) ? explode(',', $r['exclude']) : array();
-	$r['exclude'] = implode( ',', apply_filters('wp_list_pages_excludes', $exclude_array) );
-
-	// Query pages.
-	$r['hierarchical'] = 0;
-	$pages = get_pages($r);
-
-	if ( !empty($pages) ) {
 		if ( $r['title_li'] )
 			$output .= '<li class="pagenav">' . $r['title_li'] . '<ul>';
 
-		global $wp_query;
-		if ( is_page() || is_attachment() || $wp_query->is_posts_page )
-			$current_page = $wp_query->get_queried_object_id();
-		$output .= walk_page_tree($pages, $r['depth'], $current_page, $r);
+
+    $tml = 		'<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+	$menus = tmenus::instance();
+    foreach ($menus->tree as $id => $items) {
+      $item = $menus->items[$id];
+      $output .= sprintf($tml, litepublisher::$options->url . $item['url'], $item['title'], '');
+    }
 
 		if ( $r['title_li'] )
 			$output .= '</ul></li>';
-	}
-
-	$output = apply_filters('wp_list_pages', $output, $r);
 
 	if ( $r['echo'] )
 		echo $output;
 	else
 		return $output;
 }
+function wp_register() {}
+function wp_loginout() {}
+
+function wp_meta() {
+    $result = '';
+$std = tstdwidgets::instance();
+    extract($std->data['meta']);
+    $tml = '<li><a href="%1$s" >%2$s</a></li>';
+    $metaclasses = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
+    $lang = tlocal::instance('default');
+    if ($rss) $result .= sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss, $metaclasses['rss']);
+    if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
+    if ($media) $result .= sprintf($tml, litepublisher::$options->url . '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
+    if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
+    if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile, $metaclasses['profile']);
+    if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
+echo $result;    
+}
+
+
+function wp_footer() {{
+echo ttemplate::instance()->footer;
+}
+
