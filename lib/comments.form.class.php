@@ -78,8 +78,21 @@ class tcommentform extends tevents {
     $this->basename ='commentform';
     $this->cache = false;
   }
-  
-  public static function printform($postid) {
+
+public static function getcomuser() {
+    if (!empty($_COOKIE["userid"])) {
+      $comusers = tcomusers::instance($postid);
+      $user = $comusers->fromcookie($_COOKIE['userid']);
+      if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
+        $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
+        $user = $comusers2->fromcookie($_COOKIE['userid']);
+      }
+return $user;
+}
+return false;
+}      
+
+   public static function printform($postid) {
     $result = '';
     $self = self::instance();
     $lang = tlocal::instance('comment');
@@ -93,15 +106,7 @@ class tcommentform extends tevents {
     $args->postid = $postid;
     $args->antispam = '_Value' . strtotime ("+1 hour");
     
-    if (!empty($_COOKIE["userid"])) {
-      $comusers = tcomusers::instance($postid);
-      $user = $comusers->fromcookie($_COOKIE['userid']);
-      if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
-        $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
-        $user = $comusers2->fromcookie($_COOKIE['userid']);
-      }
-      
-      if ($user) {
+      if ($user = self::getcomuser()) {
         $args->name = $user['name'];
         $args->email = $user['email'];
         $args->url = $user['url'];
