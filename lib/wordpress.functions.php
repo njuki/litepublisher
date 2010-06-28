@@ -445,9 +445,12 @@ $date = litepublisher::$urlmap->context->posted;
 elseif (litepublisher::$urlmap->context instanceof tarchives) {
 $date = litepublisher::$urlmap->context->date;
 }
+return _wpdate($d, $date);
+}
 
-	if ( '' == $d ) return tlocal::date($date);
-return tlocal::translate(date($d, $date), 'datetime');
+function _wpdate($format, $date) {
+	if ( '' == $format ) return tlocal::date($date);
+return tlocal::translate(date($format, $date), 'datetime');
 }
 
 function the_author() {
@@ -847,45 +850,33 @@ echo $comments->getcontentlist($tml, 'alt', '');
 		if ( 'div' == $r['style'] ) {
 			$tag = 'div';
 			$add_below = 'comment';
+
+<div $class id="comment-$comment.id">
+		<div class="comment-author vcard">
+<cite class="fn">$comment.authorlink</cite> <span class="says">says:</span>
+		</div>
+
 		} else {
 			$tag = 'li';
 			$add_below = 'div-comment';
-											<!--comment--><li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
-													<a name="comment-$comment.id"></a>
-														<div class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></div>
+
+$class1 = 'class="alt"';
+
+<li $class id="comment-$comment.id">
+		<div id="div-comment-$comment.id" class="comment-body">
+<cite class="fn">$comment.authorlink</cite> <span class="says">says:</span>
+		</div>
+
+
+														<div class="commentmetadata">
+<a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a>
+</div>
 														<span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
 <p  id="commentcontent-$comment.id">
 															$comment.content
 														</p>
 												</li>
 
-		}
-?>
-		<<?php echo $tag ?> <?php comment_class(empty( $r['has_children'] ) ? '' : 'parent') ?> id="comment-<?php comment_ID() ?>">
-		<?php if ( 'div' != $r['style'] ) : ?>
-		<div id="div-comment-<?php comment_ID() ?>" class="comment-body">
-		<?php endif; ?>
-		<div class="comment-author vcard">
-		<?php if ($r['avatar_size'] != 0) echo get_avatar( $comment, $r['avatar_size'] ); ?>
-		<?php printf(__('<cite class="fn">%s</cite> <span class="says">says:</span>'), get_comment_author_link()) ?>
-		</div>
-<?php if ($comment->comment_approved == '0') : ?>
-		<em><?php _e('Your comment is awaiting moderation.') ?></em>
-		<br />
-<?php endif; ?>
-
-		<div class="comment-meta commentmetadata"><a href="<?php echo htmlspecialchars( get_comment_link( $comment->comment_ID ) ) ?>"><?php printf(__('%1$s at %2$s'), get_comment_date(),  get_comment_time()) ?></a><?php edit_comment_link(__('(Edit)'),'&nbsp;&nbsp;','') ?></div>
-
-		<?php comment_text() ?>
-
-		<div class="reply">
-		<?php comment_reply_link(array_merge( $r, array('add_below' => $add_below, 'depth' => $depth, 'max_depth' => $r['max_depth']))) ?>
-		</div>
-		<?php if ( 'div' != $r['style'] ) : ?>
-		</div>
-		<?php endif; ?>
-<?php
-	}
 
 /////
 		if ( 'div' == $r['style'] )
@@ -894,6 +885,74 @@ echo $comments->getcontentlist($tml, 'alt', '');
 			echo "</li>\n";
 	}
 
-
 	$in_comment_loop = false;
 }
+
+function comment_class( $class = '', $comment_id = null, $post_id = null, $echo = true ) {
+	// Separates classes with a single space, collates classes for comment DIV
+	$class = 'class="' . join( ' ', get_comment_class( $class, $comment_id, $post_id ) ) . '"';
+	if ( $echo)
+		echo $class;
+	else
+		return $class;
+}
+
+function get_comment_class( $class = '', $comment_id = null, $post_id = null ) {
+	global $comment_alt, $comment_depth, $comment_thread_alt;
+	$classes = array();
+	$classes[] = 'comment';
+	if ( empty($comment_alt) )
+		$comment_alt = 0;
+	if ( empty($comment_depth) )
+		$comment_depth = 1;
+	if ( empty($comment_thread_alt) )
+		$comment_thread_alt = 0;
+
+	if ( $comment_alt % 2 ) {
+		$classes[] = 'odd';
+		$classes[] = 'alt';
+	} else {
+		$classes[] = 'even';
+	}
+
+	$comment_alt++;
+
+	// Alt for top-level comments
+	if ( 1 == $comment_depth ) {
+		if ( $comment_thread_alt % 2 ) {
+			$classes[] = 'thread-odd';
+			$classes[] = 'thread-alt';
+		} else {
+			$classes[] = 'thread-even';
+		}
+		$comment_thread_alt++;
+	}
+
+	$classes[] = "depth-$comment_depth";
+
+	if ( !empty($class) ) {
+		if ( !is_array( $class ) )
+			$class = preg_split('#\s+#', $class);
+		$classes = array_merge($classes, $class);
+	}
+
+	$classes = array_map('esc_attr', $classes);
+
+	return $classes;
+}
+
+function get_comment_author_link() {
+global $comment;
+return $comment->authorlink;
+}
+
+function get_comment_link( $comment = null, $args = array() ) {
+global $comment;
+return $coment->link;
+}
+
+function get_comment_date( $d = '' ) {
+	global $comment;
+return _wpdate($d, $comment->date);
+}
+
