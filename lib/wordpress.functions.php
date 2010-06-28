@@ -1,5 +1,214 @@
 <?php
 
+class wordpress {
+public static $current_post = -1;
+public static $post_count = -1;
+public static $posts;
+public static $post;
+public static $pages;
+
+public static function getcontent() {
+ob_start();
+$files = array();
+$obj = litepublisher::$urlmap->context;
+if ($obj instanceof tpost) {
+$files[] = 'single.php';
+}elseif ($obj instanceof tmenu) {
+$files[] = 'page.php';
+}
+
+$files[] = 'index.php';
+locate_template($files, true);
+return ob_get_flush();
+}
+
+public static function have_posts() {
+		if (self::$post_count == -1) {
+$context = ttemplate::instance()->context;
+$items = array();
+if ($context instanceof tpost) {
+self::$posts = array(0 => $context->id);
+self::$post_count  = 1;
+self::$post = $context;
+return true;
+} elseif ($context instanceof thomepage){
+$items = $context->getitems();
+} elseif ($context instanceof tcommontags) {
+$items = $context->itemsposts->getposts($context->id);
+    $posts = litepublisher::$classes->posts;
+    $items = $posts->stripdrafts($items);
+    $items = $posts->sortbyposted($items);
+} elseif ($context instanceof tarchives) {
+$items = $context->getposts();
+}
+
+    $perpage = litepublisher::$options->perpage;
+self::$pages = ceil(count($items)/ $perpage);
+    self::$posts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
+self::$post_count = count(self::$posts);
+}
+
+return self::$current_post + 1 < self::$post_count;
+	}
+
+public static 	function the_post() {
+		self::$post = self::next_post();
+	}
+
+public static function next_post() {
+		self::$current_post++;
+		self::$post = tpost::instance(self::$posts[self::$current_post]);
+		return self::$post;
+	}
+
+}//class
+
+function have_posts() {
+return wordpress::have_posts();
+}
+
+function the_post() {
+return wordpress::the_post();
+}
+
+function the_ID() {
+	echo wordpress::$post->id;
+}
+
+function the_permalink() {
+	echo wordpress::$post->link;
+}
+
+function the_title_attribute( $args = '' ) {
+echo wordpress::$post->title;
+}
+
+function the_title($before = '', $after = '', $echo = true) {
+echo wordpress::$post->title;
+}
+
+function the_time( $d = '' ) {
+	echo get_the_time( $d );
+}
+
+function get_the_time( $d = '', $post = null ) {
+if (litepublisher::$urlmap->context instanceof tpost) {
+$date = litepublisher::$urlmap->context->posted;
+} elseif (litepublisher::$urlmap->context instanceof tarchives) {
+$date = litepublisher::$urlmap->context->date;
+} elseif (wordpress::$post) {
+$date = wordpress::$post->posted;
+}
+
+return _wpdate($d, $date);
+}
+
+function _wpdate($format, $date) {
+	if ( '' == $format ) return tlocal::date($date);
+return tlocal::translate(date($format, $date), 'datetime');
+}
+
+function the_author() {
+return 'admin';
+}
+
+function the_content($more_link_text = null, $stripteaser = 0) {
+	$content = get_the_content($more_link_text, $stripteaser);
+	$content = str_replace(']]>', ']]&gt;', $content);
+	echo $content;
+}
+
+function get_the_content($more_link_text = null, $stripteaser = 0) {
+if (litepublisher::$urlmap->context instanceof tpost) return litepublisher::$urlmap->context->filtered;
+return wordpress::$post->excerpt;
+}
+
+function the_tags( $before = null, $sep = ', ', $after = '' ) {
+	if ( null === $before )
+		$before = tlocal::$data['default']['tags'];
+	echo get_the_tag_list($before, $sep, $after);
+}
+
+function get_the_tag_list( $before = '', $sep = '', $after = '' ) {
+    $tags = ttags::instance();
+$links = $tags->getlinks(wordpress::$post->tags);
+if (count($links) == 0) return false;
+	return $before . join( $sep, $links) . $after;
+}
+
+function the_category( $separator = '', $parents='', $post_id = false ) {
+	echo get_the_category_list( $separator, $parents, $post_id );
+}
+
+function get_the_category_list( $separator = '', $parents='', $post_id = false ) {
+$post = $post_id ? tpost::instance($post_id) : wordpress::$post;
+if (count($post->categories) == 0) return 'Uncategorized';
+
+	$rel = 'rel="category"';
+	$thelist = '';
+$cats = tcategories::instance();
+$cats->loaditems($post->categories);
+$links = array();
+		foreach ( $post->categories as $id) {
+$item = $cats->getitem($id);
+					$links[] = '<a href="' . litepublisher::$options->url . $item['url'] . '" title="' . esc_attr( sprintf( "View all posts in %s", $item['title']) ) . '" ' . $rel . '>' . $item['title'] .'</a>';
+}
+
+	if ( '' == $separator ) {
+		$thelist .= '<ul class="post-categories">'  . "\n\t<li>";
+$thelist .= implode("</li>\n\t<li>", $links);
+		$thelist .= '</li></ul>';
+	} else {
+$thelist .= implode($separator, $links);
+	}
+	return $thelist;
+}
+
+//empty function
+function edit_post_link() {}
+function get_search_form() {}
+
+function next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
+	echo get_next_posts_link( $label, $max_page );
+}
+
+function get_next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
+	if ( !$max_page ) {
+		$max_page = wordpress::$pages;
+	}
+
+	if ( !$paged )
+		$paged = litepublisher::$urlmap->page;
+
+	$nextpage = intval($paged) + 1;
+	if ( ( empty($paged) || $nextpage <= $max_page) ) {
+		return '<a href="' . litepublisher::$urlmap->nextpage . "\">". preg_replace('/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label) .'</a>';
+	}
+}
+
+function previous_posts_link( $label = '&laquo; Previous Page' ) {
+	echo get_previous_posts_link( $label );
+}
+
+function get_previous_posts_link( $label = '&laquo; Previous Page' ) {
+	if ( litepublisher::$urlmap->page > 1 ) {
+		return '<a href="' . litepublisher::$urlmap->prevpage 
+ . "\">". preg_replace( '/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label ) .'</a>';
+	}
+}
+
+function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
+$title = ttemplate::instance()->gettitle();
+	if ( $display )
+		echo $title;
+	else
+		return $title;
+}
+
+function wp_head() {
+echo ttemplate::instance()->gethead();
+}
+
 function bloginfo($show='') {
 	echo get_bloginfo($show, 'display');
 }
@@ -111,16 +320,15 @@ return $default;
 }
 
 function get_default_feed() {
-return litepublisher::$options->url . 'rss.xml';
+return litepublisher::$options->url . '/rss.xml';
 }
 
 function get_feed_link($feed = '') {
-	if ( false !== strpos($feed, 'comments_') ) return litepublisher::$options->url . 'comments.xml';
+	if ( false !== strpos($feed, 'comments_') ) return litepublisher::$options->url . '/comments.xml';
 
 switch ($feed) {
 case 'rdf':
-return litepublisher::$options->url . 'rdf.xml';
-
+return litepublisher::$options->url . '/rdf.xml';
 
 default:
 return get_default_feed();
@@ -305,7 +513,7 @@ function wp_list_bookmarks($args = '') {
 		'limit' => -1, 'category' => '', 'exclude_category' => '',
 		'category_name' => '', 'hide_invisible' => 1,
 		'show_updated' => 0, 'echo' => 1,
-		'categorize' => 1, 'title_li' => __('Bookmarks'),
+		'categorize' => 1, 'title_li' => 'Bookmarks',
 		'title_before' => '<h2>', 'title_after' => '</h2>',
 		'category_orderby' => 'name', 'category_order' => 'ASC',
 		'class' => 'linkcat', 'category_before' => '<li id="%id" class="%class">',
@@ -345,213 +553,8 @@ if (count($links->items) > 0) {
 }
 
 
-//posts
 
-class wordpress {
-public static $current_post = -1;
-public static $post_count = -1;
-public static $posts;
-public static $post;
-public static $pages;
 
-public static function getcontent() {
-//ob_start();
-$files = array();
-$obj = litepublisher::$urlmap->context;
-if ($obj instanceof tpost) {
-$files[] = 'single.php';
-}elseif ($obj instanceof tmenu) {
-$files[] = 'page.php';
-}
-
-$files[] = 'index.php';
-locate_template($files, true);
-//return ob_get_flush();
-}
-
-public static function have_posts() {
-		if (self::$post_count == -1) {
-$context = ttemplate::instance()->context;
-$items = array();
-if ($context instanceof tpost) {
-self::$posts = array(0 => $context->id);
-self::$post_count  = 1;
-self::$post = $context;
-return true;
-} elseif ($context instanceof thomepage){
-$items = $context->getitems();
-} elseif ($context instanceof tcommontags) {
-$items = $context->itemsposts->getposts($context->id);
-    $posts = litepublisher::$classes->posts;
-    $items = $posts->stripdrafts($items);
-    $items = $posts->sortbyposted($items);
-} elseif ($context instanceof tarchives) {
-$items = $context->getposts();
-}
-
-    $perpage = litepublisher::$options->perpage;
-self::$pages = ceil(count($items)/ $perpage);
-    self::$posts = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-self::$post_count = count(self::$posts);
-}
-
-return self::$current_post + 1 < self::$post_count;
-	}
-
-public static 	function the_post() {
-		if ( self::$current_post == -1 ) // loop has just started
-		self::$post = self::next_post();
-	}
-
-public static function next_post() {
-		self::$current_post++;
-		self::$post = tpost::instance(self::$posts[self::$current_post]);
-		return self::$post;
-	}
-
-}//class
-
-function have_posts() {
-return wordpress::have_posts();
-}
-
-function the_post() {
-return wordpress::the_post();
-}
-
-function the_ID() {
-	echo wordpress::$post->id;
-}
-
-function the_permalink() {
-	echo wordpress::$post->link;
-}
-
-function the_title_attribute( $args = '' ) {
-echo wordpress::$post->title;
-}
-function the_title($before = '', $after = '', $echo = true) {
-echo wordpress::$post->title;
-}
-
-function the_time( $d = '' ) {
-	echo get_the_time( $d );
-}
-
-function get_the_time( $d = '', $post = null ) {
-if (litepublisher::$urlmap->context instanceof tpost) {
-$date = litepublisher::$urlmap->context->posted;
-} elseif (litepublisher::$urlmap->context instanceof tarchives) {
-$date = litepublisher::$urlmap->context->date;
-}
-return _wpdate($d, $date);
-}
-
-function _wpdate($format, $date) {
-	if ( '' == $format ) return tlocal::date($date);
-return tlocal::translate(date($format, $date), 'datetime');
-}
-
-function the_author() {
-return 'admin';
-}
-
-function the_content($more_link_text = null, $stripteaser = 0) {
-	$content = get_the_content($more_link_text, $stripteaser);
-	$content = str_replace(']]>', ']]&gt;', $content);
-	echo $content;
-}
-
-function get_the_content($more_link_text = null, $stripteaser = 0) {
-if (litepublisher::$urlmap->context instanceof tpost) return litepublisher::$urlmap->context->filtered;
-return wordpress::$post->excerpt;
-}
-
-function the_tags( $before = null, $sep = ', ', $after = '' ) {
-	if ( null === $before )
-		$before = tlocal::$data['default']['tags'];
-	echo get_the_tag_list($before, $sep, $after);
-}
-
-function get_the_tag_list( $before = '', $sep = '', $after = '' ) {
-    $tags = ttags::instance();
-$links = $tags->getlinks(wordpress::$post->tags);
-if (count($links) == 0) return false;
-	return $before . join( $sep, $links) . $after;
-}
-
-function the_category( $separator = '', $parents='', $post_id = false ) {
-	echo get_the_category_list( $separator, $parents, $post_id );
-}
-
-function get_the_category_list( $separator = '', $parents='', $post_id = false ) {
-$post = $post_id ? tpost::instance($post_id) : wordpress::$post;
-if (count($post->categories) == 0) return 'Uncategorized';
-
-	$rel = 'rel="category"';
-	$thelist = '';
-$cats = tcategories::instance();
-$cats->loaditems($post->categories);
-$links = array();
-		foreach ( $post->categories as $id) {
-$item = $cats->getitem($id);
-					$links[] = '<a href="' . litepublisher::$options->url . $item['url'] . '" title="' . esc_attr( sprintf( "View all posts in %s", $item['title']) ) . '" ' . $rel . '>' . $item['title'] .'</a>';
-}
-
-	if ( '' == $separator ) {
-		$thelist .= '<ul class="post-categories">'  . "\n\t<li>";
-$thelist .= implode("</li>\n\t<li>", $links);
-		$thelist .= '</li></ul>';
-	} else {
-$thelist .= implode($separator, $links);
-	}
-	return $thelist;
-}
-
-//empty function
-function edit_post_link() {}
-function get_search_form() {}
-
-function next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
-	echo get_next_posts_link( $label, $max_page );
-}
-
-function get_next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
-	if ( !$max_page ) {
-		$max_page = wordpress::$pages;
-	}
-
-	if ( !$paged )
-		$paged = litepublisher::$urlmap->page;
-
-	$nextpage = intval($paged) + 1;
-	if ( ( empty($paged) || $nextpage <= $max_page) ) {
-		return '<a href="' . litepublisher::$urlmap->nextpage . "\">". preg_replace('/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label) .'</a>';
-	}
-}
-
-function previous_posts_link( $label = '&laquo; Previous Page' ) {
-	echo get_previous_posts_link( $label );
-}
-
-function get_previous_posts_link( $label = '&laquo; Previous Page' ) {
-	if ( litepublisher::$urlmap->page > 1 ) {
-		return '<a href="' . litepublisher::$urlmap->prevpage 
- . "\">". preg_replace( '/&([^#])(?![a-z]{1,8};)/', '&#038;$1', $label ) .'</a>';
-	}
-}
-
-function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
-$title = ttemplate::instance()->gettitle();
-	if ( $display )
-		echo $title;
-	else
-		return $title;
-}
-
-function wp_head() {
-echo ttemplate::instance()->gethead();
-}
 
 function language_attributes($doctype = 'html') {
 	$attributes = array();
@@ -1012,4 +1015,12 @@ function comments_popup_link( $zero = false, $one = false, $more = false, $css_c
 }
 }
 
+function get_num_queries() {
+if (!dbversion) return 0;
+return count(litepublisher::$db->history);
+}
+
+	function timer_stop() { }
+
+function wp_enqueue_script( $handle, $src = false, $deps = array(), $ver = false, $in_footer = false ) {}
 ?>
