@@ -137,7 +137,7 @@ return ttemplate::instance()->url . '/style.css';
 }
 
 function get_stylesheet() {
-return get_option('stylesheet'));
+return get_option('stylesheet');
 }
 
 function get_theme_root_uri( $stylesheet_or_template = false ) {
@@ -145,7 +145,7 @@ return litepublisher::$options->files . '/themes';
 }
 
 function get_template_directory_uri() {
-return ttemplate::instance()-->url;
+return ttemplate::instance()->url;
 }
 
 function get_bloginfo_rss($show = '') {
@@ -171,8 +171,8 @@ function wp_parse_args( $args, $defaults = '' ) {
 
 function wp_parse_str( $string, &$array ) {
 	parse_str( $string, $array );
-	if ( get_magic_quotes_gpc()  $array = stripslashes_deep( $array );
-return $array 
+	if ( get_magic_quotes_gpc())  $array = stripslashes_deep( $array );
+return $array;
 }
 
 function stripslashes_deep($value) {
@@ -182,7 +182,7 @@ function stripslashes_deep($value) {
 
 function esc_attr( $text ) {
 //return _wp_specialchars( $text, ENT_QUOTES );
-return @htmlspecialchars( $text, ENT_QUOTES)
+return @htmlspecialchars( $text, ENT_QUOTES);
 }
 
 function wp_list_categories( $args = '' ) {
@@ -253,7 +253,7 @@ $item = $categories->getitem($id);
 
 	}
 
-	if ( $title_li && 'list' == $style  $output .= '</ul></li>';
+	if ( $title_li && 'list' == $style)  $output .= '</ul></li>';
 
 	if ( $echo )
 		echo $output;
@@ -355,7 +355,7 @@ public static $post;
 public static $pages;
 
 public static function getcontent() {
-ob_start()
+//ob_start();
 $files = array();
 $obj = litepublisher::$urlmap->context;
 if ($obj instanceof tpost) {
@@ -366,7 +366,7 @@ $files[] = 'page.php';
 
 $files[] = 'index.php';
 locate_template($files, true);
-return ob_get_flush();
+//return ob_get_flush();
 }
 
 public static function have_posts() {
@@ -374,7 +374,7 @@ public static function have_posts() {
 $context = ttemplate::instance()->context;
 $items = array();
 if ($context instanceof tpost) {
-self::$posts = array(0 => context->id);
+self::$posts = array(0 => $context->id);
 self::$post_count  = 1;
 self::$post = $context;
 return true;
@@ -401,10 +401,9 @@ return self::$current_post + 1 < self::$post_count;
 public static 	function the_post() {
 		if ( self::$current_post == -1 ) // loop has just started
 		self::$post = self::next_post();
-}
 	}
 
-	function next_post() {
+public static function next_post() {
 		self::$current_post++;
 		self::$post = tpost::instance(self::$posts[self::$current_post]);
 		return self::$post;
@@ -442,7 +441,7 @@ function the_time( $d = '' ) {
 function get_the_time( $d = '', $post = null ) {
 if (litepublisher::$urlmap->context instanceof tpost) {
 $date = litepublisher::$urlmap->context->posted;
-elseif (litepublisher::$urlmap->context instanceof tarchives) {
+} elseif (litepublisher::$urlmap->context instanceof tarchives) {
 $date = litepublisher::$urlmap->context->date;
 }
 return _wpdate($d, $date);
@@ -464,7 +463,7 @@ function the_content($more_link_text = null, $stripteaser = 0) {
 }
 
 function get_the_content($more_link_text = null, $stripteaser = 0) {
-if (litepublisher::$urlmap->context is tpost) return litepublisher::$urlmap->context->filtered;
+if (litepublisher::$urlmap->context instanceof tpost) return litepublisher::$urlmap->context->filtered;
 return wordpress::$post->excerpt;
 }
 
@@ -511,7 +510,7 @@ $thelist .= implode($separator, $links);
 
 //empty function
 function edit_post_link() {}
-function get_search_form();
+function get_search_form() {}
 
 function next_posts_link( $label = 'Next Page &raquo;', $max_page = 0 ) {
 	echo get_next_posts_link( $label, $max_page );
@@ -550,9 +549,27 @@ $title = ttemplate::instance()->gettitle();
 		return $title;
 }
 
-
 function wp_head() {
 echo ttemplate::instance()->gethead();
+}
+
+function language_attributes($doctype = 'html') {
+	$attributes = array();
+	$output = '';
+
+	if ( $dir = get_bloginfo('text_direction') )
+		$attributes[] = "dir=\"$dir\"";
+
+	if ( $lang = get_bloginfo('language') ) {
+		if ( get_option('html_type') == 'text/html' || $doctype == 'html' )
+			$attributes[] = "lang=\"$lang\"";
+
+		if ( get_option('html_type') != 'text/html' || $doctype == 'xhtml' )
+			$attributes[] = "xml:lang=\"$lang\"";
+	}
+
+	$output = implode(' ', $attributes);
+	echo $output;
 }
 
 function is_single ($post = '') {
@@ -586,8 +603,11 @@ return false;
 function is_paged () {
 return litepublisher::$urlmap->page > 1;
 }
+function is_page ($page = '') {
+return litepublisher::$urlmap->context instanceof tmenu;
+}
 
-function is_attachment() }
+function is_attachment() {
 return false;
 }
 
@@ -673,7 +693,7 @@ function get_body_class( $class = '' ) {
 		$pageID = litepublisher::$urlmap->context->id;
 
 		$classes[] = 'page-id-' . $pageID;
-
+}
 	if ( litepublisher::$urlmap->page > 1 ) {
 		$classes[] = 'paged-' . litepublisher::$urlmap->page;
 
@@ -689,8 +709,6 @@ function get_body_class( $class = '' ) {
 			$classes[] = 'date-paged-' . litepublisher::$urlmap->page;
 		elseif ( is_author() )
 			$classes[] = 'author-paged-' . litepublisher::$urlmap->page;
-		elseif ( is_search() )
-			$classes[] = 'search-paged-' . $page;
 	}
 
 	if ( !empty($class) ) {
@@ -700,6 +718,36 @@ function get_body_class( $class = '' ) {
 	}
 
 return array_map('esc_attr', $classes);
+}
+
+function post_class( $class = '', $post_id = null ) {
+	// Separates classes with a single space, collates classes for post DIV
+	echo 'class="' . join( ' ', get_post_class( $class, $post_id ) ) . '"';
+}
+
+function get_post_class( $class = '', $post_id = null ) {
+	$post = wordpress::$post;
+
+	$classes = array();
+
+	if ( empty($post) )
+		return $classes;
+
+	$classes[] = 'post-' . $post->id;
+	$classes[] = 'post';
+
+	// hentry for hAtom compliace
+	$classes[] = 'hentry';
+
+	// Tags
+	if ( !empty($class) ) {
+		if ( !is_array( $class ) )
+			$class = preg_split('#\s+#', $class);
+		$classes = array_merge($classes, $class);
+	}
+
+	$classes = array_map('esc_attr', $classes);
+	return $classes;
 }
 
 function get_header( $name = null ) {
@@ -712,7 +760,6 @@ function get_header( $name = null ) {
 	if ('' == locate_template($templates, true))
 		load_template( get_theme_root() . '/default/header.php');
 }
-
 
 function get_footer( $name = null ) {
 	$templates = array();
@@ -740,15 +787,15 @@ function locate_template($template_names, $load = false) {
 	if (!is_array($template_names))
 		return '';
 
-	$located = '';
+$located = '';
 $path = ttemplate::instance()->path;
+$path = litepublisher::$paths->home . "themes\\wpdefault\\";
 	foreach($template_names as $template_name) {
 		if ( file_exists($path . $template_name)) {
 			$located = $path . $template_name;
 			break;
 		}
 	}
-
 	if ($load && '' != $located)
 		load_template($located);
 
@@ -758,6 +805,7 @@ $path = ttemplate::instance()->path;
 function load_template($_template_file) {
 	require_once($_template_file);
 }
+
 
 function single_cat_title($prefix = '', $display = true ) {
 return litepublisher::$urlmap->context->title;
@@ -780,8 +828,7 @@ function wp_list_pages($args = '') {
 		if ( $r['title_li'] )
 			$output .= '<li class="pagenav">' . $r['title_li'] . '<ul>';
 
-
-    $tml = 		'<li><a href="%1$s" title="%2$s">%2$s</a></li>';
+   $tml = 		'<li><a href="%1$s" title="%2$s">%2$s</a></li>';
 	$menus = tmenus::instance();
     foreach ($menus->tree as $id => $items) {
       $item = $menus->items[$id];
@@ -796,6 +843,7 @@ function wp_list_pages($args = '') {
 	else
 		return $output;
 }
+
 function wp_register() {}
 function wp_loginout() {}
 
@@ -815,7 +863,7 @@ $std = tstdwidgets::instance();
 echo $result;    
 }
 
-function wp_footer() {{
+function wp_footer() {
 echo ttemplate::instance()->footer;
 }
 
@@ -830,8 +878,10 @@ return litepublisher::$urlmap->context->commentscount > 0;
 function comments_number( $zero = false, $one = false, $more = false, $deprecated = '' ) {
 echo ttemplatecomments::instance()->getcount( litepublisher::$urlmap->context->commentscount);
 }
+
 function previous_comments_link() {}
 function next_comments_link() {}
+
 
 function wp_list_comments($args = array(), $comments = null ) {
 	global $comment_alt, $comment_depth, $comment_thread_alt, $overridden_cpage, $in_comment_loop;
@@ -844,48 +894,34 @@ function wp_list_comments($args = array(), $comments = null ) {
 
 	$r = wp_parse_args( $args, $defaults );
 
-    $comments = tcomments::instance($wordpress::$post->id);
-echo $comments->getcontentlist($tml, 'alt', '');
-
 		if ( 'div' == $r['style'] ) {
-			$tag = 'div';
-			$add_below = 'comment';
-
-<div $class id="comment-$comment.id">
+$tml = '<div $class id="comment-$comment.id">
 		<div class="comment-author vcard">
 <cite class="fn">$comment.authorlink</cite> <span class="says">says:</span>
 		</div>
-
+		<div class="comment-meta commentmetadata">
+<a href="$coment.link">$comment.date $lang.attime $comment.time</a>
+</div>
+$comment.content
+</div>';
 		} else {
-			$tag = 'li';
-			$add_below = 'div-comment';
-
 $class1 = 'class="alt"';
-
-<li $class id="comment-$comment.id">
+$tml = '<li $class id="comment-$comment.id">
 		<div id="div-comment-$comment.id" class="comment-body">
 <cite class="fn">$comment.authorlink</cite> <span class="says">says:</span>
 		</div>
-
-
-														<div class="commentmetadata">
-<a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a>
+		<div class="comment-meta commentmetadata">
+<a href="$coment.link">$comment.date $lang.attime $comment.time</a>
 </div>
-														<span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
-<p  id="commentcontent-$comment.id">
-															$comment.content
-														</p>
-												</li>
+$comment.content
+</li>';
+}
 
-
-/////
-		if ( 'div' == $r['style'] )
-			echo "</div>\n";
-		else
-			echo "</li>\n";
-	}
-
+$class1 =comment_class('', null, null, false);
+$class2 =comment_class('', null, null, false);
 	$in_comment_loop = false;
+    $c = tcomments::instance(wordpress::$post->id);
+echo $c->getcontentlist($tml, $class1, $class2);
 }
 
 function comment_class( $class = '', $comment_id = null, $post_id = null, $echo = true ) {
@@ -901,12 +937,9 @@ function get_comment_class( $class = '', $comment_id = null, $post_id = null ) {
 	global $comment_alt, $comment_depth, $comment_thread_alt;
 	$classes = array();
 	$classes[] = 'comment';
-	if ( empty($comment_alt) )
-		$comment_alt = 0;
-	if ( empty($comment_depth) )
-		$comment_depth = 1;
-	if ( empty($comment_thread_alt) )
-		$comment_thread_alt = 0;
+	if ( empty($comment_alt) ) $comment_alt = 0;
+	if ( empty($comment_depth) ) $comment_depth = 1;
+	if ( empty($comment_thread_alt) ) $comment_thread_alt = 0;
 
 	if ( $comment_alt % 2 ) {
 		$classes[] = 'odd';
@@ -937,9 +970,9 @@ function get_comment_class( $class = '', $comment_id = null, $post_id = null ) {
 	}
 
 	$classes = array_map('esc_attr', $classes);
-
 	return $classes;
 }
+
 
 function get_comment_author_link() {
 global $comment;
@@ -953,6 +986,30 @@ return $coment->link;
 
 function get_comment_date( $d = '' ) {
 	global $comment;
-return _wpdate($d, $comment->date);
+return _wpdate($d, $comment->posted);
 }
 
+function get_comment_time( $d = '', $gmt = false, $translate = true ) {
+	global $comment;
+	if ( '' == $d ) return $comment->time;
+return date($d, $comment->posted);
+}
+
+function get_comment_text() {
+	global $comment;
+return $comment->content;
+}
+
+function comment_text() {
+echo get_comment_text();
+}
+
+function comments_popup_link( $zero = false, $one = false, $more = false, $css_class = '', $none = false ) {
+	$number = ttemplatecomments::instance()->getcount(wordpress::$post->commentscount);
+
+	if ( 0 == $number && !wordpress::$post->commentsenabled ) {
+		echo '<span' . ((!empty($css_class)) ? ' class="' . esc_attr( $css_class ) . '"' : '') . '>' . $none . '</span>';
+}
+}
+
+?>
