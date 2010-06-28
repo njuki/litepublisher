@@ -150,7 +150,7 @@ public function getposts() {
       $item = $this->items[$this->date];
 return $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
     } else {
-      if (!isset($this->items[$this->date]['posts'])) return array()p;
+      if (!isset($this->items[$this->date]['posts'])) return array();
 return $this->items[$this->date]['posts'];
     }
 }  

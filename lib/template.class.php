@@ -110,7 +110,9 @@ class ttemplate extends tevents {
     if (isset($context->tmlfile) && ($context->tmlfile != '')) $ttmlfile = $context->tmlfile;
     $theme = $this->loadtheme($themename, $tmlfile);
     $result = $this->httpheader();
-    $result  .= $theme->parse($theme->theme);
+    //$result  .= $theme->parse($theme->theme);
+require_once(litepublisher::$paths->lib . 'wordpress.functions.php');
+$result .= wordpress::getcontent();
     if ($context instanceof itemplate2) $context->afterrequest($result);
     return $result;
   }
