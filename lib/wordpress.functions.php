@@ -10,10 +10,10 @@ public static $pages;
 public static function getcontent() {
 ob_start();
 $files = array();
-$obj = litepublisher::$urlmap->context;
-if ($obj instanceof tpost) {
+$context = litepublisher::$urlmap->context;
+if ($context instanceof tpost) {
 $files[] = 'single.php';
-}elseif ($obj instanceof tmenu) {
+}elseif ($context instanceof tmenu) {
 $files[] = 'page.php';
 }
 
@@ -312,8 +312,6 @@ return $options->url;
 case 'blogname':
 return $options->name;
 
-
-
 		case 'description':
 case 'blogdescription':
 return $options->description;
@@ -326,6 +324,9 @@ return 'style.css';
 
 case 'admin_email':
 return $options->email;
+
+case 'comment_registration':
+return false;
 
 default:
 return $default;
@@ -363,6 +364,10 @@ return get_option('stylesheet');
 
 function get_theme_root_uri( $stylesheet_or_template = false ) {
 return litepublisher::$options->files . '/themes';
+}
+
+function get_theme_root( $stylesheet_or_template = false ) {
+return litepublisher::$paths->home . 'themes';
 }
 
 function get_template_directory_uri() {
@@ -799,6 +804,15 @@ function get_sidebar( $name = null ) {
 		load_template( get_theme_root() . '/default/sidebar.php');
 }
 
+function comments_template( $file = '/comments.php', $separate_comments = false ) {
+if (!(litepublisher::$urlmap->context instanceof tpost)) return;
+	$templates = array();
+	if ( !empty($file) ) $templates[] = $file;
+	$templates[] = "comments.php";
+	if ('' == locate_template($templates, true))
+		load_template( get_theme_root() . '/default/comments.php');
+}
+
 function locate_template($template_names, $load = false) {
 	if (!is_array($template_names))
 		return '';
@@ -813,7 +827,7 @@ $path = litepublisher::$paths->home . "themes\\wpdefault\\";
 		}
 	}
 	if ($load && '' != $located)
-		load_template($located);
+		require_once($located);
 
 	return $located;
 }
@@ -821,7 +835,6 @@ $path = litepublisher::$paths->home . "themes\\wpdefault\\";
 function load_template($_template_file) {
 	require_once($_template_file);
 }
-
 
 function single_cat_title($prefix = '', $display = true ) {
 return litepublisher::$urlmap->context->title;
@@ -916,21 +929,21 @@ $tml = '<div $class id="comment-$comment.id">
 <cite class="fn">$comment.authorlink</cite> <span class="says">says:</span>
 		</div>
 		<div class="comment-meta commentmetadata">
-<a href="$coment.link">$comment.date $lang.attime $comment.time</a>
+<a href="$comment.url">$comment.date $lang.attime $comment.time</a>
 </div>
-$comment.content
+<p>$comment.content</p>
 </div>';
 		} else {
-$class1 = 'class="alt"';
 $tml = '<li $class id="comment-$comment.id">
 		<div id="div-comment-$comment.id" class="comment-body">
+		<div class="comment-author vcard">
 <cite class="fn">$comment.authorlink</cite> <span class="says">says:</span>
 		</div>
 		<div class="comment-meta commentmetadata">
-<a href="$coment.link">$comment.date $lang.attime $comment.time</a>
+<a href="$comment.url">$comment.date $lang.attime $comment.time</a>
 </div>
-$comment.content
-</li>';
+<p>$comment.content<p>
+</div></li>';
 }
 
 $class1 =comment_class('', null, null, false);
@@ -1013,7 +1026,7 @@ return date($d, $comment->posted);
 
 function get_comment_text() {
 	global $comment;
-return $comment->content;
+return '<p>' . $comment->content . '</p>';
 }
 
 function comment_text() {
@@ -1058,6 +1071,42 @@ return wordpress::$post->pingenabled;
 }
 
 function trackback_url($deprecated = true) {
-
+echo $_SERVER['REQUEST_URI'];
 }
+
+function comment_form_title( $noreplytext = false, $replytext = false, $linktoparent = TRUE ) {
+$lang = tlocal::instance('comment');
+	if ( false === $noreplytext ) $noreplytext = $lang->leavereply;
+		echo $noreplytext;
+}
+
+function get_cancel_comment_reply_link($text = '') {
+	if ( empty($text)  ) $text = 'Click here to cancel reply.';
+	$style = ' style="display:none;"';
+	$link = $_SERVER['REQUEST_URI'];
+	return '<a rel="nofollow" id="cancel-comment-reply-link" href="' . $link . '"' . $style . '>' . $text . '</a>';
+}
+
+function cancel_comment_reply_link($text = '') {
+	echo get_cancel_comment_reply_link($text);
+}
+
+function is_user_logged_in() {
+return false;
+}
+
+function allowed_tags() {}
+
+function comment_id_fields() {
+$id = wordpress::$post->id;
+	echo "<input type='hidden' name='comment_post_ID' value='$id' id='comment_post_ID' />\n";
+	//echo "<input type='hidden' name='comment_parent' id='comment_parent' value='$replytoid' />\n";
+}
+
+function do_action($tag, $arg = '') {
+if ($tag == 'comment_form') {
+echo '<input type="hidden" name="antispam" value="_Value' . strtotime ('+1 hour') . '" />';
+}
+}
+
 ?>
