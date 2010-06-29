@@ -440,8 +440,8 @@ function wp_list_categories( $args = '' ) {
 
 	$output = '';
 	if ( $title_li && 'list' == $style ) $output = '<li class="categories">' . $r['title_li'] . '<ul>';
-
-	if ( empty( $categories ) ) {
+$cats = tcategories::instance();
+	if ($cats->count == 0 ) {
 		if ( 'list' == $style )
 			$output .= '<li>No categories</li>';
 		else
@@ -463,16 +463,16 @@ $sortnames = array(
 'term_group' => 'title'
 );
 $limit = isset($number) ? $number : 0;
-$categories = tcategories::instance();
-$items = $categories->getsorted($sortnames[$r['orderby']], $limit);
+
+$items = $cats->getsorted($sortnames[$r['orderby']], $limit);
 $theme = ttheme::instance();
-    $tml = '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
+    $tml = '<li class="cat-item cat-item-$id"><a href="$options.url$url" title="View all posts filed under $title">$icon$title</a>$count</li>';
     $args = targs::instance();
     $args->count = '';
 foreach ($items as $id) {
-$item = $categories->getitem($id);
+$item = $cats->getitem($id);
       $args->add($item);
-      $args->icon = litepublisher::$options->icondisabled ? '' : $this->geticonlink($id);
+      $args->icon = litepublisher::$options->icondisabled ? '' : $cats->geticonlink($id);
       if ($show_count) $args->count = sprintf(' (%d)', $item['itemscount']);
       $output .= $theme->parsearg($tml,$args);
 }
