@@ -46,6 +46,7 @@ class ttheme extends tevents {
     $this->name = '';
     $this->tmlfile = 'index';
     $this->parsing = array();
+$this->data['type'] = 'litepublisher';
     $this->data['theme'] = '';
     $this->data['title'] = '';
     $this->data['menu'] = array();
@@ -64,12 +65,13 @@ class ttheme extends tevents {
     self::$instances[$name][$tmlfile] = $this;
     $datafile = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (file_exists($datafile))  return parent::load();
-    
-    $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . "$tmlfile.tml";
-    if (!@file_exists($filename)) $this->error("Theme file $filename not exists");
+
     $parser = tthemeparser::instance();
-    $parser->parse($filename, $this);
-    $this->save();
+    if ($parser->parse($this)) {
+$this->save();
+}else {
+$this->error("Theme file $filename not exists");
+}
   }
   
   public function __tostring() {
@@ -149,6 +151,17 @@ class ttheme extends tevents {
     $s = strtr ($s, $args->data);
     return $this->parse($s);
   }
+
+public function gethtml($context) {
+    self::$vars['context'] = $context;
+switch ($this->type) {
+case 'litepublisher':
+return $this->parse($this->theme);
+
+case 'wordpress':
+return wordpress::getcontent();
+}
+}
   
   public function getnotfount() {
     return $this->parse($this->nocontent);

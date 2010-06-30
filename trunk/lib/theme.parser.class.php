@@ -50,16 +50,21 @@ class tthemeparser extends tdata {
     $s));
   }
   
-  public function parse($filename, $theme) {
+  public function parse(ttheme $theme) {
     $this->warnings = array();
-    
+
+$filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $theme->tmlfile . '.tml';
+    if (!@file_exists($filename))  return $this->checktheme($theme);
+
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
+$theme->type = 'litepublisher';
     $theme->title = $this->parsetitle($s);
     $theme->menu = $this->parsemenu($this->gettag($s, 'menulist', '$template.menu'));
     $theme->content = $this->parsecontent($this->requiretag($s, 'content', '$template.content'));
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
+return true;
   }
   
   private function parsetitle(&$s) {
@@ -344,13 +349,18 @@ class tthemeparser extends tdata {
   public function getabout($name) {
     if (!isset($this->abouts)) $this->abouts = array();
     if (!isset($this->abouts[$name])) {
-      $about = parse_ini_file(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
-      //слить языковую локаль в описание
+if (      $about = parse_ini_file(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini', true)) {
+      //join languages
       if (isset($about[litepublisher::$options->language])) {
         $about['about'] = $about[litepublisher::$options->language] + $about['about'];
       }
       $this->abouts[$name] = $about['about'];
-    }
+} elseif ($about =  $this->get_about_wordpress_theme($name)){
+      $this->abouts[$name] = $about;
+} else {
+      $this->abouts[$name] = false;
+}
+}
     return $this->abouts[$name];
   }
   
@@ -433,6 +443,78 @@ class tthemeparser extends tdata {
     }
   }
   
+
+//wordpress
+public function checktheme(ttheme $theme) {
+if ($about = $this->get_about_wordpress_theme($theme->name)) {
+$theme->type = 'wordpress';
+return true;
+}
+return false;
+}
+
+public function get_about_wordpress_theme($name) {
+ $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'style.css';
+if (!@file_exists($filename)) return false;
+$data = $this->wp_get_theme_data($filename);
+$about = array(
+'author' => $data['Author'],
+'url' => $data['URI'] != ''  ? $data['URI'] :$data['AuthorURI'],
+'description' => $data['Description'],
+'version' => $data['Version']
+);
+
+return $about;
+}
+
+public function wp_get_theme_data( $theme_file ) {
+	$default_headers = array( 
+		'Name' => 'Theme Name', 
+		'URI' => 'Theme URI', 
+		'Description' => 'Description', 
+		'Author' => 'Author', 
+		'AuthorURI' => 'Author URI',
+		'Version' => 'Version', 
+		'Template' => 'Template', 
+		'Status' => 'Status', 
+		'Tags' => 'Tags'
+		);
+
+	$theme_data = $this->wp_get_file_data( $theme_file, $default_headers, 'theme' );
+
+	$theme_data['Name'] = $theme_data['Title'] = strip_tags( $theme_data['Name']);
+	$theme_data['URI'] = strip_tags( $theme_data['URI'] );
+	$theme_data['AuthorURI'] = strip_tags( $theme_data['AuthorURI'] );
+	$theme_data['Version'] = strip_tags( $theme_data['Version'], $themes_allowed_tags );
+
+	if ( $theme_data['Author'] == '' ) {
+		$theme_data['Author'] = 'Anonymous';
+}
+
+	return $theme_data;
+}
+
+public function wp_get_file_data( $file, $default_headers, $context = '' ) {
+	$fp = fopen( $file, 'r' );
+	$file_data = fread( $fp, 8192 );
+	fclose( $fp );
+
+	foreach ( $default_headers as $field => $regex ) {
+		preg_match( '/' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, ${$field});
+		if ( !empty( ${$field} ) )
+			${$field} = _cleanup_header_comment( ${$field}[1] );
+		else
+			${$field} = '';
+	}
+
+return compact( array_keys($default_headers) );
+}
+
 }//class
+
+function _cleanup_header_comment($str) {
+	return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
+}
+
 
 ?>

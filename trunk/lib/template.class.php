@@ -102,17 +102,15 @@ class ttemplate extends tevents {
   public function request($context) {
     $this->context = $context;
     $this->itemplate = $context instanceof itemplate;
-    ttheme::$vars['context'] = $context;
     $themename = $this->theme;
     if (litepublisher::$urlmap->adminpanel)       $themename = $this->admintheme;
     if (isset($context->theme) && ($context->theme != '')) $themename = $context->theme;
     $tmlfile = 'index';
     if (isset($context->tmlfile) && ($context->tmlfile != '')) $ttmlfile = $context->tmlfile;
     $theme = $this->loadtheme($themename, $tmlfile);
+if (($theme->type != 'litepublisher') && litepublisher::$urlmap->adminpanel) $theme = $this->loadtheme('default', $tmlfile);
     $result = $this->httpheader();
-    //$result  .= $theme->parse($theme->theme);
-require_once(litepublisher::$paths->lib . 'wordpress.functions.php');
-$result .= wordpress::getcontent();
+    $result  .= $theme->gethtml($context);
     if ($context instanceof itemplate2) $context->afterrequest($result);
     return $result;
   }
