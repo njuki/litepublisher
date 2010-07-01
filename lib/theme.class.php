@@ -123,7 +123,7 @@ $this->error("Theme file $filename not exists");
       litepublisher::$options->trace("Object $name not found");
       return '';
     }
-    
+
     try {
     return $var->{$prop};
     } catch (Exception $e) {
@@ -246,6 +246,12 @@ return wordpress::getcontent();
     return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
   }
   
+
+public static function clearcache() {
+tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
+    litepublisher::$urlmap->clearcache();
+}
+
 }//class
 
 class tthemeprops {
