@@ -377,29 +377,23 @@ if (      $about = parse_ini_file(litepublisher::$paths->themes . $name . DIRECT
     $template->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  ;
     $template->url = litepublisher::$options->url  . '/themes/'. $template->theme;
     
-    $theme = ttheme::instance();
-    $this->parse($template->path . 'index.tml', $theme);
-    $theme->basename = 'themes' . DIRECTORY_SEPARATOR . "$template->theme.index";
-    $theme->save();
-    $template->save();
-    
+$theme = ttheme::getinstance($name, $tmlfile);
+
     $about = $this->getabout($name);
     if (!empty($about['about']['pluginclassname'])) {
       $plugins = tplugins::instance();
       $plugins->addext($name, $about['about']['pluginclassname'], $about['about']['pluginfilename']);
     }
     
-    $urlmap = turlmap::instance();
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function reparse() {
-    $template = ttemplate::instance();
     $theme = ttheme::instance();
-    $this->parse($template->path . 'index.tml', $theme);
-    $theme->save();
-    $urlmap = turlmap::instance();
-    $urlmap->clearcache();
+$theme->lock();
+    $this->parse($theme);
+ttheme::clearcache();
+$theme->unlock();
   }
   
   private function getdefaultconfirmform() {
