@@ -127,6 +127,7 @@ $this->error("Theme file $filename not exists");
     try {
     return $var->{$prop};
     } catch (Exception $e) {
+//var_dump($this->parsing[count($this->parsing)-1]);
       litepublisher::$options->handexception($e);
     }
     return '';
@@ -148,8 +149,8 @@ $this->error("Theme file $filename not exists");
   }
   
   public function parsearg($s, targs $args) {
-    $s = strtr ($s, $args->data);
-    return $this->parse($s);
+    $s = $this->parse($s);
+return strtr ($s, $args->data);
   }
 
 public function gethtml($context) {

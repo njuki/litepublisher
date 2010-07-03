@@ -270,28 +270,21 @@ class tcodedocfilter extends titems {
     $doc = $ini['document'];
     $wiki = twikiwords::instance();
     $lang = tlocal::instance('codedoc');
-    $args = targs::instance();
-    $post->title = sprintf($lang->interfacetitle, $class);
-    $id = $wiki->add($class, $post->id);
-    $args->interface= sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
-    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$options->url, $doc['source']);
-    
+    $post->title = $doc['title'];
+if ($post->id == 0) $post->url = '';
+
     $content = $this->getdescription($post, $doc['description']);
     $post->excerpt = $content;
-    
-    $content .= $this->convertitems($post, $ini, 'method', 'methods');
+        $post->excerpt = tcontentfilter::GetExcerpt($s, 250);
     
     if (!empty($doc['example'])) {
-      $headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
-      $content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
+      $content = sprintf('<h2><a href="#example">%2$s</a></h2>%1$s<h2><a name="example"></a>%2$s</h2>', 
+$content, $lang->example);
       $content .= highlight_string($doc['example'], true);
     }
     
-    $args->headers = $headers;
-    $args->content = $content;
-    $post->filtered = $this->html->interface($args);
+    $post->filtered = $content;
   }
-  
   
   public static function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
