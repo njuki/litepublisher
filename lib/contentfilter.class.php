@@ -103,15 +103,15 @@ class tcontentfilter extends tevents {
       return $content;
     }
     
-    $result = trim($content);
-    $result = self::auto_p($result);
+    $result = str_replace(array("\r\n", "\r"), "\n", trim($content));
     $result = $this->replacecode($result);
+    $result = self::auto_p($result);
     $this->callevent('afterfilter', array(&$result));
     return $result;
   }
   
   public function replacecode($s) {
-    $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'CallbackReplaceCode'), $s);
+    $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'callback_replace_code'), $s);
     if ($this->phpcode) {
       $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array(&$this, 'callback_replace_php'), $s);
     } else {
@@ -120,27 +120,27 @@ class tcontentfilter extends tevents {
     return $s;
   }
   
-  public function callback_fix_php($m) {
-    return str_replace("<br />\n", "\n", $m[0]);
-  }
-  
-  public static function specchars($s) {
-    $s = str_replace("<br />\n", "\n", $s);
-    return str_replace(
-    array('"', "'", '$'),
-    array('&quot;', '&#39;', '&#36;'),
+  public static function replace_code($s) {
+    $s = str_replace(
+    array('"', "'", '$', "\n", ' '),
+    array('&quot;', '&#39;', '&#36;', '<br />', '&nbsp;'),
     htmlspecialchars($s));
+    return sprintf('<code>%s</code>', $s);
   }
   
-  public function CallbackReplaceCode($found) {
-    return sprintf('<code><pre>%s</pre></code>', self::specchars($found[1]));
+  public function callback_replace_code($found) {
+return self::replace_code($found[1]);
   }
   
   public function callback_replace_php($found) {
-    return sprintf('<code><pre>%s</pre></code>', self::specchars($found[0]));
+return self::replace_code($found[0]);
   }
-  
-  public static function getexcerpt($content, $len) {
+
+  public function callback_fix_php($m) {
+    return str_replace("\n", ' ', $m[0]);
+  }
+
+   public static function getexcerpt($content, $len) {
     $result = strip_tags($content);
     if (strlen($result) <= $len) return $result;
     $chars = "\n ,.;!?:(";
@@ -166,8 +166,7 @@ class tcontentfilter extends tevents {
   }
   
   // uset in tthemeparser
-  
-  public static function getidtag($tag, $s) {
+    public static function getidtag($tag, $s) {
     if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {
       return $m[1];
     }
