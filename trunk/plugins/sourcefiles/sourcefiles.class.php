@@ -40,7 +40,15 @@ public function gethead() { }
   public function getcont() {
     $updir = $this->item['filename'] == '' ? '' : sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li>', litepublisher::$options->url, $this->item['dir']);
     $theme = ttheme::instance();
+    if (strend($this->item['filename'], '.php')) {
+$dir = str_replace('/', DIRECTORY_SEPARATOR, $this->item['dir']);
+    $realdir = litepublisher::$paths->home;
+$realdir .= $dir == '' : 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
+    $realfile = $realdir . DIRECTORY_SEPARATOR. $this->item['filename'] ;
+    return sprintf($theme->content->simple, $updir . highlight_file($realfile , true));
+} else {
     return sprintf($theme->content->simple, $updir . $this->item['content']);
+}
   }
   
   public function add($dir, $filename, $realdir = '') {
@@ -74,7 +82,7 @@ public function gethead() { }
   }
   
   public function syntax($filename) {
-    if (strend($filename, '.php')) return highlight_file($filename, true);
+    if (strend($filename, '.php')) return '';
     $source = file_get_contents($filename);
     $ext = substr($filename, -3);
     if ($ext == 'tml') $ext = 'htm';
