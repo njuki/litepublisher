@@ -56,7 +56,8 @@ class tupdater extends tevents {
   
   public function autoupdate() {
     $lang = tlocal::instance('service');
-    $this->createbackup();
+    $backuper = tbackuper::instance();
+    $backuper->createbackup();
     $result = $this->download($this->latest);
     if ($result === true) {
       $result = $lang->successdownload;
@@ -80,14 +81,6 @@ class tupdater extends tevents {
     }
     //return litepublisher::$options->version + 0.01;
     return false;
-  }
-  
-  public function createbackup(){
-    $backuper = tbackuper::instance();
-    $s = $backuper->getpartial(true, true, true);
-    $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d') . '.tar.gz';
-    file_put_contents($filename, $s);
-    chmod($filename, 0666);
   }
   
   public function download($version) {

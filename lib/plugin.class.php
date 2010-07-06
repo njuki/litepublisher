@@ -12,7 +12,7 @@ class tplugin extends tevents {
     parent::create();
     $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
   }
-  
+
 }
 
 ?>

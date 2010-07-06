@@ -6,13 +6,13 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tbackup2emailInstall($self) {
+function tbackup2dropboxInstall($self) {
   $cron = tcron::instance();
   $self->idcron = $cron->add('week', get_class($self), 'send', null);
   $self->save();
 }
 
-function tbackup2emailUninstall(&$self) {
+function tbackup2dropboxUninstall(&$self) {
   $cron = tcron::instance();
   $cron->remove($self->idcron);
 }
