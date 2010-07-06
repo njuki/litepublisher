@@ -17,7 +17,7 @@ class tbackup2dropbox extends tplugin {
     $this->data['idcron'] = 0;
 $this->data['email'] = '';
 $this->data['password'] = '';
-$this->data['dir'] = '';
+$this->data['dir'] = '/';
   }
   
   public function send() {
@@ -29,6 +29,7 @@ require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'DropboxUploader.php');
 
         $uploader = new DropboxUploader($this->email, $this->password);
 try {
+set_time_limit(600);
         $uploader->upload($filename, $this->dir);
 unlink($filename);
     } catch (Exception $e) {
