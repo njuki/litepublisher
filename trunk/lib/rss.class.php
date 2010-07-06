@@ -100,6 +100,7 @@ class trss extends tevents {
     $comment = new tarray2prop($a);
     foreach ($recent  as $item) {
       $comment->array = $item;
+        //$comment->posturl = $post->url;
       $this->AddRSSComment($comment, $title . $comment->title);
     }
   }
@@ -130,8 +131,6 @@ class trss extends tevents {
       foreach ($items as $id) {
         $item = $comments->items[$id];
         $item['id'] = $id;
-        $item['posturl'] =
-        
         $author = $comusers->items[$item['author']];
         $item['name'] = $author['name'];
         $item['email'] = $author['email'];
@@ -203,7 +202,7 @@ class trss extends tevents {
   }
   
   public function AddRSSComment($comment, $title) {
-    $link = "litepublisher::$options->url$comment->posturl#comment-$comment->id";
+    $link = litepublisher::$options->url . $comment->posturl . '#comment-' . $comment->id;
     $date = is_int($comment->posted) ? $comment->posted : strtotime($comment->posted);
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $title);
