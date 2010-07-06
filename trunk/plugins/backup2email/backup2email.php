@@ -21,7 +21,7 @@ class tbackup2email extends tplugin {
     $backuper = tbackuper::instance();
     $s = $backuper->getpartial(false, false, false);
     $date = date('d-m-Y');
-    $filename = litepublisher::$domain . ".$date.zip";
+    $filename = litepublisher::$domain . ".$date.tar.gz";
     
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $ini = parse_ini_file($dir . 'about.ini');
