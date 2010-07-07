@@ -129,18 +129,18 @@ class tcontentfilter extends tevents {
   }
   
   public function callback_replace_code($found) {
-return self::replace_code($found[1]);
+    return self::replace_code($found[1]);
   }
   
   public function callback_replace_php($found) {
-return self::replace_code($found[0]);
+    return self::replace_code($found[0]);
   }
-
+  
   public function callback_fix_php($m) {
     return str_replace("\n", ' ', $m[0]);
   }
-
-   public static function getexcerpt($content, $len) {
+  
+  public static function getexcerpt($content, $len) {
     $result = strip_tags($content);
     if (strlen($result) <= $len) return $result;
     $chars = "\n ,.;!?:(";
@@ -166,7 +166,7 @@ return self::replace_code($found[0]);
   }
   
   // uset in tthemeparser
-    public static function getidtag($tag, $s) {
+  public static function getidtag($tag, $s) {
     if (preg_match("/<$tag\\s*.*?id\\s*=\\s*['\"]([^\"'>]*)/i", $s, $m)) {
       return $m[1];
     }

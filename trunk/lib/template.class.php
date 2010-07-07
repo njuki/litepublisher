@@ -69,19 +69,23 @@ class ttemplate extends tevents {
   
   protected function settheme($name) {
     if (($this->theme != $name) && $this->theme_exists($name)) {
-$this->lock();
-      $parser = tthemeparser::instance();
-      $parser->changetheme($this->theme, $name);
-$this->unlock();
-      $this->themechanged();
+      try {
+        $this->lock();
+        $parser = tthemeparser::instance();
+        $parser->changetheme($this->theme, $name);
+        $this->unlock();
+        $this->themechanged();
+      } catch (Exception $e) {
+        litepublisher::$options->handexception($e);
+      }
     }
   }
   
   private function loadtheme($name, $tmlfile) {
-if (!$this->theme_exists($name)) {
-$name = $this->theme;
-}
-/*
+    if (!$this->theme_exists($name)) {
+      $name = $this->theme;
+    }
+    /*
     if (!@file_exists($path . "$tmlfile.tml")) {
       if (($tmlfile != 'index') && @file_exists($this->path . "index.tml")) {
         $tmlfile = 'index';
@@ -100,32 +104,32 @@ $name = $this->theme;
       }
     }
     */
-$tmlfile = 'index';
+    $tmlfile = 'index';
     $this->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$options->files . "/themes/$name";
     return ttheme::getinstance($name, $tmlfile);
   }
-
-public function getcontexttheme($context) {
+  
+  public function getcontexttheme($context) {
     $themename = $this->theme;
     if (litepublisher::$urlmap->adminpanel)       $themename = $this->admintheme;
     if (isset($context->theme) && ($context->theme != '')) $themename = $context->theme;
     $tmlfile = 'index';
     if (isset($context->tmlfile) && ($context->tmlfile != '')) $ttmlfile = $context->tmlfile;
     $theme = $this->loadtheme($themename, $tmlfile);
-if (($theme->type != 'litepublisher') && litepublisher::$urlmap->adminpanel) {
-$theme = $this->loadtheme('default', $tmlfile);
-}
-
-litepublisher::$classes->instances[get_class($theme)] = $theme;
-return $theme;
-}
-
+    if (($theme->type != 'litepublisher') && litepublisher::$urlmap->adminpanel) {
+      $theme = $this->loadtheme('default', $tmlfile);
+    }
+    
+    litepublisher::$classes->instances[get_class($theme)] = $theme;
+    return $theme;
+  }
+  
   public function request($context) {
     $this->context = $context;
     $this->itemplate = $context instanceof itemplate;
-ttheme::$vars['template'] = $this;
-$theme = $this->getcontexttheme($context);
+    ttheme::$vars['template'] = $this;
+    $theme = $this->getcontexttheme($context);
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     if ($context instanceof itemplate2) $context->afterrequest($result);
@@ -173,9 +177,9 @@ $theme = $this->getcontexttheme($context);
     } elseif ($this->contextHasProp('title')) {
       $title = $this->context->title;
     }
-
+    
     if (empty($title)) return litepublisher::$options->name;
-
+    
     $args = targs::instance();
     $args->title = $title;
     $theme = ttheme::instance();

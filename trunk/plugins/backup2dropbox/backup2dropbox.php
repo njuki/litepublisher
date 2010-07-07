@@ -15,28 +15,28 @@ class tbackup2dropbox extends tplugin {
   protected function create() {
     parent::create();
     $this->data['idcron'] = 0;
-$this->data['email'] = '';
-$this->data['password'] = '';
-$this->data['dir'] = '/';
+    $this->data['email'] = '';
+    $this->data['password'] = '';
+    $this->data['dir'] = '/';
   }
   
   public function send() {
-if ($this->password == '') return;
+    if ($this->password == '') return;
     $backuper = tbackuper::instance();
     $filename  = $backuper->createbackup();
     
-require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'DropboxUploader.php');
-
-        $uploader = new DropboxUploader($this->email, $this->password);
-try {
-set_time_limit(600);
-        $uploader->upload($filename, $this->dir);
-unlink($filename);
+    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'DropboxUploader.php');
+    
+    $uploader = new DropboxUploader($this->email, $this->password);
+    try {
+      set_time_limit(600);
+      $uploader->upload($filename, $this->dir);
+      unlink($filename);
     } catch (Exception $e) {
-return $e->getMessage();
-}
-return true;
-   }
+      return $e->getMessage();
+    }
+    return true;
+  }
   
 }//class
 

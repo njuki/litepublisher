@@ -87,6 +87,7 @@ class tcodedocfilter extends titems {
       break;
       
       case 'manual':
+      $result['class'] = '';
       $this->getmanual($post, $ini);
       break;
     }
@@ -271,15 +272,15 @@ class tcodedocfilter extends titems {
     $wiki = twikiwords::instance();
     $lang = tlocal::instance('codedoc');
     $post->title = $doc['title'];
-if ($post->id == 0) $post->url = '';
-
+    if ($post->id == 0) $post->url = '';
+    
     $content = $this->getdescription($post, $doc['description']);
     $post->excerpt = $content;
-        $post->excerpt = tcontentfilter::GetExcerpt($s, 250);
+    $post->excerpt = tcontentfilter::GetExcerpt($s, 250);
     
     if (!empty($doc['example'])) {
-      $content = sprintf('<h2><a href="#example">%2$s</a></h2>%1$s<h2><a name="example"></a>%2$s</h2>', 
-$content, $lang->example);
+      $content = sprintf('<h2><a href="#example">%2$s</a></h2>%1$s<h2><a name="example"></a>%2$s</h2>',
+      $content, $lang->example);
       $content .= highlight_string($doc['example'], true);
     }
     

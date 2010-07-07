@@ -12,7 +12,7 @@ class turlmap extends titems {
   public $page;
   public $uripath;
   public $itemrequested;
-public  $context;
+  public  $context;
   public $cachefilename;
   public $argtree;
   public $is404;
@@ -415,17 +415,17 @@ public  $context;
       }
     }
   }
-
-public function getnextpage() {
-$url = $this->itemrequested['url'];
-return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page + 1) . '/';
-}
-
-public function getprevpage() {
-$url = $this->itemrequested['url'];
-if ($this->page <= 2) return url;
-return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
-}
+  
+  public function getnextpage() {
+    $url = $this->itemrequested['url'];
+    return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page + 1) . '/';
+  }
+  
+  public function getprevpage() {
+    $url = $this->itemrequested['url'];
+    if ($this->page <= 2) return url;
+    return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
+  }
   
 }//class
 

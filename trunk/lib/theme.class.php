@@ -46,7 +46,7 @@ class ttheme extends tevents {
     $this->name = '';
     $this->tmlfile = 'index';
     $this->parsing = array();
-$this->data['type'] = 'litepublisher';
+    $this->data['type'] = 'litepublisher';
     $this->data['theme'] = '';
     $this->data['title'] = '';
     $this->data['menu'] = array();
@@ -65,13 +65,13 @@ $this->data['type'] = 'litepublisher';
     self::$instances[$name][$tmlfile] = $this;
     $datafile = litepublisher::$paths->data . $this->getbasename() .'.php';
     if (file_exists($datafile))  return parent::load();
-
+    
     $parser = tthemeparser::instance();
     if ($parser->parse($this)) {
-$this->save();
-}else {
-$this->error("Theme file $filename not exists");
-}
+      $this->save();
+    }else {
+      $this->error("Theme file $filename not exists");
+    }
   }
   
   public function __tostring() {
@@ -97,6 +97,7 @@ $this->error("Theme file $filename not exists");
   public function parsecallback($names) {
     $name = $names[1];
     $prop = $names[2];
+    if ($prop == '') return "\$$name.";
     if ($name == 'options') {
       if (($prop == 'password') || ($prop == 'cookie')) return '';
       $var = litepublisher::$options;
@@ -123,11 +124,11 @@ $this->error("Theme file $filename not exists");
       litepublisher::$options->trace("Object $name not found");
       return '';
     }
-
+    
     try {
     return $var->{$prop};
     } catch (Exception $e) {
-//var_dump($this->parsing[count($this->parsing)-1]);
+      //var_dump($this->parsing[count($this->parsing)-1]);
       litepublisher::$options->handexception($e);
     }
     return '';
@@ -150,19 +151,19 @@ $this->error("Theme file $filename not exists");
   
   public function parsearg($s, targs $args) {
     $s = $this->parse($s);
-return strtr ($s, $args->data);
+    return strtr ($s, $args->data);
   }
-
-public function gethtml($context) {
+  
+  public function gethtml($context) {
     self::$vars['context'] = $context;
-switch ($this->type) {
-case 'litepublisher':
-return $this->parse($this->theme);
-
-case 'wordpress':
-return wordpress::getcontent();
-}
-}
+    switch ($this->type) {
+      case 'litepublisher':
+      return $this->parse($this->theme);
+      
+      case 'wordpress':
+      return wordpress::getcontent();
+    }
+  }
   
   public function getnotfount() {
     return $this->parse($this->nocontent);
@@ -247,12 +248,12 @@ return wordpress::getcontent();
     return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
   }
   
-
-public static function clearcache() {
-tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
+  
+  public static function clearcache() {
+    tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
-}
-
+  }
+  
 }//class
 
 class tthemeprops {

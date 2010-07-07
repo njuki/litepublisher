@@ -7,8 +7,8 @@
 **/
 
 class tadminbackup2dropbox {
-
-    public function getcontent() {
+  
+  public function getcontent() {
     $plugin = tbackup2dropbox::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $form = file_get_contents($dir . 'backup2dropbox.tml');
@@ -23,19 +23,19 @@ class tadminbackup2dropbox {
   
   public function processform() {
     $plugin = tbackup2dropbox::instance();
-if (!isset($_POST['createnow'])) {
-    extract($_POST);
-    $plugin->lock();
-    $plugin->email = $email;
-    $plugin->password = $password;
-    $plugin->dir = $dir;
-    $plugin->unlock();
-    return '';
-} else {
-$r = $plugin->send() ;
-if ($r === true)$r = 'Uploaded';
-return sprintf('<h2>%s</h2>', $r);
-}
+    if (!isset($_POST['createnow'])) {
+      extract($_POST);
+      $plugin->lock();
+      $plugin->email = $email;
+      $plugin->password = $password;
+      $plugin->dir = $dir;
+      $plugin->unlock();
+      return '';
+    } else {
+      $r = $plugin->send() ;
+      if ($r === true)$r = 'Uploaded';
+      return sprintf('<h2>%s</h2>', $r);
+    }
   }
   
 }

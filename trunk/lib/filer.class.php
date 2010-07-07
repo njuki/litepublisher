@@ -9,7 +9,7 @@
 class tfiler {
   
   public static function delete($path, $subdirs , $rmdir = false) {
-$path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if ( $h = opendir($path)) {
       while(FALSE !== ($filename = readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
