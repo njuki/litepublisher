@@ -34,15 +34,15 @@ class tadminthemes extends tadminmenu {
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
       $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'theme';
-
-    $parser = tthemeparser::instance();
+      
+      $parser = tthemeparser::instance();
       foreach ($list as $name) {
         if ($about = $parser->getabout($name)) {
-        $about['name'] = $name;
-        $args->add($about);
-        $args->checked = $name == $template->theme;
-        $result .= $html->radioitem($args);
-}
+          $about['name'] = $name;
+          $args->add($about);
+          $args->checked = $name == $template->theme;
+          $result .= $html->radioitem($args);
+        }
       }
       $result .= $html->formfooter();
       break;
@@ -170,7 +170,7 @@ class tadminthemes extends tadminmenu {
   private function  getplugin() {
     if (!isset($this->plugin)) {
       $template =  ttemplate::instance();
-    $parser = tthemeparser::instance();
+      $parser = tthemeparser::instance();
       if (!($about = $parser->getabout($template->theme))) return false;
       if (empty($about['adminclassname']))  return false;
       $class = $about['adminclassname'];

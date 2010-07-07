@@ -100,7 +100,7 @@ class trss extends tevents {
     $comment = new tarray2prop($a);
     foreach ($recent  as $item) {
       $comment->array = $item;
-        //$comment->posturl = $post->url;
+      //$comment->posturl = $post->url;
       $this->AddRSSComment($comment, $title . $comment->title);
     }
   }

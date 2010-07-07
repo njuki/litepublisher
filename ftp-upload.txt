@@ -266,6 +266,12 @@ send lib\widgets.links.class.php lib/widgets.links.class.php
 quote site chmod 666 lib/widgets.links.class.php
 send lib\widgets.standarts.class.php lib/widgets.standarts.class.php
 quote site chmod 666 lib/widgets.standarts.class.php
+send lib\wordpress.comment.txt lib/wordpress.comment.txt
+quote site chmod 666 lib/wordpress.comment.txt
+send lib\wordpress.functions.php lib/wordpress.functions.php
+quote site chmod 666 lib/wordpress.functions.php
+send lib\wordpress.includes.php lib/wordpress.includes.php
+quote site chmod 666 lib/wordpress.includes.php
 send lib\xmlrpc.action.class.php lib/xmlrpc.action.class.php
 quote site chmod 666 lib/xmlrpc.action.class.php
 send lib\xmlrpc.blogger.class.php lib/xmlrpc.blogger.class.php
@@ -514,6 +520,8 @@ send lib\update\update.3.52.php lib/update/update.3.52.php
 quote site chmod 666 lib/update/update.3.52.php
 send lib\update\update.3.54.php lib/update/update.3.54.php
 quote site chmod 666 lib/update/update.3.54.php
+send lib\update\update.3.56.php lib/update/update.3.56.php
+quote site chmod 666 lib/update/update.3.56.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -569,6 +577,26 @@ quote site chmod 666 plugins/adminlinks/adminlinks.php
 send plugins\adminlinks\index.htm plugins/adminlinks/index.htm
 quote site chmod 666 plugins/adminlinks/index.htm
 cd plugins
+mkdir backup2dropbox
+quote site chmod 777 backup2dropbox
+cd ../
+send plugins\backup2dropbox\.htaccess plugins/backup2dropbox/.htaccess
+quote site chmod 666 plugins/backup2dropbox/.htaccess
+send plugins\backup2dropbox\about.ini plugins/backup2dropbox/about.ini
+quote site chmod 666 plugins/backup2dropbox/about.ini
+send plugins\backup2dropbox\admin.backup2dropbox.php plugins/backup2dropbox/admin.backup2dropbox.php
+quote site chmod 666 plugins/backup2dropbox/admin.backup2dropbox.php
+send plugins\backup2dropbox\backup2dropbox.install.php plugins/backup2dropbox/backup2dropbox.install.php
+quote site chmod 666 plugins/backup2dropbox/backup2dropbox.install.php
+send plugins\backup2dropbox\backup2dropbox.php plugins/backup2dropbox/backup2dropbox.php
+quote site chmod 666 plugins/backup2dropbox/backup2dropbox.php
+send plugins\backup2dropbox\backup2dropbox.tml plugins/backup2dropbox/backup2dropbox.tml
+quote site chmod 666 plugins/backup2dropbox/backup2dropbox.tml
+send plugins\backup2dropbox\DropboxUploader.php plugins/backup2dropbox/DropboxUploader.php
+quote site chmod 666 plugins/backup2dropbox/DropboxUploader.php
+send plugins\backup2dropbox\index.htm plugins/backup2dropbox/index.htm
+quote site chmod 666 plugins/backup2dropbox/index.htm
+cd plugins
 mkdir backup2email
 quote site chmod 777 backup2email
 cd ../
@@ -582,6 +610,18 @@ send plugins\backup2email\backup2email.php plugins/backup2email/backup2email.php
 quote site chmod 666 plugins/backup2email/backup2email.php
 send plugins\backup2email\index.htm plugins/backup2email/index.htm
 quote site chmod 666 plugins/backup2email/index.htm
+cd plugins
+mkdir clearcache
+quote site chmod 777 clearcache
+cd ../
+send plugins\clearcache\.htaccess plugins/clearcache/.htaccess
+quote site chmod 666 plugins/clearcache/.htaccess
+send plugins\clearcache\about.ini plugins/clearcache/about.ini
+quote site chmod 666 plugins/clearcache/about.ini
+send plugins\clearcache\clearcache.php plugins/clearcache/clearcache.php
+quote site chmod 666 plugins/clearcache/clearcache.php
+send plugins\clearcache\index.htm plugins/clearcache/index.htm
+quote site chmod 666 plugins/clearcache/index.htm
 cd plugins
 mkdir codedoc
 quote site chmod 777 codedoc

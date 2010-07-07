@@ -135,8 +135,8 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function getcont() {
-$items = $this->getposts();
-if (count($items) == 0)return '';    
+    $items = $this->getposts();
+    if (count($items) == 0)return '';
     $theme = ttheme::instance();
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
@@ -144,17 +144,17 @@ if (count($items) == 0)return '';
     $result .=$theme->getpages($this->items[$this->date]['url'], litepublisher::$urlmap->page, ceil(count($items)/ $perpage));
     return $result;
   }
-
-public function getposts() {
+  
+  public function getposts() {
     if (dbversion) {
       $item = $this->items[$this->date];
-return $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
+  return $this->db->idselect("status = 'published' and year(posted) = '{$item['year']}' and month(posted) = '{$item['month']}' ORDER BY posted DESC ");
     } else {
       if (!isset($this->items[$this->date]['posts'])) return array();
-return $this->items[$this->date]['posts'];
+      return $this->items[$this->date]['posts'];
     }
-}  
-
+  }
+  
 }//class
 
 ?>

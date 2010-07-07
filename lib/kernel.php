@@ -1010,6 +1010,7 @@ class turlmap extends titems {
   public $page;
   public $uripath;
   public $itemrequested;
+  public  $context;
   public $cachefilename;
   public $argtree;
   public $is404;
@@ -1157,18 +1158,18 @@ class turlmap extends titems {
     $parents = class_parents($class);
     if (in_array('titem', $parents)) {
       //$source = titem::iteminstance($class, $item['arg']);
-      $source = call_user_func_array(array($class, 'instance'), array($item['arg']));
+      $this->context = call_user_func_array(array($class, 'instance'), array($item['arg']));
     } else {
-      $source = getinstance($class);
+      $this->context = getinstance($class);
     }
     
     //special handling for rss
-    if (method_exists($source, 'request') && ($s = $source->request($item['arg']))) {
+    if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
       //tfiler::log($s, 'content.log');
       if ($s == 404) return $this->notfound404();
     } else {
       $template = ttemplate::instance();
-      $s = $template->request($source);
+      $s = $template->request($this->context);
     }
     eval('?>'. $s);
     if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
@@ -1411,6 +1412,17 @@ class turlmap extends titems {
         }
       }
     }
+  }
+  
+  public function getnextpage() {
+    $url = $this->itemrequested['url'];
+    return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page + 1) . '/';
+  }
+  
+  public function getprevpage() {
+    $url = $this->itemrequested['url'];
+    if ($this->page <= 2) return url;
+    return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
   }
   
 }//class
