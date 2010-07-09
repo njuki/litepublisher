@@ -127,29 +127,8 @@ class tticket extends tpost {
     return $theme->parsearg($tml, $args);
   }
   
-  protected function getauthorname() {
-    return $this->getusername($this->author, false);
-  }
-  
-  protected function getauthorlink() {
-    return $this->getusername($this->author, true);
-  }
-  
   protected function getassigntoname() {
     return $this->getusername($this->assignto, true);
-  }
-  
-  private function getusername($id, $link) {
-    if ($id == 0) return '';
-    if ($id == 1) {
-      $profile = tprofile::instance();
-      return $profile->nick;
-    } else {
-      $users = tusers::instance();
-      $account = $users->getitem($id);
-      if (!$link || ($account['url'] == '')) return $account['name'];
-      return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$options->url, litepublisher::$options->q, $id, $account['name']);
-    }
   }
   
   public function closepoll() {
