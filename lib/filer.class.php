@@ -100,6 +100,7 @@ class tfiler {
   public static function ini2js(array $a, $filename) {
     $sections = array();
     foreach ($a as $name => $section) {
+if ($name == 'codedoc') continue;
       if ($name == 'default' || $name == 'delete') $name = 'a' . $name;
       $list = array();
       foreach ($section as $key => $value) {

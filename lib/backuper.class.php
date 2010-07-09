@@ -18,6 +18,7 @@ class tbackuper extends tevents {
   }
   
   public function  readdir(tar $tar, $path, $subdir, $prefix = '') {
+$path  = rtrim($path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR  ;
     $subdir = trim($subdir, DIRECTORY_SEPARATOR  );
     if ($subdir != '') $subdir .= DIRECTORY_SEPARATOR  ;
     $subdirslashed = str_replace(DIRECTORY_SEPARATOR   , '/', $subdir) ;

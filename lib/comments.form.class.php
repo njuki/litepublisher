@@ -120,9 +120,8 @@ class tcommentform extends tevents {
         $result .= $hold;
       }
     }
-  }
-  
-  $result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
+
+    $result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
   return $result;
 }
 
