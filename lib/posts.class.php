@@ -88,7 +88,6 @@ class tposts extends titems {
     return $theme->getpostswidgetcontent($list, $sitebar, '');
   }
   
-  
   private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();

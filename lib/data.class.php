@@ -257,6 +257,19 @@ function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
 }
 
+function array_delete(array &$a, $i) {
+        array_splice($a, $i, 1);
+}
+
+function array_delete_value(array &$a, $value) {
+$i = array_search($value, $a);
+if ($i !== false)         array_splice($a, $i, 1);
+}
+
+function array_insert(array &$a, $item, $index) {
+        array_splice($a, $index, 0, array($item));
+}
+
 function dumpstr($s) {
   echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
 }
