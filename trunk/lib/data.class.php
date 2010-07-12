@@ -270,6 +270,14 @@ function array_insert(array &$a, $item, $index) {
         array_splice($a, $index, 0, array($item));
 }
 
+function array_move(array &$a, $oldindex, $newindex) {
+//delete and insert
+if (($oldindex == $newindex) || !isset($a[$oldindex])) return false;
+$item = $a[$oldindex];
+        array_splice($a, $oldindex, 1);
+        array_splice($a, $newindex, 0, array($item));
+}
+
 function dumpstr($s) {
   echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
 }
