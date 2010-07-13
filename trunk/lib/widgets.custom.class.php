@@ -6,8 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcustomwidget extends titems {
-  
+class tcustomwidget extends twidget {
+public $items;
+private $id;
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -15,22 +17,30 @@ class tcustomwidget extends titems {
   protected function create() {
     parent::create();
     $this->basename   = 'widgets.custom';
+$this->addmap('items', array());
+  }
+
+public function getwidget($id, $sitebar) {
+if (!isset($this->items[$id])) return '';
+if ($this->items[$id]['template'] == '') return $this->items[$id]['content'];
+return parent::getwidget($id, $sitebar);
+}
+
+public function gettitle($id) {
+return $this->items[$id]['title'];
+}
+  
+  public function getcontent($id, $sitebar) {
+return $this->items[$id]['content'];
   }
   
-  public function getwidget($id, $sitebar) {
-    $item = $this->getitem($id);
-    if (!$item['templ']) return $item['content'];
-    $theme = ttheme::instance();
-    return $theme->getwidget($item['title'], $item['content'], 'widget', $sitebar);
-  }
-  
-  public function add($title, $content, $templ) {
+  public function add($title, $content, $template) {
     $widgets = twidgets::instance();
-    $id = $widgets->add(get_class($this), 'echo', 0, -1);
+    $id = $widgets->addext($this, $title, $template);
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
-    'templ' => $templ
+'template' => $template
     );
     
     $this->save();
@@ -38,16 +48,14 @@ class tcustomwidget extends titems {
     return $id;
   }
   
-  public function edit($id, $title, $content, $templ) {
+  public function edit($id, $title, $content, $template) {
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
-    'templ' => $templ
+'template' => $template
     );
-    
-    $this->save();
-    $widgets = twidgets::instance();
-    $widgets->itemexpired($id);
+        $this->save();
+    $widgets->expired($id);
   }
   
   public function delete($id) {
