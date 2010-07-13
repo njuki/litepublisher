@@ -7,20 +7,18 @@
 **/
 
 class twidget extends tdata {
-public $pageclass;
 public $template;
 
 protected function create() {
 parent::create();
 $this->basename = 'widget';
 $this->cache = 'cache';
-$this->pageclass = '';
 $this->template = 'widget';
 }
 
   public function getwidget($id, $sitebar) {
 try {
-$title = $this->gettitle();
+$title = $this->gettitle($id);
       $content = $this->getcontent($id, $sitebar);
     } catch (Exception $e) {
 litepublisher::$options->handexception($e);
@@ -95,10 +93,18 @@ $this->addmap('classes', array());
   public function add(twidget $widget) {
 return $this->additem( array(
 'class' => get_class($widget),
-'pageclass' => $widget->pageclass,
 'cache' => $widget->cache,
-'title' => $widget->title,
+'title' => $widget->gettitle(0),
 'template' => $widget->template
+));
+}
+
+  public function addext(twidget $widget, $title, $template) {
+return $this->additem( array(
+'class' => get_class($widget),
+'cache' => $widget->cache,
+'title' => $title,
+'template' => $template
 ));
 }
 

@@ -6,7 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tlinkswidget extends titems {
+class tlinkswidget extends twidget {
+public $items;
   public $redirlink;
   
   public static function instance() {
@@ -16,15 +17,17 @@ class tlinkswidget extends titems {
   protected function create() {
     parent::create();
     $this->basename = 'widgets.links';
+$this->template = 'links';
+$this->addmap('items', array());
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
   }
   
-  public function getwidgetcontent($id, $sitebar) {
+  public function getcontent($id, $sitebar) {
     if (count($this->items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('link', $sitebar);
+    $tml = $theme->getwidgetitem('links', $sitebar);
     $args = targs::instance();
     foreach ($this->items as $id => $item) {
       $url =  $item['url'];
@@ -35,7 +38,7 @@ class tlinkswidget extends titems {
       $result .=   sprintf($tml, $url, $item['title'], $item['text']);
     }
     
-    return sprintf($theme->getwidgetitems('link', $sitebar), $result);
+    return sprintf($theme->getwidgetitems('links', $sitebar), $result);
   }
   
   public function add($url, $title, $text) {
