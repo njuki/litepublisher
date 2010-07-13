@@ -6,314 +6,350 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class twidgets extends tsingleitems {
-  public $current;
-  public $curwidget;
-  public $curindex;
-  public $count;
-  public static $default;
+class twidget extends tdata {
+public $pageclass;
+public $template;
+
+protected function create() {
+parent::create();
+$this->basename = 'widget';
+$this->cache = 'cache';
+$this->pageclass = '';
+$this->template = 'widget';
+}
+
+  public function getwidget($id, $sitebar) {
+try {
+$title = $this->gettitle();
+      $content = $this->getcontent($id, $sitebar);
+    } catch (Exception $e) {
+litepublisher::$options->handexception($e);
+return '';
+}
+    
+    $theme = ttheme::instance();
+return $theme->getwidget($title, $content, $this->template, $sitebar);
+  }
+
+public function gettitle($id) {
+return '';
+}
   
+public function getcontent($id, $sitebar) {
+return '';
+}
+
+public static function getcachefilename($id) {
+$theme = ttheme::instance();
+return litepublisher::$paths->cache . sprintf('widget.%s.%d.php', $theme->name, $id);
+}
+
+public function expired($id) {
+switch ($this->cache) {
+case 'cache':
+case true:
+$cache = twidgetscache::instance();
+$cache->expired($id);
+break;
+
+case 'include':
+$sitebar = $this->getsitebar($id);
+$filename = self::getcachefilename($id, $sitebar);
+file_put_contents($filename, $this->getwidget($id, $sitebar);
+break;
+}
+}
+
+public function getsitebar($id) {
+$widgets = twidgets::instance();
+foreach ($widgets->sitebars as $i=> $sitebar) {
+foreach ($sitebar as $item) {
+if ($id == $item['id']) return $i;
+}
+}
+return 0;
+}
+
+}//class
+
+class twidgets extends titems {
+public $sitebars;
+public classes;$
+  public $currentsitebar;
+  public $idwidget;
+
   public static function instance($id = null) {
-    if (is_null($id)) {
-      $id = isset(self::$default) ? self::$default : 0;
-    }
-    return parent::singleinstance(__class__, $id);
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+$this->dbversion = false;
+    parent::create();
+    $this->addevents('onwidget', 'oncurrentsitebar');
+$this->basename = 'widgets';
+    $this->currentsitebar = 0;
+$this->addmap('sitebars', array());
+$this->addmap('classes', array());
+  }
+
+  public function add(twidget $widget) {
+return $this->additem( array(
+'class' => get_class($widget),
+'pageclass' => $widget->pageclass,
+'cache' => $widget->cache,
+'title' => $widget->title,
+'template' => $widget->template
+));
+}
+
+public function delete($id) {
+if (!isset($this->items[$id])) return;
+
+for ($i = count($this->sitebars) - 1; $i >= 0; $i--) {
+foreach ($this->sitebars[$i] as $j => $item) {
+if ($id == $item['id']) array_delete($this->sitebars[$i], $j);
+}
+}
+
+foreach ($this->classes as $class => $items) {
+foreach ($items as $i => $item) {
+if ($id == $item['id']) array_delete($this->classes[$class], $i);
+}
+}
+
+unset($this->items[$id]);
+$this->deleted($id
+}
+
+public function getwidget($id) {
+if (!isset($this->items[$id])) return $this->error("The requested $id widget not found");
+$class = $this->items[$id]['class'];
+if (!class_exists($class)) {
+$this->delete($id);
+return $this->error("The $class class not found");
+}
+return getinstance($class);
+}
+
+  public function getsitebar($context) {
+$items = $this->sitebars[$this->currentsitebar];
+$subitems =  $this->getsubitems($context, $this->currentsitebar))
+$items = $this->joinitems($items, $subitems);
+      $result = $this->getsitebarcontent($items, $this->currentsitebar);
+    $this->callevent('oncurrentsitebar', array(&$result, $this->currentsitebar++));
+    return $result;
+  }
+
+private function getsubitems($context, $sitebar) {
+$result = array();
+foreach ($this->classes as $class => $items) {
+if ($context instanceof $class) {
+foreach ($items as $ $item) {
+if ($sitebar == $item['sitebar']) $result[] = $item;
+}
+}
+}
+return $result);
+}
+
+private function joinitems(array $items, array $subitems) {
+if (count($subitems) == 0) return $items;
+//delete copies
+for ($i = count($items) -1; $i >= 0; $i--) {
+$id = $items[$i]['id'];
+foreach ($subitems as $subitem) {
+if ($id == $subitem['id']) array_delete($items, $i);
+}
+}
+
+//join
+foreach ($subitems as $item) {
+$count = count($items);
+$order = $item['order'];
+    if (($order < 0) || ($order >= $count)) $order = $count - 1;
+array_insert($items, $item, $order);
+}
+}
+return $items;
+}
+
+private function getsitebarcontent(array $items, $sitebar) {
+$result = '';
+$cache = twidgetscache::instance();
+foreach ($items as $item) {
+$id = $item['id'];
+if ($item['ajax']) {
+$content = $this->getajax($id, $sitebar);
+} else {
+switch ($this->items[$item['id']]['cache']) {
+case 'cache':
+case true:
+$content = $cache->getcontent($id, $sitebar);
+break;
+
+case 'include':
+$content = $this->include($id, $sitebar);
+break;
+
+case 'nocache':
+case false:
+$content = $this->nocache($id, $sitebar);
+break;
+}
+}
+    $this->callevent('onwidget', array($id, &$content));
+$result .= $content;
+}
+return $result;
+}
+
+public function getajax($id, $sitebar) {
+      $title = sprintf('<a onclick="widgets.load(this, %d)">%s</a>', $id, $this->items[$id]['title']);
+      $content = "<!--widgetcontent-$id-->";
+    $theme = ttheme::instance();
+return $theme->getwidget($title, $content, $thisitems[$id]['template'], $sitebar);
+}
+
+private function include($id, $sitebar) {
+$filename = twidget::getcachefilename($id, $sitebar);
+if (!file_exists($filename)) {
+$widget = $this->getwidget($id);
+$content = $widget->getwidget($id, $sitebar);
+file_put_contents($filename, $content);
+@chmod($filename, 0666);
+}
+return "\n<?php @include('$filename'); ?>\n";
+}
+
+private function nocache($id, $sitebar) {
+$class = $this->items[$id]['class'];
+return "\n<?php
+    \$widget = $class::instance();
+    echo \$widget->getwidget($id, $sitebar);
+      ?>\n";
+}
+
+
+public function find($class) {
+foreach ($this->items as $id => $item) {
+if ($class == $item['class']) return $id;
+}
+return false;
+}
+
+}//class
+
+class twidgetscache extends titems {
+  private $modified;
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+$this->dbversion = false;
+    parent::create();
+    $this->modified = false;
+}
+
+  public function getbasename() {
+$theme = ttheme::instance();
+return 'widgetscache.' . $theme->name;
+}
+
+  public function savemodified() {
+    if ($this->modified) parent::save();
+    $this->modified = false;
+  }
+  
+  public function save() {
+    $this->modified = true;
+  }
+  
+public function getcontent($id, $sitebar) {
+if (isset($this->items[$id][$sitebar])) return $this->items[$id][$sitebar];
+return $this->setcontent($id, $sitebar);
+}
+
+public function setcontent($id, $sitebar) {
+$widgets = twidgets::instance();
+$widget = $widgets->getwidget($id);
+$result = $widget->getcontent($id, $sitebar);
+$this->items[[$id][$sitebar] = $result;
+$this->save();
+return $result;
+}
+
+public function expired($id) {
+if (isset($this->items[$id])) {
+unset($this->items[$id]);
+$this->save();
+}
+}
+
+}//class
+
+class tsitebars extends tdata {
+public $items;
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-    $this->addevents('onsitebar');
-    $this->current = 0;
-    $theme = ttheme::instance();
-    $this->count = $theme->sitebarscount;
-    $this->dbversion = false;
-    $this->addmap('items', array(0 => array(), 1 => array(), 2 => array()));
+$widgets = twidgets::instance();
+$this->items = &$widgets->sitebars;
   }
-  
-  public function getbasename() {
-    return 'widgets' . DIRECTORY_SEPARATOR  . $this->id;
-  }
-  
-  public function load() {
-    if (!isset($this->id)) return false;
-    if ($this->id !== 0) return parent::load();
-    
-    //значит id = 0 и сайтбары по умолчанию будем хранить в ttemplate
-    $template = ttemplate::instance();
-    if (isset($template->data['sitebars'])) {
-      $this->data = &$template->data['sitebars'];
-    } else {
-      $template->data['sitebars'] = &$this->data;
-    }
-    $this->afterload();
-  }
-  
-  public function save() {
-    if ($this->id !== 0) return parent::save();
-    $template = ttemplate::instance();
-    $template->save();
-  }
-  
-  public function getitem($id) {
-    for ($i = count($this->items) - 1; $i >= 0; $i--) {
-      if (isset($this->items[$i][$id])) return $this->items[$i][$id];
-    }
-    return false;
-  }
-  
-  public function sitebarcount($sitebar) {
-    return count($this->items[$sitebar]);
-  }
-  
-  public function getcontent() {
-    $theme = ttheme::instance();
-    $file = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.sitebar.$this->id.$this->current.php";
-    if (file_exists($file)) {
-      $result = file_get_contents($file);
-    } else {
-      $result = $this->getsitebar($this->current);
-      //если закончились сайтбары, то остатки объеденить
-      if ($this->count == $this->current + 1) {
-        for ($i = $this->current + 1; $i < count($this->items); $i++) {
-          $result .= $this->getsitebar($i);
-        }
-      }
-      
-      file_put_contents($file, $result);
-      @chmod($file, 0666);
-    }
-    $this->callevent('onsitebar', array(&$result, $this->current++));
-    return $result;
-  }
-  
-  private function getsitebar($index) {
-    $result = '';
-    $template = ttemplate::instance();
-    $i = 0;
-    foreach ($this->items[$index] as $id => $item) {
-      $this->curwidget= $id;
-      $this->curindex= $i++;
-      $content = $this->getwidgetcontent($item);
-      $template->onwidget($id, $content);
-      $result .= $content;
-    }
-    return $result;
-  }
-  
-  public function getcachefilename($id) {
-    return "widget.$this->id.$id.php";
-  }
-  
-  public function getcachefile($id) {
-    return litepublisher::$paths->cache . $this->getcachefilename($id);
-  }
-  
-  public function getwidget($id) {
-    return $this->getwidgetcontent($this->getitem($id));
-  }
-  
-  private function getwidgetcontent($item) {
-    switch ( $item['echotype']) {
-      case 'echo':
-      $result = $this->dogetwidget($item);
-      break;
-      
-      case 'include':
-      $filename = $this->getcachefilename($item['id']);
-      $file = litepublisher::$paths->cache . $filename;
-      if (!@file_exists($file)) {
-        $result = $this->dogetwidget($item);
-        file_put_contents($file, $result);
-        @chmod($file, 0666);
-      }
-      $result = "\n<?php @include(litepublisher::\$paths->cache . '$filename'); ?>\n";
-      break;
-      
-      case 'nocache':
-      $result = "\n<?php
-    \$widget = getinstance('{$item['class']}');
-    echo \$widget->getwidget({$item['id']}, $this->current);
-      ?>\n";
-      break;
-    }
-    
-    return $result;
-  }
-  
-  private function dogetwidget($item) {
-    if (!class_exists($item['class'])) {
-      $this->deleteclass($item['class']);
-      return '';
-    }
-    
-    $result = '';
-    $template = ttemplate::instance();
-    $widget = GetInstance($item['class']);
-    try {
-      $id = $item['id'];
-      if (empty($item['template'])) {
-        $result =   $widget->getwidget($id, $this->current);
-      }else {
-        $content = $widget->getwidgetcontent($id, $this->current);
-        $template->onwidgetcontent($id, $content);
-        $theme= ttheme::instance();
-        $result = $theme->getwidget($item['title'], $content, $item['template'], $this->current);
-      }
-    } catch (Exception $e) {
-      litepublisher::$options->handexception($e);
-    }
-    return $result;
-  }
-  
-  public function add($class, $echotype, $sitebar, $order) {
-    return $this->addext($class, $echotype, '', '', $sitebar, $order);
-  }
-  
-  public function addext($class, $echotype, $template, $title, $sitebar, $order) {
-    if ($sitebar >= $this->count) return $this->error("sitebar index $sitebar cant more than sitebars count in theme");
-    if (!isset($this->items[$sitebar])) return $this->error("Unknown sitebar $sitebar");
-    if (($order < 0) || ($order > $this->sitebarcount($sitebar))) $order = $this->sitebarcount($sitebar);
-    if (!preg_match('/echo|include|nocache/', $echotype)) $echotype = 'echo';
-    $id = ++$this->autoid;
-    $item =  array(
-    'id' => $id,
-    'class' => $class,
-    'echotype' => $echotype,
-    'template' => $template,
-    'title' => $title
-    );
-    
-    $this->insert($item, $sitebar, $order);
-    $this->added($id);
-    return $id;
-  }
-  
-  private function insert($item, $sitebar, $order) {
-    $id = $item['id'];
-    //вставить в массив с соблюдением порядка и ключей
-    if (!isset($this->items[$sitebar])) $sitebar = count($this->items) - 1;
-    if ($order < 0) $order = 0;
-    if ($order >= count($this->items[$sitebar])) {
-      $this->items[$sitebar][$id] = $item;
-    } else {
-      $i = 0;
-      $new = array();
-      foreach ($this->items[$sitebar] as $idwidget => $widget) {
-        if ($i++ == $order) $new[$id] = $item;
-        $new[$idwidget] = $widget;
-      }
-      $this->items[$sitebar] = $new;
-    }
-    $this->save();
-  }
-  
-  public function deleteclass($class) {
-    $deleted = false;
-    for ($i = count($this->items) - 1; $i >= 0; $i--) {
-      foreach ($this->items[$i] as $id => $item) {
-        if ($item['class'] == $class) {
-          unset($this->items[$i][$id]);
-          $this->deleted($id);
-          $deleted = true;
-        }
-      }
-    }
-    if ($deleted) {
-      $this->save();
-      $urlmap = turlmap::instance();
-      $urlmap->save();
-    }
-  }
-  
-  public function delete($idwidget) {
-    for ($i = count($this->items) - 1; $i >= 0; $i--) {
-      foreach ($this->items[$i] as $id => $item) {
-        if ($id == $idwidget)  {
-          unset($this->items[$i][$id]);
-          $this->save();
-          $this->deleted($id);
-          $urlmap = turlmap::instance();
-          $urlmap->clearcache();
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  
-  public function findclass($class) {
-    for ($i = count($this->items) - 1; $i >= 0; $i--) {
-      foreach ($this->items[$i] as $id => $item) {
-        if ($class == $item['class'])  return $id;
-      }
-    }
-    return false;
-  }
-  
-  public function findsitebar($id) {
-    for ($i = count($this->items) - 1; $i >= 0; $i--) {
-      if (isset($this->items[$i][$id])) return $i;
-    }
-    return false;
-  }
-  
-  public function getorder($id) {
-    $result = 0;
-    $sitebar = $this->findsitebar($id);
-    foreach ($this->items[$sitebar] as $idwidget => $item) {
-      if ($id == $idwidget) break;
-      $result++;
-    }
-    return $result;
-  }
-  
-  public static function  expired($instance) {
-    $self = self::instance(0);
-    $self->setexpired(get_class($instance));
-  }
-  
-  public function setexpired($class) {
-    for ($i = count($this->items) - 1; $i >= 0; $i--) {
-      foreach ($this->items[$i] as $id => $item) {
-        if ($class == $item['class'])  {
-          if ($item['echotype'] == 'echo') {
-            $urlmap = turlmap::instance();
-            $urlmap->clearcache();
-            return;
-          } else {
-            @unlink($this->getcachefile($item['id']));
-          }
-        }
-      }
-    }
-  }
-  
-  public function itemexpired($id) {
-    $item = $this->getitem($id);
-    if ($item['echotype'] == 'echo') {
-      $urlmap = turlmap::instance();
-      $urlmap->clearcache();
-    } else {
-      @unlink($this->getcachefile($item['id']));
-    }
-  }
-  
-  public function changesitebar($id, $sitebar) {
-    $this->setpos($id, $sitebar, $this->getorder($id));
-  }
-  
-  public function changeorder($id, $order) {
-    $this->setpos($id, $this->findsitebar($id), $order);
-  }
-  
-  public function setpos($id, $sitebar, $order) {
-    $oldsitebar = $this->findsitebar($id);
-    $oldorder = $this->getorder($id);
-    if (($oldsitebar == $sitebar) && ($oldorder == $order)) return;
-    $item = $this->items[$oldsitebar][$id];
-    unset($this->items[$oldsitebar][$id]);
-    $this->insert($item, $sitebar, $order);
-  }
-  
+
+public function load() {}
+
+public function save() {
+twidgets::instance()->save();
+}
+
+public function ad($id) {
+$this->insert($id, false, 0, -1);
+}
+
+public function insert($id, $ajax, $index, $order) {
+if (!isset($this->items[$index])) return $this->error("Unknown sitebar $index");
+$item = array('id' => $id, 'ajax' => $ajax);
+    if (($order < 0) || ($order > count($this->items[$index]))) {
+$this->items[$index][] = $item;
+} else {
+array_insert($this->sitebars[$index], $item, $order);
+}
+$this->save();
+}
+
+
+public function delete($id, $index) {
+if ($i = $this->indexof($id, $index)) {
+array_delete($this->items[$index], $i);
+$this->save();
+return $i;
+}
+}}
+return false;
+}
+
+public function indexof($id, $index) {
+foreach ($this->items[$index] as $i => $item) {
+if ($id == $item['id']) return $i;
+}
+return false;
+}
+
+public function move($id, $index, $neworder) {
+if ($old = $this->indexof($id, $index)) {
+if ($old != $newindex) {
+array_move($this->items[$index], $old, $newindex);
+$this->save();
+}
+}
+}
+
 }//class
+
 ?>

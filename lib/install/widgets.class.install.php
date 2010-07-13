@@ -11,4 +11,13 @@ function twidgetsInstall($self) {
   @mkdir($dir, 0777);
   @chmod($dir, 0777);
 }
+
+function twidgetscacheInstall($self) {
+litepublisher::$options->onsave = $self->savemodified;
+}
+
+function twidgetscacheUninstall($self) {
+litepublisher::$options->unsubscribeclass($self);
+}
+
 ?>
