@@ -21,7 +21,7 @@ class toptions extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'options';
-    $this->addevents('changed', 'perpagechanged');
+    $this->addevents('changed', 'perpagechanged', 'onsave');
     unset($this->cache);
     $this->gmt = date('Z');
     $this->errorlog = '';
@@ -43,6 +43,7 @@ class toptions extends tevents {
   public function savemodified() {
     if ($this->modified) parent::save();
     $this->modified = false;
+$this->onsave();
   }
   
   public function save() {

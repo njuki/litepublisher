@@ -6,16 +6,28 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcommentswidget extends tevents {
+class tcommentswidget extends twidget {
   
   public static function instance() {
     return getinstance(__class__);
   }
-  
-  public function getwidgetcontent($id, $sitebar) {
+
+protected function create() {
+parent::create();
+$this->basename = 'widget.comments';
+$this->cache = 'include';
+$this->template = 'comments';
+}
+
+public function gettitle() {
+return tlocal::$data['stdwidgetnames']['comments'];
+}
+
+  public function getcontent($id, $sitebar) {
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($manager->recentcount);
-    if (count($recent) == 0) return '';    $result = '';
+    if (count($recent) == 0) return '';
+    $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('comments', $sitebar);
     $args = targs::instance();
@@ -29,8 +41,7 @@ class tcommentswidget extends tevents {
   }
   
   public function changed($id, $idpost) {
-    $std = tstdwidgets::instance();
-    $std->expire('comments');
+$this->expired($this->id);
   }
   
 }//class
