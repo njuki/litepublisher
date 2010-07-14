@@ -17,15 +17,13 @@ parent::create();
 $this->basename = 'widget.comments';
 $this->cache = 'include';
 $this->template = 'comments';
-}
-
-public function gettitle() {
-return tlocal::$data['stdwidgetnames']['comments'];
+    $this->data['recentcount'] =  7;
+$this->data['title'] = tlocal::$data['stdwidgetnames']['comments'];
 }
 
   public function getcontent($id, $sitebar) {
     $manager = tcommentmanager::instance();
-    $recent = $manager->getrecent($manager->recentcount);
+    $recent = $manager->getrecent($this->recentcount);
     if (count($recent) == 0) return '';
     $result = '';
     $theme = ttheme::instance();

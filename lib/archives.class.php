@@ -150,6 +150,7 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.archives';
 $this->template = 'archives';
+$this->data['title'] = tlocal::$data['stdwidgetnames']['archives'];
     $this->data['showcount'] = false;
 }
 
@@ -159,10 +160,6 @@ $this->template = 'archives';
       $this->Save();
     }
   }
-
-public function gettitle() {
-return tlocal::$data['stdwidgetnames']['archives'];
-}
 
   public function getcontent($id, $sitebar) {
 $arch = tarchives::instance();

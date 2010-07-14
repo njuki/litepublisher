@@ -24,7 +24,6 @@ class tcommentmanager extends tevents {
     $this->data['hidelink'] = false;
     $this->data['redir'] = true;
     $this->data['nofollow'] = false;
-    $this->data['recentcount'] =  7;
     $this->data['maxrecent'] =  20;
   }
   

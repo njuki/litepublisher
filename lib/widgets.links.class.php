@@ -21,11 +21,11 @@ $this->template = 'links';
 $this->addmap('items', array());
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
+$this->data['title'] = tlocal::$data['stdwidgetnames']['links'];
   }
 
-
 public function gettitle($id) {
-return tlocal::$data['stdwidgetnames']['links'];  
+return $this->title;
 }
 
   public function getcontent($id, $sitebar) {

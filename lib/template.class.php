@@ -13,7 +13,6 @@ class ttemplate extends tevents {
   public $itemplate;
   public $javascripts;
   public $javaoptions;
-  public $cursitebar;
   //public $footer;
   
   public static function instance() {
@@ -26,17 +25,14 @@ class ttemplate extends tevents {
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$options->files . '/themes/default';
     $this->itemplate = false;
-    $this->cursitebar = 0;
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
     litepublisher::$options->url, litepublisher::$options->files));
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged',
-    'onsitebar', 'onadminsitebar', 'onadminpanelsitebar', 'onadminhover', 'onwidget', 'onwidgetcontent', 'ondemand');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged' 'onadminhover', 'ondemand');
     $this->data['theme'] = 'default';
     $this->data['admintheme'] = '';
     $this->data['hovermenu'] = true;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
-    $this->data['sitebars'] = null;
     $this->data['tags'] = array();
     $this->addmap('javascripts', array());
   }
@@ -154,20 +150,8 @@ class ttemplate extends tevents {
   
   //html tags
   public function getsitebar() {
-    if ($this->context instanceof itemplate2) {
-      $result = $this->context->getsitebar();
-    } else {
       $widgets = twidgets::instance();
-      $result = $widgets->getcontent();
-    }
-    
-    $this->dositebarclass($result, get_class($this->context));
-    
-    $this->callevent('onsitebar', array(&$result, $this->cursitebar));
-    if (litepublisher::$options->admincookie) $this->callevent('onadminsitebar', array(&$result, $this->cursitebar));
-    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanelsitebar', array(&$result, $this->cursitebar));
-    $this->cursitebar++;
-    return $result;
+return $widgets->getsitebar($this->context);
   }
   
   public function gettitle() {
@@ -309,46 +293,6 @@ class ttemplate extends tevents {
       $this->data['footer'] = $s;
       $this->Save();
     }
-  }
-  
-  private function dositebarclass(&$content, $class) {
-    if (isset($this->events["sitebar_$class"])) {
-      $this->callevent("sitebar_$class", array(&$content, $this->cursitebar));
-    }
-  }
-  
-  public function addsitebarclass($class, $handler) {
-    if (!class_exists($class)) return $this->error("Class $class not found", 404);
-    $this->lock();
-    $this->dosetevent("sitebar_$class", $handler);
-    $this->optimizeevents();
-    $this->unlock();
-  }
-  
-  public function  deletesitebarclass($sitebarclass, $instance) {
-    $this->lock();
-    $this->delete_event_class("sitebar_$sitebarclass", get_class($instance));
-    $this->optimizeevents();
-    $this->unlock();
-  }
-  
-  private function optimizeevents() {
-    foreach ($this->events as $name => $list) {
-      if (count($list) == 0) {
-        unset($this->events[$name]);
-      } elseif (strbegin($name, 'sitebar_')) {
-        $class = substr($name, strlen('sitebar_'));
-        if (!class_exists($class)) unset($this->events[$name]);
-      }
-    }
-  }
-  
-  public function onwidget($id, &$content) {
-    $this->callevent('onwidget', array($id, &$content));
-  }
-  
-  public function onwidgetcontent($id, &$content) {
-    $this->callevent('onwidgetcontent', array($id, &$content));
   }
   
 }//class

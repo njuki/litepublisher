@@ -16,6 +16,7 @@ class tmetawidget extends twidget {
     parent::create();
     $this->basename = 'widget.meta';
 $this->template = 'meta';
+$this->data['title'] = tlocal::$data['stdwidgetnames']['meta'];
     $this->data['meta'] = array(
     'rss' => true,
     'comments' => true,
@@ -27,7 +28,7 @@ $this->template = 'meta';
   }
   
 public function gettitle($id) {
-return tlocal::$data['stdwidgetnames']['meta'];
+return $this->title;
 }
 
   public function getcontent($id, $sitebar) {

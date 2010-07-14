@@ -30,7 +30,22 @@ return $theme->getwidget($title, $content, $this->template, $sitebar);
   }
 
 public function gettitle($id) {
+if (isset($this->data['title'])) return $this->data['title'];
 return '';
+}
+
+protected function settitle($value) {
+$widgets = gtwidgets::instance();
+if ($id = $widgets->find($this)) {
+if ($widgets->items[$id]['title'] != $value) {
+$widgets->items[$id]['title'] = $value;
+$widgets->save();
+}
+}
+if (isset($this->data['title']) && ($value != $this->data['title'])) {
+$this->data['title'] = $value;
+$this->save();
+}
 }
   
 public function getcontent($id, $sitebar) {
@@ -90,7 +105,7 @@ public classes;$
   protected function create() {
 $this->dbversion = false;
     parent::create();
-    $this->addevents('onwidget', 'oncurrentsitebar');
+    $this->addevents('onwidget', 'onadminlogged', 'onadminpanel', 'ongetwidgets', 'onsitebar');
 $this->basename = 'widgets';
     $this->currentsitebar = 0;
 $this->addmap('sitebars', array());
@@ -134,6 +149,28 @@ unset($this->items[$id]);
 $this->deleted($id
 }
 
+public function deleteclass($class) {
+$this->unsubscribeclassname($class);
+$deleted = array();
+foreach ($this->items as $id => $item) {
+if($class == $item['class']) {
+unset($this->items[$id]);
+$deleted[] = $id;
+}
+}
+
+if (count($deleted) > 0) {
+foreach ($this->sitebars as $i => $sitebar) {
+foreach ($sitebar as $j => $item) {
+if (in_array($item['id'], $deleted)) array_delete($this->sitebars[$i], $j);
+}
+}
+}
+
+if (isset($this->classes[$class])) unset($this->classes[$class]);
+$this->save();
+}
+
 public function getwidget($id) {
 if (!isset($this->items[$id])) return $this->error("The requested $id widget not found");
 $class = $this->items[$id]['class'];
@@ -145,19 +182,35 @@ return getinstance($class);
 }
 
   public function getsitebar($context) {
-$items = $this->sitebars[$this->currentsitebar];
-$subitems =  $this->getsubitems($context, $this->currentsitebar))
-$items = $this->joinitems($items, $subitems);
-      $result = $this->getsitebarcontent($items, $this->currentsitebar);
-    $this->callevent('oncurrentsitebar', array(&$result, $this->currentsitebar++));
+$sitebar = $this->currentsitebar;
+$items = $this->getwidgets($context, $sitebar);
+$theme = ttheme::instance();
+      if ($theme->sitebarscount == $sitebar + 1) {
+        for ($i = $sitebar + 1; $i < count($this->items); $i++) {
+$items = $this->joinitems($items, $this->getwidgets($context, $i));
+}
+}
+
+if ($context instanceof itemplate2) $context->getwidgets($items, $sitebar);
+    if (litepublisher::$options->admincookie) $this->callevent('onadminlogged', array(&$items, $sitebar));
+    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
+    $this->callevent('ongetwidgets', array(&$items, $sitebar));
+      $result = $this->getsitebarcontent($items, $sitebar);
+    $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
     return $result;
   }
+
+private function getwidgets($context, $sitebar) {
+$items = $this->sitebars[$sitebar];
+$subitems =  $this->getsubitems($context, $sitebar);
+$result = $this->joinitems($items, $subitems);
+}
 
 private function getsubitems($context, $sitebar) {
 $result = array();
 foreach ($this->classes as $class => $items) {
 if ($context instanceof $class) {
-foreach ($items as $ $item) {
+foreach ($items as  $item) {
 if ($sitebar == $item['sitebar']) $result[] = $item;
 }
 }
@@ -167,6 +220,7 @@ return $result);
 
 private function joinitems(array $items, array $subitems) {
 if (count($subitems) == 0) return $items;
+if (count($items) == 0) return $subitems;
 //delete copies
 for ($i = count($items) -1; $i >= 0; $i--) {
 $id = $items[$i]['id'];
@@ -194,7 +248,7 @@ $id = $item['id'];
 if ($item['ajax']) {
 $content = $this->getajax($id, $sitebar);
 } else {
-switch ($this->items[$item['id']]['cache']) {
+switch ($this->items[$id]['cache']) {
 case 'cache':
 case true:
 $content = $cache->getcontent($id, $sitebar);
@@ -206,7 +260,12 @@ break;
 
 case 'nocache':
 case false:
-$content = $this->nocache($id, $sitebar);
+$widget = getinstance($this->items[$id]['class']);
+$content = $widget->getwidget($id, $content);
+break;
+
+case 'code':
+$content = $this->getcode($id, $sitebar);
 break;
 }
 }
@@ -234,7 +293,7 @@ file_put_contents($filename, $content);
 return "\n<?php @include('$filename'); ?>\n";
 }
 
-private function nocache($id, $sitebar) {
+private function getcode($id, $sitebar) {
 $class = $this->items[$id]['class'];
 return "\n<?php
     \$widget = $class::instance();
@@ -335,7 +394,6 @@ array_insert($this->sitebars[$index], $item, $order);
 }
 $this->save();
 }
-
 
 public function delete($id, $index) {
 if ($i = $this->indexof($id, $index)) {
