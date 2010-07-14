@@ -18,25 +18,8 @@ class tarchives extends titems implements  itemplate {
     $this->basename   = 'archives';
     $this->table = 'posts';
     $this->data['lite'] = false;
-    $this->data['showcount'] = false;
     $this->data['tmlfile'] = '';
     $this->data['theme'] = '';
-  }
-  
-  public function getwidgetcontent($id, $sitebar) {
-    if (count($this->items) == 0) return '';
-    $result = '';
-    $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('archives', $sitebar);
-    $args = targs::instance();
-    foreach ($this->items as $date => $item) {
-      $args->add($item);
-      $args->icon = '';
-    $args->count = $this->showcount ? "({$item['count']})" : '';
-      $result .= $theme->parsearg($tml, $args);
-    }
-    
-    return sprintf($theme->getwidgetitems('archives', $sitebar), $result);
   }
   
   public function GetHeadLinks() {
@@ -153,6 +136,49 @@ public function getdescription() {}
       if (!isset($this->items[$this->date]['posts'])) return array();
       return $this->items[$this->date]['posts'];
     }
+  }
+  
+}//class
+
+class tarchiveswidget extends twidget {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
+protected function create() {
+parent::create();
+$this->basename = 'widget.archives';
+$this->template = 'archives';
+    $this->data['showcount'] = false;
+}
+
+  protected function setshowcount($value) {
+    if ($value != $this->showcount) {
+      $this->data['showcount'] = $value;
+      $this->Save();
+    }
+  }
+
+public function gettitle() {
+return tlocal::$data['stdwidgetnames']['archives'];
+}
+
+  public function getcontent($id, $sitebar) {
+$arch = tarchives::instance();
+    if (count($arch->items) == 0) return '';
+    $result = '';
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem('archives', $sitebar);
+    $args = targs::instance();
+    foreach ($arch->items as $date => $item) {
+      $args->add($item);
+      $args->icon = '';
+    $args->count = $this->showcount ? "({$item['count']})" : '';
+      $result .= $theme->parsearg($tml, $args);
+    }
+    
+    return sprintf($theme->getwidgetitems('archives', $sitebar), $result);
   }
   
 }//class

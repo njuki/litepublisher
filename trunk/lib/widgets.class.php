@@ -68,6 +68,13 @@ if ($id == $item['id']) return $i;
 return 0;
 }
 
+public function expire() {
+$widgets = twidgets::instance();
+foreach ($widgets->items as $id => $item) {
+if ($this instanceof $item['class']) $this->expired($id);
+}
+}
+  
 }//class
 
 class twidgets extends titems {
