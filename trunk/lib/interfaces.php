@@ -18,7 +18,7 @@ interface itemplate {
 }
 
 interface itemplate2 {
-  public function getsitebar();
+  public function getwidgets(array &$items, $sitebar);
   public function afterrequest(&$content);
 }
 

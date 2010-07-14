@@ -15,6 +15,7 @@ $classes->add('tcommontagswidget', 'tags.common.class.php');
 $classes->add('tcategorieswidget', 'tags.categories.class.php');
 $classes->add('ttagswidget', 'tags.cloud.class.php');
 $classes->add('tarchiveswidget', 'archives.class.php');
+$classes->add('tpostswidget', 'posts.class.php');
 
 $custom = tcustomwidget::instance();
 $customitems = array();
@@ -54,10 +55,28 @@ $widget->showcount = $arch->showcount;
 unset($arch->data['showcount']);
 $arch->save();
 
+$widget = tpostswidget::instance();
+$posts = tposts::instance();
+$widget->recentcount = $posts->recentcount;
+unset($posts->data['recentcount']);
+$posts->save();
+
+$widget = tcommentswidget::instance();
+    $manager = tcommentmanager::instance();
+if ($widget->recentcount != $manager->recentcount) {
+$widget->recentcount = $manager->recentcount;
+$widget->save();
+}
+unset($manager->data['recentcount']);
+$manager->save();
+
 $template = ttemplate::instance();
 $data = new titems();
       $data->data = $template->data['sitebars'];
 unset($template->data['sitebars']);
+foreach ($template->events as $$name => $event) {
+if (!isset($template->eventnames[$name])) unset($template->events[$name]);;
+}
 $template->save();
 
 $sitebars = tsitebars::instance();
@@ -117,15 +136,20 @@ $id = $widgets->add(tarchiveswidget ::instance();
 $ajax = $std->items['archives']['ajax'];
 break;
 
+case 'tposts':
+case 'posts':
+$id = $widgets->add(tpostswidget ::instance();
+$ajax = $std->items['posts']['ajax'];
+break;
+
 }
 
 $sitebars->insert($id, $ajax, $i, $j++);
 }
 }
 
-litepublisher::$classes->delete('tstdwidgets');
-litepublisher::$classes->unlock();
-
+$classes->delete('tstdwidgets');
+$classes->unlock();
 $widgets->unlock();
 ttheme::clearcache();
 }

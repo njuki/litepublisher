@@ -27,7 +27,6 @@ class tposts extends titems {
     $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
-    $this->data['recentcount'] = 10;
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
@@ -82,12 +81,7 @@ class tposts extends titems {
     }
   }
   
-  public function getwidgetcontent($id, $sitebar) {
-    $list = $this->getrecent($this->recentcount);
-    $theme = ttheme::instance();
-    return $theme->getpostswidgetcontent($list, $sitebar, '');
-  }
-  
+
   private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
@@ -318,6 +312,37 @@ class tposts extends titems {
   
   public function afterexcerpt($post, &$result) {
     $this->callevent('afterexcerpt', array($post, &$result));
+  }
+  
+}//class
+
+
+class tpostswidget extends twidget {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
+protected function create() {
+parent::create();
+$this->basename = 'widget.posts';
+$this->template = 'posts';
+$this->data['title'] = tlocal::$data['stdwidgetnames']['posts'];
+    $this->data['recentcount'] = 10;
+}
+
+protected function setrecentcount($value) {
+if ($value != $this->recentcount) {
+    $this->data['recentcount'] = $value;
+$this->save();
+}
+}
+
+  public function getcontent($id, $sitebar) {
+$posts = tposts::instance();
+    $list = $posts->getrecent($this->recentcount);
+    $theme = ttheme::instance();
+    return $theme->getpostswidgetcontent($list, $sitebar, '');
   }
   
 }//class

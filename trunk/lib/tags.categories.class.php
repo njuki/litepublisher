@@ -48,14 +48,11 @@ class tcategorieswidget extends tcommontagswidget {
     parent::create();
     $this->basename = 'widget.categories';
 $this->template = 'categories';
+$this->data['title'] = tlocal::$data['stdwidgetnames']['categories'];
 }
 
 public function getowner() {
 return tcategories::instance();
-}
-
-public function gettitle($id) {
-return tlocal::$data['stdwidgetnames']['categories'];  
 }
 
 }//class

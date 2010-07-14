@@ -6,14 +6,17 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tadminlinkspluginInstall($self) {
-  $template = ttemplate::instance();
-  $template->onadminsitebar = $self->onsitebar;
+function tadminlinkswidgetInstall($self) {
+$widgets = twidgets::instance();
+$widgets->lock();
+$widgets->add($self);
+$widgets->onadminlogged = $self->adminlogged;
+$widgets->unlock();
 }
 
-function tadminlinkspluginUninstall($self) {
-  $template = ttemplate::instance();
-  $template->unsubscribeclass($self);
+function tadminlinkswidgetUninstall($self) {
+$widgets = twidgets::instance();
+$widgets->deleteclass(get_class($self));
 }
 
 ?>

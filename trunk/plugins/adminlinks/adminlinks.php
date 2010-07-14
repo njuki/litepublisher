@@ -6,20 +6,36 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminlinksplugin extends tplugin {
+class tadminlinkswidget extends twidget {
   
   public static function instance() {
     return getinstance(__class__);
   }
-  
-  public function onsitebar(&$content, $index) {
-    if ($index > 0 || litepublisher::$urlmap->adminpanel) return;
+
+protected function create() {
+parent::create();
+$this->basename = 'widget.adminlinks';
+$this->cache = 'nocache';
+$this->data['title'] = tlocal::$data['stdwidgetnames']['comments'];
+$this->data['order'] = 0;
+$this->data['sitebar'] = 0;
+}
+
+public function adminlogged(array &$items, $sitebar) {
+if ($sitebar == $this->sitebar) {
+if ($order < 0) || ($order >= count($items)) $order = count($items);
+$widgets = twidgets::instance();
+$id = $widgets->find($this);
+array_insert($items, $id, $order);
+}
+}
+
+  public function getcontent($id, $sitebar) {
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('widget', $index);
+    $tml = $theme->getwidgetitem('widget', $sitebar);
     tlocal::loadlang('admin');
-    $template = ttemplate::instance();
     
-    if ($template->context instanceof tpost) {
+    if (litepublisher::$urlmap->context instanceof tpost) {
       $post = $template->context;
       $lang = tlocal::instance('posts');
       $title = $lang->adminpost;
