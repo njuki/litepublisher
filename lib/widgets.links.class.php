@@ -22,7 +22,12 @@ $this->addmap('items', array());
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
   }
-  
+
+
+public function gettitle($id) {
+return tlocal::$data['stdwidgetnames']['links'];  
+}
+
   public function getcontent($id, $sitebar) {
     if (count($this->items) == 0) return '';
     $result = '';

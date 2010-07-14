@@ -18,10 +18,6 @@ class tcommontags extends titems implements  itemplate {
     $this->dbversion = dbversion;
     parent::create();
     $this->data['lite'] = false;
-    $this->data['sortname'] = 'count';
-    $this->data['showcount'] = true;
-    $this->data['maxcount'] =0;
-    
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
     $this->contents = new ttagcontent($this);
@@ -49,26 +45,12 @@ class tcommontags extends titems implements  itemplate {
     }
   }
   
-  public function save() {
-    parent::save();
-    if (!$this->locked)  {
-      tstdwidgets ::expired($this->PostPropname);
-    }
-  }
-  
-  public function getwidgetcontent($id, $sitebar) {
-    return $this->GetSortedList($this->sortname, $this->maxcount, $sitebar);
-  }
-  
-  private function GetSortedList($sortname, $count, $sitebar) {
+  public function getsortedcontent($sortname, $count, $showcount, $tml) {
     $sorted = $this->getsorted($sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
-    $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem($this->basename, $sitebar);
     $args = targs::instance();
-    $showcount = $this->showcount;
-    $args->count = '';
+        $args->count = '';
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
@@ -76,7 +58,7 @@ class tcommontags extends titems implements  itemplate {
       if ($showcount) $args->count = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }
-    return sprintf($theme->getwidgetitems($this->basename, $sitebar), $result);
+return $result;
   }
   
   public function geticonlink($id) {
@@ -339,7 +321,8 @@ class tcommontags extends titems implements  itemplate {
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
-      $result .= $this->GetSortedList($this->sortname, 0, 0);
+$tml = '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
+      $result .= $this->getsortedcontent('count', 0, 0, false, $tml);
       return sprintf("<ul>\n%s</ul>\n", $result);
     }
     
@@ -366,12 +349,9 @@ class tcommontags extends titems implements  itemplate {
     $result = $this->contents->getvalue($this->id, 'tmlfile');
   }
   
-  public function SetParams($lite, $sortname, $showcount, $maxcount) {
-    if (($lite != $this->lite) || ($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
+  public function Setlite($lite) {
+    if ($lite != $this->lite) {
       $this->lite = $lite;
-      $this->sortname = $sortname;
-      $this->showcount = $showcount;
-      $this->maxcount = $maxcount;
       $this->save();
     }
   }
@@ -477,5 +457,36 @@ class ttagcontent extends tdata {
     return $this->getvalue($id, 'keywords');
   }
   
+}//class
+
+class tcommontagswidget extends twidget {
+
+  protected function create() {
+    parent::create();
+    $this->data['sortname'] = 'count';
+    $this->data['showcount'] = true;
+    $this->data['maxcount'] =0;
+}
+
+  public function SetParams($sortname, $maxcount, $showcount) {
+    if (($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
+      $this->sortname = $sortname;
+      $this->showcount = $showcount;
+      $this->maxcount = $maxcount;
+      $this->save();
+    }
+  }
+
+public function getowner() {
+return false;
+}
+
+public function getcontent($id, $sitebar) {
+    $theme = ttheme::instance();
+    $tml = $theme->getwidgetitem($this->template, $sitebar);
+    $result = $this->owner->getsortedcontent($this->sortname, $this->maxcount, $this->showcount, $tml);
+    return sprintf($theme->getwidgetitems($this->template, $sitebar), $result);
+  }
+
 }//class
 ?>
