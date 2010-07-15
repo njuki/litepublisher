@@ -18,9 +18,6 @@ class tfoaf extends titems {
     parent::create();
     $this->basename = 'foaf';
     $this->table = 'foaf';
-    $this->data['maxcount'] =0;
-    $this->data['redir'] = true;
-    $this->data['redirlink'] = '/foaflink.htm';
   }
   
   public function getapproved($count) {
@@ -32,49 +29,22 @@ class tfoaf extends titems {
     } else {
       $result = array_keys($this->items);
       if ($count > 0) {
-        $result = array_slice($items, 0, $this->maxcount);
+        $result = array_slice($items, 0, $count);
       }
       return $result;
     }
   }
   
-  public function getwidgetcontent($id, $sitebar) {
-    $items = $this->getapproved($this->maxcount);
-    if (count($items) == 0) return '';
-    $result = '';
-    $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('friends', $sitebar);
-    $args = targs::instance();
-    foreach ($items as $id) {
-      $item = $this->getitem($id);
-      $args->add($item);
-      if ($this->redir && !strbegin($item['url'], litepublisher::$options->url)) {
-        $args->url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
-      }
-      $result .=   $theme->parsearg($tml, $args);
-    }
-    return $result;
-  }
-  
   public function request($arg) {
-    switch($arg) {
-      case 'xml':
-      $s = "<?php
+      $result = "<?php
       @header('Content-Type: text/xml; charset=utf-8');
       @ header('Last-Modified: " . date('r') ."');
       @header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
       echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
       '; ?>";
-      $s .= $this->getfoafxml();
-      return  $s;
-      
-      case 'redir':
-      $this->cache = false;
-      $id = empty($_GET['friend']) ? 1 : (int) $_GET['friend'];
-      if (!isset($this->items[$id])) return 404;
-    return "<?php @header('Location: {$this->items[$id]['blog']}'); ?>";
-    }
-  }
+      $result .= $this->getfoafxml();
+      return  $result;
+        }
   
   public function add($nick,$url, $foafurl, $status) {
     $item = array(

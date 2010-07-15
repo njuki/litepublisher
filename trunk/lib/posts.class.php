@@ -327,7 +327,7 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.posts';
 $this->template = 'posts';
-$this->data['title'] = tlocal::$data['stdwidgetnames']['posts'];
+$this->data['title'] = tlocal::$data['default']['recentposts'];
     $this->data['recentcount'] = 10;
 }
 

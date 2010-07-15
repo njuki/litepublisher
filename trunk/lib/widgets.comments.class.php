@@ -18,7 +18,7 @@ $this->basename = 'widget.comments';
 $this->cache = 'include';
 $this->template = 'comments';
     $this->data['recentcount'] =  7;
-$this->data['title'] = tlocal::$data['stdwidgetnames']['comments'];
+$this->data['title'] = tlocal::$data['default']['recentcomments'];
 }
 
   public function getcontent($id, $sitebar) {
