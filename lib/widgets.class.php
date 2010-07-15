@@ -66,14 +66,14 @@ $cache->expired($id);
 break;
 
 case 'include':
-$sitebar = $this->getsitebar($id);
+$sitebar = self::getsitebar($id);
 $filename = self::getcachefilename($id, $sitebar);
 file_put_contents($filename, $this->getwidget($id, $sitebar);
 break;
 }
 }
 
-public function getsitebar($id) {
+public static function getsitebar($id) {
 $widgets = twidgets::instance();
 foreach ($widgets->sitebars as $i=> $sitebar) {
 foreach ($sitebar as $item) {
@@ -261,7 +261,7 @@ break;
 case 'nocache':
 case false:
 $widget = getinstance($this->items[$id]['class']);
-$content = $widget->getwidget($id, $content);
+$content = $widget->getwidget($id, $sitebar);
 break;
 
 case 'code':
@@ -276,7 +276,7 @@ return $result;
 }
 
 public function getajax($id, $sitebar) {
-      $title = sprintf('<a onclick="widgets.load(this, %d)">%s</a>', $id, $this->items[$id]['title']);
+$title = sprintf('<a onclick="widgets.load(this, %d, %d)">%s</a>', $id, $sitebar, $this->items[$id]['title']);
       $content = "<!--widgetcontent-$id-->";
     $theme = ttheme::instance();
 return $theme->getwidget($title, $content, $thisitems[$id]['template'], $sitebar);
@@ -307,6 +307,35 @@ foreach ($this->items as $id => $item) {
 if ($class == $item['class']) return $id;
 }
 return false;
+}
+
+  public function xmlrpcgetwidget($id, $sitebar) {
+if (!isset($this->items[$id])) return $this->error("Widget $id not found");
+switch ($this->items[$id]['cache']
+case 'cache':
+case true:
+$cache = twidgetscache::instance();
+return $cache->getcontent($id, $sitebar);
+
+case 'nocache':
+case false:
+case 'code':
+$widget = getinstance($this->items[$id]['class']);
+return  $widget->getwidget($id, $sitebar);
+
+case 'include':
+$filename = twidget::getcachefilename($id, $sitebar);
+if (file_exists($filename)) {
+return file_get_contents($filename);
+} else {
+$widget = $this->getwidget($id);
+$content = $widget->getwidget($id, $sitebar);
+file_put_contents($filename, $content);
+@chmod($filename, 0666);
+return $content;
+}
+}
+
 }
 
 }//class
@@ -380,7 +409,7 @@ public function save() {
 twidgets::instance()->save();
 }
 
-public function ad($id) {
+public function add($id) {
 $this->insert($id, false, 0, -1);
 }
 

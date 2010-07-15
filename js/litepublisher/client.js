@@ -35,7 +35,7 @@ function createclient() {
   });
 }
 
-widgets.load = function (node, id) {
+widgets.load = function (node, id, sitebar) {
   var comment = findcomment(node, id);
   if (! comment) return alert('Widget not found');
   var i = widgets.add(node, comment);
@@ -43,7 +43,7 @@ widgets.load = function (node, id) {
   if (client == undefined) client = createclient();
   
   client.litepublisher.getwidget( {
-    params:[id],
+    params:[id, sitebar],
     
     onSuccess:function(result){
       if (result && (result != 'false')) {

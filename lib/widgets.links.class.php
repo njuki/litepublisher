@@ -21,7 +21,7 @@ $this->template = 'links';
 $this->addmap('items', array());
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
-$this->data['title'] = tlocal::$data['stdwidgetnames']['links'];
+$this->data['title'] = tlocal::$data['default']['links'];
   }
 
 public function gettitle($id) {

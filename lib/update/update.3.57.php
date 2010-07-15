@@ -48,7 +48,6 @@ unset($widget->owner->data['maxcount']);
 unset($widget->owner->data['showcount']);
 $widget->owner->save();
 
-
 $widget = tarchiveswidget::instance();
 $arch= tarchives::instance();
 $widget->showcount = $arch->showcount;
@@ -69,6 +68,18 @@ $widget->save();
 }
 unset($manager->data['recentcount']);
 $manager->save();
+
+
+$foaf = tfoaf::instance();
+litepublisher::$urlmap->lock();
+litepublisher::$urlmap->delete($foaf->redirlink);
+$classes->add('tfriendswidget', 'widgets.friends.class.php');
+litepublisher::$urlmap->unlock();
+
+    unset($foaf->data['maxcount']);
+    unset($foaf->data['redir']);
+    unset($foaf->data['redirlink']);
+$foaf->save();
 
 $template = ttemplate::instance();
 $data = new titems();
@@ -142,11 +153,22 @@ $id = $widgets->add(tpostswidget ::instance();
 $ajax = $std->items['posts']['ajax'];
 break;
 
+case 'friends':
+case 'tfoaf':
+$id = $widgets->add(tfriendswidget::instance();
+$ajax = $std->items['friends']['ajax'];
+break;
 }
 
 $sitebars->insert($id, $ajax, $i, $j++);
 }
 }
+
+  $xmlrpc = TXMLRPC::instance();
+$xmlrpc->lock();
+  $xmlrpc->deleteclass('tstdwidgets');
+  $xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($widgets));
+$xmlrpc->unlock();
 
 $classes->delete('tstdwidgets');
 $classes->unlock();

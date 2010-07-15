@@ -7,12 +7,8 @@
 **/
 
 function tfoafInstall($self) {
-  $urlmap = turlmap::instance();
-  $urlmap->lock();
-  $urlmap->add('/foaf.xml', get_class($self), 'xml');
-  $urlmap->add($self->redirlink, get_class($self), 'redir', 'get');
-  $urlmap->unlock();
-  
+  litepublisher::$urlmap->add('/foaf.xml', get_class($self));
+
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
@@ -37,9 +33,6 @@ function tfoafUninstall($self) {
     $manager = tdbmanager ::instance();
     $manager->deletetable($self->table);
   }
-  
-  $std = tstdwidgets::instance();
-  $std->delete('friends');
 }
 
 ?>
