@@ -16,6 +16,7 @@ $classes->add('tcategorieswidget', 'tags.categories.class.php');
 $classes->add('ttagswidget', 'tags.cloud.class.php');
 $classes->add('tarchiveswidget', 'archives.class.php');
 $classes->add('tpostswidget', 'posts.class.php');
+$classes->add('tmenuwidget', 'widget.menu.class.php');
 //change filename
 $classes->items['tlinkswidget'][0] = 'widget.links.class.php';
 $classes->items['tcustomwidget'][0] = 'widget.custom.class.php';

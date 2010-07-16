@@ -5,6 +5,7 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
+
 function tlinkswidgetInstall($self) {
   tlocal::loadlang('admin');
   $lang = &tlocal::$data['installation'];
@@ -18,7 +19,7 @@ function tlinkswidgetInstall($self) {
   $robots->save();
 }
 
-function tlinkswidgetUninstall(&$self) {
+function tlinkswidgetUninstall($self) {
   $widgets = twidgets::instance();
   $widgets->deleteclass(get_class($self));
   turlmap::unsub($self);
