@@ -130,6 +130,20 @@ return $this->additem( array(
 ));
 }
 
+public function addclass(twidget $widget, $class) {
+$this->lock();
+$id = $this->add($widget);
+if (!isset($this->classes[$class])) $this->classes[$class] = array();
+$this->classes[$class][] = array(
+'id' => $id,
+'order' => 0,
+'sitebar' => 0,
+'ajax' => false
+);
+$this->unlock();
+return $id;
+}
+
 public function delete($id) {
 if (!isset($this->items[$id])) return;
 
