@@ -51,7 +51,7 @@ class tadminmenus extends tmenus {
     return $groups->hasright(litepublisher::$options->group, $group);
   }
   
-  protected function getchilds($id) {
+  public function getchilds($id) {
     if ($id == 0) {
       $result = array();
       foreach ($this->tree as $iditem => $items) {

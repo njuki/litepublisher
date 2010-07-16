@@ -38,6 +38,19 @@ $sitebars->insert($id, true, 0, -1);
 $id = $widgets->add(tlinkswidget::instance());
 $sitebars->insert($id, true, 0, -1);
 
+$id = $widgets->add(tfriendswidget::instance());
+$sitebars->insert($id, true, 0, -1);
+
+
+$id = $widgets->add(tpostswidget::instance());
+$sitebars->insert($id, true, 1, -1);
+
+$id = $widgets->add(tcommentswidget::instance());
+$sitebars->insert($id, true, 1, -1);
+
+$id = $widgets->add(tmetawidget::instance());
+$sitebars->insert($id, true, 1, -1);
+
 $widgets->unlock();
 }
 ?>

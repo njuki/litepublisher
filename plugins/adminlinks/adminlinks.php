@@ -16,21 +16,20 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.adminlinks';
 $this->cache = 'nocache';
-$this->data['title'] = tlocal::$data['stdwidgetnames']['comments'];
+$this->data['title'] = 'Admin links';
 $this->data['order'] = 0;
 $this->data['sitebar'] = 0;
 }
 
 public function adminlogged(array &$items, $sitebar) {
-if ($sitebar == $this->sitebar) {
+if ($sitebar != $this->sitebar) return;
 if ($order < 0) || ($order >= count($items)) $order = count($items);
 $widgets = twidgets::instance();
 $id = $widgets->find($this);
 array_insert($items, $id, $order);
 }
-}
 
-  public function getcontent($id, $sitebar) {
+  public function getwidget($id, $sitebar) {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('widget', $sitebar);
     tlocal::loadlang('admin');
@@ -48,10 +47,10 @@ array_insert($items, $id, $order);
       $links .= sprintf($tml, "$editurl&mode=update", $lang->updatepost);
       $links .= sprintf($tml, "$action=delete", $lang->delete);
     } else {
-      switch (get_class($template->context)) {
+      switch (get_class(litepublisher::$urlmap->context)) {
         case 'tcategories':
         case 'ttags':
-        $tags = $template->context;
+        $tags = litepublisher::$urlmap->context;
         $name = $tags instanceof ttags ? 'tags' : 'categories';
         $adminurl = litepublisher::$options->url . "/admin/posts/$name/";
         $lang = tlocal::instance('tags');
@@ -71,8 +70,8 @@ array_insert($items, $id, $order);
         break;
         
         default:
-        if ($template->context instanceof tmenu) {
-          $menu = $template->context;
+        if (litepublisher::$urlmap->context instanceof tmenu) {
+          $menu = litepublisher::$urlmap->context;
           $lang = tlocal::instance('menu');
           $title = $lang->title;
           $adminurl = litepublisher::$options->url . "/admin/menu/edit/";
@@ -86,9 +85,8 @@ array_insert($items, $id, $order);
     }
     
     $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
-    $links = sprintf($theme->getwidgetitems('widget', $index), $links);
-    $widget = $theme->getwidget($title, $links, 'widget', $index);
-    $content = $widget . $content;
+    $links = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
+return $theme->getwidget($title, $links, 'widget', $sitebar);
   }
   
 }//class

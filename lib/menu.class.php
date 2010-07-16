@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tmenus extends TItems {
+class tmenus extends titems {
   public $tree;
   
   public static function instance() {
@@ -148,7 +148,7 @@ class tmenus extends TItems {
   
   private function getsubtree($parent) {
     $result = array();
-    // первый шаг найти всех детей и отсортировать
+    // first step is a find all childs and sort them
     $sort= array();
     foreach ($this->items as $id => $item) {
       if (($item['parent'] == $parent) && ($item['status'] == 'published')) {
@@ -163,9 +163,14 @@ class tmenus extends TItems {
     }
     return $result;
   }
-  
-  //возвращает массив id
-  private function getparents($id) {
+
+
+public function getparent($id) {
+return $this->items[$id]['parent'];
+}  
+
+  //return array of id
+  public function getparents($id) {
     $result = array();
     $id = $this->items[$id]['parent'];
     while ($id != 0) {
@@ -177,7 +182,7 @@ class tmenus extends TItems {
   }
   
   //ищет в дереве список детей, так как они уже отсортированы
-  protected function getchilds($id) {
+  public function getchilds($id) {
     if ($id == 0) {
       $result = array();
       foreach ($this->tree as $iditem => $items) {
@@ -202,46 +207,6 @@ class tmenus extends TItems {
       }
     }
     return array_keys($tree);
-  }
-  
-  private function getwidgetitem($tml, $item, $subnodes) {
-    $args = targs::instance();
-    if ($subnodes != '') $subnodes = "<ul>\n$subnodes</ul>\n";
-    $args->add($item);
-    $args->count = $subnodes;
-    $args->icon = '';
-    $theme = ttheme::instance();
-    return $theme->parsearg($tml, $args);
-  }
-  
-  /* Так как меню верхнего уровня все равно показывается в шапке, то в виджете меню ббудут начинаться с второго уровня */
-  public function getsubmenuwidget($id) {
-    $result = '';
-    $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('submenu', 0);
-    // 1 вначале список подменю
-    $submenu = '';
-    $childs = $this->getchilds($id);
-    foreach ($childs as $child) {
-      $submenu .= $this->getwidgetitem($tml, $this->items[$child], '');
-    }
-    
-    if (0 == $this->items[$id]['parent']) {
-      $result = $submenu;
-    } else {
-      $sibling = $this->getchilds($this->items[$id]['parent']);
-      foreach ($sibling as $iditem) {
-        $result .= $this->getwidgetitem($tml, $this->items[$iditem], $iditem == $id ? $submenu : '');
-      }
-    }
-    
-    $parents = $this->getparents($id);
-    foreach ($parents as $parent) {
-      $result = $this->getwidgetitem($tml, $this->items[$parent], $result);
-    }
-    if ($result != '') $result = sprintf($theme->getwidgetitems('submenu', 0), $result);
-    $widgets = twidgets::instance();
-    return $theme->getwidget($this->items[$id]['title'], $result, 'submenu', $widgets->current);
   }
   
   public function getmenu($hover) {
@@ -283,7 +248,7 @@ class tmenus extends TItems {
   
 }//class
 
-class tmenu extends titem implements  itemplate, itemplate2, imenu {
+class tmenu extends titem implements  itemplate, imenu {
   public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
@@ -407,21 +372,6 @@ public function gethead() {}
     $theme = ttheme::instance();
     return $theme->parse($theme->content->menu);
   }
-  
-  //itemplate2
-  public function getsitebar() {
-    $result = '';
-    $widgets = twidgets::instance();
-    $template = ttemplate::instance();
-    $theme = ttheme::instance();
-    if (($widgets->current == 0) && !($template->hovermenu && $theme->menu->hover)) {
-      $result .= $this->owner->getsubmenuwidget($this->id);
-    }
-    $result .= $widgets->getcontent();
-    return $result;
-  }
-  
-public function afterrequest(&$content) {}
   
   //imenu
   public function getparent() {

@@ -271,6 +271,7 @@
     <!--/items-->
 		    </div>
 			<!--/widget-->
+
 			<!--submenu-->
 				<div class="widget">
 			      <div class="rubric">%s</div>
@@ -281,6 +282,7 @@
     <!--/items-->
 				</div>
 			<!--/submenu-->
+
 			<!--categories-->
 				<div class="widget">
 			      <div class="rubric">%s</div>

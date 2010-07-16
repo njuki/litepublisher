@@ -7,6 +7,7 @@
 **/
 
 class thomepage extends tevents implements  itemplate, itemplate2, imenu  {
+public $sitebars;
   
   public static function instance() {
     return getinstance(__class__);
@@ -19,6 +20,7 @@ class thomepage extends tevents implements  itemplate, itemplate2, imenu  {
     $this->data['hideposts'] = false;
     $this->data['defaultswidgets'] = true;
     $this->data['showstandartcontent'] = true;
+$this->addmap('sitebars', array(array(), array(), array()));
     $this->data['text'] = '';
     $this->data['tmlfile'] = '';
     $this->data['theme'] = '';
@@ -57,10 +59,6 @@ public function getdescription() {}
     $this->setvalue('hideposts', $value);
   }
   
-  public function setstedajax($value) {
-    $this->setvalue('stdajx', $value);
-  }
-  
   private function setvalue($name, $value) {
     if ($this->data[$name] != $value) {
       $this->data[$name] = $value;
@@ -72,25 +70,18 @@ public function getdescription() {}
   //ITemplate2
 public function afterrequest(&$content) {}
   
-  public function getsitebar() {
+  public function getwidgets(array &$items, $sitebar) {
     if ($this->defaultswidgets) {
-      $widgets = twidgets::instance();
       if ($this->showstandartcontent) {
-        $std = tstdwidgets::instance();
-        $std->disableajax = true;
-        //чтобы кеш брался из другого файла, но есть опасность сохранения виджетов негде было
-        $id = $widgets->id;
-        $widgets->id = 'homepage';
-        $result = $widgets->getcontent();
-        $widgets->id = $id;
-        return $result;
+foreach ($items as $i => $item) {
+$items[$i]['ajax'] = false;
+}
       }
-      return $widgets->getcontent();
     }else {
-      $widgets = twidgets::instance('homepage');
-      return $widgets->getcontent();
+if (isset($this->sitebars[$sitebar])) $items = $this->sitebars[$sitebar];
     }
   }
+
   // imenu
 public function getparent() { return 0; }
 public function setparent($id) {}
