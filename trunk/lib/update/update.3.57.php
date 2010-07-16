@@ -16,6 +16,10 @@ $classes->add('tcategorieswidget', 'tags.categories.class.php');
 $classes->add('ttagswidget', 'tags.cloud.class.php');
 $classes->add('tarchiveswidget', 'archives.class.php');
 $classes->add('tpostswidget', 'posts.class.php');
+//change filename
+$classes->items['tlinkswidget'][0] = 'widget.links.class.php';
+$classes->items['tcustomwidget'][0] = 'widget.custom.class.php';
+$classes->items['tcommentswidget'][0] = 'widget.comments.class.php';
 
 $custom = tcustomwidget::instance();
 $customitems = array();
@@ -174,5 +178,20 @@ $classes->delete('tstdwidgets');
 $classes->unlock();
 $widgets->unlock();
 ttheme::clearcache();
+
+//delete files
+$lib = litepublisher::$paths->lib;
+$install = $lib . 'install' . DIRECTORY_SEPARATOR;
+
+@unlink($lib . 'widgets.standarts.class.php');
+@unlink($install . 'widgets.standarts.class.install.php');
+
+@unlink($lib . 'widgets.links.class.php');
+@unlink($install . 'widgets.links.class.install.php');
+
+@unlink($lib . 'widgets.custom.class.php');
+@unlink($install . 'widget.custom.class.install.php');
+
+@unlink($lib . 'widgets.comments.class.php');
 }
 ?>

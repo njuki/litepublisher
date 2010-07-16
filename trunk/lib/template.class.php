@@ -28,7 +28,7 @@ class ttemplate extends tevents {
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s'",
     litepublisher::$options->url, litepublisher::$options->files));
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged' 'onadminhover', 'ondemand');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
     $this->data['theme'] = 'default';
     $this->data['admintheme'] = '';
     $this->data['hovermenu'] = true;
