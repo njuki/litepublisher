@@ -12,69 +12,48 @@ class tadminwidgets extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  private function getcombosortname ($comboname, $sortname) {
-    $result = "<select name='$comboname' id='$comboname'>\n";
-    foreach (tlocal::$data['sortnametags'] as $name => $value) {
-      $selected = $sortname  == $name? 'selected' : '';
-      $result .= "<option value='$name' $selected>$value</option>\n";
-    }
-    $result .= "</select>";
-    return $result;
+  public static function getcombosortname ($comboname, $sortname) {
+return self::getcombo(tlocal::$data['sortnametags'], $comboname, $sortname) {
   }
   
-  private function getcombo($name, $index, $count) {
-    $index++;
+  public static function getcombo(array $items, $name, $index) {
     $result = "<select name='$name' id='$name'>\n";
-    for ($i = 1; $i <= $count; $i++) {
-      $selected = $i == $index  ? 'selected' : '';
-      $result .= "<option $selected>$i</option>\n";
+foreach ($items as $i => $item) {
+      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $index  ? 'selected' : '', $item);
     }
     $result .= "</select>\n";
     return $result;
   }
+
+
+public static function getsitebarnames($count) {
+$result = range(1, $count );
+$parser = tthemeparser::instance();
+$template = ttemplate::instance();
+$about = $parser->getabout($template->theme);
+foreach ($result as $key => $value) {
+if (isset($about["sitebar$value"])) $result[$i] = $about['sitebar$value"];
+}
+return $result;
+}
   
-  private function getwidgettitle(twidgets $widgets, $id) {
-    $widget = $widgets->getitem($id);
-    if (!empty($widget['title'])) return $widget['title'];
-    if (isset(tlocal::$data['stdwidgetnames'][$widget['class']])) {
-      return TLocal::$data['stdwidgetnames'][$widget['class']];
-    }
-    
-    $std = tstdwidgets::instance();
-    if ($name = $std->getname($id)) {
-      return $std->gettitle($name);
-    }
-    
-    $class = $widget['class'];
-    if ($class == 'tcustomwidget') {
-      $custom = tcustomwidget ::instance();
-      return $custom->items[$id]['title'];
-    }
-    
-    //if widget is plugin then get from about.ini
-    $plugins = tplugins::instance();
-    foreach ($plugins->items as $name => $item) {
-      if ($class == $item['class']) {
-        $about = $plugins->GetAbout($name);
-        return $about['name'];
-      }
-    }
-    return '';
-  }
-  
-  private function getwidgets(twidgets $widgets) {
+public static function getsitebarsform(array $sitebars) {
+$widgets = twidgets::instance();
     $args = targs::instance();
-    $html = $this->html;
+    $html = THtmlResource ::instance();
+$html->section = 'widgets';
     $result = $html->checkallscript;
     $result .= $html->formhead();
-    // принимается что макс число сайтбаров = 3
-    for ($i = 0; $i < 3; $i++) {
-      $j = 0;
-      foreach ($widgets->items[$i] as $id => $item) {
+$count = count($sitebars);
+$sitebarnames = self::getsitebarnames(count($sitebars));
+foreach ($sitebars as $i => $sitebar)
+$orders = range(1, count($sitebar));
+foreach ($sitebar as $j => $_item) {
+$id = $_item['id'];
         $args->id = $id;
-        $args->title = $this->getwidgettitle($widgets, $id);
-        $args->sitebarcombo = $this->getcombo("sitebar-$id", $i, 3);
-        $args->ordercombo = $this->getcombo("order-$id", $j++, $widgets->sitebarcount($i));
+        $args->add($widgets->getitem($id));
+        $args->sitebarcombo = $this->getcombo($sitebarnames, "sitebar-$id", $i);
+        $args->ordercombo = $this->getcombo($orders, "order-$id", $j);
         $result .= $html->item($args);
       }
     }
@@ -82,19 +61,28 @@ class tadminwidgets extends tadminmenu {
     return  $html->fixquote($result);
   }
   
-  private function setwidgets(twidgets $widgets) {
-    if (!empty($_POST['deletewidgets']))  return $this->DeleteWidgets($widgets);
-    // собрать все значения id чекбоксов
+// parse POST into sitebars array
+  public static function editsitebars(array $sitebars) {
+    // collect all id from checkboxes
     $items = array();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, 'widgetcheck-'))$items[] = (int) $value;
     }
     
-    $widgets->lock();
     foreach ($items as $id) {
-      $widgets->setpos($id, $_POST["sitebar-$id"] - 1, $_POST["order-$id"] - 1);
+    if (isset($_POST['deletewidgets']))  {
+if ($pos = tsitebars::getpos($sitebars, $id)) {
+list($i, $j) = $pos;
+array_delete($sitebars[$i], $j);
+}
+} else {
+$i = (int)$_POST["sitebar-$id"];
+$j = (int) $_POST["order-$id"];
+tsitebars::setpos($sitebars, $id, $i, $j);
     }
-    $widgets->unlock();
+}
+
+return $sitebars;
     return $this->html->h2->success;
   }
   
@@ -352,22 +340,6 @@ class tadminwidgets extends tadminmenu {
     }//switch
   }
   
-  private function DeleteWidgets(twidgets $widgets) {
-    $template = ttemplate::instance();
-    $template->lock();
-    $widgets->lock();
-    $check = 'widgetcheck-';
-    foreach ($_POST as $key => $value) {
-      if (strbegin($key, $check)){
-        $id = (int) substr($key, strlen($check));
-        $widgets->delete($id);
-      }
-    }
-    $widgets->unlock();
-    $template->unlock();
-    litepublisher::$urlmap->clearcache();
-    return $this->html->h2->successdeleted;
-  }
-  
+
 }//class
 ?>
