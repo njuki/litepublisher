@@ -464,6 +464,27 @@ $this->save();
 }
 }
 
+public static function getpos(array $sitebars, $id) {
+foreach ($sitebars as $i => $sitebar) {
+foreach ($sitebar as $j => $item) {
+if ($id == $item['id']) return array($i, $j);
+}
+}
+return false;
+}
+
+public static function setpos(array $items, $id, $newsitebar, $neworder) {
+if ($pos = self::getpos($items, $id)) {
+list($oldsitebar, $oldorder) = $pos;
+if (($oldsitebar != $newsitebar) || ($oldorder != $neworder)){
+$item = $items[$oldsitebars][$oldorder];
+array_delete($items[$oldsitebar], $oldorder);
+array_insert($items[$newsitebar], $neworder, $item);
+}
+}
+return $items;
+}
+
 }//class
 
 ?>
