@@ -58,6 +58,18 @@ $id = $_item['id'];
       }
     }
     $result .= $html->formfooter();
+
+//all widgets
+$result .= $html->addform();
+$args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'id';
+$widgets = twidgets::instance();
+foreach ($widgets->items as $id => $item) {
+$args->id = $id;
+$args->add($item);
+$args->checked = tsitebars::getpos($sitebars, $id) ? true : false;
+$result .= $html->additem($args);
+}
+$result .= $html->addfooter();
     return  $html->fixquote($result);
   }
   
@@ -89,21 +101,44 @@ return $sitebars;
   
   public function getcontent() {
 $widgets = twidgets::instance();
-$result = self::getsitebarsform($widgets->sitebars);
+$id = $this->idget();
+if ($widgets->itemexists($id)) {
+$widget = $widgets->getwidget($id);
+return  $widget->admin->getcontent();
 }
+
+return self::getsitebarsform($widgets->sitebars);
+}
+
   public function processform() {
+    litepublisher::$urlmap->clearcache();
 $widgets = twidgets::instance();
+$id = $this->idget();
+if ($widgets->itemexists($id)) {
+$widget = $widgets->getwidget($id);
+return  $widget->admin->processform();
+}
+$widgets->sitebars = self::setsitebars($widgets->sitebars);
+$widgets->save();
+}
+
+public static function setsitebars(array $sitebars) {
 switch ($_POST['action']) {
 case 'edit':
-$widgets->sitebars = self::getsitebars($widgets->sitebars);
-$widgets->save();
-break;
+return self::getsitebars($sitebars);
 
 case 'add':
-
-break;
+$widgets = twidgets::instance();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'addwidget-')){
+$sitebars[0][] = array(
+'id' => (int) $value,
+'ajax' => false
+);
 }
-    litepublisher::$urlmap->clearcache();
+    }
+  return $sitebars;  
+}
 }
 
 }//class

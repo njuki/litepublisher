@@ -8,12 +8,19 @@
 
 class twidget extends tdata {
 public $template;
+protected $adminclass;
 
 protected function create() {
 parent::create();
 $this->basename = 'widget';
 $this->cache = 'cache';
 $this->template = 'widget';
+$this->adminclass = '';
+}
+
+protected function getadmin() {
+if (($this->adminclass != '') && class_exists($this->adminclass)) return getinstance($this->adminclass);
+$this->error(sprintf('The "%s" admin class not found', $this->adminclass));
 }
 
   public function getwidget($id, $sitebar) {
