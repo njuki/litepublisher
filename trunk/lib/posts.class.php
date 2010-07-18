@@ -327,20 +327,21 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.posts';
 $this->template = 'posts';
+$this->adminclass = 'tadminpostswidget';
 $this->data['title'] = tlocal::$data['default']['recentposts'];
-    $this->data['recentcount'] = 10;
+    $this->data['maxcount'] = 10;
 }
 
-protected function setrecentcount($value) {
-if ($value != $this->recentcount) {
-    $this->data['recentcount'] = $value;
+protected function setmaxcount($value) {
+if ($value != $this->rmaxcount) {
+    $this->data['maxcount'] = $value;
 $this->save();
 }
 }
 
   public function getcontent($id, $sitebar) {
 $posts = tposts::instance();
-    $list = $posts->getrecent($this->recentcount);
+    $list = $posts->getrecent($this->maxcount);
     $theme = ttheme::instance();
     return $theme->getpostswidgetcontent($list, $sitebar, '');
   }

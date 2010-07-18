@@ -61,7 +61,7 @@ $arch->save();
 
 $widget = tpostswidget::instance();
 $posts = tposts::instance();
-$widget->recentcount = $posts->recentcount;
+$widget->maxcount = $posts->recentcount;
 unset($posts->data['recentcount']);
 $posts->save();
 
