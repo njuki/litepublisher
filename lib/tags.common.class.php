@@ -463,6 +463,7 @@ class tcommontagswidget extends twidget {
 
   protected function create() {
     parent::create();
+$this->adminclass = 'tadmintagswidget';
     $this->data['sortname'] = 'count';
     $this->data['showcount'] = true;
     $this->data['maxcount'] =0;

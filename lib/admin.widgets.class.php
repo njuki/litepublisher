@@ -12,10 +12,6 @@ class tadminwidgets extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public static function getcombosortname ($comboname, $sortname) {
-return self::getcombo(tlocal::$data['sortnametags'], $comboname, $sortname) {
-  }
-  
   public static function getcombo(array $items, $name, $index) {
     $result = "<select name='$name' id='$name'>\n";
 foreach ($items as $i => $item) {

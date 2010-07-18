@@ -15,11 +15,15 @@ parent::create();
 $this->basename = 'widget';
 $this->cache = 'cache';
 $this->template = 'widget';
-$this->adminclass = '';
+$this->adminclass = 'tadminwidget';
 }
 
 protected function getadmin() {
-if (($this->adminclass != '') && class_exists($this->adminclass)) return getinstance($this->adminclass);
+if (($this->adminclass != '') && class_exists($this->adminclass)) {
+$admin = getinstance($this->adminclass);
+$admin->widget = $this;
+return $admin;
+}
 $this->error(sprintf('The "%s" admin class not found', $this->adminclass));
 }
 
