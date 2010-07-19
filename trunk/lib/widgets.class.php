@@ -360,7 +360,25 @@ file_put_contents($filename, $content);
 return $content;
 }
 }
+}
 
+
+public function getpos($id) {
+return tsitebars::getpos($this->sitebars, $id);
+}
+
+public function setpos($id, $sitebar, $order) {
+$this->sitebars = tsitebars::setpos($this->sitebars, $id, $sitebar, $order);
+$this->save();
+}
+
+public function &finditem($id) {
+foreach ($this->classes as $class => $items) {
+foreach ($items as $item) {
+if ($id == $item['id']) return $this->classes[$class][$i];
+}
+}
+return false;
 }
 
 }//class

@@ -124,21 +124,27 @@ $widget->redir = isset($_POST['redir']);
 
 }//class
 
-class tadminmenuwidget extends tadminwidget {
+class tadminorderwidget extends tadminwidget {
 
   public static function instance($id = null) {
     return getinstance(__class__);
   }
 
   protected function dogetcontent(twidget $widget, targs $args){
-$args->maxcount = $widget->maxcount;
-$args->redir = $widget->redir;
-return $this->html->friendsform($args);
+$widgets =twidgets::instance();
+if ($item = &$widgets->finditem($widget->id)) {
+$args->sitebar = $item['sitebar'];
+$args->order = $item['order'];
+return $this->html->locationform($args);
+}
 }
 
   protected function doprocessform(twidget $widget)  {
-$widget->maxcount = (int) $_POST['maxcount']);
-$widget->redir = isset($_POST['redir']);
+$widgets = twidgets::instance();
+if ($item = &$widgets->finditem($widget->id)) {
+$item['sitebar'] = (int) $_POST['sitebar'];
+$item['order'] = (int) $_POST['order'];
+}
 }
 
 }//class
