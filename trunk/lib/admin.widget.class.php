@@ -18,11 +18,25 @@ $this->html = THtmlResource ::instance();
     $this->lang = tlocal::instance('widgets');
 }
 
-public function getcontent(){
+
+  protected function dogetcontent(twidget $widget, targs $args){
 $this->error('Not implemented');
+}
+public function getcontent(){
+$form = $this->dogetcontent($this->widget, targs::instance());
+return $this->optionsform($form);
 }
 
   public function processform()  {
+$widget = $this->widget;
+$widget->lock();
+$widget->title = $_POST['title'];
+$this->doprocessform($widget);
+$widget->unlock();
+return $this->html->h2->updated;
+}
+
+  protected function doprocessform(twidget $widget)  {
 $this->error('Not implemented');
 }
 
@@ -41,52 +55,109 @@ class tadmintagswidget extends tadminwidget {
     return getinstance(__class__);
   }
 
-  public function getcontent(){
-$widget = $this->widget;
-    $args = targs::instance();
+  protected function dogetcontent(twidget $widget, targs $args){
 $args->showcount = $widget->showcount;
 $args->maxcount = $widget->maxcount;
 $args->combo = tadminwidgets::getcombo(tlocal::$data['sortnametags'], 'sort', $widget->sortname);
-return $this->optionsform($this->html->tagsform($args));
+return $this->html->tagsform($args);
 }
 
-  public function processform()  {
+  protected function doprocessform(twidget $widget)  {
 extract($_POST);
-$widget = $this->widget;
-$widget->lock();
-$widget->title = $title;
 $widget->maxcount = int) $maxcount;
 $widget->showcount = isset($showcount);
 $widget->sortname = $sort;
-$widget->unlock();
 }
 
 }//class
 
-class tadminpostswidget extends tadminwidget {
+class tadminmaxcount extends tadminwidget {
 
   public static function instance($id = null) {
     return getinstance(__class__);
   }
 
-  public function getcontent(){
-$widget = $this->widget;
-    $args = targs::instance();
+  protected function dogetcontent(twidget $widget, targs $args){
 $args->maxcount = $widget->maxcount;
-return $this->optionsform($this->html->postsform($args));
+return $this->html->maxcountform($args);
 }
 
-  public function processform()  {
-extract($_POST);
-$widget = $this->widget;
-$widget->lock();
-$widget->title = $title;
-$widget->maxcount = int) $maxcount;
-$widget->unlock();
+  protected function doprocessform(twidget $widget)  {
+$widget->maxcount = int) $_POST['maxcount'];
 }
 
 }//class
 
+class tadminshowcount extends tadminwidget {
 
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
 
-?>
+  protected function dogetcontent(twidget $widget, targs $args){
+$args->showcount = $widget->showcount;
+return $this->html->showcountform($args);
+}
+
+  protected function doprocessform(twidget $widget)  {
+$widget->showcount = isset($_POST['showcount']);
+}
+
+}//class
+
+class tadminfriendswidget extends tadminwidget {
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+
+  protected function dogetcontent(twidget $widget, targs $args){
+$args->maxcount = $widget->maxcount;
+$args->redir = $widget->redir;
+return $this->html->friendsform($args);
+}
+
+  protected function doprocessform(twidget $widget)  {
+$widget->maxcount = (int) $_POST['maxcount']);
+$widget->redir = isset($_POST['redir']);
+}
+
+}//class
+
+class tadminmenuwidget extends tadminwidget {
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+
+  protected function dogetcontent(twidget $widget, targs $args){
+$args->maxcount = $widget->maxcount;
+$args->redir = $widget->redir;
+return $this->html->friendsform($args);
+}
+
+  protected function doprocessform(twidget $widget)  {
+$widget->maxcount = (int) $_POST['maxcount']);
+$widget->redir = isset($_POST['redir']);
+}
+
+}//class
+
+class tadmincustomwidget extends tadminwidget {
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+
+  protected function dogetcontent(twidget $widget, targs $args){
+$args->maxcount = $widget->maxcount;
+$args->redir = $widget->redir;
+return $this->html->friendsform($args);
+}
+
+  protected function doprocessform(twidget $widget)  {
+$widget->maxcount = (int) $_POST['maxcount']);
+$widget->redir = isset($_POST['redir']);
+}
+
+}//class

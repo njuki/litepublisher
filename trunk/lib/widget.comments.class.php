@@ -17,13 +17,14 @@ parent::create();
 $this->basename = 'widget.comments';
 $this->cache = 'include';
 $this->template = 'comments';
-    $this->data['recentcount'] =  7;
+$this->adminclass = 'tadminmaxcount';
+    $this->data['maxcount'] =  7;
 $this->data['title'] = tlocal::$data['default']['recentcomments'];
 }
 
   public function getcontent($id, $sitebar) {
     $manager = tcommentmanager::instance();
-    $recent = $manager->getrecent($this->recentcount);
+    $recent = $manager->getrecent($this->maxcount);
     if (count($recent) == 0) return '';
     $result = '';
     $theme = ttheme::instance();

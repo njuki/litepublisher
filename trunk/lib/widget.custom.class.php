@@ -17,6 +17,7 @@ private $id;
   protected function create() {
     parent::create();
     $this->basename   = 'widgets.custom';
+$this->adminclass = 'tadmincustomwidget';
 $this->addmap('items', array());
   }
 

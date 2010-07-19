@@ -150,6 +150,7 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.archives';
 $this->template = 'archives';
+$this->adminclass = 'tadminshowcount';
 $this->data['title'] = tlocal::$data['default']['archives'];
     $this->data['showcount'] = false;
 }

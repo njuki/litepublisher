@@ -67,13 +67,12 @@ $posts->save();
 
 $widget = tcommentswidget::instance();
     $manager = tcommentmanager::instance();
-if ($widget->recentcount != $manager->recentcount) {
-$widget->recentcount = $manager->recentcount;
+if ($widget->maxcount != $manager->recentcount) {
+$widget->maxcount = $manager->recentcount;
 $widget->save();
 }
 unset($manager->data['recentcount']);
 $manager->save();
-
 
 $foaf = tfoaf::instance();
 litepublisher::$urlmap->lock();
