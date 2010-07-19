@@ -16,6 +16,7 @@ class tmenuwidget extends twidget {
 $this->cache = 'nocache';
     $this->basename = 'widget.menu';
 $this->template = 'submenu';
+$this->adminclass = 'tadminmenuwidget';
 }
 
 public function gettitle($id) {

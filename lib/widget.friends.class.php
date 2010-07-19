@@ -16,6 +16,7 @@ class tfriendswidget extends twidget {
     parent::create();
     $this->basename = 'widget.friends';
 $this->template = 'friends';
+$this->adminclass = 'tadminfriendswidget';
 $this->data['title'] = tlocal::$data['default']['myfriends'];
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
