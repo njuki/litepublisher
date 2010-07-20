@@ -97,6 +97,18 @@ return $sitebars;
   
   public function getcontent() {
 $widgets = twidgets::instance();
+if (isset($_GET['add'])) {
+switch ($_GET['add'])) {
+case 'custom':
+$widget = tcustomwidget::instance();
+return  $widget->admin->getcontent();
+
+case 'link':
+$widget = tlinkswidget::instance();
+return  $widget->admin->getcontent();
+}
+}
+
 $idwidget = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
 if ($widgets->itemexists($idwidget)) {
 $widget = $widgets->getwidget($idwidget);

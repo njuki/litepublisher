@@ -22,6 +22,7 @@ $this->html = THtmlResource ::instance();
   protected function dogetcontent(twidget $widget, targs $args){
 $this->error('Not implemented');
 }
+
 public function getcontent(){
 $form = $this->dogetcontent($this->widget, targs::instance());
 return $this->optionsform($form);
@@ -157,23 +158,45 @@ class tadmincustomwidget extends tadminwidget {
     return getinstance(__class__);
   }
 
-  protected function dogetcontent(twidget $widget, targs $args){
-$args->maxcount = $widget->maxcount;
-$args->redir = $widget->redir;
-return $this->html->friendsform($args);
+public static function gettemplates() {
+$result = array();
+$lang = tlocal::instance('widgets');
+$result['widget'] = $lang->defaulttemplate;
+foreach (tthemeparser::getwidgetnames() as $name) {
+$result[$name] = $lang->$name;
 }
-
-public function getcontent() {
-$result = parent::getcontent();
 return $result;
 }
 
-  protected function doprocessform(twidget $widget)  {
-$widget->maxcount = (int) $_POST['maxcount']);
-$widget->redir = isset($_POST['redir']);
+public function getcontent() {
+$widget = $this->widget;
+$id = $_GET['idwidget'];
+$item = $widget->getitem($id);
+    $args = targs::instance();
+$html= $this->html;
+$args->title = $item['title'];
+$args->text = $item['content'];
+$args->combo =tadminwidgets::getcombo(self::gettemplates(), 'template', $item['template']);
+$args->content = $html->customform($args);
+$result = $html->optionsform($args);
+
+      $list = '';
+      $args->adminurl = litepublisher::$options->url . litepublisher::$options->q . 'idwidget';
+      foreach ($widget->items as $id => $item) {
+        $args->idwidget = $id;
+        $args->add($item);
+        $list .= $html->customitem($args);
+      }
+      $result .= sprintf($html->customitems, $list);
+return $result;
 }
 
   public function processform()  {
-return parent::processform();
+extract($_POST);
+$idwidget = (int) $_GET['idwidget'];
+$widget = $this->widget;
+$widget->add($title, $text, $template);
+$widget->edit($idwidget, $title, $text, $template);
 }
+
 }//class
