@@ -170,9 +170,20 @@ return $result;
 
 public function getcontent() {
 $widget = $this->widget;
-$id = $_GET['idwidget'];
-$item = $widget->getitem($id);
     $args = targs::instance();
+$id = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+if (isset($widget->items[$id])) {
+$item = $widget->getitem($id);
+$args->mode = 'edit';
+} else {
+$args->mode = 'add';
+$item = array(
+'title' => '',
+'content' => '',
+'template' => 'widget'
+);
+}
+
 $html= $this->html;
 $args->title = $item['title'];
 $args->text = $item['content'];
@@ -195,8 +206,15 @@ return $result;
 extract($_POST);
 $idwidget = (int) $_GET['idwidget'];
 $widget = $this->widget;
-$widget->add($title, $text, $template);
+switch ($mode) {
+case 'add':
+$_GET['idwidget'] = $widget->add($title, $text, $template);
+break;
+
+case 'edit':
 $widget->edit($idwidget, $title, $text, $template);
+break;
+}
 }
 
 }//class
