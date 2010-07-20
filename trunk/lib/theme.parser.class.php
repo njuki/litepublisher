@@ -14,6 +14,10 @@ class tthemeparser extends tdata {
   public static function instance() {
     return getinstance(__class__);
   }
+
+public static function getwidgetnames() {
+return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
+}
   
   public function parsetag(&$s, $tag, $replace) {
     $result = '';
@@ -305,7 +309,7 @@ class tthemeparser extends tdata {
     $widget = $this->requiretag($s, 'widget', '%s');
     $result['widget'] = $this->parsewidget($widget, 'widget');
     
-    foreach (array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') as $name) {
+    foreach (self::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
       } else {
