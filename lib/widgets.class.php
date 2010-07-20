@@ -378,7 +378,8 @@ foreach ($items as $item) {
 if ($id == $item['id']) return $this->classes[$class][$i];
 }
 }
-return false;
+$item = null;
+return $item;
 }
 
 }//class

@@ -30,7 +30,7 @@ return $this->optionsform($form);
   public function processform()  {
 $widget = $this->widget;
 $widget->lock();
-$widget->title = $_POST['title'];
+if (isset($_POST['title'])) $widget->title = $_POST['title'];
 $this->doprocessform($widget);
 $widget->unlock();
 return $this->html->h2->updated;
@@ -132,18 +132,20 @@ class tadminorderwidget extends tadminwidget {
 
   protected function dogetcontent(twidget $widget, targs $args){
 $widgets =twidgets::instance();
-if ($item = &$widgets->finditem($widget->id)) {
-$args->sitebar = $item['sitebar'];
-$args->order = $item['order'];
+$item = &$widgets->finditem($widget->id);
+if ($item) {
+$args->sitebarcombo = tadminwidgets::getcombo(tadminwidgets::getsitebarnames(3), 'sitebar', $item['sitebar']);
+$args->ordercombo = tadminwidgets::getcombo(range(-1, 10),  'order', $item['order']);
 return $this->html->locationform($args);
 }
 }
 
   protected function doprocessform(twidget $widget)  {
 $widgets = twidgets::instance();
-if ($item = &$widgets->finditem($widget->id)) {
+$item = &$widgets->finditem($widget->id);
+if ($item) {
 $item['sitebar'] = (int) $_POST['sitebar'];
-$item['order'] = (int) $_POST['order'];
+$item['order'] = ((int) $_POST['order']) - 1;
 }
 }
 
@@ -161,9 +163,17 @@ $args->redir = $widget->redir;
 return $this->html->friendsform($args);
 }
 
+public function getcontent() {
+$result = parent::getcontent();
+return $result;
+}
+
   protected function doprocessform(twidget $widget)  {
 $widget->maxcount = (int) $_POST['maxcount']);
 $widget->redir = isset($_POST['redir']);
 }
 
+  public function processform()  {
+return parent::processform();
+}
 }//class

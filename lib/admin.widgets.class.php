@@ -28,7 +28,7 @@ $parser = tthemeparser::instance();
 $template = ttemplate::instance();
 $about = $parser->getabout($template->theme);
 foreach ($result as $key => $value) {
-if (isset($about["sitebar$value"])) $result[$i] = $about['sitebar$value"];
+if (isset($about["sitebar$key"])) $result[$key] = $about['sitebar$key"];
 }
 return $result;
 }
@@ -57,7 +57,7 @@ $id = $_item['id'];
 
 //all widgets
 $result .= $html->addform();
-$args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'id';
+$args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget';
 $widgets = twidgets::instance();
 foreach ($widgets->items as $id => $item) {
 $args->id = $id;
@@ -97,9 +97,9 @@ return $sitebars;
   
   public function getcontent() {
 $widgets = twidgets::instance();
-$id = $this->idget();
-if ($widgets->itemexists($id)) {
-$widget = $widgets->getwidget($id);
+$idwidget = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+if ($widgets->itemexists($idwidget)) {
+$widget = $widgets->getwidget($idwidget);
 return  $widget->admin->getcontent();
 }
 
@@ -109,13 +109,14 @@ return self::getsitebarsform($widgets->sitebars);
   public function processform() {
     litepublisher::$urlmap->clearcache();
 $widgets = twidgets::instance();
-$id = $this->idget();
-if ($widgets->itemexists($id)) {
-$widget = $widgets->getwidget($id);
+$idwidget = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+if ($widgets->itemexists($idwidget)) {
+$widget = $widgets->getwidget($idwidget);
 return  $widget->admin->processform();
-}
+} else {
 $widgets->sitebars = self::setsitebars($widgets->sitebars);
 $widgets->save();
+return $this->html->h2->success;
 }
 
 public static function setsitebars(array $sitebars) {
