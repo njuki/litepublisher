@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class twidget extends tdata {
+class twidget extends tevents {
 public $template;
 protected $adminclass;
 
