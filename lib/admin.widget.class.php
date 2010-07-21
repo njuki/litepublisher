@@ -277,9 +277,32 @@ $_GET['idlink'] = $widget->add($url, $linktitle, $text);
 break;
 
 case 'edit':
-$widget->edit($idlink, $;linktitle, $text);
+$widget->edit($idlink, $linktitle, $text);
 break;
+}
+}
+$widget->unlock();
+return $this->html->h2->updated;
+}
+
+}//class
+
+class tadminmetawidget extends tadminwidget {
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+
+  protected function dogetcontent(twidget $widget, targs $args){
+$args->add($widget->meta);
+return $this->html->metaform($args);
+}
+
+  protected function doprocessform(twidget $widget)  {
+foreach ($widget->meta as $name => $value) {
+$widget->data['meta'][$name] = isset($_POST[$name]);
 }
 }
 
 }//class
+
