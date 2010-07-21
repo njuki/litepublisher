@@ -103,9 +103,9 @@ $idwidget = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
 if ($widgets->itemexists($idwidget)) {
 $widget = $widgets->getwidget($idwidget);
 return  $widget->admin->getcontent();
-}
-
+} else {
 return self::getsitebarsform($widgets->sitebars);
+}
 
 case 'addcustom':
 $widget = tcustomwidget::instance();
