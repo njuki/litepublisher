@@ -8,6 +8,7 @@
 
 class tlinkswidget extends twidget {
 public $items;
+public $autoid;
   public $redirlink;
   
   public static function instance() {
@@ -18,7 +19,9 @@ public $items;
     parent::create();
     $this->basename = 'widgets.links';
 $this->template = 'links';
+$this->adminclass = 'tadminlinkswidget';
 $this->addmap('items', array());
+$this->addmap('autoid', 0);
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
 $this->data['title'] = tlocal::$data['default']['links'];
@@ -67,6 +70,14 @@ return $this->title;
     
     $this->save();
   }
+
+public function delete($id) {
+if (isset($this->items[$id)) {
+unset($this->items[$id]);
+$this->save();
+litepublisher::$urlmap->clearcache();
+}
+}
   
   public function request($arg) {
     $this->cache = false;

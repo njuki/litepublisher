@@ -18,6 +18,9 @@ $this->html = THtmlResource ::instance();
     $this->lang = tlocal::instance('widgets');
 }
 
+protected function getadminurl() {
+return litepublisher::$options->url . '/admin/widgets/' litepublisher::$options->q . 'idwidget';
+}
 
   protected function dogetcontent(twidget $widget, targs $args){
 $this->error('Not implemented');
@@ -173,7 +176,7 @@ $widget = $this->widget;
     $args = targs::instance();
 $id = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
 if (isset($widget->items[$id])) {
-$item = $widget->getitem($id);
+$item = $widget->items[$id];
 $args->mode = 'edit';
 } else {
 $args->mode = 'add';
@@ -192,7 +195,7 @@ $args->content = $html->customform($args);
 $result = $html->optionsform($args);
 
       $list = '';
-      $args->adminurl = litepublisher::$options->url . litepublisher::$options->q . 'idwidget';
+      $args->adminurl = $this->adminurl;'idwidget';
       foreach ($widget->items as $id => $item) {
         $args->idwidget = $id;
         $args->add($item);
@@ -213,6 +216,68 @@ break;
 
 case 'edit':
 $widget->edit($idwidget, $title, $text, $template);
+break;
+}
+}
+
+}//class
+class tadminlinkswidget extends tadminwidget {
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+
+public function getcontent() {
+$widget = $this->widget;
+    $args = targs::instance();
+$id = isset($_GET['idlink']) ? (int) $_GET['idlink'] : 0;
+if (isset($widget->items[$id])) {
+$item = $widget->items[$id];
+$args->mode = 'add';
+} else {
+$args->mode = 'edit';
+$item = array(
+    'url' => '',
+    'title' => '',
+    'text' => ''
+);
+}
+
+$html= $this->html;
+$args->add($item);
+$args->redir = $widget->redir;
+$args->content = $html->linksform($args);
+$result = $html->optionsform($args);
+
+      $args->adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink=';
+$result .= $html->linkstableheader ();
+      foreach ($widget->items as $id => $item) {
+        $args->id = $id;
+        $args->add($item);
+        $result .= $html->linkitem($args);
+      }
+      $result .= $html->linkstablefooter();
+return $result;
+}
+
+  public function processform()  {
+$widget = $this->widget;
+$widget->lock();
+      if (isset($_POST['delete'])) {
+        foreach ($_POST as $id => $value) {
+          if (isset($widget->items[$id]))  $widget->delete($id);
+          }
+} else {
+extract($_POST, EXTR_SKIP);
+$widget->title = $title;
+$widget->redir = isset($redir);
+switch ($mode) {
+case 'add':
+$_GET['idlink'] = $widget->add($url, $linktitle, $text);
+break;
+
+case 'edit':
+$widget->edit($idlink, $;linktitle, $text);
 break;
 }
 }

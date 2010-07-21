@@ -117,11 +117,16 @@ class tmenus extends titems {
   }
   
   public function deleteurl($url) {
-    foreach ($this->items as $id => $item) {
-      if ($url == $item['url']) return $this->delete($id);
-    }
+      if ($id = $this->url2id($url)) return $this->delete($id);
   }
-  
+
+public function url2id($url) {
+    foreach ($this->items as $id => $item) {
+      if ($url == $item['url']) return $id;
+}
+return false;
+}
+
   public function  remove($id) {
     if (!$this->itemexists($id)) return false;
     if ($this->haschilds($id)) return false;

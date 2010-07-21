@@ -177,6 +177,22 @@ $xmlrpc->unlock();
 $classes->delete('tstdwidgets');
 $classes->unlock();
 $widgets->unlock();
+
+$admin = tadminmenus::instance();
+$admin->lock();
+$idwidgets = $admin->url2id('/admin/widgets/');
+$admin->deleteurl('/admin/widgets/std/');
+$admin->deleteurl('/admin/widgets/stdoptions/');
+$admin->deleteurl('/admin/widgets/links/');
+$admin->deleteurl('/admin/widgets/custom/');
+$admin->deleteurl('/admin/widgets/meta/');
+$admin->deleteurl('/admin/widgets/homepagewidgets/');
+
+   $admin->createitem($idwidgets, 'classes', 'admin', 'tadminwidgets');
+   $admin->createitem($idwidgets, 'home', 'admin', 'tadminwidgets');
+    $admin->createitem($idwidgets, 'addcustom', 'admin', 'tadminwidgets');
+$admin->unlock();
+
 ttheme::clearcache();
 
 //delete files
