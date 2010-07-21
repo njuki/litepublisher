@@ -18,8 +18,8 @@ public $sitebars;
     $this->basename = 'homepage' ;
     $this->data['idurl'] = 0;
     $this->data['hideposts'] = false;
-    $this->data['defaultswidgets'] = true;
-    $this->data['showstandartcontent'] = true;
+    $this->data['defaultsitebar'] = true;
+    $this->data['ajax'] = false;
 $this->addmap('sitebars', array(array(), array(), array()));
     $this->data['text'] = '';
     $this->data['tmlfile'] = '';
@@ -71,8 +71,8 @@ public function getdescription() {}
 public function afterrequest(&$content) {}
   
   public function getwidgets(array &$items, $sitebar) {
-    if ($this->defaultswidgets) {
-      if ($this->showstandartcontent) {
+    if ($this->defaultsitebar) {
+      if (!$this->ajax) {
 foreach ($items as $i => $item) {
 $items[$i]['ajax'] = false;
 }

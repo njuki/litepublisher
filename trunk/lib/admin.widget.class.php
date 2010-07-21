@@ -67,7 +67,7 @@ return $this->html->tagsform($args);
 }
 
   protected function doprocessform(twidget $widget)  {
-extract($_POST);
+extract($_POST, EXTR_SKIP);
 $widget->maxcount = int) $maxcount;
 $widget->showcount = isset($showcount);
 $widget->sortname = $sort;
@@ -206,7 +206,7 @@ return $result;
 }
 
   public function processform()  {
-extract($_POST);
+extract($_POST, EXTR_SKIP);
 $idwidget = (int) $_GET['idwidget'];
 $widget = $this->widget;
 switch ($mode) {
@@ -302,6 +302,39 @@ return $this->html->metaform($args);
 foreach ($widget->meta as $name => $value) {
 $widget->data['meta'][$name] = isset($_POST[$name]);
 }
+}
+
+}//class
+
+class tadminhomewidgets extends tadminwidget {
+
+  public static function instance($id = null) {
+    return getinstance(__class__);
+  }
+
+public function getcontent(){
+$home = thomepage::instance();
+$args = targs::instance();
+$args->ajax = $home->ajax;
+$args->defaultsitebar = $home->defaultsitebar;
+$result = $this->html->homeform($args);
+if (!$home->defaultsitebar) {
+$result .= tadminwidgets::getsitebarsform($home->sitebars);
+}
+return $result;
+}
+
+  public function processform()  {
+$home = thomepage::instance();
+$home->lock();
+if (isset($_POST['homeoptions'])) {
+$home->ajax = isset(_POST['ajax']);
+$home->defaultsitebar = isset($_POST['defaultsitebar']);
+} else {
+$home->sitebars = tadminwidgets::setsitebars($widgets->sitebars);
+}
+$home->unlock();
+return $this->html->updated;
 }
 
 }//class
