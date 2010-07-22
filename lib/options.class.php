@@ -156,6 +156,11 @@ $this->onsave();
   public function SetPassword($value) {
     $this->password = md5("$this->login:$this->realm:$value");
   }
+
+public function setdbpassword($password) {
+$this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+$this->save();
+}
   
   public function Getinstalled() {
     return isset($this->data['url']);
