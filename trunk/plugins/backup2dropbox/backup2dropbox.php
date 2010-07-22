@@ -18,6 +18,7 @@ class tbackup2dropbox extends tplugin {
     $this->data['email'] = '';
     $this->data['password'] = '';
     $this->data['dir'] = '/';
+$this->data['uploadfiles'] = true;
   }
   
   public function send() {
@@ -32,11 +33,22 @@ class tbackup2dropbox extends tplugin {
       set_time_limit(600);
       $uploader->upload($filename, $this->dir);
       unlink($filename);
+if ($this->uploadfiles) $this->uploadfiles($uploader);
     } catch (Exception $e) {
       return $e->getMessage();
     }
     return true;
   }
+
+
+private function uploadfiles(DropboxUploader $uploader, $dir) {
+$dir = $this->dir . 'files/';
+    if ($list = glob(litepublisher::$paths->backup . '*.gz')) {
+      foreach($list as $filename) {
+        $args->filename = basename($filename);
+
+      $uploader->upload($filename, $dir);
+}
   
 }//class
 

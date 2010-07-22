@@ -7,8 +7,24 @@
 **/
 
 class tfiler {
+
+  public static function callback($callback, $path, $subdir) {
+    $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    if ( $h = opendir($path)) {
+      while(FALSE !== ($filename = readdir($h))) {
+        if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
+        $file = $path. $filename;
+        if (is_dir($file)) {
+          if ($subdir) self::callback($callback, $file . DIRECTORY_SEPARATOR, $subdir);
+        } else {
+call_user_func_array($callback, array($filename));
+        }
+      }
+      closedir($h);
+    }
+  }
   
-  public static function delete($path, $subdirs , $rmdir = false) {
+    public static function delete($path, $subdirs , $rmdir = false) {
     $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if ( $h = opendir($path)) {
       while(FALSE !== ($filename = readdir($h))) {
