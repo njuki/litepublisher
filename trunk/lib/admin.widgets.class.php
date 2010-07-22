@@ -6,21 +6,21 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminwidgets extends tadminmenu {
+class tadminwidgets extends tdata {
   
-  public static function instance($id = 0) {
-    return parent::iteminstance(__class__, $id);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
   public static function getcombo(array $items, $name, $index) {
-    $result = "<select name='$name' id='$name'>\n";
+//    $result = sprintf('<select name="%1$s" id="%1$s>', $name);
 foreach ($items as $i => $item) {
-      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $index  ? 'selected' : '', $item);
+//      $result .= sprintf('<option value="%s" %s>%s</option>', $i, ($i == $index  ? 'selected' : ''), $item);
     }
-    $result .= "</select>\n";
+//    $result .= "</select>\n";
+
     return $result;
   }
-
 
 public static function getsitebarnames($count) {
 $result = range(1, $count );
@@ -28,7 +28,7 @@ $parser = tthemeparser::instance();
 $template = ttemplate::instance();
 $about = $parser->getabout($template->theme);
 foreach ($result as $key => $value) {
-if (isset($about["sitebar$key"])) $result[$key] = $about['sitebar$key"];
+if (isset($about["sitebar$key"])) $result[$key] = $about["sitebar$key"];
 }
 return $result;
 }
@@ -42,7 +42,7 @@ $html->section = 'widgets';
     $result .= $html->formhead();
 $count = count($sitebars);
 $sitebarnames = self::getsitebarnames(count($sitebars));
-foreach ($sitebars as $i => $sitebar)
+foreach ($sitebars as $i => $sitebar) {
 $orders = range(1, count($sitebar));
 foreach ($sitebar as $j => $_item) {
 $id = $_item['id'];
@@ -116,7 +116,19 @@ $adminhome = tadminhomewidgets::instance();
 return $adminhome->getcontent();
 
 case 'classes':
-return '';
+return 'Sorry, under construction';
+$result = '';
+$html = $this->html;
+$args = targs::instance();
+$args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . 'class';
+foreach ($widgets->classes as $class => $items) {
+$args->class = $class;
+$args->name = $this->getclassname($class);
+$args->count = count($items);
+$result .= $html->classitem($args);
+}
+$args->content = $result;
+return $html->classesform($args);
 }
 }
 

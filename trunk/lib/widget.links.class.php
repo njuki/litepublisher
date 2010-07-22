@@ -17,6 +17,7 @@ public $autoid;
   
   protected function create() {
     parent::create();
+$this->addevents('added', 'deleted');
     $this->basename = 'widgets.links';
 $this->template = 'links';
 $this->adminclass = 'tadminlinkswidget';
@@ -72,7 +73,7 @@ return $this->title;
   }
 
 public function delete($id) {
-if (isset($this->items[$id)) {
+if (isset($this->items[$id])) {
 unset($this->items[$id]);
 $this->save();
 litepublisher::$urlmap->clearcache();
