@@ -79,7 +79,7 @@ break;
 case 'include':
 $sitebar = self::getsitebar($id);
 $filename = self::getcachefilename($id, $sitebar);
-file_put_contents($filename, $this->getwidget($id, $sitebar);
+file_put_contents($filename, $this->getwidget($id, $sitebar));
 break;
 }
 }
@@ -105,7 +105,7 @@ if ($this instanceof $item['class']) $this->expired($id);
 
 class twidgets extends titems {
 public $sitebars;
-public classes;$
+public $classes;
   public $currentsitebar;
   public $idwidget;
 
@@ -119,7 +119,7 @@ $this->dbversion = false;
     $this->addevents('onwidget', 'onadminlogged', 'onadminpanel', 'ongetwidgets', 'onsitebar');
 $this->basename = 'widgets';
     $this->currentsitebar = 0;
-$this->addmap('sitebars', array());
+$this->addmap('sitebars', array(array(), array(), array()));
 $this->addmap('classes', array());
   }
 
@@ -171,7 +171,7 @@ if ($id == $item['id']) array_delete($this->classes[$class], $i);
 }
 
 unset($this->items[$id]);
-$this->deleted($id
+$this->deleted($id);
 }
 
 public function deleteclass($class) {
@@ -240,7 +240,7 @@ if ($sitebar == $item['sitebar']) $result[] = $item;
 }
 }
 }
-return $result);
+return $result;
 }
 
 private function joinitems(array $items, array $subitems) {
@@ -261,7 +261,7 @@ $order = $item['order'];
     if (($order < 0) || ($order >= $count)) $order = $count - 1;
 array_insert($items, $item, $order);
 }
-}
+
 return $items;
 }
 
@@ -280,7 +280,7 @@ $content = $cache->getcontent($id, $sitebar);
 break;
 
 case 'include':
-$content = $this->include($id, $sitebar);
+$content = $this->includewidget($id, $sitebar);
 break;
 
 case 'nocache':
@@ -307,7 +307,7 @@ $title = sprintf('<a onclick="widgets.load(this, %d, %d)">%s</a>', $id, $sitebar
 return $theme->getwidget($title, $content, $thisitems[$id]['template'], $sitebar);
 }
 
-private function include($id, $sitebar) {
+private function includewidget($id, $sitebar) {
 $filename = twidget::getcachefilename($id, $sitebar);
 if (!file_exists($filename)) {
 $widget = $this->getwidget($id);
@@ -336,7 +336,7 @@ return false;
 
   public function xmlrpcgetwidget($id, $sitebar) {
 if (!isset($this->items[$id])) return $this->error("Widget $id not found");
-switch ($this->items[$id]['cache']
+switch ($this->items[$id]['cache']) {
 case 'cache':
 case true:
 $cache = twidgetscache::instance();
@@ -420,7 +420,7 @@ public function setcontent($id, $sitebar) {
 $widgets = twidgets::instance();
 $widget = $widgets->getwidget($id);
 $result = $widget->getcontent($id, $sitebar);
-$this->items[[$id][$sitebar] = $result;
+$this->items[$id][$sitebar] = $result;
 $this->save();
 return $result;
 }
@@ -474,7 +474,6 @@ array_delete($this->items[$index], $i);
 $this->save();
 return $i;
 }
-}}
 return false;
 }
 

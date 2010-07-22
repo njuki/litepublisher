@@ -41,6 +41,7 @@ $foaf = tfoaf::instance();
     }
 
     return sprintf($theme->getwidgetitems('friends', $sitebar), $result);
+}
 
   public function request($arg) {
       $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
@@ -51,8 +52,6 @@ $item = $foaf->getitem($id);
     return sprintf('<?php @header(\'Location: %s\'); ?>', $item['url']);
     }
 
-}
-  
 }//class
 
 ?>
