@@ -292,8 +292,8 @@ class tinstaller extends tdata {
     
     $plugins = tplugins::instance();
     $plugins->lock();
-    $plugins->add('oldestposts');
-    $plugins->add('adminlinks');
+    //$plugins->add('oldestposts');
+    //$plugins->add('adminlinks');
     //$plugins->add('nicedit');
     $plugins->unlock();
   }

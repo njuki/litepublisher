@@ -46,7 +46,7 @@ return '';
 }
 
 protected function settitle($value) {
-$widgets = gtwidgets::instance();
+$widgets = twidgets::instance();
 if ($id = $widgets->find($this)) {
 if ($widgets->items[$id]['title'] != $value) {
 $widgets->items[$id]['title'] = $value;

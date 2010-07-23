@@ -33,21 +33,25 @@ $this->data['uploadfiles'] = true;
       set_time_limit(600);
       $uploader->upload($filename, $this->dir);
       unlink($filename);
-if ($this->uploadfiles) $this->uploadfiles($uploader);
+if ($this->uploadfiles) $this->uploadfiles($uploader, '');
     } catch (Exception $e) {
       return $e->getMessage();
     }
     return true;
   }
 
-
 private function uploadfiles(DropboxUploader $uploader, $dir) {
-$dir = $this->dir . 'files/';
-    if ($list = glob(litepublisher::$paths->backup . '*.gz')) {
+if ($dir != '') $dir = trim($dir, '/') . '/';
+if ($list = glob(litepublisher::$paths->files . $dir . '*.*')) {    
       foreach($list as $filename) {
-        $args->filename = basename($filename);
-
-      $uploader->upload($filename, $dir);
+if (is_dir($filename)) {
+$base = basename($filename);
+if ($base[0] == '.') continue;
+$this->uploadfiles($uploader, $base);
+} else {
+      $uploader->upload($filename, $this->dir . $dir);
+}
+}
 }
   
 }//class
