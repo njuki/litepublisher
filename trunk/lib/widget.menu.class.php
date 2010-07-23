@@ -53,7 +53,7 @@ $parent = $menus->getparent($id);
     }
 
     if ($result == '')  return '';
-return sprintf($theme->getitems('submenu', $sitebar), $result);
+return sprintf($theme->getwidgetitems('submenu', $sitebar), $result);
   }
   
   private function getitem($tml, $item, $subnodes) {

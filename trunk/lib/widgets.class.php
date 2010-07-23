@@ -364,7 +364,7 @@ break;
 }
 
 //fix bug for client library
-if ($result == '') $result = '<!--emptycontent-->';
+if ($result == '') return 'false';
 return $result;
 }
 
@@ -405,6 +405,13 @@ $this->dbversion = false;
   public function getbasename() {
 $theme = ttheme::instance();
 return 'widgetscache.' . $theme->name;
+}
+
+  public function load() {
+    $filename = litepublisher::$paths->cache . $this->getbasename() .'.php';
+    if (file_exists($filename)) {
+      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
+    }
 }
 
   public function savemodified() {
@@ -501,7 +508,7 @@ $this->save();
 }
 }
 
-public static function getpos(array $sitebars, $id) {
+public static function getpos(array &$sitebars, $id) {
 foreach ($sitebars as $i => $sitebar) {
 foreach ($sitebar as $j => $item) {
 if ($id == $item['id']) return array($i, $j);
@@ -510,7 +517,7 @@ if ($id == $item['id']) return array($i, $j);
 return false;
 }
 
-public static function setpos(array $items, $id, $newsitebar, $neworder) {
+public static function setpos(array &$items, $id, $newsitebar, $neworder) {
 if ($pos = self::getpos($items, $id)) {
 list($oldsitebar, $oldorder) = $pos;
 if (($oldsitebar != $newsitebar) || ($oldorder != $neworder)){
@@ -519,7 +526,6 @@ array_delete($items[$oldsitebar], $oldorder);
 array_insert($items[$newsitebar], $neworder, $item);
 }
 }
-return $items;
 }
 
 }//class
