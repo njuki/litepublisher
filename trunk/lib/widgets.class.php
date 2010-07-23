@@ -228,7 +228,7 @@ if ($context instanceof itemplate2) $context->getwidgets($items, $sitebar);
 private function getwidgets($context, $sitebar) {
 $items = $this->sitebars[$sitebar];
 $subitems =  $this->getsubitems($context, $sitebar);
-$result = $this->joinitems($items, $subitems);
+return $this->joinitems($items, $subitems);
 }
 
 private function getsubitems($context, $sitebar) {
@@ -340,28 +340,33 @@ switch ($this->items[$id]['cache']) {
 case 'cache':
 case true:
 $cache = twidgetscache::instance();
-return $cache->getcontent($id, $sitebar);
+$result = $cache->getcontent($id, $sitebar);
+break;
 
 case 'nocache':
 case false:
 case 'code':
 $widget = getinstance($this->items[$id]['class']);
-return  $widget->getwidget($id, $sitebar);
+$result = $widget->getwidget($id, $sitebar);
+break;
 
 case 'include':
 $filename = twidget::getcachefilename($id, $sitebar);
 if (file_exists($filename)) {
-return file_get_contents($filename);
+$result = file_get_contents($filename);
 } else {
 $widget = $this->getwidget($id);
-$content = $widget->getwidget($id, $sitebar);
-file_put_contents($filename, $content);
+$result = $widget->getwidget($id, $sitebar);
+file_put_contents($filename, $result);
 @chmod($filename, 0666);
-return $content;
-}
+break;
 }
 }
 
+//fix bug for client library
+if ($result == '') $result = '<!--emptycontent-->';
+return $result;
+}
 
 public function getpos($id) {
 return tsitebars::getpos($this->sitebars, $id);
@@ -403,7 +408,10 @@ return 'widgetscache.' . $theme->name;
 }
 
   public function savemodified() {
-    if ($this->modified) parent::save();
+    if ($this->modified) {
+      self::savetofile(litepublisher::$paths->cache .$this->getbasename(), 
+self::comment_php($this->savetostring()));
+}
     $this->modified = false;
   }
   

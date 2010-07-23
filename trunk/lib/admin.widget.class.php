@@ -62,7 +62,7 @@ class tadmintagswidget extends tadminwidget {
   protected function dogetcontent(twidget $widget, targs $args){
 $args->showcount = $widget->showcount;
 $args->maxcount = $widget->maxcount;
-$args->combo = tadminwidgets::getcombo(tlocal::$data['sortnametags'], 'sort', $widget->sortname);
+$args->combo = tadminwidgets::getcombo('sort', tlocal::$data['sortnametags'], $widget->sortname);
 return $this->html->tagsform($args);
 }
 
@@ -138,8 +138,8 @@ class tadminorderwidget extends tadminwidget {
 $widgets =twidgets::instance();
 $item = &$widgets->finditem($widget->id);
 if ($item) {
-$args->sitebarcombo = tadminwidgets::getcombo(tadminwidgets::getsitebarnames(3), 'sitebar', $item['sitebar']);
-$args->ordercombo = tadminwidgets::getcombo(range(-1, 10),  'order', $item['order']);
+$args->sitebarcombo = tadminwidgets::getcombo('sitebar', tadminwidgets::getsitebarnames(3), $item['sitebar']);
+$args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $item['order']);
 return $this->html->locationform($args);
 }
 }
@@ -190,7 +190,7 @@ $item = array(
 $html= $this->html;
 $args->title = $item['title'];
 $args->text = $item['content'];
-$args->combo =tadminwidgets::getcombo(self::gettemplates(), 'template', $item['template']);
+$args->combo =tadminwidgets::getcombo('template', self::gettemplates(), $item['template']);
 $args->content = $html->customform($args);
 $result = $html->optionsform($args);
 
