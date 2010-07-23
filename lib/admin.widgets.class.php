@@ -34,11 +34,12 @@ return $result;
   
 public static function getsitebarsform(array $sitebars) {
 $widgets = twidgets::instance();
-    $args = targs::instance();
     $html = THtmlResource ::instance();
 $html->section = 'widgets';
     $result = $html->checkallscript;
     $result .= $html->formhead();
+    $args = targs::instance();
+$args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget';
 $count = count($sitebars);
 $sitebarnames = self::getsitebarnames(count($sitebars));
 foreach ($sitebars as $i => $sitebar) {
@@ -57,7 +58,6 @@ $args->ajax = $_item['ajax'];
 
 //all widgets
 $result .= $html->addhead();
-$args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget';
 $widgets = twidgets::instance();
 foreach ($widgets->items as $id => $item) {
 $args->id = $id;

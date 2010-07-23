@@ -267,7 +267,6 @@ return $items;
 
 private function getsitebarcontent(array $items, $sitebar) {
 $result = '';
-$cache = twidgetscache::instance();
 foreach ($items as $item) {
 $id = $item['id'];
 if ($item['ajax']) {
@@ -276,7 +275,7 @@ $content = $this->getajax($id, $sitebar);
 switch ($this->items[$id]['cache']) {
 case 'cache':
 case true:
-$content = $cache->getcontent($id, $sitebar);
+$content = $this->getwidgetcache($id, $sitebar);
 break;
 
 case 'include':
@@ -307,6 +306,14 @@ $title = sprintf('<a onclick="widgets.load(this, %d, %d)">%s</a>', $id, $sitebar
 return $theme->getwidget($title, $content, $thisitems[$id]['template'], $sitebar);
 }
 
+public function getwidgetcache($id, $sitebar) {
+$title = $this->items[$id]['title'];
+$cache = twidgetscache::instance();
+$content = $cache->getcontent($id, $sitebar);
+    $theme = ttheme::instance();
+return $theme->getwidget($title, $content, $this->items[$id]['template'], $sitebar);
+}
+
 private function includewidget($id, $sitebar) {
 $filename = twidget::getcachefilename($id, $sitebar);
 if (!file_exists($filename)) {
@@ -327,7 +334,8 @@ return "\n<?php
 }
 
 
-public function find($class) {
+public function find(twidget $widget) {
+$class = get_class($widget);
 foreach ($this->items as $id => $item) {
 if ($class == $item['class']) return $id;
 }
@@ -425,7 +433,7 @@ self::comment_php($this->savetostring()));
   public function save() {
     $this->modified = true;
   }
-  
+
 public function getcontent($id, $sitebar) {
 if (isset($this->items[$id][$sitebar])) return $this->items[$id][$sitebar];
 return $this->setcontent($id, $sitebar);
@@ -521,9 +529,9 @@ public static function setpos(array &$items, $id, $newsitebar, $neworder) {
 if ($pos = self::getpos($items, $id)) {
 list($oldsitebar, $oldorder) = $pos;
 if (($oldsitebar != $newsitebar) || ($oldorder != $neworder)){
-$item = $items[$oldsitebars][$oldorder];
+$item = $items[$oldsitebar][$oldorder];
 array_delete($items[$oldsitebar], $oldorder);
-array_insert($items[$newsitebar], $neworder, $item);
+array_insert($items[$newsitebar], $item, $neworder);
 }
 }
 }
