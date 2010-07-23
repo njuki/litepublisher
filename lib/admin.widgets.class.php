@@ -46,6 +46,7 @@ $orders = range(1, count($sitebar));
 foreach ($sitebar as $j => $_item) {
 $id = $_item['id'];
         $args->id = $id;
+$args->ajax = $_item['ajax'];
         $args->add($widgets->getitem($id));
         $args->sitebarcombo = self::getcombo("sitebar-$id", $sitebarnames, $i);
         $args->ordercombo = self::getcombo("order-$id", $orders, $j);
@@ -75,7 +76,7 @@ $result .= $html->addfooter();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, 'widgetcheck-'))$items[] = (int) $value;
     }
-    
+
     foreach ($items as $id) {
     if (isset($_POST['deletewidgets']))  {
 if ($pos = tsitebars::getpos($sitebars, $id)) {
@@ -85,6 +86,7 @@ array_delete($sitebars[$i], $j);
 } else {
 $i = (int)$_POST["sitebar-$id"];
 $j = (int) $_POST["order-$id"];
+//var_dump($i, $j, $sitebars[0][0]);
 tsitebars::setpos($sitebars, $id, $i, $j);
 $sitebars[$i][$j]['ajax'] = isset($_POST["ajaxcheck-$id"]);
     }
@@ -158,7 +160,7 @@ case 'home':
 public static function setsitebars(array $sitebars) {
 switch ($_POST['action']) {
 case 'edit':
-return self::getsitebars($sitebars);
+return self::editsitebars($sitebars);
 
 case 'add':
 $widgets = twidgets::instance();
