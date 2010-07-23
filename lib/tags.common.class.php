@@ -49,6 +49,7 @@ class tcommontags extends titems implements  itemplate {
     $sorted = $this->getsorted($sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
+$theme = ttheme::instance();
     $args = targs::instance();
         $args->count = '';
     foreach($sorted as $id) {
