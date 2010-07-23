@@ -36,6 +36,7 @@ public static function getsitebarsform(array $sitebars) {
 $widgets = twidgets::instance();
     $html = THtmlResource ::instance();
 $html->section = 'widgets';
+$lang = tlocal::instance('widgets');
     $result = $html->checkallscript;
     $result .= $html->formhead();
     $args = targs::instance();

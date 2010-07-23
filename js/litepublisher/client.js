@@ -109,7 +109,7 @@ widgets.hide = function() {
   widgets.setvisible(this, false);
 }
 
-widgets.show = function(node) {
+widgets.show = function() {
   widgets.setvisible(this, true);
 }
 
