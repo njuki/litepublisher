@@ -6,19 +6,18 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminwidgets extends tdata {
+class tadminwidgets extends tadminmenu {
   
-  public static function instance() {
-    return getinstance(__class__);
+  public static function instance($id = 0) {
+    return parent::iteminstance(__class__, $id);
   }
   
   public static function getcombo(array $items, $name, $index) {
-//    $result = sprintf('<select name="%1$s" id="%1$s>', $name);
+    $result = sprintf('<select name="%1$s" id="%1$s>', $name);
 foreach ($items as $i => $item) {
-//      $result .= sprintf('<option value="%s" %s>%s</option>', $i, ($i == $index  ? 'selected' : ''), $item);
+      $result .= sprintf('<option value="%s" %s>%s</option>', $i, ($i == $index  ? 'selected' : ''), $item);
     }
-//    $result .= "</select>\n";
-
+    $result .= "</select>\n";
     return $result;
   }
 
@@ -48,15 +47,15 @@ foreach ($sitebar as $j => $_item) {
 $id = $_item['id'];
         $args->id = $id;
         $args->add($widgets->getitem($id));
-        $args->sitebarcombo = $this->getcombo($sitebarnames, "sitebar-$id", $i);
-        $args->ordercombo = $this->getcombo($orders, "order-$id", $j);
+        $args->sitebarcombo = self::getcombo($sitebarnames, "sitebar-$id", $i);
+        $args->ordercombo = self::getcombo($orders, "order-$id", $j);
         $result .= $html->item($args);
       }
     }
     $result .= $html->formfooter();
 
 //all widgets
-$result .= $html->addform();
+$result .= $html->addhead();
 $args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget';
 $widgets = twidgets::instance();
 foreach ($widgets->items as $id => $item) {

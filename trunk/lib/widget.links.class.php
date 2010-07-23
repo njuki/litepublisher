@@ -28,10 +28,6 @@ $this->addmap('autoid', 0);
 $this->data['title'] = tlocal::$data['default']['links'];
   }
 
-public function gettitle($id) {
-return $this->title;
-}
-
   public function getcontent($id, $sitebar) {
     if (count($this->items) == 0) return '';
     $result = '';

@@ -12,14 +12,14 @@ protected $html;
 protected $lang;
 
 protected function create() {
-parent::instance();
+//parent::instance();
 $this->html = THtmlResource ::instance();
     $this->html->section = 'widgets';
     $this->lang = tlocal::instance('widgets');
 }
 
 protected function getadminurl() {
-return litepublisher::$options->url . '/admin/widgets/' litepublisher::$options->q . 'idwidget';
+return litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget=';
 }
 
   protected function dogetcontent(twidget $widget, targs $args){
@@ -68,7 +68,7 @@ return $this->html->tagsform($args);
 
   protected function doprocessform(twidget $widget)  {
 extract($_POST, EXTR_SKIP);
-$widget->maxcount = int) $maxcount;
+$widget->maxcount = (int) $maxcount;
 $widget->showcount = isset($showcount);
 $widget->sortname = $sort;
 }
@@ -87,7 +87,7 @@ return $this->html->maxcountform($args);
 }
 
   protected function doprocessform(twidget $widget)  {
-$widget->maxcount = int) $_POST['maxcount'];
+$widget->maxcount = (int) $_POST['maxcount'];
 }
 
 }//class
@@ -122,7 +122,7 @@ return $this->html->friendsform($args);
 }
 
   protected function doprocessform(twidget $widget)  {
-$widget->maxcount = (int) $_POST['maxcount']);
+$widget->maxcount = (int) $_POST['maxcount'];
 $widget->redir = isset($_POST['redir']);
 }
 
@@ -229,7 +229,13 @@ class tadminlinkswidget extends tadminwidget {
 
 public function getcontent() {
 $widget = $this->widget;
+$html= $this->html;
     $args = targs::instance();
+$args->title = $widget->title;
+$args->redir = $widget->redir;
+$args->content = $html->linksoptions ($args);
+$result = $html->optionsform($args);
+
 $id = isset($_GET['idlink']) ? (int) $_GET['idlink'] : 0;
 if (isset($widget->items[$id])) {
 $item = $widget->items[$id];
@@ -243,13 +249,10 @@ $item = array(
 );
 }
 
-$html= $this->html;
 $args->add($item);
-$args->redir = $widget->redir;
-$args->content = $html->linksform($args);
-$result = $html->optionsform($args);
+$result .= $html->linkform($args);
 
-      $args->adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink=';
+      $args->adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink';
 $result .= $html->linkstableheader ();
       foreach ($widget->items as $id => $item) {
         $args->id = $id;
@@ -264,13 +267,12 @@ return $result;
 $widget = $this->widget;
 $widget->lock();
       if (isset($_POST['delete'])) {
-        foreach ($_POST as $id => $value) {
+        foreach ($_POST as $key => $value) {
+$id = (int) $value;
           if (isset($widget->items[$id]))  $widget->delete($id);
           }
-} else {
+} elseif (isset($_POST['mode'])) {
 extract($_POST, EXTR_SKIP);
-$widget->title = $title;
-$widget->redir = isset($redir);
 switch ($mode) {
 case 'add':
 $_GET['idlink'] = $widget->add($url, $linktitle, $text);
@@ -280,6 +282,10 @@ case 'edit':
 $widget->edit($idlink, $linktitle, $text);
 break;
 }
+} else {
+extract($_POST, EXTR_SKIP);
+$widget->title = $title;
+$widget->redir = isset($redir);
 }
 $widget->unlock();
 return $this->html->h2->updated;
@@ -328,7 +334,7 @@ return $result;
 $home = thomepage::instance();
 $home->lock();
 if (isset($_POST['homeoptions'])) {
-$home->ajax = isset(_POST['ajax']);
+$home->ajax = isset($_POST['ajax']);
 $home->defaultsitebar = isset($_POST['defaultsitebar']);
 } else {
 $home->sitebars = tadminwidgets::setsitebars($widgets->sitebars);
