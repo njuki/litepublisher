@@ -35,6 +35,14 @@ $customitems[$idold] = $id;
 $custom->items = $items;
 $custom->save();
 
+$widget = tlinkswidget::instance();
+foreach (($widget->items as $id => $item) {
+$item['anchor'] = $item['text'];
+unset($item['text']);
+$widget->items[$id] = $item;
+}
+$widget->save();
+
 $meta = tmetawidget::instance();
 $meta->data['meta'] = $std->data['meta'];
 $meta->save();

@@ -40,17 +40,17 @@ $this->data['title'] = tlocal::$data['default']['links'];
         $url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
       }
       
-      $result .=   sprintf($tml, $url, $item['title'], $item['text']);
+      $result .=   sprintf($tml, $url, $item['title'], $item['anchor']);
     }
     
     return sprintf($theme->getwidgetitems('links', $sitebar), $result);
   }
   
-  public function add($url, $title, $text) {
+  public function add($url, $title, $anchor) {
     $this->items[++$this->autoid] = array(
     'url' => $url,
     'title' => $title,
-    'text' => $text
+    'anchor' => $anchor
     );
     
     $this->save();
@@ -58,13 +58,14 @@ $this->data['title'] = tlocal::$data['default']['links'];
     return $this->autoid;
   }
   
-  public function edit($id, $url, $title, $text) {
+  public function edit($id, $url, $title, $anchor) {
+$id = (int) $id;
+if (!isset($this->items[$id])) return false;
     $this->items[$id] = array(
     'url' => $url,
     'title' => $title,
-    'text' => $text
+    'anchor' => $anchor
     );
-    
     $this->save();
   }
 

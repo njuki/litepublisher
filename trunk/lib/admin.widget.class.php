@@ -136,20 +136,24 @@ class tadminorderwidget extends tadminwidget {
 
   protected function dogetcontent(twidget $widget, targs $args){
 $widgets =twidgets::instance();
-$item = &$widgets->finditem($widget->id);
+$id = $widgets->find($widget);
+$item = &$widgets->finditem($id);
 if ($item) {
 $args->sitebarcombo = tadminwidgets::getcombo('sitebar', tadminwidgets::getsitebarnames(3), $item['sitebar']);
 $args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $item['order']);
-return $this->html->locationform($args);
+$args->ajax = $item['ajax'];
+return $this->html->orderform($args);
 }
 }
 
   protected function doprocessform(twidget $widget)  {
 $widgets = twidgets::instance();
-$item = &$widgets->finditem($widget->id);
+$item = &$widgets->finditem($widgets->find($widget));
 if ($item) {
 $item['sitebar'] = (int) $_POST['sitebar'];
-$item['order'] = ((int) $_POST['order']) - 1;
+$item['order'] = ((int) $_POST['order']);
+$item['ajax'] = isset($_POST['ajax']);
+$widgets->save();
 }
 }
 
@@ -239,13 +243,13 @@ $result = $html->optionsform($args);
 $id = isset($_GET['idlink']) ? (int) $_GET['idlink'] : 0;
 if (isset($widget->items[$id])) {
 $item = $widget->items[$id];
-$args->mode = 'add';
-} else {
 $args->mode = 'edit';
+} else {
+$args->mode = 'add';
 $item = array(
     'url' => '',
     'title' => '',
-    'text' => ''
+    'anchor' => ''
 );
 }
 
@@ -275,11 +279,11 @@ $id = (int) $value;
 extract($_POST, EXTR_SKIP);
 switch ($mode) {
 case 'add':
-$_GET['idlink'] = $widget->add($url, $linktitle, $text);
+$_GET['idlink'] = $widget->add($url, $linktitle, $anchor);
 break;
 
 case 'edit':
-$widget->edit($idlink, $linktitle, $text);
+$widget->edit((int) $_GET['idlink'], $url, $linktitle, $anchor);
 break;
 }
 } else {

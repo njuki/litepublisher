@@ -63,7 +63,7 @@ $widgets = twidgets::instance();
 foreach ($widgets->items as $id => $item) {
 $args->id = $id;
 $args->add($item);
-$args->checked = tsitebars::getpos($sitebars, $id) ? true : false;
+$args->checked = tsitebars::getpos($sitebars, $id) ? false : true;
 $result .= $html->additem($args);
 }
 $result .= $html->addfooter();
