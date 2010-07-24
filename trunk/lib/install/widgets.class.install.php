@@ -41,7 +41,6 @@ $sitebars->insert($id, true, 0, -1);
 $id = $widgets->add(tfriendswidget::instance());
 $sitebars->insert($id, true, 0, -1);
 
-
 $id = $widgets->add(tpostswidget::instance());
 $sitebars->insert($id, true, 1, -1);
 

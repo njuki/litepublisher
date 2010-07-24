@@ -100,7 +100,15 @@ foreach ($widgets->items as $id => $item) {
 if ($this instanceof $item['class']) $this->expired($id);
 }
 }
-  
+
+
+public function getcontext($class) {
+if (litepublisher::$urlmap->context instanceof $class) return litepublisher::$urlmap->context;
+//ajax
+$widgets = twidgets::instance();
+return litepublisher::$urlmap->getidcontext($widgets->idurlcontext);
+}  
+
 }//class
 
 class twidgets extends titems {
@@ -108,6 +116,7 @@ public $sitebars;
 public $classes;
   public $currentsitebar;
   public $idwidget;
+public $idurlcontext;
 
   public static function instance($id = null) {
     return getinstance(__class__);
@@ -119,6 +128,7 @@ $this->dbversion = false;
     $this->addevents('onwidget', 'onadminlogged', 'onadminpanel', 'ongetwidgets', 'onsitebar');
 $this->basename = 'widgets';
     $this->currentsitebar = 0;
+$this->idurlcontext = 0;
 $this->addmap('sitebars', array(array(), array(), array()));
 $this->addmap('classes', array());
   }
@@ -258,8 +268,11 @@ if ($id == $subitem['id']) array_delete($items, $i);
 foreach ($subitems as $item) {
 $count = count($items);
 $order = $item['order'];
-    if (($order < 0) || ($order >= $count)) $order = $count - 1;
+    if (($order < 0) || ($order >= $count)) {
+$items[] = $item;
+} else {
 array_insert($items, $item, $order);
+}
 }
 
 return $items;
@@ -342,8 +355,9 @@ if ($class == $item['class']) return $id;
 return false;
 }
 
-  public function xmlrpcgetwidget($id, $sitebar) {
+  public function xmlrpcgetwidget($id, $sitebar, $idurl) {
 if (!isset($this->items[$id])) return $this->error("Widget $id not found");
+$this->idurlcontext = $idurl;
 switch ($this->items[$id]['cache']) {
 case 'cache':
 case true:

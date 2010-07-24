@@ -154,17 +154,30 @@ class turlmap extends titems {
       $this->notfound404();
     }
   }
-  
-  protected function GenerateHTML(array $item) {
+
+public function getidcontext($id) {
+if ($this->dbversion) {
+$item = $this->getitem($id);
+} else {
+foreach ($this->items as $url => $item) {
+if ($id == $item['id']) break;
+}
+}
+return $this->getcontext($item);
+}
+
+public function getcontext(array $item) {
     $class = $item['class'];
     $parents = class_parents($class);
     if (in_array('titem', $parents)) {
-      //$source = titem::iteminstance($class, $item['arg']);
-      $this->context = call_user_func_array(array($class, 'instance'), array($item['arg']));
+return call_user_func_array(array($class, 'instance'), array($item['arg']));
     } else {
-      $this->context = getinstance($class);
+return getinstance($class);
     }
-    
+}
+  
+  protected function GenerateHTML(array $item) {
+    $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
       //tfiler::log($s, 'content.log');

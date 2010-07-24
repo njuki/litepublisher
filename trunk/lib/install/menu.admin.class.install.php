@@ -44,7 +44,7 @@ function tadminmenusInstall($self) {
   
   $widgets = $self->createitem(0, 'widgets', 'admin', 'tadminwidgets');
   {
-    $self->createitem($widgets, 'classes', 'admin', 'tadminwidgets');
+    //$self->createitem($widgets, 'classes', 'admin', 'tadminwidgets');
     $self->createitem($widgets, 'home', 'admin', 'tadminwidgets');
     $self->createitem($widgets, 'addcustom', 'admin', 'tadminwidgets');
   }

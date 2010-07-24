@@ -154,7 +154,8 @@ $widget = tcustomwidget::instance();
 return  $widget->admin->processform();
 
 case 'home':
-
+$adminhome = tadminhomewidgets::instance();
+return $adminhome->processform();
 }
 }
 

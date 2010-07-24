@@ -20,14 +20,17 @@ $this->adminclass = 'tadminorderwidget';
 $this->data['title'] = tlocal::$data['default']['submenu'];
 }
 
+
+
 public function gettitle($id) {
 if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;
 return $this->data['title'];
 }
 
   public function getcontent($idwidget, $sitebar) {
-$id = litepublisher::$urlmap->context->id;
-$menus = litepublisher::$urlmap->context->owner;
+$menu = $this->getcontext('tmenu');
+$id = $menu->id;
+$menus = $menu->owner;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('submenu', $sitebar);
