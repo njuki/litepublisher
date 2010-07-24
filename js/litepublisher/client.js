@@ -43,7 +43,7 @@ widgets.load = function (node, id, sitebar) {
   if (client == undefined) client = createclient();
   
   client.litepublisher.getwidget( {
-    params:[id, sitebar],
+    params:[id, sitebar, ltoptions.idurl],
     
     onSuccess:function(result){
       if (result && (result != 'false')) {

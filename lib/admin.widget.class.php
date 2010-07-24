@@ -140,7 +140,7 @@ $id = $widgets->find($widget);
 $item = &$widgets->finditem($id);
 if ($item) {
 $args->sitebarcombo = tadminwidgets::getcombo('sitebar', tadminwidgets::getsitebarnames(3), $item['sitebar']);
-$args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $item['order']);
+$args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $item['order'] + 1);
 $args->ajax = $item['ajax'];
 return $this->html->orderform($args);
 }
@@ -151,7 +151,7 @@ $widgets = twidgets::instance();
 $item = &$widgets->finditem($widgets->find($widget));
 if ($item) {
 $item['sitebar'] = (int) $_POST['sitebar'];
-$item['order'] = ((int) $_POST['order']);
+$item['order'] = ((int) $_POST['order'] - 1);
 $item['ajax'] = isset($_POST['ajax']);
 $widgets->save();
 }
@@ -344,7 +344,7 @@ $home->defaultsitebar = isset($_POST['defaultsitebar']);
 $home->sitebars = tadminwidgets::setsitebars($widgets->sitebars);
 }
 $home->unlock();
-return $this->html->updated;
+return $this->html->h2->updated;
 }
 
 }//class
