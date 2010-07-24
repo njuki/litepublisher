@@ -341,7 +341,8 @@ if (isset($_POST['homeoptions'])) {
 $home->ajax = isset($_POST['ajax']);
 $home->defaultsitebar = isset($_POST['defaultsitebar']);
 } else {
-$home->sitebars = tadminwidgets::setsitebars($widgets->sitebars);
+var_dump($_POST);
+tadminwidgets::setsitebars($home->sitebars);
 }
 $home->unlock();
 return $this->html->h2->updated;
