@@ -71,7 +71,7 @@ $result .= $html->addfooter();
   }
   
 // parse POST into sitebars array
-  public static function editsitebars(array $sitebars) {
+  public static function editsitebars(array &$sitebars) {
     // collect all id from checkboxes
     $items = array();
     foreach ($_POST as $key => $value) {
@@ -93,8 +93,7 @@ $sitebars[$i][$j]['ajax'] = isset($_POST["ajaxcheck-$id"]);
     }
 }
 
-return $sitebars;
-    return $this->html->h2->success;
+//    return $this->html->h2->success;
   }
   
   public function getcontent() {
@@ -144,7 +143,7 @@ if ($widgets->itemexists($idwidget)) {
 $widget = $widgets->getwidget($idwidget);
 return  $widget->admin->processform();
 } else {
-$widgets->sitebars = self::setsitebars($widgets->sitebars);
+self::setsitebars($widgets->sitebars);
 $widgets->save();
 return $this->html->h2->success;
 }
@@ -159,7 +158,7 @@ return $adminhome->processform();
 }
 }
 
-public static function setsitebars(array $sitebars) {
+public static function setsitebars(array &$sitebars) {
 switch ($_POST['action']) {
 case 'edit':
 return self::editsitebars($sitebars);
@@ -174,7 +173,6 @@ $sitebars[0][] = array(
 );
 }
     }
-  return $sitebars;  
 }
 }
 
