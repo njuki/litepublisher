@@ -387,7 +387,7 @@ $this->save();
 
 public function &finditem($id) {
 foreach ($this->classes as $class => $items) {
-foreach ($items as $item) {
+foreach ($items as $i => $item) {
 if ($id == $item['id']) return $this->classes[$class][$i];
 }
 }

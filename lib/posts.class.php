@@ -327,13 +327,13 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.posts';
 $this->template = 'posts';
-$this->adminclass = 'tadminmaxcount ';
+$this->adminclass = 'tadminmaxcount';
 $this->data['title'] = tlocal::$data['default']['recentposts'];
     $this->data['maxcount'] = 10;
 }
 
 protected function setmaxcount($value) {
-if ($value != $this->rmaxcount) {
+if ($value != $this->maxcount) {
     $this->data['maxcount'] = $value;
 $this->save();
 }
