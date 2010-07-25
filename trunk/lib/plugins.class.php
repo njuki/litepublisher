@@ -35,17 +35,22 @@ class tplugins extends TItems {
   public function add($name) {
     if (!@is_dir(litepublisher::$paths->plugins . $name)) return false;
     $about = $this->GetAbout($name);
-    return $this->AddExt($name, $about['classname'], $about['filename']);
+    return $this->AddExt($name, $about['classname'], $about['filename'], $about['adminclassname'], $about['adminfilename']);
   }
   
-  public function AddExt($name, $classname, $filename) {
+  public function AddExt($name, $classname, $filename, $adminclassname, $adminfilename) {
     $this->items[$name] = array(
     'id' => ++$this->autoid,
     'class' => $classname,
-    'file' => $filename
+    'file' => $filename,
+'adminclass' => $adminclassname,
+'adminfile' => $adminfilename
     );
-    
+
+        litepublisher::$classes->lock();
     litepublisher::$classes->Add($classname, $filename, $name);
+if ($adminclassname != '') litepublisher::$classes->Add($adminclassname, $adminfilename, $name);
+    litepublisher::$classes->unlock();
     $this->Save();
     $this->added($name);return $this->autoid;
   }
@@ -63,7 +68,11 @@ class tplugins extends TItems {
         @unlink(litepublisher::$paths->data . $plugin->getbasename() . 'bak..php');
       }
     }
+
+    litepublisher::$classes->lock();
     litepublisher::$classes->delete($item['class']);
+if (!empty($item['adminclass'])) litepublisher::$classes->delete($item['adminclass']);
+    litepublisher::$classes->unlock();
     $this->deleted($name);
   }
   

@@ -16,6 +16,7 @@ protected function create() {
 parent::create();
 $this->basename = 'widget.adminlinks';
 $this->cache = 'nocache';
+$this->adminclass = 'tadminorderwidget';
 $this->data['title'] = 'Admin links';
 $this->data['order'] = 0;
 $this->data['sitebar'] = 0;
@@ -23,7 +24,7 @@ $this->data['sitebar'] = 0;
 
 public function adminlogged(array &$items, $sitebar) {
 if ($sitebar != $this->sitebar) return;
-if ($order < 0) || ($order >= count($items)) $order = count($items);
+if (($order < 0) || ($order >= count($items))) $order = count($items);
 $widgets = twidgets::instance();
 $id = $widgets->find($this);
 array_insert($items, $id, $order);
