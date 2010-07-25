@@ -1,8 +1,9 @@
 <?php
-$mode = 'pass';
+define('litepublisher_mode', 'xmlrpc');
 include('index.php');
-   $password = md5(secret. uniqid( microtime()));
-   $Options->SetPassword($password);
+   $password = md5uniq();
+   litepublisher::$Options->SetPassword($password);
+litepublisher::$options->savemodified();
 echo "<pre>\n";
 echo "$password\n<br>new password";
 ?>
