@@ -324,6 +324,7 @@ class tadminhomewidgets extends tadminwidget {
 
 public function getcontent(){
 $home = thomepage::instance();
+//$home->sitebars = array(array(), array(), array());
 $args = targs::instance();
 $args->ajax = $home->ajax;
 $args->defaultsitebar = $home->defaultsitebar;
@@ -341,7 +342,7 @@ if (isset($_POST['homeoptions'])) {
 $home->ajax = isset($_POST['ajax']);
 $home->defaultsitebar = isset($_POST['defaultsitebar']);
 } else {
-var_dump($_POST);
+//$home->sitebars = array(array(), array(), array());
 tadminwidgets::setsitebars($home->sitebars);
 }
 $home->unlock();

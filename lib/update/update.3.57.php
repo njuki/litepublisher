@@ -196,7 +196,7 @@ $admin->deleteurl('/admin/widgets/custom/');
 $admin->deleteurl('/admin/widgets/meta/');
 $admin->deleteurl('/admin/widgets/homepagewidgets/');
 
-   $admin->createitem($idwidgets, 'classes', 'admin', 'tadminwidgets');
+   //$admin->createitem($idwidgets, 'classes', 'admin', 'tadminwidgets');
    $admin->createitem($idwidgets, 'home', 'admin', 'tadminwidgets');
     $admin->createitem($idwidgets, 'addcustom', 'admin', 'tadminwidgets');
 $admin->unlock();
