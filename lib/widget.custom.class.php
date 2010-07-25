@@ -30,9 +30,6 @@ if ($item['template'] == '') return $item['content'];
 return $theme->getwidget($item['title'], $item['content'], $item['template'], $sitebar);
   }
 
-
-}
-
 public function gettitle($id) {
 return $this->items[$id]['title'];
 }

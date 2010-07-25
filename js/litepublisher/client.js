@@ -49,7 +49,12 @@ widgets.load = function (node, id, sitebar) {
       if (result && (result != 'false')) {
         var tmp = document.createElement("div");
         tmp.innerHTML =result;
+if (tmp.firstChild.nodeName ==String.fromCharCode(35) + 'text') {
+        var content = tmp;
+} else {
         var content = tmp.firstChild;
+}
+
         content.parentNode.removeChild(content);
         comment.parentNode.replaceChild(content, comment);
         widgets.items[i][1] = content;

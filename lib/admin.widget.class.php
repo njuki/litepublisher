@@ -198,21 +198,23 @@ $args->combo =tadminwidgets::getcombo('template', self::gettemplates(), $item['t
 $args->content = $html->customform($args);
 $result = $html->optionsform($args);
 
-      $list = '';
+    $result .= $html->checkallscript;
+$result .= $html->customheader();
       $args->adminurl = $this->adminurl;'idwidget';
       foreach ($widget->items as $id => $item) {
         $args->idwidget = $id;
         $args->add($item);
-        $list .= $html->customitem($args);
+        $result .= $html->customitem($args);
       }
-      $result .= sprintf($html->customitems, $list);
+      $result .= $html->customfooter();
 return $result;
 }
 
   public function processform()  {
+$widget = $this->widget;
+if (isset($_POST['mode'])) {
 extract($_POST, EXTR_SKIP);
 $idwidget = (int) $_GET['idwidget'];
-$widget = $this->widget;
 switch ($mode) {
 case 'add':
 $_GET['idwidget'] = $widget->add($title, $text, $template);
@@ -221,6 +223,16 @@ break;
 case 'edit':
 $widget->edit($idwidget, $title, $text, $template);
 break;
+}
+} else {
+$widgets = twidgets::instance();
+$widgets->lock();
+$widget->lock();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'widgetcheck-')) $widget->delete((int) $value);
+    }
+$widget->unlock;
+$widgets->unlock();
 }
 }
 
