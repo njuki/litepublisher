@@ -17,6 +17,17 @@ $classes->add('ttagswidget', 'tags.cloud.class.php');
 $classes->add('tarchiveswidget', 'archives.class.php');
 $classes->add('tpostswidget', 'posts.class.php');
 $classes->add('tmenuwidget', 'widget.menu.class.php');
+//admin
+$classes->add('tadminwidget', 'admin.widget.class.php');
+$classes->add('tadminmaxcount', 'admin.widget.class.php');
+$classes->add('tadminshowcount', 'admin.widget.class.php');
+$classes->add('tadminorderwidget', 'admin.widget.class.php');
+$classes->add('tadminfriendswidget', 'admin.widget.class.php');
+$classes->add('tadmintagswidget', 'admin.widget.class.php');
+$classes->add('tadmincustomwidget' 'admin.widget.class.php');
+$classes->add('tadminlinkswidget', 'admin.widget.class.php');
+$classes->add('tadminmetawidget', 'admin.widget.class.php');
+$classes->add('tadminhomewidgets', 'admin.widget.class.php');
 //change filename
 $classes->items['tlinkswidget'][0] = 'widget.links.class.php';
 $classes->items['tcustomwidget'][0] = 'widget.custom.class.php';
