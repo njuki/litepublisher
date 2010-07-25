@@ -395,7 +395,7 @@ return tsitebars::getpos($this->sitebars, $id);
 }
 
 public function setpos($id, $sitebar, $order) {
-$this->sitebars = tsitebars::setpos($this->sitebars, $id, $sitebar, $order);
+tsitebars::setpos($this->sitebars, $id, $sitebar, $order);
 $this->save();
 }
 
@@ -545,6 +545,7 @@ list($oldsitebar, $oldorder) = $pos;
 if (($oldsitebar != $newsitebar) || ($oldorder != $neworder)){
 $item = $items[$oldsitebar][$oldorder];
 array_delete($items[$oldsitebar], $oldorder);
+if (($neworder < 0) || ($neworder > count($items[$newsitebar]))) $neworder = count($items[$newsitebar]);
 array_insert($items[$newsitebar], $item, $neworder);
 }
 }

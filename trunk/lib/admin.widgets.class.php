@@ -79,18 +79,22 @@ $result .= $html->addfooter();
     }
 
     foreach ($items as $id) {
-    if (isset($_POST['deletewidgets']))  {
 if ($pos = tsitebars::getpos($sitebars, $id)) {
 list($i, $j) = $pos;
+    if (isset($_POST['deletewidgets']))  {
 array_delete($sitebars[$i], $j);
-}
 } else {
-$i = (int)$_POST["sitebar-$id"];
-$j = (int) $_POST["order-$id"];
-//var_dump($i, $j, $sitebars[0][0]);
-tsitebars::setpos($sitebars, $id, $i, $j);
-$sitebars[$i][$j]['ajax'] = isset($_POST["ajaxcheck-$id"]);
+$i2 = (int)$_POST["sitebar-$id"];
+$j2 = (int) $_POST["order-$id"];
+if ($j2 > count($sitebars[$i2])) $j2 = count($sitebars[$i2]);
+if (($i != $i2) || ($j != $j2)) {
+$item = $sitebars[$i][$j];
+array_delete($sitebars[$i], $j);
+array_insert($sitebars[$i2], $item, $j2);
+}
+$sitebars[$i2][$j2]['ajax'] = isset($_POST["ajaxcheck-$id"]);
     }
+}
 }
 
 //    return $this->html->h2->success;
@@ -161,7 +165,8 @@ return $adminhome->processform();
 public static function setsitebars(array &$sitebars) {
 switch ($_POST['action']) {
 case 'edit':
-return self::editsitebars($sitebars);
+self::editsitebars($sitebars);
+break;
 
 case 'add':
 $widgets = twidgets::instance();
