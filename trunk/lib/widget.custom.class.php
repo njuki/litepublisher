@@ -19,12 +19,18 @@ private $id;
     $this->basename   = 'widgets.custom';
 $this->adminclass = 'tadmincustomwidget';
 $this->addmap('items', array());
+$this->addevents('added', 'deleted');
   }
 
 public function getwidget($id, $sitebar) {
 if (!isset($this->items[$id])) return '';
-if ($this->items[$id]['template'] == '') return $this->items[$id]['content'];
-return parent::getwidget($id, $sitebar);
+$item = $this->items[$id];
+if ($item['template'] == '') return $item['content'];
+    $theme = ttheme::instance();
+return $theme->getwidget($item['title'], $item['content'], $item['template'], $sitebar);
+  }
+
+
 }
 
 public function gettitle($id) {
@@ -37,6 +43,7 @@ return $this->items[$id]['content'];
   
   public function add($title, $content, $template) {
     $widgets = twidgets::instance();
+$widgets->lock();
     $id = $widgets->addext($this, $title, $template);
     $this->items[$id] = array(
     'title' => $title,
@@ -44,6 +51,9 @@ return $this->items[$id]['content'];
 'template' => $template
     );
     
+$sitebars = tsitebars::instance();
+$sitebars->add($id);
+$widgets->unlock();
     $this->save();
     $this->added($id);
     return $id;
@@ -56,7 +66,11 @@ return $this->items[$id]['content'];
 'template' => $template
     );
         $this->save();
-    $widgets->expired($id);
+
+$widgets = twidgets::instance();
+$widgets[$id]['title'] = $title;
+$widgets->save();
+    $wthis->expired($id);
   }
   
   public function delete($id) {
