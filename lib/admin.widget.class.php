@@ -55,7 +55,7 @@ return $this->html->optionsform($args);
 
 class tadmintagswidget extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -77,7 +77,7 @@ $widget->sortname = $sort;
 
 class tadminmaxcount extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -94,7 +94,7 @@ $widget->maxcount = (int) $_POST['maxcount'];
 
 class tadminshowcount extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -111,7 +111,7 @@ $widget->showcount = isset($_POST['showcount']);
 
 class tadminfriendswidget extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -130,7 +130,7 @@ $widget->redir = isset($_POST['redir']);
 
 class tadminorderwidget extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -151,7 +151,7 @@ $widget->ajax = isset($_POST['ajax']);
 
 class tadmincustomwidget extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -229,7 +229,7 @@ $widgets->unlock();
 }//class
 class tadminlinkswidget extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -301,7 +301,7 @@ return $this->html->h2->updated;
 
 class tadminmetawidget extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
@@ -320,7 +320,7 @@ $widget->data['meta'][$name] = isset($_POST[$name]);
 
 class tadminhomewidgets extends tadminwidget {
 
-  public static function instance($id = null) {
+  public static function instance() {
     return getinstance(__class__);
   }
 
