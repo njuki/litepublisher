@@ -53,7 +53,7 @@ $about = tplugins::getabout($name);
       $result = $html->fixquote($result);
     } else {
       $name = $_GET['plugin'];
-      if (!isset($this->names[$name])) return $this->notfound;
+      if (!in_array($name, $this->names)) return $this->notfound;
       if ($admin = $this->getadminplugin($name)) {
         $result .= $admin->getcontent();
       }
@@ -75,7 +75,7 @@ $about = tplugins::getabout($name);
       $result = $this->html->h2->updated;
     } else {
       $name = $_GET['plugin'];
-      if (!isset($this->names[$name])) return $this->notfound;
+      if (!in_array($name, $this->names)) return $this->notfound;
       if ($admin = $this->getadminplugin($name)) {
         $result = $admin->processform();
       }

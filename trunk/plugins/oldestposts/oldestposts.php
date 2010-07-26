@@ -6,39 +6,37 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class toldestposts extends tplugin {
+class toldestposts extends tclasswidget {
   
   public static function instance() {
     return getinstance(__class__);
   }
+
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.oldestposts';
+$this->adminclass = 'tadminoldestposts';
+$this->cache = 'nocache';
+$this->data['title'] = tlocal::$data['default']['prev'];
+    $this->data['maxcount'] = 10;
+}
   
-  public function onsitebar(&$content, $index) {
-    if ($index > 0) return;
-    $links = $this->getoldposts($index);
-    if ($links == '') return;
-    $theme = ttheme::instance();
-    $widget = $theme->getwidget(tlocal::$data['default']['prev'], $links, 'widget', $index);
-    $content = $widget . $content;
-  }
-  
-  private function getoldposts($index) {
-    $template = ttemplate::instance();
-    $post = $template->context;
+  public function getcontent($id, $sitebar) {
+    $post = $this->getcontext('tpost');
     $posts = tposts::instance();
-    
     if (dbversion) {
-      $items = $posts->select("status = 'published' and posted < '$post->sqldate' ",' order by posted desc limit 10');
+      $items = $posts->select("status = 'published' and posted < '$post->sqldate' ",' order by posted desc limit '. $this->maxcount);
     } else {
       $arch = array_keys($posts->archives);
       $i = array_search($post->id, $arch);
       if (!is_int($i)) return '';
-      $items = array_slice($arch, $i + 1, 10);
+      $items = array_slice($arch, $i + 1, $this->maxcount);
     }
     
     if (count($items) == 0) return '';
     
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('widget', $index);
+    $tml = $theme->getwidgetitem($this->template, $sitebar);
     $result = '';
     foreach ($items as $id) {
       $post = tpost::instance($id);
@@ -46,8 +44,9 @@ class toldestposts extends tplugin {
       $result .= sprintf($tml, $post->link, $post->title);
     }
     
-    return sprintf($theme->getwidgetitems('widget', $index), $result);
+    return sprintf($theme->getwidgetitems($this->template, $sitebar), $result);
   }
   
 }//class
+
 ?>

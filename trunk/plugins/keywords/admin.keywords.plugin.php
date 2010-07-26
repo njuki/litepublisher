@@ -6,21 +6,25 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminkeywords {
+class tadminkeywords extends tadminwidget {
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
+
   
   public function getcontent() {
-    $result = '';
-    $dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
+    $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
     $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
     $tml = parse_ini_file($selfdir . 'keywords.templates.ini', false);
-    $admin = tadminplugins::instance();
-    $about = $admin->abouts[$_GET['plugin']];
-    $html = THtmlResource::instance();
-    $lang = tlocal::instance();
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    $html = $this->html;
+    $lang = $this->lang;
     $args = targs::instance();
     if (isset($_GET['filename'])) {
       $filename = $_GET['filename'];
-      if (!@file_exists($dir . $filename)) return $admin->notfound();
+      if (!@file_exists($datadir . $filename)) return $html->h2->notfound;
       $args->filename = $filename;
       $args->content =file_get_contents($dir . $filename);
       $args->edithead = $about['edithead'];
@@ -31,15 +35,15 @@ class tadminkeywords {
     $result = '';
     if ($page == 1) {
       $widget = tkeywordswidget::instance();
+$args->title = $widget->title;
       $args->count = $widget->count;
       $args->trace = $widget->trace;
       $args->notify = $widget->notify;
-      $args->title = $widget->title;
       $args->countlabel = $about['countlabel'];
       $args->tracelabel = $about['tracelabel'];
       $args->notifylabel = $about['notifylabel'];
-      $args->titlelabel = $about['titlelabel'];
-      $result .= $html->parsearg($tml['optionsform'], $args);
+      $args->content = $html->parsearg($tml['optionsform'], $args);
+$result .= $html->optionsform($args);
     }
     
     $from = 100 * ($page - 1);
@@ -76,10 +80,11 @@ class tadminkeywords {
   }
   
   public function processform() {
-    $dir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
-    if (isset($_POST['pluginoptions'])) {
-      extract($_POST);
-      $widget = tkeywordswidget::instance();
+    $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
+    if (isset($_POST['optionsform'])) {
+extract($_POST, EXTR_SKIP);
+$widget = tkeywordswidget::instance();
+$widget->lock();
       $widget->title = $title;
       $widget->count = (int) $count;
       $widget->notify = isset($notify);
@@ -95,7 +100,7 @@ class tadminkeywords {
       }
       
       $widget->trace = $trace;
-      $widget->save();
+      $widget->unlock();
       return;
     }
     
@@ -103,14 +108,14 @@ class tadminkeywords {
       $filename = str_replace('_php', '.php', $_GET['filename']);
       $content = trim($_POST['content']);
       if ($content = '') {
-        @unlink($dir . $filename);
+        @unlink($datadir . $filename);
       } else {
-        file_put_contents($dir . $filename, $content);
+        file_put_contents($datadir . $filename, $content);
       }
     } else {
       foreach ($_POST as $filename => $value) {
         $filename = str_replace('_php', '.php', $filename);
-        if (preg_match('/^\d+?-\d+?\.php$/', $filename)) unlink($dir . $filename);
+        if (preg_match('/^\d+?-\d+?\.php$/', $filename)) unlink($datadir . $filename);
       }
     }
   }

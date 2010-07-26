@@ -17,6 +17,7 @@ class tkeywordswidget extends twidget {
     parent::create();
     $this->basename = 'keywords' . DIRECTORY_SEPARATOR   . 'index';
 $this->cache = 'nocache';
+$this->adminclass = 'tadminkeywords';
     $this->data['count'] = 6;
     $this->data['notify'] = true;
     $this->data['trace'] = true;
@@ -26,7 +27,18 @@ $this->cache = 'nocache';
   
   public function getwidget($id, $sitebar) {
     if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
-    $filename = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR. litepublisher::$urlmap->itemrequested['id'] . ".litepublisher::$urlmap->page .php";
+return parent::getwidget($id, $sitebar);
+}
+
+  public function getcontent($id, $sitebar) {
+    if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
+if (strend(litepublisher::$urlmap->url, '.xml')) {
+$widgets = twidgets::instance();
+$id = $widgets->ididurlcontext;
+} else {
+$id = litepublisher::$urlmap->itemrequested['id'];
+}
+    $filename = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR.$id . '.' . litepublisher::$urlmap->page . '.php';
     if (@file_exists($filename)) {
       $links = file_get_contents($filename);
     } else {
@@ -41,9 +53,9 @@ $this->cache = 'nocache';
         $plugin->added($filename, $links);
       }
     }
+
     $theme = ttheme::instance();
-$content = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
-    return $theme->getwidget($this->title, $content, 'widget', $sitebar);
+return sprintf($theme->getwidgetitems($this->template, $sitebar), $links);
   }
   
 }//class
