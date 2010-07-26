@@ -77,14 +77,14 @@ $cache->expired($id);
 break;
 
 case 'include':
-$sitebar = self::getsitebar($id);
+$sitebar = self::findsitebar($id);
 $filename = self::getcachefilename($id, $sitebar);
 file_put_contents($filename, $this->getwidget($id, $sitebar));
 break;
 }
 }
 
-public static function getsitebar($id) {
+public static function findsitebar($id) {
 $widgets = twidgets::instance();
 foreach ($widgets->sitebars as $i=> $sitebar) {
 foreach ($sitebar as $item) {
@@ -101,13 +101,69 @@ if ($this instanceof $item['class']) $this->expired($id);
 }
 }
 
-
 public function getcontext($class) {
 if (litepublisher::$urlmap->context instanceof $class) return litepublisher::$urlmap->context;
 //ajax
 $widgets = twidgets::instance();
 return litepublisher::$urlmap->getidcontext($widgets->idurlcontext);
 }  
+
+}//class
+
+class torderwidget extends twidget {
+
+  protected function create() {
+    parent::create();
+$this->data['id'] = 0;
+$this->data['ajax'] = false;
+$this->data['order'] = 0;
+$this->data['sitebar'] = 0;
+}
+
+public function onsitebar(array &$items, $sitebar) {
+if ($sitebar != $this->sitebar) return;
+$order = $this->order;
+if (($order < 0) || ($order >= count($items))) $order = count($items);
+array_insert($items, array('id' => $this->id, 'ajax' => $this->ajax), $order);
+}
+
+}//class
+
+class tclasswidget extends twidget {
+private $item;
+
+private function isvalue($name) {
+return in_array($name, array('ajax', 'order', 'sitebar'));
+}
+
+  public function __get($name) {
+if ($this->isvalue($name)) {
+if (!$this->item) {
+$widgets = twidgets::instance();
+$this->item = &$widgets->finditem($widgets->find($this));
+}
+return $this->item[$name];
+}
+return parent::__get($name);
+}
+
+  public function __set($name, $value) {
+if ($this->isvalue($name)) {
+if (!$this->item) {
+$widgets = twidgets::instance();
+$this->item = &$widgets->finditem($widgets->find($this));
+}
+$this->item[$name] = $value;
+} else {
+parent::__set($name, $value);
+}
+}
+
+public function save() {
+parent::save();
+$widgets = twidgets::instance();
+$widgets->save();
+}
 
 }//class
 
@@ -287,7 +343,6 @@ $content = $this->getajax($id, $sitebar);
 } else {
 switch ($this->items[$id]['cache']) {
 case 'cache':
-case true:
 $content = $this->getwidgetcache($id, $sitebar);
 break;
 

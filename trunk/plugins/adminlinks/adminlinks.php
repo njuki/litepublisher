@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminlinkswidget extends twidget {
+class tadmincontextwidget extends torderwidget {
   
   public static function instance() {
     return getinstance(__class__);
@@ -18,16 +18,6 @@ $this->basename = 'widget.adminlinks';
 $this->cache = 'nocache';
 $this->adminclass = 'tadminorderwidget';
 $this->data['title'] = 'Admin links';
-$this->data['order'] = 0;
-$this->data['sitebar'] = 0;
-}
-
-public function adminlogged(array &$items, $sitebar) {
-if ($sitebar != $this->sitebar) return;
-if (($order < 0) || ($order >= count($items))) $order = count($items);
-$widgets = twidgets::instance();
-$id = $widgets->find($this);
-array_insert($items, $id, $order);
 }
 
   public function getwidget($id, $sitebar) {
@@ -67,7 +57,7 @@ array_insert($items, $id, $order);
         $lang = tlocal::instance('options');
         $title = $lang->home;
         $links = sprintf($tml, litepublisher::$options->url . "/admin/options/home/", $lang->title);
-        $links .= sprintf($tml, litepublisher::$options->url . "/admin/widgets/homepagewidgets/", tlocal::$data['names']['homepagewidgets']);
+        $links .= sprintf($tml, litepublisher::$options->url . "/admin/widgets/home/", tlocal::$data['widgets']['title']);
         break;
         
         default:
@@ -87,7 +77,7 @@ array_insert($items, $id, $order);
     
     $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
     $links = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
-return $theme->getwidget($title, $links, 'widget', $sitebar);
+return $theme->getwidget($this->title, $links, 'widget', $sitebar);
   }
   
 }//class

@@ -6,17 +6,16 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tadminlinkswidgetInstall($self) {
+function tadmincontextwidgetInstall($self) {
+$about = tplugins::getabout(tplugins::getname(__file__));
+$self->data['title'] =$about['name'];
+
 $widgets = twidgets::instance();
 $widgets->lock();
-$widgets->add($self);
-$widgets->onadminlogged = $self->adminlogged;
+$self->id = $widgets->add($self);
+$widgets->onadminlogged = $self->onsitebar;
 $widgets->unlock();
-}
-
-function tadminlinkswidgetUninstall($self) {
-$widgets = twidgets::instance();
-$widgets->deleteclass(get_class($self));
+$self->save();
 }
 
 ?>

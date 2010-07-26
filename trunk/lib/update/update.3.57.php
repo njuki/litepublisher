@@ -6,7 +6,16 @@ $std = tstdwidgets::instance();
 
 $classes = litepublisher::$classes;
 $classes->lock();
+if (isset($classes->items['tadminlinkswidget'])) {
+unset($classes->items['tadminlinkswidget']
+$plugins = tplugins::instance();
+unset($plugins->items['adminlinks']);
+$plugins->save();
+}
+
 $classes->add('twidget', 'widgets.class.php');
+$classes->add('torderwidget', 'widgets.class.php');
+$classes->add('tclasswidget', 'widgets.class.php');
 $classes->add('twidgetscache', 'widgets.class.php');
 $classes->add('tsitebars', 'widgets.class.php');
 $classes->add('tcommentswidget', 'widgets.comments.class.php');
