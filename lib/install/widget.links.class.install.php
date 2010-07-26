@@ -20,8 +20,6 @@ function tlinkswidgetInstall($self) {
 }
 
 function tlinkswidgetUninstall($self) {
-  $widgets = twidgets::instance();
-  $widgets->deleteclass(get_class($self));
   turlmap::unsub($self);
 }
 

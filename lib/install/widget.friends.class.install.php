@@ -11,8 +11,6 @@ function tfriendswidgetInstall($self) {
 }
 
 function tfriendswidgetUninstall($self) {
-$widgets = twidgets::instance();
-$widgets->deleteclass(get_class($self));
   turlmap::unsub($self);
 }
 

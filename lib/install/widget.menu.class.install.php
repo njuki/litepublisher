@@ -11,9 +11,4 @@ function tmenuwidgetInstall($self) {
 $widgets->addclass($self, 'tmenu');
 }
 
-function tmenuwidgetUninstall($self) {
-  $widgets = twidgets::instance();
-  $widgets->deleteclass(get_class($self));
-}
-
 ?>

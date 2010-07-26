@@ -7,19 +7,24 @@
 **/
 
 class tplugins extends TItems {
+  public static $abouts;
   
   public static function instance() {
     return getinstance(__class__);
   }
   
   protected function create() {
+    $this->dbversion = false;
     parent::create();
     $this->basename = 'plugins' . DIRECTORY_SEPARATOR  . 'index';
-    $this->dbversion = false;
   }
   
-  public function getabout($name) {
-    return self::localabout(litepublisher::$paths->plugins .  $name );
+  public static function getabout($name) {
+if (!isset(self::$abouts[$name])) {
+if (!isset(self::$abouts)) self::$abouts = array();
+self::$abouts[$name] = self::localabout(litepublisher::$paths->plugins .  $name );
+}
+return self::$abouts[$name];
   }
   
   public static function localabout($dir) {
@@ -31,10 +36,14 @@ class tplugins extends TItems {
     
     return $about['about'];
   }
+
+public static function getname($filename) {
+return basename(dirname($filename));
+}
   
   public function add($name) {
     if (!@is_dir(litepublisher::$paths->plugins . $name)) return false;
-    $about = $this->GetAbout($name);
+$about = self::getabout($name);
     return $this->AddExt($name, $about['classname'], $about['filename'], $about['adminclassname'], $about['adminfilename']);
   }
   

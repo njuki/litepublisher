@@ -7,37 +7,24 @@
 **/
 
 class tadminplugins extends tadminmenu {
-  public $abouts;
-  
+private $names;
+ 
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   protected function create() {
     parent::create();
-    //$this->adminplugins = array();
-    $this->readabout();
-  }
-  
-  private function readabout() {
-    $this->abouts = array();
-    $list = tfiler::getdir(litepublisher::$paths->plugins);
-    sort($list);
-    foreach ($list as $name) {
-      $about = parse_ini_file(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . 'about.ini', true);
-      //слить языковую локаль в описание
-      if (isset($about[litepublisher::$options->language])) {
-        $about['about'] = $about[litepublisher::$options->language] + $about['about'];
-      }
-      $this->abouts[$name] = $about['about'];
-    }
+    $this->names = tfiler::getdir(litepublisher::$paths->plugins);
+    sort($this->names);
   }
   
   public function getpluginsmenu() {
     $result = '';
     $url = $this->url . litepublisher::$options->q . 'plugin=';
     $plugins = tplugins::instance();
-    foreach ($this->abouts as $name => $about) {
+    foreach ($this->names as $name) {
+$about = tplugins::getabout($name);
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
         $result .= sprintf('<li><a href="%s%s">%s</a></li>', $url, $name, $about['name']);
       }
@@ -54,7 +41,8 @@ class tadminplugins extends tadminmenu {
       $result .= $html->checkallscript;
       $result .= $html->formhead();
       $args = targs::instance();
-      foreach ($this->abouts as $name => $about) {
+      foreach ($this->names as $name) {
+$about = tplugins::getabout($name);
         $args->add($about);
         $args->name = $name;
         $args->checked = isset($plugins->items[$name]);
@@ -65,7 +53,7 @@ class tadminplugins extends tadminmenu {
       $result = $html->fixquote($result);
     } else {
       $name = $_GET['plugin'];
-      if (!isset($this->abouts[$name])) return $this->notfound;
+      if (!isset($this->names[$name])) return $this->notfound;
       if ($admin = $this->getadminplugin($name)) {
         $result .= $admin->getcontent();
       }
@@ -87,7 +75,7 @@ class tadminplugins extends tadminmenu {
       $result = $this->html->h2->updated;
     } else {
       $name = $_GET['plugin'];
-      if (!isset($this->abouts[$name])) return $this->notfound;
+      if (!isset($this->names[$name])) return $this->notfound;
       if ($admin = $this->getadminplugin($name)) {
         $result = $admin->processform();
       }
@@ -98,7 +86,7 @@ class tadminplugins extends tadminmenu {
   }
   
   private function getadminplugin($name) {
-    $about = $this->abouts[$name];
+$about = tplugins::getabout($name);
     if (empty($about['adminclassname'])) return false;
     $class = $about['adminclassname'];
     if (!class_exists($class))  require_once(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);
