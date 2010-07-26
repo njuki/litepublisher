@@ -14,18 +14,14 @@ function tsamepostsInstall($self) {
     items text NOT NULL,
     PRIMARY KEY(id) ');
   }
-  
-  $template = ttemplate::instance();
-  $template->addsitebarclass(litepublisher::$classes->classes['post'], $self->onsitebar);
-  
-  $posts= tposts::instance();
+
+  $widgets = twidgets::instance();
+$widgets->addclass($self, 'tpost');
+
   $posts->changed = $self->postschanged;
 }
 
 function tsamepostsUninstall($self) {
-  $template = ttemplate::instance();
-  $template->deletesitebarclass(litepublisher::$classes->classes['post'], $self);
-  
   tposts::unsub($self);
   if (dbversion) {
     $manager = tdbmanager ::instance();
