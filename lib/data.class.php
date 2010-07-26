@@ -71,7 +71,6 @@ class tdata {
     foreach ($this->coinstances as $coinstance) {
       if (method_exists($coinstance, $name)) return call_user_func_array(array($coinstance, $name), $params);
     }
-    
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   

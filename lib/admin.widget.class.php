@@ -135,26 +135,16 @@ class tadminorderwidget extends tadminwidget {
   }
 
   protected function dogetcontent(twidget $widget, targs $args){
-$widgets =twidgets::instance();
-$id = $widgets->find($widget);
-$item = &$widgets->finditem($id);
-if ($item) {
-$args->sitebarcombo = tadminwidgets::getcombo('sitebar', tadminwidgets::getsitebarnames(3), $item['sitebar']);
-$args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $item['order'] + 1);
-$args->ajax = $item['ajax'];
+$args->sitebarcombo = tadminwidgets::getcombo('sitebar', tadminwidgets::getsitebarnames(3), $widget->sitebar);
+$args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $widget->order + 1);
+$args->ajax = $widget->ajax;
 return $this->html->orderform($args);
-}
 }
 
   protected function doprocessform(twidget $widget)  {
-$widgets = twidgets::instance();
-$item = &$widgets->finditem($widgets->find($widget));
-if ($item) {
-$item['sitebar'] = (int) $_POST['sitebar'];
-$item['order'] = ((int) $_POST['order'] - 1);
-$item['ajax'] = isset($_POST['ajax']);
-$widgets->save();
-}
+$widget->sitebar = (int) $_POST['sitebar'];
+$widget->order = ((int) $_POST['order'] - 1);
+$widget->ajax = isset($_POST['ajax']);
 }
 
 }//class

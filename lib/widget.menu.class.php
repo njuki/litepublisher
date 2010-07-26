@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tmenuwidget extends twidget {
+class tmenuwidget extends tclasswidget {
   public static function instance() {
     return getinstance(__class__);
   }
@@ -19,8 +19,6 @@ $this->template = 'submenu';
 $this->adminclass = 'tadminorderwidget';
 $this->data['title'] = tlocal::$data['default']['submenu'];
 }
-
-
 
 public function gettitle($id) {
 if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;
