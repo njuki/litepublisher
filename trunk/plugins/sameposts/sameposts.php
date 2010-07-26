@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsameposts extends tplugin {
+class tsameposts extends tclasswidget {
   
   public static function instance() {
     return getinstance(__class__);
@@ -14,12 +14,17 @@ class tsameposts extends tplugin {
   
   protected function create() {
     parent::create();
-    $this->data['tml'] = '';
     if (dbversion) {
       $this->table = 'sameposts';
     } else {
       $this->data['revision'] = 1;
     }
+
+    $this->basename = 'widget.sameposts';
+$this->adminclass = 'tadminsameposts';
+$this->cache = 'nocache';
+$this->data['title'] = tlocal::$data['default']['sameposts'];
+    $this->data['maxcount'] = 10;
   }
   
   public function postschanged() {
@@ -54,9 +59,7 @@ class tsameposts extends tplugin {
     }
     
     arsort($same);
-    $result = array_keys($same);
-    $result = array_slice($result, 0, 10);
-    return $result;
+return array_slice(array_keys($same), 0, $this->maxcount);
   }
   
   private function getsame($id) {
@@ -65,8 +68,7 @@ class tsameposts extends tplugin {
       if (is_string($items)) {
         return $items == '' ? array() : explode(',', $items);
       } else {
-        
-        $result = $this->findsame($id);
+                $result = $this->findsame($id);
         $this->db->add(array('id' => $id, 'items' => implode(',', $result)));
         return $result;
       }
@@ -87,18 +89,14 @@ class tsameposts extends tplugin {
     }
   }
   
-  public function onsitebar(&$content, $index) {
-    if ($index > 0) return;
-    $template = ttemplate::instance();
-    $post = $template->context;
+  public function getcontent($id, $sitebar) {
+    $post = $this->getcontext('tpost');
     $list = $this->getsame($post->id);
-    if (count($list) == 0) return;
+    if (count($list) == 0) return'';
     $posts = tposts::instance();
     $posts->loaditems($list);
     $theme = ttheme::instance();
-    $links = $theme->getpostswidgetcontent($list, $index, $this->tml);
-    $widget = $theme->getwidget(tlocal::$data['default']['sameposts'], $links, 'widget', $index);
-    $content = $widget . $content;
+    return $theme->getpostswidgetcontent($list, $sitebar, '');
   }
   
 }//class

@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminsameposts extends tadminorderwidget {
+class tadminoldestposts extends tadminorderwidget {
 
   public static function instance() {
     return getinstance(__class__);
