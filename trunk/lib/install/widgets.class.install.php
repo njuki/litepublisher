@@ -6,6 +6,11 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+function twidgetUninstall($self) {
+$widgets = twidgets::instance();
+$widgets->deleteclass(get_class($self));
+}
+
 function twidgetsInstall($self) {
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($self));
