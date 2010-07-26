@@ -13,18 +13,17 @@ function tkeywordspluginInstall($self) {
   $item = litepublisher::$classes->items[get_class($self)];
   litepublisher::$classes->add('tkeywordswidget','keywords.widget.php', $item[1]);
   
-  $about = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'about.ini', true);
-  //слить языковую локаль в описание
-  if (isset($about[litepublisher::$options->language])) {
-    $about['about'] = $about[litepublisher::$options->language] + $about['about'];
-  }
-  
+  $about = tplugins::getabout(tplugins::getname(__file__));
+
   $widget = tkeywordswidget::instance();
-  $widget->title =  $about['about']['title'];
+  $widget->title =  $about['title'];
   $widget->save();
   
   $widgets = twidgets::instance();
-  $widgets->addext(get_class($widget), 'nocache', '', '', $widgets->count - 1, -1);
+$widgets->lock();
+$sitebars = tsitebars::instance();
+  $sitebars->insert($widgets->add($widget), false, 1, -1);
+$widgets->unlock();
   
   $urlmap = turlmap::instance();
   $urlmap->lock();
