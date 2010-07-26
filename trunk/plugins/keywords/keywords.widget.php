@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tkeywordswidget extends tevents {
+class tkeywordswidget extends twidget {
   protected $links;
   
   public static function instance() {
@@ -16,6 +16,7 @@ class tkeywordswidget extends tevents {
   public function create() {
     parent::create();
     $this->basename = 'keywords' . DIRECTORY_SEPARATOR   . 'index';
+$this->cache = 'nocache';
     $this->data['count'] = 6;
     $this->data['notify'] = true;
     $this->data['trace'] = true;
@@ -31,7 +32,7 @@ class tkeywordswidget extends tevents {
     } else {
       if (count($this->links) < $this->count) return '';
       $arlinks = array_splice($this->links, 0, $this->count);
-      $this->Save();
+      $this->save();
       
       $links = "\n<li>" . implode("</li>\n<li>", $arlinks)  . "</li>";
       file_put_contents($filename, $links);
@@ -41,8 +42,9 @@ class tkeywordswidget extends tevents {
       }
     }
     $theme = ttheme::instance();
-    return $theme->getwidget($this->title, $links, 'widget', $sitebar);
+$content = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
+    return $theme->getwidget($this->title, $content, 'widget', $sitebar);
   }
   
-}
+}//class
 ?>
