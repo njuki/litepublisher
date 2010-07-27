@@ -6,19 +6,26 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminsapeplugin {
-  private $widgets = array('ategories', 'TArchives', 'TLinksWidget', 'TFoaf', 'TPosts', 'TMetaWidget');
-  
-  public function getcontent() {
-    $plugin = tsapeplugin::instance();
-    $std = tstdwidgets::instance();
+class tadminsapeplugin extends tadminwidget {
+  private $widgets = array('tcategories', 'TArchives', 'TLinksWidget', 'TFoaf', 'TPosts', 'TMetaWidget');
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
+  protected function create() {
+    parent::create();
+$this->widget = tsapeplugin::instance();
+}
+
+  protected function dogetcontent(twidget $widget, targs $args){
     $theme = ttheme::instance();
     $checkbox = '<p><input type="checkbox" name="widget-$id" id="widget-$id" value="$id" $checked/>
     <label for="widget-$id">$name</label></p>';
     
     $checkboxes = '';
-    $args = targs::instance();
-    foreach ($std->items as $name => $item) {
+$widgets = twidgets::instance();
+    foreach ($$widgets->items as $id => $item) {
       if ($item['ajax']) continue;
       $args->id = $item['id'];
       $args->checked = in_array($item['id'], $plugin->widgets);
@@ -34,20 +41,15 @@ class tadminsapeplugin {
     return $theme->parsearg($tml, $args);
   }
   
-  public function processform() {
-    $plugin = tsapeplugin::instance();
-    $plugin->lock();
-    $plugin->widgets = array();
+  protected function doprocessform(twidget $widget)  {
+    $widget->widgets = array();
     foreach ($_POST as $name => $value) {
-      if (strbegin($name, 'widget-')) $plugin->widgets[] = (int) $value;
+      if (strbegin($name, 'widget-')) $widget->widgets[] = (int) $value;
     }
     extract($_POST);
-    $plugin->count = (int) $count;
-    $plugin->user = $user;
-    $plugin->force = isset($force);
-    
-    $plugin->unlock();
-    return '';
+    $widget->count = (int) $count;
+    $widget->user = $user;
+    $widget->force = isset($force);
   }
   
 }//class
