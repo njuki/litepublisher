@@ -63,7 +63,7 @@ class THtmlResource  {
         $type = $item[1];
         $name = $item[2];
         $varname = '$' . $name;
-        //сконвертировать спецсимволы для редактора
+        //convert spec charsfor editor
         if (isset($args->data[$varname])) {
           $str = &$args->data[$varname];
           $str = htmlspecialchars($str);

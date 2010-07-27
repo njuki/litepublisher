@@ -7,7 +7,6 @@
 **/
 
 class tadminsapeplugin extends tadminwidget {
-  private $widgets = array('tcategories', 'TArchives', 'TLinksWidget', 'TFoaf', 'TPosts', 'TMetaWidget');
 
   public static function instance() {
     return getinstance(__class__);
@@ -18,38 +17,31 @@ class tadminsapeplugin extends tadminwidget {
 $this->widget = tsapeplugin::instance();
 }
 
-  protected function dogetcontent(twidget $widget, targs $args){
-    $theme = ttheme::instance();
-    $checkbox = '<p><input type="checkbox" name="widget-$id" id="widget-$id" value="$id" $checked/>
-    <label for="widget-$id">$name</label></p>';
-    
-    $checkboxes = '';
-$widgets = twidgets::instance();
-    foreach ($$widgets->items as $id => $item) {
-      if ($item['ajax']) continue;
-      $args->id = $item['id'];
-      $args->checked = in_array($item['id'], $plugin->widgets);
-      $args->name = $std->gettitle($name);
-      $checkboxes .= $theme->parsearg($checkbox, $args);
-    }
-    
-    $args->checkboxes = $checkboxes;
-    $args->user = $plugin->user;
-    $args->count = $plugin->count;
-    $args->force = $plugin->force;
+public function getcontent(){
+$result = '';
+$widget = $this->widget;
+$args = targs::instance();
+if ($widget->id != 0) {
+    $args->maxcount = $widget->counts[$widget->id];
+$result .= $this->optionsform($this->html->maxcountform($args));
+}
+
+    $args->user = $widget->user;
+    $args->force = $widget->force;
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'sapeform.tml');
-    return $theme->parsearg($tml, $args);
+    $result .= $this->html->parsearg($tml, $args);
+return $result;
   }
   
   protected function doprocessform(twidget $widget)  {
-    $widget->widgets = array();
-    foreach ($_POST as $name => $value) {
-      if (strbegin($name, 'widget-')) $widget->widgets[] = (int) $value;
-    }
-    extract($_POST);
-    $widget->count = (int) $count;
+extract($_POST, EXTR_SKIP);
+if (isset($sapeoptions)) {
     $widget->user = $user;
     $widget->force = isset($force);
+} else {
+    $widget->counts[$widget->id] = (int) $maxcount;
+return parent::doprocessform($widget);
+}
   }
   
 }//class
