@@ -1,16 +1,12 @@
-<h2>Настройка ссылок <a href="http://www.sape.ru/r.97609359bd.php">sape.ru</a></h2>
-<form name="form" action="" method="post" >
+<h2>Настройка аккаунта<a href="http://www.sape.ru/r.97609359bd.php">sape.ru</a></h2>
+<form name='sapeform' action='' method='post'>
 <p><input type="text" name="user" id="user" value="$user" size="22" />
 <label for="user"><strong>Имя пользователя в sape (много букв и цифр)</strong></label></p>
-
-<p><input type="text" name="count" id="count" value="$count" size="22" />
-<label for="count"><strong>Количество ссылок в одном виджете (рекомендуется 1-2)</strong></label></p>
 
 <p><input type="checkbox" name="force" id="force" $force/>
 <label for="force">Показывать код  подверждения (требуется только при добавлении площадки в sape)</label></p>
 
-<h3>В какие виджеты добавлять ссылки</h3>
-$checkboxes
+<input type='hidden' name='sapeoptions' value='1' />
 
- <p><input type="submit" name="Submit" value="Изменить настройки"/></p>
+ <p><input type='submit' name='setoptions' value='Сохранить настройки'/></p>
 </form>
