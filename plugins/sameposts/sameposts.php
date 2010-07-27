@@ -24,9 +24,12 @@ class tsameposts extends tclasswidget {
 $this->template = 'posts';
 $this->adminclass = 'tadminsameposts';
 $this->cache = 'nocache';
-$this->data['title'] = tlocal::$data['default']['sameposts'];
     $this->data['maxcount'] = 10;
   }
+
+public function getdeftitle() {
+return tlocal::$data['default']['sameposts'];
+}
   
   public function postschanged() {
     if (dbversion) {

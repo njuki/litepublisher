@@ -17,10 +17,13 @@ class tfriendswidget extends twidget {
     $this->basename = 'widget.friends';
 $this->template = 'friends';
 $this->adminclass = 'tadminfriendswidget';
-$this->data['title'] = tlocal::$data['default']['myfriends'];
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
     $this->data['redirlink'] = '/foaflink.htm';
+}
+
+public function getdeftitle() {
+return tlocal::$data['default']['myfriends'];
 }
 
   public function getcontent($id, $sitebar) {

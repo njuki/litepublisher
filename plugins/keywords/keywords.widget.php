@@ -22,8 +22,12 @@ $this->adminclass = 'tadminkeywords';
     $this->data['notify'] = true;
     $this->data['trace'] = true;
     $this->addmap('links', array());
-    $this->data['title'] = '';
   }
+
+public function getdeftitle() {
+$about = tplugins::getabout(tplugins::getname(__file__));
+return $about['title'];
+}
   
   public function getwidget($id, $sitebar) {
     if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';

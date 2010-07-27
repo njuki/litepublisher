@@ -17,7 +17,11 @@ parent::create();
 $this->basename = 'widget.adminlinks';
 $this->cache = 'nocache';
 $this->adminclass = 'tadminorderwidget';
-$this->data['title'] = 'Admin links';
+}
+
+public function getdeftitle() {
+$about = tplugins::getabout(tplugins::getname(__file__));
+return $about['name'];
 }
 
   public function getwidget($id, $sitebar) {

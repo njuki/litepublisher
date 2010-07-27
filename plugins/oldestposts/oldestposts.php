@@ -18,8 +18,11 @@ class toldestposts extends tclasswidget {
 $this->template = 'posts';
 $this->adminclass = 'tadminoldestposts';
 $this->cache = 'nocache';
-$this->data['title'] = tlocal::$data['default']['prev'];
     $this->data['maxcount'] = 10;
+}
+
+public function getdeftitle() {
+return tlocal::$data['default']['prev'];
 }
   
   public function getcontent($id, $sitebar) {

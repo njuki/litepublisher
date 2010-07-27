@@ -34,7 +34,7 @@ return $this->optionsform($form);
   public function processform()  {
 $widget = $this->widget;
 $widget->lock();
-if (isset($_POST['title'])) $widget->title = $_POST['title'];
+if (isset($_POST['title'])) $widget->settitle($widget->id, $_POST['title']);
 $this->doprocessform($widget);
 $widget->unlock();
 return $this->html->h2->updated;
@@ -46,7 +46,7 @@ $this->error('Not implemented');
 
 protected function optionsform($content) {
     $args = targs::instance();
-$args->title = $this->widget->title;
+$args->title = $this->widget->gettitle($widget->id);
 $args->content = $content;
 return $this->html->optionsform($args);
 }
@@ -237,7 +237,7 @@ public function getcontent() {
 $widget = $this->widget;
 $html= $this->html;
     $args = targs::instance();
-$args->title = $widget->title;
+$args->title = $widget->gettitle($widget->id);
 $args->redir = $widget->redir;
 $args->content = $html->linksoptions ($args);
 $result = $html->optionsform($args);
@@ -290,7 +290,7 @@ break;
 }
 } else {
 extract($_POST, EXTR_SKIP);
-$widget->title = $title;
+$widget->settitle($widget->id, $title);
 $widget->redir = isset($redir);
 }
 $widget->unlock();

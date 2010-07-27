@@ -8,6 +8,7 @@
 
 class tsapeplugin extends twidget {
   public $sape;
+public $counts;
   
   public static function instance() {
     return getinstance(__class__);
@@ -17,12 +18,15 @@ class tsapeplugin extends twidget {
     parent::create();
 $this->basename = 'widget.sape';
 $this->cache = 'nocache';
-$this->data['title'] = tlocal::$data['default']['links'];
 $this->data['user'] = '';
     $this->data['count'] = 2;
     $this->data['force'] = false;
-    $this->data['optcode'] = '';
+$this->addmap('counts', array());
   }
+
+public function getdeftitle() {
+return tlocal::$data['default']['links'];
+}
   
   private function createsape() {
     if (!defined('_SAPE_USER')){
@@ -35,34 +39,23 @@ $this->data['user'] = '';
     }
   }
 
-public function gettitle($id) {
-if ($is_null($id)) return tlocal::$data['default']['links'];
-$widgets = twidgets::instance();
-return $widgets->items[$id]['title'];
-}
-
-public function settitle($id, $title) {
-$widgets = twidgets::instance();
-$widgets->items[$id]['title'] = $title;
-}
-  
   public function getcontent($id, $sitebar) {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
     if (!isset($this->sape)) $this->createsape();
-    $Links = $this->sape->return_links($$this->count);
+    $Links = $this->sape->return_links($$this->counts[$id]);
     if (empty($Links)) return '';
     return sprintf('<ul><li>%s</li></ul>', $links);
   }
-  
-  public function onsitebar(&$content, $index) {
-    $code = $this->tag;
-    while ($i = strpos($content, $code)) {
-      if ($links = $this->getlinks($this->count)) {
-      $content = substr_replace($content, $links, $i, strlen($code));
-    }
+
+public function setcount($id ,$count) {
+$this->counts[$id] = $count;
+$widgets = twidgets::instance();
+foreach ($this->counts as $id => $count) {
+if (!isset($widgets->items[$id])) unset($this->counts[$id]);
 }
-  }
+$this->save();
+}
   
-}//class
+  }//class
 ?>

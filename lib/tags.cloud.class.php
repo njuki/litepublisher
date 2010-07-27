@@ -41,9 +41,12 @@ class ttagswidget extends tcommontagswidget {
     parent::create();
     $this->basename = 'widget.tags';
 $this->template = 'tags';
-$this->data['title'] = tlocal::$data['stdwidgetnames']['tags'];
     $this->sortname = 'title';
     $this->showcount = false;
+}
+
+public function getdeftitle() {
+return tlocal::$data['default']['tags'];
 }
 
 public function getowner() {

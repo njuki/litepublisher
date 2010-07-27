@@ -8,7 +8,6 @@
 
 class tcustomwidget extends twidget {
 public $items;
-private $id;
 
   public static function instance() {
     return getinstance(__class__);
@@ -65,9 +64,9 @@ $widgets->unlock();
         $this->save();
 
 $widgets = twidgets::instance();
-$widgets[$id]['title'] = $title;
+$widgets->items[$id]['title'] = $title;
 $widgets->save();
-    $wthis->expired($id);
+    $this->expired($id);
   }
   
   public function delete($id) {

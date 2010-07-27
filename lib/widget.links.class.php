@@ -25,8 +25,11 @@ $this->addmap('items', array());
 $this->addmap('autoid', 0);
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
-$this->data['title'] = tlocal::$data['default']['links'];
   }
+
+public function getdeftitle() {
+return tlocal::$data['default']['links'];
+}
 
   public function getcontent($id, $sitebar) {
     if (count($this->items) == 0) return '';

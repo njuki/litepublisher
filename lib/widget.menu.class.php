@@ -17,12 +17,15 @@ $this->cache = 'nocache';
     $this->basename = 'widget.menu';
 $this->template = 'submenu';
 $this->adminclass = 'tadminorderwidget';
-$this->data['title'] = tlocal::$data['default']['submenu'];
+}
+
+public function getdeftitle() {
+return tlocal::$data['default']['submenu'];
 }
 
 public function gettitle($id) {
 if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;
-return $this->data['title'];
+return parent::gettitle($id);
 }
 
   public function getcontent($idwidget, $sitebar) {
