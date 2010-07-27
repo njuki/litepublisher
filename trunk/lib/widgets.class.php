@@ -7,6 +7,7 @@
 **/
 
 class twidget extends tevents {
+public $id;
 public $template;
 protected $adminclass;
 
@@ -14,6 +15,7 @@ protected function create() {
 parent::create();
 $this->basename = 'widget';
 $this->cache = 'cache';
+$this->id = 0;
 $this->template = 'widget';
 $this->adminclass = 'tadminwidget';
 }
@@ -40,22 +42,26 @@ return '';
 return $theme->getwidget($title, $content, $this->template, $sitebar);
   }
 
-public function gettitle($id) {
-if (isset($this->data['title'])) return $this->data['title'];
+public function getdeftitle() {
 return '';
 }
 
-protected function settitle($value) {
+public function gettitle($id) {
 $widgets = twidgets::instance();
-if ($id = $widgets->find($this)) {
-if ($widgets->items[$id]['title'] != $value) {
-$widgets->items[$id]['title'] = $value;
+if (isset($widgets->items[$id])) {
+return $widgets->items[$id]['title'];
+}
+return $this->getdeftitle();
+}
+
+public function settitle($id, $title) {
+$widgets = twidgets::instance();
+if (isset($widget->items[$id])) {
+if ($widgets->items[$id]['title'] != $title) {
+$widgets->items[$id]['title'] = $title;
 $widgets->save();
 }
 }
-if (isset($this->data['title']) && ($value != $this->data['title'])) {
-$this->data['title'] = $value;
-$this->save();
 }
 }
   
@@ -269,7 +275,9 @@ if (!class_exists($class)) {
 $this->delete($id);
 return $this->error("The $class class not found");
 }
-return getinstance($class);
+$result = getinstance($class);
+$result->id = $id;
+return $result;
 }
 
   public function getsitebar($context) {
@@ -352,7 +360,7 @@ break;
 
 case 'nocache':
 case false:
-$widget = getinstance($this->items[$id]['class']);
+$widget = $this->getwidget($id);
 $content = $widget->getwidget($id, $sitebar);
 break;
 
@@ -397,10 +405,10 @@ private function getcode($id, $sitebar) {
 $class = $this->items[$id]['class'];
 return "\n<?php
     \$widget = $class::instance();
+\$widget->id = \$id;
     echo \$widget->getwidget($id, $sitebar);
       ?>\n";
 }
-
 
 public function find(twidget $widget) {
 $class = get_class($widget);
@@ -415,7 +423,6 @@ if (!isset($this->items[$id])) return $this->error("Widget $id not found");
 $this->idurlcontext = $idurl;
 switch ($this->items[$id]['cache']) {
 case 'cache':
-case true:
 $cache = twidgetscache::instance();
 $result = $cache->getcontent($id, $sitebar);
 break;
@@ -423,8 +430,8 @@ break;
 case 'nocache':
 case false:
 case 'code':
-$widget = getinstance($this->items[$id]['class']);
-$result = $widget->getwidget($id, $sitebar);
+$widget = $this->getwidget($id);
+$result = $widget->getcontent($id, $sitebar);
 break;
 
 case 'include':
@@ -433,7 +440,7 @@ if (file_exists($filename)) {
 $result = file_get_contents($filename);
 } else {
 $widget = $this->getwidget($id);
-$result = $widget->getwidget($id, $sitebar);
+$result = $widget->getcontent($id, $sitebar);
 file_put_contents($filename, $result);
 @chmod($filename, 0666);
 break;

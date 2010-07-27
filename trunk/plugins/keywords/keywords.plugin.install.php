@@ -13,12 +13,8 @@ function tkeywordspluginInstall($self) {
   $item = litepublisher::$classes->items[get_class($self)];
   litepublisher::$classes->add('tkeywordswidget','keywords.widget.php', $item[1]);
   
-  $about = tplugins::getabout(tplugins::getname(__file__));
 
   $widget = tkeywordswidget::instance();
-  $widget->title =  $about['title'];
-  $widget->save();
-  
   $widgets = twidgets::instance();
 $widgets->lock();
 $sitebars = tsitebars::instance();

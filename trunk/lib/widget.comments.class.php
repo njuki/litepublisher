@@ -19,7 +19,10 @@ $this->cache = 'include';
 $this->template = 'comments';
 $this->adminclass = 'tadminmaxcount';
     $this->data['maxcount'] =  7;
-$this->data['title'] = tlocal::$data['default']['recentcomments'];
+}
+
+public function getdeftitle() {
+return tlocal::$data['default']['recentcomments'];
 }
 
   public function getcontent($id, $sitebar) {

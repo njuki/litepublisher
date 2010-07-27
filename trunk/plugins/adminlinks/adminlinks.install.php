@@ -7,9 +7,6 @@
 **/
 
 function tadmincontextwidgetInstall($self) {
-$about = tplugins::getabout(tplugins::getname(__file__));
-$self->data['title'] =$about['name'];
-
 $widgets = twidgets::instance();
 $widgets->lock();
 $self->id = $widgets->add($self);
