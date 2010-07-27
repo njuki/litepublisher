@@ -6,9 +6,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsapeplugin extends tplugin {
+class tsapeplugin extends twidget {
   public $sape;
-  public $widgets;
   
   public static function instance() {
     return getinstance(__class__);
@@ -16,11 +15,13 @@ class tsapeplugin extends tplugin {
   
   protected function create() {
     parent::create();
-    $this->data['user'] = '';
+$this->basename = 'widget.sape';
+$this->cache = 'nocache';
+$this->data['title'] = tlocal::$data['default']['links'];
+$this->data['user'] = '';
     $this->data['count'] = 2;
     $this->data['force'] = false;
     $this->data['optcode'] = '';
-    $this->addmap('widgets', array());
   }
   
   private function createsape() {
@@ -33,43 +34,34 @@ class tsapeplugin extends tplugin {
       $this->sape = new SAPE_client($o);
     }
   }
+
+public function gettitle($id) {
+if ($is_null($id)) return tlocal::$data['default']['links'];
+$widgets = twidgets::instance();
+return $widgets->items[$id]['title'];
+}
+
+public function settitle($id, $title) {
+$widgets = twidgets::instance();
+$widgets->items[$id]['title'] = $title;
+}
   
-  public static function echolinks($count = null) {
-    $self = getinstance(__class__);
-    echo $self->getlinks($count);
-  }
-  
-  public function getlinks($count = null) {
+  public function getcontent($id, $sitebar) {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
     if (!isset($this->sape)) $this->createsape();
-    $Links = $this->sape->return_links($count);
+    $Links = $this->sape->return_links($$this->count);
     if (empty($Links)) return '';
-    return "<li>$Links</li>\n";
-  }
-  
-  protected function gettag() {
-    return sprintf('<!--%s-->', $this->optcode);
-  }
-  
-  public function getwidgetcontent($id, $sitebar) {
-    return $this->tag;
-  }
-  
-  public function onwidgetcontent($id, &$content) {
-    if (in_array($id, $this->widgets)) {
-      $content .= "\n<!--$this->optcode-->\n";
-    }
+    return sprintf('<ul><li>%s</li></ul>', $links);
   }
   
   public function onsitebar(&$content, $index) {
     $code = $this->tag;
-    $theme = ttheme::instance();
     while ($i = strpos($content, $code)) {
-      $links = $this->getlinks($this->count);
-      if (!empty($links)) $links = sprintf($theme->getwidgetitems('widget', $index), $links);
+      if ($links = $this->getlinks($this->count)) {
       $content = substr_replace($content, $links, $i, strlen($code));
     }
+}
   }
   
 }//class

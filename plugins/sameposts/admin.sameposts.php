@@ -14,7 +14,7 @@ class tadminsameposts extends tadminorderwidget {
 
   protected function create() {
     parent::create();
-$this->widget = toldestposts::instance();
+$this->widget = tsameposts::instance();
 }
 
   protected function dogetcontent(twidget $widget, targs $args){

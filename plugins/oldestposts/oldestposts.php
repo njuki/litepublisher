@@ -15,6 +15,7 @@ class toldestposts extends tclasswidget {
   protected function create() {
     parent::create();
     $this->basename = 'widget.oldestposts';
+$this->template = 'posts';
 $this->adminclass = 'tadminoldestposts';
 $this->cache = 'nocache';
 $this->data['title'] = tlocal::$data['default']['prev'];
@@ -34,17 +35,9 @@ $this->data['title'] = tlocal::$data['default']['prev'];
     }
     
     if (count($items) == 0) return '';
-    
+   
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem($this->template, $sitebar);
-    $result = '';
-    foreach ($items as $id) {
-      $post = tpost::instance($id);
-      ttheme::$vars['post'] = $post;
-      $result .= sprintf($tml, $post->link, $post->title);
-    }
-    
-    return sprintf($theme->getwidgetitems($this->template, $sitebar), $result);
+    return $theme->getpostswidgetcontent($items, $sitebar, '');
   }
   
 }//class

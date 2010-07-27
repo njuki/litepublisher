@@ -329,6 +329,20 @@
     <!--/items-->
 			    </div>
 			<!--/friends-->
+
+		<!--posts-->
+				<div class="widget">
+			      <div class="rubric">%s</div>
+    <!--items-->
+		      <ul class="linkcat">
+					<!--item-->
+						<li><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></li>
+					<!--/item-->
+			    </ul>
+    <!--/items-->
+			</div>
+		<!--/posts-->
+
 		<!--/sitebar-->
 	</div>
 		
@@ -352,6 +366,7 @@
     <!--/items-->
 			</li>
 		<!--/posts-->
+
 		<!--comments-->
 		<li id="lastcomments">
 			<div class="rubric">%s</div>

@@ -10,28 +10,19 @@ function tsapepluginInstall($self) {
   $self->data['optcode'] = md5uniq();
   $self->save();
   
-  $template = ttemplate::instance();
-  $template->lock();
-  $template->onsitebar= $self->onsitebar;
-  $template->onwidgetcontent = $self->onwidgetcontent;
-  $template->unlock();
+$widgets = twidgets::instance();
+  $widgets->lock();
+$id = $widgets->add($self);
+$sitebars = tsitebars::instance();
+$sitebars->add($id);
+  $widgets->onsitebar= $self->onsitebar;
+  $widgets->unlock();
   
-  $widgets = twidgets::instance();
-  $widgets->addext(get_class($self), 'echo', 'links', tlocal::$data['default']['links'], 0, -1);
-  
-  $urlmap = turlmap::instance();
-  $urlmap->clearcache();
+  litepublisher::$urlmap->clearcache();
 }
 
 function tsapepluginUninstall($self) {
-  $widgets = twidgets::instance();
-  $widgets->deleteclass($self);
   
-  $template = ttemplate::instance();
-  $template->unsubscribeclass($self);
-  
-  $urlmap = turlmap::instance();
-  $urlmap->clearcache();
 }
 
 ?>

@@ -21,6 +21,7 @@ class tsameposts extends tclasswidget {
     }
 
     $this->basename = 'widget.sameposts';
+$this->template = 'posts';
 $this->adminclass = 'tadminsameposts';
 $this->cache = 'nocache';
 $this->data['title'] = tlocal::$data['default']['sameposts'];
