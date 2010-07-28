@@ -35,12 +35,13 @@ return $result;
   
   protected function doprocessform(twidget $widget)  {
 extract($_POST, EXTR_SKIP);
-if (isset($sapeoptions)) {
+if (isset($addwidget)) {
+$widget->add();
+} elseif (isset($sapeoptions)) {
     $widget->user = $user;
     $widget->force = isset($force);
 } else {
     $widget->counts[$widget->id] = (int) $maxcount;
-return parent::doprocessform($widget);
 }
   }
   
