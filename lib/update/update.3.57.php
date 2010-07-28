@@ -1,5 +1,16 @@
 <?php
 function update357() {
+$template = ttemplate::instance();
+$data = new titems();
+      $data->data = $template->data['sitebars'];
+unset($template->data['sitebars']);
+$eventnames = array('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
+foreach ($template->events as $name => $event) {
+if (!in_array($name,$eventnames)) unset($template->events[$name]);
+}
+$template->save();
+
+
 $widgets = twidgets::instance();
 $widgets->lock();
 $std = tstdwidgets::instance();
@@ -116,18 +127,7 @@ litepublisher::$urlmap->unlock();
     unset($foaf->data['redirlink']);
 $foaf->save();
 
-$template = ttemplate::instance();
-$data = new titems();
-      $data->data = $template->data['sitebars'];
-unset($template->data['sitebars']);
-foreach ($template->events as $name => $event) {
-if (!$template->eventexists($name)) unset($template->events[$name]);
-}
-$template->save();
-
 $sitebars = tsitebars::instance();
-
-
 foreach ($data->data['items'] as $i => $sitebar) {
 $j = 0;
 foreach ($sitebar as $idold => $item) {
@@ -138,11 +138,8 @@ $class = $std->getname($idold);
 switch ($class) {
 case 'tcommentswidget':
 case 'comments':
-$id = $widgets->find('tcommentswidget');
-if ($id === false) {
 $widget = tcommentswidget::instance();
 $id = $widgets->add($widget);
-}
 $ajax = $std->items['comments']['ajax'];
 break;
 
@@ -153,11 +150,8 @@ break;
 
 case 'tlinkswidget':
 case 'links':
-$id = $widgets->find('tlinkswidget');
-if ($id === false) {
 $widget = tlinkswidget::instance();
 $id = $widgets->add($widget);
-}
 $ajax = $std->items['links']['ajax'];
 break;
 
@@ -233,7 +227,7 @@ ttheme::clearcache();
 $lib = litepublisher::$paths->lib;
 $install = $lib . 'install' . DIRECTORY_SEPARATOR;
 
-@unlink($lib . 'widgets.standarts.class.php');
+//@unlink($lib . 'widgets.standarts.class.php');
 @unlink($install . 'widgets.standarts.class.install.php');
 
 @unlink($lib . 'widgets.links.class.php');
