@@ -294,7 +294,7 @@ class twidgets extends titems {
     $items = $this->getwidgets($context, $sitebar);
     $theme = ttheme::instance();
     if ($theme->sitebarscount == $sitebar + 1) {
-      for ($i = $sitebar + 1; $i < count($this->items); $i++) {
+      for ($i = $sitebar + 1; $i < count($this->sitebars); $i++) {
         $items = $this->joinitems($items, $this->getwidgets($context, $i));
       }
     }
