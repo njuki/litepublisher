@@ -7,7 +7,7 @@
 **/
 
 class ttags extends tcommontags {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -21,18 +21,18 @@ class ttags extends tcommontags {
     $this->contents->table = 'tagscontent';
     $this->itemsposts->table = $this->table . 'items';
   }
-
+  
   public function save() {
     parent::save();
     if (!$this->locked)  {
-ttagswidget::instance()->expire();
+      ttagswidget::instance()->expire();
     }
   }
   
-  }//class
+}//class
 
 class ttagswidget extends tcommontagswidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -40,18 +40,18 @@ class ttagswidget extends tcommontagswidget {
   protected function create() {
     parent::create();
     $this->basename = 'widget.tags';
-$this->template = 'tags';
+    $this->template = 'tags';
     $this->sortname = 'title';
     $this->showcount = false;
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['tags'];
-}
-
-public function getowner() {
-return ttags::instance();
-}
-
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['tags'];
+  }
+  
+  public function getowner() {
+    return ttags::instance();
+  }
+  
 }//class
 ?>

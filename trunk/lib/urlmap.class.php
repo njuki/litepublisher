@@ -154,27 +154,27 @@ class turlmap extends titems {
       $this->notfound404();
     }
   }
-
-public function getidcontext($id) {
-if ($this->dbversion) {
-$item = $this->getitem($id);
-} else {
-foreach ($this->items as $url => $item) {
-if ($id == $item['id']) break;
-}
-}
-return $this->getcontext($item);
-}
-
-public function getcontext(array $item) {
+  
+  public function getidcontext($id) {
+    if ($this->dbversion) {
+      $item = $this->getitem($id);
+    } else {
+      foreach ($this->items as $url => $item) {
+        if ($id == $item['id']) break;
+      }
+    }
+    return $this->getcontext($item);
+  }
+  
+  public function getcontext(array $item) {
     $class = $item['class'];
     $parents = class_parents($class);
     if (in_array('titem', $parents)) {
-return call_user_func_array(array($class, 'instance'), array($item['arg']));
+      return call_user_func_array(array($class, 'instance'), array($item['arg']));
     } else {
-return getinstance($class);
+      return getinstance($class);
     }
-}
+  }
   
   protected function GenerateHTML(array $item) {
     $this->context = $this->getcontext($item);

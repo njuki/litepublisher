@@ -125,8 +125,8 @@ class tcontentfilter extends tevents {
     array('"', "'", '$', ' '),
     array('&quot;', '&#39;', '&#36;', '&nbsp;'),
     htmlspecialchars($s));
-//double space for prevent auto_p
-$s = str_replace("\n", '<br  />', $s);
+    //double space for prevent auto_p
+    $s = str_replace("\n", '<br  />', $s);
     return sprintf('<code>%s</code>', $s);
   }
   

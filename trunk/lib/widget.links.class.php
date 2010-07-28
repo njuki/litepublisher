@@ -7,8 +7,8 @@
 **/
 
 class tlinkswidget extends twidget {
-public $items;
-public $autoid;
+  public $items;
+  public $autoid;
   public $redirlink;
   
   public static function instance() {
@@ -17,20 +17,20 @@ public $autoid;
   
   protected function create() {
     parent::create();
-$this->addevents('added', 'deleted');
+    $this->addevents('added', 'deleted');
     $this->basename = 'widgets.links';
-$this->template = 'links';
-$this->adminclass = 'tadminlinkswidget';
-$this->addmap('items', array());
-$this->addmap('autoid', 0);
+    $this->template = 'links';
+    $this->adminclass = 'tadminlinkswidget';
+    $this->addmap('items', array());
+    $this->addmap('autoid', 0);
     $this->redirlink = '/linkswidget/';
     $this->data['redir'] = true;
   }
-
-public function getdeftitle() {
-return tlocal::$data['default']['links'];
-}
-
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['links'];
+  }
+  
   public function getcontent($id, $sitebar) {
     if (count($this->items) == 0) return '';
     $result = '';
@@ -62,8 +62,8 @@ return tlocal::$data['default']['links'];
   }
   
   public function edit($id, $url, $title, $anchor) {
-$id = (int) $id;
-if (!isset($this->items[$id])) return false;
+    $id = (int) $id;
+    if (!isset($this->items[$id])) return false;
     $this->items[$id] = array(
     'url' => $url,
     'title' => $title,
@@ -71,14 +71,14 @@ if (!isset($this->items[$id])) return false;
     );
     $this->save();
   }
-
-public function delete($id) {
-if (isset($this->items[$id])) {
-unset($this->items[$id]);
-$this->save();
-litepublisher::$urlmap->clearcache();
-}
-}
+  
+  public function delete($id) {
+    if (isset($this->items[$id])) {
+      unset($this->items[$id]);
+      $this->save();
+      litepublisher::$urlmap->clearcache();
+    }
+  }
   
   public function request($arg) {
     $this->cache = false;

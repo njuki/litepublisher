@@ -7,8 +7,8 @@
 **/
 
 class tadminplugins extends tadminmenu {
-private $names;
- 
+  private $names;
+  
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
@@ -24,7 +24,7 @@ private $names;
     $url = $this->url . litepublisher::$options->q . 'plugin=';
     $plugins = tplugins::instance();
     foreach ($this->names as $name) {
-$about = tplugins::getabout($name);
+      $about = tplugins::getabout($name);
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
         $result .= sprintf('<li><a href="%s%s">%s</a></li>', $url, $name, $about['name']);
       }
@@ -42,7 +42,7 @@ $about = tplugins::getabout($name);
       $result .= $html->formhead();
       $args = targs::instance();
       foreach ($this->names as $name) {
-$about = tplugins::getabout($name);
+        $about = tplugins::getabout($name);
         $args->add($about);
         $args->name = $name;
         $args->checked = isset($plugins->items[$name]);
@@ -86,7 +86,7 @@ $about = tplugins::getabout($name);
   }
   
   private function getadminplugin($name) {
-$about = tplugins::getabout($name);
+    $about = tplugins::getabout($name);
     if (empty($about['adminclassname'])) return false;
     $class = $about['adminclassname'];
     if (!class_exists($class))  require_once(litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . $about['adminfilename']);

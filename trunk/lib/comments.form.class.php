@@ -120,99 +120,99 @@ class tcommentform extends tevents {
         $result .= $hold;
       }
     }
-
+    
     $result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
-  return $result;
-}
-
-private function checkspam($s) {
-  $TimeKey = (int) substr($s, strlen('_Value'));
-  return time() < $TimeKey;
-}
-
-public function request($arg) {
-  if (litepublisher::$options->commentsdisabled) return 404;
-  if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
+    return $result;
+  }
+  
+  private function checkspam($s) {
+    $TimeKey = (int) substr($s, strlen('_Value'));
+    return time() < $TimeKey;
+  }
+  
+  public function request($arg) {
+    if (litepublisher::$options->commentsdisabled) return 404;
+    if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
+      return "<?php
+      @header('Allow: POST');
+      @header('HTTP/1.1 405 Method Not Allowed', true, 405);
+      @header('Content-Type: text/plain');
+      ?>";
+    }
+    
+    $posturl = litepublisher::$options->url . '/';
+    
+    if (get_magic_quotes_gpc()) {
+      foreach ($_POST as $name => $value) {
+        $_POST[$name] = stripslashes($_POST[$name]);
+      }
+    }
+    
+    $kept = new tkeptcomments();
+    if (!isset($_POST['confirmid'])) {
+      $values = $_POST;
+      $values['date'] = time();
+      $confirmid  = $kept->add($values);
+      return tsimplecontent::html($this->getconfirmform($confirmid));
+    }
+    
+    $confirmid = $_POST['confirmid'];
+    if (!($values = $kept->getitem($confirmid))) {
+      return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
+    }
+    $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
+    $posts = litepublisher::$classes->posts;
+    if(!$posts->itemexists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
+    $post = tpost::instance($postid);
+    
+    $values = array(
+    'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
+    'email' => isset($values['email']) ? trim($values['email']) : '',
+    'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
+    'subscribe' => isset($values['subscribe']),
+    'content' => isset($values['content']) ? trim($values['content']) : '',
+    'postid' => $postid,
+    'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
+    );
+    
+    $lang = tlocal::instance('comment');
+    if (!$this->checkspam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
+    if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
+    if (empty($values['name'])) return tsimplecontent::content($lang->emptyname);
+    if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
+    if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
+    if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
+    //check duplicates
+    if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
+    
+    $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
+    $users = tcomusers::instance($postid);
+    $uid = $users->add($values['name'], $values['email'], $values['url']);
+    $usercookie = $users->getcookie($uid);
+    if (!litepublisher::$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
+    
+    $subscribers = tsubscribers::instance();
+    $subscribers->update($post->id, $uid, $values['subscribe']);
+    
+    litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content']);
+    
+    $idpostcookie = dbversion ? '' : "@setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
     return "<?php
-    @header('Allow: POST');
-    @header('HTTP/1.1 405 Method Not Allowed', true, 405);
-    @header('Content-Type: text/plain');
+    @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
+    $idpostcookie
+    @header('Location: " . litepublisher::$options->url . "$posturl');
     ?>";
   }
   
-  $posturl = litepublisher::$options->url . '/';
-  
-  if (get_magic_quotes_gpc()) {
-    foreach ($_POST as $name => $value) {
-      $_POST[$name] = stripslashes($_POST[$name]);
-    }
+  private function getconfirmform($confirmid) {
+    $lang = tlocal::instance($this->basename);
+    ttheme::$vars['lang'] = $lang;
+    $args = targs::instance();
+    $args->confirmid = $confirmid;
+    $theme = ttheme::instance();
+    return $theme->parsearg($theme->content->post->templatecomments->confirmform, $args);
   }
   
-  $kept = new tkeptcomments();
-  if (!isset($_POST['confirmid'])) {
-    $values = $_POST;
-    $values['date'] = time();
-    $confirmid  = $kept->add($values);
-    return tsimplecontent::html($this->getconfirmform($confirmid));
-  }
-  
-  $confirmid = $_POST['confirmid'];
-  if (!($values = $kept->getitem($confirmid))) {
-    return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
-  }
-  $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
-  $posts = litepublisher::$classes->posts;
-  if(!$posts->itemexists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
-  $post = tpost::instance($postid);
-  
-  $values = array(
-  'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
-  'email' => isset($values['email']) ? trim($values['email']) : '',
-  'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
-  'subscribe' => isset($values['subscribe']),
-  'content' => isset($values['content']) ? trim($values['content']) : '',
-  'postid' => $postid,
-  'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
-  );
-  
-  $lang = tlocal::instance('comment');
-  if (!$this->checkspam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
-  if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
-  if (empty($values['name'])) return tsimplecontent::content($lang->emptyname);
-  if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
-  if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
-  if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
-  //check duplicates
-  if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
-  
-  $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-  $users = tcomusers::instance($postid);
-  $uid = $users->add($values['name'], $values['email'], $values['url']);
-  $usercookie = $users->getcookie($uid);
-  if (!litepublisher::$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
-  
-  $subscribers = tsubscribers::instance();
-  $subscribers->update($post->id, $uid, $values['subscribe']);
-  
-  litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content']);
-  
-  $idpostcookie = dbversion ? '' : "@setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
-  return "<?php
-  @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
-  $idpostcookie
-  @header('Location: " . litepublisher::$options->url . "$posturl');
-  ?>";
-}
-
-private function getconfirmform($confirmid) {
-  $lang = tlocal::instance($this->basename);
-  ttheme::$vars['lang'] = $lang;
-  $args = targs::instance();
-  $args->confirmid = $confirmid;
-  $theme = ttheme::instance();
-  return $theme->parsearg($theme->content->post->templatecomments->confirmform, $args);
-}
-
 }//class
 
 ?>

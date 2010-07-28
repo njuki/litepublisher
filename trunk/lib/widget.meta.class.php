@@ -7,7 +7,7 @@
 **/
 
 class tmetawidget extends twidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -15,8 +15,8 @@ class tmetawidget extends twidget {
   protected function create() {
     parent::create();
     $this->basename = 'widget.meta';
-$this->template = 'meta';
-$this->adminclass = 'tadminmetawidget';
+    $this->template = 'meta';
+    $this->adminclass = 'tadminmetawidget';
     $this->data['meta'] = array(
     'rss' => true,
     'comments' => true,
@@ -26,10 +26,10 @@ $this->adminclass = 'tadminmetawidget';
     'sitemap' => true
     );
   }
-
-public function getdeftitle() {
-return tlocal::$data['default']['meta'];
-}
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['meta'];
+  }
   
   public function getcontent($id, $sitebar) {
     extract($this->data['meta']);

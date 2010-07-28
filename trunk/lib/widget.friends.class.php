@@ -7,7 +7,7 @@
 **/
 
 class tfriendswidget extends twidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -15,19 +15,19 @@ class tfriendswidget extends twidget {
   protected function create() {
     parent::create();
     $this->basename = 'widget.friends';
-$this->template = 'friends';
-$this->adminclass = 'tadminfriendswidget';
+    $this->template = 'friends';
+    $this->adminclass = 'tadminfriendswidget';
     $this->data['maxcount'] =0;
     $this->data['redir'] = true;
     $this->data['redirlink'] = '/foaflink.htm';
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['myfriends'];
-}
-
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['myfriends'];
+  }
+  
   public function getcontent($id, $sitebar) {
-$foaf = tfoaf::instance();
+    $foaf = tfoaf::instance();
     $items = $foaf->getapproved($this->maxcount);
     if (count($items) == 0) return '';
     $result = '';
@@ -42,19 +42,19 @@ $foaf = tfoaf::instance();
       }
       $result .=   $theme->parsearg($tml, $args);
     }
-
+    
     return sprintf($theme->getwidgetitems('friends', $sitebar), $result);
-}
-
+  }
+  
   public function request($arg) {
-      $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
-$foaf = tfoaf::instance();
-      if (!$foaf->itemexists($id)) return 404;
-$item = $foaf->getitem($id);
-      $this->cache = false;
+    $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
+    $foaf = tfoaf::instance();
+    if (!$foaf->itemexists($id)) return 404;
+    $item = $foaf->getitem($id);
+    $this->cache = false;
     return sprintf('<?php @header(\'Location: %s\'); ?>', $item['url']);
-    }
-
+  }
+  
 }//class
 
 ?>

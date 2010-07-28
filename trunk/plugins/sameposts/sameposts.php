@@ -19,17 +19,17 @@ class tsameposts extends tclasswidget {
     } else {
       $this->data['revision'] = 1;
     }
-
+    
     $this->basename = 'widget.sameposts';
-$this->template = 'posts';
-$this->adminclass = 'tadminsameposts';
-$this->cache = 'nocache';
+    $this->template = 'posts';
+    $this->adminclass = 'tadminsameposts';
+    $this->cache = 'nocache';
     $this->data['maxcount'] = 10;
   }
-
-public function getdeftitle() {
-return tlocal::$data['default']['sameposts'];
-}
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['sameposts'];
+  }
   
   public function postschanged() {
     if (dbversion) {
@@ -53,12 +53,12 @@ return tlocal::$data['default']['sameposts'];
       $itemsposts= $posts->stripdrafts($itemsposts);
       foreach ($itemsposts as $id) {
         if ($id == $idpost) continue;
-          $same[$id] = isset($same[$id]) ? $same[$id] + 1 : 1;
+        $same[$id] = isset($same[$id]) ? $same[$id] + 1 : 1;
       }
     }
     
     arsort($same);
-return array_slice(array_keys($same), 0, $this->maxcount);
+    return array_slice(array_keys($same), 0, $this->maxcount);
   }
   
   private function getsame($id) {
@@ -67,7 +67,7 @@ return array_slice(array_keys($same), 0, $this->maxcount);
       if (is_string($items)) {
         return $items == '' ? array() : explode(',', $items);
       } else {
-                $result = $this->findsame($id);
+        $result = $this->findsame($id);
         $this->db->add(array('id' => $id, 'items' => implode(',', $result)));
         return $result;
       }

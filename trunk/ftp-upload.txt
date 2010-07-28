@@ -84,6 +84,8 @@ send lib\admin.themes.class.php lib/admin.themes.class.php
 quote site chmod 666 lib/admin.themes.class.php
 send lib\admin.users.class.php lib/admin.users.class.php
 quote site chmod 666 lib/admin.users.class.php
+send lib\admin.widget.class.php lib/admin.widget.class.php
+quote site chmod 666 lib/admin.widget.class.php
 send lib\admin.widgets.class.php lib/admin.widgets.class.php
 quote site chmod 666 lib/admin.widgets.class.php
 send lib\archives.class.php lib/archives.class.php
@@ -256,22 +258,22 @@ send lib\users.class.php lib/users.class.php
 quote site chmod 666 lib/users.class.php
 send lib\users.groups.class.php lib/users.groups.class.php
 quote site chmod 666 lib/users.groups.class.php
+send lib\widget.comments.class.php lib/widget.comments.class.php
+quote site chmod 666 lib/widget.comments.class.php
+send lib\widget.custom.class.php lib/widget.custom.class.php
+quote site chmod 666 lib/widget.custom.class.php
+send lib\widget.friends.class.php lib/widget.friends.class.php
+quote site chmod 666 lib/widget.friends.class.php
+send lib\widget.links.class.php lib/widget.links.class.php
+quote site chmod 666 lib/widget.links.class.php
+send lib\widget.menu.class.php lib/widget.menu.class.php
+quote site chmod 666 lib/widget.menu.class.php
+send lib\widget.meta.class.php lib/widget.meta.class.php
+quote site chmod 666 lib/widget.meta.class.php
 send lib\widgets.class.php lib/widgets.class.php
 quote site chmod 666 lib/widgets.class.php
-send lib\widgets.comments.class.php lib/widgets.comments.class.php
-quote site chmod 666 lib/widgets.comments.class.php
-send lib\widgets.custom.class.php lib/widgets.custom.class.php
-quote site chmod 666 lib/widgets.custom.class.php
-send lib\widgets.links.class.php lib/widgets.links.class.php
-quote site chmod 666 lib/widgets.links.class.php
-send lib\widgets.standarts.class.php lib/widgets.standarts.class.php
-quote site chmod 666 lib/widgets.standarts.class.php
-send lib\wordpress.comment.txt lib/wordpress.comment.txt
-quote site chmod 666 lib/wordpress.comment.txt
 send lib\wordpress.functions.php lib/wordpress.functions.php
 quote site chmod 666 lib/wordpress.functions.php
-send lib\wordpress.includes.php lib/wordpress.includes.php
-quote site chmod 666 lib/wordpress.includes.php
 send lib\xmlrpc.action.class.php lib/xmlrpc.action.class.php
 quote site chmod 666 lib/xmlrpc.action.class.php
 send lib\xmlrpc.blogger.class.php lib/xmlrpc.blogger.class.php
@@ -466,14 +468,14 @@ send lib\install\users.groups.class.install.php lib/install/users.groups.class.i
 quote site chmod 666 lib/install/users.groups.class.install.php
 send lib\install\users.sql lib/install/users.sql
 quote site chmod 666 lib/install/users.sql
+send lib\install\widget.friends.class.install.php lib/install/widget.friends.class.install.php
+quote site chmod 666 lib/install/widget.friends.class.install.php
+send lib\install\widget.links.class.install.php lib/install/widget.links.class.install.php
+quote site chmod 666 lib/install/widget.links.class.install.php
+send lib\install\widget.menu.class.install.php lib/install/widget.menu.class.install.php
+quote site chmod 666 lib/install/widget.menu.class.install.php
 send lib\install\widgets.class.install.php lib/install/widgets.class.install.php
 quote site chmod 666 lib/install/widgets.class.install.php
-send lib\install\widgets.custom.class.install.php lib/install/widgets.custom.class.install.php
-quote site chmod 666 lib/install/widgets.custom.class.install.php
-send lib\install\widgets.links.class.install.php lib/install/widgets.links.class.install.php
-quote site chmod 666 lib/install/widgets.links.class.install.php
-send lib\install\widgets.standarts.class.install.php lib/install/widgets.standarts.class.install.php
-quote site chmod 666 lib/install/widgets.standarts.class.install.php
 send lib\install\xmlrpc.action.class.install.php lib/install/xmlrpc.action.class.install.php
 quote site chmod 666 lib/install/xmlrpc.action.class.install.php
 send lib\install\xmlrpc.blogger.class.install.php lib/install/xmlrpc.blogger.class.install.php
@@ -522,6 +524,8 @@ send lib\update\update.3.54.php lib/update/update.3.54.php
 quote site chmod 666 lib/update/update.3.54.php
 send lib\update\update.3.56.php lib/update/update.3.56.php
 quote site chmod 666 lib/update/update.3.56.php
+send lib\update\update.3.57.php lib/update/update.3.57.php
+quote site chmod 666 lib/update/update.3.57.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -820,6 +824,8 @@ send plugins\oldestposts\.htaccess plugins/oldestposts/.htaccess
 quote site chmod 666 plugins/oldestposts/.htaccess
 send plugins\oldestposts\about.ini plugins/oldestposts/about.ini
 quote site chmod 666 plugins/oldestposts/about.ini
+send plugins\oldestposts\admin.oldestsposts.php plugins/oldestposts/admin.oldestsposts.php
+quote site chmod 666 plugins/oldestposts/admin.oldestsposts.php
 send plugins\oldestposts\index.htm plugins/oldestposts/index.htm
 quote site chmod 666 plugins/oldestposts/index.htm
 send plugins\oldestposts\oldestposts.install.php plugins/oldestposts/oldestposts.install.php
@@ -1460,8 +1466,6 @@ send js\litepublisher\hovermenu.js js/litepublisher/hovermenu.js
 quote site chmod 666 js/litepublisher/hovermenu.js
 send js\litepublisher\hovermenu.min.js js/litepublisher/hovermenu.min.js
 quote site chmod 666 js/litepublisher/hovermenu.min.js
-send js\litepublisher\ie6.css js/litepublisher/ie6.css
-quote site chmod 666 js/litepublisher/ie6.css
 send js\litepublisher\index.htm js/litepublisher/index.htm
 quote site chmod 666 js/litepublisher/index.htm
 send js\litepublisher\moderate.js js/litepublisher/moderate.js

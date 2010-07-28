@@ -7,12 +7,12 @@
 **/
 
 class tadminkeywords extends tadminwidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
-
-
+  
+  
   
   public function getcontent() {
     $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
@@ -35,7 +35,7 @@ class tadminkeywords extends tadminwidget {
     $result = '';
     if ($page == 1) {
       $widget = tkeywordswidget::instance();
-$args->title = $widget->title;
+      $args->title = $widget->title;
       $args->count = $widget->count;
       $args->trace = $widget->trace;
       $args->notify = $widget->notify;
@@ -43,7 +43,7 @@ $args->title = $widget->title;
       $args->tracelabel = $about['tracelabel'];
       $args->notifylabel = $about['notifylabel'];
       $args->content = $html->parsearg($tml['optionsform'], $args);
-$result .= $html->optionsform($args);
+      $result .= $html->optionsform($args);
     }
     
     $from = 100 * ($page - 1);
@@ -82,9 +82,9 @@ $result .= $html->optionsform($args);
   public function processform() {
     $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
     if (isset($_POST['optionsform'])) {
-extract($_POST, EXTR_SKIP);
-$widget = tkeywordswidget::instance();
-$widget->lock();
+      extract($_POST, EXTR_SKIP);
+      $widget = tkeywordswidget::instance();
+      $widget->lock();
       $widget->title = $title;
       $widget->count = (int) $count;
       $widget->notify = isset($notify);

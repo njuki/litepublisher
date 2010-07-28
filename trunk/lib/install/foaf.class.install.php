@@ -8,7 +8,7 @@
 
 function tfoafInstall($self) {
   litepublisher::$urlmap->add('/foaf.xml', get_class($self));
-
+  
   if ($self->dbversion) {
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;

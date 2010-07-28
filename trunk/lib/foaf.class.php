@@ -36,15 +36,15 @@ class tfoaf extends titems {
   }
   
   public function request($arg) {
-      $result = "<?php
-      @header('Content-Type: text/xml; charset=utf-8');
-      @ header('Last-Modified: " . date('r') ."');
-      @header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
-      echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
-      '; ?>";
-      $result .= $this->getfoafxml();
-      return  $result;
-        }
+    $result = "<?php
+    @header('Content-Type: text/xml; charset=utf-8');
+    @ header('Last-Modified: " . date('r') ."');
+    @header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
+    echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
+    '; ?>";
+    $result .= $this->getfoafxml();
+    return  $result;
+  }
   
   public function add($nick,$url, $foafurl, $status) {
     $item = array(

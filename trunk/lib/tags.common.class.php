@@ -49,9 +49,9 @@ class tcommontags extends titems implements  itemplate {
     $sorted = $this->getsorted($sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
-$theme = ttheme::instance();
+    $theme = ttheme::instance();
     $args = targs::instance();
-        $args->count = '';
+    $args->count = '';
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
@@ -59,7 +59,7 @@ $theme = ttheme::instance();
       if ($showcount) $args->count = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }
-return $result;
+    return $result;
   }
   
   public function geticonlink($id) {
@@ -322,7 +322,7 @@ return $result;
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
-$tml = '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
+      $tml = '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
       $result .= $this->getsortedcontent('count', 0, 0, false, $tml);
       return sprintf("<ul>\n%s</ul>\n", $result);
     }
@@ -461,15 +461,15 @@ class ttagcontent extends tdata {
 }//class
 
 class tcommontagswidget extends twidget {
-
+  
   protected function create() {
     parent::create();
-$this->adminclass = 'tadmintagswidget';
+    $this->adminclass = 'tadmintagswidget';
     $this->data['sortname'] = 'count';
     $this->data['showcount'] = true;
     $this->data['maxcount'] =0;
-}
-
+  }
+  
   public function SetParams($sortname, $maxcount, $showcount) {
     if (($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
       $this->sortname = $sortname;
@@ -478,17 +478,17 @@ $this->adminclass = 'tadmintagswidget';
       $this->save();
     }
   }
-
-public function getowner() {
-return false;
-}
-
-public function getcontent($id, $sitebar) {
+  
+  public function getowner() {
+    return false;
+  }
+  
+  public function getcontent($id, $sitebar) {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->template, $sitebar);
     $result = $this->owner->getsortedcontent($this->sortname, $this->maxcount, $this->showcount, $tml);
     return sprintf($theme->getwidgetitems($this->template, $sitebar), $result);
   }
-
+  
 }//class
 ?>

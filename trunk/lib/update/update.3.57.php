@@ -28,7 +28,7 @@ $classes->add('tcategorieswidget', 'tags.categories.class.php');
 $classes->add('ttagswidget', 'tags.cloud.class.php');
 $classes->add('tarchiveswidget', 'archives.class.php');
 $classes->add('tpostswidget', 'posts.class.php');
-$classes->add('tmenuwidget', 'widget.menu.class.php');
+
 //admin
 $classes->add('tadminwidget', 'admin.widget.class.php');
 $classes->add('tadminmaxcount', 'admin.widget.class.php');
@@ -126,7 +126,9 @@ if (!$template->eventexists($name)) unset($template->events[$name]);
 $template->save();
 
 $sitebars = tsitebars::instance();
-foreach ($data->items as $i => $sitebar) {
+
+
+foreach ($data->data['items'] as $i => $sitebar) {
 $j = 0;
 foreach ($sitebar as $idold => $item) {
 $class = $item['class'];
@@ -206,6 +208,7 @@ $xmlrpc->lock();
 $xmlrpc->unlock();
 
 $classes->delete('tstdwidgets');
+$classes->add('tmenuwidget', 'widget.menu.class.php');
 $classes->unlock();
 $widgets->unlock();
 

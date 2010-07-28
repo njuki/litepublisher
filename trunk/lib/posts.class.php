@@ -81,7 +81,7 @@ class tposts extends titems {
     }
   }
   
-
+  
   private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
@@ -322,21 +322,21 @@ class tpostswidget extends twidget {
   public static function instance() {
     return getinstance(__class__);
   }
-
-protected function create() {
-parent::create();
-$this->basename = 'widget.posts';
-$this->template = 'posts';
-$this->adminclass = 'tadminmaxcount';
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.posts';
+    $this->template = 'posts';
+    $this->adminclass = 'tadminmaxcount';
     $this->data['maxcount'] = 10;
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['recentposts'];
-}
-
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['recentposts'];
+  }
+  
   public function getcontent($id, $sitebar) {
-$posts = tposts::instance();
+    $posts = tposts::instance();
     $list = $posts->getrecent($this->maxcount);
     $theme = ttheme::instance();
     return $theme->getpostswidgetcontent($list, $sitebar, '');

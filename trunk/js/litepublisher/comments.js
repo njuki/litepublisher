@@ -17,22 +17,22 @@ function quotecomment(id, authorname) {
   var formarea = document.getElementById("comment");
   var commentcontent = document.getElementById('commentcontent-' + id);
   
-if (window.getSelection) {
- var sel = window.getSelection();
- } else if (document.getSelection) {
- var sel = document.getSelection(); 
-} else if (document.selection) {
- var sel = document.selection.createRange().text; 
-} else {
-var sel = '';
-}
+  if (window.getSelection) {
+    var sel = window.getSelection();
+  } else if (document.getSelection) {
+    var sel = document.getSelection();
+  } else if (document.selection) {
+    var sel = document.selection.createRange().text;
+  } else {
+    var sel = '';
+  }
   
   if (sel == '') {
-  if (commentcontent.innerText){
-sel = commentcontent.innerText; 
-} else {
- sel = commentcontent.textContent; 
-}
+    if (commentcontent.innerText){
+      sel = commentcontent.innerText;
+    } else {
+      sel = commentcontent.textContent;
+    }
   }
   
   formarea.value += getquotedcontent(authorname, sel);

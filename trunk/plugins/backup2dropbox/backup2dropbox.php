@@ -18,7 +18,7 @@ class tbackup2dropbox extends tplugin {
     $this->data['email'] = '';
     $this->data['password'] = '';
     $this->data['dir'] = '/';
-$this->data['uploadfiles'] = true;
+    $this->data['uploadfiles'] = true;
   }
   
   public function send() {
@@ -33,27 +33,28 @@ $this->data['uploadfiles'] = true;
       set_time_limit(600);
       $uploader->upload($filename, $this->dir);
       unlink($filename);
-if ($this->uploadfiles) $this->uploadfiles($uploader, '');
+      //if ($this->uploadfiles) $this->uploadfiles($uploader, '');
     } catch (Exception $e) {
       return $e->getMessage();
     }
     return true;
   }
-
-private function uploadfiles(DropboxUploader $uploader, $dir) {
-if ($dir != '') $dir = trim($dir, '/') . '/';
-if ($list = glob(litepublisher::$paths->files . $dir . '*.*')) {    
-      foreach($list as $filename) {
-if (is_dir($filename)) {
-$base = basename($filename);
-if ($base[0] == '.') continue;
-$this->uploadfiles($uploader, $base);
-} else {
-      $uploader->upload($filename, $this->dir . $dir);
-}
-}
-}
   
-}//class
-
-?>
+  /*
+  private function uploadfiles(DropboxUploader $uploader, $dir) {
+    if ($dir != '') $dir = trim($dir, '/') . '/';
+    if ($list = glob(litepublisher::$paths->files . $dir . '*.*')) {
+      foreach($list as $filename) {
+        if (is_dir($filename)) {
+          $base = basename($filename);
+          if ($base[0] == '.') continue;
+          $this->uploadfiles($uploader, $base);
+        } else {
+          $uploader->upload($filename, $this->dir . $dir);
+        }
+      }
+    }
+    */
+  }//class
+  
+  ?>

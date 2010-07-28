@@ -28,18 +28,18 @@ class tcategories extends tcommontags {
       $this->save();
     }
   }
-
+  
   public function save() {
     parent::save();
     if (!$this->locked)  {
-tcategorieswidget::instance()->expire();
+      tcategorieswidget::instance()->expire();
     }
   }
   
-  }//class
+}//class
 
 class tcategorieswidget extends tcommontagswidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -47,16 +47,16 @@ class tcategorieswidget extends tcommontagswidget {
   protected function create() {
     parent::create();
     $this->basename = 'widget.categories';
-$this->template = 'categories';
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['categories'];
-}
-
-public function getowner() {
-return tcategories::instance();
-}
-
+    $this->template = 'categories';
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['categories'];
+  }
+  
+  public function getowner() {
+    return tcategories::instance();
+  }
+  
 }//class
 ?>

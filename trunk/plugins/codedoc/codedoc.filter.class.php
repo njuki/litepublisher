@@ -272,7 +272,7 @@ class tcodedocfilter extends titems {
     $wiki = twikiwords::instance();
     $lang = tlocal::instance('codedoc');
     $post->title = $doc['name'];
-
+    
     $content = $this->getdescription($post, $doc['description']);
     $post->excerpt = $content;
     $post->excerpt = tcontentfilter::GetExcerpt($s, 250);
