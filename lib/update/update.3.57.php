@@ -107,8 +107,8 @@ $manager->save();
 
 $foaf = tfoaf::instance();
 litepublisher::$urlmap->lock();
-litepublisher::$urlmap->delete($foaf->redirlink);
-$classes->add('tfriendswidget', 'widgets.friends.class.php');
+litepublisher::$urlmap->delete('/foaflink.htm');
+$classes->add('tfriendswidget', 'widget.friends.class.php');
 litepublisher::$urlmap->unlock();
 
     unset($foaf->data['maxcount']);
@@ -120,8 +120,8 @@ $template = ttemplate::instance();
 $data = new titems();
       $data->data = $template->data['sitebars'];
 unset($template->data['sitebars']);
-foreach ($template->events as $$name => $event) {
-if (!isset($template->eventnames[$name])) unset($template->events[$name]);;
+foreach ($template->events as $name => $event) {
+if (!$template->eventexists($name)) unset($template->events[$name]);
 }
 $template->save();
 
