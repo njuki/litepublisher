@@ -34,7 +34,7 @@ class toptions extends tevents {
     $this->modified = false;
     date_default_timezone_set($this->timezone);
     $this->gmt = @date('Z');
-setlocale(LC_ALL, 'en_EN'); //fix strftime
+    setlocale(LC_ALL, 'en_EN'); //fix strftime
     if (!defined('dbversion')) {
       define('dbversion', isset($this->data['dbconfig']));
     }
@@ -44,7 +44,7 @@ setlocale(LC_ALL, 'en_EN'); //fix strftime
   public function savemodified() {
     if ($this->modified) parent::save();
     $this->modified = false;
-$this->onsave();
+    $this->onsave();
   }
   
   public function save() {
@@ -156,11 +156,11 @@ $this->onsave();
   public function SetPassword($value) {
     $this->password = md5("$this->login:$this->realm:$value");
   }
-
-public function setdbpassword($password) {
-$this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
-$this->save();
-}
+  
+  public function setdbpassword($password) {
+    $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+    $this->save();
+  }
   
   public function Getinstalled() {
     return isset($this->data['url']);

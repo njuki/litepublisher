@@ -7,14 +7,14 @@
 **/
 
 function twidgetUninstall($self) {
-$widgets = twidgets::instance();
-$widgets->deleteclass(get_class($self));
+  $widgets = twidgets::instance();
+  $widgets->deleteclass(get_class($self));
 }
 
 function twidgetsInstall($self) {
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($self));
-install_std_widgets($self);
+  install_std_widgets($self);
 }
 
 function twidgetsUninstall($self) {
@@ -23,38 +23,38 @@ function twidgetsUninstall($self) {
 }
 
 function twidgetscacheInstall($self) {
-litepublisher::$options->onsave = $self->savemodified;
+  litepublisher::$options->onsave = $self->savemodified;
 }
 
 function twidgetscacheUninstall($self) {
-litepublisher::$options->unsubscribeclass($self);
+  litepublisher::$options->unsubscribeclass($self);
 }
 
 function install_std_widgets($widgets) {
-$widgets->lock();
-$sitebars = tsitebars::instance();
-
-$id = $widgets->add(tcategorieswidget::instance());
-$sitebars->insert($id, true, 0, -1);
-
-$id = $widgets->add(tarchiveswidget::instance());
-$sitebars->insert($id, true, 0, -1);
-
-$id = $widgets->add(tlinkswidget::instance());
-$sitebars->insert($id, true, 0, -1);
-
-$id = $widgets->add(tfriendswidget::instance());
-$sitebars->insert($id, true, 0, -1);
-
-$id = $widgets->add(tpostswidget::instance());
-$sitebars->insert($id, true, 1, -1);
-
-$id = $widgets->add(tcommentswidget::instance());
-$sitebars->insert($id, true, 1, -1);
-
-$id = $widgets->add(tmetawidget::instance());
-$sitebars->insert($id, true, 1, -1);
-
-$widgets->unlock();
+  $widgets->lock();
+  $sitebars = tsitebars::instance();
+  
+  $id = $widgets->add(tcategorieswidget::instance());
+  $sitebars->insert($id, true, 0, -1);
+  
+  $id = $widgets->add(tarchiveswidget::instance());
+  $sitebars->insert($id, true, 0, -1);
+  
+  $id = $widgets->add(tlinkswidget::instance());
+  $sitebars->insert($id, true, 0, -1);
+  
+  $id = $widgets->add(tfriendswidget::instance());
+  $sitebars->insert($id, true, 0, -1);
+  
+  $id = $widgets->add(tpostswidget::instance());
+  $sitebars->insert($id, true, 1, -1);
+  
+  $id = $widgets->add(tcommentswidget::instance());
+  $sitebars->insert($id, true, 1, -1);
+  
+  $id = $widgets->add(tmetawidget::instance());
+  $sitebars->insert($id, true, 1, -1);
+  
+  $widgets->unlock();
 }
 ?>

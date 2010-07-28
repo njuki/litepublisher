@@ -7,8 +7,8 @@
 **/
 
 class tcustomwidget extends twidget {
-public $items;
-
+  public $items;
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -16,40 +16,40 @@ public $items;
   protected function create() {
     parent::create();
     $this->basename   = 'widgets.custom';
-$this->adminclass = 'tadmincustomwidget';
-$this->addmap('items', array());
-$this->addevents('added', 'deleted');
+    $this->adminclass = 'tadmincustomwidget';
+    $this->addmap('items', array());
+    $this->addevents('added', 'deleted');
   }
-
-public function getwidget($id, $sitebar) {
-if (!isset($this->items[$id])) return '';
-$item = $this->items[$id];
-if ($item['template'] == '') return $item['content'];
+  
+  public function getwidget($id, $sitebar) {
+    if (!isset($this->items[$id])) return '';
+    $item = $this->items[$id];
+    if ($item['template'] == '') return $item['content'];
     $theme = ttheme::instance();
-return $theme->getwidget($item['title'], $item['content'], $item['template'], $sitebar);
+    return $theme->getwidget($item['title'], $item['content'], $item['template'], $sitebar);
   }
-
-public function gettitle($id) {
-return $this->items[$id]['title'];
-}
+  
+  public function gettitle($id) {
+    return $this->items[$id]['title'];
+  }
   
   public function getcontent($id, $sitebar) {
-return $this->items[$id]['content'];
+    return $this->items[$id]['content'];
   }
   
   public function add($title, $content, $template) {
     $widgets = twidgets::instance();
-$widgets->lock();
+    $widgets->lock();
     $id = $widgets->addext($this, $title, $template);
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
-'template' => $template
+    'template' => $template
     );
     
-$sitebars = tsitebars::instance();
-$sitebars->add($id);
-$widgets->unlock();
+    $sitebars = tsitebars::instance();
+    $sitebars->add($id);
+    $widgets->unlock();
     $this->save();
     $this->added($id);
     return $id;
@@ -59,13 +59,13 @@ $widgets->unlock();
     $this->items[$id] = array(
     'title' => $title,
     'content' => $content,
-'template' => $template
+    'template' => $template
     );
-        $this->save();
-
-$widgets = twidgets::instance();
-$widgets->items[$id]['title'] = $title;
-$widgets->save();
+    $this->save();
+    
+    $widgets = twidgets::instance();
+    $widgets->items[$id]['title'] = $title;
+    $widgets->save();
     $this->expired($id);
   }
   

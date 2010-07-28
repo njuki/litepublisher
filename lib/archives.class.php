@@ -145,29 +145,29 @@ class tarchiveswidget extends twidget {
   public static function instance() {
     return getinstance(__class__);
   }
-
-protected function create() {
-parent::create();
-$this->basename = 'widget.archives';
-$this->template = 'archives';
-$this->adminclass = 'tadminshowcount';
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.archives';
+    $this->template = 'archives';
+    $this->adminclass = 'tadminshowcount';
     $this->data['showcount'] = false;
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['archives'];
-}
-
-
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['archives'];
+  }
+  
+  
   protected function setshowcount($value) {
     if ($value != $this->showcount) {
       $this->data['showcount'] = $value;
       $this->Save();
     }
   }
-
+  
   public function getcontent($id, $sitebar) {
-$arch = tarchives::instance();
+    $arch = tarchives::instance();
     if (count($arch->items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();

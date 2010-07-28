@@ -7,7 +7,7 @@
 **/
 
 function tsapepluginInstall($self) {
-$self->add();
+  $self->add();
 }
 
 ?>

@@ -11,19 +11,19 @@ class toldestposts extends tclasswidget {
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   protected function create() {
     parent::create();
     $this->basename = 'widget.oldestposts';
-$this->template = 'posts';
-$this->adminclass = 'tadminoldestposts';
-$this->cache = 'nocache';
+    $this->template = 'posts';
+    $this->adminclass = 'tadminoldestposts';
+    $this->cache = 'nocache';
     $this->data['maxcount'] = 10;
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['prev'];
-}
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['prev'];
+  }
   
   public function getcontent($id, $sitebar) {
     $post = $this->getcontext('tpost');
@@ -38,7 +38,7 @@ return tlocal::$data['default']['prev'];
     }
     
     if (count($items) == 0) return '';
-   
+    
     $theme = ttheme::instance();
     return $theme->getpostswidgetcontent($items, $sitebar, '');
   }

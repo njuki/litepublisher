@@ -150,8 +150,8 @@ class ttemplate extends tevents {
   
   //html tags
   public function getsitebar() {
-      $widgets = twidgets::instance();
-return $widgets->getsitebar($this->context);
+    $widgets = twidgets::instance();
+    return $widgets->getsitebar($this->context);
   }
   
   public function gettitle() {

@@ -11,20 +11,20 @@ class tcommentswidget extends twidget {
   public static function instance() {
     return getinstance(__class__);
   }
-
-protected function create() {
-parent::create();
-$this->basename = 'widget.comments';
-$this->cache = 'include';
-$this->template = 'comments';
-$this->adminclass = 'tadminmaxcount';
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.comments';
+    $this->cache = 'include';
+    $this->template = 'comments';
+    $this->adminclass = 'tadminmaxcount';
     $this->data['maxcount'] =  7;
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['recentcomments'];
-}
-
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['recentcomments'];
+  }
+  
   public function getcontent($id, $sitebar) {
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($this->maxcount);
@@ -43,7 +43,7 @@ return tlocal::$data['default']['recentcomments'];
   }
   
   public function changed($id, $idpost) {
-$this->expired($this->id);
+    $this->expired($this->id);
   }
   
 }//class

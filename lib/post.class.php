@@ -547,8 +547,8 @@ class tpost extends titem implements  itemplate {
   public function getschemalink() {
     return 'post';
   }
-
-//author
+  
+  //author
   protected function getauthorname() {
     return $this->getusername($this->author, false);
   }

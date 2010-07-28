@@ -11,19 +11,19 @@ class tadmincontextwidget extends torderwidget {
   public static function instance() {
     return getinstance(__class__);
   }
-
-protected function create() {
-parent::create();
-$this->basename = 'widget.adminlinks';
-$this->cache = 'nocache';
-$this->adminclass = 'tadminorderwidget';
-}
-
-public function getdeftitle() {
-$about = tplugins::getabout(tplugins::getname(__file__));
-return $about['name'];
-}
-
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.adminlinks';
+    $this->cache = 'nocache';
+    $this->adminclass = 'tadminorderwidget';
+  }
+  
+  public function getdeftitle() {
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    return $about['name'];
+  }
+  
   public function getwidget($id, $sitebar) {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('widget', $sitebar);
@@ -81,7 +81,7 @@ return $about['name'];
     
     $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
     $links = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
-return $theme->getwidget($this->title, $links, 'widget', $sitebar);
+    return $theme->getwidget($this->title, $links, 'widget', $sitebar);
   }
   
 }//class

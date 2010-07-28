@@ -14,10 +14,10 @@ function tsamepostsInstall($self) {
     items text NOT NULL,
     PRIMARY KEY(id) ');
   }
-
+  
   $widgets = twidgets::instance();
-$widgets->addclass($self, 'tpost');
-
+  $widgets->addclass($self, 'tpost');
+  
   $posts->changed = $self->postschanged;
 }
 

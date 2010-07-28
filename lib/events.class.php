@@ -56,10 +56,10 @@ class tevents extends tdata {
     unset(litepublisher::$classes->instances[get_class($this)]);
     foreach ($this->coinstances as $coinstance) $coinstance->free();
   }
-
-public function eventexists($name) {
-return in_array($name, $this->eventnames);
-}
+  
+  public function eventexists($name) {
+    return in_array($name, $this->eventnames);
+  }
   
   public function __get($name) {
     if (method_exists($this, $name)) return array('class' =>get_class($this), 'func' => $name);

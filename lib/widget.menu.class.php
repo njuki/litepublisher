@@ -13,25 +13,25 @@ class tmenuwidget extends tclasswidget {
   
   protected function create() {
     parent::create();
-$this->cache = 'nocache';
+    $this->cache = 'nocache';
     $this->basename = 'widget.menu';
-$this->template = 'submenu';
-$this->adminclass = 'tadminorderwidget';
-}
-
-public function getdeftitle() {
-return tlocal::$data['default']['submenu'];
-}
-
-public function gettitle($id) {
-if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;
-return parent::gettitle($id);
-}
-
+    $this->template = 'submenu';
+    $this->adminclass = 'tadminorderwidget';
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['submenu'];
+  }
+  
+  public function gettitle($id) {
+    if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;
+    return parent::gettitle($id);
+  }
+  
   public function getcontent($idwidget, $sitebar) {
-$menu = $this->getcontext('tmenu');
-$id = $menu->id;
-$menus = $menu->owner;
+    $menu = $this->getcontext('tmenu');
+    $id = $menu->id;
+    $menus = $menu->owner;
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('submenu', $sitebar);
@@ -42,7 +42,7 @@ $menus = $menu->owner;
       $submenu .= $this->getitem($tml, $menus->getitem($child), '');
     }
     
-$parent = $menus->getparent($id);
+    $parent = $menus->getparent($id);
     if ($parent == 0) {
       $result = $submenu;
     } else {
@@ -56,9 +56,9 @@ $parent = $menus->getparent($id);
     foreach ($parents as $parent) {
       $result = $this->getitem($tml, $menus->getitem($parent), $result);
     }
-
+    
     if ($result == '')  return '';
-return sprintf($theme->getwidgetitems('submenu', $sitebar), $result);
+    return sprintf($theme->getwidgetitems('submenu', $sitebar), $result);
   }
   
   private function getitem($tml, $item, $subnodes) {

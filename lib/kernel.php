@@ -73,7 +73,6 @@ class tdata {
     foreach ($this->coinstances as $coinstance) {
       if (method_exists($coinstance, $name)) return call_user_func_array(array($coinstance, $name), $params);
     }
-    
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   
@@ -259,6 +258,27 @@ function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
 }
 
+function array_delete(array &$a, $i) {
+  array_splice($a, $i, 1);
+}
+
+function array_delete_value(array &$a, $value) {
+  $i = array_search($value, $a);
+  if ($i !== false)         array_splice($a, $i, 1);
+}
+
+function array_insert(array &$a, $item, $index) {
+  array_splice($a, $index, 0, array($item));
+}
+
+function array_move(array &$a, $oldindex, $newindex) {
+  //delete and insert
+  if (($oldindex == $newindex) || !isset($a[$oldindex])) return false;
+  $item = $a[$oldindex];
+  array_splice($a, $oldindex, 1);
+  array_splice($a, $newindex, 0, array($item));
+}
+
 function dumpstr($s) {
   echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
 }
@@ -320,6 +340,10 @@ class tevents extends tdata {
   public function free() {
     unset(litepublisher::$classes->instances[get_class($this)]);
     foreach ($this->coinstances as $coinstance) $coinstance->free();
+  }
+  
+  public function eventexists($name) {
+    return in_array($name, $this->eventnames);
   }
   
   public function __get($name) {
@@ -810,7 +834,7 @@ class toptions extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'options';
-    $this->addevents('changed', 'perpagechanged');
+    $this->addevents('changed', 'perpagechanged', 'onsave');
     unset($this->cache);
     $this->gmt = date('Z');
     $this->errorlog = '';
@@ -822,7 +846,8 @@ class toptions extends tevents {
     if (!parent::load()) return false;
     $this->modified = false;
     date_default_timezone_set($this->timezone);
-    $this->gmt = date('Z');
+    $this->gmt = @date('Z');
+    setlocale(LC_ALL, 'en_EN'); //fix strftime
     if (!defined('dbversion')) {
       define('dbversion', isset($this->data['dbconfig']));
     }
@@ -832,6 +857,7 @@ class toptions extends tevents {
   public function savemodified() {
     if ($this->modified) parent::save();
     $this->modified = false;
+    $this->onsave();
   }
   
   public function save() {
@@ -942,6 +968,11 @@ class toptions extends tevents {
   
   public function SetPassword($value) {
     $this->password = md5("$this->login:$this->realm:$value");
+  }
+  
+  public function setdbpassword($password) {
+    $this->data['dbconfig']['password'] = base64_encode(str_rot13 ($password));
+    $this->save();
   }
   
   public function Getinstalled() {
@@ -1153,16 +1184,29 @@ class turlmap extends titems {
     }
   }
   
-  protected function GenerateHTML(array $item) {
+  public function getidcontext($id) {
+    if ($this->dbversion) {
+      $item = $this->getitem($id);
+    } else {
+      foreach ($this->items as $url => $item) {
+        if ($id == $item['id']) break;
+      }
+    }
+    return $this->getcontext($item);
+  }
+  
+  public function getcontext(array $item) {
     $class = $item['class'];
     $parents = class_parents($class);
     if (in_array('titem', $parents)) {
-      //$source = titem::iteminstance($class, $item['arg']);
-      $this->context = call_user_func_array(array($class, 'instance'), array($item['arg']));
+      return call_user_func_array(array($class, 'instance'), array($item['arg']));
     } else {
-      $this->context = getinstance($class);
+      return getinstance($class);
     }
-    
+  }
+  
+  protected function GenerateHTML(array $item) {
+    $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
       //tfiler::log($s, 'content.log');
@@ -1447,7 +1491,7 @@ interface itemplate {
 }
 
 interface itemplate2 {
-  public function getsitebar();
+  public function getwidgets(array &$items, $sitebar);
   public function afterrequest(&$content);
 }
 

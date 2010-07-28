@@ -14,10 +14,10 @@ class tthemeparser extends tdata {
   public static function instance() {
     return getinstance(__class__);
   }
-
-public static function getwidgetnames() {
-return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
-}
+  
+  public static function getwidgetnames() {
+    return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
+  }
   
   public function parsetag(&$s, $tag, $replace) {
     $result = '';

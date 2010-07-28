@@ -8,7 +8,7 @@
 
 class tsapeplugin extends twidget {
   public $sape;
-public $counts;
+  public $counts;
   
   public static function instance() {
     return getinstance(__class__);
@@ -16,18 +16,18 @@ public $counts;
   
   protected function create() {
     parent::create();
-$this->basename = 'widget.sape';
-$this->cache = 'nocache';
-$this->adminclass = 'tadminsapeplugin';
-$this->data['user'] = '';
+    $this->basename = 'widget.sape';
+    $this->cache = 'nocache';
+    $this->adminclass = 'tadminsapeplugin';
+    $this->data['user'] = '';
     $this->data['count'] = 2;
     $this->data['force'] = false;
-$this->addmap('counts', array());
+    $this->addmap('counts', array());
   }
-
-public function getdeftitle() {
-return tlocal::$data['default']['links'];
-}
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['links'];
+  }
   
   private function createsape() {
     if (!defined('_SAPE_USER')){
@@ -39,7 +39,7 @@ return tlocal::$data['default']['links'];
       $this->sape = new SAPE_client($o);
     }
   }
-
+  
   public function getcontent($id, $sitebar) {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
@@ -48,22 +48,22 @@ return tlocal::$data['default']['links'];
     if (empty($Links)) return '';
     return sprintf('<ul><li>%s</li></ul>', $links);
   }
-
-public function setcount($id ,$count) {
-$this->counts[$id] = $count;
-$widgets = twidgets::instance();
-foreach ($this->counts as $id => $count) {
-if (!isset($widgets->items[$id])) unset($this->counts[$id]);
-}
-$this->save();
-}
-
-public function add() {
-$id = $this->addtositebar(0);
-$this->counts[$id] = 10;
-$this->save();
-return $id;
-}
   
-  }//class
+  public function setcount($id ,$count) {
+    $this->counts[$id] = $count;
+    $widgets = twidgets::instance();
+    foreach ($this->counts as $id => $count) {
+      if (!isset($widgets->items[$id])) unset($this->counts[$id]);
+    }
+    $this->save();
+  }
+  
+  public function add() {
+    $id = $this->addtositebar(0);
+    $this->counts[$id] = 10;
+    $this->save();
+    return $id;
+  }
+  
+}//class
 ?>

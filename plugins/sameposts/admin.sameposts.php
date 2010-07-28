@@ -7,29 +7,29 @@
 **/
 
 class tadminsameposts extends tadminorderwidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   protected function create() {
     parent::create();
-$this->widget = tsameposts::instance();
-}
-
+    $this->widget = tsameposts::instance();
+  }
+  
   protected function dogetcontent(twidget $widget, targs $args){
-$args->maxcount = $widget->maxcount;
+    $args->maxcount = $widget->maxcount;
     $this->html->section = 'widgets';
-$result = $this->html->maxcountform($args);
-$result .= parent::dogetcontent($widget, $args);
-return $result;
-}
-
+    $result = $this->html->maxcountform($args);
+    $result .= parent::dogetcontent($widget, $args);
+    return $result;
+  }
+  
   protected function doprocessform(twidget $widget)  {
-$widget->maxcount = (int) $_POST['maxcount'];
-return parent::doprocessform($widget);
-}
-
+    $widget->maxcount = (int) $_POST['maxcount'];
+    return parent::doprocessform($widget);
+  }
+  
 }//class
 
 ?>

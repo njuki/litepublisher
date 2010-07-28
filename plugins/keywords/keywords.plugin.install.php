@@ -13,13 +13,13 @@ function tkeywordspluginInstall($self) {
   $item = litepublisher::$classes->items[get_class($self)];
   litepublisher::$classes->add('tkeywordswidget','keywords.widget.php', $item[1]);
   
-
+  
   $widget = tkeywordswidget::instance();
   $widgets = twidgets::instance();
-$widgets->lock();
-$sitebars = tsitebars::instance();
+  $widgets->lock();
+  $sitebars = tsitebars::instance();
   $sitebars->insert($widgets->add($widget), false, 1, -1);
-$widgets->unlock();
+  $widgets->unlock();
   
   $urlmap = turlmap::instance();
   $urlmap->lock();

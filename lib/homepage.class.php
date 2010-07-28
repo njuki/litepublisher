@@ -7,7 +7,7 @@
 **/
 
 class thomepage extends tevents implements  itemplate, itemplate2, imenu  {
-public $sitebars;
+  public $sitebars;
   
   public static function instance() {
     return getinstance(__class__);
@@ -20,7 +20,7 @@ public $sitebars;
     $this->data['hideposts'] = false;
     $this->data['defaultsitebar'] = true;
     $this->data['ajax'] = false;
-$this->addmap('sitebars', array(array(), array(), array()));
+    $this->addmap('sitebars', array(array(), array(), array()));
     $this->data['text'] = '';
     $this->data['tmlfile'] = '';
     $this->data['theme'] = '';
@@ -73,15 +73,15 @@ public function afterrequest(&$content) {}
   public function getwidgets(array &$items, $sitebar) {
     if ($this->defaultsitebar) {
       if (!$this->ajax) {
-foreach ($items as $i => $item) {
-$items[$i]['ajax'] = false;
-}
+        foreach ($items as $i => $item) {
+          $items[$i]['ajax'] = false;
+        }
       }
     }else {
-if (isset($this->sitebars[$sitebar])) $items = $this->sitebars[$sitebar];
+      if (isset($this->sitebars[$sitebar])) $items = $this->sitebars[$sitebar];
     }
   }
-
+  
   // imenu
 public function getparent() { return 0; }
 public function setparent($id) {}

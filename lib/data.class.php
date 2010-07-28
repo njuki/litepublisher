@@ -257,24 +257,24 @@ function strend($s, $end) {
 }
 
 function array_delete(array &$a, $i) {
-        array_splice($a, $i, 1);
+  array_splice($a, $i, 1);
 }
 
 function array_delete_value(array &$a, $value) {
-$i = array_search($value, $a);
-if ($i !== false)         array_splice($a, $i, 1);
+  $i = array_search($value, $a);
+  if ($i !== false)         array_splice($a, $i, 1);
 }
 
 function array_insert(array &$a, $item, $index) {
-        array_splice($a, $index, 0, array($item));
+  array_splice($a, $index, 0, array($item));
 }
 
 function array_move(array &$a, $oldindex, $newindex) {
-//delete and insert
-if (($oldindex == $newindex) || !isset($a[$oldindex])) return false;
-$item = $a[$oldindex];
-        array_splice($a, $oldindex, 1);
-        array_splice($a, $newindex, 0, array($item));
+  //delete and insert
+  if (($oldindex == $newindex) || !isset($a[$oldindex])) return false;
+  $item = $a[$oldindex];
+  array_splice($a, $oldindex, 1);
+  array_splice($a, $newindex, 0, array($item));
 }
 
 function dumpstr($s) {

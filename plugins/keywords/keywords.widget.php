@@ -16,32 +16,32 @@ class tkeywordswidget extends twidget {
   public function create() {
     parent::create();
     $this->basename = 'keywords' . DIRECTORY_SEPARATOR   . 'index';
-$this->cache = 'nocache';
-$this->adminclass = 'tadminkeywords';
+    $this->cache = 'nocache';
+    $this->adminclass = 'tadminkeywords';
     $this->data['count'] = 6;
     $this->data['notify'] = true;
     $this->data['trace'] = true;
     $this->addmap('links', array());
   }
-
-public function getdeftitle() {
-$about = tplugins::getabout(tplugins::getname(__file__));
-return $about['title'];
-}
+  
+  public function getdeftitle() {
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    return $about['title'];
+  }
   
   public function getwidget($id, $sitebar) {
     if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
-return parent::getwidget($id, $sitebar);
-}
-
+    return parent::getwidget($id, $sitebar);
+  }
+  
   public function getcontent($id, $sitebar) {
     if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
-if (strend(litepublisher::$urlmap->url, '.xml')) {
-$widgets = twidgets::instance();
-$id = $widgets->ididurlcontext;
-} else {
-$id = litepublisher::$urlmap->itemrequested['id'];
-}
+    if (strend(litepublisher::$urlmap->url, '.xml')) {
+      $widgets = twidgets::instance();
+      $id = $widgets->ididurlcontext;
+    } else {
+      $id = litepublisher::$urlmap->itemrequested['id'];
+    }
     $filename = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR.$id . '.' . litepublisher::$urlmap->page . '.php';
     if (@file_exists($filename)) {
       $links = file_get_contents($filename);
@@ -57,9 +57,9 @@ $id = litepublisher::$urlmap->itemrequested['id'];
         $plugin->added($filename, $links);
       }
     }
-
+    
     $theme = ttheme::instance();
-return sprintf($theme->getwidgetitems($this->template, $sitebar), $links);
+    return sprintf($theme->getwidgetitems($this->template, $sitebar), $links);
   }
   
 }//class

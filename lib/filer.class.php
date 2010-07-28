@@ -7,7 +7,7 @@
 **/
 
 class tfiler {
-
+  
   public static function callback($callback, $path, $subdir) {
     $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if ( $h = opendir($path)) {
@@ -17,14 +17,14 @@ class tfiler {
         if (is_dir($file)) {
           if ($subdir) self::callback($callback, $file . DIRECTORY_SEPARATOR, $subdir);
         } else {
-call_user_func_array($callback, array($filename));
+          call_user_func_array($callback, array($filename));
         }
       }
       closedir($h);
     }
   }
   
-    public static function delete($path, $subdirs , $rmdir = false) {
+  public static function delete($path, $subdirs , $rmdir = false) {
     $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if ( $h = opendir($path)) {
       while(FALSE !== ($filename = readdir($h))) {
@@ -116,7 +116,7 @@ call_user_func_array($callback, array($filename));
   public static function ini2js(array $a, $filename) {
     $sections = array();
     foreach ($a as $name => $section) {
-if ($name == 'codedoc') continue;
+      if ($name == 'codedoc') continue;
       if ($name == 'default' || $name == 'delete') $name = 'a' . $name;
       $list = array();
       foreach ($section as $key => $value) {

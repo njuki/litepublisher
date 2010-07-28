@@ -7,12 +7,12 @@
 **/
 
 function tadmincontextwidgetInstall($self) {
-$widgets = twidgets::instance();
-$widgets->lock();
-$self->id = $widgets->add($self);
-$widgets->onadminlogged = $self->onsitebar;
-$widgets->unlock();
-$self->save();
+  $widgets = twidgets::instance();
+  $widgets->lock();
+  $self->id = $widgets->add($self);
+  $widgets->onadminlogged = $self->onsitebar;
+  $widgets->unlock();
+  $self->save();
 }
 
 ?>

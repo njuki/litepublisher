@@ -20,11 +20,11 @@ class tplugins extends TItems {
   }
   
   public static function getabout($name) {
-if (!isset(self::$abouts[$name])) {
-if (!isset(self::$abouts)) self::$abouts = array();
-self::$abouts[$name] = self::localabout(litepublisher::$paths->plugins .  $name );
-}
-return self::$abouts[$name];
+    if (!isset(self::$abouts[$name])) {
+      if (!isset(self::$abouts)) self::$abouts = array();
+      self::$abouts[$name] = self::localabout(litepublisher::$paths->plugins .  $name );
+    }
+    return self::$abouts[$name];
   }
   
   public static function localabout($dir) {
@@ -36,14 +36,14 @@ return self::$abouts[$name];
     
     return $about['about'];
   }
-
-public static function getname($filename) {
-return basename(dirname($filename));
-}
+  
+  public static function getname($filename) {
+    return basename(dirname($filename));
+  }
   
   public function add($name) {
     if (!@is_dir(litepublisher::$paths->plugins . $name)) return false;
-$about = self::getabout($name);
+    $about = self::getabout($name);
     return $this->AddExt($name, $about['classname'], $about['filename'], $about['adminclassname'], $about['adminfilename']);
   }
   
@@ -52,13 +52,13 @@ $about = self::getabout($name);
     'id' => ++$this->autoid,
     'class' => $classname,
     'file' => $filename,
-'adminclass' => $adminclassname,
-'adminfile' => $adminfilename
+    'adminclass' => $adminclassname,
+    'adminfile' => $adminfilename
     );
-
-        litepublisher::$classes->lock();
+    
+    litepublisher::$classes->lock();
     litepublisher::$classes->Add($classname, $filename, $name);
-if ($adminclassname != '') litepublisher::$classes->Add($adminclassname, $adminfilename, $name);
+    if ($adminclassname != '') litepublisher::$classes->Add($adminclassname, $adminfilename, $name);
     litepublisher::$classes->unlock();
     $this->Save();
     $this->added($name);return $this->autoid;
@@ -77,10 +77,10 @@ if ($adminclassname != '') litepublisher::$classes->Add($adminclassname, $adminf
         @unlink(litepublisher::$paths->data . $plugin->getbasename() . 'bak..php');
       }
     }
-
+    
     litepublisher::$classes->lock();
     litepublisher::$classes->delete($item['class']);
-if (!empty($item['adminclass'])) litepublisher::$classes->delete($item['adminclass']);
+    if (!empty($item['adminclass'])) litepublisher::$classes->delete($item['adminclass']);
     litepublisher::$classes->unlock();
     $this->deleted($name);
   }
