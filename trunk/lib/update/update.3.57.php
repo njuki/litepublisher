@@ -6,20 +6,23 @@ $std = tstdwidgets::instance();
 
 $classes = litepublisher::$classes;
 $classes->lock();
-if (isset($classes->items['tadminlinkswidget'])) {
-unset($classes->items['tadminlinkswidget']
+
 $plugins = tplugins::instance();
-unset($plugins->items['adminlinks']);
+$plugins->lock();
+$plugins->delete('adminlinks');
+$plugins->delete('oldestposts');
+$plugins->delete('keywords');
+$plugins->delete('sameposts');
+$plugins->delete('sape');
 $plugins->save();
-}
 
 $classes->add('twidget', 'widgets.class.php');
 $classes->add('torderwidget', 'widgets.class.php');
 $classes->add('tclasswidget', 'widgets.class.php');
 $classes->add('twidgetscache', 'widgets.class.php');
 $classes->add('tsitebars', 'widgets.class.php');
-$classes->add('tcommentswidget', 'widgets.comments.class.php');
-$classes->add('tmetawidget', 'widgets.meta.class.php');
+$classes->add('tcommentswidget', 'widget.comments.class.php');
+$classes->add('tmetawidget', 'widget.meta.class.php');
 $classes->add('tcommontagswidget', 'tags.common.class.php');
 $classes->add('tcategorieswidget', 'tags.categories.class.php');
 $classes->add('ttagswidget', 'tags.cloud.class.php');
@@ -33,7 +36,7 @@ $classes->add('tadminshowcount', 'admin.widget.class.php');
 $classes->add('tadminorderwidget', 'admin.widget.class.php');
 $classes->add('tadminfriendswidget', 'admin.widget.class.php');
 $classes->add('tadmintagswidget', 'admin.widget.class.php');
-$classes->add('tadmincustomwidget' 'admin.widget.class.php');
+$classes->add('tadmincustomwidget', 'admin.widget.class.php');
 $classes->add('tadminlinkswidget', 'admin.widget.class.php');
 $classes->add('tadminmetawidget', 'admin.widget.class.php');
 $classes->add('tadminhomewidgets', 'admin.widget.class.php');
@@ -56,7 +59,7 @@ $custom->items = $items;
 $custom->save();
 
 $widget = tlinkswidget::instance();
-foreach (($widget->items as $id => $item) {
+foreach ($widget->items as $id => $item) {
 $item['anchor'] = $item['text'];
 unset($item['text']);
 $widget->items[$id] = $item;
@@ -67,15 +70,15 @@ $meta = tmetawidget::instance();
 $meta->data['meta'] = $std->data['meta'];
 $meta->save();
 
-$widget = tcategories::instance();
-$widget->setparams($widget->owner->sortname, $widget->owner->maxcount, $widget->owner->showcount) {
+$widget = tcategorieswidget::instance();
+$widget->setparams($widget->owner->sortname, $widget->owner->maxcount, $widget->owner->showcount);
 unset($widget->owner->data['sortname']);
 unset($widget->owner->data['maxcount']);
 unset($widget->owner->data['showcount']);
 $widget->owner->save();
 
 $widget = ttagswidget::instance();
-$widget->setparams($widget->owner->sortname, $widget->owner->maxcount, $widget->owner->showcount) {
+$widget->setparams($widget->owner->sortname, $widget->owner->maxcount, $widget->owner->showcount);
 unset($widget->owner->data['sortname']);
 unset($widget->owner->data['maxcount']);
 unset($widget->owner->data['showcount']);
@@ -126,7 +129,7 @@ $sitebars = tsitebars::instance();
 foreach ($data->items as $i => $sitebar) {
 $j = 0;
 foreach ($sitebar as $idold => $item) {
-$class = item['class'];
+$class = $item['class'];
 if ($class == 'tstdwidgets') {
 $class = $std->getname($idold);
 }
@@ -163,31 +166,31 @@ break;
 
 case 'tcategories':
 case 'categories':
-$id = $widgets->add(tcategorieswidget::instance();
+$id = $widgets->add(tcategorieswidget::instance());
 $ajax = $std->items['categories']['ajax'];
 break;
 
 case 'ttags':
 case 'tags':
-$id = $widgets->add(ttagswidget::instance();
+$id = $widgets->add(ttagswidget::instance());
 $ajax = $std->items['tags']['ajax'];
 break;
 
 case 'tarchives':
 case 'archives':
-$id = $widgets->add(tarchiveswidget ::instance();
+$id = $widgets->add(tarchiveswidget ::instance());
 $ajax = $std->items['archives']['ajax'];
 break;
 
 case 'tposts':
 case 'posts':
-$id = $widgets->add(tpostswidget ::instance();
+$id = $widgets->add(tpostswidget ::instance());
 $ajax = $std->items['posts']['ajax'];
 break;
 
 case 'friends':
 case 'tfoaf':
-$id = $widgets->add(tfriendswidget::instance();
+$id = $widgets->add(tfriendswidget::instance());
 $ajax = $std->items['friends']['ajax'];
 break;
 }
