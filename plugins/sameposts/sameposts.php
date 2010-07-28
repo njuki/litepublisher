@@ -43,22 +43,17 @@ return tlocal::$data['default']['sameposts'];
   private function findsame($idpost) {
     $posts = tposts::instance();
     $post = tpost::instance($idpost);
-    $list = $post->categories;
-    if (count($list) == 0) return array();
+    if (count($post->categories) == 0) return array();
     $cats = tcategories::instance();
     $cats->loadall();
     $same = array();
-    foreach ($list as $id) {
-      if (!isset($cats->items[$id])) continue;
-      $itemsposts = $cats->itemsposts->getposts($id);
-      $posts->stripdrafts($itemsposts);
-      foreach ($itemsposts as $i) {
-        if ($i == $idpost) continue;
-        if (isset($same[$i])) {
-          $same[$i]++;
-        } else {
-          $same[$i] = 1;
-        }
+    foreach ($post->categories as $idcat) {
+      if (!isset($cats->items[$idcat])) continue;
+      $itemsposts = $cats->itemsposts->getposts($idcat);
+      $itemsposts= $posts->stripdrafts($itemsposts);
+      foreach ($itemsposts as $id) {
+        if ($id == $idpost) continue;
+          $same[$id] = isset($same[$id]) ? $same[$id] + 1 : 1;
       }
     }
     

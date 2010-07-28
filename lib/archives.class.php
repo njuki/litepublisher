@@ -151,9 +151,13 @@ parent::create();
 $this->basename = 'widget.archives';
 $this->template = 'archives';
 $this->adminclass = 'tadminshowcount';
-$this->data['title'] = tlocal::$data['default']['archives'];
     $this->data['showcount'] = false;
 }
+
+public function getdeftitle() {
+return tlocal::$data['default']['archives'];
+}
+
 
   protected function setshowcount($value) {
     if ($value != $this->showcount) {

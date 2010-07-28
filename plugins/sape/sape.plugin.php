@@ -18,6 +18,7 @@ public $counts;
     parent::create();
 $this->basename = 'widget.sape';
 $this->cache = 'nocache';
+$this->adminclass = 'tadminsapeplugin';
 $this->data['user'] = '';
     $this->data['count'] = 2;
     $this->data['force'] = false;
@@ -55,6 +56,13 @@ foreach ($this->counts as $id => $count) {
 if (!isset($widgets->items[$id])) unset($this->counts[$id]);
 }
 $this->save();
+}
+
+public function add() {
+$id = $this->addtositebar(0);
+$this->counts[$id] = 10;
+$this->save();
+return $id;
 }
   
   }//class

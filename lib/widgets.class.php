@@ -20,6 +20,18 @@ $this->template = 'widget';
 $this->adminclass = 'tadminwidget';
 }
 
+public function addtositebar($sitebar) {
+$widgets = twidgets::instance();
+  $widgets->lock();
+$id = $widgets->add($this);
+$sitebars = tsitebars::instance();
+$sitebars->insert($id, false, $sitebar, -1);
+  $widgets->unlock();
+
+  litepublisher::$urlmap->clearcache();  
+return $id;
+}
+  
 protected function getadmin() {
 if (($this->adminclass != '') && class_exists($this->adminclass)) {
 $admin = getinstance($this->adminclass);
@@ -56,16 +68,13 @@ return $this->getdeftitle();
 
 public function settitle($id, $title) {
 $widgets = twidgets::instance();
-if (isset($widget->items[$id])) {
-if ($widgets->items[$id]['title'] != $title) {
+if (isset($widgets->items[$id]) && ($widgets->items[$id]['title'] != $title)) {
 $widgets->items[$id]['title'] = $title;
 $widgets->save();
 }
 }
-}
-}
-  
-public function getcontent($id, $sitebar) {
+
+ public function getcontent($id, $sitebar) {
 return '';
 }
 

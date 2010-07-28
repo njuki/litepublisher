@@ -46,7 +46,7 @@ $this->error('Not implemented');
 
 protected function optionsform($content) {
     $args = targs::instance();
-$args->title = $this->widget->gettitle($widget->id);
+$args->title = $this->widget->gettitle($this->widget->id);
 $args->content = $content;
 return $this->html->optionsform($args);
 }
