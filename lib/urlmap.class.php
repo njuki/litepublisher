@@ -150,7 +150,7 @@ class turlmap extends titems {
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
-      $this->deleteclass($item['class']);
+      //$this->deleteclass($item['class']);
       $this->notfound404();
     }
   }

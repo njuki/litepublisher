@@ -6,10 +6,9 @@ $data = new titems();
 unset($template->data['sitebars']);
 $eventnames = array('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
 foreach ($template->events as $name => $event) {
-if (!in_array($name,$eventnames)) unset($template->events[$name]);
+if (in_array($name,$eventnames)) unset($template->data['events'][$name]);
 }
 $template->save();
-
 
 $widgets = twidgets::instance();
 $widgets->lock();
