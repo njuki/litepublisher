@@ -7,7 +7,7 @@ $data = new titems();
 unset($template->data['sitebars']);
 $eventnames = array('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
 foreach ($template->events as $name => $event) {
-if (in_array($name,$eventnames)) unset($template->data['events'][$name]);
+if (!in_array($name,$eventnames)) unset($template->data['events'][$name]);
 }
 
 $s = 'echo round(($usec1 + $sec1) - ($usec2 + $sec2), 2), \'Sec \';';
