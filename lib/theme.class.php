@@ -172,16 +172,24 @@ class ttheme extends tevents {
   public function getpages($url, $page, $count) {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $link =$this->content->navi->link;
+$url = litepublisher::$options->url . $url;
     $suburl = rtrim($url, '/');
+$from = 1;
+$to = $count;
+$perpage = litepublisher::$options->perpage;
+if ($count > $perpage * 2) {
+$perpage2 = ceil($perpage / 2);
+//$page is midle of the bar
+$from = max(1, $page - $perpage2);
+$to = min($count, $page + $perpage2);
+}
     $a = array();
-    for ($i = 1; $i <= $count; $i++) {
-      $pageurl = $i == 1 ? litepublisher::$options->url . $url : litepublisher::$options->url . "$suburl/page/$i/";
+    for ($i = $from; $i <= $to; $i++) {
+      $pageurl = $i == 1 ? $url : $suburl . sprintf('/page/%d/', $i);
       $a[] = sprintf($i == $page ? $this->content->navi->current : $link, $pageurl, $i);
     }
     
-    $result = implode($this->content->navi->divider, $a);
-    $result = sprintf($this->content->navi, $result);
-    return $result;
+return sprintf($this->content->navi, implode($this->content->navi->divider, $a));
   }
   
   public function getposts(array $items, $lite) {
