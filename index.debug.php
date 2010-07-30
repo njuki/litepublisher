@@ -51,7 +51,7 @@ self::$_paths = array(
 );
 
 self::$paths = new tpaths();
-self::$microtime = microtime();
+self::$microtime = microtime(true);
 }
 
 }

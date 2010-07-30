@@ -42,7 +42,7 @@ class litepublisher {
     );
     
     self::$paths = new tpaths();
-    self::$microtime = microtime();
+    self::$microtime = microtime(true);
   }
   
 }

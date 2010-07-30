@@ -69,15 +69,15 @@ class tdatabase {
     if (litepublisher::$debug) {
       $this->history[] = array(
       'sql' => $sql,
-      'started' => microtime(),
-      'finished' => microtime()
+      'time' => 0
       );
+      $microtime = microtime(true);
     }
     
     if (is_resource ($this->result)) mysql_free_result($this->result);
     $this->result = mysql_query($sql, $this->handle);
     if (litepublisher::$debug) {
-      $this->history[count($this->history) - 1]['finished'] = microtime();
+      $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
       //if (count($this->history) > 100) $this->error("too many queries");
     }
     if ($this->result == false) {

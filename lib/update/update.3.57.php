@@ -1,4 +1,5 @@
 <?php
+
 function update357() {
 $template = ttemplate::instance();
 $data = new titems();
@@ -8,6 +9,16 @@ $eventnames = array('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'o
 foreach ($template->events as $name => $event) {
 if (in_array($name,$eventnames)) unset($template->data['events'][$name]);
 }
+
+$s = 'echo round(($usec1 + $sec1) - ($usec2 + $sec2), 2), \'Sec \';';
+if ($i = strpos($template->footer, $s)) {
+$template->footer = substr_replace($template->footer, 'echo round(microtime(true) - litepublisher::$microtime, 2), \'Sec \';', $i, strlen($s));
+$s = 'list($usec1, $sec1) = explode(\' \', microtime());';
+if ($i = strpos($template->footer, $s))  $template->footer = substr_replace($template->footer, '', $i, strlen($s));
+$s = 'list($usec2, $sec2) = explode(\' \', litepublisher::$microtime);';
+if ($i = strpos($template->footer, $s)) $template->footer = substr_replace($template->footer, '', $i, strlen($s));
+}
+
 $template->save();
 
 $widgets = twidgets::instance();
@@ -207,7 +218,7 @@ $widgets->unlock();
 
 $admin = tadminmenus::instance();
 $admin->lock();
-$idwidgets = $admin->url2id('/admin/widgets/');
+$idwidgets = url2id($admin, '/admin/widgets/');
 $admin->deleteurl('/admin/widgets/std/');
 $admin->deleteurl('/admin/widgets/stdoptions/');
 $admin->deleteurl('/admin/widgets/links/');
@@ -236,5 +247,28 @@ $install = $lib . 'install' . DIRECTORY_SEPARATOR;
 @unlink($install . 'widget.custom.class.install.php');
 
 @unlink($lib . 'widgets.comments.class.php');
+
+litepublisher::$options->version = '3.57';
+litepublisher::$urlmap->redir301('/admin/service/' . litepublisher::$options->q . 'update=1');
 }
+
+if (!function_exists('array_insert')) {
+function array_delete_value(array &$a, $value) {
+  $i = array_search($value, $a);
+  if ($i !== false)         array_splice($a, $i, 1);
+}
+
+function array_insert(array &$a, $item, $index) {
+  array_splice($a, $index, 0, array($item));
+}
+
+}
+
+  function url2id(tmenus $menus, $url) {
+    foreach ($menus->items as $id => $item) {
+      if ($url == $item['url']) return $id;
+    }
+    return false;
+  }
+  
 ?>

@@ -199,20 +199,17 @@ class tdbmanager  {
     $total = 0.0;
     $max = 0.0;
     foreach (litepublisher::$db->history as $i => $item) {
-      list($usec2, $sec2) = explode(' ', $item['started']);
-      list($usec1, $sec1) = explode(' ', $item['finished']);
-      $worked = round(($usec1 + $sec1) - ($usec2 + $sec2), 8);
-      $total += $worked;
-      if ($max < $worked) {
-        $maxsql = $item['sql'];
-        $max = $worked;
-      }
     $result .= "$i: $worked\n{$item['sql']}\n\n";
+      $total += $item['time'];
+      if ($max < $item['time']) {
+        $maxsql = $item['sql'];
+        $max = $item['time'];
+      }
     }
     $result .= "maximum $max\n$maxsql\n";
     $result .= sprintf("%s total time\n%d querries\n\n", $total, count(litepublisher::$db->history));
-    
     return $result;
   }
+  
 }//class
 ?>
