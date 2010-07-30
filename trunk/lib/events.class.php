@@ -60,7 +60,7 @@ class tevents extends tdata {
   public function eventexists($name) {
     return in_array($name, $this->eventnames);
   }
-
+  
   public function __get($name) {
     if (method_exists($this, $name)) return array('class' =>get_class($this), 'func' => $name);
     return parent::__get($name);

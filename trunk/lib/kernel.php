@@ -832,6 +832,8 @@ class toptions extends tevents {
   }
   
   protected function create() {
+    //fix old version
+    if (is_string(litepublisher::$microtime)) litepublisher::$microtime = microtime(true);
     parent::create();
     $this->basename = 'options';
     $this->addevents('changed', 'perpagechanged', 'onsave');
@@ -1179,7 +1181,7 @@ class turlmap extends titems {
     if (class_exists($item['class']))  {
       return $this->GenerateHTML($item);
     } else {
-      $this->deleteclass($item['class']);
+      //$this->deleteclass($item['class']);
       $this->notfound404();
     }
   }
@@ -1216,7 +1218,7 @@ class turlmap extends titems {
       $s = $template->request($this->context);
     }
     eval('?>'. $s);
-    if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
+    if (litepublisher::$options->cache && $this->context->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);

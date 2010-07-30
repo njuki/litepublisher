@@ -388,7 +388,7 @@ class twidgets extends titems {
     $title = sprintf('<a onclick="widgets.load(this, %d, %d)">%s</a>', $id, $sitebar, $this->items[$id]['title']);
     $content = "<!--widgetcontent-$id-->";
     $theme = ttheme::instance();
-    return $theme->getwidget($title, $content, $thisitems[$id]['template'], $sitebar);
+    return $theme->getwidget($title, $content, $this->items[$id]['template'], $sitebar);
   }
   
   public function getwidgetcache($id, $sitebar) {

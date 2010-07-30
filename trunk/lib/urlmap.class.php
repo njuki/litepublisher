@@ -187,7 +187,7 @@ class turlmap extends titems {
       $s = $template->request($this->context);
     }
     eval('?>'. $s);
-    if (litepublisher::$options->cache && $source->cache &&!litepublisher::$options->admincookie) {
+    if (litepublisher::$options->cache && $this->context->cache &&!litepublisher::$options->admincookie) {
       $cachefile = $this->getcachefile($item);
       file_put_contents($cachefile, $s);
       chmod($cachefile, 0666);
