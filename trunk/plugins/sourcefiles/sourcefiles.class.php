@@ -43,7 +43,7 @@ public function gethead() { }
     if (strend($this->item['filename'], '.php')) {
       $dir = str_replace('/', DIRECTORY_SEPARATOR, $this->item['dir']);
       $realdir = litepublisher::$paths->home;
-      $realdir .= $dir == '' : 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
+      $realdir .= $dir == '' ? 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
       $realfile = $realdir . DIRECTORY_SEPARATOR. $this->item['filename'] ;
       return sprintf($theme->content->simple, $updir . highlight_file($realfile , true));
     } else {

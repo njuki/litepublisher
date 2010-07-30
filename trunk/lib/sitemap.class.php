@@ -82,7 +82,7 @@ public function getdescription() {}
       $result .= "</ul>\n";
     }
     
-    $result .=$theme->getpages('/sitemap/', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
+    $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
     return $result;
   }
   
