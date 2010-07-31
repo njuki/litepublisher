@@ -75,13 +75,13 @@ public function getdescription() {}
     if (litepublisher::$urlmap->page  == 1) {
       $tags = ttags::instance();
       $tags->loadall();
-if ($tags->count > 0) {
-      $result .= '<h3>' . tlocal::$data['default']['tags'] . "</h3>\n<ul>\n";
-      foreach ($tags->items as $id => $item) {
-      $result .= "<li><a href=\"".  litepublisher::$options->url. $item['url'] . "\">{$item['title']}</a></li>\n";
+      if ($tags->count > 0) {
+        $result .= '<h3>' . tlocal::$data['default']['tags'] . "</h3>\n<ul>\n";
+        foreach ($tags->items as $id => $item) {
+        $result .= "<li><a href=\"".  litepublisher::$options->url. $item['url'] . "\">{$item['title']}</a></li>\n";
+        }
+        $result .= "</ul>\n";
       }
-      $result .= "</ul>\n";
-}
     }
     
     $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));

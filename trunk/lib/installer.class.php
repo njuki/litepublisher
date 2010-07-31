@@ -338,6 +338,7 @@ class tinstaller extends tdata {
     require_once(litepublisher::$paths->lib . 'local.class.php');
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
     tlocal::loadlang('admin');
+    date_default_timezone_set(tlocal::$data['installation']['timezone']);
   }
   
   private function GetBrowserLang() {
