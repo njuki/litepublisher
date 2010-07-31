@@ -1,11 +1,13 @@
 <?php
 //set_time_limit(1);
 error_reporting(E_ALL);
+error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
+//set_error_handler("exception_error_handler");
  Header( 'Cache-Control: no-cache, must-revalidate');
   Header( 'Pragma: no-cache');
 
 function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-if (strpos($errstr, 'timezone')) return;
+//if (strpos($errstr, 'timezone')) return;
 //    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 //if ($errno == 2 || $errno == 2048) return;
 $errfile= str_replace(dirname(__file__), '', $errfile);
@@ -15,7 +17,7 @@ $s = str_replace($s, 'F:\web5\home\blogolet.ru\www', '');
 echo $s;
 //    throw new Exception('handle exception');
 }
-set_error_handler("exception_error_handler");
+//set_error_handler("exception_error_handler");
 //echo "<pre>\n";
 
 class litepublisher {
@@ -111,5 +113,4 @@ $man = tdbmanager::instance();
 //var_dump(litepublisher::$_paths);
 //litepublisher::$urlmap->clearcache();
 //var_dump(litepublisher::$options->dbconfig);
-
 ?>

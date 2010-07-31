@@ -78,7 +78,7 @@
 		<!--/excerpt-->
 
 			<!--lite-->
-			<h1>$lang.archivelist</h1>
+			<h1>$lang.posts</h1>
 			<ul>
 				<!--excerpt-->
 				<li>$post.date <a href="$options.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>
@@ -219,12 +219,12 @@
 							<!--confirmform-->
 								<h2>$lang.formhead</h2>
 								<form name="preform" method="post" action="">
-								  <p><input type="submit" name="submit" value="$lang.robot"/></p>
+								  <p><input type="submit" name="submit1" value="$lang.robot"/></p>
 								</form>
 
 								<form name="form" method="post" action="">
 								<input type="hidden" name="confirmid" value="$confirmid" />
-								  <p><input type="submit" name="submit" value="$lang.human"/></p>
+								  <p><input type="submit" name="submit2" value="$lang.human"/></p>
 								</form>
 							<!--/confirmform-->
 						<!--/templatecomments-->

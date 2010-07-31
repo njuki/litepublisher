@@ -178,10 +178,9 @@ $from = 1;
 $to = $count;
 $perpage = litepublisher::$options->perpage;
 if ($count > $perpage * 2) {
-$perpage2 = ceil($perpage / 2);
 //$page is midle of the bar
-$from = max(1, $page - $perpage2);
-$to = min($count, $page + $perpage2);
+$from = max(1, $page - ceil($perpage / 2));
+$to = min($count, $from + $perpage);
 }
     $a = array();
     for ($i = $from; $i <= $to; $i++) {

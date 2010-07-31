@@ -18,14 +18,13 @@ class ttickets extends tposts {
     $this->ticketstable = 'tickets';
   }
   
-  public function getcount($where) {
+  public function getticketscount($where) {
     $db = litepublisher::$db;
     if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $db->tickets
     where $db->posts.status <> 'deleted' and $db->tickets.id = $db->posts.id $where")) {
       if ($r = $db->fetchassoc($res)) return $r['count'];
     }
     return 0;
-    
   }
   
   public function transformres($res) {
