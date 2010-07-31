@@ -69,7 +69,7 @@ $post.commentslink
 <!--/excerpt-->		
 
 <!--lite-->
-<h1>$lang.archivelist</h1>
+<h1>$lang.posts</h1>
 <ul>
 <!--excerpt-->
 <li>$post.date <a href="$options.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>

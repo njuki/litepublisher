@@ -39,7 +39,7 @@ class tadmintickets extends tadminmenu {
       break;
     }
     
-    $count = $tickets->getcount($where);
+    $count = $tickets->getticketscount($where);
     $from = $this->getfrom($perpage, $count);
     if ($count > 0) {
       $items = $tickets->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
