@@ -81,7 +81,7 @@ class tadmincontextwidget extends torderwidget {
     
     $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
     $links = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
-    return $theme->getwidget($this->title, $links, 'widget', $sitebar);
+    return $theme->getwidget($this->gettitle($id), $links, 'widget', $sitebar);
   }
   
 }//class

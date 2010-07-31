@@ -18,6 +18,7 @@ function tsamepostsInstall($self) {
   $widgets = twidgets::instance();
   $widgets->addclass($self, 'tpost');
   
+  $posts = tposts::instance();
   $posts->changed = $self->postschanged;
 }
 

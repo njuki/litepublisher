@@ -838,7 +838,7 @@ class toptions extends tevents {
     $this->basename = 'options';
     $this->addevents('changed', 'perpagechanged', 'onsave');
     unset($this->cache);
-    $this->gmt = date('Z');
+    $this->gmt = 0;
     $this->errorlog = '';
     $this->modified = false;
     $this->admincookie = false;
@@ -848,7 +848,7 @@ class toptions extends tevents {
     if (!parent::load()) return false;
     $this->modified = false;
     date_default_timezone_set($this->timezone);
-    $this->gmt = @date('Z');
+    $this->gmt = date('Z');
     setlocale(LC_ALL, 'en_EN'); //fix strftime
     if (!defined('dbversion')) {
       define('dbversion', isset($this->data['dbconfig']));

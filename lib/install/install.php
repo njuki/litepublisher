@@ -10,7 +10,7 @@ if (!defined('litepublisher_mode')) define('litepublisher_mode', 'install');
 require_once(litepublisher::$paths->lib . 'installer.class.php');
 if (litepublisher::$debug) {
   require_once(litepublisher::$paths->lib . 'filer.class.php');
-  tfiler::delete(litepublisher::$paths->data, true, true);
+  if (is_dir(litepublisher::$paths->data)) tfiler::delete(litepublisher::$paths->data, true, true);
 }
 $installer = new tinstaller();
 $installer->install();

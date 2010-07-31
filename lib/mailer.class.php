@@ -14,10 +14,14 @@ class tmailer {
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = gmdate ("M d Y H:i:s");
     if (litepublisher::$debug) {
-      $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . strftime ('%H-%M-%S.%d.%m.%Y.eml');
+      $dir = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR ;
+      if (!is_dir($dir)) {
+        mkdir($dir, 0777);
+        @chmod($dir, 0777);
+      }
       $eml = "To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: LitePublisher mailer\n\n$body";
       
-      return file_put_contents($filename, $eml);
+      return file_put_contents($dir . date('H-i-s.d.m.Y.\e\m\l'), $eml);
     }
     
     mail($to, $subj, $body,

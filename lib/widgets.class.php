@@ -59,6 +59,7 @@ class twidget extends tevents {
   }
   
   public function gettitle($id) {
+    if (!isset($id)) $this->error('no id');
     $widgets = twidgets::instance();
     if (isset($widgets->items[$id])) {
       return $widgets->items[$id]['title'];

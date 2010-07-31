@@ -33,6 +33,7 @@ function installoptions($language) {
   $options->language = $language;
   tlocal::loadlang('admin');
   $options->timezone = tlocal::$data['installation']['timezone'];
+  date_default_timezone_set(tlocal::$data['installation']['timezone']);
   $options->dateformat = '';
   $options->keywords = "blog";
   $options->login = "admin";

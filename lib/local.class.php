@@ -103,15 +103,15 @@ class tlocal {
   }
   
   public static function install() {
-$dir =litepublisher::$paths->data . 'languages';
-if (!is_dir($dir)) @mkdir($dir, 0777);
-@chmod($dir, 0777);
+    $dir =litepublisher::$paths->data . 'languages';
+    if (!is_dir($dir)) @mkdir($dir, 0777);
+    @chmod($dir, 0777);
     self::checkload();
   }
-
-public static function clearcache() {
+  
+  public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'languages', false, false);
-}
+  }
   
 }//class
 
