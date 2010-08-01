@@ -81,7 +81,7 @@ class THtmlResource  {
       }
     }
     
-    $s = strtr ($s, $args->data);
+    $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
   

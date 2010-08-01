@@ -151,7 +151,7 @@ class tthemeparser extends tdata {
     }
     
     if ($dateformat = $this->parsetag($s, 'date', '$post.excerptdate')) {
-      $result['dateformat'] = $dateformat;
+      $result['dateformat'] = self::strftimetodate($dateformat);
     } else {
       $result['dateformat'] = $post['dateformat'];
     }
@@ -205,8 +205,8 @@ class tthemeparser extends tdata {
     $result['rss'] = $this->gettag($s, 'rss', '$post.subscriberss');
     $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post.prevnext'));
     $result['templatecomments'] = $this->parsetemplatecomments($this->requiretag($s, 'templatecomments', '$post.templatecomments'));
-    // после комментариев из за секции date в комментарии
-    $result['dateformat'] = $this->parsetag($s, 'date', '$post.date');
+    // after coments due to section 'date' in comment
+    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.date'));
     $result[0] = $s;
     return $result;
   }
@@ -275,7 +275,7 @@ class tthemeparser extends tdata {
     $result['class2'] = $this->parsetag($s, 'class2', '');
     $result['moderate'] = $this->gettag($s, 'moderate', '$moderate');
     
-    $result['dateformat'] = $this->parsetag($s, 'date', '$comment.date');
+    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$comment.date'));
     $result[0] = $s;
     return $result;
   }
@@ -441,6 +441,49 @@ class tthemeparser extends tdata {
     }
   }
   
+  
+  public static function strftimetodate($format) {
+    static $trans;
+    if (!isset($trans)) $trans = array(
+    '%a' => 'D',
+    '%A' => 'l',
+    '%b' => 'M',
+    '%B' => 'F',
+    '%c' => tlocal::$data['datetime']['dateformat'],
+    '%C' => 'y',
+    '%d' => 'd',
+    '%D' => 'i/d/y',
+    '%e' => 'j',
+    '%g' => 'Y',
+    '%G' => 'Y',
+    '%h' => 'F',
+    '%H' => 'H',
+    '%I' => 'h',
+    '%j' => 'z',
+    '%m' => 'm',
+    '%M' => 'i',
+    '%n' => "\n",
+    '%p' => 'A',
+    '%r'  => 'ga.',
+    '%R' => 'G',
+    '%S' =>  's',
+    '%t' => "\t",
+    '%T' => 'H:i:s',
+    '%u'=> 'w', // must be +1
+    '%U' => 'W',
+    '%V' => 'W',
+    '%W' => 'W',
+    '%w' => 'w',
+    '%x' => tlocal::$data['datetime']['dateformat'],
+    '%X' => 'H:i:s',
+    '%y' => 'y',
+    '%Y' => 'Y',
+    '%Z' => 't',
+    '%%' => '%'
+    );
+    
+    return strtr($format, $trans);
+  }
   
   //wordpress
   public function checktheme(ttheme $theme) {
