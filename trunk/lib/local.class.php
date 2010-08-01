@@ -60,7 +60,7 @@ class tlocal {
   
   public static function date($date, $format = '') {
     if (empty($format)) $format = self::getdateformat();
-    return self::translate(strftime ($format, $date), 'datetime');
+    return self::translate(date($format, $date), 'datetime');
   }
   
   public static function getdateformat() {

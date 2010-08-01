@@ -102,7 +102,7 @@ public function getdescription() {}
   }
   
   public function getIndex() {
-    $lastmod = strftime("%Y-%m-%d", $this->date);
+    $lastmod = date('Y-m-d', $this->date);
     
     $result = '
     
@@ -124,7 +124,7 @@ public function getdescription() {}
     $this->countfiles = 0;
     $this->count = 0;
     $this->date = time();
-    $this->lastmod = strftime("%Y-%m-%d", $this->date);
+    $this->lastmod = date('Y-m-d', $this->date);
     $this->openfile();
     
     //home page
