@@ -38,7 +38,10 @@ class tsourcefiles extends tplugin {
 public function getdescription() { }
 public function gethead() { }
   public function getcont() {
-    $updir = $this->item['filename'] == '' ? '' : sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li>', litepublisher::$options->url, $this->item['dir']);
+    $updir = '';
+if($this->item['filename'] != '') {
+    $updir = sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$options->url, $this->item['dir']);
+}
     $theme = ttheme::instance();
     if (strend($this->item['filename'], '.php')) {
       $dir = str_replace('/', DIRECTORY_SEPARATOR, $this->item['dir']);

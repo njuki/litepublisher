@@ -215,7 +215,8 @@ class tcommentmanager extends tevents {
     tmailer::sendtoadmin($subject, $body, true);
   }
   
-  public function getrecent($count) {
+//status supports only db version
+  public function getrecent($count, $status = 'approved') {
     if (dbversion) {
       $db = litepublisher::$db;
       $res = $db->query("select $db->comments.*,
@@ -223,7 +224,7 @@ class tcommentmanager extends tevents {
       $db->posts.title as title, $db->posts.commentscount as commentscount,
       $db->urlmap.url as posturl
       from $db->comments, $db->comusers, $db->posts, $db->urlmap
-      where $db->comments.status = 'approved' and
+      where $db->comments.status = '$status' and
       $db->comusers.id = $db->comments.author and
       $db->posts.id = $db->comments.post and
       $db->urlmap.id = $db->posts.idurl and

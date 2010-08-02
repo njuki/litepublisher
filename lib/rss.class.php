@@ -30,34 +30,30 @@ class trss extends tevents {
   }
   
   public function request($arg) {
-    $result = "<?php\n";
+    $result = '';
     if (($arg == 'posts') && ($this->feedburner  != '')) {
-      $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
+      $result .= "<?php
+if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburner');
         header('HTTP/1.1 307 Temporary Redirect');
         return;
       }
-      ";
+      ?>";
     }elseif (($arg == 'comments') && ($this->feedburnercomments  != '')) {
-      $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
+      $result .= "<?php
+if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburnercomments');
         header('HTTP/1.1 307 Temporary Redirect');
         return;
       }
-      ";
+      ?>";
     }
-    
-    $result .= "  @header('Content-Type: text/xml; charset=utf-8');
-    @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
-    echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
-    ?>";
-    
-    $this->domrss = new Tdomrss;
-    
-    switch ($arg) {
+
+    $result .= turlmap::xmlheader();
+        $this->domrss = new Tdomrss;
+        switch ($arg) {
       case 'posts':
       $this->GetRSSRecentPosts();
       break;
@@ -101,6 +97,26 @@ class trss extends tevents {
     foreach ($recent  as $item) {
       $comment->array = $item;
       //$comment->posturl = $post->url;
+      $this->AddRSSComment($comment, $title . $comment->title);
+    }
+  }
+
+  public function getholdcomments($url, $count) {
+$result = turlmap::xmlheader();
+$this->dogetholdcomments($url, $count);
+    $result .= $this->domrss->GetStripedXML();
+    return $result;
+}
+
+  private function dogetholdcomments($url, $count) {
+    $this->domrss->CreateRoot(litepublisher::$options->url . $url, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
+    $manager = tcommentmanager::instance();
+    $recent = $manager->getrecent($count, 'hold');
+    $title = tlocal::$data['comment']['onpost'] . ' ';
+    $a = array();
+    $comment = new tarray2prop($a);
+    foreach ($recent  as $item) {
+      $comment->array = $item;
       $this->AddRSSComment($comment, $title . $comment->title);
     }
   }
