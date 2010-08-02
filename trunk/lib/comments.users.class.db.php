@@ -67,7 +67,7 @@ class tcomusers extends titems {
   
   public function request($arg) {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-    if (!$this->itemexists($id)) return 404;
+    if (!$this->itemexists($id)) return turlmap::redir301('/');
     $item = $this->getitem($id);
     $url = $item['url'];
     if (!strpos($url, '.')) $url = litepublisher::$options->url . litepublisher::$options->home;

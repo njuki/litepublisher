@@ -93,7 +93,7 @@ class tcomusers extends titems {
     try {
       $item = $this->getitem($id);
     } catch (Exception $e) {
-      return 404;
+      return turlmap::redir301('/');
     }
     
     $url = $item['url'];

@@ -7,15 +7,19 @@ $notfound->save();
 }
 
 if (dbversion) {
-litepublisher::$classes->add('tadmincommentsrss', 'admin.comments.hold.class.db.php');
+litepublisher::$classes->add('trssholdcomments', 'rss.holdcomments.class.db.php');
 $admin = tadminmenus::instance();
 $idcomments = $admin->url2id('/admin/comments/');
-$admin->createitem($idcomments, 'holdrss', 'moderator', 'tadmincommentsrss');
+$admin->createitem($idcomments, 'holdrss', 'moderator', 'tadminmoderator');
 }
 
-
 $redir = tredirector::instance();
+$redir->lock();
 $redir->add('/rss/', '/rss.xml');
+$redir->add('/contact.php', '/kontakty.htm');
+$redir->add('/feed/', '/rss.xml');
+
+$redir->unlock();
   }
 
 ?>
