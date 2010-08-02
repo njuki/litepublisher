@@ -12,7 +12,7 @@ class tmailer {
   protected static function  send($from, $to, $subj, $body) {
     $options =     litepublisher::$options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
-    $date = gmdate ("M d Y H:i:s");
+    $date = date('r');
     if (litepublisher::$debug) {
       $dir = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR ;
       if (!is_dir($dir)) {
@@ -66,7 +66,7 @@ class tmailer {
   public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
     $options =     litepublisher::$options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
-    $date = gmdate ("M d Y H:i:s", time());
+    $date = date('r');
     $from = self::CreateEmail($options->name, $options->fromemail);
     $to = self::CreateEmail('admin', $options->email);
     $boundary = md5(microtime());
@@ -118,9 +118,9 @@ class TSMTPMailer extends tevents {
       if ($smtp->Authenticate($this->login, $this->password)) {
         if ($smtp->Mail($this->login) && $smtp->Recipient($toemail)) {
           $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
-          $date = gmdate ("M d Y H:i:s", time());
-          $from = TMailer::CreateEmail($fromname, $fromemail);
-          $to = TMailer::CreateEmail($toname, $toemail);
+    $date = date('r');
+          $from = tmailer::CreateEmail($fromname, $fromemail);
+          $to = tmailer::CreateEmail($toname, $toemail);
           
           $smtp->data("From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
         }
