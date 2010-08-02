@@ -57,7 +57,7 @@ class tadminlogin extends tadminform {
       $url = $groups->gethome($options->group);
     }
     
-return litepublisher::$urlmap->redir301($url);
+    return litepublisher::$urlmap->redir301($url);
   }
   
   public function getcontent() {

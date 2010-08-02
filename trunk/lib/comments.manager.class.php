@@ -215,7 +215,7 @@ class tcommentmanager extends tevents {
     tmailer::sendtoadmin($subject, $body, true);
   }
   
-//status supports only db version
+  //status supports only db version
   public function getrecent($count, $status = 'approved') {
     if (dbversion) {
       $db = litepublisher::$db;

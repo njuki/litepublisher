@@ -118,7 +118,7 @@ class TSMTPMailer extends tevents {
       if ($smtp->Authenticate($this->login, $this->password)) {
         if ($smtp->Mail($this->login) && $smtp->Recipient($toemail)) {
           $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
-    $date = date('r');
+          $date = date('r');
           $from = tmailer::CreateEmail($fromname, $fromemail);
           $to = tmailer::CreateEmail($toname, $toemail);
           

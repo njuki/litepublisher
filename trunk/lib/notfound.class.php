@@ -14,7 +14,7 @@ class tnotfound404 extends tevents {
   
   protected function create() {
     parent::create();
-$this->data['notify'] = true;
+    $this->data['notify'] = true;
     $this->basename = 'notfound';
     $this->data['text'] = '';
     $this->data['tmlfile'] = '';
@@ -31,22 +31,22 @@ $this->data['notify'] = true;
   }
   
   function getcont() {
-if ($this->notify) $this->sendmail();
+    if ($this->notify) $this->sendmail();
     $this->cache = false;
     $result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
     $theme = ttheme::instance();
     return sprintf($theme->content->simple, $result);
   }
-
-private function sendmail() {
-$args = targs::instance();
-$args->url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-$args->ref =  isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+  
+  private function sendmail() {
+    $args = targs::instance();
+    $args->url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $args->ref =  isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
     $mailtemplate = tmailtemplate::instance('notfound');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body, true);
-}
+  }
   
 }//class
 
