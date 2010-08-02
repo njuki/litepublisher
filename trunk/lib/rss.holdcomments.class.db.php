@@ -64,6 +64,14 @@ return 404;
 ttheme::$vars['comment'] = $comment;
 $theme = ttheme::instance();
 $tml = $this->template;
+if ($tml == '') {
+    $html = THtmlResource ::instance();
+    $html->section = 'comments';
+$tml = $html->rsstemplate;
+}
+$tml = str_replace('$adminurl', '/admin/comments/'. litepublisher::$options->q 'id=$comment.id&action=', $tml);
+tlocal::load('admin');
+    $lang = tlocal::instance('comments');
     foreach ($recent  as $item) {
       $comment->array = $item;
 $comment->content = $theme->parse($tml);
