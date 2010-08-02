@@ -126,6 +126,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'notfound404':
       $err = tnotfound404::instance();
+$args->notify = $err->notify;
       $args->content = $err->text;
       break;
       
@@ -136,7 +137,7 @@ class Tadminoptions extends tadminmenu {
   }
   
   public function processform() {
-    extract($_POST);
+    extract($_POST, EXTR_SKIP);
     $options = litepublisher::$options;
     
     switch ($this->name) {
@@ -352,6 +353,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'notfound404':
       $err = tnotfound404 ::instance();
+$err->notify = isset($notify);
       $err->text = $content;
       $err->save();
       break;

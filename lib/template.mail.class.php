@@ -16,9 +16,9 @@ class tmailtemplate extends titems {
   }
   
   protected function create() {
+    $this->dbversion = false;
     parent::create();
     $this->basename = 'template.mail';
-    $this->dbversion = false;
   }
   
   public function add($name, $subj, $body) {
