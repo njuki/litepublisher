@@ -7,12 +7,12 @@
 **/
 
 function trssholdcommentsInstall($self) {
-$self->idurl = litepublisher::$urlmap->add($self->url, get_class($self), null, 'get');
-$self->save();
+  $self->idurl = litepublisher::$urlmap->add($self->url, get_class($self), null, 'get');
+  $self->save();
 }
 
 function trssholdcommentsUninstall($self) {
-turlmap::unsub($self);
+  turlmap::unsub($self);
   litepublisher::$classes->commentmanager->unsubscribeclass($self);
 }
 

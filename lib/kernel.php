@@ -1233,7 +1233,7 @@ class turlmap extends titems {
     $this->is404 = true;
     $obj = tnotfound404::instance();
     $Template = ttemplate::instance();
-    $s = &$Template->request($obj);
+    $s = $Template->request($obj);
     eval('?>'. $s);
   }
   
@@ -1468,6 +1468,16 @@ class turlmap extends titems {
     $url = $this->itemrequested['url'];
     if ($this->page <= 2) return url;
     return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
+  }
+  
+  public static function xmlheader() {
+    $url = litepublisher::$options->url;
+    return "<?php
+    header('Content-Type: text/xml; charset=utf-8');
+    header('Last-Modified: " . date('r') ."');
+    header('X-Pingback: $url/rpc.xml');
+    echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
+    ?>";
   }
   
 }//class

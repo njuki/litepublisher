@@ -224,6 +224,8 @@ send lib\robotstxt.class.php lib/robotstxt.class.php
 quote site chmod 666 lib/robotstxt.class.php
 send lib\rss.class.php lib/rss.class.php
 quote site chmod 666 lib/rss.class.php
+send lib\rss.holdcomments.class.db.php lib/rss.holdcomments.class.db.php
+quote site chmod 666 lib/rss.holdcomments.class.db.php
 send lib\rss.multimedia.class.php lib/rss.multimedia.class.php
 quote site chmod 666 lib/rss.multimedia.class.php
 send lib\simplecontent.class.php lib/simplecontent.class.php
@@ -446,6 +448,8 @@ send lib\install\robotstxt.class.install.php lib/install/robotstxt.class.install
 quote site chmod 666 lib/install/robotstxt.class.install.php
 send lib\install\rss.class.install.php lib/install/rss.class.install.php
 quote site chmod 666 lib/install/rss.class.install.php
+send lib\install\rss.holdcomments.class.db.install.php lib/install/rss.holdcomments.class.db.install.php
+quote site chmod 666 lib/install/rss.holdcomments.class.db.install.php
 send lib\install\rss.multimedia.class.install.php lib/install/rss.multimedia.class.install.php
 quote site chmod 666 lib/install/rss.multimedia.class.install.php
 send lib\install\sitemap.class.install.php lib/install/sitemap.class.install.php
@@ -526,6 +530,10 @@ send lib\update\update.3.56.php lib/update/update.3.56.php
 quote site chmod 666 lib/update/update.3.56.php
 send lib\update\update.3.57.php lib/update/update.3.57.php
 quote site chmod 666 lib/update/update.3.57.php
+send lib\update\update.3.58.php lib/update/update.3.58.php
+quote site chmod 666 lib/update/update.3.58.php
+send lib\update\update.3.59.php lib/update/update.3.59.php
+quote site chmod 666 lib/update/update.3.59.php
 cd lib
 mkdir languages
 quote site chmod 777 languages

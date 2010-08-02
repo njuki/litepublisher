@@ -18,7 +18,6 @@ $redir->lock();
 $redir->add('/rss/', '/rss.xml');
 $redir->add('/contact.php', '/kontakty.htm');
 $redir->add('/feed/', '/rss.xml');
-
 $redir->unlock();
   }
 

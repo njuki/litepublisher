@@ -33,7 +33,7 @@ class trss extends tevents {
     $result = '';
     if (($arg == 'posts') && ($this->feedburner  != '')) {
       $result .= "<?php
-if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
+      if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburner');
         header('HTTP/1.1 307 Temporary Redirect');
@@ -42,7 +42,7 @@ if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
       ?>";
     }elseif (($arg == 'comments') && ($this->feedburnercomments  != '')) {
       $result .= "<?php
-if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
+      if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburnercomments');
         header('HTTP/1.1 307 Temporary Redirect');
@@ -50,10 +50,10 @@ if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
       }
       ?>";
     }
-
+    
     $result .= turlmap::xmlheader();
-        $this->domrss = new Tdomrss;
-        switch ($arg) {
+    $this->domrss = new Tdomrss;
+    switch ($arg) {
       case 'posts':
       $this->GetRSSRecentPosts();
       break;
@@ -100,14 +100,14 @@ if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
       $this->AddRSSComment($comment, $title . $comment->title);
     }
   }
-
+  
   public function getholdcomments($url, $count) {
-$result = turlmap::xmlheader();
-$this->dogetholdcomments($url, $count);
+    $result = turlmap::xmlheader();
+    $this->dogetholdcomments($url, $count);
     $result .= $this->domrss->GetStripedXML();
     return $result;
-}
-
+  }
+  
   private function dogetholdcomments($url, $count) {
     $this->domrss->CreateRoot(litepublisher::$options->url . $url, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
     $manager = tcommentmanager::instance();
