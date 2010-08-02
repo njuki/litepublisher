@@ -12,9 +12,9 @@ class tredirector extends titems {
   }
   
   protected function create() {
+    $this->dbversion = false;
     parent::create();
     $this->basename = 'redirector';
-    $this->dbversion = false;
   }
   
   public function add($from, $to) {

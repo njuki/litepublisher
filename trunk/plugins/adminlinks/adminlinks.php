@@ -65,7 +65,7 @@ class tadmincontextwidget extends torderwidget {
         break;
         
         default:
-        if (litepublisher::$urlmap->context instanceof tmenu) {
+        if ((litepublisher::$urlmap->context instanceof tmenu) && !(litepublisher::$urlmap->context instanceof tadminmenu)) {
           $menu = litepublisher::$urlmap->context;
           $lang = tlocal::instance('menu');
           $title = $lang->title;

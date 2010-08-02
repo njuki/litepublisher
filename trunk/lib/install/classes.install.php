@@ -24,7 +24,7 @@ function ParseClassesIni() {
   
   $ini = parse_ini_file(litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
   foreach ($ini['items'] as $class => $filename) {
-    //исключить из списка только файлы для бд или файлов
+    //exclude files
     if (strpos($filename, $exclude)) continue;
     if (!file_exists(litepublisher::$paths->lib . $filename)){
       $filename = str_replace('.class.', $replace, $filename);
