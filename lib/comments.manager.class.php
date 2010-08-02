@@ -220,7 +220,7 @@ class tcommentmanager extends tevents {
     if (dbversion) {
       $db = litepublisher::$db;
       $res = $db->query("select $db->comments.*,
-      $db->comusers.name as name,
+      $db->comusers.name as name, $db->comusers.email as email, $db->comusers.url as url,
       $db->posts.title as title, $db->posts.commentscount as commentscount,
       $db->urlmap.url as posturl
       from $db->comments, $db->comusers, $db->posts, $db->urlmap
