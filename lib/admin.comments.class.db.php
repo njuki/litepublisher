@@ -110,8 +110,16 @@ class tadminmoderator extends tadminmenu {
       
       $result .= $this->getauthorslist();
       return $result;
+
+case 'holdrss':
+$rss = trssholdcomments::instance();
+    $args = targs::instance();
+$args->rssurl = $rss->rssurl;
+$args->key = $rss->key;
+$args->count = $rss->count;
+$args->template = $rss->template;
+return $html->holdrss($args);
     }
-    
   }
   
   private function editcomment($id) {
@@ -326,9 +334,8 @@ class tadminmoderator extends tadminmenu {
           $item = $comments->getitem($this->idget() );
           $post = tpost::instance( (int) $item['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
-          header("Location: " . litepublisher::$options->url . $post->lastcommenturl);
-          exit();
-          
+return turlmap::redir301($post->lastcommenturl);
+
           case 'edit':
           $comments = tcomments::instance();
           $comment = $comments->getcomment($this->idget);
@@ -356,7 +363,7 @@ class tadminmoderator extends tadminmenu {
       case 'pingback':
       $pingbacks = tpingbacks::instance();
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
-        extract($_POST);
+    extract($_POST, EXTR_SKIP);
         $pingbacks->edit($this->idget(), $title, $url);
       } else {
         $status = isset($_POST['approve']) ? 'approve' : (isset($_POST['hold']) ? 'hold' : 'delete');
@@ -398,6 +405,17 @@ class tadminmoderator extends tadminmenu {
         $result =  $html->h2->authoredited;
       }
       break;
+
+case 'holdrss':
+    extract($_POST, EXTR_SKIP);
+$rss = trssholdcomments::instance();
+$rss->lock();
+$rss->key = $key;
+$rss->count = (int) $count;
+$rss->template = $template;
+$rss->unlock();
+$result = '';
+break;
     }
     
     litepublisher::$urlmap->clearcache();

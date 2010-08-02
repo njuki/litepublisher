@@ -77,7 +77,7 @@ if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
   }
   
   public function GetRSSRecentPosts() {
-    $this->domrss->CreateRoot(litepublisher::$options->url. '/rss/', litepublisher::$options->name);
+    $this->domrss->CreateRoot(litepublisher::$options->url. '/rss.xml', litepublisher::$options->name);
     $posts = tposts::instance();
     $list = $posts->getrecent(litepublisher::$options->perpage);
     foreach ($list as $id ) {
