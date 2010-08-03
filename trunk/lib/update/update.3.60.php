@@ -2,9 +2,9 @@
 function update360() {
 if (dbversion) {
 $admin = tadminmenus::instance();
-if ($id = $admin->url2id('/admin/comments/holdrss/');
+if ($id = $admin->url2id('/admin/comments/holdrss/')) {
 tlocal::loadlang('admin');
-$admin->items[$id]['title'] = tlocal::$data[['names']['holdrss'];
+$admin->items[$id]['title'] = tlocal::$data['names']['holdrss'];
 $admin->save();
 ttheme::clearcache();
 }
