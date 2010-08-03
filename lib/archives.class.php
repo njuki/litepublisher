@@ -52,7 +52,7 @@ class tarchives extends titems implements  itemplate {
         $this->items[$this->date] = array(
         'idurl' => 0,
         'url' => $linkgen->Createlink($this, 'archive', false),
-        'title' => tlocal::date($this->date, '%B %Y'),
+        'title' => tlocal::date($this->date, 'F Y'),
         'year' => $r['year'],
         'month' => $r['month'],
         'count' => $r['count']
@@ -66,7 +66,7 @@ class tarchives extends titems implements  itemplate {
           $this->items[$this->date] = array(
           'idurl' => 0,
           'url' => $linkgen->Createlink($this, 'archive', false),
-          'title' => tlocal::date($this->date, '%B %Y'),
+          'title' => tlocal::date($this->date, 'F Y'),
           'year' => $d['year'],
           'month' =>$d['mon'],
           'count' => 0,
