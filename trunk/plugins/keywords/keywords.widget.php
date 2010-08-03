@@ -30,8 +30,11 @@ class tkeywordswidget extends twidget {
   }
   
   public function getwidget($id, $sitebar) {
-    if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
-    return parent::getwidget($id, $sitebar);
+      $content = $this->getcontent($id, $sitebar);
+if ($content == '') return '';
+      $title = $this->gettitle($id);
+    $theme = ttheme::instance();
+    return $theme->getwidget($title, $content, $this->template, $sitebar);
   }
   
   public function getcontent($id, $sitebar) {
