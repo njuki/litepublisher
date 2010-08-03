@@ -118,35 +118,33 @@ class tfiles extends titems {
     }
     
     $theme = ttheme::instance();
-    $tml = $theme->content->post->files;
+    $templates = $theme->content->post->files->array;
+$img = $theme->content->post->files->image->img;
     $args = targs::instance();
-    
-    foreach ($items as $type => $subitems) {
+$imgargs = targs::instance();
+        foreach ($items as $type => $subitems) {
       foreach ($subitems as $id) {
         $item = $this->items[$id];
+        $args->preview  = '';
         $args->add($item);
         $args->id = $id;
-        $itemtml = empty($tml->array[$type]) ? $tml->array['file'] : $tml->array[$type];
-        $preview = $this->getpreview($item['preview']);
-        if (($preview == '') && ($type == 'image')) {
-          $preview = sprintf('<img src="%1$/files/%2$s" title="%2$s" alt="%2$s"/>', litepublisher::$options->files, $item['filename']);
-        }
-        $args->preview  = $preview;
-        $result .= $theme->parsearg($itemtml , $args);
+    if ($item['preview'] > 0) {
+    $imgitem = $this->getitem($item['preview']);
+    if ($imgitem['media'] === 'image') {
+$imgargs->add($imgitem);
+$imgargs->id = $item['preview'];
+$args->preview = $theme->parsearg($img, $imgargs);
+} elseif($type == 'image')) {
+$args->preview = $theme->parsearg($img, $args);
+}
+}
+
+        $tml = empty($templates[$type]) ? $templates['file'] : $templates[$type];
+        $result .= $theme->parsearg($tml, $args);
       }
     }
     
     return sprintf($theme->parse($tml), $result);
-  }
-  
-  private function getpreview($id) {
-    if ($id == 0) return '';
-    $item = $this->getitem($id);
-    if ($item['media'] === 'image') {
-      return sprintf('<img src="%1$s/files/%2$s" title="%2$s" alt="%2$s"/>', litepublisher::$options->files, $item['filename']);
-    } else {
-      return '';
-    }
   }
   
   public function postedited($idpost) {

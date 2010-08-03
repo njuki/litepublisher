@@ -214,7 +214,9 @@ class tthemeparser extends tdata {
   private function parsefiles($s) {
     $result = array();
     $result['file'] = $this->requiretag($s, 'file', '%s');
-    $result['image'] = $this->gettag($s, 'image', '');
+$image = $this->gettag($s, 'image', '');
+    $result['image']['img'] = $this->gettag($image, 'img', '$preview');
+    $result['image'][0] = $image;
     $result['audio'] = $this->gettag($s, 'audio', '');
     $result['video'] = $this->parsetag($s, 'video', '');
     $result[0] = $s;
