@@ -534,6 +534,8 @@ send lib\update\update.3.58.php lib/update/update.3.58.php
 quote site chmod 666 lib/update/update.3.58.php
 send lib\update\update.3.59.php lib/update/update.3.59.php
 quote site chmod 666 lib/update/update.3.59.php
+send lib\update\update.3.60.php lib/update/update.3.60.php
+quote site chmod 666 lib/update/update.3.60.php
 cd lib
 mkdir languages
 quote site chmod 777 languages

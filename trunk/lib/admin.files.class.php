@@ -98,15 +98,26 @@ class tadminfiles extends tadminmenu {
   public function processform() {
     $files = tfiles::instance();
     if (empty($_GET['action'])) {
-      if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
-        $error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
-        return "<h2>$error</h2>\n";
+      if ($_POST['uploadmode'] == 'upload') {
+        if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
+          $error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
+          return "<h2>$error</h2>\n";
+        }
+        if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
+        
+        $overwrite  = isset($_POST['overwrite']);
+        $parser = tmediaparser::instance();
+        $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
+      } else {
+        //downloadurl
+        $content = http::get($_POST['downloadurl']);
+        if ($content == false) return $this->html->h2->errordownloadurl;
+        $filename = basename(trim($_POST['downloadurl'], '/'));
+        if ($filename == '') $filename = 'noname.txt';
+        $overwrite  = isset($_POST['overwrite']);
+        $parser = tmediaparser::instance();
+        $parser->upload($filename, $content, $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
       }
-      if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
-      
-      $overwrite  = isset($_POST['overwrite']);
-      $parser = tmediaparser::instance();
-      $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
       return $this->html->h2->success;
     } elseif ($_GET['action'] == 'edit') {
       $id = $this->idget();

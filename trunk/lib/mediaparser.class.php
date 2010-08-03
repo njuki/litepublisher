@@ -21,13 +21,13 @@ class tmediaparser extends tevents {
     $this->data['audiosize'] = 128;
   }
   
-  public function upload($filename, $content, $title, $overwrite ) {
+  public function upload($filename, $content, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $tempfilename = $this->doupload($filename, $content);
-    return $this->addfile($filename, $tempfilename, $title, '', '', $overwrite);
+    return $this->addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite);
   }
   
   public function uploadfile($filename, $tempfilename, $title, $description, $keywords, $overwrite ) {
