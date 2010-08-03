@@ -8,6 +8,7 @@ $notfound->save();
 
 if (dbversion) {
 litepublisher::$classes->add('trssholdcomments', 'rss.holdcomments.class.db.php');
+tlocal::loadlang('admin');
 $admin = tadminmenus::instance();
 $idcomments = $admin->url2id('/admin/comments/');
 $admin->createitem($idcomments, 'holdrss', 'moderator', 'tadminmoderator');
