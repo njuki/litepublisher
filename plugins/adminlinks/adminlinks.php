@@ -30,7 +30,7 @@ class tadmincontextwidget extends torderwidget {
     tlocal::loadlang('admin');
     
     if (litepublisher::$urlmap->context instanceof tpost) {
-      $post = $template->context;
+      $post = litepublisher::$urlmap->context;
       $lang = tlocal::instance('posts');
       $title = $lang->adminpost;
       $editurl = litepublisher::$options->url . "/admin/posts/editor/" . litepublisher::$options->q . "id=$post->id";

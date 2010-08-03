@@ -40,6 +40,12 @@ class tsapeplugin extends twidget {
     }
   }
   
+  public function getwidget($id, $sitebar) {
+    if ($this->user == '') return '';
+    if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
+return parent::getwidget($id, $sitebar);
+}
+
   public function getcontent($id, $sitebar) {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
