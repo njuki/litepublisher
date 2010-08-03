@@ -33,12 +33,14 @@ class tupdater extends tevents {
     $dir = litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR;
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= $this->version) {
+$ver = (string) $v;
+if (strlen($ver) == 3) $ver .= '0';
       if ($log) tfiler::log("$v selected to update", 'update');
-      $filename = $dir . "update.$v.php";
+      $filename = $dir . "update.$ver.php";
       if (file_exists($filename)) {
         require_once($filename);
         if ($log) tfiler::log("$filename is required file", 'update');
-        $func = 'update' . str_replace('.', '', $v);
+        $func = 'update' . str_replace('.', '', $ver);
         if (function_exists($func)) {
           $func();
           if ($log) tfiler::log("$func is called", 'update');

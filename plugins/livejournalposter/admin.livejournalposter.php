@@ -15,8 +15,7 @@ class tadminlivejournalposter {
     $form = file_get_contents($dir . 'form.tml');
     $html = THtmlResource::instance();
     $args = targs::instance();
-    $admin = tadminplugins::instance();
-    $about = $admin->abouts[$_GET['plugin']];
+    $about = tplugins::getabout(tplugins::getname(__file__));
     $args->add($about);
     $args->add($plugin->data);
     $args->publicchecked = 'public' == $plugin->privacy;
