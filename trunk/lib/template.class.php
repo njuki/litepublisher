@@ -199,6 +199,7 @@ class ttemplate extends tevents {
     $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && $theme->menu->hover;
 $current = $this->context instanceof tmenu ? $this->context->id : 0;
+if (($current == 0) && ($this->context instanceof thomepage)) $current = $this->context->idmenu;
     if (litepublisher::$urlmap->adminpanel) {
       $this->callevent('onadminhover', array(&$hovermenu));
       $adminmenus = tadminmenus::instance();
