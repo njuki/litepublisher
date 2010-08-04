@@ -214,32 +214,34 @@ class tmenus extends titems {
     return array_keys($tree);
   }
   
-  public function getmenu($hover) {
+  public function getmenu($current, $hover) {
     if (count($this->tree) == 0) return '';
     $theme = ttheme::instance();
     if ($hover) {
-      $result = $this->getsubmenu($this->tree);
-      return sprintf($theme->menu, $result);
+      $result = $this->getsubmenu($this->tree, $current);
+      return str_replace('$items', $result, $theme->menu);
     }
     
     $result = '';
     $tml = $theme->menu->item;
+$args = targs::instance();
+$args->submenu = '';
     foreach ($this->tree as $id => $items) {
-      $item = $this->items[$id];
-      $result .= sprintf($tml, litepublisher::$options->url . $item['url'], $item['title'], '');
+$args->add($this->items[$id]);
+      $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
     }
-    $result = sprintf($theme->menu, $result);
-    return $result;
+      return str_replace('$items', $result, (string) $theme->menu);
   }
   
-  private function getsubmenu(&$tree) {
+  private function getsubmenu(&$tree, $current) {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->menu->item;
+$args = targs::instance();
     foreach ($tree as $id => $items) {
-      $subitems = count($items) == 0 ? '' : sprintf($theme->menu->submenu, $this->getsubmenu($items));
-      $item = $this->items[$id];
-      $result .= sprintf($tml,litepublisher::$options->url . $item['url'], $item['title'], $subitems);
+      $args->submenu = count($items) == 0 ? '' :  str_replace('$submenu', $this->getsubmenu($items, $current), $theme->menu->submenu);
+$args->add($this->items[$id]);
+      $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
     }
     return $result;
   }

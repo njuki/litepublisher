@@ -133,7 +133,7 @@ class tfiles extends titems {
           if ($preview->media === 'image') {
             $preview->id = $item['preview'];
             $args->preview = $theme->parsearg($templates['preview'], $args);
-          } elseif($type == 'image')) {
+          } elseif($type == 'image') {
             $preview->array = $item;
             $preview->id = $id;
             $args->preview = $theme->parsearg($templates['preview'], $args);

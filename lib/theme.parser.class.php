@@ -11,6 +11,7 @@ class tthemeparser extends tdata {
   public $warnings;
   private $abouts;
   private $default;
+private $fixold = true;
   
   public static function instance() {
     return getinstance(__class__);
@@ -73,7 +74,7 @@ class tthemeparser extends tdata {
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
     $theme->type = 'litepublisher';
     $theme->title = $this->parsetitle($s);
-    $theme->menu = $this->parsemenu($this->gettag($s, 'menulist', '$template.menu'));
+    $theme->menu = $this->parsemenu($s);
     $theme->content = $this->parsecontent($this->requiretag($s, 'content', '$template.content'));
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
@@ -81,30 +82,51 @@ class tthemeparser extends tdata {
   }
   
   private function parsetitle(&$s) {
-    if ($result = $this->parsetag($s, 'title', '$template.title')) return $result;
-    return '$title | $options.name';
+return $this->parsetag($s, 'title', '$template.title', $this->default->title);
   }
   
-  private function parsemenu($s) {
+  private function parsemenu(&$str) {
+$menu = $this->default->menu;
+$s = $this->gettag($str, 'menulist', '$template.menu');
+if ($s == '') return $menu->array;
     $result = array();
-    $item = trim($this->parsetag($s, 'item', '%s'));
-    if ($submenu = $this->parsetag($item, 'submenu', '%3$s')) $result['submenu'] = $submenu;
-    $result['item'] = $item;
-    $result['current'] = $this->parsetag($s, 'current', '');
+    $item = trim($this->parsetag($s, 'item', '$items'));
+$result['submenu'] = $this->parsetag($item, 'submenu', '$submenu', $menu->submenu);
+    $result['item'] = $item != '' ? $item : $menu->item;
+    $result['current'] = $this->parsetag($s, 'current', '', $menu->current);
+//fix old version
+if ($this->fixold) {
+if (strpos($result['submenu'], '%')) $result['submenu'] = sprintf($result['submenu'], '$items');
+if (strpos($result['item'], '%')) $result['item'] = sprintf($result['item'], '$url', '$title', '$submenu');
+if (strpos($result['current'], '%')) $result['current'] = sprintf($result['current'], '$url', '$title', '$submenu');
+}
+
     //hover
-    $result['hover'] = false;
     $nohover = '<!--nohover-->';
     if (is_int($i = strpos($s, $nohover))) {
+    $result['hover'] = false;
       $s = substr_replace($s, '', $i, strlen($nohover));
-    } else {
-      if ($id = tcontentfilter::getidtag('*', $s)) {
+    } elseif ($id = tcontentfilter::getidtag('*', $s)) {
         $result['id'] = $id;
         preg_match('/\<(\w*)/',$item, $t);
         $result['tag'] = $t[1];
         $result['hover'] = true;
-      }
     }
-    $result[0] = $this->deletespaces($s);
+
+$s = $this->deletespaces($s);
+if ($s != '') {
+if (!isset(    $result['hover'])) $result['hover'] = false;
+    $result[0] = $s;
+} else {
+if (!isset(    $result['hover'])) {
+$result['hover'] = $menu->hover;
+if ($result['hover']) {
+        $result['id'] = $menu->id;
+        $result['tag'] = $menu->tag;
+}
+}
+    $result[0] = (string) $menu;
+}
     return $result;
   }
   
