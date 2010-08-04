@@ -75,7 +75,7 @@ private $fixold = true;
     $theme->type = 'litepublisher';
     $theme->title = $this->parsetitle($s);
     $theme->menu = $this->parsemenu($s);
-    $theme->content = $this->parsecontent($this->requiretag($s, 'content', '$template.content'));
+    $theme->content = $this->parsecontent($s);
     $theme->sitebars = $this->parsesitebars($s);
     $theme->theme= $s;
     return true;
@@ -87,7 +87,7 @@ return $this->gettag($s, 'title', '$template.title', $this->default->title);
   
   private function parsemenu(&$str) {
 $menu = $this->default->menu;
-$s = $this->gettag($str, 'menulist', '$template.menu');
+$s = $this->parsetag($str, 'menulist', '$template.menu');
 if ($s == '') return $menu->array;
     $result = array();
     $item = trim($this->parsetag($s, 'item', '$items'));
@@ -130,9 +130,11 @@ if ($result['hover']) {
     return $result;
   }
   
-  private function parsecontent($s) {
+  private function parsecontent(&$str) {
+$s = $this->parsetag($str, 'content', '$template.content');
+if ($s == '') return $this->default->content->array;
     $result = array();
-    $result['post']= $this->parsepost($this->requiretag($s, 'post', ''));
+    $result['post']= $this->parsepost($s);
     $result['excerpts'] = $this->parse_excerpts($this->requiretag($s, 'excerpts', ''), $result['post']);
     $result['navi'] = $this->parsenavi($this->requiretag($s, 'navi', ''));
     $result['admin'] = $this->parseadmin($this->parsetag($s, 'admin', ''));
@@ -159,11 +161,11 @@ if ($result['hover']) {
   
   private function parse_excerpt($s, array &$post) {
     $result = array();
-    if ($commontags = $this->parsecommontags($s, 'commontags', '')) {
+    if ($commontags = $this->parse_post_tags($s, 'commontags', '')) {
       $result['commontags'] = $commontags;
     }
     
-    if ($categories = $this->parsecommontags($s, 'categories', '$post.categorieslinks')) {
+    if ($categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks')) {
       $result['categories'] = $categories;
     } elseif ($commontags) {
       $result['categories'] = $commontags;
@@ -172,7 +174,7 @@ if ($result['hover']) {
       $result['categories'] = $post['categories'];
     }
     
-    if ($tags = $this->parsecommontags($s, 'tags', '$post.tagslinks')) {
+    if ($tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks')) {
       $result['tags'] = $tags;
     } elseif ($commontags) {
       $result['tags'] = $commontags;
@@ -200,7 +202,7 @@ if ($result['hover']) {
     return $result;
   }
   
-  private function parsecommontags(&$s, $name, $replace) {
+  private function parse_post_tags(&$s, $name, $replace) {
     if ($commontags = $this->parsetag($s, $name, $replace)) {
       $result = array();
       $result['item'] = $this->parsetag($commontags, 'item', '%s');
@@ -211,27 +213,29 @@ if ($result['hover']) {
     return false;
   }
   
-  private function parsepost($s) {
+  private function parsepost(&$str) {
+$s = $this->parsetag($str, 'post', '');
+if ($s == '') return $this->default->content->post->array;
     $result = array();
-    if ($commontags = $this->parsecommontags($s, 'commontags', '')) {
+    if ($commontags = $this->parse_post_tags($s, 'commontags', '')) {
       $result['commontags'] = $commontags;
     }
     
-    if ($categories = $this->parsecommontags($s, 'categories', '$post.categorieslinks')) {
+    if ($categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks')) {
       $result['categories'] = $categories;
     } else {
       $result['categories'] = $commontags;
       $result['categories'][0] = str_replace('commontags', 'categories', $commontags[0]);
     }
     
-    if ($tags = $this->parsecommontags($s, 'tags', '$post.tagslinks')) {
+    if ($tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks')) {
       $result['tags'] = $tags;
     } else {
       $result['tags'] = $commontags;
       $result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
     }
     
-    $result['files'] = $this->parsefiles($this->requiretag($s, 'files', '$post.filelist'));
+    $result['files'] = $this->parsefiles($s);
     $result['more'] = $this->gettag($s, 'more', '');
     $result['rss'] = $this->gettag($s, 'rss', '$post.subscriberss');
     $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post.prevnext'));
@@ -242,10 +246,13 @@ if ($result['hover']) {
     return $result;
   }
   
-  private function parsefiles($s) {
+  private function parsefiles(&$str) {
     $default = $this->default->content->post->files;
+$s = $this->parsetag($str, 'files', '$post.filelist');
+if ($s == '') return $default->array;
+
     $result = array();
-    $result['file'] = $this->gettag($s, 'file', '%s', $default->file);
+    $result['file'] = $this->gettag($s, 'file', '$items', $default->file);
     $result['image'] = $this->gettag($s, 'image', '', $default->image);
     $result['preview'] = $this->gettag($s, 'preview', '', $default->preview);
     $result['audio'] = $this->gettag($s, 'audio', '', $default->audio);
