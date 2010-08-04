@@ -41,7 +41,7 @@ class tlivejournalposter extends tplugin {
     }
     $response = $client->getResponse();
     $challenge = $response['challenge'];
-
+    
     $args = array(
     'username' => $this->login,
     'auth_method' => 'challenge',
@@ -82,7 +82,7 @@ class tlivejournalposter extends tplugin {
     } else {
       $method = 'LJ.XMLRPC.postevent';
     }
-
+    
     if (!$client->query($method, $args)) {
       if (litepublisher::$debug) tfiler::log('Something went wrong - '.$client->getErrorCode().' : '.$client->getErrorMessage());
       return  false;

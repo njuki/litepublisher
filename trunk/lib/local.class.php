@@ -14,10 +14,12 @@ class targs {
   }
   
   public function __construct($thisthis = null) {
+    $options = litepublisher::$options;
     $this->data = array(
-    '$options.url' => litepublisher::$options->url,
-  '{$options.q}' => litepublisher::$options->q,
-    '$options.files' => litepublisher::$options->files
+    '$options.url' => $options->url,
+  '{$options.q}' => $options->q,
+    '$options.q' => $options->q,
+    '$options.files' => $options->files
     );
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }

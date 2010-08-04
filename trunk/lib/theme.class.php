@@ -35,7 +35,11 @@ class ttheme extends tevents {
       return self::$instances[$name][$tmlfile];
     }
     
-    $result = isset(litepublisher::$classes->instances[__class__]) ? litepublisher::$classes->newinstance(__class__) : getinstance(__class__);
+    if (($name == 'default') && ($tmlfile == 'default')) {
+      $result = litepublisher::$classes->newinstance(__class__);
+    } else {
+      $result = isset(litepublisher::$classes->instances[__class__]) ? litepublisher::$classes->newinstance(__class__) : getinstance(__class__);
+    }
     $result->loaddata($name, $tmlfile);
     return $result;
   }
@@ -135,17 +139,15 @@ class ttheme extends tevents {
   }
   
   public function parse($s) {
-    if (is_object($s)) $s = $s->__tostring();
-    $s = str_replace('$options.url', litepublisher::$options->url, $s);
-    array_push($this->parsing, $s);
-    
+    $s = str_replace('$options.url', litepublisher::$options->url, (string) $s);
+    //array_push($this->parsing, $s);
     try {
       $result = preg_replace_callback('/\$(\w*+)\.(\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);
     }
-    array_pop($this->parsing);
+    //array_pop($this->parsing);
     return $result;
   }
   

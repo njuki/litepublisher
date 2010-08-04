@@ -172,7 +172,7 @@ class tadminservice extends tadminmenu {
             litepublisher::$options->savemodified();
           }
         }
-        litepublisher::$urlmap->clearcache();
+        ttheme::clearcache();
         @header('Location: http://' . $_SERVER['HTTP_HOST'] .  $_SERVER['REQUEST_URI']);
         exit();
         

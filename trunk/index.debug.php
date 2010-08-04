@@ -109,8 +109,4 @@ $man = tdbmanager::instance();
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//
-//var_dump(litepublisher::$_paths);
-//litepublisher::$urlmap->clearcache();
-//var_dump(litepublisher::$options->dbconfig);
 ?>

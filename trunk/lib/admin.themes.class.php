@@ -119,16 +119,17 @@ class tadminthemes extends tadminmenu {
         
         case 'edit':
         if (!empty($_GET['file']) && !empty($_GET['theme'])) {
-          //проверка на безопасность, чтобы не указывали в запросе файлы не в теме
+          //security check
           if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
           if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
+            ttheme::clearcache();
             return  $this->html->h2->errorsave;
           }
         }
         break;
         
         case 'options':
-        extract($_POST);
+        extract($_POST, EXTR_SKIP);
         if (isset($hometheme)) {
           $home = thomepage::instance();
           $home->theme = $hometheme;
@@ -163,7 +164,7 @@ class tadminthemes extends tadminmenu {
       }
     }
     
-    litepublisher::$urlmap->clearcache();
+    ttheme::clearcache();
     return $result;
   }
   

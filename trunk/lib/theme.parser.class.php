@@ -10,6 +10,7 @@ class tthemeparser extends tdata {
   public $theme;
   public $warnings;
   private $abouts;
+  private $default;
   
   public static function instance() {
     return getinstance(__class__);
@@ -39,12 +40,15 @@ class tthemeparser extends tdata {
     $this->error(sprintf($lang->error, $tag));
   }
   
-  public function gettag(&$s, $tag, $replace) {
+  public function gettag(&$s, $tag, $replace, $default = null) {
     if ($result = $this->parsetag($s, $tag, $replace)) return $result;
+    return (string) $default;
+    /*
     tlocal::loadlang('admin');
     $lang = tlocal::instance('themes');
     $this->warnings[] = sprintf($lang->warning, $tag);
     return $result;
+    */
   }
   
   public function deletespaces($s) {
@@ -59,6 +63,11 @@ class tthemeparser extends tdata {
     
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $theme->tmlfile . '.tml';
     if (!@file_exists($filename))  return $this->checktheme($theme);
+    if (($theme->name == 'default') && ($theme->tmlfile == 'default')) {
+      $this->default = new tdefaulttheme();
+    } else {
+      $this->default = ttheme::getinstance('default', 'default');
+    }
     
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
@@ -212,14 +221,15 @@ class tthemeparser extends tdata {
   }
   
   private function parsefiles($s) {
+    $default = $this->default->content->post->files;
     $result = array();
-    $result['file'] = $this->requiretag($s, 'file', '%s');
-$image = $this->gettag($s, 'image', '');
-    $result['image']['img'] = $this->gettag($image, 'img', '$preview');
-    $result['image'][0] = $image;
-    $result['audio'] = $this->gettag($s, 'audio', '');
-    $result['video'] = $this->parsetag($s, 'video', '');
-    $result[0] = $s;
+    $result['file'] = $this->gettag($s, 'file', '%s', $default->file);
+    $result['image'] = $this->gettag($s, 'image', '', $default->image);
+    $result['preview'] = $this->gettag($s, 'preview', '', $default->preview);
+    $result['audio'] = $this->gettag($s, 'audio', '', $default->audio);
+    $result['video'] = $this->parsetag($s, 'video', '', $default->video);
+    $s = trim($s);
+    $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   
@@ -559,5 +569,15 @@ function _cleanup_header_comment($str) {
   return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
 }
 
+class tdefaulttheme implements arrayaccess {
+public function __get($name) { return $this; }
+public function __set($name, $value) { }
+public function __tostring() { return ''; }
+  
+public function offsetSet($offset, $value) {}
+public function offsetExists($offset) { return true; }
+public function offsetUnset($offset) {}
+public function offsetGet($offset) { return $this; }
+}//class
 
 ?>

@@ -30,9 +30,9 @@ class tkeywordswidget extends twidget {
   }
   
   public function getwidget($id, $sitebar) {
-      $content = $this->getcontent($id, $sitebar);
-if ($content == '') return '';
-      $title = $this->gettitle($id);
+    $content = $this->getcontent($id, $sitebar);
+    if ($content == '') return '';
+    $title = $this->gettitle($id);
     $theme = ttheme::instance();
     return $theme->getwidget($title, $content, $this->template, $sitebar);
   }

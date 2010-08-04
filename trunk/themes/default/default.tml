@@ -108,6 +108,7 @@
 								<ul id="files-$post.id">
 								<!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
 								<!--image--><li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
+<!--preview--><img src="$options.files/files/$preview.filename" title="$title" alt="$title" /><!--/preview-->
 								<!--audio-->
 								<li><a href="$options.files/files/$filename" title="$title">$title</a>
 								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
