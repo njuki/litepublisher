@@ -162,21 +162,21 @@ class Tadminoptions extends tadminmenu {
       //$filter->filter($text);
       $home->text = $text;
       $home->hideposts = isset($hideposts);
-      $home->unlock();
-      $menus = tmenus::instance();
-      $id =$menus->class2id(get_class($home));
       $homemenu = isset($homemenu);
-      if ($homemenu != ($id > 0)) {
+      if ($homemenu != ($home->idmenu > 0)) {
+      $menus = tmenus::instance();
         if ($homemenu) {
           $menus->lock();
-          $id = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
+          $home->idmenu = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
           $menus->items[$id]['order'] = 0;
           $menus->sort();
           $menus->unlock();
         } else {
-          $menus->remove($id);
+          $menus->remove($home->idmenu);
+$home->idmenu = 0;
         }
       }
+      $home->unlock();
       break;
       
       case 'mail':

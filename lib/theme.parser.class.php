@@ -82,7 +82,7 @@ private $fixold = true;
   }
   
   private function parsetitle(&$s) {
-return $this->parsetag($s, 'title', '$template.title', $this->default->title);
+return $this->gettag($s, 'title', '$template.title', $this->default->title);
   }
   
   private function parsemenu(&$str) {
@@ -97,8 +97,8 @@ $result['submenu'] = $this->parsetag($item, 'submenu', '$submenu', $menu->submen
 //fix old version
 if ($this->fixold) {
 if (strpos($result['submenu'], '%')) $result['submenu'] = sprintf($result['submenu'], '$items');
-if (strpos($result['item'], '%')) $result['item'] = sprintf($result['item'], '$url', '$title', '$submenu');
-if (strpos($result['current'], '%')) $result['current'] = sprintf($result['current'], '$url', '$title', '$submenu');
+if (strpos($result['item'], '%')) $result['item'] = sprintf($result['item'], '$options.url$url', '$title', '$submenu');
+if (strpos($result['current'], '%')) $result['current'] = sprintf($result['current'], '$options.url$url', '$title', '$submenu');
 }
 
     //hover
