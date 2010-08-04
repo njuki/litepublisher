@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
 <head>
-	<title>$template.title</title>
+	<title><!--title-->$title | $options.name<!--/title--></title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<link rel="stylesheet" href="$template.url/css/style.css" type="text/css" media="all" />
 	<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
@@ -36,7 +36,7 @@
 	<!--menulist-->
 	<ul id="nav">
 		<!--item-->
-		<li><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>
+		<li><a href="$options.url$url" title="$title">$title</a><!--submenu--><ul>$submenu</ul><!--/submenu--></li>
 		<!--/item-->
 		<!--current-->
 		<li class="current_page_item"><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>
