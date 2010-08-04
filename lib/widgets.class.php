@@ -130,7 +130,7 @@ class torderwidget extends twidget {
   
   protected function create() {
     parent::create();
-unset($this->id);
+    unset($this->id);
     $this->data['id'] = 0;
     $this->data['ajax'] = false;
     $this->data['order'] = 0;

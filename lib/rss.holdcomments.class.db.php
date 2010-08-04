@@ -61,8 +61,7 @@ class trssholdcomments extends tevents {
     $recent = $manager->getrecent($this->count, 'hold');
     var_dump($recent);
     $title = tlocal::$data['comment']['onpost'] . ' ';
-    $a = array();
-    $comment = new tarray2prop($a);
+    $comment = new tarray2prop();
     ttheme::$vars['comment'] = $comment;
     $theme = ttheme::instance();
     $tml = $this->template;

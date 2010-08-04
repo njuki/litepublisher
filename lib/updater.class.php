@@ -33,8 +33,8 @@ class tupdater extends tevents {
     $dir = litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR;
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= $this->version) {
-$ver = (string) $v;
-if (strlen($ver) == 3) $ver .= '0';
+      $ver = (string) $v;
+      if (strlen($ver) == 3) $ver .= '0';
       if ($log) tfiler::log("$v selected to update", 'update');
       $filename = $dir . "update.$ver.php";
       if (file_exists($filename)) {

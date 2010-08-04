@@ -1082,6 +1082,8 @@ send themes\default\css\index.htm themes/default/css/index.htm
 quote site chmod 666 themes/default/css/index.htm
 send themes\default\css\style.css themes/default/css/style.css
 quote site chmod 666 themes/default/css/style.css
+send themes\default\default.tml themes/default/default.tml
+quote site chmod 666 themes/default/default.tml
 cd themes/default
 mkdir images
 quote site chmod 777 images

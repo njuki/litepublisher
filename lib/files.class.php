@@ -119,32 +119,34 @@ class tfiles extends titems {
     
     $theme = ttheme::instance();
     $templates = $theme->content->post->files->array;
-$img = $theme->content->post->files->image->img;
     $args = targs::instance();
-$imgargs = targs::instance();
-        foreach ($items as $type => $subitems) {
+    $preview = new tarray2prop();
+    ttheme::$vars['preview'] = $preview;
+    foreach ($items as $type => $subitems) {
       foreach ($subitems as $id) {
         $item = $this->items[$id];
         $args->preview  = '';
         $args->add($item);
         $args->id = $id;
-    if ($item['preview'] > 0) {
-    $imgitem = $this->getitem($item['preview']);
-    if ($imgitem['media'] === 'image') {
-$imgargs->add($imgitem);
-$imgargs->id = $item['preview'];
-$args->preview = $theme->parsearg($img, $imgargs);
-} elseif($type == 'image')) {
-$args->preview = $theme->parsearg($img, $args);
-}
-}
-
+        if ($item['preview'] > 0) {
+          $preview->array = $this->getitem($item['preview']);
+          if ($preview->media === 'image') {
+            $preview->id = $item['preview'];
+            $args->preview = $theme->parsearg($templates['preview'], $args);
+          } elseif($type == 'image')) {
+            $preview->array = $item;
+            $preview->id = $id;
+            $args->preview = $theme->parsearg($templates['preview'], $args);
+          }
+        }
+        
         $tml = empty($templates[$type]) ? $templates['file'] : $templates[$type];
         $result .= $theme->parsearg($tml, $args);
       }
     }
     
-    return sprintf($theme->parse($tml), $result);
+    unset(ttheme::$vars['preview'], $preview);
+    return sprintf($theme->parse($templates[0]), $result);
   }
   
   public function postedited($idpost) {

@@ -92,11 +92,9 @@ class trss extends tevents {
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent(litepublisher::$options->perpage);
     $title = tlocal::$data['comment']['onpost'] . ' ';
-    $a = array();
-    $comment = new tarray2prop($a);
+    $comment = new tarray2prop();
     foreach ($recent  as $item) {
       $comment->array = $item;
-      //$comment->posturl = $post->url;
       $this->AddRSSComment($comment, $title . $comment->title);
     }
   }
@@ -113,8 +111,7 @@ class trss extends tevents {
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($count, 'hold');
     $title = tlocal::$data['comment']['onpost'] . ' ';
-    $a = array();
-    $comment = new tarray2prop($a);
+    $comment = new tarray2prop();
     foreach ($recent  as $item) {
       $comment->array = $item;
       $this->AddRSSComment($comment, $title . $comment->title);
@@ -127,8 +124,7 @@ class trss extends tevents {
     $title = $lang->from . ' ';
     $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
     $comments = tcomments::instance($idpost);
-    $a = array();
-    $comment = new tarray2prop($a);
+    $comment = new tarray2prop();
     if (dbversion) {
       $recent = $comments->select("post = $idpost and status = 'approved'",
       "order by $comments->thistable.posted desc limit ". litepublisher::$options->perpage);
