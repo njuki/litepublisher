@@ -214,7 +214,7 @@ class tmenus extends titems {
     return array_keys($tree);
   }
   
-  public function getmenu($current, $hover) {
+  public function getmenu($hover, $current) {
     if (count($this->tree) == 0) return '';
     $theme = ttheme::instance();
     if ($hover) {
@@ -236,12 +236,13 @@ class tmenus extends titems {
   private function getsubmenu(&$tree, $current) {
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->menu->item;
+$menu = $theme->menu;
+    $tml = $menu->item;
     $args = targs::instance();
     foreach ($tree as $id => $items) {
-      $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $theme->menu->submenu);
+      $args->submenu = count($items) == 0 ? '' :  str_replace('$submenu', $this->getsubmenu($items, $current), $menu->submenu);
       $args->add($this->items[$id]);
-      $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
+      $result .= $theme->parsearg($current == $id ?  $menu->current : $tml, $args);
     }
     return $result;
   }

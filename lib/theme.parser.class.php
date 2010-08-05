@@ -85,7 +85,7 @@ $theme->parent = $about['parent'];
     $theme->menu = $this->parsemenu($s);
     $theme->content = $this->parsecontent($s);
     $theme->sitebars = $this->parsesitebars($s);
-$s = trim($s);
+$s = $this->deletespaces($s);
     $theme->theme= $s != ''? $s : (string) $this->default->theme;
     return true;
   }
@@ -145,7 +145,7 @@ $s = trim($s);
     $result = array();
     $result['post']= $this->parsepost($s);
     $result['excerpts'] = $this->parse_excerpts($this->requiretag($s, 'excerpts', ''), $result['post']);
-    $result['navi'] = $this->parsenavi($this->requiretag($s, 'navi', ''));
+    $result['navi'] = $this->parsenavi($s);
     $result['admin'] = $this->parseadmin($this->parsetag($s, 'admin', ''));
     $result['simple'] = $this->requiretag($s, 'simple', '');
     $result['notfound'] = $this->requiretag($s, 'notfound', '');
@@ -302,14 +302,24 @@ $s = trim($s);
     return $result;
   }
   
-  private function parsenavi($s) {
+  private function parsenavi(&$str) {
+$s = $this->parsetag($s, 'navi', '');
+if ($s == '') return $this->default->content->navi->array;
+$default = $this->default->content->navi;
     $result = array();
-    $result['prev'] = $this->parsetag($s, 'prev', '%s');
-    $result['next'] = $this->parsetag($s, 'next', '');
-    $result['link'] = $this->parsetag($s, 'link', '');
-    $result['current'] = $this->parsetag($s, 'current', '');
-    $result['divider'] = $this->parsetag($s, 'divider', '');
-    $result[0] = $s;
+    $result['prev'] = $this->parsetag($s, 'prev', '$items', $default->prev);
+    $result['next'] = $this->parsetag($s, 'next', '', $default->next);
+    $result['link'] = $this->parsetag($s, 'link', '', $default->link);
+    $result['current'] = $this->parsetag($s, 'current', '', $default->current);
+    $result['divider'] = $this->parsetag($s, 'divider', '', $default->divider);
+if ($this->fixold) {
+$result['prev'] = sprintf($result['prev'], '$link');
+$result['next'] = sprintf($result['next'], '$link');
+$result['link'] =sprintf($result['link'], '$options.url$url', '$page');
+$result['current'] =sprintf($result['current'], '$options.url$url', '$page');
+}
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   

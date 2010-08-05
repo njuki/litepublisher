@@ -174,9 +174,6 @@ $this->data['parent'] = '';
   
   public function getpages($url, $page, $count) {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $link =$this->content->navi->link;
-    $url = litepublisher::$options->url . $url;
-    $suburl = rtrim($url, '/');
     $from = 1;
     $to = $count;
     $perpage = litepublisher::$options->perpage;
@@ -185,13 +182,20 @@ $this->data['parent'] = '';
       $from = max(1, $page - ceil($perpage / 2));
       $to = min($count, $from + $perpage);
     }
+$items = range($from, $to);
+if ($items[0] != 1) array_unshift($items, 1);
+if ($items[count($items) -1] != $count) $items[] = $count;
+    $navi =$this->content->navi;
+    $pageurl = rtrim($url, '/') . '/page/';
+$args = targs::instance();
     $a = array();
-    for ($i = $from; $i <= $to; $i++) {
-      $pageurl = $i == 1 ? $url : $suburl . sprintf('/page/%d/', $i);
-      $a[] = sprintf($i == $page ? $this->content->navi->current : $link, $pageurl, $i);
+foreach ($items as $i) {
+$args->page = $i;
+      $args->url = $i == 1 ? $url : $pageurl .$i . '/';
+      $a[] = $this->parsearg(($i == $page ? $navi->current : $navi->link), $args);
     }
     
-    return sprintf($this->content->navi, implode($this->content->navi->divider, $a));
+    return str_replace('$items', implode($navi->divider, $a), (string) $navi);
   }
   
   public function getposts(array $items, $lite) {
