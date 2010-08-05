@@ -240,7 +240,7 @@ $menu = $theme->menu;
     $tml = $menu->item;
     $args = targs::instance();
     foreach ($tree as $id => $items) {
-      $args->submenu = count($items) == 0 ? '' :  str_replace('$submenu', $this->getsubmenu($items, $current), $menu->submenu);
+      $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
       $args->add($this->items[$id]);
       $result .= $theme->parsearg($current == $id ?  $menu->current : $tml, $args);
     }

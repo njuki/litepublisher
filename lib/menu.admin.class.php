@@ -110,7 +110,7 @@ $menu = $theme->menu;
     foreach ($tree as $id => $items) {
       $item = $this->items[$id];
       if ($this->hasright($item['group'])) {
-        $args->submenu = count($items) == 0 ? '' :  str_replace('$submenu', $this->getsubmenu($items, $current), $menu->submenu);
+        $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
         $args->add($item);
         $result .= $theme->parsearg($current == $id  ? $menu->current:$tml, $args);
       }
