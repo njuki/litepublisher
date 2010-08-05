@@ -36,10 +36,10 @@
 	<!--menulist-->
 	<ul id="nav">
 		<!--item-->
-		<li><a href="$options.url$url" title="$title">$title</a><!--submenu--><ul>$submenu</ul><!--/submenu--></li>
+		<li><a href="$options.url$url" title="$title">$title</a><!--submenu--><ul>$items</ul><!--/submenu--></li>
 		<!--/item-->
 		<!--current-->
-		<li class="current_page_item"><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>
+		<li class="current_page_item"><a href="$options.url$url" title="$title">$title</a>$submenu</li>
 		<!--/current-->	
 	</ul>
 	<!--/menulist-->
