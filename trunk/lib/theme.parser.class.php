@@ -11,7 +11,7 @@ class tthemeparser extends tdata {
   public $warnings;
   private $abouts;
   private $default;
-private $fixold = true;
+  private $fixold = true;
   
   public static function instance() {
     return getinstance(__class__);
@@ -82,57 +82,57 @@ private $fixold = true;
   }
   
   private function parsetitle(&$s) {
-return $this->gettag($s, 'title', '$template.title', $this->default->title);
+    return $this->gettag($s, 'title', '$template.title', $this->default->title);
   }
   
   private function parsemenu(&$str) {
-$menu = $this->default->menu;
-$s = $this->parsetag($str, 'menulist', '$template.menu');
-if ($s == '') return $menu->array;
+    $menu = $this->default->menu;
+    $s = $this->parsetag($str, 'menulist', '$template.menu');
+    if ($s == '') return $menu->array;
     $result = array();
     $item = trim($this->parsetag($s, 'item', '$items'));
-$result['submenu'] = $this->parsetag($item, 'submenu', '$submenu', $menu->submenu);
+    $result['submenu'] = $this->parsetag($item, 'submenu', '$submenu', $menu->submenu);
     $result['item'] = $item != '' ? $item : $menu->item;
     $result['current'] = $this->parsetag($s, 'current', '', $menu->current);
-//fix old version
-if ($this->fixold) {
-if (strpos($result['submenu'], '%')) $result['submenu'] = sprintf($result['submenu'], '$items');
-if (strpos($result['item'], '%')) $result['item'] = sprintf($result['item'], '$options.url$url', '$title', '$submenu');
-if (strpos($result['current'], '%')) $result['current'] = sprintf($result['current'], '$options.url$url', '$title', '$submenu');
-}
-
+    //fix old version
+    if ($this->fixold) {
+      if (strpos($result['submenu'], '%')) $result['submenu'] = sprintf($result['submenu'], '$items');
+      if (strpos($result['item'], '%')) $result['item'] = sprintf($result['item'], '$options.url$url', '$title', '$submenu');
+      if (strpos($result['current'], '%')) $result['current'] = sprintf($result['current'], '$options.url$url', '$title', '$submenu');
+    }
+    
     //hover
     $nohover = '<!--nohover-->';
     if (is_int($i = strpos($s, $nohover))) {
-    $result['hover'] = false;
+      $result['hover'] = false;
       $s = substr_replace($s, '', $i, strlen($nohover));
     } elseif ($id = tcontentfilter::getidtag('*', $s)) {
-        $result['id'] = $id;
-        preg_match('/\<(\w*)/',$item, $t);
-        $result['tag'] = $t[1];
-        $result['hover'] = true;
+      $result['id'] = $id;
+      preg_match('/\<(\w*)/',$item, $t);
+      $result['tag'] = $t[1];
+      $result['hover'] = true;
     }
-
-$s = $this->deletespaces($s);
-if ($s != '') {
-if (!isset(    $result['hover'])) $result['hover'] = false;
-    $result[0] = $s;
-} else {
-if (!isset(    $result['hover'])) {
-$result['hover'] = $menu->hover;
-if ($result['hover']) {
-        $result['id'] = $menu->id;
-        $result['tag'] = $menu->tag;
-}
-}
-    $result[0] = (string) $menu;
-}
+    
+    $s = $this->deletespaces($s);
+    if ($s != '') {
+      if (!isset(    $result['hover'])) $result['hover'] = false;
+      $result[0] = $s;
+    } else {
+      if (!isset(    $result['hover'])) {
+        $result['hover'] = $menu->hover;
+        if ($result['hover']) {
+          $result['id'] = $menu->id;
+          $result['tag'] = $menu->tag;
+        }
+      }
+      $result[0] = (string) $menu;
+    }
     return $result;
   }
   
   private function parsecontent(&$str) {
-$s = $this->parsetag($str, 'content', '$template.content');
-if ($s == '') return $this->default->content->array;
+    $s = $this->parsetag($str, 'content', '$template.content');
+    if ($s == '') return $this->default->content->array;
     $result = array();
     $result['post']= $this->parsepost($s);
     $result['excerpts'] = $this->parse_excerpts($this->requiretag($s, 'excerpts', ''), $result['post']);
@@ -161,27 +161,34 @@ if ($s == '') return $this->default->content->array;
   
   private function parse_excerpt($s, array &$post) {
     $result = array();
-    if ($commontags = $this->parse_post_tags($s, 'commontags', '')) {
-      $result['commontags'] = $commontags;
-    }
+    $categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks');
+    $tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks');
+    $common = $this->parse_post_tags($s, 'commontags', '');
     
-    if ($categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks')) {
+    if ($categories) {
       $result['categories'] = $categories;
-    } elseif ($commontags) {
-      $result['categories'] = $commontags;
-      $result['categories'][0] = str_replace('commontags', 'categories', $commontags[0]);
+    } elseif ($common) {
+      $result['categories'] = $common;
+      $result['categories'][0] = str_replace('commontags', 'categories', $common[0]);
+    } elseif ($tags) {
+      $result['categories'] = $tags;
+      $result['categories'][0] = str_replace('tags', 'categories', $tags[0]);
     } else {
       $result['categories'] = $post['categories'];
     }
     
-    if ($tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks')) {
+    if ($tags) {
       $result['tags'] = $tags;
-    } elseif ($commontags) {
-      $result['tags'] = $commontags;
-      $result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
+    } elseif ($common) {
+      $result['tags'] = $common;
+      $result['tags'][0] = str_replace('commontags', 'tags', $common[0]);
+    } elseif ($categories) {
+      $result['tags'] = $categories;
+      $result['tags'][0] = str_replace('categories', 'tags', $categories[0]);
     } else {
       $result['tags'] = $post['tags'];
     }
+    
     
     if ($dateformat = $this->parsetag($s, 'date', '$post.excerptdate')) {
       $result['dateformat'] = self::strftimetodate($dateformat);
@@ -203,54 +210,66 @@ if ($s == '') return $this->default->content->array;
   }
   
   private function parse_post_tags(&$s, $name, $replace) {
-    if ($commontags = $this->parsetag($s, $name, $replace)) {
-      $result = array();
-      $result['item'] = $this->parsetag($commontags, 'item', '%s');
-      $result['divider'] = $this->parsetag($commontags, 'divider', '');
-      $result[0] = $commontags;
-      return $result;
-    }
-    return false;
+    $section = $this->parsetag($s, $name, $replace);
+    if ($section == '') return false;
+    $result = array();
+    $result['item'] = trim($this->parsetag($section, 'item', '$items'));
+    $result['divider'] = $this->parsetag($section, 'divider', '');
+    $result[0] = trim($section);
+    return $result;
   }
   
   private function parsepost(&$str) {
-$s = $this->parsetag($str, 'post', '');
-if ($s == '') return $this->default->content->post->array;
+    $s = $this->parsetag($str, 'post', '');
+    if ($s == '') return $this->default->content->post->array;
+    $default = $this->default->content->post;
     $result = array();
-    if ($commontags = $this->parse_post_tags($s, 'commontags', '')) {
-      $result['commontags'] = $commontags;
-    }
     
-    if ($categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks')) {
+    $categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks');
+    $tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks');
+    $common = $this->parse_post_tags($s, 'commontags', '');
+    
+    if ($categories) {
       $result['categories'] = $categories;
+    } elseif ($common) {
+      $result['categories'] = $common;
+      $result['categories'][0] = str_replace('commontags', 'categories', $common[0]);
+    } elseif ($tags) {
+      $result['categories'] = $tags;
+      $result['categories'][0] = str_replace('tags', 'categories', $tags[0]);
     } else {
-      $result['categories'] = $commontags;
-      $result['categories'][0] = str_replace('commontags', 'categories', $commontags[0]);
+      $result['categories'] = $default->array['categories'];
     }
     
-    if ($tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks')) {
+    if ($tags) {
       $result['tags'] = $tags;
+    } elseif ($common) {
+      $result['tags'] = $common;
+      $result['tags'][0] = str_replace('commontags', 'tags', $common[0]);
+    } elseif ($categories) {
+      $result['tags'] = $categories;
+      $result['tags'][0] = str_replace('categories', 'tags', $categories[0]);
     } else {
-      $result['tags'] = $commontags;
-      $result['tags'][0] = str_replace('commontags', 'tags', $commontags[0]);
+      $result['tags'] = $default->array['tags'];
     }
     
     $result['files'] = $this->parsefiles($s);
-    $result['more'] = $this->gettag($s, 'more', '');
-    $result['rss'] = $this->gettag($s, 'rss', '$post.subscriberss');
-    $result['prevnext']  = $this->parseprevnext($this->parsetag($s, 'prevnext', '$post.prevnext'));
+    $result['more'] = $this->gettag($s, 'more', '', $this->default->content->post->more);
+    $result['rss'] = $this->gettag($s, 'rss', '$post.subscriberss', $this->default->content->post->rss);
+    $result['prevnext']  = $this->parseprevnext($s);
     $result['templatecomments'] = $this->parsetemplatecomments($this->requiretag($s, 'templatecomments', '$post.templatecomments'));
     // after coments due to section 'date' in comment
-    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.date'));
-    $result[0] = $s;
+    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.date', $this->default->content->post->dateformat));
+    $s = trim($s);
+    $result[0] = $s != '' ? $s : (string) $this->default->content->post;
     return $result;
   }
   
   private function parsefiles(&$str) {
     $default = $this->default->content->post->files;
-$s = $this->parsetag($str, 'files', '$post.filelist');
-if ($s == '') return $default->array;
-
+    $s = $this->parsetag($str, 'files', '$post.filelist');
+    if ($s == '') return $default->array;
+    
     $result = array();
     $result['file'] = $this->gettag($s, 'file', '$items', $default->file);
     $result['image'] = $this->gettag($s, 'image', '', $default->image);
@@ -262,11 +281,15 @@ if ($s == '') return $default->array;
     return $result;
   }
   
-  private function parseprevnext($s) {
+  private function parseprevnext(&$str) {
+    $s = $this->parsetag($str, 'prevnext', '$post.prevnext');
+    if ($s == '') return $this->default->content->post->prevnext->array;
+    $default = $this->default->content->post->prevnext;
     $result = array();
-    $result['prev'] = $this->parsetag($s, 'prev', '%1$s');
-    $result['next'] = $this->parsetag($s, 'next', '%2$s');
-    $result[0] = $s;
+    $result['prev'] = $this->gettag($s, 'prev', '$prev', $default->prev);
+    $result['next'] = $this->parsetag($s, 'next', '$next', $default->next);
+    $s = trim($s);
+    $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   

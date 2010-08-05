@@ -90,29 +90,29 @@ class tadminmenus extends tmenus {
     
     $result = '';
     $tml = $theme->menu->item;
-$args = targs::instance();
-$args->submenu = '';
+    $args = targs::instance();
+    $args->submenu = '';
     foreach ($this->tree as $id => $items) {
       $item = $this->items[$id];
       if ($this->hasright($item['group'])) {
-$args->add($this->items[$id]);
-      $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
-}
+        $args->add($this->items[$id]);
+        $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
+      }
     }
-      return str_replace('$items', $result, (string) $theme->menu);
+    return str_replace('$items', $result, (string) $theme->menu);
   }
   
   private function getsubmenu(&$tree, $current) {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->menu->item;
-$args = targs::instance();
+    $args = targs::instance();
     foreach ($tree as $id => $items) {
       $item = $this->items[$id];
       if ($this->hasright($item['group'])) {
-      $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $theme->menu->submenu);
-$args->add($this->items[$id]);
-      $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
+        $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $theme->menu->submenu);
+        $args->add($this->items[$id]);
+        $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
       }
     }
     return $result;

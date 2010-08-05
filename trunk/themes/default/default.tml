@@ -64,7 +64,7 @@
 		<!--excerpt-->
 		<div class="post" id="post-$post.id">
 			<h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-				<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
+				<span class="post-date"><!--date-->d.m.Y<!--/date--></span>
 				<span class="post-tags">$post.tagslinks</span>
 			<div class="post-content">$post.excerpt 
 				<!--more--> <a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
@@ -91,19 +91,16 @@
 		<!--post-->
 			<div class="post" id="post-$post.id">
 		        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-					<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
-					<span class="post-tags">$post.tagslinks</span>
-						<!--commontags-->
-							$lang.commontags: 
+					<span class="post-date"><!--date-->d.m.Y<!--/date--></span>
+					<span class="post-tags">						<!--tags-->
+							$lang.tags: 
 								<!--item-->
 								<a href="$options.url$url" title="$title">$icon$title</a>
 								<!--/item-->
 								<!--divider-->, <!--/divider-->
-							
-						<!--/commontags-->
+													<!--/tags--></span>
 						
-						
-						<div class="post-content">
+												<div class="post-content">
 							<!--files-->
 								<ul id="files-$post.id">
 								<!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
@@ -124,7 +121,13 @@
 							
 							<div class="post-info">
 								<!--rss--><span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span><!--/rss-->
-								<span class="post-cat">$post.categorieslinks</span>	
+								<span class="post-cat">						<!--commontags-->
+							$lang.categories: 
+								<!--item-->
+								<a href="$options.url$url" title="$title">$icon$title</a>
+								<!--/item-->
+								<!--divider-->, <!--/divider-->
+													<!--/categories--></span>	
 							</div>
 						
 							<!--prevnext-->

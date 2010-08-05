@@ -164,7 +164,7 @@ class Tadminoptions extends tadminmenu {
       $home->hideposts = isset($hideposts);
       $homemenu = isset($homemenu);
       if ($homemenu != ($home->idmenu > 0)) {
-      $menus = tmenus::instance();
+        $menus = tmenus::instance();
         if ($homemenu) {
           $menus->lock();
           $home->idmenu = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
@@ -173,7 +173,7 @@ class Tadminoptions extends tadminmenu {
           $menus->unlock();
         } else {
           $menus->remove($home->idmenu);
-$home->idmenu = 0;
+          $home->idmenu = 0;
         }
       }
       $home->unlock();

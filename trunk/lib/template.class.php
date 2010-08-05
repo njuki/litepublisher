@@ -198,25 +198,25 @@ class ttemplate extends tevents {
   public function getmenu() {
     $theme = ttheme::instance();
     $hovermenu = $this->hovermenu && $theme->menu->hover;
-$current = $this->context instanceof tmenu ? $this->context->id : 0;
-if (($current == 0) && ($this->context instanceof thomepage)) $current = $this->context->idmenu;
+    $current = $this->context instanceof tmenu ? $this->context->id : 0;
+    if (($current == 0) && ($this->context instanceof thomepage)) $current = $this->context->idmenu;
     if (litepublisher::$urlmap->adminpanel) {
       $this->callevent('onadminhover', array(&$hovermenu));
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($hovermenu, $current);
     }
     
-if ($current == 0) {
-    $filename = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.menu.php";
-    if (@file_exists($filename)) return file_get_contents($filename);
+    if ($current == 0) {
+      $filename = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.menu.php";
+      if (@file_exists($filename)) return file_get_contents($filename);
     }
-
+    
     $menus = tmenus::instance();
     $result = $menus->getmenu($hovermenu, $current);
-if ($current == 0) {
-    file_put_contents($filename, $result);
-    @chmod($filename, 0666);
-}
+    if ($current == 0) {
+      file_put_contents($filename, $result);
+      @chmod($filename, 0666);
+    }
     return $result;
   }
   

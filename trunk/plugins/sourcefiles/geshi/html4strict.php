@@ -161,7 +161,7 @@ $language_data = array (
         ),
     'URLS' => array(
         //2 => 'http://december.com/html/4/element/{FNAMEL}.html',
-        2 => 'http://www.w3schools.com/tags/tag{FNAMEL.asp',
+        2 => 'http://www.w3schools.com/tags/tag{FNAMEL}.asp',
         3 => ''
         ),
     'OOLANG' => false,

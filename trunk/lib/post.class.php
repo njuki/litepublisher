@@ -224,8 +224,8 @@ class tpost extends titem implements  itemplate {
       }
       $list[] = $theme->parsearg($tml->item,  $args);
     }
-    $result = implode($tml->divider, $list);
-    return sprintf($theme->parse($tml), $result);
+    
+    return str_replace('$items', implode($tml->divider, $list), $theme->parse($tml));
   }
   
   public function getdate() {
@@ -374,7 +374,10 @@ class tpost extends titem implements  itemplate {
     }
     
     if (($prev == '') && ($next == '')) return '';
-    return sprintf($theme->parse($tml), $prev, $next);
+    return str_replace(
+    array('$prev', '$next'),
+    array($prev, $next),
+    $theme->parse($tml));
   }
   
   public function getcommentslink() {
