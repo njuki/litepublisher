@@ -79,7 +79,7 @@ class tcommentform extends tevents {
     $this->cache = false;
   }
   
-  public static function getcomuser() {
+  public static function getcomuser($postid) {
     if (!empty($_COOKIE["userid"])) {
       $comusers = tcomusers::instance($postid);
       $user = $comusers->fromcookie($_COOKIE['userid']);
@@ -106,7 +106,7 @@ class tcommentform extends tevents {
     $args->postid = $postid;
     $args->antispam = '_Value' . strtotime ("+1 hour");
     
-    if ($user = self::getcomuser()) {
+    if ($user = self::getcomuser($postid)) {
       $args->name = $user['name'];
       $args->email = $user['email'];
       $args->url = $user['url'];

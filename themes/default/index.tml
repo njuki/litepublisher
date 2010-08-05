@@ -91,47 +91,16 @@
 		<!--post-->
 			<div class="post" id="post-$post.id">
 		        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-					<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
+					<span class="post-date">$post.date</span>
 					<span class="post-tags">$post.tagslinks</span>
-						<!--commontags-->
-							$lang.commontags: 
-								<!--item-->
-								<a href="$options.url$url" title="$title">$icon$title</a>
-								<!--/item-->
-								<!--divider-->, <!--/divider-->
-							
-						<!--/commontags-->
-						
-						
 						<div class="post-content">
-							<!--files-->
-								<ul id="files-$post.id">
-								<!--file--><li><a href="$options.files/files/$filename" title="$title">$description</a></li><!--/file-->
-								<!--image--><li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li><!--/image-->
-								<!--audio-->
-								<li><a href="$options.files/files/$filename" title="$title">$title</a>
-								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span>
-								</li><!--/audio-->
-								<!--video-->
-								<li><a href="$options.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a>
-								</li><!--/video-->
-								</ul>
-							<!--/files-->
-							<!--more--><a name="more-$post.id"></a><!--/more-->
+       $post.filelist
 							$post.content
-							
 							<div class="post-info">
-								<!--rss--><span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span><!--/rss-->
+								$post.subscriberss
 								<span class="post-cat">$post.categorieslinks</span>	
 							</div>
-						
-							<!--prevnext-->
-								<div id="prevnext">
-								<!--prev--><p id="prev">&larr; $lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a></p><!--/prev-->
-								<!--next--><p id="next">$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a> &rarr;</p><!--/next-->
-								</div>
-							<!--/prevnext-->
+							$post.prevnext
 						</div>
 						
 						<!--templatecomments-->

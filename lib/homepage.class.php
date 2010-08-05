@@ -17,7 +17,7 @@ class thomepage extends tevents implements  itemplate, itemplate2, imenu  {
     parent::create();
     $this->basename = 'homepage' ;
     $this->data['idurl'] = 0;
-$this->data['idmenu'] = 0;
+    $this->data['idmenu'] = 0;
     $this->data['hideposts'] = false;
     $this->data['defaultsitebar'] = true;
     $this->data['ajax'] = false;
