@@ -33,16 +33,7 @@
 	<div id="header"><div id="logo"><span class="name"><a href="$options.url/">$options.name</a></span><span class="slogan">$options.description</span>
 </div></div>
 	<div id="topmenu">
-	<!--menulist-->
-	<ul id="nav">
-		<!--item-->
-		<li><a href="%1$s" title="%2$s">%2$s</a><!--submenu--><ul>%s</ul><!--/submenu--></li>
-		<!--/item-->
-		<!--current-->
-		<li class="current_page_item"><a href="%1$s" title="%2$s">%2$s</a>%3$s</li>
-		<!--/current-->	
-	</ul>
-	<!--/menulist-->
+	 $template.menu
 </div>
 <div id="out">
 <div id="middle">
