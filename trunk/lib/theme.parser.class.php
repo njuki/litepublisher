@@ -85,7 +85,8 @@ $theme->parent = $about['parent'];
     $theme->menu = $this->parsemenu($s);
     $theme->content = $this->parsecontent($s);
     $theme->sitebars = $this->parsesitebars($s);
-    $theme->theme= $s;
+$s = trim($s);
+    $theme->theme= $s != ''? $s : (string) $this->default->theme;
     return true;
   }
   
