@@ -51,6 +51,7 @@ class ttheme extends tevents {
     $this->tmlfile = 'index';
     $this->parsing = array();
     $this->data['type'] = 'litepublisher';
+$this->data['parent'] = '';
     $this->data['theme'] = '';
     $this->data['title'] = '';
     $this->data['menu'] = array();

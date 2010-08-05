@@ -18,7 +18,6 @@ class tadminmenus extends tmenus {
     tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
   
-  
   private function getadmintitle($name) {
     if (isset(tlocal::$data[$name]['title'])) {
       return tlocal::$data[$name]['title'];
@@ -209,4 +208,18 @@ public function save() { return true; }
   }
   
 }//class
+
+class tadminmenus2 extends tadminmenus {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'adminmenu2';
+}
+
+}//class
+
 ?>

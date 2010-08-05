@@ -60,14 +60,22 @@ class tthemeparser extends tdata {
   }
   
   public function parse(ttheme $theme) {
-    $this->warnings = array();
-    
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $theme->tmlfile . '.tml';
     if (!@file_exists($filename))  return $this->checktheme($theme);
     if (($theme->name == 'default') && ($theme->tmlfile == 'default')) {
       $this->default = new tdefaulttheme();
     } else {
+$about = $this->getabout($theme->name); 
+if (($about['type'] == 'litepublisher') && !empty($about['parent'])) {
+$parent = $this->getabout($about['parent']);
+if (($parent['type'] != 'litepublisher') || !empty($parent['parent'])) {
+$this->error(sprintf('Parent theme %s of theme %s has parent', $about['parent'], $theme->name));
+}
+      $this->default = ttheme::getinstance($about['parent'], 'index');
+$theme->parent = $about['parent'];
+} else {
       $this->default = ttheme::getinstance('default', 'default');
+}
     }
     
     $s = file_get_contents($filename);
@@ -418,12 +426,14 @@ class tthemeparser extends tdata {
     if (!isset($this->abouts)) $this->abouts = array();
     if (!isset($this->abouts[$name])) {
       if (      $about = parse_ini_file(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini', true)) {
+$about['about']['type'] = 'litepublisher';
         //join languages
         if (isset($about[litepublisher::$options->language])) {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];
         }
         $this->abouts[$name] = $about['about'];
       } elseif ($about =  $this->get_about_wordpress_theme($name)){
+$about['type'] = 'wordpress';
         $this->abouts[$name] = $about;
       } else {
         $this->abouts[$name] = false;
