@@ -412,18 +412,20 @@ if (count($result) == 0) return $this->default->sitebars;
   }
   
   private function parsesitebar($s, $sitebar) {
-$default = $this->default->sitebars[$sitebar];
     $result = array();
-    $widget = $this->parsetag($s, 'widget', '$items');
-if ($widget == '') {
-$result['widget'] = $default['widget'];
+$default = $this->default->sitebars[$sitebar];
+$isdef = $this->default instanceof tdefaulttheme;
+    if ($widget = $this->parsetag($s, 'widget', '$items')) {
+    $result['widget'] = $this->parsewidget($widget, 'widget', $sitebar);
 } else {
-    $result['widget'] = $this->parsewidget($widget, 'widget');
+$result['widget'] = $default['widget'];
 }
     
     foreach (self::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
-        $result[$name] = $this->parsewidget($widget, $name);
+        $result[$name] = $this->parsewidget($widget, $name, $sitbar);
+} elseif ($isdef) {
+$result[$name] = $result['widget'];
       } else {
         $result[$name]  = $default[$name];
       }
@@ -434,9 +436,10 @@ $s = $this->deletespaces($s);
     return $result;
   }
   
-  private function parsewidget($s, $name) {
+  private function parsewidget(&$str, $name, $sitebar) {
+$default = $this->default->sitebars[$sitebar][$name];
     $result = array();
-    $items = $this->requiretag($s, 'items', '%s');
+    if ($items = $this->parsetag($s, 'items', '$items');
     if ($item = $this->parsetag($items, 'item', '%s')) {
       $result['item'] = $item;
     } else {
