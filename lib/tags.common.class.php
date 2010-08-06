@@ -328,7 +328,7 @@ class tcommontags extends titems implements  itemplate {
     }
     
     $result .= $this->contents->getcontent($this->id);
-    if ($result != '') $result = sprintf($theme->content->simple, $result);
+    if ($result != '') $result = $theme->simple($result);
     
     $items = $this->itemsposts->getposts($this->id);
     $posts = litepublisher::$classes->posts;

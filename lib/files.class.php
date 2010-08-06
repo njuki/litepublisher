@@ -101,7 +101,7 @@ class tfiles extends titems {
     return true;
   }
   
-  public function getlist(array $list) {
+  public function getlist(array $list, array $templates) {
     if (count($list) == 0) return '';
     $result = '';
     if ($this->dbversion) {
@@ -109,16 +109,15 @@ class tfiles extends titems {
       $this->select(sprintf('parent in (%s)', implode(',', $list)), '');
     }
     
-    //отсортировать по типам
+    //sort by media type
     $items = array();
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
       $items[$item['media']][] = $id;
     }
-    
-    $theme = ttheme::instance();
-    $templates = $theme->content->post->files->array;
+
+$theme = ttheme::instance();    
     $args = targs::instance();
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;

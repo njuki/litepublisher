@@ -40,17 +40,6 @@
 	<div id="content">
 		<!--content-->
 		
-			<!--simple-->
-			<div class="simplecontent">%s</div>
-			<!--/simple-->
-		
-			<!--notfound-->
-			<div class="simplecontent">
-				<h2 class="center">$lang.notfound </h2>
-				<p class="center">$lang.nocontent</p>
-			</div>
-			<!--/notfound-->
-		
 		<!--excerpts-->
 		<!--excerpt-->
 		<div class="post" id="post-$post.id">
@@ -59,7 +48,7 @@
 				<span class="post-tags">$post.tagslinks</span>
 			<div class="post-content">$post.excerpt 
 				<!--more--> <a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
-				$post.filelist
+				$post.excerptfilelist
 			</div>
 			<div class="post-info">
 				<span class="post-comments">$post.commentslink</span>
@@ -199,16 +188,6 @@
 		        </div>
 			</div>
 		<!--/menu-->
-		<!--admin-->
-			<!--edit-->
-			<input type="text" name="$name" id="$name" value="$content" size="22" />
-			<!--/edit-->
-
-			<!--area-->
-			<textarea name="$name" id="$name" cols="57%" rows="10">$content</textarea>
-			<!--/area-->
-
-		<!--/admin-->
 		<!--/content-->
 	</div>
 	<div id="sidebar">

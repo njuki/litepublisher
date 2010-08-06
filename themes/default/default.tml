@@ -50,7 +50,7 @@
 		<!--content-->
 		
 			<!--simple-->
-			<div class="simplecontent">%s</div>
+			<div class="simplecontent">$content</div>
 			<!--/simple-->
 		
 			<!--notfound-->
@@ -68,7 +68,7 @@
 				<span class="post-tags">$post.tagslinks</span>
 			<div class="post-content">$post.excerpt 
 				<!--more--> <a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
-				$post.filelist
+				$post.excerptfilelist
 			</div>
 			<div class="post-info">
 				<span class="post-comments">$post.commentslink</span>

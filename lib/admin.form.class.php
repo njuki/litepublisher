@@ -41,7 +41,7 @@ public function getdescription() {}
     $result = $this->formresult;
     $result .= $this->getcontent();
     $theme = ttheme::instance();
-    return sprintf($theme->content->simple, $result);
+    return $theme->simple($result);
   }
   
   public function gethtml() {

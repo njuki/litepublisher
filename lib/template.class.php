@@ -137,17 +137,9 @@ class ttemplate extends tevents {
       $result= $this->context->httpheader();
       if (!empty($result)) return $result;
     }
-    $nocache = $this->context->cache ? '' : "
-    @Header( 'Cache-Control: no-cache, must-revalidate');
-    @Header( 'Pragma: no-cache');";
-    
-    return "<?php $nocache
-    @header('Content-Type: text/html; charset=utf-8');
-    @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
-    ?>";
-  }
-  
+return turlmap::httpheader($this->context->cache);
+}
+
   //html tags
   public function getsitebar() {
     $widgets = twidgets::instance();
