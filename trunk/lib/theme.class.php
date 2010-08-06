@@ -206,15 +206,14 @@ $args->page = $i;
     }
     
     $result = '';
-    $tml = $lite ? $this->content->excerpts->lite->excerpt : $this->content->excerpts->excerpt;
-    if (is_object($tml)) $tml = $tml->__tostring();
+    $tml = $lite ? (string) $this->content->excerpts->lite->excerpt : (string) $this->content->excerpts->excerpt;
     foreach($items as $id) {
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     
     $tml = $lite ? $this->content->excerpts->lite : $this->content->excerpts;
-    return sprintf($this->parse($tml), $result);
+    return str_replace('$items', $result, $this->parse((string) $tml));
   }
   
   public function getpostswidgetcontent(array $items, $sitebar, $tml) {
@@ -261,9 +260,12 @@ $args->page = $i;
     }
     return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
   }
+
+public function simple($content) {
+return str_replace('$content', $content, $this->content->simple);
+}
   
-  
-  public static function clearcache() {
+   public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }

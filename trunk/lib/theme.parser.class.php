@@ -144,20 +144,28 @@ $s = $this->deletespaces($s);
     if ($s == '') return $this->default->content->array;
     $result = array();
     $result['post']= $this->parsepost($s);
-    $result['excerpts'] = $this->parse_excerpts($this->requiretag($s, 'excerpts', ''), $result['post']);
+    $result['excerpts'] = $this->parse_excerpts($s, $result['post']);
     $result['navi'] = $this->parsenavi($s);
-    $result['admin'] = $this->parseadmin($this->parsetag($s, 'admin', ''));
-    $result['simple'] = $this->requiretag($s, 'simple', '');
-    $result['notfound'] = $this->requiretag($s, 'notfound', '');
-    $result['menu']= $this->requiretag($s, 'menu', '');
+    $result['admin'] = $this->parseadmin($s);
+$default = $this->default->content;
+    $result['menu']= $this->gettag($s, 'menu', '', $default->menu);
+    $result['simple'] = $this->gettag($s, 'simple', '', $default->simple);
+    $result['notfound'] = $this->gettag($s, 'notfound', '', $default->notfound);
+if ($this->fixold) {
+if (strpos($result['simple'], '%')) $result['simple'] = sprintf($result['simple'], '$content');
+if (strpos($result['notfound'], '%')) $result['notfound'] = sprintf($result['notfound'], '$content');
+}
     return $result;
   }
   
-  private function parse_excerpts($s, array &$post) {
+  private function parse_excerpts(&$str, array &$post) {
+$s = $this->parsetag($str, 'excerpts', '');
+if ($s == '') return $this->default->content->excerpts->array;
     $result = array();
-    $result['excerpt'] = $this->parse_excerpt($this->requiretag($s, 'excerpt', '%s'), $post);
+    $result['excerpt'] = $this->parse_excerpt($s, $post);
     $result['lite'] = $this->parselite($this->gettag($s, 'lite', ''));
-    $result[0] = $s;
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : (string) $this->default->content->excerpts;
     return $result;
   }
   
@@ -168,7 +176,9 @@ $s = $this->deletespaces($s);
     return $result;
   }
   
-  private function parse_excerpt($s, array &$post) {
+  private function parse_excerpt(&$str, array &$post) {
+$s = $this->parsetag($str, 'excerpt', '$items');
+if ($s == '') return $this->default->content->excerpts->excerpt->array;
     $result = array();
     $categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks');
     $tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks');
@@ -197,9 +207,9 @@ $s = $this->deletespaces($s);
     } else {
       $result['tags'] = $post['tags'];
     }
-    
-    
-    if ($dateformat = $this->parsetag($s, 'date', '$post.excerptdate')) {
+
+    $result['files'] = $this->parsefilesexcerpt($s, $post['files']);
+        if ($dateformat = $this->parsetag($s, 'date', '$post.excerptdate')) {
       $result['dateformat'] = self::strftimetodate($dateformat);
     } else {
       $result['dateformat'] = $post['dateformat'];
@@ -289,6 +299,23 @@ $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
+
+  private function parsefilesexcerpt(&$str, array &$files) {
+    $s = $this->parsetag($str, 'files', '$post.excerptfilelist');
+    if ($s == '') return $files;
+    $default = new tarray2prop();
+$default ->array = $files;
+        $result = array();
+    $result['file'] = $this->gettag($s, 'file', '$items', $default->file);
+    $result['image'] = $this->gettag($s, 'image', '', $default->image);
+    $result['preview'] = $this->gettag($s, 'preview', '', $default->preview);
+    $result['audio'] = $this->gettag($s, 'audio', '', $default->audio);
+    $result['video'] = $this->parsetag($s, 'video', '', $default->video);
+    $s = trim($s);
+    $result[0] = $s != '' ? $s : $files[0];
+    return $result;
+  }
+  
   
   private function parseprevnext(&$str) {
     $s = $this->parsetag($str, 'prevnext', '$post.prevnext');
@@ -323,10 +350,13 @@ $s = $this->deletespaces($s);
     return $result;
   }
   
-  private function parseadmin($s) {
+  private function parseadmin(&$str) {
+$default = $this->default->content->admin;
+$s = $this->parsetag($str, 'admin', '');
+if ($s == '') return $default->array;
     $result = array();
-    $result['area'] = trim($this->parsetag($s, 'area', ''));
-    $result['edit'] = trim($this->parsetag($s, 'edit', ''));
+    $result['area'] = trim($this->gettag($s, 'area', '', $default->area));
+    $result['edit'] = trim($this->gettag($s, 'edit', '', $default->edit));
     return $result;
   }
   

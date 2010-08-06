@@ -37,7 +37,7 @@ public function getdescription() {}
   public function getcont() {
     $result = '';
     $theme = ttheme::instance();
-    if (litepublisher::$urlmap->page == 1) $result .= sprintf($theme->content->simple, $this->text);
+    if (litepublisher::$urlmap->page == 1) $result .= $theme->simple($this->text);
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
     

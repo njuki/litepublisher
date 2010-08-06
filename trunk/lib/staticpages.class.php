@@ -41,7 +41,7 @@ public function gethead() { }
   
   public function getcont() {
     $theme = ttheme::instance();
-    return sprintf($theme->content->simple, $this->getval('filtered'));
+    return $theme->simple($this->getval('filtered'));
   }
   
   public function add($title, $description, $keywords, $content) {

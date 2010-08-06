@@ -22,20 +22,19 @@ class tnotfound404 extends tevents {
   }
   
   public function  httpheader() {
-    return "<?php
-    @Header( 'HTTP/1.0 404 Not Found');
-    @Header( 'Content-Type: text/html; charset=utf-8' );
-    @Header( 'Cache-Control: no-cache, must-revalidate');
-    @Header( 'Pragma: no-cache');
-    ?>";
+    return "<?php Header( 'HTTP/1.0 404 Not Found'); ?>" . turlmap::httpheader(false);
   }
   
   function getcont() {
-    if ($this->notify) $this->sendmail();
     $this->cache = false;
-    $result = $this->text != '' ? $this->text :  '<h2 class="center">'. tlocal::$data['default']['notfound'] . '</h2>';
+    if ($this->notify) $this->sendmail();
     $theme = ttheme::instance();
-    return sprintf($theme->content->simple, $result);
+if ($this->text == '') {
+$lang = tlocal::instance('default');
+return $theme->parse($theme->content->notfound);
+} else {
+    return $theme->simple($this->text);
+}
   }
   
   private function sendmail() {

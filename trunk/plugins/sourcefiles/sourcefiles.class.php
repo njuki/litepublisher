@@ -48,9 +48,9 @@ public function gethead() { }
       $realdir = litepublisher::$paths->home;
       $realdir .= $dir == '' ? 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
       $realfile = $realdir . DIRECTORY_SEPARATOR. $this->item['filename'] ;
-      return sprintf($theme->content->simple, $updir . highlight_file($realfile , true));
+      return $theme->simple($updir . highlight_file($realfile , true));
     } else {
-      return sprintf($theme->content->simple, $updir . $this->item['content']);
+      return $theme->simple($updir . $this->item['content']);
     }
   }
   
