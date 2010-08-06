@@ -47,7 +47,7 @@
 				<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
 				<span class="post-tags">$post.tagslinks</span>
 			<div class="post-content">$post.excerpt 
-				<!--more--> <a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
+				$post.morelink
 				$post.excerptfilelist
 			</div>
 			<div class="post-info">
@@ -56,15 +56,6 @@
 			</div>
 		</div>
 		<!--/excerpt-->
-
-			<!--lite-->
-			<h1>$lang.posts</h1>
-			<ul>
-				<!--excerpt-->
-				<li>$post.date <a href="$options.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>
-				<!--/excerpt-->
-			</ul>
-			<!--/lite-->
 
 		<!--/excerpts-->
 

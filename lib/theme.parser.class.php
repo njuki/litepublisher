@@ -163,16 +163,20 @@ $s = $this->parsetag($str, 'excerpts', '');
 if ($s == '') return $this->default->content->excerpts->array;
     $result = array();
     $result['excerpt'] = $this->parse_excerpt($s, $post);
-    $result['lite'] = $this->parselite($this->gettag($s, 'lite', ''));
+    $result['lite'] = $this->parselite($s);
 $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $this->default->content->excerpts;
     return $result;
   }
   
-  private function parselite($s) {
+  private function parselite(&$str) {
+$default = $this->default->content->excerpts->lite;
+$s= $this->gettag($str, 'lite', '');
+if ($s == '') return $default->array;
     $result = array();
-    $result['excerpt'] = $this->parsetag($s, 'excerpt', '%s');
-    $result[0] = $s;
+    $result['excerpt'] = $this->parsetag($s, 'excerpt', '$items', $default->excerpt);
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   
@@ -209,22 +213,11 @@ if ($s == '') return $this->default->content->excerpts->excerpt->array;
     }
 
     $result['files'] = $this->parsefilesexcerpt($s, $post['files']);
-        if ($dateformat = $this->parsetag($s, 'date', '$post.excerptdate')) {
-      $result['dateformat'] = self::strftimetodate($dateformat);
-    } else {
-      $result['dateformat'] = $post['dateformat'];
-    }
-    
-    $result['more'] = $this->gettag($s, 'more', '$post.morelink');
-    $result['previews'] = $this->parsepreviews($this->parsetag($s, 'previews', '$post.previews'));
-    $result[0] = $s;
-    return $result;
-  }
-  
-  private function parsepreviews($s) {
-    $result = array();
-    $result['preview'] = $this->parsetag($s, 'preview', '%s');
-    $result[0] = $s;
+$default = $this->default->content->excerpts->excerpt;
+    $result['more'] = $this->gettag($s, 'more', '$post.morelink', $default->more);
+    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['dateformat']));
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   
@@ -409,28 +402,35 @@ if ($s == '') return $default->array;
     return $result;
   }
   
-  private function parsesitebars(&$s) {
+  private function parsesitebars(&$str) {
     $result = array();
     while ($sitebar = $this->parsetag($s, 'sitebar', '$template.sitebar')) {
-      $result[] = $this->parsesitebar($sitebar);
+      $result[] = $this->parsesitebar($sitebar, count($result));
     }
+if (count($result) == 0) return $this->default->sitebars;
     return $result;
   }
   
-  private function parsesitebar($s) {
+  private function parsesitebar($s, $sitebar) {
+$default = $this->default->sitebars[$sitebar];
     $result = array();
-    $widget = $this->requiretag($s, 'widget', '%s');
+    $widget = $this->parsetag($s, 'widget', '$items');
+if ($widget == '') {
+$result['widget'] = $default['widget'];
+} else {
     $result['widget'] = $this->parsewidget($widget, 'widget');
+}
     
     foreach (self::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name);
       } else {
-        $result[$name] ['item'] = $this->GetDefaultWidgetItem($name);
+        $result[$name]  = $default[$name];
       }
     }
     
-    $result[0] = $this->deletespaces($s);
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
   
