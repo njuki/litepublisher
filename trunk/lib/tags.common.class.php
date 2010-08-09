@@ -49,14 +49,19 @@ class tcommontags extends titems implements  itemplate {
     $sorted = $this->getsorted($sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
+$url = litepublisher::$options->url;
+$iconenabled = ! litepublisher::$options->icondisabled;
     $theme = ttheme::instance();
     $args = targs::instance();
-    $args->count = '';
+    $args->subitems = '';
+$args->icon = '';
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
-      $args->icon = litepublisher::$options->icondisabled ? '' : $this->geticonlink($id);
-      if ($showcount) $args->count = sprintf(' (%d)', $item['itemscount']);
+$args->url = $url . $item['url'];
+$args->anchor = $item['title'];
+if ($iconenabled)       $args->icon = $this->geticonlink($id);
+      if ($showcount) $args->subitems = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }
     return $result;
@@ -487,7 +492,7 @@ class tcommontagswidget extends twidget {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->template, $sitebar);
     $result = $this->owner->getsortedcontent($this->sortname, $this->maxcount, $this->showcount, $tml);
-    return sprintf($theme->getwidgetitems($this->template, $sitebar), $result);
+    return $theme->getwidgetcontent($result, $this->template, $sitebar);
   }
   
 }//class

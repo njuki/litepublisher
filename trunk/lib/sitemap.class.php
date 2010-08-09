@@ -90,12 +90,7 @@ public function getdescription() {}
   
   public function request($arg) {
     if ($arg == 'xml') {
-      $s = "<?php
-      @header('Content-Type: text/xml; charset=utf-8');
-      echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
-      ?>";
-      $s .= $this->GetIndex();
-      return  $s;
+return turlmap::xmlheader() . $this->GetIndex();
     }
     
     $this->title = tlocal::$data['default']['sitemap'];
@@ -109,14 +104,17 @@ public function getdescription() {}
     <sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
     ';
     $url = litepublisher::$options->files . '/files/' . litepublisher::$domain;
+$exists = true;
     for ($i =1; $i <= $this->countfiles; $i++) {
       $result .= "   <sitemap>
       <loc>$url.$i.xml.gz</loc>
       <lastmod>$lastmod</lastmod>
       </sitemap>\n";
+if ($exists) $exists = file_exists(litepublisher::$paths->files . "$i.xml.gz");
     }
     
     $result .= '   </sitemapindex>';
+if (!$exists)     $this->createfiles();
     return $result;
   }
   

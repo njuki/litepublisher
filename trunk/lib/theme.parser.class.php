@@ -423,7 +423,7 @@ $result['widget'] = $default['widget'];
     
     foreach (self::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
-        $result[$name] = $this->parsewidget($widget, $name, $sitbar);
+        $result[$name] = $this->parsewidget($widget, $name, $sitebar);
 } elseif ($isdef) {
 $result[$name] = $result['widget'];
       } else {
@@ -436,34 +436,56 @@ $s = $this->deletespaces($s);
     return $result;
   }
   
-  private function parsewidget(&$str, $name, $sitebar) {
+  private function parsewidget($s, $name, $sitebar) {
+if ($this->default instanceof tdefaulttheme) {
+$default = array();
+} else {
 $default = $this->default->sitebars[$sitebar][$name];
+}
     $result = array();
-    if ($items = $this->parsetag($s, 'items', '$items');
-    if ($item = $this->parsetag($items, 'item', '%s')) {
-      $result['item'] = $item;
+    if ($items = $this->parsetag($s, 'items', '$content')) {
+    if ($item = $this->parsetag($items, 'item', '$item')) {
+if ($this->fixold) {
+$item = sprintf($item, '$url', $title', '$subitems');
+$item = str_replace('$count', $subitems', $item);
+$item = str_replace('$options.url', '', $item);
+}
+       $result['item'] = trim($item);
     } else {
-      $result['item'] = $this->GetDefaultWidgetItem($name);
+      $result['item'] = $default['item'];
     }
+if ($name == 'meta') $result['classes'] = $this->parsemetawidget($items, $sitebar);
+if ($this->fixold) $items = sprintf($items, '$items');
+    $result['items'] = $this->deletespaces($items);
+} else {
+      $result['items'] = $default['items'];
+      $result['item'] = $default['item'];
+if ($name == 'meta') $result['classes'] = $default['classes'];
+}
     
-    if ($name == 'meta') {
-      $result['classes'] = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
-      if ($classes = $this->parsetag($items, 'metaclasses', '')) {
-        $classes = explode(',', $classes);
-        foreach ($classes as $class) {
+$s = $this->deletespaces($s);
+if ($this->fixold) $s = sprintf($s, '$title', '$content');
+   $result[0] = $s != '' ? $s : $default[0];
+    return $result;
+  }
+
+private function parsemetawidget(&$str, $sitebar) {
+      $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
+$default = $this->default instanceof tdefaulttheme ? $result : $this->default->sitebars[$sitebar]['meta']['classes'];
+$s = $this->parsetag($str, 'metaclasses', ''));
+if ($s == '') return $default;
+
+        foreach (explode(',', $s) as $class) {
           if ($i = strpos($class, '=')) {
             $classname = trim(substr($class, 0, $i));
             $value = trim(substr($class, $i + 1));
-            if ($value != '') $result['classes'][$classname] = sprintf('class="%s"', $value);
+            if ($value != '') $result[$classname] = sprintf('class="%s"', $value);
           }
         }
-      }
-    }
-    
-    $result['items'] = $this->deletespaces($items);
-    $result[0] = $this->deletespaces($s);
-    return $result;
-  }
+      } else {
+
+return $result;
+}
   
   //manager
   public function getabout($name) {
@@ -529,36 +551,6 @@ $about['type'] = 'wordpress';
     <p><input type="submit" name="submit" value="$lang->human"/></p>
     </form>';
   }
-  
-  private function GetDefaultWidgetItem($name) {
-    switch ($name) {
-      case 'submenu':
-      case 'categories':
-      case  'tags':
-      return '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
-      
-      case 'archives':
-      return '<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>';
-      
-      case 'posts':
-      return '<li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
-      <small>$post.date</small></li>';
-      
-      case 'comments':
-      return '<li><strong><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>';
-      
-      case 'link':
-      return '<li><a href="$url" title="$title">$text</a></li>';
-      
-      case 'foaf':
-      return '<li><a href="$url" rel="friend" title="$nick">$nick</a></li>';
-      
-      //case 'widget':
-      default:
-      return '<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-    }
-  }
-  
   
   public static function strftimetodate($format) {
     static $trans;

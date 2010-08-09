@@ -268,10 +268,10 @@
 		<!--sitebar-->
 			<!--widget-->	
 			<div class="widget">
-		      <div class="rubric">%s</div>
+		      <div class="rubric">$title</div>
     <!--items-->
 		      <ul class="linkcat">
-				%s
+				      <!--item--><li><a href="$url" title="$title">$icon$anchor</a>$subitems</li><!--/item-->
 		      </ul>
     <!--/items-->
 		    </div>
@@ -290,23 +290,24 @@
 
 			<!--categories-->
 				<div class="widget">
-			      <div class="rubric">%s</div>
+			      <div class="rubric">$title</div>
     <!--items-->
 			      <ul class="list-cat" id="widgetcategories">
 					<!--item-->
-					<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>
+					<li><a href="$url" title="$title">$icon$title</a>$subitems</li>
 					<!--/item-->
 			      </ul>
     <!--/items-->
 			    </div>
 			<!--/categories-->
+
 			<!--archives-->
 				<div class="widget">
-			      <div class="rubric">%s</div>
+			      <div class="rubric">$title</div>
     <!--items-->
 			      <ul class="list-archives" id="widgetarchives">
 					<!--item-->
-					<li><a href="$options.url$url" rel="archives" title="$title">$icon$title</a>$count</li>
+					<li><a href="$url" rel="archives" title="$title">$icon$title</a>$subitems</li>
 					<!--/item-->
 			      </ul>
     <!--/items-->

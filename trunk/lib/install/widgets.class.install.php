@@ -36,6 +36,8 @@ function install_std_widgets($widgets) {
   
   $id = $widgets->add(tcategorieswidget::instance());
   $sitebars->insert($id, true, 0, -1);
+
+  $id = $widgets->add(ttagswidget::instance());
   
   $id = $widgets->add(tarchiveswidget::instance());
   $sitebars->insert($id, true, 0, -1);

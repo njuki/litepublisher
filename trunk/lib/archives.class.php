@@ -175,12 +175,13 @@ class tarchiveswidget extends twidget {
     $args = targs::instance();
     foreach ($arch->items as $date => $item) {
       $args->add($item);
+$args->anchor = $item['title'];
       $args->icon = '';
-    $args->count = $this->showcount ? "({$item['count']})" : '';
+    $args->subitems = $this->showcount ? "({$item['count']})" : '';
       $result .= $theme->parsearg($tml, $args);
     }
     
-    return sprintf($theme->getwidgetitems('archives', $sitebar), $result);
+    return $theme->getwidgetcontent($result, 'archives', $sitebar);
   }
   
 }//class
