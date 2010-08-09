@@ -35,12 +35,12 @@ class tadmincontextwidget extends torderwidget {
       $title = $lang->adminpost;
       $editurl = litepublisher::$options->url . "/admin/posts/editor/" . litepublisher::$options->q . "id=$post->id";
       $action = litepublisher::$options->url . "/admin/posts/" . litepublisher::$options->q . "id=$post->id&action";
-      $links = sprintf($tml, litepublisher::$options->url . "/admin/posts/editor/" . litepublisher::$options->q . "mode=short", tlocal::$data['names']['quick']);
-      $links .= sprintf($tml, "$editurl&mode=short", $lang->edit);
-      $links .= sprintf($tml, "$editurl&mode=midle", $lang->midledit);
-      $links .= sprintf($tml, "$editurl&mode=full", $lang->fulledit);
-      $links .= sprintf($tml, "$editurl&mode=update", $lang->updatepost);
-      $links .= sprintf($tml, "$action=delete", $lang->delete);
+      $links = $this->getitem($tml, "/admin/posts/editor/" . litepublisher::$options->q . "mode=short", tlocal::$data['names']['quick']);
+      $links .= $this->getitem($tml, "$editurl&mode=short", $lang->edit);
+      $links .= $this->getitem($tml, "$editurl&mode=midle", $lang->midledit);
+      $links .= $this->getitem($tml, "$editurl&mode=full", $lang->fulledit);
+      $links .= $this->getitem($tml, "$editurl&mode=update", $lang->updatepost);
+      $links .= $this->getitem($tml, "$action=delete", $lang->delete);
     } else {
       switch (get_class(litepublisher::$urlmap->context)) {
         case 'tcategories':
@@ -50,18 +50,18 @@ class tadmincontextwidget extends torderwidget {
         $adminurl = litepublisher::$options->url . "/admin/posts/$name/";
         $lang = tlocal::instance('tags');
       $title = $lang->{$name};
-        $links = sprintf($tml,$adminurl, $lang->add);
+        $links = $this->getitem($tml,$adminurl, $lang->add);
         $adminurl .= litepublisher::$options->q . "id=$tags->id";
-        $links .= sprintf($tml,$adminurl, $lang->edit);
-        $links .= sprintf($tml, "$adminurl&action=delete", $lang->delete);
-        $links .= sprintf($tml, "$adminurl&full=1", $lang->fulledit);
+        $links .= $this->getitem($tml,$adminurl, $lang->edit);
+        $links .= $this->getitem($tml, "$adminurl&action=delete", $lang->delete);
+        $links .= $this->getitem($tml, "$adminurl&full=1", $lang->fulledit);
         break;
         
         case 'thomepage':
         $lang = tlocal::instance('options');
         $title = $lang->home;
-        $links = sprintf($tml, litepublisher::$options->url . "/admin/options/home/", $lang->title);
-        $links .= sprintf($tml, litepublisher::$options->url . "/admin/widgets/home/", tlocal::$data['widgets']['title']);
+        $links = $this->getitem($tml, "/admin/options/home/", $lang->title);
+        $links .= $this->getitem($tml, "/admin/widgets/home/", tlocal::$data['widgets']['title']);
         break;
         
         default:
@@ -70,8 +70,8 @@ class tadmincontextwidget extends torderwidget {
           $lang = tlocal::instance('menu');
           $title = $lang->title;
           $adminurl = litepublisher::$options->url . "/admin/menu/edit/";
-          $links = sprintf($tml,$adminurl, $lang->addmenu);
-          $links .= sprintf($tml, $adminurl . litepublisher::$options->q . "id=$menu->id", $lang->edit);
+          $links = $this->getitem($tml,$adminurl, $lang->addmenu);
+          $links .= $this->getitem($tml, $adminurl . litepublisher::$options->q . "id=$menu->id", $lang->edit);
         } else {
           return;
         }
@@ -79,10 +79,24 @@ class tadmincontextwidget extends torderwidget {
       }
     }
     
-    $links .= sprintf($tml, litepublisher::$options->url . "/admin/logout/", tlocal::$data['login']['logout']);
-    $links = sprintf($theme->getwidgetitems('widget', $sitebar), $links);
+    $links .= $this->getitem($tml, '/admin/logout/', tlocal::$data['login']['logout']);
+    $links = $theme->getwidgetcontent($links, 'widget', $sitebar);
     return $theme->getwidget($this->gettitle($id), $links, 'widget', $sitebar);
   }
+private function getitem($tml, $url, $title) {
+$args = targs::instance();
+$args->icon = '';$args->subitems = '';
+$args->rel = 'admin';
+if (strbegin($url, 'http://')) {
+$args->url = $url;
+} else {
+$args->url = litepublisher::$options->url  . $url;
+}
+$args->title = $title;
+$args->anchor = $title;
+$theme = ttheme::instance();
+return $theme->parsearg($tml, $args);
+}
   
 }//class
 

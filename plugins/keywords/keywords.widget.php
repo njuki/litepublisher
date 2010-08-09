@@ -62,7 +62,7 @@ class tkeywordswidget extends twidget {
     }
     
     $theme = ttheme::instance();
-    return sprintf($theme->getwidgetitems($this->template, $sitebar), $links);
+    return $theme->getwidgetcontent($links, $this->template, $sitebar);
   }
   
 }//class

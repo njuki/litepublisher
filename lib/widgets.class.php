@@ -306,7 +306,7 @@ class twidgets extends titems {
     if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
     $this->callevent('ongetwidgets', array(&$items, $sitebar));
     $result = $this->getsitebarcontent($items, $sitebar);
-if ($result != '') $result = str_replace('$items', $result, $theme->sitebars[$sitebar][0]);
+if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
     $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
     return $result;
   }
@@ -332,6 +332,7 @@ if ($result != '') $result = str_replace('$items', $result, $theme->sitebars[$si
   private function joinitems(array $items, array $subitems) {
     if (count($subitems) == 0) return $items;
     if (count($items) == 0) return $subitems;
+
     //delete copies
     for ($i = count($items) -1; $i >= 0; $i--) {
       $id = $items[$i]['id'];
@@ -342,6 +343,7 @@ if ($result != '') $result = str_replace('$items', $result, $theme->sitebars[$si
     
     //join
     foreach ($subitems as $item) {
+//echo $this->items[$item['id']]['class'], '<br>';
       $count = count($items);
       $order = $item['order'];
       if (($order < 0) || ($order >= $count)) {
