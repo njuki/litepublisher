@@ -59,7 +59,7 @@ class tmenuwidget extends tclasswidget {
     }
     
     if ($result == '')  return '';
-    return sprintf($theme->getwidgetitems('submenu', $sitebar), $result);
+    return $theme->getwidgetcontent($result, 'submenu', $sitebar);
   }
   
   private function getitem($tml, $item, $subnodes) {

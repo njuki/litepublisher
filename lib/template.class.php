@@ -20,6 +20,8 @@ class ttemplate extends tevents {
   }
   
   protected function create() {
+//prevent recursion
+litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
@@ -60,7 +62,7 @@ class ttemplate extends tevents {
   }
   
   public function theme_exists($name) {
-    return ($name != '') && @file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR   );
+    return ($name != '') && file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR   );
   }
   
   protected function settheme($name) {
@@ -79,8 +81,14 @@ class ttemplate extends tevents {
   
   private function loadtheme($name, $tmlfile) {
     if (!$this->theme_exists($name)) {
-      $name = $this->theme;
+        if ($name == $this->theme) {
+$name = 'default';
+} else {
+$name = $this->theme;
+    if (!$this->theme_exists($name)) $name = 'default';
     }
+}
+
     /*
     if (!@file_exists($path . "$tmlfile.tml")) {
       if (($tmlfile != 'index') && @file_exists($this->path . "index.tml")) {
