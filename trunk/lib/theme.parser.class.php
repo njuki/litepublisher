@@ -404,10 +404,10 @@ if ($s == '') return $default->array;
   
   private function parsesitebars(&$str) {
     $result = array();
-    while ($sitebar = $this->parsetag($s, 'sitebar', '$template.sitebar')) {
+    while ($sitebar = $this->parsetag($str, 'sitebar', '$template.sitebar')) {
       $result[] = $this->parsesitebar($sitebar, count($result));
     }
-if (count($result) == 0) return $this->default->sitebars;
+if (count($result) == 0) return $this->default->sitebars->array;
     return $result;
   }
   
@@ -444,7 +444,7 @@ $default = $this->default->sitebars[$sitebar][$name];
 }
     $result = array();
     if ($items = $this->parsetag($s, 'items', '$content')) {
-    if ($item = $this->parsetag($items, 'item', '$item')) {
+    if ($item = $this->parsetag($items, 'item', '$items')) {
 if ($this->fixold) {
 $item = sprintf($item, '$url', '$title', '$anchor', '$subitems');
 $item = str_replace('$count', '$subitems', $item);
@@ -490,7 +490,8 @@ return $result;
   public function getabout($name) {
     if (!isset($this->abouts)) $this->abouts = array();
     if (!isset($this->abouts[$name])) {
-      if (      $about = parse_ini_file(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini', true)) {
+$filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini';
+      if (file_exists($filename) && (      $about = parse_ini_file($filename, true))) {
 $about['about']['type'] = 'litepublisher';
         //join languages
         if (isset($about[litepublisher::$options->language])) {
@@ -635,7 +636,7 @@ $about['type'] = 'wordpress';
     $theme_data['Name'] = $theme_data['Title'] = strip_tags( $theme_data['Name']);
     $theme_data['URI'] = strip_tags( $theme_data['URI'] );
     $theme_data['AuthorURI'] = strip_tags( $theme_data['AuthorURI'] );
-    $theme_data['Version'] = strip_tags( $theme_data['Version'], $themes_allowed_tags );
+    $theme_data['Version'] = strip_tags( $theme_data['Version']);
     
     if ( $theme_data['Author'] == '' ) {
       $theme_data['Author'] = 'Anonymous';

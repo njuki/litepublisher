@@ -39,7 +39,7 @@ class tcommentswidget extends twidget {
       $args->content = tcontentfilter::getexcerpt($item['content'], 120);
       $result .= $theme->parsearg($tml,$args);
     }
-    return sprintf($theme->getwidgetitems('comments', $sitebar), $result);
+    return $theme->getwidgetcontent($result, 'comments', $sitebar);
   }
   
   public function changed($id, $idpost) {
