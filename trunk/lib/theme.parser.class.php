@@ -446,8 +446,8 @@ $default = $this->default->sitebars[$sitebar][$name];
     if ($items = $this->parsetag($s, 'items', '$content')) {
     if ($item = $this->parsetag($items, 'item', '$item')) {
 if ($this->fixold) {
-$item = sprintf($item, '$url', $title', '$subitems');
-$item = str_replace('$count', $subitems', $item);
+$item = sprintf($item, '$url', '$title', '$anchor', '$subitems');
+$item = str_replace('$count', '$subitems', $item);
 $item = str_replace('$options.url', '', $item);
 }
        $result['item'] = trim($item);
@@ -472,7 +472,7 @@ if ($this->fixold) $s = sprintf($s, '$title', '$content');
 private function parsemetawidget(&$str, $sitebar) {
       $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
 $default = $this->default instanceof tdefaulttheme ? $result : $this->default->sitebars[$sitebar]['meta']['classes'];
-$s = $this->parsetag($str, 'metaclasses', ''));
+$s = $this->parsetag($str, 'metaclasses', '');
 if ($s == '') return $default;
 
         foreach (explode(',', $s) as $class) {
@@ -482,7 +482,6 @@ if ($s == '') return $default;
             if ($value != '') $result[$classname] = sprintf('class="%s"', $value);
           }
         }
-      } else {
 
 return $result;
 }
