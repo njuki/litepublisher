@@ -224,13 +224,19 @@ $args->page = $i;
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
-    $result = str_replace("'", '"', $result);
-    return sprintf($this->getwidgetitems('posts', $sitebar), $result);
+    return str_replace('$items', $result, $this->getwidgetitems('posts');
   }
-  
+
+public function getwidgetcontent($items, $name, $sitebar) {
+      return str_replace('$items', $items, $this->getwidgetitems($name, $sitebar));
+}
+
   public function getwidget($title, $content, $template, $sitebar) {
     $tml = $this->getwidgettemplate($template, $sitebar);
-    return sprintf($tml, $title, $content);
+$args = targs::instance();
+$args->title = $title;
+$args->content = $content;
+    return $this->parsearg($tml, $args);
   }
   
   public function getwidgettemplate($name, $sitebar) {

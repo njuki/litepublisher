@@ -453,11 +453,10 @@ public static function httpheader($cache) {
   }
   
  public static function xmlheader() {
-    $url = litepublisher::$options->url;
     return "<?php
     header('Content-Type: text/xml; charset=utf-8');
     header('Last-Modified: " . date('r') ."');
-    header('X-Pingback: $url/rpc.xml');
+    header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
   }

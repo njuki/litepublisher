@@ -183,23 +183,12 @@
 	</div>
 	<div id="sidebar">
 		<!--sitebar-->
-			<!--widget-->	
-			<div class="widget">
-		      <div class="rubric">%s</div>
-    <!--items-->
-		      <ul class="linkcat">
-				%s
-		      </ul>
-    <!--/items-->
-		    </div>
-			<!--/widget-->
-
 			<!--submenu-->
 				<div class="widget">
 			      <div class="rubric">%s</div>
     <!--items-->
 			      <ul class="list-page">
-					%s
+           $items
 			      </ul>
     <!--/items-->
 				</div>
