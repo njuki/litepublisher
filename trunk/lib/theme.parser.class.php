@@ -413,7 +413,7 @@ if (count($result) == 0) return $this->default->sitebars->array;
   
   private function parsesitebar($s, $sitebar) {
     $result = array();
-$default = $this->default->sitebars[$sitebar];
+$default = $this->default->sitebars->array[$sitebar];
 $isdef = $this->default instanceof tdefaulttheme;
     if ($widget = $this->parsetag($s, 'widget', '$items')) {
     $result['widget'] = $this->parsewidget($widget, 'widget', $sitebar);
@@ -440,7 +440,7 @@ $s = $this->deletespaces($s);
 if ($this->default instanceof tdefaulttheme) {
 $default = array();
 } else {
-$default = $this->default->sitebars[$sitebar][$name];
+$default = $this->default->sitebars->array[$sitebar][$name];
 }
     $result = array();
     if ($items = $this->parsetag($s, 'items', '$content')) {
@@ -471,7 +471,7 @@ if ($this->fixold) $s = sprintf($s, '$title', '$content');
 
 private function parsemetawidget(&$str, $sitebar) {
       $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
-$default = $this->default instanceof tdefaulttheme ? $result : $this->default->sitebars[$sitebar]['meta']['classes'];
+$default = $this->default instanceof tdefaulttheme ? $result : $this->default->sitebars->array[$sitebar]['meta']['classes'];
 $s = $this->parsetag($str, 'metaclasses', '');
 if ($s == '') return $default;
 
@@ -516,13 +516,13 @@ $about['type'] = 'wordpress';
         $plugins->delete($old);
       }
     }
-    
+
     $template->data['theme'] = $name;
     $template->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  ;
     $template->url = litepublisher::$options->url  . '/themes/'. $template->theme;
-    
+
     $theme = ttheme::getinstance($name, 'index');
-    
+   
     $about = $this->getabout($name);
     if (!empty($about['about']['pluginclassname'])) {
       $plugins = tplugins::instance();

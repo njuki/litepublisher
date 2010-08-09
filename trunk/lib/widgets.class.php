@@ -295,9 +295,17 @@ class twidgets extends titems {
     $sitebar = $this->currentsitebar;
     $items = $this->getwidgets($context, $sitebar);
     $theme = ttheme::instance();
-    if ($theme->sitebarscount == $sitebar + 1) {
+    if ($sitebar + 1 == $theme->sitebarscount) {
       for ($i = $sitebar + 1; $i < count($this->sitebars); $i++) {
-        $items = $this->joinitems($items, $this->getwidgets($context, $i));
+$subitems =  $this->getwidgets($context, $i);
+    //delete copies
+      foreach ($subitems as $i => $subitem) {
+$id = $subitem['id'];
+foreach ($items as $item) {
+        if ($id == $item['id']) array_delete($subitems, $i);
+      }
+    }
+    foreach ($subitems as $item) $uitems[] = $item;
       }
     }
     
@@ -343,7 +351,6 @@ if ($result != '') $result = str_replace('$items', $result, (string) $theme->sit
     
     //join
     foreach ($subitems as $item) {
-//echo $this->items[$item['id']]['class'], '<br>';
       $count = count($items);
       $order = $item['order'];
       if (($order < 0) || ($order >= $count)) {
