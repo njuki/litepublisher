@@ -7,6 +7,7 @@
 **/
 
 class tmenuwidget extends tclasswidget {
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -63,10 +64,10 @@ class tmenuwidget extends tclasswidget {
   
   private function getitem($tml, $item, $subnodes) {
     $args = targs::instance();
-    if ($subnodes != '') $subnodes = "<ul>\n$subnodes</ul>\n";
     $args->add($item);
-    $args->count = $subnodes;
-    $args->icon = '';
+$args->rel = 'menu';
+$args->icon = '';
+$args->subitems = $subnodes == '' ? '' : sprintf('<ul>%s</ul>', $subnodes);
     $theme = ttheme::instance();
     return $theme->parsearg($tml, $args);
   }

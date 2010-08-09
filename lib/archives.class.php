@@ -173,11 +173,14 @@ class tarchiveswidget extends twidget {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('archives', $sitebar);
     $args = targs::instance();
+      $args->icon = '';
+$args->subitems = '';
+$args->rel = 'archives';
+$url = litepublisher::$options->url;
     foreach ($arch->items as $date => $item) {
       $args->add($item);
-$args->anchor = $item['title'];
-      $args->icon = '';
-    $args->subitems = $this->showcount ? "({$item['count']})" : '';
+$args->url = $url . $item['url'];
+if ($this->showcount)     $args->subitems = sprintf('(%d)', $item['count']);
       $result .= $theme->parsearg($tml, $args);
     }
     

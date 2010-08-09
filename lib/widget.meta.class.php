@@ -32,25 +32,36 @@ class tmetawidget extends twidget {
   }
   
   public function getcontent($id, $sitebar) {
-    extract($this->data['meta']);
+    extract($this->data['meta'], EXTR_SKIP);
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('meta', $sitebar);
-    $tml .= "\n";
     $metaclasses = isset($theme->data['sitebars'][$sitebar]['meta']) ? $theme->data['sitebars'][$sitebar]['meta']['classes'] :
     array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
     $lang = tlocal::instance('default');
-    $result = '';
-    if ($rss) $result .= sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss, $metaclasses['rss']);
-    if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
-    if ($media) $result .= sprintf($tml, litepublisher::$options->url . '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
-    if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
-    if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile, $metaclasses['profile']);
-    if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
+
+    if ($rss) $result .= $this->getitem($tml, '/rss.xml', $lang->rss, $metaclasses['rss']);
+    if ($comments) $result .= $this->getitem($tml, '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
+    if ($media) $result .= $this->getitem($tml, '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
+    if ($foaf) $result .= $this->getitem($tml, '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
+    if ($profile) $result .= $this->getitem($tml, '/profile.htm', $lang->profile, $metaclasses['profile']);
+    if ($sitemap) $result .= $this->getitem($tml, '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
     
     if ($result == '') return '';
-    return sprintf($theme->getwidgetitems('meta', $sitebar), $result);
+    return $theme->getwidgetcontent($result, 'meta', $sitebar);
   }
+
+private function getitem($tml, $url, $title, $class) {
+$args = targs::instance();
+$args->icon = '';$args->subitems = '';
+$args->rel = $class;
+$args->url = litepublisher::$options->url  . $url;
+$args->title = $title;
+$args->anchor = $title;
+$args->class = $class == '' ? '' : sprintf('class="%s"', $class);
+$theme = ttheme::instance();
+return $theme->parsearg($tml, $args);
+}
   
 }//class
 ?>

@@ -224,7 +224,7 @@ $args->page = $i;
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
-    return str_replace('$items', $result, $this->getwidgetitems('posts');
+    return str_replace('$items', $result, $this->getwidgetitems('posts', $sitebar));
   }
 
 public function getwidgetcontent($items, $name, $sitebar) {

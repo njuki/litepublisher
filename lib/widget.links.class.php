@@ -36,17 +36,22 @@ class tlinkswidget extends twidget {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('links', $sitebar);
+$redirlink = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . 'id=';
+$url = litepublisher::$options->url;
     $args = targs::instance();
+$args->subitems = '';
+$args->icon = '';
+$args->rel = 'link blogroll';
     foreach ($this->items as $id => $item) {
-      $url =  $item['url'];
-      if ($this->redir && !strbegin($url, litepublisher::$options->url)) {
-        $url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
+$args->add($item);
+$args->id = $id;
+      if ($this->redir && !strbegin($item['url'], $url)) {
+        $args->url = $redirlink . $id;
       }
-      
-      $result .=   sprintf($tml, $url, $item['title'], $item['anchor']);
+            $result .=   $theme->parsearg($tml, $args);
     }
     
-    return sprintf($theme->getwidgetitems('links', $sitebar), $result);
+    return $theme->getwidgetcontent($result, 'links', $sitebar);
   }
   
   public function add($url, $title, $anchor) {
