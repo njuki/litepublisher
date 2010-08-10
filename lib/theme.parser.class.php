@@ -404,6 +404,7 @@ if ($this->fixold) $s = sprintf($s, '$items', '$from');
   
   private function parsecomment($s) {
     $result = array();
+$default = $this->default->content->post->templatecomments->comments->comment->array;
     $result['class1'] = $this->parsetag($s, 'class1', '$class');
     $result['class2'] = $this->parsetag($s, 'class2', '');
     $result['moderate'] = $this->gettag($s, 'moderate', '$moderate');
