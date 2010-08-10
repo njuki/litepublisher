@@ -90,7 +90,7 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
       $pingback->array = $item;
       $result .= $theme->parse($tml);
     }
-    return sprintf($theme->parse($theme->content->post->templatecomments->pingbacks), $result);
+    return str_replace('$items', $result, $theme->parse($theme->content->post->templatecomments->pingbacks));
   }
   
 }//class

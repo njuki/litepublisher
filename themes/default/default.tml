@@ -148,7 +148,7 @@
 										<ol class="commentlist" id="<!--commentsid-->commentlist<!--/commentsid-->" start="$from">
 											<!--comment--><li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
 													<a name="comment-$comment.id"></a>
-														<div class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></div>
+														<div class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->d.m.Y<!--/date--> $lang.attime $comment.time</a></div>
 														<span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
 														
 														<!--moderate-->

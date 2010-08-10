@@ -156,27 +156,26 @@ class tcomments extends titems {
     $result = $this->getcontentwhere('approved', '');
     if (!$this->moderator) return $result;
     $theme = ttheme::instance();
+$tml = $theme->content->post->templatecomments->comments;
     tlocal::loadlang('admin');
-    $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
+    $result .= $theme->parse($tml->hold);
     $post = tpost::instance($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->getcontentwhere('hold', '');
     } else {
       //add empty list of hold comments
       $commentsid = $theme->content->post->templatecomments->comments->commentsid;
-      $tml = $theme->content->post->templatecomments->comments->__tostring();
-      $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
-      $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
+      $s = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml->array[0]);
+      $s = str_replace('<a name="comments"', '<a name="holdcomments"', $s);
 $args = targs::instance();
-$args->items = $result;
 $args->from = 1;
-    $result .= $theme->parsearg($tml, $args);
+$args->items = '';
+   $result .= $theme->parsearg($s, $args);
     }
     
     $args = targs::instance();
     $args->comments = $result;
-    $result = $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
-    return $result;
+return $theme->parsearg($tml->moderateform, $args);
   }
   
   public function getholdcontent($idauthor) {
@@ -211,11 +210,12 @@ $args->from = 1;
     } else {
       $moderate = '';
     }
-    $tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
+$tmlcmt= $theme->content->post->templatecomments->comments->comment;
+    $tml = str_replace('$moderate', $moderate, $tmlcmt->array[0]);
     
     $i = 1;
-    $class1 = $theme->content->post->templatecomments->comments->comment->class1;
-    $class2 = $theme->content->post->templatecomments->comments->comment->class2;
+    $class1 = $tmlcmt->class1;
+    $class2 = $tmlcmt->class2;
     foreach ($items as $id) {
       $comment->id = $id;
       $args->class = (++$i % 2) == 0 ? $class1 : $class2;

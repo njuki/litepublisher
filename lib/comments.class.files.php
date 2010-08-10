@@ -224,7 +224,7 @@ class tcomments extends titems {
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
       $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
 $args = targs::instance();
-$args->items = $result;
+$args->items = '';
 $args->from = 1;
     $result .= $theme->parsearg($tml, $args);
     }

@@ -362,8 +362,7 @@ if ($s == '') return $default;
 $src = $this->parsetag($s, 'comments', '');
     $result['comments'] = $src == '' ? $default['comments'] : $this->parsecomments($src);
 
-$src = $this->parsetag($s, 'moderateform', '');
-    $result['moderateform'] = $src == '' ? $default['moderateform'] : $this->parsemoderateform($src);
+    $result['moderateform'] = $this->gettag($s, 'moderateform', '', $default['moderateform']);
 
 $src = $this->parsetag($s, 'pingbacks', '');
     $result['pingbacks'] = $src == '' ? $default['pingbacks']: $this->parsepingbacks($src);
@@ -405,28 +404,21 @@ if ($this->fixold) $s = sprintf($s, '$items', '$from');
   private function parsecomment($s) {
     $result = array();
 $default = $this->default->content->post->templatecomments->comments->comment->array;
-    $result['class1'] = $this->parsetag($s, 'class1', '$class');
-    $result['class2'] = $this->parsetag($s, 'class2', '');
-    $result['moderate'] = $this->gettag($s, 'moderate', '$moderate');
-    
-    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$comment.date'));
-    $result[0] = $s;
+    $result['class1'] = $this->gettag($s, 'class1', '$class', $default['class1']);
+    $result['class2'] = $this->gettag($s, 'class2', '', $default['class2']);
+    $result['moderate'] = $this->gettag($s, 'moderate', '$moderate', $default['moderate']);
+        $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$comment.date', $default['dateformat']));
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : $default[0];
     return $result;
-  }
-  
-  private function parsemoderateform($s) {
-    return $s;
-    /*
-    $result = array();
-    $result[0] = $s;
-    return $result;
-    */
   }
   
   private function parsepingbacks($s) {
     $result = array();
-    $result['pingback'] = $this->parsetag($s, 'pingback', '%1$s');
-    $result[0] = $s;
+$default = $this->default->content->post->templatecomments->pingbacks->array;
+    $result['pingback'] = $this->gettag($s, 'pingback', '$items', $default['pingback']);
+$s = $this->deletespaces($s);
+    $result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
   
