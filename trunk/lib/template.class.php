@@ -13,6 +13,7 @@ class ttemplate extends tevents {
   public $itemplate;
   public $javascripts;
   public $javaoptions;
+public $hover;
   //public $footer;
   
   public static function instance() {
@@ -27,6 +28,7 @@ litepublisher::$classes->instances[__class__] = $this;
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$options->files . '/themes/default';
     $this->itemplate = false;
+$this->hover = true;
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s',\nidurl: '%3\$s'",
     litepublisher::$options->url, litepublisher::$options->files, litepublisher::$urlmap->itemrequested['id']));
@@ -134,6 +136,7 @@ $name = $this->theme;
     $this->itemplate = $context instanceof itemplate;
     ttheme::$vars['template'] = $this;
     $theme = $this->getcontexttheme($context);
+    $this->hover = $this->hovermenu && $theme->menu->hover;
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     if ($context instanceof itemplate2) $context->afterrequest($result);
@@ -196,27 +199,27 @@ return turlmap::httpheader($this->context->cache);
   }
   
   public function getmenu() {
-    $theme = ttheme::instance();
-    $hovermenu = $this->hovermenu && $theme->menu->hover;
     $current = $this->context instanceof tmenu ? $this->context->id : 0;
     if (($current == 0) && ($this->context instanceof thomepage)) $current = $this->context->idmenu;
     if (litepublisher::$urlmap->adminpanel) {
-      $this->callevent('onadminhover', array(&$hovermenu));
+      $this->onadminhover();
       $adminmenus = tadminmenus::instance();
-      return $adminmenus->getmenu($hovermenu, $current);
+      return $adminmenus->getmenu($this->hover, $current);
     }
     
     if ($current == 0) {
       $filename = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.menu.php";
-      if (@file_exists($filename)) return file_get_contents($filename);
+      if (file_exists($filename)) return file_get_contents($filename);
     }
     
     $menus = tmenus::instance();
-    $result = $menus->getmenu($hovermenu, $current);
+    $result = $menus->getmenu($this->hover, $current);
+
     if ($current == 0) {
       file_put_contents($filename, $result);
       @chmod($filename, 0666);
     }
+
     return $result;
   }
   
