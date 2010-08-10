@@ -218,12 +218,15 @@ class tcomments extends titems {
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->hold->dogetcontent(true, 0);
     } else {
-      //добавить пустой список задержанных
+      //add empty list of hold comments
       $commentsid = $theme->content->post->templatecomments->comments->commentsid;
       $tml = $theme->content->post->templatecomments->comments->__tostring();
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
       $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
-      $result .= sprintf($tml, '', 1);
+$args = targs::instance();
+$args->items = $result;
+$args->from = 1;
+    $result .= $theme->parsearg($tml, $args);
     }
     $args = targs::instance();
     $args->comments = $result;
@@ -283,7 +286,11 @@ class tcomments extends titems {
     if (!$ismoder) {
       if ($result == '') return '';
     }
-    return sprintf($tml, $result, $from + 1);
+
+$args = targs::instance();
+$args->items = $result;
+$args->from = $from + 1;
+    return $theme->parsearg($tml, $args);
   }
   
 }//class
