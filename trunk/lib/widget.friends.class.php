@@ -31,19 +31,24 @@ class tfriendswidget extends twidget {
     $items = $foaf->getapproved($this->maxcount);
     if (count($items) == 0) return '';
     $result = '';
+$url = litepublisher::$options->url;
+$redirlink  = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . 'id=';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('friends', $sitebar);
     $args = targs::instance();
+$args->subitems = '';
+$args->$icon = '';
+$args->rel = 'friend';
     foreach ($items as $id) {
       $item = $foaf->getitem($id);
       $args->add($item);
-      if ($this->redir && !strbegin($item['url'], litepublisher::$options->url)) {
-        $args->url = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . "id=$id";
-      }
+      if ($this->redir && !strbegin($item['url'], $url)) {
+        $args->url = $redirlink . $id;
+}
       $result .=   $theme->parsearg($tml, $args);
     }
     
-    return sprintf($theme->getwidgetitems('friends', $sitebar), $result);
+    return $theme->getwidgetcontent($result, 'friends', $sitebar);
   }
   
   public function request($arg) {

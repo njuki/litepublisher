@@ -43,7 +43,7 @@ class tcommentswidget extends twidget {
   }
   
   public function changed($id, $idpost) {
-    $this->expired($this->id);
+    $this->expire();
   }
   
 }//class

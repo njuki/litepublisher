@@ -87,7 +87,6 @@ class twidget extends tevents {
   public function expired($id) {
     switch ($this->cache) {
       case 'cache':
-      case true:
       $cache = twidgetscache::instance();
       $cache->expired($id);
       break;
@@ -551,6 +550,11 @@ class twidgetscache extends titems {
       $this->save();
     }
   }
+
+public function onclearcache() {
+$this->items = array();
+$this->modified = false;
+}
   
 }//class
 

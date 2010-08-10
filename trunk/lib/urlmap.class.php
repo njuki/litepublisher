@@ -28,7 +28,7 @@ class turlmap extends titems {
     parent::create();
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
-    $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
+    $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->is404 = false;
     $this->adminpanel = false;
     $this->mobile= false;
@@ -327,7 +327,7 @@ class turlmap extends titems {
       closedir($h);
     }
     
-    $this->CacheExpired();
+    $this->onclearcache();
   }
   
   public function setexpired($id) {
