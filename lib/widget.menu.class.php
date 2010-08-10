@@ -23,6 +23,12 @@ class tmenuwidget extends tclasswidget {
   public function getdeftitle() {
     return tlocal::$data['default']['submenu'];
   }
+
+  public function getwidget($id, $sitebar) {
+$template = ttemplate::instance();
+if ($template->hover) return '';
+return parent::getwidget($id, $sitebar) {
+}
   
   public function gettitle($id) {
     if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;

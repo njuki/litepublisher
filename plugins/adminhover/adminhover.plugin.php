@@ -17,8 +17,8 @@ class tadminhoverplugin extends tplugin {
     $this->data['hover'] = false;
   }
   
-  public function onadminhover(&$hover) {
-    $hover = $this->hover;
+  public function onadminhover() {
+    ttemplate::instance()->hover = $this->hover;
   }
   
   public function onadminhead(&$head) {
