@@ -269,7 +269,7 @@ $s = $this->deletespaces($s);
     $result['more'] = $this->gettag($s, 'more', '', $this->default->content->post->more);
     $result['rss'] = $this->gettag($s, 'rss', '$post.subscriberss', $this->default->content->post->rss);
     $result['prevnext']  = $this->parseprevnext($s);
-    $result['templatecomments'] = $this->parsetemplatecomments($this->requiretag($s, 'templatecomments', '$post.templatecomments'));
+    $result['templatecomments'] = $this->parsetemplatecomments($s);
     // after coments due to section 'date' in comment
     $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.date', $this->default->content->post->dateformat));
     $s = trim($s);
@@ -353,25 +353,52 @@ if ($s == '') return $default->array;
     return $result;
   }
   
-  private function parsetemplatecomments($s) {
+  private function parsetemplatecomments(&$str) {
+$default = $this->default->content->post->templatecomments->array;
+$s = $this->parsetag($str, 'templatecomments', '$post.templatecomments');
+if ($s == '') return $default;
     $result = array();
-    $result['comments'] = $this->parsecomments($this->requiretag($s, 'comments', ''));
-    $result['moderateform'] = $this->parsemoderateform($this->requiretag($s, 'moderateform', ''));
-    $result['pingbacks'] = $this->parsepingbacks($this->gettag($s, 'pingbacks', ''));
-    $result['closed'] = $this->requiretag($s, 'closed', '');
-    $result['form'] = $this->requiretag($s, 'form', '');
-    $result['confirmform'] = $this->gettag($s, 'confirmform', '');
-    if ($result['confirmform'] == '') $result['confirmform'] = $this->getdefaultconfirmform();
+
+$src = $this->parsetag($s, 'comments', '');
+    $result['comments'] = $src == '' ? $default['comments'] : $this->parsecomments($src);
+
+$src = $this->parsetag($s, 'moderateform', '');
+    $result['moderateform'] = $src == '' ? $default['moderateform'] : $this->parsemoderateform($src);
+
+$src = $this->parsetag($s, 'pingbacks', '');
+    $result['pingbacks'] = $src == '' ? $default['pingbacks']: $this->parsepingbacks($src);
+
+$src = $this->parsetag($s, 'closed', '');
+    $result['closed'] = $src == '' ? $default['closed']  : $src;
+
+$src = $this->parsetag($s, 'form', '');
+    $result['form'] = $src == '' ? $default['form']  : $src;
+$src = $this->parsetag($s, 'confirmform', '');
+    $result['confirmform'] = $src == '' ? $default['confirmform'] : $src;
+
     return $result;
   }
   
   private function parsecomments($s) {
+$default = $this->default->content->post->templatecomments->comments->array;
     $result = array();
-    $result['count'] = $this->gettag($s, 'count', '');
-    $result['hold'] = $this->gettag($s, 'hold', '');
-    $result['comment'] = $this->parsecomment($this->requiretag($s, 'comment', '%1$s'));
-    $result['commentsid'] = $this->requiretag($s, 'commentsid', false);
-    $result[0] = $s;
+
+$src = $this->parsetag($s, 'count', '');
+    $result['count'] = $src == '' ? $default['count'] : $src;
+
+$src = $this->parsetag($s, 'hold', '');
+    $result['hold'] = $src == '' ? $default['hold'] : $src;
+
+$src = $this->parsetag($s, 'comment', '$items');
+    $result['comment'] = $src == '' ? $default['comment']  : $this->parsecomment($src);
+
+$src = $this->parsetag($s, 'commentsid', false);
+    $result['commentsid'] = $src == '' ? $default['commentsid'] : $src;
+
+$s = $this->deletespaces($s);
+if ($this->fixold) $s = sprintf($s, '$items', '$from');
+    $result[0] = $s == '' ? $default[0] : $s;
+
     return $result;
   }
   
@@ -538,18 +565,6 @@ $about['type'] = 'wordpress';
     $this->parse($theme);
     ttheme::clearcache();
     $theme->unlock();
-  }
-  
-  private function getdefaultconfirmform() {
-    return '<h2>$lang->formhead</h2>
-    <form name="preform" method="post" action="">
-    <p><input type="submit" name="submit" value="$lang->robot"/></p>
-    </form>
-    
-    <form name="form" method="post" action="">
-    <input type="hidden" name="confirmid" value="$confirmid" />
-    <p><input type="submit" name="submit" value="$lang->human"/></p>
-    </form>';
   }
   
   public static function strftimetodate($format) {

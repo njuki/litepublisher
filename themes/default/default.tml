@@ -145,7 +145,7 @@
 								<!--/count-->
 									<!--hold--><p class="hold"><em>$lang.hold</em></p><!--/hold-->
 									   <a name="comments"></a>
-										<ol class="commentlist" id="<!--commentsid-->commentlist<!--/commentsid-->" start="%2$d">
+										<ol class="commentlist" id="<!--commentsid-->commentlist<!--/commentsid-->" start="$from">
 											<!--comment--><li <!--class1-->class="alt"<!--/class1--> id="comment-$comment.id">
 													<a name="comment-$comment.id"></a>
 														<div class="commentmetadata"><a href="#comment-$comment.id" title=""><!--date-->%d.%m.%Y<!--/date--> $lang.attime $comment.time</a></div>
