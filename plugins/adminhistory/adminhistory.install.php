@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tadminlastpagesInstall($self) {
+function tadminhistoryInstall($self) {
   $widgets = twidgets::instance();
   $widgets->lock();
   $self->id = $widgets->add($self);
