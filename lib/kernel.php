@@ -923,7 +923,8 @@ class toptions extends tevents {
   
   public function authcookie() {
     if (empty($_COOKIE['admin']))  return false;
-    if ($this->cookie == $_COOKIE['admin']) {
+    $cookie = md5((string) $_COOKIE['admin'] . litepublisher::$secret);
+    if ($this->cookie == $cookie) {
       if ($this->cookieexpired < time()) return false;
       $this->user = 1;
     } elseif (!$this->usersenabled)  {
@@ -987,6 +988,12 @@ class toptions extends tevents {
       date_default_timezone_set($this->timezone);
       $this->gmt = date('Z');
     }
+  }
+  
+  public function setcookie($cookie) {
+    if ($cookie != '') $cookie = md5((string) $cookie . litepublisher::$secret);
+    $this->data['cookie'] = $cookie;
+    $this->save();
   }
   
   public function handexception($e) {

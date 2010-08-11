@@ -169,10 +169,12 @@ class tadmincustomwidget extends tadminwidget {
     $widget = $this->widget;
     $args = targs::instance();
     $id = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+    if ($id == 0) $id = isset($_POST['idwidget']) ? (int) $_POST['idwidget'] : 0;
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
       $args->mode = 'edit';
     } else {
+      $id = 0;
       $args->mode = 'add';
       $item = array(
       'title' => '',
@@ -181,6 +183,7 @@ class tadmincustomwidget extends tadminwidget {
       );
     }
     
+    $args->idwidget = $id;
     $html= $this->html;
     $args->title = $item['title'];
     $args->text = $item['content'];
@@ -210,8 +213,9 @@ class tadmincustomwidget extends tadminwidget {
         break;
         
         case 'edit':
-      $idwidget = (int) $_GET['idwidget'];
-        $widget->edit($idwidget, $title, $text, $template);
+        $id = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+        if ($id == 0) $id = isset($_POST['idwidget']) ? (int) $_POST['idwidget'] : 0;
+        $widget->edit($id, $title, $text, $template);
         break;
       }
     } else {
