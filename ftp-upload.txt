@@ -474,6 +474,8 @@ send lib\install\users.sql lib/install/users.sql
 quote site chmod 666 lib/install/users.sql
 send lib\install\widget.comments.class.install.php lib/install/widget.comments.class.install.php
 quote site chmod 666 lib/install/widget.comments.class.install.php
+send lib\install\widget.custom.class.install.php lib/install/widget.custom.class.install.php
+quote site chmod 666 lib/install/widget.custom.class.install.php
 send lib\install\widget.friends.class.install.php lib/install/widget.friends.class.install.php
 quote site chmod 666 lib/install/widget.friends.class.install.php
 send lib\install\widget.links.class.install.php lib/install/widget.links.class.install.php
@@ -544,6 +546,8 @@ send lib\update\update.3.63.php lib/update/update.3.63.php
 quote site chmod 666 lib/update/update.3.63.php
 send lib\update\update.3.64.php lib/update/update.3.64.php
 quote site chmod 666 lib/update/update.3.64.php
+send lib\update\update.3.65.php lib/update/update.3.65.php
+quote site chmod 666 lib/update/update.3.65.php
 cd lib
 mkdir languages
 quote site chmod 777 languages

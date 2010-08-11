@@ -193,7 +193,7 @@ class tadmincustomwidget extends tadminwidget {
     
     $result .= $html->checkallscript;
     $result .= $html->customheader();
-    $args->adminurl = $this->adminurl;'idwidget';
+    $args->adminurl = $this->adminurl;
     foreach ($widget->items as $id => $item) {
       $args->idwidget = $id;
       $args->add($item);
@@ -225,7 +225,7 @@ class tadmincustomwidget extends tadminwidget {
       foreach ($_POST as $key => $value) {
         if (strbegin($key, 'widgetcheck-')) $widget->delete((int) $value);
       }
-      $widget->unlock;
+      $widget->unlock();
       $widgets->unlock();
     }
   }

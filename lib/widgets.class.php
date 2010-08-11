@@ -238,7 +238,7 @@ class twidgets extends titems {
   }
   
   public function delete($id) {
-    if (!isset($this->items[$id])) return;
+    if (!isset($this->items[$id])) return false;
     
     for ($i = count($this->sitebars) - 1; $i >= 0; $i--) {
       foreach ($this->sitebars[$i] as $j => $item) {
@@ -254,6 +254,8 @@ class twidgets extends titems {
     
     unset($this->items[$id]);
     $this->deleted($id);
+    $this->save();
+    return true;
   }
   
   public function deleteclass($class) {
