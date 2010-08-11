@@ -1058,7 +1058,7 @@ class turlmap extends titems {
     parent::create();
     $this->table = 'urlmap';
     $this->basename = 'urlmap';
-    $this->addevents('beforerequest', 'afterrequest', 'CacheExpired');
+    $this->addevents('beforerequest', 'afterrequest', 'onclearcache');
     $this->is404 = false;
     $this->adminpanel = false;
     $this->mobile= false;
@@ -1357,7 +1357,7 @@ class turlmap extends titems {
       closedir($h);
     }
     
-    $this->CacheExpired();
+    $this->onclearcache();
   }
   
   public function setexpired($id) {
@@ -1470,12 +1470,23 @@ class turlmap extends titems {
     return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
   }
   
+  public static function httpheader($cache) {
+    $nocache = $cache ? '' : "
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');";
+    
+    return "<?php $nocache
+    header('Content-Type: text/html; charset=utf-8');
+    header('Last-Modified: ' . date('r'));
+    header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
+    ?>";
+  }
+  
   public static function xmlheader() {
-    $url = litepublisher::$options->url;
     return "<?php
     header('Content-Type: text/xml; charset=utf-8');
     header('Last-Modified: " . date('r') ."');
-    header('X-Pingback: $url/rpc.xml');
+    header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
   }

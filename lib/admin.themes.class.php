@@ -98,7 +98,6 @@ class tadminthemes extends tadminmenu {
       } catch (Exception $e) {
         return $e->getMessage();
       }
-      $result = implode("<br />\n", $parser->warnings);
     } else {
       switch ($this->name) {
         case 'themes':
@@ -113,8 +112,6 @@ class tadminthemes extends tadminmenu {
           return $e->getMessage();
         }
         $result = $this->html->h2->success;
-        $parser = tthemeparser::instance();
-        if (isset($parser->warnings)) $result .=implode("<br />\n", $parser->warnings);
         break;
         
         case 'edit':

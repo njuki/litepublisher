@@ -51,7 +51,7 @@ class ttheme extends tevents {
     $this->tmlfile = 'index';
     $this->parsing = array();
     $this->data['type'] = 'litepublisher';
-$this->data['parent'] = '';
+    $this->data['parent'] = '';
     $this->data['theme'] = '';
     $this->data['title'] = '';
     $this->data['menu'] = array();
@@ -182,15 +182,15 @@ $this->data['parent'] = '';
       $from = max(1, $page - ceil($perpage / 2));
       $to = min($count, $from + $perpage);
     }
-$items = range($from, $to);
-if ($items[0] != 1) array_unshift($items, 1);
-if ($items[count($items) -1] != $count) $items[] = $count;
+    $items = range($from, $to);
+    if ($items[0] != 1) array_unshift($items, 1);
+    if ($items[count($items) -1] != $count) $items[] = $count;
     $navi =$this->content->navi;
     $pageurl = rtrim($url, '/') . '/page/';
-$args = targs::instance();
+    $args = targs::instance();
     $a = array();
-foreach ($items as $i) {
-$args->page = $i;
+    foreach ($items as $i) {
+      $args->page = $i;
       $args->url = $i == 1 ? $url : $pageurl .$i . '/';
       $a[] = $this->parsearg(($i == $page ? $navi->current : $navi->link), $args);
     }
@@ -226,16 +226,16 @@ $args->page = $i;
     }
     return str_replace('$items', $result, $this->getwidgetitems('posts', $sitebar));
   }
-
-public function getwidgetcontent($items, $name, $sitebar) {
-      return str_replace('$items', $items, $this->getwidgetitems($name, $sitebar));
-}
-
+  
+  public function getwidgetcontent($items, $name, $sitebar) {
+    return str_replace('$items', $items, $this->getwidgetitems($name, $sitebar));
+  }
+  
   public function getwidget($title, $content, $template, $sitebar) {
     $tml = $this->getwidgettemplate($template, $sitebar);
-$args = targs::instance();
-$args->title = $title;
-$args->content = $content;
+    $args = targs::instance();
+    $args->title = $title;
+    $args->content = $content;
     return $this->parsearg($tml, $args);
   }
   
@@ -266,12 +266,12 @@ $args->content = $content;
     }
     return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
   }
-
-public function simple($content) {
-return str_replace('$content', $content, $this->content->simple);
-}
   
-   public static function clearcache() {
+  public function simple($content) {
+    return str_replace('$content', $content, $this->content->simple);
+  }
+  
+  public static function clearcache() {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }

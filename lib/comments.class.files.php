@@ -223,10 +223,10 @@ class tcomments extends titems {
       $tml = $theme->content->post->templatecomments->comments->__tostring();
       $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
       $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
-$args = targs::instance();
-$args->items = '';
-$args->from = 1;
-    $result .= $theme->parsearg($tml, $args);
+      $args = targs::instance();
+      $args->items = '';
+      $args->from = 1;
+      $result .= $theme->parsearg($tml, $args);
     }
     $args = targs::instance();
     $args->comments = $result;
@@ -286,10 +286,10 @@ $args->from = 1;
     if (!$ismoder) {
       if ($result == '') return '';
     }
-
-$args = targs::instance();
-$args->items = $result;
-$args->from = $from + 1;
+    
+    $args = targs::instance();
+    $args->items = $result;
+    $args->from = $from + 1;
     return $theme->parsearg($tml, $args);
   }
   

@@ -116,8 +116,8 @@ class tfiles extends titems {
       $item = $this->items[$id];
       $items[$item['media']][] = $id;
     }
-
-$theme = ttheme::instance();    
+    
+    $theme = ttheme::instance();
     $args = targs::instance();
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;

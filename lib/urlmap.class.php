@@ -439,20 +439,20 @@ class turlmap extends titems {
     if ($this->page <= 2) return url;
     return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
   }
-
-public static function httpheader($cache) {
+  
+  public static function httpheader($cache) {
     $nocache = $cache ? '' : "
-  Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');";
-
+    
     return "<?php $nocache
     header('Content-Type: text/html; charset=utf-8');
-     header('Last-Modified: ' . date('r'));
+    header('Last-Modified: ' . date('r'));
     header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
     ?>";
   }
   
- public static function xmlheader() {
+  public static function xmlheader() {
     return "<?php
     header('Content-Type: text/xml; charset=utf-8');
     header('Last-Modified: " . date('r') ."');

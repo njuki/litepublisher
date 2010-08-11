@@ -296,15 +296,15 @@ class twidgets extends titems {
     $theme = ttheme::instance();
     if ($sitebar + 1 == $theme->sitebarscount) {
       for ($i = $sitebar + 1; $i < count($this->sitebars); $i++) {
-$subitems =  $this->getwidgets($context, $i);
-    //delete copies
-      foreach ($subitems as $i => $subitem) {
-$id = $subitem['id'];
-foreach ($items as $item) {
-        if ($id == $item['id']) array_delete($subitems, $i);
-      }
-    }
-    foreach ($subitems as $item) $uitems[] = $item;
+        $subitems =  $this->getwidgets($context, $i);
+        //delete copies
+        foreach ($subitems as $i => $subitem) {
+          $id = $subitem['id'];
+          foreach ($items as $item) {
+            if ($id == $item['id']) array_delete($subitems, $i);
+          }
+        }
+        foreach ($subitems as $item) $uitems[] = $item;
       }
     }
     
@@ -313,7 +313,7 @@ foreach ($items as $item) {
     if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
     $this->callevent('ongetwidgets', array(&$items, $sitebar));
     $result = $this->getsitebarcontent($items, $sitebar);
-if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
+    if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
     $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
     return $result;
   }
@@ -339,7 +339,7 @@ if ($result != '') $result = str_replace('$items', $result, (string) $theme->sit
   private function joinitems(array $items, array $subitems) {
     if (count($subitems) == 0) return $items;
     if (count($items) == 0) return $subitems;
-
+    
     //delete copies
     for ($i = count($items) -1; $i >= 0; $i--) {
       $id = $items[$i]['id'];
@@ -550,11 +550,11 @@ class twidgetscache extends titems {
       $this->save();
     }
   }
-
-public function onclearcache() {
-$this->items = array();
-$this->modified = false;
-}
+  
+  public function onclearcache() {
+    $this->items = array();
+    $this->modified = false;
+  }
   
 }//class
 

@@ -156,7 +156,7 @@ class tcomments extends titems {
     $result = $this->getcontentwhere('approved', '');
     if (!$this->moderator) return $result;
     $theme = ttheme::instance();
-$tml = $theme->content->post->templatecomments->comments;
+    $tml = $theme->content->post->templatecomments->comments;
     tlocal::loadlang('admin');
     $result .= $theme->parse($tml->hold);
     $post = tpost::instance($this->pid);
@@ -167,15 +167,15 @@ $tml = $theme->content->post->templatecomments->comments;
       $commentsid = $theme->content->post->templatecomments->comments->commentsid;
       $s = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml->array[0]);
       $s = str_replace('<a name="comments"', '<a name="holdcomments"', $s);
-$args = targs::instance();
-$args->from = 1;
-$args->items = '';
-   $result .= $theme->parsearg($s, $args);
+      $args = targs::instance();
+      $args->from = 1;
+      $args->items = '';
+      $result .= $theme->parsearg($s, $args);
     }
     
     $args = targs::instance();
     $args->comments = $result;
-return $theme->parsearg($tml->moderateform, $args);
+    return $theme->parsearg($tml->moderateform, $args);
   }
   
   public function getholdcontent($idauthor) {
@@ -210,7 +210,7 @@ return $theme->parsearg($tml->moderateform, $args);
     } else {
       $moderate = '';
     }
-$tmlcmt= $theme->content->post->templatecomments->comments->comment;
+    $tmlcmt= $theme->content->post->templatecomments->comments->comment;
     $tml = str_replace('$moderate', $moderate, $tmlcmt->array[0]);
     
     $i = 1;
@@ -232,10 +232,10 @@ $tmlcmt= $theme->content->post->templatecomments->comments->comment;
     if (!$ismoder) {
       if ($result == '') return '';
     }
-
-$args = targs::instance();
-$args->items = $result;
-$args->from = $from + 1;
+    
+    $args = targs::instance();
+    $args->items = $result;
+    $args->from = $from + 1;
     return $theme->parsearg($tml, $args);
   }
   

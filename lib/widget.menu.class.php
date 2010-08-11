@@ -7,7 +7,7 @@
 **/
 
 class tmenuwidget extends tclasswidget {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -23,12 +23,12 @@ class tmenuwidget extends tclasswidget {
   public function getdeftitle() {
     return tlocal::$data['default']['submenu'];
   }
-
+  
   public function getwidget($id, $sitebar) {
-$template = ttemplate::instance();
-if ($template->hover) return '';
-return parent::getwidget($id, $sitebar) {
-}
+    $template = ttemplate::instance();
+    if ($template->hover) return '';
+    return parent::getwidget($id, $sitebar);
+  }
   
   public function gettitle($id) {
     if (litepublisher::$urlmap->context instanceof tmenu) return litepublisher::$urlmap->context->title;
@@ -71,9 +71,10 @@ return parent::getwidget($id, $sitebar) {
   private function getitem($tml, $item, $subnodes) {
     $args = targs::instance();
     $args->add($item);
-$args->rel = 'menu';
-$args->icon = '';
-$args->subitems = $subnodes == '' ? '' : sprintf('<ul>%s</ul>', $subnodes);
+    $args->anchor = $item['title'];
+    $args->rel = 'menu';
+    $args->icon = '';
+    $args->subitems = $subnodes == '' ? '' : sprintf('<ul>%s</ul>', $subnodes);
     $theme = ttheme::instance();
     return $theme->parsearg($tml, $args);
   }

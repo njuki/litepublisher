@@ -49,18 +49,19 @@ class tcommontags extends titems implements  itemplate {
     $sorted = $this->getsorted($sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
-$url = litepublisher::$options->url;
-$iconenabled = ! litepublisher::$options->icondisabled;
+    $url = litepublisher::$options->url;
+    $iconenabled = ! litepublisher::$options->icondisabled;
     $theme = ttheme::instance();
     $args = targs::instance();
     $args->subitems = '';
-$args->icon = '';
-$args->rel = $this->PermalinkIndex;
+    $args->icon = '';
+    $args->rel = $this->PermalinkIndex;
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
-$args->url = $url . $item['url'];
-if ($iconenabled)       $args->icon = $this->geticonlink($id);
+      $args->anchor = $item['title'];
+      $args->url = $url . $item['url'];
+      if ($iconenabled)       $args->icon = $this->geticonlink($id);
       if ($showcount) $args->subitems = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }

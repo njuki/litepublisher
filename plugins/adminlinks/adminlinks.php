@@ -83,20 +83,20 @@ class tadmincontextwidget extends torderwidget {
     $links = $theme->getwidgetcontent($links, 'widget', $sitebar);
     return $theme->getwidget($this->gettitle($id), $links, 'widget', $sitebar);
   }
-private function getitem($tml, $url, $title) {
-$args = targs::instance();
-$args->icon = '';$args->subitems = '';
-$args->rel = 'admin';
-if (strbegin($url, 'http://')) {
-$args->url = $url;
-} else {
-$args->url = litepublisher::$options->url  . $url;
-}
-$args->title = $title;
-$args->anchor = $title;
-$theme = ttheme::instance();
-return $theme->parsearg($tml, $args);
-}
+  private function getitem($tml, $url, $title) {
+    $args = targs::instance();
+    $args->icon = '';$args->subitems = '';
+    $args->rel = 'admin';
+    if (strbegin($url, 'http://')) {
+      $args->url = $url;
+    } else {
+      $args->url = litepublisher::$options->url  . $url;
+    }
+    $args->title = $title;
+    $args->anchor = $title;
+    $theme = ttheme::instance();
+    return $theme->parsearg($tml, $args);
+  }
   
 }//class
 

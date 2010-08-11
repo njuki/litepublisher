@@ -29,12 +29,12 @@ class tnotfound404 extends tevents {
     $this->cache = false;
     if ($this->notify) $this->sendmail();
     $theme = ttheme::instance();
-if ($this->text == '') {
-$lang = tlocal::instance('default');
-return $theme->parse($theme->content->notfound);
-} else {
-    return $theme->simple($this->text);
-}
+    if ($this->text == '') {
+      $lang = tlocal::instance('default');
+      return $theme->parse($theme->content->notfound);
+    } else {
+      return $theme->simple($this->text);
+    }
   }
   
   private function sendmail() {

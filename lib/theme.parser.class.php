@@ -8,7 +8,6 @@
 
 class tthemeparser extends tdata {
   public $theme;
-  public $warnings;
   private $abouts;
   private $default;
   private $fixold = true;
@@ -34,22 +33,9 @@ class tthemeparser extends tdata {
     return $result;
   }
   
-  public function requiretag(&$s, $tag, $replace) {
-    if ($result = $this->parsetag($s, $tag, $replace)) return $result;
-    tlocal::loadlang('admin');
-    $lang = tlocal::instance('themes');
-    $this->error(sprintf($lang->error, $tag));
-  }
-  
   public function gettag(&$s, $tag, $replace, $default = null) {
     if ($result = $this->parsetag($s, $tag, $replace)) return $result;
     return (string) $default;
-    /*
-    tlocal::loadlang('admin');
-    $lang = tlocal::instance('themes');
-    $this->warnings[] = sprintf($lang->warning, $tag);
-    return $result;
-    */
   }
   
   public function deletespaces($s) {
@@ -65,17 +51,17 @@ class tthemeparser extends tdata {
     if (($theme->name == 'default') && ($theme->tmlfile == 'default')) {
       $this->default = new tdefaulttheme();
     } else {
-$about = $this->getabout($theme->name); 
-if (($about['type'] == 'litepublisher') && !empty($about['parent'])) {
-$parent = $this->getabout($about['parent']);
-if (($parent['type'] != 'litepublisher') || !empty($parent['parent'])) {
-$this->error(sprintf('Parent theme %s of theme %s has parent', $about['parent'], $theme->name));
-}
-      $this->default = ttheme::getinstance($about['parent'], 'index');
-$theme->parent = $about['parent'];
-} else {
-      $this->default = ttheme::getinstance('default', 'default');
-}
+      $about = $this->getabout($theme->name);
+      if (($about['type'] == 'litepublisher') && !empty($about['parent'])) {
+        $parent = $this->getabout($about['parent']);
+        if (($parent['type'] != 'litepublisher') || !empty($parent['parent'])) {
+          $this->error(sprintf('Parent theme %s of theme %s has parent', $about['parent'], $theme->name));
+        }
+        $this->default = ttheme::getinstance($about['parent'], 'index');
+        $theme->parent = $about['parent'];
+      } else {
+        $this->default = ttheme::getinstance('default', 'default');
+      }
     }
     
     $s = file_get_contents($filename);
@@ -85,7 +71,7 @@ $theme->parent = $about['parent'];
     $theme->menu = $this->parsemenu($s);
     $theme->content = $this->parsecontent($s);
     $theme->sitebars = $this->parsesitebars($s);
-$s = $this->deletespaces($s);
+    $s = $this->deletespaces($s);
     $theme->theme= $s != ''? $s : (string) $this->default->theme;
     return true;
   }
@@ -147,42 +133,42 @@ $s = $this->deletespaces($s);
     $result['excerpts'] = $this->parse_excerpts($s, $result['post']);
     $result['navi'] = $this->parsenavi($s);
     $result['admin'] = $this->parseadmin($s);
-$default = $this->default->content;
+    $default = $this->default->content;
     $result['menu']= $this->gettag($s, 'menu', '', $default->menu);
     $result['simple'] = $this->gettag($s, 'simple', '', $default->simple);
     $result['notfound'] = $this->gettag($s, 'notfound', '', $default->notfound);
-if ($this->fixold) {
-if (strpos($result['simple'], '%')) $result['simple'] = sprintf($result['simple'], '$content');
-if (strpos($result['notfound'], '%')) $result['notfound'] = sprintf($result['notfound'], '$content');
-}
+    if ($this->fixold) {
+      if (strpos($result['simple'], '%')) $result['simple'] = sprintf($result['simple'], '$content');
+      if (strpos($result['notfound'], '%')) $result['notfound'] = sprintf($result['notfound'], '$content');
+    }
     return $result;
   }
   
   private function parse_excerpts(&$str, array &$post) {
-$s = $this->parsetag($str, 'excerpts', '');
-if ($s == '') return $this->default->content->excerpts->array;
+    $s = $this->parsetag($str, 'excerpts', '');
+    if ($s == '') return $this->default->content->excerpts->array;
     $result = array();
     $result['excerpt'] = $this->parse_excerpt($s, $post);
     $result['lite'] = $this->parselite($s);
-$s = $this->deletespaces($s);
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $this->default->content->excerpts;
     return $result;
   }
   
   private function parselite(&$str) {
-$default = $this->default->content->excerpts->lite;
-$s= $this->gettag($str, 'lite', '');
-if ($s == '') return $default->array;
+    $default = $this->default->content->excerpts->lite;
+    $s= $this->gettag($str, 'lite', '');
+    if ($s == '') return $default->array;
     $result = array();
     $result['excerpt'] = $this->parsetag($s, 'excerpt', '$items', $default->excerpt);
-$s = $this->deletespaces($s);
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   
   private function parse_excerpt(&$str, array &$post) {
-$s = $this->parsetag($str, 'excerpt', '$items');
-if ($s == '') return $this->default->content->excerpts->excerpt->array;
+    $s = $this->parsetag($str, 'excerpt', '$items');
+    if ($s == '') return $this->default->content->excerpts->excerpt->array;
     $result = array();
     $categories = $this->parse_post_tags($s, 'categories', '$post.categorieslinks');
     $tags = $this->parse_post_tags($s, 'tags', '$post.tagslinks');
@@ -211,12 +197,12 @@ if ($s == '') return $this->default->content->excerpts->excerpt->array;
     } else {
       $result['tags'] = $post['tags'];
     }
-
+    
     $result['files'] = $this->parsefilesexcerpt($s, $post['files']);
-$default = $this->default->content->excerpts->excerpt;
+    $default = $this->default->content->excerpts->excerpt;
     $result['more'] = $this->gettag($s, 'more', '$post.morelink', $default->more);
     $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['dateformat']));
-$s = $this->deletespaces($s);
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
@@ -292,13 +278,13 @@ $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
-
+  
   private function parsefilesexcerpt(&$str, array &$files) {
     $s = $this->parsetag($str, 'files', '$post.excerptfilelist');
     if ($s == '') return $files;
     $default = new tarray2prop();
-$default ->array = $files;
-        $result = array();
+    $default ->array = $files;
+    $result = array();
     $result['file'] = $this->gettag($s, 'file', '$items', $default->file);
     $result['image'] = $this->gettag($s, 'image', '', $default->image);
     $result['preview'] = $this->gettag($s, 'preview', '', $default->preview);
@@ -323,30 +309,30 @@ $default ->array = $files;
   }
   
   private function parsenavi(&$str) {
-$s = $this->parsetag($s, 'navi', '');
-if ($s == '') return $this->default->content->navi->array;
-$default = $this->default->content->navi;
+    $s = $this->parsetag($s, 'navi', '');
+    if ($s == '') return $this->default->content->navi->array;
+    $default = $this->default->content->navi;
     $result = array();
     $result['prev'] = $this->parsetag($s, 'prev', '$items', $default->prev);
     $result['next'] = $this->parsetag($s, 'next', '', $default->next);
     $result['link'] = $this->parsetag($s, 'link', '', $default->link);
     $result['current'] = $this->parsetag($s, 'current', '', $default->current);
     $result['divider'] = $this->parsetag($s, 'divider', '', $default->divider);
-if ($this->fixold) {
-$result['prev'] = sprintf($result['prev'], '$link');
-$result['next'] = sprintf($result['next'], '$link');
-$result['link'] =sprintf($result['link'], '$options.url$url', '$page');
-$result['current'] =sprintf($result['current'], '$options.url$url', '$page');
-}
-$s = $this->deletespaces($s);
+    if ($this->fixold) {
+      $result['prev'] = sprintf($result['prev'], '$link');
+      $result['next'] = sprintf($result['next'], '$link');
+      $result['link'] =sprintf($result['link'], '$options.url$url', '$page');
+      $result['current'] =sprintf($result['current'], '$options.url$url', '$page');
+    }
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }
   
   private function parseadmin(&$str) {
-$default = $this->default->content->admin;
-$s = $this->parsetag($str, 'admin', '');
-if ($s == '') return $default->array;
+    $default = $this->default->content->admin;
+    $s = $this->parsetag($str, 'admin', '');
+    if ($s == '') return $default->array;
     $result = array();
     $result['area'] = trim($this->gettag($s, 'area', '', $default->area));
     $result['edit'] = trim($this->gettag($s, 'edit', '', $default->edit));
@@ -354,70 +340,70 @@ if ($s == '') return $default->array;
   }
   
   private function parsetemplatecomments(&$str) {
-$default = $this->default->content->post->templatecomments->array;
-$s = $this->parsetag($str, 'templatecomments', '$post.templatecomments');
-if ($s == '') return $default;
+    $default = $this->default->content->post->templatecomments->array;
+    $s = $this->parsetag($str, 'templatecomments', '$post.templatecomments');
+    if ($s == '') return $default;
     $result = array();
-
-$src = $this->parsetag($s, 'comments', '');
+    
+    $src = $this->parsetag($s, 'comments', '');
     $result['comments'] = $src == '' ? $default['comments'] : $this->parsecomments($src);
-
+    
     $result['moderateform'] = $this->gettag($s, 'moderateform', '', $default['moderateform']);
-
-$src = $this->parsetag($s, 'pingbacks', '');
+    
+    $src = $this->parsetag($s, 'pingbacks', '');
     $result['pingbacks'] = $src == '' ? $default['pingbacks']: $this->parsepingbacks($src);
-
-$src = $this->parsetag($s, 'closed', '');
+    
+    $src = $this->parsetag($s, 'closed', '');
     $result['closed'] = $src == '' ? $default['closed']  : $src;
-
-$src = $this->parsetag($s, 'form', '');
+    
+    $src = $this->parsetag($s, 'form', '');
     $result['form'] = $src == '' ? $default['form']  : $src;
-$src = $this->parsetag($s, 'confirmform', '');
+    $src = $this->parsetag($s, 'confirmform', '');
     $result['confirmform'] = $src == '' ? $default['confirmform'] : $src;
-
+    
     return $result;
   }
   
   private function parsecomments($s) {
-$default = $this->default->content->post->templatecomments->comments->array;
+    $default = $this->default->content->post->templatecomments->comments->array;
     $result = array();
-
-$src = $this->parsetag($s, 'count', '');
+    
+    $src = $this->parsetag($s, 'count', '');
     $result['count'] = $src == '' ? $default['count'] : $src;
-
-$src = $this->parsetag($s, 'hold', '');
+    
+    $src = $this->parsetag($s, 'hold', '');
     $result['hold'] = $src == '' ? $default['hold'] : $src;
-
-$src = $this->parsetag($s, 'comment', '$items');
+    
+    $src = $this->parsetag($s, 'comment', '$items');
     $result['comment'] = $src == '' ? $default['comment']  : $this->parsecomment($src);
-
-$src = $this->parsetag($s, 'commentsid', false);
+    
+    $src = $this->parsetag($s, 'commentsid', false);
     $result['commentsid'] = $src == '' ? $default['commentsid'] : $src;
-
-$s = $this->deletespaces($s);
-if ($this->fixold) $s = sprintf($s, '$items', '$from');
+    
+    $s = $this->deletespaces($s);
+    if ($this->fixold) $s = sprintf($s, '$items', '$from');
     $result[0] = $s == '' ? $default[0] : $s;
-
+    
     return $result;
   }
   
   private function parsecomment($s) {
     $result = array();
-$default = $this->default->content->post->templatecomments->comments->comment->array;
+    $default = $this->default->content->post->templatecomments->comments->comment->array;
     $result['class1'] = $this->gettag($s, 'class1', '$class', $default['class1']);
     $result['class2'] = $this->gettag($s, 'class2', '', $default['class2']);
     $result['moderate'] = $this->gettag($s, 'moderate', '$moderate', $default['moderate']);
-        $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$comment.date', $default['dateformat']));
-$s = $this->deletespaces($s);
+    $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$comment.date', $default['dateformat']));
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
   
   private function parsepingbacks($s) {
     $result = array();
-$default = $this->default->content->post->templatecomments->pingbacks->array;
+    $default = $this->default->content->post->templatecomments->pingbacks->array;
     $result['pingback'] = $this->gettag($s, 'pingback', '$items', $default['pingback']);
-$s = $this->deletespaces($s);
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
@@ -427,99 +413,99 @@ $s = $this->deletespaces($s);
     while ($sitebar = $this->parsetag($str, 'sitebar', '$template.sitebar')) {
       $result[] = $this->parsesitebar($sitebar, count($result));
     }
-if (count($result) == 0) return $this->default->sitebars->array;
+    if (count($result) == 0) return $this->default->sitebars->array;
     return $result;
   }
   
   private function parsesitebar($s, $sitebar) {
     $result = array();
-$default = $this->default->sitebars->array[$sitebar];
-$isdef = $this->default instanceof tdefaulttheme;
+    $default = $this->default->sitebars->array[$sitebar];
+    $isdef = $this->default instanceof tdefaulttheme;
     if ($widget = $this->parsetag($s, 'widget', '$items')) {
-    $result['widget'] = $this->parsewidget($widget, 'widget', $sitebar);
-} else {
-$result['widget'] = $default['widget'];
-}
+      $result['widget'] = $this->parsewidget($widget, 'widget', $sitebar);
+    } else {
+      $result['widget'] = $default['widget'];
+    }
     
     foreach (self::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name, $sitebar);
-} elseif ($isdef) {
-$result[$name] = $result['widget'];
+      } elseif ($isdef) {
+        $result[$name] = $result['widget'];
       } else {
         $result[$name]  = $default[$name];
       }
     }
     
-$s = $this->deletespaces($s);
+    $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
   
   private function parsewidget($s, $name, $sitebar) {
-if ($this->default instanceof tdefaulttheme) {
-$default = array();
-} else {
-$default = $this->default->sitebars->array[$sitebar][$name];
-}
+    if ($this->default instanceof tdefaulttheme) {
+      $default = array();
+    } else {
+      $default = $this->default->sitebars->array[$sitebar][$name];
+    }
     $result = array();
     if ($items = $this->parsetag($s, 'items', '$content')) {
-    if ($item = $this->parsetag($items, 'item', '$items')) {
-if ($this->fixold) {
-$item = sprintf($item, '$url', '$title', '$anchor', '$subitems');
-$item = str_replace('$count', '$subitems', $item);
-$item = str_replace('$options.url', '', $item);
-}
-       $result['item'] = trim($item);
+      if ($item = $this->parsetag($items, 'item', '$items')) {
+        if ($this->fixold) {
+          $item = sprintf($item, '$url', '$title', '$anchor', '$subitems');
+          $item = str_replace('$count', '$subitems', $item);
+          $item = str_replace('$options.url', '', $item);
+        }
+        $result['item'] = trim($item);
+      } else {
+        $result['item'] = $default['item'];
+      }
+      if ($name == 'meta') $result['classes'] = $this->parsemetawidget($items, $sitebar);
+      if ($this->fixold) $items = sprintf($items, '$items');
+      $result['items'] = $this->deletespaces($items);
     } else {
-      $result['item'] = $default['item'];
-    }
-if ($name == 'meta') $result['classes'] = $this->parsemetawidget($items, $sitebar);
-if ($this->fixold) $items = sprintf($items, '$items');
-    $result['items'] = $this->deletespaces($items);
-} else {
       $result['items'] = $default['items'];
       $result['item'] = $default['item'];
-if ($name == 'meta') $result['classes'] = $default['classes'];
-}
+      if ($name == 'meta') $result['classes'] = $default['classes'];
+    }
     
-$s = $this->deletespaces($s);
-if ($this->fixold) $s = sprintf($s, '$title', '$content');
-   $result[0] = $s != '' ? $s : $default[0];
+    $s = $this->deletespaces($s);
+    if ($this->fixold) $s = sprintf($s, '$title', '$content');
+    $result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
-
-private function parsemetawidget(&$str, $sitebar) {
-      $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
-$default = $this->default instanceof tdefaulttheme ? $result : $this->default->sitebars->array[$sitebar]['meta']['classes'];
-$s = $this->parsetag($str, 'metaclasses', '');
-if ($s == '') return $default;
-
-        foreach (explode(',', $s) as $class) {
-          if ($i = strpos($class, '=')) {
-            $classname = trim(substr($class, 0, $i));
-            $value = trim(substr($class, $i + 1));
-            if ($value != '') $result[$classname] = sprintf('class="%s"', $value);
-          }
-        }
-
-return $result;
-}
+  
+  private function parsemetawidget(&$str, $sitebar) {
+    $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
+    $default = $this->default instanceof tdefaulttheme ? $result : $this->default->sitebars->array[$sitebar]['meta']['classes'];
+    $s = $this->parsetag($str, 'metaclasses', '');
+    if ($s == '') return $default;
+    
+    foreach (explode(',', $s) as $class) {
+      if ($i = strpos($class, '=')) {
+        $classname = trim(substr($class, 0, $i));
+        $value = trim(substr($class, $i + 1));
+        if ($value != '') $result[$classname] = sprintf('class="%s"', $value);
+      }
+    }
+    
+    return $result;
+  }
   
   //manager
   public function getabout($name) {
     if (!isset($this->abouts)) $this->abouts = array();
     if (!isset($this->abouts[$name])) {
-$filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini';
+      $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini';
       if (file_exists($filename) && (      $about = parse_ini_file($filename, true))) {
-$about['about']['type'] = 'litepublisher';
+        $about['about']['type'] = 'litepublisher';
         //join languages
         if (isset($about[litepublisher::$options->language])) {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];
         }
         $this->abouts[$name] = $about['about'];
       } elseif ($about =  $this->get_about_wordpress_theme($name)){
-$about['type'] = 'wordpress';
+        $about['type'] = 'wordpress';
         $this->abouts[$name] = $about;
       } else {
         $this->abouts[$name] = false;
@@ -536,13 +522,13 @@ $about['type'] = 'wordpress';
         $plugins->delete($old);
       }
     }
-
+    
     $template->data['theme'] = $name;
     $template->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  ;
     $template->url = litepublisher::$options->url  . '/themes/'. $template->theme;
-
+    
     $theme = ttheme::getinstance($name, 'index');
-   
+    
     $about = $this->getabout($name);
     if (!empty($about['about']['pluginclassname'])) {
       $plugins = tplugins::instance();
