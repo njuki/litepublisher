@@ -339,8 +339,7 @@ class twidgets extends titems {
   
   private function joinitems(array $items, array $subitems) {
     if (count($subitems) == 0) return $items;
-    if (count($items) == 0) return $subitems;
-    
+    if (count($items) > 0) {
     //delete copies
     for ($i = count($items) -1; $i >= 0; $i--) {
       $id = $items[$i]['id'];
@@ -348,7 +347,7 @@ class twidgets extends titems {
         if ($id == $subitem['id']) array_delete($items, $i);
       }
     }
-    
+}    
     //join
     foreach ($subitems as $item) {
       $count = count($items);
