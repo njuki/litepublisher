@@ -304,7 +304,8 @@ class twidgets extends titems {
             if ($id == $item['id']) array_delete($subitems, $i);
           }
         }
-        foreach ($subitems as $item) $uitems[] = $item;
+
+        foreach ($subitems as $item) $items[] = $item;
       }
     }
     
