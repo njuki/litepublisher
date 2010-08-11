@@ -175,7 +175,7 @@ class tcomments extends titems {
     
     $args = targs::instance();
     $args->comments = $result;
-    return $theme->parsearg($tml->moderateform, $args);
+    return $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
   }
   
   public function getholdcontent($idauthor) {

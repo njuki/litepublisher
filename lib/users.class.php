@@ -112,9 +112,11 @@ class tusers extends titems {
   }
   
   public function authcookie($cookie) {
+$cookie = (string) $cookie;
     if (empty($cookie)) return false;
+$cookie = md5( $cookie . litepublisher::$secret);
     if ($this->dbversion) {
-      if (($a = $this->select('cookie = '. dbquote($cookie), 'limit 1')) && (count($a) > 0)) {
+      if (($a = $this->select("cookie = '$cookie'", 'limit 1')) && (count($a) > 0)) {
         $item = $this->getitem($a[0]);
         if (strtotime($item['expired']) < time()) return  false;
         return (int) $item['id'];
@@ -141,10 +143,13 @@ class tusers extends titems {
   }
   
   public function setcookie($id, $cookie, $expired) {
+if ($cookie != '') $cookie = md5($cookie . litepublisher::$secret);
     $expired = sqldate($expired);
-    if (isset($this->items[$id])) {      $this->items[$id]['cookie'] = $cookie;
+    if (isset($this->items[$id])) {      
+$this->items[$id]['cookie'] = $cookie;
       $this->items[$id]['expired'] = $expired;
     }
+
     if ($this->dbversion) {
       $this->db->updateassoc(array(
       'id' => $id,
