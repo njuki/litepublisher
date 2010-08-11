@@ -432,14 +432,14 @@ class tthemeparser extends tdata {
         $result[$name] = $this->parsewidget($widget, $name, $sitebar);
       } else {
         $result[$name] = $result['widget'];
-if (($name == 'posts') || ($name == 'comments')) {
-$result[$name]['item'] = $default[$name]['item'];
-} elseif ($name == 'meta') {
-$result['meta']['classes'] = $default['meta']['classes'];
-}
+        if (($name == 'posts') || ($name == 'comments')) {
+          $result[$name]['item'] = $default[$name]['item'];
+        } elseif ($name == 'meta') {
+          $result['meta']['classes'] = $default['meta']['classes'];
+        }
+      }
     }
-}
-   
+    
     $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : $default[0];
     return $result;

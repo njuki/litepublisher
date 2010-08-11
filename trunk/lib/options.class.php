@@ -110,7 +110,7 @@ class toptions extends tevents {
   
   public function authcookie() {
     if (empty($_COOKIE['admin']))  return false;
-$cookie = md5((string) $_COOKIE['admin'] . litepublisher::$secret);
+    $cookie = md5((string) $_COOKIE['admin'] . litepublisher::$secret);
     if ($this->cookie == $cookie) {
       if ($this->cookieexpired < time()) return false;
       $this->user = 1;
@@ -176,12 +176,12 @@ $cookie = md5((string) $_COOKIE['admin'] . litepublisher::$secret);
       $this->gmt = date('Z');
     }
   }
-
-public function setcookie($cookie) {
-if ($cookie != '') $cookie = md5((string) $cookie . litepublisher::$secret);
-$this->data['cookie'] = $cookie;
-$this->save();
-}
+  
+  public function setcookie($cookie) {
+    if ($cookie != '') $cookie = md5((string) $cookie . litepublisher::$secret);
+    $this->data['cookie'] = $cookie;
+    $this->save();
+  }
   
   public function handexception($e) {
     /*
