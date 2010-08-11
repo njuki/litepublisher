@@ -24,12 +24,12 @@ function twidgetsUninstall($self) {
 
 function twidgetscacheInstall($self) {
   litepublisher::$options->onsave = $self->savemodified;
-litepublisher::$urlmap->onclearcache = $self->onclearcache;
+  litepublisher::$urlmap->onclearcache = $self->onclearcache;
 }
 
 function twidgetscacheUninstall($self) {
   litepublisher::$options->unsubscribeclass($self);
-turlmap::unsub($self);
+  turlmap::unsub($self);
 }
 
 function install_std_widgets($widgets) {
@@ -38,7 +38,7 @@ function install_std_widgets($widgets) {
   
   $id = $widgets->add(tcategorieswidget::instance());
   $sitebars->insert($id, true, 0, -1);
-
+  
   $id = $widgets->add(ttagswidget::instance());
   
   $id = $widgets->add(tarchiveswidget::instance());

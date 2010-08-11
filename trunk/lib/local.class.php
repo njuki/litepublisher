@@ -35,10 +35,10 @@ public function __get($name) { return $this->data[$name]; }
   
   public function add(array $a) {
     foreach ($a as $key => $value) $this->__set($key, $value);
-if (isset($a['title']) && !isset($a['anchor']) && !isset($this->data['$anchor']))  $this->__set('anchor', $a['title']);
-if (isset($a['anchor']) && !isset($a['title']) && !isset($this->data['$title']))  $this->__set('title', $a['anchor']);
+    if (isset($a['title']) && !isset($a['anchor']) && !isset($this->data['$anchor']))  $this->__set('anchor', $a['title']);
+    if (isset($a['anchor']) && !isset($a['title']) && !isset($this->data['$title']))  $this->__set('title', $a['anchor']);
   }
-
+  
 }//class
 
 class tlocal {

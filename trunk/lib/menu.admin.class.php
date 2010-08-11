@@ -104,7 +104,7 @@ class tadminmenus extends tmenus {
   private function getsubmenu(&$tree, $current) {
     $result = '';
     $theme = ttheme::instance();
-$menu = $theme->menu;
+    $menu = $theme->menu;
     $tml = $menu->item;
     $args = targs::instance();
     foreach ($tree as $id => $items) {
@@ -219,8 +219,8 @@ class tadminmenus2 extends tadminmenus {
   protected function create() {
     parent::create();
     $this->basename = 'adminmenu2';
-}
-
+  }
+  
 }//class
 
 ?>

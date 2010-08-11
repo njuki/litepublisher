@@ -13,7 +13,7 @@ class ttemplate extends tevents {
   public $itemplate;
   public $javascripts;
   public $javaoptions;
-public $hover;
+  public $hover;
   //public $footer;
   
   public static function instance() {
@@ -21,14 +21,14 @@ public $hover;
   }
   
   protected function create() {
-//prevent recursion
-litepublisher::$classes->instances[__class__] = $this;
+    //prevent recursion
+    litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$options->files . '/themes/default';
     $this->itemplate = false;
-$this->hover = true;
+    $this->hover = true;
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s',\nidurl: '%3\$s'",
     litepublisher::$options->url, litepublisher::$options->files, litepublisher::$urlmap->itemrequested['id']));
@@ -83,14 +83,14 @@ $this->hover = true;
   
   private function loadtheme($name, $tmlfile) {
     if (!$this->theme_exists($name)) {
-        if ($name == $this->theme) {
-$name = 'default';
-} else {
-$name = $this->theme;
-    if (!$this->theme_exists($name)) $name = 'default';
+      if ($name == $this->theme) {
+        $name = 'default';
+      } else {
+        $name = $this->theme;
+        if (!$this->theme_exists($name)) $name = 'default';
+      }
     }
-}
-
+    
     /*
     if (!@file_exists($path . "$tmlfile.tml")) {
       if (($tmlfile != 'index') && @file_exists($this->path . "index.tml")) {
@@ -148,9 +148,9 @@ $name = $this->theme;
       $result= $this->context->httpheader();
       if (!empty($result)) return $result;
     }
-return turlmap::httpheader($this->context->cache);
-}
-
+    return turlmap::httpheader($this->context->cache);
+  }
+  
   //html tags
   public function getsitebar() {
     $widgets = twidgets::instance();
@@ -208,18 +208,19 @@ return turlmap::httpheader($this->context->cache);
     }
     
     if ($current == 0) {
+      $theme = ttheme::instance();
       $filename = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.menu.php";
       if (file_exists($filename)) return file_get_contents($filename);
     }
     
     $menus = tmenus::instance();
     $result = $menus->getmenu($this->hover, $current);
-
+    
     if ($current == 0) {
       file_put_contents($filename, $result);
       @chmod($filename, 0666);
     }
-
+    
     return $result;
   }
   

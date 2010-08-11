@@ -283,7 +283,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'cache':
       if (isset($clearcache)) {
-        litepublisher::$urlmap->clearcache();
+        ttheme::clearcache();
       } else {
         $options->lock();
         $options->cache = isset($cache );

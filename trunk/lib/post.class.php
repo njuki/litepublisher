@@ -343,7 +343,7 @@ class tpost extends titem implements  itemplate {
     $files = tfiles::instance();
     return $files->getlist($this->files, $theme->content->post->files->array);
   }
-
+  
   public function getexcerptfilelist() {
     if (count($this->files) == 0) return '';
     $theme = ttheme::instance();
@@ -351,7 +351,7 @@ class tpost extends titem implements  itemplate {
     return $files->getlist($this->files, $theme->content->excerpts->excerpt->files->array);
   }
   
-    public function getcont() {
+  public function getcont() {
     ttheme::$vars['post'] = $this;
     $theme = ttheme::instance();
     return $theme->parse($theme->content->post);

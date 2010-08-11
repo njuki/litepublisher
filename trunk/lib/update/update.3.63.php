@@ -11,17 +11,22 @@ if (!$widgets->find($widget)) {
 $widgets->add($widget);
 }
 litepublisher::$urlmap->lock();
+    $cache = twidgetscache::instance();
+if (litepublisher::$urlmap->eventexists('CacheExpired')) {
+litepublisher::$urlmap->CacheExpired= $cache->onclearcache;
 $events = &litepublisher::$urlmap->data['events'];
 if (isset($events['CacheExpired'])) {
 $events['onclearcache'] = $events['CacheExpired'];
 unset($events['CacheExpired']);
 }
-    $cache = twidgetscache::instance();
+} else {
 litepublisher::$urlmap->onclearcache = $cache->onclearcache;
+}
 litepublisher::$urlmap->unlock();
 
 $widget = tcommentswidget::instance();
   litepublisher::$classes->commentmanager->changed = $widget->changed;
+ttheme::clearcache();
   }
 
 ?>

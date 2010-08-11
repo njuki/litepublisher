@@ -472,6 +472,8 @@ send lib\install\users.groups.class.install.php lib/install/users.groups.class.i
 quote site chmod 666 lib/install/users.groups.class.install.php
 send lib\install\users.sql lib/install/users.sql
 quote site chmod 666 lib/install/users.sql
+send lib\install\widget.comments.class.install.php lib/install/widget.comments.class.install.php
+quote site chmod 666 lib/install/widget.comments.class.install.php
 send lib\install\widget.friends.class.install.php lib/install/widget.friends.class.install.php
 quote site chmod 666 lib/install/widget.friends.class.install.php
 send lib\install\widget.links.class.install.php lib/install/widget.links.class.install.php
@@ -538,6 +540,8 @@ send lib\update\update.3.60.php lib/update/update.3.60.php
 quote site chmod 666 lib/update/update.3.60.php
 send lib\update\update.3.62.php lib/update/update.3.62.php
 quote site chmod 666 lib/update/update.3.62.php
+send lib\update\update.3.63.php lib/update/update.3.63.php
+quote site chmod 666 lib/update/update.3.63.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -560,6 +564,20 @@ mkdir plugins
 quote site chmod 777 plugins
 send plugins\.htaccess plugins/.htaccess
 quote site chmod 666 plugins/.htaccess
+cd plugins
+mkdir adminhistory
+quote site chmod 777 adminhistory
+cd ../
+send plugins\adminhistory\.htaccess plugins/adminhistory/.htaccess
+quote site chmod 666 plugins/adminhistory/.htaccess
+send plugins\adminhistory\about.ini plugins/adminhistory/about.ini
+quote site chmod 666 plugins/adminhistory/about.ini
+send plugins\adminhistory\adminhistory.install.php plugins/adminhistory/adminhistory.install.php
+quote site chmod 666 plugins/adminhistory/adminhistory.install.php
+send plugins\adminhistory\adminhistory.php plugins/adminhistory/adminhistory.php
+quote site chmod 666 plugins/adminhistory/adminhistory.php
+send plugins\adminhistory\index.htm plugins/adminhistory/index.htm
+quote site chmod 666 plugins/adminhistory/index.htm
 cd plugins
 mkdir adminhover
 quote site chmod 777 adminhover

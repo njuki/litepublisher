@@ -39,7 +39,7 @@ class tmetawidget extends twidget {
     $metaclasses = isset($theme->data['sitebars'][$sitebar]['meta']) ? $theme->data['sitebars'][$sitebar]['meta']['classes'] :
     array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
     $lang = tlocal::instance('default');
-
+    
     if ($rss) $result .= $this->getitem($tml, '/rss.xml', $lang->rss, $metaclasses['rss']);
     if ($comments) $result .= $this->getitem($tml, '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
     if ($media) $result .= $this->getitem($tml, '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
@@ -50,18 +50,18 @@ class tmetawidget extends twidget {
     if ($result == '') return '';
     return $theme->getwidgetcontent($result, 'meta', $sitebar);
   }
-
-private function getitem($tml, $url, $title, $class) {
-$args = targs::instance();
-$args->icon = '';$args->subitems = '';
-$args->rel = $class;
-$args->url = litepublisher::$options->url  . $url;
-$args->title = $title;
-$args->anchor = $title;
-$args->class = $class == '' ? '' : sprintf('class="%s"', $class);
-$theme = ttheme::instance();
-return $theme->parsearg($tml, $args);
-}
+  
+  private function getitem($tml, $url, $title, $class) {
+    $args = targs::instance();
+    $args->icon = '';$args->subitems = '';
+    $args->rel = $class;
+    $args->url = litepublisher::$options->url  . $url;
+    $args->title = $title;
+    $args->anchor = $title;
+    $args->class = $class == '' ? '' : sprintf('class="%s"', $class);
+    $theme = ttheme::instance();
+    return $theme->parsearg($tml, $args);
+  }
   
 }//class
 ?>
