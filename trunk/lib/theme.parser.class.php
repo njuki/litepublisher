@@ -430,13 +430,11 @@ class tthemeparser extends tdata {
     foreach (self::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
         $result[$name] = $this->parsewidget($widget, $name, $sitebar);
-      } elseif ($isdef) {
-        $result[$name] = $result['widget'];
       } else {
-        $result[$name]  = $default[$name];
-      }
+        $result[$name] = $result['widget'];
+}
     }
-    
+   
     $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : $default[0];
     return $result;
