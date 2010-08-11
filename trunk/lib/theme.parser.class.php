@@ -309,7 +309,7 @@ class tthemeparser extends tdata {
   }
   
   private function parsenavi(&$str) {
-    $s = $this->parsetag($s, 'navi', '');
+    $s = $this->parsetag($str, 'navi', '');
     if ($s == '') return $this->default->content->navi->array;
     $default = $this->default->content->navi;
     $result = array();
