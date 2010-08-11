@@ -204,13 +204,13 @@ class tadmincustomwidget extends tadminwidget {
     $widget = $this->widget;
     if (isset($_POST['mode'])) {
       extract($_POST, EXTR_SKIP);
-      $idwidget = (int) $_GET['idwidget'];
       switch ($mode) {
         case 'add':
         $_GET['idwidget'] = $widget->add($title, $text, $template);
         break;
         
         case 'edit':
+      $idwidget = (int) $_GET['idwidget'];
         $widget->edit($idwidget, $title, $text, $template);
         break;
       }
