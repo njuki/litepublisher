@@ -109,6 +109,6 @@ $man = tdbmanager::instance();
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-include('lib/update/update.3.64.php');
-update364();
+//include('lib/update/update.3.65.php');
+//update365();
 ?>
