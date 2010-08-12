@@ -102,7 +102,7 @@ function xml2array($xml)  {
   return $result;
 }
 
-class Tdomrss extends domDocument {
+class tdomrss extends domDocument {
   public $items;
   public $rss;
   public $channel;
@@ -169,12 +169,51 @@ class Tdomrss extends domDocument {
     $this->items[] = $result;
     return $result;
   }
-  
+
+public function createitem($title, $link) {
+    $result = self::add($this->channel, 'item');
+    $this->items[] = $result;
+
+    return $result;
+}
+
   public function GetStripedXML() {
     $s = $this->saveXML();
     return substr($s, strpos($s, '?>') + 2);
   }
-  
+
+public static function add(DOMNode $owner, $name) {
+  $result = $owner->ownerDocument->createElement($name);
+  $owner->appendChild($result);
+  return $result;
+}
+
+public static function addvalue($owner, $name, $value) {
+  $result = $owner->ownerDocument->createElement($name);
+  $textnode = $owner->ownerDocument->createTextNode($value);
+  $result->appendChild($textnode);
+  $owner->appendChild($result);
+  Return $result;
+}
+
+  }//class
+
+class trssitem {
+public $item;
+
+
+ppublic function __get($name) {
+
+}
+
+public function __set($name, $value) {
+    tdomrss::addvalue($this->item, $name, $value);
+}
+
+public function add($name) {
+return tdomrss::add($this->item, $name);
+}
+
 }//class
 
 ?>

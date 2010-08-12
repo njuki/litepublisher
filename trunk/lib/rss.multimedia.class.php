@@ -38,7 +38,7 @@ class trssMultimedia extends tevents {
     
     $result .= turlmap::xmlheader();
     
-    $this->domrss = new Tdomrss;
+    $this->domrss = new tdomrss;
     $this->domrss->CreateRootMultimedia(litepublisher::$options->url. litepublisher::$urlmap->url, 'media');
     
     $list = $this->getrecent($arg, litepublisher::$options->perpage);
