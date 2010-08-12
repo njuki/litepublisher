@@ -101,7 +101,7 @@ class tcommentform extends tevents {
     $args->name = '';
     $args->email = '';
     $args->url = '';
-    $args->subscribe = true;
+    $args->subscribe = litepublisher::$options->defaultsubscribe;
     $args->content = '';
     $args->postid = $postid;
     $args->antispam = '_Value' . strtotime ("+1 hour");
@@ -182,8 +182,9 @@ class tcommentform extends tevents {
     if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
     if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
     if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
-    //check duplicates
+if (litepublisher::$options->checkduplicate) {
     if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
+}
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance($postid);
