@@ -101,7 +101,7 @@ function editcomment(id) {
         document.getElementById('name').value = result.name;
         document.getElementById('email').value = result.email;
         document.getElementById('url').value = result.url;
-        document.getElementById('comment').value = result.content;
+        document.getElementById('comment').value = result.rawcontent;
         
         document.getElementById('commentform').onsubmit = submiteditcomment(id);
         document.getElementById('name').focus();

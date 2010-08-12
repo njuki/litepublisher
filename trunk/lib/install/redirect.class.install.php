@@ -7,12 +7,12 @@
 **/
 
 function tredirectorInsttall($self) {
-$self->lock();
-$self->add('rss/', '/rss.xml');
-$self->add('/rss', '/rss.xml');
-$self->add('/feed/', '/rss.xml');
-$self->add('/contact.php', '/kontakty.htm');
-$self->add('/kontakty.htm', '/contact.htm');
-$self->unlock();
+  $self->lock();
+  $self->add('rss/', '/rss.xml');
+  $self->add('/rss', '/rss.xml');
+  $self->add('/feed/', '/rss.xml');
+  $self->add('/contact.php', '/kontakty.htm');
+  $self->add('/kontakty.htm', '/contact.htm');
+  $self->unlock();
 }
 ?>

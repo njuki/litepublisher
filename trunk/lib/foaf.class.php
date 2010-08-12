@@ -36,7 +36,7 @@ class tfoaf extends titems {
   }
   
   public function request($arg) {
-return turlmap::xmlheader() . $this->getfoafxml();
+    return turlmap::xmlheader() . $this->getfoafxml();
   }
   
   public function add($nick,$url, $foafurl, $status) {

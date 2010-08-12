@@ -1070,6 +1070,7 @@ class turlmap extends titems {
     $this->adminpanel = false;
     $this->mobile= false;
     $this->cachefilename = false;
+    $this->page = 1;
   }
   
   protected function prepareurl($host, $url) {
