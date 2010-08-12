@@ -65,8 +65,8 @@ class Tadminoptions extends tadminmenu {
       $args->commentsenabled = $options->commentsenabled;
       $args->pingenabled  = $options->pingenabled;
       $args->commentpages  = $options->commentpages;
-$args->checkduplicate = $options->checkduplicate;
-$args->defaultsubscribe  = $options->defaultsubscribe;
+      $args->checkduplicate = $options->checkduplicate;
+      $args->defaultsubscribe  = $options->defaultsubscribe;
       $manager = litepublisher::$classes->commentmanager;
       $args->sendnotification = $manager->sendnotification;
       $args->hidelink = $manager->hidelink;
@@ -239,8 +239,8 @@ $args->defaultsubscribe  = $options->defaultsubscribe;
       $options->pingenabled  = isset($pingenabled );
       $options->commentpages = isset($commentpages);
       $options->commentsperpage = $commentsperpage;
-$options->checkduplicate = isset($checkduplicate);
-$options->defaultsubscribe = isset($defaultsubscribe);
+      $options->checkduplicate = isset($checkduplicate);
+      $options->defaultsubscribe = isset($defaultsubscribe);
       $options->unlock();
       
       $manager = litepublisher::$classes->commentmanager;
