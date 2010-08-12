@@ -27,7 +27,7 @@ class trssMultimedia extends tevents {
     $result = '';
     if (($arg == null) && ($this->feedburner  != '')) {
       $result .= "<??php
-if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
+      if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburner');
         header('HTTP/1.1 307 Temporary Redirect');
@@ -36,8 +36,8 @@ if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
       ?>";
     }
     
-        $result .= turlmap::xmlheader();
-
+    $result .= turlmap::xmlheader();
+    
     $this->domrss = new Tdomrss;
     $this->domrss->CreateRootMultimedia(litepublisher::$options->url. litepublisher::$urlmap->url, 'media');
     

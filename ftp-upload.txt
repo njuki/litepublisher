@@ -444,6 +444,8 @@ send lib\install\profile.class.install.php lib/install/profile.class.install.php
 quote site chmod 666 lib/install/profile.class.install.php
 send lib\install\raw.sql lib/install/raw.sql
 quote site chmod 666 lib/install/raw.sql
+send lib\install\redirect.class.install.php lib/install/redirect.class.install.php
+quote site chmod 666 lib/install/redirect.class.install.php
 send lib\install\robotstxt.class.install.php lib/install/robotstxt.class.install.php
 quote site chmod 666 lib/install/robotstxt.class.install.php
 send lib\install\rss.class.install.php lib/install/rss.class.install.php
