@@ -52,7 +52,7 @@ class trss extends tevents {
     }
     
     $result .= turlmap::xmlheader();
-    $this->domrss = new Tdomrss;
+    $this->domrss = new tdomrss;
     switch ($arg) {
       case 'posts':
       $this->GetRSSRecentPosts();

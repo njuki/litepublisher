@@ -6,11 +6,11 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tthemeparser extends tdata {
+class tthemeparser extends tevents {
   public $theme;
   private $abouts;
   private $default;
-  private $fixold = true;
+  private $fixold;
   
   public static function instance() {
     return getinstance(__class__);
@@ -19,8 +19,15 @@ class tthemeparser extends tdata {
   public static function getwidgetnames() {
     return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
   }
-  
-  public function parsetag(&$s, $tag, $replace) {
+
+  protected function create() {
+    parent::create();
+$this->basename = 'themeparser';
+$this->addevents('parsed');
+$this->fixold = true;
+}
+
+    public function parsetag(&$s, $tag, $replace) {
     $result = '';
     $opentag = "<!--$tag-->";
     $closetag = "<!--/$tag-->";
@@ -73,6 +80,7 @@ class tthemeparser extends tdata {
     $theme->sitebars = $this->parsesitebars($s);
     $s = $this->deletespaces($s);
     $theme->theme= $s != ''? $s : (string) $this->default->theme;
+$this->parsed();
     return true;
   }
   

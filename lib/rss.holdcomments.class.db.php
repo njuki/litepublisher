@@ -47,7 +47,7 @@ class trssholdcomments extends tevents {
     if (isset($_GET['key']) && ($this->key != '') && ($this->key == $_GET['key'])) {
       $result = turlmap::xmlheader();
       $rss = trss::instance();
-      $rss->domrss = new Tdomrss;
+      $rss->domrss = new tdomrss;
       $this->dogetholdcomments($rss);
       $result .= $rss->domrss->GetStripedXML();
       return $result;
