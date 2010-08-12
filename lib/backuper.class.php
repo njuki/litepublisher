@@ -61,6 +61,7 @@ class tbackuper extends tevents {
   }
   
   public function getpartial($plugins, $theme, $lib) {
+set_time_limit(300);
     $tar = new tar();
     if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
@@ -104,6 +105,7 @@ class tbackuper extends tevents {
   }
   
   public function upload(&$content) {
+set_time_limit(300);
     $tmp = false;
     $dataprefix = 'data/';
     $themesprefix =  'themes/';
@@ -160,6 +162,7 @@ class tbackuper extends tevents {
   }
   
   public function getfull() {
+set_time_limit(300);
     $tar = new tar();
     if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
     $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
