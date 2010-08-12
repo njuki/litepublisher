@@ -254,12 +254,17 @@
 		<!--/menu-->
 		<!--admin-->
 			<!--edit-->
-			<input type="text" name="$name" id="$name" value="$content" size="22" />
+			<input type="text" name="$name" id="$name" value="$value" size="22" />
 			<!--/edit-->
 
 			<!--area-->
-			<textarea name="$name" id="$name" cols="57%" rows="10">$content</textarea>
+			<textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea>
 			<!--/area-->
+
+<!--checkbox-->
+<p><input type="checkbox" name="$name" id="$name" $value />
+<label for="$name"><strong>$lang.$name</strong></label></p>
+<!--/checkbox-->
 
 		<!--/admin-->
 		<!--/content-->

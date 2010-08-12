@@ -251,18 +251,6 @@ $menu.content
     </div>
 <!--/menu-->
 
-<!--admin-->
-
-<!--edit-->
-<input type="text" name="$name" id="$name" value="$content" size="22" />
-<!--/edit-->
-
-<!--area-->
-<textarea name="$name" id="$name" cols="57%" rows="10">$content</textarea>
-<!--/area-->
-
-<!--/admin-->
-
 <!--/content-->
   </div>
 

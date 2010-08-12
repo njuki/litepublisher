@@ -335,6 +335,7 @@ class tthemeparser extends tdata {
     if ($s == '') return $default->array;
     $result = array();
     $result['area'] = trim($this->gettag($s, 'area', '', $default->area));
+    $result['checkbox'] = trim($this->gettag($s, 'checkbox', '', $default->checkbox));
     $result['edit'] = trim($this->gettag($s, 'edit', '', $default->edit));
     return $result;
   }
