@@ -59,7 +59,7 @@ widgets.load = function (node, id, sitebar) {
         comment.parentNode.replaceChild(content, comment);
         widgets.items[i][1] = content;
       } else {
-        //alert('problem');
+  node.onclick = null;
       }
     },
     

@@ -24,26 +24,22 @@ class trssMultimedia extends tevents {
   }
   
   public function request($arg) {
-    $result = "<?php\n";
+    $result = '';
     if (($arg == null) && ($this->feedburner  != '')) {
-      $result .= "if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
+      $result .= "<??php
+if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburner');
         header('HTTP/1.1 307 Temporary Redirect');
         return;
       }
-      ";
+      ?>";
     }
     
-    
-    $result .= "  @header('Content-Type: text/xml; charset=utf-8');
-    @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: litepublisher::$options->url/rpc.xml');
-    echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
-    ?>";
-    
+        $result .= turlmap::xmlheader();
+
     $this->domrss = new Tdomrss;
-    $this->domrss->CreateRootMultimedia(litepublisher::$urlmap->url, 'media');
+    $this->domrss->CreateRootMultimedia(litepublisher::$options->url. litepublisher::$urlmap->url, 'media');
     
     $list = $this->getrecent($arg, litepublisher::$options->perpage);
     foreach ($list as $id) {
@@ -58,7 +54,7 @@ class trssMultimedia extends tevents {
     $files = tfiles::instance();
     if (dbversion) {
       $sql = $type == '' ? '' : "media = '$type' ";
-      return $files->select($sql . "parent = 0 order by posted desc limit $count");
+      return $files->select($sql . 'parent = 0', " order by posted desc limit $count");
     } else {
       $result = array();
       $list = array_reverse(array_keys($files->items));
