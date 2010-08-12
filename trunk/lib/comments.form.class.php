@@ -182,9 +182,9 @@ class tcommentform extends tevents {
     if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
     if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
     if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
-if (litepublisher::$options->checkduplicate) {
-    if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
-}
+    if (litepublisher::$options->checkduplicate) {
+      if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
+    }
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance($postid);
