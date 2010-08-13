@@ -23,6 +23,15 @@ class tupdater extends tevents {
   public static function GetVersion() {
     return trim(file_get_contents(litepublisher::$paths->libinclude . 'version.txt'));
   }
+
+public function run($version) {
+      $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
+      if (file_exists($filename)) {
+        require_once($filename);
+        $func = 'update' . str_replace('.', '', $version);
+        if (function_exists($func)) $func();
+}
+}
   
   public function update() {
     $log = false;
