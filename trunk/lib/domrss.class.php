@@ -170,13 +170,6 @@ class tdomrss extends domDocument {
     return $result;
   }
 
-public function createitem($title, $link) {
-    $result = self::add($this->channel, 'item');
-    $this->items[] = $result;
-
-    return $result;
-}
-
   public function GetStripedXML() {
     $s = $this->saveXML();
     return substr($s, strpos($s, '?>') + 2);
@@ -194,11 +187,17 @@ $this->node = $node;
 $this->index = 0;
 }
 
+public static function newinstance($node) {
+$class = __class__;
+return new $class($node);
+}
+
 public function getlist() {
 return $this->node instanceof DOMNodeList? $this->node : $this->node->childNodes;
 }
 
 public function getitem($name) {
+if (($node = $this->current()) && ($node->nodeName == $name)) return $node;
 if ($list = $this->node->getElementsByTagName($name)) {
 if ($list->length > 0) return $list->item(0);
 }
@@ -207,25 +206,15 @@ return false;
 
 public function __get($name) {
 if ($name == 'list') return $this->getlist();
+if (($node = $this->current()) && ($node->nodeName == $name)) {
+return self::newinstance($node);
+}
+
 if ($list = $this->node->getElementsByTagName($name)) {
-$class = __class__;
-if ($list->length > 3) {
-echo ($list->length) ;
-echo " = count\n";
-for ($i = $list->length - 1; $i >= 0; $i--) {
-echo "$i\n";
-echo $list->item($i)->nodeName;
-echo "\n";
-echo $list->item($i)->nodeValue;
-echo "\n";
-}
-exit();
-}
-//var_dump($list->item(0));
 switch ($list->length) {
 case 0: return false;
-case 1: return new $class($list->item(0));
-default: return new $class($list);
+case 1: return self::newinstance($list->item(0));
+default: return self::newinstance($list);
 }
 }
 return false;
@@ -238,9 +227,6 @@ return $this->node->wholeText;
 }
 if ($this->count() > 0) {
  $node = $this->offsetGet(0);
-echo get_class($node);
-$node = $this->node->firstChild;
-echo get_class($node);
 if ($node instanceof DOMText) return $node->wholeText;
 }
 if ($this->node instanceof DOMNode) return $this->node->nodeValue;
@@ -304,7 +290,8 @@ return $this->getitem($offset);
     }
 
     function current() {
-        return $this->list->item($this->index);
+if ($this->valid())         return $this->list->item($this->index);
+return false;
     }
 
     function key() {
@@ -319,11 +306,12 @@ return $this->list->item($this->index)->nodeName;
         return ($this->index >= 0) && ($this->index < $this->count());
     }
 
-/*
-public function add($name) {
-return self::add($this->item, $name);
+function add($name) {
+  $result = $this->node->ownerDocument->createElement($name);
+  $this->node->appendChild($result);
+  return self::newinstance($result);
 }
-*/
+
 public static function addvalue($owner, $name, $value) {
   $result = $owner->ownerDocument->createElement($name);
   $textnode = $owner->ownerDocument->createTextNode($value);
@@ -332,7 +320,7 @@ public static function addvalue($owner, $name, $value) {
   Return $result;
 }
 
-public static function add(DOMNode $owner, $name) {
+public static function append(DOMNode $owner, $name) {
   $result = $owner->ownerDocument->createElement($name);
   $owner->appendChild($result);
   return $result;
