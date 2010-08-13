@@ -182,12 +182,148 @@ public function createitem($title, $link) {
     return substr($s, strpos($s, '?>') + 2);
   }
 
-public static function add(DOMNode $owner, $name) {
-  $result = $owner->ownerDocument->createElement($name);
-  $owner->appendChild($result);
-  return $result;
+  }//class
+
+//wraper for domnode
+class tnode implements Countable, arrayaccess, Iterator  {
+private $index;
+public $node;
+
+public function __construct($node = null) {
+$this->node = $node;
+$this->index = 0;
 }
 
+public function getlist() {
+return $this->node instanceof DOMNodeList? $this->node : $this->node->childNodes;
+}
+
+public function getitem($name) {
+if ($list = $this->node->getElementsByTagName($name)) {
+if ($list->length > 0) return $list->item(0);
+}
+return false;
+}
+
+public function __get($name) {
+if ($name == 'list') return $this->getlist();
+if ($list = $this->node->getElementsByTagName($name)) {
+$class = __class__;
+if ($list->length > 3) {
+echo ($list->length) ;
+echo " = count\n";
+for ($i = $list->length - 1; $i >= 0; $i--) {
+echo "$i\n";
+echo $list->item($i)->nodeName;
+echo "\n";
+echo $list->item($i)->nodeValue;
+echo "\n";
+}
+exit();
+}
+//var_dump($list->item(0));
+switch ($list->length) {
+case 0: return false;
+case 1: return new $class($list->item(0));
+default: return new $class($list);
+}
+}
+return false;
+}
+
+public function __tostring() {
+if ($this->node instanceof DOMText) {
+if ($this->node->isWhitespaceInElementContent() ) return '';
+return $this->node->wholeText;
+}
+if ($this->count() > 0) {
+ $node = $this->offsetGet(0);
+echo get_class($node);
+$node = $this->node->firstChild;
+echo get_class($node);
+if ($node instanceof DOMText) return $node->wholeText;
+}
+if ($this->node instanceof DOMNode) return $this->node->nodeValue;
+return '';
+}
+
+public function __set($name, $value) {
+if ($node = $this->getitem($name)) {
+self::setvalue($node, $value);
+} else {
+    self::addvalue($this->node, $name, $value);
+}
+}
+
+public function node_exists($name) {
+if (!($this->node instanceof DOMNode)) return false;
+if ($list  = $this->node->getElementsByTagName($name)) {}
+return $list->length > 0;
+return false;
+}
+
+//Countable 
+public function count() {
+if ($list = $this->list) {
+return $list->length;
+} else {
+return 0;
+}
+}
+
+//arrayaccess 
+public function offsetSet($offset, $value) {
+self::setvalue($this->offsetGet($offset), $value);
+}
+
+public function offsetExists($offset) {
+if (is_int($offset)) {
+return ($offset >= 0) && ($offset < $this->count());
+} else {
+return $this->node_exists($offset);
+}
+}
+
+public function offsetUnset($offset) {
+if ($node = $this->offsetGet($offset)) {
+$node->parentNode->removeChild($node);
+}
+}
+
+public function offsetGet($offset) {
+if (is_int($offset)) {
+return $this->list->item($offset);
+} else {
+return $this->getitem($offset);
+}
+}
+
+//Iterator 
+    function rewind() {
+        $this->index = 0;
+    }
+
+    function current() {
+        return $this->list->item($this->index);
+    }
+
+    function key() {
+return $this->list->item($this->index)->nodeName;
+    }
+
+    function next() {
+        ++$this->index;
+    }
+
+    function valid() {
+        return ($this->index >= 0) && ($this->index < $this->count());
+    }
+
+/*
+public function add($name) {
+return self::add($this->item, $name);
+}
+*/
 public static function addvalue($owner, $name, $value) {
   $result = $owner->ownerDocument->createElement($name);
   $textnode = $owner->ownerDocument->createTextNode($value);
@@ -196,22 +332,30 @@ public static function addvalue($owner, $name, $value) {
   Return $result;
 }
 
-  }//class
-
-class trssitem {
-public $item;
-
-
-ppublic function __get($name) {
-
+public static function add(DOMNode $owner, $name) {
+  $result = $owner->ownerDocument->createElement($name);
+  $owner->appendChild($result);
+  return $result;
 }
 
-public function __set($name, $value) {
-    tdomrss::addvalue($this->item, $name, $value);
+public static function setvalue(DOMNode $node, $value) {
+if ($node->hasChildNodes()) {
+//replace
+if ($value instanceof DOMNode) {
+$node->replaceChild($value, $node->firstChild);
+} else {
+  $textnode = $node->ownerDocument->createTextNode($value);
+$node->replaceChild($textnode , $node->firstChild);
 }
-
-public function add($name) {
-return tdomrss::add($this->item, $name);
+} else {
+//add
+if ($value instanceof DOMNode) {
+$node->appendChild($value);
+} else {
+  $textnode = $node->ownerDocument->createTextNode($value);
+  $node->appendChild($textnode);
+}
+}
 }
 
 }//class
