@@ -158,13 +158,7 @@ class ttemplate extends tevents {
   }
   
   public function gettitle() {
-    $title = '';
-    if ($this->itemplate) {
-      $title = $this->context->gettitle();
-    } elseif ($this->contextHasProp('title')) {
-      $title = $this->context->title;
-    }
-    
+    $title = $this->itemplate ? $this->context->gettitle() : '';
     if (empty($title)) return litepublisher::$options->name;
     
     $args = targs::instance();
@@ -187,13 +181,13 @@ class ttemplate extends tevents {
   }
   
   public function getkeywords() {
-    $result = $this->contextHasProp('keywords') ? $this->context->keywords : '';
+    $result = $this->itemplate ? $this->context->getkeywords() : '';
     if ($result == '')  return litepublisher::$options->keywords;
     return $result;
   }
   
   public function getdescription() {
-    $result = $this->contextHasProp('description') ? $this->context->description : '';
+    $result = $this->itemplate ? $this->context->getdescription() : '';
     if ($result =='') return litepublisher::$options->description;
     return $result;
   }
@@ -269,11 +263,12 @@ class ttemplate extends tevents {
       }
     }
     
-    foreach ($this->javascripts as $name => $script)  $result .=$script . "\n";
-    
     if ($this->itemplate) $result .= $this->context->gethead();
-    
-    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminhead', array(&$result));
+        if (litepublisher::$urlmap->adminpanel) {
+$this->callevent('onadminhead', array(&$result));
+} else {
+$result .= implode("\n", $this->javascripts);
+}
     $result = $this->getjavaoptions() . $result;
     $this->callevent('onhead', array(&$result));
     return trim($result);
@@ -288,12 +283,7 @@ class ttemplate extends tevents {
   public function getcontent() {
     $result = '';
     $this->callevent('beforecontent', array(&$result));
-    if ($this->itemplate || method_exists($this->context, 'getcont')) {
-      $result .= $this->context->getcont();
-    } elseif ($this->contextHasProp('content')) {
-      $result .= $this->context->content;
-    }
-    
+    $result .= $this->itemplate ? $this->context->getcont() : '';
     $this->callevent('aftercontent', array(&$result));
     return $result;
   }

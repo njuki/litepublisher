@@ -198,15 +198,17 @@ return $this->node instanceof DOMNodeList? $this->node : $this->node->childNodes
 
 public function getitem($name) {
 if (($node = $this->current()) && ($node->nodeName == $name)) return $node;
-if ($list = $this->node->getElementsByTagName($name)) {
-if ($list->length > 0) return $list->item(0);
+$count = $this->list->length;
+for ($i = 0; $i < $count; $i++) {
+$node = $this->list->item($i);
+if ($node->nodeName == $name) return $node;
 }
 return false;
 }
 
 public function __get($name) {
 if ($name == 'list') return $this->getlist();
-if (($node = $this->current()) && ($node->nodeName == $name)) {
+if ($node = $this->getitem($name)) {
 return self::newinstance($node);
 }
 
