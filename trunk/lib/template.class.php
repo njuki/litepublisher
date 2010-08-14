@@ -14,6 +14,7 @@ class ttemplate extends tevents {
   public $javascripts;
   public $adminjavascripts;
   public $javaoptions;
+  public $stdjavascripts;
   public $hover;
   //public $footer;
   
@@ -41,6 +42,12 @@ class ttemplate extends tevents {
     $this->data['tags'] = array();
     $this->addmap('javascripts', array());
     $this->addmap('adminjavascripts', array());
+    $this->addmap('stdjavascripts', array(
+
+'hovermenu' => '/js/litepublisher/hovermenu.min.js',
+'comments' => '/js/litepublisher/comments.min.js',
+'moderate' => '/js/litepublisher/moderate.min.js'
+));
   }
   
   public function __get($name) {
@@ -261,7 +268,7 @@ class ttemplate extends tevents {
       if ($theme->menu->hover) {
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-        $result .=  '<script type="text/javascript" src="' . litepublisher::$options->files . '/js/litepublisher/hovermenu.min.js"></script>' . "\n";
+        $result .=  '<script type="text/javascript" src="' . litepublisher::$options->files .  $this->stdjavascripts['hovermenu'] .  '"></script>' . "\n";
       }
     }
     
