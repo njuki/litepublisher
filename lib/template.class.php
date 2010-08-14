@@ -12,6 +12,7 @@ class ttemplate extends tevents {
   public $context;
   public $itemplate;
   public $javascripts;
+  public $adminjavascripts;
   public $javaoptions;
   public $hover;
   //public $footer;
@@ -39,6 +40,7 @@ class ttemplate extends tevents {
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
     $this->addmap('javascripts', array());
+    $this->addmap('adminjavascripts', array());
   }
   
   public function __get($name) {
@@ -265,6 +267,7 @@ class ttemplate extends tevents {
     
     if ($this->itemplate) $result .= $this->context->gethead();
         if (litepublisher::$urlmap->adminpanel) {
+$result .= implode("\n", $this->adminjavascripts);
 $this->callevent('onadminhead', array(&$result));
 } else {
 $result .= implode("\n", $this->javascripts);
