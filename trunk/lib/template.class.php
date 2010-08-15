@@ -13,8 +13,8 @@ class ttemplate extends tevents {
   public $itemplate;
   public $javascripts;
   public $adminjavascripts;
-  public $javaoptions;
   public $stdjavascripts;
+  public $javaoptions;
   public $hover;
   //public $footer;
   
@@ -43,7 +43,6 @@ class ttemplate extends tevents {
     $this->addmap('javascripts', array());
     $this->addmap('adminjavascripts', array());
     $this->addmap('stdjavascripts', array(
-
 'hovermenu' => '/js/litepublisher/hovermenu.min.js',
 'comments' => '/js/litepublisher/comments.min.js',
 'moderate' => '/js/litepublisher/moderate.min.js'

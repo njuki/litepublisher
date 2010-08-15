@@ -312,9 +312,14 @@ class tpost extends titem implements  itemplate {
 if ($script = $template->stdjavascripts['comments']) $result .= $template->getjavascript($script);
       if (!$options->admincookie) $result .= " <script type=\"text/javascript\" src=\"$options->files/files/$options->language.js\"></script>\n";
     }
+
     if ($options->admincookie) {
-      $tc = ttemplatecomments::instance();
-      $result .=  $tc->getadminhead();
+if ($script = $template->stdjavascripts['moderate']) {
+$theme = ttheme::instance();
+  $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
+$result .= $template->getjavascript($script);
+$result .= $template->getjavascript('/files/admin' . litepublisher::$options->language . '.js');
+}
     }
     return $result;
   }
