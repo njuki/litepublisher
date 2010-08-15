@@ -300,10 +300,10 @@ class twidgets extends titems {
       for ($i = $sitebar + 1; $i < count($this->sitebars); $i++) {
         $subitems =  $this->getwidgets($context, $i);
         //delete copies
-        foreach ($subitems as $i => $subitem) {
+        foreach ($subitems as $index => $subitem) {
           $id = $subitem['id'];
           foreach ($items as $item) {
-            if ($id == $item['id']) array_delete($subitems, $i);
+            if ($id == $item['id']) array_delete($subitems, $index);
           }
         }
         

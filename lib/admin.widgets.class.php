@@ -96,7 +96,6 @@ class tadminwidgets extends tadminmenu {
         }
       }
     }
-    
     //    return $this->html->h2->success;
   }
   
