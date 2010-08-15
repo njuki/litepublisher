@@ -260,15 +260,19 @@ class ttemplate extends tevents {
     $result .= "\n};\n</script>\n";
     return $result;
   }
+
+public function getjavascript($filename) {
+return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$options->files . $filename) . "\n";
+}
   
   public function gethead() {
     $result = '';
     if ($this->hovermenu) {
       $theme = ttheme::instance();
-      if ($theme->menu->hover) {
+      if ($theme->menu->hover && ($script = $this->stdjavascripts['hovermenu'])) {
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-        $result .=  '<script type="text/javascript" src="' . litepublisher::$options->files .  $this->stdjavascripts['hovermenu'] .  '"></script>' . "\n";
+$result .= $this->getjavascript($script);
       }
     }
     
