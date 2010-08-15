@@ -75,7 +75,7 @@ if (litepublisher::$debug) {
 require_once(litepublisher::$paths->lib . 'data.class.php');
 require_once(litepublisher::$paths->lib . 'events.class.php');
 require_once(litepublisher::$paths->lib . 'items.class.php');
-require_once(litepublisher::$paths->lib . 'classes.php');
+require_once(litepublisher::$paths->lib . 'classes.class.php');
 require_once(litepublisher::$paths->lib . 'options.class.php');
 } else {
 require_once(litepublisher::$paths->lib . 'kernel.php');
