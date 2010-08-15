@@ -58,7 +58,7 @@ class THtmlResource  {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-    if (preg_match_all('/\[(area|edit|checkbox):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(area|edit|checkbox|text):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       $admin = $theme->content->admin;
       foreach ($m as $item) {
         $type = $item[1];

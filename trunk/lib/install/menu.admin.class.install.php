@@ -54,6 +54,7 @@ function tadminmenusInstall($self) {
   {
     $self->createitem($themes, 'edit', 'admin', 'tadminthemes');
     $self->createitem($themes, 'options', 'admin', 'tadminthemes');
+$self->createitem($themes, 'javascripts', 'admin', 'tadmintheme');
   }
   
   $menu = $self->createitem(0, 'menu', 'editor', 'tadminmenumanager');

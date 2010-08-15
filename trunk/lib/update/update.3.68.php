@@ -5,6 +5,7 @@ litepublisher::$classes->items['tdomrss'] = array('domrss.class.php', '');
 litepublisher::$classes->items['tnode'] = array('domrss.class.php', '');
 litepublisher::$classes->items['tclasses'] = array('classes.class.php', '');
 litepublisher::$classes->save();
+@unlink(litepublisher::$paths->lib . 'classes.php');
 
 $template = ttemplate::instance();
 $template->data['adminjavascripts'] = array();
@@ -15,5 +16,10 @@ $template->data['adminjavascripts'] = array();
 );
 
 $template->save();
+
+tlocal::loadlang('admin');
+$admin = tadminmenus::instance();
+$idthemes = $admin->url2id('/admin/themes/');
+$admin->createitem($idthemes, 'javascripts', 'admin', 'tadmintheme');
 }
 ?>

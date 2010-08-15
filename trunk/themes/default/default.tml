@@ -266,6 +266,11 @@
 <label for="$name"><strong>$lang.$name</strong></label></p>
 <!--/checkbox-->
 
+<!--text-->
+<p><input type='text' name='$name' id='$name' value='$value' size='22' />
+<label for='$name'><strong>$lang.$name</strong></label></p>
+<!--/text-->
+
 		<!--/admin-->
 		<!--/content-->
 	</div>
