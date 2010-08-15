@@ -1,7 +1,9 @@
 <?php
 function update368() {
-litepublisher::$classes->items['tdomrss'] = litepublisher::$classes->items['Tdomrss'];
-unset(litepublisher::$classes->items['Tdomrss']);
+if (isset(litepublisher::$classes->items['Tdomrss'])) unset(litepublisher::$classes->items['Tdomrss']);
+litepublisher::$classes->items['tdomrss'] = array('domrss.class.php', '');
+litepublisher::$classes->items['tnode'] = array('domrss.class.php', '');
+litepublisher::$classes->items['tclasses'] = array('classes.class.php', '');
 litepublisher::$classes->save();
 
 $template = ttemplate::instance();
