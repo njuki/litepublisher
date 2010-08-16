@@ -72,7 +72,7 @@ function moderate(list, action) {
     },
     
     onException:function(errorObj){
-      alert(ltoptions.lang.commentnotmoderated);
+      alert(lang.comments.notmoderated);
     },
     
   onComplete:function(responseObj){ }

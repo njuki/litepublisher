@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tnotfound404 extends tevents {
+class tnotfound404 extends tevents implements itemplate {
   
   public static function instance() {
     return getinstance(__class__);
@@ -21,6 +21,15 @@ class tnotfound404 extends tevents {
     $this->data['theme'] = '';
   }
   
+public function request($arg) {}
+public function gettitle() {}
+public function getkeywords() {}
+public function getdescription() {}
+public function gethead() {}
+  
+  
+  
+  
   public function  httpheader() {
     return "<?php Header( 'HTTP/1.0 404 Not Found'); ?>" . turlmap::httpheader(false);
   }
@@ -28,6 +37,7 @@ class tnotfound404 extends tevents {
   function getcont() {
     $this->cache = false;
     if ($this->notify) $this->sendmail();
+    
     $theme = ttheme::instance();
     if ($this->text == '') {
       $lang = tlocal::instance('default');

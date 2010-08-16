@@ -142,7 +142,7 @@ function loadjavascript(filename) {
   var head= document.getElementsByTagName('head')[0];
   var script= document.createElement('script');
   script.type= 'text/javascript';
-//script.async = true;
+  script.async = true;
   script.src= ltoptions.files + filename;
   head.appendChild(script);
   return true;

@@ -69,7 +69,8 @@ class tlocal {
   }
   
   public static function getdateformat() {
-    return litepublisher::$options->dateformat != ''? litepublisher::$options->dateformat : self::$data['datetime']['dateformat'];
+    $format = litepublisher::$options->dateformat;
+    return $format != ''? $format : self::$data['datetime']['dateformat'];
   }
   
   public static function translate($s, $section = 'default') {
@@ -82,23 +83,37 @@ class tlocal {
     }
   }
   
-  public static function loadlang($FileName) {
-    if (litepublisher::$options->language != '') {
-      self::load(litepublisher::$paths->languages . $FileName. litepublisher::$options->language);
+  public static function loadlang($name) {
+    $langname = litepublisher::$options->language;
+    if ($langname != '') {
+      self::load(litepublisher::$paths->languages . $name . $langname);
     }
   }
   
-  public static function load($partialname) {
+  public static function load($filename) {
     if (!isset(self::$data)) self::$data = array();
     if (!isset(self::$files)) self::$files = array();
-    if (in_array($partialname , self::$files)) return;
-    self::$files[] = $partialname ;
-    if (!tfiler::unserialize($partialname . '.php', $v) || !is_array($v)) {
-      $v = parse_ini_file($partialname . '.ini', true);
-      tfiler::serialize($partialname . '.php', $v);
-      tfiler::ini2js($v + self::$data , litepublisher::$paths->files . basename($partialname) . '.js');
+    if (in_array($filename, self::$files)) return;
+    self::$files[] = $filename;
+    $cachefilename = self::getcachefilename(basename($filename));
+    if (tfiler::unserialize($cachefilename, $v) && is_array($v)) {
+      self::$data = $v + self::$data ;
+    } else {
+      $v = parse_ini_file($filename . '.ini', true);
+      self::$data = $v + self::$data ;
+      tfiler::serialize($cachefilename, $v);
+      self::ini2js($filename);
     }
-    self::$data = $v + self::$data ;
+  }
+  
+  public static function ini2js($filename) {
+    $base = basename($filename);
+    if (strbegin($base, 'admin')) {
+      $js = array('comments' => self::$data['comments']);
+    } else {
+      $js = array('comment' => self::$data['comment']);
+    }
+    tfiler::ini2js($js, litepublisher::$paths->files . $base . '.js');
   }
   
   public static function loadini($filename) {
@@ -114,8 +129,16 @@ class tlocal {
     self::checkload();
   }
   
+  public static function getcachedir() {
+    return litepublisher::$paths->data . 'languages' . DIRECTORY_SEPARATOR;
+  }
+  
   public static function clearcache() {
-    tfiler::delete(litepublisher::$paths->data . 'languages', false, false);
+    tfiler::delete(self::getcachedir(), false, false);
+  }
+  
+  public static function getcachefilename($name) {
+    return self::getcachedir() . $name . '.php';
   }
   
 }//class

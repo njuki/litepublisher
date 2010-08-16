@@ -23,20 +23,20 @@ class tupdater extends tevents {
   public static function GetVersion() {
     return trim(file_get_contents(litepublisher::$paths->libinclude . 'version.txt'));
   }
-
-public function run($version) {
-      $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
-      if (file_exists($filename)) {
-        require_once($filename);
-        $func = 'update' . str_replace('.', '', $version);
-        if (function_exists($func)) $func();
-}
-}
+  
+  public function run($version) {
+    $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
+    if (file_exists($filename)) {
+      require_once($filename);
+      $func = 'update' . str_replace('.', '', $version);
+      if (function_exists($func)) $func();
+    }
+  }
   
   public function update() {
     $log = false;
     if ($log) tfiler::log("begin update", 'update');
-    tfiler::deletemask(litepublisher::$paths->languages . '*.php');
+    tlocal::clearcache();
     $this->version =  self::getversion();
     if ($log) tfiler::log("update started from litepublisher::$options->version to $this->version", 'update');
     $dir = litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR;
@@ -59,9 +59,8 @@ public function run($version) {
     }
     
     litepublisher::$options->version = $this->version;
-    
-    $urlmap = turlmap::instance();
-    $urlmap->clearcache();
+    ttheme::clearcache();
+    tlocal::clearcache();
     if ($log) tfiler::log("update finished", 'update');
   }
   

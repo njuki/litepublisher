@@ -675,7 +675,7 @@ class tsingleitems extends titems {
   
 }//class
 
-//classes.php
+//classes.class.php
 /**
 * Lite Publisher
 * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/

@@ -114,6 +114,7 @@ class tfiler {
   }
   
   public static function ini2js(array $a, $filename) {
+  $result  = "var lang;\nif (lang == undefined) lang = {};\n";
     $sections = array();
     foreach ($a as $name => $section) {
       if ($name == 'codedoc') continue;
@@ -123,18 +124,11 @@ class tfiler {
         if ($key == 'default' || $key == 'delete') $key = 'a' . $key;
         $value = str_replace("\r\n", '\n', $value);
         $value = str_replace("\n", '\n', $value);
-        $list[] = "$key:\"$value\"";
+        $list[] = sprintf('%s:"%s"', $key, $value);
       }
-    $sections[] = sprintf("$name:{\n%s\n}", implode(",\n", $list));
+    $result .= sprintf("lang.$name = {\n%s\n};\n", implode(",\n", $list));
     }
-  $s = sprintf("var lang= {\n%s\n};\n", implode(",\n", $sections));
-    /*
-    if (strbegin(basename($filename), 'admin')) {
-      $s = gzencode($s);
-      $filename .= '.gz';
-    }
-    */
-    file_put_contents($filename, $s);
+    file_put_contents($filename, $result);
     chmod($filename, 0666);
   }
   

@@ -129,12 +129,10 @@ class ttickets extends tposts {
   
   public function checkadminlang() {
     if (!isset(tlocal::$data['tickets'])) {
-      tlocal::loadini($this->resource . litepublisher::$options->language . '.admin.ini');
-      if (!isset(tlocal::$data['ticket'])) {
-        tlocal::loadini($this->resource . litepublisher::$options->language . '.ini');
-      }
-      tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
+      $langname = litepublisher::$options->language;
+      tlocal::loadini(self::getresource() . $langname . '.admin.ini');
+      if (!isset(tlocal::$data['ticket']))  tlocal::loadini(self::getresource() . $langname . '.ini');
+      tfiler::serialize(tlocal::getcachefilename('admin'. $langname), tlocal::$data);
     }
   }
   

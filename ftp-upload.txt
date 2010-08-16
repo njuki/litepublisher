@@ -96,8 +96,8 @@ send lib\backuper.class.php lib/backuper.class.php
 quote site chmod 666 lib/backuper.class.php
 send lib\class-IXR.php lib/class-IXR.php
 quote site chmod 666 lib/class-IXR.php
-send lib\classes.php lib/classes.php
-quote site chmod 666 lib/classes.php
+send lib\classes.class.php lib/classes.class.php
+quote site chmod 666 lib/classes.class.php
 send lib\comments.class.db.php lib/comments.class.db.php
 quote site chmod 666 lib/comments.class.db.php
 send lib\comments.class.files.php lib/comments.class.files.php
@@ -552,6 +552,8 @@ send lib\update\update.3.65.php lib/update/update.3.65.php
 quote site chmod 666 lib/update/update.3.65.php
 send lib\update\update.3.66.php lib/update/update.3.66.php
 quote site chmod 666 lib/update/update.3.66.php
+send lib\update\update.3.68.php lib/update/update.3.68.php
+quote site chmod 666 lib/update/update.3.68.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
