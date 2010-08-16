@@ -19,7 +19,11 @@ $template->save();
 
 tlocal::loadlang('admin');
 $admin = tadminmenus::instance();
+//$admin->deleteurl('/admin/themes/javascripts/');
 $idthemes = $admin->url2id('/admin/themes/');
-$admin->createitem($idthemes, 'javascripts', 'admin', 'tadmintheme');
+$admin->createitem($idthemes, 'javascripts', 'admin', 'tadminthemes');
+
+    tfiler::deletemask(litepublisher::$paths->languages . '*.php');
 }
+
 ?>

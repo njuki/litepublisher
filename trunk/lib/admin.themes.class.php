@@ -23,7 +23,7 @@ class tadminthemes extends tadminmenu {
       $args->url = litepublisher::$options->url . $this->url . litepublisher::$options->q ."plugin=$template->theme";
       $result .= $html->pluginlink($args);
     }
-
+    
     switch ($this->name) {
       case 'themes':
       if ($plugin && !empty($_GET['plugin'])) {
@@ -84,14 +84,13 @@ class tadminthemes extends tadminmenu {
       $args->admintheme = $template->admintheme;
       $result = $html->optionsform($args);
       break;
-
-case 'javascripts':
-$args->hovermenu = $template->stdjavascripts['hovermenu'];
-$args->comments = $template->stdjavascripts['comments'];
-$args->moderate = $template->stdjavascripts['moderate'];
+      
+      case 'javascripts':
+      $args->hovermenu = $template->stdjavascripts['hovermenu'];
+      $args->comments = $template->stdjavascripts['comments'];
+      $args->moderate = $template->stdjavascripts['moderate'];
       $result = $html->jsform($args);
-var_dump($result);
-break;
+      break;
     }
     
     return $html->fixquote($result);
@@ -166,15 +165,15 @@ break;
         }
         $result = $this->html->h2->themeschanged;
         break;
-
-case 'javascripts':
+        
+        case 'javascripts':
         extract($_POST, EXTR_SKIP);
         $template = ttemplate::instance();
-$template->stdjavascripts['hovermenu'] = $hovermenu;
-$template->stdjavascripts['comments'] = $comments;
-$template->stdjavascripts['moderate'] = $moderate;
-$template->save();
-break;
+        $template->stdjavascripts['hovermenu'] = $hovermenu;
+        $template->stdjavascripts['comments'] = $comments;
+        $template->stdjavascripts['moderate'] = $moderate;
+        $template->save();
+        break;
       }
     }
     

@@ -14,12 +14,7 @@ class tmanifest extends tevents {
   
   public function request($arg) {
     $options = litepublisher::$options;
-    $s = "<?php
-    @header('Content-Type: text/xml; charset=utf-8');
-    @ header('Last-Modified: " . date('r') ."');
-    @header('X-Pingback: $options->url/rpc.xml');
-    echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>
-    '; ?>";
+    $s = turlmap::xmlheader();
     switch ($arg) {
       case 'manifest':
       $s .= '<manifest xmlns="http://schemas.microsoft.com/wlw/manifest/weblog">

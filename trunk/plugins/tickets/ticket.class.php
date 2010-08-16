@@ -142,8 +142,9 @@ class tticket extends tpost {
   
   public static function checklang() {
     if (!isset(tlocal::$data['ticket'])) {
-      tlocal::loadini(self::getresource() . litepublisher::$options->language . '.ini');
-      tfiler::serialize(litepublisher::$paths->languages . litepublisher::$options->language . '.php', tlocal::$data);
+      $langname = litepublisher::$options->language;
+      tlocal::loadini(self::getresource() . $langname . '.ini');
+      tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
     }
   }

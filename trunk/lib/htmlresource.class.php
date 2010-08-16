@@ -92,13 +92,15 @@ class THtmlResource  {
     return str_replace('\"', "'", $s);
   }
   
-  public function load($FileName) {
-    $PartFileName = litepublisher::$paths->languages . $FileName;
-    if (!tfiler::unserialize($PartFileName . '.php', $v) || !is_array($v)) {
-      $v = parse_ini_file($PartFileName . '.ini', true);
-      tfiler::serialize($PartFileName . '.php', $v);
+  public function load($name) {
+    $cachefilename = tlocal::getcachefilename($name);
+    if (tfiler::unserialize($cachefilename, $v) && is_array($v)) {
+      $this->ini = $v + $this->ini;
+    } else {
+      $v = parse_ini_file(litepublisher::$paths->languages . $name . '.ini', true);
+      $this->ini = $v + $this->ini;
+      tfiler::serialize($cachefilename, $v);
     }
-    $this->ini = $v + $this->ini;
   }
   
   public function loadini($filename) {

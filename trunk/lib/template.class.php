@@ -43,10 +43,10 @@ class ttemplate extends tevents {
     $this->addmap('javascripts', array());
     $this->addmap('adminjavascripts', array());
     $this->addmap('stdjavascripts', array(
-'hovermenu' => '/js/litepublisher/hovermenu.min.js',
-'comments' => '/js/litepublisher/comments.min.js',
-'moderate' => '/js/litepublisher/moderate.min.js'
-));
+    'hovermenu' => '/js/litepublisher/hovermenu.min.js',
+    'comments' => '/js/litepublisher/comments.min.js',
+    'moderate' => '/js/litepublisher/moderate.min.js'
+    ));
   }
   
   public function __get($name) {
@@ -259,10 +259,10 @@ class ttemplate extends tevents {
     $result .= "\n};\n</script>\n";
     return $result;
   }
-
-public function getjavascript($filename) {
-return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$options->files . $filename) . "\n";
-}
+  
+  public function getjavascript($filename) {
+    return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$options->files . $filename) . "\n";
+  }
   
   public function gethead() {
     $result = '';
@@ -271,17 +271,17 @@ return sprintf('<script type="text/javascript" src="%s"></script>', litepublishe
       if ($theme->menu->hover && ($script = $this->stdjavascripts['hovermenu'])) {
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-$result .= $this->getjavascript($script);
+        $result .= $this->getjavascript($script);
       }
     }
     
     if ($this->itemplate) $result .= $this->context->gethead();
-        if (litepublisher::$urlmap->adminpanel) {
-$result .= implode("\n", $this->adminjavascripts);
-$this->callevent('onadminhead', array(&$result));
-} else {
-$result .= implode("\n", $this->javascripts);
-}
+    if (litepublisher::$urlmap->adminpanel) {
+      $result .= implode("\n", $this->adminjavascripts);
+      $this->callevent('onadminhead', array(&$result));
+    } else {
+      $result .= implode("\n", $this->javascripts);
+    }
     $result = $this->getjavaoptions() . $result;
     $this->callevent('onhead', array(&$result));
     return trim($result);

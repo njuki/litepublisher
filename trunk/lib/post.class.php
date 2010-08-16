@@ -302,24 +302,26 @@ class tpost extends titem implements  itemplate {
     $options = litepublisher::$options;
     $template = ttemplate::instance();
     $template->javaoptions[] = "idpost: $this->id";
-
+    
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
-
+    
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
       $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
-if ($script = $template->stdjavascripts['comments']) $result .= $template->getjavascript($script);
-      if (!$options->admincookie) $result .= " <script type=\"text/javascript\" src=\"$options->files/files/$options->language.js\"></script>\n";
+      if ($script = $template->stdjavascripts['comments']) {
+        $result .= $template->getjavascript($script);
+        $result .= $template->getjavascript("/files/$options->language.js");
+      }
     }
-
+    
     if ($options->admincookie) {
-if ($script = $template->stdjavascripts['moderate']) {
-$theme = ttheme::instance();
-  $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
-$result .= $template->getjavascript($script);
-$result .= $template->getjavascript('/files/admin' . litepublisher::$options->language . '.js');
-}
+      if ($script = $template->stdjavascripts['moderate']) {
+        $theme = ttheme::instance();
+      $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
+        $result .= $template->getjavascript($script);
+        $result .= $template->getjavascript("/files/admin$options->language.js");
+      }
     }
     return $result;
   }

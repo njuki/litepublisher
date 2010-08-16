@@ -19,15 +19,15 @@ class tthemeparser extends tevents {
   public static function getwidgetnames() {
     return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
   }
-
+  
   protected function create() {
     parent::create();
-$this->basename = 'themeparser';
-$this->addevents('parsed');
-$this->fixold = true;
-}
-
-    public function parsetag(&$s, $tag, $replace) {
+    $this->basename = 'themeparser';
+    $this->addevents('parsed');
+    $this->fixold = true;
+  }
+  
+  public function parsetag(&$s, $tag, $replace) {
     $result = '';
     $opentag = "<!--$tag-->";
     $closetag = "<!--/$tag-->";
@@ -80,7 +80,7 @@ $this->fixold = true;
     $theme->sitebars = $this->parsesitebars($s);
     $s = $this->deletespaces($s);
     $theme->theme= $s != ''? $s : (string) $this->default->theme;
-$this->parsed();
+    $this->parsed();
     return true;
   }
   

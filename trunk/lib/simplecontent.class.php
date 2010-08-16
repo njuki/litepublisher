@@ -6,19 +6,21 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsimplecontent  extends tdata {
+class tsimplecontent  extends tdata implements itemplate {
   public $text;
   public $html;
   
   public function  httpheader() {
-    return "<?php
-    @Header( 'Content-Type: text/html; charset=utf-8' );
-    @Header( 'Cache-Control: no-cache, must-revalidate');
-    @Header( 'Pragma: no-cache');
-    ?>";
+    return turlmap::htmlheader(false);
   }
   
-  function getcont() {
+public function request($arg) {}
+public function gettitle() {}
+public function getkeywords() {}
+public function getdescription() {}
+public function gethead() {}
+  
+  public function getcont() {
     $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
     $theme =ttheme::instance();
     return $theme->simple($result);
