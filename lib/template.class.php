@@ -265,16 +265,7 @@ class ttemplate extends tevents {
   }
   
   public function gethead() {
-    $result = '';
-    if ($this->hovermenu) {
-      $theme = ttheme::instance();
-      if ($theme->menu->hover && ($script = $this->stdjavascripts['hovermenu'])) {
-        $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
-        $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-        $result .= $this->getjavascript($script);
-      }
-    }
-    
+    $result = $this->gethovermenuhead();
     if ($this->itemplate) $result .= $this->context->gethead();
     if (litepublisher::$urlmap->adminpanel) {
       $result .= implode("\n", $this->adminjavascripts);
@@ -286,6 +277,18 @@ class ttemplate extends tevents {
     $this->callevent('onhead', array(&$result));
     return trim($result);
   }
+
+public function gethovermenuhead() {
+    if ($this->hover) {
+      if ($script = $this->stdjavascripts['hovermenu']) {
+      $theme = ttheme::instance();
+        $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
+        $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
+return $this->getjavascript($script);
+      }
+    }
+    return '';
+}
   
   public function getbody() {
     $result = '';

@@ -343,9 +343,11 @@ class tthemeparser extends tevents {
     if ($s == '') return $default->array;
     $result = array();
     $result['area'] = trim($this->gettag($s, 'area', '', $default->area));
+    $result['editor'] = trim($this->gettag($s, 'editor', '', $default->editor));
     $result['checkbox'] = trim($this->gettag($s, 'checkbox', '', $default->checkbox));
-    $result['text'] = trim($this->gettag($s, 'text', '', $default->checkbox));
+    $result['text'] = trim($this->gettag($s, 'text', '', $default->text));
     $result['edit'] = trim($this->gettag($s, 'edit', '', $default->edit));
+    $result['form'] = trim($this->gettag($s, 'form', '', $default->form));
     return $result;
   }
   

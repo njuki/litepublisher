@@ -9,7 +9,6 @@
 function tadminhoverpluginInstall($self) {
   $template = ttemplate::instance();
   $template->lock();
-  $template->onadminhover = $self->onadminhover;
   $template->onadminhead = $self->onadminhead;
   $template->unlock();
 }
