@@ -17,20 +17,13 @@ class tadminhoverplugin extends tplugin {
     $this->data['hover'] = false;
   }
   
-  public function onadminhover() {
-    ttemplate::instance()->hover = $this->hover;
-  }
-  
   public function onadminhead(&$head) {
     $template = ttemplate::instance();
-    if ($this->hover && !$template->hovermenu) {
-      $theme = ttheme::instance();
-      if (isset($theme->menu->id)) {
-        $template->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
-        $template->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-        $head .=  '<script type="text/javascript" src="' . litepublisher::$options->files . '/js/litepublisher/hovermenu.min.js"></script>' . "\n";
+$theme = ttheme::instance();
+    if ($this->hover && !$template->hover && $theme->menu->hover) {
+$template->hover  = true;
+$head .= $template->gethovermenuhead();
       }
-    }
   }
   
 }//class

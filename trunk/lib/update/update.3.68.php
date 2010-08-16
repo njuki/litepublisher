@@ -24,6 +24,10 @@ $idthemes = $admin->url2id('/admin/themes/');
 $admin->createitem($idthemes, 'javascripts', 'admin', 'tadminthemes');
 
     tfiler::deletemask(litepublisher::$paths->languages . '*.php');
+
+    $dir =litepublisher::$paths->data . 'languages';
+mkdir($dir, 0777);
+chmod($dir, 0777);
 }
 
 ?>

@@ -261,6 +261,11 @@
 			<textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea>
 			<!--/area-->
 
+<!--editor-->
+<p><strong>$lang.$name:</strong><br />
+<textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea></p>
+<!--/editor-->
+
 <!--checkbox-->
 <p><input type="checkbox" name="$name" id="$name" $value />
 <label for="$name"><strong>$lang.$name</strong></label></p>
@@ -271,6 +276,14 @@
 <label for='$name'><strong>$lang.$name</strong></label></p>
 <!--/text-->
 
+
+<!--form-->
+<h2>$formtitle</h2>
+<form name="form" action="" method="post" >
+$items
+  <p><input type="submit" name="submit" value="$lang.update" /></p>
+</form>
+<!--/form-->
 		<!--/admin-->
 		<!--/content-->
 	</div>
