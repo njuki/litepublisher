@@ -47,9 +47,12 @@ class tadminwidgets extends tadminmenu {
       $orders = range(1, count($sitebar));
       foreach ($sitebar as $j => $_item) {
         $id = $_item['id'];
+$item = $widgets->getitem($id);
         $args->id = $id;
         $args->ajax = $_item['ajax'];
-        $args->add($widgets->getitem($id));
+$args->inline = $_item['ajax'] === 'inline';
+$args->disabled = $item['cache'] == 'cache' ? '' : 'disabled';
+        $args->add($item);
         $args->sitebarcombo = self::getcombo("sitebar-$id", $sitebarnames, $i);
         $args->ordercombo = self::getcombo("order-$id", $orders, $j);
         $result .= $html->item($args);
@@ -92,7 +95,7 @@ class tadminwidgets extends tadminmenu {
             array_delete($sitebars[$i], $j);
             array_insert($sitebars[$i2], $item, $j2);
           }
-          $sitebars[$i2][$j2]['ajax'] = isset($_POST["ajaxcheck-$id"]);
+          $sitebars[$i2][$j2]['ajax'] =  isset($_POST["inlinecheck-$id"]) ? 'inline' : isset($_POST["ajaxcheck-$id"]); 
         }
       }
     }
