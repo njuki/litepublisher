@@ -277,18 +277,18 @@ class ttemplate extends tevents {
     $this->callevent('onhead', array(&$result));
     return trim($result);
   }
-
-public function gethovermenuhead() {
+  
+  public function gethovermenuhead() {
     if ($this->hover) {
       if ($script = $this->stdjavascripts['hovermenu']) {
-      $theme = ttheme::instance();
+        $theme = ttheme::instance();
         $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
         $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-return $this->getjavascript($script);
+        return $this->getjavascript($script);
       }
     }
     return '';
-}
+  }
   
   public function getbody() {
     $result = '';

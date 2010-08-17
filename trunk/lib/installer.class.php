@@ -305,7 +305,7 @@ class tinstaller extends tdata {
   
   public static function sendmail() {
     //tlocal::loadlang('admin');
-if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
+    if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
     $lang = &tlocal::$data['installation'];
     $body = sprintf($lang['body'], litepublisher::$options->url, litepublisher::$options->login, mailpassword);
     
@@ -339,7 +339,7 @@ if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths
     require_once(litepublisher::$paths->lib . 'local.class.php');
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
     //tlocal::loadlang('admin');
-tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
+    tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
     date_default_timezone_set(tlocal::$data['installation']['timezone']);
   }
   

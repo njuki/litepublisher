@@ -117,12 +117,12 @@ class THtmlResource  {
     }
     return $result;
   }
-
-public function adminform($tml, targs $args) {
-$args->items = $this->parsearg($tml, $args);
-$theme = ttheme::instance();
-return $this->parsearg($theme->content->admin->form, $args);
-}
+  
+  public function adminform($tml, targs $args) {
+    $args->items = $this->parsearg($tml, $args);
+    $theme = ttheme::instance();
+    return $this->parsearg($theme->content->admin->form, $args);
+  }
   
 }//class
 
