@@ -72,6 +72,21 @@ widgets.load = function (node, id, sitebar) {
   
 }
 
+widgets.inlineload= function (node) {
+  var comment = findcomment(node, false);
+  if (! comment) return alert('Widget not found');
+        var tmp = document.createElement("div");
+        tmp.innerHTML =comment.nodeValue ;
+        if (tmp.firstChild.nodeName ==String.fromCharCode(35) + 'text') {
+          var content = tmp;
+        } else {
+          var content = tmp.firstChild;
+        }
+        content.parentNode.removeChild(content);
+        comment.parentNode.replaceChild(content, comment);
+return widgets.add(node, content);
+}
+
 widgets.add = function(node, widget) {
   node.onclick = widgets.hide;
   widgets.items.push([node, widget]);
@@ -120,14 +135,21 @@ widgets.show = function() {
 
 function findnextnode(node, name, value) {
   while (node = node.nextSibling) {
-    if ((node.nodeName == name) && (node.nodeValue == value)) return node;
+    if (node.nodeName == name){
+if (value == false) return node;
+if (node.nodeValue == value) return node;
   }
+}
   return false;
 }
 
 function findcomment(node, id) {
   var name = String.fromCharCode(35) + 'comment';
+if (id) {
   var value = 'widgetcontent-' + id;
+} else {
+var value = false;
+}
   if (result = findnextnode(node, name, value)) return  result;
   if (result = findnextnode(node.parentNode,name, value)) return  result;
   if (result = findnextnode(node.parentNode.parentNode, name, value)) return  result;
