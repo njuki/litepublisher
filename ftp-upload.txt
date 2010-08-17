@@ -715,6 +715,24 @@ quote site chmod 666 plugins/externallinks/externallinks.plugin.php
 send plugins\externallinks\index.htm plugins/externallinks/index.htm
 quote site chmod 666 plugins/externallinks/index.htm
 cd plugins
+mkdir googleanalitic
+quote site chmod 777 googleanalitic
+cd ../
+send plugins\googleanalitic\.htaccess plugins/googleanalitic/.htaccess
+quote site chmod 666 plugins/googleanalitic/.htaccess
+send plugins\googleanalitic\about.ini plugins/googleanalitic/about.ini
+quote site chmod 666 plugins/googleanalitic/about.ini
+send plugins\googleanalitic\ense.js plugins/googleanalitic/ense.js
+quote site chmod 666 plugins/googleanalitic/ense.js
+send plugins\googleanalitic\googleanalitic.js plugins/googleanalitic/googleanalitic.js
+quote site chmod 666 plugins/googleanalitic/googleanalitic.js
+send plugins\googleanalitic\googleanalitic.plugin.php plugins/googleanalitic/googleanalitic.plugin.php
+quote site chmod 666 plugins/googleanalitic/googleanalitic.plugin.php
+send plugins\googleanalitic\index.htm plugins/googleanalitic/index.htm
+quote site chmod 666 plugins/googleanalitic/index.htm
+send plugins\googleanalitic\ruse.js plugins/googleanalitic/ruse.js
+quote site chmod 666 plugins/googleanalitic/ruse.js
+cd plugins
 mkdir homepageinvert
 quote site chmod 777 homepageinvert
 cd ../

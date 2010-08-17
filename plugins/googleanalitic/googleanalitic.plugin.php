@@ -17,41 +17,47 @@ class tgoogleanalitic extends tplugin {
     $this->data['user'] = '';
     $this->data['se'] = '';
   }
-
-public function getcontent() {
+  
+  public function getcontent() {
     $tml = '[text:user]
-[editor:se]';
+    [editor:se]';
     $html = THtmlResource::instance();
     $args = targs::instance();
-$about = tplugins::getabout(tplugins::getname(__file__));
-$args->formtitle = $about['formtitle'];
-$args->data['$lang.user'] = $about['user'];
-$args->data['$lang.se'] = $about['se'];
-$args->user = $this->user;
-$args->se = $this->se;
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    $args->formtitle = $about['formtitle'];
+    $args->data['$lang.user'] = $about['user'];
+    $args->data['$lang.se'] = $about['se'];
+    $args->user = $this->user;
+    $args->se = $this->se;
     return $html->adminform($tml, $args);
-}
-
-public function processform() {
-$this->user = $_POST['user'];
-$this->se = $_POST['se'];
-$this->save();
-$template = ttemplate::instance();
-if ($this->user == '') {
-$template->deletejavascript('googleanalitic');
-} else {
-$s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'googleanalitic.js');
-$template->editjavascript('googleanalitic', sprintf($s, $this->user, $this->se));
-}
-}
-
-public function install() {
-$this->se = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . 'se.js');
-$this->save();
-}  
-
+  }
+  
+  public function processform() {
+    $this->user = $_POST['user'];
+    $this->se = $_POST['se'];
+    $this->save();
+    $filename = litepublisher::$paths->files . 'googleanalitic.js';
+    $template = ttemplate::instance();
+    if ($this->user == '') {
+      $template->deletejavascript('googleanalitic');
+      @unlink($filename);
+    } else {
+      $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'googleanalitic.js');
+      $s = sprintf($s, $this->user, $this->se);
+      file_put_contents($filename, $s);
+      @chmod($filename, 0666);
+      $template->addjavascript('googleanalitic', $template->getjavascript('/files/googleanalitic.js'));
+    }
+    litepublisher::$urlmap->clearcache();
+  }
+  
+  public function install() {
+    $this->se = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . 'se.js');
+    $this->save();
+  }
+  
   public function uninstall() {
-ttemplate::instance()->deletejavascript('googleanalitic');
+    ttemplate::instance()->deletejavascript('googleanalitic');
   }
   
 }//class
