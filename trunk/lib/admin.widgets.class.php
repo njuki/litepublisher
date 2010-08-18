@@ -51,7 +51,7 @@ class tadminwidgets extends tadminmenu {
         $args->id = $id;
         $args->ajax = $_item['ajax'];
         $args->inline = $_item['ajax'] === 'inline';
-        $args->disabled = $item['cache'] == 'cache' ? '' : 'disabled';
+        $args->disabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache') ? '' : 'disabled';
         $args->add($item);
         $args->sitebarcombo = self::getcombo("sitebar-$id", $sitebarnames, $i);
         $args->ordercombo = self::getcombo("order-$id", $orders, $j);
