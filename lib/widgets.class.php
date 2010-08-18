@@ -369,12 +369,20 @@ class twidgets extends titems {
     foreach ($items as $item) {
       $id = $item['id'];
       $cachetype = $this->items[$id]['cache'];
-      if ($item['ajax']) {
-        if (($cachetype == 'cache') && ($item['ajax'] === 'inline')) {
+if ($item['ajax'] === 'inline') {
+switch ($cachetype) {
+case 'cache':
+case 'nocache':
+case false:
           $content = $this->getinline($id, $sitebar);
-        } else {
+break;
+
+default:
           $content = $this->getajax($id, $sitebar);
-        }
+break;
+}
+      } elseif ($item['ajax']) {
+          $content = $this->getajax($id, $sitebar);
       } else {
         switch ($cachetype) {
           case 'cache':
@@ -411,8 +419,14 @@ class twidgets extends titems {
   
   public function getinline($id, $sitebar) {
     $title = sprintf('<a onclick="widgets.inlineload(this)">%s</a>', $this->items[$id]['title']);
+if ('cache' == $this->items[$id]['cache']) {
     $cache = twidgetscache::instance();
-    $content = sprintf('<!--%s-->', $cache->getcontent($id, $sitebar));
+$content = $cache->getcontent($id, $sitebar);
+} else {
+$widget = $this->getwidget($id);
+$content = $widget->getcontent($id, $sitebar);
+}
+    $content = sprintf('<!--%s-->', $content);
     $theme = ttheme::instance();
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sitebar);
   }
