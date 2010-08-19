@@ -657,6 +657,68 @@ quote site chmod 666 plugins/backup2email/backup2email.php
 send plugins\backup2email\index.htm plugins/backup2email/index.htm
 quote site chmod 666 plugins/backup2email/index.htm
 cd plugins
+mkdir bookmarks
+quote site chmod 777 bookmarks
+cd ../
+send plugins\bookmarks\.htaccess plugins/bookmarks/.htaccess
+quote site chmod 666 plugins/bookmarks/.htaccess
+send plugins\bookmarks\about.ini plugins/bookmarks/about.ini
+quote site chmod 666 plugins/bookmarks/about.ini
+send plugins\bookmarks\bookmarks.widget.install.php plugins/bookmarks/bookmarks.widget.install.php
+quote site chmod 666 plugins/bookmarks/bookmarks.widget.install.php
+send plugins\bookmarks\bookmarks.widget.php plugins/bookmarks/bookmarks.widget.php
+quote site chmod 666 plugins/bookmarks/bookmarks.widget.php
+cd plugins/bookmarks
+mkdir icons
+quote site chmod 777 icons
+cd ../../
+send plugins\bookmarks\icons\bobrdobr.png plugins/bookmarks/icons/bobrdobr.png
+quote site chmod 666 plugins/bookmarks/icons/bobrdobr.png
+send plugins\bookmarks\icons\buzz.png plugins/bookmarks/icons/buzz.png
+quote site chmod 666 plugins/bookmarks/icons/buzz.png
+send plugins\bookmarks\icons\delicious.png plugins/bookmarks/icons/delicious.png
+quote site chmod 666 plugins/bookmarks/icons/delicious.png
+send plugins\bookmarks\icons\digg.png plugins/bookmarks/icons/digg.png
+quote site chmod 666 plugins/bookmarks/icons/digg.png
+send plugins\bookmarks\icons\facebook.png plugins/bookmarks/icons/facebook.png
+quote site chmod 666 plugins/bookmarks/icons/facebook.png
+send plugins\bookmarks\icons\google.png plugins/bookmarks/icons/google.png
+quote site chmod 666 plugins/bookmarks/icons/google.png
+send plugins\bookmarks\icons\livejournal.png plugins/bookmarks/icons/livejournal.png
+quote site chmod 666 plugins/bookmarks/icons/livejournal.png
+send plugins\bookmarks\icons\memori.png plugins/bookmarks/icons/memori.png
+quote site chmod 666 plugins/bookmarks/icons/memori.png
+send plugins\bookmarks\icons\moemesto.png plugins/bookmarks/icons/moemesto.png
+quote site chmod 666 plugins/bookmarks/icons/moemesto.png
+send plugins\bookmarks\icons\mrwong.png plugins/bookmarks/icons/mrwong.png
+quote site chmod 666 plugins/bookmarks/icons/mrwong.png
+send plugins\bookmarks\icons\myworld.png plugins/bookmarks/icons/myworld.png
+quote site chmod 666 plugins/bookmarks/icons/myworld.png
+send plugins\bookmarks\icons\news2ru.png plugins/bookmarks/icons/news2ru.png
+quote site chmod 666 plugins/bookmarks/icons/news2ru.png
+send plugins\bookmarks\icons\reddit.png plugins/bookmarks/icons/reddit.png
+quote site chmod 666 plugins/bookmarks/icons/reddit.png
+send plugins\bookmarks\icons\slashdot.png plugins/bookmarks/icons/slashdot.png
+quote site chmod 666 plugins/bookmarks/icons/slashdot.png
+send plugins\bookmarks\icons\smi2.png plugins/bookmarks/icons/smi2.png
+quote site chmod 666 plugins/bookmarks/icons/smi2.png
+send plugins\bookmarks\icons\stumbleupon.png plugins/bookmarks/icons/stumbleupon.png
+quote site chmod 666 plugins/bookmarks/icons/stumbleupon.png
+send plugins\bookmarks\icons\technorati.png plugins/bookmarks/icons/technorati.png
+quote site chmod 666 plugins/bookmarks/icons/technorati.png
+send plugins\bookmarks\icons\twitter.png plugins/bookmarks/icons/twitter.png
+quote site chmod 666 plugins/bookmarks/icons/twitter.png
+send plugins\bookmarks\icons\vkontakte.png plugins/bookmarks/icons/vkontakte.png
+quote site chmod 666 plugins/bookmarks/icons/vkontakte.png
+send plugins\bookmarks\icons\ya.png plugins/bookmarks/icons/ya.png
+quote site chmod 666 plugins/bookmarks/icons/ya.png
+send plugins\bookmarks\icons\yahoo.png plugins/bookmarks/icons/yahoo.png
+quote site chmod 666 plugins/bookmarks/icons/yahoo.png
+send build\indexfile.htm plugins/bookmarks/icons/index.htm
+quote site chmod 666 plugins/bookmarks/icons/index.htm
+send plugins\bookmarks\index.htm plugins/bookmarks/index.htm
+quote site chmod 666 plugins/bookmarks/index.htm
+cd plugins
 mkdir clearcache
 quote site chmod 777 clearcache
 cd ../

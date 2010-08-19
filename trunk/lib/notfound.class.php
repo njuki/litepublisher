@@ -31,7 +31,7 @@ public function gethead() {}
   
   
   public function  httpheader() {
-    return "<?php Header( 'HTTP/1.0 404 Not Found'); ?>" . turlmap::httpheader(false);
+    return "<?php Header( 'HTTP/1.0 404 Not Found'); ?>" . turlmap::htmlheader(false);
   }
   
   function getcont() {

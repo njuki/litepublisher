@@ -1421,12 +1421,11 @@ class turlmap extends titems {
   
   public function redir301($to) {
     //tfiler::log($to. "\n" . $this->url);
-    litepublisher::$options->savemodified();
-    //tfiler::log(var_export($_COOKIE, true));
     self::redir(litepublisher::$options->url . $to);
   }
   
   public static function redir($url) {
+    litepublisher::$options->savemodified();
     if ( php_sapi_name() != 'cgi-fcgi' ) {
       $protocol = $_SERVER["SERVER_PROTOCOL"];
       if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
@@ -1434,6 +1433,7 @@ class turlmap extends titems {
     }
     
     header("Location: $url");
+    if (ob_get_level()) ob_end_flush ();
     exit();
   }
   
@@ -1478,7 +1478,7 @@ class turlmap extends titems {
     return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
   }
   
-  public static function httpheader($cache) {
+  public static function htmlheader($cache) {
     $nocache = $cache ? '' : "
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');";
