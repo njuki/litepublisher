@@ -156,7 +156,7 @@ class ttemplate extends tevents {
       $result= $this->context->httpheader();
       if (!empty($result)) return $result;
     }
-    return turlmap::httpheader($this->context->cache);
+    return turlmap::htmlheader($this->context->cache);
   }
   
   //html tags
