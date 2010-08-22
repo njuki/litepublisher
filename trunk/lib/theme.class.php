@@ -102,7 +102,7 @@ class ttheme extends tevents {
   public function parsecallback($names) {
     $name = $names[1];
     $prop = $names[2];
-    if ($prop == '') return "\$$name.";
+    //if ($prop == '') return "\$$name.";
     if ($name == 'options') {
       if (($prop == 'password') || ($prop == 'cookie')) return '';
       $var = litepublisher::$options;
@@ -143,7 +143,7 @@ class ttheme extends tevents {
     $s = str_replace('$options.url', litepublisher::$options->url, (string) $s);
     //array_push($this->parsing, $s);
     try {
-      $result = preg_replace_callback('/\$(\w*+)\.(\w*+)/', array(&$this, 'parsecallback'), $s);
+      $result = preg_replace_callback('/\$(\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);
