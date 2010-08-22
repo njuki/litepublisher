@@ -84,6 +84,7 @@ require_once(litepublisher::$paths->lib . 'kernel.php');
 litepublisher::$classes = tclasses::instance();
 litepublisher::$options = toptions::instance();
 if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+try {
 if (dbversion) litepublisher::$db = new tdatabase();
     litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
 //tfiler::log($_SERVER['REQUEST_URI']);
@@ -99,6 +100,10 @@ litepublisher::$options->data['dbconfig']['prefix'] = 'litepublisherru_';
 litepublisher::$options->setpassword('admin');
 litepublisher::$options->save();
 */
+    } catch (Exception $e) {
+      echo $e->GetMessage();
+    }
+
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){

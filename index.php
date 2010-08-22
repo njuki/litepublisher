@@ -53,18 +53,22 @@ public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 }
 
 ob_start();
-litepublisher::init();
-require_once(litepublisher::$paths->lib . 'kernel.php');
-litepublisher::$classes = tclasses::instance();
-litepublisher::$options = toptions::instance();
-if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
-if (dbversion) litepublisher::$db = new tdatabase();
-litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
-litepublisher::$urlmap = turlmap::instance();
-if (!defined('litepublisher_mode')) {
-  litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
+try {
+  litepublisher::init();
+  require_once(litepublisher::$paths->lib . 'kernel.php');
+  litepublisher::$classes = tclasses::instance();
+  litepublisher::$options = toptions::instance();
+  if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+  if (dbversion) litepublisher::$db = new tdatabase();
+  litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
+  litepublisher::$urlmap = turlmap::instance();
+  if (!defined('litepublisher_mode')) {
+    litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
+  }
+  
+} catch (Exception $e) {
+  echo $e->GetMessage();
 }
-
 ob_end_flush ();
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();

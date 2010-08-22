@@ -15,7 +15,7 @@ function tredirectorInsttall($self) {
   $self->add('/wp-rss2.php', '/rss.xml');
   $self->add('/contact.php', '/kontakty.htm');
   $self->add('/kontakty.htm', '/contact.htm');
-$self->add('/wp-login.php', '/admin/login/');
+  $self->add('/wp-login.php', '/admin/login/');
   $self->unlock();
 }
 ?>

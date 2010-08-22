@@ -554,6 +554,8 @@ send lib\update\update.3.66.php lib/update/update.3.66.php
 quote site chmod 666 lib/update/update.3.66.php
 send lib\update\update.3.68.php lib/update/update.3.68.php
 quote site chmod 666 lib/update/update.3.68.php
+send lib\update\update.3.71.php lib/update/update.3.71.php
+quote site chmod 666 lib/update/update.3.71.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -684,6 +686,8 @@ send plugins\bookmarks\icons\facebook.png plugins/bookmarks/icons/facebook.png
 quote site chmod 666 plugins/bookmarks/icons/facebook.png
 send plugins\bookmarks\icons\google.png plugins/bookmarks/icons/google.png
 quote site chmod 666 plugins/bookmarks/icons/google.png
+send plugins\bookmarks\icons\index.htm plugins/bookmarks/icons/index.htm
+quote site chmod 666 plugins/bookmarks/icons/index.htm
 send plugins\bookmarks\icons\livejournal.png plugins/bookmarks/icons/livejournal.png
 quote site chmod 666 plugins/bookmarks/icons/livejournal.png
 send plugins\bookmarks\icons\memori.png plugins/bookmarks/icons/memori.png
@@ -714,8 +718,6 @@ send plugins\bookmarks\icons\ya.png plugins/bookmarks/icons/ya.png
 quote site chmod 666 plugins/bookmarks/icons/ya.png
 send plugins\bookmarks\icons\yahoo.png plugins/bookmarks/icons/yahoo.png
 quote site chmod 666 plugins/bookmarks/icons/yahoo.png
-send build\indexfile.htm plugins/bookmarks/icons/index.htm
-quote site chmod 666 plugins/bookmarks/icons/index.htm
 send plugins\bookmarks\index.htm plugins/bookmarks/index.htm
 quote site chmod 666 plugins/bookmarks/index.htm
 cd plugins
@@ -1176,6 +1178,20 @@ send plugins\wprss\index.htm plugins/wprss/index.htm
 quote site chmod 666 plugins/wprss/index.htm
 send plugins\wprss\wprss.php plugins/wprss/wprss.php
 quote site chmod 666 plugins/wprss/wprss.php
+cd plugins
+mkdir youtubeplayer
+quote site chmod 777 youtubeplayer
+cd ../
+send plugins\youtubeplayer\.htaccess plugins/youtubeplayer/.htaccess
+quote site chmod 666 plugins/youtubeplayer/.htaccess
+send plugins\youtubeplayer\about.ini plugins/youtubeplayer/about.ini
+quote site chmod 666 plugins/youtubeplayer/about.ini
+send plugins\youtubeplayer\admin.youtube.player.class.php plugins/youtubeplayer/admin.youtube.player.class.php
+quote site chmod 666 plugins/youtubeplayer/admin.youtube.player.class.php
+send plugins\youtubeplayer\index.htm plugins/youtubeplayer/index.htm
+quote site chmod 666 plugins/youtubeplayer/index.htm
+send plugins\youtubeplayer\youtube.player.class.php plugins/youtubeplayer/youtube.player.class.php
+quote site chmod 666 plugins/youtubeplayer/youtube.player.class.php
 mkdir themes
 quote site chmod 777 themes
 cd themes

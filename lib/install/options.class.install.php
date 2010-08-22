@@ -21,7 +21,11 @@ function installoptions($language) {
     'password' => base64_encode(str_rot13 ($_REQUEST['dbpassword'])),
     'prefix' => $_REQUEST['dbprefix']
     );
-    litepublisher::$db= new tdatabase();
+    try {
+      litepublisher::$db= new tdatabase();
+    } catch (Exception $e) {
+      die($e->GetMessage());
+    }
   }
   
   $options->subdir = getrequestdir();
