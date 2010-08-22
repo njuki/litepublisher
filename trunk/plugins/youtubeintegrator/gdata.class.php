@@ -28,7 +28,6 @@ $_SESSION['keys'] = $keys;
 return sprintf('https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=%s&&oauth_callback=%s',
 urlencode($keys[request_key]), urlencode($this->urlaccess));
 }
-}
 return false;
 }
 
@@ -56,9 +55,27 @@ return $result;
 return false;
 }
 
-public function getuploadtoken($accesstoken, $secret) {
-$xml = dox;
+public function getuploadtoken($accesstoken, $secret, $title, $description, $category, $keywords) {
+$dom = new domDocument();
+    $dom->encoding = 'utf-8';
+    $dom->appendChild($dom->createComment('generator="Lite Publisher/' . litepublisher::$options->version . ' version"'));
+    $entry  = $dom->createElement('entry');
+    $dom->appendChild($entry);
+    
+    AddAttr($entry, 'xmlns', 'http://www.w3.org/2005/Atom');
+    AddAttr($entry, 'xmlns:media', 'http://search.yahoo.com/mrss/');
+    AddAttr($entry, 'xmlns:yt', 'http://gdata.youtube.com/schemas/2007');
+    $group = AddNode($entry, 'media:group');
+    $node = AddNodeValue($group, 'media:title', $title);
+AddAttr($node, 'type', 'plain');
 
+    $node = AddNodeValue($group, 'media:category', $category);
+AddAttr($node, 'scheme', 'http://gdata.youtube.com/schemas/2007/categories.cat');
+
+    $node = AddNodeValue($group, 'media:keywords', $keywords);
+
+$postdata = $dom->saveXML();
+die($postdata);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'http://gdata.youtube.com/action/GetUploadToken');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -96,6 +113,4 @@ return $this->uploaded();
 }
 
 }//class
-?>
-}
 ?>

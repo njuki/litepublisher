@@ -160,7 +160,7 @@ return implode("&", $total);
 	}
 
 	public function gettoken(&$key_bucket, $url, $params=array()){
-		if ($bits = $this->getbits($this->geturl($key_bucket, $url, $params)) {
+		if ($bits = $this->getbits($this->geturl($key_bucket, $url, $params))) {
 		$key_bucket['request_key']	= $bits['oauth_token'];
 		$key_bucket['request_secret']	= $bits['oauth_token_secret'];
 		if ($key_bucket['request_key'] && $key_bucket['request_secret']){
@@ -188,7 +188,7 @@ return false;
 	public function getaccess(&$key_bucket, $url, $params=array()){
 		$key_bucket['user_key']		= $key_bucket['request_key'];
 		$key_bucket['user_secret']	= $key_bucket['request_secret'];
-		if ($bits = $this->getbits($this->geturl($key_bucket, $url, $params)) {
+		if ($bits = $this->getbits($this->geturl($key_bucket, $url, $params))) {
 		$key_bucket['user_key']		= $bits['oauth_token'];
 		$key_bucket['user_secret']	= $bits['oauth_token_secret'];
 		if ($key_bucket['user_key'] && $key_bucket['user_secret']){
@@ -198,11 +198,10 @@ return false;
 		return false;
 	}
 
-	private function dorequest($url, $method="GET", $postdata=null){
+	private function dorequest($url, $method='GET', $postdata=null){
 		if ($this->use_fopen && $method == 'GET'){
 if ($data = file($url)) {
-			$response = implode("", $data);
-			return $response;
+return implode("", $data);
 }
 return false;
 		}
@@ -218,7 +217,7 @@ return false;
 
 		if ($method == 'GET'){
 			# nothing special for GETs
-		}else if ($method == 'POST'){
+		}elseif ($method == 'POST'){
 			curl_setopt($ch, CURLOPT_POST, TRUE);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
 		}else{
@@ -228,8 +227,9 @@ return false;
 		$response = curl_exec($ch);
 		$headers = curl_getinfo($ch);
 		curl_close($ch);
-	        if ($headers['http_code'] != "200") return false;
+	        if ($headers['http_code'] != '200') return false;
 		return $response;
 	}
+}//class
 	
 ?>
