@@ -7,30 +7,30 @@
 **/
 
 class tyoutubeplayer extends tplugin {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-$this->data['template'] ='<object width="425" height="350">
-  <param name="movie" value="$url"></param>
-  <param name="wmode" value="transparent"></param>
-  <embed src="$url" 
-    type="application/x-shockwave-flash" wmode="transparent" 
+    $this->data['template'] ='<object width="425" height="350">
+    <param name="movie" value="$url"></param>
+    <param name="wmode" value="transparent"></param>
+    <embed src="$url"
+    type="application/x-shockwave-flash" wmode="transparent"
     width="425" height="350">
-  </embed>
-</object>';
+    </embed>
+    </object>';
   }
   
   public function filter(&$content) {
-if (preg_match_all('/\[youtube\=(http:\/\/.*?)\]/',$content, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[youtube\=(http:\/\/.*?)\]/',$content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
-$content = str_replace($item[0], 
-str_replace('$url', $item[1], $this->template), $content);
-}
-}
+        $content = str_replace($item[0],
+        str_replace('$url', $item[1], $this->template), $content);
+      }
+    }
   }
   
   public function install() {

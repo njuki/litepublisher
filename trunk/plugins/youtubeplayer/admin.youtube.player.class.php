@@ -7,7 +7,7 @@
 **/
 
 class tadminyoutubeplayer {
-
+  
   public function getcontent() {
     $plugin = tyoutubeplayer::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
@@ -17,13 +17,13 @@ class tadminyoutubeplayer {
     $args->template = $plugin->template;
     $html = THtmlResource::instance();
     return $html->adminform('[editor:template]', $args);
-}
+  }
   
-public function processform() {
+  public function processform() {
     $plugin = tyoutubeplayer::instance();
-$plugin->template = $_POST['template'];
-$plugin->save();
-}
-
+    $plugin->template = $_POST['template'];
+    $plugin->save();
+  }
+  
 }//class
 ?>

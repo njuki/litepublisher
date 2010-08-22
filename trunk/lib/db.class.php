@@ -31,10 +31,10 @@ class tdatabase {
     $this->handle = mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
     if (! $this->handle) {
       //die(mysql_error());
-die('Error connect to database');
+      throw new Exception('Error connect to database');
     }
     if (!        mysql_select_db($dbconfig['dbname'], $this->handle)) {
-      die(mysql_error($this->handle));
+      throw new Exception('Error select database');
     }
     
     $this->query('SET NAMES utf8');
