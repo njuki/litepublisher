@@ -30,7 +30,8 @@ class tdatabase {
     if ($dbconfig['port'] > 0) $host .= ':' . $dbconfig['port'];
     $this->handle = mysql_connect($host, $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])));
     if (! $this->handle) {
-      die(mysql_error());
+      //die(mysql_error());
+die('Error connect to database');
     }
     if (!        mysql_select_db($dbconfig['dbname'], $this->handle)) {
       die(mysql_error($this->handle));
