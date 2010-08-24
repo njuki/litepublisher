@@ -74,7 +74,7 @@ public function __construct() {
 		return $params;
 	}
 
-	private function geturl($key_bucket, $url, $params=array(), $method="GET"){
+	public function geturl($key_bucket, $url, $params=array(), $method="GET"){
 return $this->normalize_url($url) . "?" . $this->getparams($this->getsign($key_bucket, $url, $params, $method));
 	}
 
@@ -108,17 +108,17 @@ return base64_encode($this->hmac_sha1($raw, $key, TRUE));
 
 	private function normalize_url($url){
 		$parts = parse_url($url);
-		$port = "";
+		$port = '';
 		if (array_key_exists('port', $parts) && $parts['port'] != '80'){
 			$port = ':' . $parts['port'];
 		}
-		return $parts['scheme'] . ':://' .  $parts['host'] . $port . $parts['path'];
+		return $parts['scheme'] . '://' .  $parts['host'] . $port . $parts['path'];
 	}
 
 	private function get_signable($params){
 		ksort($params);
 		$total = array();
-		foreach ($$params as $k => $v) {
+		foreach ($params as $k => $v) {
 			if ($k == "oauth_signature") continue;
 			$total[] = rawurlencode($k) . "=" . rawurlencode($v);
 		}
@@ -132,6 +132,17 @@ return base64_encode($this->hmac_sha1($raw, $key, TRUE));
 		}
 return implode("&", $total);
 	}
+
+	public function getauthorization($key_bucket, $params) {
+$params = $this->getsign($key_bucket, '', $params, 'post');
+ksort($params);
+		$result = array();
+		foreach ($params as $k => $v) {
+			$result[] = sprintf('%s="%s"', $k, urlencode($v));
+		}
+return implode(', ', $result);
+	}
+
 
 	private function hmac_sha1($data, $key, $raw=TRUE){
 		if (strlen($key) > 64){
@@ -173,7 +184,6 @@ return implode("&", $total);
 	private function getbits($url){
 		if ($crap = $this->dorequest($url)) {
 		$bits = explode("&", $crap);
-
 		$result = array();
 		foreach ($bits as $bit){
 			list($k, $v) = explode('=', $bit, 2);
@@ -207,7 +217,6 @@ return false;
 		}
 
 		$ch = curl_init();
-
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:')); 	// Get around error 417
@@ -227,6 +236,7 @@ return false;
 		$response = curl_exec($ch);
 		$headers = curl_getinfo($ch);
 		curl_close($ch);
+//var_dump($response, $headers);
 	        if ($headers['http_code'] != '200') return false;
 		return $response;
 	}
