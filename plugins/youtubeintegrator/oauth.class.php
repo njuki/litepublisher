@@ -1,90 +1,49 @@
 <?php
-/**
-* Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* based on lib_oauth - A standalone PHP4 OAuth library
-**/
-
-	# lib_oauth - A standalone PHP4 OAuth library
-	#
-	# By Cal Henderson <cal@iamcal.com>
-	#
-	# Heavily based on the PHP5 OAuth library
-	# http://code.google.com/p/oauth-php/
-	#
-	# Patches from:
-	#  * Kellan <kellan@pobox.com>
-	#    - Flickr compatibility fix
-	#  * Zhihong Zhang <zhihong.zhang@corp.aol.com>
-	#    - quoted key names for E_WARNINGS mode
-	#    - caught the urlencode() vs rawurlencode() bug
-	#  * Paul Webster <paul@dabdig.com>
-	#    - POST support
-	#    - cURL support
-	#
-	# This program is free software; you can redistribute it and/or modify
-	# it under the terms of the GNU General Public License as published by
-	# the Free Software Foundation; either version 2 of the License, or
-	# (at your option) any later version.
-	# 
-	# This program is distributed in the hope that it will be useful,
-	# but WITHOUT ANY WARRANTY; without even the implied warranty of
-	# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	# GNU General Public License for more details.
-	# 
-	# You should have received a copy of the GNU General Public License
-	# along with this program; if not, write to the Free Software
-	# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-	#
-
-
 class toauth {
 public $urllist;
 public $key;
 public $secret;
-	# seconds before HTTP requests time out (cURL only)
+public $token;
+public $tokensecret;
 	public $timeout;
 
 public function __construct() {
+$this->key = $_SERVER['HTTP_HOST'];
+$this->secret = '';
+$this->token = '';
+$this->tokensecret = '';
 	$this->timeout = 2;
 $this->urllist = array(
 'request' => 'https://www.google.com/accounts/OAuthGetRequestToken',
 'authorize' => 'https://www.google.com/accounts/OAuthAuthorizeToken',
 'access' => 'https://www.google.com/accounts/OAuthGetAccessToken',
-'callback' = ''
+'callback' => ''
 );
 }
 
-	private function getsign($key_bucket, $url, $params=array(), $method="GET"){
-		# fold query params passed on the URL into params array
-		$url_parsed = parse_url($url);
-		if (isset($url_parsed['query'])){
-			parse_str($url_parsed['query'], $url_params);
-			$params = array_merge($params, $url_params);
-		}
-		
-		# create the request thingy
-		$params['oauth_version']		= '1.0';
-		$params['oauth_nonce']		= md5('_oauth_rand_' . microtime() . mt_rand());
-		$params['oauth_timestamp']	= gmmktime();
-		$params['oauth_consumer_key']	= $key_bucket['oauth_key'];
-
-		if (isset($key_bucket['user_key'])){
-			$params['oauth_token']		= $key_bucket['user_key'];
+	private function getsign($keys, $url, $method='GET'){
+		$parsed = parse_url($url);
+		if (isset($parsed['query'])){
+			parse_str($parsed['query'], $url_params);
+			$keys = array_merge($keys, $url_params);
 		}
 
-		$params['oauth_signature_method']	= 'HMAC-SHA1';
-		$params['oauth_signature']	= $this->getsignature($key_bucket, $url, $params, $method);
-		return $params;
+if (!isset($keys['oauth_key'])) $keys['oauth_key'] = $this->key;
+		$keys['oauth_version']		= '1.0';
+		$keys['oauth_nonce']		= md5('_oauth_rand_' . microtime() . mt_rand());
+		$keys['oauth_timestamp']	= time();
+		$keys['oauth_consumer_key']	= $keys['oauth_key'];
+		$keys['oauth_signature_method']	= 'HMAC-SHA1';
+		$keys['oauth_signature']	= $this->getsignature($keys, $url, $method);
+		return $keys;
 	}
 
-	public function geturl($key_bucket, $url, $params=array(), $method="GET"){
-return $this->normalize_url($url) . "?" . $this->getparams($this->getsign($key_bucket, $url, $params, $method));
+	public function geturl($keys, $url, $method='GET'){
+return $this->normalize_url($url) . "?" . $this->getparams($this->getsign($keys, $url, $method));
 	}
 
-	public function getdata($key_bucket, $url, $params=array(), $method="GET"){
-		$url = $this->geturl($key_bucket, $url, $params, $method);
+	public function getdata($keys, $url, $params=array(), $method="GET"){
+		$url = $this->geturl($keys, $url, $params, $method);
 		if ($method == 'POST'){
 			list($url, $postdata) = explode('?', $url, 2);
 		}else{
@@ -94,17 +53,16 @@ return $this->normalize_url($url) . "?" . $this->getparams($this->getsign($key_b
 		return $this->dorequest($url, $method, $postdata);
 	}
 
-	private function getsignature($key_bucket, $url, $params, $method){
+	private function getsignature($keys, $url, $method){
 		$sig = array(
 			rawurlencode(strtoupper ($method)),
 			preg_replace('/%7E/', '~', rawurlencode($this->normalize_url($url))),
-			rawurlencode($this->get_signable($params)),
+			rawurlencode($this->get_signable($keys))
 		);
 
-		$key = rawurlencode($key_bucket['oauth_secret']) . "&";
-
-		if (isset($key_bucket['user_key'])){
-			$key .= rawurlencode($key_bucket['user_secret']);
+		$key = rawurlencode($this->secret) . '&';
+		if ($this->tokensecret != '') {
+			$key .= rawurlencode($this->tokensecret);
 		}
 
 		$raw = implode("&", $sig);
@@ -121,10 +79,10 @@ return base64_encode($this->hmac_sha1($raw, $key, TRUE));
 	}
 
 	private function get_signable($params){
+if (isset($params['oauth_signature'])) unset($params['oauth_signature']);
 		ksort($params);
 		$total = array();
 		foreach ($params as $k => $v) {
-			if ($k == "oauth_signature") continue;
 			$total[] = rawurlencode($k) . "=" . rawurlencode($v);
 		}
 		return implode("&", $total);
@@ -138,12 +96,12 @@ return base64_encode($this->hmac_sha1($raw, $key, TRUE));
 return implode("&", $total);
 	}
 
-	public function getauthorization($key_bucket, $params) {
-$params = $this->getsign($key_bucket, '', $params, 'post');
+	public function getauthorization($keys, $url) {
+$params = $this->getsign($keys, $url, 'post');
 ksort($params);
 		$result = array();
 		foreach ($params as $k => $v) {
-			$result[] = sprintf('%s="%s"', $k, urlencode($v));
+			$result[] = sprintf('%s="%s"', $k, rawurlencode($v));
 		}
 return implode(', ', $result);
 	}
@@ -161,26 +119,20 @@ return implode(', ', $result);
 		$_opad = (substr($key, 0, 64) ^ str_repeat(chr(0x5C), 64));
 
 		$hex = sha1($_opad . pack('H40', sha1($_ipad . $data)));
-
-		if ($raw){
+		if (!$raw) return $hex;
 			$bin = '';
 			while (strlen($hex)){
 				$bin .= chr(hexdec(substr($hex, 0, 2)));
 				$hex = substr($hex, 2);
 			}
 			return $bin;
-		}
-
-		return $hex;
 	}
 
-	public function gettoken(&$key_bucket, $url, $params=array()){
-		if ($bits = $this->getbits($this->geturl($key_bucket, $url, $params))) {
-		$key_bucket['request_key']	= $bits['oauth_token'];
-		$key_bucket['request_secret']	= $bits['oauth_token_secret'];
-		if ($key_bucket['request_key'] && $key_bucket['request_secret']){
-			return true;
-		}
+	public function gettoken(array $keys){
+		if ($bits = $this->getbits($this->geturl($keys, $this->urllist['request']))) {
+		$this->token 	= $bits['oauth_token'];
+		$this->tokensecret = $bits['oauth_token_secret'];
+		if ($this->token && $this->tokensecret) return true;
 }
 		return false;
 	}
@@ -199,15 +151,11 @@ return implode(', ', $result);
 return false;
 	}
 
-	public function getaccess(&$key_bucket, $url, $params=array()){
-		$key_bucket['user_key']		= $key_bucket['request_key'];
-		$key_bucket['user_secret']	= $key_bucket['request_secret'];
-		if ($bits = $this->getbits($this->geturl($key_bucket, $url, $params))) {
-		$key_bucket['user_key']		= $bits['oauth_token'];
-		$key_bucket['user_secret']	= $bits['oauth_token_secret'];
-		if ($key_bucket['user_key'] && $key_bucket['user_secret']){
-			return true;
-		}
+	public function getaccess($keys) {
+		if ($bits = $this->getbits($this->geturl($keys, $this->urllist['access']))) {
+$this->token = $bits['oauth_token'];
+$this->tokensecret = $bits['oauth_token_secret'];
+		if ($this->token && $this->tokensecret) return true;
 }
 		return false;
 	}
@@ -239,33 +187,27 @@ return false;
 	}
 
 //litepublisher 
-public function getrequesttoken() {
-	$keys = array(
-		'oauth_key'		=> $this->domain,
-	'oauth_secret'		=> $this->devsecret
-);
-$params = array('scope' => 'http://gdata.youtube.com');
-if ($this->gettoken($keys, $this->urllist['request'], $params)) {
-if ($result = $this->getaccess($keys)) return $result;
-ini_set('session.use_cookies', false);
-session_cache_limiter(false);
-session_id (md5($keys['request_key']));
-session_start();
-$_SESSION['keys'] = $keys;
-session_write_close();
-return $this->urllist['authorize'] . sprintf(?oauth_token=%s&&oauth_callback=%s',
-urlencode($keys[request_key]), urlencode($this->urllist['callback']));
-}
-return false;
+
+public function getkeys() {
+return array('scope' => 'http://gdata.youtube.com');
 }
 
-private function getaccess(array $keys) {
-$params = array('scope' => 'http://gdata.youtube.com');
-if ($this->getaccess($keys, $this->urllist['access'], $params)) {
-return array(
-'token' => $keys['user_key'],
-'secret' => $keys['user_secret']
+public function getrequesttoken() {
+$keys = $this->getkeys();
+if ($this->gettoken($keys)) {
+$keys['oauth_token'] = $this->token;
+if ($this->getaccess($keys)) return true;
+ini_set('session.use_cookies', false);
+session_cache_limiter(false);
+session_id (md5($this->token));
+session_start();
+$_SESSION['tokens'] = array(
+'token' => $this->token,
+'secret' => $this->tokensecret
 );
+session_write_close();
+return $this->urllist['authorize'] . sprintf('?oauth_token=%s&&oauth_callback=%s',
+rawurlencode($this->token), rawurlencode($this->urllist['callback']));
 }
 return false;
 }
@@ -275,15 +217,55 @@ ini_set('session.use_cookies', false);
 session_cache_limiter(false);
 session_id (md5($_GET['oauth_token']));
 session_start();
-if (!isset($_SESSION['keys'])) return false;
-$keys = $_SESSION['keys'];
-if ($result = $this->getaccess($keys)) {
+if (!isset($_SESSION['tokens'])) return false;
+$tokens = $_SESSION['tokens'];
+$this->token = $tokens['token'];
+$this->tokensecret = $tokens['secret'];
+$keys = $this->getkeys();
+$keys['oauth_token'] = $this->token;
+if ($this->getaccess($keys)) {
 session_destroy();
-return $result;
+return true;
 }
 return false;
 }
 
+public function send($postdata) {
+$url = 'http://start.ru/oauth/example/echo_api.php';
+$keys = array();
+$keys['oauth_token'] = $this->token;
+$authorization = $this->getauthorization($keys, $url);
+//var_dump($authorization );
+
+		$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+'Authorization: OAuth '. $authorization,
+//sprintf('Authorization: AuthSub token="%s"', urlencode($accesstoken)),
+'Content-Type: application/atom+xml; charset=UTF-8',
+'Content-Length: ' . strlen($postdata ),
+'GData-Version: 2',
+//'X-GData-Key: key=' . $this->devkey,
+'Expect:'));
+
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+			curl_setopt($ch, CURLOPT_POST, TRUE);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata );
+		
+		$response = curl_exec($ch);
+		$headers = curl_getinfo($ch);
+		curl_close($ch);
+
+var_dump($response , $headers);
+return $response ;
+	        if ($headers['http_code'] != "200") return false;
+		$result = xml2array($response);
+return $result['response'];
+}
+
 }//class
-	
 ?>
