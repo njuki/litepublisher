@@ -1,6 +1,6 @@
 <?php
 
-class tgdata {
+class tgdata extends toauth {
 public $devkey;
 public $devsecret;
 public $domain;
