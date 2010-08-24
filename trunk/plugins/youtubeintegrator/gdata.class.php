@@ -15,55 +15,6 @@ $this->urlaccess = '/oauth/access/';
 $this->urluploaded = '/oauth/uploaded/';
 }
 
-public function getrequesttoken() {
-	$keys = array(
-		'oauth_key'		=> $this->domain,
-	'oauth_secret'		=> $this->devsecret
-);
-$params = array('scope' => 'http://gdata.youtube.com');
-//$oauth = toauth::instance();
-$oauth = new toauth();
-if ($oauth->gettoken($keys, 'https://www.google.com/accounts/OAuthGetRequestToken', $params)) {
-if ($result = $this->getaccess($keys)) return $result;
-ini_set('session.use_cookies', false);
-session_cache_limiter(false);
-session_id (md5($keys['request_key']));
-session_start();
-$_SESSION['keys'] = $keys;
-session_write_close();
-return sprintf('https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=%s&&oauth_callback=%s',
-urlencode($keys[request_key]), urlencode($this->urlaccess));
-}
-return false;
-}
-
-private function getaccess(array $keys) {
-$params = array('scope' => 'http://gdata.youtube.com');
-//$oauth = toauth::instance();
-$oauth = new toauth();
-if ($oauth->getaccess($keys, 'https://www.google.com/accounts/OAuthGetAccessToken', $params)) {
-echo $oauth->geturl($keys, 'http://gdata.youtube.com/action/GetUploadToken', $params);
-return array(
-'token' => $keys['user_key'],
-'secret' => $keys['user_secret']
-);
-}
-return false;
-}
-
-public function getaccesstoken() {
-ini_set('session.use_cookies', false);
-session_cache_limiter(false);
-session_id (md5($_GET['oauth_token']));
-session_start();
-if (!isset($_SESSION['keys'])) return false;
-$keys = $_SESSION['keys'];
-if ($result = $this->getaccess($keys)) {
-session_destroy();
-return $result;
-}
-return false;
-}
 
 public function getuploadtoken($accesstoken, $secret, $title, $description, $category, $keywords) {
 $dom = new domDocument();

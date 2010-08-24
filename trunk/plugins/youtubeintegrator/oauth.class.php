@@ -40,15 +40,20 @@
 
 
 class toauth {
-	# use fopen wrappers for GETs - this will usually work on servers
-	# that don't have cURL installed, but wont work for POST requests
-	public $use_fopen;
+public $urllist;
+public $key;
+public $secret;
 	# seconds before HTTP requests time out (cURL only)
 	public $timeout;
 
 public function __construct() {
-	$this->use_fopen = false;
 	$this->timeout = 2;
+$this->urllist = array(
+'request' => 'https://www.google.com/accounts/OAuthGetRequestToken',
+'authorize' => 'https://www.google.com/accounts/OAuthAuthorizeToken',
+'access' => 'https://www.google.com/accounts/OAuthGetAccessToken',
+'callback' = ''
+);
 }
 
 	private function getsign($key_bucket, $url, $params=array(), $method="GET"){
@@ -143,7 +148,6 @@ ksort($params);
 return implode(', ', $result);
 	}
 
-
 	private function hmac_sha1($data, $key, $raw=TRUE){
 		if (strlen($key) > 64){
 			$key =  pack('H40', sha1($key));
@@ -209,13 +213,6 @@ return false;
 	}
 
 	private function dorequest($url, $method='GET', $postdata=null){
-		if ($this->use_fopen && $method == 'GET'){
-if ($data = file($url)) {
-return implode("", $data);
-}
-return false;
-		}
-
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -240,6 +237,53 @@ return false;
 	        if ($headers['http_code'] != '200') return false;
 		return $response;
 	}
+
+//litepublisher 
+public function getrequesttoken() {
+	$keys = array(
+		'oauth_key'		=> $this->domain,
+	'oauth_secret'		=> $this->devsecret
+);
+$params = array('scope' => 'http://gdata.youtube.com');
+if ($this->gettoken($keys, $this->urllist['request'], $params)) {
+if ($result = $this->getaccess($keys)) return $result;
+ini_set('session.use_cookies', false);
+session_cache_limiter(false);
+session_id (md5($keys['request_key']));
+session_start();
+$_SESSION['keys'] = $keys;
+session_write_close();
+return $this->urllist['authorize'] . sprintf(?oauth_token=%s&&oauth_callback=%s',
+urlencode($keys[request_key]), urlencode($this->urllist['callback']));
+}
+return false;
+}
+
+private function getaccess(array $keys) {
+$params = array('scope' => 'http://gdata.youtube.com');
+if ($this->getaccess($keys, $this->urllist['access'], $params)) {
+return array(
+'token' => $keys['user_key'],
+'secret' => $keys['user_secret']
+);
+}
+return false;
+}
+
+public function getaccesstoken() {
+ini_set('session.use_cookies', false);
+session_cache_limiter(false);
+session_id (md5($_GET['oauth_token']));
+session_start();
+if (!isset($_SESSION['keys'])) return false;
+$keys = $_SESSION['keys'];
+if ($result = $this->getaccess($keys)) {
+session_destroy();
+return $result;
+}
+return false;
+}
+
 }//class
 	
 ?>
