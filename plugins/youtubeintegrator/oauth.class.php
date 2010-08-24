@@ -189,7 +189,7 @@ $this->tokensecret = $bits['oauth_token_secret'];
 //litepublisher 
 
 public function getkeys() {
-return array('scope' => 'http://gdata.youtube.com');
+return array();
 }
 
 public function getrequesttoken() {
@@ -230,41 +230,37 @@ return true;
 return false;
 }
 
-public function send($postdata) {
-$url = 'http://start.ru/oauth/example/echo_api.php';
+public function getextraheaders() {
+return array();
+}
+
+public function postdata($postdata, $url) {
 $keys = array();
 $keys['oauth_token'] = $this->token;
 $authorization = $this->getauthorization($keys, $url);
-//var_dump($authorization );
-
+$headers = array(
+'Authorization: OAuth '. $authorization,
+'Content-Length: ' . strlen($postdata )
+);
+$headers = array_merge($headers, $this->getextraheaders());
 		$ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-'Authorization: OAuth '. $authorization,
-//sprintf('Authorization: AuthSub token="%s"', urlencode($accesstoken)),
-'Content-Type: application/atom+xml; charset=UTF-8',
-'Content-Length: ' . strlen($postdata ),
-'GData-Version: 2',
-//'X-GData-Key: key=' . $this->devkey,
-'Expect:'));
-
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 			curl_setopt($ch, CURLOPT_POST, TRUE);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata );
 		
 		$response = curl_exec($ch);
 		$headers = curl_getinfo($ch);
 		curl_close($ch);
-
-var_dump($response , $headers);
-return $response ;
+//var_dump($response , $headers);
+//echo htmlspecialchars($response );
 	        if ($headers['http_code'] != "200") return false;
-		$result = xml2array($response);
-return $result['response'];
+return $response;
 }
 
 }//class

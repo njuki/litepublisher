@@ -1,22 +1,38 @@
 <?php
 
-class tgdata extends toauth {
+class tyoutubeoauth extends toauth {
 public $devkey;
-public $devsecret;
-public $domain;
-public $urlaccess;
-public $urluploaded;
 
-public function __construct($devkey, $devsecret) {
-$this->devkey = $devkey;
-$this->devsecret = $devsecret;
-$this->domain = $_SERVER['HTTP_HOST'];
-$this->urlaccess = '/oauth/access/';
-$this->urluploaded = '/oauth/uploaded/';
+public function __construct() {
+parent::__construct();
+$this->devkey = '';
 }
 
+public function getkeys() {
+return array('scope' => 'http://gdata.youtube.com');
+}
 
-public function getuploadtoken($accesstoken, $secret, $title, $description, $category, $keywords) {
+public function getextraheaders() {
+return array(
+'Content-Type: application/atom+xml; charset=UTF-8',
+'GData-Version: 2',
+'X-GData-Key: key=' . $this->devkey
+);
+}
+
+}//class
+
+class tgdata {
+public $oauth;
+
+public function __construct() {
+$oauth = new tyoutubeoauth();
+$oauth->urllist['gettokenupload'] = 'http://gdata.youtube.com/action/GetUploadToken';
+$oauth->devkey = '';
+$this->oauth = $oauth;
+}
+
+public function getuploadtoken($title, $description, $category, $keywords) {
 $dom = new domDocument();
     $dom->encoding = 'utf-8';
     $dom->appendChild($dom->createComment('generator="Lite Publisher'));
@@ -36,52 +52,20 @@ AddAttr($node, 'scheme', 'http://gdata.youtube.com/schemas/2007/categories.cat')
     $node = AddNodeValue($group, 'media:keywords', $keywords);
 
 $postdata = $dom->saveXML();
-//echo $postdata ;
-
-$this->domain = 'key';
-	$keys = array(
-		'oauth_key'		=> $this->domain,
-	'oauth_secret'		=> $secret,
-'user_key' => $accesstoken
-);
-$params = array();
-//'scope' => 'http://gdata.youtube.com');
-//$oauth = toauth::instance();
-$oauth = new toauth();
-$authorization = $oauth->getauthorization($keys, $params);
-//var_dump($authorization );
-
-		$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 
-//'http://litepublisher.ru/auth/head.php');
-//'http://gdata.youtube.com/action/GetUploadToken');
-//$url);
-'http://term.ie/oauth/example/echo_api.php');
-
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-'Authorization: OAuth '. $authorization,
-//sprintf('Authorization: AuthSub token="%s"', urlencode($accesstoken)),
-'Content-Type: application/atom+xml; charset=UTF-8',
-'Content-Length: ' . strlen($postdata ),
-'GData-Version: 2',
-'X-GData-Key: key=' . $this->devkey,
-'Expect:'));
-
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 2);
-			curl_setopt($ch, CURLOPT_POST, TRUE);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata );
-		
-		$response = curl_exec($ch);
-		$headers = curl_getinfo($ch);
-		curl_close($ch);
-var_dump($response , $headers);
-	        if ($headers['http_code'] != "200") return false;
+if ($response = $this->oauth->postdata($postdata, $this->oauth->urllist['gettokenupload'])) {
+/*
+array(2) {
+  ["url"]=>
+  string(174) "http://uploads.gdata.youtube.com/action/FormDataUpload/AIwbFAQxRT5mv6Y0uccQeN1FuWuX-dgX9IdTktzvbQQvv_ajheJzuE0mK5JIwQSCZq_l1I7QVkfjj6SImefsZ1y5WfaU_TUu24DAEPpOgUZ9q1RE6uc62ZU"
+  ["token"]=>
+  string(290) "AIwbFARvRGwEGdKMYE_c4jlanBZUGOSERhjFsFcqfXh757AUr89IOO8vRpdDXRLmwMSSwddJYAJVL_fsZmoKoZ8iz2e6ha8oAV5AIZn1AEFPTucyjehmovN5fI9k2LJ2x2QiqCOitk0P0wJis9JVnR9ategVnzEblhzEJu46U_wq1geHN2ZAU5Mqs3worKmgxlbJ3PtztGJjc-vkd6WRLJEiKhhxLCIA_9ibBJ39ZY95XLH5NdwZCNUpbw0JiiXO6EzaXEYVcym12xup0g9Dg4OwMa3glsOCSg"
+}
+*/
 		$result = xml2array($response);
+var_dump($result);
 return $result['response'];
+}
+return false;
 }
 
 public function request($arg) {
