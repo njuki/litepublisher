@@ -164,17 +164,18 @@ class Tadminoptions extends tadminmenu {
       //$filter->filter($text);
       $home->text = $text;
       $home->hideposts = isset($hideposts);
-      $homemenu = isset($homemenu);
-      if ($homemenu != ($home->idmenu > 0)) {
         $menus = tmenus::instance();
-        if ($homemenu) {
+$idmenu = $menus->url2id('/');
+if (isset($homemenu)) {
+if ($idmenu != $home->idmenu) {
           $menus->lock();
           $home->idmenu = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
-          $menus->items[$id]['order'] = 0;
+          $menus->items[$home->idmenu]['order'] = 0;
           $menus->sort();
           $menus->unlock();
+}
         } else {
-          $menus->remove($home->idmenu);
+          if ($idmenu) $menus->remove($idmenu);
           $home->idmenu = 0;
         }
       }
