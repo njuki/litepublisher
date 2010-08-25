@@ -1,4 +1,11 @@
 <?php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 class toauth {
 public $urllist;
 public $key;
@@ -21,11 +28,21 @@ $this->urllist = array(
 );
 }
 
+//to override in child classes
+public function getkeys() {
+return array();
+}
+
+public function getextraheaders() {
+return array();
+}
+
+
 	private function getsign($keys, $url, $method='GET'){
 		$parsed = parse_url($url);
 		if (isset($parsed['query'])){
-			parse_str($parsed['query'], $url_params);
-			$keys = array_merge($keys, $url_params);
+			parse_str($parsed['query'], $query);
+			$keys = array_merge($keys, $query);
 		}
 
 if (!isset($keys['oauth_key'])) $keys['oauth_key'] = $this->key;
@@ -38,11 +55,11 @@ if (!isset($keys['oauth_key'])) $keys['oauth_key'] = $this->key;
 		return $keys;
 	}
 
-	public function geturl($keys, $url, $method='GET'){
+	public function geturl(array $keys, $url, $method='GET'){
 return $this->normalize_url($url) . "?" . $this->getparams($this->getsign($keys, $url, $method));
 	}
 
-	public function getdata($keys, $url, $params=array(), $method="GET"){
+	public function getdata(array $keys, $url, $params=array(), $method="GET"){
 		$url = $this->geturl($keys, $url, $params, $method);
 		if ($method == 'POST'){
 			list($url, $postdata) = explode('?', $url, 2);
@@ -89,11 +106,11 @@ if (isset($params['oauth_signature'])) unset($params['oauth_signature']);
 	}
 
 	private function getparams($params){
-		$total = array();
+		$result = array();
 		foreach ($params as $k => $v) {
-			$total[] = rawurlencode($k) . "=" . rawurlencode($v);
+			$result[] = rawurlencode($k) . '=' . rawurlencode($v);
 		}
-return implode("&", $total);
+return implode("&", $result);
 	}
 
 	public function getauthorization($keys, $url) {
@@ -170,7 +187,6 @@ $this->tokensecret = $bits['oauth_token_secret'];
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
 		if ($method == 'GET'){
-			# nothing special for GETs
 		}elseif ($method == 'POST'){
 			curl_setopt($ch, CURLOPT_POST, TRUE);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
@@ -181,16 +197,10 @@ $this->tokensecret = $bits['oauth_token_secret'];
 		$response = curl_exec($ch);
 		$headers = curl_getinfo($ch);
 		curl_close($ch);
-//var_dump($response, $headers);
 	        if ($headers['http_code'] != '200') return false;
 		return $response;
 	}
 
-//litepublisher 
-
-public function getkeys() {
-return array();
-}
 
 public function getrequesttoken() {
 $keys = $this->getkeys();
@@ -228,10 +238,6 @@ session_destroy();
 return true;
 }
 return false;
-}
-
-public function getextraheaders() {
-return array();
 }
 
 public function postdata($postdata, $url) {
