@@ -28,8 +28,12 @@ class THtmlResource  {
   
   public function __construct() {
     $this->ini = array();
-    $this->load('adminhtml');
-    tlocal::loadlang('admin');
+    if (litepublisher::$options->installed) {
+      $this->load('adminhtml');
+      tlocal::loadlang('admin');
+    } else {
+      $this->loadini(litepublisher::$paths->languages . 'adminhtml.ini');
+    }
   }
   
   public function __get($name) {
