@@ -6,26 +6,30 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class toauth {
+class toauth extends tevents {
 public $urllist;
+/*
 public $key;
 public $secret;
 public $token;
 public $tokensecret;
+*/
 	public $timeout;
 
-public function __construct() {
-$this->key = $_SERVER['HTTP_HOST'];
-$this->secret = '';
-$this->token = '';
-$this->tokensecret = '';
+protected function create() {
+parent::create();
+$this->basename = 'oauth';
+$this->data['key'] = $_SERVER['HTTP_HOST'];
+$this->data['secret'] = '';
+$this->data['token'] = '';
+$this->data['tokensecret'] = '';
 	$this->timeout = 2;
-$this->urllist = array(
+$this->addmap('urllist',  array(
 'request' => 'https://www.google.com/accounts/OAuthGetRequestToken',
 'authorize' => 'https://www.google.com/accounts/OAuthAuthorizeToken',
 'access' => 'https://www.google.com/accounts/OAuthGetAccessToken',
 'callback' => ''
-);
+));
 }
 
 //to override in child classes
@@ -235,6 +239,7 @@ $keys = $this->getkeys();
 $keys['oauth_token'] = $this->token;
 if ($this->getaccess($keys)) {
 session_destroy();
+$this->save();
 return true;
 }
 return false;
@@ -249,6 +254,7 @@ $headers = array(
 'Content-Length: ' . strlen($postdata )
 );
 $headers = array_merge($headers, $this->getextraheaders());
+
 		$ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
