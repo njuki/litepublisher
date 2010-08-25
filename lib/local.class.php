@@ -79,7 +79,10 @@ class tlocal {
   
   public static function checkload() {
     if (!isset(self::$data)) {
-      self::loadlang('');
+      self::$data = array();
+      self::$files = array();
+      if (!isset(self::$files)) self::$files = array();
+      if (litepublisher::$options->installed) self::loadlang('');
     }
   }
   
@@ -91,8 +94,6 @@ class tlocal {
   }
   
   public static function load($filename) {
-    if (!isset(self::$data)) self::$data = array();
-    if (!isset(self::$files)) self::$files = array();
     if (in_array($filename, self::$files)) return;
     self::$files[] = $filename;
     $cachefilename = self::getcachefilename(basename($filename));
@@ -119,6 +120,7 @@ class tlocal {
   public static function loadini($filename) {
     if (file_exists($filename) && ($v = parse_ini_file($filename, true))) {
       self::$data = $v + self::$data ;
+      self::$files[] = $filename;
     }
   }
   

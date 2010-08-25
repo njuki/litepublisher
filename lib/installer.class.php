@@ -11,6 +11,7 @@ class tinstaller extends tdata {
   public $mode;
   public $lite;
   public $resulttype;
+  public $installed;
   
   public static function instance() {
     return getinstance(__class__);
@@ -20,6 +21,7 @@ class tinstaller extends tdata {
     $this->mode = 'form';
     $this->language = $this->GetBrowserLang();
     $this->lite = false;
+    $this->installed = false;
     
     if (isset($_GET) && (count($_GET) > 0)) {
       $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
@@ -338,8 +340,14 @@ class tinstaller extends tdata {
     require_once(litepublisher::$paths->lib . 'filer.class.php');
     require_once(litepublisher::$paths->lib . 'local.class.php');
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
+    
+    $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.ini';
+    tlocal::loadini($ini);
+    
     //tlocal::loadlang('admin');
-    tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
+    $ini = litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini';
+    tlocal::loadini($ini);
+    
     date_default_timezone_set(tlocal::$data['installation']['timezone']);
   }
   

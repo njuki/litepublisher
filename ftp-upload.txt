@@ -1550,8 +1550,6 @@ send js\audio-player\license.txt js/audio-player/license.txt
 quote site chmod 666 js/audio-player/license.txt
 send js\audio-player\player.swf js/audio-player/player.swf
 quote site chmod 666 js/audio-player/player.swf
-send js\filebrowser.js js/filebrowser.js
-quote site chmod 666 js/filebrowser.js
 cd js
 mkdir flowplayer
 quote site chmod 777 flowplayer
