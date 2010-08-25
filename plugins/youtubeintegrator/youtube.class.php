@@ -1,11 +1,12 @@
 <?php
 
 class tyoutubeoauth extends toauth {
-public $devkey;
 
-public function __construct() {
-parent::__construct();
-$this->devkey = '';
+protected function create() {
+parent::create();
+$this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'oauth';
+$this->data['devkey'] = '';
+$this->urllist['gettokenupload'] = 'http://gdata.youtube.com/action/GetUploadToken';
 }
 
 public function getkeys() {
@@ -22,14 +23,13 @@ return array(
 
 }//class
 
-class tgdata {
+class tyoutube extends tevents {
 public $oauth;
 
-public function __construct() {
-$oauth = new tyoutubeoauth();
-$oauth->urllist['gettokenupload'] = 'http://gdata.youtube.com/action/GetUploadToken';
-$oauth->devkey = '';
-$this->oauth = $oauth;
+protected function create() {
+parent::create();
+$this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'index';
+$this->oauth = new tyoutubeoauth();
 }
 
 public function getuploadtoken($title, $description, $category, $keywords) {
