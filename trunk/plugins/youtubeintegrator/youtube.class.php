@@ -79,4 +79,23 @@ return $this->uploaded();
 }
 
 }//class
+
+class tyoutubecategories extends titems {
+
+protected function create() {
+$this->dbversion = false;
+parent::create();
+$this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'categories';
+}
+
+public function update() {
+$url = 'http://gdata.youtube.com/schemas/2007/categories.cat';
+$lang = litepublisher::$options->languages;
+if ($lang != 'en') {
+$url .= sprintf('?hl=%s-%s', $lang, strtoupper($lang));
+}
+if ($xml = http://get($url)) {
+}
+}
+}//class
 ?>
