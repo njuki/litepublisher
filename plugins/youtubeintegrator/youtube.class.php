@@ -94,8 +94,20 @@ $lang = litepublisher::$options->languages;
 if ($lang != 'en') {
 $url .= sprintf('?hl=%s-%s', $lang, strtoupper($lang));
 }
-if ($xml = http://get($url)) {
+if (s = http://get($url)) {
+$xml = simplexml_load_string($s);
+    $xml->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
+    $categories = $xml->xpath('//atom:category');
+$this->items = array();
+    foreach ($categories as $cat) {
+if ($yt = $cat->children('yt', true)->getName() == 'assignable') {
+$this->items[(string) $cat['term']] = (string) $cat['label'];
 }
 }
+$this->save();
+}
+}
+
 }//class
+
 ?>
