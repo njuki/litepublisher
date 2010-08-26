@@ -38,13 +38,13 @@ public function getdescription() {}
     $result = '';
     $theme = ttheme::instance();
     if (litepublisher::$urlmap->page == 1) {
-$image = $this->image;
-if ($image != '') {
-if (!strbegin($image, 'http://')) $image = litepublisher::$options->files . $image;
-$image = sprintf('<img src="%s" algt="Home image" />', $image);
-}
-$result .= $theme->simple($image . $this->text);
-}
+      $image = $this->image;
+      if ($image != '') {
+        if (!strbegin($image, 'http://')) $image = litepublisher::$options->files . $image;
+        $image = sprintf('<img src="%s" algt="Home image" />', $image);
+      }
+      $result .= $theme->simple($image . $this->text);
+    }
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
     

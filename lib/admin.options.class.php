@@ -29,9 +29,9 @@ class Tadminoptions extends tadminmenu {
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
       $args->text = $home->text;
-$args->image = $home->image;
+      $args->image = $home->image;
       $menus = tmenus::instance();
-$idmenu = $menus->url2id('/');
+      $idmenu = $menus->url2id('/');
       $args->homemenu = $idmenu > 0;
       break;
       
@@ -162,26 +162,26 @@ $idmenu = $menus->url2id('/');
       case 'home':
       $home = thomepage::instance();
       $home->lock();
-$home->image = $image;
+      $home->image = $image;
       //$filter = tcontentfilter::instance();
       //$filter->filter($text);
       $home->text = $text;
       $home->hideposts = isset($hideposts);
       $home->unlock();
-
-        $menus = tmenus::instance();
-$idmenu = $menus->url2id('/');
-if (isset($homemenu)) {
-if (!$idmenu) {
+      
+      $menus = tmenus::instance();
+      $idmenu = $menus->url2id('/');
+      if (isset($homemenu)) {
+        if (!$idmenu) {
           $menus->lock();
-$idmenu = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
+          $idmenu = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
           $menus->items[$idmenu]['order'] = 0;
           $menus->sort();
           $menus->unlock();
-}
-        } else {
-          if ($idmenu) $menus->remove($idmenu);
         }
+      } else {
+        if ($idmenu) $menus->remove($idmenu);
+      }
       break;
       
       case 'mail':

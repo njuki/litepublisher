@@ -207,11 +207,11 @@ class ttemplate extends tevents {
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($this->hover, $current);
     }
-
+    
     if (($current == 0) && ($this->context instanceof thomepage)) {
-    $menus = tmenus::instance();
-if ($idmenu = $menus->url2id('/')) return $menus->getmenu($this->hover, $idmenu);
-}
+      $menus = tmenus::instance();
+      if ($idmenu = $menus->url2id('/')) return $menus->getmenu($this->hover, $idmenu);
+    }
     
     if ($current == 0) {
       $theme = ttheme::instance();

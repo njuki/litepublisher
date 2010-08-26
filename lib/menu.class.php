@@ -103,9 +103,9 @@ class tmenus extends titems {
   public function  delete($id) {
     if (!$this->itemexists($id)) return false;
     if ($this->haschilds($id)) return false;
-// save homepage
-$url = $this->items[$id]['url'];
-if ($url != '/') litepublisher::$urlmap->delete($url);
+    // save homepage
+    $url = $this->items[$id]['url'];
+    if ($url != '/') litepublisher::$urlmap->delete($url);
     $this->lock();
     unset($this->items[$id]);
     $this->sort();

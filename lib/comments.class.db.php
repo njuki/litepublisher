@@ -43,10 +43,10 @@ class tcomments extends titems {
     $item['rawcontent'] = $content;
     
     $comusers = tcomusers::instance();
-if ($author = $comusers->getitem($idauthor)) {
-    $item = $item + $author;
-}
-
+    if ($author = $comusers->getitem($idauthor)) {
+      $item = $item + $author;
+    }
+    
     $item['id'] = $id;
     $this->items[$id] = $item;
     
