@@ -17,7 +17,7 @@ class thomepage extends tevents implements  itemplate, itemplate2, imenu  {
     parent::create();
     $this->basename = 'homepage' ;
     $this->data['idurl'] = 0;
-    $this->data['idmenu'] = 0;
+    $this->data['image'] = '';
     $this->data['hideposts'] = false;
     $this->data['defaultsitebar'] = true;
     $this->data['ajax'] = false;
@@ -37,7 +37,14 @@ public function getdescription() {}
   public function getcont() {
     $result = '';
     $theme = ttheme::instance();
-    if (litepublisher::$urlmap->page == 1) $result .= $theme->simple($this->text);
+    if (litepublisher::$urlmap->page == 1) {
+$image = $this->image;
+if ($image != '') {
+if (!strbegin($image, 'http://')) $image = litepublisher::$options->files . $image;
+$image = sprintf('<img src="%s" algt="Home image" />', $image);
+}
+$result .= $theme->simple($image . $this->text);
+}
     if ($this->hideposts) return $result;
     $items =  $this->getitems();
     

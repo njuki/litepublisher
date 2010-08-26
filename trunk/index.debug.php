@@ -114,5 +114,5 @@ $man = tdbmanager::instance();
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//tupdater::instance()->run(3.68);
+//tupdater::instance()->run(3.73);
 ?>

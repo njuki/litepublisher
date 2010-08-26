@@ -103,8 +103,9 @@ class tmenus extends titems {
   public function  delete($id) {
     if (!$this->itemexists($id)) return false;
     if ($this->haschilds($id)) return false;
-    $urlmap = turlmap::instance();
-    $urlmap->delete($this->items[$id]['url']);
+// save homepage
+$url = $this->items[$id]['url'];
+if ($url != '/') litepublisher::$urlmap->delete($url);
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
@@ -112,7 +113,7 @@ class tmenus extends titems {
     $this->deleted($id);
     @unlink($this->dir . "$id.php");
     @unlink($this->dir . "$id.bak.php");
-    $urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
     return true;
   }
   
@@ -251,7 +252,7 @@ class tmenus extends titems {
     foreach($this->items as $id => $item) {
       if ($class == $item['class']) return $id;
     }
-    return 0;
+    return false;
   }
   
 }//class
