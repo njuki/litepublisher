@@ -54,7 +54,7 @@ class tadminlogin extends tadminform {
     $url = '/admin/';
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::instance();
-      $url = $groups->gethome($options->group);
+      $url = $groups->gethome(litepublisher::$options->group);
     }
     
     return litepublisher::$urlmap->redir301($url);
