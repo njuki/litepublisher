@@ -22,7 +22,7 @@ class tbackup2dropbox extends tplugin {
   }
   
   public function send() {
-    if ($this->password == '') return;
+   if ($this->password == '') return;
     $backuper = tbackuper::instance();
     $filename  = $backuper->createbackup();
     
@@ -33,28 +33,29 @@ class tbackup2dropbox extends tplugin {
       set_time_limit(600);
       $uploader->upload($filename, $this->dir);
       unlink($filename);
-      //if ($this->uploadfiles) $this->uploadfiles($uploader, '');
+      if ($this->uploadfiles) $this->uploadfiles($uploader, '');
     } catch (Exception $e) {
       return $e->getMessage();
     }
     return true;
   }
   
-  /*
   private function uploadfiles(DropboxUploader $uploader, $dir) {
     if ($dir != '') $dir = trim($dir, '/') . '/';
-    if ($list = glob(litepublisher::$paths->files . $dir . '*.*')) {
+    if ($list = glob(litepublisher::$paths->files . $dir . '*')) {
       foreach($list as $filename) {
         if (is_dir($filename)) {
           $base = basename($filename);
           if ($base[0] == '.') continue;
           $this->uploadfiles($uploader, $base);
         } else {
-          $uploader->upload($filename, $this->dir . $dir);
+          $uploader->upload($filename, $this->dir . 'files/' . $dir);
+}
         }
       }
+
     }
-    */
+
   }//class
   
   ?>

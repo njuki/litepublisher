@@ -67,6 +67,10 @@ class tyoutube extends tevents {
     }
     return false;
   }
+
+public function getuploaded() {
+
+}
   
   public function request($arg) {
     switch ($arg) {
