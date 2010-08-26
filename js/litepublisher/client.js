@@ -160,13 +160,14 @@ function loadjavascript(filename) {
   // check loaded scripts
   if (ltoptions.scripts == undefined) ltoptions.scripts = '';
   if (ltoptions.scripts.indexOf(filename) >= 0) return false;
+if (filename.substring(0, 7) != 'http://') filename = ltoptions.files + filename;
   ltoptions.scripts += filename + "\n";
-  var head= document.getElementsByTagName('head')[0];
   var script= document.createElement('script');
   script.type= 'text/javascript';
   script.async = true;
-  script.src= ltoptions.files + filename;
-  head.appendChild(script);
+  script.src= filename;
+    var first = document.getElementsByTagName('script')[0];
+ first.parentNode.insertBefore(script, first);
   return true;
 }
 
