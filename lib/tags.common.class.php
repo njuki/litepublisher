@@ -72,7 +72,10 @@ class tcommontags extends titems implements  itemplate {
     $item = $this->getitem($id);
     if ($item['icon'] == 0)  return '';
     $files = tfiles::instance();
-    return $files->geticon($item['icon'], $item['title']);
+    if ($files->itemexists($item['icon'])) return $files->geticon($item['icon'], $item['title']);
+    $this->setvalue($id, 'icon', 0);
+    if (!$this->dbversion) $this->save();
+    return '';
   }
   
   public function geticon() {

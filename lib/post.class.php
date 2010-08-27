@@ -220,7 +220,11 @@ class tpost extends titem implements  itemplate {
         $args->icon = '';
       } else {
         $files = tfiles::instance();
-        $args->icon = $files->geticon($item['icon']);
+        if ($files->itemexists($item['icon'])) {
+          $args->icon = $files->geticon($item['icon']);
+        } else {
+          $args->icon = '';
+        }
       }
       $list[] = $theme->parsearg($tml->item,  $args);
     }
@@ -337,13 +341,19 @@ class tpost extends titem implements  itemplate {
   public function geticonurl() {
     if ($this->icon == 0) return '';
     $files = tfiles::instance();
-    return $files->geturl($this->icon);
+    if ($files->itemexists($this->icon)) return $files->geturl($this->icon);
+    $this->icon = 0;
+    $this->save();
+    return '';
   }
   
   public function geticonlink() {
     if (($this->icon == 0) || litepublisher::$options->icondisabled) return '';
     $files = tfiles::instance();
-    return $files->geticon($this->icon);
+    if ($files->itemexists($this->icon)) return $files->geticon($this->icon);
+    $this->icon = 0;
+    $this->save();
+    return '';
   }
   
   public function getfilelist() {

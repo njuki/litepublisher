@@ -181,7 +181,7 @@ class ttemplate extends tevents {
       $icon = $this->context->icon;
       if ($icon > 0) {
         $files = tfiles::instance();
-        $result = $files->geturl($icon);
+        if ($files->itemexists($icon)) $result = $files->geturl($icon);
       }
     }
     if ($result == '')  return litepublisher::$options->files . '/favicon.ico';
