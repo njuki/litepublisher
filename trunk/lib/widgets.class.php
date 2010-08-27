@@ -94,7 +94,7 @@ class twidget extends tevents {
       case 'include':
       $sitebar = self::findsitebar($id);
       $filename = self::getcachefilename($id, $sitebar);
-      file_put_contents($filename, $this->getwidget($id, $sitebar));
+      file_put_contents($filename, $this->getcontent($id, $sitebar));
       break;
     }
   }
@@ -496,7 +496,7 @@ class twidgets extends titems {
       }
     }
     
-    //fix bug for client library
+    //fix bug for javascript client library
     if ($result == '') return 'false';
     return $result;
   }

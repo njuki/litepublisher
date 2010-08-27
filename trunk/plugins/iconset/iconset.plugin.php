@@ -7,6 +7,7 @@
 **/
 
 class ticonsetplugin extends tplugin {
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -82,7 +83,6 @@ class ticonsetplugin extends tplugin {
     $icons->unlock();
     $files->unlock();
     litepublisher::$urlmap->clearcache();
-    //litepublisher::$urlmap->redir301(litepublisher::$urlmap->url);
   }
   
 }//class
