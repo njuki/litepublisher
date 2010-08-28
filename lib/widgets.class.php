@@ -274,9 +274,16 @@ class twidgets extends titems {
           if (in_array($item['id'], $deleted)) array_delete($this->sitebars[$i], $j);
         }
       }
+
+foreach ($this->classes as $name => $items) {
+foreach ($items as $i => $item) {
+          if (in_array($item['id'], $deleted)) array_delete($this->classes[$name], $i);
+}
+if (count($this->classes[$name]) == 0) unset($this->classes[$name]);
+}
     }
-    
-    if (isset($this->classes[$class])) unset($this->classes[$class]);
+
+    if (isset($this->classes[$class])) unset($this->classes[$class]);    
     $this->save();
   }
   
