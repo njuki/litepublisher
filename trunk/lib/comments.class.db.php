@@ -27,6 +27,7 @@ class tcomments extends titems {
   }
   
   public function add($idauthor, $content, $status) {
+if ($idauthor == 0) $this->error('Author id = 0');
     $filter = tcontentfilter::instance();
     $filtered = $filter->filtercomment($content);
     
@@ -45,7 +46,9 @@ class tcomments extends titems {
     $comusers = tcomusers::instance();
     if ($author = $comusers->getitem($idauthor)) {
       $item = $item + $author;
-    }
+    } else {
+$this->error(sprintf('Author %d not found', $idauthor));
+}
     
     $item['id'] = $id;
     $this->items[$id] = $item;
