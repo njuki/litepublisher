@@ -9,5 +9,10 @@ if (!isset($widgets->items[$id])) array_delete($this->classes[$name], $i);
 if (count($widgets->classes[$name]) == 0) unset($widgets->classes[$name]);
 }
 $widgets->save();
+
+$template = ttemplate::instance();
+$template->data['heads'] = array();
+$template->data['adminheads'] = array();
+$template->save();
 }
 ?>
