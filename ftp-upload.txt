@@ -1201,60 +1201,6 @@ quote site chmod 666 plugins/wprss/index.htm
 send plugins\wprss\wprss.php plugins/wprss/wprss.php
 quote site chmod 666 plugins/wprss/wprss.php
 cd plugins
-mkdir youtubeintegrator
-quote site chmod 777 youtubeintegrator
-cd ../
-send plugins\youtubeintegrator\.htaccess plugins/youtubeintegrator/.htaccess
-quote site chmod 666 plugins/youtubeintegrator/.htaccess
-send plugins\youtubeintegrator\about.ini plugins/youtubeintegrator/about.ini
-quote site chmod 666 plugins/youtubeintegrator/about.ini
-send plugins\youtubeintegrator\index.html plugins/youtubeintegrator/index.html
-quote site chmod 666 plugins/youtubeintegrator/index.html
-send plugins\youtubeintegrator\nexturl.txt plugins/youtubeintegrator/nexturl.txt
-quote site chmod 666 plugins/youtubeintegrator/nexturl.txt
-send plugins\youtubeintegrator\player.js plugins/youtubeintegrator/player.js
-quote site chmod 666 plugins/youtubeintegrator/player.js
-send plugins\youtubeintegrator\resp.xml plugins/youtubeintegrator/resp.xml
-quote site chmod 666 plugins/youtubeintegrator/resp.xml
-cd plugins/youtubeintegrator
-mkdir swfobject
-quote site chmod 777 swfobject
-cd ../../
-send plugins\youtubeintegrator\swfobject\expressInstall.swf plugins/youtubeintegrator/swfobject/expressInstall.swf
-quote site chmod 666 plugins/youtubeintegrator/swfobject/expressInstall.swf
-send plugins\youtubeintegrator\swfobject\index.html plugins/youtubeintegrator/swfobject/index.html
-quote site chmod 666 plugins/youtubeintegrator/swfobject/index.html
-send plugins\youtubeintegrator\swfobject\index_dynamic.html plugins/youtubeintegrator/swfobject/index_dynamic.html
-quote site chmod 666 plugins/youtubeintegrator/swfobject/index_dynamic.html
-cd plugins/youtubeintegrator/swfobject
-mkdir src
-quote site chmod 777 src
-cd ../../../
-send plugins\youtubeintegrator\swfobject\src\expressInstall.as plugins/youtubeintegrator/swfobject/src/expressInstall.as
-quote site chmod 666 plugins/youtubeintegrator/swfobject/src/expressInstall.as
-send plugins\youtubeintegrator\swfobject\src\expressInstall.fla plugins/youtubeintegrator/swfobject/src/expressInstall.fla
-quote site chmod 666 plugins/youtubeintegrator/swfobject/src/expressInstall.fla
-send plugins\youtubeintegrator\swfobject\src\swfobject.js plugins/youtubeintegrator/swfobject/src/swfobject.js
-quote site chmod 666 plugins/youtubeintegrator/swfobject/src/swfobject.js
-send build\indexfile.htm plugins/youtubeintegrator/swfobject/src/index.htm
-quote site chmod 666 plugins/youtubeintegrator/swfobject/src/index.htm
-send plugins\youtubeintegrator\swfobject\swfobject.js plugins/youtubeintegrator/swfobject/swfobject.js
-quote site chmod 666 plugins/youtubeintegrator/swfobject/swfobject.js
-send plugins\youtubeintegrator\swfobject\test.swf plugins/youtubeintegrator/swfobject/test.swf
-quote site chmod 666 plugins/youtubeintegrator/swfobject/test.swf
-send build\indexfile.htm plugins/youtubeintegrator/swfobject/index.htm
-quote site chmod 666 plugins/youtubeintegrator/swfobject/index.htm
-send plugins\youtubeintegrator\uploadform.tml plugins/youtubeintegrator/uploadform.tml
-quote site chmod 666 plugins/youtubeintegrator/uploadform.tml
-send plugins\youtubeintegrator\Use the YouTube API with PHP.txt plugins/youtubeintegrator/Use the YouTube API with PHP.txt
-quote site chmod 666 plugins/youtubeintegrator/Use the YouTube API with PHP.txt
-send plugins\youtubeintegrator\youtube.class.install.php plugins/youtubeintegrator/youtube.class.install.php
-quote site chmod 666 plugins/youtubeintegrator/youtube.class.install.php
-send plugins\youtubeintegrator\youtube.class.php plugins/youtubeintegrator/youtube.class.php
-quote site chmod 666 plugins/youtubeintegrator/youtube.class.php
-send build\indexfile.htm plugins/youtubeintegrator/index.htm
-quote site chmod 666 plugins/youtubeintegrator/index.htm
-cd plugins
 mkdir youtubeplayer
 quote site chmod 777 youtubeplayer
 cd ../
