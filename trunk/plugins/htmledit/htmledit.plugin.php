@@ -17,14 +17,11 @@ class themleditplugin extends tplugin {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $template = ttemplate::instance();
     $template->adminheads['htmleditplugin'] = '<link rel="stylesheet" href="' . $url . '/ed.css" type="text/css" />';
-    $template->adminjavascripts['htmleditplugin'] = '<script type="text/javascript" src="'. $url . '/ed.js"></script>
-    <script type="text/javascript">
+    $template->adminjavascripts['htmleditplugin'] = '<script type="text/javascript">
     var URLpromt = "' . $about['urlpromt'] . '";
     var IMGpromt = "' . $about['imgpromt'] . '";
-    var _documentReady = false;
-  window.onload = function(){_documentReady = true}
-    init_OnLoad("edToolbar(\'all\')");
-    </script>';
+    </script>
+<script type="text/javascript" src="'. $url . '/ed.js"></script>';
     $template->save();
   }
   
