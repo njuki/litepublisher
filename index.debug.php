@@ -1,6 +1,5 @@
 <?php
 //set_time_limit(1);
-error_reporting(E_ALL);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 //set_error_handler("exception_error_handler");
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -94,25 +93,20 @@ if (!defined('litepublisher_mode')) {
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
 
-/*
-litepublisher::$options->cache = false;
-litepublisher::$options->data['dbconfig']['prefix'] = 'litepublisherru_';
-litepublisher::$options->setpassword('admin');
-litepublisher::$options->save();
-*/
     } catch (Exception $e) {
       echo $e->GetMessage();
     }
 
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
+
 if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){
 echo "<pre>\n";
 $man = tdbmanager::instance();
 //$man->optimize();
 //$man->deletealltables();
-//echo  $man->performance();
+echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//tupdater::instance()->run(3.73);
+//tupdater::instance()->run(3.75);
 ?>
