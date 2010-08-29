@@ -199,7 +199,7 @@ class tdbmanager  {
     $total = 0.0;
     $max = 0.0;
     foreach (litepublisher::$db->history as $i => $item) {
-    $result .= "$i: $worked\n{$item['sql']}\n\n";
+    $result .= "$i: {$item['time']}\n{$item['sql']}\n\n";
       $total += $item['time'];
       if ($max < $item['time']) {
         $maxsql = $item['sql'];
