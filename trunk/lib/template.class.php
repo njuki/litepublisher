@@ -11,6 +11,8 @@ class ttemplate extends tevents {
   public $url;
   public $context;
   public $itemplate;
+  public $heads;
+  public  $adminheads;
   public $javascripts;
   public $adminjavascripts;
   public $stdjavascripts;
@@ -40,6 +42,8 @@ class ttemplate extends tevents {
     $this->data['hovermenu'] = true;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
+    $this->addmap('heads', array());
+    $this->addmap('adminheads', array());
     $this->addmap('javascripts', array());
     $this->addmap('adminjavascripts', array());
     $this->addmap('stdjavascripts', array(
@@ -272,14 +276,16 @@ class ttemplate extends tevents {
     $result = $this->gethovermenuhead();
     if ($this->itemplate) $result .= $this->context->gethead();
     if (litepublisher::$urlmap->adminpanel) {
+      $result .= implode("\n", $this->adminheads);
       $result .= implode("\n", $this->adminjavascripts);
       $this->callevent('onadminhead', array(&$result));
     } else {
+      $result .= implode("\n", $this->heads);
       $result .= implode("\n", $this->javascripts);
     }
     $result = $this->getjavaoptions() . $result;
     $this->callevent('onhead', array(&$result));
-    return trim($result);
+    return $result;
   }
   
   public function gethovermenuhead() {
