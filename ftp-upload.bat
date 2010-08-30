@@ -1,4 +1,4 @@
-@echo off
+echo on
 echoLite Publisher ftp uploader
 echo Please edit "ftp-install.txt" file to upload Lite Publisher
 echo 1. Change "open example.com" to your server name

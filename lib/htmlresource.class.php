@@ -62,14 +62,14 @@ class THtmlResource  {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-    if (preg_match_all('/\[(area|editor|edit|checkbox|text):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       $admin = $theme->content->admin;
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[2];
         $varname = '$' . $name;
         //convert spec charsfor editor
-        if ($type != 'checkbox') {
+        if (($type != 'checkbox') || ($name != 'combo')) {
           if (isset($args->data[$varname])) {
             $args->data[$varname] = str_replace(
             array('"', "'", '$'),

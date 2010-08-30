@@ -1,6 +1,7 @@
 <?php
-$mode = 'update';
+define('litepublisher_mode', 'xmlrpc');
 include('index.php');
-    $updater = &TUpdater::Instance();
-echo $updater->AutoUpdate();
+    $updater = tupdater::instance();
+$r = $updater->autoupdate();
+var_dump($r);
 ?>
