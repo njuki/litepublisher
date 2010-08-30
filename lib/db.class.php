@@ -79,7 +79,12 @@ class tdatabase {
     $this->result = mysql_query($sql, $this->handle);
     if (litepublisher::$debug) {
       $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
-      //if (count($this->history) > 100) $this->error("too many queries");
+    if ($r = mysql_fetch_assoc(mysql_query('SHOW WARNINGS', $this->handle))) {
+echo "<pre>\n";
+echo $sql, "\n";
+var_dump($r);
+echo "</pre>\n";
+}
     }
     if ($this->result == false) {
       $this->doerror(mysql_error($this->handle));
