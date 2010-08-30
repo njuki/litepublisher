@@ -17,7 +17,7 @@ function tdownloadcounterInstall($self) {
   $files->deleted = $self->delete;
   
   $urlmap = turlmap::instance();
-  $urlmap->add('/downloadcounter/', get_class($self), 'get', null);
+  $urlmap->add('/downloadcounter/', get_class($self), null, 'get');
 }
 
 function tdownloadcounterUninstall(&$self) {

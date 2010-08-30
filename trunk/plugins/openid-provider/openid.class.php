@@ -27,8 +27,23 @@ class topenid extends tevents {
   }
   
   public function install() {
-    $urlmap = turlmap::instance();
-    $urlmap->add($this->url, get_class($this), null, 'get');
+    litepublisher::$urlmap->add($this->url, get_class($this), null, 'get');
+
+$template = ttemplate::instance();
+$template->heads['openidclient'] =  sprintf('<link rel="openid.server" href="%1$s" />
+	<link rel="openid2.provider" href="%1$s" />
+	<link rel="openid.delegate" href="%1$s" />
+	<link rel="openid2.local_id" href="%1$s" />',
+litepublisher::$options->url . $this->url);
+$template->save();
+  }
+
+  public function uninstall() {
+    turlmap::unsub($this);
+$template = ttemplate::instance();
+unset($template->heads['openidclient']);
+$template->save();
+litepublisher::$urlmap->clearcache();
   }
   
   public function afterload() {
@@ -40,7 +55,7 @@ class topenid extends tevents {
   }
   
   private function LoadBigMath() {
-    require_once(litepublisher::$paths->libinclude . 'bigmath.php');
+    require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'bigmath.php');
     if (!extension_loaded('bcmath')) {
       if (!@dl('bcmath.'. PHP_SHLIB_SUFFIX) && !@dl('php_bcmath.'. PHP_SHLIB_SUFFIX)) {
         if (!extension_loaded('gmp')) {
@@ -73,9 +88,14 @@ class topenid extends tevents {
       tfiler::log($log, 'openid.log');
     }
     $this->LoadBigMath();
-    tlocal::loadlang('admin');
     ini_set('arg_separator.output', '&');
-    
+    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
+if (file_exists($dir . litepublisher::$options->languages . '.ini')) {
+tlocal::loadini($dir . litepublisher::$options->languages . '.ini');
+} else {
+tlocal::loadini($dir . 'en.ini';
+}
+
     if (!isset($_REQUEST['openid_mode'])) return $this->nomode();
     switch ($_REQUEST['openid_mode']) {
       case 'associate':
@@ -105,20 +125,17 @@ class topenid extends tevents {
   }
   
   private function nomode() {
-    $options = litepublisher::$options;
-    $result = tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
-    //$result = str_replace('</head>', "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=$options->url$options->home\">\n</head>", $result);
-    return $result;
+return tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
   }
   
   private function id_res() {
     $auth = &TAuthDigest::instance();
     if (!$auth->auth())  return $auth->Headers();
-    return tsimplecontent::html(TLocal::$data['openidserver']['logged']);
+    return tsimplecontent::html(tlocal::$data['openidserver']['logged']);
   }
   
   private function cancel() {
-    return tsimplecontent::html(TLocal::$data['openidserver']['canceled']);
+    return tsimplecontent::html(tlocal::$data['openidserver']['canceled']);
   }
   
   private function GetMessage($key, $defkey) {
@@ -347,6 +364,8 @@ class topenid extends tevents {
         }
         
         $html = THtmlResource::instance();
+    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
+$html->loadini($dir . 'html.ini');
         $html->section = 'openidserver';
         $lang = tlocal::instance('openidserver');
         $args = targs::instance();

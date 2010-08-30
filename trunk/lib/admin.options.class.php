@@ -91,13 +91,7 @@ class Tadminoptions extends tadminmenu {
       $args->urlencode = $linkgen->urlencode;
       break;
       
-      case 'openid':
-      $openid = topenid::instance();
-      $args->confirm = $openid->confirm;
-      $args->usebigmath = $openid->usebigmath;
-      $args->trusted = implode("\n", $openid->trusted);
-      break;
-      
+
       case 'cache':
       $args->cache = $options->cache;
       break;
@@ -280,14 +274,7 @@ class Tadminoptions extends tadminmenu {
       $linkgen->save();
       break;
       
-      case 'openid':
-      $openid = topenid::instance();
-      $openid->confirm = isset($confirm);
-      $openid->usebigmath = isset($usebigmath);
-      $openid->trusted = explode("\n", trim($trusted));
-      $openid->save();
-      break;
-      
+
       case 'cache':
       if (isset($clearcache)) {
         ttheme::clearcache();
