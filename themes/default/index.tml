@@ -14,10 +14,6 @@
 	<meta name="keywords" content="$template.keywords" />
 	<meta name="description" content="$template.description" />
 	<link rel="sitemap" href="$options.url/sitemap.htm" />
-	<link rel="openid.server" href="$options.url/openid/" />
-	<link rel="openid2.provider" href="$options.url/openid/" />
-	<link rel="openid.delegate" href="$options.url/openid/" />
-	<link rel="openid2.local_id" href="$options.url/openid/" />
 	<!--[if IE 6]>
 		<script src="$template.url/css/DD_belatedPNG.js"></script>
 		<script>		
