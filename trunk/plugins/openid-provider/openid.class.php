@@ -93,7 +93,7 @@ litepublisher::$urlmap->clearcache();
 if (file_exists($dir . litepublisher::$options->languages . '.ini')) {
 tlocal::loadini($dir . litepublisher::$options->languages . '.ini');
 } else {
-tlocal::loadini($dir . 'en.ini';
+tlocal::loadini($dir . 'en.ini');
 }
 
     if (!isset($_REQUEST['openid_mode'])) return $this->nomode();
