@@ -1253,7 +1253,12 @@ class turlmap extends titems {
     }
   }
   
+  public function addget($url, $class) {
+    return $this->add($url, $class, null, 'get');
+  }
+  
   public function add($url, $class, $arg, $type = 'normal') {
+    if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
     if (dbversion) {
       $item= array(
       'url' => $url,

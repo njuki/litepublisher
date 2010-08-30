@@ -91,7 +91,7 @@ class Tadminoptions extends tadminmenu {
       $args->urlencode = $linkgen->urlencode;
       break;
       
-
+      
       case 'cache':
       $args->cache = $options->cache;
       break;
@@ -274,7 +274,7 @@ class Tadminoptions extends tadminmenu {
       $linkgen->save();
       break;
       
-
+      
       case 'cache':
       if (isset($clearcache)) {
         ttheme::clearcache();
