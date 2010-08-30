@@ -28,22 +28,22 @@ class topenid extends tevents {
   
   public function install() {
     litepublisher::$urlmap->add($this->url, get_class($this), null, 'get');
-
-$template = ttemplate::instance();
-$template->heads['openidclient'] =  sprintf('<link rel="openid.server" href="%1$s" />
-	<link rel="openid2.provider" href="%1$s" />
-	<link rel="openid.delegate" href="%1$s" />
-	<link rel="openid2.local_id" href="%1$s" />',
-litepublisher::$options->url . $this->url);
-$template->save();
+    
+    $template = ttemplate::instance();
+    $template->heads['openidclient'] =  sprintf('<link rel="openid.server" href="%1$s" />
+    <link rel="openid2.provider" href="%1$s" />
+    <link rel="openid.delegate" href="%1$s" />
+    <link rel="openid2.local_id" href="%1$s" />',
+    litepublisher::$options->url . $this->url);
+    $template->save();
   }
-
+  
   public function uninstall() {
     turlmap::unsub($this);
-$template = ttemplate::instance();
-unset($template->heads['openidclient']);
-$template->save();
-litepublisher::$urlmap->clearcache();
+    $template = ttemplate::instance();
+    unset($template->heads['openidclient']);
+    $template->save();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function afterload() {
@@ -90,12 +90,12 @@ litepublisher::$urlmap->clearcache();
     $this->LoadBigMath();
     ini_set('arg_separator.output', '&');
     $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-if (file_exists($dir . litepublisher::$options->languages . '.ini')) {
-tlocal::loadini($dir . litepublisher::$options->languages . '.ini');
-} else {
-tlocal::loadini($dir . 'en.ini');
-}
-
+    if (file_exists($dir . litepublisher::$options->languages . '.ini')) {
+      tlocal::loadini($dir . litepublisher::$options->languages . '.ini');
+    } else {
+      tlocal::loadini($dir . 'en.ini');
+    }
+    
     if (!isset($_REQUEST['openid_mode'])) return $this->nomode();
     switch ($_REQUEST['openid_mode']) {
       case 'associate':
@@ -125,7 +125,7 @@ tlocal::loadini($dir . 'en.ini');
   }
   
   private function nomode() {
-return tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
+    return tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
   }
   
   private function id_res() {
@@ -364,8 +364,8 @@ return tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
         }
         
         $html = THtmlResource::instance();
-    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-$html->loadini($dir . 'html.ini');
+        $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
+        $html->loadini($dir . 'html.ini');
         $html->section = 'openidserver';
         $lang = tlocal::instance('openidserver');
         $args = targs::instance();

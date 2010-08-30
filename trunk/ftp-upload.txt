@@ -196,8 +196,6 @@ send lib\notfound.class.php lib/notfound.class.php
 quote site chmod 666 lib/notfound.class.php
 send lib\oauth.class.php lib/oauth.class.php
 quote site chmod 666 lib/oauth.class.php
-send lib\openid.class.php lib/openid.class.php
-quote site chmod 666 lib/openid.class.php
 send lib\options.class.php lib/options.class.php
 quote site chmod 666 lib/options.class.php
 send lib\pinger.class.php lib/pinger.class.php
@@ -308,8 +306,6 @@ cd lib
 mkdir include
 quote site chmod 777 include
 cd ../
-send lib\include\bigmath.php lib/include/bigmath.php
-quote site chmod 666 lib/include/bigmath.php
 send lib\include\class-phpmailer.php lib/include/class-phpmailer.php
 quote site chmod 666 lib/include/class-phpmailer.php
 send lib\include\class-pop3.php lib/include/class-pop3.php
@@ -562,6 +558,8 @@ send lib\update\update.3.73.php lib/update/update.3.73.php
 quote site chmod 666 lib/update/update.3.73.php
 send lib\update\update.3.75.php lib/update/update.3.75.php
 quote site chmod 666 lib/update/update.3.75.php
+send lib\update\update.3.76.php lib/update/update.3.76.php
+quote site chmod 666 lib/update/update.3.76.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -828,6 +826,30 @@ send plugins\htmledit\ed.js plugins/htmledit/ed.js
 quote site chmod 666 plugins/htmledit/ed.js
 send plugins\htmledit\htmledit.plugin.php plugins/htmledit/htmledit.plugin.php
 quote site chmod 666 plugins/htmledit/htmledit.plugin.php
+cd plugins/htmledit
+mkdir images
+quote site chmod 777 images
+cd ../../
+send plugins\htmledit\images\bold.gif plugins/htmledit/images/bold.gif
+quote site chmod 666 plugins/htmledit/images/bold.gif
+send plugins\htmledit\images\code.gif plugins/htmledit/images/code.gif
+quote site chmod 666 plugins/htmledit/images/code.gif
+send plugins\htmledit\images\image.gif plugins/htmledit/images/image.gif
+quote site chmod 666 plugins/htmledit/images/image.gif
+send plugins\htmledit\images\index.htm plugins/htmledit/images/index.htm
+quote site chmod 666 plugins/htmledit/images/index.htm
+send plugins\htmledit\images\italic.gif plugins/htmledit/images/italic.gif
+quote site chmod 666 plugins/htmledit/images/italic.gif
+send plugins\htmledit\images\link.gif plugins/htmledit/images/link.gif
+quote site chmod 666 plugins/htmledit/images/link.gif
+send plugins\htmledit\images\ordered.gif plugins/htmledit/images/ordered.gif
+quote site chmod 666 plugins/htmledit/images/ordered.gif
+send plugins\htmledit\images\quote.gif plugins/htmledit/images/quote.gif
+quote site chmod 666 plugins/htmledit/images/quote.gif
+send plugins\htmledit\images\underline.gif plugins/htmledit/images/underline.gif
+quote site chmod 666 plugins/htmledit/images/underline.gif
+send plugins\htmledit\images\unordered.gif plugins/htmledit/images/unordered.gif
+quote site chmod 666 plugins/htmledit/images/unordered.gif
 send plugins\htmledit\index.htm plugins/htmledit/index.htm
 quote site chmod 666 plugins/htmledit/index.htm
 cd plugins
@@ -978,6 +1000,38 @@ send plugins\oldestposts\oldestposts.install.php plugins/oldestposts/oldestposts
 quote site chmod 666 plugins/oldestposts/oldestposts.install.php
 send plugins\oldestposts\oldestposts.php plugins/oldestposts/oldestposts.php
 quote site chmod 666 plugins/oldestposts/oldestposts.php
+cd plugins
+mkdir openid-provider
+quote site chmod 777 openid-provider
+cd ../
+send plugins\openid-provider\.htaccess plugins/openid-provider/.htaccess
+quote site chmod 666 plugins/openid-provider/.htaccess
+send plugins\openid-provider\about.ini plugins/openid-provider/about.ini
+quote site chmod 666 plugins/openid-provider/about.ini
+send plugins\openid-provider\admin.openid.class.php plugins/openid-provider/admin.openid.class.php
+quote site chmod 666 plugins/openid-provider/admin.openid.class.php
+send plugins\openid-provider\bigmath.php plugins/openid-provider/bigmath.php
+quote site chmod 666 plugins/openid-provider/bigmath.php
+send plugins\openid-provider\index.htm plugins/openid-provider/index.htm
+quote site chmod 666 plugins/openid-provider/index.htm
+send plugins\openid-provider\openid.class.php plugins/openid-provider/openid.class.php
+quote site chmod 666 plugins/openid-provider/openid.class.php
+cd plugins/openid-provider
+mkdir resource
+quote site chmod 777 resource
+cd ../../
+send plugins\openid-provider\resource\.htaccess plugins/openid-provider/resource/.htaccess
+quote site chmod 666 plugins/openid-provider/resource/.htaccess
+send plugins\openid-provider\resource\en.ini plugins/openid-provider/resource/en.ini
+quote site chmod 666 plugins/openid-provider/resource/en.ini
+send plugins\openid-provider\resource\html.ini plugins/openid-provider/resource/html.ini
+quote site chmod 666 plugins/openid-provider/resource/html.ini
+send plugins\openid-provider\resource\index.htm plugins/openid-provider/resource/index.htm
+quote site chmod 666 plugins/openid-provider/resource/index.htm
+send plugins\openid-provider\resource\ru.ini plugins/openid-provider/resource/ru.ini
+quote site chmod 666 plugins/openid-provider/resource/ru.ini
+send plugins\openid-provider\resource\ua.ini plugins/openid-provider/resource/ua.ini
+quote site chmod 666 plugins/openid-provider/resource/ua.ini
 cd plugins
 mkdir polls
 quote site chmod 777 polls

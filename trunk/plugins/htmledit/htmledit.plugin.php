@@ -21,7 +21,7 @@ class themleditplugin extends tplugin {
     var URLpromt = "' . $about['urlpromt'] . '";
     var IMGpromt = "' . $about['imgpromt'] . '";
     </script>
-<script type="text/javascript" src="'. $url . '/ed.js"></script>';
+    <script type="text/javascript" src="'. $url . '/ed.js"></script>';
     $template->save();
   }
   
