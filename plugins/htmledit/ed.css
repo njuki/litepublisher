@@ -20,8 +20,18 @@ margin:0 2px 2px 0;
 .toolbar a:hover span{display:inline; position:absolute; background:#f5f5f5; border:1px solid #cccccc; color:#6c6c6c;}
 
 .ed{
-
 width:500px;
 border:1px solid #ccc;
 height:300px;
+}
+
+.htmlbutton {
+margin: 1px;
+padding: 2px;
+}
+
+.htmlbutton:hover {
+opacity:.60;
+filter: alpha(opacity=60); 
+-moz-opacity: 0.60;
 }

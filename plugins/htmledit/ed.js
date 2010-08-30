@@ -34,7 +34,6 @@ function edToolbar(obj) {
 			var toolbar = document.createElement('div');
 			toolbar.className = 'toolbar';
 			toolbar.innerHTML = buttons(textarea[i].id);
-alert(toolbar.innerHTML );
 			textarea[i].parentNode.insertBefore(toolbar, textarea[i]);
 		}
 	} else {
@@ -46,16 +45,26 @@ alert(toolbar.innerHTML );
 	}
 }
 
+function addbutton(click, tag, image, obj) {
+return '<a onClick="' + click + '(\'<' + tag  + ">', '</" + tag + ">', '" + obj + "')\">" +
+'<img class="htmlbutton" src="' + ltoptions.files + '/plugins/htmledit/images/' + image + '" name="btn' + tag + '" alt="' + tag + '" title="' + tag + '" /></a>';
+}
+
+function addbuttonclick(click, title, image, obj) {
+return '<a onClick="' + click + "('" + obj + "');\">" +
+'<img class="htmlbutton" src="' + ltoptions.files + '/plugins/htmledit/images/' + image + '" name="btn' + title + '" alt="' + title + '" title="' + title + '" /></a>';
+}
+
 function buttons(obj) {
-var buttons = "<a href='javascript:void(0);' onClick=\"doAddTags('<strong>','</strong>','" + obj + "')\">b<span>&lt;strong&gt;*&lt;/strong&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doAddTags('<em>','</em>','" + obj + "')\">i<span>&lt;em&gt;*&lt;/em&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doAddTags('<h4>','</h4>','" + obj + "')\">h4<span>&lt;h4&gt;*&lt;/h4&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doAddTags('<br />','','" + obj + "')\">br<span>&lt;br /&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doAddTags('<pre><code>','</code></pre>','" + obj + "')\">?&gt;<span>&lt;pre&gt;&lt;code&gt;*&lt;/code&gt;&lt;/pre&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doList('<ul>','</ul>','" + obj + "')\">ul<span>&lt;ul&gt;<br />&nbsp;&nbsp;&lt;li&gt;*&lt;\/li&gt;<br />&lt;/ul&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doList('<ol>','</ol>','" + obj + "')\">ol<span>&lt;ol&gt;<br />&nbsp;&nbsp;&lt;li&gt;*&lt;\/li&gt;<br />&lt;/ol&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doImage('" + obj + "')\">img<span>&lt;img&nbsp;src='' /&gt;</span></a>" +
-	"<a href='javascript:void(0);' onClick=\"doURL('" + obj + "')\">url<span>&lt;a&nbsp;href=''&gt;*&lt;/a&gt;</span></a>";
+var buttons = addbutton('doAddTags', 'strong', 'bold.gif', obj) +
+addbutton('doAddTags', 'em', 'italic.gif', obj) +
+addbutton('doAddTags', 'u', 'underline.gif', obj) +
+addbuttonclick('doURL', 'link', 'link.gif', obj) +
+addbuttonclick('doImage', 'picture', 'image.gif', obj) +
+addbutton('doList', 'ul', 'unordered.gif', obj) +
+addbutton('doList', 'ol', 'sordered.gif', obj) +
+addbutton('doAddTags', 'blockquote', 'quote.gif', obj) +
+addbutton('doAddTags', 'code', 'code.gif', obj);
 		return buttons;
 }
 	
