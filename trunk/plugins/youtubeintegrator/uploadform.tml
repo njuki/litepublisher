@@ -1,4 +1,8 @@
- <form name="tokenform" id="tokenform" action="" method="post"  >
+ <form name="tokenform" id="tokenform" action="" method="post" onsubmit="return false;">
+[combo:category]
+[text:title]
+[text:description]
+[text:keywords]
 </form>
 
  <form name="youtubeuploadform" id="youtubeuploadform" action="" method="post"  enctype="multipart/form-data" 

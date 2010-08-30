@@ -347,6 +347,7 @@ class tthemeparser extends tevents {
     $result['checkbox'] = trim($this->gettag($s, 'checkbox', '', $default->checkbox));
     $result['text'] = trim($this->gettag($s, 'text', '', $default->text));
     $result['edit'] = trim($this->gettag($s, 'edit', '', $default->edit));
+    $result['combo'] = trim($this->gettag($s, 'combo', '', $default->combo));
     $result['form'] = trim($this->gettag($s, 'form', '', $default->form));
     return $result;
   }

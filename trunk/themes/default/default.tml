@@ -272,6 +272,12 @@
 <label for='$name'><strong>$lang.$name</strong></label></p>
 <!--/text-->
 
+<!--combo-->
+		<h3><label for="$name">$lang.$name</label></h3>
+<p><select name="$name" id="$name">
+$value
+</select></p>
+<!--/combo-->
 
 <!--form-->
 <h2>$formtitle</h2>
