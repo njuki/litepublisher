@@ -6,6 +6,7 @@ class tyoutubeoauth extends toauth {
     parent::create();
     $this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'oauth';
     $this->data['devkey'] = '';
+    $this->urllist['callback'] = litepublisher::$options->url . '/admin/youtube/accesstoken.htm';
     $this->urllist['gettokenupload'] = 'http://gdata.youtube.com/action/GetUploadToken';
   }
   
@@ -75,8 +76,11 @@ class tyoutube extends tevents {
   
   public function request($arg) {
     switch ($arg) {
-      case 'accesstoken':
-      return $this->getaccesstoken();
+      case 'access':
+      if ($this->oauth->getaccesstoken()) {
+return  turlmap::redir301('/admin/files/youtube/');
+}
+return 404;
       
       case 'uploaded':
       return $this->uploaded();
