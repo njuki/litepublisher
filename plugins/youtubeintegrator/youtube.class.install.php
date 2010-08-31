@@ -14,6 +14,7 @@ $urlmap = turlmap::instance();
 $urlmap->lock();
 $urlmap->add('/admin/youtube/getrequest.htm', get_class($self), 'request', 'get');
 $urlmap->add('/admin/youtube/accesstoken.htm', get_class($self), 'access', 'get');
+$urlmap->add('/admin/youtube/uploaded.htm', get_class($self), 'uploaded', 'get');
 $admin = tadminmenus::instance();
 $idfiles = $admin->url2id('/admin/files/');
     $admin->createitem($idfiles, 'youtube', 'editor', 'tadminyoutubefiles');

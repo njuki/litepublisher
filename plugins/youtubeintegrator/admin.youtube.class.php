@@ -7,9 +7,8 @@ class tadminyoutube {
   }
 
   public function getcontent() {
-tlocal::load(dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR . litepublisher::$options->languages . '.youtube');
-$lang = tlocal::instance('youtube');
     $plugin = tyoutube::instance();
+$lang = $plugin->getlang();
     $args = targs::instance();
     $args->devkey = $plugin->devkey;
     $args->secret = $plugin->secret;
