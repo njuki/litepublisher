@@ -1,6 +1,7 @@
 <?php
 
 class tyoutube extends toauth {
+private $devkey;
   
   public static function instance() {
     return getinstance(__class__);
@@ -9,7 +10,7 @@ class tyoutube extends toauth {
   protected function create() {
     parent::create();
     $this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'index';
-    $this->data['devkey'] = '';
+    $this->devkey = 'AI39si4_m8rJy-W_aoj8IB--x80qAWN1MEoIqclupj_mulksGFDiNz2tIxVLQAnXMPYA8adauF45HFxKQV9WiQtbCJV64ZFmDw';
     $this->urllist['callback'] = litepublisher::$options->url . '/admin/youtube/accesstoken.htm';
     $this->urllist['gettokenupload'] = 'http://gdata.youtube.com/action/GetUploadToken';
   }
