@@ -63,12 +63,23 @@ private $devkey;
     $postdata = $xml->asXML();
     if ($response = $this->oauth->postdata($postdata, $this->oauth->urllist['gettokenupload']))  return simplexml_load_string($response);    return false;
   }
+
+public static function getlang() {
+tlocal::load(dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR . litepublisher::$options->languages . '.youtube');
+return tlocal::instance('youtube');
+}
   
-  public function getuploaded() {
-    
+  public function uploaded() {
+$lang = self::getlang();
+    if (empty($_GET['status']) || empty($_GET['id']) ||($_GET['status'] != 200))  return tsimplecontent::content($lang->notuploaded);
+//add id to files
+$files = tfiles::instance();
+return turlmap::redir301('/admin/files/youtube/');
   }
   
   public function request($arg) {
+    if ($s = tadminmenu::auth('editor')) return $s;
+
     switch ($arg) {
 case 'request':
 if ($url = $this->getrequesttoken()) {
@@ -77,7 +88,7 @@ return turlmap::redir($url);
 return 404;
 
       case 'access':
-      if ($this->getaccesstoken()) {
+      if (!empty($_GET['oauth_token']) && $this->getaccesstoken()) {
 return  turlmap::redir301('/admin/files/youtube/');
 }
 return 404;
