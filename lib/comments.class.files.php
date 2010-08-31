@@ -57,7 +57,7 @@ class tcomments extends titems {
     return count($this->items);
   }
   
-  public function add($author, $content, $status) {
+  public function add($author, $content, $status, $ip) {
     $filter = tcontentfilter::instance();
     $item  = array(
     'author' => $author,
@@ -73,7 +73,6 @@ class tcomments extends titems {
     }
     $this->save();
     
-    $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
     $this->raw->add($this->autoid, $content, $ip);
     $this->added($this->autoid);
     return $this->autoid;

@@ -4,7 +4,6 @@
   `parent` int(10) unsigned NOT NULL default '0',
   `posted` datetime NOT NULL default '2010-01-01 10:01:01',
   `status` enum('approved','hold','spam','deleted') default 'approved',
-  `ip` varchar(15) NOT NULL default '',
   `content` text NOT NULL,
 
   PRIMARY KEY  (`id`),

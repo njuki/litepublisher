@@ -139,7 +139,7 @@ class tadminmenu  extends tmenu {
 public function load() { return true; }
 public function save() { return true; }
   
-  public function auth() {
+  public static function auth($group) {
     $auth = tauthdigest::instance();
     if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
@@ -149,7 +149,7 @@ public function save() { return true; }
     
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::instance();
-      if (!$groups->hasright(litepublisher::$options->group, $this->group)) return 404;
+      if (!$groups->hasright(litepublisher::$options->group, $group)) return 404;
     }
   }
   
@@ -160,7 +160,7 @@ public function save() { return true; }
       $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
     }
     
-    if ($s = $this->auth()) return $s;
+    if ($s = self::auth($this->group)) return $s;
     tlocal::loadlang('admin');
     $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();

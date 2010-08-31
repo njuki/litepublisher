@@ -152,6 +152,7 @@ class tcommentform extends tevents {
     if (!isset($_POST['confirmid'])) {
       $values = $_POST;
       $values['date'] = time();
+      $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
       $confirmid  = $kept->add($values);
       return tsimplecontent::html($this->getconfirmform($confirmid));
     }
@@ -171,6 +172,7 @@ class tcommentform extends tevents {
     'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
+    'ip' => isset($values['ip']) ? $values['name'] : '',
     'postid' => $postid,
     'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
     );
@@ -188,14 +190,14 @@ class tcommentform extends tevents {
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance($postid);
-    $uid = $users->add($values['name'], $values['email'], $values['url']);
+    $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     $usercookie = $users->getcookie($uid);
     if (!litepublisher::$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
     
     $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
-    litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content']);
+    litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
     
     $idpostcookie = dbversion ? '' : "@setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
     return "<?php
