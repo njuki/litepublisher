@@ -32,7 +32,7 @@ private $devkey;
     
     if ($xml = $this->getuploadtoken($title, $description, $category, $keywords)) {
       return array(
-      'url' => $xml->url,
+      'url' => $xml->url . '?nexturl=' . rawurlencode(litepublisher::$options->url . '/admin/youtube/uploaded.htm'),
       'token' => $xml->token
       );
     }
@@ -61,21 +61,46 @@ private $devkey;
     $group->keywords = $keywords;
     
     $postdata = $xml->asXML();
-    if ($response = $this->oauth->postdata($postdata, $this->oauth->urllist['gettokenupload']))  return simplexml_load_string($response);    return false;
+    if ($response = $this->postdata($postdata, $this->urllist['gettokenupload']))  return simplexml_load_string($response);    return false;
+  }
+
+public function getfeed() {
+if ($s = $this->get_data('http://gdata.youtube.com/feeds/api/users/default/uploads'))  new SimpleXMLElement($s);
+return false;
+}
+
+public function getitem($id) {
+$xml = $this->getfeed();
+if (!$xml) return false;
+$result = array();
+    foreach ($xml->entry as $entry) {
+$identry = substr($entry->id, strrpos($entry->id, '/'));
+if ($id == $identry) break;
+}
+
+      $media = $entry->children('http://search.yahoo.com/mrss/');
+      // get video thumbnail
+      $attrs = $media->group->thumbnail[0]->attributes();
+      $thumbnail = $attrs['url']; 
+return $result;
+}            
+
+  public function uploaded() {
+$lang = self::getlang();
+    if (empty($_GET['status']) || empty($_GET['id']) ||($_GET['status'] != 200))  return tsimplecontent::content($lang->notuploaded);
+$item = $this->getitem($_GET['id']);
+
+//add id to files
+$files = tfiles::instance();
+return turlmap::redir301('/admin/files/youtube/');
+}
   }
 
 public static function getlang() {
 tlocal::load(dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR . litepublisher::$options->languages . '.youtube');
 return tlocal::instance('youtube');
 }
-  
-  public function uploaded() {
-$lang = self::getlang();
-    if (empty($_GET['status']) || empty($_GET['id']) ||($_GET['status'] != 200))  return tsimplecontent::content($lang->notuploaded);
-//add id to files
-$files = tfiles::instance();
-return turlmap::redir301('/admin/files/youtube/');
-  }
+
   
   public function request($arg) {
     if ($s = tadminmenu::auth('editor')) return $s;

@@ -274,6 +274,29 @@ class toauth extends tevents {
     if ($headers['http_code'] != "200") return false;
     return $response;
   }
-  
+
+public function get_data($url) {
+    $keys['oauth_token'] = $this->token;
+    $authorization = $this->getauthorization($keys, $url);
+    $headers = array('Authorization: OAuth '. $authorization);
+    $headers = array_merge($headers, $this->getextraheaders());
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+
+    $response = curl_exec($ch);
+    $headers = curl_getinfo($ch);
+    curl_close($ch);
+    //var_dump($response , $headers);
+    //echo htmlspecialchars($response );
+    if ($headers['http_code'] != "200") return false;
+    return $response;
+  }
+
 }//class
 ?>
