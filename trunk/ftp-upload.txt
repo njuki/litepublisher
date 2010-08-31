@@ -338,6 +338,8 @@ cd lib
 mkdir install
 quote site chmod 777 install
 cd ../
+send lib\install\admin.board.class.install.php lib/install/admin.board.class.install.php
+quote site chmod 666 lib/install/admin.board.class.install.php
 send lib\install\admin.login.class.install.php lib/install/admin.login.class.install.php
 quote site chmod 666 lib/install/admin.login.class.install.php
 send lib\install\admin.password.class.install.php lib/install/admin.password.class.install.php
@@ -560,6 +562,8 @@ send lib\update\update.3.75.php lib/update/update.3.75.php
 quote site chmod 666 lib/update/update.3.75.php
 send lib\update\update.3.76.php lib/update/update.3.76.php
 quote site chmod 666 lib/update/update.3.76.php
+send lib\update\update.3.77.php lib/update/update.3.77.php
+quote site chmod 666 lib/update/update.3.77.php
 cd lib
 mkdir languages
 quote site chmod 777 languages

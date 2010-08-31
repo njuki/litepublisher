@@ -69,16 +69,16 @@ class tcommentmanager extends tevents {
     $this->save();
   }
   
-  public function add($idpost, $name, $email, $url, $content) {
+  public function add($idpost, $name, $email, $url, $content, $ip) {
     $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
-    $idauthor = $comusers->add($name, $email, $url);
-    return $this->addcomment($idpost, $idauthor, $content);
+    $idauthor = $comusers->add($name, $email, $url, $ip);
+    return $this->addcomment($idpost, $idauthor, $content, $ip);
   }
   
-  public function addcomment($idpost, $idauthor, $content) {
+  public function addcomment($idpost, $idauthor, $content, $ip) {
     $status = litepublisher::$classes->spamfilter->createstatus($idauthor, $content);
     $comments = tcomments::instance($idpost);
-    $id = $comments->add($idauthor,  $content, $status);
+    $id = $comments->add($idauthor,  $content, $status, $ip);
     
     if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
     

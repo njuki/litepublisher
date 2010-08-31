@@ -337,7 +337,7 @@ class turlmap extends titems {
   }
   
   public function setexpired($id) {
-    tfiler::deletemask(litepublisher::$paths->cache . "*.$id-*.php");
+    tfiler::deletemask(litepublisher::$paths->cache . "$id-*.php");
   }
   
   public function setexpiredcurrent() {

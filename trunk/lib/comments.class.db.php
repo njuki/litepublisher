@@ -26,7 +26,7 @@ class tcomments extends titems {
     $this->pid = 0;
   }
   
-  public function add($idauthor, $content, $status) {
+  public function add($idauthor, $content, $status, $ip) {
     if ($idauthor == 0) $this->error('Author id = 0');
     $filter = tcontentfilter::instance();
     $filtered = $filter->filtercomment($content);
@@ -57,6 +57,7 @@ class tcomments extends titems {
     'id' => $id,
     'created' => sqldate(),
     'modified' => sqldate(),
+    'ip' => $ip,
     'rawcontent' => $content,
     'hash' => md5($content)
     ));
@@ -143,6 +144,7 @@ class tcomments extends titems {
     'id' => $id,
     'created' => sqldate($posted),
     'modified' => sqldate(),
+    'ip' => $ip,
     'rawcontent' => $content,
     'hash' => md5($content)
     ));

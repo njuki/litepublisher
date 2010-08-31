@@ -6,35 +6,63 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminboard extends tadminmenu {
+class tadminboard extends tevents implements itemplate {
   
-  public static function instance($id = 0) {
-    return parent::iteminstance(__class__, $id);
+  public static function instance() {
+    return getinstance(__class__);
   }
   
-  public function getgroup() {
-    return 'editor';
+  protected function create() {
+    parent::create();
+    $this->cache = false;
   }
   
+public function load() { return true; }
+public function save() { return true; }
   
+  public function request($id) {
+    if ($s = tadminmenu::auth('editor')) return $s;
+    tlocal::loadlang('admin');
+  }
   
   public function gethead() {
     $editor = tposteditor::instance();
     return $editor->gethead();
   }
   
-  public function getcontent() {
+  public function gettitle() {
+    return tlocal::$data['names']['board'];
+  }
+  
+  public function getkeywords() {
+    return '';
+  }
+  
+  public function getdescription() {
+    return '';
+  }
+  
+  public function getcont() {
     $result = $this->logoutlink;
     $editor = tposteditor::instance();
     $result .= $editor->shorteditor();
     return $result;
   }
   
-  public function processform() {
-  }
-  
   protected function getlogoutlink() {
     return $this->gethtml('login')->logout();
+  }
+  
+  public function gethtml($name = '') {
+    $result = THtmlResource ::instance();
+    if ($name == '') $name = 'login';
+    $result->section = $name;
+    $lang = tlocal::instance($name);
+    return $result;
+  }
+  
+  public function getlang() {
+    return tlocal::instance('login');
   }
   
 }//class

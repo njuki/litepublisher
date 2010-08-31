@@ -93,6 +93,7 @@ function tadminmenusInstall($self) {
     $self->createitem($service, 'run', 'admin', 'tadminservice');
   }
   
+  /*
   $board = $self->additem(array(
   'parent' => 0,
   'url' => '/admin/',
@@ -101,7 +102,7 @@ function tadminmenusInstall($self) {
   'class' => 'tadminboard',
   'group' => 'author'
   ));
-  
+  */
   $self->unlock();
   
   $redir = tredirector::instance();

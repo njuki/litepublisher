@@ -20,14 +20,14 @@ class tcomusers extends titems {
     $this->cache = false;
   }
   
-  public function add($name, $email, $url) {
-    $ip = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
+  public function add($name, $email, $url, $ip) {
     if ($id = $this->find($name, $email, $url)) return $id;
     $id = $this->db->add(array(
     'trust' => 0,
     'name' => $name,
     'url' => $url,
     'email' => $email,
+    'ip' => $ip,
     'cookie' => md5uniq(),
     ));
     
@@ -40,7 +40,8 @@ class tcomusers extends titems {
     $this->UpdateAssoc(array(
     'name' => $name,
     'email' => $email,
-    'url' => $url
+    'url' => $url,
+    'ip' => $ip
     ));
     $manager = tcommentmanager::instance();
     $manager->authoredited($id);

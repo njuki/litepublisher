@@ -24,14 +24,15 @@ class tcomusers extends titems {
     return 'posts'.  DIRECTORY_SEPARATOR . $this->pid . DIRECTORY_SEPARATOR . 'comments.authors';
   }
   
-  public function add($name, $email, $url) {
+  public function add($name, $email, $url, $ip) {
     if ($id = $this->find($name, $email, $url)) return $id;
     $this->lock();
     $this->items[++$this->autoid] = array(
     'name' => $name,
     'url' => $url,
     'email' => $email,
-    'cookie' => md5uniq()
+    'cookie' => md5uniq(),
+    'ip' => $ip
     );
     
     $this->unlock();
@@ -46,6 +47,7 @@ class tcomusers extends titems {
     $item['name'] = $name;
     $item['url'] = $url;
     $item['email'] = $email;
+    $item['ip'] = $ip;
     $this->unlock();
     $manager = tcommentmanager::instance();
     $manager->authoredited($id);
