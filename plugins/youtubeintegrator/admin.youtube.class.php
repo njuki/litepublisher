@@ -7,32 +7,26 @@ class tadminyoutube {
   }
 
   public function getcontent() {
+tlocal::load(dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR . litepublisher::$options->languages . '.youtube');
+$lang = tlocal::instance('youtube');
     $plugin = tyoutube::instance();
     $args = targs::instance();
-    $args->confirm = $openid->confirm;
-    $args->usebigmath = $openid->usebigmath;
-    $args->trusted = implode("\n", $openid->trusted);
-    
-    $tml = '[checkbox:confirm]
-    [checkbox:usebigmath]
-    [editor:trusted]';
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $args->formtitle = $about['formtitle'];
-    $args->data['$lang.confirm'] = $about['confirm'];
-    $args->data['$lang.usebigmath'] = $about['usebigmath'];
-    $args->data['$lang.trusted'] = $about['trusted'];
-    
+    $args->devkey = $plugin->devkey;
+    $args->secret = $plugin->secret;
+        $args->formtitle = $lang->optionstitle;
+    $tml = '[text:devkey] [text:secret]';
     $html = THtmlResource::instance();
-    return $html->adminform($tml, $args);
+    $result = $html->adminform($tml, $args);
+$result .= '<p><a href="' . litepublisher::$options->url . '/admin/youtube/getrequest.htm">' . $lang->getrequest . '</a></p>';
+return $result;
   }
   
   public function processform() {
     extract($_POST, EXTR_SKIP);
     $plugin = tyoutube::instance();
-    $openid->confirm = isset($confirm);
-    $openid->usebigmath = isset($usebigmath);
-    $openid->trusted = explode("\n", trim($trusted));
-    $openid->save();
+    $plugin->devkey = $devkey;
+$plugin->secret = $secret;
+$plugin->save();
   }
   
 }//class

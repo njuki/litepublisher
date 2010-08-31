@@ -1,10 +1,14 @@
 <?php
 
-class tyoutubeoauth extends toauth {
+class tyoutube extends toauth {
   
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
   protected function create() {
     parent::create();
-    $this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'oauth';
+    $this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'index';
     $this->data['devkey'] = '';
     $this->urllist['callback'] = litepublisher::$options->url . '/admin/youtube/accesstoken.htm';
     $this->urllist['gettokenupload'] = 'http://gdata.youtube.com/action/GetUploadToken';
@@ -20,17 +24,6 @@ class tyoutubeoauth extends toauth {
     'GData-Version: 2',
     'X-GData-Key: key=' . $this->devkey
     );
-  }
-  
-}//class
-
-class tyoutube extends tevents {
-  public $oauth;
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'youtube' . DIRECTORY_SEPARATOR . 'index';
-    $this->oauth = new tyoutubeoauth();
   }
   
   public function xmlrpcgetuploadtoken($login, $password, $title, $description, $category, $keywords) {
@@ -76,8 +69,14 @@ class tyoutube extends tevents {
   
   public function request($arg) {
     switch ($arg) {
+case 'request':
+if ($url = $this->getrequesttoken()) {
+return turlmap::redir($url);
+}
+return 404;
+
       case 'access':
-      if ($this->oauth->getaccesstoken()) {
+      if ($this->getaccesstoken()) {
 return  turlmap::redir301('/admin/files/youtube/');
 }
 return 404;
