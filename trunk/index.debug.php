@@ -105,8 +105,8 @@ echo "<pre>\n";
 $man = tdbmanager::instance();
 //$man->optimize();
 //$man->deletealltables();
-echo  $man->performance();
+//echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//tupdater::instance()->run(3.76);
+//tupdater::instance()->run(3.77);
 ?>

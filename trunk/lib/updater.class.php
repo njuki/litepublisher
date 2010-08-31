@@ -71,7 +71,21 @@ class tupdater extends tevents {
     $result = $this->download($this->latest);
     if ($result === true) {
       $result = $lang->successdownload;
-      $this->update($result);
+      $this->update();
+      $result .= $lang->successupdated;
+    }
+    return $result;
+  }
+
+public function auto2($ver) {
+    $lang = tlocal::instance('service');
+$latest = $this->latest;
+if($latest == litepublisher::$options->version) return 'Already updated';
+if (($ver == 0) || ($ver > $latest)) $ver = $latest;
+    $result = $this->download($ver);
+    if ($result === true) {
+      $result = $lang->successdownload;
+      $this->update();
       $result .= $lang->successupdated;
     }
     return $result;
