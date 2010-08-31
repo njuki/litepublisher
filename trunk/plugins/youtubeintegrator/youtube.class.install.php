@@ -12,6 +12,7 @@ functiontyoutubeInstall($self) {
 
 $urlmap = turlmap::instance();
 $urlmap->lock();
+$urlmap->add('/admin/youtube/getrequest.htm', get_class($self), 'request', 'get');
 $urlmap->add('/admin/youtube/accesstoken.htm', get_class($self), 'access', 'get');
 $admin = tadminmenus::instance();
 $idfiles = $admin->url2id('/admin/files/');
@@ -23,7 +24,7 @@ $urlmap->unlock();
   $rpc->add('litepublisher.youtube.getuploadtoken', 'xmlrpcgetuploadtoken', get_class($self));
 }
 
-functiontyoutubeUninstall($self) {
+function tyoutubeUninstall($self) {
   $rpc = TXMLRPC::instance();
   $rpc->deleteclass(get_class($self));
   
