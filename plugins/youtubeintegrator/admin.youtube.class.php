@@ -14,10 +14,9 @@ $lang = tlocal::instance('youtube');
     $args->devkey = $plugin->devkey;
     $args->secret = $plugin->secret;
         $args->formtitle = $lang->optionstitle;
-    $tml = '[text:devkey] [text:secret]';
     $html = THtmlResource::instance();
 $result = sprintf('<p>%s <a href="http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html">http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html</a></p>', $lang->registerapp);
-    $result .= $html->adminform($tml, $args);
+    $result .= $html->adminform('[text:secret]', $args);
 $result .= '<p><a href="' . litepublisher::$options->url . '/admin/youtube/getrequest.htm">' . $lang->getrequest . '</a></p>';
 return $result;
   }
