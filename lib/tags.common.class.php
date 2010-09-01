@@ -256,7 +256,7 @@ class tcommontags extends titems implements  itemplate {
     if (!in_array($sortname, array('title', 'itemscount', 'id'))) $sortname = 'title';
     
     if ($this->dbversion) {
-      $limit  = $sortname == 'itemscount' ? "order by $this->thistable.itemscount asc" :"order by $this->thistable.$sortname desc";
+      $limit  = $sortname == 'itemscount' ? "order by $this->thistable.itemscount desc" :"order by $this->thistable.$sortname asc";
       if ($count > 0) $limit .= " limit $count";
       return $this->select("$this->thistable.parent = 0", $limit);
     }

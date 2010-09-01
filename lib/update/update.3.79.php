@@ -9,7 +9,7 @@ $urlmap = turlmap::instance();
 if (dbversion) {
 $urlmap->db->delete("url = '/admin/themes/javascripts/'");
 } else {
-unset($urlmap->items['/admin/themes/javascripts/');
+unset($urlmap->items['/admin/themes/javascripts/']);
 $urlmap->save();
 }
 }
