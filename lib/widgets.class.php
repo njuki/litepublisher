@@ -450,11 +450,14 @@ class twidgets extends titems {
     $filename = twidget::getcachefilename($id, $sitebar);
     if (!file_exists($filename)) {
       $widget = $this->getwidget($id);
-      $content = $widget->getwidget($id, $sitebar);
+      $content = $widget->getcontent($id, $sitebar);
       file_put_contents($filename, $content);
       @chmod($filename, 0666);
     }
-    return "\n<?php @include('$filename'); ?>\n";
+
+    $theme = ttheme::instance();
+    return $theme->getwidget($this->items[$id]['title'], "\n<?php @include('$filename'); ?>\n", $this->items[
+$id]['template'], $sitebar);
   }
   
   private function getcode($id, $sitebar) {

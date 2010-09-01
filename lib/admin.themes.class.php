@@ -23,7 +23,6 @@ class tadminthemes extends tadminmenu {
       $args->url = litepublisher::$options->url . $this->url . litepublisher::$options->q ."plugin=$template->theme";
       $result .= $html->pluginlink($args);
     }
-    
     switch ($this->name) {
       case 'themes':
       if ($plugin && !empty($_GET['plugin'])) {

@@ -247,20 +247,20 @@ class turlmap extends titems {
   public function delete($url) {
     if (dbversion) {
       $url = dbquote($url);
-      if ($item = $this->db->getitem("url = $url")) {
-        $this->db->delete("url = $url");
+      if ($id = $this->db->findid('url = ' . $url)) {
+        $this->db->iddelete($id);
       } else {
         return false;
       }
     } elseif (isset($this->items[$url])) {
-      $item = $this->items[$url];
+      $id = $this->items[$url]['id'];
       unset($this->items[$url]);
       $this->save();
     } else {
       return false;
     }
     $this->clearcache();
-    $this->deleted($item);
+    $this->deleted($id);
     return true;
   }
   

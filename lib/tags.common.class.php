@@ -361,7 +361,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function Setlite($lite) {
     if ($lite != $this->lite) {
-      $this->lite = $lite;
+      $this->data['lite'] = $lite;
       $this->save();
     }
   }

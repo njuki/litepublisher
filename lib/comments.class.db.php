@@ -307,7 +307,7 @@ class tcomment extends tdata {
     if ($manager->hidelink || ($this->url == '') || !$manager->checktrust($this->trust)) return $this->name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
-      return "<a $rel href=\"" . litepublisher::$options->url . "/comusers.htm" . litepublisher::$options->q . "id=$this->id\">$this->name</a>";
+      return "<a $rel href=\"" . litepublisher::$options->url . "/comusers.htm" . litepublisher::$options->q . "id=$this->author\">$this->name</a>";
     } else {
       return "<a $rel href=\"$this->url\">$this->name</a>";
     }
