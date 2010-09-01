@@ -1424,7 +1424,7 @@ class turlmap extends titems {
     }
   }
   
-  public function redir301($to) {
+  public static function redir301($to) {
     //tfiler::log($to. "\n" . $this->url);
     self::redir(litepublisher::$options->url . $to);
   }

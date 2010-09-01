@@ -104,15 +104,14 @@ class tmediaparser extends tevents {
       chmod($dir, 0777);
     }
     if ($media) $dir .= DIRECTORY_SEPARATOR;
-    if (!$overwrite  )  $filename = $this->getunique($dir, $filename);
-    if (!rename(litepublisher::$paths->files . $tempfilename, $dir . $filename)) return $this->error("Error rename file $tempfile to $dir$filename");
+    if ($overwrite  )  {
+      if (file_exists($dir . $filename)) unlink($dir . $filename);
+    } else {
+      $filename = $this->getunique($dir, $filename);
+    }
+    if (!rename(litepublisher::$paths->files . $tempfilename, $dir . $filename)) return $this->error("Error rename file $tempfilename to $dir$filename");
     return "$media/$filename";
   }
-  /*
-  public function add($filename, $tempfilename, $title) {
-    return $this->addfile($filename, $tempfilename, $title, '', '', true);
-  }
-  */
   
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $files = tfiles::instance();
@@ -139,7 +138,8 @@ class tmediaparser extends tevents {
       'preview' => 0,
       'filename' => $filename,
       'title' => $title,
-      'description' => ''
+      'description' => '',
+      'keywords' => ''
       );
       $preview['parent'] = $id;
       $idpreview = $files->additem($preview);
@@ -148,6 +148,32 @@ class tmediaparser extends tevents {
     }
     $files->unlock();
     return $id;
+  }
+  
+  public function uploadthumbnail($parent, $filename, $content) {
+    if (!preg_match('/\.(jpg|gif|png|bmp)$/i', $filename)) return false;
+    $linkgen = tlinkgenerator::instance();
+    $filename = $linkgen->filterfilename($filename);
+    $tempfilename = $this->doupload($filename, $content);
+    $files = tfiles::instance();
+    $md5 =md5_file(litepublisher::$paths->files . $tempfilename);
+    if ($id = $files->IndexOf('md5', $md5)) {
+      @unlink(litepublisher::$paths->files . $tempfilename);
+      return $id;
+    }
+    
+    $info = $this->getinfo($tempfilename);
+    $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], true);
+    $item = $info + array(
+    'filename' => $filename,
+    'parent' => $parent,
+    'preview' => 0,
+    'title' => '',
+    'description' => '',
+    'keywords' => ''
+    );
+    
+    return $files->additem($item);
   }
   
   private function getdefaultvalues($filename) {
