@@ -272,8 +272,7 @@ class tcomments extends titems {
     return $result;
   }
   
-  
-}//class
+  }//class
 
 class tcomment extends tdata {
   
@@ -359,7 +358,14 @@ class tcomment extends tdata {
     $filter = tcontentfilter::instance();
     $this->data['content'] = $filter->filtercomment($s);
   }
-  
+
+
+public function getip() {
+    if (isset($this->data['ip'])) return $this->data['ip'];
+    $comments = tcomments::instance($this->post);
+    return $comments->raw->getvalue($this->id, 'ip');
+  }
+
 }//class
 
 ?>
