@@ -290,13 +290,6 @@ class Tadminoptions extends tadminmenu {
       litepublisher::$classes->archives->lite = isset($litearchives);
       litepublisher::$classes->categories->lite = isset($litecategories);
       litepublisher::$classes->tags->lite = isset($litetags);
-      if (dbversion) {
-        $options->save();
-      } else {
-        litepublisher::$classes->archives->save();
-        litepublisher::$classes->categories->save();
-        litepublisher::$classes->tags->save();
-      }
       break;
       
       case 'secure':

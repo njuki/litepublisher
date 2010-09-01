@@ -150,7 +150,7 @@ class tmediaparser extends tevents {
     return $id;
   }
   
-  public function uploadthumbnail($parent, $filename, $content) {
+  public function uploadthumbnail($filename, $content) {
     if (!preg_match('/\.(jpg|gif|png|bmp)$/i', $filename)) return false;
     $linkgen = tlinkgenerator::instance();
     $filename = $linkgen->filterfilename($filename);
@@ -166,7 +166,7 @@ class tmediaparser extends tevents {
     $info['filename'] = $this->movetofolder($filename, $tempfilename, $info['media'], true);
     $item = $info + array(
     'filename' => $filename,
-    'parent' => $parent,
+    'parent' => 0,
     'preview' => 0,
     'title' => '',
     'description' => '',
