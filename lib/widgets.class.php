@@ -454,10 +454,10 @@ class twidgets extends titems {
       file_put_contents($filename, $content);
       @chmod($filename, 0666);
     }
-
+    
     $theme = ttheme::instance();
     return $theme->getwidget($this->items[$id]['title'], "\n<?php @include('$filename'); ?>\n", $this->items[
-$id]['template'], $sitebar);
+    $id]['template'], $sitebar);
   }
   
   private function getcode($id, $sitebar) {
