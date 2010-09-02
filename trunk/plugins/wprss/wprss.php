@@ -32,8 +32,7 @@ class twprssimporter extends timporter {
     $args = targs::instance();
     $args->script = $this->script;
     $args->ignorelink = $this->ignorelink;
-    $admin = tadminplugins::instance();
-    $about = $admin->abouts[$_GET['plugin']];
+    $about = tplugins::getabout(tplugins::getname(__file__));
     $args->scriptlabel = $about['scriptlabel'];
     $args->ignorelinklabel = $about['ignorelink'];
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');

@@ -18,7 +18,7 @@ class tfiles extends titems {
     parent::create();
     $this->basename = 'files';
     $this->table = 'files';
-    $this->addevents('changed', 'edited');
+    $this->addevents('changed', 'edited', 'ongetfilelist');
     $this->itemsposts = tfileitems ::instance();
   }
   
@@ -99,6 +99,14 @@ class tfiles extends titems {
     $this->unlock();
     $this->changed();
     return true;
+  }
+  
+  public function getfilelist(array $list, $excerpt) {
+    if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
+    $theme = ttheme::instance();
+    return $this->getlist($list, $excerpt ?
+    $theme->content->excerpts->excerpt->files->array :
+    $theme->content->post->files->array);
   }
   
   public function getlist(array $list, array $templates) {

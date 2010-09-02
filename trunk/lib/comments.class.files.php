@@ -359,7 +359,6 @@ class TComment {
   }
   
   public function __get($name) {
-echo "$name<br>";
     if (method_exists($this,$get = "get$name")) {
       return  $this->$get();
     }
