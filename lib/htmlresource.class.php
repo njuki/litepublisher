@@ -62,7 +62,7 @@ class THtmlResource  {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       $admin = $theme->content->admin;
       foreach ($m as $item) {
         $type = $item[1];
@@ -127,6 +127,12 @@ class THtmlResource  {
     $theme = ttheme::instance();
     return $this->parsearg($theme->content->admin->form, $args);
   }
+
+public function getcheckbox($name, $value) {
+$theme = ttheme::instance();
+return str_replace(array('$name', '$value'),
+        array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
+}
   
 }//class
 

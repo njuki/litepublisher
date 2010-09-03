@@ -19,6 +19,22 @@ return $owner->getview($name);
 public static function getowner() {
 return tviews::instance();
 }
+
+public static function getsitebars($context) {
+$view = self::getview($context);
+return view->sitebars;
+}
+
+public static function getview($context) {
+$name = $context->view;
+if ($name == '') $name = 'default';
+$owner = self::getowner();
+if (!isset($owner->items[$name])) {
+$name = 'default';
+$context->view = $name;
+}
+return $owner->getview($name);
+}
   
 public function __construct($name) {
 parent::__construct();

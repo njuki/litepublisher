@@ -22,16 +22,17 @@ switch ($_POST['step']) {
 case 2: 
 $files = tfiles::instance();
 $args->step = 3;
-    $args->formtitle = $about['itemstitle'];
+    $args->formtitle = $about['feeditems'];
 $tml = '<tr>
 <td align="center"><input type="checkbox" name="youtubeid-$id" id="youtubeid-$id" value="$id" $checked /></td>
-<td align="left"><a href="http://www.youtube.com/watch?v=$id" target="top"$title</a></td>
+<td align="left"><a href="http://www.youtube.com/watch?v=$id" target="top">$title</a></td>
 </tr>';
 $items = '';
 foreach ($feed->items as $id => $item) {
 $args->add($item);
-$args->checked = $files->exists($id) : false : true;
-$items = $html->parsearg($tml, $args);
+$args->id = $id;
+$args->checked = $files->exists($id) ? false : true;
+$items .= $html->parsearg($tml, $args);
 }
     $args->items = $items;
 
@@ -79,15 +80,15 @@ break;
 case 2:
 $feed->items = array();
 $feed->url = trim($_POST['url']);
-if ($s = http::get(feed->$url))  $feed->items = $feed->feedtoitems($s);
+if ($s = http::get($feed->url))  $feed->items = $feed->feedtoitems($s);
 $feed->save();
 break;
 
 case 3:
 $files = tfiles::instance();
-$files = tfiles::lock();
+$files->lock();
 foreach ($_POST as $k => $v) {
-if (strbegin($k, 'youtubeid-') && isset($feed->items[$v] && !$files->exists($v))) {
+if (strbegin($k, 'youtubeid-') && isset($feed->items[$v]) && !$files->exists($v)) {
 $feed->addtofiles($feed->items[$v]);
 }
 }

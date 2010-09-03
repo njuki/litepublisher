@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tyoutubefeed extends tevents {
+class tyoutubefeed extends tplugin {
 public $items;
 
   public static function instance() {
@@ -61,9 +61,12 @@ return $result;
 public function addtofiles(array $item) {
 $files = tfiles::instance();
 $files->lock();
-if ($image = http::get($item['preview']) {
-$filename = 'thumbnail.' . substr($item['preview'], strrpos($item['preview'], '/') + 1);
-$item['preview'] = $files->uploadthumbnail($filename, $image);
+if ($image = http::get($item['preview'])) {
+$ext = substr($item['preview'], strrpos($item['preview'], '.'));
+$filename = sprintf('thumbnail.%s.%s', $item['filename'], $ext);
+
+$mediaparser = tmediaparser::instance();
+$item['preview'] = $mediaparser->uploadthumbnail($filename, $image);
 } else {
 $item['preview'] = 0;
 }
@@ -75,7 +78,7 @@ return $id;
 
 public function themeparsed($theme) {
     $theme->content->excerpts->excerpt->files->array['youtube'] = $this->player;
-    $theme->content->post->files->array)['youtube'] = $this->player;
+    $theme->content->post->files->array['youtube'] = $this->player;
 }
 
 }//class

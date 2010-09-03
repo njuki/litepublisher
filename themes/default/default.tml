@@ -279,6 +279,10 @@ $value
 </select></p>
 <!--/combo-->
 
+<!--hidden-->
+<input type="hidden" name="$name" value="$value" />
+<!--/hidden-->
+
 <!--form-->
 <h2>$formtitle</h2>
 <form name="form" action="" method="post" >
