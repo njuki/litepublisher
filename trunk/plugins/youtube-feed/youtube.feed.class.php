@@ -7,12 +7,14 @@
 **/
 
 class tyoutubefeed extends tevents {
+public $items;
 
   public static function instance() {
     return getinstance(__class__);
   }
   protected function create() {
     parent::create();
+$this->data['url'] = '';
     $this->data['player'] ='<li><object width="425" height="350">
     <param name="movie" value="http://www.youtube.com/v/$filename?rel=0"></param>
     <param name="wmode" value="transparent"></param>
@@ -21,6 +23,7 @@ class tyoutubefeed extends tevents {
     width="425" height="350">
     </embed>
     </object></li>';
+$this->addmap('items', array());
   }
 
 public static function feedtoitems($s) {
