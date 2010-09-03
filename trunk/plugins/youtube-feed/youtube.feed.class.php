@@ -39,7 +39,7 @@ $item = array(
 'author' => litepublisher::$options->user,
 'size' => 0
 );
-$item = array();
+
 $id = substr($entry->id, strrpos($entry->id, '/') + 1);
 $item['filename'] = $id;
 $item['md5'] = $id;
@@ -63,14 +63,14 @@ $files = tfiles::instance();
 $files->lock();
 if ($image = http::get($item['preview'])) {
 $ext = substr($item['preview'], strrpos($item['preview'], '.'));
-$filename = sprintf('thumbnail.%s.%s', $item['filename'], $ext);
-
+$filename = sprintf('thumbnail.%s%s', $item['filename'], $ext);
 $mediaparser = tmediaparser::instance();
 $item['preview'] = $mediaparser->uploadthumbnail($filename, $image);
 } else {
 $item['preview'] = 0;
 }
-$id = $files->additem($item);
+
+$id = $files->insert($item);
 if ($item['preview'] != 0) $files->setvalue($item['preview'], 'parent', $id);
 $files->unlock();
 return $id;

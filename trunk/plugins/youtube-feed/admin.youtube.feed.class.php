@@ -17,9 +17,10 @@ public function getcontent() {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::instance();
     $html = THtmlResource::instance();
-
+if (!isset($_POST['step'])) $_POST['step'] = 1;
 switch ($_POST['step']) {
 case 2: 
+case 3:
 $files = tfiles::instance();
 $args->step = 3;
     $args->formtitle = $about['feeditems'];
