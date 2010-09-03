@@ -80,7 +80,7 @@ class tthemeparser extends tevents {
     $theme->sitebars = $this->parsesitebars($s);
     $s = $this->deletespaces($s);
     $theme->theme= $s != ''? $s : (string) $this->default->theme;
-    $this->parsed();
+    $this->parsed($theme);
     return true;
   }
   
@@ -348,6 +348,7 @@ class tthemeparser extends tevents {
     $result['text'] = trim($this->gettag($s, 'text', '', $default->text));
     $result['edit'] = trim($this->gettag($s, 'edit', '', $default->edit));
     $result['combo'] = trim($this->gettag($s, 'combo', '', $default->combo));
+    $result['hidden'] = trim($this->gettag($s, 'hidden', '', $default->hidden));
     $result['form'] = trim($this->gettag($s, 'form', '', $default->form));
     return $result;
   }

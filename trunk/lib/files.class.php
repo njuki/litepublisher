@@ -100,6 +100,10 @@ class tfiles extends titems {
     $this->changed();
     return true;
   }
+
+public function exists($filename) {
+return $this->IndexOf('filename', $filename);
+}
   
   public function getfilelist(array $list, $excerpt) {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;

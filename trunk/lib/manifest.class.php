@@ -32,9 +32,7 @@ class tmanifest extends tevents {
       <adminLinkText>$options->name</adminLinkText>
       <adminUrl>$options->url/admin/</adminUrl>
       <postEditingUrl>
-      <![CDATA[
-  $options->url/admin/posts/editor/{$options->q}id={post-id}
-      ]]>
+      <![CDATA[$options->url/admin/posts/editor/{$options->q}id={post-id}]]>
       </postEditingUrl>
       </weblog>
       
@@ -44,9 +42,7 @@ class tmanifest extends tevents {
       <text>Manage Comments</text>
       <imageUrl>images/wlw/wp-comments.png</imageUrl>
       <clickUrl>
-      <![CDATA[
-      $options->url/admin/comments/
-      ]]>
+      <![CDATA[$options->url/admin/comments/]]>
       </clickUrl>
       </button>
       
