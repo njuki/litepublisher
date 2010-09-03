@@ -14,6 +14,11 @@ $admin->createitem($idfiles, 'youtube', 'author', 'tadminfiles');
 
 $parser = tthemeparser::instance();
 $parser->parsed = $self->themeparsed;
+
+if (dbversion) {
+$man = tdbmanager::instance();
+$man->alter('files', "modify `media` enum('bin','image','icon','audio','video','document','executable','text','archive', 'youtube') default 'bin'");
+}
 }
 
 function tyoutubefeedUninstall($self) {

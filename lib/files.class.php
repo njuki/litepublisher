@@ -54,18 +54,20 @@ class tfiles extends titems {
     $item['posted'] = sqldate();
     $item['md5'] = md5_file($realfile);
     $item['size'] = filesize($realfile);
-    
+ return $this->insert($item);   
+  }
+
+public function insert(array $item) {
     if (dbversion) {
       $id = $this->db->add($item);
+} else {
+$id = ++$this->autoid;
+}
       $this->items[$id] = $item;
-      return $id;
-    } else {
-      $this->items[++$this->autoid] = $item;
-      $this->save();
+      if (!$this->dbversion) $this->save();
       $this->changed();
-      $this->added($this->autoid);
-      return $this->autoid;
-    }
+      $this->added($id);
+      return $id;
   }
   
   public function edit($id, $title, $description, $keywords) {
