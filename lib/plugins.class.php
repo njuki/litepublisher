@@ -48,6 +48,7 @@ class tplugins extends TItems {
   }
   
   public function AddExt($name, $classname, $filename, $adminclassname, $adminfilename) {
+$this->lock();
     $this->items[$name] = array(
     'id' => ++$this->autoid,
     'class' => $classname,
@@ -60,7 +61,7 @@ class tplugins extends TItems {
     litepublisher::$classes->Add($classname, $filename, $name);
     if ($adminclassname != '') litepublisher::$classes->Add($adminclassname, $adminfilename, $name);
     litepublisher::$classes->unlock();
-    $this->Save();
+    $this->unlock();
     $this->added($name);return $this->autoid;
   }
   

@@ -7,7 +7,7 @@ class tadminyoutubeuploader {
   }
 
   public function getcontent() {
-    $plugin = tyoutube::instance();
+    $plugin = tyoutubeuploader::instance();
 $lang = $plugin->getlang();
     $args = targs::instance();
     $args->devkey = $plugin->devkey;

@@ -31,6 +31,7 @@ class tyoutubeplayer extends tplugin {
   public function filter(&$content) {
     if (preg_match_all(
   "/\[youtube\=http:\/\/([a-zA-Z0-9\-\_]+\.|)youtube\.com\/watch(\?v\=|\/v\/|#!v=)([a-zA-Z0-9\-\_]{11})([^<\s]*)\]/",
+//"/\[youtube\=http:\/\/([a-zA-Z0-9\-\_]+\.|)youtube\.com\/watch(\?v\=|\/v\/)([a-zA-Z0-9\-\_]{11})([^<\s]*)\]/",
     $content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $id = $item[3];
