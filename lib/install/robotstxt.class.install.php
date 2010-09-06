@@ -12,9 +12,9 @@ function trobotstxtInstall($self) {
   
   $self->add("#" . litepublisher::$options->url . "/");
   $self->add('User-agent: *');
-  $self->AddDisallow('/rss.xml');
-  $self->AddDisallow('/comments.xml');
-  $self->AddDisallow('/comments/');
+  //$self->AddDisallow('/rss.xml');
+  //$self->AddDisallow('/comments.xml');
+  //$self->AddDisallow('/comments/');
   $self->AddDisallow('/admin/');
   $self->unlock();
 }
