@@ -7,11 +7,11 @@
 **/
 
 function tviewsInstall($self) {
-$self->lock();
-$default = $self->add('default');
-$home = $self->add('home');
-$home->ajax = false;
-$self->unlock();
+  $self->lock();
+  $default = $self->add('default');
+  $home = $self->add('home');
+  $home->ajax = false;
+  $self->unlock();
 }
 
 ?>

@@ -127,12 +127,12 @@ class THtmlResource  {
     $theme = ttheme::instance();
     return $this->parsearg($theme->content->admin->form, $args);
   }
-
-public function getcheckbox($name, $value) {
-$theme = ttheme::instance();
-return str_replace(array('$name', '$value'),
-        array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
-}
+  
+  public function getcheckbox($name, $value) {
+    $theme = ttheme::instance();
+    return str_replace(array('$name', '$value'),
+    array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
+  }
   
 }//class
 

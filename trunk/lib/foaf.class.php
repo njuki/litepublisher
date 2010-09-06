@@ -101,38 +101,35 @@ class tfoaf extends titems {
   }
   
   private function getfoafxml() {
-    $result = '<rdf:RDF
-    xml:lang="en"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:foaf="http://xmlns.com/foaf/0.1/"
-    xmlns:ya="http://blogs.yandex.ru/schema/foaf/"
-    xmlns:lj="http://www.livejournal.org/rss/lj/1.0/"
-    xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <foaf:Person>
-    ';
+    $result = '<rdf:RDF ' .
+    'xml:lang="en" '.
+    'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ' .
+    'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" ' .
+    'xmlns:foaf="http://xmlns.com/foaf/0.1/" ' .
+    'xmlns:ya="http://blogs.yandex.ru/schema/foaf/" ' .
+    'xmlns:lj="http://www.livejournal.org/rss/lj/1.0/" ' .
+    'xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" ' .
+    'xmlns:dc="http://purl.org/dc/elements/1.1/">' .
+    '<foaf:Person>';
     
     $profile = tprofile::instance();
     $result .= $profile-> getfoaf();
     $result .= $this->getknows();
     
-    $result .= '</foaf:Person>
-    </rdf:RDF>';
-    
+    $result .= '</foaf:Person></rdf:RDF>';
     return $result;
   }
   
   private function getknows() {
     $result = '';
     foreach ($this->items as $id => $item) {
-      $result .= "<foaf:knows>
-      <foaf:Person>
-    <foaf:nick>{$item['nick']}</foaf:nick>
-    <rdfs:seeAlso rdf:resource=\"{$item['foafurl']}\"/>
-    <foaf:weblog rdf:resource=\"{$item['url']}\"/>
-      </foaf:Person>
-      </foaf:knows>\n";
+      $result .= '<foaf:knows>' .
+      '<foaf:Person>' .
+      '<foaf:nick>' . self::escape($item['nick']) . '</foaf:nick>' .
+      '<rdfs:seeAlso rdf:resource="' .self::escape($item['foafurl']) . '"/>' .
+      '<foaf:weblog rdf:resource="' . self::escape($item['url']) . '"/>' .
+      '</foaf:Person>' .
+      '</foaf:knows>';
     }
     
     return $result;
@@ -284,6 +281,11 @@ class tfoaf extends titems {
       }
     }
     return false;
+  }
+  
+  
+  public static  function escape($s) {
+    return strtr (htmlspecialchars($s), array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;'));
   }
   
 }//class

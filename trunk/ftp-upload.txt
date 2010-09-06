@@ -260,6 +260,8 @@ send lib\users.class.php lib/users.class.php
 quote site chmod 666 lib/users.class.php
 send lib\users.groups.class.php lib/users.groups.class.php
 quote site chmod 666 lib/users.groups.class.php
+send lib\views.class.php lib/views.class.php
+quote site chmod 666 lib/views.class.php
 send lib\widget.comments.class.php lib/widget.comments.class.php
 quote site chmod 666 lib/widget.comments.class.php
 send lib\widget.custom.class.php lib/widget.custom.class.php
@@ -474,6 +476,8 @@ send lib\install\users.groups.class.install.php lib/install/users.groups.class.i
 quote site chmod 666 lib/install/users.groups.class.install.php
 send lib\install\users.sql lib/install/users.sql
 quote site chmod 666 lib/install/users.sql
+send lib\install\views.class.install.php lib/install/views.class.install.php
+quote site chmod 666 lib/install/views.class.install.php
 send lib\install\widget.comments.class.install.php lib/install/widget.comments.class.install.php
 quote site chmod 666 lib/install/widget.comments.class.install.php
 send lib\install\widget.custom.class.install.php lib/install/widget.custom.class.install.php
@@ -566,6 +570,8 @@ send lib\update\update.3.77.php lib/update/update.3.77.php
 quote site chmod 666 lib/update/update.3.77.php
 send lib\update\update.3.79.php lib/update/update.3.79.php
 quote site chmod 666 lib/update/update.3.79.php
+send lib\update\update.3.80.php lib/update/update.3.80.php
+quote site chmod 666 lib/update/update.3.80.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -1261,6 +1267,22 @@ quote site chmod 666 plugins/wprss/index.htm
 send plugins\wprss\wprss.php plugins/wprss/wprss.php
 quote site chmod 666 plugins/wprss/wprss.php
 cd plugins
+mkdir youtube-feed
+quote site chmod 777 youtube-feed
+cd ../
+send plugins\youtube-feed\about.ini plugins/youtube-feed/about.ini
+quote site chmod 666 plugins/youtube-feed/about.ini
+send plugins\youtube-feed\admin.youtube.feed.class.php plugins/youtube-feed/admin.youtube.feed.class.php
+quote site chmod 666 plugins/youtube-feed/admin.youtube.feed.class.php
+send plugins\youtube-feed\url.txt plugins/youtube-feed/url.txt
+quote site chmod 666 plugins/youtube-feed/url.txt
+send plugins\youtube-feed\youtube.feed.class.install.php plugins/youtube-feed/youtube.feed.class.install.php
+quote site chmod 666 plugins/youtube-feed/youtube.feed.class.install.php
+send plugins\youtube-feed\youtube.feed.class.php plugins/youtube-feed/youtube.feed.class.php
+quote site chmod 666 plugins/youtube-feed/youtube.feed.class.php
+send build\indexfile.htm plugins/youtube-feed/index.htm
+quote site chmod 666 plugins/youtube-feed/index.htm
+cd plugins
 mkdir youtubeplayer
 quote site chmod 777 youtubeplayer
 cd ../
@@ -1270,6 +1292,8 @@ send plugins\youtubeplayer\about.ini plugins/youtubeplayer/about.ini
 quote site chmod 666 plugins/youtubeplayer/about.ini
 send plugins\youtubeplayer\admin.youtube.player.class.php plugins/youtubeplayer/admin.youtube.player.class.php
 quote site chmod 666 plugins/youtubeplayer/admin.youtube.player.class.php
+send plugins\youtubeplayer\h.htm plugins/youtubeplayer/h.htm
+quote site chmod 666 plugins/youtubeplayer/h.htm
 send plugins\youtubeplayer\index.htm plugins/youtubeplayer/index.htm
 quote site chmod 666 plugins/youtubeplayer/index.htm
 send plugins\youtubeplayer\youtube.player.class.php plugins/youtubeplayer/youtube.player.class.php
