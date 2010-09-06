@@ -1,6 +1,7 @@
 var youtube = {
 url: '',
 token: '',
+inrequest: false,
   client : new rpc.ServiceProxy(ltoptions.pingback, {
     asynchronous: true,
     protocol: 'XML-RPC',
@@ -10,7 +11,11 @@ token: '',
 };
 
 youtube.submitform =  function() {
+if (youtube.inrequest) return youtube.print('Send request');
+    if (document.getElementById('file').value == '') return youtube.print('You must select file to upload');
+
 if (youtube.token == '') {
+youtube.inrequest = true;
 youtube.client.litepublisher.youtube.getuploadtoken({
     params:['', '',
         document.getElementById('title').value,
@@ -40,19 +45,10 @@ alert('Error token');
   onComplete:function(responseObj){ }
   } );
 
-
 return false;
-} else {
-}
 };
 
-document.getElementById('youtubeuploadform').onsubmit = youtube.submitform;
-
-
-  function checkForFile() { 
-    if (document.getElementById('file').value) { 
-      return true; 
-    } 
-    document.getElementById('errMsg').style.display = ''; 
-    return false; 
-  } 
+youtube.print = function (s) {
+document.getElementById('infostatus').innerHTML = s;
+return false;
+};
