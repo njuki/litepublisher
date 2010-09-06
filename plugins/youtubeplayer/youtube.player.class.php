@@ -14,14 +14,18 @@ class tyoutubeplayer extends tplugin {
   
   protected function create() {
     parent::create();
-    $this->data['template'] ='<object width="425" height="350">
-    <param name="movie" value="$url?rel=0"></param>
-    <param name="wmode" value="transparent"></param>
-    <embed src="$url?rel=0"
-    type="application/x-shockwave-flash" wmode="transparent"
-    width="425" height="350">
-    </embed>
-    </object>';
+    $this->data['template'] ='<object width="425" height="350">' .
+    '<param name="movie" value="http://www.youtube.com/v/$id?fs=1&amp;rel=0"></param>' .
+    //'<param name="wmode" value="transparent"></param>' .
+    '<param name="allowFullScreen" value="true"></param>' .
+    '<param name="allowscriptaccess" value="always"></param>' .
+    '<embed src="http://www.youtube.com/v/$id?fs=1&amp;rel=0" ' .
+    'type="application/x-shockwave-flash" ' .
+    //'wmode="transparent" ' .
+    'allowscriptaccess="always" ' .
+    'allowfullscreen="true" ' .
+    'width="425" height="350">' .
+    '</embed></object>';
   }
   
   public function filter(&$content) {
@@ -30,9 +34,8 @@ class tyoutubeplayer extends tplugin {
     $content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $id = $item[3];
-        $url = 'http://www.youtube.com/v/' . $id;
         $content = str_replace($item[0],
-        str_replace('$url', $url, $this->template), $content);
+        str_replace('$id', $id, $this->template), $content);
       }
     }
   }

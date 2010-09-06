@@ -48,52 +48,52 @@ class tprofile extends tevents implements itemplate {
     $postscount = $posts->archivescount;
     $manager = litepublisher::$classes->commentmanager;
     
-    $result = "<foaf:nick>$this->nick</foaf:nick>
-    <foaf:name>$this->nick</foaf:name>
-    <foaf:dateOfBirth>$this->dateOfBirth</foaf:dateOfBirth>
-    <foaf:gender>$this->gender</foaf:gender>
-    <foaf:img rdf:resource=\"$this->img\" />
-    <foaf:icqChatID>$this->icqChatID</foaf:icqChatID>
-    <foaf:aimChatID>$this->aimChatID</foaf:aimChatID>
-    <foaf:jabberID>$this->jabberID</foaf:jabberID>
-    <foaf:msnChatID>$this->msnChatID</foaf:msnChatID>
-    <foaf:yahooChatID>$this->yahooChatID</foaf:yahooChatID>
-    <foaf:homepage>$options->url/</foaf:homepage>
-    <foaf:mbox>$this->mbox</foaf:mbox>
-    <foaf:weblog
-    dc:title=\"$options->name\"
-    rdf:resource=\"$options->url/\"/>
+    $result = '<foaf:nick>' . tfoaf::escape($this->nick) . '</foaf:nick>' .
+    '<foaf:name>' . tfoaf::escape($this->nick) . '</foaf:name>' .
+    '<foaf:dateOfBirth>' . tfoaf::escape($this->dateOfBirth) . '</foaf:dateOfBirth>' .
+    "<foaf:gender>$this->gender</foaf:gender>" .
+    '<foaf:img rdf:resource="' . tfoaf::escape($this->img) . '" />' .
+    '<foaf:icqChatID>' . tfoaf::escape($this->icqChatID) . '</foaf:icqChatID>' .
+    '<foaf:aimChatID>' . tfoaf::escape($this->aimChatID) . '</foaf:aimChatID>' .
+    '<foaf:jabberID>' . tfoaf::escape($this->jabberID) . '</foaf:jabberID>' .
+    '<foaf:msnChatID>' . tfoaf::escape($this->msnChatID) . '</foaf:msnChatID>' .
+    '<foaf:yahooChatID>' . tfoaf::escape($this->yahooChatID) . '</foaf:yahooChatID>' .
+    '<foaf:homepage>' . tfoaf::escape($options->url) . '/</foaf:homepage>' .
+    '<foaf:mbox>' . tfoaf::escape($this->mbox) . '</foaf:mbox>' .
+    '<foaf:weblog ' .
+    'dc:title="'. tfoaf::escape($options->name) . '" ' .
+    'rdf:resource="' . tfoaf::escape($options->url) . '/" />' .
     
-    <foaf:page>
-    <foaf:Document rdf:about=\"$options->url$this->url\">
-    <dc:title>$options->name Profile</dc:title>
-    <dc:description>Full profile, including information such as interests and bio.</dc:description>
-    </foaf:Document>
-    </foaf:page>
+    '<foaf:page>' .
+    '<foaf:Document rdf:about="' . tfoaf::escape($options->url . $this->url) . '">' .
+    '<dc:title>' . tfoaf::escape($options->name) . ' Profile</dc:title>' .
+    '<dc:description>Full profile, including information such as interests and bio.</dc:description>' .
+    '</foaf:Document>' .
+    '</foaf:page>' .
     
-    <lj:journaltitle>litepublisher::$options->name</lj:journaltitle>
-    <lj:journalsubtitle>litepublisher::$options->description</lj:journalsubtitle>
+    '<lj:journaltitle>' . tfoaf::escape($options->name) . '</lj:journaltitle>' .
+    '<lj:journalsubtitle>' . tfoaf::escape($options->description) . '</lj:journalsubtitle>' .
     
-    <ya:blogActivity>
-    <ya:Posts>
-    <ya:feed
-    dc:type=\"application/rss+xml\"
-    rdf:resource=\"litepublisher::$options->url/rss/\"/>
-    <ya:posted>$postscount</ya:posted>
-    </ya:Posts>
-    </ya:blogActivity>
+    '<ya:blogActivity>' .
+    '<ya:Posts>' .
+    '<ya:feed ' .
+    'dc:type="application/rss+xml" ' .
+    'rdf:resource="' . tfoaf::escape($options->url) . '/rss.xml" />' .
+    "<ya:posted>$postscount</ya:posted>" .
+    '</ya:Posts>' .
+    '</ya:blogActivity>' .
     
-    <ya:blogActivity>
-    <ya:Comments>
-    <ya:feed
-    dc:type=\"application/rss+xml\"
-    rdf:resource=\"litepublisher::$options->url/comments/\"/>
-    <ya:posted>$postscount</ya:posted>
-    <ya:received>$manager->count</ya:received>
-    </ya:Comments>
-    </ya:blogActivity>\n";
+    '<ya:blogActivity>' .
+    '<ya:Comments>' .
+    '<ya:feed ' .
+    'dc:type="application/rss+xml" '.
+    'rdf:resource="' . tfoaf::escape($options->url) . '/comments.xml"/>' .
+    "<ya:posted>$postscount</ya:posted>" .
+    "<ya:received>$manager->count</ya:received>" .
+    '</ya:Comments>' .
+    '</ya:blogActivity>';
     
-    if ($this->bio != '') $result .= "<ya:bio>$this->bio</ya:bio>\n";
+    if ($this->bio != '') $result .= '<ya:bio>'. tfoaf::escape($this->bio) . '</ya:bio>';
     
     $result .= $this->GetFoafOpenid();
     $result .= $this->GetFoafCountry();
@@ -107,26 +107,25 @@ class tprofile extends tevents implements itemplate {
     foreach ($list as $name) {
       $name = trim($name);
       if (empty($name)) continue;
-      $result .= "    <foaf:interest dc:title=\"$name\" rdf:resource=\"$this->interesturl". urlencode($name) . "\" />\n";
+      $result .= '<foaf:interest dc:title="' . tfoaf::escape($name) . '" rdf:resource="' . tfoaf::escape($this->interesturl) . urlencode($name) . '" />';
     }
     return $result;
-    
   }
   
   public function GetFoafOpenid() {
-    return '<foaf:openid rdf:resource="'. litepublisher::$options->url . '/" />';
+    return '<foaf:openid rdf:resource="'. tfoaf::escape(litepublisher::$options->url) . '/" />';
   }
   
   public function GetFoafCountry() {
     $result = '';
-    if ($this->country != '') $result .= "<ya:country dc:title=\"$this->country\"
-    rdf:resource=\"$this->geourl" . urlencode($this->country) . "\"/>\n";
+    if ($this->country != '') $result .= '<ya:country dc:title="' . tfoaf::escape($this->country) . '" '.
+    'rdf:resource="' . tfoaf::escape($this->geourl) . urlencode($this->country) . '"/>';
     
-    if ($this->region != '') $result .="<ya:region dc:title=\"$this->region\"
-    rdf:resource=\"$this->geourl". urlencode($this->region) . "\"/>\n";
+    if ($this->region != '') $result .='<ya:region dc:title="' . tfoaf::escape($this->region) . '" '.
+    'rdf:resource="' . tfoaf::escape($this->geourl) . urlencode($this->region) . '"/>';
     
-    if ($this->city != '') $result .= "<ya:city dc:title=\"$this->city\"
-    rdf:resource=\"$this->geourl". urlencode("$this->country, $this->city") . "\"/>\n";
+    if ($this->city != '') $result .= '<ya:city dc:title="' . tfoaf::escape($this->city) . '" ' .
+    'rdf:resource="' . tfoaf::escape($this->geourl) . urlencode("$this->country, $this->city") . '" />';
     
     return $result;
   }

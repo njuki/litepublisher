@@ -20,7 +20,7 @@ function tusersInstall($self) {
   $urlmap = turlmap::instance();
   $urlmap->add('/users.htm', get_class($self), 'get');
   
-  $robots = TRobotstxt ::instance();
+  $robots = trobotstxt ::instance();
   $robots->AddDisallow('/users.htm');
 }
 
