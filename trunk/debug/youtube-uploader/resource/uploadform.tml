@@ -10,12 +10,10 @@ onsubmit="return youtube.submitform();">
 
   <input id="file" type="file" name="file"/> 
 
-  <div id="error" style="display:none;color:red"> 
-    You need to specify a file. 
-  </div> 
 
   <input type="hidden" name="token" id="token" value="TOKEN"/> 
 
 <p><input type="submit" name="submit" value="$lang.upload" /></p>
 </form>
+
 <div id="infostatus"</div>
