@@ -1,18 +1,12 @@
 var youtube = {
 url: '',
-token: ''
-};
-
-youtube.init =   function() {
-  this.client = new rpc.ServiceProxy(ltoptions.pingback, {
+token: '',
+  client : new rpc.ServiceProxy(ltoptions.pingback, {
     asynchronous: true,
     protocol: 'XML-RPC',
     sanitize: false,
     methods: ['litepublisher.youtube.getuploadtoken']
-  });
-
-var form = document.getElementById('youtubeuploadform');
-form.onsubmit = this.submitform;
+  })
 };
 
 youtube.submitform =  function() {
@@ -52,7 +46,8 @@ return false;
 }
 };
 
-//youtube.init();
+document.getElementById('youtubeuploadform').onsubmit = youtube.submitform;
+
 
   function checkForFile() { 
     if (document.getElementById('file').value) { 
