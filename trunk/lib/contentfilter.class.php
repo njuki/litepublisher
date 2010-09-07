@@ -32,14 +32,15 @@ class tcontentfilter extends tevents {
   }
   
   public function filterpost(tpost $post, $s) {
+    $moretag = ' <!--more-->';
     if ($this->callevent('beforecontent', array($post, &$s))) return;
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
     preg_match('/\[cut(.*?)?\]/', $s, $matches)
     ) {
       $parts = explode($matches[0], $s, 2);
-      $post->excerpt = $this->filter($parts[0]);
-      $post->filtered = $post->excerpt . '<!--more-->' . $this->ExtractPages($post,$parts[1]);
+      $post->excerpt = $this->filter($parts[0] . $moretag);
+      $post->filtered = $post->excerpt . $moretag . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $post->excerpt;
       $post->moretitle =  self::gettitle($matches[1]);
       if ($post->moretitle == '')  $post->moretitle = tlocal::$data['default']['more'];
@@ -47,7 +48,7 @@ class tcontentfilter extends tevents {
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
         $post->excerpt = self::GetExcerpt($s, $this->automorelength);
-        $post->excerpt = $this->filter($post->excerpt);
+        $post->excerpt = $this->filter($post->excerpt . $moretag);
         $post->rss =  $post->excerpt;
         $post->moretitle = tlocal::$data['default']['more'];
       } else {
