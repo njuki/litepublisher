@@ -39,27 +39,28 @@ class tcontentfilter extends tevents {
     preg_match('/\[cut(.*?)?\]/', $s, $matches)
     ) {
       $parts = explode($matches[0], $s, 2);
-      $post->excerpt = $this->filter($parts[0] . $moretag);
-      $post->filtered = $post->excerpt . $moretag . $this->ExtractPages($post,$parts[1]);
-      $post->rss =  $post->excerpt;
+$excerpt = $this->filter($parts[0] . $moretag);
+      $post->excerpt = $excerpt;
+      $post->filtered = $excerpt . $moretag . $this->ExtractPages($post,$parts[1]);
+      $post->rss =  $excerpt;
       $post->moretitle =  self::gettitle($matches[1]);
       if ($post->moretitle == '')  $post->moretitle = tlocal::$data['default']['more'];
     } else {
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
-        $post->excerpt = self::GetExcerpt($s, $this->automorelength);
-        $post->excerpt = $this->filter($post->excerpt . $moretag);
-        $post->rss =  $post->excerpt;
+$excerpt = $this->filter(self::GetExcerpt($s, $this->automorelength) . $moretag);
+        $post->excerpt = $excerpt;
+        $post->rss =  $excerpt;
         $post->moretitle = tlocal::$data['default']['more'];
       } else {
-        $post->excerpt = $this->ExtractPages($post, $s);
-        $post->filtered = $post->excerpt;
-        $post->rss =  $post->excerpt;
+        $post->filtered = $this->ExtractPages($post, $s);
+        $post->excerpt = $post->filtered;
+        $post->rss =  $post->filtered;
         $post->moretitle =  '';
       }
     }
     
-    $post->description = self::getpostdescription($post->excerpt);
+    $post->description = self::getpostdescription($post->data['excerpt']);
   $this->aftercontent($post);}
   
   public static function getpostdescription($description) {

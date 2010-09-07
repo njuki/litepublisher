@@ -422,7 +422,11 @@ class tpost extends titem implements  itemplate {
     $result = $this->data['excerpt'];
     $posts = tposts::instance();
     $posts->beforeexcerpt($this, $result);
+   $posts->addrevision();
+    if ($this->revision < $posts->revision) $this->revision = $posts->revision;
+//dumpstr($result);
       $result = $this->replacemore($result, true);
+//dumpstr($result);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $result = $theme->parse($result);
