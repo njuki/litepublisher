@@ -66,9 +66,8 @@ $template.head
 		<span>$lang.posted $post.date</span>
 	  </div>
 		<div class="post-content">
-$post.excerpt
-<!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
-$post.filelist
+$post.excerptcontent
+$post.excerptfilelist
 	</div>
 		<div class="post-info">
 $post.categorieslinks

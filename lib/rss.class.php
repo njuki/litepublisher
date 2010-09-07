@@ -188,8 +188,7 @@ class trss extends tevents {
     $content = '';
     $this->callevent('beforepost', array($post->id, &$content));
     if ($this->template == '') {
-      $content .=$post->rss;
-      $content .= $post->morelink;
+      $content .= $post->replacemore($post->rss, true);
     } else {
       eval('$content .= "'. $this->template . '";');
     }

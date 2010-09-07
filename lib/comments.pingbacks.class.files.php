@@ -28,7 +28,7 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     'url' => $url,
     'title' => $title,
     'posted' => time(),
-    'ip' => preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']),
+    'ip' => preg_replace('/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']),
     'approved' => false
     );
     $this->save();

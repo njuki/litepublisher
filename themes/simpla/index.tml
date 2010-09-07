@@ -48,9 +48,8 @@ $template.head
 			<h3>$post.date</h3>
 		</div>
 		<div class="entrybody">
-$post.excerpt
-<!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
-$post.filelist
+$post.excerptcontent
+$post.excerptfilelist
 		</div>
 		
 		<div class="entrymeta">

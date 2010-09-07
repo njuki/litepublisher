@@ -211,6 +211,7 @@ class tthemeparser extends tevents {
     $result['more'] = $this->gettag($s, 'more', '', $default->more);
     $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['dateformat']));
     $s = $this->deletespaces($s);
+if ($this->fixold) $s = preg_replace('/\$post\.excerpt([^\w]+)/', '$post.excerptcontent$1', $s);
     $result[0] = $s != '' ? $s : (string) $default;
     return $result;
   }

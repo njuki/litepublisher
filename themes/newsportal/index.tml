@@ -90,9 +90,8 @@ $template.head
         <h3><a href="$options.url$post.url" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h3>
 $post.date
 <div class="entry">
-$post.filelist
-$post.excerpt
-<!--more--><a href="$options.url$post.url#more-$post.id" class="more-link">$post.moretitle</a><!--/more-->
+$post.excerptfilelist
+$post.excerptcontent
 </div>
 			<p class="info">
 $post.categorieslinks
