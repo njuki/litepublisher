@@ -14,6 +14,24 @@ class tadminfoaf extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
+  public function gethtml($name = '') {
+    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
+    if (!isset(tlocal::$data['foaf'])) {
+      if (file_exists($dir . litepublisher::$options->language . '.ini')) {
+        tlocal::loadini($dir . litepublisher::$options->language . '.ini');
+      } else {
+        tlocal::loadini($dir . 'en.ini');
+      }
+    }
+    
+    $html = THtmlResource::instance();
+    if (!isset($html->ini['foaf'])) {
+      $html->loadini($dir . 'html.ini');
+    }
+    
+    return parent::gethtml($name = '');
+  }
+  
   private function getcombo($id, $status) {
     $lang = tlocal::instance('foaf');
     $names = array('approved', 'hold', 'invated', 'rejected', 'spam', 'error');

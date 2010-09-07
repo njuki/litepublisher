@@ -47,9 +47,6 @@ function install_std_widgets($widgets) {
   $id = $widgets->add(tlinkswidget::instance());
   $sitebars->insert($id, 'inline', 0, -1);
   
-  $id = $widgets->add(tfriendswidget::instance());
-  $sitebars->insert($id, 'inline', 0, -1);
-  
   $id = $widgets->add(tpostswidget::instance());
   $sitebars->insert($id, 'inline', 1, -1);
   

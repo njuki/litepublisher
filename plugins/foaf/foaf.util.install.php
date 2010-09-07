@@ -11,7 +11,7 @@ function tfoafutilInstall($self) {
   $cron->add('day', get_class($self), 'CheckFriendship', null);
 }
 
-function tfoafmanagerUninstall($self) {
+function tfoafutilUninstall($self) {
   $cron = tcron::instance();
   $cron->deleteclass(get_class($self));
 }

@@ -16,11 +16,22 @@ function trssInstall($self) {
   
   litepublisher::$classes->commentmanager->changed = $self->commentschanged;
   $self->save();
+  
+  $meta = tmetawidget::instance();
+  $meta->lock();
+  $meta->add('rss', '/rss.xml', tlocal::$data['default']['rss']);
+  $meta->add('comments', '/comments.xml', tlocal::$data['default']['rsscomments']);
+  $meta->unlock();
 }
 
 function trssUninstall($self) {
   turlmap::unsub($self);
   litepublisher::$classes->commentmanager->unsubscribeclass($self);
+  $meta = tmetawidget::instance();
+  $meta->lock();
+  $meta->delete('rss');
+  $meta->delete('comments');
+  $meta->unlock();
 }
 
 ?>

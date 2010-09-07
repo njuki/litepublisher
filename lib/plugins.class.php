@@ -48,7 +48,7 @@ class tplugins extends TItems {
   }
   
   public function AddExt($name, $classname, $filename, $adminclassname, $adminfilename) {
-$this->lock();
+    $this->lock();
     $this->items[$name] = array(
     'id' => ++$this->autoid,
     'class' => $classname,

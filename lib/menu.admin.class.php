@@ -21,6 +21,8 @@ class tadminmenus extends tmenus {
   private function getadmintitle($name) {
     if (isset(tlocal::$data[$name]['title'])) {
       return tlocal::$data[$name]['title'];
+    } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {
+      return tlocal::$data[tlocal::instance()->section][$name];
     } elseif (isset(tlocal::$data['names'][$name])) {
       return tlocal::$data['names'][$name];
     } elseif (isset(tlocal::$data['default'][$name])) {

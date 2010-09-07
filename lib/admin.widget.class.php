@@ -109,25 +109,6 @@ class tadminshowcount extends tadminwidget {
   
 }//class
 
-class tadminfriendswidget extends tadminwidget {
-  
-  public static function instance() {
-    return getinstance(__class__);
-  }
-  
-  protected function dogetcontent(twidget $widget, targs $args){
-    $args->maxcount = $widget->maxcount;
-    $args->redir = $widget->redir;
-    return $this->html->friendsform($args);
-  }
-  
-  protected function doprocessform(twidget $widget)  {
-    $widget->maxcount = (int) $_POST['maxcount'];
-    $widget->redir = isset($_POST['redir']);
-  }
-  
-}//class
-
 class tadminorderwidget extends tadminwidget {
   
   public static function instance() {
@@ -310,13 +291,19 @@ class tadminmetawidget extends tadminwidget {
   }
   
   protected function dogetcontent(twidget $widget, targs $args){
-    $args->add($widget->meta);
-    return $this->html->metaform($args);
+    $html = $this->html;
+    $result = '';
+    foreach ($widget->items as $name => $item) {
+      $args->add($item);
+      $args->name = $name;
+      $result .= $html->metaitem($args);
+    }
+    return $result;
   }
   
   protected function doprocessform(twidget $widget)  {
-    foreach ($widget->meta as $name => $value) {
-      $widget->data['meta'][$name] = isset($_POST[$name]);
+    foreach ($widget->items as $name => $item) {
+      $widget->items[$name]['enabled'] = isset($_POST[$name]);
     }
   }
   

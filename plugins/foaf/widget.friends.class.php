@@ -23,7 +23,8 @@ class tfriendswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['myfriends'];
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    return $about['name'];
   }
   
   public function getcontent($id, $sitebar) {

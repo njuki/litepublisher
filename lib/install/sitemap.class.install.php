@@ -19,10 +19,15 @@ function tsitemapInstall($self) {
   
   $self->add('/sitemap.htm', 4);
   $self->createfiles();
+  
+  $meta = tmetawidget::instance();
+  $meta->add('sitemap', '/sitemap.htm', tlocal::$data['default']['sitemap']);
 }
 
 function tsitemapUninstall($self) {
   turlmap::unsub($self);
+  $meta = tmetawidget::instance();
+  $meta->delete('sitemap');
 }
 
 ?>

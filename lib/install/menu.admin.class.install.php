@@ -63,12 +63,6 @@ function tadminmenusInstall($self) {
     $self->items[$id]['title'] = tlocal::$data['menu']['addmenu'];
   }
   
-  $foaf = $self->createitem(0, 'foaf', 'admin', 'tadminfoaf');
-  {
-    $self->createitem($foaf, 'profile', 'admin', 'tadminfoaf');
-    $self->createitem($foaf, 'profiletemplate', 'admin', 'tadminfoaf');
-  }
-  
   $opt = $self->createitem(0, 'options', 'admin', 'tadminoptions');
   {
     $self->createitem($opt, 'home', 'admin', 'tadminoptions');

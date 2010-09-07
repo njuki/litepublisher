@@ -90,6 +90,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 
 litepublisher::$urlmap = turlmap::instance();
 if (!defined('litepublisher_mode')) {
+//tupdater::instance()->run(3.81);
 litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
 }
 
@@ -109,5 +110,5 @@ $man = tdbmanager::instance();
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//tupdater::instance()->run(3.80);
+//tupdater::instance()->run(3.81);
 ?>

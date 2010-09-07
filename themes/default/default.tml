@@ -8,7 +8,6 @@
 	<link rel="pingback" href="$options.url/rpc.xml" />
 	 <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
 	<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
-	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$options.url/foaf.xml" />
 	<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
 	<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
 	<meta name="keywords" content="$template.keywords" />
