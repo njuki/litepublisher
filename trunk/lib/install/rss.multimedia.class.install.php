@@ -19,12 +19,18 @@ function trssMultimediaInstall($self) {
   $files = tfiles::instance();
   $files->changed = $self->fileschanged;
   $self->save();
+  
+  $meta = tmetawidget::instance();
+  $meta->add('media', '/rss/multimedia.xml', tlocal::$data['default']['rssmedia']);
 }
 
 function trssMultimediaUninstall($self) {
   turlmap::unsub($self);
   $files = tfiles::instance();
   $files->unsubscribeclass($self);
+  
+  $meta = tmetawidget::instance();
+  $meta->delete('media');
 }
 
 ?>

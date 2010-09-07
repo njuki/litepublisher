@@ -130,11 +130,22 @@ class tprofile extends tevents implements itemplate {
     return $result;
   }
   
-public function request($arg) { }
+  public function request($arg) {
+    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
+    if (!isset(tlocal::$data['foaf'])) {
+      if (file_exists($dir . litepublisher::$options->language . '.ini')) {
+        tlocal::loadini($dir . litepublisher::$options->language . '.ini');
+      } else {
+        tlocal::loadini($dir . 'en.ini');
+      }
+    }
+    $lang = tlocal::instance('foaf');
+  }
   
   public function gettitle() {
-    return tlocal::$data['default']['profile'];
+    return tlocal::$data['foaf']['profile'];
   }
+  
 public function gethead() { }
   
   public function getkeywords() {
@@ -146,22 +157,28 @@ public function gethead() { }
   }
   
   public function getcont() {
-    tlocal::loadlang('admin');
-    $lang = tlocal::instance('profile');
     ttheme::$vars['profile'] = $this;
     $theme = ttheme::instance();
-    return $theme->parse($this->template);
+    $tml = $this->template;
+    if ($tml == '') {
+      $html = THtmlResource::instance();
+      if (!isset($html->ini['foaf'])) $html->loadini(dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR . 'html.ini');
+      $html->section = 'foaf';
+      $tml = $html->profile;
+    }
+    return $theme->parse($tml);
   }
   
   protected function getstat() {
     $posts = tposts::instance();
     $manager = tcommentmanager::instance();
-    $lang = tlocal::instance('profile');
+    $lang =
+    tlocal::instance('foaf');
     return sprintf($lang->statistic, $posts->archivescount, $manager->count);
   }
   
   protected function getmyself() {
-    $lang = tlocal::instance('profile');
+    $lang = tlocal::instance('foaf');
     $result = array();
     if ($this->img != '') $result[] = "<img src=\"$this->img\" />";
     if ($this->nick != '') $result[] = "$lang->nick $this->nick";
@@ -188,7 +205,7 @@ public function gethead() { }
     'yahooChatID' => 'Yahoo',
     'mbox' => 'E-Mail'
     );
-    $lang = tlocal::instance('profile');
+    $lang = tlocal::instance('foaf');
     $result = "<table>
     <thead>
     <tr>

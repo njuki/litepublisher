@@ -7,6 +7,7 @@
 **/
 
 class tmetawidget extends twidget {
+  public $items;
   
   public static function instance() {
     return getinstance(__class__);
@@ -17,35 +18,42 @@ class tmetawidget extends twidget {
     $this->basename = 'widget.meta';
     $this->template = 'meta';
     $this->adminclass = 'tadminmetawidget';
-    $this->data['meta'] = array(
-    'rss' => true,
-    'comments' => true,
-    'media' => true,
-    'foaf' => true,
-    'profile' => true,
-    'sitemap' => true
-    );
+    $this->addmap('items', array());
   }
   
   public function getdeftitle() {
     return tlocal::$data['default']['meta'];
   }
   
+  public function add($name, $url, $title) {
+    $this->items[$name] = array(
+    'enabled' => true,
+    'url' => $url,
+    'title' => $title
+    );
+    $this->save();
+  }
+  
+  public function delete($name) {
+    if (isset($this->items[$name])) {
+      unset($this->items[$name]);
+      $this->save();
+    }
+  }
+  
   public function getcontent($id, $sitebar) {
-    extract($this->data['meta'], EXTR_SKIP);
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('meta', $sitebar);
     $metaclasses = isset($theme->data['sitebars'][$sitebar]['meta']) ? $theme->data['sitebars'][$sitebar]['meta']['classes'] :
     array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
-    $lang = tlocal::instance('default');
     
-    if ($rss) $result .= $this->getitem($tml, '/rss.xml', $lang->rss, $metaclasses['rss']);
-    if ($comments) $result .= $this->getitem($tml, '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
-    if ($media) $result .= $this->getitem($tml, '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
-    if ($foaf) $result .= $this->getitem($tml, '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
-    if ($profile) $result .= $this->getitem($tml, '/profile.htm', $lang->profile, $metaclasses['profile']);
-    if ($sitemap) $result .= $this->getitem($tml, '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
+    foreach    ($this->items as $name => $item) {
+      if ($item['enabled']) {
+        $result .= $this->getitem($tml,
+        $item['url'], $item['title'],  isset($metaclasses[$name]) ? $metaclasses[$name] : '');
+      }
+    }
     
     if ($result == '') return '';
     return $theme->getwidgetcontent($result, 'meta', $sitebar);

@@ -50,8 +50,6 @@ send lib\admin.comments.class.files.php lib/admin.comments.class.files.php
 quote site chmod 666 lib/admin.comments.class.files.php
 send lib\admin.files.class.php lib/admin.files.class.php
 quote site chmod 666 lib/admin.files.class.php
-send lib\admin.foaf.class.php lib/admin.foaf.class.php
-quote site chmod 666 lib/admin.foaf.class.php
 send lib\admin.form.class.php lib/admin.form.class.php
 quote site chmod 666 lib/admin.form.class.php
 send lib\admin.icons.class.php lib/admin.icons.class.php
@@ -148,10 +146,6 @@ send lib\filer.class.php lib/filer.class.php
 quote site chmod 666 lib/filer.class.php
 send lib\files.class.php lib/files.class.php
 quote site chmod 666 lib/files.class.php
-send lib\foaf.class.php lib/foaf.class.php
-quote site chmod 666 lib/foaf.class.php
-send lib\foaf.util.class.php lib/foaf.util.class.php
-quote site chmod 666 lib/foaf.util.class.php
 send lib\homepage.class.php lib/homepage.class.php
 quote site chmod 666 lib/homepage.class.php
 send lib\htmlresource.class.php lib/htmlresource.class.php
@@ -214,8 +208,6 @@ send lib\post.transform.class.php lib/post.transform.class.php
 quote site chmod 666 lib/post.transform.class.php
 send lib\posts.class.php lib/posts.class.php
 quote site chmod 666 lib/posts.class.php
-send lib\profile.class.php lib/profile.class.php
-quote site chmod 666 lib/profile.class.php
 send lib\redirect.class.php lib/redirect.class.php
 quote site chmod 666 lib/redirect.class.php
 send lib\remoteadmin.class.php lib/remoteadmin.class.php
@@ -266,8 +258,6 @@ send lib\widget.comments.class.php lib/widget.comments.class.php
 quote site chmod 666 lib/widget.comments.class.php
 send lib\widget.custom.class.php lib/widget.custom.class.php
 quote site chmod 666 lib/widget.custom.class.php
-send lib\widget.friends.class.php lib/widget.friends.class.php
-quote site chmod 666 lib/widget.friends.class.php
 send lib\widget.links.class.php lib/widget.links.class.php
 quote site chmod 666 lib/widget.links.class.php
 send lib\widget.menu.class.php lib/widget.menu.class.php
@@ -398,12 +388,6 @@ send lib\install\files.class.install.php lib/install/files.class.install.php
 quote site chmod 666 lib/install/files.class.install.php
 send lib\install\files.sql lib/install/files.sql
 quote site chmod 666 lib/install/files.sql
-send lib\install\foaf.class.install.php lib/install/foaf.class.install.php
-quote site chmod 666 lib/install/foaf.class.install.php
-send lib\install\foaf.sql lib/install/foaf.sql
-quote site chmod 666 lib/install/foaf.sql
-send lib\install\foaf.util.install.php lib/install/foaf.util.install.php
-quote site chmod 666 lib/install/foaf.util.install.php
 send lib\install\homepage.class.install.php lib/install/homepage.class.install.php
 quote site chmod 666 lib/install/homepage.class.install.php
 send lib\install\icons.class.install.php lib/install/icons.class.install.php
@@ -442,8 +426,6 @@ send lib\install\posts.sql lib/install/posts.sql
 quote site chmod 666 lib/install/posts.sql
 send lib\install\postspages.sql lib/install/postspages.sql
 quote site chmod 666 lib/install/postspages.sql
-send lib\install\profile.class.install.php lib/install/profile.class.install.php
-quote site chmod 666 lib/install/profile.class.install.php
 send lib\install\raw.sql lib/install/raw.sql
 quote site chmod 666 lib/install/raw.sql
 send lib\install\redirect.class.install.php lib/install/redirect.class.install.php
@@ -482,8 +464,6 @@ send lib\install\widget.comments.class.install.php lib/install/widget.comments.c
 quote site chmod 666 lib/install/widget.comments.class.install.php
 send lib\install\widget.custom.class.install.php lib/install/widget.custom.class.install.php
 quote site chmod 666 lib/install/widget.custom.class.install.php
-send lib\install\widget.friends.class.install.php lib/install/widget.friends.class.install.php
-quote site chmod 666 lib/install/widget.friends.class.install.php
 send lib\install\widget.links.class.install.php lib/install/widget.links.class.install.php
 quote site chmod 666 lib/install/widget.links.class.install.php
 send lib\install\widget.menu.class.install.php lib/install/widget.menu.class.install.php
@@ -572,6 +552,8 @@ send lib\update\update.3.79.php lib/update/update.3.79.php
 quote site chmod 666 lib/update/update.3.79.php
 send lib\update\update.3.80.php lib/update/update.3.80.php
 quote site chmod 666 lib/update/update.3.80.php
+send lib\update\update.3.81.php lib/update/update.3.81.php
+quote site chmod 666 lib/update/update.3.81.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -794,6 +776,54 @@ send plugins\externallinks\externallinks.plugin.php plugins/externallinks/extern
 quote site chmod 666 plugins/externallinks/externallinks.plugin.php
 send plugins\externallinks\index.htm plugins/externallinks/index.htm
 quote site chmod 666 plugins/externallinks/index.htm
+cd plugins
+mkdir foaf
+quote site chmod 777 foaf
+cd ../
+send plugins\foaf\.htaccess plugins/foaf/.htaccess
+quote site chmod 666 plugins/foaf/.htaccess
+send plugins\foaf\about.ini plugins/foaf/about.ini
+quote site chmod 666 plugins/foaf/about.ini
+send plugins\foaf\admin.foaf.class.php plugins/foaf/admin.foaf.class.php
+quote site chmod 666 plugins/foaf/admin.foaf.class.php
+send plugins\foaf\admin.widget.friends.class.php plugins/foaf/admin.widget.friends.class.php
+quote site chmod 666 plugins/foaf/admin.widget.friends.class.php
+send plugins\foaf\foaf.class.install.php plugins/foaf/foaf.class.install.php
+quote site chmod 666 plugins/foaf/foaf.class.install.php
+send plugins\foaf\foaf.class.php plugins/foaf/foaf.class.php
+quote site chmod 666 plugins/foaf/foaf.class.php
+send plugins\foaf\foaf.util.class.php plugins/foaf/foaf.util.class.php
+quote site chmod 666 plugins/foaf/foaf.util.class.php
+send plugins\foaf\foaf.util.install.php plugins/foaf/foaf.util.install.php
+quote site chmod 666 plugins/foaf/foaf.util.install.php
+send plugins\foaf\index.htm plugins/foaf/index.htm
+quote site chmod 666 plugins/foaf/index.htm
+send plugins\foaf\profile.class.install.php plugins/foaf/profile.class.install.php
+quote site chmod 666 plugins/foaf/profile.class.install.php
+send plugins\foaf\profile.class.php plugins/foaf/profile.class.php
+quote site chmod 666 plugins/foaf/profile.class.php
+cd plugins/foaf
+mkdir resource
+quote site chmod 777 resource
+cd ../../
+send plugins\foaf\resource\.htaccess plugins/foaf/resource/.htaccess
+quote site chmod 666 plugins/foaf/resource/.htaccess
+send plugins\foaf\resource\en.ini plugins/foaf/resource/en.ini
+quote site chmod 666 plugins/foaf/resource/en.ini
+send plugins\foaf\resource\foaf.sql plugins/foaf/resource/foaf.sql
+quote site chmod 666 plugins/foaf/resource/foaf.sql
+send plugins\foaf\resource\html.ini plugins/foaf/resource/html.ini
+quote site chmod 666 plugins/foaf/resource/html.ini
+send plugins\foaf\resource\index.htm plugins/foaf/resource/index.htm
+quote site chmod 666 plugins/foaf/resource/index.htm
+send plugins\foaf\resource\ru.ini plugins/foaf/resource/ru.ini
+quote site chmod 666 plugins/foaf/resource/ru.ini
+send plugins\foaf\resource\ua.ini plugins/foaf/resource/ua.ini
+quote site chmod 666 plugins/foaf/resource/ua.ini
+send plugins\foaf\widget.friends.class.install.php plugins/foaf/widget.friends.class.install.php
+quote site chmod 666 plugins/foaf/widget.friends.class.install.php
+send plugins\foaf\widget.friends.class.php plugins/foaf/widget.friends.class.php
+quote site chmod 666 plugins/foaf/widget.friends.class.php
 cd plugins
 mkdir googleanalitic
 quote site chmod 777 googleanalitic
@@ -1274,8 +1304,6 @@ send plugins\youtube-feed\about.ini plugins/youtube-feed/about.ini
 quote site chmod 666 plugins/youtube-feed/about.ini
 send plugins\youtube-feed\admin.youtube.feed.class.php plugins/youtube-feed/admin.youtube.feed.class.php
 quote site chmod 666 plugins/youtube-feed/admin.youtube.feed.class.php
-send plugins\youtube-feed\url.txt plugins/youtube-feed/url.txt
-quote site chmod 666 plugins/youtube-feed/url.txt
 send plugins\youtube-feed\youtube.feed.class.install.php plugins/youtube-feed/youtube.feed.class.install.php
 quote site chmod 666 plugins/youtube-feed/youtube.feed.class.install.php
 send plugins\youtube-feed\youtube.feed.class.php plugins/youtube-feed/youtube.feed.class.php
@@ -1292,8 +1320,6 @@ send plugins\youtubeplayer\about.ini plugins/youtubeplayer/about.ini
 quote site chmod 666 plugins/youtubeplayer/about.ini
 send plugins\youtubeplayer\admin.youtube.player.class.php plugins/youtubeplayer/admin.youtube.player.class.php
 quote site chmod 666 plugins/youtubeplayer/admin.youtube.player.class.php
-send plugins\youtubeplayer\h.htm plugins/youtubeplayer/h.htm
-quote site chmod 666 plugins/youtubeplayer/h.htm
 send plugins\youtubeplayer\index.htm plugins/youtubeplayer/index.htm
 quote site chmod 666 plugins/youtubeplayer/index.htm
 send plugins\youtubeplayer\youtube.player.class.php plugins/youtubeplayer/youtube.player.class.php

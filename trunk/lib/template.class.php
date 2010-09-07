@@ -274,16 +274,17 @@ class ttemplate extends tevents {
   
   public function gethead() {
     $result = $this->gethovermenuhead();
+    $result .= implode("\n", $this->heads);
+    $result .= implode("\n", $this->javascripts);
     if ($this->itemplate) $result .= $this->context->gethead();
     if (litepublisher::$urlmap->adminpanel) {
       $result .= implode("\n", $this->adminheads);
       $result .= implode("\n", $this->adminjavascripts);
       $this->callevent('onadminhead', array(&$result));
-    } else {
-      $result .= implode("\n", $this->heads);
-      $result .= implode("\n", $this->javascripts);
     }
     $result = $this->getjavaoptions() . $result;
+    $theme = ttheme::instance();
+    $result = $theme->parse($result);
     $this->callevent('onhead', array(&$result));
     return $result;
   }

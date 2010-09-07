@@ -62,7 +62,6 @@ class tadminwidgets extends tadminmenu {
     
     //all widgets
     $result .= $html->addhead();
-    $widgets = twidgets::instance();
     foreach ($widgets->items as $id => $item) {
       $args->id = $id;
       $args->add($item);
@@ -174,8 +173,10 @@ class tadminwidgets extends tadminmenu {
       $widgets = twidgets::instance();
       foreach ($_POST as $key => $value) {
         if (strbegin($key, 'addwidget-')){
+          $id = (int) $value;
+          if (!$widgets->itemexists($id) || $widgets->subclass($id)) continue;
           $sitebars[0][] = array(
-          'id' => (int) $value,
+          'id' => $id,
           'ajax' => false
           );
         }

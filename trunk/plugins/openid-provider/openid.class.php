@@ -90,8 +90,8 @@ class topenid extends tevents {
     $this->LoadBigMath();
     ini_set('arg_separator.output', '&');
     $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-    if (file_exists($dir . litepublisher::$options->languages . '.ini')) {
-      tlocal::loadini($dir . litepublisher::$options->languages . '.ini');
+    if (file_exists($dir . litepublisher::$options->language . '.ini')) {
+      tlocal::loadini($dir . litepublisher::$options->language . '.ini');
     } else {
       tlocal::loadini($dir . 'en.ini');
     }

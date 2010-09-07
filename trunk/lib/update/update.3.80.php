@@ -1,5 +1,5 @@
 <?php
-function update3880() {
+function update380() {
 if (dbversion) {
 $man = tdbmanager ::instance();
 $man->alter('files', "alter `samplingrate` set default 0");

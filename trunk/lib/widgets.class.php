@@ -1,6 +1,6 @@
 <?php
 /**
-* Lite Publisher
+cl* Lite Publisher
 * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
@@ -235,6 +235,15 @@ class twidgets extends titems {
     );
     $this->unlock();
     return $id;
+  }
+  
+  public function subclass($id) {
+    foreach ($this->classes as $class => $items) {
+      foreach ($items as $item) {
+        if ($id == $item['id']) return $class;
+      }
+    }
+    return false;
   }
   
   public function delete($id) {
