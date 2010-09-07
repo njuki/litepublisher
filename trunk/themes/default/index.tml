@@ -41,8 +41,7 @@
 			<h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
 				<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
 				<span class="post-tags">$post.tagslinks</span>
-			<div class="post-content">$post.excerpt 
-				$post.morelink
+			<div class="post-content">$post.excerptcontent
 				$post.excerptfilelist
 			</div>
 			<div class="post-info">

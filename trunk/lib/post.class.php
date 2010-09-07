@@ -418,15 +418,12 @@ class tpost extends titem implements  itemplate {
     return $tc->getcomments($this->id);
   }
   
-  public function getexcerpt() {
+  public function getexcerptcontent() {
     $result = $this->data['excerpt'];
     $posts = tposts::instance();
     $posts->beforeexcerpt($this, $result);
-   $posts->addrevision();
-    if ($this->revision < $posts->revision) $this->revision = $posts->revision;
-//dumpstr($result);
+       if ($this->revision < $posts->revision) $this->revision = $posts->revision;
       $result = $this->replacemore($result, true);
-//dumpstr($result);
     if (litepublisher::$options->parsepost) {
       $theme = ttheme::instance();
       $result = $theme->parse($result);
@@ -435,7 +432,7 @@ class tpost extends titem implements  itemplate {
     return $result;
   }
   
-  private function replacemore($content, $excerpt) {
+  public function replacemore($content, $excerpt) {
     $theme = ttheme::instance();
     ttheme::$vars['post'] = $this;
     $more = $theme->parse($excerpt ?
