@@ -208,7 +208,7 @@ class tthemeparser extends tevents {
     
     $result['files'] = $this->parsefilesexcerpt($s, $post['files']);
     $default = $this->default->content->excerpts->excerpt;
-    $result['more'] = $this->gettag($s, 'more', '$post.morelink', $default->more);
+    $result['more'] = $this->gettag($s, 'more', '', $default->more);
     $result['dateformat'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['dateformat']));
     $s = $this->deletespaces($s);
     $result[0] = $s != '' ? $s : (string) $default;
