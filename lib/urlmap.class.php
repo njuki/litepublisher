@@ -51,11 +51,13 @@ class turlmap extends titems {
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
+    if (litepublisher::$options->ob_cache) ob_start();
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
+    if (litepublisher::$options->ob_cache) ob_end_flush ();
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
   }
@@ -467,6 +469,24 @@ class turlmap extends titems {
     ?>";
   }
   
+  public function startcompress() {
+    if ( ini_get('zlib.output_compression') || ('ob_gzhandler' == ini_get('output_handler')) ||
+    !isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) return null;
+    
+    //header('Vary: Accept-Encoding');
+    if ( false !== strpos( strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') && function_exists('gzencode') ) {
+      header('Content-Encoding: gzip');
+      return 'compress_gzip';
+    } elseif ( false !== strpos( strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'deflate') && function_exists('gzdeflate')) {
+      header('Content-Encoding: deflate');
+      return 'compress_deflate';
+    }
+    return null;
+  }
+  
 }//class
+
+function compress_gzip($s) { return gzencode($s); }
+function compress_deflate($s) { return gzdeflate($s, 9); }
 
 ?>

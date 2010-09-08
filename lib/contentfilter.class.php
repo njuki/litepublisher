@@ -39,7 +39,7 @@ class tcontentfilter extends tevents {
     preg_match('/\[cut(.*?)?\]/', $s, $matches)
     ) {
       $parts = explode($matches[0], $s, 2);
-$excerpt = $this->filter($parts[0] . $moretag);
+      $excerpt = $this->filter($parts[0] . $moretag);
       $post->excerpt = $excerpt;
       $post->filtered = $excerpt . $moretag . $this->ExtractPages($post,$parts[1]);
       $post->rss =  $excerpt;
@@ -48,7 +48,7 @@ $excerpt = $this->filter($parts[0] . $moretag);
     } else {
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
-$excerpt = $this->filter(self::GetExcerpt($s, $this->automorelength) . $moretag);
+        $excerpt = $this->filter(self::GetExcerpt($s, $this->automorelength) . $moretag);
         $post->excerpt = $excerpt;
         $post->rss =  $excerpt;
         $post->moretitle = tlocal::$data['default']['more'];

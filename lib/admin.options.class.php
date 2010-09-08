@@ -94,6 +94,8 @@ class Tadminoptions extends tadminmenu {
       
       case 'cache':
       $args->cache = $options->cache;
+      $args->ob_cache = $options->ob_cache;
+      $args->compress = $options->compress;
       break;
       
       case 'lite':
@@ -282,6 +284,8 @@ class Tadminoptions extends tadminmenu {
         $options->lock();
         $options->cache = isset($cache );
         if (!empty($cacheexpired)) $options->expiredcache = (int) $cacheexpired;
+        $options->ob_cache = isset($ob_cache);
+        $options->compress = isset($compress);
         $options->unlock();
       }
       break;

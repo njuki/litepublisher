@@ -1,4 +1,4 @@
-<?php
+c<?php
 /**
 * Lite Publisher
 * Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
@@ -53,6 +53,8 @@ function installoptions($language) {
   $options->mailer = "";
   $options->data['cache'] = true;
   $options->expiredcache= 3600;
+  $options->ob_cache = true;
+  $options->compress = false;
   $options->filetime_offset = tfiler::get_filetime_offset();
   $options->data['perpage'] = 10;
   $options->filtercommentstatus = true;

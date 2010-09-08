@@ -52,7 +52,6 @@ public function __get($name) { return litepublisher::$_paths[$name]; }
 public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 }
 
-ob_start();
 try {
   litepublisher::init();
   require_once(litepublisher::$paths->lib . 'kernel.php');
@@ -69,7 +68,6 @@ try {
 } catch (Exception $e) {
   echo $e->GetMessage();
 }
-ob_end_flush ();
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 ?>
