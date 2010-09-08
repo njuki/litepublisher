@@ -180,7 +180,7 @@ class tcommontags extends titems implements  itemplate {
     $urlmap = turlmap::instance();
     $linkgen = tlinkgenerator::instance();
     $url = trim($url);
-    // попытка восстановить что ли урл
+    // try rebuild url
     if ($url == '') {
       $url = $linkgen->createurl($title, $this->PermalinkIndex, false);
     }
@@ -194,8 +194,7 @@ class tcommontags extends titems implements  itemplate {
       $item['url'] = $url;
     }
     
-    
-    $this->items[$id] = $item;
+        $this->items[$id] = $item;
     $this->save();
     $urlmap->clearcache();
   }
