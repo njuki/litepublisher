@@ -9,10 +9,11 @@ $man->setautoincrement('posts', $data->lastid)
 } else {
 $posts->autoid = $data->lastid;
 }
-
-foreach ($data->data['items'] as $id => $item) {
+$items = $data->data[['items'];
+foreach ($items as $id => $item) {
 $post = migratepost($id);
 savepost($post);
+migratecomments($id);
 if (!dbversion) {
       $posts->items[$post->id] = array(
       'posted' => $post->posted
