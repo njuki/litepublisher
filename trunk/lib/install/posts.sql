@@ -15,7 +15,7 @@
   `categories` text NOT NULL,
   `tags` text NOT NULL,
   `files` text NOT NULL,
-  `password` varchar(64) NOT NULL,
+  `password` varchar(32) NOT NULL default '',
   `theme` varchar(64) NOT NULL,
   `tmlfile` varchar(64) NOT NULL,
   `status` enum('published','draft','future','deleted') default 'published',
