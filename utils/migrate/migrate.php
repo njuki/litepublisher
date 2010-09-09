@@ -33,7 +33,7 @@ cleartags(ttags::instance());
 class tmigratedata extends tdata {
 public static $dir;
 
-public function load($name) {
+public function loadfile($name) {
 $this->data = array();
 $filename = self::$dir . $name . '.php';
     if (file_exists($filename)) {
@@ -46,7 +46,7 @@ $filename = self::$dir . $name . '.php';
 
 function migrateposts() {
 global $data, $man;
-$data->load('posts' . DIRECTORY_SEPARATOR . 'index');
+$data->loadfile('posts' . DIRECTORY_SEPARATOR . 'index');
 $posts = tposts::instance();
 if (dbversion) {
 $man->setautoincrement('posts', $data->lastid);
@@ -75,18 +75,20 @@ $arch->postschanged();
 //update trust values
 if (dbversion) {
       $db = litepublisher::$db;
-      $res = $db->query("SELECT author as 'author', count(author) as 'count' FROM  $db->comments 
-where status = 'approved' GROUP BY  author");
+$trusts = $db->res2assoc($db->query("SELECT author as 'author', count(author) as 'count' FROM  $db->comments 
+where status = 'approved' GROUP BY  author"));
+
 $db->table = 'comusers';
-      while ($r = $db->fetchassoc($res)) {
+foreach ($trusts as $r) {
         $db->setvalue($r['author'], 'trust', $r['count']);
 }
+unset($trust);
 }
 }
 
 function migratepost($id) {
 global $data;
-$data->load('posts' . DIRECTORY_SEPARATOR  . $id . DIRECTORY_SEPARATOR . 'index');
+$data->loadfile('posts' . DIRECTORY_SEPARATOR  . $id . DIRECTORY_SEPARATOR . 'index');
 $post = tpost::instance();
 foreach ($data->data as $name =>  $value) {
 if (isset($post->data[$name])) $post->data[$name] = $value;
@@ -133,14 +135,14 @@ $db->insert_a($values);
 
 function migratecomments($idpost) {
 global $data, $users;
-if (!$data->load('posts' . DIRECTORY_SEPARATOR  . $idpost . DIRECTORY_SEPARATOR . 'comments')) return;
+if (!$data->loadfile('posts' . DIRECTORY_SEPARATOR  . $idpost . DIRECTORY_SEPARATOR . 'comments')) return;
 if (!isset($data->data['items'])) {
 var_dump($idpost, $data->data);
 exit();
 }
 if (!isset($users)) {
 $users = new tmigratedata();
-$users->load('commentusers');
+$users->loadfile('commentusers');
 }
 
 $comments = tcomments::instance($idpost);
@@ -179,7 +181,7 @@ function addpingback($idpost, $item) {
 
 function migratetags(tcommontags $tags) {
 global $data, $man;
-$data->load($tags->basename);
+$data->loadfile($tags->basename);
 if (dbversion) {
 $man->setautoincrement($tags->table, $data->lastid);
 } else {
@@ -226,10 +228,9 @@ $man->exec("OPTIMIZE TABLE $table");
 migrateposts();
 migratetags(tcategories::instance());
 migratetags(ttags::instance());
-migratemenus();
+//migratemenus();
 //migratewidgets();
 
 //$man = tdbmanager::instance();
-echo  $man->performance();
-
+//echo  $man->performance();
 ?>
