@@ -163,7 +163,7 @@ class titemsposts extends titems {
       foreach ($list as $idpost) {
         $items = $this->getitems($idpost);
         $db->table = 'posts';
-        $db->setvalue($idpost, $Propname, implode(', ', $items));
+        $db->setvalue($idpost, $propname, implode(', ', $items));
       }
     } else {
       foreach ($list as $idpost) {
