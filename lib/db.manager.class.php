@@ -24,7 +24,7 @@ class tdbmanager  {
   
   public function createtable($name, $struct) {
     //    if (litepublisher::$debug)
-    $this->deletetable($name);
+$this->deletetable($name);
     return $this->exec("
     create table $this->prefix$name
     ($struct)
@@ -33,7 +33,8 @@ class tdbmanager  {
   }
   
   public function deletetable($name) {
-    $this->exec("DROP TABLE IF EXISTS $this->prefix$name");
+    //$this->exec("DROP TABLE IF EXISTS $this->prefix$name");
+if ($this->table_exists($name)) $this->exec("DROP TABLE $this->prefix$name");
   }
   
   public function  deletealltables( ) {
@@ -76,8 +77,8 @@ class tdbmanager  {
     return false;
   }
   
-  public function  TableExists( $name) {
-    if ( $list = $this->GetTableList()) {
+  public function  table_exists( $name) {
+    if ( $list = $this->gettables()) {
       return in_array($this->prefix . $name, $list);
     }
     return false;
