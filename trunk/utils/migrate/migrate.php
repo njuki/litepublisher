@@ -2,7 +2,6 @@
 set_time_limit(120);
 define('litepublisher_mode', 'xmlrpc');
 include('index.php');
-$man = tdbmanager::instance();
 
 function cleartags($tags) {
 $tags->lock();
@@ -13,6 +12,7 @@ $tags->delete($id);
 $tags->unlock();
 }
 
+function clearposts() {
 $posts = tposts::instance();
 $posts->lock();
 if (dbversion) {
@@ -27,8 +27,18 @@ $posts->delete($id);
 }
 }
 $posts->unlock();
-cleartags(tcategories::instance());
-cleartags(ttags::instance());
+}
+
+function clearmenu() {
+
+
+$menus = tmenus::instance();
+$menus->lock();
+foreach ($menus->items as $id => $item) {
+$menus->delete($id);
+}
+$menus->unlock();
+}
 
 class tmigratedata extends tdata {
 public static $dir;
@@ -211,26 +221,103 @@ $tags->items[$id]  = array(
 }
 if (!dbversion) $tags->save();
 }
-  
+
+function migratemenus() {
+$data = new tmigratedata();
+$data->loadfile('menus' . DIRECTORY_SEPARATOR . 'index');
+$menus = tmenus::instance();
+$menus->lock();
+$menus->autoid = $data->lastid;
+
+foreach ($data->data['items'] as $id => $item) {
+$menu = migratemenu($id, $item['class']);
+    $menus->items[$id] = array(
+    'id' => $id,
+    'class' => get_class($menu)
+    );
+    //move props
+    foreach (tmenu::$ownerprops as $prop) {
+      $menus->items[$id][$prop] = $menu->$prop;
+      if (array_key_exists($prop, $menu->data)) unset($menu->data[$prop]);
+    }
+$menu->id = $id;
+$menu->idurl = addurl($menu->url, $menu, $id);
+$menu->save();
+}
+$menus->sort();
+$menus->unlock();
+}
+
+function migratemenu($id, $class) {
+global $data;
+$data->loadfile('menus' . DIRECTORY_SEPARATOR . $id . DIRECTORY_SEPARATOR  . 'index');
+$classes = array(
+'TMenuItem' => 'tmenu',
+'TContactForm' => 'tcontactform'
+);
+$class = $classes[$class];
+$menu = new $class();
+foreach ($data->data as $name => $value) {
+if (isset($menu->data[$name])) $menu->data[$name] = $value;
+}
+$menu->data['id'] = 0;
+return $menu;
+}  
+
 function addurl($url, $obj, $id) {
 return litepublisher::$urlmap->add($url, get_class($obj), $id, 'normal');
 }
 
+function migrateoptions() {
+global $data;
+$data->loadfile('options');
+$options = litepublisher::$options;
+$options->name = $data->name;
+$options->description = $data->description;
+$options->keywords = $data->keywords;
+$options->email = $data->email;
+    $options->timezone = $data->timezone;
+$options->cache = $data->CacheEnabled;
+$options->expiredcache = $data->CacheExpired;
+$options->perpage = $data->postsperpage;
+  $options->DefaultCommentStatus = $data->DefaultCommentStatus;
+  $options->commentsdisabled = $data->commentsdisabled;
+  $options->commentsenabled = $data->commentsenabled;
+  $options->pingenabled = $data->pingenabled;
+  $options->commentpages = $data->commentpages;
+  $options->commentsperpage = $data->commentsperpage;
+  $options->echoexception = $data->echoexception;
+    }
+
 tmigratedata::$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'data2' . DIRECTORY_SEPARATOR ;
 $data = new tmigratedata();
 
-//$man->optimize();
+if (dbversion) {
+$man = tdbmanager::instance();
     $tables = $man->gettables();
     foreach ($tables as $table) {
 $man->exec("OPTIMIZE TABLE $table");
     }
+}
 
+litepublisher::$urlmap->lock();
+/*
+clearposts();
+cleartags(tcategories::instance());
+cleartags(ttags::instance());
+clearmenu();
+migrateoptions();
 migrateposts();
 migratetags(tcategories::instance());
 migratetags(ttags::instance());
-//migratemenus();
+migratemenus();
 //migratewidgets();
-
-//$man = tdbmanager::instance();
+*/
+migrateoptions();
+clearmenu();
+migratemenus();
+litepublisher::$urlmap->unlock();
+litepublisher::$options->savemodified();
 //echo  $man->performance();
+echo "\nmigrated\n";
 ?>
