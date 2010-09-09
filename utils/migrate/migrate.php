@@ -2,6 +2,7 @@
 set_time_limit(120);
 define('litepublisher_mode', 'xmlrpc');
 include('index.php');
+$man = tdbmanager::instance();
 
 function cleartags($tags) {
 $tags->lock();
@@ -67,6 +68,20 @@ if (!dbversion) {
 }
 $posts->UpdateArchives();
 $posts->save();
+
+$arch = tarchives::instance();
+$arch->postschanged();
+
+//update trust values
+if (dbversion) {
+      $db = litepublisher::$db;
+      $res = $db->query("SELECT author as 'author', count(author) as 'count' FROM  $db->comments 
+where status = 'approved' GROUP BY  author");
+$db->table = 'comusers';
+      while ($r = $db->fetchassoc($res)) {
+        $db->setvalue($r['author'], 'trust', $r['count']);
+}
+}
 }
 
 function migratepost($id) {
@@ -150,7 +165,12 @@ addpingback($idpost, $item);
 }
 $comusers->unlock();
 $comments->unlock();
-return $comments->count;
+
+if (dbversion) {      $count = $comments->db->getcount("post = $idpost and status = 'approved'");
+      $count = $comments->db->getcount("post = $idpost and status = 'approved'");
+      $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
+}
+
 }
 
 function addpingback($idpost, $item) {
@@ -197,13 +217,19 @@ return litepublisher::$urlmap->add($url, get_class($obj), $id, 'normal');
 tmigratedata::$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'data2' . DIRECTORY_SEPARATOR ;
 $data = new tmigratedata();
 
+//$man->optimize();
+    $tables = $man->gettables();
+    foreach ($tables as $table) {
+$man->exec("OPTIMIZE TABLE $table");
+    }
+
 migrateposts();
 migratetags(tcategories::instance());
 migratetags(ttags::instance());
 migratemenus();
 //migratewidgets();
 
-$man = tdbmanager::instance();
+//$man = tdbmanager::instance();
 echo  $man->performance();
 
 ?>
