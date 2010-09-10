@@ -203,7 +203,7 @@ class tcomments extends titems {
     }
     
     $table = $this->thistable;
-    $items = $this->select("$table.post = $this->pid and $table.status = '$status' $whereauthor",
+    $items = $this->select("$table.post = $this->pid $whereauthor  and $table.status = '$status'",
     "order by $table.posted asc limit $from, $count");
     
     $args = targs::instance();
