@@ -32,7 +32,7 @@ class tinstaller extends tdata {
     }
     
     if (!empty($_GET['mode'])) $this->mode = $_GET['mode'];
-    if (!empty($_GET['lite'])) $this->lite = $_GET['lite'] == 'true';
+    if (!empty($_GET['lite'])) $this->lite = $_GET['lite'] == 1;
     if (!empty($_GET['resulttype'])) $this->resulttype = $_GET['resulttype'];
   }
   
@@ -76,7 +76,6 @@ class tinstaller extends tdata {
         exit();
         
         case 'xmlrpc':
-        require_once(litepublisher::$paths->libinclude . 'class-IXR.php');
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
@@ -114,9 +113,6 @@ class tinstaller extends tdata {
     if ($this->mode != 'remote') {
       $this->congratulation($password);
     }
-    
-    $arch = tarchives::instance();
-    $arch->lite = $this->lite;
     
     if (!$this->lite) $this->CreateFirstPost();
     
@@ -294,7 +290,7 @@ class tinstaller extends tdata {
     
     $plugins = tplugins::instance();
     $plugins->lock();
-    //$plugins->add('oldestposts');
+    $plugins->add('oldestposts');
     //$plugins->add('adminlinks');
     //$plugins->add('nicedit');
     $plugins->unlock();
