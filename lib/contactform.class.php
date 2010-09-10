@@ -12,6 +12,11 @@ class tcontactform extends tmenu {
     return getinstance(__class__);
   }
   
+  protected function create() {
+    parent::create();
+    $this->cache = false;
+  }
+  
   public function processform() {
     if (!isset($_POST['contactvalue'])) return  '';
     $lang = tlocal::instance('contactform');

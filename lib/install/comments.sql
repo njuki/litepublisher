@@ -8,6 +8,6 @@
 
   PRIMARY KEY  (`id`),
   KEY `post` (`post`),
+  KEY `status` (`status`),
   KEY `author` (`author`),
-  KEY `posted` (`posted`),
-  KEY `status` (`status`)
+  KEY `posted` (`posted`)

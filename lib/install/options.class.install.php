@@ -50,7 +50,7 @@ function installoptions($language) {
   $options->cookieexpired = 0;
   
   $options->email = "yarrowsoft@gmail.com";
-  $options->mailer = "";
+  $options->mailer = '';
   $options->data['cache'] = true;
   $options->expiredcache= 3600;
   $options->ob_cache = true;
