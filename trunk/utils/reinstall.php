@@ -586,11 +586,26 @@ die('Error download last release');
     chmod($dir, 0777);
     return is_dir($dir);
   }
+
 }//class
 
+function movefolders() {
+}
+
+function reinstall() {
+$data = new tmigratedata();
+$data->loadfile('options');
 if (download::install()) {
-header('Location: http://'. $_SERVER['HTTP_HOST'] . '/');
+$params = sprintf('&lang=%s&name=%s&description=%s&email=%s', rawurlencode($data->language), rawurlencode($data->name), rawurlencode($data->description), rawurlencode($data->email));
+if ($s = http::get('http://'. $_SERVER['HTTP_HOST'] . '/?mode=remote&lite=1&resulttype=serialized' . $params)) {
+$info = unserialize($s);
+dbname=jusoft_test&dblogin=test&dbpassword=test&dbversion=1&dbprefix=startru_&usehost=0
+
+header('Location: http://'. $_SERVER['HTTP_HOST'] . '/migrate.php');
 exit();
 }
-echo "Cant install";
+}
+
+movefolders();
+reinstall();
 ?>
