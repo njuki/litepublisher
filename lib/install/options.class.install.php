@@ -72,6 +72,7 @@ function installoptions($language) {
   $options->usersenabled = false;
   $options->reguser = false;
   $options->icondisabled = false;
+$options->data['storage'] = array();
   
   $options->unlock();
   return $password;

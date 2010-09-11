@@ -22,14 +22,6 @@ class tfiles extends titems {
     $this->itemsposts = tfileitems ::instance();
   }
   
-  public function load() {
-    if(!$this->dbversion) parent::load();
-  }
-  
-  public function save() {
-    if (!$this->dbversion) parent::save();
-  }
-  
   public function geturl($id) {
     $item = $this->getitem($id);
     return litepublisher::$options->files . '/files/' . $item['filename'];

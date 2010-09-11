@@ -24,12 +24,12 @@ class titems extends tevents {
   
   public function load() {
     if ($this->dbversion) {
-      $data = &litepublisher::$options->data;
-      if (isset($data[$this->table])) {
-        $this->data = &$data[$this->table];
+      $storage = &litepublisher::$options->data['storage'];
+      if (isset($storage[$this->table])) {
+        $this->data = &$storage[$this->table];
         $this->afterload();
       } else {
-        $data[$this->table] = &$this->data;
+        $storage[$this->table] = &$this->data;
       }
       return  true;
     } else {
