@@ -51,7 +51,7 @@ class tmetawidget extends twidget {
     foreach    ($this->items as $name => $item) {
       if ($item['enabled']) {
         $result .= $this->getitem($tml,
-        $item['url'], $item['title'],  isset($metaclasses[$name]) ? $metaclasses[$name] : '');
+        $item['url'], $item['title'],  $name, isset($metaclasses[$name]) ? $metaclasses[$name] : '');
       }
     }
     
@@ -59,14 +59,14 @@ class tmetawidget extends twidget {
     return $theme->getwidgetcontent($result, 'meta', $sitebar);
   }
   
-  private function getitem($tml, $url, $title, $class) {
+  private function getitem($tml, $url, $title, $name, $class) {
     $args = targs::instance();
     $args->icon = '';$args->subitems = '';
-    $args->rel = $class;
+    $args->rel = $name;
+    $args->class = $class;
     $args->url = litepublisher::$options->url  . $url;
     $args->title = $title;
     $args->anchor = $title;
-    $args->class = $class == '' ? '' : sprintf('class="%s"', $class);
     $theme = ttheme::instance();
     return $theme->parsearg($tml, $args);
   }

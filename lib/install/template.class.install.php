@@ -11,6 +11,7 @@ function ttemplateInstall($self) {
   $html = THtmlResource::instance();
   $html->section = 'installation';
   $lang = tlocal::instance('installation');
+  ttheme::$vars['lang'] = $lang;
   $self->footer = $html->footer() . $html->stat;
 }
 
