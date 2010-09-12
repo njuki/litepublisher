@@ -50,8 +50,8 @@ class tsapeplugin extends twidget {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
     if (!isset($this->sape)) $this->createsape();
-    $Links = $this->sape->return_links($this->counts[$id]);
-    if (empty($Links)) return '';
+    $links = $this->sape->return_links($this->counts[$id]);
+    if (empty($links)) return '';
     return sprintf('<ul><li>%s</li></ul>', $links);
   }
   
