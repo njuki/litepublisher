@@ -49,7 +49,6 @@ $filename = self::$dir . $name . '.php';
     if (file_exists($filename)) {
       return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
     }
-
 }
 
 }//class
@@ -329,7 +328,7 @@ $widgets->unlock();
 }
 }
 
-tmigratedata::$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'data2' . DIRECTORY_SEPARATOR ;
+tmigratedata::$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'old'. DIRECTORY_SEPARATOR;
 $data = new tmigratedata();
 
 if (dbversion) {
