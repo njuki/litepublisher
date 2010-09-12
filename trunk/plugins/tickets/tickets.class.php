@@ -144,5 +144,9 @@ class ttickets extends tposts {
     $this->externalfunc(get_class($this), 'Uninstall', null);
   }
   
+  public function hasright($who, $group) {
+    return ($who == 'tiket') &&($group == 'author');
+  }
+  
 }//class
 ?>

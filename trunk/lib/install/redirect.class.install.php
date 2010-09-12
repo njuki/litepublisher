@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tredirectorInsttall($self) {
+function tredirectorInstall($self) {
   $self->lock();
   $self->add('rss/', '/rss.xml');
   $self->add('/rss', '/rss.xml');

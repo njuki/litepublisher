@@ -37,7 +37,6 @@ function tticketsInstall($self) {
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
-  
   litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::instance();
   $adminoptions->usersenabled = true;
@@ -90,6 +89,7 @@ function tticketsInstall($self) {
   $groups->lock();
   $groups->add('ticket', '/admin/tickets/editor/');
   $groups->defaultgroup = 'ticket';
+  $groups->onhasright = $self->hasright;
   $groups->unlock();
   
   $cron = tcron::instance();
