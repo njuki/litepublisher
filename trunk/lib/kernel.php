@@ -1236,8 +1236,8 @@ class turlmap extends titems {
   
   public function notfound404() {
     $redir = tredirector::instance();
-    if (isset($redir->items[$this->url])) {
-      return $this->redir301($redir->items[$this->url]);
+    if ($url  = $redir->get($this->url)) {
+      return $this->redir301($url);
     }
     
     $this->is404 = true;

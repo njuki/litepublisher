@@ -510,7 +510,7 @@ return$useGzip ? gzencode($this->tar_file) : $this->tar_file;
 // lib/http.class.php
 class http {
   public static function get($url) {
-    $timeout = 10;
+    $timeout = 5;
     $parsed = @parse_url($url);
     if ( !$parsed || !is_array($parsed) ) return false;
     if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
@@ -892,7 +892,7 @@ if (is_dir($home . $name)) rename($home . $name, $backup . $name);
 
 $data = $home . 'data' . DIRECTORY_SEPARATOR . $_SERVER['HTTP_HOST'];
 $old = $home . 'data' . DIRECTORY_SEPARATOR . 'old';
-if (is_dir($data) && !isdir($old))  rename($data, $old);
+if (is_dir($data) && !is_dir($old))  rename($data, $old);
 tmigratedata::$dir =$old . DIRECTORY_SEPARATOR;
 }
 
@@ -916,11 +916,11 @@ die('Error connect to database');
 die('Error select database');
     }
     
-$parans .= "&dbversion=1&dbname=$dbname&dblogin=$dblogin&dbpassword=$dbpassword&dbprefix=$dbprefix";
+$params .= "&dbversion=1&dbname=$dbname&dblogin=$dblogin&dbpassword=$dbpassword&dbprefix=$dbprefix";
 if (!isset($dbhost)) {
-$parans .= '&usehost=0';
+$params .= '&usehost=0';
 } else {
-$parans .= "&usehost=1&dbhost=$dbhost&dbport=$dbport";
+$params .= "&usehost=1&dbhost=$dbhost&dbport=$dbport";
 }
 }
 if ($s = http::get('http://'. $_SERVER['HTTP_HOST'] . '/?mode=remote&lite=1&resulttype=serialized' . $params)) {
@@ -929,5 +929,5 @@ header('Location: http://'. $_SERVER['HTTP_HOST'] . '/migrate.php');
 exit();
 }
 }
-
+echo "Not installed";
 ?>
