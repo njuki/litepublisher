@@ -23,5 +23,12 @@ class tredirector extends titems {
     $this->added($from);
   }
   
-}
+  public function get($url) {
+    if (isset($this->items[$url])) return $this->items[$url];
+    //fix for 2.xx versions
+    if (preg_match('/^\/comments\/(\d*?)\/?$/', $url, $m)) return sprintf('/comments/%d.xml', $m[1]);
+    return false;
+  }
+  
+}//class
 ?>
