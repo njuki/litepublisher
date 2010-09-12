@@ -1,5 +1,6 @@
 <?php
-function update385() {
+function update386() {
 tredirector::instance()->install();
+
 }
 ?>
