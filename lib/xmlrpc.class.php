@@ -156,6 +156,20 @@ class TXMLRPCAbstract extends tevents {
     throw new Exception('Bad login/pass combination.', 403);
   }
   
+  public static function canedit($login, $password, $idpost) {
+    if (litepublisher::$options->auth($login, $password))  {
+      $group = litepublisher::$options->group;
+      if (($group == 'admin') || ($group == 'editor')) return true;
+      $groups = tusergroups::instance();
+      if ($groups->hasright($group, 'author')) {
+        if ($idpost == 0) return true;
+        $post = tpost::instance($idpost);
+        return $post->author == litepublisher::$options->user;
+      }
+    }
+    throw new Exception('Bad login/pass combination.', 403);
+  }
+  
   public static function xerror($code, $msg) {
     return new IXR_Error($code, $msg);
   }

@@ -487,11 +487,11 @@ class turlmap extends titems {
 }//class
 
 function compress_gzip($s) {
- return gzencode($s); 
+  return gzencode($s);
 }
 
 function compress_deflate($s) {
- return gzdeflate($s, 9); 
+  return gzdeflate($s, 9);
 }
 
 ?>

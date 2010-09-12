@@ -87,7 +87,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
   }
   
   public function getbrowser($login, $password, $idpost) {
-    $this->auth($login, $password, 'editor');
+    self::canedit($login, $password, $idpost);
     $args = targs::instance();
     $args->pages = $this->get_page(1);
     $args->currentfiles = $this->getpostfiles((int) $idpost);
@@ -214,8 +214,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     if (!litepublisher::$options->admincookie) return false;
     if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == 'editor')) return true;
     $groups = tusergroups::instance();
-    if ($groups->hasright(litepublisher::$options->group, 'editor')) return true;
-    return $groups->hasright(litepublisher::$options->group, 'ticket');
+    return $groups->hasright(litepublisher::$options->group, 'editor');
   }
   
   public function request() {
@@ -235,15 +234,8 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     
     $parser = tmediaparser::instance();
     $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
-    $result = $this->getfileitem($id, 'curr');
     
-    return "<?php
-    @Header( 'Cache-Control: no-cache, must-revalidate');
-    @Header( 'Pragma: no-cache');
-    @header('Content-Type: text/html; charset=utf-8');
-    @ header('Last-Modified: ' . date('r'));
-    @header('X-Pingback: ". litepublisher::$options->url . "/rpc.xml');
-    ?>" . $result;
+    return turlmap::htmlheader(false) . $this->getfileitem($id, 'curr');
   }
   
 }//class

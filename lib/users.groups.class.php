@@ -16,6 +16,7 @@ class tusergroups extends titems {
     parent::create();
     $this->basename = 'usergroups';
     $this->data['defaultgroup'] = 'nobody';
+    $this->addevents('onhasright');
   }
   
   function add($name, $home = '/ADMIN/') {
@@ -44,6 +45,7 @@ class tusergroups extends titems {
       case 'moderator':
       return ($group == 'subscriber') || ($group == 'author');
     }
+    if ($this->onhasright($who, $group)) return true;
     return false;
   }
   

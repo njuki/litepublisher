@@ -63,6 +63,7 @@ class tinstaller extends tdata {
       'name' => litepublisher::$options->name,
       'description' => litepublisher::$options->description
       );
+      litepublisher::$options->savemodified();
       
       switch ($this->resulttype) {
         case 'serialized' :
