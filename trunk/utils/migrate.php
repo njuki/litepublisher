@@ -342,7 +342,7 @@ $man->exec("OPTIMIZE TABLE $table");
 litepublisher::$urlmap->lock();
 
 $linkgen = tlinkgenerator::instance();
-$linkgen->archive = '/[year]/[month]/',
+$linkgen->archive = '/[year]/[month]/';
 $linkgen->save();
 
 clearposts();
