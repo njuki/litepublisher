@@ -167,12 +167,12 @@ class trss extends tevents {
     
     $guid  = AddNodeValue($item, 'guid', $post->link);
     AddAttr($guid, 'isPermaLink', 'false');
-if (class_exists   ('tprofile')) {
-    $profile = tprofile::instance();
-    AddNodeValue($item, 'dc:creator', $profile->nick);
-} else {
-    AddNodeValue($item, 'dc:creator', 'admin');
-}
+    if (class_exists   ('tprofile')) {
+      $profile = tprofile::instance();
+      AddNodeValue($item, 'dc:creator', $profile->nick);
+    } else {
+      AddNodeValue($item, 'dc:creator', 'admin');
+    }
     
     $categories = tcategories::instance();
     $names = $categories->GetNames($post->categories);
