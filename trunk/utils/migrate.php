@@ -62,10 +62,19 @@ $man->setautoincrement('posts', $data->lastid);
 } else {
 $posts->autoid = $data->lastid;
 }
+
+$tags = ttags::instance();
+$tags->lock();
+$tags->itemsposts->lock();
+$cats = tcategories::instance();
+$cats->lock();
+$cats->itemsposts->lock();
 $items = $data->data['items'];
 foreach ($items as $id => $item) {
 $post = migratepost($id);
 savepost($post);
+  $cats->itemsposts->setitems($post->id, $post->categories);
+  $tags->itemsposts->setitems($post->id, $post->tags);
 migratecomments($id);
 if (!dbversion) {
       $posts->items[$post->id] = array(
@@ -77,6 +86,10 @@ if (!dbversion) {
 }
 $posts->UpdateArchives();
 $posts->save();
+$tags->itemsposts->unlock();
+$tags->unlock();
+$cats->itemsposts->unlock();
+$cats->unlock();
 
 $arch = tarchives::instance();
 $arch->postschanged();
