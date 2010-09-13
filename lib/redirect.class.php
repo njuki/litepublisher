@@ -27,6 +27,8 @@ class tredirector extends titems {
     if (isset($this->items[$url])) return $this->items[$url];
     //fix for 2.xx versions
     if (preg_match('/^\/comments\/(\d*?)\/?$/', $url, $m)) return sprintf('/comments/%d.xml', $m[1]);
+    if (preg_match('/^\/authors\/(\d*?)\/?$/', $url, $m)) return '/comusers.htm?id=' . $m[1];
+    
     return false;
   }
   

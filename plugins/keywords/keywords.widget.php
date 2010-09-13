@@ -41,7 +41,7 @@ class tkeywordswidget extends twidget {
     if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
     if (strend(litepublisher::$urlmap->url, '.xml')) {
       $widgets = twidgets::instance();
-      $id = $widgets->ididurlcontext;
+      $id = $widgets->idurlcontext;
     } else {
       $id = litepublisher::$urlmap->itemrequested['id'];
     }
