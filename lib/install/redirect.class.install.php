@@ -8,7 +8,7 @@
 
 function tredirectorInstall($self) {
   $self->lock();
-  $self->add('rss/', '/rss.xml');
+  $self->add('/rss/', '/rss.xml');
   $self->add('/rss', '/rss.xml');
   $self->add('/feed/', '/rss.xml');
   $self->add('/wp-rss.php', '/rss.xml');

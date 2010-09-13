@@ -341,6 +341,10 @@ $man->exec("OPTIMIZE TABLE $table");
 
 litepublisher::$urlmap->lock();
 
+$linkgen = tlinkgenerator::instance();
+$linkgen->archive = '/[year]/[month]/',
+$linkgen->save();
+
 clearposts();
 cleartags(tcategories::instance());
 cleartags(ttags::instance());
