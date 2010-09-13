@@ -45,7 +45,7 @@ class tposts extends titems {
   
   public function loaditems(array $items) {
     if (!dbversion || count($items) == 0) return;
-    //исключить из загрузки загруженные посты
+    //exclude already loaded items
     if (isset(titem::$instances['post'])) {
       $items = array_diff($items, array_keys(titem::$instances['post']));
     }

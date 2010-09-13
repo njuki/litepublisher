@@ -107,9 +107,13 @@ class tcommentmanager extends tevents {
   public function reply($idreply, $idpost, $content) {
     $status = 'approved';
     $idpost = (int) $idpost;
-    $profile = tprofile::instance();
-    $email = $profile->mbox!= '' ? $profile->mbox : litepublisher::$options->fromemail;
+    $email = litepublisher::$options->fromemail;
     $site = litepublisher::$options->url . litepublisher::$options->home;
+    
+    if (class_exists('tprofile')) {
+      $profile = tprofile::instance();
+      $email = $profile->mbox!= '' ? $profile->mbox : $email;
+    }
     $comusers = tcomusers::instance($idpost);
     $idauthor = $comusers->add($profile->nick, $email, $site, '');
     $comments = tcomments::instance($idpost);

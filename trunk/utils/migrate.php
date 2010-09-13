@@ -57,6 +57,7 @@ function migrateposts() {
 global $data, $man;
 $data->loadfile('posts' . DIRECTORY_SEPARATOR . 'index');
 $posts = tposts::instance();
+$posts->lock();
 if (dbversion) {
 $man->setautoincrement('posts', $data->lastid);
 } else {
@@ -85,7 +86,8 @@ if (!dbversion) {
 }
 }
 $posts->UpdateArchives();
-$posts->save();
+$posts->addrevision();
+$posts->unlock();
 $tags->itemsposts->unlock();
 $tags->unlock();
 $cats->itemsposts->unlock();
