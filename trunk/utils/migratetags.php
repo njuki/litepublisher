@@ -22,5 +22,6 @@ $tags->unlock();
 $cats->itemsposts->unlock();
 $cats->unlock();
 
+litepublisher:$urlmap->cleartags();
 echo "updated<br>\n";
 ?>
