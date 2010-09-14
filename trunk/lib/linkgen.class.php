@@ -166,7 +166,7 @@ class tlinkgenerator extends tevents {
     $url = trim(strip_tags($obj->url), "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
     if ($url == '') return $this->createlink($obj, $schema, true);
     $result= '/' . $this->encode($url);
-   if (strend($obj->url, '/')) $result .= '/';
+    if (strend($obj->url, '/')) $result .= '/';
     $result= $this->clean($result);
     $result = $this->MakeUnique($result);
     return $result;
