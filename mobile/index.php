@@ -11,6 +11,8 @@ if (version_compare(PHP_VERSION, '5.1', '<')) {
 }
 
 class litepublisher {
+public static $mobile;
+public static $mobiletheme = 'default';
   public static $db;
   public static $classes;
   public static $options;
@@ -25,7 +27,7 @@ class litepublisher {
   public static function init() {
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
     self::$domain = $domain[2];
-    
+self::$mobile = '/' . basename(dirname(__file__));
     $home = dirname(dirname(__file__)). DIRECTORY_SEPARATOR;
     self::$_paths = array(
     'home' => $home,
@@ -33,7 +35,7 @@ class litepublisher {
     'libinclude' => $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR,
     'languages' => $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR,
     'data' => $home . 'data'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR,
-    'cache' => $home . 'cache'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR . 'mobile.',
+    'cache' => $home . 'cache'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR,
     'plugins' =>  $home . 'plugins' . DIRECTORY_SEPARATOR,
     'themes' => $home . 'themes'. DIRECTORY_SEPARATOR,
     'files' => $home . 'files' . DIRECTORY_SEPARATOR,
@@ -42,7 +44,7 @@ class litepublisher {
     );
     
     self::$paths = new tpaths();
-    self::$microtime = microtime();
+    self::$microtime = microtime(true);
   }
   
 }
@@ -52,34 +54,50 @@ public function __get($name) { return litepublisher::$_paths[$name]; }
 public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 }
 
-ob_start();
-litepublisher::init();
-litepublisher::$debug = true;
-if (litepublisher::$debug) {
-require_once(litepublisher::$paths->lib . 'data.class.php');
-require_once(litepublisher::$paths->lib . 'events.class.php');
-require_once(litepublisher::$paths->lib . 'items.class.php');
-require_once(litepublisher::$paths->lib . 'classes.php');
-require_once(litepublisher::$paths->lib . 'options.class.php');
-} else {
-require_once(litepublisher::$paths->lib . 'kernel.php');
+try {
+  litepublisher::init();
+  require_once(litepublisher::$paths->lib . 'kernel.php');
+class tmobileclasses extends tclasses {
+public $mobileclasses;
+
+public function __construct() {
+$this->mobileclasses = array(
+'toptions' => 'tmobileoptions',
+'turlmap' => 'tmobileurlmap',
+'ttemplate' => 'tmobiletemplate'
+);
+parent::__construct();
 }
 
-litepublisher::$classes = tclasses::instance();
-    litepublisher::$classes->remap['toptions'] = 'tmobileoptions';
-        litepublisher::$classes->remap['turlmap'] = 'tmobileurlmap';
-        litepublisher::$classes->remap['ttemplate'] = 'tmobiletemplate';
+public function install() {}
+public function uninstall() {}
 
-litepublisher::$options = tmobileoptions::instance();
-if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
-if (dbversion) litepublisher::$db = new tdatabase();
-litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
-litepublisher::$urlmap = tmobileurlmap::instance();
-if (!defined('litepublisher_mode')) {
-  litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
+  public function getinstance($class) {
+if (isset($this->mobileclasses[$class])) $class = $this->mobileclasses[$class];
+return parent::getinstance($class);
 }
 
-ob_end_flush ();
+  public function newinstance($class) {
+if (isset($this->mobileclasses[$class])) $class = $this->mobileclasses[$class];
+return parent::newinstance($class);
+}
+
+}//class
+
+  litepublisher::$classes = new tmobileclasses();
+require_once(dirname(__file__) .DIRECTORY_SEPARATOR. 'mobile.classes.php');
+  litepublisher::$options = tmobileoptions::instance();
+  if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
+  if (dbversion) litepublisher::$db = new tdatabase();
+  litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
+  litepublisher::$urlmap = tmobileurlmap::instance();
+  if (!defined('litepublisher_mode')) {
+    litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
+  }
+  
+} catch (Exception $e) {
+  echo $e->GetMessage();
+}
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 ?>
