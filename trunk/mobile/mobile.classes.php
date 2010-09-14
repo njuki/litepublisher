@@ -7,9 +7,13 @@
 **/
 
 class tmobileoptions  extends toptions {
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
   public function geturl() {
-    $result = parent::geturl();
-    return $result . '/mobile';
+return parent::geturl() . litepublisher::$mobile;
   }
   
 public function install() {}
@@ -17,26 +21,33 @@ public function uninstall() {}
 }//class
 
 class tmobiletemplate extends ttemplate {
-  
-  protected function create() {
-    parent::create();
-    $this->basename = 'template.mobile' ;
-    $this->data['theme'] = 'default.mobile';
+
+  public static function instance() {
+    return getinstance(__class__);
   }
+
+  public function getcontexttheme($context) {
+return ttheme::instance(litepublisher::$mobiletheme);
+}
   
 }//class
 
 class tmobileurlmap extends turlmap {
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+
 public function install() {}
 public function uninstall() {}
   
   protected function prepareurl($host, $url) {
     parent::prepareurl($host, $url);
-    if (strbegin($this->url, '/mobile/') || ($this->url == '/mobile')) {
-      if ($this->url == '/mobile') {
+    if (strbegin($this->url, litepublisher::$mobile . '/') || ($this->url == litepublisher::$mobile)) {
+      if ($this->url == litepublisher::$mobile) {
         $this->url = '/';
       } else {
-        $this->url = substr($this->url, strlen('/mobile'));
+        $this->url = substr($this->url, strlen(litepublisher::$mobile));
       }
     }
   }

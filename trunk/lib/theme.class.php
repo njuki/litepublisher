@@ -126,7 +126,7 @@ class ttheme extends tevents {
     }
     
     if (!is_object($var)) {
-      litepublisher::$options->trace("Object $name not found");
+      litepublisher::$options->trace(sprintf("Object $name and property $prop  not found in \n%s\n", $this->parsing[count($this->parsing) -1]));
       return '';
     }
     
@@ -141,14 +141,14 @@ class ttheme extends tevents {
   
   public function parse($s) {
     $s = str_replace('$options.url', litepublisher::$options->url, (string) $s);
-    //array_push($this->parsing, $s);
+    array_push($this->parsing, $s);
     try {
       $result = preg_replace_callback('/\$(\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);
     }
-    //array_pop($this->parsing);
+    array_pop($this->parsing);
     return $result;
   }
   
@@ -156,6 +156,12 @@ class ttheme extends tevents {
     $s = $this->parse($s);
     return strtr ($s, $args->data);
   }
+
+public static function parsevar($name, $var, $s) {
+self::$vars[$name] = $var;
+$self = self::instance();
+return $self->parse($s);
+}
   
   public function gethtml($context) {
     self::$vars['context'] = $context;
