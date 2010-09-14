@@ -560,6 +560,8 @@ send lib\update\update.3.87.php lib/update/update.3.87.php
 quote site chmod 666 lib/update/update.3.87.php
 send lib\update\update.3.88.php lib/update/update.3.88.php
 quote site chmod 666 lib/update/update.3.88.php
+send lib\update\update.3.89.php lib/update/update.3.89.php
+quote site chmod 666 lib/update/update.3.89.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -1012,8 +1014,8 @@ send plugins\mobile\mobile\.htaccess plugins/mobile/mobile/.htaccess
 quote site chmod 666 plugins/mobile/mobile/.htaccess
 send plugins\mobile\mobile\index.php plugins/mobile/mobile/index.php
 quote site chmod 666 plugins/mobile/mobile/index.php
-send plugins\mobile\mobile.classes.php plugins/mobile/mobile.classes.php
-quote site chmod 666 plugins/mobile/mobile.classes.php
+send plugins\mobile\mobile\mobile.classes.php plugins/mobile/mobile/mobile.classes.php
+quote site chmod 666 plugins/mobile/mobile/mobile.classes.php
 send plugins\mobile\mobile.plugin.php plugins/mobile/mobile.plugin.php
 quote site chmod 666 plugins/mobile/mobile.plugin.php
 cd plugins

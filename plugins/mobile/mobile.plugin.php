@@ -14,8 +14,8 @@ class tmobileplugin extends tplugin {
   
   public function install() {
     if (!file_exists(litepublisher::$paths->home . 'mobile' .DIRECTORY_SEPARATOR . 'index.php')) die("folder 'mobile' with requried files not exists. Please copy required folder from plugin.");
-
-/*
+    
+    /*
     $filename = 'mobile.classes.php';
     $dir =  basename(dirname(__file__) );
     litepublisher::$classes->lock();
@@ -23,7 +23,7 @@ class tmobileplugin extends tplugin {
     litepublisher::$classes->Add('tmobiletemplate', $filename, $dir);
     litepublisher::$classes->Add('tmobileurlmap', $filename, $dir);
     litepublisher::$classes->unlock();
-  */  
+    */
     $menus = tmenus::instance();
     $menu = tmenu::instance();
     $menu->parent = 0;
@@ -32,7 +32,7 @@ class tmobileplugin extends tplugin {
     $menu->title = $about['menutitle'];
     $menu->url = '/mobile/';
     $menus->add($menu);
-
+    
     $robot = trobotstxt::instance();
     $robot->AddDisallow('/mobile/');
     
@@ -43,13 +43,13 @@ class tmobileplugin extends tplugin {
     $menus = tmenus::instance();
     $menus->deleteurl('/mobile/');
     
-/*
+    /*
     litepublisher::$classes->lock();
     litepublisher::$classes->delete('tmobileoptions');
     litepublisher::$classes->delete('tmobiletemplate');
     litepublisher::$classes->delete('tmobileurlmap');
     litepublisher::$classes->unlock();
-  */  
+    */
     litepublisher::$urlmap->clearcache();
   }
   
