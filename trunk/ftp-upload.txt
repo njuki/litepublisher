@@ -342,6 +342,8 @@ send lib\install\admin.subscribers.class.install.php lib/install/admin.subscribe
 quote site chmod 666 lib/install/admin.subscribers.class.install.php
 send lib\install\archives.class.install.php lib/install/archives.class.install.php
 quote site chmod 666 lib/install/archives.class.install.php
+send lib\install\authdigest.class.install.php lib/install/authdigest.class.install.php
+quote site chmod 666 lib/install/authdigest.class.install.php
 send lib\install\classes.ini lib/install/classes.ini
 quote site chmod 666 lib/install/classes.ini
 send lib\install\classes.install.php lib/install/classes.install.php

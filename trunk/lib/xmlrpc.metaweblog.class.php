@@ -350,7 +350,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     
     $parser = tmediaparser::instance();
-    $id = $parser->upload($filename, $struct['bits'], '', $overwrite );
+    $id = $parser->upload($filename, $struct['bits'], '', '', '', $overwrite );
     if (!$id)  return $this->xerror(500, "Could not write file $name");
     $files = tfiles::instance();
     $item = $files->getitem($id);
