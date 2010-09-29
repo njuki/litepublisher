@@ -12,8 +12,6 @@ class tadminkeywords extends tadminwidget {
     return getinstance(__class__);
   }
   
-  
-  
   public function getcontent() {
     $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
     $selfdir = dirname(__file__) . DIRECTORY_SEPARATOR ;
@@ -26,7 +24,7 @@ class tadminkeywords extends tadminwidget {
       $filename = $_GET['filename'];
       if (!@file_exists($datadir . $filename)) return $html->h2->notfound;
       $args->filename = $filename;
-      $args->content =file_get_contents($dir . $filename);
+      $args->content =file_get_contents($datadir . $filename);
       $args->edithead = $about['edithead'];
       return $html->parsearg($tml['editform'], $args);
     }
@@ -35,7 +33,9 @@ class tadminkeywords extends tadminwidget {
     $result = '';
     if ($page == 1) {
       $widget = tkeywordswidget::instance();
-      $args->title = $widget->title;
+      $widgets = twidgets::instance();
+      $idwidget = $widgets->find($widget);
+      $args->title = $widget->gettitle($idwidget);
       $args->count = $widget->count;
       $args->trace = $widget->trace;
       $args->notify = $widget->notify;
@@ -47,7 +47,7 @@ class tadminkeywords extends tadminwidget {
     }
     
     $from = 100 * ($page - 1);
-    $filelist = tfiler::getfiles($dir);
+    $filelist = tfiler::getfiles($datadir);
     sort($filelist);
     $count = ceil(count($filelist)/ 100);
     $links = $this->getlinkpages($page, $count);
@@ -60,7 +60,7 @@ class tadminkeywords extends tadminwidget {
     foreach ($filelist as $filename) {
       if (!preg_match('/^\d+?\.\d+?\.php$/', $filename)) continue;
       $args->filename = $filename;
-      $args->content = file_get_contents($dir . $filename);
+      $args->content = file_get_contents($datadir . $filename);
       $list .= $html->parsearg($tml['item'], $args);
     }
     

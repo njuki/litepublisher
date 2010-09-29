@@ -1101,6 +1101,7 @@ class turlmap extends titems {
   
   private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
+      //tfiler::log(var_export($this->itemrequested , true));
       return $this->printcontent($this->itemrequested);
     } else {
       $this->notfound404();
