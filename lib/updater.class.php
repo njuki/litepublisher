@@ -100,7 +100,7 @@ class tupdater extends tevents {
   
   public function getlatest() {
     if (($s = http::get('http://litepublisher.com/service/version.txt'))  ||
-    ($s = http::get('http://litepublisher.googlecode.com/files/version.txt') )) {
+    ($s = http::get('http://litepublisher.googlecode.com/svn/trunk/lib/include/version.txt') )) {
       return $s;
     }
     //return litepublisher::$options->version + 0.01;
