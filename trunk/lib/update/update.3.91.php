@@ -235,7 +235,45 @@ $storage[$name] = $data;
 }
 }
 
+  $posts = tposts::instance();
+$posts->lock();
+
+if (isset(litepublisher::$classes->items['ttickets'])) {
+$tickets = ttickets::instance();
+  $posts->deleted = $tickets->postdeleted;
+}
+
+if (isset(litepublisher::$classes->items['twikiwords'])) {
+$wiki = twikiwords::instance();
+  $posts->added = $wiki->postadded;
+  $posts->deleted = $wiki->postdeleted;
+}
+
+if (isset(litepublisher::$classes->items['tsameposts'])) {
+$same = tsameposts::instance();
+  $posts->changed = $same->postschanged;
+}
+
+if (isset(litepublisher::$classes->items['tpostcontentplugin'])) {
+$c = tpostcontentplugin::instance();
+  $posts->beforecontent = $c->beforecontent;
+  $posts->aftercontent = $c->aftercontent;
+}
+
+if (isset(litepublisher::$classes->items['tcodedocplugin'])) {
+$doc = tcodedocplugin::instance();
+  $posts->deleted = $doc->postdeleted;
+  $posts->added = $doc->postadded;
+}
+
+if (isset(litepublisher::$classes->items['tlivejournal'])) {
+$lj = tlivejournal::instance();
+$lj->install(()
+};
+
+$posts->unlock();
 litepublisher::$options->save();
 litepublisher::$options->savemodified();
+
 }
 ?>
