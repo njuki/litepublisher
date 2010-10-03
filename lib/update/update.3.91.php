@@ -241,6 +241,7 @@ $posts->lock();
 if (isset(litepublisher::$classes->items['ttickets'])) {
 $tickets = ttickets::instance();
   $posts->deleted = $tickets->postdeleted;
+sync_tickets($tickets);
 }
 
 if (isset(litepublisher::$classes->items['twikiwords'])) {
@@ -276,4 +277,15 @@ litepublisher::$options->save();
 litepublisher::$options->savemodified();
 
 }
+
+function sync_tickets($tickets) {
+    $db = $tickets->getdb($tickets->ticketstable);
+    $items = $db->idselect("id not in (select id from $db->postclasses)");
+$c = tpostclasses::instance();
+    $idclass = $c->addclass('tticket');
+foreach ($items as $id) {
+    $c->add($id, $idclass);
+}
+}
+
 ?>
