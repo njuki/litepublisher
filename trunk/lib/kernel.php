@@ -354,7 +354,7 @@ class tevents extends tdata {
   public function __set($name, $value) {
     if (parent::__set($name, $value)) return true;
     if (in_array($name, $this->eventnames)) {
-      $this->dosetevent($name, $value);
+      $this->addevent($name, $value['class'], $value['func']);
       return true;
     }
     $this->error("Unknown property $name in class ". get_class($this));
@@ -413,22 +413,27 @@ class tevents extends tdata {
     $this->save();
   }
   
-  public function setevent($name, $value) {
-    if (!in_array($name, $this->eventnames)) return $this->error("No such $name event");
-    $this->dosetevent($name, $value);
+  
+  public function setevent($name, $params) {
+    return $this->addevent($name, $params['class'], $params['func']);
   }
   
-  protected function dosetevent($name, $params) {
-    if (!isset($params['func'])) return false;
-    if (!isset($this->events[$name])) $this->events[$name] =array();
-    $list = $this->get_events($name);
-    foreach ($list  as $event) {
-      if (($event['class'] == $params['class']) && ($event['func'] == $params['func'])) return;
+  public function addevent($name, $class, $func) {
+    if (!in_array($name, $this->eventnames)) return $this->error(sprintf('No such %s event', $name ));
+    if (empty($func)) return false;
+    if (isset($this->events[$name])) {
+      if ($list = $this->get_events($name)) {
+        foreach ($list  as $event) {
+          if (($event['class'] == $class) && ($event['func'] == $func)) return false;
+        }
+      }
+    } else {
+      $this->events[$name] =array();
     }
     
     $this->events[$name][] = array(
-    'class' => $params['class'],
-    'func' => $params['func']
+    'class' => $class,
+    'func' => $func
     );
     $this->save();
   }
@@ -872,7 +877,7 @@ class toptions extends tevents {
   
   public function __set($name, $value) {
     if (in_array($name, $this->eventnames)) {
-      $this->dosetevent($name, $value);
+      $this->addevent($name, $value['class'], $value['func']);
       return true;
     }
     

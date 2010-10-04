@@ -127,8 +127,8 @@ class tevents extends tdata {
     array_splice($this->events[$name], $i, 1);
     $this->save();
   }
-
-
+  
+  
   public function setevent($name, $params) {
     return $this->addevent($name, $params['class'], $params['func']);
   }
@@ -137,15 +137,15 @@ class tevents extends tdata {
     if (!in_array($name, $this->eventnames)) return $this->error(sprintf('No such %s event', $name ));
     if (empty($func)) return false;
     if (isset($this->events[$name])) {
-    if ($list = $this->get_events($name)) {
-    foreach ($list  as $event) {
-      if (($event['class'] == $class) && ($event['func'] == $func)) return false;
+      if ($list = $this->get_events($name)) {
+        foreach ($list  as $event) {
+          if (($event['class'] == $class) && ($event['func'] == $func)) return false;
+        }
+      }
+    } else {
+      $this->events[$name] =array();
     }
-    }
-} else {
-$this->events[$name] =array();
-}
-
+    
     $this->events[$name][] = array(
     'class' => $class,
     'func' => $func

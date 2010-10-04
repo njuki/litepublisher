@@ -43,6 +43,8 @@ class tadminkeywords extends tadminwidget {
       $args->tracelabel = $about['tracelabel'];
       $args->notifylabel = $about['notifylabel'];
       $args->content = $html->parsearg($tml['optionsform'], $args);
+      $html->section = 'widgets';
+      $lang->section = 'widgets';
       $result .= $html->optionsform($args);
     }
     
@@ -84,8 +86,10 @@ class tadminkeywords extends tadminwidget {
     if (isset($_POST['optionsform'])) {
       extract($_POST, EXTR_SKIP);
       $widget = tkeywordswidget::instance();
+      $widgets = twidgets::instance();
+      $idwidget = $widgets->find($widget);
       $widget->lock();
-      $widget->title = $title;
+      $widget->settitle($idwidget, $title);
       $widget->count = (int) $count;
       $widget->notify = isset($notify);
       $trace = isset($trace);
