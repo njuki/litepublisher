@@ -13,7 +13,7 @@ class titem extends tdata {
   public static function iteminstance($class, $id = 0) {
     $name = call_user_func_array(array($class, 'getinstancename'), array());
     //echo "$name:$class:$id<br>\n";
-//litepublisher::$options->trace($name);
+    //litepublisher::$options->trace($name);
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$name][$id]))     return self::$instances[$name][$id];
     $self = litepublisher::$classes->newitem($name, $class, $id);

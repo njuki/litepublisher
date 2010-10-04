@@ -241,6 +241,10 @@ $posts->lock();
 if (isset(litepublisher::$classes->items['ttickets'])) {
 $tickets = ttickets::instance();
   $posts->deleted = $tickets->postdeleted;
+$c = tpostclasses::instance();
+  $posts->added = $c->postadded;
+  $posts->deleted = $c->postdeleted;
+
 sync_tickets($tickets);
 }
 
@@ -269,7 +273,7 @@ $doc = tcodedocplugin::instance();
 
 if (isset(litepublisher::$classes->items['tlivejournal'])) {
 $lj = tlivejournal::instance();
-$lj->install(()
+$lj->install();
 };
 
 $posts->unlock();

@@ -10,7 +10,7 @@ class tcodedocplugin extends tplugin {
   private $fix;
   
   public static function instance() {
-    return getinstance(__file__);
+    return getinstance(__class__);
   }
   
   protected function create() {
