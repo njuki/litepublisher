@@ -151,7 +151,7 @@ public function save() { return true; }
     
     if (litepublisher::$options->group != 'admin') {
       $groups = tusergroups::instance();
-      if (!$groups->hasright(litepublisher::$options->group, $group)) return 404;
+      if (!$groups->hasright(litepublisher::$options->group, $group)) return 403;
     }
   }
   

@@ -25,10 +25,16 @@ class tredirector extends titems {
   
   public function get($url) {
     if (isset($this->items[$url])) return $this->items[$url];
+if (strbegin($url, litepublisher::$options->url)) return substr($url, strlen(litepublisher::$options->url));
+
     //fix for 2.xx versions
     if (preg_match('/^\/comments\/(\d*?)\/?$/', $url, $m)) return sprintf('/comments/%d.xml', $m[1]);
     if (preg_match('/^\/authors\/(\d*?)\/?$/', $url, $m)) return '/comusers.htm?id=' . $m[1];
-    
+ 
+if (strpos($url, '%')) {   
+$url = rawurldecode($url);
+if (strbegin($url, litepublisher::$options->url)) return substr($url, strlen(litepublisher::$options->url));
+}
     return false;
   }
   
