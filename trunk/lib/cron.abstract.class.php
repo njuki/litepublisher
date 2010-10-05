@@ -35,7 +35,7 @@ class tabstractcron extends tevents {
   }
   
   public function request($arg) {
-    if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 404;
+    if (!isset($_GET['cronpass']) || ($this->password != $_GET['cronpass'])) return 403;
     if (($fh = @fopen($this->path .'cron.lok', 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
       try {
         ignore_user_abort(true);

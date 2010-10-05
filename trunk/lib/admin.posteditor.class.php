@@ -48,7 +48,7 @@ class tposteditor extends tadminmenu {
       if (!$posts->itemexists($this->idpost)) return 404;
     }
     $post = tpost::instance($this->idpost);
-    if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return 404;
+    if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return 403;
   }
   
   public function gettitle() {

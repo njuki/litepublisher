@@ -33,12 +33,14 @@ public function gethead() {}
   function getcont() {
     $this->cache = false;
     $theme = ttheme::instance();
-    if ($this->text == '') {
+    if ($this->text != '') return $theme->simple($this->text);
+
       $lang = tlocal::instance('default');
+if ($this->basename == 'forbidden') {
+return $theme->simple(sprintf('<h1>%s</h1>', $lang->forbidden));
+} else {
       return $theme->parse($theme->content->notfound);
-    } else {
-      return $theme->simple($this->text);
-    }
+}
   }
   
 }//class
