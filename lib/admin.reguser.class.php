@@ -20,7 +20,7 @@ class tadminreguser extends tadminform {
   }
   
   public function request($arg) {
-    if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 404;
+    if (!litepublisher::$options->usersenabled || !litepublisher::$options->reguser) return 403;
     return parent::request($arg);
   }
   
