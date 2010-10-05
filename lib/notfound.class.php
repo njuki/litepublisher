@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tnotfound404 extends tevents implements itemplate {
+class tforbidden extends tevents implements itemplate {
   
   public static function instance() {
     return getinstance(__class__);
@@ -14,8 +14,7 @@ class tnotfound404 extends tevents implements itemplate {
   
   protected function create() {
     parent::create();
-    $this->data['notify'] = true;
-    $this->basename = 'notfound';
+    $this->basename = 'forbidden';
     $this->data['text'] = '';
     $this->data['tmlfile'] = '';
     $this->data['theme'] = '';
@@ -27,17 +26,12 @@ public function getkeywords() {}
 public function getdescription() {}
 public function gethead() {}
   
-  
-  
-  
   public function  httpheader() {
-    return "<?php Header( 'HTTP/1.0 404 Not Found'); ?>" . turlmap::htmlheader(false);
+    return "<?php Header( 'HTTP/1.0 403 Forbidden'); ?>" . turlmap::htmlheader(false);
   }
   
   function getcont() {
     $this->cache = false;
-    if ($this->notify) $this->sendmail();
-    
     $theme = ttheme::instance();
     if ($this->text == '') {
       $lang = tlocal::instance('default');
@@ -45,6 +39,29 @@ public function gethead() {}
     } else {
       return $theme->simple($this->text);
     }
+  }
+  
+}//class
+
+class tnotfound404 extends tforbidden {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'notfound';
+    $this->data['notify'] = true;
+  }
+  
+  public function  httpheader() {
+    return "<?php Header( 'HTTP/1.0 404 Not Found'); ?>" . turlmap::htmlheader(false);
+  }
+  
+  function getcont() {
+    if ($this->notify) $this->sendmail();
+return parent::getcont();
   }
   
   private function sendmail() {
