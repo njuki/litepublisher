@@ -27,6 +27,13 @@ class tinstaller extends tdata {
       $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
     }
     
+    $sub = rtrim($_SERVER['REQUEST_URI'], '/');
+    if ('/admin' == substr($sub, -6)) {
+      $sub = substr($sub, 0, strlen($sub) - 5);
+      header('Location: http://'. $_SERVER['HTTP_HOST'] . $sub);
+      exit();
+    }
+    
     if (!empty($_GET['lang']))  {
       if (@file_exists(litepublisher::$paths->languages . $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
     }

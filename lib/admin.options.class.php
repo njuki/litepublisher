@@ -125,9 +125,11 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'notfound404':
-      $err = tnotfound404::instance();
-      $args->notify = $err->notify;
-      $args->content = $err->text;
+      $notfound  = tnotfound404::instance();
+      $args->notify = $notfound->notify;
+      $args->content = $notfound->text;
+      $forbidden = tforbidden::instance();
+      $args->forbiddentext = $forbidden->text;
       break;
       
     }
@@ -343,10 +345,13 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'notfound404':
-      $err = tnotfound404 ::instance();
-      $err->notify = isset($notify);
-      $err->text = $content;
-      $err->save();
+      $notfound = tnotfound404 ::instance();
+      $notfound->notify = isset($notify);
+      $notfound->text = $content;
+      $forbidden = tforbidden::instance();
+      $forbidden->text = $forbiddentext;
+      $forbidden->save();
+      $notfound->save();
       break;
       
     }
