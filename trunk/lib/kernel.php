@@ -1093,7 +1093,7 @@ class turlmap extends titems {
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
-    if (litepublisher::$options->ob_cache) ob_start();
+    //if (litepublisher::$options->ob_cache) ob_start();
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
@@ -1227,7 +1227,10 @@ class turlmap extends titems {
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
       //tfiler::log($s, 'content.log');
-      if ($s == 404) return $this->notfound404();
+      switch ($s) {
+        case 404: return $this->notfound404();
+        case 403: return $this->forbidden();
+      }
     } else {
       $template = ttemplate::instance();
       $s = $template->request($this->context);
@@ -1248,6 +1251,14 @@ class turlmap extends titems {
     
     $this->is404 = true;
     $obj = tnotfound404::instance();
+    $Template = ttemplate::instance();
+    $s = $Template->request($obj);
+    eval('?>'. $s);
+  }
+  
+  public function forbidden() {
+    $this->is404 = true;
+    $obj = tforbidden::instance();
     $Template = ttemplate::instance();
     $s = $Template->request($obj);
     eval('?>'. $s);

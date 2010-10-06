@@ -109,13 +109,14 @@ class tcommentmanager extends tevents {
     $idpost = (int) $idpost;
     $email = litepublisher::$options->fromemail;
     $site = litepublisher::$options->url . litepublisher::$options->home;
-    
+    $name = 'Admin';
     if (class_exists('tprofile')) {
       $profile = tprofile::instance();
       $email = $profile->mbox!= '' ? $profile->mbox : $email;
+      $name = $profile->nick != '' ? $profile->nick : 'Admin';
     }
     $comusers = tcomusers::instance($idpost);
-    $idauthor = $comusers->add($profile->nick, $email, $site, '');
+    $idauthor = $comusers->add($name, $email, $site, '');
     $comments = tcomments::instance($idpost);
     $id = $comments->add($idauthor,  $content, $status, '');
     

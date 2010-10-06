@@ -26,6 +26,21 @@ class tcomusers extends titems {
   
   public function add($name, $email, $url, $ip) {
     if ($id = $this->find($name, $email, $url)) return $id;
+    
+    if (($parsed = @parse_url($url)) &&  is_array($parsed) ) {
+      if ( empty($parsed['host'])) {
+        $url = '';
+      } else {
+        if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
+          $parsed['scheme']= 'http';
+        }
+        $url = $parsed['scheme'] . '://' . $parsed['host'] . $parsed['path'];
+        if (!empty($parsed['query'])) $url .= '?' . $parsed['query'];
+      }
+    } else {
+      $url = '';
+    }
+    
     $this->lock();
     $this->items[++$this->autoid] = array(
     'name' => $name,

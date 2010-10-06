@@ -34,13 +34,13 @@ public function gethead() {}
     $this->cache = false;
     $theme = ttheme::instance();
     if ($this->text != '') return $theme->simple($this->text);
-
-      $lang = tlocal::instance('default');
-if ($this->basename == 'forbidden') {
-return $theme->simple(sprintf('<h1>%s</h1>', $lang->forbidden));
-} else {
+    
+    $lang = tlocal::instance('default');
+    if ($this->basename == 'forbidden') {
+      return $theme->simple(sprintf('<h1>%s</h1>', $lang->forbidden));
+    } else {
       return $theme->parse($theme->content->notfound);
-}
+    }
   }
   
 }//class
@@ -63,7 +63,7 @@ class tnotfound404 extends tforbidden {
   
   function getcont() {
     if ($this->notify) $this->sendmail();
-return parent::getcont();
+    return parent::getcont();
   }
   
   private function sendmail() {
