@@ -101,6 +101,14 @@ class tauthdigest extends tevents {
   }
   
   public function isattack() {
+if (isset($_GET['ref'])) {
+$ref = $_GET['ref'];
+$url = $_SERVER['REQUEST_URI'];
+$url = substr($url, 0, strpos($url, '&ref='));
+//var_dump($url);
+if ($ref == md5(litepublisher::$secret . litepublisher::$options->url . $url)) return false;
+}
+
     $host = '';
     if (!empty($_SERVER['HTTP_REFERER'])) {
       $p = parse_url($_SERVER['HTTP_REFERER']);
