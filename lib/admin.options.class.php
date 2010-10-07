@@ -55,6 +55,7 @@ class Tadminoptions extends tadminmenu {
       $args->icondisabled = $options->icondisabled;
       
       $parser = tmediaparser::instance();
+      $args->enablepreview = $parser->enablepreview;
       $args->ratio = $parser->ratio;
       $args->previewwidth = $parser->previewwidth;
       $args->previewheight = $parser->previewheight;
@@ -225,6 +226,7 @@ class Tadminoptions extends tadminmenu {
       $template->unlock();
       
       $parser = tmediaparser::instance();
+      $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);
       $parser->previewwidth = $previewwidth;
       $parser->previewheight = $previewheight;

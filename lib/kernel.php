@@ -1093,7 +1093,7 @@ class turlmap extends titems {
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
-    //if (litepublisher::$options->ob_cache) ob_start();
+    if (litepublisher::$options->ob_cache) ob_start();
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
