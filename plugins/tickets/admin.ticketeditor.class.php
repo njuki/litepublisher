@@ -114,7 +114,7 @@ class tticketeditor extends tposteditor {
         $users =tusers::instance();
         $user = $users->getitem(litepublisher::$options->user);
         $comusers = tcomusers::instance();
-        $uid = $comusers->add($user['name'], $user['email'], $user['url']);
+        $uid = $comusers->add($user['name'], $user['email'], $user['url'], '');
         $comusers->setvalue($uid, 'cookie', $user['cookie']);
         $subscribers = tsubscribers::instance();
         //$subscribers->update($id, $uid, true);
