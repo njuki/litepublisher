@@ -28,7 +28,7 @@ class tmanifest extends tevents {
       '<weblog>' .
       '<serviceName>Lite Publisher</serviceName>' .
       
-      "    <homepageLinkText>$options->name</homepageLinkText>" .
+      "<homepageLinkText>$options->name</homepageLinkText>" .
       "<adminLinkText>$options->name</adminLinkText>" .
       "<adminUrl>$options->url/admin/</adminUrl>" .
       '<postEditingUrl>' .
@@ -56,7 +56,7 @@ class tmanifest extends tevents {
       '<service>' .
       '<engineName>Lite Publisher</engineName>' .
       '<engineLink>http://litepublisher.com/</engineLink>' .
-      "    <homePageLink>$options->url/</homePageLink>" .
+      "<homePageLink>$options->url/</homePageLink>" .
       '<apis>' .
       '<api name="WordPress" blogID="1" preferred="true" apiLink="' . $options->url . '/rpc.xml" />' .
       '<api name="Movable Type" blogID="1" preferred="false" apiLink="' . $options->url . '/rpc.xml" />' .
