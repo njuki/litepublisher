@@ -580,14 +580,10 @@ send lib\languages\adminhtml.ini lib/languages/adminhtml.ini
 quote site chmod 666 lib/languages/adminhtml.ini
 send lib\languages\adminru.ini lib/languages/adminru.ini
 quote site chmod 666 lib/languages/adminru.ini
-send lib\languages\adminua.ini lib/languages/adminua.ini
-quote site chmod 666 lib/languages/adminua.ini
 send lib\languages\en.ini lib/languages/en.ini
 quote site chmod 666 lib/languages/en.ini
 send lib\languages\ru.ini lib/languages/ru.ini
 quote site chmod 666 lib/languages/ru.ini
-send lib\languages\ua.ini lib/languages/ua.ini
-quote site chmod 666 lib/languages/ua.ini
 mkdir plugins
 quote site chmod 777 plugins
 send plugins\.htaccess plugins/.htaccess

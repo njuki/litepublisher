@@ -213,11 +213,11 @@ class tcommentmanager extends tevents {
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
-$adminurl = litepublisher::$options->url . '/admin/comments/'. litepublisher::$options->q . "id=$id&post=$idpost";
-$ref = md5(litepublisher::$secret . $adminurl);
-$adminurl .= "&ref=$ref&action";
+    $adminurl = litepublisher::$options->url . '/admin/comments/'. litepublisher::$options->q . "id=$id&post=$idpost";
+    $ref = md5(litepublisher::$secret . $adminurl);
+    $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;
-
+    
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
