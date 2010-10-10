@@ -60,7 +60,7 @@ class tcommontags extends titems implements  itemplate {
       $args->add($item);
       $args->anchor = $item['title'];
       $args->url = $url . $item['url'];
-$args->icon = $iconenabled ? $this->geticonlink($id) : '';
+      $args->icon = $iconenabled ? $this->geticonlink($id) : '';
       if ($showcount) $args->subitems = sprintf(' (%d)', $item['itemscount']);
       $result .= $theme->parsearg($tml,$args);
     }
