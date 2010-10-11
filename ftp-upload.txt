@@ -570,6 +570,8 @@ send lib\update\update.3.93.php lib/update/update.3.93.php
 quote site chmod 666 lib/update/update.3.93.php
 send lib\update\update.3.94.php lib/update/update.3.94.php
 quote site chmod 666 lib/update/update.3.94.php
+send lib\update\update.3.96.php lib/update/update.3.96.php
+quote site chmod 666 lib/update/update.3.96.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -994,6 +996,8 @@ send plugins\markdown\.htaccess plugins/markdown/.htaccess
 quote site chmod 666 plugins/markdown/.htaccess
 send plugins\markdown\about.ini plugins/markdown/about.ini
 quote site chmod 666 plugins/markdown/about.ini
+send plugins\markdown\admin.markdown.plugin.class.php plugins/markdown/admin.markdown.plugin.class.php
+quote site chmod 666 plugins/markdown/admin.markdown.plugin.class.php
 send plugins\markdown\index.htm plugins/markdown/index.htm
 quote site chmod 666 plugins/markdown/index.htm
 send plugins\markdown\markdown.parser.class.php plugins/markdown/markdown.parser.class.php
