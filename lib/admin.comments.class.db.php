@@ -338,7 +338,7 @@ class tadminmoderator extends tadminmenu {
           
           case 'edit':
           $comments = tcomments::instance();
-          $comment = $comments->getcomment($this->idget);
+          $comment = $comments->getcomment($this->idget());
           $comment->content = $_POST['content'];
           break;
         }
