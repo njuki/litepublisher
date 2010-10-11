@@ -15,12 +15,17 @@ class tmarkdownplugin extends tplugin {
   
   protected function create() {
     parent::create();
+$this->data['nocontinue'] = false;
+$this->data['deletep'] = true;
+
     require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'markdown.parser.class.php');
     $this->parser = new Markdown_Parser();
   }
   
   public function filter(&$content) {
     $content = $this->parser->transform($content);
+if ($this->nocontinue) return true;
+if ($this->deletep) $content = str_replace(array('<p>', '</p>',), '', $content);
   }
   
   public function install() {

@@ -104,7 +104,6 @@ class tcontentfilter extends tevents {
       $this->callevent('afterfilter', array(&$content));
       return $content;
     }
-    
     $result = str_replace(array("\r\n", "\r"), "\n", trim($content));
     $result = $this->replacecode($result);
     $result = self::auto_p($result);
