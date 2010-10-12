@@ -44,6 +44,9 @@ function texternallinksUninstall($self) {
   if (dbversion) {
     $manager = tdbmanager::instance();
     $manager->deletetable($self->table);
+
+$posts = tposts::instance();
+$posts->addrevision();
   }
 }
 

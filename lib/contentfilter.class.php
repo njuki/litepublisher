@@ -235,6 +235,26 @@ class tcontentfilter extends tevents {
     
     return $str;
   }
+
+public static function createlinks(&$content) {
+  $content = preg_replace(
+'/\s?((http:\/\/|ftp:\/\/)\w{1}[-\.\w]+\.[a-zA-Z]{2,4}'.
+  '((\/([\/\w\+\.\?\-%&~_=;\(\)^\s]+|()))|()))\s?/i',
+  '<a href="$1">$1</a>',
+$content);
+
+/*
+  $content = preg_replace(
+'/(?<!\/)www\./',
+  'http://$0', $Line);
+  '<a href="http://$1">$0</a>',
+$content);
+
+*/
+}
+
+
+
   
 }//class
 ?>
