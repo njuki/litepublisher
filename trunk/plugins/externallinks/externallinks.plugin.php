@@ -76,7 +76,7 @@ class texternallinks extends titems {
   }
   
   public function filter(&$content) {
-    if(!preg_match_all("/<a\\s*.*?href\\s*=\\s*['\"]([^\"'>]*).*?>(.*?)<\/a>/i", $content, $links))  return;
+    if(!preg_match_all('/<a\s*.*?href\s*=\s*[\'"]([^"\'>]*).*?>(.*?)<\/a>/i', $content, $links))  return;
     $redir = litepublisher::$options->url . '/externallink.htm' . litepublisher::$options->q . 'id=';
     $external = array();
     foreach($links[1] as $num => $link) {

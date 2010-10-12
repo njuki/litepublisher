@@ -104,6 +104,7 @@ litepublisher::$options->showerrors();
 if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){
 echo "<pre>\n";
 $man = tdbmanager::instance();
+//tfiler::log("sql\n" . $man->performance());
 //$man->optimize();
 //$man->deletealltables();
 //$man->alter('files', "modify `description` text  NOT NULL");

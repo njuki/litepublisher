@@ -40,7 +40,7 @@ class tpost extends titem implements  itemplate {
     'filtered' => '',
     'excerpt' => '',
     'rss' => '',
-    'rawcontent' => '',
+    'rawcontent' => dbversion ? false : '',
     'description' => '',
     'moretitle' => '',
     'categories' => array(),
@@ -483,8 +483,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setcontent($s) {
-    if ($s <> $this->rawcontent) {
       if (!is_string($s)) $this->error('Error! Post content must be string');
+    if ($s != $this->rawcontent) {
       $this->rawcontent = $s;
       $filter = tcontentfilter::instance();
       $filter->filterpost($this,$s);
@@ -506,7 +506,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getrawcontent() {
-    if (dbversion && ($this->id > 0) && empty($this->data['rawcontent'])) {
+    if (dbversion && ($this->id > 0) && ($this->data['rawcontent'] === false)) {
       $this->data['rawcontent'] = $this->rawdb->getvalue($this->id, 'rawcontent');
     }
     return $this->data['rawcontent'];

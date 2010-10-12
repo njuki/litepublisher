@@ -162,8 +162,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       $post->link = $struct['permaLink'];
     }
     
-    if(isset($struct["wp_password"])) {
-      $post->password = $struct["wp_password"];
+    if(isset($struct['wp_password'])) {
+      $post->password = $struct['wp_password'];
     }
     
     if (!empty($struct['mt_keywords'])) {
@@ -244,7 +244,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     switch ($publish) {
       case 1:
-      case true:
+      case 'true':
       case 'publish':
       $post->status = 'published';
       break;
@@ -272,7 +272,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $post = tpost::instance($postid);
     switch ($publish) {
       case 1:
-      case true:
+      case 'true':
       case 'publish':
       $post->status = 'published';
       break;
@@ -282,6 +282,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $this->setpost($struct, $post);
+
     $posts->edit($post);
     return true;
   }
