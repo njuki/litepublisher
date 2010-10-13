@@ -237,6 +237,8 @@ class tcontentfilter extends tevents {
   }
 
 public static function createlinks(&$content) {
+  return preg_replace('@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@', '<a href="$1" target="_blank">$1</a>', $s); 
+
   $content = preg_replace(
 '/\s?((http:\/\/|ftp:\/\/)\w{1}[-\.\w]+\.[a-zA-Z]{2,4}'.
   '((\/([\/\w\+\.\?\-%&~_=;\(\)^\s]+|()))|()))\s?/i',
@@ -250,11 +252,26 @@ $content);
   '<a href="http://$1">$0</a>',
 $content);
 
+//
+function makeClickableLinks($text) 
+{ 
+ 
+        $text = html_entity_decode($text); 
+        $text = " ".$text; 
+        $text = eregi_replace('(((f|ht){1}tp://)[-a-zA-Z0-9@:%_\+.~#?&//=]+)', 
+                '<a href="\\1" target=_blank>\\1</a>', $text); 
+        $text = eregi_replace('(((f|ht){1}tps://)[-a-zA-Z0-9@:%_\+.~#?&//=]+)', 
+                '<a href="\\1" target=_blank>\\1</a>', $text); 
+        $text = eregi_replace('([[:space:]()[{}])(www.[-a-zA-Z0-9@:%_\+.~#?&//=]+)', 
+        '\\1<a href="http://\\2" target=_blank>\\2</a>', $text); 
+        $text = eregi_replace('([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3})', 
+        '<a href="mailto:\\1" target=_blank>\\1</a>', $text); 
+        return $text; 
+} 
+ 
+
 */
 }
 
-
-
-  
 }//class
 ?>

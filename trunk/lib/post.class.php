@@ -171,6 +171,12 @@ class tpost extends titem implements  itemplate {
       }
     }
   }
+
+public function getbookmark() {
+ttheme::$vars['post'] = $this;
+$theme = ttheme::instance();
+return $theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
+}
   
   public function getrsscomments() {
     return litepublisher::$options->url . "/comments/$this->id.xml";
@@ -250,7 +256,19 @@ class tpost extends titem implements  itemplate {
     }
     return $this->dateformater;
   }
-  
+
+public function getday() {
+    return date($this->posted, 'D');
+}
+
+public function getmonth() {
+    return tlocal::date($this->posted, 'M');
+}
+ 
+public function getyear() {
+    return date($this->posted, 'Y');
+}
+ 
   public function getmorelink() {
     if ($this->moretitle == '') return '';
     $theme = ttheme::instance();
