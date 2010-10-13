@@ -20,10 +20,10 @@ function texternallinksInstall($self) {
   }
   
   $filter = tcontentfilter::instance();
-$filter->lock();
+  $filter->lock();
   $filter->afterfilter = $self->filter;
   $filter->onaftercomment = $self->filter;
-$filter->unlock();
+  $filter->unlock();
   
   $cron = tcron::instance();
   $cron->add('hour', get_class($self), 'updatestat');
@@ -47,9 +47,9 @@ function texternallinksUninstall($self) {
   if (dbversion) {
     $manager = tdbmanager::instance();
     $manager->deletetable($self->table);
-
-$posts = tposts::instance();
-$posts->addrevision();
+    
+    $posts = tposts::instance();
+    $posts->addrevision();
   }
 }
 

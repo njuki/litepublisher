@@ -51,8 +51,8 @@ class Tadminoptions extends tadminmenu {
       $filter = tcontentfilter::instance();
       $args->automore = $filter->automore;
       $args->automorelength = $filter->automorelength;
-$args->autolinks = $filter->autolinks;
-$args->commentautolinks = $filter->commentautolinks;
+      $args->autolinks = $filter->autolinks;
+      $args->commentautolinks = $filter->commentautolinks;
       $args->hovermenu = $template->hovermenu;
       $args->icondisabled = $options->icondisabled;
       
@@ -220,9 +220,9 @@ $args->commentautolinks = $filter->commentautolinks;
       $filter = tcontentfilter::instance();
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;
-$filter->autolinks = isset($autolinks);
-$filter->commentautolinks = isset($commentautolinks);
-            $filter->save();
+      $filter->autolinks = isset($autolinks);
+      $filter->commentautolinks = isset($commentautolinks);
+      $filter->save();
       $template = ttemplate::instance();
       $template->lock();
       $template->hovermenu = isset($hovermenu);

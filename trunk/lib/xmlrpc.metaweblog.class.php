@@ -282,7 +282,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $this->setpost($struct, $post);
-
+    
     $posts->edit($post);
     return true;
   }

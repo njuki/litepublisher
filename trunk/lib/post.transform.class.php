@@ -54,7 +54,7 @@ class tposttransform  {
   public function save() {
     $db = litepublisher::$db;
     $db->table = 'posts';
-$post = $this->post;
+    $post = $this->post;
     $list = array();
     foreach (self::$props  As $name) {
       if ($name == 'id') continue;
@@ -63,12 +63,12 @@ $post = $this->post;
     
     $db->idupdate($post->id, implode(', ', $list));
     
-$raw = array(
+    $raw = array(
     'id' => $post->id,
     'modified' => sqldate()
-);
-if (false !== $post->data['rawcontent']) $raw['rawcontent'] = $post->data['rawcontent'];
-        $post->rawdb->updateassoc($raw);
+    );
+    if (false !== $post->data['rawcontent']) $raw['rawcontent'] = $post->data['rawcontent'];
+    $post->rawdb->updateassoc($raw);
     $db->table = 'pages';
     $db->iddelete($this->post->id);
     foreach ($post->data['pages'] as $i => $content) {
