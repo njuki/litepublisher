@@ -298,6 +298,8 @@ cd lib
 mkdir include
 quote site chmod 777 include
 cd ../
+send lib\include\aliases.ini lib/include/aliases.ini
+quote site chmod 666 lib/include/aliases.ini
 send lib\include\class-phpmailer.php lib/include/class-phpmailer.php
 quote site chmod 666 lib/include/class-phpmailer.php
 send lib\include\class-pop3.php lib/include/class-pop3.php
@@ -572,6 +574,8 @@ send lib\update\update.3.94.php lib/update/update.3.94.php
 quote site chmod 666 lib/update/update.3.94.php
 send lib\update\update.3.96.php lib/update/update.3.96.php
 quote site chmod 666 lib/update/update.3.96.php
+send lib\update\update.3.97.php lib/update/update.3.97.php
+quote site chmod 666 lib/update/update.3.97.php
 cd lib
 mkdir languages
 quote site chmod 777 languages

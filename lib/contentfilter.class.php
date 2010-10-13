@@ -19,8 +19,8 @@ class tcontentfilter extends tevents {
     $this->data['automore'] = true;
     $this->data['automorelength'] = 250;
     $this->data['phpcode'] = true;
-$this->data['autolinks'] = true;
-$this->data['commentautolinks'] = true;
+    $this->data['autolinks'] = true;
+    $this->data['commentautolinks'] = true;
   }
   
   public function filtercomment($content) {
@@ -28,14 +28,14 @@ $this->data['commentautolinks'] = true;
       $this->callevent('onaftercomment', array(&$content));
       return $content;
     }
-
+    
     $result = trim($content);
     $result = str_replace(array("\r\n", "\r"), "\n", $result);
     $result = self::quote(htmlspecialchars($result));
     $result = self::simplebbcode($result);
     $result = str_replace("\n", "<br />\n", $result);
-if ($this->commentautolinks) $result = self::createlinks($result);
-      $this->callevent('onaftercomment', array(&$result));
+    if ($this->commentautolinks) $result = self::createlinks($result);
+    $this->callevent('onaftercomment', array(&$result));
     return $result;
   }
   
@@ -113,7 +113,7 @@ if ($this->commentautolinks) $result = self::createlinks($result);
       return $content;
     }
     $result = str_replace(array("\r\n", "\r"), "\n", trim($content));
-if ($this->autolinks) $result = self::createlinks($result);
+    if ($this->autolinks) $result = self::createlinks($result);
     $result = $this->replacecode($result);
     $result = self::auto_p($result);
     $this->callevent('afterfilter', array(&$result));
@@ -244,43 +244,43 @@ if ($this->autolinks) $result = self::createlinks($result);
     
     return $str;
   }
-
-// imported code from wordpress
-public static function createlinks($s) {
-// function make_clickable($ret) {
-$s = ' ' . $s;
-	$s = preg_replace_callback('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/=?@\[\](+-]|[.,;:](?![\s<]|(\))?([\s]|$))|(?(1)\)(?![\s<.,;:]|$)|\)))+)#is', '_make_url_clickable_cb', $s);
-
-	$s = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#$%&~/.\-;:=,?@\[\]+]+)#is', '_make_web_ftp_clickable_cb', $s);
-	$s = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', '_make_email_clickable_cb', $s);
-
-	$s = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>", $s);
-return trim($s);
-}
-
-}//class
-
-function _make_url_clickable_cb($matches) {
-	$url = $matches[2];
-	if ( empty($url) ) 		return $matches[0];
-	return $matches[1] . "<a href=\"$url\">$url</a>";
-}
-
-function _make_web_ftp_clickable_cb($matches) {
-	$ret = '';
-	$dest = $matches[2];
-	$dest = 'http://' . $dest;
-	if ( empty($dest) ) return $matches[0];
-	if ( in_array( substr($dest, -1), array('.', ',', ';', ':', ')') ) === true ) {
-		$ret = substr($dest, -1);
-		$dest = substr($dest, 0, strlen($dest)-1);
-	}
-	return $matches[1] . "<a href=\"$dest\" rel=\"nofollow\">$dest</a>$ret";
-}
-
-function _make_email_clickable_cb($matches) {
-	$email = $matches[2] . '@' . $matches[3];
-	return $matches[1] . "<a href=\"mailto:$email\">$email</a>";
-}
-
-?>
+  
+  // imported code from wordpress
+  public static function createlinks($s) {
+    // function make_clickable($ret) {
+      $s = ' ' . $s;
+      $s = preg_replace_callback('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/=?@\[\](+-]|[.,;:](?![\s<]|(\))?([\s]|$))|(?(1)\)(?![\s<.,;:]|$)|\)))+)#is', '_make_url_clickable_cb', $s);
+      
+      $s = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#$%&~/.\-;:=,?@\[\]+]+)#is', '_make_web_ftp_clickable_cb', $s);
+    $s = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', '_make_email_clickable_cb', $s);
+      
+      $s = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>", $s);
+      return trim($s);
+    }
+    
+  }//class
+  
+  function _make_url_clickable_cb($matches) {
+    $url = $matches[2];
+    if ( empty($url) ) 		return $matches[0];
+    return $matches[1] . "<a href=\"$url\">$url</a>";
+  }
+  
+  function _make_web_ftp_clickable_cb($matches) {
+    $ret = '';
+    $dest = $matches[2];
+    $dest = 'http://' . $dest;
+    if ( empty($dest) ) return $matches[0];
+    if ( in_array( substr($dest, -1), array('.', ',', ';', ':', ')') ) === true ) {
+      $ret = substr($dest, -1);
+      $dest = substr($dest, 0, strlen($dest)-1);
+    }
+    return $matches[1] . "<a href=\"$dest\" rel=\"nofollow\">$dest</a>$ret";
+  }
+  
+  function _make_email_clickable_cb($matches) {
+    $email = $matches[2] . '@' . $matches[3];
+    return $matches[1] . "<a href=\"mailto:$email\">$email</a>";
+  }
+  
+  ?>

@@ -67,6 +67,7 @@ class tcomments extends titems {
   
   public function edit($id, $idauthor, $content) {
     if (!$this->itemexists($id)) return false;
+    if ($idauthor == 0) $idauthor = $this->db->getvalue($id, 'author');
     $filter = tcontentfilter::instance();
     $item = array(
     'id' => (int) $id,

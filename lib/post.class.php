@@ -171,12 +171,12 @@ class tpost extends titem implements  itemplate {
       }
     }
   }
-
-public function getbookmark() {
-ttheme::$vars['post'] = $this;
-$theme = ttheme::instance();
-return $theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
-}
+  
+  public function getbookmark() {
+    ttheme::$vars['post'] = $this;
+    $theme = ttheme::instance();
+    return $theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
+  }
   
   public function getrsscomments() {
     return litepublisher::$options->url . "/comments/$this->id.xml";
@@ -256,19 +256,19 @@ return $theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink
     }
     return $this->dateformater;
   }
-
-public function getday() {
+  
+  public function getday() {
     return date($this->posted, 'D');
-}
-
-public function getmonth() {
+  }
+  
+  public function getmonth() {
     return tlocal::date($this->posted, 'M');
-}
- 
-public function getyear() {
+  }
+  
+  public function getyear() {
     return date($this->posted, 'Y');
-}
- 
+  }
+  
   public function getmorelink() {
     if ($this->moretitle == '') return '';
     $theme = ttheme::instance();
@@ -501,7 +501,7 @@ public function getyear() {
   }
   
   public function setcontent($s) {
-      if (!is_string($s)) $this->error('Error! Post content must be string');
+    if (!is_string($s)) $this->error('Error! Post content must be string');
     if ($s != $this->rawcontent) {
       $this->rawcontent = $s;
       $filter = tcontentfilter::instance();
