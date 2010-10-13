@@ -20,7 +20,10 @@ function texternallinksInstall($self) {
   }
   
   $filter = tcontentfilter::instance();
+$filter->lock();
   $filter->afterfilter = $self->filter;
+  $filter->onaftercomment = $self->filter;
+$filter->unlock();
   
   $cron = tcron::instance();
   $cron->add('hour', get_class($self), 'updatestat');
