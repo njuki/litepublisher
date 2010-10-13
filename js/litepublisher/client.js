@@ -218,10 +218,3 @@ function playvideofile(id, filename) {
     });
   }
 }
-
-function htmlentities(s){	
-	var div = document.createElement('div');
-	var text = document.createTextNode(s);
-	div.appendChild(text);
-	return div.innerHTML;
-}
