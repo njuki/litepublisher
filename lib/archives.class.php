@@ -22,7 +22,7 @@ class tarchives extends titems implements  itemplate {
     $this->data['theme'] = '';
   }
   
-  public function GetHeadLinks() {
+  public function getheadlinks() {
     $result = '';
     foreach ($this->items as $date => $item) {
   $result  .= "<link rel=\"archives\" title=\"{$item['title']}\" href=\"litepublisher::$options->url{$item['url']}\" />\n";
