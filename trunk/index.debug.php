@@ -101,15 +101,16 @@ litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQ
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 
-if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){
-echo "<pre>\n";
+//if (dbversion && !preg_match('/(^\/rpc\.xml|\/rss|\/comments\.)|(\.xml$)/', $_SERVER['REQUEST_URI'])){
+{
+//echo "<pre>\n";
 $man = tdbmanager::instance();
-//tfiler::log("sql\n" . $man->performance());
+tfiler::log("sql\n" . $man->performance());
 //$man->optimize();
 //$man->deletealltables();
 //$man->alter('files', "modify `description` text  NOT NULL");
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//tupdater::instance()->run(3.96);
+//tupdater::instance()->run(3.97);
 ?>

@@ -86,7 +86,10 @@ class texternallinks extends titems {
       $external[$link] = $redir . $id;
     }
     
-    if (count($external) > 0) $content = strtr($content, $external);
+foreach ($external as $src => $dst) {
+$content = str_replace(sprintf('"%s"', $src), sprintf('"%s"', $dst), $content);
+$content = str_replace(sprintf("'%s'", $src), sprintf("'%s'", $dst), $content);
+}
   }
   
 }//class

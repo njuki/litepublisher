@@ -90,7 +90,7 @@ class tcommentmanager extends tevents {
   
   public function edit($id, $idpost, $name, $email, $url, $content) {
     $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
-    $idauthor = $comusers->add($name, $email, $url);
+    $idauthor = $comusers->add($name, $email, $url, '');
     return $this->editcomment($id, $idpost, $idauthor, $content);
   }
   
