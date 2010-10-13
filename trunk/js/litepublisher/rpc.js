@@ -15,6 +15,13 @@
  *
  */
 
+function htmlentities(s){	
+	var div = document.createElement('div');
+	var text = document.createTextNode(s);
+	div.appendChild(text);
+	return div.innerHTML;
+}
+
 var rpc = {
 	version:"0.8.0.2",	
 	requestCount: 0
@@ -630,9 +637,9 @@ rpc.ServiceProxy.prototype.__toXMLRPC = function(value){
 			break;
 		case 'string':
 			xml.push('<string>');
-			xml.push(value.replace(/[<>&]/, function(ch){
-				
-			})); //escape for XML!
+xml.push(htmlentities(value));
+			//xml.push(value.replace(/[<>&]/, function(ch){}));
+ //escape for XML!
 			xml.push('</string>');
 			break;
 		case 'object':

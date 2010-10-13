@@ -122,10 +122,10 @@ function submiteditcomment(id) {
   return function() {
     client.litepublisher.comments.edit( {
       params:['', '', id, ltoptions.idpost, {
-        name: htmlentities(document.getElementById('name').value),
-        email: htmlentities(document.getElementById('email').value),
-        url: htmlentities(document.getElementById('url').value),
-        content: htmlentities9(document.getElementById('comment').value)
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        url: document.getElementById('url').value,
+        content: document.getElementById('comment').value
       }],
       
       onSuccess:function(result){
@@ -162,7 +162,7 @@ function sendreply() {
     
     if (client == undefined) client = createclient();
     client.litepublisher.comments.reply( {
-      params:['', '', 0, ltoptions.idpost, htmlentities(content)],
+      params:['', '', 0, ltoptions.idpost, content],
       
       onSuccess:function(result){
         try {
