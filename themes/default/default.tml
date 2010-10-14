@@ -155,10 +155,9 @@
 																<input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
 															</div>
 														<!--/moderate-->
+
+<div class="commentcontent" id="commentcontent-$comment.id" >$comment.content</div>
 														
-														<p id="commentcontent-$comment.id">
-															$comment.content
-														</p>
 														<div class="replyquotebuttons">
 															<input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
 															<input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
@@ -395,6 +394,7 @@ $items
 		<!--sitebar-->
 
 		<!--widget-->
+		<li>
 			<div class="rubric">$title</div>
     <!--items-->
 				<ul>
@@ -403,11 +403,12 @@ $items
       <!--/item-->
 				</ul>
     <!--/items-->
+			</li>
 			<!--/widget-->
 
 		<!--posts-->
 		<li id="lastposts">
-			<div class="rubric">%s</div>
+			<div class="rubric">$title</div>
     <!--items-->
 				<ul id="widgetposts">
 					<!--item-->
