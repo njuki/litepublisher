@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsourcefiles extends tplugin {
+class tsourcefiles extends tplugin implements itemplate {
   public $ignore;
   private $item;
   private $geshi;
