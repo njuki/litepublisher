@@ -34,8 +34,8 @@ class tcontentfilter extends tevents {
     }
     
     $result = self::simplebbcode($result);
+    $result = preg_replace('/(?<!\n)(?<!\>)\n/', "<br />\n", $result);
     if ($this->commentautolinks) $result = self::createlinks($result);
-$result = self::auto_p($result);
     $this->callevent('onaftercomment', array(&$result));
     return $result;
   }
