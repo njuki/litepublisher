@@ -105,12 +105,12 @@ litepublisher::$options->showerrors();
 {
 //echo "<pre>\n";
 $man = tdbmanager::instance();
-tfiler::log("sql\n" . $man->performance());
+//tfiler::log("sql\n" . $man->performance());
 //$man->optimize();
 //$man->deletealltables();
 //$man->alter('files', "modify `description` text  NOT NULL");
 //echo  $man->performance();
 //file_put_contents(litepublisher::$pathshome. "litepublisher::$domain .sql", $man->export());
 }
-//tupdater::instance()->run(3.97);
+//tupdater::instance()->run(3.98);
 ?>
