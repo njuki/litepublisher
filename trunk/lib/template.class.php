@@ -301,6 +301,25 @@ class ttemplate extends tevents {
     return '';
   }
   
+  public function getmeta() {
+    $result =
+    '<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
+    <link rel="pingback" href="$options.url/rpc.xml" />
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
+    <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
+    <meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
+    <meta name="keywords" content="$template.keywords" />
+    <meta name="description" content="$template.description" />
+    <link rel="sitemap" href="$options.url/sitemap.htm" />
+    <script type="text/javascript" src="$options.files/js/litepublisher/rpc.min.js"></script>
+    <script type="text/javascript" src="$options.files/js/litepublisher/client.min.js"></script>
+    <script type="text/javascript" src="$options.files/js/jsibox/jsibox_basic.js"></script>';
+    
+    $theme = ttheme::instance();
+    return $theme->parse($result);
+  }
+  
   public function getbody() {
     $result = '';
     $this->callevent('onbody', array(&$result));

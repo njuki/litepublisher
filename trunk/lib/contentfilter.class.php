@@ -27,7 +27,7 @@ class tcontentfilter extends tevents {
     $result = trim($content);
     $result = str_replace(array("\r\n", "\r"), "\n", $result);
     $result = self::quote(htmlspecialchars($result));
-
+    
     if ($this->callevent('oncomment', array(&$result))) {
       $this->callevent('onaftercomment', array(&$result));
       return $result;
@@ -152,7 +152,7 @@ class tcontentfilter extends tevents {
   public function callback_fix_php($m) {
     return str_replace("\n", ' ', $m[0]);
   }
-
+  
   public static function getexcerpt($content, $len) {
     $result = strip_tags($content);
     if (strlen($result) <= $len) return $result;

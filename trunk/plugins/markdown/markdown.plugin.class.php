@@ -30,10 +30,10 @@ class tmarkdownplugin extends tplugin {
   
   public function install() {
     $filter = tcontentfilter::instance();
-$filter->lock();
+    $filter->lock();
     $filter->beforefilter = $this->filter;
     $filter->oncomment = $this->filter;
-$filter->unlock();
+    $filter->unlock();
   }
   
   public function uninstall() {
