@@ -59,7 +59,7 @@ class tthemeparser extends tevents {
       $this->default = new tdefaulttheme();
     } else {
       $about = $this->getabout($theme->name);
-      if (($about['type'] == 'litepublisher') && !empty($about['parent'])) {
+      if ((($about['type'] == 'litepublisher')|| ($about['type'] == 'alias')) && !empty($about['parent'])) {
         $parent = $this->getabout($about['parent']);
         if (($parent['type'] != 'litepublisher') || !empty($parent['parent'])) {
           $this->error(sprintf('Parent theme %s of theme %s has parent', $about['parent'], $theme->name));
@@ -73,6 +73,7 @@ class tthemeparser extends tevents {
     
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
+    if (isset($about) && ($about['type'] == 'alias')) $s = self::replace_aliases($s);
     $theme->type = 'litepublisher';
     $theme->title = $this->parsetitle($s);
     $theme->menu = $this->parsemenu($s);
@@ -516,7 +517,7 @@ class tthemeparser extends tevents {
     if (!isset($this->abouts[$name])) {
       $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'about.ini';
       if (file_exists($filename) && (      $about = parse_ini_file($filename, true))) {
-        $about['about']['type'] = 'litepublisher';
+        if (empty($about['about']['type'])) $about['about']['type'] = 'litepublisher';
         //join languages
         if (isset($about[litepublisher::$options->language])) {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];
@@ -605,6 +606,15 @@ class tthemeparser extends tevents {
     );
     
     return strtr($format, $trans);
+  }
+  
+  //aliases
+  public static function replace_aliases($s) {
+    $ini = parse_ini_file(litepublisher::$paths->libinclude . 'aliases.ini');
+    foreach ($ini as $alias => $tag) {
+      $s = str_replace("%%$alias%%", $tag, $s);
+    }
+    return $s;
   }
   
   //wordpress

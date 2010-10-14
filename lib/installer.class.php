@@ -262,8 +262,8 @@ class tinstaller extends tdata {
   private function getlangcombo() {
     $langs = array(
     'en' => 'English',
-    'ru' => 'Russian',
-    'ua' => 'Ukrain'
+    'ru' => 'Russian'
+    //'ua' => 'Ukrain'
     );
     
     $result = '';
