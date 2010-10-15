@@ -6,54 +6,66 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tview extends tdata {
-  public $name;
-  public $sitebars;
-  
-  public static function instance($name = '') {
-    if ($name == '') $name = 'default';
-    $owner = self::getowner();
-    return $owner->getview($name);
+class tview extends titem {
+private $_theme;
+
+  public static function instance($id = 1) {
+    return parent::iteminstance(__class__, $id);
+  }
+
+  public static function getinstancename() {
+    return 'view';
   }
   
-  public static function getowner() {
-    return tviews::instance();
+  public static function getview($instance) {
+$id = $instance->getview();
+$views = tviews::instance();
+if (!$views->itemexists($id)) {
+$id = 1; //default, wich always exists
+$instance->setview($id);
+}
+return self::instance($id);
   }
-  
-  public static function getsitebars($context) {
-    $view = self::getview($context);
-    return view->sitebars;
+
+protected function create() {
+parent::create();
+$this->data = array(
+'id' => 0,
+'name' => 'default',
+'themename' => 'default',
+      'defaultsitebar' => true,
+      'ajax' => false,
+'sitebars' => array()
+);
   }
-  
-  public static function getview($context) {
-    $name = $context->view;
-    if ($name == '') $name = 'default';
-    $owner = self::getowner();
-    if (!isset($owner->items[$name])) {
-      $name = 'default';
-      $context->view = $name;
-    }
-    return $owner->getview($name);
-  }
-  
-  public function __construct($name) {
-    parent::__construct();
-    $this->name = $name;
-    $owner = self::getowner();
-    $this->sitebars = &$owner->items[$name]['sitebars'];
-    $this->data= &$owner->items[$name];
-  }
-public function load() {}
-  public function save() {
-    self::getowner()->save();
-  }
-  
+
+public function load() {
+$views = tviews::instance();
+if ($views->itemexists($this->id)) {
+$this->data = &$views->items[$this->id];
+return true;
+}
+return false;
+}
+
+public function save() {
+return tviews::instance()->save();
+}
+
+public function gettheme() {
+if (isset($this_theme) && ($this->themename == $this_theme->name)) return $this->_theme;
+if (!ttheme::exists($this->themename)) {
+$this->themename = 'default';
+$this->save();
+}
+$this->_theme = ttheme::instance($this->themename);
+return $this->_theme;
+}
+
 }//class
 
 class tviews extends titems {
-  private $instances;
-  public $classes;
-  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -62,53 +74,38 @@ class tviews extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'views';
-    $this->instances = array();
     $this->addmap('classes', array());
   }
   
   public function add($name) {
-    if (!isset($this->items[[$name]){
-      $this->items[$name] = array(
-      'theme' => 'default',
-      'tml' => 'index',
-      'defaultsitebar' => true,
-      'ajax' => false,
-      'sitebars' => array(array(), array(), array())
-      );
-      $this->save();
-    }
-    return $this->getview($name);
+$this->lock();
+$id = ++$this->autoid;
+$view = litepublisher::$classes->newitem(tview::getitemname(), 'tview', $id);
+$view->id = $id;
+$view->name = $name;
+$this->items[$id] = &$view->data;
+      $this->unlock();
+return $view;
   }
   
-  public function delete(name) {
-    if (!isset($this->items[name])) return false;
-    foreach ($this->classes as $name => $iditem) {
-      if ($id == $iditem) $this->classes = 0;
-    }
-    unset($this->items[$name]);
-    unset($this->instances[$name]);
-    $this->save();
-    $this->deleted($id);
-    return true;
+  public function delete($id) {
+if ($id == 1) return $this->error('You cant delete default view');
+return parent::delete($id);
   }
   
-  public function getview($id) {
-    if (isset($this->instances[$name])) return $this->instances[$name];
-    if (!isset($this->items[$name])) $this->error("The '$name' view not found");
-    $result = litepublisher::$classes->newinstance('tview');
-    $this->instances[$name] = $result;
-    return $result;
-  }
-  
-  public function widgetdeleted($id) {
-    foreach ($this->items as $name  => $view) {
-      for ($i = count($view['sitebars']) - 1; $i >= 0; $i--) {
-        foreach ($view['sitebar'][$i] as $j => $item) {
-          if ($id == $item['id']) array_delete($this->items[$name]['sitebars'][$i], $j);
+  public function widgetdeleted($idwidget) {
+$deleted = false;
+    foreach ($this->items as $id => $item) {
+foreach ($item['sitebars'] as $i => sitebar) {
+for ($j = count($sitebar) -1; $j >= 0; $j--) {
+          if ($idwidget == $sitebar[$j]['id']) {
+array_delete($this->items[$id]['sitebars'][$i], $j);
+$deleted = true;
+}
         }
       }
     }
-    $this->save();
+if ($deleted) $this->save();
   }
   
 }//class
