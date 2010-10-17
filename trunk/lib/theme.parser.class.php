@@ -616,7 +616,81 @@ class tthemeparser extends tevents {
     }
     return $s;
   }
-  
+
+//4 ver
+public function find_root_tags($s) {
+$result = array();
+    $s = str_replace(array("\r\n", "\r"), "\n", $s);
+$s = trim($s);
+$c = 0;
+ while ($s != '') {
+if ($c++ > 10) return "Out of loop";
+if (preg_match('/^(\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
+$tag = $m[1];
+$s = ltrim(substr($s, strlen($m[0])));
+if (isset($m[3])) {
+$i = self::find_close($s, $m[3]);
+} else {
+$i = strpos($s, "\n");
+}
+
+$value = trim(substr($s, 0, $i));
+$s = ltrim(substr($s, $i));
+$result[$tag] = self::extract_tags($value);
+} else {
+if ($i = strpos($s, "\n")) {
+$s = ltrim(substr($s, $i));
+} else {
+$s = '';
+}
+}
+}
+return $result;
+}
+
+public static function extract_tags($s) {
+$result = array();
+$c = 0;
+ while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
+if ($c++ > 10) die('Out of llop ' . __function__);
+if (!isset($m[3])) die('The skobka not found');
+$tag = $m[1];
+$j = strpos($s, $m[0]);
+$pre  = rtrim(substr($s, 0, $j));
+$s= ltrim(substr($s, $j + strlen($m[0])));
+$i = self::find_close($s, $m[3]);
+$value = trim(substr($s, 0, $i));
+$s = ltrim(substr($s, $i + 1));
+$result[$tag] = self::extract_tags($value);
+$s = $pre . $tag . $s;
+}
+$result[0] = trim($s);
+return $result;
+}
+
+public static function find_close($s, $a) {
+$brackets = array(
+'[' => ']',
+'{' => '}',
+'(' => ')'
+);
+
+$b = $brackets[$a];
+$i = strpos($s, $b);
+$sub = substr($s, 0, $i);
+$opened = substr_count($sub, $a);
+if ($opened == 0) return $i;
+
+while ($opened >=  substr_count($sub, $b)) {
+$i = strpos($s, $b, $i + 1);
+if ($i === false) die(" The '$b' not found in\n$s");
+$sub = substr($s, 0, $i);
+$opened = substr_count($sub, $a);
+}
+
+return $i;
+}
+
   //wordpress
   public function checktheme(ttheme $theme) {
     if ($about = $this->get_about_wordpress_theme($theme->name)) {
