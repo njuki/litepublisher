@@ -622,6 +622,7 @@ public function find_root_tags($s) {
 $result = array();
     $s = str_replace(array("\r\n", "\r"), "\n", $s);
 $s = trim($s);
+$roottags = array('theme', 'title', 'menu', 'content', 'sitebar');
 $c = 0;
  while ($s != '') {
 if ($c++ > 10) return "Out of loop";
