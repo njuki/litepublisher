@@ -29,6 +29,7 @@ class tcontactform extends tmenu {
     
     $content = trim($_POST['content']);
     if (strlen($content) <= 15) return '<p><strong>' .  tlocal::$data['comment']['emptycontent'] . "</strong></p>\n";
+if (false !== strpos($content, '<a href')) return $error;
     
     tmailer::sendmail('', $email, '', litepublisher::$options->email, $lang->subject, $content);
     
