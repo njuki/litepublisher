@@ -523,7 +523,7 @@ class tthemeparser extends tevents {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];
         }
         $this->abouts[$name] = $about['about'];
-      } elseif ($about =  $this->get_about_wordpress_theme($name)){
+      } elseif ($about =  twordpressthemeparser::get_about_wordpress_theme($name)){
         $about['type'] = 'wordpress';
         $this->abouts[$name] = $about;
       } else {
@@ -623,10 +623,8 @@ $result = array();
     $s = str_replace(array("\r\n", "\r"), "\n", $s);
 $s = trim($s);
 $roottags = array('theme', 'title', 'menu', 'content', 'sitebar');
-$c = 0;
  while ($s != '') {
-if ($c++ > 10) return "Out of loop";
-if (preg_match('/^(\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
+if (preg_match('/^(\$?\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 $tag = $m[1];
 $s = ltrim(substr($s, strlen($m[0])));
 if (isset($m[3])) {
@@ -637,7 +635,7 @@ $i = strpos($s, "\n");
 
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i));
-$result[$tag] = self::extract_tags($value);
+$result[$tag] = $this->extract_tags($tag, $value);
 } else {
 if ($i = strpos($s, "\n")) {
 $s = ltrim(substr($s, $i));
@@ -649,12 +647,10 @@ $s = '';
 return $result;
 }
 
-public static function extract_tags($s) {
+public function extract_tags($parent, $s) {
 $result = array();
-$c = 0;
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
-if ($c++ > 10) die('Out of llop ' . __function__);
-if (!isset($m[3])) die('The skobka not found');
+if (!isset($m[3])) $this->error('The baracket not found');
 $tag = $m[1];
 $j = strpos($s, $m[0]);
 $pre  = rtrim(substr($s, 0, $j));
@@ -662,7 +658,7 @@ $s= ltrim(substr($s, $j + strlen($m[0])));
 $i = self::find_close($s, $m[3]);
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i + 1));
-$result[$tag] = self::extract_tags($value);
+$result[$tag] = $this->extract_tags($parent . '.' . $tag, $value);
 $s = $pre . $tag . $s;
 }
 $result[0] = trim($s);
@@ -692,87 +688,5 @@ $opened = substr_count($sub, $a);
 return $i;
 }
 
-  //wordpress
-  public function checktheme(ttheme $theme) {
-    if ($about = $this->get_about_wordpress_theme($theme->name)) {
-      $theme->type = 'wordpress';
-      return true;
-    }
-    return false;
-  }
-  
-  public function get_about_wordpress_theme($name) {
-    $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'style.css';
-    if (!@file_exists($filename)) return false;
-    $data = $this->wp_get_theme_data($filename);
-    $about = array(
-    'author' => $data['Author'],
-    'url' => $data['URI'] != ''  ? $data['URI'] :$data['AuthorURI'],
-    'description' => $data['Description'],
-    'version' => $data['Version']
-    );
-    
-    return $about;
-  }
-  
-  public function wp_get_theme_data( $theme_file ) {
-    $default_headers = array(
-    'Name' => 'Theme Name',
-    'URI' => 'Theme URI',
-    'Description' => 'Description',
-    'Author' => 'Author',
-    'AuthorURI' => 'Author URI',
-    'Version' => 'Version',
-    'Template' => 'Template',
-    'Status' => 'Status',
-    'Tags' => 'Tags'
-    );
-    
-    $theme_data = $this->wp_get_file_data( $theme_file, $default_headers, 'theme' );
-    
-    $theme_data['Name'] = $theme_data['Title'] = strip_tags( $theme_data['Name']);
-    $theme_data['URI'] = strip_tags( $theme_data['URI'] );
-    $theme_data['AuthorURI'] = strip_tags( $theme_data['AuthorURI'] );
-    $theme_data['Version'] = strip_tags( $theme_data['Version']);
-    
-    if ( $theme_data['Author'] == '' ) {
-      $theme_data['Author'] = 'Anonymous';
-    }
-    
-    return $theme_data;
-  }
-  
-  public function wp_get_file_data( $file, $default_headers, $context = '' ) {
-    $fp = fopen( $file, 'r' );
-    $file_data = fread( $fp, 8192 );
-    fclose( $fp );
-    
-    foreach ( $default_headers as $field => $regex ) {
-    preg_match( '/' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, ${$field});
-    if ( !empty( ${$field} ) )
-  ${$field} = _cleanup_header_comment( ${$field}[1] );
-      else
-    ${$field} = '';
-    }
-    
-    return compact( array_keys($default_headers) );
-  }
-  
 }//class
-
-function _cleanup_header_comment($str) {
-  return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
-}
-
-class tdefaulttheme implements arrayaccess {
-public function __get($name) { return $this; }
-public function __set($name, $value) { }
-public function __tostring() { return ''; }
-  
-public function offsetSet($offset, $value) {}
-public function offsetExists($offset) { return true; }
-public function offsetUnset($offset) {}
-public function offsetGet($offset) { return $this; }
-}//class
-
 ?>
