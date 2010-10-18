@@ -9,9 +9,6 @@
 class tthemeparser extends tevents {
   public $theme;
   private $abouts;
-  private $default;
-  private $fixold;
-  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -24,32 +21,6 @@ class tthemeparser extends tevents {
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('parsed');
-    $this->fixold = true;
-  }
-  
-  public function parsetag(&$s, $tag, $replace) {
-    $result = '';
-    $opentag = "<!--$tag-->";
-    $closetag = "<!--/$tag-->";
-    if(is_int($i = strpos($s, $opentag)) && ($j = strpos($s, $closetag))) {
-      $result = substr($s, $i + strlen($opentag), $j - $i - strlen($opentag));
-      if ($replace === false) $replace = $result;
-      $s = substr_replace($s, $replace, $i, $j - $i + strlen($closetag));
-      $s = str_replace("\n\n", "\n", $s);
-    }
-    return $result;
-  }
-  
-  public function gettag(&$s, $tag, $replace, $default = null) {
-    if ($result = $this->parsetag($s, $tag, $replace)) return $result;
-    return (string) $default;
-  }
-  
-  public function deletespaces($s) {
-    return trim(str_replace(
-    array('   ', '  ', "\r", " \n", "\n\n"),
-    array(' ', ' ', "\n", "\n", "\n"),
-    $s));
   }
   
   public function parse(ttheme $theme) {
