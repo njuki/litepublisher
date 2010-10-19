@@ -143,8 +143,8 @@ class ttheme extends tevents {
     $s = str_replace('$options.url', litepublisher::$options->url, (string) $s);
     array_push($this->parsing, $s);
     try {
+$s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
       $result = preg_replace_callback('/\$(\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
-$result = preg_replace_callback('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', array(&$this, 'parsecallback'), $result);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);
