@@ -171,7 +171,7 @@ class tcontentfilter extends tevents {
   }
   
   public static function quote($s) {
-    return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;'));
+    return strtr ($s, array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;', '$' => '&#36;', '%' =>  '&#37;', '_' => '&#95;'));
   }
   
   public static function escape($s) {
