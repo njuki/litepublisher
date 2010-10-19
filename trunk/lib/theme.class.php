@@ -52,7 +52,7 @@ class ttheme extends tevents {
     $this->parsing = array();
     $this->data['type'] = 'litepublisher';
     $this->data['parent'] = '';
-    $this->data['theme'] = '';
+    $this->data['template'] = '';
     $this->data['title'] = '';
     $this->data['menu'] = array();
     $this->data['content'] = array();
@@ -167,7 +167,7 @@ class ttheme extends tevents {
     self::$vars['context'] = $context;
     switch ($this->type) {
       case 'litepublisher':
-      return $this->parse($this->theme);
+      return $this->parse($this->template);
       
       case 'wordpress':
       return wordpress::getcontent();
