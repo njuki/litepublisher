@@ -7,14 +7,6 @@
 **/
 
 class twordpressthemeparser {
-  public static function checktheme(ttheme $theme) {
-    if ($about = self::get_about_wordpress_theme($theme->name)) {
-      $theme->type = 'wordpress';
-      return true;
-    }
-    return false;
-  }
-  
   public static function get_about_wordpress_theme($name) {
     $filename = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR . 'style.css';
     if (!@file_exists($filename)) return false;
