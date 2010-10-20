@@ -8,8 +8,8 @@
 
 class temptytheme {
 public static function settheme(ttheme $theme) {
-$empty = array (
-  'template' => '',
+$theme->templates = array (
+  0 => '',
   'title' => '',
   'menu' => 
   array (
@@ -582,9 +582,6 @@ $empty = array (
   ),
 );
 
-foreach ($empty as $k => $v) {
-$theme->data[$k] = $v;
-}
 }
 }
 ?>

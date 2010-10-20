@@ -173,9 +173,13 @@ preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
 $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
 if (!file_exists($filename)) $this->error("File '$filename' not found");
 $s = trim(file_get_contents($filename));
+    $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
+$s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
+$s = str_replace('$options.', '$site.', $s);
 }
 
 if (strbegin($parent, '$template')) $parent = substr($parent, strlen('$template'));
+
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
@@ -192,10 +196,20 @@ $this->setvalue($parent, trim($s));
 }
 
 public function setvalue($tag, $value) {
-if ($tag == '') || ($tag == 'template')) $this->theme->template = value;
+if ($tag == '') || ($tag == 'template')) {
+$this->theme->templates[0] = value;
+elseif (!strpos($tag, '.')) {
+if (!isset($this->theme->templates[$tag])) $this->error("Unknown '$tag' tag");
+$this->theme->templates[$tag] = $value;
+} else {
 $keys = explode('.', $tag);
-foreach ($keys as $name( {
-$tag = $tag->$name;
+$first = array_shift($keys);
+$last = array_pop($keys);
+$prop = $this->theme->$first;
+foreach ($keys as $key) {
+$prop = $prop->$key;
+}
+$prop->$last = $value;
 }
 }
 
