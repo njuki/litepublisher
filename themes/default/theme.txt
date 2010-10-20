@@ -15,52 +15,7 @@ $template.content - содержание, содержит все основны
 $template.sitebar - шаблон сайтбара и виджетов в нем
 
 Начнем декларировать шаблоны верхнего уровня, и в начале обявим шаблон всей страницы целиком:
-$template = {
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
-<head>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<title>$template.title</title>
-	<link rel="stylesheet" href="$template.url/css/style.css" type="text/css" media="all" />
-	<!--[if IE 6]>
-		<script src="$template.url/css/DD_belatedPNG.js"></script>
-		<script>		
-		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, #lastcomments li, #lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
-		 </script>
-	<![endif]--> 
-$template.meta
-	$template.head
-</head>
-<body>
-	<div id="header"><div id="logo"><span class="name"><a href="$options.url/">$options.name</a></span><span class="slogan">$options.description</span>
-</div></div>
-	<div id="topmenu">
-	 $template.menu
-</div>
-<div id="out">
-<div id="middle">
-	<div id="content">
-
-		$template.content
-	</div>
-	<div id="sidebar">
-		$template.sitebar
-	</div>
-		
-	<div id="footer">
-	<div id="bottom">
-	<ul id="footerbar">
-		$template.sitebar
-	</ul>
-		
-			<div id="copyright"><span class="blogolet"><a href="$options.url$options.home">$options.name</a></span>$template.footer</div>
-	</div>
-</div>
-</div>
-</div>	
-</body>
-</html>
-}
+$template = {@import(main.htm)}
 
 Следует заметить, что вэтом шаблоне отсутствуют какие либо вложенные шаблоны. Сделано это специально для демонстрации общей структуры темы на самом верхнем уровне. Можно немного поподробнее остановиться на каждом из тегов. Самым первым встречается тег $template.title - заголовок страницы. Установим шаблон для заголовка страницы следующим образом:
 
@@ -72,7 +27,6 @@ $template.head - стандартный html для секции HEAD HTML до�
 $options.url - адрес сайта
 $options.name - название сайта
 $options.description - описание сайта
-
 
 Далее мы встречаем тег $template.menu - ЭТО СПИСОК МЕНЮ В ШАПКЕ САЙТА, ЗАДЕКЛАРИРУЕМ ШАБЛОН ДЛЯ ЭТОГО ТЕГА
 
@@ -171,7 +125,7 @@ $post.subscriberss - ссылка на rss комментариев к запи�
 $post.prevnext - ссылки на следующую и предыдущую запись, можно задать для этих ссылок шаблон
 $post.templatecomments - выводит список комментариев и форму для отправки комментария. имеет много вложенных шаблонов.
 
-Дополнительно приведу еще список тегов записи, могущщих оказаться полезными при разработке темы:
+Дополнительно приведу еще список тегов записи, могущих оказаться полезными при разработке темы:
 $post.day - день (01-31) публикации
 $post.month - месяц, краткое название (Несколько букв)
 $post.year - год публикации, 4 цифры

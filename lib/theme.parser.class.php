@@ -183,35 +183,69 @@ if (strbegin($parent, '$template')) $parent = substr($parent, strlen('$template'
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
+$paths = $this->getpaths($parent, $tag);
 $j = strpos($s, $m[0]);
 $pre  = rtrim(substr($s, 0, $j));
 $s= ltrim(substr($s, $j + strlen($m[0])));
 $i = self::find_close($s, $m[3]);
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i + 1));
-$this->settag($parent . '.' . $tag, $value);
-$s = $pre . $tag . $s;
+$this->settag($parent . '.' . $paths['tag'], $value);
+$s = $pre . $paths['replace'] . $s;
 }
-$this->setvalue($parent, trim($s));
+return $this->setvalue($parent, trim($s));
 }
 
 public function setvalue($tag, $value) {
 if ($tag == '') || ($tag == 'template')) {
 $this->theme->templates[0] = value;
+return '';
 elseif (!strpos($tag, '.')) {
 if (!isset($this->theme->templates[$tag])) $this->error("Unknown '$tag' tag");
 $this->theme->templates[$tag] = $value;
+return '';
 } else {
 $keys = explode('.', $tag);
-$first = array_shift($keys);
-$last = array_pop($keys);
-$prop = $this->theme->$first;
-foreach ($keys as $key) {
-$prop = $prop->$key;
+switch (array_shift($keys)) {
+case 'menu':
+return $this->setmenulist($keys, $value);
+
+case 'content':
+$content = $this->theme->content;
+switch (array_shift($keys)) {
+case 'post':
+return $this->setpost($keys, $value);
+
+case 'excerpts':
+return $this->setexcerpts($keys, $value);
+
+case 'navi':
+return $this->setnavi($keys, $value);
+
+case 'admin':
+$name = array_shift($keys);
+$content->admin->$name = $value;
+return '';
+
+case 'menu':
+$content->menu = $value;
+return '';
+
+case 'simple':
+$content->simple = $value;
+return '';
+
+case notfound':
+$content->notfound = $value;
+return '';
 }
-$prop->$last = $value;
+
+case 'sitebar':
+}
+
 }
 }
+
 
 public static function find_close($s, $a) {
 $brackets = array(
@@ -234,6 +268,20 @@ $opened = substr_count($sub, $a);
 }
 
 return $i;
+}
+
+public function setpost(array $keys, $value) {
+$post = $this->theme->content->post;
+switch(array_shift($keys)) {
+case 'more':
+$post->more = $value;
+return '';
+
+case 'rss':
+$post->rss = $value;
+return '$post.subscriberss';
+
+}
 }
 
 }//class
