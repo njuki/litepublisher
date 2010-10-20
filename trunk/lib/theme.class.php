@@ -12,6 +12,7 @@ class ttheme extends tevents {
   public $name;
   public $tmlfile;
   public $parsing;
+public $templates;
   private $themeprops;
   
   /*
@@ -46,17 +47,20 @@ class ttheme extends tevents {
   
   protected function create() {
     parent::create();
-    $this->themeprops = new tthemeprops($this->data);
     $this->name = '';
     $this->tmlfile = 'index';
     $this->parsing = array();
     $this->data['type'] = 'litepublisher';
     $this->data['parent'] = '';
-    $this->data['template'] = '';
-    $this->data['title'] = '';
-    $this->data['menu'] = array();
-    $this->data['content'] = array();
-    $this->data['sitebars'] = array();
+$this->addmap('templates', array());
+$this->templates = array(
+0 => '',
+'title' => '',
+    'menu' => array(),
+'content' => array(),
+'sitebars' => array()
+);
+    $this->themeprops = new tthemeprops($this->templates);
   }
   
   public function load() {
@@ -80,15 +84,19 @@ class ttheme extends tevents {
   }
   
   public function __tostring() {
-    return $this->theme;
+    return $this->templates[0];
   }
   
   public function __get($name) {
-    if (array_key_exists($name, $this->data) && is_array($this->data[$name])) {
-      $this->themeprops->array = &$this->data[$name];
+    if (array_key_exists($name, $this->templates)) {
+if (is_array($this->templates[$name])) {
+      $this->themeprops->array = &$this->templates[$name];
       return $this->themeprops;
+} else {
+return $this->templates[$name];
+}
     } elseif ($name == 'comment') {
-      $this->themeprops->array = &$this->data['content']['post']['templatecomments']['comments']['comment'];
+      $this->themeprops->array = &$this->templates['content']['post']['templatecomments']['comments']['comment'];
       return $this->themeprops;
     }
     
@@ -96,7 +104,7 @@ class ttheme extends tevents {
   }
   
   public function getsitebarscount() {
-    return count($this->data['sitebars']);
+    return count($this->templates['sitebars']);
   }
   
   public function parsecallback($names) {
@@ -114,6 +122,7 @@ class ttheme extends tevents {
       $classes = litepublisher::$classes;
       if (isset($classes->classes[$name])) {
         $var = $classes->getinstance($classes->classes[$name]);
+self::$vars[$name] = $var;
       } else {
         $class = 't' . $name;
         if (isset($classes->items[$class])) $var = $classes->getinstance($class);
@@ -168,7 +177,7 @@ $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
     self::$vars['context'] = $context;
     switch ($this->type) {
       case 'litepublisher':
-      return $this->parse($this->template);
+      return $this->parse($this->templates[0]);
       
       case 'wordpress':
       return wordpress::getcontent();
@@ -176,7 +185,7 @@ $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
   }
   
   public function getnotfount() {
-    return $this->parse($this->nocontent);
+    return $this->parse($this->content->notfound);
   }
   
   public function getpages($url, $page, $count) {
