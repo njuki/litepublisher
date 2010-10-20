@@ -36,58 +36,46 @@ class tthemeparser extends tevents {
   public function parse(ttheme $theme) {
 $this->checkparent($theme->name);
       $about = $this->getabout($theme->name);
-$theme->type = $about['type'];
-
 switch ($about['type']) {
 case 'litepublisher3':
 case 'litepublisher':
 $theme->type = 'litepublisher';
 $ver3 = tthemeparserver3::instance();
-return $ver3->parse($theme);
+$ver3->parse($theme);
 break;
 
 case 'litepublisher4':
 $theme->type = 'litepublisher';
-
-break;
-
-case 'alias':
+$this->parse($theme);
 break;
 
 case 'wordpress':
+$theme->type = 'wordpress';
 break;
 }
 
-    $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $theme->tmlfile . '.tml';
-    if (!@file_exists($filename))  return $this->checktheme($theme);
-    if (($theme->name == 'default') && ($theme->tmlfile == 'default')) {
-      $this->default = new tdefaulttheme();
-    } else {
-
-      if ((($about['type'] == 'litepublisher')|| ($about['type'] == 'alias')) && !empty($about['parent'])) {
-        $parent = $this->getabout($about['parent']);
-        if (($parent['type'] != 'litepublisher') || !empty($parent['parent'])) {
-          $this->error(sprintf('Parent theme %s of theme %s has parent', $about['parent'], $theme->name));
-        }
-        $this->default = ttheme::getinstance($about['parent'], 'index');
-        $theme->parent = $about['parent'];
-      } else {
-        $this->default = ttheme::getinstance('default', 'default');
-      }
-    }
-    
-    $s = file_get_contents($filename);
-    $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
-    if (isset($about) && ($about['type'] == 'alias')) $s = self::replace_aliases($s);
-    $theme->type = 'litepublisher';
-    $theme->title = $this->parsetitle($s);
-    $theme->menu = $this->parsemenu($s);
-    $theme->content = $this->parsecontent($s);
-    $theme->sitebars = $this->parsesitebars($s);
-    $s = $this->deletespaces($s);
-    $theme->theme= $s != ''? $s : (string) $this->default->theme;
     $this->parsed($theme);
     return true;
+}
+
+public function parse(ttheme $theme) {
+    $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . 'theme.txt';
+    if (!@file_exists($filename))  return $this->error("The requested theme '$theme->name' not exists");
+
+    if ($theme->name == 'default') {
+$theme->template = temptytheme::getempty();
+    } else {
+$about = $this->getabout($theme->name);
+$parentname = empty($about['parent']) ? 'default' : $about['parent'];
+$parent = ttheme::instance($parentname);
+$theme->template = $parent->template;
+}
+
+    $s = file_get_contents($filename);
+    $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
+$s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
+$s = str_replace('$options.', '$site.', $s);
+$this->parsetags($theme, $s);
   }
   
   public function getabout($name) {
