@@ -32,7 +32,6 @@ class tthemeparser extends tevents {
     return false;
   }
   
-  
   public function parse(ttheme $theme) {
 $this->checkparent($theme->name);
       $about = $this->getabout($theme->name);
@@ -46,7 +45,7 @@ break;
 
 case 'litepublisher4':
 $theme->type = 'litepublisher';
-$this->parse($theme);
+$this->parsetags($theme);
 break;
 
 case 'wordpress':
@@ -58,7 +57,7 @@ break;
     return true;
 }
 
-public function parse(ttheme $theme) {
+public function parsetheme(ttheme $theme) {
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . 'theme.txt';
     if (!@file_exists($filename))  return $this->error("The requested theme '$theme->name' not exists");
 
@@ -140,11 +139,10 @@ sprintf('Theme %s has parent %s theme which has parent %s', $name, $about['paren
   }
   
 //4 ver
-public function find_root_tags($s) {
-$result = array();
-    $s = str_replace(array("\r\n", "\r"), "\n", $s);
+
+public function parsetags(ttheme $theme, $s) {
 $s = trim($s);
-$roottags = array('theme', 'title', 'menu', 'content', 'sitebar');
+$roottags = array_keys($theme->templates);
  while ($s != '') {
 if (preg_match('/^(\$?\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 $tag = $m[1];
@@ -157,7 +155,7 @@ $i = strpos($s, "\n");
 
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i));
-$result[$tag] = $this->extract_tags($tag, $value);
+$this->settag($tag, $value);
 } else {
 if ($i = strpos($s, "\n")) {
 $s = ltrim(substr($s, $i));
@@ -169,10 +167,17 @@ $s = '';
 return $result;
 }
 
-public function extract_tags($parent, $s) {
-$result = array();
+public function settag($parent, $s) {
+if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) || 
+preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
+$filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
+if (!file_exists($filename)) $this->error("File '$filename' not found");
+$s = trim(file_get_contents($filename));
+}
+
+if (strbegin($parent, '$template')) $parent = substr($parent, strlen('$template'));
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
-if (!isset($m[3])) $this->error('The baracket not found');
+if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
 $j = strpos($s, $m[0]);
 $pre  = rtrim(substr($s, 0, $j));
@@ -180,11 +185,18 @@ $s= ltrim(substr($s, $j + strlen($m[0])));
 $i = self::find_close($s, $m[3]);
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i + 1));
-$result[$tag] = $this->extract_tags($parent . '.' . $tag, $value);
+$this->settag($parent . '.' . $tag, $value);
 $s = $pre . $tag . $s;
 }
-$result[0] = trim($s);
-return $result;
+$this->setvalue($parent, trim($s));
+}
+
+public function setvalue($tag, $value) {
+if ($tag == '') || ($tag == 'template')) $this->theme->template = value;
+$keys = explode('.', $tag);
+foreach ($keys as $name( {
+$tag = $tag->$name;
+}
 }
 
 public static function find_close($s, $a) {
