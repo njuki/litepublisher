@@ -12,8 +12,10 @@ if (version_compare(PHP_VERSION, '5.1', '<')) {
 
 class litepublisher {
   public static $db;
+public static $storage;
   public static $classes;
   public static $options;
+public static $site;
   public static $urlmap;
   public static $paths;
   public static $_paths;
@@ -26,18 +28,20 @@ class litepublisher {
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
     self::$domain = $domain[2];
     
-    $home = dirname(__file__). DIRECTORY_SEPARATOR;
+    $home = dirname(__file__) . DIRECTORY_SEPARATOR;
+    $storage = $home . 'storage' . DIRECTORY_SEPARATOR;
     self::$_paths = array(
     'home' => $home,
     'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
     'libinclude' => $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR,
     'languages' => $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR,
-    'data' => $home . 'data'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR,
-    'cache' => $home . 'cache'. DIRECTORY_SEPARATOR . self::$domain  . DIRECTORY_SEPARATOR,
+    'storage' => $storage,
+    'data' => $storage . 'data'. DIRECTORY_SEPARATOR,
+    'cache' => $storage . 'cache'. DIRECTORY_SEPARATOR,
+    'backup' => $storage . 'backup' . DIRECTORY_SEPARATOR,
     'plugins' =>  $home . 'plugins' . DIRECTORY_SEPARATOR,
     'themes' => $home . 'themes'. DIRECTORY_SEPARATOR,
     'files' => $home . 'files' . DIRECTORY_SEPARATOR,
-    'backup' => $home . 'backup' . DIRECTORY_SEPARATOR,
     'js' => $home . 'js' . DIRECTORY_SEPARATOR
     );
     

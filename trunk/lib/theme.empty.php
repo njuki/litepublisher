@@ -7,11 +7,9 @@
 **/
 
 class temptytheme {
-public static function getempty() {
-return array (
-  'type' => '',
-  'parent' => '',
-  'theme' => '',
+public static function settheme(ttheme $theme) {
+$empty = array (
+  'template' => '',
   'title' => '',
   'menu' => 
   array (
@@ -583,6 +581,10 @@ return array (
     ),
   ),
 );
+
+foreach ($empty as $k => $v) {
+$theme->data[$k] = $v;
+}
 }
 }
 ?>
