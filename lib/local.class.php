@@ -14,17 +14,20 @@ class targs {
   }
   
   public function __construct($thisthis = null) {
-    $options = litepublisher::$options;
+    $site = litepublisher::$site;
     $this->data = array(
-    '$options.url' => $options->url,
-  '{$options.q}' => $options->q,
-    '$options.q' => $options->q,
-    '$options.files' => $options->files
+    '$site.url' => $site->url,
+  '{$site.q}' => $site->q,
+    '$site.q' => $site->q,
+    '$site.files' => $site->files
     );
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   
-public function __get($name) { return $this->data[$name]; }
+public function __get($name) {
+if ($name == 'item_url') return litepublisher::$site->url . $this->data['url'];
+ return $this->data[$name]; 
+}
   
   public function __set($name, $value) {
     if (is_bool($value)) {
