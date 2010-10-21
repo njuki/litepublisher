@@ -19,28 +19,29 @@ $template = {@import(main.htm)}
 
 Следует заметить, что вэтом шаблоне отсутствуют какие либо вложенные шаблоны. Сделано это специально для демонстрации общей структуры темы на самом верхнем уровне. Можно немного поподробнее остановиться на каждом из тегов. Самым первым встречается тег $template.title - заголовок страницы. Установим шаблон для заголовка страницы следующим образом:
 
-$template.title = [$title | $options.name]
+$template.title = [$title | $site.name]
 
-где $title - это например заголовок записи, а $options.name - название сайта в настройках. Мы уже объявили два шаблона в теме - 	$template(шаблон всей страницы) и $template.title (заголовок страницы). Далее встречаются следующие теги, которые не являются шаблонами:
+где $title - это например заголовок записи, а $site.name - название сайта в настройках. Мы уже объявили два шаблона в теме - 	$template(шаблон всей страницы) и $template.title (заголовок страницы). Далее встречаются следующие теги, которые не являются шаблонами:
 $template.url - адрес этой темы, используется чтобы указать адрес файлов темы. Нигде не декларируется, так как это не шаблон.
 $template.head - стандартный html для секции HEAD HTML документа.
-$options.url - адрес сайта
-$options.name - название сайта
-$options.description - описание сайта
+$site.url - адрес сайта
+$site.name - название сайта
+$site.description - описание сайта
 
 Далее мы встречаем тег $template.menu - ЭТО СПИСОК МЕНЮ В ШАПКЕ САЙТА, ЗАДЕКЛАРИРУЕМ ШАБЛОН ДЛЯ ЭТОГО ТЕГА
 
 $TEMPLATE.MENU = [
+$hover = [true]
 	<ul id="nav">
-		$item = [<li><a href="$options.url$url" title="$title">$title</a>$submenu = [ <ul>$items</ul>]</li>]
-		$current = [		<li class="current_page_item"><a href="$options.url$url" title="$title">$title</a>$submenu</li>]
+		$item = [<li><a href="$link" title="$title">$title</a>$submenu = [ <ul>$items</ul>]</li>]
+		$current = [		<li class="current_page_item"><a href="$link" title="$title">$title</a>$submenu</li>]
 	</ul>
 ]
 
 В этом шаблоне мы встретили два вложенных шаблона: $item и $current, а шаблон $item имеет у себя вложенный шаблон  $submenu. Что же означают эти шаблоны? $item ОТВЕЧАЕТ ЗА элемент списка меню, $current отвечает за текущий элемент списка - когда ёоткрытая страница это меню, то эта ссылка может быть выделена. Вложенный в $item, шаблон $submenu отвечает за шаблон подменю - имеет смысл для тем поддерживающих всплывающее меню. Далее шаблон меню использует для генерации html списка меню следующие значения:
 
+$link - адрес страницы, включая адрес сайта
 $url - адрес страницы меню, без адреса сайта
-$options.url - адрес сайта, используется во многих шаблонах, вместе $optons.url и $URL ДАЮТ ПОЛНЫЙ АДРЕС СТРАНИЦЫ
 $TITLE - ЗАГОЛОВОК МЕНЮ
 $ITEMS - ИСПОЛЬЗУЕТСЯ В ШАБЛОНЕ ПОДМЕНЮ $SUBMENU, КОТОРОЕ ГЕНЕРИРУЕТСЯ движком.
 
@@ -165,7 +166,7 @@ content.post.date = [d.m.Y]
 
 content.post.taglinks = [
 							$lang.tags: 
-								$item = [ <a href="$options.url$url" title="$title">$icon$title</a>]
+								$item = [ <a href="$site.url$url" title="$title">$icon$title</a>]
 								$divider = [, ]
 ]
 
@@ -173,7 +174,7 @@ content.post.taglinks = [
 
 content.post.catlinks = [
 							$lang.categories: 
-								$item = [ <a href="$options.url$url" title="$title">$icon$title</a>]
+								$item = [ <a href="$site.url$url" title="$title">$icon$title</a>]
 								$divider = [, ]
 ]
 
@@ -197,17 +198,17 @@ CONTENT.POST.PREVNEXT = [
 content.post.filelist = [
 								<ul id="files-$post.id">
 
-  $file = [<li><a href="$options.files/files/$filename" title="$title">$description</a></li>]
+  $file = [<li><a href="$site.files/files/$filename" title="$title">$description</a></li>]
 
-  $image = <li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$options.files/files/$filename" title="$title">$preview$title</a></li>]
+  $image = <li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$site.files/files/$filename" title="$title">$preview$title</a></li>]
 
-  $preview = [<img src="$options.files/files/$preview.filename" title="$title" alt="$title" />]
+  $preview = [<img src="$site.files/files/$preview.filename" title="$title" alt="$title" />]
 
-   $audio = [<li><a href="$options.files/files/$filename" title="$title">$title</a>
-								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></span></li>]
+   $audio = [<li><a href="$site.files/files/$filename" title="$title">$title</a>
+								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></span></li>]
 
-   $video = [<li><a href="$options.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$options.files/files/$filename');" title="$title">$lang.play</a></li>]
+   $video = [<li><a href="$site.files/files/$filename" title="$title" id="videofile-$id">$title</a>
+<a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></li>]
 
 								</ul>
 ]
@@ -230,7 +231,7 @@ $author - уникальный id автора файла. Имеет смысл
 $size - размер в байтах файла
 $posted - дата добавления файла
 $mime - mime тип файла, строка, не всегда возможно коректное значение
-$filename - имя файла, включая папку относительно общей папки файлов. Полный адрес к файлу получается $options.files$filename
+$filename - имя файла, включая папку относительно общей папки файлов. Полный адрес к файлу получается $site.files$filename
 $title - название файла, если не было задано, то равно имени файла
 $description - описание файла, пустая строка, если не задано 
 $keywords - ключевые слова для файла, пустая строка, если не задано

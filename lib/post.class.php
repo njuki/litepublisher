@@ -241,21 +241,12 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
   
   public function getdate() {
     $theme = ttheme::instance();
-    return tlocal::date($this->posted, $theme->content->post->dateformat);
+    return tlocal::date($this->posted, $theme->content->post->date);
   }
   
   public function getexcerptdate() {
     $theme = ttheme::instance();
-    return tlocal::date($this->posted, $theme->content->excerpts->excerpt->dateformat);
-  }
-  
-  public function getdateformat() {
-    if (isset($this->dateformater)){
-      $this->dateformater->date = $this->posted;
-    } else {
-      $this->dateformater = new tdateformater($this->posted);
-    }
-    return $this->dateformater;
+    return tlocal::date($this->posted, $theme->content->excerpts->excerpt->date);
   }
   
   public function getday() {
