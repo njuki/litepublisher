@@ -25,13 +25,13 @@ $theme->templates = array (
   array (
     'post' => 
     array (
-      'categories' => 
+      'catlinks' => 
       array (
         'item' => '',
         'divider' => '',
         0 => '',
       ),
-      'tags' => 
+      'taglinks' => 
       array (
         'item' => '',
         'divider' => '',
@@ -47,7 +47,7 @@ $theme->templates = array (
         0 => '',
       ),
       'more' => '',
-      'rss' => '',
+      'rsslink' => '',
       'prevnext' => 
       array (
         'prev' => '',

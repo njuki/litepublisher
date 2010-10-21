@@ -196,25 +196,26 @@ class tpost extends titem implements  itemplate {
   
   //template
   public function getexcerptcategories() {
-    return $this->getcommontagslinks('categories', 'category', true);
+    return $this->getcommontagslinks('categories', true);
   }
   
   public function getexcerpttags() {
-    return $this->getcommontagslinks('tags', 'tag', true);
+    return $this->getcommontagslinks('tags', true);
   }
   
-  public function getcategorieslinks() {
-    return $this->getcommontagslinks('categories', 'category', false);
+  public function getcatlinks() {
+    return $this->getcommontagslinks('categories', false);
   }
   
-  public function Gettagslinks() {
-    return $this->getcommontagslinks('tags', 'tag', false);
+  public function Gettaglinks() {
+    return $this->getcommontagslinks('tags', false);
   }
   
-  private function getcommontagslinks($names, $name, $excerpt) {
+  private function getcommontagslinks($names, $excerpt) {
     if (count($this->$names) == 0) return '';
     $theme = ttheme::instance();
-    $tml = $excerpt ? $theme->content->excerpts->$names : $theme->content->post->$names;
+    $tml = $excerpt ? $theme->content->excerpts : $theme->content->post;
+$tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
     $args = targs::instance();
@@ -392,11 +393,11 @@ class tpost extends titem implements  itemplate {
     return $theme->parse($theme->content->post);
   }
   
-  public function getsubscriberss() {
+  public function getrsslink() {
     if ($this->commentsenabled && ($this->commentscount > 0)) {
       $theme = ttheme::instance();
       ttheme::$vars['post'] = $this;
-      return $theme->parse($theme->content->post->rss);
+      return $theme->parse($theme->content->post->rsslink);
     }
     return '';
   }
