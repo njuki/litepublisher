@@ -8,6 +8,7 @@
 
 class tthemeparser extends tevents {
   public $theme;
+private $paths;
   private $abouts;
 
   public static function instance() {
@@ -139,6 +140,28 @@ sprintf('Theme %s has parent %s theme which has parent %s', $name, $about['paren
   }
   
 //4 ver
+public static function find_close($s, $a) {
+$brackets = array(
+'[' => ']',
+'{' => '}',
+'(' => ')'
+);
+
+$b = $brackets[$a];
+$i = strpos($s, $b);
+$sub = substr($s, 0, $i);
+$opened = substr_count($sub, $a);
+if ($opened == 0) return $i;
+
+while ($opened >=  substr_count($sub, $b)) {
+$i = strpos($s, $b, $i + 1);
+if ($i === false) die(" The '$b' not found in\n$s");
+$sub = substr($s, 0, $i);
+$opened = substr_count($sub, $a);
+}
+
+return $i;
+}
 
 public function parsetags(ttheme $theme, $s) {
 $s = trim($s);
@@ -178,111 +201,35 @@ $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
 $s = str_replace('$options.', '$site.', $s);
 }
 
-if (strbegin($parent, '$template')) $parent = substr($parent, strlen('$template'));
+if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
 
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
-$paths = $this->getpaths($parent, $tag);
 $j = strpos($s, $m[0]);
 $pre  = rtrim(substr($s, 0, $j));
 $s= ltrim(substr($s, $j + strlen($m[0])));
 $i = self::find_close($s, $m[3]);
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i + 1));
-$this->settag($parent . '.' . $paths['tag'], $value);
-$s = $pre . $paths['replace'] . $s;
-}
-return $this->setvalue($parent, trim($s));
-}
-
-public function setvalue($tag, $value) {
-if ($tag == '') || ($tag == 'template')) {
-$this->theme->templates[0] = value;
-return '';
-elseif (!strpos($tag, '.')) {
-if (!isset($this->theme->templates[$tag])) $this->error("Unknown '$tag' tag");
-$this->theme->templates[$tag] = $value;
-return '';
-} else {
-$keys = explode('.', $tag);
-switch (array_shift($keys)) {
-case 'menu':
-return $this->setmenulist($keys, $value);
-
-case 'content':
-$content = $this->theme->content;
-switch (array_shift($keys)) {
-case 'post':
-return $this->setpost($keys, $value);
-
-case 'excerpts':
-return $this->setexcerpts($keys, $value);
-
-case 'navi':
-return $this->setnavi($keys, $value);
-
-case 'admin':
-$name = array_shift($keys);
-$content->admin->$name = $value;
-return '';
-
-case 'menu':
-$content->menu = $value;
-return '';
-
-case 'simple':
-$content->simple = $value;
-return '';
-
-case notfound':
-$content->notfound = $value;
-return '';
+$info = $this->getinfo($parent, $tag);
+$this->settag($parent . '.' . $info['name'], $value);
+$s = $pre . $info['replace'] . $s;
 }
 
-case 'sitebar':
+$this->paths[$parent]['data'] = trim($s);
 }
 
+public function getinfo($parentpath, $tag) {
+$regexp = sprintf('/^%s\.(\w\w*+)$/', str_replace('.', '\.', $parentpath));
+foreach ($this->paths as $path => $info) {
+if  (preg_match($regexp, $path, $m)) {
+if ($tag == $info['tag']) {
+$info['name'] = $m1];
+return $info;
 }
 }
-
-
-public static function find_close($s, $a) {
-$brackets = array(
-'[' => ']',
-'{' => '}',
-'(' => ')'
-);
-
-$b = $brackets[$a];
-$i = strpos($s, $b);
-$sub = substr($s, 0, $i);
-$opened = substr_count($sub, $a);
-if ($opened == 0) return $i;
-
-while ($opened >=  substr_count($sub, $b)) {
-$i = strpos($s, $b, $i + 1);
-if ($i === false) die(" The '$b' not found in\n$s");
-$sub = substr($s, 0, $i);
-$opened = substr_count($sub, $a);
+}
+$this->error("The '$tag' not found in path '$parentpath'");
 }
 
-return $i;
-}
-
-public function setpost(array $keys, $value) {
-$post = $this->theme->content->post;
-switch(array_shift($keys)) {
-case 'more':
-$post->more = $value;
-return '';
-
-case 'rss':
-$post->rss = $value;
-return '$post.subscriberss';
-
-}
-}
-
-}//class
-?>
