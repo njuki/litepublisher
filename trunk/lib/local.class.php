@@ -25,8 +25,10 @@ class targs {
   }
   
 public function __get($name) {
-if ($name == 'item_url') return litepublisher::$site->url . $this->data['url'];
- return $this->data[$name]; 
+if (($name == 'link') && !isset($this->data['$link'])  && isset($this->data['$url'])) {
+return litepublisher::$site->url . $this->data['$url'];
+}
+ return $this->data['$' . $name]; 
 }
   
   public function __set($name, $value) {
@@ -34,10 +36,16 @@ if ($name == 'item_url') return litepublisher::$site->url . $this->data['url'];
       $value = $value ? 'checked="checked"' : '';
     }
     $this->data['$'.$name] = $value;
+if (($name == 'url') && !isset($this->data['$link'])) {
+$this->data['$link'] = litepublisher::$site->url . $value;
+}
   }
   
   public function add(array $a) {
-    foreach ($a as $key => $value) $this->__set($key, $value);
+    foreach ($a as $key => $value) {
+$this->__set($key, $value);
+}
+
     if (isset($a['title']) && !isset($a['anchor']) && !isset($this->data['$anchor']))  $this->__set('anchor', $a['title']);
     if (isset($a['anchor']) && !isset($a['title']) && !isset($this->data['$title']))  $this->__set('title', $a['anchor']);
   }
