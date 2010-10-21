@@ -70,13 +70,23 @@ $parentname = empty($about['parent']) ? 'default' : $about['parent'];
 $parent = ttheme::instance($parentname);
 $theme->template = $parent->template;
 }
+$s = self::getfile($filename);
+$this->parsetags($theme, $s);
+  }
 
+public static function getfile($filename) {
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
 $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
 $s = str_replace('$options.', '$site.', $s);
-$this->parsetags($theme, $s);
-  }
+$s = strtr($s, array(
+'$post.categorieslinks' => '$post.catlinks',
+'$post.tagslinks' => '$post.taglinks',
+'$post.subscriberss' => '$post.rsslink',
+
+));
+return $s;
+}
   
   public function getabout($name) {
     if (!isset($this->abouts)) $this->abouts = array();

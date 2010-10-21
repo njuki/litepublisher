@@ -95,13 +95,13 @@ content.post = [
 			<div class="post" id="post-$post.id">
 		        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
 					<span class="post-date">$post.date</span>
-					<span class="post-tags">$post.tagslinks</span>
+					<span class="post-tags">$post.taglinks</span>
 						<div class="post-content">
        $post.filelist
 							$post.content
 							<div class="post-info">
-								$post.subscriberss
-								<span class="post-cat">$post.categorieslinks</span>	
+								$post.rsslink
+								<span class="post-cat">$post.catlinks</span>	
 							</div>
 							$post.prevnext
 						</div>
@@ -117,12 +117,11 @@ $lang.permalink - переведенная строка "постоянная с
 $post.title - заголовок записи
 $post.iconlink - html ссылка на иконку, если есть
 $post.date - отформатированная и переведенная дата публикации поста. о формате и шаблоне даты читайте ниже
-$post.tagslinks - ссылки на метки записи, для них есть свой шаблон
+$post.taglinks - ссылки на метки записи, для них есть свой шаблон
 $post.filelist - список файлов записи, длясписка есть свой шаблон
 $post.content - текст записи
-$post.categorieslinks - ссылки на рубрики записи, тоже можно задать шаблон
-$post.subscriberss - ссылка на rss комментариев к записи, есть для этого тоже шаблон							
-$post.prevnext - ссылки на следующую и предыдущую запись, можно задать для этих ссылок шаблон
+$post.catlinks - ссылки на рубрики записи, тоже можно задать шаблон
+$post.rsslink - html ссылка на rss комментариев к записи, есть для этого тоже шаблон				$post.prevnext - ссылки на следующую и предыдущую запись, можно задать для этих ссылок шаблон
 $post.templatecomments - выводит список комментариев и форму для отправки комментария. имеет много вложенных шаблонов.
 
 Дополнительно приведу еще список тегов записи, могущих оказаться полезными при разработке темы:
@@ -151,10 +150,10 @@ $post.iconurl - адрес иконки, если она есть
 
 $post.date - отформатированная и переведенная дата публикации поста
 $post.filelist - список файлов записи, длясписка есть свой шаблон
-$post.tagslinks - ссылки на метки записи
-$post.categorieslinks - ссылки на рубрики записи
+$post.taglinks - ссылки на метки записи
+$post.catlinks - ссылки на рубрики записи
 $post.more - шаблон для внутристраничной ссылки из анонса, то есть куда ссылается ссылка "Далее" из анонса
-$post.subscriberss - ссылка на rss комментариев к записи
+$post.rsslink - ссылка на rss комментариев к записи
 $post.prevnext - ссылки на следующую и предыдущую запись
 $post.templatecomments - выводит список комментариев и форму для отправки комментария. имеет много вложенных шаблонов.
 
@@ -162,9 +161,9 @@ $post.templatecomments - выводит список комментариев и
 
 content.post.date = [d.m.Y]
 
-Как видим формат простой - это параметры для php функции date, и вданном случае это d.m.Y, дата будет переведена на язык сайта. Следующим тегом идет $post.tagslinks, зададим шаблон для списка меток
+Как видим формат простой - это параметры для php функции date, и вданном случае это d.m.Y, дата будет переведена на язык сайта. Следующим тегом идет $post.taglinks, зададим шаблон для списка меток
 
-content.post.tagslinks = [
+content.post.taglinks = [
 							$lang.tags: 
 								$item = [ <a href="$options.url$url" title="$title">$icon$title</a>]
 								$divider = [, ]
@@ -172,7 +171,7 @@ content.post.tagslinks = [
 
 Шаблон получился не сложным, в нем присутствует строка $lang.tags - "Метки", а также два вложенных шаблона: $ITEM - ШАБЛОН ОДНОЙ МЕТКИ и $divider - шаблон разделителя ссылок. Все. Симметрично устроен шаблон для рубрик. Обявим его
 
-content.post.categorieslinks = [
+content.post.catlinks = [
 							$lang.categories: 
 								$item = [ <a href="$options.url$url" title="$title">$icon$title</a>]
 								$divider = [, ]
@@ -180,7 +179,7 @@ content.post.categorieslinks = [
 
 Вся разница между двумя этими шаблонами в $lang - в первом случае это "Метки", а во втором - "Рубрики".Перед тем, как расматривать шаблон списка файлов рассмотрим два несложных шаблона - ссылка на RSS и ссылки на следующую и предыдущую запись.
 
-CONTENT.post.subscriberss = [
+CONTENT.post.rsslink = [
 <span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span>
 ]
 
