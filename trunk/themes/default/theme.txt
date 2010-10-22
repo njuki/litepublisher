@@ -379,6 +379,7 @@ $lang.topost - строка "на запись"
 
 content.post.templatecomments.comments = [
   <a name="comments"></a>
+$id = [commentlist]
   <ol class="commentlist" id="commentlist" start="$from">
 $comment
 										</ol>
@@ -394,6 +395,7 @@ $commentsid - id тега ol. Используется для смены id дл
 content.post.templatecomments.holdcomments = [
 <p class="hold"><em>$lang.hold</em></p>
   <a name="holdcomments"></a>
+$id = [holdcommentlist]
   <ol class="commentlist" id="holdcommentlist" start="1">
 $comment
 										</ol>
