@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tcommentswidgetIInstall($self) {
+function tcommentswidgetInstall($self) {
   litepublisher::$classes->commentmanager->changed = $self->changed;
 }
 
