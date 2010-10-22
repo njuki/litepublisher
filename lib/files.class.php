@@ -103,8 +103,8 @@ class tfiles extends titems {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
     $theme = ttheme::instance();
     return $this->getlist($list, $excerpt ?
-    $theme->content->excerpts->excerpt->files->array :
-    $theme->content->post->files->array);
+    $theme->content->excerpts->excerpt->filelist->array :
+    $theme->content->post->filelist->array);
   }
   
   public function getlist(array $list, array $templates) {
