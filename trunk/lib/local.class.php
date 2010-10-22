@@ -35,16 +35,23 @@ return litepublisher::$site->url . $this->data['$url'];
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
     }
+
     $this->data['$'.$name] = $value;
+    $this->data["%%$name%%"] = $value;
+
 if (($name == 'url') && !isset($this->data['$link'])) {
 $this->data['$link'] = litepublisher::$site->url . $value;
+$this->data['%%link%%'] = litepublisher::$site->url . $value;
 }
   }
   
   public function add(array $a) {
     foreach ($a as $key => $value) {
 $this->__set($key, $value);
-if ($key == 'url') $this->data['$link'] = litepublisher::$site->url . $value;
+if ($key == 'url') {
+$this->data['$link'] = litepublisher::$site->url . $value;
+$this->data['%%link%%'] = litepublisher::$site->url . $value;
+}
 }
 
     if (isset($a['title']) && !isset($a['anchor']) && !isset($this->data['$anchor']))  $this->__set('anchor', $a['title']);
