@@ -307,6 +307,16 @@ public function __construct(array &$array) { $this->array = &$array; }
   }
   
 public function __set($name, $value) {$this->array[$name] = $value; }
+
+public function __call($name, $params) {
+$theme = ttheme::instance();
+if (isset($params[0]) && (is_object($params[0]) && ($params[0] instanceof targs)) {
+return $theme->parsearg( (string) $this->$name, $params[0]);)
+} else {
+return $theme->parse((string) $this->$name);
+}
+}
+
 public function __tostring() { return $this->array[0]; }
   public function __isset($name) {
     return array_key_exists($name, $this->array);
