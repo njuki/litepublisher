@@ -55,15 +55,16 @@ $theme->templates = array (
         0 => '',
       ),
       'templatecomments' => 
+      array (
         'moderateform' => '',
         'closed' => '',
         'form' => '',
         'confirmform' => '',
-      array (
+        'holdcomments' => 
         'comments' => 
         array (
           'count' => '',
-          'hold' => '',
+          'id' => '',
           'comment' => 
           array (
             'class1' => '',

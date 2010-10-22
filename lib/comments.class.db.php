@@ -173,18 +173,14 @@ class tcomments extends titems {
       $result .= $this->getcontentwhere('hold', '');
     } else {
       //add empty list of hold comments
-      $commentsid = $theme->content->post->templatecomments->comments->commentsid;
-      $s = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml->array[0]);
-      $s = str_replace('<a name="comments"', '<a name="holdcomments"', $s);
       $args = targs::instance();
-      $args->from = 1;
-      $args->items = '';
-      $result .= $theme->parsearg($s, $args);
+      $args->comment = '';
+      $result .= $theme->content->post->templatecomments->holdcomments($args);
     }
     
     $args = targs::instance();
     $args->comments = $result;
-    return $theme->parsearg($theme->content->post->templatecomments->moderateform, $args);
+    return $theme->content->post->templatecomments->moderateform($args);
   }
   
   public function getholdcontent($idauthor) {
@@ -219,32 +215,31 @@ class tcomments extends titems {
     } else {
       $moderate = '';
     }
-    $tmlcmt= $theme->content->post->templatecomments->comments->comment;
-    $tml = str_replace('$moderate', $moderate, $tmlcmt->array[0]);
+    $tmlcomment= $theme->content->post->templatecomments->comments->comment;
+    $tml = str_replace('$moderate', $moderate, $tmlcomment->array[0]);
     
     $i = 1;
-    $class1 = $tmlcmt->class1;
-    $class2 = $tmlcmt->class2;
+    $class1 = $tmlcomment->class1;
+    $class2 = $tmlcomment->class2;
     foreach ($items as $id) {
       $comment->id = $id;
       $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
     
-    $tml = (string) $theme->content->post->templatecomments->comments;
-    if ($status == 'hold') {
-      $tml = str_replace('<a name="comments"', '<a name="holdcomments"', $tml);
-      $commentsid = $theme->content->post->templatecomments->comments->commentsid;
-      $tml = str_replace("id=\"$commentsid\"", "id=\"hold$commentsid\"", $tml);
-    }
-    
     if (!$ismoder) {
       if ($result == '') return '';
     }
     
+    if ($status == 'hold') {
+    $tml = (string) $theme->content->post->templatecomments->holdcomments;
+    } else {
+    $tml = (string) $theme->content->post->templatecomments->comments;
+}
+    
     $args = targs::instance();
-    $args->items = $result;
     $args->from = $from + 1;
+    $args->comment = $result;
     return $theme->parsearg($tml, $args);
   }
   
