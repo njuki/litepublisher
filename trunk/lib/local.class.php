@@ -44,6 +44,7 @@ $this->data['$link'] = litepublisher::$site->url . $value;
   public function add(array $a) {
     foreach ($a as $key => $value) {
 $this->__set($key, $value);
+if ($key == 'url') $this->data['$link'] = litepublisher::$site->url . $value;
 }
 
     if (isset($a['title']) && !isset($a['anchor']) && !isset($this->data['$anchor']))  $this->__set('anchor', $a['title']);

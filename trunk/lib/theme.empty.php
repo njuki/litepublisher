@@ -37,7 +37,7 @@ $theme->templates = array (
         'divider' => '',
         0 => '',
       ),
-      'files' => 
+      'filelist' => 
       array (
         'file' => '',
         'image' => '',
@@ -55,6 +55,10 @@ $theme->templates = array (
         0 => '',
       ),
       'templatecomments' => 
+        'moderateform' => '',
+        'closed' => '',
+        'form' => '',
+        'confirmform' => '',
       array (
         'comments' => 
         array (
@@ -71,15 +75,11 @@ $theme->templates = array (
           'commentsid' => '',
           0 => '',
         ),
-        'moderateform' => '',
         'pingbacks' => 
         array (
           'pingback' => '',
           0 => '',
         ),
-        'closed' => '',
-        'form' => '',
-        'confirmform' => '',
       ),
       'dateformat' => '',
       0 => '',
@@ -88,19 +88,19 @@ $theme->templates = array (
     array (
       'excerpt' => 
       array (
-        'categories' => 
+        'catlinks' => 
         array (
           'item' => '',
           'divider' => '',
           0 => '',
         ),
-        'tags' => 
+        'taglinks' => 
         array (
           'item' => '',
           'divider' => '',
           0 => '',
         ),
-        'files' => 
+        'filelist' => 
         array (
           'file' => '',
           'image' => '',
@@ -293,4 +293,9 @@ $theme->templates = array (
       0 => '',
     ),
   ),
+'custom' => array(
+);
+}
+}
+?>
 )
