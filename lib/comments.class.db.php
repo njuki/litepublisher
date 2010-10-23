@@ -243,31 +243,6 @@ class tcomments extends titems {
     return $theme->parsearg($tml, $args);
   }
   
-  public function getcontentlist($tml, $class1, $class2) {
-    $result = '';
-    $post = tpost::instance($this->pid);
-    $from = litepublisher::$options->commentpages  ? (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage : 0;
-    $count = litepublisher::$options->commentpages  ? litepublisher::$options->commentsperpage : $post->commentscount;
-    
-    $table = $this->thistable;
-    $items = $this->select("$table.post = $this->pid and $table.status = 'approved'",
-    "order by $table.posted asc limit $from, $count");
-    
-    $args = targs::instance();
-    $args->from = $from;
-    $comment = new tcomment(0);
-    ttheme::$vars['comment'] = $comment;
-    $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
-    $i = 1;
-    foreach ($items as $id) {
-      $comment->id = $id;
-      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
-      $result .= $theme->parsearg($tml, $args);
-    }
-    return $result;
-  }
-  
 }//class
 
 class tcomment extends tdata {
@@ -355,8 +330,7 @@ class tcomment extends tdata {
     $this->data['content'] = $filter->filtercomment($s);
   }
   
-  
-  public function getip() {
+    public function getip() {
     if (isset($this->data['ip'])) return $this->data['ip'];
     $comments = tcomments::instance($this->post);
     return $comments->raw->getvalue($this->id, 'ip');

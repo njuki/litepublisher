@@ -357,14 +357,13 @@ content.post.templatecomments.moderateform= [
 
 Этот шаблон привязан к javascript LitePublisher - модерация комментариев происходит без перезагрузки страницы. Следует обратить внимание на обязательный тег $comments - это список комментариев. Получается, что этот список находится внутри формы - это нужно потому, что у каждого комментария есть чекбокс, которые обрабатываются javascript. Форма модерирования и чекбоксы появляются только для залогиненного модератора. $lang.* - строки, названия кнопок.
 
-Перейдем к главному - список комментариев и сам шаблон комментария. Шаблон списка включает в себя следующие шаблоны:
-
+Перейдем к главному - список комментариев и сам шаблон комментария. Есть два списка комментариев: одобренных и задержанных. Главным, безусловно, является список одобренных, а второстепенным является список задержанных комментариев. Шаблон списка включает в себя следующие шаблоны:
 $count - шаблон количества комментариев на запись
-$hold - шаблон заголовка для задержанных комменттариев
 $comment - шаблон комментария
+$id  id списка
+$idhold id списка задержанных
 
-Начнем обявлять шаблоны:
-
+Начнем обявлять шаблоны с шаблона количества:
 content.post.templatecomments.comments.count = [
 <p id="comments">$count $lang.topost &#8220;$post.title&#8221;</p>
 ]
@@ -376,28 +375,83 @@ $count - собствено число комментариев, уже отфо
 $lang.topost - строка "на запись"
 
 А вот и сам список комментариев:
-
 content.post.templatecomments.comments = [
   <a name="comments"></a>
 $id = [commentlist]
+$idhold = [holdcommentlist]
   <ol class="commentlist" id="commentlist" start="$from">
 $comment
 										</ol>
 ]
 
 Как видим шаблон простой и в нем использовались 3 шаблона:
-
 $from - число откуда начинается отсчет комментариев, обычно это 1, но при большом количестве комментариев и разбивки на страницы это число равно например 101
 $comment - шаблон комментария
-$commentsid - id тега ol. Используется для смены id для списка задержанных комментариев, так как родин шаблон для обоих списков комментариев - одобренных и задержанных. Нужно для javascript модерирования - по id javascript находит оба списка и может перемещать между списками комментарии.
+$id - id списка одобренных
+$idhold - id списка задержанных. $id и $idhold предназначены для javascript модерирования комментариев, чтобы скрипт мог перемещать комментарии между списками. Не влияет на генерируемый html списков, но передается в javascript. Без этих значений javascript не сможет найти оба списка.
 
-Вот простой шаблон для заголовка задержанных комментариев:
+Объявим шаблон для списка задержанных - он является почти полной копией списка одобренных:
 content.post.templatecomments.holdcomments = [
 <p class="hold"><em>$lang.hold</em></p>
   <a name="holdcomments"></a>
-$id = [holdcommentlist]
   <ol class="commentlist" id="holdcommentlist" start="1">
 $comment
 										</ol>
 ]
 
+Объявим шаблон комментария:
+
+content.post.templatecomments.comments.comment = [
+ <li $class1=[class="alt"] $class2=[] id="comment-$comment.id">
+  <a name="comment-$comment.id"></a>
+  <div class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date = [d.m.Y] $lang.attime $comment.time</a></div>
+  <span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
+  $moderate
+  <div class="commentcontent" id="commentcontent-$comment.id" >$comment.content</div>
+  <div class="replyquotebuttons">
+   <input type="button" value="$lang.reply" onclick="replycomment($comment.id,'$comment.name');" />
+   <input type="button" value="$lang.quote" onclick="quotecomment($comment.id,'$comment.name');" />
+  </div>
+ </li>
+]
+
+В шаблоне комментария мы видим несколько вложенных шаблонов и активное использование тегов $comment.* Рассмотрим вложенные шаблоны:
+$class1 - html класс нечетных комментариев
+$class2 - html класс четных комментариев (в данном примере класс отсутствует)
+$comment.date - шаблон даты комментария, не обязательный шаблон
+$moderate - вложенный шаблон кнопок модерирования (рассмотрим ниже)
+
+Как видим вложенных шаблонов немного, зато много свойств у $comment, перечислим их
+
+$comment.id - уникальный id (число) комментария
+$comment.post - уникальный id (число) записи для которой комментарий
+$comment.author - уникальный id (число) автора комментария
+$comment.parent - уникальный id (число) родительского комментария, в настоящее время не исползуется и = 0
+$comment.posted - дата добавления в формате timestamp (целое число)
+$comment.status - статус комментария, только в бд версии, возможные значения: 'approved','hold','spam','deleted'
+$comment.content - отфильтрованный текст коммнтария
+$comment.authorlink - html ссылка на автора комментария, может быть только имя комментатора в зависимости от настроек сайта
+$comment.date - отформатированная строка дата отправления комментария, для этого тега можно задать свой шаблон. Если шаблони не задан, то исползуется формат по умолчанию
+$comment.time - время отправления комментария, используется шаблон даты "H:i" (час:минуты)
+$comment.localstatus - состояние комментария, переведенная на язык строка, например "одобрен", "задержан"
+$comment.website - адрес сайта комментатора
+$comment.url - адрес записи с (#) внутристраничной ссылкой на комментарий
+$comment.posttitle - заголовок записи для которой комментарий
+$comment.rawcontent - неотфильтрованный текст комментатораip - IP адрес комментатора
+
+Понятно, что не все перечисленные теги исползуются в шаблоне комментария, а только их часть. Следует остановиться на шаблоне даты $comment.date - вы можете просто вставить этот тег в шаблон, а если хотите задать свой собственный шаблон даты, то вам следует это сделать привычным для формата темы способом $comment.date = [ваш формат даты] Формат даты - это формат даты для функции PHP date, в данном примере это "d.m.Y"
+
+Как и обещали шаблон кнопок модерирования:
+content.post.templatecomments.comments.comment.moderate = [
+ <div class="moderationbuttons">
+  <input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
+													  <input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
+  <input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
+  <input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
+  <input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
+ </div>
+]
+
+Несмотря на свой объем шаблон кнопок модерирования достаточно примитивен - в нем находится чекбокс для пометки комментария для массовой модерации, а также кнопки для индивидуального модерирования комментария. Кнопки используют javascript Litepublisher который осуществляет автоматическую модерацию комментариев.
+
+С комментариями практически все - остались только пингбеки.
