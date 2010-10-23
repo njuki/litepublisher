@@ -36,16 +36,15 @@ public function save() {}
     $post = tpost::instance($idpost);
     //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
-    
-    $theme = ttheme::instance();
+    $lang = tlocal::instance('comment');    
     $comments = tcomments::instance($idpost);
     $list = $comments->getcontent();
     
-    $lang = tlocal::instance('comment');
+    $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->comments;
     $args = targs::instance();
     $args->count = $this->getcount($post->commentscount);
-    $result .= $theme->parsearg($tml->count, $args);
+    $result .= $tml->count($args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
