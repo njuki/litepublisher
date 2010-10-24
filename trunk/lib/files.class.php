@@ -125,6 +125,7 @@ class tfiles extends titems {
     
     $theme = ttheme::instance();
     $args = targs::instance();
+$url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
     foreach ($items as $type => $subitems) {
@@ -132,15 +133,18 @@ class tfiles extends titems {
         $item = $this->items[$id];
         $args->preview  = '';
         $args->add($item);
+$args->link = $url . $item['filename'];
         $args->id = $id;
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
           if ($preview->media === 'image') {
             $preview->id = $item['preview'];
+$preview->link = $url . $preview->filename;
             $args->preview = $theme->parsearg($templates['preview'], $args);
           } elseif($type == 'image') {
             $preview->array = $item;
             $preview->id = $id;
+$preview->link = $url . $preview->filename;
             $args->preview = $theme->parsearg($templates['preview'], $args);
           }
         }

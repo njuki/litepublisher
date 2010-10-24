@@ -228,17 +228,17 @@ $nextpost - следующая запись
 content.post.filelist = [
 								<ul id="files-$post.id">
 
-  $file = [<li><a href="$site.files/files/$filename" title="$title">$description</a></li>]
+  $file = [<li><a href="$link" title="$title">$description</a></li>]
 
-  $image = [<li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$site.files/files/$filename" title="$title">$preview$title</a></li>]
+  $image = [<li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$link" title="$title">$preview$title</a></li>]
 
-  $preview = [<img src="$site.files/files/$preview.filename" title="$title" alt="$title" />]
+  $preview = [<img src="$preview.link" title="$title" alt="$title" />]
 
-   $audio = [<li><a href="$site.files/files/$filename" title="$title">$title</a>
-								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></span></li>]
+   $audio = [<li><a href="$link" title="$title">$title</a>
+								<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$link');" title="$title">$lang.play</a></span></li>]
 
-   $video = [<li><a href="$site.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></li>]
+   $video = [<li><a href="$link" title="$title" id="videofile-$id">$title</a>
+<a onclick="playvideofile('videofile-$id', '$link');" title="$title">$lang.play</a></li>]
 
 								</ul>
 ]
