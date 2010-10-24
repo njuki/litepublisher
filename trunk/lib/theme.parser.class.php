@@ -72,6 +72,7 @@ $theme->template = $parent->template;
 }
 $s = self::getfile($filename);
 $this->parsetags($theme, $s);
+$this->afterparse($theme);
   }
 
 public static function getfile($filename) {
@@ -244,3 +245,24 @@ return $info;
 $this->error("The '$tag' not found in path '$parentpath'");
 }
 
+public function afterparse($theme) {
+$menu = &$theme->templates['menu'];
+if (isset($menu['hover'])) {
+if (!is_bool($menu['hover'])) $menu['hover'] = $menu['hover'] != 'false';
+} else {
+$menu['hover'] = true;
+
+$post = &$theme->templates['content'['post'];
+$excerpt = &$theme->templates['content']['excerpts']['excerpt'];
+if (empty($excerpt['data'])) $excerpt['date'] = $post['date'];
+foreach (array('filelist', 'catlinks', 'taglinks') as $name) {
+foreach ($post[$name] as $key => $value) {
+if (empty($excerpt[$name][$key])) $excerpt[$name][$key] = $value;
+}
+}
+
+
+foreach ($theme->templates['sitebars'] as $i => $sitebar) {
+}
+
+}
