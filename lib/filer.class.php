@@ -108,9 +108,9 @@ class tfiler {
   public static function serialize($FileName, &$v) {
     $s = serialize($v);
     $s =  tdata::comment_php($s);
-    if (file_exists($FileName)) chmod($FileName, 0666);
+    if (file_exists($FileName)) @chmod($FileName, 0666);
     file_put_contents($FileName, $s);
-    chmod($FileName, 0666);
+    @chmod($FileName, 0666);
   }
   
   public static function ini2js(array $a, $filename) {
