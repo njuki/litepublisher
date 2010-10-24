@@ -110,7 +110,7 @@ $theme->templates = array (
           'video' => '',
           0 => '',
         ),
-        'more' => '',
+        'morelink' => '',
         'date' => '',
         0 => '',
       ),

@@ -228,8 +228,9 @@ $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
       $result .= $this->parse($tml);
     }
     
-    $tml = $lite ? $this->content->excerpts->lite : $this->content->excerpts;
-    return str_replace('$items', $result, $this->parse((string) $tml));
+    $tml = $lite ? (string) $this->content->excerpts->lite : (string) $this->content->excerpts;
+if ($tml == '') return $result;
+    return str_replace('$excerpt', $result, $this->parse($tml));
   }
   
   public function getpostswidgetcontent(array $items, $sitebar, $tml) {

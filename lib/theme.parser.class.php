@@ -83,7 +83,8 @@ $s = strtr($s, array(
 '$post.categorieslinks' => '$post.catlinks',
 '$post.tagslinks' => '$post.taglinks',
 '$post.subscriberss' => '$post.rsslink',
-
+'$post.excerptcategories' => '$post.excerptcatlinks',
+'$post.excerpttags' => '$post.excerpttaglinks',
 ));
 return $s;
 }

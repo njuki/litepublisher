@@ -151,7 +151,7 @@ class tfiles extends titems {
     }
     
     unset(ttheme::$vars['preview'], $preview);
-    return str_replace('$items', $result, $theme->parse($templates[0]));
+    return str_replace('$file', $result, $theme->parse($templates[0]));
   }
   
   public function postedited($idpost) {

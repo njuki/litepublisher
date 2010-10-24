@@ -195,11 +195,11 @@ class tpost extends titem implements  itemplate {
   }
   
   //template
-  public function getexcerptcategories() {
+  public function getexcerptcatlinks() {
     return $this->getcommontagslinks('categories', true);
   }
   
-  public function getexcerpttags() {
+  public function getexcerpttaglinks() {
     return $this->getcommontagslinks('tags', true);
   }
   
@@ -265,7 +265,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     if ($this->moretitle == '') return '';
     $theme = ttheme::instance();
     ttheme::$vars['post'] = $this;
-    return $theme->parse($theme->content->excerpts->excerpt->more);
+    return $theme->parse($theme->content->excerpts->excerpt->morelink);
   }
   
   public function gettagnames() {
