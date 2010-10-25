@@ -346,6 +346,22 @@ $sitebars[$i][$widgetname][$name] = $value;
 $sitebars[$i][$widgetname] = $widget;
 }
 }
+if (is_string($sitebars[$i]['meta']['classes'])) {
+$sitebars[$i]['meta']['classes'] = self::getmetaclasses($sitebars[$i]['meta']['classes'])
 }
+}
+
+}
+
+public static function getmetaclasses($s) {
+    $result = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
+    foreach (explode(',', $s) as $class) {
+      if ($i = strpos($class, '=')) {
+        $classname = trim(substr($class, 0, $i));
+        $value = trim(substr($class, $i + 1));
+        if ($value != '') $result[$classname] = sprintf('class="%s"', $value);
+      }
+    }
+        return $result;
 
 }
