@@ -8,8 +8,10 @@
 
 class tthemeparser extends tevents {
   public $theme;
-private $paths;
   private $abouts;
+private $paths;
+private $sitebar_index;
+private $sitebar_count;
 
   public static function instance() {
     return getinstance(__class__);
@@ -23,6 +25,8 @@ private $paths;
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('parsed');
+$this->sitebar_index = 0;
+$this->sitebar_count = 0;
   }
 
   public static function checktheme(ttheme $theme) {
@@ -87,7 +91,7 @@ $s = strtr($s, array(
 '$post.excerptcategories' => '$post.excerptcatlinks',
 '$post.excerpttags' => '$post.excerpttaglinks',
 ));
-return $s;
+return trim($s);
 }
   
   public function getabout($name) {
@@ -207,13 +211,21 @@ if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) ||
 preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
 $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
 if (!file_exists($filename)) $this->error("File '$filename' not found");
-$s = trim(file_get_contents($filename));
-    $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
-$s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
-$s = str_replace('$options.', '$site.', $s);
+$s = self::getfile($filename);
 }
 
 if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
+switch ($parent) {
+case 'sitebar.index':
+$this->sitebar_index = (int) trim($s);
+if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
+return;
+
+case 'sitebar':
+$this->sitebar_index = ++$this->sitebar_count - 1;
+if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
+break;
+}
 
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
@@ -229,7 +241,15 @@ $this->settag($parent . '.' . $info['name'], $value);
 $s = $pre . $info['replace'] . $s;
 }
 
-$this->paths[$parent]['data'] = trim($s);
+$s = trim($s);
+if (strbegin($parent, 'sitebar.')) {
+$data = &$this->getwidgetdata($parent);
+$data = $s;
+}  elseif (isset($this->paths[$parent])) {
+$this->paths[$parent]['data'] = $s;
+} else {
+$this->error("The '$parent' tag not found");
+}
 }
 
 public function getinfo($parentpath, $tag) {
@@ -238,11 +258,58 @@ foreach ($this->paths as $path => $info) {
 if  (preg_match($regexp, $path, $m)) {
 if ($tag == $info['tag']) {
 $info['name'] = $m1];
+$info['path'] = $path;
 return $info;
 }
 }
 }
+
+if (strbegin($parentpath, 'sitebar.')) {
+$name = substr($tag, 1);
+$path = $parentpath . '.' . $name;
+return array(
+'data' => &$this->getwidgetdata($path),
+'tag' => $tag',
+'replace' => $tag,
+'path' => $path,
+'name' => $name
+);
+}
+
 $this->error("The '$tag' not found in path '$parentpath'");
+}
+
+private function &getwidgetdata($path) {
+if (preg_match('/^sitebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) {
+$widgetname = $m[1];
+if ($widgetname != 'widget') || (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$name' name");
+$sitebar = &$theme->templates['sitebars'][$this->sitebar_index];
+if (!isset($sitebar[$widgetname])) {
+if (isset($sitebar['widget'])) {
+$sitebar[$widgetname] = $sitebar['widget'];
+} else {
+$sitebar[$widgetname] = array(
+0 => '',
+'items' => '',
+'item' => '',
+'subitems' => ''
+);
+}
+}
+$widget = &$sitebar[$widgetname];
+if (empty($m[2])) return $widget[0];
+switch ($m[2]) {
+case '.items':
+return $widget['items'];
+
+case '.items.item':
+return $widget['item'];
+
+case '.items.item.subitems':
+return $widget['subitems'];
+}
+}
+$this->error("The '$path' path is not a widget path");
 }
 
 public function afterparse($theme) {
