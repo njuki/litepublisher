@@ -38,7 +38,7 @@ $url = litepublisher::$site->url;
     foreach ($recent as $item) {
       $args->add($item);
 $args->link = $url . $posturl;
-      $args->content = tcontentfilter::getexcerpt($item['content'], 120);
+      $args->text = tcontentfilter::getexcerpt($item['content'], 120);
       $result .= $theme->parsearg($tml,$args);
     }
     return $theme->getwidgetcontent($result, 'comments', $sitebar);

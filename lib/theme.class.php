@@ -245,14 +245,14 @@ if ($tml == '') return $result;
   }
   
   public function getwidgetcontent($items, $name, $sitebar) {
-    return str_replace('$items', $items, $this->getwidgetitems($name, $sitebar));
+    return str_replace('$item', $items, $this->getwidgetitems($name, $sitebar));
   }
   
   public function getwidget($title, $content, $template, $sitebar) {
     $tml = $this->getwidgettemplate($template, $sitebar);
     $args = targs::instance();
     $args->title = $title;
-    $args->content = $content;
+    $args->items = $content;
     return $this->parsearg($tml, $args);
   }
   
