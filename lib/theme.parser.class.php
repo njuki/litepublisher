@@ -243,8 +243,7 @@ $s = $pre . $info['replace'] . $s;
 
 $s = trim($s);
 if (strbegin($parent, 'sitebar.')) {
-$data = &$this->getwidgetdata($parent);
-$data = $s;
+$this->setwidgetvalue($parent, $s);
 }  elseif (isset($this->paths[$parent])) {
 $this->paths[$parent]['data'] = $s;
 } else {
@@ -268,7 +267,7 @@ if (strbegin($parentpath, 'sitebar.')) {
 $name = substr($tag, 1);
 $path = $parentpath . '.' . $name;
 return array(
-'data' => &$this->getwidgetdata($path),
+'data' => null,
 'tag' => $tag',
 'replace' => $tag,
 'path' => $path,
@@ -276,10 +275,23 @@ return array(
 );
 }
 
+if (preg_match('/^(\$?custom\.)(\w\w*+)(\.admin)?$/', $parentpath, $m)) {
+$name = $m[2];
+$path = $parentpath . '.' . $name;
+return array(
+'data' => &$this->theme->templates['custom'][$name],
+'tag' => $tag',
+'replace' => $tag,
+'path' => $path,
+'name' => $name
+);
+}
+
+
 $this->error("The '$tag' not found in path '$parentpath'");
 }
 
-private function &getwidgetdata($path) {
+private function setwidgetvalue($path, $value) {
 if (preg_match('/^sitebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) {
 $widgetname = $m[1];
 if ($widgetname != 'widget') || (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$name' name");
@@ -298,19 +310,25 @@ if ($widgetname == 'meta') $widget['classes'] = '';
 }
 }
 $widget = &$sitebar[$widgetname];
-if (empty($m[2])) return $widget[0];
+if (empty($m[2])) {
+$widget[0] = $s;
+} else {
 switch ($m[2]) {
 case '.items':
-return $widget['items'];
+$widget['items'] = $value;
+return;
 
 case '.items.item':
-return $widget['item'];
+$widget['item'] = $value;
+return;
 
 case '.items.item.subitems':
-return $widget['subitems'];
+$widget['subitems'] = $value;
+return;
 
 case '.classes':
-return $widget['classes'];
+$widget['classes'] = $value;
+return;
 }
 }
 $this->error("The '$path' path is not a widget path");
