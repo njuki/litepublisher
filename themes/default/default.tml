@@ -428,7 +428,7 @@ $items
     <!--items-->
 				<ul id="widgetcomments">
 					<!--item-->
-						<li><a href=" $options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>
+						<li><a href="$options.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>
 					<!--/item-->
 				</ul>
     <!--/items-->
