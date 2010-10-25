@@ -158,7 +158,6 @@ class tarchiveswidget extends twidget {
     return tlocal::$data['default']['archives'];
   }
   
-  
   protected function setshowcount($value) {
     if ($value != $this->showcount) {
       $this->data['showcount'] = $value;
@@ -176,11 +175,9 @@ class tarchiveswidget extends twidget {
     $args->icon = '';
     $args->subitems = '';
     $args->rel = 'archives';
-    $url = litepublisher::$options->url;
     foreach ($arch->items as $date => $item) {
       $args->add($item);
-      $args->anchor = $item['title'];
-      $args->url = $url . $item['url'];
+      $args->text = $item['title'];
       if ($this->showcount)     $args->subitems = sprintf('(%d)', $item['count']);
       $result .= $theme->parsearg($tml, $args);
     }

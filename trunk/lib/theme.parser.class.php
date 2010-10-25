@@ -246,6 +246,8 @@ if (strbegin($parent, 'sitebar.')) {
 $this->setwidgetvalue($parent, $s);
 }  elseif (isset($this->paths[$parent])) {
 $this->paths[$parent]['data'] = $s;
+} elseif (preg_match('/^(\$?custom\.)(\w\w*+)(\.admin)?$/', $parent, $m)) {
+
 } else {
 $this->error("The '$parent' tag not found");
 }
@@ -263,8 +265,8 @@ return $info;
 }
 }
 
-if (strbegin($parentpath, 'sitebar.')) {
 $name = substr($tag, 1);
+if (strbegin($parentpath, 'sitebar.')) {
 $path = $parentpath . '.' . $name;
 return array(
 'data' => null,
@@ -275,18 +277,42 @@ return array(
 );
 }
 
-if (preg_match('/^(\$?custom\.)(\w\w*+)(\.admin)?$/', $parentpath, $m)) {
-$name = $m[2];
-$path = $parentpath . '.' . $name;
-return array(
-'data' => &$this->theme->templates['custom'][$name],
-'tag' => $tag',
-'replace' => $tag,
-'path' => $path,
+$names = explode('.', $parentpath);
+if ($names[0] == '$custom') || ($names[0] == 'custom')) {
+$custom = &$this->theme->templates['custom'];
+if (isset($names[1])) $name = $names[1];
+if (!isset($custom[$name])) $custom[$name] = '';
+
+$result = array(
+'data' => null,
+'tag' => $tag,
+'replace' => '',
+'path' => "custom.$name",
 'name' => $name
 );
+
+switch (count($names)) {
+case 1:
+$path = "custom.$name";
+$result['data'] = &$custom[$name];
+break;
+
+case 2:
+if ($tag != 'admin') $this->error("In custom '$parentpath' third element can be 'admin', but '$tag' found");
+
+break;
+
+case 3:
+if ($names[2] != 'admin') $this->error("In custom '$parentpath' third element can be 'admin'");
+$path = "custom.$name.admin.$tag";
+$result['data'] = 
+break;
 }
 
+$result['path'] = $path;
+$this->paths[$path] = $result;
+return$result;
+}
 
 $this->error("The '$tag' not found in path '$parentpath'");
 }
