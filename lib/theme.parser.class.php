@@ -294,6 +294,7 @@ $sitebar[$widgetname] = array(
 'item' => '',
 'subitems' => ''
 );
+if ($widgetname == 'meta') $widget['classes'] = '';
 }
 }
 $widget = &$sitebar[$widgetname];
@@ -307,6 +308,9 @@ return $widget['item'];
 
 case '.items.item.subitems':
 return $widget['subitems'];
+
+case '.classes':
+return $widget['classes'];
 }
 }
 $this->error("The '$path' path is not a widget path");
@@ -328,8 +332,20 @@ if (empty($excerpt[$name][$key])) $excerpt[$name][$key] = $value;
 }
 }
 
-
-foreach ($theme->templates['sitebars'] as $i => $sitebar) {
+$sitebars = $this->theme->templates['sitebars'];
+foreach ($sitebars as $i => $sitebar) {
+$widget = $sitebar['widget'];
+foreach (self::getwidgetnames as $widgetname) {
+if (isset($sitebar[$widgetname])) {
+foreach ($widget as $name => $value) {
+if (empty($sitebar[$widgetname][$name])) {
+$sitebars[$i][$widgetname][$name] = $value;
+}
+}
+} else {
+$sitebars[$i][$widgetname] = $widget;
+}
+}
 }
 
 }

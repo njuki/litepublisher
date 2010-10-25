@@ -35,7 +35,7 @@ class tcommentmanager extends tevents {
   
   private function indexofrecent($id, $idpost) {
     foreach ($this->items as $i => $item) {
-      if ($id == $item['id'] && $idpost == $item['idpost']) return $i;
+      if ($id == $item['id'] && $idpost == $item['post']) return $i;
     }
     return false;
   }
@@ -54,7 +54,7 @@ class tcommentmanager extends tevents {
     $item = $post->comments->items[$id];
     $item['id'] = $id;
     
-    $item['idpost'] = $idpost;
+    $item['post'] = $idpost;
     $item['title'] = $post->title;
     $item['posturl'] =     $post->lastcommenturl;
     
@@ -166,7 +166,7 @@ class tcommentmanager extends tevents {
     } else {
       $deleted = false;
       foreach ($this->items as $i => $item) {
-        if ($idpost == $item['idpost']) {
+        if ($idpost == $item['iost']) {
           unset($this->items[$i]);
           //array_splice($this->items, $i, 1);
           $deleted = true;
