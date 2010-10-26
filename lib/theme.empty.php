@@ -18,7 +18,7 @@ $theme->templates = array (
     'current' => '',
     'id' => '',
     'tag' => '',
-    'hover' => '',
+    'hover' => true,
     0 => '',
   ),
   'content' => 

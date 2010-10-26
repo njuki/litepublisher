@@ -24,14 +24,7 @@ class titems extends tevents {
   
   public function load() {
     if ($this->dbversion) {
-      $storage = &litepublisher::$options->data['storage'];
-      if (isset($storage[$this->table])) {
-        $this->data = &$storage[$this->table];
-        $this->afterload();
-      } else {
-        $storage[$this->table] = &$this->data;
-      }
-      return  true;
+return tstorage::load($this);
     } else {
       return parent::load();
     }
@@ -39,7 +32,7 @@ class titems extends tevents {
   
   public function save() {
     if ($this->dbversion) {
-      return litepublisher::$options->save();
+      return tstorage::save($this);
     } else {
       return parent::save();
     }

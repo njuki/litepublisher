@@ -6,13 +6,13 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class toptions extends tevents {
+class toptions extends tevents_storage {
   public $user;
   public $group;
   public $admincookie;
   public $gmt;
   public $errorlog;
-  private $modified;
+
   
   public static function instance() {
     return getinstance(__class__);
@@ -27,34 +27,16 @@ class toptions extends tevents {
     unset($this->cache);
     $this->gmt = 0;
     $this->errorlog = '';
-    $this->modified = false;
     $this->admincookie = false;
   }
   
-  public function load() {
-    if (!parent::load()) return false;
-    $this->modified = false;
+  public function afterload() {
+parent::afterload();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
     if (!defined('dbversion')) {
       define('dbversion', isset($this->data['dbconfig']));
     }
-    return true;
-  }
-  
-  public function savemodified() {
-    if ($this->modified) parent::save();
-    $this->modified = false;
-    $this->onsave();
-  }
-  
-  public function save() {
-    $this->modified = true;
-  }
-  
-  public function unlock() {
-    $this->modified = true;
-    parent::unlock();
   }
   
   public function __set($name, $value) {
@@ -89,23 +71,6 @@ class toptions extends tevents {
       unset($this->data);
       $this->save();
     }
-  }
-  
-  public function geturl() {
-    if ($this->fixedurl) return $this->data['url'];
-    return 'http://'. litepublisher::$domain;
-  }
-  
-  public function seturl($url) {
-    $url = rtrim($url, '/');
-    $this->lock();
-    $this->data['url'] = $url;
-    $this->files= $url;
-    $this->subdir = '';
-    if ($i = strpos($url, '/', 10)) {
-      $this->subdir = substr($url, $i);
-    }
-    $this->unlock();
   }
   
   public function authcookie() {
