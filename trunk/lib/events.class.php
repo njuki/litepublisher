@@ -217,4 +217,17 @@ class tevents extends tdata {
   
 }//class
 
+class tevents_storage extends tevents {
+
+public function load() {
+tstorage::load($this);
+}
+
+public function save() {
+tstorage::save($this);
+}
+
+}//class
+
+
 ?>
