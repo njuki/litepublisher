@@ -83,13 +83,14 @@ public static function getfile($filename) {
     $s = file_get_contents($filename);
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
 $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
-$s = str_replace('$options.', '$site.', $s);
 $s = strtr($s, array(
+'$options.url$url' => '$link',
 '$post.categorieslinks' => '$post.catlinks',
 '$post.tagslinks' => '$post.taglinks',
 '$post.subscriberss' => '$post.rsslink',
 '$post.excerptcategories' => '$post.excerptcatlinks',
 '$post.excerpttags' => '$post.excerpttaglinks',
+'$options' => '$site'
 ));
 return trim($s);
 }
@@ -246,8 +247,8 @@ if (strbegin($parent, 'sitebar.')) {
 $this->setwidgetvalue($parent, $s);
 }  elseif (isset($this->paths[$parent])) {
 $this->paths[$parent]['data'] = $s;
-} elseif (preg_match('/^(\$?custom\.)(\w\w*+)(\.admin)?$/', $parent, $m)) {
-
+} elseif (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
+$this->setcustom($parent, $s);
 } else {
 $this->error("The '$parent' tag not found");
 }
@@ -277,43 +278,15 @@ return array(
 );
 }
 
-$names = explode('.', $parentpath);
-if ($names[0] == '$custom') || ($names[0] == 'custom')) {
-$custom = &$this->theme->templates['custom'];
-if (isset($names[1])) $name = $names[1];
-if (!isset($custom[$name])) $custom[$name] = '';
-
-$result = array(
+if (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
+return array(
 'data' => null,
 'tag' => $tag,
 'replace' => '',
-'path' => "custom.$name",
+'path' => $parentpath . '.' . $name,
 'name' => $name
 );
-
-switch (count($names)) {
-case 1:
-$path = "custom.$name";
-$result['data'] = &$custom[$name];
-break;
-
-case 2:
-if ($tag != 'admin') $this->error("In custom '$parentpath' third element can be 'admin', but '$tag' found");
-
-break;
-
-case 3:
-if ($names[2] != 'admin') $this->error("In custom '$parentpath' third element can be 'admin'");
-$path = "custom.$name.admin.$tag";
-$result['data'] = 
-break;
 }
-
-$result['path'] = $path;
-$this->paths[$path] = $result;
-return$result;
-}
-
 $this->error("The '$tag' not found in path '$parentpath'");
 }
 
@@ -358,6 +331,28 @@ return;
 }
 }
 $this->error("The '$path' path is not a widget path");
+}
+
+public function setcustom($path, $value) {
+$names = explode('.', $path);
+if (count($names) < 2) return;
+if ($names[0] != '$custom') || ($names[0] != 'custom')) $this->error("The '$path' path is not a custom path");
+$name = $names[1];
+switch (count($names)) {
+case 2:
+$this->theme->templates['custom'][$name] = $value;
+return;
+
+case 3: 
+return;
+
+case 4:
+$tag = $names[3];
+$admin = &$this->theme->templates['customadmin'];
+if (!isset($admin[$name])) $admin[$name] = array();
+$admin[$name][$tag] = $value;
+return;
+}
 }
 
 public function afterparse($theme) {

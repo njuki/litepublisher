@@ -134,9 +134,8 @@ $theme->templates = array (
     array (
       'area' => '',
       'editor' => '',
-      'checkbox' => '',
       'text' => '',
-      'edit' => '',
+      'checkbox' => '',
       'combo' => '',
       'hidden' => '',
       'form' => '',
@@ -153,148 +152,13 @@ $theme->templates = array (
       array (
         'item' => '',
         'items' => '',
+        'subitems' => '',
         0 => '',
       ),
-      'submenu' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'categories' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'tags' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'archives' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'links' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'posts' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'comments' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'friends' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'meta' => 
-      array (
-        'item' => '',
-        'classes' => 
-        array (
-          'rss' => '',
-          'comments' => '',
-          'media' => '',
-          'foaf' => '',
-          'profile' => '',
-          'sitemap' => '',
-        ),
-        'items' => '',
-        0 => '',
-      ),
-      0 => '',
-    ),
-    1 => 
-    array (
-      'widget' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'submenu' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'categories' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'tags' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'archives' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'links' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'posts' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'comments' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'friends' => 
-      array (
-        'item' => '',
-        'items' => '',
-        0 => '',
-      ),
-      'meta' => 
-      array (
-        'item' => '',
-        'classes' => 
-        array (
-          'rss' => '',
-          'comments' => '',
-          'media' => '',
-          'foaf' => '',
-          'profile' => '',
-          'sitemap' => '',
-        ),
-        'items' => '',
-        0 => '',
-      ),
-      0 => '',
     ),
   ),
 'custom' => array(
+'customadmin' => array(
 );
 }
 }

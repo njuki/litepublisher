@@ -54,8 +54,8 @@ $this->data['%%link%%'] = litepublisher::$site->url . $value;
 }
 }
 
-    if (isset($a['title']) && !isset($a['text']) && !isset($this->data['$text']))  $this->__set('text', $a['title']);
-    if (isset($a['text']) && !isset($a['title']) && !isset($this->data['$title']))  $this->__set('title', $a['text']);
+    if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
+    if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
   }
   
 }//class
