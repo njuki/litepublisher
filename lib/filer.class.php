@@ -41,7 +41,7 @@ class tfiler {
       }
       closedir($h);
     }
-    if ($rmdir) rmdir($path);
+    if ($rmdir && !file_exists($path)) rmdir($path);
   }
   
   public static function deletemask($mask) {
@@ -96,7 +96,7 @@ class tfiler {
   
   public static function unserialize($FileName, &$v) {
     if (file_exists($FileName) && ($s = file_get_contents($FileName))) {
-      $s =tdata::uncomment_php($s);
+      $s =tfilestorage::uncomment_php($s);
       if (!empty($s)) {
         $v = unserialize($s);
         return true;
@@ -107,7 +107,7 @@ class tfiler {
   
   public static function serialize($FileName, &$v) {
     $s = serialize($v);
-    $s =  tdata::comment_php($s);
+    $s =  tfilestorage::comment_php($s);
     if (file_exists($FileName)) @chmod($FileName, 0666);
     file_put_contents($FileName, $s);
     @chmod($FileName, 0666);

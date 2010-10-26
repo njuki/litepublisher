@@ -14,7 +14,7 @@ class targs {
   }
   
   public function __construct($thisthis = null) {
-    $site = litepublisher::$site;
+    $site = litepublisher::$options;
     $this->data = array(
     '$site.url' => $site->url,
   '{$site.q}' => $site->q,

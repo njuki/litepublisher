@@ -38,7 +38,15 @@ class tclasses extends titems {
     $this->instances = array();
     if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
   }
-  
+
+public function load() {
+return tstorage::load($this);
+}
+
+public function save() {
+return tstorage::save($this);
+}
+
   public function getinstance($class) {
     if (!class_exists($class)) {
       $this->error("Class $class not found");

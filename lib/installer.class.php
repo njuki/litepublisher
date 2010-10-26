@@ -202,23 +202,23 @@ class tinstaller extends tdata {
     $this->CheckFolder(litepublisher::$paths->themes);
   }
   
-  public function CheckFolder($FolderName) {
-    if(!@file_exists($FolderName)) {
-      $up = dirname($FolderName);
-      if(!@file_exists($up)) {
+  public function CheckFolder($folder) {
+    if(!file_exists($folder)) {
+      $up = dirname($folder);
+      if(!file_exists($up)) {
         @mkdir($up, 0777);
         @chmod($up, 0777);
       }
-      @mkdir($FolderName, 0777);
+      @mkdir($folder, 0777);
     }
-    @chmod($FolderName, 0777);
-    if(!@file_exists($FolderName) && !@is_dir($FolderName)) {
-      echo "directory $FolderName is not exists. Please create directory and set permisions to 0777";
+    @chmod($folder, 0777);
+    if(!file_exists($folder) && !@is_dir($FolderName)) {
+      echo "directory $folder is not exists. Please create directory and set permisions to 0777";
       exit();
     }
-    $tmp= $FolderName . 'index.htm';
+    $tmp= $folder . 'index.htm';
     if (!@file_put_contents($tmp, ' ')) {
-      echo "Error write file to the $FolderName folder. Please change permisions to 0777";
+      echo "Error write file to the $folder folder. Please change permisions to 0777";
       exit();
     }
     @chmod($tmp, 0666);
