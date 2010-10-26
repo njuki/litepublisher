@@ -311,8 +311,8 @@ public function __set($name, $value) {$this->array[$name] = $value; }
 
 public function __call($name, $params) {
 $theme = ttheme::instance();
-if (isset($params[0]) && (is_object($params[0]) && ($params[0] instanceof targs)) {
-return $theme->parsearg( (string) $this->$name, $params[0]);)
+if (isset($params[0]) && is_object($params[0]) && ($params[0] instanceof targs)) {
+return $theme->parsearg( (string) $this->$name, $params[0]);
 } else {
 return $theme->parse((string) $this->$name);
 }

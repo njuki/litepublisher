@@ -196,7 +196,7 @@ tfilestorage::save($this);
   
 }//class
 
-class tfilestorage {]
+class tfilestorage {
 public static $disabled;
 
 public static function save(tdata $obj) {
@@ -285,7 +285,6 @@ if (!empty($s)) self::$data = unserialize($s);
 return true;
 }
 return false;
-}
 }
 
 }//class
