@@ -186,7 +186,7 @@ echo "<pre>\n";
  while ($s != '') {
 if (preg_match('/^(\$?\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 $tag = $m[1];
-echo "tag = $tag\n";
+//echo "tag = $tag\n";
 $s = ltrim(substr($s, strlen($m[0])));
 if (isset($m[3])) {
 $i = self::find_close($s, $m[3]);
@@ -228,16 +228,31 @@ $this->sitebar_index = ++$this->sitebar_count - 1;
 if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
 break;
 }
-echo "parent=$parent\n\n";
+//echo "parent=$parent\n\n";
+$stop = 'som';
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
 $j = strpos($s, $m[0]);
 $pre  = rtrim(substr($s, 0, $j));
 $s= ltrim(substr($s, $j + strlen($m[0])));
+if ($tag == $stop) {
+echo "\nafter trim\n";
+dumpstr($pre);
+echo "s=\n";
+dumpstr($s);
+}
 $i = self::find_close($s, $m[3]);
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i + 1));
+if ($tag == $stop) {
+echo "pre\n";
+dumpstr($pre);
+echo "extra value\n";
+dumpstr($s);
+var_dump($value);
+}
+
 $info = $this->getinfo($parent, $tag);
 $this->settag($parent . '.' . $info['name'], $value);
 $s = $pre . $info['replace'] . $s;
@@ -842,7 +857,7 @@ return array(
 'content.post.templatecomments.comments.comment.class2' => array(
 'data' => &$post['templatecomments']['comments']['comment']['class2'],
 'tag' => '$class2',
-'replace' => ''
+'replace' => ' '
 ),
 
 'content.post.templatecomments.comments.comment.date' => array(
@@ -999,6 +1014,12 @@ return array(
 'content.navi.link' => array(
 'data' => &$content['navi']['link'],
 'tag' => '$link',
+'replace' => ''
+),
+
+'content.navi.current' => array(
+'data' => &$content['navi']['current'],
+'tag' => '$current',
 'replace' => ''
 ),
 
