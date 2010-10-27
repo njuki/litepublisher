@@ -326,20 +326,21 @@ function get_bloginfo($show = '', $filter = 'raw') {
 }
 
 function get_option( $setting, $default = false ) {
-  $options = litepublisher::$options;
+$site = litepublisher::$site;
+$option = litepublisher::$options;
   switch ($setting) {
     case 'url' :
     case 'home' : // DEPRECATED
     case 'siteurl' : // DEPRECATED
     case 'wpurl' :
-    return $options->url;
+    return $site->url;
     
     case 'blogname':
-    return $options->name;
+    return $site->name;
     
     case 'description':
     case 'blogdescription':
-    return $options->description;
+    return $site->description;
     
     case 'html_type':
     return 'text/html';

@@ -182,7 +182,7 @@ public function parsetags(ttheme $theme, $s) {
 $this->theme = $theme;
 $this->paths = self::getpaths($theme);
 $s = trim($s);
-echo "<pre>\n";
+//echo "<pre>\n";
  while ($s != '') {
 if (preg_match('/^(\$?\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 $tag = $m[1];

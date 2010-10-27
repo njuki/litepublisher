@@ -30,8 +30,8 @@ class tsubscribers extends titemsposts {
   }
   
   public function save() {
-    if (self::$savedisabled || $this->locked) return;
-    self::savetofile(litepublisher::$paths->data .$this->getbasename(), self::comment_php($this->savetostring()));
+    if ($this->lockcount > 0) return;
+tfilestorage::save($this);
   }
   
   public function update($pid, $uid, $subscribed) {

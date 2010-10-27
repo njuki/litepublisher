@@ -58,27 +58,27 @@ class tprofile extends tevents implements itemplate {
     '<foaf:jabberID>' . tfoaf::escape($this->jabberID) . '</foaf:jabberID>' .
     '<foaf:msnChatID>' . tfoaf::escape($this->msnChatID) . '</foaf:msnChatID>' .
     '<foaf:yahooChatID>' . tfoaf::escape($this->yahooChatID) . '</foaf:yahooChatID>' .
-    '<foaf:homepage>' . tfoaf::escape($options->url) . '/</foaf:homepage>' .
+    '<foaf:homepage>' . tfoaf::escape(litepublisher::$site->url) . '/</foaf:homepage>' .
     '<foaf:mbox>' . tfoaf::escape($this->mbox) . '</foaf:mbox>' .
     '<foaf:weblog ' .
-    'dc:title="'. tfoaf::escape($options->name) . '" ' .
-    'rdf:resource="' . tfoaf::escape($options->url) . '/" />' .
+    'dc:title="'. tfoaf::escape(litepublisher::$site->name) . '" ' .
+    'rdf:resource="' . tfoaf::escape(litepublisher::$site->url) . '/" />' .
     
     '<foaf:page>' .
-    '<foaf:Document rdf:about="' . tfoaf::escape($options->url . $this->url) . '">' .
-    '<dc:title>' . tfoaf::escape($options->name) . ' Profile</dc:title>' .
+    '<foaf:Document rdf:about="' . tfoaf::escape(litepublisher::$site->url . $this->url) . '">' .
+    '<dc:title>' . tfoaf::escape(litepublisher::$site->name) . ' Profile</dc:title>' .
     '<dc:description>Full profile, including information such as interests and bio.</dc:description>' .
     '</foaf:Document>' .
     '</foaf:page>' .
     
-    '<lj:journaltitle>' . tfoaf::escape($options->name) . '</lj:journaltitle>' .
-    '<lj:journalsubtitle>' . tfoaf::escape($options->description) . '</lj:journalsubtitle>' .
+    '<lj:journaltitle>' . tfoaf::escape(litepublisher::$site->name) . '</lj:journaltitle>' .
+    '<lj:journalsubtitle>' . tfoaf::escape(litepublisher::$site->description) . '</lj:journalsubtitle>' .
     
     '<ya:blogActivity>' .
     '<ya:Posts>' .
     '<ya:feed ' .
     'dc:type="application/rss+xml" ' .
-    'rdf:resource="' . tfoaf::escape($options->url) . '/rss.xml" />' .
+    'rdf:resource="' . tfoaf::escape(litepublisher::$site->url) . '/rss.xml" />' .
     "<ya:posted>$postscount</ya:posted>" .
     '</ya:Posts>' .
     '</ya:blogActivity>' .
@@ -87,7 +87,7 @@ class tprofile extends tevents implements itemplate {
     '<ya:Comments>' .
     '<ya:feed ' .
     'dc:type="application/rss+xml" '.
-    'rdf:resource="' . tfoaf::escape($options->url) . '/comments.xml"/>' .
+    'rdf:resource="' . tfoaf::escape(litepublisher::$site->url) . '/comments.xml"/>' .
     "<ya:posted>$postscount</ya:posted>" .
     "<ya:received>$manager->count</ya:received>" .
     '</ya:Comments>' .
