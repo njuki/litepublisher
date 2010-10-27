@@ -25,7 +25,7 @@ class tadminmenumanager extends tadminmenu {
     $html = $this->html;
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'id';
+    $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'id';
     
     switch ($this->name) {
       case 'menu':
@@ -99,7 +99,7 @@ class tadminmenumanager extends tadminmenu {
     $menus = tmenus::instance();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = litepublisher::$options->url .$this->url . 'edit/' . litepublisher::$options->q . 'id';
+    $args->editurl = litepublisher::$site->url .$this->url . 'edit/' . litepublisher::$site->q . 'id';
     $html = $this->html;
     $result = $html->listhead();
     foreach ($menus->items as $id => $item) {

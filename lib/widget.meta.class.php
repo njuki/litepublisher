@@ -64,7 +64,7 @@ class tmetawidget extends twidget {
     $args->icon = '';$args->subitems = '';
     $args->rel = $name;
     $args->class = $class;
-    $args->url = litepublisher::$options->url  . $url;
+    $args->url = litepublisher::$site->url  . $url;
     $args->title = $title;
     $args->anchor = $title;
     $theme = ttheme::instance();

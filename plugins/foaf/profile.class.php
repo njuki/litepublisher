@@ -113,7 +113,7 @@ class tprofile extends tevents implements itemplate {
   }
   
   public function GetFoafOpenid() {
-    return '<foaf:openid rdf:resource="'. tfoaf::escape(litepublisher::$options->url) . '/" />';
+    return '<foaf:openid rdf:resource="'. tfoaf::escape(litepublisher::$site->url) . '/" />';
   }
   
   public function GetFoafCountry() {
@@ -246,7 +246,7 @@ public function gethead() { }
     $foaf = tfoaf::instance();
     $foaf->loadall();
     foreach ($foaf->items As $id => $item) {
-    $url = $foaf->redir ?"litepublisher::$options->url$foaf->redirlink{litepublisher::$options->q}friend=$id" : $item['url'];
+    $url = $foaf->redir ?"litepublisher::$site->url$foaf->redirlink{litepublisher::$options->q}friend=$id" : $item['url'];
     $result .= "<a href=\"$url\" rel=\"friend\">{$item['nick']}</a>,\n";
     }
     $result .= "</p>\n";

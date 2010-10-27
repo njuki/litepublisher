@@ -183,7 +183,7 @@ class tfoaf extends titems {
   
   private function validateurl($url, $foafurl) {
     if (($url = $this->getdomain($url)) && ($foafurl = $this->getdomain($foafurl))) {
-      $self = $this->getdomain(litepublisher::$options->url);
+      $self = $this->getdomain(litepublisher::$site->url);
       return ($url == $foafurl) && ($url != $self);
     }
     return false;
@@ -239,8 +239,8 @@ class tfoaf extends titems {
     $profile = tprofile::instance();
     return array(
     'nick' => $profile->nick,
-    'url' => litepublisher::$options->url . litepublisher::$options->home,
-    'foafurl' => litepublisher::$options->url . '/foaf.xml'
+    'url' => litepublisher::$site->url . litepublisher::$options->home,
+    'foafurl' => litepublisher::$site->url . '/foaf.xml'
     );
   }
   

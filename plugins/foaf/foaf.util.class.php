@@ -70,7 +70,7 @@ class tfoafutil  extends tevents {
     foreach ($knows  as $node) {
       $blog = $node->getElementsByTagName('Person')->item(0)->getElementsByTagName('weblog')->item(0)->attributes->getNamedItem('resource')->nodeValue;
       $seealso = $node->getElementsByTagName('Person')->item(0)->getElementsByTagName('seeAlso')->item(0)->attributes->getNamedItem('resource')->nodeValue;
-      if (($blog == litepublisher::$options->url . '/') && ($seealso == litepublisher::$options->url . '/foaf.xml')) {
+      if (($blog == litepublisher::$site->url . '/') && ($seealso == litepublisher::$site->url . '/foaf.xml')) {
         return true;
       }
     }

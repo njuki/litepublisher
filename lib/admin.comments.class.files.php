@@ -200,7 +200,7 @@ class tadminmoderator extends tadminmenu {
     $html = $this->html;
     $head =sprintf($html->h2->postscount, $from, $from + count($items), $count);
     $args = targs::instance();
-    $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . 'post';
+    $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . 'post';
     foreach ($items  as $id ) {
       $post = tpost::instance($id);
       ttheme::$vars['post'] = $post;
@@ -228,7 +228,7 @@ class tadminmoderator extends tadminmenu {
     $result .= $html->checkallscript;
     $result .= $html->pingbackheader();
     $args = targs::instance();
-    $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . "post=$idpost&id";
+    $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . "post=$idpost&id";
     $post = tpost::instance($idpost);
     $args->posttitle =$post->title;
     $args->postlink = $post->link;
@@ -286,7 +286,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $args->id = "$id&post=$idpost";
     $args->action = 'delete';
-    $args->adminurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . "idpost=$idpost&id";
+    $args->adminurl = litepublisher::$site->url . $this->url . litepublisher::$site->q . "idpost=$idpost&id";
     $args->confirm = $confirm;
     return $this->html->confirmform($args);
   }
@@ -319,7 +319,7 @@ class tadminmoderator extends tadminmenu {
     $items =array_slice(array_keys($comusers->items), $from, $perpage);
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
-    $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . "idpost=$idpost&id";
+    $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . "idpost=$idpost&id";
     $args->ip = '';
     foreach ($items as $id) {
       $args->id = $id;
@@ -357,7 +357,7 @@ class tadminmoderator extends tadminmenu {
           case 'reply':
           $post = tpost::instance( (int) $_REQUEST['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
-          @header("Location: litepublisher::$options->url$post->lastcommenturl");
+          @header("Location: litepublisher::$site->url$post->lastcommenturl");
           exit();
           
           case 'edit':

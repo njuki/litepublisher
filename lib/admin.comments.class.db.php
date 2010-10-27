@@ -242,7 +242,7 @@ class tadminmoderator extends tadminmenu {
     $args = targs::instance();
     $args->id = $id;
     $args->action = 'delete';
-    $args->adminurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . 'id';
+    $args->adminurl = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
     $args->confirm = $confirm;
     return $this->html->confirmform($args);
   }

@@ -35,7 +35,7 @@ class ttemplate extends tevents {
     $this->hover = true;
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s',\nidurl: '%3\$s'",
-    litepublisher::$options->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
+    litepublisher::$site->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
     $this->data['theme'] = 'default';
     $this->data['admintheme'] = '';

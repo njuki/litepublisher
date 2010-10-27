@@ -23,7 +23,7 @@ class tmenus extends titems {
   }
   
   public function getlink($id) {
-    return sprintf('<a href="%1$s%2$s" title="%3$s">%3$s</a>', litepublisher::$options->url, $this->items[$id]['url'], $this->items[$id]['title']);
+    return sprintf('<a href="%1$s%2$s" title="%3$s">%3$s</a>', litepublisher::$site->url, $this->items[$id]['url'], $this->items[$id]['title']);
   }
   
   public function getdir() {
@@ -400,7 +400,7 @@ public function gethead() {}
   }
   
   public function getlink() {
-    return litepublisher::$options->url . $this->url;
+    return litepublisher::$site->url . $this->url;
   }
   
 }//class

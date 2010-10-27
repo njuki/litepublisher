@@ -176,7 +176,7 @@ function get_the_category_list( $separator = '', $parents='', $post_id = false )
   $links = array();
   foreach ( $post->categories as $id) {
     $item = $cats->getitem($id);
-    $links[] = '<a href="' . litepublisher::$options->url . $item['url'] . '" title="' . esc_attr( sprintf( "View all posts in %s", $item['title']) ) . '" ' . $rel . '>' . $item['title'] .'</a>';
+    $links[] = '<a href="' . litepublisher::$site->url . $item['url'] . '" title="' . esc_attr( sprintf( "View all posts in %s", $item['title']) ) . '" ' . $rel . '>' . $item['title'] .'</a>';
   }
   
   if ( '' == $separator ) {
@@ -359,15 +359,15 @@ function get_option( $setting, $default = false ) {
 }
 
 function get_default_feed() {
-  return litepublisher::$options->url . '/rss.xml';
+  return litepublisher::$site->url . '/rss.xml';
 }
 
 function get_feed_link($feed = '') {
-  if ( false !== strpos($feed, 'comments_') ) return litepublisher::$options->url . '/comments.xml';
+  if ( false !== strpos($feed, 'comments_') ) return litepublisher::$site->url . '/comments.xml';
   
   switch ($feed) {
     case 'rdf':
-    return litepublisher::$options->url . '/rdf.xml';
+    return litepublisher::$site->url . '/rdf.xml';
     
     default:
     return get_default_feed();
@@ -578,8 +578,8 @@ function wp_list_bookmarks($args = '') {
     $args = targs::instance();
     foreach ($links->items as $id => $item) {
       $url =  $item['url'];
-      if ($links->redir && !strbegin($url, litepublisher::$options->url)) {
-        $url = litepublisher::$options->url . $links->redirlink . litepublisher::$options->q . "id=$id";
+      if ($links->redir && !strbegin($url, litepublisher::$site->url)) {
+        $url = litepublisher::$site->url . $links->redirlink . litepublisher::$site->q . "id=$id";
       }
       $output .=   sprintf($tml, $url, $item['title'], $item['text']);
     }
@@ -886,7 +886,7 @@ function wp_list_pages($args = '') {
   $menus = tmenus::instance();
   foreach ($menus->tree as $id => $items) {
     $item = $menus->items[$id];
-    $output .= sprintf($tml, litepublisher::$options->url . $item['url'], $item['title'], '');
+    $output .= sprintf($tml, litepublisher::$site->url . $item['url'], $item['title'], '');
   }
   
   if ( $r['title_li'] )
@@ -908,12 +908,12 @@ function wp_meta() {
   $tml = '<li><a href="%1$s" >%2$s</a></li>';
   $metaclasses = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
   $lang = tlocal::instance('default');
-  if ($rss) $result .= sprintf($tml, litepublisher::$options->url . '/rss.xml', $lang->rss, $metaclasses['rss']);
-  if ($comments) $result .= sprintf($tml, litepublisher::$options->url . '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
-  if ($media) $result .= sprintf($tml, litepublisher::$options->url . '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
-  if ($foaf) $result .= sprintf($tml, litepublisher::$options->url . '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
-  if ($profile) $result .= sprintf($tml, litepublisher::$options->url . '/profile.htm', $lang->profile, $metaclasses['profile']);
-  if ($sitemap) $result .= sprintf($tml, litepublisher::$options->url . '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
+  if ($rss) $result .= sprintf($tml, litepublisher::$site->url . '/rss.xml', $lang->rss, $metaclasses['rss']);
+  if ($comments) $result .= sprintf($tml, litepublisher::$site->url . '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
+  if ($media) $result .= sprintf($tml, litepublisher::$site->url . '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
+  if ($foaf) $result .= sprintf($tml, litepublisher::$site->url . '/foaf.xml', $lang->foaf, $metaclasses['foaf']);
+  if ($profile) $result .= sprintf($tml, litepublisher::$site->url . '/profile.htm', $lang->profile, $metaclasses['profile']);
+  if ($sitemap) $result .= sprintf($tml, litepublisher::$site->url . '/sitemap.htm', $lang->sitemap, $metaclasses['sitemap']);
   echo $result;
 }
 

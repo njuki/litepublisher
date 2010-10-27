@@ -34,7 +34,7 @@ class topenid extends tevents {
     <link rel="openid2.provider" href="%1$s" />
     <link rel="openid.delegate" href="%1$s" />
     <link rel="openid2.local_id" href="%1$s" />',
-    litepublisher::$options->url . $this->url);
+    litepublisher::$site->url . $this->url);
     $template->save();
   }
   
@@ -331,7 +331,7 @@ class topenid extends tevents {
     
     if (empty($_REQUEST['openid_identity'])) return $this->error_get($return_to, 'identity');
     $identity = $_REQUEST['openid_identity'];
-    if ($identity != litepublisher::$options->url. $this->url)  return $this->error_get($return_to, 'identity');
+    if ($identity != litepublisher::$site->url. $this->url)  return $this->error_get($return_to, 'identity');
     
     $trust_root = !empty($_REQUEST['openid_trust_root']) ? $_REQUEST['openid_trust_root'] : $return_to;
     if ($trust_root != $return_to) {
@@ -392,7 +392,7 @@ class topenid extends tevents {
     
     $keys = array(
     'mode' => 'id_res',
-    'identity' => litepublisher::$options->url . $this->url,
+    'identity' => litepublisher::$site->url . $this->url,
     'return_to' => $return_to
     );
     

@@ -32,8 +32,8 @@ class tfriendswidget extends twidget {
     $items = $foaf->getapproved($this->maxcount);
     if (count($items) == 0) return '';
     $result = '';
-    $url = litepublisher::$options->url;
-    $redirlink  = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . 'id=';
+    $url = litepublisher::$site->url;
+    $redirlink  = litepublisher::$site->url . $this->redirlink . litepublisher::$options->q . 'id=';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('friends', $sitebar);
     $args = targs::instance();

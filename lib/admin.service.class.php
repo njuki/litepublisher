@@ -160,7 +160,7 @@ class tadminservice extends tadminmenu {
         if (strpos($_FILES["filename"]["name"], '.sql')) {
           $backuper->uploaddump(file_get_contents($_FILES["filename"]["tmp_name"]));
         } else {
-          $url = litepublisher::$options->url;
+          $url = litepublisher::$site->url;
           if (dbversion) $dbconfig = litepublisher::$options->dbconfig;
           $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]));
           if (isset($saveurl)) {

@@ -61,10 +61,10 @@ public function getdescription() {}
         if ($pages > 1) {
           $url = rtrim($item['url'], '/');
           for ($i = 2; $i < $pages; $i++) {
-            $postpages .= '<a href="' . litepublisher::$options->url . "$url/page/$i/\">$i</a>,";
+            $postpages .= '<a href="' . litepublisher::$site->url . "$url/page/$i/\">$i</a>,";
           }
         }
-        $result .= sprintf("<li><a href=\"%s%s\">%s</a>%s</li>\n", litepublisher::$options->url, $item['url'], $item['title'], $postpages);
+        $result .= sprintf("<li><a href=\"%s%s\">%s</a>%s</li>\n", litepublisher::$site->url, $item['url'], $item['title'], $postpages);
       }
       if ($result != '') $result = "<ul>\n" . $result . "\n</ul>\n";
     } else {
@@ -78,7 +78,7 @@ public function getdescription() {}
       if ($tags->count > 0) {
         $result .= '<h3>' . tlocal::$data['default']['tags'] . "</h3>\n<ul>\n";
         foreach ($tags->items as $id => $item) {
-        $result .= "<li><a href=\"".  litepublisher::$options->url. $item['url'] . "\">{$item['title']}</a></li>\n";
+        $result .= "<li><a href=\"".  litepublisher::$site->url. $item['url'] . "\">{$item['title']}</a></li>\n";
         }
         $result .= "</ul>\n";
       }
@@ -221,7 +221,7 @@ public function getdescription() {}
   }
   
   private function writeitem($url, $prio) {
-    $url = litepublisher::$options->url . $url;
+    $url = litepublisher::$site->url . $url;
     gzwrite($this->fd, "   <url>
     <loc>$url</loc>
     <lastmod>$this->lastmod</lastmod>

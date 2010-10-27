@@ -1082,7 +1082,7 @@ class turlmap extends titems {
     $this->host = $host;
     $this->page = 1;
     $this->uripath = array();
-    if (litepublisher::$options->q == '?') {
+    if (litepublisher::$site->q == '?') {
       $this->url = substr($url, strlen(litepublisher::$options->subdir));
     } else {
       $this->url = $_GET['url'];
@@ -1445,7 +1445,7 @@ class turlmap extends titems {
   
   public static function redir301($to) {
     //tfiler::log($to. "\n" . $this->url);
-    self::redir(litepublisher::$options->url . $to);
+    self::redir(litepublisher::$site->url . $to);
   }
   
   public static function redir($url) {
@@ -1493,13 +1493,13 @@ class turlmap extends titems {
   
   public function getnextpage() {
     $url = $this->itemrequested['url'];
-    return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page + 1) . '/';
+    return litepublisher::$site->url . rtrim($url, '/') . '/page/' . ($this->page + 1) . '/';
   }
   
   public function getprevpage() {
     $url = $this->itemrequested['url'];
     if ($this->page <= 2) return url;
-    return litepublisher::$options->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
+    return litepublisher::$site->url . rtrim($url, '/') . '/page/' . ($this->page - 1) . '/';
   }
   
   public static function htmlheader($cache) {
@@ -1510,7 +1510,7 @@ class turlmap extends titems {
     return "<?php $nocache
     header('Content-Type: text/html; charset=utf-8');
     header('Last-Modified: ' . date('r'));
-    header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
+    header('X-Pingback: " . litepublisher::$site->url . "/rpc.xml');
     ?>";
   }
   
@@ -1518,7 +1518,7 @@ class turlmap extends titems {
     return "<?php
     header('Content-Type: text/xml; charset=utf-8');
     header('Last-Modified: " . date('r') ."');
-    header('X-Pingback: " . litepublisher::$options->url . "/rpc.xml');
+    header('X-Pingback: " . litepublisher::$site->url . "/rpc.xml');
     echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
     ?>";
   }

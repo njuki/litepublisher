@@ -33,8 +33,8 @@ class tadmincontextwidget extends torderwidget {
       $post = litepublisher::$urlmap->context;
       $lang = tlocal::instance('posts');
       $title = $lang->adminpost;
-      $editurl = litepublisher::$options->url . "/admin/posts/editor/" . litepublisher::$options->q . "id=$post->id";
-      $action = litepublisher::$options->url . "/admin/posts/" . litepublisher::$options->q . "id=$post->id&action";
+      $editurl = litepublisher::$site->url . "/admin/posts/editor/" . litepublisher::$options->q . "id=$post->id";
+      $action = litepublisher::$site->url . "/admin/posts/" . litepublisher::$options->q . "id=$post->id&action";
       $links = $this->getitem($tml, "/admin/posts/editor/" . litepublisher::$options->q . "mode=short", tlocal::$data['names']['quick']);
       $links .= $this->getitem($tml, "$editurl&mode=short", $lang->edit);
       $links .= $this->getitem($tml, "$editurl&mode=midle", $lang->midledit);
@@ -47,7 +47,7 @@ class tadmincontextwidget extends torderwidget {
         case 'ttags':
         $tags = litepublisher::$urlmap->context;
         $name = $tags instanceof ttags ? 'tags' : 'categories';
-        $adminurl = litepublisher::$options->url . "/admin/posts/$name/";
+        $adminurl = litepublisher::$site->url . "/admin/posts/$name/";
         $lang = tlocal::instance('tags');
       $title = $lang->{$name};
         $links = $this->getitem($tml,$adminurl, $lang->add);
@@ -69,7 +69,7 @@ class tadmincontextwidget extends torderwidget {
           $menu = litepublisher::$urlmap->context;
           $lang = tlocal::instance('menu');
           $title = $lang->title;
-          $adminurl = litepublisher::$options->url . "/admin/menu/edit/";
+          $adminurl = litepublisher::$site->url . "/admin/menu/edit/";
           $links = $this->getitem($tml,$adminurl, $lang->addmenu);
           $links .= $this->getitem($tml, $adminurl . litepublisher::$options->q . "id=$menu->id", $lang->edit);
         } else {
@@ -90,7 +90,7 @@ class tadmincontextwidget extends torderwidget {
     if (strbegin($url, 'http://')) {
       $args->url = $url;
     } else {
-      $args->url = litepublisher::$options->url  . $url;
+      $args->url = litepublisher::$site->url  . $url;
     }
     $args->title = $title;
     $args->anchor = $title;

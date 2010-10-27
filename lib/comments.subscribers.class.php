@@ -101,7 +101,7 @@ class tsubscribers extends titemsposts {
     $mailtemplate = tmailtemplate::instance('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
-    $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$options->url, litepublisher::$options->q);
+    $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
     $comusers = tcomusers::instance();
     foreach ($subscribers as $uid) {

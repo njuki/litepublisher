@@ -124,8 +124,8 @@ class TXMLRPCWordpress extends TXMLRPCMetaWeblog {
       'name' => $item['title'],
       'count' => $item['itemscount'],
       'slug' => '',
-      'html_url' => litepublisher::$options->url . $item['url'],
-      'rss_url' => litepublisher::$options->url . $item['url']
+      'html_url' => litepublisher::$site->url . $item['url'],
+      'rss_url' => litepublisher::$site->url . $item['url']
       );
     }
     return $result;

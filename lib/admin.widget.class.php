@@ -19,7 +19,7 @@ class tadminwidget extends tdata {
   }
   
   protected function getadminurl() {
-    return litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget=';
+    return litepublisher::$site->url . '/admin/widgets/' . litepublisher::$site->q . 'idwidget=';
   }
   
   protected function dogetcontent(twidget $widget, targs $args){

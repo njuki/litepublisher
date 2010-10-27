@@ -140,7 +140,7 @@ class tcommentform extends tevents {
       ?>";
     }
     
-    $posturl = litepublisher::$options->url . '/';
+    $posturl = litepublisher::$site->url . '/';
     
     if (get_magic_quotes_gpc()) {
       foreach ($_POST as $name => $value) {
@@ -203,7 +203,7 @@ class tcommentform extends tevents {
     return "<?php
     @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
     $idpostcookie
-    @header('Location: " . litepublisher::$options->url . "$posturl');
+    @header('Location: " . litepublisher::$site->url . "$posturl');
     ?>";
   }
   

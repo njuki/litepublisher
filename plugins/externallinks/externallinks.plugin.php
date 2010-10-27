@@ -77,11 +77,11 @@ class texternallinks extends titems {
   
   public function filter(&$content) {
     if(!preg_match_all('/<a\s*.*?href\s*=\s*[\'"]([^"\'>]*).*?>(.*?)<\/a>/i', $content, $links))  return;
-    $redir = litepublisher::$options->url . '/externallink.htm' . litepublisher::$options->q . 'id=';
+    $redir = litepublisher::$site->url . '/externallink.htm' . litepublisher::$options->q . 'id=';
     $external = array();
     foreach($links[1] as $num => $link) {
       if (isset($external[$link])) continue;
-      if (strbegin($link, litepublisher::$options->url)) continue;
+      if (strbegin($link, litepublisher::$site->url)) continue;
       $id = $this->add($link);
       $external[$link] = $redir . $id;
     }

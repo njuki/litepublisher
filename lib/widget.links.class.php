@@ -36,8 +36,8 @@ class tlinkswidget extends twidget {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('links', $sitebar);
-    $redirlink = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . 'id=';
-    $url = litepublisher::$options->url;
+    $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . 'id=';
+    $url = litepublisher::$site->url;
     $args = targs::instance();
     $args->subitems = '';
     $args->icon = '';

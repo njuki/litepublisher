@@ -26,7 +26,7 @@ public function save() {}
   
   public function getcommentslink(tpost $post) {
     $count = $this->getcount($post->commentscount);
-    return "<a href=\"" . litepublisher::$options->url . "$post->lastcommenturl#comments\">$count</a>";
+    return "<a href=\"" . litepublisher::$site->url . "$post->lastcommenturl#comments\">$count</a>";
   }
   
   public function getcomments($idpost) {

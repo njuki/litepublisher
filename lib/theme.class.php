@@ -149,7 +149,7 @@ self::$vars[$name] = $var;
   }
   
   public function parse($s) {
-    $s = str_replace('$options.url', litepublisher::$options->url, (string) $s);
+    $s = str_replace('$options.url', litepublisher::$site->url, (string) $s);
     array_push($this->parsing, $s);
     try {
 $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);

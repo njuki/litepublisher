@@ -67,7 +67,7 @@ class tticketsmenu extends tmenu {
     order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio");
     
     $count = 0;
-    $url = litepublisher::$options->url;
+    $url = litepublisher::$site->url;
     $index = $this->type == 'tickets' ? 'type' : 'state';
     tticket::checklang();
     $local = tlocal::$data['ticket'];

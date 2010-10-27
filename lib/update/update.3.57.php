@@ -249,7 +249,7 @@ $install = $lib . 'install' . DIRECTORY_SEPARATOR;
 @unlink($lib . 'widgets.comments.class.php');
 
 litepublisher::$options->version = '3.57';
-litepublisher::$urlmap->redir301('/admin/service/' . litepublisher::$options->q . 'update=1');
+litepublisher::$urlmap->redir301('/admin/service/' . litepublisher::$site->q . 'update=1');
 }
 
 if (!function_exists('array_insert')) {
