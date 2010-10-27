@@ -283,7 +283,7 @@ return $info;
 }
 
 $name = substr($tag, 1);
-if (strbegin($parentpath, 'sitebar.')) {
+if (strbegin($parentpath, 'sitebar')) {
 $path = $parentpath . '.' . $name;
 return array(
 'data' => null,
@@ -307,9 +307,9 @@ $this->error("The '$tag' not found in path '$parentpath'");
 }
 
 private function setwidgetvalue($path, $value) {
-if (preg_match('/^sitebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' path is not a widget path");
+if (!preg_match('/^sitebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
 $widgetname = $m[1];
-if (($widgetname != 'widget') || (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$name' name");
+if (($widgetname != 'widget') && (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
 $sitebar = &$this->theme->templates['sitebars'][$this->sitebar_index];
 if (!isset($sitebar[$widgetname])) {
 if (isset($sitebar['widget'])) {
@@ -327,7 +327,7 @@ if ($widgetname == 'meta') $widget['classes'] = '';
 
 $widget = &$sitebar[$widgetname];
 if (empty($m[2])) {
-$widget[0] = $s;
+$widget[0] = $value;
 } else {
 switch ($m[2]) {
 case '.items':
@@ -335,16 +335,22 @@ $widget['items'] = $value;
 return;
 
 case '.items.item':
+case '.item':
 $widget['item'] = $value;
 return;
 
 case '.items.item.subitems':
+case '.item.subitems':
+case '.subitems':
 $widget['subitems'] = $value;
 return;
 
 case '.classes':
 $widget['classes'] = $value;
 return;
+
+default:
+$this->error("Unknown '$path' widget path");
 }
 }
 }
@@ -392,7 +398,7 @@ $sitebars = $this->theme->templates['sitebars'];
 foreach ($sitebars as $i => $sitebar) {
 $widget = $sitebar['widget'];
 
-foreach (self::getwidgetnames as $widgetname) {
+foreach (self::getwidgetnames() as $widgetname) {
 if (isset($sitebar[$widgetname])) {
 foreach ($widget as $name => $value) {
 if (empty($sitebar[$widgetname][$name])) {
