@@ -64,6 +64,7 @@ require_once(litepublisher::$paths->lib . 'events.class.php');
 require_once(litepublisher::$paths->lib . 'items.class.php');
 require_once(litepublisher::$paths->lib . 'classes.class.php');
 require_once(litepublisher::$paths->lib . 'options.class.php');
+require_once(litepublisher::$paths->lib . 'site.class.php');
 } else {
 require_once(litepublisher::$paths->lib . 'kernel.php');
 }
@@ -71,6 +72,7 @@ require_once(litepublisher::$paths->lib . 'kernel.php');
 tstorage::loaddata();
   litepublisher::$classes = tclasses::instance();
   litepublisher::$options = toptions::instance();
+  litepublisher::$site = tsite::instance();
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
@@ -80,8 +82,9 @@ tstorage::loaddata();
   }
   
 } catch (Exception $e) {
-  echo $e->GetMessage();
+  //echo $e->GetMessage();
+litepublisher::$options->handexception($e);
 }
-if (tstorage::savedata()) litepublisher::$options->onsave();
+if (tstorage::savemodified()) litepublisher::$options->onsave();
 litepublisher::$options->showerrors();
 ?>

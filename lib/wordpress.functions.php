@@ -388,7 +388,7 @@ function get_stylesheet() {
 }
 
 function get_theme_root_uri( $stylesheet_or_template = false ) {
-  return litepublisher::$options->files . '/themes';
+  return litepublisher::$site->files . '/themes';
 }
 
 function get_theme_root( $stylesheet_or_template = false ) {

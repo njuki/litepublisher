@@ -14,7 +14,7 @@ class tadmintags extends tadminmenu {
   
   public function gethead() {
     if (isset($_GET['full'])) {
-      return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>', litepublisher::$options->files);
+      return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>', litepublisher::$site->files);
     }
     return '';
   }

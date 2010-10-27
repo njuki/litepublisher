@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-/* чтобы предвратить рекурсивный вызов инстал€ции toptions в этом файле нет функции toptionsInstall */
+/* to prevent recurse call function toptionsInstall not exists */
 function installoptions($language) {
   $options = toptions::instance();
   $options->lock();
@@ -28,18 +28,11 @@ function installoptions($language) {
     }
   }
   
-  $options->subdir = getrequestdir();
-  $options->fixedurl = true;
-  $options->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $options->subdir;
-  $options->files =$options->data['url'];
-  $options->q = '?';
-  
   $options->language = $language;
   tlocal::loadlang('admin');
   $options->timezone = tlocal::$data['installation']['timezone'];
   date_default_timezone_set(tlocal::$data['installation']['timezone']);
   $options->dateformat = '';
-  $options->keywords = "blog";
   $options->login = "admin";
   $options->password = "";
   $options->realm = "Admin panel";
@@ -76,22 +69,6 @@ function installoptions($language) {
   
   $options->unlock();
   return $password;
-}
-
-function getrequestdir() {
-  if (isset($_GET) && (count($_GET) > 0) && ($i = strpos($_SERVER['REQUEST_URI'], '?'))) {
-    $_SERVER['REQUEST_URI']= substr($_SERVER['REQUEST_URI'], 0, $i);
-  }
-  
-  if (preg_match('/index\.php$/', $_SERVER['REQUEST_URI'])) {
-    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('index.php'));
-  }
-  
-  if (preg_match('/install\.php$/', $_SERVER['REQUEST_URI'])) {
-    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 0, strlen(   $_SERVER['REQUEST_URI']) - strlen('install.php'));
-  }
-  
-  return rtrim($_SERVER['REQUEST_URI'], '/');
 }
 
 ?>

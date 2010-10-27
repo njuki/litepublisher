@@ -103,7 +103,7 @@ public function getdescription() {}
     
     <sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
     ';
-    $url = litepublisher::$options->files . '/files/' . litepublisher::$domain;
+    $url = litepublisher::$site->files . '/files/' . litepublisher::$domain;
     $exists = true;
     for ($i =1; $i <= $this->countfiles; $i++) {
       $result .= "   <sitemap>
