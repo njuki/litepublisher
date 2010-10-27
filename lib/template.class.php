@@ -171,7 +171,7 @@ class ttemplate extends tevents_storage {
   
   public function gettitle() {
     $title = $this->itemplate ? $this->context->gettitle() : '';
-    if (empty($title)) return litepublisher::$options->name;
+    if (empty($title)) return litepublisher::$site->name;
     
     $args = targs::instance();
     $args->title = $title;
@@ -194,13 +194,13 @@ class ttemplate extends tevents_storage {
   
   public function getkeywords() {
     $result = $this->itemplate ? $this->context->getkeywords() : '';
-    if ($result == '')  return litepublisher::$options->keywords;
+    if ($result == '')  return litepublisher::$site->keywords;
     return $result;
   }
   
   public function getdescription() {
     $result = $this->itemplate ? $this->context->getdescription() : '';
-    if ($result =='') return litepublisher::$options->description;
+    if ($result =='') return litepublisher::$site->description;
     return $result;
   }
   
@@ -303,18 +303,18 @@ class ttemplate extends tevents_storage {
   
   public function getmeta() {
     $result =
-    '<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
-    <link rel="pingback" href="$options.url/rpc.xml" />
-    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
-    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
+    '<link rel="alternate" type="application/rss+xml" title="$site.name RSS Feed" href="$site.url/rss.xml" />
+    <link rel="pingback" href="$site.url/rpc.xml" />
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
     <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
-    <meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
+    <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
     <meta name="keywords" content="$template.keywords" />
     <meta name="description" content="$template.description" />
-    <link rel="sitemap" href="$options.url/sitemap.htm" />
-    <script type="text/javascript" src="$options.files/js/litepublisher/rpc.min.js"></script>
-    <script type="text/javascript" src="$options.files/js/litepublisher/client.min.js"></script>
-    <script type="text/javascript" src="$options.files/js/jsibox/jsibox_basic.js"></script>';
+    <link rel="sitemap" href="$site.url/sitemap.htm" />
+    <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
+    <script type="text/javascript" src="$site.files/js/litepublisher/client.min.js"></script>
+    <script type="text/javascript" src="$site.files/js/jsibox/jsibox_basic.js"></script>';
     
     $theme = ttheme::instance();
     return $theme->parse($result);

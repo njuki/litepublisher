@@ -31,8 +31,8 @@
   <body>
 
 <div id="header"><div id="logo"><span class="name">Lite Publisher</span><span class="slogan">
-$options.name<br />
-$options.description
+$site.name<br />
+$site.description
 </span>
 </div></div>
 	
@@ -42,7 +42,7 @@ $options.description
 
 <h1 class="rubric">$lang.success</h1>
 
-   <p>$lang.canlogin: <a href='$options.url/admin/'>$options.url/admin/</a> $lang.uselogin
+   <p>$lang.canlogin: <a href='$site.url/admin/'>$site.url/admin/</a> $lang.uselogin
 <strong>$lang.login</strong>: <code>$options.login</code> <strong>$lang.password</strong>: <code>$password</code></p>
    <p>$lang.passnote</p>
    
@@ -52,7 +52,7 @@ $options.description
    <dt>$lang.password</dt>
    <dd><code>$password</code></dd>
    </dl>
-  <p>$lang.lostpass:  <strong><a href='$options.url/admin/password/'>$options.url/admin/password/</a></strong></p>
+  <p>$lang.lostpass:  <strong><a href='$site.url/admin/password/'>$site.url/admin/password/</a></strong></p>
 
    <p>$lang.moresteps</p>
 			

@@ -691,7 +691,7 @@ sitebar.archives.items = [<ul class="list-archives" id="widgetarchives">$item</u
 Шаблон для свежих записей, в котором доступны теги $post.* :
 sitebar.posts.item = [<li><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></li>]
 Шаблон для свежих комментариев:
-sitebar.comments.item = [<li><a href=" $link#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $text...</li>]
+sitebar.comments.item = [<li><a href=" $link#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>]
 
 Для шаблона свежих коменнтариев необходимы пояснения к использованным тегам. В шаблоне доступны следующие теги:
 $id - уникальный id (число) комментария

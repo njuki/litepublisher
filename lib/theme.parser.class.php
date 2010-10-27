@@ -209,6 +209,9 @@ $s = '';
 }
 
 public function settag($parent, $s) {
+dumpstr($parent);
+dumpstr($s);
+if (strpos($s, 'import')) dumpstr($s);
 if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) || 
 preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
 $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];

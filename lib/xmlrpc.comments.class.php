@@ -127,7 +127,7 @@ class TXMLRPCComments extends TXMLRPCAbstract {
     $data = $comment->data;
     
     return array(
-    "date_created_gmt"		=> new IXR_Date($comment->posted - litepublisher::$options.gmt),
+    "date_created_gmt"		=> new IXR_Date($comment->posted - litepublisher::$options->gmt),
     "user_id"				=> $data['author'],
     "comment_id"			=> $id,
     "parent"				=> $data['parent'],

@@ -142,7 +142,7 @@ class tauthdigest extends tevents {
   }
   
   public function setcookies($cookie, $expired) {
-    setcookie('admin', $cookie, $expired, litepublisher::$options->subdir . '/', false);
+    setcookie('admin', $cookie, $expired, litepublisher::$site->subdir . '/', false);
     if (litepublisher::$options->user == 1) {
       litepublisher::$options->setcookie($cookie);
       litepublisher::$options->cookieexpired = $expired;

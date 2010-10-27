@@ -50,7 +50,7 @@ class tabstractpingbacks extends titems {
     $subject = $mailtemplate->pingbacksubj($args);
     $body = $mailtemplate->pingbackbody($args);
     
-    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
+    tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email,  $subject, $body);
     
   }

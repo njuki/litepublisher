@@ -327,7 +327,7 @@ class tcommontags extends titems implements  itemplate {
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
-      $tml = '<li><a href="$options.url$url" title="$title">$icon$title</a>$count</li>';
+      $tml = '<li><a href="$link" title="$title">$icon$title</a>$count</li>';
       $result .= $this->getsortedcontent('count', 0, 0, false, $tml);
       return sprintf("<ul>\n%s</ul>\n", $result);
     }

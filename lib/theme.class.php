@@ -106,23 +106,17 @@ return $this->templates[$name];
   public function getsitebarscount() {
     return count($this->templates['sitebars']);
   }
-  
-  public function parsecallback($names) {
-    $name = $names[1];
-    $prop = $names[2];
-    //if ($prop == '') return "\$$name.";
-    if ($name == 'options') {
-      if (($prop == 'password') || ($prop == 'cookie')) return '';
-      $var = litepublisher::$options;
-    } elseif (isset(self::$vars[$name])) {
-      $var =  self::$vars[$name];
-    } elseif (isset($GLOBALS[$name])) {
+
+
+private function getvar($name) {
+if ($name == 'site')  return litepublisher::$site;
+
+if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
       $classes = litepublisher::$classes;
       if (isset($classes->classes[$name])) {
         $var = $classes->getinstance($classes->classes[$name]);
-self::$vars[$name] = $var;
       } else {
         $class = 't' . $name;
         if (isset($classes->items[$class])) $var = $classes->getinstance($class);
@@ -135,10 +129,24 @@ self::$vars[$name] = $var;
     }
     
     if (!is_object($var)) {
-      litepublisher::$options->trace(sprintf("Object $name and property $prop  not found in \n%s\n", $this->parsing[count($this->parsing) -1]));
-      return '';
+      litepublisher::$options->trace(sprintf('Object %s not found in %s', $name, $this->parsing[count($this->parsing) -1]));
+      return false;
     }
-    
+
+return $var;
+}
+  
+  public function parsecallback($names) {
+    $name = $names[1];
+    $prop = $names[2];
+if (isset(self::$vars[$name])) {
+      $var =  self::$vars[$name];
+} elseif ($var = $this->getvar($name)) {
+self::$vars[$name] = $var;    
+} else {
+return '';
+}
+
     try {
     return $var->{$prop};
     } catch (Exception $e) {
@@ -149,7 +157,7 @@ self::$vars[$name] = $var;
   }
   
   public function parse($s) {
-    $s = str_replace('$options.url', litepublisher::$site->url, (string) $s);
+    $s = str_replace('$site.url', litepublisher::$site->url, (string) $s);
     array_push($this->parsing, $s);
     try {
 $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
@@ -257,7 +265,7 @@ if ($tml == '') return $result;
   }
   
   public function getwidgettemplate($name, $sitebar) {
-    $sitebars = &$this->data['sitebars'];
+    $sitebars = &$this->templates['sitebars'];
     if (!isset($sitebars[$sitebar][$name][0])) $name = 'widget';
     return $sitebars[$sitebar][$name][0];
   }
@@ -271,7 +279,7 @@ if ($tml == '') return $result;
   }
   
   public function  getwidgettml($index, $name, $tml) {
-    $sitebars = &$this->data['sitebars'];
+    $sitebars = &$this->templates['sitebars'];
     if (isset($sitebars[$index][$name][$tml])) return $sitebars[$index][$name][$tml];
     if ($tml == 'items'){
       if (isset($sitebars[$index])) return $sitebars[$index]['widget']['items'];

@@ -37,8 +37,8 @@ $url = litepublisher::$site->url;
     $args->onrecent = tlocal::$data['comment']['onrecent'];
     foreach ($recent as $item) {
       $args->add($item);
-$args->link = $url . $posturl;
-      $args->text = tcontentfilter::getexcerpt($item['content'], 120);
+$args->link = $url . $item['posturl'];
+      $args->content = tcontentfilter::getexcerpt($item['content'], 120);
       $result .= $theme->parsearg($tml,$args);
     }
     return $theme->getwidgetcontent($result, 'comments', $sitebar);

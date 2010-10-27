@@ -109,7 +109,7 @@ tfilestorage::save($this);
       if (empty($user['email'])) continue;
       if ($user['email'] == $comment->email) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
-      tmailer::sendmail(litepublisher::$options->name, $this->fromemail,  $user['name'], $user['email'],
+      tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $user['email'],
       $subject, $body . $user['cookie']);
     }
   }

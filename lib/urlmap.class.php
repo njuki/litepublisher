@@ -41,7 +41,7 @@ class turlmap extends titems {
     $this->page = 1;
     $this->uripath = array();
     if (litepublisher::$site->q == '?') {
-      $this->url = substr($url, strlen(litepublisher::$options->subdir));
+      $this->url = substr($url, strlen(litepublisher::$site->subdir));
     } else {
       $this->url = $_GET['url'];
     }
