@@ -91,8 +91,8 @@ class tabstractcron extends tevents {
   
   public function ping() {
     $urlmap = turlmap::instance();
-    $this->AddToChain($urlmap->host, litepublisher::$options->subdir . $this->url);
-    $this->PingHost($urlmap->host, litepublisher::$options->subdir . $this->url);
+    $this->AddToChain($urlmap->host, litepublisher::$site->subdir . $this->url);
+    $this->PingHost($urlmap->host, litepublisher::$site->subdir . $this->url);
   }
   
   private function PingHost($host, $path) {
@@ -132,7 +132,7 @@ class tabstractcron extends tevents {
     if (($time === false) || ($time + 3600 > time())) return;
     $s = file_get_contents($filename);
     @unlink($filename);
-    tmailer::SendAttachmentToAdmin('[error] '. litepublisher::$options->name, 'See attachment', 'errors.txt', $s);
+    tmailer::SendAttachmentToAdmin('[error] '. litepublisher::$site->name, 'See attachment', 'errors.txt', $s);
     sleep(2);
   }
   

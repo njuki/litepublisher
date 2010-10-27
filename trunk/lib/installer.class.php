@@ -346,7 +346,6 @@ class tinstaller extends tdata {
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
     
     $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.ini';
-var_dump($ini);
     tlocal::loadini($ini);
    
     $ini = litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini';

@@ -492,7 +492,7 @@ function wp_list_categories( $args = '' ) {
     
     $items = $cats->getsorted($sortnames[$r['orderby']], $limit);
     $theme = ttheme::instance();
-    $tml = '<li class="cat-item cat-item-$id"><a href="$options.url$url" title="View all posts filed under $title">$icon$title</a>$count</li>';
+    $tml = '<li class="cat-item cat-item-$id"><a href="$link" title="View all posts filed under $title">$icon$title</a>$count</li>';
     $args = targs::instance();
     $args->count = '';
     foreach ($items as $id) {
@@ -527,13 +527,13 @@ function wp_get_archives($args = '') {
   $arch = tarchives::instance();
   
   if ('link' == $format)
-  $tml = "\t<link rel='archives' title='\$title' href='\$options.url\$url' />\n";
+  $tml = "\t<link rel='archives' title='\$title' href='\$url' />\n";
   elseif ('option' == $format)
-  $tml = "\t<option value='\$options.url\$url'>$before \$title$after</option>\n";
+  $tml = "\t<option value='\$url'>$before \$title$after</option>\n";
   elseif ('html' == $format)
-  $tml = "\t<li>$before<a href='\$options.url\$url' title='\$title'>\$title</a>\$count$after</li>\n";
+  $tml = "\t<li>$before<a href='\$url' title='\$title'>\$title</a>\$count$after</li>\n";
   else // custom
-  $tml = "\t$before<a href='\$options.url\$url' title='\$title'>\$title</a>\$count$after\n";
+  $tml = "\t$before<a href='\$url' title='\$title'>\$title</a>\$count$after\n";
   
   $theme = ttheme::instance();
   $args = targs::instance();

@@ -70,7 +70,7 @@ class tadminreguser extends tadminform {
     $body = $mailtemplate->body($args);
     $adminbody = $mailtemplate->adminbody($args);
     tmailer::sendtoadmin($subject, $adminbody);
-    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
+    tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
     $this->registered = true;
     return $this->html->h2->successreg;

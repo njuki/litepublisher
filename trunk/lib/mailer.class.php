@@ -51,7 +51,7 @@ class tmailer {
       return;
     }
     
-    self::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
+    self::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email, $subject, $body);
   }
   
@@ -66,7 +66,7 @@ class tmailer {
     $options =     litepublisher::$options;
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = date('r');
-    $from = self::CreateEmail($options->name, $options->fromemail);
+    $from = self::CreateEmail(litepublisher::$site->name, $options->fromemail);
     $to = self::CreateEmail('admin', $options->email);
     $boundary = md5(microtime());
     $textpart = "--$boundary\nContent-Type: text/plain; charset=\"UTF-8\"\nContent-Transfer-Encoding: base64\n\n";

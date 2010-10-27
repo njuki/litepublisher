@@ -183,7 +183,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     $args->part = $part;
     $args->id = $id;
     if ($item['media'] == 'image') {
-      $img = '<img src="litepublisher::$options.files/files/$filename" title="$filename" />';
+      $img = '<img src="$site.files/files/$filename" title="$filename" />';
       if ($item['preview'] == 0) {
         $args->preview = '';
       } else {

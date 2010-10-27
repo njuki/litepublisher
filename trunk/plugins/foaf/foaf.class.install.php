@@ -53,7 +53,7 @@ function tfoafInstall($self) {
   $urlmap->unlock();
   
   $template = ttemplate::instance();
-  $template->heads['foaf'] = '	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$options.url/foaf.xml" />';
+  $template->heads['foaf'] = '	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />';
   $template->save();
   
   $about = tplugins::getabout($name);

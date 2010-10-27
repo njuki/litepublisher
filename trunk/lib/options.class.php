@@ -134,7 +134,7 @@ if (tstorage::savemodified()) $this->onsave();
   }
   
   public function Getinstalled() {
-    return isset($this->data['url']);
+    return isset($this->data['login']);
   }
   
   public function settimezone($value) {

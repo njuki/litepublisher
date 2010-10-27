@@ -51,7 +51,7 @@ class tadminpassword extends tadminform {
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     
-    tmailer::sendmail(litepublisher::$options->name, litepublisher::$options->fromemail,
+    tmailer::sendmail(litepublisher::$site->name, litepublisher::$options->fromemail,
     $name, $email, $subject, $body);
     return $this->html->h2->success;
   }

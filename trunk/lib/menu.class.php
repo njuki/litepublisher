@@ -15,7 +15,7 @@ class tmenus extends titems {
   
   protected function create() {
     parent::create();
-    $this->addevents('edited', 'onprocessform');
+    $this->addevents('edited', 'onprocessform', 'onmenu', 'onitems', 'onsubitems');
     
     $this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
@@ -216,22 +216,28 @@ class tmenus extends titems {
   }
   
   public function getmenu($hover, $current) {
-    if (count($this->tree) == 0) return '';
+$result = '';
+    if (count($this->tree) > 0) {
     $theme = ttheme::instance();
     if ($hover) {
-      $result = $this->getsubmenu($this->tree, $current);
-      return str_replace('$items', $result, $theme->menu);
-    }
-    
-    $result = '';
+      $items = $this->getsubmenu($this->tree, $current);
+    } else {
+$items = '';
     $tml = $theme->menu->item;
     $args = targs::instance();
     $args->submenu = '';
     foreach ($this->tree as $id => $items) {
       $args->add($this->items[$id]);
-      $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
+      $items .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
     }
-    return str_replace('$items', $result, (string) $theme->menu);
+}
+
+      $this->callevent('onitems', array(&$items));
+      $result = str_replace('$item', $items, (string) $theme->menu);
+}
+      $this->callevent('onmenu', array(&$result));
+return $result;
+
   }
   
   private function getsubmenu(&$tree, $current) {
@@ -241,7 +247,9 @@ class tmenus extends titems {
     $tml = $menu->item;
     $args = targs::instance();
     foreach ($tree as $id => $items) {
-      $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
+$submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
+      $this->callevent('onsubitems', array($id, &$subitems));
+      $args->submenu = $submenu;
       $args->add($this->items[$id]);
       $result .= $theme->parsearg($current == $id ?  $menu->current : $tml, $args);
     }
