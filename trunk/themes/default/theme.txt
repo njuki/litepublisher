@@ -413,7 +413,7 @@ $comment
 Объявим шаблон комментария:
 
 content.post.templatecomments.comments.comment = [
- <li $class1=[class="alt"] $class2=[ ] id="comment-$comment.id">
+ <li $class1=[class="alt"] $class2=[] id="comment-$comment.id">
   <a name="comment-$comment.id"></a>
   <div class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date = [d.m.Y] $lang.attime $comment.time</a></div>
   <span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
