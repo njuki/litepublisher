@@ -267,7 +267,7 @@ return false;
 }
 
 public static function savemodified() {
-    if (self::modified) {
+    if (self::$modified) {
 if (self::$disabled) return false;
 self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
     self::$modified = false;

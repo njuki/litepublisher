@@ -46,6 +46,10 @@ $this->basename = 'site';
     }
     $this->save();
   }
+
+public function getversion() {
+return litepublisher::$options->data['version'];
+}
   
 }//class
 

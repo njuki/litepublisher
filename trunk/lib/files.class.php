@@ -24,7 +24,7 @@ class tfiles extends titems {
   
   public function geturl($id) {
     $item = $this->getitem($id);
-    return litepublisher::$options->files . '/files/' . $item['filename'];
+    return litepublisher::$site->files . '/files/' . $item['filename'];
   }
   
   public function getlink($id) {
@@ -33,7 +33,7 @@ class tfiles extends titems {
     if (($item['icon'] != 0) && ($item['media'] != 'icon')) {
       $icon = $this->geticon($item['icon']);
     }
-    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', litepublisher::$options->files. $item['filename'], $item['title'], $icon . $item['description']);
+    return sprintf('<a href="%1$s" title="%2$s">%3$s</a>', litepublisher::$site->files. $item['filename'], $item['title'], $icon . $item['description']);
   }
   
   public function geticon($id) {

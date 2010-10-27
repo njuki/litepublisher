@@ -85,7 +85,7 @@ class tadminfiles extends tadminmenu {
       $item = $files->items[$id];
       $args->add($item);
       $args->id = $id;
-      if ($type == 'icon') $args->title = sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$options->files, $item['filename']);
+      if ($type == 'icon') $args->title = sprintf('<img src="%1$s/files/%2$s" title="%2$s" />', litepublisher::$site->files, $item['filename']);
       $result .= $html->tableitem ($args);
     }
     

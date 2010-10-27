@@ -13,7 +13,7 @@ class themleditplugin extends tplugin {
   }
   
   public function install() {
-    $url = litepublisher::$options->files . '/plugins/' . tplugins::getname(__file__);
+    $url = litepublisher::$site->files . '/plugins/' . tplugins::getname(__file__);
     $about = tplugins::getabout(tplugins::getname(__file__));
     $template = ttemplate::instance();
     $template->adminheads['htmleditplugin'] = '<link rel="stylesheet" href="' . $url . '/ed.css" type="text/css" />';

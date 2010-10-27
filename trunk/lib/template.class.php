@@ -30,12 +30,12 @@ class ttemplate extends tevents {
     parent::create();
     $this->basename = 'template' ;
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
-    $this->url = litepublisher::$options->files . '/themes/default';
+    $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
     $this->hover = true;
     $this->javaoptions = array(0 =>
     sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s',\nidurl: '%3\$s'",
-    litepublisher::$options->url, litepublisher::$options->files, litepublisher::$urlmap->itemrequested['id']));
+    litepublisher::$options->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
     $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
     $this->data['theme'] = 'default';
     $this->data['admintheme'] = '';
@@ -72,7 +72,7 @@ class ttemplate extends tevents {
     parent::afterload();
     if (!$this->theme_exists($this->theme))  $this->theme = 'default';
     $this->path = litepublisher::$paths->themes . $this->theme  . DIRECTORY_SEPARATOR ;
-    $this->url = litepublisher::$options->files . '/themes/'. $this->theme;
+    $this->url = litepublisher::$site->files . '/themes/'. $this->theme;
   }
   
   public function theme_exists($name) {
@@ -124,7 +124,7 @@ class ttemplate extends tevents {
     */
     $tmlfile = 'index';
     $this->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR ;
-    $this->url = litepublisher::$options->files . "/themes/$name";
+    $this->url = litepublisher::$site->files . "/themes/$name";
     return ttheme::getinstance($name, $tmlfile);
   }
   
@@ -188,7 +188,7 @@ class ttemplate extends tevents {
         if ($files->itemexists($icon)) $result = $files->geturl($icon);
       }
     }
-    if ($result == '')  return litepublisher::$options->files . '/favicon.ico';
+    if ($result == '')  return litepublisher::$site->files . '/favicon.ico';
     return $result;
   }
   
@@ -269,7 +269,7 @@ class ttemplate extends tevents {
   }
   
   public function getjavascript($filename) {
-    return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$options->files . $filename) . "\n";
+    return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$site->files . $filename) . "\n";
   }
   
   public function gethead() {

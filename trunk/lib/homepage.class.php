@@ -40,7 +40,7 @@ public function getdescription() {}
     if (litepublisher::$urlmap->page == 1) {
       $image = $this->image;
       if ($image != '') {
-        if (!strbegin($image, 'http://')) $image = litepublisher::$options->files . $image;
+        if (!strbegin($image, 'http://')) $image = litepublisher::$site->files . $image;
         $image = sprintf('<img src="%s" algt="Home image" />', $image);
       }
       $result .= $theme->simple($image . $this->text);
