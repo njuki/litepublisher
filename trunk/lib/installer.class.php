@@ -63,7 +63,7 @@ class tinstaller extends tdata {
   public function OutputResult($password) {
     if ($this->mode == 'remote') {
       $result = array(
-      'url' => litepublisher::$options->url,
+      'url' => litepublisher::$site->url,
       'login' => litepublisher::$options->login,
       'password' => $password,
       'email' => litepublisher::$options->email,
@@ -189,7 +189,7 @@ class tinstaller extends tdata {
     litepublisher::$options->description = $description;
     litepublisher::$options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
-    if (litepublisher::$options->q == '&') litepublisher::$options->data['url'] .= '/index.php?url=';
+    if (litepublisher::$site->q == '&') litepublisher::$options->data['url'] .= '/index.php?url=';
     litepublisher::$options->unlock();
   }
   
@@ -234,9 +234,9 @@ class tinstaller extends tdata {
   
   public function CheckApache($rewrite) {
     if ($rewrite || (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules()))) {
-      litepublisher::$options->q = '?';
+      litepublisher::$site->q = '?';
     } else {
-      litepublisher::$options->q = '&';
+      litepublisher::$site->q = '&';
     }
   }
   
@@ -313,7 +313,7 @@ class tinstaller extends tdata {
     //tlocal::loadlang('admin');
     if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
     $lang = &tlocal::$data['installation'];
-    $body = sprintf($lang['body'], litepublisher::$options->url, litepublisher::$options->login, mailpassword);
+    $body = sprintf($lang['body'], litepublisher::$site->url, litepublisher::$options->login, mailpassword);
     
     tmailer::sendmail('', litepublisher::$options->fromemail,
     '', litepublisher::$options->email, $lang['subject'], $body);
@@ -327,7 +327,7 @@ class tinstaller extends tdata {
     $lang = tlocal::instance('installation');
     $args = targs::instance();
     $args->title = litepublisher::$options->name;
-    $args->url = litepublisher::$options->url . '/';
+    $args->url = litepublisher::$site->url . '/';
     $args->password = $password;
     $content = $html->parsearg($tml, $args);
     $this->echohtml($content);

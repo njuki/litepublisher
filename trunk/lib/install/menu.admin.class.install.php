@@ -16,7 +16,7 @@ function tadminmenusInstall($self) {
     $self->items[$id]['title'] = tlocal::$data['names']['midle'];
     $item = $self->items[$id];
     $item['id'] = ++$self->autoid;
-    $item['url'] .= litepublisher::$options->q . 'mode=short';
+    $item['url'] .= litepublisher::$site->q . 'mode=short';
     $item['title'] = tlocal::$data['names']['quick'];
     $self->items[$self->autoid] = $item;
     $self->createitem($posts, 'categories', 'editor', 'tadmintags');

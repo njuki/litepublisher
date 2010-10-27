@@ -64,7 +64,7 @@ class tadminreguser extends tadminform {
     $args->add($users->getitem($id));
     $args->id = $id;
     $args->password = $password;
-    $args->adminurl = litepublisher::$options->url . '/admin/users/' . litepublisher::$options->q . 'id';
+    $args->adminurl = litepublisher::$site->url . '/admin/users/' . litepublisher::$site->q . 'id';
     $mailtemplate = tmailtemplate::instance($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);

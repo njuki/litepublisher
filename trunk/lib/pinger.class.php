@@ -174,7 +174,7 @@ class tpinger extends tevents {
   }
   
   public function pingservices($url) {
-    $home = litepublisher::$options->url . litepublisher::$options->home;
+    $home = litepublisher::$site->url . litepublisher::$options->home;
     $list = explode("\n", $this->services);
     foreach ($list as $service) {
       $service = trim($service);
@@ -183,7 +183,7 @@ class tpinger extends tevents {
       $client->timeout = 3;
       $client->useragent .= ' -- Lite Publisher/'.litepublisher::$options->version;
       $client->debug = false;
-      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$options->name, $home, $url, litepublisher::$options->url . "/rss/") )
+      if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$options->name, $home, $url, litepublisher::$site->url . "/rss/") )
       $client->query('weblogUpdates.ping', litepublisher::$options->name, $url);
     }
   }

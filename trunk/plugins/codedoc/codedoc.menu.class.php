@@ -58,7 +58,7 @@ class tcodedocmenu extends tmenu {
     order by $db->codedoc.class, $db->posts.title, $db->posts.posted");
     
     $count = 0;
-    $url = litepublisher::$options->url;
+    $url = litepublisher::$site->url;
     while ($item = $db->fetchassoc($res)) {
       $result .= sprintf('<li><a href="%1$s%2$s" title="%3$s">%3$s</a></li>', $url, $item['url'], $item['title']);
       $count++;

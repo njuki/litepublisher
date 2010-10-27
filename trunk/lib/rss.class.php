@@ -77,7 +77,7 @@ class trss extends tevents {
   }
   
   public function GetRSSRecentPosts() {
-    $this->domrss->CreateRoot(litepublisher::$options->url. '/rss.xml', litepublisher::$options->name);
+    $this->domrss->CreateRoot(litepublisher::$site->url. '/rss.xml', litepublisher::$options->name);
     $posts = tposts::instance();
     $list = $posts->getrecent(litepublisher::$options->perpage);
     foreach ($list as $id ) {
@@ -88,7 +88,7 @@ class trss extends tevents {
   }
   
   public function GetRecentComments() {
-    $this->domrss->CreateRoot(litepublisher::$options->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
+    $this->domrss->CreateRoot(litepublisher::$site->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent(litepublisher::$options->perpage);
     $title = tlocal::$data['comment']['onpost'] . ' ';
@@ -107,7 +107,7 @@ class trss extends tevents {
   }
   
   private function dogetholdcomments($url, $count) {
-    $this->domrss->CreateRoot(litepublisher::$options->url . $url, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
+    $this->domrss->CreateRoot(litepublisher::$site->url . $url, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$options->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($count, 'hold');
     $title = tlocal::$data['comment']['onpost'] . ' ';
@@ -216,7 +216,7 @@ class trss extends tevents {
   }
   
   public function AddRSSComment($comment, $title) {
-    $link = litepublisher::$options->url . $comment->posturl . '#comment-' . $comment->id;
+    $link = litepublisher::$site->url . $comment->posturl . '#comment-' . $comment->id;
     $date = is_int($comment->posted) ? $comment->posted : strtotime($comment->posted);
     $item = $this->domrss->AddItem();
     AddNodeValue($item, 'title', $title);

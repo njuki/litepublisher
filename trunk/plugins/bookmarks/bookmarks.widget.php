@@ -33,10 +33,10 @@ class tbookmarkswidget extends tlinkswidget  {
     if (litepublisher::$urlmap->is404) return '';
     $result = '';
     $a = array(
-    '$url' => urlencode(litepublisher::$options->url .  litepublisher::$urlmap->url),
+    '$url' => urlencode(litepublisher::$site->url .  litepublisher::$urlmap->url),
     '$title' => urlencode(ttemplate::instance()->title)
     );
-    $redirlink = litepublisher::$options->url . $this->redirlink . litepublisher::$options->q . strtr('url=$url&title=$title&id=', $a);
+    $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$options->q . strtr('url=$url&title=$title&id=', $a);
     $iconurl = litepublisher::$site->files . sprintf('/plugins/%s/icons/', basename(dirname(__file__)));
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('links', $sitebar);

@@ -202,7 +202,7 @@ public function save() { return true; }
   }
   
   public function getadminurl() {
-    return litepublisher::$options->url .$this->url . litepublisher::$options->q . 'id';
+    return litepublisher::$site->url .$this->url . litepublisher::$site->q . 'id';
   }
   
   public function getfrom($perpage, $count) {

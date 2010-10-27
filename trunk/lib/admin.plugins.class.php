@@ -21,7 +21,7 @@ class tadminplugins extends tadminmenu {
   
   public function getpluginsmenu() {
     $result = '';
-    $url = $this->url . litepublisher::$options->q . 'plugin=';
+    $url = $this->url . litepublisher::$site->q . 'plugin=';
     $plugins = tplugins::instance();
     foreach ($this->names as $name) {
       $about = tplugins::getabout($name);

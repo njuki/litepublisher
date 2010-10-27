@@ -33,7 +33,7 @@ $site.description - описание сайта
 
 Далее мы встречаем тег $template.menu - ЭТО СПИСОК МЕНЮ В ШАПКЕ САЙТА, ЗАДЕКЛАРИРУЕМ ШАБЛОН ДЛЯ ЭТОГО ТЕГА
 
-$TEMPLATE.MENU = [
+$template.menu = [
 $hover = [true]
 $id = [nav]
 $tag = [li]
@@ -207,13 +207,13 @@ $icon - html иконка, если есть
 
 Перед тем, как расматривать шаблон списка файлов рассмотрим два несложных шаблона - ссылка на RSS и ссылки на следующую и предыдущую запись.
 
-CONTENT.post.rsslink = [
+content.post.rsslink = [
 <span class="post-rsscomments"><a href="$post.rsscomments" title="$lang.subscribetorsscomments" >$lang.subscribetorsscomments</a></span>
 ]
 
 В этом шаблоне встречаются два тега: $post.rsscomments - это адресс ссылки RSS комментариев записи, а $lang - строка "Подписаться на RSS комментариев". Все более чем просто. Также несложный шаблон ссыллок на следующую и предыдущую запись:
 
-CONTENT.POST.PREVNEXT = [
+content.post.prevnext = [
 								<div id="prevnext">
 								$prev = [<p id="prev">&larr; $lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a></p>]
 								$next = [<p id="next">$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a> &rarr;</p>]
@@ -413,7 +413,7 @@ $comment
 Объявим шаблон комментария:
 
 content.post.templatecomments.comments.comment = [
- <li $class1=[class="alt"] $class2=[] id="comment-$comment.id">
+ <li $class1=[class="alt"] $class2=[ ] id="comment-$comment.id">
   <a name="comment-$comment.id"></a>
   <div class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date = [d.m.Y] $lang.attime $comment.time</a></div>
   <span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>

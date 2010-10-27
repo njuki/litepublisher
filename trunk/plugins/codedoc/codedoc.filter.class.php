@@ -129,7 +129,7 @@ class tcodedocfilter extends titems {
     }
     
     $args->childs = $this->getchilds($post->id);
-    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$options->url, $doc['source']);
+    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
     $args->interfaces = $this->getclasses($doc, 'interface');
     $args->dependent = $this->getclasses($doc, 'dependent');
     $description = $this->getdescription($post, $doc['description']);
@@ -252,7 +252,7 @@ class tcodedocfilter extends titems {
     $post->title = sprintf($lang->interfacetitle, $class);
     $id = $wiki->add($class, $post->id);
     $args->class = sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
-    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$options->url, $doc['source']);
+    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
     $content = $this->getdescription($post, $doc['description']);
     $post->excerpt = $content;
     $content .= $this->convertitems($post, $ini, 'method', 'methods');

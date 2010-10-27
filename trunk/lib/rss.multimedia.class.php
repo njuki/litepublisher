@@ -39,7 +39,7 @@ class trssMultimedia extends tevents {
     $result .= turlmap::xmlheader();
     
     $this->domrss = new tdomrss;
-    $this->domrss->CreateRootMultimedia(litepublisher::$options->url. litepublisher::$urlmap->url, 'media');
+    $this->domrss->CreateRootMultimedia(litepublisher::$site->url. litepublisher::$urlmap->url, 'media');
     
     $list = $this->getrecent($arg, litepublisher::$options->perpage);
     foreach ($list as $id) {
@@ -74,7 +74,7 @@ class trssMultimedia extends tevents {
     $file = $files->getitem($id);
     $posts = $files->itemsposts->getposts($id);
     if (count($posts) == 0) {
-      $postlink = litepublisher::$options->url . '/';
+      $postlink = litepublisher::$site->url . '/';
     } else {
       $post = tpost::instance($posts[0]);
       $postllink = $post->link;

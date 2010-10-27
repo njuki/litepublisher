@@ -35,7 +35,7 @@ class TXMLRPCAction extends titems {
   public function confirm($id, $to, $name, $args) {
     $this->DeleteExpired();
     if (!isset($this->actions[$id])) return new IXR_Error(403, 'Action not found');
-    if ($to != litepublisher::$options->url . '/rpc.xml') return new IXR_Error(403, 'Bad xmlrpc server');
+    if ($to != litepublisher::$site->url . '/rpc.xml') return new IXR_Error(403, 'Bad xmlrpc server');
     return true;
   }
   
@@ -92,7 +92,7 @@ class TXMLRPCAction extends titems {
     $this->unlock();
     
     $Client  = new IXR_Client($to);
-    if ($Client->query('litepublisher.action.send', $id, litepublisher::$options->url . '/rpc.xml', $name, $args)) {
+    if ($Client->query('litepublisher.action.send', $id, litepublisher::$site->url . '/rpc.xml', $name, $args)) {
       return $Client->getResponse();
     }
     return false;

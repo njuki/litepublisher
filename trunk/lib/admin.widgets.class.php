@@ -40,7 +40,7 @@ class tadminwidgets extends tadminmenu {
     $result = $html->checkallscript;
     $result .= $html->formhead();
     $args = targs::instance();
-    $args->adminurl = litepublisher::$options->url . '/admin/widgets/' . litepublisher::$options->q . 'idwidget';
+    $args->adminurl = litepublisher::$site->url . '/admin/widgets/' . litepublisher::$site->q . 'idwidget';
     $count = count($sitebars);
     $sitebarnames = self::getsitebarnames(count($sitebars));
     foreach ($sitebars as $i => $sitebar) {
@@ -126,7 +126,7 @@ class tadminwidgets extends tadminmenu {
       $result = '';
       $html = $this->html;
       $args = targs::instance();
-      $args->adminurl = litepublisher::$options->url .$this->url . litepublisher::$options->q . 'class';
+      $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . 'class';
       foreach ($widgets->classes as $class => $items) {
         $args->class = $class;
         $args->name = $this->getclassname($class);

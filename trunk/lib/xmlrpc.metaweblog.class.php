@@ -224,8 +224,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       'description' => $categories->contents->getdescription($item['id']),
       'categoryName' => $item['title'],
       'title' => $item['title'],
-      'htmlUrl' => litepublisher::$options->url . $item['url'],
-      'rssUrl' =>  litepublisher::$options->url . $item['url']
+      'htmlUrl' => litepublisher::$site->url . $item['url'],
+      'rssUrl' =>  litepublisher::$site->url . $item['url']
       );
     }
     

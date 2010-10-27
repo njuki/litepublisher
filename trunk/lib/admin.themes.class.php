@@ -20,7 +20,7 @@ class tadminthemes extends tadminmenu {
     $template = ttemplate::instance();
     if ($plugin = $this->getplugin())  {
       $args->themename = $Template->theme;
-      $args->url = litepublisher::$options->url . $this->url . litepublisher::$options->q ."plugin=$template->theme";
+      $args->url = litepublisher::$site->url . $this->url . litepublisher::$site->q ."plugin=$template->theme";
       $result .= $html->pluginlink($args);
     }
     switch ($this->name) {
@@ -32,7 +32,7 @@ class tadminthemes extends tadminmenu {
       $result .= $html->formheader();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
-      $args->editurl = litepublisher::$options->url . $this->url . 'edit/' . litepublisher::$options->q . 'theme';
+      $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'theme';
       
       $parser = tthemeparser::instance();
       foreach ($list as $name) {
@@ -52,7 +52,7 @@ class tadminthemes extends tadminmenu {
       $result = sprintf($html->h2->filelist, $themename);
       $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
-      $editurl = litepublisher::$options->url . $this->url . litepublisher::$options->q . "theme=$themename&file";
+      $editurl = litepublisher::$site->url . $this->url . litepublisher::$site->q . "theme=$themename&file";
       $fileitem = $html->fileitem . "\n";
       $filelist = '';
       foreach ($list as $file) {

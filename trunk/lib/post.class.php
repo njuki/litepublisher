@@ -159,7 +159,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function Getlink() {
-    return litepublisher::$options->url . $this->url;
+    return litepublisher::$site->url . $this->url;
   }
   
   public function Setlink($link) {
@@ -179,7 +179,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getrsscomments() {
-    return litepublisher::$options->url . "/comments/$this->id.xml";
+    return litepublisher::$site->url . "/comments/$this->id.xml";
   }
   
   public function Getpubdate() {
@@ -608,7 +608,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
       $users = tusers::instance();
       $account = $users->getitem($id);
       if (!$link || ($account['url'] == '')) return $account['name'];
-      return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$options->url, litepublisher::$options->q, $id, $account['name']);
+      return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $account['name']);
     }
   }
   

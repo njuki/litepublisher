@@ -14,7 +14,7 @@ function tsitemapInstall($self) {
   $urlmap->add('/sitemap.htm', get_class($self), null);
   
   $robots = trobotstxt ::instance();
-  array_splice($robots->items, 1, 0, "Sitemap: " . litepublisher::$options->url . "/sitemap.xml");
+  array_splice($robots->items, 1, 0, "Sitemap: " . litepublisher::$site->url . "/sitemap.xml");
   $robots->save();
   
   $self->add('/sitemap.htm', 4);

@@ -29,7 +29,7 @@ class TXMLRPCParser extends IXR_Server  {
     @header('Date: ".date('r') . "');
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');
-    @header('X-Pingback: ". litepublisher::$options->url . "/rpc.xml');
+    @header('X-Pingback: ". litepublisher::$site->url . "/rpc.xml');
     echo'$head';
     ?>" . $xml;
   }

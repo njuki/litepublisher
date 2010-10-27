@@ -22,7 +22,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     
     $result = array(
     //'isAdmin'  => true,
-    'url'      => litepublisher::$options->url . '/',
+    'url'      => litepublisher::$site->url . '/',
     'blogid'   => '1',
     'blogName' => litepublisher::$options->name
     );
@@ -35,7 +35,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     $result= array(
     'nickname'  => $login,
     'userid'    => litepublisher::$options->user,
-    'url'       => litepublisher::$options->url .'/',
+    'url'       => litepublisher::$site->url .'/',
     'lastname'  => '',
     'firstname' => ''		);
     return $result;

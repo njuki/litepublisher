@@ -114,7 +114,7 @@ class tcomusers extends titems {
     }
     
     $url = $item['url'];
-    if (!strpos($url, '.')) $url = litepublisher::$options->url . $options->home;
+    if (!strpos($url, '.')) $url = litepublisher::$site->url . $options->home;
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;
     turlmap::redir($url);
   }

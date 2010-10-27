@@ -13,11 +13,11 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
   }
   
   public function ping($from, $to) {
-    if (!strbegin($to, litepublisher::$options->url)) {
+    if (!strbegin($to, litepublisher::$site->url)) {
       return new IXR_Error(0, 'Is there no link to us?');
     }
     
-    $url = substr($to, strlen(litepublisher::$options->url) );
+    $url = substr($to, strlen(litepublisher::$site->url) );
     $urlmap = turlmap::instance();
     if (!($item = $urlmap->finditem($url))) {
       return $this->xerror(0, 'Is there no link to us?');

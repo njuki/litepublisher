@@ -241,7 +241,7 @@ class tcommontags extends titems implements  itemplate {
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
-      $result[] = sprintf('<a href="%1$s" title="%2$s">%2$s</a>', litepublisher::$options->url . $item['url'], $item['title']);
+      $result[] = sprintf('<a href="%1$s" title="%2$s">%2$s</a>', litepublisher::$site->url . $item['url'], $item['title']);
     }
     return $result;
   }

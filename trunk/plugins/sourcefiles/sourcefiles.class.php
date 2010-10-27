@@ -40,7 +40,7 @@ public function gethead() { }
   public function getcont() {
     $updir = '';
     if($this->item['filename'] != '') {
-      $updir = sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$options->url, $this->item['dir']);
+      $updir = sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$site->url, $this->item['dir']);
     }
     $theme = ttheme::instance();
     if (strend($this->item['filename'], '.php')) {
@@ -109,7 +109,7 @@ public function gethead() { }
     $dirs = array();
     $files = array();
     $content = '';
-    $url = litepublisher::$options->url;
+    $url = litepublisher::$site->url;
     $updir = dirname($dir);
     $updir = $updir == '.' ? '' : $updir . '/';
     $dircontent = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);

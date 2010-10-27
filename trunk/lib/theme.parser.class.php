@@ -50,7 +50,7 @@ break;
 
 case 'litepublisher4':
 $theme->type = 'litepublisher';
-$this->parsetags($theme);
+$this->parsetheme($theme);
 break;
 
 case 'wordpress':
@@ -67,7 +67,7 @@ public function parsetheme(ttheme $theme) {
     if (!@file_exists($filename))  return $this->error("The requested theme '$theme->name' not exists");
 
     if ($theme->name == 'default') {
-$theme->template = temptytheme::getempty();
+self::setempty($theme);
     } else {
 $about = $this->getabout($theme->name);
 $parentname = empty($about['parent']) ? 'default' : $about['parent'];
@@ -135,7 +135,7 @@ sprintf('Theme %s has parent %s theme which has parent %s', $name, $about['paren
     
     $template->data['theme'] = $name;
     $template->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  ;
-    $template->url = litepublisher::$options->url  . '/themes/'. $template->theme;
+    $template->url = litepublisher::$site->url  . '/themes/'. $template->theme;
     
     $theme = ttheme::getinstance($name, 'index');
     
@@ -167,25 +167,26 @@ $brackets = array(
 $b = $brackets[$a];
 $i = strpos($s, $b);
 $sub = substr($s, 0, $i);
-$opened = substr_count($sub, $a);
-if ($opened == 0) return $i;
+if (substr_count($sub, $a) == 0) return $i;
 
-while ($opened >=  substr_count($sub, $b)) {
+while (substr_count($sub, $a) >  substr_count($sub, $b)) {
 $i = strpos($s, $b, $i + 1);
 if ($i === false) die(" The '$b' not found in\n$s");
 $sub = substr($s, 0, $i);
-$opened = substr_count($sub, $a);
 }
 
 return $i;
 }
 
 public function parsetags(ttheme $theme, $s) {
+$this->theme = $theme;
+$this->paths = self::getpaths($theme);
 $s = trim($s);
-$roottags = array_keys($theme->templates);
+echo "<pre>\n";
  while ($s != '') {
 if (preg_match('/^(\$?\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 $tag = $m[1];
+echo "tag = $tag\n";
 $s = ltrim(substr($s, strlen($m[0])));
 if (isset($m[3])) {
 $i = self::find_close($s, $m[3]);
@@ -204,7 +205,7 @@ $s = '';
 }
 }
 }
-return $result;
+
 }
 
 public function settag($parent, $s) {
@@ -227,8 +228,8 @@ $this->sitebar_index = ++$this->sitebar_count - 1;
 if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
 break;
 }
-
- while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
+echo "parent=$parent\n\n";
+ while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
 $j = strpos($s, $m[0]);
@@ -278,7 +279,7 @@ return array(
 );
 }
 
-if (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
+if (strbegin($parentpath, '$custom') || strbegin($parentpath, 'custom')) {
 return array(
 'data' => null,
 'tag' => $tag,
@@ -592,10 +593,28 @@ return array(
 'replace' => '$template.menu'
 ),
 
+'menu.hover' => array(
+'data' => &$data['menu']['hover'],
+'tag' => '$hover',
+'replace' => ''
+),
+
+'menu.id' => array(
+'data' => &$data['menu']['id'],
+'tag' => '$id',
+'replace' => ''
+),
+
+'menu.tag' => array(
+'data' => &$data['menu']['tag'],
+'tag' => '$tag',
+'replace' => ''
+),
+
 'menu.item' => array(
 'data' => &$data['menu']['item'],
 'tag' => '$item',
-'replace' => '$items'
+'replace' => '$item'
 ),
 
 'menu.current' => array(
@@ -730,6 +749,24 @@ return array(
 'replace' => ''
 ),
 
+'content.post.prevnext' => array(
+'data' => &$post['prevnext'][0],
+'tag' => '$post.prevnext',
+'replace' => '$post.prevnext'
+),
+
+'content.post.prevnext.prev' => array(
+'data' => &$post['prevnext']['prev'],
+'tag' => '$prev',
+'replace' => '$prev'
+),
+
+'content.post.prevnext.next' => array(
+'data' => &$post['prevnext']['next'],
+'tag' => '$next',
+'replace' => '$next'
+),
+
 'content.post.templatecomments' => array(
 'data' => null,
 'tag' => '$post.templatecomments',
@@ -784,6 +821,11 @@ return array(
 'replace' => ''
 ),
 
+'content.post.templatecomments.comments.count' => array(
+'data' => &$post['templatecomments']['comments']['count'],
+'tag' => '$count',
+'replace' => ''
+),
 
 'content.post.templatecomments.comments.comment' => array(
 'data' => &$post['templatecomments']['comments']['comment'][0],

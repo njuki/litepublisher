@@ -108,7 +108,7 @@ class tcommentmanager extends tevents {
     $status = 'approved';
     $idpost = (int) $idpost;
     $email = litepublisher::$options->fromemail;
-    $site = litepublisher::$options->url . litepublisher::$options->home;
+    $site = litepublisher::$site->url . litepublisher::$options->home;
     $name = 'Admin';
     if (class_exists('tprofile')) {
       $profile = tprofile::instance();
@@ -213,7 +213,7 @@ class tcommentmanager extends tevents {
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
     $args = targs::instance();
-    $adminurl = litepublisher::$options->url . '/admin/comments/'. litepublisher::$options->q . "id=$id&post=$idpost";
+    $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id&post=$idpost";
     $ref = md5(litepublisher::$secret . $adminurl);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;

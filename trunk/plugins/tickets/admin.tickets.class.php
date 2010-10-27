@@ -54,7 +54,7 @@ class tadmintickets extends tadminmenu {
     $result .= $html->listhead();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = litepublisher::$options->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
+    $args->editurl = litepublisher::$site->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
     $lang = tlocal::instance('tickets');
     foreach ($items  as $id ) {
       $ticket = tticket::instance($id);
