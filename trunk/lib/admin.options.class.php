@@ -148,13 +148,14 @@ class Tadminoptions extends tadminmenu {
     switch ($this->name) {
       case 'options':
       $template = ttemplate::instance();
-      $options->lock();
-      $options->fixedurl = isset($fixedurl);
-      if (!empty($url) && ($url != $options->url))  $options->seturl($url);
-      if (!empty($name)) $options->name = $name;
-      if (!empty($description)) $options->description = $description;
-      if (!empty($keywords)) $options->keywords = $keywords;
-      $options->unlock();
+$site = litepublisher::$site;
+      $site->lock();
+      $site->fixedurl = isset($fixedurl);
+      if (!empty($url) && ($url != $site->url))  $site->seturl($url);
+      if (!empty($name)) $site->name = $name;
+      if (!empty($description)) $site->description = $description;
+      if (!empty($keywords)) $site->keywords = $keywords;
+      $site->unlock();
       
       if (!empty($textfooter)) $template->footer = $textfooter;
       litepublisher::$urlmap->clearcache();

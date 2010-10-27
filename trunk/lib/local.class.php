@@ -100,7 +100,6 @@ class tlocal {
     if (!isset(self::$data)) {
       self::$data = array();
       self::$files = array();
-      if (!isset(self::$files)) self::$files = array();
       if (litepublisher::$options->installed) self::loadlang('');
     }
   }

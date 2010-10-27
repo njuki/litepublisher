@@ -65,19 +65,19 @@ class tkeywordsplugin  extends tplugin {
   }
   
   public function added($filename, $content) {
-    $options = litepublisher::$options;
-    $subject ="[$options->name] new keywords added";
+    $site = litepublisher::$site;
+    $subject ="[$site->name] new keywords added";
     $body = "The new widget has been added on
-  $options->url{$_SERVER['REQUEST_URI']}
+  $site->url{$_SERVER['REQUEST_URI']}
     links:
     $content
     
     You can edit this links at:
-  $options->url/admin/plugins/{$options->q}plugin=keywords&filename=$filename
+  $site->url/admin/plugins/{$site->q}plugin=keywords&filename=$filename
     ";
     
-    tmailer::sendmail($options->name, $options->fromemail,
-    'admin', $options->email,  $subject, $body);
+    tmailer::sendmail($site->name, litepublisher::$options->fromemail,
+    'admin', litepublisher::$options->email,  $subject, $body);
   }
   
 }//class

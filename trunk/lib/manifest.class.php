@@ -13,7 +13,7 @@ class tmanifest extends tevents {
   }
   
   public function request($arg) {
-    $options = litepublisher::$options;
+    $site = litepublisher::$site;
     $s = turlmap::xmlheader();
     switch ($arg) {
       case 'manifest':
@@ -28,11 +28,11 @@ class tmanifest extends tevents {
       '<weblog>' .
       '<serviceName>Lite Publisher</serviceName>' .
       
-      "<homepageLinkText>$options->name</homepageLinkText>" .
-      "<adminLinkText>$options->name</adminLinkText>" .
-      "<adminUrl>$options->url/admin/</adminUrl>" .
+      "<homepageLinkText>$site->name</homepageLinkText>" .
+      "<adminLinkText>$site->name</adminLinkText>" .
+      "<adminUrl>$site->url/admin/</adminUrl>" .
       '<postEditingUrl>' .
-  "<![CDATA[$options->url/admin/posts/editor/{$options->q}id={post-id}]]>" .
+  "<![CDATA[$site->url/admin/posts/editor/{$site->q}id={post-id}]]>" .
       '</postEditingUrl>' .
       '</weblog>' .
       
@@ -43,7 +43,7 @@ class tmanifest extends tevents {
       //'<imageUrl>images/wlw/wp-comments.png</imageUrl>' .
       '<imageUrl>/favicon.ico</imageUrl>' .
       '<clickUrl>' .
-      "<![CDATA[$options->url/admin/comments/]]>" .
+      "<![CDATA[$site->url/admin/comments/]]>" .
       '</clickUrl>' .
       '</button>' .
       
@@ -56,12 +56,12 @@ class tmanifest extends tevents {
       '<service>' .
       '<engineName>Lite Publisher</engineName>' .
       '<engineLink>http://litepublisher.com/</engineLink>' .
-      "<homePageLink>$options->url/</homePageLink>" .
+      "<homePageLink>$site->url/</homePageLink>" .
       '<apis>' .
-      '<api name="WordPress" blogID="1" preferred="true" apiLink="' . $options->url . '/rpc.xml" />' .
-      '<api name="Movable Type" blogID="1" preferred="false" apiLink="' . $options->url . '/rpc.xml" />' .
-      '<api name="MetaWeblog" blogID="1" preferred="false" apiLink="' . $options->url . '/rpc.xml" />' .
-      '<api name="Blogger" blogID="1" preferred="false" apiLink="' . $options->url . '/rpc.xml" />' .
+      '<api name="WordPress" blogID="1" preferred="true" apiLink="' . $site->url . '/rpc.xml" />' .
+      '<api name="Movable Type" blogID="1" preferred="false" apiLink="' . $site->url . '/rpc.xml" />' .
+      '<api name="MetaWeblog" blogID="1" preferred="false" apiLink="' . $site->url . '/rpc.xml" />' .
+      '<api name="Blogger" blogID="1" preferred="false" apiLink="' . $site->url . '/rpc.xml" />' .
       '</apis>' .
       '</service>' .
       '</rsd>';

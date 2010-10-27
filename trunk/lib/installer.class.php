@@ -67,8 +67,8 @@ class tinstaller extends tdata {
       'login' => litepublisher::$options->login,
       'password' => $password,
       'email' => litepublisher::$options->email,
-      'name' => litepublisher::$options->name,
-      'description' => litepublisher::$options->description
+      'name' => litepublisher::$site->name,
+      'description' => litepublisher::$site->description
       );
       litepublisher::$options->savemodified();
       
@@ -185,11 +185,11 @@ class tinstaller extends tdata {
   public function processform($email, $name, $description, $rewrite) {
     litepublisher::$options->lock();
     litepublisher::$options->email = $email;
-    litepublisher::$options->name = $name;
-    litepublisher::$options->description = $description;
+    litepublisher::$site->name = $name;
+    litepublisher::$site->description = $description;
     litepublisher::$options->fromemail = 'litepublisher@' . $_SERVER['SERVER_NAME'];
     $this->CheckApache($rewrite);
-    if (litepublisher::$site->q == '&') litepublisher::$options->data['url'] .= '/index.php?url=';
+    if (litepublisher::$site->q == '&') litepublisher::$site->data['url'] .= '/index.php?url=';
     litepublisher::$options->unlock();
   }
   
@@ -326,7 +326,7 @@ class tinstaller extends tdata {
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
     $args = targs::instance();
-    $args->title = litepublisher::$options->name;
+    $args->title = litepublisher::$site->name;
     $args->url = litepublisher::$site->url . '/';
     $args->password = $password;
     $content = $html->parsearg($tml, $args);
@@ -346,9 +346,9 @@ class tinstaller extends tdata {
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
     
     $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.ini';
+var_dump($ini);
     tlocal::loadini($ini);
-    
-    //tlocal::loadlang('admin');
+   
     $ini = litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini';
     tlocal::loadini($ini);
     

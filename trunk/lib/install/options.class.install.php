@@ -29,6 +29,7 @@ function installoptions($language) {
   }
   
   $options->language = $language;
+  tlocal::loadlang('');
   tlocal::loadlang('admin');
   $options->timezone = tlocal::$data['installation']['timezone'];
   date_default_timezone_set(tlocal::$data['installation']['timezone']);

@@ -16,7 +16,7 @@ $installer = new tinstaller();
 $installer->install();
 
 if (litepublisher::$options instanceof toptions) {
-  litepublisher::$options->savemodified();
+litepublisher::$options->savemodified();
   if (!empty(litepublisher::$options->errorlog)) {
     echo litepublisher::$options->errorlog;
   }

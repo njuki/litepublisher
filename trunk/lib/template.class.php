@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttemplate extends tevents {
+class ttemplate extends tevents_storage {
   public $path;
   public $url;
   public $context;

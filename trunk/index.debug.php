@@ -85,6 +85,6 @@ tstorage::loaddata();
   //echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-if (tstorage::savemodified()) litepublisher::$options->onsave();
+litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 ?>
