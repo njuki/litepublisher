@@ -182,14 +182,15 @@ public function parsetags(ttheme $theme, $s) {
 $this->theme = $theme;
 $this->paths = self::getpaths($theme);
 $s = trim($s);
-//echo "<pre>\n";
+echo "<pre>\n";
  while ($s != '') {
-if (preg_match('/^(\$?\w*+(\.\w\w*+)+)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
+if (preg_match('/^((\$template)?(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
+//var_dump($m);
 $tag = $m[1];
-//echo "tag = $tag\n";
+echo "tag = $tag\n";
 $s = ltrim(substr($s, strlen($m[0])));
-if (isset($m[3])) {
-$i = self::find_close($s, $m[3]);
+if (isset($m[4])) {
+$i = self::find_close($s, $m[4]);
 } else {
 $i = strpos($s, "\n");
 }
@@ -209,9 +210,6 @@ $s = '';
 }
 
 public function settag($parent, $s) {
-dumpstr($parent);
-dumpstr($s);
-if (strpos($s, 'import')) dumpstr($s);
 if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) || 
 preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
 $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
@@ -269,7 +267,7 @@ $this->paths[$parent]['data'] = $s;
 } elseif (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
 $this->setcustom($parent, $s);
 } else {
-$this->error("The '$parent' tag not found");
+$this->error("The '$parent' tag not found. Content \n$s");
 }
 }
 
