@@ -16,6 +16,7 @@ $site->lock();
   $site->files =$site->data['url'];
   $site->q = '?';
 
+$site->home = '/';
   $site->keywords = "blog";
   $site->unlock();
 }
