@@ -274,7 +274,7 @@ $path = $parentpath . '.' . $name;
 return array(
 'data' => null,
 'tag' => $tag,
-'replace' => $tag,
+'replace' => $tag == '$classes' ? '' : $tag,
 'path' => $path,
 'name' => $name
 );
@@ -332,6 +332,7 @@ $widget['subitems'] = $value;
 return;
 
 case '.classes':
+case '.items.classes':
 $widget['classes'] = $value;
 return;
 
@@ -389,13 +390,10 @@ if (isset($sitebar[$widgetname])) {
 foreach ($widget as $name => $value) {
 if (empty($sitebar[$widgetname][$name])) {
 $sitebars[$i][$widgetname][$name] = $value;
-echo "\n$widgetname.$name = \n";
-dumpstr($value);
 }
 }
 } else {
 $sitebars[$i][$widgetname] = $widget;
-//if ($widgetname == 'links') var_dump($widgetname, $widget);
 }
 }
 if (is_string($sitebars[$i]['meta']['classes'])) {
