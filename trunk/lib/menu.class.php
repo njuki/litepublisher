@@ -214,7 +214,11 @@ class tmenus extends titems {
     }
     return array_keys($tree);
   }
-  
+
+  public function exclude($id) {
+return false;
+}
+
   public function getmenu($hover, $current) {
 $result = '';
     if (count($this->tree) > 0) {
@@ -227,6 +231,7 @@ $items = '';
     $args = targs::instance();
     $args->submenu = '';
     foreach ($this->tree as $id => $items) {
+if ($this->exclude($id)) continue;
       $args->add($this->items[$id]);
       $items .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
     }
@@ -237,7 +242,6 @@ $items = '';
 }
       $this->callevent('onmenu', array(&$result));
 return $result;
-
   }
   
   private function getsubmenu(&$tree, $current) {
@@ -247,6 +251,7 @@ return $result;
     $tml = $menu->item;
     $args = targs::instance();
     foreach ($tree as $id => $items) {
+if ($this->exclude($id)) continue;
 $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
       $this->callevent('onsubitems', array($id, &$subitems));
       $args->submenu = $submenu;

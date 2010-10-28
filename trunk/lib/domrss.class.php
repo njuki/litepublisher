@@ -133,7 +133,7 @@ class tdomrss extends domDocument {
     
     AddNodeValue($this->channel , 'title', $title);
     AddNodeValue($this->channel , 'link', $url);
-    AddNodeValue($this->channel , 'description', litepublisher::$options->description);
+    AddNodeValue($this->channel , 'description', litepublisher::$site->description);
     AddNodeValue($this->channel , 'pubDate', date('r'));
     AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
     AddNodeValue($this->channel , 'language', 'en');
@@ -158,7 +158,7 @@ class tdomrss extends domDocument {
     
     AddNodeValue($this->channel , 'title', $title);
     AddNodeValue($this->channel , 'link', $url);
-    AddNodeValue($this->channel , 'description', litepublisher::$options->description);
+    AddNodeValue($this->channel , 'description', litepublisher::$site->description);
     AddNodeValue($this->channel , 'pubDate', date('r'));
     AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
     AddNodeValue($this->channel , 'language', 'en');

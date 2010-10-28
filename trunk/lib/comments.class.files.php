@@ -212,7 +212,6 @@ class tcomments extends titems {
     $theme = ttheme::instance();
     tlocal::loadlang('admin');
     $lang = tlocal::instance('comment');
-    $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
     $post = tpost::instance($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->hold->dogetcontent(true, 0);
