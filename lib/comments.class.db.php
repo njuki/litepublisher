@@ -165,9 +165,7 @@ class tcomments extends titems {
     $result = $this->getcontentwhere('approved', '');
     if (!$this->moderator) return $result;
     $theme = ttheme::instance();
-    $tml = $theme->content->post->templatecomments->comments;
     tlocal::loadlang('admin');
-    $result .= $theme->parse($tml->hold);
     $post = tpost::instance($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->getcontentwhere('hold', '');
@@ -177,8 +175,8 @@ class tcomments extends titems {
       $args->comment = '';
       $result .= $theme->content->post->templatecomments->holdcomments($args);
     }
-    
-    $args = targs::instance();
+
+        $args = targs::instance();
     $args->comments = $result;
     return $theme->content->post->templatecomments->moderateform($args);
   }

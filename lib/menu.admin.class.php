@@ -81,45 +81,10 @@ class tadminmenus extends tmenus {
     return array_keys($tree);
   }
   
-  public function getmenu($hover, $current) {
-    if (count($this->tree) == 0) return '';
-    $theme = ttheme::instance();
-    if ($hover) {
-      $result = $this->getsubmenu($this->tree, $current);
-      return str_replace('$items', $result, $theme->menu);
-    }
-    
-    $result = '';
-    $tml = $theme->menu->item;
-    $args = targs::instance();
-    $args->submenu = '';
-    foreach ($this->tree as $id => $items) {
-      $item = $this->items[$id];
-      if ($this->hasright($item['group'])) {
-        $args->add($item);
-        $result .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
-      }
-    }
-    return str_replace('$items', $result, (string) $theme->menu);
-  }
-  
-  private function getsubmenu(&$tree, $current) {
-    $result = '';
-    $theme = ttheme::instance();
-    $menu = $theme->menu;
-    $tml = $menu->item;
-    $args = targs::instance();
-    foreach ($tree as $id => $items) {
-      $item = $this->items[$id];
-      if ($this->hasright($item['group'])) {
-        $args->submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
-        $args->add($item);
-        $result .= $theme->parsearg($current == $id  ? $menu->current:$tml, $args);
-      }
-    }
-    return $result;
-  }
-  
+  public function exclude($id) {
+return !$this->hasright($this->items[$id]['group']);
+}
+
 }//class
 
 class tadminmenu  extends tmenu {
