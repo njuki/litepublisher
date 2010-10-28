@@ -245,11 +245,12 @@ if ($tml == '') return $result;
     if (count($items) == 0) return '';
     $result = '';
     if ($tml == '') $tml = $this->getwidgetitem('posts', $sitebar);
+
     foreach ($items as $id) {
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
-    return str_replace('$items', $result, $this->getwidgetitems('posts', $sitebar));
+    return str_replace('$item', $result, $this->getwidgetitems('posts', $sitebar));
   }
   
   public function getwidgetcontent($items, $name, $sitebar) {
@@ -281,17 +282,14 @@ if ($tml == '') return $result;
   public function  getwidgettml($index, $name, $tml) {
     $sitebars = &$this->templates['sitebars'];
     if (isset($sitebars[$index][$name][$tml])) return $sitebars[$index][$name][$tml];
-    if ($tml == 'items'){
-      if (isset($sitebars[$index])) return $sitebars[$index]['widget']['items'];
-      return $sitebars[0]['widget']['items'];
-    }
-    
-    foreach ($sitebars as $widgets) {
-      if (isset($widgets[$name][$tml])) return $widgets[$name][$tml];
-    }
-    return $tml == 'item' ? '<li><a href="%1$s" title="%2$s">%2$s</a></li>' : '<ul>%s</ul>';
-  }
-  
+if ($index >= count($sitebars)) {
+$index = count($sitebars) - 1;
+    if (isset($sitebars[$index][$name][$tml])) return $sitebars[$index][$name][$tml];
+}
+    if (isset($sitebars[$index]['widget'][$tml])) return $sitebars[$index]['widget'][$tml];
+$this->error("Unknown widget '$name' and template '$tml' in $index sitebar");
+}
+
   public function simple($content) {
     return str_replace('$content', $content, $this->content->simple);
   }

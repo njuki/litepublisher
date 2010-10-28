@@ -49,7 +49,6 @@ class tlinkswidget extends twidget {
         $args->link = $redirlink . $id;
       }
       $result .=   $theme->parsearg($tml, $args);
-dumpstr($result);
     }
     
     return $theme->getwidgetcontent($result, 'links', $sitebar);
