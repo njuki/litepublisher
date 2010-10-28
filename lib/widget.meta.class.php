@@ -45,9 +45,7 @@ class tmetawidget extends twidget {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('meta', $sitebar);
-    $metaclasses = isset($theme->data['sitebars'][$sitebar]['meta']) ? $theme->data['sitebars'][$sitebar]['meta']['classes'] :
-    array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
-    
+    $metaclasses = $theme->getwidgettml($sitebar, 'meta', 'classes');
     $args = targs::instance();
     foreach    ($this->items as $name => $item) {
       if (!$item['enabled']) continue;
