@@ -446,7 +446,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     $theme = ttheme::instance();
     ttheme::$vars['post'] = $this;
     $more = $theme->parse($excerpt ?
-    $theme->content->excerpts->excerpt->more :
+    $theme->content->excerpts->excerpt->morelink :
     $theme->content->post->more);
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {

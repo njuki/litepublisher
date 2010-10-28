@@ -46,19 +46,20 @@ class tlinkswidget extends twidget {
       $args->add($item);
       $args->id = $id;
       if ($this->redir && !strbegin($item['url'], $url)) {
-        $args->url = $redirlink . $id;
+        $args->link = $redirlink . $id;
       }
       $result .=   $theme->parsearg($tml, $args);
+dumpstr($result);
     }
     
     return $theme->getwidgetcontent($result, 'links', $sitebar);
   }
   
-  public function add($url, $title, $anchor) {
+  public function add($url, $title, $text) {
     $this->items[++$this->autoid] = array(
     'url' => $url,
     'title' => $title,
-    'anchor' => $anchor
+    'text' => $text
     );
     
     $this->save();

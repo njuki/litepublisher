@@ -332,7 +332,7 @@ class twidgets extends titems {
     if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
     $this->callevent('ongetwidgets', array(&$items, $sitebar));
     $result = $this->getsitebarcontent($items, $sitebar);
-    if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
+    //if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
     $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
     return $result;
   }
