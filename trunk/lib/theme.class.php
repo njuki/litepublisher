@@ -308,6 +308,11 @@ class tthemeprops {
 public function __construct(array &$array) { $this->array = &$array; }
   
   public function __get($name) {
+if (!isset($this->array[$name])) {
+litepublisher::$options->trace(implode("<br>", array_keys(($this->array))));
+litepublisher::$options->showerrors();
+}
+
     if (is_array($this->array[$name])) {
       $this->array = &$this->array[$name];
       return $this;
@@ -326,7 +331,14 @@ return $theme->parse((string) $this->$name);
 }
 }
 
-public function __tostring() { return $this->array[0]; }
+public function __tostring() { 
+if (!isset($this->array[0])) {
+litepublisher::$options->trace(implode("\n", array_keys(($this->array))));
+litepublisher::$options->showerrors();
+}
+
+return $this->array[0]; 
+}
   public function __isset($name) {
     return array_key_exists($name, $this->array);
   }

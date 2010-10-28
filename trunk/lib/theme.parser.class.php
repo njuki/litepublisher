@@ -182,15 +182,14 @@ public function parsetags(ttheme $theme, $s) {
 $this->theme = $theme;
 $this->paths = self::getpaths($theme);
 $s = trim($s);
-echo "<pre>\n";
+//echo "<pre>\n";
  while ($s != '') {
-if (preg_match('/^((\$template)?(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
-//var_dump($m);
+if (preg_match('/^(((\$template|\$custom)?\.?)?\w*+(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 $tag = $m[1];
-echo "tag = $tag\n";
+//echo "tag $tag\n";
 $s = ltrim(substr($s, strlen($m[0])));
-if (isset($m[4])) {
-$i = self::find_close($s, $m[4]);
+if (isset($m[5])) {
+$i = self::find_close($s, $m[5]);
 } else {
 $i = strpos($s, "\n");
 }
@@ -359,7 +358,7 @@ $this->error("Unknown '$path' widget path");
 public function setcustom($path, $value) {
 $names = explode('.', $path);
 if (count($names) < 2) return;
-if (($names[0] != '$custom') || ($names[0] != 'custom')) $this->error("The '$path' path is not a custom path");
+if (($names[0] != '$custom') && ($names[0] != 'custom')) $this->error("The '$path' path is not a custom path");
 $name = $names[1];
 switch (count($names)) {
 case 2:
@@ -447,6 +446,8 @@ $theme->templates = array (
   array (
     'post' => 
     array (
+      'more' => '',
+      'rsslink' => '',
       'catlinks' => 
       array (
         'item' => '',
@@ -468,8 +469,6 @@ $theme->templates = array (
         'video' => '',
         0 => '',
       ),
-      'more' => '',
-      'rsslink' => '',
       'prevnext' => 
       array (
         'prev' => '',
@@ -511,6 +510,9 @@ $theme->templates = array (
     array (
       'excerpt' => 
       array (
+        0 => '',
+        'morelink' => '',
+        'date' => '',
         'catlinks' => 
         array (
           'item' => '',
@@ -531,10 +533,7 @@ $theme->templates = array (
           'audio' => '',
           'video' => '',
           0 => '',
-        ),
-        'morelink' => '',
-        'date' => '',
-        0 => '',
+        )
       ),
       'lite' => 
       array (
