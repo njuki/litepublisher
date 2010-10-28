@@ -332,7 +332,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     if ($options->admincookie) {
       if ($script = $template->stdjavascripts['moderate']) {
         $theme = ttheme::instance();
-      $template->javaoptions[] = "commentsid: '{$theme->content->post->templatecomments->comments->commentsid}'";
+      $template->javaoptions[] = sprintf('commentsid: "%s"', $theme->content->post->templatecomments->comments->id);
         $result .= $template->getjavascript($script);
         $result .= $template->getjavascript("/files/admin$options->language.js");
       }

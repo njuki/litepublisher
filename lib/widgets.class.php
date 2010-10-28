@@ -568,7 +568,7 @@ class twidgetscache extends titems {
   
   public function savemodified() {
     if ($this->modified) {
-      self::savetofile(litepublisher::$paths->cache .$this->getbasename(),
+      tfilestorage::savetofile(litepublisher::$paths->cache .$this->getbasename(),
       self::comment_php($this->savetostring()));
     }
     $this->modified = false;

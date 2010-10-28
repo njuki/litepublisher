@@ -102,6 +102,18 @@ return $this->templates[$name];
     
     return parent::__get($name);
   }
+
+public function __set($name, $value) {
+    if (array_key_exists($name, $this->templates)) {
+if (is_array($this->templates[$name]) && isset($this->templates[$name][0]))  {
+$this->templates[$name][0] = $value;
+} else {
+$this->templates[$name] = $value;
+}
+return;
+}
+return parent::__set($name, $value);
+}
   
   public function getsitebarscount() {
     return count($this->templates['sitebars']);
@@ -307,7 +319,7 @@ public function __construct(array &$array) { $this->array = &$array; }
   
   public function __get($name) {
 if (!isset($this->array[$name])) {
-litepublisher::$options->trace(implode("<br>", array_keys(($this->array))));
+litepublisher::$options->trace("$name not found\n" . implode("\n", array_keys(($this->array))));
 litepublisher::$options->showerrors();
 }
 
