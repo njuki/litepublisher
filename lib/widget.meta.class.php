@@ -48,27 +48,19 @@ class tmetawidget extends twidget {
     $metaclasses = isset($theme->data['sitebars'][$sitebar]['meta']) ? $theme->data['sitebars'][$sitebar]['meta']['classes'] :
     array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
     
+    $args = targs::instance();
     foreach    ($this->items as $name => $item) {
-      if ($item['enabled']) {
-        $result .= $this->getitem($tml,
-        $item['url'], $item['title'],  $name, isset($metaclasses[$name]) ? $metaclasses[$name] : '');
-      }
+      if (!$item['enabled']) continue;
+$args->add($item);
+    $args->icon = '';
+$args->subitems = '';
+    $args->rel = $name;
+$args->class = isset($metaclasses[$name]) ? $metaclasses[$name] : '';
+    $result .= $theme->parsearg($tml, $args);
     }
     
     if ($result == '') return '';
     return $theme->getwidgetcontent($result, 'meta', $sitebar);
-  }
-  
-  private function getitem($tml, $url, $title, $name, $class) {
-    $args = targs::instance();
-    $args->icon = '';$args->subitems = '';
-    $args->rel = $name;
-    $args->class = $class;
-    $args->url = litepublisher::$site->url  . $url;
-    $args->title = $title;
-    $args->anchor = $title;
-    $theme = ttheme::instance();
-    return $theme->parsearg($tml, $args);
   }
   
 }//class

@@ -63,17 +63,18 @@ break;
 }
 
 public function parsetheme(ttheme $theme) {
-    $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . 'theme.txt';
-    if (!@file_exists($filename))  return $this->error("The requested theme '$theme->name' not exists");
+$about = $this->getabout($theme->name);
+    $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $about['file'];
+    if (!@file_exists($filename))  return $this->error("The requested theme '$theme->name' file $filename not found");
 
     if ($theme->name == 'default') {
 self::setempty($theme);
     } else {
-$about = $this->getabout($theme->name);
 $parentname = empty($about['parent']) ? 'default' : $about['parent'];
 $parent = ttheme::instance($parentname);
 $theme->template = $parent->template;
 }
+
 $s = self::getfile($filename);
 $this->parsetags($theme, $s);
 $this->afterparse($theme);
@@ -120,8 +121,9 @@ public function checkparent($name) {
       $about = $this->getabout($name);
 if (empty($about['parent'])) return true;
 $parent = $this->getabout($about['parent']);
-if (!empty($parent['parent'])) $this->error(
-sprintf('Theme %s has parent %s theme which has parent %s', $name, $about['parent'], $parent['parent']));
+if (!empty($parent['parent'])) {
+$this->error(sprintf('Theme %s has parent %s theme which has parent %s', $name, $about['parent'], $parent['parent']));
+}
 }
   
   public function changetheme($old, $name) {
@@ -228,31 +230,15 @@ $this->sitebar_index = ++$this->sitebar_count - 1;
 if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
 break;
 }
-//echo "parent=$parent\n\n";
-$stop = 'som';
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
 if (!isset($m[3])) $this->error('The bracket not found');
 $tag = $m[1];
 $j = strpos($s, $m[0]);
 $pre  = rtrim(substr($s, 0, $j));
 $s= ltrim(substr($s, $j + strlen($m[0])));
-if ($tag == $stop) {
-echo "\nafter trim\n";
-dumpstr($pre);
-echo "s=\n";
-dumpstr($s);
-}
 $i = self::find_close($s, $m[3]);
 $value = trim(substr($s, 0, $i));
 $s = ltrim(substr($s, $i + 1));
-if ($tag == $stop) {
-echo "pre\n";
-dumpstr($pre);
-echo "extra value\n";
-dumpstr($s);
-var_dump($value);
-}
-
 $info = $this->getinfo($parent, $tag);
 $this->settag($parent . '.' . $info['name'], $value);
 $s = $pre . $info['replace'] . $s;
@@ -394,7 +380,7 @@ if (empty($excerpt[$name][$key])) $excerpt[$name][$key] = $value;
 }
 }
 
-$sitebars = $this->theme->templates['sitebars'];
+$sitebars = &$this->theme->templates['sitebars'];
 foreach ($sitebars as $i => $sitebar) {
 $widget = $sitebar['widget'];
 
@@ -403,10 +389,13 @@ if (isset($sitebar[$widgetname])) {
 foreach ($widget as $name => $value) {
 if (empty($sitebar[$widgetname][$name])) {
 $sitebars[$i][$widgetname][$name] = $value;
+echo "\n$widgetname.$name = \n";
+dumpstr($value);
 }
 }
 } else {
 $sitebars[$i][$widgetname] = $widget;
+//if ($widgetname == 'links') var_dump($widgetname, $widget);
 }
 }
 if (is_string($sitebars[$i]['meta']['classes'])) {
