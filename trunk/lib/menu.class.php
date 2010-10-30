@@ -21,7 +21,7 @@ class tmenus extends titems {
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
     $this->addmap('tree', array());
 $this->data['idhome'] = 0;
-$this->data['exhome'] = true;
+$this->data['home'] = false;
   }
   
   public function getlink($id) {
@@ -95,7 +95,7 @@ $item->url = '/';
   }
   
   public function edit(tmenu $item) {
-if (!($item instance of thomepage)) {
+if (!($item instanceof thomepage)) {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($item, 'menu');
 }
@@ -225,7 +225,7 @@ if($id == $this->idhome) return false;
   }
 
   public function exclude($id) {
-return $this->exhome && ($id == $this->idhome);
+return !$this->home && ($id == $this->idhome);
 }
 
   public function getmenu($hover, $current) {
@@ -395,12 +395,16 @@ public function gethead() {}
   }
   
   public function getcont() {
-    return ttheme::$parsevar('menu', $this, ttheme::instance()->content->menu);
+    return ttheme::parsevar('menu', $this, ttheme::instance()->content->menu);
   }
   
   public function getlink() {
     return litepublisher::$site->url . $this->url;
   }
+
+public function getcontent() {
+return $this->data['content'];
+}
 
 public function setcontent($s) {
     if (!is_string($s)) $this->error('Error! Page content must be string');

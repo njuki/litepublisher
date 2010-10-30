@@ -37,7 +37,7 @@ public function gettitle() {}
     $items =  $this->getitems();
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();
-    $result .=$theme->getpages(litepublisher::$options->home, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
+    $result .=$theme->getpages($this->url, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
     return $result;
   }
   
