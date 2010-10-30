@@ -22,13 +22,6 @@ interface itemplate2 {
   public function afterrequest(&$content);
 }
 
-interface imenu {
-  public function getparent();
-  public function setparent($id);
-  public function getorder();
-  public function setorder($order);
-}
-
 interface iposts {
   public function add(tpost $post);
   public function edit(tpost $post);

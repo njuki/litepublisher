@@ -15,13 +15,6 @@ class ttheme extends tevents {
 public $templates;
   private $themeprops;
   
-  /*
-  public $menu;
-  public $content;
-  public $sitebars;
-  public $admin;
-  */
-  
   public static function instance() {
     $result = getinstance(__class__);
     if ($result->name == '') {
