@@ -11,6 +11,7 @@ function thomepageInstall($self) {
 $menus = tmenus::instance();
 $menus->lock();
 $self->url = '/';
+$self->title = tlocal::$data['default'['home'];
 $menus->idhome = $menus->add($self);
 $menus->unlock();
 }

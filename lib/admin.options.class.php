@@ -28,11 +28,10 @@ class Tadminoptions extends tadminmenu {
       case 'home':
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
-      $args->text = $home->text;
       $args->image = $home->image;
       $menus = tmenus::instance();
-      $idmenu = $menus->url2id('/');
-      $args->homemenu = $idmenu > 0;
+$args->idhome = $menus->idhome;
+      $args->homemenu =  $menus->home;
       break;
       
       case 'mail':
@@ -165,25 +164,12 @@ $site = litepublisher::$site;
       $home = thomepage::instance();
       $home->lock();
       $home->image = $image;
-      //$filter = tcontentfilter::instance();
-      //$filter->filter($text);
-      $home->text = $text;
       $home->hideposts = isset($hideposts);
       $home->unlock();
       
       $menus = tmenus::instance();
-      $idmenu = $menus->url2id('/');
-      if (isset($homemenu)) {
-        if (!$idmenu) {
-          $menus->lock();
-          $idmenu = $menus->insert(get_class($home), 0, tlocal::$data['default']['home'], '/');
-          $menus->items[$idmenu]['order'] = 0;
-          $menus->sort();
-          $menus->unlock();
-        }
-      } else {
-        if ($idmenu) $menus->remove($idmenu);
-      }
+$menus->home = isset($homemenu);
+$menus->save();
       break;
       
       case 'mail':
