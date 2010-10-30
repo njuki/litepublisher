@@ -20,6 +20,8 @@ class tmenus extends titems {
     $this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
     $this->addmap('tree', array());
+$this->data['idhome'] = 0;
+$this->data['exhome'] = true;
   }
   
   public function getlink($id) {
@@ -30,15 +32,19 @@ class tmenus extends titems {
     return litepublisher::$paths->data . 'menus' . DIRECTORY_SEPARATOR;
   }
   
-  public function add(imenu $item) {
+  public function add(tmenu $item) {
     //fix null fields
     foreach (tmenu::$ownerprops as $prop) {
       if (!isset($item->data[$prop])) $item->data[$prop] = '';
     }
     
+if ($item instanceof thomepage) {
+$item->url = '/';
+} else {
     $linkgen = tlinkgenerator::instance();
     $item->url = $linkgen->addurl($item, 'menu');
-    
+}
+
     $id = ++$this->autoid;
     $this->items[$id] = array(
     'id' => $id,
@@ -88,9 +94,11 @@ class tmenus extends titems {
     ));
   }
   
-  public function edit(imenu $item) {
+  public function edit(tmenu $item) {
+if (!($item instance of thomepage)) {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($item, 'menu');
+}
     
     $this->lock();
     $this->sort();
@@ -102,6 +110,7 @@ class tmenus extends titems {
   
   public function  delete($id) {
     if (!$this->itemexists($id)) return false;
+if($id == $this->idhome) return false;
     if ($this->haschilds($id)) return false;
     // save homepage
     $url = $this->items[$id]['url'];
@@ -216,7 +225,7 @@ class tmenus extends titems {
   }
 
   public function exclude($id) {
-return false;
+return $this->exhome && ($id == $this->idhome);
 }
 
   public function getmenu($hover, $current) {
@@ -230,7 +239,7 @@ $items = '';
     $tml = $theme->menu->item;
     $args = targs::instance();
     $args->submenu = '';
-    foreach ($this->tree as $id => $items) {
+    foreach ($this->tree as $id => $subitems) {
 if ($this->exclude($id)) continue;
       $args->add($this->items[$id]);
       $items .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
@@ -270,7 +279,7 @@ $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($i
   
 }//class
 
-class tmenu extends titem implements  itemplate, imenu {
+class tmenu extends titem implements  itemplate {
   public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
@@ -385,36 +394,22 @@ public function gethead() {}
     return $this->data['description'];
   }
   
-  public function getcontent() {
-    return $this->data['content'];
-  }
-  
   public function getcont() {
-    ttheme::$vars['menu'] = $this;
-    $theme = ttheme::instance();
-    return $theme->parse($theme->content->menu);
-  }
-  
-  //imenu
-  public function getparent() {
-    return $this->__get('parent');
-  }
-  
-  public function setparent($id) {
-    $this->__set('parent', $id);
-  }
-  
-  public function getorder() {
-    return $this->__get('order');
-  }
-  
-  public function setorder($order) {
-    $this->__set('order', $order);
+    return ttheme::$parsevar('menu', $this, ttheme::instance()->content->menu);
   }
   
   public function getlink() {
     return litepublisher::$site->url . $this->url;
   }
+
+public function setcontent($s) {
+    if (!is_string($s)) $this->error('Error! Page content must be string');
+    if ($s != $this->rawcontent) {
+      $this->rawcontent = $s;
+      $filter = tcontentfilter::instance();
+      $this->data['content'] = $filter->filter($s);
+    }
+}
   
 }//class
 

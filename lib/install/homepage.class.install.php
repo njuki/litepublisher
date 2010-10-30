@@ -7,14 +7,21 @@
 **/
 
 function thomepageInstall($self) {
-  litepublisher::$options->home = '/';
-  $urlmap = turlmap::instance();
-  $self->idurl = $urlmap->add(litepublisher::$options->home, get_class($self), null);
-  $self->save();
+  litepublisher::$site->home = '/';
+$menus = tmenus::instance();
+$menus->lock();
+$self->url = '/';
+$menus->idhome = $menus->add($self);
+$menus->unlock();
 }
 
 function thomepageUninstall($self) {
   turlmap::unsub($self);
+$menus = tmenus::instance();
+$menus->lock();
+unset($menus->items[$menus->idhome]);
+$menus->sort();
+$menus->unlock();
 }
 
 ?>
