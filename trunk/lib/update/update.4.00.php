@@ -8,7 +8,6 @@ $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tsite', 'site.class.php'();
 $classes->unlock();
 
-
 $home = thomepage();
 $old = $home->data;
     $home->data= array(
@@ -22,7 +21,7 @@ $old = $home->data;
     'tmlfile' => '',
     'theme' => '',
     //owner props
-    'title' => '',
+    'title' => tlocal::$data['default']['home'],
     'url' => '/',
     'idurl' => 0,
     'parent' => 0,
@@ -36,7 +35,19 @@ $home->content = $old['text'];
     $home->data['hideposts'] = $old['hideposts'];
 
 litepublisher::$urlmap->delete('/');
+$menus = tmenus::instance();
+$menus->lock();
+$menus->data['idhome'] = 0;
+$menus->data['home'] = false;
+
 $home->install();
+$menus->unlock();
+
+//fix for something
+$admin = tadminmenus::instance();
+$admin->data['idhome'] = 0;
+$admin->data['home'] = false;
+$admin->save();
 
 }
 ?>
