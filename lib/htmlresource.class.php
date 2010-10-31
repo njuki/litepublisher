@@ -63,7 +63,7 @@ class THtmlResource  {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden):(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden):|=(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       $admin = $theme->content->admin;
       foreach ($m as $item) {
         $type = $item[1];
@@ -137,4 +137,60 @@ class THtmlResource  {
   
 }//class
 
+class tformprop {
+public $obj;
+
+public function __get($name) {
+if (isset($this->obj->$name)) {
+return array(
+'obj' => $this->obj,
+'propname' => $name
+);
+}
+tlogsubsystem::error(sprintf('The property %s not found in class %s', $name, get_class($this->obj));
+}
+}//class
+
+class tform {
+private $props;
+
+public function __create() {
+    $a = func_get_args();
+$this->props = array();
+foreach ($a as $prop) {
+$this->addprop($prop);
+}
+}
+
+public function addprop(array $prop) {
+$this->props[] = array((
+'obj' => $prop['obj'],
+'propname' => $prop['propname'],
+);
+}
+
+public function getform() {
+$result = '';
+foreach ($this->props as $prop) {
+
+}
+}
+
+public function processform() {
+foreach ($this->props as $prop) $prop['obj']->lock();
+
+foreach ($this->props as $prop) {
+if (isset($_POST[$name])) {
+$value = $_POST[$name];
+if ($value == 'checked') $value = true;
+} else {
+$value = false;
+}
+$prop['obj']->$name = $value;
+}
+
+foreach ($this->props as $prop) $prop['obj']->unlock();
+}
+
+}//class
 ?>
