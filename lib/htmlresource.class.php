@@ -33,6 +33,7 @@ class THtmlResource  {
       tlocal::loadlang('admin');
     } else {
       $this->loadini(litepublisher::$paths->languages . 'adminhtml.ini');
+      $this->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
     }
   }
   

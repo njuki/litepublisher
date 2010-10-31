@@ -586,7 +586,8 @@ $combo = [<h3><label for="$name">$lang.$name</label></h3>
 
 $hidden = [<input type="hidden" name="$name" value="$value" />]
 
-$form = [<h2>$formtitle</h2>
+$form = [
+<h2>$formtitle</h2>
 <form name="form" action="" method="post" >
 $items
   <p><input type="submit" name="submit" value="$lang.update" /></p>

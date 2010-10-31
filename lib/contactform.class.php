@@ -9,31 +9,30 @@
 class tcontactform extends tmenu {
   
   public static function instance($id = 0) {
-    return getinstance(__class__);
+    return self::iteminstance(__class__, $id);
   }
   
   protected function create() {
     parent::create();
     $this->cache = false;
+$this->data['subject'] = '';
+$this->data['errmesg'] = '';$this->data['success'] = '';
   }
   
   public function processform() {
     if (!isset($_POST['contactvalue'])) return  '';
-    $lang = tlocal::instance('contactform');
-    $error = "<p><strong>$lang->error</strong></p>\n";
-    
     $time = substr($_POST['contactvalue'], strlen('_contactform'));
-    if (time() >  $time) return $error;
+    if (time() >  $time) return $this->errmesg;
     $email = trim($_POST['email']);
-    if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::$data['comment']['invalidemail'] . "</strong></p>\n";
+
+    if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['invalidemail']);
     
     $content = trim($_POST['content']);
-    if (strlen($content) <= 15) return '<p><strong>' .  tlocal::$data['comment']['emptycontent'] . "</strong></p>\n";
-if (false !== strpos($content, '<a href')) return $error;
+    if (strlen($content) <= 15) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['emptycontent']);
+if (false !== strpos($content, '<a href')) return $this->errmesg;
     
-    tmailer::sendmail('', $email, '', litepublisher::$options->email, $lang->subject, $content);
-    
-    return "<p><strong>$lang->success</strong></p>\n";
+    tmailer::sendmail('', $email, '', litepublisher::$options->email, $this->subject, $content);
+    return $this->success;
   }
   
 }//class
