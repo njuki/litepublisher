@@ -16,7 +16,8 @@ class tcontactform extends tmenu {
     parent::create();
     $this->cache = false;
 $this->data['subject'] = '';
-$this->data['errmesg'] = '';$this->data['success'] = '';
+$this->data['errmesg'] = '';
+$this->data['success'] = '';
   }
   
   public function processform() {

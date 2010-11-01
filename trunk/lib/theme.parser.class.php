@@ -65,7 +65,7 @@ break;
 public function parsetheme(ttheme $theme) {
 $about = $this->getabout($theme->name);
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $about['file'];
-    if (!@file_exists($filename))  return $this->error("The requested theme '$theme->name' file $filename not found");
+    if (!file_exists($filename))  return $this->error("The requested theme '$theme->name' file $filename not found");
 
     if ($theme->name == 'default') {
 self::setempty($theme);
