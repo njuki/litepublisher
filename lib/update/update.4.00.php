@@ -49,5 +49,18 @@ $admin->data['idhome'] = 0;
 $admin->data['home'] = false;
 $admin->save();
 
+//contact form
+  $html = THtmlResource::instance();
+if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+  $html->section = 'contactform';
+    tlocal::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
+  $lang = tlocal::instance('contactform');
+
+$contact = tcontactform();
+$contact->data['subject'] = $lang->subject;
+$contact->data['errmesg'] =$html->errmesg();
+$this->data['success'] = $html->success();
+$contact->save();
+
 }
 ?>

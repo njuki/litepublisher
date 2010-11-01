@@ -10,38 +10,36 @@ class ttheme extends tevents {
   public static $instances = array();
   public static $vars = array();
   public $name;
-  public $tmlfile;
   public $parsing;
 public $templates;
   private $themeprops;
-  
+
+public static function exists($name) {
+return file_exists(litepublisher::$paths->data . 'themes'. DIRECTORY_SEPARATOR . $name . '.php') ||
+file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  . 'about.ini');
+}
+
   public static function instance() {
-    $result = getinstance(__class__);
-    if ($result->name == '') {
-      $template = ttemplate::instance();
-      $result->loaddata($template->theme, 'index');
-    }
-    return $result;
+    return getinstance(__class__);
   }
   
-  public static function getinstance($name, $tmlfile) {
-    if (isset(self::$instances[$name][$tmlfile])) {
-      return self::$instances[$name][$tmlfile];
-    }
-    
-    if (($name == 'default') && ($tmlfile == 'default')) {
-      $result = litepublisher::$classes->newinstance(__class__);
-    } else {
-      $result = isset(litepublisher::$classes->instances[__class__]) ? litepublisher::$classes->newinstance(__class__) : getinstance(__class__);
-    }
-    $result->loaddata($name, $tmlfile);
+  public static function getinstance($name) {
+    if (isset(self::$instances[$name])) return self::$instances[$name];
+if (isset(litepublisher::$classes->instances[__class__])) {
+ $result = getinstance(__class__);
+if ($result->name != '') $result = litepublisher::$classes->newinstance(__class__);
+} else {
+$result = litepublisher::$classes->newinstance(__class__);
+}
+
+    $result->name = $name;
+$result->load();
     return $result;
   }
   
   protected function create() {
     parent::create();
     $this->name = '';
-    $this->tmlfile = 'index';
     $this->parsing = array();
     $this->data['type'] = 'litepublisher';
     $this->data['parent'] = '';
@@ -55,27 +53,34 @@ $this->templates = array(
 );
     $this->themeprops = new tthemeprops($this->templates);
   }
+
+public function getbasename() {
+return 'themes' . DIRECTORY_SEPARATOR . $this->name;
+}
   
   public function load() {
-    if ($this->name != '') return $this->loaddata($this->name, $this->tmlfile);
-  }
+    if ($this->name == '') return false;
+if (parent::load()) {
+self::$instances[$this->name] = $this;
+return true;
+}
+return $this->parsetheme();
+ }
   
-  public function loaddata($name, $tmlfile) {
-    $this->name = $name;
-    $this->tmlfile = $tmlfile;
-    $this->basename = 'themes' . DIRECTORY_SEPARATOR . "$name.$tmlfile";
-    self::$instances[$name][$tmlfile] = $this;
-    $datafile = litepublisher::$paths->data . $this->getbasename() .'.php';
-    if (file_exists($datafile))  return parent::load();
-    
+  public function parsetheme() {
+if (!file_exists(litepublisher::$paths->themes . $this->name . DIRECTORY_SEPARATOR  . 'about.ini')) {
+$this->error(sprintf('The %s theme not exists', $this->name));
+}
+
     $parser = tthemeparser::instance();
     if ($parser->parse($this)) {
+self::$instances[$this->name] = $this;
       $this->save();
     }else {
       $this->error("Theme file $filename not exists");
     }
   }
-  
+
   public function __tostring() {
     return $this->templates[0];
   }
