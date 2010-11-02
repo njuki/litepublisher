@@ -19,8 +19,10 @@ $self->defaults = array(
 'post' => $default,
 'menu' => $default,
 'category' => $default,
-'tag' => $default
+'tag' => $default,
+'admin' => $admin
 );
+
   $self->unlock();
 }
 

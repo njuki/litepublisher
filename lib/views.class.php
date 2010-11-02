@@ -84,7 +84,7 @@ $this->save();
 
 }//class
 
-class tviews extends titems {
+class tviews extends titems_storage {
 public $defaults;
 
   public static function instance() {
@@ -98,14 +98,6 @@ public $defaults;
     $this->addmap('defaults', array());
   }
   
-public function load() {
-return tstorage::load($this);
-}
-
-public function save() {
-return tstorage::save($this);
-}
-
   public function add($name) {
 $this->lock();
 $id = ++$this->autoid;

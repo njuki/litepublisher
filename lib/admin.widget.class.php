@@ -317,28 +317,26 @@ class tadminhomewidgets extends tadminwidget {
   
   public function getcontent(){
     $home = thomepage::instance();
-    //$home->sitebars = array(array(), array(), array());
     $args = targs::instance();
-    $args->ajax = $home->ajax;
-    $args->defaultsitebar = $home->defaultsitebar;
+    $args->ajax = $view->ajax;
+    $args->customsitebar = $home->customsitebar;
     $result = $this->html->homeform($args);
-    if (!$home->defaultsitebar) {
-      $result .= tadminwidgets::getsitebarsform($home->sitebars);
+    if ($view->customsitebar) {
+      $result .= tadminwidgets::getsitebarsform($view->sitebars);
     }
     return $result;
   }
   
   public function processform()  {
     $home = thomepage::instance();
-    $home->lock();
+    $view->lock();
     if (isset($_POST['homeoptions'])) {
-      $home->ajax = isset($_POST['ajax']);
-      $home->defaultsitebar = isset($_POST['defaultsitebar']);
+      $view->ajax = isset($_POST['ajax']);
+      $view->customsitebar = isset($_POST['customsitebar']);
     } else {
-      //$home->sitebars = array(array(), array(), array());
-      tadminwidgets::setsitebars($home->sitebars);
+      tadminwidgets::setsitebars($view->sitebars);
     }
-    $home->unlock();
+    $view->unlock();
     return $this->html->h2->updated;
   }
   
