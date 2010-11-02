@@ -355,13 +355,12 @@ public function setview($id) {
 if ($id != $this->view) {
 $this->data['view'] = $id;
 if ($this->dbversion) {
-$this->save();
-} else {
 $this->db->setvalue($this->id, 'view', $value);
+} else {
+$this->save();
 }
 }
 
-  
   public function geticonurl() {
     if ($this->icon == 0) return '';
     $files = tfiles::instance();

@@ -322,7 +322,17 @@ class tcommontags extends titems implements  itemplate {
     if ($result == '') $result = $this->title;
     return $result;
   }
-  
+
+public function getview() {
+return $this->contents->getvalue($this->id, 'view');
+}
+
+public function setview($id) {
+if ($id != $this->view) {
+$this->contents->setvalue($this->id, 'view', $value);
+}
+}
+
   public function getcont() {
     $result = '';
     $theme = ttheme::instance();
@@ -345,14 +355,6 @@ class tcommontags extends titems implements  itemplate {
     $item = $this->getitem($this->id);
     $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil(count($items)/ $perpage));
     return $result;
-  }
-  
-  public function gettheme() {
-    $result = $this->contents->getvalue($this->id, 'theme');
-  }
-  
-  public function gettmlfile() {
-    $result = $this->contents->getvalue($this->id, 'tmlfile');
   }
   
   public function Setlite($lite) {
@@ -381,8 +383,7 @@ class ttagcontent extends tdata {
   public function getitem($id) {
     if (isset($this->items[$id]))  return $this->items[$id];
     $item = array(
-    'theme' => '',
-    'tmlfile' => '',
+'view' => 1,
     'description' => '',
     'keywords' => '',
     'content' => '',
@@ -413,8 +414,7 @@ class ttagcontent extends tdata {
     $item = $this->getitem($id);
     $filter = tcontentfilter::instance();
     $item =array(
-    'theme' => $item['theme'],
-    'tmlfile' => $item['tmlfile'],
+    'view' => $item['view'],
     'content' => $filter->filter($content),
     'rawcontent' => $content,
     'description' => $description,

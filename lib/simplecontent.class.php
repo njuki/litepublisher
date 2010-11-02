@@ -19,10 +19,16 @@ public function gettitle() {}
 public function getkeywords() {}
 public function getdescription() {}
 public function gethead() {}
+
+public function getview() {
+return 1;
+}
+
+public function setview($id) { }
   
   public function getcont() {
     $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
-    $theme =ttheme::instance();
+    $theme =tview::getview(1)->theme;
     return $theme->simple($result);
   }
   
