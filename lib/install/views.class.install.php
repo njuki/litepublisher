@@ -14,6 +14,13 @@ $lang = tlocal::instance('names');
   $home = $self->add($lang->home);
   $home->ajax = false;
 $admin = $self->add($lang->adminpanel);
+
+$self->defaults = array(
+'post' => $default,
+'menu' => $default,
+'category' => $default,
+'tag' => $default
+);
   $self->unlock();
 }
 

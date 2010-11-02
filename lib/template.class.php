@@ -11,6 +11,7 @@ class ttemplate extends tevents_storage {
   public $url;
   public $context;
   public $itemplate;
+public $view;
   public $heads;
   public  $adminheads;
   public $javascripts;
@@ -60,19 +61,8 @@ class ttemplate extends tevents_storage {
       $tags = ttemplatetags::instance();
       return $tags->__get($name);
     }
-    if ($this->contextHasProp($name)) return $this->context->$name;
+    if (isset($this->context) && isset($this->context->$name)) return $this->context->$name;
     return parent::__get($name);
-  }
-  
-  private function contextHasProp($name) {
-    return isset($this->context) && isset($this->context->$name);
-  }
-  
-  public function afterload() {
-    parent::afterload();
-    if (!ttheme::exists($this->theme))  $this->theme = 'default';
-    $this->path = litepublisher::$paths->themes . $this->theme  . DIRECTORY_SEPARATOR ;
-    $this->url = litepublisher::$site->files . '/themes/'. $this->theme;
   }
   
   protected function settheme($name) {
@@ -89,39 +79,15 @@ class ttemplate extends tevents_storage {
     }
   }
   
-  private function loadtheme($name) {
-    if (!ttheme::exists($name)) {
-      if ($name == $this->theme) {
-        $name = 'default';
-      } else {
-        $name = $this->theme;
-        if (!ttheme::exists($name)) $name = 'default';
-      }
-    }
-    
-    $this->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR ;
-    $this->url = litepublisher::$site->files . "/themes/$name";
-    return ttheme::getinstance($name);
-  }
-  
-  public function getcontexttheme($context) {
-    $themename = $this->theme;
-    if (litepublisher::$urlmap->adminpanel)       $themename = $this->admintheme;
-    if (isset($context->theme) && ($context->theme != '')) $themename = $context->theme;
-
-    $theme = $this->loadtheme($themename);
-    if (($theme->type != 'litepublisher') && litepublisher::$urlmap->adminpanel) {
-      $theme = $this->loadtheme('default');
-    }
-    
-    return $theme;
-  }
-  
   public function request($context) {
     $this->context = $context;
-    $this->itemplate = $context instanceof itemplate;
     ttheme::$vars['template'] = $this;
-    $theme = $this->getcontexttheme($context);
+    $this->itemplate = $context instanceof itemplate;
+$this->view = $this->itemplate ? tview::getview($context) : tview::instance();
+    $theme = $this->view->theme;
+litepublisher::$classes->instances[get_class($theme)] = $theme;
+    $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
+    $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->hovermenu && $theme->menu->hover;
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
@@ -140,7 +106,7 @@ class ttemplate extends tevents_storage {
   //html tags
   public function getsitebar() {
     $widgets = twidgets::instance();
-    return $widgets->getsitebar($this->context);
+    return $widgets->getsitebar($this->context, $this->view);
   }
   
   public function gettitle() {
@@ -155,7 +121,7 @@ class ttemplate extends tevents_storage {
   
   public function geticon() {
     $result = '';
-    if ($this->contextHasProp('icon')) {
+    if (isset($this->context) && isset($this->context->icon)) {
       $icon = $this->context->icon;
       if ($icon > 0) {
         $files = tfiles::instance();
@@ -186,14 +152,8 @@ class ttemplate extends tevents_storage {
       return $adminmenus->getmenu($this->hover, $current);
     }
     
-    if (($current == 0) && ($this->context instanceof thomepage)) {
-      $menus = tmenus::instance();
-      if ($idmenu = $menus->url2id('/')) return $menus->getmenu($this->hover, $idmenu);
-    }
-    
     if ($current == 0) {
-      $theme = ttheme::instance();
-      $filename = litepublisher::$paths->cache . "$theme->name.$theme->tmlfile.menu.php";
+      $filename = litepublisher::$paths->cache . $this->view->theme->name . '.menu.php';
       if (file_exists($filename)) return file_get_contents($filename);
     }
     
