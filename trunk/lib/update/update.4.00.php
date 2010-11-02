@@ -8,6 +8,8 @@ $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tsite', 'site.class.php'();
 $classes->add('tview', 'views.class.php');
 $classes->add('tviews',  'views.class.php');
+unset($classes->interfaces['itemplate2']);
+$classes->interfaces['iwidgets'] = 'interfaces.php';
 
 $classes->unlock();
 

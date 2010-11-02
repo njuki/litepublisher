@@ -308,13 +308,34 @@ class twidgets extends titems {
     return $result;
   }
   
-  public function getsitebar($context) {
+  public function getsitebar($context, tview $view) {
     $sitebar = $this->currentsitebar;
-    $items = $this->getwidgets($context, $sitebar);
-    $theme = ttheme::instance();
+    $items = $this->getwidgets($context, $view, $sitebar);
+    if ($context instanceof iwidgets) $context->getwidgets($items, $sitebar);
+    if (litepublisher::$options->admincookie) $this->callevent('onadminlogged', array(&$items, $sitebar));
+    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
+    $this->callevent('ongetwidgets', array(&$items, $sitebar));
+    $result = $this->getsitebarcontent($items, $sitebar);
+    //if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
+    $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
+    return $result;
+  }
+  
+  private function getwidgets($context, tview $view, $sitebar) {
+    $theme = $view->theme;
+if (($view->id >  1) && !$view->customsitebars) {
+$view = tview::instance(1);
+}
+
+    $items =  isset($view->sitebars[$sitebar]) ? $view->sitebars[$sitebar] : array();
+
+    $subitems =  $this->getsubitems($context, $sitebar);
+    $items = $this->joinitems($items, $subitems);
+
     if ($sitebar + 1 == $theme->sitebarscount) {
-      for ($i = $sitebar + 1; $i < count($this->sitebars); $i++) {
-        $subitems =  $this->getwidgets($context, $i);
+      for ($i = $sitebar + 1; $i < count($view->sitebars); $i++) {
+        $subitems =  $this->joinitems($view->sitebars[$i], $this->getsubitems($context, $i));
+
         //delete copies
         foreach ($subitems as $index => $subitem) {
           $id = $subitem['id'];
@@ -327,20 +348,7 @@ class twidgets extends titems {
       }
     }
     
-    if ($context instanceof itemplate2) $context->getwidgets($items, $sitebar);
-    if (litepublisher::$options->admincookie) $this->callevent('onadminlogged', array(&$items, $sitebar));
-    if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
-    $this->callevent('ongetwidgets', array(&$items, $sitebar));
-    $result = $this->getsitebarcontent($items, $sitebar);
-    //if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
-    $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
-    return $result;
-  }
-  
-  private function getwidgets($context, $sitebar) {
-    $items = $this->sitebars[$sitebar];
-    $subitems =  $this->getsubitems($context, $sitebar);
-    return $this->joinitems($items, $subitems);
+return $items;
   }
   
   private function getsubitems($context, $sitebar) {
@@ -384,6 +392,7 @@ class twidgets extends titems {
     $result = '';
     foreach ($items as $item) {
       $id = $item['id'];
+if (!isset($this->items[$id])) continue;
       $cachetype = $this->items[$id]['cache'];
       if ($item['ajax'] === 'inline') {
         switch ($cachetype) {

@@ -91,7 +91,6 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->hover = $this->hovermenu && $theme->menu->hover;
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
-    if ($context instanceof itemplate2) $context->afterrequest($result);
     return $result;
   }
   
