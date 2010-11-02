@@ -50,8 +50,7 @@ class tpost extends titem implements  itemplate {
     'commentsenabled' => litepublisher::$options->commentsenabled,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
-    'theme' => '',
-    'tmlfile' => '',
+    'view' => 1,
     'commentscount' => 0,
     'pingbackscount' => 0,
     'pagescount' => 0,
@@ -347,6 +346,21 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
   public function getdescription() {
     return $this->data['description'];
   }
+
+public function getview() {
+return $this->data['view'];
+}
+
+public function setview($id) {
+if ($id != $this->view) {
+$this->data['view'] = $id;
+if ($this->dbversion) {
+$this->save();
+} else {
+$this->db->setvalue($this->id, 'view', $value);
+}
+}
+
   
   public function geticonurl() {
     if ($this->icon == 0) return '';
@@ -611,7 +625,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $account['name']);
     }
   }
-  
+
 }//class
 
 ?>
