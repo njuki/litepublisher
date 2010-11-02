@@ -1,4 +1,33 @@
 <?php
+
+function altertheme($table) {
+$man = tdbmanager ::instance();
+$man->alter($table, 'drop tmlfile');
+$man->alter($table, 'drop theme');
+$man->alter($table, "add `view` int unsigned NOT NULL default '1'");
+}
+
+f
+foreach ($tags->items as $id => $itemtag) {
+$item = $tags->content->getitem($id);
+if (isset($item['tmlfile'])) {
+unset($item['tmlfile']);
+unset($item['theme']);
+$item['view'] = 1;
+$tags->contents->setitem($id, $item);
+}
+}unction updatetags($tags) {
+}
+
+function updatesingle($obj) {
+if (isset($obj->data['theme'])) {
+unset($obj->data['theme']);
+unset($obj->data['tmlfile']);
+$obj->data['view'] = 1;
+$obj->save();
+}
+}
+
 function update400() {
 $classes = litepublisher::$classes;
 $classes->lock();
@@ -89,10 +118,9 @@ $contact->save();
 
 
 if (dbversion) {
-$man = tdbmanager ::instance();
-$man->alter('posts', 'drop tmlfile');
-$man->alter('posts', 'drop theme');
-$man->alter('posts', "add `view` int unsigned NOT NULL default '1'");
+altertheme('posts');
+altertheme('tagscontent');
+altertheme('catscontent');
 } else {
 $posts = tposts::instance();
 foreach ($posts->items as $id => $item) {
@@ -103,7 +131,19 @@ $post->data['view'] = 1;
 $post->save();
 $post->free();
 }
+
+updatetags(ttags::instance());
+updatetags(tcategories::instance());
 }
+
+singleupdate(tarchives::instance());
+singleupdate(tforbidden::instance());
+singleupdate(tnotfound404::instance());
+singleupdate(tsimplecontent ::instance());
+singleupdate(tsitemap::instance());
+singleupdate(tsitemap::instance());
+
+
 
 tstorage::savemodified();
 }

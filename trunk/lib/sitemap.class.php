@@ -22,8 +22,7 @@ class tsitemap extends titems implements itemplate {
     $this->basename = 'sitemap';
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
-    $this->data['tmlfile'] = '';
-    $this->data['theme'] = '';
+    $this->data['view'] = 1;
   }
   
   public function add($url, $prio) {
@@ -40,11 +39,22 @@ public function gettitle() { return $this->title; }
 public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
+
+public function getview() {
+return $this->data['view'];
+}
+
+public function setview($id) {
+if ($id != $this->view) {
+$this->data['view'] = $id;
+$this->save();
+}
+}
   
   public function getcont() {
     $result = '';
     $posts = tposts::instance();
-    $theme = ttheme::instance();
+    $theme = tview::getview($this->theme;
     $perpage = 1000;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     if (dbversion) {

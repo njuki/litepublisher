@@ -18,8 +18,7 @@ class tarchives extends titems implements  itemplate {
     $this->basename   = 'archives';
     $this->table = 'posts';
     $this->data['lite'] = false;
-    $this->data['tmlfile'] = '';
-    $this->data['theme'] = '';
+    $this->data['view'] = 1;
   }
   
   public function getheadlinks() {
@@ -116,7 +115,18 @@ class tarchives extends titems implements  itemplate {
 public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
-  
+
+public function getview() {
+return $this->data['view'];
+}
+
+public function setview($id) {
+if ($id != $this->view) {
+$this->data['view'] = $id;
+$this->save();
+}
+}
+
   public function getcont() {
     $items = $this->getposts();
     if (count($items) == 0)return '';
