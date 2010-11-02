@@ -13,13 +13,12 @@ interface itemplate {
   public function getdescription();
   public function gethead();
   public function getcont();
-  // property theme;
-  // property tmlfile;
+public function getview();
+public function setview($id);
 }
 
-interface itemplate2 {
+interface iwidgets {
   public function getwidgets(array &$items, $sitebar);
-  public function afterrequest(&$content);
 }
 
 interface iposts {
