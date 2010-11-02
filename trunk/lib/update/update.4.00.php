@@ -18,8 +18,8 @@ $old = $home->data;
     'keywords' => '',
     'description' => '',
     'password' => '',
-    'tmlfile' => '',
-    'theme' => '',
+    'view' => 1,
+
     //owner props
     'title' => tlocal::$data['default']['home'],
     'url' => '/',
@@ -41,6 +41,15 @@ $menus->data['idhome'] = 0;
 $menus->data['home'] = false;
 
 $home->install();
+
+foreach ($menus->items as $id => $item) {
+$menu = tmenu::instance($id);
+$menu->data['view'] = 1;
+unset($menu->data['tmlfile']);
+unset($menu->data['theme']);
+$menu->content = $menu->data['content'];
+$menu->save();
+}
 $menus->unlock();
 
 //fix for something

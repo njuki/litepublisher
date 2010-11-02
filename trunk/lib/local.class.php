@@ -136,6 +136,7 @@ class tlocal {
   }
   
   public static function loadini($filename) {
+    if (in_array($filename, self::$files)) return;
     if (file_exists($filename) && ($v = parse_ini_file($filename, true))) {
       self::$data = $v + self::$data ;
       self::$files[] = $filename;
@@ -160,6 +161,10 @@ class tlocal {
   public static function getcachefilename($name) {
     return self::getcachedir() . $name . '.php';
   }
+
+public static function loadinstall() {
+    self::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
+}
   
 }//class
 
