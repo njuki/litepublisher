@@ -119,7 +119,11 @@ return $id;
   
   public function delete($id) {
 if ($id == 1) return $this->error('You cant delete default view');
+foreach ($this->defaults as $name => $iddefault) {
+if ($id == $iddefault) $this->defaults[$name] = 1;
+}
 return parent::delete($id);
+
   }
   
   public function widgetdeleted($idwidget) {

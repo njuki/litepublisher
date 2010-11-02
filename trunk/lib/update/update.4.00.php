@@ -6,6 +6,9 @@ unset($classes->items['imenu']);
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tsite', 'site.class.php'();
+$classes->add('tview', 'views.class.php');
+$classes->add('tviews',  'views.class.php');
+
 $classes->unlock();
 
 $home = thomepage();
@@ -62,14 +65,15 @@ $admin->save();
   $html = THtmlResource::instance();
 if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
   $html->section = 'contactform';
-    tlocal::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
+    tlocal::loadinstall();
   $lang = tlocal::instance('contactform');
 
 $contact = tcontactform();
 $contact->data['subject'] = $lang->subject;
 $contact->data['errmesg'] =$html->errmesg();
-$this->data['success'] = $html->success();
+$contact->data['success'] = $html->success();
 $contact->save();
 
+tstorage::savemodified();
 }
 ?>
