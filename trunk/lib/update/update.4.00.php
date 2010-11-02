@@ -3,6 +3,7 @@ function update400() {
 $classes = litepublisher::$classes;
 $classes->lock();
 unset($classes->items['imenu']);
+$classes->add('titems_storage', 'items.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tsite', 'site.class.php'();
@@ -12,6 +13,20 @@ unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 
 $classes->unlock();
+
+
+
+
+
+$data = new tdata();
+$data->basename = 'widgets';
+tfilestorage::load($data);
+$view = tview::instance();
+$view->sitebars = $data->data['sitebars'];
+unset($data->data['sitebars'];
+$widgets = twidgets::instance();
+$widgets->data = $data->data;
+$widgets->save();
 
 $home = thomepage();
 $old = $home->data;

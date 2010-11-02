@@ -186,4 +186,87 @@ class tadminwidgets extends tadminmenu {
   
 }//class
 
+
+class tsitebars extends tdata {
+  public $items;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+$view = tview::instance();
+    $this->items = &$view->sitebars;
+  }
+  
+public function load() {}
+  
+  public function save() {
+    tview::instance()->save();
+  }
+  
+  public function add($id) {
+    $this->insert($id, false, 0, -1);
+  }
+  
+  public function insert($id, $ajax, $index, $order) {
+    if (!isset($this->items[$index])) return $this->error("Unknown sitebar $index");
+    $item = array('id' => $id, 'ajax' => $ajax);
+    if (($order < 0) || ($order > count($this->items[$index]))) {
+      $this->items[$index][] = $item;
+    } else {
+      array_insert($this->items[$index], $item, $order);
+    }
+    $this->save();
+  }
+  
+  public function delete($id, $index) {
+    if ($i = $this->indexof($id, $index)) {
+      array_delete($this->items[$index], $i);
+      $this->save();
+      return $i;
+    }
+    return false;
+  }
+  
+  public function indexof($id, $index) {
+    foreach ($this->items[$index] as $i => $item) {
+      if ($id == $item['id']) return $i;
+    }
+    return false;
+  }
+  
+  public function move($id, $index, $neworder) {
+    if ($old = $this->indexof($id, $index)) {
+      if ($old != $newindex) {
+        array_move($this->items[$index], $old, $newindex);
+        $this->save();
+      }
+    }
+  }
+  
+  public static function getpos(array &$sitebars, $id) {
+    foreach ($sitebars as $i => $sitebar) {
+      foreach ($sitebar as $j => $item) {
+        if ($id == $item['id']) return array($i, $j);
+      }
+    }
+    return false;
+  }
+  
+  public static function setpos(array &$items, $id, $newsitebar, $neworder) {
+    if ($pos = self::getpos($items, $id)) {
+      list($oldsitebar, $oldorder) = $pos;
+      if (($oldsitebar != $newsitebar) || ($oldorder != $neworder)){
+        $item = $items[$oldsitebar][$oldorder];
+        array_delete($items[$oldsitebar], $oldorder);
+        if (($neworder < 0) || ($neworder > count($items[$newsitebar]))) $neworder = count($items[$newsitebar]);
+        array_insert($items[$newsitebar], $item, $neworder);
+      }
+    }
+  }
+  
+}//class
+
 ?>

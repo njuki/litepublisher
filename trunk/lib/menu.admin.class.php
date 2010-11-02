@@ -105,7 +105,11 @@ class tadminmenu  extends tmenu {
   
 public function load() { return true; }
 public function save() { return true; }
-  
+
+public function getview() {
+return tviews::instance()->defaults['admin'];
+}
+
   public static function auth($group) {
     $auth = tauthdigest::instance();
     if (litepublisher::$options->cookieenabled) {
