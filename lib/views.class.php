@@ -7,7 +7,8 @@
 **/
 
 class tview extends titem {
-private $_theme;
+public $sitebars;
+private $themeinstance;
 
   public static function instance($id = 1) {
     return parent::iteminstance(__class__, $id);
@@ -33,16 +34,19 @@ $this->data = array(
 'id' => 0,
 'name' => 'default',
 'themename' => 'default',
-      'defaultsitebar' => true,
+'customtheme' => array(),
+      'customsitebar' => false,
       'ajax' => false,
 'sitebars' => array()
 );
+$this->sitebars = &$this->data['sitebars'];
   }
 
 public function load() {
 $views = tviews::instance();
 if ($views->itemexists($this->id)) {
 $this->data = &$views->items[$this->id];
+$this->sitebars = &$this->data['sitebars'];
 return true;
 }
 return false;
@@ -53,18 +57,35 @@ return tviews::instance()->save();
 }
 
 public function gettheme() {
-if (isset($this_theme) && ($this->themename == $this_theme->name)) return $this->_theme;
+if (isset($this->themeinstance) && ($this->themename == $this->themeinstance->name)) return $this->themeinstance;
 if (!ttheme::exists($this->themename)) {
 $this->themename = 'default';
+$this->data['customtheme'] = array();
 $this->save();
 }
-$this->_theme = ttheme::instance($this->themename);
-return $this->_theme;
+$this->themeinstance = ttheme::instance($this->themename);
+$this->themeinstance->templates['custom'] = $this->data['customtheme'];
+return $this->themeinstance;
+}
+
+public function setcustomsitebar($value) {
+if ($value != $this->customsitebar) {
+if ($this->id == 1) return false;
+if ($value) {
+$default = tview::instance(1);
+$this->sitebars = $default->sitebars;
+} else {
+$this->sitebars = array();
+}
+$this->data['customsitebar'] = $value;
+$this->save();
+}
 }
 
 }//class
 
 class tviews extends titems {
+public $defaults;
 
   public static function instance() {
     return getinstance(__class__);
@@ -74,9 +95,17 @@ class tviews extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'views';
-    $this->addmap('classes', array());
+    $this->addmap('defaults', array());
   }
   
+public function load() {
+return tstorage::load($this);
+}
+
+public function save() {
+return tstorage::save($this);
+}
+
   public function add($name) {
 $this->lock();
 $id = ++$this->autoid;
@@ -85,7 +114,7 @@ $view->id = $id;
 $view->name = $name;
 $this->items[$id] = &$view->data;
       $this->unlock();
-return $view;
+return $id;
   }
   
   public function delete($id) {

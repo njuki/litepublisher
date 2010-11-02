@@ -313,8 +313,7 @@ class tmenu extends titem implements  itemplate {
     'keywords' => '',
     'description' => '',
     'password' => '',
-    'tmlfile' => '',
-    'theme' => '',
+    'view' => 1,
     //owner props
     'title' => '',
     'url' => '',

@@ -8,9 +8,12 @@
 
 function tviewsInstall($self) {
   $self->lock();
-  $default = $self->add('default');
-  $home = $self->add('home');
+    tlocal::loadlang('admin');
+$lang = tlocal::instance('names');
+  $default = $self->add($lang->default);
+  $home = $self->add($lang->home);
   $home->ajax = false;
+$admin = $self->add($lang->adminpanel);
   $self->unlock();
 }
 
