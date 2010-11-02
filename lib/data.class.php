@@ -240,7 +240,6 @@ return false;
     return str_replace('**//*/', '*/', substr($s, 9, strlen($s) - 9 - 6));
   }
   
-
 }//class
 
 class tstorage extends tfilestorage {

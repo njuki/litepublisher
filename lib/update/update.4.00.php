@@ -14,10 +14,6 @@ $classes->interfaces['iwidgets'] = 'interfaces.php';
 
 $classes->unlock();
 
-
-
-
-
 $data = new tdata();
 $data->basename = 'widgets';
 tfilestorage::load($data);
@@ -90,6 +86,24 @@ $contact->data['subject'] = $lang->subject;
 $contact->data['errmesg'] =$html->errmesg();
 $contact->data['success'] = $html->success();
 $contact->save();
+
+
+if (dbversion) {
+$man = tdbmanager ::instance();
+$man->alter('posts', 'drop tmlfile');
+$man->alter('posts', 'drop theme');
+$man->alter('posts', "add `view` int unsigned NOT NULL default '1'");
+} else {
+$posts = tposts::instance();
+foreach ($posts->items as $id => $item) {
+$post = tpost::instance($id);
+unset($post->data['tmlfile']);
+unset($post->data['theme']);
+$post->data['view'] = 1;
+$post->save();
+$post->free();
+}
+}
 
 tstorage::savemodified();
 }
