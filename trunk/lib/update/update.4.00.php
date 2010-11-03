@@ -32,6 +32,7 @@ function update400() {
 $classes = litepublisher::$classes;
 $classes->lock();
 unset($classes->items['imenu']);
+$classes->items['tsitebars'][0] 'admin.widgets.class.php';
 $classes->add('titems_storage', 'items.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
@@ -141,10 +142,7 @@ singleupdate(tforbidden::instance());
 singleupdate(tnotfound404::instance());
 singleupdate(tsimplecontent ::instance());
 singleupdate(tsitemap::instance());
-singleupdate(tsitemap::instance());
-
-
-
+if (isset($classes->items['tprofile'])) singleupdate(tprofile::instance());
 tstorage::savemodified();
 }
 ?>

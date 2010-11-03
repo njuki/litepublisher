@@ -402,6 +402,7 @@ if ($id != $this->view) {
 $this->data['view'] = $id;
 $this->save();
 }
+}
 
     public function getcont() {
     return ttheme::parsevar('menu', $this, ttheme::instance()->content->menu);

@@ -360,6 +360,7 @@ $this->db->setvalue($this->id, 'view', $value);
 $this->save();
 }
 }
+}
 
   public function geticonurl() {
     if ($this->icon == 0) return '';

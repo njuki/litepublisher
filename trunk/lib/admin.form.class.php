@@ -18,6 +18,13 @@ class tadminform extends tevents implements itemplate {
 public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
+
+public function getview() {
+return tviews::instance()->defaults['admin'];
+}
+
+public function setview($id) {}
+
   
   public function request($arg) {
     $this->cache = false;

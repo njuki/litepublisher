@@ -98,8 +98,8 @@ class twidget extends tevents {
   }
   
   public static function findsitebar($id) {
-    $widgets = twidgets::instance();
-    foreach ($widgets->sitebars as $i=> $sitebar) {
+$view = tview::instance();
+    foreach ($view->sitebars as $i=> $sitebar) {
       foreach ($sitebar as $item) {
         if ($id == $item['id']) return $i;
       }
@@ -245,7 +245,6 @@ class twidgets extends titems_storage {
   public function delete($id) {
     if (!isset($this->items[$id])) return false;
     
-    for ($i = count($this->sitebars) - 1; $i >= 0; $i--) {
     foreach ($this->classes as $class => $items) {
       foreach ($items as $i => $item) {
         if ($id == $item['id']) array_delete($this->classes[$class], $i);
@@ -314,7 +313,7 @@ class twidgets extends titems_storage {
   
   private function getwidgets($context, tview $view, $sitebar) {
     $theme = $view->theme;
-if (($view->id >  1) && !$view->customsitebars) {
+if (($view->id >  1) && !$view->customsitebar) {
 $view = tview::instance(1);
 }
 

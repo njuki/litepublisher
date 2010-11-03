@@ -11,8 +11,9 @@ function tviewsInstall($self) {
     tlocal::loadlang('admin');
 $lang = tlocal::instance('names');
   $default = $self->add($lang->default);
-  $home = $self->add($lang->home);
-  $home->ajax = false;
+$def = tview::instance($default);
+$def->sitebars = array(array(), array(), array());
+
 $admin = $self->add($lang->adminpanel);
 
 $self->defaults = array(

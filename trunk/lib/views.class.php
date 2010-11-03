@@ -40,6 +40,7 @@ $this->data = array(
 'sitebars' => array()
 );
 $this->sitebars = &$this->data['sitebars'];
+$this->themeinstance = null;
   }
 
 public function load() {
@@ -56,15 +57,24 @@ public function save() {
 return tviews::instance()->save();
 }
 
-public function gettheme() {
-if (isset($this->themeinstance) && ($this->themename == $this->themeinstance->name)) return $this->themeinstance;
-if (!ttheme::exists($this->themename)) {
-$this->themename = 'default';
-$this->data['customtheme'] = array();
+public function setthemename($name) {
+if ($name != $this->themename) {
+if (!theme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
+$this->data['themename'] = $name;
+$this->themeinstance = ttheme::getinstance($name);
+$this->data['customtheme'] = $this->themeinstance->templates['custom'];
 $this->save();
 }
-$this->themeinstance = ttheme::instance($this->themename);
+}
+
+public function gettheme() {
+if (isset($this->themeinstance)) return $this->themeinstance;
+if (ttheme::exists($this->themename)) {
+$this->themeinstance = ttheme::getinstance($this->themename);
 $this->themeinstance->templates['custom'] = $this->data['customtheme'];
+} else {
+$this->setthemename('default');
+}
 return $this->themeinstance;
 }
 
@@ -101,7 +111,7 @@ public $defaults;
   public function add($name) {
 $this->lock();
 $id = ++$this->autoid;
-$view = litepublisher::$classes->newitem(tview::getitemname(), 'tview', $id);
+$view = litepublisher::$classes->newitem(tview::getinstancename(), 'tview', $id);
 $view->id = $id;
 $view->name = $name;
 $this->items[$id] = &$view->data;
@@ -121,7 +131,7 @@ return parent::delete($id);
   public function widgetdeleted($idwidget) {
 $deleted = false;
     foreach ($this->items as $id => $item) {
-foreach ($item['sitebars'] as $i => sitebar) {
+foreach ($item['sitebars'] as $i => $sitebar) {
 for ($j = count($sitebar) -1; $j >= 0; $j--) {
           if ($idwidget == $sitebar[$j]['id']) {
 array_delete($this->items[$id]['sitebars'][$i], $j);

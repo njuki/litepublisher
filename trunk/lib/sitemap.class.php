@@ -54,7 +54,7 @@ $this->save();
   public function getcont() {
     $result = '';
     $posts = tposts::instance();
-    $theme = tview::getview($this->theme;
+    $theme = tview::getview($thisview)->theme;
     $perpage = 1000;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     if (dbversion) {
