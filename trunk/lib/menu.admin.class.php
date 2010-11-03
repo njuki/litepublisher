@@ -137,8 +137,8 @@ return tviews::instance()->defaults['admin'];
     $this->doprocessform();
   }
   
-  public function idget() {
-    return !empty($_GET['id']) ? (int) $_GET['id'] : (!empty($_POST['id']) ? (int)$_POST['id'] : 0);
+  public static function idget($name = 'id') {
+    return !empty($_GET[$name]) ? (int) $_GET[$name] : (!empty($_POST[$name]) ? (int)$_POST[$name] : 0);
   }
   
   public function getaction() {

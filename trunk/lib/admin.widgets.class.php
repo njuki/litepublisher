@@ -24,8 +24,8 @@ class tadminwidgets extends tadminmenu {
   public static function getsitebarnames($count) {
     $result = range(1, $count);
     $parser = tthemeparser::instance();
-    $template = ttemplate::instance();
-    $about = $parser->getabout($template->theme);
+$theme = ttheme::instance();
+    $about = $parser->getabout($theme->name);
     foreach ($result as $key => $value) {
       if (isset($about["sitebar$key"])) $result[$key] = $about["sitebar$key"];
     }
@@ -41,6 +41,7 @@ class tadminwidgets extends tadminmenu {
     $result .= $html->formhead();
     $args = targs::instance();
     $args->adminurl = litepublisher::$site->url . '/admin/widgets/' . litepublisher::$site->q . 'idwidget';
+$args->idview = self::idget('idview');
     $count = count($sitebars);
     $sitebarnames = self::getsitebarnames(count($sitebars));
     foreach ($sitebars as $i => $sitebar) {
