@@ -7,13 +7,30 @@
 **/
 
 class tadminviews extends tadminmenu {
-  private $plugin;
-  
+
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
-  public function getcontent() {
+
+public static function getcombo() {
+$idget = self::idget('idview');
+if ($idget == 0) $idget = 1;
+$views = tviews::instance();
+$items = '';
+foreach ($views->items as $id => $item) {
+      $items .= sprintf('<option value="%d" %s>%s</option>', $id,
+ $idget == $id ? 'selected="selected"' : '', $item['name']);
+}
+
+    $html = THtmlResource ::instance();
+    $html->section = 'views';
+    $lang = tlocal::instance('views');
+$args = targs::instance();
+$args->items = $items;
+return $html->comboform($args);
+}
+
+    public function getcontent() {
     $result = '';
     $html = $this->html;
     $args = targs::instance();
