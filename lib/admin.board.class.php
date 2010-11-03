@@ -41,7 +41,13 @@ public function save() { return true; }
   public function getdescription() {
     return '';
   }
-  
+
+public function getview() {
+return tviews::instance()->defaults['admin'];
+}
+
+public function setview($id) {}
+
   public function getcont() {
     $result = $this->logoutlink;
     $editor = tposteditor::instance();

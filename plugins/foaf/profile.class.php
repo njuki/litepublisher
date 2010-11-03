@@ -18,8 +18,7 @@ class tprofile extends tevents implements itemplate {
     $this->data = $this->data + array(
     'url' => '/profile.htm',
     'template' => '',
-    'tmlfile' => '',
-    'theme' => '',
+    'view' => 1,
     'nick' => 'admin',
     'dateOfBirth' => date('Y-m-d'),
     'gender' => 'male',
@@ -155,7 +154,18 @@ public function gethead() { }
   public function getdescription() {
     return tcontentfilter::getexcerpt($this->bio, 128);
   }
-  
+
+public function getview() {
+return $this->data['view'];
+}
+
+public function setview($id) {
+if ($id != $this->view) {
+$this->data['view'] = $id;
+$this->save();
+}
+}
+
   public function getcont() {
     ttheme::$vars['profile'] = $this;
     $theme = ttheme::instance();

@@ -63,11 +63,11 @@ class THtmlResource  {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden):|=(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       $admin = $theme->content->admin;
       foreach ($m as $item) {
         $type = $item[1];
-        $name = $item[2];
+        $name = $item[3];
         $varname = '$' . $name;
         //convert spec charsfor editor
         if (($type != 'checkbox') || ($name != 'combo')) {
@@ -160,7 +160,7 @@ return array(
 'propname' => $name
 );
 }
-tlogsubsystem::error(sprintf('The property %s not found in class %s', $name, get_class($this->obj));
+//tlogsubsystem::error(sprintf('The property %s not found in class %s', $name, get_class($this->obj));
 }
 
 public function __call($name, $args) {
@@ -171,10 +171,11 @@ return array(
 'type' => $args[0]
 );
 }
+}
 
 }//class
 
-class tform {
+class tautoform {
 private $props;
 
 public function __create() {
@@ -186,7 +187,7 @@ $this->addprop($prop);
 }
 
 public function addprop(array $prop) {
-$this->props[] = array((
+$this->props[] = array(
 'obj' => $prop['obj'],
 'propname' => $prop['propname'],
 'type' => $type
