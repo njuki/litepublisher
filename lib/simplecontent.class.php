@@ -6,9 +6,17 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsimplecontent  extends tdata implements itemplate {
+class tsimplecontent  extends tevents_itemplate implements itemplate {
   public $text;
   public $html;
+
+  public static function instance() {
+    return Getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'simplecontent';
   
   public function  httpheader() {
     return turlmap::htmlheader(false);
@@ -16,16 +24,7 @@ class tsimplecontent  extends tdata implements itemplate {
   
 public function request($arg) {}
 public function gettitle() {}
-public function getkeywords() {}
-public function getdescription() {}
-public function gethead() {}
 
-public function getview() {
-return 1;
-}
-
-public function setview($id) { }
-  
   public function getcont() {
     $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
     $theme =tview::getview(1)->theme;

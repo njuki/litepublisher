@@ -313,7 +313,7 @@ class tmenu extends titem implements  itemplate {
     'keywords' => '',
     'description' => '',
     'password' => '',
-    'view' => 1,
+    'idview' => 1,
     //owner props
     'title' => '',
     'url' => '',
@@ -393,13 +393,13 @@ public function gethead() {}
     return $this->data['description'];
   }
 
-public function getview() {
-return $this->data['view'];
+public function getidview() {
+return $this->data['idview'];
 }
 
-public function setview($id) {
-if ($id != $this->view) {
-$this->data['view'] = $id;
+public function setidview($id) {
+if ($id != $this->idview) {
+$this->data['idview'] = $id;
 $this->save();
 }
 }

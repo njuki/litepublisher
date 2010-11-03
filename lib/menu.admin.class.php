@@ -106,7 +106,7 @@ class tadminmenu  extends tmenu {
 public function load() { return true; }
 public function save() { return true; }
 
-public function getview() {
+public function getidview() {
 return tviews::instance()->defaults['admin'];
 }
 

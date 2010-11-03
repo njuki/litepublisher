@@ -4,7 +4,7 @@ function altertheme($table) {
 $man = tdbmanager ::instance();
 $man->alter($table, 'drop tmlfile');
 $man->alter($table, 'drop theme');
-$man->alter($table, "add `view` int unsigned NOT NULL default '1'");
+$man->alter($table, "add `idview` int unsigned NOT NULL default '1'");
 }
 
 f
@@ -39,9 +39,11 @@ $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tsite', 'site.class.php'();
 $classes->add('tview', 'views.class.php');
 $classes->add('tviews',  'views.class.php');
+$classes->add('tadminviews', 'admin.views.class.php');
+$classes->add('tevents_storage', 'events.class.php');
+$classes->add('tevents_itemplate', 'events.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
-
 $classes->unlock();
 
 $data = new tdata();
@@ -128,7 +130,7 @@ foreach ($posts->items as $id => $item) {
 $post = tpost::instance($id);
 unset($post->data['tmlfile']);
 unset($post->data['theme']);
-$post->data['view'] = 1;
+$post->data['idview'] = 1;
 $post->save();
 $post->free();
 }
