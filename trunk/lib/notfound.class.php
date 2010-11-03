@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tforbidden extends tevents implements itemplate {
+class tforbidden extends tevents_itemplate implements itemplate {
   
   public static function instance() {
     return getinstance(__class__);
@@ -16,26 +16,10 @@ class tforbidden extends tevents implements itemplate {
     parent::create();
     $this->basename = 'forbidden';
     $this->data['text'] = '';
-    $this->data['view'] = 1;
   }
   
 public function request($arg) {}
 public function gettitle() {}
-public function getkeywords() {}
-public function getdescription() {}
-public function gethead() {}
-  
-public function getview() {
-return $this->data['view'];
-}
-
-public function setview($id) {
-if ($id != $this->view) {
-$this->data['view'] = $id;
-$this->save();
-}
-}
-
   public function  httpheader() {
     return "<?php Header( 'HTTP/1.0 403 Forbidden'); ?>" . turlmap::htmlheader(false);
   }

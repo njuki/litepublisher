@@ -17,7 +17,7 @@ class tadminthemes extends tadminmenu {
     $result = '';
     $html = $this->html;
     $args = targs::instance();
-    $template = ttemplate::instance();
+$theme = $view->theme;
     if ($plugin = $this->getplugin())  {
       $args->themename = $Template->theme;
       $args->url = litepublisher::$site->url . $this->url . litepublisher::$site->q ."plugin=$template->theme";

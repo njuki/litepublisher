@@ -39,11 +39,11 @@ public function gethead() { }
     return $this->getval('description');
   }
   
-public function getview() {
+public function getidview() {
     return $this->getval('view');
 }
 
-public function setview($id) {
+public function setidview($id) {
 if ($id != $this->view) {
 $this->items[$this->id]['view'] = $id;
 $this->save();

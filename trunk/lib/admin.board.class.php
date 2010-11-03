@@ -42,11 +42,11 @@ public function save() { return true; }
     return '';
   }
 
-public function getview() {
+public function getidview() {
 return tviews::instance()->defaults['admin'];
 }
 
-public function setview($id) {}
+public function setidview($id) {}
 
   public function getcont() {
     $result = $this->logoutlink;

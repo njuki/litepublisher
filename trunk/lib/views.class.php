@@ -19,11 +19,11 @@ private $themeinstance;
   }
   
   public static function getview($instance) {
-$id = $instance->getview();
+$id = $instance->getidview();
 $views = tviews::instance();
 if (!$views->itemexists($id)) {
 $id = 1; //default, wich always exists
-$instance->setview($id);
+$instance->setidview($id);
 }
 return self::instance($id);
   }

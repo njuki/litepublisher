@@ -12,6 +12,10 @@ class tadminviews extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
 
+public static function getidview() {
+}
+
+
 public static function getcombo() {
 $idget = self::idget('idview');
 if ($idget == 0) $idget = 1;

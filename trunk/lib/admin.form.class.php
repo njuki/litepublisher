@@ -19,13 +19,12 @@ public function gethead() {}
 public function getkeywords() {}
 public function getdescription() {}
 
-public function getview() {
+public function getidview() {
 return tviews::instance()->defaults['admin'];
 }
 
-public function setview($id) {}
+public function setidview($id) {}
 
-  
   public function request($arg) {
     $this->cache = false;
     tlocal::loadlang('admin');

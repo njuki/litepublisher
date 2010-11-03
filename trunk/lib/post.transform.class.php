@@ -9,14 +9,14 @@
 class tposttransform  {
   public $post;
   public static $arrayprops= array('categories', 'tags', 'files');
-  public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'view');
+  public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'idview');
   public static $boolprops= array('commentsenabled', 'pingenabled');
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision',
   //'created', 'modified',
   'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
   'categories', 'tags', 'files',
-  'password', 'view', 'icon',
+  'password', 'idview', 'icon',
   'status', 'commentsenabled', 'pingenabled',
   'commentscount', 'pingbackscount', 'pagescount',
   );
@@ -74,10 +74,6 @@ class tposttransform  {
     foreach ($post->data['pages'] as $i => $content) {
       $db->updateassoc(array('post' => $post->id, 'page' => $i, 'content' => $content));
     }
-  }
-  
-  public function getassoc() {
-    
   }
   
   public function setassoc(array $a) {

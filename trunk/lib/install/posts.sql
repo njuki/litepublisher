@@ -16,7 +16,7 @@
   `tags` text NOT NULL,
   `files` text NOT NULL,
   `password` varchar(32) NOT NULL default '',
-  `view` int unsigned NOT NULL default '1',
+  `idview` int unsigned NOT NULL default '1',
   `status` enum('published','draft','future','deleted') default 'published',
   `commentsenabled` boolean default true,
   `pingenabled` boolean default true,

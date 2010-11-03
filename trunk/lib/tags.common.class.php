@@ -323,13 +323,13 @@ class tcommontags extends titems implements  itemplate {
     return $result;
   }
 
-public function getview() {
-return $this->contents->getvalue($this->id, 'view');
+public function getidview() {
+return $this->contents->getvalue($this->id, 'idview');
 }
 
-public function setview($id) {
-if ($id != $this->view) {
-$this->contents->setvalue($this->id, 'view', $value);
+public function setidview($id) {
+if ($id != $this->idview) {
+$this->contents->setvalue($this->id, 'idview', $id);
 }
 }
 
@@ -383,7 +383,7 @@ class ttagcontent extends tdata {
   public function getitem($id) {
     if (isset($this->items[$id]))  return $this->items[$id];
     $item = array(
-'view' => 1,
+'idview' => 1,
     'description' => '',
     'keywords' => '',
     'content' => '',
@@ -414,7 +414,7 @@ class ttagcontent extends tdata {
     $item = $this->getitem($id);
     $filter = tcontentfilter::instance();
     $item =array(
-    'view' => $item['view'],
+    'idview' => $item['idview'],
     'content' => $filter->filter($content),
     'rawcontent' => $content,
     'description' => $description,

@@ -50,7 +50,7 @@ class tpost extends titem implements  itemplate {
     'commentsenabled' => litepublisher::$options->commentsenabled,
     'pingenabled' => litepublisher::$options->pingenabled,
     'password' => '',
-    'view' => 1,
+    'idview' => 1,
     'commentscount' => 0,
     'pingbackscount' => 0,
     'pagescount' => 0,
@@ -347,15 +347,15 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     return $this->data['description'];
   }
 
-public function getview() {
-return $this->data['view'];
+public function getidview() {
+return $this->data['idview'];
 }
 
-public function setview($id) {
-if ($id != $this->view) {
-$this->data['view'] = $id;
+public function setidview($id) {
+if ($id != $this->idview) {
+$this->data['idview'] = $id;
 if ($this->dbversion) {
-$this->db->setvalue($this->id, 'view', $value);
+$this->db->setvalue($this->id, 'idview', $id);
 } else {
 $this->save();
 }
