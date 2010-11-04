@@ -27,8 +27,7 @@ public function gettitle() {}
 
   public function getcont() {
     $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
-    $theme =tview::getview(1)->theme;
-    return $theme->simple($result);
+    return $this->view->theme->simple($result);
   }
   
   public static function html($content) {

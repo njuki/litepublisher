@@ -20,6 +20,7 @@ private $themeinstance;
   
   public static function getview($instance) {
 $id = $instance->getidview();
+    if (isset(self::$instances['view'][$id]))     return self::$instances['view'][$id];
 $views = tviews::instance();
 if (!$views->itemexists($id)) {
 $id = 1; //default, wich always exists
@@ -143,6 +144,71 @@ $deleted = true;
 if ($deleted) $this->save();
   }
   
+}//class
+
+
+class tevents_itemplate extends tevents {
+
+  protected function create() {
+    parent::create();
+    $this->data['idview'] = 1;
+}
+
+public function gethead() {}
+public function getkeywords() {}
+public function getdescription() {}
+
+public function getidview() {
+return $this->data['idview'];
+}
+
+public function setidview($id) {
+if ($id != $this->idview) {
+$this->data['idview'] = $id;
+$this->save();
+}
+}
+
+public function getview() {
+return tview::getview($this);
+}
+
+}//class
+
+
+class titems_itemplate extends titems {
+
+  protected function create() {
+    parent::create();
+    $this->data['idview'] = 1;
+$this->data['keywords'] = '';
+$this->data['description'] = '';
+  }
+
+public function gethead() {}
+public function getkeywords() {
+return $this->data['keywords'] : '';
+}
+
+public function getdescription() {
+return $this->data['description'];
+}
+
+public function getidview() {
+return $this->data['idview'];
+}
+
+public function setidview($id) {
+if ($id != $this->data['idview']) {
+$this->data['idview'] = $id;
+$this->save();
+}
+}
+
+public function getview() {
+return tview::getview($this);
+}
+
 }//class
 
 ?>
