@@ -7,23 +7,25 @@ $man->alter($table, 'drop theme');
 $man->alter($table, "add `idview` int unsigned NOT NULL default '1'");
 }
 
-f
+function updatetags($tags) {
 foreach ($tags->items as $id => $itemtag) {
 $item = $tags->content->getitem($id);
 if (isset($item['tmlfile'])) {
 unset($item['tmlfile']);
 unset($item['theme']);
-$item['view'] = 1;
+$item['idview'] = 1;
 $tags->contents->setitem($id, $item);
 }
-}unction updatetags($tags) {
+}
 }
 
-function updatesingle($obj) {
+function singleupdate($obj) {
 if (isset($obj->data['theme'])) {
 unset($obj->data['theme']);
 unset($obj->data['tmlfile']);
-$obj->data['view'] = 1;
+$obj->data['idview'] = 1;
+$obj->data['keywords'] = '';
+$obj->data['description'] = '';
 $obj->save();
 }
 }
@@ -41,7 +43,8 @@ $classes->add('tview', 'views.class.php');
 $classes->add('tviews',  'views.class.php');
 $classes->add('tadminviews', 'admin.views.class.php');
 $classes->add('tevents_storage', 'events.class.php');
-$classes->add('tevents_itemplate', 'events.class.php');
+$classes->add('tevents_itemplate', 'views.class.php');
+$classes->add('titems_itemplate', 'views.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
@@ -66,7 +69,7 @@ $old = $home->data;
     'keywords' => '',
     'description' => '',
     'password' => '',
-    'view' => 1,
+    'idview' => 1,
 
     //owner props
     'title' => tlocal::$data['default']['home'],
@@ -92,7 +95,7 @@ $home->install();
 
 foreach ($menus->items as $id => $item) {
 $menu = tmenu::instance($id);
-$menu->data['view'] = 1;
+$menu->data['idview'] = 1;
 unset($menu->data['tmlfile']);
 unset($menu->data['theme']);
 $menu->content = $menu->data['content'];
@@ -117,8 +120,8 @@ $contact = tcontactform();
 $contact->data['subject'] = $lang->subject;
 $contact->data['errmesg'] =$html->errmesg();
 $contact->data['success'] = $html->success();
+$contact->data['idview'] = 1;
 $contact->save();
-
 
 if (dbversion) {
 altertheme('posts');
@@ -142,9 +145,18 @@ updatetags(tcategories::instance());
 singleupdate(tarchives::instance());
 singleupdate(tforbidden::instance());
 singleupdate(tnotfound404::instance());
-singleupdate(tsimplecontent ::instance());
 singleupdate(tsitemap::instance());
+singleupdate(tsimplecontent::instance());
 if (isset($classes->items['tprofile'])) singleupdate(tprofile::instance());
+
+$static = tstaticpages::instance();
+if (count($static->items)) {
+foreach ($static->items as $id => $item) {
+$static->items[$id]['idview'] = 1;
+}
+$static->save();
+}
+
 tstorage::savemodified();
 }
 ?>

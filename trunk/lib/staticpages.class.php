@@ -40,12 +40,12 @@ public function gethead() { }
   }
   
 public function getidview() {
-    return $this->getval('view');
+    return $this->getval('idview');
 }
 
 public function setidview($id) {
-if ($id != $this->view) {
-$this->items[$this->id]['view'] = $id;
+if ($id != $this->idview) {
+$this->items[$this->id]['idview'] = $id;
 $this->save();
 }
 }
@@ -69,7 +69,7 @@ $this->save();
     'rawcontent' => $content,
     'description' => tcontentfilter::escape($description),
     'keywords' => tcontentfilter::escape($keywords),
-'view' => 1
+'idview' => 1
     );
     $this->save();
     return $this->autoid;
@@ -87,7 +87,7 @@ $this->save();
     'rawcontent' => $content,
     'description' => tcontentfilter::escape($description),
     'keywords' => tcontentfilter::escape($keywords),
-'view' => $item['view']
+'idview' => $item['idview']
     );
     $this->save();
     litepublisher::$urlmap->clearcache();

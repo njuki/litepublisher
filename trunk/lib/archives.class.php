@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tarchives extends titems implements  itemplate {
+class tarchives extends titems_itemplate implements  itemplate {
   public $date;
   
   public static function instance() {
@@ -18,7 +18,6 @@ class tarchives extends titems implements  itemplate {
     $this->basename   = 'archives';
     $this->table = 'posts';
     $this->data['lite'] = false;
-    $this->data['idview'] = 1;
   }
   
   public function getheadlinks() {
@@ -112,21 +111,6 @@ class tarchives extends titems implements  itemplate {
     return $this->items[$this->date]['title'];
   }
   
-public function gethead() {}
-public function getkeywords() {}
-public function getdescription() {}
-
-public function getidview() {
-return $this->data['idview'];
-}
-
-public function setidview($id) {
-if ($id != $this->idview) {
-$this->data['idview'] = $id;
-$this->save();
-}
-}
-
   public function getcont() {
     $items = $this->getposts();
     if (count($items) == 0)return '';

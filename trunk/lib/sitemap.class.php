@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tsitemap extends titems implements itemplate {
+class tsitemap extends titems_itemplate implements itemplate {
   public $title;
   private $lastmod;
   private $count;
@@ -22,7 +22,6 @@ class tsitemap extends titems implements itemplate {
     $this->basename = 'sitemap';
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
-    $this->data['idview'] = 1;
   }
   
   public function add($url, $prio) {
@@ -36,25 +35,11 @@ class tsitemap extends titems implements itemplate {
   
   //itemplate
 public function gettitle() { return $this->title; }
-public function gethead() {}
-public function getkeywords() {}
-public function getdescription() {}
 
-public function getidview() {
-return $this->data['idview'];
-}
-
-public function setidview($id) {
-if ($id != $this->idview) {
-$this->data['idview'] = $id;
-$this->save();
-}
-}
-  
   public function getcont() {
     $result = '';
     $posts = tposts::instance();
-    $theme = tview::getview($thisview)->theme;
+    $theme = $this->view->theme;
     $perpage = 1000;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     if (dbversion) {
