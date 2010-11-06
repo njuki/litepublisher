@@ -136,8 +136,12 @@ return tviews::instance()->defaults['admin'];
     $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();
   }
-  
-  public static function idget($name = 'id', $default = 0) {
+
+  public static function idget() {
+return self::getparam('id', 0);
+}
+
+  public static function getparam($name, $default) {
     return !empty($_GET[$name]) ? (int) $_GET[$name] : (!empty($_POST[$name]) ? (int)$_POST[$name] : $default);
   }
   

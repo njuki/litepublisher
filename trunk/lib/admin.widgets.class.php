@@ -33,7 +33,7 @@ $count = count($view->sitebars);
   }
   
   public static function getsitebarsform() {
-$idview = self::idget('idview', 1);
+$idview = self::getparam('idview', 1);
 $view = tview::instance($idview);
 $result = tadminviews::getviewform();
 
