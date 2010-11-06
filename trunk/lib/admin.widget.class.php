@@ -309,37 +309,4 @@ class tadminmetawidget extends tadminwidget {
   
 }//class
 
-class tadminhomewidgets extends tadminwidget {
-  
-  public static function instance() {
-    return getinstance(__class__);
-  }
-  
-  public function getcontent(){
-    $home = thomepage::instance();
-    $args = targs::instance();
-    $args->ajax = $view->ajax;
-    $args->customsitebar = $home->customsitebar;
-    $result = $this->html->homeform($args);
-    if ($view->customsitebar) {
-      $result .= tadminwidgets::getsitebarsform($view->sitebars);
-    }
-    return $result;
-  }
-  
-  public function processform()  {
-    $home = thomepage::instance();
-    $view->lock();
-    if (isset($_POST['homeoptions'])) {
-      $view->ajax = isset($_POST['ajax']);
-      $view->customsitebar = isset($_POST['customsitebar']);
-    } else {
-      tadminwidgets::setsitebars($view->sitebars);
-    }
-    $view->unlock();
-    return $this->html->h2->updated;
-  }
-  
-}//class
-
 ?>

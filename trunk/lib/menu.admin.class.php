@@ -173,6 +173,10 @@ return tviews::instance()->defaults['admin'];
   public function getadminurl() {
     return litepublisher::$site->url .$this->url . litepublisher::$site->q . 'id';
   }
+
+public static function getadminlink($path, $params) {
+    return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
+}
   
   public function getfrom($perpage, $count) {
     if (litepublisher::$urlmap->page <= 1) return 0;

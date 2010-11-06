@@ -21,30 +21,41 @@ class tadminwidgets extends tadminmenu {
     return $result;
   }
   
-  public static function getsitebarnames($count) {
+  public static function getsitebarnames(tview $view) {
+$count = count($view->sitebars);
     $result = range(1, $count);
     $parser = tthemeparser::instance();
-$theme = ttheme::instance();
-    $about = $parser->getabout($theme->name);
+    $about = $parser->getabout($view->theme->name);
     foreach ($result as $key => $value) {
       if (isset($about["sitebar$key"])) $result[$key] = $about["sitebar$key"];
     }
     return $result;
   }
   
-  public static function getsitebarsform(array $sitebars) {
+  public static function getsitebarsform() {
+$idview = self::idget('idview', 1);
+$view = tview::instance($idview);
+$result = tadminviews::getviewform();
+
     $widgets = twidgets::instance();
     $html = THtmlResource ::instance();
     $html->section = 'widgets';
     $lang = tlocal::instance('widgets');
-    $result = $html->checkallscript;
-    $result .= $html->formhead();
     $args = targs::instance();
-    $args->adminurl = litepublisher::$site->url . '/admin/widgets/' . litepublisher::$site->q . 'idwidget';
-$args->idview = self::idget('idview');
-    $count = count($sitebars);
-    $sitebarnames = self::getsitebarnames(count($sitebars));
-    foreach ($sitebars as $i => $sitebar) {
+$args->idview = $idview;
+$args->customsitebar = $view->customsitebar;
+$args->ajax = $view->ajax;
+$form = $view->id == 1 ? '' : '[checkbox=customsitebar] ';
+$form .= ' [checkbox=ajax] [hidden=idview]';
+$result .= $html->parsearg($form, $args);
+
+if (($view->id == 1) || $view->customsitebar) {
+    $result .= $html->checkallscript;
+    $result .= $html->formhead();
+    $args->adminurl = self::getadminlink('/admin/views/widgets/', 'idwidget');
+    $count = count($view->sitebars);
+    $sitebarnames = self::getsitebarnames($view);
+    foreach ($view->sitebars as $i => $sitebar) {
       $orders = range(1, count($sitebar));
       foreach ($sitebar as $j => $_item) {
         $id = $_item['id'];
@@ -70,6 +81,7 @@ $args->idview = self::idget('idview');
       $result .= $html->additem($args);
     }
     $result .= $html->addfooter();
+}
     return  $html->fixquote($result);
   }
   
@@ -103,25 +115,22 @@ $args->idview = self::idget('idview');
   }
   
   public function getcontent() {
-    $widgets = twidgets::instance();
     switch ($this->name) {
       case 'widgets':
-      $idwidget = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+      $idwidget = self::idget('idwidget');
+    $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->getcontent();
       } else {
-        return self::getsitebarsform($widgets->sitebars);
+        return self::getsitebarsform();
       }
       
       case 'addcustom':
       $widget = tcustomwidget::instance();
       return  $widget->admin->getcontent();
-      
-      case 'home':
-      $adminhome = tadminhomewidgets::instance();
-      return $adminhome->getcontent();
-      
+
+/*      
       case 'classes':
       return 'Sorry, under construction';
       $result = '';
@@ -136,57 +145,61 @@ $args->idview = self::idget('idview');
       }
       $args->content = $result;
       return $html->classesform($args);
+*/
     }
   }
   
   public function processform() {
     litepublisher::$urlmap->clearcache();
-    $widgets = twidgets::instance();
     switch ($this->name) {
       case 'widgets':
-      $idwidget = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
+      $idwidget = self::idget('idwidget');
+    $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->processform();
       } else {
-        self::setsitebars($widgets->sitebars);
-        $widgets->save();
+        self::setsitebars();
         return $this->html->h2->success;
       }
       
       case 'addcustom':
       $widget = tcustomwidget::instance();
       return  $widget->admin->processform();
-      
-      case 'home':
-      $adminhome = tadminhomewidgets::instance();
-      return $adminhome->processform();
     }
   }
   
-  public static function setsitebars(array &$sitebars) {
+  public static function setsitebars() {
+$idview = self::idget('idview', 1);
+$view = tview::instance($idview);
+
     switch ($_POST['action']) {
+case 'options':
+      $view->ajax = isset($_POST['ajax']);
+      $view->customsitebar = isset($_POST['customsitebar']);
+break;
+
       case 'edit':
-      self::editsitebars($sitebars);
+      self::editsitebars($view->sitebars);
       break;
-      
+
       case 'add':
       $widgets = twidgets::instance();
       foreach ($_POST as $key => $value) {
         if (strbegin($key, 'addwidget-')){
           $id = (int) $value;
           if (!$widgets->itemexists($id) || $widgets->subclass($id)) continue;
-          $sitebars[0][] = array(
+          $views->sitebars[0][] = array(
           'id' => $id,
           'ajax' => false
           );
         }
       }
     }
+$view->save();
   }
   
 }//class
-
 
 class tsitebars extends tdata {
   public $items;
