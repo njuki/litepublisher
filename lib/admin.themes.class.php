@@ -11,7 +11,21 @@ class tadminthemes extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
+
+public static function isfilename($filename) {
+return preg_match('/^\w[\w\.\-_]*+$/', $filename);
+}
+
+public static function file_exists($themename, $filename) {
+return self::theme_exists($themename) && self::isfilename($filename) && 
+file_exists(litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $filename);
+}
+
+public static function theme_exists($name) {
+return preg_match('/^\w[\w\.\-_]*+$/', $themename) &&
+is_dir(litepublisher::$paths->themes .$themename);
+}
+
   public function getcontent() {
     $result = tadminviews::getviewform();
 $idview = self::idget('idview', 1);
@@ -39,9 +53,8 @@ $theme = $view->theme;
       break;
       
       case 'edit':
-      $themename = self::idget('theme', $theme->name);
-if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) ||
-!is_dir(litepublisher::$paths->themes . $themename)) return $this->notfound;
+      $themename = self::getparam('theme', $theme->name);
+if (!self::theme_exists($themename)) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
       $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
@@ -55,33 +68,12 @@ if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) ||
       
       if (!empty($_GET['file'])) {
         $file = $_GET['file'];
-        if (strpbrk ($file, '/\<>')) return $this->notfound;
+if (!self::file_exists($file)) return $this->notfound;
         $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
-        if (!@file_exists($filename)) return $this->notfound;
         $args->content = file_get_contents($filename);
         $result .= sprintf($html->h2->filename, $_GET['file']);
         $result .= $html->editform($args);
       }
-      break;
-      
-      case 'options':
-      $home = thomepage::instance();
-      $args->hometheme = $home->theme;
-      $arch = tarchives::instance();
-      $args->archtheme = $arch->theme;
-      $notfound = tnotfound404::instance();
-      $args->theme404 = $notfound->theme;
-      $sitemap = tsitemap::instance();
-      $args->sitemaptheme = $sitemap->theme;
-      $args->admintheme = $template->admintheme;
-      $result = $html->optionsform($args);
-      break;
-      
-      case 'javascripts':
-      $args->hovermenu = $template->stdjavascripts['hovermenu'];
-      $args->comments = $template->stdjavascripts['comments'];
-      $args->moderate = $template->stdjavascripts['moderate'];
-      $result = $html->jsform($args);
       break;
     }
     
@@ -90,100 +82,40 @@ if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) ||
   
   public function processform() {
     $result = '';
+$idview = self::getparam('idview', 1);
+$view = tview::instance($idview);
+
     if  (isset($_POST['reparse'])) {
       $parser = tthemeparser::instance();
       try {
-        $parser->reparse();
+        $parser->reparse($view->theme->name);
       } catch (Exception $e) {
-        return $e->getMessage();
+        $result = $e->getMessage();
       }
     } else {
       switch ($this->name) {
         case 'themes':
-        if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
-        
         if (empty($_POST['selection']))   return '';
-        $template = ttemplate::instance();
         try {
-          $template->theme = $_POST['selection'];
-        } catch (Exception $e) {
-          $template->theme = 'default';
-          return $e->getMessage();
-        }
+          $view->themename = $_POST['selection'];
         $result = $this->html->h2->success;
+        } catch (Exception $e) {
+          $view->themename = 'default';
+          $result = $e->getMessage();
+        }
         break;
         
         case 'edit':
-        if (!empty($_GET['file']) && !empty($_GET['theme'])) {
-          //security check
-          if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
+        if (empty($_GET['file']) || empty($_GET['theme'])) return '';
+if (!self::file_exists($_GET['theme'], $_GET['file'])) return '';
           if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
-            ttheme::clearcache();
-            return  $this->html->h2->errorsave;
+            $result = $this->html->h2->errorsave;
           }
-        }
         break;
-        
-        case 'options':
-        extract($_POST, EXTR_SKIP);
-        if (isset($hometheme)) {
-          $home = thomepage::instance();
-          $home->theme = $hometheme;
-          $home->save();
-        }
-        
-        if (isset($archtheme)) {
-          $arch = tarchives::instance();
-          $arch->theme = $archtheme;
-          $arch->save();
-        }
-        
-        if (isset($theme404)) {
-          $notfound = tnotfound404::instance();
-          $notfound->theme = $theme404;
-          $notfound->save();
-        }
-        
-        if (isset($sitemaptheme)) {
-          $sitemap = tsitemap::instance();
-          $sitemap->theme = $sitemaptheme;
-          $sitemap->save();
-        }
-        
-        if (isset($admintheme)) {
-          $template = ttemplate::instance();
-          $template->admintheme = $admintheme;
-          $template->save();
-        }
-        $result = $this->html->h2->themeschanged;
-        break;
-        
-        case 'javascripts':
-        extract($_POST, EXTR_SKIP);
-        $template = ttemplate::instance();
-        $template->stdjavascripts['hovermenu'] = $hovermenu;
-        $template->stdjavascripts['comments'] = $comments;
-        $template->stdjavascripts['moderate'] = $moderate;
-        $template->save();
-        break;
-      }
     }
     
     ttheme::clearcache();
     return $result;
-  }
-  
-  private function  getplugin() {
-    if (!isset($this->plugin)) {
-      $template =  ttemplate::instance();
-      $parser = tthemeparser::instance();
-      if (!($about = $parser->getabout($template->theme))) return false;
-      if (empty($about['adminclassname']))  return false;
-      $class = $about['adminclassname'];
-      if (!class_exists($class))  require_once($template->path . $about['adminfilename']);
-      $this->plugin = getinstance($class);
-    }
-    return $this->plugin;
   }
   
 }//class
