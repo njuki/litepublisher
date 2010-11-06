@@ -34,6 +34,7 @@ function update400() {
 $classes = litepublisher::$classes;
 $classes->lock();
 unset($classes->items['imenu']);
+unset($classes->items['tadminhomewidgets');
 $classes->items['tsitebars'][0] 'admin.widgets.class.php';
 $classes->add('titems_storage', 'items.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');

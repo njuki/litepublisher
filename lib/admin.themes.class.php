@@ -7,39 +7,31 @@
 **/
 
 class tadminthemes extends tadminmenu {
-  private $plugin;
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function getcontent() {
-    $result = '';
+    $result = tadminviews::getviewform();
+$idview = self::idget('idview', 1);
+$view = tview::instance(1);
     $html = $this->html;
     $args = targs::instance();
 $theme = $view->theme;
-    if ($plugin = $this->getplugin())  {
-      $args->themename = $Template->theme;
-      $args->url = litepublisher::$site->url . $this->url . litepublisher::$site->q ."plugin=$template->theme";
-      $result .= $html->pluginlink($args);
-    }
+
     switch ($this->name) {
       case 'themes':
-      if ($plugin && !empty($_GET['plugin'])) {
-        $result .= $plugin->getcontent();
-        return $result;
-      }
       $result .= $html->formheader();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
-      $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'theme';
-      
+      $args->editurl = self::getadminlink('/admin/views/themes/edit/', 'theme');
       $parser = tthemeparser::instance();
       foreach ($list as $name) {
         if ($about = $parser->getabout($name)) {
           $about['name'] = $name;
           $args->add($about);
-          $args->checked = $name == $template->theme;
+          $args->checked = $name == $theme->name;
           $result .= $html->radioitem($args);
         }
       }
@@ -47,13 +39,14 @@ $theme = $view->theme;
       break;
       
       case 'edit':
-      $themename = !empty($_GET['theme']) ? $_GET['theme'] : $template->theme;
-      if (strpbrk($themename, '/\<>')) return $this->notfound;
+      $themename = self::idget('theme', $theme->name);
+if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) ||
+!is_dir(litepublisher::$paths->themes . $themename)) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
       $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
-      $editurl = litepublisher::$site->url . $this->url . litepublisher::$site->q . "theme=$themename&file";
-      $fileitem = $html->fileitem . "\n";
+      $editurl = self::getadminlink('/admin/views/themes/edit/', sprintf('theme=%s&file', $themename));
+      $fileitem = $html->fileitem;
       $filelist = '';
       foreach ($list as $file) {
         $filelist .= sprintf($fileitem, $editurl, $file);
