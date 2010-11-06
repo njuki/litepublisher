@@ -16,34 +16,30 @@ public static function getidview() {
 }
 
 
-public static function getcombo() {
-$idget = self::idget('idview');
-if ($idget == 0) $idget = 1;
-$views = tviews::instance();
-$items = '';
-foreach ($views->items as $id => $item) {
-      $items .= sprintf('<option value="%d" %s>%s</option>', $id,
- $idget == $id ? 'selected="selected"' : '', $item['name']);
-}
-
+public static function getviewform() {
     $html = THtmlResource ::instance();
     $html->section = 'views';
     $lang = tlocal::instance('views');
 $args = targs::instance();
-$args->items = $items;
+$args->items = self::getcombo();
 return $html->comboform($args);
+}
+
+public static function getcombo() {
+$idview = self::idget('idview', 1);
+$views = tviews::instance();
+$result = '';
+foreach ($views->items as $id => $item) {
+      $result .= sprintf('<option value="%d" %s>%s</option>', $id,
+ $idview == $id ? 'selected="selected"' : '', $item['name']);
+}
+return $result;
 }
 
     public function getcontent() {
     $result = '';
     $html = $this->html;
     $args = targs::instance();
-    $template = ttemplate::instance();
-    if ($plugin = $this->getplugin())  {
-      $args->themename = $Template->theme;
-      $args->url = litepublisher::$site->url . $this->url . litepublisher::$site->q ."plugin=$template->theme";
-      $result .= $html->pluginlink($args);
-    }
     switch ($this->name) {
       case 'themes':
       if ($plugin && !empty($_GET['plugin'])) {
