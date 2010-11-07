@@ -150,8 +150,7 @@ return self::getparam('id', 0);
   }
   
   public function getaction() {
-    if (isset($_REQUEST['action']))  return $_REQUEST['action'];
-    return false;
+return isset($_REQUEST['action']) ? $_REQUEST['action'] false;
   }
   
   public function gethtml($name = '') {

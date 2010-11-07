@@ -37,16 +37,26 @@ return $result;
     $args = targs::instance();
     switch ($this->name) {
       case 'views':
+switch ($this->action) {
+case 'edit':
+break;
+
+case 'delete':
+break;
+default:
+$url = self::getlink('/admin/views/$path/', 'idview=%d');
+$table = $html->createtable(
+'name' => 'left',
+'themename' => '<a href="$site.url/admin/views/themes/$site.qidview=$id">$themename</a>',
+'widgets' =>
+'edit' =>
+'delete' =>
+);
+
       $result .= $html->formheader();
-      $list =    tfiler::getdir(litepublisher::$paths->themes);
-      sort($list);
-      $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'theme';
-      
-      $parser = tthemeparser::instance();
-      foreach ($list as $name) {
-        if ($about = $parser->getabout($name)) {
-          $about['name'] = $name;
-          $args->add($about);
+      $args->editurl = self::getlink('/admin/views/', 'action=edit&idview');
+foreach ($views->items as $id => $item) {      
+          $args->add($uitem);
           $args->checked = $name == $template->theme;
           $result .= $html->radioitem($args);
         }
