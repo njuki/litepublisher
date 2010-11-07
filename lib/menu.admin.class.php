@@ -17,8 +17,12 @@ class tadminmenus extends tmenus {
     $this->basename = 'adminmenu';
     tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
-  
-  private function getadmintitle($name) {
+
+  public function getdir() {
+    return litepublisher::$paths->data . 'adminmenus' . DIRECTORY_SEPARATOR;
+  }
+
+    private function getadmintitle($name) {
     if (isset(tlocal::$data[$name]['title'])) {
       return tlocal::$data[$name]['title'];
     } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {

@@ -85,15 +85,6 @@ $item->url = '/';
     return $this->autoid;
   }
   
-  public function insert($class, $parent, $title, $url) {
-    return $this->additem(array(
-    'parent' => (int)$parent,
-    'title' => $title,
-    'url' => $url,
-    'class' => $class
-    ));
-  }
-  
   public function edit(tmenu $item) {
 if (!($item instanceof thomepage)) {
     $linkgen = tlinkgenerator::instance();
@@ -118,8 +109,10 @@ litepublisher::$urlmap->delete($this->items[$id]['url']);
     $this->sort();
     $this->unlock();
     $this->deleted($id);
-    @unlink($this->dir . "$id.php");
-    @unlink($this->dir . "$id.bak.php");
+$filename = $this->dir . $id . '.php';
+if (file_exists($filename))unlink($filename);
+$filename = $this->dir . $id . '.bak.php';
+if (file_exists($filename))unlink($filename);
     litepublisher::$urlmap->clearcache();
     return true;
   }
@@ -127,6 +120,18 @@ litepublisher::$urlmap->delete($this->items[$id]['url']);
   public function deleteurl($url) {
     if ($id = $this->url2id($url)) return $this->delete($id);
   }
+
+public function deletetree($id) {
+    if (!$this->itemexists($id)) return false;
+if($id == $this->idhome) return false;
+$this->lock();
+$childs = $this->getchilds($id);
+foreach ($childs as $child) {
+$this->deletetree($child);
+}
+$this->delete($id);
+$this->unlock();
+}
   
   public function url2id($url) {
     foreach ($this->items as $id => $item) {

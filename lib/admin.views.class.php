@@ -12,23 +12,18 @@ class tadminviews extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
 
-public static function getidview() {
-}
-
-
 public static function getviewform() {
     $html = THtmlResource ::instance();
     $html->section = 'views';
     $lang = tlocal::instance('views');
 $args = targs::instance();
-$args->items = self::getcombo();
+$args->items = self::getcombo(self::getparam('idview', 1));
 return $html->comboform($args);
 }
 
-public static function getcombo() {
-$idview = self::idget('idview', 1);
-$views = tviews::instance();
+public static function getcombo($idview$id) {
 $result = '';
+$views = tviews::instance();
 foreach ($views->items as $id => $item) {
       $result .= sprintf('<option value="%d" %s>%s</option>', $id,
  $idview == $id ? 'selected="selected"' : '', $item['name']);
@@ -41,11 +36,7 @@ return $result;
     $html = $this->html;
     $args = targs::instance();
     switch ($this->name) {
-      case 'themes':
-      if ($plugin && !empty($_GET['plugin'])) {
-        $result .= $plugin->getcontent();
-        return $result;
-      }
+      case 'views':
       $result .= $html->formheader();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
