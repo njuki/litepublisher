@@ -30,6 +30,32 @@ $obj->save();
 }
 }
 
+
+function updateadminmenu() {
+$admin = tadminmenus::instance();
+$admin->lock();
+$admin->data['idhome'] = 0;
+$admin->data['home'] = false;
+$idwidgets = $admin->url2id('/admin/widgets/');
+$id = $admin->url2id('/admin/themes/');
+$childs = $admin->getchilds($id);
+foreach ($childs as $child) {
+$admin->delete($child);
+}
+$admin->delete($id);
+
+$id = $admin->url2id('/admin/widgets/');
+$childs = $admin->getchilds($id);
+foreach ($childs as $child) {
+$admin->delete($child);
+}
+$admin->delete($id);
+
+
+
+$admin->unlock();
+}
+
 function update400() {
 $classes = litepublisher::$classes;
 $classes->lock();
@@ -46,6 +72,7 @@ $classes->add('tadminviews', 'admin.views.class.php');
 $classes->add('tevents_storage', 'events.class.php');
 $classes->add('tevents_itemplate', 'views.class.php');
 $classes->add('titems_itemplate', 'views.class.php');
+$classes->add('tadminthemefiles', 'admin.themefiles.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
@@ -104,15 +131,7 @@ $menu->save();
 }
 $menus->unlock();
 
-//fix for something
-$admin = tadminmenus::instance();
-$admin->lock();
-$admin->data['idhome'] = 0;
-$admin->data['home'] = false;
-$idwidgets = $admin->url2id('/admin/widgets/');
-$idthemes = $admin->url2id('/admin/themes/');
-$admin->unlock();
-
+updateadminmenu();
 
 //contact form
   $html = THtmlResource::instance();

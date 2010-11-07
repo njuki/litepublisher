@@ -12,20 +12,6 @@ class tadminthemes extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
 
-public static function isfilename($filename) {
-return preg_match('/^\w[\w\.\-_]*+$/', $filename);
-}
-
-public static function file_exists($themename, $filename) {
-return self::theme_exists($themename) && self::isfilename($filename) && 
-file_exists(litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $filename);
-}
-
-public static function theme_exists($name) {
-return preg_match('/^\w[\w\.\-_]*+$/', $themename) &&
-is_dir(litepublisher::$paths->themes .$themename);
-}
-
   public function getcontent() {
     $result = tadminviews::getviewform();
 $idview = self::idget('idview', 1);
@@ -34,8 +20,6 @@ $view = tview::instance(1);
     $args = targs::instance();
 $theme = $view->theme;
 
-    switch ($this->name) {
-      case 'themes':
       $result .= $html->formheader();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
@@ -50,33 +34,6 @@ $theme = $view->theme;
         }
       }
       $result .= $html->formfooter();
-      break;
-      
-      case 'edit':
-      $themename = self::getparam('theme', $theme->name);
-if (!self::theme_exists($themename)) return $this->notfound;
-      $result = sprintf($html->h2->filelist, $themename);
-      $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
-      sort($list);
-      $editurl = self::getadminlink('/admin/views/themes/edit/', sprintf('theme=%s&file', $themename));
-      $fileitem = $html->fileitem;
-      $filelist = '';
-      foreach ($list as $file) {
-        $filelist .= sprintf($fileitem, $editurl, $file);
-      }
-      $result .= sprintf($html->filelist, $filelist);
-      
-      if (!empty($_GET['file'])) {
-        $file = $_GET['file'];
-if (!self::file_exists($file)) return $this->notfound;
-        $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
-        $args->content = file_get_contents($filename);
-        $result .= sprintf($html->h2->filename, $_GET['file']);
-        $result .= $html->editform($args);
-      }
-      break;
-    }
-    
     return $html->fixquote($result);
   }
   
@@ -93,8 +50,6 @@ $view = tview::instance($idview);
         $result = $e->getMessage();
       }
     } else {
-      switch ($this->name) {
-        case 'themes':
         if (empty($_POST['selection']))   return '';
         try {
           $view->themename = $_POST['selection'];
@@ -103,17 +58,7 @@ $view = tview::instance($idview);
           $view->themename = 'default';
           $result = $e->getMessage();
         }
-        break;
-        
-        case 'edit':
-        if (empty($_GET['file']) || empty($_GET['theme'])) return '';
-if (!self::file_exists($_GET['theme'], $_GET['file'])) return '';
-          if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
-            $result = $this->html->h2->errorsave;
-          }
-        break;
-    }
-    
+}    
     ttheme::clearcache();
     return $result;
   }
