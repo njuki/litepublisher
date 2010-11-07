@@ -117,7 +117,7 @@ if (($view->id == 1) || $view->customsitebar) {
   public function getcontent() {
     switch ($this->name) {
       case 'widgets':
-      $idwidget = self::idget('idwidget');
+      $idwidget = self::getparam('idwidget');
     $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
@@ -153,7 +153,7 @@ if (($view->id == 1) || $view->customsitebar) {
     litepublisher::$urlmap->clearcache();
     switch ($this->name) {
       case 'widgets':
-      $idwidget = self::idget('idwidget');
+      $idwidget = self::getparam('idwidget');
     $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
@@ -170,7 +170,7 @@ if (($view->id == 1) || $view->customsitebar) {
   }
   
   public static function setsitebars() {
-$idview = self::idget('idview', 1);
+$idview = self::getparam('idview', 1);
 $view = tview::instance($idview);
 
     switch ($_POST['action']) {

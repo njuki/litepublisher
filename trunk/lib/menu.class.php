@@ -112,9 +112,7 @@ if (!($item instanceof thomepage)) {
     if (!$this->itemexists($id)) return false;
 if($id == $this->idhome) return false;
     if ($this->haschilds($id)) return false;
-    // save homepage
-    $url = $this->items[$id]['url'];
-    if ($url != '/') litepublisher::$urlmap->delete($url);
+litepublisher::$urlmap->delete($this->items[$id]['url']);
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
@@ -154,8 +152,7 @@ if($id == $this->idhome) return false;
       if ($item['parent'] == $id) return true;
     }
     return false;
-    
-  }
+      }
   
   public function sort() {
     $this->tree = $this->getsubtree(0);

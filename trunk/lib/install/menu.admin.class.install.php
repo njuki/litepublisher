@@ -43,19 +43,20 @@ function tadminmenusInstall($self) {
     $self->createitem($files, 'bin', 'editor', 'tadminfiles');
   }
   
+  $views = $self->createitem(0, 'views', 'admin', 'tadminviews');
+{
   $widgets = $self->createitem(0, 'widgets', 'admin', 'tadminwidgets');
   {
-    //$self->createitem($widgets, 'classes', 'admin', 'tadminwidgets');
     $self->createitem($widgets, 'home', 'admin', 'tadminwidgets');
     $self->createitem($widgets, 'addcustom', 'admin', 'tadminwidgets');
   }
-  
   $themes = $self->createitem(0, 'themes', 'admin', 'tadminthemes');
   {
     $self->createitem($themes, 'edit', 'admin', 'tadminthemes');
     $self->createitem($themes, 'options', 'admin', 'tadminthemes');
     $self->createitem($themes, 'javascripts', 'admin', 'tadminthemes');
   }
+}
   
   $menu = $self->createitem(0, 'menu', 'editor', 'tadminmenumanager');
   {
