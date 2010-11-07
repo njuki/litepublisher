@@ -134,19 +134,54 @@ class THtmlResource  {
     return str_replace(array('$name', '$value'),
     array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
   }
+
+public function gettable($head, ?$body) {
+return strtr($this->ini['common']['table'], array(
+'$tablehead' => $head,
+'$tablebody' => $body));
+}
   
+public function createtable(array $struct) {
+foreach ($struct as $name => $align) {
+if (preg_match('/^(left|center|right)$/', $align))
+$row['tml'] = "\$$name";
+$row['align'] = $align;
+} else {
+$row['tml'] = $align;
+$row['align'] = 'center';
+}
+
+$this->tablestruct[$name] = $row;
+}
+}
+
+public function addtotable(array $item) {
+foreach ($this->tablestruct as $name => $struct) {
+$this->htmltable .=$theme->parse
+}
+}
+
+}//class
+?>
 }//class
 
-class tformprop {
-public $obj;
-public $form;
+
+class tautoform {
 const editor = 'editor';
 const text = 'text';
 const checkbox = 'checkbox';
 const hidden = 'hidden';
+public $obj;
+private $props;
+
+public function __create(tdata $obj, $section) {
+$this->obj = $obj;
+$this->section = $section;
+$this->props = array();
+}
 
 public function __set($name, $value) {
-$this->form->props[] = array(
+$this->props[] = array(
 'obj' => $this->obj,
 'propname' => $name,
 'type' => $value
@@ -173,14 +208,8 @@ return array(
 }
 }
 
-}//class
-
-class tautoform {
-private $props;
-
-public function __create() {
+public function add() {
     $a = func_get_args();
-$this->props = array();
 foreach ($a as $prop) {
 $this->addprop($prop);
 }
