@@ -106,9 +106,13 @@ $menus->unlock();
 
 //fix for something
 $admin = tadminmenus::instance();
+$admin->lock();
 $admin->data['idhome'] = 0;
 $admin->data['home'] = false;
-$admin->save();
+$idwidgets = $admin->url2id('/admin/widgets/');
+$idthemes = $admin->url2id('/admin/themes/');
+$admin->unlock();
+
 
 //contact form
   $html = THtmlResource::instance();
