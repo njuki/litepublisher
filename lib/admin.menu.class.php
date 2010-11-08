@@ -74,7 +74,7 @@ class tadminmenumanager extends tadminmenu {
   
   public function processform() {
     if ($this->name != 'edit') return '';
-    extract($_POST);
+    extract($_POST, EXTR_SKIP);
     if (empty($title)) return '';
     $id = $this->idget();
     $menus = tmenus::instance();

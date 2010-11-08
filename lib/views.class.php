@@ -187,7 +187,7 @@ $this->data['description'] = '';
 
 public function gethead() {}
 public function getkeywords() {
-return $this->data['keywords'] : '';
+return $this->data['keywords'];
 }
 
 public function getdescription() {

@@ -143,6 +143,14 @@ public function getedit($name, $value, $title) {
 ));
 }
 
+public function getcombo($name, $value, $title) {
+    return strtr(ttheme::instance()->content->admin->combo, array(
+'$lang.$name' => $title,
+'$name' => $name,
+'$value' => $value
+));
+}
+
 public function gettable($head, $body) {
 return strtr($this->ini['common']['table'], array(
 '$tablehead' => $head,
@@ -240,8 +248,7 @@ $this->addprop($prop);
 }
 }
 
-p
-ublic function addprop(array $prop) {
+public function addprop(array $prop) {
 if (isset($prop['type'])) {
 $type = $prop['type'];
 } else {
@@ -249,17 +256,19 @@ $type = 'text';
 $value = $prop['obj']->{$prop['propname']};
 if (is_bool($value)) {
 $type = 'checkbox';
-}strpos($value, "\n")) {
-$type = 'editor'; elseif (
+} elseif(strpos($value, "\n")) {
+$type = 'editor';
 }
 }
 
-$this->props[] = array(
+$item = array(
 'obj' => $prop['obj'],
 'propname' => $prop['propname'],
 'type' => $type,
 'title' => isset($prop['title']) ? $prop['title'] : ''
 );
+if (($type == 'combo') && isset($prop['items'])) $item['items'] = $prop['items'];
+$this->props[] = $item;
 return count($this->props) - 1;
 }
 
