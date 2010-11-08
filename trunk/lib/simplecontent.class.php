@@ -17,6 +17,7 @@ class tsimplecontent  extends tevents_itemplate implements itemplate {
   protected function create() {
     parent::create();
     $this->basename = 'simplecontent';
+}
   
   public function  httpheader() {
     return turlmap::htmlheader(false);

@@ -12,11 +12,10 @@ $menus = tmenus::instance();
 $menus->lock();
 $self->url = '/';
 $self->title = tlocal::$data['default']['home'];
-$self->view = tviews::instance()->add(tlocal::$data['names']['home']);
-  $homeview = tview::instance($self->view);
+$self->idview = tviews::instance()->add(tlocal::$data['names']['home']);
+  $homeview = tview::instance($self->idview);
   $homeview->ajax = false;
 $homeview->save();
-
 
 $menus->idhome = $menus->add($self);
 $menus->unlock();

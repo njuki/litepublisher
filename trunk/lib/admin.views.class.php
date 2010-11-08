@@ -22,7 +22,17 @@ $args->items = self::getcombo(self::getparam('idview', 1));
 return $html->comboform($args);
 }
 
-public static function getcombo($idview$id) {
+public static function getcomboview($idview, $name = 'idview') {
+    $lang = tlocal::instance('views');
+$theme = ttheme::instance();
+return $theme->strtr($theme->content->admin->combo, array(
+'$lang.$name' => $lang->view,
+'$name' => $name,
+'$value' => self::getcombo($idview)
+));
+}
+
+public static function getcombo($idview) {
 $result = '';
 $views = tviews::instance();
 foreach ($views->items as $id => $item) {
@@ -52,13 +62,17 @@ $i = $form->addprop(array(
 'title' => $customadmin[$name]['title']
 ));
 if ($customadmin[$name]['type'] == 'combo') {
-$form->props[$i]['items'] = explode$customadmin[$name]['values'];
+$form->props[$i]['items'] = $customadmin[$name]['values'];
 }
 }
 }
 
 $this->_editform = $form;
 return $form;
+}
+
+public function getspecclasses() {
+return array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap');
 }
 
     public function getcontent() {
@@ -97,17 +111,16 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
       case 'spec':
 $items = '';
 $content = '';
-foreach (array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap') as $classname) {
+foreach (self::getspecclasses() as $classname) {
 $obj = getinstance($classname);
-ttheme::$vars['obj'] = $obj;
 $args->classname = $classname;
 $name = substr($classname, 1);
 $args->title = $lang->{$name};
-$inputs = self::get
+$inputs = self::getcomboview($obj->idview, "idview-$classname");
 $inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
 $inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
-$items .= $html->spectab($args);
 $args->inputs = $inputs;
+$items .= $html->spectab($args);
 $content .=$html->specform($args);
 }
 
@@ -115,8 +128,24 @@ $args->items = $items;
 $args->content = $content;
       $result .= $html->adminform($html->spectabs, $args);
       break;
+
+case 'defaults':
+$items = '';
+$theme = ttheme::instance();
+$tml = $theme->templates->content->admin->combo;
+foreach ($views->defaults as $name => $id) {
+$args->name = $name;
+$args->value = self::getcombo($id);
+$args->data['$lang.$name'] = $lang->$name;
+$items .= $theme->parsearg($tml, $args);
+}
+$args->items = $items;
+$args->formtitle = $lang->defaultsform;
+$result .= $theme->parsearg($theme->content->admin->form, $args);
+break;
       
       case 'headers':
+$template = ttemplate::instance();
       $args->hovermenu = $template->stdjavascripts['hovermenu'];
       $args->comments = $template->stdjavascripts['comments'];
       $args->moderate = $template->stdjavascripts['moderate'];
@@ -132,58 +161,40 @@ $args->content = $content;
       switch ($this->name) {
         case 'views':
 if ($this->action == 'edit') return $this->editform->processform();
-        
-        $result = $this->html->h2->success;
         break;
         
         case 'spec':
-        extract($_POST, EXTR_SKIP);
-        if (isset($hometheme)) {
-          $home = thomepage::instance();
-          $home->theme = $hometheme;
-          $home->save();
-        }
-        
-        if (isset($archtheme)) {
-          $arch = tarchives::instance();
-          $arch->theme = $archtheme;
-          $arch->save();
-        }
-        
-        if (isset($theme404)) {
-          $notfound = tnotfound404::instance();
-          $notfound->theme = $theme404;
-          $notfound->save();
-        }
-        
-        if (isset($sitemaptheme)) {
-          $sitemap = tsitemap::instance();
-          $sitemap->theme = $sitemaptheme;
-          $sitemap->save();
-        }
-        
-        if (isset($admintheme)) {
-          $template = ttemplate::instance();
-          $template->admintheme = $admintheme;
-          $template->save();
-        }
-        $result = $this->html->h2->themeschanged;
+foreach (self::getspecclasses() as $classname) {
+$obj = getinstance($classname);
+$obj->lock();
+$obj->setidview($_POST["idview-$classname"]);
+$obj->keywords = $_POST["keywords-$classname"];
+$obj->description = $_POST["description->$classname"];
+$obj->unlock();
+}        
         break;
+
+case 'defaults':
+$views = tviews::instance();
+foreach ($views->defaults as $name => $id) {
+$views->defaults[$name] = (int) $_POST[$name];
+}
+$views->save();
+break;
         
         case 'headers':
-        extract($_POST, EXTR_SKIP);
+    extract($_POST, EXTR_SKIP);
         $template = ttemplate::instance();
-        $template->stdjavascripts['hovermenu'] = $hovermenu;
+        $template->headers = $headers;
         $template->stdjavascripts['comments'] = $comments;
         $template->stdjavascripts['moderate'] = $moderate;
         $template->save();
         break;
-      }
     }
     
     ttheme::clearcache();
-    return $result;
   }
   
 }//class
+
 ?>
