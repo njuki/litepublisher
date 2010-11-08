@@ -73,6 +73,7 @@ $classes->add('tevents_storage', 'events.class.php');
 $classes->add('tevents_itemplate', 'views.class.php');
 $classes->add('titems_itemplate', 'views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
+$classes->add('tautoform' 'htmlresource.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();

@@ -35,9 +35,9 @@ $this->data = array(
 'id' => 0,
 'name' => 'default',
 'themename' => 'default',
-'customtheme' => array(),
       'customsitebar' => false,
       'ajax' => false,
+'custom' => array(),
 'sitebars' => array()
 );
 $this->sitebars = &$this->data['sitebars'];
@@ -63,7 +63,7 @@ if ($name != $this->themename) {
 if (!theme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
 $this->data['themename'] = $name;
 $this->themeinstance = ttheme::getinstance($name);
-$this->data['customtheme'] = $this->themeinstance->templates['custom'];
+$this->data['custom'] = $this->themeinstance->templates['custom'];
 $this->save();
 }
 }
@@ -72,7 +72,7 @@ public function gettheme() {
 if (isset($this->themeinstance)) return $this->themeinstance;
 if (ttheme::exists($this->themename)) {
 $this->themeinstance = ttheme::getinstance($this->themename);
-$this->themeinstance->templates['custom'] = $this->data['customtheme'];
+$this->themeinstance->templates['custom'] = $this->data['custom'];
 } else {
 $this->setthemename('default');
 }

@@ -114,7 +114,7 @@ class THtmlResource  {
     }
   }
   
-  public function array2combo(array $items, $selname) {
+  public static function array2combo(array $items, $selname) {
     $result = '';
     foreach ($items as $name => $title) {
       $selected = $selname == $name ? "selected='selected'" : '';
@@ -163,6 +163,15 @@ $args->tablebody = $body;
 return $theme->parsearg($this->ini['common']['table'], $args);
 }
 
+  public function confirmdelete($id, $adminurl, $mesg) {
+    $args = targs::instance();
+    $args->id = $id;
+    $args->action = 'delete';
+    $args->adminurl = $adminurl;
+    $args->confirm = $mesg;
+    return $this->confirmform($args);
+  }
+
 }//class
 
 class tautoform {
@@ -170,14 +179,22 @@ const editor = 'editor';
 const text = 'text';
 const checkbox = 'checkbox';
 const hidden = 'hidden';
-public $obj;
-private $props;
-private$section;
 
-public function __create(tdata $obj, $section) {
+public $obj;
+public $props;
+public $section;
+public $_title;
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+public function __create(tdata $obj, $section, $titleindex) {
 $this->obj = $obj;
 $this->section = $section;
 $this->props = array();
+$lang = tlocal::instance($section);
+$this->_title = $lang->$titleindex;
 }
 
 public function __set($name, $value) {
@@ -215,12 +232,27 @@ $this->addprop($prop);
 }
 }
 
-public function addprop(array $prop) {
+p
+ublic function addprop(array $prop) {
+if (isset($prop['type'])) {
+$type = $prop['type'];
+} else {
+$type = 'text';
+$value = $prop['obj']->{$prop['propname']};
+if (is_bool($value)) {
+$type = 'checkbox';
+}strpos($value, "\n")) {
+$type = 'editor'; elseif (
+}
+}
+
 $this->props[] = array(
 'obj' => $prop['obj'],
 'propname' => $prop['propname'],
-'type' => $type
+'type' => $type,
+'title' => isset($prop['title']) ? $prop['title'] : ''
 );
+return count($this->props) - 1;
 }
 
 public function getcont() {
@@ -241,17 +273,21 @@ break;
 case 'checkbox':
 $value = $value ? 'checked="checked"' : '';
 break;
+
+case 'combo':
+$value = THtmlResource  ::array2combo($prop['items'], $value);
+break;
 }
 
 $items .= strtr($admin->{$prop['type']}, array(
-'$lang.$name' => $lang->{$prop['propname']},
+'$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
 '$name' => $prop['propname'],
 '$value' => $value
 ));
 }
 
-
 $args = targs::instance();
+$args->formtitle = $this->_title;
     $args->items = $items;
     return $theme->parsearg($theme->content->admin->form, $args);
 }

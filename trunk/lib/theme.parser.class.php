@@ -359,6 +359,11 @@ case 4:
 $tag = $names[3];
 $admin = &$this->theme->templates['customadmin'];
 if (!isset($admin[$name])) $admin[$name] = array();
+if ($tag == 'values') {
+$value = explode(',', $value);
+foreach ($value as $i => $v) $value[$i] = trim($v);
+}
+
 $admin[$name][$tag] = $value;
 return;
 }
