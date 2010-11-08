@@ -95,16 +95,19 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
       break;
       
       case 'spec':
-      $home = thomepage::instance();
-      $args->hometheme = $home->theme;
-      $arch = tarchives::instance();
-      $args->archtheme = $arch->theme;
-      $notfound = tnotfound404::instance();
-      $args->theme404 = $notfound->theme;
-      $sitemap = tsitemap::instance();
-      $args->sitemaptheme = $sitemap->theme;
-      $args->admintheme = $template->admintheme;
-      $result = $html->optionsform($args);
+$items = '';
+$content = '';
+foreach (array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap') as $classname) {
+$obj = getinstance($classname);
+ttheme::$vars['specobj'] = $obj;
+
+$items .= $html->spectab($args);
+$content .=$html->specform($args);
+}
+
+$args->items = $items;
+$args->content = $content;
+      $result .= $html->adminform($html->spectabs, $args);
       break;
       
       case 'headers':
