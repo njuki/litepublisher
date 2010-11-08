@@ -99,9 +99,15 @@ $items = '';
 $content = '';
 foreach (array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap') as $classname) {
 $obj = getinstance($classname);
-ttheme::$vars['specobj'] = $obj;
-
+ttheme::$vars['obj'] = $obj;
+$args->classname = $classname;
+$name = substr($classname, 1);
+$args->title = $lang->{$name};
+$inputs = self::get
+$inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
+$inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
 $items .= $html->spectab($args);
+$args->inputs = $inputs;
 $content .=$html->specform($args);
 }
 

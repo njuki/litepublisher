@@ -135,6 +135,14 @@ class THtmlResource  {
     array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
   }
 
+public function getedit($name, $value, $title) {
+    return strtr(ttheme::instance()->content->admin->edit, array(
+'$lang.$name' => $title,
+'$name' => $name,
+'$value' => $value
+));
+}
+
 public function gettable($head, $body) {
 return strtr($this->ini['common']['table'], array(
 '$tablehead' => $head,
