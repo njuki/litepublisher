@@ -7,6 +7,7 @@
 **/
 
 class tadminviews extends tadminmenu {
+private $_editform;
 
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -32,15 +33,33 @@ return $result;
 }
 
 public function geteditform() {
+if (isset($this->_editform)) return $this->_editform;
 $id = self::getparam('idview', 1);
 $view = tview::instance($id);
-$form = new tautoform($view, 'views');
-$form->name = tautoform::text;
-$form->ajax = tautoform::checkbox;
-$form->customsitebar = tautoform::checkbox;
-return $form;
+$form = new tautoform($view, 'views', 'editform');
+$form->add($form->id('hidden'), $form->name, $form->ajax);
+if ($id != 1) $form->addprop($form->customsitebar);
+if (count($view->custom) > 0) {
+$custom = new tarray2prop ();
+$custom->array = &$view->data['custom'];
+$form->obj = $custom;
+$customadmin = $view->theme->templates['customadmin'];
+foreach ($custom->array as $name => $value) {
+$i = $form->addprop(array(
+'obj' => $custom,
+'propname' => $name,
+'type' => $customadmin[$name]['type'],
+'title' => $customadmin[$name]['title']
+));
+if ($customadmin[$name]['type'] == 'combo') {
+$form->props[$i]['items'] = explode$customadmin[$name]['values'];
+}
+}
 }
 
+$this->_editform = $form;
+return $form;
+}
 
     public function getcontent() {
     $result = '';
@@ -50,12 +69,19 @@ $lang = tlocal::instance('views');
     $args = targs::instance();
     switch ($this->name) {
       case 'views':
+
 switch ($this->action) {
 case 'edit':
 $result .= $this->editform->getcontent();
 break;
 
 case 'delete':
+$idview = self::getparam('idview', 1);
+          if($this->confirmed) {
+$views->delete($idview);
+} else {
+    $result .= $html->confirmdelete($idview, self::getlink('/admin/views/', 'idview'), $lang->confirmdelete);
+}
 break;
 }
 
@@ -68,7 +94,7 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
 ));
       break;
       
-      case 'options':
+      case 'spec':
       $home = thomepage::instance();
       $args->hometheme = $home->theme;
       $arch = tarchives::instance();
@@ -81,7 +107,7 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
       $result = $html->optionsform($args);
       break;
       
-      case 'javascripts':
+      case 'headers':
       $args->hovermenu = $template->stdjavascripts['hovermenu'];
       $args->comments = $template->stdjavascripts['comments'];
       $args->moderate = $template->stdjavascripts['moderate'];
@@ -94,41 +120,14 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
   
   public function processform() {
     $result = '';
-    if  (isset($_POST['reparse'])) {
-      $parser = tthemeparser::instance();
-      try {
-        $parser->reparse();
-      } catch (Exception $e) {
-        return $e->getMessage();
-      }
-    } else {
       switch ($this->name) {
-        case 'themes':
-        if (!empty($_GET['plugin']) && ($plugin = $this->getplugin())) return $plugin->processform();
+        case 'views':
+if ($this->action == 'edit') return $this->editform->processform();
         
-        if (empty($_POST['selection']))   return '';
-        $template = ttemplate::instance();
-        try {
-          $template->theme = $_POST['selection'];
-        } catch (Exception $e) {
-          $template->theme = 'default';
-          return $e->getMessage();
-        }
         $result = $this->html->h2->success;
         break;
         
-        case 'edit':
-        if (!empty($_GET['file']) && !empty($_GET['theme'])) {
-          //security check
-          if (strpbrk ($_GET['file'] . $_GET['theme'], '/\<>')) return '';
-          if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
-            ttheme::clearcache();
-            return  $this->html->h2->errorsave;
-          }
-        }
-        break;
-        
-        case 'options':
+        case 'spec':
         extract($_POST, EXTR_SKIP);
         if (isset($hometheme)) {
           $home = thomepage::instance();
@@ -162,7 +161,7 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
         $result = $this->html->h2->themeschanged;
         break;
         
-        case 'javascripts':
+        case 'headers':
         extract($_POST, EXTR_SKIP);
         $template = ttemplate::instance();
         $template->stdjavascripts['hovermenu'] = $hovermenu;
@@ -175,19 +174,6 @@ array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/ad
     
     ttheme::clearcache();
     return $result;
-  }
-  
-  private function  getplugin() {
-    if (!isset($this->plugin)) {
-      $template =  ttemplate::instance();
-      $parser = tthemeparser::instance();
-      if (!($about = $parser->getabout($template->theme))) return false;
-      if (empty($about['adminclassname']))  return false;
-      $class = $about['adminclassname'];
-      if (!class_exists($class))  require_once($template->path . $about['adminfilename']);
-      $this->plugin = getinstance($class);
-    }
-    return $this->plugin;
   }
   
 }//class
