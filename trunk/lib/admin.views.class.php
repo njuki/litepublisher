@@ -31,62 +31,41 @@ foreach ($views->items as $id => $item) {
 return $result;
 }
 
+public function geteditform() {
+$id = self::getparam('idview', 1);
+$view = tview::instance($id);
+$form = new tautoform($view, 'views');
+$form->name = tautoform::text;
+$form->ajax = tautoform::checkbox;
+$form->customsitebar = tautoform::checkbox;
+return $form;
+}
+
+
     public function getcontent() {
     $result = '';
+$views = tviews::instance();
     $html = $this->html;
+$lang = tlocal::instance('views');
     $args = targs::instance();
     switch ($this->name) {
       case 'views':
 switch ($this->action) {
 case 'edit':
+$result .= $this->editform->getcontent();
 break;
 
 case 'delete':
 break;
-default:
-$url = self::getlink('/admin/views/$path/', 'idview=%d');
-$table = $html->createtable(
-'name' => 'left',
-'themename' => '<a href="$site.url/admin/views/themes/$site.qidview=$id">$themename</a>',
-'widgets' =>
-'edit' =>
-'delete' =>
-);
+}
 
-      $result .= $html->formheader();
-      $args->editurl = self::getlink('/admin/views/', 'action=edit&idview');
-foreach ($views->items as $id => $item) {      
-          $args->add($uitem);
-          $args->checked = $name == $template->theme;
-          $result .= $html->radioitem($args);
-        }
-      }
-      $result .= $html->formfooter();
-      break;
-      
-      case 'edit':
-      $themename = !empty($_GET['theme']) ? $_GET['theme'] : $template->theme;
-      if (strpbrk($themename, '/\<>')) return $this->notfound;
-      $result = sprintf($html->h2->filelist, $themename);
-      $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
-      sort($list);
-      $editurl = litepublisher::$site->url . $this->url . litepublisher::$site->q . "theme=$themename&file";
-      $fileitem = $html->fileitem . "\n";
-      $filelist = '';
-      foreach ($list as $file) {
-        $filelist .= sprintf($fileitem, $editurl, $file);
-      }
-      $result .= sprintf($html->filelist, $filelist);
-      
-      if (!empty($_GET['file'])) {
-        $file = $_GET['file'];
-        if (strpbrk ($file, '/\<>')) return $this->notfound;
-        $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
-        if (!@file_exists($filename)) return $this->notfound;
-        $args->content = file_get_contents($filename);
-        $result .= sprintf($html->h2->filename, $_GET['file']);
-        $result .= $html->editform($args);
-      }
+$result .= $html->buildtable($views->items, array(
+array('left', $lang->name,'$name'),
+array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', self::getlink('/admin/views/themes/', 'idview=$id'))),
+array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', self::getlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
+array('center', $lang->edit, sprintf('<a href="%s">%s</a>', self::getlink('/admin/views/', 'action=edit&idview=$id'), $lang->edit)),
+array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
+));
       break;
       
       case 'options':

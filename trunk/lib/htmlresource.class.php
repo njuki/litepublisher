@@ -135,36 +135,35 @@ class THtmlResource  {
     array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
   }
 
-public function gettable($head, ?$body) {
+public function gettable($head, $body) {
 return strtr($this->ini['common']['table'], array(
 '$tablehead' => $head,
 '$tablebody' => $body));
 }
   
-public function createtable(array $struct) {
-foreach ($struct as $name => $align) {
-if (preg_match('/^(left|center|right)$/', $align))
-$row['tml'] = "\$$name";
-$row['align'] = $align;
-} else {
-$row['tml'] = $align;
-$row['align'] = 'center';
+public function buildtable(array $items, array $tablestruct) {
+$head = '';
+$body = '';
+$tml = '<tr>';
+foreach ($tablestruct as $elem) {
+$head .= sprintf('<th lign="%s">%s</th>', $elem[0], $elem[1]);
+$tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
 }
+$tml .= '</tr>';
 
-$this->tablestruct[$name] = $row;
+$theme = ttheme::instance();
+$args = targs::instance();
+foreach ($items as $id => $item) {
+$args->add($item);
+if (!isset($item['id'])) $args->id = $id;
+$body .= $theme->parsearg($tml, $args);
 }
-}
-
-public function addtotable(array $item) {
-foreach ($this->tablestruct as $name => $struct) {
-$this->htmltable .=$theme->parse
-}
+$args->tablehead  = $head;
+$args->tablebody = $body;
+return $theme->parsearg($this->ini['common']['table'], $args);
 }
 
 }//class
-?>
-}//class
-
 
 class tautoform {
 const editor = 'editor';
@@ -173,6 +172,7 @@ const checkbox = 'checkbox';
 const hidden = 'hidden';
 public $obj;
 private $props;
+private$section;
 
 public function __create(tdata $obj, $section) {
 $this->obj = $obj;
@@ -223,8 +223,9 @@ $this->props[] = array(
 );
 }
 
-public function getform() {
+public function getcont() {
 $items = '';
+$theme = ttheme::instance();
       $admin = $theme->content->admin;
 foreach ($this->props as $prop) {
 $value = $prop['obj']->{$prop['propname']};
@@ -249,7 +250,10 @@ $items .= strtr($admin->{$prop['type']}, array(
 ));
 }
 
-//return str_replace
+
+$args = targs::instance();
+    $args->items = $items;
+    return $theme->parsearg($theme->content->admin->form, $args);
 }
 
 public function processform() {
