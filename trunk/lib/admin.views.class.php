@@ -13,11 +13,12 @@ private $_editform;
     return parent::iteminstance(__class__, $id);
   }
 
-public static function getviewform() {
+public static function getviewform($url) {
     $html = THtmlResource ::instance();
     $html->section = 'views';
     $lang = tlocal::instance('views');
 $args = targs::instance();
+$args->url = litepublisher::$site->url . $url;
 $args->items = self::getcombo(self::getparam('idview', 1));
 return $html->comboform($args);
 }
