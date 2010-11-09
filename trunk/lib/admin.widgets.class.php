@@ -35,23 +35,13 @@ $count = count($view->sitebars);
   public static function getsitebarsform() {
 $idview = self::getparam('idview', 1);
 $view = tview::instance($idview);
-$result = tadminviews::getviewform();
-
     $widgets = twidgets::instance();
     $html = THtmlResource ::instance();
     $html->section = 'widgets';
     $lang = tlocal::instance('widgets');
     $args = targs::instance();
 $args->idview = $idview;
-if ($idview > 1) {
-$args->customsitebar = $view->customsitebar;
-$args->disableajax = $view->disableajax;
-$lang->section = 'views';
-$result .= $html->parsearg('[checkbox=customsitebar] [checkbox=disableajax] [hidden=idview]', $args);
-}
-$lang->section = 'widgets';
-if (($view->id == 1) || $view->customsitebar) {
-    $result .= $html->checkallscript;
+    $result = $html->checkallscript;
     $result .= $html->formhead();
     $args->adminurl = self::getadminlink('/admin/views/widgets/', 'idwidget');
     $count = count($view->sitebars);
@@ -78,11 +68,10 @@ if (($view->id == 1) || $view->customsitebar) {
     foreach ($widgets->items as $id => $item) {
       $args->id = $id;
       $args->add($item);
-      $args->checked = tsitebars::getpos($sitebars, $id) ? false : true;
+      $args->checked = tsitebars::getpos($view->sitebars, $id) ? false : true;
       $result .= $html->additem($args);
     }
     $result .= $html->addfooter();
-}
     return  $html->fixquote($result);
   }
   
@@ -124,29 +113,26 @@ if (($view->id == 1) || $view->customsitebar) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->getcontent();
       } else {
-        return self::getsitebarsform();
+$idview = self::getparam('idview', 1);
+$view = tview::instance($idview);
+$result = tadminviews::getviewform();
+if (($idview == 1) || $view->customsitebar) {
+        $result .= self::getsitebarsform();
+} else {
+$args = targs::instance();
+$args->idview = $idview;
+$args->customsitebar = $view->customsitebar;
+$args->disableajax = $view->disableajax;
+$args->action = 'options';
+$result .= $html->getadminform('[checkbox=customsitebar] [checkbox=disableajax] [hidden=idview] [hidden=action', $args);
+}
+return $result;
       }
       
       case 'addcustom':
       $widget = tcustomwidget::instance();
       return  $widget->admin->getcontent();
 
-/*      
-      case 'classes':
-      return 'Sorry, under construction';
-      $result = '';
-      $html = $this->html;
-      $args = targs::instance();
-      $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . 'class';
-      foreach ($widgets->classes as $class => $items) {
-        $args->class = $class;
-        $args->name = $this->getclassname($class);
-        $args->count = count($items);
-        $result .= $html->classitem($args);
-      }
-      $args->content = $result;
-      return $html->classesform($args);
-*/
     }
   }
   
@@ -160,7 +146,7 @@ if (($view->id == 1) || $view->customsitebar) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->processform();
       } else {
-        self::setsitebars();
+        if (isset($_POST['action'])) self::setsitebars();
         return $this->html->h2->success;
       }
       
@@ -171,13 +157,13 @@ if (($view->id == 1) || $view->customsitebar) {
   }
   
   public static function setsitebars() {
-$idview = self::getparam('idview', 1);
+$idview = (int) self::getparam('idview', 1);
 $view = tview::instance($idview);
 
     switch ($_POST['action']) {
 case 'options':
-      $view->ajax = isset($_POST['ajax']);
-      $view->customsitebar = isset($_POST['customsitebar']);
+$view->disableajax = isset($_POST['disableajax']);
+$view->customsitebar = isset($_POST['customsitebar']);
 break;
 
       case 'edit':
