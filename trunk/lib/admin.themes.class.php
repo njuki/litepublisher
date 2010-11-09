@@ -14,16 +14,17 @@ class tadminthemes extends tadminmenu {
 
   public function getcontent() {
     $result = tadminviews::getviewform();
-$idview = self::idget('idview', 1);
-$view = tview::instance(1);
-    $html = $this->html;
+$idview = self::getparam('idview', 1);
+$view = tview::instance($idview);
+    $html = $this->gethtml('themes');;
     $args = targs::instance();
+$args->idview = $idview;
 $theme = $view->theme;
 
-      $result .= $html->formheader();
+      $result .= $html->formheader($args);
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
-      $args->editurl = self::getadminlink('/admin/views/themes/edit/', 'theme');
+      $args->editurl = self::getadminlink('/admin/views/edittheme/', 'theme');
       $parser = tthemeparser::instance();
       foreach ($list as $name) {
         if ($about = $parser->getabout($name)) {

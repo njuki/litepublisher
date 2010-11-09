@@ -142,11 +142,11 @@ return tviews::instance()->defaults['admin'];
   }
 
   public static function idget() {
-return self::getparam('id', 0);
+return (int) self::getparam('id', 0);
 }
 
   public static function getparam($name, $default) {
-    return !empty($_GET[$name]) ? (int) $_GET[$name] : (!empty($_POST[$name]) ? (int)$_POST[$name] : $default);
+    return !empty($_GET[$name]) ? $_GET[$name] : (!empty($_POST[$name]) ? $_POST[$name] : $default);
   }
   
   public function getaction() {

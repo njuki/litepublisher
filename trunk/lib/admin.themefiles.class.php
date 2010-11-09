@@ -22,21 +22,19 @@ file_exists(litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $
 }
 
 public static function theme_exists($name) {
-return preg_match('/^\w[\w\.\-_]*+$/', $themename) &&
-is_dir(litepublisher::$paths->themes .$themename);
+return preg_match('/^\w[\w\.\-_]*+$/', $name) &&
+is_dir(litepublisher::$paths->themes .$name);
 }
 
   public function getcontent() {
-    $html = $this->html;
+    $html = $this->gethtml('themefiles');
     $args = targs::instance();
-
-
-      $themename = self::getparam('theme', $theme->name);
+      $themename = self::getparam('theme', tview::instance(1)->themename);
 if (!self::theme_exists($themename)) return $this->notfound;
       $result = sprintf($html->h2->filelist, $themename);
       $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
       sort($list);
-      $editurl = self::getadminlink('/admin/views/themes/edit/', sprintf('theme=%s&file', $themename));
+      $editurl = self::getadminlink('/admin/views/edittheme/', sprintf('theme=%s&file', $themename));
       $fileitem = $html->fileitem;
       $filelist = '';
       foreach ($list as $file) {
@@ -46,10 +44,10 @@ if (!self::theme_exists($themename)) return $this->notfound;
       
       if (!empty($_GET['file'])) {
         $file = $_GET['file'];
-if (!self::file_exists($file)) return $this->notfound;
+if (!self::file_exists($themename, $file)) return $this->notfound;
         $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
         $args->content = file_get_contents($filename);
-        $result .= sprintf($html->h2->filename, $_GET['file']);
+        $result .= sprintf($html->h2->filename, $file);
         $result .= $html->editform($args);
       }
     
