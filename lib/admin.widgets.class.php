@@ -43,12 +43,13 @@ $result = tadminviews::getviewform();
     $lang = tlocal::instance('widgets');
     $args = targs::instance();
 $args->idview = $idview;
+if ($idview > 1) {
 $args->customsitebar = $view->customsitebar;
-$args->ajax = $view->ajax;
-$form = $view->id == 1 ? '' : '[checkbox=customsitebar] ';
-$form .= ' [checkbox=ajax] [hidden=idview]';
-$result .= $html->parsearg($form, $args);
-
+$args->disableajax = $view->disableajax;
+$lang->section = 'views';
+$result .= $html->parsearg('[checkbox=customsitebar] [checkbox=disableajax] [hidden=idview]', $args);
+}
+$lang->section = 'widgets';
 if (($view->id == 1) || $view->customsitebar) {
     $result .= $html->checkallscript;
     $result .= $html->formhead();
@@ -117,7 +118,7 @@ if (($view->id == 1) || $view->customsitebar) {
   public function getcontent() {
     switch ($this->name) {
       case 'widgets':
-      $idwidget = self::getparam('idwidget');
+      $idwidget = self::getparam('idwidget', 0);
     $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
@@ -153,7 +154,7 @@ if (($view->id == 1) || $view->customsitebar) {
     litepublisher::$urlmap->clearcache();
     switch ($this->name) {
       case 'widgets':
-      $idwidget = self::getparam('idwidget');
+      $idwidget = (int) self::getparam('idwidget', 0);
     $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
