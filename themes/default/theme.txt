@@ -576,13 +576,14 @@ $text = [<p><input type='text' name='$name' id='$name' value='$value' size='22' 
 
 			$area = [<textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea>]
 
-$editor = [<p><strong>$lang.$name:</strong><br /><textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea></p>]
+$editor = [<p><label for="$name"><strong>$lang.$name:</strong></label><br />
+<textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea></p>]
 
 $checkbox= [<p><input type="checkbox" name="$name" id="$name" $value />
 <label for="$name"><strong>$lang.$name</strong></label></p>]
 
-$combo = [<h3><label for="$name">$lang.$name</label></h3>
-<p><select name="$name" id="$name">$value</select></p>]
+$combo = [<p><label for="$name"><strong>$lang.$name:</strong></label>
+<select name="$name" id="$name">$value</select></p>]
 
 $hidden = [<input type="hidden" name="$name" value="$value" />]
 
@@ -591,8 +592,7 @@ $form = [
 <form name="form" action="" method="post" >
 $items
   <p><input type="submit" name="submit" value="$lang.update" /></p>
-</form>
-]
+</form>]
 ]
 
 Шаблон admin предназначен длягенерации форм в админке. В настоящее время эти шаблоны  исползуются мало и предпологается в будущем полный переход на эти шаблоны. Перечислим их
