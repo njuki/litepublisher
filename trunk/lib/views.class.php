@@ -36,7 +36,7 @@ $this->data = array(
 'name' => 'default',
 'themename' => 'default',
       'customsitebar' => false,
-      'ajax' => false,
+      'disableajax' => false,
 'custom' => array(),
 'sitebars' => array()
 );

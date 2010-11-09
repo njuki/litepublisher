@@ -305,7 +305,7 @@ class twidgets extends titems_storage {
     if (litepublisher::$options->admincookie) $this->callevent('onadminlogged', array(&$items, $sitebar));
     if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sitebar));
     $this->callevent('ongetwidgets', array(&$items, $sitebar));
-    $result = $this->getsitebarcontent($items, $sitebar);
+    $result = $this->getsitebarcontent($items, $sitebar, !$view->customsitebar && $view->disableajax);
     //if ($result != '') $result = str_replace('$items', $result, (string) $theme->sitebars->$sitebar);
     $this->callevent('onsitebar', array(&$result, $this->currentsitebar++));
     return $result;
@@ -378,12 +378,13 @@ return $items;
     return $items;
   }
   
-  private function getsitebarcontent(array $items, $sitebar) {
+  private function getsitebarcontent(array $items, $sitebar, $disableajax) {
     $result = '';
     foreach ($items as $item) {
       $id = $item['id'];
 if (!isset($this->items[$id])) continue;
       $cachetype = $this->items[$id]['cache'];
+if ($disableajax)  $item['ajax'] = false;
       if ($item['ajax'] === 'inline') {
         switch ($cachetype) {
           case 'cache':
@@ -561,7 +562,7 @@ class twidgetscache extends titems {
   public function load() {
     $filename = litepublisher::$paths->cache . $this->getbasename() .'.php';
     if (file_exists($filename)) {
-      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
+      return $this->loadfromstring(tfilestorage::uncomment_php(file_get_contents($filename)));
     }
   }
   
