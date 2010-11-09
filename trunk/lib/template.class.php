@@ -262,8 +262,7 @@ $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).
     <script type="text/javascript" src="$site.files/js/jsibox/jsibox_basic.js"></script>';
 */
     
-    $theme = $this->view->theme;
-    return $theme->parse($result);
+    return $this->view->theme->parse($result);
   }
   
   public function getbody() {

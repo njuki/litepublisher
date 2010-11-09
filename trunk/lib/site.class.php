@@ -50,6 +50,10 @@ $this->basename = 'site';
 public function getversion() {
 return litepublisher::$options->data['version'];
 }
+
+public function getlanguage() {
+return litepublisher::$options->data['language'];
+}
   
 }//class
 

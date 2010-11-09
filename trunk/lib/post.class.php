@@ -322,20 +322,8 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
       $lang = tlocal::instance('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
-      if ($script = $template->stdjavascripts['comments']) {
-        $result .= $template->getjavascript($script);
-        $result .= $template->getjavascript("/files/$options->language.js");
-      }
     }
     
-    if ($options->admincookie) {
-      if ($script = $template->stdjavascripts['moderate']) {
-        $theme = ttheme::instance();
-      $template->javaoptions[] = sprintf('commentsid: "%s"', $theme->content->post->templatecomments->comments->id);
-        $result .= $template->getjavascript($script);
-        $result .= $template->getjavascript("/files/admin$options->language.js");
-      }
-    }
     return $result;
   }
   
