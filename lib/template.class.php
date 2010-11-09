@@ -223,6 +223,7 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
   }
   
   public function gethovermenuhead() {
+return '';
     if ($this->hover) {
       if ($script = $this->stdjavascripts['hovermenu']) {
         $theme = ttheme::instance();
@@ -245,11 +246,23 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     <meta name="keywords" content="$template.keywords" />
     <meta name="description" content="$template.description" />
     <link rel="sitemap" href="$site.url/sitemap.htm" />
+		<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
+		<script type="text/javascript">
+  $(document).ready(function() {
+$("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
+    $("#tabs").tabs();
+  });
+		</script>';
+
+/*
     <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
     <script type="text/javascript" src="$site.files/js/litepublisher/client.min.js"></script>
     <script type="text/javascript" src="$site.files/js/jsibox/jsibox_basic.js"></script>';
+*/
     
-    $theme = ttheme::instance();
+    $theme = $this->view->theme;
     return $theme->parse($result);
   }
   

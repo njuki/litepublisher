@@ -115,7 +115,7 @@ $args->idview = $idview;
       } else {
 $idview = self::getparam('idview', 1);
 $view = tview::instance($idview);
-$result = tadminviews::getviewform();
+$result = tadminviews::getviewform('/admin/views/widgets/');
 if (($idview == 1) || $view->customsitebar) {
         $result .= self::getsitebarsform();
 } else {
@@ -124,7 +124,7 @@ $args->idview = $idview;
 $args->customsitebar = $view->customsitebar;
 $args->disableajax = $view->disableajax;
 $args->action = 'options';
-$result .= $html->getadminform('[checkbox=customsitebar] [checkbox=disableajax] [hidden=idview] [hidden=action', $args);
+$result .= $this->html->adminform('[checkbox=customsitebar] [checkbox=disableajax] [hidden=idview] [hidden=action]', $args);
 }
 return $result;
       }
