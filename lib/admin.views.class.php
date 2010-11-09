@@ -25,7 +25,7 @@ return $html->comboform($args);
 public static function getcomboview($idview, $name = 'idview') {
     $lang = tlocal::instance('views');
 $theme = ttheme::instance();
-return $theme->strtr($theme->content->admin->combo, array(
+return strtr($theme->content->admin->combo, array(
 '$lang.$name' => $lang->view,
 '$name' => $name,
 '$value' => self::getcombo($idview)
@@ -47,8 +47,10 @@ if (isset($this->_editform)) return $this->_editform;
 $id = self::getparam('idview', 1);
 $view = tview::instance($id);
 $form = new tautoform($view, 'views', 'editform');
-$form->add($form->id('hidden'), $form->name, $form->ajax);
-if ($id != 1) $form->addprop($form->customsitebar);
+$form->add($form->id('hidden'), $form->name);
+if ($id > 1) {
+$form->add($form->customsitebar, $form->disableajax);
+}
 if (count($view->custom) > 0) {
 $custom = new tarray2prop ();
 $custom->array = &$view->data['custom'];
@@ -94,17 +96,16 @@ $idview = self::getparam('idview', 1);
           if($this->confirmed) {
 $views->delete($idview);
 } else {
-    $result .= $html->confirmdelete($idview, self::getlink('/admin/views/', 'idview'), $lang->confirmdelete);
+    $result .= $html->confirmdelete($idview, self::getadminlink('/admin/views/', 'idview'), $lang->confirmdelete);
 }
 break;
 }
-
 $result .= $html->buildtable($views->items, array(
 array('left', $lang->name,'$name'),
-array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', self::getlink('/admin/views/themes/', 'idview=$id'))),
-array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', self::getlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
-array('center', $lang->edit, sprintf('<a href="%s">%s</a>', self::getlink('/admin/views/', 'action=edit&idview=$id'), $lang->edit)),
-array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
+array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', self::getadminlink('/admin/views/themes/', 'idview=$id'))),
+array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', self::getadminlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
+array('center', $lang->edit, sprintf('<a href="%s">%s</a>', self::getadminlink('/admin/views/', 'action=edit&idview=$id'), $lang->edit)),
+array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getadminlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
 ));
       break;
       
@@ -126,13 +127,14 @@ $content .=$html->specform($args);
 
 $args->items = $items;
 $args->content = $content;
+$args->formtitle = $lang->defaults;
       $result .= $html->adminform($html->spectabs, $args);
       break;
 
 case 'defaults':
 $items = '';
 $theme = ttheme::instance();
-$tml = $theme->templates->content->admin->combo;
+$tml = $theme->content->admin->combo;
 foreach ($views->defaults as $name => $id) {
 $args->name = $name;
 $args->value = self::getcombo($id);

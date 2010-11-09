@@ -136,7 +136,7 @@ class THtmlResource  {
   }
 
 public function getedit($name, $value, $title) {
-    return strtr(ttheme::instance()->content->admin->edit, array(
+    return strtr(ttheme::instance()->content->admin->text, array(
 '$lang.$name' => $title,
 '$name' => $name,
 '$value' => $value
@@ -162,7 +162,7 @@ $head = '';
 $body = '';
 $tml = '<tr>';
 foreach ($tablestruct as $elem) {
-$head .= sprintf('<th lign="%s">%s</th>', $elem[0], $elem[1]);
+$head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
 $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
 }
 $tml .= '</tr>';
@@ -205,7 +205,7 @@ public $_title;
     return getinstance(__class__);
   }
   
-public function __create(tdata $obj, $section, $titleindex) {
+public function __construct(tdata $obj, $section, $titleindex) {
 $this->obj = $obj;
 $this->section = $section;
 $this->props = array();
@@ -222,6 +222,8 @@ $this->props[] = array(
 }
 
 public function __get($name) {
+//var_dump($name, $this, $this->obj, $this->obj->$name);
+//litepublisher::$options->error();
 if (isset($this->obj->$name)) {
 return array(
 'obj' => $this->obj,
@@ -272,8 +274,9 @@ $this->props[] = $item;
 return count($this->props) - 1;
 }
 
-public function getcont() {
+public function getcontent() {
 $items = '';
+$lang = tlocal::instance();
 $theme = ttheme::instance();
       $admin = $theme->content->admin;
 foreach ($this->props as $prop) {
@@ -313,6 +316,7 @@ public function processform() {
 foreach ($this->props as $prop) $prop['obj']->lock();
 
 foreach ($this->props as $prop) {
+$name = $prop['propname'];
 if (isset($_POST[$name])) {
 $value = $_POST[$name];
 if ($value == 'checked') $value = true;
