@@ -229,6 +229,7 @@ class tcomments extends titems {
   
   public function dogetcontent($hold, $idauthor) {
     $result = '';
+$post = tpost::instance($this->pid);
     $from = 0;
     $items = array_keys($this->items);
     if (!$hold) {
@@ -254,13 +255,18 @@ class tcomments extends titems {
       } else {
         $moderate = '';
       }
-      $tml = str_replace('$moderate', $moderate, $theme->content->post->templatecomments->comments->comment);
+
+    $tmlcomment= $theme->content->post->templatecomments->comments->comment;
+    $tml = strtr($tmlcomment->array[0], array(
+'$moderate' => $moderate, 
+'$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
+));
       
       $i = 1;
-      $class1 = $theme->content->post->templatecomments->comments->comment->class1;
-      $class2 = $theme->content->post->templatecomments->comments->comment->class2;
+    $class1 = $tmlcomment->class1;
+    $class2 = $tmlcomment->class2;
       foreach ($items as $id) {
-        //разрулить в одном месте одобренные и задержанные комменты
+        //one method for approved and hold comments
         if (!litepublisher::$options->admincookie && $hold) {
           if ($idauthor != $this->items[$id]['author']) continue;
         }

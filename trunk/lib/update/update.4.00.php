@@ -50,9 +50,6 @@ foreach ($childs as $child) {
 $admin->delete($child);
 }
 $admin->delete($id);
-
-
-
 $admin->unlock();
 }
 
@@ -182,6 +179,14 @@ $static->items[$id]['idview'] = 1;
 $static->save();
 }
 
+$data = new tdata();
+$data->basename = 'template';
+tfilestorage::load($data);
+unset($data->data['stdjavascripts']);
+$template = ttemplate::instance();
+$template->lock();
+$template->data = $data->data;
+$template->unlock();
 tstorage::savemodified();
 }
 ?>
