@@ -214,8 +214,11 @@ class tcomments extends titems {
       $moderate = '';
     }
     $tmlcomment= $theme->content->post->templatecomments->comments->comment;
-    $tml = str_replace('$moderate', $moderate, $tmlcomment->array[0]);
-    
+    $tml = strtr($tmlcomment->array[0], array(
+'$moderate' => $moderate, 
+'$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
+));
+
     $i = 1;
     $class1 = $tmlcomment->class1;
     $class2 = $tmlcomment->class2;

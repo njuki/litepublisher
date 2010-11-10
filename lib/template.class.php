@@ -16,7 +16,6 @@ public $view;
   public  $adminheads;
   public $javascripts;
   public $adminjavascripts;
-  public $stdjavascripts;
   public $javaoptions;
   public $hover;
   //public $footer;
@@ -47,11 +46,6 @@ public $view;
     $this->addmap('adminheads', array());
     $this->addmap('javascripts', array());
     $this->addmap('adminjavascripts', array());
-    $this->addmap('stdjavascripts', array(
-    'hovermenu' => '/js/litepublisher/hovermenu.min.js',
-    'comments' => '/js/litepublisher/comments.min.js',
-    'moderate' => '/js/litepublisher/moderate.min.js'
-    ));
   }
   
   public function __get($name) {
@@ -206,8 +200,7 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
   }
   
   public function gethead() {
-    $result = $this->gethovermenuhead();
-    $result .= implode("\n", $this->heads);
+    $result = implode("\n", $this->heads);
     $result .= implode("\n", $this->javascripts);
     if ($this->itemplate) $result .= $this->context->gethead();
     if (litepublisher::$urlmap->adminpanel) {
@@ -216,23 +209,9 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
       $this->callevent('onadminhead', array(&$result));
     }
     $result = $this->getjavaoptions() . $result;
-    $theme = ttheme::instance();
-    $result = $theme->parse($result);
+    $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
     return $result;
-  }
-  
-  public function gethovermenuhead() {
-return '';
-    if ($this->hover) {
-      if ($script = $this->stdjavascripts['hovermenu']) {
-        $theme = ttheme::instance();
-        $this->javaoptions[] = sprintf("idmenu: '%s'", $theme->menu->id);
-        $this->javaoptions[] = sprintf("tagmenu: '%s'", $theme->menu->tag);
-        return $this->getjavascript($script);
-      }
-    }
-    return '';
   }
   
   public function getmeta() {
@@ -248,13 +227,7 @@ return '';
     <link rel="sitemap" href="$site.url/sitemap.htm" />
 		<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="$site.files/js/jquery/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
-		<script type="text/javascript">
-  $(document).ready(function() {
-$("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
-    $("#tabs").tabs();
-  });
-		</script>';
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
 
 /*
     <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>

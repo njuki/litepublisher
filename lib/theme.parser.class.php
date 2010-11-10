@@ -429,8 +429,6 @@ $theme->templates = array (
     'submenu' => '',
     'item' => '',
     'current' => '',
-    'id' => '',
-    'tag' => '',
     'hover' => true,
     0 => '',
   ),
@@ -609,18 +607,6 @@ return array(
 'menu.hover' => array(
 'data' => &$data['menu']['hover'],
 'tag' => '$hover',
-'replace' => ''
-),
-
-'menu.id' => array(
-'data' => &$data['menu']['id'],
-'tag' => '$id',
-'replace' => ''
-),
-
-'menu.tag' => array(
-'data' => &$data['menu']['tag'],
-'tag' => '$tag',
 'replace' => ''
 ),
 
@@ -868,6 +854,12 @@ return array(
 'data' => &$post['templatecomments']['comments']['comment']['moderate'],
 'tag' => '$moderate',
 'replace' => '$moderate'
+),
+
+'content.post.templatecomments.comments.comment.quotebuttons' => array(
+'data' => &$post['templatecomments']['comments']['comment']['quotebuttons'],
+'tag' => '$quotebuttons',
+'replace' => '$quotebuttons'
 ),
 
 'content.post.templatecomments.pingbacks' => array(
