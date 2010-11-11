@@ -227,7 +227,12 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     <link rel="sitemap" href="$site.url/sitemap.htm" />
 		<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="$site.files/js/jquery/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
+
+    <script type="text/javascript" src="$site.files/js/litepublisher/widgets.js"></script>
+    <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
+    <script type="text/javascript" src="$site.files/js/litepublisher/client.js"></script>
+';
 
 /*
     <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>

@@ -88,4 +88,6 @@ litepublisher::$options->handexception($e);
 }
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
+//litepublisher::$urlmap->delete('/getwidget.htm');
+//litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 ?>

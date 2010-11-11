@@ -156,7 +156,7 @@ class topenid extends tevents {
   }
   
   private function error_post( $key) {
-    $result = "<?php @header('HTTP/1.1 400 Bad Request, true, 400); ?>";
+    $result = "<?php @header('HTTP/1.1 400 Bad Request', true, 400); ?>";
     $result .= 'error:'. $this->GetMessage($key, 'badrequest');
     return $result;
   }

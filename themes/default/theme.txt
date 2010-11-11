@@ -758,7 +758,6 @@ sitebar.posts = [
 				<ul id="widgetposts">
 					$item = [<li><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a><br />
 							<small>$post.date</small></li>]
-					]
 			    </ul>
     ]
 			</li>
@@ -771,7 +770,7 @@ sitebar.comments = [
 			<div class="rubric">$title</div>
     $items = [
 				<ul id="widgetcomments">
-					$item = [<li><a href="$link#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>]
+					$item = [<li><a href="$link#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>
 					]
 				</ul>
     ]
