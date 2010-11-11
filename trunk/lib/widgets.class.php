@@ -79,6 +79,9 @@ class twidget extends tevents {
   
   public static function getcachefilename($id) {
     $theme = ttheme::instance();
+if ($theme->name == '') {
+$theme = tview::instance()->theme;
+}
     return litepublisher::$paths->cache . sprintf('widget.%s.%d.php', $theme->name, $id);
   }
   
@@ -489,17 +492,38 @@ if ($disableajax)  $item['ajax'] = false;
   public function xmlrpcgetwidget($id, $sitebar, $idurl) {
     if (!isset($this->items[$id])) return $this->error("Widget $id not found");
     $this->idurlcontext = $idurl;
+$result = $this->getwidgetcontent($id, $sitebar);
+    //fix bug for javascript client library
+    if ($result == '') return 'false';
+}
+
+private static function getget($name) {
+return isset($_GET[$name]) ? (int) $_GET[$name] : false;
+}
+
+private static function error_request($s) {
+return '<?php header(\'HTTP/1.1 400 Bad Request\', true, 400); ?>' . turlmap::htmlheader(false) . $s;
+}
+
+public function request($arg) {
+$this->cache = false;
+$id = self::getget('id');
+$sitebar = self::getget('sitebar');
+if (($id === false) || ($sitebar === false) || !$this->itemexists($id)) return $this->error_request('Invalid params');
+try {
+$result = $this->getwidgetcontent($id, $sitebar);
+return turlmap::htmlheader(false) . $result;
+    } catch (Exception $e) {
+return $this->error_request('Cant get widget content');
+}
+}
+
+public function getwidgetcontent($id, $sitebar) {
+    if (!isset($this->items[$id])) return false;
     switch ($this->items[$id]['cache']) {
       case 'cache':
       $cache = twidgetscache::instance();
       $result = $cache->getcontent($id, $sitebar);
-      break;
-      
-      case 'nocache':
-      case false:
-      case 'code':
-      $widget = $this->getwidget($id);
-      $result = $widget->getcontent($id, $sitebar);
       break;
       
       case 'include':
@@ -511,12 +535,17 @@ if ($disableajax)  $item['ajax'] = false;
         $result = $widget->getcontent($id, $sitebar);
         file_put_contents($filename, $result);
         @chmod($filename, 0666);
+}
         break;
+
+      case 'nocache':
+      case 'code':
+      case false:
+      $widget = $this->getwidget($id);
+      $result = $widget->getcontent($id, $sitebar);
+      break;
       }
-    }
-    
-    //fix bug for javascript client library
-    if ($result == '') return 'false';
+
     return $result;
   }
   
