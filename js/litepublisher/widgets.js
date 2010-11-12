@@ -7,8 +7,7 @@ widgets.load = function (node, id, sitebar) {
   if (! comment) return alert('Widget not found');
         node.onclick = null;
 
-$.get(
-ltoptions.url + '/getwidget.htm',
+$.get(ltoptions.url + '/getwidget.htm',
 {id: id, sitebar: sitebar, idurl: ltoptions.idurl},
 
 function (result) { 
