@@ -5,9 +5,8 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-var swfu;
-var  createswfu = function() {
-  if (swfu != undefined) return;
+
+function createswfu () {
   var settings = {
     flash_url : ltoptions.files + "/js/swfupload/swfupload.swf",
     upload_url: ltoptions.url + "/admin/swfupload.htm",
@@ -45,7 +44,7 @@ var  createswfu = function() {
   };
   
   try {
-    swfu = new SWFUpload(settings);
+    return new SWFUpload(settings);
   } catch(e) {
     alert('Error create swfupload ' + e.message);
   }
@@ -99,6 +98,4 @@ function queueComplete(numFilesUploaded) {
   //alert('queueComplete');
 };
 
-//callback
-swfumutex.creator = true;
-if (swfumutex.uploader) createswfu();
+var swfu = createswfu();

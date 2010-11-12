@@ -5,6 +5,28 @@
 * and GPL (gpl.txt) licenses.
 **/
 
+var commentclient;
+
+function createcommentclient() {
+  return new rpc.ServiceProxy(ltoptions.pingback, {
+    asynchronous: true,
+    protocol: 'XML-RPC',
+    sanitize: false,
+    methods: [
+    'litepublisher.moderate',
+    'litepublisher.deletecomment',
+    'litepublisher.comments.setstatus',
+    'litepublisher.comments.add',
+    'litepublisher.comments.get',
+    'litepublisher.comments.edit',
+    'litepublisher.comments.reply',
+    'litepublisher.comments.getrecent'
+    ]
+    //callbackParamName: 'callback'
+  });
+}
+
+
 function movecomment(id, status) {
   var item =document.getElementById("comment-" + id);
   var idnewparent = ltoptions.commentsid;
@@ -16,8 +38,8 @@ function movecomment(id, status) {
 
 function deletecomment(id) {
   if (!confirm(lang.comments.confirmdelete)) return;
-  if (client == undefined) client = createclient();
-  client.litepublisher.deletecomment( {
+  if (commentclient == undefined) commentclient = createcommentclient();
+  commentclient.litepublisher.deletecomment( {
     
     params:['', '', id, ltoptions.idpost],
     
@@ -35,8 +57,8 @@ function deletecomment(id) {
 }
 
 function setcommentstatus(id, status) {
-  if (client == undefined) client = createclient();
-  client.litepublisher.comments.setstatus( {
+  if (commentclient == undefined) commentclient = createcommentclient();
+  commentclient.litepublisher.comments.setstatus( {
     params:['', '', id, ltoptions.idpost, status],
     
     onSuccess:function(result){
@@ -56,8 +78,8 @@ function moderate(list, action) {
     if (!confirm(lang.comments.confirmdelete)) return;
   }
   
-  if (client == undefined) client = createclient();
-  client.litepublisher.moderate( {
+  if (commentclient == undefined) commentclient = createcommentclient();
+  commentclient.litepublisher.moderate( {
     params:['', '', ltoptions.idpost, list, action],
     
     onSuccess:function(result){
@@ -92,8 +114,8 @@ function submitmoderateform(form, action) {
 }
 
 function editcomment(id) {
-  if (client == undefined) client = createclient();
-  client.litepublisher.comments.get( {
+  if (commentclient == undefined) commentclient = createcommentclient();
+  commentclient.litepublisher.comments.get( {
     params:['', '', id, ltoptions.idpost],
     
     onSuccess:function(result){
@@ -120,7 +142,7 @@ function editcomment(id) {
 
 function submiteditcomment(id) {
   return function() {
-    client.litepublisher.comments.edit( {
+    commentclient.litepublisher.comments.edit( {
       params:['', '', id, ltoptions.idpost, {
         name: document.getElementById('name').value,
         email: document.getElementById('email').value,
@@ -160,8 +182,8 @@ function sendreply() {
       return;
     }
     
-    if (client == undefined) client = createclient();
-    client.litepublisher.comments.reply( {
+    if (commentclient == undefined) commentclient = createcommentclient();
+    commentclient.litepublisher.comments.reply( {
       params:['', '', 0, ltoptions.idpost, content],
       
       onSuccess:function(result){
