@@ -978,6 +978,3 @@ SWFUpload.Console.writeLine = function (message) {
 		alert("Exception: " + ex.name + " Message: " + ex.message);
 	}
 };
-//callback
-swfumutex.uploader = true;
-if (swfumutex.creator)	createswfu();

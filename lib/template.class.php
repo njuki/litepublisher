@@ -230,8 +230,8 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
 		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
 
     <script type="text/javascript" src="$site.files/js/litepublisher/widgets.js"></script>
-    <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
-    <script type="text/javascript" src="$site.files/js/litepublisher/client.js"></script>
+    <script type="text/javascript" src="$site.files/js/litepublisher/players.js"></script>
+    <script type="text/javascript" src="$site.files/js/jsibox/jsibox_basic.js"></script>
 ';
 
 /*

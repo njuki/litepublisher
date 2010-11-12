@@ -5,15 +5,27 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-//ansync load javascripts
-var swfumutex = {
-  creator: false,
-  uploader: false
-};
+var fileclient;
 
+function createfileclient() {
+  return new rpc.ServiceProxy(ltoptions.pingback, {
+    asynchronous: true,
+    protocol: 'XML-RPC',
+    sanitize: false,
+    methods: [
+    'litepublisher.files.getbrowser',
+    'litepublisher.files.getpage',
+    'litepublisher.files.geticons',
+    'litepublisher.files.getthemes',
+    'litepublisher.files.gettags'
+    ]
+  });
+}
+
+//ansync load javascripts
 function filebrowser(link) {
-  if (client == undefined) client = createclient();
-  client.litepublisher.files.getbrowser( {
+  if (fileclient == undefined) fileclient = createfileclient();
+  fileclient.litepublisher.files.getbrowser( {
     params:['', '', ltoptions.idpost],
     
     onSuccess:function(result){
@@ -36,8 +48,10 @@ function filebrowser(link) {
         ltoptions.idcurrentfiles = "currentfiles";
         
         //createswfu();
-        loadjavascript('/js/swfupload/swfupload.js');
-        loadjavascript('/js/litepublisher/swfuploader.js');
+jQuery.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
+        jQuery.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
+});
+
       } catch (e) {
         alert('Error ' + e.message);
       }
@@ -109,8 +123,8 @@ post.deletechecked = function() {
 }
 
 post.getpage = function (page) {
-  if (client == undefined) client = createclient();
-  client.litepublisher.files.getpage( {
+  if (fileclient == undefined) fileclient = createfileclient();
+  fileclient.litepublisher.files.getpage( {
     params:['','', page],
     
     onSuccess:function(result){
@@ -151,8 +165,8 @@ function iconbrowser(link, idicon) {
   var span = document.getElementById("iconbrowser");
   if (!span) return alert('Tag not found');
   widgets.add(link, span);
-  if (client == undefined) client = createclient();
-  client.litepublisher.files.geticons( {
+  if (fileclient == undefined) fileclient = createfileclient();
+  fileclient.litepublisher.files.geticons( {
     params:['', '', idicon],
     
     onSuccess:function(result){
@@ -170,8 +184,8 @@ function iconbrowser(link, idicon) {
 function themebrowser(link, themename) {
   var div = document.getElementById("themebrowser");
   widgets.add(link, div);
-  if (client == undefined) client = createclient();
-  client.litepublisher.files.getthemes( {
+  if (fileclient == undefined) fileclient = createfileclient();
+  fileclient.litepublisher.files.getthemes( {
     params:['', '', themename],
     
     onSuccess:function(result){
@@ -190,8 +204,8 @@ function themebrowser(link, themename) {
 function selecttheme(link, themename, name) {
   var div = document.getElementById(name);
   widgets.add(link, div);
-  if (client == undefined) client = createclient();
-  client.litepublisher.files.getthemes( {
+  if (fileclient == undefined) fileclient = createfileclient();
+  fileclient.litepublisher.files.getthemes( {
     params:['', '', themename],
     
     onSuccess:function(result){
@@ -215,8 +229,8 @@ function tagsbrowser(link) {
   editparent.parentNode.insertBefore(p, editparent.nextSibling);
   widgets.add(link, p);
   
-  if (client == undefined) client = createclient();
-  client.litepublisher.files.gettags( {
+  if (fileclient == undefined) fileclient = createfileclient();
+  fileclient.litepublisher.files.gettags( {
     params:['', ''],
     
     onSuccess:function(result){
