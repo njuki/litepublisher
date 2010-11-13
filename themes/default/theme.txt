@@ -289,12 +289,12 @@ $duration - не используется, равно 0
 Аудио: после клика по ссылке "Воспроизвести" будет загружен флэш  плеер на место тега span - его id указывается первым параметром для функции  playaudiofile, а вторым идет ссылка на сам файл для проигрывания. Тег с указанным id будетзаменен на тег p с классом audioplayer_container, то есть сам плеер будет внутри <p class="audioplayer_container">плеер</p>, и вы можете оформить необходимым для вас образом стили. То есть после клика "Воспроизвести" ссылка перестанет существовать, замененная плеером. Более детальную документацию про аудиоплеер вы можете найти на официальном сайте плеера (http://wpaudioplayer.com/frequently-asked-questions). Если стоит задача загрузить все аудиоплееры приоткрытии страницы, то поможет следующий шаблон для $audio
 
 <object type="application/x-shockwave-flash" data="$site.files/js/audio-player/player.swf" id="audioplayer-$id" height="24" width="290">
-<param name="movie" value="$site.files/js/audio-player/player.swf">
-<param name="FlashVars" value="playerID=audioplayer1&soundFile=$link">
-<param name="quality" value="high">
-<param name="menu" value="false">
-<param name="wmode" value="transparent">
-</object> 
+<param name="movie" value="$site.files/js/audio-player/player.swf" />
+<param name="FlashVars" value="playerID=audioplayer1&soundFile=$link" />
+<param name="quality" value="high" />
+<param name="menu" value="false" />
+<param name="wmode" value="transparent" />
+</object>
 
 Видео: после клика "Воспроизвести" будет загружен флэш плеер.Это делает функция playvideofile с двумя параметрами: первый это селектор для jquery, для id тега надо добавлять символ #, а второй параметр - ссылка на видеофайл. Указанный тег будет замещен кодом видеоплеера и ссылка "Воспроизвести" изчезнет. То есть плеер будет загружен по запросу - это экономит скорость загрузки страницы. Если вы хотите, чтобы видеоплеер всегда был на странице, то вам следует использовать следующий шаблон:
 

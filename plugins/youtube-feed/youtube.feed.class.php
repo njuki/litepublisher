@@ -81,8 +81,8 @@ class tyoutubefeed extends tplugin {
   }
   
   public function themeparsed($theme) {
-    $theme->content->excerpts->excerpt->files->array['youtube'] = $this->player;
-    $theme->content->post->files->array['youtube'] = $this->player;
+    $theme->content->excerpts->excerpt->filelist->array['youtube'] = $this->player;
+    $theme->content->post->filelist->array['youtube'] = $this->player;
   }
   
 }//class
