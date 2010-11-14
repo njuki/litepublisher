@@ -509,7 +509,12 @@ public function request($arg) {
 $this->cache = false;
 $id = self::getget('id');
 $sitebar = self::getget('sitebar');
+    $this->idurlcontext = self::getget('idurl');
 if (($id === false) || ($sitebar === false) || !$this->itemexists($id)) return $this->error_request('Invalid params');
+$themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::instance(1)->themename;
+if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::instance(1)->themename;
+$theme = ttheme::getinstance($themename);
+
 try {
 $result = $this->getwidgetcontent($id, $sitebar);
 return turlmap::htmlheader(false) . $result;

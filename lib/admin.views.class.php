@@ -149,9 +149,7 @@ break;
       
       case 'headers':
 $template = ttemplate::instance();
-      $args->hovermenu = $template->stdjavascripts['hovermenu'];
-      $args->comments = $template->stdjavascripts['comments'];
-      $args->moderate = $template->stdjavascripts['moderate'];
+      $args->heads = $template->heads
       $result = $html->jsform($args);
       break;
     }

@@ -8,7 +8,7 @@
 var commentclient;
 
 function createcommentclient() {
-  return new rpc.ServiceProxy(ltoptions.pingback, {
+  return new rpc.ServiceProxy(ltoptions.url + '/rpc.xml', {
     asynchronous: true,
     protocol: 'XML-RPC',
     sanitize: false,

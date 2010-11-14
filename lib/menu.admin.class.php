@@ -141,6 +141,11 @@ return tviews::instance()->defaults['admin'];
     $this->doprocessform();
   }
 
+public function gethead() {
+return '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
+}
+
   public static function idget() {
 return (int) self::getparam('id', 0);
 }

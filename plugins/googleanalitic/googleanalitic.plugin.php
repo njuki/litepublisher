@@ -39,14 +39,14 @@ class tgoogleanalitic extends tplugin {
     $filename = litepublisher::$paths->files . 'googleanalitic.js';
     $template = ttemplate::instance();
     if ($this->user == '') {
-      $template->deletejavascript('googleanalitic');
+      $template->deletefromhead($template->getjavascript('/files/googleanalitic.js'));
       @unlink($filename);
     } else {
       $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'googleanalitic.js');
       $s = sprintf($s, $this->user, $this->se);
       file_put_contents($filename, $s);
       @chmod($filename, 0666);
-      $template->addjavascript('googleanalitic', $template->getjavascript('/files/googleanalitic.js'));
+      $template->addtohead($template->getjavascript('/files/googleanalitic.js'));
     }
     litepublisher::$urlmap->clearcache();
   }
