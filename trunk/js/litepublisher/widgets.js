@@ -15,7 +15,7 @@ widgets.load = function (node, id, sitebar) {
         node.onclick = null;
 
 $.get(ltoptions.url + '/getwidget.htm',
-{id: id, sitebar: sitebar, idurl: ltoptions.idurl},
+{id: id, sitebar: sitebar, themename: ltoptions.themename, idurl: ltoptions.idurl},
 
 function (result) { 
       var content = $(result);

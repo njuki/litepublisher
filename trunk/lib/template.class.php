@@ -12,10 +12,6 @@ class ttemplate extends tevents_storage {
   public $context;
   public $itemplate;
 public $view;
-  public $heads;
-  public  $adminheads;
-  public $javascripts;
-  public $adminjavascripts;
   public $javaoptions;
   public $hover;
   //public $footer;
@@ -29,23 +25,17 @@ public $view;
     litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
-    $this->hover = true;
     $this->javaoptions = array(0 =>
-    sprintf("url: '%1\$s',\npingback: '%1\$s/rpc.xml',\nfiles: '%2\$s',\nidurl: '%3\$s'",
+    sprintf("url: '%1\$s',\nfiles: '%2\$s',\nidurl: '%3\$s'",
     litepublisher::$site->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
-    $this->data['theme'] = 'default';
-    $this->data['admintheme'] = '';
+    $this->hover = true;
     $this->data['hovermenu'] = true;
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
-    $this->addmap('heads', array());
-    $this->addmap('adminheads', array());
-    $this->addmap('javascripts', array());
-    $this->addmap('adminjavascripts', array());
   }
   
   public function __get($name) {
@@ -83,6 +73,7 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->hovermenu && $theme->menu->hover;
+$this->javaoptions[] = sprintf('themename: \'%s\'',  $theme->name);
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     return $result;
@@ -108,7 +99,7 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     
     $args = targs::instance();
     $args->title = $title;
-    $theme = ttheme::instance();
+$theme = $this->view->theme;
     return $theme->parsearg($theme->title, $args);
   }
   
@@ -169,25 +160,6 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     litepublisher::$urlmap->clearcache();
   }
   
-  public function addjavascript($name, $script) {
-    if (!isset($this->javascripts[$name])) {
-      $this->javascripts[$name] = $script;
-      $this->save();
-    }
-  }
-  
-  public function editjavascript($name, $script) {
-    $this->javascripts[$name] = $script;
-    $this->save();
-  }
-  
-  public function deletejavascript($name) {
-    if (isset($this->javascripts[$name])) {
-      unset($this->javascripts[$name]);
-      $this->save();
-    }
-  }
-  
   private function getjavaoptions() {
     $result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
       $result .= implode(",\n", $this->javaoptions);
@@ -196,18 +168,31 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
   }
   
   public function getjavascript($filename) {
-    return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$site->files . $filename) . "\n";
+    return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$site->files . $filename);
   }
+
+public function addtohead($s) {
+$s = trim($s);
+if (false === strpos($this->heads, $s)) {
+$this->heads = trim($this->heads) . "\n" . $s;
+$this->save();
+}
+}
+
+public function deletefromhead($s) {
+$s = trim($s);
+$i = strpos($this->heads, $s);
+if (false !== $i) {
+$this->heads = substr_replace($this->heads, '', $i, strlen($s));
+$this->heads = trim(str_replace("\n\n", "\n", $this->heads));
+$this->save();
+}
+}
   
   public function gethead() {
-    $result = implode("\n", $this->heads);
-    $result .= implode("\n", $this->javascripts);
+    $result = $this->heads;
+$result = '';
     if ($this->itemplate) $result .= $this->context->gethead();
-    if (litepublisher::$urlmap->adminpanel) {
-      $result .= implode("\n", $this->adminheads);
-      $result .= implode("\n", $this->adminjavascripts);
-      $this->callevent('onadminhead', array(&$result));
-    }
     $result = $this->getjavaoptions() . $result;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
@@ -226,8 +211,18 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     <meta name="description" content="$template.description" />
     <link rel="sitemap" href="$site.url/sitemap.htm" />
     <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>
+
+<link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />	
+		<script type="text/javascript">
+  $(document).ready(function() {
+$("a[rel^=\'prettyPhoto\']").prettyPhoto(); 
+  });
+		</script>
+
 ';
 /*
+    <script type="text/javascript" src="$site.files/js/prettyPhoto/js/jquery.prettyPhoto.js"></script>
+
 		<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="$site.files/js/jquery/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
