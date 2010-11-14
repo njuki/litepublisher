@@ -558,11 +558,6 @@ public function getwidgetcontent($id, $sitebar) {
     return tsitebars::getpos($this->sitebars, $id);
   }
   
-  public function setpos($id, $sitebar, $order) {
-    tsitebars::setpos($this->sitebars, $id, $sitebar, $order);
-    $this->save();
-  }
-  
   public function &finditem($id) {
     foreach ($this->classes as $class => $items) {
       foreach ($items as $i => $item) {
