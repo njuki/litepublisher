@@ -87,7 +87,7 @@ class tinstaller extends tdata {
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
-        $html = THtmlResource::instance();
+        $html = tadminhtml::instance();
         $html->section = 'installation';
         eval('$xml = "'. $html->xmlrpc . '\n";');
         // Send it
@@ -243,7 +243,7 @@ class tinstaller extends tdata {
   public function wizardform() {
     $this->loadlang();
     $combobox = $this->getlangcombo();
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
     if (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules())) {
@@ -275,7 +275,7 @@ class tinstaller extends tdata {
   }
   
   public function CreateFirstPost() {
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $html->section = 'installation';
     $lang = tlocal::instance();
     $theme = ttheme::instance();
@@ -322,7 +322,7 @@ class tinstaller extends tdata {
   public function congratulation($password) {
     global  $lang;
     $tml = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.congratulation.tml');
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $html->section = 'installation';
     $lang = tlocal::instance('installation');
     $args = targs::instance();

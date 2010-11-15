@@ -33,10 +33,10 @@ $count = count($view->sitebars);
   }
   
   public static function getsitebarsform() {
-$idview = self::getparam('idview', 1);
+$idview = tadminhtml::getparam('idview', 1);
 $view = tview::instance($idview);
     $widgets = twidgets::instance();
-    $html = THtmlResource ::instance();
+    $html = tadminhtml ::instance();
     $html->section = 'widgets';
     $lang = tlocal::instance('widgets');
     $args = targs::instance();
@@ -107,13 +107,13 @@ $args->idview = $idview;
   public function getcontent() {
     switch ($this->name) {
       case 'widgets':
-      $idwidget = self::getparam('idwidget', 0);
+      $idwidget = tadminhtml::getparam('idwidget', 0);
     $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->getcontent();
       } else {
-$idview = self::getparam('idview', 1);
+$idview = tadminhtml::getparam('idview', 1);
 $view = tview::instance($idview);
 $result = tadminviews::getviewform('/admin/views/widgets/');
 if (($idview == 1) || $view->customsitebar) {
@@ -140,7 +140,7 @@ return $result;
     litepublisher::$urlmap->clearcache();
     switch ($this->name) {
       case 'widgets':
-      $idwidget = (int) self::getparam('idwidget', 0);
+      $idwidget = (int) tadminhtml::getparam('idwidget', 0);
     $widgets = twidgets::instance();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
@@ -157,7 +157,7 @@ return $result;
   }
   
   public static function setsitebars() {
-$idview = (int) self::getparam('idview', 1);
+$idview = (int) tadminhtml::getparam('idview', 1);
 $view = tview::instance($idview);
 
     switch ($_POST['action']) {

@@ -42,7 +42,7 @@ return $this->getcontent();
 
 public function getcontent() {
 $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
-   $html = THtmlResource ::instance();
+   $html = tadminhtml ::instance();
     $html->section = 'editor';
 $lang = tlocal::instance('editor');
     $post = tpost::instance($this->idpost);
@@ -61,16 +61,49 @@ break;
 
 case 'files':
     $args = targs::instance();
-$args->ajax = tadminmenu::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get=");
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get=");
     //$args->pages = $this->get_page(1);
-    //$args->currentfiles = $this->getpostfiles((int) $idpost);
+   $args->currentfiles = $this->getpostfiles($post);
     $result = $html->browser($args);
-//$result .= $post->filelist;
 break;
 
+default:
+$result = var_export($_GET, true);
 }
 return turlmap::htmlheader(false) . $result;
 }
 
+  private function getpostfiles(tpost $post) {
+    $result = '';
+    $files = tfiles::instance();
+    $args = targs::instance();
+
+    foreach ($post->files as $id) {
+    $item = $files->getitem($id);
+    $args->add($item);
+    $args->idtag = "$part-$id";
+    $args->part = $part;
+    $args->id = $id;
+    if ($item['media'] == 'image') {
+      $img = '<img src="$site.files/files/$filename" title="$filename" />';
+      if ($item['preview'] == 0) {
+        $args->preview = '';
+      } else {
+        $preview = $files->getitem($item['preview']);
+        $imgarg = new targs();
+        $imgarg->add($preview);
+        $theme = ttheme::instance();
+        $args->preview =$theme->parsearg($img, $imgarg);
+      }
+      return $this->html->image($args);
+    } else {
+      return $this->html->fileitem($args);
+    }
+
+      $result .= $this->getfileitem($id, 'curr');
+    }
+    return $result;
+  }
+  
 }//class
 ?>

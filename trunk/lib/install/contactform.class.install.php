@@ -7,7 +7,7 @@
 **/
 
 function tcontactformInstall($self) {
-  $html = THtmlResource::instance();
+  $html = tadminhtml::instance();
   $html->section = 'contactform';
   $lang = tlocal::instance('contactform');
     $self->title =  $lang->title;;

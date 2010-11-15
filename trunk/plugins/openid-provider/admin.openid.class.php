@@ -27,7 +27,7 @@ class tadminopenid {
     $args->data['$lang.usebigmath'] = $about['usebigmath'];
     $args->data['$lang.trusted'] = $about['trusted'];
     
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     return $html->adminform($tml, $args);
   }
   

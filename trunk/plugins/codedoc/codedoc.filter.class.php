@@ -293,7 +293,7 @@ class tcodedocfilter extends titems {
   public function gethtml($name = '') {
     if ($name == '') $name = 'codedoc';
     $this->checkadminlang();
-    $result = THtmlResource ::instance();
+    $result = tadminhtml ::instance();
     if (!isset($result->ini['codedoc'])) {
       $result->loadini(self::getresource() . 'html.ini');
       tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $result->ini);

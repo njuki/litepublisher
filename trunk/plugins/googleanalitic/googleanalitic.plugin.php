@@ -21,7 +21,7 @@ class tgoogleanalitic extends tplugin {
   public function getcontent() {
     $tml = '[text:user]
     [editor:se]';
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $args = targs::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->formtitle = $about['formtitle'];

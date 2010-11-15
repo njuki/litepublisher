@@ -120,7 +120,7 @@ class ttickets extends tposts {
   }
   
   public function checkhtml() {
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     if (!isset($html->ini['tickets'])) {
       $html->loadini($this->resource . 'html.ini');
       tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $html->ini);

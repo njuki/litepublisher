@@ -24,7 +24,7 @@ class tadminfoaf extends tadminmenu {
       }
     }
     
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     if (!isset($html->ini['foaf'])) {
       $html->loadini($dir . 'html.ini');
     }

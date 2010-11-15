@@ -12,7 +12,7 @@ class tadminpostcontentplugin {
   public function getcontent() {
     $plugin = tpostcontentplugin ::instance();
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "postcontent" . litepublisher::$options->language . ".tml");
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $args = targs::instance();
     $args->before = $plugin->before;
     $args->after = $plugin->after;

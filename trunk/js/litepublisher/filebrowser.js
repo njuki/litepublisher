@@ -2,26 +2,29 @@
     $("#tabs").tabs({
 cache: true,
    load: function(event, ui) { 
-if (ui.index == 2) initfiletab();
+//if (ui.index == 2) initfiletab();
 }
 });
   });
 
-function initfiletab() {
-$.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
-        $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
-});
-
+function initfiletabs() {
+$.get(ltoptions.url + '/admin/ajaxposteditor.htm',
+{id: ltoptions.idpost, get: "files"},
+function (result) { 
       try {
-  $(document).ready(function() {
+$("#filetabs").html(result);
     $('#filetabs').tabs({cache: true});
-  });
 
         ltoptions.idfilepages = "filepages";
         ltoptions.idfilepage = "filepage";
         ltoptions.idcurrentfiles = "currentfiles";
+
+$.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
+        $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
+});
         
       } catch (e) {  alert('Error ' + e.message); }
+});
 }
 
 function getcookie(name) {

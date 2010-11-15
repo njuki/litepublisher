@@ -12,7 +12,7 @@ class tadminbackup2dropbox {
     $plugin = tbackup2dropbox::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $form = file_get_contents($dir . 'backup2dropbox.tml');
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $args = targs::instance();
     $admin = tadminplugins::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));

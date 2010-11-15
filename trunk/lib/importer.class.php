@@ -17,7 +17,7 @@ class timporter extends tplugin {
   
   //template
   public function getcontent() {
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $html->section = 'importer';
     $lang = tlocal::instance('importer');
     return $html->form();

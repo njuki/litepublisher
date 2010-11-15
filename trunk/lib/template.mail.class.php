@@ -44,7 +44,7 @@ class tmailtemplate extends titems {
   
   public function gettml($name, $part) {
     if (isset($this->items[$name])) return $this->items[$name][$part];
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $html->section = $name;
     return $html->$part;
   }

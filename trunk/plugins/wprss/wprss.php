@@ -36,7 +36,7 @@ class twprssimporter extends timporter {
     $args->scriptlabel = $about['scriptlabel'];
     $args->ignorelinklabel = $about['ignorelink'];
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $result .= $html->parsearg($tml, $args);
     return $result;
   }

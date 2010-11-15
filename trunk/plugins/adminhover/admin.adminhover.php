@@ -12,7 +12,7 @@ class tadminadminhover {
     $plugin = tadminhoverplugin::instance();
     $about = tplugins::localabout(dirname(__file__));
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'admin.adminhover.tml');
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $args = targs::instance();
     $args->hovermenu = $plugin->hover;
     $args->langhovermenu = $about['langhovermenu'];

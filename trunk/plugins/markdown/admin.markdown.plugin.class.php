@@ -17,7 +17,7 @@ $plugin = tmarkdownplugin::instance();
 
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::instance();
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
 
       $args->formtitle = $about['name'];
       $args->data['$lang.nocontinue'] = $about['nocontinue'];

@@ -53,7 +53,7 @@ function doinstallclasses() {
   
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->lock();
-        $html = THtmlResource::instance();
+        $html = tadminhtml::instance();
 if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
 
   foreach(litepublisher::$classes->items as $class => $item) {

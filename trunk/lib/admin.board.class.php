@@ -60,7 +60,7 @@ public function setidview($id) {}
   }
   
   public function gethtml($name = '') {
-    $result = THtmlResource ::instance();
+    $result = tadminhtml ::instance();
     if ($name == '') $name = 'login';
     $result->section = $name;
     $lang = tlocal::instance($name);

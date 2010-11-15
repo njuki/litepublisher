@@ -13,7 +13,7 @@ class tadminlivejournalposter {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     if ($plugin->template == '') $plugin->template = file_get_contents($dir. 'livejournalposter.tml');
     $form = file_get_contents($dir . 'form.tml');
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $args = targs::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->add($about);
