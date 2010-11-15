@@ -86,14 +86,6 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     return $this->get_page((int) $index);
   }
   
-  public function getbrowser($login, $password, $idpost) {
-    self::canedit($login, $password, $idpost);
-    $args = targs::instance();
-    $args->pages = $this->get_page(1);
-    $args->currentfiles = $this->getpostfiles((int) $idpost);
-    return $this->html->browser($args);
-  }
-  
   public function geticons($login, $password, $idicon) {
     $this->auth($login, $password, 'editor');
     $result = '';

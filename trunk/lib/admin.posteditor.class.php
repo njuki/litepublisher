@@ -23,11 +23,6 @@ $result = parent::gethead();
     <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
     ', litepublisher::$site->files, litepublisher::$options->language);
     //<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
-$result .= '<script type="text/javascript">
-  $(document).ready(function() {
-    $("#tabs").tabs({cache: true});
-  });
-		</script>';
 return $result;
   }
   
