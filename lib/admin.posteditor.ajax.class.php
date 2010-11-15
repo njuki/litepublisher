@@ -62,10 +62,13 @@ break;
 
 case 'files':
     $args = targs::instance();
-$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get=");
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
 $theme = ttheme::instance();
 $templates = $theme->content->post->filelist->array;
 foreach ($templates as $name => $tml) {
+$tml = str_replace('$id', 'curfile-$id', $tml);
+$tml = str_replace('$post.id', 'curpost-$post.id', $tml);
+
 $templates[$name] = str_replace(
 '<li>',
  '<li><input type="checkbox" name="currentfile-$id" id="currentfile-$id" value="$id">',
@@ -73,12 +76,80 @@ $tml);
 }
     $files = tfiles::instance();
    $args->currentfiles = $files->getlist($post->files, $templates);
-    //$args->pages = $this->get_page(1);
+
+    if (dbversion) {
+      $sql = "parent =0 and media <> 'icon'";
+      $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
+      $count = $files->db->getcount($sql);
+    } else {
+      $list= array();
+$uid = litepublisher::$options->user;
+      foreach ($files->items as $id => $item) {
+        if (($item['parent'] != 0) || ($item['media'] == 'icon')) continue;
+        if ($uid > 1 && $uid != $item['author']) continue;
+        $list[] = $id;
+      }
+      $count = count($list);
+    }
+
+$pages = '';
+    $perpage = 10;
+$count = ceil($count/$perpage);
+for ($i =1; $i <= $count; $i++) {
+$args->index = $i;
+$pages .= $html->pageindex($args);
+}
+
+    $args->pages = $pages;
     $result = $html->browser($args);
 break;
 
-case 'filespage':
-$result = $_GET['page'];
+case 'filepage':
+$page = tadminhtml::getparam('page', 1);
+$page = min(1, $page);
+    $perpage = 10;
+    $files = tfiles::instance();
+    if (dbversion) {
+      $sql = "parent =0 and media <> 'icon'";
+      $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
+      $count = $files->db->getcount($sql);
+$pagescount = ceil($count/$perpage);
+$page = min($page, $pagescount);
+    $from = ($page -1)  * $perpage;
+      $list = $files->select($sql, " order by posted desc limit $from, $perpage");
+      if (!$list) $list = array();
+    } else {
+      $list= array();
+$uid = litepublisher::$options->user;
+      foreach ($files->items as $id => $item) {
+        if (($item['parent'] != 0) || ($item['media'] == 'icon')) continue;
+        if ($uid > 1 && $uid != $item['author']) continue;
+        $list[] = $id;
+      }
+      $count = count($list);
+$pagescount = ceil($count/$perpage);
+$page = min($page, $pagescount);
+    $from = ($page -1)  * $perpage;
+      $list = array_slice($list, $from, $perpage);
+    }
+
+if (count($list) == 0) return '';
+
+    $args = targs::instance();
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+$theme = ttheme::instance();
+$templates = $theme->content->post->filelist->array;
+foreach ($templates as $name => $tml) {
+$tml = str_replace('$id', 'filepage-$id', $tml);
+$tml = str_replace('$post.id', 'post-$post.id', $tml);
+$templates[$name] = str_replace(
+'<li>',
+ '<li><input type="checkbox" name="itemfilepage-$id" id="itemfilepage-$id" value="$id">',
+$tml);
+}
+    $files = tfiles::instance();
+$result = $files->getlist($list, $templates);
+    $result .= $html->page($args);
 break;
 
 default:

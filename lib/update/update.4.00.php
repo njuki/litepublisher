@@ -217,6 +217,7 @@ tstorage::savemodified();
   $rpc->lock();
   $rpc->delete('litepublisher.files.gettags');
   $rpc->delete('litepublisher.files.getbrowser');
+  $rpc->delete('litepublisher.files.getpage');
 $rpc->unlock();
 }
 ?>

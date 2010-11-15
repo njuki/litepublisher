@@ -9,12 +9,12 @@ var widgets = {
   items: []
 };
 
-widgets.load = function (node, id, sitebar) {
+widgets.load = function (node, id, sidebar) {
   var comment = widgets.findcomment(node, id);
   if (! comment) return alert('Widget not found');
         node.onclick = null;
 $.get(ltoptions.url + '/getwidget.htm',
-{id: id, sitebar: sitebar, themename: ltoptions.themename, idurl: ltoptions.idurl},
+{id: id, sidebar: sidebar, themename: ltoptions.themename, idurl: ltoptions.idurl},
 
 function (result) { 
       var content = $(result);
