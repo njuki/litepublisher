@@ -71,6 +71,7 @@ $classes->add('tevents_itemplate', 'views.class.php');
 $classes->add('titems_itemplate', 'views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
 $classes->add('tautoform' 'htmlresource.class.php');
+$classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
@@ -208,5 +209,11 @@ $template->heads =
     <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
 
 tstorage::savemodified();
+
+
+  $rpc = TXMLRPC::instance();
+  $rpc->lock();
+  $rpc->delete('litepublisher.files.gettags');
+$rpc->unlock();
 }
 ?>

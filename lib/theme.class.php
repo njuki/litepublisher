@@ -25,13 +25,8 @@ file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  . 'abou
   
   public static function getinstance($name) {
     if (isset(self::$instances[$name])) return self::$instances[$name];
-if (isset(litepublisher::$classes->instances[__class__])) {
  $result = getinstance(__class__);
 if ($result->name != '') $result = litepublisher::$classes->newinstance(__class__);
-} else {
-$result = litepublisher::$classes->newinstance(__class__);
-}
-
     $result->name = $name;
 $result->load();
     return $result;
@@ -317,7 +312,7 @@ public function __construct(array &$array) { $this->array = &$array; }
   
   public function __get($name) {
 if (!isset($this->array[$name])) {
-litepublisher::$options->trace("$name not found\n" . implode("\n", array_keys(($this->array))));
+litepublisher::$options->trace("$name not found\n" . implode("\n", array_keys($this->array)));
 litepublisher::$options->showerrors();
 }
 

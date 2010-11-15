@@ -73,5 +73,5 @@ try {
   echo $e->GetMessage();
 }
 litepublisher::$options->savemodified();
-litepublisher::$options->showerrors();
+//litepublisher::$options->showerrors();
 ?>

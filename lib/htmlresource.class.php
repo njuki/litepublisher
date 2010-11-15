@@ -136,7 +136,8 @@ class THtmlResource  {
   }
 
 public function getedit($name, $value, $title) {
-    return strtr(ttheme::instance()->content->admin->text, array(
+$theme = ttheme::instance();
+    return strtr($theme->content->admin->text, array(
 '$lang.$name' => $title,
 '$name' => $name,
 '$value' => $value

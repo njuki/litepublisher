@@ -154,17 +154,6 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     return $this->html->fixquote($result);
   }
   
-  public function gettags($login, $password) {
-    $this->auth($login, $password, 'editor');
-    $result = array();
-    $tags = ttags::instance();
-    if ($tags->dbversion) $tags->select("", "order by itemscount");
-    foreach ($tags->items as $id => $item) {
-      $result[] = '<a onclick="tagclicked(this);">' . $item['title'] . "</a>";
-    }
-    return implode(",\n", $result);
-  }
-  
   private function getpostfiles($idpost) {
     $result = '';
     $post = tpost::instance((int) $idpost);

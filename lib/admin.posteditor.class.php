@@ -14,14 +14,21 @@ class tposteditor extends tadminmenu {
   }
   
   public function gethead() {
+$result = parent::gethead();
     $template = ttemplate::instance();
     $template->javaoptions[] = 'idpost: ' . $this->idget();
-    return sprintf('
+    $result .= sprintf('
 <script type="text/javascript" src="%1$s/js/litepublisher/rpc.min.js"></script>
 <script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
     <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
     ', litepublisher::$site->files, litepublisher::$options->language);
     //<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
+$result .= '<script type="text/javascript">
+  $(document).ready(function() {
+    $("#tabs").tabs({cache: true});
+  });
+		</script>';
+return $result;
   }
   
   protected function getcategories(tpost $post) {
@@ -81,6 +88,7 @@ class tposteditor extends tadminmenu {
     ttheme::$vars['post'] = $post;
     $mode = $this->getmode();
     $args = targs::instance();
+$args->ajax = self::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     if ($post->id != 0) {
       $adminurl = $this->adminurl . "=$post->id&mode";
       $result .= sprintf($html->h2->formhead, "<a href='$post->link'>$post->title</a>",
@@ -128,8 +136,12 @@ class tposteditor extends tadminmenu {
   }
   
   public function processform() {
+echo "<pre>\n";
+var_dump($_POST);
+echo "</pre>\n";
+return;
     extract($_POST);
-    $mode = $this->getmode();
+
     $this->basename = 'editor';
     $html = $this->html;
     $post = tpost::instance((int)$id);
@@ -137,7 +149,7 @@ class tposteditor extends tadminmenu {
       if (empty($title)) return $html->h2->emptytitle;
       $post->title = $title;
       $post->categories = $this->getcats();
-      $post->tagnames = $tags;
+      if (isset($tags)) $post->tagnames = $tags;
       if (isset($icon)) $post->icon = (int) $icon;
       if (isset($theme)) $post->theme = $theme;
       if (isset($tmlfile)) $post->tmlfile = $tmlfile;

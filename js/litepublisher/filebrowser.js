@@ -22,9 +22,9 @@ function createfileclient() {
   });
 }
 
-//ansync load javascripts
 function filebrowser(link) {
   if (fileclient == undefined) fileclient = createfileclient();
+
   fileclient.litepublisher.files.getbrowser( {
     params:['', '', ltoptions.idpost],
     
@@ -52,7 +52,7 @@ jQuery.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
         jQuery.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
 });
 
-      } catch (e) {
+      } catch (e) { 
         alert('Error ' + e.message);
       }
     },
@@ -245,23 +245,18 @@ function tagsbrowser(link) {
   } );
 }
 
-function tagclicked(link) {
-  try {
-    var newtag  = link.innerHTML ;
-    var edit = document.getElementById("tags");
-    var tags = edit.value;
+function tagtopost(link) {
+    var newtag  = $(link).html();
+    var tags = $('#tags').val();
     if (tags == '') {
-      edit.value = newtag;
-      return;
-    }
-    
-    var re = /\s*,\s*/;
+$('#tags').val(newtag);
+    } else {
+        var re = /\s*,\s*/;
     var list = tags.split(re);
     for (var i = list.length; i >= 0; i--) {
       if (newtag == list[i]) return;
     }
-    
-    edit.value += ', ' + newtag;
-    
-} catch(e) { alert(e.message); }
+$('#tags').val(tags + ', ' + newtag);
+    }
 }
+// catch(e) { alert(e.message); 
