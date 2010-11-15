@@ -68,7 +68,7 @@ $templates = $theme->content->post->filelist->array;
 foreach ($templates as $name => $tml) {
 $templates[$name] = str_replace(
 '<li>',
- '<li><input type="checkbox" name="currentfile-$id" id="currentfile->$id" value="$id">',
+ '<li><input type="checkbox" name="currentfile-$id" id="currentfile-$id" value="$id">',
 $tml);
 }
     $files = tfiles::instance();

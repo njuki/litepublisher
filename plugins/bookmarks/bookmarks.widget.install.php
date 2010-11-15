@@ -138,7 +138,7 @@ function tbookmarkswidgetInstall($self) {
     );
     
   }
-  $self->addtositebar(0);
+  $self->addtosidebar(0);
   $self->unlock();
   //trick: lock data to prevent add link from parent class tlinkswidget
   $self->lock();

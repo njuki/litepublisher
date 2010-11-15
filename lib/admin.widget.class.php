@@ -116,14 +116,14 @@ class tadminorderwidget extends tadminwidget {
   }
   
   protected function dogetcontent(twidget $widget, targs $args){
-    $args->sitebarcombo = tadminwidgets::getcombo('sitebar', tadminwidgets::getsitebarnames(3), $widget->sitebar);
+    $args->sidebarcombo = tadminwidgets::getcombo('sidebar', tadminwidgets::getsidebarnames(3), $widget->sidebar);
     $args->ordercombo = tadminwidgets::getcombo('order', range(-1, 10), $widget->order + 1);
     $args->ajax = $widget->ajax;
     return $this->html->orderform($args);
   }
   
   protected function doprocessform(twidget $widget)  {
-    $widget->sitebar = (int) $_POST['sitebar'];
+    $widget->sidebar = (int) $_POST['sidebar'];
     $widget->order = ((int) $_POST['order'] - 1);
     $widget->ajax = isset($_POST['ajax']);
   }

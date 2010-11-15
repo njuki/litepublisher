@@ -31,11 +31,11 @@ class tlinkswidget extends twidget {
     return tlocal::$data['default']['links'];
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     if (count($this->items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('links', $sitebar);
+    $tml = $theme->getwidgetitem('links', $sidebar);
     $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . 'id=';
     $url = litepublisher::$site->url;
     $args = targs::instance();
@@ -51,7 +51,7 @@ class tlinkswidget extends twidget {
       $result .=   $theme->parsearg($tml, $args);
     }
     
-    return $theme->getwidgetcontent($result, 'links', $sitebar);
+    return $theme->getwidgetcontent($result, 'links', $sidebar);
   }
   
   public function add($url, $title, $text) {

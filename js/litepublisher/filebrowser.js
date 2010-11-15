@@ -73,15 +73,9 @@ post.addfrompage = function() {
 }
 
 post.deletecurrentfiles = function() {
-$('
-.each(function() {
-});
-    if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
-      var id = elems[i].value;
-      var elem = document.getElementById("fileitem-curr-" + id);
-      elem.parentNode.removeChild(elem);
-    }
-  }
+$("input:checked[id^='currentfile']").each(function() {
+$(this).parent().parent().remove();
+ } );
 }
 
 post.getpage = function (page) {

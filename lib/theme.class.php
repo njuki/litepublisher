@@ -44,7 +44,7 @@ $this->templates = array(
 'title' => '',
     'menu' => array(),
 'content' => array(),
-'sitebars' => array()
+'sidebars' => array()
 );
     $this->themeprops = new tthemeprops($this->templates);
   }
@@ -108,8 +108,8 @@ return;
 return parent::__set($name, $value);
 }
   
-  public function getsitebarscount() {
-    return count($this->templates['sitebars']);
+  public function getsidebarscount() {
+    return count($this->templates['sidebars']);
   }
 
 
@@ -246,34 +246,34 @@ if ($tml == '') return $result;
     return str_replace('$excerpt', $result, $this->parse($tml));
   }
   
-  public function getpostswidgetcontent(array $items, $sitebar, $tml) {
+  public function getpostswidgetcontent(array $items, $sidebar, $tml) {
     if (count($items) == 0) return '';
     $result = '';
-    if ($tml == '') $tml = $this->getwidgetitem('posts', $sitebar);
+    if ($tml == '') $tml = $this->getwidgetitem('posts', $sidebar);
 
     foreach ($items as $id) {
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
-    return str_replace('$item', $result, $this->getwidgetitems('posts', $sitebar));
+    return str_replace('$item', $result, $this->getwidgetitems('posts', $sidebar));
   }
   
-  public function getwidgetcontent($items, $name, $sitebar) {
-    return str_replace('$item', $items, $this->getwidgetitems($name, $sitebar));
+  public function getwidgetcontent($items, $name, $sidebar) {
+    return str_replace('$item', $items, $this->getwidgetitems($name, $sidebar));
   }
   
-  public function getwidget($title, $content, $template, $sitebar) {
-    $tml = $this->getwidgettemplate($template, $sitebar);
+  public function getwidget($title, $content, $template, $sidebar) {
+    $tml = $this->getwidgettemplate($template, $sidebar);
     $args = targs::instance();
     $args->title = $title;
     $args->items = $content;
     return $this->parsearg($tml, $args);
   }
   
-  public function getwidgettemplate($name, $sitebar) {
-    $sitebars = &$this->templates['sitebars'];
-    if (!isset($sitebars[$sitebar][$name][0])) $name = 'widget';
-    return $sitebars[$sitebar][$name][0];
+  public function getwidgettemplate($name, $sidebar) {
+    $sidebars = &$this->templates['sidebars'];
+    if (!isset($sidebars[$sidebar][$name][0])) $name = 'widget';
+    return $sidebars[$sidebar][$name][0];
   }
   
   public function  getwidgetitem($name, $index) {
@@ -285,14 +285,14 @@ if ($tml == '') return $result;
   }
   
   public function  getwidgettml($index, $name, $tml) {
-    $sitebars = &$this->templates['sitebars'];
-    if (isset($sitebars[$index][$name][$tml])) return $sitebars[$index][$name][$tml];
-if ($index >= count($sitebars)) {
-$index = count($sitebars) - 1;
-    if (isset($sitebars[$index][$name][$tml])) return $sitebars[$index][$name][$tml];
+    $sidebars = &$this->templates['sidebars'];
+    if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
+if ($index >= count($sidebars)) {
+$index = count($sidebars) - 1;
+    if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
 }
-    if (isset($sitebars[$index]['widget'][$tml])) return $sitebars[$index]['widget'][$tml];
-$this->error("Unknown widget '$name' and template '$tml' in $index sitebar");
+    if (isset($sidebars[$index]['widget'][$tml])) return $sidebars[$index]['widget'][$tml];
+$this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
 }
 
   public function simple($content) {

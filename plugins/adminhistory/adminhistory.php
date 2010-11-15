@@ -41,10 +41,10 @@ class tadminhistory extends torderwidget {
     $this->save();
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('widget', $sitebar);
+    $tml = $theme->getwidgetitem('widget', $sidebar);
     $args = targs::instance();
     $args->icon = '';$args->subitems = '';
     $args->rel = 'admin';
@@ -57,7 +57,7 @@ class tadminhistory extends torderwidget {
       $result .= $theme->parsearg($tml, $args);
     }
     if (!isset($_POST) || (count($_POST) == 0)) $this->add();
-    return $theme->getwidgetcontent($result, 'widget', $sitebar);
+    return $theme->getwidgetcontent($result, 'widget', $sidebar);
   }
   
 }//class

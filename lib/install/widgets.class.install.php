@@ -39,27 +39,27 @@ function twidgetscacheUninstall($self) {
 
 function install_std_widgets($widgets) {
   $widgets->lock();
-  $sitebars = tsitebars::instance();
+  $sidebars = tsidebars::instance();
   
   $id = $widgets->add(tcategorieswidget::instance());
-  $sitebars->insert($id, 'inline', 0, -1);
+  $sidebars->insert($id, 'inline', 0, -1);
   
   $id = $widgets->add(ttagswidget::instance());
   
   $id = $widgets->add(tarchiveswidget::instance());
-  $sitebars->insert($id, 'inline', 0, -1);
+  $sidebars->insert($id, 'inline', 0, -1);
   
   $id = $widgets->add(tlinkswidget::instance());
-  $sitebars->insert($id, 'inline', 0, -1);
+  $sidebars->insert($id, 'inline', 0, -1);
   
   $id = $widgets->add(tpostswidget::instance());
-  $sitebars->insert($id, 'inline', 1, -1);
+  $sidebars->insert($id, 'inline', 1, -1);
   
   $id = $widgets->add(tcommentswidget::instance());
-  $sitebars->insert($id, true, 1, -1);
+  $sidebars->insert($id, true, 1, -1);
   
   $id = $widgets->add(tmetawidget::instance());
-  $sitebars->insert($id, 'inline', 1, -1);
+  $sidebars->insert($id, 'inline', 1, -1);
   
   $widgets->unlock();
 }

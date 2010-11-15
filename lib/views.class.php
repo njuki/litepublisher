@@ -7,7 +7,7 @@
 **/
 
 class tview extends titem {
-public $sitebars;
+public $sidebars;
 private $themeinstance;
 
   public static function instance($id = 1) {
@@ -35,12 +35,12 @@ $this->data = array(
 'id' => 0,
 'name' => 'default',
 'themename' => 'default',
-      'customsitebar' => false,
+      'customsidebar' => false,
       'disableajax' => false,
 'custom' => array(),
-'sitebars' => array()
+'sidebars' => array()
 );
-$this->sitebars = &$this->data['sitebars'];
+$this->sidebars = &$this->data['sidebars'];
 $this->themeinstance = null;
   }
 
@@ -48,7 +48,7 @@ public function load() {
 $views = tviews::instance();
 if ($views->itemexists($this->id)) {
 $this->data = &$views->items[$this->id];
-$this->sitebars = &$this->data['sitebars'];
+$this->sidebars = &$this->data['sidebars'];
 return true;
 }
 return false;
@@ -79,16 +79,16 @@ $this->setthemename('default');
 return $this->themeinstance;
 }
 
-public function setcustomsitebar($value) {
-if ($value != $this->customsitebar) {
+public function setcustomsidebar($value) {
+if ($value != $this->customsidebar) {
 if ($this->id == 1) return false;
 if ($value) {
 $default = tview::instance(1);
-$this->sitebars = $default->sitebars;
+$this->sidebars = $default->sidebars;
 } else {
-$this->sitebars = array();
+$this->sidebars = array();
 }
-$this->data['customsitebar'] = $value;
+$this->data['customsidebar'] = $value;
 $this->save();
 }
 }
@@ -132,10 +132,10 @@ return parent::delete($id);
   public function widgetdeleted($idwidget) {
 $deleted = false;
     foreach ($this->items as $id => $item) {
-foreach ($item['sitebars'] as $i => $sitebar) {
-for ($j = count($sitebar) -1; $j >= 0; $j--) {
-          if ($idwidget == $sitebar[$j]['id']) {
-array_delete($this->items[$id]['sitebars'][$i], $j);
+foreach ($item['sidebars'] as $i => $sidebar) {
+for ($j = count($sidebar) -1; $j >= 0; $j--) {
+          if ($idwidget == $sidebar[$j]['id']) {
+array_delete($this->items[$id]['sidebars'][$i], $j);
 $deleted = true;
 }
         }

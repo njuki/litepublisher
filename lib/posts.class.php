@@ -335,11 +335,11 @@ class tpostswidget extends twidget {
     return tlocal::$data['default']['recentposts'];
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $posts = tposts::instance();
     $list = $posts->getrecent($this->maxcount);
     $theme = ttheme::instance();
-    return $theme->getpostswidgetcontent($list, $sitebar, '');
+    return $theme->getpostswidgetcontent($list, $sidebar, '');
   }
   
 }//class

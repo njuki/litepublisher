@@ -17,8 +17,8 @@ function tkeywordspluginInstall($self) {
   $widgets = twidgets::instance();
   $widgets->lock();
   $id = $widgets->add($widget);
-  $sitebars = tsitebars::instance();
-  $sitebars->insert($id, false, 1, -1);
+  $sidebars = tsidebars::instance();
+  $sidebars->insert($id, false, 1, -1);
   $widgets->unlock();
   
   $urlmap = turlmap::instance();

@@ -12,7 +12,7 @@ function tviewsInstall($self) {
 $lang = tlocal::instance('names');
   $default = $self->add($lang->default);
 $def = tview::instance($default);
-$def->sitebars = array(array(), array(), array());
+$def->sidebars = array(array(), array(), array());
 
 $admin = $self->add($lang->adminpanel);
 

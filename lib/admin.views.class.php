@@ -50,7 +50,7 @@ $view = tview::instance($id);
 $form = new tautoform($view, 'views', 'editform');
 $form->add($form->id('hidden'), $form->name);
 if ($id > 1) {
-$form->add($form->customsitebar, $form->disableajax);
+$form->add($form->customsidebar, $form->disableajax);
 }
 if (count($view->custom) > 0) {
 $custom = new tarray2prop ();
@@ -97,16 +97,16 @@ $idview = tadminhtml::getparam('idview', 1);
           if($this->confirmed) {
 $views->delete($idview);
 } else {
-    $result .= $html->confirmdelete($idview, self::getadminlink('/admin/views/', 'idview'), $lang->confirmdelete);
+    $result .= $html->confirmdelete($idview, tadminhtml::getadminlink('/admin/views/', 'idview'), $lang->confirmdelete);
 }
 break;
 }
 $result .= $html->buildtable($views->items, array(
 array('left', $lang->name,'$name'),
-array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', self::getadminlink('/admin/views/themes/', 'idview=$id'))),
-array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', self::getadminlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
-array('center', $lang->edit, sprintf('<a href="%s">%s</a>', self::getadminlink('/admin/views/', 'action=edit&idview=$id'), $lang->edit)),
-array('center', $lang->delete, sprintf('<a href="%s">%s</a>', self::getadminlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
+array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', tadminhtml::getadminlink('/admin/views/themes/', 'idview=$id'))),
+array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
+array('center', $lang->edit, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/', 'action=edit&idview=$id'), $lang->edit)),
+array('center', $lang->delete, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
 ));
       break;
       

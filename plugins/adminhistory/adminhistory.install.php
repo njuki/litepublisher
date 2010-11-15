@@ -10,7 +10,7 @@ function tadminhistoryInstall($self) {
   $widgets = twidgets::instance();
   $widgets->lock();
   $self->id = $widgets->add($self);
-  $widgets->onadminlogged = $self->onsitebar;
+  $widgets->onadminlogged = $self->onsidebar;
   $widgets->unlock();
   $self->save();
 }

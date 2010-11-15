@@ -88,14 +88,14 @@ class tsameposts extends tclasswidget {
     }
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $post = $this->getcontext('tpost');
     $list = $this->getsame($post->id);
     if (count($list) == 0) return'';
     $posts = tposts::instance();
     $posts->loaditems($list);
     $theme = ttheme::instance();
-    return $theme->getpostswidgetcontent($list, $sitebar, '');
+    return $theme->getpostswidgetcontent($list, $sidebar, '');
   }
   
 }//class

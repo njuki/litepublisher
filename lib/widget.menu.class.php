@@ -24,10 +24,10 @@ class tmenuwidget extends tclasswidget {
     return tlocal::$data['default']['submenu'];
   }
   
-  public function getwidget($id, $sitebar) {
+  public function getwidget($id, $sidebar) {
     $template = ttemplate::instance();
     if ($template->hover) return '';
-    return parent::getwidget($id, $sitebar);
+    return parent::getwidget($id, $sidebar);
   }
   
   public function gettitle($id) {
@@ -35,13 +35,13 @@ class tmenuwidget extends tclasswidget {
     return parent::gettitle($id);
   }
   
-  public function getcontent($idwidget, $sitebar) {
+  public function getcontent($idwidget, $sidebar) {
     $menu = $this->getcontext('tmenu');
     $id = $menu->id;
     $menus = $menu->owner;
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('submenu', $sitebar);
+    $tml = $theme->getwidgetitem('submenu', $sidebar);
     // 1 submenu list
     $submenu = '';
     $childs = $menus->getchilds($id);
@@ -65,7 +65,7 @@ class tmenuwidget extends tclasswidget {
     }
     
     if ($result == '')  return '';
-    return $theme->getwidgetcontent($result, 'submenu', $sitebar);
+    return $theme->getwidgetcontent($result, 'submenu', $sidebar);
   }
   
   private function getitem($tml, $item, $subnodes) {

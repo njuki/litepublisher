@@ -24,12 +24,12 @@ class tbookmarkswidget extends tlinkswidget  {
     $about = tplugins::getabout(tplugins::getname(__file__));
     return $about['name'];
   }
-  public function getwidget($id, $sitebar) {
+  public function getwidget($id, $sidebar) {
     $widgets = twidgets::instance();
-    return $widgets->getinline($id, $sitebar);
+    return $widgets->getinline($id, $sidebar);
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     if (litepublisher::$urlmap->is404) return '';
     $result = '';
     $a = array(
@@ -39,7 +39,7 @@ class tbookmarkswidget extends tlinkswidget  {
     $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$options->q . strtr('url=$url&title=$title&id=', $a);
     $iconurl = litepublisher::$site->files . sprintf('/plugins/%s/icons/', basename(dirname(__file__)));
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('links', $sitebar);
+    $tml = $theme->getwidgetitem('links', $sidebar);
     $args = targs::instance();
     $args->subitems = '';
     $args->rel = 'link bookmark';
@@ -56,7 +56,7 @@ class tbookmarkswidget extends tlinkswidget  {
       $result .=   $theme->parsearg($tml, $args);
     }
     
-    return $theme->getwidgetcontent($result, 'links', $sitebar);
+    return $theme->getwidgetcontent($result, 'links', $sidebar);
   }
   
   public function request($arg) {

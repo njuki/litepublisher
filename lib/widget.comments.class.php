@@ -25,13 +25,13 @@ class tcommentswidget extends twidget {
     return tlocal::$data['default']['recentcomments'];
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($this->maxcount);
     if (count($recent) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('comments', $sitebar);
+    $tml = $theme->getwidgetitem('comments', $sidebar);
 $url = litepublisher::$site->url;
     $args = targs::instance();
     $args->onrecent = tlocal::$data['comment']['onrecent'];
@@ -41,7 +41,7 @@ $args->link = $url . $item['posturl'];
       $args->content = tcontentfilter::getexcerpt($item['content'], 120);
       $result .= $theme->parsearg($tml,$args);
     }
-    return $theme->getwidgetcontent($result, 'comments', $sitebar);
+    return $theme->getwidgetcontent($result, 'comments', $sidebar);
   }
   
   public function changed($id, $idpost) {

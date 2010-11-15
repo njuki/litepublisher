@@ -24,7 +24,7 @@ $theme = $view->theme;
       $result .= $html->formheader($args);
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
-      $args->editurl = self::getadminlink('/admin/views/edittheme/', 'theme');
+      $args->editurl = tadminhtml::getadminlink('/admin/views/edittheme/', 'theme');
       $parser = tthemeparser::instance();
       foreach ($list as $name) {
         if ($about = $parser->getabout($name)) {

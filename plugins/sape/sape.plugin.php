@@ -40,13 +40,13 @@ class tsapeplugin extends twidget {
     }
   }
   
-  public function getwidget($id, $sitebar) {
+  public function getwidget($id, $sidebar) {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
-    return parent::getwidget($id, $sitebar);
+    return parent::getwidget($id, $sidebar);
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
     if (!isset($this->sape)) $this->createsape();
@@ -65,7 +65,7 @@ class tsapeplugin extends twidget {
   }
   
   public function add() {
-    $id = $this->addtositebar(0);
+    $id = $this->addtosidebar(0);
     $this->counts[$id] = 10;
     $this->save();
     return $id;

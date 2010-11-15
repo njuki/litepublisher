@@ -41,11 +41,11 @@ class tmetawidget extends twidget {
     }
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('meta', $sitebar);
-    $metaclasses = $theme->getwidgettml($sitebar, 'meta', 'classes');
+    $tml = $theme->getwidgetitem('meta', $sidebar);
+    $metaclasses = $theme->getwidgettml($sidebar, 'meta', 'classes');
     $args = targs::instance();
     foreach    ($this->items as $name => $item) {
       if (!$item['enabled']) continue;
@@ -58,7 +58,7 @@ $args->class = isset($metaclasses[$name]) ? $metaclasses[$name] : '';
     }
     
     if ($result == '') return '';
-    return $theme->getwidgetcontent($result, 'meta', $sitebar);
+    return $theme->getwidgetcontent($result, 'meta', $sidebar);
   }
   
 }//class

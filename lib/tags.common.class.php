@@ -488,11 +488,11 @@ class tcommontagswidget extends twidget {
     return false;
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem($this->template, $sitebar);
+    $tml = $theme->getwidgetitem($this->template, $sidebar);
     $result = $this->owner->getsortedcontent($this->sortname, $this->maxcount, $this->showcount, $tml);
-    return $theme->getwidgetcontent($result, $this->template, $sitebar);
+    return $theme->getwidgetcontent($result, $this->template, $sidebar);
   }
   
 }//class
