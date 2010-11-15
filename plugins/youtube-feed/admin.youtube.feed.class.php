@@ -16,7 +16,7 @@ class tadminyoutubefeed {
     $feed = tyoutubefeed::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::instance();
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     if (!isset($_POST['step'])) $_POST['step'] = 1;
     switch ($_POST['step']) {
       case 2:

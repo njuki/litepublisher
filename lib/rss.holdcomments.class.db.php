@@ -66,7 +66,7 @@ class trssholdcomments extends tevents {
     $theme = ttheme::instance();
     $tml = $this->template;
     if ($tml == '') {
-      $html = THtmlResource ::instance();
+      $html = tadminhtml ::instance();
       $html->section = 'comments';
       $tml = $html->rsstemplate;
     }

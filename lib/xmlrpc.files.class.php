@@ -15,7 +15,7 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
   
   protected function create() {
     parent::create();
-    $this->html = THtmlResource::instance();
+    $this->html = tadminhtml::instance();
     $this->html->section ='files';
     tlocal::loadlang('admin');
     $lang = tlocal::instance('files');
@@ -146,40 +146,8 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     return $this->html->fixquote($result);
   }
   
-  private function getpostfiles($idpost) {
-    $result = '';
-    $post = tpost::instance((int) $idpost);
-    foreach ($post->files as $id) {
-      $result .= $this->getfileitem($id, 'curr');
-    }
-    return $result;
-  }
-  
-  private function getfileitem($id, $part) {
-    $files = tfiles::instance();
-    $item = $files->getitem($id);
-    $args = targs::instance();
-    $args->add($item);
-    $args->idtag = "$part-$id";
-    $args->part = $part;
-    $args->id = $id;
-    if ($item['media'] == 'image') {
-      $img = '<img src="$site.files/files/$filename" title="$filename" />';
-      if ($item['preview'] == 0) {
-        $args->preview = '';
-      } else {
-        $preview = $files->getitem($item['preview']);
-        $imgarg = new targs();
-        $imgarg->add($preview);
-        $theme = ttheme::instance();
-        $args->preview =$theme->parsearg($img, $imgarg);
-      }
-      return $this->html->image($args);
-    } else {
-      return $this->html->fileitem($args);
-    }
-  }
-  
+
+
   // swfupload
   private function error500($msg) {
     return "<?php

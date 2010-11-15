@@ -38,7 +38,7 @@ class tsimpleimporter extends timporter {
     $args->maplabel = $about['maplabel'];
     $args->scriptlabel = $about['scriptlabel'];
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $result .= $html->parsearg($tml, $args);
     return $result;
   }

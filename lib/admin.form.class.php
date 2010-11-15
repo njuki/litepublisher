@@ -51,7 +51,7 @@ public function setidview($id) {}
   }
   
   public function gethtml() {
-    $result = THtmlResource ::instance();
+    $result = tadminhtml ::instance();
     $result->section = $this->section;
     $lang = tlocal::instance($this->section);
     return $result;

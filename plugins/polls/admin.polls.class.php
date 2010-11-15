@@ -11,7 +11,7 @@ class tadminpolls {
   public function getcontent() {
     $plugin = tpolls::instance();
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "adminform.tml");
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     $args = targs::instance();
     $about = tplugins::localabout(dirname(__file__));
     foreach ($about as $name => $value) {

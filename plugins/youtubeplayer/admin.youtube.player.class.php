@@ -15,7 +15,7 @@ class tadminyoutubeplayer {
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.template'] = $about['template'];
     $args->template = $plugin->template;
-    $html = THtmlResource::instance();
+    $html = tadminhtml::instance();
     return $html->adminform('[editor:template]', $args);
   }
   

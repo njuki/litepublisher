@@ -147,19 +147,15 @@ return '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom
 }
 
   public static function idget() {
-return (int) self::getparam('id', 0);
+return (int) tadminhtml::getparam('id', 0);
 }
 
-  public static function getparam($name, $default) {
-    return !empty($_GET[$name]) ? $_GET[$name] : (!empty($_POST[$name]) ? $_POST[$name] : $default);
-  }
-  
   public function getaction() {
 return isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
   }
   
   public function gethtml($name = '') {
-    $result = THtmlResource ::instance();
+    $result = tadminhtml::instance();
     if ($name == '') $name = $this->basename;
     if (!isset($result->ini[$name])) {
       $name = $this->owner->items[$this->parent]['name'];
@@ -186,10 +182,6 @@ return isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
     return litepublisher::$site->url .$this->url . litepublisher::$site->q . 'id';
   }
 
-public static function getadminlink($path, $params) {
-    return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
-}
-  
   public function getfrom($perpage, $count) {
     if (litepublisher::$urlmap->page <= 1) return 0;
     return min($count, (litepublisher::$urlmap->page - 1) * $perpage);

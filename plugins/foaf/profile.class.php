@@ -159,7 +159,7 @@ public function gethead() { }
     $theme = ttheme::instance();
     $tml = $this->template;
     if ($tml == '') {
-      $html = THtmlResource::instance();
+      $html = tadminhtml::instance();
       if (!isset($html->ini['foaf'])) $html->loadini(dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR . 'html.ini');
       $html->section = 'foaf';
       $tml = $html->profile;

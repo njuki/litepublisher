@@ -14,12 +14,12 @@ private $_editform;
   }
 
 public static function getviewform($url) {
-    $html = THtmlResource ::instance();
+    $html = tadminhtml ::instance();
     $html->section = 'views';
     $lang = tlocal::instance('views');
 $args = targs::instance();
 $args->url = litepublisher::$site->url . $url;
-$args->items = self::getcombo(self::getparam('idview', 1));
+$args->items = self::getcombo(tadminhtml::getparam('idview', 1));
 return $html->comboform($args);
 }
 
@@ -45,7 +45,7 @@ return $result;
 
 public function geteditform() {
 if (isset($this->_editform)) return $this->_editform;
-$id = self::getparam('idview', 1);
+$id = tadminhtml::getparam('idview', 1);
 $view = tview::instance($id);
 $form = new tautoform($view, 'views', 'editform');
 $form->add($form->id('hidden'), $form->name);
@@ -93,7 +93,7 @@ $result .= $this->editform->getcontent();
 break;
 
 case 'delete':
-$idview = self::getparam('idview', 1);
+$idview = tadminhtml::getparam('idview', 1);
           if($this->confirmed) {
 $views->delete($idview);
 } else {

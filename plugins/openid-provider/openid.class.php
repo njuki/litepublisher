@@ -363,7 +363,7 @@ class topenid extends tevents {
           $this->save();
         }
         
-        $html = THtmlResource::instance();
+        $html = tadminhtml::instance();
         $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
         $html->loadini($dir . 'html.ini');
         $html->section = 'openidserver';

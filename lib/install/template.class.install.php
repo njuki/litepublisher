@@ -20,7 +20,7 @@ $self->heads =
     <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
 
   //footer
-  $html = THtmlResource::instance();
+  $html = tadminhtml::instance();
   $html->section = 'installation';
   $lang = tlocal::instance('installation');
   ttheme::$vars['lang'] = $lang;

@@ -58,7 +58,9 @@ $classes = litepublisher::$classes;
 $classes->lock();
 unset($classes->items['imenu']);
 unset($classes->items['tadminhomewidgets');
-$classes->items['tsitebars'][0] 'admin.widgets.class.php';
+$classes->items['tsitebars'][0] = 'admin.widgets.class.php';
+$classes->items['tadminhtml'] = $classes->items['tadminhtml'];
+unset($classes->items['tadminhtml']);
 $classes->add('titems_storage', 'items.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
@@ -133,7 +135,7 @@ $menus->unlock();
 updateadminmenu();
 
 //contact form
-  $html = THtmlResource::instance();
+  $html = tadminhtml::instance();
 if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
   $html->section = 'contactform';
     tlocal::loadinstall();

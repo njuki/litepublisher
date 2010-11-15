@@ -13,7 +13,7 @@ class tadminwidget extends tdata {
   
   protected function create() {
     //parent::instance();
-    $this->html = THtmlResource ::instance();
+    $this->html = tadminhtml ::instance();
     $this->html->section = 'widgets';
     $this->lang = tlocal::instance('widgets');
   }

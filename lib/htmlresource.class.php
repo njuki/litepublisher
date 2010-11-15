@@ -16,7 +16,7 @@ public function __construct($tag) { $this->tag = $tag; }
   
 }//class
 
-class THtmlResource  {
+class tadminhtml {
   public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
   public $section;
   public $ini;
@@ -113,7 +113,14 @@ class THtmlResource  {
       $this->ini = $v + $this->ini;
     }
   }
+
+  public static function getparam($name, $default) {
+    return !empty($_GET[$name]) ? $_GET[$name] : (!empty($_POST[$name]) ? $_POST[$name] : $default);
+  }
   
+public static function getadminlink($path, $params) {
+    return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
+}
   public static function array2combo(array $items, $selname) {
     $result = '';
     foreach ($items as $name => $title) {
@@ -296,7 +303,7 @@ $value = $value ? 'checked="checked"' : '';
 break;
 
 case 'combo':
-$value = THtmlResource  ::array2combo($prop['items'], $value);
+$value = tadminhtml  ::array2combo($prop['items'], $value);
 break;
 }
 
