@@ -25,7 +25,7 @@ class toldestposts extends tclasswidget {
     return tlocal::$data['default']['prev'];
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $post = $this->getcontext('tpost');
     $posts = tposts::instance();
     if (dbversion) {
@@ -40,7 +40,7 @@ class toldestposts extends tclasswidget {
     if (count($items) == 0) return '';
     
     $theme = ttheme::instance();
-    return $theme->getpostswidgetcontent($items, $sitebar, '');
+    return $theme->getpostswidgetcontent($items, $sidebar, '');
   }
   
 }//class

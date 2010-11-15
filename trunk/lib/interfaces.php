@@ -18,7 +18,7 @@ public function setidview($id);
 }
 
 interface iwidgets {
-  public function getwidgets(array &$items, $sitebar);
+  public function getwidgets(array &$items, $sidebar);
 }
 
 interface iposts {

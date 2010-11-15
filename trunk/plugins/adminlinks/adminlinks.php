@@ -24,9 +24,9 @@ class tadmincontextwidget extends torderwidget {
     return $about['name'];
   }
   
-  public function getwidget($id, $sitebar) {
+  public function getwidget($id, $sidebar) {
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('widget', $sitebar);
+    $tml = $theme->getwidgetitem('widget', $sidebar);
     tlocal::loadlang('admin');
     
     if (litepublisher::$urlmap->context instanceof tpost) {
@@ -80,8 +80,8 @@ class tadmincontextwidget extends torderwidget {
     }
     
     $links .= $this->getitem($tml, '/admin/logout/', tlocal::$data['login']['logout']);
-    $links = $theme->getwidgetcontent($links, 'widget', $sitebar);
-    return $theme->getwidget($this->gettitle($id), $links, 'widget', $sitebar);
+    $links = $theme->getwidgetcontent($links, 'widget', $sidebar);
+    return $theme->getwidget($this->gettitle($id), $links, 'widget', $sidebar);
   }
   private function getitem($tml, $url, $title) {
     $args = targs::instance();

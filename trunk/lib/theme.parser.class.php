@@ -10,8 +10,8 @@ class tthemeparser extends tevents {
   public $theme;
   private $abouts;
 private $paths;
-private $sitebar_index;
-private $sitebar_count;
+private $sidebar_index;
+private $sidebar_count;
 
   public static function instance() {
     return getinstance(__class__);
@@ -25,8 +25,8 @@ private $sitebar_count;
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('parsed');
-$this->sitebar_index = 0;
-$this->sitebar_count = 0;
+$this->sidebar_index = 0;
+$this->sidebar_count = 0;
   }
 
   public static function checktheme(ttheme $theme) {
@@ -91,7 +91,10 @@ $s = strtr($s, array(
 '$post.subscriberss' => '$post.rsslink',
 '$post.excerptcategories' => '$post.excerptcatlinks',
 '$post.excerpttags' => '$post.excerpttaglinks',
-'$options' => '$site'
+'$options' => '$site',
+'$template.sitebar' => '$template.sidebar',
+'<!--sitebar-->' => '<!--sidebar-->',
+'<!--/sitebar-->' => '<!--/sidebar-->'
 ));
 return trim($s);
 }
@@ -220,14 +223,14 @@ $s = self::getfile($filename);
 
 if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
 switch ($parent) {
-case 'sitebar.index':
-$this->sitebar_index = (int) trim($s);
-if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
+case 'sidebar.index':
+$this->sidebar_index = (int) trim($s);
+if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
 return;
 
-case 'sitebar':
-$this->sitebar_index = ++$this->sitebar_count - 1;
-if (!isset($this->theme->templates['sitebars'][$this->sitebar_index])) $this->theme->templates['sitebars'][$this->sitebar_index] = array();
+case 'sidebar':
+$this->sidebar_index = ++$this->sidebar_count - 1;
+if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
 break;
 }
  while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
@@ -245,7 +248,7 @@ $s = $pre . $info['replace'] . $s;
 }
 
 $s = trim($s);
-if (strbegin($parent, 'sitebar.')) {
+if (strbegin($parent, 'sidebar.')) {
 $this->setwidgetvalue($parent, $s);
 }  elseif (isset($this->paths[$parent])) {
 $this->paths[$parent]['data'] = $s;
@@ -269,7 +272,7 @@ return $info;
 }
 
 $name = substr($tag, 1);
-if (strbegin($parentpath, 'sitebar')) {
+if (strbegin($parentpath, 'sidebar')) {
 $path = $parentpath . '.' . $name;
 return array(
 'data' => null,
@@ -293,15 +296,15 @@ $this->error("The '$tag' not found in path '$parentpath'");
 }
 
 private function setwidgetvalue($path, $value) {
-if (!preg_match('/^sitebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
+if (!preg_match('/^sidebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
 $widgetname = $m[1];
 if (($widgetname != 'widget') && (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
-$sitebar = &$this->theme->templates['sitebars'][$this->sitebar_index];
-if (!isset($sitebar[$widgetname])) {
-if (isset($sitebar['widget'])) {
-$sitebar[$widgetname] = $sitebar['widget'];
+$sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
+if (!isset($sidebar[$widgetname])) {
+if (isset($sidebar['widget'])) {
+$sidebar[$widgetname] = $sidebar['widget'];
 } else {
-$sitebar[$widgetname] = array(
+$sidebar[$widgetname] = array(
 0 => '',
 'items' => '',
 'item' => '',
@@ -311,7 +314,7 @@ if ($widgetname == 'meta') $widget['classes'] = '';
 }
 }
 
-$widget = &$sitebar[$widgetname];
+$widget = &$sidebar[$widgetname];
 if (empty($m[2])) {
 $widget[0] = $value;
 } else {
@@ -386,23 +389,23 @@ if (empty($excerpt[$name][$key])) $excerpt[$name][$key] = $value;
 }
 }
 
-$sitebars = &$this->theme->templates['sitebars'];
-foreach ($sitebars as $i => $sitebar) {
-$widget = $sitebar['widget'];
+$sidebars = &$this->theme->templates['sidebars'];
+foreach ($sidebars as $i => $sidebar) {
+$widget = $sidebar['widget'];
 
 foreach (self::getwidgetnames() as $widgetname) {
-if (isset($sitebar[$widgetname])) {
+if (isset($sidebar[$widgetname])) {
 foreach ($widget as $name => $value) {
-if (empty($sitebar[$widgetname][$name])) {
-$sitebars[$i][$widgetname][$name] = $value;
+if (empty($sidebar[$widgetname][$name])) {
+$sidebars[$i][$widgetname][$name] = $value;
 }
 }
 } else {
-$sitebars[$i][$widgetname] = $widget;
+$sidebars[$i][$widgetname] = $widget;
 }
 }
-if (is_string($sitebars[$i]['meta']['classes'])) {
-$sitebars[$i]['meta']['classes'] = self::getmetaclasses($sitebars[$i]['meta']['classes']);
+if (is_string($sidebars[$i]['meta']['classes'])) {
+$sidebars[$i]['meta']['classes'] = self::getmetaclasses($sidebars[$i]['meta']['classes']);
 }
 }
 
@@ -555,7 +558,7 @@ $theme->templates = array (
     'simple' => '',
     'notfound' => '',
   ),
-  'sitebars' => 
+  'sidebars' => 
   array (
     0 => 
     array (
@@ -1067,10 +1070,10 @@ return array(
 'replace' => ''
 ),
 
-'sitebar' => array(
+'sidebar' => array(
 'data' => null,
-'tag' => '$template.sitebar',
-'replace' => '$template.sitebar'
+'tag' => '$template.sidebar',
+'replace' => '$template.sidebar'
 ),
 
 'custom' => array(

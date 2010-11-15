@@ -21,19 +21,19 @@ class tcustomwidget extends twidget {
     $this->addevents('added', 'deleted');
   }
   
-  public function getwidget($id, $sitebar) {
+  public function getwidget($id, $sidebar) {
     if (!isset($this->items[$id])) return '';
     $item = $this->items[$id];
     if ($item['template'] == '') return $item['content'];
     $theme = ttheme::instance();
-    return $theme->getwidget($item['title'], $item['content'], $item['template'], $sitebar);
+    return $theme->getwidget($item['title'], $item['content'], $item['template'], $sidebar);
   }
   
   public function gettitle($id) {
     return $this->items[$id]['title'];
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     return $this->items[$id]['content'];
   }
   
@@ -47,8 +47,8 @@ class tcustomwidget extends twidget {
     'template' => $template
     );
     
-    $sitebars = tsitebars::instance();
-    $sitebars->add($id);
+    $sidebars = tsidebars::instance();
+    $sidebars->add($id);
     $widgets->unlock();
     $this->save();
     $this->added($id);

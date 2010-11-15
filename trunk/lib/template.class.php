@@ -88,9 +88,9 @@ $this->javaoptions[] = sprintf('themename: \'%s\'',  $theme->name);
   }
   
   //html tags
-  public function getsitebar() {
+  public function getsidebar() {
     $widgets = twidgets::instance();
-    return $widgets->getsitebar($this->context, $this->view);
+    return $widgets->getsidebar($this->context, $this->view);
   }
   
   public function gettitle() {

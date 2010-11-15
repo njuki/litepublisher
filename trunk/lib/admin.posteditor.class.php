@@ -59,7 +59,7 @@ return $result;
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      return tlocal::$data[$this->name]['title'];
+      return tlocal::$data[$this->name]['editor'];
     }
   }
   
@@ -83,7 +83,7 @@ return $result;
     ttheme::$vars['post'] = $post;
     $mode = $this->getmode();
     $args = targs::instance();
-$args->ajax = self::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     if ($post->id != 0) {
       $adminurl = $this->adminurl . "=$post->id&mode";
       $result .= sprintf($html->h2->formhead, "<a href='$post->link'>$post->title</a>",

@@ -21,18 +21,18 @@ class tadminwidgets extends tadminmenu {
     return $result;
   }
   
-  public static function getsitebarnames(tview $view) {
-$count = count($view->sitebars);
+  public static function getsidebarnames(tview $view) {
+$count = count($view->sidebars);
     $result = range(1, $count);
     $parser = tthemeparser::instance();
     $about = $parser->getabout($view->theme->name);
     foreach ($result as $key => $value) {
-      if (isset($about["sitebar$key"])) $result[$key] = $about["sitebar$key"];
+      if (isset($about["sidebar$key"])) $result[$key] = $about["sidebar$key"];
     }
     return $result;
   }
   
-  public static function getsitebarsform() {
+  public static function getsidebarsform() {
 $idview = tadminhtml::getparam('idview', 1);
 $view = tview::instance($idview);
     $widgets = twidgets::instance();
@@ -43,12 +43,12 @@ $view = tview::instance($idview);
 $args->idview = $idview;
     $result = $html->checkallscript;
     $result .= $html->formhead();
-    $args->adminurl = self::getadminlink('/admin/views/widgets/', 'idwidget');
-    $count = count($view->sitebars);
-    $sitebarnames = self::getsitebarnames($view);
-    foreach ($view->sitebars as $i => $sitebar) {
-      $orders = range(1, count($sitebar));
-      foreach ($sitebar as $j => $_item) {
+    $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
+    $count = count($view->sidebars);
+    $sidebarnames = self::getsidebarnames($view);
+    foreach ($view->sidebars as $i => $sidebar) {
+      $orders = range(1, count($sidebar));
+      foreach ($sidebar as $j => $_item) {
         $id = $_item['id'];
         $item = $widgets->getitem($id);
         $args->id = $id;
@@ -56,7 +56,7 @@ $args->idview = $idview;
         $args->inline = $_item['ajax'] === 'inline';
         $args->disabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache') ? '' : 'disabled';
         $args->add($item);
-        $args->sitebarcombo = self::getcombo("sitebar-$id", $sitebarnames, $i);
+        $args->sidebarcombo = self::getcombo("sidebar-$id", $sidebarnames, $i);
         $args->ordercombo = self::getcombo("order-$id", $orders, $j);
         $result .= $html->item($args);
       }
@@ -68,15 +68,15 @@ $args->idview = $idview;
     foreach ($widgets->items as $id => $item) {
       $args->id = $id;
       $args->add($item);
-      $args->checked = tsitebars::getpos($view->sitebars, $id) ? false : true;
+      $args->checked = tsidebars::getpos($view->sidebars, $id) ? false : true;
       $result .= $html->additem($args);
     }
     $result .= $html->addfooter();
     return  $html->fixquote($result);
   }
   
-  // parse POST into sitebars array
-  public static function editsitebars(array &$sitebars) {
+  // parse POST into sidebars array
+  public static function editsidebars(array &$sidebars) {
     // collect all id from checkboxes
     $items = array();
     foreach ($_POST as $key => $value) {
@@ -84,20 +84,20 @@ $args->idview = $idview;
     }
     
     foreach ($items as $id) {
-      if ($pos = tsitebars::getpos($sitebars, $id)) {
+      if ($pos = tsidebars::getpos($sidebars, $id)) {
         list($i, $j) = $pos;
         if (isset($_POST['deletewidgets']))  {
-          array_delete($sitebars[$i], $j);
+          array_delete($sidebars[$i], $j);
         } else {
-          $i2 = (int)$_POST["sitebar-$id"];
+          $i2 = (int)$_POST["sidebar-$id"];
           $j2 = (int) $_POST["order-$id"];
-          if ($j2 > count($sitebars[$i2])) $j2 = count($sitebars[$i2]);
+          if ($j2 > count($sidebars[$i2])) $j2 = count($sidebars[$i2]);
           if (($i != $i2) || ($j != $j2)) {
-            $item = $sitebars[$i][$j];
-            array_delete($sitebars[$i], $j);
-            array_insert($sitebars[$i2], $item, $j2);
+            $item = $sidebars[$i][$j];
+            array_delete($sidebars[$i], $j);
+            array_insert($sidebars[$i2], $item, $j2);
           }
-          $sitebars[$i2][$j2]['ajax'] =  isset($_POST["inlinecheck-$id"]) ? 'inline' : isset($_POST["ajaxcheck-$id"]);
+          $sidebars[$i2][$j2]['ajax'] =  isset($_POST["inlinecheck-$id"]) ? 'inline' : isset($_POST["ajaxcheck-$id"]);
         }
       }
     }
@@ -116,15 +116,15 @@ $args->idview = $idview;
 $idview = tadminhtml::getparam('idview', 1);
 $view = tview::instance($idview);
 $result = tadminviews::getviewform('/admin/views/widgets/');
-if (($idview == 1) || $view->customsitebar) {
-        $result .= self::getsitebarsform();
+if (($idview == 1) || $view->customsidebar) {
+        $result .= self::getsidebarsform();
 } else {
 $args = targs::instance();
 $args->idview = $idview;
-$args->customsitebar = $view->customsitebar;
+$args->customsidebar = $view->customsidebar;
 $args->disableajax = $view->disableajax;
 $args->action = 'options';
-$result .= $this->html->adminform('[checkbox=customsitebar] [checkbox=disableajax] [hidden=idview] [hidden=action]', $args);
+$result .= $this->html->adminform('[checkbox=customsidebar] [checkbox=disableajax] [hidden=idview] [hidden=action]', $args);
 }
 return $result;
       }
@@ -146,7 +146,7 @@ return $result;
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->processform();
       } else {
-        if (isset($_POST['action'])) self::setsitebars();
+        if (isset($_POST['action'])) self::setsidebars();
         return $this->html->h2->success;
       }
       
@@ -156,18 +156,18 @@ return $result;
     }
   }
   
-  public static function setsitebars() {
+  public static function setsidebars() {
 $idview = (int) tadminhtml::getparam('idview', 1);
 $view = tview::instance($idview);
 
     switch ($_POST['action']) {
 case 'options':
 $view->disableajax = isset($_POST['disableajax']);
-$view->customsitebar = isset($_POST['customsitebar']);
+$view->customsidebar = isset($_POST['customsidebar']);
 break;
 
       case 'edit':
-      self::editsitebars($view->sitebars);
+      self::editsidebars($view->sidebars);
       break;
 
       case 'add':
@@ -176,7 +176,7 @@ break;
         if (strbegin($key, 'addwidget-')){
           $id = (int) $value;
           if (!$widgets->itemexists($id) || $widgets->subclass($id)) continue;
-          $views->sitebars[0][] = array(
+          $views->sidebars[0][] = array(
           'id' => $id,
           'ajax' => false
           );
@@ -188,7 +188,7 @@ $view->save();
   
 }//class
 
-class tsitebars extends tdata {
+class tsidebars extends tdata {
   public $items;
   
   public static function instance() {
@@ -198,7 +198,7 @@ class tsitebars extends tdata {
   protected function create() {
     parent::create();
 $view = tview::instance();
-    $this->items = &$view->sitebars;
+    $this->items = &$view->sidebars;
   }
   
 public function load() {}
@@ -212,7 +212,7 @@ public function load() {}
   }
   
   public function insert($id, $ajax, $index, $order) {
-    if (!isset($this->items[$index])) return $this->error("Unknown sitebar $index");
+    if (!isset($this->items[$index])) return $this->error("Unknown sidebar $index");
     $item = array('id' => $id, 'ajax' => $ajax);
     if (($order < 0) || ($order > count($this->items[$index]))) {
       $this->items[$index][] = $item;
@@ -247,23 +247,23 @@ public function load() {}
     }
   }
   
-  public static function getpos(array &$sitebars, $id) {
-    foreach ($sitebars as $i => $sitebar) {
-      foreach ($sitebar as $j => $item) {
+  public static function getpos(array &$sidebars, $id) {
+    foreach ($sidebars as $i => $sidebar) {
+      foreach ($sidebar as $j => $item) {
         if ($id == $item['id']) return array($i, $j);
       }
     }
     return false;
   }
   
-  public static function setpos(array &$items, $id, $newsitebar, $neworder) {
+  public static function setpos(array &$items, $id, $newsidebar, $neworder) {
     if ($pos = self::getpos($items, $id)) {
-      list($oldsitebar, $oldorder) = $pos;
-      if (($oldsitebar != $newsitebar) || ($oldorder != $neworder)){
-        $item = $items[$oldsitebar][$oldorder];
-        array_delete($items[$oldsitebar], $oldorder);
-        if (($neworder < 0) || ($neworder > count($items[$newsitebar]))) $neworder = count($items[$newsitebar]);
-        array_insert($items[$newsitebar], $item, $neworder);
+      list($oldsidebar, $oldorder) = $pos;
+      if (($oldsidebar != $newsidebar) || ($oldorder != $neworder)){
+        $item = $items[$oldsidebar][$oldorder];
+        array_delete($items[$oldsidebar], $oldorder);
+        if (($neworder < 0) || ($neworder > count($items[$newsidebar]))) $neworder = count($items[$newsidebar]);
+        array_insert($items[$newsidebar], $item, $neworder);
       }
     }
   }

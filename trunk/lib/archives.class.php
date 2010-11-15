@@ -159,12 +159,12 @@ class tarchiveswidget extends twidget {
     }
   }
   
-  public function getcontent($id, $sitebar) {
+  public function getcontent($id, $sidebar) {
     $arch = tarchives::instance();
     if (count($arch->items) == 0) return '';
     $result = '';
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem('archives', $sitebar);
+    $tml = $theme->getwidgetitem('archives', $sidebar);
     $args = targs::instance();
     $args->icon = '';
     $args->subitems = '';
@@ -176,7 +176,7 @@ class tarchiveswidget extends twidget {
       $result .= $theme->parsearg($tml, $args);
     }
     
-    return $theme->getwidgetcontent($result, 'archives', $sitebar);
+    return $theme->getwidgetcontent($result, 'archives', $sidebar);
   }
   
 }//class
