@@ -78,6 +78,10 @@ tstorage::loaddata();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
+tlocal::clearcache();
+//litepublisher::$classes->delete('tajaxposteditor');
+//litepublisher::$classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
+
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }
@@ -90,4 +94,5 @@ litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
+//litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
 ?>
