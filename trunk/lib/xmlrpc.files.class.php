@@ -28,64 +28,9 @@ class TXMLRPCFiles extends TXMLRPCAbstract {
     return true;
   }
   
-  private function getpagelinks($current, $count) {
-    $list = array();
-    for ($i = 1; $i <= $count; $i++) {
-      if ($i == $current) {
-        $list[] = "$i";
-      } else {
-        $list[] = "<a onclick='post.getpage($i);' title='$i'>$i</a>";
-      }
-    }
-    $result = $this->html->pagelinks();
-    return sprintf($result, implode(' | ', $list));
-  }
-  
-  private function get_page($index) {
-    $result = '';
-    $files = tfiles::instance();
-    $perpage = 10;
-    if (dbversion) {
-      $sql = "parent =0 and media <> 'icon'";
-      $sql .= litepublisher::$options->user <= 1 ? '' : " and author = litepublisher::$options->user";
-      $count = $files->db->getcount($sql);
-    } else {
-      $list= array();
-      foreach ($files->items as $id => $item) {
-        if ($item['parent'] != 0) continue;
-        if (litepublisher::$options->user > 1 && litepublisher::$options->user != $item['author']) continue;
-        if ($item['media'] == 'icon') continue;
-        $list[] = $id;
-      }
-      $count = count($list);
-    }
+
     
-    $from = ($index -1)  * $perpage;
-    
-    if (dbversion) {
-      $list = $files->select($sql, " order by posted desc limit $from, $perpage");
-      if (!$list) $list = array();
-    } else {
-      $list = array_slice($list, $from, $perpage);
-    }
-    
-    $result .= sprintf($this->html->h2->countfiles, $count, $from, $from + count($list));
-    $result .= $this->getpagelinks($index, ceil($count / $perpage));
-    $page = '';
-    foreach ($list as $id) {
-      $page .= $this->getfileitem($id, 'pages');
-      $page .= "\n";
-    }
-    
-    $result .= sprintf($this->html->page, $page);
-    return str_replace("'", '"', $result);
-  }
-  
-  public function getpage($login, $password, $index) {
-    $this->auth($login, $password, 'editor');
-    return $this->get_page((int) $index);
-  }
-  
+
   public function geticons($login, $password, $idicon) {
     $this->auth($login, $password, 'editor');
     $result = '';
