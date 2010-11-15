@@ -72,9 +72,10 @@ post.addfrompage = function() {
   }
 }
 
-post.deletechecked = function() {
-  var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
-  for (var i =0, n = elems.length; i < n; i++) {
+post.deletecurrentfiles = function() {
+$('
+.each(function() {
+});
     if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
       var id = elems[i].value;
       var elem = document.getElementById("fileitem-curr-" + id);
