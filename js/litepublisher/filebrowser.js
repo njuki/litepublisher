@@ -1,69 +1,27 @@
-/**
-* Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
-var fileclient;
-
-function createfileclient() {
-  return new rpc.ServiceProxy(ltoptions.url + '/rpc.xml', {
-    asynchronous: true,
-    protocol: 'XML-RPC',
-    sanitize: false,
-    methods: [
-    'litepublisher.files.getbrowser',
-    'litepublisher.files.getpage',
-    'litepublisher.files.geticons',
-    'litepublisher.files.getthemes',
-    'litepublisher.files.gettags'
-    ]
-  });
+  $(document).ready(function() {
+    $("#tabs").tabs({
+cache: true,
+   load: function(event, ui) { 
+if (ui.index == 2) initfiletab();
 }
+});
+  });
 
-function filebrowser(link) {
-  if (fileclient == undefined) fileclient = createfileclient();
+function initfiletab() {
+$.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
+        $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
+});
 
-  fileclient.litepublisher.files.getbrowser( {
-    params:['', '', ltoptions.idpost],
-    
-    onSuccess:function(result){
       try {
-        var div = document.createElement("div");
-        div.innerHTML = result;
-        var browser = document.getElementById("filebrowser");
-        browser.parentNode.replaceChild(div, browser);
-        widgets.add(link, div);
-        var form = document.getElementById("form");
-        form.onsubmit = submitform;
-        var hidden = document.createElement('input');
-        hidden.type= 'hidden';
-        hidden.name = 'fileschanged';
-        hidden.value = '1';
-        form.appendChild(hidden);
-        
+  $(document).ready(function() {
+    $('#filetabs').tabs({cache: true});
+  });
+
         ltoptions.idfilepages = "filepages";
         ltoptions.idfilepage = "filepage";
         ltoptions.idcurrentfiles = "currentfiles";
         
-        //createswfu();
-jQuery.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
-        jQuery.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
-});
-
-      } catch (e) { 
-        alert('Error ' + e.message);
-      }
-    },
-    
-    onException:function(errorObj){
-      alert("Server error");
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-  
+      } catch (e) {  alert('Error ' + e.message); }
 }
 
 function getcookie(name) {

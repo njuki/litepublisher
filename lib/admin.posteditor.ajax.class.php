@@ -59,6 +59,15 @@ $result = $html->getedit('tags', $post->tagnames, $lang->tags);
 $result .= implode(",\n", $items);
 break;
 
+case 'files':
+    $args = targs::instance();
+$args->ajax = tadminmenu::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get=");
+    //$args->pages = $this->get_page(1);
+    //$args->currentfiles = $this->getpostfiles((int) $idpost);
+    $result = $html->browser($args);
+//$result .= $post->filelist;
+break;
+
 }
 return turlmap::htmlheader(false) . $result;
 }
