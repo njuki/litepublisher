@@ -46,6 +46,7 @@ $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
     $html->section = 'editor';
 $lang = tlocal::instance('editor');
     $post = tpost::instance($this->idpost);
+ttheme::$vars['post'] = $post;
 
 switch ($_GET['get']) {
 case 'tags':
@@ -62,9 +63,22 @@ break;
 case 'files':
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get=");
+$theme = ttheme::instance();
+$templates = $theme->content->post->filelist->array;
+foreach ($templates as $name => $tml) {
+$templates[$name] = str_replace(
+'<li>',
+ '<li><input type="checkbox" name="currentfile-$id" id="currentfile->$id" value="$id">',
+$tml);
+}
+    $files = tfiles::instance();
+   $args->currentfiles = $files->getlist($post->files, $templates);
     //$args->pages = $this->get_page(1);
-   $args->currentfiles = $this->getpostfiles($post);
     $result = $html->browser($args);
+break;
+
+case 'filespage':
+$result = $_GET['page'];
 break;
 
 default:
@@ -73,37 +87,5 @@ $result = var_export($_GET, true);
 return turlmap::htmlheader(false) . $result;
 }
 
-  private function getpostfiles(tpost $post) {
-    $result = '';
-    $files = tfiles::instance();
-    $args = targs::instance();
-
-    foreach ($post->files as $id) {
-    $item = $files->getitem($id);
-    $args->add($item);
-    $args->idtag = "$part-$id";
-    $args->part = $part;
-    $args->id = $id;
-    if ($item['media'] == 'image') {
-      $img = '<img src="$site.files/files/$filename" title="$filename" />';
-      if ($item['preview'] == 0) {
-        $args->preview = '';
-      } else {
-        $preview = $files->getitem($item['preview']);
-        $imgarg = new targs();
-        $imgarg->add($preview);
-        $theme = ttheme::instance();
-        $args->preview =$theme->parsearg($img, $imgarg);
-      }
-      return $this->html->image($args);
-    } else {
-      return $this->html->fileitem($args);
-    }
-
-      $result .= $this->getfileitem($id, 'curr');
-    }
-    return $result;
-  }
-  
 }//class
 ?>
