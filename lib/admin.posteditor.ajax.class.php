@@ -62,10 +62,20 @@ break;
 
 case 'posted':
 $args = targs::instance();
-      $args->date = '12.03.1972';
-//$post->posted != 0 ?date('d.m.Y', $post->posted) : '';
+      $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
       $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
 $result = $html->datepicker($args);
+break;
+
+case 'status':
+$form = new tautoform($post, 'editor', 'editor');
+$form->add($form->commentsenabled, $form->pingenabled, 
+$form->status('combo', array(
+'published' => $lang->published, 
+'draft' => $lang->draft
+)));
+
+$result = $form->getcontent();
 break;
 
 case 'files':

@@ -82,7 +82,6 @@ return $result;
     $html = $this->html;
     $post = tpost::instance($this->idpost);
     ttheme::$vars['post'] = $post;
-    $mode = $this->getmode();
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     if ($post->id != 0) {
@@ -92,24 +91,15 @@ $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->i
     }
     $args->categories = $this->getcategories($post);
     $args->raw = $post->rawcontent;
-    $args->commentsenabled = $post->commentsenabled;
-    $args->pingenabled = $post->pingenabled;
-    $args->published = $post->status != 'draft' ? 'selected' : '';
-    $args->draft = $post->status == 'draft' ? 'selected' : '';
-    
-    if ($mode != 'short') {
-      $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
-      $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+
       $args->content = $post->filtered;
       $args->excerpt = $post->data['excerpt'];
       $args->rss = $post->rss;
-    }
     
-    $result .= $html->$mode($args);
+    $result .= $html->short($args);
     $result = $html->fixquote($result);
     return $result;
   }
-  
   
   protected function getcats() {
     $result = array();
@@ -153,29 +143,20 @@ return;
     
     if (isset($fileschanged))  $post->files = $this->getfiles();
     
-    switch ($this->getmode()) {
-      case 'short':
       $post->content = $raw;
-      break;
-      
-      case 'midle':
-      if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
+
+if (isset($date) && ($date != '')  && @sscanf($date, '%d.%d.%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
         $post->posted = mktime($h,$min,0, $m, $d, $y);
       }
       
       $post->content = $raw;
+
+if (isset($status)) {
+      $post->status = $status == 'draft' ? 'draft' : 'published';
       $post->commentsenabled = isset($commentsenabled);
       $post->pingenabled = isset($pingenabled);
-      $post->status = $status == 'draft' ? 'draft' : 'published';
-      break;
-      
-      case 'full':
-      if (($date != '')  && @sscanf($date, '%d-%d-%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
-        $post->posted = mktime($h,$min,0, $m, $d, $y);
-      }
-      $post->commentsenabled = isset($commentsenabled);
-      $post->pingenabled = isset($pingenabled);
-      $post->status = $status == 'draft' ? 'draft' : 'published';
+}
+
       $post->title2 = $title2;
       $post->url = $url;
       $post->description = $description;
@@ -184,13 +165,8 @@ return;
       $post->excerpt = $excerpt;
       $post->rss = $rss;
       $post->moretitle = $moretitle;
-      break;
-      
-      case 'update':
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
       $post->content = $post->rawcontent . "\n\n" . $update;
-      break;
-    }
     
     $posts = tposts::instance();
     if ($id == 0) {

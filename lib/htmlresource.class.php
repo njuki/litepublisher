@@ -243,11 +243,13 @@ return array(
 
 public function __call($name, $args) {
 if (isset($this->obj->$name)) {
-return array(
+$result = array(
 'obj' => $this->obj,
 'propname' => $name,
 'type' => $args[0]
 );
+if (($result['type'] == 'combo') && isset($args[1]))  $result['items'] = $args[1];
+return $result;
 }
 }
 
@@ -283,7 +285,7 @@ return count($this->props) - 1;
 }
 
 public function getcontent() {
-$items = '';
+$result = '';
 $lang = tlocal::instance();
 $theme = ttheme::instance();
       $admin = $theme->content->admin;
@@ -307,16 +309,19 @@ $value = tadminhtml  ::array2combo($prop['items'], $value);
 break;
 }
 
-$items .= strtr($admin->{$prop['type']}, array(
+$result .= strtr($admin->{$prop['type']}, array(
 '$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
 '$name' => $prop['propname'],
 '$value' => $value
 ));
 }
+return $result;
+}
 
+public function getform() {
 $args = targs::instance();
 $args->formtitle = $this->_title;
-    $args->items = $items;
+    $args->items = $this->getcontent();
     return $theme->parsearg($theme->content->admin->form, $args);
 }
 
