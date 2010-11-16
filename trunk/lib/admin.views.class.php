@@ -89,7 +89,7 @@ $lang = tlocal::instance('views');
 
 switch ($this->action) {
 case 'edit':
-$result .= $this->editform->getcontent();
+$result .= $this->editform->getform();
 break;
 
 case 'delete':
