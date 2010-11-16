@@ -12,7 +12,7 @@ class ttemplate extends tevents_storage {
   public $context;
   public $itemplate;
 public $view;
-  public $javaoptions;
+  public $ltoptions;
   public $hover;
   //public $footer;
   
@@ -29,7 +29,7 @@ public $view;
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
-    $this->javaoptions = array(0 =>
+    $this->ltoptions = array(0 =>
     sprintf("url: '%1\$s',\nfiles: '%2\$s',\nidurl: '%3\$s'",
     litepublisher::$site->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
     $this->hover = true;
@@ -73,7 +73,7 @@ litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->hovermenu && $theme->menu->hover;
-$this->javaoptions[] = sprintf('themename: \'%s\'',  $theme->name);
+$this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     return $result;
@@ -160,9 +160,9 @@ $theme = $this->view->theme;
     litepublisher::$urlmap->clearcache();
   }
   
-  private function getjavaoptions() {
+  private function getltoptions() {
     $result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
-      $result .= implode(",\n", $this->javaoptions);
+      $result .= implode(",\n", $this->ltoptions);
     $result .= "\n};\n</script>\n";
     return $result;
   }
@@ -193,7 +193,7 @@ $this->save();
     $result = $this->heads;
 $result = '';
     if ($this->itemplate) $result .= $this->context->gethead();
-    $result = $this->getjavaoptions() . $result;
+    $result = $this->getltoptions() . $result;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
     return $result;
