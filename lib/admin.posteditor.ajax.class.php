@@ -63,6 +63,10 @@ break;
 case 'files':
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+    $files = tfiles::instance();
+if (count($post->files) == 0) {
+   $args->currentfiles = '<ul></ul>';
+} else {
 $theme = ttheme::instance();
 $templates = $theme->content->post->filelist->array;
 foreach ($templates as $name => $tml) {
@@ -74,8 +78,9 @@ $templates[$name] = str_replace(
  '<li><input type="checkbox" name="currentfile-$id" id="currentfile-$id" value="$id">',
 $tml);
 }
-    $files = tfiles::instance();
+
    $args->currentfiles = $files->getlist($post->files, $templates);
+}
 
     if (dbversion) {
       $sql = "parent =0 and media <> 'icon'";

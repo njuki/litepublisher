@@ -11,19 +11,12 @@ function initfiletabs() {
 $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
 {id: ltoptions.idpost, get: "files"},
 function (result) { 
-      try {
 $("#filetabs").html(result);
     $('#filetabs').tabs({cache: true});
-
-        ltoptions.idfilepages = "filepages";
-        ltoptions.idfilepage = "filepage";
-        ltoptions.idcurrentfiles = "currentfiles";
 
 $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
         $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
 });
-        
-      } catch (e) {  alert('Error ' + e.message); }
 });
 }
 
@@ -47,75 +40,68 @@ function getcookie(name) {
   return(setStr);
 }
 
-var post = {
-  id: ltoptions.idpost
-};
+function str_replace ( search, replace, subject ) {	
+	if(!(replace instanceof Array)){
+		replace=new Array(replace);
+		if(search instanceof Array){//If search	is an array and replace	is a string, then this replacement string is used for every value of search
+			while(search.length>replace.length){
+				replace[replace.length]=replace[0];
+			}
+		}
+	}
 
-post.add= function(html) {
-  document.getElementById(ltoptions.idcurrentfiles).innerHTML += html;
+	if(!(search instanceof Array))search=new Array(search);
+	while(search.length>replace.length){//If replace	has fewer values than search , then an empty string is used for the rest of replacement values
+		replace[replace.length]='';
+	}
+
+	if(subject instanceof Array){//If subject is an array, then the search and replace is performed with every entry of subject , and the return value is an array as well.
+		for(k in subject){
+			subject[k]=str_replace(search,replace,subject[k]);
+		}
+		return subject;
+	}
+
+	for(var k=0; k<search.length; k++){
+		var i = subject.indexOf(search[k]);
+		while(i>-1){
+			subject = subject.replace(search[k], replace[k]);
+			i = subject.indexOf(search[k],i);
+		}
+	}
+
+	return subject;
+
 }
 
-post.addfrompage = function() {
-  var elems = document.getElementById(ltoptions.idfilepage).getElementsByTagName("input");
-  for (var i =0, n = elems.length; i < n; i++) {
-    if((elems[i].type == 'checkbox') && (elems[i].checked == true)) {
-      elems[i].checked = false;
-      var id = elems[i].value;
-      if (elem = document.getElementById("fileitem-curr-" + id)) continue;
-      var elem = document.getElementById("fileitem-pages-" + id);
-      var li = elem.cloneNode(true);
-      li.id = "fileitem-curr-" + id;
-      var check = li.getElementsByTagName("input")[0];
-      check.id = "filecheckbox-" + id;
-      document.getElementById(ltoptions.idcurrentfiles).appendChild(li);
-    }
-  }
+function addtocurrentfiles() {
+$("input:checked[id^='itemfilepage']").each(function() {
+this.checked = false;
+var html =str_replace(
+["itemfilepage-", "filepage-", "post-"],
+["currentfile-", "curfile-", "curpost-"],
+$('<div></div>').append($( this).parent().clone() ).html());
+// outer html prev line
+$('#currentfilestab > :first').append(html);
+});
 }
 
-post.deletecurrentfiles = function() {
+function delete_current_files() {
+prepareform();
 $("input:checked[id^='currentfile']").each(function() {
-$(this).parent().parent().remove();
+$(this).parent().remove();
  } );
 }
 
-post.getpage = function (page) {
-  if (fileclient == undefined) fileclient = createfileclient();
-  fileclient.litepublisher.files.getpage( {
-    params:['','', page],
-    
-    onSuccess:function(result){
-      var div = document.getElementById(ltoptions.idfilepages);
-      div.innerHTML  = result;
-    },
-    
-    onException:function(errorObj){
-      alert("Server error");
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-  
-}
-
-var submitform = function() {
-  //disable delete button
-  document.getElementById("deletechecked").disabled = "disabled";
-  var elems = document.getElementById(ltoptions.idcurrentfiles).getElementsByTagName("input");
-  for (var i =0, n = elems.length; i < n; i++) {
-    if(elems[i].type == 'checkbox') {
-      elems[i].checked = true;
-    }
-  }
-  
-  var elems = document.getElementById(ltoptions.idfilepage).getElementsByTagName("input");
-  for (var i =0, n = elems.length; i < n; i++) {
-    if(elems[i].type == 'checkbox') {
-      elems[i].checked = false;
-    }
-  }
-  
+function prepareform() {
+var files = [];
+$("input[id^='currentfile']").each(function() {
+files.push($(this).val());
+});
+var s = files.join(',');
+alert(s);
   return true;
-};
+}
 
 function iconbrowser(link, idicon) {
   var span = document.getElementById("iconbrowser");
