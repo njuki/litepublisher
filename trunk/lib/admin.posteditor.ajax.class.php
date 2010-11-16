@@ -60,6 +60,13 @@ $result = $html->getedit('tags', $post->tagnames, $lang->tags);
 $result .= implode(",\n", $items);
 break;
 
+case 'posted':
+$args = targs::instance();
+      $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
+      $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+$result = $html->parsearg('[text=date] [text=time]', $args);
+break;
+
 case 'files':
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
@@ -142,6 +149,7 @@ if (count($list) == 0) return '';
 
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+$args->page = $page;
 $theme = ttheme::instance();
 $templates = $theme->content->post->filelist->array;
 foreach ($templates as $name => $tml) {

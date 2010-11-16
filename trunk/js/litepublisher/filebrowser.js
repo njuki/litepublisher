@@ -93,14 +93,12 @@ $(this).parent().remove();
  } );
 }
 
-function prepareform() {
+function getpostfiles() {
 var files = [];
 $("input[id^='currentfile']").each(function() {
 files.push($(this).val());
 });
-var s = files.join(',');
-alert(s);
-  return true;
+return files.join(',');
 }
 
 function iconbrowser(link, idicon) {
@@ -113,70 +111,6 @@ function iconbrowser(link, idicon) {
     
     onSuccess:function(result){
       span.innerHTML  = result;
-    },
-    
-    onException:function(errorObj){
-      alert("XMLRPC server error");
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-}
-
-function themebrowser(link, themename) {
-  var div = document.getElementById("themebrowser");
-  widgets.add(link, div);
-  if (fileclient == undefined) fileclient = createfileclient();
-  fileclient.litepublisher.files.getthemes( {
-    params:['', '', themename],
-    
-    onSuccess:function(result){
-      div.innerHTML  += result;
-    },
-    
-    onException:function(errorObj){
-      alert("XMLRPC server error");
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-  
-}
-
-function selecttheme(link, themename, name) {
-  var div = document.getElementById(name);
-  widgets.add(link, div);
-  if (fileclient == undefined) fileclient = createfileclient();
-  fileclient.litepublisher.files.getthemes( {
-    params:['', '', themename],
-    
-    onSuccess:function(result){
-      result = result.replace(new RegExp('"theme"','g'), '"' + name + '"');
-      div.innerHTML  += result;
-    },
-    
-    onException:function(errorObj){
-      alert("XMLRPC server error");
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
-  
-}
-
-function tagsbrowser(link) {
-  var editparent = document.getElementById("tags").parentNode;
-  if (!editparent) return alert('Parent Edit not found');
-  var p = document.createElement("p");
-  editparent.parentNode.insertBefore(p, editparent.nextSibling);
-  widgets.add(link, p);
-  
-  if (fileclient == undefined) fileclient = createfileclient();
-  fileclient.litepublisher.files.gettags( {
-    params:['', ''],
-    
-    onSuccess:function(result){
-      p.innerHTML  = result;
     },
     
     onException:function(errorObj){
