@@ -149,7 +149,7 @@ break;
       
       case 'headers':
 $template = ttemplate::instance();
-      $args->heads = $template->heads
+      $args->heads = $template->heads;
       $result = $html->jsform($args);
       break;
     }

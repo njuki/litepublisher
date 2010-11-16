@@ -23,6 +23,18 @@ return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::html
 }
 
   public function request($arg) {
+if (isset($_GET['upload'])) {
+    if (empty($_POST['admincookie'])) return self::error403();
+    if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
+      return "<?php
+      header('Allow: POST');
+      header('HTTP/1.1 405 Method Not Allowed', true, 405);
+      header('Content-Type: text/plain');
+      ?>";
+}
+    $_COOKIE['admin'] = $_POST['admincookie'];
+}
+
     if (!litepublisher::$options->cookieenabled) return self::error403();
       if (!litepublisher::$options->authcookie()) return self::error403();
     if (litepublisher::$options->group != 'admin') {
@@ -74,7 +86,20 @@ $form->status('combo', array(
 'published' => $lang->published, 
 'draft' => $lang->draft
 )));
+$result = $form->getcontent();
+break;
 
+case 'view':
+$result = tadminviews::getcomboview($post->idview);
+if ($icons = tadminicons::getradio($post->icon)) {
+$result .= $html->h2->icons;
+$result .= $icons;
+}
+break;
+
+case 'seo':
+$form = new tautoform($post, 'editor', 'editor');
+$form->add($form->url, $form->keywords, $form->description);
 $result = $form->getcontent();
 break;
 
@@ -174,6 +199,15 @@ $tml);
     $files = tfiles::instance();
 $result = $files->getlist($list, $templates);
     $result .= $html->page($args);
+break;
+
+case 'upload':
+    if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) ||
+ $_FILES["Filedata"]["error"] != 0) return self::error403();
+
+    $parser = tmediaparser::instance();
+    $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
+    $result = $this->getfileitem($id, 'curr');
 break;
 
 default:

@@ -167,7 +167,9 @@ if (isset($status)) {
       $post->moretitle = $moretitle;
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
       $post->content = $post->rawcontent . "\n\n" . $update;
-    
+
+if (isset($idview)) $post->idview = $idview;    
+
     $posts = tposts::instance();
     if ($id == 0) {
       $_POST['id'] = $posts->add($post);
