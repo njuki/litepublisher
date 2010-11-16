@@ -16,7 +16,8 @@ class tposteditor extends tadminmenu {
   public function gethead() {
 $result = parent::gethead();
     $template = ttemplate::instance();
-    $template->javaoptions[] = 'idpost: ' . $this->idget();
+    $template->ltoptions[] = 'idpost: ' . $this->idget();
+    $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
     $result .= sprintf('
 <script type="text/javascript" src="%1$s/js/litepublisher/rpc.min.js"></script>
 <script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>

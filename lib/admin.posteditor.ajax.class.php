@@ -62,9 +62,10 @@ break;
 
 case 'posted':
 $args = targs::instance();
-      $args->date = $post->posted != 0 ?date('d-m-Y', $post->posted) : '';
+      $args->date = '12.03.1972';
+//$post->posted != 0 ?date('d.m.Y', $post->posted) : '';
       $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
-$result = $html->parsearg('[text=date] [text=time]', $args);
+$result = $html->datepicker($args);
 break;
 
 case 'files':

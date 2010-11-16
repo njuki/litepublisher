@@ -2,10 +2,33 @@
     $("#tabs").tabs({
 cache: true,
    load: function(event, ui) { 
-//if (ui.index == 2) initfiletab();
+switch (ui.index) {
+case 2:
+if (ltoptions.lang == 'en') {
+initdatepicker();
+} else {
+$.getScript(ltoptions.files + '/js/jquery/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+initdatepicker();
+});
+}
+break;
+}
 }
 });
   });
+
+function initdatepicker() {
+var cur = $("#date").val();
+$('#datepicker').datepicker({
+ altField: '#date',
+altFormat: 'dd.mm.yy',
+dateFormat: 'dd.mm.yy',
+changeYear: true
+//showButtonPanel: true
+});
+
+$("#datepicker").datepicker("setDate", cur);
+}
 
 function initfiletabs() {
 $.get(ltoptions.url + '/admin/ajaxposteditor.htm',

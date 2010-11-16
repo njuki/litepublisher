@@ -314,7 +314,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     $result = '';
     $options = litepublisher::$options;
     $template = ttemplate::instance();
-    $template->javaoptions[] = "idpost: $this->id";
+    $template->ltoptions[] = 'idpost: ' . $this->id;
     
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
