@@ -78,23 +78,18 @@ return $result;
   }
   
   public function getcontent() {
-    $result = '';
     $html = $this->html;
     $post = tpost::instance($this->idpost);
     ttheme::$vars['post'] = $post;
     $args = targs::instance();
+$args->id = $post->id;
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-    if ($post->id != 0) $result .= $html->h2->formhead . $post->bookmark;
     $args->categories = $this->getcategories($post);
     $args->raw = $post->rawcontent;
 
-      $args->content = $post->filtered;
-      $args->excerpt = $post->data['excerpt'];
-      $args->rss = $post->rss;
-    
-    $result .= $html->short($args);
-    $result = $html->fixquote($result);
-    return $result;
+    $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
+    $result .= $html->form($args);
+return $html->fixquote($result);
   }
   
   protected function getcats() {
@@ -124,32 +119,32 @@ return;
       if (isset($icon)) $post->icon = (int) $icon;
       if (isset($idview)) $post->idview = $idview;
     if (isset($files))  $post->files = explode(',', $files);
-    
-      $post->content = $raw;
-
 if (isset($date) && ($date != '')  && @sscanf($date, '%d.%d.%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
         $post->posted = mktime($h,$min,0, $m, $d, $y);
       }
       
-      $post->content = $raw;
-
 if (isset($status)) {
       $post->status = $status == 'draft' ? 'draft' : 'published';
       $post->commentsenabled = isset($commentsenabled);
       $post->pingenabled = isset($pingenabled);
 }
 
-      $post->title2 = $title2;
+if (isset($url)) {
       $post->url = $url;
+      $post->title2 = $title2;
+$post->keywords = $keywords;
       $post->description = $description;
-      $post->rawcontent = $raw;
-      $post->filtered = $content;
-      $post->excerpt = $excerpt;
-      $post->rss = $rss;
-      $post->moretitle = $moretitle;
-      $update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
-      $post->content = $post->rawcontent . "\n\n" . $update;
+}
 
+      $post->content = $raw;
+      if (isset($excerpt)) $post->excerpt = $excerpt;
+      if (isset($rss)) $post->rss = $rss;
+      if (isset($more)) $post->moretitle = $more;
+      if (isset($filtered)) $post->filtered = $content;
+if (isset($upd)) {
+      $update = sprintf($this->lang->updateformat, tlocal::date(time()), $upd);
+      $post->content = $post->rawcontent . "\n\n" . $update;
+}
     $posts = tposts::instance();
     if ($id == 0) {
       $_POST['id'] = $posts->add($post);

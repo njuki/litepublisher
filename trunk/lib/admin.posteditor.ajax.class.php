@@ -208,6 +208,21 @@ $files = tfiles::instance();
     $result = $files->getlist(array($id), $templates);
 break;
 
+case 'excerpt':
+break;
+
+case 'rss':
+break;
+
+case 'more':
+break;
+
+case 'filtered':
+break;
+
+case 'upd':
+break;
+
 default:
 $result = var_export($_GET, true);
 }
