@@ -191,7 +191,7 @@ if (count($list) == 0) return '';
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
 $args->page = $page;
-$templates = $this->getfiletemplates('filepage-$id', 'post-$post.id', 'itemfilepage-$id');
+$templates = $this->getfiletemplates('pagefile-$id', 'pagepost-$post.id', 'itemfilepage-$id');
     $files = tfiles::instance();
 $result = $files->getlist($list, $templates);
     $result .= $html->page($args);
