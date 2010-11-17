@@ -83,18 +83,20 @@ function str_replace ( search, replace, subject ) {
 
 function addtocurrentfiles() {
 $("input:checked[id^='itemfilepage']").each(function() {
-this.checked = false;
+$(this).attr('checked', false);
+var id = $(this).val();
+if ($("#currentfile-" + id).length == 0) {
 var html =str_replace(
-["itemfilepage-", "filepage-", "post-"],
-["currentfile-", "curfile-", "curpost-"],
+['pagefile-', 'pagepost-', 'itemfilepage-'],
+['curfile-', 'curpost-', 'currentfile-'],
 $('<div></div>').append($( this).parent().clone() ).html());
 // outer html prev line
 $('#currentfilestab > :first').append(html);
+}
 });
 }
 
 function delete_current_files() {
-prepareform();
 $("input:checked[id^='currentfile']").each(function() {
 $(this).parent().remove();
  } );

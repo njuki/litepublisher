@@ -1,14 +1,67 @@
-/**
-* Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
+function swfUploadPreLoad() {
+  //alert('swfUploadPreLoad');
+}
+
+function swfUploadLoaded() {
+  //alert('swfUploadLoaded');
+}
+
+function swfUploadLoadFailed() {
+  //alert('swfUploadLoadFailed');
+}
+
+function fileQueued(file) {
+  //alert('fileQueued');
+}
+
+function fileQueueError(file, errorCode, message) {
+  //alert('fileQueueError');
+}
+
+function fileDialogComplete(numFilesSelected, numFilesQueued) {
+  this.startUpload();
+}
+
+function uploadStart(file) {
+  return true;
+}
+
+function uploadProgress(file, bytesLoaded, bytesTotal) {
+}
+
+function uploadError(file, errorCode, message) {
+  alert('uploadError');
+}
+
+function uploadComplete(file) {
+  //alert('uploadComplete');
+}
+
+// This event comes from the Queue Plugin
+function queueComplete(numFilesUploaded) {
+  //alert('queueComplete');
+};
+
+//central event
+function uploadSuccess(file, serverData) {
+var haschilds = $("#newfilestab").children().length > 0;
+$("#newfilestab").append(serverData);
+var html = $("#newfilestab").children(":last").html();
+if (haschilds) {
+$("#newfilestab").children(":last").remove();
+$("#newfilestab").children(":first").append(html);
+}
+html =str_replace(
+['uploaded-', 'new-post-', 'newfile-'],
+['curfile-', 'curpost-', 'currentfile-'],
+html);
+$('#currentfilestab > :first').append(html);
+}
 
 function createswfu () {
   var settings = {
     flash_url : ltoptions.files + "/js/swfupload/swfupload.swf",
-    upload_url: ltoptions.url + "/admin/ajaxposteditor.htm?get=upload&id=' + ltoptions.idpost,
+    upload_url: ltoptions.url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost,
     // prevent_swf_caching: false,
   post_params: {"admincookie": getcookie("admin")},
     file_size_limit : "100 MB",
@@ -49,52 +102,19 @@ function createswfu () {
   }
 }
 
-function swfUploadPreLoad() {
-  //alert('swfUploadPreLoad');
-}
+function getcookie(name) {
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+        }
+        return '';
+    }
 
-function swfUploadLoaded() {
-  //alert('swfUploadLoaded');
-}
-
-function swfUploadLoadFailed() {
-  //alert('swfUploadLoadFailed');
-}
-
-function fileQueued(file) {
-  //alert('fileQueued');
-}
-
-function fileQueueError(file, errorCode, message) {
-  //alert('fileQueueError');
-}
-
-function fileDialogComplete(numFilesSelected, numFilesQueued) {
-  this.startUpload();
-}
-
-function uploadStart(file) {
-  return true;
-}
-
-function uploadProgress(file, bytesLoaded, bytesTotal) {
-}
-
-function uploadSuccess(file, serverData) {
-fileuploaded(serverData);
-}
-
-function uploadError(file, errorCode, message) {
-  alert('uploadError');
-}
-
-function uploadComplete(file) {
-  //alert('uploadComplete');
-}
-
-// This event comes from the Queue Plugin
-function queueComplete(numFilesUploaded) {
-  //alert('queueComplete');
-};
 
 var swfu = createswfu();
