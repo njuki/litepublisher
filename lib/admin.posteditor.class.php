@@ -84,11 +84,7 @@ return $result;
     ttheme::$vars['post'] = $post;
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-    if ($post->id != 0) {
-      $adminurl = $this->adminurl . "=$post->id&mode";
-      $result .= sprintf($html->h2->formhead, "<a href='$post->link'>$post->title</a>",
-      "$adminurl=short", "$adminurl=midle", "$adminurl=full");
-    }
+    if ($post->id != 0) $result .= $html->h2->formhead . $post->bookmark;
     $args->categories = $this->getcategories($post);
     $args->raw = $post->rawcontent;
 
@@ -111,16 +107,6 @@ $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->i
     return $result;
   }
   
-  protected function getfiles() {
-    $result = array();
-    foreach ($_POST as $key => $value) {
-      if (strbegin($key, 'filecheckbox-')) {
-        $result[] = (int) $value;
-      }
-    }
-    return $result;
-  }
-  
   public function processform() {
 echo "<pre>\n";
 var_dump($_POST);
@@ -131,17 +117,13 @@ return;
     $this->basename = 'editor';
     $html = $this->html;
     $post = tpost::instance((int)$id);
-    if ($mode != 'update'){
       if (empty($title)) return $html->h2->emptytitle;
       $post->title = $title;
       $post->categories = $this->getcats();
       if (isset($tags)) $post->tagnames = $tags;
       if (isset($icon)) $post->icon = (int) $icon;
-      if (isset($theme)) $post->theme = $theme;
-      if (isset($tmlfile)) $post->tmlfile = $tmlfile;
-    }
-    
-    if (isset($fileschanged))  $post->files = $this->getfiles();
+      if (isset($idview)) $post->idview = $idview;
+    if (isset($files))  $post->files = explode(',', $files);
     
       $post->content = $raw;
 
@@ -167,8 +149,6 @@ if (isset($status)) {
       $post->moretitle = $moretitle;
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $update);
       $post->content = $post->rawcontent . "\n\n" . $update;
-
-if (isset($idview)) $post->idview = $idview;    
 
     $posts = tposts::instance();
     if ($id == 0) {

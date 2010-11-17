@@ -52,6 +52,21 @@ if (isset($_GET['upload'])) {
 return $this->getcontent();
   }
 
+private function getfiletemplates($id, $idpost, $li_id) {
+$theme = ttheme::instance();
+$result = $theme->content->post->filelist->array;
+$replace = array(
+'$id'=> $id,
+'$post.id'=> $idpost,
+'<li>' => sprintf('<li><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id)
+);
+foreach ($result as $name => $tml) {
+$result[$name] = strtr($tml, $replace);
+}
+return $result;
+}
+
+
 public function getcontent() {
 $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
    $html = tadminhtml ::instance();
@@ -99,7 +114,7 @@ break;
 
 case 'seo':
 $form = new tautoform($post, 'editor', 'editor');
-$form->add($form->url, $form->keywords, $form->description);
+$form->add($form->url, $form->title2, $form->keywords, $form->description);
 $result = $form->getcontent();
 break;
 
@@ -110,18 +125,7 @@ $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->i
 if (count($post->files) == 0) {
    $args->currentfiles = '<ul></ul>';
 } else {
-$theme = ttheme::instance();
-$templates = $theme->content->post->filelist->array;
-foreach ($templates as $name => $tml) {
-$tml = str_replace('$id', 'curfile-$id', $tml);
-$tml = str_replace('$post.id', 'curpost-$post.id', $tml);
-
-$templates[$name] = str_replace(
-'<li>',
- '<li><input type="checkbox" name="currentfile-$id" id="currentfile-$id" value="$id">',
-$tml);
-}
-
+$templates = $this->getfiletemplates('curfile-$id', 'curpost-$post.id', 'currentfile-$id');
    $args->currentfiles = $files->getlist($post->files, $templates);
 }
 
@@ -149,6 +153,7 @@ $pages .= $html->pageindex($args);
 }
 
     $args->pages = $pages;
+$args->files = implode(',', $post->files);
     $result = $html->browser($args);
 break;
 
@@ -186,16 +191,7 @@ if (count($list) == 0) return '';
     $args = targs::instance();
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
 $args->page = $page;
-$theme = ttheme::instance();
-$templates = $theme->content->post->filelist->array;
-foreach ($templates as $name => $tml) {
-$tml = str_replace('$id', 'filepage-$id', $tml);
-$tml = str_replace('$post.id', 'post-$post.id', $tml);
-$templates[$name] = str_replace(
-'<li>',
- '<li><input type="checkbox" name="itemfilepage-$id" id="itemfilepage-$id" value="$id">',
-$tml);
-}
+$templates = $this->getfiletemplates('filepage-$id', 'post-$post.id', 'itemfilepage-$id');
     $files = tfiles::instance();
 $result = $files->getlist($list, $templates);
     $result .= $html->page($args);
@@ -207,7 +203,9 @@ case 'upload':
 
     $parser = tmediaparser::instance();
     $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
-    $result = $this->getfileitem($id, 'curr');
+$templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');
+$files = tfiles::instance();
+    $result = $files->getlist(array($id), $templates);
 break;
 
 default:
