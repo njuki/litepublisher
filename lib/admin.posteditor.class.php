@@ -145,13 +145,12 @@ if (isset($upd)) {
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $upd);
       $post->content = $post->rawcontent . "\n\n" . $update;
 }
+
     $posts = tposts::instance();
     if ($id == 0) {
       $_POST['id'] = $posts->add($post);
     } else {
       $posts->edit($post);
-    }
-    
     return sprintf($html->p->success,"<a href=\"$post->link\" title=\"$post->title\">$post->title</a>");
   }
   
