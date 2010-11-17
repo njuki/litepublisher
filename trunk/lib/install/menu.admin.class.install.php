@@ -11,14 +11,8 @@ function tadminmenusInstall($self) {
   //posts
   $posts = $self->createitem(0, 'posts', 'author', 'tadminposts');
   {
-    //добавить еще одно подменю, но без добавления урла в карту урлов,
     $id = $self->createitem($posts, 'editor', 'author', 'tposteditor');
-    $self->items[$id]['title'] = tlocal::$data['names']['midle'];
-    $item = $self->items[$id];
-    $item['id'] = ++$self->autoid;
-    $item['url'] .= litepublisher::$site->q . 'mode=short';
-    $item['title'] = tlocal::$data['names']['quick'];
-    $self->items[$self->autoid] = $item;
+    $self->items[$id]['title'] = tlocal::$data['names']['newpost'];
     $self->createitem($posts, 'categories', 'editor', 'tadmintags');
     $self->createitem($posts, 'tags', 'editor', 'tadmintags');
     $self->createitem($posts, 'staticpages', 'editor', 'tadminstaticpages');

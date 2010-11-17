@@ -150,7 +150,7 @@ break;
       case 'headers':
 $template = ttemplate::instance();
       $args->heads = $template->heads;
-      $result = $html->jsform($args);
+      $result = $html->getadminform('[editor=heads]', $args);
       break;
     }
     
@@ -184,11 +184,8 @@ $views->save();
 break;
         
         case 'headers':
-    extract($_POST, EXTR_SKIP);
         $template = ttemplate::instance();
-        $template->headers = $headers;
-        $template->stdjavascripts['comments'] = $comments;
-        $template->stdjavascripts['moderate'] = $moderate;
+        $template->heads = $$_POST['heads'];
         $template->save();
         break;
     }

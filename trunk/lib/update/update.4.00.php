@@ -50,12 +50,15 @@ foreach ($childs as $child) {
 $admin->delete($child);
 }
 $admin->delete($id);
+
+$admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short');
 $admin->unlock();
 }
 
 function update400() {
 $classes = litepublisher::$classes;
 $classes->lock();
+$classes->delete('TXMLRPCFiles');
 unset($classes->items['imenu']);
 unset($classes->items['tadminhomewidgets');
 $classes->items['tsidebars'][0] = 'admin.widgets.class.php';
@@ -212,14 +215,8 @@ $template->heads =
 
 tstorage::savemodified();
 
-
   $rpc = TXMLRPC::instance();
-  $rpc->lock();
-  $rpc->delete('litepublisher.files.gettags');
-  $rpc->delete('litepublisher.files.getbrowser');
-  $rpc->delete('litepublisher.files.getpage');
-  $rpc->delete('litepublisher.files.geticons');
-  $rpc->delete('litepublisher.files.getthemes');
-$rpc->unlock();
+$rpc->deleteclass('TXMLRPCFiles');
+turlmap::unsub('TXMLRPCFiles');
 }
 ?>

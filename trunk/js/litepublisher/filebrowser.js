@@ -37,30 +37,14 @@ function (result) {
 $("#filetabs").html(result);
     $('#filetabs').tabs({cache: true});
 
+$('form:first').submit(function() {
+$("#files").vals(getpostfiles());
+});
+
 $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
         $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
 });
 });
-}
-
-function getcookie(name) {
-  var cookie = " " + document.cookie;
-  var search = " " + name + "=";
-  var setStr = null;
-  var offset = 0;
-  var end = 0;
-  if (cookie.length > 0) {
-    offset = cookie.indexOf(search);
-    if (offset != -1) {
-      offset += search.length;
-      end = cookie.indexOf(";", offset)
-      if (end == -1) {
-        end = cookie.length;
-      }
-      setStr = unescape(cookie.substring(offset, end));
-    }
-  }
-  return(setStr);
 }
 
 function str_replace ( search, replace, subject ) {	
@@ -122,26 +106,6 @@ $("input[id^='currentfile']").each(function() {
 files.push($(this).val());
 });
 return files.join(',');
-}
-
-function iconbrowser(link, idicon) {
-  var span = document.getElementById("iconbrowser");
-  if (!span) return alert('Tag not found');
-  widgets.add(link, span);
-  if (fileclient == undefined) fileclient = createfileclient();
-  fileclient.litepublisher.files.geticons( {
-    params:['', '', idicon],
-    
-    onSuccess:function(result){
-      span.innerHTML  = result;
-    },
-    
-    onException:function(errorObj){
-      alert("XMLRPC server error");
-    },
-    
-  onComplete:function(responseObj){ }
-  } );
 }
 
 function tagtopost(link) {
