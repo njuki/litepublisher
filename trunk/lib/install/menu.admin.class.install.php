@@ -69,6 +69,7 @@ $self->createitem($views, 'widgets', 'admin', 'tadminwidgets');
     $self->createitem($opt, 'robots', 'admin', 'tadminoptions');
     $self->createitem($opt, 'local', 'admin', 'tadminoptions');
     $self->createitem($opt, 'notfound404', 'admin', 'tadminoptions');
+    $self->createitem($opt, 'admin', 'admin', 'tadminoptions');
   }
   
   $service = $self->createitem(0, 'service', 'admin', 'tadminservice');

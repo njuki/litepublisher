@@ -34,6 +34,7 @@ public $view;
     litepublisher::$site->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
     $this->hover = true;
     $this->data['hovermenu'] = true;
+$this->data['heads'] = '';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
   }

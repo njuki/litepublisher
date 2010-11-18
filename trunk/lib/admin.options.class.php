@@ -133,6 +133,9 @@ $args->idhome = $menus->idhome;
       $forbidden = tforbidden::instance();
       $args->forbiddentext = $forbidden->text;
       break;
+
+case 'admin':
+break;
       
     }
     

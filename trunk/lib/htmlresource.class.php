@@ -72,10 +72,7 @@ class tadminhtml {
         //convert spec charsfor editor
         if (($type != 'checkbox') || ($name != 'combo')) {
           if (isset($args->data[$varname])) {
-            $args->data[$varname] = str_replace(
-            array('"', "'", '$'),
-            array('&quot;', '&#39;', '&#36;'),
-            htmlspecialchars($args->data[$varname]));
+            $args->data[$varname] = self::>specchars($args->data[$varname]);
           } else {
             $args->data[$varname] = '';
           }
@@ -90,6 +87,15 @@ class tadminhtml {
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
+
+public static function specchars($s) {
+return strtr(            htmlspecialchars($s), array(
+            '"' => '&quot;',
+ "'" =>'&#39;',
+ '$' => '&#36;'
+));
+}
+
   
   public function fixquote($s) {
     $s = str_replace("\\'", '\"', $s);

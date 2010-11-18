@@ -52,6 +52,7 @@ $admin->delete($child);
 $admin->delete($id);
 
 $admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short');
+    $admin->createitem($admin->url2id('/admin/options/'),  'admin', 'admin', 'tadminoptions');
 $admin->unlock();
 }
 

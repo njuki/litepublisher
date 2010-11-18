@@ -263,7 +263,7 @@ $theme = ttheme::instance();
 return strtr($theme->content->admin->editor, array(
 '$lang.$name' => $title,
 '$name' => $name,
-'$value' => $value
+'$value' => tadminhtml::specchars($value)
 ));
 }
 
