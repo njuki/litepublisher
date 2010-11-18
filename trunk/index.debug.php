@@ -22,8 +22,7 @@ public static $site;
   
   public static function init() {
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
-    self::$domain = $domain[2];
-    
+        self::$domain = $domain[2];
     $home = dirname(__file__) . DIRECTORY_SEPARATOR;
     $storage = $home . 'storage' . DIRECTORY_SEPARATOR;
     self::$_paths = array(
@@ -95,6 +94,4 @@ litepublisher::$options->showerrors();
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
-
-
 ?>

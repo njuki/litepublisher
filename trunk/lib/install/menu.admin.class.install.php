@@ -8,6 +8,9 @@
 
 function tadminmenusInstall($self) {
   $self->lock();
+$self->heads = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
+
   //posts
   $posts = $self->createitem(0, 'posts', 'author', 'tadminposts');
   {

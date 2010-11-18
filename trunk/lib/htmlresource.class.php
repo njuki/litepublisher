@@ -72,7 +72,7 @@ class tadminhtml {
         //convert spec charsfor editor
         if (($type != 'checkbox') || ($name != 'combo')) {
           if (isset($args->data[$varname])) {
-            $args->data[$varname] = self::>specchars($args->data[$varname]);
+            $args->data[$varname] = self::specchars($args->data[$varname]);
           } else {
             $args->data[$varname] = '';
           }

@@ -18,8 +18,10 @@ class tajaxposteditor  extends tevents {
 $this->basename = 'ajaxposteditor';
 $this->addevents('onhead', 'oneditor');
 $this->data['head'] = '';
-$this->data['visual'] = '/plugins/tiny_mce/init.js';
-$this->data['ajaxvisual'] = true;
+$this->data['visual'] = 
+//'/plugins/tiny_mce/init.js';
+'/plugins/ckeditor/init.js';
+$this->data['ajaxvisual'] = false;
 }
 
 public function dogethead($head) {
@@ -257,8 +259,10 @@ public function geteditor($name, $value) {
     $html->section = 'editor';
 $lang = tlocal::instance('editor');
 $title = $lang->$name;
+if ($name == 'raw') {
 if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-if ($name == 'raw') $title .= $html->loadcontenttabs();
+$title .= $html->loadcontenttabs();
+}
 $theme = ttheme::instance();
 return strtr($theme->content->admin->editor, array(
 '$lang.$name' => $title,
