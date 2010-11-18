@@ -47,6 +47,22 @@ $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
 });
 }
 
+function loadcontenttabs() {
+$("#loadcontenttabs").remove();
+$.get(ltoptions.url + '/admin/ajaxposteditor.htm',
+{id: ltoptions.idpost, get: "contenttabs"},
+function (html) { 
+$(html).insertBefore("#raweditor");
+$("#raweditor").appendTo("#rawtab");
+    $('#contenttabs').tabs({cache: true});
+});
+}
+
+function loadvisual() {
+$("#loadvisual").remove();
+$.getScript(ltoptions.files + ltoptions.visual);
+}
+
 function str_replace ( search, replace, subject ) {	
 	if(!(replace instanceof Array)){
 		replace=new Array(replace);
@@ -124,4 +140,4 @@ $('#tags').val(newtag);
 $('#tags').val(tags + ', ' + newtag);
     }
 }
-// catch(e) { alert(e.message); 
+//} catch(e) { alert(e.message); }

@@ -51,7 +51,7 @@ public function setidview($id) {}
   public function getcont() {
     $result = $this->logoutlink;
     $editor = tposteditor::instance();
-    $result .= $editor->shorteditor();
+    $result .= $editor->getexternal();
     return $result;
   }
   

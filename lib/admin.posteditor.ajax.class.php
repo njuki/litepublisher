@@ -16,6 +16,19 @@ class tajaxposteditor  extends tevents {
   protected function create() {
     parent::create();
 $this->basename = 'ajaxposteditor';
+$this->addevents('onhead', 'oneditor');
+$this->data['head'] = '';
+$this->data['visual'] = '/plugins/tiny_mce/init.js';
+$this->data['ajaxvisual'] = true;
+}
+
+public function dogethead($head) {
+    $template = ttemplate::instance();
+    $template->ltoptions[] = sprintf('visual: "%s"', $this->visual);
+$head .= $this->head;
+if (!$this->ajaxvisual && $this->visual) $head .= $template->getjavascript($this->visual);
+$this->callevent('onhead', array(&$head));
+return $head;
 }
 
 private static function error403() {
@@ -207,26 +220,51 @@ $files = tfiles::instance();
     $result = $files->getlist(array($id), $templates);
 break;
 
+case 'contenttabs':
+    $args = targs::instance();
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+$result = $html->contenttabs($args);
+break;
+
 case 'excerpt':
- 
+$result = $this->geteditor('excerpt', $post->excerpt);
 break;
 
 case 'rss':
+$result = $this->geteditor('rss', $post->rss);
 break;
 
 case 'more':
+$result = $html->getedit('more', $post->moretitle, $lang->more);
 break;
 
 case 'filtered':
+$result = $this->geteditor('filtered', $post->filtered);
 break;
 
 case 'upd':
+$result = $this->geteditor('upd', '');
 break;
 
 default:
 $result = var_export($_GET, true);
 }
 return turlmap::htmlheader(false) . $result;
+}
+
+public function geteditor($name, $value) {
+   $html = tadminhtml ::instance();
+    $html->section = 'editor';
+$lang = tlocal::instance('editor');
+$title = $lang->$name;
+if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
+if ($name == 'raw') $title .= $html->loadcontenttabs();
+$theme = ttheme::instance();
+return strtr($theme->content->admin->editor, array(
+'$lang.$name' => $title,
+'$name' => $name,
+'$value' => $value
+));
 }
 
 }//class
