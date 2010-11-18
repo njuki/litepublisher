@@ -24,7 +24,8 @@ $result = parent::gethead();
     <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
     ', litepublisher::$site->files, litepublisher::$options->language);
     //<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
-return $result;
+$ajax = tajaxposteditor ::instance();
+return $ajax->dogethead($result);
   }
   
   protected function getcategories(tpost $post) {
@@ -64,14 +65,7 @@ return $result;
     }
   }
   
-  private function getmode() {
-    $mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : 'midle';
-    if (!preg_match('/short|midle|full|update/', $mode)) $mode = 'midle';
-    return $mode;
-  }
-  
-  public function shorteditor() {
-    $_REQUEST['mode'] = 'short';
+  public function getexternal() {
     $this->basename = 'editor';
     $this->idpost = 0;
     return $this->getcontent();
@@ -84,8 +78,10 @@ return $result;
     $args = targs::instance();
 $args->id = $post->id;
 $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+$args->title = $post->title;
     $args->categories = $this->getcategories($post);
-    $args->raw = $post->rawcontent;
+$ajaxeditor = tajaxposteditor ::instance();
+$args->editor = $ajaxeditor->geteditor('raw', $post->rawcontent);
 
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->form($args);
@@ -151,6 +147,7 @@ if (isset($upd)) {
       $_POST['id'] = $posts->add($post);
     } else {
       $posts->edit($post);
+}
     return sprintf($html->p->success,"<a href=\"$post->link\" title=\"$post->title\">$post->title</a>");
   }
   
