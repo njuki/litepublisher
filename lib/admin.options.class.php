@@ -7,7 +7,7 @@
 **/
 
 class Tadminoptions extends tadminmenu {
-private $_adminoptionsform;
+
 
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -136,8 +136,6 @@ $args->idhome = $menus->idhome;
       $args->forbiddentext = $forbidden->text;
       break;
 
-case 'admin':
-return $this->adminoptionsform->form;
     }
     
   $result  = $this->html->{$this->name}($args);
@@ -349,9 +347,6 @@ $menus->save();
       $forbidden->save();
       $notfound->save();
       break;
-
-case 'admin':
-return $this->adminoptionsform->processform();
           }
     
     return '';
@@ -381,15 +376,5 @@ return $this->adminoptionsform->processform();
     $menus->unlock();
   }
 
-public function getadminoptionsform() {
-if (isset($this->_adminoptionsform)) return $this_adminoptionsform;
-$form = new tautoform(tajaxposteditor ::instance(), 'options', 'adminoptions');
-$form->add($form->ajaxvisual, $form->visual);
-$form->obj = tadminmenus::instance();
-$form->add($form->heads('editor'));
-$this->_adminoptionsform = $form;
-return $form;
-}
-  
 }//class
 ?>

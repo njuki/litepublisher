@@ -18,10 +18,10 @@ class tajaxposteditor  extends tevents {
 $this->basename = 'ajaxposteditor';
 $this->addevents('onhead', 'oneditor');
 $this->data['head'] = '';
-$this->data['visual'] = 
+$this->data['visual'] = '';
 //'/plugins/tiny_mce/init.js';
-'/plugins/ckeditor/init.js';
-$this->data['ajaxvisual'] = false;
+//'/plugins/ckeditor/init.js';
+$this->data['ajaxvisual'] = true;
 }
 
 public function dogethead($head) {
