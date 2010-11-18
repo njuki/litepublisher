@@ -8,6 +8,7 @@
 
 class tadminviews extends tadminmenu {
 private $_editform;
+private $_adminoptionsform;
 
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -152,6 +153,9 @@ $template = ttemplate::instance();
       $args->heads = $template->heads;
       $result = $html->getadminform('[editor=heads]', $args);
       break;
+
+case 'admin':
+return $this->adminoptionsform->form;
     }
     
     return $html->fixquote($result);
@@ -188,11 +192,24 @@ break;
         $template->heads = $$_POST['heads'];
         $template->save();
         break;
+
+case 'admin':
+return $this->adminoptionsform->processform();
     }
     
     ttheme::clearcache();
   }
   
+public function getadminoptionsform() {
+if (isset($this->_adminoptionsform)) return $this_adminoptionsform;
+$form = new tautoform(tajaxposteditor ::instance(), 'options', 'adminoptions');
+$form->add($form->ajaxvisual, $form->visual);
+$form->obj = tadminmenus::instance();
+$form->add($form->heads('editor'));
+$this->_adminoptionsform = $form;
+return $form;
+}
+
 }//class
 
 ?>
