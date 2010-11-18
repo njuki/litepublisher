@@ -15,6 +15,7 @@ class tadminmenus extends tmenus {
   protected function create() {
     parent::create();
     $this->basename = 'adminmenu';
+$this->data['heads'] = '';
     tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
 
@@ -110,6 +111,10 @@ class tadminmenu  extends tmenu {
 public function load() { return true; }
 public function save() { return true; }
 
+public function gethead() {
+return tadminmenus::instance()->heads;
+}
+
 public function getidview() {
 return tviews::instance()->defaults['admin'];
 }
@@ -140,11 +145,6 @@ return tviews::instance()->defaults['admin'];
     $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();
   }
-
-public function gethead() {
-return '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
-}
 
   public static function idget() {
 return (int) tadminhtml::getparam('id', 0);
