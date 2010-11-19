@@ -430,14 +430,14 @@ if ($disableajax)  $item['ajax'] = false;
   }
   
   public function getajax($id, $sidebar) {
-    $title = sprintf('<a onclick="widgets.load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
+    $title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
     $content = "<!--widgetcontent-$id-->";
     $theme = ttheme::instance();
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getinline($id, $sidebar) {
-    $title = sprintf('<a onclick="widgets.inlineload(this)">%s</a>', $this->items[$id]['title']);
+    $title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
     if ('cache' == $this->items[$id]['cache']) {
       $cache = twidgetscache::instance();
       $content = $cache->getcontent($id, $sidebar);
