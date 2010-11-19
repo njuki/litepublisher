@@ -196,8 +196,7 @@ tfilestorage::load($data);
 unset($data->data['stdjavascripts']);
 $template = ttemplate::instance();
 $template->lock();
-$template->data
-$template->heads .= implode("\n", $template->data['javascripts']);
+$template->heads .= implode("\n", $data->data['javascripts']);
 unset($template->data['javascripts']);
 $template->unlock();
 tview::instance(1)->themename = $template->data['theme'];

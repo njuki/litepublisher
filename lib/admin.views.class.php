@@ -110,7 +110,7 @@ $("form").hide();
 </script>';
 
 $args = targs::instance();
-$args->formtitle = sprintf('<a id="togglelink" href="#togglelink">%s</a>', $lang->addview);
+$args->formtitle = sprintf('<a id="togglelink" href="#">%s</a>', $lang->addview);
 $args->action = 'add';
 $result .= $html->adminform('[text=name] [hidden=action]', $args);
 break;
@@ -164,7 +164,8 @@ break;
       case 'headers':
 $template = ttemplate::instance();
       $args->heads = $template->heads;
-      $result = $html->getadminform('[editor=heads]', $args);
+$args->formtitle = $lang->heads;
+      $result = $html->adminform('[editor=heads]', $args);
       break;
 
 case 'admin':
@@ -184,8 +185,6 @@ $name = trim($_POST['name']);
 if ($name != '') {
 $views = tviews::instance();
 $id = $views->add($name);
-$_GET['idview'] = $id;
-$_REQUEST['action'] = 'edit';
 return;
 }
 break;
