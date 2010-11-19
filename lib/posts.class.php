@@ -99,6 +99,11 @@ class tposts extends titems {
       $icons = ticons::instance();
       $post->icon = $icons->getid('post');
     }
+
+if ($post->idview == 1) {
+$views = tviews::instance();
+if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
+}
     
     $post->pagescount = count($post->pages);
     $linkgen = tlinkgenerator::instance();

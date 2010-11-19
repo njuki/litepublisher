@@ -110,7 +110,7 @@ $("form").hide();
 </script>';
 
 $args = targs::instance();
-$args->formtitle = sprintf('<a id="togglelink" href="#">%s</a>', $lang->addview);
+$args->formtitle = sprintf('<a id="togglelink" href="">%s</a>', $lang->addview);
 $args->action = 'add';
 $result .= $html->adminform('[text=name] [hidden=action]', $args);
 break;

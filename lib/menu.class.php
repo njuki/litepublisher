@@ -45,6 +45,12 @@ $item->url = '/';
     $item->url = $linkgen->addurl($item, 'menu');
 }
 
+if ($item->idview == 1) {
+$views = tviews::instance();
+if (isset($views->defaults['menu'])) $item->data['idview'] = $views->defaults['menu'];
+}
+
+
     $id = ++$this->autoid;
     $this->items[$id] = array(
     'id' => $id,
