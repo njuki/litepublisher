@@ -134,9 +134,14 @@ class tcommontags extends titems implements  itemplate {
     $urlmap =turlmap::instance();
     $linkgen = tlinkgenerator::instance();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
-    
+
+$views = tviews::instance();
+$idview = isset($views->defaults[$this->PermalinkIndex] ? $views->defaults[$this->PermalinkIndex] : 1;
     if ($this->dbversion)  {
-      $id = $this->db->add(array('title' => $title));
+      $id = $this->db->add(array(
+'title' => $title,
+'idview' => $idview
+));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
     } else {
@@ -152,6 +157,7 @@ class tcommontags extends titems implements  itemplate {
     'url' =>$url,
     'title' => $title,
     'icon' => 0,
+'idview' => $idview,
     'itemscount' => 0
     );
     $this->unlock();
