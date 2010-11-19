@@ -328,6 +328,7 @@ public function getform() {
 $args = targs::instance();
 $args->formtitle = $this->_title;
     $args->items = $this->getcontent();
+$theme = ttheme::instance();
     return $theme->parsearg($theme->content->admin->form, $args);
 }
 

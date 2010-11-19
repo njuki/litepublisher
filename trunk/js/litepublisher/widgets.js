@@ -1,16 +1,5 @@
-/**
-* Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
-var widgets = {
-  items: []
-};
-
-widgets.load = function (node, id, sidebar) {
-  var comment = widgets.findcomment(node, id);
+function widget_load(node, id, sidebar) {
+  var comment = widget_findcomment(node, id);
   if (! comment) return alert('Widget not found');
         node.onclick = null;
 $.get(ltoptions.url + '/getwidget.htm',
@@ -19,45 +8,11 @@ $.get(ltoptions.url + '/getwidget.htm',
 function (result) { 
       var content = $(result);
 $(comment).replaceWith(content);
-widgets.add(node, content);
+widget_add(node, content);
     }, 'html');
 }
 
-widgets.inlineload= function (node) {
-  var comment = widgets.findcomment(node, false);
-  if (! comment) return alert('Widget not found');
-      var content = $(comment.nodeValue);
-$(comment).replaceWith(content);
-  return widgets.add(node, content);
-}
-
-widgets.add = function(node, widget) {
-  node.onclick = widgets.toggle;
-  widgets.items.push([node, widget]);
-  return widgets.items.length - 1;
-}
-
-widgets.setitem = function(node, value) {
-  for (var i = widgets.items.length - 1; i >= 0; i--) {
-    if (node == widgets.items[i][0]) {
-      widgets.items[i][1] = value;
-      return;
-    }
-  }
-  widgets.add(node, value);
-}
-
-widgets.toggle = function() {
-node = this;
-    for (var i = widgets.items.length - 1; i >= 0; i--) {
-      if (node == widgets.items[i][0]) {
-    $(widgets.items[i][1]).toggle();
-        return;
-      }
-    }
-}
-
-widgets.findcomment = function(node, id) {
+function widget_findcomment(node, id) {
 var result = false;
 if (id) id = 'widgetcontent-' + id;
 do {
@@ -69,3 +24,31 @@ result = node;
 } while (node = node.parentNode);
   return false;
 }
+
+function widget_inline(node) {
+  var comment = widget_findcomment(node, false);
+  if (! comment) return alert('Widget not found');
+      var content = $(comment.nodeValue);
+$(comment).replaceWith(content);
+  widget_add(node, content);
+}
+
+function widget_add(node, widget) {
+$(node).data("litepublisher_widget", widget);
+$(node).click(function(event) {
+widget_toggle(this);
+return false;
+});
+}
+
+function widget_toggle(node) {
+$(node).data("litepublisher_widget").toggle();
+}
+
+  $(document).ready(function() {
+$("*[rel~='inlinewidget']").click(function() {
+$(this).unbind('click');
+widget_inline(this);
+return false;
+});
+});
