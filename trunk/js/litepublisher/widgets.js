@@ -1,12 +1,19 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 function widget_load(node, id, sidebar) {
+$(node).attr("onclick", "");
   var comment = widget_findcomment(node, id);
   if (! comment) return alert('Widget not found');
-        node.onclick = null;
 $.get(ltoptions.url + '/getwidget.htm',
 {id: id, sidebar: sidebar, themename: ltoptions.themename, idurl: ltoptions.idurl},
 
-function (result) { 
-      var content = $(result);
+function (html) { 
+      var content = $(html);
 $(comment).replaceWith(content);
 widget_add(node, content);
     }, 'html');

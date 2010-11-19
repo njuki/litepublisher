@@ -87,7 +87,6 @@ $lang = tlocal::instance('views');
     $args = targs::instance();
     switch ($this->name) {
       case 'views':
-
 switch ($this->action) {
 case 'edit':
 $result .= $this->editform->getform();
@@ -105,7 +104,6 @@ break;
 default:
 $result .= '<script type="text/javascript">
   $(document).ready(function() {
-alert($("form").html());
   widget_add("#togglelink", $("form"));
 $("form").hide();
 });
@@ -113,15 +111,15 @@ $("form").hide();
 
 $args = targs::instance();
 $args->formtitle = sprintf('<a id="togglelink" href="#togglelink">%s</a>', $lang->addview);
-$result .= $html->adminform('[text=name]', $args);
+$args->action = 'add';
+$result .= $html->adminform('[text=name] [hidden=action]', $args);
 break;
 }
 
 $result .= $html->buildtable($views->items, array(
-array('left', $lang->name,'$name'),
+array('left', $lang->name,sprintf('<a href="%s">$name</a>', tadminhtml::getadminlink('/admin/views/', 'action=edit&idview=$id'))),
 array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', tadminhtml::getadminlink('/admin/views/themes/', 'idview=$id'))),
 array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
-array('center', $lang->edit, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/', 'action=edit&idview=$id'), $lang->edit)),
 array('center', $lang->delete, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
 ));
       break;
@@ -186,8 +184,8 @@ $name = trim($_POST['name']);
 if ($name != '') {
 $views = tviews::instance();
 $id = $views->add($name);
-$_GET['id'] = $id;
-$_GET['action'] = 'edit';
+$_GET['idview'] = $id;
+$_REQUEST['action'] = 'edit';
 return;
 }
 break;
