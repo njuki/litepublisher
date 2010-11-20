@@ -33,8 +33,17 @@ $this->callevent('onhead', array(&$head));
 return $head;
 }
 
-private static function error403() {
+protected static function error403() {
 return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . 'Forbidden';
+}
+
+public static function auth() {
+    if (!litepublisher::$options->cookieenabled) return self::error403();
+      if (!litepublisher::$options->authcookie()) return self::error403();
+    if (litepublisher::$options->group != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright(litepublisher::$options->group, 'author')) return self::error403();
+    }
 }
 
   public function request($arg) {
@@ -50,13 +59,7 @@ if (isset($_GET['upload'])) {
     $_COOKIE['admin'] = $_POST['admincookie'];
 }
 
-    if (!litepublisher::$options->cookieenabled) return self::error403();
-      if (!litepublisher::$options->authcookie()) return self::error403();
-    if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::instance();
-      if (!$groups->hasright(litepublisher::$options->group, 'author')) return self::error403();
-    }
-
+if ($err = self::auth()) return $err;
     $this->idpost = tadminmenu::idget();
     if ($this->idpost > 0) {
       $posts = tposts::instance();

@@ -8,7 +8,15 @@ $man->alter($table, "add `idview` int unsigned NOT NULL default '1'");
 }
 
 function updatetags($tags) {
+if (dbversion) {
+$man = tdbmanager ::instance();
+$man->alter($tags->table, "add `idview` int unsigned NOT NULL default '1'");
+$man->alter($tags->contents->table, 'drop tmlfile');
+$man->alter($tags->contents->table, 'drop theme');
+} else {
+$tags->lock();
 foreach ($tags->items as $id => $itemtag) {
+$tags->items[$id]['idview'] = 1;
 $item = $tags->content->getitem($id);
 if (isset($item['tmlfile'])) {
 unset($item['tmlfile']);
@@ -16,6 +24,8 @@ unset($item['theme']);
 $item['idview'] = 1;
 $tags->contents->setitem($id, $item);
 }
+}
+$tags->unlock();
 }
 }
 
@@ -29,7 +39,6 @@ $obj->data['description'] = '';
 $obj->save();
 }
 }
-
 
 function updateadminmenu() {
 $admin = tadminmenus::instance();

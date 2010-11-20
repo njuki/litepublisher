@@ -24,6 +24,8 @@ $lang = tlocal::instance('tags');
     $args = targs::instance();
     $args->id = $id;
     $args->adminurl = $this->adminurl;
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get=', $id, $istags  ? 'tags' : 'categories'));
+
     if ($id ==  0) {
       $args->title = '';
       $result .= $istags ? $h2->addtag : $h2->addcategory;
