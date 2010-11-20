@@ -344,7 +344,7 @@ $this->contents->setvalue($this->id, 'idview', $id);
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
-      $items = $this->getsortedcontent('<li><a href="$link" title="$title">$icon$title</a>$count</li>';
+      $items = $this->getsortedcontent(0, '<li><a href="$link" title="$title">$icon$title</a>$count</li>',
 '<ul>$item</ul>',
 'count', 0, 0, false);
 $result .= sprintf('<ul>%s</ul>', $items);
@@ -494,9 +494,9 @@ class tcommontagswidget extends twidget {
   
   public function getcontent($id, $sidebar) {
     $theme = ttheme::instance();
-$items = $this->owner->getsortedcontent(
+$items = $this->owner->getsortedcontent(0,
 $theme->getwidgetitem($this->template, $sidebar),
-$this->showsubitems ? $theme->getwidgettml($this->template, $sidebar, 'subitems') : '',
+$this->showsubitems ? $theme->getwidgettml($sidebar, $this->template, 'subitems') : '',
 $this->sortname, $this->maxcount, $this->showcount);
 return $theme->getwidgetcontent($items, $this->template, $sidebar);
   }
