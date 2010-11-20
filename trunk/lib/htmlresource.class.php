@@ -63,8 +63,19 @@ class tadminhtml {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       $admin = $theme->content->admin;
+// parse tags [form] .. [/form]
+if (is_int($i = strpos($s, '[form]'))) {
+$replace = substr($admin->form, 0, strpos($admin->form, '$items'));
+      $s = substr_replace($s, $replace, $i, strlen('[form]'));
+}
+
+if ($i = strpos($s, '[/form]')) {
+$replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items'));
+      $s = substr_replace($s, $replace, $i, strlen('[/form]'));
+}
+
+    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
@@ -78,8 +89,10 @@ class tadminhtml {
           }
         }
         
-        $tag = str_replace(array('$name', '$value'),
-        array($name, $varname), $admin->$type);
+        $tag = strtr($admin->$type, array(
+'$name' => $name,
+'$value' =>$varname
+));
         $s = str_replace($item[0], $tag, $s);
       }
     }
@@ -300,10 +313,7 @@ $value = $prop['obj']->{$prop['propname']};
 switch ($prop['type']) {
 case 'text':
 case 'editor':
-$value = str_replace(
-            array('"', "'", '$'),
-            array('&quot;', '&#39;', '&#36;'),
-            htmlspecialchars($value));
+$value = tadminhtml::specchars($value);
 break;
 
 case 'checkbox':

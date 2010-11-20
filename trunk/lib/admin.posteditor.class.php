@@ -19,30 +19,38 @@ $result = parent::gethead();
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
     $result .= sprintf('
-<script type="text/javascript" src="%1$s/js/litepublisher/rpc.min.js"></script>
 <script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
     <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
     ', litepublisher::$site->files, litepublisher::$options->language);
-    //<script type="text/javascript" src="%1$s/js/litepublisher/swfuploader.js"></script>
 $ajax = tajaxposteditor ::instance();
 return $ajax->dogethead($result);
   }
-  
-  protected function getcategories(tpost $post) {
-    $result = '';
+
+private function getsubcategories($parent, array $postitems) {
+$result = '';
     $categories = tcategories::instance();
-    if (count($post->categories) == 0) $post->categories = array($categories->defaultid);
     $html = $this->html;
     $args = targs::instance();
-    $categories->loadall();
     foreach ($categories->items  as $id => $item) {
+if ($parent != $item['parent']) continue;
       $args->add($item);
-      $args->checked = in_array($item['id'], $post->categories);
+      $args->checked = in_array($item['id'], $postitems);
+$args->subitems = $this->getsubcategories($id, $postitems);
       $result .= $html->category($args);
     }
-    $result = sprintf($html->categories(), $result);
-    $result = str_replace("'", '"', $result);
-    return $result;
+
+if ($result != '') $result = sprintf($html->categories(), $result);
+if ($parent == 0) $result = $html->categorieshead($args) . $result;
+return $result;
+}
+  
+  protected function getcategories(tpost $post) {
+    $categories = tcategories::instance();
+    $categories->loadall();
+$postitems = $post->categories;
+    if (count($postitems) == 0) $postitems = array($categories->defaultid);
+$result = $this->getsubcategories(0, $postitems);
+return str_replace("'", '"', $result);
   }
   
   public function request($id) {
@@ -99,10 +107,12 @@ return $html->fixquote($result);
   }
   
   public function processform() {
+/*
 echo "<pre>\n";
 var_dump($_POST);
 echo "</pre>\n";
 return;
+*/
     extract($_POST);
 
     $this->basename = 'editor';

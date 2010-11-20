@@ -135,12 +135,9 @@ class tcommontags extends titems implements  itemplate {
     $linkgen = tlinkgenerator::instance();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
 
-$views = tviews::instance();
-$idview = isset($views->defaults[$this->PermalinkIndex] ? $views->defaults[$this->PermalinkIndex] : 1;
     if ($this->dbversion)  {
       $id = $this->db->add(array(
-'title' => $title,
-'idview' => $idview
+'title' => $title
 ));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
@@ -157,7 +154,6 @@ $idview = isset($views->defaults[$this->PermalinkIndex] ? $views->defaults[$this
     'url' =>$url,
     'title' => $title,
     'icon' => 0,
-'idview' => $idview,
     'itemscount' => 0
     );
     $this->unlock();
@@ -388,8 +384,11 @@ class ttagcontent extends tdata {
   
   public function getitem($id) {
     if (isset($this->items[$id]))  return $this->items[$id];
+$views = tviews::instance();
+$idview = isset($views->defaults[$this->owner->PermalinkIndex]) ? $views->defaults[$this->owner->PermalinkIndex] : 1;
+
     $item = array(
-'idview' => 1,
+'idview' => $idview,
     'description' => '',
     'keywords' => '',
     'content' => '',
