@@ -196,7 +196,6 @@ $this->save();
     $result = $this->getltoptions() . $result;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
-//dumpstr($result);
     return $result;
   }
   
