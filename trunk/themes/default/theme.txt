@@ -659,7 +659,7 @@ $template.sidebar = [
     <div class="rubric">$title</div>
     $items = [
     <ul class="linkcat">
-      $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems = [<ul>$items</ul>]</li>]
+      $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems = [<ul>$item</ul>]</li>]
     </ul>
     ]
   </div>
@@ -720,7 +720,7 @@ sidebar.categories = [
 <div class="widget">
 <div class="rubric">$title</div>
 $items = [
- <ul class="list-cat" id="widgetcategories">
+ <ul class="list-cat" id="widgetcategories-$parent">
  $item = [
   <li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>
  ]
