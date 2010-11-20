@@ -140,19 +140,23 @@ return strtr(            htmlspecialchars($s), array(
 public static function getadminlink($path, $params) {
     return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
 }
-  public static function array2combo(array $items, $selname) {
+
+  public static function array2combo(array $items, $selected) {
     $result = '';
-    foreach ($items as $name => $title) {
-      $selected = $selname == $name ? "selected='selected'" : '';
-      $result .= "<option value='$name' $selected>$title</option>\n";
+    foreach ($items as $i => $title) {
+      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $selected ? 'selected' : '', $title);
     }
     return $result;
   }
   
+  public static function getcombobox($name, array $items, $selected) {
+return sprintf('<select name="%1$s" id="%1$s">%2$s</select>', $name,
+self::array2combo($items, $selected));
+  }
+  
   public function adminform($tml, targs $args) {
     $args->items = $this->parsearg($tml, $args);
-    $theme = ttheme::instance();
-    return $this->parsearg($theme->content->admin->form, $args);
+    return $this->parsearg(ttheme::instance()->content->admin->form, $args);
   }
   
   public function getcheckbox($name, $value) {
