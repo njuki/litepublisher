@@ -81,7 +81,7 @@ $replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items
         $name = $item[3];
         $varname = '$' . $name;
         //convert spec charsfor editor
-        if (($type != 'checkbox') || ($name != 'combo')) {
+        if (!(($type == 'checkbox') || ($type == 'combo'))) {
           if (isset($args->data[$varname])) {
             $args->data[$varname] = self::specchars($args->data[$varname]);
           } else {

@@ -30,7 +30,7 @@ class tadminwidget extends tdata {
     $args = targs::instance();
 $args->formtitle = $widgettitle . ' ' . $this->lang->widget;
     $args->title = $widgettitle;
-    $args->items = $this->html->getedit('title', $widgettitle, this->lang->widgettitle) .. $content;
+    $args->items = $this->html->getedit('title', $widgettitle, $this->lang->widgettitle) . $content;
     return $this->html->parsearg(ttheme::instance()->content->admin->form, $args);
   }
   
@@ -65,7 +65,7 @@ class tadmintagswidget extends tadminwidget {
     $args->showcount = $widget->showcount;
 $args->showsubitems = $widget->showsubitems;
     $args->maxcount = $widget->maxcount;
-    $args->sort = tadminhtml::getcombobox('sort', tlocal::$data['sortnametags'], $widget->sortname);
+    $args->sort = tadminhtml::array2combo(tlocal::$data['sortnametags'], $widget->sortname);
     return $this->html->parsearg('[combo=sort] [checkbox=showsubitems] [checkbox=showcount] [text=maxcount]', $args);
   }
   
@@ -120,8 +120,8 @@ class tadminorderwidget extends tadminwidget {
   }
   
   protected function dogetcontent(twidget $widget, targs $args){
-    $args->sidebar = tadminhtml::getcombobox('sidebar', tadminwidgets::getsidebarnames(3), $widget->sidebar);
-    $args->order = tadminhtml::getcombobox('order', range(-1, 10), $widget->order + 1);
+    $args->sidebar = tadminhtml::array2combo(tadminwidgets::getsidebarnames(3), $widget->sidebar);
+    $args->order = tadminhtml::array2combo(range(-1, 10), $widget->order + 1);
     $args->ajax = $widget->ajax;
     return $this->html->parsearg('[combo=sidebar] [combo=order] [checkbox=ajax]', $args);
   }
@@ -171,7 +171,7 @@ class tadmincustomwidget extends tadminwidget {
     $args->idwidget = $id;
     $html= $this->html;
     $args->text = $item['content'];
-    $args->template =tadminhtml::getcombobox('template', self::gettemplates(), $item['template']);
+    $args->template =tadminhtml::array2combo(self::gettemplates(), $item['template']);
     $result = $this->optionsform($item['title'], $html->parsearg(
 '[text=text]
 [combo=template]
@@ -224,16 +224,17 @@ class tadminlinkswidget extends tadminwidget {
   public static function instance() {
     return getinstance(__class__);
   }
-  
+
+  protected function dogetcontent(twidget $widget, targs $args){
+    $args->redir = $widget->redir;
+return $this->html->parsearg('[checkbox=redir]', $args);
+}  
+
   public function getcontent() {
+$result = parent::getcontent();
     $widget = $this->widget;
     $html= $this->html;
     $args = targs::instance();
-    $args->title = $widget->gettitle($widget->id);
-    $args->redir = $widget->redir;
-    $args->content = $html->linksoptions ($args);
-    $result = $this->optionsform(
-    
     $id = isset($_GET['idlink']) ? (int) $_GET['idlink'] : 0;
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
