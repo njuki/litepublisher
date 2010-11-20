@@ -12,20 +12,14 @@ class tadmintags extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethead() {
-    if (isset($_GET['full'])) {
-      return sprintf('<script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>', litepublisher::$site->files);
-    }
-    return '';
-  }
-  
   public function getcontent() {
     $result = '';
     $istags = $this->name == 'tags';
     $tags = $istags  ? litepublisher::$classes->tags : litepublisher::$classes->categories;
-    $this->basename = 'categories';
+    $this->basename = 'tags';
     $html = $this->html;
     $h2 = $html->h2;
+$lang = tlocal::instance('tags');
     $id = $this->idget();
     $args = targs::instance();
     $args->id = $id;
@@ -65,19 +59,20 @@ class tadmintags extends tadminmenu {
     $from = $this->getfrom($perpage, $count);
     
     if (dbversion) {
-      $items = $tags->select('', " order by id asc limit $from, $perpage");
-      if (!$items) $items = array();
+$items = array();
+      if ($iditems = $tags->select('', " order by parent, id asc limit $from, $perpage")) {
+$items = $tags->items;
+}
     } else {
-      $items = array_slice(array_keys($tags->items), $from, $perpage);
+      $items = array_slice($tags->items, $from, $perpage);
     }
     
-    $result .= $html->listhead();
-    foreach ($items as $id) {
-      $item = $tags->getitem($id);
-      $args->add($item);
-      $result .= $html->itemlist($args);
-    }
-    $result .= $html->listfooter;
+$result .= $html->buildtable($items, array(
+array('right', $lang->count2, '$itemscount'),
+array('left', $lang->title,'<a href="$link" title="$title">$title</a>'),
+array('center', $lang->edit, '<a href="$adminurl=$id">$lang.edit</a>'),
+array('center', $lang->delete, '<a href="$adminurl=$id&action=delete">$lang.delete</a>')
+));
     $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
