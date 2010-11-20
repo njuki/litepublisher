@@ -59,10 +59,12 @@ class tcommontags extends titems implements  itemplate {
       $args->icon = $iconenabled ? $this->geticonlink($id) : '';
 $subitems = '';
       if ($showcount) $subitems = sprintf(' (%d)', $item['itemscount']);
-$subitems .= $this->getsortedcontent($id, $tml, $subtml, $sortname, $count, $showcount);
+if ($subtml != '') $subitems .= $this->getsortedcontent($id, $tml, $subtml, $sortname, $count, $showcount);
 $args->subitems = $subitems;
       $result .= $theme->parsearg($tml,$args);
     }
+if ($parent == 0) return $result;
+$args->parent = $parent;
 $args->item = $result;
     return $theme->parsearg($subtml, $args);
   }
@@ -342,9 +344,10 @@ $this->contents->setvalue($this->id, 'idview', $id);
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
-      $tml = '<li><a href="$link" title="$title">$icon$title</a>$count</li>';
-$subtml = '<ul>$item</ul>';
-      $result .= $this->getsortedcontent($tml, 'count', 0, 0, false);
+      $items = $this->getsortedcontent('<li><a href="$link" title="$title">$icon$title</a>$count</li>';
+'<ul>$item</ul>',
+'count', 0, 0, false);
+$result .= sprintf('<ul>%s</ul>', $items);
       return $result;
     }
     
@@ -481,16 +484,8 @@ class tcommontagswidget extends twidget {
     $this->adminclass = 'tadmintagswidget';
     $this->data['sortname'] = 'count';
     $this->data['showcount'] = true;
+    $this->data['showsubitems'] = true;
     $this->data['maxcount'] =0;
-  }
-  
-  public function SetParams($sortname, $maxcount, $showcount) {
-    if (($sortname != $this->sortname) || ($showcount != $this->showcount) || ($maxcount != $this->maxcount)) {
-      $this->sortname = $sortname;
-      $this->showcount = $showcount;
-      $this->maxcount = $maxcount;
-      $this->save();
-    }
   }
   
   public function getowner() {
@@ -499,9 +494,11 @@ class tcommontagswidget extends twidget {
   
   public function getcontent($id, $sidebar) {
     $theme = ttheme::instance();
-    $tml = $theme->getwidgetitem($this->template, $sidebar);
-    $subtml = $theme->getwidgettml($this->template, $sidebar, 'subitems');
-return $this->owner->getsortedcontent($tml, $subtml, $this->sortname, $this->maxcount, $this->showcount);
+$items = $this->owner->getsortedcontent(
+$theme->getwidgetitem($this->template, $sidebar),
+$this->showsubitems ? $theme->getwidgettml($this->template, $sidebar, 'subitems') : '',
+$this->sortname, $this->maxcount, $this->showcount);
+return $theme->getwidgetcontent($items, $this->template, $sidebar);
   }
   
 }//class

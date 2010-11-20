@@ -12,15 +12,6 @@ class tadminwidgets extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public static function getcombo($name, array $items, $selected) {
-    $result = sprintf('<select name="%1$s" id="%1$s">', $name);
-    foreach ($items as $i => $item) {
-      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $selected ? 'selected' : '', $item);
-    }
-    $result .= "</select>\n";
-    return $result;
-  }
-  
   public static function getsidebarnames(tview $view) {
 $count = $view->theme->sidebarscount;
     $result = range(1, $count);
@@ -56,8 +47,8 @@ $args->idview = $idview;
         $args->inline = $_item['ajax'] === 'inline';
         $args->disabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache') ? '' : 'disabled';
         $args->add($item);
-        $args->sidebarcombo = self::getcombo("sidebar-$id", $sidebarnames, $i);
-        $args->ordercombo = self::getcombo("order-$id", $orders, $j);
+        $args->sidebarcombo = tadminhtml::getcombobox("sidebar-$id", $sidebarnames, $i);
+        $args->ordercombo = tadminhtml::getcombobox("order-$id", $orders, $j);
         $result .= $html->item($args);
       }
     }
