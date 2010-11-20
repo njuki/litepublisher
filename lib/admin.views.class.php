@@ -164,12 +164,12 @@ break;
       case 'headers':
 $template = ttemplate::instance();
       $args->heads = $template->heads;
-$args->formtitle = $lang->heads;
+$args->formtitle = $lang->headstitle;
       $result = $html->adminform('[editor=heads]', $args);
       break;
 
 case 'admin':
-return $this->adminoptionsform->form;
+return $this->adminoptionsform->getform();;
     }
     
     return $html->fixquote($result);
@@ -215,7 +215,7 @@ break;
         
         case 'headers':
         $template = ttemplate::instance();
-        $template->heads = $$_POST['heads'];
+        $template->heads = $_POST['heads'];
         $template->save();
         break;
 
@@ -227,8 +227,8 @@ return $this->adminoptionsform->processform();
   }
   
 public function getadminoptionsform() {
-if (isset($this->_adminoptionsform)) return $this_adminoptionsform;
-$form = new tautoform(tajaxposteditor ::instance(), 'options', 'adminoptions');
+if (isset($this->_adminoptionsform)) return $this->_adminoptionsform;
+$form = new tautoform(tajaxposteditor ::instance(), 'views', 'adminoptions');
 $form->add($form->ajaxvisual, $form->visual);
 $form->obj = tadminmenus::instance();
 $form->add($form->heads('editor'));

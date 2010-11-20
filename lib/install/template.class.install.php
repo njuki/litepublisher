@@ -17,7 +17,15 @@ $self->heads =
     <meta name="keywords" content="$template.keywords" />
     <meta name="description" content="$template.description" />
     <link rel="sitemap" href="$site.url/sitemap.htm" />
-    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
+    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>
+<link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />	
+		<script type="text/javascript">
+  $(document).ready(function() {
+$("a[rel^=\'prettyPhoto\']").prettyPhoto(); 
+  });
+		</script>
+';
+// <script type="text/javascript" src="$site.files/js/prettyPhoto/js/jquery.prettyPhoto.js"></script>
 
   //footer
   $html = tadminhtml::instance();

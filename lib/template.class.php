@@ -192,53 +192,12 @@ $this->save();
   
   public function gethead() {
     $result = $this->heads;
-$result = '';
     if ($this->itemplate) $result .= $this->context->gethead();
     $result = $this->getltoptions() . $result;
     $result = $this->view->theme->parse($result);
     $this->callevent('onhead', array(&$result));
+//dumpstr($result);
     return $result;
-  }
-  
-  public function getmeta() {
-    $result =
-    '<link rel="alternate" type="application/rss+xml" title="$site.name RSS Feed" href="$site.url/rss.xml" />
-    <link rel="pingback" href="$site.url/rpc.xml" />
-    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
-    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
-    <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
-    <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
-    <meta name="keywords" content="$template.keywords" />
-    <meta name="description" content="$template.description" />
-    <link rel="sitemap" href="$site.url/sitemap.htm" />
-
-    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>
-
-<link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />	
-		<script type="text/javascript">
-  $(document).ready(function() {
-$("a[rel^=\'prettyPhoto\']").prettyPhoto(); 
-  });
-		</script>
-';
-/*
-
-    <script type="text/javascript" src="$site.files/js/prettyPhoto/js/jquery.prettyPhoto.js"></script>
-
-		<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
-
-    <script type="text/javascript" src="$site.files/js/litepublisher/widgets.js"></script>
-    <script type="text/javascript" src="$site.files/js/litepublisher/players.js"></script>
-    <script type="text/javascript" src="$site.files/js/jsibox/jsibox_basic.js"></script>
-
-    <script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
-    <script type="text/javascript" src="$site.files/js/litepublisher/client.min.js"></script>
-    <script type="text/javascript" src="$site.files/js/jsibox/jsibox_basic.js"></script>';
-*/
-    
-    return $this->view->theme->parse($result);
   }
   
   public function getbody() {

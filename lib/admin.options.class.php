@@ -32,8 +32,8 @@ class Tadminoptions extends tadminmenu {
       $args->hideposts = $home->hideposts;
       $args->image = $home->image;
       $menus = tmenus::instance();
-$args->idhome = $menus->idhome;
       $args->homemenu =  $menus->home;
+$args->formtitle = '';
       break;
       
       case 'mail':
