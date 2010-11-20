@@ -131,17 +131,24 @@ $args->item = $result;
     }
   }
   
-  public function add($title) {
+  public function add($parent, $title) {
     if (empty($title)) return false;
     if ($id  = $this->IndexOf('title', $title)) return $id;
+$parent = (int) $parent;
+if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
     $urlmap =turlmap::instance();
     $linkgen = tlinkgenerator::instance();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
 
+$views = tviews::instance();
+$idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
+
     if ($this->dbversion)  {
       $id = $this->db->add(array(
-'title' => $title
+'parent' => $parent,
+'title' => $title,
+'idview' => $idview
 ));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
@@ -153,11 +160,12 @@ $args->item = $result;
     $this->lock();
     $this->items[$id] = array(
     'id' => $id,
-    'parent' => 0,
+    'parent' => $parent,
     'idurl' =>         $idurl,
     'url' =>$url,
     'title' => $title,
     'icon' => 0,
+'idview' => $idview,
     'itemscount' => 0
     );
     $this->unlock();
@@ -167,16 +175,14 @@ $args->item = $result;
     return $id;
   }
   
-  public function edit($id, $title, $url, $icon) {
+  public function edit($id, $title, $url) {
     $item = $this->getitem($id);
-    if (($item['title'] == $title) && ($item['url'] == $url) && ($item['icon'] == $icon)) return;
+    if (($item['title'] == $title) && ($item['url'] == $url)) return;
     $item['title'] = $title;
-    $item['icon'] = $icon;
     if ($this->dbversion) {
       $this->db->updateassoc(array(
       'id' => $id,
-      'title' => $title,
-      'icon' => $icon
+      'title' => $title
       ));
     }
     
@@ -224,7 +230,7 @@ $args->item = $result;
     foreach ($list as $title) {
       $title = tcontentfilter::escape($title);
       if ($title == '') continue;
-      $result[] = $this->add($title);
+      $result[] = $this->add(0, $title);
     }
     $this->unlock();
     return $result;
@@ -331,12 +337,13 @@ if ($parent != $item['parent']) continue;
   }
 
 public function getidview() {
-return $this->contents->getvalue($this->id, 'idview');
+    $item = $this->getitem($this->id);
+    return $item['idview'];
 }
 
 public function setidview($id) {
 if ($id != $this->idview) {
-$this->contents->setvalue($this->id, 'idview', $id);
+$this->setvalue($this->id, 'idview', $id);
 }
 }
 
@@ -391,11 +398,7 @@ class ttagcontent extends tdata {
   
   public function getitem($id) {
     if (isset($this->items[$id]))  return $this->items[$id];
-$views = tviews::instance();
-$idview = isset($views->defaults[$this->owner->PermalinkIndex]) ? $views->defaults[$this->owner->PermalinkIndex] : 1;
-
     $item = array(
-'idview' => $idview,
     'description' => '',
     'keywords' => '',
     'content' => '',
@@ -426,7 +429,6 @@ $idview = isset($views->defaults[$this->owner->PermalinkIndex]) ? $views->defaul
     $item = $this->getitem($id);
     $filter = tcontentfilter::instance();
     $item =array(
-    'idview' => $item['idview'],
     'content' => $filter->filter($content),
     'rawcontent' => $content,
     'description' => $description,
@@ -462,7 +464,7 @@ $idview = isset($views->defaults[$this->owner->PermalinkIndex]) ? $views->defaul
     $item = $this->getitem($id);
     $filter = tcontentfilter::instance();
     $item['rawcontent'] = $content;
-    $item['content'] = $filter->GetPostContent($content);
+    $item['content'] = $filter->filter($content);
     $item['description'] = tcontentfilter::getexcerpt($content, 80);
     $this->setitem($id, $item);
   }
