@@ -45,24 +45,26 @@ class tcommontags extends titems implements  itemplate {
     }
   }
   
-  public function getsortedcontent($sortname, $count, $showcount, $tml) {
-    $sorted = $this->getsorted($sortname, $count);
+  public function getsortedcontent($parent, $tml, $subtml, $sortname, $count, $showcount) {
+    $sorted = $this->getsorted($parent, $sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
     $iconenabled = ! litepublisher::$options->icondisabled;
     $theme = ttheme::instance();
     $args = targs::instance();
-    $args->subitems = '';
     $args->rel = $this->PermalinkIndex;
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
-      $args->anchor = $item['title'];
       $args->icon = $iconenabled ? $this->geticonlink($id) : '';
-      if ($showcount) $args->subitems = sprintf(' (%d)', $item['itemscount']);
+$subitems = '';
+      if ($showcount) $subitems = sprintf(' (%d)', $item['itemscount']);
+$subitems .= $this->getsortedcontent($id, $tml, $subtml, $sortname, $count, $showcount);
+$args->subitems = $subitems;
       $result .= $theme->parsearg($tml,$args);
     }
-    return $result;
+$args->item = $result;
+    return $theme->parsearg($subtml, $args);
   }
   
   public function geticonlink($id) {
@@ -248,7 +250,7 @@ class tcommontags extends titems implements  itemplate {
     return $result;
   }
   
-  public function getsorted($sortname, $count) {
+  public function getsorted($parent, $sortname, $count) {
     $count = (int) $count;
     if ($sortname == 'count') $sortname = 'itemscount';
     if (!in_array($sortname, array('title', 'itemscount', 'id'))) $sortname = 'title';
@@ -256,11 +258,12 @@ class tcommontags extends titems implements  itemplate {
     if ($this->dbversion) {
       $limit  = $sortname == 'itemscount' ? "order by $this->thistable.itemscount desc" :"order by $this->thistable.$sortname asc";
       if ($count > 0) $limit .= " limit $count";
-      return $this->select("$this->thistable.parent = 0", $limit);
+      return $this->select("$this->thistable.parent = $parent", $limit);
     }
     
     $list = array();
     foreach($this->items as $id => $item) {
+if ($parent != $item['parent']) continue;
       $list[$id] = $item[$sortname];
     }
     if (($sortname == 'itemscount')) {
@@ -340,8 +343,9 @@ $this->contents->setvalue($this->id, 'idview', $id);
     $theme = ttheme::instance();
     if ($this->id == 0) {
       $tml = '<li><a href="$link" title="$title">$icon$title</a>$count</li>';
-      $result .= $this->getsortedcontent('count', 0, 0, false, $tml);
-      return sprintf("<ul>\n%s</ul>\n", $result);
+$subtml = '<ul>$item</ul>';
+      $result .= $this->getsortedcontent($tml, 'count', 0, 0, false);
+      return $result;
     }
     
     $result .= $this->contents->getcontent($this->id);
@@ -496,8 +500,8 @@ class tcommontagswidget extends twidget {
   public function getcontent($id, $sidebar) {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem($this->template, $sidebar);
-    $result = $this->owner->getsortedcontent($this->sortname, $this->maxcount, $this->showcount, $tml);
-    return $theme->getwidgetcontent($result, $this->template, $sidebar);
+    $subtml = $theme->getwidgettml($this->template, $sidebar, 'subitems');
+return $this->owner->getsortedcontent($tml, $subtml, $this->sortname, $this->maxcount, $this->showcount);
   }
   
 }//class
