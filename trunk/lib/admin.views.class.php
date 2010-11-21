@@ -102,17 +102,11 @@ $views->delete($idview);
 break;
 
 default:
-$result .= '<script type="text/javascript">
-  $(document).ready(function() {
-  widget_add("#togglelink", $("form"));
-$("form").hide();
-});
-</script>';
-
 $args = targs::instance();
-$args->formtitle = sprintf('<a id="togglelink" href="">%s</a>', $lang->addview);
+$args->formtitle = $html->togglelink();
 $args->action = 'add';
 $result .= $html->adminform('[text=name] [hidden=action]', $args);
+$result .= $html->addscript;
 break;
 }
 

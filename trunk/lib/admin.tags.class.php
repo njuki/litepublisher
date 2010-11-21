@@ -19,41 +19,40 @@ class tadmintags extends tadminmenu {
 if (dbversion) $tags->loadall();
 $parents = array(0 => '-----');
 foreach ($tags->items as $id => $item) {
-$parents[$id] = $item['title']';
+$parents[$id] = $item['title'];
 }
 
     $this->basename = 'tags';
     $html = $this->html;
-    $h2 = $html->h2;
 $lang = tlocal::instance('tags');
     $id = $this->idget();
     $args = targs::instance();
     $args->id = $id;
     $args->adminurl = $this->adminurl;
-$args->ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get=', $id, $istags  ? 'tags' : 'categories'));
+$args->ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
+
+      if (isset($_GET['action']) && ($_GET['action'] == 'delete') && $tags->itemexists($id)) {
+        if  ($this->confirmed) {
+          $tags->delete($id);
+          $result .= $html->h2->successdeleted;
+        } else {
+          return $html->confirmdelete($id, $this->adminurl, $lang->confirmdelete);
+        }
+}
 
     if ($id ==  0) {
+$result .= $html->togglehead();
+$result .= $html->addscript;
 $args->title = '';
 $args->parent = tadminhtml::array2combo($parents, 0);
-    } elseif (!$tags->itemexists($id)) {
-      return $this->notfound;
-    } else {
+        $result .= $html->form($args);
+    } elseif ($tags->itemexists($id)) {
       $item = $tags->getitem($id);
       $args->add($item);
 $args->parent = tadminhtml::array2combo($parents, $item['parent']);
+        $result .= $html->form($args);
+}
 
-      if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
-        if  ($this->confirmed) {
-          $tags->delete($id);
-          return $h2->successdeleted;
-        } else {
-          return $html->confirmdelete($args);
-        }
-      }
-      
-      $result .= $istags ? $h2->edittag : $h2->editcategory;
-        $result = $html->form($args);
-    
     //table
     $perpage = 20;
     $count = $tags->count;
@@ -61,19 +60,18 @@ $args->parent = tadminhtml::array2combo($parents, $item['parent']);
     
       $items = array_slice($tags->items, $from, $perpage);
 foreach ($items as $id => $item) {
-$item['parentname'] =$parents[$id];
+$items[$id]['parentname'] =$parents[$id];
 }
 
 $result .= $html->buildtable($items, array(
 array('right', $lang->count2, '$itemscount'),
 array('left', $lang->parent, '$parentname'),
 array('left', $lang->title,'<a href="$link" title="$title">$title</a>'),
-array('center', $lang->edit, '<a href="$adminurl=$id">$lang.edit</a>'),
-array('center', $lang->delete, '<a href="$adminurl=$id&action=delete">$lang.delete</a>')
+array('center', $lang->edit, "<a href=\"$this->adminurl=\$id\">$lang->edit</a>"),
+array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
 ));
     $result = $html->fixquote($result);
-    
-    $theme = ttheme::instance();
+        $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
@@ -97,20 +95,21 @@ if (isset($parent)) $item['parent'] = (int) $parent;
 if (isset($idview)) $item['idview'] = (int) $idview;
 if (isset($icon)) $item['icon'] = (int) $icon;
 $tags->items[$id] = $item;
-if (dbversion) $tags->db->updateassoc($item);
 if (isset($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);
+unset($item['url']);
+if (dbversion) $tags->db->updateassoc($item);
     }
 
 if (isset($raw) || isset($keywords)) {
 $item = $tags->contents->getitem($id);
-if (isset($raw)) $raw = $tags->
+if (isset($raw)) {
     $filter = tcontentfilter::instance();
     $item['rawcontent'] = $raw;
     $item['content'] = $filter->filter($raw);
 }
 if (isset($keywords)) {
 $item['keywords'] = $keywords;
-$item['description'] $description;
+$item['description'] = $description;
 }
       $tags->contents->setitem($id, $item);
 }
