@@ -22,40 +22,54 @@ return $this->getcontent();
 }
 
 public function getcontent() {
-$tags = tadminhtml::getparam('type', 'tags') == 'tags' ? ttags::instance : tcategories::instance();if ($err = self::auth()) return $err;
-    $id = tadminmenu::idget();
-    if ($id > 0) {
-      if (!$tags->itemexists($id)) return self::error403();
-    }
+$type = tadminhtml::getparam('type', 'tags') == 'tags' ? 'tags' : 'categories';
+$tags = $type == 'tags' ? ttags::instance : tcategories::instance();if ($err = self::auth()) return $err;
+    $id = tadminhtml::idparam();
+    if (($id > 0) && !$tags->itemexists($id)) return self::error403();
 
 $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
    $html = tadminhtml ::instance();
     $html->section = 'tags';
 $lang = tlocal::instance('tags');
 
+if ($id == 0) {
+$views = tviews::instance();
+$name = $type == 'tags' ? 'tag' : 'category';
+$item = array(
+'title' => '',
+'idview' => isset($views->defaults[$name]) ? $views->defaults[$name] : 1,
+'icon' => 0,
+'url' => '',
+'keywords' => '',
+'description' => ''
+);
+} else {
+$item = $tags->getitem($id);
+}
+
 switch ($_GET['get']) {
 case 'view':
-$result = tadminviews::getcomboview($tags->contents->getvalue($id, 'idview'));
-if ($icons = tadminicons::getradio($post->icon)) {
+$result = tadminviews::getcomboview($item['idview']);
+if ($icons = tadminicons::getradio($item['icon'])) {
 $result .= $html->h2->icons;
 $result .= $icons;
 }
 break;
 
 case 'seo':
-$form = new tautoform($post, 'editor', 'editor');
-$form->add($form->url, $form->keywords, $form->description);
-$result = $form->getcontent();
-break;
-
-case 'contenttabs':
-    $args = targs::instance();
-$args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-$result = $html->contenttabs($args);
+$args = targs::instance();
+if ($id == 0) {
+$args->url = '';
+$args->keywords = '';
+$args->description = '';
+} else {
+$args->add($tags->contents->getitem($id));
+}
+$result = $html->parsearg('[text=url] [text=description] [text=keywords]', $args);
 break;
 
 case 'text':
-$result = $this->geteditor('excerpt', $post->excerpt);
+$result = $this->geteditor('raw', $id == 0 ? '' : $tags->contents->getcontent($id));
 break;
 
 default:
