@@ -24,9 +24,9 @@ public function gettitle() {}
     return "<?php Header( 'HTTP/1.0 403 Forbidden'); ?>" . turlmap::htmlheader(false);
   }
   
-public function getcont() {
+  public function getcont() {
     $this->cache = false;
-$view = tview::getview($this);
+    $view = tview::getview($this);
     $theme = $view->theme;
     if ($this->text != '') return $theme->simple($this->text);
     

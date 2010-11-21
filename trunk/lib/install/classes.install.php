@@ -53,9 +53,9 @@ function doinstallclasses() {
   
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->lock();
-        $html = tadminhtml::instance();
-if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
-
+  $html = tadminhtml::instance();
+  if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+  
   foreach(litepublisher::$classes->items as $class => $item) {
     //echo "$class<br>\n";
     if (preg_match('/^(titemspostsowner|tcomment|IXR_Client|IXR_Server|tautoform)$/', $class)) continue;

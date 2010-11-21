@@ -11,38 +11,38 @@ class tadminthemes extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
+  
   public function getcontent() {
     $result = tadminviews::getviewform('/admin/views/themes/');
-$idview = tadminhtml::getparam('idview', 1);
-$view = tview::instance($idview);
+    $idview = tadminhtml::getparam('idview', 1);
+    $view = tview::instance($idview);
     $html = $this->gethtml('themes');;
     $args = targs::instance();
-$args->idview = $idview;
-$theme = $view->theme;
-
-      $result .= $html->formheader($args);
-      $list =    tfiler::getdir(litepublisher::$paths->themes);
-      sort($list);
-      $args->editurl = tadminhtml::getadminlink('/admin/views/edittheme/', 'theme');
-      $parser = tthemeparser::instance();
-      foreach ($list as $name) {
-        if ($about = $parser->getabout($name)) {
-          $about['name'] = $name;
-          $args->add($about);
-          $args->checked = $name == $theme->name;
-          $result .= $html->radioitem($args);
-        }
+    $args->idview = $idview;
+    $theme = $view->theme;
+    
+    $result .= $html->formheader($args);
+    $list =    tfiler::getdir(litepublisher::$paths->themes);
+    sort($list);
+    $args->editurl = tadminhtml::getadminlink('/admin/views/edittheme/', 'theme');
+    $parser = tthemeparser::instance();
+    foreach ($list as $name) {
+      if ($about = $parser->getabout($name)) {
+        $about['name'] = $name;
+        $args->add($about);
+        $args->checked = $name == $theme->name;
+        $result .= $html->radioitem($args);
       }
-      $result .= $html->formfooter();
+    }
+    $result .= $html->formfooter();
     return $html->fixquote($result);
   }
   
   public function processform() {
     $result = '';
-$idview = tadminhtml::getparam('idview', 1);
-$view = tview::instance($idview);
-
+    $idview = tadminhtml::getparam('idview', 1);
+    $view = tview::instance($idview);
+    
     if  (isset($_POST['reparse'])) {
       $parser = tthemeparser::instance();
       try {
@@ -51,15 +51,15 @@ $view = tview::instance($idview);
         $result = $e->getMessage();
       }
     } else {
-        if (empty($_POST['selection']))   return '';
-        try {
-          $view->themename = $_POST['selection'];
+      if (empty($_POST['selection']))   return '';
+      try {
+        $view->themename = $_POST['selection'];
         $result = $this->html->h2->success;
-        } catch (Exception $e) {
-          $view->themename = 'default';
-          $result = $e->getMessage();
-        }
-}    
+      } catch (Exception $e) {
+        $view->themename = 'default';
+        $result = $e->getMessage();
+      }
+    }
     ttheme::clearcache();
     return $result;
   }

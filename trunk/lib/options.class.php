@@ -12,7 +12,7 @@ class toptions extends tevents_storage {
   public $admincookie;
   public $gmt;
   public $errorlog;
-
+  
   
   public static function instance() {
     return getinstance(__class__);
@@ -31,19 +31,19 @@ class toptions extends tevents_storage {
   }
   
   public function afterload() {
-parent::afterload();
+    parent::afterload();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
     if (!defined('dbversion')) {
       define('dbversion', isset($this->data['dbconfig']));
     }
   }
-
-public function savemodified() {
-if (tstorage::savemodified()) $this->onsave();
-}
-
-    public function __set($name, $value) {
+  
+  public function savemodified() {
+    if (tstorage::savemodified()) $this->onsave();
+  }
+  
+  public function __set($name, $value) {
     if (in_array($name, $this->eventnames)) {
       $this->addevent($name, $value['class'], $value['func']);
       return true;

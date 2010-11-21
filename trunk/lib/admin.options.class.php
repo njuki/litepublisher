@@ -7,8 +7,8 @@
 **/
 
 class Tadminoptions extends tadminmenu {
-
-
+  
+  
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
@@ -33,7 +33,7 @@ class Tadminoptions extends tadminmenu {
       $args->image = $home->image;
       $menus = tmenus::instance();
       $args->homemenu =  $menus->home;
-$args->formtitle = '';
+      $args->formtitle = '';
       break;
       
       case 'mail':
@@ -135,7 +135,7 @@ $args->formtitle = '';
       $forbidden = tforbidden::instance();
       $args->forbiddentext = $forbidden->text;
       break;
-
+      
     }
     
   $result  = $this->html->{$this->name}($args);
@@ -149,7 +149,7 @@ $args->formtitle = '';
     switch ($this->name) {
       case 'options':
       $template = ttemplate::instance();
-$site = litepublisher::$site;
+      $site = litepublisher::$site;
       $site->lock();
       $site->fixedurl = isset($fixedurl);
       if (!empty($url) && ($url != $site->url))  $site->seturl($url);
@@ -170,8 +170,8 @@ $site = litepublisher::$site;
       $home->unlock();
       
       $menus = tmenus::instance();
-$menus->home = isset($homemenu);
-$menus->save();
+      $menus->home = isset($homemenu);
+      $menus->save();
       break;
       
       case 'mail':
@@ -347,7 +347,7 @@ $menus->save();
       $forbidden->save();
       $notfound->save();
       break;
-          }
+    }
     
     return '';
   }
@@ -375,6 +375,6 @@ $menus->save();
     }
     $menus->unlock();
   }
-
+  
 }//class
 ?>

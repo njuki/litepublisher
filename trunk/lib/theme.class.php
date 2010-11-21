@@ -11,24 +11,24 @@ class ttheme extends tevents {
   public static $vars = array();
   public $name;
   public $parsing;
-public $templates;
+  public $templates;
   private $themeprops;
-
-public static function exists($name) {
-return file_exists(litepublisher::$paths->data . 'themes'. DIRECTORY_SEPARATOR . $name . '.php') ||
-file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  . 'about.ini');
-}
-
+  
+  public static function exists($name) {
+    return file_exists(litepublisher::$paths->data . 'themes'. DIRECTORY_SEPARATOR . $name . '.php') ||
+    file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  . 'about.ini');
+  }
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
   public static function getinstance($name) {
     if (isset(self::$instances[$name])) return self::$instances[$name];
- $result = getinstance(__class__);
-if ($result->name != '') $result = litepublisher::$classes->newinstance(__class__);
+    $result = getinstance(__class__);
+    if ($result->name != '') $result = litepublisher::$classes->newinstance(__class__);
     $result->name = $name;
-$result->load();
+    $result->load();
     return $result;
   }
   
@@ -38,56 +38,56 @@ $result->load();
     $this->parsing = array();
     $this->data['type'] = 'litepublisher';
     $this->data['parent'] = '';
-$this->addmap('templates', array());
-$this->templates = array(
-0 => '',
-'title' => '',
+    $this->addmap('templates', array());
+    $this->templates = array(
+    0 => '',
+    'title' => '',
     'menu' => array(),
-'content' => array(),
-'sidebars' => array()
-);
+    'content' => array(),
+    'sidebars' => array()
+    );
     $this->themeprops = new tthemeprops($this->templates);
   }
-
-public function getbasename() {
-return 'themes' . DIRECTORY_SEPARATOR . $this->name;
-}
+  
+  public function getbasename() {
+    return 'themes' . DIRECTORY_SEPARATOR . $this->name;
+  }
   
   public function load() {
     if ($this->name == '') return false;
-if (parent::load()) {
-self::$instances[$this->name] = $this;
-return true;
-}
-return $this->parsetheme();
- }
+    if (parent::load()) {
+      self::$instances[$this->name] = $this;
+      return true;
+    }
+    return $this->parsetheme();
+  }
   
   public function parsetheme() {
-if (!file_exists(litepublisher::$paths->themes . $this->name . DIRECTORY_SEPARATOR  . 'about.ini')) {
-$this->error(sprintf('The %s theme not exists', $this->name));
-}
-
+    if (!file_exists(litepublisher::$paths->themes . $this->name . DIRECTORY_SEPARATOR  . 'about.ini')) {
+      $this->error(sprintf('The %s theme not exists', $this->name));
+    }
+    
     $parser = tthemeparser::instance();
     if ($parser->parse($this)) {
-self::$instances[$this->name] = $this;
+      self::$instances[$this->name] = $this;
       $this->save();
     }else {
       $this->error("Theme file $filename not exists");
     }
   }
-
+  
   public function __tostring() {
     return $this->templates[0];
   }
   
   public function __get($name) {
     if (array_key_exists($name, $this->templates)) {
-if (is_array($this->templates[$name])) {
-      $this->themeprops->array = &$this->templates[$name];
-      return $this->themeprops;
-} else {
-return $this->templates[$name];
-}
+      if (is_array($this->templates[$name])) {
+        $this->themeprops->array = &$this->templates[$name];
+        return $this->themeprops;
+      } else {
+        return $this->templates[$name];
+      }
     } elseif ($name == 'comment') {
       $this->themeprops->array = &$this->templates['content']['post']['templatecomments']['comments']['comment'];
       return $this->themeprops;
@@ -95,28 +95,28 @@ return $this->templates[$name];
     
     return parent::__get($name);
   }
-
-public function __set($name, $value) {
+  
+  public function __set($name, $value) {
     if (array_key_exists($name, $this->templates)) {
-if (is_array($this->templates[$name]) && isset($this->templates[$name][0]))  {
-$this->templates[$name][0] = $value;
-} else {
-$this->templates[$name] = $value;
-}
-return;
-}
-return parent::__set($name, $value);
-}
+      if (is_array($this->templates[$name]) && isset($this->templates[$name][0]))  {
+        $this->templates[$name][0] = $value;
+      } else {
+        $this->templates[$name] = $value;
+      }
+      return;
+    }
+    return parent::__set($name, $value);
+  }
   
   public function getsidebarscount() {
     return count($this->templates['sidebars']);
   }
-
-
-private function getvar($name) {
-if ($name == 'site')  return litepublisher::$site;
-
-if (isset($GLOBALS[$name])) {
+  
+  
+  private function getvar($name) {
+    if ($name == 'site')  return litepublisher::$site;
+    
+    if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
       $classes = litepublisher::$classes;
@@ -137,21 +137,21 @@ if (isset($GLOBALS[$name])) {
       litepublisher::$options->trace(sprintf('Object %s not found in %s', $name, $this->parsing[count($this->parsing) -1]));
       return false;
     }
-
-return $var;
-}
+    
+    return $var;
+  }
   
   public function parsecallback($names) {
     $name = $names[1];
     $prop = $names[2];
-if (isset(self::$vars[$name])) {
+    if (isset(self::$vars[$name])) {
       $var =  self::$vars[$name];
-} elseif ($var = $this->getvar($name)) {
-self::$vars[$name] = $var;    
-} else {
-return '';
-}
-
+    } elseif ($var = $this->getvar($name)) {
+      self::$vars[$name] = $var;
+    } else {
+      return '';
+    }
+    
     try {
     return $var->{$prop};
     } catch (Exception $e) {
@@ -165,7 +165,7 @@ return '';
     $s = str_replace('$site.url', litepublisher::$site->url, (string) $s);
     array_push($this->parsing, $s);
     try {
-$s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
+      $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
       $result = preg_replace_callback('/\$(\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
@@ -242,7 +242,7 @@ $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
     }
     
     $tml = $lite ? (string) $this->content->excerpts->lite : (string) $this->content->excerpts;
-if ($tml == '') return $result;
+    if ($tml == '') return $result;
     return str_replace('$excerpt', $result, $this->parse($tml));
   }
   
@@ -250,7 +250,7 @@ if ($tml == '') return $result;
     if (count($items) == 0) return '';
     $result = '';
     if ($tml == '') $tml = $this->getwidgetitem('posts', $sidebar);
-
+    
     foreach ($items as $id) {
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
@@ -287,14 +287,14 @@ if ($tml == '') return $result;
   public function  getwidgettml($index, $name, $tml) {
     $sidebars = &$this->templates['sidebars'];
     if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
-if ($index >= count($sidebars)) {
-$index = count($sidebars) - 1;
-    if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
-}
+    if ($index >= count($sidebars)) {
+      $index = count($sidebars) - 1;
+      if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
+    }
     if (isset($sidebars[$index]['widget'][$tml])) return $sidebars[$index]['widget'][$tml];
-$this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
-}
-
+    $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
+  }
+  
   public function simple($content) {
     return str_replace('$content', $content, $this->content->simple);
   }
@@ -311,11 +311,11 @@ class tthemeprops {
 public function __construct(array &$array) { $this->array = &$array; }
   
   public function __get($name) {
-if (!isset($this->array[$name])) {
-litepublisher::$options->trace("$name not found\n" . implode("\n", array_keys($this->array)));
-litepublisher::$options->showerrors();
-}
-
+    if (!isset($this->array[$name])) {
+      litepublisher::$options->trace("$name not found\n" . implode("\n", array_keys($this->array)));
+      litepublisher::$options->showerrors();
+    }
+    
     if (is_array($this->array[$name])) {
       $this->array = &$this->array[$name];
       return $this;
@@ -324,24 +324,24 @@ litepublisher::$options->showerrors();
   }
   
 public function __set($name, $value) {$this->array[$name] = $value; }
-
-public function __call($name, $params) {
-$theme = ttheme::instance();
-if (isset($params[0]) && is_object($params[0]) && ($params[0] instanceof targs)) {
-return $theme->parsearg( (string) $this->$name, $params[0]);
-} else {
-return $theme->parse((string) $this->$name);
-}
-}
-
-public function __tostring() { 
-if (!isset($this->array[0])) {
-litepublisher::$options->trace(implode("\n", array_keys(($this->array))));
-litepublisher::$options->showerrors();
-}
-
-return $this->array[0]; 
-}
+  
+  public function __call($name, $params) {
+    $theme = ttheme::instance();
+    if (isset($params[0]) && is_object($params[0]) && ($params[0] instanceof targs)) {
+      return $theme->parsearg( (string) $this->$name, $params[0]);
+    } else {
+      return $theme->parse((string) $this->$name);
+    }
+  }
+  
+  public function __tostring() {
+    if (!isset($this->array[0])) {
+      litepublisher::$options->trace(implode("\n", array_keys(($this->array))));
+      litepublisher::$options->showerrors();
+    }
+    
+    return $this->array[0];
+  }
   public function __isset($name) {
     return array_key_exists($name, $this->array);
   }

@@ -10,17 +10,17 @@ function tcontactformInstall($self) {
   $html = tadminhtml::instance();
   $html->section = 'contactform';
   $lang = tlocal::instance('contactform');
-    $self->title =  $lang->title;;
-$self->subject = $lang->subject;
-$self->success  = $html->success();
-$self->errmesg = $html->errmesg();
-$filter = tcontentfilter::instance();
-$value = $filter->phpcode;
-$filter->phpcode = false;
+  $self->title =  $lang->title;;
+  $self->subject = $lang->subject;
+  $self->success  = $html->success();
+  $self->errmesg = $html->errmesg();
+  $filter = tcontentfilter::instance();
+  $value = $filter->phpcode;
+  $filter->phpcode = false;
   $self->content = $html->form();
-$filter->phpcode = $value;
+  $filter->phpcode = $value;
   $self->order = 10;
-
+  
   $menus = tmenus::instance();
   $menus->add($self);
 }

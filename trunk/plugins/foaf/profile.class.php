@@ -153,7 +153,7 @@ public function gethead() { }
   public function getdescription() {
     return tcontentfilter::getexcerpt($this->bio, 128);
   }
-
+  
   public function getcont() {
     ttheme::$vars['profile'] = $this;
     $theme = ttheme::instance();

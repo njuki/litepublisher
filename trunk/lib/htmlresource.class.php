@@ -63,18 +63,18 @@ class tadminhtml {
   
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
-      $admin = $theme->content->admin;
-// parse tags [form] .. [/form]
-if (is_int($i = strpos($s, '[form]'))) {
-$replace = substr($admin->form, 0, strpos($admin->form, '$items'));
+    $admin = $theme->content->admin;
+    // parse tags [form] .. [/form]
+    if (is_int($i = strpos($s, '[form]'))) {
+      $replace = substr($admin->form, 0, strpos($admin->form, '$items'));
       $s = substr_replace($s, $replace, $i, strlen('[form]'));
-}
-
-if ($i = strpos($s, '[/form]')) {
-$replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items'));
+    }
+    
+    if ($i = strpos($s, '[/form]')) {
+      $replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items'));
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
-}
-
+    }
+    
     if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
@@ -90,9 +90,9 @@ $replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items
         }
         
         $tag = strtr($admin->$type, array(
-'$name' => $name,
-'$value' =>$varname
-));
+        '$name' => $name,
+        '$value' =>$varname
+        ));
         $s = str_replace($item[0], $tag, $s);
       }
     }
@@ -100,15 +100,15 @@ $replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
-
-public static function specchars($s) {
-return strtr(            htmlspecialchars($s), array(
-            '"' => '&quot;',
- "'" =>'&#39;',
- '$' => '&#36;'
-));
-}
-
+  
+  public static function specchars($s) {
+    return strtr(            htmlspecialchars($s), array(
+    '"' => '&quot;',
+    "'" =>'&#39;',
+    '$' => '&#36;'
+    ));
+  }
+  
   
   public function fixquote($s) {
     $s = str_replace("\\'", '\"', $s);
@@ -132,19 +132,19 @@ return strtr(            htmlspecialchars($s), array(
       $this->ini = $v + $this->ini;
     }
   }
-
+  
   public static function getparam($name, $default) {
     return !empty($_GET[$name]) ? $_GET[$name] : (!empty($_POST[$name]) ? $_POST[$name] : $default);
   }
-
-  public static function idparam() {
-return (int) tadminhtml::getparam('id', 0);
-}
   
-public static function getadminlink($path, $params) {
+  public static function idparam() {
+    return (int) tadminhtml::getparam('id', 0);
+  }
+  
+  public static function getadminlink($path, $params) {
     return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
-}
-
+  }
+  
   public static function array2combo(array $items, $selected) {
     $result = '';
     foreach ($items as $i => $title) {
@@ -154,8 +154,8 @@ public static function getadminlink($path, $params) {
   }
   
   public static function getcombobox($name, array $items, $selected) {
-return sprintf('<select name="%1$s" id="%1$s">%2$s</select>', $name,
-self::array2combo($items, $selected));
+    return sprintf('<select name="%1$s" id="%1$s">%2$s</select>', $name,
+    self::array2combo($items, $selected));
   }
   
   public function adminform($tml, targs $args) {
@@ -168,52 +168,52 @@ self::array2combo($items, $selected));
     return str_replace(array('$name', '$value'),
     array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
   }
-
-public function getedit($name, $value, $title) {
-$theme = ttheme::instance();
-    return strtr($theme->content->admin->text, array(
-'$lang.$name' => $title,
-'$name' => $name,
-'$value' => $value
-));
-}
-
-public function getcombo($name, $value, $title) {
-    return strtr(ttheme::instance()->content->admin->combo, array(
-'$lang.$name' => $title,
-'$name' => $name,
-'$value' => $value
-));
-}
-
-public function gettable($head, $body) {
-return strtr($this->ini['common']['table'], array(
-'$tablehead' => $head,
-'$tablebody' => $body));
-}
   
-public function buildtable(array $items, array $tablestruct) {
-$head = '';
-$body = '';
-$tml = '<tr>';
-foreach ($tablestruct as $elem) {
-$head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
-$tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
-}
-$tml .= '</tr>';
-
-$theme = ttheme::instance();
-$args = targs::instance();
-foreach ($items as $id => $item) {
-$args->add($item);
-if (!isset($item['id'])) $args->id = $id;
-$body .= $theme->parsearg($tml, $args);
-}
-$args->tablehead  = $head;
-$args->tablebody = $body;
-return $theme->parsearg($this->ini['common']['table'], $args);
-}
-
+  public function getedit($name, $value, $title) {
+    $theme = ttheme::instance();
+    return strtr($theme->content->admin->text, array(
+    '$lang.$name' => $title,
+    '$name' => $name,
+    '$value' => $value
+    ));
+  }
+  
+  public function getcombo($name, $value, $title) {
+    return strtr(ttheme::instance()->content->admin->combo, array(
+    '$lang.$name' => $title,
+    '$name' => $name,
+    '$value' => $value
+    ));
+  }
+  
+  public function gettable($head, $body) {
+    return strtr($this->ini['common']['table'], array(
+    '$tablehead' => $head,
+    '$tablebody' => $body));
+  }
+  
+  public function buildtable(array $items, array $tablestruct) {
+    $head = '';
+    $body = '';
+    $tml = '<tr>';
+    foreach ($tablestruct as $elem) {
+      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
+      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    }
+    $tml .= '</tr>';
+    
+    $theme = ttheme::instance();
+    $args = targs::instance();
+    foreach ($items as $id => $item) {
+      $args->add($item);
+      if (!isset($item['id'])) $args->id = $id;
+      $body .= $theme->parsearg($tml, $args);
+    }
+    $args->tablehead  = $head;
+    $args->tablebody = $body;
+    return $theme->parsearg($this->ini['common']['table'], $args);
+  }
+  
   public function confirmdelete($id, $adminurl, $mesg) {
     $args = targs::instance();
     $args->id = $id;
@@ -222,150 +222,150 @@ return $theme->parsearg($this->ini['common']['table'], $args);
     $args->confirm = $mesg;
     return $this->confirmform($args);
   }
-
+  
 }//class
 
 class tautoform {
-const editor = 'editor';
-const text = 'text';
-const checkbox = 'checkbox';
-const hidden = 'hidden';
-
-public $obj;
-public $props;
-public $section;
-public $_title;
-
+  const editor = 'editor';
+  const text = 'text';
+  const checkbox = 'checkbox';
+  const hidden = 'hidden';
+  
+  public $obj;
+  public $props;
+  public $section;
+  public $_title;
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
-public function __construct(tdata $obj, $section, $titleindex) {
-$this->obj = $obj;
-$this->section = $section;
-$this->props = array();
-$lang = tlocal::instance($section);
-$this->_title = $lang->$titleindex;
-}
-
-public function __set($name, $value) {
-$this->props[] = array(
-'obj' => $this->obj,
-'propname' => $name,
-'type' => $value
-);
-}
-
-public function __get($name) {
-//var_dump($name, $this, $this->obj, $this->obj->$name);
-//litepublisher::$options->error();
-if (isset($this->obj->$name)) {
-return array(
-'obj' => $this->obj,
-'propname' => $name
-);
-}
-//tlogsubsystem::error(sprintf('The property %s not found in class %s', $name, get_class($this->obj));
-}
-
-public function __call($name, $args) {
-if (isset($this->obj->$name)) {
-$result = array(
-'obj' => $this->obj,
-'propname' => $name,
-'type' => $args[0]
-);
-if (($result['type'] == 'combo') && isset($args[1]))  $result['items'] = $args[1];
-return $result;
-}
-}
-
-public function add() {
+  public function __construct(tdata $obj, $section, $titleindex) {
+    $this->obj = $obj;
+    $this->section = $section;
+    $this->props = array();
+    $lang = tlocal::instance($section);
+    $this->_title = $lang->$titleindex;
+  }
+  
+  public function __set($name, $value) {
+    $this->props[] = array(
+    'obj' => $this->obj,
+    'propname' => $name,
+    'type' => $value
+    );
+  }
+  
+  public function __get($name) {
+    //var_dump($name, $this, $this->obj, $this->obj->$name);
+    //litepublisher::$options->error();
+    if (isset($this->obj->$name)) {
+      return array(
+      'obj' => $this->obj,
+      'propname' => $name
+      );
+    }
+    //tlogsubsystem::error(sprintf('The property %s not found in class %s', $name, get_class($this->obj));
+  }
+  
+  public function __call($name, $args) {
+    if (isset($this->obj->$name)) {
+      $result = array(
+      'obj' => $this->obj,
+      'propname' => $name,
+      'type' => $args[0]
+      );
+      if (($result['type'] == 'combo') && isset($args[1]))  $result['items'] = $args[1];
+      return $result;
+    }
+  }
+  
+  public function add() {
     $a = func_get_args();
-foreach ($a as $prop) {
-$this->addprop($prop);
-}
-}
-
-public function addprop(array $prop) {
-if (isset($prop['type'])) {
-$type = $prop['type'];
-} else {
-$type = 'text';
-$value = $prop['obj']->{$prop['propname']};
-if (is_bool($value)) {
-$type = 'checkbox';
-} elseif(strpos($value, "\n")) {
-$type = 'editor';
-}
-}
-
-$item = array(
-'obj' => $prop['obj'],
-'propname' => $prop['propname'],
-'type' => $type,
-'title' => isset($prop['title']) ? $prop['title'] : ''
-);
-if (($type == 'combo') && isset($prop['items'])) $item['items'] = $prop['items'];
-$this->props[] = $item;
-return count($this->props) - 1;
-}
-
-public function getcontent() {
-$result = '';
-$lang = tlocal::instance();
-$theme = ttheme::instance();
-      $admin = $theme->content->admin;
-foreach ($this->props as $prop) {
-$value = $prop['obj']->{$prop['propname']};
-switch ($prop['type']) {
-case 'text':
-case 'editor':
-$value = tadminhtml::specchars($value);
-break;
-
-case 'checkbox':
-$value = $value ? 'checked="checked"' : '';
-break;
-
-case 'combo':
-$value = tadminhtml  ::array2combo($prop['items'], $value);
-break;
-}
-
-$result .= strtr($admin->{$prop['type']}, array(
-'$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
-'$name' => $prop['propname'],
-'$value' => $value
-));
-}
-return $result;
-}
-
-public function getform() {
-$args = targs::instance();
-$args->formtitle = $this->_title;
+    foreach ($a as $prop) {
+      $this->addprop($prop);
+    }
+  }
+  
+  public function addprop(array $prop) {
+    if (isset($prop['type'])) {
+      $type = $prop['type'];
+    } else {
+      $type = 'text';
+    $value = $prop['obj']->{$prop['propname']};
+      if (is_bool($value)) {
+        $type = 'checkbox';
+      } elseif(strpos($value, "\n")) {
+        $type = 'editor';
+      }
+    }
+    
+    $item = array(
+    'obj' => $prop['obj'],
+    'propname' => $prop['propname'],
+    'type' => $type,
+    'title' => isset($prop['title']) ? $prop['title'] : ''
+    );
+    if (($type == 'combo') && isset($prop['items'])) $item['items'] = $prop['items'];
+    $this->props[] = $item;
+    return count($this->props) - 1;
+  }
+  
+  public function getcontent() {
+    $result = '';
+    $lang = tlocal::instance();
+    $theme = ttheme::instance();
+    $admin = $theme->content->admin;
+    foreach ($this->props as $prop) {
+    $value = $prop['obj']->{$prop['propname']};
+      switch ($prop['type']) {
+        case 'text':
+        case 'editor':
+        $value = tadminhtml::specchars($value);
+        break;
+        
+        case 'checkbox':
+        $value = $value ? 'checked="checked"' : '';
+        break;
+        
+        case 'combo':
+        $value = tadminhtml  ::array2combo($prop['items'], $value);
+        break;
+      }
+      
+    $result .= strtr($admin->{$prop['type']}, array(
+    '$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
+      '$name' => $prop['propname'],
+      '$value' => $value
+      ));
+    }
+    return $result;
+  }
+  
+  public function getform() {
+    $args = targs::instance();
+    $args->formtitle = $this->_title;
     $args->items = $this->getcontent();
-$theme = ttheme::instance();
+    $theme = ttheme::instance();
     return $theme->parsearg($theme->content->admin->form, $args);
-}
-
-public function processform() {
-foreach ($this->props as $prop) $prop['obj']->lock();
-
-foreach ($this->props as $prop) {
-$name = $prop['propname'];
-if (isset($_POST[$name])) {
-$value = $_POST[$name];
-if ($value == 'checked') $value = true;
-} else {
-$value = false;
-}
-$prop['obj']->$name = $value;
-}
-
-foreach ($this->props as $prop) $prop['obj']->unlock();
-}
-
+  }
+  
+  public function processform() {
+    foreach ($this->props as $prop) $prop['obj']->lock();
+    
+    foreach ($this->props as $prop) {
+      $name = $prop['propname'];
+      if (isset($_POST[$name])) {
+        $value = $_POST[$name];
+        if ($value == 'checked') $value = true;
+      } else {
+        $value = false;
+      }
+      $prop['obj']->$name = $value;
+    }
+    
+    foreach ($this->props as $prop) $prop['obj']->unlock();
+  }
+  
 }//class
 ?>

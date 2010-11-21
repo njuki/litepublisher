@@ -44,18 +44,18 @@ function queueComplete(numFilesUploaded) {
 
 //central event
 function uploadSuccess(file, serverData) {
-var haschilds = $("#newfilestab").children().length > 0;
-$("#newfilestab").append(serverData);
-var html = $("#newfilestab").children(":last").html();
-if (haschilds) {
-$("#newfilestab").children(":last").remove();
-$("#newfilestab").children(":first").append(html);
-}
-html =str_replace(
-['uploaded-', 'new-post-', 'newfile-'],
-['curfile-', 'curpost-', 'currentfile-'],
-html);
-$('#currentfilestab > :first').append(html);
+  var haschilds = $("#newfilestab").children().length > 0;
+  $("#newfilestab").append(serverData);
+  var html = $("#newfilestab").children(":last").html();
+  if (haschilds) {
+    $("#newfilestab").children(":last").remove();
+    $("#newfilestab").children(":first").append(html);
+  }
+  html =str_replace(
+  ['uploaded-', 'new-post-', 'newfile-'],
+  ['curfile-', 'curpost-', 'currentfile-'],
+  html);
+  $('#currentfilestab > :first').append(html);
 }
 
 function createswfu () {
@@ -103,18 +103,18 @@ function createswfu () {
 }
 
 function getcookie(name) {
-        if (document.cookie && document.cookie != '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    return decodeURIComponent(cookie.substring(name.length + 1));
-                }
-            }
-        }
-        return '';
+  if (document.cookie && document.cookie != '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]);
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) == (name + '=')) {
+        return decodeURIComponent(cookie.substring(name.length + 1));
+      }
     }
+  }
+  return '';
+}
 
 
 var swfu = createswfu();

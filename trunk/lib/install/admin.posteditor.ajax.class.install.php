@@ -7,10 +7,10 @@
 **/
 
 function tajaxposteditorInstall($self) {
-litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', get_class($self));
+  litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', get_class($self));
 }
 
 function tajaxposteditorUninstall($self) {
-turlmap::unsub($self);
+  turlmap::unsub($self);
 }
 ?>

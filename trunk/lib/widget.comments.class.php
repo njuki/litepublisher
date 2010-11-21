@@ -32,12 +32,12 @@ class tcommentswidget extends twidget {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('comments', $sidebar);
-$url = litepublisher::$site->url;
+    $url = litepublisher::$site->url;
     $args = targs::instance();
     $args->onrecent = tlocal::$data['comment']['onrecent'];
     foreach ($recent as $item) {
       $args->add($item);
-$args->link = $url . $item['posturl'];
+      $args->link = $url . $item['posturl'];
       $args->content = tcontentfilter::getexcerpt($item['content'], 120);
       $result .= $theme->parsearg($tml,$args);
     }

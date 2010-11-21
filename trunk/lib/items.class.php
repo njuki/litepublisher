@@ -24,7 +24,7 @@ class titems extends tevents {
   
   public function load() {
     if ($this->dbversion) {
-return tstorage::load($this);
+      return tstorage::load($this);
     } else {
       return parent::load();
     }
@@ -145,15 +145,15 @@ return tstorage::load($this);
 }//class
 
 class titems_storage extends titems {
-
-public function load() {
-return tstorage::load($this);
-}
-
-public function save() {
-return tstorage::save($this);
-}
-
+  
+  public function load() {
+    return tstorage::load($this);
+  }
+  
+  public function save() {
+    return tstorage::save($this);
+  }
+  
 }//class
 
 class tsingleitems extends titems {

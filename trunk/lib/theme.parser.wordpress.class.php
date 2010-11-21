@@ -64,9 +64,9 @@ class twordpressthemeparser {
     return compact( array_keys($default_headers) );
   }
   
-public static function _cleanup_header_comment($str) {
-  return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
-}
-
+  public static function _cleanup_header_comment($str) {
+    return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
+  }
+  
 }//class
 ?>

@@ -229,7 +229,7 @@ class tcomments extends titems {
   
   public function dogetcontent($hold, $idauthor) {
     $result = '';
-$post = tpost::instance($this->pid);
+    $post = tpost::instance($this->pid);
     $from = 0;
     $items = array_keys($this->items);
     if (!$hold) {
@@ -255,16 +255,16 @@ $post = tpost::instance($this->pid);
       } else {
         $moderate = '';
       }
-
-    $tmlcomment= $theme->content->post->templatecomments->comments->comment;
-    $tml = strtr($tmlcomment->array[0], array(
-'$moderate' => $moderate, 
-'$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
-));
+      
+      $tmlcomment= $theme->content->post->templatecomments->comments->comment;
+      $tml = strtr($tmlcomment->array[0], array(
+      '$moderate' => $moderate,
+      '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
+      ));
       
       $i = 1;
-    $class1 = $tmlcomment->class1;
-    $class2 = $tmlcomment->class2;
+      $class1 = $tmlcomment->class1;
+      $class2 = $tmlcomment->class2;
       foreach ($items as $id) {
         //one method for approved and hold comments
         if (!litepublisher::$options->admincookie && $hold) {
@@ -275,16 +275,16 @@ $post = tpost::instance($this->pid);
         $result .= $theme->parsearg($tml, $args);
       }
     }//if count
-
+    
     if (!$ismoder) {
       if ($result == '') return '';
     }
     
     if ($hold) {
-    $tml = (string) $theme->content->post->templatecomments->holdcomments;
+      $tml = (string) $theme->content->post->templatecomments->holdcomments;
     } else {
-    $tml = (string) $theme->content->post->templatecomments->comments;
-}
+      $tml = (string) $theme->content->post->templatecomments->comments;
+    }
     
     $args = targs::instance();
     $args->from = $from + 1;

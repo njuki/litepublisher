@@ -20,8 +20,8 @@ class tmenus extends titems {
     $this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
     $this->addmap('tree', array());
-$this->data['idhome'] = 0;
-$this->data['home'] = false;
+    $this->data['idhome'] = 0;
+    $this->data['home'] = false;
   }
   
   public function getlink($id) {
@@ -38,19 +38,19 @@ $this->data['home'] = false;
       if (!isset($item->data[$prop])) $item->data[$prop] = '';
     }
     
-if ($item instanceof thomepage) {
-$item->url = '/';
-} else {
-    $linkgen = tlinkgenerator::instance();
-    $item->url = $linkgen->addurl($item, 'menu');
-}
-
-if ($item->idview == 1) {
-$views = tviews::instance();
-if (isset($views->defaults['menu'])) $item->data['idview'] = $views->defaults['menu'];
-}
-
-
+    if ($item instanceof thomepage) {
+      $item->url = '/';
+    } else {
+      $linkgen = tlinkgenerator::instance();
+      $item->url = $linkgen->addurl($item, 'menu');
+    }
+    
+    if ($item->idview == 1) {
+      $views = tviews::instance();
+      if (isset($views->defaults['menu'])) $item->data['idview'] = $views->defaults['menu'];
+    }
+    
+    
     $id = ++$this->autoid;
     $this->items[$id] = array(
     'id' => $id,
@@ -92,10 +92,10 @@ if (isset($views->defaults['menu'])) $item->data['idview'] = $views->defaults['m
   }
   
   public function edit(tmenu $item) {
-if (!($item instanceof thomepage)) {
-    $linkgen = tlinkgenerator::instance();
-    $linkgen->editurl($item, 'menu');
-}
+    if (!($item instanceof thomepage)) {
+      $linkgen = tlinkgenerator::instance();
+      $linkgen->editurl($item, 'menu');
+    }
     
     $this->lock();
     $this->sort();
@@ -107,18 +107,18 @@ if (!($item instanceof thomepage)) {
   
   public function  delete($id) {
     if (!$this->itemexists($id)) return false;
-if($id == $this->idhome) return false;
+    if($id == $this->idhome) return false;
     if ($this->haschilds($id)) return false;
-litepublisher::$urlmap->delete($this->items[$id]['url']);
+    litepublisher::$urlmap->delete($this->items[$id]['url']);
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
     $this->unlock();
     $this->deleted($id);
-$filename = $this->dir . $id . '.php';
-if (file_exists($filename))unlink($filename);
-$filename = $this->dir . $id . '.bak.php';
-if (file_exists($filename))unlink($filename);
+    $filename = $this->dir . $id . '.php';
+    if (file_exists($filename))unlink($filename);
+    $filename = $this->dir . $id . '.bak.php';
+    if (file_exists($filename))unlink($filename);
     litepublisher::$urlmap->clearcache();
     return true;
   }
@@ -126,18 +126,18 @@ if (file_exists($filename))unlink($filename);
   public function deleteurl($url) {
     if ($id = $this->url2id($url)) return $this->delete($id);
   }
-
-public function deletetree($id) {
+  
+  public function deletetree($id) {
     if (!$this->itemexists($id)) return false;
-if($id == $this->idhome) return false;
-$this->lock();
-$childs = $this->getchilds($id);
-foreach ($childs as $child) {
-$this->deletetree($child);
-}
-$this->delete($id);
-$this->unlock();
-}
+    if($id == $this->idhome) return false;
+    $this->lock();
+    $childs = $this->getchilds($id);
+    foreach ($childs as $child) {
+      $this->deletetree($child);
+    }
+    $this->delete($id);
+    $this->unlock();
+  }
   
   public function url2id($url) {
     foreach ($this->items as $id => $item) {
@@ -163,7 +163,7 @@ $this->unlock();
       if ($item['parent'] == $id) return true;
     }
     return false;
-      }
+  }
   
   public function sort() {
     $this->tree = $this->getsubtree(0);
@@ -231,34 +231,34 @@ $this->unlock();
     }
     return array_keys($tree);
   }
-
+  
   public function exclude($id) {
-return !$this->home && ($id == $this->idhome);
-}
-
+    return !$this->home && ($id == $this->idhome);
+  }
+  
   public function getmenu($hover, $current) {
-$result = '';
+    $result = '';
     if (count($this->tree) > 0) {
-    $theme = ttheme::instance();
-    if ($hover) {
-      $items = $this->getsubmenu($this->tree, $current);
-    } else {
-$items = '';
-    $tml = $theme->menu->item;
-    $args = targs::instance();
-    $args->submenu = '';
-    foreach ($this->tree as $id => $subitems) {
-if ($this->exclude($id)) continue;
-      $args->add($this->items[$id]);
-      $items .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
-    }
-}
-
+      $theme = ttheme::instance();
+      if ($hover) {
+        $items = $this->getsubmenu($this->tree, $current);
+      } else {
+        $items = '';
+        $tml = $theme->menu->item;
+        $args = targs::instance();
+        $args->submenu = '';
+        foreach ($this->tree as $id => $subitems) {
+          if ($this->exclude($id)) continue;
+          $args->add($this->items[$id]);
+          $items .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
+        }
+      }
+      
       $this->callevent('onitems', array(&$items));
       $result = str_replace('$item', $items, (string) $theme->menu);
-}
-      $this->callevent('onmenu', array(&$result));
-return $result;
+    }
+    $this->callevent('onmenu', array(&$result));
+    return $result;
   }
   
   private function getsubmenu(&$tree, $current) {
@@ -268,8 +268,8 @@ return $result;
     $tml = $menu->item;
     $args = targs::instance();
     foreach ($tree as $id => $items) {
-if ($this->exclude($id)) continue;
-$submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
+      if ($this->exclude($id)) continue;
+      $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
       $this->callevent('onsubitems', array($id, &$subitems));
       $args->submenu = $submenu;
       $args->add($this->items[$id]);
@@ -400,38 +400,38 @@ public function gethead() {}
   public function getdescription() {
     return $this->data['description'];
   }
-
-public function getidview() {
-return $this->data['idview'];
-}
-
-public function setidview($id) {
-if ($id != $this->idview) {
-$this->data['idview'] = $id;
-$this->save();
-}
-}
-
-    public function getcont() {
+  
+  public function getidview() {
+    return $this->data['idview'];
+  }
+  
+  public function setidview($id) {
+    if ($id != $this->idview) {
+      $this->data['idview'] = $id;
+      $this->save();
+    }
+  }
+  
+  public function getcont() {
     return ttheme::parsevar('menu', $this, ttheme::instance()->content->menu);
   }
   
   public function getlink() {
     return litepublisher::$site->url . $this->url;
   }
-
-public function getcontent() {
-return $this->data['content'];
-}
-
-public function setcontent($s) {
+  
+  public function getcontent() {
+    return $this->data['content'];
+  }
+  
+  public function setcontent($s) {
     if (!is_string($s)) $this->error('Error! Page content must be string');
     if ($s != $this->rawcontent) {
       $this->rawcontent = $s;
       $filter = tcontentfilter::instance();
       $this->data['content'] = $filter->filter($s);
     }
-}
+  }
   
 }//class
 

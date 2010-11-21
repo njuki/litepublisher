@@ -11,7 +11,7 @@ class ttemplate extends tevents_storage {
   public $url;
   public $context;
   public $itemplate;
-public $view;
+  public $view;
   public $ltoptions;
   public $hover;
   //public $footer;
@@ -34,7 +34,7 @@ public $view;
     litepublisher::$site->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
     $this->hover = true;
     $this->data['hovermenu'] = true;
-$this->data['heads'] = '';
+    $this->data['heads'] = '';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
   }
@@ -68,13 +68,13 @@ $this->data['heads'] = '';
     $this->context = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
-$this->view = $this->itemplate ? tview::getview($context) : tview::instance();
+    $this->view = $this->itemplate ? tview::getview($context) : tview::instance();
     $theme = $this->view->theme;
-litepublisher::$classes->instances[get_class($theme)] = $theme;
+    litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->hovermenu && $theme->menu->hover;
-$this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
+    $this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     return $result;
@@ -100,7 +100,7 @@ $this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
     
     $args = targs::instance();
     $args->title = $title;
-$theme = $this->view->theme;
+    $theme = $this->view->theme;
     return $theme->parsearg($theme->title, $args);
   }
   
@@ -171,24 +171,24 @@ $theme = $this->view->theme;
   public function getjavascript($filename) {
     return sprintf('<script type="text/javascript" src="%s"></script>', litepublisher::$site->files . $filename);
   }
-
-public function addtohead($s) {
-$s = trim($s);
-if (false === strpos($this->heads, $s)) {
-$this->heads = trim($this->heads) . "\n" . $s;
-$this->save();
-}
-}
-
-public function deletefromhead($s) {
-$s = trim($s);
-$i = strpos($this->heads, $s);
-if (false !== $i) {
-$this->heads = substr_replace($this->heads, '', $i, strlen($s));
-$this->heads = trim(str_replace("\n\n", "\n", $this->heads));
-$this->save();
-}
-}
+  
+  public function addtohead($s) {
+    $s = trim($s);
+    if (false === strpos($this->heads, $s)) {
+      $this->heads = trim($this->heads) . "\n" . $s;
+      $this->save();
+    }
+  }
+  
+  public function deletefromhead($s) {
+    $s = trim($s);
+    $i = strpos($this->heads, $s);
+    if (false !== $i) {
+      $this->heads = substr_replace($this->heads, '', $i, strlen($s));
+      $this->heads = trim(str_replace("\n\n", "\n", $this->heads));
+      $this->save();
+    }
+  }
   
   public function gethead() {
     $result = $this->heads;

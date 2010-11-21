@@ -8,9 +8,9 @@
 
 function tadminmenusInstall($self) {
   $self->lock();
-$self->heads = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
-
+  $self->heads = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />
+  <script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
+  
   //posts
   $posts = $self->createitem(0, 'posts', 'author', 'tadminposts');
   {
@@ -41,16 +41,16 @@ $self->heads = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.
   }
   
   $views = $self->createitem(0, 'views', 'admin', 'tadminviews');
-{
-$self->createitem($views, 'themes', 'admin', 'tadminthemes');
+  {
+    $self->createitem($views, 'themes', 'admin', 'tadminthemes');
     $self->createitem($views, 'edittheme', 'admin', 'tadminthemefiles');
-$self->createitem($views, 'widgets', 'admin', 'tadminwidgets');
+    $self->createitem($views, 'widgets', 'admin', 'tadminwidgets');
     $self->createitem($views, 'addcustom', 'admin', 'tadminwidgets');
     $self->createitem($views, 'defaults', 'admin', 'tadminviews');
     $self->createitem($views, 'spec', 'admin', 'tadminviews');
     $self->createitem($views, 'headers', 'admin', 'tadminviews');
     $self->createitem($views, 'admin', 'admin', 'tadminviews');
-}
+  }
   
   $menu = $self->createitem(0, 'menu', 'editor', 'tadminmenumanager');
   {

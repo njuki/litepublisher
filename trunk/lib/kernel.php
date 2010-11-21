@@ -125,19 +125,16 @@ class tdata {
   }
   
   public function load() {
-    if ($this->dbversion == 'full') return $this->LoadFromDB();
-    $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
-    if (file_exists($filename)) {
-      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
-    }
+    //if ($this->dbversion == 'full') return $this->LoadFromDB();
+    return tfilestorage::load($this);
   }
   
   public function save() {
-    if (self::$savedisabled || ($this->lockcount > 0)) return;
+    if ($this->lockcount > 0) return;
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
-      self::savetofile(litepublisher::$paths->data .$this->getbasename(), self::comment_php($this->savetostring()));
+      tfilestorage::save($this);
     }
   }
   
@@ -199,6 +196,24 @@ class tdata {
     return litepublisher::$db->prefix . $this->table;
   }
   
+}//class
+
+class tfilestorage {
+  public static $disabled;
+  
+  public static function save(tdata $obj) {
+    if (self::$disabled) return false;
+    return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), self::comment_php($obj->savetostring()));
+  }
+  
+  public static function load(tdata $obj) {
+    $filename = litepublisher::$paths->data . $obj->getbasename() .'.php';
+    if (file_exists($filename)) {
+      return $obj->loadfromstring(self::uncomment_php(file_get_contents($filename)));
+    }
+    return false;
+  }
+  
   public static function savetofile($base, $content) {
     $tmp = $base .'.tmp.php';
     if(false === file_put_contents($tmp, $content)) {
@@ -225,6 +240,52 @@ class tdata {
   
   public static function uncomment_php($s) {
     return str_replace('**//*/', '*/', substr($s, 9, strlen($s) - 9 - 6));
+  }
+  
+}//class
+
+class tstorage extends tfilestorage {
+  private static $data;
+  private static $modified;
+  
+  public static function save(tdata $obj) {
+    self::$modified = true;
+    $base = $obj->getbasename();
+    if (!isset(self::$data[$base])) self::$data[$base] = &$obj->data;
+    return true;
+  }
+  
+  public static function load(tdata $obj) {
+    $base = $obj->getbasename();
+    if (isset(self::$data[$base])) {
+      $obj->data = &self::$data[$base];
+      $obj->afterload();
+      return true;
+    } else {
+      self::$data[$base] = &$obj->data;
+      return false;
+    }
+  }
+  
+  public static function savemodified() {
+    if (self::$modified) {
+      if (self::$disabled) return false;
+      self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+      self::$modified = false;
+      return true;
+    }
+    return false;
+  }
+  
+  public static function loaddata() {
+    self::$data = array();
+    $filename = litepublisher::$paths->data . 'storage.php';
+    if (file_exists($filename)) {
+      $s = self::uncomment_php(file_get_contents($filename));
+      if (!empty($s)) self::$data = unserialize($s);
+      return true;
+    }
+    return false;
   }
   
 }//class
@@ -502,6 +563,18 @@ class tevents extends tdata {
   
 }//class
 
+class tevents_storage extends tevents {
+  
+  public function load() {
+    return tstorage::load($this);
+  }
+  
+  public function save() {
+    return tstorage::save($this);
+  }
+  
+}//class
+
 //items.class.php
 /**
 * Lite Publisher
@@ -528,14 +601,7 @@ class titems extends tevents {
   
   public function load() {
     if ($this->dbversion) {
-      $storage = &litepublisher::$options->data['storage'];
-      if (isset($storage[$this->table])) {
-        $this->data = &$storage[$this->table];
-        $this->afterload();
-      } else {
-        $storage[$this->table] = &$this->data;
-      }
-      return  true;
+      return tstorage::load($this);
     } else {
       return parent::load();
     }
@@ -543,7 +609,7 @@ class titems extends tevents {
   
   public function save() {
     if ($this->dbversion) {
-      return litepublisher::$options->save();
+      return tstorage::save($this);
     } else {
       return parent::save();
     }
@@ -655,6 +721,18 @@ class titems extends tevents {
   
 }//class
 
+class titems_storage extends titems {
+  
+  public function load() {
+    return tstorage::load($this);
+  }
+  
+  public function save() {
+    return tstorage::save($this);
+  }
+  
+}//class
+
 class tsingleitems extends titems {
   public static $instances;
   public $id;
@@ -719,6 +797,14 @@ class tclasses extends titems {
     $this->addmap('remap', array());
     $this->instances = array();
     if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
+  }
+  
+  public function load() {
+    return tstorage::load($this);
+  }
+  
+  public function save() {
+    return tstorage::save($this);
   }
   
   public function getinstance($class) {
@@ -824,13 +910,13 @@ function getinstance($class) {
 * and GPL (gpl.txt) licenses.
 **/
 
-class toptions extends tevents {
+class toptions extends tevents_storage {
   public $user;
   public $group;
   public $admincookie;
   public $gmt;
   public $errorlog;
-  private $modified;
+  
   
   public static function instance() {
     return getinstance(__class__);
@@ -845,34 +931,20 @@ class toptions extends tevents {
     unset($this->cache);
     $this->gmt = 0;
     $this->errorlog = '';
-    $this->modified = false;
     $this->admincookie = false;
   }
   
-  public function load() {
-    if (!parent::load()) return false;
-    $this->modified = false;
+  public function afterload() {
+    parent::afterload();
     date_default_timezone_set($this->timezone);
     $this->gmt = date('Z');
     if (!defined('dbversion')) {
       define('dbversion', isset($this->data['dbconfig']));
     }
-    return true;
   }
   
   public function savemodified() {
-    if ($this->modified) parent::save();
-    $this->modified = false;
-    $this->onsave();
-  }
-  
-  public function save() {
-    $this->modified = true;
-  }
-  
-  public function unlock() {
-    $this->modified = true;
-    parent::unlock();
+    if (tstorage::savemodified()) $this->onsave();
   }
   
   public function __set($name, $value) {
@@ -907,23 +979,6 @@ class toptions extends tevents {
       unset($this->data);
       $this->save();
     }
-  }
-  
-  public function geturl() {
-    if ($this->fixedurl) return $this->data['url'];
-    return 'http://'. litepublisher::$domain;
-  }
-  
-  public function seturl($url) {
-    $url = rtrim($url, '/');
-    $this->lock();
-    $this->data['url'] = $url;
-    $this->files= $url;
-    $this->subdir = '';
-    if ($i = strpos($url, '/', 10)) {
-      $this->subdir = substr($url, $i);
-    }
-    $this->unlock();
   }
   
   public function authcookie() {
@@ -983,7 +1038,7 @@ class toptions extends tevents {
   }
   
   public function Getinstalled() {
-    return isset($this->data['url']);
+    return isset($this->data['login']);
   }
   
   public function settimezone($value) {
@@ -1083,7 +1138,7 @@ class turlmap extends titems {
     $this->page = 1;
     $this->uripath = array();
     if (litepublisher::$site->q == '?') {
-      $this->url = substr($url, strlen(litepublisher::$options->subdir));
+      $this->url = substr($url, strlen(litepublisher::$site->subdir));
     } else {
       $this->url = $_GET['url'];
     }
@@ -1093,13 +1148,13 @@ class turlmap extends titems {
     $this->prepareurl($host, $url);
     $this->adminpanel = strbegin($this->url, '/admin/') || ($this->url == '/admin');
     $this->beforerequest();
-    if (litepublisher::$options->ob_cache) ob_start();
+    if (!litepublisher::$debug && litepublisher::$options->ob_cache) ob_start();
     try {
       $this->dorequest($this->url);
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
-    if (litepublisher::$options->ob_cache) ob_end_flush ();
+    if (!litepublisher::$debug && litepublisher::$options->ob_cache) ob_end_flush ();
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
   }
@@ -1563,20 +1618,12 @@ interface itemplate {
   public function getdescription();
   public function gethead();
   public function getcont();
-  // property theme;
-  // property tmlfile;
+  public function getidview();
+  public function setidview($id);
 }
 
-interface itemplate2 {
-  public function getwidgets(array &$items, $sitebar);
-  public function afterrequest(&$content);
-}
-
-interface imenu {
-  public function getparent();
-  public function setparent($id);
-  public function getorder();
-  public function setorder($order);
+interface iwidgets {
+  public function getwidgets(array &$items, $sidebar);
 }
 
 interface iposts {
