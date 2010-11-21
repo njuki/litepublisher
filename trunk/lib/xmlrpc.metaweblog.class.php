@@ -299,6 +299,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
   private function GetStruct(tpost $post) {
+    $categories = tcategories::instance();
     return array(
     'dateCreated' => new IXR_Date($post->posted),
     'userid' => (string) $post->author,
@@ -307,7 +308,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     'title' => $post->title,
     'link' => $post->link,
     'permaLink' => $post->link,
-    'categories' => $post->catnames,
+    'categories' => $categories->getnames($post->categories),
     'mt_excerpt' => $post->excerpt,
     'mt_text_more' => '',
     'mt_allow_comments' => $post->commentsenabled ? 1 : 0,

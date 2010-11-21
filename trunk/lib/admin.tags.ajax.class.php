@@ -49,11 +49,7 @@ $item = $tags->getitem($id);
 
 switch ($_GET['get']) {
 case 'view':
-$result = tadminviews::getcomboview($item['idview']);
-if ($icons = tadminicons::getradio($item['icon'])) {
-$result .= $html->h2->icons;
-$result .= $icons;
-}
+$result = $this->getviewicon($item['idview'], $item['icon']);
 break;
 
 case 'seo':

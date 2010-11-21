@@ -91,6 +91,8 @@ $classes->add('titems_itemplate', 'views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
 $classes->add('tautoform' 'htmlresource.class.php');
 $classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
+$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
+$classes->add('tajaxtageditor',  'admin.tags.ajax.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();

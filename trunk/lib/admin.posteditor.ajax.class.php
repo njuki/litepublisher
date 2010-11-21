@@ -122,11 +122,7 @@ $result = $form->getcontent();
 break;
 
 case 'view':
-$result = tadminviews::getcomboview($post->idview);
-if ($icons = tadminicons::getradio($post->icon)) {
-$result .= $html->h2->icons;
-$result .= $icons;
-}
+$result = $this->getviewicon($post->idview, $post->icon);
 break;
 
 case 'seo':
@@ -272,6 +268,15 @@ return strtr($theme->content->admin->editor, array(
 '$name' => $name,
 '$value' => tadminhtml::specchars($value)
 ));
+}
+
+public function getviewicon($idview, $icon) {
+$result = tadminviews::getcomboview($idview);
+if ($icons = tadminicons::getradio($icon)) {
+$result .= $html->h2->icons;
+$result .= $icons;
+}
+return $result;
 }
 
 }//class

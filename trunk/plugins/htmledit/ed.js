@@ -62,7 +62,7 @@ addbutton('doAddTags', 'u', 'underline.gif', obj) +
 addbuttonclick('doURL', 'link', 'link.gif', obj) +
 addbuttonclick('doImage', 'picture', 'image.gif', obj) +
 addbutton('doList', 'ul', 'unordered.gif', obj) +
-addbutton('doList', 'ol', 'sordered.gif', obj) +
+addbutton('doList', 'ol', 'ordered.gif', obj) +
 addbutton('doAddTags', 'blockquote', 'quote.gif', obj) +
 addbutton('doAddTags', 'code', 'code.gif', obj);
 		return buttons;
