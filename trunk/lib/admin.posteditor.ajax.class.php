@@ -60,7 +60,7 @@ if (isset($_GET['upload'])) {
 }
 
 if ($err = self::auth()) return $err;
-    $this->idpost = tadminmenu::idget();
+    $this->idpost = tadminhtml::idparam();
     if ($this->idpost > 0) {
       $posts = tposts::instance();
       if (!$posts->itemexists($this->idpost)) return self::error403();
@@ -264,7 +264,7 @@ $lang = tlocal::instance('editor');
 $title = $lang->$name;
 if ($name == 'raw') {
 if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-$title .= $html->loadcontenttabs();
+if (__class__ == get_class($this)) $title .= $html->loadcontenttabs();
 }
 $theme = ttheme::instance();
 return strtr($theme->content->admin->editor, array(

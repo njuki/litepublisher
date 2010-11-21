@@ -136,6 +136,10 @@ return strtr(            htmlspecialchars($s), array(
   public static function getparam($name, $default) {
     return !empty($_GET[$name]) ? $_GET[$name] : (!empty($_POST[$name]) ? $_POST[$name] : $default);
   }
+
+  public static function idparam() {
+return (int) tadminhtml::getparam('id', 0);
+}
   
 public static function getadminlink($path, $params) {
     return litepublisher::$site->url . $path . litepublisher::$site->q . $params;

@@ -32,7 +32,8 @@ $("a[rel^=\'prettyPhoto\']").prettyPhoto();
   $html->section = 'installation';
   $lang = tlocal::instance('installation');
   ttheme::$vars['lang'] = $lang;
-  $self->footer = $html->footer() . $html->stat;
+$theme = ttheme::instance();
+  $self->footer = $theme->parse($html->footer) . $html->stat;
 }
 
 ?>
