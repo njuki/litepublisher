@@ -12,10 +12,10 @@ if (version_compare(PHP_VERSION, '5.1', '<')) {
 
 class litepublisher {
   public static $db;
-  public static $storage;
+public static $storage;
   public static $classes;
   public static $options;
-  public static $site;
+public static $site;
   public static $urlmap;
   public static $paths;
   public static $_paths;
@@ -26,8 +26,7 @@ class litepublisher {
   
   public static function init() {
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
-    self::$domain = $domain[2];
-    
+        self::$domain = $domain[2];
     $home = dirname(__file__) . DIRECTORY_SEPARATOR;
     $storage = $home . 'storage' . DIRECTORY_SEPARATOR;
     self::$_paths = array(
@@ -58,9 +57,22 @@ public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 
 try {
   litepublisher::init();
-  require_once(litepublisher::$paths->lib . 'kernel.php');
+define('dbversion' , true);
+if (litepublisher::$debug) {
+require_once(litepublisher::$paths->lib . 'data.class.php');
+require_once(litepublisher::$paths->lib . 'events.class.php');
+require_once(litepublisher::$paths->lib . 'items.class.php');
+require_once(litepublisher::$paths->lib . 'classes.class.php');
+require_once(litepublisher::$paths->lib . 'options.class.php');
+require_once(litepublisher::$paths->lib . 'site.class.php');
+} else {
+require_once(litepublisher::$paths->lib . 'kernel.php');
+}
+
+tstorage::loaddata();
   litepublisher::$classes = tclasses::instance();
   litepublisher::$options = toptions::instance();
+  litepublisher::$site = tsite::instance();
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
@@ -68,10 +80,9 @@ try {
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }
-  
 } catch (Exception $e) {
-  echo $e->GetMessage();
+litepublisher::$options->handexception($e);
 }
 litepublisher::$options->savemodified();
-//litepublisher::$options->showerrors();
+litepublisher::$options->showerrors();
 ?>
