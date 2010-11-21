@@ -79,7 +79,7 @@ tstorage::loaddata();
 //ttheme::clearcache();
 tlocal::clearcache();
 //litepublisher::$classes->delete('tajaxposteditor');
-//litepublisher::$classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
+//litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);

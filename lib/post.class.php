@@ -281,7 +281,7 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
   public function getcatnames() {
     if (count($this->categories) == 0)  return array();
     $categories = tcategories::instance();
-    return $categories->getnames($this->categories);
+    return implode(', ', $categories->getnames($this->categories));
   }
   
   public function setcatnames($names) {
