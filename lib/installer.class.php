@@ -347,13 +347,13 @@ class tinstaller extends tdata {
     
     $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.ini';
     tlocal::loadini($ini);
-   
+    
     $ini = litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini';
     tlocal::loadini($ini);
-
+    
     $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini';
     tlocal::loadini($ini);
-
+    
     date_default_timezone_set(tlocal::$data['installation']['timezone']);
   }
   

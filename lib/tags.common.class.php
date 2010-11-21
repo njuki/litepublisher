@@ -57,15 +57,15 @@ class tcommontags extends titems implements  itemplate {
       $item = $this->getitem($id);
       $args->add($item);
       $args->icon = $iconenabled ? $this->geticonlink($id) : '';
-$subitems = '';
+      $subitems = '';
       if ($showcount) $subitems = sprintf(' (%d)', $item['itemscount']);
-if ($subtml != '') $subitems .= $this->getsortedcontent($id, $tml, $subtml, $sortname, $count, $showcount);
-$args->subitems = $subitems;
+      if ($subtml != '') $subitems .= $this->getsortedcontent($id, $tml, $subtml, $sortname, $count, $showcount);
+      $args->subitems = $subitems;
       $result .= $theme->parsearg($tml,$args);
     }
-if ($parent == 0) return $result;
-$args->parent = $parent;
-$args->item = $result;
+    if ($parent == 0) return $result;
+    $args->parent = $parent;
+    $args->item = $result;
     return $theme->parsearg($subtml, $args);
   }
   
@@ -134,22 +134,22 @@ $args->item = $result;
   public function add($parent, $title) {
     if (empty($title)) return false;
     if ($id  = $this->IndexOf('title', $title)) return $id;
-$parent = (int) $parent;
-if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
+    $parent = (int) $parent;
+    if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
     $urlmap =turlmap::instance();
     $linkgen = tlinkgenerator::instance();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
-
-$views = tviews::instance();
-$idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
-
+    
+    $views = tviews::instance();
+    $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
+    
     if ($this->dbversion)  {
       $id = $this->db->add(array(
-'parent' => $parent,
-'title' => $title,
-'idview' => $idview
-));
+      'parent' => $parent,
+      'title' => $title,
+      'idview' => $idview
+      ));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
     } else {
@@ -165,7 +165,7 @@ $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$thi
     'url' =>$url,
     'title' => $title,
     'icon' => 0,
-'idview' => $idview,
+    'idview' => $idview,
     'itemscount' => 0
     );
     $this->unlock();
@@ -271,7 +271,7 @@ $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$thi
     
     $list = array();
     foreach($this->items as $id => $item) {
-if ($parent != $item['parent']) continue;
+      if ($parent != $item['parent']) continue;
       $list[$id] = $item[$sortname];
     }
     if (($sortname == 'itemscount')) {
@@ -335,26 +335,26 @@ if ($parent != $item['parent']) continue;
     if ($result == '') $result = $this->title;
     return $result;
   }
-
-public function getidview() {
+  
+  public function getidview() {
     $item = $this->getitem($this->id);
     return $item['idview'];
-}
-
-public function setidview($id) {
-if ($id != $this->idview) {
-$this->setvalue($this->id, 'idview', $id);
-}
-}
-
+  }
+  
+  public function setidview($id) {
+    if ($id != $this->idview) {
+      $this->setvalue($this->id, 'idview', $id);
+    }
+  }
+  
   public function getcont() {
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
       $items = $this->getsortedcontent(0, '<li><a href="$link" title="$title">$icon$title</a>$count</li>',
-'<ul>$item</ul>',
-'count', 0, 0, false);
-$result .= sprintf('<ul>%s</ul>', $items);
+      '<ul>$item</ul>',
+      'count', 0, 0, false);
+      $result .= sprintf('<ul>%s</ul>', $items);
       return $result;
     }
     
@@ -496,11 +496,11 @@ class tcommontagswidget extends twidget {
   
   public function getcontent($id, $sidebar) {
     $theme = ttheme::instance();
-$items = $this->owner->getsortedcontent(0,
-$theme->getwidgetitem($this->template, $sidebar),
-$this->showsubitems ? $theme->getwidgettml($sidebar, $this->template, 'subitems') : '',
-$this->sortname, $this->maxcount, $this->showcount);
-return $theme->getwidgetcontent($items, $this->template, $sidebar);
+    $items = $this->owner->getsortedcontent(0,
+    $theme->getwidgetitem($this->template, $sidebar),
+    $this->showsubitems ? $theme->getwidgettml($sidebar, $this->template, 'subitems') : '',
+    $this->sortname, $this->maxcount, $this->showcount);
+    return $theme->getwidgetcontent($items, $this->template, $sidebar);
   }
   
 }//class

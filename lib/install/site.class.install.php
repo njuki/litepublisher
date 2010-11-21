@@ -8,15 +8,15 @@
 
 
 function tsiteInstall($self) {
-$site = $self;
-$site->lock();
-    $site->subdir = getrequestdir();
+  $site = $self;
+  $site->lock();
+  $site->subdir = getrequestdir();
   $site->fixedurl = true;
   $site->url = 'http://'. strtolower($_SERVER['HTTP_HOST'])  . $site->subdir;
   $site->files =$site->data['url'];
   $site->q = '?';
-
-$site->home = '/';
+  
+  $site->home = '/';
   $site->keywords = "blog";
   $site->unlock();
 }

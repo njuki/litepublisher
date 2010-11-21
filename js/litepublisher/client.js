@@ -75,8 +75,8 @@ widgets.load = function (node, id, sitebar) {
 widgets.inlineload= function (node) {
   var comment = findcomment(node, false);
   if (! comment) return alert('Widget not found');
-      $(comment).replaceWith($(comment).text());
-/*
+  $(comment).replaceWith($(comment).text());
+  /*
   var tmp = document.createElement("div");
   tmp.innerHTML =comment.nodeValue ;
   if (tmp.firstChild.nodeName ==String.fromCharCode(35) + 'text') {
@@ -86,7 +86,7 @@ widgets.inlineload= function (node) {
   }
   content.parentNode.removeChild(content);
   comment.parentNode.replaceChild(content, comment);
-*/
+  */
   return widgets.add(node, content);
 }
 

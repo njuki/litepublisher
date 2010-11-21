@@ -214,7 +214,7 @@ class tpost extends titem implements  itemplate {
     if (count($this->$names) == 0) return '';
     $theme = ttheme::instance();
     $tml = $excerpt ? $theme->content->excerpts : $theme->content->post;
-$tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
+    $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
     $args = targs::instance();
@@ -334,22 +334,22 @@ $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
   public function getdescription() {
     return $this->data['description'];
   }
-
-public function getidview() {
-return $this->data['idview'];
-}
-
-public function setidview($id) {
-if ($id != $this->idview) {
-$this->data['idview'] = $id;
-if ($this->dbversion) {
-$this->db->setvalue($this->id, 'idview', $id);
-} else {
-$this->save();
-}
-}
-}
-
+  
+  public function getidview() {
+    return $this->data['idview'];
+  }
+  
+  public function setidview($id) {
+    if ($id != $this->idview) {
+      $this->data['idview'] = $id;
+      if ($this->dbversion) {
+        $this->db->setvalue($this->id, 'idview', $id);
+      } else {
+        $this->save();
+      }
+    }
+  }
+  
   public function geticonurl() {
     if ($this->icon == 0) return '';
     $files = tfiles::instance();
@@ -613,7 +613,7 @@ $this->save();
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $account['name']);
     }
   }
-
+  
 }//class
 
 ?>

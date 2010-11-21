@@ -175,8 +175,8 @@ class tcomments extends titems {
       $args->comment = '';
       $result .= $theme->content->post->templatecomments->holdcomments($args);
     }
-
-        $args = targs::instance();
+    
+    $args = targs::instance();
     $args->comments = $result;
     return $theme->content->post->templatecomments->moderateform($args);
   }
@@ -215,10 +215,10 @@ class tcomments extends titems {
     }
     $tmlcomment= $theme->content->post->templatecomments->comments->comment;
     $tml = strtr($tmlcomment->array[0], array(
-'$moderate' => $moderate, 
-'$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
-));
-
+    '$moderate' => $moderate,
+    '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
+    ));
+    
     $i = 1;
     $class1 = $tmlcomment->class1;
     $class2 = $tmlcomment->class2;
@@ -233,10 +233,10 @@ class tcomments extends titems {
     }
     
     if ($status == 'hold') {
-    $tml = (string) $theme->content->post->templatecomments->holdcomments;
+      $tml = (string) $theme->content->post->templatecomments->holdcomments;
     } else {
-    $tml = (string) $theme->content->post->templatecomments->comments;
-}
+      $tml = (string) $theme->content->post->templatecomments->comments;
+    }
     
     $args = targs::instance();
     $args->from = $from + 1;
@@ -331,7 +331,7 @@ class tcomment extends tdata {
     $this->data['content'] = $filter->filtercomment($s);
   }
   
-    public function getip() {
+  public function getip() {
     if (isset($this->data['ip'])) return $this->data['ip'];
     $comments = tcomments::instance($this->post);
     return $comments->raw->getvalue($this->id, 'ip');

@@ -13,8 +13,8 @@ interface itemplate {
   public function getdescription();
   public function gethead();
   public function getcont();
-public function getidview();
-public function setidview($id);
+  public function getidview();
+  public function setidview($id);
 }
 
 interface iwidgets {

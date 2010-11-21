@@ -10,14 +10,14 @@ class tadminicons extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-public static function getradio($idicon) {
-$items = self::getallicons();
-if (count($items) == 0) return '';
-$html = tadminhtml::instance();
-$html->section = 'files';
-$args = targgs::instance();
-//add empty icon
+  
+  public static function getradio($idicon) {
+    $items = self::getallicons();
+    if (count($items) == 0) return '';
+    $html = tadminhtml::instance();
+    $html->section = 'files';
+    $args = targgs::instance();
+    //add empty icon
     $args->id = 0;
     $args->checked = 0 == $idicon;
     $args->filename = '';
@@ -29,24 +29,24 @@ $args = targgs::instance();
       $args->add($item);
       $args->id = $id;
       $args->checked = $id == $idicon;
-$args->link = litepublisher::$site->files . $item['filename'];
+      $args->link = litepublisher::$site->files . $item['filename'];
       $result .= $html->radioicon($args);
     }
     
     return $result;
-}
-
+  }
+  
   public static function getallicons() {
     $files = tfiles::instance();
     if ($files->dbversion) {
       if ($result = $files->select("parent = 0 and media = 'icon'", "")) return $result;
-return array();
+      return array();
     } else {
-    $result = array();
+      $result = array();
       foreach ($files->items as $id => $item) {
         if ('icon' == $item['media']) $result[] = $id;
       }
-    return $result;
+      return $result;
     }
   }
   

@@ -39,17 +39,17 @@ public function gethead() { }
     return $this->getval('description');
   }
   
-public function getidview() {
+  public function getidview() {
     return $this->getval('idview');
-}
-
-public function setidview($id) {
-if ($id != $this->idview) {
-$this->items[$this->id]['idview'] = $id;
-$this->save();
-}
-}
-
+  }
+  
+  public function setidview($id) {
+    if ($id != $this->idview) {
+      $this->items[$this->id]['idview'] = $id;
+      $this->save();
+    }
+  }
+  
   public function getcont() {
     $theme = tview::getview($this)->theme;
     return $theme->simple($this->getval('filtered'));
@@ -69,7 +69,7 @@ $this->save();
     'rawcontent' => $content,
     'description' => tcontentfilter::escape($description),
     'keywords' => tcontentfilter::escape($keywords),
-'idview' => 1
+    'idview' => 1
     );
     $this->save();
     return $this->autoid;
@@ -87,7 +87,7 @@ $this->save();
     'rawcontent' => $content,
     'description' => tcontentfilter::escape($description),
     'keywords' => tcontentfilter::escape($keywords),
-'idview' => $item['idview']
+    'idview' => $item['idview']
     );
     $this->save();
     litepublisher::$urlmap->clearcache();

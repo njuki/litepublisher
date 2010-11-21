@@ -15,9 +15,9 @@ class tcontactform extends tmenu {
   protected function create() {
     parent::create();
     $this->cache = false;
-$this->data['subject'] = '';
-$this->data['errmesg'] = '';
-$this->data['success'] = '';
+    $this->data['subject'] = '';
+    $this->data['errmesg'] = '';
+    $this->data['success'] = '';
   }
   
   public function processform() {
@@ -25,12 +25,12 @@ $this->data['success'] = '';
     $time = substr($_POST['contactvalue'], strlen('_contactform'));
     if (time() >  $time) return $this->errmesg;
     $email = trim($_POST['email']);
-
+    
     if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['invalidemail']);
     
     $content = trim($_POST['content']);
     if (strlen($content) <= 15) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['emptycontent']);
-if (false !== strpos($content, '<a href')) return $this->errmesg;
+    if (false !== strpos($content, '<a href')) return $this->errmesg;
     
     tmailer::sendmail('', $email, '', litepublisher::$options->email, $this->subject, $content);
     return $this->success;

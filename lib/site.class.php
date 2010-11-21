@@ -7,16 +7,16 @@
 **/
 
 class tsite extends tevents_storage {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-$this->basename = 'site';
+    $this->basename = 'site';
   }
-
+  
   
   public function __set($name, $value) {
     if (in_array($name, $this->eventnames)) {
@@ -46,14 +46,14 @@ $this->basename = 'site';
     }
     $this->save();
   }
-
-public function getversion() {
-return litepublisher::$options->data['version'];
-}
-
-public function getlanguage() {
-return litepublisher::$options->data['language'];
-}
+  
+  public function getversion() {
+    return litepublisher::$options->data['version'];
+  }
+  
+  public function getlanguage() {
+    return litepublisher::$options->data['language'];
+  }
   
 }//class
 

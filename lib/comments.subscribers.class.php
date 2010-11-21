@@ -31,7 +31,7 @@ class tsubscribers extends titemsposts {
   
   public function save() {
     if ($this->lockcount > 0) return;
-tfilestorage::save($this);
+    tfilestorage::save($this);
   }
   
   public function update($pid, $uid, $subscribed) {

@@ -15,15 +15,15 @@ class tadminmenus extends tmenus {
   protected function create() {
     parent::create();
     $this->basename = 'adminmenu';
-$this->data['heads'] = '';
+    $this->data['heads'] = '';
     tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
-
+  
   public function getdir() {
     return litepublisher::$paths->data . 'adminmenus' . DIRECTORY_SEPARATOR;
   }
-
-    private function getadmintitle($name) {
+  
+  private function getadmintitle($name) {
     if (isset(tlocal::$data[$name]['title'])) {
       return tlocal::$data[$name]['title'];
     } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {
@@ -87,9 +87,9 @@ $this->data['heads'] = '';
   }
   
   public function exclude($id) {
-return !$this->hasright($this->items[$id]['group']);
-}
-
+    return !$this->hasright($this->items[$id]['group']);
+  }
+  
 }//class
 
 class tadminmenu  extends tmenu {
@@ -110,15 +110,15 @@ class tadminmenu  extends tmenu {
   
 public function load() { return true; }
 public function save() { return true; }
-
-public function gethead() {
-return tadminmenus::instance()->heads;
-}
-
-public function getidview() {
-return tviews::instance()->defaults['admin'];
-}
-
+  
+  public function gethead() {
+    return tadminmenus::instance()->heads;
+  }
+  
+  public function getidview() {
+    return tviews::instance()->defaults['admin'];
+  }
+  
   public static function auth($group) {
     $auth = tauthdigest::instance();
     if (litepublisher::$options->cookieenabled) {
@@ -145,13 +145,13 @@ return tviews::instance()->defaults['admin'];
     $this->arg = litepublisher::$urlmap->argtree;
     $this->doprocessform();
   }
-
+  
   public static function idget() {
-return (int) tadminhtml::getparam('id', 0);
-}
-
+    return (int) tadminhtml::getparam('id', 0);
+  }
+  
   public function getaction() {
-return isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
+    return isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
   }
   
   public function gethtml($name = '') {
@@ -181,7 +181,7 @@ return isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
   public function getadminurl() {
     return litepublisher::$site->url .$this->url . litepublisher::$site->q . 'id';
   }
-
+  
   public function getfrom($perpage, $count) {
     if (litepublisher::$urlmap->page <= 1) return 0;
     return min($count, (litepublisher::$urlmap->page - 1) * $perpage);

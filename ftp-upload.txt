@@ -16,24 +16,30 @@ send mit.txt mit.txt
 quote site chmod 644 mit.txt
 send gpl.txt gpl.txt
 quote site chmod 644 gpl.txt
+mkdir storage
+quote site chmod 777 storage
+send build\indexfile.htm storage/index.htm
+quote site chmod 666 storage/index.htm
+send build\htaccess.txt storage/.htaccess
+quote site chmod 666 storage/.htaccess
+cd storage
 mkdir backup
 quote site chmod 777 backup
-send build\htaccess.txt backup/.htaccess
-quote site chmod 666 backup/.htaccess
-send build\indexfile.htm backup/index.htm
-quote site chmod 666 backup/index.htm
+cd ../
+send build\indexfile.htm storage/backup/index.htm
+quote site chmod 666 storage/backup/index.htm
+cd storage
 mkdir cache
 quote site chmod 777 cache
-send build\htaccess.txt cache/.htaccess
-quote site chmod 666 cache/.htaccess
-send build\indexfile.htm cache/index.htm
-quote site chmod 666 cache/index.htm
+cd ../
+send build\indexfile.htm storage/cache/index.htm
+quote site chmod 666 storage/cache/index.htm
+cd storage
 mkdir data
 quote site chmod 777 data
-send build\htaccess.txt data/.htaccess
-quote site chmod 666 data/.htaccess
-send build\indexfile.htm data/index.htm
-quote site chmod 666 data/index.htm
+cd ../
+send build\indexfile.htm storage/data/index.htm
+quote site chmod 666 storage/data/index.htm
 mkdir files
 quote site chmod 777 files
 send build\indexfile.htm files/index.htm
@@ -56,6 +62,8 @@ send lib\admin.icons.class.php lib/admin.icons.class.php
 quote site chmod 666 lib/admin.icons.class.php
 send lib\admin.login.class.php lib/admin.login.class.php
 quote site chmod 666 lib/admin.login.class.php
+send lib\admin.menu.ajax.class.php lib/admin.menu.ajax.class.php
+quote site chmod 666 lib/admin.menu.ajax.class.php
 send lib\admin.menu.class.php lib/admin.menu.class.php
 quote site chmod 666 lib/admin.menu.class.php
 send lib\admin.options.class.php lib/admin.options.class.php
@@ -64,6 +72,8 @@ send lib\admin.password.class.php lib/admin.password.class.php
 quote site chmod 666 lib/admin.password.class.php
 send lib\admin.plugins.class.php lib/admin.plugins.class.php
 quote site chmod 666 lib/admin.plugins.class.php
+send lib\admin.posteditor.ajax.class.php lib/admin.posteditor.ajax.class.php
+quote site chmod 666 lib/admin.posteditor.ajax.class.php
 send lib\admin.posteditor.class.php lib/admin.posteditor.class.php
 quote site chmod 666 lib/admin.posteditor.class.php
 send lib\admin.posts.class.php lib/admin.posts.class.php
@@ -76,12 +86,18 @@ send lib\admin.staticpages.class.php lib/admin.staticpages.class.php
 quote site chmod 666 lib/admin.staticpages.class.php
 send lib\admin.subscribers.class.php lib/admin.subscribers.class.php
 quote site chmod 666 lib/admin.subscribers.class.php
+send lib\admin.tags.ajax.class.php lib/admin.tags.ajax.class.php
+quote site chmod 666 lib/admin.tags.ajax.class.php
 send lib\admin.tags.class.php lib/admin.tags.class.php
 quote site chmod 666 lib/admin.tags.class.php
+send lib\admin.themefiles.class.php lib/admin.themefiles.class.php
+quote site chmod 666 lib/admin.themefiles.class.php
 send lib\admin.themes.class.php lib/admin.themes.class.php
 quote site chmod 666 lib/admin.themes.class.php
 send lib\admin.users.class.php lib/admin.users.class.php
 quote site chmod 666 lib/admin.users.class.php
+send lib\admin.views.class.php lib/admin.views.class.php
+quote site chmod 666 lib/admin.views.class.php
 send lib\admin.widget.class.php lib/admin.widget.class.php
 quote site chmod 666 lib/admin.widget.class.php
 send lib\admin.widgets.class.php lib/admin.widgets.class.php
@@ -222,6 +238,8 @@ send lib\rss.multimedia.class.php lib/rss.multimedia.class.php
 quote site chmod 666 lib/rss.multimedia.class.php
 send lib\simplecontent.class.php lib/simplecontent.class.php
 quote site chmod 666 lib/simplecontent.class.php
+send lib\site.class.php lib/site.class.php
+quote site chmod 666 lib/site.class.php
 send lib\sitemap.class.php lib/sitemap.class.php
 quote site chmod 666 lib/sitemap.class.php
 send lib\staticpages.class.php lib/staticpages.class.php
@@ -244,6 +262,10 @@ send lib\theme.class.php lib/theme.class.php
 quote site chmod 666 lib/theme.class.php
 send lib\theme.parser.class.php lib/theme.parser.class.php
 quote site chmod 666 lib/theme.parser.class.php
+send lib\theme.parser.ver3.class.php lib/theme.parser.ver3.class.php
+quote site chmod 666 lib/theme.parser.ver3.class.php
+send lib\theme.parser.wordpress.class.php lib/theme.parser.wordpress.class.php
+quote site chmod 666 lib/theme.parser.wordpress.class.php
 send lib\updater.class.php lib/updater.class.php
 quote site chmod 666 lib/updater.class.php
 send lib\urlmap.class.php lib/urlmap.class.php
@@ -276,8 +298,6 @@ send lib\xmlrpc.class.php lib/xmlrpc.class.php
 quote site chmod 666 lib/xmlrpc.class.php
 send lib\xmlrpc.comments.class.php lib/xmlrpc.comments.class.php
 quote site chmod 666 lib/xmlrpc.comments.class.php
-send lib\xmlrpc.files.class.php lib/xmlrpc.files.class.php
-quote site chmod 666 lib/xmlrpc.files.class.php
 send lib\xmlrpc.livejournal.class.php lib/xmlrpc.livejournal.class.php
 quote site chmod 666 lib/xmlrpc.livejournal.class.php
 send lib\xmlrpc.metaweblog.class.php lib/xmlrpc.metaweblog.class.php
@@ -298,8 +318,6 @@ cd lib
 mkdir include
 quote site chmod 777 include
 cd ../
-send lib\include\aliases.ini lib/include/aliases.ini
-quote site chmod 666 lib/include/aliases.ini
 send lib\include\class-phpmailer.php lib/include/class-phpmailer.php
 quote site chmod 666 lib/include/class-phpmailer.php
 send lib\include\class-pop3.php lib/include/class-pop3.php
@@ -338,6 +356,8 @@ send lib\install\admin.login.class.install.php lib/install/admin.login.class.ins
 quote site chmod 666 lib/install/admin.login.class.install.php
 send lib\install\admin.password.class.install.php lib/install/admin.password.class.install.php
 quote site chmod 666 lib/install/admin.password.class.install.php
+send lib\install\admin.posteditor.ajax.class.install.php lib/install/admin.posteditor.ajax.class.install.php
+quote site chmod 666 lib/install/admin.posteditor.ajax.class.install.php
 send lib\install\admin.reguser.class.install.php lib/install/admin.reguser.class.install.php
 quote site chmod 666 lib/install/admin.reguser.class.install.php
 send lib\install\admin.subscribers.class.install.php lib/install/admin.subscribers.class.install.php
@@ -400,6 +420,8 @@ send lib\install\index.htm lib/install/index.htm
 quote site chmod 666 lib/install/index.htm
 send lib\install\install.congratulation.tml lib/install/install.congratulation.tml
 quote site chmod 666 lib/install/install.congratulation.tml
+send lib\install\install.ini lib/install/install.ini
+quote site chmod 666 lib/install/install.ini
 send lib\install\install.php lib/install/install.php
 quote site chmod 666 lib/install/install.php
 send lib\install\installform.tml lib/install/installform.tml
@@ -442,6 +464,8 @@ send lib\install\rss.holdcomments.class.db.install.php lib/install/rss.holdcomme
 quote site chmod 666 lib/install/rss.holdcomments.class.db.install.php
 send lib\install\rss.multimedia.class.install.php lib/install/rss.multimedia.class.install.php
 quote site chmod 666 lib/install/rss.multimedia.class.install.php
+send lib\install\site.class.install.php lib/install/site.class.install.php
+quote site chmod 666 lib/install/site.class.install.php
 send lib\install\sitemap.class.install.php lib/install/sitemap.class.install.php
 quote site chmod 666 lib/install/sitemap.class.install.php
 send lib\install\tags.common.class.install.php lib/install/tags.common.class.install.php
@@ -452,6 +476,8 @@ send lib\install\tags.sql lib/install/tags.sql
 quote site chmod 666 lib/install/tags.sql
 send lib\install\template.class.install.php lib/install/template.class.install.php
 quote site chmod 666 lib/install/template.class.install.php
+send lib\install\theme.class.install.php lib/install/theme.class.install.php
+quote site chmod 666 lib/install/theme.class.install.php
 send lib\install\urlmap.class.install.php lib/install/urlmap.class.install.php
 quote site chmod 666 lib/install/urlmap.class.install.php
 send lib\install\urlmap.sql lib/install/urlmap.sql
@@ -482,8 +508,6 @@ send lib\install\xmlrpc.class.install.php lib/install/xmlrpc.class.install.php
 quote site chmod 666 lib/install/xmlrpc.class.install.php
 send lib\install\xmlrpc.comments.class.install.php lib/install/xmlrpc.comments.class.install.php
 quote site chmod 666 lib/install/xmlrpc.comments.class.install.php
-send lib\install\xmlrpc.files.class.install.php lib/install/xmlrpc.files.class.install.php
-quote site chmod 666 lib/install/xmlrpc.files.class.install.php
 send lib\install\xmlrpc.livejournal.class.install.php lib/install/xmlrpc.livejournal.class.install.php
 quote site chmod 666 lib/install/xmlrpc.livejournal.class.install.php
 send lib\install\xmlrpc.metaweblog.class.install.php lib/install/xmlrpc.metaweblog.class.install.php
@@ -500,84 +524,8 @@ cd lib
 mkdir update
 quote site chmod 777 update
 cd ../
-send lib\update\update.3.34.php lib/update/update.3.34.php
-quote site chmod 666 lib/update/update.3.34.php
-send lib\update\update.3.35.php lib/update/update.3.35.php
-quote site chmod 666 lib/update/update.3.35.php
-send lib\update\update.3.38.php lib/update/update.3.38.php
-quote site chmod 666 lib/update/update.3.38.php
-send lib\update\update.3.42.php lib/update/update.3.42.php
-quote site chmod 666 lib/update/update.3.42.php
-send lib\update\update.3.48.php lib/update/update.3.48.php
-quote site chmod 666 lib/update/update.3.48.php
-send lib\update\update.3.49.php lib/update/update.3.49.php
-quote site chmod 666 lib/update/update.3.49.php
-send lib\update\update.3.52.php lib/update/update.3.52.php
-quote site chmod 666 lib/update/update.3.52.php
-send lib\update\update.3.54.php lib/update/update.3.54.php
-quote site chmod 666 lib/update/update.3.54.php
-send lib\update\update.3.56.php lib/update/update.3.56.php
-quote site chmod 666 lib/update/update.3.56.php
-send lib\update\update.3.57.php lib/update/update.3.57.php
-quote site chmod 666 lib/update/update.3.57.php
-send lib\update\update.3.58.php lib/update/update.3.58.php
-quote site chmod 666 lib/update/update.3.58.php
-send lib\update\update.3.59.php lib/update/update.3.59.php
-quote site chmod 666 lib/update/update.3.59.php
-send lib\update\update.3.60.php lib/update/update.3.60.php
-quote site chmod 666 lib/update/update.3.60.php
-send lib\update\update.3.62.php lib/update/update.3.62.php
-quote site chmod 666 lib/update/update.3.62.php
-send lib\update\update.3.63.php lib/update/update.3.63.php
-quote site chmod 666 lib/update/update.3.63.php
-send lib\update\update.3.64.php lib/update/update.3.64.php
-quote site chmod 666 lib/update/update.3.64.php
-send lib\update\update.3.65.php lib/update/update.3.65.php
-quote site chmod 666 lib/update/update.3.65.php
-send lib\update\update.3.66.php lib/update/update.3.66.php
-quote site chmod 666 lib/update/update.3.66.php
-send lib\update\update.3.68.php lib/update/update.3.68.php
-quote site chmod 666 lib/update/update.3.68.php
-send lib\update\update.3.71.php lib/update/update.3.71.php
-quote site chmod 666 lib/update/update.3.71.php
-send lib\update\update.3.73.php lib/update/update.3.73.php
-quote site chmod 666 lib/update/update.3.73.php
-send lib\update\update.3.75.php lib/update/update.3.75.php
-quote site chmod 666 lib/update/update.3.75.php
-send lib\update\update.3.76.php lib/update/update.3.76.php
-quote site chmod 666 lib/update/update.3.76.php
-send lib\update\update.3.77.php lib/update/update.3.77.php
-quote site chmod 666 lib/update/update.3.77.php
-send lib\update\update.3.79.php lib/update/update.3.79.php
-quote site chmod 666 lib/update/update.3.79.php
-send lib\update\update.3.80.php lib/update/update.3.80.php
-quote site chmod 666 lib/update/update.3.80.php
-send lib\update\update.3.81.php lib/update/update.3.81.php
-quote site chmod 666 lib/update/update.3.81.php
-send lib\update\update.3.82.php lib/update/update.3.82.php
-quote site chmod 666 lib/update/update.3.82.php
-send lib\update\update.3.84.php lib/update/update.3.84.php
-quote site chmod 666 lib/update/update.3.84.php
-send lib\update\update.3.86.php lib/update/update.3.86.php
-quote site chmod 666 lib/update/update.3.86.php
-send lib\update\update.3.87.php lib/update/update.3.87.php
-quote site chmod 666 lib/update/update.3.87.php
-send lib\update\update.3.88.php lib/update/update.3.88.php
-quote site chmod 666 lib/update/update.3.88.php
-send lib\update\update.3.89.php lib/update/update.3.89.php
-quote site chmod 666 lib/update/update.3.89.php
-send lib\update\update.3.91.php lib/update/update.3.91.php
-quote site chmod 666 lib/update/update.3.91.php
-send lib\update\update.3.93.php lib/update/update.3.93.php
-quote site chmod 666 lib/update/update.3.93.php
-send lib\update\update.3.94.php lib/update/update.3.94.php
-quote site chmod 666 lib/update/update.3.94.php
-send lib\update\update.3.96.php lib/update/update.3.96.php
-quote site chmod 666 lib/update/update.3.96.php
-send lib\update\update.3.97.php lib/update/update.3.97.php
-quote site chmod 666 lib/update/update.3.97.php
-send lib\update\update.3.98.php lib/update/update.3.98.php
-quote site chmod 666 lib/update/update.3.98.php
+send lib\update\update.4.00.php lib/update/update.4.00.php
+quote site chmod 666 lib/update/update.4.00.php
 cd lib
 mkdir languages
 quote site chmod 777 languages
@@ -590,8 +538,12 @@ send lib\languages\adminru.ini lib/languages/adminru.ini
 quote site chmod 666 lib/languages/adminru.ini
 send lib\languages\en.ini lib/languages/en.ini
 quote site chmod 666 lib/languages/en.ini
+send lib\languages\en.install.ini lib/languages/en.install.ini
+quote site chmod 666 lib/languages/en.install.ini
 send lib\languages\ru.ini lib/languages/ru.ini
 quote site chmod 666 lib/languages/ru.ini
+send lib\languages\ru.install.ini lib/languages/ru.install.ini
+quote site chmod 666 lib/languages/ru.install.ini
 mkdir plugins
 quote site chmod 777 plugins
 send plugins\.htaccess plugins/.htaccess
@@ -739,6 +691,18 @@ quote site chmod 666 plugins/bookmarks/icons/yahoo.png
 send plugins\bookmarks\index.htm plugins/bookmarks/index.htm
 quote site chmod 666 plugins/bookmarks/index.htm
 cd plugins
+mkdir ckeditor
+quote site chmod 777 ckeditor
+cd ../
+send plugins\ckeditor\.htaccess plugins/ckeditor/.htaccess
+quote site chmod 666 plugins/ckeditor/.htaccess
+send plugins\ckeditor\about.ini plugins/ckeditor/about.ini
+quote site chmod 666 plugins/ckeditor/about.ini
+send plugins\ckeditor\ckeditor.plugin.php plugins/ckeditor/ckeditor.plugin.php
+quote site chmod 666 plugins/ckeditor/ckeditor.plugin.php
+send plugins\ckeditor\index.htm plugins/ckeditor/index.htm
+quote site chmod 666 plugins/ckeditor/index.htm
+cd plugins
 mkdir clearcache
 quote site chmod 777 clearcache
 cd ../
@@ -782,6 +746,20 @@ send plugins\codedoc\resource\index.htm plugins/codedoc/resource/index.htm
 quote site chmod 666 plugins/codedoc/resource/index.htm
 send plugins\codedoc\resource\ru.ini plugins/codedoc/resource/ru.ini
 quote site chmod 666 plugins/codedoc/resource/ru.ini
+cd plugins
+mkdir embeddedplayers
+quote site chmod 777 embeddedplayers
+cd ../
+send plugins\embeddedplayers\.htaccess plugins/embeddedplayers/.htaccess
+quote site chmod 666 plugins/embeddedplayers/.htaccess
+send plugins\embeddedplayers\about.ini plugins/embeddedplayers/about.ini
+quote site chmod 666 plugins/embeddedplayers/about.ini
+send plugins\embeddedplayers\embeddedplayers.plugin.install.php plugins/embeddedplayers/embeddedplayers.plugin.install.php
+quote site chmod 666 plugins/embeddedplayers/embeddedplayers.plugin.install.php
+send plugins\embeddedplayers\embeddedplayers.plugin.php plugins/embeddedplayers/embeddedplayers.plugin.php
+quote site chmod 666 plugins/embeddedplayers/embeddedplayers.plugin.php
+send plugins\embeddedplayers\index.htm plugins/embeddedplayers/index.htm
+quote site chmod 666 plugins/embeddedplayers/index.htm
 cd plugins
 mkdir externallinks
 quote site chmod 777 externallinks
@@ -1010,6 +988,8 @@ send plugins\markdown\markdown.parser.class.php plugins/markdown/markdown.parser
 quote site chmod 666 plugins/markdown/markdown.parser.class.php
 send plugins\markdown\markdown.plugin.class.php plugins/markdown/markdown.plugin.class.php
 quote site chmod 666 plugins/markdown/markdown.plugin.class.php
+send plugins\markdown\mini.php plugins/markdown/mini.php
+quote site chmod 666 plugins/markdown/mini.php
 cd plugins
 mkdir mobile
 quote site chmod 777 mobile
@@ -1032,22 +1012,6 @@ send plugins\mobile\mobile\mobile.classes.php plugins/mobile/mobile/mobile.class
 quote site chmod 666 plugins/mobile/mobile/mobile.classes.php
 send plugins\mobile\mobile.plugin.php plugins/mobile/mobile.plugin.php
 quote site chmod 666 plugins/mobile/mobile.plugin.php
-cd plugins
-mkdir nicedit
-quote site chmod 777 nicedit
-cd ../
-send plugins\nicedit\about.ini plugins/nicedit/about.ini
-quote site chmod 666 plugins/nicedit/about.ini
-send plugins\nicedit\index.htm plugins/nicedit/index.htm
-quote site chmod 666 plugins/nicedit/index.htm
-send plugins\nicedit\nicedit.install.php plugins/nicedit/nicedit.install.php
-quote site chmod 666 plugins/nicedit/nicedit.install.php
-send plugins\nicedit\nicEdit.js plugins/nicedit/nicEdit.js
-quote site chmod 666 plugins/nicedit/nicEdit.js
-send plugins\nicedit\nicedit.php plugins/nicedit/nicedit.php
-quote site chmod 666 plugins/nicedit/nicedit.php
-send plugins\nicedit\nicEditorIcons.gif plugins/nicedit/nicEditorIcons.gif
-quote site chmod 666 plugins/nicedit/nicEditorIcons.gif
 cd plugins
 mkdir oldestposts
 quote site chmod 777 oldestposts
@@ -1291,6 +1255,1136 @@ quote site chmod 666 plugins/tickets/tickets.menu.class.php
 send plugins\tickets\ztodo.txt plugins/tickets/ztodo.txt
 quote site chmod 666 plugins/tickets/ztodo.txt
 cd plugins
+mkdir tiny_mce
+quote site chmod 777 tiny_mce
+cd ../
+send plugins\tiny_mce\.htaccess plugins/tiny_mce/.htaccess
+quote site chmod 666 plugins/tiny_mce/.htaccess
+send plugins\tiny_mce\about.ini plugins/tiny_mce/about.ini
+quote site chmod 666 plugins/tiny_mce/about.ini
+send plugins\tiny_mce\index.htm plugins/tiny_mce/index.htm
+quote site chmod 666 plugins/tiny_mce/index.htm
+send plugins\tiny_mce\init.js plugins/tiny_mce/init.js
+quote site chmod 666 plugins/tiny_mce/init.js
+send plugins\tiny_mce\jquery.tinymce.js plugins/tiny_mce/jquery.tinymce.js
+quote site chmod 666 plugins/tiny_mce/jquery.tinymce.js
+cd plugins/tiny_mce
+mkdir langs
+quote site chmod 777 langs
+cd ../../
+send plugins\tiny_mce\langs\en.js plugins/tiny_mce/langs/en.js
+quote site chmod 666 plugins/tiny_mce/langs/en.js
+send plugins\tiny_mce\langs\ru.js plugins/tiny_mce/langs/ru.js
+quote site chmod 666 plugins/tiny_mce/langs/ru.js
+send build\indexfile.htm plugins/tiny_mce/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/langs/index.htm
+send plugins\tiny_mce\license.txt plugins/tiny_mce/license.txt
+quote site chmod 666 plugins/tiny_mce/license.txt
+cd plugins/tiny_mce
+mkdir plugins
+quote site chmod 777 plugins
+cd ../../
+cd plugins/tiny_mce/plugins
+mkdir advhr
+quote site chmod 777 advhr
+cd ../../../
+cd plugins/tiny_mce/plugins/advhr
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\advhr\css\advhr.css plugins/tiny_mce/plugins/advhr/css/advhr.css
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/css/advhr.css
+send build\indexfile.htm plugins/tiny_mce/plugins/advhr/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/css/index.htm
+send plugins\tiny_mce\plugins\advhr\editor_plugin.js plugins/tiny_mce/plugins/advhr/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/editor_plugin.js
+send plugins\tiny_mce\plugins\advhr\editor_plugin_src.js plugins/tiny_mce/plugins/advhr/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/advhr
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\advhr\js\rule.js plugins/tiny_mce/plugins/advhr/js/rule.js
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/js/rule.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advhr/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/js/index.htm
+cd plugins/tiny_mce/plugins/advhr
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\advhr\langs\en_dlg.js plugins/tiny_mce/plugins/advhr/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advhr/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/langs/index.htm
+send plugins\tiny_mce\plugins\advhr\rule.htm plugins/tiny_mce/plugins/advhr/rule.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/rule.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/advhr/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advhr/index.htm
+cd plugins/tiny_mce/plugins
+mkdir advimage
+quote site chmod 777 advimage
+cd ../../../
+cd plugins/tiny_mce/plugins/advimage
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\advimage\css\advimage.css plugins/tiny_mce/plugins/advimage/css/advimage.css
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/css/advimage.css
+send build\indexfile.htm plugins/tiny_mce/plugins/advimage/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/css/index.htm
+send plugins\tiny_mce\plugins\advimage\editor_plugin.js plugins/tiny_mce/plugins/advimage/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/editor_plugin.js
+send plugins\tiny_mce\plugins\advimage\editor_plugin_src.js plugins/tiny_mce/plugins/advimage/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/editor_plugin_src.js
+send plugins\tiny_mce\plugins\advimage\image.htm plugins/tiny_mce/plugins/advimage/image.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/image.htm
+cd plugins/tiny_mce/plugins/advimage
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\plugins\advimage\img\sample.gif plugins/tiny_mce/plugins/advimage/img/sample.gif
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/img/sample.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/advimage/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/img/index.htm
+cd plugins/tiny_mce/plugins/advimage
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\advimage\js\image.js plugins/tiny_mce/plugins/advimage/js/image.js
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/js/image.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advimage/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/js/index.htm
+cd plugins/tiny_mce/plugins/advimage
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\advimage\langs\en_dlg.js plugins/tiny_mce/plugins/advimage/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advimage/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/langs/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/advimage/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advimage/index.htm
+cd plugins/tiny_mce/plugins
+mkdir advlink
+quote site chmod 777 advlink
+cd ../../../
+cd plugins/tiny_mce/plugins/advlink
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\advlink\css\advlink.css plugins/tiny_mce/plugins/advlink/css/advlink.css
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/css/advlink.css
+send build\indexfile.htm plugins/tiny_mce/plugins/advlink/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/css/index.htm
+send plugins\tiny_mce\plugins\advlink\editor_plugin.js plugins/tiny_mce/plugins/advlink/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/editor_plugin.js
+send plugins\tiny_mce\plugins\advlink\editor_plugin_src.js plugins/tiny_mce/plugins/advlink/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/advlink
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\advlink\js\advlink.js plugins/tiny_mce/plugins/advlink/js/advlink.js
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/js/advlink.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advlink/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/js/index.htm
+cd plugins/tiny_mce/plugins/advlink
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\advlink\langs\en_dlg.js plugins/tiny_mce/plugins/advlink/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advlink/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/langs/index.htm
+send plugins\tiny_mce\plugins\advlink\link.htm plugins/tiny_mce/plugins/advlink/link.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/link.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/advlink/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advlink/index.htm
+cd plugins/tiny_mce/plugins
+mkdir advlist
+quote site chmod 777 advlist
+cd ../../../
+send plugins\tiny_mce\plugins\advlist\editor_plugin.js plugins/tiny_mce/plugins/advlist/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/advlist/editor_plugin.js
+send plugins\tiny_mce\plugins\advlist\editor_plugin_src.js plugins/tiny_mce/plugins/advlist/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/advlist/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/advlist/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/advlist/index.htm
+cd plugins/tiny_mce/plugins
+mkdir autoresize
+quote site chmod 777 autoresize
+cd ../../../
+send plugins\tiny_mce\plugins\autoresize\editor_plugin.js plugins/tiny_mce/plugins/autoresize/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/autoresize/editor_plugin.js
+send plugins\tiny_mce\plugins\autoresize\editor_plugin_src.js plugins/tiny_mce/plugins/autoresize/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/autoresize/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/autoresize/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/autoresize/index.htm
+cd plugins/tiny_mce/plugins
+mkdir autosave
+quote site chmod 777 autosave
+cd ../../../
+send plugins\tiny_mce\plugins\autosave\editor_plugin.js plugins/tiny_mce/plugins/autosave/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/autosave/editor_plugin.js
+send plugins\tiny_mce\plugins\autosave\editor_plugin_src.js plugins/tiny_mce/plugins/autosave/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/autosave/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/autosave
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\autosave\langs\en.js plugins/tiny_mce/plugins/autosave/langs/en.js
+quote site chmod 666 plugins/tiny_mce/plugins/autosave/langs/en.js
+send build\indexfile.htm plugins/tiny_mce/plugins/autosave/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/autosave/langs/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/autosave/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/autosave/index.htm
+cd plugins/tiny_mce/plugins
+mkdir bbcode
+quote site chmod 777 bbcode
+cd ../../../
+send plugins\tiny_mce\plugins\bbcode\editor_plugin.js plugins/tiny_mce/plugins/bbcode/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/bbcode/editor_plugin.js
+send plugins\tiny_mce\plugins\bbcode\editor_plugin_src.js plugins/tiny_mce/plugins/bbcode/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/bbcode/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/bbcode/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/bbcode/index.htm
+cd plugins/tiny_mce/plugins
+mkdir contextmenu
+quote site chmod 777 contextmenu
+cd ../../../
+send plugins\tiny_mce\plugins\contextmenu\editor_plugin.js plugins/tiny_mce/plugins/contextmenu/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/contextmenu/editor_plugin.js
+send plugins\tiny_mce\plugins\contextmenu\editor_plugin_src.js plugins/tiny_mce/plugins/contextmenu/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/contextmenu/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/contextmenu/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/contextmenu/index.htm
+cd plugins/tiny_mce/plugins
+mkdir directionality
+quote site chmod 777 directionality
+cd ../../../
+send plugins\tiny_mce\plugins\directionality\editor_plugin.js plugins/tiny_mce/plugins/directionality/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/directionality/editor_plugin.js
+send plugins\tiny_mce\plugins\directionality\editor_plugin_src.js plugins/tiny_mce/plugins/directionality/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/directionality/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/directionality/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/directionality/index.htm
+cd plugins/tiny_mce/plugins
+mkdir emotions
+quote site chmod 777 emotions
+cd ../../../
+send plugins\tiny_mce\plugins\emotions\editor_plugin.js plugins/tiny_mce/plugins/emotions/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/editor_plugin.js
+send plugins\tiny_mce\plugins\emotions\editor_plugin_src.js plugins/tiny_mce/plugins/emotions/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/editor_plugin_src.js
+send plugins\tiny_mce\plugins\emotions\emotions.htm plugins/tiny_mce/plugins/emotions/emotions.htm
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/emotions.htm
+cd plugins/tiny_mce/plugins/emotions
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\plugins\emotions\img\smiley-cool.gif plugins/tiny_mce/plugins/emotions/img/smiley-cool.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-cool.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-cry.gif plugins/tiny_mce/plugins/emotions/img/smiley-cry.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-cry.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-embarassed.gif plugins/tiny_mce/plugins/emotions/img/smiley-embarassed.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-embarassed.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-foot-in-mouth.gif plugins/tiny_mce/plugins/emotions/img/smiley-foot-in-mouth.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-foot-in-mouth.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-frown.gif plugins/tiny_mce/plugins/emotions/img/smiley-frown.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-frown.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-innocent.gif plugins/tiny_mce/plugins/emotions/img/smiley-innocent.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-innocent.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-kiss.gif plugins/tiny_mce/plugins/emotions/img/smiley-kiss.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-kiss.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-laughing.gif plugins/tiny_mce/plugins/emotions/img/smiley-laughing.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-laughing.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-money-mouth.gif plugins/tiny_mce/plugins/emotions/img/smiley-money-mouth.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-money-mouth.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-sealed.gif plugins/tiny_mce/plugins/emotions/img/smiley-sealed.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-sealed.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-smile.gif plugins/tiny_mce/plugins/emotions/img/smiley-smile.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-smile.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-surprised.gif plugins/tiny_mce/plugins/emotions/img/smiley-surprised.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-surprised.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-tongue-out.gif plugins/tiny_mce/plugins/emotions/img/smiley-tongue-out.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-tongue-out.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-undecided.gif plugins/tiny_mce/plugins/emotions/img/smiley-undecided.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-undecided.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-wink.gif plugins/tiny_mce/plugins/emotions/img/smiley-wink.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-wink.gif
+send plugins\tiny_mce\plugins\emotions\img\smiley-yell.gif plugins/tiny_mce/plugins/emotions/img/smiley-yell.gif
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/smiley-yell.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/emotions/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/img/index.htm
+cd plugins/tiny_mce/plugins/emotions
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\emotions\js\emotions.js plugins/tiny_mce/plugins/emotions/js/emotions.js
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/js/emotions.js
+send build\indexfile.htm plugins/tiny_mce/plugins/emotions/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/js/index.htm
+cd plugins/tiny_mce/plugins/emotions
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\emotions\langs\en_dlg.js plugins/tiny_mce/plugins/emotions/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/emotions/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/langs/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/emotions/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/emotions/index.htm
+cd plugins/tiny_mce/plugins
+mkdir example
+quote site chmod 777 example
+cd ../../../
+send plugins\tiny_mce\plugins\example\dialog.htm plugins/tiny_mce/plugins/example/dialog.htm
+quote site chmod 666 plugins/tiny_mce/plugins/example/dialog.htm
+send plugins\tiny_mce\plugins\example\editor_plugin.js plugins/tiny_mce/plugins/example/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/example/editor_plugin.js
+send plugins\tiny_mce\plugins\example\editor_plugin_src.js plugins/tiny_mce/plugins/example/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/example/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/example
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\plugins\example\img\example.gif plugins/tiny_mce/plugins/example/img/example.gif
+quote site chmod 666 plugins/tiny_mce/plugins/example/img/example.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/example/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/example/img/index.htm
+cd plugins/tiny_mce/plugins/example
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\example\js\dialog.js plugins/tiny_mce/plugins/example/js/dialog.js
+quote site chmod 666 plugins/tiny_mce/plugins/example/js/dialog.js
+send build\indexfile.htm plugins/tiny_mce/plugins/example/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/example/js/index.htm
+cd plugins/tiny_mce/plugins/example
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\example\langs\en.js plugins/tiny_mce/plugins/example/langs/en.js
+quote site chmod 666 plugins/tiny_mce/plugins/example/langs/en.js
+send plugins\tiny_mce\plugins\example\langs\en_dlg.js plugins/tiny_mce/plugins/example/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/example/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/example/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/example/langs/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/example/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/example/index.htm
+cd plugins/tiny_mce/plugins
+mkdir fullpage
+quote site chmod 777 fullpage
+cd ../../../
+cd plugins/tiny_mce/plugins/fullpage
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\fullpage\css\fullpage.css plugins/tiny_mce/plugins/fullpage/css/fullpage.css
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/css/fullpage.css
+send build\indexfile.htm plugins/tiny_mce/plugins/fullpage/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/css/index.htm
+send plugins\tiny_mce\plugins\fullpage\editor_plugin.js plugins/tiny_mce/plugins/fullpage/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/editor_plugin.js
+send plugins\tiny_mce\plugins\fullpage\editor_plugin_src.js plugins/tiny_mce/plugins/fullpage/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/editor_plugin_src.js
+send plugins\tiny_mce\plugins\fullpage\fullpage.htm plugins/tiny_mce/plugins/fullpage/fullpage.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/fullpage.htm
+cd plugins/tiny_mce/plugins/fullpage
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\fullpage\js\fullpage.js plugins/tiny_mce/plugins/fullpage/js/fullpage.js
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/js/fullpage.js
+send build\indexfile.htm plugins/tiny_mce/plugins/fullpage/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/js/index.htm
+cd plugins/tiny_mce/plugins/fullpage
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\fullpage\langs\en_dlg.js plugins/tiny_mce/plugins/fullpage/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/fullpage/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/langs/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/fullpage/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullpage/index.htm
+cd plugins/tiny_mce/plugins
+mkdir fullscreen
+quote site chmod 777 fullscreen
+cd ../../../
+send plugins\tiny_mce\plugins\fullscreen\editor_plugin.js plugins/tiny_mce/plugins/fullscreen/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/fullscreen/editor_plugin.js
+send plugins\tiny_mce\plugins\fullscreen\editor_plugin_src.js plugins/tiny_mce/plugins/fullscreen/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/fullscreen/editor_plugin_src.js
+send plugins\tiny_mce\plugins\fullscreen\fullscreen.htm plugins/tiny_mce/plugins/fullscreen/fullscreen.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullscreen/fullscreen.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/fullscreen/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/fullscreen/index.htm
+cd plugins/tiny_mce/plugins
+mkdir iespell
+quote site chmod 777 iespell
+cd ../../../
+send plugins\tiny_mce\plugins\iespell\editor_plugin.js plugins/tiny_mce/plugins/iespell/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/iespell/editor_plugin.js
+send plugins\tiny_mce\plugins\iespell\editor_plugin_src.js plugins/tiny_mce/plugins/iespell/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/iespell/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/iespell/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/iespell/index.htm
+cd plugins/tiny_mce/plugins
+mkdir inlinepopups
+quote site chmod 777 inlinepopups
+cd ../../../
+send plugins\tiny_mce\plugins\inlinepopups\editor_plugin.js plugins/tiny_mce/plugins/inlinepopups/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/editor_plugin.js
+send plugins\tiny_mce\plugins\inlinepopups\editor_plugin_src.js plugins/tiny_mce/plugins/inlinepopups/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/inlinepopups
+mkdir skins
+quote site chmod 777 skins
+cd ../../../../
+cd plugins/tiny_mce/plugins/inlinepopups/skins
+mkdir clearlooks2
+quote site chmod 777 clearlooks2
+cd ../../../../../
+cd plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2
+mkdir img
+quote site chmod 777 img
+cd ../../../../../../
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\alert.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/alert.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/alert.gif
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\button.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/button.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/button.gif
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\buttons.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/buttons.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/buttons.gif
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\confirm.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/confirm.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/confirm.gif
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\corners.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/corners.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/corners.gif
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\horizontal.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/horizontal.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/horizontal.gif
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\vertical.gif plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/vertical.gif
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/vertical.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/index.htm
+send plugins\tiny_mce\plugins\inlinepopups\skins\clearlooks2\window.css plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/window.css
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/window.css
+send build\indexfile.htm plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/clearlooks2/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/inlinepopups/skins/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/skins/index.htm
+send plugins\tiny_mce\plugins\inlinepopups\template.htm plugins/tiny_mce/plugins/inlinepopups/template.htm
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/template.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/inlinepopups/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/inlinepopups/index.htm
+cd plugins/tiny_mce/plugins
+mkdir insertdatetime
+quote site chmod 777 insertdatetime
+cd ../../../
+send plugins\tiny_mce\plugins\insertdatetime\editor_plugin.js plugins/tiny_mce/plugins/insertdatetime/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/insertdatetime/editor_plugin.js
+send plugins\tiny_mce\plugins\insertdatetime\editor_plugin_src.js plugins/tiny_mce/plugins/insertdatetime/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/insertdatetime/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/insertdatetime/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/insertdatetime/index.htm
+cd plugins/tiny_mce/plugins
+mkdir layer
+quote site chmod 777 layer
+cd ../../../
+send plugins\tiny_mce\plugins\layer\editor_plugin.js plugins/tiny_mce/plugins/layer/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/layer/editor_plugin.js
+send plugins\tiny_mce\plugins\layer\editor_plugin_src.js plugins/tiny_mce/plugins/layer/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/layer/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/layer/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/layer/index.htm
+cd plugins/tiny_mce/plugins
+mkdir legacyoutput
+quote site chmod 777 legacyoutput
+cd ../../../
+send plugins\tiny_mce\plugins\legacyoutput\editor_plugin.js plugins/tiny_mce/plugins/legacyoutput/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/legacyoutput/editor_plugin.js
+send plugins\tiny_mce\plugins\legacyoutput\editor_plugin_src.js plugins/tiny_mce/plugins/legacyoutput/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/legacyoutput/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/legacyoutput/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/legacyoutput/index.htm
+cd plugins/tiny_mce/plugins
+mkdir media
+quote site chmod 777 media
+cd ../../../
+cd plugins/tiny_mce/plugins/media
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\media\css\content.css plugins/tiny_mce/plugins/media/css/content.css
+quote site chmod 666 plugins/tiny_mce/plugins/media/css/content.css
+send plugins\tiny_mce\plugins\media\css\media.css plugins/tiny_mce/plugins/media/css/media.css
+quote site chmod 666 plugins/tiny_mce/plugins/media/css/media.css
+send build\indexfile.htm plugins/tiny_mce/plugins/media/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/media/css/index.htm
+send plugins\tiny_mce\plugins\media\editor_plugin.js plugins/tiny_mce/plugins/media/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/media/editor_plugin.js
+send plugins\tiny_mce\plugins\media\editor_plugin_src.js plugins/tiny_mce/plugins/media/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/media/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/media
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\plugins\media\img\flash.gif plugins/tiny_mce/plugins/media/img/flash.gif
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/flash.gif
+send plugins\tiny_mce\plugins\media\img\flv_player.swf plugins/tiny_mce/plugins/media/img/flv_player.swf
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/flv_player.swf
+send plugins\tiny_mce\plugins\media\img\quicktime.gif plugins/tiny_mce/plugins/media/img/quicktime.gif
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/quicktime.gif
+send plugins\tiny_mce\plugins\media\img\realmedia.gif plugins/tiny_mce/plugins/media/img/realmedia.gif
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/realmedia.gif
+send plugins\tiny_mce\plugins\media\img\shockwave.gif plugins/tiny_mce/plugins/media/img/shockwave.gif
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/shockwave.gif
+send plugins\tiny_mce\plugins\media\img\trans.gif plugins/tiny_mce/plugins/media/img/trans.gif
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/trans.gif
+send plugins\tiny_mce\plugins\media\img\windowsmedia.gif plugins/tiny_mce/plugins/media/img/windowsmedia.gif
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/windowsmedia.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/media/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/media/img/index.htm
+cd plugins/tiny_mce/plugins/media
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\media\js\embed.js plugins/tiny_mce/plugins/media/js/embed.js
+quote site chmod 666 plugins/tiny_mce/plugins/media/js/embed.js
+send plugins\tiny_mce\plugins\media\js\media.js plugins/tiny_mce/plugins/media/js/media.js
+quote site chmod 666 plugins/tiny_mce/plugins/media/js/media.js
+send build\indexfile.htm plugins/tiny_mce/plugins/media/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/media/js/index.htm
+cd plugins/tiny_mce/plugins/media
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\media\langs\en_dlg.js plugins/tiny_mce/plugins/media/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/media/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/media/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/media/langs/index.htm
+send plugins\tiny_mce\plugins\media\media.htm plugins/tiny_mce/plugins/media/media.htm
+quote site chmod 666 plugins/tiny_mce/plugins/media/media.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/media/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/media/index.htm
+cd plugins/tiny_mce/plugins
+mkdir nonbreaking
+quote site chmod 777 nonbreaking
+cd ../../../
+send plugins\tiny_mce\plugins\nonbreaking\editor_plugin.js plugins/tiny_mce/plugins/nonbreaking/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/nonbreaking/editor_plugin.js
+send plugins\tiny_mce\plugins\nonbreaking\editor_plugin_src.js plugins/tiny_mce/plugins/nonbreaking/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/nonbreaking/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/nonbreaking/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/nonbreaking/index.htm
+cd plugins/tiny_mce/plugins
+mkdir noneditable
+quote site chmod 777 noneditable
+cd ../../../
+send plugins\tiny_mce\plugins\noneditable\editor_plugin.js plugins/tiny_mce/plugins/noneditable/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/noneditable/editor_plugin.js
+send plugins\tiny_mce\plugins\noneditable\editor_plugin_src.js plugins/tiny_mce/plugins/noneditable/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/noneditable/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/noneditable/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/noneditable/index.htm
+cd plugins/tiny_mce/plugins
+mkdir pagebreak
+quote site chmod 777 pagebreak
+cd ../../../
+cd plugins/tiny_mce/plugins/pagebreak
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\pagebreak\css\content.css plugins/tiny_mce/plugins/pagebreak/css/content.css
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/css/content.css
+send build\indexfile.htm plugins/tiny_mce/plugins/pagebreak/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/css/index.htm
+send plugins\tiny_mce\plugins\pagebreak\editor_plugin.js plugins/tiny_mce/plugins/pagebreak/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/editor_plugin.js
+send plugins\tiny_mce\plugins\pagebreak\editor_plugin_src.js plugins/tiny_mce/plugins/pagebreak/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/pagebreak
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\plugins\pagebreak\img\pagebreak.gif plugins/tiny_mce/plugins/pagebreak/img/pagebreak.gif
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/img/pagebreak.gif
+send plugins\tiny_mce\plugins\pagebreak\img\trans.gif plugins/tiny_mce/plugins/pagebreak/img/trans.gif
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/img/trans.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/pagebreak/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/img/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/pagebreak/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/pagebreak/index.htm
+cd plugins/tiny_mce/plugins
+mkdir paste
+quote site chmod 777 paste
+cd ../../../
+send plugins\tiny_mce\plugins\paste\editor_plugin.js plugins/tiny_mce/plugins/paste/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/paste/editor_plugin.js
+send plugins\tiny_mce\plugins\paste\editor_plugin_src.js plugins/tiny_mce/plugins/paste/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/paste/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/paste
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\paste\js\pastetext.js plugins/tiny_mce/plugins/paste/js/pastetext.js
+quote site chmod 666 plugins/tiny_mce/plugins/paste/js/pastetext.js
+send plugins\tiny_mce\plugins\paste\js\pasteword.js plugins/tiny_mce/plugins/paste/js/pasteword.js
+quote site chmod 666 plugins/tiny_mce/plugins/paste/js/pasteword.js
+send build\indexfile.htm plugins/tiny_mce/plugins/paste/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/paste/js/index.htm
+cd plugins/tiny_mce/plugins/paste
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\paste\langs\en_dlg.js plugins/tiny_mce/plugins/paste/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/paste/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/paste/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/paste/langs/index.htm
+send plugins\tiny_mce\plugins\paste\pastetext.htm plugins/tiny_mce/plugins/paste/pastetext.htm
+quote site chmod 666 plugins/tiny_mce/plugins/paste/pastetext.htm
+send plugins\tiny_mce\plugins\paste\pasteword.htm plugins/tiny_mce/plugins/paste/pasteword.htm
+quote site chmod 666 plugins/tiny_mce/plugins/paste/pasteword.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/paste/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/paste/index.htm
+cd plugins/tiny_mce/plugins
+mkdir preview
+quote site chmod 777 preview
+cd ../../../
+send plugins\tiny_mce\plugins\preview\editor_plugin.js plugins/tiny_mce/plugins/preview/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/preview/editor_plugin.js
+send plugins\tiny_mce\plugins\preview\editor_plugin_src.js plugins/tiny_mce/plugins/preview/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/preview/editor_plugin_src.js
+send plugins\tiny_mce\plugins\preview\example.html plugins/tiny_mce/plugins/preview/example.html
+quote site chmod 666 plugins/tiny_mce/plugins/preview/example.html
+cd plugins/tiny_mce/plugins/preview
+mkdir jscripts
+quote site chmod 777 jscripts
+cd ../../../../
+send plugins\tiny_mce\plugins\preview\jscripts\embed.js plugins/tiny_mce/plugins/preview/jscripts/embed.js
+quote site chmod 666 plugins/tiny_mce/plugins/preview/jscripts/embed.js
+send build\indexfile.htm plugins/tiny_mce/plugins/preview/jscripts/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/preview/jscripts/index.htm
+send plugins\tiny_mce\plugins\preview\preview.html plugins/tiny_mce/plugins/preview/preview.html
+quote site chmod 666 plugins/tiny_mce/plugins/preview/preview.html
+send build\indexfile.htm plugins/tiny_mce/plugins/preview/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/preview/index.htm
+cd plugins/tiny_mce/plugins
+mkdir print
+quote site chmod 777 print
+cd ../../../
+send plugins\tiny_mce\plugins\print\editor_plugin.js plugins/tiny_mce/plugins/print/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/print/editor_plugin.js
+send plugins\tiny_mce\plugins\print\editor_plugin_src.js plugins/tiny_mce/plugins/print/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/print/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/print/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/print/index.htm
+cd plugins/tiny_mce/plugins
+mkdir save
+quote site chmod 777 save
+cd ../../../
+send plugins\tiny_mce\plugins\save\editor_plugin.js plugins/tiny_mce/plugins/save/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/save/editor_plugin.js
+send plugins\tiny_mce\plugins\save\editor_plugin_src.js plugins/tiny_mce/plugins/save/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/save/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/save/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/save/index.htm
+cd plugins/tiny_mce/plugins
+mkdir searchreplace
+quote site chmod 777 searchreplace
+cd ../../../
+cd plugins/tiny_mce/plugins/searchreplace
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\searchreplace\css\searchreplace.css plugins/tiny_mce/plugins/searchreplace/css/searchreplace.css
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/css/searchreplace.css
+send build\indexfile.htm plugins/tiny_mce/plugins/searchreplace/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/css/index.htm
+send plugins\tiny_mce\plugins\searchreplace\editor_plugin.js plugins/tiny_mce/plugins/searchreplace/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/editor_plugin.js
+send plugins\tiny_mce\plugins\searchreplace\editor_plugin_src.js plugins/tiny_mce/plugins/searchreplace/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/searchreplace
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\searchreplace\js\searchreplace.js plugins/tiny_mce/plugins/searchreplace/js/searchreplace.js
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/js/searchreplace.js
+send build\indexfile.htm plugins/tiny_mce/plugins/searchreplace/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/js/index.htm
+cd plugins/tiny_mce/plugins/searchreplace
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\searchreplace\langs\en_dlg.js plugins/tiny_mce/plugins/searchreplace/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/searchreplace/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/langs/index.htm
+send plugins\tiny_mce\plugins\searchreplace\searchreplace.htm plugins/tiny_mce/plugins/searchreplace/searchreplace.htm
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/searchreplace.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/searchreplace/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/searchreplace/index.htm
+cd plugins/tiny_mce/plugins
+mkdir spellchecker
+quote site chmod 777 spellchecker
+cd ../../../
+cd plugins/tiny_mce/plugins/spellchecker
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\spellchecker\css\content.css plugins/tiny_mce/plugins/spellchecker/css/content.css
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/css/content.css
+send build\indexfile.htm plugins/tiny_mce/plugins/spellchecker/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/css/index.htm
+send plugins\tiny_mce\plugins\spellchecker\editor_plugin.js plugins/tiny_mce/plugins/spellchecker/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/editor_plugin.js
+send plugins\tiny_mce\plugins\spellchecker\editor_plugin_src.js plugins/tiny_mce/plugins/spellchecker/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/spellchecker
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\plugins\spellchecker\img\wline.gif plugins/tiny_mce/plugins/spellchecker/img/wline.gif
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/img/wline.gif
+send build\indexfile.htm plugins/tiny_mce/plugins/spellchecker/img/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/img/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/spellchecker/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/spellchecker/index.htm
+cd plugins/tiny_mce/plugins
+mkdir style
+quote site chmod 777 style
+cd ../../../
+cd plugins/tiny_mce/plugins/style
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\style\css\props.css plugins/tiny_mce/plugins/style/css/props.css
+quote site chmod 666 plugins/tiny_mce/plugins/style/css/props.css
+send build\indexfile.htm plugins/tiny_mce/plugins/style/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/style/css/index.htm
+send plugins\tiny_mce\plugins\style\editor_plugin.js plugins/tiny_mce/plugins/style/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/style/editor_plugin.js
+send plugins\tiny_mce\plugins\style\editor_plugin_src.js plugins/tiny_mce/plugins/style/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/style/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/style
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\style\js\props.js plugins/tiny_mce/plugins/style/js/props.js
+quote site chmod 666 plugins/tiny_mce/plugins/style/js/props.js
+send build\indexfile.htm plugins/tiny_mce/plugins/style/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/style/js/index.htm
+cd plugins/tiny_mce/plugins/style
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\style\langs\en_dlg.js plugins/tiny_mce/plugins/style/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/style/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/style/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/style/langs/index.htm
+send plugins\tiny_mce\plugins\style\props.htm plugins/tiny_mce/plugins/style/props.htm
+quote site chmod 666 plugins/tiny_mce/plugins/style/props.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/style/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/style/index.htm
+cd plugins/tiny_mce/plugins
+mkdir tabfocus
+quote site chmod 777 tabfocus
+cd ../../../
+send plugins\tiny_mce\plugins\tabfocus\editor_plugin.js plugins/tiny_mce/plugins/tabfocus/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/tabfocus/editor_plugin.js
+send plugins\tiny_mce\plugins\tabfocus\editor_plugin_src.js plugins/tiny_mce/plugins/tabfocus/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/tabfocus/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/tabfocus/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/tabfocus/index.htm
+cd plugins/tiny_mce/plugins
+mkdir table
+quote site chmod 777 table
+cd ../../../
+send plugins\tiny_mce\plugins\table\cell.htm plugins/tiny_mce/plugins/table/cell.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/cell.htm
+cd plugins/tiny_mce/plugins/table
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\table\css\cell.css plugins/tiny_mce/plugins/table/css/cell.css
+quote site chmod 666 plugins/tiny_mce/plugins/table/css/cell.css
+send plugins\tiny_mce\plugins\table\css\row.css plugins/tiny_mce/plugins/table/css/row.css
+quote site chmod 666 plugins/tiny_mce/plugins/table/css/row.css
+send plugins\tiny_mce\plugins\table\css\table.css plugins/tiny_mce/plugins/table/css/table.css
+quote site chmod 666 plugins/tiny_mce/plugins/table/css/table.css
+send build\indexfile.htm plugins/tiny_mce/plugins/table/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/css/index.htm
+send plugins\tiny_mce\plugins\table\editor_plugin.js plugins/tiny_mce/plugins/table/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/editor_plugin.js
+send plugins\tiny_mce\plugins\table\editor_plugin_src.js plugins/tiny_mce/plugins/table/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/table
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\table\js\cell.js plugins/tiny_mce/plugins/table/js/cell.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/js/cell.js
+send plugins\tiny_mce\plugins\table\js\merge_cells.js plugins/tiny_mce/plugins/table/js/merge_cells.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/js/merge_cells.js
+send plugins\tiny_mce\plugins\table\js\row.js plugins/tiny_mce/plugins/table/js/row.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/js/row.js
+send plugins\tiny_mce\plugins\table\js\table.js plugins/tiny_mce/plugins/table/js/table.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/js/table.js
+send build\indexfile.htm plugins/tiny_mce/plugins/table/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/js/index.htm
+cd plugins/tiny_mce/plugins/table
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\table\langs\en_dlg.js plugins/tiny_mce/plugins/table/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/table/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/table/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/langs/index.htm
+send plugins\tiny_mce\plugins\table\merge_cells.htm plugins/tiny_mce/plugins/table/merge_cells.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/merge_cells.htm
+send plugins\tiny_mce\plugins\table\row.htm plugins/tiny_mce/plugins/table/row.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/row.htm
+send plugins\tiny_mce\plugins\table\table.htm plugins/tiny_mce/plugins/table/table.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/table.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/table/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/table/index.htm
+cd plugins/tiny_mce/plugins
+mkdir template
+quote site chmod 777 template
+cd ../../../
+send plugins\tiny_mce\plugins\template\blank.htm plugins/tiny_mce/plugins/template/blank.htm
+quote site chmod 666 plugins/tiny_mce/plugins/template/blank.htm
+cd plugins/tiny_mce/plugins/template
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\template\css\template.css plugins/tiny_mce/plugins/template/css/template.css
+quote site chmod 666 plugins/tiny_mce/plugins/template/css/template.css
+send build\indexfile.htm plugins/tiny_mce/plugins/template/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/template/css/index.htm
+send plugins\tiny_mce\plugins\template\editor_plugin.js plugins/tiny_mce/plugins/template/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/template/editor_plugin.js
+send plugins\tiny_mce\plugins\template\editor_plugin_src.js plugins/tiny_mce/plugins/template/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/template/editor_plugin_src.js
+cd plugins/tiny_mce/plugins/template
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\template\js\template.js plugins/tiny_mce/plugins/template/js/template.js
+quote site chmod 666 plugins/tiny_mce/plugins/template/js/template.js
+send build\indexfile.htm plugins/tiny_mce/plugins/template/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/template/js/index.htm
+cd plugins/tiny_mce/plugins/template
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\template\langs\en_dlg.js plugins/tiny_mce/plugins/template/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/template/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/template/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/template/langs/index.htm
+send plugins\tiny_mce\plugins\template\template.htm plugins/tiny_mce/plugins/template/template.htm
+quote site chmod 666 plugins/tiny_mce/plugins/template/template.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/template/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/template/index.htm
+cd plugins/tiny_mce/plugins
+mkdir visualchars
+quote site chmod 777 visualchars
+cd ../../../
+send plugins\tiny_mce\plugins\visualchars\editor_plugin.js plugins/tiny_mce/plugins/visualchars/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/visualchars/editor_plugin.js
+send plugins\tiny_mce\plugins\visualchars\editor_plugin_src.js plugins/tiny_mce/plugins/visualchars/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/visualchars/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/visualchars/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/visualchars/index.htm
+cd plugins/tiny_mce/plugins
+mkdir wordcount
+quote site chmod 777 wordcount
+cd ../../../
+send plugins\tiny_mce\plugins\wordcount\editor_plugin.js plugins/tiny_mce/plugins/wordcount/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/wordcount/editor_plugin.js
+send plugins\tiny_mce\plugins\wordcount\editor_plugin_src.js plugins/tiny_mce/plugins/wordcount/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/wordcount/editor_plugin_src.js
+send build\indexfile.htm plugins/tiny_mce/plugins/wordcount/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/wordcount/index.htm
+cd plugins/tiny_mce/plugins
+mkdir xhtmlxtras
+quote site chmod 777 xhtmlxtras
+cd ../../../
+send plugins\tiny_mce\plugins\xhtmlxtras\abbr.htm plugins/tiny_mce/plugins/xhtmlxtras/abbr.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/abbr.htm
+send plugins\tiny_mce\plugins\xhtmlxtras\acronym.htm plugins/tiny_mce/plugins/xhtmlxtras/acronym.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/acronym.htm
+send plugins\tiny_mce\plugins\xhtmlxtras\attributes.htm plugins/tiny_mce/plugins/xhtmlxtras/attributes.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/attributes.htm
+send plugins\tiny_mce\plugins\xhtmlxtras\cite.htm plugins/tiny_mce/plugins/xhtmlxtras/cite.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/cite.htm
+cd plugins/tiny_mce/plugins/xhtmlxtras
+mkdir css
+quote site chmod 777 css
+cd ../../../../
+send plugins\tiny_mce\plugins\xhtmlxtras\css\attributes.css plugins/tiny_mce/plugins/xhtmlxtras/css/attributes.css
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/css/attributes.css
+send plugins\tiny_mce\plugins\xhtmlxtras\css\popup.css plugins/tiny_mce/plugins/xhtmlxtras/css/popup.css
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/css/popup.css
+send build\indexfile.htm plugins/tiny_mce/plugins/xhtmlxtras/css/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/css/index.htm
+send plugins\tiny_mce\plugins\xhtmlxtras\del.htm plugins/tiny_mce/plugins/xhtmlxtras/del.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/del.htm
+send plugins\tiny_mce\plugins\xhtmlxtras\editor_plugin.js plugins/tiny_mce/plugins/xhtmlxtras/editor_plugin.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/editor_plugin.js
+send plugins\tiny_mce\plugins\xhtmlxtras\editor_plugin_src.js plugins/tiny_mce/plugins/xhtmlxtras/editor_plugin_src.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/editor_plugin_src.js
+send plugins\tiny_mce\plugins\xhtmlxtras\ins.htm plugins/tiny_mce/plugins/xhtmlxtras/ins.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/ins.htm
+cd plugins/tiny_mce/plugins/xhtmlxtras
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\plugins\xhtmlxtras\js\abbr.js plugins/tiny_mce/plugins/xhtmlxtras/js/abbr.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/abbr.js
+send plugins\tiny_mce\plugins\xhtmlxtras\js\acronym.js plugins/tiny_mce/plugins/xhtmlxtras/js/acronym.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/acronym.js
+send plugins\tiny_mce\plugins\xhtmlxtras\js\attributes.js plugins/tiny_mce/plugins/xhtmlxtras/js/attributes.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/attributes.js
+send plugins\tiny_mce\plugins\xhtmlxtras\js\cite.js plugins/tiny_mce/plugins/xhtmlxtras/js/cite.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/cite.js
+send plugins\tiny_mce\plugins\xhtmlxtras\js\del.js plugins/tiny_mce/plugins/xhtmlxtras/js/del.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/del.js
+send plugins\tiny_mce\plugins\xhtmlxtras\js\element_common.js plugins/tiny_mce/plugins/xhtmlxtras/js/element_common.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/element_common.js
+send plugins\tiny_mce\plugins\xhtmlxtras\js\ins.js plugins/tiny_mce/plugins/xhtmlxtras/js/ins.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/ins.js
+send build\indexfile.htm plugins/tiny_mce/plugins/xhtmlxtras/js/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/js/index.htm
+cd plugins/tiny_mce/plugins/xhtmlxtras
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\plugins\xhtmlxtras\langs\en_dlg.js plugins/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/plugins/xhtmlxtras/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/langs/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/xhtmlxtras/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/xhtmlxtras/index.htm
+send build\indexfile.htm plugins/tiny_mce/plugins/index.htm
+quote site chmod 666 plugins/tiny_mce/plugins/index.htm
+cd plugins/tiny_mce
+mkdir themes
+quote site chmod 777 themes
+cd ../../
+cd plugins/tiny_mce/themes
+mkdir advanced
+quote site chmod 777 advanced
+cd ../../../
+send plugins\tiny_mce\themes\advanced\about.htm plugins/tiny_mce/themes/advanced/about.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/about.htm
+send plugins\tiny_mce\themes\advanced\anchor.htm plugins/tiny_mce/themes/advanced/anchor.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/anchor.htm
+send plugins\tiny_mce\themes\advanced\charmap.htm plugins/tiny_mce/themes/advanced/charmap.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/charmap.htm
+send plugins\tiny_mce\themes\advanced\color_picker.htm plugins/tiny_mce/themes/advanced/color_picker.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/color_picker.htm
+send plugins\tiny_mce\themes\advanced\editor_template.js plugins/tiny_mce/themes/advanced/editor_template.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/editor_template.js
+send plugins\tiny_mce\themes\advanced\editor_template_src.js plugins/tiny_mce/themes/advanced/editor_template_src.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/editor_template_src.js
+send plugins\tiny_mce\themes\advanced\image.htm plugins/tiny_mce/themes/advanced/image.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/image.htm
+cd plugins/tiny_mce/themes/advanced
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\themes\advanced\img\colorpicker.jpg plugins/tiny_mce/themes/advanced/img/colorpicker.jpg
+quote site chmod 666 plugins/tiny_mce/themes/advanced/img/colorpicker.jpg
+send plugins\tiny_mce\themes\advanced\img\icons.gif plugins/tiny_mce/themes/advanced/img/icons.gif
+quote site chmod 666 plugins/tiny_mce/themes/advanced/img/icons.gif
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/img/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/img/index.htm
+cd plugins/tiny_mce/themes/advanced
+mkdir js
+quote site chmod 777 js
+cd ../../../../
+send plugins\tiny_mce\themes\advanced\js\about.js plugins/tiny_mce/themes/advanced/js/about.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/about.js
+send plugins\tiny_mce\themes\advanced\js\anchor.js plugins/tiny_mce/themes/advanced/js/anchor.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/anchor.js
+send plugins\tiny_mce\themes\advanced\js\charmap.js plugins/tiny_mce/themes/advanced/js/charmap.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/charmap.js
+send plugins\tiny_mce\themes\advanced\js\color_picker.js plugins/tiny_mce/themes/advanced/js/color_picker.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/color_picker.js
+send plugins\tiny_mce\themes\advanced\js\image.js plugins/tiny_mce/themes/advanced/js/image.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/image.js
+send plugins\tiny_mce\themes\advanced\js\link.js plugins/tiny_mce/themes/advanced/js/link.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/link.js
+send plugins\tiny_mce\themes\advanced\js\source_editor.js plugins/tiny_mce/themes/advanced/js/source_editor.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/source_editor.js
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/js/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/js/index.htm
+cd plugins/tiny_mce/themes/advanced
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\themes\advanced\langs\en.js plugins/tiny_mce/themes/advanced/langs/en.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/langs/en.js
+send plugins\tiny_mce\themes\advanced\langs\en_dlg.js plugins/tiny_mce/themes/advanced/langs/en_dlg.js
+quote site chmod 666 plugins/tiny_mce/themes/advanced/langs/en_dlg.js
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/langs/index.htm
+send plugins\tiny_mce\themes\advanced\link.htm plugins/tiny_mce/themes/advanced/link.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/link.htm
+cd plugins/tiny_mce/themes/advanced
+mkdir skins
+quote site chmod 777 skins
+cd ../../../../
+cd plugins/tiny_mce/themes/advanced/skins
+mkdir default
+quote site chmod 777 default
+cd ../../../../../
+send plugins\tiny_mce\themes\advanced\skins\default\content.css plugins/tiny_mce/themes/advanced/skins/default/content.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/content.css
+send plugins\tiny_mce\themes\advanced\skins\default\dialog.css plugins/tiny_mce/themes/advanced/skins/default/dialog.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/dialog.css
+cd plugins/tiny_mce/themes/advanced/skins/default
+mkdir img
+quote site chmod 777 img
+cd ../../../../../../
+send plugins\tiny_mce\themes\advanced\skins\default\img\buttons.png plugins/tiny_mce/themes/advanced/skins/default/img/buttons.png
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/buttons.png
+send plugins\tiny_mce\themes\advanced\skins\default\img\items.gif plugins/tiny_mce/themes/advanced/skins/default/img/items.gif
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/items.gif
+send plugins\tiny_mce\themes\advanced\skins\default\img\menu_arrow.gif plugins/tiny_mce/themes/advanced/skins/default/img/menu_arrow.gif
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/menu_arrow.gif
+send plugins\tiny_mce\themes\advanced\skins\default\img\menu_check.gif plugins/tiny_mce/themes/advanced/skins/default/img/menu_check.gif
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/menu_check.gif
+send plugins\tiny_mce\themes\advanced\skins\default\img\progress.gif plugins/tiny_mce/themes/advanced/skins/default/img/progress.gif
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/progress.gif
+send plugins\tiny_mce\themes\advanced\skins\default\img\tabs.gif plugins/tiny_mce/themes/advanced/skins/default/img/tabs.gif
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/tabs.gif
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/skins/default/img/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/img/index.htm
+send plugins\tiny_mce\themes\advanced\skins\default\ui.css plugins/tiny_mce/themes/advanced/skins/default/ui.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/ui.css
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/skins/default/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/default/index.htm
+cd plugins/tiny_mce/themes/advanced/skins
+mkdir o2k7
+quote site chmod 777 o2k7
+cd ../../../../../
+send plugins\tiny_mce\themes\advanced\skins\o2k7\content.css plugins/tiny_mce/themes/advanced/skins/o2k7/content.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/content.css
+send plugins\tiny_mce\themes\advanced\skins\o2k7\dialog.css plugins/tiny_mce/themes/advanced/skins/o2k7/dialog.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/dialog.css
+cd plugins/tiny_mce/themes/advanced/skins/o2k7
+mkdir img
+quote site chmod 777 img
+cd ../../../../../../
+send plugins\tiny_mce\themes\advanced\skins\o2k7\img\button_bg.png plugins/tiny_mce/themes/advanced/skins/o2k7/img/button_bg.png
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/img/button_bg.png
+send plugins\tiny_mce\themes\advanced\skins\o2k7\img\button_bg_black.png plugins/tiny_mce/themes/advanced/skins/o2k7/img/button_bg_black.png
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/img/button_bg_black.png
+send plugins\tiny_mce\themes\advanced\skins\o2k7\img\button_bg_silver.png plugins/tiny_mce/themes/advanced/skins/o2k7/img/button_bg_silver.png
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/img/button_bg_silver.png
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/skins/o2k7/img/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/img/index.htm
+send plugins\tiny_mce\themes\advanced\skins\o2k7\ui.css plugins/tiny_mce/themes/advanced/skins/o2k7/ui.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/ui.css
+send plugins\tiny_mce\themes\advanced\skins\o2k7\ui_black.css plugins/tiny_mce/themes/advanced/skins/o2k7/ui_black.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/ui_black.css
+send plugins\tiny_mce\themes\advanced\skins\o2k7\ui_silver.css plugins/tiny_mce/themes/advanced/skins/o2k7/ui_silver.css
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/ui_silver.css
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/skins/o2k7/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/o2k7/index.htm
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/skins/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/skins/index.htm
+send plugins\tiny_mce\themes\advanced\source_editor.htm plugins/tiny_mce/themes/advanced/source_editor.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/source_editor.htm
+send build\indexfile.htm plugins/tiny_mce/themes/advanced/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/advanced/index.htm
+cd plugins/tiny_mce/themes
+mkdir simple
+quote site chmod 777 simple
+cd ../../../
+send plugins\tiny_mce\themes\simple\editor_template.js plugins/tiny_mce/themes/simple/editor_template.js
+quote site chmod 666 plugins/tiny_mce/themes/simple/editor_template.js
+send plugins\tiny_mce\themes\simple\editor_template_src.js plugins/tiny_mce/themes/simple/editor_template_src.js
+quote site chmod 666 plugins/tiny_mce/themes/simple/editor_template_src.js
+cd plugins/tiny_mce/themes/simple
+mkdir img
+quote site chmod 777 img
+cd ../../../../
+send plugins\tiny_mce\themes\simple\img\icons.gif plugins/tiny_mce/themes/simple/img/icons.gif
+quote site chmod 666 plugins/tiny_mce/themes/simple/img/icons.gif
+send build\indexfile.htm plugins/tiny_mce/themes/simple/img/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/img/index.htm
+cd plugins/tiny_mce/themes/simple
+mkdir langs
+quote site chmod 777 langs
+cd ../../../../
+send plugins\tiny_mce\themes\simple\langs\en.js plugins/tiny_mce/themes/simple/langs/en.js
+quote site chmod 666 plugins/tiny_mce/themes/simple/langs/en.js
+send build\indexfile.htm plugins/tiny_mce/themes/simple/langs/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/langs/index.htm
+cd plugins/tiny_mce/themes/simple
+mkdir skins
+quote site chmod 777 skins
+cd ../../../../
+cd plugins/tiny_mce/themes/simple/skins
+mkdir default
+quote site chmod 777 default
+cd ../../../../../
+send plugins\tiny_mce\themes\simple\skins\default\content.css plugins/tiny_mce/themes/simple/skins/default/content.css
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/default/content.css
+send plugins\tiny_mce\themes\simple\skins\default\ui.css plugins/tiny_mce/themes/simple/skins/default/ui.css
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/default/ui.css
+send build\indexfile.htm plugins/tiny_mce/themes/simple/skins/default/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/default/index.htm
+cd plugins/tiny_mce/themes/simple/skins
+mkdir o2k7
+quote site chmod 777 o2k7
+cd ../../../../../
+send plugins\tiny_mce\themes\simple\skins\o2k7\content.css plugins/tiny_mce/themes/simple/skins/o2k7/content.css
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/o2k7/content.css
+cd plugins/tiny_mce/themes/simple/skins/o2k7
+mkdir img
+quote site chmod 777 img
+cd ../../../../../../
+send plugins\tiny_mce\themes\simple\skins\o2k7\img\button_bg.png plugins/tiny_mce/themes/simple/skins/o2k7/img/button_bg.png
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/o2k7/img/button_bg.png
+send build\indexfile.htm plugins/tiny_mce/themes/simple/skins/o2k7/img/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/o2k7/img/index.htm
+send plugins\tiny_mce\themes\simple\skins\o2k7\ui.css plugins/tiny_mce/themes/simple/skins/o2k7/ui.css
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/o2k7/ui.css
+send build\indexfile.htm plugins/tiny_mce/themes/simple/skins/o2k7/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/o2k7/index.htm
+send build\indexfile.htm plugins/tiny_mce/themes/simple/skins/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/skins/index.htm
+send build\indexfile.htm plugins/tiny_mce/themes/simple/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/simple/index.htm
+send build\indexfile.htm plugins/tiny_mce/themes/index.htm
+quote site chmod 666 plugins/tiny_mce/themes/index.htm
+send plugins\tiny_mce\tiny_mce.js plugins/tiny_mce/tiny_mce.js
+quote site chmod 666 plugins/tiny_mce/tiny_mce.js
+send plugins\tiny_mce\tiny_mce.plugin.php plugins/tiny_mce/tiny_mce.plugin.php
+quote site chmod 666 plugins/tiny_mce/tiny_mce.plugin.php
+send plugins\tiny_mce\tiny_mce_popup.js plugins/tiny_mce/tiny_mce_popup.js
+quote site chmod 666 plugins/tiny_mce/tiny_mce_popup.js
+send plugins\tiny_mce\tiny_mce_src.js plugins/tiny_mce/tiny_mce_src.js
+quote site chmod 666 plugins/tiny_mce/tiny_mce_src.js
+cd plugins/tiny_mce
+mkdir utils
+quote site chmod 777 utils
+cd ../../
+send plugins\tiny_mce\utils\editable_selects.js plugins/tiny_mce/utils/editable_selects.js
+quote site chmod 666 plugins/tiny_mce/utils/editable_selects.js
+send plugins\tiny_mce\utils\form_utils.js plugins/tiny_mce/utils/form_utils.js
+quote site chmod 666 plugins/tiny_mce/utils/form_utils.js
+send plugins\tiny_mce\utils\mctabs.js plugins/tiny_mce/utils/mctabs.js
+quote site chmod 666 plugins/tiny_mce/utils/mctabs.js
+send plugins\tiny_mce\utils\validate.js plugins/tiny_mce/utils/validate.js
+quote site chmod 666 plugins/tiny_mce/utils/validate.js
+send build\indexfile.htm plugins/tiny_mce/utils/index.htm
+quote site chmod 666 plugins/tiny_mce/utils/index.htm
+cd plugins
 mkdir wikiwords
 quote site chmod 777 wikiwords
 cd ../
@@ -1322,16 +2416,18 @@ cd plugins
 mkdir youtube-feed
 quote site chmod 777 youtube-feed
 cd ../
+send plugins\youtube-feed\.htaccess plugins/youtube-feed/.htaccess
+quote site chmod 666 plugins/youtube-feed/.htaccess
 send plugins\youtube-feed\about.ini plugins/youtube-feed/about.ini
 quote site chmod 666 plugins/youtube-feed/about.ini
 send plugins\youtube-feed\admin.youtube.feed.class.php plugins/youtube-feed/admin.youtube.feed.class.php
 quote site chmod 666 plugins/youtube-feed/admin.youtube.feed.class.php
+send plugins\youtube-feed\index.htm plugins/youtube-feed/index.htm
+quote site chmod 666 plugins/youtube-feed/index.htm
 send plugins\youtube-feed\youtube.feed.class.install.php plugins/youtube-feed/youtube.feed.class.install.php
 quote site chmod 666 plugins/youtube-feed/youtube.feed.class.install.php
 send plugins\youtube-feed\youtube.feed.class.php plugins/youtube-feed/youtube.feed.class.php
 quote site chmod 666 plugins/youtube-feed/youtube.feed.class.php
-send build\indexfile.htm plugins/youtube-feed/index.htm
-quote site chmod 666 plugins/youtube-feed/index.htm
 cd plugins
 mkdir youtubeplayer
 quote site chmod 777 youtubeplayer
@@ -1466,8 +2562,12 @@ send themes\default\index.htm themes/default/index.htm
 quote site chmod 666 themes/default/index.htm
 send themes\default\index.tml themes/default/index.tml
 quote site chmod 666 themes/default/index.tml
+send themes\default\main.htm themes/default/main.htm
+quote site chmod 666 themes/default/main.htm
 send themes\default\screenshot.png themes/default/screenshot.png
 quote site chmod 666 themes/default/screenshot.png
+send themes\default\theme.txt themes/default/theme.txt
+quote site chmod 666 themes/default/theme.txt
 cd themes
 mkdir web-blue
 quote site chmod 777 web-blue
@@ -1692,12 +2792,128 @@ cd js
 mkdir audio-player
 quote site chmod 777 audio-player
 cd ../
+cd js/audio-player
+mkdir audio-player
+quote site chmod 777 audio-player
+cd ../../
+cd js/audio-player/audio-player
+mkdir assets
+quote site chmod 777 assets
+cd ../../../
+send js\audio-player\audio-player\assets\arrow.png js/audio-player/audio-player/assets/arrow.png
+quote site chmod 666 js/audio-player/audio-player/assets/arrow.png
+send js\audio-player\audio-player\assets\audio-player-admin.css js/audio-player/audio-player/assets/audio-player-admin.css
+quote site chmod 666 js/audio-player/audio-player/assets/audio-player-admin.css
+send js\audio-player\audio-player\assets\audio-player-admin.js js/audio-player/audio-player/assets/audio-player-admin.js
+quote site chmod 666 js/audio-player/audio-player/assets/audio-player-admin.js
+send js\audio-player\audio-player\assets\audio-player.js js/audio-player/audio-player/assets/audio-player.js
+quote site chmod 666 js/audio-player/audio-player/assets/audio-player.js
+cd js/audio-player/audio-player/assets
+mkdir cpicker
+quote site chmod 777 cpicker
+cd ../../../../
+send js\audio-player\audio-player\assets\cpicker\colorpicker.css js/audio-player/audio-player/assets/cpicker/colorpicker.css
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/colorpicker.css
+send js\audio-player\audio-player\assets\cpicker\colorpicker.js js/audio-player/audio-player/assets/cpicker/colorpicker.js
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/colorpicker.js
+cd js/audio-player/audio-player/assets/cpicker
+mkdir images
+quote site chmod 777 images
+cd ../../../../../
+send js\audio-player\audio-player\assets\cpicker\images\colorpicker_overlay.png js/audio-player/audio-player/assets/cpicker/images/colorpicker_overlay.png
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/images/colorpicker_overlay.png
+send js\audio-player\audio-player\assets\cpicker\images\colorpicker_select.gif js/audio-player/audio-player/assets/cpicker/images/colorpicker_select.gif
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/images/colorpicker_select.gif
+send js\audio-player\audio-player\assets\cpicker\images\custom_background.png js/audio-player/audio-player/assets/cpicker/images/custom_background.png
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/images/custom_background.png
+send js\audio-player\audio-player\assets\cpicker\images\custom_indic.gif js/audio-player/audio-player/assets/cpicker/images/custom_indic.gif
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/images/custom_indic.gif
+send build\indexfile.htm js/audio-player/audio-player/assets/cpicker/images/index.htm
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/images/index.htm
+send build\indexfile.htm js/audio-player/audio-player/assets/cpicker/index.htm
+quote site chmod 666 js/audio-player/audio-player/assets/cpicker/index.htm
+send js\audio-player\audio-player\assets\error.png js/audio-player/audio-player/assets/error.png
+quote site chmod 666 js/audio-player/audio-player/assets/error.png
+cd js/audio-player/audio-player/assets
+mkdir lib
+quote site chmod 777 lib
+cd ../../../../
+send js\audio-player\audio-player\assets\lib\jquery.js js/audio-player/audio-player/assets/lib/jquery.js
+quote site chmod 666 js/audio-player/audio-player/assets/lib/jquery.js
+send build\indexfile.htm js/audio-player/audio-player/assets/lib/index.htm
+quote site chmod 666 js/audio-player/audio-player/assets/lib/index.htm
+send js\audio-player\audio-player\assets\loader.gif js/audio-player/audio-player/assets/loader.gif
+quote site chmod 666 js/audio-player/audio-player/assets/loader.gif
+send js\audio-player\audio-player\assets\picker-icon.png js/audio-player/audio-player/assets/picker-icon.png
+quote site chmod 666 js/audio-player/audio-player/assets/picker-icon.png
+send js\audio-player\audio-player\assets\player.swf js/audio-player/audio-player/assets/player.swf
+quote site chmod 666 js/audio-player/audio-player/assets/player.swf
+send js\audio-player\audio-player\assets\thcpck-bottom.png js/audio-player/audio-player/assets/thcpck-bottom.png
+quote site chmod 666 js/audio-player/audio-player/assets/thcpck-bottom.png
+send js\audio-player\audio-player\assets\thcpck-slice.png js/audio-player/audio-player/assets/thcpck-slice.png
+quote site chmod 666 js/audio-player/audio-player/assets/thcpck-slice.png
+send js\audio-player\audio-player\assets\thcpck-top.png js/audio-player/audio-player/assets/thcpck-top.png
+quote site chmod 666 js/audio-player/audio-player/assets/thcpck-top.png
+send js\audio-player\audio-player\assets\theme-picker-icon.png js/audio-player/audio-player/assets/theme-picker-icon.png
+quote site chmod 666 js/audio-player/audio-player/assets/theme-picker-icon.png
+send js\audio-player\audio-player\assets\tick.png js/audio-player/audio-player/assets/tick.png
+quote site chmod 666 js/audio-player/audio-player/assets/tick.png
+send build\indexfile.htm js/audio-player/audio-player/assets/index.htm
+quote site chmod 666 js/audio-player/audio-player/assets/index.htm
+send js\audio-player\audio-player\audio-player.php js/audio-player/audio-player/audio-player.php
+quote site chmod 666 js/audio-player/audio-player/audio-player.php
+cd js/audio-player/audio-player
+mkdir languages
+quote site chmod 777 languages
+cd ../../../
+send js\audio-player\audio-player\languages\audio-player-da_DK.mo js/audio-player/audio-player/languages/audio-player-da_DK.mo
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-da_DK.mo
+send js\audio-player\audio-player\languages\audio-player-da_DK.po js/audio-player/audio-player/languages/audio-player-da_DK.po
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-da_DK.po
+send js\audio-player\audio-player\languages\audio-player-de_DE.mo js/audio-player/audio-player/languages/audio-player-de_DE.mo
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-de_DE.mo
+send js\audio-player\audio-player\languages\audio-player-de_DE.po js/audio-player/audio-player/languages/audio-player-de_DE.po
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-de_DE.po
+send js\audio-player\audio-player\languages\audio-player-es_ES.mo js/audio-player/audio-player/languages/audio-player-es_ES.mo
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-es_ES.mo
+send js\audio-player\audio-player\languages\audio-player-es_ES.po js/audio-player/audio-player/languages/audio-player-es_ES.po
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-es_ES.po
+send js\audio-player\audio-player\languages\audio-player-fr_FR.mo js/audio-player/audio-player/languages/audio-player-fr_FR.mo
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-fr_FR.mo
+send js\audio-player\audio-player\languages\audio-player-fr_FR.po js/audio-player/audio-player/languages/audio-player-fr_FR.po
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-fr_FR.po
+send js\audio-player\audio-player\languages\audio-player-zh_CN.mo js/audio-player/audio-player/languages/audio-player-zh_CN.mo
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-zh_CN.mo
+send js\audio-player\audio-player\languages\audio-player-zh_CN.po js/audio-player/audio-player/languages/audio-player-zh_CN.po
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player-zh_CN.po
+send js\audio-player\audio-player\languages\audio-player.pot js/audio-player/audio-player/languages/audio-player.pot
+quote site chmod 666 js/audio-player/audio-player/languages/audio-player.pot
+send build\indexfile.htm js/audio-player/audio-player/languages/index.htm
+quote site chmod 666 js/audio-player/audio-player/languages/index.htm
+send js\audio-player\audio-player\license.txt js/audio-player/audio-player/license.txt
+quote site chmod 666 js/audio-player/audio-player/license.txt
+cd js/audio-player/audio-player
+mkdir php
+quote site chmod 777 php
+cd ../../../
+send js\audio-player\audio-player\php\check-audio-folder.php js/audio-player/audio-player/php/check-audio-folder.php
+quote site chmod 666 js/audio-player/audio-player/php/check-audio-folder.php
+send js\audio-player\audio-player\php\options-panel.php js/audio-player/audio-player/php/options-panel.php
+quote site chmod 666 js/audio-player/audio-player/php/options-panel.php
+send build\indexfile.htm js/audio-player/audio-player/php/index.htm
+quote site chmod 666 js/audio-player/audio-player/php/index.htm
+send js\audio-player\audio-player\readme.txt js/audio-player/audio-player/readme.txt
+quote site chmod 666 js/audio-player/audio-player/readme.txt
+send build\indexfile.htm js/audio-player/audio-player/index.htm
+quote site chmod 666 js/audio-player/audio-player/index.htm
 send js\audio-player\audio-player-noswfobject.js js/audio-player/audio-player-noswfobject.js
 quote site chmod 666 js/audio-player/audio-player-noswfobject.js
 send js\audio-player\audio-player-uncompressed.js js/audio-player/audio-player-uncompressed.js
 quote site chmod 666 js/audio-player/audio-player-uncompressed.js
 send js\audio-player\audio-player.js js/audio-player/audio-player.js
 quote site chmod 666 js/audio-player/audio-player.js
+send js\audio-player\crossdomain.xml js/audio-player/crossdomain.xml
+quote site chmod 666 js/audio-player/crossdomain.xml
 send js\audio-player\index.htm js/audio-player/index.htm
 quote site chmod 666 js/audio-player/index.htm
 send js\audio-player\license.txt js/audio-player/license.txt
@@ -1708,12 +2924,12 @@ cd js
 mkdir flowplayer
 quote site chmod 777 flowplayer
 cd ../
-send js\flowplayer\flowplayer-3.1.4.min.js js/flowplayer/flowplayer-3.1.4.min.js
-quote site chmod 666 js/flowplayer/flowplayer-3.1.4.min.js
-send js\flowplayer\flowplayer-3.1.5.swf js/flowplayer/flowplayer-3.1.5.swf
-quote site chmod 666 js/flowplayer/flowplayer-3.1.5.swf
-send js\flowplayer\flowplayer.controls-3.1.5.swf js/flowplayer/flowplayer.controls-3.1.5.swf
-quote site chmod 666 js/flowplayer/flowplayer.controls-3.1.5.swf
+send js\flowplayer\flowplayer-3.2.4.min.js js/flowplayer/flowplayer-3.2.4.min.js
+quote site chmod 666 js/flowplayer/flowplayer-3.2.4.min.js
+send js\flowplayer\flowplayer-3.2.5.swf js/flowplayer/flowplayer-3.2.5.swf
+quote site chmod 666 js/flowplayer/flowplayer-3.2.5.swf
+send js\flowplayer\flowplayer.controls-3.2.3.swf js/flowplayer/flowplayer.controls-3.2.3.swf
+quote site chmod 666 js/flowplayer/flowplayer.controls-3.2.3.swf
 send js\flowplayer\index.htm js/flowplayer/index.htm
 quote site chmod 666 js/flowplayer/index.htm
 send js\flowplayer\LICENSE.txt js/flowplayer/LICENSE.txt
@@ -1721,23 +2937,51 @@ quote site chmod 666 js/flowplayer/LICENSE.txt
 send js\index.htm js/index.htm
 quote site chmod 666 js/index.htm
 cd js
-mkdir jsibox
-quote site chmod 777 jsibox
+mkdir jquery
+quote site chmod 777 jquery
 cd ../
-cd js/jsibox
-mkdir img
-quote site chmod 777 img
+cd js/jquery
+mkdir images
+quote site chmod 777 images
 cd ../../
-send js\jsibox\img\ajax-loader2.gif js/jsibox/img/ajax-loader2.gif
-quote site chmod 666 js/jsibox/img/ajax-loader2.gif
-send js\jsibox\img\blank.gif js/jsibox/img/blank.gif
-quote site chmod 666 js/jsibox/img/blank.gif
-send build\indexfile.htm js/jsibox/img/index.htm
-quote site chmod 666 js/jsibox/img/index.htm
-send js\jsibox\jsibox_basic.js js/jsibox/jsibox_basic.js
-quote site chmod 666 js/jsibox/jsibox_basic.js
-send build\indexfile.htm js/jsibox/index.htm
-quote site chmod 666 js/jsibox/index.htm
+send js\jquery\images\ui-bg_flat_0_aaaaaa_40x100.png js/jquery/images/ui-bg_flat_0_aaaaaa_40x100.png
+quote site chmod 666 js/jquery/images/ui-bg_flat_0_aaaaaa_40x100.png
+send js\jquery\images\ui-bg_flat_75_ffffff_40x100.png js/jquery/images/ui-bg_flat_75_ffffff_40x100.png
+quote site chmod 666 js/jquery/images/ui-bg_flat_75_ffffff_40x100.png
+send js\jquery\images\ui-bg_glass_55_fbf9ee_1x400.png js/jquery/images/ui-bg_glass_55_fbf9ee_1x400.png
+quote site chmod 666 js/jquery/images/ui-bg_glass_55_fbf9ee_1x400.png
+send js\jquery\images\ui-bg_glass_65_ffffff_1x400.png js/jquery/images/ui-bg_glass_65_ffffff_1x400.png
+quote site chmod 666 js/jquery/images/ui-bg_glass_65_ffffff_1x400.png
+send js\jquery\images\ui-bg_glass_75_dadada_1x400.png js/jquery/images/ui-bg_glass_75_dadada_1x400.png
+quote site chmod 666 js/jquery/images/ui-bg_glass_75_dadada_1x400.png
+send js\jquery\images\ui-bg_glass_75_e6e6e6_1x400.png js/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png
+quote site chmod 666 js/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png
+send js\jquery\images\ui-bg_glass_95_fef1ec_1x400.png js/jquery/images/ui-bg_glass_95_fef1ec_1x400.png
+quote site chmod 666 js/jquery/images/ui-bg_glass_95_fef1ec_1x400.png
+send js\jquery\images\ui-bg_highlight-soft_75_cccccc_1x100.png js/jquery/images/ui-bg_highlight-soft_75_cccccc_1x100.png
+quote site chmod 666 js/jquery/images/ui-bg_highlight-soft_75_cccccc_1x100.png
+send js\jquery\images\ui-icons_222222_256x240.png js/jquery/images/ui-icons_222222_256x240.png
+quote site chmod 666 js/jquery/images/ui-icons_222222_256x240.png
+send js\jquery\images\ui-icons_2e83ff_256x240.png js/jquery/images/ui-icons_2e83ff_256x240.png
+quote site chmod 666 js/jquery/images/ui-icons_2e83ff_256x240.png
+send js\jquery\images\ui-icons_454545_256x240.png js/jquery/images/ui-icons_454545_256x240.png
+quote site chmod 666 js/jquery/images/ui-icons_454545_256x240.png
+send js\jquery\images\ui-icons_888888_256x240.png js/jquery/images/ui-icons_888888_256x240.png
+quote site chmod 666 js/jquery/images/ui-icons_888888_256x240.png
+send js\jquery\images\ui-icons_cd0a0a_256x240.png js/jquery/images/ui-icons_cd0a0a_256x240.png
+quote site chmod 666 js/jquery/images/ui-icons_cd0a0a_256x240.png
+send build\indexfile.htm js/jquery/images/index.htm
+quote site chmod 666 js/jquery/images/index.htm
+send js\jquery\jquery-1.4.2.min.js js/jquery/jquery-1.4.2.min.js
+quote site chmod 666 js/jquery/jquery-1.4.2.min.js
+send js\jquery\jquery-ui-1.8.6.custom.css js/jquery/jquery-ui-1.8.6.custom.css
+quote site chmod 666 js/jquery/jquery-ui-1.8.6.custom.css
+send js\jquery\jquery-ui-1.8.6.custom.min.js js/jquery/jquery-ui-1.8.6.custom.min.js
+quote site chmod 666 js/jquery/jquery-ui-1.8.6.custom.min.js
+send js\jquery\jquery.ui.datepicker-ru.js js/jquery/jquery.ui.datepicker-ru.js
+quote site chmod 666 js/jquery/jquery.ui.datepicker-ru.js
+send build\indexfile.htm js/jquery/index.htm
+quote site chmod 666 js/jquery/index.htm
 cd js
 mkdir litepublisher
 quote site chmod 777 litepublisher
@@ -1754,22 +2998,238 @@ send js\litepublisher\debug.js js/litepublisher/debug.js
 quote site chmod 666 js/litepublisher/debug.js
 send js\litepublisher\filebrowser.js js/litepublisher/filebrowser.js
 quote site chmod 666 js/litepublisher/filebrowser.js
-send js\litepublisher\hovermenu.js js/litepublisher/hovermenu.js
-quote site chmod 666 js/litepublisher/hovermenu.js
-send js\litepublisher\hovermenu.min.js js/litepublisher/hovermenu.min.js
-quote site chmod 666 js/litepublisher/hovermenu.min.js
 send js\litepublisher\index.htm js/litepublisher/index.htm
 quote site chmod 666 js/litepublisher/index.htm
+send js\litepublisher\litepublisher.min.js js/litepublisher/litepublisher.min.js
+quote site chmod 666 js/litepublisher/litepublisher.min.js
 send js\litepublisher\moderate.js js/litepublisher/moderate.js
 quote site chmod 666 js/litepublisher/moderate.js
 send js\litepublisher\moderate.min.js js/litepublisher/moderate.min.js
 quote site chmod 666 js/litepublisher/moderate.min.js
+send js\litepublisher\players.js js/litepublisher/players.js
+quote site chmod 666 js/litepublisher/players.js
+send js\litepublisher\players.min.js js/litepublisher/players.min.js
+quote site chmod 666 js/litepublisher/players.min.js
 send js\litepublisher\rpc.js js/litepublisher/rpc.js
 quote site chmod 666 js/litepublisher/rpc.js
 send js\litepublisher\rpc.min.js js/litepublisher/rpc.min.js
 quote site chmod 666 js/litepublisher/rpc.min.js
 send js\litepublisher\swfuploader.js js/litepublisher/swfuploader.js
 quote site chmod 666 js/litepublisher/swfuploader.js
+send js\litepublisher\widgets.js js/litepublisher/widgets.js
+quote site chmod 666 js/litepublisher/widgets.js
+send js\litepublisher\widgets.min.js js/litepublisher/widgets.min.js
+quote site chmod 666 js/litepublisher/widgets.min.js
+cd js
+mkdir prettyphoto
+quote site chmod 777 prettyphoto
+cd ../
+cd js/prettyphoto
+mkdir css
+quote site chmod 777 css
+cd ../../
+send js\prettyphoto\css\index.htm js/prettyphoto/css/index.htm
+quote site chmod 666 js/prettyphoto/css/index.htm
+send js\prettyphoto\css\prettyPhoto.css js/prettyphoto/css/prettyPhoto.css
+quote site chmod 666 js/prettyphoto/css/prettyPhoto.css
+cd js/prettyphoto
+mkdir images
+quote site chmod 777 images
+cd ../../
+cd js/prettyphoto/images
+mkdir backgrounds
+quote site chmod 777 backgrounds
+cd ../../../
+send js\prettyphoto\images\backgrounds\bodyBackground.jpg js/prettyphoto/images/backgrounds/bodyBackground.jpg
+quote site chmod 666 js/prettyphoto/images/backgrounds/bodyBackground.jpg
+send js\prettyphoto\images\backgrounds\checkmark.gif js/prettyphoto/images/backgrounds/checkmark.gif
+quote site chmod 666 js/prettyphoto/images/backgrounds/checkmark.gif
+send js\prettyphoto\images\backgrounds\index.htm js/prettyphoto/images/backgrounds/index.htm
+quote site chmod 666 js/prettyphoto/images/backgrounds/index.htm
+send js\prettyphoto\images\index.htm js/prettyphoto/images/index.htm
+quote site chmod 666 js/prettyphoto/images/index.htm
+cd js/prettyphoto/images
+mkdir prettyPhoto
+quote site chmod 777 prettyPhoto
+cd ../../../
+cd js/prettyphoto/images/prettyPhoto
+mkdir dark_rounded
+quote site chmod 777 dark_rounded
+cd ../../../../
+send js\prettyphoto\images\prettyPhoto\dark_rounded\btnNext.png js/prettyphoto/images/prettyPhoto/dark_rounded/btnNext.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/btnNext.png
+send js\prettyphoto\images\prettyPhoto\dark_rounded\btnPrevious.png js/prettyphoto/images/prettyPhoto/dark_rounded/btnPrevious.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/btnPrevious.png
+send js\prettyphoto\images\prettyPhoto\dark_rounded\contentPattern.png js/prettyphoto/images/prettyPhoto/dark_rounded/contentPattern.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/contentPattern.png
+send js\prettyphoto\images\prettyPhoto\dark_rounded\default_thumbnail.gif js/prettyphoto/images/prettyPhoto/dark_rounded/default_thumbnail.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/default_thumbnail.gif
+send js\prettyphoto\images\prettyPhoto\dark_rounded\loader.gif js/prettyphoto/images/prettyPhoto/dark_rounded/loader.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/loader.gif
+send js\prettyphoto\images\prettyPhoto\dark_rounded\sprite.png js/prettyphoto/images/prettyPhoto/dark_rounded/sprite.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/sprite.png
+send build\indexfile.htm js/prettyphoto/images/prettyPhoto/dark_rounded/index.htm
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_rounded/index.htm
+cd js/prettyphoto/images/prettyPhoto
+mkdir dark_square
+quote site chmod 777 dark_square
+cd ../../../../
+send js\prettyphoto\images\prettyPhoto\dark_square\btnNext.png js/prettyphoto/images/prettyPhoto/dark_square/btnNext.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/btnNext.png
+send js\prettyphoto\images\prettyPhoto\dark_square\btnPrevious.png js/prettyphoto/images/prettyPhoto/dark_square/btnPrevious.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/btnPrevious.png
+send js\prettyphoto\images\prettyPhoto\dark_square\contentPattern.png js/prettyphoto/images/prettyPhoto/dark_square/contentPattern.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/contentPattern.png
+send js\prettyphoto\images\prettyPhoto\dark_square\default_thumbnail.gif js/prettyphoto/images/prettyPhoto/dark_square/default_thumbnail.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/default_thumbnail.gif
+send js\prettyphoto\images\prettyPhoto\dark_square\loader.gif js/prettyphoto/images/prettyPhoto/dark_square/loader.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/loader.gif
+send js\prettyphoto\images\prettyPhoto\dark_square\sprite.png js/prettyphoto/images/prettyPhoto/dark_square/sprite.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/sprite.png
+send build\indexfile.htm js/prettyphoto/images/prettyPhoto/dark_square/index.htm
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/dark_square/index.htm
+cd js/prettyphoto/images/prettyPhoto
+mkdir facebook
+quote site chmod 777 facebook
+cd ../../../../
+send js\prettyphoto\images\prettyPhoto\facebook\btnNext.png js/prettyphoto/images/prettyPhoto/facebook/btnNext.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/btnNext.png
+send js\prettyphoto\images\prettyPhoto\facebook\btnPrevious.png js/prettyphoto/images/prettyPhoto/facebook/btnPrevious.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/btnPrevious.png
+send js\prettyphoto\images\prettyPhoto\facebook\contentPatternBottom.png js/prettyphoto/images/prettyPhoto/facebook/contentPatternBottom.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/contentPatternBottom.png
+send js\prettyphoto\images\prettyPhoto\facebook\contentPatternLeft.png js/prettyphoto/images/prettyPhoto/facebook/contentPatternLeft.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/contentPatternLeft.png
+send js\prettyphoto\images\prettyPhoto\facebook\contentPatternRight.png js/prettyphoto/images/prettyPhoto/facebook/contentPatternRight.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/contentPatternRight.png
+send js\prettyphoto\images\prettyPhoto\facebook\contentPatternTop.png js/prettyphoto/images/prettyPhoto/facebook/contentPatternTop.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/contentPatternTop.png
+send js\prettyphoto\images\prettyPhoto\facebook\default_thumbnail.gif js/prettyphoto/images/prettyPhoto/facebook/default_thumbnail.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/default_thumbnail.gif
+send js\prettyphoto\images\prettyPhoto\facebook\loader.gif js/prettyphoto/images/prettyPhoto/facebook/loader.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/loader.gif
+send js\prettyphoto\images\prettyPhoto\facebook\sprite.png js/prettyphoto/images/prettyPhoto/facebook/sprite.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/sprite.png
+send build\indexfile.htm js/prettyphoto/images/prettyPhoto/facebook/index.htm
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/facebook/index.htm
+send js\prettyphoto\images\prettyPhoto\index.htm js/prettyphoto/images/prettyPhoto/index.htm
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/index.htm
+cd js/prettyphoto/images/prettyPhoto
+mkdir light_rounded
+quote site chmod 777 light_rounded
+cd ../../../../
+send js\prettyphoto\images\prettyPhoto\light_rounded\btnNext.png js/prettyphoto/images/prettyPhoto/light_rounded/btnNext.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_rounded/btnNext.png
+send js\prettyphoto\images\prettyPhoto\light_rounded\btnPrevious.png js/prettyphoto/images/prettyPhoto/light_rounded/btnPrevious.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_rounded/btnPrevious.png
+send js\prettyphoto\images\prettyPhoto\light_rounded\default_thumbnail.gif js/prettyphoto/images/prettyPhoto/light_rounded/default_thumbnail.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_rounded/default_thumbnail.gif
+send js\prettyphoto\images\prettyPhoto\light_rounded\loader.gif js/prettyphoto/images/prettyPhoto/light_rounded/loader.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_rounded/loader.gif
+send js\prettyphoto\images\prettyPhoto\light_rounded\sprite.png js/prettyphoto/images/prettyPhoto/light_rounded/sprite.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_rounded/sprite.png
+send build\indexfile.htm js/prettyphoto/images/prettyPhoto/light_rounded/index.htm
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_rounded/index.htm
+cd js/prettyphoto/images/prettyPhoto
+mkdir light_square
+quote site chmod 777 light_square
+cd ../../../../
+send js\prettyphoto\images\prettyPhoto\light_square\btnNext.png js/prettyphoto/images/prettyPhoto/light_square/btnNext.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_square/btnNext.png
+send js\prettyphoto\images\prettyPhoto\light_square\btnPrevious.png js/prettyphoto/images/prettyPhoto/light_square/btnPrevious.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_square/btnPrevious.png
+send js\prettyphoto\images\prettyPhoto\light_square\default_thumbnail.gif js/prettyphoto/images/prettyPhoto/light_square/default_thumbnail.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_square/default_thumbnail.gif
+send js\prettyphoto\images\prettyPhoto\light_square\loader.gif js/prettyphoto/images/prettyPhoto/light_square/loader.gif
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_square/loader.gif
+send js\prettyphoto\images\prettyPhoto\light_square\sprite.png js/prettyphoto/images/prettyPhoto/light_square/sprite.png
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_square/sprite.png
+send build\indexfile.htm js/prettyphoto/images/prettyPhoto/light_square/index.htm
+quote site chmod 666 js/prettyphoto/images/prettyPhoto/light_square/index.htm
+cd js/prettyphoto/images
+mkdir thumbnails
+quote site chmod 777 thumbnails
+cd ../../../
+send js\prettyphoto\images\thumbnails\flash-logo.png js/prettyphoto/images/thumbnails/flash-logo.png
+quote site chmod 666 js/prettyphoto/images/thumbnails/flash-logo.png
+send js\prettyphoto\images\thumbnails\index.htm js/prettyphoto/images/thumbnails/index.htm
+quote site chmod 666 js/prettyphoto/images/thumbnails/index.htm
+send js\prettyphoto\images\thumbnails\quicktime-logo.gif js/prettyphoto/images/thumbnails/quicktime-logo.gif
+quote site chmod 666 js/prettyphoto/images/thumbnails/quicktime-logo.gif
+send js\prettyphoto\images\thumbnails\t_1.jpg js/prettyphoto/images/thumbnails/t_1.jpg
+quote site chmod 666 js/prettyphoto/images/thumbnails/t_1.jpg
+send js\prettyphoto\images\thumbnails\t_2.jpg js/prettyphoto/images/thumbnails/t_2.jpg
+quote site chmod 666 js/prettyphoto/images/thumbnails/t_2.jpg
+send js\prettyphoto\images\thumbnails\t_3.jpg js/prettyphoto/images/thumbnails/t_3.jpg
+quote site chmod 666 js/prettyphoto/images/thumbnails/t_3.jpg
+send js\prettyphoto\images\thumbnails\t_4.jpg js/prettyphoto/images/thumbnails/t_4.jpg
+quote site chmod 666 js/prettyphoto/images/thumbnails/t_4.jpg
+send js\prettyphoto\images\thumbnails\t_5.jpg js/prettyphoto/images/thumbnails/t_5.jpg
+quote site chmod 666 js/prettyphoto/images/thumbnails/t_5.jpg
+send js\prettyphoto\index.htm js/prettyphoto/index.htm
+quote site chmod 666 js/prettyphoto/index.htm
+cd js/prettyphoto
+mkdir js
+quote site chmod 777 js
+cd ../../
+send js\prettyphoto\js\index.htm js/prettyphoto/js/index.htm
+quote site chmod 666 js/prettyphoto/js/index.htm
+send js\prettyphoto\js\jquery.prettyPhoto.js js/prettyphoto/js/jquery.prettyPhoto.js
+quote site chmod 666 js/prettyphoto/js/jquery.prettyPhoto.js
+cd js
+mkdir superfish-1.4.8
+quote site chmod 777 superfish-1.4.8
+cd ../
+send js\superfish-1.4.8\.DS_Store js/superfish-1.4.8/.DS_Store
+quote site chmod 666 js/superfish-1.4.8/.DS_Store
+send js\superfish-1.4.8\changelog.txt js/superfish-1.4.8/changelog.txt
+quote site chmod 666 js/superfish-1.4.8/changelog.txt
+cd js/superfish-1.4.8
+mkdir css
+quote site chmod 777 css
+cd ../../
+send js\superfish-1.4.8\css\.DS_Store js/superfish-1.4.8/css/.DS_Store
+quote site chmod 666 js/superfish-1.4.8/css/.DS_Store
+send js\superfish-1.4.8\css\superfish-navbar.css js/superfish-1.4.8/css/superfish-navbar.css
+quote site chmod 666 js/superfish-1.4.8/css/superfish-navbar.css
+send js\superfish-1.4.8\css\superfish-vertical.css js/superfish-1.4.8/css/superfish-vertical.css
+quote site chmod 666 js/superfish-1.4.8/css/superfish-vertical.css
+send js\superfish-1.4.8\css\superfish.css js/superfish-1.4.8/css/superfish.css
+quote site chmod 666 js/superfish-1.4.8/css/superfish.css
+send build\indexfile.htm js/superfish-1.4.8/css/index.htm
+quote site chmod 666 js/superfish-1.4.8/css/index.htm
+send js\superfish-1.4.8\example.html js/superfish-1.4.8/example.html
+quote site chmod 666 js/superfish-1.4.8/example.html
+cd js/superfish-1.4.8
+mkdir images
+quote site chmod 777 images
+cd ../../
+send js\superfish-1.4.8\images\.DS_Store js/superfish-1.4.8/images/.DS_Store
+quote site chmod 666 js/superfish-1.4.8/images/.DS_Store
+send js\superfish-1.4.8\images\arrows-ffffff.png js/superfish-1.4.8/images/arrows-ffffff.png
+quote site chmod 666 js/superfish-1.4.8/images/arrows-ffffff.png
+send js\superfish-1.4.8\images\shadow.png js/superfish-1.4.8/images/shadow.png
+quote site chmod 666 js/superfish-1.4.8/images/shadow.png
+send build\indexfile.htm js/superfish-1.4.8/images/index.htm
+quote site chmod 666 js/superfish-1.4.8/images/index.htm
+cd js/superfish-1.4.8
+mkdir js
+quote site chmod 777 js
+cd ../../
+send js\superfish-1.4.8\js\hoverIntent.js js/superfish-1.4.8/js/hoverIntent.js
+quote site chmod 666 js/superfish-1.4.8/js/hoverIntent.js
+send js\superfish-1.4.8\js\jquery-1.2.6.min.js js/superfish-1.4.8/js/jquery-1.2.6.min.js
+quote site chmod 666 js/superfish-1.4.8/js/jquery-1.2.6.min.js
+send js\superfish-1.4.8\js\jquery.bgiframe.min.js js/superfish-1.4.8/js/jquery.bgiframe.min.js
+quote site chmod 666 js/superfish-1.4.8/js/jquery.bgiframe.min.js
+send js\superfish-1.4.8\js\superfish.js js/superfish-1.4.8/js/superfish.js
+quote site chmod 666 js/superfish-1.4.8/js/superfish.js
+send js\superfish-1.4.8\js\supersubs.js js/superfish-1.4.8/js/supersubs.js
+quote site chmod 666 js/superfish-1.4.8/js/supersubs.js
+send build\indexfile.htm js/superfish-1.4.8/js/index.htm
+quote site chmod 666 js/superfish-1.4.8/js/index.htm
+send build\indexfile.htm js/superfish-1.4.8/index.htm
+quote site chmod 666 js/superfish-1.4.8/index.htm
 cd js
 mkdir swfupload
 quote site chmod 777 swfupload

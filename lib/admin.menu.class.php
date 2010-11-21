@@ -31,41 +31,41 @@ class tadminmenumanager extends tadminmenu {
       
       case 'edit':
       $id = $this->idget();
-    $menus = tmenus::instance();
-$parents = array(0 => '-----');
-foreach ($menus->items as $id => $item) {
-$parents[$id] = $item['title'];
-}
-
-    $html = $this->html;
-$lang = tlocal::instance('menu');
-    $args = targs::instance();
-    $args->adminurl = $this->adminurl;
-$args->ajax = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
-    $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'id';
-    
+      $menus = tmenus::instance();
+      $parents = array(0 => '-----');
+      foreach ($menus->items as $id => $item) {
+        $parents[$id] = $item['title'];
+      }
+      
+      $html = $this->html;
+      $lang = tlocal::instance('menu');
+      $args = targs::instance();
+      $args->adminurl = $this->adminurl;
+      $args->ajax = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
+      $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'id';
+      
       if ($id == 0) {
         $args->id = 0;
         $args->title = '';
-$args->parent = tadminhtml::array2combo($parents, 0);
-$args->order = tadminhtml::array2combo(range(0, 10), 0);
-$status = 'published';
+        $args->parent = tadminhtml::array2combo($parents, 0);
+        $args->order = tadminhtml::array2combo(range(0, 10), 0);
+        $status = 'published';
       } else {
         if (!$menus->itemexists($id)) return $this->notfound;
         $menuitem = tmenu::instance($id);
         $args->id = $id;
         $args->title = $menuitem->title;
-$args->parent = tadminhtml::array2combo($parents, $menuitem->parent);
-$args->order = tadminhtml::array2combo(range(0, 10), $menuitem->order);
-$status = $menuitem->status;
+        $args->parent = tadminhtml::array2combo($parents, $menuitem->parent);
+        $args->order = tadminhtml::array2combo(range(0, 10), $menuitem->order);
+        $status = $menuitem->status;
       }
-$args->status = tadminhtml::array2combo(array(
-'draft' => $lang->draft,
-'published' => $lang->published
-), $status);
-
-$ajaxeditor = tajaxmenueditor::instance();
-$args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent);
+      $args->status = tadminhtml::array2combo(array(
+      'draft' => $lang->draft,
+      'published' => $lang->published
+      ), $status);
+      
+      $ajaxeditor = tajaxmenueditor::instance();
+      $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent);
       $html->section = 'menu';
       return $html->form($args);
     }
@@ -84,12 +84,12 @@ $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcont
     $menuitem->parent = (int) $parent;
     $menuitem->status = $status == 'draft' ? 'draft' : 'published';
     $menuitem->content = $raw;
-if (isset($idview)) $menuitem->idview = $idview;
-if (isset($url)) {
-    $menuitem->url = $url;    
-$menuitem->keywords = $keywords;
-$menuitem->description = $description;
-}
+    if (isset($idview)) $menuitem->idview = $idview;
+    if (isset($url)) {
+      $menuitem->url = $url;
+      $menuitem->keywords = $keywords;
+      $menuitem->description = $description;
+    }
     if ($id == 0) {
       $_POST['id'] = $menus->add($menuitem);
     } else  {

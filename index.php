@@ -12,10 +12,10 @@ if (version_compare(PHP_VERSION, '5.1', '<')) {
 
 class litepublisher {
   public static $db;
-public static $storage;
+  public static $storage;
   public static $classes;
   public static $options;
-public static $site;
+  public static $site;
   public static $urlmap;
   public static $paths;
   public static $_paths;

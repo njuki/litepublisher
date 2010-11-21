@@ -25,7 +25,7 @@ class twidget extends tevents {
     $id = $widgets->add($this);
     $sidebars = tsidebars::instance();
     $sidebars->insert($id, false, $sidebar, -1);
-
+    
     litepublisher::$urlmap->clearcache();
     return $id;
   }
@@ -79,9 +79,9 @@ class twidget extends tevents {
   
   public static function getcachefilename($id) {
     $theme = ttheme::instance();
-if ($theme->name == '') {
-$theme = tview::instance()->theme;
-}
+    if ($theme->name == '') {
+      $theme = tview::instance()->theme;
+    }
     return litepublisher::$paths->cache . sprintf('widget.%s.%d.php', $theme->name, $id);
   }
   
@@ -101,7 +101,7 @@ $theme = tview::instance()->theme;
   }
   
   public static function findsidebar($id) {
-$view = tview::instance();
+    $view = tview::instance();
     foreach ($view->sidebars as $i=> $sidebar) {
       foreach ($sidebar as $item) {
         if ($id == $item['id']) return $i;
@@ -316,19 +316,19 @@ class twidgets extends titems_storage {
   
   private function getwidgets($context, tview $view, $sidebar) {
     $theme = $view->theme;
-if (($view->id >  1) && !$view->customsidebar) {
-$view = tview::instance(1);
-}
-
+    if (($view->id >  1) && !$view->customsidebar) {
+      $view = tview::instance(1);
+    }
+    
     $items =  isset($view->sidebars[$sidebar]) ? $view->sidebars[$sidebar] : array();
-
+    
     $subitems =  $this->getsubitems($context, $sidebar);
     $items = $this->joinitems($items, $subitems);
-
+    
     if ($sidebar + 1 == $theme->sidebarscount) {
       for ($i = $sidebar + 1; $i < count($view->sidebars); $i++) {
         $subitems =  $this->joinitems($view->sidebars[$i], $this->getsubitems($context, $i));
-
+        
         //delete copies
         foreach ($subitems as $index => $subitem) {
           $id = $subitem['id'];
@@ -341,7 +341,7 @@ $view = tview::instance(1);
       }
     }
     
-return $items;
+    return $items;
   }
   
   private function getsubitems($context, $sidebar) {
@@ -385,9 +385,9 @@ return $items;
     $result = '';
     foreach ($items as $item) {
       $id = $item['id'];
-if (!isset($this->items[$id])) continue;
+      if (!isset($this->items[$id])) continue;
       $cachetype = $this->items[$id]['cache'];
-if ($disableajax)  $item['ajax'] = false;
+      if ($disableajax)  $item['ajax'] = false;
       if ($item['ajax'] === 'inline') {
         switch ($cachetype) {
           case 'cache':
@@ -492,38 +492,38 @@ if ($disableajax)  $item['ajax'] = false;
   public function xmlrpcgetwidget($id, $sidebar, $idurl) {
     if (!isset($this->items[$id])) return $this->error("Widget $id not found");
     $this->idurlcontext = $idurl;
-$result = $this->getwidgetcontent($id, $sidebar);
+    $result = $this->getwidgetcontent($id, $sidebar);
     //fix bug for javascript client library
     if ($result == '') return 'false';
-}
-
-private static function getget($name) {
-return isset($_GET[$name]) ? (int) $_GET[$name] : false;
-}
-
-private static function error_request($s) {
-return '<?php header(\'HTTP/1.1 400 Bad Request\', true, 400); ?>' . turlmap::htmlheader(false) . $s;
-}
-
-public function request($arg) {
-$this->cache = false;
-$id = self::getget('id');
-$sidebar = self::getget('sidebar');
+  }
+  
+  private static function getget($name) {
+    return isset($_GET[$name]) ? (int) $_GET[$name] : false;
+  }
+  
+  private static function error_request($s) {
+    return '<?php header(\'HTTP/1.1 400 Bad Request\', true, 400); ?>' . turlmap::htmlheader(false) . $s;
+  }
+  
+  public function request($arg) {
+    $this->cache = false;
+    $id = self::getget('id');
+    $sidebar = self::getget('sidebar');
     $this->idurlcontext = self::getget('idurl');
-if (($id === false) || ($sidebar === false) || !$this->itemexists($id)) return $this->error_request('Invalid params');
-$themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::instance(1)->themename;
-if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::instance(1)->themename;
-$theme = ttheme::getinstance($themename);
-
-try {
-$result = $this->getwidgetcontent($id, $sidebar);
-return turlmap::htmlheader(false) . $result;
+    if (($id === false) || ($sidebar === false) || !$this->itemexists($id)) return $this->error_request('Invalid params');
+    $themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::instance(1)->themename;
+    if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::instance(1)->themename;
+    $theme = ttheme::getinstance($themename);
+    
+    try {
+      $result = $this->getwidgetcontent($id, $sidebar);
+      return turlmap::htmlheader(false) . $result;
     } catch (Exception $e) {
-return $this->error_request('Cant get widget content');
-}
-}
-
-public function getwidgetcontent($id, $sidebar) {
+      return $this->error_request('Cant get widget content');
+    }
+  }
+  
+  public function getwidgetcontent($id, $sidebar) {
     if (!isset($this->items[$id])) return false;
     switch ($this->items[$id]['cache']) {
       case 'cache':
@@ -540,17 +540,17 @@ public function getwidgetcontent($id, $sidebar) {
         $result = $widget->getcontent($id, $sidebar);
         file_put_contents($filename, $result);
         @chmod($filename, 0666);
-}
-        break;
-
+      }
+      break;
+      
       case 'nocache':
       case 'code':
       case false:
       $widget = $this->getwidget($id);
       $result = $widget->getcontent($id, $sidebar);
       break;
-      }
-
+    }
+    
     return $result;
   }
   

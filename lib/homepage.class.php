@@ -7,19 +7,19 @@
 **/
 
 class thomepage extends tmenu  {
-
+  
   public static function instance($id = 0) {
     return self::iteminstance(__class__, $id);
   }
-
+  
   protected function create() {
     parent::create();
     $this->basename = 'homepage' ;
     $this->data['image'] = '';
     $this->data['hideposts'] = false;
   }
-
-public function gettitle() {}  
+  
+public function gettitle() {}
   
   public function getcont() {
     $result = '';
@@ -33,7 +33,7 @@ public function gettitle() {}
       $result .= $theme->simple($image . $this->content);
     }
     if ($this->hideposts) return $result;
-
+    
     $items =  $this->getitems();
     $result .= $theme->getposts($items, false);
     $Posts = tposts::instance();

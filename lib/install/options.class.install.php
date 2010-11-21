@@ -29,11 +29,11 @@ function installoptions($language) {
   }
   
   $options->language = $language;
-
+  
   tlocal::loadlang('');
   tlocal::loadlang('admin');
-    tlocal::loadinstall();
-
+  tlocal::loadinstall();
+  
   $options->timezone = tlocal::$data['installation']['timezone'];
   date_default_timezone_set(tlocal::$data['installation']['timezone']);
   $options->dateformat = '';
@@ -69,7 +69,7 @@ function installoptions($language) {
   $options->usersenabled = false;
   $options->reguser = false;
   $options->icondisabled = false;
-
+  
   $options->unlock();
   return $password;
 }

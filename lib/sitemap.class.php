@@ -35,7 +35,7 @@ class tsitemap extends titems_itemplate implements itemplate {
   
   //itemplate
 public function gettitle() { return $this->title; }
-
+  
   public function getcont() {
     $result = '';
     $posts = tposts::instance();

@@ -49,12 +49,12 @@ class tmetawidget extends twidget {
     $args = targs::instance();
     foreach    ($this->items as $name => $item) {
       if (!$item['enabled']) continue;
-$args->add($item);
-    $args->icon = '';
-$args->subitems = '';
-    $args->rel = $name;
-$args->class = isset($metaclasses[$name]) ? $metaclasses[$name] : '';
-    $result .= $theme->parsearg($tml, $args);
+      $args->add($item);
+      $args->icon = '';
+      $args->subitems = '';
+      $args->rel = $name;
+      $args->class = isset($metaclasses[$name]) ? $metaclasses[$name] : '';
+      $result .= $theme->parsearg($tml, $args);
     }
     
     if ($result == '') return '';

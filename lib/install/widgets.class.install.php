@@ -12,17 +12,17 @@ function twidgetUninstall($self) {
 }
 
 function twidgetsInstall($self) {
-litepublisher::$urlmap->addget('/getwidget.htm', get_class($self));
-$robot = trobotstxt::instance();
+  litepublisher::$urlmap->addget('/getwidget.htm', get_class($self));
+  $robot = trobotstxt::instance();
   $robot->AddDisallow('/getwidget.htm');
-
+  
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($self));
   install_std_widgets($self);
 }
 
 function twidgetsUninstall($self) {
-turlmap::unsub($self);
+  turlmap::unsub($self);
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->deleteclass(get_class($self));
 }

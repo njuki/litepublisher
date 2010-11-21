@@ -9,7 +9,7 @@
 class tsimplecontent  extends tevents_itemplate implements itemplate {
   public $text;
   public $html;
-
+  
   public static function instance() {
     return Getinstance(__class__);
   }
@@ -17,7 +17,7 @@ class tsimplecontent  extends tevents_itemplate implements itemplate {
   protected function create() {
     parent::create();
     $this->basename = 'simplecontent';
-}
+  }
   
   public function  httpheader() {
     return turlmap::htmlheader(false);
@@ -25,7 +25,7 @@ class tsimplecontent  extends tevents_itemplate implements itemplate {
   
 public function request($arg) {}
 public function gettitle() {}
-
+  
   public function getcont() {
     $result = empty($this->text) ? $this->html : sprintf("<h2>%s</h2>\n", $this->text);
     return $this->view->theme->simple($result);

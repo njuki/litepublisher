@@ -124,7 +124,7 @@ class tdata {
   
   public function load() {
     //if ($this->dbversion == 'full') return $this->LoadFromDB();
-return tfilestorage::load($this);
+    return tfilestorage::load($this);
   }
   
   public function save() {
@@ -132,7 +132,7 @@ return tfilestorage::load($this);
     if ($this->dbversion) {
       $this->SaveToDB();
     } else {
-tfilestorage::save($this);
+      tfilestorage::save($this);
     }
   }
   
@@ -197,21 +197,21 @@ tfilestorage::save($this);
 }//class
 
 class tfilestorage {
-public static $disabled;
-
-public static function save(tdata $obj) {
-if (self::$disabled) return false;
-      return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), self::comment_php($obj->savetostring()));
-}
-
-public static function load(tdata $obj) {
+  public static $disabled;
+  
+  public static function save(tdata $obj) {
+    if (self::$disabled) return false;
+    return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), self::comment_php($obj->savetostring()));
+  }
+  
+  public static function load(tdata $obj) {
     $filename = litepublisher::$paths->data . $obj->getbasename() .'.php';
     if (file_exists($filename)) {
       return $obj->loadfromstring(self::uncomment_php(file_get_contents($filename)));
     }
-return false;
-}
-
+    return false;
+  }
+  
   public static function savetofile($base, $content) {
     $tmp = $base .'.tmp.php';
     if(false === file_put_contents($tmp, $content)) {
@@ -243,49 +243,49 @@ return false;
 }//class
 
 class tstorage extends tfilestorage {
-private static $data;
-private static $modified;
-
-public static function save(tdata $obj) {
-self::$modified = true;
-$base = $obj->getbasename();
-      if (!isset(self::$data[$base])) self::$data[$base] = &$obj->data;
-return true;
-}
-
-public static function load(tdata $obj) {
-$base = $obj->getbasename();
-      if (isset(self::$data[$base])) {
-        $obj->data = &self::$data[$base];
-        $obj->afterload();
-return true;
-      } else {
-        self::$data[$base] = &$obj->data;
-return false;
-      }
-}
-
-public static function savemodified() {
-    if (self::$modified) {
-if (self::$disabled) return false;
-self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
-    self::$modified = false;
-return true;
-}
-return false;
+  private static $data;
+  private static $modified;
+  
+  public static function save(tdata $obj) {
+    self::$modified = true;
+    $base = $obj->getbasename();
+    if (!isset(self::$data[$base])) self::$data[$base] = &$obj->data;
+    return true;
   }
-
-public static function loaddata() {
-self::$data = array();
+  
+  public static function load(tdata $obj) {
+    $base = $obj->getbasename();
+    if (isset(self::$data[$base])) {
+      $obj->data = &self::$data[$base];
+      $obj->afterload();
+      return true;
+    } else {
+      self::$data[$base] = &$obj->data;
+      return false;
+    }
+  }
+  
+  public static function savemodified() {
+    if (self::$modified) {
+      if (self::$disabled) return false;
+      self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+      self::$modified = false;
+      return true;
+    }
+    return false;
+  }
+  
+  public static function loaddata() {
+    self::$data = array();
     $filename = litepublisher::$paths->data . 'storage.php';
     if (file_exists($filename)) {
-$s = self::uncomment_php(file_get_contents($filename));
-if (!empty($s)) self::$data = unserialize($s);
-return true;
-}
-return false;
-}
-
+      $s = self::uncomment_php(file_get_contents($filename));
+      if (!empty($s)) self::$data = unserialize($s);
+      return true;
+    }
+    return false;
+  }
+  
 }//class
 
 class tarray2prop {

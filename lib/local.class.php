@@ -24,36 +24,36 @@ class targs {
     if (isset($thisthis)) $this->data['$this'] = $thisthis;
   }
   
-public function __get($name) {
-if (($name == 'link') && !isset($this->data['$link'])  && isset($this->data['$url'])) {
-return litepublisher::$site->url . $this->data['$url'];
-}
- return $this->data['$' . $name]; 
-}
+  public function __get($name) {
+    if (($name == 'link') && !isset($this->data['$link'])  && isset($this->data['$url'])) {
+      return litepublisher::$site->url . $this->data['$url'];
+    }
+    return $this->data['$' . $name];
+  }
   
   public function __set($name, $value) {
     if (is_bool($value)) {
       $value = $value ? 'checked="checked"' : '';
     }
-
+    
     $this->data['$'.$name] = $value;
     $this->data["%%$name%%"] = $value;
-
-if (($name == 'url') && !isset($this->data['$link'])) {
-$this->data['$link'] = litepublisher::$site->url . $value;
-$this->data['%%link%%'] = litepublisher::$site->url . $value;
-}
+    
+    if (($name == 'url') && !isset($this->data['$link'])) {
+      $this->data['$link'] = litepublisher::$site->url . $value;
+      $this->data['%%link%%'] = litepublisher::$site->url . $value;
+    }
   }
   
   public function add(array $a) {
     foreach ($a as $key => $value) {
-$this->__set($key, $value);
-if ($key == 'url') {
-$this->data['$link'] = litepublisher::$site->url . $value;
-$this->data['%%link%%'] = litepublisher::$site->url . $value;
-}
-}
-
+      $this->__set($key, $value);
+      if ($key == 'url') {
+        $this->data['$link'] = litepublisher::$site->url . $value;
+        $this->data['%%link%%'] = litepublisher::$site->url . $value;
+      }
+    }
+    
     if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
     if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
   }
@@ -161,10 +161,10 @@ class tlocal {
   public static function getcachefilename($name) {
     return self::getcachedir() . $name . '.php';
   }
-
-public static function loadinstall() {
+  
+  public static function loadinstall() {
     self::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
-}
+  }
   
 }//class
 
