@@ -95,7 +95,7 @@ if (isset($parent)) $item['parent'] = (int) $parent;
 if (isset($idview)) $item['idview'] = (int) $idview;
 if (isset($icon)) $item['icon'] = (int) $icon;
 $tags->items[$id] = $item;
-if (isset($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);
+if (!empty($url) && ($url != $item['url'])) $tags->edit($id, $title, $url);
 unset($item['url']);
 if (dbversion) $tags->db->updateassoc($item);
     }
