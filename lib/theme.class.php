@@ -129,8 +129,7 @@ class ttheme extends tevents {
     }
     
     if (!isset($var)) {
-      $template = ttemplate::instance();
-      $var = $template->ondemand($name);
+      $var = $classes->gettemplatevar($name);
     }
     
     if (!is_object($var)) {

@@ -117,8 +117,14 @@ class tadminmoderator extends tadminmenu {
       $args->rssurl = $rss->rssurl;
       $args->key = $rss->key;
       $args->count = $rss->count;
-      $args->template = $rss->template;
-      return $html->holdrss($args);
+      $args->rsstemplate = $rss->template;
+$args->formtitle = $lang->rssurl . sprintf(' <a href="%1$s">%1$s</a>', litepublisher::$site->url . $rss->rssurl);
+
+      return $html->adminform('
+[text=key]
+[text=count]
+[editor=rsstemplate]',
+$args);
     }
   }
   
@@ -409,7 +415,7 @@ class tadminmoderator extends tadminmenu {
       $rss->lock();
       $rss->key = $key;
       $rss->count = (int) $count;
-      $rss->template = $template;
+      $rss->template = $rsstemplate;
       $rss->unlock();
       $result = '';
       break;

@@ -25,7 +25,7 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'themechanged', 'ondemand');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'on');
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
@@ -48,20 +48,6 @@ class ttemplate extends tevents_storage {
     }
     if (isset($this->context) && isset($this->context->$name)) return $this->context->$name;
     return parent::__get($name);
-  }
-  
-  protected function settheme($name) {
-    if (($this->theme != $name) && ttheme::exists($name)) {
-      try {
-        $this->lock();
-        $parser = tthemeparser::instance();
-        $parser->changetheme($this->theme, $name);
-        $this->unlock();
-        $this->themechanged();
-      } catch (Exception $e) {
-        litepublisher::$options->handexception($e);
-      }
-    }
   }
   
   public function request($context) {
@@ -100,7 +86,7 @@ class ttemplate extends tevents_storage {
     
     $args = targs::instance();
     $args->title = $title;
-    $theme = $this->view->theme;
+$theme = $this->view->theme;
     return $theme->parsearg($theme->title, $args);
   }
   

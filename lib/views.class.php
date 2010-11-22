@@ -65,6 +65,7 @@ class tview extends titem {
       $this->themeinstance = ttheme::getinstance($name);
       $this->data['custom'] = $this->themeinstance->templates['custom'];
       $this->save();
+tviews::instance()->themechanged($this);
     }
   }
   
@@ -106,6 +107,7 @@ class tviews extends titems_storage {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'views';
+$this->addevents('themechanged');
     $this->addmap('defaults', array());
   }
   
@@ -126,8 +128,7 @@ class tviews extends titems_storage {
       if ($id == $iddefault) $this->defaults[$name] = 1;
     }
     return parent::delete($id);
-    
-  }
+      }
   
   public function widgetdeleted($idwidget) {
     $deleted = false;
