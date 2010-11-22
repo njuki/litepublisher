@@ -33,7 +33,7 @@ function ttemplateInstall($self) {
   $lang = tlocal::instance('installation');
   ttheme::$vars['lang'] = $lang;
   $theme = ttheme::instance();
-  $self->footer = $theme->parse($html->footer) . $html->stat;
+  $self->footer = $theme->parse($html->footer);
 }
 
 ?>

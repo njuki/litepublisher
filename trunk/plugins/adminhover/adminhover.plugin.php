@@ -17,12 +17,11 @@ class tadminhoverplugin extends tplugin {
     $this->data['hover'] = false;
   }
   
-  public function onadminhead(&$head) {
-    $template = ttemplate::instance();
-    $theme = ttheme::instance();
-    if ($this->hover && !$template->hover && $theme->menu->hover) {
-      $template->hover  = true;
-      $head .= $template->gethovermenuhead();
+  public function beforemenu(&$content, &$hover, $current) {
+    if ($hover != $this->hover) {
+      $hover = $this->hover;
+      $template = ttemplate::instance();
+      $template->hover = $hover;
     }
   }
   

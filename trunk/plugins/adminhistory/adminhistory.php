@@ -50,9 +50,8 @@ class tadminhistory extends torderwidget {
     $args->rel = 'admin';
     $url = litepublisher::$site->url;
     foreach ($this->items as $item) {
-      //var_dump($item);
       $args->title = $item['title'];
-      $args->anchor = $item['title'];
+      $args->text = $item['title'];
       $args->url = $url . $item['url'];
       $result .= $theme->parsearg($tml, $args);
     }

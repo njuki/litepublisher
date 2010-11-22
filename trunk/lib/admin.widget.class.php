@@ -179,7 +179,6 @@ class tadmincustomwidget extends tadminwidget {
     [hidden=idwidget]',
     $args));
     
-    $result .= $html->checkallscript;
     $result .= $html->customheader();
     $args->adminurl = $this->adminurl;
     foreach ($widget->items as $id => $item) {

@@ -35,7 +35,7 @@ class tadminservice extends tadminmenu {
       break;
       
       case 'engine':
-      $result = $html->checkallscript;
+      $result = '';
       $checkboxes = '';
       $item = $html->engineitem;
       $item .= "\n";

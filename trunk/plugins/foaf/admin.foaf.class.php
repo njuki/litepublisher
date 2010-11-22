@@ -58,8 +58,7 @@ class tadminfoaf extends tadminmenu {
       $items = array_slice(array_keys($foaf->items), $from, $perpage);
     }
     $html = $this->html;
-    $result = $html->checkallscript;
-    $result .= $html->tableheader();
+    $result = $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     foreach ($items as $id )  {

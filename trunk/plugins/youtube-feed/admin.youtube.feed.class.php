@@ -50,8 +50,7 @@ class tadminyoutubefeed {
       </table>';
       
       $args->items = $html->parsearg($table, $args);
-      $result = $html->checkallscript;
-      $result .= $html->adminform('$items [hidden:step]', $args);
+      $result = $html->adminform('$items [hidden:step]', $args);
       return $result;
       
       default:

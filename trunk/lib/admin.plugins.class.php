@@ -38,7 +38,6 @@ class tadminplugins extends tadminmenu {
     $html = $this->html;
     $plugins = tplugins::instance();
     if (empty($_GET['plugin'])) {
-      $result .= $html->checkallscript;
       $result .= $html->formhead();
       $args = targs::instance();
       foreach ($this->names as $name) {
