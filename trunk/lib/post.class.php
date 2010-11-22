@@ -10,6 +10,7 @@ class tpost extends titem implements  itemplate {
   private $aprev;
   private $anext;
   private $ameta;
+private $_theme;
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -170,11 +171,16 @@ class tpost extends titem implements  itemplate {
       }
     }
   }
+
+public function gettheme() {
+ttheme::$vars['post'] = $this;
+if (isset($this->_theme)) return $this->_theme;
+$this->_theme = tview::getview($this)->theme;
+return $this->_theme;
+}
   
   public function getbookmark() {
-    ttheme::$vars['post'] = $this;
-    $theme = ttheme::instance();
-    return $theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
+    return $this->theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
   }
   
   public function getrsscomments() {
@@ -212,7 +218,7 @@ class tpost extends titem implements  itemplate {
   
   private function getcommontagslinks($names, $excerpt) {
     if (count($this->$names) == 0) return '';
-    $theme = ttheme::instance();
+    $theme = $this->theme;
     $tml = $excerpt ? $theme->content->excerpts : $theme->content->post;
     $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
     $tags= litepublisher::$classes->$names;
@@ -239,13 +245,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getdate() {
-    $theme = ttheme::instance();
-    return tlocal::date($this->posted, $theme->content->post->date);
+    return tlocal::date($this->posted, $this->theme->content->post->date);
   }
   
   public function getexcerptdate() {
-    $theme = ttheme::instance();
-    return tlocal::date($this->posted, $theme->content->excerpts->excerpt->date);
+    return tlocal::date($this->posted, $this->theme->content->excerpts->excerpt->date);
   }
   
   public function getday() {
@@ -262,9 +266,7 @@ class tpost extends titem implements  itemplate {
   
   public function getmorelink() {
     if ($this->moretitle == '') return '';
-    $theme = ttheme::instance();
-    ttheme::$vars['post'] = $this;
-    return $theme->parse($theme->content->excerpts->excerpt->morelink);
+    return $this->theme->parse($this->theme->content->excerpts->excerpt->morelink);
   }
   
   public function gettagnames() {
@@ -381,16 +383,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcont() {
-    ttheme::$vars['post'] = $this;
-    $theme = ttheme::instance();
-    return $theme->parse($theme->content->post);
+    return $this->theme->content->post();
   }
   
   public function getrsslink() {
     if ($this->commentsenabled && ($this->commentscount > 0)) {
-      $theme = ttheme::instance();
-      ttheme::$vars['post'] = $this;
-      return $theme->parse($theme->content->post->rsslink);
+      return $this->theme->content->post->rsslink();
     }
     return '';
   }
@@ -398,7 +396,7 @@ class tpost extends titem implements  itemplate {
   public function getprevnext() {
     $prev = '';
     $next = '';
-    $theme = ttheme::instance();
+    $theme = $this->theme;
     $tml = $theme->content->post->prevnext;
     if ($prevpost = $this->prev) {
       ttheme::$vars['prevpost'] = $prevpost;
@@ -437,16 +435,14 @@ class tpost extends titem implements  itemplate {
     if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result = $this->replacemore($result, true);
     if (litepublisher::$options->parsepost) {
-      $theme = ttheme::instance();
-      $result = $theme->parse($result);
+      $result = $this->theme->parse($result);
     }
     $posts->afterexcerpt($this, $result);
     return $result;
   }
   
   public function replacemore($content, $excerpt) {
-    $theme = ttheme::instance();
-    ttheme::$vars['post'] = $this;
+    $theme = $this->theme;
     $more = $theme->parse($excerpt ?
     $theme->content->excerpts->excerpt->morelink :
     $theme->content->post->more);
@@ -473,8 +469,7 @@ class tpost extends titem implements  itemplate {
     }
     
     if ($this->haspages) {
-      $theme = ttheme::instance();
-      $result .= $theme->getpages($this->url, $page, $this->countpages);
+      $result .= $this->theme->getpages($this->url, $page, $this->countpages);
     }
     return $result;
   }
@@ -487,8 +482,7 @@ class tpost extends titem implements  itemplate {
     if ($this->revision < $posts->revision) $this->revision = $posts->revision;
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
-      $theme = ttheme::instance();
-      $result = $theme->parse($result);
+      $result = $this->theme->parse($result);
     }
     $posts->aftercontent($this, $result);
     return $result;

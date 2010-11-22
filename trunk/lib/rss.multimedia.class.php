@@ -26,7 +26,7 @@ class trssMultimedia extends tevents {
   public function request($arg) {
     $result = '';
     if (($arg == null) && ($this->feedburner  != '')) {
-      $result .= "<??php
+      $result .= "<?php
       if (!preg_match('/feedburner|feedvalidator/i', \$_SERVER['HTTP_USER_AGENT'])) {
         if (function_exists('status_header')) status_header( 307 );
         header('Location:$this->feedburner');

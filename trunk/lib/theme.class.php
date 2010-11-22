@@ -46,7 +46,7 @@ class ttheme extends tevents {
     'content' => array(),
     'sidebars' => array()
     );
-    $this->themeprops = new tthemeprops($this->templates);
+    $this->themeprops = new tthemeprops($this);
   }
   
   public function getbasename() {
@@ -308,7 +308,12 @@ class ttheme extends tevents {
 
 class tthemeprops {
   public $array;
-public function __construct(array &$array) { $this->array = &$array; }
+private $_theme;
+
+public function __construct(ttheme $theme) {
+$this->_theme = $theme;
+ $this->array = &$theme->templates;
+}
   
   public function __get($name) {
     if (!isset($this->array[$name])) {
@@ -326,11 +331,10 @@ public function __construct(array &$array) { $this->array = &$array; }
 public function __set($name, $value) {$this->array[$name] = $value; }
   
   public function __call($name, $params) {
-    $theme = ttheme::instance();
     if (isset($params[0]) && is_object($params[0]) && ($params[0] instanceof targs)) {
-      return $theme->parsearg( (string) $this->$name, $params[0]);
+      return $this->_theme->parsearg( (string) $this->$name, $params[0]);
     } else {
-      return $theme->parse((string) $this->$name);
+      return $this->_theme->parse((string) $this->$name);
     }
   }
   
