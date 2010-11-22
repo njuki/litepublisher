@@ -49,7 +49,7 @@ class tnotfound404 extends tforbidden {
   protected function create() {
     parent::create();
     $this->basename = 'notfound';
-    $this->data['notify'] = true;
+    $this->data['notify'] = false;
   }
   
   public function  httpheader() {
