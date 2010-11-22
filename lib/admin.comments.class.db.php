@@ -154,7 +154,6 @@ class tadminmoderator extends tadminmenu {
     $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted asc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
-    $result .= $html->checkallscript;
     $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
@@ -186,7 +185,6 @@ class tadminmoderator extends tadminmenu {
     $items = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
-    $result .= $html->checkallscript;
     $result .= $html->pingbackheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
@@ -302,7 +300,7 @@ class tadminmoderator extends tadminmenu {
     $comusers = tcomusers::instance();
     if (!$comusers->itemexists($authorid))  return '';
     $html = $this->gethtml('moderator');
-    $result = $html->checkallscript;
+    $result = '';
     $res = $db->query("select $db->posts.id as id, $db->posts.title as title, $db->urlmap.url as url
     from $db->posts, $db->urlmap
     where $db->posts.id in (select DISTINCT $db->comments.post from $db->comments where author = $authorid)

@@ -165,7 +165,6 @@ class tadminmoderator extends tadminmenu {
     $list = array_slice(array_keys($comments->items), $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
-    $result .= $html->checkallscript;
     $result .= $html->tableheader();
     $args = targs::instance();
     $args->adminurl = $this->adminurl ."post=$idpost&id";
@@ -225,8 +224,6 @@ class tadminmoderator extends tadminmenu {
     $list = array_slice(array_keys($pingbacks->items), $from, $perpage);
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
-    $result .= $html->checkallscript;
-    $result .= $html->pingbackheader();
     $args = targs::instance();
     $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . "post=$idpost&id";
     $post = tpost::instance($idpost);

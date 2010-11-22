@@ -9,7 +9,23 @@
 function tadminmenusInstall($self) {
   $self->lock();
   $self->heads = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />
-  <script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
+  <script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $("input[rel=\'checkall\']").click(function() {
+      $(this).closest("form").find("input:checkbox").attr("checked", true);
+      $(this).attr("checked", false);
+    });
+    
+    $("input[rel=\'invertcheck\']").click(function() {
+      $(this).closest("form").find("input:checkbox").each(function() {
+        $(this).attr("checked", ! $(this).attr("checked"));
+      });
+      $(this).attr("checked", false);
+    });
+    
+  });
+  </script>';
   
   //posts
   $posts = $self->createitem(0, 'posts', 'author', 'tadminposts');

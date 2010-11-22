@@ -25,7 +25,7 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onadminhead', 'onbody', 'themechanged', 'onadminhover', 'ondemand');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'themechanged', 'ondemand');
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
@@ -132,7 +132,6 @@ class ttemplate extends tevents_storage {
   public function getmenu() {
     $current = $this->context instanceof tmenu ? $this->context->id : 0;
     if (litepublisher::$urlmap->adminpanel) {
-      $this->onadminhover();
       $adminmenus = tadminmenus::instance();
       return $adminmenus->getmenu($this->hover, $current);
     }

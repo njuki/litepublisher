@@ -11,12 +11,12 @@ class tadminadminhover {
   public function getcontent() {
     $plugin = tadminhoverplugin::instance();
     $about = tplugins::localabout(dirname(__file__));
-    $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'admin.adminhover.tml');
     $html = tadminhtml::instance();
     $args = targs::instance();
     $args->hovermenu = $plugin->hover;
-    $args->langhovermenu = $about['langhovermenu'];
-    return $html->parsearg($tml, $args);
+    $args->data['$lang.hovermenu']= $about['langhovermenu'];
+    $args->formtitle = $about['name'];
+    return $html->adminform('[checkbox=hovermenu]', $args);
   }
   
   public function processform() {

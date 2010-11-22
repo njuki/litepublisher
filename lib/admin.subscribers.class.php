@@ -26,8 +26,7 @@ class tadminsubscribers extends tadminform {
     $items = $subscribers->getposts($user['id']);
     if (count($items) == 0) return $html->h2->nosubscribtions;
     $args->email = $user['email'];
-    $result = $html->checkallscript;
-    $result .=$html->formhead($args);
+    $result =$html->formhead($args);
     foreach ($items as $postid) {
       $post = tpost::instance($postid);
       ttheme::$vars['post'] = $post;

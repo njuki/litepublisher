@@ -54,8 +54,6 @@ class tadminkeywords extends tadminwidget {
     $count = ceil(count($filelist)/ 100);
     $links = $this->getlinkpages($page, $count);
     $result .= $links;
-    $result .= $html->checkallscript;
-    
     $filelist = array_slice($filelist, $from, 100, true);
     $list = '';
     $args->url = litepublisher::$site->url. '/admin/plugins/' . litepublisher::$options->q . 'plugin=' . $_GET['plugin'];

@@ -15,7 +15,7 @@ class tmenus extends titems {
   
   protected function create() {
     parent::create();
-    $this->addevents('edited', 'onprocessform', 'onmenu', 'onitems', 'onsubitems');
+    $this->addevents('edited', 'onprocessform', 'onbeforemenu', 'onmenu', 'onitems', 'onsubitems');
     
     $this->dbversion = false;
     $this->basename = 'menus' . DIRECTORY_SEPARATOR   . 'index';
@@ -238,6 +238,7 @@ class tmenus extends titems {
   
   public function getmenu($hover, $current) {
     $result = '';
+    $this->callevent('onbeforemenu', array(&$result, &$hover,$current ));
     if (count($this->tree) > 0) {
       $theme = ttheme::instance();
       if ($hover) {

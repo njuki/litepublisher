@@ -7,15 +7,13 @@
 **/
 
 function tadminhoverpluginInstall($self) {
-  $template = ttemplate::instance();
-  $template->lock();
-  $template->onadminhead = $self->onadminhead;
-  $template->unlock();
+  $admin = tadminmenus::instance();
+  $admin->onbeforemenu = $self->beforemenu;
 }
 
 function tadminhoverpluginUninstall($self) {
-  $template = ttemplate::instance();
-  $template->unsubscribeclass($self);
+  $admin = tadminmenus::instance();
+  $admin->unsubscribeclass($self);
 }
 
 ?>

@@ -32,8 +32,7 @@ class tadminwidgets extends tadminmenu {
     $lang = tlocal::instance('widgets');
     $args = targs::instance();
     $args->idview = $idview;
-    $result = $html->checkallscript;
-    $result .= $html->formhead();
+    $result = $html->formhead();
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
     $count = count($view->sidebars);
     $sidebarnames = self::getsidebarnames($view);

@@ -49,7 +49,6 @@ class tadmintickets extends tadminmenu {
     }
     
     $html = $this->html;
-    $result .= $html->checkallscript;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
     $args = targs::instance();

@@ -67,7 +67,6 @@ class tadminposts extends tadminmenu {
       $items = array_reverse (array_keys($items));
     }
     $html = $this->html;
-    $result .= $html->checkallscript;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
     $args = targs::instance();
