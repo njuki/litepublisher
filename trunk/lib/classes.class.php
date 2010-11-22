@@ -31,7 +31,7 @@ class tclasses extends titems {
     parent::create();
     $this->basename = 'classes';
     $this->dbversion = false;
-    $this->addevents('onnewitem');
+    $this->addevents('onnewitem', 'gettemplatevar');
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());

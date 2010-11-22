@@ -7,13 +7,31 @@
 **/
 
 class Tadminoptions extends tadminmenu {
+private $_form;
   
-  
-  public static function instance($id = 0) {
+    public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
-  public function getcontent() {
+
+public function getautoform($name) {
+if (isset($this->_form)) return $this->_form;
+switch ($name) {
+      case 'options':
+$form = new tautoform(litepublisher::$site, 'options', 'blogdescription');
+$form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords);
+$form->obj = ttemplate::instance();
+$form->add($form->footer('editor'));
+break;
+
+default:
+return false;
+}
+$this->_form = $form;
+return $form;
+}
+
+    public function getcontent() {
+if ($form = $this->getautoform($this->name)) return $form->getform();
     $options = litepublisher::$options;
     $template = ttemplate::instance();
     ttheme::$vars['template'] = $template;
@@ -21,12 +39,6 @@ class Tadminoptions extends tadminmenu {
     $args = targs::instance();
     
     switch ($this->name) {
-      case 'options':
-      $args->fixedurl = litepublisher::$site->fixedurl;
-      $args->description = litepublisher::$site->description;
-      $args->textfooter = $template->footer;
-      break;
-      
       case 'home':
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
@@ -143,25 +155,12 @@ class Tadminoptions extends tadminmenu {
   }
   
   public function processform() {
+litepublisher::$urlmap->clearcache();
+if ($form = $this->getautoform($this->name)) return $form->processform();
     extract($_POST, EXTR_SKIP);
     $options = litepublisher::$options;
     
     switch ($this->name) {
-      case 'options':
-      $template = ttemplate::instance();
-      $site = litepublisher::$site;
-      $site->lock();
-      $site->fixedurl = isset($fixedurl);
-      if (!empty($url) && ($url != $site->url))  $site->seturl($url);
-      if (!empty($name)) $site->name = $name;
-      if (!empty($description)) $site->description = $description;
-      if (!empty($keywords)) $site->keywords = $keywords;
-      $site->unlock();
-      
-      if (!empty($textfooter)) $template->footer = $textfooter;
-      litepublisher::$urlmap->clearcache();
-      break;
-      
       case 'home':
       $home = thomepage::instance();
       $home->lock();
