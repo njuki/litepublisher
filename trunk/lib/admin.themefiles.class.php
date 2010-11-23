@@ -28,6 +28,7 @@ class tadminthemefiles extends tadminmenu {
   
   public function getcontent() {
     $html = $this->gethtml('themefiles');
+$lang = tlocal::instance('themefiles');
     $args = targs::instance();
     $themename = tadminhtml::getparam('theme', tview::instance(1)->themename);
     if (!self::theme_exists($themename)) return $this->notfound;
@@ -46,9 +47,9 @@ class tadminthemefiles extends tadminmenu {
       $file = $_GET['file'];
       if (!self::file_exists($themename, $file)) return $this->notfound;
       $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
-      $args->content = file_get_contents($filename);
-      $result .= sprintf($html->h2->filename, $file);
-      $result .= $html->editform($args);
+      $args->text = file_get_contents($filename);
+$args->formtitle = sprintf($lang->filename, $file);
+      $result .= $html->adminform('[editor=text]', $args);
     }
     
     return $html->fixquote($result);
@@ -58,7 +59,7 @@ class tadminthemefiles extends tadminmenu {
     $result = '';
     if (empty($_GET['file']) || empty($_GET['theme'])) return '';
     if (!self::file_exists($_GET['theme'], $_GET['file'])) return '';
-    if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['content'])) {
+    if (!file_put_contents(litepublisher::$paths->themes . $_GET['theme'] . DIRECTORY_SEPARATOR . $_GET['file'], $_POST['text'])) {
       $result = $this->html->h2->errorsave;
     }
     
