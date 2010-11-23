@@ -57,7 +57,6 @@ public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 
 try {
   litepublisher::init();
-  define('dbversion' , true);
   if (litepublisher::$debug) {
     require_once(litepublisher::$paths->lib . 'data.class.php');
     require_once(litepublisher::$paths->lib . 'events.class.php');
