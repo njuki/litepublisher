@@ -626,7 +626,7 @@ $checkbox= [<p><input type="checkbox" name="$name" id="$name" $value />
 $combo = [<p><label for="$name"><strong>$lang.$name:</strong></label>
 <select name="$name" id="$name">$value</select></p>]
 
-$hidden = [<input type="hidden" name="$name" value="$value" />]
+$hidden = [<input type="hidden" name="$name" id="$name" value="$value" />]
 
 $form = [
 <h2>$formtitle</h2>

@@ -34,7 +34,7 @@ class titem extends tdata {
   
   public function free() {
     unset(self::$instances[$this->getinstancename()][$this->id]);
-unset($this->coinstances);
+//unset($this->coinstances);
   }
   
   public function __construct() {
