@@ -11,12 +11,12 @@ class tadminstaticpages extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-private function editform(targs  $args) {
-$args->text = $args->rawcontent;
-$args->formtitle = $this->title;
-return $this->html->adminform('[text=title] [text=description] [text=keywords] [editor=text] [hidden=id]', $args);
-}
+  
+  private function editform(targs  $args) {
+    $args->text = $args->rawcontent;
+    $args->formtitle = $this->title;
+    return $this->html->adminform('[text=title] [text=description] [text=keywords] [editor=text] [hidden=id]', $args);
+  }
   
   public function getcontent() {
     $result = '';
@@ -40,7 +40,7 @@ return $this->html->adminform('[text=title] [text=description] [text=keywords] [
           $result .= $html->confirmdelete($args);
         }
       } else {
-      $result .= $this->editform($args);
+        $result .= $this->editform($args);
       }
     } else {
       $args->title = '';

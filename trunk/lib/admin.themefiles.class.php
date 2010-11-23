@@ -28,7 +28,7 @@ class tadminthemefiles extends tadminmenu {
   
   public function getcontent() {
     $html = $this->gethtml('themefiles');
-$lang = tlocal::instance('themefiles');
+    $lang = tlocal::instance('themefiles');
     $args = targs::instance();
     $themename = tadminhtml::getparam('theme', tview::instance(1)->themename);
     if (!self::theme_exists($themename)) return $this->notfound;
@@ -48,7 +48,7 @@ $lang = tlocal::instance('themefiles');
       if (!self::file_exists($themename, $file)) return $this->notfound;
       $filename = litepublisher::$paths->themes .$themename . DIRECTORY_SEPARATOR  . $file;
       $args->text = file_get_contents($filename);
-$args->formtitle = sprintf($lang->filename, $file);
+      $args->formtitle = sprintf($lang->filename, $file);
       $result .= $html->adminform('[editor=text]', $args);
     }
     

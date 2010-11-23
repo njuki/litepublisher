@@ -68,16 +68,16 @@ class tini2array {
     
     return $result;
   }
-
+  
   public static function parsesection($s) {
     $result  =array();
     $s = str_replace(array("\r\n", "\r"), "\n", trim($s));
     $lines = explode("\n", $s);
-      $name = '';
-      $value = '';
-      while (self::extractvalue($lines, $name, $value)) {
-        $result[$name] = $value;
-      }
+    $name = '';
+    $value = '';
+    while (self::extractvalue($lines, $name, $value)) {
+      $result[$name] = $value;
+    }
     return $result;
   }
   

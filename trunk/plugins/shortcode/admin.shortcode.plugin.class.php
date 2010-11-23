@@ -7,27 +7,27 @@
 **/
 
 class tadminshortcodeplugin {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
-
-  public function getcontent() {  
-$plugin = tshortcode::instance();
+  
+  public function getcontent() {
+    $plugin = tshortcode::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::instance();
-      $args->codes = $plugin->codes;
-$args->formtitle = $about['formtitle'];
-      $args->data['$lang.codes'] = $about['codes'];
-
+    $args->codes = $plugin->codes;
+    $args->formtitle = $about['formtitle'];
+    $args->data['$lang.codes'] = $about['codes'];
+    
     $html = tadminhtml::instance();
-return $html->adminform('[editor=codes]', $args);
-}
-
+    return $html->adminform('[editor=codes]', $args);
+  }
+  
   public function processform() {
-$plugin = tshortcode::instance();
-$plugin->setcodes($_POST['codes']);
-}
-
+    $plugin = tshortcode::instance();
+    $plugin->setcodes($_POST['codes']);
+  }
+  
 }//class
 ?>

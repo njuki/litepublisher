@@ -791,7 +791,7 @@ class tclasses extends titems {
     parent::create();
     $this->basename = 'classes';
     $this->dbversion = false;
-    $this->addevents('onnewitem');
+    $this->addevents('onnewitem', 'gettemplatevar');
     $this->addmap('classes', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
@@ -944,7 +944,9 @@ class toptions extends tevents_storage {
   }
   
   public function savemodified() {
-    if (tstorage::savemodified()) $this->onsave();
+    $result = tstorage::savemodified();
+    $this->onsave($result);
+    return $result;
   }
   
   public function __set($name, $value) {
@@ -1054,6 +1056,14 @@ class toptions extends tevents_storage {
     if ($cookie != '') $cookie = md5((string) $cookie . litepublisher::$secret);
     $this->data['cookie'] = $cookie;
     $this->save();
+  }
+  
+  public function getcommentsapproved() {
+    return $this->DefaultCommentStatus  == 'approved';
+  }
+  
+  public function setcommentsapproved($value) {
+    $this->DefaultCommentStatus  = $value ? 'approved' : 'hold';
   }
   
   public function handexception($e) {

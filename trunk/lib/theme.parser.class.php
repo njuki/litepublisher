@@ -187,11 +187,9 @@ class tthemeparser extends tevents {
     $this->theme = $theme;
     $this->paths = self::getpaths($theme);
     $s = trim($s);
-    //echo "<pre>\n";
     while ($s != '') {
       if (preg_match('/^(((\$template|\$custom)?\.?)?\w*+(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           $tag = $m[1];
-          //echo "tag $tag\n";
           $s = ltrim(substr($s, strlen($m[0])));
           if (isset($m[5])) {
             $i = self::find_close($s, $m[5]);
@@ -233,6 +231,7 @@ class tthemeparser extends tevents {
         if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
         break;
       }
+      
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           if (!isset($m[3])) $this->error('The bracket not found');
           $tag = $m[1];
@@ -299,6 +298,19 @@ class tthemeparser extends tevents {
         if (!preg_match('/^sidebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
         $widgetname = $m[1];
         if (($widgetname != 'widget') && (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
+        $path = empty($m[2]) ? '0' : $m[2];
+        $this->setwidgetitem($widgetname, $path, $value);
+        if ($widgetname == 'widget') {
+          foreach (self::getwidgetnames() as $widgetname) {
+            if ((($widgetname == 'posts') || ($widgetname == 'comments')) &&
+            (($path =='.items.item') || ($path == '.item'))) continue;
+            
+            $this->setwidgetitem($widgetname, $path, $value);
+          }
+        }
+      }
+      
+      private function setwidgetitem($widgetname, $path, $value) {
         $sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
         if (!isset($sidebar[$widgetname])) {
           if (isset($sidebar['widget'])) {
@@ -315,33 +327,33 @@ class tthemeparser extends tevents {
         }
         
         $widget = &$sidebar[$widgetname];
-        if (empty($m[2])) {
+        switch ($path) {
+          case '0':
           $widget[0] = $value;
-        } else {
-          switch ($m[2]) {
-            case '.items':
-            $widget['items'] = $value;
-            return;
-            
-            case '.items.item':
-            case '.item':
-            $widget['item'] = $value;
-            return;
-            
-            case '.items.item.subitems':
-            case '.item.subitems':
-            case '.subitems':
-            $widget['subitems'] = $value;
-            return;
-            
-            case '.classes':
-            case '.items.classes':
-            $widget['classes'] = $value;
-            return;
-            
-            default:
-            $this->error("Unknown '$path' widget path");
-          }
+          return;
+          
+          case '.items':
+          $widget['items'] = $value;
+          return;
+          
+          case '.items.item':
+          case '.item':
+          $widget['item'] = $value;
+          return;
+          
+          case '.items.item.subitems':
+          case '.item.subitems':
+          case '.subitems':
+          $widget['subitems'] = $value;
+          return;
+          
+          case '.classes':
+          case '.items.classes':
+          $widget['classes'] = $value;
+          return;
+          
+          default:
+          $this->error("Unknown '$path' widget path");
         }
       }
       
@@ -390,6 +402,8 @@ class tthemeparser extends tevents {
         }
         
         $sidebars = &$this->theme->templates['sidebars'];
+        $count = substr_count($this->theme->templates[0], '$template.sidebar');
+        if (count($sidebars) > $count) array_splice($sidebar, $count , $count - count($sidebars));
         foreach ($sidebars as $i => $sidebar) {
           $widget = $sidebar['widget'];
           

@@ -307,12 +307,12 @@ class ttheme extends tevents {
 
 class tthemeprops {
   public $array;
-private $_theme;
-
-public function __construct(ttheme $theme) {
-$this->_theme = $theme;
- $this->array = &$theme->templates;
-}
+  private $_theme;
+  
+  public function __construct(ttheme $theme) {
+    $this->_theme = $theme;
+    $this->array = &$theme->templates;
+  }
   
   public function __get($name) {
     if (!isset($this->array[$name])) {

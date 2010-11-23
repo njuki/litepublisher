@@ -86,7 +86,7 @@ class ttemplate extends tevents_storage {
     
     $args = targs::instance();
     $args->title = $title;
-$theme = $this->view->theme;
+    $theme = $this->view->theme;
     return $theme->parsearg($theme->title, $args);
   }
   

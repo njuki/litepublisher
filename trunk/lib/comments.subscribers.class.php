@@ -23,7 +23,7 @@ class tsubscribers extends titemsposts {
   }
   
   public function load() {
-return tfilestorage::load($this);
+    return tfilestorage::load($this);
   }
   
   public function save() {
