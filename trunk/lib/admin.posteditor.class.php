@@ -107,12 +107,12 @@ class tposteditor extends tadminmenu {
   }
   
   public function processform() {
-    /*
+/*
     echo "<pre>\n";
     var_dump($_POST);
     echo "</pre>\n";
     return;
-    */
+*/
     extract($_POST);
     
     $this->basename = 'editor';
