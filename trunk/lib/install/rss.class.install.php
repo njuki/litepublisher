@@ -12,6 +12,8 @@ function trssInstall($self) {
   $urlmap->add('/rss.xml', get_class($self), 'posts');
   $self->idcomments = $urlmap->add('/comments.xml', get_class($self), 'comments');
   $self->idpostcomments =   $urlmap->add('/comments/', get_class($self), null, 'tree');
+$urlmap->add('/rss/categories/', get_class($self), 'categories', 'tree');
+$urlmap->add('/rss/tags/', get_class($self), 'tags', 'tree');
   $urlmap->unlock();
   
   litepublisher::$classes->commentmanager->changed = $self->commentschanged;

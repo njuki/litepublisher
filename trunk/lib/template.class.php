@@ -52,6 +52,7 @@ class ttemplate extends tevents_storage {
   
   public function request($context) {
     $this->context = $context;
+ttheme::$vars['context'] = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
     $this->view = $this->itemplate ? tview::getview($context) : tview::instance();
@@ -63,6 +64,7 @@ class ttemplate extends tevents_storage {
     $this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
+    unset(ttheme::$vars['context'], ttheme::$vars['template']);
     return $result;
   }
   

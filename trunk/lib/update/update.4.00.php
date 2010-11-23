@@ -62,9 +62,36 @@ $admin->delete($id);
 
 $admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short');
 
+  $views = $admin->createitem(0, 'views', 'admin', 'tadminviews');
+  {
+    $admin->createitem($views, 'themes', 'admin', 'tadminthemes');
+    $admin->createitem($views, 'edittheme', 'admin', 'tadminthemefiles');
+    $admin->createitem($views, 'widgets', 'admin', 'tadminwidgets');
+    $admin->createitem($views, 'addcustom', 'admin', 'tadminwidgets');
+    $admin->createitem($views, 'defaults', 'admin', 'tadminviews');
+    $admin->createitem($views, 'spec', 'admin', 'tadminviews');
+    $admin->createitem($views, 'headers', 'admin', 'tadminviews');
+    $admin->createitem($views, 'admin', 'admin', 'tadminviews');
+  }
 
 $admin->data['heads'] = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>';
+		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $("input[rel=\'checkall\']").click(function() {
+      $(this).closest("form").find("input:checkbox").attr("checked", true);
+      $(this).attr("checked", false);
+    });
+    
+    $("input[rel=\'invertcheck\']").click(function() {
+      $(this).closest("form").find("input:checkbox").each(function() {
+        $(this).attr("checked", ! $(this).attr("checked"));
+      });
+      $(this).attr("checked", false);
+    });
+    
+  });
+  </script>';
 
 $admin->unlock();
 }
@@ -102,6 +129,12 @@ $classes->add('tajaxtageditor',  'admin.tags.ajax.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
+
+$urlmap = litepublisher::$urlmap;
+$urlmap->lock();
+$urlmap->add('/rss/categories/', 'trss', 'categories', 'tree');
+$urlmap->add('/rss/tags/', 'trss', 'tags', 'tree');
+  $urlmap->unlock();
 
 $data = new tdata();
 $data->basename = 'widgets';

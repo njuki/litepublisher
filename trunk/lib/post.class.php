@@ -106,6 +106,8 @@ class tpost extends titem implements  itemplate {
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
+  unset($this->aprev, $this->anext, $this->ameta, $this->_theme);
+if (isset(ttheme::$vars['post']) && ($this == ttheme::$vars['post'])) unset(ttheme::$vars['post']);
     parent::free();
   }
   
@@ -409,10 +411,12 @@ class tpost extends titem implements  itemplate {
     }
     
     if (($prev == '') && ($next == '')) return '';
-    return str_replace(
-    array('$prev', '$next'),
-    array($prev, $next),
-    $theme->parse($tml));
+    $result = strtr(    $theme->parse($tml), array(
+    '$prev' => $prev,
+'$next' => $next
+));
+unset(ttheme::$vars['prevpost'],ttheme::$vars['nextpost']);
+return $result;
   }
   
   public function getcommentslink() {
