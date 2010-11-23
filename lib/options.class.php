@@ -40,7 +40,9 @@ class toptions extends tevents_storage {
   }
   
   public function savemodified() {
-    if (tstorage::savemodified()) $this->onsave();
+    $result = tstorage::savemodified();
+    $this->onsave($result);
+    return $result;
   }
   
   public function __set($name, $value) {
@@ -151,14 +153,14 @@ class toptions extends tevents_storage {
     $this->data['cookie'] = $cookie;
     $this->save();
   }
-
-public function getcommentsapproved() {
-return $this->DefaultCommentStatus  == 'approved';
-}
-
-public function setcommentsapproved($value) {
-$this->DefaultCommentStatus  = $value ? 'approved' : 'hold';
-}
+  
+  public function getcommentsapproved() {
+    return $this->DefaultCommentStatus  == 'approved';
+  }
+  
+  public function setcommentsapproved($value) {
+    $this->DefaultCommentStatus  = $value ? 'approved' : 'hold';
+  }
   
   public function handexception($e) {
     /*

@@ -7,61 +7,61 @@
 **/
 
 class Tadminoptions extends tadminmenu {
-private $_form;
+  private $_form;
   
-    public static function instance($id = 0) {
+  public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-public function getautoform($name) {
-if (isset($this->_form)) return $this->_form;
-switch ($name) {
+  
+  public function getautoform($name) {
+    if (isset($this->_form)) return $this->_form;
+    switch ($name) {
       case 'options':
-$form = new tautoform(litepublisher::$site, 'options', 'blogdescription');
-$form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords);
-$form->obj = ttemplate::instance();
-$form->add($form->footer('editor'));
-break;
-
-      case 'rss':
-$form = new tautoform(trss::instance(), 'options', 'rssoptions');
-$form->add($form->feedburner, $form->feedburnercomments, $form->template('editor'));
+      $form = new tautoform(litepublisher::$site, 'options', 'blogdescription');
+      $form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords);
+      $form->obj = ttemplate::instance();
+      $form->add($form->footer('editor'));
       break;
-
+      
+      case 'rss':
+      $form = new tautoform(trss::instance(), 'options', 'rssoptions');
+      $form->add($form->feedburner, $form->feedburnercomments, $form->template('editor'));
+      break;
+      
       case 'comments':
-$form = new tautoform(litepublisher::$options, 'options', 'commentform');
-$form->add($form->filtercommentstatus, $form->commentsapproved, $form->checkduplicate, $form->defaultsubscribe, $form->commentsdisabled, $form->commentsenabled, $form->pingenabled, 
-$form->commentpages, $form->commentsperpage);
-$form->obj = litepublisher::$classes->commentmanager;
-$form->add($form->sendnotification, $form->hidelink,  $form->redir, $form->nofollow);
+      $form = new tautoform(litepublisher::$options, 'options', 'commentform');
+      $form->add($form->filtercommentstatus, $form->commentsapproved, $form->checkduplicate, $form->defaultsubscribe, $form->commentsdisabled, $form->commentsenabled, $form->pingenabled,
+      $form->commentpages, $form->commentsperpage);
+      $form->obj = litepublisher::$classes->commentmanager;
+      $form->add($form->sendnotification, $form->hidelink,  $form->redir, $form->nofollow);
       $form->addeditor(tsubscribers::instance(), 'locklist');
       break;
-
+      
       case 'ping':
-$form = new tautoform(tpinger::instance(), 'options', 'optionsping');
-$form->add($form->enabled, $form->services('editor'));
+      $form = new tautoform(tpinger::instance(), 'options', 'optionsping');
+      $form->add($form->enabled, $form->services('editor'));
       break;
       
       case 'robots':
-$form = new tautoform(trobotstxt::instance(), 'options', 'editrobot');
-$form->add($form->text('editor'));
-      break;
-
-      case 'notfound404':
-$form = new tautoform(tnotfound404::instance(), 'options', 'edit404');
-$form->add($form->notify, $form->text('editor'));
+      $form = new tautoform(trobotstxt::instance(), 'options', 'editrobot');
+      $form->add($form->text('editor'));
       break;
       
-
-default:
-return false;
-}
-$this->_form = $form;
-return $form;
-}
-
-    public function getcontent() {
-if ($form = $this->getautoform($this->name)) return $form->getform();
+      case 'notfound404':
+      $form = new tautoform(tnotfound404::instance(), 'options', 'edit404');
+      $form->add($form->notify, $form->text('editor'));
+      break;
+      
+      
+      default:
+      return false;
+    }
+    $this->_form = $form;
+    return $form;
+  }
+  
+  public function getcontent() {
+    if ($form = $this->getautoform($this->name)) return $form->getform();
     $options = litepublisher::$options;
     $template = ttemplate::instance();
     ttheme::$vars['template'] = $template;
@@ -140,8 +140,8 @@ if ($form = $this->getautoform($this->name)) return $form->getform();
   }
   
   public function processform() {
-litepublisher::$urlmap->clearcache();
-if ($form = $this->getautoform($this->name)) return $form->processform();
+    litepublisher::$urlmap->clearcache();
+    if ($form = $this->getautoform($this->name)) return $form->processform();
     extract($_POST, EXTR_SKIP);
     $options = litepublisher::$options;
     

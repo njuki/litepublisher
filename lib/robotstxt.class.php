@@ -32,15 +32,15 @@ class trobotstxt extends titems {
       $this->added($value);
     }
   }
-
-public function gettext() {
-return implode("\n", $this->items);
-}
-
-public function settext($value) {
-$this->items = explode("\n", $value);
-$this->save();
-}
+  
+  public function gettext() {
+    return implode("\n", $this->items);
+  }
+  
+  public function settext($value) {
+    $this->items = explode("\n", $value);
+    $this->save();
+  }
   
   public function request($arg) {
     $s = "<?php

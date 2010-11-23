@@ -91,7 +91,7 @@ class tadminservice extends tadminmenu {
       break;
       
       case 'run':
-$args->formtitle = $this->lang->runhead;
+      $args->formtitle = $this->lang->runhead;
       $args->content = isset($_POST['content']) ? $_POST['content'] : '';
       $result = $html->adminform('[editor=content]', $args);
       break;

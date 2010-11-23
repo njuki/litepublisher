@@ -118,13 +118,13 @@ class tadminmoderator extends tadminmenu {
       $args->key = $rss->key;
       $args->count = $rss->count;
       $args->rsstemplate = $rss->template;
-$args->formtitle = $lang->rssurl . sprintf(' <a href="%1$s">%1$s</a>', litepublisher::$site->url . $rss->rssurl);
-
+      $args->formtitle = $lang->rssurl . sprintf(' <a href="%1$s">%1$s</a>', litepublisher::$site->url . $rss->rssurl);
+      
       return $html->adminform('
-[text=key]
-[text=count]
-[editor=rsstemplate]',
-$args);
+      [text=key]
+      [text=count]
+      [editor=rsstemplate]',
+      $args);
     }
   }
   

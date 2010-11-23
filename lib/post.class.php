@@ -10,7 +10,7 @@ class tpost extends titem implements  itemplate {
   private $aprev;
   private $anext;
   private $ameta;
-private $_theme;
+  private $_theme;
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -171,13 +171,13 @@ private $_theme;
       }
     }
   }
-
-public function gettheme() {
-ttheme::$vars['post'] = $this;
-if (isset($this->_theme)) return $this->_theme;
-$this->_theme = tview::getview($this)->theme;
-return $this->_theme;
-}
+  
+  public function gettheme() {
+    ttheme::$vars['post'] = $this;
+    if (isset($this->_theme)) return $this->_theme;
+    $this->_theme = tview::getview($this)->theme;
+    return $this->_theme;
+  }
   
   public function getbookmark() {
     return $this->theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');

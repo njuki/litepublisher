@@ -54,7 +54,8 @@ public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 try {
   litepublisher::init();
 if (litepublisher::$domain== 'fireflyblog.ru') {
-define('dbversion' , false);
+//define('dbversion' , false);
+litepublisher::$paths->data .= 'fire\\';
 }
 
 if (litepublisher::$debug) {

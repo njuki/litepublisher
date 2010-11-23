@@ -287,21 +287,21 @@ class tautoform {
     }
   }
   
-
-public function addsingle($obj, $propname, $type) {
-return $this->addprop(array(
-'obj' => $obj,
-'propname' => $propname,
-'type' => $type
-));
-}
-
-
-
-public function addeditor($obj, $propname) {
-return $this->addsingle($obj, $propname, 'editor');
-}
-
+  
+  public function addsingle($obj, $propname, $type) {
+    return $this->addprop(array(
+    'obj' => $obj,
+    'propname' => $propname,
+    'type' => $type
+    ));
+  }
+  
+  
+  
+  public function addeditor($obj, $propname) {
+    return $this->addsingle($obj, $propname, 'editor');
+  }
+  
   public function addprop(array $prop) {
     if (isset($prop['type'])) {
       $type = $prop['type'];

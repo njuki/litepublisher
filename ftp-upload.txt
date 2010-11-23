@@ -986,8 +986,6 @@ send plugins\markdown\markdown.parser.class.php plugins/markdown/markdown.parser
 quote site chmod 666 plugins/markdown/markdown.parser.class.php
 send plugins\markdown\markdown.plugin.class.php plugins/markdown/markdown.plugin.class.php
 quote site chmod 666 plugins/markdown/markdown.plugin.class.php
-send plugins\markdown\mini.php plugins/markdown/mini.php
-quote site chmod 666 plugins/markdown/mini.php
 cd plugins
 mkdir mobile
 quote site chmod 777 mobile
@@ -1158,12 +1156,12 @@ send plugins\shortcode\.htaccess plugins/shortcode/.htaccess
 quote site chmod 666 plugins/shortcode/.htaccess
 send plugins\shortcode\about.ini plugins/shortcode/about.ini
 quote site chmod 666 plugins/shortcode/about.ini
+send plugins\shortcode\admin.shortcode.plugin.class.php plugins/shortcode/admin.shortcode.plugin.class.php
+quote site chmod 666 plugins/shortcode/admin.shortcode.plugin.class.php
 send plugins\shortcode\index.htm plugins/shortcode/index.htm
 quote site chmod 666 plugins/shortcode/index.htm
 send plugins\shortcode\shortcode.plugin.php plugins/shortcode/shortcode.plugin.php
 quote site chmod 666 plugins/shortcode/shortcode.plugin.php
-send plugins\shortcode\shortcode.plugins.install.php' plugins/shortcode/shortcode.plugins.install.php'
-quote site chmod 666 plugins/shortcode/shortcode.plugins.install.php'
 cd plugins
 mkdir simpleimporter
 quote site chmod 777 simpleimporter
