@@ -23,6 +23,36 @@ $form->obj = ttemplate::instance();
 $form->add($form->footer('editor'));
 break;
 
+      case 'rss':
+$form = new tautoform(trss::instance(), 'options', 'rssoptions');
+$form->add($form->feedburner, $form->feedburnercomments, $form->template('editor'));
+      break;
+
+      case 'comments':
+$form = new tautoform(litepublisher::$options, 'options', 'commentform');
+$form->add($form->filtercommentstatus, $form->commentsapproved, $form->checkduplicate, $form->defaultsubscribe, $form->commentsdisabled, $form->commentsenabled, $form->pingenabled, 
+$form->commentpages, $form->commentsperpage);
+$form->obj = litepublisher::$classes->commentmanager;
+$form->add($form->sendnotification, $form->hidelink,  $form->redir, $form->nofollow);
+      $form->addeditor(tsubscribers::instance(), 'locklist');
+      break;
+
+      case 'ping':
+$form = new tautoform(tpinger::instance(), 'options', 'optionsping');
+$form->add($form->enabled, $form->services('editor'));
+      break;
+      
+      case 'robots':
+$form = new tautoform(trobotstxt::instance(), 'options', 'editrobot');
+$form->add($form->text('editor'));
+      break;
+
+      case 'notfound404':
+$form = new tautoform(tnotfound404::instance(), 'options', 'edit404');
+$form->add($form->notify, $form->text('editor'));
+      break;
+      
+
 default:
 return false;
 }
@@ -54,12 +84,6 @@ if ($form = $this->getautoform($this->name)) return $form->getform();
       $args->mailerchecked = $options->mailer == 'smtp';
       break;
       
-      case 'rss':
-      $rss = trss::instance();
-      ttheme::$vars['rss'] = $rss;
-      $args->content = $rss->template;
-      break;
-      
       case 'view':
       $filter = tcontentfilter::instance();
       $args->automore = $filter->automore;
@@ -74,31 +98,6 @@ if ($form = $this->getautoform($this->name)) return $form->getform();
       $args->ratio = $parser->ratio;
       $args->previewwidth = $parser->previewwidth;
       $args->previewheight = $parser->previewheight;
-      break;
-      
-      case 'comments':
-      $args->filtercommentstatus = $options->filtercommentstatus;
-      $args->status = $options->DefaultCommentStatus  == 'approved';
-      $args->commentsdisabled = $options->commentsdisabled;
-      $args->commentsenabled = $options->commentsenabled;
-      $args->pingenabled  = $options->pingenabled;
-      $args->commentpages  = $options->commentpages;
-      $args->checkduplicate = $options->checkduplicate;
-      $args->defaultsubscribe  = $options->defaultsubscribe;
-      $manager = litepublisher::$classes->commentmanager;
-      $args->sendnotification = $manager->sendnotification;
-      $args->hidelink = $manager->hidelink;
-      $args->redir = $manager->redir;
-      $args->nofollow = $manager->nofollow;
-      
-      $subscribers = tsubscribers::instance();
-      $args->locklist = $subscribers->locklist;
-      break;
-      
-      case 'ping':
-      $pinger = tpinger::instance();
-      $args->pingenabled  = $pinger->enabled;
-      $args->content = $pinger->services;
       break;
       
       case 'links':
@@ -131,23 +130,9 @@ if ($form = $this->getautoform($this->name)) return $form->getform();
       $args->phpcode = $filter->phpcode;
       break;
       
-      case 'robots':
-      $robots = trobotstxt::instance();
-      $args->content = implode("\n", $robots->items);
-      break;
-      
       case 'local':
       $args->timezones = $this->gettimezones();
       break;
-      
-      case 'notfound404':
-      $notfound  = tnotfound404::instance();
-      $args->notify = $notfound->notify;
-      $args->content = $notfound->text;
-      $forbidden = tforbidden::instance();
-      $args->forbiddentext = $forbidden->text;
-      break;
-      
     }
     
   $result  = $this->html->{$this->name}($args);
@@ -194,14 +179,6 @@ if ($form = $this->getautoform($this->name)) return $form->processform();
       $mailer->unlock();
       break;
       
-      case 'rss':
-      $rss = trss::instance();
-      $rss->lock();
-      $rss->SetFeedburnerLinks($feedburner, $feedburnercomments);
-      $rss->template = $content;
-      $rss->unlock();
-      break;
-      
       case 'view':
       $options->icondisabled = isset($icondisabled);
       if (!empty($perpage)) $options->perpage = (int) $perpage;
@@ -222,42 +199,6 @@ if ($form = $this->getautoform($this->name)) return $form->processform();
       $parser->previewwidth = $previewwidth;
       $parser->previewheight = $previewheight;
       $parser->save();
-      break;
-      
-      case 'comments':
-      $options->lock();
-      $options->filtercommentstatus = isset($filtercommentstatus);
-      $options->DefaultCommentStatus  = isset($status) ? 'approved' : 'hold';
-      $options->commentsdisabled = isset($commentsdisabled);
-      $options->commentsenabled = isset($commentsenabled);
-      $options->pingenabled  = isset($pingenabled );
-      $options->commentpages = isset($commentpages);
-      $options->commentsperpage = $commentsperpage;
-      $options->checkduplicate = isset($checkduplicate);
-      $options->defaultsubscribe = isset($defaultsubscribe);
-      $options->unlock();
-      
-      $manager = litepublisher::$classes->commentmanager;
-      $manager->sendnotification = isset($sendnotification);
-      $manager->hidelink = isset($hidelink);
-      $manager->redir = isset($redir);
-      $manager->nofollow = isset($nofollow);
-      $manager->save();
-      
-      $subscribtion = tsubscribers::instance();
-      if ($locklist != $subscribtion->locklist) {
-        $subscribtion->locklist = $locklist;
-        $subscribtion->save();
-      }
-      litepublisher::$urlmap->clearcache();
-      break;
-      
-      case 'ping':
-      $pinger = tpinger::instance();
-      $pinger->lock();
-      $pinger->services = $content;
-      $pinger->enabled = isset($pingenabled);
-      $pinger->unlock();
       break;
       
       case 'links':
@@ -315,12 +256,6 @@ if ($form = $this->getautoform($this->name)) return $form->processform();
       }
       break;
       
-      case 'robots':
-      $robots = trobotstxt::instance();
-      $robots->items = explode("\n", $content);
-      $robots->save();
-      break;
-      
       case 'local':
       $options->lock();
       $options->dateformat = $dateformat;
@@ -335,16 +270,6 @@ if ($form = $this->getautoform($this->name)) return $form->processform();
       }
       $options->unlock();
       litepublisher::$urlmap->clearcache();
-      break;
-      
-      case 'notfound404':
-      $notfound = tnotfound404 ::instance();
-      $notfound->notify = isset($notify);
-      $notfound->text = $content;
-      $forbidden = tforbidden::instance();
-      $forbidden->text = $forbiddentext;
-      $forbidden->save();
-      $notfound->save();
       break;
     }
     

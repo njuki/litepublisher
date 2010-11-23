@@ -75,7 +75,7 @@ class tadminhtml {
       $s = substr_replace($s, $replace, $i, strlen('[/form]'));
     }
     
-    if (preg_match_all('/\[(area|editor|edit|checkbox|text|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+    if (preg_match_all('/\[(editor|checkbox|text|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
         $type = $item[1];
         $name = $item[3];
@@ -287,6 +287,21 @@ class tautoform {
     }
   }
   
+
+public function addsingle($obj, $propname, $type) {
+return $this->addprop(array(
+'obj' => $obj,
+'propname' => $propname,
+'type' => $type
+));
+}
+
+
+
+public function addeditor($obj, $propname) {
+return $this->addsingle($obj, $propname, 'editor');
+}
+
   public function addprop(array $prop) {
     if (isset($prop['type'])) {
       $type = $prop['type'];

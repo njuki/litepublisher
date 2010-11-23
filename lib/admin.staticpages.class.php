@@ -11,6 +11,12 @@ class tadminstaticpages extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
+
+private function editform(targs  $args) {
+$args->text = $args->rawcontent;
+$args->formtitle = $this->title;
+return $this->html->adminform('[text=title] [text=description] [text=keywords] [editor=text] [hidden=id]', $args);
+}
   
   public function getcontent() {
     $result = '';
@@ -34,14 +40,14 @@ class tadminstaticpages extends tadminmenu {
           $result .= $html->confirmdelete($args);
         }
       } else {
-        $result .= $html->form($args);
+      $result .= $this->editform($args);
       }
     } else {
       $args->title = '';
       $args->description = '';
       $args->keywords = '';
-      $args->content = '';
-      $result .= $html->form($args);
+      $args->rawcontent = '';
+      $result .= $this->editform($args);
     }
     
     //table
@@ -61,9 +67,9 @@ class tadminstaticpages extends tadminmenu {
     $pages = tstaticpages::instance();
     $id = $this->idget();
     if ($id == 0) {
-      $_POST['id'] = $pages->add($title, $description, $keywords, $rawcontent);
+      $_POST['id'] = $pages->add($title, $description, $keywords, $text);
     } else {
-      $pages->edit($id, $title, $description, $keywords, $rawcontent);
+      $pages->edit($id, $title, $description, $keywords, $text);
     }
     $this->basename = 'staticpages';
     return $this->html->h2->success;

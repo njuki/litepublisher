@@ -23,10 +23,7 @@ class tsubscribers extends titemsposts {
   }
   
   public function load() {
-    $filename = litepublisher::$paths->data . $this->getbasename() .'.php';
-    if (@file_exists($filename)) {
-      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
-    }
+return tfilestorage::load($this);
   }
   
   public function save() {

@@ -28,10 +28,7 @@ return $result;
 }
 
 public function setcodes($s) {
-$s = "[section]\n" . $s;
-$a = tini2array::parse($s);
-$this->items = $a['section'];
-
+$this->items  = tini2array::parsesection($s);
 $this->save();
 }
   
