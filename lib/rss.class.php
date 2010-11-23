@@ -55,12 +55,21 @@ class trss extends tevents {
     $this->domrss = new tdomrss;
     switch ($arg) {
       case 'posts':
-      $this->GetRSSRecentPosts();
+      $this->getrecentposts();
       break;
       
       case 'comments':
       $this->GetRecentComments();
       break;
+
+case 'categories':
+case 'tags':
+      if (!preg_match('/\/(\d*?)\.xml$/', litepublisher::$urlmap->url, $match)) return 404;
+      $id = (int) $match[1];
+$tags = $arg == 'categories' ? tcategories::instance() : ttags::instance();
+if (!$tags->itemexists($id)) return 404;
+$this->gettagrss($tags, $id);
+break;
       
       default:
       if (!preg_match('/\/(\d*?)\.xml$/', litepublisher::$urlmap->url, $match)) return 404;
@@ -76,16 +85,28 @@ class trss extends tevents {
     return $result;
   }
   
-  public function GetRSSRecentPosts() {
+  public function getrecentposts() {
     $this->domrss->CreateRoot(litepublisher::$site->url. '/rss.xml', litepublisher::$site->name);
     $posts = tposts::instance();
-    $list = $posts->getrecent(litepublisher::$options->perpage);
+$this->getrssposts($posts->getrecent(litepublisher::$options->perpage));
+}
+
+public function getrssposts(array $list) {
     foreach ($list as $id ) {
       $post = tpost::instance($id);
       $this->AddRSSPost($post);
     }
-    
-  }
+      }
+
+public function gettagrss(tcommontags $tags, $id) {
+    $this->domrss->CreateRoot(litepublisher::$site->url. litepublisher::$urlmap->url, $tags->getvalue($id, 'title'));
+
+    $items = $tags->itemsposts->getposts($id);
+    $posts = litepublisher::$classes->posts;
+    $items = $posts->stripdrafts($items);
+    $items = $posts->sortbyposted($items);
+$this->getrssposts(array_slice($items, 0, litepublisher::$options->perpage));
+}
   
   public function GetRecentComments() {
     $this->domrss->CreateRoot(litepublisher::$site->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$site->name);
