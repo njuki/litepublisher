@@ -6,9 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tticket extends tpost {
-  public $ticket;
-  public $ticketstable;
+class tticket extends tchildpost {
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -16,9 +14,9 @@ class tticket extends tpost {
   
   protected function create() {
     parent::create();
-    $this->ticketstable = 'tickets';
-    $this->data['ticket'] = &$this->ticket;
-    $this->ticket = array(
+    $this->childtable = 'tickets';
+    $this->data['childdata'] = &$this->childdata;
+    $this->childdata = array(
     'id' => 0,
     'type' => 'bug',
     'state'  => 'opened',
@@ -34,55 +32,16 @@ class tticket extends tpost {
     );
   }
   
-  public function __get($name) {
-    if ($name == 'id') return $this->data['id'];
-    if (array_key_exists($name, $this->ticket)) return $this->ticket[$name];
-    return parent::__get($name);
-  }
-  
-  public function __set($name, $value) {
-    if ($name == 'id') return $this->setid($value);
-    if (array_key_exists($name, $this->ticket)) {
-      $this->ticket[$name] = $value;
-      return true;
-    }
-    return parent::__set($name, $value);
-  }
-  
-  public function __isset($name) {
-    return array_key_exists($name, $this->ticket) || parent::__isset($name);
-  }
-  
-  protected function LoadFromDB() {
-    if (!parent::LoadFromDB())  return false;
-    if ($a = $this->getdb($this->ticketstable)->getitem($this->id)) {
-      $this->ticket = $a;
-      $this->ticket['reproduced'] = $a['reproduced'] == '1';
-      return true;
-    }
-    return false;
-  }
-  
-  protected function SaveToDB() {
-    parent::SaveToDB();
-    if ($this->ticket['closed'] == '') $this->ticket['closed'] = sqldate();
-    $this->ticket['id'] = $this->id;
-    $this->getdb($this->ticketstable)->updateassoc($this->ticket);
-  }
-  
-  public function addtodb() {
-    $id = parent::addtodb();
-    $this->ticket['id'] = $id;
-    $this->getdb($this->ticketstable)->add($this->ticket);
-    return $this->id;
-  }
+public function fixdata() {
+$this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
+}
   
   protected function getclosed() {
-    return strtotime($this->ticket['closed']);
+    return strtotime($this->childdata['closed']);
   }
   
   protected function setclosed($value) {
-    $this->ticket['closed'] = sqldate($value);
+    $this->childdata['closed'] = sqldate($value);
   }
   
   protected function getcontentpage($page) {
@@ -101,8 +60,8 @@ class tticket extends tpost {
     $filter = tcontentfilter::instance();
     $filter->filterpost($this,$this->rawcontent);
     $result .= $this->filtered;
-    if (!empty($this->ticket['code'])) {
-      $lang = tlocal::instance('ticket');
+    if (!empty($this->childdata['code'])) {
+      $lang = tlocal::instance('childdata');
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
     }
@@ -111,7 +70,7 @@ class tticket extends tpost {
   
   public function getticketcontent() {
     self::checklang();
-    $lang = tlocal::instance('ticket');
+    $lang = tlocal::instance('childdata');
     $args = targs::instance();
     foreach (array('type', 'state', 'prio') as $prop) {
       $value = $this->$prop;
@@ -122,8 +81,8 @@ class tticket extends tpost {
     $args->author = $this->authorlink;
     
     ttheme::$vars['ticket'] = $this;
-    $theme = ttheme::instance();
-    $tml = file_get_contents($this->resource . 'ticket.tml');
+    $theme = $this->theme;
+    $tml = file_get_contents($this->resource . 'childdata.tml');
     return $theme->parsearg($tml, $args);
   }
   
@@ -141,7 +100,7 @@ class tticket extends tpost {
   }
   
   public static function checklang() {
-    if (!isset(tlocal::$data['ticket'])) {
+    if (!isset(tlocal::$data['childdata'])) {
       $langname = litepublisher::$options->language;
       tlocal::loadini(self::getresource() . $langname . '.ini');
       tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
@@ -150,7 +109,7 @@ class tticket extends tpost {
   }
   
   public function getschemalink() {
-    return 'ticket';
+    return 'childdata';
   }
   
 }//class
