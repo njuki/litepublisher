@@ -23,7 +23,7 @@ return tticket::instance();
 }  
 
   public function createpoll() {
-    $this->checkadminlang();
+tlocal::loadsection('admin', 'ticket', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('tickets');
     $items = explode(',', $lang->pollitems);
     $polls = tpolls::instance();
@@ -73,19 +73,6 @@ $deleted = implode(',', $items);
       foreach ($idpolls as $idpoll)       $pols->delete($idpoll);
     }
       }
-  
-  protected function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  }
-  
-  public function checkhtml() {
-    $html = tadminhtml::instance();
-$html->addini('tickets', $this->resource . 'html.ini');
-}
-
-  public function checkadminlang() {
-tlocal::loadsection('admin', 'ticket', self::getresource());
-}
   
   public function hasright($who, $group) {
     return ($who == 'tiket') &&($group == 'author');

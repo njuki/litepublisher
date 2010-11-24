@@ -166,8 +166,8 @@ if ($name != '') $name = '.' . $name;
 public static function loadsection($name, $section, $dir) {
     if (!isset(self::$data[$section])) {
 $language = litepublisher::$options->language;
-      self::loadini($dir . $language . '.ini');
 if ($name != '') $name = '.' . $name;
+      self::loadini($dir . $language . $name . '.ini');
 tfiler::serialize(self::getcachefilename($language . $name . '.ini'), self::$data);
     }
   }
