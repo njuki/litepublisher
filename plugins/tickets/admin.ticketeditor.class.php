@@ -22,10 +22,13 @@ class tticketeditor extends tposteditor {
   }
   
   public function gethtml($name = '') {
-    $tickets = ttickets::instance();
-    $tickets->checkhtml();
-    $tickets->checkadminlang();
-    return parent::gethtml($name);
+    $html = tadminhtml::instance();
+$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+$html->addini('tickets', $dir . 'html.ini');
+//$html->section = 'tickets';
+tlocal::loadsection('', 'ticket', $dir);
+tlocal::loadsection('admin', 'tickets', $dir);
+return parent::gethtml($name);
   }
   
   protected function getlogoutlink() {
@@ -35,12 +38,13 @@ class tticketeditor extends tposteditor {
   public function getcontent() {
     $result = $this->logoutlink;
     $this->basename = 'tickets';
-    $html = $this->html;
     $ticket = tticket::instance($this->idpost);
     ttheme::$vars['ticket'] = $ticket;
     $args = targs::instance();
-    if ($ticket->id > 0) $result .= $html->headeditor ();
+    //if ($ticket->id > 0) $result .= $html->headeditor ();
     $args->categories = $this->getcategories($ticket);
+    $html = $this->html;
+$lang = tlocal::instance('tickets');
     $args->raw = $ticket->rawcontent;
     $args->code = $ticket->code;
     $args->fixed = $ticket->state == 'fixed';
@@ -66,7 +70,7 @@ class tticketeditor extends tposteditor {
     }
     $args->priocombo = $html->array2combo($prio, $ticket->prio);
     
-    $result .= $html->editor($args);
+    $result .= $html->form($args);
     $result = $html->fixquote($result);
     return $result;
   }
