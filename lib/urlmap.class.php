@@ -64,7 +64,6 @@ class turlmap extends titems {
   
   private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
-      //tfiler::log(var_export($this->itemrequested , true));
       return $this->printcontent($this->itemrequested);
     } else {
       $this->notfound404();
@@ -184,7 +183,6 @@ class turlmap extends titems {
     $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
-      //tfiler::log($s, 'content.log');
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
@@ -402,7 +400,6 @@ class turlmap extends titems {
   }
   
   public static function redir301($to) {
-    //tfiler::log($to. "\n" . $this->url);
     self::redir(litepublisher::$site->url . $to);
   }
   

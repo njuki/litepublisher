@@ -126,6 +126,13 @@ class tadminhtml {
       tfiler::serialize($cachefilename, $v);
     }
   }
+
+public function addini($section, $filename) {
+    if (!isset($this->ini[$section])) {
+      $this->loadini($filename);
+      tfiler::serialize(tlocal::getcachefilename('adminhtml'), $this->ini);
+    }
+  }
   
   public function loadini($filename) {
     if( $v = parse_ini_file($filename, true)) {

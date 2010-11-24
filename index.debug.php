@@ -79,6 +79,7 @@ tstorage::loaddata();
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
 tlocal::clearcache();
+
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 

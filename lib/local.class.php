@@ -163,11 +163,12 @@ if ($name != '') $name = '.' . $name;
     return self::getcachedir() . $name . '.php';
   }
 
-public static function loadsection($section, $dir) {
+public static function loadsection($name, $section, $dir) {
     if (!isset(self::$data[$section])) {
-      self::loadini($dir . litepublisher::$options->language . '.ini');
-      tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
+$language = litepublisher::$options->language;
+      self::loadini($dir . $language . '.ini');
+if ($name != '') $name = '.' . $name;
+tfiler::serialize(self::getcachefilename($language . $name . '.ini'), self::$data);
     }
   }
   
