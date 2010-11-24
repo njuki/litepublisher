@@ -42,7 +42,7 @@ tlocal::loadsection('admin', 'ticket', dirname(__file__) . DIRECTORY_SEPARATOR .
   private function notify(tticket $ticket) {
     ttheme::$vars['ticket'] = $ticket;
     $args = targs::instance();
-    $args->adminurl = litepublisher::$site->url . '/admin/tickets/editor/'. litepublisher::$options->q . 'id=' . $ticket->id;
+    $args->adminurl = litepublisher::$site->url . '/admin/tickets/editor/'. litepublisher::$site->q . 'id=' . $ticket->id;
     $mailtemplate = tmailtemplate::instance('tickets');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);

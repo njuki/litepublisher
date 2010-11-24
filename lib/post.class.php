@@ -605,8 +605,12 @@ return $result;
   protected function getusername($id, $link) {
     if ($id == 0) return '';
     if ($id == 1) {
+if (litepublisher::$classes->exists('tprofile')) {
       $profile = tprofile::instance();
       return $profile->nick;
+} else {
+return 'admin';
+}
     } else {
       $users = tusers::instance();
       $account = $users->getitem($id);

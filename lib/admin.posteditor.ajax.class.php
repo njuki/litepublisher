@@ -280,7 +280,7 @@ if ($lang->section == '') $lang->section = 'editor';
     $title = $lang->raw;
       if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
 $title .= $html->loadcontenttabs();
-    return $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
+    return $html->getinput('editor', 'raw', tadminhtml::specchars($value), $title);
   }  
   
 }//class

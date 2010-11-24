@@ -24,12 +24,14 @@ class tchildpost extends tpost {
 
   public function __get($name) {
     if ($name == 'id') return $this->data['id'];
+    if (method_exists($this, $get = 'get' . $name))   return $this->$get();
     if (array_key_exists($name, $this->childdata)) return $this->childdata[$name];
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
     if ($name == 'id') return $this->setid($value);
+    if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
     if (array_key_exists($name, $this->childdata)) {
       $this->childdata[$name] = $value;
       return true;
@@ -102,9 +104,11 @@ $childstable = $db->prefix . $this->childstable;
       $child = $this->newpost();
       $t->post  = $child;
       $t->setassoc($a);
+/*
       foreach ($child->childdata as $name => $value) {
         if (isset($a[$name])) $child->childdata[$name] = $value;
       }
+*/
       $child->fixdata();
       $result[] = $child->id;
     }
@@ -113,7 +117,7 @@ $childstable = $db->prefix . $this->childstable;
   
   public function select($where, $limit) {
     $db = litepublisher::$db;
-$childstable = $db.prefix . $this->childstable;
+$childstable = $db->prefix . $this->childstable;
     $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $childstable.*
     from $db->posts, $db->urlmap, $childstable
     where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit");
