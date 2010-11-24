@@ -65,7 +65,7 @@ class tadminmenumanager extends tadminmenu {
       ), $status);
       
       $ajaxeditor = tajaxmenueditor::instance();
-      $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent);
+      $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true);
       $html->section = 'menu';
       return $html->form($args);
     }

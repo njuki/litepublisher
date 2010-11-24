@@ -89,7 +89,7 @@ class tposteditor extends tadminmenu {
     $args->title = $post->title;
     $args->categories = $this->getcategories($post);
     $ajaxeditor = tajaxposteditor ::instance();
-    $args->editor = $ajaxeditor->geteditor('raw', $post->rawcontent);
+    $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
     
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->form($args);
