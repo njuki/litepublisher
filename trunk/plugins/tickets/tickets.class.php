@@ -80,20 +80,12 @@ $deleted = implode(',', $items);
   
   public function checkhtml() {
     $html = tadminhtml::instance();
-    if (!isset($html->ini['tickets'])) {
-      $html->loadini($this->resource . 'html.ini');
-      tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $html->ini);
-    }
-  }
-  
+$html->addini('tickets', $this->resource . 'html.ini');
+}
+
   public function checkadminlang() {
-    if (!isset(tlocal::$data['tickets'])) {
-      $langname = litepublisher::$options->language;
-      tlocal::loadini(self::getresource() . $langname . '.admin.ini');
-      if (!isset(tlocal::$data['ticket']))  tlocal::loadini(self::getresource() . $langname . '.ini');
-      tfiler::serialize(tlocal::getcachefilename('admin'. $langname), tlocal::$data);
-    }
-  }
+tlocal::loadsection('admin', 'ticket', self::getresource());
+}
   
   public function hasright($who, $group) {
     return ($who == 'tiket') &&($group == 'author');

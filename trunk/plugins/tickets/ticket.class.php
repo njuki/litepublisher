@@ -100,13 +100,8 @@ $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
   }
   
   public static function checklang() {
-    if (!isset(tlocal::$data['childdata'])) {
-      $langname = litepublisher::$options->language;
-      tlocal::loadini(self::getresource() . $langname . '.ini');
-      tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
-    }
-  }
+tlocal::loadsection('', 'ticket', self::getresource());
+}
   
   public function getschemalink() {
     return 'childdata';
