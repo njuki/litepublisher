@@ -69,19 +69,6 @@ public function fixdata() {
     return $this->id;
   }
   
-  public static function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  }
-  
-  public static function checklang() {
-    if (!isset(tlocal::$data['childdata'])) {
-      $langname = litepublisher::$options->language;
-      tlocal::loadini(self::getresource() . $langname . '.ini');
-      tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
-    }
-  }
-  
 }//class
 
 class tchildposts extends tposts {
@@ -100,7 +87,7 @@ return tchildpost::instance();
   
   public function getchildscount($where) {
     $db = litepublisher::$db;
-$childstable = $db.prefix . $this->childstable;
+$childstable = $db->prefix . $this->childstable;
     if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $childstable
     where $db->posts.status <> 'deleted' and $childstable.id = $db->posts.id $where")) {
       if ($r = $db->fetchassoc($res)) return $r['count'];
@@ -147,27 +134,6 @@ $childstable = $db.prefix . $this->childstable;
 $this->deletechilds($deleted);
 $db->table = $this->childstable;
     $db->deleteitems($deleted);
-  }
-  
-  protected function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  }
-  
-  public function checkhtml() {
-    $html = tadminhtml::instance();
-    if (!isset($html->ini['tickets'])) {
-      $html->loadini($this->resource . 'html.ini');
-      tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $html->ini);
-    }
-  }
-  
-  public function checkadminlang() {
-    if (!isset(tlocal::$data['tickets'])) {
-      $langname = litepublisher::$options->language;
-      tlocal::loadini(self::getresource() . $langname . '.admin.ini');
-      if (!isset(tlocal::$data['ticket']))  tlocal::loadini(self::getresource() . $langname . '.ini');
-      tfiler::serialize(tlocal::getcachefilename('admin'. $langname), tlocal::$data);
-    }
   }
   
   public function install() {

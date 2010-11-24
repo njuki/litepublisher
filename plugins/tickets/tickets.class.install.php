@@ -18,7 +18,7 @@ function tticketsInstall($self) {
   litepublisher::$options->parsepost = false;
   
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->ticketstable, file_get_contents($self->resource .'ticket.sql'));
+  $manager->CreateTable($self->childstable, file_get_contents($self->resource .'ticket.sql'));
   
   litepublisher::$classes->lock();
   litepublisher::$classes->add('tpostclasses', 'post.classes.php');
@@ -74,7 +74,7 @@ function tticketsInstall($self) {
     $menu->parent = $id;
     $menu->url = "/$type/";
     $menu->title = $ini[$type];
-    $menu->content = $ini["content$type"];
+    $menu->content = '';
     $menus->add($menu);
   }
   $menus->unlock();
@@ -127,12 +127,13 @@ function tticketsUninstall($self) {
   litepublisher::$classes->unlock();
   
   $manager = tdbmanager ::instance();
-  $manager->deletetable($self->ticketstable);
+  $manager->deletetable($self->childstable);
   
+if (class_exists('tpolls')) {
   $polls = tpolls::instance();
   $polls->garbage = true;
   $polls->save();
-  
+  }
   tfiler::deletemask(litepublisher::$paths->languages . '*.php');
 }
 

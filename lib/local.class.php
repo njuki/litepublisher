@@ -161,8 +161,16 @@ class tlocal {
   public static function getcachefilename($name) {
     return self::getcachedir() . $name . '.php';
   }
+
+public static function loadsection($section, $dir) {
+    if (!isset(self::$data[$section])) {
+      tlocal::loadini($dir . litepublisher::$options->language . '.ini');
+      tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
+      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
+    }
+  }
   
-  public static function loadinstall() {
+ public static function loadinstall() {
     self::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
   }
   
