@@ -275,5 +275,9 @@ tstorage::savemodified();
   $rpc = TXMLRPC::instance();
 $rpc->deleteclass('TXMLRPCFiles');
 turlmap::unsub('TXMLRPCFiles');
+
+$l = litepublisher::$paths->languages;
+@unlink($l . 'adminru.ini');
+@unlink($l . 'adminen.ini');
 }
 ?>

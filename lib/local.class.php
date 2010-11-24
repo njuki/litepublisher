@@ -107,7 +107,8 @@ class tlocal {
   public static function loadlang($name) {
     $langname = litepublisher::$options->language;
     if ($langname != '') {
-      self::load(litepublisher::$paths->languages . $name . $langname);
+if ($name != '') $name = '.' . $name;
+      self::load(litepublisher::$paths->languages . $langname . $name);
     }
   }
   
@@ -127,7 +128,7 @@ class tlocal {
   
   public static function ini2js($filename) {
     $base = basename($filename);
-    if (strbegin($base, 'admin')) {
+    if (strend($base, '.admin')) {
       $js = array('comments' => self::$data['comments']);
     } else {
       $js = array('comment' => self::$data['comment']);
@@ -164,7 +165,7 @@ class tlocal {
 
 public static function loadsection($section, $dir) {
     if (!isset(self::$data[$section])) {
-      tlocal::loadini($dir . litepublisher::$options->language . '.ini');
+      self::loadini($dir . litepublisher::$options->language . '.ini');
       tfiler::serialize(tlocal::getcachefilename($langname), tlocal::$data);
       tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . litepublisher::$options->language . '.js');
     }
