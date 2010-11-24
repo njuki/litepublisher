@@ -41,7 +41,7 @@ $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
   }
   
   protected function setclosed($value) {
-    $this->childdata['closed'] = sqldate($value);
+    $this->childdata['closed'] = is_int($value) ? sqldate($value) : $value;
   }
   
   protected function getcontentpage($page) {
@@ -61,7 +61,8 @@ $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
     $filter->filterpost($this,$this->rawcontent);
     $result .= $this->filtered;
     if (!empty($this->childdata['code'])) {
-      $lang = tlocal::instance('childdata');
+    self::checklang();
+      $lang = tlocal::instance('ticket');
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
     }
@@ -82,7 +83,7 @@ $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
     
     ttheme::$vars['ticket'] = $this;
     $theme = $this->theme;
-    $tml = file_get_contents($this->resource . 'childdata.tml');
+    $tml = file_get_contents($this->resource . 'ticket.tml');
     return $theme->parsearg($tml, $args);
   }
   
@@ -104,7 +105,7 @@ tlocal::loadsection('', 'ticket', self::getresource());
 }
   
   public function getschemalink() {
-    return 'childdata';
+    return 'ticket';
   }
   
 }//class

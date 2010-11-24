@@ -30,7 +30,7 @@ class tdata {
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "get$name"))  {
+    if (method_exists($this, $get = 'get' . $name))  {
       return $this->$get();
     } elseif (array_key_exists($name, $this->data)) {
       return $this->data[$name];
@@ -43,7 +43,7 @@ class tdata {
   }
   
   public function __set($name, $value) {
-    if (method_exists($this, $set = "set$name")) {
+    if (method_exists($this, $set = 'set' . $name)) {
       $this->$set($value);
       return true;
     }

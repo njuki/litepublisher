@@ -136,6 +136,11 @@ class tclasses extends titems {
     return false;
   }
   
+
+public function exists($class) {
+return isset($this->items[$class]);
+}
+
 }//class
 
 function getinstance($class) {

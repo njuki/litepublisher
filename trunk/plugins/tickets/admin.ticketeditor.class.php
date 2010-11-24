@@ -39,6 +39,7 @@ $html->addini('tickets', $dir . 'html.ini');
 //$html->section = 'tickets';
 tlocal::loadsection('', 'ticket', $dir);
 tlocal::loadsection('admin', 'tickets', $dir);
+tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
 return parent::gethtml($name);
   }
   
@@ -61,7 +62,7 @@ return parent::gethtml($name);
     $html = $this->html;
 $lang = tlocal::instance('tickets');
 
-    $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->code);
+    $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->codetext);
 
     $args->fixed = $ticket->state == 'fixed';
     $types = array(
@@ -114,10 +115,9 @@ $lang = tlocal::instance('tickets');
     $ticket = tticket::instance((int)$id);
     $ticket->title = $title;
     $ticket->categories = $this->getcats();
-    $ticket->tagnames = $tags;
+    if (isset($tags)) $ticket->tagnames = $tags;
     if ($ticket->author == 0) $ticket->author = litepublisher::$options->user;
-    if (isset($icon)) $ticket->icon = (int) $icon;
-    if (isset($fileschanged))  $ticket->files = $this->getfiles();
+    if (isset($files))  $ticket->files = explode(',', $files);
     $ticket->content = $raw;
     $ticket->code = $code;
     $ticket->prio = $prio;
@@ -128,6 +128,7 @@ $lang = tlocal::instance('tickets');
     if ($id == 0) {
       $ticket->status = $newstatus;
       $ticket->type = $type;
+$ticket->closed = time();
       $id = $tickets->add($ticket);
       $_POST['id'] = $id;
       if (litepublisher::$options->group == 'ticket') {
