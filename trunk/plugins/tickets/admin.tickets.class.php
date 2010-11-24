@@ -8,8 +8,8 @@
 
 class tadmintickets extends tadminmenu {
   
-  public static function instance() {
-    return getinstance(__class__);
+  public static function instance($id = 0) {
+    return parent::iteminstance(__class__, $id);
   }
   
   public function gethtml($name = '') {
@@ -53,7 +53,7 @@ class tadmintickets extends tadminmenu {
     $result .= $html->listhead();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id';
+    $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id');
     $lang = tlocal::instance('tickets');
     foreach ($items  as $id ) {
       $ticket = tticket::instance($id);

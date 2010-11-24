@@ -8,8 +8,8 @@
 
 class tticketeditor extends tposteditor {
   
-  public static function instance() {
-    return getinstance(__class__);
+  public static function instance($id = 0) {
+    return parent::iteminstance(__class__, $id);
   }
   
   public function request($id) {

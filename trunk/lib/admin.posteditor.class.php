@@ -29,7 +29,7 @@ class tposteditor extends tadminmenu {
   private function getsubcategories($parent, array $postitems) {
     $result = '';
     $categories = tcategories::instance();
-    $html = $this->html;
+    $html = $this->gethtml('editor');
     $args = targs::instance();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
