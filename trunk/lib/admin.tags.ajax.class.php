@@ -65,7 +65,7 @@ class tajaxtageditor extends tajaxposteditor  {
       break;
       
       case 'text':
-      $result = $this->geteditor('raw', $id == 0 ? '' : $tags->contents->getcontent($id));
+      $result = $this->geteditor('raw', $id == 0 ? '' : $tags->contents->getcontent($id), true);
       break;
       
       default:

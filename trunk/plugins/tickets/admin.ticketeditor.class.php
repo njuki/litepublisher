@@ -11,6 +11,17 @@ class tticketeditor extends tposteditor {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
+
+  public function gethead() {
+$result = parent::gethead();
+$result .= '
+    <script type="text/javascript">
+$(document).ready(function() {
+    $("#contenttabs").tabs();
+});
+</script>';
+return $result;
+}
   
   public function request($id) {
     if ($s = parent::request($id)) return $s;
@@ -43,10 +54,15 @@ return parent::gethtml($name);
     $args = targs::instance();
     //if ($ticket->id > 0) $result .= $html->headeditor ();
     $args->categories = $this->getcategories($ticket);
+    $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
+    $ajaxeditor = tajaxposteditor ::instance();
+    $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
+
     $html = $this->html;
 $lang = tlocal::instance('tickets');
-    $args->raw = $ticket->rawcontent;
-    $args->code = $ticket->code;
+
+    $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->code);
+
     $args->fixed = $ticket->state == 'fixed';
     $types = array(
     'bug' => tlocal::$data['ticket']['bug'],

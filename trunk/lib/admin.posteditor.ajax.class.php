@@ -36,6 +36,17 @@ class tajaxposteditor  extends tevents {
   protected static function error403() {
     return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . 'Forbidden';
   }
+
+  public function getviewicon($idview, $icon) {
+    $result = tadminviews::getcomboview($idview);
+    if ($icons = tadminicons::getradio($icon)) {
+    $html = tadminhtml ::instance();
+if ($html->section == '') $html->section = 'editor';
+      $result .= $html->h2->icons;
+      $result .= $icons;
+    }
+    return $result;
+  }
   
   public static function auth() {
     if (!litepublisher::$options->cookieenabled) return self::error403();
@@ -228,11 +239,11 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'excerpt':
-      $result = $this->geteditor('excerpt', $post->excerpt);
+      $result = $this->geteditor('excerpt', $post->excerpt, false);
       break;
       
       case 'rss':
-      $result = $this->geteditor('rss', $post->rss);
+      $result = $this->geteditor('rss', $post->rss, false);
       break;
       
       case 'more':
@@ -240,11 +251,11 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'filtered':
-      $result = $this->geteditor('filtered', $post->filtered);
+      $result = $this->geteditor('filtered', $post->filtered, false);
       break;
       
       case 'upd':
-      $result = $this->geteditor('upd', '');
+      $result = $this->geteditor('upd', '', false);
       break;
       
       default:
@@ -253,31 +264,24 @@ class tajaxposteditor  extends tevents {
     return turlmap::htmlheader(false) . $result;
   }
   
-  public function geteditor($name, $value) {
+  public function geteditor($name, $value, $visual) {
     $html = tadminhtml ::instance();
-    $html->section = 'editor';
     $lang = tlocal::instance('editor');
     $title = $lang->$name;
-    if ($name == 'raw') {
+      if ($visual && $this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
+    return $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
+  }
+
+  public function getraweditor($value) {
+    $html = tadminhtml ::instance();
+if ($html->section == '') $html->section = 'editor';
+    $lang = tlocal::instance();
+if ($lang->section == '') $lang->section = 'editor';
+    $title = $lang->raw;
       if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-      if (__class__ == get_class($this)) $title .= $html->loadcontenttabs();
-    }
-    $theme = ttheme::instance();
-    return strtr($theme->content->admin->editor, array(
-    '$lang.$name' => $title,
-    '$name' => $name,
-    '$value' => tadminhtml::specchars($value)
-    ));
-  }
-  
-  public function getviewicon($idview, $icon) {
-    $result = tadminviews::getcomboview($idview);
-    if ($icons = tadminicons::getradio($icon)) {
-      $result .= $html->h2->icons;
-      $result .= $icons;
-    }
-    return $result;
-  }
+$title .= $html->loadcontenttabs();
+    return $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
+  }  
   
 }//class
 ?>

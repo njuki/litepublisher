@@ -171,27 +171,25 @@ public function addini($section, $filename) {
   }
   
   public function getcheckbox($name, $value) {
-    $theme = ttheme::instance();
-    return str_replace(array('$name', '$value'),
-    array($name, $value ? 'checked="checked"' : ''), $theme->content->admin->checkbox);
+return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }
-  
-  public function getedit($name, $value, $title) {
+
+  public function getinput($type, $name, $value, $title) {
     $theme = ttheme::instance();
-    return strtr($theme->content->admin->text, array(
+    return strtr($theme->content->admin->$type, array(
     '$lang.$name' => $title,
     '$name' => $name,
     '$value' => $value
     ));
+}
+
+  public function getedit($name, $value, $title) {
+return $this->getinput('text', $name, $value, $title);
   }
   
   public function getcombo($name, $value, $title) {
-    return strtr(ttheme::instance()->content->admin->combo, array(
-    '$lang.$name' => $title,
-    '$name' => $name,
-    '$value' => $value
-    ));
-  }
+return $this->getinput('combo', $name, $value, $title);
+}
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(
