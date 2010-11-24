@@ -187,7 +187,7 @@ $this->getrssposts(array_slice($items, 0, litepublisher::$options->perpage));
     AddNodeValue($item, 'pubDate', $post->pubdate);
     
     $guid  = AddNodeValue($item, 'guid', $post->link);
-    AddAttr($guid, 'isPermaLink', 'false');
+    AddAttr($guid, 'isPermaLink', 'true');
     if (class_exists   ('tprofile')) {
       $profile = tprofile::instance();
       AddNodeValue($item, 'dc:creator', $profile->nick);
@@ -218,8 +218,8 @@ $this->getrssposts(array_slice($items, 0, litepublisher::$options->perpage));
     }
     $this->callevent('afterpost', array($post->id, &$content));
     
-    AddCData($item, 'description', strip_tags($content));
     AddCData($item, 'content:encoded', $content);
+    AddCData($item, 'description', strip_tags($content));
     AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
     
     if (count($post->files) > 0) {
@@ -232,6 +232,7 @@ $this->getrssposts(array_slice($items, 0, litepublisher::$options->perpage));
         AddAttr($enclosure , 'length', $file['size']);
         AddAttr($enclosure , 'type', $file['mime']);
       }
+$post->onrssitem($item);
     }
     
   }

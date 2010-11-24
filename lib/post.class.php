@@ -394,6 +394,9 @@ if (isset(ttheme::$vars['post']) && ($this == ttheme::$vars['post'])) unset(tthe
     }
     return '';
   }
+
+public function onrssitem($item) {
+}
   
   public function getprevnext() {
     $prev = '';

@@ -6,52 +6,22 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttickets extends tposts {
-  public $ticketstable;
-  
+class ttickets extends tchildposts {
+
   public static function instance() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-    $this->ticketstable = 'tickets';
+    $this->childstable = 'tickets';
   }
-  
-  public function getticketscount($where) {
-    $db = litepublisher::$db;
-    if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $db->tickets
-    where $db->posts.status <> 'deleted' and $db->tickets.id = $db->posts.id $where")) {
-      if ($r = $db->fetchassoc($res)) return $r['count'];
-    }
-    return 0;
-  }
-  
-  public function transformres($res) {
-    $result = array();
-    $t = new tposttransform();
-    while ($a = litepublisher::$db->fetchassoc($res)) {
-      $ticket = tticket::instance();
-      $t->post  = $ticket;
-      $t->setassoc($a);
-      foreach ($ticket->ticket as $name => $value) {
-        if (isset($a[$name])) $ticket->ticket[$name] = $value;
-      }
-      $ticket->ticket['reproduced'] = $a['reproduced'] == '1';
-      $result[] = $ticket->id;
-    }
-    return $result;
-  }
-  
-  public function select($where, $limit) {
-    $db = litepublisher::$db;
-    $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $db->tickets.*
-    from $db->posts, $db->urlmap, $db->tickets
-    where $where and  $db->posts.id = $db->tickets.id and $db->urlmap.id  = $db->posts.idurl $limit");
-    
-    return $this->transformres($res);
-  }
-  
+
+
+public function newpost() {
+return tticket::instance();
+}  
+
   public function createpoll() {
     $this->checkadminlang();
     $lang = tlocal::instance('tickets');
@@ -85,7 +55,7 @@ class ttickets extends tposts {
   }
   
   public function postdeleted($id) {
-    $db = $this->getdb($this->ticketstable);
+    $db = $this->getdb($this->childstable);
     $idpoll = $db->getvalue($id, 'poll');
     $db->delete("id = $id");
     if ($idpoll > 0) {
@@ -94,26 +64,15 @@ class ttickets extends tposts {
     }
   }
   
-  public function optimize() {
-    $db = $this->getdb($this->ticketstable);
-    $items = $db->res2assoc($db->query("select id, poll from $db->prefix$this->ticketstable where id not in
-    (select $db->posts.id from $db->posts)"));
-    if (count($items) == 0) return;
-    $deleted = array();
-    $idpolls = array();
-    foreach ($items as $item) {
-      $deleted[] = $item['id'];
-      if ($item['poll'] > 0) $idpolls[] = $item['poll'];
-    }
-    
-    $db->deleteitems($deleted);
-    
-    if (count($idpolls) > 0) {
+  public function deletechilds(array $items) {
+$deleted = implode(',', $items);
+    $db = $this->getdb($this->childstable);
+    $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childstable where (id in ($deleted)) and (poll  > 0)"));
+    if (count ($idpolls) > 0) {
       $polls = tpolls::instance();
       foreach ($idpolls as $idpoll)       $pols->delete($idpoll);
     }
-    
-  }
+      }
   
   protected function getresource() {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
@@ -134,14 +93,6 @@ class ttickets extends tposts {
       if (!isset(tlocal::$data['ticket']))  tlocal::loadini(self::getresource() . $langname . '.ini');
       tfiler::serialize(tlocal::getcachefilename('admin'. $langname), tlocal::$data);
     }
-  }
-  
-  public function install() {
-    $this->externalfunc(get_class($this), 'Install', null);
-  }
-  
-  public function uninstall() {
-    $this->externalfunc(get_class($this), 'Uninstall', null);
   }
   
   public function hasright($who, $group) {

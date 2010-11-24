@@ -39,7 +39,7 @@ class tadmintickets extends tadminmenu {
       break;
     }
     
-    $count = $tickets->getticketscount($where);
+    $count = $tickets->getchildscount($where);
     $from = $this->getfrom($perpage, $count);
     if ($count > 0) {
       $items = $tickets->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
@@ -53,7 +53,7 @@ class tadmintickets extends tadminmenu {
     $result .= $html->listhead();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = litepublisher::$site->url . $this->url . 'editor/' . litepublisher::$options->q . 'id';
+    $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id';
     $lang = tlocal::instance('tickets');
     foreach ($items  as $id ) {
       $ticket = tticket::instance($id);
