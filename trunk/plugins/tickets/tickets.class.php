@@ -75,7 +75,7 @@ $deleted = implode(',', $items);
       }
   
   public function hasright($who, $group) {
-    return ($who == 'tiket') &&($group == 'author');
+    return ($who == 'ticket') &&($group == 'author');
   }
   
 }//class

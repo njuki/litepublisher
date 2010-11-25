@@ -132,6 +132,8 @@ unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
 
+litepublisher::$options->crontime = time();
+
 $urlmap = litepublisher::$urlmap;
 $urlmap->lock();
 $urlmap->add('/rss/categories/', 'trss', 'categories', 'tree');

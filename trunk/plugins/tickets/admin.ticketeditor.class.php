@@ -22,6 +22,15 @@ $(document).ready(function() {
 </script>';
 return $result;
 }
+
+  public function gettitle() {
+    if ($this->idpost == 0){
+      return parent::gettitle();
+    } else {
+tlocal::loadsection('admin', 'tickets', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+      return tlocal::$data['tickets']['editor'];
+}
+    }
   
   public function request($id) {
     if ($s = parent::request($id)) return $s;
@@ -53,7 +62,7 @@ return parent::gethtml($name);
     $ticket = tticket::instance($this->idpost);
     ttheme::$vars['ticket'] = $ticket;
     $args = targs::instance();
-    //if ($ticket->id > 0) $result .= $html->headeditor ();
+    $args->title = $ticket->title;
     $args->categories = $this->getcategories($ticket);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
     $ajaxeditor = tajaxposteditor ::instance();
@@ -86,13 +95,20 @@ $lang = tlocal::instance('tickets');
       $prio[$p] = tlocal::$data['ticket'][$p];
     }
     $args->priocombo = $html->array2combo($prio, $ticket->prio);
-    
+
+   if ($ticket->id > 0) $result .= $html->headeditor ();    
     $result .= $html->form($args);
     $result = $html->fixquote($result);
     return $result;
   }
   
   public function processform() {
+/*
+    echo "<pre>\n";
+    var_dump($_POST);
+    echo "</pre>\n";
+    return;
+*/
     extract($_POST);
     $tickets = ttickets::instance();
     $this->basename = 'tickets';
