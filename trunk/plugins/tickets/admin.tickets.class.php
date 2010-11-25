@@ -14,11 +14,11 @@ class tadmintickets extends tadminmenu {
   
   public function gethtml($name = '') {
     $html = tadminhtml::instance();
-$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-$html->addini('tickets', $dir . 'html.ini');
-tlocal::loadsection('', 'ticket', $dir);
-tlocal::loadsection('admin', 'tickets', $dir);
-tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    $html->addini('tickets', $dir . 'html.ini');
+    tlocal::loadsection('', 'ticket', $dir);
+    tlocal::loadsection('admin', 'tickets', $dir);
+    tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
     return parent::gethtml($name);
   }
   

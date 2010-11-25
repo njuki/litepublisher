@@ -106,8 +106,8 @@ class tpost extends titem implements  itemplate {
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
-  unset($this->aprev, $this->anext, $this->ameta, $this->_theme);
-if (isset(ttheme::$vars['post']) && ($this == ttheme::$vars['post'])) unset(ttheme::$vars['post']);
+    unset($this->aprev, $this->anext, $this->ameta, $this->_theme);
+    if (isset(ttheme::$vars['post']) && ($this == ttheme::$vars['post'])) unset(ttheme::$vars['post']);
     parent::free();
   }
   
@@ -394,9 +394,9 @@ if (isset(ttheme::$vars['post']) && ($this == ttheme::$vars['post'])) unset(tthe
     }
     return '';
   }
-
-public function onrssitem($item) {
-}
+  
+  public function onrssitem($item) {
+  }
   
   public function getprevnext() {
     $prev = '';
@@ -416,10 +416,10 @@ public function onrssitem($item) {
     if (($prev == '') && ($next == '')) return '';
     $result = strtr(    $theme->parse($tml), array(
     '$prev' => $prev,
-'$next' => $next
-));
-unset(ttheme::$vars['prevpost'],ttheme::$vars['nextpost']);
-return $result;
+    '$next' => $next
+    ));
+    unset(ttheme::$vars['prevpost'],ttheme::$vars['nextpost']);
+    return $result;
   }
   
   public function getcommentslink() {
@@ -605,12 +605,12 @@ return $result;
   protected function getusername($id, $link) {
     if ($id == 0) return '';
     if ($id == 1) {
-if (litepublisher::$classes->exists('tprofile')) {
-      $profile = tprofile::instance();
-      return $profile->nick;
-} else {
-return 'admin';
-}
+      if (litepublisher::$classes->exists('tprofile')) {
+        $profile = tprofile::instance();
+        return $profile->nick;
+      } else {
+        return 'admin';
+      }
     } else {
       $users = tusers::instance();
       $account = $users->getitem($id);

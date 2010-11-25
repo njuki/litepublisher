@@ -52,11 +52,11 @@ class ttheme extends tevents {
   public function getbasename() {
     return 'themes' . DIRECTORY_SEPARATOR . $this->name;
   }
-
-public function __destruct() {    
-unset($this->themeprops, self::$instances[$this->name], $this->templates);
-parent::__destruct();
-}
+  
+  public function __destruct() {
+    unset($this->themeprops, self::$instances[$this->name], $this->templates);
+    parent::__destruct();
+  }
   public function load() {
     if ($this->name == '') return false;
     if (parent::load()) {
@@ -317,13 +317,13 @@ class tthemeprops {
     $this->_theme = $theme;
     $this->array = &$theme->templates;
   }
-
-public function __destruct() {  
-unset($this->_theme );
-unset($this->array);
-}
-
-
+  
+  public function __destruct() {
+    unset($this->_theme );
+    unset($this->array);
+  }
+  
+  
   
   public function __get($name) {
     if (!isset($this->array[$name])) {

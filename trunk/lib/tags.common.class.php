@@ -321,8 +321,8 @@ class tcommontags extends titems implements  itemplate {
   }
   
   public function gethead() {
-return sprintf('<link rel="alternate" type="application/rss+xml" title="%s" href="$site.url/rss/%s/%d.xml" />',
- $this->gettitle(), $this->PostPropname, $this->id);
+    return sprintf('<link rel="alternate" type="application/rss+xml" title="%s" href="$site.url/rss/%s/%d.xml" />',
+    $this->gettitle(), $this->PostPropname, $this->id);
   }
   
   public function getkeywords() {

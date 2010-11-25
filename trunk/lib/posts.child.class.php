@@ -9,8 +9,8 @@
 class tchildpost extends tpost {
   public $childdata;
   public $childtable;
-
-/*  
+  
+  /*
   protected function create() {
     parent::create();
     $this->childtable = 'tickets';
@@ -20,8 +20,8 @@ class tchildpost extends tpost {
     'type' => 'bug',
     );
   }
-*/  
-
+  */
+  
   public function __get($name) {
     if ($name == 'id') return $this->data['id'];
     if (method_exists($this, $get = 'get' . $name))   return $this->$get();
@@ -42,12 +42,12 @@ class tchildpost extends tpost {
   public function __isset($name) {
     return array_key_exists($name, $this->childdata) || parent::__isset($name);
   }
-
-public function fixdata() {
-//$this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
-}
-
-    protected function LoadFromDB() {
+  
+  public function fixdata() {
+    //$this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
+  }
+  
+  protected function LoadFromDB() {
     if (!parent::LoadFromDB())  return false;
     if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
       $this->childdata = $a;
@@ -75,21 +75,21 @@ public function fixdata() {
 
 class tchildposts extends tposts {
   public $childstable;
-
-/*  
+  
+  /*
   protected function create() {
     parent::create();
     $this->childstable = 'tickets';
   }
-
-public function newpost() {
-return tchildpost::instance();
-}
-*/
+  
+  public function newpost() {
+    return tchildpost::instance();
+  }
+  */
   
   public function getchildscount($where) {
     $db = litepublisher::$db;
-$childstable = $db->prefix . $this->childstable;
+    $childstable = $db->prefix . $this->childstable;
     if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $childstable
     where $db->posts.status <> 'deleted' and $childstable.id = $db->posts.id $where")) {
       if ($r = $db->fetchassoc($res)) return $r['count'];
@@ -104,11 +104,11 @@ $childstable = $db->prefix . $this->childstable;
       $child = $this->newpost();
       $t->post  = $child;
       $t->setassoc($a);
-/*
+      /*
       foreach ($child->childdata as $name => $value) {
         if (isset($a[$name])) $child->childdata[$name] = $value;
       }
-*/
+      */
       $child->fixdata();
       $result[] = $child->id;
     }
@@ -117,7 +117,7 @@ $childstable = $db->prefix . $this->childstable;
   
   public function select($where, $limit) {
     $db = litepublisher::$db;
-$childstable = $db->prefix . $this->childstable;
+    $childstable = $db->prefix . $this->childstable;
     $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $childstable.*
     from $db->posts, $db->urlmap, $childstable
     where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit");
@@ -135,17 +135,17 @@ $childstable = $db->prefix . $this->childstable;
     $deleted = $db->res2id($db->query("select id from $db->prefix$this->childstable where id not in
     (select $db->posts.id from $db->posts)"));
     if (count($deleted) == 0) return;
-$this->deletechilds($deleted);
-$db->table = $this->childstable;
+    $this->deletechilds($deleted);
+    $db->table = $this->childstable;
     $db->deleteitems($deleted);
   }
   
   public function install() {
-if (__class__ != get_class($this)) $this->externalfunc(get_class($this), 'Install', null);
+    if (__class__ != get_class($this)) $this->externalfunc(get_class($this), 'Install', null);
   }
   
   public function uninstall() {
-if (__class__ != get_class($this)) $this->externalfunc(get_class($this), 'Uninstall', null);
+    if (__class__ != get_class($this)) $this->externalfunc(get_class($this), 'Uninstall', null);
   }
   
 }//class

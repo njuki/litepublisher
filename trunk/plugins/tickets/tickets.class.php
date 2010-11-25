@@ -7,7 +7,7 @@
 **/
 
 class ttickets extends tchildposts {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -16,14 +16,14 @@ class ttickets extends tchildposts {
     parent::create();
     $this->childstable = 'tickets';
   }
-
-
-public function newpost() {
-return tticket::instance();
-}  
-
+  
+  
+  public function newpost() {
+    return tticket::instance();
+  }
+  
   public function createpoll() {
-tlocal::loadsection('admin', 'ticket', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+    tlocal::loadsection('admin', 'ticket', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('tickets');
     $items = explode(',', $lang->pollitems);
     $polls = tpolls::instance();
@@ -65,14 +65,14 @@ tlocal::loadsection('admin', 'ticket', dirname(__file__) . DIRECTORY_SEPARATOR .
   }
   
   public function deletechilds(array $items) {
-$deleted = implode(',', $items);
+    $deleted = implode(',', $items);
     $db = $this->getdb($this->childstable);
     $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childstable where (id in ($deleted)) and (poll  > 0)"));
     if (count ($idpolls) > 0) {
       $polls = tpolls::instance();
       foreach ($idpolls as $idpoll)       $pols->delete($idpoll);
     }
-      }
+  }
   
   public function hasright($who, $group) {
     return ($who == 'ticket') &&($group == 'author');

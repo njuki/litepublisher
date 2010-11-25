@@ -43,12 +43,12 @@ class tview extends titem {
     $this->sidebars = &$this->data['sidebars'];
     $this->themeinstance = null;
   }
-
-public function __destruct() {  
-unset($this->themeinstance);
-parent::__destruct();
-}
-
+  
+  public function __destruct() {
+    unset($this->themeinstance);
+    parent::__destruct();
+  }
+  
   public function load() {
     $views = tviews::instance();
     if ($views->itemexists($this->id)) {

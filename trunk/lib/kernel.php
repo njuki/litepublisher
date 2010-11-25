@@ -32,7 +32,7 @@ class tdata {
   }
   
   public function __get($name) {
-    if (method_exists($this, $get = "get$name"))  {
+    if (method_exists($this, $get = 'get' . $name))  {
       return $this->$get();
     } elseif (array_key_exists($name, $this->data)) {
       return $this->data[$name];
@@ -45,7 +45,7 @@ class tdata {
   }
   
   public function __set($name, $value) {
-    if (method_exists($this, $set = "set$name")) {
+    if (method_exists($this, $set = 'set' . $name)) {
       $this->$set($value);
       return true;
     }
@@ -372,6 +372,10 @@ class tevents extends tdata {
     parent::__construct();
     $this->assignmap();
     $this->load();
+  }
+  
+  public function __destruct() {
+    unset($this->data, $this->events, $this->eventnames, $this->map);
   }
   
   protected function create() {
@@ -896,6 +900,11 @@ class tclasses extends titems {
     return false;
   }
   
+  
+  public function exists($class) {
+    return isset($this->items[$class]);
+  }
+  
 }//class
 
 function getinstance($class) {
@@ -1230,7 +1239,6 @@ class turlmap extends titems {
   
   private function dorequest($url) {
     if ($this->itemrequested = $this->finditem($url)){
-      //tfiler::log(var_export($this->itemrequested , true));
       return $this->printcontent($this->itemrequested);
     } else {
       $this->notfound404();
@@ -1350,7 +1358,6 @@ class turlmap extends titems {
     $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
-      //tfiler::log($s, 'content.log');
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
@@ -1560,15 +1567,20 @@ class turlmap extends titems {
   
   protected function CheckSingleCron() {
     if (defined('cronpinged')) return;
+    /*
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
     $time = file_exists($cronfile) ? filemtime($cronfile) : 0;
     if ($time + 3600 - litepublisher::$options->filetime_offset < time()) {
       register_shutdown_function('tcron::selfping');
     }
+    */
+    if (time() > litepublisher::$options->crontime + 3600) {
+      litepublisher::$options->crontime = time();
+      register_shutdown_function(array('tcron', 'selfping'));
+    }
   }
   
   public static function redir301($to) {
-    //tfiler::log($to. "\n" . $this->url);
     self::redir(litepublisher::$site->url . $to);
   }
   
