@@ -75,9 +75,9 @@ if ($html->section == '') $html->section = 'editor';
     if ($this->idpost > 0) {
       $posts = tposts::instance();
       if (!$posts->itemexists($this->idpost)) return self::error403();
-    }
     $post = tpost::instance($this->idpost);
     if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return self::error403();
+}
     return $this->getcontent();
   }
   

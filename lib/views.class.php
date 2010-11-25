@@ -65,10 +65,10 @@ parent::__destruct();
   
   public function setthemename($name) {
     if ($name != $this->themename) {
-      if (!theme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
+      if (!ttheme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
       $this->data['themename'] = $name;
       $this->themeinstance = ttheme::getinstance($name);
-      $this->data['custom'] = $this->themeinstance->templates['custom'];
+      $this->data['custom'] = isset($this->themeinstance->templates['custom']) ? $this->themeinstance->templates['custom'] : array();
       $this->save();
       tviews::instance()->themechanged($this);
     }

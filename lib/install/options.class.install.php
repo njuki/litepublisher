@@ -69,7 +69,7 @@ function installoptions($language) {
   $options->usersenabled = false;
   $options->reguser = false;
   $options->icondisabled = false;
-  
+  $options->crontime = time();
   $options->unlock();
   return $password;
 }
