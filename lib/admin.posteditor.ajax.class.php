@@ -36,12 +36,12 @@ class tajaxposteditor  extends tevents {
   protected static function error403() {
     return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . 'Forbidden';
   }
-
+  
   public function getviewicon($idview, $icon) {
     $result = tadminviews::getcomboview($idview);
     if ($icons = tadminicons::getradio($icon)) {
-    $html = tadminhtml ::instance();
-if ($html->section == '') $html->section = 'editor';
+      $html = tadminhtml ::instance();
+      if ($html->section == '') $html->section = 'editor';
       $result .= $html->h2->icons;
       $result .= $icons;
     }
@@ -75,9 +75,9 @@ if ($html->section == '') $html->section = 'editor';
     if ($this->idpost > 0) {
       $posts = tposts::instance();
       if (!$posts->itemexists($this->idpost)) return self::error403();
-    $post = tpost::instance($this->idpost);
-    if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return self::error403();
-}
+      $post = tpost::instance($this->idpost);
+      if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return self::error403();
+    }
     return $this->getcontent();
   }
   
@@ -268,20 +268,20 @@ if ($html->section == '') $html->section = 'editor';
     $html = tadminhtml ::instance();
     $lang = tlocal::instance('editor');
     $title = $lang->$name;
-      if ($visual && $this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
+    if ($visual && $this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
     return $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
   }
-
+  
   public function getraweditor($value) {
     $html = tadminhtml ::instance();
-if ($html->section == '') $html->section = 'editor';
+    if ($html->section == '') $html->section = 'editor';
     $lang = tlocal::instance();
-if ($lang->section == '') $lang->section = 'editor';
+    if ($lang->section == '') $lang->section = 'editor';
     $title = $lang->raw;
-      if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-$title .= $html->loadcontenttabs();
+    if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
+    $title .= $html->loadcontenttabs();
     return $html->getinput('editor', 'raw', tadminhtml::specchars($value), $title);
-  }  
+  }
   
 }//class
 ?>

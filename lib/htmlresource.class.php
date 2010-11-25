@@ -126,8 +126,8 @@ class tadminhtml {
       tfiler::serialize($cachefilename, $v);
     }
   }
-
-public function addini($section, $filename) {
+  
+  public function addini($section, $filename) {
     if (!isset($this->ini[$section])) {
       $this->loadini($filename);
       tfiler::serialize(tlocal::getcachefilename('adminhtml'), $this->ini);
@@ -171,9 +171,9 @@ public function addini($section, $filename) {
   }
   
   public function getcheckbox($name, $value) {
-return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
+    return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }
-
+  
   public function getinput($type, $name, $value, $title) {
     $theme = ttheme::instance();
     return strtr($theme->content->admin->$type, array(
@@ -181,15 +181,15 @@ return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$l
     '$name' => $name,
     '$value' => $value
     ));
-}
-
+  }
+  
   public function getedit($name, $value, $title) {
-return $this->getinput('text', $name, $value, $title);
+    return $this->getinput('text', $name, $value, $title);
   }
   
   public function getcombo($name, $value, $title) {
-return $this->getinput('combo', $name, $value, $title);
-}
+    return $this->getinput('combo', $name, $value, $title);
+  }
   
   public function gettable($head, $body) {
     return strtr($this->ini['common']['table'], array(

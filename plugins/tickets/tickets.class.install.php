@@ -129,10 +129,10 @@ function tticketsUninstall($self) {
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childstable);
   
-if (class_exists('tpolls')) {
-  $polls = tpolls::instance();
-  $polls->garbage = true;
-  $polls->save();
+  if (class_exists('tpolls')) {
+    $polls = tpolls::instance();
+    $polls->garbage = true;
+    $polls->save();
   }
   tfiler::deletemask(litepublisher::$paths->languages . '*.php');
 }

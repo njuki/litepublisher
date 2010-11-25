@@ -222,6 +222,8 @@ send lib\post.meta.class.php lib/post.meta.class.php
 quote site chmod 666 lib/post.meta.class.php
 send lib\post.transform.class.php lib/post.transform.class.php
 quote site chmod 666 lib/post.transform.class.php
+send lib\posts.child.class.php lib/posts.child.class.php
+quote site chmod 666 lib/posts.child.class.php
 send lib\posts.class.php lib/posts.class.php
 quote site chmod 666 lib/posts.class.php
 send lib\redirect.class.php lib/redirect.class.php
@@ -530,16 +532,16 @@ cd lib
 mkdir languages
 quote site chmod 777 languages
 cd ../
-send lib\languages\adminen.ini lib/languages/adminen.ini
-quote site chmod 666 lib/languages/adminen.ini
 send lib\languages\adminhtml.ini lib/languages/adminhtml.ini
 quote site chmod 666 lib/languages/adminhtml.ini
-send lib\languages\adminru.ini lib/languages/adminru.ini
-quote site chmod 666 lib/languages/adminru.ini
+send lib\languages\en.admin.ini lib/languages/en.admin.ini
+quote site chmod 666 lib/languages/en.admin.ini
 send lib\languages\en.ini lib/languages/en.ini
 quote site chmod 666 lib/languages/en.ini
 send lib\languages\en.install.ini lib/languages/en.install.ini
 quote site chmod 666 lib/languages/en.install.ini
+send lib\languages\ru.admin.ini lib/languages/ru.admin.ini
+quote site chmod 666 lib/languages/ru.admin.ini
 send lib\languages\ru.ini lib/languages/ru.ini
 quote site chmod 666 lib/languages/ru.ini
 send lib\languages\ru.install.ini lib/languages/ru.install.ini

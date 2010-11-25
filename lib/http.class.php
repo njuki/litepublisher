@@ -14,7 +14,7 @@ class http {
     if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
       $url = 'http://' . $url;
     }
-if ( function_exists('curl_init') ) {
+    if ( function_exists('curl_init') ) {
       $handle = curl_init();
       curl_setopt ($handle, CURLOPT_URL, $url);
       curl_setopt ($handle, CURLOPT_FOLLOWLOCATION, 1);

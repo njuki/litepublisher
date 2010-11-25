@@ -41,12 +41,12 @@ class tusergroups extends titems {
     switch ($who) {
       case 'editor':
       if ($group == 'author') return true;
-break;
-
+      break;
+      
       
       case 'moderator':
-if (($group == 'subscriber') || ($group == 'author')) return true;
-break;
+      if (($group == 'subscriber') || ($group == 'author')) return true;
+      break;
     }
     if ($this->onhasright($who, $group)) return true;
     return false;

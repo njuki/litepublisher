@@ -52,7 +52,7 @@ class ttemplate extends tevents_storage {
   
   public function request($context) {
     $this->context = $context;
-ttheme::$vars['context'] = $context;
+    ttheme::$vars['context'] = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
     $this->view = $this->itemplate ? tview::getview($context) : tview::instance();

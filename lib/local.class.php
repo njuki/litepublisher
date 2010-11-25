@@ -107,7 +107,7 @@ class tlocal {
   public static function loadlang($name) {
     $langname = litepublisher::$options->language;
     if ($langname != '') {
-if ($name != '') $name = '.' . $name;
+      if ($name != '') $name = '.' . $name;
       self::load(litepublisher::$paths->languages . $langname . $name);
     }
   }
@@ -162,17 +162,17 @@ if ($name != '') $name = '.' . $name;
   public static function getcachefilename($name) {
     return self::getcachedir() . $name . '.php';
   }
-
-public static function loadsection($name, $section, $dir) {
+  
+  public static function loadsection($name, $section, $dir) {
     if (!isset(self::$data[$section])) {
-$language = litepublisher::$options->language;
-if ($name != '') $name = '.' . $name;
+      $language = litepublisher::$options->language;
+      if ($name != '') $name = '.' . $name;
       self::loadini($dir . $language . $name . '.ini');
-tfiler::serialize(self::getcachefilename($language . $name . '.ini'), self::$data);
+      tfiler::serialize(self::getcachefilename($language . $name . '.ini'), self::$data);
     }
   }
   
- public static function loadinstall() {
+  public static function loadinstall() {
     self::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
   }
   

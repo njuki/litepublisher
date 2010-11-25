@@ -27,10 +27,10 @@ class tevents extends tdata {
     $this->assignmap();
     $this->load();
   }
-
-public function __destruct() {    
-unset($this->data, $this->events, $this->eventnames, $this->map);
-}
+  
+  public function __destruct() {
+    unset($this->data, $this->events, $this->eventnames, $this->map);
+  }
   
   protected function create() {
     $this->addmap('events', array());

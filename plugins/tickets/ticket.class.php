@@ -32,9 +32,9 @@ class tticket extends tchildpost {
     );
   }
   
-public function fixdata() {
-$this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
-}
+  public function fixdata() {
+    $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
+  }
   
   protected function getclosed() {
     return strtotime($this->childdata['closed']);
@@ -61,7 +61,7 @@ $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
     $filter->filterpost($this,$this->rawcontent);
     $result .= $this->filtered;
     if (!empty($this->childdata['code'])) {
-    self::checklang();
+      self::checklang();
       $lang = tlocal::instance('ticket');
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
@@ -101,8 +101,8 @@ $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
   }
   
   public static function checklang() {
-tlocal::loadsection('', 'ticket', self::getresource());
-}
+    tlocal::loadsection('', 'ticket', self::getresource());
+  }
   
   public function getschemalink() {
     return 'ticket';

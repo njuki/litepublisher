@@ -32,10 +32,10 @@ class tposts extends titems {
     if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
-
-public function newpost() {
-return tpost::instance();
-}
+  
+  public function newpost() {
+    return tpost::instance();
+  }
   
   public function getitem($id) {
     if (dbversion) {
@@ -61,7 +61,7 @@ return tpost::instance();
   public function transformres($res) {
     $result = array();
     $t = new tposttransform();
-$db = litepublisher::$db;
+    $db = litepublisher::$db;
     while ($a = $db->fetchassoc($res)) {
       $t->post = $this->newpost();
       $t->setassoc($a);
