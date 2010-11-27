@@ -66,6 +66,7 @@ class tdatabase {
       return $this->result;
     }
     */
+if (strbegin($sql, 'select ')) $sql = str_replace('select ', 'select SQL_BUFFER_RESULT ', $sql);
     $this->sql = $sql;
     if (litepublisher::$debug) {
       $this->history[] = array(
