@@ -77,9 +77,8 @@ tstorage::loaddata();
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
-//ttheme::clearcache();
-//tlocal::clearcache();
 ttheme::clearcache();
+//tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
@@ -97,4 +96,12 @@ litepublisher::$options->showerrors();
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
+/*
+echo "<pre>\n";
+$man = tdbmanager::instance();
+echo $man->performance();
+echo "\n", microtime(true) - litepublisher::$microtime, "\n";
+echo tfilestorage::$time, "\n";
+echo tfilestorage::$time2, "\n";
+*/
 ?>
