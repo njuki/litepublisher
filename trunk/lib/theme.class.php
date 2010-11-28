@@ -86,14 +86,11 @@ class ttheme extends tevents {
   
   public function __get($name) {
     if (array_key_exists($name, $this->templates)) {
-      if (is_array($this->templates[$name])) {
-        $this->themeprops->array = &$this->templates[$name];
+        $this->themeprops->path = $name;
+        $this->themeprops->tostring = false;
         return $this->themeprops;
-      } else {
-        return $this->templates[$name];
-      }
     } elseif ($name == 'comment') {
-      $this->themeprops->array = &$this->templates['content']['post']['templatecomments']['comments']['comment'];
+      $this->themeprops->path = 'content.post.templatecomments.comments.comment';
       return $this->themeprops;
     }
     
@@ -102,12 +99,8 @@ class ttheme extends tevents {
   
   public function __set($name, $value) {
     if (array_key_exists($name, $this->templates)) {
-      if (is_array($this->templates[$name]) && isset($this->templates[$name][0]))  {
-        $this->templates[$name][0] = $value;
-      } else {
         $this->templates[$name] = $value;
-      }
-      return;
+return;
     }
     return parent::__set($name, $value);
   }
@@ -116,10 +109,8 @@ class ttheme extends tevents {
     return count($this->templates['sidebars']);
   }
   
-  
   private function getvar($name) {
     if ($name == 'site')  return litepublisher::$site;
-    
     if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
@@ -193,7 +184,7 @@ class ttheme extends tevents {
     self::$vars['context'] = $context;
     switch ($this->type) {
       case 'litepublisher':
-      return $this->parse($this->templates[0]);
+      return $this->parse($this->templates['index']);
       
       case 'wordpress':
       return wordpress::getcontent();
@@ -238,13 +229,13 @@ class ttheme extends tevents {
     }
     
     $result = '';
-    $tml = $lite ? (string) $this->content->excerpts->lite->excerpt : (string) $this->content->excerpts->excerpt;
+    $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
     
-    $tml = $lite ? (string) $this->content->excerpts->lite : (string) $this->content->excerpts;
+    $tml = $lite ? $this->templates['content.excerpts.lite'] : $this->templates['content.excerpts'];
     if ($tml == '') return $result;
     return str_replace('$excerpt', $result, $this->parse($tml));
   }
@@ -310,55 +301,67 @@ class ttheme extends tevents {
 }//class
 
 class tthemeprops {
-  public $array;
-  private $_theme;
-  
-  public function __construct(ttheme $theme) {
-    $this->_theme = $theme;
-    $this->array = &$theme->templates;
+public $path;
+  private $theme;
+public $tostring;
+
+    public function __construct(ttheme $theme) {
+    $this->theme = $theme;
+$this->path = '';
+$this->tostring = false;
   }
   
   public function __destruct() {
-    unset($this->_theme );
-    unset($this->array);
+    unset($this->theme );
   }
-  
-  
+
+public function error($path) {
+      litepublisher::$options->trace(sprintf('Path "%s" not found', $path));
+      litepublisher::$options->showerrors();
+}
+
+public function getpath($name) {
+return $this->path == '' ? $name : $this->path . '.' . $name;
+}
   
   public function __get($name) {
-    if (!isset($this->array[$name])) {
-      litepublisher::$options->trace("$name not found\n" . implode("\n", array_keys($this->array)));
-      litepublisher::$options->showerrors();
-    }
-    
-    if (is_array($this->array[$name])) {
-      $this->array = &$this->array[$name];
-      return $this;
-    }
-    return $this->array[$name];
+if ($name == '__props') {
+$this->tostring= true;
+return;
+}
+
+$path = $this->getpath($name);
+echo "$path = path<br>";
+if (!array_key_exists($path, $this->theme->templates)) $this->error($path);
+if ($this->tostring) return $this->theme->templates[$path];
+$this->path = $path;
+return $this;
   }
   
-public function __set($name, $value) {$this->array[$name] = $value; }
+public function __set($name, $value) {
+$this->theme->templates[$this->getpath($name)] = $value;
+}
   
   public function __call($name, $params) {
     if (isset($params[0]) && is_object($params[0]) && ($params[0] instanceof targs)) {
-      return $this->_theme->parsearg( (string) $this->$name, $params[0]);
+      return $this->theme->parsearg( (string) $this->$name, $params[0]);
     } else {
-      return $this->_theme->parse((string) $this->$name);
+      return $this->theme->parse((string) $this->$name);
     }
   }
   
   public function __tostring() {
-    if (!isset($this->array[0])) {
-      litepublisher::$options->trace(implode("\n", array_keys(($this->array))));
-      litepublisher::$options->showerrors();
-    }
-    
-    return $this->array[0];
+if (array_key_exists($this->path, $this->theme->templates)) {
+    return $this->theme->templates[$this->path];
+} else {
+$this->error($this->path);
+}
   }
+
   public function __isset($name) {
-    return array_key_exists($name, $this->array);
+    return array_key_exists($this->getpath($name), $this->theme->templates);
   }
+
 }//class
 
 

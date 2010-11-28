@@ -78,6 +78,7 @@ class ttemplate extends tevents_storage {
   
   //html tags
   public function getsidebar() {
+return '';
     $widgets = twidgets::instance();
     return $widgets->getsidebar($this->context, $this->view);
   }

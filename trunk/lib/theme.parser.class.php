@@ -142,7 +142,7 @@ class tthemeparser extends tevents {
     $template->path = litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  ;
     $template->url = litepublisher::$site->url  . '/themes/'. $template->theme;
     
-    $theme = ttheme::getinstance($name, 'index');
+    $theme = ttheme::getinstance($name);
     
     $about = $this->getabout($name);
     if (!empty($about['about']['pluginclassname'])) {
@@ -212,6 +212,8 @@ class tthemeparser extends tevents {
     }
     
     public function settag($parent, $s) {
+if (false !== strpos($parent, 'sidebar')) return;
+
       if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) ||
       preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
         $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
@@ -241,16 +243,19 @@ class tthemeparser extends tevents {
           $i = self::find_close($s, $m[3]);
           $value = trim(substr($s, 0, $i));
           $s = ltrim(substr($s, $i + 1));
-          $info = $this->getinfo($parent, $tag);
-          $this->settag($parent . '.' . $info['name'], $value);
-          $s = $pre . $info['replace'] . $s;
+
+$path = $this->tagtopath($parent, $tag);
+          $this->settag($path, $value);
+          $s = $pre . $this->paths[$path]['replace'] . $s;
         }
         
         $s = trim($s);
         if (strbegin($parent, 'sidebar.')) {
-          $this->setwidgetvalue($parent, $s);
+          //$this->setwidgetvalue($parent, $s);
         }  elseif (isset($this->paths[$parent])) {
-          $this->paths[$parent]['data'] = $s;
+          $this->theme->templates[$parent] = $s;
+} elseif (($parent == '') || ($parent == '$template')) {
+$this->theme->templates['index'] = $s;
         } elseif (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
           $this->setcustom($parent, $s);
         } else {
@@ -258,21 +263,18 @@ class tthemeparser extends tevents {
         }
       }
       
-      public function getinfo($parentpath, $tag) {
-        $regexp = sprintf('/^%s\.(\w\w*+)$/', str_replace('.', '\.', $parentpath));
+      public function tagtopath($parent, $tag) {
+if (($parent == '') || ($parent == '$template')) return 'index';
         foreach ($this->paths as $path => $info) {
-          if  (preg_match($regexp, $path, $m)) {
-            if ($tag == $info['tag']) {
-              $info['name'] = $m[1];
-              $info['path'] = $path;
-              return $info;
-            }
+if (strbegin($path, $parent)) {
+            if ($tag == $info['tag']) return $path;
+}
           }
-        }
-        
+
+        echo "$tag not found in $parent\n";
         $name = substr($tag, 1);
-        if (strbegin($parentpath, 'sidebar')) {
-          $path = $parentpath . '.' . $name;
+        if (strbegin($parent, 'sidebar')) {
+          $path = $parent . '.' . $name;
           return array(
           'data' => null,
           'tag' => $tag,
@@ -284,7 +286,6 @@ class tthemeparser extends tevents {
         
         if (strbegin($parentpath, '$custom') || strbegin($parentpath, 'custom')) {
           return array(
-          'data' => null,
           'tag' => $tag,
           'replace' => '',
           'path' => $parentpath . '.' . $name,
@@ -385,13 +386,14 @@ class tthemeparser extends tevents {
       }
       
       public function afterparse($theme) {
-        $menu = &$theme->templates['menu'];
-        if (isset($menu['hover'])) {
-          if (!is_bool($menu['hover'])) $menu['hover'] = $menu['hover'] != 'false';
+$theme = $this->theme;
+if (isset($theme->menu->hover)) {
+          if (!is_bool($theme->menu->hover)) $theme->menu->hover = $theme->menu->hover != 'false';
         } else {
-          $menu['hover'] = true;
+          $theme->menu->hover = true;
         }
-        
+        return;
+
         $post = &$theme->templates['content']['post'];
         $excerpt = &$theme->templates['content']['excerpts']['excerpt'];
         if (empty($excerpt['data'])) $excerpt['date'] = $post['date'];
@@ -590,514 +592,434 @@ class tthemeparser extends tevents {
         );
       }
       
-      public static function getpaths(ttheme $theme) {
-        $data = &$theme->templates;
-        $content = &$theme->templates['content'];
-        $post = &$theme->templates['content']['post'];
-        $excerpt = &$theme->templates['content']['excerpts']['excerpt'];
-        
+      public static function getpaths() {
         return array(
-        '' => array(
-        'data' => &$data[0],
-        'tag' => '',
-        'replace' => ''
-        ),
-        
-        '$template' => array(
-        'data' => &$data[0],
+        'index' => array(
         'tag' => '',
         'replace' => ''
         ),
         
         'title' => array(
-        'data' => &$data['title'],
         'tag' => '$template.title',
         'replace' => '$template.title'
         ),
         
         'menu' => array(
-        'data' => &$data['menu'][0],
         'tag' => '$template.menu',
         'replace' => '$template.menu'
         ),
         
         'menu.hover' => array(
-        'data' => &$data['menu']['hover'],
         'tag' => '$hover',
         'replace' => ''
         ),
         
         'menu.item' => array(
-        'data' => &$data['menu']['item'],
         'tag' => '$item',
         'replace' => '$item'
         ),
         
         'menu.current' => array(
-        'data' => &$data['menu']['current'],
         'tag' => '$current',
         'replace' => ''
         ),
         
         'menu.item.submenu' => array(
-        'data' => &$data['menu']['submenu'],
         'tag' => '$submenu',
         'replace' => '$submenu'
         ),
         
         'content' => array(
-        'data' => null,
         'tag' => '$template.content',
         'replace' => '$template.content'
         ),
         
         'content.simple' => array(
-        'data' => &$content['simple'],
         'tag' => '$simple',
         'replace' => ''
         ),
         
         'content.notfound' => array(
-        'data' => &$content['notfound'],
         'tag' => '$notfound',
         'replace' => ''
         ),
         
         'content.menu' => array(
-        'data' => &$content['menu'],
         'tag' => '$menu',
         'replace' => ''
         ),
         
         'content.post' => array(
-        'data' => &$post[0],
         'tag' => '$post',
         'replace' => ''
         ),
         
         'content.post.more' => array(
-        'data' => &$post['more'],
         'tag' => '$post.more',
         'replace' => ''
         ),
         
         'content.post.rsslink' => array(
-        'data' => &$post['rsslink'],
         'tag' => '$post.rsslink',
         'replace' => '$post.rsslink'
         ),
         
         'content.post.date' => array(
-        'data' => &$post['date'],
         'tag' => '$post.date',
         'replace' => '$post.date'
         ),
         
         'content.post.filelist' => array(
-        'data' => &$post['filelist'][0],
         'tag' => '$post.filelist',
         'replace' => '$post.filelist'
         ),
         
         'content.post.filelist.file' => array(
-        'data' => &$post['filelist']['file'],
         'tag' => '$file',
         'replace' => '$file'
         ),
         
         'content.post.filelist.image' => array(
-        'data' => &$post['filelist']['image'],
         'tag' => '$image',
         'replace' => ''
         ),
         
         'content.post.filelist.preview' => array(
-        'data' => &$post['filelist']['preview'],
         'tag' => '$preview',
         'replace' => ''
         ),
         
         'content.post.filelist.audio' => array(
-        'data' => &$post['filelist']['audio'],
         'tag' => '$audio',
         'replace' => ''
         ),
         
         'content.post.filelist.video' => array(
-        'data' => &$post['filelist']['video'],
         'tag' => '$video',
         'replace' => ''
         ),
         
         'content.post.catlinks' => array(
-        'data' => &$post['catlinks'][0],
         'tag' => '$post.catlinks',
         'replace' => '$post.catlinks'
         ),
         
         'content.post.catlinks.item' => array(
-        'data' => &$post['catlinks']['item'],
         'tag' => '$item',
         'replace' => '$items'
         ),
         
         'content.post.catlinks.divider' => array(
-        'data' => &$post['catlinks']['divider'],
         'tag' => '$divider',
         'replace' => ''
         ),
         
         'content.post.taglinks' => array(
-        'data' => &$post['taglinks'][0],
         'tag' => '$post.taglinks',
         'replace' => '$post.taglinks'
         ),
         
         'content.post.taglinks.item' => array(
-        'data' => &$post['taglinks']['item'],
         'tag' => '$item',
         'replace' => '$items'
         ),
         
         'content.post.taglinks.divider' => array(
-        'data' => &$post['taglinks']['divider'],
         'tag' => '$divider',
         'replace' => ''
         ),
         
         'content.post.prevnext' => array(
-        'data' => &$post['prevnext'][0],
         'tag' => '$post.prevnext',
         'replace' => '$post.prevnext'
         ),
         
         'content.post.prevnext.prev' => array(
-        'data' => &$post['prevnext']['prev'],
         'tag' => '$prev',
         'replace' => '$prev'
         ),
         
         'content.post.prevnext.next' => array(
-        'data' => &$post['prevnext']['next'],
         'tag' => '$next',
         'replace' => '$next'
         ),
         
         'content.post.templatecomments' => array(
-        'data' => null,
         'tag' => '$post.templatecomments',
         'replace' => '$post.templatecomments'
         ),
         
         'content.post.templatecomments.closed' => array(
-        'data' => &$post['templatecomments']['closed'],
         'tag' => '$closed',
         'replace' => ''
         ),
         
         'content.post.templatecomments.form' => array(
-        'data' => &$post['templatecomments']['form'],
         'tag' => '$form',
         'replace' => ''
         ),
         
         'content.post.templatecomments.confirmform' => array(
-        'data' => &$post['templatecomments']['confirmform'],
         'tag' => '$confirmform',
         'replace' => ''
         ),
         
         'content.post.templatecomments.moderateform' => array(
-        'data' => &$post['templatecomments']['moderateform'],
         'tag' => '$moderateform',
         'replace' => ''
         ),
         
         'content.post.templatecomments.holdcomments' => array(
-        'data' => &$post['templatecomments']['holdcomments'],
         'tag' => '$holdcomments',
         'replace' => ''
         ),
         
         'content.post.templatecomments.comments' => array(
-        'data' => &$post['templatecomments']['comments'][0],
         'tag' => '$comments',
         'replace' => ''
         ),
         
         'content.post.templatecomments.comments.id' => array(
-        'data' => &$post['templatecomments']['comments']['id'],
         'tag' => '$id',
         'replace' => ''
         ),
         
         'content.post.templatecomments.comments.idhold' => array(
-        'data' => &$post['templatecomments']['comments']['idhold'],
         'tag' => '$idhold',
         'replace' => ''
         ),
         
         'content.post.templatecomments.comments.count' => array(
-        'data' => &$post['templatecomments']['comments']['count'],
         'tag' => '$count',
         'replace' => ''
         ),
         
         'content.post.templatecomments.comments.comment' => array(
-        'data' => &$post['templatecomments']['comments']['comment'][0],
         'tag' => '$comment',
         'replace' => '$comment'
         ),
         
         'content.post.templatecomments.comments.comment.class1' => array(
-        'data' => &$post['templatecomments']['comments']['comment']['class1'],
         'tag' => '$class1',
         'replace' => ' $class'
         ),
         
         'content.post.templatecomments.comments.comment.class2' => array(
-        'data' => &$post['templatecomments']['comments']['comment']['class2'],
         'tag' => '$class2',
         'replace' => ' '
         ),
         
         'content.post.templatecomments.comments.comment.date' => array(
-        'data' => &$post['templatecomments']['comments']['comment']['date'],
         'tag' => '$comment.date',
         'replace' => '$comment.date'
         ),
         
         'content.post.templatecomments.comments.comment.moderate' => array(
-        'data' => &$post['templatecomments']['comments']['comment']['moderate'],
         'tag' => '$moderate',
         'replace' => '$moderate'
         ),
         
         'content.post.templatecomments.comments.comment.quotebuttons' => array(
-        'data' => &$post['templatecomments']['comments']['comment']['quotebuttons'],
         'tag' => '$quotebuttons',
         'replace' => '$quotebuttons'
         ),
         
         'content.post.templatecomments.pingbacks' => array(
-        'data' => &$post['templatecomments']['pingbacks'][0],
         'tag' => '$pingbacks',
         'replace' => ''
         ),
         
         'content.post.templatecomments.pingbacks.pingback' => array(
-        'data' => &$post['templatecomments']['pingbacks']['pingback'],
         'tag' => '$pingback',
         'replace' => '$pingback'
         ),
         
         'content.excerpts' => array(
-        'data' => &$content['excerpts'][0],
         'tag' => '$excerpts',
         'replace' => ''
         ),
         
         'content.excerpts.excerpt' => array(
-        'data' => &$excerpt[0],
         'tag' => '$excerpt',
         'replace' => '$excerpt'
         ),
         
         'content.excerpts.excerpt.date' => array(
-        'data' => &$excerpt['date'],
         'tag' => '$post.excerptdate',
         'replace' => '$post.excerptdate'
         ),
         
         'content.excerpts.excerpt.morelink' => array(
-        'data' => &$excerpt['morelink'],
         'tag' => '$post.morelink',
         'replace' => ''
         ),
         
-        
         'content.excerpts.excerpt.filelist' => array(
-        'data' => &$excerpt['filelist'][0],
         'tag' => '$post.excerptfilelist',
         'replace' => '$post.excerptfilelist'
         ),
         
         'content.excerpts.excerpt.filelist.file' => array(
-        'data' => &$excerpt['filelist']['file'],
         'tag' => '$file',
         'replace' => '$file'
         ),
         
         'content.excerpts.excerpt.filelist.image' => array(
-        'data' => &$excerpt['filelist']['image'],
         'tag' => '$image',
         'replace' => ''
         ),
         
         'content.excerpts.excerpt.filelist.preview' => array(
-        'data' => &$excerpt['filelist']['preview'],
         'tag' => '$preview',
         'replace' => ''
         ),
         
         'content.excerpts.excerpt.filelist.audio' => array(
-        'data' => &$excerpt['filelist']['audio'],
         'tag' => '$audio',
         'replace' => ''
         ),
         
         'content.excerpts.excerpt.filelist.video' => array(
-        'data' => &$excerpt['filelist']['video'],
         'tag' => '$video',
         'replace' => ''
         ),
         
         'content.excerpts.excerpt.catlinks' => array(
-        'data' => &$excerpt['catlinks'][0],
         'tag' => '$post.excerptcatlinks',
         'replace' => '$post.excerptcatlinks'
         ),
         
         'content.excerpts.excerpt.catlinks.item' => array(
-        'data' => &$excerpt['catlinks']['item'],
         'tag' => '$item',
         'replace' => '$items'
         ),
         
         'content.excerpts.excerpt.catlinks.divider' => array(
-        'data' => &$excerpt['catlinks']['divider'],
         'tag' => '$divider',
         'replace' => ''
         ),
         
         'content.excerpts.excerpt.taglinks' => array(
-        'data' => &$excerpt['taglinks'][0],
         'tag' => '$post.taglinks',
         'replace' => '$post.taglinks'
         ),
         
         'content.excerpts.excerpt.taglinks.item' => array(
-        'data' => &$excerpt['taglinks']['item'],
         'tag' => '$item',
         'replace' => '$items'
         ),
         
         'content.excerpts.excerpt.taglinks.divider' => array(
-        'data' => &$excerpt['taglinks']['divider'],
         'tag' => '$divider',
         'replace' => ''
         ),
         
         'content.excerpts.lite' => array(
-        'data' => &$content['lite'][0],
         'tag' => '$lite',
         'replace' => ''
         ),
         
         'content.excerpts.lite.excerpt' => array(
-        'data' => &$content['lite']['excerpt'],
         'tag' => '$excerpt',
         'replace' => '$excerpt'
         ),
         
         'content.navi' => array(
-        'data' => &$content['navi'][0],
         'tag' => '$navi',
         'replace' => ''
         ),
         
         'content.navi.prev' => array(
-        'data' => &$content['navi']['prev'],
         'tag' => '$prev',
         'replace' => '$items'
         ),
         
         'content.navi.next' => array(
-        'data' => &$content['navi']['next'],
         'tag' => '$next',
         'replace' => ''
         ),
         
         'content.navi.link' => array(
-        'data' => &$content['navi']['link'],
         'tag' => '$link',
         'replace' => ''
         ),
         
         'content.navi.current' => array(
-        'data' => &$content['navi']['current'],
         'tag' => '$current',
         'replace' => ''
         ),
         
         'content.navi.divider' => array(
-        'data' => &$content['navi']['divider'],
         'tag' => '$divider',
         'replace' => ''
         ),
         
         'content.admin' => array(
-        'data' => null,
         'tag' => '$admin',
         'replace' => ''
         ),
         
         'content.admin.editor' => array(
-        'data' => &$content['admin']['editor'],
         'tag' => '$editor',
         'replace' => ''
         ),
         
-        'content.admin.area' => array(
-        'data' => &$content['admin']['area'],
-        'tag' => '$area',
-        'replace' => ''
-        ),
-        
         'content.admin.text' => array(
-        'data' => &$content['admin']['text'],
         'tag' => '$text',
         'replace' => ''
         ),
         
         'content.admin.combo' => array(
-        'data' => &$content['admin']['combo'],
         'tag' => '$combo',
         'replace' => ''
         ),
         
         'content.admin.checkbox' => array(
-        'data' => &$content['admin']['checkbox'],
         'tag' => '$checkbox',
         'replace' => ''
         ),
         
         'content.admin.hidden' => array(
-        'data' => &$content['admin']['hidden'],
         'tag' => '$hidden',
         'replace' => ''
         ),
         
         'content.admin.form' => array(
-        'data' => &$content['admin']['form'],
         'tag' => '$form',
         'replace' => ''
         ),
         
         'sidebar' => array(
-        'data' => null,
         'tag' => '$template.sidebar',
         'replace' => '$template.sidebar'
         ),
-        
+      
+            'sitebar.widget' => array(
+        'tag' => '$widget',
+        'replace' => ''
+        ),
+
+            'sitebar.widget.items' => array(
+        'tag' => '$items',
+        'replace' => '$items'
+        ),
+
+            'sitebar.widget.items.item' => array(
+        'tag' => '$item',
+        'replace' => '$item'
+        ),
+
+            'sitebar.widget.items.item.subitems' => array(
+        'tag' => '$subitems',
+        'replace' => '$subitems'
+        ),
+
         'custom' => array(
-        'data' => null,
         'tag' => '$custom',
         'replace' => ''
         )
         );
       }
-      
       
     }//class
     ?>
