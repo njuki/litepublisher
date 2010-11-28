@@ -302,7 +302,10 @@ class twidgets extends titems_storage {
   }
   
   public function getsidebar($context, tview $view) {
-    $sidebar = $this->currentsidebar;
+return $this->getsidebarindex($context, $view, $this->currentsidebar++);
+}
+
+  public function getsidebarindex($context, tview $view, $sidebar) {
     $items = $this->getwidgets($context, $view, $sidebar);
     if ($context instanceof iwidgets) $context->getwidgets($items, $sidebar);
     if (litepublisher::$options->admincookie) $this->callevent('onadminlogged', array(&$items, $sidebar));
@@ -310,7 +313,7 @@ class twidgets extends titems_storage {
     $this->callevent('ongetwidgets', array(&$items, $sidebar));
     $result = $this->getsidebarcontent($items, $sidebar, !$view->customsidebar && $view->disableajax);
     //if ($result != '') $result = str_replace('$items', $result, (string) $theme->sidebars->$sidebar);
-    $this->callevent('onsidebar', array(&$result, $this->currentsidebar++));
+    $this->callevent('onsidebar', array(&$result, $sidebar));
     return $result;
   }
   

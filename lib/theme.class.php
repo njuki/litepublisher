@@ -40,7 +40,7 @@ class ttheme extends tevents {
     $this->data['parent'] = '';
     $this->addmap('templates', array());
     $this->templates = array(
-    0 => '',
+    'index' => '',
     'title' => '',
     'menu' => array(),
     'content' => array(),
@@ -48,15 +48,16 @@ class ttheme extends tevents {
     );
     $this->themeprops = new tthemeprops($this);
   }
+
+  public function __destruct() {
+    unset($this->themeprops, self::$instances[$this->name], $this->templates);
+    parent::__destruct();
+  }
   
   public function getbasename() {
     return 'themes' . DIRECTORY_SEPARATOR . $this->name;
   }
   
-  public function __destruct() {
-    unset($this->themeprops, self::$instances[$this->name], $this->templates);
-    parent::__destruct();
-  }
   public function load() {
     if ($this->name == '') return false;
     if (parent::load()) {
@@ -85,15 +86,10 @@ class ttheme extends tevents {
   }
   
   public function __get($name) {
-    if (array_key_exists($name, $this->templates)) {
-        $this->themeprops->path = $name;
-        $this->themeprops->tostring = false;
-        return $this->themeprops;
-    } elseif ($name == 'comment') {
-      $this->themeprops->path = 'content.post.templatecomments.comments.comment';
-      return $this->themeprops;
-    }
-    
+    if (array_key_exists($name, $this->templates)) return $this->themeprops->setpath($name);
+    if ($name == 'comment') return $this->themeprops->setpath('content.post.templatecomments.comments.comment');
+if ($name == 'sidebar') return $this->themeprops->setroot($this->templates['sidebars'][0]);
+if (preg_match('/^sidebar(\d)$/', $name, $m)) return $this->themeprops->setroot($this->templates['sidebars'][$m[1]]);
     return parent::__get($name);
   }
   
@@ -301,18 +297,20 @@ return;
 }//class
 
 class tthemeprops {
-public $path;
   private $theme;
+private $root;
+public $path;
 public $tostring;
 
     public function __construct(ttheme $theme) {
     $this->theme = $theme;
+$this->root = &$theme->templates;
 $this->path = '';
 $this->tostring = false;
   }
   
   public function __destruct() {
-    unset($this->theme );
+    unset($this->theme, $this->root);
   }
 
 public function error($path) {
@@ -320,26 +318,31 @@ public function error($path) {
       litepublisher::$options->showerrors();
 }
 
+public function setroot(array &$root) {
+$this->root = &$root;
+return $this->setpath('');
+}
+
 public function getpath($name) {
 return $this->path == '' ? $name : $this->path . '.' . $name;
 }
-  
-  public function __get($name) {
-if ($name == '__props') {
-$this->tostring= true;
-return;
+
+public function setpath($path) {
+$this->path = $path;
+$this->tostring = false;
+return $this;
 }
 
+  public function __get($name) {
 $path = $this->getpath($name);
-echo "$path = path<br>";
-if (!array_key_exists($path, $this->theme->templates)) $this->error($path);
-if ($this->tostring) return $this->theme->templates[$path];
+if (!array_key_exists($path, $this->root)) $this->error($path);
+if ($this->tostring) return $this->root[$path];
 $this->path = $path;
 return $this;
   }
   
 public function __set($name, $value) {
-$this->theme->templates[$this->getpath($name)] = $value;
+$this->root[$this->getpath($name)] = $value;
 }
   
   public function __call($name, $params) {
@@ -351,18 +354,15 @@ $this->theme->templates[$this->getpath($name)] = $value;
   }
   
   public function __tostring() {
-if (array_key_exists($this->path, $this->theme->templates)) {
-    return $this->theme->templates[$this->path];
+if (array_key_exists($this->path, $this->root)) {
+    return $this->root[$this->path];
 } else {
 $this->error($this->path);
 }
   }
 
   public function __isset($name) {
-    return array_key_exists($this->getpath($name), $this->theme->templates);
+    return array_key_exists($this->getpath($name), $this->root);
   }
 
 }//class
-
-
-?>
