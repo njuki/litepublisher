@@ -568,7 +568,7 @@ content.excerpts.excerpt.filelist - $post.excerptfilelist, шаблон для �
 
 Следует наверно продемонстрировать, как изменить один из шаблонов, например картинки в списке файлов анонса:
 content.excerpts.excerpt.filelist.image = [
-  <li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$link" title="$title">$preview$title</a></li>
+<li><a rel="prettyPhoto[gallery-$post.id]" href="$link" title="$title">$preview$title</a></li>
 ]
 
 На самом деле мы задали абсолютно такой же шаблон как и восновном списке, но вы можете изменить шаблон по своему вкусу.
