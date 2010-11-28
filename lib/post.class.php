@@ -223,6 +223,7 @@ class tpost extends titem implements  itemplate {
     $theme = $this->theme;
     $tml = $excerpt ? $theme->content->excerpts : $theme->content->post;
     $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
+$tml->tostring = true;
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
     $args = targs::instance();
@@ -251,7 +252,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getexcerptdate() {
-    return tlocal::date($this->posted, $this->theme->content->excerpts->excerpt->date);
+    return tlocal::date($this->posted, (string) $this->theme->content->excerpts->excerpt->date);
   }
   
   public function getday() {
