@@ -221,7 +221,7 @@ class tpost extends titem implements  itemplate {
   private function getcommontagslinks($names, $excerpt) {
     if (count($this->$names) == 0) return '';
     $theme = $this->theme;
-    $tml = $excerpt ? $theme->content->excerpts : $theme->content->post;
+    $tml = $excerpt ? $theme->content->excerpts->excerpt : $theme->content->post;
     $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
 $tml->tostring = true;
     $tags= litepublisher::$classes->$names;
