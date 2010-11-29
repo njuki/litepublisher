@@ -334,6 +334,7 @@ $this->tostring = false;
 public function error($path) {
       litepublisher::$options->trace(sprintf('Path "%s" not found', $path));
       litepublisher::$options->showerrors();
+var_dump($this->root);
 }
 
 public function getpath($name) {
