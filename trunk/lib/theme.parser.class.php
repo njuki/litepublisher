@@ -64,7 +64,8 @@ class tthemeparser extends tevents {
     $about = $this->getabout($theme->name);
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $about['file'];
     if (!file_exists($filename))  return $this->error("The requested theme '$theme->name' file $filename not found");
-    
+
+if ($theme->name != 'default') {    
       $parentname = empty($about['parent']) ? 'default' : $about['parent'];
       $parent = ttheme::instance($parentname);
       $theme->template = $parent->template;
@@ -235,9 +236,9 @@ if (preg_match('/^sidebar(\d)\.?/', $parent, $m)) {
           $value = trim(substr($s, 0, $i));
           $s = ltrim(substr($s, $i + 1));
 
-$path = $this->tagtopath($parent, $tag);
-          $this->settag($path, $value);
-          $s = $pre . $this->paths[$path]['replace'] . $s;
+$info = $this->tagtopath($parent, $tag);
+          $this->settag($info['path'], $value);
+          $s = $pre . $info['replace'] . $s;
         }
         
         $s = trim($s);
@@ -258,39 +259,39 @@ $this->theme->templates['index'] = $s;
 if (($parent == '') || ($tag == '$template')) return 'index';
         foreach ($this->paths as $path => $info) {
 if (strbegin($path, $parent)) {
-            if ($tag == $info['tag']) return $path;
+            if ($tag == $info['tag']) {
+$info['path'] = $path;
+return $info;
+}
 }
           }
-
-        echo "$tag not found in $parent\n";
-        $name = substr($tag, 1);
+$name = substr($tag, 1);
+$path = $parent . '.' . $name;
         if (strbegin($parent, 'sidebar')) {
-          $path = $parent . '.' . $name;
           return array(
-          'data' => null,
+'path' => $path,
           'tag' => $tag,
-          'replace' => $tag == '$classes' ? '' : $tag,
-          'path' => $path,
-          'name' => $name
+          'replace' => $tag == '$classes' ? '' : $tag
           );
         }
         
-        if (strbegin($parentpath, '$custom') || strbegin($parentpath, 'custom')) {
+        if (strbegin($parent, '$custom') || strbegin($parentpath, 'custom')) {
           return array(
+'path' => $path,
           'tag' => $tag,
-          'replace' => '',
-          'path' => $parentpath . '.' . $name,
-          'name' => $name
+          'replace' => ''
           );
         }
+
         $this->error("The '$tag' not found in path '$parentpath'");
       }
       
       private function setwidgetvalue($path, $value) {
-        if (!preg_match('/^sidebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
-        $widgetname = $m[1];
+if (!strpos($path, '.')) return;
+        if (!preg_match('/^sidebar(\d?)\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
+        $widgetname = $m[2];
         if (($widgetname != 'widget') && (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
-$path = ttheme::getwidgetpath(empty($m[2]) ? '' : $m[2]);
+$path = ttheme::getwidgetpath(empty($m[3]) ? '' : $m[3]);
 if ($path === false) $this->error("Unknown '$path' widget path");
         $this->setwidgetitem($widgetname, $path, $value);
 
@@ -307,7 +308,7 @@ if ($path === false) $this->error("Unknown '$path' widget path");
       private function setwidgetitem($widgetname, $path, $value) {
         $sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
         if (!isset($sidebar[$widgetname])) {
-foreach ( array('', '.items', '.item', '.subitems') as $ name) {
+foreach ( array('', '.items', '.item', '.subitems') as $name) {
             $sidebar[$widgetname . $name] = isset($sidebar['widget' . $name]) ? $sidebar['widget' . $name] : '';
 }
             if ($widgetname == 'meta') $sidebar['meta.classes'] = '';
@@ -787,31 +788,6 @@ foreach (array('', '.items', '.item', '.subitems') as $name) {
         'replace' => ''
         ),
         
-        'sidebar' => array(
-        'tag' => '$template.sidebar',
-        'replace' => '$template.sidebar'
-        ),
-      
-            'sitebar.widget' => array(
-        'tag' => '$widget',
-        'replace' => ''
-        ),
-
-            'sitebar.widget.items' => array(
-        'tag' => '$items',
-        'replace' => '$items'
-        ),
-
-            'sitebar.widget.items.item' => array(
-        'tag' => '$item',
-        'replace' => '$item'
-        ),
-
-            'sitebar.widget.items.item.subitems' => array(
-        'tag' => '$subitems',
-        'replace' => '$subitems'
-        ),
-
         'custom' => array(
         'tag' => '$custom',
         'replace' => ''

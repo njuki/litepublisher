@@ -45,7 +45,8 @@ class ttheme extends tevents {
     'menu' => '',
     'content' => '',
     'sidebars' => array(),
-'custom' => array()
+'custom' => array(),
+'customadmin' => array()
     );
     $this->themeprops = new tthemeprops($this);
   }
@@ -246,6 +247,7 @@ return;
       self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
+unset(self::$vars['post']);
     return str_replace('$item', $result, $this->getwidgetitems('posts', $sidebar));
   }
   
@@ -254,17 +256,10 @@ return;
   }
   
   public function getwidget($title, $content, $template, $sidebar) {
-    $tml = $this->getwidgettemplate($template, $sidebar);
     $args = targs::instance();
     $args->title = $title;
     $args->items = $content;
-    return $this->parsearg($tml, $args);
-  }
-  
-  public function getwidgettemplate($name, $sidebar) {
-    $sidebars = &$this->templates['sidebars'];
-    if (!isset($sidebars[$sidebar][$name][0])) $name = 'widget';
-    return $sidebars[$sidebar][$name][0];
+    return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
   }
   
   public function  getwidgetitem($name, $index) {
@@ -276,13 +271,12 @@ return;
   }
   
   public function  getwidgettml($index, $name, $tml) {
-    $sidebars = &$this->templates['sidebars'];
-    if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
-    if ($index >= count($sidebars)) {
-      $index = count($sidebars) - 1;
-      if (isset($sidebars[$index][$name][$tml])) return $sidebars[$index][$name][$tml];
-    }
-    if (isset($sidebars[$index]['widget'][$tml])) return $sidebars[$index]['widget'][$tml];
+$count = count($this->templates['sidebars']);
+    if ($index >= $count) $index = $count - 1;
+$widgets = &$this->templates['sidebars'][$index];
+if (($tml != '') && ($tml [0] != '.')) $tml = '.' . $tml;
+    if (isset($widgets[$name . $tml])) return $widgets[$name . $tml];
+    if (isset($widgets['widget' . $tml])) return $widgets['widget'  . $tml];
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
   }
   
