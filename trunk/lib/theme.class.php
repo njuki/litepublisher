@@ -42,9 +42,10 @@ class ttheme extends tevents {
     $this->templates = array(
     'index' => '',
     'title' => '',
-    'menu' => array(),
-    'content' => array(),
-    'sidebars' => array()
+    'menu' => '',
+    'content' => '',
+    'sidebars' => array(),
+'custom' => array()
     );
     $this->themeprops = new tthemeprops($this);
   }
@@ -293,6 +294,29 @@ return;
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }
+
+public static function getwidgetpath($path) {
+if ($path === '') return '';
+switch ($path) {
+          case '.items':
+return '.items';
+
+          case '.items.item':
+          case '.item':
+return '.item';
+
+          case '.items.item.subitems':
+          case '.item.subitems':
+          case '.subitems':
+return '.subitems';
+
+         case '.classes':
+          case '.items.classes':
+return  '.classes';
+}
+
+return false;
+}
   
 }//class
 
@@ -318,18 +342,20 @@ public function error($path) {
       litepublisher::$options->showerrors();
 }
 
-public function setroot(array &$root) {
-$this->root = &$root;
-return $this->setpath('');
-}
-
 public function getpath($name) {
 return $this->path == '' ? $name : $this->path . '.' . $name;
 }
 
 public function setpath($path) {
+$this->root = &$this->theme->templates;
 $this->path = $path;
 $this->tostring = false;
+return $this;
+}
+
+public function setroot(array &$root) {
+$this->setpath('');
+$this->root = &$root;
 return $this;
 }
 
