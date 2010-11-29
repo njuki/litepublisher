@@ -11,7 +11,6 @@ class tthemeparser extends tevents {
   private $abouts;
   private $paths;
   private $sidebar_index;
-  private $sidebar_count;
   
   public static function instance() {
     return getinstance(__class__);
@@ -26,7 +25,6 @@ class tthemeparser extends tevents {
     $this->basename = 'themeparser';
     $this->addevents('parsed');
     $this->sidebar_index = 0;
-    $this->sidebar_count = 0;
   }
   
   public static function checktheme(ttheme $theme) {
@@ -209,8 +207,6 @@ class tthemeparser extends tevents {
     }
     
     public function settag($parent, $s) {
-if (false !== strpos($parent, 'sidebar')) return;
-
       if (preg_match('/file\s*=\s*(\w*+\.\w\w*+\s*)/i', $s, $m) ||
       preg_match('/\@import\s*\(\s*(\w*+\.\w\w*+\s*)\)/i', $s, $m)) {
         $filename = litepublisher::$paths->themes . $this->theme->name . DIRECTORY_SEPARATOR . $m[1];
@@ -219,18 +215,16 @@ if (false !== strpos($parent, 'sidebar')) return;
       }
       
       if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
-      switch ($parent) {
-        case 'sidebar.index':
-        $this->sidebar_index = (int) trim($s);
+
+if (strbegin($parent, 'sidebar')) {
+if (preg_match('/^sidebar(\d)\.?/', $parent, $m)) {
+        $this->sidebar_index = (int) $m[1];
+} else {
+        $this->sidebar_index = 0;
+}
         if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
-        return;
+}
         
-        case 'sidebar':
-        $this->sidebar_index = ++$this->sidebar_count - 1;
-        if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
-        break;
-      }
-      
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           if (!isset($m[3])) $this->error('The bracket not found');
           $tag = $m[1];
