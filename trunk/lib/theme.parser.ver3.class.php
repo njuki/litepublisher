@@ -46,7 +46,7 @@ $this->parsecontent($s);
     $theme->sidebars = $this->parsesidebars($s);
     $s = $this->fixhead($s);
     $s = $this->deletespaces($s);
-    $theme->templates[0] = $s != ''? $s : (string) $this->default->theme;
+    $theme->templates['index'] = $s != ''? $s :  $this->default->templates['index'];
     return true;
   }
   
@@ -164,7 +164,7 @@ $result = &$this->theme->templates;
 
 $this->parsepost($s);
     $result['excerpts'] = $this->parse_excerpts($s, $result['post']);
-    $result['navi'] = $this->parsenavi($s);
+$this->parsenavi($s);
     $result['admin'] = $this->parseadmin($s);
 
     $default = $this->default->templates;
@@ -343,23 +343,24 @@ $default->tostring = true;
   
   private function parsenavi(&$str) {
     $s = $this->parsetag($str, 'navi', '');
-    if ($s == '') return $this->default->content->navi->array;
+    if ($s == '') return $this->copy('content.navi');
     $default = $this->default->content->navi;
-    $result = array();
-    $result['prev'] = $this->parsetag($s, 'prev', '$items', $default->prev);
-    $result['next'] = $this->parsetag($s, 'next', '', $default->next);
-    $result['link'] = $this->parsetag($s, 'link', '', $default->link);
-    $result['current'] = $this->parsetag($s, 'current', '', $default->current);
-    $result['divider'] = $this->parsetag($s, 'divider', '', $default->divider);
+$default->tostring = true;
+$path = 'content.navi.';
+    $result = &$this->theme->templates;
+    $result[$path . 'prev'] = $this->parsetag($s, 'prev', '$items', $default->prev);
+    $result[$path . 'next'] = $this->parsetag($s, 'next', '', $default->next);
+    $result[$path . 'link'] = $this->parsetag($s, 'link', '', $default->link);
+    $result[$path . 'current'] = $this->parsetag($s, 'current', '', $default->current);
+    $result[$path . 'divider'] = $this->parsetag($s, 'divider', '', $default->divider);
     if ($this->fixold) {
-      $result['prev'] = sprintf($result['prev'], '$link');
-      $result['next'] = sprintf($result['next'], '$link');
-      $result['link'] =sprintf($result['link'], '$link', '$page');
-      $result['current'] =sprintf($result['current'], '$link', '$page');
+      $result[$path . 'prev'] = sprintf($result[$path . 'prev'], '$link');
+      $result[$path . 'next'] = sprintf($result[$path . 'next'], '$link');
+      $result[$path . 'link'] =sprintf($result[$path . 'link'], '$link', '$page');
+      $result[$path . 'current'] =sprintf($result[$path . 'current'], '$link', '$page');
     }
     $s = $this->deletespaces($s);
-    $result[0] = $s != '' ? $s : (string) $default;
-    return $result;
+    $result['content.navi'] = $s != '' ? $s : (string) $default;
   }
   
   private function parseadmin(&$str) {
