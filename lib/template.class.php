@@ -83,7 +83,6 @@ if (preg_match('/^sidebar(\d)$/', $name, $m)) {
   
   //html tags
   public function getsidebar() {
-return '';
     $widgets = twidgets::instance();
     return $widgets->getsidebar($this->context, $this->view);
   }
