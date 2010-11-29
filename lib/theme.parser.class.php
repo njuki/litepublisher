@@ -67,9 +67,6 @@ class tthemeparser extends tevents {
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . $about['file'];
     if (!file_exists($filename))  return $this->error("The requested theme '$theme->name' file $filename not found");
     
-    if ($theme->name == 'default') {
-      self::setempty($theme);
-    } else {
       $parentname = empty($about['parent']) ? 'default' : $about['parent'];
       $parent = ttheme::instance($parentname);
       $theme->template = $parent->template;
@@ -250,8 +247,8 @@ $path = $this->tagtopath($parent, $tag);
         }
         
         $s = trim($s);
-        if (strbegin($parent, 'sidebar.')) {
-          //$this->setwidgetvalue($parent, $s);
+        if (strbegin($parent, 'sidebar')) {
+          $this->setwidgetvalue($parent, $s);
         }  elseif (isset($this->paths[$parent])) {
           $this->theme->templates[$parent] = $s;
 } elseif (($parent == '') || ($parent == '$template')) {
@@ -264,7 +261,7 @@ $this->theme->templates['index'] = $s;
       }
       
       public function tagtopath($parent, $tag) {
-if (($parent == '') || ($parent == '$template')) return 'index';
+if (($parent == '') || ($tag == '$template')) return 'index';
         foreach ($this->paths as $path => $info) {
 if (strbegin($path, $parent)) {
             if ($tag == $info['tag']) return $path;
@@ -299,12 +296,14 @@ if (strbegin($path, $parent)) {
         if (!preg_match('/^sidebar\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
         $widgetname = $m[1];
         if (($widgetname != 'widget') && (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
-        $path = empty($m[2]) ? '0' : $m[2];
+$path = ttheme::getwidgetpath(empty($m[2]) ? '' : $m[2]);
+if ($path === false) $this->error("Unknown '$path' widget path");
         $this->setwidgetitem($widgetname, $path, $value);
+
         if ($widgetname == 'widget') {
           foreach (self::getwidgetnames() as $widgetname) {
             if ((($widgetname == 'posts') || ($widgetname == 'comments')) &&
-            (($path =='.items.item') || ($path == '.item'))) continue;
+            ($path =='.item')) continue;
             
             $this->setwidgetitem($widgetname, $path, $value);
           }
@@ -314,48 +313,13 @@ if (strbegin($path, $parent)) {
       private function setwidgetitem($widgetname, $path, $value) {
         $sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
         if (!isset($sidebar[$widgetname])) {
-          if (isset($sidebar['widget'])) {
-            $sidebar[$widgetname] = $sidebar['widget'];
-          } else {
-            $sidebar[$widgetname] = array(
-            0 => '',
-            'items' => '',
-            'item' => '',
-            'subitems' => ''
-            );
-            if ($widgetname == 'meta') $widget['classes'] = '';
-          }
+foreach ( array('', '.items', '.item', '.subitems') as $ name) {
+            $sidebar[$widgetname . $name] = isset($sidebar['widget' . $name]) ? $sidebar['widget' . $name] : '';
+}
+            if ($widgetname == 'meta') $sidebar['meta.classes'] = '';
         }
-        
-        $widget = &$sidebar[$widgetname];
-        switch ($path) {
-          case '0':
-          $widget[0] = $value;
-          return;
-          
-          case '.items':
-          $widget['items'] = $value;
-          return;
-          
-          case '.items.item':
-          case '.item':
-          $widget['item'] = $value;
-          return;
-          
-          case '.items.item.subitems':
-          case '.item.subitems':
-          case '.subitems':
-          $widget['subitems'] = $value;
-          return;
-          
-          case '.classes':
-          case '.items.classes':
-          $widget['classes'] = $value;
-          return;
-          
-          default:
-          $this->error("Unknown '$path' widget path");
-        }
+
+$sidebar[$widgetname . $path] = $value;        
       }
       
       public function setcustom($path, $value) {
@@ -386,43 +350,36 @@ if (strbegin($path, $parent)) {
       }
       
       public function afterparse($theme) {
-$theme = $this->theme;
-if (isset($theme->menu->hover)) {
-          if (!is_bool($theme->menu->hover)) $theme->menu->hover = $theme->menu->hover != 'false';
+$templates = &$this->theme->templates;
+if (isset($templates['menu.hover'])) {
+          if (!is_bool($templates['menu.hover'])) $templates['menu.hover ']= $templates['menu.hover'] != 'false';
         } else {
-          $theme->menu->hover = true;
+          $templates['menu.hover'] = true;
         }
-        return;
 
-        $post = &$theme->templates['content']['post'];
-        $excerpt = &$theme->templates['content']['excerpts']['excerpt'];
-        if (empty($excerpt['data'])) $excerpt['date'] = $post['date'];
-        foreach (array('filelist', 'catlinks', 'taglinks') as $name) {
-          foreach ($post[$name] as $key => $value) {
-            if (empty($excerpt[$name][$key])) $excerpt[$name][$key] = $value;
+        $post = 'content.post.';
+        $excerpt = 'content.excerpts.excerpt.';
+        foreach (array('date', 
+'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video',
+'catlinks',         'catlinks.item', 'catlinks.divider', 
+'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
+            if (empty($templates[$excerpt . $name])) $templates[$excerpt . $name] = $templates[$post . $name];
           }
-        }
-        
+
         $sidebars = &$this->theme->templates['sidebars'];
-        $count = substr_count($this->theme->templates[0], '$template.sidebar');
+        $count = substr_count($this->theme->templates['index'], '$template.sidebar');
         if (count($sidebars) > $count) array_splice($sidebar, $count , $count - count($sidebars));
-        foreach ($sidebars as $i => $sidebar) {
-          $widget = $sidebar['widget'];
-          
+for ($i = 0; $i < $count; $i++) {
+          $sidebar = &$this->theme->templates['sidebars'][$i];
           foreach (self::getwidgetnames() as $widgetname) {
-            if (isset($sidebar[$widgetname])) {
-              foreach ($widget as $name => $value) {
-                if (empty($sidebar[$widgetname][$name])) {
-                  $sidebars[$i][$widgetname][$name] = $value;
+foreach (array('', '.items', '.item', '.subitems') as $name) {
+                if (empty($sidebar[$widgetname . $name])) $sidebar[$widgetname . $name] = $sidebar['widget' . $name];
                 }
               }
-            } else {
-              $sidebars[$i][$widgetname] = $widget;
-            }
-          }
-          if (is_string($sidebars[$i]['meta']['classes'])) {
-            $sidebars[$i]['meta']['classes'] = self::getmetaclasses($sidebars[$i]['meta']['classes']);
-          }
+
+          if (is_string($sidebar['meta.classes'])) {
+            $sidebar['meta.classes'] = self::getmetaclasses($sidebar['meta.classes']);
+}
         }
         
       }
@@ -437,159 +394,6 @@ if (isset($theme->menu->hover)) {
           }
         }
         return $result;
-      }
-      
-      public static function setempty(ttheme $theme) {
-        $theme->templates = array (
-        0 => '',
-        'title' => '',
-        'menu' =>
-        array (
-        'submenu' => '',
-        'item' => '',
-        'current' => '',
-        'hover' => true,
-        0 => '',
-        ),
-        'content' =>
-        array (
-        'post' =>
-        array (
-        'more' => '',
-        'rsslink' => '',
-        'catlinks' =>
-        array (
-        'item' => '',
-        'divider' => '',
-        0 => '',
-        ),
-        'taglinks' =>
-        array (
-        'item' => '',
-        'divider' => '',
-        0 => '',
-        ),
-        'filelist' =>
-        array (
-        'file' => '',
-        'image' => '',
-        'preview' => '',
-        'audio' => '',
-        'video' => '',
-        0 => '',
-        ),
-        'prevnext' =>
-        array (
-        'prev' => '',
-        'next' => '',
-        0 => '',
-        ),
-        'templatecomments' =>
-        array (
-        'moderateform' => '',
-        'closed' => '',
-        'form' => '',
-        'confirmform' => '',
-        'holdcomments' => '',
-        'comments' =>
-        array (
-        'count' => '',
-        'id' => '',
-        'comment' =>
-        array (
-        'class1' => '',
-        'class2' => '',
-        'moderate' => '',
-        'dateformat' => '',
-        0 => '',
-        ),
-        'commentsid' => '',
-        0 => '',
-        ),
-        'pingbacks' =>
-        array (
-        'pingback' => '',
-        0 => '',
-        ),
-        ),
-        'dateformat' => '',
-        0 => '',
-        ),
-        'excerpts' =>
-        array (
-        'excerpt' =>
-        array (
-        0 => '',
-        'morelink' => '',
-        'date' => '',
-        'catlinks' =>
-        array (
-        'item' => '',
-        'divider' => '',
-        0 => '',
-        ),
-        'taglinks' =>
-        array (
-        'item' => '',
-        'divider' => '',
-        0 => '',
-        ),
-        'filelist' =>
-        array (
-        'file' => '',
-        'image' => '',
-        'preview' => '',
-        'audio' => '',
-        'video' => '',
-        0 => '',
-        )
-        ),
-        'lite' =>
-        array (
-        'excerpt' => '',
-        0 => '',
-        ),
-        0 => '',
-        ),
-        'navi' =>
-        array (
-        'prev' => '',
-        'next' => '',
-        'link' => '',
-        'current' => '',
-        'divider' => '',
-        0 => '',
-        ),
-        'admin' =>
-        array (
-        'area' => '',
-        'editor' => '',
-        'text' => '',
-        'checkbox' => '',
-        'combo' => '',
-        'hidden' => '',
-        'form' => '',
-        ),
-        'menu' => '',
-        'simple' => '',
-        'notfound' => '',
-        ),
-        'sidebars' =>
-        array (
-        0 =>
-        array (
-        'widget' =>
-        array (
-        'item' => '',
-        'items' => '',
-        'subitems' => '',
-        0 => '',
-        ),
-        ),
-        ),
-        'custom' => array(),
-        'customadmin' => array()
-        );
       }
       
       public static function getpaths() {
