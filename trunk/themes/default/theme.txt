@@ -774,7 +774,7 @@ sitemap- ссылка на карту сайта
 
 Мы закончили с шаблоннами первого сайдбара - все недостающие шаблоны стандартных виджетов будут взяты из шаблона виджета по умолчанию. Добавим второй сайдбар:
 
-$template.sidebar = [
+$template.sidebar1 = [
   $widget = [
   <li>
     <div class="rubric">$title</div>
@@ -789,7 +789,7 @@ $template.sidebar = [
 
 После чего приступаем к обявлению шаблона свежих записей:
 
-sidebar.posts = [
+sidebar1.posts = [
 		<li id="lastposts">
 			<div class="rubric">$title</div>
     $items = [
@@ -803,7 +803,7 @@ sidebar.posts = [
 
 Описание тегов смотрите в комментариях к первому сайдбару. Следующим зададим шаблон свежих комментариев:
 
-sidebar.comments = [
+sidebar1.comments = [
 		<li id="lastcomments">
 			<div class="rubric">$title</div>
     $items = [
@@ -817,7 +817,7 @@ sidebar.comments = [
 
 Теги шаблона виджета свежих комментариев смотрите в первом сайдбаре. Следующий виджет - мета:
 
-sidebar.meta = [
+sidebar1.meta = [
 	<li id="meta">
 				<div class="rubric">$title</div>
 $items = [
