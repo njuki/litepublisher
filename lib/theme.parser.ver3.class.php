@@ -108,23 +108,24 @@ if (strbegin($name, $section)) $result[$name] = $value;
 private function append($section, array $a) {
 $result = &$this->theme->templates;
 foreach ($a as $name => $value) {
-$result[$section . $name === '' ? '' '.' . $name] = $value;
+if ($name != '') $name = '.' . $name;
+$result[$section . $name] = $value;
 }
 }  
 
   private function parsemenu(&$str) {
-    $menu = $this->default->menu;
+
 $result = &$this->theme->templates;
     $s = $this->parsetag($str, 'menulist', '$template.menu');
     if ($s == '') return $this->copy('menu');
-
+    $default = &$this->default->templates;
     $item = trim($this->parsetag($s, 'item', '$item'));
-    $result['menu.submenu'] = $this->parsetag($item, 'submenu', '$submenu', $menu->submenu);
-    $result['menu.item'] = $item != '' ? $item : $menu->item;
-    $result['menu.current'] = $this->parsetag($s, 'current', '', $menu->current);
+    $result['menu.item.submenu'] = $this->parsetag($item, 'submenu', '$submenu', $default['menu.item.submenu']);
+    $result['menu.item'] = $item != '' ? $item : $default['menu.item'];
+    $result['menu.current'] = $this->parsetag($s, 'current', '', $default['menu.current']);
     //fix old version
     if ($this->fixold) {
-      if (strpos($result['menu.submenu'], '%')) $result['menu.submenu'] = sprintf($result['menu.submenu'], '$items');
+      if (strpos($result['menu.item.submenu'], '%')) $result['menu.item.submenu'] = sprintf($result['menu.item.submenu'], '$items');
       if (strpos($result['menu.item'], '%')) $result['menu.item'] = sprintf($result['menu.item'], '$link', '$title', '$submenu');
       if (strpos($result['menu.current'], '%')) $result['menu.current'] = sprintf($result['menu.current'], '$link', '$title', '$submenu');
     }
@@ -149,12 +150,11 @@ $result = &$this->theme->templates;
     $s = $this->deletespaces($s);
     if ($s == '') {
       if (!isset(    $result['menu.hover'])) $result['menu.hover'] = $menu->hover;
-      $result['menu'] = (string) $menu;
+      $result['menu'] = $default['menu'];
     } else {
       if (!isset(    $result['menu.hover'])) $result['menu.hover'] = false;
       $result['menu'] = $s;
     }
-
   }
   
   private function parsecontent(&$str) {
@@ -236,7 +236,7 @@ $this->parsefilesexcerpt($s);
     $default = $this->default->content->excerpts->excerpt;
 $default->tostring = true;
     $result[$path . 'morelink'] = $this->gettag($s, 'more', '', $default->morelink);
-    $result[$path . 'date'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['date']));
+    $result[$path . 'date'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $result['content.post.date']));
     $s = $this->deletespaces($s);
     if ($this->fixold) $s = preg_replace('/\$post\.excerpt([^\w]+)/', '$post.excerptcontent$1', $s);
     $result['content.excerpts.excerpt'] = $s != '' ? $s : (string) $default;
@@ -256,7 +256,7 @@ private function copytags($name) {
 $result = &$this->theme->templates;
 $dst  = 'content.excerpts.excerpt.' . $name;
 $src = 'content.post.' . $name;
-foreach ('', '.item', '.divider') as $key) {
+foreach (array('', '.item', '.divider') as $key) {
 $result[$dst . $key] = $result[$src . $key];
 }
 }
@@ -324,9 +324,9 @@ $default->tostring = true;
   
   private function parsefilesexcerpt(&$str) {
 $result = &$this->theme->templates;
-$files = array();
-foreach ('', 'file', 'image', 'preview', 'audio', 'video') as $name) {
-$files[$name] = $result['content.post.filelist' . $name];
+$files = array('' => $result['content.post.filelist']);
+foreach (array('file', 'image', 'preview', 'audio', 'video') as $name) {
+$files[$name] = $result['content.post.filelist.' . $name];
 }
 
     $s = $this->parsetag($str, 'files', '$post.excerptfilelist');
@@ -350,7 +350,7 @@ $path = 'content.excerpts.excerpt.filelist.';
 $default->tostring = true;
     $result = &$this->theme->templates;
     $result['content.post.prevnext.prev'] = $this->gettag($s, 'prev', '$prev', $default->prev);
-    $result[content.post.prevnext.'next'] = $this->parsetag($s, 'next', '$next', $default->next);
+    $result['content.post.prevnext.next'] = $this->parsetag($s, 'next', '$next', $default->next);
     $s = trim($s);
     $result['content.post.prevnext'] = $s != '' ? $s : (string) $default;
   }
@@ -491,7 +491,7 @@ $path = 'content.post.templatecomments.pingbacks';
     while ($sidebar = $this->parsetag($str, 'sidebar', '$template.sidebar')) {
       $result[] = $this->parsesidebar($sidebar, count($result));
     }
-    if (count($result) == 0) return $this->default->sidebars->array;
+    if (count($result) == 0) return $this->default->templates['sidebars'];
     return $result;
   }
   

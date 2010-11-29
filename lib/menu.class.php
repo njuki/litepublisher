@@ -245,7 +245,7 @@ class tmenus extends titems {
         $items = $this->getsubmenu($this->tree, $current);
       } else {
         $items = '';
-        $tml = $theme->menu->item;
+        $tml = $theme->templates['menu.item'];
         $args = targs::instance();
         $args->submenu = '';
         foreach ($this->tree as $id => $subitems) {
@@ -256,7 +256,7 @@ class tmenus extends titems {
       }
       
       $this->callevent('onitems', array(&$items));
-      $result = str_replace('$item', $items, (string) $theme->menu);
+      $result = str_replace('$item', $items, $theme->templates['menu']);
     }
     $this->callevent('onmenu', array(&$result));
     return $result;
@@ -265,16 +265,16 @@ class tmenus extends titems {
   private function getsubmenu(&$tree, $current) {
     $result = '';
     $theme = ttheme::instance();
-    $menu = $theme->menu;
-    $tml = $menu->item;
+    $tml = $theme->templates['menu.item'];
+$tml_submenu = $theme->templates['menu.item.submenu'];
     $args = targs::instance();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
-      $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $menu->submenu);
+      $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $tml_submenu);
       $this->callevent('onsubitems', array($id, &$subitems));
       $args->submenu = $submenu;
       $args->add($this->items[$id]);
-      $result .= $theme->parsearg($current == $id ?  $menu->current : $tml, $args);
+      $result .= $theme->parsearg($current == $id ?  $theme->templates['menu.current'] : $tml, $args);
     }
     return $result;
   }
