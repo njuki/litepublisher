@@ -43,7 +43,7 @@ $this->theme = $theme;
     $theme->title = $this->parsetitle($s);
 $this->parsemenu($s);
 $this->parsecontent($s);
-    $theme->sidebars = $this->parsesidebars($s);
+    $theme->templates['sidebars'] = $this->parsesidebars($s);
     $s = $this->fixhead($s);
     $s = $this->deletespaces($s);
     $theme->templates['index'] = $s != ''? $s :  $this->default->templates['index'];
@@ -163,9 +163,9 @@ $result = &$this->theme->templates;
     if ($s == '') return $this->copy('content');
 
 $this->parsepost($s);
-    $result['excerpts'] = $this->parse_excerpts($s, $result['post']);
+$this->parse_excerpts($s);
 $this->parsenavi($s);
-    $result['admin'] = $this->parseadmin($s);
+$this->parseadmin($s);
 
     $default = $this->default->templates;
     $result['content.menu']= $this->gettag($s, 'menu', '', $default['content.menu']);
@@ -178,68 +178,68 @@ $this->parsenavi($s);
 
   }
   
-  private function parse_excerpts(&$str, array &$post) {
+  private function parse_excerpts(&$str) {
     $s = $this->parsetag($str, 'excerpts', '');
-    if ($s == '') return $this->default->content->excerpts->array;
-    $result = array();
-    $result['excerpt'] = $this->parse_excerpt($s, $post);
-    $result['lite'] = $this->parselite($s);
+    if ($s == '') return $this->copy('content.excerpts');
+$this->parse_excerpt($s);
+$this->parselite($s);
     $s = $this->deletespaces($s);
-    $result[0] = $s != '' ? $s : (string) $this->default->content->excerpts;
-    return $result;
+    $result = &$this->theme->templates;
+    $result['content.excerpts'] = $s != '' ? $s : (string) $this->default->content->excerpts;
   }
   
   private function parselite(&$str) {
-    $default = $this->default->content->excerpts->lite;
     $s= $this->gettag($str, 'lite', '');
-    if ($s == '') return $default->array;
-    $result = array();
-    $result['excerpt'] = $this->parsetag($s, 'excerpt', '$items', $default->excerpt);
+    if ($s == '') return $this->copy('content.excerpts.lite');
+    $default = $this->default->content->excerpts->lite;
+$default->tostring = true;
+    $result = &$this->theme->templates;
+    $result['content.excerpts.lite.excerpt'] = $this->parsetag($s, 'excerpt', '$items', $default->excerpt);
     $s = $this->deletespaces($s);
-    $result[0] = $s != '' ? $s : (string) $default;
-    return $result;
+    $result['content.excerpts.lite'] = $s != '' ? $s : (string) $default;
   }
   
-  private function parse_excerpt(&$str, array &$post) {
+  private function parse_excerpt(&$str) {
     $s = $this->parsetag($str, 'excerpt', '$excerpt');
-    if ($s == '') return $this->default->content->excerpts->excerpt->array;
-    $result = array();
+    if ($s == '') return $this->copy('content.excerpts.excerpt');
+    $result = &$this->theme->templates;
+$path = 'content.excerpts.excerpt.';
     $categories = $this->parse_post_tags($s, 'categories', '$post.catlinks');
     $tags = $this->parse_post_tags($s, 'tags', '$post.taglinks');
     $common = $this->parse_post_tags($s, 'commontags', '');
     
     if ($categories) {
-      $result['catlinks'] = $categories;
+$this->append($path . 'catlinks', $categories);
     } elseif ($common) {
-      $result['catlinks'] = $common;
-      $result['catlinks'][0] = str_replace('commontags', 'categories', $common[0]);
+ $this->append($path . 'catlinks', $common);
+      $result[$path . 'catlinks'] = str_replace('commontags', 'categories', $common['']);
     } elseif ($tags) {
-      $result['catlinks'] = $tags;
-      $result['catlinks'][0] = str_replace('tags', 'categories', $tags[0]);
+$this->append($path . 'catlinks', $tags);
+      $result[$path . 'catlinks'] = str_replace('tags', 'categories', $tags['']);
     } else {
-      $result['catlinks'] = $post['catlinks'];
+$this->copytags('catlinks');
     }
     
     if ($tags) {
-      $result['taglinks'] = $tags;
+$this->append($path . 'taglinks', $tags);
     } elseif ($common) {
-      $result['taglinks'] = $common;
-      $result['taglinks'][0] = str_replace('commontags', 'tags', $common[0]);
+      $this->append($path . 'taglinks',  $common);
+      $result[$path . 'taglinks'][0] = str_replace('commontags', 'tags', $common['']);
     } elseif ($categories) {
-      $result['taglinks'] = $categories;
-      $result['taglinks'][0] = str_replace('categories', 'tags', $categories[0]);
+$this->append($path . 'taglinks', $categories);
+      $result[$path . 'taglinks'] = str_replace('categories', 'tags', $categories['']);
     } else {
-      $result['taglinks'] = $post['taglinks'];
+$this->copytags('taglinks');
     }
     
-    $result['filelist'] = $this->parsefilesexcerpt($s, $post['filelist']);
+$this->parsefilesexcerpt($s);
     $default = $this->default->content->excerpts->excerpt;
-    $result['morelink'] = $this->gettag($s, 'more', '', $default->morelink);
-    $result['date'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['date']));
+$default->tostring = true;
+    $result[$path . 'morelink'] = $this->gettag($s, 'more', '', $default->morelink);
+    $result[$path . 'date'] = self::strftimetodate($this->parsetag($s, 'date', '$post.excerptdate', $post['date']));
     $s = $this->deletespaces($s);
     if ($this->fixold) $s = preg_replace('/\$post\.excerpt([^\w]+)/', '$post.excerptcontent$1', $s);
-    $result[0] = $s != '' ? $s : (string) $default;
-    return $result;
+    $result['content.excerpts.excerpt'] = $s != '' ? $s : (string) $default;
   }
   
   private function parse_post_tags(&$s, $name, $replace) {
@@ -248,9 +248,18 @@ $this->parsenavi($s);
     $result = array();
     $result['item'] = trim($this->parsetag($section, 'item', '$items'));
     $result['divider'] = $this->parsetag($section, 'divider', '');
-    $result[0] = trim($section);
+    $result[''] = trim($section);
     return $result;
   }
+
+private function copytags($name) {
+$result = &$this->theme->templates;
+$dst  = 'content.excerpts.excerpt.' . $name;
+$src = 'content.post.' . $name;
+foreach ('', '.item', '.divider') as $key) {
+$result[$dst . $key] = $result[$src . $key];
+}
+}
   
   private function parsepost(&$str) {
     $s = $this->parsetag($str, 'post', '');
@@ -266,10 +275,10 @@ $result = &$this->theme->templates;
 $this->append('content.post.catlinks', $categories);
     } elseif ($common) {
 $this->append('content.post.catlinks', $common);
-      $result['content.post.catlinks'] = str_replace('commontags', 'categories', $common[0]);
+      $result['content.post.catlinks'] = str_replace('commontags', 'categories', $common['']);
     } elseif ($tags) {
 $this->append('content.post.catlinks', $tags);
-      $result['content.post.catlinks'] = str_replace('tags', 'categories', $tags[0]);
+      $result['content.post.catlinks'] = str_replace('tags', 'categories', $tags['']);
     } else {
 $this->copy('content.post.catlinks');
     }
@@ -278,10 +287,10 @@ $this->copy('content.post.catlinks');
 $this->append('content.post.taglinks', $tags);
     } elseif ($common) {
 $this->append('content.post.taglinks', $common);
-      $result['content.post.taglinks'] = str_replace('commontags', 'tags', $common[0]);
+      $result['content.post.taglinks'] = str_replace('commontags', 'tags', $common['']);
     } elseif ($categories) {
 $this->append('content.post.taglinks', $categories);
-      $result['content.post.taglinks'] = str_replace('categories', 'tags', $categories[0]);
+      $result['content.post.taglinks'] = str_replace('categories', 'tags', $categories['']);
     } else {
 $this->copy('content.post.taglinks');
     }
@@ -313,20 +322,25 @@ $default->tostring = true;
     $result[$to] = $s != '' ? $s : (string) $default;
   }
   
-  private function parsefilesexcerpt(&$str, array &$files) {
+  private function parsefilesexcerpt(&$str) {
+$result = &$this->theme->templates;
+$files = array();
+foreach ('', 'file', 'image', 'preview', 'audio', 'video') as $name) {
+$files[$name] = $result['content.post.filelist' . $name];
+}
+
     $s = $this->parsetag($str, 'files', '$post.excerptfilelist');
-    if ($s == '') return $files;
+    if ($s == '') return $this->append('content.excerpts.excerpt.filelist', $files);
     $default = new tarray2prop();
     $default ->array = $files;
-    $result = array();
-    $result['file'] = $this->gettag($s, 'file', '$items', $default->file);
-    $result['image'] = $this->gettag($s, 'image', '', $default->image);
-    $result['preview'] = $this->gettag($s, 'preview', '', $default->preview);
-    $result['audio'] = $this->gettag($s, 'audio', '', $default->audio);
-    $result['video'] = $this->parsetag($s, 'video', '', $default->video);
+$path = 'content.excerpts.excerpt.filelist.';
+    $result[$path . 'file'] = $this->gettag($s, 'file', '$items', $default->file);
+    $result[$path . 'image'] = $this->gettag($s, 'image', '', $default->image);
+    $result[$path . 'preview'] = $this->gettag($s, 'preview', '', $default->preview);
+    $result[$path . 'audio'] = $this->gettag($s, 'audio', '', $default->audio);
+    $result[$path . 'video'] = $this->parsetag($s, 'video', '', $default->video);
     $s = trim($s);
-    $result[0] = $s != '' ? $s : $files[0];
-    return $result;
+    $result[trim($path, '.')] = $s != '' ? $s : $files[''];
   }
   
   private function parseprevnext(&$str) {
@@ -364,18 +378,18 @@ $path = 'content.navi.';
   }
   
   private function parseadmin(&$str) {
-    $default = $this->default->content->admin;
     $s = $this->parsetag($str, 'admin', '');
-    if ($s == '') return $default->array;
-    $result = array();
-    $result['area'] = trim($this->gettag($s, 'area', '', $default->area));
-    $result['editor'] = trim($this->gettag($s, 'editor', '', $default->editor));
-    $result['checkbox'] = trim($this->gettag($s, 'checkbox', '', $default->checkbox));
-    $result['text'] = trim($this->gettag($s, 'text', '', $default->text));
-    $result['combo'] = trim($this->gettag($s, 'combo', '', $default->combo));
-    $result['hidden'] = trim($this->gettag($s, 'hidden', '', $default->hidden));
-    $result['form'] = trim($this->gettag($s, 'form', '', $default->form));
-    return $result;
+    if ($s == '') return $this->copy('content.admin');
+    $default = $this->default->content->admin;
+$default->tostring = true;
+    $result = &$this->theme->templates;
+$path = 'content.admin.';
+    $result[$path . 'editor'] = trim($this->gettag($s, 'editor', '', $default->editor));
+    $result[$path . 'checkbox'] = trim($this->gettag($s, 'checkbox', '', $default->checkbox));
+    $result[$path . 'text'] = trim($this->gettag($s, 'text', '', $default->text));
+    $result[$path . 'combo'] = trim($this->gettag($s, 'combo', '', $default->combo));
+    $result[$path . 'hidden'] = trim($this->gettag($s, 'hidden', '', $default->hidden));
+    $result[$path . 'form'] = trim($this->gettag($s, 'form', '', $default->form));
   }
   
   private function parsetemplatecomments(&$str) {
