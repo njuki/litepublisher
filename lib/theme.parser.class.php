@@ -376,7 +376,7 @@ foreach (array('', '.items', '.item', '.subitems') as $name) {
             $sidebar['meta.classes'] = self::getmetaclasses($sidebar['meta.classes']);
 }
         }
-        
+
       }
       
       public static function getmetaclasses($s) {

@@ -24,11 +24,7 @@ class tthemeparserver3 extends tevents {
   public function parse(ttheme $theme) {
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . 'index.tml';
     if (!file_exists($filename))  return false;
-    if ($theme->name == 'default') {
-$this->error("Default theme must benew version");
-      //$this->default = new tdefaulttheme();
-}
-
+    if ($theme->name == 'default') $this->error('Default theme must be in new format');
       $parser = tthemeparser::instance();
       $about = $parser->getabout($theme->name);
       if (empty($about['parent'])) {
@@ -40,6 +36,7 @@ $this->error("Default theme must benew version");
 
     $s = tthemeparser::getfile($filename);
 $this->theme = $theme;
+$theme->templates = $this->default->templates;
     $theme->title = $this->parsetitle($s);
 $this->parsemenu($s);
 $this->parsecontent($s);
@@ -395,13 +392,15 @@ $path = 'content.admin.';
   private function parsetemplatecomments(&$str) {
     $s = $this->parsetag($str, 'templatecomments', '$post.templatecomments');
     if ($s == '') return $this->copy('content.post.templatecomments');
-    $default = $this->default->content->post->templatecomments->array;
+    $default = $this->default->templates;;
     $result = &$this->theme->templates;
 $path = 'content.post.templatecomments.';
         $src = $this->parsetag($s, 'comments', '');
 if ($src == '') {
 $this->copy($path . 'comments');
 } else {
+
+    $oldhold = $this->parsetag($src, 'hold', '');
 $this->parsecomments($src);
 }
     
@@ -434,7 +433,7 @@ $this->copy($path . 'pingbacks');
     $result[$path . 'comments.idhold'] = 'hold' . $id;
     $hold = str_replace("id=\"$id\"", "id=\"hold$id\"", $hold);
     $hold = str_replace('<a name="comments"', '<a name="holdcomments"', $hold);
-    $hold = $result[$path . 'comments.hold'] . $hold;
+    if (isset($oldhold)) $hold = $oldhold . $hold;
     $result[$path . 'holdcomments'] = $hold;
   }
   
@@ -445,9 +444,6 @@ $path = 'content.post.templatecomments.comments.';
     
     $src = $this->parsetag($s, 'count', '');
     $result[$path . 'count'] = $src == '' ? $default[$path . 'count'] : $src;
-    
-    $src = $this->parsetag($s, 'hold', '');
-    $result[$path . 'hold'] = $src == '' ? $default[$path . 'hold'] : $src;
     
     if ($src = $this->parsetag($s, 'comment', '$comment')) {
 $this->parsecomment($src);
@@ -497,23 +493,23 @@ $path = 'content.post.templatecomments.pingbacks';
   
   private function parsesidebar($s, $sidebar) {
     $result = array();
-    $default = $this->default->sidebars->array[$sidebar];
-    $isdef = $this->default instanceof tdefaulttheme;
+    $default = &$this->default->templates['sidebars'][$sidebar];
+
     if ($widget = $this->parsetag($s, 'widget', '$items')) {
-      $result['widget'] = $this->parsewidget($widget, 'widget', $sidebar);
+$this->parsewidget($result, 'widget', $sidebar, $widget);
     } else {
-      $result['widget'] = $default['widget'];
+$this->copywidget($result, 'widget', $default, 'widget');
     }
     
     foreach (tthemeparser::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
-        $result[$name] = $this->parsewidget($widget, $name, $sidebar);
+$this->parsewidget($result, $name, $sidebar, $widget);
       } else {
-        $result[$name] = $result['widget'];
+        $this->copywidget($result, $name, $result, 'widget');
         if (($name == 'posts') || ($name == 'comments')) {
-          $result[$name]['item'] = $default[$name]['item'];
+          $result[$name . '.item']= $default[$name . '.item'];
         } elseif ($name == 'meta') {
-          $result['meta']['classes'] = $default['meta']['classes'];
+          $result['meta.classes'] = $default['meta.classes'];
         }
       }
     }
@@ -522,14 +518,15 @@ $path = 'content.post.templatecomments.pingbacks';
     //$result[0] = $s != '' ? $s : $default[0];
     return $result;
   }
-  
-  private function parsewidget($s, $name, $sidebar) {
-    if ($this->default instanceof tdefaulttheme) {
-      $default = array();
-    } else {
-      $default = $this->default->sidebars->array[$sidebar][$name];
-    }
-    $result = array();
+
+private function copywidget(&$result, $name, $default, $defname) {
+foreach (array('', '.item', '.items', '.subitems') as $key) {
+$result[$name . $key] = $default[$defname . $key];
+}
+}
+
+  private function parsewidget(&$result, $name, $sidebar, $s) {
+      $default = $this->default->templates['sidebars'][$sidebar];
     if ($items = $this->parsetag($s, 'items', '$items')) {
       if ($item = $this->parsetag($items, 'item', '$item')) {
         if ($this->fixold) {
@@ -540,17 +537,17 @@ $path = 'content.post.templatecomments.pingbacks';
           '$anchor' => '$text'
           ));
         }
-        $result['item'] = trim($item);
+        $result[$name . '.item'] = trim($item);
       } else {
-        $result['item'] = $default['item'];
+        $result[$name . '.item'] = $default[$name . '.item'];
       }
-      if ($name == 'meta') $result['classes'] = $this->parsemetawidget($items, $sidebar);
+      if ($name == 'meta') $result['meta.classes'] = $this->parsemetawidget($items, $sidebar);
       if ($this->fixold) $items = sprintf($items, '$item');
-      $result['items'] = $this->deletespaces($items);
+      $result[$name . '.items'] = $this->deletespaces($items);
     } else {
-      $result['items'] = $default['items'];
-      $result['item'] = $default['item'];
-      if ($name == 'meta') $result['classes'] = $default['classes'];
+      $result[$name . '.items'] = $default[$name . '.items'];
+      $result[$name . '.item'] = $default[$name . '.item'];
+      if ($name == 'meta') $result['meta.classes'] = $default['meta.classes'];
     }
     
     $s = $this->deletespaces($s);
@@ -558,15 +555,13 @@ $path = 'content.post.templatecomments.pingbacks';
       $s = sprintf($s, '$title', '$items');
       $s = str_replace('$content', '$items', $s);
     }
-    $result[0] = $s != '' ? $s : $default[0];
-    return $result;
+    $result[$name] = $s != '' ? $s : $default[$name];
+$result[$name . '.subitems'] = $default[$name . '.subitems'];
   }
   
   private function parsemetawidget(&$str, $sidebar) {
-    $default = $this->default instanceof tdefaulttheme ? array() : $this->default->sidebars->array[$sidebar]['meta']['classes'];
     $s = $this->parsetag($str, 'metaclasses', '');
-    if ($s == '') return $default;
-    return tthemeparser::getmetaclasses($s);
+return $s == '' ? $this->default->templates['sidebars'][$sidebar]['meta.classes'] : tthemeparser::getmetaclasses($s);
   }
   
   public static function strftimetodate($format) {
