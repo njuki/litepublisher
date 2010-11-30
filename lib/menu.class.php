@@ -293,7 +293,8 @@ class tmenu extends titem implements  itemplate {
   public $formresult;
   
   public static function instance($id = 0) {
-    return self::iteminstance(__class__, $id);
+$class = $id == 0 ? __class__ : self::getowner()->items[$id]['class'];
+    return self::iteminstance($class,  $id);
   }
   
   public static function iteminstance($class, $id = 0) {

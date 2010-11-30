@@ -219,12 +219,11 @@ class tcomments extends titems {
       //add empty list of hold comments
       $args = targs::instance();
       $args->comment = '';
-      $result .= $theme->content->post->templatecomments->holdcomments($args);
+      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
     $args = targs::instance();
     $args->comments = $result;
-    $result = $theme->content->post->templatecomments->moderateform($args);
-    return $result;
+    return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
   }
   
   public function dogetcontent($hold, $idauthor) {
@@ -244,20 +243,20 @@ class tcomments extends titems {
     if (count($items) > 0) {
       $args = targs::instance();
       $args->from = $from;
-      $comment = new TComment($this);
+      $comment = new tcomment($this);
       ttheme::$vars['comment'] = $comment;
       if ($hold) $comment->status = 'hold';
       $lang = tlocal::instance('comment');
       
       if ($ismoder) {
         tlocal::loadlang('admin');
-        $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
+      $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
       } else {
         $moderate = '';
       }
       
-      $tmlcomment= $theme->content->post->templatecomments->comments->comment;
-      $tml = strtr($tmlcomment->array[0], array(
+    $tmlcomment= $theme->gettag('content.post.templatecomments.comments.comment');;
+    $tml = strtr((string) $tmlcomment, array(
       '$moderate' => $moderate,
       '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
       ));
@@ -275,18 +274,18 @@ class tcomments extends titems {
         $result .= $theme->parsearg($tml, $args);
       }
     }//if count
-    
+            unset(ttheme::$vars['comment']);
     if (!$ismoder) {
       if ($result == '') return '';
     }
     
     if ($hold) {
-      $tml = (string) $theme->content->post->templatecomments->holdcomments;
+      $tml = $theme->templates['content.post.templatecomments.holdcomments'];
     } else {
-      $tml = (string) $theme->content->post->templatecomments->comments;
+      $tml = $theme->templates['content.post.templatecomments.comments'];
     }
     
-    $args = targs::instance();
+
     $args->from = $from + 1;
     $args->comment = $result;
     return $theme->parsearg($tml, $args);
