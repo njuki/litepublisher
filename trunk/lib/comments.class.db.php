@@ -173,12 +173,12 @@ class tcomments extends titems {
       //add empty list of hold comments
       $args = targs::instance();
       $args->comment = '';
-      $result .= $theme->content->post->templatecomments->holdcomments($args);
+      $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
     
     $args = targs::instance();
     $args->comments = $result;
-    return $theme->content->post->templatecomments->moderateform($args);
+    return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
   }
   
   public function getholdcontent($idauthor) {
