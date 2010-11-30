@@ -94,6 +94,7 @@ class tposteditor extends tadminmenu {
     
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->form($args);
+unset(ttheme::$vars['post']);
     return $html->fixquote($result);
   }
   
