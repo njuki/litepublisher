@@ -33,19 +33,22 @@ public function gettitle() {}
   
   public static function html($content) {
     $class = __class__;
-    $self = new $class();
+    $self = self::instance();
     $self->html = $content;
     $template = ttemplate::instance();
     return $template->request($self);
   }
   
   public static function content($content) {
-    $class = __class__;
-    $self = new $class();
+    $self = self::instance();
     $self->text = $content;
     $template = ttemplate::instance();
     return $template->request($self);
   }
+
+public static function gettheme() {
+return tview::getview(self::instance())->theme;
+}
   
 }//class
 

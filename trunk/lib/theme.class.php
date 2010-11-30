@@ -102,7 +102,14 @@ return;
     }
     return parent::__set($name, $value);
   }
-  
+
+public function gettag($path) {
+    if (!array_key_exists($path, $this->templates)) $this->error(sprintf('Path "%s" not found', $path));
+$this->themeprops->setpath($path);
+$this->themeprops->tostring = true;
+return $this->themeprops;
+}
+
   public function getsidebarscount() {
     return count($this->templates['sidebars']);
   }
@@ -334,7 +341,6 @@ $this->tostring = false;
 public function error($path) {
       litepublisher::$options->trace(sprintf('Path "%s" not found', $path));
       litepublisher::$options->showerrors();
-var_dump($this->root);
 }
 
 public function getpath($name) {

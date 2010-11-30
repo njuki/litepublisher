@@ -352,6 +352,9 @@ if (isset($templates['menu.hover'])) {
           $templates['menu.hover'] = true;
         }
 
+if (!isset($templates['content.post.templatecomments'])) $templates['content.post.templatecomments'] = '';
+if (!isset($templates['content.post.templatecomments.confirmform'])) $this->error('tml not');
+
         $post = 'content.post.';
         $excerpt = 'content.excerpts.excerpt.';
         foreach (array('date', 

@@ -209,12 +209,12 @@ class tcomments extends titems {
     $theme = ttheme::instance();
     if ($ismoder = $this->moderator) {
       tlocal::loadlang('admin');
-      $moderate =$theme->content->post->templatecomments->comments->comment->moderate;
+      $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
     } else {
       $moderate = '';
     }
-    $tmlcomment= $theme->content->post->templatecomments->comments->comment;
-    $tml = strtr($tmlcomment->array[0], array(
+    $tmlcomment= $theme->gettag('content.post.templatecomments.comments.comment');;
+    $tml = strtr((string) $tmlcomment, array(
     '$moderate' => $moderate,
     '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
     ));
@@ -227,18 +227,17 @@ class tcomments extends titems {
       $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
-    
+        unset(ttheme::$vars['comment']);
     if (!$ismoder) {
       if ($result == '') return '';
     }
     
     if ($status == 'hold') {
-      $tml = (string) $theme->content->post->templatecomments->holdcomments;
+      $tml = $theme->templates['content.post.templatecomments.holdcomments'];
     } else {
-      $tml = (string) $theme->content->post->templatecomments->comments;
+      $tml = $theme->templates['content.post.templatecomments.comments'];
     }
     
-    $args = targs::instance();
     $args->from = $from + 1;
     $args->comment = $result;
     return $theme->parsearg($tml, $args);
@@ -286,7 +285,7 @@ class tcomment extends tdata {
   
   public function getdate() {
     $theme = ttheme::instance();
-    return tlocal::date($this->posted, $theme->comment->dateformat);
+    return tlocal::date($this->posted, $theme->templates['content.post.templatecomments.comments.comment.date']);
   }
   
   public function Getlocalstatus() {

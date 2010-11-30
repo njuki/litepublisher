@@ -420,7 +420,7 @@ class TComment {
   
   public function getdate() {
     $theme = ttheme::instance();
-    return TLocal::date($this->posted, $theme->comment->dateformat);
+    return tlocal::date($this->posted, $theme->templates['content.post.templatecomments.comments.comment.date']);
   }
   
   public function getlocalstatus() {
