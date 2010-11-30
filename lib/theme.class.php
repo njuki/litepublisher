@@ -249,9 +249,8 @@ return $this->themeprops;
     if (count($items) == 0) return '';
     $result = '';
     if ($tml == '') $tml = $this->getwidgetitem('posts', $sidebar);
-    
     foreach ($items as $id) {
-      self::$vars['post'] = tpost::instance($id);
+self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
 unset(self::$vars['post']);
