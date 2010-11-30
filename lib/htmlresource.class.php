@@ -64,6 +64,7 @@ class tadminhtml {
   public function parsearg($s, targs $args) {
     $theme = ttheme::instance();
     $admin = $theme->content->admin;
+$admin->tostring = true;
     // parse tags [form] .. [/form]
     if (is_int($i = strpos($s, '[form]'))) {
       $replace = substr($admin->form, 0, strpos($admin->form, '$items'));
@@ -88,7 +89,6 @@ class tadminhtml {
             $args->data[$varname] = '';
           }
         }
-        
         $tag = strtr($admin->$type, array(
         '$name' => $name,
         '$value' =>$varname
@@ -96,7 +96,7 @@ class tadminhtml {
         $s = str_replace($item[0], $tag, $s);
       }
     }
-    
+
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
