@@ -107,9 +107,6 @@ class tpost extends titem implements  itemplate {
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
     unset($this->aprev, $this->anext, $this->ameta, $this->_theme);
-    if (($this->id > 0) && isset(ttheme::$vars['post']) && ($this == ttheme::$vars['post'])) {
-unset(ttheme::$vars['post']);
-}
     parent::free();
   }
   
