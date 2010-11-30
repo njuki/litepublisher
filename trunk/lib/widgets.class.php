@@ -312,7 +312,6 @@ return $this->getsidebarindex($context, $view, $this->currentsidebar++);
     if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sidebar));
     $this->callevent('ongetwidgets', array(&$items, $sidebar));
     $result = $this->getsidebarcontent($items, $sidebar, !$view->customsidebar && $view->disableajax);
-    //if ($result != '') $result = str_replace('$items', $result, (string) $theme->sidebars->$sidebar);
     $this->callevent('onsidebar', array(&$result, $sidebar));
     return $result;
   }
