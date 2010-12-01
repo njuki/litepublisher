@@ -1,5 +1,5 @@
 <?php
-set_time_limit(1);
+//set_time_limit(1);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -54,7 +54,7 @@ public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
 try {
   litepublisher::init();
 if (litepublisher::$domain== 'fireflyblog.ru') {
-//define('dbversion' , false);
+define('dbversion' , false);
 litepublisher::$paths->data .= 'fire\\';
 }
 
@@ -77,7 +77,7 @@ tstorage::loaddata();
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
-ttheme::clearcache();
+//ttheme::clearcache();
 //tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
@@ -104,5 +104,5 @@ echo "\n", microtime(true) - litepublisher::$microtime, "\n";
 echo tfilestorage::$time, "\n";
 echo tfilestorage::$time2, "\n";
 */
-//echo "\n", round(microtime(true) - litepublisher::$microtime, 2), "\n";
+echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 ?>

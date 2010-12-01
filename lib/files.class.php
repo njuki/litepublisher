@@ -103,11 +103,11 @@ class tfiles extends titems {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
     $theme = ttheme::instance();
     return $this->getlist($list, $excerpt ?
-    $theme->content->excerpts->excerpt->filelist->array :
-    $theme->content->post->filelist->array);
+    $theme->gettag('content.excerpts.excerpt.filelist') :
+    $theme->gettag('content.post.filelist')
   }
   
-  public function getlist(array $list, array $templates) {
+  public function getlist(array $list,  $templates) {
     if (count($list) == 0) return '';
     $result = '';
     if ($this->dbversion) {
@@ -117,10 +117,16 @@ class tfiles extends titems {
     
     //sort by media type
     $items = array();
+$types = array(
+'file' => $templates->file
+'preview' => $templates->preview
+);
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
-      $items[$item['media']][] = $id;
+$type = $item['media'];
+      $items[$type][] = $id;
+if (!isset($types[$type])) $types[$type] = isset($templates->$type) ? $templates->$type : $templates->file;
     }
     
     $theme = ttheme::instance();
@@ -140,22 +146,21 @@ class tfiles extends titems {
           if ($preview->media === 'image') {
             $preview->id = $item['preview'];
             $preview->link = $url . $preview->filename;
-            $args->preview = $theme->parsearg($templates['preview'], $args);
+            $args->preview = $theme->parsearg($types['preview'], $args);
           } elseif($type == 'image') {
             $preview->array = $item;
             $preview->id = $id;
             $preview->link = $url . $preview->filename;
-            $args->preview = $theme->parsearg($templates['preview'], $args);
+            $args->preview = $theme->parsearg($types['preview'], $args);
           }
         }
         
-        $tml = empty($templates[$type]) ? $templates['file'] : $templates[$type];
-        $result .= $theme->parsearg($tml, $args);
+        $result .= $theme->parsearg($types[$type], $args);
       }
     }
     
     unset(ttheme::$vars['preview'], $preview);
-    return str_replace('$file', $result, $theme->parse($templates[0]));
+    return str_replace('$file', $result, $theme->parse((string) $templates));
   }
   
   public function postedited($idpost) {

@@ -234,6 +234,7 @@ return $this->themeprops;
     }
     
     $result = '';
+      self::$vars['lang'] = tlocal::instance('default');
     $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
       self::$vars['post'] = tpost::instance($id);
