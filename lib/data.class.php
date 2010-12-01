@@ -298,10 +298,12 @@ tfiler::log('Storage locked, data not saved');
 
 class tarray2prop {
   public $array;
+public function __construct(array $a = null) { $this->array = $a; }
+public function __destruct() { unset($this->array); }
 public function __get($name) { return $this->array[$name]; }
 public function __set($name, $value) { $this->array[$name] = $value; }
-public function __tostring() { return $this->array[0]; }
 public function __isset($name) { return array_key_exists($name, $this->array); }
+public function __tostring() { return $this->array['']; }
 }//class
 
 function sqldate($date = 0) {

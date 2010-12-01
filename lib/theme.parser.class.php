@@ -393,7 +393,53 @@ foreach (array('', '.items', '.item', '.subitems') as $name) {
         }
         return $result;
       }
-      
+
+public static function diff(ttheme $theme, $dir = '') {
+if ($theme->name == 'default') return false;
+$result = '';
+if ($dir == '') $dir = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR;
+$parent = ttheme::getinstance($theme->parent == '' ? 'default' : $theme->parent);
+if ($theme->templates['index'] != $parent->templates['index']) {
+file_put_contents($dir . 'index.htm', $theme->templates['index']);
+$result .= '$template = {@import(index.htm)}';
+$result .= "\n";
+}
+
+foreach ($theme->templates as $name => $value) {
+if ($name == 'index') continue;
+if (is_array($value)) continue;
+$value = trim($value);
+if ($value == trim($parent->templates[$name])) continue;
+if (strend($name, '.date')) {
+if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::$data['datetime']['dateformat'])) continue;
+}
+$result .= "\$template.$name = [$value]\n\n";
+
+}
+
+for ($i =0; $i < count($theme->templates['sidebars']); $i++ ) {
+$sidebar = &$theme->templates['sidebars'][$i];
+$parentsidebar =&$parent->templates['sidebars'][$i];
+foreach ($sidebar as $name => $value) {
+if (is_string($value)) {
+$value = trim($value);
+if ($value == trim($parentsidebar[$name])) continue;
+} else {
+if (count(array_diff_assoc($value, $parentsidebar[$name])) == 0) continue;
+$a = array_map(create_function('$k, $v', 'return "$k=$v";'),
+array_keys($value), array_values($value));
+$value = implode(',', $a);
+}
+
+$result .= $i == 0 ? 'sidebar.' : "sidebar$i.";
+$result .= "$name = [$value]\n\n";
+}
+}
+
+file_put_contents($dir . 'theme.txt', $result);
+return $result;
+}
+
       public static function getpaths() {
         return array(
         'index' => array(
