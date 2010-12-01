@@ -110,6 +110,15 @@ $this->themeprops->tostring = true;
 return $this->themeprops;
 }
 
+public function reg($exp) {
+if (!strpos($exp, '\.')) $exp = str_replace('.', '\.', $exp);
+$result = array();
+foreach ($this->templates as $name => $val) {
+if (preg_match($exp, $name)) $result[$name] = $val;
+}
+return $result;
+}
+
   public function getsidebarscount() {
     return count($this->templates['sidebars']);
   }
