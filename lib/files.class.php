@@ -104,7 +104,7 @@ class tfiles extends titems {
     $theme = ttheme::instance();
     return $this->getlist($list, $excerpt ?
     $theme->gettag('content.excerpts.excerpt.filelist') :
-    $theme->gettag('content.post.filelist')
+    $theme->gettag('content.post.filelist'));
   }
   
   public function getlist(array $list,  $templates) {
@@ -118,7 +118,7 @@ class tfiles extends titems {
     //sort by media type
     $items = array();
 $types = array(
-'file' => $templates->file
+'file' => $templates->file,
 'preview' => $templates->preview
 );
     foreach ($list as $id) {
@@ -167,7 +167,7 @@ if (!isset($types[$type])) $types[$type] = isset($templates->$type) ? $templates
     $post = tpost::instance($idpost);
     $this->itemsposts->setitems($idpost, $post->files);
   }
-  
+
 }//class
 
 class tfileitems extends titemsposts {
