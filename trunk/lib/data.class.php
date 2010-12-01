@@ -268,7 +268,15 @@ class tstorage extends tfilestorage {
   public static function savemodified() {
     if (self::$modified) {
       if (self::$disabled) return false;
+$lock = litepublisher::$paths->data .'storage.lok';
+    if (($fh = @fopen($lock, 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
       self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+      flock($fh, LOCK_UN);
+      fclose($fh);
+@chmod($lock, 0666);
+} else {
+tfiler::log('Storage locked, data not saved');
+}
       self::$modified = false;
       return true;
     }

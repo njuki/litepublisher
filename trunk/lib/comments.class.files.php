@@ -240,8 +240,8 @@ class tcomments extends titems {
     
     $ismoder = $this->moderator;
     $theme = ttheme::instance();
-    if (count($items) > 0) {
       $args = targs::instance();
+    if (count($items) > 0) {
       $args->from = $from;
       $comment = new tcomment($this);
       ttheme::$vars['comment'] = $comment;

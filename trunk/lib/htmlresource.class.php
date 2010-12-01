@@ -336,6 +336,7 @@ class tautoform {
     $lang = tlocal::instance();
     $theme = ttheme::instance();
     $admin = $theme->content->admin;
+$admin->tostring = true;
     foreach ($this->props as $prop) {
     $value = $prop['obj']->{$prop['propname']};
       switch ($prop['type']) {

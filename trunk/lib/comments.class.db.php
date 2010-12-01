@@ -166,17 +166,16 @@ class tcomments extends titems {
     if (!$this->moderator) return $result;
     $theme = ttheme::instance();
     tlocal::loadlang('admin');
+    $args = targs::instance();
     $post = tpost::instance($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->getcontentwhere('hold', '');
     } else {
       //add empty list of hold comments
-      $args = targs::instance();
       $args->comment = '';
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
     
-    $args = targs::instance();
     $args->comments = $result;
     return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
   }
@@ -200,8 +199,8 @@ class tcomments extends titems {
     $table = $this->thistable;
     $items = $this->select("$table.post = $this->pid $whereauthor  and $table.status = '$status'",
     "order by $table.posted asc limit $from, $count");
-    
-    $args = targs::instance();
+
+    $args = targs::instance();    
     $args->from = $from;
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;

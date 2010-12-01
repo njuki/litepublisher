@@ -19,10 +19,10 @@ class tembeddedplayers extends tplugin {
   }
   
   public function themeparsed($theme) {
-    $theme->content->excerpts->excerpt->filelist->array['audio'] = $this->audio;
-    $theme->content->excerpts->excerpt->filelist->array['video'] = $this->video;
-    $theme->content->post->filelist->array['audio'] = $this->audio;
-    $theme->content->post->filelist->array['video'] =$this->video;
+    $theme->templates['content.excerpts.excerpt.filelist.audio'] = $this->audio;
+    $theme->templates['content.excerpts.excerpt.filelist.video'] = $this->video;
+    $theme->templates['content.post.filelist.audio'] = $this->audio;
+    $theme->templates['content.post.filelist.video'] =$this->video;
   }
   
 }//class
