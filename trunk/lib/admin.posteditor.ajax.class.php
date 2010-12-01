@@ -83,14 +83,33 @@ class tajaxposteditor  extends tevents {
   
   private function getfiletemplates($id, $idpost, $li_id) {
     $theme = ttheme::instance();
-    $result = $theme->content->post->filelist->array;
+    $result = array();
+//$tml = $theme->gettag('content.post.filelist');
     $replace = array(
     '$id'=> $id,
     '$post.id'=> $idpost,
     '<li>' => sprintf('<li><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id)
     );
-    foreach ($result as $name => $tml) {
-      $result[$name] = strtr($tml, $replace);
+
+$types = 
+//array_diff_uassoc(
+array_intersect_uassoc (
+array('a' => 'aval', 'b' => 'bal'),
+array('a' => 'a2', 'c' => 'c2'),
+//array(),
+//$theme->templates, $theme->templates,
+'funccomp');
+//create_function('$name, $b', 'return preg_match(\'/filelist\.(\w*?)$/\', $name) ? 1 : 0;'));
+//var_dump($types);
+echo count($types);
+echo implode('<br>', array_keys($types));
+exit();
+
+
+  
+
+    foreach ($types as $name) {
+      $result[$name] = strtr($tml->$name, $replace);
     }
     return $result;
   }
@@ -284,4 +303,18 @@ class tajaxposteditor  extends tevents {
   }
   
 }//class
+
+function funccomp($name, $b) {
+//if ($name == 'a') return 0;
+echo "$name: $b<br>";
+return strcasecmp($name, $b);
+if (is_string($name)) return 0;
+
+return $b == 0  ? 0 : strcasecmp($name, $b);
+return strbegin($name, 'content.post') ? -1 : 
+strcasecmp($name, $b);
+return strbegin($name, 'content.post') ? -1 : strcasecmp($name, $b);
+return preg_match('/filelist\.(\w*?)$/', $name) ? 
+0 : strcasecmp($name, $b);
+}
 ?>

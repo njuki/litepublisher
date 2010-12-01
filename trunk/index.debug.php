@@ -104,5 +104,5 @@ echo "\n", microtime(true) - litepublisher::$microtime, "\n";
 echo tfilestorage::$time, "\n";
 echo tfilestorage::$time2, "\n";
 */
-echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
+//echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 ?>
