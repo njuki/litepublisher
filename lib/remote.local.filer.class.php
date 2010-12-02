@@ -36,13 +36,6 @@ public function chgrp($file, $group, $recursive = false) {
 		return true;
 	}
 
-protected function getmode($mode) {
-if ($mode) return $mode;
-			if ( $this->is_file($file) )  return $this->chmod_file;
-if ( $this->is_dir($file) ) return $this->chmod_dir;
-				return false;
-}
-
 public function chmod($file, $mode = false, $recursive = false) {
 if (!$mode && !$mode = $this->getmode($mode))) return false;
 		if ( ! $this->exists($file) ) return false;
@@ -67,14 +60,6 @@ public function chown($file, $owner, $recursive = false) {
 		return true;
 	}
 
-protected function getownername($owner) {
-		if ($owner&& function_exists('posix_getpwuid') )
-		$a = posix_getpwuid($owner);
-		return $a['name'];
-}
-return  $owner
-}
-
 public function owner($file) {
 return $this->getownername(@fileowner($file));
 	}
@@ -82,22 +67,9 @@ return $this->getownername(@fileowner($file));
 public function getchmod($file) {
 		return substr(decoct(@fileperms($file)),3);
 
-protected function getgroupname($group) {
-		if ($group && function_exists('posix_getgrgid') )
-		$a = posix_getgrgid($group);
-		return $a['name'];
-	}
-return $group;
-	}
-
 public function group($file) {
 return $this->getgroupname(@filegroup($file));
 }
-
-public function copy($src, $dst, $overwrite = false ) {
-		if( ! $overwrite && $this->exists($dst) ) return false;
-if ($s = $this->getfile($src)) return $this->putfile($dst, $s);
-return false;
 
 public function move($source, $destination, $overwrite = false) {
 		if ( $this->copy($source, $destination, $overwrite) && $this->exists($destination) ) {
@@ -156,24 +128,9 @@ public function size($file) {
 	}
 
 public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
-		if ( ! $chmod ) $chmod = $this->chmod_dir;
 		if ( ! @mkdir($path) ) return false;
-		$this->chmod($path, $chmod);
-		if ( $chown ) $this->chown($path, $chown);
-		if ( $chgrp ) $this->chgrp($path, $chgrp);
-		return true;
+return parent::mkdir($path, $chmod , $chown , $chgrp );
 	}
-
-protected function getfileinfo($filename) {
-$result = array();
-			$result['mode'] 	= $this->getchmod($filename);
-			$result['owner']    	= $this->owner($filename);
-			$result['group']    	= $this->group($filename);
-			$result['size']    	= $this->size($filename);
-			$result['time']= $this->mtime($filename);
-			$result['type']		= $this->is_dir($filename) ? 'd' : 'f';
-return $result;
-}
 
 public function dirlist($path, $include_hidden = true, $recursive = false) {
 		if ( $this->is_file($path) ) {
