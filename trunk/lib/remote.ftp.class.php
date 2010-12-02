@@ -60,20 +60,12 @@ public function chdir($dir) {
 	}
 
 public function chmod($file, $mode, $recursive ) {
-		if ( ! $mode ) {
-			if ( $this->is_file($file) )
-				$mode = $this->chmod_file;
-			elseif ( $this->is_dir($file) )
-				$mode = $this->chmod_dir;
-			else
-				return false;
-		}
-
+if (!$mode && !$mode = $this->getmode($mode))) return false;
 	if ( ! $this->exists($file) && ! $this->is_dir($file) ) return false;
 		if ( ! $recursive || ! $this->is_dir($file) ) {
 			return @ftp_chmod($this->handle, $mode, $file);
 		}
-		//Is a directory, and we want recursive
+
 		$filelist = $this->dirlist($file);
 		foreach ( $filelist as $filename ) {
 			$this->chmod($file . '/' . $filename, $mode, $recursive);
