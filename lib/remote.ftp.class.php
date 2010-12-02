@@ -3,8 +3,8 @@
 class tftpfiler extends tremotefiler {
 protected $ssl;
 
-public function __construct($host, $login, $password, $port) {
-parent::__construct($host, $login, $password, $port);
+public function __construct($host, $login, $password) {
+parent::__construct($host, $login, $password);
 if (empty($this->port)) $this->port = 21;
 $this->timeout = 240;
 $this->ssl = false;
@@ -51,7 +51,7 @@ if (!($temp = tmpfile())) return false;
 }
 
 public function pwd() {
-if ($result = @ftp_pwd($this->handle)) return trailingslashit($result);
+if ($result = @ftp_pwd($this->handle)) return rtrim($result, '/') . '/';
 return false;
 }
 
@@ -97,10 +97,10 @@ public function delete($file, $recursive = false ) {
 		if ( $this->is_file($file) ) return @ftp_delete($this->handle, $file);
 		if ( !$recursive ) return @ftp_rmdir($this->handle, $file);
 
-		$filelist = $this->dirlist( trailingslashit($file) );
+		$filelist = $this->dirlist( rtrim($file, '/'). '/' );
 		if ( !empty($filelist) )
 			foreach ( $filelist as $delete_file )
-				$this->delete( trailingslashit($file) . $delete_file['name'], $recursive);
+				$this->delete( rtrim($file, '/') .'/' . $delete_file['name'], $recursive);
 		return @ftp_rmdir($this->handle, $file);
 	}
 
@@ -115,7 +115,7 @@ public function is_file($file) {
 
 public function is_dir($path) {
 		$cwd = $this->pwd();
-		$result = @ftp_chdir($this->handle, trailingslashit($path) );
+		$result = @ftp_chdir($this->handle, rtrim($path , '/') . '/' );
 		if ( $result && $path == $this->pwd() || $this->pwd() != $cwd ) {
 			@ftp_chdir($this->handle, $cwd);
 			return true;
@@ -227,7 +227,8 @@ public function dirlist($path = '.', $include_hidden = true, $recursive = false)
 			$base = false;
 		}
 
-		if (false == ($list = @ftp_rawlist($this->handle, '-a ' . $path, false))) return false;
+		if (false == ($list = ftp_rawlist($this->handle, '-a ' . $path, false))) return false;
+var_dump($list);
 		$dirlist = array();
 		foreach ( $list as $k => $v ) {
 			$entry = $this->parselisting($v);
