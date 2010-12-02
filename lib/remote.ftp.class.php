@@ -16,13 +16,13 @@ public function __destruct() {
 	}
 
 public function connect() {
-$this->handle = $this->ssl && function_exists('ftp_ssl_connect' ?
+$this->handle = $this->ssl && function_exists('ftp_ssl_connect') ?
 @ftp_ssl_connect($this->host, $this->port, $this->timeout) :
 @ftp_connect($this->host, $this->port, $this->timeout);
 
 if ($this->handle && @ftp_login($this->handle,$this->login, $this->password) ) {
 		@ftp_pasv( $this->handle, true );
-		if ( @ftp_get_option($this->handle, FTP_TIMEOUT_SEC) < $this->timeout) }
+		if ( @ftp_get_option($this->handle, FTP_TIMEOUT_SEC) < $this->timeout) {
 @ftp_set_option($this->handle, FTP_TIMEOUT_SEC, $this->timeout);
 }
 return true;
@@ -31,7 +31,7 @@ return false;
 }
 
 public function getfile($filename) {
-		if (($temp = tmpfile()) &&@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) )
+		if (($temp = tmpfile()) &&@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
 		fseek($temp, 0); //Skip back to the start of the file being written to
 		$result= '';
 		while ( ! feof($temp) ) $result .= fread($temp, 8192);
@@ -60,7 +60,7 @@ public function chdir($dir) {
 	}
 
 public function chmod($file, $mode, $recursive ) {
-if (!$mode && !$mode = $this->getmode($mode))) return false;
+if (!$mode && !($mode = $this->getmode($mode))) return false;
 	if ( ! $this->exists($file) && ! $this->is_dir($file) ) return false;
 		if ( ! $recursive || ! $this->is_dir($file) ) {
 			return @ftp_chmod($this->handle, $mode, $file);
