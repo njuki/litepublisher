@@ -149,12 +149,10 @@ public function size($file) {
 public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 		$path = untrailingslashit($path);
 		if ( ! $chmod ) $chmod = $this->chmod_dir;
-		if ( ssh2_sftp_mkdir($this->sftp, $path, $chmod, true)) {
+		if ( !ssh2_sftp_mkdir($this->sftp, $path, $chmod, true)) return false;
 		if ( $chown ) $this->chown($path, $chown);
 		if ( $chgrp ) $this->chgrp($path, $chgrp);
 		return true;
-}
-return  false;
 	}
 
 public  function dirlist($path, $include_hidden = true, $recursive = false) {

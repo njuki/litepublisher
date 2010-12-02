@@ -128,6 +128,12 @@ $classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 $classes->add('tajaxtageditor',  'admin.tags.ajax.class.php');
 $classes->items['tchildpost'] = array('posts.child.class.php', '');
 $classes->add('tchildposts',  'posts.child.class.php');
+$classes->add('tremotefiler', 'remote.abstract.filer.class.php');
+$classes->add('tftpfiler', 'remote.ftp.class.php');
+$classes->add('tftpsocketfiler', 'remote.ftpsocket.class.php');
+$classes->add('tlocalfiler', 'remote.local.filer.class.php');
+$classes->add('tssh2filer', 'remote.ssh2.class.php');
+
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
