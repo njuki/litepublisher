@@ -89,12 +89,9 @@ public function group($file) {
 	}
 
 public function copy($source, $destination, $overwrite = false ) {
-		if ( ! $overwrite && $this->exists($destination) )
-			return false;
-		$content = $this->get_contents($source);
-		if ( false === $content)
-			return false;
-		return $this->put_contents($destination, $content);
+		if ( ! $overwrite && $this->exists($destination) ) return false;
+		if (false == ($content = $this->getfile($source))) return false;
+		return $this->putfile($destination, $content);
 	}
 
 public function move($source, $destination, $overwrite = false) {
@@ -102,12 +99,9 @@ public function move($source, $destination, $overwrite = false) {
 	}
 
 public function delete($file, $recursive = false ) {
-		if ( empty($file) )
-			return false;
-		if ( $this->is_file($file) )
-			return @ftp_delete($this->handle, $file);
-		if ( !$recursive )
-			return @ftp_rmdir($this->handle, $file);
+		if ( empty($file) ) return false;
+		if ( $this->is_file($file) ) return @ftp_delete($this->handle, $file);
+		if ( !$recursive ) return @ftp_rmdir($this->handle, $file);
 
 		$filelist = $this->dirlist( trailingslashit($file) );
 		if ( !empty($filelist) )
@@ -126,9 +120,9 @@ public function is_file($file) {
 	}
 
 public function is_dir($path) {
-		$cwd = $this->cwd();
+		$cwd = $this->pwd();
 		$result = @ftp_chdir($this->handle, trailingslashit($path) );
-		if ( $result && $path == $this->cwd() || $this->cwd() != $cwd ) {
+		if ( $result && $path == $this->pwd() || $this->pwd() != $cwd ) {
 			@ftp_chdir($this->handle, $cwd);
 			return true;
 		}
@@ -157,27 +151,18 @@ public function size($file) {
 		return ftp_size($this->handle, $file);
 	}
 
-public function touch($file, $time = 0, $atime = 0) {
-		return false;
-	}
-
 public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
-		if  ( !ftp_mkdir($this->handle, $path) )
-			return false;
-		if ( ! $chmod )
-			$chmod = FS_CHMOD_DIR;
+		if  ( !ftp_mkdir($this->handle, $path) ) return false;
+		if ( ! $chmod ) $chmod = $this->chmod_dir;
 		$this->chmod($path, $chmod);
-		if ( $chown )
-			$this->chown($path, $chown);
-		if ( $chgrp )
-			$this->chgrp($path, $chgrp);
+		if ( $chown ) $this->chown($path, $chown);
+		if ( $chgrp ) $this->chgrp($path, $chgrp);
 		return true;
 	}
 
 public function rmdir($path, $recursive = false) {
 		return $this->delete($path, $recursive);
 	}
-
 
 private function parselisting($line) {
 		static $is_windows;
@@ -246,17 +231,13 @@ private function parselisting($line) {
 
 public function dirlist($path = '.', $include_hidden = true, $recursive = false) {
 		if ( $this->is_file($path) ) {
-			$limit_file = basename($path);
+			$base = basename($path);
 			$path = dirname($path) . '/';
 		} else {
-			$limit_file = false;
+			$base = false;
 		}
 
-		$list = @ftp_rawlist($this->handle, '-a ' . $path, false);
-
-		if ( $list === false )
-			return false;
-
+		if (false == ($list = @ftp_rawlist($this->handle, '-a ' . $path, false))) rturn false;
 		$dirlist = array();
 		foreach ( $list as $k => $v ) {
 			$entry = $this->parselisting($v);
@@ -269,7 +250,7 @@ public function dirlist($path = '.', $include_hidden = true, $recursive = false)
 			if ( ! $include_hidden && '.' == $entry['name'][0] )
 				continue;
 
-			if ( $limit_file && $entry['name'] != $limit_file)
+			if ( $base && $entry['name'] != $base)
 				continue;
 
 			$dirlist[ $entry['name'] ] = $entry;

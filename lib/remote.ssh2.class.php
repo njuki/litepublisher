@@ -172,17 +172,9 @@ if ($dir = @dir($this->getfilename($path))) {
 if (($name == '.') || ($name == '..')) continue;
 			if ( ! $include_hidden && '.' == $name[0] ) continue;
 			if ( $base && $name != $base) continue;
-$a = array();
 $fullname = $path.'/'.$name);
-			$a['perms'] 	= $this->gethchmod($fullname);
-			$a['permsn']	= $this->getnumchmodfromh($a['perms']);
-			$a['number'] 	= false;
-			$a['owner']    	= $this->owner($fullname);
-			$a['group']    	= $this->group($fullname);
-			$a['size']    	= $this->size($fullname);
-			$a['lastmodunix']= $this->mtime($fullname);
-			$a['lastmod']   = date('M j',$a['lastmodunix']);
-			$a['time']    	= date('h:i:s',$a['lastmodunix']);
+$a = $this->getfileinfo($fullname);
+$a['name'] = $name;
 if ($this->is_dir($fullname)) {
 			$a['type']		= 'f';
 }else {
