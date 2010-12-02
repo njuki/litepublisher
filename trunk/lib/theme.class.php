@@ -125,6 +125,7 @@ return $result;
   
   private function getvar($name) {
     if ($name == 'site')  return litepublisher::$site;
+if ($name == 'lang') return tlocal::instance();
     if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
