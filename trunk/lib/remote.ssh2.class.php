@@ -4,7 +4,7 @@ class tssh2filer extends tremotefiler {
 protected $sftp;
 protected $hostkey;
 protected $public_key;
-protected $private_key
+protected $private_key;
 
 public function __construct($host, $login, $password, $port) {
 parent::__construct($host, $login, $password, $port);
@@ -44,6 +44,7 @@ private function run($cmd) {
 private function runbool($cmd) {
 if ($result = $this->run($cmd)) return  trim($result) != '';
 return false;
+}
 
 private function getfilename($file) {
 return 'ssh2.sftp://' . $this->sftp . '/' . ltrim($filename, '/');
@@ -69,7 +70,7 @@ public function chdir($dir) {
 protected function runcommand($cmd, $filename, $mode, $recursive) {
 		if ( ! $this->exists($filename) ) return false;
 if ($recursive && $this->is_dir($filename)) $cmd .= ' -R';
-return $this->runbool(sprintf('%s %o %s', $cmd, $mode, escapeshellarg($filename));
+return $this->runbool(sprintf('%s %o %s', $cmd, $mode, escapeshellarg($filename)));
 	}
 
 public function chgrp($filename, $group, $recursive ) {
@@ -77,7 +78,7 @@ return $this->runcommand('chgrp', $filename, $group, $recursive);
 	}
 
 public function chmod($file, $mode, $recursive ) {
-if (!$mode && !$mode = $this->getmode($mode))) return false;
+if (!$mode && !($mode = $this->getmode($mode))) return false;
 return $this->runcommand('chmod', $filename, $mode, $recursive);
 	}
 
@@ -103,7 +104,7 @@ public function move($source, $destination, $overwrite = false) {
 	}
 
 public function delete($file, $recursive = false) {
-		if ( $this->is_file($file)  return ssh2_sftp_unlink($this->sftp, $file);
+		if ( $this->is_file($file))  return ssh2_sftp_unlink($this->sftp, $file);
 		if ( ! $recursive ) return ssh2_sftp_rmdir($this->sftp, $file);
 		$filelist = $this->dirlist($file);
 		if ( is_array($filelist) ) {
@@ -170,7 +171,7 @@ if ($dir = @dir($this->getfilename($path))) {
 if (($name == '.') || ($name == '..')) continue;
 			if ( ! $include_hidden && '.' == $name[0] ) continue;
 			if ( $base && $name != $base) continue;
-$fullname = $path.'/'.$name);
+$fullname = $path.'/'.$name;
 $a = $this->getfileinfo($fullname);
 $a['name'] = $name;
 if ($this->is_dir($fullname)) {

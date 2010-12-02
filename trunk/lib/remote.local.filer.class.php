@@ -37,9 +37,9 @@ public function chgrp($file, $group, $recursive = false) {
 	}
 
 public function chmod($file, $mode = false, $recursive = false) {
-if (!$mode && !$mode = $this->getmode($mode))) return false;
+if (!$mode && !($mode = $this->getmode($mode))) return false;
 		if ( ! $this->exists($file) ) return false;
-		if ( ! $recursive  ! $this->is_dir($file) ) return @chmod($file, $mode);
+		if ( ! $recursive  || ! $this->is_dir($file) ) return @chmod($file, $mode);
 
 		$file = trailingslashit($file);
 		$filelist = $this->dirlist($file);
@@ -66,6 +66,7 @@ return $this->getownername(@fileowner($file));
 
 public function getchmod($file) {
 		return substr(decoct(@fileperms($file)),3);
+}
 
 public function group($file) {
 return $this->getgroupname(@filegroup($file));
@@ -147,7 +148,7 @@ public function dirlist($path, $include_hidden = true, $recursive = false) {
 if (($name == '.') || ($name == '..')) continue;
 			if ( ! $include_hidden && '.' == $name[0] ) continue;
 			if ( $base && $name != $base) continue;
-$fullname = $path.'/'.$name);
+$fullname = $path.'/'.$name;
 $a = $this->getfileinfo($fullname);
 $a['name'] = $name;
 			if ( 'd' == $a['type'] ) {

@@ -36,15 +36,15 @@ if ( $this->is_dir($file) ) return $this->chmod_dir;
 }
 
 protected function getownername($owner) {
-		if ($owner&& function_exists('posix_getpwuid') )
+		if ($owner&& function_exists('posix_getpwuid') ) {
 		$a = posix_getpwuid($owner);
 		return $a['name'];
 }
-return  $owner
+return  $owner;
 }
 
 protected function getgroupname($group) {
-		if ($group && function_exists('posix_getgrgid') )
+		if ($group && function_exists('posix_getgrgid') ) {
 		$a = posix_getgrgid($group);
 		return $a['name'];
 	}
@@ -53,7 +53,7 @@ return $group;
 
 public function copy($src, $dst, $overwrite = false ) {
 		if( ! $overwrite && $this->exists($dst) ) return false;
-if (false === ($s = $this->getfile($src))) return false
+if (false === ($s = $this->getfile($src))) return false;
  return $this->putfile($dst, $s);
 }
 
