@@ -6,8 +6,8 @@ protected $hostkey;
 protected $public_key;
 protected $private_key;
 
-public function __construct($host, $login, $password, $port) {
-parent::__construct($host, $login, $password, $port);
+public function __construct($host, $login, $password) {
+parent::__construct($host, $login, $password);
 if (empty($this->port)) $this->port = 22;
 $this->ssl = false;
 $this->hostkey = false;

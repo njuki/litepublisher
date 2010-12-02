@@ -10,11 +10,11 @@ protected $timeout;
 public $chmod_file;
 public $chmod_dir;
 
-public function __construct($host, $login, $password, $port) {
+public function __construct($host, $login, $password) {
 $this->host = $host;
 $this->login = $login;
 $this->password = $password;
-$this->port = $port;
+$this->port = 21;
 $this->handle= null;
 $this->timeout = 30;
 $this->chmod_file = 0644;
