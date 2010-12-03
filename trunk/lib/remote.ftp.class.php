@@ -30,6 +30,41 @@ return true;
 return false;
 }
 
+public static function findfile($self, $dir, $filename) {
+$dir = rtrim($dir, '/');
+if ($list = $self->dirlist($dir)) {
+if (isset($list[$filename])) return $dir;
+foreach ($list as $name => $item) {
+if ($item['isdir']) {
+if ($result = self::findfile($self, $dir . '/' . $name, $filename)) return$result;
+}
+}
+}
+return false;
+}
+
+public static function findfolder($self, $folder, $base = '.', $loop = false ) {
+		if ( empty( $base ) || '.' == $base ) $base = rtrim($this->pwd(), '/') . '/';
+		$folder = rtrim($folder, '/');
+		$folder_parts = explode('/', $folder);
+		$last_path = $folder_parts[ count($folder_parts) - 1 ];
+		$files = $this->dirlist( $base );
+		foreach ( $folder_parts as $key ) {
+			if ( $key == $last_path ) continue; //We want this to be caught by the next code block.
+			if ( isset($files[ $key ]) ){
+				$newdir = rtrim(path_join($base, $key), '/') . '/';
+				if ( $ret = $this->findfolder( $folder, $newdir, $loop) ) return $ret;
+			}
+		}
+
+		if (isset( $files[ $last_path ] ) ) {
+			return trailingslashit($base . $last_path);
+		}
+		if ( $loop ) return false; //Prevent tihs function looping again.
+		return $this->findfolder($folder, '/', true);
+	}
+
+
 public function getfile($filename) {
 		if (($temp = tmpfile()) &&@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
 		fseek($temp, 0); //Skip back to the start of the file being written to
@@ -246,6 +281,7 @@ if (($name == '.') || ($name == '..')) continue;
 			if ( ! $include_hidden && '.' == $name[0] ) continue;
 			if ( $base && $name != $base) continue;
 $a['mode'] = $this->perm2mode($a['perms']);
+if (!isset($a['isdir'])) $a['isdir'] = $a['type'] == 'd';
 			$result[ $name ] = $a;
 		}
 unset($list);
