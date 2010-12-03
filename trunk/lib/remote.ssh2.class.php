@@ -59,7 +59,7 @@ public function putfile($filename, $content) {
 }
 
 public function pwd() {
-if ($result = $this->run('pwd')) return trailingslashit($result);
+if ($result = $this->run('pwd')) return rtrim($result, '/') . '/';
 return false;
 }
 
@@ -148,7 +148,7 @@ public function size($file) {
 	}
 
 public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
-		$path = untrailingslashit($path);
+		$path = rtrim($path, '/');
 		if ( ! $chmod ) $chmod = $this->chmod_dir;
 		if ( !ssh2_sftp_mkdir($this->sftp, $path, $chmod, true)) return false;
 		if ( $chown ) $this->chown($path, $chown);

@@ -114,26 +114,14 @@ public function is_file($file) {
 	}
 
 public function is_dir($path) {
-		$cwd = $this->pwd();
+if ($path == '.') return true;
+		$old  = $this->pwd();
 		$result = @ftp_chdir($this->handle, rtrim($path , '/') . '/' );
-		if ( $result && $path == $this->pwd() || $this->pwd() != $cwd ) {
-			@ftp_chdir($this->handle, $cwd);
+$cur = $this->pwd();
+		if (( $result && ($path == $cur)) || ($cur != $old)) {
+			@ftp_chdir($this->handle, $old);
 			return true;
 		}
-		return false;
-	}
-
-public function is_readable($file) {
-		//Get dir list, Check if the file is readable by the current user??
-		return true;
-	}
-
-public function is_writable($file) {
-		//Get dir list, Check if the file is writable by the current user??
-		return true;
-	}
-
-public function atime($file) {
 		return false;
 	}
 
@@ -153,6 +141,27 @@ return parent::mkdir($path, $chmod , $chown , $chgrp );
 public function rmdir($path, $recursive = false) {
 		return $this->delete($path, $recursive);
 	}
+
+private function perm2mode($mode) {
+		$realmode = '';
+		$legal =  array('', 'w', 'r', 'x', '-');
+		$attarray = preg_split('//', $mode);
+
+		for($i=0; $i < count($attarray); $i++)
+		   if($key = array_search($attarray[$i], $legal))
+			   $realmode .= $legal[$key];
+
+		$mode = str_pad($realmode, 9, '-');
+		$trans = array('-'=>'0', 'r'=>'4', 'w'=>'2', 'x'=>'1');
+		$mode = strtr($mode,$trans);
+
+		$newmode = '';
+		$newmode .= $mode[0] + $mode[1] + $mode[2];
+		$newmode .= $mode[3] + $mode[4] + $mode[5];
+		$newmode .= $mode[6] + $mode[7] + $mode[8];
+		return $newmode;
+	}
+
 
 private function parselisting($line) {
 		static $is_windows;
@@ -177,7 +186,7 @@ private function parselisting($line) {
 			$b['am/pm'] = $lucifer[6];
 			$b['name'] = $lucifer[8];
 		} else if (!$is_windows && $lucifer=preg_split("/[ ]/",$line,9,PREG_SPLIT_NO_EMPTY)) {
-			//echo $line."\n";
+
 			$lcount=count($lucifer);
 			if ($lcount<8) return '';
 			$b = array();
@@ -228,40 +237,27 @@ public function dirlist($path = '.', $include_hidden = true, $recursive = false)
 		}
 
 		if (false == ($list = ftp_rawlist($this->handle, '-a ' . $path, false))) return false;
-var_dump($list);
-		$dirlist = array();
+		$result = array();
 		foreach ( $list as $k => $v ) {
-			$entry = $this->parselisting($v);
-			if ( empty($entry) )
-				continue;
-
-			if ( '.' == $entry['name'] || '..' == $entry['name'] )
-				continue;
-
-			if ( ! $include_hidden && '.' == $entry['name'][0] )
-				continue;
-
-			if ( $base && $entry['name'] != $base)
-				continue;
-
-			$dirlist[ $entry['name'] ] = $entry;
+			$a = $this->parselisting($v);
+			if ( empty($a) ) continue;
+$name = $a['name'];
+if (($name == '.') || ($name == '..')) continue;
+			if ( ! $include_hidden && '.' == $name[0] ) continue;
+			if ( $base && $name != $base) continue;
+$a['mode'] = $this->perm2mode($a['perms']);
+			$result[ $name ] = $a;
 		}
-
-		if ( ! $dirlist )
-			return false;
-
-		$ret = array();
-		foreach ( (array)$dirlist as $struc ) {
-			if ( 'd' == $struc['type'] ) {
-				if ( $recursive )
-					$struc['files'] = $this->dirlist($path . '/' . $struc['name'], $include_hidden, $recursive);
-				else
-					$struc['files'] = array();
+unset($list);
+		if ( count($result) == 0) return false;
+		foreach ( $result as $name => $a) {
+			if ( 'd' == $a['type'] ) {
+					$result[$name]['files'] = $recursive  ? 
+$this->dirlist($path . '/' . $name, $include_hidden, true) :
+array();
 			}
-
-			$ret[ $struc['name'] ] = $struc;
 		}
-		return $ret;
+		return $result;
 	}
 
 }//class
