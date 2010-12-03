@@ -28,7 +28,7 @@ public function chgrp($file, $group, $recursive = false) {
 		if ( ! $this->exists($file) ) return false;
 		if ( ! $recursive  || ! $this->is_dir($file) ) return @chgrp($file, $group);
 
-		$file = trailingslashit($file);
+		$file = rtrim($file, '/') . '/';
 		$filelist = $this->dirlist($file);
 		foreach ($filelist as $filename) {
 			$this->chgrp($file . $filename, $group, $recursive);
@@ -41,7 +41,7 @@ if (!$mode && !($mode = $this->getmode($mode))) return false;
 		if ( ! $this->exists($file) ) return false;
 		if ( ! $recursive  || ! $this->is_dir($file) ) return @chmod($file, $mode);
 
-		$file = trailingslashit($file);
+		$file = rtrim($file, '/') . '/';
 		$filelist = $this->dirlist($file);
 		foreach ($filelist as $filename) {
 			$this->chmod($file . $filename, $mode, $recursive);
@@ -87,7 +87,7 @@ public function delete($file, $recursive = false) {
 		if ( ! $recursive && $this->is_dir($file) ) return rmdir($file);
 
 $result = true;
-		if ($filelist = $this->dirlist(trailingslashit($file), true)) {
+		if ($filelist = $this->dirlist(rtrim($file, '/') . '/', true)) {
 			foreach ($filelist as $filename => $fileinfo) {
 $result = $this->delete($file . $filename, true ) && $result;
 }
@@ -156,7 +156,7 @@ $a['name'] = $name;
 array();
 			}
 
-			 $result[$name][] = $a;
+			 $result[$name] = $a;
 		}
 		$dir->close();
 		unset($dir);
