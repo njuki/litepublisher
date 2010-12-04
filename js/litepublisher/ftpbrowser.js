@@ -8,18 +8,17 @@ openftpfolder($(this).value());
 });
 }
 
-function openftpfolder(folder) {
+function openftpfolder(foldername) {
 $.post(ltoptions.url + "/admin/ajaxftpbrowser.htm",
 {
 host: $("#host").val(),
-login: $("#login).val(),
-password: ($("#password").val(),
-folder: folder
+login: $("#login").val(),
+password:  $("#password").val(),
+folder: foldername
 },
 function (html) { 
 $("#ftpbrowser").html(html);
 $("#folder").val($("#curfolder").value());
 initftpbrowser();
-});
 });
 }
