@@ -816,6 +816,11 @@ return $result;
         'tag' => '$text',
         'replace' => ''
         ),
+
+        'content.admin.password' => array(
+        'tag' => '$password',
+        'replace' => ''
+        ),
         
         'content.admin.combo' => array(
         'tag' => '$combo',
