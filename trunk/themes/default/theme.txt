@@ -617,8 +617,11 @@ $page - номер страницы, цифра
 Остался последний шаблон в секцииcontent - admin, вот его сейчас и опишим:
 
 content.admin = [
-$text = [<p><input type='text' name='$name' id='$name' value='$value' size='22' />
-<label for='$name'><strong>$lang.$name</strong></label></p>]
+$text = [<p><input type="text" name="$name" id="$name" value="$value" size="22" />
+<label for="$name"><strong>$lang.$name</strong></label></p>]
+
+$password = [<p><input type="password" name="$name" id="$name" value="$value" size='22' />
+<label for="$name"><strong>$lang.$name</strong></label></p>]
 
 $editor = [<p><label for="$name"><strong>$lang.$name:</strong></label><br />
 <textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea></p>]
