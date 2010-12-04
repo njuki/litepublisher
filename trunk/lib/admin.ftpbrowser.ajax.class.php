@@ -48,7 +48,13 @@ class tajaxftpbrowser extends tevents {
     $post = tpost::instance($this->idpost);
     ttheme::$vars['post'] = $post;
 
+if ($this->checkaccount()) {
 $ftp = new tftpfiler::instance($host, $login, $password);
+$result = $this->getfolder($ftp);
+    return turlmap::htmlheader(false) . $result;    
+}
+
+public function getfolder($ftp) {
 if (!$ftp->connect()) return 'not conne';
 
 if ($list = $ftp->getdir($dir)) {
@@ -60,7 +66,7 @@ $result .= sprintf('<li><a href="%1$s">%1$s</a></li>', $name);
 }
 $result.= '</ul>';
 }
-    return turlmap::htmlheader(false) . $result;    
+
 }
 
 }//class
