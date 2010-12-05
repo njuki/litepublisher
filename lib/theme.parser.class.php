@@ -16,10 +16,6 @@ class tthemeparser extends tevents {
     return getinstance(__class__);
   }
   
-  public static function getwidgetnames() {
-    return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
-  }
-  
   protected function create() {
     parent::create();
     $this->basename = 'themeparser';
@@ -290,13 +286,13 @@ $path = $parent . '.' . $name;
 if (!strpos($path, '.')) return;
         if (!preg_match('/^sidebar(\d?)\.(\w\w*+)(\.\w\w*+)*$/', $path, $m)) $this->error("The '$path' is not a widget path");
         $widgetname = $m[2];
-        if (($widgetname != 'widget') && (!in_array($widgetname, self::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
+        if (($widgetname != 'widget') && (!in_array($widgetname, ttheme::getwidgetnames()))) $this->error("Unknown widget '$widgetname' name");
 $path = ttheme::getwidgetpath(empty($m[3]) ? '' : $m[3]);
 if ($path === false) $this->error("Unknown '$path' widget path");
         $this->setwidgetitem($widgetname, $path, $value);
 
         if ($widgetname == 'widget') {
-          foreach (self::getwidgetnames() as $widgetname) {
+          foreach (ttheme::getwidgetnames() as $widgetname) {
             if ((($widgetname == 'posts') || ($widgetname == 'comments')) &&
             ($path =='.item')) continue;
             
@@ -369,7 +365,7 @@ if (!isset($templates['content.post.templatecomments.confirmform'])) $this->erro
         if (count($sidebars) > $count) array_splice($sidebar, $count , $count - count($sidebars));
 for ($i = 0; $i < $count; $i++) {
           $sidebar = &$this->theme->templates['sidebars'][$i];
-          foreach (self::getwidgetnames() as $widgetname) {
+          foreach (ttheme::getwidgetnames() as $widgetname) {
 foreach (array('', '.items', '.item', '.subitems') as $name) {
                 if (empty($sidebar[$widgetname . $name])) $sidebar[$widgetname . $name] = $sidebar['widget' . $name];
                 }
