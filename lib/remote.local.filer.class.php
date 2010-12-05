@@ -29,7 +29,7 @@ public function chgrp($file, $group, $recursive = false) {
 		if ( ! $recursive  || ! $this->is_dir($file) ) return @chgrp($file, $group);
 
 		$file = rtrim($file, '/') . '/';
-		$filelist = $this->dirlist($file);
+		$filelist = $this->getdir($file);
 		foreach ($filelist as $filename) {
 			$this->chgrp($file . $filename, $group, $recursive);
 }
@@ -42,7 +42,7 @@ if (!$mode && !($mode = $this->getmode($mode))) return false;
 		if ( ! $recursive  || ! $this->is_dir($file) ) return @chmod($file, $mode);
 
 		$file = rtrim($file, '/') . '/';
-		$filelist = $this->dirlist($file);
+		$filelist = $this->getdir($file);
 		foreach ($filelist as $filename) {
 			$this->chmod($file . $filename, $mode, $recursive);
 }
@@ -53,7 +53,7 @@ public function chown($file, $owner, $recursive = false) {
 		if ( ! $this->exists($file) ) return false;
 		if ( ! $recursive  || ! $this->is_dir($file) ) return @chown($file, $owner);
 
-		$filelist = $this->dirlist($file);
+		$filelist = $this->getdir($file);
 		foreach ($filelist as $filename) {
 			$this->chown($file . '/' . $filename, $owner, $recursive);
 		}
@@ -87,7 +87,7 @@ public function delete($file, $recursive = false) {
 		if ( ! $recursive && $this->is_dir($file) ) return rmdir($file);
 
 $result = true;
-		if ($filelist = $this->dirlist(rtrim($file, '/') . '/', true)) {
+		if ($filelist = $this->getdir(rtrim($file, '/') . '/', true)) {
 			foreach ($filelist as $filename => $fileinfo) {
 $result = $this->delete($file . $filename, true ) && $result;
 }
@@ -133,7 +133,7 @@ public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 return parent::mkdir($path, $chmod , $chown , $chgrp );
 	}
 
-public function dirlist($path, $include_hidden = true, $recursive = false) {
+public function getdir($path, $include_hidden = true, $recursive = false) {
 		if ( $this->is_file($path) ) {
 			$base = basename($path);
 			$path = dirname($path);
@@ -152,7 +152,7 @@ $fullname = $path.'/'.$name;
 $a = $this->getfileinfo($fullname);
 $a['name'] = $name;
 			if ( 'd' == $a['type'] ) {
-					$a['files'] = $recursive  ? $this->dirlist($fullname, $include_hidden, true) :
+					$a['files'] = $recursive  ? $this->getdir($fullname, $include_hidden, true) :
 array();
 			}
 
