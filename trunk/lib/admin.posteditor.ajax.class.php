@@ -270,10 +270,17 @@ if ($name == 'filelist') $name = '';
   
   public function geteditor($name, $value, $visual) {
     $html = tadminhtml ::instance();
-    $lang = tlocal::instance('editor');
+$hsect = $html->section;
+$html->section = 'editor';
+    $lang = tlocal::instance();
+$lsect = $lang->section;
+$lang->section = 'editor';
     $title = $lang->$name;
     if ($visual && $this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
-    return $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
+    $result = $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
+$lang->section = $lsect;
+$html->section = $hsect;
+return $result;
   }
   
   public function getraweditor($value) {

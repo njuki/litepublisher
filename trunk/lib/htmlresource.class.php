@@ -62,6 +62,7 @@ class tadminhtml {
   }
   
   public function parsearg($s, targs $args) {
+if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::instance();
     $admin = $theme->content->admin;
 $admin->tostring = true;

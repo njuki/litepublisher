@@ -19,7 +19,7 @@ class tadminwidget extends tdata {
   }
   
   protected function getadminurl() {
-    return litepublisher::$site->url . '/admin/widgets/' . litepublisher::$site->q . 'idwidget=';
+    return litepublisher::$site->url . '/admin/views/widgets/' . litepublisher::$site->q . 'idwidget=';
   }
   
   protected function dogetcontent(twidget $widget, targs $args){
@@ -31,7 +31,7 @@ class tadminwidget extends tdata {
     $args->formtitle = $widgettitle . ' ' . $this->lang->widget;
     $args->title = $widgettitle;
     $args->items = $this->html->getedit('title', $widgettitle, $this->lang->widgettitle) . $content;
-    return $this->html->parsearg(ttheme::instance()->content->admin->form, $args);
+    return $this->html->parsearg((string) ttheme::instance()->content->admin->form, $args);
   }
   
   public function getcontent(){
@@ -144,7 +144,7 @@ class tadmincustomwidget extends tadminwidget {
     $result = array();
     $lang = tlocal::instance('widgets');
     $result['widget'] = $lang->defaulttemplate;
-    foreach (tthemeparser::getwidgetnames() as $name) {
+    foreach (ttheme::getwidgetnames() as $name) {
       $result[$name] = $lang->$name;
     }
     return $result;
@@ -153,8 +153,7 @@ class tadmincustomwidget extends tadminwidget {
   public function getcontent() {
     $widget = $this->widget;
     $args = targs::instance();
-    $id = isset($_GET['idwidget']) ? (int) $_GET['idwidget'] : 0;
-    if ($id == 0) $id = isset($_POST['idwidget']) ? (int) $_POST['idwidget'] : 0;
+$id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
       $args->mode = 'edit';
@@ -173,14 +172,14 @@ class tadmincustomwidget extends tadminwidget {
     $args->text = $item['content'];
     $args->template =tadminhtml::array2combo(self::gettemplates(), $item['template']);
     $result = $this->optionsform($item['title'], $html->parsearg(
-    '[text=text]
+    '[editor=text]
     [combo=template]
     [hidden=mode]
     [hidden=idwidget]',
     $args));
-    
     $result .= $html->customheader();
     $args->adminurl = $this->adminurl;
+
     foreach ($widget->items as $id => $item) {
       $args->idwidget = $id;
       $args->add($item);

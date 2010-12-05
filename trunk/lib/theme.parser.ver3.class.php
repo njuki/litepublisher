@@ -501,7 +501,7 @@ $this->parsewidget($result, 'widget', $sidebar, $widget);
 $this->copywidget($result, 'widget', $default, 'widget');
     }
     
-    foreach (tthemeparser::getwidgetnames() as $name) {
+    foreach (ttheme::getwidgetnames() as $name) {
       if ($widget =$this->parsetag($s, $name, ''))  {
 $this->parsewidget($result, $name, $sidebar, $widget);
       } else {

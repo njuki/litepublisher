@@ -122,7 +122,6 @@ class tadminwidgets extends tadminmenu {
       case 'addcustom':
       $widget = tcustomwidget::instance();
       return  $widget->admin->getcontent();
-      
     }
   }
   

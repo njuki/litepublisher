@@ -31,6 +31,10 @@ class ttheme extends tevents {
     $result->load();
     return $result;
   }
+
+  public static function getwidgetnames() {
+    return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
+  }
   
   protected function create() {
     parent::create();
@@ -332,10 +336,11 @@ return false;
 }//class
 
 class tthemeprops {
-  private $theme;
-private $root;
+
 public $path;
 public $tostring;
+private $root;
+  private $theme;
 
     public function __construct(ttheme $theme) {
     $this->theme = $theme;
