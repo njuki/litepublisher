@@ -44,18 +44,18 @@ function queueComplete(numFilesUploaded) {
 
 //central event
 function uploadSuccess(file, serverData) {
-  var haschilds = $("#newfilestab").children().length > 0;
-  $("#newfilestab").append(serverData);
-  var html = $("#newfilestab").children(":last").html();
-  if (haschilds) {
-    $("#newfilestab").children(":last").remove();
-    $("#newfilestab").children(":first").append(html);
-  }
-  html =str_replace(
-  ['uploaded-', 'new-post-', 'newfile-'],
-  ['curfile-', 'curpost-', 'currentfile-'],
-  html);
-  $('#currentfilestab > :first').append(html);
+var haschilds = $("#newfilestab").children().length > 0;
+$("#newfilestab").append(serverData);
+var html = $("#newfilestab").children(":last").html();
+if (haschilds) {
+$("#newfilestab").children(":last").remove();
+$("#newfilestab").children(":first").append(html);
+}
+html =str_replace(
+['uploaded-', 'new-post-', 'newfile-'],
+['curfile-', 'curpost-', 'currentfile-'],
+html);
+$('#currentfilestab > :first').append(html);
 }
 
 function createswfu () {
@@ -95,6 +95,15 @@ function createswfu () {
     queue_complete_handler : queueComplete
   };
   
+if (ltoptions.language != 'en') {
+settings.button_text= '<span class="upload_button">' + ltoptions.upload_button_text + '</span>';
+settings.button_image_url= ltoptions.files + "/js/swfupload/images/XPButtonNoText_160x22.png";
+settings.button_width =  160;
+settings.button_text_style = '.upload_button { font-family: Helvetica, Arial, sans-serif; font-size: 14pt; text-align: center; }';
+settings.button_text_top_padding= 1;
+settings.button_text_left_padding= 5;
+}
+
   try {
     return new SWFUpload(settings);
   } catch(e) {
@@ -103,18 +112,18 @@ function createswfu () {
 }
 
 function getcookie(name) {
-  if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]);
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) == (name + '=')) {
-        return decodeURIComponent(cookie.substring(name.length + 1));
-      }
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+        }
+        return '';
     }
-  }
-  return '';
-}
 
 
 var swfu = createswfu();

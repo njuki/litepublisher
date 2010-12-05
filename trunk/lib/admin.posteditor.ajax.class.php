@@ -27,6 +27,7 @@ class tajaxposteditor  extends tevents {
   public function dogethead($head) {
     $template = ttemplate::instance();
     $template->ltoptions[] = sprintf('visual: "%s"', $this->visual);
+    $template->ltoptions[] = sprintf('upload_button_text: "%s"', tlocal::instance()->upload);
     $head .= $this->head;
     if (!$this->ajaxvisual && $this->visual) $head .= $template->getjavascript($this->visual);
     $this->callevent('onhead', array(&$head));

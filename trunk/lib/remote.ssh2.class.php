@@ -106,7 +106,7 @@ public function move($source, $destination, $overwrite = false) {
 public function delete($file, $recursive = false) {
 		if ( $this->is_file($file))  return ssh2_sftp_unlink($this->sftp, $file);
 		if ( ! $recursive ) return ssh2_sftp_rmdir($this->sftp, $file);
-		$filelist = $this->dirlist($file);
+		$filelist = $this->getdir($file);
 		if ( is_array($filelist) ) {
 			foreach ( $filelist as $filename => $fileinfo) {
 				$this->delete($file . '/' . $filename, $recursive);
@@ -156,7 +156,7 @@ public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 		return true;
 	}
 
-public  function dirlist($path, $include_hidden = true, $recursive = false) {
+public  function getdir($path, $include_hidden = true, $recursive = false) {
 		if ( $this->is_file($path) ) {
 			$base = basename($path);
 			$path = dirname($path);
@@ -178,7 +178,7 @@ if ($this->is_dir($fullname)) {
 			$a['type']		= 'f';
 }else {
 			$a['type']		= 'd';
-					$a['files'] = $recursive  ? $a['files'] = $this->dirlist($fullname, $include_hidden, $recursive) : array();
+					$a['files'] = $recursive  ? $a['files'] = $this->getdir($fullname, $include_hidden, $recursive) : array();
 			}
 
 			$result[ $name ] = $a;

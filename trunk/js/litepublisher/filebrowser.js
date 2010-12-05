@@ -34,7 +34,7 @@ function initfiletabs() {
   $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
 {id: ltoptions.idpost, get: "files"},
   function (result) {
-    $("#filetabs").html(result);
+    $("#filebrowser").html(result);
   $('#filetabs').tabs({cache: true});
     
     $('form:first').submit(function() {

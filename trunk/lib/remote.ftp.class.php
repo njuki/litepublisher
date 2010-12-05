@@ -32,7 +32,7 @@ return false;
 
 public static function findfile($self, $dir, $filename) {
 $dir = rtrim($dir, '/');
-if ($list = $self->dirlist($dir)) {
+if ($list = $self->getdir($dir)) {
 if (isset($list[$filename])) return $dir;
 foreach ($list as $name => $item) {
 if ($item['isdir']) {
@@ -48,7 +48,7 @@ public static function findfolder($self, $folder, $base = '.', $loop = false ) {
 		$folder = rtrim($folder, '/');
 		$folder_parts = explode('/', $folder);
 		$last_path = $folder_parts[ count($folder_parts) - 1 ];
-		$files = $this->dirlist( $base );
+		$files = $this->getdir( $base );
 		foreach ( $folder_parts as $key ) {
 			if ( $key == $last_path ) continue; //We want this to be caught by the next code block.
 			if ( isset($files[ $key ]) ){
@@ -101,7 +101,7 @@ if (!$mode && !($mode = $this->getmode($mode))) return false;
 			return @ftp_chmod($this->handle, $mode, $file);
 		}
 
-		$filelist = $this->dirlist($file);
+		$filelist = $this->getdir($file);
 		foreach ( $filelist as $filename ) {
 			$this->chmod($file . '/' . $filename, $mode, true);
 		}
@@ -109,17 +109,17 @@ if (!$mode && !($mode = $this->getmode($mode))) return false;
 	}
 
 public function owner($file) {
-		$dir = $this->dirlist($file);
+		$dir = $this->getdir($file);
 		return $dir[$file]['owner'];
 	}
 
 public function getchmod($file) {
-		$dir = $this->dirlist($file);
+		$dir = $this->getdir($file);
 		return $dir[$file]['permsn'];
 	}
 
 public function group($file) {
-		$dir = $this->dirlist($file);
+		$dir = $this->getdir($file);
 		return $dir[$file]['group'];
 	}
 
@@ -132,7 +132,7 @@ public function delete($file, $recursive = false ) {
 		if ( $this->is_file($file) ) return @ftp_delete($this->handle, $file);
 		if ( !$recursive ) return @ftp_rmdir($this->handle, $file);
 
-		$filelist = $this->dirlist( rtrim($file, '/'). '/' );
+		$filelist = $this->getdir( rtrim($file, '/'). '/' );
 		if ( !empty($filelist) )
 			foreach ( $filelist as $delete_file )
 				$this->delete( rtrim($file, '/') .'/' . $delete_file['name'], $recursive);
@@ -263,7 +263,7 @@ private function parselisting($line) {
 		return $b;
 	}
 
-public function dirlist($path = '.', $include_hidden = true, $recursive = false) {
+public function getdir($path = '.', $include_hidden = true, $recursive = false) {
 		if ( $this->is_file($path) ) {
 			$base = basename($path);
 			$path = dirname($path) . '/';
@@ -289,7 +289,7 @@ unset($list);
 		foreach ( $result as $name => $a) {
 			if ( 'd' == $a['type'] ) {
 					$result[$name]['files'] = $recursive  ? 
-$this->dirlist($path . '/' . $name, $include_hidden, true) :
+$this->getdir($path . '/' . $name, $include_hidden, true) :
 array();
 			}
 		}
