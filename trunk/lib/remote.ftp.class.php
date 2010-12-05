@@ -94,18 +94,10 @@ public function chdir($dir) {
 		return @ftp_chdir($this->handle, $dir);
 	}
 
-public function chmod($file, $mode, $recursive ) {
+public function chmod($file, $mode) {
 if (!$mode && !($mode = $this->getmode($mode))) return false;
 	if ( ! $this->exists($file) && ! $this->is_dir($file) ) return false;
-		if ( ! $recursive || ! $this->is_dir($file) ) {
 			return @ftp_chmod($this->handle, $mode, $file);
-		}
-
-		$filelist = $this->getdir($file);
-		foreach ( $filelist as $filename ) {
-			$this->chmod($file . '/' . $filename, $mode, true);
-		}
-		return true;
 	}
 
 public function owner($file) {
@@ -127,21 +119,15 @@ public function move($source, $destination, $overwrite = false) {
 		return ftp_rename($this->handle, $source, $destination);
 	}
 
-public function delete($file, $recursive = false ) {
+public function delete($file) {
 		if ( empty($file) ) return false;
 		if ( $this->is_file($file) ) return @ftp_delete($this->handle, $file);
-		if ( !$recursive ) return @ftp_rmdir($this->handle, $file);
-
-		$filelist = $this->getdir( rtrim($file, '/'). '/' );
-		if ( !empty($filelist) )
-			foreach ( $filelist as $delete_file )
-				$this->delete( rtrim($file, '/') .'/' . $delete_file['name'], $recursive);
-		return @ftp_rmdir($this->handle, $file);
+return @ftp_rmdir($this->handle, $file);
 	}
 
 public function exists($file) {
 		$list = @ftp_nlist($this->handle, $file);
-		return !empty($list); //empty list = no file, so invert.
+		return !empty($list); 
 	}
 
 public function is_file($file) {
@@ -173,8 +159,8 @@ public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 return parent::mkdir($path, $chmod , $chown , $chgrp );
 	}
 
-public function rmdir($path, $recursive = false) {
-		return $this->delete($path, $recursive);
+public function rmdir($path) {
+		return $this->delete($path);
 	}
 
 private function perm2mode($mode) {
@@ -263,7 +249,7 @@ private function parselisting($line) {
 		return $b;
 	}
 
-public function getdir($path = '.', $include_hidden = true, $recursive = false) {
+public function getdir($path = '.', $include_hidden = true) {
 		if ( $this->is_file($path) ) {
 			$base = basename($path);
 			$path = dirname($path) . '/';
@@ -286,13 +272,6 @@ if (!isset($a['isdir'])) $a['isdir'] = $a['type'] == 'd';
 		}
 unset($list);
 		if ( count($result) == 0) return false;
-		foreach ( $result as $name => $a) {
-			if ( 'd' == $a['type'] ) {
-					$result[$name]['files'] = $recursive  ? 
-$this->getdir($path . '/' . $name, $include_hidden, true) :
-array();
-			}
-		}
 		return $result;
 	}
 

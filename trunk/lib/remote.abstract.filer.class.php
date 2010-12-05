@@ -65,7 +65,6 @@ public function move($source, $destination, $overwrite = false) {
 			return false;
 	}
 
-
 public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 		if ( ! $chmod ) $chmod = $this->chmod_dir;
 		$this->chmod($path, $chmod);
@@ -83,6 +82,21 @@ $result = array();
 			$result['time']= $this->mtime($filename);
 			$result['type']		= $this->is_dir($filename) ? 'd' : 'f';
 return $result;
+}
+
+public function each($dir, $func, $args) {
+$dir = rtrim($dir, '/');
+if ($list = $this->getdir($dir)) {
+$call = array($this, $func);
+if (!is_array($args)) {
+$args = isset($args) ? array(0 => $args) : array();
+}
+  array_unshift($args, 0);
+foreach ($list as $name => $item) {
+$args[0] = $dir . '/' . $name;
+call_user_func_array($call, $args);
+}
+}
 }
 
 }//
