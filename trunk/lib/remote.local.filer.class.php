@@ -2,19 +2,19 @@
 
 class tlocalfiler extends tremotefiler {
 
-public function connect() {
-		return true;
-	}
-
 public function getfile($file) {
 		return file_get_contents($file);
 	}
 
-public function putfile($filename, $content, $mode ) {
+public function putcontent($filename, $content, $mode ) {
 if (file_put_contents($filename, $content) === false) return false;
 		$this->chmod($file, $mode);
 		return true;
 	}
+
+public function upload($localfile, $filename) {
+return file_put_contents($filename, file_get_contents($localfile)) !== false;
+}
 
 public function pwd() {
 		return getcwd();
@@ -61,7 +61,7 @@ public function chown($file, $owner, $recursive = false) {
 	}
 
 public function owner($file) {
-return $this->getownername(@fileowner($file));
+return $self::getownername(@fileowner($file));
 	}
 
 public function getchmod($file) {

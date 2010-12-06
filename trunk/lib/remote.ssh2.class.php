@@ -1,19 +1,20 @@
 <?php
 
 class tssh2filer extends tremotefiler {
-protected $sftp;
+public $sftp;
 protected $hostkey;
 protected $public_key;
 protected $private_key;
 
-public function __construct($host, $login, $password) {
-parent::__construct($host, $login, $password);
-if (empty($this->port)) $this->port = 22;
+public function __construct() {
+parent::__construct();
 $this->ssl = false;
 $this->hostkey = false;
 }
 
-public function connect() {
+public function connect($host, $login, $password) {
+if (!parent::connect($host, $login, $password)) rturn false;
+if (empty($this->port)) $this->port = 22;
 $this->handle = empty($this->key) ? 
 @ssh2_connect($this->host, $this->port) :
  @ssh2_connect($this->host, $this->port, $this->hostkey);
@@ -54,8 +55,12 @@ public function getfile($filename) {
 		return file_get_contents($this->getfilename($filename));
 	}
 
-public function putfile($filename, $content) {
+public function putcontent($filename, $content) {
 		return file_put_contents($this->getfilename($filename), $content) !== false;
+}
+
+public function upload($localfile, $filename) {
+		return file_put_contents($this->getfilename($filename), file_get_contents($localfile)) !== false;
 }
 
 public function pwd() {
@@ -87,7 +92,7 @@ return $this->runcommand('chown ', $filename, $owner, $recursive);
 	}
 
 public function owner($file) {
-return $this->getownername(@fileowner($this->
+return self::getownername(@fileowner($this->
 $file));
 	}
 

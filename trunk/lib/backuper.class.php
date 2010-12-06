@@ -7,63 +7,168 @@
 **/
 
 class tbackuper extends tevents {
-  
-  public static function instance() {
+private $__filer;
+private $tar;
+private $zip;
+private $archtype;
+public  $filertype;
+
+    public static function instance() {
     return getinstance(__class__);
   }
   
+public static function include_tar() {
+    require_once(litepublisher::$paths->libinclude . 'tar.class.php');
+}
+
+public static function include_zip() {
+    require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
+}
+
+public static function include_unzip() {
+    require_once(litepublisher::$paths->libinclude . 'strunzip.lib.php');
+}
+  
   protected function create() {
     parent::create();
-    require_once(litepublisher::$paths->libinclude . 'tar.class.php');
+$this->basename = 'backuper';
+$this->data['fftpfolder'] = '';
+$this->__filer = null;
+$this->tar = null;
+$this->zip = null;
+$this->archtype = 'zip';
+$this->filertype = self::getprefered();
   }
-  
-  public function  readdir(tar $tar, $path, $subdir, $prefix = '') {
-    $path  = rtrim($path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR  ;
-    $subdir = trim($subdir, DIRECTORY_SEPARATOR  );
-    if ($subdir != '') $subdir .= DIRECTORY_SEPARATOR  ;
-    $subdirslashed = str_replace(DIRECTORY_SEPARATOR   , '/', $subdir) ;
+
+public function __destruct() {
+unset($this->__filer, $this->tar, $this->zip);
+parent::__destruct();
+}
+
+public function unknown_archive() {
+$this->error('Unknow archive type ' $this->archtype);
+}
+
+public static function getprefered() {
+$owner = fileowner(dirname(__file__));
+if (($owner !== false) && ($owner === getmyuid())) return 'file';
+
+if (extension_loaded('ssh2') && function_exists('stream_get_contents') ) return 'ssh2';
+if (extension_loaded('ftp')) return 'ftp';
+if (extension_loaded('sockets') || function_exists('fsockopen')) return 'socket';
+return false;
+}
+
+public function getfiler() {
+if (isset($this->__filer) return $this->__filer;
+switch ($this->filertype) {
+case 'ftp':
+$result = new tftpfiler();
+break;
+case 'ssh2':
+$result = new tssh2filer();
+break;
+
+case 'socket':
+$result = new tftpsocketfiler();
+break;
+
+case 'file':
+$result = new tlocalfiler();
+break;
+
+default:
+$result = new tlocalfiler();
+$result->chmod_file = 0666;
+$result->chmod_dir = 0777;
+}
+
+$this->__filer = $result;
+return $result;
+}
+
+public function createarch() {
+switch ($this->archtype) {
+case 'tar':
+self::include_tar();
+   $this->tar = new tar();
+break;
+
+case 'zip':
+self::include_zip();
+$this->zip = new zip();
+break;
+
+default:
+$this->unknown_archive();
+}
+}
+
+public function savearch() {
+switch ($this->archtype) {
+case 'tar':
+return $this->tar->savetostring(true);
+
+case 'zip':
+return $this->zip->file();
+
+default:
+$this->unknown_archive();
+}
+}
+
+private function addfile($filename, $content, $perm) {
+switch ($this->archtype) {
+case 'tar':
+return $this->tar->addstring($content, $filename, $perm);
+
+case 'zip':
+          return $this->zip->addFile($content, $filename);
+
+default:
+$this->unknown_archive();
+}
+}
+
+private function adddir($dir, $perm) {
+switch ($this->archtype) {
+case 'tar':
+return $this->tar->adddir($dir, $perm);
+
+case 'zip':
+return true;
+
+default:
+$this->unknownarchive();
+}
+}
+
+  public function  readdir($path) {
+$filer = $this->getfiler();
+    $path  = rtrim($path, '/');
+    if ($list = $filer->getdir($path )) {
+$this->adddir($path, $filer->getchmod($path));
+$path .= '/';
     $hasindex = false;
-    if ($fp = opendir($path . $subdir)) {
-      $tar->adddir($prefix. $subdirslashed, 0777);
-      while (FALSE !== ($file = readdir($fp))) {
-        if (($file == '.') || ($file == '..')) continue;
-        $filename = $path . $subdir .$file;
-        if (is_dir($filename)) {
-          $this->readdir($tar, $path, $subdir . $file, $prefix);
+foreach ($list as $name => $item) {
+$filename = $path . $name;
+        if ($item['isdir']) {
+          $this->readdir($filename);
         } 			else {
-          if (preg_match('/(\.bak\.php$)|(\.lok$)/',  $file)) continue;
-          $tar->add($filename, "$prefix$subdirslashed$file", 0666);
-          if (!$hasindex) $hasindex = ($file == 'index.php') || ($file == 'index.htm');
+          if (preg_match('/(\.bak\.php$)|(\.lok$)/',  $name)) continue;
+$this->addfile($filename,$filer->getfile($filename), $item['mode']);
+          if (!$hasindex) $hasindex = ($name == 'index.php') || ($name == 'index.htm');
         }
       }
+    if (!$hasindex) $this->addfile($$path . 'index.htm', '', $filer->chmod_file);
     }
-    if (!$hasindex) $tar->addstring('', $prefix . $subdirslashed. 'index.htm', 0666);
-  }
-  
-  private function dirtotar($dir, $gz) {
-    $tar = new tar();
-    $this->readdir($tar, $dir, '');
-    return $tar->savetostring($gz);
-  }
-  
-  public function DownloadPlugin($name) {
-    $this->RequireZip();
-    $zip = new zipfile();
-    $this->readdir($zip, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
-    return $zip->file();
-  }
-  
-  public function DownloadTheme($name) {
-    $this->RequireZip();
-    $zip = new zipfile();
-    $this->readdir($zip, litepublisher::$paths->themes . $name, '', "themes/$name/");
-    return $zip->file();
   }
   
   public function getpartial($plugins, $theme, $lib) {
     set_time_limit(300);
-    $tar = new tar();
-    if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
+
+$this->createarch();
+    if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
     $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
     if ($lib)  {
       $this->readdir($tar, litepublisher::$paths->lib, '', 'lib/');

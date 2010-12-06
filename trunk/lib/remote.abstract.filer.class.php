@@ -4,16 +4,13 @@ class tremotefiler {
 protected $host;
 protected $login;
 protected $password;
-protected $port;
+public $port;
 protected $handle;
 protected $timeout;
 public $chmod_file;
 public $chmod_dir;
 
-public function __construct($host, $login, $password) {
-$this->host = $host;
-$this->login = $login;
-$this->password = $password;
+public function __construct() {
 $this->port = 21;
 $this->handle= null;
 $this->timeout = 30;
@@ -21,11 +18,11 @@ $this->chmod_file = 0644;
 $this->chmod_dir = 0755 ;
 }
 
-public static function getprefered() {
-if (extension_loaded('ssh2') && function_exists('stream_get_contents') ) return 'ssh2';
-if (extension_loaded('ftp')) return 'ftp';
-if (extension_loaded('sockets') || function_exists('fsockopen')) return 'socket';
-return false;
+public function connect($host, $login, $password) {
+if (empty($host) || empty($login) || empty($password)) return false;
+$this->host = $host;
+$this->login = $login;
+$this->password = $password;
 }
 
 protected function getmode($mode) {
@@ -35,7 +32,7 @@ if ( $this->is_dir($file) ) return $this->chmod_dir;
 				return false;
 }
 
-protected function getownername($owner) {
+public static function getownername($owner) {
 		if ($owner&& function_exists('posix_getpwuid') ) {
 		$a = posix_getpwuid($owner);
 		return $a['name'];

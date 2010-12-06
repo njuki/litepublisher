@@ -1,21 +1,22 @@
 <?php
 
 class tftpfiler extends tremotefiler {
-protected $ssl;
+public $ssl;
 
-public function __construct($host, $login, $password) {
-parent::__construct($host, $login, $password);
-if (empty($this->port)) $this->port = 21;
+public function __construct() {
+parent::__construct();
 $this->timeout = 240;
 $this->ssl = false;
-
 }
 
 public function __destruct() {
 		if ( $this->handle) ftp_close($this->handle);
 	}
 
-public function connect() {
+public function connect($host, $login, $password) {
+if (!parent::connect($host, $login, $password)) rturn false;
+if (empty($this->port)) $this->port = 21;
+
 $this->handle = $this->ssl && function_exists('ftp_ssl_connect') ?
 @ftp_ssl_connect($this->host, $this->port, $this->timeout) :
 @ftp_connect($this->host, $this->port, $this->timeout);
@@ -76,13 +77,17 @@ public function getfile($filename) {
 return false;
 	}
 
-public function putfile($filename, $content) {
+public function putcontent($filename, $content) {
 if (!($temp = tmpfile())) return false;
 		fwrite($temp, $content);
-		fseek($temp, 0); //Skip back to the start of the file being written to
-		$result = @ftp_fput($this->handle, $filename, $temp, FTP_BINARY);
+		fseek($temp, 0); 
+		$result = @ftp_fput($this->handle, $filename, $tmp, FTP_BINARY);
 		fclose($temp);
 		return $result;
+}
+
+public function upload($localfile, $filename) {
+return @ftp_put($this->handle, $filename, $localfile, FTP_BINARY);
 }
 
 public function pwd() {
