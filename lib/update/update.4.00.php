@@ -285,6 +285,12 @@ tstorage::savemodified();
 $rpc->deleteclass('TXMLRPCFiles');
 turlmap::unsub('TXMLRPCFiles');
 
+$backuper = tbackuper::instance();
+if (!isset($backuper->data['ftpfolder'])) {
+$backuper->data['fftpfolder'] = '';
+$backuper->save();
+}
+
 $l = litepublisher::$paths->languages;
 @unlink($l . 'adminru.ini');
 @unlink($l . 'adminen.ini');
