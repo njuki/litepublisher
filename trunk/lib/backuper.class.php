@@ -32,7 +32,7 @@ public static function include_unzip() {
   protected function create() {
     parent::create();
 $this->basename = 'backuper';
-$this->data['fftpfolder'] = '';
+$this->data['ftproot'] = '';
 $this->__filer = null;
 $this->tar = null;
 $this->zip = null;
@@ -163,33 +163,56 @@ $this->addfile($filename,$filer->getfile($filename), $item['mode']);
     if (!$hasindex) $this->addfile($$path . 'index.htm', '', $filer->chmod_file);
     }
   }
+
+public function chdir($dir) {
+if (($this->filertype == 'ftp') || ($this->filertype == 'socket')) {
+if ('/' != DIRECTORY_SEPARATOR  ) $dir = str_replace(DIRECTORY_SEPARATOR  , '/', $dir);
+$dir = rtrim($dir, '/');
+$root = rtrim($this->ftproot, '/');
+if (strbegin($dir, $root)) $dir = substr($dir, strlen($$root));
+$this->filer->chdir($dir);
+} else {
+$this->filer->chdir($dir);
+}
+}
   
   public function getpartial($plugins, $theme, $lib) {
     set_time_limit(300);
-
 $this->createarch();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
-    $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
+
+$this->chdir(litepublisher::$paths->storage);
+$this->readdir('storage/data');
+
     if ($lib)  {
-      $this->readdir($tar, litepublisher::$paths->lib, '', 'lib/');
-      $this->readdir($tar, litepublisher::$paths->js, '', 'js/');
+$this->chdir(litepublisher::$paths->lib);
+      $this->readdir('lib');
+$this->chdir(litepublisher::$paths->js);
+      $this->readdir('js');
     }
+
     if ($theme)  {
-      $template = ttemplate::instance();
-      $themename = $template->theme;
-      $this->readdir($tar, litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  , '', "themes/$themename/");
+$this->chdir(litepublisher::$paths->themes);
+$views = tviews::instance();
+$names = array();
+foreach ($views->items as $id => $item) {
+if (in_array($item['themename'], continue;
+$names)) $names[] = $item['themename'];
+$this->readdir('themes/' . $item['themename']);
+}
     }
     
     if ($plugins) {
       $plugins = tplugins::instance();
       foreach ($plugins->items as $name => $item) {
+$this->chdir(litepublisher::$paths->plugins);
         if (@is_dir(litepublisher::$paths->plugins . $name)) {
-          $this->readdir($tar, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
+          $this->readdir('plugins/' . $name);
         }
       }
     }
     
-    return $tar->savetostring(true);
+    return $this->savearchive();
   }
   
   public function getdump() {
