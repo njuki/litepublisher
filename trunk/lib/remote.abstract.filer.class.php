@@ -31,6 +31,7 @@ if (empty($host) || empty($login) || empty($password)) return false;
 $this->host = $host;
 $this->login = $login;
 $this->password = $password;
+return true;
 }
 
 protected function getmode($mode) {
