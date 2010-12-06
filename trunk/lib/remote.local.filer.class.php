@@ -1,6 +1,17 @@
 <?php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
 
 class tlocalfiler extends tremotefiler {
+
+public function __construct() {
+parent::__construct();
+$this->connected = true;
+}
 
 public function getfile($file) {
 		return file_get_contents($file);
@@ -133,29 +144,17 @@ public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 return parent::mkdir($path, $chmod , $chown , $chgrp );
 	}
 
-public function getdir($path, $include_hidden = true, $recursive = false) {
-		if ( $this->is_file($path) ) {
-			$base = basename($path);
-			$path = dirname($path);
-		} else {
-			$base = false;
-		}
-		if ( ! $this->is_dir($path) ) return false;
-
+public function getdir($path) {
+		if ( $this->is_file($path) ) $path = dirname($path);
+$path = str_replace('/', DIRECTORY_SEPARATOR  , $path);
+$path = rtrim($path, DIRECTORY_SEPARATOR);
 		if ($dir = @dir($path)) {
 		$result = array();
 		while (false !== ($name= $dir->read()) ) {
-if (($name == '.') || ($name == '..')) continue;
-			if ( ! $include_hidden && '.' == $name[0] ) continue;
-			if ( $base && $name != $base) continue;
-$fullname = $path.'/'.$name;
+if (($name == '.') || ($name == '..') || ($name == '.svn')) continue;
+$fullname = $path.DIRECTORY_SEPARATOR  . $name;
 $a = $this->getfileinfo($fullname);
 $a['name'] = $name;
-			if ( 'd' == $a['type'] ) {
-					$a['files'] = $recursive  ? $this->getdir($fullname, $include_hidden, true) :
-array();
-			}
-
 			 $result[$name] = $a;
 		}
 		$dir->close();

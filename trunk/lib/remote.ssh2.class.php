@@ -1,4 +1,10 @@
 <?php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
 
 class tssh2filer extends tremotefiler {
 public $sftp;
@@ -25,6 +31,7 @@ $authresult = $this->public_key&& $this->private_key ?
 @ssh2_auth_password($this->handle, $this->login, $this->password);
 if ($authresult) {
 		$this->sftp = ssh2_sftp($this->handle);
+$this->connected = true;
 return true;
 }
 }
@@ -161,31 +168,17 @@ public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
 		return true;
 	}
 
-public  function getdir($path, $include_hidden = true, $recursive = false) {
-		if ( $this->is_file($path) ) {
-			$base = basename($path);
-			$path = dirname($path);
-		} else {
-			$base = false;
-		}
-
+public  function getdir($path) {
+		if ( $this->is_file($path) ) 			$path = dirname($path);
 		if (!  $this->is_dir($path) )  return false;
 		$result = array();
 if ($dir = @dir($this->getfilename($path))) {
 		while (false !== ($name = $dir->read()) ) {
-if (($name == '.') || ($name == '..')) continue;
-			if ( ! $include_hidden && '.' == $name[0] ) continue;
-			if ( $base && $name != $base) continue;
+if (($name == '.') || ($name == '..') || ($name == '.svn')) continue;
 $fullname = $path.'/'.$name;
 $a = $this->getfileinfo($fullname);
 $a['name'] = $name;
-if ($this->is_dir($fullname)) {
-			$a['type']		= 'f';
-}else {
-			$a['type']		= 'd';
-					$a['files'] = $recursive  ? $a['files'] = $this->getdir($fullname, $include_hidden, $recursive) : array();
-			}
-
+$a['isdir'] = $this->is_dir($fullname);
 			$result[ $name ] = $a;
 		}
 		$dir->close();
@@ -196,4 +189,3 @@ return false;
 }
 
 }//class
-
