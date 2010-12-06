@@ -65,6 +65,7 @@ switch ($this->filertype) {
 case 'ftp':
 $result = new tftpfiler();
 break;
+
 case 'ssh2':
 $result = new tssh2filer();
 break;
@@ -82,6 +83,7 @@ $this->filertype = 'file';
 $result = new tlocalfiler();
 $result->chmod_file = 0666;
 $result->chmod_dir = 0777;
+break;
 }
 
 $this->__filer = $result;
@@ -196,11 +198,14 @@ public function check_ftp_root() {
 $temp = litepublisher::$paths->data . md5uniq() . '.tmp';
 file_put_contents($temp,' ');
 @chmod($temp, 0666);
+//$temp = '/home/jusoft/blogolet.ru/data/test-write.txt';
 $filename = str_replace('\\\\', '/', $temp);
 $filename = str_replace('\\', '/', $filename);
 $this->filer->chdir('/');
 if (($this->ftproot == '') || !strbegin($filename, $this->ftproot) || !$this->filer->exists(substr($filename, strlen($this->ftproot)))) {
-$this->ftproot = $this->find_ftp_root($temp);
+$this->ftproot = $this->find_ftp_root(
+//'/home/jusoft/blogolet.ru/data/test-write.txt');
+$temp);
 $this->save();
 }
 unlink($temp);
