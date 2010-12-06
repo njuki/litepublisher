@@ -131,9 +131,9 @@ public function size($file) {
 		return ftp_size($this->handle, $file);
 	}
 
-public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
+public function mkdir($path, $chmod) {
 		if  ( !ftp_mkdir($this->handle, $path) ) return false;
-return parent::mkdir($path, $chmod , $chown , $chgrp );
+return parent::mkdir($path, $chmod );
 	}
 
 public function rmdir($path) {
@@ -243,5 +243,4 @@ unset($list);
 		if ( count($result) == 0) return false;
 		return $result;
 	}
-
 }//class

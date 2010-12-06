@@ -71,13 +71,20 @@ public function move($source, $destination, $overwrite = false) {
 			return false;
 	}
 
-public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
+public function mkdir($path, $chmod) {
 		if ( ! $chmod ) $chmod = $this->chmod_dir;
 		$this->chmod($path, $chmod);
-		if ( $chown ) $this->chown($path, $chown);
-		if ( $chgrp ) $this->chgrp($path, $chgrp);
 		return true;
 	}
+
+public function forcedir($dir) {
+$dir = rtrim($dir, '/');
+if (!$this->is_dir($dir)) {
+$this->forcedir(dirname($dir));
+$this->mkdir($dir, $this->chmod_dir);
+//$this->chmod($dir, $this->chmod_dir);
+}
+}
 
 protected function getfileinfo($filename) {
 $result = array();

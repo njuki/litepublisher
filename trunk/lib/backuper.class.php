@@ -8,11 +8,13 @@
 
 class tbackuper extends tevents {
 private $__filer;
+private $existingfolders;
 private $tar;
 private $zip;
 private $unzip;
 private $archtype;
 public  $filertype;
+
 
     public static function instance() {
     return getinstance(__class__);
@@ -298,14 +300,22 @@ $this->setdump($content);
 return true;
       }
 
+$dir = dirname($filename);
+if (!isset($this->existingfolders[$dir])) {
+$this->filer->forcedir($dir);
+$this->existingfolders[$dir] = true;
+}
+
 if ($this->filer->putcontent($filename, $content)) {
 $this->filer->chmod($filename, $mode);
 }
 }
 
-    public function upload(&$content, $archtype) {
+    public function upload(&$content, $ignoredata, $archtype) {
     set_time_limit(300);
 $this->archtype = $archtype;
+$this->ignoredata = $ignoredata;
+
 $this->createarchive();
     switch ($archtype) {
 case 'tar':
@@ -328,12 +338,7 @@ break;
 default:
 $this->unknownarchive();
 }
-
-      
-
-    }
-    
-    if ($tmp) {
+if (!$ignoredata &&
       $old = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths->data) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
       @rename(litepublisher::$paths->data, $old);
       @rename($tmp, litepublisher::$paths->data);
