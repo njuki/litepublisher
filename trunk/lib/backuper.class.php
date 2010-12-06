@@ -10,6 +10,7 @@ class tbackuper extends tevents {
 private $__filer;
 private $tar;
 private $zip;
+private $unzip;
 private $archtype;
 public  $filertype;
 
@@ -36,12 +37,13 @@ $this->data['ftproot'] = '';
 $this->__filer = null;
 $this->tar = null;
 $this->zip = null;
+$this->unzip = null;
 $this->archtype = 'zip';
 $this->filertype = self::getprefered();
   }
 
 public function __destruct() {
-unset($this->__filer, $this->tar, $this->zip);
+unset($this->__filer, $this->tar, $this->zip, $this->unzip);
 parent::__destruct();
 }
 
@@ -110,6 +112,11 @@ break;
 case 'zip':
 self::include_zip();
 $this->zip = new zip();
+break;
+
+case 'unzip':
+self::include_unzip();
+$this->unzip = new StrSimpleUnzip ();
 break;
 
 default:
@@ -198,14 +205,11 @@ public function check_ftp_root() {
 $temp = litepublisher::$paths->data . md5uniq() . '.tmp';
 file_put_contents($temp,' ');
 @chmod($temp, 0666);
-//$temp = '/home/jusoft/blogolet.ru/data/test-write.txt';
 $filename = str_replace('\\\\', '/', $temp);
 $filename = str_replace('\\', '/', $filename);
 $this->filer->chdir('/');
 if (($this->ftproot == '') || !strbegin($filename, $this->ftproot) || !$this->filer->exists(substr($filename, strlen($this->ftproot)))) {
-$this->ftproot = $this->find_ftp_root(
-//'/home/jusoft/blogolet.ru/data/test-write.txt');
-$temp);
+$this->ftproot = $this->find_ftp_root($temp);
 $this->save();
 }
 unlink($temp);
@@ -287,46 +291,46 @@ $this->updir(litepublisher::$paths->plugins);
     }
     return $this->setdump($s);
   }
-  
-  public function upload(&$content) {
-    set_time_limit(300);
-    $tmp = false;
-    $dataprefix = 'data/';
-    $themesprefix =  'themes/';
-    $pluginsprefix = 'plugins/';
-    $jsprefix = 'js/';
-    
-    $tar = new tar();
-    $tar->loadfromstring($content);
-    foreach ($tar->files as $file) {
-      $filename = $file['name'];
+
+private function uploadfile($filename, $content, $mode) {
       if (dbversion && $filename == 'dump.sql') {
-        $this->setdump($file['file']);
-        continue;
+$this->setdump($content);
+return true;
       }
-      if (strbegin($filename, $dataprefix)) {
-        $filename = substr($filename, strlen($dataprefix));
-        if (!$tmp) $tmp = $this->createtemp();
-        $path = $tmp;
-      } elseif (strbegin($filename, $themesprefix)) {
-        $filename = substr($filename, strlen($themesprefix));
-        $path = litepublisher::$paths->themes;
-      } elseif (strbegin($filename, $pluginsprefix)) {
-        $filename = substr($filename, strlen($pluginsprefix));
-        $path = litepublisher::$paths->plugins;
-      } elseif (strbegin($filename, $jsprefix)) {
-        $filename = substr($filename, strlen($jsprefix));
-        $path = litepublisher::$paths->js;
-      } else {
-        //echo $dir, " is unknown dir<br>";
-      }
+
+if ($this->filer->putcontent($filename, $content)) {
+$this->filer->chmod($filename, $mode);
+}
+}
+
+    public function upload(&$content, $archtype) {
+    set_time_limit(300);
+$this->archtype = $archtype;
+$this->createarchive();
+    switch ($archtype) {
+case 'tar':
+    $this->tar->loadfromstring($content);
+    foreach ($tar->files as $item) {
+$this->uploadfile($item['name'],$item['file'], $item['mode']);
+}
+unset($this->tar);
+break;      
+
+case 'zip':
+    $this->unzip->ReadData($content);
+    foreach ($this->unzip->Entries as  $item) {
+      if ($item->Error != 0) continue;
+$this->uploadfile($item->Path . $item->Name, $item->Data, $this->filer->chmod_file);
+}
+unset($this->unzip);
+break;
+
+default:
+$this->unknownarchive();
+}
+
       
-      $filename = $path . str_replace('/', DIRECTORY_SEPARATOR  , $filename);
-      if (!tfiler::forcedir(dirname($filename))) return $this->error("error create folder " . dirname($filename));
-      if (false === file_put_contents($filename, $file['file'])) return $this->error("Error saving file $filename");
-      
-      //chmod($filename, $file['mode']);
-      chmod($filename, 0666);
+
     }
     
     if ($tmp) {
