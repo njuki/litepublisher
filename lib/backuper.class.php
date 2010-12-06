@@ -46,7 +46,7 @@ parent::__destruct();
 }
 
 public function unknown_archive() {
-$this->error('Unknow archive type ' $this->archtype);
+$this->error('Unknown archive type ' . $this->archtype);
 }
 
 public static function getprefered() {
@@ -60,7 +60,7 @@ return false;
 }
 
 public function getfiler() {
-if (isset($this->__filer) return $this->__filer;
+if (isset($this->__filer)) return $this->__filer;
 switch ($this->filertype) {
 case 'ftp':
 $result = new tftpfiler();
@@ -78,6 +78,7 @@ $result = new tlocalfiler();
 break;
 
 default:
+$this->filertype = 'file';
 $result = new tlocalfiler();
 $result->chmod_file = 0666;
 $result->chmod_dir = 0777;
@@ -87,7 +88,17 @@ $this->__filer = $result;
 return $result;
 }
 
+public function connect($host, $login, $password) {
+if ($this->filer->connected) return true;
+if ($this->filer->connect($host, $login, $password)) {
+if (($this->filertype == 'ftp') || ($this->filertype == 'socket')) $this->check_ftp_root();
+return true;
+}
+return false;
+}
+
 public function createarch() {
+if (!$this->filer->connected) $this->error('Filer not connected');
 switch ($this->archtype) {
 case 'tar':
 self::include_tar();
@@ -166,14 +177,54 @@ $this->addfile($filename,$filer->getfile($filename), $item['mode']);
 
 public function chdir($dir) {
 if (($this->filertype == 'ftp') || ($this->filertype == 'socket')) {
+$dir = str_replace('\\', '/', $dir);
 if ('/' != DIRECTORY_SEPARATOR  ) $dir = str_replace(DIRECTORY_SEPARATOR  , '/', $dir);
 $dir = rtrim($dir, '/');
 $root = rtrim($this->ftproot, '/');
-if (strbegin($dir, $root)) $dir = substr($dir, strlen($$root));
+if (strbegin($dir, $root)) $dir = substr($dir, strlen($root));
 $this->filer->chdir($dir);
 } else {
 $this->filer->chdir($dir);
 }
+}
+
+public function updir($dir) {
+$this->chdir(dirname(rtrim($dir, DIRECTORY_SEPARATOR )));
+}
+
+public function check_ftp_root() {
+$temp = litepublisher::$paths->data . md5uniq() . '.tmp';
+file_put_contents($temp,' ');
+@chmod($temp, 0666);
+$filename = str_replace('\\\\', '/', $temp);
+$filename = str_replace('\\', '/', $filename);
+$this->filer->chdir('/');
+if (($this->ftproot == '') || !strbegin($filename, $this->ftproot) || !$this->filer->exists(substr($filename, strlen($this->ftproot)))) {
+$this->ftproot = $this->find_ftp_root($temp);
+$this->save();
+}
+unlink($temp);
+}
+
+public function find_ftp_root($filename) {
+$root = '';
+$filename = str_replace('\\\\', '/', $filename);
+$filename = str_replace('\\', '/', $filename);
+if ($i = strpos($filename, ':')) {
+$root = substr($filename, 0, $i);
+$filename = substr($filename, $i);
+}
+
+$this->filer->chdir('/');
+while (($filename != '') && !$this->filer->exists($filename)) {
+if ($i = strpos($filename, '/', 1)) {
+$root .= substr($filename, 0, $i);
+$filename = substr($filename, $i);
+} else {
+return false;
+}
+}
+return $root;
 }
   
   public function getpartial($plugins, $theme, $lib) {
@@ -181,31 +232,31 @@ $this->filer->chdir($dir);
 $this->createarch();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
 
-$this->chdir(litepublisher::$paths->storage);
+$this->updir(dirname(rtrim(litepublisher::$paths->storage, DIRECTORY_SEPARATOR) ));
 $this->readdir('storage/data');
 
     if ($lib)  {
-$this->chdir(litepublisher::$paths->lib);
+$this->updir(litepublisher::$paths->lib);
       $this->readdir('lib');
-$this->chdir(litepublisher::$paths->js);
+$this->updir(litepublisher::$paths->js);
       $this->readdir('js');
     }
 
     if ($theme)  {
-$this->chdir(litepublisher::$paths->themes);
+$this->updir(litepublisher::$paths->themes);
 $views = tviews::instance();
 $names = array();
 foreach ($views->items as $id => $item) {
-if (in_array($item['themename'], continue;
-$names)) $names[] = $item['themename'];
+if (in_array($item['themename'], $names))continue;
+ $names[] = $item['themename'];
 $this->readdir('themes/' . $item['themename']);
 }
     }
     
     if ($plugins) {
+$this->updir(litepublisher::$paths->plugins);
       $plugins = tplugins::instance();
       foreach ($plugins->items as $name => $item) {
-$this->chdir(litepublisher::$paths->plugins);
         if (@is_dir(litepublisher::$paths->plugins . $name)) {
           $this->readdir('plugins/' . $name);
         }
@@ -312,9 +363,10 @@ $this->chdir(litepublisher::$paths->plugins);
   
   public function createbackup(){
     $s = $this->getpartial(true, true, true);
-    $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d') . '.tar.gz';
+    $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
+$filename .= $this->archtype == 'zip' ? '.zip' : '.tar.gz';
     file_put_contents($filename, $s);
-    chmod($filename, 0666);
+    @chmod($filename, 0666);
     return $filename;
   }
   

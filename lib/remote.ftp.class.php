@@ -1,4 +1,10 @@
 <?php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
 
 class tftpfiler extends tremotefiler {
 public $ssl;
@@ -14,7 +20,7 @@ public function __destruct() {
 	}
 
 public function connect($host, $login, $password) {
-if (!parent::connect($host, $login, $password)) rturn false;
+if (!parent::connect($host, $login, $password)) return false;
 if (empty($this->port)) $this->port = 21;
 
 $this->handle = $this->ssl && function_exists('ftp_ssl_connect') ?
@@ -26,45 +32,11 @@ if ($this->handle && @ftp_login($this->handle,$this->login, $this->password) ) {
 		if ( @ftp_get_option($this->handle, FTP_TIMEOUT_SEC) < $this->timeout) {
 @ftp_set_option($this->handle, FTP_TIMEOUT_SEC, $this->timeout);
 }
+$this->connected = true;
 return true;
 }
 return false;
 }
-
-public static function findfile($self, $dir, $filename) {
-$dir = rtrim($dir, '/');
-if ($list = $self->getdir($dir)) {
-if (isset($list[$filename])) return $dir;
-foreach ($list as $name => $item) {
-if ($item['isdir']) {
-if ($result = self::findfile($self, $dir . '/' . $name, $filename)) return$result;
-}
-}
-}
-return false;
-}
-
-public static function findfolder($self, $folder, $base = '.', $loop = false ) {
-		if ( empty( $base ) || '.' == $base ) $base = rtrim($this->pwd(), '/') . '/';
-		$folder = rtrim($folder, '/');
-		$folder_parts = explode('/', $folder);
-		$last_path = $folder_parts[ count($folder_parts) - 1 ];
-		$files = $this->getdir( $base );
-		foreach ( $folder_parts as $key ) {
-			if ( $key == $last_path ) continue; //We want this to be caught by the next code block.
-			if ( isset($files[ $key ]) ){
-				$newdir = rtrim(path_join($base, $key), '/') . '/';
-				if ( $ret = $this->findfolder( $folder, $newdir, $loop) ) return $ret;
-			}
-		}
-
-		if (isset( $files[ $last_path ] ) ) {
-			return trailingslashit($base . $last_path);
-		}
-		if ( $loop ) return false; //Prevent tihs function looping again.
-		return $this->findfolder($folder, '/', true);
-	}
-
 
 public function getfile($filename) {
 		if (($temp = tmpfile()) &&@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
@@ -254,24 +226,16 @@ private function parselisting($line) {
 		return $b;
 	}
 
-public function getdir($path = '.', $include_hidden = true) {
-		if ( $this->is_file($path) ) {
-			$base = basename($path);
-			$path = dirname($path) . '/';
-		} else {
-			$base = false;
-		}
-
+public function getdir($path) {
+		if ( $this->is_file($path) ) $path = dirname($path) . '/';
 		if (false == ($list = ftp_rawlist($this->handle, '-a ' . $path, false))) return false;
 		$result = array();
 		foreach ( $list as $k => $v ) {
 			$a = $this->parselisting($v);
 			if ( empty($a) ) continue;
 $name = $a['name'];
-if (($name == '.') || ($name == '..')) continue;
-			if ( ! $include_hidden && '.' == $name[0] ) continue;
-			if ( $base && $name != $base) continue;
-$a['mode'] = $this->perm2mode($a['perms']);
+if (($name == '.') || ($name == '..') || ($name == '.svn')) continue;
+$a['mode'] = octdec ($this->perm2mode($a['perms']));
 if (!isset($a['isdir'])) $a['isdir'] = $a['type'] == 'd';
 			$result[ $name ] = $a;
 		}

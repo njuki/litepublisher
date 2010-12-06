@@ -1,4 +1,10 @@
 <?php
+/**
+* Lite Publisher
+* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
 
 class tremotefiler {
 protected $host;
@@ -9,6 +15,7 @@ protected $handle;
 protected $timeout;
 public $chmod_file;
 public $chmod_dir;
+public $connected;
 
 public function __construct() {
 $this->port = 21;
@@ -16,6 +23,7 @@ $this->handle= null;
 $this->timeout = 30;
 $this->chmod_file = 0644;
 $this->chmod_dir = 0755 ;
+$this->connected = false;
 }
 
 public function connect($host, $login, $password) {
@@ -77,7 +85,7 @@ $result = array();
 			$result['group']    	= $this->group($filename);
 			$result['size']    	= $this->size($filename);
 			$result['time']= $this->mtime($filename);
-			$result['type']		= $this->is_dir($filename) ? 'd' : 'f';
+			$result['isdir']		= $this->is_dir($filename);
 return $result;
 }
 
