@@ -139,9 +139,11 @@ public function size($file) {
 		return filesize($file);
 	}
 
-public function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
-		if ( ! @mkdir($path) ) return false;
-return parent::mkdir($path, $chmod , $chown , $chgrp );
+public function mkdir($path, $chmod) {
+		if ( ! $chmod) $chmod = $this->chmod_dir;
+		if ( ! @mkdir($path, $chmod) ) return false;
+@chmod($path, $chmod);
+return true;
 	}
 
 public function getdir($path) {
@@ -162,6 +164,16 @@ $a['name'] = $name;
 		return $result;
 	}
 return false;
+}
+
+
+public function forcedir($dir) {
+$dir = rtrim($dir, DIRECTORY_SEPARATOR );
+if (!is_dir($dir)) {
+$this->forcedir(dirname($dir));
+mkdir($dir, $this->chmod_dir);
+@chmod($dir, $this->chmod_dir);
+}
 }
 
 }//class

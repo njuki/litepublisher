@@ -188,4 +188,13 @@ $a['isdir'] = $this->is_dir($fullname);
 return false;
 }
 
+public function forcedir($dir) {
+$dir = rtrim($dir, DIRECTORY_SEPARATOR );
+if (!$this->is_dir($dir)) {
+$this->forcedir(dirname($dir));
+$this->mkdir($dir, $this->chmod_dir);
+@$this->chmod($dir, $this->chmod_dir);
+}
+}
+
 }//class
