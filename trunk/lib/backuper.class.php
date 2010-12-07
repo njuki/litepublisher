@@ -7,14 +7,16 @@
 **/
 
 class tbackuper extends tevents {
-private $__filer;
-private $existingfolders;
+public  $filertype;
 private $tar;
 private $zip;
 private $unzip;
 private $archtype;
-public  $filertype;
-
+private $__filer;
+private $existingfolders;
+private $lastdir;
+private $stdfolders;
+private $hasdata;
 
     public static function instance() {
     return getinstance(__class__);
@@ -41,6 +43,7 @@ $this->tar = null;
 $this->zip = null;
 $this->unzip = null;
 $this->archtype = 'zip';
+$this->lastdir = '';
 $this->filertype = self::getprefered();
   }
 
@@ -126,13 +129,17 @@ $this->unknown_archive();
 }
 }
 
-public function savearch() {
+public function savearchive() {
 switch ($this->archtype) {
 case 'tar':
-return $this->tar->savetostring(true);
+$result = $this->tar->savetostring(true);
+unset($this->tar);
+return $result;
 
 case 'zip':
-return $this->zip->file();
+$result = $this->zip->file();
+unset($this->zip);
+return $result;
 
 default:
 $this->unknown_archive();
@@ -166,8 +173,8 @@ $this->unknownarchive();
 }
 
   public function  readdir($path) {
-$filer = $this->getfiler();
     $path  = rtrim($path, '/');
+$filer = $this->getfiler();
     if ($list = $filer->getdir($path )) {
 $this->adddir($path, $filer->getchmod($path));
 $path .= '/';
@@ -187,6 +194,8 @@ $this->addfile($filename,$filer->getfile($filename), $item['mode']);
   }
 
 public function chdir($dir) {
+if ($dir === $this->lastdir) return;
+$this->lastdir= $dir;
 if (($this->filertype == 'ftp') || ($this->filertype == 'socket')) {
 $dir = str_replace('\\', '/', $dir);
 if ('/' != DIRECTORY_SEPARATOR  ) $dir = str_replace(DIRECTORY_SEPARATOR  , '/', $dir);
@@ -197,6 +206,13 @@ $this->filer->chdir($dir);
 } else {
 $this->filer->chdir($dir);
 }
+}
+
+public function setdir($dir) {
+$dir = trim($dir, '/');
+if ($i = strpos($dir, '/')) $dir = substr($dir, $i);
+if (! array_key_exists($dir, litepublisher::$_paths)) $this->error(sprintf('Unknown "%s" folder', $dir));
+$this->chdir(dirname(rtrim(litepublisher::$_paths[$dir], DIRECTORY_SEPARATOR )));
 }
 
 public function updir($dir) {
@@ -243,18 +259,18 @@ return $root;
 $this->createarch();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
 
-$this->updir(dirname(rtrim(litepublisher::$paths->storage, DIRECTORY_SEPARATOR) ));
+$this->setdir('storage');
 $this->readdir('storage/data');
 
     if ($lib)  {
-$this->updir(litepublisher::$paths->lib);
+$this->setdir('lib');
       $this->readdir('lib');
-$this->updir(litepublisher::$paths->js);
+$this->setdir('js');
       $this->readdir('js');
     }
 
     if ($theme)  {
-$this->updir(litepublisher::$paths->themes);
+$this->setdir('themes');
 $views = tviews::instance();
 $names = array();
 foreach ($views->items as $id => $item) {
@@ -265,7 +281,7 @@ $this->readdir('themes/' . $item['themename']);
     }
     
     if ($plugins) {
-$this->updir(litepublisher::$paths->plugins);
+$this->setdir('plugins');
       $plugins = tplugins::instance();
       foreach ($plugins->items as $name => $item) {
         if (@is_dir(litepublisher::$paths->plugins . $name)) {
@@ -274,7 +290,7 @@ $this->updir(litepublisher::$paths->plugins);
       }
     }
     
-    return $this->savearchive();
+return $this->savearchive();
   }
   
   public function getdump() {
@@ -300,22 +316,31 @@ $this->setdump($content);
 return true;
       }
 
-$dir = dirname($filename);
+//spec rule for storage folder 
+if (strbegin($filename, 'storage/')) {
+if (!strbegin($filename, 'storage/data/')) return true;
+if (strend($filename, '/index.htm') || strend($filename, '/.htaccess')) return true;
+$this->hasdata = true;
+$filename = 'storage/newdata/' . substr($filename, strlen('storage/data/'));
+}
+
+$dir = rtrim(dirname($filename), '/');
+$this->setdir($dir);
 if (!isset($this->existingfolders[$dir])) {
 $this->filer->forcedir($dir);
 $this->existingfolders[$dir] = true;
 }
 
-if ($this->filer->putcontent($filename, $content)) {
+if ($this->filer->putcontent($filename, $content) === false) return false;
 $this->filer->chmod($filename, $mode);
-}
+return true;
 }
 
-    public function upload(&$content, $ignoredata, $archtype) {
+    public function upload(&$content, $archtype) {
     set_time_limit(300);
 $this->archtype = $archtype;
-$this->ignoredata = $ignoredata;
-
+$this->hasdata = false;
+$this->existingfolders = array();
 $this->createarchive();
     switch ($archtype) {
 case 'tar':
@@ -338,11 +363,13 @@ break;
 default:
 $this->unknownarchive();
 }
-if (!$ignoredata &&
-      $old = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths->data) . '.old-tmp.tmp' . DIRECTORY_SEPARATOR;
-      @rename(litepublisher::$paths->data, $old);
-      @rename($tmp, litepublisher::$paths->data);
-      tfiler::delete($old, true, true);
+unset($this->existingfolders);
+if ($this->hasdata) {
+$this->setdir('storage');
+$old = 'storage/backup/data-' . time();
+$this->filer->rename('storage/data', $old);
+$this->filer->rename('storage/newdata', 'storage/data');
+$this->filer->deletedir($old);
     }
     return true;
   }

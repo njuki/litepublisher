@@ -92,7 +92,7 @@ public function group($file) {
 		return $dir[$file]['group'];
 	}
 
-public function move($source, $destination, $overwrite = false) {
+public function rename($source, $destination) {
 		return ftp_rename($this->handle, $source, $destination);
 	}
 
