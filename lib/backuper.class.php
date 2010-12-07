@@ -133,13 +133,11 @@ public function savearchive() {
 switch ($this->archtype) {
 case 'tar':
 $result = $this->tar->savetostring(true);
-echo count($this->tar->files);
 unset($this->tar);
 return $result;
 
 case 'zip':
 $result = $this->zip->file();
-echo count($this->zip->datasec);
 unset($this->zip);
 return $result;
 

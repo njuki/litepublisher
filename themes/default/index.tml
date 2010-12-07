@@ -4,28 +4,16 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<title>$template.title</title>
 	<link rel="stylesheet" href="$template.url/css/style.css" type="text/css" media="all" />
-	<link rel="alternate" type="application/rss+xml" title="$options.name RSS Feed" href="$options.url/rss.xml" />
-	<link rel="pingback" href="$options.url/rpc.xml" />
-	 <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$options.url/rsd.xml" />
-	<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$options.url/wlwmanifest.xml" />
-	<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
-	<meta name="generator" content="Lite Publisher $options.version" /> <!-- leave this for stats -->
-	<meta name="keywords" content="$template.keywords" />
-	<meta name="description" content="$template.description" />
-	<link rel="sitemap" href="$options.url/sitemap.htm" />
 	<!--[if IE 6]>
 		<script src="$template.url/css/DD_belatedPNG.js"></script>
 		<script>		
 		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, #lastcomments li, #lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
 		 </script>
 	<![endif]--> 
-	<script type="text/javascript" src="$options.files/js/litepublisher/rpc.min.js"></script>
-	<script type="text/javascript" src="$options.files/js/litepublisher/client.min.js"></script>
-	<script type="text/javascript" src="$options.files/js/jsibox/jsibox_basic.js"></script>
 	$template.head
 </head>
 <body>
-	<div id="header"><div id="logo"><span class="name"><a href="$options.url/">$options.name</a></span><span class="slogan">$options.description</span>
+	<div id="header"><div id="logo"><span class="name"><a href="$site.url/">$site.name</a></span><span class="slogan">$site.description</span>
 </div></div>
 	<div id="topmenu">
 	 $template.menu
@@ -33,65 +21,19 @@
 <div id="out">
 <div id="middle">
 	<div id="content">
-		<!--content-->
-		
-		<!--excerpts-->
-		<!--excerpt-->
-		<div class="post" id="post-$post.id">
-			<h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-				<span class="post-date"><!--date-->%d.%m.%Y<!--/date--></span>
-				<span class="post-tags">$post.tagslinks</span>
-			<div class="post-content">$post.excerptcontent
-				$post.excerptfilelist
-			</div>
-			<div class="post-info">
-				<span class="post-comments">$post.commentslink</span>
-				<span class="post-cat">$post.categorieslinks</span>	
-			</div>
-		</div>
-		<!--/excerpt-->
-
-		<!--/excerpts-->
-
-		<!--post-->
-			<div class="post" id="post-$post.id">
-		        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-					<span class="post-date">$post.date</span>
-					<span class="post-tags">$post.tagslinks</span>
-						<div class="post-content">
-       $post.filelist
-							$post.content
-							<div class="post-info">
-								$post.subscriberss
-								<span class="post-cat">$post.categorieslinks</span>	
-							</div>
-							$post.prevnext
-						</div>
-      $post.templatecomments
-			</div>
-		<!--/post-->
-
-		<!--menu-->
-			<div class="post" id="menu-$menu.id">
-		        <h2>$menu.title</h2>
-		        <div class="post-content">
-					$menu.content
-		        </div>
-			</div>
-		<!--/menu-->
-		<!--/content-->
+		$template.content
 	</div>
 	<div id="sidebar">
-		$template.sitebar
+		$template.sidebar
 	</div>
 		
 	<div id="footer">
 	<div id="bottom">
 	<ul id="footerbar">
-		$template.sitebar
+		$template.sidebar
 	</ul>
 		
-			<div id="copyright"><span class="blogolet"><a href="$options.url$options.home">$options.name</a></span>$template.footer</div>
+			<div id="copyright"><span class="blogolet"><a href="$site.url/">$site.name</a></span>$template.footer</div>
 	</div>
 </div>
 </div>

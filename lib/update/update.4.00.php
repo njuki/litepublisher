@@ -133,7 +133,6 @@ $classes->add('tftpfiler', 'remote.ftp.class.php');
 $classes->add('tftpsocketfiler', 'remote.ftpsocket.class.php');
 $classes->add('tlocalfiler', 'remote.local.filer.class.php');
 $classes->add('tssh2filer', 'remote.ssh2.class.php');
-$classes->add('tajaxftpbrowser', 'admin.ftpbrowser.ajax.class.php');
 
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
