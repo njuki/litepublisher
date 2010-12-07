@@ -11,7 +11,7 @@ public  $filertype;
 private $tar;
 private $zip;
 private $unzip;
-private $archtype;
+public $archtype;
 private $__filer;
 private $existingfolders;
 private $lastdir;
@@ -116,7 +116,7 @@ break;
 
 case 'zip':
 self::include_zip();
-$this->zip = new zip();
+$this->zip = new zipfile();
 break;
 
 case 'unzip':
@@ -133,11 +133,13 @@ public function savearchive() {
 switch ($this->archtype) {
 case 'tar':
 $result = $this->tar->savetostring(true);
+echo count($this->tar->files);
 unset($this->tar);
 return $result;
 
 case 'zip':
 $result = $this->zip->file();
+echo count($this->zip->datasec);
 unset($this->zip);
 return $result;
 
@@ -199,14 +201,15 @@ $filer = tlocalfiler::instance();
 if ($list = $filer->getdir($path)) {
 $dir = 'storage/data/' . str_replace(DIRECTORY_SEPARATOR  , '/', substr($path, strlen(litepublisher::$paths->data)));
 $this->adddir($dir, $filer->getchmod($path));
+$dir = rtrim($dir, '/') . '/';
     $hasindex = false;
 $path .= DIRECTORY_SEPARATOR ;
 foreach ($list as $name => $item) {
 $filename = $path . $name;
-if (is_dir($filename) {
+if (is_dir($filename)) {
 $this->readdata($filename);
 }else {
-          if (preg_match('/(\.bak\.php$)|(\.lok$)/',  $name)) continue;
+          if (preg_match('/(\.bak\.php$)|(\.lok$)|(\.log$)/',  $name)) continue;
 $this->addfile($dir . $name, file_get_contents($filename), $item['mode']);
           if (!$hasindex) $hasindex = ($name == 'index.php') || ($name == 'index.htm');
 }
@@ -309,6 +312,27 @@ $this->setdir('plugins');
     
 return $this->savearchive();
   }
+
+  public function getfull() {
+    set_time_limit(300);
+$this->createarch();
+    if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
+
+$this->readdata(litepublisher::$paths->data);
+
+$this->setdir('lib');
+      $this->readdir('lib');
+$this->setdir('js');
+      $this->readdir('js');
+
+$this->setdir('plugins');
+      $this->readdir('plugins');
+
+$this->setdir('themes');
+      $this->readdir('themes');
+
+return $this->savearchive();
+  }
   
   public function getdump() {
     $dbmanager = tdbmanager ::instance();
@@ -392,43 +416,17 @@ default:
 $this->unknownarchive();
 }
 unset($this->existingfolders);
-if ($this->hasdata) {
+if ($this->hasdata) $this->renamedata();
+    return true;
+  }
+
+private function renamedata() {
 $old = litepublisher::$paths->backup . 'data-' . time();
 $data =rtrim(litepublisher::$paths->data, DIRECTORY_SEPARATOR);
 rename($data, $old);
 rename(litepublisher::$paths->storage . 'newdata', $data);
 tfiler::delete($old, true, true);
-    }
-    return true;
-  }
-  
-  private function createtemp() {
-    $result = dirname(litepublisher::$paths->data) .DIRECTORY_SEPARATOR . basename(litepublisher::$paths->data) . '.tmp.tmp' . DIRECTORY_SEPARATOR;
-    if (!is_dir($result)) mkdir($result, 0777);
-    chmod($result, 0777);
-    return $result;
-  }
-  
-  public function getfull() {
-    set_time_limit(300);
-    $tar = new tar();
-    if (dbversion) $tar->addstring($this->getdump(), 'dump.sql', 0644);
-    $this->readdir($tar, litepublisher::$paths->data, '', 'data/');
-    
-    foreach (tfiler::getdir(litepublisher::$paths->plugins) as $name ) {
-      $this->readdir($tar, litepublisher::$paths->plugins, $name, "plugins/");
-    }
-    
-    foreach (tfiler::getdir(litepublisher::$paths->themes) as $name ) {
-      $this->readdir($tar, litepublisher::$paths->themes , $name, "themes/");
-    }
-    
-    $this->readdir($tar, litepublisher::$paths->lib, '', 'lib/');
-    $this->readdir($tar, litepublisher::$paths->js, '', 'js/');
-    //$this->readdir($tar, litepublisher::$paths->files, '', 'files/');
-    
-    return $tar->savetostring(true);
-  }
+}
   
   public function createbackup(){
     $s = $this->getpartial(true, true, true);

@@ -53,6 +53,7 @@ class litepublisher {
 class tpaths {
 public function __get($name) { return litepublisher::$_paths[$name]; }
 public function __set($name, $value) { litepublisher::$_paths[$name] = $value; }
+public function __isset($name) { return array_key_exists($name, litepublisher::$_paths); }
 }
 
 try {

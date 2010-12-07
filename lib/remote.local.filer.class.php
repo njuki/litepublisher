@@ -76,7 +76,7 @@ public function chown($file, $owner, $recursive = false) {
 	}
 
 public function owner($file) {
-return $self::getownername(@fileowner($file));
+return self::getownername(@fileowner($file));
 	}
 
 public function getchmod($file) {
