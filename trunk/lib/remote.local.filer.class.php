@@ -8,6 +8,10 @@
 
 class tlocalfiler extends tremotefiler {
 
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
 public function __construct() {
 parent::__construct();
 $this->connected = true;
@@ -162,13 +166,12 @@ $a['name'] = $name;
 return false;
 }
 
-
 public function forcedir($dir) {
-$dir = rtrim($dir, DIRECTORY_SEPARATOR );
+$dir = str_replace('/', DIRECTORY_SEPARATOR  , $dir);
+$dir = rtrim($path, DIRECTORY_SEPARATOR);
 if (!is_dir($dir)) {
 $this->forcedir(dirname($dir));
-mkdir($dir, $this->chmod_dir);
-@chmod($dir, $this->chmod_dir);
+$this->mkdir($dir, $this->chmod_dir);
 }
 }
 

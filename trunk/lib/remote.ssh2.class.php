@@ -12,6 +12,11 @@ protected $hostkey;
 protected $public_key;
 protected $private_key;
 
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+
 public function __construct() {
 parent::__construct();
 $this->ssl = false;

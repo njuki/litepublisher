@@ -172,7 +172,7 @@ $this->unknownarchive();
 }
 }
 
-  public function  readdir($path) {
+  private function  readdir($path) {
     $path  = rtrim($path, '/');
 $filer = $this->getfiler();
     if ($list = $filer->getdir($path )) {
@@ -189,10 +189,32 @@ $this->addfile($filename,$filer->getfile($filename), $item['mode']);
           if (!$hasindex) $hasindex = ($name == 'index.php') || ($name == 'index.htm');
         }
       }
-    if (!$hasindex) $this->addfile($$path . 'index.htm', '', $filer->chmod_file);
+    if (!$hasindex) $this->addfile($path . 'index.htm', '', $filer->chmod_file);
     }
   }
 
+private function readdata($path) {
+$path = rtrim($path, DIRECTORY_SEPARATOR );
+$filer = tlocalfiler::instance();
+if ($list = $filer->getdir($path)) {
+$dir = 'storage/data/' . str_replace(DIRECTORY_SEPARATOR  , '/', substr($path, strlen(litepublisher::$paths->data)));
+$this->adddir($dir, $filer->getchmod($path));
+    $hasindex = false;
+$path .= DIRECTORY_SEPARATOR ;
+foreach ($list as $name => $item) {
+$filename = $path . $name;
+if (is_dir($filename) {
+$this->readdata($filename);
+}else {
+          if (preg_match('/(\.bak\.php$)|(\.lok$)/',  $name)) continue;
+$this->addfile($dir . $name, file_get_contents($filename), $item['mode']);
+          if (!$hasindex) $hasindex = ($name == 'index.php') || ($name == 'index.htm');
+}
+}
+    if (!$hasindex) $this->addfile($dir . 'index.htm', '', $filer->chmod_file);
+}
+}
+  
 public function chdir($dir) {
 if ($dir === $this->lastdir) return;
 $this->lastdir= $dir;
@@ -213,10 +235,6 @@ $dir = trim($dir, '/');
 if ($i = strpos($dir, '/')) $dir = substr($dir, $i);
 if (! array_key_exists($dir, litepublisher::$_paths)) $this->error(sprintf('Unknown "%s" folder', $dir));
 $this->chdir(dirname(rtrim(litepublisher::$_paths[$dir], DIRECTORY_SEPARATOR )));
-}
-
-public function updir($dir) {
-$this->chdir(dirname(rtrim($dir, DIRECTORY_SEPARATOR )));
 }
 
 public function check_ftp_root() {
@@ -253,14 +271,13 @@ return false;
 }
 return $root;
 }
-  
+
   public function getpartial($plugins, $theme, $lib) {
     set_time_limit(300);
 $this->createarch();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
 
-$this->setdir('storage');
-$this->readdir('storage/data');
+$this->readdata(litepublisher::$paths->data);
 
     if ($lib)  {
 $this->setdir('lib');
@@ -310,6 +327,19 @@ return $this->savearchive();
     return $this->setdump($s);
   }
 
+private function writedata($filename, $content, $mode) {
+if (strend($filename, '/index.htm') || strend($filename, '/.htaccess')) return true;
+$this->hasdata = true;
+$filename = substr($filename, strlen('storage/data/'));
+$filename =str_replace('/', DIRECTORY_SEPARATOR, $filename);
+$filename = litepublisher::$path->storage . 'newdata' . DIRECTORY_SEPARATOR . $filename;
+$filer = tlocalfiler::instance();
+$filer->forcedir(dirname($filename));
+if (file_put_contents($filename, $content) === false) return false;
+@chmod($filename, $mode);
+return true;
+}
+
 private function uploadfile($filename, $content, $mode) {
       if (dbversion && $filename == 'dump.sql') {
 $this->setdump($content);
@@ -318,10 +348,8 @@ return true;
 
 //spec rule for storage folder 
 if (strbegin($filename, 'storage/')) {
-if (!strbegin($filename, 'storage/data/')) return true;
-if (strend($filename, '/index.htm') || strend($filename, '/.htaccess')) return true;
-$this->hasdata = true;
-$filename = 'storage/newdata/' . substr($filename, strlen('storage/data/'));
+if (!strbegin($filename, 'storage/data/')) return $this->writedata($filename, $content, $mode);
+return true;
 }
 
 $dir = rtrim(dirname($filename), '/');
@@ -365,11 +393,11 @@ $this->unknownarchive();
 }
 unset($this->existingfolders);
 if ($this->hasdata) {
-$this->setdir('storage');
-$old = 'storage/backup/data-' . time();
-$this->filer->rename('storage/data', $old);
-$this->filer->rename('storage/newdata', 'storage/data');
-$this->filer->deletedir($old);
+$old = litepublisher::$paths->backup . 'data-' . time();
+$data =rtrim(litepublisher::$paths->data, DIRECTORY_SEPARATOR);
+rename($data, $old);
+rename(litepublisher::$paths->storage . 'newdata', $data);
+tfiler::delete($old, true, true);
     }
     return true;
   }
