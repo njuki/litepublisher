@@ -83,12 +83,8 @@ public function group($file) {
 return $this->getgroupname(@filegroup($file));
 }
 
-public function move($source, $destination, $overwrite = false) {
-		if ( $this->copy($source, $destination, $overwrite) && $this->exists($destination) ) {
-			$this->delete($source);
-			return true;
-}
-			return false;
+public function rename($source, $destination) {
+return @rename($source, $destination);
 	}
 
 public function delete($file, $recursive = false) {

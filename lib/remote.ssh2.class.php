@@ -111,7 +111,7 @@ public function getchmod($file) {
 		return substr(decoct(@fileperms($this->getfilename($file) )),3);
 	}
 
-public function move($source, $destination, $overwrite = false) {
+public function rename($source, $destination) {
 		return @ssh2_sftp_rename($this->handle, $source, $destination);
 	}
 
@@ -186,15 +186,6 @@ $a['isdir'] = $this->is_dir($fullname);
 		return $result;
 }
 return false;
-}
-
-public function forcedir($dir) {
-$dir = rtrim($dir, DIRECTORY_SEPARATOR );
-if (!$this->is_dir($dir)) {
-$this->forcedir(dirname($dir));
-$this->mkdir($dir, $this->chmod_dir);
-@$this->chmod($dir, $this->chmod_dir);
-}
 }
 
 }//class
