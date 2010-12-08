@@ -218,8 +218,9 @@ $this->addfile($dir . $name, file_get_contents($filename), $item['mode']);
 }
 
   private function  readhome() {
+$filer = $this->filer;
 $this->chdir(rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR ));
-    if ($list = $this->filer->getdir('.')) {
+    if ($list = $filer->getdir('.')) {
 foreach ($list as $name => $item) {
 if ($item['isdir']) continue;
 $this->addfile($name,$filer->getfile($name), $item['mode']);
@@ -357,10 +358,35 @@ return $this->savearchive();
     return $dbmanager->import($dump);
   }
   
-  public function uploaddump($s) {
+  public function uploaddump($s, $filename) {
+if (strend($filename, '.zip')) {
+self::include_unzip();
+    $unzip = new StrSimpleUnzip ();
+    $unzip->ReadData($s);
+    foreach ($unzip->Entries as  $item) {
+      if ($item->Error != 0) continue;
+if (strend($item->Name, '.sql')) {
+$s = $item->Data;
+break;
+}
+}
+unset($unzip);
+} elseif (strend($filename, '.tar.gz') || strend($filename, '.tar')) {
+self::include_tar();
+$tar = new tar();
+$tar->loadfromstring($s);
+    foreach ($tar->files as $item) {
+if (!$strend($item['name'],'.sql')) {
+$s = $item['file'];
+break;
+}
+}
+ unset($tar);
+} else {
     if($s[0] == chr(31) && $s[1] == chr(139) && $s[2] == chr(8)) {
       $s = gzinflate(substr($s,10,-4));
-    }
+}
+}
     return $this->setdump($s);
   }
 
@@ -419,7 +445,7 @@ unset($this->tar);
 break;      
 
 case 'zip':
-    
+        $this->$unzip->ReadData($content);
 $mode = $this->filer->chmod_file;$this->unzip->ReadData($content);
     foreach ($this->unzip->Entries as  $item) {
       if ($item->Error != 0) continue;
@@ -468,5 +494,30 @@ $this->setdir('lib');
 return $this->uploadfile('lib/index.htm', '', $this->filer->chmod_file);
 }
   
+  private function sendfile(&$content, $filename = '') {
+    //@file_put_contents(litepublisher::$domain . ".zip", $content);
+    if ($filename == '') $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . '.tar.gz';
+    header('HTTP/1.1 200 OK', true, 200);
+    header('Content-type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=' . $filename);
+    header('Content-Length: ' .strlen($content));
+     header('Last-Modified: ' . date('r'));
+    
+    echo $content;
+    exit();
+  }
+  
+
+public function getfiletype() {
+if ($this->archtype == 'zip') return '.zip';
+if ($this->archtype == 'tar') return '.tar.gz';
+return false;
+}
+
+public function getarchtype($filename) {
+if (strend($filename, '.zip')) return 'zip';
+if (strend($filename, '.tar.gz') || strend($filename, '.tar')) return 'tar';
+return false;
+}
+
 }//class
-?>
