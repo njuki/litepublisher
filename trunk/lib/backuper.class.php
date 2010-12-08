@@ -8,10 +8,11 @@
 
 class tbackuper extends tevents {
 public  $filertype;
+public $archtype;
+public $result;
 private $tar;
 private $zip;
 private $unzip;
-public $archtype;
 private $__filer;
 private $existingfolders;
 private $lastdir;
@@ -215,7 +216,18 @@ $this->addfile($dir . $name, file_get_contents($filename), $item['mode']);
     if (!$hasindex) $this->addfile($dir . 'index.htm', '', $filer->chmod_file);
 }
 }
-  
+
+  private function  readhome() {
+$this->chdir(rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR ));
+    if ($list = $this->filer->getdir('.')) {
+foreach ($list as $name => $item) {
+if ($item['isdir']) continue;
+$this->addfile($name,$filer->getfile($name), $item['mode']);
+        }
+      }
+    }
+
+
 public function chdir($dir) {
 if ($dir === $this->lastdir) return;
 $this->lastdir= $dir;
@@ -285,6 +297,8 @@ $this->setdir('lib');
       $this->readdir('lib');
 $this->setdir('js');
       $this->readdir('js');
+
+$this->readhome();
     }
 
     if ($theme)  {
@@ -322,6 +336,7 @@ $this->setdir('lib');
       $this->readdir('lib');
 $this->setdir('js');
       $this->readdir('js');
+$this->readhome();
 
 $this->setdir('plugins');
       $this->readdir('plugins');
@@ -368,6 +383,8 @@ $this->setdump($content);
 return true;
       }
 
+//ignore home files
+if (!strpos($filename, '/')) return true;
 //spec rule for storage folder 
 if (strbegin($filename, 'storage/')) {
 if (!strbegin($filename, 'storage/data/')) return $this->writedata($filename, $content, $mode);
@@ -396,16 +413,18 @@ $this->createarchive();
 case 'tar':
     $this->tar->loadfromstring($content);
     foreach ($tar->files as $item) {
-$this->uploadfile($item['name'],$item['file'], $item['mode']);
+if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
 }
 unset($this->tar);
 break;      
 
 case 'zip':
-    $this->unzip->ReadData($content);
+    
+$mode = $this->filer->chmod_file;$this->unzip->ReadData($content);
     foreach ($this->unzip->Entries as  $item) {
       if ($item->Error != 0) continue;
-$this->uploadfile($item->Path . $item->Name, $item->Data, $this->filer->chmod_file);
+if (!$this->uploadfile($item->Path . $item->Name, $item->Data, $mode)) 
+return $this->errorwrite($item->Path . $item->Name);
 }
 unset($this->unzip);
 break;
@@ -425,6 +444,13 @@ rename($data, $old);
 rename(litepublisher::$paths->storage . 'newdata', $data);
 tfiler::delete($old, true, true);
 }
+
+private function errorwrite($filename) {
+tlocal::loadlang('admin');
+$lang = tlocal::instance('service');
+$this->result = sprintf($lang->errorwritefile, $filename);
+return false;
+}
   
   public function createbackup(){
     $s = $this->getpartial(true, true, true);
@@ -434,6 +460,13 @@ $filename .= $this->archtype == 'zip' ? '.zip' : '.tar.gz';
     @chmod($filename, 0666);
     return $filename;
   }
+
+public function test() {
+    if (!@file_put_contents(litepublisher::$paths->data . 'index.htm', ' ')) return false;
+if (!$this->filer->connected) return false;
+$this->setdir('lib');
+return $this->uploadfile('lib/index.htm', '', $this->filer->chmod_file);
+}
   
 }//class
 ?>
