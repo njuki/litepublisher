@@ -53,7 +53,7 @@ unset($this->__filer, $this->tar, $this->zip, $this->unzip);
 parent::__destruct();
 }
 
-public function unknown_archive() {
+public function unknownarchive() {
 $this->error('Unknown archive type ' . $this->archtype);
 }
 
@@ -107,7 +107,7 @@ return true;
 return false;
 }
 
-public function createarch() {
+public function createarchive() {
 if (!$this->filer->connected) $this->error('Filer not connected');
 switch ($this->archtype) {
 case 'tar':
@@ -429,8 +429,9 @@ $this->filer->chmod($filename, $mode);
 return true;
 }
 
-    public function upload(&$content, $archtype) {
+    public function upload($content, $archtype) {
     set_time_limit(300);
+if ($archtype == 'zip') $archtype = 'unzip';
 $this->archtype = $archtype;
 $this->hasdata = false;
 $this->existingfolders = array();
@@ -444,8 +445,8 @@ if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this
 unset($this->tar);
 break;      
 
-case 'zip':
-        $this->$unzip->ReadData($content);
+case 'unzip':
+        $this->unzip->ReadData($content);
 $mode = $this->filer->chmod_file;$this->unzip->ReadData($content);
     foreach ($this->unzip->Entries as  $item) {
       if ($item->Error != 0) continue;
@@ -494,20 +495,6 @@ $this->setdir('lib');
 return $this->uploadfile('lib/index.htm', '', $this->filer->chmod_file);
 }
   
-  private function sendfile(&$content, $filename = '') {
-    //@file_put_contents(litepublisher::$domain . ".zip", $content);
-    if ($filename == '') $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . '.tar.gz';
-    header('HTTP/1.1 200 OK', true, 200);
-    header('Content-type: application/octet-stream');
-    header('Content-Disposition: attachment; filename=' . $filename);
-    header('Content-Length: ' .strlen($content));
-     header('Last-Modified: ' . date('r'));
-    
-    echo $content;
-    exit();
-  }
-  
-
 public function getfiletype() {
 if ($this->archtype == 'zip') return '.zip';
 if ($this->archtype == 'tar') return '.tar.gz';

@@ -184,8 +184,6 @@ if (!$this->checkbackuper()) return $html->h3->erroraccount;
       $backuper = tbackuper::instance();
     extract($_POST, EXTR_SKIP);
 if (isset($upload)) {
-var_dump($_FILES);
-exit();
         if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
           return $html->attack($_FILES["filename"]["name"]);
         }
