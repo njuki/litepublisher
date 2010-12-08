@@ -25,12 +25,24 @@ class tadminservice extends tadminmenu {
       $result .= $html->info($args);
       $updater = tupdater::instance();
       $islatest= $updater->islatest();
-      if ($islatest === true) {
-        $result .= $html->h3->islatest;
-      } elseif ($islatest === false) {
-        $result .= $html->requireupdate();
-      } else {
+//$islatest = 1;
+     if ($islatest === false) {
         $result .= $html->h2->errorservice;
+      } elseif ($islatest <= 0) {
+        $result .= $html->h3->islatest;
+} else {
+$backuper = tbackuper::instance();
+//$backuper->filertype = 'ftp';
+if ($backuper->filertype == 'file') {
+$args->loginform = '';
+} else {
+$acc = $backuper->filertype == 'ssh2' ? $html->h3->ssh2account : $html->h3->ftpaccount;
+$args->host = tadminhtml::getparam('host', '');
+$args->login = tadminhtml::getparam('login', '');
+$args->password = tadminhtml::getparam('pasword', '');
+$args->loginform = $acc. $html->parsearg('[text=host] [text=login] [password=password]', $args);
+}
+        $result .= $html->requireupdate($args);
       }
       break;
       

@@ -8,6 +8,8 @@
 
 class tupdater extends tevents {
   public $version;
+public $result;
+public $log;
   
   public static function instance() {
     return getinstance(__class__);
@@ -18,6 +20,7 @@ class tupdater extends tevents {
     $this->addevents('onupdated');
     $this->basename = 'updater';
     $this->version =  self::getversion();
+$this->log = false;
   }
   
   public static function GetVersion() {
@@ -28,33 +31,27 @@ class tupdater extends tevents {
     $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
     if (file_exists($filename)) {
       require_once($filename);
+        if ($this->log) tfiler::log("$filename is required file", 'update');
       $func = 'update' . str_replace('.', '', $version);
-      if (function_exists($func)) $func();
+      if (function_exists($func)) {
+$func();
+          if ($this->log) tfiler::log("$func is called", 'update');
+}
     }
   }
   
   public function update() {
-    $log = false;
+    $log =$this->log;false;
     if ($log) tfiler::log("begin update", 'update');
     tlocal::clearcache();
     $this->version =  self::getversion();
     if ($log) tfiler::log("update started from litepublisher::$options->version to $this->version", 'update');
-    $dir = litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR;
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= $this->version) {
       $ver = (string) $v;
       if (strlen($ver) == 3) $ver .= '0';
       if ($log) tfiler::log("$v selected to update", 'update');
-      $filename = $dir . "update.$ver.php";
-      if (file_exists($filename)) {
-        require_once($filename);
-        if ($log) tfiler::log("$filename is required file", 'update');
-        $func = 'update' . str_replace('.', '', $ver);
-        if (function_exists($func)) {
-          $func();
-          if ($log) tfiler::log("$func is called", 'update');
-        }
-      }
+$this->run($v);
       $v = $v + 0.01;
     }
     
@@ -68,13 +65,13 @@ class tupdater extends tevents {
     $lang = tlocal::instance('service');
     $backuper = tbackuper::instance();
     $backuper->createbackup();
-    $result = $this->download($this->latest);
-    if ($result === true) {
-      $result = $lang->successdownload;
-      $this->update();
-      $result .= $lang->successupdated;
+    if ($this->download($this->latest)) {
+      $this->result = $lang->successdownload;
+$this->update();
+      $this->result .= $lang->successupdated;
+return true;
     }
-    return $result;
+    return false;
   }
   
   public function auto2($ver) {
@@ -82,20 +79,20 @@ class tupdater extends tevents {
     $latest = $this->latest;
     if($latest == litepublisher::$options->version) return 'Already updated';
     if (($ver == 0) || ($ver > $latest)) $ver = $latest;
-    $result = $this->download($ver);
-    if ($result === true) {
-      $result = $lang->successdownload;
+if ($this->download($ver)) {
+      $this->result = $lang->successdownload;
       $this->update();
       $result .= $lang->successupdated;
+return true;
     }
-    return $result;
+    return false;
   }
   
   public function islatest() {
     if ($latest = $this->getlatest()) {
-      return litepublisher::$options->version >= $latest;
+return $latest - litepublisher::$options->version ;
     }
-    return 'error';
+    return false;
   }
   
   public function getlatest() {
@@ -103,46 +100,31 @@ class tupdater extends tevents {
     ($s = http::get('http://litepublisher.googlecode.com/svn/trunk/lib/include/version.txt') )) {
       return $s;
     }
-    //return litepublisher::$options->version + 0.01;
     return false;
   }
   
   public function download($version) {
     $lang = tlocal::instance('service');
-    //test write
-    if (!@file_put_contents(litepublisher::$paths->lib . 'index.htm', ' ')) {
-      return sprintf($lang->errorwrite, litepublisher::$paths->lib);
-    }
-    
+$backuper = tbackuper::instance();
+if (!$backuper->test()) {
+$this->result = $lang->errorwrite;
+return  false;
+}
+
     if (!($s = http::get("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) &&
     !($s = http::get("http://litepublisher.com/download/litepublisher.$version.tar.gz") )) {
-      return $lang->erordownload;
+      $this->result = $lang->erordownload;
+return  false;
     }
-    
-    require_once(litepublisher::$paths->libinclude . 'tar.class.php');
-    $tar = new tar();
-    $tar->loadfromstring($s);
-    foreach ($tar->files as $file) {
-      if (      $filename = $this->fixfilename($file['name'])) {
-        if (!tfiler::forcedir(dirname($filename))) return $this->error("error create folder " . dirname($filename));
-        if (false === @file_put_contents($filename, $file['file'])) {
-          return sprintf($lang->errorwritefile, $filename);
+
+$backuper->archtype = 'tar';    
+if (!$backuper->upload($s)) {
+$this->result = $backuper->result;
+return false;
         }
-        @chmod($filename, 0666);
-      }
-    }
+
     $this->onupdated($tar);
     return true;
-  }
-  
-  private function fixfilename($filename) {
-    foreach (array('lib', 'plugins', 'js', 'themes') as $dir) {
-      if (strbegin($filename, $dir . '/')) {
-        $filename = substr($filename, strlen($dir) + 1);
-        return litepublisher::$paths->$dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
-      }
-    }
-    return false;
   }
   
 }//class
