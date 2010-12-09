@@ -198,8 +198,8 @@ class tinstaller extends tdata {
     $this->CheckFolder(litepublisher::$paths->cache);
     $this->CheckFolder(litepublisher::$paths->files);
     $this->CheckFolder(litepublisher::$paths->languages);
-    $this->CheckFolder(litepublisher::$paths->plugins);
-    $this->CheckFolder(litepublisher::$paths->themes);
+    //$this->CheckFolder(litepublisher::$paths->plugins);
+    //$this->CheckFolder(litepublisher::$paths->themes);
   }
   
   public function CheckFolder($folder) {
