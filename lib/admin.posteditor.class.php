@@ -15,7 +15,7 @@ class tposteditor extends tadminmenu {
   
   public function gethead() {
     $result = parent::gethead();
-
+    
     $template = ttemplate::instance();
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
@@ -94,7 +94,7 @@ class tposteditor extends tadminmenu {
     
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->form($args);
-unset(ttheme::$vars['post']);
+    unset(ttheme::$vars['post']);
     return $html->fixquote($result);
   }
   

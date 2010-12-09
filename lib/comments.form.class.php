@@ -213,8 +213,8 @@ class tcommentform extends tevents {
     $args->confirmid = $confirmid;
     $theme = tsimplecontent::gettheme();
     return $theme->parsearg(
-$theme->templates['content.post.templatecomments.confirmform'], $args);
-//$theme->content->post->templatecomments->confirmform, $args);
+    $theme->templates['content.post.templatecomments.confirmform'], $args);
+    //$theme->content->post->templatecomments->confirmform, $args);
   }
   
 }//class

@@ -41,7 +41,7 @@ class tfiler {
       }
       closedir($h);
     }
-    if ($rmdir && !file_exists($path)) rmdir($path);
+    if ($rmdir && is_dir($path)) rmdir($path);
   }
   
   public static function deletemask($mask) {

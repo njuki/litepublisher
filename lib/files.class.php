@@ -117,16 +117,16 @@ class tfiles extends titems {
     
     //sort by media type
     $items = array();
-$types = array(
-'file' => $templates->file,
-'preview' => $templates->preview
-);
+    $types = array(
+    'file' => $templates->file,
+    'preview' => $templates->preview
+    );
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
-$type = $item['media'];
+      $type = $item['media'];
       $items[$type][] = $id;
-if (!isset($types[$type])) $types[$type] = isset($templates->$type) ? $templates->$type : $templates->file;
+      if (!isset($types[$type])) $types[$type] = isset($templates->$type) ? $templates->$type : $templates->file;
     }
     
     $theme = ttheme::instance();
@@ -167,7 +167,7 @@ if (!isset($types[$type])) $types[$type] = isset($templates->$type) ? $templates
     $post = tpost::instance($idpost);
     $this->itemsposts->setitems($idpost, $post->files);
   }
-
+  
 }//class
 
 class tfileitems extends titemsposts {

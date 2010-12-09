@@ -199,8 +199,8 @@ class tcomments extends titems {
     $table = $this->thistable;
     $items = $this->select("$table.post = $this->pid $whereauthor  and $table.status = '$status'",
     "order by $table.posted asc limit $from, $count");
-
-    $args = targs::instance();    
+    
+    $args = targs::instance();
     $args->from = $from;
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
@@ -226,7 +226,7 @@ class tcomments extends titems {
       $args->class = (++$i % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
-        unset(ttheme::$vars['comment']);
+    unset(ttheme::$vars['comment']);
     if (!$ismoder) {
       if ($result == '') return '';
     }
