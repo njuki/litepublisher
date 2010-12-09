@@ -33,7 +33,7 @@ class tfriendswidget extends twidget {
     if (count($items) == 0) return '';
     $result = '';
     $url = litepublisher::$site->url;
-    $redirlink  = litepublisher::$site->url . $this->redirlink . litepublisher::$options->q . 'id=';
+    $redirlink  = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . 'id=';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('friends', $sidebar);
     $args = targs::instance();
