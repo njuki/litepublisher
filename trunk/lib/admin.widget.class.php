@@ -153,7 +153,7 @@ class tadmincustomwidget extends tadminwidget {
   public function getcontent() {
     $widget = $this->widget;
     $args = targs::instance();
-$id = (int) tadminhtml::getparam('idwidget', 0);
+    $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
       $args->mode = 'edit';
@@ -179,7 +179,7 @@ $id = (int) tadminhtml::getparam('idwidget', 0);
     $args));
     $result .= $html->customheader();
     $args->adminurl = $this->adminurl;
-
+    
     foreach ($widget->items as $id => $item) {
       $args->idwidget = $id;
       $args->add($item);

@@ -11,10 +11,10 @@ class tadminmenumanager extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
+  
   public function gethead() {
     $result = parent::gethead();
-
+    
     $template = ttemplate::instance();
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
@@ -26,7 +26,7 @@ class tadminmenumanager extends tadminmenu {
     return $ajax->dogethead($result);
   }
   
-    public function gettitle() {
+  public function gettitle() {
     if (($this->name == 'edit') && ($this->idget() != 0)) {
       return $this->lang->edit;
     }
@@ -56,7 +56,7 @@ class tadminmenumanager extends tadminmenu {
       $args->adminurl = $this->adminurl;
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
       $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'id';
-      $id = $this->idget();      
+      $id = $this->idget();
       if ($id == 0) {
         $args->id = 0;
         $args->title = '';

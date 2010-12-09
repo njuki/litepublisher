@@ -62,10 +62,10 @@ class tadminhtml {
   }
   
   public function parsearg($s, targs $args) {
-if (!is_string($s)) $s = (string) $s;
+    if (!is_string($s)) $s = (string) $s;
     $theme = ttheme::instance();
     $admin = $theme->content->admin;
-$admin->tostring = true;
+    $admin->tostring = true;
     // parse tags [form] .. [/form]
     if (is_int($i = strpos($s, '[form]'))) {
       $replace = substr($admin->form, 0, strpos($admin->form, '$items'));
@@ -97,7 +97,7 @@ $admin->tostring = true;
         $s = str_replace($item[0], $tag, $s);
       }
     }
-
+    
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }
@@ -337,7 +337,7 @@ class tautoform {
     $lang = tlocal::instance();
     $theme = ttheme::instance();
     $admin = $theme->content->admin;
-$admin->tostring = true;
+    $admin->tostring = true;
     foreach ($this->props as $prop) {
     $value = $prop['obj']->{$prop['propname']};
       switch ($prop['type']) {

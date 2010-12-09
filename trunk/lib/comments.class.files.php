@@ -240,7 +240,7 @@ class tcomments extends titems {
     
     $ismoder = $this->moderator;
     $theme = ttheme::instance();
-      $args = targs::instance();
+    $args = targs::instance();
     if (count($items) > 0) {
       $args->from = $from;
       $comment = new tcomment($this);
@@ -250,13 +250,13 @@ class tcomments extends titems {
       
       if ($ismoder) {
         tlocal::loadlang('admin');
-      $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
+        $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
       } else {
         $moderate = '';
       }
       
-    $tmlcomment= $theme->gettag('content.post.templatecomments.comments.comment');;
-    $tml = strtr((string) $tmlcomment, array(
+      $tmlcomment= $theme->gettag('content.post.templatecomments.comments.comment');;
+      $tml = strtr((string) $tmlcomment, array(
       '$moderate' => $moderate,
       '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
       ));
@@ -274,7 +274,7 @@ class tcomments extends titems {
         $result .= $theme->parsearg($tml, $args);
       }
     }//if count
-            unset(ttheme::$vars['comment']);
+    unset(ttheme::$vars['comment']);
     if (!$ismoder) {
       if ($result == '') return '';
     }
@@ -285,7 +285,7 @@ class tcomments extends titems {
       $tml = $theme->templates['content.post.templatecomments.comments'];
     }
     
-
+    
     $args->from = $from + 1;
     $args->comment = $result;
     return $theme->parsearg($tml, $args);

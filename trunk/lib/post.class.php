@@ -222,7 +222,7 @@ class tpost extends titem implements  itemplate {
     $theme = $this->theme;
     $tml = $excerpt ? $theme->content->excerpts->excerpt : $theme->content->post;
     $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
-$tml->tostring = true;
+    $tml->tostring = true;
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
     $args = targs::instance();

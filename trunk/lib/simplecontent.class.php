@@ -45,10 +45,10 @@ public function gettitle() {}
     $template = ttemplate::instance();
     return $template->request($self);
   }
-
-public static function gettheme() {
-return tview::getview(self::instance())->theme;
-}
+  
+  public static function gettheme() {
+    return tview::getview(self::instance())->theme;
+  }
   
 }//class
 

@@ -266,7 +266,7 @@ class tmenus extends titems {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->templates['menu.item'];
-$tml_submenu = $theme->templates['menu.item.submenu'];
+    $tml_submenu = $theme->templates['menu.item.submenu'];
     $args = targs::instance();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
@@ -293,7 +293,7 @@ class tmenu extends titem implements  itemplate {
   public $formresult;
   
   public static function instance($id = 0) {
-$class = $id == 0 ? __class__ : self::getowner()->items[$id]['class'];
+    $class = $id == 0 ? __class__ : self::getowner()->items[$id]['class'];
     return self::iteminstance($class,  $id);
   }
   

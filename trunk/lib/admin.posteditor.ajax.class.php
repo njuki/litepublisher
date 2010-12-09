@@ -88,13 +88,13 @@ class tajaxposteditor  extends tevents {
     '$post.id'=> $idpost,
     '<li>' => sprintf('<li><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id)
     );
-
+    
     $theme = ttheme::instance();
-$types = $theme->reg('/^content\.post\.filelist/');
+    $types = $theme->reg('/^content\.post\.filelist/');
     $a = array();
     foreach ($types as $name => $val) {
-$name = substr($name, strrpos($name, '.') + 1);
-if ($name == 'filelist') $name = '';
+      $name = substr($name, strrpos($name, '.') + 1);
+      if ($name == 'filelist') $name = '';
       $a[$name] = strtr($val, $replace);
     }
     return new tarray2prop ($a);
@@ -271,17 +271,17 @@ if ($name == 'filelist') $name = '';
   
   public function geteditor($name, $value, $visual) {
     $html = tadminhtml ::instance();
-$hsect = $html->section;
-$html->section = 'editor';
+    $hsect = $html->section;
+    $html->section = 'editor';
     $lang = tlocal::instance();
-$lsect = $lang->section;
-$lang->section = 'editor';
+    $lsect = $lang->section;
+    $lang->section = 'editor';
     $title = $lang->$name;
     if ($visual && $this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
     $result = $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
-$lang->section = $lsect;
-$html->section = $hsect;
-return $result;
+    $lang->section = $lsect;
+    $html->section = $hsect;
+    return $result;
   }
   
   public function getraweditor($value) {

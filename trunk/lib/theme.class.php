@@ -31,7 +31,7 @@ class ttheme extends tevents {
     $result->load();
     return $result;
   }
-
+  
   public static function getwidgetnames() {
     return array('submenu', 'categories', 'tags', 'archives', 'links', 'posts', 'comments', 'friends', 'meta') ;
   }
@@ -49,12 +49,12 @@ class ttheme extends tevents {
     'menu' => '',
     'content' => '',
     'sidebars' => array(),
-'custom' => array(),
-'customadmin' => array()
+    'custom' => array(),
+    'customadmin' => array()
     );
     $this->themeprops = new tthemeprops($this);
   }
-
+  
   public function __destruct() {
     unset($this->themeprops, self::$instances[$this->name], $this->templates);
     parent::__destruct();
@@ -94,42 +94,42 @@ class ttheme extends tevents {
   public function __get($name) {
     if (array_key_exists($name, $this->templates)) return $this->themeprops->setpath($name);
     if ($name == 'comment') return $this->themeprops->setpath('content.post.templatecomments.comments.comment');
-if ($name == 'sidebar') return $this->themeprops->setroot($this->templates['sidebars'][0]);
-if (preg_match('/^sidebar(\d)$/', $name, $m)) return $this->themeprops->setroot($this->templates['sidebars'][$m[1]]);
+    if ($name == 'sidebar') return $this->themeprops->setroot($this->templates['sidebars'][0]);
+    if (preg_match('/^sidebar(\d)$/', $name, $m)) return $this->themeprops->setroot($this->templates['sidebars'][$m[1]]);
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
     if (array_key_exists($name, $this->templates)) {
-        $this->templates[$name] = $value;
-return;
+      $this->templates[$name] = $value;
+      return;
     }
     return parent::__set($name, $value);
   }
-
-public function gettag($path) {
+  
+  public function gettag($path) {
     if (!array_key_exists($path, $this->templates)) $this->error(sprintf('Path "%s" not found', $path));
-$this->themeprops->setpath($path);
-$this->themeprops->tostring = true;
-return $this->themeprops;
-}
-
-public function reg($exp) {
-if (!strpos($exp, '\.')) $exp = str_replace('.', '\.', $exp);
-$result = array();
-foreach ($this->templates as $name => $val) {
-if (preg_match($exp, $name)) $result[$name] = $val;
-}
-return $result;
-}
-
+    $this->themeprops->setpath($path);
+    $this->themeprops->tostring = true;
+    return $this->themeprops;
+  }
+  
+  public function reg($exp) {
+    if (!strpos($exp, '\.')) $exp = str_replace('.', '\.', $exp);
+    $result = array();
+    foreach ($this->templates as $name => $val) {
+      if (preg_match($exp, $name)) $result[$name] = $val;
+    }
+    return $result;
+  }
+  
   public function getsidebarscount() {
     return count($this->templates['sidebars']);
   }
   
   private function getvar($name) {
     if ($name == 'site')  return litepublisher::$site;
-if ($name == 'lang') return tlocal::instance();
+    if ($name == 'lang') return tlocal::instance();
     if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
@@ -248,7 +248,7 @@ if ($name == 'lang') return tlocal::instance();
     }
     
     $result = '';
-      self::$vars['lang'] = tlocal::instance('default');
+    self::$vars['lang'] = tlocal::instance('default');
     $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
       self::$vars['post'] = tpost::instance($id);
@@ -265,10 +265,10 @@ if ($name == 'lang') return tlocal::instance();
     $result = '';
     if ($tml == '') $tml = $this->getwidgetitem('posts', $sidebar);
     foreach ($items as $id) {
-self::$vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::instance($id);
       $result .= $this->parse($tml);
     }
-unset(self::$vars['post']);
+    unset(self::$vars['post']);
     return str_replace('$item', $result, $this->getwidgetitems('posts', $sidebar));
   }
   
@@ -292,10 +292,10 @@ unset(self::$vars['post']);
   }
   
   public function  getwidgettml($index, $name, $tml) {
-$count = count($this->templates['sidebars']);
+    $count = count($this->templates['sidebars']);
     if ($index >= $count) $index = $count - 1;
-$widgets = &$this->templates['sidebars'][$index];
-if (($tml != '') && ($tml [0] != '.')) $tml = '.' . $tml;
+    $widgets = &$this->templates['sidebars'][$index];
+    if (($tml != '') && ($tml [0] != '.')) $tml = '.' . $tml;
     if (isset($widgets[$name . $tml])) return $widgets[$name . $tml];
     if (isset($widgets['widget' . $tml])) return $widgets['widget'  . $tml];
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
@@ -309,83 +309,83 @@ if (($tml != '') && ($tml [0] != '.')) $tml = '.' . $tml;
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }
-
-public static function getwidgetpath($path) {
-if ($path === '') return '';
-switch ($path) {
-          case '.items':
-return '.items';
-
-          case '.items.item':
-          case '.item':
-return '.item';
-
-          case '.items.item.subitems':
-          case '.item.subitems':
-          case '.subitems':
-return '.subitems';
-
-         case '.classes':
-          case '.items.classes':
-return  '.classes';
-}
-
-return false;
-}
+  
+  public static function getwidgetpath($path) {
+    if ($path === '') return '';
+    switch ($path) {
+      case '.items':
+      return '.items';
+      
+      case '.items.item':
+      case '.item':
+      return '.item';
+      
+      case '.items.item.subitems':
+      case '.item.subitems':
+      case '.subitems':
+      return '.subitems';
+      
+      case '.classes':
+      case '.items.classes':
+      return  '.classes';
+    }
+    
+    return false;
+  }
   
 }//class
 
 class tthemeprops {
-
-public $path;
-public $tostring;
-private $root;
+  
+  public $path;
+  public $tostring;
+  private $root;
   private $theme;
-
-    public function __construct(ttheme $theme) {
+  
+  public function __construct(ttheme $theme) {
     $this->theme = $theme;
-$this->root = &$theme->templates;
-$this->path = '';
-$this->tostring = false;
+    $this->root = &$theme->templates;
+    $this->path = '';
+    $this->tostring = false;
   }
   
   public function __destruct() {
     unset($this->theme, $this->root);
   }
-
-public function error($path) {
-      litepublisher::$options->trace(sprintf('Path "%s" not found', $path));
-      litepublisher::$options->showerrors();
-}
-
-public function getpath($name) {
-return $this->path == '' ? $name : $this->path . '.' . $name;
-}
-
-public function setpath($path) {
-$this->root = &$this->theme->templates;
-$this->path = $path;
-$this->tostring = false;
-return $this;
-}
-
-public function setroot(array &$root) {
-$this->setpath('');
-$this->root = &$root;
-return $this;
-}
-
-  public function __get($name) {
-$path = $this->getpath($name);
-if (!array_key_exists($path, $this->root)) $this->error($path);
-if ($this->tostring) return $this->root[$path];
-$this->path = $path;
-return $this;
+  
+  public function error($path) {
+    litepublisher::$options->trace(sprintf('Path "%s" not found', $path));
+    litepublisher::$options->showerrors();
   }
   
-public function __set($name, $value) {
-$this->root[$this->getpath($name)] = $value;
-}
+  public function getpath($name) {
+    return $this->path == '' ? $name : $this->path . '.' . $name;
+  }
+  
+  public function setpath($path) {
+    $this->root = &$this->theme->templates;
+    $this->path = $path;
+    $this->tostring = false;
+    return $this;
+  }
+  
+  public function setroot(array &$root) {
+    $this->setpath('');
+    $this->root = &$root;
+    return $this;
+  }
+  
+  public function __get($name) {
+    $path = $this->getpath($name);
+    if (!array_key_exists($path, $this->root)) $this->error($path);
+    if ($this->tostring) return $this->root[$path];
+    $this->path = $path;
+    return $this;
+  }
+  
+  public function __set($name, $value) {
+    $this->root[$this->getpath($name)] = $value;
+  }
   
   public function __call($name, $params) {
     if (isset($params[0]) && is_object($params[0]) && ($params[0] instanceof targs)) {
@@ -396,15 +396,15 @@ $this->root[$this->getpath($name)] = $value;
   }
   
   public function __tostring() {
-if (array_key_exists($this->path, $this->root)) {
-    return $this->root[$this->path];
-} else {
-$this->error($this->path);
-}
+    if (array_key_exists($this->path, $this->root)) {
+      return $this->root[$this->path];
+    } else {
+      $this->error($this->path);
+    }
   }
-
+  
   public function __isset($name) {
     return array_key_exists($this->getpath($name), $this->root);
   }
-
+  
 }//class

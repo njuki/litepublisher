@@ -302,9 +302,9 @@ class twidgets extends titems_storage {
   }
   
   public function getsidebar($context, tview $view) {
-return $this->getsidebarindex($context, $view, $this->currentsidebar++);
-}
-
+    return $this->getsidebarindex($context, $view, $this->currentsidebar++);
+  }
+  
   public function getsidebarindex($context, tview $view, $sidebar) {
     $items = $this->getwidgets($context, $view, $sidebar);
     if ($context instanceof iwidgets) $context->getwidgets($items, $sidebar);

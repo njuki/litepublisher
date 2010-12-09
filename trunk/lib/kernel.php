@@ -270,7 +270,15 @@ class tstorage extends tfilestorage {
   public static function savemodified() {
     if (self::$modified) {
       if (self::$disabled) return false;
-      self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+      $lock = litepublisher::$paths->data .'storage.lok';
+      if (($fh = @fopen($lock, 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
+        self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+        flock($fh, LOCK_UN);
+        fclose($fh);
+        @chmod($lock, 0666);
+      } else {
+        tfiler::log('Storage locked, data not saved');
+      }
       self::$modified = false;
       return true;
     }
@@ -292,10 +300,12 @@ class tstorage extends tfilestorage {
 
 class tarray2prop {
   public $array;
+public function __construct(array $a = null) { $this->array = $a; }
+public function __destruct() { unset($this->array); }
 public function __get($name) { return $this->array[$name]; }
 public function __set($name, $value) { $this->array[$name] = $value; }
-public function __tostring() { return $this->array[0]; }
 public function __isset($name) { return array_key_exists($name, $this->array); }
+public function __tostring() { return $this->array['']; }
 }//class
 
 function sqldate($date = 0) {

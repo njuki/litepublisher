@@ -8,8 +8,8 @@
 
 class tupdater extends tevents {
   public $version;
-public $result;
-public $log;
+  public $result;
+  public $log;
   
   public static function instance() {
     return getinstance(__class__);
@@ -20,7 +20,7 @@ public $log;
     $this->addevents('onupdated');
     $this->basename = 'updater';
     $this->version =  self::getversion();
-$this->log = false;
+    $this->log = false;
   }
   
   public static function GetVersion() {
@@ -31,12 +31,12 @@ $this->log = false;
     $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
     if (file_exists($filename)) {
       require_once($filename);
-        if ($this->log) tfiler::log("$filename is required file", 'update');
+      if ($this->log) tfiler::log("$filename is required file", 'update');
       $func = 'update' . str_replace('.', '', $version);
       if (function_exists($func)) {
-$func();
-          if ($this->log) tfiler::log("$func is called", 'update');
-}
+        $func();
+        if ($this->log) tfiler::log("$func is called", 'update');
+      }
     }
   }
   
@@ -51,7 +51,7 @@ $func();
       $ver = (string) $v;
       if (strlen($ver) == 3) $ver .= '0';
       if ($log) tfiler::log("$v selected to update", 'update');
-$this->run($v);
+      $this->run($v);
       $v = $v + 0.01;
     }
     
@@ -67,9 +67,9 @@ $this->run($v);
     $backuper->createbackup();
     if ($this->download($this->latest)) {
       $this->result = $lang->successdownload;
-$this->update();
+      $this->update();
       $this->result .= $lang->successupdated;
-return true;
+      return true;
     }
     return false;
   }
@@ -79,18 +79,18 @@ return true;
     $latest = $this->latest;
     if($latest == litepublisher::$options->version) return 'Already updated';
     if (($ver == 0) || ($ver > $latest)) $ver = $latest;
-if ($this->download($ver)) {
+    if ($this->download($ver)) {
       $this->result = $lang->successdownload;
       $this->update();
       $result .= $lang->successupdated;
-return true;
+      return true;
     }
     return false;
   }
   
   public function islatest() {
     if ($latest = $this->getlatest()) {
-return $latest - litepublisher::$options->version ;
+      return $latest - litepublisher::$options->version ;
     }
     return false;
   }
@@ -105,24 +105,24 @@ return $latest - litepublisher::$options->version ;
   
   public function download($version) {
     $lang = tlocal::instance('service');
-$backuper = tbackuper::instance();
-if (!$backuper->test()) {
-$this->result = $lang->errorwrite;
-return  false;
-}
-
+    $backuper = tbackuper::instance();
+    if (!$backuper->test()) {
+      $this->result = $lang->errorwrite;
+      return  false;
+    }
+    
     if (!($s = http::get("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) &&
     !($s = http::get("http://litepublisher.com/download/litepublisher.$version.tar.gz") )) {
       $this->result = $lang->erordownload;
-return  false;
+      return  false;
     }
-
-$backuper->archtype = 'tar';    
-if (!$backuper->upload($s)) {
-$this->result = $backuper->result;
-return false;
-        }
-
+    
+    $backuper->archtype = 'tar';
+    if (!$backuper->upload($s)) {
+      $this->result = $backuper->result;
+      return false;
+    }
+    
     $this->onupdated($tar);
     return true;
   }

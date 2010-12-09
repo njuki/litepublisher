@@ -42,11 +42,11 @@ class ttemplate extends tevents_storage {
   public function __get($name) {
     if (method_exists($this, $get = 'get' . $name)) return $this->$get();
     if (array_key_exists($name, $this->data)) return $this->data[$name];
-if (preg_match('/^sidebar(\d)$/', $name, $m)) {
-    $widgets = twidgets::instance();
-    return $widgets->getsidebarindex($this->context, $this->view, $m[1]);
-}
-
+    if (preg_match('/^sidebar(\d)$/', $name, $m)) {
+      $widgets = twidgets::instance();
+      return $widgets->getsidebarindex($this->context, $this->view, $m[1]);
+    }
+    
     if (array_key_exists($name, $this->data['tags'])) {
       $tags = ttemplatetags::instance();
       return $tags->__get($name);
