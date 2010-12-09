@@ -65,7 +65,6 @@ class tthemeparser extends tevents {
       $parentname = empty($about['parent']) ? 'default' : $about['parent'];
       $parent = ttheme::getinstance($parentname);
       $theme->templates = $parent->templates;
-//var_dump($theme);
     }
     
     $s = self::getfile($filename);
@@ -363,7 +362,7 @@ class tthemeparser extends tevents {
         
         $sidebars = &$this->theme->templates['sidebars'];
         $count = substr_count($this->theme->templates['index'], '$template.sidebar');
-        if (count($sidebars) > $count) array_splice($sidebars, $count , $count - count($sidebars));
+        if (count($sidebars) > $count) array_splice($sidebars, $count , count($sidebars) - $count);
         for ($i = 0; $i < $count; $i++) {
           $sidebar = &$this->theme->templates['sidebars'][$i];
           foreach (ttheme::getwidgetnames() as $widgetname) {
@@ -404,6 +403,14 @@ class tthemeparser extends tevents {
         
         foreach ($theme->templates as $name => $value) {
           if ($name == 'index') continue;
+          if ($name == 'menu.hover') {
+            if ($value != $parent->templates['menu.hover']) {
+              if (is_bool($value)) $value = $value ? 'true' : 'false';
+              $result .= "\$template.menu.hover = [$value]\n\n";
+            }
+            continue;
+          }
+          
           if (is_array($value)) continue;
           $value = trim($value);
           if ($value == trim($parent->templates[$name])) continue;
@@ -411,7 +418,6 @@ class tthemeparser extends tevents {
             if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::$data['datetime']['dateformat'])) continue;
           }
           $result .= "\$template.$name = [$value]\n\n";
-          
         }
         
         for ($i =0; $i < count($theme->templates['sidebars']); $i++ ) {

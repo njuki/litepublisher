@@ -373,7 +373,9 @@ class tautoform {
   }
   
   public function processform() {
-    foreach ($this->props as $prop) $prop['obj']->lock();
+    foreach ($this->props as $prop) {
+      if (method_exists($prop['obj'], 'lock')) $prop['obj']->lock();
+    }
     
     foreach ($this->props as $prop) {
       $name = $prop['propname'];
@@ -386,7 +388,9 @@ class tautoform {
       $prop['obj']->$name = $value;
     }
     
-    foreach ($this->props as $prop) $prop['obj']->unlock();
+    foreach ($this->props as $prop) {
+      if (method_exists($prop['obj'], 'unlock')) $prop['obj']->unlock();
+    }
   }
   
 }//class
