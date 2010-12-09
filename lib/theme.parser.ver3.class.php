@@ -79,7 +79,7 @@ class tthemeparserver3 extends tevents {
     '<link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />',
     '<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />',
     '<link rel="shortcut icon" type="image/x-icon" href="$template.icon" />',
-'<link rel="shortcut icon" type="image/x-icon" href="$site.files/favicon.ico" />',
+    '<link rel="shortcut icon" type="image/x-icon" href="$site.files/favicon.ico" />',
     '<meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->',
     '<meta name="keywords" content="$template.keywords" />',
     '<meta name="description" content="$template.description" />',

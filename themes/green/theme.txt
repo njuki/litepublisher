@@ -1,7 +1,7 @@
 $template = {@import(index.tml)}
-$template.menu = [<ul>
+$template.menu = [<ul id="nav">
 $item
-</ul>]
+		</ul>]
 
 $template.menu.hover = [false]
 
@@ -12,49 +12,36 @@ $template.content.notfound = [<div class="simplecontent">
 <p class="center">$lang.nocontent</p>
 </div>]
 
-$template.content.menu = [<div class="entry entry-$menu.id">
-		<div class="entrytitle">
-        <h2><a href="$site.url$menu.url" rel="bookmark" title="$lang.permalink $menu.title">$menu.title</a></h2>
-		</div>
-		<div class="entrybody">
+$template.content.menu = [<div class="post" id="menu-$menu.id">
+        <h2>$menu.title</h2>
+        <div class="post-content">
 $menu.content
-		</div>
-		
-	</div>]
+        </div>
+    </div>]
 
-$template.content.post = [<div class="entry entry-$post.id">
-		<div class="entrytitle">
+$template.content.post = [<div class="post" id="post-$post.id">
         <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-			<h3>$post.date</h3>
-		</div>
-		<div class="entrybody">
+$post.catlinks
+$post.taglinks
+<span class="post-calendar">$post.date</span>
+		<div class="post-content">
 $post.filelist
 $post.content
 $post.rsslink
 $post.prevnext
 		</div>
-		
-		<div class="entrymeta">
-		<div class="postinfo">
-$post.catlinks
-$post.taglinks
-		</div>
-		</div>
-		
-	</div>
-	<div class="commentsblock">
 $post.templatecomments
 	</div>]
 
-$template.content.post.taglinks.divider = []
+$template.content.post.taglinks.divider = [;]
 
-$template.content.post.taglinks = [<span class="filedto">$lang.tags: 
+$template.content.post.taglinks = [<span class="post-cat">$lang.tags: 
 $items
 </span>]
 
-$template.content.post.catlinks.divider = []
+$template.content.post.catlinks.divider = [;]
 
-$template.content.post.catlinks = [<span class="filedto">$lang.categories: 
+$template.content.post.catlinks = [<span class="post-cat">$lang.categories: 
 $items
 </span>]
 
@@ -92,13 +79,13 @@ $template.content.post.templatecomments.form = [<script type="text/javascript" s
 <h3 id="respond">$lang.leavereply</h3>
 <form action="$site.url/send-comment.php" method="post" id="commentform">
 <p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
-<label for="name"><small>$lang.name</small></label></p>
+<label for="name"><strong>$lang.name</strong></label></p>
 <p><input type="text" name="email" id="email" value="$email" size="22" tabindex="2" />
-<label for="email"><small>$lang.email</small></label></p>
+<label for="email"><strong>$lang.email</strong></label></p>
 <p><input type="text" name="url" id="url" value="$url" size="22" tabindex="3" />
-<label for="url"><small>$lang.url</small></label></p>
+<label for="url"><strong>$lang.url</strong></label></p>
 <p><input type="checkbox" name="subscribe" id="subscribe" $subscribe size="22" tabindex="4" />
-<label for="subscribe"><small>$lang.subscribe</small></label></p>
+<label for="subscribe"><strong>$lang.subscribe</strong></label></p>
 <p><textarea name="content" id="comment" cols="100%" rows="10" tabindex="5"></textarea></p>
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
@@ -129,13 +116,13 @@ $comments
 
 $template.content.post.templatecomments.comments.count = [<h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3>]
 
-$template.content.post.templatecomments.comments = [<a name="comments"></a>	
-		<ol class="commentlist" id="commentlist" start="0">
+$template.content.post.templatecomments.comments = [<a name="comments"></a>
+	<ol class="commentlist" id="commentlist" start="0">
 $comment
  </ol>]
 
-$template.content.post.templatecomments.holdcomments = [<h3><em>$lang.hold</em></h3><a name="holdcomments"></a>	
-		<ol class="commentlist" id="holdcommentlist" start="0">
+$template.content.post.templatecomments.holdcomments = [<h3><em>$lang.hold</em></h3><a name="holdcomments"></a>
+	<ol class="commentlist" id="holdcommentlist" start="0">
 $comment
  </ol>]
 
@@ -163,31 +150,28 @@ $template.content.post.templatecomments.comments.comment.moderate = [<span class
 <input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
 </span>]
 
-$template.content.post.templatecomments.pingbacks.pingback = [<li class="alt" id="comment-$comment.id">
+$template.content.post.templatecomments.pingbacks.pingback = [<li class="alt" id="pingback-$pingback.id">
 			<cite><a href="$pingback.url">$pingback.title</a></cite>
 		</li>]
 
 $template.content.post.templatecomments.pingbacks = [<h3 id="comments">$lang.pingbacks</h3>
-		<ol class="commentlist" start="%2$d">
+	<ol class="commentlist" start="1">
 $pingback
  </ol>]
 
-$template.content.excerpts.excerpt = [<div class="entry entry-$post.id">
-		<div class="entrytitle">
+$template.content.excerpts.excerpt = [<div class="post" id="post-$post.id">
+	 <div class="entry">
   <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-			<h3>$post.date</h3>
-		</div>
-		<div class="entrybody">
+		<span>$lang.posted $post.date</span>
+	 </div>
+		<div class="post-content">
 $post.excerptcontent
 $post.excerptfilelist
-		</div>
-		
-		<div class="entrymeta">
-		<div class="postinfo">
+	</div>
+		<div class="post-info">
 $post.catlinks
 $post.taglinks
-		</div>
-$post.commentslink
+ <span class="post-comments">$post.commentslink</span>
 		</div>
 	</div>]
 
@@ -199,10 +183,6 @@ $template.content.excerpts.lite = [<h1>$lang.posts</h1>
 <ul>
 $items
 </ul>]
-
-$template.content.navi.prev = [<div class="alignleft">$link</div>]
-
-$template.content.navi.next = [<div class="alignright">$link</div>]
 
 $template.content.navi = [<div class="navigation">
 $items
@@ -223,87 +203,202 @@ $template.content.excerpts.excerpt.filelist.video = [<li><a href="$site.files/fi
 <a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a>
 								</li>]
 
-$template.content.excerpts.excerpt.catlinks = [<span class="filedto">$lang.categories: 
+$template.content.excerpts.excerpt.catlinks = [<span class="post-cat">$lang.categories: 
 $items
 </span>]
 
-$template.content.excerpts.excerpt.catlinks.divider = []
+$template.content.excerpts.excerpt.catlinks.divider = [;]
 
-$template.content.excerpts.excerpt.taglinks = [<span class="filedto">$lang.tags: 
+$template.content.excerpts.excerpt.taglinks = [<span class="post-cat">$lang.tags: 
 $items
 </span>]
 
-$template.content.excerpts.excerpt.taglinks.divider = []
+$template.content.excerpts.excerpt.taglinks.divider = [;]
 
-sidebar.widget.items = [<ul>
+sidebar.widget.items = [<ul class="linkcat">
 $item
-</ul>]
+ </ul>]
 
-sidebar.widget = [<h2>$title</h2>
- $items]
+sidebar.widget = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
-sidebar.submenu = [<h2>$title</h2>
- $items]
-
-sidebar.submenu.items = [<ul>
+sidebar.submenu.items = [<ul class="list-page">
 $item
-</ul>]
+ </ul>]
 
-sidebar.categories = [<h2>$title</h2>
- $items]
+sidebar.submenu = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
-sidebar.categories.items = [<ul>
+sidebar.categories.items = [<ul class="list-cat" id="widgetcategories">
+$items
+ </ul>]
+
+sidebar.categories = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
+
+sidebar.tags = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
+
+sidebar.tags.items = [<ul class="linkcat">
 $item
-</ul>]
+ </ul>]
 
-sidebar.tags = [<h2>$title</h2>
- $items]
+sidebar.archives.items = [<ul class="list-archives" id="widgetarchives">
+  $items
+ </ul>]
 
-sidebar.tags.items = [<ul>
+sidebar.archives = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
+
+sidebar.links.items = [<ul class="linkcat" id="widgetlinks">
+  $items
+ </ul>]
+
+sidebar.links = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
+
+sidebar.posts = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
+
+sidebar.posts.items = [<ul class="linkcat">
 $item
-</ul>]
+ </ul>]
 
-sidebar.archives = [<h2>$title</h2>
- $items]
+sidebar.comments = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
-sidebar.archives.items = [<ul>
+sidebar.comments.items = [<ul class="linkcat">
 $item
-</ul>]
+ </ul>]
 
-sidebar.links = [<h2>$title</h2>
- $items]
-
-sidebar.links.items = [<ul>
+sidebar.friends.items = [<ul class="linkcat" id="widgetfriends">
 $item
-</ul>]
+ </ul>]
 
-sidebar.posts = [<h2>$title</h2>
- $items]
+sidebar.friends = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
-sidebar.posts.items = [<ul>
-$item
-</ul>]
-
-sidebar.comments = [<h2>$title</h2>
- $items]
-
-sidebar.comments.items = [<ul>
-$item
-</ul>]
-
-sidebar.friends = [<h2>$title</h2>
- $items]
-
-sidebar.friends.items = [<ul>
-$item
-</ul>]
-
-sidebar.meta = [<h2>$title</h2>
- $items]
+sidebar.meta = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
 sidebar.meta.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
 
-sidebar.meta.items = [<ul>
+sidebar.meta.items = [<ul class="linkcat">
 $item
-</ul>]
+ </ul>]
+
+sidebar1.widget.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.widget = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.submenu = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.submenu.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.categories = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.categories.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.tags = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.tags.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.archives = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.archives.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.links = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.links.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.posts.item = [<li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
+    <small>$post.date</small></li>]
+
+sidebar1.posts.items = [<ul id="widgetposts">
+$item
+ </ul>]
+
+sidebar1.posts = [<div class="footer-recent-posts">
+ <h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.comments.item = [<li><strong><a href=" $site.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>]
+
+sidebar1.comments.items = [<ul id="widgetcomments">
+$item
+ </ul>]
+
+sidebar1.comments = [<div class="footer-recent-comments">
+ <h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.friends = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
+
+sidebar1.friends.items = [<ul>
+$item
+ </ul>]
+
+sidebar1.meta.items = [<ul id="widgetmeta">
+  $items
+ </ul>]
+
+sidebar1.meta = [<div class="footer-meta">
+		<h4>$title</h4>
+ $items
+ </div>]
 

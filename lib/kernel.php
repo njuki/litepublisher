@@ -942,8 +942,6 @@ class toptions extends tevents_storage {
   }
   
   protected function create() {
-    //fix old version
-    if (is_string(litepublisher::$microtime)) litepublisher::$microtime = microtime(true);
     parent::create();
     $this->basename = 'options';
     $this->addevents('changed', 'perpagechanged', 'onsave');

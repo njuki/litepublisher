@@ -326,7 +326,6 @@ class twidgets extends titems_storage {
     
     $subitems =  $this->getsubitems($context, $sidebar);
     $items = $this->joinitems($items, $subitems);
-    
     if ($sidebar + 1 == $theme->sidebarscount) {
       for ($i = $sidebar + 1; $i < count($view->sidebars); $i++) {
         $subitems =  $this->joinitems($view->sidebars[$i], $this->getsubitems($context, $i));
