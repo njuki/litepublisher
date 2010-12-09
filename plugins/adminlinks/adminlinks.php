@@ -61,7 +61,7 @@ class tadmincontextwidget extends torderwidget {
         $lang = tlocal::instance('options');
         $title = $lang->home;
         $links = $this->getitem($tml, "/admin/options/home/", $lang->title);
-        $links .= $this->getitem($tml, "/admin/widgets/home/", tlocal::$data['widgets']['title']);
+        //$links .= $this->getitem($tml, "/admin/widgets/home/", tlocal::$data['widgets']['title']);
         break;
         
         default:
