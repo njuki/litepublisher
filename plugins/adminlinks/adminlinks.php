@@ -33,13 +33,8 @@ class tadmincontextwidget extends torderwidget {
       $post = litepublisher::$urlmap->context;
       $lang = tlocal::instance('posts');
       $title = $lang->adminpost;
-      $editurl = litepublisher::$site->url . "/admin/posts/editor/" . litepublisher::$options->q . "id=$post->id";
-      $action = litepublisher::$site->url . "/admin/posts/" . litepublisher::$options->q . "id=$post->id&action";
-      $links = $this->getitem($tml, "/admin/posts/editor/" . litepublisher::$options->q . "mode=short", tlocal::$data['names']['quick']);
-      $links .= $this->getitem($tml, "$editurl&mode=short", $lang->edit);
-      $links .= $this->getitem($tml, "$editurl&mode=midle", $lang->midledit);
-      $links .= $this->getitem($tml, "$editurl&mode=full", $lang->fulledit);
-      $links .= $this->getitem($tml, "$editurl&mode=update", $lang->updatepost);
+      $action = tadminhtml::getadminlink('/admin/posts/', "id=$post->id&action");
+      $links = $this->getitem($tml, tadminhtml::getadminlink('/admin/posts/editor/', 'id=' . $post->id), $lang->edit);
       $links .= $this->getitem($tml, "$action=delete", $lang->delete);
     } else {
       switch (get_class(litepublisher::$urlmap->context)) {
@@ -51,7 +46,7 @@ class tadmincontextwidget extends torderwidget {
         $lang = tlocal::instance('tags');
       $title = $lang->{$name};
         $links = $this->getitem($tml,$adminurl, $lang->add);
-        $adminurl .= litepublisher::$options->q . "id=$tags->id";
+        $adminurl .= litepublisher::$site->q . "id=$tags->id";
         $links .= $this->getitem($tml,$adminurl, $lang->edit);
         $links .= $this->getitem($tml, "$adminurl&action=delete", $lang->delete);
         $links .= $this->getitem($tml, "$adminurl&full=1", $lang->fulledit);
@@ -71,7 +66,7 @@ class tadmincontextwidget extends torderwidget {
           $title = $lang->title;
           $adminurl = litepublisher::$site->url . "/admin/menu/edit/";
           $links = $this->getitem($tml,$adminurl, $lang->addmenu);
-          $links .= $this->getitem($tml, $adminurl . litepublisher::$options->q . "id=$menu->id", $lang->edit);
+          $links .= $this->getitem($tml, $adminurl . litepublisher::$site->q . "id=$menu->id", $lang->edit);
         } else {
           return;
         }

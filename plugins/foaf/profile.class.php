@@ -244,7 +244,7 @@ public function gethead() { }
     $foaf = tfoaf::instance();
     $foaf->loadall();
     foreach ($foaf->items As $id => $item) {
-    $url = $foaf->redir ?"litepublisher::$site->url$foaf->redirlink{litepublisher::$options->q}friend=$id" : $item['url'];
+    $url = $foaf->redir ?"litepublisher::$site->url$foaf->redirlink{litepublisher::$site->q}friend=$id" : $item['url'];
     $result .= "<a href=\"$url\" rel=\"friend\">{$item['nick']}</a>,\n";
     }
     $result .= "</p>\n";
