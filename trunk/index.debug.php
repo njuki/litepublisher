@@ -1,5 +1,5 @@
 <?php
-//set_time_limit(1);
+set_time_limit(1);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -78,8 +78,8 @@ tstorage::loaddata();
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
-ttheme::clearcache();
-tlocal::clearcache();
+//ttheme::clearcache();
+//tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');

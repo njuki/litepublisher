@@ -147,7 +147,7 @@ class ttheme extends tevents {
     }
     
     if (!is_object($var)) {
-      litepublisher::$options->trace(sprintf('Object %s not found in %s', $name, $this->parsing[count($this->parsing) -1]));
+      litepublisher::$options->trace(sprintf('Object "%s" not found in s', $name, $this->parsing[count($this->parsing) -1]));
       return false;
     }
     
@@ -179,7 +179,7 @@ class ttheme extends tevents {
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
-      $result = preg_replace_callback('/\$(\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
+      $result = preg_replace_callback('/\$(\w\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);

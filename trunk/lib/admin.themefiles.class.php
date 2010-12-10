@@ -35,7 +35,7 @@ class tadminthemefiles extends tadminmenu {
     $result = sprintf($html->h2->filelist, $themename);
     $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
     sort($list);
-    $editurl = tadminhtml::getadminlink('/admin/views/edittheme/', sprintf('theme=%s&file', $themename));
+    $editurl = tadminhtml::getadminlink('/admin/views/themefiles/', sprintf('theme=%s&file', $themename));
     $fileitem = $html->fileitem;
     $filelist = '';
     foreach ($list as $file) {
