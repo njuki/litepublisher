@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tthemetree extends tadminmenu {
+class tthemetree extends tadminmenu implements iwidgets {
 private $ini;
 private $theme;
 
@@ -65,7 +65,7 @@ $result .= $this->getitem($name);
 return sprintf('<ul>%s</ul>', $result);
 }
 
-public function getwidgetcontent() {
+public function getwidgetcontent($id, $sidebar) {
 $result = '';
 //root tags
 $result .= $this->getsingle('title');
@@ -75,15 +75,50 @@ $result .= $this->getsidebars();
 return sprintf('<ul id="themetree">%s</ul>', $result);
 }
 
+public function getwidget($id, $sidebar) {
+      $title = $this->gettitle($id);
+      $content = $this->getwidgetcontent($id, $sidebar);
+    $theme = ttheme::instance();
+    return $theme->getwidget($title, $content, 'widget', $sidebar);
+}
+
+public function getwidgets(array &$items, $sidebar) {
+if (($sitebar == 0) && isset($this->theme)) {
+$id = twidgets::instance()->find($this);
+array_insert($items, $id, 0);
+}
+}
 
 public function getcontent() {
-$name = tadminhtml::getparam('name', '');
-if (ttheme::exists($name)) {
+if (isset($this->theme)) {
+return '<div id="themeeditor"></div>';
 } else {
 }
 }
 
 public function processform() {
+$name = tadminhtml::getparam('name', '');
+if (($name === '') || !ttheme::exists($name)) return '';
+$this->theme = ttheme::getinstance($name);
+$templates = &$theme->templates;
+foreach ($_POST as $name => $value) {
+$name = str_replace('_', '.', $name);
+if (isset($templates[$name]) {
+$templates[$name] = trim($value);
+} elseif (strbegin($name, sidebar')) {
+if (strbegin($name, 'sidebar.')) {$sidebar = 0;
+} elseif (preg_match('/^sidebar(\d)\./', $name, $m)) {
+$sidebar = (int) $m[1];
+} else {
+continue;
+}
+if (isset($templates[$sidebar][$name])) $templates[$sidebar][$name] = $value;
+}
 }
 
+if (is_string($templates['menu.hover'])) $templates['menu.hover'] = trim($templates['menu.hover']) == 'true';
+
+$theme->save();
+tthemeparser::compress($theme);
+return '';
 }//class

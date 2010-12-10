@@ -390,13 +390,13 @@ class tthemeparser extends tevents {
         return $result;
       }
       
-      public static function diff(ttheme $theme, $dir = '') {
+      public static function compress(ttheme $theme, $dir = '') {
         if ($theme->name == 'default') return false;
         $result = '';
         if ($dir == '') $dir = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR;
         $parent = ttheme::getinstance($theme->parent == '' ? 'default' : $theme->parent);
         if ($theme->templates['index'] != $parent->templates['index']) {
-          file_put_contents($dir . 'index.tml', $theme->templates['index']);
+          if (file_put_contents($dir . 'index.tml', $theme->templates['index']) === false) return false;
         $result .= '$template = {@import(index.tml)}';
           $result .= "\n";
         }
@@ -439,8 +439,7 @@ class tthemeparser extends tevents {
           }
         }
         
-        file_put_contents($dir . 'theme.txt', $result);
-        return $result;
+return file_put_contents($dir . 'theme.txt', $result);
       }
       
       public static function getpaths() {
