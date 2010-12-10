@@ -343,7 +343,7 @@ class tthemeparser extends tevents {
       public function afterparse($theme) {
         $templates = &$this->theme->templates;
         if (isset($templates['menu.hover'])) {
-          if (!is_bool($templates['menu.hover'])) $templates['menu.hover ']= $templates['menu.hover'] != 'false';
+          if (!is_bool($templates['menu.hover'])) $templates['menu.hover']= $templates['menu.hover'] != 'false';
         } else {
           $templates['menu.hover'] = true;
         }

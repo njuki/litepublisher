@@ -5,7 +5,7 @@ $("#themetree").find("a").click(function() {
 try {
 $(this).parent().find("ul").slideToggle();
 var rel = $(this).attr("rel");
-if (rel == "expand") return false;
+if (rel == "ignore") return false;
 var e = $(this).data("editor");
 if (e) {
 switcheditor(e);
