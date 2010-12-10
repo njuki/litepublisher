@@ -19,6 +19,7 @@ interface itemplate {
 
 interface iwidgets {
   public function getwidgets(array &$items, $sidebar);
+  public function getsidebar(&$content, $sidebar);
 }
 
 interface iposts {

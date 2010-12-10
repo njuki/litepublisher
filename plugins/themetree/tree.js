@@ -3,7 +3,7 @@ $("#themetree").find('ul').hide();
 
 $("#themetree").find("a").click(function() {
 try {
-$(this).parent().find("ul").toggle();
+$(this).parent().find("ul").slideToggle();
 var rel = $(this).attr("rel");
 if (rel == "expand") return false;
 var e = $(this).data("editor");
@@ -44,9 +44,10 @@ function switcheditor(editor) {
 var current = $("#themeeditor").data("mycurrent");
 if (current) {
 if (current == editor) return;
-current.slideUp();
+current.slideUp('fast', function() {
+editor.slideDown('fast');
+});
 }
-
-editor.slideDown();
+else editor.show();
 $("#themeeditor").data("mycurrent", editor);
 }

@@ -49,7 +49,7 @@ function widget_add(node, widget) {
 }
 
 function widget_toggle(node) {
-  $(node).data("litepublisher_widget").toggle();
+  $(node).data("litepublisher_widget").slideToggle();
 }
 
 $(document).ready(function() {
