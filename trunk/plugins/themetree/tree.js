@@ -32,21 +32,21 @@ var html = '<p><label for="$name"><strong>$lang.$name:</strong></label><br /> <t
 
 html = replace_string(html, "$lang.$name", title);
 html = replace_string(html, "$name", replace_string(path, ".", "_"));
-html = replace_string(html, "$value", path);
+html = replace_string(html, "$value", theme[path]);
 
-var result = $("#themeeditor").append(html);
+var result = $(html);
+$("#themeeditor").append(result);
 switcheditor(result);
 return result;
 }
 
 function switcheditor(editor) {
-alert(editor.text());
-var current = $("#themeeditor").data("current");
+var current = $("#themeeditor").data("mycurrent");
 if (current) {
-alert(current.text());
 if (current == editor) return;
-current.hide();
+current.slideUp();
 }
-editor.show();
-$("#themeditor").data("current", editor);
+
+editor.slideDown();
+$("#themeeditor").data("mycurrent", editor);
 }
