@@ -17,11 +17,11 @@ private $theme;
 public function gethead() {
 $result = parent::gethead();
 $template = ttemplate::instance();
-$result .= $template->getjavascript(/js/litepublisher/themetree.js');
-$name = tadminhtml::getparam('name', '');
+$result .= $template->getjavascript('/js/litepublisher/themetree.js');
+$name = tadminhtml::getparam('theme', '');
 if (($name != '') && ttheme::exists($name)) {
 $this->theme = ttheme::getinstance($name);
-$this->ini = tini2array::parsesection(file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . litepublisher::$options->language . '.theme.ini'));
+$this->ini = tini2array::parsesection(file_get_contents(litepublisher::$paths->languages . litepublisher::$options->language . '.theme.ini'));
 $result .= $this->themetojavascript($name);
 }
 return $result;
@@ -119,6 +119,7 @@ return $result;
 public function getwidgetcontent($id, $sidebar) {
 $result = '';
 //root tags
+$result .= $this->getitem('index');
 $result .= $this->getitem('title');
 $result .= $this->getitem('menu');
 $result .= $this->getitem('content');
@@ -153,7 +154,7 @@ return $html->adminform('<div id="themeeditor"></div>', $args);
 }
 
 public function processform() {
-$name = tadminhtml::getparam('name', '');
+$name = tadminhtml::getparam('theme', '');
 if (($name === '') || !ttheme::exists($name)) return '';
 $this->theme = ttheme::getinstance($name);
 $templates = &$this->theme->templates;
