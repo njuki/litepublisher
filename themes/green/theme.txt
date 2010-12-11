@@ -215,16 +215,11 @@ $items
 
 $template.content.excerpts.excerpt.taglinks.divider = [;]
 
-sidebar.widget = [<div class="widget">
- <h2 class="sidebartitle">$title</h2>
- $items
- </div>]
-
 sidebar.widget.items = [<ul class="linkcat">
 $item
  </ul>]
 
-sidebar.submenu = [<div class="widget">
+sidebar.widget = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
  $items
  </div>]
@@ -233,7 +228,7 @@ sidebar.submenu.items = [<ul class="list-page">
 $item
  </ul>]
 
-sidebar.categories = [<div class="widget">
+sidebar.submenu = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
  $items
  </div>]
@@ -241,6 +236,11 @@ sidebar.categories = [<div class="widget">
 sidebar.categories.items = [<ul class="list-cat" id="widgetcategories">
 $items
  </ul>]
+
+sidebar.categories = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
 sidebar.tags = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
@@ -251,16 +251,11 @@ sidebar.tags.items = [<ul class="linkcat">
 $item
  </ul>]
 
-sidebar.archives = [<div class="widget">
- <h2 class="sidebartitle">$title</h2>
- $items
- </div>]
-
 sidebar.archives.items = [<ul class="list-archives" id="widgetarchives">
   $items
  </ul>]
 
-sidebar.links = [<div class="widget">
+sidebar.archives = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
  $items
  </div>]
@@ -268,6 +263,11 @@ sidebar.links = [<div class="widget">
 sidebar.links.items = [<ul class="linkcat" id="widgetlinks">
   $items
  </ul>]
+
+sidebar.links = [<div class="widget">
+ <h2 class="sidebartitle">$title</h2>
+ $items
+ </div>]
 
 sidebar.posts = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
@@ -287,34 +287,34 @@ sidebar.comments.items = [<ul class="linkcat">
 $item
  </ul>]
 
+sidebar.friends.items = [<ul class="linkcat" id="widgetfriends">
+$item
+ </ul>]
+
 sidebar.friends = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
  $items
  </div>]
-
-sidebar.friends.items = [<ul class="linkcat" id="widgetfriends">
-$item
- </ul>]
 
 sidebar.meta = [<div class="widget">
  <h2 class="sidebartitle">$title</h2>
  $items
  </div>]
 
+sidebar.meta.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
+
 sidebar.meta.items = [<ul class="linkcat">
 $item
  </ul>]
 
-sidebar.meta.item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
+sidebar1.widget.items = [<ul>
+$item
+ </ul>]
 
 sidebar1.widget = [<div class="footer-meta">
 		<h4>$title</h4>
  $items
  </div>]
-
-sidebar1.widget.items = [<ul>
-$item
- </ul>]
 
 sidebar1.submenu = [<div class="footer-meta">
 		<h4>$title</h4>
@@ -361,28 +361,28 @@ sidebar1.links.items = [<ul>
 $item
  </ul>]
 
-sidebar1.posts = [<div class="footer-recent-posts">
- <h4>$title</h4>
- $items
- </div>]
+sidebar1.posts.item = [<li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
+    <small>$post.date</small></li>]
 
 sidebar1.posts.items = [<ul id="widgetposts">
 $item
  </ul>]
 
-sidebar1.posts.item = [<li><strong><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a></strong><br />
-    <small>$post.date</small></li>]
-
-sidebar1.comments = [<div class="footer-recent-comments">
+sidebar1.posts = [<div class="footer-recent-posts">
  <h4>$title</h4>
  $items
  </div>]
+
+sidebar1.comments.item = [<li><strong><a href=" $site.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>]
 
 sidebar1.comments.items = [<ul id="widgetcomments">
 $item
  </ul>]
 
-sidebar1.comments.item = [<li><strong><a href=" $site.url$posturl#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a></strong>: $content...</li>]
+sidebar1.comments = [<div class="footer-recent-comments">
+ <h4>$title</h4>
+ $items
+ </div>]
 
 sidebar1.friends = [<div class="footer-meta">
 		<h4>$title</h4>
@@ -393,12 +393,12 @@ sidebar1.friends.items = [<ul>
 $item
  </ul>]
 
+sidebar1.meta.items = [<ul id="widgetmeta">
+  $items
+ </ul>]
+
 sidebar1.meta = [<div class="footer-meta">
 		<h4>$title</h4>
  $items
  </div>]
-
-sidebar1.meta.items = [<ul id="widgetmeta">
-  $items
- </ul>]
 

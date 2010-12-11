@@ -342,12 +342,7 @@ class tthemeparser extends tevents {
       
       public function afterparse($theme) {
         $templates = &$this->theme->templates;
-        if (isset($templates['menu.hover'])) {
-          if (!is_bool($templates['menu.hover'])) $templates['menu.hover']= $templates['menu.hover'] != 'false';
-        } else {
-          $templates['menu.hover'] = true;
-        }
-        
+          $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 'false') : 'true';
         if (!isset($templates['content.post.templatecomments'])) $templates['content.post.templatecomments'] = '';
         if (!isset($templates['content.post.templatecomments.confirmform'])) $this->error('tml not');
         
@@ -403,14 +398,6 @@ class tthemeparser extends tevents {
         
         foreach ($theme->templates as $name => $value) {
           if ($name == 'index') continue;
-          if ($name == 'menu.hover') {
-            if ($value != $parent->templates['menu.hover']) {
-              if (is_bool($value)) $value = $value ? 'true' : 'false';
-              $result .= "\$template.menu.hover = [$value]\n\n";
-            }
-            continue;
-          }
-          
           if (is_array($value)) continue;
           $value = trim($value);
           if ($value == trim($parent->templates[$name])) continue;

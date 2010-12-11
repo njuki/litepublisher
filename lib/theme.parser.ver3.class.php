@@ -131,12 +131,12 @@ class tthemeparserver3 extends tevents {
     //hover
     $nohover = '<!--nohover-->';
     if (is_int($i = strpos($s, $nohover))) {
-      $result['menu.hover'] = false;
+      $result['menu.hover'] = 'false';
       $s = substr_replace($s, '', $i, strlen($nohover));
     } elseif ($id = tcontentfilter::getidtag('*', $s)) {
       preg_match('/\<(\w*)/',$item, $t);
       $tag = $t[1];
-      $result['menu.hover'] = true;
+      $result['menu.hover'] = 'true';
       $js = sprintf('		<script type="text/javascript">
       $(document).ready(function() {
     $("#%s %s").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");});
@@ -150,7 +150,7 @@ class tthemeparserver3 extends tevents {
       if (!isset(    $result['menu.hover'])) $result['menu.hover'] = $menu->hover;
       $result['menu'] = $default['menu'];
     } else {
-      if (!isset(    $result['menu.hover'])) $result['menu.hover'] = false;
+      if (!isset(    $result['menu.hover'])) $result['menu.hover'] = 'false';
       $result['menu'] = $s;
     }
   }

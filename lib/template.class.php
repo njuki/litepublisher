@@ -65,7 +65,7 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
-    $this->hover = $this->hovermenu && $theme->menu->hover;
+    $this->hover = $this->hovermenu && ($theme->templates['menu.hover'] == 'true');
     $this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);

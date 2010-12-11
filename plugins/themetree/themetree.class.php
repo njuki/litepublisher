@@ -35,8 +35,9 @@ $theme = ttheme::getinstance($name);
 foreach ($theme->templates as $name => $value) {
 if (is_string($value)) {
 $value = tadminhtml::specchars($value);
-$value = str_replace("\n", "'+\n'", $value);
-$result .= "theme['$name'] = '$value';\n";
+        $value = str_replace("\r\n", '\n', $value);
+        $value = str_replace("\n", "\\n\"+\n\"", $value);
+$result .= "theme['$name'] = \"$value\";\n";
 }
 }
 $value =$theme->templates['menu.hover'] ? 'true' : 'false';
@@ -44,10 +45,14 @@ $result .= "theme['menu.hover'] = '$value';\n";
 foreach ($theme->templates['sidebars'] as $i => &$sidebar) {
 $pre = $i == 0 ? 'sidebar' : "sidebar$i";
 foreach ($sidebar as $name => $value) {
-if (!is_string($value)) continue;
+if (!is_string($value)) {
+              $value = implode(',', array_map(create_function('$k, $v', 'return "$k=$v";'),
+              array_keys($value), array_values($value)));
+}
 $value = tadminhtml::specchars($value);
-$value = str_replace("\n", "'+\n'", $value);
-$result .= "theme['$pre.$name'] = '$value';\n";
+        $value = str_replace("\r\n", '\n', $value);
+        $value = str_replace("\n", "\\n\"+\n\"", $value);
+$result .= "theme['$pre.$name'] = \"$value\";\n";
 }
 }
 
@@ -95,9 +100,12 @@ $item = sprintf('<li><a rel="%s" href="">%s</a>
 $items = sprintf('<li><a rel="%s" href="">%s</a>
 <ul>%s</ul>
 </li>', "$pre.$name.items", $this->ini["sidebar.widget.items"], $item);
+if ($name == 'meta') $items .= sprintf('<li><a rel="%s" href="">%s</a></li>',  "$pre.meta.classes", $this->ini["sidebar.meta.classes"]);
 $result .= sprintf('<li><a rel="%s" href="">%s</a>
 <ul>%s</ul>
 </li>',  "$pre.$name", $this->ini["sidebar.$name"], $items);
+
+
 }
 }
 $result .= '</ul>
@@ -148,24 +156,31 @@ public function processform() {
 $name = tadminhtml::getparam('name', '');
 if (($name === '') || !ttheme::exists($name)) return '';
 $this->theme = ttheme::getinstance($name);
-$templates = &$theme->templates;
+$templates = &$this->theme->templates;
+$sidebars = &$this->theme->templates['sidebars'];
 foreach ($_POST as $name => $value) {
 $name = str_replace('_', '.', $name);
+$value = trim($value);
+$value = str_replace("\r\n", "\n", $value);
 if (isset($templates[$name])) {
-$templates[$name] = trim($value);
+$templates[$name] = $value;
 } elseif (strbegin($name, 'sidebar')) {
 if (strbegin($name, 'sidebar.')) {
-$sidebar = 0;
+$index = 0;
 } elseif (preg_match('/^sidebar(\d)\./', $name, $m)) {
-$sidebar = (int) $m[1];
+$index = (int) $m[1];
 } else {
 continue;
 }
-if (isset($templates['sidebars'][$sidebar][$name])) $templates['sidebars'][$sidebar][$name] = $value;
+$name = substr($name, strpos($name, '.') +1);
+if (isset($sidebars[$index][$name])){
+if ($name == 'meta.classes') $value = tthemeparser::getmetaclasses($value);
+$sidebars[$index][$name] = $value;
+}
 }
 }
 
-if (is_string($templates['menu.hover'])) $templates['menu.hover'] = trim($templates['menu.hover']) == 'true';
+$templates['menu.hover'] = $templates['menu.hover'] == 'true' ? 'true' : 'false';
 
 $this->theme->save();
 tthemeparser::compress($this->theme);
