@@ -42,7 +42,7 @@ $result .= "theme['$name'] = '$value';\n";
 $value =$theme->templates['menu.hover'] ? 'true' : 'false';
 $result .= "theme['menu.hover'] = '$value';\n";
 foreach ($theme->templates['sidebars'] as $i => &$sidebar) {
-$pre = $i == 0 ? 'sidebar' : "sidebar$";
+$pre = $i == 0 ? 'sidebar' : "sidebar$i";
 foreach ($sidebar as $name => $value) {
 if (!is_string($value)) continue;
 $value = tadminhtml::specchars($value);
@@ -52,7 +52,6 @@ $result .= "theme['$pre.$name'] = '$value';\n";
 }
 
 $result .=   "\n</script>";
-file_put_contents('theme.js', $result);
 return $result;
 }
 
@@ -61,20 +60,21 @@ return ($name == 'content') || ($name == 'content.post.templatecomments') || ($n
 }
   
 private function getitem($name) {
-return sprintf('<li><a rel="%s" href="">%s</a>%s</li>', 
+return sprintf('<li><a rel="%s" href="">%s</a>%s</li>
+', 
 $this->getignore($name) ? 'ignore' : $name, $this->ini[$name], $this->getsubitems($name));
 }
 
 private function getsubitems($name) {
-$items = $this->theme->reg("/$name.\w*+/");
+$items = $this->theme->reg("/$name.\w*+\$/");
 if (count($items) == 0) return '';
 $result = '';
 foreach ($items as $name => $val) {
 $result .= $this->getitem($name);
 }
-return sprintf('
-<ul>%s</ul>
-', $result);
+return sprintf('<ul>
+%s
+</ul>', $result);
 }
 
 private function getthemesidebars() {
@@ -98,7 +98,6 @@ $items = sprintf('<li><a rel="%s" href="">%s</a>
 $result .= sprintf('<li><a rel="%s" href="">%s</a>
 <ul>%s</ul>
 </li>',  "$pre.$name", $this->ini["sidebar.$name"], $items);
-//file_put_contents("widgets/$i.$name.htm", $w);
 }
 }
 $result .= '</ul>
@@ -106,7 +105,6 @@ $result .= '</ul>
 }
 $result .= '</ul>
 </li>';
-file_put_contents('widgets/sidebars.htm', $result);
 return $result;
 }
 
@@ -123,6 +121,7 @@ return sprintf('<ul id="themetree">%s</ul>', $result);
 public function getwidget($id, $sidebar) {
       $title = $this->gettitle();
       $content = $this->getwidgetcontent(0, $sidebar);
+$content = str_replace('<ul>', '<ul style="display: none;">', $content);
     $theme = ttheme::instance();
     return $theme->getwidget($title, $content, 'widget', $sidebar);
 }
@@ -162,14 +161,14 @@ $sidebar = (int) $m[1];
 } else {
 continue;
 }
-if (isset($templates[$sidebar][$name])) $templates[$sidebar][$name] = $value;
+if (isset($templates['sidebars'][$sidebar][$name])) $templates['sidebars'][$sidebar][$name] = $value;
 }
 }
 
 if (is_string($templates['menu.hover'])) $templates['menu.hover'] = trim($templates['menu.hover']) == 'true';
 
-$theme->save();
-tthemeparser::compress($theme);
+$this->theme->save();
+tthemeparser::compress($this->theme);
 return '';
 }
 
