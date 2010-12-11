@@ -44,7 +44,8 @@ var html = '<p><label for="$name"><strong>$lang.$name:</strong></label><br /> <t
 
 html = replace_string(html, "$lang.$name", title);
 html = replace_string(html, "$name", replace_string(path, ".", "_"));
-var value = theme[path];if (value == undefined) alert(path);
+var value = theme[path];
+if (value == undefined) alert(path);
 html = replace_string(html, "$value", value);
 
 var result = $(html);
