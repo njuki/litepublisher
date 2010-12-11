@@ -35,6 +35,7 @@ $theme = ttheme::getinstance($name);
 foreach ($theme->templates as $name => $value) {
 if (is_string($value)) {
 $value = tadminhtml::specchars($value);
+$value = str_replace("\n", "'+\n'", $value);
 $result .= "theme['$name'] = '$value';\n";
 }
 }
@@ -45,6 +46,7 @@ $pre = $i == 0 ? 'sidebar' : "sidebar$";
 foreach ($sidebar as $name => $value) {
 if (!is_string($value)) continue;
 $value = tadminhtml::specchars($value);
+$value = str_replace("\n", "'+\n'", $value);
 $result .= "theme['$pre.$name'] = '$value';\n";
 }
 }
@@ -70,27 +72,41 @@ $result = '';
 foreach ($items as $name => $val) {
 $result .= $this->getitem($name);
 }
-return sprintf('<ul>%s</ul>', $result);
+return sprintf('
+<ul>%s</ul>
+', $result);
 }
 
 private function getthemesidebars() {
-$result = sprintf('<li><a rel="ignore" href="">%s</a><ul>', $this->ini['sidebars']);
+$result = sprintf('<li><a rel="ignore" href="">%s</a>
+<ul>', $this->ini['sidebars']);
 $names = ttheme::getwidgetnames();
 array_unshift($names, 'widget');
 foreach ($this->theme->templates['sidebars'] as $i => &$widgets) {
-$result = sprintf('<li><a rel="ignore" href="">%d</a><ul>', $i);
+$result .= sprintf('<li><a rel="ignore" href="">%d</a>
+<ul>', $i);
 $pre = $i == 0 ? 'sidebar' : "sidebar$i";
 foreach ($names as $name) {
 if (isset($widgets[$name])) {
 $subitems = sprintf('<li><a rel="%s" href="">%s</a></li>', "$pre.$name.subitems", $this->ini["sidebar.widget.subitems"]);
-$item = sprintf('<li><a rel="%s" href="">%s</a><ul>%s</ul></li>', "$pre.$name.item", $this->ini['sidebar.widget.item'], $subitems);
-$items = sprintf('<li><a rel="%s" href="">%s</a><ul>%s</ul></li>', "$pre.$name.items", $this->ini["sidebar.widget.items"], $item);
-$result .= sprintf('<li><a rel="%s" href="">%s</a><ul>%s</ul></li>',  "$pre.$name", $this->ini["sidebar.$name"], $items);
+$item = sprintf('<li><a rel="%s" href="">%s</a>
+<ul>%s</ul>
+</li>', "$pre.$name.item", $this->ini['sidebar.widget.item'], $subitems);
+$items = sprintf('<li><a rel="%s" href="">%s</a>
+<ul>%s</ul>
+</li>', "$pre.$name.items", $this->ini["sidebar.widget.items"], $item);
+$result .= sprintf('<li><a rel="%s" href="">%s</a>
+<ul>%s</ul>
+</li>',  "$pre.$name", $this->ini["sidebar.$name"], $items);
+//file_put_contents("widgets/$i.$name.htm", $w);
 }
 }
-$result .= '</ul></li>';
+$result .= '</ul>
+</li>';
 }
-$result .= '</ul></li>';
+$result .= '</ul>
+</li>';
+file_put_contents('widgets/sidebars.htm', $result);
 return $result;
 }
 
@@ -120,8 +136,11 @@ $content = $this->getwidget(0, 0) . $content;
 }
 
 public function getcontent() {
+$html = $this->html;
+$args = targs::instance();
 if (isset($this->theme)) {
-return '<div id="themeeditor"></div>';
+$args->formtitle = $this->gettitle();
+return $html->adminform('<div id="themeeditor"></div>', $args);
 } else {
 }
 }
