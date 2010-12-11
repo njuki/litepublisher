@@ -65,7 +65,8 @@ $admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short
   $views = $admin->createitem(0, 'views', 'admin', 'tadminviews');
   {
     $admin->createitem($views, 'themes', 'admin', 'tadminthemes');
-    $admin->createitem($views, 'edittheme', 'admin', 'tadminthemefiles');
+    $admin->createitem($views, 'edittheme', 'admin', 'tadminthemetree');
+    $admin->createitem($views, 'themefiles', 'admin', 'tadminthemefiles');
     $admin->createitem($views, 'widgets', 'admin', 'tadminwidgets');
     $admin->createitem($views, 'addcustom', 'admin', 'tadminwidgets');
     $admin->createitem($views, 'defaults', 'admin', 'tadminviews');
@@ -122,6 +123,7 @@ $classes->add('tevents_storage', 'events.class.php');
 $classes->add('tevents_itemplate', 'views.class.php');
 $classes->add('titems_itemplate', 'views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
+$classes->add('tadminthemetree', 'admin.themetree.class.php');
 $classes->add('tautoform' 'htmlresource.class.php');
 $classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
 $classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
