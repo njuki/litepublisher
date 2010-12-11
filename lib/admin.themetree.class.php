@@ -150,6 +150,7 @@ if (isset($this->theme)) {
 $args->formtitle = $this->gettitle();
 return $html->adminform('<div id="themeeditor"></div>', $args);
 } else {
+return tadminthemes::getthemes();
 }
 }
 
