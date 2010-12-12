@@ -342,7 +342,7 @@ class tthemeparser extends tevents {
       
       public function afterparse($theme) {
         $templates = &$this->theme->templates;
-          $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 'false') : 'true';
+        $templates['menu.hover'] = isset($templates['menu.hover']) ? ($templates['menu.hover'] == 'true' ? 'true' : 'false') : 'true';
         if (!isset($templates['content.post.templatecomments'])) $templates['content.post.templatecomments'] = '';
         if (!isset($templates['content.post.templatecomments.confirmform'])) $this->error('tml not');
         
@@ -426,7 +426,7 @@ class tthemeparser extends tevents {
           }
         }
         
-return file_put_contents($dir . 'theme.txt', $result);
+        return file_put_contents($dir . 'theme.txt', $result);
       }
       
       public static function getpaths() {

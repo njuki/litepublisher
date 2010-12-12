@@ -365,21 +365,21 @@ class tcommontags extends titems implements  itemplate {
     if ($result != '') $result = $theme->simple($result);
     
     $items = $this->itemsposts->getposts($this->id);
-if ($this->dbversion && ($this->includeparents || $this->includechilds)) $ths->loadall();
-if ($this->includeparents) {
-$parents = $this->getparents($this->id);
-foreach ($parents as $id) {
-    $items = array_merge($items, array_diff($this->itemsposts->getposts(id), $items));
-}
-}
-
-if ($this->includechilds) {
-$childs = $this->getchillds($this->id);
-foreach ($chlds as $id) {
-    $items = array_merge($items, array_diff($this->itemsposts->getposts(id), $items));
-}
-}
-
+    if ($this->dbversion && ($this->includeparents || $this->includechilds)) $this->loadall();
+    if ($this->includeparents) {
+      $parents = $this->getparents($this->id);
+      foreach ($parents as $id) {
+        $items = array_merge($items, array_diff($this->itemsposts->getposts($id), $items));
+      }
+    }
+    
+    if ($this->includechilds) {
+      $childs = $this->getchilds($this->id);
+      foreach ($childs as $id) {
+        $items = array_merge($items, array_diff($this->itemsposts->getposts($id), $items));
+      }
+    }
+    
     $posts = litepublisher::$classes->posts;
     $items = $posts->stripdrafts($items);
     $items = $posts->sortbyposted($items);
@@ -391,22 +391,22 @@ foreach ($chlds as $id) {
     return $result;
   }
   
-public function getparents($id) {$result = array();
-while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
-return $result;
-}
-
-public function getchilds($parent) {
-$result = array();
-foreach ($this->items as $id => $item) {
-if ($parent == $item['parent']) {
-$result[] =$id;
-$result = array_merge($result, $this->getchilds($id));
-}
-}
-return $result;
-}
-
+  public function getparents($id) {$result = array();
+    while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
+    return $result;
+  }
+  
+  public function getchilds($parent) {
+    $result = array();
+    foreach ($this->items as $id => $item) {
+      if ($parent == $item['parent']) {
+        $result[] =$id;
+        $result = array_merge($result, $this->getchilds($id));
+      }
+    }
+    return $result;
+  }
+  
 }//class
 
 class ttagcontent extends tdata {

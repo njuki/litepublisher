@@ -67,7 +67,7 @@ class Tadminoptions extends tadminmenu {
     ttheme::$vars['template'] = $template;
     $result = '';
     $args = targs::instance();
-
+    
     switch ($this->name) {
       case 'home':
       $home = thomepage::instance();
@@ -112,26 +112,26 @@ class Tadminoptions extends tadminmenu {
       $args->compress = $options->compress;
       break;
       
-case 'catstags':
+      case 'catstags':
       case 'lite': //old version suports
       $args->litearch= litepublisher::$classes->archives->lite;
-$cats = litepublisher::$classes->categories;
+      $cats = litepublisher::$classes->categories;
       $args->litecats= $cats->lite;
-$args->parentcats = $cats->includeparents;
-$args->childcats = $cats->includechilds;
-$tags = litepublisher::$classes->tags;
+      $args->parentcats = $cats->includeparents;
+      $args->childcats = $cats->includechilds;
+      $tags = litepublisher::$classes->tags;
       $args->litetags = $tags->lite;
-$args->parenttags = $tags->includeparents;
-$args->childtags = $tags->includechilds;
-$lang = tlocal::instance('options');
-$args->formtitle = $lang->catstags;
-$html = $this->html;
-    return $html->adminform('[checkbox=litearch]
-[checkbox=litecats] [checkbox=parentcats] [checkbox=childcats]
-[checkbox=litetags] [checkbox=parenttags] [checkbox=childtags]', $args) .
-$html->p->notecatstags;
-
-            case 'secure':
+      $args->parenttags = $tags->includeparents;
+      $args->childtags = $tags->includechilds;
+      $lang = tlocal::instance('options');
+      $args->formtitle = $lang->catstags;
+      $html = $this->html;
+      return $html->adminform('[checkbox=litearch]
+      [checkbox=litecats] [checkbox=parentcats] [checkbox=childcats]
+      [checkbox=litetags] [checkbox=parenttags] [checkbox=childtags]', $args) .
+      $html->p->notecatstags;
+      
+      case 'secure':
       $auth = tauthdigest::instance();
       $args->cookie = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
@@ -239,18 +239,18 @@ $html->p->notecatstags;
       break;
       
       case 'lite':
-case 'catstags':
+      case 'catstags':
       litepublisher::$classes->archives->lite = isset($litearch);
       $cats = litepublisher::$classes->categories;
-$cats->lite = isset($litecats);
-$cats->includeparents = isset($parentcats);
-$cats->includechilds = isset($childcats);
-$cats->save();
+      $cats->lite = isset($litecats);
+      $cats->includeparents = isset($parentcats);
+      $cats->includechilds = isset($childcats);
+      $cats->save();
       $tags = litepublisher::$classes->tags;
-$tags->lite = isset($litetags);
-$tags->includeparents = isset($parenttags);
-$tags->includechilds = isset($childtags);
-$tags->save();
+      $tags->lite = isset($litetags);
+      $tags->includeparents = isset($parenttags);
+      $tags->includechilds = isset($childtags);
+      $tags->save();
       break;
       
       case 'secure':
