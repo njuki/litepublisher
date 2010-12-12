@@ -376,12 +376,12 @@ class tautoform {
     foreach ($this->props as $prop) {
       if (method_exists($prop['obj'], 'lock')) $prop['obj']->lock();
     }
-
+    
     foreach ($this->props as $prop) {
       $name = $prop['propname'];
       if (isset($_POST[$name])) {
         $value = trim($_POST[$name]);
-if ($prop['type'] == 'checkbox') $value = true;
+        if ($prop['type'] == 'checkbox') $value = true;
       } else {
         $value = false;
       }

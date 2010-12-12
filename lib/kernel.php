@@ -936,7 +936,6 @@ class toptions extends tevents_storage {
   public $gmt;
   public $errorlog;
   
-  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -969,6 +968,11 @@ class toptions extends tevents_storage {
   public function __set($name, $value) {
     if (in_array($name, $this->eventnames)) {
       $this->addevent($name, $value['class'], $value['func']);
+      return true;
+    }
+    
+    if (method_exists($this, $set = 'set' . $name)) {
+      $this->$set($value);
       return true;
     }
     
@@ -1047,8 +1051,8 @@ class toptions extends tevents_storage {
     return $users->getvalue($this->user, 'password');
   }
   
-  public function SetPassword($value) {
-    $this->password = md5("$this->login:$this->realm:$value");
+  public function changepassword($newpassword) {
+    $this->password = md5("$this->login:$this->realm:$newpassword");
   }
   
   public function setdbpassword($password) {
@@ -1713,6 +1717,7 @@ interface itemplate {
 
 interface iwidgets {
   public function getwidgets(array &$items, $sidebar);
+  public function getsidebar(&$content, $sidebar);
 }
 
 interface iposts {

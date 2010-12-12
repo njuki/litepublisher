@@ -28,8 +28,8 @@ class tadminthemefiles extends tadminmenu {
   
   public function getcontent() {
     $themename = tadminhtml::getparam('theme', '');
-if (($themename == '') || !self::theme_exists($themename)) return tadminthemes::getthemes();
-
+    if (($themename == '') || !self::theme_exists($themename)) return tadminthemes::getthemes();
+    
     $html = $this->gethtml('themefiles');
     $lang = tlocal::instance('themefiles');
     $args = targs::instance();

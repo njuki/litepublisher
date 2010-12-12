@@ -11,17 +11,17 @@ class tadminthemes extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-public static function getthemes() {
-$html = tadminhtml::instance();
-$html->section = 'themes';
-return sprintf('<ul>%s</ul>', self::getlist($html->item, ''));
-}
-
-public static function getlist($tml, $selected) {
+  
+  public static function getthemes() {
+    $html = tadminhtml::instance();
+    $html->section = 'themes';
+    return sprintf('<ul>%s</ul>', self::getlist($html->item, ''));
+  }
+  
+  public static function getlist($tml, $selected) {
     $result = '';
-$html = tadminhtml::instance();
-$html->section = 'themes';
+    $html = tadminhtml::instance();
+    $html->section = 'themes';
     $args = targs::instance();
     $list =    tfiler::getdir(litepublisher::$paths->themes);
     sort($list);
@@ -36,9 +36,9 @@ $html->section = 'themes';
         $result .= $html->parsearg($tml, $args);
       }
     }
-return  $result;
-}  
-
+    return  $result;
+  }
+  
   public function getcontent() {
     $result = tadminviews::getviewform('/admin/views/themes/');
     $idview = tadminhtml::getparam('idview', 1);
@@ -49,7 +49,7 @@ return  $result;
     $theme = $view->theme;
     
     $result .= $html->formheader($args);
-$result .= self::getlist($html->radioitem, $theme->name);
+    $result .= self::getlist($html->radioitem, $theme->name);
     $result .= $html->formfooter();
     return $html->fixquote($result);
   }

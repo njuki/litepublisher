@@ -47,7 +47,7 @@ class toptions extends tevents_storage {
       $this->addevent($name, $value['class'], $value['func']);
       return true;
     }
-
+    
     if (method_exists($this, $set = 'set' . $name)) {
       $this->$set($value);
       return true;
