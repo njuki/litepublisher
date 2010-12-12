@@ -67,7 +67,7 @@ class Tadminoptions extends tadminmenu {
     ttheme::$vars['template'] = $template;
     $result = '';
     $args = targs::instance();
-    
+
     switch ($this->name) {
       case 'home':
       $home = thomepage::instance();
@@ -106,20 +106,32 @@ class Tadminoptions extends tadminmenu {
       $args->urlencode = $linkgen->urlencode;
       break;
       
-      
       case 'cache':
       $args->cache = $options->cache;
       $args->ob_cache = $options->ob_cache;
       $args->compress = $options->compress;
       break;
       
-      case 'lite':
-      $args->litearchives = litepublisher::$classes->archives->lite;
-      $args->litecategories = litepublisher::$classes->categories->lite;
-      $args->litetags = litepublisher::$classes->tags->lite;
-      break;
-      
-      case 'secure':
+case 'catstags':
+      case 'lite': //old version suports
+      $args->litearch= litepublisher::$classes->archives->lite;
+$cats = litepublisher::$classes->categories;
+      $args->litecats= $cats->lite;
+$args->parentcats = $cats->includeparents;
+$args->childcats = $cats->includechilds;
+$tags = litepublisher::$classes->tags;
+      $args->litetags = $tags->lite;
+$args->parenttags = $tags->includeparents;
+$args->childtags = $tags->includechilds;
+$lang = tlocal::instance('options');
+$args->formtitle = $lang->catstags;
+$html = $this->html;
+    return $html->adminform('[checkbox=litearch]
+[checkbox=litecats] [checkbox=parentcats] [checkbox=childcats]
+[checkbox=litetags] [checkbox=parenttags] [checkbox=childtags]', $args) .
+$html->p->notecatstags;
+
+            case 'secure':
       $auth = tauthdigest::instance();
       $args->cookie = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
@@ -227,9 +239,18 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'lite':
-      litepublisher::$classes->archives->lite = isset($litearchives);
-      litepublisher::$classes->categories->lite = isset($litecategories);
-      litepublisher::$classes->tags->lite = isset($litetags);
+case 'catstags':
+      litepublisher::$classes->archives->lite = isset($litearch);
+      $cats = litepublisher::$classes->categories;
+$cats->lite = isset($litecats);
+$cats->includeparents = isset($parentcats);
+$cats->includechilds = isset($childcats);
+$cats->save();
+      $tags = litepublisher::$classes->tags;
+$tags->lite = isset($litetags);
+$tags->includeparents = isset($parenttags);
+$tags->includechilds = isset($childtags);
+$tags->save();
       break;
       
       case 'secure':
@@ -238,7 +259,7 @@ class Tadminoptions extends tadminmenu {
         if ($oldpassword == '') return $h2->badpassword;
         if (($newpassword == '') || ($newpassword != $repassword))  return $h2->difpassword;
         if (!$options->auth($options->login, $oldpassword)) return $h2->badpassword;
-        $options->SetPassword($newpassword);
+        $options->changepassword($newpassword);
         $auth = tauthdigest::instance();
         $auth->logout();
         return $h2->passwordchanged;

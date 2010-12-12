@@ -85,7 +85,7 @@ function tadminmenusInstall($self) {
     $self->createitem($opt, 'ping', 'admin', 'tadminoptions');
     $self->createitem($opt, 'links', 'admin', 'tadminoptions');
     $self->createitem($opt, 'cache', 'admin', 'tadminoptions');
-    $self->createitem($opt, 'lite', 'admin', 'tadminoptions');
+    $self->createitem($opt, 'catstags', 'admin', 'tadminoptions');
     $self->createitem($opt, 'secure', 'admin', 'tadminoptions');
     $self->createitem($opt, 'robots', 'admin', 'tadminoptions');
     $self->createitem($opt, 'local', 'admin', 'tadminoptions');

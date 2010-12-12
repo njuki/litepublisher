@@ -128,8 +128,8 @@ class toptions extends tevents_storage {
     return $users->getvalue($this->user, 'password');
   }
   
-  public function SetPassword($value) {
-    $this->password = md5("$this->login:$this->realm:$value");
+  public function changepassword($newpassword) {
+    $this->password = md5("$this->login:$this->realm:$newpassword");
   }
   
   public function setdbpassword($password) {
