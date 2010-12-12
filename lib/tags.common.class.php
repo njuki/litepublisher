@@ -365,6 +365,7 @@ class tcommontags extends titems implements  itemplate {
     if ($result != '') $result = $theme->simple($result);
     
     $items = $this->itemsposts->getposts($this->id);
+if ($this->dbversion && ($this->includeparents || $this->includechilds)) $ths->loadall();
 if ($this->includeparents) {
 $parents = $this->getparents($this->id);
 foreach ($parents as $id) {
@@ -390,15 +391,7 @@ foreach ($chlds as $id) {
     return $result;
   }
   
-  public function Setlite($lite) {
-    if ($lite != $this->lite) {
-      $this->data['lite'] = $lite;
-      $this->save();
-    }
-  }
-
-public function getparents($id) {
-$result = array();
+public function getparents($id) {$result = array();
 while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
 return $result;
 }

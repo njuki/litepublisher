@@ -83,7 +83,7 @@ class tusers extends titems {
     return $id == 1 ? litepublisher::$options->password : $this->getvalue($id, 'password');
   }
   
-  public function setpassword($id, $password) {
+  public function changepassword($id, $password) {
     $item = $this->getitem($id);
     $this->setvalue($id, 'password', md5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
   }

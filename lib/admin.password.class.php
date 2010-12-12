@@ -32,9 +32,9 @@ class tadminpassword extends tadminform {
     if (!$id) return $this->html->h2->error;
     $password = md5uniq();
     if ($id == 1) {
-      litepublisher::$options->setpassword($password);
+      litepublisher::$options->changepassword($password);
     } else {
-      $users->setpassword($id, $password);
+      $users->changepassword($id, $password);
     }
     
     $args = targs::instance();
