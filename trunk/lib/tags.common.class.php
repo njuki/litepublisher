@@ -18,6 +18,8 @@ class tcommontags extends titems implements  itemplate {
     $this->dbversion = dbversion;
     parent::create();
     $this->data['lite'] = false;
+    $this->data['includechilds'] = false;
+    $this->data['includeparents'] = false;
     $this->PermalinkIndex = 'category';
     $this->PostPropname = 'categories';
     $this->contents = new ttagcontent($this);
@@ -363,6 +365,20 @@ class tcommontags extends titems implements  itemplate {
     if ($result != '') $result = $theme->simple($result);
     
     $items = $this->itemsposts->getposts($this->id);
+if ($this->includeparents) {
+$parents = $this->getparents($this->id);
+foreach ($parents as $id) {
+    $items = array_merge($items, array_diff($this->itemsposts->getposts(id), $items));
+}
+}
+
+if ($this->includechilds) {
+$childs = $this->getchillds($this->id);
+foreach ($chlds as $id) {
+    $items = array_merge($items, array_diff($this->itemsposts->getposts(id), $items));
+}
+}
+
     $posts = litepublisher::$classes->posts;
     $items = $posts->stripdrafts($items);
     $items = $posts->sortbyposted($items);
@@ -380,7 +396,24 @@ class tcommontags extends titems implements  itemplate {
       $this->save();
     }
   }
-  
+
+public function getparents($id) {
+$result = array();
+while ($id = (int) $this->items[$id]['parent']) $result[] = $id;
+return $result;
+}
+
+public function getchilds($parent) {
+$result = array();
+foreach ($this->items as $id => $item) {
+if ($parent == $item['parent']) {
+$result[] =$id;
+$result = array_merge($result, $this->getchilds($id));
+}
+}
+return $result;
+}
+
 }//class
 
 class ttagcontent extends tdata {
