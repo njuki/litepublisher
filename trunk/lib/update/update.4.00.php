@@ -1,4 +1,51 @@
+<pre>
 <?php
+
+function update400() {
+if (!isset(litepblisher::$site)) {
+create_storage();
+} else {
+update_step2();
+}
+}
+
+// in 3.98 context data. Create storage
+
+function addstorage($storage, $obj) {
+$storage->data[$obj->getbasename()] = $obj->data;
+}
+
+function create_storage() {
+$storage = new tdata();
+$storage->basename = 'storage';
+addstorage($storage, $classes);
+$options = litepublisher::$options;
+
+
+foreach ($options->data['storage'] as $name => $datastorage) {
+if ($name == 'posts') $name ='posts'  . DIRECTORY_SEPARATOR  . 'index';
+$storage->data[$name] = $datastorage;
+}
+
+addstorage($storage, $options);
+unset($storage->data['options']['storage']);
+
+$widgets = new tdata();
+$widgets->basename = 'widgets';
+$widgets->load();
+
+
+
+$view = tview::instance();
+$view->sidebars = $widgets->data['sidebars'];
+unset($widgets->data['sidebars']);
+
+$storage->data['widgets'] = $widgets->data;
+$storage->save();
+}
+
+function update_step2() {
+}
 
 function altertheme($table) {
 $man = tdbmanager ::instance();
@@ -8,13 +55,16 @@ $man->alter($table, "add `idview` int unsigned NOT NULL default '1'");
 }
 
 function updatetags($tags) {
+$tags->lock();
+$tags->data['includeparents'] = false;
+$tags->data['includechilds'] = false;
+
 if (dbversion) {
 $man = tdbmanager ::instance();
 $man->alter($tags->table, "add `idview` int unsigned NOT NULL default '1'");
 $man->alter($tags->contents->table, 'drop tmlfile');
 $man->alter($tags->contents->table, 'drop theme');
 } else {
-$tags->lock();
 foreach ($tags->items as $id => $itemtag) {
 $tags->items[$id]['idview'] = 1;
 $item = $tags->content->getitem($id);
@@ -25,8 +75,8 @@ $item['idview'] = 1;
 $tags->contents->setitem($id, $item);
 }
 }
-$tags->unlock();
 }
+$tags->unlock();
 }
 
 function singleupdate($obj) {
@@ -97,7 +147,7 @@ $admin->data['heads'] = '<link type="text/css" href="$site.files/js/jquery/jquer
 $admin->unlock();
 }
 
-function update400() {
+function update_400() {
 $classes = litepublisher::$classes;
 $classes->lock();
 $plugins = tplugins::instance();
@@ -108,14 +158,14 @@ $plugins->delete('adminlinks');
 $plugins->unlock();
 $classes->delete('TXMLRPCFiles');
 unset($classes->items['imenu']);
-unset($classes->items['tadminhomewidgets');
+unset($classes->items['tadminhomewidgets']);
 $classes->items['tsidebars'][0] = 'admin.widgets.class.php';
 $classes->items['tadminhtml'] = $classes->items['tadminhtml'];
 unset($classes->items['tadminhtml']);
 $classes->add('titems_storage', 'items.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
-$classes->add('tsite', 'site.class.php'();
+$classes->add('tsite', 'site.class.php');
 $classes->add('tview', 'views.class.php');
 $classes->add('tviews',  'views.class.php');
 $classes->add('tadminviews', 'admin.views.class.php');
@@ -124,7 +174,7 @@ $classes->add('tevents_itemplate', 'views.class.php');
 $classes->add('titems_itemplate', 'views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
 $classes->add('tadminthemetree', 'admin.themetree.class.php');
-$classes->add('tautoform' 'htmlresource.class.php');
+$classes->add('tautoform', 'htmlresource.class.php');
 $classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
 $classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 $classes->add('tajaxtageditor',  'admin.tags.ajax.class.php');
@@ -147,16 +197,6 @@ $urlmap->lock();
 $urlmap->add('/rss/categories/', 'trss', 'categories', 'tree');
 $urlmap->add('/rss/tags/', 'trss', 'tags', 'tree');
   $urlmap->unlock();
-
-$data = new tdata();
-$data->basename = 'widgets';
-tfilestorage::load($data);
-$view = tview::instance();
-$view->sidebars = $data->data['sidebars'];
-unset($data->data['sidebars'];
-$widgets = twidgets::instance();
-$widgets->data = $data->data;
-$widgets->save();
 
 $home = thomepage();
 $old = $home->data;
@@ -220,8 +260,6 @@ $contact->save();
 
 if (dbversion) {
 altertheme('posts');
-altertheme('tagscontent');
-altertheme('catscontent');
 } else {
 $posts = tposts::instance();
 foreach ($posts->items as $id => $item) {
@@ -232,10 +270,10 @@ $post->data['idview'] = 1;
 $post->save();
 $post->free();
 }
+}
 
 updatetags(ttags::instance());
 updatetags(tcategories::instance());
-}
 
 singleupdate(tarchives::instance());
 singleupdate(tforbidden::instance());
