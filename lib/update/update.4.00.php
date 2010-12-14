@@ -77,14 +77,52 @@ unset($options['description']);
 $data['site'] = $site;
 }
 
-function update_step2() {
+
+function get_template_data() {
+$template = load_data('template');
+$data = &$template->data;
+unset($data['stdjavascripts']);
+unset($data['javascripts']);
+unset($data['events']['onadminhover']);
+unset($data['adminjavascripts']);
+unset($data['adminheads']);
+    unset($data['theme']);
+    unset($data['admintheme']);
+
+$data['heads'] =
+    '<link rel="alternate" type="application/rss+xml" title="$site.name RSS Feed" href="$site.url/rss.xml" />
+    <link rel="pingback" href="$site.url/rpc.xml" />
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
+    <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
+    <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
+    <meta name="keywords" content="$template.keywords" />
+    <meta name="description" content="$template.description" />
+    <link rel="sitemap" href="$site.url/sitemap.htm" />
+    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
+
+return $data;
 }
 
-function altertheme($table) {
+//step2
+function update_posts($table) {
+if (dbversion) {
+$table = 'posts';
 $man = tdbmanager ::instance();
 $man->alter($table, 'drop tmlfile');
 $man->alter($table, 'drop theme');
 $man->alter($table, "add `idview` int unsigned NOT NULL default '1'");
+} else {
+$posts = tposts::instance();
+foreach ($posts->items as $id => $item) {
+$post = tpost::instance($id);
+unset($post->data['tmlfile']);
+unset($post->data['theme']);
+$post->data['idview'] = 1;
+$post->save();
+$post->free();
+}
+}
 }
 
 function updatetags($tags) {
@@ -121,6 +159,56 @@ $obj->data['keywords'] = '';
 $obj->data['description'] = '';
 $obj->save();
 }
+}
+
+function update_home_menu() {
+$urlitem = litepublisher::$urlmap->findurl('/');
+$home = getinstance($urlitem['class']);
+$oldhome = load_data('homepage');
+$old = $oldhome->data;
+//echo implode("\n" , array_keys($old));
+
+    $home->data= array(
+    'id' => 0,
+    'author' => 0, //not supported
+    'content' => '',
+    'rawcontent' => '',
+    'keywords' => '',
+    'description' => '',
+    'password' => '',
+    'idview' => 1,
+
+    //owner props
+    'title' => tlocal::$data['default']['home'],
+    'url' => '/',
+    'idurl' => 0,
+    'parent' => 0,
+    'order' => 0,
+    'status' => 'published'
+    );
+
+$home->content = $old['text'];
+
+    $home->data['image'] = $old['image'];
+    $home->data['hideposts'] = $old['hideposts'];
+
+litepublisher::$urlmap->delete('/');
+$menus = tmenus::instance();
+$menus->lock();
+$menus->data['idhome'] = 0;
+$menus->data['home'] = false;
+
+$home->install();
+
+foreach ($menus->items as $id => $item) {
+$menu = tmenu::instance($id);
+$menu->data['idview'] = 1;
+unset($menu->data['tmlfile']);
+unset($menu->data['theme']);
+$menu->content = $menu->data['content'];
+$menu->save();
+}
+$menus->unlock();
 }
 
 function updateadminmenu() {
@@ -180,6 +268,31 @@ $admin->data['heads'] = '<link type="text/css" href="$site.files/js/jquery/jquer
 $admin->unlock();
 }
 
+function update_contactform() {
+  $html = tadminhtml::instance();
+if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+  $html->section = 'contactform';
+    tlocal::loadinstall();
+  $lang = tlocal::instance('contactform');
+
+$contact = tcontactform();
+$contact->data['subject'] = $lang->subject;
+$contact->data['errmesg'] =$html->errmesg();
+$contact->data['success'] = $html->success();
+$contact->data['idview'] = 1;
+$contact->save();
+}
+
+function update_static() {
+$static = tstaticpages::instance();
+if (count($static->items)) {
+foreach ($static->items as $id => $item) {
+$static->items[$id]['idview'] = 1;
+}
+$static->save();
+}
+}
+
 function add_new_kernel_classes() {
 $classes = litepublisher::$classes;
 $classes->lock();
@@ -201,15 +314,15 @@ unset($classes->items['imenu']);
 unset($classes->items['tadminhomewidgets']);
 unset($classes->items['tsitebars']);
 $classes->items['tsidebars'] = array('admin.widgets.class.php', '');
-$classes->items['tadminhtml'] = $classes->items['THtmlResource '];
-unset($classes->items['THtmlResource ']);
+$classes->items['tadminhtml'] = $classes->items['THtmlResource'];
+unset($classes->items['THtmlResource']);
 $classes->add('tviews',  'views.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tadminviews', 'admin.views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
 $classes->add('tadminthemetree', 'admin.themetree.class.php');
-$classes->add('tautoform', 'htmlresource.class.php');
+$classes->items['tautoform'] = array('htmlresource.class.php', '');
 $classes->add('tajaxposteditor', 'admin.posteditor.ajax.class.php');
 $classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 $classes->add('tajaxtageditor',  'admin.tags.ajax.class.php');
@@ -237,33 +350,7 @@ $template = load_data('template');
 $view->themename = $template->data['theme'];
 }
 
-function get_template_data() {
-$template = load_data('template');
-$data = &$template->data;
-unset($data['stdjavascripts']);
-unset($data['javascripts']);
-unset($data['events']['onadminhover']);
-unset($data['adminjavascripts']);
-unset($data['adminheads']);
-    unset($data['theme']);
-    unset($data['admintheme']);
-
-$data['heads'] =
-    '<link rel="alternate" type="application/rss+xml" title="$site.name RSS Feed" href="$site.url/rss.xml" />
-    <link rel="pingback" href="$site.url/rpc.xml" />
-    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
-    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
-    <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
-    <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
-    <meta name="keywords" content="$template.keywords" />
-    <meta name="description" content="$template.description" />
-    <link rel="sitemap" href="$site.url/sitemap.htm" />
-    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
-
-return $data;
-}
-
-function update_400() {
+function update_step2() {
 $classes = litepublisher::$classes;
 $classes->lock();
 
@@ -282,81 +369,10 @@ $urlmap->lock();
 $urlmap->add('/rss/categories/', 'trss', 'categories', 'tree');
 $urlmap->add('/rss/tags/', 'trss', 'tags', 'tree');
   $urlmap->unlock();
-
-$home = thomepage();
-$old = $home->data;
-    $home->data= array(
-    'id' => 0,
-    'author' => 0, //not supported
-    'content' => '',
-    'rawcontent' => '',
-    'keywords' => '',
-    'description' => '',
-    'password' => '',
-    'idview' => 1,
-
-    //owner props
-    'title' => tlocal::$data['default']['home'],
-    'url' => '/',
-    'idurl' => 0,
-    'parent' => 0,
-    'order' => 0,
-    'status' => 'published'
-    );
-
-$home->content = $old['text'];
-
-    $home->data['image'] = $old['image'];
-    $home->data['hideposts'] = $old['hideposts'];
-
-litepublisher::$urlmap->delete('/');
-$menus = tmenus::instance();
-$menus->lock();
-$menus->data['idhome'] = 0;
-$menus->data['home'] = false;
-
-$home->install();
-
-foreach ($menus->items as $id => $item) {
-$menu = tmenu::instance($id);
-$menu->data['idview'] = 1;
-unset($menu->data['tmlfile']);
-unset($menu->data['theme']);
-$menu->content = $menu->data['content'];
-$menu->save();
-}
-$menus->unlock();
-
+update_home_menu();
 updateadminmenu();
-
-//contact form
-  $html = tadminhtml::instance();
-if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
-  $html->section = 'contactform';
-    tlocal::loadinstall();
-  $lang = tlocal::instance('contactform');
-
-$contact = tcontactform();
-$contact->data['subject'] = $lang->subject;
-$contact->data['errmesg'] =$html->errmesg();
-$contact->data['success'] = $html->success();
-$contact->data['idview'] = 1;
-$contact->save();
-
-if (dbversion) {
-altertheme('posts');
-} else {
-$posts = tposts::instance();
-foreach ($posts->items as $id => $item) {
-$post = tpost::instance($id);
-unset($post->data['tmlfile']);
-unset($post->data['theme']);
-$post->data['idview'] = 1;
-$post->save();
-$post->free();
-}
-}
-
+update_contactform();
+update_posts();
 updatetags(ttags::instance());
 updatetags(tcategories::instance());
 
@@ -366,15 +382,7 @@ singleupdate(tnotfound404::instance());
 singleupdate(tsitemap::instance());
 singleupdate(tsimplecontent::instance());
 if (isset($classes->items['tprofile'])) singleupdate(tprofile::instance());
-
-$static = tstaticpages::instance();
-if (count($static->items)) {
-foreach ($static->items as $id => $item) {
-$static->items[$id]['idview'] = 1;
-}
-$static->save();
-}
-
+update_static();
 tstorage::savemodified();
 
   $rpc = TXMLRPC::instance();
@@ -386,7 +394,7 @@ if (!isset($backuper->data['ftpfolder'])) {
 $backuper->data['fftpfolder'] = '';
 $backuper->save();
 }
-
+return;
 $l = litepublisher::$paths->languages;
 @unlink($l . 'adminru.ini');
 @unlink($l . 'adminen.ini');
