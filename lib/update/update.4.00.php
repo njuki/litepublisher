@@ -2,26 +2,32 @@
 <?php
 
 function update400() {
-if (!isset(litepblisher::$site)) {
+if (!isset(litepublisher::$site)) {
 create_storage();
+die('Please update your /index.php from <a href="http://litepublisher.googlecode.com/svn/trunk/utils/index3to4.php">http://litepublisher.googlecode.com/svn/trunk/utils/index3to4.php</a>');
 } else {
 update_step2();
 }
 }
 
-// in 3.98 context data. Create storage
-
 function addstorage($storage, $obj) {
 $storage->data[$obj->getbasename()] = $obj->data;
+}
+
+function load_data($name) {
+$result = new tdata();
+$result->basename = $name;
+$result->load();
+return $result;
 }
 
 function create_storage() {
 $storage = new tdata();
 $storage->basename = 'storage';
-addstorage($storage, $classes);
+add_new_kernel_classes();
+addstorage($storage, litepublisher::$classes);
+
 $options = litepublisher::$options;
-
-
 foreach ($options->data['storage'] as $name => $datastorage) {
 if ($name == 'posts') $name ='posts'  . DIRECTORY_SEPARATOR  . 'index';
 $storage->data[$name] = $datastorage;
@@ -30,18 +36,45 @@ $storage->data[$name] = $datastorage;
 addstorage($storage, $options);
 unset($storage->data['options']['storage']);
 
-$widgets = new tdata();
-$widgets->basename = 'widgets';
-$widgets->load();
 
+create_site($storage->data);
 
-
-$view = tview::instance();
-$view->sidebars = $widgets->data['sidebars'];
-unset($widgets->data['sidebars']);
-
+$widgets = load_data('widgets');
+unset($widgets->data['sitebars']);
 $storage->data['widgets'] = $widgets->data;
+
+$storage->data['template'] = get_template_data();
 $storage->save();
+}
+
+function create_site(&$data) {
+$options = &$data['options'];
+$e = new tevents();
+$site = &$e->data;
+
+$site['url'] = $options['url'];
+unset($options['url']);
+
+$site['files'] = $options['files'];
+unset($options['files']);
+
+$site['q'] = $options['q'];
+unset($options['q']);
+
+  $site['subdir'] =$options['subdir'];
+unset($options['subdir']);
+
+  $site['fixedurl'] =$options['fixedurl'];
+unset($options['fixedurl']);
+
+$site['keywords'] = $options['keywords'];
+unset($options['keywords']);
+
+$site['description'] = $options['description'];
+unset($options['description']);
+
+  $site['home'] = '/';
+$data['site'] = $site;
 }
 
 function update_step2() {
@@ -147,31 +180,33 @@ $admin->data['heads'] = '<link type="text/css" href="$site.files/js/jquery/jquer
 $admin->unlock();
 }
 
-function update_400() {
+function add_new_kernel_classes() {
 $classes = litepublisher::$classes;
 $classes->lock();
-$plugins = tplugins::instance();
-$plugins->lock();
-$plugins->delete('adminhistory');
-$plugins->delete('adminhover');
-$plugins->delete('adminlinks');
-$plugins->unlock();
+$classes->items['tevents_storage'] = array('events.class.php', '');
+$classes->items['tevents_itemplate'] = array('views.class.php', '');
+$classes->items['titems_storage'] = array('items.class.php', '');
+$classes->items['titems_itemplate'] = array('views.class.php', '');
+$classes->items['tsite'] = array('site.class.php', '');
+$classes->items['tview']  = array('views.class.php', '');
+//$classes->items['tviews']  = array('views.class.php', '');
+$classes->unlock();
+}
+
+function add_classes() {
+$classes = litepublisher::$classes;
+$classes->lock();
 $classes->delete('TXMLRPCFiles');
 unset($classes->items['imenu']);
 unset($classes->items['tadminhomewidgets']);
-$classes->items['tsidebars'][0] = 'admin.widgets.class.php';
-$classes->items['tadminhtml'] = $classes->items['tadminhtml'];
-unset($classes->items['tadminhtml']);
-$classes->add('titems_storage', 'items.class.php');
+unset($classes->items['tsitebars']);
+$classes->items['tsidebars'] = array('admin.widgets.class.php', '');
+$classes->items['tadminhtml'] = $classes->items['THtmlResource '];
+unset($classes->items['THtmlResource ']);
+$classes->add('tviews',  'views.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
-$classes->add('tsite', 'site.class.php');
-$classes->add('tview', 'views.class.php');
-$classes->add('tviews',  'views.class.php');
 $classes->add('tadminviews', 'admin.views.class.php');
-$classes->add('tevents_storage', 'events.class.php');
-$classes->add('tevents_itemplate', 'views.class.php');
-$classes->add('titems_itemplate', 'views.class.php');
 $classes->add('tadminthemefiles', 'admin.themefiles.class.php');
 $classes->add('tadminthemetree', 'admin.themetree.class.php');
 $classes->add('tautoform', 'htmlresource.class.php');
@@ -189,7 +224,57 @@ $classes->add('tssh2filer', 'remote.ssh2.class.php');
 unset($classes->interfaces['itemplate2']);
 $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
+}
 
+
+function create_views() {
+$views = tviews::instance();
+$views->install();
+$widgets = load_data('widgets');
+$view = tview::instance();
+$view->sidebars = $widgets->data['sitebars'];
+$template = load_data('template');
+$view->themename = $template->data['theme'];
+}
+
+function get_template_data() {
+$template = load_data('template');
+$data = &$template->data;
+unset($data['stdjavascripts']);
+unset($data['javascripts']);
+unset($data['events']['onadminhover']);
+unset($data['adminjavascripts']);
+unset($data['adminheads']);
+    unset($data['theme']);
+    unset($data['admintheme']);
+
+$data['heads'] =
+    '<link rel="alternate" type="application/rss+xml" title="$site.name RSS Feed" href="$site.url/rss.xml" />
+    <link rel="pingback" href="$site.url/rpc.xml" />
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
+    <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
+    <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
+    <meta name="keywords" content="$template.keywords" />
+    <meta name="description" content="$template.description" />
+    <link rel="sitemap" href="$site.url/sitemap.htm" />
+    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
+
+return $data;
+}
+
+function update_400() {
+$classes = litepublisher::$classes;
+$classes->lock();
+
+$plugins = tplugins::instance();
+$plugins->lock();
+$plugins->delete('adminhistory');
+$plugins->delete('adminhover');
+$plugins->delete('adminlinks');
+$plugins->unlock();
+add_classes();
+$classes->unlock();
 litepublisher::$options->crontime = time();
 
 $urlmap = litepublisher::$urlmap;
@@ -290,34 +375,6 @@ $static->items[$id]['idview'] = 1;
 $static->save();
 }
 
-$data = new tdata();
-$data->basename = 'template';
-tfilestorage::load($data);
-unset($data->data['stdjavascripts']);
-$template = ttemplate::instance();
-$template->lock();
-$template->heads .= implode("\n", $data->data['javascripts']);
-unset($template->data['javascripts']);
-unset($template->data['events']['onadminhover']);
-$template->unlock();
-tview::instance(1)->themename = $template->data['theme'];
-unset($template->data['adminjavascripts']);
-unset($template->data['adminheads']);
-    unset($template->data['theme']);
-    unset($template->data['admintheme']);
-
-$template->heads =
-    '<link rel="alternate" type="application/rss+xml" title="$site.name RSS Feed" href="$site.url/rss.xml" />
-    <link rel="pingback" href="$site.url/rpc.xml" />
-    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="$site.url/rsd.xml" />
-    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="$site.url/wlwmanifest.xml" />
-    <link rel="shortcut icon" type="image/x-icon" href="$template.icon" />
-    <meta name="generator" content="Lite Publisher $site.version" /> <!-- leave this for stats -->
-    <meta name="keywords" content="$template.keywords" />
-    <meta name="description" content="$template.description" />
-    <link rel="sitemap" href="$site.url/sitemap.htm" />
-    <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>';
-
 tstorage::savemodified();
 
   $rpc = TXMLRPC::instance();
@@ -334,4 +391,3 @@ $l = litepublisher::$paths->languages;
 @unlink($l . 'adminru.ini');
 @unlink($l . 'adminen.ini');
 }
-?>
