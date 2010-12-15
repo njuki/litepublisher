@@ -50,7 +50,6 @@ class tmenus extends titems {
       if (isset($views->defaults['menu'])) $item->data['idview'] = $views->defaults['menu'];
     }
     
-    
     $id = ++$this->autoid;
     $this->items[$id] = array(
     'id' => $id,

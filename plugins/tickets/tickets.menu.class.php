@@ -39,7 +39,7 @@ class tticketsmenu extends tmenu {
       $perpage = litepublisher::$options->perpage;
       $theme = ttheme::instance();
       $tickets = ttickets::instance();
-      $tt = litepublisher::$db->prefix . $tickets->ticketstable;
+      $tt = litepublisher::$db->prefix . $tickets->childstable;
       $pt = litepublisher::$db->posts;
       $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
       $count = $tickets->getticketscount($where);
@@ -57,7 +57,7 @@ class tticketsmenu extends tmenu {
     $result = '';
     $tickets = ttickets::instance();
     $db = litepublisher::$db;
-    $tt = $db->prefix . $tickets->ticketstable;
+    $tt = $db->prefix . $tickets->childstable;
     $pt = $db->posts;
     $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
     $res = $db->query("select $pt.id, $pt.idurl, $pt.title,

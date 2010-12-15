@@ -3,6 +3,7 @@
 function update400() {
 if (!isset(litepublisher::$site)) {
 create_storage();
+tlocal::clearcache();
 die('Please update your /index.php from <a href="http://litepublisher.googlecode.com/svn/trunk/utils/index3to4.php">http://litepublisher.googlecode.com/svn/trunk/utils/index3to4.php</a>');
 } else {
 update_step2();
@@ -207,9 +208,6 @@ $menus->lock();
 $menus->data['idhome'] = 0;
 $menus->data['home'] = false;
 
-$home->lock();
-$home->install();
-$home->unlock();
 foreach ($menus->items as $id => $item) {
 $menu = tmenu::instance($id);
 $menu->data['idview'] = 1;
@@ -218,6 +216,9 @@ unset($menu->data['theme']);
 $menu->content = $menu->data['content'];
 $menu->save();
 }
+$home->lock();
+$home->install();
+$home->unlock();
 $menus->unlock();
 }
 
@@ -244,7 +245,7 @@ $admin->delete($id);
 $admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short');
 
   $views = $admin->createitem(0, 'views', 'admin', 'tadminviews');
-$admin->items[$views]['order'] = 4;
+$admin->items[$views]['order'] = $admin->url2id('/admin/files/') + 1;
   {
     $admin->createitem($views, 'themes', 'admin', 'tadminthemes');
     $admin->createitem($views, 'edittheme', 'admin', 'tadminthemetree');

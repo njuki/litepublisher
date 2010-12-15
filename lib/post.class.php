@@ -403,6 +403,7 @@ class tpost extends titem implements  itemplate {
     $next = '';
     $theme = $this->theme;
     $tml = $theme->content->post->prevnext;
+$tml->tostring = true;
     if ($prevpost = $this->prev) {
       ttheme::$vars['prevpost'] = $prevpost;
       $prev = $theme->parse($tml->prev);
