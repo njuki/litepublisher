@@ -47,7 +47,6 @@ $item['sidebar'] = $item['sitebar'];
 unset($item['sitebar']);
 }
 }
-var_dump($widgets->data);
 $storage->data['widgets'] = $widgets->data;
 
 $storage->data['template'] = get_template_data();
@@ -208,8 +207,9 @@ $menus->lock();
 $menus->data['idhome'] = 0;
 $menus->data['home'] = false;
 
+$home->lock();
 $home->install();
-
+$home->unlock();
 foreach ($menus->items as $id => $item) {
 $menu = tmenu::instance($id);
 $menu->data['idview'] = 1;
@@ -244,6 +244,7 @@ $admin->delete($id);
 $admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short');
 
   $views = $admin->createitem(0, 'views', 'admin', 'tadminviews');
+$admin->items[$views]['order'] = 4;
   {
     $admin->createitem($views, 'themes', 'admin', 'tadminthemes');
     $admin->createitem($views, 'edittheme', 'admin', 'tadminthemetree');
@@ -255,6 +256,7 @@ $admin->deleteurl('/admin/posts/editor/' . litepublisher::$site->q . 'mode=short
     $admin->createitem($views, 'headers', 'admin', 'tadminviews');
     $admin->createitem($views, 'admin', 'admin', 'tadminviews');
   }
+
 
 $admin->data['heads'] = '<link type="text/css" href="$site.files/js/jquery/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="$site.files/js/jquery/jquery-ui-1.8.6.custom.min.js"></script>
@@ -313,7 +315,7 @@ $classes->items['titems_storage'] = array('items.class.php', '');
 $classes->items['titems_itemplate'] = array('views.class.php', '');
 $classes->items['tsite'] = array('site.class.php', '');
 $classes->items['tview']  = array('views.class.php', '');
-//$classes->items['tviews']  = array('views.class.php', '');
+$classes->items['tviews']  = array('views.class.php', '');
 $classes->unlock();
 }
 
@@ -327,7 +329,7 @@ unset($classes->items['tsitebars']);
 $classes->items['tsidebars'] = array('admin.widgets.class.php', '');
 $classes->items['tadminhtml'] = $classes->items['THtmlResource'];
 unset($classes->items['THtmlResource']);
-$classes->add('tviews',  'views.class.php');
+//$classes->add('tviews',  'views.class.php');
 $classes->add('tthemeparserver3', 'theme.parser.ver3.class.php');
 $classes->add('twordpressthemeparser', 'theme.parser.wordpress.class.php');
 $classes->add('tadminviews', 'admin.views.class.php');
@@ -350,18 +352,19 @@ $classes->interfaces['iwidgets'] = 'interfaces.php';
 $classes->unlock();
 }
 
-
 function create_views() {
 $views = tviews::instance();
 $views->install();
 $widgets = load_data('widgets');
-$view = tview::instance();
+$view = tview::instance(1);
 $view->sidebars = $widgets->data['sitebars'];
 $template = load_data('template');
 $view->themename = $template->data['theme'];
+$views->save();
 }
 
 function update_step2() {
+tlocal::clearcache();
 $classes = litepublisher::$classes;
 $classes->lock();
 
@@ -373,6 +376,7 @@ $plugins->delete('adminlinks');
 $plugins->unlock();
 add_classes();
 $classes->unlock();
+create_views();
 litepublisher::$options->crontime = time();
 
 $urlmap = litepublisher::$urlmap;
