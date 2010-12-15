@@ -307,6 +307,7 @@ class twidgets extends titems_storage {
   
   public function getsidebarindex($context, tview $view, $sidebar) {
     $items = $this->getwidgets($context, $view, $sidebar);
+var_dump($items);
     if ($context instanceof iwidgets) $context->getwidgets($items, $sidebar);
     if (litepublisher::$options->admincookie) $this->callevent('onadminlogged', array(&$items, $sidebar));
     if (litepublisher::$urlmap->adminpanel) $this->callevent('onadminpanel', array(&$items, $sidebar));

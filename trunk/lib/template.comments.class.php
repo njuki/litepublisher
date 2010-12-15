@@ -15,7 +15,7 @@ class ttemplatecomments extends tdata {
 public function load() {}
 public function save() {}
   
-  public function getcount($count) {
+  public static function getcount($count) {
     $l = &tlocal::$data['comment'];
     switch($count) {
       case 0: return $l[0];
@@ -25,7 +25,7 @@ public function save() {}
   }
   
   public function getcommentslink(tpost $post) {
-    $count = $this->getcount($post->commentscount);
+    $count = self::getcount($post->commentscount);
     return "<a href=\"" . litepublisher::$site->url . "$post->lastcommenturl#comments\">$count</a>";
   }
   
@@ -43,7 +43,7 @@ public function save() {}
     $theme = ttheme::instance();
     $tml = $theme->content->post->templatecomments->comments;
     $args = targs::instance();
-    $args->count = $this->getcount($post->commentscount);
+    $args->count = self::getcount($post->commentscount);
     $result .= $tml->count($args);
     $result .= $list;
     

@@ -47,7 +47,7 @@ $item['sidebar'] = $item['sitebar'];
 unset($item['sitebar']);
 }
 }
-
+var_dump($widgets->data);
 $storage->data['widgets'] = $widgets->data;
 
 $storage->data['template'] = get_template_data();

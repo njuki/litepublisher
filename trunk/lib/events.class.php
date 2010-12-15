@@ -129,11 +129,11 @@ class tevents extends tdata {
   
   private function delete_event_item($name, $i) {
     array_splice($this->events[$name], $i, 1);
+if (count($this->events[$name]) == 0) unset($this->events[$name]);
     $this->save();
   }
   
-  
-  public function setevent($name, $params) {
+    public function setevent($name, $params) {
     return $this->addevent($name, $params['class'], $params['func']);
   }
   
