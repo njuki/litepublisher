@@ -228,6 +228,7 @@ class ttheme extends tevents {
     if ($items[0] != 1) array_unshift($items, 1);
     if ($items[count($items) -1] != $count) $items[] = $count;
     $navi =$this->content->navi;
+$navi->tostring = true;
     $pageurl = rtrim($url, '/') . '/page/';
     $args = targs::instance();
     $a = array();
