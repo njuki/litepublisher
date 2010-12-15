@@ -332,7 +332,7 @@ class turlmap extends titems {
   
   public function clearcache() {
     $path = litepublisher::$paths->cache;
-    if ( $h = opendir($path)) {
+    if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
         $file = $path. $filename;

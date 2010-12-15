@@ -143,7 +143,7 @@ class tajaxposteditor  extends tevents {
       
       case 'seo':
       $form = new tautoform($post, 'editor', 'editor');
-      $form->add($form->url, $form->title2, $form->keywords, $form->description);
+      $form->add($form->url, $form->title2, $form->description);
       $result = $form->getcontent();
       break;
       

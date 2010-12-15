@@ -1,4 +1,3 @@
-<pre>
 <?php
 
 function update400() {
@@ -41,6 +40,14 @@ create_site($storage->data);
 
 $widgets = load_data('widgets');
 unset($widgets->data['sitebars']);
+foreach ($widgets->data['classes'] as $class => &$items) {
+unset($item);
+foreach ($items as &$item) {
+$item['sidebar'] = $item['sitebar'];
+unset($item['sitebar']);
+}
+}
+
 $storage->data['widgets'] = $widgets->data;
 
 $storage->data['template'] = get_template_data();
@@ -66,6 +73,9 @@ unset($options['subdir']);
 
   $site['fixedurl'] =$options['fixedurl'];
 unset($options['fixedurl']);
+
+$site['name'] = $options['name'];
+unset($options['name']);
 
 $site['keywords'] = $options['keywords'];
 unset($options['keywords']);
@@ -105,7 +115,7 @@ return $data;
 }
 
 //step2
-function update_posts($table) {
+function update_posts() {
 if (dbversion) {
 $table = 'posts';
 $man = tdbmanager ::instance();
@@ -270,12 +280,13 @@ $admin->unlock();
 
 function update_contactform() {
   $html = tadminhtml::instance();
-if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+if (!isset($html->ini['contactform'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
   $html->section = 'contactform';
     tlocal::loadinstall();
   $lang = tlocal::instance('contactform');
+$theme = ttheme::getinstance('default');
 
-$contact = tcontactform();
+$contact = tcontactform::instance();
 $contact->data['subject'] = $lang->subject;
 $contact->data['errmesg'] =$html->errmesg();
 $contact->data['success'] = $html->success();
@@ -394,6 +405,7 @@ if (!isset($backuper->data['ftpfolder'])) {
 $backuper->data['fftpfolder'] = '';
 $backuper->save();
 }
+
 return;
 $l = litepublisher::$paths->languages;
 @unlink($l . 'adminru.ini');
