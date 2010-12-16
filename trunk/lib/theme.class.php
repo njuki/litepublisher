@@ -228,17 +228,18 @@ class ttheme extends tevents {
     if ($items[0] != 1) array_unshift($items, 1);
     if ($items[count($items) -1] != $count) $items[] = $count;
     $navi =$this->content->navi;
-$navi->tostring = true;
+$currenttml=$this->templates['content.navi.current'];
+$tml =$this->templates['content.navi.link'];
     $pageurl = rtrim($url, '/') . '/page/';
     $args = targs::instance();
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
       $args->url = $i == 1 ? $url : $pageurl .$i . '/';
-      $a[] = $this->parsearg(($i == $page ? $navi->current : $navi->link), $args);
+      $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }
     
-    return str_replace('$items', implode($navi->divider, $a), (string) $navi);
+    return str_replace('$items', implode($this->templates['content.navi.divider'], $a), $this->templates['content.navi']);
   }
   
   public function getposts(array $items, $lite) {

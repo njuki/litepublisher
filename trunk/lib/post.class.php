@@ -220,9 +220,9 @@ class tpost extends titem implements  itemplate {
   private function getcommontagslinks($names, $excerpt) {
     if (count($this->$names) == 0) return '';
     $theme = $this->theme;
-    $tml = $excerpt ? $theme->content->excerpts->excerpt : $theme->content->post;
-    $tml = $names == 'tags' ? $tml->taglinks : $tml->catlinks;
-    $tml->tostring = true;
+    $tmlpath= $excerpt ? 'content.excerpts.excerpt' : 'content.post';
+    $tmlpath .= $names == 'tags' ? 'taglinks' : 'catlinks';
+$tmlitem = $theme->templates[$tmlpath . '.item'];
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
     $args = targs::instance();
@@ -240,10 +240,10 @@ class tpost extends titem implements  itemplate {
           $args->icon = '';
         }
       }
-      $list[] = $theme->parsearg($tml->item,  $args);
+      $list[] = $theme->parsearg($tmlitem,  $args);
     }
     
-    return str_replace('$items', implode($tml->divider, $list), $theme->parse($tml));
+    return str_replace('$items', implode($theme->templates[$tmlpath . '.divider'], $list), $theme->parse($theme->templates[$tmlpath]));
   }
   
   public function getdate() {
@@ -402,20 +402,18 @@ class tpost extends titem implements  itemplate {
     $prev = '';
     $next = '';
     $theme = $this->theme;
-    $tml = $theme->content->post->prevnext;
-$tml->tostring = true;
     if ($prevpost = $this->prev) {
       ttheme::$vars['prevpost'] = $prevpost;
-      $prev = $theme->parse($tml->prev);
+      $prev = $theme->parse($theme->templates['content.post.prevnext.prev']);
     }
     
     if ($nextpost = $this->next) {
       ttheme::$vars['nextpost'] = $nextpost;
-      $next = $theme->parse($tml->next);
+      $next = $theme->parse($theme->templates['content.post.prevnext.next']);
     }
     
     if (($prev == '') && ($next == '')) return '';
-    $result = strtr(    $theme->parse($tml), array(
+    $result = strtr(    $theme->parse($theme->templates['content.post.prevnext']), array(
     '$prev' => $prev,
     '$next' => $next
     ));
