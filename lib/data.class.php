@@ -323,6 +323,15 @@ function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }
 
+function strbegins() {
+    $a = func_get_args();
+$s = array_shift($a);
+while ($begin = array_shift($a)) {
+  if (strncmp($s, $begin, strlen($begin)) == 0) return true;
+}
+return false;
+}
+
 function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
 }

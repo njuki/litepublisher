@@ -366,6 +366,7 @@ $views->save();
 
 function update_step2() {
 tlocal::clearcache();
+tlocal::loadlang('');
 $classes = litepublisher::$classes;
 $classes->lock();
 

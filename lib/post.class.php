@@ -221,7 +221,7 @@ class tpost extends titem implements  itemplate {
     if (count($this->$names) == 0) return '';
     $theme = $this->theme;
     $tmlpath= $excerpt ? 'content.excerpts.excerpt' : 'content.post';
-    $tmlpath .= $names == 'tags' ? 'taglinks' : 'catlinks';
+    $tmlpath .= $names == 'tags' ? '.taglinks' : '.catlinks';
 $tmlitem = $theme->templates[$tmlpath . '.item'];
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
