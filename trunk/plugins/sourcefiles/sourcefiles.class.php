@@ -37,14 +37,14 @@ class tsourcefiles extends tplugin implements itemplate {
   
 public function getdescription() { }
 public function gethead() { }
-
+  
   public function getidview() {
     return 1;
   }
   
   public function setidview($id) {
-}
-
+  }
+  
   public function getcont() {
     $updir = '';
     if($this->item['filename'] != '') {
