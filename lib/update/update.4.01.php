@@ -15,14 +15,12 @@ if (function_exists($func)) $func();
 create_storage();
 tlocal::clearcache();
 create_storage_folder();
-$url = litepublisher::$options->url . '/admin/service/' . litepublisher::$options->q . 'update=1';
 echo '<pre>
 Для продолжения обновления вам следует заменить файл index.php в корне сайта на новый файл 4 версии. Взять его можно из последнего релиза либо из репозитория по адресу: 
 <a href="http://litepublisher.googlecode.com/svn/trunk/index.php">http://litepublisher.googlecode.com/svn/trunk/index.php</a>
 
-После выполнения требований, пожалуйста, перейдите по ссылке:' .
-"<a href=\"$url\">$url</a>
-</pre>";
+После выполнения требований, пожалуйста, обновите эту страницу
+</pre>';
 exit();
 } else {
 update_step2();
@@ -51,8 +49,14 @@ echo 'не удалось записать файл storage/.htaccess - пожа
 
 foreach (array('backup', 'cache', 'data') as $name) {
 $old = rtrim(litepublisher::$_paths[$name], DIRECTORY_SEPARATOR  );
+if (!@is_dir($old)){
+echo "папка $old не существует<br>";
+continue;
+}
 $newdir = $dir . $name;
-if (!@is_dir($newdir)) {
+if (@is_dir($newdir)) {
+echo "папка $newdir уже существует, перименовать не удасться<br>";
+} else {
 if (!@rename($old, $newdir)) {
 echo "Не удалось переименовать<br>$old<br>в<br>$newdir<br>Пожалуйста, вручную переместити эти папки<br>";
 }
