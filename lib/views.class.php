@@ -79,11 +79,11 @@ class tview extends titem {
     if (ttheme::exists($this->themename)) {
       $this->themeinstance = ttheme::getinstance($this->themename);
       if (count($this->data['custom']) == count($this->themeinstance->templates['custom'])) {
-      $this->themeinstance->templates['custom'] = $this->data['custom'];
-} else {
-      $this->data['custom'] = $this->themeinstance->templates['custom'];
-$this->save();
-}
+        $this->themeinstance->templates['custom'] = $this->data['custom'];
+      } else {
+        $this->data['custom'] = $this->themeinstance->templates['custom'];
+        $this->save();
+      }
     } else {
       $this->setthemename('default');
     }

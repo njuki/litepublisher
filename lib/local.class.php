@@ -157,7 +157,7 @@ class tlocal {
   
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
-self::$files = array();
+    self::$files = array();
   }
   
   public static function getcachefilename($name) {

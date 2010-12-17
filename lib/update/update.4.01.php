@@ -1,6 +1,6 @@
 <?php
 
-function update400() {
+function update401() {
 if (!isset(litepublisher::$site)) {
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= 3.99) {
@@ -16,7 +16,7 @@ create_storage();
 tlocal::clearcache();
 create_storage_folder();
 echo '<pre>
-Для продолжения обновления вам следует заменить файл index.php в корне сайта на новый файл 4 версии. Взять его можно из последнего релиза либо из репозитория по адресу: 
+Р”Р»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РІР°Рј СЃР»РµРґСѓРµС‚ Р·Р°РјРµРЅРёС‚СЊ С„Р°Р№Р» index.php РІ РєРѕСЂРЅРµ СЃР°Р№С‚Р° РЅР° РЅРѕРІС‹Р№ С„Р°Р№Р» 4 РІРµСЂСЃРёРё. Р’Р·СЏС‚СЊ РµРіРѕ РјРѕР¶РЅРѕ РёР· РїРѕСЃР»РµРґРЅРµРіРѕ СЂРµР»РёР·Р° Р»РёР±Рѕ РёР· СЂРµРїРѕР·РёС‚РѕСЂРёСЏ РїРѕ Р°РґСЂРµСЃСѓ: 
 <a href="http://litepublisher.googlecode.com/svn/trunk/index.php">http://litepublisher.googlecode.com/svn/trunk/index.php</a>
 </pre>';
 exit();
@@ -30,17 +30,17 @@ $dir = litepublisher::$paths->home;
 if (!@is_dir($dir)) @mkdir($dir, 0777);
 @chmod($dir, 0777);
 if (!@is_dir($dir)) {
-echo 'не удалось создать папку <strong>storage</storage> в корне сайта. Дальнейшее обновление невозможно, пожалуйста, создайте папку storage в корне сайта и присвойте ей права 0777<br>';
+echo 'РЅРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РїР°РїРєСѓ <strong>storage</storage> РІ РєРѕСЂРЅРµ СЃР°Р№С‚Р°. Р”Р°Р»СЊРЅРµР№С€РµРµ РѕР±РЅРѕРІР»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕР¶Р°Р»СѓР№СЃС‚Р°, СЃРѕР·РґР°Р№С‚Рµ РїР°РїРєСѓ storage РІ РєРѕСЂРЅРµ СЃР°Р№С‚Р° Рё РїСЂРёСЃРІРѕР№С‚Рµ РµР№ РїСЂР°РІР° 0777<br>';
 }
 $dir .= DIRECTORY_SEPARATOR  ;
 if (!file_put_contents($dir . 'index.htm', ' '))  {
-echo 'не удалось записать файл storage/index.htm - пожалуйста, проверьте права на запись в папке storage<br>';
+echo 'РЅРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РїРёСЃР°С‚СЊ С„Р°Р№Р» storage/index.htm - РїРѕР¶Р°Р»СѓР№СЃС‚Р°, РїСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІР° РЅР° Р·Р°РїРёСЃСЊ РІ РїР°РїРєРµ storage<br>';
 } else {
 @chmod($dir . 'index.htm', 0666);
 }
 
 if (!file_put_contents($dir . '.htaccess', 'Deny from all'))  {
-echo 'не удалось записать файл storage/.htaccess - пожалуйста, проверьте права на запись в папке storage<br>';
+echo 'РЅРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РїРёСЃР°С‚СЊ С„Р°Р№Р» storage/.htaccess - РїРѕР¶Р°Р»СѓР№СЃС‚Р°, РїСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІР° РЅР° Р·Р°РїРёСЃСЊ РІ РїР°РїРєРµ storage<br>';
 } else {
 @chmod($dir . '.htaccess', 0666);
 }
@@ -50,7 +50,7 @@ $old = rtrim(litepublisher::$_paths[$name], DIRECTORY_SEPARATOR  );
 $newdir = $dir . $name;
 if (!@is_dir($newdir)) {
 if (!@rename($old, $newdir)) {
-echo "Не удалось переименовать<br>$old<br>в<br>$newdir<br>Пожалуйста, вручную переместити эти папки<br>";
+echo "РќРµ СѓРґР°Р»РѕСЃСЊ РїРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ<br>$old<br>РІ<br>$newdir<br>РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІСЂСѓС‡РЅСѓСЋ РїРµСЂРµРјРµСЃС‚РёС‚Рё СЌС‚Рё РїР°РїРєРё<br>";
 }
 }
 }

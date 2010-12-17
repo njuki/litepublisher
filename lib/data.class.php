@@ -324,12 +324,12 @@ function strbegin($s, $begin) {
 }
 
 function strbegins() {
-    $a = func_get_args();
-$s = array_shift($a);
-while ($begin = array_shift($a)) {
-  if (strncmp($s, $begin, strlen($begin)) == 0) return true;
-}
-return false;
+  $a = func_get_args();
+  $s = array_shift($a);
+  while ($begin = array_shift($a)) {
+    if (strncmp($s, $begin, strlen($begin)) == 0) return true;
+  }
+  return false;
 }
 
 function strend($s, $end) {

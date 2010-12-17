@@ -159,8 +159,8 @@ class ttheme extends tevents {
     $prop = $names[2];
     if (isset(self::$vars[$name])) {
       $var =  self::$vars[$name];
-} elseif ($name == 'custom') {
-return $this->templates['custom'][$prop];
+    } elseif ($name == 'custom') {
+      return $this->templates['custom'][$prop];
     } elseif ($var = $this->getvar($name)) {
       self::$vars[$name] = $var;
     } else {
@@ -230,8 +230,8 @@ return $this->templates['custom'][$prop];
     if ($items[0] != 1) array_unshift($items, 1);
     if ($items[count($items) -1] != $count) $items[] = $count;
     $navi =$this->content->navi;
-$currenttml=$this->templates['content.navi.current'];
-$tml =$this->templates['content.navi.link'];
+    $currenttml=$this->templates['content.navi.current'];
+    $tml =$this->templates['content.navi.link'];
     $pageurl = rtrim($url, '/') . '/page/';
     $args = targs::instance();
     $a = array();
