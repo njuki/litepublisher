@@ -370,7 +370,6 @@ class tthemeparser extends tevents {
             $sidebar['meta.classes'] = self::getmetaclasses($sidebar['meta.classes']);
           }
         }
-        
       }
       
       public static function getmetaclasses($s) {

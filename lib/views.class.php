@@ -68,7 +68,7 @@ class tview extends titem {
       if (!ttheme::exists($name)) return $this->error(sprintf('Theme %s not exists', $name));
       $this->data['themename'] = $name;
       $this->themeinstance = ttheme::getinstance($name);
-      $this->data['custom'] = isset($this->themeinstance->templates['custom']) ? $this->themeinstance->templates['custom'] : array();
+      $this->data['custom'] = $this->themeinstance->templates['custom'];
       $this->save();
       tviews::instance()->themechanged($this);
     }
@@ -78,7 +78,12 @@ class tview extends titem {
     if (isset($this->themeinstance)) return $this->themeinstance;
     if (ttheme::exists($this->themename)) {
       $this->themeinstance = ttheme::getinstance($this->themename);
+      if (count($this->data['custom']) == count($this->themeinstance->templates['custom'])) {
       $this->themeinstance->templates['custom'] = $this->data['custom'];
+} else {
+      $this->data['custom'] = $this->themeinstance->templates['custom'];
+$this->save();
+}
     } else {
       $this->setthemename('default');
     }
