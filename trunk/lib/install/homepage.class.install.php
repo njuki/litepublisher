@@ -16,7 +16,7 @@ function thomepageInstall($self) {
   $homeview = tview::instance($self->idview);
   $homeview->disableajax = true;
   $homeview->save();
-
+  
   $menus->idhome = $menus->add($self);
   $menus->unlock();
 }

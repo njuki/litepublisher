@@ -325,6 +325,15 @@ function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }
 
+function strbegins() {
+  $a = func_get_args();
+  $s = array_shift($a);
+  while ($begin = array_shift($a)) {
+    if (strncmp($s, $begin, strlen($begin)) == 0) return true;
+  }
+  return false;
+}
+
 function strend($s, $end) {
   return $end == substr($s, 0 - strlen($end));
 }
@@ -485,9 +494,9 @@ class tevents extends tdata {
   
   private function delete_event_item($name, $i) {
     array_splice($this->events[$name], $i, 1);
+    if (count($this->events[$name]) == 0) unset($this->events[$name]);
     $this->save();
   }
-  
   
   public function setevent($name, $params) {
     return $this->addevent($name, $params['class'], $params['func']);
@@ -1519,7 +1528,7 @@ class turlmap extends titems {
   
   public function clearcache() {
     $path = litepublisher::$paths->cache;
-    if ( $h = opendir($path)) {
+    if ( $h = @opendir($path)) {
       while(FALSE !== ($filename = @readdir($h))) {
         if (($filename == '.') || ($filename == '..') || ($filename == '.svn')) continue;
         $file = $path. $filename;
