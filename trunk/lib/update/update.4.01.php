@@ -11,14 +11,18 @@ if (function_exists($func)) $func();
       $v = $v + 0.01;
     }
 
-    litepublisher::$options->version = '3.98';
+    litepublisher::$options->version = '3.99';
 create_storage();
 tlocal::clearcache();
 create_storage_folder();
+$url = litepublisher::$options->url . '/admin/service/' . litepublisher::$options->q . 'update=1';
 echo '<pre>
 Для продолжения обновления вам следует заменить файл index.php в корне сайта на новый файл 4 версии. Взять его можно из последнего релиза либо из репозитория по адресу: 
 <a href="http://litepublisher.googlecode.com/svn/trunk/index.php">http://litepublisher.googlecode.com/svn/trunk/index.php</a>
-</pre>';
+
+После выполнения требований, пожалуйста, перейдите по ссылке:' .
+"<a href=\"$url\">$url</a>
+</pre>";
 exit();
 } else {
 update_step2();
@@ -26,8 +30,8 @@ update_step2();
 }
 
 function create_storage_folder() {
-$dir = litepublisher::$paths->home;
-if (!@is_dir($dir)) @mkdir($dir, 0777);
+$dir = litepublisher::$paths->home . 'storage';
+if (!@file_exists($dir) || !@is_dir($dir)) @mkdir($dir, 0777);
 @chmod($dir, 0777);
 if (!@is_dir($dir)) {
 echo 'не удалось создать папку <strong>storage</storage> в корне сайта. Дальнейшее обновление невозможно, пожалуйста, создайте папку storage в корне сайта и присвойте ей права 0777<br>';
