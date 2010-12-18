@@ -1,6 +1,6 @@
 <?php
 
-function update401() {
+function update4() {
 if (!isset(litepublisher::$site)) {
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= 3.99) {
@@ -18,7 +18,6 @@ create_storage_folder();
 echo '<pre>
 Для продолжения обновления вам следует заменить файл index.php в корне сайта на новый файл 4 версии. Взять его можно из последнего релиза либо из репозитория по адресу: 
 <a href="http://litepublisher.googlecode.com/svn/trunk/index.php">http://litepublisher.googlecode.com/svn/trunk/index.php</a>
-
 После выполнения требований, пожалуйста, обновите эту страницу
 </pre>';
 exit();
@@ -455,6 +454,7 @@ singleupdate(tsitemap::instance());
 singleupdate(tsimplecontent::instance());
 if (isset($classes->items['tprofile'])) singleupdate(tprofile::instance());
 update_static();
+litepublisher::$options->version = '4.00';
 tstorage::savemodified();
 
   $rpc = TXMLRPC::instance();
@@ -467,7 +467,6 @@ $backuper->data['fftpfolder'] = '';
 $backuper->save();
 }
 
-return;
 $l = litepublisher::$paths->languages;
 @unlink($l . 'adminru.ini');
 @unlink($l . 'adminen.ini');
