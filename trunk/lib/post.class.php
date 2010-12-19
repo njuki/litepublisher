@@ -283,7 +283,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcatnames() {
-    if (count($this->categories) == 0)  return array();
+    if (count($this->categories) == 0)  return '';
     $categories = tcategories::instance();
     return implode(', ', $categories->getnames($this->categories));
   }

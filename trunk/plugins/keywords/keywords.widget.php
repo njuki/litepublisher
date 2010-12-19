@@ -7,7 +7,7 @@
 **/
 
 class tkeywordswidget extends twidget {
-  protected $links;
+  public $links;
   
   public static function instance() {
     return getinstance(__class__);

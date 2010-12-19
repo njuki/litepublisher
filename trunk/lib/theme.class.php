@@ -229,7 +229,6 @@ class ttheme extends tevents {
     $items = range($from, $to);
     if ($items[0] != 1) array_unshift($items, 1);
     if ($items[count($items) -1] != $count) $items[] = $count;
-    $navi =$this->content->navi;
     $currenttml=$this->templates['content.navi.current'];
     $tml =$this->templates['content.navi.link'];
     $pageurl = rtrim($url, '/') . '/page/';
@@ -237,7 +236,7 @@ class ttheme extends tevents {
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
-      $args->url = $i == 1 ? $url : $pageurl .$i . '/';
+      $args->link = $i == 1 ? $url : $pageurl .$i . '/';
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }
     
