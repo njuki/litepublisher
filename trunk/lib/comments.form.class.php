@@ -92,11 +92,11 @@ class tcommentform extends tevents {
     return false;
   }
   
-  public static function printform($postid) {
+  public static function printform($postid, $themename) {
     $result = '';
     $self = self::instance();
     $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
+    $theme = ttheme::getinstance($themename);
     $args = targs::instance();
     $args->name = '';
     $args->email = '';
@@ -121,7 +121,7 @@ class tcommentform extends tevents {
       }
     }
     
-    $result .= $theme->parsearg($theme->content->post->templatecomments->form, $args);
+    $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
     return $result;
   }
   

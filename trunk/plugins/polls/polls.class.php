@@ -259,14 +259,14 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   }
   
   public function filter(&$content) {
-    // здесь только заменить код голосовалки на html
+    //replace poll templates to html
     $content = str_replace(array("\r\n", "\r"), "\n", $content);
     $i = 0;
     while (is_int($i = strpos($content, '[poll]', $i))) {
       $j = strpos($content, '[/poll]', $i);
       $j += strlen("[/poll]");
       $s = substr($content, $i, $j - $i);
-      // вычленить секцию items
+      // extract items
       $k = strpos($s, '[items]');
       $l = strpos($s, '[/items]');
       $s = substr_replace($s, '', $k, $l - $k);
@@ -301,9 +301,47 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
     $tml = $this->templates[$poll['type']];
     $result = $theme->parsearg($tml, $args);
-    $result = '<script type="text/javascript">loadjavascript("/plugins/polls/polls.client.js");</script>'.  $result;
+    //$result = $this->gethead() .  $result;
     return str_replace(array("'", '&#36;'), array('"', '$'), $result);
   }
+
+private function gethead() {
+return '<script type="text/javascript">
+$(document).ready(function() {
+    $.getScript(ltoptions.files + "/plugins/polls/polls.client.js");
+});
+</script>';
+}
+
+  protected static function error403() {
+    return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . 'Forbidden';
+  }
+  
+public function request($arg) {
+$this->cache = false;
+if (empty($_GET['action'])) return self::error403();
+switch ($_GET['action']) {
+case 'getcookie':
+$result = $this->getcookie(isset($_GET['cookie']) ? $_GET['cookie'] : '');
+break;
+
+case 'sendvote':
+    extract($_GET, EXTR_SKIP);
+if (!isset($idpoll) || !isset($cookie) || !isset($vote)) return self::eror403();
+try {
+$items = $this->sendvote($idpoll, $vote, $cookie);
+    } catch (Exception $e) {
+return self::error403();
+}
+$result = implode(',', $items);
+break;
+
+default:
+      $result = var_export($_GET, true);
+}
+
+    return turlmap::htmlheader(false) . $result;
+}
   
   public function getcookie($cookie) {
     if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie)))) {

@@ -94,6 +94,7 @@ litepublisher::$options->handexception($e);
 }
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
+//tupdater::instance()->run(4.02);
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
