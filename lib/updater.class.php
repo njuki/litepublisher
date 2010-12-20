@@ -117,8 +117,7 @@ class tupdater extends tevents {
       return  false;
     }
     
-    $backuper->archtype = 'tar';
-    if (!$backuper->upload($s)) {
+    if (!$backuper->upload($s, 'tar')) {
       $this->result = $backuper->result;
       return false;
     }

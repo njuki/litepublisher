@@ -127,8 +127,9 @@ class tadminservice extends tadminmenu {
     if ($backuper->filertype == 'file') return true;
     $host = tadminhtml::getparam('host', '');
     $login = tadminhtml::getparam('login', '');
-    $password = tadminhtml::getparam('pasword', '');
+    $password = tadminhtml::getparam('password', '');
     if (($host == '') || ($login == '') || ($password == '')) return '';
+
     return $backuper->connect($host, $login, $password);
   }
   
