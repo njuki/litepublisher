@@ -203,16 +203,16 @@ class tbackuper extends tevents {
       $dir = rtrim($dir, '/') . '/';
       $hasindex = false;
       $path .= DIRECTORY_SEPARATOR ;
-$ignoredir = array('languages', 'logs', 'themes');
+      $ignoredir = array('languages', 'logs', 'themes');
       foreach ($list as $name => $item) {
         $filename = $path . $name;
         if (is_dir($filename)) {
-if (($dir == 'storage/data/') && in_array($name, $ignoredir)) {
-      $this->adddir($dir . $name . '/', 0777);
-$this->addfile($dir . $name . '/index.htm', '', 0666);
-} else {
-          $this->readdata($filename);
-}
+          if (($dir == 'storage/data/') && in_array($name, $ignoredir)) {
+            $this->adddir($dir . $name . '/', 0777);
+            $this->addfile($dir . $name . '/index.htm', '', 0666);
+          } else {
+            $this->readdata($filename);
+          }
         }else {
           if (preg_match('/(\.bak\.php$)|(\.lok$)|(\.log$)/',  $name)) continue;
           $this->addfile($dir . $name, file_get_contents($filename), $item['mode']);
@@ -487,20 +487,20 @@ $this->addfile($dir . $name . '/index.htm', '', 0666);
   }
   
   public function createfullbackup(){
-return $this->_savebackup($this->getpartial(true, true, true));
-}
-
+    return $this->_savebackup($this->getpartial(true, true, true));
+  }
+  
   public function createbackup(){
-$filer = $this->__filer;
-if (!isset($filer) || ! ($filer instanceof tlocalfiler)) {
+    $filer = $this->__filer;
+    if (!isset($filer) || ! ($filer instanceof tlocalfiler)) {
       $this->__filer = tlocalfiler::instance();
-}
-$result = $this->_savebackup($this->getpartial(false, false, false));
-$this->__filer = $filer;
-return $result;
-}
-
-private function _savebackup($s) {
+    }
+    $result = $this->_savebackup($this->getpartial(false, false, false));
+    $this->__filer = $filer;
+    return $result;
+  }
+  
+  private function _savebackup($s) {
     $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
     $filename .= $this->archtype == 'zip' ? '.zip' : '.tar.gz';
     file_put_contents($filename, $s);

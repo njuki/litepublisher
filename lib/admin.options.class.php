@@ -86,7 +86,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'view':
       $filter = tcontentfilter::instance();
-$args->usefilter = $filter->usefilter;
+      $args->usefilter = $filter->usefilter;
       $args->automore = $filter->automore;
       $args->automorelength = $filter->automorelength;
       $args->autolinks = $filter->autolinks;
@@ -196,7 +196,7 @@ $args->usefilter = $filter->usefilter;
       $options->icondisabled = isset($icondisabled);
       if (!empty($perpage)) $options->perpage = (int) $perpage;
       $filter = tcontentfilter::instance();
-$filter->usefilter = isset($usefilter);
+      $filter->usefilter = isset($usefilter);
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;
       $filter->autolinks = isset($autolinks);

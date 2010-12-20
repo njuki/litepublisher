@@ -115,11 +115,11 @@ class tcontentfilter extends tevents {
       return $content;
     }
     $result = str_replace(array("\r\n", "\r"), "\n", trim($content));
-if ($this->usefilter) {
-    if ($this->autolinks) $result = self::createlinks($result);
-    $result = $this->replacecode($result);
-    $result = self::auto_p($result);
-}
+    if ($this->usefilter) {
+      if ($this->autolinks) $result = self::createlinks($result);
+      $result = $this->replacecode($result);
+      $result = self::auto_p($result);
+    }
     $this->callevent('afterfilter', array(&$result));
     return $result;
   }

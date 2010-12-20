@@ -12,61 +12,55 @@ var pollclient = {
 };
 
 pollclient.sendvote = function (idpoll, vote) {
-  for (var i = this.voted.length -1; i >= 0; i--) {
-    if (idpoll == this.voted[i]) return false;
-  }
-  this.voted.push(idpoll);
-
   $.get(ltoptions.url + '/ajaxpollserver.htm',
 {action: 'sendvote', cookie: this.cookie,idpoll: idpoll, vote: vote},
   function (result) {
-var items = result.split(',');
-        var idspan = '#votes-' + idpoll + '-';
-        for (var i =0, n =items.length; i < n; i++) {
-$(idspan + i).html(items[i]);
-          }
-        });
+    var items = result.split(',');
+    var idspan = '#votes-' + idpoll + '-';
+    for (var i =0, n =items.length; i < n; i++) {
+      $(idspan + i).html(items[i]);
     }
+  });
+};
 
 pollclient.clickvote = function(idpoll, vote) {
+  for (var i = this.voted.length -1; i >= 0; i--) {
+    if (idpoll == this.voted[i]) {
+      return false;
+    }
+  }
+  this.voted.push(idpoll);
+  
   if (this.cookierequested) {
-this.sendvote(idpoll, vote);
-} else {
-  this.cookie = this.get_cookie("polluser");
-  if (this.cookie == null) this.cookie = '';
-this.getcookie(function() { 
     this.sendvote(idpoll, vote);
-  });
-}
+  } else {
+    this.cookie = this.get_cookie("polluser");
+    if (this.cookie == null) this.cookie = '';
+    this.getcookie(function() {
+      pollclient.sendvote(idpoll, vote);
+    });
+  }
+};
 
 pollclient.radiovote = function(idpoll, btn) {
-var form = $(btn).closest("form");
-
-    var elems =  btn.form.elements;
-    for (var i = 0, n = elems.length; i < n; i++) {
-      if((elems[i].type == 'radio') && (elems[i].checked == true)) {
-        var vote = elems[i].value;
-        break;
-      }
-    }
-} catch (e) { alert(e.message); }
-  
-  this.clickvote(idpoll, vote);
-}
+  $(btn).closest("form").find("radio:checked").each(function() {
+    var vote = $(this).val();
+  });
+};
 
 pollclient.getcookie = function(callback) {
   $.get(ltoptions.url + '/ajaxpollserver.htm',
 {action: 'getcookie', cookie: this.cookie},
   function (cookie) {
-    if (cookie != this.cookie) {
-      this.set_cookie('polluser', cookie, false);
-      this.cookie = cookie;
+    if (cookie != pollclient.cookie) {
+      pollclient.set_cookie('polluser', cookie, false);
+      pollclient.cookie = cookie;
     }
     
-    this.cookierequested = true;
-    if (callback) callback();
-    });
-}
+    pollclient.cookierequested = true;
+    if (callback) callback()
+  });
+};
 
 pollclient.get_cookie= function(name) {
   var cookie = " " + document.cookie;
@@ -86,7 +80,7 @@ pollclient.get_cookie= function(name) {
     }
   }
   return(setStr);
-}
+};
 
 pollclient.set_cookie = function (name, value, expires){
   if (!expires) {
@@ -94,4 +88,4 @@ pollclient.set_cookie = function (name, value, expires){
     expires.setFullYear(expires.getFullYear() + 10);
   }
   document.cookie = name + "=" + escape(value) + "; expires=" + expires.toGMTString() +  "; path=/";
-}
+};
