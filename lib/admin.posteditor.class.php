@@ -116,7 +116,7 @@ class tposteditor extends tadminmenu {
     return;
     */
     
-    extract($_POST);
+    extract($_POST, EXTR_SKIP);
     $this->basename = 'editor';
     $html = $this->html;
     $post = tpost::instance((int)$id);

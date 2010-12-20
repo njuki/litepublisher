@@ -53,7 +53,7 @@ public function save() {}
     }
     
     if (!litepublisher::$options->commentsdisabled && $post->commentsenabled) {
-      $result .=  "<?php  echo tcommentform::printform($idpost); ?>\n";
+      $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
     } else {
       $result .= $theme->parse($theme->content->post->templatecomments->closed);
     }

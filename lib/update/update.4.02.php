@@ -15,5 +15,13 @@ if (!litepublisher::$urlmap->findurl('/getwidget.htm')) {
   $robot = trobotstxt::instance();
   $robot->AddDisallow('/getwidget.htm');
 }  
+
+if (isset(litepublisher::$classes->items['tpolls'])) {
+litepublisher::$urlmap->addget('/ajaxpollserver.htm', 'tpolls');
+  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc->deleteclass('tpolls');
+}
+
   litepublisher::$urlmap->unlock();
+
 }

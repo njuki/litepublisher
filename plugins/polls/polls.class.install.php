@@ -54,19 +54,23 @@ function tpollsInstall($self) {
   $filter->beforefilter = $self->filter;
   $filter->unlock();
   
+/*
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->lock();
   $xmlrpc->add('litepublisher.poll.sendvote', 'sendvote', get_class($self));
   $xmlrpc->add('litepublisher.poll.getcookie', 'getcookie', get_class($self));
   $xmlrpc->unlock();
-  
+  */
   litepublisher::$classes->classes['poll'] = get_class($self);
   litepublisher::$classes->save();
   
   litepublisher::$options->parsepost = true;
+
+litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
 }
 
 function tpollsUninstall($self) {
+turlmap::unsub($self);
   unset(litepublisher::$classes->classes['poll']);
   litepublisher::$classes->save();
   
@@ -76,8 +80,10 @@ function tpollsUninstall($self) {
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
   
+/*
   $xmlrpc = TXMLRPC::instance();
   $xmlrpc->deleteclass(get_class($self));
+*/
   
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);
