@@ -53,7 +53,7 @@ class tbackuper extends tevents {
     parent::__destruct();
   }
   
-  public function unknownarchive() {
+  public function unknown_archive() {
     $this->error('Unknown archive type ' . $this->archtype);
   }
   
@@ -169,7 +169,7 @@ class tbackuper extends tevents {
       return true;
       
       default:
-      $this->unknownarchive();
+      $this->unknown_archive();
     }
   }
   
@@ -252,7 +252,7 @@ class tbackuper extends tevents {
   
   public function setdir($dir) {
     $dir = trim($dir, '/');
-    if ($i = strpos($dir, '/')) $dir = substr($dir, $i);
+    if ($i = strpos($dir, '/')) $dir = substr($dir, 0, $i);
     if (! array_key_exists($dir, litepublisher::$_paths)) $this->error(sprintf('Unknown "%s" folder', $dir));
     $this->chdir(dirname(rtrim(litepublisher::$_paths[$dir], DIRECTORY_SEPARATOR )));
   }
@@ -446,7 +446,11 @@ class tbackuper extends tevents {
     switch ($archtype) {
       case 'tar':
       $this->tar->loadfromstring($content);
-      foreach ($tar->files as $item) {
+echo strlen($content), '<br>';
+if (strlen($content) < 2000) dumpstr($content);
+echo gettype($this->tar->files), '<br>';
+echo count($this->tar->files), '<br>';
+      foreach ($this->tar->files as $item) {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }
       unset($this->tar);
@@ -464,7 +468,7 @@ class tbackuper extends tevents {
       break;
       
       default:
-      $this->unknownarchive();
+      $this->unknown_archive();
     }
     unset($this->existingfolders);
     if ($this->hasdata) $this->renamedata();
