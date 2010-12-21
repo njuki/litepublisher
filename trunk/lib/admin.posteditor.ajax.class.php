@@ -59,7 +59,7 @@ class tajaxposteditor  extends tevents {
   }
   
   public function request($arg) {
-    if (isset($_GET['upload'])) {
+    if (isset($_GET['get']) && ($_GET['get'] == 'upload')) {
       if (empty($_POST['admincookie'])) return self::error403();
       if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
         return "<?php
