@@ -16,7 +16,7 @@ class tadminicons extends tadminmenu {
     if (count($items) == 0) return '';
     $html = tadminhtml::instance();
     $html->section = 'files';
-    $args = targgs::instance();
+    $args = targs::instance();
     //add empty icon
     $args->id = 0;
     $args->checked = 0 == $idicon;

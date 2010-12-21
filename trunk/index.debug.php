@@ -92,6 +92,7 @@ tlocal::clearcache();
   //echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
+//tupdater::instance()->run(4.02);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 //tupdater::instance()->run(4.02);

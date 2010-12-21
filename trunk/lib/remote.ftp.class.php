@@ -58,7 +58,7 @@ class tftpfiler extends tremotefiler {
     if (!($temp = tmpfile())) return false;
     fwrite($temp, $content);
     fseek($temp, 0);
-    $result = @ftp_fput($this->handle, $filename, $tmp, FTP_BINARY);
+    $result = @ftp_fput($this->handle, $filename, $temp, FTP_BINARY);
     fclose($temp);
     return $result;
   }

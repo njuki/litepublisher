@@ -409,7 +409,7 @@ class tbackuper extends tevents {
     return true;
   }
   
-  private function uploadfile($filename, $content, $mode) {
+  public function uploadfile($filename, $content, $mode) {
     $filename = ltrim($filename, '/');
     if (dbversion && $filename == 'dump.sql') {
       $this->setdump($content);
@@ -446,10 +446,6 @@ class tbackuper extends tevents {
     switch ($archtype) {
       case 'tar':
       $this->tar->loadfromstring($content);
-echo strlen($content), '<br>';
-if (strlen($content) < 2000) dumpstr($content);
-echo gettype($this->tar->files), '<br>';
-echo count($this->tar->files), '<br>';
       foreach ($this->tar->files as $item) {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }

@@ -25,7 +25,6 @@ class tadminservice extends tadminmenu {
       $result .= $html->info($args);
       $updater = tupdater::instance();
       $islatest= $updater->islatest();
-      //$islatest = 1;
       if ($islatest === false) {
         $result .= $html->h2->errorservice;
       } elseif ($islatest <= 0) {
@@ -129,7 +128,7 @@ class tadminservice extends tadminmenu {
     $login = tadminhtml::getparam('login', '');
     $password = tadminhtml::getparam('password', '');
     if (($host == '') || ($login == '') || ($password == '')) return '';
-
+    
     return $backuper->connect($host, $login, $password);
   }
   
