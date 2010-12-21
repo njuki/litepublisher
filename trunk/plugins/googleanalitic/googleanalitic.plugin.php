@@ -57,7 +57,8 @@ class tgoogleanalitic extends tplugin {
   }
   
   public function uninstall() {
-    ttemplate::instance()->deletejavascript('googleanalitic');
+    $template = ttemplate::instance();
+    $template->deletefromhead($template->getjavascript('/files/googleanalitic.js'));
   }
   
 }//class

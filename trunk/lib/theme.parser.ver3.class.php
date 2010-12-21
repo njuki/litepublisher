@@ -544,7 +544,7 @@ class tthemeparserver3 extends tevents {
       }
       if ($name == 'meta') $result['meta.classes'] = $this->parsemetawidget($items, $sidebar);
       if ($this->fixold) $items = sprintf($items, '$item');
-$items = str_replace('$items', '$item', $items);
+      $items = str_replace('$items', '$item', $items);
       $result[$name . '.items'] = $this->deletespaces($items);
     } else {
       $result[$name . '.items'] = $default[$name . '.items'];
