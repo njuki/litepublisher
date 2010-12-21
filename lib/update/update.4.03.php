@@ -41,6 +41,6 @@ $template = ttemplate::instance();
   $(document).ready(function() {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto();
   });
-  </script>
+  </script>';
 $template->save();  ';
 }
