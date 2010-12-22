@@ -46,45 +46,56 @@ public function gethead() { }
   }
   
   public function getcont() {
-    $updir = '';
-    if($this->item['filename'] != '') {
-      $updir = sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$site->url, $this->item['dir']);
-    }
+$dir = $this->item['dir']
+$filename = $this->item['filename']
+    $updir = $filename == '' ? '' : 
+sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$site->url, $dir);
+
     $theme = ttheme::instance();
-    if (strend($this->item['filename'], '.php')) {
-      $dir = str_replace('/', DIRECTORY_SEPARATOR, $this->item['dir']);
+      return $theme->simple($updir . $this->getcachecontent($dir, $filename);
+  }
+
+private function getcachename($dir, $name) {
+$name = $dir;
+if ($filename != '') $name .= '_' . $filename;
+$name .= '.htm';
+$name = str_replace('/', '_', $name);
+return litepublisher::$paths->data . 'sourcefiles' . DIRECTORY_SEPARATOR . $name;
+}
+
+public function getcachecontent($dir, $filename) {
+$cachefile = $this->getcachename($dir, $name);
+if (file_exists($cachefile)) return file_get_contents($cachefile);
+$result = $this->getcontent($dir, $filename);
+file_put_contents($cachefile, $result);
+@chmod($cachefile, 0666);
+return $result;
+}
+
+public function getcontent($dir, $filename) {
+if ($filename == '') {
+}
+
+      $dir = str_replace('/', DIRECTORY_SEPARATOR, $dir);
       $realdir = litepublisher::$paths->home;
       $realdir .= $dir == '' ? 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
-      $realfile = $realdir . DIRECTORY_SEPARATOR. $this->item['filename'] ;
-      return $theme->simple($updir . highlight_file($realfile , true));
-    } else {
-      return $theme->simple($updir . $this->item['content']);
-    }
-  }
+      $realfile = $realdir . DIRECTORY_SEPARATOR. $filename;
+    if (strend($filename, '.php')) return highlight_file($realfile , true);
+return $this->syntax($realfile);
+}
   
   public function add($dir, $filename, $realdir = '') {
-    $realdir = $realdir == '' ? litepublisher::$paths->home : $realdir;
-    $realfile = $realdir . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR . $filename;
     $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
     $dir = trim($dir, '/');
-    $hash = md5_file ($realfile);
-    if ($item = $this->db->finditem(sprintf('filename = %s and dir = %s', dbquote($filename), dbquote($dir)))) {
-      if ($hash != $item['hash']) {
-        $item['hash'] = $hash;
-        $item['content'] = $this->syntax($realfile);
-        $this->db->updateassoc($item);
-      }
-      return $item['id'];
-    }
+    if ($item = $this->db->finditem(sprintf('filename = %s and dir = %s', dbquote($filename), dbquote($dir)))) return $item['id'];
+
     
     $item = array(
     'idurl' => 0,
     'filename' => $filename,
-    'dir' => $dir,
-    'hash' => $hash,
-    'content' => $this->syntax($realfile)
+    'dir' => $dir
     );
-    if (strlen($item['content']) > 100000) $item['content'] = 'big';
+
     $id =$this->db->add($item);
     if ($dir != '') $dir .= '/';
     $idurl = litepublisher::$urlmap->add("/source/$dir$filename", get_class($this), $id);
