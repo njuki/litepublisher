@@ -95,6 +95,7 @@ class titemsposts extends titems {
   }
   
   public function setitems($idpost, array $items) {
+$items = array_unique($items);
     if (dbversion) {
       $db = $this->db;
       $old = $this->getitems($idpost);

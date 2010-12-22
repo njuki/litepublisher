@@ -326,11 +326,16 @@ class tmediaparser extends tevents {
     if (!empty($parts['dirname']) && ($parts['dirname'] != '.')) {
       $destfilename = $parts['dirname'] . DIRECTORY_SEPARATOR . $destfilename;
     }
+
+          $fullname = litepublisher::$paths->files . $destfilename ;
+$dir = dirname($fullname) . DIRECTORY_SEPARATOR;
+$fullname = $dir . $this->getunique($dir, basename($fullname));
+
+    if (!$this->createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight)) return false;
     
-    if (!$this->createsnapshot(litepublisher::$paths->files . $filename, litepublisher::$paths->files . $destfilename, $this->previewwidth, $this->previewheight)) return false;
-    
-    @chmod(litepublisher::$paths->files . $destfilename, 0666);
-    $info = getimagesize(litepublisher::$paths->files. $filename);
+    @chmod($fullname, 0666);
+    $info = getimagesize($fullname);
+$destfilename = substr($fullname, strlen(litepublisher::$paths->files));
     $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
     $result['media'] = 'image';
     $result['mime'] = $info['mime'];
