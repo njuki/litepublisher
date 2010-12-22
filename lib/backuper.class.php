@@ -416,6 +416,8 @@ class tbackuper extends tevents {
       return true;
     }
     
+    $mode = $this->filer->getmode($mode);
+    
     //ignore home files
     if (!strpos($filename, '/')) return true;
     //spec rule for storage folder

@@ -77,7 +77,7 @@ class tftpfiler extends tremotefiler {
   }
   
   public function chmod($file, $mode) {
-    if (!$mode && !($mode = $this->getmode($mode))) return false;
+    $mode = $this->getmode($mode);
     if ( ! $this->exists($file) && ! $this->is_dir($file) ) return false;
     return @ftp_chmod($this->handle, $mode, $file);
   }

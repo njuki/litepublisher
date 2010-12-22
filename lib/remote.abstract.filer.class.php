@@ -34,11 +34,21 @@ class tremotefiler {
     return true;
   }
   
-  protected function getmode($mode) {
-    if ($mode) return $mode;
-    if ( $this->is_file($file) )  return $this->chmod_file;
-    if ( $this->is_dir($file) ) return $this->chmod_dir;
-    return false;
+  public function getmode($mode) {
+    static $modes;
+    if (!$mode) return $this->chmod_file;
+    if (!isset($modes)) {
+      foreach (array(0644, 0666, 0640, 0660, 0777, 0755, 0770, 0750) as $value) {
+        $modes[$value ] = $value;
+        $modes[octdec($value)] = $value;
+        $d = (int) sprintf('%o', $value);
+        $modes[$d] = $value;
+        $o = (int) sprintf('%o', decoct($value));
+        $modes[$o] = $value;
+      }
+    }
+    $mode = (int) $mode;
+    return isset($modes[$mode]) ? $modes[$mode] : $this->chmod_file;
   }
   
   public static function getownername($owner) {
@@ -73,6 +83,7 @@ class tremotefiler {
   
   public function mkdir($path, $chmod) {
     if ( ! $chmod ) $chmod = $this->chmod_dir;
+    $chmod = $this->getmode($chmod);
     $this->chmod($path, $chmod);
     return true;
   }

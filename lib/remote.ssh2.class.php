@@ -94,7 +94,7 @@ class tssh2filer extends tremotefiler {
   }
   
   public function chmod($file, $mode, $recursive ) {
-    if (!$mode && !($mode = $this->getmode($mode))) return false;
+    $mode = $this->getmode($mode);
     return $this->runcommand('chmod', $filename, $mode, $recursive);
   }
   
@@ -166,6 +166,7 @@ class tssh2filer extends tremotefiler {
   public function mkdir($path, $chmod) {
     $path = rtrim($path, '/');
     if ( ! $chmod ) $chmod = $this->chmod_dir;
+    $chmod = $this->getmode($chmod);
     return ssh2_sftp_mkdir($this->sftp, $path, $chmod, true);
   }
   
