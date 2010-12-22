@@ -21,10 +21,8 @@ class tlocalfiler extends tremotefiler {
     return file_get_contents($file);
   }
   
-  public function putcontent($filename, $content, $mode ) {
-    if (file_put_contents($filename, $content) === false) return false;
-    $this->chmod($file, $mode);
-    return true;
+  public function putcontent($filename, $content) {
+    return file_put_contents($filename, $content);
   }
   
   public function upload($localfile, $filename) {
@@ -51,17 +49,8 @@ class tlocalfiler extends tremotefiler {
     return true;
   }
   
-  public function chmod($file, $mode = false, $recursive = false) {
-    if (!$mode && !($mode = $this->getmode($mode))) return false;
-    if ( ! $this->exists($file) ) return false;
-    if ( ! $recursive  || ! $this->is_dir($file) ) return @chmod($file, $mode);
-    
-    $file = rtrim($file, '/') . '/';
-    $filelist = $this->getdir($file);
-    foreach ($filelist as $filename) {
-      $this->chmod($file . $filename, $mode, $recursive);
-    }
-    return true;
+  public function chmod($file, $mode ) {
+    return @chmod($file, $this->getmode($mode));
   }
   
   public function chown($file, $owner, $recursive = false) {
@@ -141,6 +130,7 @@ class tlocalfiler extends tremotefiler {
   
   public function mkdir($path, $chmod) {
     if ( ! $chmod) $chmod = $this->chmod_dir;
+    $chmod = $this->getmode($chmod);
     if ( ! @mkdir($path, $chmod) ) return false;
     @chmod($path, $chmod);
     return true;
