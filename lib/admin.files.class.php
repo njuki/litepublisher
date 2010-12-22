@@ -99,6 +99,7 @@ class tadminfiles extends tadminmenu {
   public function processform() {
     $files = tfiles::instance();
     if (empty($_GET['action'])) {
+
       if ($_POST['uploadmode'] == 'upload') {
         if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
           $error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
