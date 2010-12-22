@@ -24,12 +24,13 @@ class tadminicons extends tadminmenu {
     $args->title = tlocal::$data['common']['empty'];
     $result = $html->radioicon($args);
     $files = tfiles::instance();
+    $url = litepublisher::$site->files . '/files/';
     foreach ($items as $id) {
       $item = $files->getitem($id);
       $args->add($item);
       $args->id = $id;
       $args->checked = $id == $idicon;
-      $args->link = litepublisher::$site->files . $item['filename'];
+      $args->link = $url . $item['filename'];
       $result .= $html->radioicon($args);
     }
     
