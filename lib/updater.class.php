@@ -122,7 +122,7 @@ class tupdater extends tevents {
       return false;
     }
     
-    $this->onupdated($tar);
+    $this->onupdated();
     return true;
   }
   
