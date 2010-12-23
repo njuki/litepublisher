@@ -19,8 +19,7 @@ class tadminsameposts extends tadminorderwidget {
   
   protected function dogetcontent(twidget $widget, targs $args){
     $args->maxcount = $widget->maxcount;
-    $this->html->section = 'widgets';
-    $result = $this->html->maxcountform($args);
+    $result = $this->html->parsearg('[text=maxcount]', $args);
     $result .= parent::dogetcontent($widget, $args);
     return $result;
   }

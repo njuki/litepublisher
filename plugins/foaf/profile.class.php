@@ -242,9 +242,10 @@ public function gethead() { }
   protected function getfriendslist() {
     $result = "<p>\n";
     $foaf = tfoaf::instance();
+$widget = tfriendswidget::instance();
     $foaf->loadall();
     foreach ($foaf->items As $id => $item) {
-    $url = $foaf->redir ?"litepublisher::$site->url$foaf->redirlink{litepublisher::$site->q}friend=$id" : $item['url'];
+    $url = $widget->redir ?"litepublisher::$site->url$widget->redirlink{litepublisher::$site->q}friend=$id" : $item['url'];
     $result .= "<a href=\"$url\" rel=\"friend\">{$item['nick']}</a>,\n";
     }
     $result .= "</p>\n";

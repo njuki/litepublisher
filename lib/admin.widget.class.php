@@ -31,7 +31,7 @@ class tadminwidget extends tdata {
     $args->formtitle = $widgettitle . ' ' . $this->lang->widget;
     $args->title = $widgettitle;
     $args->items = $this->html->getedit('title', $widgettitle, $this->lang->widgettitle) . $content;
-    return $this->html->parsearg((string) ttheme::instance()->content->admin->form, $args);
+    return $this->html->parsearg(ttheme::instance()->templates['content.admin.form'], $args);
   }
   
   public function getcontent(){
@@ -120,7 +120,9 @@ class tadminorderwidget extends tadminwidget {
   }
   
   protected function dogetcontent(twidget $widget, targs $args){
-    $args->sidebar = tadminhtml::array2combo(tadminwidgets::getsidebarnames(3), $widget->sidebar);
+    $idview = tadminhtml::getparam('idview', 1);
+    $view = tview::instance($idview);
+    $args->sidebar = tadminhtml::array2combo(tadminwidgets::getsidebarnames($view), $widget->sidebar);
     $args->order = tadminhtml::array2combo(range(-1, 10), $widget->order + 1);
     $args->ajax = $widget->ajax;
     return $this->html->parsearg('[combo=sidebar] [combo=order] [checkbox=ajax]', $args);
