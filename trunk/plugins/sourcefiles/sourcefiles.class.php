@@ -81,9 +81,8 @@ if ($filename == '') return $this->getdircontent($dir);
 return $this->syntax($realdir . DIRECTORY_SEPARATOR. $filename);
 }
   
-  public function add($dir, $filename, $realdir = '') {
-    $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
-    $dir = trim($dir, '/');
+  public function add($dir, $filename) {
+    $dir = trim(str_replace(DIRECTORY_SEPARATOR, '/', $dir), '/');
     if ($item = $this->db->finditem(sprintf('filename = %s and dir = %s', dbquote($filename), dbquote($dir)))) return $item['id'];
 
     $item = array(

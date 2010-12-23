@@ -10,9 +10,9 @@ class tbackuper extends tevents {
   public  $filertype;
   public $archtype;
   public $result;
-  private $tar;
-  private $zip;
-  private $unzip;
+  public $tar;
+  public $zip;
+  public $unzip;
   private $__filer;
   private $existingfolders;
   private $lastdir;
@@ -38,6 +38,7 @@ class tbackuper extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'backuper';
+$this->addevents('onuploaded');
     $this->data['ftproot'] = '';
     $this->__filer = null;
     $this->tar = null;
@@ -451,6 +452,7 @@ class tbackuper extends tevents {
       foreach ($this->tar->files as $item) {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }
+$this->onuploaded($this);
       unset($this->tar);
       break;
       
@@ -462,6 +464,7 @@ class tbackuper extends tevents {
         if (!$this->uploadfile($item->Path . '/' . $item->Name, $item->Data, $mode))
         return $this->errorwrite($item->Path . $item->Name);
       }
+$this->onuploaded($this);
       unset($this->unzip);
       break;
       
