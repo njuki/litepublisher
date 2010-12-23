@@ -73,15 +73,12 @@ return $result;
 }
 
 public function getcontent($dir, $filename) {
-if ($filename == '') {
-}
+if ($filename == '') return $this->getdircontent($dir);
 
       $dir = str_replace('/', DIRECTORY_SEPARATOR, $dir);
       $realdir = litepublisher::$paths->home;
       $realdir .= $dir == '' ? 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
-      $realfile = $realdir . DIRECTORY_SEPARATOR. $filename;
-    if (strend($filename, '.php')) return highlight_file($realfile , true);
-return $this->syntax($realfile);
+return $this->syntax($realdir . DIRECTORY_SEPARATOR. $filename);
 }
   
   public function add($dir, $filename, $realdir = '') {
@@ -89,7 +86,6 @@ return $this->syntax($realfile);
     $dir = trim($dir, '/');
     if ($item = $this->db->finditem(sprintf('filename = %s and dir = %s', dbquote($filename), dbquote($dir)))) return $item['id'];
 
-    
     $item = array(
     'idurl' => 0,
     'filename' => $filename,
@@ -104,7 +100,7 @@ return $this->syntax($realfile);
   }
   
   public function syntax($filename) {
-    if (strend($filename, '.php')) return '';
+    if (strend($filename, '.php')) return highlight_file($file , true);
     $source = file_get_contents($filename);
     $ext = substr($filename, -3);
     if ($ext == 'tml') $ext = 'htm';
@@ -120,44 +116,74 @@ return $this->syntax($realfile);
     $this->geshi->set_source($source);
     return $this->geshi->parse_code();
   }
-  
-  public function adddir($dir) {
-    $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
-    $dir = trim($dir, '/');
-    $realdir = litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR;
-    $dirs = array();
-    $files = array();
-    $content = '';
+
+public function getdircontent($dir) {
+$list = $this->getfilelist($dir);
+if (!$list) return '';
+
     $url = litepublisher::$site->url;
     $updir = dirname($dir);
     $updir = $updir == '.' ? '' : $updir . '/';
-    $dircontent = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);
+    $result = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);
+
+foreach ($list['dirs'] as $filename) {
+          $result .= sprintf('<li><a href="%1$s/source/%2$s/" title="%3$s"><strong>%3$s</strong></a></li>', $url, $dir . '/' $filename, strtoupper($filename));
+}
+
+foreach ($list['files'] as $filename) {
+          if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
+            $result .= sprintf('<li><a href="%1$s/source/%2$s/%3$s" title="%3$s">%3$s</a></li>', $url, $dir, $filename);
+          } elseif (preg_match('/\.(jpg|gif|png|bmp|ico)$/', $filename)) {
+            $result .= sprintf('<li><img src="%1$s/%2$s/%3$s" alt="%3$s" /></li>', $url, $dir, $filename);
+          }
+}
+
+return sprintf('<ul>%s</ul>', $result);
+}
+
+public function getfilelist($dir){
+    $dir = trim(str_replace(DIRECTORY_SEPARATOR, '/', $dir), '/');
+    $realdir = litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR;
     if ($list = scandir ($realdir)) {
-      foreach ($list as $filename) {
-        if (preg_match('/^(\.|\.\.|\.htaccess|index\.htm|\.svn)$/', $filename)) continue;
-        if (in_array($dir . '/' . $filename, $this->ignore)) continue;
+$result = array (
+'dirs' => array(),
+'files' => array()
+);
+      foreach ($list as $i => $filename) {
+        if (preg_match('/^(\.|\.\.|\.htaccess|index\.htm|\.svn)$/', $filename) ||
+in_array($dir . '/' . $filename, $this->ignore)) continue;
         if (is_dir($realdir . $filename)) {
+$result['dirs'][] = $filename;
+} else {
+            if (strend($filename, '.min.js')) continue;
+$result['files'][] = $filename;
+}
+}
+return $result;
+}
+return false;
+}
+  
+  public function adddir($dir) {
+    $dir = trim(str_replace(DIRECTORY_SEPARATOR, '/', $dir), '/');
+$dirs = array();
+$files = array();
+if ($list = $this->getfilelist($dir)) {
+foreach ($list['dirs'] as $filename) {
           $newdir = $dir . '/' . $filename;
           $dirs[] = dbquote($newdir);
-          $id = $this->adddir($newdir);
-          $dircontent .= sprintf('<li><a href="%1$s/source/%2$s/" title="%3$s"><strong>%3$s</strong></a></li>', $url, $newdir , strtoupper($filename));
-          $dircontent .= "\n";
-        } else {
+$this->adddir($newdir);
+}
+
+foreach ($list['files'] as $filename) {
           if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
-            if (strend($filename, '.min.js') || (($dir == 'lib/languages') && strend($filename, '.php'))) continue;
             $files[] = dbquote($filename);
-            $id = $this->add($dir, $filename);
-            $content .= sprintf('<li><a href="%1$s/source/%2$s/%3$s" title="%3$s">%3$s</a></li>', $url, $dir, $filename);
-          } elseif (preg_match('/\.(jpg|gif|png|bmp|ico)$/', $filename)) {
-            $content .= sprintf('<li><img src="%1$s/%2$s/%3$s" alt="%3$s" /></li>', $url, $dir, $filename);
-          }
-          $content .= "\n";
+$this->add($dir, $filename);
         }
       }
-    }
-    
-    $content = sprintf("<ul>\n%s\n%s\n</ul>\n", $dircontent, $content);
-    
+
+}
+
     $sqlfiles = sprintf("(dir = %s and filename <> '' ", dbquote($dir));
     $sqlfiles .= count($files) == 0 ?  ')' : sprintf(' and filename not in (%s))', implode(',', $files));
     $sqldirs = sprintf(' or (filename = \'\' and dir <> %1$s and left(dir, %2$d) = %1$s', dbquote($dir), strlen($dir));
@@ -170,15 +196,6 @@ return $this->syntax($realfile);
         $idurls[] = $item['idurl'];
       }
       litepublisher::$urlmap->loaditems($idurls);
-      /*
-      $robot = trobotstxt::instance();
-      $robot->lock();
-      foreach ($idurls as $idurl) {
-        $robot->AddDisallow(litepublisher::$urlmap->getvalue($idurl, 'url'));
-      }
-      $robot->unlock();
-      */
-      
       litepublisher::$urlmap->db->deleteitems($idurls);
       $this->db->deleteitems($items);
     }
@@ -189,10 +206,8 @@ return $this->syntax($realfile);
     } else {
       $item = array(
       'idurl' => 0,
-      'hash' => '',
       'filename' => '',
-      'dir' => $dir,
-      'content' => $content
+      'dir' => $dir
       );
       $id = $this->db->add($item);
       $idurl = litepublisher::$urlmap->add("/source/$dir/", get_class($this), $id);
