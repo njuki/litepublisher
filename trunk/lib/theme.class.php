@@ -160,7 +160,7 @@ class ttheme extends tevents {
     if (isset(self::$vars[$name])) {
       $var =  self::$vars[$name];
     } elseif ($name == 'custom') {
-      return $this->templates['custom'][$prop];
+      return $this->parse($this->templates['custom'][$prop]);
     } elseif ($var = $this->getvar($name)) {
       self::$vars[$name] = $var;
     } else {

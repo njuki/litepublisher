@@ -165,7 +165,7 @@ class tadminwidgets extends tadminmenu {
         if (strbegin($key, 'addwidget-')){
           $id = (int) $value;
           if (!$widgets->itemexists($id) || $widgets->subclass($id)) continue;
-          $views->sidebars[0][] = array(
+          $view->sidebars[0][] = array(
           'id' => $id,
           'ajax' => false
           );
@@ -257,6 +257,30 @@ public function load() {}
     }
   }
   
+public static function fix() {
+$widgets = twidgets::instance();
+foreach ($widgets->classes as $classname => &$items) {
+foreach ($items as $i => $item) {
+if (!isset($widgets->items[$item['id']])) unset($items[$i]);
+}
+}
+
+$views = tviews::instance();
+foreach ($views->items as &$viewitem) {
+if (($viewitem['id'] != 1) && !$viewitem['customsidebar']) continue;
+unset($sidebar);
+foreach ($viewitem['sidebars'] as &$sidebar) {
+for ($i = count($sidebar) - 1; $i >= 0; $i--) {
+echo $sidebar[$i]['id'], '<br>';
+          if (!isset($widgets->items[$sidebar[$i]['id']])) {
+array_delete($sidebar, $i);
+}
+}
+}
+}
+$views->save();
+}
+
 }//class
 
 ?>
