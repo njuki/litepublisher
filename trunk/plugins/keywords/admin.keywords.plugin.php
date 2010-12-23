@@ -35,17 +35,16 @@ class tadminkeywords extends tadminwidget {
       $widget = tkeywordswidget::instance();
       $widgets = twidgets::instance();
       $idwidget = $widgets->find($widget);
-      $args->title = $widget->gettitle($idwidget);
       $args->count = $widget->count;
       $args->trace = $widget->trace;
       $args->notify = $widget->notify;
       $args->countlabel = $about['countlabel'];
       $args->tracelabel = $about['tracelabel'];
       $args->notifylabel = $about['notifylabel'];
-      $args->content = $html->parsearg($tml['optionsform'], $args);
-      $html->section = 'widgets';
-      $lang->section = 'widgets';
-      $result .= $html->optionsform($args);
+
+      $result .= $this->optionsform(
+$widget->gettitle($idwidget),
+$html->parsearg($tml['optionsform'], $args));
     }
     
     $from = 100 * ($page - 1);

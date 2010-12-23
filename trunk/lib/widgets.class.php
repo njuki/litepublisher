@@ -271,12 +271,6 @@ class twidgets extends titems_storage {
     }
     
     if (count($deleted) > 0) {
-      foreach ($this->sidebars as $i => $sidebar) {
-        foreach ($sidebar as $j => $item) {
-          if (in_array($item['id'], $deleted)) array_delete($this->sidebars[$i], $j);
-        }
-      }
-      
       foreach ($this->classes as $name => $items) {
         foreach ($items as $i => $item) {
           if (in_array($item['id'], $deleted)) array_delete($this->classes[$name], $i);
@@ -287,6 +281,7 @@ class twidgets extends titems_storage {
     
     if (isset($this->classes[$class])) unset($this->classes[$class]);
     $this->save();
+foreach ($deleted as $id)     $this->deleted($id);
   }
   
   public function getwidget($id) {

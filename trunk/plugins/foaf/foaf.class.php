@@ -146,14 +146,6 @@ class tfoaf extends titems {
     }
   }
   
-  public function setparams($maxcount, $redir) {
-    if (($this->maxcount != $maxcount) || ($this->redir != $redir)) {
-      $this->maxcount = $maxcount;
-      $this->redir = $redir;
-      $this->Save();
-    }
-  }
-  
   public function setstatus($id, $value) {
     if ($this->itemexists($id)) $this->setvalue($id, 'status', $value);
     if (!$this->dbversion) $this->save();
