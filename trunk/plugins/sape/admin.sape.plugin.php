@@ -24,8 +24,8 @@ class tadminsapeplugin extends tadminwidget {
     if ($widget->id != 0) {
       $args->maxcount = $widget->counts[$widget->id];
       $result .= $this->optionsform(
-    $this->widget->gettitle($this->widget->id),
-$this->html->parsearg('[text=maxcount]', $args));
+      $this->widget->gettitle($this->widget->id),
+      $this->html->parsearg('[text=maxcount]', $args));
     }
     
     $args->user = $widget->user;

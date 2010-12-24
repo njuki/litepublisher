@@ -281,7 +281,7 @@ class twidgets extends titems_storage {
     
     if (isset($this->classes[$class])) unset($this->classes[$class]);
     $this->save();
-foreach ($deleted as $id)     $this->deleted($id);
+    foreach ($deleted as $id)     $this->deleted($id);
   }
   
   public function getwidget($id) {

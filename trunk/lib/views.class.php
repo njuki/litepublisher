@@ -143,11 +143,11 @@ class tviews extends titems_storage {
   public function widgetdeleted($idwidget) {
     $deleted = false;
     foreach ($this->items as &$viewitem) {
-unset($sidebar);
+      unset($sidebar);
       foreach ($viewitem['sidebars'] as &$sidebar) {
-for ($i = count($sidebar) - 1; $i >= 0; $i--) {
+        for ($i = count($sidebar) - 1; $i >= 0; $i--) {
           if ($idwidget == $sidebar[$i]['id']) {
-array_delete($sidebar, $i);
+            array_delete($sidebar, $i);
             $deleted = true;
           }
         }

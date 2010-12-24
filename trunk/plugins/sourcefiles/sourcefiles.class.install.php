@@ -16,10 +16,10 @@ function tsourcefilesInstall($self) {
   `dir` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`)
   ");
-
-$dir = litepublisher::$paths->data . 'sourcefiles'
-if (!@is_dir($dir)) @mkdir($dir, 0777);
-@chmod($dir, 0777);
+  
+  $dir = litepublisher::$paths->data . 'sourcefiles'
+  if (!@is_dir($dir)) @mkdir($dir, 0777);
+  @chmod($dir, 0777);
 }
 
 function tsourcefilesUninstall($self) {
@@ -28,8 +28,8 @@ function tsourcefilesUninstall($self) {
   $manager->deletetable($self->table);
   
   Turlmap::unsub($self);
-
-tfiler::delete(litepublisher::$paths->data . 'sourcefiles', true, true);
+  
+  tfiler::delete(litepublisher::$paths->data . 'sourcefiles', true, true);
 }
 
 ?>

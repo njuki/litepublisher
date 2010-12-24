@@ -38,7 +38,7 @@ class tbackuper extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'backuper';
-$this->addevents('onuploaded');
+    $this->addevents('onuploaded');
     $this->data['ftproot'] = '';
     $this->__filer = null;
     $this->tar = null;
@@ -452,7 +452,7 @@ $this->addevents('onuploaded');
       foreach ($this->tar->files as $item) {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }
-$this->onuploaded($this);
+      $this->onuploaded($this);
       unset($this->tar);
       break;
       
@@ -464,7 +464,7 @@ $this->onuploaded($this);
         if (!$this->uploadfile($item->Path . '/' . $item->Name, $item->Data, $mode))
         return $this->errorwrite($item->Path . $item->Name);
       }
-$this->onuploaded($this);
+      $this->onuploaded($this);
       unset($this->unzip);
       break;
       
