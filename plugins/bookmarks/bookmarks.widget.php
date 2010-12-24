@@ -52,6 +52,7 @@ class tbookmarkswidget extends tlinkswidget  {
       } else {
         $args->url = strtr($item['url'], $a);
       }
+
       $args->icon = $item['text'] == '' ? '' : sprintf('<img src="%s%s" alt="%s" />', $iconurl, $item['text'], $item['title']);
       $result .=   $theme->parsearg($tml, $args);
     }
