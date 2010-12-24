@@ -54,7 +54,7 @@ function tfoafInstall($self) {
   
   $template = ttemplate::instance();
   $template->addtohead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />';
-    $about = tplugins::getabout($name);
+  $about = tplugins::getabout($name);
   $meta = tmetawidget::instance();
   $meta->lock();
   $meta->add('foaf', '/foaf.xml', $about['name']);
@@ -95,7 +95,7 @@ function tfoafUninstall($self) {
   
   $template = ttemplate::instance();
   $template->deletefromhead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />';
-
+  
   $meta = tmetawidget::instance();
   $meta->lock();
   $meta->delete('foaf');

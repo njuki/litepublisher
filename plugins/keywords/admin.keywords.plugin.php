@@ -41,10 +41,10 @@ class tadminkeywords extends tadminwidget {
       $args->countlabel = $about['countlabel'];
       $args->tracelabel = $about['tracelabel'];
       $args->notifylabel = $about['notifylabel'];
-
+      
       $result .= $this->optionsform(
-$widget->gettitle($idwidget),
-$html->parsearg($tml['optionsform'], $args));
+      $widget->gettitle($idwidget),
+      $html->parsearg($tml['optionsform'], $args));
     }
     
     $from = 100 * ($page - 1);

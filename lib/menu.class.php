@@ -302,13 +302,13 @@ class tmenu extends titem implements  itemplate {
     if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
     return parent::iteminstance($class, $id);
   }
-
+  
   public static function singleinstance($class) {
     $single = getinstance($class);
-if ($id = $single->getowner()->class2id($class)) {
-    if ($single->id == $id) return $single;
-    if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
-}
+    if ($id = $single->getowner()->class2id($class)) {
+      if ($single->id == $id) return $single;
+      if (($single->id == 0) && ($id > 0)) return $single->loaddata($id);
+    }
     return $single;
   }
   
