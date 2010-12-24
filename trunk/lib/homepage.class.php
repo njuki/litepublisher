@@ -9,7 +9,7 @@
 class thomepage extends tmenu  {
   
   public static function instance($id = 0) {
-    return self::iteminstance(__class__, $id);
+    return $id == 0 ? self::singleinstance(__class__) : self::iteminstance(__class__, $id);
   }
   
   protected function create() {

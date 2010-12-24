@@ -625,7 +625,7 @@ content.excerpts.lite = [
 content.navi = [
 	<div class="navigation">
 			$prev = [<span class="previous-entries">$link</span>]
-			$next = [<span class='"next-entries">$link</span>]
+			$next = [<span class="next-entries">$link</span>]
 			$link = [<a href="$link">$page</a>]
 			$current = [$page]
 			$divider = [|]
