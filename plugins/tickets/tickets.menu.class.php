@@ -42,7 +42,7 @@ class tticketsmenu extends tmenu {
       $tt = litepublisher::$db->prefix . $tickets->childstable;
       $pt = litepublisher::$db->posts;
       $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
-      $count = $tickets->getticketscount($where);
+      $count = $tickets->getchildscount($where);
       $from = ($page - 1) * $perpage;
       if ($from <= $count)  {
         $items = $tickets->select("$pt.status = 'published' $where", " order by $pt.posted desc, $tt.type, $tt.state, $tt.prio, $tt.votes desc limit $from, $perpage");
