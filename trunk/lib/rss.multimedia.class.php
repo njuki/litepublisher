@@ -73,11 +73,12 @@ class trssMultimedia extends tevents {
     $files = tfiles::instance();
     $file = $files->getitem($id);
     $posts = $files->itemsposts->getposts($id);
+
     if (count($posts) == 0) {
       $postlink = litepublisher::$site->url . '/';
     } else {
       $post = tpost::instance($posts[0]);
-      $postllink = $post->link;
+      $postlink = $post->link;
     }
     
     $item = $this->domrss->AddItem();
