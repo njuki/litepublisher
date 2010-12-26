@@ -109,7 +109,7 @@ class tticketeditor extends tposteditor {
     echo "</pre>\n";
     return;
     */
-    extract($_POST);
+    extract($_POST, EXTR_SKIP);
     $tickets = ttickets::instance();
     $this->basename = 'tickets';
     $html = $this->html;

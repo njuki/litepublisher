@@ -12,24 +12,29 @@ class themleditplugin extends tplugin {
     return getinstance(__class__);
   }
   
-  public function install() {
+  public function gethead() {
     $url = litepublisher::$site->files . '/plugins/' . tplugins::getname(__file__);
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $template = ttemplate::instance();
-    $template->adminheads['htmleditplugin'] = '<link rel="stylesheet" href="' . $url . '/ed.css" type="text/css" />';
-    $template->adminjavascripts['htmleditplugin'] = '<script type="text/javascript">
-    var URLpromt = "' . $about['urlpromt'] . '";
-    var IMGpromt = "' . $about['imgpromt'] . '";
-    </script>
-    <script type="text/javascript" src="'. $url . '/ed.js"></script>';
-    $template->save();
+    $result = '<link rel="stylesheet" href="' . $url . '/ed.css" type="text/css" />';
+    $result .= '<script type="text/javascript">';
+    $result .= '    var URLpromt = "' . $about['urlpromt'] . '";';
+    $result .= ' var IMGpromt = "' . $about['imgpromt'] . '";';
+    $result .= '</script>';
+    $result .= '<script type="text/javascript" src="'. $url . '/ed.js"></script>';
+    return $result;
+  }
+  
+  public function install() {
+    $admin = tadminmenus::instance();
+    $admin->heads .= $this->gethead();
+    $admin->save();
   }
   
   public function uninstall() {
-    $template = ttemplate::instance();
-    unset($template->adminheads['htmleditplugin']);
-    unset($template->adminjavascripts['htmleditplugin']);
-    $template->save();
+    $head = $this->gethead();
+    $admin = tadminmenus::instance();
+    $admin->heads = str_replace($head, '', $admin->heads);
+    $admin->save();
   }
   
 }//class

@@ -84,7 +84,7 @@ public function gethead() { }
   public function add($dir, $filename) {
     $dir = trim(str_replace(DIRECTORY_SEPARATOR, '/', $dir), '/');
     if ($id = $this->db->findid(sprintf('filename = %s and dir = %s', dbquote($filename), dbquote($dir)))) return $id;
-   
+    
     $item = array(
     'idurl' => 0,
     'filename' => $filename,
@@ -95,7 +95,7 @@ public function gethead() { }
     if ($dir != '') $dir .= '/';
     $idurl = litepublisher::$urlmap->add("/source/$dir$filename", get_class($this), $id);
     $this->db->setvalue($id, 'idurl', $idurl);
-echo "$id added\n";
+    echo "$id added\n";
     return $id;
   }
   
@@ -172,7 +172,7 @@ echo "$id added\n";
     if ($list = $this->getfilelist($dir)) {
       foreach ($list['dirs'] as $filename) {
         $newdir = $dir . '/' . $filename;
-$dirs[] = litepublisher::$db->escape($filename);
+        $dirs[] = litepublisher::$db->escape($filename);
         $this->adddir($newdir);
       }
       
@@ -187,12 +187,12 @@ $dirs[] = litepublisher::$db->escape($filename);
     
     $sql = sprintf("(dir = %s and filename <> '' ", dbquote($dir));
     $sql .= count($files) == 0 ?  ')' : sprintf(' and filename not in (%s))', implode(',', $files));
-$sqldir = litepublisher::$db->escape($dir);
+    $sqldir = litepublisher::$db->escape($dir);
     $sql .= sprintf(' or (filename = \'\' and dir != \'%1$s\' and left(dir, %2$d) = \'%1$s\'', $sqldir, strlen($sqldir));
-$sql .= count($dirs) == 0 ? ')' : 
-sprintf(' and (SUBSTRING(dir, %d) not regexp \'^(%s)($|\\\/)\') )',
-strlen($sqldir) + 2, implode('|', $dirs));
-
+    $sql .= count($dirs) == 0 ? ')' :
+    sprintf(' and (SUBSTRING(dir, %d) not regexp \'^(%s)($|\\\/)\') )',
+    strlen($sqldir) + 2, implode('|', $dirs));
+    
     if ($deleted = $this->db->getitems($sql)) {
       $items = array();
       $idurls = array();
@@ -200,13 +200,13 @@ strlen($sqldir) + 2, implode('|', $dirs));
         $items[] = $item['id'];
         $idurls[] = $item['idurl'];
       }
-
+      
       litepublisher::$urlmap->db->deleteitems($idurls);
       $this->db->deleteitems($items);
     }
     
     if ($id = $this->db->findid("filename = '' and dir = ". dbquote($dir)))  return $id;
-
+    
     $item = array(
     'idurl' => 0,
     'filename' => '',

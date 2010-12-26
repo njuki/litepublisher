@@ -113,10 +113,10 @@ class tdatabase {
   public function quote($s) {
     return sprintf('\'%s\'', mysql_real_escape_string($s));
   }
-
-public function escape($s) {
-return mysql_real_escape_string($s);
-}
+  
+  public function escape($s) {
+    return mysql_real_escape_string($s);
+  }
   
   public function select($where) {
     if ($where != '') $where = 'where '. $where;
