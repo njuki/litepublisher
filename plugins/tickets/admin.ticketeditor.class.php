@@ -146,7 +146,7 @@ class tticketeditor extends tposteditor {
       $ticket->type = $type;
       $ticket->closed = time();
       $id = $tickets->add($ticket);
-      $_POST['id'] = $id;
+      $_GET['id'] = $id;
       if (litepublisher::$options->group == 'ticket') {
         $users =tusers::instance();
         $user = $users->getitem(litepublisher::$options->user);

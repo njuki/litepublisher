@@ -187,11 +187,11 @@ $dirs[] = litepublisher::$db->escape($filename);
     
     $sql = sprintf("(dir = %s and filename <> '' ", dbquote($dir));
     $sql .= count($files) == 0 ?  ')' : sprintf(' and filename not in (%s))', implode(',', $files));
-    $sql .= 'or (dir regexp \'^' . 
-str_replace('/', '\\\/',
-litepublisher::$db->escape($dir));
-$sql .= count($dirs) == 0 ? '\\/.*\')' : 
-sprintf('\\\/!(%s).+\')', implode('|', $dirs));
+$sqldir = litepublisher::$db->escape($dir);
+    $sql .= sprintf(' or (filename = \'\' and dir != \'%1$s\' and left(dir, %2$d) = \'%1$s\'', $sqldir, strlen($sqldir));
+$sql .= count($dirs) == 0 ? ')' : 
+sprintf(' and (SUBSTRING(dir, %d) not regexp \'^(%s)($|\\\/)\') )',
+strlen($sqldir) + 2, implode('|', $dirs));
 
     if ($deleted = $this->db->getitems($sql)) {
       $items = array();
