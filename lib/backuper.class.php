@@ -449,10 +449,19 @@ class tbackuper extends tevents {
     switch ($archtype) {
       case 'tar':
       $this->tar->loadfromstring($content);
+if (!is_array($this->tar->files)) {
+unset($this->tar);
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('service');
+    $this->result = $lang->errorarchive;
+return false;
+}
+
       foreach ($this->tar->files as $item) {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }
       $this->onuploaded($this);
+}
       unset($this->tar);
       break;
       
