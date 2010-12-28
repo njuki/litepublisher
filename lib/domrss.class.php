@@ -6,19 +6,21 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function AddAttr($node, $name, $value) {
+class tnode {
+public static function attr($node, $name, $value) {
   $attr = $node->ownerDocument->createAttribute($name);
   $attr->value = $value;
   $node->appendChild($attr);
+return $attr;
 }
 
-function AddNode($node, $name) {
+public static function add($node, $name) {
   $result = $node->ownerDocument->createElement($name);
   $node->appendChild($result);
   return $result;
 }
 
-function AddNodeValue($node, $name, $value) {
+public static function addvalue($node, $name, $value) {
   $result = $node->ownerDocument->createElement($name);
   $textnode = $node->ownerDocument->createTextNode($value);
   $result->appendChild($textnode);
@@ -26,7 +28,8 @@ function AddNodeValue($node, $name, $value) {
   Return $result;
 }
 
-function AddCData($node, $name, $value) {
+
+public static function addcdata($node, $name, $value) {
   $result = $node->ownerDocument->createElement($name);
   $textnode = $node->ownerDocument->createCDATASection($value);
   $result->appendChild($textnode);
@@ -34,6 +37,7 @@ function AddCData($node, $name, $value) {
   Return $result;
 }
 
+}//class
 function _struct_to_array(&$values, &$i)  {
   $result = array();
   if (isset($values[$i]['value'])) array_push($result, $values[$i]['value']);
@@ -118,25 +122,25 @@ class tdomrss extends domDocument {
     $this->rss = $this->createElement('rss');
     $this->appendChild($this->rss);
     
-    AddAttr($this->rss, 'version', '2.0');
-    AddAttr($this->rss, 'xmlns:content', "http://purl.org/rss/1.0/modules/content/");
-    AddAttr($this->rss, 'xmlns:wfw',  "http://wellformedweb.org/CommentAPI/");
-    AddAttr($this->rss, 'xmlns:dc', "http://purl.org/dc/elements/1.1/");
-    AddAttr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
+    tnode::attr($this->rss, 'version', '2.0');
+    tnode::attr($this->rss, 'xmlns:content', "http://purl.org/rss/1.0/modules/content/");
+    tnode::attr($this->rss, 'xmlns:wfw',  "http://wellformedweb.org/CommentAPI/");
+    tnode::attr($this->rss, 'xmlns:dc', "http://purl.org/dc/elements/1.1/");
+    tnode::attr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
     
-    $this->channel = AddNode($this->rss, 'channel');
+    $this->channel = tnode::add($this->rss, 'channel');
     
-    $link = AddNode($this->channel, 'atom:link');
-    AddAttr($link, 'href', $url);
-    AddAttr($link, 'rel', "self");
-    AddAttr($link,'type', "application/rss+xml");
+    $link = tnode::add($this->channel, 'atom:link');
+    tnode::attr($link, 'href', $url);
+    tnode::attr($link, 'rel', "self");
+    tnode::attr($link,'type', "application/rss+xml");
     
-    AddNodeValue($this->channel , 'title', $title);
-    AddNodeValue($this->channel , 'link', $url);
-    AddNodeValue($this->channel , 'description', litepublisher::$site->description);
-    AddNodeValue($this->channel , 'pubDate', date('r'));
-    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
-    AddNodeValue($this->channel , 'language', 'en');
+    tnode::addvalue($this->channel , 'title', $title);
+    tnode::addvalue($this->channel , 'link', $url);
+    tnode::addvalue($this->channel , 'description', litepublisher::$site->description);
+    tnode::addvalue($this->channel , 'pubDate', date('r'));
+    tnode::addvalue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
+    tnode::addvalue($this->channel , 'language', 'en');
   }
   
   public function CreateRootMultimedia($url, $title) {
@@ -145,27 +149,27 @@ class tdomrss extends domDocument {
     $this->rss = $this->createElement('rss');
     $this->appendChild($this->rss);
     
-    AddAttr($this->rss, 'version', '2.0');
-    AddAttr($this->rss, 'xmlns:media', "http://video.search.yahoo.com/mrss");
-    AddAttr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
+    tnode::attr($this->rss, 'version', '2.0');
+    tnode::attr($this->rss, 'xmlns:media', "http://video.search.yahoo.com/mrss");
+    tnode::attr($this->rss, 'xmlns:atom', "http://www.w3.org/2005/Atom");
     
-    $this->channel = AddNode($this->rss, 'channel');
+    $this->channel = tnode::add($this->rss, 'channel');
     
-    $link = AddNode($this->channel, 'atom:link');
-    AddAttr($link, 'href', $url);
-    AddAttr($link, 'rel', "self");
-    AddAttr($link,'type', "application/rss+xml");
+    $link = tnode::add($this->channel, 'atom:link');
+    tnode::attr($link, 'href', $url);
+    tnode::attr($link, 'rel', "self");
+    tnode::attr($link,'type', "application/rss+xml");
     
-    AddNodeValue($this->channel , 'title', $title);
-    AddNodeValue($this->channel , 'link', $url);
-    AddNodeValue($this->channel , 'description', litepublisher::$site->description);
-    AddNodeValue($this->channel , 'pubDate', date('r'));
-    AddNodeValue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
-    AddNodeValue($this->channel , 'language', 'en');
+    tnode::addvalue($this->channel , 'title', $title);
+    tnode::addvalue($this->channel , 'link', $url);
+    tnode::addvalue($this->channel , 'description', litepublisher::$site->description);
+    tnode::addvalue($this->channel , 'pubDate', date('r'));
+    tnode::addvalue($this->channel , 'generator', 'http://litepublisher.com/generator.htm?version=' . litepublisher::$options->version);
+    tnode::addvalue($this->channel , 'language', 'en');
   }
   
   public function AddItem() {
-    $result = AddNode($this->channel, 'item');
+    $result = tnode::add($this->channel, 'item');
     $this->items[] = $result;
     return $result;
   }
