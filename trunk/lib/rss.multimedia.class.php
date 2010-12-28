@@ -82,48 +82,48 @@ class trssMultimedia extends tevents {
     }
     
     $item = $this->domrss->AddItem();
-    AddNodeValue($item, 'title', $file['title']);
-    AddNodeValue($item, 'link', $postlink);
-    AddNodeValue($item, 'pubDate', $file['posted']);
+    tnode::addvalue($item, 'title', $file['title']);
+    tnode::addvalue($item, 'link', $postlink);
+    tnode::addvalue($item, 'pubDate', $file['posted']);
     
-    $media = AddNode($item, 'media:content');
-    AddAttr($media, 'url', $files->geturl($id));
-    AddAttr($media, 'fileSize', $file['size']);
-    AddAttr($media, 'type', $file['mime']);
-    AddAttr($media, 'medium', $file['media']);
-    AddAttr($media, 'expression', 'full');
+    $media = tnode::add($item, 'media:content');
+    tnode::attr($media, 'url', $files->geturl($id));
+    tnode::attr($media, 'fileSize', $file['size']);
+    tnode::attr($media, 'type', $file['mime']);
+    tnode::attr($media, 'medium', $file['media']);
+    tnode::attr($media, 'expression', 'full');
     
     if ($file['width'] > 0 && $file['height'] > 0) {
-      AddAttr($media, 'height', $file['height']);
-      AddAttr($media, 'width', $file['width']);
+      tnode::attr($media, 'height', $file['height']);
+      tnode::attr($media, 'width', $file['width']);
     }
     
-    if (!empty($file['bitrate'])) AddAttr($media, 'bitrate', $file['bitrate']);
-    if (!empty($file['framerate'])) AddAttr($media, 'framerate', $file['framerate']);
-    if (!empty($file['samplingrate'])) AddAttr($media, 'samplingrate', $file['samplingrate']);
-    if (!empty($file['channels'])) AddAttr($media, 'channels', $file['channels']);
-    if (!empty($file['duration'])) AddAttr($media, 'duration', $file['duration']);
+    if (!empty($file['bitrate'])) tnode::attr($media, 'bitrate', $file['bitrate']);
+    if (!empty($file['framerate'])) tnode::attr($media, 'framerate', $file['framerate']);
+    if (!empty($file['samplingrate'])) tnode::attr($media, 'samplingrate', $file['samplingrate']);
+    if (!empty($file['channels'])) tnode::attr($media, 'channels', $file['channels']);
+    if (!empty($file['duration'])) tnode::attr($media, 'duration', $file['duration']);
     
-    $md5 = AddNodeValue($item, 'media:hash', $file['md5']);
-    AddAttr($md5, 'algo', "md5");
+    $md5 = tnode::addvalue($item, 'media:hash', $file['md5']);
+    tnode::attr($md5, 'algo', "md5");
     
     if (!empty($file['keywords'])) {
-      AddNodeValue($item, 'media:keywords', $file['keywords']);
+      tnode::addvalue($item, 'media:keywords', $file['keywords']);
     }
     
     if (!empty($file['description'])) {
-      $description = AddNodeValue($item, 'description', $file['description']);
-      AddAttr($description, 'type', 'html');
+      $description = tnode::addvalue($item, 'description', $file['description']);
+      tnode::attr($description, 'type', 'html');
     }
     
     if ($file['preview'] > 0) {
       $idpreview = $file['preview'];
       $preview = $files->getitem($idpreview);
-      $thumbnail  = AddNode($item, 'media:thumbnail');
-      AddAttr($thumbnail, 'url', $files->geturl($idpreview));
+      $thumbnail  = tnode::add($item, 'media:thumbnail');
+      tnode::attr($thumbnail, 'url', $files->geturl($idpreview));
       if ($preview['width'] > 0 && $preview['height'] > 0) {
-        AddAttr($thumbnail, 'height', $preview['height']);
-        AddAttr($thumbnail, 'width', $preview['width']);
+        tnode::attr($thumbnail, 'height', $preview['height']);
+        tnode::attr($thumbnail, 'width', $preview['width']);
       }
     }
     

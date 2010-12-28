@@ -181,32 +181,32 @@ class trss extends tevents {
   
   public function AddRSSPost(tpost $post) {
     $item = $this->domrss->AddItem();
-    AddNodeValue($item, 'title', $post->title);
-    AddNodeValue($item, 'link', $post->link);
-    AddNodeValue($item, 'comments', $post->link . '#comments');
-    AddNodeValue($item, 'pubDate', $post->pubdate);
+    tnode::addvalue($item, 'title', $post->title);
+    tnode::addvalue($item, 'link', $post->link);
+    tnode::addvalue($item, 'comments', $post->link . '#comments');
+    tnode::addvalue($item, 'pubDate', $post->pubdate);
     
-    $guid  = AddNodeValue($item, 'guid', $post->link);
-    AddAttr($guid, 'isPermaLink', 'true');
+    $guid  = tnode::addvalue($item, 'guid', $post->link);
+    tnode::attr($guid, 'isPermaLink', 'true');
     if (class_exists   ('tprofile')) {
       $profile = tprofile::instance();
-      AddNodeValue($item, 'dc:creator', $profile->nick);
+      tnode::addvalue($item, 'dc:creator', $profile->nick);
     } else {
-      AddNodeValue($item, 'dc:creator', 'admin');
+      tnode::addvalue($item, 'dc:creator', 'admin');
     }
     
     $categories = tcategories::instance();
     $names = $categories->GetNames($post->categories);
     foreach ($names as $name) {
       if (empty($name)) continue;
-      AddCData($item, 'category', $name);
+      tnode::addcdata($item, 'category', $name);
     }
     
     $tags = ttags::instance();
     $names = $tags->GetNames($post->tags);
     foreach ($names as $name) {
       if (empty($name)) continue;
-      AddCData($item, 'category', $name);
+      tnode::addcdata($item, 'category', $name);
     }
     
     $content = '';
@@ -218,19 +218,19 @@ class trss extends tevents {
     }
     $this->callevent('afterpost', array($post->id, &$content));
     
-    AddCData($item, 'content:encoded', $content);
-    AddCData($item, 'description', strip_tags($content));
-    AddNodeValue($item, 'wfw:commentRss', $post->rsscomments);
+    tnode::addcdata($item, 'content:encoded', $content);
+    tnode::addcdata($item, 'description', strip_tags($content));
+    tnode::addvalue($item, 'wfw:commentRss', $post->rsscomments);
     
     if (count($post->files) > 0) {
       $files = tfiles::instance();
       $files->loaditems($post->files);
       foreach ($post->files as $idfile) {
         $file = $files->getitem($idfile);
-        $enclosure = AddNode($item, 'enclosure');
-        AddAttr($enclosure , 'url', litepublisher::$site->files . '/files/' . $file['filename']);
-        AddAttr($enclosure , 'length', $file['size']);
-        AddAttr($enclosure , 'type', $file['mime']);
+        $enclosure = tnode::add($item, 'enclosure');
+        tnode::attr($enclosure , 'url', litepublisher::$site->files . '/files/' . $file['filename']);
+        tnode::attr($enclosure , 'length', $file['size']);
+        tnode::attr($enclosure , 'type', $file['mime']);
       }
       $post->onrssitem($item);
     }
@@ -241,13 +241,13 @@ class trss extends tevents {
     $link = litepublisher::$site->url . $comment->posturl . '#comment-' . $comment->id;
     $date = is_int($comment->posted) ? $comment->posted : strtotime($comment->posted);
     $item = $this->domrss->AddItem();
-    AddNodeValue($item, 'title', $title);
-    AddNodeValue($item, 'link', $link);
-    AddNodeValue($item, 'dc:creator', $comment->name);
-    AddNodeValue($item, 'pubDate', date('r', $date));
-    AddNodeValue($item, 'guid', $link);
-    AddCData($item, 'description', strip_tags($comment->content));
-    AddCData($item, 'content:encoded', $comment->content);
+    tnode::addvalue($item, 'title', $title);
+    tnode::addvalue($item, 'link', $link);
+    tnode::addvalue($item, 'dc:creator', $comment->name);
+    tnode::addvalue($item, 'pubDate', date('r', $date));
+    tnode::addvalue($item, 'guid', $link);
+    tnode::addcdata($item, 'description', strip_tags($comment->content));
+    tnode::addcdata($item, 'content:encoded', $comment->content);
   }
   
   public function SetFeedburnerLinks($rss, $comments) {
