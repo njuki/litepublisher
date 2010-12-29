@@ -16,7 +16,7 @@ class trss extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'rss';
-    $this->addevents('beforepost', 'afterpost');
+    $this->addevents('beforepost', 'afterpost', 'onpostitem');
     $this->data['feedburner'] = '';
     $this->data['feedburnercomments'] = '';
     $this->data['template'] = '';
@@ -93,8 +93,7 @@ class trss extends tevents {
   
   public function getrssposts(array $list) {
     foreach ($list as $id ) {
-      $post = tpost::instance($id);
-      $this->AddRSSPost($post);
+      $this->addpost(tpost::instance($id));
     }
   }
   
@@ -179,7 +178,7 @@ class trss extends tevents {
     
   }
   
-  public function AddRSSPost(tpost $post) {
+  public function addpost(tpost $post) {
     $item = $this->domrss->AddItem();
     tnode::addvalue($item, 'title', $post->title);
     tnode::addvalue($item, 'link', $post->link);
@@ -196,14 +195,14 @@ class trss extends tevents {
     }
     
     $categories = tcategories::instance();
-    $names = $categories->GetNames($post->categories);
+    $names = $categories->getnames($post->categories);
     foreach ($names as $name) {
       if (empty($name)) continue;
       tnode::addcdata($item, 'category', $name);
     }
     
     $tags = ttags::instance();
-    $names = $tags->GetNames($post->tags);
+    $names = $tags->getnames($post->tags);
     foreach ($names as $name) {
       if (empty($name)) continue;
       tnode::addcdata($item, 'category', $name);
@@ -232,9 +231,10 @@ class trss extends tevents {
         tnode::attr($enclosure , 'length', $file['size']);
         tnode::attr($enclosure , 'type', $file['mime']);
       }
-      $post->onrssitem($item);
     }
-    
+      $post->onrssitem($item);    
+$this->onpostitem($item);
+return $item;
   }
   
   public function AddRSSComment($comment, $title) {
