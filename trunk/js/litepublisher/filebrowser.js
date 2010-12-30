@@ -6,6 +6,8 @@
 **/
 
 $(document).ready(function() {
+$('<link rel="stylesheet" type="text/css" href="'+ltoptions.files +'/js/jjquery/jquery-ui-1.8.6.custom.css" />') .appendTo("head");
+          $.getScript(ltoptions.files + '/js/jquery/jquery.ui.core-tabs.min.js', function() {
   $("#tabs").tabs({
     cache: true,
     load: function(event, ui) {
@@ -23,8 +25,10 @@ $(document).ready(function() {
     }
   });
 });
+});
 
 function initdatepicker() {
+          $.getScript(ltoptions.files + '/js/jquery/jquery.ui.datepicker.min.js', function() {
   var cur = $("#date").val();
   $('#datepicker').datepicker({
     altField: '#date',
@@ -35,6 +39,7 @@ function initdatepicker() {
   });
   
   $("#datepicker").datepicker("setDate", cur);
+});
 }
 
 function initfiletabs() {

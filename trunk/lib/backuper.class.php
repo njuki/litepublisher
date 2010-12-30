@@ -461,7 +461,6 @@ class tbackuper extends tevents {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }
       $this->onuploaded($this);
-    }
     unset($this->tar);
     break;
     
@@ -526,7 +525,7 @@ public function test() {
   if (!@file_put_contents(litepublisher::$paths->data . 'index.htm', ' ')) return false;
   if (!$this->filer->connected) return false;
   $this->setdir('lib');
-  return $this->uploadfile('lib/index.htm', '', $this->filer->chmod_file);
+  return $this->uploadfile('lib/index.htm', ' ', $this->filer->chmod_file);
 }
 
 public function getfiletype() {
