@@ -243,12 +243,13 @@ class tadminlinkswidget extends tadminwidget {
       $args->mode = 'add';
       $item = array(
       'url' => '',
-      'title' => '',
-      'anchor' => ''
+      'linktitle' => '',
+      'text' => ''
       );
     }
     
     $args->add($item);
+    $args->linktitle = $item['title'];
     $result .= $html->linkform($args);
     
     $args->adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink';
@@ -263,6 +264,7 @@ class tadminlinkswidget extends tadminwidget {
   }
   
   public function processform()  {
+    var_dump($_POST);
     $widget = $this->widget;
     $widget->lock();
     if (isset($_POST['delete'])) {
@@ -274,11 +276,11 @@ class tadminlinkswidget extends tadminwidget {
       extract($_POST, EXTR_SKIP);
       switch ($mode) {
         case 'add':
-        $_GET['idlink'] = $widget->add($url, $linktitle, $anchor);
+        $_GET['idlink'] = $widget->add($url, $linktitle, $text);
         break;
         
         case 'edit':
-        $widget->edit((int) $_GET['idlink'], $url, $linktitle, $anchor);
+        $widget->edit((int) $_GET['idlink'], $url, $linktitle, $text);
         break;
       }
     } else {

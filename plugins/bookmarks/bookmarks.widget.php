@@ -24,6 +24,7 @@ class tbookmarkswidget extends tlinkswidget  {
     $about = tplugins::getabout(tplugins::getname(__file__));
     return $about['name'];
   }
+  
   public function getwidget($id, $sidebar) {
     $widgets = twidgets::instance();
     return $widgets->getinline($id, $sidebar);
@@ -46,11 +47,11 @@ class tbookmarkswidget extends tlinkswidget  {
     foreach ($this->items as $id => $item) {
       $args->id = $id;
       $args->title = $item['title'];
-      $args->anchor = $item['title'];
+      $args->text = $item['title'];
       if ($this->redir) {
-        $args->url = $redirlink . $id;
+        $args->link = $redirlink . $id;
       } else {
-        $args->url = strtr($item['url'], $a);
+        $args->link = strtr($item['url'], $a);
       }
       
       $args->icon = $item['text'] == '' ? '' : sprintf('<img src="%s%s" alt="%s" />', $iconurl, $item['text'], $item['title']);

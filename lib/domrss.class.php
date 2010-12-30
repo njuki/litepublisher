@@ -7,36 +7,36 @@
 **/
 
 class tnode {
-public static function attr($node, $name, $value) {
-  $attr = $node->ownerDocument->createAttribute($name);
-  $attr->value = $value;
-  $node->appendChild($attr);
-return $attr;
-}
-
-public static function add($node, $name) {
-  $result = $node->ownerDocument->createElement($name);
-  $node->appendChild($result);
-  return $result;
-}
-
-public static function addvalue($node, $name, $value) {
-  $result = $node->ownerDocument->createElement($name);
-  $textnode = $node->ownerDocument->createTextNode($value);
-  $result->appendChild($textnode);
-  $node->appendChild($result);
-  Return $result;
-}
-
-
-public static function addcdata($node, $name, $value) {
-  $result = $node->ownerDocument->createElement($name);
-  $textnode = $node->ownerDocument->createCDATASection($value);
-  $result->appendChild($textnode);
-  $node->appendChild($result);
-  Return $result;
-}
-
+  public static function attr($node, $name, $value) {
+    $attr = $node->ownerDocument->createAttribute($name);
+    $attr->value = $value;
+    $node->appendChild($attr);
+    return $attr;
+  }
+  
+  public static function add($node, $name) {
+    $result = $node->ownerDocument->createElement($name);
+    $node->appendChild($result);
+    return $result;
+  }
+  
+  public static function addvalue($node, $name, $value) {
+    $result = $node->ownerDocument->createElement($name);
+    $textnode = $node->ownerDocument->createTextNode($value);
+    $result->appendChild($textnode);
+    $node->appendChild($result);
+    Return $result;
+  }
+  
+  
+  public static function addcdata($node, $name, $value) {
+    $result = $node->ownerDocument->createElement($name);
+    $textnode = $node->ownerDocument->createCDATASection($value);
+    $result->appendChild($textnode);
+    $node->appendChild($result);
+    Return $result;
+  }
+  
 }//class
 function _struct_to_array(&$values, &$i)  {
   $result = array();

@@ -16,10 +16,7 @@
  */
 
 function htmlentities(s){	
-	var div = document.createElement('div');
-	var text = document.createTextNode(s);
-	div.appendChild(text);
-	return div.innerHTML;
+return $('<pre></pre>').text(s).html();
 }
 
 var rpc = {
