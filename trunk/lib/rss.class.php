@@ -232,9 +232,9 @@ class trss extends tevents {
         tnode::attr($enclosure , 'type', $file['mime']);
       }
     }
-      $post->onrssitem($item);    
-$this->onpostitem($item);
-return $item;
+    $post->onrssitem($item);
+    $this->onpostitem($item);
+    return $item;
   }
   
   public function AddRSSComment($comment, $title) {

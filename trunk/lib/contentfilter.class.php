@@ -25,6 +25,7 @@ class tcontentfilter extends tevents {
   }
   
   public function filtercomment($content) {
+    tfiler::log($content);
     $result = trim($content);
     $result = str_replace(array("\r\n", "\r"), "\n", $result);
     $result = self::quote(htmlspecialchars($result));
@@ -36,14 +37,15 @@ class tcontentfilter extends tevents {
     
     $result = self::simplebbcode($result);
     if ($this->commentautolinks) $result = self::createlinks($result);
-      $result = $this->replacecode($result);
-      $result = self::auto_p($result);
-if (!strpos($result, '<p>', 4)) {
-if (strbegin($result, '<p>')) $result = substr($result, 3);
-if(strend($result, '</p>')) $result = substr($result, 0, strlen($result) - 4);
-$result = trim($result);
-}
+    $result = $this->replacecode($result);
+    $result = self::auto_p($result);
+    if (!strpos($result, '<p>', 4)) {
+      if (strbegin($result, '<p>')) $result = substr($result, 3);
+      if(strend($result, '</p>')) $result = substr($result, 0, strlen($result) - 4);
+      $result = trim($result);
+    }
     $this->callevent('onaftercomment', array(&$result));
+    tfiler::log($result);
     return $result;
   }
   
@@ -251,7 +253,8 @@ $result = trim($result);
     
     // Convert single linebreaks to <br />
     $str = preg_replace('~(?<!\n)\n(?!\n)~', "<br />\n", $str);
-    
+    //fix bug <li> ... </p>
+    $str = preg_replace('~\n<li>(.*)</p>\n~', "\n<li>\$1\n", $str);
     return $str;
   }
   

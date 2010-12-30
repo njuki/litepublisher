@@ -47,6 +47,8 @@ class tlinkswidget extends twidget {
       $args->id = $id;
       if ($this->redir && !strbegin($item['url'], $url)) {
         $args->link = $redirlink . $id;
+      } else {
+        $args->link = $item['url'];
       }
       $result .=   $theme->parsearg($tml, $args);
     }
@@ -66,13 +68,13 @@ class tlinkswidget extends twidget {
     return $this->autoid;
   }
   
-  public function edit($id, $url, $title, $anchor) {
+  public function edit($id, $url, $title, $text) {
     $id = (int) $id;
     if (!isset($this->items[$id])) return false;
     $this->items[$id] = array(
     'url' => $url,
     'title' => $title,
-    'anchor' => $anchor
+    'text' => $text
     );
     $this->save();
   }
