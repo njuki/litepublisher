@@ -15,8 +15,8 @@
 
 function inittabs(sel, callback) {
 $(document).ready(function() {
-$('<link rel="stylesheet" type="text/css" href="'+ltoptions.files +'/js/jjquery/jquery-ui-1.8.6.custom.css" />') .appendTo("head");
-          $.getScript(ltoptions.files + '/js/jquery/jquery.ui.core-tabs.min.js', function() {
+$('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui/ui-lightness/jquery-ui-1.8.7.custom.css" />').appendTo("head");
+          $.getScript(ltoptions.files + '/js/jquery/ui/jquery-ui-1.8.7.custom.min.js', function() {
   $(sel).tabs({ cache: true });
 if (typeof callback=== "function") callback();
 });

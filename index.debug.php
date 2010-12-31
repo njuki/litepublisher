@@ -79,7 +79,7 @@ tstorage::loaddata();
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
-ttheme::clearcache();
+//ttheme::clearcache();
 tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
@@ -93,7 +93,7 @@ tlocal::clearcache();
   //echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-//tupdater::instance()->run(4.02);
+//tupdater::instance()->run(4.09);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 //tupdater::instance()->run(4.02);
