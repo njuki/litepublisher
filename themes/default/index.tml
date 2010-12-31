@@ -4,10 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<title>$template.title</title>
 	<link rel="stylesheet" href="$template.url/css/style.css" type="text/css" media="all" />
+		<script src="$site.url/js/litepublisher/loader.min.js"></script>
 	<!--[if IE 6]>
-		<script src="$template.url/css/DD_belatedPNG.js"></script>
 		<script>		
+load_script("$template.url/css/DD_belatedPNG.js", function() {
 		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, #lastcomments li, #lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
+});
 		 </script>
 	<![endif]--> 
 	$template.head
