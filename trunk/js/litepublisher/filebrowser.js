@@ -8,16 +8,19 @@
 $(document).ready(function() {
           $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
 inittabs("#tabs", function() {
+
   $("#tabs").bind( "tabsload", function(event, ui) {
       switch (ui.index) {
         case 2:
-        if (ltoptions.lang == 'en') {
+          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker.min.js', function() {
           initdatepicker();
-        } else {
-          $.getScript(ltoptions.files + '/js/jquery/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
-            initdatepicker();
-          });
-        }
+        if (ltoptions.lang == 'en') {
+} else {
+          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+          initdatepicker();
+});
+}
+});
         break;
       }
   });
@@ -25,13 +28,13 @@ inittabs("#tabs", function() {
   $("a[rel~='initfiletabs']").click(function() {
     $(this).unbind('click');
 initfiletabs();
+return false;
 });
 
 });
 });
 
 function initdatepicker() {
-          $.getScript(ltoptions.files + '/js/jquery/jquery.ui.datepicker.min.js', function() {
   var cur = $("#date").val();
   $('#datepicker').datepicker({
     altField: '#date',
@@ -42,7 +45,6 @@ function initdatepicker() {
   });
   
   $("#datepicker").datepicker("setDate", cur);
-});
 }
 
 function initfiletabs() {
