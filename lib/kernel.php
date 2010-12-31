@@ -3,7 +3,7 @@
 //data.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -366,7 +366,7 @@ function dumpstr($s) {
 //events.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -601,7 +601,7 @@ class tevents_storage extends tevents {
 //items.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -784,7 +784,7 @@ class tsingleitems extends titems {
 //classes.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -933,7 +933,7 @@ function getinstance($class) {
 //options.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -1138,7 +1138,7 @@ class toptions extends tevents_storage {
 //site.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -1197,7 +1197,7 @@ class tsite extends tevents_storage {
 //urlmap.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -1710,7 +1710,7 @@ function compress_deflate($s) {
 //interfaces.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
@@ -1741,7 +1741,7 @@ interface iposts {
 //plugin.class.php
 /**
 * Lite Publisher
-* Copyright (C) 2010 Vladimir Yushko http://litepublisher.com/
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
