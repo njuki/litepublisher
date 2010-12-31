@@ -6,11 +6,9 @@
 **/
 
 $(document).ready(function() {
-$('<link rel="stylesheet" type="text/css" href="'+ltoptions.files +'/js/jjquery/jquery-ui-1.8.6.custom.css" />') .appendTo("head");
-          $.getScript(ltoptions.files + '/js/jquery/jquery.ui.core-tabs.min.js', function() {
-  $("#tabs").tabs({
-    cache: true,
-    load: function(event, ui) {
+          $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
+inittabs("#tabs", function() {
+  $("#tabs").bind( "tabsload", function(event, ui) {
       switch (ui.index) {
         case 2:
         if (ltoptions.lang == 'en') {
@@ -22,8 +20,13 @@ $('<link rel="stylesheet" type="text/css" href="'+ltoptions.files +'/js/jjquery/
         }
         break;
       }
-    }
   });
+
+  $("a[rel~='initfiletabs']").click(function() {
+    $(this).unbind('click');
+initfiletabs();
+});
+
 });
 });
 
