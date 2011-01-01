@@ -431,7 +431,7 @@ content.post.templatecomments.moderateform= [
 		<script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
 		<script type="text/javascript" src="$site.files/js/litepublisher/moderate.min.js"></script>
 		<script type="text/javascript" src="$site.files/files/$site.language.admin.js"></script>
-								<form name="moderateform" action="$options.url/admin/comments/" method="post">
+								<form name="moderateform" id="moderateform" action="$options.url/admin/comments/" method="post">
 								$comments
 								<p>
 								<input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
