@@ -5,48 +5,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-$(document).ready(function() {
-          $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
-inittabs("#tabs", function() {
-
-  $("#tabs").bind( "tabsload", function(event, ui) {
-      switch (ui.index) {
-        case 2:
-          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker.min.js', function() {
-          initdatepicker();
-        if (ltoptions.lang == 'en') {
-} else {
-          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
-          initdatepicker();
-});
-}
-});
-        break;
-      }
-  });
-
-  $("a[rel~='initfiletabs']").click(function() {
-    $(this).unbind('click');
-initfiletabs();
-return false;
-});
-
-  $("a[rel~='loadcontenttabs']").click(function() {
-    $(this).unbind('click');
-loadcontenttabs();
-return false;
-});
-
-  $("a[rel~='loadvisual']").click(function() {
-    $(this).unbind('click');
-  $("#loadvisual").remove();
-  $.getScript(ltoptions.files + ltoptions.visual);
-return false;
-});
-
-});
-});
-
 function initdatepicker() {
   var cur = $("#date").val();
   $('#datepicker').datepicker({
@@ -58,23 +16,6 @@ function initdatepicker() {
   });
   
   $("#datepicker").datepicker("setDate", cur);
-}
-
-function initfiletabs() {
-  $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
-{id: ltoptions.idpost, get: "files"},
-  function (result) {
-    $("#filebrowser").html(result);
-  $('#filetabs').tabs({cache: true});
-    
-    $('form:first').submit(function() {
-      $("#files").val(getpostfiles());
-    });
-    
-    $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
-      $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
-    });
-  });
 }
 
 function loadcontenttabs() {
@@ -122,7 +63,7 @@ function str_replace ( search, replace, subject ) {
   
 }
 
-function addtocurrentfiles() {
+var addtocurrentfiles= function() {
   $("input:checked[id^='itemfilepage']").each(function() {
     $(this).attr('checked', false);
     var id = $(this).val();
@@ -137,18 +78,36 @@ function addtocurrentfiles() {
   });
 }
 
-function delete_current_files() {
-  $("input:checked[id^='currentfile']").each(function() {
-    $(this).parent().remove();
-  } );
-}
-
 function getpostfiles() {
   var files = [];
   $("input[id^='currentfile']").each(function() {
     files.push($(this).val());
   });
   return files.join(',');
+}
+
+function initfiletabs() {
+  $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
+{id: ltoptions.idpost, get: "files"},
+  function (html) {
+    $("#filebrowser").html(html);
+  $('#filetabs').tabs({cache: true});
+  $("button[rel~='addtocurrentfiles']").live('click', addtocurrentfiles);
+
+  $("#deletecurrentfiles").click(function() {
+  $("input:checked[id^='currentfile']").each(function() {
+    $(this).parent().remove();
+  } );
+});
+
+ $('form:first').submit(function() {
+      $("#files").val(getpostfiles());
+    });
+    
+    $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
+      $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
+    });
+  });
 }
 
 function tagtopost(link) {
@@ -165,3 +124,45 @@ function tagtopost(link) {
     $('#tags').val(tags + ', ' + newtag);
   }
 }
+
+$(document).ready(function() {
+          $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
+inittabs("#tabs", function() {
+
+  $("#tabs").bind( "tabsload", function(event, ui) {
+      switch (ui.index) {
+        case 2:
+          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker.min.js', function() {
+          initdatepicker();
+        if (ltoptions.lang == 'en') {
+} else {
+          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+          initdatepicker();
+});
+}
+});
+        break;
+      }
+  });
+
+  $("a[rel~='initfiletabs']").click(function() {
+    $(this).unbind('click');
+initfiletabs();
+return false;
+});
+
+  $("a[rel~='loadcontenttabs']").click(function() {
+    $(this).unbind('click');
+loadcontenttabs();
+return false;
+});
+
+  $("a[rel~='loadvisual']").click(function() {
+    $(this).unbind('click');
+  $("#loadvisual").remove();
+  $.getScript(ltoptions.files + ltoptions.visual);
+return false;
+});
+
+});
+});
