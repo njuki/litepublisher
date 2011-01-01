@@ -31,6 +31,19 @@ initfiletabs();
 return false;
 });
 
+  $("a[rel~='loadcontenttabs']").click(function() {
+    $(this).unbind('click');
+loadcontenttabs();
+return false;
+});
+
+  $("a[rel~='loadvisual']").click(function() {
+    $(this).unbind('click');
+  $("#loadvisual").remove();
+  $.getScript(ltoptions.files + ltoptions.visual);
+return false;
+});
+
 });
 });
 
@@ -73,11 +86,6 @@ function loadcontenttabs() {
     $("#raweditor").appendTo("#rawtab");
   $('#contenttabs').tabs({cache: true});
   });
-}
-
-function loadvisual() {
-  $("#loadvisual").remove();
-  $.getScript(ltoptions.files + ltoptions.visual);
 }
 
 function str_replace ( search, replace, subject ) {
