@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<title>$template.title</title>
-	<link rel="stylesheet" href="$site.url/themes/default/css/style.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="$template.url/compressed.css" type="text/css" media="all" />
 		<script src="$site.url/js/litepublisher/loader.min.js"></script>
 	<!--[if IE 6]>
 		<script>		
@@ -12,6 +12,14 @@ load_script("$site.url/themes/default/css/DD_belatedPNG.js", function() {
 });
 		 </script>
 	<![endif]--> 
+  <script type="text/javascript">
+load_script("$site.files/js/litepublisher/litepublisher.min.js", function() {
+  $(document).ready(function() {
+$("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
+    $("a[rel^='prettyPhoto']").prettyPhoto();
+  });
+});
+  </script>
 	$template.head
 </head>
 <body>
