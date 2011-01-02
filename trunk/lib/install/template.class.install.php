@@ -17,7 +17,7 @@ function ttemplateInstall($self) {
   <meta name="keywords" content="$template.keywords" />
   <meta name="description" content="$template.description" />
   <link rel="sitemap" href="$site.url/sitemap.htm" />
-  <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.min.js"></script>
+  <script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>
   <link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />
   <script type="text/javascript">
   $(document).ready(function() {

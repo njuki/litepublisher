@@ -17,7 +17,6 @@ class tsite extends tevents_storage {
     $this->basename = 'site';
   }
   
-  
   public function __set($name, $value) {
     if (in_array($name, $this->eventnames)) {
       $this->addevent($name, $value['class'], $value['func']);
