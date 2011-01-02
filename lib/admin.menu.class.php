@@ -18,10 +18,10 @@ class tadminmenumanager extends tadminmenu {
     $template = ttemplate::instance();
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
-    $result .= sprintf('
-    <script type="text/javascript" src="%1$s/js/litepublisher/filebrowser.js"></script>
-    <script type="text/javascript" src="%1$s/files/admin%2$s.js"></script>
-    ', litepublisher::$site->files, litepublisher::$options->language);
+    $result .= '<script type="text/javascript">
+    inittabs("#tabs");
+    </script>';
+    
     $ajax = tajaxmenueditor ::instance();
     return $ajax->dogethead($result);
   }

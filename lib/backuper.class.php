@@ -461,83 +461,83 @@ class tbackuper extends tevents {
         if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
       }
       $this->onuploaded($this);
-    unset($this->tar);
-    break;
-    
-    case 'unzip':
-    $mode = $this->filer->chmod_file;
-    $this->unzip->ReadData($content);
-    foreach ($this->unzip->Entries as  $item) {
-      if ($item->Error != 0) continue;
-      if (!$this->uploadfile($item->Path . '/' . $item->Name, $item->Data, $mode))
-      return $this->errorwrite($item->Path . $item->Name);
+      unset($this->tar);
+      break;
+      
+      case 'unzip':
+      $mode = $this->filer->chmod_file;
+      $this->unzip->ReadData($content);
+      foreach ($this->unzip->Entries as  $item) {
+        if ($item->Error != 0) continue;
+        if (!$this->uploadfile($item->Path . '/' . $item->Name, $item->Data, $mode))
+        return $this->errorwrite($item->Path . $item->Name);
+      }
+      $this->onuploaded($this);
+      unset($this->unzip);
+      break;
+      
+      default:
+      $this->unknown_archive();
     }
-    $this->onuploaded($this);
-    unset($this->unzip);
-    break;
-    
-    default:
-    $this->unknown_archive();
+    unset($this->existingfolders);
+    if ($this->hasdata) $this->renamedata();
+    return true;
   }
-  unset($this->existingfolders);
-  if ($this->hasdata) $this->renamedata();
-  return true;
-}
-
-private function renamedata() {
-  $old = litepublisher::$paths->backup . 'data-' . time();
-  $data =rtrim(litepublisher::$paths->data, DIRECTORY_SEPARATOR);
-  rename($data, $old);
-  rename(litepublisher::$paths->storage . 'newdata', $data);
-  tfiler::delete($old, true, true);
-}
-
-private function errorwrite($filename) {
-  tlocal::loadlang('admin');
-  $lang = tlocal::instance('service');
-  $this->result = sprintf($lang->errorwritefile, $filename);
-  return false;
-}
-
-public function createfullbackup(){
-  return $this->_savebackup($this->getpartial(true, true, true));
-}
-
-public function createbackup(){
-  $filer = $this->__filer;
-  if (!isset($filer) || ! ($filer instanceof tlocalfiler)) {
-    $this->__filer = tlocalfiler::instance();
+  
+  private function renamedata() {
+    $old = litepublisher::$paths->backup . 'data-' . time();
+    $data =rtrim(litepublisher::$paths->data, DIRECTORY_SEPARATOR);
+    rename($data, $old);
+    rename(litepublisher::$paths->storage . 'newdata', $data);
+    tfiler::delete($old, true, true);
   }
-  $result = $this->_savebackup($this->getpartial(false, false, false));
-  $this->__filer = $filer;
-  return $result;
-}
-
-private function _savebackup($s) {
-  $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
-  $filename .= $this->archtype == 'zip' ? '.zip' : '.tar.gz';
-  file_put_contents($filename, $s);
-  @chmod($filename, 0666);
-  return $filename;
-}
-
-public function test() {
-  if (!@file_put_contents(litepublisher::$paths->data . 'index.htm', ' ')) return false;
-  if (!$this->filer->connected) return false;
-  $this->setdir('lib');
-  return $this->uploadfile('lib/index.htm', ' ', $this->filer->chmod_file);
-}
-
-public function getfiletype() {
-  if ($this->archtype == 'zip') return '.zip';
-  if ($this->archtype == 'tar') return '.tar.gz';
-  return false;
-}
-
-public function getarchtype($filename) {
-  if (strend($filename, '.zip')) return 'zip';
-  if (strend($filename, '.tar.gz') || strend($filename, '.tar')) return 'tar';
-  return false;
-}
-
+  
+  private function errorwrite($filename) {
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('service');
+    $this->result = sprintf($lang->errorwritefile, $filename);
+    return false;
+  }
+  
+  public function createfullbackup(){
+    return $this->_savebackup($this->getpartial(true, true, true));
+  }
+  
+  public function createbackup(){
+    $filer = $this->__filer;
+    if (!isset($filer) || ! ($filer instanceof tlocalfiler)) {
+      $this->__filer = tlocalfiler::instance();
+    }
+    $result = $this->_savebackup($this->getpartial(false, false, false));
+    $this->__filer = $filer;
+    return $result;
+  }
+  
+  private function _savebackup($s) {
+    $filename = litepublisher::$paths->backup . litepublisher::$domain . date('-Y-m-d');
+    $filename .= $this->archtype == 'zip' ? '.zip' : '.tar.gz';
+    file_put_contents($filename, $s);
+    @chmod($filename, 0666);
+    return $filename;
+  }
+  
+  public function test() {
+    if (!@file_put_contents(litepublisher::$paths->data . 'index.htm', ' ')) return false;
+    if (!$this->filer->connected) return false;
+    $this->setdir('lib');
+    return $this->uploadfile('lib/index.htm', ' ', $this->filer->chmod_file);
+  }
+  
+  public function getfiletype() {
+    if ($this->archtype == 'zip') return '.zip';
+    if ($this->archtype == 'tar') return '.tar.gz';
+    return false;
+  }
+  
+  public function getarchtype($filename) {
+    if (strend($filename, '.zip')) return 'zip';
+    if (strend($filename, '.tar.gz') || strend($filename, '.tar')) return 'tar';
+    return false;
+  }
+  
 }//class

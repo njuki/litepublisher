@@ -3,13 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<title>$template.title</title>
-
-	<link rel="stylesheet" href="$template.url/compressed.css" type="text/css" media="all" />
-<!--
-	<link rel="stylesheet" href="$site.files/themes/default/css/style.css" type="text/css" media="all" />
-  <link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />
--->
-
+  <link type="text/css" href="$template.url/common.css" rel="stylesheet" />
 		<script src="$site.url/js/litepublisher/loader.min.js"></script>
 	<!--[if IE 6]>
 		<script>		

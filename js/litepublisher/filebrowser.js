@@ -92,15 +92,15 @@ function initfiletabs() {
   function (html) {
     $("#filebrowser").html(html);
   $('#filetabs').tabs({cache: true});
-  $("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
-
-  $("#deletecurrentfiles").click(function() {
-  $("input:checked[id^='currentfile']").each(function() {
-    $(this).parent().remove();
-  } );
-});
-
- $('form:first').submit(function() {
+    $("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
+    
+    $("#deletecurrentfiles").click(function() {
+      $("input:checked[id^='currentfile']").each(function() {
+        $(this).parent().remove();
+      } );
+    });
+    
+    $('form:first').submit(function() {
       $("#files").val(getpostfiles());
     });
     
@@ -125,44 +125,38 @@ function tagtopost(link) {
   }
 }
 
-$(document).ready(function() {
-          $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
-inittabs("#tabs", function() {
-
-  $("#tabs").bind( "tabsload", function(event, ui) {
-      switch (ui.index) {
-        case 2:
+function initposteditor() {
+  $(document).ready(function() {
+    $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
+    inittabs("#tabs", function() {
+      $("#tabs").bind( "tabsload", function(event, ui) {
+        switch (ui.index) {
+          case 2:
           $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker.min.js', function() {
-          initdatepicker();
-        if (ltoptions.lang == 'en') {
-} else {
-          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
-          initdatepicker();
-});
-}
-});
-        break;
-      }
+            initdatepicker();
+            if (ltoptions.lang == 'en') {
+            } else {
+              $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+                initdatepicker();
+              });
+            }
+          });
+          break;
+        }
+      });
+      
+      $("a[rel~='initfiletabs']").click(function() {
+        $(this).unbind('click');
+        initfiletabs();
+        return false;
+      });
+      
+      $("a[rel~='loadcontenttabs']").click(function() {
+        $(this).unbind('click');
+        loadcontenttabs();
+        return false;
+      });
+      
+    });
   });
-
-  $("a[rel~='initfiletabs']").click(function() {
-    $(this).unbind('click');
-initfiletabs();
-return false;
-});
-
-  $("a[rel~='loadcontenttabs']").click(function() {
-    $(this).unbind('click');
-loadcontenttabs();
-return false;
-});
-
-  $("a[rel~='loadvisual']").click(function() {
-    $(this).unbind('click');
-  $("#loadvisual").remove();
-  $.getScript(ltoptions.files + ltoptions.visual);
-return false;
-});
-
-});
-});
+}
