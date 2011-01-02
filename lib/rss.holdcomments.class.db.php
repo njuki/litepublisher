@@ -59,7 +59,6 @@ class trssholdcomments extends tevents {
     $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$site->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($this->count, 'hold');
-    var_dump($recent);
     $title = tlocal::$data['comment']['onpost'] . ' ';
     $comment = new tarray2prop();
     ttheme::$vars['comment'] = $comment;

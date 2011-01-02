@@ -264,7 +264,6 @@ class tadminlinkswidget extends tadminwidget {
   }
   
   public function processform()  {
-    var_dump($_POST);
     $widget = $this->widget;
     $widget->lock();
     if (isset($_POST['delete'])) {

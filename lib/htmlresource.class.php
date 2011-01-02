@@ -263,8 +263,6 @@ class tautoform {
   }
   
   public function __get($name) {
-    //var_dump($name, $this, $this->obj, $this->obj->$name);
-    //litepublisher::$options->error();
     if (isset($this->obj->$name)) {
       return array(
       'obj' => $this->obj,

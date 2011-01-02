@@ -25,7 +25,6 @@ class tcontentfilter extends tevents {
   }
   
   public function filtercomment($content) {
-    tfiler::log($content);
     $result = trim($content);
     $result = str_replace(array("\r\n", "\r"), "\n", $result);
     $result = self::quote(htmlspecialchars($result));
@@ -45,7 +44,6 @@ class tcontentfilter extends tevents {
       $result = trim($result);
     }
     $this->callevent('onaftercomment', array(&$result));
-    tfiler::log($result);
     return $result;
   }
   

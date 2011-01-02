@@ -170,7 +170,6 @@ class ttheme extends tevents {
     try {
     return $var->{$prop};
     } catch (Exception $e) {
-      //var_dump($this->parsing[count($this->parsing)-1]);
       litepublisher::$options->handexception($e);
     }
     return '';
