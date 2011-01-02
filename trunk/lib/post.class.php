@@ -450,8 +450,8 @@ class tpost extends titem implements  itemplate {
   public function replacemore($content, $excerpt) {
     $theme = $this->theme;
     $more = $theme->parse($excerpt ?
-    $theme->content->excerpts->excerpt->morelink :
-    $theme->content->post->more);
+    $theme->templates['content.excerpts.excerpt.morelink'] :
+    $theme->templates['content.post.more']);
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {
       return str_replace($tag, $more, $content);
@@ -459,6 +459,17 @@ class tpost extends titem implements  itemplate {
       return $excerpt ? $content  : $more . $content;
     }
   }
+
+protected function getteaser() {
+$content = $this->filtered;
+    $tag = '<!--more-->';
+    if ($i =strpos($content, $tag)) {
+$content = substr($content, $i + strlen($tag));
+if (!strbegin($content, '<p>')) $content = '<p>' . $content;
+return $content;
+}
+return '';
+}
   
   protected function getcontentpage($page) {
     $result = '';
