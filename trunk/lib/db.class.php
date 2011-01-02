@@ -47,8 +47,10 @@ class tdatabase {
   }
   
   public function __destruct() {
+if (is_object($this)) {
     if (is_resource($this->handle)) mysql_close($this->handle);
     $this->handle = false;
+}
   }
   
   public function __get ($name) {

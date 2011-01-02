@@ -105,7 +105,6 @@ class tauthdigest extends tevents {
       $ref = $_GET['ref'];
       $url = $_SERVER['REQUEST_URI'];
       $url = substr($url, 0, strpos($url, '&ref='));
-      //var_dump($url);
       if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url)) return false;
     }
     

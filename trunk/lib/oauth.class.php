@@ -269,8 +269,6 @@ class toauth extends tevents {
     $response = curl_exec($ch);
     $headers = curl_getinfo($ch);
     curl_close($ch);
-    //var_dump($response , $headers);
-    //echo htmlspecialchars($response );
     if ($headers['http_code'] != "200") return false;
     return $response;
   }
@@ -292,8 +290,6 @@ class toauth extends tevents {
     $response = curl_exec($ch);
     $headers = curl_getinfo($ch);
     curl_close($ch);
-    //var_dump($response , $headers);
-    //echo htmlspecialchars($response );
     if ($headers['http_code'] != "200") return false;
     return $response;
   }
