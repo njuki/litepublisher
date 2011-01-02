@@ -18,6 +18,7 @@ function tsiteInstall($self) {
   
   $site->home = '/';
   $site->keywords = "blog";
+$site->jquery_version = '1.4.4';
   $site->unlock();
 }
 
