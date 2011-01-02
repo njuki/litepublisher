@@ -612,11 +612,11 @@ class tpost extends titem implements  itemplate {
       }
     } else {
       $users = tusers::instance();
-try {
-      $account = $users->getitem($id);
-    } catch (Exception $e) {
-return '';
-}
+      try {
+        $account = $users->getitem($id);
+      } catch (Exception $e) {
+        return '';
+      }
       if (!$link || ($account['url'] == '')) return $account['name'];
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $account['name']);
     }

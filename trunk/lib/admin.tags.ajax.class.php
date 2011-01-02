@@ -23,7 +23,7 @@ class tajaxtageditor extends tajaxposteditor  {
   
   public function getcontent() {
     $type = tadminhtml::getparam('type', 'tags') == 'tags' ? 'tags' : 'categories';
-    $tags = $type == 'tags' ? ttags::instance : tcategories::instance();if ($err = self::auth()) return $err;
+    $tags = $type == 'tags' ? ttags::instance() : tcategories::instance();if ($err = self::auth()) return $err;
     $id = tadminhtml::idparam();
     if (($id > 0) && !$tags->itemexists($id)) return self::error403();
     
@@ -66,6 +66,7 @@ class tajaxtageditor extends tajaxposteditor  {
       
       case 'text':
       $result = $this->geteditor('raw', $id == 0 ? '' : $tags->contents->getcontent($id), true);
+      $result .= $this->dogethead('');
       break;
       
       default:
