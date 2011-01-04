@@ -85,7 +85,8 @@ public function gettitle() { return $this->title; }
   
   public function request($arg) {
     if ($arg == 'xml') {
-      return turlmap::xmlheader() . $this->GetIndex();
+      return '<?php turlmap::sendxml(); ?>' .
+      $this->GetIndex();
     }
     
     $this->title = tlocal::$data['default']['sitemap'];

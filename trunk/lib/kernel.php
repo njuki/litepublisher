@@ -1301,11 +1301,12 @@ class turlmap extends titems {
     }
     
     $this->uripath = explode('/', trim($url, '/'));
-    //tree обрезаю окончание урла в аргумент
+    //tree convert into argument
     $url = trim($url, '/');
     $j = -1;
     while($i = strrpos($url, '/', $j)) {
       if ($result = $this->query('/' . substr($url, 0, $i + 1))) {
+        if ($result['type'] != 'tree') return false;
         $this->argtree = substr($url, $i +1);
         return $result;
       }
@@ -1661,24 +1662,24 @@ class turlmap extends titems {
   }
   
   public static function htmlheader($cache) {
-    $nocache = $cache ? '' : "
-    Header( 'Cache-Control: no-cache, must-revalidate');
-    Header( 'Pragma: no-cache');";
-    
-    return "<?php $nocache
+    return sprintf('<?php turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
+  }
+  
+  public static function sendheader($cache) {
+    if (!$cache) {
+      Header( 'Cache-Control: no-cache, must-revalidate');
+      Header( 'Pragma: no-cache');
+    }
     header('Content-Type: text/html; charset=utf-8');
     header('Last-Modified: ' . date('r'));
     header('X-Pingback: " . litepublisher::$site->url . "/rpc.xml');
-    ?>";
   }
   
-  public static function xmlheader() {
-    return "<?php
+  public static function sendxml() {
     header('Content-Type: text/xml; charset=utf-8');
-    header('Last-Modified: " . date('r') ."');
+    header('Last-Modified: ' . date('r'));
     header('X-Pingback: " . litepublisher::$site->url . "/rpc.xml');
-    echo '<?xml version=\"1.0\" encoding=\"utf-8\" ?>';
-    ?>";
+    echo '<?xml version="1.0" encoding="utf-8" ?>';
   }
   
   public function startcompress() {

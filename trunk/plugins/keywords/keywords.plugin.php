@@ -69,7 +69,8 @@ class tkeywordsplugin  extends tplugin {
     $subject ="[$site->name] new keywords added";
     $body = "The new widget has been added on
   $site->url{$_SERVER['REQUEST_URI']}
-    links:
+    
+    Widget content:
     $content
     
     You can edit this links at:
