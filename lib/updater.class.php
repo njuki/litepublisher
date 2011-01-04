@@ -62,6 +62,10 @@ class tupdater extends tevents {
   }
   
   public function autoupdate() {
+    //protect timeout
+    Header( 'Cache-Control: no-cache, must-revalidate');
+    Header( 'Pragma: no-cache');
+    
     $lang = tlocal::instance('service');
     $backuper = tbackuper::instance();
     $backuper->createbackup();

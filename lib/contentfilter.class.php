@@ -141,10 +141,12 @@ class tcontentfilter extends tevents {
   }
   
   public static function replace_code($s) {
-    $s = str_replace(
-    array('"', "'", '$', ' '),
-    array('&quot;', '&#39;', '&#36;', '&nbsp;'),
-    htmlspecialchars($s));
+    $s = strtr(    htmlspecialchars($s), array(
+    '"' =>'&quot;',
+    "'" =>  '&#39;',
+    '$' => '&#36;',
+    '  ' => '&nbsp;&nbsp;'
+    ));
     //double space for prevent auto_p
     $s = str_replace("\n", '<br  />', $s);
     return sprintf('<code>%s</code>', $s);

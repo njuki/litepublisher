@@ -195,13 +195,12 @@ class tadminservice extends tadminmenu {
           if (dbversion) $dbconfig = litepublisher::$options->dbconfig;
           $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]), $backuper->getarchtype($_FILES["filename"]["name"]));
           if (isset($saveurl)) {
-            litepublisher::$site->load();
-            litepublisher::$site->seturl($url);
-            if (dbversion) {
-              litepublisher::$options->load();
-              litepublisher::$options->dbconfig = $dbconfig;
-            }
-            litepublisher::$options->save();
+            $storage = newtdata();
+            $storage->basename = 'storage';
+            $storage->load();
+            $storage->data['site'] = litepublisher::$site->data;
+            if (dbversion) $data->data['options']['dbconfig'] = $dbconfig;
+            $storage->save();
           }
         }
         ttheme::clearcache();

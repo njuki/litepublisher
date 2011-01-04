@@ -151,7 +151,7 @@ class tposteditor extends tadminmenu {
     if (isset($excerpt)) $post->excerpt = $excerpt;
     if (isset($rss)) $post->rss = $rss;
     if (isset($more)) $post->moretitle = $more;
-    if (isset($filtered)) $post->filtered = $content;
+    if (isset($filtered)) $post->filtered = $filtered;
     if (isset($upd)) {
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $upd);
       $post->content = $post->rawcontent . "\n\n" . $update;

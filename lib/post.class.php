@@ -459,17 +459,17 @@ class tpost extends titem implements  itemplate {
       return $excerpt ? $content  : $more . $content;
     }
   }
-
-protected function getteaser() {
-$content = $this->filtered;
+  
+  protected function getteaser() {
+    $content = $this->filtered;
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {
-$content = substr($content, $i + strlen($tag));
-if (!strbegin($content, '<p>')) $content = '<p>' . $content;
-return $content;
-}
-return '';
-}
+      $content = substr($content, $i + strlen($tag));
+      if (!strbegin($content, '<p>')) $content = '<p>' . $content;
+      return $content;
+    }
+    return '';
+  }
   
   protected function getcontentpage($page) {
     $result = '';

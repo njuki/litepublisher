@@ -95,7 +95,6 @@ public function gethead() { }
     if ($dir != '') $dir .= '/';
     $idurl = litepublisher::$urlmap->add("/source/$dir$filename", get_class($this), $id);
     $this->db->setvalue($id, 'idurl', $idurl);
-    echo "$id added\n";
     return $id;
   }
   

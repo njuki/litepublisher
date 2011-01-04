@@ -51,7 +51,7 @@ class trss extends tevents {
       ?>";
     }
     
-    $result .= turlmap::xmlheader();
+    $result .= '<?php turlmap::sendxml(); ?>';
     $this->domrss = new tdomrss;
     switch ($arg) {
       case 'posts':
@@ -120,7 +120,7 @@ class trss extends tevents {
   }
   
   public function getholdcomments($url, $count) {
-    $result = turlmap::xmlheader();
+    $result = '<?php turlmap::sendxml(); ?>';
     $this->dogetholdcomments($url, $count);
     $result .= $this->domrss->GetStripedXML();
     return $result;

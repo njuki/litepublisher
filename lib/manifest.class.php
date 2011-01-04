@@ -14,7 +14,7 @@ class tmanifest extends tevents {
   
   public function request($arg) {
     $site = litepublisher::$site;
-    $s = turlmap::xmlheader();
+    $s = '<?php turlmap::sendxml(); ?>';
     switch ($arg) {
       case 'manifest':
       $s .= '<manifest xmlns="http://schemas.microsoft.com/wlw/manifest/weblog">' .
