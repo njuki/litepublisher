@@ -69,23 +69,23 @@ class tdata {
     }
     
     foreach ($this->coinstances as $coinstance) {
-      if (method_exists($coinstance, $name) || $coinstance->method_exists($name)) 
-return call_user_func_array(array($coinstance, $name), $params);
+      if (method_exists($coinstance, $name) || $coinstance->method_exists($name))
+      return call_user_func_array(array($coinstance, $name), $params);
     }
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   
   public function __isset($name) {
-if (array_key_exists($name, $this->data) || method_exists($this, "get$name") || method_exists($this, "Get$name")) return true;
+    if (array_key_exists($name, $this->data) || method_exists($this, "get$name") || method_exists($this, "Get$name")) return true;
     foreach ($this->coinstances as $coinstance) {
       if (isset($coinstance->$name)) return true;
-}
-return false;
+    }
+    return false;
   }
-
-public function method_exists($name) {
-return false;
-}
+  
+  public function method_exists($name) {
+    return false;
+  }
   
   public function error($Msg) {
     throw new Exception($Msg);
@@ -162,8 +162,8 @@ return false;
   
   public function afterload() {
     foreach ($this->coinstances as $coinstance) {
-$coinstance->afterload();
-}
+      $coinstance->afterload();
+    }
   }
   
   public function lock() {

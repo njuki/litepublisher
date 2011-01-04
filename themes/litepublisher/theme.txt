@@ -76,4 +76,20 @@ content.post.templatecomments.moderateform= [
 								</form>
 ]
 
+Теперь для себя лично я решил убрать кнопки модерирования в каждом комментарии,, точнее сделать их в виде аяксового блока - будет буква М, по клику по которой будут появляться индвидуальные кнопки.
+content.post.templatecomments.comments.comment.moderate = [
+ <div class="moderationbuttons">
+  <input type="checkbox" name="checkbox-comment-$comment.id" id="checkbox-comment-$comment.id" value="$comment.id" />
+<a rel="inlinewidget" href="#">M</a>
+<!--
+													  <input type="button" value="$lang.approve" onclick="setcommentstatus($comment.id, 'approved');" />
+  <input type="button" value="$lang.holdbutton" onclick="setcommentstatus($comment.id, 'hold');" />
+  <input type="button" value="$lang.delete" onclick="deletecomment($comment.id);" />
+  <input type="button" value="$lang.edit" onclick="editcomment($comment.id);" />
+-->
+ </div>
+]
+
+
+
 Все, больше никаких изменений в теме нет.

@@ -14,7 +14,7 @@ class thomepageInvert extends tplugin {
   
   public function getitems() {
     $posts = tposts::instance();
-$perpage = litepublisher::$options->perpage;
+    $perpage = litepublisher::$options->perpage;
     $count = $posts->archivescount;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     if ($from > $count)  return array();
@@ -28,13 +28,13 @@ $perpage = litepublisher::$options->perpage;
   }
   
   function install() {
-$home = thomepage::instance();
-$home->onbeforegetitems = $this->getitems;
+    $home = thomepage::instance();
+    $home->onbeforegetitems = $this->getitems;
   }
   
   function uninstall() {
-$home = thomepage::instance();
-$home->unsubscribeclass($this);
+    $home = thomepage::instance();
+    $home->unsubscribeclass($this);
   }
   
 }//class

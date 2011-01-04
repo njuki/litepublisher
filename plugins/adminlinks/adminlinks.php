@@ -25,6 +25,7 @@ class tadmincontextwidget extends torderwidget {
   }
   
   public function getwidget($id, $sidebar) {
+    $links = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('widget', $sidebar);
     tlocal::loadlang('admin');
@@ -55,25 +56,21 @@ class tadmincontextwidget extends torderwidget {
         case 'thomepage':
         $lang = tlocal::instance('options');
         $title = $lang->home;
-        $links = $this->getitem($tml, "/admin/options/home/", $lang->title);
-        //$links .= $this->getitem($tml, "/admin/widgets/home/", tlocal::$data['widgets']['title']);
+        $links .= $this->getitem($tml, "/admin/options/home/", $lang->title);
         break;
-        
-        default:
-        if ((litepublisher::$urlmap->context instanceof tmenu) && !(litepublisher::$urlmap->context instanceof tadminmenu)) {
-          $menu = litepublisher::$urlmap->context;
-          $lang = tlocal::instance('menu');
-          $title = $lang->title;
-          $adminurl = litepublisher::$site->url . "/admin/menu/edit/";
-          $links = $this->getitem($tml,$adminurl, $lang->addmenu);
-          $links .= $this->getitem($tml, $adminurl . litepublisher::$site->q . "id=$menu->id", $lang->edit);
-        } else {
-          return;
-        }
-        break;
+      }
+      
+      if ((litepublisher::$urlmap->context instanceof tmenu) && !(litepublisher::$urlmap->context instanceof tadminmenu)) {
+        $menu = litepublisher::$urlmap->context;
+        $lang = tlocal::instance('menu');
+        $title = $lang->title;
+        $adminurl = litepublisher::$site->url . "/admin/menu/edit/";
+        $links .= $this->getitem($tml,$adminurl, $lang->addmenu);
+        $links .= $this->getitem($tml, $adminurl . litepublisher::$site->q . "id=$menu->id", $lang->edit);
       }
     }
     
+    if ($links == '') return '';
     $links .= $this->getitem($tml, '/admin/logout/', tlocal::$data['login']['logout']);
     $links = $theme->getwidgetcontent($links, 'widget', $sidebar);
     return $theme->getwidget($this->gettitle($id), $links, 'widget', $sidebar);
@@ -83,12 +80,12 @@ class tadmincontextwidget extends torderwidget {
     $args->icon = '';$args->subitems = '';
     $args->rel = 'admin';
     if (strbegin($url, 'http://')) {
-      $args->url = $url;
+      $args->link = $url;
     } else {
-      $args->url = litepublisher::$site->url  . $url;
+      $args->url = $url;
     }
     $args->title = $title;
-    $args->anchor = $title;
+    $args->text = $title;
     $theme = ttheme::instance();
     return $theme->parsearg($tml, $args);
   }

@@ -25,8 +25,9 @@ function widget_findcomment(node, id) {
   do {
     result = node;
     while (result = result.nextSibling) {
-      if (result.nodeType  != 8)continue;
-      if (!id || (id == result.nodeValue)) return result;
+      if (result.nodeType  == 8) {
+        if (!id || (id == result.nodeValue)) return result;
+      }
     }
   } while (node = node.parentNode);
   return false;
