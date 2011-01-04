@@ -71,13 +71,22 @@ class tdata {
     }
     
     foreach ($this->coinstances as $coinstance) {
-      if (method_exists($coinstance, $name)) return call_user_func_array(array($coinstance, $name), $params);
+      if (method_exists($coinstance, $name) || $coinstance->method_exists($name))
+      return call_user_func_array(array($coinstance, $name), $params);
     }
     $this->error("The requested method $name not found in class " . get_class($this));
   }
   
   public function __isset($name) {
-    return array_key_exists($name, $this->data) || method_exists($this, "get$name") | method_exists($this, "Get$name");
+    if (array_key_exists($name, $this->data) || method_exists($this, "get$name") || method_exists($this, "Get$name")) return true;
+    foreach ($this->coinstances as $coinstance) {
+      if (isset($coinstance->$name)) return true;
+    }
+    return false;
+  }
+  
+  public function method_exists($name) {
+    return false;
   }
   
   public function error($Msg) {
@@ -154,6 +163,9 @@ class tdata {
   }
   
   public function afterload() {
+    foreach ($this->coinstances as $coinstance) {
+      $coinstance->afterload();
+    }
   }
   
   public function lock() {
@@ -413,6 +425,7 @@ class tevents extends tdata {
     foreach ($this->coclasses as $coclass) {
       $this->coinstances[] = getinstance($coclass);
     }
+    parent::afterload();
   }
   
   protected function addmap($name, $value) {
@@ -444,9 +457,18 @@ class tevents extends tdata {
     $this->error("Unknown property $name in class ". get_class($this));
   }
   
+  public function method_exists($name) {
+    return in_array($name, $this->eventnames);
+  }
+  
   public  function __call($name, $params) {
     if (in_array($name, $this->eventnames)) return $this->callevent($name, $params);
     parent::__call($name, $params);
+  }
+  
+  public function __isset($name) {
+    if (parent::__isset($name)) return true;
+    return in_array($name, $this->eventnames);
   }
   
   protected function addevents() {
@@ -459,9 +481,10 @@ class tevents extends tdata {
     return false;
   }
   
-  protected function callevent($name, $params) {
+  public function callevent($name, $params) {
     $result = '';
     if (    $list = $this->get_events($name)) {
+      
       foreach ($list as $i => $item) {
         if (empty($item['class'])) {
           if (function_exists($item['func'])) {
@@ -595,6 +618,39 @@ class tevents_storage extends tevents {
   public function save() {
     return tstorage::save($this);
   }
+  
+}//class
+
+
+class tcoevents extends tevents {
+  private $owner;
+  
+  public function __construct() {
+    parent::__construct();
+    $a = func_get_args();
+    $owner = array_shift ($a);
+    $this->owner = $owner;
+    if (!isset($owner->data['events'])) $owner->data['events'] = array();
+    $this->events = &$owner->data['events'];
+    array_splice($this->eventnames, count($this->eventnames), 0, $a);
+  }
+  
+  public function __destruct() {
+    parent::__destruct();
+    unset($this->owner);
+  }
+  
+public function assignmap() {}
+protected function create() { }
+public function load() {}
+  public function afterload() {
+    $this->events = &$this->owner->data['events'];
+  }
+  
+  public function save() {
+    return $this->owner->save();
+  }
+  
   
 }//class
 

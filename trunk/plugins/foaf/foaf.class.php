@@ -232,7 +232,7 @@ class tfoaf extends titems {
     $profile = tprofile::instance();
     return array(
     'nick' => $profile->nick,
-    'url' => litepublisher::$site->url . litepublisher::$options->home,
+    'url' => litepublisher::$site->url . litepublisher::$site->home,
     'foafurl' => litepublisher::$site->url . '/foaf.xml'
     );
   }

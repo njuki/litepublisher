@@ -108,7 +108,7 @@ class tcommentmanager extends tevents {
     $status = 'approved';
     $idpost = (int) $idpost;
     $email = litepublisher::$options->fromemail;
-    $site = litepublisher::$site->url . litepublisher::$options->home;
+    $site = litepublisher::$site->url . litepublisher::$site->home;
     $name = 'Admin';
     if (class_exists('tprofile')) {
       $profile = tprofile::instance();

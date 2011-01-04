@@ -174,7 +174,7 @@ class tpinger extends tevents {
   }
   
   public function pingservices($url) {
-    $home = litepublisher::$site->url . litepublisher::$options->home;
+    $home = litepublisher::$site->url . litepublisher::$site->home;
     $list = explode("\n", $this->services);
     foreach ($list as $service) {
       $service = trim($service);

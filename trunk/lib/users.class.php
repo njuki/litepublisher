@@ -166,7 +166,7 @@ class tusers extends titems {
     if (!$this->itemexists($id)) return 404;
     $item = $this->getitem($id);
     $url = $item['url'];
-    if (!strpos($url, '.')) $url = litepublisher::$site->url . litepublisher::$options->home;
+    if (!strpos($url, '.')) $url = litepublisher::$site->url . litepublisher::$site->home;
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;
     turlmap::redir($url);
   }
