@@ -104,7 +104,7 @@ class tcommentform extends tevents {
     $args->subscribe = litepublisher::$options->defaultsubscribe;
     $args->content = '';
     $args->postid = $postid;
-    $args->antispam = '_Value' . strtotime ("+1 hour");
+    $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
     
     if ($user = self::getcomuser($postid)) {
       $args->name = $user['name'];
@@ -126,7 +126,10 @@ class tcommentform extends tevents {
   }
   
   private function checkspam($s) {
-    $TimeKey = (int) substr($s, strlen('_Value'));
+    if  (!($s = @base64_decode($s))) return false;
+    $sign = 'superspamer';
+    if (!strbegin($s, $sign)) return false;
+    $TimeKey = (int) substr($s, strlen($sign));
     return time() < $TimeKey;
   }
   
