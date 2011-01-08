@@ -57,7 +57,7 @@ class turlmap extends titems {
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
-    if (!litepublisher::$debug && litepublisher::$options->ob_cache) ob_end_flush ();
+    if (!litepublisher::$debug && litepublisher::$options->ob_cache) @ob_end_flush ();
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
   }
