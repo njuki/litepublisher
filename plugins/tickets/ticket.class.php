@@ -80,7 +80,7 @@ class tticket extends tchildpost {
   
   public function getticketcontent() {
     self::checklang();
-    $lang = tlocal::instance('childdata');
+    $lang = tlocal::instance('ticket');
     $args = targs::instance();
     foreach (array('type', 'state', 'prio') as $prop) {
       $value = $this->$prop;

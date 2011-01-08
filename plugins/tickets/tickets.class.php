@@ -23,7 +23,7 @@ class ttickets extends tchildposts {
   }
   
   public function createpoll() {
-    tlocal::loadsection('admin', 'ticket', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+    tlocal::loadsection('admin', 'tickets', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('tickets');
     $items = explode(',', $lang->pollitems);
     $polls = tpolls::instance();
