@@ -1,4 +1,5 @@
   `id` int unsigned NOT NULL auto_increment,
+  `class` enum('tpost') default 'tpost',
   `idurl` int unsigned NOT NULL default '0',
   `parent` int unsigned NOT NULL default '0',
   `author` int unsigned NOT NULL default '0',

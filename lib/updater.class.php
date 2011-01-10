@@ -63,7 +63,7 @@ class tupdater extends tevents {
   
   public function autoupdate() {
     //protect timeout
-    if (ob_get_level()) ob_end_flush ();
+    if (ob_get_level()) @ob_end_clean ();
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
     
