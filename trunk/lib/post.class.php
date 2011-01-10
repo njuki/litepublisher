@@ -13,12 +13,26 @@ class tpost extends titem implements  itemplate {
   private $_theme;
   
   public static function instance($id = 0) {
+$id = (int) $id;
+if (dbversion && ($id > 0)) {
+    if (isset(self::$instances['post'][$id]))     return self::$instances['post'][$id];
+if ($result = self::loadpost($id)) {
+self::$instances['post'][$id] = $result;
+return $result;
+}
+return null;
+}
     return parent::iteminstance(__class__, $id);
   }
   
   public static function getinstancename() {
     return 'post';
   }
+
+public static function newitem($class) {
+if (empty($class)) $class = __class__;
+return new $class();
+}
   
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
@@ -78,17 +92,34 @@ class tpost extends titem implements  itemplate {
     }
     return $result;
   }
-  
+
   protected function LoadFromDB() {
-    $db = litepublisher::$db;
-    if ($a = $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
-    where $db->posts.id = $this->id and  $db->urlmap.id  = $db->posts.idurl limit 1")) {
-      $trans = tposttransform::instance($this);
-      $trans->setassoc($a);
+if ($a = $this->getassoc($this->id)) {
+$this->setassoc($a);
       return true;
     }
     return false;
   }
+
+public static function loadpost($id) {
+if ($a = $this->getassoc($this->id)) {
+$self = self::newitem($a['class']);
+$self->setassoc($a);
+      return $self;
+    }
+    return false;
+}
+  
+protected function getassoc($id) {
+    $db = litepublisher::$db;
+return $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    where $db->posts.id = $id and  $db->urlmap.id  = $db->posts.idurl limit 1");
+}
+
+public function setassoc(array $a) {
+      $trans = tposttransform::instance($this);
+      $trans->setassoc($a);
+}
   
   public function save() {
     parent::save();
@@ -438,7 +469,7 @@ class tpost extends titem implements  itemplate {
     $result = $this->data['excerpt'];
     $posts = tposts::instance();
     $posts->beforeexcerpt($this, $result);
-    if ($this->revision < $posts->revision) $this->revision = $posts->revision;
+    if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result = $this->replacemore($result, true);
     if (litepublisher::$options->parsepost) {
       $result = $this->theme->parse($result);
@@ -496,7 +527,7 @@ class tpost extends titem implements  itemplate {
     $posts = tposts::instance();
     $posts->beforecontent($this, $result);
     //$posts->addrevision();
-    if ($this->revision < $posts->revision) $this->revision = $posts->revision;
+    if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result .= $this->getcontentpage(litepublisher::$urlmap->page);
     if (litepublisher::$options->parsepost) {
       $result = $this->theme->parse($result);
@@ -518,7 +549,7 @@ class tpost extends titem implements  itemplate {
     if ($value != $this->data['revision']) {
       $this->updatefiltered();
       $posts = tposts::instance();
-      $this->data['revision'] = $posts->revision;
+      $this->data['revision'] = (int) $posts->revision;
       if ($this->id > 0) $this->save();
     }
   }

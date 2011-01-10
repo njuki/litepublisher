@@ -55,6 +55,22 @@ class tdbmanager  {
   public function setautoincrement($table, $value) {
     $this->exec("ALTER TABLE $this->prefix$table AUTO_INCREMENT = $value");
   }
+
+public function getenum($table, $column) {
+if ($res = $this->query("describe $this->prefix$table $column")) {
+$r = $this->fetchassoc($res);
+$s = $r['Type'];
+if (preg_match('/enum\((.*?)\)/', $s, $m)) {
+$values = $m[1];
+$result = explode(',', $values);
+foreach ($result as $i => $v) {
+$result[$i] =trim($v, ' \'"');
+}
+return $result;
+}
+}
+return false;
+}
   
   public function getdatabases() {
     if ($res = $this->query("show databases")) {

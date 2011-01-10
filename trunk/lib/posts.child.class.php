@@ -104,11 +104,6 @@ class tchildposts extends tposts {
       $child = $this->newpost();
       $t->post  = $child;
       $t->setassoc($a);
-      /*
-      foreach ($child->childdata as $name => $value) {
-        if (isset($a[$name])) $child->childdata[$name] = $value;
-      }
-      */
       $child->fixdata();
       $result[] = $child->id;
     }
