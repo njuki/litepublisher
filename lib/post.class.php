@@ -7,6 +7,8 @@
 **/
 
 class tpost extends titem implements  itemplate {
+  public $childdata;
+  public $childtable;
   private $aprev;
   private $anext;
   private $ameta;
@@ -29,7 +31,7 @@ return null;
     return 'post';
   }
 
-public static function newitem($class) {
+public static function newpost($class) {
 if (empty($class)) $class = __class__;
 return new $class();
 }
@@ -40,6 +42,8 @@ return new $class();
   
   protected function create() {
     $this->table = 'posts';
+    $this->childtable = '';
+    $this->data['childdata'] = &$this->childdata;
     $this->data= array(
     'id' => 0,
     'idurl' => 0,
@@ -84,7 +88,40 @@ return new $class();
     return dbversion;
   }
   
+  public function __get($name) {
+if ($this->childtable) {
+    if ($name == 'id') return $this->data['id'];
+    if (method_exists($this, $get = 'get' . $name))   return $this->$get();
+array_key_exists($name, $this->childdata)) return $this->childdata[$name];
+}
+    return parent::__get($name);
+  }
+  
+  public function __set($name, $value) {
+if ($this->childtable) {
+    if ($name == 'id') return $this->setid($value);
+    if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
+    if (array_key_exists($name, $this->childdata)) {
+      $this->childdata[$name] = $value;
+      return true;
+    }
+}
+    return parent::__set($name, $value);
+  }
+  
+  public function __isset($name) {
+    return parent::__isset($name) || ($this->childtable && array_key_exists($name, $this->childdata) );
+  }
+
   //db
+  public function afterdb() {
+    //$this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
+  }
+
+public function beforedb() {
+//if ($this->childdata['closed'] == '') $this->childdata['closed'] = sqldate();
+}
+
   public function load() {
     $result = dbversion? $this->LoadFromDB() : parent::load();
     if ($result) {
@@ -94,7 +131,7 @@ return new $class();
   }
 
   protected function LoadFromDB() {
-if ($a = $this->getassoc($this->id)) {
+if ($a = self::getassoc($this->id)) {
 $this->setassoc($a);
       return true;
     }
@@ -102,15 +139,15 @@ $this->setassoc($a);
   }
 
 public static function loadpost($id) {
-if ($a = $this->getassoc($this->id)) {
-$self = self::newitem($a['class']);
+if ($a = self::getassoc($id)) {
+$self = self::newpost($a['class']);
 $self->setassoc($a);
       return $self;
     }
     return false;
 }
   
-protected function getassoc($id) {
+public static function getassoc($id) {
     $db = litepublisher::$db;
 return $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $db->posts.id = $id and  $db->urlmap.id  = $db->posts.idurl limit 1");
@@ -119,6 +156,11 @@ return $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->
 public function setassoc(array $a) {
       $trans = tposttransform::instance($this);
       $trans->setassoc($a);
+if ($this->childtable) {
+    if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
+      $this->childdata = $a;
+      $this->afterdb();
+}
 }
   
   public function save() {
@@ -128,11 +170,22 @@ public function setassoc(array $a) {
   
   protected function SaveToDB() {
     tposttransform ::instance($this)->save();
+if ($this->childtable) {
+$this->beforedb();
+    $this->childdata['id'] = $this->id;
+    $this->getdb($this->childtable)->updateassoc($this->childdata);
   }
+}
   
   public function addtodb() {
-    $this->setid(tposttransform ::add($this));
-    return $this->id;
+$id = tposttransform ::add($this);
+    $this->setid($id);
+if ($this->childtable) {
+$this->beforedb();
+    $this->childdata['id'] = $id;
+    $this->getdb($this->childtable)->updateassoc($this->childdata);
+  }
+    return $id;
   }
   
   public function free() {

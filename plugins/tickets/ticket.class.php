@@ -32,10 +32,14 @@ class tticket extends tchildpost {
     );
   }
   
-  public function fixdata() {
-    $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
-  }
-  
+  public function beforedb() {
+    if ($this->childdata['closed'] == '') $this->childdata['closed'] = sqldate();
+}
+
+  public function afterdb() {
+    $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1'; 
+}
+
   public function gethead() {
     $result = parent::gethead();
     if ($this->poll > 0) {

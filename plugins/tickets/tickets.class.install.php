@@ -19,13 +19,11 @@ function tticketsInstall($self) {
   
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->childstable, file_get_contents($self->resource .'ticket.sql'));
+$manager->alter('posts', "modify `class` enum('tticket')");
   
   litepublisher::$classes->lock();
-  litepublisher::$classes->add('tpostclasses', 'post.classes.php');
   $posts = tposts::instance();
-  $posts->deleted = $self->postdeleted;
-  
-  //install polls if its needed
+ //install polls if its needed
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
   $polls = tpolls::instance();

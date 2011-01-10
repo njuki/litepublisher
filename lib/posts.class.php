@@ -10,6 +10,7 @@ class tposts extends titems {
   public $itemcoclasses;
   public $archives;
   public $rawtable;
+  public $childstable;
   
   public static function instance() {
     return getinstance(__class__);
@@ -24,6 +25,7 @@ class tposts extends titems {
     $this->dbversion = dbversion;
     parent::create();
     $this->table = 'posts';
+    $this->childstable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
@@ -31,10 +33,6 @@ class tposts extends titems {
     $this->data['revision'] = 0;
     if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
-  }
-  
-  public function newpost() {
-    return tpost::instance();
   }
   
   public function getitem($id) {
@@ -58,24 +56,32 @@ class tposts extends titems {
     return $this->select("$this->thistable.id in ($list)", '');
   }
   
-  public function transformres($res) {
+  public function setassoc(array $items) {
+if (count($items) == 0) return array();
     $result = array();
     $t = new tposttransform();
-    $db = litepublisher::$db;
-    while ($a = $db->fetchassoc($res)) {
-      $t->post = $this->newpost();
+foreach ($items as $a) {
+      $t->post = tpost::newpost($a['class']);
       $t->setassoc($a);
       $result[] = $t->post->id;
     }
+unset($t);
     return $result;
   }
   
   public function select($where, $limit) {
     $db = litepublisher::$db;
+if ($this->childstable == '') {
     $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit");
-    
-    return $this->transformres($res);
+    } else {
+    $childstable = $db->prefix . $this->childstable;
+    $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $childstable.*
+    from $db->posts, $db->urlmap, $childstable
+    where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit");
+}
+
+    return $this->setassoc($db->fetchassoc($res));
   }
   
   public function getcount() {
@@ -86,11 +92,22 @@ class tposts extends titems {
     }
   }
   
+  public function getchildscount($where) {
+if ($this->childstable == '') return 0;
+    $db = litepublisher::$db;
+    $childstable = $db->prefix . $this->childstable;
+    if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $childstable
+    where $db->posts.status <> 'deleted' and $childstable.id = $db->posts.id $where")) {
+      if ($r = $db->fetchassoc($res)) return $r['count'];
+    }
+    return 0;
+  }
   
-  private function beforechange($post) {
+    private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
     $post->data['revision'] = $this->revision;
+$this->data['class'] = get_class($this);
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -157,6 +174,10 @@ class tposts extends titems {
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
+if ($this->childstable) {
+    $db = $this->getdb($this->childstable);
+    $db->delete("id = $id");
+}
       //$this->deletedeleted();
     } else {
       if ($post = tpost::instance($id)) {
@@ -192,6 +213,16 @@ class tposts extends titems {
     
     $db->exec("delete from $db->postsmeta where id in ($deleted)");
     $this->db->delete("id in ($deleted)");
+
+if ($this->childstable) {
+    $db = $this->getdb($this->childstable);
+    $childsdeleted = $db->res2id($db->query("select id from $db->prefix$this->childstable where id not in
+    (select $db->posts.id from $db->posts)"));
+    if (count($childsdeleted) > 0) {
+    $db->table = $this->childstable;
+    $db->deleteitems($childsdeleted);
+}
+}
     $this->cointerface('deletedeleted', $deleted);
   }
   
