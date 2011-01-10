@@ -980,7 +980,7 @@ class Markdown_Parser {
 			# in current context.
 			#
 			$token_re = $this->em_strong_prepared_relist["$em$strong"];
-			
+			if (!$token_re ) break;
 			#
 			# Each loop iteration search for the next emphasis token. 
 			# Each token is then passed to handleSpanToken.

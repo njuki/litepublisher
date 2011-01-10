@@ -17,7 +17,6 @@ class ttickets extends tchildposts {
     $this->childstable = 'tickets';
   }
   
-  
   public function newpost() {
     return tticket::instance();
   }
