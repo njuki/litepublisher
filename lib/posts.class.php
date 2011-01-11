@@ -81,7 +81,7 @@ if ($this->childstable == '') {
     where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit");
 }
 
-    return $this->setassoc($db->fetchassoc($res));
+    return $this->setassoc($db->res2assoc($res));
   }
   
   public function getcount() {

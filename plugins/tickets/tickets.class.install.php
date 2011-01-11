@@ -8,18 +8,16 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-  tfiler::deletemask(litepublisher::$paths->languages . '*.php');
-  $self->checkadminlang();
-  
+$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    tlocal::loadsection('admin', 'tickets', $dir);
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
   $filter->save();
-  
   litepublisher::$options->parsepost = false;
   
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->childstable, file_get_contents($self->resource .'ticket.sql'));
-$manager->alter('posts', "modify `class` enum('tticket')");
+  $manager->CreateTable($self->childstable, file_get_contents($dir .'ticket.sql'));
+$manager->addenum('posts', 'class', 'tticket');
   
   litepublisher::$classes->lock();
   $posts = tposts::instance();
@@ -31,6 +29,7 @@ $manager->alter('posts', "modify `class` enum('tticket')");
   $polls->save();
   
   litepublisher::$classes->Add('tticket', 'ticket.class.php', basename(dirname(__file__) ));
+  tticket::checklang();
   litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', basename(dirname(__file__) ));
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
@@ -49,7 +48,7 @@ $manager->alter('posts', "modify `class` enum('tticket')");
   
   $idmenu = $adminmenus->createitem($parent, 'fixed', 'ticket', 'tadmintickets');
   $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['fixed'];
-  
+ 
   $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
   $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
   
@@ -57,7 +56,7 @@ $manager->alter('posts', "modify `class` enum('tticket')");
   
   $menus = tmenus::instance();
   $menus->lock();
-  $ini = parse_ini_file($self->resource . litepublisher::$options->language . '.install.ini', false);
+  $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
   
   $menu = tticketsmenu::instance();
   $menu->type = 'tickets';
@@ -124,15 +123,16 @@ function tticketsUninstall($self) {
   litepublisher::$classes->delete('tticketsmenu');
   litepublisher::$classes->unlock();
   
-  $manager = tdbmanager ::instance();
-  $manager->deletetable($self->childstable);
-  
   if (class_exists('tpolls')) {
     $polls = tpolls::instance();
     $polls->garbage = true;
     $polls->save();
   }
-  tfiler::deletemask(litepublisher::$paths->languages . '*.php');
+tlocal::clearcache();
+
+  $manager = tdbmanager ::instance();
+  $manager->deletetable($self->childstable);
+$manager->delete_enum('posts', 'class', 'tticket');
 }
 
 ?>

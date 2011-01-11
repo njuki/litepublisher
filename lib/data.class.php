@@ -38,7 +38,7 @@ class tdata {
       foreach ($this->coinstances as $coinstance) {
         if (isset($coinstance->$name)) return $coinstance->$name;
       }
-      return    $this->error("The requested property $name not found in class ". get_class($this));
+      return    $this->error(sprintf('The requested property "%s" not found in class  %s', $name, get_class($this)));
     }
   }
   

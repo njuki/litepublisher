@@ -11,7 +11,7 @@ class tposttransform  {
   public static $arrayprops= array('categories', 'tags', 'files');
   public static $intprops= array('id', 'idurl', 'parent', 'author', 'revision', 'icon', 'commentscount', 'pingbackscount', 'pagescount', 'idview');
   public static $boolprops= array('commentsenabled', 'pingenabled');
-  public static $props = array('id', 'idurl', 'parent', 'author', 'revision',
+  public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
   'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',

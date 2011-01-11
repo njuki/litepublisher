@@ -71,8 +71,46 @@ return $result;
 }
 return false;
 }
+
+public function setenum($table, $column, array $enum) {
+foreach ($enum as $i => $item) {
+$enum[$i] = sprintf('\'%s\'', trim($item));
+}
+$items = implode(',', $enum);
+$tmp = $column . '_tmp';
+$this->exec("alter table $this->prefix$table add $tmp enum($items)");
+$this->exec("update $this->prefix$table set $tmp = $column + 0");
+$this->exec("alter table $this->prefix$table drop $column");
+$this->exec("alter table $this->prefix$table change $tmp $column enum($items)");
+/*
+$res = $this->query("describe $this->prefix$table");
+echo "<pre>\n";
+var_dump($this->res2assoc($res));
+*/
+}
+
+public function addenum($table, $column, $value) {
+if ($values = $this->getenum($table, $column)) {
+if (!in_array($value, $values))  {
+$values[] = $value;
+$this->setenum($table, $column, $values);
+}
+}
+}
+
+public function delete_enum($table, $column, $value) {
+if ($values = $this->getenum($table, $column)) {
+$value = trim($value, ' \'"');
+if (false !== ($i = array_search($value, $values))) {
+unset($values[$i]);
+$default = $values[0];
+$this->exec("update $this->prefix$table set $column = '$default' where $column = '$value'");
+$this->setenum($table, $column, $values);
+}
+}
+}
   
-  public function getdatabases() {
+    public function getdatabases() {
     if ($res = $this->query("show databases")) {
       return $this->res2id($res);
     }

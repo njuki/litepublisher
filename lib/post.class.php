@@ -51,6 +51,7 @@ return new $class();
     'author' => 0,
     'revision' => 0,
     'icon' => 0,
+'class' => '',
     'posted' => 0,
     'modified' => 0,
     'url' => '',
@@ -92,7 +93,7 @@ return new $class();
 if ($this->childtable) {
     if ($name == 'id') return $this->data['id'];
     if (method_exists($this, $get = 'get' . $name))   return $this->$get();
-array_key_exists($name, $this->childdata)) return $this->childdata[$name];
+if (array_key_exists($name, $this->childdata)) return $this->childdata[$name];
 }
     return parent::__get($name);
   }
@@ -160,6 +161,7 @@ if ($this->childtable) {
     if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
       $this->childdata = $a;
       $this->afterdb();
+}
 }
 }
   
