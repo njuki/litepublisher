@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttickets extends tchildposts {
+class ttickets extends tposts {
   
   public static function instance() {
     return getinstance(__class__);

@@ -7,6 +7,7 @@
 **/
 
 function tpostsInstall($self) {
+if ('tposts' != get_class($self)) return;
   if (dbversion) {
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
@@ -23,11 +24,12 @@ function tpostsInstall($self) {
 }
 
 function tpostsUninstall($self) {
+if ('tposts' != get_class($self)) return;
   $Cron = tcron::instance();
   $Cron->deleteclass(get_class($self));
   
   $widgets = twidgets::instance();
-  $widgets->deleteclass($clf);
+  $widgets->deleteclass($self);
   //@rmdir(litepublisher::$paths->data . 'posts');
 }
 

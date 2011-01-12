@@ -298,6 +298,16 @@ class tdatabase {
     }
     return $result;
   }
+
+  public function res2items($res) {
+    $result = array();
+    if ($res) {
+      while ($r = mysql_fetch_assoc($res)) {
+        $result[(int) $r['id']] = $r;
+      }
+    }
+    return $result;
+  }
   
   public function fetchassoc($res) {
     return mysql_fetch_assoc($res);
