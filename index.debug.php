@@ -100,13 +100,9 @@ litepublisher::$options->showerrors();
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
-/*
+
 echo "<pre>\n";
 $man = tdbmanager::instance();
 echo $man->performance();
-echo "\n", microtime(true) - litepublisher::$microtime, "\n";
-echo tfilestorage::$time, "\n";
-echo tfilestorage::$time2, "\n";
-*/
-//echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
+echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 ?>

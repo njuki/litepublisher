@@ -6,15 +6,18 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tticket extends tchildpost {
+class tticket extends tpost {
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
-  protected function create() {
+
+public static function getchildtable() {
+return 'tickets';
+}
+
+    protected function create() {
     parent::create();
-    $this->childtable = 'tickets';
     $this->data['childdata'] = &$this->childdata;
     $this->childdata = array(
     'id' => 0,

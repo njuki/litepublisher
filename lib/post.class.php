@@ -8,7 +8,7 @@
 
 class tpost extends titem implements  itemplate {
   public $childdata;
-  public $childtable;
+public $childtable;
   private $aprev;
   private $anext;
   private $ameta;
@@ -31,6 +31,10 @@ return null;
     return 'post';
   }
 
+public static function getchildtable() {
+return '';
+}
+
 public static function newpost($class) {
 if (empty($class)) $class = __class__;
 return new $class();
@@ -42,7 +46,8 @@ return new $class();
   
   protected function create() {
     $this->table = 'posts';
-    $this->childtable = '';
+//last binding, like cache
+$this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
     $this->data['childdata'] = &$this->childdata;
     $this->data= array(
     'id' => 0,
@@ -51,7 +56,7 @@ return new $class();
     'author' => 0,
     'revision' => 0,
     'icon' => 0,
-'class' => '',
+'class' => __class__,
     'posted' => 0,
     'modified' => 0,
     'url' => '',

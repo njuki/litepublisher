@@ -71,17 +71,38 @@ unset($t);
   
   public function select($where, $limit) {
     $db = litepublisher::$db;
-if ($this->childstable == '') {
-    $res = $db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
-    where $where and  $db->urlmap.id  = $db->posts.idurl $limit");
-    } else {
+if ($this->childstable) {
     $childstable = $db->prefix . $this->childstable;
-    $res = $db->query("select $db->posts.*, $db->urlmap.url as url, $childstable.*
+return $this->setassoc($db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url, $childstable.*
     from $db->posts, $db->urlmap, $childstable
-    where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit");
+    where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
 }
 
-    return $this->setassoc($db->res2assoc($res));
+$items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    where $where and  $db->urlmap.id  = $db->posts.idurl $limit"));
+
+if (count($items) == 0) return array();
+$subclasses = array();
+foreach ($items as &$item) {
+if (empty($item['class'])) $item['class'] = 'tpost';
+if ($item['class'] != 'tpost') {
+$subclasses[$item['class']][] = $item['id'];
+}
+}
+unset($item);
+
+foreach ($subclasses as $class => $list) {
+$childtable =  $db->prefix . 
+call_user_func_array(array($class, 'getchildtable'), array());
+$list = implode(',', $list);
+$subitems = $db->res2items($db->query("select $childtable.* 
+from $childtable where id in ($list)"));
+foreach ($subitems as $id => $subitem) {
+$items[$id] = array_merge($items[$id], $subitem);
+}
+}
+
+return $this->setassoc($items);
   }
   
   public function getcount() {
