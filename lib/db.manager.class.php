@@ -143,28 +143,7 @@ $this->setenum($table, $column, $values);
     return $this->exec("CREATE DATABASE $name");
   }
   
-  private function deletedeleted() {
-    $posts = tposts::instance();
-    $posts->deletedeleted();
-    
-    $db = litepublisher::$db;
-    //comments
-    $db->exec("delete from $db->rawcomments where id in
-    (select id from $db->comments where status = 'deleted')");
-    
-    $db->exec("delete from $db->comments where status = 'deleted'");
-    
-    $db->exec("delete from $db->comusers where id not in
-    (select DISTINCT author from $db->comments)");
-    
-    //subscribtions
-    $db->exec("delete from $db->subscribers where post not in (select id from $db->posts)");
-    $db->exec("delete from $db->subscribers where item not in (select id from $db->comusers)");
-  }
-  
   public function optimize() {
-    $this->deletedeleted();
-    sleep(2);
     $prefix = strtolower(litepublisher::$options->dbconfig['prefix']);
     $tables = $this->gettables();
     foreach ($tables as $table) {
