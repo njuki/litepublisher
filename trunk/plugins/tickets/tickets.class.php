@@ -14,7 +14,7 @@ class ttickets extends tposts {
   
   protected function create() {
     parent::create();
-    $this->childstable = 'tickets';
+    $this->childtable = 'tickets';
   }
   
   public function newpost() {
@@ -54,7 +54,7 @@ class ttickets extends tposts {
   }
   
   public function postdeleted($id) {
-    $db = $this->getdb($this->childstable);
+    $db = $this->getdb($this->childtable);
     $idpoll = $db->getvalue($id, 'poll');
     $db->delete("id = $id");
     if ($idpoll > 0) {
@@ -65,8 +65,8 @@ class ttickets extends tposts {
   
   public function deletechilds(array $items) {
     $deleted = implode(',', $items);
-    $db = $this->getdb($this->childstable);
-    $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childstable where (id in ($deleted)) and (poll  > 0)"));
+    $db = $this->getdb($this->childtable);
+    $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childtable where (id in ($deleted)) and (poll  > 0)"));
     if (count ($idpolls) > 0) {
       $polls = tpolls::instance();
       foreach ($idpolls as $idpoll)       $pols->delete($idpoll);

@@ -10,7 +10,7 @@ class tposts extends titems {
   public $itemcoclasses;
   public $archives;
   public $rawtable;
-  public $childstable;
+  public $childtable;
   
   public static function instance() {
     return getinstance(__class__);
@@ -25,7 +25,7 @@ class tposts extends titems {
     $this->dbversion = dbversion;
     parent::create();
     $this->table = 'posts';
-    $this->childstable = '';
+    $this->childtable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
@@ -71,11 +71,11 @@ unset($t);
   
   public function select($where, $limit) {
     $db = litepublisher::$db;
-if ($this->childstable) {
-    $childstable = $db->prefix . $this->childstable;
-return $this->setassoc($db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url, $childstable.*
-    from $db->posts, $db->urlmap, $childstable
-    where $where and  $db->posts.id = $childstable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
+if ($this->childtable) {
+    $childtable = $db->prefix . $this->childtable;
+return $this->setassoc($db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url, $childtable.*
+    from $db->posts, $db->urlmap, $childtable
+    where $where and  $db->posts.id = $childtable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
 }
 
 $items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
@@ -114,11 +114,11 @@ return $this->setassoc($items);
   }
   
   public function getchildscount($where) {
-if ($this->childstable == '') return 0;
+if ($this->childtable == '') return 0;
     $db = litepublisher::$db;
-    $childstable = $db->prefix . $this->childstable;
-    if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $childstable
-    where $db->posts.status <> 'deleted' and $childstable.id = $db->posts.id $where")) {
+    $childtable = $db->prefix . $this->childtable;
+    if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $childtable
+    where $db->posts.status <> 'deleted' and $childtable.id = $db->posts.id $where")) {
       if ($r = $db->fetchassoc($res)) return $r['count'];
     }
     return 0;
@@ -195,11 +195,10 @@ $this->data['class'] = get_class($this);
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
-if ($this->childstable) {
-    $db = $this->getdb($this->childstable);
+if ($this->childtable) {
+    $db = $this->getdb($this->childtable);
     $db->delete("id = $id");
 }
-      //$this->deletedeleted();
     } else {
       if ($post = tpost::instance($id)) {
         $idurl = $post->idurl;
@@ -221,32 +220,7 @@ if ($this->childstable) {
     return true;
   }
   
-  public function deletedeleted() {
-    $deleted = $this->db->idselect("status = 'deleted'");
-    if (count($deleted) == 0) return;
-    $deleted = implode(',', $deleted);
-    $db = litepublisher::$db;
-    $db->exec("delete from $db->urlmap where id in
-    (select idurl from $this->thistable where id in ($deleted))");
-    
-    $this->getdb($this->rawtable)->delete("id in ($deleted)");
-    $this->getdb('pages')->delete("id in ($deleted)");
-    
-    $db->exec("delete from $db->postsmeta where id in ($deleted)");
-    $this->db->delete("id in ($deleted)");
 
-if ($this->childstable) {
-    $db = $this->getdb($this->childstable);
-    $childsdeleted = $db->res2id($db->query("select id from $db->prefix$this->childstable where id not in
-    (select $db->posts.id from $db->posts)"));
-    if (count($childsdeleted) > 0) {
-    $db->table = $this->childstable;
-    $db->deleteitems($childsdeleted);
-}
-}
-    $this->cointerface('deletedeleted', $deleted);
-  }
-  
   public function updated(tpost $post) {
     if (!$this->dbversion) {
       $this->items[$post->id] = array(
