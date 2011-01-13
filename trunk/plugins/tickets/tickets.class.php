@@ -53,17 +53,7 @@ class ttickets extends tposts {
     return parent::edit($post);
   }
   
-  public function postdeleted($id) {
-    $db = $this->getdb($this->childtable);
-    $idpoll = $db->getvalue($id, 'poll');
-    $db->delete("id = $id");
-    if ($idpoll > 0) {
-      $polls = tpolls::instance();
-      $polls->delete($idpoll);
-    }
-  }
-  
-  public function deletechilds(array $items) {
+  public function postsdeleted(array $items) {
     $deleted = implode(',', $items);
     $db = $this->getdb($this->childtable);
     $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childtable where (id in ($deleted)) and (poll  > 0)"));

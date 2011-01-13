@@ -39,14 +39,14 @@ class tticketsmenu extends tmenu {
       $perpage = litepublisher::$options->perpage;
       $theme = ttheme::instance();
       $tickets = ttickets::instance();
-      $tt = litepublisher::$db->prefix . $tickets->childstable;
+      $tt = litepublisher::$db->prefix . $tickets->childtable;
       $pt = litepublisher::$db->posts;
       $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
       $count = $tickets->getchildscount($where);
       $from = ($page - 1) * $perpage;
       if ($from <= $count)  {
         $items = $tickets->select("$pt.status = 'published' $where", " order by $pt.posted desc, $tt.type, $tt.state, $tt.prio, $tt.votes desc limit $from, $perpage");
-        $result .= $theme->getposts($items, false);
+        $result = $theme->getposts($items, false);
       }
       $result .=$theme->getpages($this->url, $page + 1, ceil($count / $perpage) + 1);
     }
@@ -57,30 +57,31 @@ class tticketsmenu extends tmenu {
     $result = '';
     $tickets = ttickets::instance();
     $db = litepublisher::$db;
-    $tt = $db->prefix . $tickets->childstable;
+    $tt = $db->prefix . $tickets->childtable;
     $pt = $db->posts;
     $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
-    $res = $db->query("select $pt.id, $pt.idurl, $pt.title,
+
+   $items = $db->res2assoc($db->query("select $pt.id, $pt.idurl, $pt.title,
     $db->urlmap.url as url, $tt.type, $tt.state, $tt.votes
     from $pt, $db->urlmap, $tt
     where $pt.id = $tt.id and $db->urlmap.id  = $pt.idurl  and $pt.status = 'published' $where
-    order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio");
+    order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio"));
     
-    $count = 0;
+if (count($items) == 0) return '';
     $url = litepublisher::$site->url;
     $index = $this->type == 'tickets' ? 'type' : 'state';
     tticket::checklang();
     $local = tlocal::$data['ticket'];
-    while ($item = $db->fetchassoc($res)) {
+
+foreach ($items as $item) {
       $result .= sprintf('<li>%4$s: <a href="%1$s%2$s" title="%3$s">%3$s</a></li>', $url, $item['url'], $item['title'], $local[$item[$index]]);
-      $count++;
     }
     
-    if ($count == 0) return '';
+
     $result = sprintf('<ul>%s</ul>', $result);
     
     $theme = ttheme::instance();
-    $result .=$theme->getpages($this->url, 1, ceil($count/ litepublisher::$options->perpage) + 1);
+    $result .=$theme->getpages($this->url, 1, ceil(count($items)/ litepublisher::$options->perpage) + 1);
     return $result;
   }
   
