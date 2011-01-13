@@ -7,6 +7,7 @@
 **/
 
 class tdboptimizer extends tevents {
+public $childtables;
 
     public static function instance() {
     return getinstance(__class__);
@@ -15,36 +16,42 @@ class tdboptimizer extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'db.optimizer';
+$this->addmap('childtables', array());
+$this->addevents('postsdeleted');
 }
 
+public function garbageposts($table) {
+$db = litepublisher::$db;
+    $deleted = $db->res2id($db->query("select id from $db->prefix$table where id not in
+    (select $db->posts.id from $db->posts)"));
+    if (count($deleted) > 0) {
+$db->table = $table;
+    $db->deleteitems($deleted);
+}
+}
 
   public function deletedeleted() {
 //posts
-    $deleted = $this->db->idselect("status = 'deleted'");
-    if (count($deleted) == 0) return;
-    $deleted = implode(',', $deleted);
     $db = litepublisher::$db;
+$db->table = 'posts';
+    $items = $db->idselect("status = 'deleted'");
+    if (count($items) > 0) {
+    $deleted = sprintf('id in (%s)', implode(',', $items));
     $db->exec("delete from $db->urlmap where id in
-    (select idurl from $this->thistable where id in ($deleted))");
+    (select idurl from $db->tposts where $deleted)");
     
-    $this->getdb($this->rawtable)->delete("id in ($deleted)");
-    $this->getdb('pages')->delete("id in ($deleted)");
-    
-    $db->exec("delete from $db->postsmeta where id in ($deleted)");
-    $this->db->delete("id in ($deleted)");
+foreach (array('posts', 'rawposts', 'pages', 'postsmeta') s $table) {
+$db->table = $table;
+$db->delete($deleted);
+}
 
-if ($this->childtable) {
-    $db = $this->getdb($this->childtable);
-    $childsdeleted = $db->res2id($db->query("select id from $db->prefix$this->childtable where id not in
-    (select $db->posts.id from $db->posts)"));
-    if (count($childsdeleted) > 0) {
-    $db->table = $this->childtable;
-    $db->deleteitems($childsdeleted);
+foreach ($this->childtables as $table) {
+$db->table = $table;
+$db->delete($deleted);
 }
-}
-  
-    
-    $db = litepublisher::$db;
+$this->postsdeleted($items);
+  }
+
     //comments
     $db->exec("delete from $db->rawcomments where id in
     (select id from $db->comments where status = 'deleted')");
@@ -68,4 +75,4 @@ $man->optimize();
 
 }//class
 
-?>>
+?>

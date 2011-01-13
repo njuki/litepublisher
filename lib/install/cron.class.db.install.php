@@ -10,7 +10,7 @@ function tcronInstall($self) {
   $manager = tdbmanager ::instance();
   $manager->CreateTable('cron', file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'cron.sql'));
   
-  $self->addnightly(get_class($manager), 'optimize', null);
+  $self->addnightly('tdboptimizer', 'optimize', null);
 }
 
 ?>
