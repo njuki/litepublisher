@@ -190,7 +190,7 @@ $id = tposttransform ::add($this);
 if ($this->childtable) {
 $this->beforedb();
     $this->childdata['id'] = $id;
-    $this->getdb($this->childtable)->updateassoc($this->childdata);
+    $this->getdb($this->childtable)->insert_a($this->childdata);
   }
     return $id;
   }

@@ -16,9 +16,10 @@ $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATO
   litepublisher::$options->parsepost = false;
   
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->childstable, file_get_contents($dir .'ticket.sql'));
+  $manager->CreateTable($self->childtable, file_get_contents($dir .'ticket.sql'));
 $manager->addenum('posts', 'class', 'tticket');
 
+$optimizer = tdboptimizer::instance();
 $optimizer->lock();
 $optimizer->childtables[] = 'tickets';
 $optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
@@ -135,11 +136,11 @@ function tticketsUninstall($self) {
 tlocal::clearcache();
 
   $manager = tdbmanager ::instance();
-  $manager->deletetable($self->childstable);
+  $manager->deletetable($self->childtable);
 $manager->delete_enum('posts', 'class', 'tticket');
 
 $optimizer = tdboptimizer::instance();
-$optmizer->lock();
+$optimizer->lock();
 $optimizer->unsubscribeclass($self);
 if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
 unset($optimizer->childtables[$i]);

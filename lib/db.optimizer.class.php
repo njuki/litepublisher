@@ -36,11 +36,12 @@ $db->table = $table;
 $db->table = 'posts';
     $items = $db->idselect("status = 'deleted'");
     if (count($items) > 0) {
+$this->postsdeleted($items);
     $deleted = sprintf('id in (%s)', implode(',', $items));
     $db->exec("delete from $db->urlmap where id in
-    (select idurl from $db->tposts where $deleted)");
+    (select idurl from $db->posts where $deleted)");
     
-foreach (array('posts', 'rawposts', 'pages', 'postsmeta') s $table) {
+foreach (array('posts', 'rawposts', 'pages', 'postsmeta')  as $table) {
 $db->table = $table;
 $db->delete($deleted);
 }
@@ -49,7 +50,6 @@ foreach ($this->childtables as $table) {
 $db->table = $table;
 $db->delete($deleted);
 }
-$this->postsdeleted($items);
   }
 
     //comments

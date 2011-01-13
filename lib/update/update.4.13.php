@@ -28,6 +28,8 @@ $optimizer->lock();
 $optimizer->childtables[] = 'tickets';
 $optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
 $optimizer->unlock();
+    $posts = tposts::instance();
+    $posts->unsubscribeclassname('ttickets');
 }
 
 tstorage::savemodified();
