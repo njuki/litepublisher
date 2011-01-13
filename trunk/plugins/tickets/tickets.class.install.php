@@ -18,9 +18,13 @@ $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATO
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->childstable, file_get_contents($dir .'ticket.sql'));
 $manager->addenum('posts', 'class', 'tticket');
-  
+
+$optimizer->lock();
+$optimizer->childtables[] = 'tickets';
+$optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
+$optimizer->unlock();
+
   litepublisher::$classes->lock();
-  $posts = tposts::instance();
  //install polls if its needed
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
@@ -133,6 +137,15 @@ tlocal::clearcache();
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childstable);
 $manager->delete_enum('posts', 'class', 'tticket');
+
+$optimizer = tdboptimizer::instance();
+$optmizer->lock();
+$optimizer->unsubscribeclass($self);
+if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
+unset($optimizer->childtables[$i]);
+}
+$optimizer->unlock();
+
 }
 
 ?>
