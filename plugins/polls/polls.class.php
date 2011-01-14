@@ -348,7 +348,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   }
   
   public function getcookie($cookie) {
-    if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote($cookie)))) {
+    if (($cookie != '') && ( $iduser = $this->getdb($this->userstable)->findid('cookie = ' .dbquote(substr($cookie, 0, 32))))) {
       return $cookie;
     }
     $cookie = md5uniq();

@@ -31,6 +31,7 @@ class tposts extends titems {
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
+$this->data['syncmeta'] = false;
     if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
@@ -66,6 +67,7 @@ foreach ($items as $a) {
       $result[] = $t->post->id;
     }
 unset($t);
+if ($this->syncmeta)  tmetapost::loaditems($result);
     return $result;
   }
   
