@@ -218,6 +218,7 @@ class ttheme extends tevents {
   public function getpages($url, $page, $count) {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $args = targs::instance();
+$args->count = $count;
     $from = 1;
     $to = $count;
     $perpage = litepublisher::$options->perpage;
@@ -241,7 +242,11 @@ $args->perpage = $perpage;
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }
     
-    return str_replace('$items', implode($this->templates['content.navi.divider'], $a), $this->templates['content.navi']);
+$args->link =$url;
+$args->pageurl = $pageurl;
+$args->page = $page;
+$args->items = implode($this->templates['content.navi.divider'], $a);
+    return $this->parsearg($this->templates['content.navi'], $args);
   }
   
   public function getposts(array $items, $lite) {
