@@ -100,9 +100,10 @@ litepublisher::$options->showerrors();
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
-
+/*
 echo "<pre>\n";
 $man = tdbmanager::instance();
 echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
+*/
 ?>

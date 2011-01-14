@@ -74,6 +74,31 @@ class tmetapost extends titem {
       $this->db->insertrow("(id, name, value) values ($this->id, $name, $value)");
     }
   }
+
+public static function loaditems(array $items) {
+    if (!dbversion || count($items) == 0) return;
+    //exclude already loaded items
+    if (isset(self::$instances['postmeta'])) {
+      $items = array_diff($items, array_keys(self::$instances['postmeta']));
+    } else {
+self::$instances['postmeta'] = array();
+}
+    if (count($items) == 0) return;
+$instances = &self::$instances['postmeta'];
+$db = litepublisher::$db;
+$db->table = 'postsmeta';
+    $res = $db->select(sprintf('id in (%s)', implode(',', $items)));
+    while ($row = $db->fetchassoc($res)) {
+$id = (int) $row['id'];
+if (!isset($instances[$id])) {
+$instances[$id] = new self();
+$instances[$id]->data['id'] = $id;
+}
+      $instances[$id]->data[$row['name']] = $row['value'];
+    }
+    return true;
+
+}
   
 }//class
 ?>

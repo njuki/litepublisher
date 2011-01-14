@@ -5,6 +5,11 @@ if (!dbversion) return;
 
 $man = tdbmanager::instance();
 $man->alter('posts', "add `class` enum('tpost') default 'tpost' after id");
+
+$posts = tposts::instance();
+$posts->data['syncmeta'] = false;
+$posts->save();
+
 litepublisher::$classes->add('tdboptimizer','db.optimizer.class.php');
 $cron = tcron::instance();
   $cron->addnightly('tdboptimizer', 'optimize', null);
