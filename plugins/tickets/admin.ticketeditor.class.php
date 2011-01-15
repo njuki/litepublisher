@@ -62,6 +62,7 @@ class tticketeditor extends tposteditor {
     $ticket = tticket::instance($this->idpost);
     ttheme::$vars['ticket'] = $ticket;
     $args = targs::instance();
+$args->id = $this->idpost;
     $args->title = $ticket->title;
     $args->categories = $this->getcategories($ticket);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
@@ -121,7 +122,7 @@ class tticketeditor extends tposteditor {
         $hold = $tickets->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
         $approved = $tickets->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
         if ($approved < 3) {
-          if ($hold - $approved >= 1) return $html->h2->noapproved;
+          if ($hold - $approved >= 2) return $html->h2->noapproved;
           $newstatus = 'draft';
         }
       }
@@ -147,6 +148,7 @@ class tticketeditor extends tposteditor {
       $ticket->closed = time();
       $id = $tickets->add($ticket);
       $_GET['id'] = $id;
+      $_POST['id'] = $id;
       if (litepublisher::$options->group == 'ticket') {
         $users =tusers::instance();
         $user = $users->getitem(litepublisher::$options->user);

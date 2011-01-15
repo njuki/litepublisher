@@ -23,9 +23,14 @@ class tmarkdownplugin extends tplugin {
   }
   
   public function filter(&$content) {
+    if ($this->deletep) $content = str_replace('_', '&#95;', $content);
     $content = $this->parser->transform($content);
+    if ($this->deletep) $content = strtr($content, array(
+'<p>' => '',
+ '</p>' => '',
+'&#95;' => '_'
+));
     if ($this->nocontinue) return true;
-    if ($this->deletep) $content = str_replace(array('<p>', '</p>',), '', $content);
   }
   
   public function install() {

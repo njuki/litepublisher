@@ -1,5 +1,5 @@
   `id` int unsigned NOT NULL default '0',
-  `type` enum('bug','feature','support','task') NOT NULL default 'bug',
+  `type` enum('bug','feature','support','task') default 'bug',
   `state` enum('fixed','opened','wontfix','invalid','duplicate','reassign') default 'opened',
   `prio` enum('trivial','minor','major','critical','blocker') default 'major',
   `assignto` int unsigned NOT NULL default '0',
