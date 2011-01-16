@@ -4,23 +4,23 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<title>$template.title</title>
   <link type="text/css" href="$template.url/common.css" rel="stylesheet" />
-		<script src="$site.url/js/litepublisher/loader.min.js"></script>
+	$template.head
 	<!--[if IE 6]>
 		<script>		
-load_script("$site.url/themes/default/css/DD_belatedPNG.js", function() {
+        $.getScript("$site.url/themes/default/css/DD_belatedPNG.js", function() {
+    $(document).ready(function() {
 		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, #lastcomments li, #lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
+});
 });
 		 </script>
 	<![endif]--> 
   <script type="text/javascript">
-load_script("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js", function() {
   $(document).ready(function() {
 $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
     $("a[rel^='prettyPhoto']").prettyPhoto();
   });
-});
   </script>
-	$template.head
+
 </head>
 <body>
 	<div id="header"><div id="logo"><span class="name"><a href="$site.url/">$site.name</a></span><span class="slogan">$site.description</span>
