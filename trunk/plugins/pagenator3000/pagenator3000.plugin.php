@@ -12,50 +12,30 @@ class tpagenator3000 extends tplugin {
     return getinstance(__class__);
   }
   
-  public function gethead() {
-    $url = litepublisher::$site->files . '/plugins/' . tplugins::getname(__file__);
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    $result = '<link rel="stylesheet" href="' . $url . '/ed.css" type="text/css" />';
-    $result .= '<script type="text/javascript">';
-    $result .= '    var URLpromt = "' . $about['urlpromt'] . '";';
-    $result .= ' var IMGpromt = "' . $about['imgpromt'] . '";';
-    $result .= '</script>';
-    $result .= '<script type="text/javascript" src="'. $url . '/ed.js"></script>';
-    return $result;
-  }
-
 public function themeparsed(ttheme $theme) {
+if (strpos($theme->templates['content.navi'], 'paginator3000.js')) return;
 $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
-$about = tplugins::getabouttplugins::getname(__file__));(
-$head = '		<script type="text/javascript">
+$about = tplugins::getabout(tplugins::getname(__file__));
+$head = '<script type="text/javascript">
   $(document).ready(function() {
-    $('<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />').appendTo("head");
+    $(\'<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />\').appendTo("head");
         $.getScript("' . $url . 'paginator3000.js", function() {
-    $('#paginator').paginator({
+$("#paginator").addClass("paginator");
+    $("#paginator").paginator({
         pagesTotal : %%count%%,
         pagesSpan : %%perpage%%,
         pageCurrent : %%page%%,
-        baseUrl : function(num) {
-if (nul == 1) return '%%url%%';
-            var str = window.location.search;
-            if (str) {
-                if(str.indexOf('/page/') + 1) {
-                    var loc = str.replace('/page/[0-9]+/', '/page/' + num);
-                } else {
-                    var loc = str + '/page/' + num + '/';
-                }
-            } else {
-                var loc = '/page/' + num + '/';
-            }
-            window.location.search = loc;
+        baseUrl : function(page) {
+            window.location= ++page == 1 ? "%%link%%" :
+ "%%pageurl%%" + page + "/";
         },
 
         returnOrder : false,
         lang : {
-            next : "Следующая",
-            last : "Последняя",
-            prior : "Предыдущая",
-            first : "Первая",
+            next : "' . $about['next'] . '",
+            last : "' . $about['last'] . '",
+            prior : "' . $about['prior'] . '",
+            first : "' . $about['first'] . '",
             arrowRight : String.fromCharCode(8594),
             arrowLeft : String.fromCharCode(8592)
         }
@@ -64,8 +44,7 @@ if (nul == 1) return '%%url%%';
 });
 </script>';
 
-$theme->templates['content.navi'] = $head . $theme->templates'content.navi'];
-$theme->save();
+$theme->templates['content.navi'] = $head . $theme->templates['content.navi'];
 }
   
   public function install() {
@@ -77,6 +56,7 @@ $theme->save();
   public function uninstall() {
   $parser = tthemeparser::instance();
   $parser->unsubscribeclass($this);
+  ttheme::clearcache();
   }
   
 }//class

@@ -623,7 +623,7 @@ content.excerpts.lite = [
 В секции content нам осталось описать еще два шаблона - navi и admin. Шаблон navi предназначен для постраничной навигации, зададим его:
 
 content.navi = [
-	<div class="navigation">
+	<div id="paginator" class="navigation">
 			$prev = [<span class="previous-entries">$link</span>]
 			$next = [<span class="next-entries">$link</span>]
 			$link = [<a href="$link">$page</a>]

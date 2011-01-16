@@ -17,10 +17,8 @@
   <script type="text/javascript">
   $(document).ready(function() {
 $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
-    $("a[rel^='prettyPhoto']").prettyPhoto();
   });
   </script>
-
 </head>
 <body>
 	<div id="header"><div id="logo"><span class="name"><a href="$site.url/">$site.name</a></span><span class="slogan">$site.description</span>
