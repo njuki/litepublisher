@@ -32,6 +32,7 @@ class tthemeparser extends tevents {
   }
   
   public function parse(ttheme $theme) {
+$theme->lock();
     $this->checkparent($theme->name);
     $about = $this->getabout($theme->name);
     switch ($about['type']) {
@@ -53,6 +54,7 @@ class tthemeparser extends tevents {
     }
     
     $this->parsed($theme);
+$theme->unlock();
     return true;
   }
   

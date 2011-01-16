@@ -33,8 +33,11 @@ $optimizer->lock();
 $optimizer->childtables[] = 'tickets';
 $optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
 $optimizer->unlock();
+
     $posts = tposts::instance();
     $posts->unsubscribeclassname('ttickets');
+$db = litepublisher::$db;
+$db->query("update $db->tickets set type = 'bug' where type = ''");
 }
 
 tstorage::savemodified();

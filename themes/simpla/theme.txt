@@ -204,7 +204,7 @@ $template.content.navi.prev = [<div class="alignleft">$link</div>]
 
 $template.content.navi.next = [<div class="alignright">$link</div>]
 
-$template.content.navi = [<div class="navigation">
+$template.content.navi = [<div id="paginator" class="navigation">
 $items
 </div>]
 

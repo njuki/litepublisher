@@ -195,7 +195,7 @@ $template.content.navi.prev = [$link]
 
 $template.content.navi.next = [$link]
 
-$template.content.navi = [<p align='center'>
+$template.content.navi = [<p id="paginator" align='center'>
 $items
 </p>]
 

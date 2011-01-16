@@ -184,7 +184,7 @@ $template.content.excerpts.lite = [<h1>$lang.posts</h1>
 $items
 </ul>]
 
-$template.content.navi = [<div class="navigation">
+$template.content.navi = [<div id="paginator" class="navigation">
 $items
 </div>]
 

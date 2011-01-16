@@ -72,7 +72,6 @@ if (count($items) == 0) return '';
     $index = $this->type == 'tickets' ? 'type' : 'state';
     tticket::checklang();
     $local = tlocal::$data['ticket'];
-
 foreach ($items as $item) {
       $result .= sprintf('<li>%4$s: <a href="%1$s%2$s" title="%3$s">%3$s</a></li>', $url, $item['url'], $item['title'], $local[$item[$index]]);
     }

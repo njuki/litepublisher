@@ -7,10 +7,10 @@
             baseUrl     : '?page=', //link or function function (page){}
             returnOrder : false,  // 1..10 if false, 10..1 if true
             lang        : {
-                next  : "Следующая",
-                last  : "Последняя",
-                prior : "Предыдущая",
-                first : "Первая",
+                next  : "Next",
+                last  : "Last",
+                prior : "Prior",
+                first : "First",
                 arrowRight : String.fromCharCode(8594),
                 arrowLeft  : String.fromCharCode(8592)
             }

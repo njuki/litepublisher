@@ -233,6 +233,7 @@ $args->perpage = $perpage;
     if ($items[count($items) -1] != $count) $items[] = $count;
     $currenttml=$this->templates['content.navi.current'];
     $tml =$this->templates['content.navi.link'];
+if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
     $pageurl = rtrim($url, '/') . '/page/';
 
     $a = array();
