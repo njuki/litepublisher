@@ -17,14 +17,15 @@ if (strpos($theme->templates['content.navi'], 'paginator3000.js')) return;
 $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
 $about = tplugins::getabout(tplugins::getname(__file__));
 $head = '<script type="text/javascript">
-  $(document).ready(function() {
+
     $(\'<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />\').appendTo("head");
-        $.getScript("' . $url . 'paginator3000.js", function() {
+  $(document).ready(function() {
+        $.getScript("' . $url . 'paginator3000.min.js", function() {
 $("#paginator").addClass("paginator");
     $("#paginator").paginator({
         pagesTotal : %%count%%,
         pagesSpan : %%perpage%%,
-        pageCurrent : %%page%%,
+        pageCurrent : %%page%% - 1,
         baseUrl : function(page) {
             window.location= ++page == 1 ? "%%link%%" :
  "%%pageurl%%" + page + "/";
