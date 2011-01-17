@@ -7,7 +7,7 @@
 **/
 
 function tpostsInstall($self) {
-if ('tposts' != get_class($self)) return;
+  if ('tposts' != get_class($self)) return;
   if (dbversion) {
     $manager = tdbmanager ::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
@@ -24,7 +24,7 @@ if ('tposts' != get_class($self)) return;
 }
 
 function tpostsUninstall($self) {
-if ('tposts' != get_class($self)) return;
+  if ('tposts' != get_class($self)) return;
   $Cron = tcron::instance();
   $Cron->deleteclass(get_class($self));
   

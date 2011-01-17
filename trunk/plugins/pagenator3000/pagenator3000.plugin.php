@@ -12,52 +12,52 @@ class tpagenator3000 extends tplugin {
     return getinstance(__class__);
   }
   
-public function themeparsed(ttheme $theme) {
-if (strpos($theme->templates['content.navi'], 'paginator3000.js')) return;
-$url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
-$about = tplugins::getabout(tplugins::getname(__file__));
-$head = '<script type="text/javascript">
-
+  public function themeparsed(ttheme $theme) {
+    if (strpos($theme->templates['content.navi'], 'paginator3000.js')) return;
+    $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
+    $about = tplugins::getabout(tplugins::getname(__file__));
+    $head = '<script type="text/javascript">
+    
     $(\'<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />\').appendTo("head");
-  $(document).ready(function() {
-        $.getScript("' . $url . 'paginator3000.min.js", function() {
-$("#paginator").addClass("paginator");
-    $("#paginator").paginator({
-        pagesTotal : %%count%%,
-        pagesSpan : %%perpage%%,
-        pageCurrent : %%page%% - 1,
-        baseUrl : function(page) {
+    $(document).ready(function() {
+      $.getScript("' . $url . 'paginator3000.min.js", function() {
+        $("#paginator").addClass("paginator");
+        $("#paginator").paginator({
+          pagesTotal : %%count%%,
+          pagesSpan : %%perpage%%,
+          pageCurrent : %%page%% - 1,
+          baseUrl : function(page) {
             window.location= ++page == 1 ? "%%link%%" :
- "%%pageurl%%" + page + "/";
-        },
-
-        returnOrder : false,
-        lang : {
+            "%%pageurl%%" + page + "/";
+          },
+          
+          returnOrder : false,
+          lang : {
             next : "' . $about['next'] . '",
             last : "' . $about['last'] . '",
             prior : "' . $about['prior'] . '",
             first : "' . $about['first'] . '",
             arrowRight : String.fromCharCode(8594),
             arrowLeft : String.fromCharCode(8592)
-        }
-});
-});
-});
-</script>';
-
-$theme->templates['content.navi'] = $head . $theme->templates['content.navi'];
-}
+          }
+        });
+      });
+    });
+    </script>';
+    
+    $theme->templates['content.navi'] = $head . $theme->templates['content.navi'];
+  }
   
   public function install() {
-  $parser = tthemeparser::instance();
-  $parser->parsed = $this->themeparsed;
-  ttheme::clearcache();
+    $parser = tthemeparser::instance();
+    $parser->parsed = $this->themeparsed;
+    ttheme::clearcache();
   }
   
   public function uninstall() {
-  $parser = tthemeparser::instance();
-  $parser->unsubscribeclass($this);
-  ttheme::clearcache();
+    $parser = tthemeparser::instance();
+    $parser->unsubscribeclass($this);
+    ttheme::clearcache();
   }
   
 }//class

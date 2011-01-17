@@ -218,11 +218,11 @@ class ttheme extends tevents {
   public function getpages($url, $page, $count) {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
     $args = targs::instance();
-$args->count = $count;
+    $args->count = $count;
     $from = 1;
     $to = $count;
     $perpage = litepublisher::$options->perpage;
-$args->perpage = $perpage;
+    $args->perpage = $perpage;
     if ($count > $perpage * 2) {
       //$page is midle of the bar
       $from = max(1, $page - ceil($perpage / 2));
@@ -233,9 +233,9 @@ $args->perpage = $perpage;
     if ($items[count($items) -1] != $count) $items[] = $count;
     $currenttml=$this->templates['content.navi.current'];
     $tml =$this->templates['content.navi.link'];
-if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
+    if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
     $pageurl = rtrim($url, '/') . '/page/';
-
+    
     $a = array();
     foreach ($items as $i) {
       $args->page = $i;
@@ -243,10 +243,10 @@ if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
       $a[] = $this->parsearg(($i == $page ? $currenttml : $tml), $args);
     }
     
-$args->link =$url;
-$args->pageurl = $pageurl;
-$args->page = $page;
-$args->items = implode($this->templates['content.navi.divider'], $a);
+    $args->link =$url;
+    $args->pageurl = $pageurl;
+    $args->page = $page;
+    $args->items = implode($this->templates['content.navi.divider'], $a);
     return $this->parsearg($this->templates['content.navi'], $args);
   }
   

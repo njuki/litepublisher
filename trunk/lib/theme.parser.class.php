@@ -32,7 +32,7 @@ class tthemeparser extends tevents {
   }
   
   public function parse(ttheme $theme) {
-$theme->lock();
+    $theme->lock();
     $this->checkparent($theme->name);
     $about = $this->getabout($theme->name);
     switch ($about['type']) {
@@ -54,7 +54,7 @@ $theme->lock();
     }
     
     $this->parsed($theme);
-$theme->unlock();
+    $theme->unlock();
     return true;
   }
   
@@ -76,7 +76,7 @@ $theme->unlock();
   
   public static function getfile($filename) {
     $s = file_get_contents($filename);
-if ($s === false) return litepublisher::$options->error(sprintf('Error read "%s" file', $filename));
+    if ($s === false) return litepublisher::$options->error(sprintf('Error read "%s" file', $filename));
     $s = str_replace(array("\r\n", "\r", "\n\n"), "\n", $s);
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
     $s = strtr($s, array(

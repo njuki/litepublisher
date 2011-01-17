@@ -60,23 +60,23 @@ class tticketsmenu extends tmenu {
     $tt = $db->prefix . $tickets->childtable;
     $pt = $db->posts;
     $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
-
-   $items = $db->res2assoc($db->query("select $pt.id, $pt.idurl, $pt.title,
+    
+    $items = $db->res2assoc($db->query("select $pt.id, $pt.idurl, $pt.title,
     $db->urlmap.url as url, $tt.type, $tt.state, $tt.votes
     from $pt, $db->urlmap, $tt
     where $pt.id = $tt.id and $db->urlmap.id  = $pt.idurl  and $pt.status = 'published' $where
     order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio"));
     
-if (count($items) == 0) return '';
+    if (count($items) == 0) return '';
     $url = litepublisher::$site->url;
     $index = $this->type == 'tickets' ? 'type' : 'state';
     tticket::checklang();
     $local = tlocal::$data['ticket'];
-foreach ($items as $item) {
+    foreach ($items as $item) {
       $result .= sprintf('<li>%4$s: <a href="%1$s%2$s" title="%3$s">%3$s</a></li>', $url, $item['url'], $item['title'], $local[$item[$index]]);
     }
     
-
+    
     $result = sprintf('<ul>%s</ul>', $result);
     
     $theme = ttheme::instance();

@@ -26,10 +26,10 @@ class tmarkdownplugin extends tplugin {
     if ($this->deletep) $content = str_replace('_', '&#95;', $content);
     $content = $this->parser->transform($content);
     if ($this->deletep) $content = strtr($content, array(
-'<p>' => '',
- '</p>' => '',
-'&#95;' => '_'
-));
+    '<p>' => '',
+    '</p>' => '',
+    '&#95;' => '_'
+    ));
     if ($this->nocontinue) return true;
   }
   

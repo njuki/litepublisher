@@ -11,12 +11,12 @@ class tticket extends tpost {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-public static function getchildtable() {
-return 'tickets';
-}
-
-    protected function create() {
+  
+  public static function getchildtable() {
+    return 'tickets';
+  }
+  
+  protected function create() {
     parent::create();
     $this->data['childdata'] = &$this->childdata;
     $this->childdata = array(
@@ -37,12 +37,12 @@ return 'tickets';
   
   public function beforedb() {
     if ($this->childdata['closed'] == '') $this->childdata['closed'] = sqldate();
-}
-
+  }
+  
   public function afterdb() {
-    $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1'; 
-}
-
+    $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
+  }
+  
   public function gethead() {
     $result = parent::gethead();
     if ($this->poll > 0) {

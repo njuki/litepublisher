@@ -28,22 +28,22 @@ class tajaxposteditor  extends tevents {
     $template = ttemplate::instance();
     $template->ltoptions[] = sprintf('upload_button_text: "%s"', tlocal::instance()->upload);
     $head .= $this->head;
-if ($this->visual) {
-    if ($this->ajaxvisual) {
-    $head .= '<script type="text/javascript">
-    $(document).ready(function() {
-      $("a[rel~=\'loadvisual\']").click(function() {
-        $(this).unbind("click");
-        $("#loadvisual").remove();
-        $.getScript("' . litepublisher::$site->files . $this->visual . '");
-        return false;
-      });
-    });
-    </script>';
-} else {
-$head .= $template->getjavascript($this->visual);
-}
-}
+    if ($this->visual) {
+      if ($this->ajaxvisual) {
+        $head .= '<script type="text/javascript">
+        $(document).ready(function() {
+          $("a[rel~=\'loadvisual\']").click(function() {
+            $(this).unbind("click");
+            $("#loadvisual").remove();
+            $.getScript("' . litepublisher::$site->files . $this->visual . '");
+            return false;
+          });
+        });
+        </script>';
+      } else {
+        $head .= $template->getjavascript($this->visual);
+      }
+    }
     
     $this->callevent('onhead', array(&$head));
     return $head;

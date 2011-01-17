@@ -8,37 +8,37 @@
 
 class tpost extends titem implements  itemplate {
   public $childdata;
-public $childtable;
+  public $childtable;
   private $aprev;
   private $anext;
   private $ameta;
   private $_theme;
   
   public static function instance($id = 0) {
-$id = (int) $id;
-if (dbversion && ($id > 0)) {
-    if (isset(self::$instances['post'][$id]))     return self::$instances['post'][$id];
-if ($result = self::loadpost($id)) {
-self::$instances['post'][$id] = $result;
-return $result;
-}
-return null;
-}
+    $id = (int) $id;
+    if (dbversion && ($id > 0)) {
+      if (isset(self::$instances['post'][$id]))     return self::$instances['post'][$id];
+      if ($result = self::loadpost($id)) {
+        self::$instances['post'][$id] = $result;
+        return $result;
+      }
+      return null;
+    }
     return parent::iteminstance(__class__, $id);
   }
   
   public static function getinstancename() {
     return 'post';
   }
-
-public static function getchildtable() {
-return '';
-}
-
-public static function newpost($class) {
-if (empty($class)) $class = __class__;
-return new $class();
-}
+  
+  public static function getchildtable() {
+    return '';
+  }
+  
+  public static function newpost($class) {
+    if (empty($class)) $class = __class__;
+    return new $class();
+  }
   
   public function getbasename() {
     return 'posts' . DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . 'index';
@@ -46,8 +46,8 @@ return new $class();
   
   protected function create() {
     $this->table = 'posts';
-//last binding, like cache
-$this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
+    //last binding, like cache
+    $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'), array());
     $this->data['childdata'] = &$this->childdata;
     $this->data= array(
     'id' => 0,
@@ -56,7 +56,7 @@ $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'
     'author' => 0,
     'revision' => 0,
     'icon' => 0,
-'class' => __class__,
+    'class' => __class__,
     'posted' => 0,
     'modified' => 0,
     'url' => '',
@@ -95,39 +95,39 @@ $this->childtable = call_user_func_array(array(get_class($this), 'getchildtable'
   }
   
   public function __get($name) {
-if ($this->childtable) {
-    if ($name == 'id') return $this->data['id'];
-    if (method_exists($this, $get = 'get' . $name))   return $this->$get();
-if (array_key_exists($name, $this->childdata)) return $this->childdata[$name];
-}
+    if ($this->childtable) {
+      if ($name == 'id') return $this->data['id'];
+      if (method_exists($this, $get = 'get' . $name))   return $this->$get();
+      if (array_key_exists($name, $this->childdata)) return $this->childdata[$name];
+    }
     return parent::__get($name);
   }
   
   public function __set($name, $value) {
-if ($this->childtable) {
-    if ($name == 'id') return $this->setid($value);
-    if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
-    if (array_key_exists($name, $this->childdata)) {
-      $this->childdata[$name] = $value;
-      return true;
+    if ($this->childtable) {
+      if ($name == 'id') return $this->setid($value);
+      if (method_exists($this, $set = 'set'. $name)) return $this->$set($value);
+      if (array_key_exists($name, $this->childdata)) {
+        $this->childdata[$name] = $value;
+        return true;
+      }
     }
-}
     return parent::__set($name, $value);
   }
   
   public function __isset($name) {
     return parent::__isset($name) || ($this->childtable && array_key_exists($name, $this->childdata) );
   }
-
+  
   //db
   public function afterdb() {
     //$this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
   }
-
-public function beforedb() {
-//if ($this->childdata['closed'] == '') $this->childdata['closed'] = sqldate();
-}
-
+  
+  public function beforedb() {
+    //if ($this->childdata['closed'] == '') $this->childdata['closed'] = sqldate();
+  }
+  
   public function load() {
     $result = dbversion? $this->LoadFromDB() : parent::load();
     if ($result) {
@@ -135,40 +135,40 @@ public function beforedb() {
     }
     return $result;
   }
-
+  
   protected function LoadFromDB() {
-if ($a = self::getassoc($this->id)) {
-$this->setassoc($a);
+    if ($a = self::getassoc($this->id)) {
+      $this->setassoc($a);
       return true;
     }
     return false;
   }
-
-public static function loadpost($id) {
-if ($a = self::getassoc($id)) {
-$self = self::newpost($a['class']);
-$self->setassoc($a);
+  
+  public static function loadpost($id) {
+    if ($a = self::getassoc($id)) {
+      $self = self::newpost($a['class']);
+      $self->setassoc($a);
       return $self;
     }
     return false;
-}
+  }
   
-public static function getassoc($id) {
+  public static function getassoc($id) {
     $db = litepublisher::$db;
-return $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    return $db->selectassoc("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $db->posts.id = $id and  $db->urlmap.id  = $db->posts.idurl limit 1");
-}
-
-public function setassoc(array $a) {
-      $trans = tposttransform::instance($this);
-      $trans->setassoc($a);
-if ($this->childtable) {
-    if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
-      $this->childdata = $a;
-      $this->afterdb();
-}
-}
-}
+  }
+  
+  public function setassoc(array $a) {
+    $trans = tposttransform::instance($this);
+    $trans->setassoc($a);
+    if ($this->childtable) {
+      if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
+        $this->childdata = $a;
+        $this->afterdb();
+      }
+    }
+  }
   
   public function save() {
     parent::save();
@@ -177,21 +177,21 @@ if ($this->childtable) {
   
   protected function SaveToDB() {
     tposttransform ::instance($this)->save();
-if ($this->childtable) {
-$this->beforedb();
-    $this->childdata['id'] = $this->id;
-    $this->getdb($this->childtable)->updateassoc($this->childdata);
+    if ($this->childtable) {
+      $this->beforedb();
+      $this->childdata['id'] = $this->id;
+      $this->getdb($this->childtable)->updateassoc($this->childdata);
+    }
   }
-}
   
   public function addtodb() {
-$id = tposttransform ::add($this);
+    $id = tposttransform ::add($this);
     $this->setid($id);
-if ($this->childtable) {
-$this->beforedb();
-    $this->childdata['id'] = $id;
-    $this->getdb($this->childtable)->insert_a($this->childdata);
-  }
+    if ($this->childtable) {
+      $this->beforedb();
+      $this->childdata['id'] = $id;
+      $this->getdb($this->childtable)->insert_a($this->childdata);
+    }
     return $id;
   }
   
