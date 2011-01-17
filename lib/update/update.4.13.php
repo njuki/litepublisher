@@ -38,6 +38,8 @@ $optimizer->unlock();
     $posts->unsubscribeclassname('ttickets');
 $db = litepublisher::$db;
 $db->query("update $db->tickets set type = 'bug' where type = ''");
+unset(litepublisher::$classes->items['tchildpost']);
+unset(litepublisher::$classes->items['tchildposts']);
 }
 
 tstorage::savemodified();
