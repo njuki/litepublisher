@@ -62,7 +62,7 @@ class tticketeditor extends tposteditor {
     $ticket = tticket::instance($this->idpost);
     ttheme::$vars['ticket'] = $ticket;
     $args = targs::instance();
-$args->id = $this->idpost;
+    $args->id = $this->idpost;
     $args->title = $ticket->title;
     $args->categories = $this->getcategories($ticket);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");

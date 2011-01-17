@@ -113,7 +113,7 @@ function createswfu () {
   
   try {
     return new SWFUpload(settings);
-  } catch(e) { alert('Error create swfupload ' + e.message); }
+} catch(e) { alert('Error create swfupload ' + e.message); }
 }
 
 function getcookie(name) {

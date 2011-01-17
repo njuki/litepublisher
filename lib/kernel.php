@@ -40,7 +40,7 @@ class tdata {
       foreach ($this->coinstances as $coinstance) {
         if (isset($coinstance->$name)) return $coinstance->$name;
       }
-      return    $this->error("The requested property $name not found in class ". get_class($this));
+      return    $this->error(sprintf('The requested property "%s" not found in class  %s', $name, get_class($this)));
     }
   }
   
@@ -1308,7 +1308,7 @@ class turlmap extends titems {
     } catch (Exception $e) {
       litepublisher::$options->handexception($e);
     }
-    if (!litepublisher::$debug && litepublisher::$options->ob_cache) ob_end_flush ();
+    if (!litepublisher::$debug && litepublisher::$options->ob_cache) @ob_end_flush ();
     $this->afterrequest($this->url);
     $this->CheckSingleCron();
   }
@@ -1435,6 +1435,7 @@ class turlmap extends titems {
     $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
+      //tfiler::log("$this->url\n$s");
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
@@ -1791,7 +1792,6 @@ interface iposts {
   public function add(tpost $post);
   public function edit(tpost $post);
   public function delete($id);
-  public function deletedeleted($deleted);
 }
 
 //plugin.class.php

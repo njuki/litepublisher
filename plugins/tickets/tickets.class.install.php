@@ -8,8 +8,8 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    tlocal::loadsection('admin', 'tickets', $dir);
+  $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+  tlocal::loadsection('admin', 'tickets', $dir);
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
   $filter->save();
@@ -17,16 +17,16 @@ $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATO
   
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->childtable, file_get_contents($dir .'ticket.sql'));
-$manager->addenum('posts', 'class', 'tticket');
-
-$optimizer = tdboptimizer::instance();
-$optimizer->lock();
-$optimizer->childtables[] = 'tickets';
-$optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
-$optimizer->unlock();
-
+  $manager->addenum('posts', 'class', 'tticket');
+  
+  $optimizer = tdboptimizer::instance();
+  $optimizer->lock();
+  $optimizer->childtables[] = 'tickets';
+  $optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
+  $optimizer->unlock();
+  
   litepublisher::$classes->lock();
- //install polls if its needed
+  //install polls if its needed
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
   $polls = tpolls::instance();
@@ -53,7 +53,7 @@ $optimizer->unlock();
   
   $idmenu = $adminmenus->createitem($parent, 'fixed', 'ticket', 'tadmintickets');
   $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['fixed'];
- 
+  
   $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
   $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
   
@@ -133,20 +133,20 @@ function tticketsUninstall($self) {
     $polls->garbage = true;
     $polls->save();
   }
-tlocal::clearcache();
-
+  tlocal::clearcache();
+  
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
-$manager->delete_enum('posts', 'class', 'tticket');
-
-$optimizer = tdboptimizer::instance();
-$optimizer->lock();
-$optimizer->unsubscribeclass($self);
-if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
-unset($optimizer->childtables[$i]);
-}
-$optimizer->unlock();
-
+  $manager->delete_enum('posts', 'class', 'tticket');
+  
+  $optimizer = tdboptimizer::instance();
+  $optimizer->lock();
+  $optimizer->unsubscribeclass($self);
+  if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
+    unset($optimizer->childtables[$i]);
+  }
+  $optimizer->unlock();
+  
 }
 
 ?>

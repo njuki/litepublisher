@@ -63,15 +63,15 @@ pollclient.getcookie = function(callback) {
 };
 
 pollclient.get_cookie= function(name) {
-        if (! document.cookie || document.cookie == '') return '';
-            var cookies = document.cookie.split(';');
-            for (var i = 0, n = cookies.length; i < n; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    return decodeURIComponent(cookie.substring(name.length + 1));
-                }
-            }
-return '';
+  if (! document.cookie || document.cookie == '') return '';
+  var cookies = document.cookie.split(';');
+  for (var i = 0, n = cookies.length; i < n; i++) {
+    var cookie = jQuery.trim(cookies[i]);
+    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return '';
 };
 
 pollclient.set_cookie = function (name, value, expires){

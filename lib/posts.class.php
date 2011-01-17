@@ -31,7 +31,7 @@ class tposts extends titems {
     $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
-$this->data['syncmeta'] = false;
+    $this->data['syncmeta'] = false;
     if (!dbversion) $this->addmap('archives' , array());
     $this->addmap('itemcoclasses', array());
   }
@@ -58,53 +58,53 @@ $this->data['syncmeta'] = false;
   }
   
   public function setassoc(array $items) {
-if (count($items) == 0) return array();
+    if (count($items) == 0) return array();
     $result = array();
     $t = new tposttransform();
-foreach ($items as $a) {
+    foreach ($items as $a) {
       $t->post = tpost::newpost($a['class']);
       $t->setassoc($a);
       $result[] = $t->post->id;
     }
-unset($t);
-if ($this->syncmeta)  tmetapost::loaditems($result);
+    unset($t);
+    if ($this->syncmeta)  tmetapost::loaditems($result);
     return $result;
   }
   
   public function select($where, $limit) {
     $db = litepublisher::$db;
-if ($this->childtable) {
-    $childtable = $db->prefix . $this->childtable;
-return $this->setassoc($db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url, $childtable.*
-    from $db->posts, $db->urlmap, $childtable
-    where $where and  $db->posts.id = $childtable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
-}
-
-$items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
+    if ($this->childtable) {
+      $childtable = $db->prefix . $this->childtable;
+      return $this->setassoc($db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url, $childtable.*
+      from $db->posts, $db->urlmap, $childtable
+      where $where and  $db->posts.id = $childtable.id and $db->urlmap.id  = $db->posts.idurl $limit")));
+    }
+    
+    $items = $db->res2items($db->query("select $db->posts.*, $db->urlmap.url as url  from $db->posts, $db->urlmap
     where $where and  $db->urlmap.id  = $db->posts.idurl $limit"));
-
-if (count($items) == 0) return array();
-$subclasses = array();
-foreach ($items as &$item) {
-if (empty($item['class'])) $item['class'] = 'tpost';
-if ($item['class'] != 'tpost') {
-$subclasses[$item['class']][] = $item['id'];
-}
-}
-unset($item);
-
-foreach ($subclasses as $class => $list) {
-$childtable =  $db->prefix . 
-call_user_func_array(array($class, 'getchildtable'), array());
-$list = implode(',', $list);
-$subitems = $db->res2items($db->query("select $childtable.* 
-from $childtable where id in ($list)"));
-foreach ($subitems as $id => $subitem) {
-$items[$id] = array_merge($items[$id], $subitem);
-}
-}
-
-return $this->setassoc($items);
+    
+    if (count($items) == 0) return array();
+    $subclasses = array();
+    foreach ($items as &$item) {
+      if (empty($item['class'])) $item['class'] = 'tpost';
+      if ($item['class'] != 'tpost') {
+        $subclasses[$item['class']][] = $item['id'];
+      }
+    }
+    unset($item);
+    
+    foreach ($subclasses as $class => $list) {
+      $childtable =  $db->prefix .
+      call_user_func_array(array($class, 'getchildtable'), array());
+      $list = implode(',', $list);
+      $subitems = $db->res2items($db->query("select $childtable.*
+      from $childtable where id in ($list)"));
+      foreach ($subitems as $id => $subitem) {
+        $items[$id] = array_merge($items[$id], $subitem);
+      }
+    }
+    
+    return $this->setassoc($items);
   }
   
   public function getcount() {
@@ -116,7 +116,7 @@ return $this->setassoc($items);
   }
   
   public function getchildscount($where) {
-if ($this->childtable == '') return 0;
+    if ($this->childtable == '') return 0;
     $db = litepublisher::$db;
     $childtable = $db->prefix . $this->childtable;
     if ($res = $db->query("SELECT COUNT($db->posts.id) as count FROM $db->posts, $childtable
@@ -126,11 +126,11 @@ if ($this->childtable == '') return 0;
     return 0;
   }
   
-    private function beforechange($post) {
+  private function beforechange($post) {
     $post->title = tcontentfilter::escape($post->title);
     $post->modified = time();
     $post->data['revision'] = $this->revision;
-$this->data['class'] = get_class($this);
+    $this->data['class'] = get_class($this);
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -197,10 +197,10 @@ $this->data['class'] = get_class($this);
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
-if ($this->childtable) {
-    $db = $this->getdb($this->childtable);
-    $db->delete("id = $id");
-}
+      if ($this->childtable) {
+        $db = $this->getdb($this->childtable);
+        $db->delete("id = $id");
+      }
     } else {
       if ($post = tpost::instance($id)) {
         $idurl = $post->idurl;
@@ -222,7 +222,7 @@ if ($this->childtable) {
     return true;
   }
   
-
+  
   public function updated(tpost $post) {
     if (!$this->dbversion) {
       $this->items[$post->id] = array(
