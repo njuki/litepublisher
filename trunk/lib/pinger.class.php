@@ -46,7 +46,7 @@ class tpinger extends tevents {
   }
   
   public function pingpost($id) {
-if (!isset($id)) return;
+    if (!isset($id)) return;
     $post = tpost::instance($id);
     if ($post->status != 'published') return;
     $meta = $post->meta;

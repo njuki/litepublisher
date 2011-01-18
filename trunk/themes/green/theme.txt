@@ -57,23 +57,6 @@ $prev
 $next
 </p>]
 
-$template.content.post.filelist.file = [<li><a href="$site.files/files/$filename" title="$title">$description</a></li>]
-
-$template.content.post.filelist.image = [<li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$site.files/files/$filename" title="$title">$preview$title</a></li>]
-
-$template.content.post.filelist.audio = [<li><a href="$site.files/files/$filename" title="$title">$title</a>
-<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></span>
-</li>]
-
-$template.content.post.filelist.video = [<li><a href="$site.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a>
-								</li>]
-
-$template.content.post.filelist = [<ul id="files-$post.id">
-$file
-								
-</ul>]
-
 $template.content.post.templatecomments.form = [<script type="text/javascript" src="$site.files/js/litepublisher/comments.min.js"></script>
     <script type="text/javascript" src="$site.files/files/$site.language.js"></script>
 <h3 id="respond">$lang.leavereply</h3>
@@ -175,8 +158,6 @@ $post.taglinks
 		</div>
 	</div>]
 
-$template.content.excerpts.excerpt.filelist.image = [<li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$site.files/files/$filename" title="$title">$preview$title</a></li>]
-
 $template.content.excerpts.lite.excerpt = [<li>$post.date <a href="$site.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>]
 
 $template.content.excerpts.lite = [<h1>$lang.posts</h1>
@@ -184,24 +165,11 @@ $template.content.excerpts.lite = [<h1>$lang.posts</h1>
 $items
 </ul>]
 
-$template.content.navi = [<div id="paginator" class="navigation">
+$template.content.navi.next = [<span class='"next-entries">$link</span>]
+
+$template.content.navi = [<div class="navigation">
 $items
 </div>]
-
-$template.content.excerpts.excerpt.filelist = [<ul id="files-$post.id">
-$file
-								
-</ul>]
-
-$template.content.excerpts.excerpt.filelist.file = [<li><a href="$site.files/files/$filename" title="$title">$description</a></li>]
-
-$template.content.excerpts.excerpt.filelist.audio = [<li><a href="$site.files/files/$filename" title="$title">$title</a>
-<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></span>
-</li>]
-
-$template.content.excerpts.excerpt.filelist.video = [<li><a href="$site.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a>
-								</li>]
 
 $template.content.excerpts.excerpt.catlinks = [<span class="post-cat">$lang.categories: 
 $items
@@ -234,7 +202,7 @@ sidebar.submenu = [<div class="widget">
  </div>]
 
 sidebar.categories.items = [<ul class="list-cat" id="widgetcategories">
-$items
+$item
  </ul>]
 
 sidebar.categories = [<div class="widget">
@@ -252,7 +220,7 @@ $item
  </ul>]
 
 sidebar.archives.items = [<ul class="list-archives" id="widgetarchives">
-  $items
+  $item
  </ul>]
 
 sidebar.archives = [<div class="widget">
@@ -261,7 +229,7 @@ sidebar.archives = [<div class="widget">
  </div>]
 
 sidebar.links.items = [<ul class="linkcat" id="widgetlinks">
-  $items
+  $item
  </ul>]
 
 sidebar.links = [<div class="widget">
@@ -394,7 +362,7 @@ $item
  </ul>]
 
 sidebar1.meta.items = [<ul id="widgetmeta">
-  $items
+  $item
  </ul>]
 
 sidebar1.meta = [<div class="footer-meta">
