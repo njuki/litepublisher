@@ -17,12 +17,12 @@ class tpagenator3000 extends tplugin {
     $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
     $about = tplugins::getabout(tplugins::getname(__file__));
     $head = '<script type="text/javascript">
-    
     $(\'<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />\').appendTo("head");
     $(document).ready(function() {
       $.getScript("' . $url . 'paginator3000.min.js", function() {
-        $("#paginator").addClass("paginator");
-        $("#paginator").paginator({
+        var tag = $("#paginator, .navigation");
+tag.addClass("paginator");
+        tag.paginator({
           pagesTotal : %%count%%,
           pagesSpan : %%perpage%%,
           pageCurrent : %%page%% - 1,
