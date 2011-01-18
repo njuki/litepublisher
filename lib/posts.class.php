@@ -233,8 +233,8 @@ class tposts extends titems {
     }
     $this->PublishFuture();
     $this->UpdateArchives();
-    $Cron = tcron::instance();
-    $Cron->add('single', get_class($this), 'dosinglecron', $post->id);
+    $cron = tcron::instance();
+    $cron->add('single', get_class($this), 'dosinglecron', $post->id);
   }
   
   public function UpdateArchives() {

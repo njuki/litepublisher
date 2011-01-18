@@ -276,9 +276,13 @@ class tcomment extends tdata {
     if ($manager->hidelink || ($this->url == '') || !$manager->checktrust($this->trust)) return $this->name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
-      return "<a $rel href=\"" . litepublisher::$site->url . "/comusers.htm" . litepublisher::$site->q . "id=$this->author\">$this->name</a>";
+      return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel, 
+litepublisher::$site->url, litepublisher::$site->q, $this->author, $this->name);
+//"<a $rel href=\"" . litepublisher::$site->url . "/comusers.htm" . litepublisher::$site->q . "id=$this->author\">$this->name</a>";
     } else {
-      return "<a $rel href=\"$this->url\">$this->name</a>";
+      return sprintf('<a %s href="%s">%s</a>',
+$rel,$this->data['url'], $this->name);
+//"<a $rel href=\"$this->url\">$this->name</a>";
     }
   }
   

@@ -6,12 +6,12 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tlivejournalInstall($self) {
+function tlivejournalposterInstall($self) {
   $posts = tposts::instance();
   $posts->singlecron = $self->sendpost;
 }
 
-function tlivejournalUninstall($self) {
+function tlivejournalposterUninstall($self) {
   tposts::unsub($self);
   if (dbversion) {
     //litepublisher::$db->table = 'postsmeta';
