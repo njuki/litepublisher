@@ -21,7 +21,7 @@ class tpagenator3000 extends tplugin {
     $(document).ready(function() {
       $.getScript("' . $url . 'paginator3000.min.js", function() {
         var tag = $("#paginator, .navigation");
-tag.addClass("paginator");
+        tag.addClass("paginator");
         tag.paginator({
           pagesTotal : %%count%%,
           pagesSpan : %%perpage%%,

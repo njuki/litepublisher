@@ -64,23 +64,6 @@ $prev
 $next
 </p>]
 
-$template.content.post.filelist.file = [<li><a href="$site.files/files/$filename" title="$title">$description</a></li>]
-
-$template.content.post.filelist.image = [<li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$site.files/files/$filename" title="$title">$preview$title</a></li>]
-
-$template.content.post.filelist.audio = [<li><a href="$site.files/files/$filename" title="$title">$title</a>
-<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></span>
-</li>]
-
-$template.content.post.filelist.video = [<li><a href="$site.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a>
-								</li>]
-
-$template.content.post.filelist = [<ul id="files-$post.id">
-$file
-								
-</ul>]
-
 $template.content.post.templatecomments.form = [<script type="text/javascript" src="$site.files/js/litepublisher/comments.min.js"></script>
     <script type="text/javascript" src="$site.files/files/$site.language.js"></script>
 <h3 id="respond">$lang.leavereply</h3>
@@ -182,8 +165,6 @@ $post.taglinks
 $post.commentslink
 </div>]
 
-$template.content.excerpts.excerpt.filelist.image = [<li><a rel="gale-$post.id" onclick="return jsiBoxOpen(this)" href="$site.files/files/$filename" title="$title">$preview$title</a></li>]
-
 $template.content.excerpts.lite.excerpt = [<li>$post.date <a href="$site.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>]
 
 $template.content.excerpts.lite = [<h1>$lang.posts</h1>
@@ -198,21 +179,6 @@ $template.content.navi.next = [$link]
 $template.content.navi = [<p id="paginator" align='center'>
 $items
 </p>]
-
-$template.content.excerpts.excerpt.filelist = [<ul id="files-$post.id">
-$file
-								
-</ul>]
-
-$template.content.excerpts.excerpt.filelist.file = [<li><a href="$site.files/files/$filename" title="$title">$description</a></li>]
-
-$template.content.excerpts.excerpt.filelist.audio = [<li><a href="$site.files/files/$filename" title="$title">$title</a>
-<span id="audiofile-$id"><a onclick="playaudiofile('audiofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a></span>
-</li>]
-
-$template.content.excerpts.excerpt.filelist.video = [<li><a href="$site.files/files/$filename" title="$title" id="videofile-$id">$title</a>
-<a onclick="playvideofile('videofile-$id', '$site.files/files/$filename');" title="$title">$lang.play</a>
-								</li>]
 
 $template.content.excerpts.excerpt.catlinks = [$lang.categories: 
 $items]
