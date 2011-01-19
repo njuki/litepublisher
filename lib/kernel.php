@@ -1719,7 +1719,7 @@ class turlmap extends titems {
   }
   
   public static function htmlheader($cache) {
-    return sprintf('<?php turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
+    return sprintf('<?php @turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
   }
   
   public static function sendheader($cache) {

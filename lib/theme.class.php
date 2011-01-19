@@ -134,16 +134,15 @@ class ttheme extends tevents {
       $var =  $GLOBALS[$name];
     } else {
       $classes = litepublisher::$classes;
+$var = $classes->gettemplatevar($name);
+if (!$var) {
       if (isset($classes->classes[$name])) {
         $var = $classes->getinstance($classes->classes[$name]);
       } else {
         $class = 't' . $name;
         if (isset($classes->items[$class])) $var = $classes->getinstance($class);
       }
-    }
-    
-    if (!isset($var)) {
-      $var = $classes->gettemplatevar($name);
+}
     }
     
     if (!is_object($var)) {
