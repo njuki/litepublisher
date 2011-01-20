@@ -114,6 +114,7 @@ $template.content.notfound = [
 			<div class="simplecontent">
 				<h2 class="center">$lang.notfound </h2>
 				<p class="center">$lang.nocontent</p>
+</div>
 ]
 
 Здесь мы видим использование двух тегов $lang.notfound и $lang.nocontent - эти значения берутся из языковых файлов lib/languages/*.ini, $lang.* всегда доступны в любом шаблоне и позволяют теме быть интернациональной.
@@ -373,7 +374,7 @@ content.post.templatecomments.closed = [<p class="nocomments">$lang.closed</p>]
 content.post.templatecomments.form = [
 		<script type="text/javascript" src="$site.files/js/litepublisher/comments.min.js"></script>
 		<script type="text/javascript" src="$site.files/files/$site.language.js"></script>
-								<p id="respond">$lang.leavereply</>
+								<p id="respond">$lang.leavereply</p>
 								<form action="$options.url/send-comment.php" method="post" id="commentform">
 									<p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
 									<label for="name">$lang.name</label></p>

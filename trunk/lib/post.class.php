@@ -338,11 +338,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getdate() {
-    return tlocal::date($this->posted, $this->theme->content->post->date);
+    return tlocal::date($this->posted, $this->theme->templates['content.post.date']);
   }
   
   public function getexcerptdate() {
-    return tlocal::date($this->posted, (string) $this->theme->content->excerpts->excerpt->date);
+    return tlocal::date($this->posted, $this->theme->templates['content.excerpts.excerpt.date']);
   }
   
   public function getday() {
