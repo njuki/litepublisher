@@ -29,8 +29,6 @@ $template.sidebar
 
 	<div id="footer">
 $template.footer
-<p>Theme designed by <a href="http://www.drwords.com/combo/" title="Anagrams" >Anagrams</a><br />
-Coder <a href="http://wize.com/" title="Product Reviews" >Product Reviews</a> | Presented by <a href="http://www.grandprofile.com/" title="Glitter Graphics" >Glitter Graphics</a></p>
 	</div>
 
 </div></div>
