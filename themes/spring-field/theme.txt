@@ -1,0 +1,132 @@
+$template = {@import(index.tml)}
+$template.menu.hover = [false]
+
+
+	$template.content.simple = [
+			<div class="post">
+				<div class="entry">
+$content
+				</div>
+			</div>
+]
+
+content.notfound = [
+			<div class="post">
+				<h2>$lang.notfound </h2>
+				<div class="entry">
+<p>$lang.nocontent</p>
+				</div>
+			</div>
+]
+
+content.excerpts.excerpt = [
+		<div class="post">
+			<h2 id="post-$post.id">$post.bookmark</h2>
+					<div class="postinfo">
+						<ul>
+							<li class="date">$post.date</li>
+							<li class="category-info">$post.catlinks</li>
+							<li class="category-info">$post.taglinks</li>
+							<li class="comment-number">$post.commentslink</li>
+						</ul>
+					</div>
+
+			<div class="entry">
+$post.excerptcontent
+$post.filelist
+			</div>
+		</div>
+]
+
+content.post = [
+		<div class="post">
+			<h2 id="post-$post.id">$post.bookmark</h2>
+					<div class="postinfo">
+						<ul>
+							<li class="date">$post.date</li>
+							<li class="category-info">$post.catlinks</li>
+							<li class="category-info">$post.taglinks</li>
+							<li class="comment-number">$post.commentslink</li>
+						</ul>
+					</div>
+
+			<div class="entry">
+$post.filelist
+$post.content
+							$post.prevnext
+			</div>
+			<div class="comments-template">
+				$post.templatecomments
+			</div>
+		</div>
+]
+
+content.post.prevnext = [
+								$prev = [&larr; $lang.prev <a rel="prev" href="$prevpost.link" title="$lang.permalink $prevpost.title">$prevpost.title</a> ]
+								$next = [$lang.next <a rel="next" href="$nextpost.link" title="$lang.permalink $nextpost.title">$nextpost.title</a> &rarr;]
+								</p>
+]
+
+content.post.templatecomments.comments.count = [
+	<h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3>
+]
+
+content.post.templatecomments.comments.comment = [
+ <li $class1=[class="alt"] $class2=[] id="comment-$comment.id">
+  <a name="comment-$comment.id"></a>
+  <div class="commentmetadata">
+
+  <strong>$comment.authorlink</strong>
+<a href="#comment-$comment.id" title="">$comment.date $lang.attime $comment.time</a>
+ $lang.says:  </div>
+  $moderate
+  <div id="commentcontent-$comment.id" >$comment.content</div>
+  $quotebuttons
+ </li>
+]
+
+content.post.templatecomments.form = [
+		<script type="text/javascript" src="$site.files/js/litepublisher/comments.min.js"></script>
+		<script type="text/javascript" src="$site.files/files/$site.language.js"></script>
+								<h3 id="respond">$lang.leavereply</h3>
+								<form action="$options.url/send-comment.php" method="post" id="commentform">
+									<p><input type="text" name="name" id="name" value="$name" size="22" />
+									<label for="name"><small>$lang.name</small></label></p>
+
+									<p><input type="text" name="email" id="email" value="$email" size="22" />
+									<label for="email"><small>$lang.email</small></label></p>
+
+									<p><input type="text" name="url" id="url" value="$url" size="22" />
+									<label for="url"><small>$lang.url</small></label></p>
+
+									<p><input type="checkbox" name="subscribe" id="subscribe" $subscribe size="22" />
+									<label for="subscribe"><small>$lang.subscribe</small></label></p>
+
+									<p><textarea name="content" id="comment" rows="10" cols="60%"></textarea></p>
+
+									<input type="hidden" name="postid" value="$postid" />
+									<input type="hidden" name="antispam" value="$antispam" />
+
+									<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" /></p>
+								</form>
+]
+
+content.menu = [
+		<div class="post">
+			<h2 id="post-$menu.id"><a href="$site.url$menu.url" rel="bookmark" title="$menu.title">$menu.title</a></h2>
+			<div class="entry">
+$menu.content
+			</div>
+		</div>
+]
+
+sidebar.widget = [
+	<li>
+  <h2>$title</h2>
+  $items = [
+		<ul>
+   $item
+		</ul>
+]
+	</li>
+]

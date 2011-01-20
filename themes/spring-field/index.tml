@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>$template.title</title>
+	<link rel="stylesheet" href="$template.url/style.css" type="text/css" media="all" />
+	$template.head
+</head>
+<body><div id="container">
+<div class="top-menu">
+$template.menu
+</div>
+
+
+<div id="page">
+
+	<div id="banner">&nbsp;</div>
+
+	<div class="narrowcolumn">
+		$template.content
+	</div>
+
+	<div id="sidebar">
+<ul>
+$template.sidebar
+</ul>
+	</div>
+
+	<div id="footer">
+$template.footer
+<p>Theme designed by <a href="http://www.drwords.com/combo/" title="Anagrams" >Anagrams</a><br />
+Coder <a href="http://wize.com/" title="Product Reviews" >Product Reviews</a> | Presented by <a href="http://www.grandprofile.com/" title="Glitter Graphics" >Glitter Graphics</a></p>
+	</div>
+
+</div></div>
+</body></html>
