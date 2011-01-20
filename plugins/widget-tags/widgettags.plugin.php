@@ -42,7 +42,6 @@ case 'links':
 $widget = tlinkswidget::instance();
 break;
 
-
 case 'posts':
 $widget = tpostswidget::instance();
 break;
@@ -52,7 +51,7 @@ $widget = tmetawidget::instance();
 break;
 
 default:
-$this->error(sprintf('Unknown "%s" widget', $name));
+return;
 }
 
 $result = new self();
