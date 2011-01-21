@@ -8,10 +8,10 @@
 	$template.head
 </head>
 <body><div id="container">
+<h2><a href="$site.url/" title="$site.name">$site.description</a></h2>
 <div class="top-menu">
 $template.menu
 </div>
-
 
 <div id="page">
 
