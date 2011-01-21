@@ -250,7 +250,7 @@ class tmenus extends titems {
         foreach ($this->tree as $id => $subitems) {
           if ($this->exclude($id)) continue;
           $args->add($this->items[$id]);
-          $items .= $current == $id ? $theme->parsearg($theme->menu->current, $args) : $theme->parsearg($tml, $args);
+          $items .= $current == $id ? $theme->parsearg($theme->templates['menu.current'], $args) : $theme->parsearg($tml, $args);
         }
       }
       

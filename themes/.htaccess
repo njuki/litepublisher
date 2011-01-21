@@ -12,3 +12,8 @@
   Order Allow,Deny
   Deny from All
 </Files>	
+
+<Files ~ ".txt$">
+  Order Allow,Deny
+  Deny from All
+</Files>	
