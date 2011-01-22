@@ -6,7 +6,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-
 function tsiteInstall($self) {
   $site = $self;
   $site->lock();

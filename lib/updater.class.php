@@ -66,8 +66,8 @@ class tupdater extends tevents {
     if (ob_get_level()) @ob_end_clean ();
     Header( 'Cache-Control: no-cache, must-revalidate');
     Header( 'Pragma: no-cache');
-echo "\n";
-flush();    
+    echo "\n";
+    flush();
     $lang = tlocal::instance('service');
     $backuper = tbackuper::instance();
     $backuper->createbackup();
