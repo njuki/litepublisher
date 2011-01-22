@@ -1719,7 +1719,7 @@ class turlmap extends titems {
   }
   
   public static function htmlheader($cache) {
-    return sprintf('<?php @turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
+    return sprintf('<?php turlmap::sendheader(%s); ?>', $cache ? 'true' : 'false');
   }
   
   public static function sendheader($cache) {
@@ -1739,30 +1739,7 @@ class turlmap extends titems {
     echo '<?xml version="1.0" encoding="utf-8" ?>';
   }
   
-  public function startcompress() {
-    if ( ini_get('zlib.output_compression') || ('ob_gzhandler' == ini_get('output_handler')) ||
-    !isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) return null;
-    
-    //header('Vary: Accept-Encoding');
-    if ( false !== strpos( strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') && function_exists('gzencode') ) {
-      header('Content-Encoding: gzip');
-      return 'compress_gzip';
-    } elseif ( false !== strpos( strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'deflate') && function_exists('gzdeflate')) {
-      header('Content-Encoding: deflate');
-      return 'compress_deflate';
-    }
-    return null;
-  }
-  
 }//class
-
-function compress_gzip($s) {
-  return gzencode($s);
-}
-
-function compress_deflate($s) {
-  return gzdeflate($s, 9);
-}
 
 //interfaces.php
 /**

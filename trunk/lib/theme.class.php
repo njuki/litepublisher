@@ -134,15 +134,15 @@ class ttheme extends tevents {
       $var =  $GLOBALS[$name];
     } else {
       $classes = litepublisher::$classes;
-$var = $classes->gettemplatevar($name);
-if (!$var) {
-      if (isset($classes->classes[$name])) {
-        $var = $classes->getinstance($classes->classes[$name]);
-      } else {
-        $class = 't' . $name;
-        if (isset($classes->items[$class])) $var = $classes->getinstance($class);
+      $var = $classes->gettemplatevar($name);
+      if (!$var) {
+        if (isset($classes->classes[$name])) {
+          $var = $classes->getinstance($classes->classes[$name]);
+        } else {
+          $class = 't' . $name;
+          if (isset($classes->items[$class])) $var = $classes->getinstance($class);
+        }
       }
-}
     }
     
     if (!is_object($var)) {
@@ -179,7 +179,7 @@ if (!$var) {
     array_push($this->parsing, $s);
     try {
       $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', $s);
-      $result = preg_replace_callback('/\$(\w\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
+      $result = preg_replace_callback('/\$([a-zA-Z]\w*+)\.(\w\w*+)/', array(&$this, 'parsecallback'), $s);
     } catch (Exception $e) {
       $result = '';
       litepublisher::$options->handexception($e);

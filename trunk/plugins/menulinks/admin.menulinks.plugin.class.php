@@ -30,30 +30,30 @@ class tadminmenulinks {
     $plugin = tmenulinks::instance();
     $plugin->before = $this->setitems($_POST['before']);
     $plugin->after = $this->setitems($_POST['after']);
-$plugin->save();
+    $plugin->save();
   }
-
-private function getitems(array &$items) {
-$result = '';
-foreach ($items as $item) {
-$result .= sprintf("[%s] = %s\n", $item['url'], $item['title']);
-}
-return $result;
-}
-
-private function setitems($s) {
-$result = array();
-$s = trim($s);
-$ini = tini2array::parsesection($s);
-foreach ($ini as $k => $v) {
-$k = trim($k, '[] ');
-$result[] = array(
-'url' => $k,
-'title' => $v
-);
-}
-return $result;
-}
+  
+  private function getitems(array &$items) {
+    $result = '';
+    foreach ($items as $item) {
+      $result .= sprintf("[%s] = %s\n", $item['url'], $item['title']);
+    }
+    return $result;
+  }
+  
+  private function setitems($s) {
+    $result = array();
+    $s = trim($s);
+    $ini = tini2array::parsesection($s);
+    foreach ($ini as $k => $v) {
+      $k = trim($k, '[] ');
+      $result[] = array(
+      'url' => $k,
+      'title' => $v
+      );
+    }
+    return $result;
+  }
   
 }//class
 ?>
