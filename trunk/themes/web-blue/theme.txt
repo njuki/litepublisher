@@ -109,8 +109,6 @@ $template.content.post.templatecomments.holdcomments = [<h3><em>$lang.hold</em><
 $comment
  </ol>]
 
-$template.content.post.templatecomments.comments.comment.quotebuttons = []
-
 $template.content.post.templatecomments.comments.comment = [<li $class id="comment-$comment.id">
  <a name="comment-$comment.id"></a>
 $moderate
