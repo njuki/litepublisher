@@ -34,7 +34,6 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 .post-tags a, .post-time {font-size:12px;}
 .post-date {background: url(../images/clock.png) no-repeat left top;padding:0 0 0 20px;float:right;color:#737373;font-size:12px;}
 .post-content, #commentlist li p  {margin:15px 0 15px 0;}
-#commentlist li div.commentcontent {margin:15px 0;}
 .post-rsscomments{float:right;background: url(../images/feed-balloon.png) no-repeat left center;padding:0 0 0 20px;}
 #content #comments, #content .hold, #content #respond {margin:30px 0 15px 0;}
 #prevnext {padding:10px 5px;border:5px solid #F3F3F3;margin:-10px 0 0;}
@@ -84,3 +83,23 @@ a:hover{color:#0c588a;}
 .blogolet {float:right;}
 .blogolet a {color:#0c588a;font-size:10px;}
 .post-tags, .post-cat {height:16px;display:block;}
+
+.filelist {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+}
+ 
+.filelist ul {
+	overflow:hidden;
+	list-style:none;
+	margin:0;
+	padding:0;
+	white-space:nowrap;
+	width:100%;
+}
+ 
+.filelist ul li {
+	display:inline;
+}
+ 
