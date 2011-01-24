@@ -195,7 +195,7 @@ class tadminservice extends tadminmenu {
           if (dbversion) $dbconfig = litepublisher::$options->dbconfig;
           $backuper->upload(file_get_contents($_FILES["filename"]["tmp_name"]), $backuper->getarchtype($_FILES["filename"]["name"]));
           if (isset($saveurl)) {
-            $storage = newtdata();
+            $storage = new tdata();
             $storage->basename = 'storage';
             $storage->load();
             $storage->data['site'] = litepublisher::$site->data;
