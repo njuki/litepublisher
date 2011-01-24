@@ -351,8 +351,46 @@ class tthemeparser extends tevents {
         
         $post = 'content.post.';
         $excerpt = 'content.excerpts.excerpt.';
+//normalize filelist
+foreach(array('file', 'image',  'audio', 'video') as $name) {
+$key = $post . 'filelist.' . $name;
+$itemkey = $key . "s.$name";
+          if (isset($templates[$itemkey])) {
+$templates[$key] = $templates[$itemkey];
+unset($templates[$itemkey]);
+}
+if (!isset($templates[$key . 's'])) $templates[$key . 's'] = '$' . $name;
+//excerpt
+$keyexcerpt = $excerpt . 'filelist.' . $name;
+$itemkeyexcerpt = $key . "s.$name";
+          if (isset($templates[$itemkeyexcerpt])) {
+$templates[$keyexcerpt] = $templates[$itemkeyexcerpt];
+unset($templates[$itemkeyexcerpt]);
+} else {
+$templates[$keyexcerpt] = $templates[$key];
+}
+if (!isset($templates[$keyexcerpt . 's'])) $templates[$keyexcerpt . 's'] = $templates[$key . 's'];
+}
+//fix preview
+$key = $post . 'filelist.preview';
+$itemkey = $post . 'filelist.images.preview';
+          if (isset($templates[$itemkey])) {
+$templates[$key] = $templates[$itemkey];
+unset($templates[$itemkey]);
+}
+
+$keyexcerpt = $excerpt . 'filelist.preview';
+$itemkeyexcerpt = $excerpt . 'filelist.images.preview';
+          if (isset($templates[$itemkeyexcerpt])) {
+$templates[$keyexcerpt] = $templates[$itemkeyexcerpt];
+unset($templates[$itemkeyexcerpt]);
+} elseif ( !isset($templates[$keyexcerpt])) {
+$templates[$keyexcerpt] = $templates[$key];
+}
+
         foreach (array('date',
         'filelist', 'filelist.file', 'filelist.image', 'filelist.preview', 'filelist.audio', 'filelist.video',
+'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos',
         'catlinks',         'catlinks.item', 'catlinks.divider',
         'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
           if (empty($templates[$excerpt . $name])) $templates[$excerpt . $name] = $templates[$post . $name];
@@ -513,17 +551,42 @@ class tthemeparser extends tevents {
         'replace' => '$post.filelist'
         ),
         
+        'content.post.filelist.files' => array(
+        'tag' => '$files',
+        'replace' => '$files'
+        ),
+
         'content.post.filelist.file' => array(
+        'tag' => '$file',
+        'replace' => '$files'
+        ),
+        
+        'content.post.filelist.files.file' => array(
         'tag' => '$file',
         'replace' => '$file'
         ),
-        
+
         'content.post.filelist.image' => array(
         'tag' => '$image',
         'replace' => ''
         ),
         
+        'content.post.filelist.images' => array(
+        'tag' => '$images',
+        'replace' => ''
+        ),
+
+        'content.post.filelist.images.image' => array(
+        'tag' => '$image',
+        'replace' => '$image'
+        ),
+
         'content.post.filelist.preview' => array(
+        'tag' => '$preview',
+        'replace' => ''
+        ),
+
+        'content.post.filelist.images.preview' => array(
         'tag' => '$preview',
         'replace' => ''
         ),
@@ -532,10 +595,30 @@ class tthemeparser extends tevents {
         'tag' => '$audio',
         'replace' => ''
         ),
+
+        'content.post.filelist.audios.audio' => array(
+        'tag' => '$audio',
+        'replace' => '$audio'
+        ),
+        
+        'content.post.filelist.audios' => array(
+        'tag' => '$audios',
+        'replace' => ''
+        ),
         
         'content.post.filelist.video' => array(
         'tag' => '$video',
         'replace' => ''
+        ),
+
+        'content.post.filelist.videos' => array(
+        'tag' => '$videos',
+        'replace' => ''
+        ),
+        
+        'content.post.filelist.videos.video' => array(
+        'tag' => '$video',
+        'replace' => '$video'
         ),
         
         'content.post.catlinks' => array(
@@ -698,17 +781,42 @@ class tthemeparser extends tevents {
         'replace' => '$post.excerptfilelist'
         ),
         
+        'content.excerpts.excerpt.filelist.files' => array(
+        'tag' => '$files',
+        'replace' => '$files'
+        ),
+
         'content.excerpts.excerpt.filelist.file' => array(
+        'tag' => '$file',
+        'replace' => '$files'
+        ),
+        
+        'content.excerpts.excerpt.filelist.files.file' => array(
         'tag' => '$file',
         'replace' => '$file'
         ),
-        
+
         'content.excerpts.excerpt.filelist.image' => array(
         'tag' => '$image',
         'replace' => ''
         ),
         
+        'content.excerpts.excerpt.filelist.images' => array(
+        'tag' => '$images',
+        'replace' => ''
+        ),
+
+        'content.excerpts.excerpt.filelist.images.image' => array(
+        'tag' => '$image',
+        'replace' => '$image'
+        ),
+
         'content.excerpts.excerpt.filelist.preview' => array(
+        'tag' => '$preview',
+        'replace' => ''
+        ),
+
+        'content.excerpts.excerpt.filelist.images.preview' => array(
         'tag' => '$preview',
         'replace' => ''
         ),
@@ -717,12 +825,32 @@ class tthemeparser extends tevents {
         'tag' => '$audio',
         'replace' => ''
         ),
+
+        'content.excerpts.excerpt.filelist.audios.audio' => array(
+        'tag' => '$audio',
+        'replace' => '$audio'
+        ),
+        
+        'content.excerpts.excerpt.filelist.audios' => array(
+        'tag' => '$audios',
+        'replace' => ''
+        ),
         
         'content.excerpts.excerpt.filelist.video' => array(
         'tag' => '$video',
         'replace' => ''
         ),
+
+        'content.excerpts.excerpt.filelist.videos' => array(
+        'tag' => '$videos',
+        'replace' => ''
+        ),
         
+        'content.excerpts.excerpt.filelist.videos.video' => array(
+        'tag' => '$video',
+        'replace' => '$video'
+        ),
+
         'content.excerpts.excerpt.catlinks' => array(
         'tag' => '$post.excerptcatlinks',
         'replace' => '$post.excerptcatlinks'
