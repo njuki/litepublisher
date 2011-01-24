@@ -43,14 +43,20 @@ class tadminmenulinks {
   
   private function setitems($s) {
     $result = array();
+$siteurl = litepublisher::$site->url;
     $s = trim($s);
     $ini = tini2array::parsesection($s);
     foreach ($ini as $k => $v) {
+$item = array('title' => $v);
       $k = trim($k, '[] ');
-      $result[] = array(
-      'url' => $k,
-      'title' => $v
-      );
+if (strbegin($k, $siteurl)) {
+$item['url'] = substr($k, strlen($siteurl));
+} elseif (strbegin($k, 'http://')) {
+$item['link'] = $k;
+} else {
+$item['url'] = $k;
+}
+      $result[] = $item;
     }
     return $result;
   }
