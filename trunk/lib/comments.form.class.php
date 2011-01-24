@@ -5,7 +5,7 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-
+if (!class_exists('tkeptcomments', false)) {
 if (dbversion) {
   class tkeptcomments extends tdata {
     
@@ -65,6 +65,7 @@ if (dbversion) {
     
   }//class
   
+}
 }
 
 class tcommentform extends tevents {
