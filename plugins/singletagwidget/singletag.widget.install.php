@@ -14,9 +14,6 @@ $self->tags->deleted = $self->tagdeleted;
 }
 
 function tsingletagwidgetUninstall($self) {
-  $widgets = twidgets::instance();
-  $widgets->deleteclass($self);
-
 $self->tags->unsubscribeclass($self);
 }
 ?>

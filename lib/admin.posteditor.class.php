@@ -30,16 +30,16 @@ class tposteditor extends tadminmenu {
     return $ajax->dogethead($result);
   }
   
-  private function getsubcategories($parent, array $postitems) {
+  private static function getsubcategories($parent, array $postitems) {
     $result = '';
     $categories = tcategories::instance();
-    $html = $this->gethtml('editor');
+    $html = tadminhtml::getinstance('editor');
     $args = targs::instance();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
       $args->add($item);
       $args->checked = in_array($item['id'], $postitems);
-      $args->subitems = $this->getsubcategories($id, $postitems);
+      $args->subitems = self::getsubcategories($id, $postitems);
       $result .= $html->category($args);
     }
     
@@ -47,16 +47,21 @@ class tposteditor extends tadminmenu {
     if ($parent == 0) $result = $html->categorieshead($args) . $result;
     return $result;
   }
-  
-  protected function getcategories(tpost $post) {
+
+public static function getcategories(array $items) {
     $categories = tcategories::instance();
     $categories->loadall();
-    $postitems = $post->categories;
-    if (count($postitems) == 0) $postitems = array($categories->defaultid);
-    $result = $this->getsubcategories(0, $postitems);
+    $result = self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
   }
-  
+
+  protected function getpostcategories(tpost $post) {
+    $postitems = $post->categories;
+    $categories = tcategories::instance();
+    if (count($postitems) == 0) $postitems = array($categories->defaultid);
+  return self::getcategories($postitems);
+}
+
   public function request($id) {
     if ($s = parent::request($id)) return $s;
     $this->basename = 'editor';
@@ -91,7 +96,7 @@ class tposteditor extends tadminmenu {
     $args->id = $post->id;
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = $post->title;
-    $args->categories = $this->getcategories($post);
+    $args->categories = $this->getpostcategories($post);
     $ajaxeditor = tajaxposteditor ::instance();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
     
@@ -101,7 +106,7 @@ class tposteditor extends tadminmenu {
     return $html->fixquote($result);
   }
   
-  protected function getcats() {
+  public static function processcategories() {
     $result = array();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, 'category-')) {
@@ -125,7 +130,7 @@ class tposteditor extends tadminmenu {
     $post = tpost::instance((int)$id);
     if (empty($title)) return $html->h2->emptytitle;
     $post->title = $title;
-    $post->categories = $this->getcats();
+    $post->categories = self::processcategories();
     if (isset($tags)) $post->tagnames = $tags;
     if (isset($icon)) $post->icon = (int) $icon;
     if (isset($idview)) $post->idview = $idview;
