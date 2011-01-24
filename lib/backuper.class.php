@@ -398,7 +398,7 @@ class tbackuper extends tevents {
   }
   
   private function writedata($filename, $content, $mode) {
-    if (strend($filename, '/index.htm') || strend($filename, '/.htaccess')) return true;
+    if (strend($filename, '/.htaccess')) return true;
     $this->hasdata = true;
     $filename = substr($filename, strlen('storage/data/'));
     $filename =str_replace('/', DIRECTORY_SEPARATOR, $filename);
