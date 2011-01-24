@@ -16,6 +16,7 @@ public $tags;
   
   protected function create() {
     parent::create();
+    $this->adminclass = 'tadminsingletagwidget';
     $this->basename = 'widget.singletag';
 $this->addmap('items', array());
 $this->tags = tcategories::instance();
@@ -33,7 +34,7 @@ $tag = $this->tags->getitem($idtag);
     $widgets = twidgets::instance();
     $id = $widgets->addext($this, $tag['title'], 'widget');
     $this->items[$id] = array(
-'idtag' => $idtag
+'idtag' => $idtag,
 'maxcount' => 10,
 'invertorder' => false
     );
@@ -79,7 +80,6 @@ return '';
   
   public function getcontent($id, $sidebar) {
 if (!isset($this->items[$id])) return '';
-getitem(
     $items = $this->tags->itemsposts->getposts($this->items[$id]['idtag']);
     if (count($items) == 0) return '';
     $posts = litepublisher::$classes->posts;

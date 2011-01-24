@@ -272,7 +272,7 @@ public function load() {}
       unset($sidebar);
       foreach ($viewitem['sidebars'] as &$sidebar) {
         for ($i = count($sidebar) - 1; $i >= 0; $i--) {
-          echo $sidebar[$i]['id'], '<br>';
+          //echo $sidebar[$i]['id'], '<br>';
           if (!isset($widgets->items[$sidebar[$i]['id']])) {
             array_delete($sidebar, $i);
           }
