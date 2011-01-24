@@ -119,14 +119,25 @@ class tfiles extends titems {
     $items = array();
     $types = array(
     'file' => $templates->file,
+    'files' => $templates->files,
     'preview' => $templates->preview
     );
+
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
       $type = $item['media'];
       $items[$type][] = $id;
-      if (!isset($types[$type])) $types[$type] = isset($templates->$type) ? $templates->$type : $templates->file;
+      if (!isset($types[$type])) {
+if (isset($templates->$type)) {
+$types[$type] = $templates->$type;
+$type .= 's';
+$types[$type] = $templates->$type;
+} else {
+$types[$type] = $type['file'];
+$types[$type . 's'] = $type['files'];
+}
+}
     }
     
     $theme = ttheme::instance();
@@ -135,6 +146,7 @@ class tfiles extends titems {
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
     foreach ($items as $type => $subitems) {
+$sublist = '';
       foreach ($subitems as $id) {
         $item = $this->items[$id];
         $args->preview  = '';
@@ -155,12 +167,14 @@ class tfiles extends titems {
           }
         }
         
-        $result .= $theme->parsearg($types[$type], $args);
+        $sublist .= $theme->parsearg($types[$type], $args);
       }
+$sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);
+$result .= $sublist;
     }
     
     unset(ttheme::$vars['preview'], $preview);
-    return str_replace('$file', $result, $theme->parse((string) $templates));
+    return str_replace('$files', $result, $theme->parse((string) $templates));
   }
   
   public function postedited($idpost) {
