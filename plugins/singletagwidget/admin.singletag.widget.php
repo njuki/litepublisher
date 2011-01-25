@@ -14,55 +14,55 @@ class tadminsingletagwidget  extends tadminwidget {
   
   public function getcontent() {
     $widget = tsingletagwidget::instance();
-$about = tplugins::getabout(tplugins::getname(__file__));
+    $about = tplugins::getabout(tplugins::getname(__file__));
     $html= $this->html;
     $args = targs::instance();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
-$args->add($widget->items[$id]);
-    $args->idwidget = $id;
-$args->data['$lang.invertorder'] = $about['invertorder'];
-$args->formtitle = $widget->gettitle($id);
-return $html->adminform('[text=maxcount]
-    [checkbox=invertorder]
-    [hidden=idwidget]',
-    $args);
-}
-$tags = array();
-    foreach ($widget->items as $id => $item) {
-$tags[] = $item['idtag'];
+      $args->add($widget->items[$id]);
+      $args->idwidget = $id;
+      $args->data['$lang.invertorder'] = $about['invertorder'];
+      $args->formtitle = $widget->gettitle($id);
+      return $html->adminform('[text=maxcount]
+      [checkbox=invertorder]
+      [hidden=idwidget]',
+      $args);
     }
-$args->formtitle = $about['formtitle'];
-return $html->adminform(tposteditor::getcategories($tags), $args);
+    $tags = array();
+    foreach ($widget->items as $id => $item) {
+      $tags[] = $item['idtag'];
+    }
+    $args->formtitle = $about['formtitle'];
+    return $html->adminform(tposteditor::getcategories($tags), $args);
   }
   
   public function processform()  {
     $widget = tsingletagwidget::instance();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
-$widget->items[$id]['maxcount'] = (int) $_POST['maxcount'];
-$widget->items[$id]['invertorder'] = isset( $_POST['invertorder']);
-$widget->save();
-return '';
-}
-
-$tags = array();
-    foreach ($widget->items as $id => $item) {
-$tags[] = $item['idtag'];
+      $widget->items[$id]['maxcount'] = (int) $_POST['maxcount'];
+      $widget->items[$id]['invertorder'] = isset( $_POST['invertorder']);
+      $widget->save();
+      return '';
     }
-$list = tposteditor::processcategories();
+    
+    $tags = array();
+    foreach ($widget->items as $id => $item) {
+      $tags[] = $item['idtag'];
+    }
+    $list = tposteditor::processcategories();
     $add = array_diff($list, $tags);
     $delete  = array_diff($tags, $list);
-if ((count($add) == 0) && (count($delete) == 0)) return '';
-$widget->lock();
-foreach ($delete as $idtag) {
-$widget->tagdeleted($idtag);
-}
-
-foreach ($add as $idtag) {
-$widget->add($idtag);
-}
-$widget->unlock();
-}
-
+    if ((count($add) == 0) && (count($delete) == 0)) return '';
+    $widget->lock();
+    foreach ($delete as $idtag) {
+      $widget->tagdeleted($idtag);
+    }
+    
+    foreach ($add as $idtag) {
+      $widget->add($idtag);
+    }
+    $widget->unlock();
+  }
+  
 }//class

@@ -367,4 +367,3 @@ sidebar1.meta = [<div class="footer-meta">
 		<h4>$title</h4>
  $items
  </div>]
-

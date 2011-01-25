@@ -6,66 +6,66 @@
 * and GPL (gpl.txt) licenses.
 **/
 if (!class_exists('tkeptcomments', false)) {
-if (dbversion) {
-  class tkeptcomments extends tdata {
-    
-    protected function create() {
-      parent::create();
-      $this->table ='commentskept';
-      $this->db->delete(sprintf("posted < '%s' - INTERVAL 20 minute ", sqldate()));
-    }
-    
-    public function add($values) {
-      $confirmid = md5uniq();
-      $this->db->add(array(
-      'id' => $confirmid,
-      'posted' => sqldate(),
-      'vals' => serialize($values)
-      ));
-      return $confirmid;
-    }
-    
-    public function getitem($confirmid) {
-      if ($item = $this->db->getitem(dbquote($confirmid))) {
-        return unserialize($item['vals']);
+  if (dbversion) {
+    class tkeptcomments extends tdata {
+      
+      protected function create() {
+        parent::create();
+        $this->table ='commentskept';
+        $this->db->delete(sprintf("posted < '%s' - INTERVAL 20 minute ", sqldate()));
       }
-      return false;
-    }
-    
-  }//class
-  
-} else {
-  
-  class tkeptcomments extends titems {
-    
-    protected function create() {
-      parent::create();
-      $this->basename ='comments.kept';
-    }
-    
-    public function afterload() {
-      parent::AfterLoad();
-      foreach ($this->items as $id => $item) {
-        if ($item['date']+ 600 < time()) unset($this->items[$id]);
+      
+      public function add($values) {
+        $confirmid = md5uniq();
+        $this->db->add(array(
+        'id' => $confirmid,
+        'posted' => sqldate(),
+        'vals' => serialize($values)
+        ));
+        return $confirmid;
       }
-    }
+      
+      public function getitem($confirmid) {
+        if ($item = $this->db->getitem(dbquote($confirmid))) {
+          return unserialize($item['vals']);
+        }
+        return false;
+      }
+      
+    }//class
     
-    public function add($values) {
-      $confirmid = md5uniq();
-      $this->items[$confirmid] =$values;
-      $this->save();
-      return $confirmid;
-    }
+  } else {
     
-    public function getitem($confirmid) {
-      if (!isset($this->items[$confirmid])) return false;
-      $this->save();
-      return $this->items[$confirmid];
-    }
+    class tkeptcomments extends titems {
+      
+      protected function create() {
+        parent::create();
+        $this->basename ='comments.kept';
+      }
+      
+      public function afterload() {
+        parent::AfterLoad();
+        foreach ($this->items as $id => $item) {
+          if ($item['date']+ 600 < time()) unset($this->items[$id]);
+        }
+      }
+      
+      public function add($values) {
+        $confirmid = md5uniq();
+        $this->items[$confirmid] =$values;
+        $this->save();
+        return $confirmid;
+      }
+      
+      public function getitem($confirmid) {
+        if (!isset($this->items[$confirmid])) return false;
+        $this->save();
+        return $this->items[$confirmid];
+      }
+      
+    }//class
     
-  }//class
-  
-}
+  }
 }
 
 class tcommentform extends tevents {

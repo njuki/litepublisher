@@ -47,21 +47,21 @@ class tposteditor extends tadminmenu {
     if ($parent == 0) $result = $html->categorieshead($args) . $result;
     return $result;
   }
-
-public static function getcategories(array $items) {
+  
+  public static function getcategories(array $items) {
     $categories = tcategories::instance();
     $categories->loadall();
     $result = self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
   }
-
+  
   protected function getpostcategories(tpost $post) {
     $postitems = $post->categories;
     $categories = tcategories::instance();
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
-  return self::getcategories($postitems);
-}
-
+    return self::getcategories($postitems);
+  }
+  
   public function request($id) {
     if ($s = parent::request($id)) return $s;
     $this->basename = 'editor';
