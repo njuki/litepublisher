@@ -34,7 +34,7 @@ class tadminwidgets extends tadminmenu {
     $args->idview = $idview;
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
     $result = $html->formhead();
-
+    
     $count = count($view->sidebars);
     $sidebarnames = self::getsidebarnames($view);
     foreach ($view->sidebars as $i => $sidebar) {
@@ -53,7 +53,7 @@ class tadminwidgets extends tadminmenu {
       }
     }
     $result .= $html->formfooter();
-
+    
     //all widgets
     $result .= $html->addhead();
     foreach ($widgets->items as $id => $item) {

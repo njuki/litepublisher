@@ -9,11 +9,11 @@
 function tsingletagwidgetInstall($self) {
   $widgets = twidgets::instance();
   $widgets->deleted = $self->widgetdeleted;
-
-$self->tags->deleted = $self->tagdeleted;
+  
+  $self->tags->deleted = $self->tagdeleted;
 }
 
 function tsingletagwidgetUninstall($self) {
-$self->tags->unsubscribeclass($self);
+  $self->tags->unsubscribeclass($self);
 }
 ?>

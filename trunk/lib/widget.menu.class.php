@@ -27,9 +27,9 @@ class tmenuwidget extends tclasswidget {
   public function getwidget($id, $sidebar) {
     $template = ttemplate::instance();
     if ($template->hover) return '';
-      $content = $this->getcontent($id, $sidebar);
-if ($content == '') return '';
-      $title = $this->gettitle($id);
+    $content = $this->getcontent($id, $sidebar);
+    if ($content == '') return '';
+    $title = $this->gettitle($id);
     $theme = ttheme::instance();
     return $theme->getwidget($title, $content, $this->template, $sidebar);
   }

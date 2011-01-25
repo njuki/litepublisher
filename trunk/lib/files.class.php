@@ -127,26 +127,24 @@ class tfiles extends titems {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
       $type = $item['media'];
+      if (isset($types[$type])) {
       $items[$type][] = $id;
-      if (!isset($types[$type])) {
-if (isset($templates->$type)) {
-$types[$type] = $templates->$type;
-$type .= 's';
-$types[$type] = $templates->$type;
-} else {
-$types[$type] = $type['file'];
-$types[$type . 's'] = $type['files'];
-}
-}
+        } elseif (isset($templates->$type)) {
+      $items[$type][] = $id;
+          $types[$type] = $templates->$type;
+          $type .= 's';
+          $types[$type] = $templates->$type;
+        } else {
+      $items['file'][] = $id;
+        }
     }
-    
     $theme = ttheme::instance();
     $args = targs::instance();
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
     foreach ($items as $type => $subitems) {
-$sublist = '';
+      $sublist = '';
       foreach ($subitems as $id) {
         $item = $this->items[$id];
         $args->preview  = '';
@@ -169,8 +167,8 @@ $sublist = '';
         
         $sublist .= $theme->parsearg($types[$type], $args);
       }
-$sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);
-$result .= $sublist;
+      $sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);
+      $result .= $sublist;
     }
     
     unset(ttheme::$vars['preview'], $preview);

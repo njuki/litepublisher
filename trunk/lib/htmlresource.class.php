@@ -25,13 +25,13 @@ class tadminhtml {
   public static function instance() {
     return getinstance(__class__);
   }
-
-public static function getinstance($section) {
-$self = getinstance(__class__);
-$self->section = $section;
-$lang = tlocal::instance($section);
-return $self;
-}
+  
+  public static function getinstance($section) {
+    $self = getinstance(__class__);
+    $self->section = $section;
+    $lang = tlocal::instance($section);
+    return $self;
+  }
   
   public function __construct() {
     $this->ini = array();
