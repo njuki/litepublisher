@@ -107,8 +107,8 @@ function initfiletabs() {
     $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
       $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
     });
-
-          $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.progressbar.min.js');
+    
+    $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.progressbar.min.js');
   });
 }
 

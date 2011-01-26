@@ -122,21 +122,21 @@ class tfiles extends titems {
     'files' => $templates->files,
     'preview' => $templates->preview
     );
-
+    
     foreach ($list as $id) {
       if (!isset($this->items[$id])) continue;
       $item = $this->items[$id];
       $type = $item['media'];
       if (isset($types[$type])) {
-      $items[$type][] = $id;
-        } elseif (isset($templates->$type)) {
-      $items[$type][] = $id;
-          $types[$type] = $templates->$type;
-          $type .= 's';
-          $types[$type] = $templates->$type;
-        } else {
-      $items['file'][] = $id;
-        }
+        $items[$type][] = $id;
+      } elseif (isset($templates->$type)) {
+        $items[$type][] = $id;
+        $types[$type] = $templates->$type;
+        $type .= 's';
+        $types[$type] = $templates->$type;
+      } else {
+        $items['file'][] = $id;
+      }
     }
     $theme = ttheme::instance();
     $args = targs::instance();

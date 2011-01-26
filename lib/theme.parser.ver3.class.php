@@ -194,6 +194,7 @@ class tthemeparserver3 extends tevents {
     $result = &$this->theme->templates;
     $result['content.excerpts.lite.excerpt'] = $this->parsetag($s, 'excerpt', '$items', $default->excerpt);
     $s = $this->deletespaces($s);
+    $s = str_replace('$items', '$excerpt', $s);
     $result['content.excerpts.lite'] = $s != '' ? $s : (string) $default;
   }
   

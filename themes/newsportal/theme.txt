@@ -165,13 +165,6 @@ $post.taglinks
 $post.commentslink
 </div>]
 
-$template.content.excerpts.lite.excerpt = [<li>$post.date <a href="$site.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>]
-
-$template.content.excerpts.lite = [<h1>$lang.posts</h1>
-<ul>
-$items
-</ul>]
-
 $template.content.navi.prev = [$link]
 
 $template.content.navi.next = [$link]

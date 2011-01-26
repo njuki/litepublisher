@@ -35,12 +35,12 @@ function uploadStart(file) {
 }
 
 function uploadProgress(file, bytesLoaded, bytesTotal) {
-try {
-		var percent = Math.ceil((bytesLoaded / bytesTotal) * 100);
-$( "#progressbar").progressbar( "value" , percent );
-	} catch (ex) {
-		this.debug(ex);
-	}
+  try {
+    var percent = Math.ceil((bytesLoaded / bytesTotal) * 100);
+    $( "#progressbar").progressbar( "value" , percent );
+  } catch (ex) {
+    this.debug(ex);
+  }
 }
 
 function uploadError(file, errorCode, message) {
@@ -48,7 +48,7 @@ function uploadError(file, errorCode, message) {
 }
 
 function uploadComplete(file) {
-$( "#progressbar" ).progressbar( "destroy" );
+  $( "#progressbar" ).progressbar( "destroy" );
   //alert('uploadComplete');
 }
 
@@ -74,7 +74,7 @@ function uploadSuccess(file, serverData) {
 }
 
 function createswfu () {
-var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
+  var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
   var settings = {
     flash_url : url + "/js/swfupload/swfupload.swf",
     upload_url: url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost,
@@ -85,13 +85,13 @@ var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
     file_types_description : "All Files",
     file_upload_limit : 0,
     file_queue_limit : 0,
-/*
+    /*
     custom_settings : {
       progressTarget : "fsUploadProgress",
       cancelButtonId : "btnCancel"
     },
-*/
-    				//debug: true,
+    */
+    //debug: true,
     
     // Button settings
     button_image_url: ltoptions.files + "/js/swfupload/images/XPButtonUploadText_61x22.png",
