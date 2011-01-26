@@ -26,6 +26,7 @@ function fileQueueError(file, errorCode, message) {
 }
 
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
+$('#progressbar').progressbar({value: 0});
   this.startUpload();
 }
 
@@ -34,6 +35,12 @@ function uploadStart(file) {
 }
 
 function uploadProgress(file, bytesLoaded, bytesTotal) {
+try {
+		var percent = Math.ceil((bytesLoaded / bytesTotal) * 100);
+$( "#progressbar").progressbar( "value" , percent );
+	} catch (ex) {
+		this.debug(ex);
+	}
 }
 
 function uploadError(file, errorCode, message) {
@@ -41,6 +48,7 @@ function uploadError(file, errorCode, message) {
 }
 
 function uploadComplete(file) {
+$( "#progressbar" ).progressbar( "destroy" );
   //alert('uploadComplete');
 }
 
@@ -77,11 +85,13 @@ var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
     file_types_description : "All Files",
     file_upload_limit : 0,
     file_queue_limit : 0,
+/*
     custom_settings : {
       progressTarget : "fsUploadProgress",
       cancelButtonId : "btnCancel"
     },
-    //				debug: true,
+*/
+    				//debug: true,
     
     // Button settings
     button_image_url: ltoptions.files + "/js/swfupload/images/XPButtonUploadText_61x22.png",
@@ -90,7 +100,6 @@ var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
     button_width: 61,
     button_height: 22,
     
-    // The event handler functions are defined in handlers.js
     //		swfupload_loaded_handler : swfUploadLoaded,
     file_queued_handler : fileQueued,
     file_queue_error_handler : fileQueueError,
