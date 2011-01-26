@@ -107,6 +107,8 @@ function initfiletabs() {
     $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
       $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
     });
+
+          $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.progressbar.min.js');
   });
 }
 
@@ -132,11 +134,11 @@ function initposteditor() {
       $("#tabs").bind( "tabsload", function(event, ui) {
         switch (ui.index) {
           case 2:
-          $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker.min.js', function() {
+          $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker.min.js', function() {
             initdatepicker();
             if (ltoptions.lang == 'en') {
             } else {
-              $.getScript(ltoptions.files + '/js/jquery/ui/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+              $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
                 initdatepicker();
               });
             }
