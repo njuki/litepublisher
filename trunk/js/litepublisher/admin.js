@@ -14,8 +14,8 @@ $(document).ready(function() {
 });
 
 function inittabs(sel, callback) {
-
-    $('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui-1.8.9/redmond/jquery-ui-1.8.9.custom.css" />').appendTo("head");
+  
+  $('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui-1.8.9/redmond/jquery-ui-1.8.9.custom.css" />').appendTo("head");
   $(document).ready(function() {
     $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery-ui-1.8.9.custom.min.js', function() {
     $(sel).tabs({ cache: true });

@@ -109,8 +109,6 @@ $template.content.post.templatecomments.holdcomments = [<h3><em>$lang.hold</em><
 $comment
  </ol>]
 
-$template.content.post.templatecomments.comments.comment.quotebuttons = []
-
 $template.content.post.templatecomments.comments.comment = [<li $class id="comment-$comment.id">
  <a name="comment-$comment.id"></a>
 $moderate
@@ -157,13 +155,6 @@ $post.taglinks
  <span class="post-comments">$post.commentslink</span>
 		</div>
 	</div>]
-
-$template.content.excerpts.lite.excerpt = [<li>$post.date <a href="$site.url$post.url" title="$lang.permalink $post.title">$post.title</a></li>]
-
-$template.content.excerpts.lite = [<h1>$lang.posts</h1>
-<ul>
-$items
-</ul>]
 
 $template.content.navi.next = [<span class='"next-entries">$link</span>]
 
@@ -369,4 +360,3 @@ sidebar1.meta = [<div class="footer-meta">
 		<h4>$title</h4>
  $items
  </div>]
-

@@ -11,11 +11,11 @@ class tlinkdescription extends tplugin {
   public static function instance() {
     return getinstance(__class__);
   }
-
+  
   protected function create() {
     parent::create();
-$this->data['description'] = '';
-
+    $this->data['description'] = '';
+    
   }
   
   public function install() {
@@ -29,12 +29,12 @@ $this->data['description'] = '';
     $parser->unsubscribeclass($this);
     ttheme::clearcache();
   }
-
+  
   public function themeparsed(ttheme $theme) {
-$s = $this->description;
-if ($s && !strpos($theme->templates['index'], $s)) {
-$theme->templates['index'] = str_replace('$site.description', $s, $theme->templates['index']);
-}
-}
-
+    $s = $this->description;
+    if ($s && !strpos($theme->templates['index'], $s)) {
+      $theme->templates['index'] = str_replace('$site.description', $s, $theme->templates['index']);
+    }
+  }
+  
 }//class
