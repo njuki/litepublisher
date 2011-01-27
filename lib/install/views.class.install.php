@@ -7,6 +7,9 @@
 **/
 
 function tviewsInstall($self) {
+$widgets = twidgets::instance();
+$widgets->deleted = $self->widgetdeleted;
+
   $self->lock();
   tlocal::loadlang('admin');
   $lang = tlocal::instance('names');
