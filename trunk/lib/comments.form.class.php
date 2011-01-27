@@ -115,9 +115,7 @@ class tcommentform extends tevents {
       $args->subscribe = $subscribers->subscribed($postid, $user['id']);
       
       $comments = tcomments::instance($postid);
-      $hold = $comments->getholdcontent($user['id']);
-      if ($hold != '') {
-        $result .= $theme->parse($theme->content->post->templatecomments->comments->hold);
+      if ($hold = $comments->getholdcontent($user['id'])) {
         $result .= $hold;
       }
     }

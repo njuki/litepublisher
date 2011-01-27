@@ -27,6 +27,9 @@ function fileQueueError(file, errorCode, message) {
 
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 $('#progressbar').progressbar({value: 0});
+if (ltoptions.uploadurl != undefined) {
+swfu.setUploadURL(ltoptions.uploadurl + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
+}
   this.startUpload();
 }
 
