@@ -23,7 +23,7 @@ class tupdater extends tevents {
     $this->log = false;
   }
   
-  public static function GetVersion() {
+  public static function getversion() {
     return trim(file_get_contents(litepublisher::$paths->libinclude . 'version.txt'));
   }
   

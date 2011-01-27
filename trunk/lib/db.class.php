@@ -110,7 +110,7 @@ class tdatabase {
       $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
       die($log);
     } else {
-      litepublisher::$options->trace($mesg);
+      litepublisher::$options->trace($this->sql . "\n" . $mesg);
     }
   }
   
