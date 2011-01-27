@@ -10,6 +10,7 @@ function tusergroupsInstall($self) {
   $self->lock();
   $self->add('admin', 'admin');
   $self->add('editor', '/admin/posts/');
+  $self->add('subeditor', '/admin/posts/');
   $self->add('author', '/admin/posts/');
   $self->add('moderator', '/admin/comments/');
   $self->add('subscriber', '/admin/subscribers/');

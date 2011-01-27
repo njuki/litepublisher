@@ -488,6 +488,7 @@ $id - id списка одобренных
 $idhold - id списка задержанных. $id и $idhold предназначены для javascript модерирования комментариев, чтобы скрипт мог перемещать комментарии между списками. Не влияет на генерируемый html списков, но передается в javascript. Без этих значений javascript не сможет найти оба списка.
 
 Объявим шаблон для списка задержанных - он является почти полной копией списка одобренных:
+
 content.post.templatecomments.holdcomments = [
 <p class="hold"><em>$lang.hold</em></p>
   <a name="holdcomments"></a>
@@ -659,21 +660,21 @@ $page - номер страницы, цифра
 
 content.admin = [
 $editor = [<p><label for="$name"><strong>$lang.$name:</strong></label><br />
-<textarea name="$name" id="$name" cols="57%" rows="10">$value</textarea></p>]
+<textarea name="$name" id="editor-$name" cols="57%" rows="10">$value</textarea></p>]
 
-$text = [<p><input type="text" name="$name" id="$name" value="$value" size="22" />
+$text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="22" />
 <label for="$name"><strong>$lang.$name</strong></label></p>]
 
-$password = [<p><input type="password" name="$name" id="$name" value="$value" size='22' />
+$password = [<p><input type="password" name="$name" id="password-$name" value="$value" size='22' />
 <label for="$name"><strong>$lang.$name</strong></label></p>]
 
-$checkbox= [<p><input type="checkbox" name="$name" id="$name" $value />
+$checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value />
 <label for="$name"><strong>$lang.$name</strong></label></p>]
 
 $combo = [<p><label for="$name"><strong>$lang.$name:</strong></label>
-<select name="$name" id="$name">$value</select></p>]
+<select name="$name" id="combo-$name">$value</select></p>]
 
-$hidden = [<input type="hidden" name="$name" id="$name" value="$value" />]
+$hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]
 
 $form = [
 <h3>$formtitle</h3>
