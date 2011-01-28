@@ -28,6 +28,7 @@ class tadminlinkdescription {
     $plugin = tlinkdescription::instance();
     $plugin->description = $_POST['description'];
     $plugin->save();
+    litepublisher::$urlmap->clearcache();
   }
   
 }//class

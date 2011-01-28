@@ -24,7 +24,7 @@ class tlinkswidget extends twidget {
     $this->addmap('items', array());
     $this->addmap('autoid', 0);
     $this->redirlink = '/linkswidget/';
-    $this->data['redir'] = true;
+    $this->data['redir'] = false;
   }
   
   public function getdeftitle() {
