@@ -451,10 +451,7 @@ class tbackuper extends tevents {
       $this->tar->loadfromstring($content);
       if (!is_array($this->tar->files)) {
         unset($this->tar);
-        tlocal::loadlang('admin');
-        $lang = tlocal::instance('service');
-        $this->result = $lang->errorarchive;
-        return false;
+return $this->errorarch();
       }
       
       foreach ($this->tar->files as $item) {
@@ -497,6 +494,60 @@ class tbackuper extends tevents {
     $lang = tlocal::instance('service');
     $this->result = sprintf($lang->errorwritefile, $filename);
     return false;
+  }
+
+private function errorarch() {
+        tlocal::loadlang('admin');
+        $lang = tlocal::instance('service');
+        $this->result = $lang->errorarchive;
+        return false;
+}
+
+//upload plugin or theme
+  public function uploaditem($content, $archtype, $itemtype) {
+$itemtype = $itemtype == 'plugin' ? 'plugins/' : 'themes/';
+    set_time_limit(300);
+    if ($archtype == 'zip') $archtype = 'unzip';
+    $this->archtype = $archtype;
+    $this->existingfolders = array();
+    $this->createarchive();
+    switch ($archtype) {
+      case 'tar':
+      $this->tar->loadfromstring($content);
+      if (!is_array($this->tar->files)) {
+        unset($this->tar);
+return $this->errorarch();
+      }
+      
+      foreach ($this->tar->files as $item) {
+if (strbegin($item['name'], $itemtype)){
+        if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
+}
+      }
+      //$this->onuploaded($this);
+      unset($this->tar);
+      break;
+      
+      case 'unzip':
+      $mode = $this->filer->chmod_file;
+      $this->unzip->ReadData($content);
+      foreach ($this->unzip->Entries as  $item) {
+        if ($item->Error != 0) continue;
+$filename = $item->Path . '/' . $item->Name;
+if (strbegin($filename, $itemtype)) {
+        if (!$this->uploadfile($filename, $item->Data, $mode))
+}
+        return $this->errorwrite($item->Path . $item->Name);
+      }
+      //$this->onuploaded($this);
+      unset($this->unzip);
+      break;
+      
+      default:
+      $this->unknown_archive();
+    }
+    unset($this->existingfolders);
+    return true;
   }
   
   public function createfullbackup(){
