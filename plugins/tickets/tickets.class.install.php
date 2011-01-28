@@ -93,16 +93,10 @@ function tticketsInstall($self) {
   $groups->defaultgroup = 'ticket';
   $groups->onhasright = $self->hasright;
   $groups->unlock();
-  
-  $cron = tcron::instance();
-  $cron->addweekly(get_class($self), 'optimize', null);
 }
 
 function tticketsUninstall($self) {
   //die("Warning! You can lost all tickets!");
-  $cron = tcron::instance();
-  $cron->deleteclass(get_class($self));
-  
   litepublisher::$classes->lock();
   //if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
