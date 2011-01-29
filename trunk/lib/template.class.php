@@ -89,12 +89,11 @@ class ttemplate extends tevents_storage {
   
   public function gettitle() {
     $title = $this->itemplate ? $this->context->gettitle() : '';
-    if (empty($title)) return litepublisher::$site->name;
-    
     $args = targs::instance();
     $args->title = $title;
     $theme = $this->view->theme;
-    return $theme->parsearg($theme->title, $args);
+$result = $theme->parsearg($theme->title, $args);
+return trim($result, ' |');
   }
   
   public function geticon() {
@@ -211,6 +210,12 @@ class ttemplate extends tevents_storage {
       $this->Save();
     }
   }
+
+public function getpage() {
+$page = litepublisher::$urlmap->page;
+if ($page <= 1) return '';
+return sprintf(tlocal::$data['default']['pagetitle'], $page);
+}
   
 }//class
 
