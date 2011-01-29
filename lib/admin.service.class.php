@@ -99,6 +99,12 @@ class tadminservice extends tadminmenu {
       $args->content = isset($_POST['content']) ? $_POST['content'] : '';
       $result = $html->adminform('[editor=content]', $args);
       break;
+
+case 'upload':
+      $args->formtitle = $this->lang->uploaditem;
+$args->url = tadminhtml::getparam('url', '');
+      $result = $html->adminform($this->getloginform() . '[text=url]', $args);
+break;
     }
     
     $result = str_replace("'", '"', $result);
