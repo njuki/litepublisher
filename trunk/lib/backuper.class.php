@@ -535,10 +535,9 @@ if (strbegin($item['name'], $itemtype)){
         if ($item->Error != 0) continue;
 $filename = $item->Path . '/' . $item->Name;
 if (strbegin($filename, $itemtype)) {
-        if (!$this->uploadfile($filename, $item->Data, $mode))
-}
-        return $this->errorwrite($item->Path . $item->Name);
+        if (!$this->uploadfile($filename, $item->Data, $mode)) return $this->errorwrite($item->Path . $item->Name);
       }
+}
       //$this->onuploaded($this);
       unset($this->unzip);
       break;

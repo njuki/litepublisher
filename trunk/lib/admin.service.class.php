@@ -101,9 +101,9 @@ class tadminservice extends tadminmenu {
       break;
 
 case 'upload':
-      $args->formtitle = $this->lang->uploaditem;
 $args->url = tadminhtml::getparam('url', '');
-      $result = $html->adminform($this->getloginform() . '[text=url]', $args);
+$args->loginform = $this->getloginform();
+      $result = $html->uploaditem($args);
 break;
     }
     
@@ -186,8 +186,8 @@ break;
       
       case 'backup':
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
-      $backuper = tbackuper::instance();
       extract($_POST, EXTR_SKIP);
+      $backuper = tbackuper::instance();
       if (isset($upload)) {
         if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
           return $html->attack($_FILES["filename"]["name"]);
@@ -216,13 +216,11 @@ break;
         $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . $backuper->getfiletype();
         $content = $backuper->getpartial(isset($plugins), isset($theme), isset($lib));
         $this->sendfile($content, $filename);
-        
-      } elseif (isset($fullbackup)) {
+              } elseif (isset($fullbackup)) {
         $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . $backuper->getfiletype();
         $content = $backuper->getfull();
         $this->sendfile($content);
-        
-      } elseif (isset($sqlbackup)) {
+              } elseif (isset($sqlbackup)) {
         $content = $backuper->getdump();
         $filename = litepublisher::$domain . date('-Y-m-d') . '.sql';
         
@@ -258,7 +256,24 @@ break;
       case 'run':
       $result = eval($_POST['content']);
       return $result;
-      break;
+
+case 'upload':
+$url = trim($_POST['url']);
+if (empty($url)) return '';
+      if (!$this->checkbackuper()) return $html->h3->erroraccount;
+if ($s = http::get($url)) {
+$itemtype = tadminhtml::getparam('itemtype', 'theme');
+$backuper = tbackuper::instance();
+if (!($archtype = $backuper->getarchtype($url))) $archtype = 'zip';
+if ($backuper->uploaditem($s, $archtype, $itemtype)) {
+return $html->h3->itemuploaded;
+} else {
+return sprintf('<h3>%s</h3>', $backuper->result);
+}
+} else{
+return $html->h3->errordownload;
+}
+break;
     }
     
   }
