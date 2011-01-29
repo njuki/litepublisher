@@ -505,7 +505,7 @@ private function errorarch() {
 
 //upload plugin or theme
   public function uploaditem($content, $archtype, $itemtype) {
-$itemtype = $itemtype == 'plugin' ? 'plugins/' : 'themes/';
+$itemtype = $itemtype == 'theme' ? 'themes/' : 'plugins/';
     set_time_limit(300);
     if ($archtype == 'zip') $archtype = 'unzip';
     $this->archtype = $archtype;

@@ -44,6 +44,7 @@ class tadminmenumanager extends tadminmenu {
       return $result;
       
       case 'edit':
+      $id = tadminhtml::idparam();
       $menus = tmenus::instance();
       $parents = array(0 => '-----');
       foreach ($menus->items as $id => $item) {
@@ -56,7 +57,7 @@ class tadminmenumanager extends tadminmenu {
       $args->adminurl = $this->adminurl;
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
       $args->editurl = litepublisher::$site->url . $this->url . 'edit/' . litepublisher::$site->q . 'id';
-      $id = $this->idget();
+
       if ($id == 0) {
         $args->id = 0;
         $args->title = '';

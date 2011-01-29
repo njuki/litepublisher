@@ -24,9 +24,11 @@ $args->formtitle =$lang->download ;
   public function processform() {
 $url = trim($_POST['url']);
 if (empty($url)) return '';
+$itemtype = tadminhtml::getparam('itemtype', 'theme');
 if ($s = http::get($url)) {
 $backuper = tbackuper::instance();
-if ($backuper->uploaditem($s, $backuper->getarchtype($url), $itemtype)) {
+if (!($archtype = $backuper->getarchtype($url))) $archtype = 'zip';
+if ($backuper->uploaditem($s, $archtype, $itemtype)) {
 return 'uploaded';
 }
 }

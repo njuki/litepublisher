@@ -80,7 +80,7 @@ tstorage::loaddata();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
 ttheme::clearcache();
-//tlocal::clearcache();
+tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');

@@ -11,7 +11,6 @@ class tadminservice extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  
   public function getcontent() {
     $result = '';
     $html = $this->html;
