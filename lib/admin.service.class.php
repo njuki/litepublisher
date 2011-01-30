@@ -101,6 +101,7 @@ class tadminservice extends tadminmenu {
       break;
 
 case 'upload':
+$args->site = rawurlencode(litepublisher::$site->url);
 $args->url = tadminhtml::getparam('url', '');
 $args->loginform = $this->getloginform();
       $result = $html->uploaditem($args);

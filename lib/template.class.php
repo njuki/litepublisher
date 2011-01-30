@@ -123,24 +123,14 @@ return trim($result, ' |');
   
   public function getmenu() {
     $current = $this->context instanceof tmenu ? $this->context->id : 0;
-    if (litepublisher::$urlmap->adminpanel) {
-      $adminmenus = tadminmenus::instance();
-      return $adminmenus->getmenu($this->hover, $current);
-    }
-    
-    if ($current == 0) {
-      $filename = litepublisher::$paths->cache . $this->view->theme->name . '.menu.php';
+      $filename = litepublisher::$paths->cache . $this->view->theme->name . '.' . $current;
+$filename .= litepublisher::$urlmap->adminpanel ? '.adminmenu.php' : '.menu.php';
       if (file_exists($filename)) return file_get_contents($filename);
-    }
-    
-    $menus = tmenus::instance();
+
+    $menus = litepublisher::$urlmap->adminpanel ? tadminmenus::instance() : tmenus::instance();
     $result = $menus->getmenu($this->hover, $current);
-    
-    if ($current == 0) {
       file_put_contents($filename, $result);
       @chmod($filename, 0666);
-    }
-    
     return $result;
   }
   
