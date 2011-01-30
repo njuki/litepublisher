@@ -548,8 +548,42 @@ if (strbegin($filename, $itemtype)) {
     unset($this->existingfolders);
     return true;
   }
+
+  public function unpack($content, $archtype) {
+$result = array();
+    if ($archtype == 'zip') $archtype = 'unzip';
+    $this->archtype = $archtype;
+    $this->createarchive();
+    switch ($archtype) {
+      case 'tar':
+      $this->tar->loadfromstring($content);
+      if (!is_array($this->tar->files)) {
+        unset($this->tar);
+return $this->errorarch();
+      }
+      
+      foreach ($this->tar->files as $item) {
+$result[$item['name']] = $item['file'];
+      }
+      unset($this->tar);
+      break;
+      
+      case 'unzip':
+      $this->unzip->ReadData($content);
+      foreach ($this->unzip->Entries as  $item) {
+$result[$item->Path . '/' . $item->Name] = $item->Data;
+}
+      unset($this->unzip);
+      break;
+      
+      default:
+      $this->unknown_archive();
+    }
+
+    return $result;
+  }
   
-  public function createfullbackup(){
+    public function createfullbackup(){
     return $this->_savebackup($this->getpartial(true, true, true));
   }
   
