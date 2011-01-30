@@ -12,5 +12,5 @@
   `code` longtext NOT NULL,
 
   PRIMARY KEY  (`id`,`type`),
-  KEY `state` (`state`),
-  KEY `prio` (`prio`)
+  KEY `type` (`type`),
+  KEY `state` (`state`)

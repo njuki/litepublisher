@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tdownloadcounter extends TItems {
+class tdownloadcounter extends titems {
   
   public static function instance() {
     return getinstance(__class__);
