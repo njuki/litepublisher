@@ -92,8 +92,8 @@ class ttemplate extends tevents_storage {
     $args = targs::instance();
     $args->title = $title;
     $theme = $this->view->theme;
-$result = $theme->parsearg($theme->title, $args);
-return trim($result, ' |');
+    $result = $theme->parsearg($theme->title, $args);
+    return trim($result, ' |');
   }
   
   public function geticon() {
@@ -123,14 +123,14 @@ return trim($result, ' |');
   
   public function getmenu() {
     $current = $this->context instanceof tmenu ? $this->context->id : 0;
-      $filename = litepublisher::$paths->cache . $this->view->theme->name . '.' . $current;
-$filename .= litepublisher::$urlmap->adminpanel ? '.adminmenu.php' : '.menu.php';
-      if (file_exists($filename)) return file_get_contents($filename);
-
+    $filename = litepublisher::$paths->cache . $this->view->theme->name . '.' . $current;
+    $filename .= litepublisher::$urlmap->adminpanel ? '.adminmenu.php' : '.menu.php';
+    if (file_exists($filename)) return file_get_contents($filename);
+    
     $menus = litepublisher::$urlmap->adminpanel ? tadminmenus::instance() : tmenus::instance();
     $result = $menus->getmenu($this->hover, $current);
-      file_put_contents($filename, $result);
-      @chmod($filename, 0666);
+    file_put_contents($filename, $result);
+    @chmod($filename, 0666);
     return $result;
   }
   
@@ -200,12 +200,12 @@ $filename .= litepublisher::$urlmap->adminpanel ? '.adminmenu.php' : '.menu.php'
       $this->Save();
     }
   }
-
-public function getpage() {
-$page = litepublisher::$urlmap->page;
-if ($page <= 1) return '';
-return sprintf(tlocal::$data['default']['pagetitle'], $page);
-}
+  
+  public function getpage() {
+    $page = litepublisher::$urlmap->page;
+    if ($page <= 1) return '';
+    return sprintf(tlocal::$data['default']['pagetitle'], $page);
+  }
   
 }//class
 

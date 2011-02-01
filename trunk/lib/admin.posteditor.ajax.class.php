@@ -281,7 +281,7 @@ class tajaxposteditor  extends tevents {
       default:
       $result = var_export($_GET, true);
     }
-tfiler::log($result);
+    //tfiler::log($result);
     return turlmap::htmlheader(false) . $result;
   }
   

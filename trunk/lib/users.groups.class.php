@@ -20,6 +20,7 @@ class tusergroups extends titems {
   }
   
   function add($name, $home = '/ADMIN/') {
+    if ($id = $this->groupid($name)) return $id;
     $this->items[++$this->autoid] = array(
     'name' => $name,
     'home' => $home

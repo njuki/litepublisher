@@ -117,7 +117,7 @@ class tposteditor extends tadminmenu {
   }
   
   public function processform() {
-   /*
+    /*
     echo "<pre>\n";
     var_dump($_POST);
     echo "</pre>\n";
@@ -135,10 +135,10 @@ class tposteditor extends tadminmenu {
     if (isset($icon)) $post->icon = (int) $icon;
     if (isset($idview)) $post->idview = $idview;
     if (isset($files))  {
-$files = trim($files);
-$post->files = $files == '' ? array() : explode(',', $files);
-var_dump($files, $post->files );
-}
+      $files = trim($files);
+      $post->files = $files == '' ? array() : explode(',', $files);
+      var_dump($files, $post->files );
+    }
     if (isset($date) && ($date != '')  && @sscanf($date, '%d.%d.%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
       $post->posted = mktime($h,$min,0, $m, $d, $y);
     }
