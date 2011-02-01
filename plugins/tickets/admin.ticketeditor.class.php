@@ -16,9 +16,7 @@ class tticketeditor extends tposteditor {
     $result = parent::gethead();
     $result .= '
     <script type="text/javascript">
-    $(document).ready(function() {
-      $("#contenttabs").tabs();
-    });
+      inittabs("#contenttabs");
     </script>';
     return $result;
   }
