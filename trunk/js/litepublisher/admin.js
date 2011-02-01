@@ -13,13 +13,37 @@ $(document).ready(function() {
   
 });
 
-function inittabs(sel, callback) {
-  
-  $('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui-1.8.9/redmond/jquery-ui-1.8.9.custom.css" />').appendTo("head");
-  $(document).ready(function() {
-    $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery-ui-1.8.9.custom.min.js', function() {
+function doinittabs(sel, fn) {
     $(sel).tabs({ cache: true });
-      if (typeof callback=== "function") callback();
+if ($.isFunction(fn)) fn();
+}
+
+function inittabs(sel, fn) {
+switch($._tabsready) {
+case 'loaded':
+doinittabs(sel, fn);
+break;
+
+case 'loading':
+$._tabslist.push({
+sel: sel,
+fn: fn
+});
+break;
+
+default:
+$._tabslist = [];
+$._tabsready = 'loading';
+  $('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui-1.8.9/redmond/jquery-ui-1.8.9.custom.css" />').appendTo("head");
+    $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery-ui-1.8.9.custom.min.js', function() {
+  $(document).ready(function() {
+$._tabsready = 'loaded';
+doinittabs(sel, fn);
+$($._tabslist).each(function(index, value) {
+doinittabs(value.sel, value.fn);
+});
+$.tabslist = null;
     });
   });
+}
 }

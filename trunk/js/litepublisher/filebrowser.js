@@ -63,7 +63,7 @@ function str_replace ( search, replace, subject ) {
   
 }
 
-var addtocurrentfiles= function() {
+function addtocurrentfiles() {
   $("input:checked[id^='itemfilepage']").each(function() {
     $(this).attr('checked', false);
     var id = $(this).val();
@@ -73,6 +73,7 @@ var addtocurrentfiles= function() {
       ['curfile-', 'curpost-', 'currentfile-'],
       $('<div></div>').append($( this).parent().clone() ).html());
       // outer html prev line
+//alert(html);
       $('#currentfilestab > :first').append(html);
     }
   });
@@ -101,7 +102,7 @@ function initfiletabs() {
     });
     
     $('form:first').submit(function() {
-      $("#files").val(getpostfiles());
+  $("input[name='files']").val(getpostfiles());
     });
     
     $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
@@ -128,15 +129,14 @@ function tagtopost(link) {
 }
 
 function initposteditor() {
-  $(document).ready(function() {
     $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
     inittabs("#tabs", function() {
       $("#tabs").bind( "tabsload", function(event, ui) {
         switch (ui.index) {
           case 2:
           $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker.min.js', function() {
-            initdatepicker();
             if (ltoptions.lang == 'en') {
+            initdatepicker();
             } else {
               $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
                 initdatepicker();
@@ -146,19 +146,16 @@ function initposteditor() {
           break;
         }
       });
-      
-      $("a[rel~='initfiletabs']").click(function() {
-        $(this).unbind('click');
+
+      $("a[rel~='initfiletabs']").one('click', function() {
         initfiletabs();
         return false;
       });
       
-      $("a[rel~='loadcontenttabs']").click(function() {
-        $(this).unbind('click');
+      $("a[rel~='loadcontenttabs']").one('click', function() {
         loadcontenttabs();
         return false;
       });
       
     });
-  });
 }

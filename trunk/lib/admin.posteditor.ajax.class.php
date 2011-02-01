@@ -32,8 +32,7 @@ class tajaxposteditor  extends tevents {
       if ($this->ajaxvisual) {
         $head .= '<script type="text/javascript">
         $(document).ready(function() {
-          $("a[rel~=\'loadvisual\']").click(function() {
-            $(this).unbind("click");
+          $("a[rel~=\'loadvisual\']").one("click", function() {
             $("#loadvisual").remove();
             $.getScript("' . litepublisher::$site->files . $this->visual . '");
             return false;
@@ -282,6 +281,7 @@ class tajaxposteditor  extends tevents {
       default:
       $result = var_export($_GET, true);
     }
+tfiler::log($result);
     return turlmap::htmlheader(false) . $result;
   }
   
