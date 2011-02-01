@@ -67,7 +67,7 @@ class tcustomwidget extends twidget {
     $widgets->items[$id]['title'] = $title;
     $widgets->save();
     $this->expired($id);
-litepublisher::$urlmap->clearcache();
+    litepublisher::$urlmap->clearcache();
   }
   
   public function delete($id) {

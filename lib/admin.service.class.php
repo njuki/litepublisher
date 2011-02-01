@@ -99,13 +99,13 @@ class tadminservice extends tadminmenu {
       $args->content = isset($_POST['content']) ? $_POST['content'] : '';
       $result = $html->adminform('[editor=content]', $args);
       break;
-
-case 'upload':
-$args->site = rawurlencode(litepublisher::$site->url);
-$args->url = tadminhtml::getparam('url', '');
-$args->loginform = $this->getloginform();
+      
+      case 'upload':
+      $args->site = rawurlencode(litepublisher::$site->url);
+      $args->url = tadminhtml::getparam('url', '');
+      $args->loginform = $this->getloginform();
       $result = $html->uploaditem($args);
-break;
+      break;
     }
     
     $result = str_replace("'", '"', $result);
@@ -217,11 +217,11 @@ break;
         $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . $backuper->getfiletype();
         $content = $backuper->getpartial(isset($plugins), isset($theme), isset($lib));
         $this->sendfile($content, $filename);
-              } elseif (isset($fullbackup)) {
+      } elseif (isset($fullbackup)) {
         $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . $backuper->getfiletype();
         $content = $backuper->getfull();
         $this->sendfile($content);
-              } elseif (isset($sqlbackup)) {
+      } elseif (isset($sqlbackup)) {
         $content = $backuper->getdump();
         $filename = litepublisher::$domain . date('-Y-m-d') . '.sql';
         
@@ -257,24 +257,24 @@ break;
       case 'run':
       $result = eval($_POST['content']);
       return $result;
-
-case 'upload':
-$url = trim($_POST['url']);
-if (empty($url)) return '';
+      
+      case 'upload':
+      $url = trim($_POST['url']);
+      if (empty($url)) return '';
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
-if ($s = http::get($url)) {
-$itemtype = tadminhtml::getparam('itemtype', 'theme');
-$backuper = tbackuper::instance();
-if (!($archtype = $backuper->getarchtype($url))) $archtype = 'zip';
-if ($backuper->uploaditem($s, $archtype, $itemtype)) {
-return $html->h3->itemuploaded;
-} else {
-return sprintf('<h3>%s</h3>', $backuper->result);
-}
-} else{
-return $html->h3->errordownload;
-}
-break;
+      if ($s = http::get($url)) {
+        $itemtype = tadminhtml::getparam('itemtype', 'theme');
+        $backuper = tbackuper::instance();
+        if (!($archtype = $backuper->getarchtype($url))) $archtype = 'zip';
+        if ($backuper->uploaditem($s, $archtype, $itemtype)) {
+          return $html->h3->itemuploaded;
+        } else {
+          return sprintf('<h3>%s</h3>', $backuper->result);
+        }
+      } else{
+        return $html->h3->errordownload;
+      }
+      break;
     }
     
   }

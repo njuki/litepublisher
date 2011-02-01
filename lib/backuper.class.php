@@ -451,7 +451,7 @@ class tbackuper extends tevents {
       $this->tar->loadfromstring($content);
       if (!is_array($this->tar->files)) {
         unset($this->tar);
-return $this->errorarch();
+        return $this->errorarch();
       }
       
       foreach ($this->tar->files as $item) {
@@ -495,17 +495,17 @@ return $this->errorarch();
     $this->result = sprintf($lang->errorwritefile, $filename);
     return false;
   }
-
-private function errorarch() {
-        tlocal::loadlang('admin');
-        $lang = tlocal::instance('service');
-        $this->result = $lang->errorarchive;
-        return false;
-}
-
-//upload plugin or theme
+  
+  private function errorarch() {
+    tlocal::loadlang('admin');
+    $lang = tlocal::instance('service');
+    $this->result = $lang->errorarchive;
+    return false;
+  }
+  
+  //upload plugin or theme
   public function uploaditem($content, $archtype, $itemtype) {
-$itemtype = $itemtype == 'theme' ? 'themes/' : 'plugins/';
+    $itemtype = $itemtype == 'theme' ? 'themes/' : 'plugins/';
     set_time_limit(300);
     if ($archtype == 'zip') $archtype = 'unzip';
     $this->archtype = $archtype;
@@ -516,13 +516,13 @@ $itemtype = $itemtype == 'theme' ? 'themes/' : 'plugins/';
       $this->tar->loadfromstring($content);
       if (!is_array($this->tar->files)) {
         unset($this->tar);
-return $this->errorarch();
+        return $this->errorarch();
       }
       
       foreach ($this->tar->files as $item) {
-if (strbegin($item['name'], $itemtype)){
-        if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
-}
+        if (strbegin($item['name'], $itemtype)){
+          if (!$this->uploadfile($item['name'],$item['file'], $item['mode'])) return $this->errorwrite($item['name']);
+        }
       }
       //$this->onuploaded($this);
       unset($this->tar);
@@ -533,11 +533,11 @@ if (strbegin($item['name'], $itemtype)){
       $this->unzip->ReadData($content);
       foreach ($this->unzip->Entries as  $item) {
         if ($item->Error != 0) continue;
-$filename = $item->Path . '/' . $item->Name;
-if (strbegin($filename, $itemtype)) {
-        if (!$this->uploadfile($filename, $item->Data, $mode)) return $this->errorwrite($item->Path . $item->Name);
+        $filename = $item->Path . '/' . $item->Name;
+        if (strbegin($filename, $itemtype)) {
+          if (!$this->uploadfile($filename, $item->Data, $mode)) return $this->errorwrite($item->Path . $item->Name);
+        }
       }
-}
       //$this->onuploaded($this);
       unset($this->unzip);
       break;
@@ -548,9 +548,9 @@ if (strbegin($filename, $itemtype)) {
     unset($this->existingfolders);
     return true;
   }
-
+  
   public function unpack($content, $archtype) {
-$result = array();
+    $result = array();
     if ($archtype == 'zip') $archtype = 'unzip';
     $this->archtype = $archtype;
     $this->createarchive();
@@ -559,11 +559,11 @@ $result = array();
       $this->tar->loadfromstring($content);
       if (!is_array($this->tar->files)) {
         unset($this->tar);
-return $this->errorarch();
+        return $this->errorarch();
       }
       
       foreach ($this->tar->files as $item) {
-$result[$item['name']] = $item['file'];
+        $result[$item['name']] = $item['file'];
       }
       unset($this->tar);
       break;
@@ -571,19 +571,19 @@ $result[$item['name']] = $item['file'];
       case 'unzip':
       $this->unzip->ReadData($content);
       foreach ($this->unzip->Entries as  $item) {
-$result[$item->Path . '/' . $item->Name] = $item->Data;
-}
+        $result[$item->Path . '/' . $item->Name] = $item->Data;
+      }
       unset($this->unzip);
       break;
       
       default:
       $this->unknown_archive();
     }
-
+    
     return $result;
   }
   
-    public function createfullbackup(){
+  public function createfullbackup(){
     return $this->_savebackup($this->getpartial(true, true, true));
   }
   

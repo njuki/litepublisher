@@ -59,10 +59,9 @@ class tadmintags extends tadminmenu {
     $from = $this->getfrom($perpage, $count);
     
     $items = array_slice($tags->items, $from, $perpage);
-    foreach ($items as $id => $item) {
-      $items[$id]['parentname'] =$parents[$id];
+    foreach ($items as &$item) {
+      $item['parentname'] = $parents[$item['parent']];
     }
-    
     $result .= $html->buildtable($items, array(
     array('right', $lang->count2, '$itemscount'),
     array('left', $lang->parent, '$parentname'),

@@ -73,7 +73,7 @@ function addtocurrentfiles() {
       ['curfile-', 'curpost-', 'currentfile-'],
       $('<div></div>').append($( this).parent().clone() ).html());
       // outer html prev line
-//alert(html);
+      //alert(html);
       $('#currentfilestab > :first').append(html);
     }
   });
@@ -102,7 +102,7 @@ function initfiletabs() {
     });
     
     $('form:first').submit(function() {
-  $("input[name='files']").val(getpostfiles());
+      $("input[name='files']").val(getpostfiles());
     });
     
     $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
@@ -129,33 +129,33 @@ function tagtopost(link) {
 }
 
 function initposteditor() {
-    $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
-    inittabs("#tabs", function() {
-      $("#tabs").bind( "tabsload", function(event, ui) {
-        switch (ui.index) {
-          case 2:
-          $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker.min.js', function() {
-            if (ltoptions.lang == 'en') {
+  $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
+  inittabs("#tabs", function() {
+    $("#tabs").bind( "tabsload", function(event, ui) {
+      switch (ui.index) {
+        case 2:
+        $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker.min.js', function() {
+          if (ltoptions.lang == 'en') {
             initdatepicker();
-            } else {
-              $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
-                initdatepicker();
-              });
-            }
-          });
-          break;
-        }
-      });
-
-      $("a[rel~='initfiletabs']").one('click', function() {
-        initfiletabs();
-        return false;
-      });
-      
-      $("a[rel~='loadcontenttabs']").one('click', function() {
-        loadcontenttabs();
-        return false;
-      });
-      
+          } else {
+            $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+              initdatepicker();
+            });
+          }
+        });
+        break;
+      }
     });
+    
+    $("a[rel~='initfiletabs']").one('click', function() {
+      initfiletabs();
+      return false;
+    });
+    
+    $("a[rel~='loadcontenttabs']").one('click', function() {
+      loadcontenttabs();
+      return false;
+    });
+    
+  });
 }
