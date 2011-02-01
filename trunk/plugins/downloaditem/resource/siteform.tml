@@ -1,0 +1,10 @@
+<div id="form_download_site">
+<h3>$formtitle</h3>
+<form name="download_site_form" id="download_site_form" action="" method="post" >
+<p>
+<label for="download_site"><strong>$lang.url</strong></label>:
+<input type="text" name="text_download_site" id="text_download_site" value="" size="22" />
+<input type="submit" name="submit" value="$lang.update" />
+</p>
+</form>
+</div>
