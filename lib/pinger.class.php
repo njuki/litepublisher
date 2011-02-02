@@ -72,7 +72,7 @@ class tpinger extends tevents {
     $punc = '.:?\-';
     $any = '\w/#~:.?+=&%@!\-' . $punc;
     
-  preg_match_all("{\b http : [$any] +? (?= [$punc] * [^$any] | $)}x", $post->content, $links);
+  preg_match_all("{\b http : [$any] +? (?= [$punc] * [^$any] | $)}x", $post->filtered, $links);
     foreach ($links[0] as $link) {
       if (in_array($link, $result)) continue;
       if ($link == $posturl) continue;

@@ -24,14 +24,15 @@ class tdownloaditem extends tpost {
     'type' => 'theme',
     'downloadurl'  => '',
     'authorurl'  => '',
+'authorname' => '',
     'version'=> '1.00',
     'votes' => 0,
     'poll' => 0
     );
   }
 
-public function getparenttags() {
-return 0;
+public function getparenttag() {
+return $this->type == 'theme' ? 
 }
 
   public function settagnames($names) {
@@ -40,10 +41,10 @@ if ($names == '') {
 $this->tags = array();
 return;
 }
-$parent = $this->getparenttags();
+$parent = $this->getparenttag();
     $tags = ttags::instance();
-$list = explode(',', trim($names));
     $items = array();
+$list = explode(',', trim($names));
     foreach ($list as $title) {
       $title = tcontentfilter::escape($title);
       if ($title == '') continue;
