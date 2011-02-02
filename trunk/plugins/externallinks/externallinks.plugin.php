@@ -81,7 +81,7 @@ class texternallinks extends titems {
     $external = array();
     foreach($links[1] as $num => $link) {
       if (isset($external[$link])) continue;
-      if (!strbegins($link, 'http', 'ftp')) continue;
+      if (!strbegin($link, 'http', 'ftp')) continue;
       if (strbegin($link, litepublisher::$site->url)) continue;
       $id = $this->add($link);
       $external[$link] = $redir . $id;
