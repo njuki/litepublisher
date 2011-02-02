@@ -22,15 +22,38 @@ class tdownloaditem extends tpost {
     $this->childdata = array(
     'id' => 0,
     'type' => 'theme',
-    'url'  => '',
+    'downloadurl'  => '',
     'authorurl'  => '',
     'version'=> '1.00',
     'votes' => 0,
     'poll' => 0
     );
   }
-  
-  public function gethead() {
+
+public function getparenttags() {
+return 0;
+}
+
+  public function settagnames($names) {
+$names = trim($names);
+if ($names == '') {
+$this->tags = array();
+return;
+}
+$parent = $this->getparenttags();
+    $tags = ttags::instance();
+$list = explode(',', trim($names));
+    $items = array();
+    foreach ($list as $title) {
+      $title = tcontentfilter::escape($title);
+      if ($title == '') continue;
+      $items[] = $tags->add($parent, $title);
+    }
+
+    $this->tags=  $items;
+  }
+
+   public function gethead() {
     $result = parent::gethead();
 $template = ttemplate::instance();
 $result .= $template->getjavascript('/plugins/' . basename(dirname(__file__)) . '/downloaditem.js');
