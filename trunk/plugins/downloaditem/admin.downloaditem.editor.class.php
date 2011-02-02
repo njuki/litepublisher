@@ -78,32 +78,18 @@ class tdownloaditemeteditor extends tposteditor {
     return;
     */
     extract($_POST, EXTR_SKIP);
-    $downloaditems = tdownloaditems::instance();
     $this->basename = 'downloaditems';
     $html = $this->html;
-    
-    if (empty($title)) return $html->h2->emptytitle;
+        if (empty($title)) return $html->h2->emptytitle;
     $downloaditem = tdownloaditem::instance((int)$id);
 $this->set_post($downloaditem);
     $downloaditem->version = $version;
-    if (litepublisher::$options->group != 'downloaditem') $downloaditem->state = $state;
-    if ($id == 0) {
-      $downloaditem->status = $newstatus;
       $downloaditem->type = $type;
-      $downloaditem->closed = time();
+    $downloaditems = tdownloaditems::instance();
+if ($downloaditem->id == 0) {
       $id = $downloaditems->add($downloaditem);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
-      if (litepublisher::$options->group == 'downloaditem') {
-        $users =tusers::instance();
-        $user = $users->getitem(litepublisher::$options->user);
-        $comusers = tcomusers::instance();
-        $uid = $comusers->add($user['name'], $user['email'], $user['url'], '');
-        $comusers->setvalue($uid, 'cookie', $user['cookie']);
-        $subscribers = tsubscribers::instance();
-        //$subscribers->update($id, $uid, true);
-        $subscribers->add($id, $uid);
-      }
     } else {
       $downloaditems->edit($downloaditem);
     }
