@@ -12,15 +12,6 @@ class tdownloaditemeteditor extends tposteditor {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    $result .= '
-    <script type="text/javascript">
-      inittabs("#contenttabs");
-    </script>';
-    return $result;
-  }
-  
   public function gettitle() {
     if ($this->idpost == 0){
       return parent::gettitle();
@@ -30,28 +21,12 @@ class tdownloaditemeteditor extends tposteditor {
     }
   }
   
-  public function gethtml($name = '') {
-    $html = tadminhtml::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    $html->addini('tickets', $dir . 'html.ini');
-    //$html->section = 'tickets';
-    tlocal::loadsection('', 'ticket', $dir);
-    tlocal::loadsection('admin', 'tickets', $dir);
-    tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
-    return parent::gethtml($name);
-  }
-  
   public function getcontent() {
     $this->basename = 'downloaditems';
     $downloaditem = tdownloaditem::instance($this->idpost);
     ttheme::$vars['downloaditem'] = $downloaditem;
     $args = targs::instance();
-    $args->id = $this->idpost;
-    $args->title = $downloaditem->title;
-    $args->categories = $this->getpostcategories($downloaditem);
-    $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$downloaditem->id&get");
-    $ajaxeditor = tajaxposteditor ::instance();
-    $args->raw = $ajaxeditor->geteditor('raw', $downloaditem->rawcontent, true);
+$this->getpostargs($downloaditem, $args);
     
     $html = $this->html;
     $lang = tlocal::instance('downloaditems');
@@ -61,9 +36,8 @@ class tdownloaditemeteditor extends tposteditor {
     'plugin' => tlocal::$data['downloaditem']['plugin']
     );
     
-    $args->typecombo= $html->array2combo($types, $downloaditem->type);
-    $args->typedisabled = $downloaditem->id == 0 ? '' : "disabled = 'disabled'";
-    
+    $args->type = tadminhtml::array2combo($types, $downloaditem->type);
+
     if ($downloaditem->id > 0) $result .= $html->headeditor ();
     $result .= $html->form($args);
     $result = $html->fixquote($result);

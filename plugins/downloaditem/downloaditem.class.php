@@ -22,6 +22,7 @@ class tdownloaditem extends tpost {
     $this->childdata = array(
     'id' => 0,
     'type' => 'theme',
+'downloads' => 0,
     'downloadurl'  => '',
     'authorurl'  => '',
 'authorname' => '',
@@ -32,7 +33,10 @@ class tdownloaditem extends tpost {
   }
 
 public function getparenttag() {
-return $this->type == 'theme' ? 
+    tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+      $lang = tlocal::instance('downloaditem');
+$tags = ttags::instance();
+return $this->type == 'theme' ? $tags->add($lang->themetag) : $tags->add($lang->plugintag);
 }
 
   public function settagnames($names) {
