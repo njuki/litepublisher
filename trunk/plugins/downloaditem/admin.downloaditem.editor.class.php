@@ -41,6 +41,7 @@ $this->getpostargs($downloaditem, $args);
     if ($downloaditem->id > 0) $result .= $html->headeditor ();
     $result .= $html->form($args);
     $result = $html->fixquote($result);
+unset(ttheme::$vars['downloaditem']);
     return $result;
   }
   
@@ -54,7 +55,8 @@ $this->getpostargs($downloaditem, $args);
     extract($_POST, EXTR_SKIP);
     $this->basename = 'downloaditems';
     $html = $this->html;
-        if (empty($title)) return $html->h2->emptytitle;
+    $lang = tlocal::instance('editor');
+    if (empty($_POST['title'])) return $html->h2->emptytitle;
     $downloaditem = tdownloaditem::instance((int)$id);
 $this->set_post($downloaditem);
     $downloaditem->version = $version;
@@ -67,7 +69,7 @@ if ($downloaditem->id == 0) {
     } else {
       $downloaditems->edit($downloaditem);
     }
-    
+    $lang = tlocal::instance('downloaditems');
     return $html->h2->successedit;
   }
   
