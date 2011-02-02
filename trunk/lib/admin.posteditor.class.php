@@ -115,20 +115,9 @@ class tposteditor extends tadminmenu {
     }
     return $result;
   }
-  
-  public function processform() {
-    /*
-    echo "<pre>\n";
-    var_dump($_POST);
-    echo "</pre>\n";
-    return;
-    */
-    
+
+protected function set_post(tpost $post) {
     extract($_POST, EXTR_SKIP);
-    $this->basename = 'editor';
-    $html = $this->html;
-    $post = tpost::instance((int)$id);
-    if (empty($title)) return $html->h2->emptytitle;
     $post->title = $title;
     $post->categories = self::processcategories();
     if (isset($tags)) $post->tagnames = $tags;
@@ -137,7 +126,6 @@ class tposteditor extends tadminmenu {
     if (isset($files))  {
       $files = trim($files);
       $post->files = $files == '' ? array() : explode(',', $files);
-      var_dump($files, $post->files );
     }
     if (isset($date) && ($date != '')  && @sscanf($date, '%d.%d.%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
       $post->posted = mktime($h,$min,0, $m, $d, $y);
@@ -165,6 +153,22 @@ class tposteditor extends tadminmenu {
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $upd);
       $post->content = $post->rawcontent . "\n\n" . $update;
     }
+
+}
+  
+  public function processform() {
+    /*
+    echo "<pre>\n";
+    var_dump($_POST);
+    echo "</pre>\n";
+    return;
+    */
+    
+    $this->basename = 'editor';
+    $html = $this->html;
+    if (empty($_POST['title'])) return $html->h2->emptytitle;
+    $post = tpost::instance((int)$id);
+$this->set_post($post);
     
     $posts = tposts::instance();
     if ($id == 0) {

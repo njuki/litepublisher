@@ -16,9 +16,7 @@ class tdownloaditemeteditor extends tposteditor {
     $result = parent::gethead();
     $result .= '
     <script type="text/javascript">
-    $(document).ready(function() {
-      $("#contenttabs").tabs();
-    });
+      inittabs("#contenttabs");
     </script>';
     return $result;
   }
@@ -27,17 +25,8 @@ class tdownloaditemeteditor extends tposteditor {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      tlocal::loadsection('admin', 'tickets', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-      return tlocal::$data['tickets']['editor'];
-    }
-  }
-  
-  public function request($id) {
-    if ($s = parent::request($id)) return $s;
-    $this->basename = 'tickets';
-    if ($this->idpost > 0) {
-      $ticket = tticket::instance($this->idpost);
-      if ((litepublisher::$options->group == 'ticket') && (litepublisher::$options->user != $ticket->author)) return 404;
+      tlocal::loadsection('admin', 'downloaditems', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+      return tlocal::$data['downloaditems']['editor'];
     }
   }
   
@@ -52,52 +41,30 @@ class tdownloaditemeteditor extends tposteditor {
     return parent::gethtml($name);
   }
   
-  protected function getlogoutlink() {
-    return $this->gethtml('login')->logout();
-  }
-  
   public function getcontent() {
-    $result = $this->logoutlink;
-    $this->basename = 'tickets';
-    $ticket = tticket::instance($this->idpost);
-    ttheme::$vars['ticket'] = $ticket;
+    $this->basename = 'downloaditems';
+    $downloaditem = tdownloaditem::instance($this->idpost);
+    ttheme::$vars['downloaditem'] = $downloaditem;
     $args = targs::instance();
     $args->id = $this->idpost;
-    $args->title = $ticket->title;
-    $args->categories = $this->getpostcategories($ticket);
-    $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
+    $args->title = $downloaditem->title;
+    $args->categories = $this->getpostcategories($downloaditem);
+    $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$downloaditem->id&get");
     $ajaxeditor = tajaxposteditor ::instance();
-    $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
+    $args->raw = $ajaxeditor->geteditor('raw', $downloaditem->rawcontent, true);
     
     $html = $this->html;
-    $lang = tlocal::instance('tickets');
+    $lang = tlocal::instance('downloaditems');
     
-    $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->codetext);
-    
-    $args->fixed = $ticket->state == 'fixed';
     $types = array(
-    'bug' => tlocal::$data['ticket']['bug'],
-    'feature' => tlocal::$data['ticket']['feature'],
-    'support' => tlocal::$data['ticket']['support'],
-    'task' => tlocal::$data['ticket']['task'],
+    'theme' => tlocal::$data['downloaditem']['theme'],
+    'plugin' => tlocal::$data['downloaditem']['plugin']
     );
     
-    $args->typecombo= $html->array2combo($types, $ticket->type);
-    $args->typedisabled = $ticket->id == 0 ? '' : "disabled = 'disabled'";
+    $args->typecombo= $html->array2combo($types, $downloaditem->type);
+    $args->typedisabled = $downloaditem->id == 0 ? '' : "disabled = 'disabled'";
     
-    $states =array();
-    foreach (array('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') as $state) {
-      $states[$state] = tlocal::$data['ticket'][$state];
-    }
-    $args->statecombo= $html->array2combo($states, $ticket->state);
-    
-    $prio = array();
-    foreach (array('trivial', 'minor', 'major', 'critical', 'blocker') as $p) {
-      $prio[$p] = tlocal::$data['ticket'][$p];
-    }
-    $args->priocombo = $html->array2combo($prio, $ticket->prio);
-    
-    if ($ticket->id > 0) $result .= $html->headeditor ();
+    if ($downloaditem->id > 0) $result .= $html->headeditor ();
     $result .= $html->form($args);
     $result = $html->fixquote($result);
     return $result;
@@ -111,45 +78,23 @@ class tdownloaditemeteditor extends tposteditor {
     return;
     */
     extract($_POST, EXTR_SKIP);
-    $tickets = ttickets::instance();
-    $this->basename = 'tickets';
+    $downloaditems = tdownloaditems::instance();
+    $this->basename = 'downloaditems';
     $html = $this->html;
     
-    // check spam
-    if ($id == 0) {
-      $newstatus = 'published';
-      if (litepublisher::$options->group == 'ticket') {
-        $hold = $tickets->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
-        $approved = $tickets->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
-        if ($approved < 3) {
-          if ($hold - $approved >= 2) return $html->h2->noapproved;
-          $newstatus = 'draft';
-        }
-      }
-    }
-    
     if (empty($title)) return $html->h2->emptytitle;
-    $ticket = tticket::instance((int)$id);
-    $ticket->title = $title;
-    $ticket->categories = self::processcategories();
-    if (isset($tags)) $ticket->tagnames = $tags;
-    if ($ticket->author == 0) $ticket->author = litepublisher::$options->user;
-    if (isset($files))  $ticket->files = explode(',', $files);
-    $ticket->content = $raw;
-    $ticket->code = $code;
-    $ticket->prio = $prio;
-    $ticket->state = $state;
-    $ticket->version = $version;
-    $ticket->os = $os;
-    if (litepublisher::$options->group != 'ticket') $ticket->state = $state;
+    $downloaditem = tdownloaditem::instance((int)$id);
+$this->set_post($downloaditem);
+    $downloaditem->version = $version;
+    if (litepublisher::$options->group != 'downloaditem') $downloaditem->state = $state;
     if ($id == 0) {
-      $ticket->status = $newstatus;
-      $ticket->type = $type;
-      $ticket->closed = time();
-      $id = $tickets->add($ticket);
+      $downloaditem->status = $newstatus;
+      $downloaditem->type = $type;
+      $downloaditem->closed = time();
+      $id = $downloaditems->add($downloaditem);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
-      if (litepublisher::$options->group == 'ticket') {
+      if (litepublisher::$options->group == 'downloaditem') {
         $users =tusers::instance();
         $user = $users->getitem(litepublisher::$options->user);
         $comusers = tcomusers::instance();
@@ -160,7 +105,7 @@ class tdownloaditemeteditor extends tposteditor {
         $subscribers->add($id, $uid);
       }
     } else {
-      $tickets->edit($ticket);
+      $downloaditems->edit($downloaditem);
     }
     
     return $html->h2->successedit;

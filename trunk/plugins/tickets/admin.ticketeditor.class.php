@@ -35,7 +35,7 @@ class tticketeditor extends tposteditor {
     $this->basename = 'tickets';
     if ($this->idpost > 0) {
       $ticket = tticket::instance($this->idpost);
-      if ((litepublisher::$options->group == 'ticket') && (litepublisher::$options->user != $ticket->author)) return 404;
+      if ((litepublisher::$options->group == 'ticket') && (litepublisher::$options->user != $ticket->author)) return 403;
     }
   }
   
@@ -132,7 +132,11 @@ class tticketeditor extends tposteditor {
     $ticket->categories = self::processcategories();
     if (isset($tags)) $ticket->tagnames = $tags;
     if ($ticket->author == 0) $ticket->author = litepublisher::$options->user;
-    if (isset($files))  $ticket->files = explode(',', $files);
+    if (isset($files))  {
+      $files = trim($files);
+      $ticket->files = $files == '' ? array() : explode(',', $files);
+    }
+
     $ticket->content = $raw;
     $ticket->code = $code;
     $ticket->prio = $prio;
