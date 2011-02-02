@@ -87,19 +87,22 @@ class tposteditor extends tadminmenu {
     $this->idpost = 0;
     return $this->getcontent();
   }
-  
-  public function getcontent() {
-    $html = $this->html;
-    $post = tpost::instance($this->idpost);
-    ttheme::$vars['post'] = $post;
-    $args = targs::instance();
+
+public function getpostargs(tpost $post, targs $args) {
     $args->id = $post->id;
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = $post->title;
     $args->categories = $this->getpostcategories($post);
     $ajaxeditor = tajaxposteditor ::instance();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
-    
+}
+  
+  public function getcontent() {
+    $html = $this->html;
+    $post = tpost::instance($this->idpost);
+    ttheme::$vars['post'] = $post;
+    $args = targs::instance();
+$this->getpostargs($post, $args);
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
@@ -176,7 +179,7 @@ $this->set_post($post);
     } else {
       $posts->edit($post);
     }
-    return sprintf($html->p->success,"<a href=\"$post->link\" title=\"$post->title\">$post->title</a>");
+    return sprintf($html->p->success,$post->bookmark);
   }
   
 }//class

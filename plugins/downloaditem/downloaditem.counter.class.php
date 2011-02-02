@@ -51,5 +51,5 @@ $db = $this->db;
     tfiler::append("$id\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt');
     return turlmap::redir($item['downloadurl']);
   }
-  
+
 }//class

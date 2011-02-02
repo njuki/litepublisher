@@ -7,42 +7,34 @@
 **/
 
 function tdownloaditemsInstall($self) {
-  if (!dbversion) die("Ticket  system only for database version");
+  if (!dbversion) die("Downloads require database");
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  tlocal::loadsection('admin', 'tickets', $dir);
-  $filter = tcontentfilter::instance();
-  $filter->phpcode = true;
-  $filter->save();
-  litepublisher::$options->parsepost = false;
-  
+  tlocal::loadsection('admin', 'downloaditems', $dir);
+
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->childtable, file_get_contents($dir .'ticket.sql'));
-  $manager->addenum('posts', 'class', 'tticket');
+  $manager->CreateTable($self->childtable, file_get_contents($dir .'downloaditems.sql'));
   
   $optimizer = tdboptimizer::instance();
   $optimizer->lock();
-  $optimizer->childtables[] = 'tickets';
-  $optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
+  $optimizer->childtables[] = 'downloaditems';
+  $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
   
   litepublisher::$classes->lock();
+/*
   //install polls if its needed
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
   $polls = tpolls::instance();
   $polls->garbage = false;
   $polls->save();
-  
-  litepublisher::$classes->Add('tticket', 'ticket.class.php', basename(dirname(__file__) ));
-  tticket::checklang();
-  litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', basename(dirname(__file__) ));
-  litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
-  litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
-  
-  litepublisher::$options->reguser = true;
-  $adminoptions = tadminoptions::instance();
-  $adminoptions->usersenabled = true;
-  
+  */
+  litepublisher::$classes->Add('tdownloaditem', 'downloaditem.class.php', basename(dirname(__file__) ));
+  tdownloaditem::checklang();
+  litepublisher::$classes->Add('tdownloaditemsmenu', 'downloaditems.menu.class.php', basename(dirname(__file__) ));
+  litepublisher::$classes->Add('tdownloaditemeditor', 'admin.downloaditem.editor.class.php', basename(dirname(__file__)));
+  litepublisher::$classes->Add('tadmindownloaditems', 'admin.downloaditems.class.php', basename(dirname(__file__)));
+  litepublisher::$classes->Add('tdownloaditemcounter', 'downloaditem.counter.class.php', basename(dirname(__file__)));
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
@@ -95,14 +87,14 @@ function tdownloaditemsUninstall($self) {
   //if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
-  litepublisher::$classes->delete('tticket');
-  litepublisher::$classes->delete('tticketeditor');
-  litepublisher::$classes->delete('tadmintickets');
+  litepublisher::$classes->delete('tdownloaditem');
+  litepublisher::$classes->delete('tdownloaditemeditor');
+  litepublisher::$classes->delete('tadmindownloaditems');
   
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
-  $adminmenus->deleteurl('/admin/tickets/editor/');
-  $adminmenus->deleteurl('/admin/tickets/');
+  $adminmenus->deleteurl('/admin/downloaditems/editor/');
+  $adminmenus->deleteurl('/admin/downloaditems/');
   $adminmenus->unlock();
   
   $menus = tmenus::instance();
@@ -110,27 +102,28 @@ function tdownloaditemsUninstall($self) {
   foreach (array('bug', 'feature', 'support', 'task') as $type) {
     $menus->deleteurl("/$type/");
   }
-  $menus->deleteurl('/tickets/');
+  $menus->deleteurl('/downloaditems/');
   $menus->unlock();
   
-  litepublisher::$classes->delete('tticketsmenu');
+  litepublisher::$classes->delete('tdownloaditemsmenu');
   litepublisher::$classes->unlock();
-  
+
+/*  
   if (class_exists('tpolls')) {
     $polls = tpolls::instance();
     $polls->garbage = true;
     $polls->save();
   }
+*/
   tlocal::clearcache();
   
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
-  $manager->delete_enum('posts', 'class', 'tticket');
   
   $optimizer = tdboptimizer::instance();
   $optimizer->lock();
   $optimizer->unsubscribeclass($self);
-  if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
+  if (false !== ($i = array_search('downloaditems', $optimizer->childtables))) {
     unset($optimizer->childtables[$i]);
   }
   $optimizer->unlock();
