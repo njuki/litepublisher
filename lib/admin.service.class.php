@@ -265,7 +265,10 @@ class tadminservice extends tadminmenu {
       if ($s = http::get($url)) {
         $itemtype = tadminhtml::getparam('itemtype', 'theme');
         $backuper = tbackuper::instance();
-        if (!($archtype = $backuper->getarchtype($url))) $archtype = 'zip';
+        if (!($archtype = $backuper->getarchtype($url))) {
+//         local file header signature     4 bytes  (0x04034b50)
+$archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
+}
         if ($backuper->uploaditem($s, $archtype, $itemtype)) {
           return $html->h3->itemuploaded;
         } else {
