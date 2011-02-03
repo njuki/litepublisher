@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class ttickets extends tposts {
+class tdownloaditems extends tposts {
   
   public static function instance() {
     return getinstance(__class__);
@@ -14,7 +14,7 @@ class ttickets extends tposts {
   
   protected function create() {
     parent::create();
-    $this->childtable = 'tickets';
+    $this->childtable = 'downloaditems';
   }
   
   public function createpoll() {
