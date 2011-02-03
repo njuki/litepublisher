@@ -13,7 +13,7 @@ class tdownloaditem extends tpost {
   }
   
   public static function getchildtable() {
-    return 'downloaditem';
+    return 'downloaditems';
   }
   
   protected function create() {
@@ -33,10 +33,7 @@ class tdownloaditem extends tpost {
   }
 
 public function getparenttag() {
-    tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-      $lang = tlocal::instance('downloaditem');
-$tags = ttags::instance();
-return $this->type == 'theme' ? $tags->add($lang->themetag) : $tags->add($lang->plugintag);
+return $this->type == 'theme' ? litepublisher::$options->downloaditem_themetag : litepublisher::$options->downloaditem_plugintag;
 }
 
   public function settagnames($names) {
@@ -85,12 +82,6 @@ $result .= $template->getjavascript('/plugins/' . basename(dirname(__file__)) . 
     $filter = tcontentfilter::instance();
     $filter->filterpost($this,$this->rawcontent);
     $result .= $this->filtered;
-    if (!empty($this->childdata['code'])) {
-      self::checklang();
-      $lang = tlocal::instance('ticket');
-      $result .= sprintf('<h2>%s</h2>', $lang->code);
-      $result .= highlight_string($this->code, true);
-    }
     $this->filtered = $result;
   }
   
@@ -102,8 +93,6 @@ $result .= $template->getjavascript('/plugins/' . basename(dirname(__file__)) . 
       $value = $this->$prop;
       $args->$prop = $lang->$value;
     }
-    $args->reproduced = $this->reproduced ? $lang->yesword : $lang->noword;
-    $args->assignto = $this->assigntoname;
     $args->author = $this->authorlink;
     
     ttheme::$vars['ticket'] = $this;

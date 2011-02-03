@@ -9,8 +9,6 @@
 function tdownloaditemsInstall($self) {
   if (!dbversion) die("Downloads require database");
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  tlocal::loadsection('admin', 'downloaditems', $dir);
-
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->childtable, file_get_contents($dir .'downloaditems.sql'));
   
@@ -19,6 +17,14 @@ function tdownloaditemsInstall($self) {
   $optimizer->childtables[] = 'downloaditems';
   $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
+
+  tlocal::loadsection('admin', 'downloaditems', $dir);
+    tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+  $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
+
+$tags = ttags::instance();
+litepublisher::$options->downloaditem_themetag = $tags->add($ini['themetag']);
+litepublisher::$options->downloaditem_plugintag = $tag->add($ini['plugintag']);
   
   litepublisher::$classes->lock();
 /*
@@ -53,8 +59,6 @@ function tdownloaditemsInstall($self) {
   
   $menus = tmenus::instance();
   $menus->lock();
-  $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
-  
   $menu = tticketsmenu::instance();
   $menu->type = 'tickets';
   $menu->url = '/tickets/';
@@ -78,7 +82,7 @@ function tdownloaditemsInstall($self) {
   $linkgen = tlinkgenerator::instance();
   $linkgen->data['ticket'] = '/[type]/[title].htm';
   $linkgen->save();
-  
+  litepublisher::$options->savemodified();
 }
 
 function tdownloaditemsUninstall($self) {
@@ -127,6 +131,11 @@ function tdownloaditemsUninstall($self) {
     unset($optimizer->childtables[$i]);
   }
   $optimizer->unlock();
+
+litepublisher::$options->delete('downloaditem_themetag');
+litepublisher::$options->delete('downloaditem_plugintag');
+litepublisher::$options->savemodified();
+
   
 }
 
