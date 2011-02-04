@@ -170,7 +170,9 @@ protected function set_post(tpost $post) {
     $this->basename = 'editor';
     $html = $this->html;
     if (empty($_POST['title'])) return $html->h2->emptytitle;
-    $post = tpost::instance((int)$id);
+$id = (int)$_POST['id'];
+    $post = tpost::instance($id);
+
 $this->set_post($post);
     
     $posts = tposts::instance();

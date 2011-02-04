@@ -1,4 +1,4 @@
-<table>
+<table class="classictable">
 	<thead>
 	<tr>
 		<th align='left'>$lang.type</th>
@@ -16,7 +16,7 @@
 
 <tr>
 		<td  align='left'><a href='$site.url/$ticket.type/'>$type</a></td>
-		<dd align='left'>$state</td>
+		<td align='left'>$state</td>
 		<td align='left'>$prio</td>
 		<td align='left'>$ticket.votes</td>
 		<td align='left'>$ticket.version</td>
