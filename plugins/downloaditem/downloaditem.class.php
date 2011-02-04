@@ -78,27 +78,17 @@ $result .= $template->getjavascript('/plugins/' . basename(dirname(__file__)) . 
   }
   
   public function updatefiltered() {
-    $result = $this->getticketcontent();
-    $filter = tcontentfilter::instance();
-    $filter->filterpost($this,$this->rawcontent);
-    $result .= $this->filtered;
-    $this->filtered = $result;
+parent::updatefiltered();
+$this->filtered = $this->getdownloadcontent() . $this->filtered;
   }
   
-  public function getticketcontent() {
+  public function getdownloadcontent() {
     self::checklang();
-    $lang = tlocal::instance('ticket');
-    $args = targs::instance();
-    foreach (array('type', 'state', 'prio') as $prop) {
-      $value = $this->$prop;
-      $args->$prop = $lang->$value;
-    }
-    $args->author = $this->authorlink;
-    
-    ttheme::$vars['ticket'] = $this;
+    $lang = tlocal::instance('downloaditem');
+    ttheme::$vars['post'] = $this;
     $theme = $this->theme;
-    $tml = file_get_contents($this->resource . 'ticket.tml');
-    return $theme->parsearg($tml, $args);
+    $tml = file_get_contents($this->resource . 'download.tml');
+    return $theme->parse($tml);
   }
   
   public function closepoll() {
@@ -111,7 +101,7 @@ $result .= $template->getjavascript('/plugins/' . basename(dirname(__file__)) . 
   }
   
   public static function checklang() {
-    tlocal::loadsection('', 'ticket', self::getresource());
+    tlocal::loadsection('', 'download', self::getresource());
   }
   
 }//class
