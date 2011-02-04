@@ -31,10 +31,8 @@ $template.menu = [<ul id="nav">
 
 content.post.templatecomments.form = [
   <script type="text/javascript">
-  $(document).ready(function() {
  $.getScript("$site.files/js/litepublisher/comments.min.js");
  $.getScript("$site.files/files/$site.language.js");
-});
 </script>
 								<p id="respond">$lang.leavereply</>
 								<form action="$options.url/send-comment.php" method="post" id="commentform">
@@ -63,11 +61,9 @@ content.post.templatecomments.form = [
 
 content.post.templatecomments.moderateform= [
 		<script type="text/javascript">
-  $(document).ready(function() {
  $.getScript("$site.files/js/litepublisher/rpc.min.js");
 		$.getScript("$site.files/js/litepublisher/moderate.min.js");
 		$.getScript("$site.files/files/$site.language.admin.js");
-});
 </script>
 								<form name="moderateform" id="moderateform" action="$options.url/admin/comments/" method="post">
 								$comments

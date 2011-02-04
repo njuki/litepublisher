@@ -599,9 +599,11 @@ content.excerpts = [
 			<h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
 				<span class="post-date">$post.excerptdate = [d.m.Y]</span>
 				<span class="post-tags">$post.taglinks</span>
-			<div class="post-content">$post.excerptcontent
-				$post.morelink = [<a href="$post.link#more-$post.id" class="more-link">$post.moretitle</a>]
+			<div class="post-content">
 				$post.excerptfilelist
+$post.excerptcontent
+				$post.morelink = [<a href="$post.link#more-$post.id" class="more-link">$post.moretitle</a>]
+
 			</div>
 			<div class="post-info">
 				<span class="post-comments">$post.commentslink</span>
@@ -639,7 +641,7 @@ content.excerpts.lite = [
 В секции content нам осталось описать еще два шаблона - navi и admin. Шаблон navi предназначен для постраничной навигации, зададим его:
 
 content.navi = [
-	<div id="paginator" class="navigation">
+	<div class="navigation">
 			$prev = [<span class="previous-entries">$link</span>]
 			$next = [<span class="next-entries">$link</span>]
 			$link = [<a href="$link">$page</a>]

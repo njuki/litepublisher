@@ -1,0 +1,14 @@
+<div class="downloadlinks">
+<span class="downloadlink">
+<a href="$site.url/downloaditem.htm{$site.q}id=$post.id" title="$lang.download">$lang.download</a>
+</span><span class="downloadlink">
+<a rel="$post.type" href="$site.url/downloaditem.htm{$site.q}id=$post.id" title="$lang.uploadtosite">$lang.uploadtosite</a>
+</span>
+</div>
+<div class="downloadinfo">
+<span class="downloadauthor">
+$lang.author: <a href="$post.authorurl">$post.authorname</a>
+</span><span>
+$lang.version: $post.version
+</span>
+</div>

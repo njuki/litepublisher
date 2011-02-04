@@ -68,18 +68,40 @@ class tticketsmenu extends tmenu {
     order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio"));
     
     if (count($items) == 0) return '';
-    $url = litepublisher::$site->url;
+
     $index = $this->type == 'tickets' ? 'type' : 'state';
+$theme = ttheme::instance();
     tticket::checklang();
-    $local = tlocal::$data['ticket'];
-    foreach ($items as $item) {
-      $result .= sprintf('<li>%4$s: <a href="%1$s%2$s" title="%3$s">%3$s</a></li>', $url, $item['url'], $item['title'], $local[$item[$index]]);
+    $langticket = tlocal::$data['ticket'];
+$args = targs::instance();
+$tml = '<tr>
+<td align="left">$state</td>
+<td align="right">$commentscount</td>
+<td align="left"><a href="$link" title="$title">$title</a></td>
+</tr>';
+
+foreach ($items as $item) {
+$args->add($item);
+$args->state = $langticket[$item[$index]];
+$result .= $theme->parsearg($tml, $args);
     }
-    
-    
-    $result = sprintf('<ul>%s</ul>', $result);
-    
-    $theme = ttheme::instance();
+
+    $args->tablebody = $result;
+$lang = tlocal::instance('ticket');
+$result = $theme->parsearg('<table class="classictable">
+	<thead>
+	<tr>
+<td align="left">$lang.state</td>
+<td align="right">$lang.comments</td>
+<td align="left">$lang.ticket</td>
+		</tr>
+	</thead>
+<tbody>
+$tablebody
+</tbody >
+</table>',
+$args);
+
     $result .=$theme->getpages($this->url, 1, ceil(count($items)/ litepublisher::$options->perpage) + 1);
     return $result;
   }
