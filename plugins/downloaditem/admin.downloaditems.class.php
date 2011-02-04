@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadmintickets extends tadminmenu {
+class tadmindownloaditems extends tadminmenu {
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -15,10 +15,10 @@ class tadmintickets extends tadminmenu {
   public function gethtml($name = '') {
     $html = tadminhtml::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    $html->addini('tickets', $dir . 'html.ini');
-    tlocal::loadsection('', 'ticket', $dir);
-    tlocal::loadsection('admin', 'tickets', $dir);
-    tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
+    $html->addini('downloaditems', $dir . 'html.ini');
+    tlocal::loadsection('', 'downloaditem', $dir);
+    tlocal::loadsection('admin', 'downloaditems', $dir);
+    tlocal::$data['downloaditems'] = tlocal::$data['downloaditem'] + tlocal::$data['downloaditems'];
     return parent::gethtml($name);
   }
   
@@ -28,50 +28,46 @@ class tadmintickets extends tadminmenu {
   
   public function getcontent() {
     $result = $this->logoutlink;
-    $tickets = ttickets::instance();
+    $downloaditems = tdownloaditems::instance();
     $perpage = 20;
-    $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
+    $where = litepublisher::$options->group == 'downloaditem' ? ' and author = ' . litepublisher::$options->user : '';
     
     switch ($this->name) {
-      case 'opened':
-      $where .= " and state = 'opened' ";
+      case 'theme':
+      $where .= " and type = 'theme' ";
       break;
       
-      case 'fixed':
-      $where .= " and state = 'fixed' ";
+      case 'plugin':
+      $where .= " and type = 'plugin' ";
       break;
     }
     
-    $count = $tickets->getchildscount($where);
+    $count = $downloaditems->getchildscount($where);
     $from = $this->getfrom($perpage, $count);
     if ($count > 0) {
-      $items = $tickets->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
+      $items = $downloaditems->select("status <> 'deleted' $where", " order by posted desc limit $from, $perpage");
       if (!$items) $items = array();
     }  else {
       $items = array();
     }
     
     $html = $this->html;
-    $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
-    $result .= $html->listhead();
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id');
-    $lang = tlocal::instance('tickets');
+    $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
+    $lang = tlocal::instance('downloaditems');
+$tablebody = '';
     foreach ($items  as $id ) {
-      $ticket = tticket::instance($id);
-      ttheme::$vars['ticket'] = $ticket;
-    $args->status = $lang->{$ticket->status};
-      $args->type = tlocal::$data['ticket'][$ticket->type];
-      $args->prio = tlocal::$data['ticket'][$ticket->prio];
-      $args->state = tlocal::$data['ticket'][$ticket->state];
-      $result .= $html->itemlist($args);
+      $downloaditem = tdownloaditem::instance($id);
+      ttheme::$vars['downloaditem'] = $downloaditem;
+    $args->status = $lang->{$downloaditem->status};
+      $args->type = tlocal::$data['downloaditem'][$downloaditem->type];
+      $tablebody .= $html->itemlist($args);
     }
+
+    $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
+$result .= $html->gettable($html->listhead(), $tablebody);
     $result .= $html->footer();
-    if (litepublisher::$options->group != 'ticket') {
-      $result  = "<form name='form' action='' method='post'>" . $result;
-      $result .= $html->listfooter();
-    }
     $result = $html->fixquote($result);
     
     $theme = ttheme::instance();
@@ -80,8 +76,8 @@ class tadmintickets extends tadminmenu {
   }
   
   public function processform() {
-    if (litepublisher::$options->group == 'ticket') return '';
-    $tickets = ttickets::instance();
+    if (litepublisher::$options->group == 'downloaditem') return '';
+    $downloaditems = tdownloaditems::instance();
     $status = isset($_POST['publish']) ? 'published' :
     (isset($_POST['setdraft']) ? 'draft' :
     (isset($_POST['setfixed']) ? 'fixed' :'delete'));
@@ -89,15 +85,12 @@ class tadmintickets extends tadminmenu {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
       if ($status == 'delete') {
-        $tickets->delete($id);
+        $downloaditems->delete($id);
       } else {
-        $ticket = tticket::instance($id);
-        if ($status == 'fixed') {
-          $ticket->state = $status;
-        } else {
-          $ticket->status = $status;
+        $downloaditem = tdownloaditem::instance($id);
+          $downloaditem->status = $status;
         }
-        $tickets->edit($ticket);
+        $downloaditems->edit($downloaditem);
       }
     }
   }
