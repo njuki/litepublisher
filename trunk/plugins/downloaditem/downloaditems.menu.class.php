@@ -20,10 +20,11 @@ class tdownloaditemsmenu extends tmenu {
   public function getcont() {
     $result = '';
     $theme = ttheme::instance();
-    if (litepublisher::$urlmap->page == 1) {
+    if ((litepublisher::$urlmap->page == 1) && ($this->content != '')) {
       $result .= $theme->simple($theme->parse($this->content));
     }
 $result .= $theme->templates['custom']['siteform'];
+
 
       $perpage = litepublisher::$options->perpage;
       $downloaditems = tdownloaditems::instance();

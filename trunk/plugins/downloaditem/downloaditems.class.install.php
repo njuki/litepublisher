@@ -163,3 +163,33 @@ $result.= "});\n";
 $result .= "</script>\n";
 return $result;
 }
+
+function add_downloaditems_to_theme($theme) { 
+if (empty($theme->templates['custom']['downloadexcerpt'])) {
+  $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    tlocal::loadsection('', 'downloaditem', $dir);
+    tlocal::loadsection('admin', 'downloaditems', $dir);
+     ttheme::$vars['lang'] = tlocal::instance('downloaditem');
+$theme->templates['custom']['downloadexcerpt'] = file_get_contents($dir . 'downloadexcerpt.tml');
+$theme->templates['custom']['downloaditem'] = file_get_contents($dir . 'downloaditem.tml');
+$theme->templates['custom']['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
+
+//admin
+$lang = tlocal::instance('downloaditems');
+$theme->templates['customadmin']['downloadexcerpt'] = array(
+'type' => 'editor',
+'title' => $lang->downloadexcerpt
+);
+
+$theme->templates['customadmin']['downloaditem'] = array(
+'type' => 'editor',
+'title' => $lang->downloadlinks
+);
+
+$theme->templates['customadmin']['siteform'] = array(
+'type' => 'editor',
+'title' => $lang->siteform
+);
+}
+//var_dump($theme->templates['customadmin'], $theme->templates['custom']);
+}
