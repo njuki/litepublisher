@@ -23,8 +23,8 @@ function tdownloaditemsInstall($self) {
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
 
 $tags = ttags::instance();
-litepublisher::$options->downloaditem_themetag = $tags->add($ini['themetag']);
-litepublisher::$options->downloaditem_plugintag = $tag->add($ini['plugintag']);
+litepublisher::$options->downloaditem_themetag = $tags->add(0, $ini['themetag']);
+litepublisher::$options->downloaditem_plugintag = $tags->add(0, $ini['plugintag']);
 $base = basename(dirname(__file__));
 $classes = litepublisher::$classes;
   $classes->lock();
@@ -86,6 +86,9 @@ $lang = tlocal::instance('downloaditems');
   }
   $menus->unlock();
 
+$template = ttemplate::instance();
+$template->addtohead(getd_download_js());
+
   $parser = tthemeparser::instance();
   $parser->parsed = $menu->themeparsed;
   ttheme::clearcache();
@@ -142,8 +145,20 @@ $classes = litepublisher::$classes;
   }
   $optimizer->unlock();
 
+$template = ttemplate::instance();
+$template->deletefromhead(getd_download_js());
+
 litepublisher::$options->delete('downloaditem_themetag');
 litepublisher::$options->delete('downloaditem_plugintag');
 litepublisher::$options->savemodified();
 }
 
+function getd_download_js() {
+$result ='<script type="text/javascript">';
+$result .= "\n\$(document).ready(function() {\n";
+$result .= "if (\$(\"a[rel='theme'], a[rel='plugin']\").length) {\n";
+$result .= '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.js\");\n";
+$result.= "});\n";
+$result .= "</script>\n";
+return $result;
+}
