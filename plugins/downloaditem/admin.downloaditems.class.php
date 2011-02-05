@@ -43,7 +43,7 @@ $result = '';
 case 'addurl':
 $args->formtitle = $lang->addurl;
 $args->url = tadminhtml::getparam('url', '');
-return $html->adminform('[text=url']', $args);
+return $html->adminform('[text=url]', $args);
 
       case 'theme':
       $where .= " and type = 'theme' ";
@@ -105,11 +105,9 @@ return '';
       } else {
         $downloaditem = tdownloaditem::instance($id);
           $downloaditem->status = $status;
-        }
         $downloaditems->edit($downloaditem);
+}
       }
-    }
   }
   
 }//class
-?>
