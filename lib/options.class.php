@@ -76,7 +76,7 @@ class toptions extends tevents_storage {
   
   public function delete($name) {
     if (array_key_exists($name, $this->data)) {
-      unset($this->data);
+      unset($this->data[$name]);
       $this->save();
     }
   }

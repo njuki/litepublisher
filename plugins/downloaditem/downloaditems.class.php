@@ -46,5 +46,31 @@ return parent::add($post);
     }
   }
   
+  public function themeparsed($theme) { 
+if (empty($theme->templates['custom']['downloadexcerpt'])) {
+  $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    tlocal::loadsection('', 'downloaditem', $dir);
+     ttheme::$vars['lang'] = tlocal::instance('downloaditem');
+$theme->templates['custom']['downloadexcerpt'] = file_get_contents($dir . 'downloadexcerpt.tml');
+$theme->templates['custom']['downloaditem'] = file_get_contents($dir . 'downloaditem.tml');
+$theme->templates['custom']['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
+
+//admin
+$theme->templates['customadmin']['downloadexcerpt'] = array(
+'type' => 'text',
+'title' => 'Download excerpt'
+);
+
+$theme->templates['custom']['downloaditem'] = array(
+'type' => 'text',
+'title' => 'Download links'
+);
+
+$theme->templates['custom']['siteform'] = array(
+'type' => 'text',
+'title' => 'Upload site form'
+);
+}
+}
+
 }//class
-?>
