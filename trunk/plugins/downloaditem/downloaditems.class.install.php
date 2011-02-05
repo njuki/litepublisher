@@ -69,10 +69,10 @@ $lang = tlocal::instance('downloaditems');
   $menus = tmenus::instance();
   $menus->lock();
   $menu = tdownloaditemsmenu::instance();
-  $menu->type = 'downloaditems';
+  $menu->type = '';
   $menu->url = '/downloads.htm';
   $menu->title = $ini['downloads'];
-  $menu->content = $ini['contentdownloaditems'];
+  $menu->content = '';
   $id = $menus->add($menu);
   
   foreach (array('theme', 'plugin') as $type) {
@@ -80,11 +80,15 @@ $lang = tlocal::instance('downloaditems');
     $menu->type = $type;
     $menu->parent = $id;
     $menu->url = sprintf('/downloads/%ss.htm', $type);
-    $menu->title = $ini[$type];
+    $menu->title = $lang->$type;
     $menu->content = '';
     $menus->add($menu);
   }
   $menus->unlock();
+
+  $parser = tthemeparser::instance();
+  $parser->parsed = $menu->themeparsed;
+  ttheme::clearcache();
   
   $linkgen = tlinkgenerator::instance();
   $linkgen->data['downloaditem'] = '/[type]/[title].htm';
@@ -101,6 +105,11 @@ function tdownloaditemsUninstall($self) {
   
   $menus = tmenus::instance();
   $menus->deletetree($menus->class2id('tdownloaditemsmenu'));
+
+  $parser = tthemeparser::instance();
+  $parser->unsubscribeclassname('tdownloaditemsmenu');
+  ttheme::clearcache();
+
 
 $classes = litepublisher::$classes;
   $classes->lock();
