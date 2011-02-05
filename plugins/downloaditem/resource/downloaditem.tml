@@ -1,6 +1,5 @@
 <h4>
 <a href="$site.url/downloaditem.htm{$site.q}id=$post.id" title="$lang.download">$lang.download</a>
-</span><span class="downloadlink">
 ($post.downloadcount) |
 <a rel="$post.type" href="$site.url/downloaditem.htm{$site.q}id=$post.id" title="$lang.uploadtosite">$lang.uploadtosite</a>
 </h4>
