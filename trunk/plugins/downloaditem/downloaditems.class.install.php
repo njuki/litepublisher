@@ -169,13 +169,13 @@ if (empty($theme->templates['custom']['downloadexcerpt'])) {
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
     tlocal::loadsection('', 'downloaditem', $dir);
     tlocal::loadsection('admin', 'downloaditems', $dir);
-     ttheme::$vars['lang'] = tlocal::instance('downloaditem');
-$theme->templates['custom']['downloadexcerpt'] = file_get_contents($dir . 'downloadexcerpt.tml');
-$theme->templates['custom']['downloaditem'] = file_get_contents($dir . 'downloaditem.tml');
+     ttheme::$vars['lang'] = tlocal::instance('downloaditems');
+$lang = tlocal::instance('downloaditems');
+$theme->templates['custom']['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
+$theme->templates['custom']['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), $lang);
 $theme->templates['custom']['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
 
 //admin
-$lang = tlocal::instance('downloaditems');
 $theme->templates['customadmin']['downloadexcerpt'] = array(
 'type' => 'editor',
 'title' => $lang->downloadexcerpt

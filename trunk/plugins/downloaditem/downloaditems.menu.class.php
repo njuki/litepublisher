@@ -23,8 +23,6 @@ class tdownloaditemsmenu extends tmenu {
     if ((litepublisher::$urlmap->page == 1) && ($this->content != '')) {
       $result .= $theme->simple($theme->parse($this->content));
     }
-$result .= $theme->templates['custom']['siteform'];
-
 
       $perpage = litepublisher::$options->perpage;
       $downloaditems = tdownloaditems::instance();
@@ -37,10 +35,13 @@ $result .= $theme->templates['custom']['siteform'];
         $items = $downloaditems->select("$p.status = 'published' $where", " order by $p.posted desc limit $from, $perpage");
     ttheme::$vars['lang'] = tlocal::instance('downloaditem');
     $tml = $theme->templates['custom']['downloadexcerpt'];
+if (count($items) > 0) {
+$result .= $theme->templates['custom']['siteform'];
     foreach($items as $id) {
       ttheme::$vars['post'] = tdownloaditem::instance($id);
       $result .= $theme->parse($tml);
     }
+}
 }    
     $result .=$theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;

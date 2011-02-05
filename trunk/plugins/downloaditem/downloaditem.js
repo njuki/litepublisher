@@ -88,6 +88,13 @@ ltoptions.download_site = $.trim($("#text_download_site").val());
 return false;
 });
 
+$("#change_url").click(function() {
+ show_siteform(true);
+return false;
+});
+
+
+
 $("a[rel='theme'], a[rel='plugin']").each(function() {
 var url = $(this).attr("href");
 $(this).data("url", url);
