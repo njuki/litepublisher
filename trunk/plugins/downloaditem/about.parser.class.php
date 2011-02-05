@@ -41,7 +41,7 @@ return $item;
 return false;
 }
 
-public function getfile(array &$files, $name) {
+public static function getfile(array &$files, $name) {
 foreach ($files as $filename => &$content) {
 if ($name == basename($filename)) return $content;
 }

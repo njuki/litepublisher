@@ -11,6 +11,7 @@ function tdownloaditemsInstall($self) {
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   $manager = tdbmanager ::instance();
   $manager->CreateTable($self->childtable, file_get_contents($dir .'downloaditem.sql'));
+  $manager->addenum('posts', 'class', 'tdownloaditem');
   
   $optimizer = tdboptimizer::instance();
   $optimizer->lock();
@@ -80,7 +81,7 @@ $lang = tlocal::instance('downloaditems');
     $menu->type = $type;
     $menu->parent = $id;
     $menu->url = sprintf('/downloads/%ss.htm', $type);
-    $menu->title = $lang->$type;
+    $menu->title = $lang->__get($type . 's');
     $menu->content = '';
     $menus->add($menu);
   }
@@ -136,6 +137,7 @@ $classes = litepublisher::$classes;
   
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
+  $manager->delete_enum('posts', 'class', 'tdownloaditem');
   
   $optimizer = tdboptimizer::instance();
   $optimizer->lock();

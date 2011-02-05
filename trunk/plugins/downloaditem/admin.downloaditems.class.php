@@ -84,7 +84,7 @@ $result .= $html->gettable($html->listhead(), $tablebody);
   
   public function processform() {
     $downloaditems = tdownloaditems::instance();
-if ($this->name == 'aaddurl') {
+if ($this->name == 'addurl') {
 $url = trim($_POST['url']);
 if ($url == '') return '';
 if ($downloaditem = taboutparser::parse($url)) {
