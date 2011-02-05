@@ -1,18 +1,15 @@
 <div id="form_download_site">
-<h3>$formtitle</h3>
 <form name="download_site_form" id="download_site_form" action="" method="post" >
-<p>
-<label for="download_site"><strong>$lang.url</strong></label>:
+<h4>$lang.editsite</h4>
+<p><label for="download_site"><strong>$lang.url</strong></label>:
 <input type="text" name="text_download_site" id="text_download_site" value="" size="22" />
-<input type="submit" name="submit" value="$lang.update" />
-</p>
+<input type="submit" name="submit" value="$lang.update" /></p>
 </form>
 </div>
 
 <div class="changeurl">
-<h2>
-$lang.yoursite:
+<h2>$lang.yoursite:
 <a id="yoursite" href="" title=""></a>
-(<a id="changeurllink" href="#" title="$lang.changeurl">$lang.changeurl</a)>
+(<a id="change_url" href="#" title="$lang.changeurl">$lang.changeurl</a)>
 </h2>
 </div>

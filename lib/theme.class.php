@@ -192,6 +192,23 @@ class ttheme extends tevents {
     $s = $this->parse($s);
     return strtr ($s, $args->data);
   }
+
+public function replacelang($s, $lang) {
+      $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', (string) $s);
+self::$vars['lang'] = isset($lang) ? $lang : tlocal::instance('default');
+    $s = strtr($s, array(
+'$site.url' => litepublisher::$site->url,
+'$site.files' => litepublisher::$site->files,
+'{$site.q}' => litepublisher::$site->q
+));
+
+if (preg_match_all('/\$lang\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
+      foreach ($m as $item) {
+$s = str_replace($item[0], $lang->{$item[1]}, $s);
+}
+}
+return $s;
+}
   
   public static function parsevar($name, $var, $s) {
     self::$vars[$name] = $var;

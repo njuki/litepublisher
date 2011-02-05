@@ -79,7 +79,7 @@ tstorage::loaddata();
   if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
-//ttheme::clearcache();
+ttheme::clearcache();
 tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
