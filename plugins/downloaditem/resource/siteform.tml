@@ -8,3 +8,11 @@
 </p>
 </form>
 </div>
+
+<div class="changeurl">
+<h2>
+$lang.yoursite:
+<a id="yoursite" href="" title=""></a>
+(<a id="changeurllink" href="#" title="$lang.changeurl">$lang.changeurl</a)>
+</h2>
+</div>

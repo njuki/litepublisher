@@ -51,19 +51,42 @@ var type = $(this).attr("rel");
 $("#form_download_site").show();
 if (ltoptions.download_site = $.trim(prompt(lang.downloaditem.urlprompt, "http://"))) {
 set_cookie('download_site', ltoptions.download_site);
+ show_siteform(false);
 window.location= get_download_item(url, type);
+} else {
+ show_siteform(true);
 }
 return false;
 }
 
-//init
-$(document).ready(function() {
-if (ltoptions.download_site = get_download_url()) {
+function show_siteform(show) {
+if (show) {
 $("#text_download_site").val(ltoptions.download_site);
-$("#form_download_site").hide();
+$("#form_download_site").show();
+$("#changeurl").hide();
 } else {
-
+$("#form_download_site").hide();
+$("#text_download_site").val(ltoptions.download_site);
+var link = $("#yoursite");
+link.attr("href", ltoptions.download_site);
+link.attr("title", ltoptions.download_site)
+link.text(ltoptions.download_site);
+$("#changeurl").show();
 }
+}
+
+function init_download_items() {
+if (ltoptions.download_site = get_download_url()) {
+show_siteform(false);
+} else {
+show_siteform(true);
+}
+
+$("#download_site_form").submit(function() {
+ltoptions.download_site = $.trim($("#text_download_site").val());
+ show_siteform(ltoptions.download_site == "");
+return false;
+});
 
 $("a[rel='theme'], a[rel='plugin']").each(function() {
 var url = $(this).attr("href");
@@ -76,8 +99,6 @@ $(this).attr("href", get_download_item(url, type));
 }
 });
 
-$("#download_site_form").submit(function() {
-ltoptions.download_site = $("#text_download_site").val();
-return false;
-});
-});
+}
+
+$(document).ready(init_download_items);
