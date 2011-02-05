@@ -17,12 +17,6 @@ class tticketsmenu extends tmenu {
     $this->data['type'] = 'tickets';
   }
   
-  public function setcontent($s) {
-    $this->rawcontent = $s;
-    $filter = tcontentfilter::instance();
-    $this->data['content'] = $filter->filter($s);
-  }
-  
   public function getcontent() {
     $page = litepublisher::$urlmap->page - 1;
     if ($page == 0) {

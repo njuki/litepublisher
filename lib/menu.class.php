@@ -423,7 +423,7 @@ public function gethead() {}
   }
   
   public function getcont() {
-    return ttheme::parsevar('menu', $this, ttheme::instance()->content->menu);
+    return ttheme::parsevar('menu', $this, ttheme::instance()->templates['content.menu']);
   }
   
   public function getlink() {

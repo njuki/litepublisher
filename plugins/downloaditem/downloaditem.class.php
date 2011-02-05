@@ -84,11 +84,10 @@ $this->filtered = $this->getdownloadcontent() . $this->filtered;
   
   public function getdownloadcontent() {
     self::checklang();
-    $lang = tlocal::instance('downloaditem');
+ttheme::$vars['lang'] = tlocal::instance('downloaditem');
     ttheme::$vars['post'] = $this;
     $theme = $this->theme;
-    $tml = file_get_contents($this->resource . 'download.tml');
-    return $theme->parse($tml);
+    return $theme->parse($theme->templates['custom']['downloaditem']);
   }
 
 public function getdownloadcount() {
