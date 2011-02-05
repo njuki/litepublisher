@@ -90,7 +90,7 @@ $template = ttemplate::instance();
 $template->addtohead(getd_download_js());
 
   $parser = tthemeparser::instance();
-  $parser->parsed = $menu->themeparsed;
+  $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
   
   $linkgen = tlinkgenerator::instance();
@@ -110,7 +110,7 @@ function tdownloaditemsUninstall($self) {
   $menus->deletetree($menus->class2id('tdownloaditemsmenu'));
 
   $parser = tthemeparser::instance();
-  $parser->unsubscribeclassname('tdownloaditemsmenu');
+  $parser->unsubscribeclass($self);
   ttheme::clearcache();
 
 
@@ -158,6 +158,7 @@ $result ='<script type="text/javascript">';
 $result .= "\n\$(document).ready(function() {\n";
 $result .= "if (\$(\"a[rel='theme'], a[rel='plugin']\").length) {\n";
 $result .= '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.js\");\n";
+$result .= "}\n";
 $result.= "});\n";
 $result .= "</script>\n";
 return $result;
