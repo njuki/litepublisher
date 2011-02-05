@@ -90,6 +90,11 @@ $this->filtered = $this->getdownloadcontent() . $this->filtered;
     $tml = file_get_contents($this->resource . 'download.tml');
     return $theme->parse($tml);
   }
+
+public function getdownloadcount() {
+$lang = tlocal::instance('downloaditem');
+return sprintf($lang->downloads, $this->downloads);
+}
   
   public function closepoll() {
     $polls = tpolls::instance();

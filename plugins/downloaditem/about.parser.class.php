@@ -12,7 +12,6 @@ class taboutparser {
     return getinstance(__class__);
   }
   
-
 public static function parse($url) {
 if ($s = http::get($url)) {
 $backuper = tbackuper::instance();

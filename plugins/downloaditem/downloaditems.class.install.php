@@ -10,7 +10,7 @@ function tdownloaditemsInstall($self) {
   if (!dbversion) die("Downloads require database");
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   $manager = tdbmanager ::instance();
-  $manager->CreateTable($self->childtable, file_get_contents($dir .'downloaditems.sql'));
+  $manager->CreateTable($self->childtable, file_get_contents($dir .'downloaditem.sql'));
   
   $optimizer = tdboptimizer::instance();
   $optimizer->lock();
@@ -25,8 +25,9 @@ function tdownloaditemsInstall($self) {
 $tags = ttags::instance();
 litepublisher::$options->downloaditem_themetag = $tags->add($ini['themetag']);
 litepublisher::$options->downloaditem_plugintag = $tag->add($ini['plugintag']);
-  
-  litepublisher::$classes->lock();
+$base = basename(dirname(__file__));
+$classes = litepublisher::$classes;
+  $classes->lock();
 /*
   //install polls if its needed
   $plugins = tplugins::instance();
@@ -35,82 +36,81 @@ litepublisher::$options->downloaditem_plugintag = $tag->add($ini['plugintag']);
   $polls->garbage = false;
   $polls->save();
   */
-  litepublisher::$classes->Add('tdownloaditem', 'downloaditem.class.php', basename(dirname(__file__) ));
+
+  $classes->Add('tdownloaditem', 'downloaditem.class.php', $base);
   tdownloaditem::checklang();
-  litepublisher::$classes->Add('tdownloaditemsmenu', 'downloaditems.menu.class.php', basename(dirname(__file__) ));
-  litepublisher::$classes->Add('tdownloaditemeditor', 'admin.downloaditem.editor.class.php', basename(dirname(__file__)));
-  litepublisher::$classes->Add('tadmindownloaditems', 'admin.downloaditems.class.php', basename(dirname(__file__)));
-  litepublisher::$classes->Add('tdownloaditemcounter', 'downloaditem.counter.class.php', basename(dirname(__file__)));
+  $classes->Add('tdownloaditemsmenu', 'downloaditems.menu.class.php', $base);
+  $classes->Add('tdownloaditemeteditor', 'admin.downloaditem.editor.class.php',$base);
+  $classes->Add('tadmindownloaditems', 'admin.downloaditems.class.php', $base);
+  $classes->Add('tdownloaditemcounter', 'downloaditem.counter.class.php', $base);
+  $classes->Add('taboutparser', 'about.parser.class.php', $base);
+  $classes->unlock();
+
+$lang = tlocal::instance('downloaditems');
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
-  $parent = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
-  $adminmenus->items[$parent]['title'] = tlocal::$data['tickets']['tickets'];
+  $parent = $adminmenus->createitem(0, 'downloaditems', 'author', 'tadmindownloaditems');
+  $adminmenus->items[$parent]['title'] = $lang->downloaditems;
   
-  $idmenu = $adminmenus->createitem($parent, 'opened', 'ticket', 'tadmintickets');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['opened'];
+  $idmenu = $adminmenus->createitem($parent, 'theme', 'author', 'tadmindownloaditems');
+  $adminmenus->items[$idmenu]['title'] = $lang->themes;
   
-  $idmenu = $adminmenus->createitem($parent, 'fixed', 'ticket', 'tadmintickets');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['fixed'];
+  $idmenu = $adminmenus->createitem($parent, 'plugin', 'author', 'tadmindownloaditems');
+  $adminmenus->items[$idmenu]['title'] = $lang->plugins;
   
-  $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
+  $idmenu = $adminmenus->createitem($parent, 'editor', 'author', 'tdownloaditemeditor');
+  $adminmenus->items[$idmenu]['title'] = $lang->add;
+
+  $idmenu = $adminmenus->createitem($parent, 'addurl', 'author', 'tadmindownloaditems');
+  $adminmenus->items[$idmenu]['title'] = $lang->addurl;
   
   $adminmenus->unlock();
   
   $menus = tmenus::instance();
   $menus->lock();
-  $menu = tticketsmenu::instance();
-  $menu->type = 'tickets';
-  $menu->url = '/tickets/';
-  $menu->title = $ini['tickets'];
-  $menu->content = $ini['contenttickets'];
+  $menu = tdownloaditemsmenu::instance();
+  $menu->type = 'downloaditems';
+  $menu->url = '/downloads.htm';
+  $menu->title = $ini['downloads'];
+  $menu->content = $ini['contentdownloaditems'];
   $id = $menus->add($menu);
   
-  foreach (array('bug', 'feature', 'support', 'task') as $type) {
-    $menu = tticketsmenu::instance();
+  foreach (array('theme', 'plugin') as $type) {
+    $menu = tdownloaditemsmenu::instance();
     $menu->type = $type;
     $menu->parent = $id;
-    $menu->url = "/$type/";
+    $menu->url = sprintf('/downloads/%ss.htm', $type);
     $menu->title = $ini[$type];
     $menu->content = '';
     $menus->add($menu);
   }
   $menus->unlock();
   
-  litepublisher::$classes->unlock();
-  
   $linkgen = tlinkgenerator::instance();
-  $linkgen->data['ticket'] = '/[type]/[title].htm';
+  $linkgen->data['downloaditem'] = '/[type]/[title].htm';
   $linkgen->save();
   litepublisher::$options->savemodified();
 }
 
 function tdownloaditemsUninstall($self) {
-  //die("Warning! You can lost all tickets!");
-  litepublisher::$classes->lock();
-  //if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
+  //die("Warning! You can lost all downloaditems!");
   tposts::unsub($self);
   
-  litepublisher::$classes->delete('tdownloaditem');
-  litepublisher::$classes->delete('tdownloaditemeditor');
-  litepublisher::$classes->delete('tadmindownloaditems');
-  
   $adminmenus = tadminmenus::instance();
-  $adminmenus->lock();
-  $adminmenus->deleteurl('/admin/downloaditems/editor/');
-  $adminmenus->deleteurl('/admin/downloaditems/');
-  $adminmenus->unlock();
+  $adminmenus->deletetree($adminmenus->url2id('/admin/downloaditems/'));
   
   $menus = tmenus::instance();
-  $menus->lock();
-  foreach (array('bug', 'feature', 'support', 'task') as $type) {
-    $menus->deleteurl("/$type/");
-  }
-  $menus->deleteurl('/downloaditems/');
-  $menus->unlock();
-  
-  litepublisher::$classes->delete('tdownloaditemsmenu');
-  litepublisher::$classes->unlock();
+  $menus->deletetree($menus->class2id('tdownloaditemsmenu'));
+
+$classes = litepublisher::$classes;
+  $classes->lock();
+  $classes->delete('tdownloaditem');
+  $classes->delete('tdownloaditemsmenu');
+  $classes->delete('tdownloaditemeteditor');
+  $classes->delete('tadmindownloaditems');
+  $classes->delete('tdownloaditemcounter');
+  $classes->delete('taboutparser');
+  $classes->unlock();
 
 /*  
   if (class_exists('tpolls')) {
@@ -119,6 +119,7 @@ function tdownloaditemsUninstall($self) {
     $polls->save();
   }
 */
+
   tlocal::clearcache();
   
   $manager = tdbmanager ::instance();
@@ -135,8 +136,5 @@ function tdownloaditemsUninstall($self) {
 litepublisher::$options->delete('downloaditem_themetag');
 litepublisher::$options->delete('downloaditem_plugintag');
 litepublisher::$options->savemodified();
-
-  
 }
 
-?>
