@@ -26,10 +26,9 @@ class tdownloaditems extends tposts {
   }
   
   public function add(tpost $post) {
-    $post->poll = $this->createpoll();
+    //$post->poll = $this->createpoll();
     $post->updatefiltered();
-    //$post->status = 'draft';
-    $id = parent::add($post);
+return parent::add($post);
   }
   
   public function edit(tpost $post) {

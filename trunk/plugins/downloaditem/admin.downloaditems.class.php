@@ -27,12 +27,24 @@ class tadmindownloaditems extends tadminmenu {
   }
   
   public function getcontent() {
-    $result = $this->logoutlink;
+$result = '';
+    //$result = $this->logoutlink;
+    $html = $this->html;
+    $args = targs::instance();
+    $args->adminurl = $this->adminurl;
+    $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
+    $lang = tlocal::instance('downloaditems');
+
     $downloaditems = tdownloaditems::instance();
     $perpage = 20;
     $where = litepublisher::$options->group == 'downloaditem' ? ' and author = ' . litepublisher::$options->user : '';
     
     switch ($this->name) {
+case 'addurl':
+$args->formtitle = $lang->addurl;
+$args->url = tadminhtml::getparam('url', '');
+return $html->adminform('[text=url']', $args);
+
       case 'theme':
       $where .= " and type = 'theme' ";
       break;
@@ -51,11 +63,6 @@ class tadmindownloaditems extends tadminmenu {
       $items = array();
     }
     
-    $html = $this->html;
-    $args = targs::instance();
-    $args->adminurl = $this->adminurl;
-    $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
-    $lang = tlocal::instance('downloaditems');
 $tablebody = '';
     foreach ($items  as $id ) {
       $downloaditem = tdownloaditem::instance($id);
@@ -76,11 +83,20 @@ $result .= $html->gettable($html->listhead(), $tablebody);
   }
   
   public function processform() {
-    if (litepublisher::$options->group == 'downloaditem') return '';
     $downloaditems = tdownloaditems::instance();
+if ($this->name == 'aaddurl') {
+$url = trim($_POST['url']);
+if ($url == '') return '';
+if ($downloaditem = taboutparser::parse($url)) {
+$id = $downloaditems->add($downloaditem);
+turlmap::redir(tadminhtml::getadminlink('/admin/downloaditems/editor/', "id=$id"));
+}
+return '';
+}
+
     $status = isset($_POST['publish']) ? 'published' :
-    (isset($_POST['setdraft']) ? 'draft' :
-    (isset($_POST['setfixed']) ? 'fixed' :'delete'));
+    (isset($_POST['setdraft']) ? 'draft' :'delete');
+
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
