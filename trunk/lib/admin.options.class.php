@@ -93,6 +93,9 @@ class Tadminoptions extends tadminmenu {
       $args->commentautolinks = $filter->commentautolinks;
       $args->hovermenu = $template->hovermenu;
       $args->icondisabled = $options->icondisabled;
+
+$themeparser = tthemeparser::instance();
+$args->replacelang = $themeparser->replacelang;
       
       $parser = tmediaparser::instance();
       $args->enablepreview = $parser->enablepreview;
@@ -206,7 +209,14 @@ class Tadminoptions extends tadminmenu {
       $template->lock();
       $template->hovermenu = isset($hovermenu);
       $template->unlock();
-      
+
+$replacelang  = isset($replacelang );
+$themeparser = tthemeparser::instance();
+if ($replacelang != $themeparser->replacelang) {
+$themeparser->replacelang = $replacelang;
+$themeparser->save();
+}
+
       $parser = tmediaparser::instance();
       $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);

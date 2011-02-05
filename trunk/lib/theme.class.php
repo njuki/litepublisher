@@ -204,7 +204,9 @@ self::$vars['lang'] = isset($lang) ? $lang : tlocal::instance('default');
 
 if (preg_match_all('/\$lang\.(\w\w*+)/', $s, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
-$s = str_replace($item[0], $lang->{$item[1]}, $s);
+if ($v = $lang->{$item[1]}) {
+$s = str_replace($item[0], $v, $s);
+}
 }
 }
 return $s;

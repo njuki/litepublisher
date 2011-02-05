@@ -170,23 +170,25 @@ if (empty($theme->templates['custom']['downloadexcerpt'])) {
     tlocal::loadsection('', 'downloaditem', $dir);
     tlocal::loadsection('admin', 'downloaditems', $dir);
      ttheme::$vars['lang'] = tlocal::instance('downloaditems');
+$custom = &$theme->templates['custom'];
+$custom['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), tlocal::instance('downloaditem'));
 $lang = tlocal::instance('downloaditems');
-$theme->templates['custom']['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
-$theme->templates['custom']['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), $lang);
-$theme->templates['custom']['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
+$custom['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
+$custom['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
 
 //admin
-$theme->templates['customadmin']['downloadexcerpt'] = array(
+$admin = &$theme->templates['customadmin'];
+$admin['downloadexcerpt'] = array(
 'type' => 'editor',
 'title' => $lang->downloadexcerpt
 );
 
-$theme->templates['customadmin']['downloaditem'] = array(
+$admin['downloaditem'] = array(
 'type' => 'editor',
 'title' => $lang->downloadlinks
 );
 
-$theme->templates['customadmin']['siteform'] = array(
+$admin['siteform'] = array(
 'type' => 'editor',
 'title' => $lang->siteform
 );
