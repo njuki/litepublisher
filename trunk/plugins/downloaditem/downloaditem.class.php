@@ -32,6 +32,10 @@ class tdownloaditem extends tpost {
     );
   }
 
+  protected function getauthorname() {
+    return $this->childdata['authorname'];
+  }
+
 public function getparenttag() {
 return $this->type == 'theme' ? litepublisher::$options->downloaditem_themetag : litepublisher::$options->downloaditem_plugintag;
 }
@@ -57,8 +61,6 @@ $list = explode(',', trim($names));
 
    public function gethead() {
     $result = parent::gethead();
-$template = ttemplate::instance();
-$result .= $template->getjavascript('/plugins/' . basename(dirname(__file__)) . '/downloaditem.js');
     if ($this->poll > 0) {
       $polls = tpolls::instance();
       $result .= $polls->gethead();

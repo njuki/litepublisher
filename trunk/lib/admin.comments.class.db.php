@@ -354,6 +354,7 @@ class tadminmoderator extends tadminmenu {
           $id = (int) $id;
           $idpost = $comments->getvalue($id, 'post');
           if ($status == 'delete') {
+var_dump($id, $idpost);
             $manager->delete($id, $idpost);
           } else {
             $manager->setstatus($id, $idpost, $status);

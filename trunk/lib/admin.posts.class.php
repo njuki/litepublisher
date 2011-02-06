@@ -56,13 +56,22 @@ class tadminposts extends tadminmenu {
     $result = '';
     $posts = tposts::instance();
     $perpage = 20;
-    $count = $posts->count;
-    $from = $this->getfrom($perpage, $count);
-    
     if (dbversion) {
-      $items = $posts->select("status <> 'deleted'", " order by posted desc limit $from, $perpage");
+$where = "status <> 'deleted' ";
+$groupname = litepublisher::$options->group;
+    if ($groupname != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright($groupname, 'editor') && $groups->hasright($groupname, 'author')) {
+    $where .= ' and author = ' . litepublisher::$options->user;
+}
+}
+    $count = $posts->db->getcount($where);
+    $from = $this->getfrom($perpage, $count);
+      $items = $posts->select($where, " order by posted desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
+    $count = $posts->count;
+    $from = $this->getfrom($perpage, $count);
       $items = array_slice($posts->items, $from, $perpage, true);
       $items = array_reverse (array_keys($items));
     }
