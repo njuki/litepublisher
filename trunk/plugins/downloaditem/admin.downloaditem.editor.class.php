@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tdownloaditemeteditor extends tposteditor {
+class tdownloaditemeditor extends tposteditor {
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
@@ -20,8 +20,20 @@ class tdownloaditemeteditor extends tposteditor {
       return tlocal::$data['downloaditems']['editor'];
     }
   }
+
+  public function gethtml($name = '') {
+    $html = tadminhtml::instance();
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    $html->addini('downloaditems', $dir . 'html.ini');
+    tlocal::loadsection('', 'downloaditem', $dir);
+    tlocal::loadsection('admin', 'downloaditems', $dir);
+    tlocal::$data['downloaditems'] = tlocal::$data['downloaditem'] + tlocal::$data['downloaditems'];
+    return parent::gethtml($name);
+  }
+  
   
   public function getcontent() {
+$result = '';
     $this->basename = 'downloaditems';
     $downloaditem = tdownloaditem::instance($this->idpost);
     ttheme::$vars['downloaditem'] = $downloaditem;

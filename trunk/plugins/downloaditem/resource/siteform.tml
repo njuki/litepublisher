@@ -1,4 +1,4 @@
-<div id="form_download_site">
+<div id="form_download_site" style="display: none;">
 <form name="download_site_form" id="download_site_form" action="" method="post" >
 <h4>$lang.editsite</h4>
 <p><label for="download_site"><strong>$lang.url</strong></label>:
@@ -7,7 +7,7 @@
 </form>
 </div>
 
-<div class="changeurl">
+<div id="changeurl" style="display: none;">
 <h2>$lang.yoursite:
 <a id="yoursite" href="" title=""></a>
 (<a id="change_url" href="#" title="$lang.changeurl">$lang.changeurl</a)>

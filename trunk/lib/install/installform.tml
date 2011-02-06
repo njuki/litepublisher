@@ -39,8 +39,8 @@ return true;
 }
 
 function showdbhost() {
-document.getElementById("divhost").style.visibility = "visible"; 
-document.getElementById("showhost").style.visibility = "hidden"; 
+document.getElementById("divhost").style.display = "block"; 
+document.getElementById("showhost").style.display = "none"; 
 document.getElementById("usehost").value = "1";
 }
 
@@ -106,7 +106,7 @@ $lang->fileversion</label></p>
     <br clear="all" />
 
 <div class="rubric" id="showhost"><a onclick="showdbhost();">$lang->showdbhost</a></div>
-<div id="divhost" style="visibility : hidden;">
+<div id="divhost" style="display: none;">
     <p>$lang->dbhost:</p>
     <input name="dbhost" type="text" id="dbhost" value="localhost" />
     <br clear="all" />
