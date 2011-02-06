@@ -128,12 +128,13 @@ function tagtopost(link) {
   }
 }
 
-function initposteditor() {
+function initposteditor(dateindex) {
+if (dateindex == undefined) dateindex = 2;
   $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
   inittabs("#tabs", function() {
     $("#tabs").bind( "tabsload", function(event, ui) {
       switch (ui.index) {
-        case 2:
+        case dateindex:
         $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery.ui.datepicker.min.js', function() {
           if (ltoptions.lang == 'en') {
             initdatepicker();

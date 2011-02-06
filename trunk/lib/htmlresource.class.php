@@ -298,7 +298,6 @@ class tautoform {
     }
   }
   
-  
   public function addsingle($obj, $propname, $type) {
     return $this->addprop(array(
     'obj' => $obj,
@@ -306,8 +305,6 @@ class tautoform {
     'type' => $type
     ));
   }
-  
-  
   
   public function addeditor($obj, $propname) {
     return $this->addsingle($obj, $propname, 'editor');
