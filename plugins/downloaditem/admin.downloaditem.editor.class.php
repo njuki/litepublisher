@@ -37,7 +37,6 @@ return $result;
     return parent::gethtml($name);
   }
   
-  
   public function getcontent() {
 $result = '';
     $this->basename = 'downloaditems';
@@ -45,6 +44,10 @@ $result = '';
     ttheme::$vars['downloaditem'] = $downloaditem;
     $args = targs::instance();
 $this->getpostargs($downloaditem, $args);
+$args->downloadurl = $downloaditem->downloadurl;
+$args->authorname = $downloaditem->authorname;
+$args->authorurl = $downloaditem->authorurl;
+$args->version = $downloaditem->version;
     
     $html = $this->html;
     $lang = tlocal::instance('downloaditems');
@@ -79,6 +82,9 @@ unset(ttheme::$vars['downloaditem']);
 $this->set_post($downloaditem);
     $downloaditem->version = $version;
       $downloaditem->type = $type;
+$downloaditem->downloadurl = $downloadurl;
+$downloaditem->authorname = $authorname;
+$downloaditem->authorurl = $authorurl;
     $downloaditems = tdownloaditems::instance();
 if ($downloaditem->id == 0) {
       $id = $downloaditems->add($downloaditem);

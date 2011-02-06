@@ -52,18 +52,18 @@ $lang = tlocal::instance('downloaditems');
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'downloaditems', 'author', 'tadmindownloaditems');
   $adminmenus->items[$parent]['title'] = $lang->downloaditems;
-  
+
+  $idmenu = $adminmenus->createitem($parent, 'addurl', 'author', 'tadmindownloaditems');
+  $adminmenus->items[$idmenu]['title'] = $lang->addurl;
+
+  $idmenu = $adminmenus->createitem($parent, 'editor', 'author', 'tdownloaditemeditor');
+  $adminmenus->items[$idmenu]['title'] = $lang->add;
+
   $idmenu = $adminmenus->createitem($parent, 'theme', 'author', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->themes;
   
   $idmenu = $adminmenus->createitem($parent, 'plugin', 'author', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->plugins;
-  
-  $idmenu = $adminmenus->createitem($parent, 'editor', 'author', 'tdownloaditemeditor');
-  $adminmenus->items[$idmenu]['title'] = $lang->add;
-
-  $idmenu = $adminmenus->createitem($parent, 'addurl', 'author', 'tadmindownloaditems');
-  $adminmenus->items[$idmenu]['title'] = $lang->addurl;
   
   $adminmenus->unlock();
   
@@ -162,7 +162,7 @@ $result .= "if (\$(\"a[rel='theme'], a[rel='plugin']\").length) {\n";
 $result .= '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.js\");\n";
 $result .= "}\n";
 $result.= "});\n";
-$result .= "</script>\n";
+$result .= "</script>";
 return $result;
 }
 

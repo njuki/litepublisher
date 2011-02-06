@@ -76,7 +76,8 @@ $("#changeurl").show();
 }
 
 function init_download_items() {
-if (ltoptions.download_site = get_download_url()) {
+try {
+if (ltoptions.download_site = get_download_site()) {
 show_siteform(false);
 } else {
 show_siteform(true);
@@ -93,8 +94,6 @@ $("#change_url").click(function() {
 return false;
 });
 
-
-
 $("a[rel='theme'], a[rel='plugin']").each(function() {
 var url = $(this).attr("href");
 $(this).data("url", url);
@@ -106,6 +105,7 @@ $(this).attr("href", get_download_item(url, type));
 }
 });
 
+} catch(e) { alert('ex' + e.message); }
 }
 
 $(document).ready(init_download_items);
