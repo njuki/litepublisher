@@ -33,8 +33,7 @@ class tsimpleimporter extends timporter {
     $args = targs::instance();
     $args->tagsmap = $tagsmap;
     $args->script = $this->script;
-    $admin = tadminplugins::instance();
-    $about = $admin->abouts[$_GET['plugin']];
+    $about = tplugins::getabout(tplugins::getname(__file__));
     $args->maplabel = $about['maplabel'];
     $args->scriptlabel = $about['scriptlabel'];
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
