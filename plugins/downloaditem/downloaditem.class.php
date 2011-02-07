@@ -82,6 +82,9 @@ $list = explode(',', trim($names));
   public function updatefiltered() {
 parent::updatefiltered();
 $this->filtered = $this->getdownloadcontent() . $this->filtered;
+$this->excerpt = $this->filtered;
+$this->filtered = $this->theme->templates['custom']['siteform'] .
+$this->filtered;
   }
   
   public function getdownloadcontent() {
@@ -93,8 +96,7 @@ ttheme::$vars['lang'] = tlocal::instance('downloaditem');
   }
 
 public function getdownloadcount() {
-$lang = tlocal::instance('downloaditem');
-return sprintf($lang->downloads, $this->downloads);
+return sprintf(tlocal::$data['downloaditem']['downloads'], $this->downloads);
 }
   
   public function closepoll() {

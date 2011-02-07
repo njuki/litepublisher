@@ -668,19 +668,19 @@ $page - номер страницы, цифра
 Остался последний шаблон в секции content - admin, вот его сейчас и опишим:
 
 content.admin = [
-$editor = [<p><label for="$name"><strong>$lang.$name:</strong></label><br />
+$editor = [<p><label for="editor-$name"><strong>$lang.$name:</strong></label><br />
 <textarea name="$name" id="editor-$name" cols="57%" rows="10">$value</textarea></p>]
 
 $text = [<p><input type="text" name="$name" id="text-$name" value="$value" size="22" />
-<label for="$name"><strong>$lang.$name</strong></label></p>]
+<label for="text-$name"><strong>$lang.$name</strong></label></p>]
 
 $password = [<p><input type="password" name="$name" id="password-$name" value="$value" size='22' />
-<label for="$name"><strong>$lang.$name</strong></label></p>]
+<label for="password-$name"><strong>$lang.$name</strong></label></p>]
 
 $checkbox= [<p><input type="checkbox" name="$name" id="checkbox-$name" $value />
-<label for="$name"><strong>$lang.$name</strong></label></p>]
+<label for="checkbox-$name"><strong>$lang.$name</strong></label></p>]
 
-$combo = [<p><label for="$name"><strong>$lang.$name:</strong></label>
+$combo = [<p><label for="combo-$name"><strong>$lang.$name:</strong></label>
 <select name="$name" id="combo-$name">$value</select></p>]
 
 $hidden = [<input type="hidden" name="$name" id="hidden-$name" value="$value" />]

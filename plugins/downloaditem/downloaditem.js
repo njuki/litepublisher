@@ -40,70 +40,112 @@ return result;
 }
 
 function get_download_item(url, type) {
+alert(url);
 var args  = 'itemtype=' + type + '&url=' +encodeURIComponent(url);
-var q = ltoptions.download_site.indexOf('?') ? '&' : '?';
+var q = ltoptions.download_site.indexOf('?')== -1  ? '?' : '&';
 return ltoptions.download_site + '/admin/service/upload/' + q + args;
 }
 
+function siteurl_dialog(fn) {
+  switch($._ui_dialog) {
+    case 'loaded':
+$("#siteurl_dialog").dialog( "open" );
+    break;
+    
+    case 'loading':
+//ignore
+    break;
+    
+    default:
+    $._ui_dialog = 'loading';
+var dir = ltoptions.files + '/plugins/downloaditem/resource/';
+    $('<link rel="stylesheet" type="text/css" href="'+ dir + 'jquery-ui-dialog-1.8.9.css" />').appendTo("head");
+    $.getScript(dir + "jquery-ui-dialog-1.8.9.min.js", function() {
+$("#siteurl_dialog").dialog( {
+autoOpen: false,
+modal: true,
+buttons: [
+{
+        text: "Ok",
+        click: function() {
+ $(this).dialog("close"); 
+var url = $.trim($("#text_download_site").val());
+set_cookie('download_site', url);
+update_siteurl(url);
+if ($.isFunction(fn)) fn();
+}
+    },
+{
+        text: "Cancel",
+        click: function() { $(this).dialog("close"); }
+    }
+]
+} );
+
+        $._ui_dialog = 'loaded';
+$("#siteurl_dialog").dialog( "open" );
+    });
+  }
+}
+
 function download_item_clicked() {
-try {
 var url = $(this).data("url");
 var type = $(this).attr("rel");
-if (ltoptions.download_site = $.trim(prompt("Please input url of your web-site", "http://"))) {
-//if (ltoptions.download_site = $.trim(prompt(lang.downloaditem.urlprompt, "http://"))) {
-set_cookie('download_site', ltoptions.download_site);
- show_siteform(false);
+if (ltoptions.download_site == '') {
+siteurl_dialog(function() {
 window.location= get_download_item(url, type);
-} else {
- show_siteform(true);
+});
 }
-} catch(e) { alert('ex' + e.message); }
 return false;
 }
 
-function show_siteform(show) {
-if (show) {
-$("#text_download_site").val(ltoptions.download_site);
-$("#form_download_site").show();
-$("#changeurl").hide();
-} else {
-$("#form_download_site").hide();
-$("#text_download_site").val(ltoptions.download_site);
+function update_siteurl(url) {
+ltoptions.download_site =url;
+$("#text_download_site").val(url);
 var link = $("#yoursite");
-link.attr("href", ltoptions.download_site);
-link.attr("title", ltoptions.download_site)
-link.text(ltoptions.download_site);
-$("#changeurl").show();
+link.attr("href", url);
+link.attr("title", url);
+link.text(url);
+
+$("a[rel='theme'], a[rel='plugin']").each(function() {
+if (url == '') {
+$(this).click(download_item_clicked);
+} else {
+$(this).unbind("click");
+var type = $(this).attr("rel");
+var fileurl = $(this).data("url");
+if (fileurl == undefined) {
+fileurl = $(this).attr("href");
+$(this).data("url", fileurl);
 }
+$(this).attr("href", get_download_item(fileurl, type));
+}
+});
+
 }
 
 function init_download_items() {
 try {
-if (ltoptions.download_site = get_download_site()) {
-show_siteform(false);
-} else {
-show_siteform(true);
+ltoptions.download_site = '';
+if (url = get_download_site()) {
+update_siteurl(url);
 }
 
-$("#download_site_form").submit(function() {
-ltoptions.download_site = $.trim($("#text_download_site").val());
- show_siteform(ltoptions.download_site == "");
-return false;
-});
-
 $("#change_url").click(function() {
- show_siteform(true);
+siteurl_dialog();
 return false;
 });
 
 $("a[rel='theme'], a[rel='plugin']").each(function() {
 var url = $(this).attr("href");
+alert('url= ' + url);
 $(this).data("url", url);
 if (ltoptions.download_site == '') {
 $(this).click(download_item_clicked);
 } else {
 var type = $(this).attr("rel");
 $(this).attr("href", get_download_item(url, type));
+alert(get_download_item(url, type));
 }
 });
 
