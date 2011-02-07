@@ -1,5 +1,5 @@
-<div id="siteurl_dialog" style="display: none;" title="$lang.editsite">
-<p><label for="download_site"><strong>$lang.url</strong></label>:
+<div id="siteurl_dialog" style="display: none;" title="$lang.changeurl">
+<p><label for="download_site"><strong>$lang.editsite</strong></label><br />:
 <input type="text" name="text_download_site" id="text_download_site" value="" size="22" /></p>
 </div>
 

@@ -67,9 +67,14 @@ $list = explode(',', trim($names));
     }
     return  $result;
   }
+
+public function get_excerpt() {
+return $this->getdownloadcontent() . $this->data['excerpt'];
+}
   
   protected function getcontentpage($page) {
-    $result = '';
+$result = $this->theme->templates['custom']['siteform'];
+    $result .= $this->getdownloadcontent();
     if ($this->poll > 0) {
       $polls = tpolls::instance();
       $result .= $polls->gethtml($this->poll, true);
@@ -77,14 +82,6 @@ $list = explode(',', trim($names));
     
     $result .= parent::getcontentpage($page);
     return $result;
-  }
-  
-  public function updatefiltered() {
-parent::updatefiltered();
-$this->filtered = $this->getdownloadcontent() . $this->filtered;
-$this->excerpt = $this->filtered;
-$this->filtered = $this->theme->templates['custom']['siteform'] .
-$this->filtered;
   }
   
   public function getdownloadcontent() {
@@ -96,7 +93,7 @@ ttheme::$vars['lang'] = tlocal::instance('downloaditem');
   }
 
 public function getdownloadcount() {
-return sprintf(tlocal::$data['downloaditem']['downloads'], $this->downloads);
+return sprintf(tlocal::$data['downloaditem']['downloaded'], $this->downloads);
 }
   
   public function closepoll() {

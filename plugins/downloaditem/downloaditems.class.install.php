@@ -74,6 +74,7 @@ $lang = tlocal::instance('downloaditems');
   $menu->title = $ini['downloads'];
   $menu->content = '';
   $id = $menus->add($menu);
+litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
   
   foreach (array('theme', 'plugin') as $type) {
     $menu = tdownloaditemsmenu::instance();
@@ -83,6 +84,7 @@ $lang = tlocal::instance('downloaditems');
     $menu->title = $lang->__get($type . 's');
     $menu->content = '';
     $menus->add($menu);
+litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
   }
   $menus->unlock();
 
