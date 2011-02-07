@@ -1,3 +1,10 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 function get_cookie(name) {
   if (document.cookie && document.cookie != '') {
     var cookies = document.cookie.split(';');
@@ -49,6 +56,7 @@ function siteurl_dialog(fn) {
   switch($._ui_dialog) {
     case 'loaded':
 $("#siteurl_dialog").dialog( "open" );
+$("#text_download_site").focus();
     break;
     
     case 'loading':
@@ -83,6 +91,7 @@ if ($.isFunction(fn)) fn();
 
         $._ui_dialog = 'loaded';
 $("#siteurl_dialog").dialog( "open" );
+$("#text_download_site").focus();
     });
   }
 }

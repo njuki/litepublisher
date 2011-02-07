@@ -30,7 +30,7 @@ $item->version = $about['version'];
 $item->tagnames = empty($about['tags']) ? '' : trim($about['tags']);
 if ($screenshot = self::getfile($files, 'screenshot.png')) {
 $media = tmediaparser::instance();
-$idscreenshot= $media->uploadthumbnail('screenshot.png', $screenshot);
+$idscreenshot= $media->uploadthumbnail($about['name'] . '.png', $screenshot);
 $item->files = array($idscreenshot);
 }
 
@@ -50,6 +50,9 @@ return false;
 
 public static function getabout(array &$files) {
 if ($about_ini = self::getfile($files , 'about.ini')) {
+$about_ini = trim($about_ini );
+//trim unicode sign
+$about_ini = substr($about_ini, strpos($about_ini, '['));
 $about = tini2array::parse($about_ini);
         if (isset($about[litepublisher::$options->language])) {
           $about['about'] = $about[litepublisher::$options->language] + $about['about'];

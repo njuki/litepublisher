@@ -157,14 +157,14 @@ class tfiles extends titems {
             $preview->id = $item['preview'];
             $preview->link = $url . $preview->filename;
             $args->preview = $theme->parsearg($types['preview'], $args);
+}
           } elseif($type == 'image') {
             $preview->array = $item;
             $preview->id = $id;
             $preview->link = $url . $preview->filename;
             $args->preview = $theme->parsearg($types['preview'], $args);
           }
-        }
-        
+
         $sublist .= $theme->parsearg($types[$type], $args);
       }
       $sublist = str_replace('$' . $type, $sublist, $types[$type . 's']);
