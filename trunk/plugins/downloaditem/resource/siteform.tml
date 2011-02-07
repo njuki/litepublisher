@@ -1,4 +1,4 @@
-<div id="form_download_site" style="display: none;" title="$lang.editsite">
+<div id="siteurl_dialog" style="display: none;" title="$lang.editsite">
 <p><label for="download_site"><strong>$lang.url</strong></label>:
 <input type="text" name="text_download_site" id="text_download_site" value="" size="22" /></p>
 </div>

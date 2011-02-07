@@ -36,6 +36,7 @@ class tupdater extends tevents {
       if (function_exists($func)) {
         $func();
         if ($this->log) tfiler::log("$func is called", 'update');
+litepublisher::$options->savemodified();
       }
     }
   }

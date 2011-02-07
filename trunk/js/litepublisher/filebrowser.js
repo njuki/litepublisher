@@ -114,17 +114,17 @@ function initfiletabs() {
 }
 
 function tagtopost(link) {
-  var newtag  = $(link).html();
-  var tags = $('#tags').val();
+  var newtag  = $(link).text();
+  var tags = $('#text-tags').val();
   if (tags == '') {
-    $('#tags').val(newtag);
+    $('#text-tags').val(newtag);
   } else {
     var re = /\s*,\s*/;
     var list = tags.split(re);
     for (var i = list.length; i >= 0; i--) {
       if (newtag == list[i]) return;
     }
-    $('#tags').val(tags + ', ' + newtag);
+    $('#text-tags').val(tags + ', ' + newtag);
   }
 }
 
