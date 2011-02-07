@@ -136,7 +136,7 @@ class tticketeditor extends tposteditor {
       $files = trim($files);
       $ticket->files = $files == '' ? array() : explode(',', $files);
     }
-
+    
     $ticket->content = $raw;
     $ticket->code = $code;
     $ticket->prio = $prio;

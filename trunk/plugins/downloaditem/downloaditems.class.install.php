@@ -18,18 +18,18 @@ function tdownloaditemsInstall($self) {
   $optimizer->childtables[] = 'downloaditems';
   $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
-
+  
   tlocal::loadsection('admin', 'downloaditems', $dir);
-    tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
+  tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
-
-$tags = ttags::instance();
-litepublisher::$options->downloaditem_themetag = $tags->add(0, $ini['themetag']);
-litepublisher::$options->downloaditem_plugintag = $tags->add(0, $ini['plugintag']);
-$base = basename(dirname(__file__));
-$classes = litepublisher::$classes;
+  
+  $tags = ttags::instance();
+  litepublisher::$options->downloaditem_themetag = $tags->add(0, $ini['themetag']);
+  litepublisher::$options->downloaditem_plugintag = $tags->add(0, $ini['plugintag']);
+  $base = basename(dirname(__file__));
+  $classes = litepublisher::$classes;
   $classes->lock();
-/*
+  /*
   //install polls if its needed
   $plugins = tplugins::instance();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
@@ -37,7 +37,7 @@ $classes = litepublisher::$classes;
   $polls->garbage = false;
   $polls->save();
   */
-
+  
   $classes->Add('tdownloaditem', 'downloaditem.class.php', $base);
   $classes->Add('tdownloaditemsmenu', 'downloaditems.menu.class.php', $base);
   $classes->Add('tdownloaditemeditor', 'admin.downloaditem.editor.class.php',$base);
@@ -45,19 +45,19 @@ $classes = litepublisher::$classes;
   $classes->Add('tdownloaditemcounter', 'downloaditem.counter.class.php', $base);
   $classes->Add('taboutparser', 'about.parser.class.php', $base);
   $classes->unlock();
-
-$lang = tlocal::instance('downloaditems');
+  
+  $lang = tlocal::instance('downloaditems');
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'downloaditems', 'author', 'tadmindownloaditems');
   $adminmenus->items[$parent]['title'] = $lang->downloaditems;
-
+  
   $idmenu = $adminmenus->createitem($parent, 'addurl', 'author', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->addurl;
-
+  
   $idmenu = $adminmenus->createitem($parent, 'editor', 'author', 'tdownloaditemeditor');
   $adminmenus->items[$idmenu]['title'] = $lang->add;
-
+  
   $idmenu = $adminmenus->createitem($parent, 'theme', 'author', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->themes;
   
@@ -74,7 +74,7 @@ $lang = tlocal::instance('downloaditems');
   $menu->title = $ini['downloads'];
   $menu->content = '';
   $id = $menus->add($menu);
-litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
+  litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
   
   foreach (array('theme', 'plugin') as $type) {
     $menu = tdownloaditemsmenu::instance();
@@ -84,13 +84,13 @@ litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
     $menu->title = $lang->__get($type . 's');
     $menu->content = '';
     $menus->add($menu);
-litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
+    litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
   }
   $menus->unlock();
-
-$template = ttemplate::instance();
-$template->addtohead(getd_download_js());
-
+  
+  $template = ttemplate::instance();
+  $template->addtohead(getd_download_js());
+  
   $parser = tthemeparser::instance();
   $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
@@ -110,13 +110,13 @@ function tdownloaditemsUninstall($self) {
   
   $menus = tmenus::instance();
   $menus->deletetree($menus->class2id('tdownloaditemsmenu'));
-
+  
   $parser = tthemeparser::instance();
   $parser->unsubscribeclass($self);
   ttheme::clearcache();
-
-
-$classes = litepublisher::$classes;
+  
+  
+  $classes = litepublisher::$classes;
   $classes->lock();
   $classes->delete('tdownloaditem');
   $classes->delete('tdownloaditemsmenu');
@@ -125,15 +125,15 @@ $classes = litepublisher::$classes;
   $classes->delete('tdownloaditemcounter');
   $classes->delete('taboutparser');
   $classes->unlock();
-
-/*  
+  
+  /*
   if (class_exists('tpolls')) {
     $polls = tpolls::instance();
     $polls->garbage = true;
     $polls->save();
   }
-*/
-
+  */
+  
   tlocal::clearcache();
   
   $manager = tdbmanager ::instance();
@@ -147,54 +147,54 @@ $classes = litepublisher::$classes;
     unset($optimizer->childtables[$i]);
   }
   $optimizer->unlock();
-
-$template = ttemplate::instance();
-$template->deletefromhead(getd_download_js());
-
-litepublisher::$options->delete('downloaditem_themetag');
-litepublisher::$options->delete('downloaditem_plugintag');
-litepublisher::$options->savemodified();
+  
+  $template = ttemplate::instance();
+  $template->deletefromhead(getd_download_js());
+  
+  litepublisher::$options->delete('downloaditem_themetag');
+  litepublisher::$options->delete('downloaditem_plugintag');
+  litepublisher::$options->savemodified();
 }
 
 function getd_download_js() {
-$result ='<script type="text/javascript">';
-$result .= "\n\$(document).ready(function() {\n";
-$result .= "if (\$(\"a[rel='theme'], a[rel='plugin']\").length) {\n";
-$result .= '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.js\");\n";
-$result .= "}\n";
-$result.= "});\n";
-$result .= "</script>";
-return $result;
+  $result ='<script type="text/javascript">';
+  $result .= "\n\$(document).ready(function() {\n";
+    $result .= "if (\$(\"a[rel='theme'], a[rel='plugin']\").length) {\n";
+      $result .= '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.min.js\");\n";
+    $result .= "}\n";
+  $result.= "});\n";
+  $result .= "</script>";
+  return $result;
 }
 
-function add_downloaditems_to_theme($theme) { 
-if (empty($theme->templates['custom']['downloadexcerpt'])) {
-  $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+function add_downloaditems_to_theme($theme) {
+  if (empty($theme->templates['custom']['downloadexcerpt'])) {
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
     tlocal::loadsection('', 'downloaditem', $dir);
     tlocal::loadsection('admin', 'downloaditems', $dir);
-     ttheme::$vars['lang'] = tlocal::instance('downloaditems');
-$custom = &$theme->templates['custom'];
-$custom['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), tlocal::instance('downloaditem'));
-$lang = tlocal::instance('downloaditems');
-$custom['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
-$custom['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
-
-//admin
-$admin = &$theme->templates['customadmin'];
-$admin['downloadexcerpt'] = array(
-'type' => 'editor',
-'title' => $lang->downloadexcerpt
-);
-
-$admin['downloaditem'] = array(
-'type' => 'editor',
-'title' => $lang->downloadlinks
-);
-
-$admin['siteform'] = array(
-'type' => 'editor',
-'title' => $lang->siteform
-);
-}
-//var_dump($theme->templates['customadmin'], $theme->templates['custom']);
+    ttheme::$vars['lang'] = tlocal::instance('downloaditems');
+    $custom = &$theme->templates['custom'];
+    $custom['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), tlocal::instance('downloaditem'));
+    $lang = tlocal::instance('downloaditems');
+    $custom['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
+    $custom['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
+    
+    //admin
+    $admin = &$theme->templates['customadmin'];
+    $admin['downloadexcerpt'] = array(
+    'type' => 'editor',
+    'title' => $lang->downloadexcerpt
+    );
+    
+    $admin['downloaditem'] = array(
+    'type' => 'editor',
+    'title' => $lang->downloadlinks
+    );
+    
+    $admin['siteform'] = array(
+    'type' => 'editor',
+    'title' => $lang->siteform
+    );
+  }
+  //var_dump($theme->templates['customadmin'], $theme->templates['custom']);
 }

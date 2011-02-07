@@ -16,35 +16,35 @@ class tdownloaditemsmenu extends tmenu {
     parent::create();
     $this->data['type'] = '';
   }
-
+  
   public function getcont() {
     $result = '';
     $theme = ttheme::instance();
     if ((litepublisher::$urlmap->page == 1) && ($this->content != '')) {
       $result .= $theme->simple($theme->parse($this->content));
     }
-
-      $perpage = litepublisher::$options->perpage;
-      $downloaditems = tdownloaditems::instance();
-      $d = litepublisher::$db->prefix . $downloaditems->childtable;
-      $p = litepublisher::$db->posts;
-      $where = $this->type == '' ? '' : " and $d.type = '$this->type'";
-      $count = $downloaditems->getchildscount($where);
-      $from = (litepublisher::$urlmap->page - 1) * $perpage;
-      if ($from <= $count)  {
-        $items = $downloaditems->select("$p.status = 'published' $where", " order by $p.posted desc limit $from, $perpage");
-    ttheme::$vars['lang'] = tlocal::instance('downloaditem');
-    $tml = $theme->templates['custom']['downloadexcerpt'];
-if (count($items) > 0) {
-$result .= $theme->templates['custom']['siteform'];
-    foreach($items as $id) {
-      ttheme::$vars['post'] = tdownloaditem::instance($id);
-      $result .= $theme->parse($tml);
+    
+    $perpage = litepublisher::$options->perpage;
+    $downloaditems = tdownloaditems::instance();
+    $d = litepublisher::$db->prefix . $downloaditems->childtable;
+    $p = litepublisher::$db->posts;
+    $where = $this->type == '' ? '' : " and $d.type = '$this->type'";
+    $count = $downloaditems->getchildscount($where);
+    $from = (litepublisher::$urlmap->page - 1) * $perpage;
+    if ($from <= $count)  {
+      $items = $downloaditems->select("$p.status = 'published' $where", " order by $p.posted desc limit $from, $perpage");
+      ttheme::$vars['lang'] = tlocal::instance('downloaditem');
+      $tml = $theme->templates['custom']['downloadexcerpt'];
+      if (count($items) > 0) {
+        $result .= $theme->templates['custom']['siteform'];
+        foreach($items as $id) {
+          ttheme::$vars['post'] = tdownloaditem::instance($id);
+          $result .= $theme->parse($tml);
+        }
+      }
     }
-}
-}    
     $result .=$theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;
   }
- 
+  
 }//class

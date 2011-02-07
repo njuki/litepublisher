@@ -28,7 +28,7 @@ class tdownloaditems extends tposts {
   public function add(tpost $post) {
     //$post->poll = $this->createpoll();
     $post->updatefiltered();
-return parent::add($post);
+    return parent::add($post);
   }
   
   public function edit(tpost $post) {
@@ -46,9 +46,9 @@ return parent::add($post);
     }
   }
   
-  public function themeparsed($theme) { 
-include_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'downloaditems.class.install.php');
-add_downloaditems_to_theme($theme);
-}
-
+  public function themeparsed($theme) {
+    include_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'downloaditems.class.install.php');
+    add_downloaditems_to_theme($theme);
+  }
+  
 }//class

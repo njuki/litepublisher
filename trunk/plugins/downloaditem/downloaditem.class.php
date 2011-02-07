@@ -22,44 +22,44 @@ class tdownloaditem extends tpost {
     $this->childdata = array(
     'id' => 0,
     'type' => 'theme',
-'downloads' => 0,
+    'downloads' => 0,
     'downloadurl'  => '',
     'authorurl'  => '',
-'authorname' => '',
+    'authorname' => '',
     'version'=> '1.00',
     'votes' => 0,
     'poll' => 0
     );
   }
-
+  
   protected function getauthorname() {
     return $this->childdata['authorname'];
   }
-
-public function getparenttag() {
-return $this->type == 'theme' ? litepublisher::$options->downloaditem_themetag : litepublisher::$options->downloaditem_plugintag;
-}
-
+  
+  public function getparenttag() {
+    return $this->type == 'theme' ? litepublisher::$options->downloaditem_themetag : litepublisher::$options->downloaditem_plugintag;
+  }
+  
   public function settagnames($names) {
-$names = trim($names);
-if ($names == '') {
-$this->tags = array();
-return;
-}
-$parent = $this->getparenttag();
+    $names = trim($names);
+    if ($names == '') {
+      $this->tags = array();
+      return;
+    }
+    $parent = $this->getparenttag();
     $tags = ttags::instance();
     $items = array();
-$list = explode(',', trim($names));
+    $list = explode(',', trim($names));
     foreach ($list as $title) {
       $title = tcontentfilter::escape($title);
       if ($title == '') continue;
       $items[] = $tags->add($parent, $title);
     }
-
+    
     $this->tags=  $items;
   }
-
-   public function gethead() {
+  
+  public function gethead() {
     $result = parent::gethead();
     if ($this->poll > 0) {
       $polls = tpolls::instance();
@@ -67,13 +67,13 @@ $list = explode(',', trim($names));
     }
     return  $result;
   }
-
-public function get_excerpt() {
-return $this->getdownloadcontent() . $this->data['excerpt'];
-}
+  
+  public function get_excerpt() {
+    return $this->getdownloadcontent() . $this->data['excerpt'];
+  }
   
   protected function getcontentpage($page) {
-$result = $this->theme->templates['custom']['siteform'];
+    $result = $this->theme->templates['custom']['siteform'];
     $result .= $this->getdownloadcontent();
     if ($this->poll > 0) {
       $polls = tpolls::instance();
@@ -86,15 +86,15 @@ $result = $this->theme->templates['custom']['siteform'];
   
   public function getdownloadcontent() {
     tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-ttheme::$vars['lang'] = tlocal::instance('downloaditem');
+    ttheme::$vars['lang'] = tlocal::instance('downloaditem');
     ttheme::$vars['post'] = $this;
     $theme = $this->theme;
     return $theme->parse($theme->templates['custom']['downloaditem']);
   }
-
-public function getdownloadcount() {
-return sprintf(tlocal::$data['downloaditem']['downloaded'], $this->downloads);
-}
+  
+  public function getdownloadcount() {
+    return sprintf(tlocal::$data['downloaditem']['downloaded'], $this->downloads);
+  }
   
   public function closepoll() {
     $polls = tpolls::instance();

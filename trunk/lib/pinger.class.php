@@ -47,7 +47,8 @@ class tpinger extends tevents {
   
   public function pingpost($id) {
     if (!isset($id)) return;
-    $post = tpost::instance($id);
+    $post = tpost::instance((int) $id);
+    if (!is_object($post)) return;
     if ($post->status != 'published') return;
     $meta = $post->meta;
     if (!isset($meta->lastpinged) || ($meta->lastpinged + 3600*24 < time())) {

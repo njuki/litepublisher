@@ -20,8 +20,8 @@ class tposteditor extends tadminmenu {
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
     $result .= '<script type="text/javascript">
-      $.getScript("$site.files/js/litepublisher/filebrowser.js", function() {
-        initposteditor();
+    $.getScript("$site.files/js/litepublisher/filebrowser.js", function() {
+      initposteditor();
     });
     </script>';
     $ajax = tajaxposteditor ::instance();
@@ -69,14 +69,14 @@ class tposteditor extends tadminmenu {
       if (!$posts->itemexists($this->idpost)) return 404;
     }
     $post = tpost::instance($this->idpost);
-$groupname = litepublisher::$options->group;
+    $groupname = litepublisher::$options->group;
     if ($groupname != 'admin') {
       $groups = tusergroups::instance();
       if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
-if (litepublisher::$options->user != $post->author) return 403;
-}
-}
-
+        if (litepublisher::$options->user != $post->author) return 403;
+      }
+    }
+    
   }
   
   public function gettitle() {
@@ -92,22 +92,22 @@ if (litepublisher::$options->user != $post->author) return 403;
     $this->idpost = 0;
     return $this->getcontent();
   }
-
-public function getpostargs(tpost $post, targs $args) {
+  
+  public function getpostargs(tpost $post, targs $args) {
     $args->id = $post->id;
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = $post->title;
     $args->categories = $this->getpostcategories($post);
     $ajaxeditor = tajaxposteditor ::instance();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
-}
+  }
   
   public function getcontent() {
     $html = $this->html;
     $post = tpost::instance($this->idpost);
     ttheme::$vars['post'] = $post;
     $args = targs::instance();
-$this->getpostargs($post, $args);
+    $this->getpostargs($post, $args);
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
@@ -123,8 +123,8 @@ $this->getpostargs($post, $args);
     }
     return $result;
   }
-
-protected function set_post(tpost $post) {
+  
+  protected function set_post(tpost $post) {
     extract($_POST, EXTR_SKIP);
     $post->title = $title;
     $post->categories = self::processcategories();
@@ -161,8 +161,8 @@ protected function set_post(tpost $post) {
       $update = sprintf($this->lang->updateformat, tlocal::date(time()), $upd);
       $post->content = $post->rawcontent . "\n\n" . $update;
     }
-
-}
+    
+  }
   
   public function processform() {
     /*
@@ -175,10 +175,10 @@ protected function set_post(tpost $post) {
     $this->basename = 'editor';
     $html = $this->html;
     if (empty($_POST['title'])) return $html->h2->emptytitle;
-$id = (int)$_POST['id'];
+    $id = (int)$_POST['id'];
     $post = tpost::instance($id);
-
-$this->set_post($post);
+    
+    $this->set_post($post);
     
     $posts = tposts::instance();
     if ($id == 0) {

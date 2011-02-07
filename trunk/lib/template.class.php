@@ -124,9 +124,9 @@ class ttemplate extends tevents_storage {
   public function getmenu() {
     $current = $this->context instanceof tmenu ? $this->context->id : 0;
     $filename = litepublisher::$paths->cache . $this->view->theme->name . '.' . $current;
-    $filename .= litepublisher::$urlmap->adminpanel ? 
-'.' . litepublisher::$options->user . '.adminmenu.php'
-: '.menu.php';
+    $filename .= litepublisher::$urlmap->adminpanel ?
+    '.' . litepublisher::$options->user . '.adminmenu.php'
+    : '.menu.php';
     if (file_exists($filename)) return file_get_contents($filename);
     
     $menus = litepublisher::$urlmap->adminpanel ? tadminmenus::instance() : tmenus::instance();

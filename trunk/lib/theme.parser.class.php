@@ -20,7 +20,7 @@ class tthemeparser extends tevents {
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('parsed');
-$this->data['replacelang'] = true;
+    $this->data['replacelang'] = true;
     $this->sidebar_index = 0;
   }
   
@@ -55,25 +55,25 @@ $this->data['replacelang'] = true;
     }
     
     $this->parsed($theme);
-if ($this->replacelang) $this->doreplacelang($theme);
+    if ($this->replacelang) $this->doreplacelang($theme);
     $theme->unlock();
     return true;
   }
-
-public function doreplacelang($theme) {
-$lang = tlocal::instance('default');
-foreach ($theme->templates as &$value) {
-if (is_string($value)) $value = $theme->replacelang($value, $lang);
-}
-unset($value);
-foreach ($theme->templates['sidebars'] as &$sidebar) {
-unset($widget);
-foreach ($sidebar as &$widget) {
-$widget = $theme->replacelang($widget, $lang);
-}
-}
-
-}
+  
+  public function doreplacelang($theme) {
+    $lang = tlocal::instance('default');
+    foreach ($theme->templates as &$value) {
+      if (is_string($value)) $value = $theme->replacelang($value, $lang);
+    }
+    unset($value);
+    foreach ($theme->templates['sidebars'] as &$sidebar) {
+      unset($widget);
+      foreach ($sidebar as &$widget) {
+        $widget = $theme->replacelang($widget, $lang);
+      }
+    }
+    
+  }
   
   public function parsetheme(ttheme $theme) {
     $about = $this->getabout($theme->name);

@@ -18,8 +18,8 @@ class tpagenator3000 extends tplugin {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $head = '<script type="text/javascript"><!--
     $(\'<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />\').appendTo("head");
-      $.getScript("' . $url . 'paginator3000.min.js", function() {
-    $(document).ready(function() {
+    $.getScript("' . $url . 'paginator3000.min.js", function() {
+      $(document).ready(function() {
         var tag = $("#paginator, .navigation");
         tag.addClass("paginator");
         tag.paginator({
@@ -43,7 +43,7 @@ class tpagenator3000 extends tplugin {
         });
       });
     });
-//-->
+    //-->
     </script>';
     
     $theme->templates['content.navi'] = $head . $theme->templates['content.navi'];
