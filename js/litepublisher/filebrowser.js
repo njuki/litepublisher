@@ -129,7 +129,7 @@ function tagtopost(link) {
 }
 
 function initposteditor(dateindex) {
-if (dateindex == undefined) dateindex = 2;
+  if (dateindex == undefined) dateindex = 2;
   $.getScript(ltoptions.files + '/files/admin' + ltoptions.lang + '.js');
   inittabs("#tabs", function() {
     $("#tabs").bind( "tabsload", function(event, ui) {

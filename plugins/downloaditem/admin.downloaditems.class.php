@@ -27,24 +27,24 @@ class tadmindownloaditems extends tadminmenu {
   }
   
   public function getcontent() {
-$result = '';
+    $result = '';
     //$result = $this->logoutlink;
     $html = $this->html;
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
     $lang = tlocal::instance('downloaditems');
-
+    
     $downloaditems = tdownloaditems::instance();
     $perpage = 20;
     $where = litepublisher::$options->group == 'downloaditem' ? ' and author = ' . litepublisher::$options->user : '';
     
     switch ($this->name) {
-case 'addurl':
-$args->formtitle = $lang->addurl;
-$args->url = tadminhtml::getparam('url', '');
-return $html->adminform('[text=url]', $args);
-
+      case 'addurl':
+      $args->formtitle = $lang->addurl;
+      $args->url = tadminhtml::getparam('url', '');
+      return $html->adminform('[text=url]', $args);
+      
       case 'theme':
       $where .= " and type = 'theme' ";
       break;
@@ -63,7 +63,7 @@ return $html->adminform('[text=url]', $args);
       $items = array();
     }
     
-$tablebody = '';
+    $tablebody = '';
     foreach ($items  as $id ) {
       $downloaditem = tdownloaditem::instance($id);
       ttheme::$vars['downloaditem'] = $downloaditem;
@@ -71,9 +71,9 @@ $tablebody = '';
       $args->type = tlocal::$data['downloaditem'][$downloaditem->type];
       $tablebody .= $html->itemlist($args);
     }
-
+    
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
-$result .= $html->gettable($html->listhead(), $tablebody);
+    $result .= $html->gettable($html->listhead(), $tablebody);
     $result .= $html->footer();
     $result = $html->fixquote($result);
     
@@ -84,19 +84,19 @@ $result .= $html->gettable($html->listhead(), $tablebody);
   
   public function processform() {
     $downloaditems = tdownloaditems::instance();
-if ($this->name == 'addurl') {
-$url = trim($_POST['url']);
-if ($url == '') return '';
-if ($downloaditem = taboutparser::parse($url)) {
-$id = $downloaditems->add($downloaditem);
-turlmap::redir(tadminhtml::getadminlink('/admin/downloaditems/editor/', "id=$id"));
-}
-return '';
-}
-
+    if ($this->name == 'addurl') {
+      $url = trim($_POST['url']);
+      if ($url == '') return '';
+      if ($downloaditem = taboutparser::parse($url)) {
+        $id = $downloaditems->add($downloaditem);
+        turlmap::redir(tadminhtml::getadminlink('/admin/downloaditems/editor/', "id=$id"));
+      }
+      return '';
+    }
+    
     $status = isset($_POST['publish']) ? 'published' :
     (isset($_POST['setdraft']) ? 'draft' :'delete');
-
+    
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
@@ -104,10 +104,10 @@ return '';
         $downloaditems->delete($id);
       } else {
         $downloaditem = tdownloaditem::instance($id);
-          $downloaditem->status = $status;
+        $downloaditem->status = $status;
         $downloaditems->edit($downloaditem);
-}
       }
+    }
   }
   
 }//class

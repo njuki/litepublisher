@@ -62,40 +62,40 @@ class tticketsmenu extends tmenu {
     order by $pt.posted desc, $tt.votes, $tt.type, $tt.state, $tt.prio"));
     
     if (count($items) == 0) return '';
-
+    
     $index = $this->type == 'tickets' ? 'type' : 'state';
-$theme = ttheme::instance();
+    $theme = ttheme::instance();
     tticket::checklang();
     $langticket = tlocal::$data['ticket'];
-$args = targs::instance();
-$tml = '<tr>
-<td align="left">$state</td>
-<td align="right">$commentscount</td>
-<td align="left"><a href="$link" title="$title">$title</a></td>
-</tr>';
-
-foreach ($items as $item) {
-$args->add($item);
-$args->state = $langticket[$item[$index]];
-$result .= $theme->parsearg($tml, $args);
+    $args = targs::instance();
+    $tml = '<tr>
+    <td align="left">$state</td>
+    <td align="right">$commentscount</td>
+    <td align="left"><a href="$link" title="$title">$title</a></td>
+    </tr>';
+    
+    foreach ($items as $item) {
+      $args->add($item);
+      $args->state = $langticket[$item[$index]];
+      $result .= $theme->parsearg($tml, $args);
     }
-
+    
     $args->tablebody = $result;
-$lang = tlocal::instance('ticket');
-$result = $theme->parsearg('<table class="classictable">
-	<thead>
-	<tr>
-<td align="left">$lang.state</td>
-<td align="right">$lang.comments</td>
-<td align="left">$lang.ticket</td>
-		</tr>
-	</thead>
-<tbody>
-$tablebody
-</tbody >
-</table>',
-$args);
-
+    $lang = tlocal::instance('ticket');
+    $result = $theme->parsearg('<table class="classictable">
+    <thead>
+    <tr>
+    <td align="left">$lang.state</td>
+    <td align="right">$lang.comments</td>
+    <td align="left">$lang.ticket</td>
+    </tr>
+    </thead>
+    <tbody>
+    $tablebody
+    </tbody >
+    </table>',
+    $args);
+    
     $result .=$theme->getpages($this->url, 1, ceil(count($items)/ litepublisher::$options->perpage) + 1);
     return $result;
   }

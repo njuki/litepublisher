@@ -165,7 +165,7 @@ class tlocal {
   }
   
   public static function loadsection($name, $section, $dir) {
-      tlocal::loadlang($name);
+    tlocal::loadlang($name);
     if (!isset(self::$data[$section])) {
       $language = litepublisher::$options->language;
       if ($name != '') $name = '.' . $name;

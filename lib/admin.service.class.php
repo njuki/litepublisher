@@ -101,11 +101,11 @@ class tadminservice extends tadminmenu {
       break;
       
       case 'upload':
-
+      
       $args->url = tadminhtml::getparam('url', '');
       $args->loginform = $this->getloginform();
       $result = str_replace('$mysite', rawurlencode(litepublisher::$site->url),
-$html->uploaditem($args));
+      $html->uploaditem($args));
       break;
     }
     
@@ -267,9 +267,9 @@ $html->uploaditem($args));
         $itemtype = tadminhtml::getparam('itemtype', 'theme');
         $backuper = tbackuper::instance();
         if (!($archtype = $backuper->getarchtype($url))) {
-//         local file header signature     4 bytes  (0x04034b50)
-$archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
-}
+          //         local file header signature     4 bytes  (0x04034b50)
+          $archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
+        }
         if ($backuper->uploaditem($s, $archtype, $itemtype)) {
           return $html->h3->itemuploaded;
         } else {

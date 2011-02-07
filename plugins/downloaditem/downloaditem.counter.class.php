@@ -33,12 +33,11 @@ class tdownloaditemcounter extends titems {
           $stat[$id] = 1;
         }
       }
-      
       if (count($stat) == 0) return;
       $this->loaditems(array_keys($stat));
-$db = $this->db;
-      foreach ($stat as $id => $downloaded) {
-          $db->setvalue($id, 'downloaded', $downloaded + $this->items[$id]['downloaded']);
+      $db = $this->db;
+      foreach ($stat as $id => $downloads) {
+        $db->setvalue($id, 'downloads', $downloads + $this->items[$id]['downloads']);
       }
     }
   }
@@ -51,5 +50,5 @@ $db = $this->db;
     tfiler::append("$id\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt');
     return turlmap::redir($item['downloadurl']);
   }
-
+  
 }//class

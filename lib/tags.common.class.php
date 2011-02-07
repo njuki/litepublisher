@@ -55,7 +55,7 @@ class tcommontags extends titems implements  itemplate {
     $theme = ttheme::instance();
     $args = targs::instance();
     $args->rel = $this->PermalinkIndex;
-$args->parent = $parent;
+    $args->parent = $parent;
     foreach($sorted as $id) {
       $item = $this->getitem($id);
       $args->add($item);
