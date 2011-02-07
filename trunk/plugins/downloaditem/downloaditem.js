@@ -40,7 +40,6 @@ return result;
 }
 
 function get_download_item(url, type) {
-alert(url);
 var args  = 'itemtype=' + type + '&url=' +encodeURIComponent(url);
 var q = ltoptions.download_site.indexOf('?')== -1  ? '?' : '&';
 return ltoptions.download_site + '/admin/service/upload/' + q + args;
@@ -70,7 +69,7 @@ buttons: [
         click: function() {
  $(this).dialog("close"); 
 var url = $.trim($("#text_download_site").val());
-set_cookie('download_site', url);
+if (url != '') set_cookie('download_site', url);
 update_siteurl(url);
 if ($.isFunction(fn)) fn();
 }
@@ -100,6 +99,7 @@ return false;
 }
 
 function update_siteurl(url) {
+if (ltoptions.download_site ==url) return;
 ltoptions.download_site =url;
 $("#text_download_site").val(url);
 var link = $("#yoursite");
@@ -107,48 +107,36 @@ link.attr("href", url);
 link.attr("title", url);
 link.text(url);
 
-$("a[rel='theme'], a[rel='plugin']").each(function() {
 if (url == '') {
-$(this).click(download_item_clicked);
+$("a[rel='theme'], a[rel='plugin']").click(download_item_clicked);
 } else {
+$("a[rel='theme'], a[rel='plugin']").each(function() {
 $(this).unbind("click");
 var type = $(this).attr("rel");
 var fileurl = $(this).data("url");
-if (fileurl == undefined) {
-fileurl = $(this).attr("href");
-$(this).data("url", fileurl);
-}
 $(this).attr("href", get_download_item(fileurl, type));
-}
 });
-
+}
 }
 
 function init_download_items() {
 try {
-ltoptions.download_site = '';
-if (url = get_download_site()) {
-update_siteurl(url);
-}
-
 $("#change_url").click(function() {
 siteurl_dialog();
 return false;
 });
 
+// save file url's
 $("a[rel='theme'], a[rel='plugin']").each(function() {
-var url = $(this).attr("href");
-alert('url= ' + url);
-$(this).data("url", url);
-if (ltoptions.download_site == '') {
-$(this).click(download_item_clicked);
-} else {
-var type = $(this).attr("rel");
-$(this).attr("href", get_download_item(url, type));
-alert(get_download_item(url, type));
-}
+$(this).data("url", $(this).attr("href"));
 });
 
+if (url = get_download_site()) {
+update_siteurl(url);
+} else {
+ltoptions.download_site = '';
+$("a[rel='theme'], a[rel='plugin']").click(download_item_clicked);
+}
 } catch(e) { alert('ex' + e.message); }
 }
 
