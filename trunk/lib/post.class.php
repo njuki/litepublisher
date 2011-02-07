@@ -524,12 +524,16 @@ class tpost extends titem implements  itemplate {
     $tc = ttemplatecomments::instance();
     return $tc->getcomments($this->id);
   }
+
+public function get_excerpt() {
+return $this->data['excerpt'];
+}
   
   public function getexcerptcontent() {
-    $result = $this->data['excerpt'];
     $posts = tposts::instance();
-    $posts->beforeexcerpt($this, $result);
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
+$result = $this->get_excerpt();
+$posts->beforeexcerpt($this, $result);
     $result = $this->replacemore($result, true);
     if (litepublisher::$options->parsepost) {
       $result = $this->theme->parse($result);
