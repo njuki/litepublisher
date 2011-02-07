@@ -85,7 +85,7 @@ $this->filtered = $this->getdownloadcontent() . $this->filtered;
   }
   
   public function getdownloadcontent() {
-    self::checklang();
+    tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
 ttheme::$vars['lang'] = tlocal::instance('downloaditem');
     ttheme::$vars['post'] = $this;
     $theme = $this->theme;
@@ -100,14 +100,6 @@ return sprintf($lang->downloads, $this->downloads);
   public function closepoll() {
     $polls = tpolls::instance();
     $polls->db->setvalue($this->poll, 'status', 'closed');
-  }
-  
-  public static function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  }
-  
-  public static function checklang() {
-    tlocal::loadsection('', 'download', self::getresource());
   }
   
 }//class

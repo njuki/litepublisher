@@ -46,16 +46,18 @@ return ltoptions.download_site + '/admin/service/upload/' + q + args;
 }
 
 function download_item_clicked() {
+try {
 var url = $(this).data("url");
 var type = $(this).attr("rel");
-$("#form_download_site").show();
-if (ltoptions.download_site = $.trim(prompt(lang.downloaditem.urlprompt, "http://"))) {
+if (ltoptions.download_site = $.trim(prompt("Please input url of your web-site", "http://"))) {
+//if (ltoptions.download_site = $.trim(prompt(lang.downloaditem.urlprompt, "http://"))) {
 set_cookie('download_site', ltoptions.download_site);
  show_siteform(false);
 window.location= get_download_item(url, type);
 } else {
  show_siteform(true);
 }
+} catch(e) { alert('ex' + e.message); }
 return false;
 }
 

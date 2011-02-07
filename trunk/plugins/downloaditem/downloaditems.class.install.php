@@ -39,7 +39,6 @@ $classes = litepublisher::$classes;
   */
 
   $classes->Add('tdownloaditem', 'downloaditem.class.php', $base);
-  tdownloaditem::checklang();
   $classes->Add('tdownloaditemsmenu', 'downloaditems.menu.class.php', $base);
   $classes->Add('tdownloaditemeditor', 'admin.downloaditem.editor.class.php',$base);
   $classes->Add('tadmindownloaditems', 'admin.downloaditems.class.php', $base);
