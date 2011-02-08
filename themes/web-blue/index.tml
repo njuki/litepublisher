@@ -40,6 +40,7 @@ $template.sidebar
  </div>
 <div id="credits">
 	<div class="alignleft">
+<a href="http://www.justskins.com/themes/wordpress-themes/">Wordpress Theme</a> by <a href="http://www.realgeek.com/forums/sitemap/f-19.html">Windows Vista Security</a>
 $template.footer
 </div>
 	<div class="alignright">
