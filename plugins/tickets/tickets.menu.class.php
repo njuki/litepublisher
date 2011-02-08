@@ -55,7 +55,7 @@ class tticketsmenu extends tmenu {
     $pt = $db->posts;
     $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
     
-    $items = $db->res2assoc($db->query("select $pt.id, $pt.idurl, $pt.title,
+    $items = $db->res2assoc($db->query("select $pt.id, $pt.idurl, $pt.title, $pt.commentscount,
     $db->urlmap.url as url, $tt.type, $tt.state, $tt.votes
     from $pt, $db->urlmap, $tt
     where $pt.id = $tt.id and $db->urlmap.id  = $pt.idurl  and $pt.status = 'published' $where
