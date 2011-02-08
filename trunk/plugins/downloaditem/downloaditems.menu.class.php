@@ -21,7 +21,7 @@ class tdownloaditemsmenu extends tmenu {
     $result = '';
     $theme = ttheme::instance();
     if ((litepublisher::$urlmap->page == 1) && ($this->content != '')) {
-      $result .= $theme->simple($theme->parse($this->content));
+      $result .= $theme->simple($theme->parse($this->rawcontent));
     }
     
     $perpage = litepublisher::$options->perpage;
