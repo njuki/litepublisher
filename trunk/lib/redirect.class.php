@@ -7,6 +7,7 @@
 **/
 
 class tredirector extends titems {
+  
   public static function instance() {
     return getinstance(__class__);
   }
