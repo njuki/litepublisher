@@ -26,23 +26,24 @@ class topenid extends tevents {
     $this->url = '/openid/';
   }
   
+  public function get_head() {
+    return "<link rel=\"openid.server\" href=\"\$site.url$this->url\" />\n" .
+    "<link rel=\"openid2.provider\" href=\"\$site.url$this->url\" />\n" .
+    "<link rel=\"openid.delegate\" href=\"\$site.url$this->url\" />" .
+    "<link rel=\"openid2.local_id\" href=\"\$site.url$this->url\" />";
+  }
+  
   public function install() {
     litepublisher::$urlmap->add($this->url, get_class($this), null, 'get');
     
     $template = ttemplate::instance();
-    $template->heads['openidclient'] =  sprintf('<link rel="openid.server" href="%1$s" />
-    <link rel="openid2.provider" href="%1$s" />
-    <link rel="openid.delegate" href="%1$s" />
-    <link rel="openid2.local_id" href="%1$s" />',
-    litepublisher::$site->url . $this->url);
-    $template->save();
+    $template->addtohead($this->get_head());
   }
   
   public function uninstall() {
     turlmap::unsub($this);
     $template = ttemplate::instance();
-    unset($template->heads['openidclient']);
-    $template->save();
+    $template->deletefromhead($this->get_head());
     litepublisher::$urlmap->clearcache();
   }
   

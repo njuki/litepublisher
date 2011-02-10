@@ -44,7 +44,7 @@ class ttemplate extends tevents_storage {
     if (array_key_exists($name, $this->data)) return $this->data[$name];
     if (preg_match('/^sidebar(\d)$/', $name, $m)) {
       $widgets = twidgets::instance();
-      return $widgets->getsidebarindex($this->context, $this->view, $m[1]);
+      return $widgets->getsidebarindex($this->context, $this->view, (int) $m[1]);
     }
     
     if (array_key_exists($name, $this->data['tags'])) {
