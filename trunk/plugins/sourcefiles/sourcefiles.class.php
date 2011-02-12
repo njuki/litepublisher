@@ -19,6 +19,7 @@ class tsourcefiles extends tplugin implements itemplate {
     parent::create();
     $this->table = 'sourcefiles';
     $this->addmap('ignore', array());
+$this->data['root'] = '';
   }
   
   public function request($arg) {
@@ -76,8 +77,7 @@ public function gethead() { }
     if ($filename == '') return $this->getdircontent($dir);
     
     $dir = str_replace('/', DIRECTORY_SEPARATOR, $dir);
-    $realdir = litepublisher::$paths->home;
-    $realdir .= $dir == '' ? 'litepublisher' . DIRECTORY_SEPARATOR . 'srcfiles' . DIRECTORY_SEPARATOR . 'root': $dir;
+    $realdir = $this->root . $dir;
     return $this->syntax($realdir . DIRECTORY_SEPARATOR. $filename);
   }
   
@@ -143,7 +143,7 @@ public function gethead() { }
   
   public function getfilelist($dir){
     $dir = trim(str_replace(DIRECTORY_SEPARATOR, '/', $dir), '/');
-    $realdir = litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR;
+    $realdir = $this->root . str_replace('/', DIRECTORY_SEPARATOR, $dir) . DIRECTORY_SEPARATOR;
     if ($list = scandir ($realdir)) {
       $result = array (
       'dirs' => array(),
@@ -216,6 +216,12 @@ public function gethead() { }
     $this->db->setvalue($id, 'idurl', $idurl);
     return $id;
   }
+
+public function reread() {
+$this->adddir('');
+tfiler::delete(litepublisher::$paths->data . 'sourcefiles', true, false);
+litepublisher::$urlmap->clearcache();
+}
   
 }//class
 ?>
