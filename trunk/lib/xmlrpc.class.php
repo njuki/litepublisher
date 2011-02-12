@@ -6,7 +6,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-
 class TXMLRPCParser extends IXR_Server  {
   public $XMLResult;
   private $owner;
