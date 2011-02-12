@@ -150,7 +150,7 @@ $args->filertype = tadminhtml::array2combo(array(
 'file' => 'file',
 'ftp' => 'ftp',
 'ftpsocket' => 'ftpsocket',
-'ssh2' => 'ssh2'
+//'ssh2' => 'ssh2'
 ), $backuper->filertype);
       break;
       

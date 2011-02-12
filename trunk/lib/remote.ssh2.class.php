@@ -18,17 +18,19 @@ class tssh2filer extends tremotefiler {
   
   public function __construct() {
     parent::__construct();
+$this->port = 22;
     $this->ssl = false;
     $this->hostkey = false;
   }
   
   public function connect($host, $login, $password) {
-    if (!parent::connect($host, $login, $password)) return false;
+    if (!parent::connect($host, $login, $password)) 
+return false;
     if (empty($this->port)) $this->port = 22;
     $this->handle = empty($this->key) ?
     @ssh2_connect($this->host, $this->port) :
     @ssh2_connect($this->host, $this->port, $this->hostkey);
-    
+
     if ($this->handle) {
       $authresult = $this->public_key&& $this->private_key ?
       @ssh2_auth_pubkey_file($this->handle, $this->login, $this->public_key, $this->private_key, $this->password) :
@@ -58,8 +60,8 @@ class tssh2filer extends tremotefiler {
     return false;
   }
   
-  private function getfilename($file) {
-    return 'ssh2.sftp://' . $this->sftp . '/' . ltrim($filename, '/');
+  public function getfilename($file) {
+    return "ssh2.sftp://$this->sftp/" . ltrim($filename, '/');
   }
   
   public function getfile($filename) {
@@ -75,7 +77,7 @@ class tssh2filer extends tremotefiler {
   }
   
   public function pwd() {
-    if ($result = $this->run('pwd')) return rtrim($result, '/') . '/';
+    if ($result = $this->run('pwd')) return rtrim(rtrim($result), '/') . '/';
     return false;
   }
   
@@ -112,7 +114,7 @@ class tssh2filer extends tremotefiler {
   }
   
   public function getchmod($file) {
-    return substr(decoct(@fileperms($this->getfilename($file) )),3);
+    return @fileperms($this->getfilename($file)) & 0777;
   }
   
   public function rename($source, $destination) {
