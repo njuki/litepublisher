@@ -20,7 +20,7 @@ class tthemeparser extends tevents {
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('parsed');
-    $this->data['replacelang'] = true;
+    $this->data['replacelang'] = false;
     $this->sidebar_index = 0;
   }
   

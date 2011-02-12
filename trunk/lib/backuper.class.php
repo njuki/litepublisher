@@ -7,7 +7,6 @@
 **/
 
 class tbackuper extends tevents {
-  public  $filertype;
   public $archtype;
   public $result;
   public $tar;
@@ -46,7 +45,7 @@ class tbackuper extends tevents {
     $this->unzip = null;
     $this->archtype = 'zip';
     $this->lastdir = '';
-    $this->filertype = self::getprefered();
+$this->data['filertype'] = 'auto';
   }
   
   public function __destruct() {
@@ -57,11 +56,18 @@ class tbackuper extends tevents {
   public function unknown_archive() {
     $this->error('Unknown archive type ' . $this->archtype);
   }
+
+public function load() {
+$result = parent::load();
+if ($this->filertype == 'auto') $this->filertype = self::getprefered();
+return $result;
+}
   
   public static function getprefered() {
-    $owner = fileowner(dirname(__file__));
-    if (($owner !== false) && ($owner === getmyuid())) return 'file';
-    
+$libowner = fileowner(dirname(__file__));
+$dataowner= fileowner(litepublisher::$paths->data . 'storage.php');
+if (($libowner !== false) && ($libowner === $dataowner)) return 'file';
+
     if (extension_loaded('ssh2') && function_exists('stream_get_contents') ) return 'ssh2';
     if (extension_loaded('ftp')) return 'ftp';
     if (extension_loaded('sockets') || function_exists('fsockopen')) return 'socket';

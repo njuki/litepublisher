@@ -27,7 +27,7 @@ class tadminviews extends tadminmenu {
   public static function getcomboview($idview, $name = 'idview') {
     $lang = tlocal::instance('views');
     $theme = ttheme::instance();
-    return strtr($theme->content->admin->combo, array(
+    return strtr($theme->templates['content.admin.combo'], array(
     '$lang.$name' => $lang->view,
     '$name' => $name,
     '$value' => self::getcombo($idview)
