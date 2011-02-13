@@ -19,7 +19,7 @@ class tsourcefiles extends tplugin implements itemplate {
     parent::create();
     $this->table = 'sourcefiles';
     $this->addmap('ignore', array());
-$this->data['root'] = '';
+    $this->data['root'] = '';
   }
   
   public function request($arg) {
@@ -50,7 +50,7 @@ public function gethead() { }
     $dir = $this->item['dir'];
     $filename = $this->item['filename'];
     $updir = $filename == '' ? '' :
-    sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$site->url, $dir);
+    ($dir == '' ? '' : sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$site->url, $dir));
     
     $theme = ttheme::instance();
     return $theme->simple($updir . $this->getcachecontent($dir, $filename));
@@ -119,22 +119,26 @@ public function gethead() { }
   public function getdircontent($dir) {
     $list = $this->getfilelist($dir);
     if (!$list) return '';
-    
+    $result = '';
     $url = litepublisher::$site->url;
-    $updir = dirname($dir);
-    $updir = $updir == '.' ? '' : $updir . '/';
-    $result = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);
+    if ($dir != '') {
+      $updir = dirname($dir);
+      $updir = $updir == '.' ? '' : $updir . '/';
+      $result = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);
+$dir .= '/';
+    }
     
     foreach ($list['dirs'] as $filename) {
       $result .= sprintf('<li><a href="%1$s/source/%2$s/" title="%3$s"><strong>%3$s</strong></a></li>',
-      $url, $dir . '/' . $filename, strtoupper($filename));
+      $url, $dir . $filename, strtoupper($filename));
     }
     
     foreach ($list['files'] as $filename) {
       if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
-        $result .= sprintf('<li><a href="%1$s/source/%2$s/%3$s" title="%3$s">%3$s</a></li>', $url, $dir, $filename);
+        $result .= sprintf('<li><a href="%1$s/source/%2$s%3$s" title="%3$s">%3$s</a></li>', 
+$url, $dir, $filename);
       } elseif (preg_match('/\.(jpg|gif|png|bmp|ico)$/', $filename)) {
-        $result .= sprintf('<li><img src="%1$s/%2$s/%3$s" alt="%3$s" /></li>', $url, $dir, $filename);
+        $result .= sprintf('<li><img src="%1$s/%2$s%3$s" alt="%3$s" /></li>', $url, $dir, $filename);
       }
     }
     
@@ -186,11 +190,17 @@ public function gethead() { }
     
     $sql = sprintf("(dir = %s and filename <> '' ", dbquote($dir));
     $sql .= count($files) == 0 ?  ')' : sprintf(' and filename not in (%s))', implode(',', $files));
+if ($dir == '') {
+    $sql .= count($dirs) == 0 ? ')' :
+    sprintf(' or (filename = \'\' and dir <> \'\' and (dir not regexp \'^(%s)($|\\\/)\') )',
+implode('|', $dirs));
+} else {
     $sqldir = litepublisher::$db->escape($dir);
     $sql .= sprintf(' or (filename = \'\' and dir != \'%1$s\' and left(dir, %2$d) = \'%1$s\'', $sqldir, strlen($sqldir));
     $sql .= count($dirs) == 0 ? ')' :
     sprintf(' and (SUBSTRING(dir, %d) not regexp \'^(%s)($|\\\/)\') )',
     strlen($sqldir) + 2, implode('|', $dirs));
+}
     
     if ($deleted = $this->db->getitems($sql)) {
       $items = array();
@@ -212,16 +222,25 @@ public function gethead() { }
     'dir' => $dir
     );
     $id = $this->db->add($item);
-    $idurl = litepublisher::$urlmap->add("/source/$dir/", get_class($this), $id);
+    if ($dir == '') {
+      if ($urlitem = litepublisher::$urlmap->db->finditem("url = '/source/'")) {
+        $idurl = $urlitem['id'];
+      } else {
+        $idurl = litepublisher::$urlmap->add("/source/", get_class($this), $id);
+      }
+    } else {
+      $idurl = litepublisher::$urlmap->add("/source/$dir/", get_class($this), $id);
+//echo "/source/$dir/ added<br>";
+    }
     $this->db->setvalue($id, 'idurl', $idurl);
     return $id;
   }
-
-public function reread() {
-$this->adddir('');
-tfiler::delete(litepublisher::$paths->data . 'sourcefiles', true, false);
-litepublisher::$urlmap->clearcache();
-}
+  
+  public function reread() {
+    $this->adddir('');
+    tfiler::delete(litepublisher::$paths->data . 'sourcefiles', true, false);
+    litepublisher::$urlmap->clearcache();
+  }
   
 }//class
 ?>

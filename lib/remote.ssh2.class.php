@@ -18,19 +18,19 @@ class tssh2filer extends tremotefiler {
   
   public function __construct() {
     parent::__construct();
-$this->port = 22;
+    $this->port = 22;
     $this->ssl = false;
     $this->hostkey = false;
   }
   
   public function connect($host, $login, $password) {
-    if (!parent::connect($host, $login, $password)) 
-return false;
+    if (!parent::connect($host, $login, $password))
+    return false;
     if (empty($this->port)) $this->port = 22;
     $this->handle = empty($this->key) ?
     @ssh2_connect($this->host, $this->port) :
     @ssh2_connect($this->host, $this->port, $this->hostkey);
-
+    
     if ($this->handle) {
       $authresult = $this->public_key&& $this->private_key ?
       @ssh2_auth_pubkey_file($this->handle, $this->login, $this->public_key, $this->private_key, $this->password) :

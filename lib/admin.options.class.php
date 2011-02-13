@@ -144,14 +144,14 @@ class Tadminoptions extends tadminmenu {
       $args->xxxcheck = $auth->xxxcheck;
       $filter = tcontentfilter::instance();
       $args->phpcode = $filter->phpcode;
-$backuper = tbackuper::instance();
-$args->filertype = tadminhtml::array2combo(array(
-'auto' => 'auto',
-'file' => 'file',
-'ftp' => 'ftp',
-'ftpsocket' => 'ftpsocket',
-//'ssh2' => 'ssh2'
-), $backuper->filertype);
+      $backuper = tbackuper::instance();
+      $args->filertype = tadminhtml::array2combo(array(
+      'auto' => 'auto',
+      'file' => 'file',
+      'ftp' => 'ftp',
+      'ftpsocket' => 'ftpsocket',
+      //'ssh2' => 'ssh2'
+      ), $backuper->filertype);
       break;
       
       case 'local':
@@ -294,12 +294,12 @@ $args->filertype = tadminhtml::array2combo(array(
         $filter = tcontentfilter::instance();
         $filter->phpcode = isset($phpcode);
         $filter->save();
-
-$backuper = tbackuper::instance();
-if ($backuper->filertype != $filertype) {
-$backuper->filertype = $filertype;
-$backuper->save();
-}
+        
+        $backuper = tbackuper::instance();
+        if ($backuper->filertype != $filertype) {
+          $backuper->filertype = $filertype;
+          $backuper->save();
+        }
       }
       break;
       
