@@ -35,7 +35,7 @@ class tadminsourcefiles  {
       set_time_limit(300);
       $version = litepublisher::$options->version;
       if (!(
-      ($s = http::get("http://dest/build/litepublisher.4.22.tar.gz")) ||
+      //($s = http::get("http://dest/build/litepublisher.4.22.tar.gz")) ||
       ($s = http::get("http://litepublisher.googlecode.com/files/litepublisher.$version.tar.gz")) ||
       ($s = http::get("http://litepublisher.com/download/litepublisher.$version.tar.gz"))
       )) {
