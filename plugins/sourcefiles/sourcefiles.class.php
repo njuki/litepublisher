@@ -125,7 +125,7 @@ public function gethead() { }
       $updir = dirname($dir);
       $updir = $updir == '.' ? '' : $updir . '/';
       $result = sprintf('<li><a href="%1$s/source/%2$s"><strong>..</strong></a></li>', $url, $updir);
-$dir .= '/';
+      $dir .= '/';
     }
     
     foreach ($list['dirs'] as $filename) {
@@ -135,8 +135,8 @@ $dir .= '/';
     
     foreach ($list['files'] as $filename) {
       if (preg_match('/\.(php|tml|css|ini|sql|js|txt)$/', $filename)) {
-        $result .= sprintf('<li><a href="%1$s/source/%2$s%3$s" title="%3$s">%3$s</a></li>', 
-$url, $dir, $filename);
+        $result .= sprintf('<li><a href="%1$s/source/%2$s%3$s" title="%3$s">%3$s</a></li>',
+        $url, $dir, $filename);
       } elseif (preg_match('/\.(jpg|gif|png|bmp|ico)$/', $filename)) {
         $result .= sprintf('<li><img src="%1$s/%2$s%3$s" alt="%3$s" /></li>', $url, $dir, $filename);
       }
@@ -190,17 +190,17 @@ $url, $dir, $filename);
     
     $sql = sprintf("(dir = %s and filename <> '' ", dbquote($dir));
     $sql .= count($files) == 0 ?  ')' : sprintf(' and filename not in (%s))', implode(',', $files));
-if ($dir == '') {
-    $sql .= count($dirs) == 0 ? ')' :
-    sprintf(' or (filename = \'\' and dir <> \'\' and (dir not regexp \'^(%s)($|\\\/)\') )',
-implode('|', $dirs));
-} else {
-    $sqldir = litepublisher::$db->escape($dir);
-    $sql .= sprintf(' or (filename = \'\' and dir != \'%1$s\' and left(dir, %2$d) = \'%1$s\'', $sqldir, strlen($sqldir));
-    $sql .= count($dirs) == 0 ? ')' :
-    sprintf(' and (SUBSTRING(dir, %d) not regexp \'^(%s)($|\\\/)\') )',
-    strlen($sqldir) + 2, implode('|', $dirs));
-}
+    if ($dir == '') {
+      $sql .= count($dirs) == 0 ? ')' :
+      sprintf(' or (filename = \'\' and dir <> \'\' and (dir not regexp \'^(%s)($|\\\/)\') )',
+      implode('|', $dirs));
+    } else {
+      $sqldir = litepublisher::$db->escape($dir);
+      $sql .= sprintf(' or (filename = \'\' and dir != \'%1$s\' and left(dir, %2$d) = \'%1$s\'', $sqldir, strlen($sqldir));
+      $sql .= count($dirs) == 0 ? ')' :
+      sprintf(' and (SUBSTRING(dir, %d) not regexp \'^(%s)($|\\\/)\') )',
+      strlen($sqldir) + 2, implode('|', $dirs));
+    }
     
     if ($deleted = $this->db->getitems($sql)) {
       $items = array();
@@ -230,7 +230,7 @@ implode('|', $dirs));
       }
     } else {
       $idurl = litepublisher::$urlmap->add("/source/$dir/", get_class($this), $id);
-//echo "/source/$dir/ added<br>";
+      //echo "/source/$dir/ added<br>";
     }
     $this->db->setvalue($id, 'idurl', $idurl);
     return $id;

@@ -48,7 +48,7 @@ class tadminmenumanager extends tadminmenu {
       $menus = tmenus::instance();
       $parents = array(0 => '-----');
       foreach ($menus->items as $item) {
-        $parents[$id] = $item['title'];
+        $parents[$item['id']] = $item['title'];
       }
       
       $html = $this->html;
@@ -61,6 +61,7 @@ class tadminmenumanager extends tadminmenu {
         $args->id = 0;
         $args->title = '';
         $args->parent = tadminhtml::array2combo($parents, 0);
+        var_dump($parents);
         $args->order = tadminhtml::array2combo(range(0, 10), 0);
         $status = 'published';
       } else {
