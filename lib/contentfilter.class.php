@@ -122,13 +122,43 @@ class tcontentfilter extends tevents {
     }
     $result = str_replace(array("\r\n", "\r"), "\n", trim($content));
     if ($this->usefilter) {
-      if ($this->autolinks) $result = self::createlinks($result);
-      $result = $this->replacecode($result);
-      $result = self::auto_p($result);
+if (strpos($result, '[html]') !== false) {
+$result = $this->splitfilter($result);
+} else {
+$result = $this->simplefilter($result);
+}
     }
     $this->callevent('afterfilter', array(&$result));
     return $result;
   }
+
+public function simplefilter($s) {
+$s = trim($s);
+if ($s == '') return '';
+      if ($this->autolinks) $s = self::createlinks($s);
+      $s = $this->replacecode($s);
+return self::auto_p($s);
+}
+
+public function splitfilter($s) {
+$result = '';
+$openlen = strlen('[html]');
+$closelen = strlen('[/html]');
+while(false !== ($i = strpos($s, 'html]'))) {
+if ($i > 0) $result = $this->simplefilter(substr($s, 0, $i - 1));
+if ($j = strpos($s, '[/html]', $i)) {
+$result .= substr($s, $i + $openlen -1, $j - $i - $openlen + 1);
+$s = substr($s, $j + $closelen);
+} else {
+//no close tag, no filter to end
+$result .= substr($s, $i + $openlen -1);
+$s = '';
+break;
+}
+}
+$result .= $this->simplefilter($s);
+return $result;
+}
   
   public function replacecode($s) {
     $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array(&$this, 'callback_replace_code'), $s);
