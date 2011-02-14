@@ -59,6 +59,8 @@ public function __isset($name) { return array_key_exists($name, litepublisher::$
 try {
   litepublisher::init();
   if (litepublisher::$debug) {
+error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
+ini_set('display_errors', 1);
     require_once(litepublisher::$paths->lib . 'data.class.php');
     require_once(litepublisher::$paths->lib . 'events.class.php');
     require_once(litepublisher::$paths->lib . 'items.class.php');
