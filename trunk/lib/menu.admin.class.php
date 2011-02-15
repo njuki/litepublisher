@@ -134,6 +134,9 @@ public function save() { return true; }
   }
   
   public function request($id) {
+    error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
+    ini_set('display_errors', 1);
+
     if (is_null($id)) $id = $this->owner->class2id(get_class($this));
     $this->data['id'] = (int)$id;
     if ($id > 0) {
