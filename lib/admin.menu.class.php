@@ -61,7 +61,6 @@ class tadminmenumanager extends tadminmenu {
         $args->id = 0;
         $args->title = '';
         $args->parent = tadminhtml::array2combo($parents, 0);
-        var_dump($parents);
         $args->order = tadminhtml::array2combo(range(0, 10), 0);
         $status = 'published';
       } else {
