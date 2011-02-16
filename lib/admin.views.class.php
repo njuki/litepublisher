@@ -127,8 +127,8 @@ class tadminviews extends tadminmenu {
         $name = substr($classname, 1);
       $args->title = $lang->{$name};
         $inputs = self::getcomboview($obj->idview, "idview-$classname");
-        $inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
-        $inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
+        if (isset($obj->data['keywords'])) $inputs .= $html->getedit("keywords-$classname", $obj->keywords, $lang->keywords);
+        if (isset($obj->data['description'])) $inputs .= $html->getedit("description-$classname", $obj->description, $lang->description);
         $args->inputs = $inputs;
         $items .= $html->spectab($args);
         $content .=$html->specform($args);
@@ -193,8 +193,8 @@ class tadminviews extends tadminmenu {
         $obj = getinstance($classname);
         $obj->lock();
         $obj->setidview($_POST["idview-$classname"]);
-        $obj->keywords = $_POST["keywords-$classname"];
-        $obj->description = $_POST["description->$classname"];
+        if (isset($obj->data['keywords'])) $obj->keywords = $_POST["keywords-$classname"];
+        if (isset($obj->data['description '])) $obj->description = $_POST["description-$classname"];
         $obj->unlock();
       }
       break;

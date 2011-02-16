@@ -529,7 +529,7 @@ class tcommontagswidget extends twidget {
     $this->showsubitems ? $theme->getwidgettml($sidebar, $this->template, 'subitems') : '',
     $this->sortname, $this->maxcount, $this->showcount);
     return str_replace('$parent', 0,
-$theme->getwidgetcontent($items, $this->template, $sidebar));
+    $theme->getwidgetcontent($items, $this->template, $sidebar));
   }
   
 }//class

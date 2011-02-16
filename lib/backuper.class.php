@@ -576,7 +576,7 @@ class tbackuper extends tevents {
       break;
       
       case 'unzip':
-case 'zip':
+      case 'zip':
       self::include_unzip();
       $unzip = new StrSimpleUnzip();
       $unzip->ReadData($content);

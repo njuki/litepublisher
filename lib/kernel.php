@@ -1729,13 +1729,13 @@ class turlmap extends titems {
     }
     header('Content-Type: text/html; charset=utf-8');
     header('Last-Modified: ' . date('r'));
-    header('X-Pingback: " . litepublisher::$site->url . "/rpc.xml');
+    header('X-Pingback: ' . litepublisher::$site->url . '/rpc.xml');
   }
   
   public static function sendxml() {
     header('Content-Type: text/xml; charset=utf-8');
     header('Last-Modified: ' . date('r'));
-    header('X-Pingback: " . litepublisher::$site->url . "/rpc.xml');
+    header('X-Pingback: ' . litepublisher::$site->url . '/rpc.xml');
     echo '<?xml version="1.0" encoding="utf-8" ?>';
   }
   
