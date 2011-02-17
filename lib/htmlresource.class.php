@@ -113,7 +113,9 @@ class tadminhtml {
     return strtr(            htmlspecialchars($s), array(
     '"' => '&quot;',
     "'" =>'&#39;',
-    '$' => '&#36;'
+    '$' => '&#36;',
+'%' => '&#37;',
+ '_' => '&#95;'
     ));
   }
   
