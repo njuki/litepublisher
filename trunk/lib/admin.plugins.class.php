@@ -21,12 +21,12 @@ class tadminplugins extends tadminmenu {
   
   public function getpluginsmenu() {
     $result = '';
-    $url = $this->url . litepublisher::$site->q . 'plugin=';
+    $link = tadminhtml::getadminlink($this->url,'plugin=');
     $plugins = tplugins::instance();
     foreach ($this->names as $name) {
       $about = tplugins::getabout($name);
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
-        $result .= sprintf('<li><a href="%s%s">%s</a></li>', $url, $name, $about['name']);
+        $result .= sprintf('<li><a href="%s%s">%s</a></li>', $link, $name, $about['name']);
       }
     }
     

@@ -83,7 +83,7 @@ class ttheme extends tevents {
       self::$instances[$this->name] = $this;
       $this->save();
     }else {
-      $this->error("Theme file $filename not exists");
+      $this->error(sprintf('Theme file %s not exists', $filename));
     }
   }
   
@@ -146,7 +146,7 @@ class ttheme extends tevents {
     }
     
     if (!is_object($var)) {
-      litepublisher::$options->trace(sprintf('Object "%s" not found in s', $name, $this->parsing[count($this->parsing) -1]));
+      litepublisher::$options->trace(sprintf('Object "%s" not found in %s', $name, $this->parsing[count($this->parsing) -1]));
       return false;
     }
     

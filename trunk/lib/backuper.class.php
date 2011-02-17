@@ -64,10 +64,13 @@ class tbackuper extends tevents {
   }
   
   public static function getprefered() {
+$datafile = litepublisher::$paths->data . 'storage.php';
+if (file_exists($datafile)) {
+    $dataowner= fileowner($datafile);
     $libowner = fileowner(dirname(__file__));
-    $dataowner= fileowner(litepublisher::$paths->data . 'storage.php');
+
     if (($libowner !== false) && ($libowner === $dataowner)) return 'file';
-    
+    }
     //if (extension_loaded('ssh2') && function_exists('stream_get_contents') ) return 'ssh2';
     if (extension_loaded('ftp')) return 'ftp';
     if (extension_loaded('sockets') || function_exists('fsockopen')) return 'socket';
