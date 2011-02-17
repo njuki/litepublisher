@@ -14,9 +14,11 @@ class tfaqmenu extends tmenu {
   
   public function gethead() {
     $result = parent::gethead();
-    $result .=   '<script type="text/javascript">
+    $result .=   '<style type="text/css">
+.faqlist  p { display:none;}
+</style>
+<script type="text/javascript">
     $(document).ready(function() {
-      $(".faqlist p").hide();
       $("a[rel=\'faqitem\']").click(function() {
         $(this).parent().children("p").slideToggle();
         return false;
