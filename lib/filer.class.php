@@ -129,7 +129,7 @@ class tfiler {
     $result .= sprintf("lang.$name = {\n%s\n};\n", implode(",\n", $list));
     }
     file_put_contents($filename, $result);
-    chmod($filename, 0666);
+    @chmod($filename, 0666);
   }
   
   public static function log($s, $filename = '') {
