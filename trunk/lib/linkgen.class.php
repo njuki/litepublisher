@@ -25,10 +25,11 @@ class tlinkgenerator extends tevents {
     'file' => '/[medium]/[filename]/',
     ));
     $this->data['urlencode'] = false;
+    $this->addevents('onencode');
   }
   
   public function createlink($source, $schema, $uniq) {
-if (!isset($this->data[$schema]))  return $this->error(sprintf('Link schema %s not exists', $schema));
+    if (!isset($this->data[$schema]))  return $this->error(sprintf('Link schema %s not exists', $schema));
     $this->source= $source;
     $result = $this->data[$schema];
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
@@ -71,8 +72,9 @@ if (!isset($this->data[$schema]))  return $this->error(sprintf('Link schema %s n
   }
   
   public function encode($s) {
-    if ($this->urlencode) return rawurlencode($s);
     $s = trim($s, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
+    $this->callevent('onencode', array(&$s));
+    if ($this->urlencode) return rawurlencode($s);
     if (litepublisher::$options->language == 'ru') $s = self::ru2lat($s);
     return strtolower($s);
   }
