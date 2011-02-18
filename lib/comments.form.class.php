@@ -174,7 +174,7 @@ class tcommentform extends tevents {
     'url' => isset($values['url']) ? tcontentfilter::escape($values['url']) : '',
     'subscribe' => isset($values['subscribe']),
     'content' => isset($values['content']) ? trim($values['content']) : '',
-    'ip' => isset($values['ip']) ? $values['name'] : '',
+    'ip' => isset($values['ip']) ? $values['ip'] : '',
     'postid' => $postid,
     'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
     );

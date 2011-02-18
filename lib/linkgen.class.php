@@ -28,6 +28,7 @@ class tlinkgenerator extends tevents {
   }
   
   public function createlink($source, $schema, $uniq) {
+if (!isset($this->data[$schema]))  return $this->error(sprintf('Link schema %s not exists', $schema));
     $this->source= $source;
     $result = $this->data[$schema];
     if(preg_match_all('/\[(\w+)\]/', $result, $match, PREG_SET_ORDER)) {
@@ -72,11 +73,11 @@ class tlinkgenerator extends tevents {
   public function encode($s) {
     if ($this->urlencode) return rawurlencode($s);
     $s = trim($s, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
-    if (litepublisher::$options->language == 'ru') $s = $this->ru2lat($s);
+    if (litepublisher::$options->language == 'ru') $s = self::ru2lat($s);
     return strtolower($s);
   }
   
-  public function ru2lat($s) {
+  public static function ru2lat($s) {
     static $ru2lat_iso;
     if (!isset($ru2lat_iso)) {
       require_once(litepublisher::$paths->libinclude . 'ru2lat-iso.php');

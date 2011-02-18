@@ -120,13 +120,13 @@ class tticketeditor extends tposteditor {
         $hold = $tickets->db->getcount('status = \'draft\' and author = '. litepublisher::$options->user);
         $approved = $tickets->db->getcount('status = \'published\' and author = '. litepublisher::$options->user);
         if ($approved < 3) {
-          if ($hold - $approved >= 2) return $html->h2->noapproved;
+          if ($hold - $approved >= 2) return $html->h4->noapproved;
           $newstatus = 'draft';
         }
       }
     }
     
-    if (empty($title)) return $html->h2->emptytitle;
+    if (empty($title)) return $html->h4->emptytitle;
     $ticket = tticket::instance((int)$id);
     $ticket->title = $title;
     $ticket->categories = self::processcategories();
@@ -165,7 +165,7 @@ class tticketeditor extends tposteditor {
       $tickets->edit($ticket);
     }
     
-    return $html->h2->successedit;
+    return $html->h4->successedit;
   }
   
 }//class
