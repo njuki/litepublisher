@@ -15,7 +15,6 @@ class tmarkdownplugin extends tplugin {
   
   protected function create() {
     parent::create();
-    $this->data['nocontinue'] = false;
     $this->data['deletep'] = true;
     
     require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'markdown.parser.class.php');
@@ -30,13 +29,12 @@ class tmarkdownplugin extends tplugin {
     '</p>' => '',
     '&#95;' => '_'
     ));
-    if ($this->nocontinue) return true;
   }
   
   public function install() {
     $filter = tcontentfilter::instance();
     $filter->lock();
-    $filter->beforefilter = $this->filter;
+    $filter->onsimplefilter = $this->filter;
     $filter->oncomment = $this->filter;
     $filter->unlock();
   }

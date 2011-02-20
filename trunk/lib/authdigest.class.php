@@ -149,8 +149,6 @@ class tauthdigest extends tevents {
       $users = tusers::instance();
       $users->setcookie(litepublisher::$options->user, $cookie, $expired);
     }
-    
-    
   }
   
 }//class
