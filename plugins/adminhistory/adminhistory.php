@@ -27,6 +27,7 @@ class tadminhistory extends torderwidget {
   }
   
   public function add() {
+    if (litepublisher::$urlmap->is404) return;
     $url =litepublisher::$urlmap->url;
     $title = litepublisher::$urlmap->context->title;
     foreach ($this->items as $i => $item) {
@@ -52,7 +53,7 @@ class tadminhistory extends torderwidget {
     foreach ($this->items as $item) {
       $args->title = $item['title'];
       $args->text = $item['title'];
-      $args->url = $url . $item['url'];
+      $args->link = $url . $item['url'];
       $result .= $theme->parsearg($tml, $args);
     }
     if (!isset($_POST) || (count($_POST) == 0)) $this->add();

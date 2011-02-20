@@ -122,7 +122,7 @@ class tadminmenumanager extends tadminmenu {
       $args->add($item);
       $args->link = $menus->getlink($id);
       $args->status = tlocal::$data['common'][$item['status']];
-      $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($id);
+      $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($item['parent']);
       $result .=$html->itemlist($args);
     }
     $result .= $html->listfooter;

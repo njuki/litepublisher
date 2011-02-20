@@ -20,16 +20,13 @@ $plugin = tmarkdownplugin::instance();
     $html = tadminhtml::instance();
 
       $args->formtitle = $about['name'];
-      $args->data['$lang.nocontinue'] = $about['nocontinue'];
       $args->data['$lang.deletep'] = $about['deletep'];
-$args->nocontinue = $plugin->nocontinue;
       $args->deletep = $plugin->deletep;
-return $html->adminform('[checkbox:nocontinue] [checkbox:deletep]', $args);
+return $html->adminform('[checkbox=deletep]', $args);
 }
 
   public function processform() {
 $plugin = tmarkdownplugin::instance();
-$plugin->nocontinue = isset($_POST['nocontinue']);
 $plugin->deletep = isset($_POST['deletep']);
 $plugin->save();
 }

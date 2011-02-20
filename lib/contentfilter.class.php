@@ -15,7 +15,7 @@ class tcontentfilter extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'contentfilter';
-    $this->addevents('oncomment', 'onaftercomment', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter');
+    $this->addevents('oncomment', 'onaftercomment', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter', 'onsimplefilter');
     $this->data['automore'] = true;
     $this->data['automorelength'] = 250;
     $this->data['phpcode'] = true;
@@ -135,6 +135,7 @@ class tcontentfilter extends tevents {
   public function simplefilter($s) {
     $s = trim($s);
     if ($s == '') return '';
+    $this->callevent('onsimplefilter', array(&$s));
     if ($this->autolinks) $s = self::createlinks($s);
     $s = $this->replacecode($s);
     return self::auto_p($s);
@@ -144,14 +145,14 @@ class tcontentfilter extends tevents {
     $result = '';
     $openlen = strlen('[html]');
     $closelen = strlen('[/html]');
-    while(false !== ($i = strpos($s, 'html]'))) {
-      if ($i > 0) $result = $this->simplefilter(substr($s, 0, $i - 1));
+    while(false !== ($i = strpos($s, '[html]'))) {
+      if ($i > 0) $result = $this->simplefilter(substr($s, 0, $i));
       if ($j = strpos($s, '[/html]', $i)) {
-        $result .= substr($s, $i + $openlen -1, $j - $i - $openlen + 1);
+        $result .= substr($s, $i + $openlen, $j - $i - $openlen);
         $s = substr($s, $j + $closelen);
       } else {
         //no close tag, no filter to end
-        $result .= substr($s, $i + $openlen -1);
+        $result .= substr($s, $i + $openlen);
         $s = '';
         break;
       }
