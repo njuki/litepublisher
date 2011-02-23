@@ -63,11 +63,17 @@ class tmailer {
   }
   
   public static function  SendAttachmentToAdmin($subj, $body, $filename, $attachment) {
-    $options =     litepublisher::$options;
+    return self::sendattachment(litepublisher::$site->name, litepublisher::$options->fromemail,
+    'admin', litepublisher::$options->email,
+    $subj, $body, $filename, $attachment);
+  }
+  
+  public static function  sendattachment($fromname, $fromemail, $toname, $toemail, $subj, $body, $filename, $attachment) {
     $subj =  '=?utf-8?B?'.@base64_encode($subj). '?=';
     $date = date('r');
-    $from = self::CreateEmail(litepublisher::$site->name, $options->fromemail);
-    $to = self::CreateEmail('admin', $options->email);
+    $from = self::CreateEmail($fromname, $fromemail);
+    $to =  self::CreateEmail($toname, $toemail);
+    
     $boundary = md5(microtime());
     $textpart = "--$boundary\nContent-Type: text/plain; charset=\"UTF-8\"\nContent-Transfer-Encoding: base64\n\n";
     $textpart .= base64_encode($body);
@@ -75,11 +81,11 @@ class tmailer {
     $attachpart = "--$boundary\nContent-Type: application/octet-stream; name=\"$filename\"\nContent-Disposition: attachment; filename=\"$filename\"\nContent-Transfer-Encoding: base64\n\n";
     $attachpart .= base64_encode($attachment);
     
-    $body = $textpart . "\n". $attachpart;
-    
+    $body = $textpart . "\n\n". $attachpart . "\n\n";
+    $options = litepublisher::$options;
     if (litepublisher::$debug)
-    return tfiler::log("To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n". $body,
-    'mail.log');
+    return file_put_contents(litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR  . date('H-i-s.d.m.Y.\e\m\l'),
+    "To: $to\nSubject: $subj\nFrom: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n". $body);
     
     mail($to, $subj, $body,
     "From: $from\nReply-To: $from\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=\"$boundary\"\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver " . litepublisher::$options->version);
