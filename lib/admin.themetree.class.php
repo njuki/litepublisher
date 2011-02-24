@@ -67,7 +67,9 @@ class tadminthemetree extends tadminmenu implements iwidgets {
   private function getitem($name) {
     return sprintf('<li><a rel="%s" href="">%s</a>%s</li>
     ',
-    $this->getignore($name) ? 'ignore' : $name, $this->ini[$name], $this->getsubitems($name));
+    $this->getignore($name) ? 'ignore' : $name,
+    isset($this->ini[$name]) ? $this->ini[$name] : $name,
+    $this->getsubitems($name));
   }
   
   private function getsubitems($name) {
