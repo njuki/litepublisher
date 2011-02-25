@@ -21,7 +21,7 @@ Otherwise you must upload files into root folder of website. set write permissio
 - storage / cache
 - storage / data
 
-In these folders you should set permissions 066 on index.htm  files
+In these folders you should set permissions 0666 on index.htm  files
 After that  open your website in browser. Installer will ask you some questions such as E-Mail, site name and database account. 
 Sometime installer can not determine language. You can change language pressing by "change language button".
 Thats all. Click install to begin instalation.
