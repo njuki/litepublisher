@@ -416,7 +416,7 @@ $this->checkbox_tml = '<input type="checkbox" name="checkbox-showcolumn-%1$d" va
 <label for="checkbox-showcolumn-%1$d"><strong>%3$s</strong></label>';
 $this->head = '';
 $this->body = '';
-$this->changed_hidden = changed_hidden';
+$this->changed_hidden = 'changed_hidden';
 }
 
 public function addcolumns(array $columns) {
@@ -428,23 +428,23 @@ $this->add($tml, $title, $align, $show);
 
 public function add($tml, $title, $align, $show) {
 $class = 'col_' . ++$this->index;
-if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$index"]);
+if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$this->index"]);
 $display = $show ? 'block' : 'none';
 $this->style .= ".$class { text-align: $align; display: $display; }\n";
-$this->checkboxes[]=  sprintf($this->checkbox_tml, $index, $checked ? 'checked="checked"' : '', $title);
+$this->checkboxes[]=  sprintf($this->checkbox_tml, $this->index, $show ? 'checked="checked"' : '', $title);
 $this->head .= sprintf('<th class="%s">%s</th>', $class, $title);
-$this->body .= sprintf('<td class=%s">%s</td>', $class, $tml);
+$this->body .= sprintf('<td class="%s">%s</td>', $class, $tml);
 return $this->index;
 }
 
-public function build($items, $buttons) {
+public function build($body, $buttons) {
 $args = targs::instance();
 $args->style = $this->style;
 $args->checkboxes = implode("\n", $this->checkboxes);
 $args->head = $this->head;
-$args->items = $items);
+$args->body = $body;
 $args->buttons = $buttons;
-$tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.tml');
+$tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.ini');
 $theme = ttheme::instance();
 return $theme->parsearg($tml, $args);
 }
