@@ -4,7 +4,7 @@ $(document).ready(function() {
     $(this).attr("checked", false);
   });
   
-  $("input[rel=\'invertcheck\']").click(function() {
+  $("input[rel='invertcheck']").click(function() {
     $(this).closest("form").find("input:checkbox").each(function() {
       $(this).attr("checked", ! $(this).attr("checked"));
     });

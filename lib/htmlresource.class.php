@@ -398,3 +398,52 @@ class tautoform {
   }
   
 }//class
+
+class ttablecolumns {
+public $style;
+public $head;
+public $checkboxes;
+public $checkbox_tml;
+public $item;
+public $changed_hidden;
+
+public function __construct() {
+$this->style = '';
+$this->checkboxes = array();
+$this->checkbox_tml = '<input type="checkbox" name="checkbox-showcolumn-%1$d" value="%1$d" %2$s />
+<label for="checkbox-showcolumn-%1$d"><strong>%3$s</strong></label>';
+$this->head = '';
+$this->body = '';
+$this->changed_hidden = changed_hidden';
+}
+
+public function addcolumns(array $columns) {
+foreach ($columns as $i => $column) {
+list($tml, $title, $align, $show) = $column;
+$this->add($i, $tml, $title, $align, $show);
+}
+}
+
+public function add($index, $tml, $title, $align, $show) {
+$class = "col_$index";
+if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$index"]);
+$display = $show ? 'block' : 'none';
+$this->style .= ".$class { text-align: $align; display: $display; }\n";
+$this->checkboxes[]=  sprintf($this->checkbox_tml, $index, $checked ? 'checked="checked"' : '', $title);
+$this->head .= sprintf('<th class="%s">%s</th>', $class, $title);
+$this->body .= sprintf('<td class=%s">%s</td>', $class, $tml);
+}
+
+public function build($items, $buttons) {
+$args = targs::instance();
+$args->style = $this->style;
+$args->checkboxes = implode("\n", $this->checkboxes);
+$args->head = $this->head;
+$args->items = $items);
+$args->buttons = $buttons;
+$tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.tml');
+$theme = ttheme::instance();
+return $theme->parsearg($tml, $args);
+}
+
+}//class
