@@ -12,10 +12,6 @@ class tadminmoderator extends tadmincommoncomments {
     return parent::iteminstance(__class__, $id);
   }
   
-  protected function getmanager() {
-    return litepublisher::$classes->commentmanager;
-  }
-  
   public function getcontent() {
     $result = '';
     $lang = $this->lang;
@@ -326,6 +322,7 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   public function processform() {
+parent::processform)();
     switch ($this->name) {
       case 'comments':
       case 'hold':
