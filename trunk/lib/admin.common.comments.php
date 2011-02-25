@@ -13,97 +13,130 @@ class tadmincommoncomments extends tadminmenu {
     return litepublisher::$classes->commentmanager;
   }
 
+  protected function create() {
+    parent::create();
+$this->showcolumns = array();
+$filename = litepublisher::$paths->data . 'commentscolumns.php';
+    if (file_exists($filename)) {
+$this->showcolumns = unserialize(tfilestorage::uncomment_php(file_get_contents($filename));
+}
+}
+
+protected function saveshowcolumns() {
+tfilestorage::savetofile(litepublisher::$paths->data .'commentscolumns', 
+tfilestorage::comment_php(serialize($this->showcolumns)));
+}
+
+protected function showcolumn($index, $default) {
+return isset($this->showcolumns[$index]) ? $this->showcolumns[$index] : $default;
+}
+
 public function buildtable() {
 $lang = tlocal::instance('comments');
 $table = new ttablecolumns();
+$table->index = 1;
+$table->checkboxes[]  = "<p>$lang->author: ";
 $table->add(
 '$id', 
 'ID',
 'right',
-true);
+$this->showcolumn($table->index + 1, true));
 
 $table->add(
 '$comment.date',
 $lang->date,
 'left',
-true);
+$this->showcolumn($table->index + 1, false));
+
 $table->add(
 '$comment.localstatus',
 $lang->status,
 'left',
-true);
+$this->showcolumn($table->index + 1, false));
 
 $table->add(
 '$comment.name',
-$lang->author,
+$lang->name,
 'left',
-true);
+$this->showcolumn($table->index + 1, true));
 
 $table->add(
 '$email',
 'E-Mail',
 'left',
-true);
+$this->showcolumn($table->index + 1, true));
 
 $table->add(
 '$website',
 $lang->website,
 'left',
-true);
+$this->showcolumn($table->index + 1, false));
 
+$table->checkboxes[] = "<br />$lang->comment: ";
 $table->add(
 '<a href="$comment.url">$comment.posttitle</a>',
 $lang->post,
 'left',
-true);
+$this->showcolumn($table->index + 1, false));
 
 $table->add(
 '$excerpt',
 $lang->content,
 'left',
-true);
+$this->showcolumn($table->index + 1, true));
 
 $table->add(
 '$comment.ip',
 'IP',
 'left',
-true);
+$this->showcolumn($table->index + 1, false));
 
+$table->checkboxes[]  = "<br />$lang->moderate: ";
 $table->add(
 <a href="$adminurl=$comment.id&action=reply">$lang.reply</a>',
 $lang->reply,
 'left',
-false);
+$this->showcolumn($table->index + 1, false));
 
 $table->add(
 '<a href="$adminurl=$comment.id&action=approve">$lang.approve</a>',
 $lang->approve,
 'left',
-false);
+$this->showcolumn($table->index + 1, false));
 
 $table->add(
 '<a href="$adminurl=$comment.id&action=hold">$lang.hold</a>',
 $lang->hold,
 'left',
-false);
+$this->showcolumn($table->index + 1, false));
 
 $table->add(
 '<a href="$adminurl=$comment.id&action=delete">$lang.delete</a>',
 $lang->delete,
 'left',
-false);
+$this->showcolumn($table->index + 1, false));
 
 $table->add(
 '<a href="$adminurl=$comment.id&action=edit">$lang.edit</a>',
 $lang->edit,
 'left',
-false);
+$this->showcolumn($table->index + 1, false));
 
 $table.body ='<tr>
 <td align ="center"><input type="checkbox" name="checkbox-$id" id="checkbox-$id" value="$id" $onhold /></td>' .
 $table.body . '</tr>';
 
+$table->checkboxes[]  = '</p>';
 return $table;
 }
-  
-}//class
+
+  public function processform() {
+if (isset($_POST['changed_hidden'])) {
+foreach ($this->showcolumns as $i => $v) {
+$this->showcolumns[$i] = isset($_POST["checkbox-showcolumn-$i"]);
+}
+$this->saveshowcolumns();
+}
+}
+
+  }//class
