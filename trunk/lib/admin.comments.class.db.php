@@ -348,14 +348,15 @@ parent::processform();
         $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
+if (!strbegin($key, 'checkbox-item-')) continue;
           $id = (int) $id;
-          $idpost = $comments->getvalue($id, 'post');
+          if ($idpost = $comments->getvalue($id, 'post')) {
           if ($status == 'delete') {
-            var_dump($id, $idpost);
             $manager->delete($id, $idpost);
           } else {
             $manager->setstatus($id, $idpost, $status);
           }
+}
         }
       }
       $result = $this->html->h2->successmoderated;
