@@ -406,8 +406,10 @@ public $checkboxes;
 public $checkbox_tml;
 public $item;
 public $changed_hidden;
+public $index;
 
 public function __construct() {
+$this->index = 0;
 $this->style = '';
 $this->checkboxes = array();
 $this->checkbox_tml = '<input type="checkbox" name="checkbox-showcolumn-%1$d" value="%1$d" %2$s />
@@ -418,20 +420,21 @@ $this->changed_hidden = changed_hidden';
 }
 
 public function addcolumns(array $columns) {
-foreach ($columns as $i => $column) {
+foreach ($columns as $column) {
 list($tml, $title, $align, $show) = $column;
-$this->add($i, $tml, $title, $align, $show);
+$this->add($tml, $title, $align, $show);
 }
 }
 
-public function add($index, $tml, $title, $align, $show) {
-$class = "col_$index";
+public function add($tml, $title, $align, $show) {
+$class = 'col_' . ++$this->index;
 if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$index"]);
 $display = $show ? 'block' : 'none';
 $this->style .= ".$class { text-align: $align; display: $display; }\n";
 $this->checkboxes[]=  sprintf($this->checkbox_tml, $index, $checked ? 'checked="checked"' : '', $title);
 $this->head .= sprintf('<th class="%s">%s</th>', $class, $title);
 $this->body .= sprintf('<td class=%s">%s</td>', $class, $tml);
+return $this->index;
 }
 
 public function build($items, $buttons) {
