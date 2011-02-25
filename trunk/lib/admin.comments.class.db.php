@@ -148,18 +148,20 @@ class tadminmoderator extends tadmincommoncomments {
     $result = '';
     $comments = tcomments::instance(0);
     $perpage = 20;
-    // подсчитать количество комментариев во всех случаях
+    // get total count
     $status = $kind == 'hold' ? 'hold' : 'approved';
     $total = $comments->db->getcount("status = '$status'");
     $from = $this->getfrom($perpage, $total);
     $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted asc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
-    $result .= $html->tableheader();
+$table = $this->createtable();
+
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $comment = new tcomment(null);
     ttheme::$vars['comment'] = $comment;
+$body = '';
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
@@ -167,11 +169,10 @@ class tadminmoderator extends tadmincommoncomments {
       $args->onhold = $comment->status == 'hold';
       $args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
       $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
-      $result .=$html->itemlist($args);
+      $body .=$html->parsearg($table->body, $args);
     }
-    $result .= $html->tablefooter();
-    $result = $html->fixquote($result);
-    
+    $result .= $table->build($body, $html->tablebuttons());
+        
     $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
@@ -322,7 +323,7 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   public function processform() {
-parent::processform)();
+parent::processform();
     switch ($this->name) {
       case 'comments':
       case 'hold':

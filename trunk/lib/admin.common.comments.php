@@ -8,6 +8,7 @@
 
 class tadmincommoncomments extends tadminmenu {
   protected $user;
+protected $showcolumns;
   
   protected function getmanager() {
     return litepublisher::$classes->commentmanager;
@@ -18,7 +19,7 @@ class tadmincommoncomments extends tadminmenu {
 $this->showcolumns = array();
 $filename = litepublisher::$paths->data . 'commentscolumns.php';
     if (file_exists($filename)) {
-$this->showcolumns = unserialize(tfilestorage::uncomment_php(file_get_contents($filename));
+$this->showcolumns = unserialize(tfilestorage::uncomment_php(file_get_contents($filename)));
 }
 }
 
@@ -31,7 +32,7 @@ protected function showcolumn($index, $default) {
 return isset($this->showcolumns[$index]) ? $this->showcolumns[$index] : $default;
 }
 
-public function buildtable() {
+public function createtable() {
 $lang = tlocal::instance('comments');
 $table = new ttablecolumns();
 $table->index = 1;
@@ -93,7 +94,7 @@ $this->showcolumn($table->index + 1, false));
 
 $table->checkboxes[]  = "<br />$lang->moderate: ";
 $table->add(
-<a href="$adminurl=$comment.id&action=reply">$lang.reply</a>',
+'<a href="$adminurl=$comment.id&action=reply">$lang.reply</a>',
 $lang->reply,
 'left',
 $this->showcolumn($table->index + 1, false));
@@ -122,9 +123,9 @@ $lang->edit,
 'left',
 $this->showcolumn($table->index + 1, false));
 
-$table.body ='<tr>
+$table->body ='<tr>
 <td align ="center"><input type="checkbox" name="checkbox-$id" id="checkbox-$id" value="$id" $onhold /></td>' .
-$table.body . '</tr>';
+$table->body . '</tr>';
 
 $table->checkboxes[]  = '</p>';
 return $table;

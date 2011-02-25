@@ -340,7 +340,7 @@ class tadminmoderator extends tadmincommoncomments  {
   }
   
   public function processform() {
-parent::processform)();
+parent::processform();
     switch ($this->name) {
       case 'comments':
       case 'hold':
