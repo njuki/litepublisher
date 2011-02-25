@@ -29,14 +29,16 @@ tfilestorage::comment_php(serialize($this->showcolumns)));
 }
 
 protected function showcolumn($index, $default) {
-return isset($this->showcolumns[$index]) ? $this->showcolumns[$index] : $default;
+if (isset($this->showcolumns[$index])) return $this->showcolumns[$index];
+$this->showcolumns[$index] = $default;
+return $default;
 }
 
 public function createtable() {
 $lang = tlocal::instance('comments');
 $table = new ttablecolumns();
 $table->index = 1;
-$table->checkboxes[]  = "<p>$lang->author: ";
+$table->checkboxes[]  = "<h4>$lang->showcolumns</h4><p>$lang->author: ";
 $table->add(
 '$id', 
 'ID',
@@ -57,7 +59,7 @@ $this->showcolumn($table->index + 1, false));
 
 $table->add(
 '$comment.name',
-$lang->name,
+$lang->author,
 'left',
 $this->showcolumn($table->index + 1, true));
 
@@ -73,7 +75,7 @@ $lang->website,
 'left',
 $this->showcolumn($table->index + 1, false));
 
-$table->checkboxes[] = "<br />$lang->comment: ";
+$table->checkboxes[] = "<br />$lang->content: ";
 $table->add(
 '<a href="$comment.url">$comment.posttitle</a>',
 $lang->post,
@@ -124,7 +126,7 @@ $lang->edit,
 $this->showcolumn($table->index + 1, false));
 
 $table->body ='<tr>
-<td align ="center"><input type="checkbox" name="checkbox-$id" id="checkbox-$id" value="$id" $onhold /></td>' .
+<td align ="center"><input type="checkbox" name="checkbox-item-$id" id="checkbox-item-$id" value="$id" $onhold /></td>' .
 $table->body . '</tr>';
 
 $table->checkboxes[]  = '</p>';
