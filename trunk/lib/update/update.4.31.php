@@ -1,6 +1,7 @@
 <?php
 
 function update431() {
+litepublisher::$classes->items['ttablecolumns']  =array('htmlresource.class.php', '');
 litepublisher::$site->jquery_version = '1.5.1';
 litepublisher::$site->save();
 
