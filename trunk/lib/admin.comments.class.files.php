@@ -6,15 +6,10 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tadminmoderator extends tadminmenu {
-  private $user;
-  
+class tadminmoderator extends tadmincommoncomments  {
+
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
-  }
-  
-  protected function getmanager() {
-    return litepublisher::$classes->commentmanager;
   }
   
   protected function getidpost() {
