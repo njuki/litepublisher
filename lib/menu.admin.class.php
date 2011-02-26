@@ -15,6 +15,7 @@ class tadminmenus extends tmenus {
   protected function create() {
     parent::create();
     $this->basename = 'adminmenu';
+    $this->addevents('onexclude');
     $this->data['heads'] = '';
     tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
@@ -87,7 +88,8 @@ class tadminmenus extends tmenus {
   }
   
   public function exclude($id) {
-    return !$this->hasright($this->items[$id]['group']);
+    if (!$this->hasright($this->items[$id]['group'])) return  true;
+    return $this->onexclude($id);
   }
   
 }//class

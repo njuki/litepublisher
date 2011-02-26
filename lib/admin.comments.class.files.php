@@ -7,7 +7,7 @@
 **/
 
 class tadminmoderator extends tadmincommoncomments  {
-
+  
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
@@ -150,21 +150,25 @@ class tadminmoderator extends tadmincommoncomments  {
   }
   
   private function getlist($status, $idpost) {
+var_dump($status, $idpost);
     $result = '';
     $comments = tcomments::instance($idpost);
     if ($status == 'hold') $comments = $comments->hold;
     $perpage = 20;
-    // подсчитать количество комментариев во всех случаях
+    // get total count for all cases
     $total = $comments->count;
     $from = $this->getfrom($perpage, $total);
     $list = array_slice(array_keys($comments->items), $from, $perpage);
     $html = $this->html;
+echo "bef";
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
-    $result .= $html->tableheader();
+    $table = $this->createtable();
     $args = targs::instance();
     $args->adminurl = $this->adminurl ."post=$idpost&id";
     $comment = new TComment($comments);
     ttheme::$vars['comment'] = $comment;
+    $body = '';
+echo "forea";
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
@@ -172,11 +176,11 @@ class tadminmoderator extends tadmincommoncomments  {
       $args->onhold = $comment->status == 'hold';
       $args->email = $comment->email == '' ? '' : "<a href='mailto:$comment->email'>$comment->email</a>";
       $args->website =$comment->website == '' ? '' : "<a href='$comment->website'>$comment->website</a>";
-      $result .=$html->itemlist($args);
+      $body .=$html->parsearg($table->body, $args);
     }
-    $result .= $html->tablefooter();
-    $result = $html->fixquote($result);
-    
+    $result .= $table->build($body, $html->tablebuttons());
+
+   
     $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
