@@ -7,7 +7,7 @@
 **/
 
 class tadminmoderator extends tadmincommoncomments {
-
+  
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
@@ -155,13 +155,13 @@ class tadminmoderator extends tadmincommoncomments {
     $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted asc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
-$table = $this->createtable();
-
+    $table = $this->createtable();
+    
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $comment = new tcomment(null);
     ttheme::$vars['comment'] = $comment;
-$body = '';
+    $body = '';
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
@@ -172,7 +172,7 @@ $body = '';
       $body .=$html->parsearg($table->body, $args);
     }
     $result .= $table->build($body, $html->tablebuttons());
-        
+    
     $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
@@ -347,15 +347,15 @@ $body = '';
         $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
-if (!strbegin($key, 'checkbox-item-')) continue;
+          if (!strbegin($key, 'checkbox-item-')) continue;
           $id = (int) $id;
           if ($idpost = $comments->getvalue($id, 'post')) {
-          if ($status == 'delete') {
-            $manager->delete($id, $idpost);
-          } else {
-            $manager->setstatus($id, $idpost, $status);
+            if ($status == 'delete') {
+              $manager->delete($id, $idpost);
+            } else {
+              $manager->setstatus($id, $idpost, $status);
+            }
           }
-}
         }
       }
       $result = $this->html->h2->successmoderated;

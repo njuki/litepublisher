@@ -67,5 +67,10 @@ class ttickets extends tposts {
     return ($who == 'ticket') &&($group == 'author');
   }
   
+  public function onexclude($id) {
+    $admin = tadminmenus::instance();
+    return $admin->items[$id]['url'] == '/admin/posts/';
+  }
+  
 }//class
 ?>

@@ -12,6 +12,7 @@ if (!$admin->url2id('/admin/service/upload/')) {
 $service = $admin->url2id('/admin/service/');
 $admin->createitem($service, 'upload', 'admin', 'tadminservice');
 }
+
 if ($id = $admin->url2id('/admin/downloaditems/')) {
 $admin->items[$id]['group'] = 'editor';
 foreach ($admin->items as $iditem => $item) {
@@ -27,6 +28,11 @@ if ($id = $admin->url2id('/admin/files/icon/')) {
 $admin->items[$id]['title'] = tlocal::$data['common']['deficons']; 
 }
 }
+
+if (isset(litepublisher::$classes->items['ttickets'])) {
+$admin->onexclude = ttickets::instance()->onexclude;
+}
+
 $admin->unlock();
 
 }

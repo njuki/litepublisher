@@ -126,9 +126,9 @@ class tticketeditor extends tposteditor {
       }
     }
     if (empty($title)) {
-$lang =tlocal::instance('editor');
-return $html->h4->emptytitle;
-}
+      $lang =tlocal::instance('editor');
+      return $html->h4->emptytitle;
+    }
     $ticket = tticket::instance((int)$id);
     $ticket->title = $title;
     $ticket->categories = self::processcategories();

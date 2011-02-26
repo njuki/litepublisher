@@ -57,6 +57,7 @@ function tticketsInstall($self) {
   $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
   $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
   
+  $adminmenus->onexclude = $self->onexclude;
   $adminmenus->unlock();
   
   $menus = tmenus::instance();
@@ -107,8 +108,8 @@ function tticketsUninstall($self) {
   
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
-  $adminmenus->deleteurl('/admin/tickets/editor/');
-  $adminmenus->deleteurl('/admin/tickets/');
+  $adminmenus->deletetree($adminmenus->url2id('/admin/tickets/'));
+  $adminmenus->unsubscribeclass($self);
   $adminmenus->unlock();
   
   $menus = tmenus::instance();
