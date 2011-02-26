@@ -323,7 +323,6 @@ $body = '';
   }
   
   public function processform() {
-parent::processform();
     switch ($this->name) {
       case 'comments':
       case 'hold':
