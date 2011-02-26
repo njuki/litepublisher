@@ -73,7 +73,7 @@ class tposteditor extends tadminmenu {
     if ($groupname != 'admin') {
       $groups = tusergroups::instance();
       if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
-        if (litepublisher::$options->user != $post->author) return 403;
+        if (($post->id != 0) && (litepublisher::$options->user != $post->author)) return 403;
       }
     }
     

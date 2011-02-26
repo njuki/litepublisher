@@ -90,9 +90,15 @@ class tajaxposteditor  extends tevents {
     if ($this->idpost > 0) {
       $posts = tposts::instance();
       if (!$posts->itemexists($this->idpost)) return self::error403();
+    $groupname = litepublisher::$options->group;
+    if ($groupname != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
       $post = tpost::instance($this->idpost);
-      if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $post->author)) return self::error403();
+if (litepublisher::$options->user != $post->author) return self::error403();
     }
+}
+}
     return $this->getcontent();
   }
   
