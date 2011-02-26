@@ -29,9 +29,13 @@ tfilestorage::comment_php(serialize($this->showcolumns)));
 }
 
 protected function showcolumn($index, $default) {
-if (isset($this->showcolumns[$index])) return $this->showcolumns[$index];
-$this->showcolumns[$index] = $default;
-return $default;
+if (isset($_POST['changed_hidden'])) {
+$r = isset($_POST["checkbox-showcolumn-$index"]);
+$this->showcolumns[$index] =$r;
+return $r; 
+} else {
+return isset($this->showcolumns[$index])? $this->showcolumns[$index] : $default;
+}
 }
 
 public function createtable() {
@@ -130,16 +134,9 @@ $table->body ='<tr>
 $table->body . '</tr>';
 
 $table->checkboxes[]  = '</p>';
+if (isset($_POST['changed_hidden'])) $this->saveshowcolumns();
 return $table;
 }
 
-  public function processform() {
-if (isset($_POST['changed_hidden'])) {
-foreach ($this->showcolumns as $i => $v) {
-$this->showcolumns[$i] = isset($_POST["checkbox-showcolumn-$i"]);
-}
-$this->saveshowcolumns();
-}
-}
+}//class
 
-  }//class
