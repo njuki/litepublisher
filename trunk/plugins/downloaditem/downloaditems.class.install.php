@@ -49,19 +49,19 @@ function tdownloaditemsInstall($self) {
   $lang = tlocal::instance('downloaditems');
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
-  $parent = $adminmenus->createitem(0, 'downloaditems', 'author', 'tadmindownloaditems');
+  $parent = $adminmenus->createitem(0, 'downloaditems', 'editor', 'tadmindownloaditems');
   $adminmenus->items[$parent]['title'] = $lang->downloaditems;
   
-  $idmenu = $adminmenus->createitem($parent, 'addurl', 'author', 'tadmindownloaditems');
+  $idmenu = $adminmenus->createitem($parent, 'addurl', 'editor', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->addurl;
   
-  $idmenu = $adminmenus->createitem($parent, 'editor', 'author', 'tdownloaditemeditor');
+  $idmenu = $adminmenus->createitem($parent, 'editor', 'editor', 'tdownloaditemeditor');
   $adminmenus->items[$idmenu]['title'] = $lang->add;
   
-  $idmenu = $adminmenus->createitem($parent, 'theme', 'author', 'tadmindownloaditems');
+  $idmenu = $adminmenus->createitem($parent, 'theme', 'editor', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->themes;
   
-  $idmenu = $adminmenus->createitem($parent, 'plugin', 'author', 'tadmindownloaditems');
+  $idmenu = $adminmenus->createitem($parent, 'plugin', 'editor', 'tadmindownloaditems');
   $adminmenus->items[$idmenu]['title'] = $lang->plugins;
   
   $adminmenus->unlock();
