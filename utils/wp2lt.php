@@ -4,8 +4,8 @@ Export categories, tags, posts, comments
 */
 echo "<pre>\n";
 set_time_limit(300);
-@ini_set('memory_limit', '32M'); 
-$mode = 'import';
+@ini_set('memory_limit', '48M'); 
+define('litepublisher_mode', 'import');
 require('index.php');
 if (@file_exists('wp-load.php')) {
 require('wp-load.php');
@@ -14,34 +14,33 @@ require('wp-load.php');
 }
 
 function ExportOptions() {
-global $Options;
-$Options->Lock();
-$Options->name = get_option('blogname');
-$Options->description = get_option('blogdescription');
-$Options->email = get_option('admin_email');
-$Options->Unlock();
+$options = litepublisher::$options;
+$options->lock();
+litepublisher::$site->name = get_option('blogname');
+litepublisher::$site->description = get_option('blogdescription');
+$options->email = get_option('admin_email');
+$options->unlock();
 
- $robots = &TRobotstxt ::Instance();
+ $robots = trobotstxt ::instance();
  $robots->AddDisallow('/feed/');
 
-$redir = &TRedirector::Instance();
-$redir->items['/feed/'] = '/rss/';
-$redir->items['/feed'] = '/rss/';
-$redir->Save();
+$redir = tredirector::instance();
+$redir->items['/feed/'] = '/rss.xml';
+$redir->items['/feed'] = '/rss.xml';
+$redir->save();
 }
 
 function ExportPages() {
-		global $wpdb, $paths;
-$menu = &TMenu::Instance();
-$menu->Lock();
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Lock();
+		global $wpdb;
+$menus = tmenus::instance();
+$menus->lock();
+  litepublisher::$urlmap->lock();
 
 $list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'page'");
 foreach ($list as  $item) {
-  $menuitem = &new TMenuItem();
+  $menuitem = new tmenu();
 $menuitem->id = (int) $item->ID;
-$menuitem->date =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
+//$menuitem->date =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
   $menuitem->title = $item->post_title;
   $menuitem->content = $item->post_content;
 $menuitem->status = 'published';
@@ -49,27 +48,35 @@ $menuitem->order = (int) $item->menu_order;
 $menuitem->parent = (int) $item->post_parent;
 $menuitem->password = $item->post_password;
   
-  if ($menuitem->date == 0) $menuitem->date = time();
+  //if ($menuitem->date == 0) $menuitem->date = time();
 $url =get_permalink($item->ID);
 $UrlArray = parse_url($url);
 $url = $UrlArray['path'];
 if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
 $menuitem->url = $url;
-  
-  $menu->UpdateInfo($menuitem);
-  @mkdir($paths['data'] . 'menus' . DIRECTORY_SEPARATOR  . $menuitem->id, 0777);
-  @chmod($paths['data'] . 'menus' . DIRECTORY_SEPARATOR  . $menuitem->id, 0777);
+    $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
+    $menuitem->idurl = litepublisher::$urlmap->Add($menuitem->url, get_class($menuitem), $menuitem->id);
+    $menus->items[$menuitem->id] = array(
+    'id' => $menuitem->id,
+    'class' => get_class($menuitem)
+    );
+    //move props
+    foreach (tmenu::$ownerprops as $prop) {
+      $menus->items[$menuitem->id][$prop] = $menuitem->$prop;
+      if (array_key_exists($prop, $menuitem->data)) unset($menuitem->data[$prop]);
+    }
 
-  $menuitem->Save();
-  $Urlmap->Add($menuitem->url, get_class($menuitem), $menuitem->id);
+  $menuitem->save();
+
 echo "menu $menuitem->id\n";	
 flush();
 }
-$Urlmap->Unlock();
-$menu->Unlock();
+litepublisher::$urlmap->unlock();
+$menus->sort();
+$menus->unlock();
 }
 
- function AddTag(&$tags, $id, $name, $url) {
+ function AddTag($tags, $id, $parent, $title, $url) {
 if (isset($tags->items[$id])) return;
   $UrlArray = parse_url($url);
   $url = $UrlArray['path'];
@@ -85,54 +92,54 @@ if (isset($tags->items[$id])) return;
   'items' => array()
   );
   
-  $Urlmap =&TUrlmap::Instance();
+  $urlmap =&TUrlmap::instance();
 $dir = "/$tags->PermalinkIndex/";
 if (substr($url, 0, strlen($dir)) == $dir) {
 $subdir = substr($url, strlen($dir));
 $subdir = trim($subdir, '/');
-$Urlmap->AddSubNode($tags->PermalinkIndex, $subdir, get_class($tags), $id);
+$urlmap->AddSubNode($tags->PermalinkIndex, $subdir, get_class($tags), $id);
 } else {
-  $Urlmap->Add($url, get_class($tags), $id);
+  $urlmap->Add($url, get_class($tags), $id);
 }
 
 }  
 
 function ExportCategories() {
-$categories = &TCategories::Instance();
-$categories->Lock();
+$categories = &TCategories::instance();
+$categories->lock();
 		if ( $cats = get_categories('get=all') ) {
 			foreach ( $cats as $cat ) {
 AddTag($categories, $cat->term_id, $cat->name, get_category_link($cat->term_id));
 $categories->lastid = max($categories->lastid, $cat->term_id);
 }
 }
-$categories->Unlock();
+$categories->unlock();
 }
 
 function  ExportPosts() {
 		global $wpdb, $from;
 
-  $Urlmap = &TUrlmap::Instance();
-  $Urlmap->Lock();
+  $urlmap = &TUrlmap::instance();
+  $urlmap->lock();
 
-$posts = &TPosts::Instance();
-$posts->Lock();
-$categories = &TCategories::Instance();
-$categories->Lock();
-$tags = &TTags::Instance();
-$tags->Lock();
-$CommentManager = &TCommentManager::Instance();
-$CommentManager->Lock();
+$posts = &TPosts::instance();
+$posts->lock();
+$categories = &TCategories::instance();
+$categories->lock();
+$tags = &TTags::instance();
+$tags->lock();
+$CommentManager = &TCommentManager::instance();
+$CommentManager->lock();
 
-$users = &TCommentUsers::Instance();
-$users->Lock();
+$users = &TCommentUsers::instance();
+$users->lock();
 
 if ($from == 0) {
 ExportCategories();
 ExportPages();
 }
 
-$cron = &TCron::Instance();
+$cron = &TCron::instance();
 
 //$list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'post'");
 $list = $wpdb->get_results("SELECT ID FROM $wpdb->posts 
@@ -173,18 +180,18 @@ $tags->PostEdit($post->id);
 ExportComments($post);
 unset(TPost::$AllItems['TPost']);
 }
-$cron->Unlock();
-$users->Unlock();
+$cron->unlock();
+$users->unlock();
 //$CommentManager->SubscribtionEnabled = true;
 //$CommentManager->NotifyModerator = true;
-$CommentManager->Unlock();
-$tags->Unlock();
-$categories->Unlock();
-$posts->Unlock();
-  $Urlmap->ClearCache();
-$arch = &TArchives::Instance();
+$CommentManager->unlock();
+$tags->unlock();
+$categories->unlock();
+$posts->unlock();
+  $urlmap->ClearCache();
+$arch = &TArchives::instance();
 $arch->PostsChanged();
-  $Urlmap->Unlock();
+  $urlmap->unlock();
 
 if (count($list) < 500) return false;
 return $item->ID;
@@ -192,7 +199,7 @@ return $item->ID;
 
 function ExportPost(&$post) {
   global $paths;
-$posts =&TPosts::Instance();
+$posts =&TPosts::instance();
   $posts->lastid = max($posts->lastid, $post->id);
   @mkdir($paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id, 0777);
   @chmod($paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id, 0777);
@@ -205,21 +212,21 @@ if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
 $post->url = $url;
   
   $posts->Updated($post);
-$cron = &TCron::Instance();
+$cron = &TCron::instance();
 $cron->Remove($cron->lastid);
-  $post->Save();
-$Urlmap = &TUrlmap::Instance();
-  $Urlmap->Add($post->url, get_class($post), $post->id);
+  $post->save();
+$urlmap = &TUrlmap::instance();
+  $urlmap->Add($post->url, get_class($post), $post->id);
 echo "$post->id\n";	
 flush();
  }
 
 function ExportComments(&$post) {
   global $wpdb;
-  $users = &TCommentUsers::Instance();
-  $CommentManager = &TCommentManager::Instance();
+  $users = &TCommentUsers::instance();
+  $CommentManager = &TCommentManager::instance();
   $comments = &$post->comments;
-  $ContentFilter = &TContentFilter::Instance();
+  $ContentFilter = &TContentFilter::instance();
   $items = $wpdb->get_results("SELECT  * FROM $wpdb->comments 
   WHERE comment_post_ID   = $post->id");
 foreach ($items as $item) {
@@ -252,7 +259,7 @@ if ($status != 'approved')   $CommentManager->items[$id]['status'] = $status;
 
 $CommentManager->lastid = max($CommentManager->lastid, $item->comment_ID);
 }
-$comments->Save();
+$comments->save();
 //unset(TComments::$Instances[$post->id]);
 }
 
