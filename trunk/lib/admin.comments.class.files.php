@@ -13,7 +13,7 @@ class tadminmoderator extends tadmincommoncomments  {
   }
   
   protected function getidpost() {
-    return isset($_REQUEST['idpost']) ? (int) $_REQUEST['idpost'] : 0;
+    return (int) tadminhtml::getparam('post', 0);
   }
   
   public function getcontent() {
@@ -150,7 +150,6 @@ class tadminmoderator extends tadmincommoncomments  {
   }
   
   private function getlist($status, $idpost) {
-var_dump($status, $idpost);
     $result = '';
     $comments = tcomments::instance($idpost);
     if ($status == 'hold') $comments = $comments->hold;
@@ -160,7 +159,6 @@ var_dump($status, $idpost);
     $from = $this->getfrom($perpage, $total);
     $list = array_slice(array_keys($comments->items), $from, $perpage);
     $html = $this->html;
-echo "bef";
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();
     $args = targs::instance();
@@ -168,7 +166,6 @@ echo "bef";
     $comment = new TComment($comments);
     ttheme::$vars['comment'] = $comment;
     $body = '';
-echo "forea";
     foreach ($list as $id) {
       $comment->id = $id;
       $args->id = $id;
@@ -179,8 +176,8 @@ echo "forea";
       $body .=$html->parsearg($table->body, $args);
     }
     $result .= $table->build($body, $html->tablebuttons());
-
-   
+    
+    
     $theme = ttheme::instance();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;

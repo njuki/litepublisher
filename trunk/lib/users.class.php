@@ -55,6 +55,45 @@ class tusers extends titems {
     return $id;
   }
   
+  public function edit($id, array $values) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    
+    $group = $values['group'];
+    $groups = tusergroups::instance();
+    if (is_numeric($group)) {
+      $gid = (int) $group;
+      if (!$groups->itemexists($gid)) return false;
+    } else {
+      if (!($gid = $groups->groupid($group))) return false;
+    }
+    
+    $item['gid'] = $gid;
+    
+    foreach ($item as $k => $v) {
+      if (!isset($values[$k])) continue;
+      switch ($k) {
+        case 'password':
+        if ($values['password'] != '') {
+          $item['password'] = md5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
+        }
+        break;
+        
+        default:
+        $item[$k] = trim($values[$k]);
+      }
+    }
+    
+    $this->items[$id] = $item;
+    $item['id'] = $id;
+    if ($this->dbversion) {
+      $this->db->updateassoc($item);
+    } else {
+      $this->save();
+    }
+    return true;
+  }
+  
   public function loginexists($login) {
     if ($login == litepublisher::$options->login) return 1;
     if ($this->dbversion) {
