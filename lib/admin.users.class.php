@@ -117,27 +117,11 @@ class tadminusers extends tadminmenu {
     
     $id = $this->idget();
     if ($id == 0) {
-      extract($_POST);
+      extract($_POST, EXTR_SKIP);
       $id = $users->add($group, $login,$password, $name, $email, $url);
       if (!$id) return $this->html->h2->invalidregdata;
     } else {
-      if (!$users->itemexists($id)) return $this->notfound;
-    }
-    
-    $item = $users->getitem($id);
-    foreach ($_POST as $key => $value) {
-      if ($key == 'password')     {
-        if ($value != '') $item['password'] = md5(sprintf('%s:%s:%s', $_POST['login'],  litepublisher::$options->realm, $value));
-        continue;
-      }
-      if (isset($item[$key])) $item[$key] = $value;
-    }
-    $users->items[$id] = $item;
-    $item['id'] = $id;
-    if ($users->dbversion) {
-      $users->db->updateassoc($item);
-    } else {
-      $users->save();
+      if (!$users->edit($id, $_POST))return $this->notfound;
     }
   }
   

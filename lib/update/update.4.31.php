@@ -1,8 +1,8 @@
 <?php
 
 function update431() {
-litepublisher::$classes->add('ttablecolumns', 'htmlresource.class.php');
-litepublisher::$classes->add('tadmincommoncomments',  'admin.common.comments.php');
+litepublisher::$classes->items['ttablecolumns'] = array('htmlresource.class.php', '');
+litepublisher::$classes->items['tadmincommoncomments'] = array('admin.common.comments.php', '');
 litepublisher::$site->jquery_version = '1.5.1';
 litepublisher::$site->save();
 
