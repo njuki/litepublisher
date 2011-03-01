@@ -406,9 +406,10 @@ class TComment {
     $comusers = tcomusers::instance($idpost);
     $item = $comusers->getitem($this->author);
     $name = $item['name'];
-    $url = $item['url'];
+    
+    if (empty($url)) return $name;
     $manager = tcommentmanager::instance();
-    if ($manager->hidelink || empty($url)) return $name;
+    if ($manager->hidelink) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
       return "<a $rel href=\"" . litepublisher::$site->url . "/comusers.htm" . litepublisher::$site->q . "id=$this->author&post=$idpost\">$name</a>";

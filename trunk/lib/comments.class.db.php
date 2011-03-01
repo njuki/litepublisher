@@ -272,8 +272,9 @@ class tcomment extends tdata {
   }
   
   public function getauthorlink() {
+    if ($this->data['url'] == '')  return $this->name;
     $manager = tcommentmanager::instance();
-    if ($manager->hidelink || ($this->url == '') || !$manager->checktrust($this->trust)) return $this->name;
+    if ($manager->hidelink || !$manager->checktrust($this->trust)) return $this->name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
