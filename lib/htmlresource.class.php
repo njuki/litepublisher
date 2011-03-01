@@ -104,7 +104,6 @@ class tadminhtml {
         $s = str_replace($item[0], $tag, $s);
       }
     }
-    
     $s = strtr($s, $args->data);
     return $theme->parse($s);
   }

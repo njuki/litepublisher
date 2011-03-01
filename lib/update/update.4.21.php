@@ -6,7 +6,7 @@ litepublisher::$site->save();
 
 $parser = tthemeparser::instance();
 if (!isset($parser->data['replacelang'])) {
-$parser->data['replacelang'] = true;
+$parser->data['replacelang'] = false;
 $parser->save();
 }
 

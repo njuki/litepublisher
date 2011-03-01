@@ -24,7 +24,7 @@ class tadminwidgets extends tadminmenu {
   }
   
   public static function getsidebarsform() {
-    $idview = tadminhtml::getparam('idview', 1);
+    $idview = (int) tadminhtml::getparam('idview', 1);
     $view = tview::instance($idview);
     $widgets = twidgets::instance();
     $html = tadminhtml ::instance();
@@ -33,8 +33,7 @@ class tadminwidgets extends tadminmenu {
     $args = targs::instance();
     $args->idview = $idview;
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
-    $result = $html->formhead();
-    
+    $result = $html->formhead($args);
     $count = count($view->sidebars);
     $sidebarnames = self::getsidebarnames($view);
     foreach ($view->sidebars as $i => $sidebar) {

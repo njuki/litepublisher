@@ -10,7 +10,7 @@ function tembeddedplayersInstall($self) {
   $self->audio = '<li>
   <object type="application/x-shockwave-flash" data="$site.files/js/audio-player/player.swf" id="audioplayer-$id" height="24" width="290">
   <param name="movie" value="$site.files/js/audio-player/player.swf" />
-  <param name="FlashVars" value="playerID=audioplayer1&soundFile=$link" />
+  <param name="FlashVars" value="playerID=audioplayer-$id&soundFile=$link" />
   <param name="quality" value="high" />
   <param name="menu" value="false" />
   <param name="wmode" value="transparent" />
