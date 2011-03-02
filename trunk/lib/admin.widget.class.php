@@ -173,12 +173,15 @@ class tadmincustomwidget extends tadminwidget {
     $html= $this->html;
     $args->text = $item['content'];
     $args->template =tadminhtml::array2combo(self::gettemplates(), $item['template']);
-    $result = $this->optionsform($item['title'], $html->parsearg(
+    $result = $this->optionsform($item['title'], 
+($id == 0 ? tadminviews::getcomboview(1) : '') .
+$html->parsearg(
     '[editor=text]
     [combo=template]
     [hidden=mode]
     [hidden=idwidget]',
     $args));
+
     $result .= $html->customheader();
     $args->adminurl = $this->adminurl;
     
@@ -197,7 +200,7 @@ class tadmincustomwidget extends tadminwidget {
       extract($_POST, EXTR_SKIP);
       switch ($mode) {
         case 'add':
-        $_GET['idwidget'] = $widget->add($title, $text, $template);
+        $_GET['idwidget'] = $widget->add($idview, $title, $text, $template);
         break;
         
         case 'edit':
