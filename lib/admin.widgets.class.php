@@ -191,8 +191,13 @@ $_GET['idview'] = $idview;
 class tsidebars extends tdata {
   public $items;
   
-  public static function instance() {
-    return getinstance(__class__);
+  public static function instance($idview = 0) {
+$result = getinstance(__class__);
+if ($idview > 0) {
+    $view = tview::instance((int) $idview);
+    $result->items = &$view->sidebars;
+}
+    return $result;
   }
   
   protected function create() {

@@ -37,7 +37,7 @@ class tcustomwidget extends twidget {
     return $this->items[$id]['content'];
   }
   
-  public function add($title, $content, $template) {
+  public function add($idview, $title, $content, $template) {
     $widgets = twidgets::instance();
     $widgets->lock();
     $id = $widgets->addext($this, $title, $template);
@@ -47,7 +47,7 @@ class tcustomwidget extends twidget {
     'template' => $template
     );
     
-    $sidebars = tsidebars::instance();
+    $sidebars = tsidebars::instance($idview);
     $sidebars->add($id);
     $widgets->unlock();
     $this->save();
