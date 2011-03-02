@@ -344,7 +344,7 @@ class tbackuper extends tevents {
   
   public function getfull() {
     set_time_limit(300);
-    $this->createarch();
+    $this->createarchive();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
     
     $this->readdata(litepublisher::$paths->data);

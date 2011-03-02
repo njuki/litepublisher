@@ -29,10 +29,13 @@ class tadminwidgets extends tadminmenu {
     $widgets = twidgets::instance();
     $html = tadminhtml ::instance();
     $html->section = 'widgets';
-    $lang = tlocal::instance('widgets');
     $args = targs::instance();
     $args->idview = $idview;
+    $lang = tlocal::instance('views');
+$args->customsidebar = $idview == 1 ? '' :
+$view->theme->parse($html->getcheckbox('customsidebar', true));
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
+    $lang = tlocal::instance('widgets');
     $result = $html->formhead($args);
     $count = count($view->sidebars);
     $sidebarnames = self::getsidebarnames($view);
@@ -54,7 +57,8 @@ class tadminwidgets extends tadminmenu {
     $result .= $html->formfooter();
     
     //all widgets
-    $result .= $html->addhead();
+$args->id_view = $idview;
+    $result .= $html->addhead($args);
     foreach ($widgets->items as $id => $item) {
       $args->id = $id;
       $args->add($item);
@@ -103,7 +107,7 @@ class tadminwidgets extends tadminmenu {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->getcontent();
       } else {
-        $idview = tadminhtml::getparam('idview', 1);
+        $idview = (int) tadminhtml::getparam('idview', 1);
         $view = tview::instance($idview);
         $result = tadminviews::getviewform('/admin/views/widgets/');
         if (($idview == 1) || $view->customsidebar) {
@@ -156,10 +160,17 @@ class tadminwidgets extends tadminmenu {
       break;
       
       case 'edit':
+if (($view->id > 1) && !isset($_POST['customsidebar'])) {
+      $view->customsidebar = false;
+} else {
       self::editsidebars($view->sidebars);
+}
       break;
       
       case 'add':
+    $idview = (int) tadminhtml::getparam('id_view', 1);
+$_GET['idview'] = $idview;
+    $view = tview::instance($idview);
       $widgets = twidgets::instance();
       foreach ($_POST as $key => $value) {
         if (strbegin($key, 'addwidget-')){
