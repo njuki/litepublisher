@@ -159,8 +159,10 @@ class tadmincustomwidget extends tadminwidget {
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
       $args->mode = 'edit';
+$viewcombo = '';;
     } else {
       $id = 0;
+$viewcombo = tadminviews::getcomboview(1);
       $args->mode = 'add';
       $item = array(
       'title' => '',
@@ -173,9 +175,7 @@ class tadmincustomwidget extends tadminwidget {
     $html= $this->html;
     $args->text = $item['content'];
     $args->template =tadminhtml::array2combo(self::gettemplates(), $item['template']);
-    $result = $this->optionsform($item['title'], 
-($id == 0 ? tadminviews::getcomboview(1) : '') .
-$html->parsearg(
+    $result = $this->optionsform($item['title'], $viewcombo . $html->parsearg(
     '[editor=text]
     [combo=template]
     [hidden=mode]
