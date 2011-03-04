@@ -20,7 +20,9 @@ class thomepage extends tmenu  {
     $this->coinstances[] = new tcoevents($this, 'onbeforegetitems', 'ongetitems');
   }
   
-public function gettitle() {}
+public function gettitle() {
+return litepublisher::$site->name;
+}
   
   public function getcont() {
     $result = '';

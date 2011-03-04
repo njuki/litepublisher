@@ -159,10 +159,10 @@ class tadmincustomwidget extends tadminwidget {
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
       $args->mode = 'edit';
-$viewcombo = '';;
+      $viewcombo = '';;
     } else {
       $id = 0;
-$viewcombo = tadminviews::getcomboview(1);
+      $viewcombo = tadminviews::getcomboview(1);
       $args->mode = 'add';
       $item = array(
       'title' => '',
@@ -181,7 +181,7 @@ $viewcombo = tadminviews::getcomboview(1);
     [hidden=mode]
     [hidden=idwidget]',
     $args));
-
+    
     $result .= $html->customheader();
     $args->adminurl = $this->adminurl;
     

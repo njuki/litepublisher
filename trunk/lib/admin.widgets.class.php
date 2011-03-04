@@ -32,8 +32,8 @@ class tadminwidgets extends tadminmenu {
     $args = targs::instance();
     $args->idview = $idview;
     $lang = tlocal::instance('views');
-$args->customsidebar = $idview == 1 ? '' :
-$view->theme->parse($html->getcheckbox('customsidebar', true));
+    $args->customsidebar = $idview == 1 ? '' :
+    $view->theme->parse($html->getcheckbox('customsidebar', true));
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
     $lang = tlocal::instance('widgets');
     $result = $html->formhead($args);
@@ -57,7 +57,7 @@ $view->theme->parse($html->getcheckbox('customsidebar', true));
     $result .= $html->formfooter();
     
     //all widgets
-$args->id_view = $idview;
+    $args->id_view = $idview;
     $result .= $html->addhead($args);
     foreach ($widgets->items as $id => $item) {
       $args->id = $id;
@@ -160,17 +160,17 @@ $args->id_view = $idview;
       break;
       
       case 'edit':
-if (($view->id > 1) && !isset($_POST['customsidebar'])) {
-      $view->customsidebar = false;
-} else {
-      self::editsidebars($view->sidebars);
-}
+      if (($view->id > 1) && !isset($_POST['customsidebar'])) {
+        $view->customsidebar = false;
+      } else {
+        self::editsidebars($view->sidebars);
+      }
       break;
       
       case 'add':
-    $idview = (int) tadminhtml::getparam('id_view', 1);
-$_GET['idview'] = $idview;
-    $view = tview::instance($idview);
+      $idview = (int) tadminhtml::getparam('id_view', 1);
+      $_GET['idview'] = $idview;
+      $view = tview::instance($idview);
       $widgets = twidgets::instance();
       foreach ($_POST as $key => $value) {
         if (strbegin($key, 'addwidget-')){
@@ -192,11 +192,11 @@ class tsidebars extends tdata {
   public $items;
   
   public static function instance($idview = 0) {
-$result = getinstance(__class__);
-if ($idview > 0) {
-    $view = tview::instance((int) $idview);
-    $result->items = &$view->sidebars;
-}
+    $result = getinstance(__class__);
+    if ($idview > 0) {
+      $view = tview::instance((int) $idview);
+      $result->items = &$view->sidebars;
+    }
     return $result;
   }
   
