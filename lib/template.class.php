@@ -93,7 +93,7 @@ class ttemplate extends tevents_storage {
     $args->title = $title;
     $theme = $this->view->theme;
     $result = $theme->parsearg($theme->title, $args);
-    return trim($result, ' |.:' .chr(187) . chr(150));
+    return trim($result, sprintf(' |.:%c%c', 187, 150));
   }
   
   public function geticon() {
