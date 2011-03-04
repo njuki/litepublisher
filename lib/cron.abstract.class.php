@@ -39,7 +39,7 @@ class tabstractcron extends tevents {
     if (($fh = @fopen($this->path .'cron.lok', 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
       try {
         ignore_user_abort(true);
-        set_time_limit(60*20);
+        set_time_limit(300);
         $this->sendexceptions();
         $this->log("started loop");
         $this->execute();
