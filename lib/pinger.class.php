@@ -50,18 +50,22 @@ class tpinger extends tevents {
     $post = tpost::instance((int) $id);
     if (!is_object($post)) return;
     if ($post->status != 'published') return;
+      $posturl = $post->link;
     $meta = $post->meta;
     if (!isset($meta->lastpinged) || ($meta->lastpinged + 3600*24 < time())) {
-      $posturl = $post->link;
       $this->pingservices($posturl);
       $meta->lastpinged = time();
     }
     
     $pinged = isset($meta->pinged) ? unserialize($meta->pinged) : array();
     $links = $this->getlinks($post);
+$m = microtime(true);
     foreach ($links as $link) {
       if (!in_array($link, $pinged)) {
-        if ($this->ping($link, $posturl)) $pinged[] = $link;
+        //if ($this->ping($link, $posturl)) $pinged[] = $link;
+$this->ping($link, $posturl);
+$pinged[] = $link;
+if ((microtime(true) - $m) > 120) break;
       }
     }
     $meta->pinged = serialize($pinged);
@@ -77,6 +81,7 @@ class tpinger extends tevents {
     foreach ($links[0] as $link) {
       if (in_array($link, $result)) continue;
       if ($link == $posturl) continue;
+if (strbegin($link, litepublisher::$site->url)) continue;
       $parts = parse_url($link);
       if ( empty($parts['query']) && (empty($parts['path']) ||($parts['path'] == '/')) ) continue;
       $result[] = $link;
@@ -176,17 +181,26 @@ class tpinger extends tevents {
   }
   
   public function pingservices($url) {
+$m = microtime(true);
+      $client = new IXR_Client();
+      $client->timeout = 3;
+      $client->useragent .= ' -- Lite Publisher/'.litepublisher::$options->version;
+      $client->debug = false;
+
     $home = litepublisher::$site->url . litepublisher::$site->home;
     $list = explode("\n", $this->services);
     foreach ($list as $service) {
       $service = trim($service);
-      sleep(1);
-      $client = new IXR_Client($service);
-      $client->timeout = 3;
-      $client->useragent .= ' -- Lite Publisher/'.litepublisher::$options->version;
-      $client->debug = false;
+            $bits = parse_url($service);
+            $client->server = $bits['host'];
+            $client->port = isset($bits['port']) ? $bits['port'] : 80;
+            $client->path = isset($bits['path']) ? $bits['path'] : '/';
+            if (!$client->path) $client->path = '/';
+
       if ( !$client->query('weblogUpdates.extendedPing', litepublisher::$site->name, $home, $url, litepublisher::$site->url . "/rss/") )
       $client->query('weblogUpdates.ping', litepublisher::$site->name, $url);
+
+if ((microtime(true) - $m) > 180) break;
     }
   }
   

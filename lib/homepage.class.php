@@ -21,7 +21,6 @@ class thomepage extends tmenu  {
   }
   
 public function gettitle() {
-return litepublisher::$site->name;
 }
   
   public function getcont() {
