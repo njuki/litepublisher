@@ -1,3 +1,10 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 $(document).ready(function() {
   $("input[rel=\'checkall\']").click(function() {
     $(this).closest("form").find("input:checkbox").attr("checked", true);
@@ -34,8 +41,8 @@ function inittabs(sel, fn) {
     default:
     $._tabslist = [];
     $._tabsready = 'loading';
-    $('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui-1.8.9/redmond/jquery-ui-1.8.9.custom.css" />').appendTo("head");
-    $.getScript(ltoptions.files + '/js/jquery/ui-1.8.9/jquery-ui-1.8.9.custom.min.js', function() {
+    $('<link rel="stylesheet" type="text/css" href="'+ ltoptions.files + '/js/jquery/ui-1.8.10/redmond/jquery-ui-1.8.10.custom.css" />').appendTo("head");
+    $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery-ui-1.8.10.custom.min.js', function() {
       $(document).ready(function() {
         $._tabsready = 'loaded';
         doinittabs(sel, fn);
