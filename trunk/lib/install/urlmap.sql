@@ -5,5 +5,4 @@
   `type` enum('normal','get','tree') default 'normal',
 
   PRIMARY KEY  (`id`),
-  KEY `url` (`url`),
-  KEY `class` (`class`)
+  KEY `url` (`url`)
