@@ -364,7 +364,29 @@ class tcommontags extends titems implements  itemplate {
     
     $result .= $this->contents->getcontent($this->id);
     if ($result != '') $result = $theme->simple($result);
-    
+
+    $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
+    $posts = litepublisher::$classes->posts;
+if ($this->dbversion) {
+    if ($this->includeparents || $this->includechilds) {
+$this->loadall();
+$all = array($this->id);
+    if ($this->includeparents) $all = array_merge($all, $this->getparents($this->id));
+    if ($this->includechilds) $all = array_merge($all, $this->getchilds($this->id));
+$tags = sprintf('in (%s)', implode(',', $all));
+} else {
+$tags = " = $this->id";
+}
+
+$from = (litepublisher::$urlmap->page - 1) * $perpage;
+$itemstable  = $this->itemsposts->thistable;
+$poststable = $posts->thistable;
+$items = $posts->select("$poststable.status = 'published' and $poststable.id in
+(select DISTINCT post from $itemstable  where $itemstable .item $tags)",
+"order by $poststable.posted desc limit $from, $perpage");
+
+    $result .= $theme->getposts($items, $this->lite);
+} else {    
     $items = $this->itemsposts->getposts($this->id);
     if ($this->dbversion && ($this->includeparents || $this->includechilds)) $this->loadall();
     if ($this->includeparents) {
@@ -381,14 +403,14 @@ class tcommontags extends titems implements  itemplate {
       }
     }
     
-    $posts = litepublisher::$classes->posts;
-    $items = $posts->stripdrafts($items);
+   $items = $posts->stripdrafts($items);
     $items = $posts->sortbyposted($items);
-    $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     $result .= $theme->getposts($list, $this->lite);
+}
+
     $item = $this->getitem($this->id);
-    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil(count($items)/ $perpage));
+    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($item['itemscount'] / $perpage));
     return $result;
   }
   

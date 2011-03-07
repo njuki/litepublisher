@@ -26,6 +26,5 @@
   `pagescount` int unsigned NOT NULL default '0',
 
   PRIMARY KEY  (`id`),
-  KEY `posted` (`posted`),
   KEY `status` (`status`),
-  KEY `parent` (`parent`)
+  KEY `posted` (`posted`)
