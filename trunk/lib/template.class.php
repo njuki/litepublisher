@@ -94,8 +94,8 @@ class ttemplate extends tevents_storage {
     $theme = $this->view->theme;
     $result = $theme->parsearg($theme->title, $args);
     $result = trim($result, sprintf(' |.:%c%c', 187, 150));
-if ($result == '') return litepublisher::$site->name;
-return $result;
+    if ($result == '') return litepublisher::$site->name;
+    return $result;
   }
   
   public function geticon() {

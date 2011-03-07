@@ -68,32 +68,32 @@ public function gettitle() { return $this->title; }
     }
     
     if (litepublisher::$urlmap->page  == 1) {
-$result .= $this->gettags(tcategories::instance());
-$result .= $this->gettags(ttags::instance());
-    $arch = tarchives::instance();
-    if (count($arch->items) > 0) {
+      $result .= $this->gettags(tcategories::instance());
+      $result .= $this->gettags(ttags::instance());
+      $arch = tarchives::instance();
+      if (count($arch->items) > 0) {
         $result .= '<h3>' . tlocal::$data['default']['archive'] . "</h3>\n<ul>\n";
-    foreach ($arch->items as $date => $item) {
-        $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
-    }
+        foreach ($arch->items as $date => $item) {
+          $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
+        }
         $result .= '</ul>';
-}
+      }
     }
     
     $result .=$theme->getpages('/sitemap.htm', litepublisher::$urlmap->page, ceil($posts->archivescount / $perpage));
     return $result;
   }
-
-private function gettags(tcommontags $tags) {
-      $tags->loadall();
-      if ($tags->count == 0)  return '';
-        $result = '<h3>' . tlocal::$data['default'][$tags->PostPropname] . "</h3>\n<p>\n";
-        foreach ($tags->items as $id => $item) {
-        $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>,', litepublisher::$site->url, $item['url'], $item['title']);
-        }
-        $result .= '</p>';
-return $result;
-}
+  
+  private function gettags(tcommontags $tags) {
+    $tags->loadall();
+    if ($tags->count == 0)  return '';
+    $result = '<h3>' . tlocal::$data['default'][$tags->PostPropname] . "</h3>\n<p>\n";
+    foreach ($tags->items as $id => $item) {
+      $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>,', litepublisher::$site->url, $item['url'], $item['title']);
+    }
+    $result .= '</p>';
+    return $result;
+  }
   
   public function request($arg) {
     if ($arg == 'xml') {

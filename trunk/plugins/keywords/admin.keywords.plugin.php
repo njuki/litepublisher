@@ -22,11 +22,11 @@ class tadminkeywords extends tadminwidget {
     $args = targs::instance();
     if (isset($_GET['filename'])) {
       $filename = $_GET['filename'];
-      if (!@file_exists($datadir . $filename)) return $html->h2->notfound;
+      if (!@file_exists($datadir . $filename)) return $html->h3->notfound;
       $args->filename = $filename;
       $args->content =file_get_contents($datadir . $filename);
-      $args->edithead = $about['edithead'];
-      return $html->parsearg($tml['editform'], $args);
+      $args->formtitle = $about['edithead'];
+      return $html->adminform('[editor=content]', $args);
     }
     
     $page = isset($_GET['page'])  ? (int) $_GET['page'] : 1;
@@ -38,13 +38,18 @@ class tadminkeywords extends tadminwidget {
       $args->count = $widget->count;
       $args->trace = $widget->trace;
       $args->notify = $widget->notify;
-      $args->countlabel = $about['countlabel'];
-      $args->tracelabel = $about['tracelabel'];
-      $args->notifylabel = $about['notifylabel'];
-      
-      $result .= $this->optionsform(
-      $widget->gettitle($idwidget),
-      $html->parsearg($tml['optionsform'], $args));
+      $args->optionsform = 1;
+      $args->title =       $widget->gettitle($idwidget);
+      tlocal::$data['keywords']  = $about;
+      $lang = tlocal::instance('keywords');
+      $args->formtitle = $about['name'];
+      $result .= $html->adminform(
+      '[text=title]
+      [text=count]
+      [checkbox=trace]
+      [checkbox=notify]
+      [hidden=optionsform]',
+      $args);
     }
     
     $from = 100 * ($page - 1);
@@ -92,11 +97,10 @@ class tadminkeywords extends tadminwidget {
       $trace = isset($trace);
       if ($widget->trace != $trace) {
         $plugin = tkeywordsplugin::instance();
-        $urlmap = turlmap::instance();
         if ($trace) {
-          $urlmap->afterrequest = $plugin->parseref;
+          litepublisher::$urlmap->afterrequest = $plugin->parseref;
         } else {
-          $urlmap->delete_event_class('afterrequest', get_class($plugin));
+          litepublisher::$urlmap->delete_event_class('afterrequest', get_class($plugin));
         }
       }
       
@@ -106,18 +110,19 @@ class tadminkeywords extends tadminwidget {
     }
     
     if (isset($_GET['filename'])) {
-      $filename = str_replace('_php', '.php', $_GET['filename']);
+      $filename = str_replace('_', '.', $_GET['filename']);
       $content = trim($_POST['content']);
-      if ($content = '') {
+      if ($content == '') {
         @unlink($datadir . $filename);
       } else {
         file_put_contents($datadir . $filename, $content);
       }
-    } else {
-      foreach ($_POST as $filename => $value) {
-        $filename = str_replace('_php', '.php', $filename);
-        if (preg_match('/^\d+?-\d+?\.php$/', $filename)) unlink($datadir . $filename);
-      }
+      return;
+    }
+    
+    foreach ($_POST as $filename => $value) {
+      $filename = str_replace('_', '.', $filename);
+      if (preg_match('/^\d+?\.\d+?\.php$/', $filename)) unlink($datadir . $filename);
     }
   }
   

@@ -26,7 +26,7 @@ class tkeywordswidget extends twidget {
   
   public function getdeftitle() {
     $about = tplugins::getabout(tplugins::getname(__file__));
-    return $about['title'];
+    return $about['deftitle'];
   }
   
   public function getwidget($id, $sidebar) {
