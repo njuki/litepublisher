@@ -68,11 +68,11 @@ class ttickets extends tposts {
   }
   
   public function onexclude($id) {
-if (litepublisher::$options->group == 'ticket') {
-    $admin = tadminmenus::instance();
-    return $admin->items[$id]['url'] == '/admin/posts/';
-}
-return false;
+    if (litepublisher::$options->group == 'ticket') {
+      $admin = tadminmenus::instance();
+      return $admin->items[$id]['url'] == '/admin/posts/';
+    }
+    return false;
   }
   
 }//class
