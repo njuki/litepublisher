@@ -59,9 +59,9 @@ public function gettitle() { return $this->title; }
             $postpages .= '<a href="' . litepublisher::$site->url . "$url/page/$i/\">$i</a>,";
           }
         }
-        $result .= sprintf("<li><a href=\"%s%s\">%s</a>%s</li>\n", litepublisher::$site->url, $item['url'], $item['title'], $postpages);
+        $result .= sprintf('<li><a href="%s%s" title="%s">%3$s</a>%4$s</li>', litepublisher::$site->url, $item['url'], $item['title'], $postpages);
       }
-      if ($result != '') $result = "<ul>\n" . $result . "\n</ul>\n";
+      if ($result != '') $result = sprintf('<ul>%s</ul>', $result);
     } else {
       $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);
@@ -87,9 +87,9 @@ public function gettitle() { return $this->title; }
   private function gettags(tcommontags $tags) {
     $tags->loadall();
     if ($tags->count == 0)  return '';
-    $result = '<h3>' . tlocal::$data['default'][$tags->PostPropname] . "</h3>\n<p>\n";
+    $result = '<h2>' . tlocal::$data['default'][$tags->PostPropname] . "</h2>\n<p>\n";
     foreach ($tags->items as $id => $item) {
-      $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>,', litepublisher::$site->url, $item['url'], $item['title']);
+      $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>, ', litepublisher::$site->url, $item['url'], $item['title']);
     }
     $result .= '</p>';
     return $result;
