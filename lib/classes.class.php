@@ -59,7 +59,8 @@ class tclasses extends titems {
   
   public function newinstance($class) {
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
-    return new $class();
+    //return new $class();
+    return new tdebugproxy(new $class());
   }
   
   public function newitem($name, $class, $id) {
