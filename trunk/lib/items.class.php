@@ -45,7 +45,7 @@ class titems extends tevents {
   
   public function loaditems(array $items) {
     if (!$this->dbversion) return;
-    //исключить из загрузки загруженные посты
+    //exclude loaded items
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);

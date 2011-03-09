@@ -296,6 +296,16 @@ class tstorage extends tfilestorage {
   }
   
   public static function loaddata() {
+/*
+$memcache_obj = memcache_connect('memcache_host', 11211);
+
+$memcache_obj = new Memcache;
+$memcache_obj->connect('memcache_host', 11211);
+if ($s= $memcache_obj->get('storage')) {
+self::$data = unserialize($s);
+}
+else echo 'no cached<br>';
+*/
     self::$data = array();
     $filename = litepublisher::$paths->data . 'storage.php';
     if (file_exists($filename)) {
