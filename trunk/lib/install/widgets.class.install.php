@@ -28,12 +28,10 @@ function twidgetsUninstall($self) {
 }
 
 function twidgetscacheInstall($self) {
-  litepublisher::$options->onsave = $self->savemodified;
   litepublisher::$urlmap->onclearcache = $self->onclearcache;
 }
 
 function twidgetscacheUninstall($self) {
-  litepublisher::$options->unsubscribeclass($self);
   turlmap::unsub($self);
 }
 

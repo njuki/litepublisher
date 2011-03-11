@@ -212,23 +212,37 @@ class tdata {
 
 class tfilestorage {
   public static $disabled;
+  public static $memcache = false;
   
   public static function save(tdata $obj) {
     if (self::$disabled) return false;
-    return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), self::comment_php($obj->savetostring()));
+    return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), $obj->savetostring());
   }
   
   public static function load(tdata $obj) {
-    $filename = litepublisher::$paths->data . $obj->getbasename() .'.php';
+    if ($s = self::loadfile(litepublisher::$paths->data . $obj->getbasename() .'.php')) {
+      return $obj->loadfromstring($s);
+    }
+    return false;
+  }
+  
+  public static function loadfile($filename) {
+    if (self::$memcache) {
+      if ($s =  self::$memcache->get($filename)) return $s;
+    }
+    
     if (file_exists($filename)) {
-      return $obj->loadfromstring(self::uncomment_php(file_get_contents($filename)));
+      $s = self::uncomment_php(file_get_contents($filename));
+      if (self::$memcache) self::$memcache->set($filename, $s, false, 3600);
+      return $s;
     }
     return false;
   }
   
   public static function savetofile($base, $content) {
+    if (self::$memcache) self::$memcache->set($base . '.php', $content, false, 3600);
     $tmp = $base .'.tmp.php';
-    if(false === file_put_contents($tmp, $content)) {
+    if(false === file_put_contents($tmp, self::comment_php($content))) {
       litepublisher::$options->trace("Error write to file $tmp");
       return false;
     }
@@ -244,6 +258,18 @@ class tfilestorage {
       return false;
     }
     return true;
+  }
+  
+  public static function savevar($filename, &$var) {
+    return self::savetofile($filename, serialize($var));
+  }
+  
+  public static function loadvar($filename, &$var) {
+    if ($s = self::loadfile($filename . '.php')) {
+      $var = unserialize($s);
+      return true;
+    }
+    return false;
   }
   
   public static function comment_php($s) {
@@ -284,7 +310,7 @@ class tstorage extends tfilestorage {
       if (self::$disabled) return false;
       $lock = litepublisher::$paths->data .'storage.lok';
       if (($fh = @fopen($lock, 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
-        self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+        self::savetofile(litepublisher::$paths->data .'storage', serialize(self::$data));
         flock($fh, LOCK_UN);
         fclose($fh);
         @chmod($lock, 0666);
@@ -299,13 +325,7 @@ class tstorage extends tfilestorage {
   
   public static function loaddata() {
     self::$data = array();
-    $filename = litepublisher::$paths->data . 'storage.php';
-    if (file_exists($filename)) {
-      $s = self::uncomment_php(file_get_contents($filename));
-      if (!empty($s)) self::$data = unserialize($s);
-      return true;
-    }
-    return false;
+    return self::loadvar(litepublisher::$paths->data . 'storage', self::$data);
   }
   
 }//class
@@ -372,7 +392,13 @@ function array_move(array &$a, $oldindex, $newindex) {
 }
 
 function dumpstr($s) {
-  echo "<pre>\n" . htmlspecialchars($s) . "</pre>\n";
+  echo "<pre>\n", htmlspecialchars($s), "</pre>\n";
+}
+
+function dumpvar(&$v) {
+  echo "<pre>\n";
+  var_dump(v);
+  echo "</pre>\n";
 }
 
 //events.class.php
@@ -701,7 +727,7 @@ class titems extends tevents {
   
   public function loaditems(array $items) {
     if (!$this->dbversion) return;
-    //исключить из загрузки загруженные посты
+    //exclude loaded items
     $items = array_diff($items, array_keys($this->items));
     if (count($items) == 0) return;
     $list = implode(',', $items);
@@ -899,6 +925,10 @@ class tclasses extends titems {
   public function newinstance($class) {
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
     return new $class();
+    /*
+    if (preg_match('/^(tcomments|toptions|tsite|targs|ttheme)$/', $class)) return new $class();
+    return new tdebugproxy(new $class());
+    */
   }
   
   public function newitem($name, $class, $id) {
@@ -1269,6 +1299,7 @@ class turlmap extends titems {
   public $is404;
   public $adminpanel;
   public $mobile;
+  public $onclose;
   
   public static function instance() {
     return getinstance(__class__);
@@ -1285,6 +1316,7 @@ class turlmap extends titems {
     $this->mobile= false;
     $this->cachefilename = false;
     $this->page = 1;
+    $this->onclose = array();
   }
   
   protected function prepareurl($host, $url) {
@@ -1310,7 +1342,7 @@ class turlmap extends titems {
     }
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) @ob_end_flush ();
     $this->afterrequest($this->url);
-    $this->CheckSingleCron();
+    $this->close();
   }
   
   private function dorequest($url) {
@@ -1645,7 +1677,19 @@ class turlmap extends titems {
     $self->unlock();
   }
   
-  protected function CheckSingleCron() {
+  private function call_close_events() {
+    foreach ($this->onclose as $event) {
+      try {
+        call_user_func($event);
+      } catch (Exception $e) {
+        litepublisher::$options->handexception($e);
+      }
+    }
+    $this->onclose = array();
+  }
+  
+  protected function close() {
+    $this->call_close_events();
     if (defined('cronpinged')) return;
     /*
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';

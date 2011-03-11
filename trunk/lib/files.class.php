@@ -112,11 +112,11 @@ class tfiles extends titems {
     $result = '';
     if ($this->dbversion) {
       //$this->loaditems($list);
-    $items = array_diff($list, array_keys($this->items));
-if (count($items) > 0) {
-      $this->select(sprintf('(id in (%1$s)) or (parent in (%1$s))',
-implode(',', $items)), '');
-}
+      $items = array_diff($list, array_keys($this->items));
+      if (count($items) > 0) {
+        $this->select(sprintf('(id in (%1$s)) or (parent in (%1$s))',
+        implode(',', $items)), '');
+      }
     }
     
     //sort by media type
