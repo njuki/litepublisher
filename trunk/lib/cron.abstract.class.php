@@ -103,24 +103,24 @@ class tabstractcron extends tevents {
   }
   
   private function pop() {
-    $filename = $this->path .'cronchain.php';
-    if(!tfiler::unserialize($filename, $list))  return;
+    $filename = $this->path .'cronchain';
+    if(!tfilestorage::loadvar($filename, $list))  return;
     if (isset($list[litepublisher::$urlmap->host]))  unset($list[litepublisher::$urlmap->host]);
     $item = array_splice($list, 0, 1);
-    tfiler::serialize($filename, $list);
+    tfilestorage::savevar($filename, $list);
     if ($item) {
       $this->PingHost(key($item), $item[key($item)]);
     }
   }
   
   private function AddToChain($host, $path) {
-    $filename = $this->path .'cronchain.php';
-    if(!tfiler::unserialize($filename, $list)) {
+    $filename = $this->path .'cronchain';
+    if(!tfilestorage::loadvar($filename, $list)) {
       $list = array();
     }
     if (!isset($list[$host])) {
       $list[$host] = $path;
-      tfiler::serialize($filename, $list);
+      tfilestorage::savevar($filename, $list);
     }
   }
   

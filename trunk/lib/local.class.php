@@ -116,12 +116,12 @@ class tlocal {
     if (in_array($filename, self::$files)) return;
     self::$files[] = $filename;
     $cachefilename = self::getcachefilename(basename($filename));
-    if (tfiler::unserialize($cachefilename, $v) && is_array($v)) {
+    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
       self::$data = $v + self::$data ;
     } else {
       $v = parse_ini_file($filename . '.ini', true);
       self::$data = $v + self::$data ;
-      tfiler::serialize($cachefilename, $v);
+      tfilestorage::savevar($cachefilename, $v);
       self::ini2js($filename);
     }
   }
@@ -161,7 +161,7 @@ class tlocal {
   }
   
   public static function getcachefilename($name) {
-    return self::getcachedir() . $name . '.php';
+    return self::getcachedir() . $name;
   }
   
   public static function loadsection($name, $section, $dir) {
@@ -170,7 +170,7 @@ class tlocal {
       $language = litepublisher::$options->language;
       if ($name != '') $name = '.' . $name;
       self::loadini($dir . $language . $name . '.ini');
-      tfiler::serialize(self::getcachefilename($language . $name), self::$data);
+      tfilestorage::savevar(self::getcachefilename($language . $name), self::$data);
     }
   }
   

@@ -210,23 +210,37 @@ class tdata {
 
 class tfilestorage {
   public static $disabled;
+public static $memcache = false;
   
   public static function save(tdata $obj) {
     if (self::$disabled) return false;
-    return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), self::comment_php($obj->savetostring()));
+    return self::savetofile(litepublisher::$paths->data .$obj->getbasename(), $obj->savetostring());
   }
   
   public static function load(tdata $obj) {
-    $filename = litepublisher::$paths->data . $obj->getbasename() .'.php';
-    if (file_exists($filename)) {
-      return $obj->loadfromstring(self::uncomment_php(file_get_contents($filename)));
+if ($s = self::loadfile(litepublisher::$paths->data . $obj->getbasename() .'.php')) {
+      return $obj->loadfromstring($s);
     }
     return false;
   }
-  
+
+  public static function loadfile($filename) {
+if (self::$memcache) {
+if ($s =  self::$memcache->get($filename)) return $s;
+}
+
+    if (file_exists($filename)) {
+$s = self::uncomment_php(file_get_contents($filename));
+if (self::$memcache) self::$memcache->set($filename, $s, false, 3600);
+      return $s;
+    }
+    return false;
+  }
+
   public static function savetofile($base, $content) {
+if (self::$memcache) self::$memcache->set($base . '.php', $content, false, 3600);
     $tmp = $base .'.tmp.php';
-    if(false === file_put_contents($tmp, $content)) {
+    if(false === file_put_contents($tmp, self::comment_php($content))) {
       litepublisher::$options->trace("Error write to file $tmp");
       return false;
     }
@@ -243,7 +257,19 @@ class tfilestorage {
     }
     return true;
   }
-  
+
+public static function savevar($filename, &$var) {
+return self::savetofile($filename, serialize($var));
+}
+
+public static function loadvar($filename, &$var) {
+if ($s = self::loadfile($filename)) {
+$v = unserialize($s);
+return true;
+}
+return false;
+}
+
   public static function comment_php($s) {
     return sprintf('<?php /* %s */ ?>', str_replace('*/', '**//*/', $s));
   }
@@ -282,7 +308,7 @@ class tstorage extends tfilestorage {
       if (self::$disabled) return false;
       $lock = litepublisher::$paths->data .'storage.lok';
       if (($fh = @fopen($lock, 'w')) &&       flock($fh, LOCK_EX | LOCK_NB)) {
-        self::savetofile(litepublisher::$paths->data .'storage', self::comment_php(serialize(self::$data)));
+        self::savetofile(litepublisher::$paths->data .'storage', serialize(self::$data));
         flock($fh, LOCK_UN);
         fclose($fh);
         @chmod($lock, 0666);
@@ -296,21 +322,17 @@ class tstorage extends tfilestorage {
   }
   
   public static function loaddata() {
-/*
-$memcache_obj = memcache_connect('memcache_host', 11211);
-
-$memcache_obj = new Memcache;
-$memcache_obj->connect('memcache_host', 11211);
-if ($s= $memcache_obj->get('storage')) {
-self::$data = unserialize($s);
-}
-else echo 'no cached<br>';
-*/
-    self::$data = array();
     $filename = litepublisher::$paths->data . 'storage.php';
+if (self::$memcache) {
+if (self::$data =  self::$memcache->get($filename)) return true;
+}
+    self::$data = array();
     if (file_exists($filename)) {
       $s = self::uncomment_php(file_get_contents($filename));
-      if (!empty($s)) self::$data = unserialize($s);
+      if (!empty($s)) {
+self::$data = unserialize($s);
+if (self::$memcache)  self::$memcache->set($filename, self::$data, false, 3600);
+}
       return true;
     }
     return false;

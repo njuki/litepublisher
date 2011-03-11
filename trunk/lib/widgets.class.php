@@ -586,16 +586,16 @@ class twidgetscache extends titems {
   }
   
   public function load() {
-    $filename = litepublisher::$paths->cache . $this->getbasename() .'.php';
-    if (file_exists($filename)) {
-      return $this->loadfromstring(tfilestorage::uncomment_php(file_get_contents($filename)));
+    if ($s = tfilestorage::loadfile(litepublisher::$paths->cache . $this->getbasename() .'.php')) {
+      return $this->loadfromstring($s);
     }
+return false;
   }
   
   public function savemodified() {
     if ($this->modified) {
       tfilestorage::savetofile(litepublisher::$paths->cache .$this->getbasename(),
-      tfilestorage::comment_php($this->savetostring()));
+      $this->savetostring());
     }
     $this->modified = false;
   }
