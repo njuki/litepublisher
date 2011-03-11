@@ -127,19 +127,19 @@ class tadminhtml {
   
   public function load($name) {
     $cachefilename = tlocal::getcachefilename($name);
-    if (tfiler::unserialize($cachefilename, $v) && is_array($v)) {
+    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini;
     } else {
       $v = parse_ini_file(litepublisher::$paths->languages . $name . '.ini', true);
       $this->ini = $v + $this->ini;
-      tfiler::serialize($cachefilename, $v);
+      tfilestorage::savevar($cachefilename, $v);
     }
   }
   
   public function addini($section, $filename) {
     if (!isset($this->ini[$section])) {
       $this->loadini($filename);
-      tfiler::serialize(tlocal::getcachefilename('adminhtml'), $this->ini);
+      tfilestorage::savevar(tlocal::getcachefilename('adminhtml'), $this->ini);
     }
   }
   

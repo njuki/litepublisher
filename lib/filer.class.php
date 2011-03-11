@@ -94,26 +94,7 @@ class tfiler {
     return is_dir($dir);
   }
   
-  public static function unserialize($FileName, &$v) {
-    if (file_exists($FileName) && ($s = file_get_contents($FileName))) {
-      $s =tfilestorage::uncomment_php($s);
-      if (!empty($s)) {
-        $v = unserialize($s);
-        return true;
-      }
-    }
-    return false;
-  }
-  
-  public static function serialize($FileName, &$v) {
-    $s = serialize($v);
-    $s =  tfilestorage::comment_php($s);
-    if (file_exists($FileName)) @chmod($FileName, 0666);
-    file_put_contents($FileName, $s);
-    @chmod($FileName, 0666);
-  }
-  
-  public static function ini2js(array $a, $filename) {
+ public static function ini2js(array $a, $filename) {
   $result  = "var lang;\nif (lang == undefined) lang = {};\n";
     $sections = array();
     foreach ($a as $name => $section) {

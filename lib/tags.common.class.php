@@ -443,7 +443,7 @@ class ttagcontent extends tdata {
   }
   
   private function getfilename($id) {
-    return litepublisher::$paths->data . $this->owner->basename . DIRECTORY_SEPARATOR . $id . '.php';
+    return litepublisher::$paths->data . $this->owner->basename . DIRECTORY_SEPARATOR . $id;
   }
   
   public function getitem($id) {
@@ -458,7 +458,7 @@ class ttagcontent extends tdata {
     if ($this->owner->dbversion) {
       if ($r = $this->db->getitem($id)) $item = $r;
     } else {
-      tfiler::unserialize($this->getfilename($id), $item);
+      tfilestorage::loadvar($this->getfilename($id), $item);
     }
     $this->items[$id] = $item;
     return $item;
@@ -471,7 +471,7 @@ class ttagcontent extends tdata {
       $item['id'] = $id;
       $this->db->insert($item);
     } else {
-      tfiler::serialize($this->getfilename($id), $item);
+      tfilestorage::savevar($this->getfilename($id), $item);
     }
   }
   
