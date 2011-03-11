@@ -18,6 +18,7 @@ class turlmap extends titems {
   public $is404;
   public $adminpanel;
   public $mobile;
+  public $onclose;
   
   public static function instance() {
     return getinstance(__class__);
@@ -34,6 +35,7 @@ class turlmap extends titems {
     $this->mobile= false;
     $this->cachefilename = false;
     $this->page = 1;
+    $this->onclose = array();
   }
   
   protected function prepareurl($host, $url) {
@@ -59,7 +61,7 @@ class turlmap extends titems {
     }
     if (!litepublisher::$debug && litepublisher::$options->ob_cache) @ob_end_flush ();
     $this->afterrequest($this->url);
-    $this->CheckSingleCron();
+    $this->close();
   }
   
   private function dorequest($url) {
@@ -394,7 +396,19 @@ class turlmap extends titems {
     $self->unlock();
   }
   
-  protected function CheckSingleCron() {
+  private function call_close_events() {
+    foreach ($this->onclose as $event) {
+      try {
+        call_user_func($event);
+      } catch (Exception $e) {
+        litepublisher::$options->handexception($e);
+      }
+    }
+    $this->onclose = array();
+  }
+  
+  protected function close() {
+    $this->call_close_events();
     if (defined('cronpinged')) return;
     /*
     $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';

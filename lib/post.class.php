@@ -514,10 +514,10 @@ class tpost extends titem implements  itemplate {
   
   public function getcommentslink() {
     if (($this->commentscount == 0) && !$this->commentsenabled) return '';
-return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
+    return sprintf('<a href="%s%s#comments">%s</a>', litepublisher::$site->url, $this->getlastcommenturl(), $this->getcmtcount());
   }
-
-public function getcmtcount() {
+  
+  public function getcmtcount() {
     $l = &tlocal::$data['comment'];
     switch($this->commentscount) {
       case 0: return $l[0];

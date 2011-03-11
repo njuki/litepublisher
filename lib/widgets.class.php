@@ -589,7 +589,7 @@ class twidgetscache extends titems {
     if ($s = tfilestorage::loadfile(litepublisher::$paths->cache . $this->getbasename() .'.php')) {
       return $this->loadfromstring($s);
     }
-return false;
+    return false;
   }
   
   public function savemodified() {
@@ -601,7 +601,10 @@ return false;
   }
   
   public function save() {
-    $this->modified = true;
+    if (!$this->modified) {
+      litepublisher::$urlmap->onclose['widgetscache'] = array($this, 'savemodified');
+      $this->modified = true;
+    }
   }
   
   public function getcontent($id, $sidebar) {

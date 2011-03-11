@@ -94,7 +94,7 @@ class tfiler {
     return is_dir($dir);
   }
   
- public static function ini2js(array $a, $filename) {
+  public static function ini2js(array $a, $filename) {
   $result  = "var lang;\nif (lang == undefined) lang = {};\n";
     $sections = array();
     foreach ($a as $name => $section) {
