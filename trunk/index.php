@@ -72,12 +72,20 @@ try {
     require_once(litepublisher::$paths->lib . 'kernel.php');
   }
   
+  /*
+  if (class_exists('Memcache')) {
+    tfilestorage::$memcache =  new Memcache;
+    tfilestorage::$memcache->connect('127.0.0.1', 11211);
+  }
+  */
+  
+  
   tstorage::loaddata();
   litepublisher::$classes = tclasses::instance();
   litepublisher::$options = toptions::instance();
   litepublisher::$site = tsite::instance();
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
-  if (dbversion) litepublisher::$db = new tdatabase();
+  if (dbversion) litepublisher::$db = tdatabase::instance();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
   if (!defined('litepublisher_mode')) {

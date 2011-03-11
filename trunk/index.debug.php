@@ -19,7 +19,7 @@ public static $site;
   public static $debug = true;
   public static $secret = '8r7j7hbt8iik//pt7hUy5/e/7FQvVBoh7/Zt8sCg8+ibVBUt7rQ';
   public static $microtime;
-  
+
   public static function init() {
     if (!preg_match('/(www\.)?([\w\.\-]+)(:\d*)?/', strtolower(trim($_SERVER['HTTP_HOST'])) , $domain)) die('cant resolve domain name');
         self::$domain = $domain[2];
@@ -61,6 +61,7 @@ litepublisher::$paths->data .= 'fire\\';
 }
 
 if (litepublisher::$debug) {
+//require_once(litepublisher::$paths->lib . 'debugproxy.class.php');
 require_once(litepublisher::$paths->lib . 'data.class.php');
 require_once(litepublisher::$paths->lib . 'events.class.php');
 require_once(litepublisher::$paths->lib . 'items.class.php');
@@ -71,16 +72,25 @@ require_once(litepublisher::$paths->lib . 'site.class.php');
 require_once(litepublisher::$paths->lib . 'kernel.php');
 }
 
+/*
+if (class_exists('Memcache')) {
+tfilestorage::$memcache =  new Memcache;
+tfilestorage::$memcache->connect('127.0.0.1', 11211);
+}
+*/
+
 tstorage::loaddata();
   litepublisher::$classes = tclasses::instance();
   litepublisher::$options = toptions::instance();
   litepublisher::$site = tsite::instance();
+
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
-  if (dbversion) litepublisher::$db = new tdatabase();
+  //if (dbversion) litepublisher::$db = tdatabase::instance();
+if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
-tlocal::clearcache();
+//tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
@@ -93,7 +103,7 @@ tlocal::clearcache();
   //echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-//tupdater::instance()->run(4.31);
+//tupdater::instance()->run(4.35);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 //tupdater::instance()->run(4.31);
@@ -106,4 +116,5 @@ $man = tdbmanager::instance();
 echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
+//tdebugproxy::showperformance();
 ?>
