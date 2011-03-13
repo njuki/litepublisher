@@ -294,22 +294,14 @@ class tcodedocfilter extends titems {
     if ($name == '') $name = 'codedoc';
     $this->checkadminlang();
     $result = tadminhtml ::instance();
-    if (!isset($result->ini['codedoc'])) {
-      $result->loadini(self::getresource() . 'html.ini');
-      tfiler::serialize(litepublisher::$paths->languages . 'adminhtml.php', $result->ini);
-    }
+    $result->addini('codedoc', self::getresource() . 'html.ini');
     $result->section = $name;
     $lang = tlocal::instance($name);
     return $result;
   }
   
   public function checkadminlang() {
-    tlocal::loadlang('admin');
-    if (!isset(tlocal::$data['codedoc'])) {
-      tlocal::loadini(self::getresource() . litepublisher::$options->language . '.ini');
-      tfiler::serialize(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.php', tlocal::$data);
-      tfiler::ini2js(tlocal::$data , litepublisher::$paths->files . 'admin' . litepublisher::$options->language . '.js');
-    }
+    tlocal::loadsection('admin', 'codedoc', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
   }
   
 }//class
