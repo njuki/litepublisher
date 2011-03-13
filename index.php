@@ -79,7 +79,6 @@ try {
   }
   */
   
-  
   tstorage::loaddata();
   litepublisher::$classes = tclasses::instance();
   litepublisher::$options = toptions::instance();

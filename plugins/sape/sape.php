@@ -406,6 +406,7 @@ class SAPE_client extends SAPE_base {
     }
 
     function _get_db_file() {
+return litepublisher::$paths->data . 'plugins' . DIRECTORY_SEPARATOR . 'sapelinks.db';
         if ($this->_multi_site) {
             return dirname(__FILE__) . '/' . $this->_host . '.links.db';
         } else {
