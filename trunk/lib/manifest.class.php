@@ -52,6 +52,7 @@ class tmanifest extends tevents {
       break;
       
       case 'rsd':
+/*
       $s .= '<rsd version="1.0" xmlns="http://archipelago.phrasewise.com/rsd">' .
       '<service>' .
       '<engineName>Lite Publisher</engineName>' .
@@ -65,7 +66,46 @@ class tmanifest extends tevents {
       '</apis>' .
       '</service>' .
       '</rsd>';
-      break;
+*/
+
+$dom = new domDocument();
+    $dom->encoding = 'utf-8';
+$rsd = $dom->createElement('rsd');
+    $dom->appendChild($rsd);
+    tnode::attr($rsd, 'version', '1.0');
+    tnode::attr($rsd, 'xmlns', 'http://archipelago.phrasewise.com/rsd');
+    $service = tnode::add($rsd, 'service');
+    tnode::addvalue($service , 'engineName', 'LitePublisher');
+    tnode::addvalue($service , 'engineLink', 'http://litepublisher.com/');
+    tnode::addvalue($service , 'homePageLink', litepublisher::$site->url . '/');
+    $apis = tnode::add($service, 'apis');
+    $api = tnode::add($apis, 'api');
+    tnode::attr($api, 'name', 'WordPress');
+    tnode::attr($api, 'blogID', '1');
+    tnode::attr($api, 'preferred', 'true');
+    tnode::attr($api, 'apiLink', litepublisher::$site->url . '/rpc.xml');
+
+    $api = tnode::add($apis, 'api');
+    tnode::attr($api, 'name', 'Movable Type');
+    tnode::attr($api, 'blogID', '1');
+    tnode::attr($api, 'preferred', 'false');
+    tnode::attr($api, 'apiLink', litepublisher::$site->url . '/rpc.xml');
+
+    $api = tnode::add($apis, 'api');
+    tnode::attr($api, 'name', 'MetaWeblog');
+    tnode::attr($api, 'blogID', '1');
+    tnode::attr($api, 'preferred', 'false');
+    tnode::attr($api, 'apiLink', litepublisher::$site->url . '/rpc.xml');
+
+    $api = tnode::add($apis, 'api');
+    tnode::attr($api, 'name', 'Blogger');
+    tnode::attr($api, 'blogID', '1');
+    tnode::attr($api, 'preferred', 'false');
+    tnode::attr($api, 'apiLink', litepublisher::$site->url . '/rpc.xml');
+
+    $xml = $dom->saveXML();
+    $s .=substr($xml, strpos($xml, '?>') + 2);
+     break;
     }
     
     return  $s;
