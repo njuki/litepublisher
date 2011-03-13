@@ -74,7 +74,7 @@ class tsameposts extends tclasswidget {
     } else {
       $filename = litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR . $id .DIRECTORY_SEPARATOR . 'same.php';
       $data = null;
-      if (tfiler::unserialize($filename, $data)) {
+      if (tfilestorage::loadvar($filename, $data)) {
         if ($data['revision'] == $this->revision) return $data['items'];
       }
       
@@ -83,7 +83,7 @@ class tsameposts extends tclasswidget {
       'revision' => $this->revision,
       'items' => $result
       );
-      tfiler::serialize($filename, $data);
+      tfilestorage::savevar($filename, $data);
       return $result;
     }
   }
