@@ -116,7 +116,7 @@ class tdata {
   }
   
   protected function externalfunc($class, $func, $arg) {
-    if ($filename = litepublisher::$classes->getclassfilename($class)) {
+    if ($filename = litepublisher::$classes->getclassfilename($class, true)) {
       $externalname = basename($filename, '.php') . '.install.php';
       $dir = dirname($filename) . DIRECTORY_SEPARATOR;
       $file = $dir . 'install' . DIRECTORY_SEPARATOR . $externalname;
