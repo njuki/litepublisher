@@ -14,6 +14,7 @@ if (!function_exists( 'spl_autoload_register' ) ) {
 
 class tclasses extends titems {
   public $classes;
+  public $debug;
   public $interfaces;
   public $remap;
   public $instances;
@@ -33,6 +34,7 @@ class tclasses extends titems {
     $this->dbversion = false;
     $this->addevents('onnewitem', 'gettemplatevar');
     $this->addmap('classes', array());
+    $this->addmap('debug', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
@@ -139,7 +141,6 @@ class tclasses extends titems {
     if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
     return false;
   }
-  
   
   public function exists($class) {
     return isset($this->items[$class]);
