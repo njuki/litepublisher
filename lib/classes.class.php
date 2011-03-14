@@ -14,7 +14,6 @@ if (!function_exists( 'spl_autoload_register' ) ) {
 
 class tclasses extends titems {
   public $classes;
-  public $debug;
   public $interfaces;
   public $remap;
   public $instances;
@@ -34,7 +33,6 @@ class tclasses extends titems {
     $this->dbversion = false;
     $this->addevents('onnewitem', 'gettemplatevar');
     $this->addmap('classes', array());
-    $this->addmap('debug', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
@@ -123,22 +121,21 @@ class tclasses extends titems {
     return false;
   }
   
-  public function getclassfilename($class) {
-    if ($path =$this->getpath($class))  return $path . $this->items[$class][0];
-    if (isset($this->interfaces[$class])) return litepublisher::$paths->lib . $this->interfaces[$class];
-    return false;
-  }
-  
-  public function getpath($class) {
-    if (!isset($this->items[$class])) return false;
-    if (empty($this->items[$class][1])) return litepublisher::$paths->lib;
-    $result = trim($this->items[$class][1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-    $filename = $result . $this->items[$class][0];
-    if (file_exists($filename))  return $result;
+  public function getclassfilename($class, $debug = false) {
+    if (isset($this->items[$class])) {
+$item = $this->items[$class];
+$filename = (litepublisher::$debug || $debug) && isset($item[2]) ? $item[2] : $item[0];
+    if (Empty($item[1])) {
+return litepublisher::$paths->lib . $filename;
+}
+    $filename = trim($item[1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
+    if (file_exists($filename))  return $filename;
     //may be is subdir?
     if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
     if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
     if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
+}
+    if (isset($this->interfaces[$class])) return litepublisher::$paths->lib . $this->interfaces[$class];
     return false;
   }
   
