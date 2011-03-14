@@ -1,13 +1,12 @@
 <?php
 
-//data.class.php
 /**
 * Lite Publisher
 * Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-
+//data.class.php
 class tdata {
   public static $savedisabled;
   public $basename;
@@ -402,13 +401,6 @@ function dumpvar(&$v) {
 }
 
 //events.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 class ECancelEvent extends Exception {
   public $result;
   
@@ -681,13 +673,6 @@ public function load() {}
 }//class
 
 //items.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 class titems extends tevents {
   public $items;
   protected $autoid;
@@ -864,13 +849,6 @@ class tsingleitems extends titems {
 }//class
 
 //classes.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 if (!function_exists( 'spl_autoload_register' ) ) {
   function __autoload($class) {
     litepublisher::$classes->_autoload($class);
@@ -879,6 +857,7 @@ if (!function_exists( 'spl_autoload_register' ) ) {
 
 class tclasses extends titems {
   public $classes;
+  public $debug;
   public $interfaces;
   public $remap;
   public $instances;
@@ -898,6 +877,7 @@ class tclasses extends titems {
     $this->dbversion = false;
     $this->addevents('onnewitem', 'gettemplatevar');
     $this->addmap('classes', array());
+    $this->addmap('debug', array());
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
@@ -1005,7 +985,6 @@ class tclasses extends titems {
     return false;
   }
   
-  
   public function exists($class) {
     return isset($this->items[$class]);
   }
@@ -1017,13 +996,6 @@ function getinstance($class) {
 }
 
 //options.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 class toptions extends tevents_storage {
   public $user;
   public $group;
@@ -1222,13 +1194,6 @@ class toptions extends tevents_storage {
 }//class
 
 //site.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 class tsite extends tevents_storage {
   
   public static function instance() {
@@ -1280,13 +1245,6 @@ class tsite extends tevents_storage {
 }//class
 
 //urlmap.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 class turlmap extends titems {
   public $host;
   public $url;
@@ -1786,13 +1744,6 @@ class turlmap extends titems {
 }//class
 
 //interfaces.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 interface itemplate {
   public function request($arg);
   public function gettitle();
@@ -1816,13 +1767,6 @@ interface iposts {
 }
 
 //plugin.class.php
-/**
-* Lite Publisher
-* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
-* Dual licensed under the MIT (mit.txt)
-* and GPL (gpl.txt) licenses.
-**/
-
 class tplugin extends tevents {
   
   protected function create() {
