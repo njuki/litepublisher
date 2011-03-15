@@ -311,7 +311,7 @@ class tinstaller extends tdata {
   
   public static function sendmail() {
     //tlocal::loadlang('admin');
-    if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini');
+    if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths->languages . litepublisher::$options->language . 'admin.ini');
     $lang = &tlocal::$data['installation'];
     $body = sprintf($lang['body'], litepublisher::$site->url, litepublisher::$options->login, mailpassword);
     
@@ -322,6 +322,7 @@ class tinstaller extends tdata {
   public function congratulation($password) {
     global  $lang;
     $tml = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.congratulation.tml');
+    $theme = ttheme::getinstance('default');
     $html = tadminhtml::instance();
     $html->section = 'installation';
     $lang = tlocal::instance('installation');

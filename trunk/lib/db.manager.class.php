@@ -25,8 +25,7 @@ class tdbmanager  {
   public function createtable($name, $struct) {
     //    if (litepublisher::$debug)
     $this->deletetable($name);
-    return $this->exec("
-    create table $this->prefix$name
+    return $this->exec("create table $this->prefix$name
     ($struct)
     DEFAULT CHARSET=utf8
     COLLATE = utf8_general_ci");

@@ -33,7 +33,7 @@ function tcommontagsInstall($self) {
   
 }
 
-function TCommonTagsUninstall(&$self) {
+function tcommontagsUninstall(&$self) {
   tposts::unsub($self);
   turlmap::unsub($self);
   
