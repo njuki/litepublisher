@@ -123,18 +123,18 @@ class tclasses extends titems {
   
   public function getclassfilename($class, $debug = false) {
     if (isset($this->items[$class])) {
-$item = $this->items[$class];
-$filename = (litepublisher::$debug || $debug) && isset($item[2]) ? $item[2] : $item[0];
-    if (Empty($item[1])) {
-return litepublisher::$paths->lib . $filename;
-}
-    $filename = trim($item[1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
-    if (file_exists($filename))  return $filename;
-    //may be is subdir?
-    if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $result;
-    if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
-    if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
-}
+      $item = $this->items[$class];
+      $filename = (litepublisher::$debug || $debug) && isset($item[2]) ? $item[2] : $item[0];
+      if (Empty($item[1])) {
+        return litepublisher::$paths->lib . $filename;
+      }
+      $filename = trim($item[1], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
+      if (file_exists($filename))  return $filename;
+      //may be is subdir?
+      if (file_exists(litepublisher::$paths->plugins . $filename)) return litepublisher::$paths->plugins . $filename;
+      if (file_exists(litepublisher::$paths->themes . $filename)) return litepublisher::$paths->themes . $result;
+      if  (file_exists(litepublisher::$paths->home . $filename)) return  litepublisher::$paths->home . $result;
+    }
     if (isset($this->interfaces[$class])) return litepublisher::$paths->lib . $this->interfaces[$class];
     return false;
   }

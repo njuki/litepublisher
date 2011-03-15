@@ -555,4 +555,106 @@ class tcommontagswidget extends twidget {
   }
   
 }//class
-?>
+
+class tcategories extends tcommontags {
+  //public  $defaultid;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->table = 'categories';
+    $this->contents->table = 'catscontent';
+    $this->itemsposts->table = $this->table . 'items';
+    $this->basename = 'categories' ;
+    $this->data['defaultid'] = 0;
+  }
+  
+  public function setdefaultid($id) {
+    if (($id != $this->defaultid) && $this->itemexists($id)) {
+      $thisdata['defaultid'] = $id;
+      $this->save();
+    }
+  }
+  
+  public function save() {
+    parent::save();
+    if (!$this->locked)  {
+      tcategorieswidget::instance()->expire();
+    }
+  }
+  
+}//class
+
+class tcategorieswidget extends tcommontagswidget {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.categories';
+    $this->template = 'categories';
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['categories'];
+  }
+  
+  public function getowner() {
+    return tcategories::instance();
+  }
+  
+}//class
+
+class ttags extends tcommontags {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->table = 'tags';
+    $this->basename = 'tags';
+    $this->PermalinkIndex = 'tag';
+    $this->PostPropname = 'tags';
+    $this->contents->table = 'tagscontent';
+    $this->itemsposts->table = $this->table . 'items';
+  }
+  
+  public function save() {
+    parent::save();
+    if (!$this->locked)  {
+      ttagswidget::instance()->expire();
+    }
+  }
+  
+}//class
+
+class ttagswidget extends tcommontagswidget {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'widget.tags';
+    $this->template = 'tags';
+    $this->sortname = 'title';
+    $this->showcount = false;
+  }
+  
+  public function getdeftitle() {
+    return tlocal::$data['default']['tags'];
+  }
+  
+  public function getowner() {
+    return ttags::instance();
+  }
+  
+}//class
