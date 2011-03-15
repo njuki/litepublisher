@@ -23,7 +23,7 @@ function ParseClassesIni() {
   $ini = parse_ini_file(litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
   $classes = litepublisher::$classes;
   $replace = dbversion ? '.class.db.' : '.class.files.';
- $exclude = !dbversion ? '.class.db.' : '.class.files.';
+  $exclude = !dbversion ? '.class.db.' : '.class.files.';
   foreach ($ini['items'] as $class => $filename) {
     //exclude files
     if (strpos($filename, $exclude)) continue;
@@ -31,54 +31,54 @@ function ParseClassesIni() {
       $filename = str_replace('.class.', $replace, $filename);
       if (!file_exists(litepublisher::$paths->lib . $filename))continue;
     }
-
-$item = array($filename, '');
-
-if (isset($ini['debug'][$class])) {
-$filename = $ini['debug'];
-    if (!file_exists(litepublisher::$paths->lib . $filename)){
-      $filename = str_replace('.class.', $replace, $filename);
-      if (file_exists(litepublisher::$paths->lib . $filename)){
-$item[2] = $filename;
-}
-}
-
-    $classes->items[$class] = $item;
-  }
-
-  $classes->classes = $ini['classes'];
-  $classes->interfaces = $ini['interfaces'];
-  $classes->Save();
-  
-  //forward create folders
-  @mkdir(litepublisher::$paths->data . 'themes', 0777);
-  @chmod(litepublisher::$paths->data . 'themes', 0777);
-  
-  @mkdir(litepublisher::$paths->data . 'languages', 0777);
-  @chmod(litepublisher::$paths->data . 'languages', 0777);
-}
-
-function doinstallclasses() {
-  litepublisher::$urlmap = turlmap::instance();
-  litepublisher::$urlmap->lock();
-  $posts = tposts::instance();
-  $posts->lock();
-  
-  $xmlrpc = TXMLRPC::instance();
-  $xmlrpc->lock();
-  $html = tadminhtml::instance();
-  if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
-  
-  foreach(litepublisher::$classes->items as $class => $item) {
-    //echo "$class<br>\n";
-    if (preg_match('/^(titem|titemspostsowner|tcomment|IXR_Client|IXR_Server|tautoform|tchildpost|tchildposts)$/', $class)) continue;
-    $obj = getinstance($class);
-    if (method_exists($obj, 'install')) $obj->install();
+    
+    $item = array($filename, '');
+    
+    if (isset($ini['debug'][$class])) {
+      $filename = $ini['debug'];
+      if (!file_exists(litepublisher::$paths->lib . $filename)){
+        $filename = str_replace('.class.', $replace, $filename);
+        if (file_exists(litepublisher::$paths->lib . $filename)){
+          $item[2] = $filename;
+        }
+      }
+      
+      $classes->items[$class] = $item;
+    }
+    
+    $classes->classes = $ini['classes'];
+    $classes->interfaces = $ini['interfaces'];
+    $classes->Save();
+    
+    //forward create folders
+    @mkdir(litepublisher::$paths->data . 'themes', 0777);
+    @chmod(litepublisher::$paths->data . 'themes', 0777);
+    
+    @mkdir(litepublisher::$paths->data . 'languages', 0777);
+    @chmod(litepublisher::$paths->data . 'languages', 0777);
   }
   
-  $xmlrpc->unlock();
-  $posts->unlock();
-  litepublisher::$urlmap->unlock();
-}
-
-?>
+  function doinstallclasses() {
+    litepublisher::$urlmap = turlmap::instance();
+    litepublisher::$urlmap->lock();
+    $posts = tposts::instance();
+    $posts->lock();
+    
+    $xmlrpc = TXMLRPC::instance();
+    $xmlrpc->lock();
+    $html = tadminhtml::instance();
+    if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+    
+    foreach(litepublisher::$classes->items as $class => $item) {
+      //echo "$class<br>\n";
+      if (preg_match('/^(titem|titemspostsowner|tcomment|IXR_Client|IXR_Server|tautoform|tchildpost|tchildposts)$/', $class)) continue;
+      $obj = getinstance($class);
+      if (method_exists($obj, 'install')) $obj->install();
+    }
+    
+    $xmlrpc->unlock();
+    $posts->unlock();
+    litepublisher::$urlmap->unlock();
+  }
+  
+  ?>

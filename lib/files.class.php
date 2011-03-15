@@ -22,6 +22,15 @@ class tfiles extends titems {
     $this->itemsposts = tfileitems ::instance();
   }
   
+  public function preload(array $items) {
+    if (!dbversion) return false;
+    $items = array_diff($items, array_keys($this->items));
+    if (count($items) > 0) {
+      $this->select(sprintf('(id in (%1$s)) or (parent in (%1$s))',
+      implode(',', $items)), '');
+    }
+  }
+  
   public function geturl($id) {
     $item = $this->getitem($id);
     return litepublisher::$site->files . '/files/' . $item['filename'];
@@ -110,14 +119,7 @@ class tfiles extends titems {
   public function getlist(array $list,  $templates) {
     if (count($list) == 0) return '';
     $result = '';
-    if ($this->dbversion) {
-      //$this->loaditems($list);
-      $items = array_diff($list, array_keys($this->items));
-      if (count($items) > 0) {
-        $this->select(sprintf('(id in (%1$s)) or (parent in (%1$s))',
-        implode(',', $items)), '');
-      }
-    }
+    if ($this->dbversion) $this->preload($list);
     
     //sort by media type
     $items = array();

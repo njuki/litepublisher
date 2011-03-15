@@ -28,7 +28,7 @@ class tposts extends titems {
     $this->childtable = '';
     $this->rawtable = 'rawposts';
     $this->basename = 'posts'  . DIRECTORY_SEPARATOR  . 'index';
-    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt');
+    $this->addevents('edited', 'changed', 'singlecron', 'beforecontent', 'aftercontent', 'beforeexcerpt', 'afterexcerpt', 'onselect');
     $this->data['archivescount'] = 0;
     $this->data['revision'] = 0;
     $this->data['syncmeta'] = false;
@@ -61,13 +61,22 @@ class tposts extends titems {
     if (count($items) == 0) return array();
     $result = array();
     $t = new tposttransform();
+    $fileitems = array();
     foreach ($items as $a) {
       $t->post = tpost::newpost($a['class']);
       $t->setassoc($a);
       $result[] = $t->post->id;
+      $f = $t->post->files;
+      if (count($f) > 0) $fileitems = array_merge($fileitems, array_diff($f, $fileitems));
     }
     unset($t);
     if ($this->syncmeta)  tmetapost::loaditems($result);
+    if (count($fileitems) > 0) {
+      $files = tfiles::instance();
+      $files->preload($fileitems);
+    }
+    
+    $this->onselect($result);
     return $result;
   }
   
