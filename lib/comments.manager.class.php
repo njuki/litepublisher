@@ -228,7 +228,7 @@ class tcommentmanager extends tevents {
   public function getrecent($count, $status = 'approved') {
     if (dbversion) {
       $db = litepublisher::$db;
-      $res = $db->query("select $db->comments.*,
+      $result = $db->res2assoc($db->query("select $db->comments.*,
       $db->comusers.name as name, $db->comusers.email as email, $db->comusers.url as url,
       $db->posts.title as title, $db->posts.commentscount as commentscount,
       $db->urlmap.url as posturl
@@ -238,9 +238,8 @@ class tcommentmanager extends tevents {
       $db->posts.id = $db->comments.post and
       $db->urlmap.id = $db->posts.idurl and
       $db->posts.status = 'published'
-      order by $db->comments.posted desc limit $count");
+      order by $db->comments.posted desc limit $count"));
       
-      $result = $db->res2assoc($res);
       if (litepublisher::$options->commentpages) {
         foreach ($result as $i => $item) {
           $page = ceil($item['commentscount'] / litepublisher::$options->commentsperpage);
@@ -249,7 +248,7 @@ class tcommentmanager extends tevents {
       }
       return $result;
     } else {
-      if ($count <= count($this->items)) return $this->items;
+      if ($count >= count($this->items)) return $this->items;
       return array_slice($this->items, 0, $count);
     }
   }

@@ -26,13 +26,13 @@ function installoptions($language) {
     } catch (Exception $e) {
       die($e->GetMessage());
     }
-/*
-$db = litepublisher::$db;
+    /*
+    $db = litepublisher::$db;
     $list = $db->res2array($db->query("show tables from " . $options->dbconfig['dbname']));
     foreach ($list as $row) {
       $db->exec("DROP TABLE IF EXISTS ". $row[0]);
     }
-*/
+    */
   }
   
   $options->language = $language;
