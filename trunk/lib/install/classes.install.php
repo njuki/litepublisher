@@ -37,8 +37,8 @@ function ParseClassesIni() {
     if (isset($ini['debug'][$class])) {
       $filename = $ini['debug'][$class];
       if (file_exists(litepublisher::$paths->lib . $filename)){
-          $item[2] = $filename;
-} else {
+        $item[2] = $filename;
+      } else {
         $filename = str_replace('.class.', $replace, $filename);
         if (file_exists(litepublisher::$paths->lib . $filename)){
           $item[2] = $filename;
