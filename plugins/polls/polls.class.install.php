@@ -54,19 +54,16 @@ function tpollsInstall($self) {
   $filter->beforefilter = $self->filter;
   $filter->unlock();
   
-  /*
-  $xmlrpc = TXMLRPC::instance();
-  $xmlrpc->lock();
-  $xmlrpc->add('litepublisher.poll.sendvote', 'sendvote', get_class($self));
-  $xmlrpc->add('litepublisher.poll.getcookie', 'getcookie', get_class($self));
-  $xmlrpc->unlock();
-  */
   litepublisher::$classes->classes['poll'] = get_class($self);
   litepublisher::$classes->save();
   
   litepublisher::$options->parsepost = true;
   
   litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
+
+$template = ttemplate::instance();
+$template->addtohead(getpollhead());
+$template->save();
 }
 
 function tpollsUninstall($self) {
@@ -79,16 +76,24 @@ function tpollsUninstall($self) {
   
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
-  
-  /*
-  $xmlrpc = TXMLRPC::instance();
-  $xmlrpc->deleteclass(get_class($self));
-  */
+
+$template = ttemplate::instance();
+$template->deletefromhead(getpollhead());
+$template->save();
   
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);
   $manager->deletetable($self->userstable);
   $manager->deletetable($self->votestable);
+}
+
+function getpollhead() {
+return '<script type="text/javascript">'.
+'load_if_exists(ltoptions.files + "/plugins/polls/polls.client.min.js", ' .
+'"*[rel~=\'poll\']", function(items) {' .
+' pollclient.init();' .
+'});' .
+'></script>';
 }
 
 function finddeletedpols($self) {
