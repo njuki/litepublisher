@@ -11,6 +11,10 @@ var pollclient = {
   voted : []
 };
 
+pollclient.init = function () {
+$("[rel=
+}
+
 pollclient.sendvote = function (idpoll, vote) {
   $.get(ltoptions.url + '/ajaxpollserver.htm',
 {action: 'sendvote', cookie: this.cookie,idpoll: idpoll, vote: vote},
@@ -58,7 +62,7 @@ pollclient.getcookie = function(callback) {
     }
     
     pollclient.cookierequested = true;
-    if (callback) callback()
+    if ($.isFunction(callback)) callback();
   });
 };
 

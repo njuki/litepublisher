@@ -54,8 +54,7 @@ function widget_toggle(node) {
 }
 
 $(document).ready(function() {
-  $("*[rel~='inlinewidget']").click(function() {
-    $(this).unbind('click');
+  $("*[rel~='inlinewidget']").one('click', function() {
     widget_inline(this);
     return false;
   });

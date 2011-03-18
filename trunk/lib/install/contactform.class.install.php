@@ -14,11 +14,7 @@ function tcontactformInstall($self) {
   $self->subject = $lang->subject;
   $self->success  = $html->success();
   $self->errmesg = $html->errmesg();
-  $filter = tcontentfilter::instance();
-  $value = $filter->phpcode;
-  $filter->phpcode = false;
   $self->content = $html->form();
-  $filter->phpcode = $value;
   $self->order = 10;
   
   $menus = tmenus::instance();
