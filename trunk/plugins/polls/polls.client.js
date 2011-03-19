@@ -12,7 +12,17 @@ var pollclient = {
 };
 
 pollclient.init = function () {
-$("[rel=
+$("*[id^='poll_']").click(function() {
+var vals = $(this).attr("id").split("_");
+pollclient.clickvote(vals[1], vals[2]);
+return false;
+});
+
+    $("form[id^='pollform_radio']").submit(function() {
+    var vote = $(this).find("radio:checked").val();
+pollclient.clickvote(vals[1], vote);
+return false;
+});
 }
 
 pollclient.sendvote = function (idpoll, vote) {
@@ -20,7 +30,7 @@ pollclient.sendvote = function (idpoll, vote) {
 {action: 'sendvote', cookie: this.cookie,idpoll: idpoll, vote: vote},
   function (result) {
     var items = result.split(',');
-    var idspan = '#votes-' + idpoll + '-';
+    var idspan = '#pollresult_' + idpoll + '_';
     for (var i =0, n =items.length; i < n; i++) {
       $(idspan + i).html(items[i]);
     }
@@ -44,12 +54,6 @@ pollclient.clickvote = function(idpoll, vote) {
       pollclient.sendvote(idpoll, vote);
     });
   }
-};
-
-pollclient.radiovote = function(idpoll, btn) {
-  $(btn).closest("form").find("radio:checked").each(function() {
-    var vote = $(this).val();
-  });
 };
 
 pollclient.getcookie = function(callback) {

@@ -2,16 +2,15 @@
 
 function update439() {
 if (!litepublisher::$classes->exists('tpolls'])) return;
+
+$dir = litepublisher::$paths->plugins . 'polls' . DIRECTORY_SEPARATOR;
 $p = tpolls::instance();
-foreach ($p->templateitems as $name => $tml) {
-$p->templateitems[$name] = str_replace(
-'onclick="pollclient.clickvote($id, $index);"', 
-'rel="poll"',
-str_replace("'", '"', $tml));
-}
+  $templates = parse_ini_file($dir . 'templates.ini',  true);
+  $p->templateitems = $templates['item'];
+  $p->templates = $templates['items'];
 $p->save();
 
-include_once(litepublisher::$paths->plugins . 'polls/polls.class.install.php');
+include_once($dir . 'polls.class.install.php');
 $template = ttemplate::instance();
 $template->addtohead(getpollhead());
 $template->save();
