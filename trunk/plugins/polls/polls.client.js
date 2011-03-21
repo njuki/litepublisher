@@ -19,7 +19,8 @@ return false;
 });
 
     $("form[id^='pollform_radio']").submit(function() {
-    var vote = $(this).find("radio:checked").val();
+    var vote = $('input:radio:checked', $(this)).val();
+alert(vote);
 pollclient.clickvote(vals[1], vote);
 return false;
 });

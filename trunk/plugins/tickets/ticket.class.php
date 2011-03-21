@@ -43,15 +43,6 @@ class tticket extends tpost {
     $this->childdata['reproduced'] = $this->childdata['reproduced'] == '1';
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    if ($this->poll > 0) {
-      $polls = tpolls::instance();
-      $result .= $polls->gethead();
-    }
-    return  $result;
-  }
-  
   protected function getclosed() {
     return strtotime($this->childdata['closed']);
   }
