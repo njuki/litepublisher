@@ -7,22 +7,80 @@
 
 //imported from jquery
 function load_script(url, callback) {
-  var head = document.getElementsByTagName("head")[0] || document.documentElement;
-  var script = document.createElement("script");
-  script.type= 'text/javascript';
-  script.async = true;
-  script.src = url;
-  var done = false;
-  script.onload = script.onreadystatechange = function() {
-    if ( !done && (!this.readyState ||
-    this.readyState === "loaded" || this.readyState === "complete") ) {
-      done = true;
+		var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
+var script = document.createElement( "script" );
+				script.async = "async";
+				script.src = url;
+				// Attach handlers for all browsers
+				script.onload = script.onreadystatechange = function() {
+					if ( !script.readyState || /loaded|complete/.test( script.readyState ) ) {
+						// Handle memory leak in IE
+						script.onload = script.onreadystatechange = null;
+						// Remove the script
+						if ( head && script.parentNode ) head.removeChild( script );
+						// Dereference the script
+						script = undefined;
+
       if (typeof callback=== "function") callback();
-      // Handle memory leak in IE
-      script.onload = script.onreadystatechange = null;
-      if ( head && script.parentNode ) head.removeChild( script );
-    }
-  };
-  
-  head.insertBefore( script, head.firstChild );
+					}
+				};
+				// Use insertBefore instead of appendChild  to circumvent an IE6 bug.
+				// This arises when a base node is used (#2709 and #4378).
+				head.insertBefore( script, head.firstChild );
+			}
+
+var jqloader = {
+jquery_loaded: false,
+items: [],
+holditems: [],
+holdready: [],
+
+loaded: function(url) {
+for (var i = this.items.length -1; i >= 0; i--) {
+if (url == this.items[i].url) return this.items[i].script;
 }
+return false;
+},
+
+load: function(url, fn) {
+if (this.jquery_loaded) {
+var script = this.loaded(url);
+if (script) {
+script.done(fn);
+return script;
+}
+script = $.getScript(url, fn);
+this.items.push({url: url, script: script});
+return script;
+} else {
+this.holditems.push({url: url, fn: fn});
+}
+},
+
+load_jquery: function(url) {
+load_script(url, this.init);
+},
+
+init: function() {
+this.jquery_loaded = true;
+$(document).ready(this.jquery_ready);
+for (var i = 0, l = this.holditems.length -1; i <= l; i++) {
+var item = this.items[i];
+this.load(item.url, item.fn);
+}
+this.holditems = null;
+},
+
+jquery_ready: function() {
+for (var i = 0, l = this.holdready.length - 1; i <= l; i++) {
+var fn = this.holdready[i];
+  if ($.isFunction(fn)) fn();
+}
+this.holdready = null;
+},
+
+ready: function(fn) {
+if (this.jquery_loaded) return $(document).ready(fn);
+this.holdready.push(fn);
+}
+};
