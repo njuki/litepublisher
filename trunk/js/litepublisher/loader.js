@@ -20,7 +20,6 @@ var script = document.createElement( "script" );
 						if ( head && script.parentNode ) head.removeChild( script );
 						// Dereference the script
 						script = undefined;
-
       if (typeof callback=== "function") callback();
 					}
 				};
@@ -63,17 +62,18 @@ load_script(url, this.init);
 
 init: function() {
 var i, l;
-this.jquery_loaded = true;
-for (i = 0, l = this.holdready.length - 1; i <= l; i++) {
-$(document).ready(this.holdready[i]);
+jqloader.jquery_loaded = true;
+for (i = 0, l = jqloader.holdready.length - 1; i <= l; i++) {
+$(document).ready(jqloader.holdready[i]);
 }
-this.holdready = null;
+jqloader.holdready = null;
 
-for (i = 0, l = this.holditems.length -1; i <= l; i++) {
-var item = this.holditems[i];
-this.load(item.url, item.fn);
+for (i = 0, l = jqloader.holditems.length -1; i <= l; i++) {
+var item = jqloader.holditems[i];
+jqloader.load(item.url, item.fn);
 }
-this.holditems = null;
+jqloader.holditems = null;
+//} catch(e) { alert(e.message); }
 },
 
 ready: function(fn) {
