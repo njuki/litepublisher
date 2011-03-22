@@ -317,8 +317,8 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     </script>';
   }
   
-  protected static function error403() {
-    return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . 'Forbidden';
+  protected static function error403($msg= 'Forbidden') {
+    return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . $msg;
   }
   
   public function request($arg) {
