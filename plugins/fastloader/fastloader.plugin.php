@@ -50,6 +50,7 @@ $template->heads = $this->replacehead($template->heads);
 $template->save();
 
 foreach ($theme->templates as $name => $value) {
+if (is_string($value))
 $theme->templates[$name] = $this->replace($value);
 }
   }
@@ -67,7 +68,7 @@ $s = preg_replace('/\$\.\s*getScript\s*\(/im',
 return $s;
 }
 
-public function restore() {
+public function restore($s) {
 $s = preg_replace(
 str_replace(' ', '\s*',
 '/<script.*> jqloader \. load \( [\'"]([^"\']*).*?\) ; <\/script>/im'),
@@ -81,11 +82,25 @@ return $s;
   
 public function replacehead($s) {
 $script = '<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>';
-if ($j = strpos($s, $script)) {
+if ($i = strpos($s, $script)) {
 return substr($s, 0, $i) .
 '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
 '<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>' .
 $this->replace(substr($s, $i + strlen($script)));
+} else {
+return $s;
+}
+}
+
+public function restorehead($s) {
+$script = '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
+'<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>';
+if ($i = strpos($s, $script)) {
+return substr($s, 0, $i) .
+'<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>' .
+$this->restore(substr($s, $i + strlen($script)));
+} else {
+return $s;
 }
 }
 
