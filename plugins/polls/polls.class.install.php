@@ -88,12 +88,13 @@ $template->save();
 }
 
 function getpollhead() {
-return '<script type="text/javascript">'.
-'load_if_exists(ltoptions.files + "/plugins/polls/polls.client.min.js", ' .
-'"*[rel~=\'poll\']", function(items) {' .
+$template = ttemplate::instance();
+return $template->getready(
+'if ($("*[id^=\'pollform_\']").length > 0) {'.
+'$.getScript("$site.files/plugins/polls/polls.client.min.js", function() {'.
 ' pollclient.init();' .
-'});' .
-'></script>';
+'});'.
+'}');
 }
 
 function finddeletedpols($self) {

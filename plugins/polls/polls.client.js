@@ -18,10 +18,10 @@ pollclient.clickvote(vals[1], vals[2]);
 return false;
 });
 
-    $("form[id^='pollform_radio']").submit(function() {
+    $("form[id^='pollform_radio_']").submit(function() {
+var vals = $(this).attr('id').split('_');
     var vote = $('input:radio:checked', $(this)).val();
-alert(vote);
-pollclient.clickvote(vals[1], vote);
+pollclient.clickvote(vals[2], vote);
 return false;
 });
 }
@@ -36,11 +36,13 @@ pollclient.sendvote = function (idpoll, vote) {
       $(idspan + i).html(items[i]);
     }
   });
+//.error( function(jq, textStatus, errorThrown) {alert('error ' + jq.responseText );});
 };
 
 pollclient.clickvote = function(idpoll, vote) {
   for (var i = this.voted.length -1; i >= 0; i--) {
     if (idpoll == this.voted[i]) {
+//alert('voted');
       return false;
     }
   }
