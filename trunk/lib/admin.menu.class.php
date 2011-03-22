@@ -18,15 +18,15 @@ class tadminmenumanager extends tadminmenu {
     $template = ttemplate::instance();
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
-//triks for support jqloader
-if (litepublisher::$classes->exists('tfastloader')) {
-    $result .= $template->getloadjavascript(
-'"$site.url/js/litepublisher/admin.js", function() {inittabs("#tabs");}' );
-} else {
-    $result .= '<script type="text/javascript">
-    inittabs("#tabs");
-    </script>';
-}
+    //triks for support jqloader
+    if (litepublisher::$classes->exists('tfastloader')) {
+      $result .= $template->getloadjavascript(
+    '"$site.url/js/litepublisher/admin.js", function() {inittabs("#tabs");}' );
+    } else {
+      $result .= '<script type="text/javascript">
+      inittabs("#tabs");
+      </script>';
+    }
     
     $ajax = tajaxmenueditor ::instance();
     return $ajax->dogethead($result);

@@ -31,10 +31,10 @@ class tajaxposteditor  extends tevents {
     if ($this->visual) {
       if ($this->ajaxvisual) {
         $head .= $template->getready('$("a[rel~=\'loadvisual\']").one("click", function() {
-            $("#loadvisual").remove();
-            $.getScript("' . litepublisher::$site->files . $this->visual . '");
-            return false;
-          });');
+          $("#loadvisual").remove();
+          $.getScript("' . litepublisher::$site->files . $this->visual . '");
+          return false;
+        });');
       } else {
         $head .= $template->getjavascript($this->visual);
       }

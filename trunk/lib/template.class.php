@@ -35,9 +35,9 @@ class ttemplate extends tevents_storage {
     $this->hover = true;
     $this->data['hovermenu'] = true;
     $this->data['heads'] = '';
-$this->data['js'] = '<script type="text/javascript" src="%s"></script>';
-$this->data['jsready'] = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
-$this->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</script>';
+    $this->data['js'] = '<script type="text/javascript" src="%s"></script>';
+  $this->data['jsready'] = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
+    $this->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
   }
@@ -159,11 +159,11 @@ $this->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</script
   public function getjavascript($filename) {
     return sprintf($this->js, litepublisher::$site->files . $filename);
   }
-
+  
   public function getready($s) {
     return sprintf($this->jsready, $s);
   }
-
+  
   public function getloadjavascript($s) {
     return sprintf($this->jsload, $s);
   }

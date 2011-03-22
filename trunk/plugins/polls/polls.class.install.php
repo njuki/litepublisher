@@ -60,10 +60,10 @@ function tpollsInstall($self) {
   litepublisher::$options->parsepost = true;
   
   litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
-
-$template = ttemplate::instance();
-$template->addtohead(getpollhead());
-$template->save();
+  
+  $template = ttemplate::instance();
+  $template->addtohead(getpollhead());
+  $template->save();
 }
 
 function tpollsUninstall($self) {
@@ -76,10 +76,10 @@ function tpollsUninstall($self) {
   
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
-
-$template = ttemplate::instance();
-$template->deletefromhead(getpollhead());
-$template->save();
+  
+  $template = ttemplate::instance();
+  $template->deletefromhead(getpollhead());
+  $template->save();
   
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);
@@ -88,13 +88,13 @@ $template->save();
 }
 
 function getpollhead() {
-$template = ttemplate::instance();
-return $template->getready(
-'if ($("*[id^=\'pollform_\']").length > 0) {'.
-'$.getScript("$site.files/plugins/polls/polls.client.min.js", function() {'.
-' pollclient.init();' .
-'});'.
-'}');
+  $template = ttemplate::instance();
+  return $template->getready(
+  'if ($("*[id^=\'pollform_\']").length > 0) {'.
+    '$.getScript("$site.files/plugins/polls/polls.client.min.js", function() {'.
+      ' pollclient.init();' .
+    '});'.
+  '}');
 }
 
 function finddeletedpols($self) {

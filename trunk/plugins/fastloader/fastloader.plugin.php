@@ -11,98 +11,98 @@ class tfastloader extends tplugin {
   public static function instance() {
     return getinstance(__class__);
   }
-
-public function install() {
-  $parser = tthemeparser::instance();
-  $parser->parsed = $this->themeparsed;
-  ttheme::clearcache();
-
-$template = ttemplate::instance();
-$template->js = '<script type="text/javascript">jqloader.load("%s");</script>';
-$template->jsready = '<script type="text/javascript">jqloader.ready(function() {%s});</script>';
-$template->jsload = '<script type="text/javascript">jqloader.load(%s);</script>';
-$template->heads = $this->replacehead($template->heads);
-$template->save();
-
-$admin = tadminmenus::instance();
-$admin->heads = $this->replace($admin->heads);
-$admin->save();
-}
-
-public function uninstall() {
-$template = ttemplate::instance();
-$template->js = '<script type="text/javascript" src="%s"></script>';
-$template->jsready = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
-$template->jsload = '<script type="text/javascript">$.getScript(%s);</script>';
-$template->heads = $this->restorehead($template->heads);
-$template->save();
-
-  $parser = tthemeparser::instance();
-  $parser->unsubscribeclass($this);
-$admin = tadminmenus::instance();
-$admin->heads = $this->restore($admin->heads);
-$admin->save();
-}
+  
+  public function install() {
+    $parser = tthemeparser::instance();
+    $parser->parsed = $this->themeparsed;
+    ttheme::clearcache();
+    
+    $template = ttemplate::instance();
+    $template->js = '<script type="text/javascript">jqloader.load("%s");</script>';
+  $template->jsready = '<script type="text/javascript">jqloader.ready(function() {%s});</script>';
+    $template->jsload = '<script type="text/javascript">jqloader.load(%s);</script>';
+    $template->heads = $this->replacehead($template->heads);
+    $template->save();
+    
+    $admin = tadminmenus::instance();
+    $admin->heads = $this->replace($admin->heads);
+    $admin->save();
+  }
+  
+  public function uninstall() {
+    $template = ttemplate::instance();
+    $template->js = '<script type="text/javascript" src="%s"></script>';
+  $template->jsready = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
+    $template->jsload = '<script type="text/javascript">$.getScript(%s);</script>';
+    $template->heads = $this->restorehead($template->heads);
+    $template->save();
+    
+    $parser = tthemeparser::instance();
+    $parser->unsubscribeclass($this);
+    $admin = tadminmenus::instance();
+    $admin->heads = $this->restore($admin->heads);
+    $admin->save();
+  }
   
   public function themeparsed($theme) {
-$template = ttemplate::instance();
-$template->heads = $this->replacehead($template->heads);
-$template->save();
-
-foreach ($theme->templates as $name => $value) {
-if (is_string($value))
-$theme->templates[$name] = $this->replace($value);
-}
+    $template = ttemplate::instance();
+    $template->heads = $this->replacehead($template->heads);
+    $template->save();
+    
+    foreach ($theme->templates as $name => $value) {
+      if (is_string($value))
+      $theme->templates[$name] = $this->replace($value);
+    }
   }
-
-public function replace($s) {
-$s = preg_replace('/<script\s*.*?src\s*=\s*[\'"]([^"\'>]*).*?>\s*<\/script>/im', 
-'<script type="text/javascript">jqloader.load("$1");</script>', $s);
-
-$s = preg_replace('/\$\s*\(\s*document\s*\)\s*\.\s*ready\s*\(/im',
-'jqloader.ready(', $s);
-
-$s = preg_replace('/\$\.\s*getScript\s*\(/im',
-'jqloader.load(', $s);
-
-return $s;
-}
-
-public function restore($s) {
-$s = preg_replace(
-str_replace(' ', '\s*',
-'/<script.*> jqloader \. load \( [\'"]([^"\']*).*?\) ; <\/script>/im'),
-'<script type="text/javascript" src="$1"></script>', $s);
-
-$s = str_replace('jqloader.ready', '$(document).ready', $s);
-$s = str_replace('jqloader.load', '$getScript', $s);
-
-return $s;
-}
   
-public function replacehead($s) {
-$script = '<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>';
-if ($i = strpos($s, $script)) {
-return substr($s, 0, $i) .
-'<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
-'<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>' .
-$this->replace(substr($s, $i + strlen($script)));
-} else {
-return $s;
-}
-}
-
-public function restorehead($s) {
-$script = '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
-'<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>';
-if ($i = strpos($s, $script)) {
-return substr($s, 0, $i) .
-'<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>' .
-$this->restore(substr($s, $i + strlen($script)));
-} else {
-return $s;
-}
-}
-
+  public function replace($s) {
+    $s = preg_replace('/<script\s*.*?src\s*=\s*[\'"]([^"\'>]*).*?>\s*<\/script>/im',
+    '<script type="text/javascript">jqloader.load("$1");</script>', $s);
+    
+    $s = preg_replace('/\$\s*\(\s*document\s*\)\s*\.\s*ready\s*\(/im',
+    'jqloader.ready(', $s);
+    
+    $s = preg_replace('/\$\.\s*getScript\s*\(/im',
+    'jqloader.load(', $s);
+    
+    return $s;
+  }
+  
+  public function restore($s) {
+    $s = preg_replace(
+    str_replace(' ', '\s*',
+    '/<script.*> jqloader \. load \( [\'"]([^"\']*).*?\) ; <\/script>/im'),
+    '<script type="text/javascript" src="$1"></script>', $s);
+    
+    $s = str_replace('jqloader.ready', '$(document).ready', $s);
+    $s = str_replace('jqloader.load', '$getScript', $s);
+    
+    return $s;
+  }
+  
+  public function replacehead($s) {
+    $script = '<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>';
+    if ($i = strpos($s, $script)) {
+      return substr($s, 0, $i) .
+      '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
+      '<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>' .
+      $this->replace(substr($s, $i + strlen($script)));
+    } else {
+      return $s;
+    }
+  }
+  
+  public function restorehead($s) {
+    $script = '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
+    '<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>';
+    if ($i = strpos($s, $script)) {
+      return substr($s, 0, $i) .
+      '<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>' .
+      $this->restore(substr($s, $i + strlen($script)));
+    } else {
+      return $s;
+    }
+  }
+  
 }//class
 ?>
