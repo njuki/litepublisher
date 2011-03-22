@@ -30,15 +30,11 @@ class tajaxposteditor  extends tevents {
     $head .= $this->head;
     if ($this->visual) {
       if ($this->ajaxvisual) {
-        $head .= '<script type="text/javascript">
-        $(document).ready(function() {
-          $("a[rel~=\'loadvisual\']").one("click", function() {
+        $head .= $template->getready('$("a[rel~=\'loadvisual\']").one("click", function() {
             $("#loadvisual").remove();
             $.getScript("' . litepublisher::$site->files . $this->visual . '");
             return false;
-          });
-        });
-        </script>';
+          });');
       } else {
         $head .= $template->getjavascript($this->visual);
       }
