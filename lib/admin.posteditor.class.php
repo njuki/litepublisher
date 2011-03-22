@@ -19,11 +19,7 @@ class tposteditor extends tadminmenu {
     $template = ttemplate::instance();
     $template->ltoptions[] = 'idpost: ' . $this->idget();
     $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
-    $result .= '<script type="text/javascript">
-    $.getScript("$site.files/js/litepublisher/filebrowser.js", function() {
-      initposteditor();
-    });
-    </script>';
+    $result .= $template->getloadjavascript('"$site.files/js/litepublisher/filebrowser.js", function() {initposteditor();}' );
     $ajax = tajaxposteditor ::instance();
     return $ajax->dogethead($result);
   }
