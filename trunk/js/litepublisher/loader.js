@@ -62,21 +62,18 @@ load_script(url, this.init);
 },
 
 init: function() {
+var i, l;
 this.jquery_loaded = true;
-$(document).ready(this.jquery_ready);
-for (var i = 0, l = this.holditems.length -1; i <= l; i++) {
-var item = this.items[i];
+for (i = 0, l = this.holdready.length - 1; i <= l; i++) {
+$(document).ready(this.holdready[i]);
+}
+this.holdready = null;
+
+for (i = 0, l = this.holditems.length -1; i <= l; i++) {
+var item = this.holditems[i];
 this.load(item.url, item.fn);
 }
 this.holditems = null;
-},
-
-jquery_ready: function() {
-for (var i = 0, l = this.holdready.length - 1; i <= l; i++) {
-var fn = this.holdready[i];
-  if ($.isFunction(fn)) fn();
-}
-this.holdready = null;
 },
 
 ready: function(fn) {

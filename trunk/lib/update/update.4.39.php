@@ -8,7 +8,7 @@ $template->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</sc
 $template->save();
 tstorage::savemodified();
 
-if (!litepublisher::$classes->exists('tpolls'])) return;
+if (!litepublisher::$classes->exists('tpolls')) return;
 
 $dir = litepublisher::$paths->plugins . 'polls' . DIRECTORY_SEPARATOR;
 $p = tpolls::instance();
