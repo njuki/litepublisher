@@ -6,8 +6,11 @@ $template->data['js'] = '<script type="text/javascript" src="%s"></script>';
 $template->data['jsready'] = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
 $template->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</script>';
 $template->save();
-tstorage::savemodified();
 
+if (litepublisher::$classes->exists('ttickets')) {
+  tposts::unsub(ttickets::instance());
+}
+tstorage::savemodified();
 if (!litepublisher::$classes->exists('tpolls')) return;
 
 $dir = litepublisher::$paths->plugins . 'polls' . DIRECTORY_SEPARATOR;
