@@ -59,15 +59,6 @@ class tdownloaditem extends tpost {
     $this->tags=  $items;
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    if ($this->poll > 0) {
-      $polls = tpolls::instance();
-      $result .= $polls->gethead();
-    }
-    return  $result;
-  }
-  
   public function get_excerpt() {
     return $this->getdownloadcontent() . $this->data['excerpt'];
   }

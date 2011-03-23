@@ -14,10 +14,18 @@ class tticketeditor extends tposteditor {
   
   public function gethead() {
     $result = parent::gethead();
+    //triks for support jqloader
+    if (litepublisher::$classes->exists('tfastloader')) {
+$template = ttemplate::instance();
+      $result .= $template->getloadjavascript(
+    '"$site.url/js/litepublisher/admin.js", function() {
+    inittabs("#contenttabs");}' );
+    } else {
     $result .= '
     <script type="text/javascript">
     inittabs("#contenttabs");
     </script>';
+}
     return $result;
   }
   
