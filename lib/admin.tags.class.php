@@ -85,7 +85,7 @@ class tadmintags extends tadminmenu {
     if ($id == 0) {
       $id = $tags->add((int) $parent, $title);
       if (isset($url)) $tags->edit($id, $title, $url);
-      if (isset($idview)) $this->setvvalue($id, 'idview', (int) $idview);
+      if (isset($idview)) $this->setvalue($id, 'idview', (int) $idview);
       if (isset($icon)) $this->setvalue($id, 'icon', (int) $icon);
     } else {
       $item = $tags->getitem($id);
