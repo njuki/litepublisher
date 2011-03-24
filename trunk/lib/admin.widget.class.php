@@ -252,7 +252,7 @@ class tadminlinkswidget extends tadminwidget {
     }
     
     $args->add($item);
-    $args->linktitle = $item['title'];
+    $args->linktitle = isset($item['title']) ? $item['title'] : (isset($item['linktitle']) ? $item['linktitle'] : '');
     $result .= $html->linkform($args);
     
     $args->adminurl = $this->adminurl . $_GET['idwidget'] . '&idlink';
