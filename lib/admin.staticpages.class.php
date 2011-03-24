@@ -23,6 +23,7 @@ class tadminstaticpages extends tadminmenu {
     $pages = tstaticpages::instance();
     $this->basename = 'staticpages';
     $html = $this->html;
+$lang = tlocal::instance('staticpages');
     $id = $this->idget();
     if (!$pages->itemexists($id)) $id = 0;
     $args = targs::instance();
@@ -35,9 +36,9 @@ class tadminstaticpages extends tadminmenu {
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
           $pages->delete($id);
-          $result .= $html->h2->successdeleted;
+          $result .= $html->h3->successdeleted;
         } else {
-          $result .= $html->confirmdelete($args);
+          $result .= $html->confirmdelete($id, $this->adminurl, sprintf('%s %s?', $lang->confirmdelete, $item['title']));
         }
       } else {
         $result .= $this->editform($args);

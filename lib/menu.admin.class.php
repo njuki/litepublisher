@@ -19,6 +19,14 @@ class tadminmenus extends tmenus {
     $this->data['heads'] = '';
     tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
   }
+
+public function settitle($id, $title) {
+if ($id && isset($this->items[$id])) {
+$this->items[$id]['title'] = $title;
+$this->save();
+litepublisher::$urlmap->clearcache();
+}
+}
   
   public function getdir() {
     return litepublisher::$paths->data . 'adminmenus' . DIRECTORY_SEPARATOR;

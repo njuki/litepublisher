@@ -78,6 +78,16 @@ class tadminviews extends tadminmenu {
   public function getspecclasses() {
     return array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap');
   }
+
+public function gethead() {
+$result = parent::gethead();
+    switch ($this->name) {
+      case 'spec':
+//$result .= $template->
+break;
+}
+return $result;
+}
   
   public function getcontent() {
     $result = '';
@@ -139,11 +149,16 @@ class tadminviews extends tadminmenu {
       $args->formtitle = $lang->defaults;
       $result .= $html->adminform($html->spectabs, $args);
       break;
+
+case 'group':
+$result = 'group';
+
+break;
       
       case 'defaults':
       $items = '';
       $theme = ttheme::instance();
-      $tml = $theme->content->admin->combo;
+      $tml = $theme->templates['content.admin.combo'];
       foreach ($views->defaults as $name => $id) {
         $args->name = $name;
         $args->value = self::getcombo($id);
