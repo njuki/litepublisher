@@ -29,7 +29,7 @@ class tupdater extends tevents {
   
   public function run($version) {
     $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
-
+    
     if (file_exists($filename)) {
       require_once($filename);
       if ($this->log) tfiler::log("$filename is required file", 'update');

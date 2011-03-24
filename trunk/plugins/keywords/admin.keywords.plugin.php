@@ -60,7 +60,7 @@ class tadminkeywords extends tadminwidget {
     $result .= $links;
     $filelist = array_slice($filelist, $from, 100, true);
     $list = '';
-    $args->url = litepublisher::$site->url. '/admin/plugins/' . litepublisher::$site->q . 'plugin=' . $_GET['plugin'];
+    $args->url = litepublisher::$site->url. '/admin/plugins/' . litepublisher::$site->q . 'plugin=' . basename(dirname(__file__));
     foreach ($filelist as $filename) {
       if (!preg_match('/^\d+?\.\d+?\.php$/', $filename)) continue;
       $args->filename = $filename;
@@ -75,7 +75,7 @@ class tadminkeywords extends tadminwidget {
   }
   
   private function getlinkpages($page, $count) {
-    $url = litepublisher::$site->url. '/admin/plugins/' . litepublisher::$site->q . 'plugin=' . $_GET['plugin'];
+    $url = litepublisher::$site->url. '/admin/plugins/' . litepublisher::$site->q . 'plugin=' . basename(dirname(__file__));
     $result = "<a href='$url'>1</a>\n";
     for ($i = 2; $i <= $count; $i++) {
       $result .= "<a href='$url&page=$i'>$i</a>|\n";

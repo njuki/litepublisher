@@ -499,7 +499,6 @@ class tcommentmanager extends tevents {
     if ($post->status != 'published') return;
     $item = $post->comments->items[$id];
     $item['id'] = $id;
-    
     $item['post'] = $idpost;
     $item['title'] = $post->title;
     $item['posturl'] =     $post->lastcommenturl;
@@ -612,7 +611,7 @@ class tcommentmanager extends tevents {
     } else {
       $deleted = false;
       foreach ($this->items as $i => $item) {
-        if ($idpost == $item['iost']) {
+        if ($idpost == $item['post']) {
           unset($this->items[$i]);
           //array_splice($this->items, $i, 1);
           $deleted = true;

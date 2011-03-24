@@ -90,7 +90,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
-//tlocal::clearcache();
+tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
@@ -106,7 +106,7 @@ litepublisher::$options->handexception($e);
 //tupdater::instance()->run(4.35);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
-//tupdater::instance()->run(4.39);
+//tupdater::instance()->run('4.40');
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
