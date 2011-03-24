@@ -23,7 +23,7 @@ class tadminstaticpages extends tadminmenu {
     $pages = tstaticpages::instance();
     $this->basename = 'staticpages';
     $html = $this->html;
-$lang = tlocal::instance('staticpages');
+    $lang = tlocal::instance('staticpages');
     $id = $this->idget();
     if (!$pages->itemexists($id)) $id = 0;
     $args = targs::instance();

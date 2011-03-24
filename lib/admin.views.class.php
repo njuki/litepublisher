@@ -78,16 +78,18 @@ class tadminviews extends tadminmenu {
   public function getspecclasses() {
     return array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap');
   }
-
-public function gethead() {
-$result = parent::gethead();
+  
+  /*
+  public function gethead() {
+    $result = parent::gethead();
     switch ($this->name) {
       case 'spec':
-//$result .= $template->
-break;
-}
-return $result;
-}
+      //$result .= $template->
+      break;
+    }
+    return $result;
+  }
+  */
   
   public function getcontent() {
     $result = '';
@@ -149,11 +151,27 @@ return $result;
       $args->formtitle = $lang->defaults;
       $result .= $html->adminform($html->spectabs, $args);
       break;
-
-case 'group':
-$result = 'group';
-
-break;
+      
+      case 'group':
+      $args->formname = 'posts';
+      $args->formtitle = $lang->viewposts;
+      $args->items = self::getcomboview($views->defaults['post'], 'postview');
+      $result .= $html->groupform($args);
+      
+      $args->formname = 'menus';
+      $args->formtitle = $lang->viewmenus;
+      $args->items = self::getcomboview($views->defaults['menu'], 'menuview');
+      $result .= $html->groupform($args);
+      
+      $args->formname = 'themes';
+      $args->formtitle = $lang->themeviews;
+      $view = tview::instance();
+      $list =    tfiler::getdir(litepublisher::$paths->themes);
+      sort($list);
+      $themes = array_combine($list, $list);
+      $args->items = $html->getcombo('themeview', tadminhtml::array2combo($themes, $view->themename), $lang->themename);
+      $result .= $html->groupform($args);
+      break;
       
       case 'defaults':
       $items = '';
@@ -211,6 +229,55 @@ break;
         if (isset($obj->data['keywords'])) $obj->keywords = $_POST["keywords-$classname"];
         if (isset($obj->data['description '])) $obj->description = $_POST["description-$classname"];
         $obj->unlock();
+      }
+      break;
+      
+      case 'group':
+      //find action
+      foreach ($_POST as $name => $value) {
+        if (strbegin($name, 'action_')) {
+          $action = substr($name, strlen('action_'));
+          break;
+        }
+      }
+      
+      switch ($action) {
+        case 'posts':
+        $posts = tposts::instance();
+        $idview = (int) $_POST['postview'];
+        if (dbversion) {
+          $posts->db->update("idview = '$idview'", 'id > 0');
+        } else {
+          foreach ($posts->items as $id => $item) {
+            $post = tpost::instance($id);
+            $post->idview = $idview;
+            $post->save();
+            $post->free();
+          }
+        }
+        break;
+        
+        case 'menus':
+        $idview = (int) $_POST['menuview'];
+        $menus = tmenus::instance();
+        foreach ($menus->items as $id => $item) {
+          $menu = tmenu::instance($id);
+          $menu->idview = $idview;
+          $menu->save();
+        }
+        break;
+        
+        case 'themes':
+        $themename = $_POST['themeview'];
+        $views = tviews::instance();
+        $views->lock();
+        foreach ($views->items as $id => $item) {
+          $view = tview::instance($id);
+          $view->themename = $themename;
+          $view->save();
+        }
+        $views->unlock();
+        break;
       }
       break;
       
