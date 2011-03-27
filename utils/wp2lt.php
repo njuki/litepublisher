@@ -60,6 +60,7 @@ $menuitem->url = $url;
     'id' => $menuitem->id,
     'class' => get_class($menuitem)
     );
+$menus->autoid = max($menus->autoid, $menuitem->id);
     //move props
     foreach (tmenu::$ownerprops as $prop) {
       $menus->items[$menuitem->id][$prop] = $menuitem->$prop;
@@ -77,40 +78,42 @@ $menus->unlock();
 }
 
  function AddTag($tags, $id, $parent, $title, $url) {
+$id = (int) $id;
+$parent = (int) $parent;
 if (isset($tags->items[$id])) return;
   $UrlArray = parse_url($url);
   $url = $UrlArray['path'];
   if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
-  
-  $tags->items[$id] = array(
-  'id' => $id,
-  'count' => 0,
-  'name' => $name,
-  'url' =>$url,
-  //'description ' => '',
-  //'keywords' => '',
-  'items' => array()
-  );
-  
-  $urlmap =&TUrlmap::instance();
-$dir = "/$tags->PermalinkIndex/";
-if (substr($url, 0, strlen($dir)) == $dir) {
-$subdir = substr($url, strlen($dir));
-$subdir = trim($subdir, '/');
-$urlmap->AddSubNode($tags->PermalinkIndex, $subdir, get_class($tags), $id);
-} else {
-  $urlmap->Add($url, get_class($tags), $id);
+        $idurl =         litepublisher::$urlmap->add($url, get_class($tags),  $id);
+$tags->autoid = max($tags->autoid, $id);
+    if ($tags->dbversion)  {
+    $tags->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$tags->thistable,$tags->autoid);
+$tags->db->insert_a(array(
+      'parent' => $parent,
+'idurl' => $idurl,
+      'title' => $title,
+      'idview' => 1
+      ));
+    }
+    
+    $tags->items[$id] = array(
+    'id' => $id,
+    'parent' => $parent,
+    'idurl' =>         $idurl,
+    'url' =>$url,
+    'title' => $title,
+    'icon' => 0,
+    'idview' => $1,
+    'itemscount' => 0
+    );
 }
-
-}  
-
+    
 function ExportCategories() {
-$categories = &TCategories::instance();
+$categories = tcategories::instance();
 $categories->lock();
 		if ( $cats = get_categories('get=all') ) {
 			foreach ( $cats as $cat ) {
 AddTag($categories, $cat->term_id, $cat->name, get_category_link($cat->term_id));
-$categories->lastid = max($categories->lastid, $cat->term_id);
 }
 }
 $categories->unlock();
@@ -119,19 +122,21 @@ $categories->unlock();
 function  ExportPosts() {
 		global $wpdb, $from;
 
-  $urlmap = &TUrlmap::instance();
+  $urlmap = turlmap::instance();
   $urlmap->lock();
 
-$posts = &TPosts::instance();
+$posts = tposts::instance();
 $posts->lock();
-$categories = &TCategories::instance();
+$categories = tcategories::instance();
+$categories->loadall();
 $categories->lock();
-$tags = &TTags::instance();
+$tags = ttags::instance();
+$tags->loadall();
 $tags->lock();
-$CommentManager = &TCommentManager::instance();
+$CommentManager = tcommentmanager::instance();
 $CommentManager->lock();
 
-$users = &TCommentUsers::instance();
+$users = tcommentusers::instance();
 $users->lock();
 
 if ($from == 0) {
@@ -139,8 +144,8 @@ ExportCategories();
 ExportPages();
 }
 
-$cron = &TCron::instance();
-
+$cron = tcron::instance();
+$cron->disableadd = true;
 //$list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'post'");
 $list = $wpdb->get_results("SELECT ID FROM $wpdb->posts 
 WHERE post_type = 'post'
@@ -151,7 +156,7 @@ foreach ($list as $idresult) {
 $itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult->ID");
 $item = &$itemres[0];
 
-  $post = &new TPost();
+  $post = new tpost();
 $post->id = (int) $item->ID;
 $post->date =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
 
@@ -162,23 +167,26 @@ $taglist = array();
 $wptags = wp_get_post_tags( $item->ID);
 foreach ($wptags as 	$wptag) {
 AddTag($tags, (int) $wptag->term_id, $wptag->name, get_tag_link($wptag->term_id ));
-$tags->lastid = max($tags->lastid, $wptag->term_id);
-$taglist[] = $wptag->term_id ;
+$taglist[] = (int) $wptag->term_id ;
 }
 
   $post->tags = $taglist;
-$post->url =get_permalink($item->ID);
+$UrlArray = parse_url(get_permalink($item->ID));
+$url = $UrlArray['path'];
+if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
+$post->url = $url;
+$post->idurl = litepublisher::$urlmap->add($post->url, get_class($post), $post->id);
+
   $post->content = $item->post_content;
 $post->commentsenabled =  'open' == $item->comment_status;
 $post->pingenabled = 'open' == $item->ping_status;
 $post->password = $item->post_password;
 $post->status = $item->post_status == 'publish' ? 'published' : 'draft';
-//
-ExportPost($post);
-$categories->PostEdit($post->id);
-$tags->PostEdit($post->id);
+savepost($post);
+  $categories->itemsposts->setitems($post->id, $post->categories);
+  $tags->itemsposts->setitems($post->id, $post->tags);
 ExportComments($post);
-unset(TPost::$AllItems['TPost']);
+$post->free();
 }
 $cron->unlock();
 $users->unlock();
@@ -187,36 +195,61 @@ $users->unlock();
 $CommentManager->unlock();
 $tags->unlock();
 $categories->unlock();
+
+$posts->UpdateArchives();
+$posts->addrevision();
+
 $posts->unlock();
-  $urlmap->ClearCache();
-$arch = &TArchives::instance();
-$arch->PostsChanged();
+  $urlmap->clearcache();
+$arch = tarchives::instance();
+$arch->postschanged();
   $urlmap->unlock();
 
 if (count($list) < 500) return false;
 return $item->ID;
 }
 
-function ExportPost(&$post) {
-  global $paths;
-$posts =&TPosts::instance();
-  $posts->lastid = max($posts->lastid, $post->id);
-  @mkdir($paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id, 0777);
-  @chmod($paths['data'] . 'posts' . DIRECTORY_SEPARATOR  . $post->id, 0777);
-
+function savepost($post) {
     if ($post->date == 0) $post->date = time();
 $post->modified = time();
-$UrlArray = parse_url($post->url);
-$url = $UrlArray['path'];
-if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
-$post->url = $url;
   
-  $posts->Updated($post);
-$cron = &TCron::instance();
-$cron->Remove($cron->lastid);
-  $post->save();
-$urlmap = &TUrlmap::instance();
-  $urlmap->Add($post->url, get_class($post), $post->id);
+$posts =tposts::instance();
+  $posts->autoid = max($posts->autoid, $post->id);
+if (dbversion) {
+    $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$tags->autoid);
+    $self = tposttransform::instance($post);
+    $values = array('id' => $post->id);
+    foreach (tposttransform::$props as $name) {
+      $values[$name] = $self->__get($name);
+    }
+    $db = litepublisher::$db;
+    $db->table = 'posts';
+$db->insert_a($values);
+    $post->rawdb->insert_a(array(
+    'id' => $post->id,
+    'created' => sqldate(),
+    'modified' => sqldate(),
+    'rawcontent' => $post->data['rawcontent']
+    ));
+    
+    $db->table = 'pages';
+    foreach ($post->data['pages'] as $i => $content) {
+      $db->insert_a(array('post' => $id, 'page' => $i,         'content' => $content));
+    }
+    
+} else {
+      $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
+      if (!is_dir($dir)) mkdir($dir, 0777);
+      chmod($dir, 0777);
+$post->save();
+
+      $posts->items[$post->id] = array(
+      'posted' => $post->posted
+      );
+      if   ($post->status != 'published') $posts->items[$post->id]['status'] = $post->status;
+      if   ($post->author > 1) $posts->items[$post->id]['author'] = $post->author;
+}
+
 echo "$post->id\n";	
 flush();
  }
@@ -265,7 +298,7 @@ $comments->save();
 
 $from = isset($_REQUEST['from']) ? $_REQUEST['from'] : 0;
 if ($from == 0) ExportOptions();
-if ($from = ExportPosts()) {
+if ($from = saveposts()) {
 echo "</pre>
 <form name='form' action='' type='get'>
 <input type=hidden name='from' value='$from' />
