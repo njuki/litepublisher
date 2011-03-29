@@ -6,15 +6,6 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 #logo .name a {text-decoration:none;color:#fff}
 #logo .slogan {top:16px;position:relative;}
 
-
-/*
-#topmenu {width:958px;height:100%;margin:0 auto;position:relative;display:block;background-color:#fff;font:14px Trebuchet MS, Tahoma, Verdana, sans-serif;color:#0c588a;padding:1px;overflow: hidden;}
-#topmenu ul {list-style:none;background-color:#bcebff;width:888px;height:100%;border:5px solid #dff6ff;padding:0 30px;overflow: hidden;}
-#topmenu ul li {height:30px;float:left;margin-right:20px;position:relative;}
-#topmenu ul li a {color:#0c588a;height:30px;position:relative;top:5px;text-shadow:1px 1px 0 #eefaff;text-decoration:none;}
-#topmenu ul li a:hover {text-decoration:underline;}
-*/
-
 #topmenu{position:relative; z-index: 50; height: 40px; width: 960px; margin: 0 auto; border: 1px solid #fff; font: 14px Trebuchet MS, Tahoma, Verdana, sans-serif; color: #0c588a;} 
 #topmenu ul li a {color: #0c588a; height: 30px; text-shadow: 1px 1px 0 #eefaff; text-decoration: none;} 
 #topmenu ul li a:hover {text-decoration:underline;} 

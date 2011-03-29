@@ -6,7 +6,7 @@
 **/
 
 $(document).ready(function() {
-  $("input[rel=\'checkall\']").click(function() {
+  $("input[rel='checkall']").click(function() {
     $(this).closest("form").find("input:checkbox").attr("checked", true);
     $(this).attr("checked", false);
   });
