@@ -27,13 +27,14 @@ class tupdater extends tevents {
     return trim(file_get_contents(litepublisher::$paths->libinclude . 'version.txt'));
   }
   
-  public function run($version) {
-    $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$version.php";
-    
+  public function run($ver) {
+    $ver = (string) $ver;
+    if (strlen($ver) == 3) $ver .= '0';
+    $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$ver.php";
     if (file_exists($filename)) {
       require_once($filename);
       if ($this->log) tfiler::log("$filename is required file", 'update');
-      $func = 'update' . str_replace('.', '', $version);
+      $func = 'update' . str_replace('.', '', $ver);
       if (function_exists($func)) {
         $func();
         if ($this->log) tfiler::log("$func is called", 'update');
