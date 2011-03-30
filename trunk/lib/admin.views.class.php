@@ -79,19 +79,72 @@ class tadminviews extends tadminmenu {
     return array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap');
   }
   
-  /*
+
   public function gethead() {
     $result = parent::gethead();
     switch ($this->name) {
+    switch ($this->name) {
+      case 'views':
+$template = ttemplate::instance();
+    $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
+  $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.js", function() {init_views();}' );
+      break;
+
+/*
       case 'spec':
       //$result .= $template->
       break;
+*/
     }
     return $result;
   }
-  */
-  
-  public function getcontent() {
+
+private function get_view_sidebars($idview) {
+$view = tview::instance($idview);
+    $widgets = twidgets::instance();
+    $html = $this->html;
+    $lang = tlocal::instance('views');
+    $args = targs::instance();
+    $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
+$view_sidebars = '';
+$widgetoptions = '';
+     $count = count($view->sidebars);
+    $sidebarnames = range(1, $count);
+    $parser = tthemeparser::instance();
+    $about = $parser->getabout($view->theme->name);
+    foreach ($sidebarnames as $key => $value) {
+      if (isset($about["sidebar$key"])) $$sidebarnames[$key] = $about["sidebar$key"];
+    }
+
+    foreach ($view->sidebars as $i => $sidebar) {
+$widgetlist = '';
+      foreach ($sidebar as $j => $_item) {
+        $id = $_item['id'];
+        $widget = $widgets->getitem($id);
+        $args->id = $id;
+        $args->ajax = $_item['ajax'];
+        $args->inline = $_item['ajax'] === 'inline';
+        $args->disabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache') ? '' : 'disabled';
+        $args->add($widget);
+$widgetlist .= $html->widgetitem($args);
+        $widgetoptions .= $html->widgetoption($args);
+}
+$args->sidebarname = $sidebarnames[$i];
+$args->items = $widgetlist;
+$view_sidebars .= $html->view_sidebar($args);
+}
+
+$args->view_sidebars = $view_sidebars;
+$args->widgetoptions = $widgetoptions;
+$args->id = $idview;
+return $html->view_sidebars($args);
+}
+
+private function get_view_theme($idview) {
+return '';
+}
+
+    public function getcontent() {
     $result = '';
     $views = tviews::instance();
     $html = $this->html;
@@ -99,6 +152,7 @@ class tadminviews extends tadminmenu {
     $args = targs::instance();
     switch ($this->name) {
       case 'views':
+/*
       switch ($this->action) {
         case 'edit':
         $result .= $this->editform->getform();
@@ -128,6 +182,20 @@ class tadminviews extends tadminmenu {
       array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
       array('center', $lang->delete, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
       ));
+*/
+
+$items = '';
+$content = '';
+foreach ($views->items as $id => $itemview) {
+$args->add($itemview);
+$items .= $html->itemview($args);
+$args->view_sidebars = $this->get_view_sidebars($id);
+$args->view_theme = $this->get_view_theme($id);
+$content .= $html->viewtab($args);
+}
+$args->items = $items;
+$args->content = $content;
+$result = $html->allviews($args);
       break;
       
       case 'spec':
