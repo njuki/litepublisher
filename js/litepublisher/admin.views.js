@@ -83,6 +83,30 @@ $(".view_sidebar", this).sortable({
 });
 });
 
+$("input[id^='widget_delete_']").click(function() {
+var a = $(this).attr("id").split("_");
+var idwidget = a.pop();
+var idview = a.pop();
+$("#dialog_widget_delete").dialog( {
+autoOpen: true,
+modal: true,
+buttons: [
+{
+        text: "Ok",
+        click: function() {
+ $(this).dialog("close"); 
+$("#widget_" + idview + "_" + idwidget).remove();
+$("#widgetoptions_" + idview + "_" + idwidget).hide();
+}
+    },
+{
+        text: "Cancel",
+        click: function() { $(this).dialog("close"); }
+    }
+]
+} );
+});
+
 });
 });
 }
