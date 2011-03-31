@@ -16,9 +16,19 @@ $("action_value").val(value);
 }
 
 function submit_views() {
-//var a = $(".
-$(".viewsidebar li").each(function() {
+for (var i =0; i < ltoptions.allviews.length; i++) {
+var idview = ltoptions.allviews[i];
+var idwidgets = "#widgets_" + idview + "_";
+$("ul[id^='view_sidebar_" + idview + "_']").each(function() {
+try {
+var sidebar = $(this).attr("id").split("_").pop();
+var widgets = $.map($(this).sortable('toArray'), function(v, index) {
+return v.split("_").pop();
 });
+$(idwidgets + sidebar).val(widgets.join(","));
+} catch(e) { alert(e.message); }
+});
+}
 }
 
 function init_views() {
@@ -62,13 +72,12 @@ return false;
 
 $(".view_sidebar li").click(function() {
 var id = $(this).attr("id");
-alert(id);
 var a = id.split("_");
 $("#widgetoptions_"+ a[1] + " div").hide();
 $("#widgetoptions_" + a[1] + "_" + a[2]).show();
 });
 
-$(".viewsidebars").each(function() {
+$(".view_sidebars").each(function() {
 $(".view_sidebar", this).sortable({
 			connectWith: $(".view_sidebar", this)
 });

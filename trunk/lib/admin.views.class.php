@@ -123,8 +123,10 @@ $widgetoptions = '';
     foreach ($view->sidebars as $index => $sidebar) {
 $args->index = $index;
 $widgetlist = '';
+$idwidgets = array();
       foreach ($sidebar as $j => $_item) {
         $id = $_item['id'];
+$idwidgets[] = $id;
         $widget = $widgets->getitem($id);
         $args->id = $id;
         $args->ajax = $_item['ajax'];
@@ -136,6 +138,7 @@ $widgetlist .= $html->widgetitem($args);
 }
 $args->sidebarname = $sidebarnames[$index];
 $args->items = $widgetlist;
+$args->idwidgets = implode(',', $idwidgets);
 $view_sidebars .= $html->view_sidebar($args);
 }
 
