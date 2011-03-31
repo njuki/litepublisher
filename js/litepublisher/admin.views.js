@@ -47,7 +47,6 @@ $("ul", ui.panel).removeClass("view_sidebars").children("li").removeClass("view_
 
 $("#allviewtabs").tabs({ cache: true });
 
-
   $("input[id^='delete_']").click(function() {
 $("#action").val("delete");
 $("#action_value").val(idview);
@@ -58,7 +57,23 @@ $("form").submit(function() {
 if ("delete" == $("action").val()) return;
 $("#action").val("sidebars");
 submit_views();
+return false;
 });
+
+$(".view_sidebar li").click(function() {
+var id = $(this).attr("id");
+alert(id);
+var a = id.split("_");
+$("#widgetoptions_"+ a[1] + " div").hide();
+$("#widgetoptions_" + a[1] + "_" + a[2]).show();
+});
+
+$(".viewsidebars").each(function() {
+$(".view_sidebar", this).sortable({
+			connectWith: $(".view_sidebar", this)
+});
+});
+
 });
 });
 }

@@ -108,6 +108,7 @@ $view = tview::instance($idview);
     $html = $this->html;
     $lang = tlocal::instance('views');
     $args = targs::instance();
+$args->idview = $idview;
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
 $view_sidebars = '';
 $widgetoptions = '';
@@ -116,10 +117,11 @@ $widgetoptions = '';
     $parser = tthemeparser::instance();
     $about = $parser->getabout($view->theme->name);
     foreach ($sidebarnames as $key => $value) {
-      if (isset($about["sidebar$key"])) $$sidebarnames[$key] = $about["sidebar$key"];
+      if (isset($about["sidebar$key"])) $sidebarnames[$key] = $about["sidebar$key"];
     }
 
-    foreach ($view->sidebars as $i => $sidebar) {
+    foreach ($view->sidebars as $index => $sidebar) {
+$args->index = $index;
 $widgetlist = '';
       foreach ($sidebar as $j => $_item) {
         $id = $_item['id'];
@@ -132,7 +134,7 @@ $widgetlist = '';
 $widgetlist .= $html->widgetitem($args);
         $widgetoptions .= $html->widgetoption($args);
 }
-$args->sidebarname = $sidebarnames[$i];
+$args->sidebarname = $sidebarnames[$index];
 $args->items = $widgetlist;
 $view_sidebars .= $html->view_sidebar($args);
 }
