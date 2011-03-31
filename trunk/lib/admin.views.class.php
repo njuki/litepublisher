@@ -83,11 +83,14 @@ class tadminviews extends tadminmenu {
   public function gethead() {
     $result = parent::gethead();
     switch ($this->name) {
-    switch ($this->name) {
       case 'views':
 $template = ttemplate::instance();
-    $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
-  $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.js", function() {init_views();}' );
+    $template->ltoptions[] = sprintf('allviews: [%s]', implode(',', array_keys(tviews::instance()->items)));
+  //$result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.js", function() {init_views();}' );
+$result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
+<script type="text/javascript" >
+init_views();
+</script>';
       break;
 
 /*
