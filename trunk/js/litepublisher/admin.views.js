@@ -54,18 +54,25 @@ $("#customsidebar_1").attr("disabled", "disabled");
 $("#disableajax_1").attr("disabled", "disabled");
 var disabled = [];
 } else {
-var disabled = $(this).attr("checked") ? [] : [0];
+var checked = $(this).attr("checked");
+var disabled = checked ? [] : [0];
+$("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
 }
-//alert(disabled.join(","));
-//maybe bug but disabled didnt work by init
-$(this).tabs({ cache: true });
-$( this).tabs( "option", "disabled", disabled );
+
+$(this).tabs({ 
+cache: true,
+disabled: disabled,
+selected: disabled.length == 0 ? 0 : 2
+});
 });
 
-$("div[rel='tabs']").each(function() {
-//$( "#viewtab_" + idview ).tabs( "option", "disabled", disabled );
-alert($(this ).tabs( "option", "disabled").join(","));
+$("input[id^='customsidebar_']").click(function() {
+var idview = $(this).attr("id").split("_").pop();
+var checked = $(this).attr("checked");
+$("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
+$( "#viewtab_" + idview ).tabs( "option", "disabled", checked  ? [] : [0]);
 });
+
 $("#allviewtabs").tabs({ cache: true });
 
   $("input[id^='delete_']").click(function() {
@@ -105,16 +112,18 @@ $("#widgetoptions_" + idview + "_" + idwidget).hide();
 });
 });
 
+
+//remember init state
+$("input[id^='inline_']").each(function() {
+$(this).data("enabled", ! $(this).attr("disabled"));
+});
+//ajax options of single widget
 $("input[id^='ajax_']").click(function() {
 var checked = $(this).attr("checked");
 var id = "#" + $(this).attr("id").replace("ajax_", "inline_");
+if ($(id).data("enabled")) {
 $(id).attr("disabled", checked ? "" : "disabled");
-});
-
-$("input[id^='customsidebar_']").click(function() {
-var idview = $(this).attr("id").split("_").pop();
-var disabled = $(this).attr("checked") ? [] : [0];
-$( "#viewtab_" + idview ).tabs( "option", "disabled", disabled );
+}
 });
 
 });

@@ -47,7 +47,7 @@ class tadminwidgets extends tadminmenu {
         $args->id = $id;
         $args->ajax = $_item['ajax'];
         $args->inline = $_item['ajax'] === 'inline';
-        $args->disabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache') ? '' : 'disabled';
+        $args->disabled = ($item['cache'] == 'cache') || ($item['cache'] == 'nocache') ? '' : 'disabled="disabled"';
         $args->add($item);
         $args->sidebarcombo = tadminhtml::getcombobox("sidebar-$id", $sidebarnames, $i);
         $args->ordercombo = tadminhtml::getcombobox("order-$id", $orders, $j);
