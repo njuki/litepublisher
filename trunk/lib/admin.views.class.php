@@ -131,7 +131,7 @@ $idwidgets = array();
 $idwidgets[] = $id;
         $widget = $widgets->getitem($id);
         $args->id = $id;
-        $args->ajax = $_item['ajax'];
+        $args->ajax = $_item['ajax'] ? true : false;
         $args->inline = $_item['ajax'] === 'inline';
         $args->disabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache') ? '' : 'disabled';
         $args->add($widget);

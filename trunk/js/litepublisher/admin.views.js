@@ -47,26 +47,25 @@ if ($.isFunction(fn)) fn();
 function init_views() {
     $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery-ui.lists.1.8.10.custom.min.js', function() {
       $(document).ready(function() {
-$("div[rel='tabs']").tabs({ 
-cache: true,
-   show: function(event, ui) {
-/*
-switch (ui.index) {
-case 0:
-$("ul", ui.panel).removeClass("view_sidebars").children("li").removeClass("view_sidebar");
-alert($(ui.panel  ).parent().html());
-$("ul", ui.panel).addClass("view_sidebars")
-.children("li").addClass("view_sidebar");
-alert($(ui.panel  ).html());
-break;
-
-default:
-$("ul", ui.panel).removeClass("view_sidebars").children("li").removeClass("view_sidebar");
+$("div[rel='tabs']").each(function() {
+var idview = $(this).attr("id").split("_").pop();
+if (idview == 1) {
+$("#customsidebar_1").attr("disabled", "disabled");
+$("#disableajax_1").attr("disabled", "disabled");
+var disabled = [];
+} else {
+var disabled = $(this).attr("checked") ? [] : [0];
 }
-*/
-}
+//alert(disabled.join(","));
+//maybe bug but disabled didnt work by init
+$(this).tabs({ cache: true });
+$( this).tabs( "option", "disabled", disabled );
 });
 
+$("div[rel='tabs']").each(function() {
+//$( "#viewtab_" + idview ).tabs( "option", "disabled", disabled );
+alert($(this ).tabs( "option", "disabled").join(","));
+});
 $("#allviewtabs").tabs({ cache: true });
 
   $("input[id^='delete_']").click(function() {
@@ -85,9 +84,8 @@ return false;
 });
 
 $(".view_sidebar li").click(function() {
-var id = $(this).attr("id");
-var a = id.split("_");
-$("#widgetoptions_"+ a[1] + " div").hide();
+var a = $(this).attr("id").split("_");
+$("div[id^='widgetoptions_"+ a[1] + "_']").hide();
 $("#widgetoptions_" + a[1] + "_" + a[2]).show();
 });
 
@@ -107,6 +105,17 @@ $("#widgetoptions_" + idview + "_" + idwidget).hide();
 });
 });
 
+$("input[id^='ajax_']").click(function() {
+var checked = $(this).attr("checked");
+var id = "#" + $(this).attr("id").replace("ajax_", "inline_");
+$(id).attr("disabled", checked ? "" : "disabled");
+});
+
+$("input[id^='customsidebar_']").click(function() {
+var idview = $(this).attr("id").split("_").pop();
+var disabled = $(this).attr("checked") ? [] : [0];
+$( "#viewtab_" + idview ).tabs( "option", "disabled", disabled );
+});
 
 });
 });
