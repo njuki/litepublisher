@@ -115,13 +115,14 @@ $args->idview = $idview;
 $view_sidebars = '';
 $widgetoptions = '';
      $count = count($view->sidebars);
-    $sidebarnames = range(1, $count);
+    $sidebarnames = range(1, 3);
     $parser = tthemeparser::instance();
     $about = $parser->getabout($view->theme->name);
     foreach ($sidebarnames as $key => $value) {
       if (isset($about["sidebar$key"])) $sidebarnames[$key] = $about["sidebar$key"];
     }
 
+if (($idview > 1) && !$view->customsidebar) $view = tview::instance(1);
     foreach ($view->sidebars as $index => $sidebar) {
 $args->index = $index;
 $widgetlist = '';
@@ -133,7 +134,7 @@ $idwidgets[] = $id;
         $args->id = $id;
         $args->ajax = $_item['ajax'] ? true : false;
         $args->inline = $_item['ajax'] === 'inline';
-        $args->disabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache') ? '' : 'disabled';
+        $args->disabled = ($widget['cache'] == 'cache') || ($widget['cache'] == 'nocache') ? '' : 'disabled="disabled"';
         $args->add($widget);
 $widgetlist .= $html->widgetitem($args);
         $widgetoptions .= $html->widgetoption($args);
