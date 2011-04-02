@@ -44,6 +44,14 @@ if ($.isFunction(fn)) fn();
 
 }
 
+function show_append_widgets(show) {
+if (show) {
+$("#appendwidgets").show();
+} else {
+$("#appendwidgets").hide();
+}
+}
+
 function init_views() {
     $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery-ui.lists.1.8.10.custom.min.js', function() {
       $(document).ready(function() {
@@ -62,7 +70,17 @@ $("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
 $(this).tabs({ 
 cache: true,
 disabled: disabled,
-selected: disabled.length == 0 ? 0 : 2
+selected: disabled.length == 0 ? 0 : 2,
+   show: function(event, ui) {
+if (ui.index == 0) {
+var idview = $(ui.panel).attr("id").split("_").pop();
+var showlist = $("#appendwidget_" + idview).data("showlist");
+show_append_widgets(showlist);
+} else {
+show_append_widgets(false);
+}
+}
+
 });
 });
 
@@ -124,6 +142,13 @@ var id = "#" + $(this).attr("id").replace("ajax_", "inline_");
 if ($(id).data("enabled")) {
 $(id).attr("disabled", checked ? "" : "disabled");
 }
+});
+
+$("a[id^='appendwidget_']").click(function() {
+var showlist = ! $(this).data("showlist");
+$(this).data("showlist", showlist);
+show_append_widgets(showlist);
+return false;
 });
 
 });

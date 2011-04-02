@@ -43,7 +43,7 @@ class tadminthemes extends tadminmenu {
     $result = tadminviews::getviewform('/admin/views/themes/');
     $idview = tadminhtml::getparam('idview', 1);
     $view = tview::instance($idview);
-    $html = $this->gethtml('themes');;
+    $html = $this->gethtml('themes');
     $args = targs::instance();
     $args->idview = $idview;
     $theme = $view->theme;
