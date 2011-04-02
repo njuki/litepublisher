@@ -116,8 +116,25 @@ $("#widgetoptions_" + a[1] + "_" + a[2]).show();
 
 $(".view_sidebars").each(function() {
 $(".view_sidebar", this).sortable({
-			connectWith: $(".view_sidebar", this)
+			connectWith: $(".view_sidebar", this),
+ 
+  receive: function(event, ui) {
+if ($(ui.sender).attr("id") == "append_widgets") {
+var id = $(ui.item).attr("id").split("_").pop();
+if ($("li[id$='_" + id + "']", this).length) {
+$(ui.sender).sortable('cancel');
+alert('cancel');
+}
+else alert('added');
+}
+}
+
 });
+});
+
+$("#append_widgets").sortable({
+			connectWith: ".view_sidebar",
+helper: "clone"
 });
 
 $("input[id^='widget_delete_']").click(function() {
