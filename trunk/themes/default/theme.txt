@@ -409,7 +409,7 @@ content.post.templatecomments.form = [
 									<input type="hidden" name="postid" value="$postid" />
 									<input type="hidden" name="antispam" value="$antispam" />
 
-									<p><input name="submit" type="submit" id="submit" value="$lang.send" /></p>
+									<p><input name="submitbutton" type="submit" id="submitbutton" value="$lang.send" /></p>
 								</form>
 ]
 
@@ -689,7 +689,7 @@ $form = [
 <h3>$formtitle</h3>
 <form name="form" action="" method="post" >
 $items
-  <p><input type="submit" name="submit" value="$lang.update" /></p>
+  <p><input type="submit" name="submitbutton" id="submitbutton" value="$lang.update" /></p>
 </form>]
 ]
 

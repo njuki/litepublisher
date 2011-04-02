@@ -1,13 +1,3 @@
-function getidview(name) {
-var a = name.split('_');
-return a[1];
-}
-
-function set_action(name, value) {
-$("#action").val($name);
-$("action_value").val(value);
-}
-
 function submit_views() {
 for (var i =0; i < ltoptions.allviews.length; i++) {
 var idview = ltoptions.allviews[i];
@@ -52,6 +42,13 @@ $("#appendwidgets").hide();
 }
 }
 
+
+function widget_clicked() {
+var a = $(this).attr("id").split("_");
+$("div[id^='widgetoptions_"+ a[1] + "_']").hide();
+$("#widgetoptions_" + a[1] + "_" + a[2]).show();
+}
+
 function init_views() {
     $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery-ui.lists.1.8.10.custom.min.js', function() {
       $(document).ready(function() {
@@ -94,25 +91,22 @@ $( "#viewtab_" + idview ).tabs( "option", "disabled", checked  ? [] : [0]);
 $("#allviewtabs").tabs({ cache: true });
 
   $("input[id^='delete_']").click(function() {
+var idview = $(this).attr("id").split("_").pop();
 confirm_dialog("#dialog_view_delete", function() {
 $("#action").val("delete");
 $("#action_value").val(idview);
-$("form").submit();
+$("#form").submit();
 });
 });
 
-$("form").submit(function() {
-if ("delete" == $("action").val()) return;
-$("#action").val("sidebars");
+$("#form").submit(function() {
+if ("delete" == $("#action").val()) return;
+$("#action").val("widgets");
 submit_views();
-return false;
+//return false;
 });
 
-$(".view_sidebar li").click(function() {
-var a = $(this).attr("id").split("_");
-$("div[id^='widgetoptions_"+ a[1] + "_']").hide();
-$("#widgetoptions_" + a[1] + "_" + a[2]).show();
-});
+$(".view_sidebar li").click(widget_clicked);
 
 $(".view_sidebars").each(function() {
 $(".view_sidebar", this).sortable({
@@ -121,11 +115,16 @@ $(".view_sidebar", this).sortable({
   receive: function(event, ui) {
 if ($(ui.sender).attr("id") == "append_widgets") {
 var id = $(ui.item).attr("id").split("_").pop();
-if ($("li[id$='_" + id + "']", this).length) {
+if ($("li[id$='_" + id + "']", this).length > 1) {
 $(ui.sender).sortable('cancel');
-alert('cancel');
+} else {
+var a = $(this).attr("id").split("_");
+a.pop();
+$(ui.item).attr("id", "widget_" + a.pop() + "_" + id);
+//$(ui.item).click(widget_clicked);
+alert($(this).html());
 }
-else alert('added');
+
 }
 }
 
@@ -146,7 +145,6 @@ $("#widget_" + idview + "_" + idwidget).remove();
 $("#widgetoptions_" + idview + "_" + idwidget).hide();
 });
 });
-
 
 //remember init state
 $("input[id^='inline_']").each(function() {

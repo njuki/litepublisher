@@ -300,7 +300,20 @@ $result = $html->allviews($args);
     $result = '';
     switch ($this->name) {
       case 'views':
+echo "<pre>\n";
+var_dump($_POST);
+echo "\n</pre>\n";
+$views = tviews::instance();
       switch ($this->action) {
+case 'delete':
+
+break;
+
+case 'widgets':
+break;
+}
+
+/*
         case 'add':
         $name = trim($_POST['name']);
         if ($name != '') {
@@ -313,6 +326,7 @@ $result = $html->allviews($args);
         case 'edit':
         return $this->editform->processform();
       }
+*/
       break;
       
       case 'spec':
