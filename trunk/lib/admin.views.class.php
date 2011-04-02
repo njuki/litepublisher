@@ -108,6 +108,7 @@ private function get_view_sidebars($idview) {
 $view = tview::instance($idview);
     $widgets = twidgets::instance();
     $html = $this->html;
+$html->section = 'views';
     $lang = tlocal::instance('views');
     $args = targs::instance();
 $args->idview = $idview;
@@ -152,7 +153,10 @@ return $html->view_sidebars($args);
 }
 
 private function get_view_theme($idview) {
-return '';
+$view = tview::instance($idview);
+    $lang = tlocal::instance('themes');
+return str_replace('theme_idview', 'theme_' . $idview,
+tadminthemes::getlist($this->html->radiotheme, $view->theme->name));
 }
 
     public function getcontent() {
@@ -202,10 +206,21 @@ $args->add($itemview);
 $items .= $html->itemview($args);
 $args->view_sidebars = $this->get_view_sidebars($id);
 $args->view_theme = $this->get_view_theme($id);
+$html->section = 'views';
 $content .= $html->viewtab($args);
 }
+    $lang->section = 'views';
 $args->items = $items;
 $args->content = $content;
+
+$widgetlist = '';
+$widgets = twidgets::instance();
+    foreach ($widgets->items as $id => $item) {
+      $args->id = $id;
+      $args->add($item);
+      $widgetlist .= $html->addwidget($args);
+    }
+$args->widgetlist=  $widgetlist;
 $result = $html->allviews($args);
       break;
       
