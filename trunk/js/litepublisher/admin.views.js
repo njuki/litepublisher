@@ -1,3 +1,10 @@
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+
 function submit_views() {
 for (var i =0; i < ltoptions.allviews.length; i++) {
 var idview = ltoptions.allviews[i];
@@ -42,7 +49,6 @@ $("#appendwidgets").hide();
 }
 }
 
-
 function widget_clicked() {
 var a = $(this).attr("id").split("_");
 $("div[id^='widgetoptions_"+ a[1] + "_']").hide();
@@ -57,6 +63,7 @@ var idview = $(this).attr("id").split("_").pop();
 if (idview == 1) {
 $("#customsidebar_1").attr("disabled", "disabled");
 $("#disableajax_1").attr("disabled", "disabled");
+$("#delete_1").attr("disabled", "disabled");
 var disabled = [];
 } else {
 var checked = $(this).attr("checked");
@@ -67,7 +74,7 @@ $("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
 $(this).tabs({ 
 cache: true,
 disabled: disabled,
-selected: disabled.length == 0 ? 0 : 2,
+selected: disabled.length == 0 ? 0 : 1,
    show: function(event, ui) {
 if (ui.index == 0) {
 var idview = $(ui.panel).attr("id").split("_").pop();
@@ -122,7 +129,6 @@ var a = $(this).attr("id").split("_");
 a.pop();
 $(ui.item).attr("id", "widget_" + a.pop() + "_" + id);
 //$(ui.item).click(widget_clicked);
-alert($(this).html());
 }
 
 }

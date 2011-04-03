@@ -384,7 +384,7 @@ class turlmap extends titems {
   
   public function addredir($from, $to) {
     if ($from == $to) return;
-    $Redir = &tredirector::instance();
+    $Redir = tredirector::instance();
     $Redir->add($from, $to);
   }
   

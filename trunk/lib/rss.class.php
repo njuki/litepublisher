@@ -24,7 +24,7 @@ class trss extends tevents {
     $this->data['idpostcomments'] = 0;
   }
   
-  public function commentschanged($idpost) {
+  public function commentschanged() {
     litepublisher::$urlmap->setexpired($this->idcomments);
     litepublisher::$urlmap->setexpired($this->idpostcomments);
   }
