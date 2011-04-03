@@ -7,7 +7,6 @@
 **/
 
 class tadminviews extends tadminmenu {
-  private $_editform;
   private $_adminoptionsform;
   
   public static function instance($id = 0) {
@@ -43,43 +42,60 @@ class tadminviews extends tadminmenu {
     }
     return $result;
   }
-  
-  public function geteditform() {
-    if (isset($this->_editform)) return $this->_editform;
-    $id = tadminhtml::getparam('idview', 1);
-    $view = tview::instance($id);
-    $form = new tautoform($view, 'views', 'editform');
-    $form->add($form->id('hidden'), $form->name);
-    if ($id > 1) {
-      $form->add($form->customsidebar, $form->disableajax);
-    }
-    if (count($view->custom) > 0) {
-      $custom = new tarray2prop ();
-      $custom->array = &$view->data['custom'];
-      $form->obj = $custom;
+
+  private function get_custom($idview) {
+    $view = tview::instance($idview);
+    if (count($view->custom) == 0) return '';
+$result = '';
+$html = $this->html;
       $customadmin = $view->theme->templates['customadmin'];
-      foreach ($custom->array as $name => $value) {
-        $i = $form->addprop(array(
-        'obj' => $custom,
-        'propname' => $name,
-        'type' => $customadmin[$name]['type'],
-        'title' => $customadmin[$name]['title']
-        ));
-        if ($customadmin[$name]['type'] == 'combo') {
-          $form->props[$i]['items'] = $customadmin[$name]['values'];
-        }
-      }
+      foreach ($view->data['custom'] as $name => $value) {
+      switch ($customadmin[$name]['type']) {
+        case 'text':
+        case 'editor':
+        $value = tadminhtml::specchars($value);
+        break;
+        
+        case 'checkbox':
+        $value = $value ? 'checked="checked"' : '';
+        break;
+
+case 'combo':
+        $value = tadminhtml  ::array2combo($customadmin[$name]['values'], $value);
+break;
+}
+
+$result .= $html->getinput(
+$customadmin[$name]['type'],
+"custom_{$idview}_$name",
+$value,
+tadminhtml::specchars($customadmin[$name]['title'])
+);
     }
-    
-    $this->_editform = $form;
-    return $form;
+    return $result;
   }
+
+  private function set_custom($idview) {
+    $view = tview::instance($idview);
+    if (count($view->custom) == 0) return;
+      $customadmin = $view->theme->templates['customadmin'];
+      foreach ($view->data['custom'] as $name => $value) {
+      switch ($customadmin[$name]['type']) {
+        case 'checkbox':
+$view->data['custom'][$name] = isset($_POST["custom_{$idview}_$name"]);
+        break;
+
+default:
+$view->data['custom'][$name] = $_POST["custom_{$idview}_$name"];
+break;
+}
+}
+}
   
-  public function getspecclasses() {
+ public function getspecclasses() {
     return array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap');
   }
   
-
   public function gethead() {
     $result = parent::gethead();
     switch ($this->name) {
@@ -88,11 +104,13 @@ $template = ttemplate::instance();
     $template->ltoptions[] = sprintf('allviews: [%s]', implode(',', array_keys(tviews::instance()->items)));
     $result .= '<link rel="stylesheet" type="text/css" href="$site.files/js/jquery/ui-1.8.10/redmond/jquery-ui-1.8.10.custom.css" />';
 
-  //$result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.js", function() {init_views();}' );
+ $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.js", function() {init_views();}' );
+/*
 $result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
 <script type="text/javascript" >
 init_views();
 </script>';
+*/
       break;
 
 /*
@@ -128,7 +146,7 @@ if (($idview > 1) && !$view->customsidebar) $view = tview::instance(1);
 $args->index = $index;
 $widgetlist = '';
 $idwidgets = array();
-      foreach ($sidebar as $j => $_item) {
+      foreach ($sidebar as $_item) {
         $id = $_item['id'];
 $idwidgets[] = $id;
         $widget = $widgets->getitem($id);
@@ -167,38 +185,6 @@ tadminthemes::getlist($this->html->radiotheme, $view->theme->name));
     $args = targs::instance();
     switch ($this->name) {
       case 'views':
-/*
-      switch ($this->action) {
-        case 'edit':
-        $result .= $this->editform->getform();
-        break;
-        
-        case 'delete':
-        $idview = tadminhtml::getparam('idview', 1);
-        if($this->confirmed) {
-          $views->delete($idview);
-        } else {
-          $result .= $html->confirmdelete($idview, tadminhtml::getadminlink('/admin/views/', 'idview'), $lang->confirmdelete);
-        }
-        break;
-        
-        default:
-        $args = targs::instance();
-        $args->formtitle = $html->togglelink();
-        $args->action = 'add';
-        $result .= $html->adminform('[text=name] [hidden=action]', $args);
-        $result .= $html->addscript;
-        break;
-      }
-      
-      $result .= $html->buildtable($views->items, array(
-      array('left', $lang->name,sprintf('<a href="%s">$name</a>', tadminhtml::getadminlink('/admin/views/', 'action=edit&idview=$id'))),
-      array('left', $lang->themename, sprintf('<a href="%s">$themename</a>', tadminhtml::getadminlink('/admin/views/themes/', 'idview=$id'))),
-      array('center', $lang->widgets, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/widgets/', 'idview=$id'), $lang->widgets)),
-      array('center', $lang->delete, sprintf('<a href="%s">%s</a>', tadminhtml::getadminlink('/admin/views/', 'action=delete&idview=$id'), $lang->delete))
-      ));
-*/
-
 $items = '';
 $content = '';
 foreach ($views->items as $id => $itemview) {
@@ -207,6 +193,7 @@ $items .= $html->itemview($args);
 $args->view_sidebars = $this->get_view_sidebars($id);
 $args->view_theme = $this->get_view_theme($id);
 $html->section = 'views';
+$args->view_custom = $this->get_custom($id);
 $content .= $html->viewtab($args);
 }
     $lang->section = 'views';
@@ -224,6 +211,10 @@ $args->widgetlist=  $widgetlist;
 $result = $html->allviews($args);
       break;
       
+case 'addview':
+        $args->formtitle = $lang->addview;
+        $result .= $html->adminform('[text=name]', $args);
+break;
       case 'spec':
       $items = '';
       $content = '';
@@ -300,35 +291,58 @@ $result = $html->allviews($args);
     $result = '';
     switch ($this->name) {
       case 'views':
+/*
 echo "<pre>\n";
 var_dump($_POST);
 echo "\n</pre>\n";
+*/
 $views = tviews::instance();
       switch ($this->action) {
 case 'delete':
-
+$idview = (int) $_POST['action_value'];
+if (($idview > 1) && $views->itemexists($idview)) $views->delete($idview);
 break;
 
 case 'widgets':
+$views->lock();
+$widgets = twidgets::instance();
+foreach ($views->items as $id => $item) {
+$view = tview::instance($id);
+if ($id > 1) {
+$view->customsidebar = isset($_POST["customsidebar_$id"]);
+$view->disableajax = isset($_POST["disableajax_$id"]);
+}
+$view->name = trim($_POST["name_$id"]);
+$view->themename = trim($_POST["theme_$id"]);
+$this->set_custom($id);
+if (($id == 1) || $view->customsidebar) {
+foreach (range(0, 2) as $index) {
+$view->sidebars[$index] = array();
+$sidebar = explode(',', trim($_POST["widgets_{$id}_$index"]));
+foreach($sidebar as $idwidget) {
+$idwidget = (int) trim($idwidget);
+if ($widgets->itemexists($idwidget)) {
+$view->sidebars[$index][] = array(
+'id' => $idwidget,
+'ajax' =>isset($_POST["inline_{$id}_$idwidget"]) ? 'inline' : isset($_POST["ajax_{$id}_$idwidget"])
+);
+}
+}
+}
+}
+}
+$views->unlock();
 break;
 }
+      break;
 
-/*
-        case 'add':
+        case 'addview':
         $name = trim($_POST['name']);
         if ($name != '') {
           $views = tviews::instance();
           $id = $views->add($name);
-          return;
-        }
-        break;
-        
-        case 'edit':
-        return $this->editform->processform();
-      }
-*/
-      break;
-      
+}
+break;      
       case 'spec':
       foreach (self::getspecclasses() as $classname) {
         $obj = getinstance($classname);

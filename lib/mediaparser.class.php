@@ -239,7 +239,7 @@ class tmediaparser extends tevents {
       break;
       
       case 'video':
-      $result['preview'] = $this->getvideopreview($filename);
+      //$result['preview'] = $this->getvideopreview($info['filename']);
       break;
       
       case 'document':
