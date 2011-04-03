@@ -11,21 +11,6 @@ http://litepublisher.ru/
 
 var textarea;
 var content;
-    var _documentReady = false;
-
-function init_OnLoad(e) {
-var areas = document.getElementsByTagName('textarea');
- if(areas.length > 0) {
-	eval(e);
-} else {
-	if(!_documentReady) {
-		setTimeout(function(){init_OnLoad(e)}, 60);
-} else {
-		var obj = document.body;
- 		if(obj) eval(e);
-	}
- }
-}
 
 function edToolbar(obj) {
 	if (obj == 'all') {
@@ -174,8 +159,8 @@ textarea = document.getElementById(obj);
 		textarea.scrollLeft = scrollLeft;
 	}
 }
-  window.onload = function() {
-_documentReady = true;
-};
 
-init_OnLoad("edToolbar('all')");
+$(function() {
+var areas = document.getElementsByTagName('textarea');
+ if(areas.length > 0) edToolbar("all");
+});
