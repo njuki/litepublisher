@@ -291,6 +291,7 @@ class tadminmoderator extends tadmincommoncomments  {
       $args->name = '';
       $args->email = '';
       $args->url = '';
+      $args->ip = '127.0.0.1';
       $args->subscribed = '';
     } else {
       $comusers = tcomusers::instance($idpost);
@@ -312,7 +313,7 @@ class tadminmoderator extends tadmincommoncomments  {
     $items =array_slice(array_keys($comusers->items), $from, $perpage);
     $result = sprintf($html->h2->authorlisthead, $from, $from + count($items), $total);
     $result .= $html->authorheader();
-    $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . "idpost=$idpost&id";
+    $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . "post=$idpost&id";
     $args->ip = '';
     foreach ($items as $id) {
       $args->id = $id;
@@ -417,7 +418,7 @@ class tadminmoderator extends tadmincommoncomments  {
           $subscribers->unlock();
         }
         
-        $result =  $html->h2->authoredited;
+        $result =  $this->html->h2->authoredited;
       }
       break;
     }

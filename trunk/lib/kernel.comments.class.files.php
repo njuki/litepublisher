@@ -1260,7 +1260,7 @@ class tcommentswidget extends twidget {
     return $theme->getwidgetcontent($result, 'comments', $sidebar);
   }
   
-  public function changed($id, $idpost) {
+  public function changed() {
     $this->expire();
   }
   
