@@ -73,11 +73,11 @@ var jqloader = {
       jqloader.load(item.url, item.fn);
     }
     jqloader.holditems = null;
-//} catch(e) { alert(e.message); }
-},
-
-ready: function(fn) {
-  if (this.jquery_loaded) return $(document).ready(fn);
-  this.holdready.push(fn);
-}
+  // catch(e) { alert(e.message); }
+  },
+  
+  ready: function(fn) {
+    if (this.jquery_loaded) return $(document).ready(fn);
+    this.holdready.push(fn);
+  }
 };
