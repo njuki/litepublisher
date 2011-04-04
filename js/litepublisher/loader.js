@@ -6,6 +6,7 @@
 **/
 
 //imported from jquery
+var $; //forward declaration
 function load_script(url, callback) {
   var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
   var script = document.createElement( "script" );
