@@ -17,7 +17,7 @@ function tsiteInstall($self) {
   
   $site->home = '/';
   $site->keywords = "blog";
-  $site->jquery_version = '1.5.1';
+  $site->jquery_version = '1.5.2';
   $site->unlock();
 }
 
