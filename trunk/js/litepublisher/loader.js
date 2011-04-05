@@ -6,7 +6,6 @@
 **/
 
 //imported from jquery
-var $; //forward declaration
 function load_script(url, callback) {
   var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
   var script = document.createElement( "script" );
@@ -81,4 +80,10 @@ var jqloader = {
     if (this.jquery_loaded) return $(document).ready(fn);
     this.holdready.push(fn);
   }
+};
+
+var $ = function() {
+  this.ready=  jqloader.ready;
+  this.getScript= jqloader.load;
+  return this;
 };
