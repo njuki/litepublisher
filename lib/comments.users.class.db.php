@@ -52,7 +52,8 @@ class tcomusers extends titems {
   }
   
   public function edit($id, $name, $url, $email, $ip) {
-    $this->UpdateAssoc(array(
+    $this->db->UpdateAssoc(array(
+    'id' => $id,
     'name' => $name,
     'email' => $email,
     'url' => $url,

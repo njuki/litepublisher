@@ -403,7 +403,7 @@ class tadminmoderator extends tadmincommoncomments {
           $subscribers->unlock();
         }
         
-        $result =  $html->h2->authoredited;
+        $result =  $this->html->h2->authoredited;
       }
       break;
       
