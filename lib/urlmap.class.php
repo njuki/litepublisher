@@ -92,7 +92,7 @@ class turlmap extends titems {
     if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
     
     //extract page number
-    if (preg_match('/(.*?)\/page\/(\d*?)\/+$/', $url, $m)) {
+    if (preg_match('/(.*?)\/page\/(\d*?)\/?$/', $url, $m)) {
       if ('/' != substr($url, -1))  return $this->redir301($url . '/');
       $url = $m[1];
       if ($url == '') $url = '/';
