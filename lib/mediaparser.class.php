@@ -15,7 +15,7 @@ class tmediaparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'mediaparser';
-$this->addevents('added');
+    $this->addevents('added');
     $this->data['enablepreview'] = true;
     $this->data['ratio'] = true;
     $this->data['previewwidth'] = 120;
@@ -149,7 +149,7 @@ $this->addevents('added');
       $files->setvalue($id, 'preview', $idpreview);
     }
     $files->unlock();
-$this->added($id);
+    $this->added($id);
     return $id;
   }
   

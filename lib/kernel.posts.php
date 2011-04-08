@@ -2284,6 +2284,23 @@ class tfiles extends titems {
     return true;
   }
   
+  public function setcontent($id, $content) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
+    if (file_put_contents($realfile, $content)) {
+      $item['md5'] = md5_file($realfile);
+      $item['size'] = filesize($realfile);
+      $this->items[$id] = $item;
+      if ($this->dbversion) {
+        $item['id'] = $id;
+        $this->db->updateassoc($item);
+      } else {
+        $this->save();
+      }
+    }
+  }
+  
   public function exists($filename) {
     return $this->IndexOf('filename', $filename);
   }

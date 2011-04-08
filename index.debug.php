@@ -1,5 +1,5 @@
 <?php
-//set_time_limit(2);
+set_time_limit(120);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 ini_set('display_errors', 1);
  Header( 'Cache-Control: no-cache, must-revalidate');
