@@ -32,7 +32,7 @@ class tadminmenus extends tmenus {
     return litepublisher::$paths->data . 'adminmenus' . DIRECTORY_SEPARATOR;
   }
   
-  private function getadmintitle($name) {
+  public function getadmintitle($name) {
     if (isset(tlocal::$data[$name]['title'])) {
       return tlocal::$data[$name]['title'];
     } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {

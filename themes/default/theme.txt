@@ -289,7 +289,7 @@ $files = [
 $images= [
   $image = [<li><a rel="prettyPhoto[gallery-$post.id]" href="$link">$preview</a></li>]
 
-  $preview = [<img src="$preview.link" title="$title" alt="$title" />]
+  $preview = [<img src="$preview.link" height="$preview.height" width="$preview.width" title="$title" alt="$title" />]
 ]
 
 $audios = [
