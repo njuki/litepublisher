@@ -75,6 +75,7 @@ function tadminmenusInstall($self) {
     $self->createitem($opt, 'robots', 'admin', 'tadminoptions');
     $self->createitem($opt, 'local', 'admin', 'tadminoptions');
     $self->createitem($opt, 'notfound404', 'admin', 'tadminoptions');
+    $self->createitem($opt, 'redir', 'admin', 'tadminredirector');
   }
   
   $service = $self->createitem(0, 'service', 'admin', 'tadminservice');
