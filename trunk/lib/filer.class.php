@@ -94,25 +94,6 @@ class tfiler {
     return is_dir($dir);
   }
   
-  public static function ini2js(array $a, $filename) {
-  $result  = "var lang;\nif (lang == undefined) lang = {};\n";
-    $sections = array();
-    foreach ($a as $name => $section) {
-      if ($name == 'codedoc') continue;
-      if ($name == 'default' || $name == 'delete') $name = 'a' . $name;
-      $list = array();
-      foreach ($section as $key => $value) {
-        if ($key == 'default' || $key == 'delete') $key = 'a' . $key;
-        $value = str_replace("\r\n", '\n', $value);
-        $value = str_replace("\n", '\n', $value);
-        $list[] = sprintf('%s:"%s"', $key, $value);
-      }
-    $result .= sprintf("lang.$name = {\n%s\n};\n", implode(",\n", $list));
-    }
-    file_put_contents($filename, $result);
-    @chmod($filename, 0666);
-  }
-  
   public static function log($s, $filename = '') {
     if ($filename == '') $filename = 'log.txt';
     self::append(date('r') . "\n$s\n\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . $filename);
