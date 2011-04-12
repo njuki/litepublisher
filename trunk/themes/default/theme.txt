@@ -632,7 +632,7 @@ content.excerpts.excerpt.filelist - $post.excerptfilelist, шаблон для �
 content.excerpts.lite = [
 			<h1>$lang.posts</h1>
 			<ul>
-				$excerpt = [<li>$post.date <a href="$post.link" title="$lang.permalink $post.title">$post.title</a></li>]
+				$excerpt = [<li><a href="$post.link" title="$lang.permalink $post.title">$post.title</a></li>]
 			</ul>
 ]
 
