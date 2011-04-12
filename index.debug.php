@@ -1,5 +1,5 @@
 <?php
-set_time_limit(120);
+set_time_limit(10);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 ini_set('display_errors', 1);
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -117,4 +117,5 @@ echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
 //tdebugproxy::showperformance();
+//echo json_encode(tlocal::$data);
 ?>

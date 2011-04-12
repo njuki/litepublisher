@@ -127,13 +127,15 @@ class tlocal {
   }
   
   public static function ini2js($filename) {
+  $js = "var lang;\nif (lang == undefined) lang = {};\n";
     $base = basename($filename);
     if (strend($base, '.admin')) {
-      $js = array('comments' => self::$data['comments']);
+      $js .= sprintf('lang.comments = %s;',  json_encode(self::$data['comments']));
     } else {
-      $js = array('comment' => self::$data['comment']);
+      $js .= sprintf('lang.comment = %s;',  json_encode(self::$data['comment']));
     }
-    tfiler::ini2js($js, litepublisher::$paths->files . $base . '.js');
+    file_put_contents(litepublisher::$paths->files . $base . '.js', $js);
+    @chmod($filename, 0666);
   }
   
   public static function loadini($filename) {
