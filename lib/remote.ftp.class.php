@@ -8,25 +8,25 @@
 
 class tftpfiler extends tremotefiler {
   public $ssl;
-private $tempfilehandle;
-
+  private $tempfilehandle;
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
-    public function __construct() {
+  public function __construct() {
     parent::__construct();
     $this->timeout = 240;
     $this->ssl = false;
-$this->tempfilehandle = false;
+    $this->tempfilehandle = false;
   }
   
   public function __destruct() {
     if ( $this->handle) ftp_close($this->handle);
-if ($this->tempfilehandle) {
-@fclose($this->tempfilehandle)
-$this->tempfilehandle = false;
-}
+    if ($this->tempfilehandle) {
+      @fclose($this->tempfilehandle);
+      $this->tempfilehandle = false;
+    }
   }
   
   public function connect($host, $login, $password) {
@@ -47,25 +47,25 @@ $this->tempfilehandle = false;
     }
     return false;
   }
-
-private function gettempfilehandle() {
-if (!$this->tempfilehandle) {
-$this->tempfilehandle = tmpfile();
-}
-return $this->tempfilehandle;
-}
+  
+  private function gettempfilehandle() {
+    if (!$this->tempfilehandle) {
+      $this->tempfilehandle = tmpfile();
+    }
+    return $this->tempfilehandle;
+  }
   
   public function getfile($filename) {
     if ($temp = $this->gettempfilehandle()){
-      fseek($temp, 0); 
-ftruncate($temp, 0);
-if (@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
-      fseek($temp, 0); 
-      $result= '';
-      while ( ! feof($temp) ) $result .= fread($temp, 8192);
-      return $result;
+      fseek($temp, 0);
+      ftruncate($temp, 0);
+      if (@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
+        fseek($temp, 0);
+        $result= '';
+        while ( ! feof($temp) ) $result .= fread($temp, 8192);
+        return $result;
+      }
     }
-}
     return false;
   }
   
@@ -73,7 +73,7 @@ if (@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
     if (!($temp = $this->gettempfilehandle())) return false;
     fseek($temp, 0);
     fwrite($temp, $content);
-ftruncate($temp, strlen($content));
+    ftruncate($temp, strlen($content));
     fseek($temp, 0);
     $result = @ftp_fput($this->handle, $filename, $temp, FTP_BINARY);
     return $result;
@@ -104,8 +104,13 @@ ftruncate($temp, strlen($content));
   }
   
   public function getchmod($file) {
-    $dir = $this->getdir($file);
-    return $dir[$file]['permsn'];
+    if ($this->is_file($file)) {
+      $dir = $this->getdir($file);
+      return $dir[$file]['mode'];
+    } else {
+      $dir = $this->getdir(dirname($file));
+      return $dir[basename($file)]['mode'];
+    }
   }
   
   public function group($file) {
