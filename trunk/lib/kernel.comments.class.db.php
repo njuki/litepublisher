@@ -1058,7 +1058,7 @@ public function save() {}
     $idpost = (int) $idpost;
     $post = tpost::instance($idpost);
     //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
-    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $this->getcommentslink($post);
+    if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
     $lang = tlocal::instance('comment');
     $comments = tcomments::instance($idpost);
     $list = $comments->getcontent();
