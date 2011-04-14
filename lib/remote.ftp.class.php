@@ -8,20 +8,25 @@
 
 class tftpfiler extends tremotefiler {
   public $ssl;
-  
+private $tempfilehandle;
+
   public static function instance() {
     return getinstance(__class__);
   }
   
-  
-  public function __construct() {
+    public function __construct() {
     parent::__construct();
     $this->timeout = 240;
     $this->ssl = false;
+$this->tempfilehandle = false;
   }
   
   public function __destruct() {
     if ( $this->handle) ftp_close($this->handle);
+if ($this->tempfilehandle) {
+@fclose($this->tempfilehandle)
+$this->tempfilehandle = false;
+}
   }
   
   public function connect($host, $login, $password) {
@@ -42,24 +47,35 @@ class tftpfiler extends tremotefiler {
     }
     return false;
   }
+
+private function gettempfilehandle() {
+if (!$this->tempfilehandle) {
+$this->tempfilehandle = tmpfile();
+}
+return $this->tempfilehandle;
+}
   
   public function getfile($filename) {
-    if (($temp = tmpfile()) &&@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
-      fseek($temp, 0); //Skip back to the start of the file being written to
+    if ($temp = $this->gettempfilehandle()){
+      fseek($temp, 0); 
+ftruncate($temp, 0);
+if (@ftp_fget($this->handle, $temp, $filename, FTP_BINARY, $resumepos) ) {
+      fseek($temp, 0); 
       $result= '';
       while ( ! feof($temp) ) $result .= fread($temp, 8192);
-      fclose($temp);
       return $result;
     }
+}
     return false;
   }
   
   public function putcontent($filename, $content) {
-    if (!($temp = tmpfile())) return false;
+    if (!($temp = $this->gettempfilehandle())) return false;
+    fseek($temp, 0);
     fwrite($temp, $content);
+ftruncate($temp, strlen($content));
     fseek($temp, 0);
     $result = @ftp_fput($this->handle, $filename, $temp, FTP_BINARY);
-    fclose($temp);
     return $result;
   }
   
