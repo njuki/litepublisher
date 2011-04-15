@@ -17,44 +17,44 @@ class tpagenator3000 extends tplugin {
     $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
     $about = tplugins::getabout(tplugins::getname(__file__));
     $head = '<script type="text/javascript"><!--
-function init_paginator3000() {
-  var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
-  var link = document.createElement( "link" );
-link.rel="stylesheet";
-link.type="text/css";
-link.href="' . $url . 'paginator3000.css";
-  head.insertBefore( link, head.firstChild );
-    $.getScript("' . $url . 'paginator3000.min.js", function() {
-      $(document).ready(function() {
-        var tag = $("#paginator, .navigation");
-        tag.addClass("paginator");
-        tag.paginator({
-          pagesTotal : %%count%%,
-          pagesSpan : %%perpage%%,
-          pageCurrent : %%page%% - 1,
-          baseUrl : function(page) {
-            window.location= ++page == 1 ? "%%link%%" :
-            "%%pageurl%%" + page + "/";
-          },
-          
-          returnOrder : false,
-          lang : {
-            next : "' . $about['next'] . '",
-            last : "' . $about['last'] . '",
-            prior : "' . $about['prior'] . '",
-            first : "' . $about['first'] . '",
-            arrowRight : String.fromCharCode(8594),
-            arrowLeft : String.fromCharCode(8592)
-          }
+    function init_paginator3000() {
+      var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
+      var link = document.createElement( "link" );
+      link.rel="stylesheet";
+      link.type="text/css";
+      link.href="' . $url . 'paginator3000.css";
+      head.insertBefore( link, head.firstChild );
+      $.getScript("' . $url . 'paginator3000.min.js", function() {
+        $(document).ready(function() {
+          var tag = $("#paginator, .navigation");
+          tag.addClass("paginator");
+          tag.paginator({
+            pagesTotal : %%count%%,
+            pagesSpan : %%perpage%%,
+            pageCurrent : %%page%% - 1,
+            baseUrl : function(page) {
+              window.location= ++page == 1 ? "%%link%%" :
+              "%%pageurl%%" + page + "/";
+            },
+            
+            returnOrder : false,
+            lang : {
+              next : "' . $about['next'] . '",
+              last : "' . $about['last'] . '",
+              prior : "' . $about['prior'] . '",
+              first : "' . $about['first'] . '",
+              arrowRight : String.fromCharCode(8594),
+              arrowLeft : String.fromCharCode(8592)
+            }
+          });
         });
       });
-    });
-}
-
-if (ltoptions.paginator3000 ==undefined) {
-ltoptions.paginator3000  = "init";
-init_paginator3000();
-}
+    }
+    
+    if (ltoptions.paginator3000 ==undefined) {
+      ltoptions.paginator3000  = "init";
+      init_paginator3000();
+    }
     //-->
     </script>';
     
