@@ -20,6 +20,7 @@ class tsitemap extends titems_itemplate implements itemplate {
   protected function create() {
     parent::create();
     $this->basename = 'sitemap';
+$this->addevents('onindex');
     $this->data['date'] = time();
     $this->data['countfiles'] = 1;
   }
@@ -106,22 +107,15 @@ public function gettitle() { return $this->title; }
   
   public function getIndex() {
     $lastmod = date('Y-m-d', $this->date);
-    
-    $result = '
-    
-    <sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
-    ';
+        $result = '<sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">';
     $url = litepublisher::$site->files . '/files/' . litepublisher::$domain;
     $exists = true;
     for ($i =1; $i <= $this->countfiles; $i++) {
-      $result .= "   <sitemap>
-      <loc>$url.$i.xml.gz</loc>
-      <lastmod>$lastmod</lastmod>
-      </sitemap>\n";
+      $result .= "<sitemap><loc>$url.$i.xml.gz</loc>      <lastmod>$lastmod</lastmod></sitemap>";
       if ($exists) $exists = file_exists(litepublisher::$paths->files . "$i.xml.gz");
     }
-    
-    $result .= '   </sitemapindex>';
+    $this->callevent('onindex', array(&$result));
+    $result .= '</sitemapindex>';
     if (!$exists)     $this->createfiles();
     return $result;
   }
@@ -230,14 +224,10 @@ public function gettitle() { return $this->title; }
   
   private function writeitem($url, $prio) {
     $url = litepublisher::$site->url . $url;
-    gzwrite($this->fd, "   <url>
-    <loc>$url</loc>
-    <lastmod>$this->lastmod</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.$prio</priority>
-    </url>\n");
+    gzwrite($this->fd, "<url><loc>$url</loc><lastmod>$this->lastmod</lastmod>".
+"<changefreq>daily</changefreq><priority>0.$prio</priority></url>");
     
-    if (++$this->count  >= 45000) {
+    if (++$this->count  >= 30000) {
       $this->closefile();
       $this->openfile();
     }
@@ -262,16 +252,14 @@ public function gettitle() { return $this->title; }
   }
   
   private function WriteHeader() {
-    gzwrite($this->fd, '<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.google.com/schemas/sitemap/0.84"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84
-    http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">
-    ');
+    gzwrite($this->fd, '<?xml version="1.0" encoding="UTF-8"?>' .
+'<urlset xmlns="http://www.google.com/schemas/sitemap/0.84"'.
+' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' .
+' xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84 http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">');
   }
-  
-  private function WriteFooter() {
-    gzwrite($this->fd, "</urlset>");
+
+    private function WriteFooter() {
+    gzwrite($this->fd, '</urlset>');
   }
   
 }//class
