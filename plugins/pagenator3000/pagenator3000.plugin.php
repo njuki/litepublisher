@@ -13,11 +13,17 @@ class tpagenator3000 extends tplugin {
   }
   
   public function themeparsed(ttheme $theme) {
-    if (strpos($theme->templates['content.navi'], 'paginator3000.js')) return;
+    if (strpos($theme->templates['content.navi'], 'paginator3000.min.js')) return;
     $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
     $about = tplugins::getabout(tplugins::getname(__file__));
     $head = '<script type="text/javascript"><!--
-    $(\'<link rel="stylesheet" type="text/css" href="' . $url . 'paginator3000.css" />\').appendTo("head");
+function init_paginator3000() {
+  var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
+  var link = document.createElement( "link" );
+link.rel="stylesheet";
+link.type="text/css";
+link.href="' . $url . 'paginator3000.css";
+  head.insertBefore( link, head.firstChild );
     $.getScript("' . $url . 'paginator3000.min.js", function() {
       $(document).ready(function() {
         var tag = $("#paginator, .navigation");
@@ -43,6 +49,12 @@ class tpagenator3000 extends tplugin {
         });
       });
     });
+}
+
+if (ltoptions.paginator3000 ==undefined) {
+ltoptions.paginator3000  = "init";
+init_paginator3000();
+}
     //-->
     </script>';
     
