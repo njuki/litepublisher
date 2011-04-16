@@ -73,8 +73,10 @@ class Tadminoptions extends tadminmenu {
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
       $args->image = $home->image;
+      $args->idhome =  $home->id;
       $menus = tmenus::instance();
       $args->homemenu =  $menus->home;
+
       $args->formtitle = '';
       break;
       
