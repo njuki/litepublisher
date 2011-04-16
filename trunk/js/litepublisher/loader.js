@@ -77,8 +77,8 @@ var jqloader = {
   },
   
   ready: function(fn) {
-    if (this.jquery_loaded) return $(document).ready(fn);
-    this.holdready.push(fn);
+    if (jqloader.jquery_loaded) return $(document).ready(fn);
+    jqloader.holdready.push(fn);
   }
 };
 
