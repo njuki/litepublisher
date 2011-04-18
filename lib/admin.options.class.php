@@ -59,7 +59,26 @@ class Tadminoptions extends tadminmenu {
     $this->_form = $form;
     return $form;
   }
-  
+
+public function gethead() {
+$result = parent::gethead();
+    switch ($this->name) {
+      case 'home':
+      $template = ttemplate::instance();
+    //triks for support jqloader
+    if (litepublisher::$classes->exists('tfastloader')) {
+      $result .= $template->getloadjavascript(
+    '"$site.url/js/litepublisher/admin.js", function() {inittabs("#tabs");}' );
+    } else {
+      $result .= '<script type="text/javascript">
+      inittabs("#tabs");
+      </script>';
+    }
+break;
+}
+return $result;
+}
+
   public function getcontent() {
     if ($form = $this->getautoform($this->name)) return $form->getform();
     $options = litepublisher::$options;
@@ -72,11 +91,15 @@ class Tadminoptions extends tadminmenu {
       case 'home':
       $home = thomepage::instance();
       $args->hideposts = $home->hideposts;
+      $args->invertorder = $home->invertorder;
       $args->image = $home->image;
       $args->idhome =  $home->id;
       $menus = tmenus::instance();
       $args->homemenu =  $menus->home;
 
+$args->includecats = tposteditor::getcategories($home->includecats);
+$args->excludecats = str_replace('category-', 'exclude_category-',
+tposteditor::getcategories($home->excludecats));
       $args->formtitle = '';
       break;
       
@@ -177,6 +200,9 @@ class Tadminoptions extends tadminmenu {
       $home->lock();
       $home->image = $image;
       $home->hideposts = isset($hideposts);
+      $home->invertorder = isset($invertorder);
+$home->includecats = tadminhtml::check2array('category-');
+$home->excludecats = tadminhtml::check2array('exclude_category-');
       $home->unlock();
       
       $menus = tmenus::instance();
