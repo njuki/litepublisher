@@ -108,6 +108,7 @@ return false;
 }
 
 function update_siteurl(url) {
+if ('/' == url.charAt(url.length - 1)) url = url.substring(0, url.length - 1);
 if (ltoptions.download_site ==url) return;
 ltoptions.download_site =url;
 $("#text_download_site").val(url);

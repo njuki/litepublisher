@@ -182,9 +182,15 @@ class tadmincustomwidget extends tadminwidget {
     [hidden=idwidget]',
     $args));
     
-    $result .= $html->customheader();
+    $result .= $this->getlist($widget);
+    return $result;
+  }
+  
+  public function getlist(twidget $widget) {
+    $args = targs::instance();
+    $html = $this->html;
+    $result = $html->customheader();
     $args->adminurl = $this->adminurl;
-    
     foreach ($widget->items as $id => $item) {
       $args->idwidget = $id;
       $args->add($item);
@@ -210,15 +216,19 @@ class tadmincustomwidget extends tadminwidget {
         break;
       }
     } else {
-      $widgets = twidgets::instance();
-      $widgets->lock();
-      $widget->lock();
-      foreach ($_POST as $key => $value) {
-        if (strbegin($key, 'widgetcheck-')) $widget->delete((int) $value);
-      }
-      $widget->unlock();
-      $widgets->unlock();
+      $this->deletewidgets($widget);
     }
+  }
+  
+  public function deletewidgets(twidget $widget) {
+    $widgets = twidgets::instance();
+    $widgets->lock();
+    $widget->lock();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, 'widgetcheck-')) $widget->delete((int) $value);
+    }
+    $widget->unlock();
+    $widgets->unlock();
   }
   
 }//class
