@@ -50,48 +50,48 @@ class thomepage extends tmenu  {
     if($result = $this->onbeforegetitems()) return $result;
     $posts = tposts::instance();
     $perpage = litepublisher::$options->perpage;
-      $from = (litepublisher::$urlmap->page - 1) * $perpage;
-$include = $this->data['includecats'];
-$exclude = $this->data['excludecats'];
-if ((count($include) == 0) && (count($exclude) == 0)) {
-    $result = $posts->getpage(litepublisher::$urlmap->page, $perpage, $this->invertorder);
-} else {
-if (dbversion) {
-      $poststable = $posts->thistable;
-$order = $this->invertorder ? 'asc' : 'desc';
-      $catstable  = litepublisher::$db->prefix . 'categoriesitems';
-$where = '';
-if (count($include) > 0) $where .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
-if (count($exclude) > 0) {
-if (count($include) > 0) $where .= ' and ';
-$where .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
-}
-
-      $result = $posts->select("$poststable.status = 'published' and $poststable.id in
-      (select DISTINCT post from $catstable  where $where)",
-      "order by $poststable.posted $order limit $from, $perpage");
-} else {
-$catsposts = tcategories::instance()->itemsposts;
-if (count($include) == 0) {
-$result = array_keys($posts->archives);
-} else {
-      $result = array();
-        foreach ($include as $id) {
-          $result = array_merge($result, array_diff($catsposts->getposts($id), $result));
+    $from = (litepublisher::$urlmap->page - 1) * $perpage;
+    $include = $this->data['includecats'];
+    $exclude = $this->data['excludecats'];
+    if ((count($include) == 0) && (count($exclude) == 0)) {
+      $result = $posts->getpage(litepublisher::$urlmap->page, $perpage, $this->invertorder);
+    } else {
+      if (dbversion) {
+        $poststable = $posts->thistable;
+        $order = $this->invertorder ? 'asc' : 'desc';
+        $catstable  = litepublisher::$db->prefix . 'categoriesitems';
+        $where = '';
+        if (count($include) > 0) $where .= sprintf('%s.item  in (%s)', $catstable , implode(',', $include));
+        if (count($exclude) > 0) {
+          if (count($include) > 0) $where .= ' and ';
+          $where .= sprintf('%s.item  not in (%s)', $catstable , implode(',', $exclude));
         }
-}
-
+        
+        $result = $posts->select("$poststable.status = 'published' and $poststable.id in
+        (select DISTINCT post from $catstable  where $where)",
+        "order by $poststable.posted $order limit $from, $perpage");
+      } else {
+        $catsposts = tcategories::instance()->itemsposts;
+        if (count($include) == 0) {
+          $result = array_keys($posts->archives);
+        } else {
+          $result = array();
+          foreach ($include as $id) {
+            $result = array_merge($result, array_diff($catsposts->getposts($id), $result));
+          }
+        }
+        
         foreach ($exclude as $id) {
-$result = array_diff($result, array_intersect($catsposts->getposts($id), $result));
+          $result = array_diff($result, array_intersect($catsposts->getposts($id), $result));
         }
-
-      $result = $posts->stripdrafts($result);
-      $result = $posts->sortbyposted($result);
-if ($this->invertorder)       $result = array_reverse($result);
-      $result = array_slice($result, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-}
-}
-
+        
+        $result = $posts->stripdrafts($result);
+        $result = $posts->sortbyposted($result);
+        if ($this->invertorder)       $result = array_reverse($result);
+        $result = array_slice($result, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
+      }
+    }
+    
     $this->callevent('ongetitems', array(&$result));
     return $result;
   }

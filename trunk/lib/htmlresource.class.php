@@ -236,8 +236,8 @@ class tadminhtml {
     $args->confirm = $mesg;
     return $this->confirmform($args);
   }
-
-public static function check2array($prefix) {
+  
+  public static function check2array($prefix) {
     $result = array();
     foreach ($_POST as $key => $value) {
       if (strbegin($key, $prefix)) {
@@ -245,7 +245,7 @@ public static function check2array($prefix) {
       }
     }
     return $result;
-}
+  }
   
 }//class
 
