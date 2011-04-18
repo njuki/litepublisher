@@ -111,7 +111,7 @@ class tposteditor extends tadminmenu {
   }
   
   public static function processcategories() {
-return tadminhtml::check2array('category-');
+    return tadminhtml::check2array('category-');
   }
   
   protected function set_post(tpost $post) {

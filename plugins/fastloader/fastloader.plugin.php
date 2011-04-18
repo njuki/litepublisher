@@ -27,7 +27,7 @@ class tfastloader extends tplugin {
     $admin = tadminmenus::instance();
     $admin->heads = $this->replace($admin->heads);
     $admin->save();
-ttheme::clearcache();
+    ttheme::clearcache();
   }
   
   public function uninstall() {
@@ -43,7 +43,7 @@ ttheme::clearcache();
     $admin = tadminmenus::instance();
     $admin->heads = $this->restore($admin->heads);
     $admin->save();
-ttheme::clearcache();
+    ttheme::clearcache();
   }
   
   public function themeparsed($theme) {

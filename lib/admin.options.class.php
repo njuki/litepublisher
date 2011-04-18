@@ -59,26 +59,26 @@ class Tadminoptions extends tadminmenu {
     $this->_form = $form;
     return $form;
   }
-
-public function gethead() {
-$result = parent::gethead();
+  
+  public function gethead() {
+    $result = parent::gethead();
     switch ($this->name) {
       case 'home':
       $template = ttemplate::instance();
-    //triks for support jqloader
-    if (litepublisher::$classes->exists('tfastloader')) {
-      $result .= $template->getloadjavascript(
-    '"$site.url/js/litepublisher/admin.js", function() {inittabs("#tabs");}' );
-    } else {
-      $result .= '<script type="text/javascript">
-      inittabs("#tabs");
-      </script>';
+      //triks for support jqloader
+      if (litepublisher::$classes->exists('tfastloader')) {
+        $result .= $template->getloadjavascript(
+      '"$site.url/js/litepublisher/admin.js", function() {inittabs("#tabs");}' );
+      } else {
+        $result .= '<script type="text/javascript">
+        inittabs("#tabs");
+        </script>';
+      }
+      break;
     }
-break;
-}
-return $result;
-}
-
+    return $result;
+  }
+  
   public function getcontent() {
     if ($form = $this->getautoform($this->name)) return $form->getform();
     $options = litepublisher::$options;
@@ -96,10 +96,10 @@ return $result;
       $args->idhome =  $home->id;
       $menus = tmenus::instance();
       $args->homemenu =  $menus->home;
-
-$args->includecats = tposteditor::getcategories($home->includecats);
-$args->excludecats = str_replace('category-', 'exclude_category-',
-tposteditor::getcategories($home->excludecats));
+      
+      $args->includecats = tposteditor::getcategories($home->includecats);
+      $args->excludecats = str_replace('category-', 'exclude_category-',
+      tposteditor::getcategories($home->excludecats));
       $args->formtitle = '';
       break;
       
@@ -201,8 +201,8 @@ tposteditor::getcategories($home->excludecats));
       $home->image = $image;
       $home->hideposts = isset($hideposts);
       $home->invertorder = isset($invertorder);
-$home->includecats = tadminhtml::check2array('category-');
-$home->excludecats = tadminhtml::check2array('exclude_category-');
+      $home->includecats = tadminhtml::check2array('category-');
+      $home->excludecats = tadminhtml::check2array('exclude_category-');
       $home->unlock();
       
       $menus = tmenus::instance();
