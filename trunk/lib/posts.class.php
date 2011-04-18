@@ -303,7 +303,22 @@ class tposts extends titems {
       return array_slice(array_keys($this->archives), 0, $count);
     }
   }
-  
+
+public function getpage($page, $perpage, $invertorder) {
+    $count = $this->archivescount;
+    $from = ($page - 1) * $perpage;
+    if ($from > $count)  return array();
+    if (dbversion)  {
+$order = $invertorder ? 'asc' : 'desc';
+      return $this->select("status = 'published'", " order by posted $order limit $from, $perpage");
+    } else {
+      $to = min($from + $perpage , $count);
+$result = array_keys($this->archives);
+if ($invertorder) $result =array_reverse($result);
+      return array_slice($result, $from, $to - $from);
+    }
+}
+
   public function GetPublishedRange($page, $perpage) {
     $count = $this->archivescount;
     $from = ($page - 1) * $perpage;

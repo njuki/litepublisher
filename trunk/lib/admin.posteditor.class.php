@@ -111,13 +111,7 @@ class tposteditor extends tadminmenu {
   }
   
   public static function processcategories() {
-    $result = array();
-    foreach ($_POST as $key => $value) {
-      if (strbegin($key, 'category-')) {
-        $result[] = (int) $value;
-      }
-    }
-    return $result;
+return tadminhtml::check2array('category-');
   }
   
   protected function set_post(tpost $post) {
