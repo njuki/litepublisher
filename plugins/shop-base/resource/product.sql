@@ -1,0 +1,22 @@
+  `id` int unsigned NOT NULL default '0',
+  `quantity` int unsigned NOT NULL default '1',
+  `condition` enum('new','used','refurbished') default 'new',
+  `availability` enum('in stock','out of stock', 'limited availability') default 'in stock',
+  `price` float unsigned NOT NULL default '0.0',
+  `gtin` bigint unsigned NOT NULL default '0',
+  `mpn` varchar(32) NOT NULL,
+  `brand` text NOT NULL,
+  `manufacturer` text NOT NULL,
+  `types` text not null,
+  `online_only` enum('n', 'y') default 'n',
+  `expiration_date` datetime NOT NULL default '2020-10-10 10:10:10',
+  `weight` int unsigned NOT NULL default '0',
+  `unit_weight` enum('gram', 'kilogram', 'lb', 'pound', 'oz', 'ounce') default 'kilogram',
+  `rate` float unsigned NOT NULL default '0.0',
+  `votes` int unsigned NOT NULL default '0',
+  `featured` enum('n', 'y') default 'n',
+  `year_produced` int unsigned NOT NULL default '0',
+
+
+  PRIMARY KEY  (`id`),
+  KEY `state` (`state`)
