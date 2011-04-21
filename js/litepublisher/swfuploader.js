@@ -5,26 +5,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function swfUploadPreLoad() {
-  //alert('swfUploadPreLoad');
-}
-
-function swfUploadLoaded() {
-  //alert('swfUploadLoaded');
-}
-
-function swfUploadLoadFailed() {
-  //alert('swfUploadLoadFailed');
-}
-
-function fileQueued(file) {
-  //alert('fileQueued');
-}
-
-function fileQueueError(file, errorCode, message) {
-  //alert('fileQueueError');
-}
-
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 $('#progressbar').progressbar({value: 0});
   if (ltoptions.uploadurl != undefined) {
@@ -54,11 +34,6 @@ function uploadComplete(file) {
   $( "#progressbar" ).progressbar( "destroy" );
   //alert('uploadComplete');
 }
-
-// This event comes from the Queue Plugin
-function queueComplete(numFilesUploaded) {
-  //alert('queueComplete');
-};
 
 //central event
 function uploadSuccess(file, serverData) {
@@ -103,16 +78,12 @@ function createswfu () {
     button_width: 61,
     button_height: 22,
     
-    //		swfupload_loaded_handler : swfUploadLoaded,
-    file_queued_handler : fileQueued,
-    file_queue_error_handler : fileQueueError,
     file_dialog_complete_handler : fileDialogComplete,
     upload_start_handler : uploadStart,
     upload_progress_handler : uploadProgress,
     upload_error_handler : uploadError,
     upload_success_handler : uploadSuccess,
-    upload_complete_handler : uploadComplete,
-    queue_complete_handler : queueComplete
+    upload_complete_handler : uploadComplete
   };
   
   if (ltoptions.language != 'en') {
@@ -142,6 +113,3 @@ function getcookie(name) {
   }
   return '';
 }
-
-
-var swfu = createswfu();
