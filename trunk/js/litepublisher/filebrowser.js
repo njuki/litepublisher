@@ -105,11 +105,9 @@ function initfiletabs() {
       $("input[name='files']").val(getpostfiles());
     });
     
-    $.getScript(ltoptions.files + '/js/swfupload/swfupload.js', function() {
-      $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js');
+      $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js', function() {
+ltoptions.swfu = createswfu();
     });
-    
-    $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery.ui.progressbar.min.js');
   });
 }
 
