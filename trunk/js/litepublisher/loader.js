@@ -82,7 +82,8 @@ var jqloader = {
   }
 };
 
-var $ = function() {
+var $ = function(fn) {
+  if (typeof fn === "function") jqloader.ready(fn);
   this.ready=  jqloader.ready;
   this.getScript= jqloader.load;
   return this;

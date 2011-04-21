@@ -5,27 +5,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function get_cookie(name) {
-  if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]);
-      if (cookie.substring(0, name.length + 1) == (name + '=')) {
-        return decodeURIComponent(cookie.substring(name.length + 1));
-      }
-    }
-  }
-  return '';
-}
-
-function set_cookie (name, value, expires){
-  if (!expires) {
-    expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 10);
-  }
-  document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + expires.toGMTString() +  "; path=/";
-}
-
 function get_get(name) {
     var q = window.location.search.substring(1);
     var vars = q.split('&');
