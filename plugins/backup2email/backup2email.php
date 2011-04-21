@@ -19,14 +19,12 @@ class tbackup2email extends tplugin {
   
   public function send() {
     $backuper = tbackuper::instance();
-    $s = $backuper->getpartial(false, false, false);
-    $date = date('d-m-Y');
-    $filename = litepublisher::$domain . ".$date.tar.gz";
+    $filename  = $backuper->createbackup();
     
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $ini = parse_ini_file($dir . 'about.ini');
     
-    tmailer::SendAttachmentToAdmin("[backup] $filename", $ini['body'], $filename, $s);
+    tmailer::SendAttachmentToAdmin("[backup] $filename", $ini['body'], basename($filename), file_get_contents($filename));
   }
   
 }//class

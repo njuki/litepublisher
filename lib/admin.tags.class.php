@@ -12,6 +12,17 @@ class tadmintags extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
+  public function gethead() {
+    $result = parent::gethead();
+    
+    $template = ttemplate::instance();
+    //$template->ltoptions[] = 'idpost: ' . $this->idget();
+    $template->ltoptions[] = sprintf('lang: "%s"', litepublisher::$options->language );
+  $result .= $template->getready('$("#tabs").tabs({ cache: true });');
+    $ajax = tajaxtageditor::instance();
+    return $ajax->dogethead($result);
+  }
+  
   public function getcontent() {
     $result = '';
     $istags = $this->name == 'tags';

@@ -51,7 +51,7 @@ pollclient.clickvote = function(idpoll, vote) {
   if (this.cookierequested) {
     this.sendvote(idpoll, vote);
   } else {
-    this.cookie = this.get_cookie("polluser");
+    this.cookie = get_cookie("polluser");
     if (this.cookie == null) this.cookie = '';
     this.getcookie(function() {
       pollclient.sendvote(idpoll, vote);
@@ -64,31 +64,11 @@ pollclient.getcookie = function(callback) {
 {action: 'getcookie', cookie: this.cookie},
   function (cookie) {
     if (cookie != pollclient.cookie) {
-      pollclient.set_cookie('polluser', cookie, false);
+      set_cookie('polluser', cookie, false);
       pollclient.cookie = cookie;
     }
     
     pollclient.cookierequested = true;
     if ($.isFunction(callback)) callback();
   });
-};
-
-pollclient.get_cookie= function(name) {
-  if (! document.cookie || document.cookie == '') return '';
-  var cookies = document.cookie.split(';');
-  for (var i = 0, n = cookies.length; i < n; i++) {
-    var cookie = jQuery.trim(cookies[i]);
-    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-      return decodeURIComponent(cookie.substring(name.length + 1));
-    }
-  }
-  return '';
-};
-
-pollclient.set_cookie = function (name, value, expires){
-  if (!expires) {
-    expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 10);
-  }
-  document.cookie = name + "=" + escape(value) + "; expires=" + expires.toGMTString() +  "; path=/";
 };

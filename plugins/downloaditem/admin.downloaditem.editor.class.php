@@ -12,12 +12,6 @@ class tdownloaditemeditor extends tposteditor {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethead() {
-    $result = parent::gethead();
-    $result = str_replace('$.initposteditor()', '$.initposteditor(3)', $result);
-    return $result;
-  }
-  
   public function gettitle() {
     if ($this->idpost == 0){
       return parent::gettitle();

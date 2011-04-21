@@ -5,9 +5,9 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function initdatepicker() {
+function initdatepicker(sel) {
   var cur = $("#date").val();
-  $('#datepicker').datepicker({
+  $(sel).datepicker({
     altField: '#date',
     altFormat: 'dd.mm.yy',
     dateFormat: 'dd.mm.yy',
@@ -88,6 +88,9 @@ function getpostfiles() {
 }
 
 function initfiletabs() {
+  var scripts = $.when(      $.getScript(ltoptions.files + '/js/swfupload/swfupload.js'),
+  $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.min.js'));
+  
   $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
 {id: ltoptions.idpost, get: "files"},
   function (html) {
@@ -105,9 +108,10 @@ function initfiletabs() {
       $("input[name='files']").val(getpostfiles());
     });
     
-      $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.js', function() {
-ltoptions.swfu = createswfu();
+    scripts.done(function() {
+      ltoptions.swfu = createswfu();
     });
+    
   });
 }
 
@@ -126,35 +130,54 @@ function tagtopost(link) {
   }
 }
 
-$.initposteditor = function(dateindex) {
-  if (dateindex == undefined) dateindex = 2;
-  $.getScript(ltoptions.files + '/files/' + ltoptions.lang + '.adnin.js');
-  inittabs("#tabs", function() {
-    $("#tabs").bind( "tabsload", function(event, ui) {
-      switch (ui.index) {
-        case dateindex:
-        $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery.ui.datepicker.min.js', function() {
+
+function error_dialog(msg) {
+  $("#dialog_error").dialog( {
+    autoOpen: true,
+    modal: true,
+    buttons: [
+    {
+      text: "Ok",
+    click: function() { $(this).dialog("close"); }
+    }
+    ]
+  } );
+}
+
+$.initposteditor = function() {
+  $("#tabs").tabs({
+    cache: true,
+    load: function(event, ui) {
+      var sel = $("#datepicker, datepicker", ui.panel);
+      if (sel.length) {
+        $.getScript(ltoptions.files + '/js/jquery/ui-1.8.11/jquery.ui.datepicker.min.js', function() {
           if (ltoptions.lang == 'en') {
-            initdatepicker();
+            initdatepicker(sel);
           } else {
-            $.getScript(ltoptions.files + '/js/jquery/ui-1.8.10/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
-              initdatepicker();
+            $.getScript(ltoptions.files + '/js/jquery/ui-1.8.11/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+              initdatepicker(sel);
             });
           }
         });
-        break;
       }
-    });
-    
-    $("a[rel~='initfiletabs']").one('click', function() {
-      initfiletabs();
-      return false;
-    });
-    
-    $("a[rel~='loadcontenttabs']").one('click', function() {
-      loadcontenttabs();
-      return false;
-    });
-    
+    }
   });
+  
+  $("a[rel~='initfiletabs']").one('click', function() {
+    initfiletabs();
+    return false;
+  });
+  
+  $("a[rel~='loadcontenttabs']").one('click', function() {
+    loadcontenttabs();
+    return false;
+  });
+  
+  $('form:first').submit(function() {
+    if ("" == $("input[name='title']").val()) {
+      error_dialog("empty title");
+      return false;
+    }
+  });
+  
 }

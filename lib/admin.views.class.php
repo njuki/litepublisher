@@ -98,13 +98,11 @@ class tadminviews extends tadminmenu {
   
   public function gethead() {
     $result = parent::gethead();
+    $template = ttemplate::instance();
     switch ($this->name) {
       case 'views':
-      $template = ttemplate::instance();
       $template->ltoptions[] = sprintf('allviews: [%s]', implode(',', array_keys(tviews::instance()->items)));
-      $result .= '<link rel="stylesheet" type="text/css" href="$site.files/js/jquery/ui-1.8.10/redmond/jquery-ui-1.8.10.custom.css" />';
-      
-    $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.js", function() {init_views();}' );
+    $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.min.js", function() {init_views();}' );
       /*
       $result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
       <script type="text/javascript" >
@@ -113,11 +111,10 @@ class tadminviews extends tadminmenu {
       */
       break;
       
-      /*
+      
       case 'spec':
-      //$result .= $template->
+    $result .= $template->getready('$("#tabs").tabs({ cache: true });');
       break;
-      */
     }
     return $result;
   }

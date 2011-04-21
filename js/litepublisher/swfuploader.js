@@ -57,7 +57,7 @@ function createswfu () {
     flash_url : url + "/js/swfupload/swfupload.swf",
     upload_url: url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost,
     // prevent_swf_caching: false,
-  post_params: {"admincookie": getcookie("admin")},
+  post_params: {"admincookie": get_cookie("admin")},
     file_size_limit : "100 MB",
     file_types : "*.*",
     file_types_description : "All Files",
@@ -98,18 +98,4 @@ function createswfu () {
   try {
     return new SWFUpload(settings);
 } catch(e) { alert('Error create swfupload ' + e.message); }
-}
-
-function getcookie(name) {
-  if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]);
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) == (name + '=')) {
-        return decodeURIComponent(cookie.substring(name.length + 1));
-      }
-    }
-  }
-  return '';
 }

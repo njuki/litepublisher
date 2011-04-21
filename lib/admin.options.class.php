@@ -65,15 +65,7 @@ class Tadminoptions extends tadminmenu {
     switch ($this->name) {
       case 'home':
       $template = ttemplate::instance();
-      //triks for support jqloader
-      if (litepublisher::$classes->exists('tfastloader')) {
-        $result .= $template->getloadjavascript(
-      '"$site.url/js/litepublisher/admin.js", function() {inittabs("#tabs");}' );
-      } else {
-        $result .= '<script type="text/javascript">
-        inittabs("#tabs");
-        </script>';
-      }
+    $result .= $template->getready('$("#tabs").tabs({ cache: true });');
       break;
     }
     return $result;
