@@ -30,6 +30,7 @@ function load_script(url, callback) {
 
 var jqloader = {
   jquery_loaded: false,
+  is_ready: false,
   items: [],
   holditems: [],
   holdready: [],
@@ -42,43 +43,56 @@ var jqloader = {
   },
   
   load: function(url, fn) {
-    if (this.jquery_loaded) {
-      var script = this.loaded(url);
+    if (jqloader.jquery_loaded) {
+      var script = jqloader.loaded(url);
       if (script) {
         script.done(fn);
-        return script;
+      } else {
+        script = $.getScript(url, fn);
+      jqloader.items.push({url: url, script: script});
       }
-      script = $.getScript(url, fn);
-    this.items.push({url: url, script: script});
       return script;
     } else {
-    this.holditems.push({url: url, fn: fn});
+    jqloader.holditems.push({url: url, fn: fn});
     }
   },
   
   load_jquery: function(url) {
-    load_script(url, this.init);
+    load_script(url, jqloader.init);
   },
   
   init: function() {
-    var i, l;
-    jqloader.jquery_loaded = true;
-    for (i = 0, l = jqloader.holdready.length - 1; i <= l; i++) {
-      $(document).ready(jqloader.holdready[i]);
-    }
-    jqloader.holdready = null;
-    
+    jqloader.jquery_loaded = $.fn  !=undefined;
+    if (!jqloader.jquery_loaded) return;
+    var i, l, a = [];
     for (i = 0, l = jqloader.holditems.length -1; i <= l; i++) {
       var item = jqloader.holditems[i];
       jqloader.load(item.url, item.fn);
     }
     jqloader.holditems = null;
-  // catch(e) { alert(e.message); }
+    
+    window.setTimeout(function() {
+      for (i = 0, l = jqloader.items.length -1; i <= l; i++) {
+        a.push(jqloader.items[i].script);
+      }
+      
+      var w = $.when.apply($, a);
+      w.done(function() {
+        jqloader.is_ready = true;
+        for (i = 0, l = jqloader.holdready.length - 1; i <= l; i++) {
+          $(document).ready(jqloader.holdready[i]);
+        }
+        jqloader.holdready = null;
+      });
+    }, 20);
   },
   
   ready: function(fn) {
-    if (jqloader.jquery_loaded) return $(document).ready(fn);
-    jqloader.holdready.push(fn);
+    if (jqloader.is_ready) {
+      $(document).ready(fn);
+    } else {
+      jqloader.holdready.push(fn);
+    }
   }
 };
 
