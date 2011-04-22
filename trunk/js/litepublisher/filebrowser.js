@@ -144,7 +144,7 @@ function error_dialog(msg) {
   } );
 }
 
-$.initposteditor = function() {
+function initposteditor () {
   $("#tabs").tabs({
     cache: true,
     load: function(event, ui) {
