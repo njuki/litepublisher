@@ -56,6 +56,15 @@ function widget_clicked() {
 }
 
 function init_views() {
+if (window.jqloader ===  undefined) {
+_init_views();
+} else {
+var script = jqloader.load(ltoptions.files + '/js/litepublisher/admin.' + $.fn.jquery + '.min.js');
+script.done(_init_views);
+}
+}
+
+function _init_views() {
   $(document).ready(function() {
     $("div[rel='tabs']").each(function() {
       var idview = $(this).attr("id").split("_").pop();
@@ -169,7 +178,7 @@ function init_views() {
       $(this).data("showlist", showlist);
       show_append_widgets(showlist);
       return false;
-    });
-    
-  });
+ 
+
+});   });
 }

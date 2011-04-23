@@ -312,8 +312,9 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     */
     return '<script type="text/javascript">
     $(document).ready(function() {
+if ($("*[id^='pollform_']").length) {
       $.getScript(ltoptions.files + "/plugins/polls/polls.client.js");
-    });
+    }); });
     </script>';
   }
   
