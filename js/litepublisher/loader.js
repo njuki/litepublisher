@@ -64,6 +64,7 @@ var jqloader = {
   init: function() {
     jqloader.jquery_loaded = $.fn  !=undefined;
     if (!jqloader.jquery_loaded) return;
+if (window.jquery == undefined) window.jquery = $;
     var i, l, a = [];
     for (i = 0, l = jqloader.holditems.length -1; i <= l; i++) {
       var item = jqloader.holditems[i];

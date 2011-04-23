@@ -90,7 +90,7 @@ function tpollsUninstall($self) {
 function getpollhead() {
   $template = ttemplate::instance();
   return $template->getready(
-  'if ($("*[id^=\'pollform_\']").length > 0) {'.
+  'if ($("*[id^=\'pollform_\']").length) {'.
     '$.getScript("$site.files/plugins/polls/polls.client.min.js", function() {'.
       ' pollclient.init();' .
     '});'.
