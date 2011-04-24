@@ -150,11 +150,11 @@ function initposteditor () {
     load: function(event, ui) {
       var sel = $("#datepicker, datepicker", ui.panel);
       if (sel.length) {
-        $.getScript(ltoptions.files + '/js/jquery/ui-1.8.11/jquery.ui.datepicker.min.js', function() {
+        $.getScript(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
           if (ltoptions.lang == 'en') {
             initdatepicker(sel);
           } else {
-            $.getScript(ltoptions.files + '/js/jquery/ui-1.8.11/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+            $.getScript(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
               initdatepicker(sel);
             });
           }
