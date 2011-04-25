@@ -88,8 +88,8 @@ function getpostfiles() {
 }
 
 function initfiletabs() {
-  var scripts = $.when(      $.getScript(ltoptions.files + '/js/swfupload/swfupload.js'),
-  $.getScript(ltoptions.files + '/js/litepublisher/swfuploader.min.js'));
+  var scripts = $.when(      $.load_script(ltoptions.files + '/js/swfupload/swfupload.js'),
+  $.load_script(ltoptions.files + '/js/litepublisher/swfuploader.min.js'));
   
   $.get(ltoptions.url + '/admin/ajaxposteditor.htm',
 {id: ltoptions.idpost, get: "files"},
@@ -150,11 +150,11 @@ function initposteditor () {
     load: function(event, ui) {
       var sel = $("#datepicker, datepicker", ui.panel);
       if (sel.length) {
-        $.getScript(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
+        $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker.min.js', function() {
           if (ltoptions.lang == 'en') {
             initdatepicker(sel);
           } else {
-            $.getScript(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
+            $.load_script(ltoptions.files + '/js/jquery/ui-' + $.ui.version + '/jquery.ui.datepicker-' + ltoptions.lang + '.js', function() {
               initdatepicker(sel);
             });
           }

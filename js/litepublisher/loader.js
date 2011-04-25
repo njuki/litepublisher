@@ -48,7 +48,7 @@ var jqloader = {
       if (script) {
         script.done(fn);
       } else {
-        script = $.getScript(url, fn);
+        script = $.load_script(url, fn);
       jqloader.items.push({url: url, script: script});
       }
       return script;
