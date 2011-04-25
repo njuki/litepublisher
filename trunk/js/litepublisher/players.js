@@ -8,7 +8,7 @@
 function playaudiofile(id, filename) {
   if (ltoptions.audiomutex == undefined) {
     ltoptions.audiomutex = 'loading';
-    jQuery.getScript(ltoptions.files + '/js/audio-player/audio-player.js', function() {
+    $.load_script(ltoptions.files + '/js/audio-player/audio-player.js', function() {
       AudioPlayer.setup(ltoptions.files + "/js/audio-player/player.swf", {
         width: 290
       });
@@ -27,7 +27,7 @@ function playaudiofile(id, filename) {
 function playvideofile(q, filename) {
   if (ltoptions.videomutex == undefined) {
     ltoptions.videomutex = 'loading';
-    jQuery.getScript(ltoptions.files + '/js/flowplayer/flowplayer-3.2.4.min.js', function() {
+    $.load_script(ltoptions.files + '/js/flowplayer/flowplayer-3.2.4.min.js', function() {
       ltoptions.videomutex = 'loaded';
       playvideofile(q, filename);
     });
