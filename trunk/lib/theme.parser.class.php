@@ -11,6 +11,7 @@ class tthemeparser extends tevents {
   private $abouts;
   private $paths;
   private $sidebar_index;
+  private $pathmap;
   
   public static function instance() {
     return getinstance(__class__);
@@ -22,6 +23,22 @@ class tthemeparser extends tevents {
     $this->addevents('parsed');
     $this->data['replacelang'] = false;
     $this->sidebar_index = 0;
+    $this->pathmap = $this->createpathmap();
+  }
+  
+  private function createpathmap() {
+    $result = array();
+    $post = 'content.post.';
+    $excerpt = 'content.excerpts.excerpt.';
+    foreach(array('file', 'image',  'audio', 'video') as $name) {
+      $key = $post . 'filelist.' . $name;
+      $result[$key . "s.$name"] = $key;
+      $keyexcerpt = $excerpt . 'filelist.' . $name;
+      $result[$keyexcerpt . "s.$name"] = $keyexcerpt;
+      $result[$post . 'filelist.images.preview'] = $post . 'filelist.preview';
+      $result[$excerpt . 'filelist.images.preview'] = $excerpt . 'filelist.preview';
+    }
+    return $result;
   }
   
   public static function checktheme(ttheme $theme) {
@@ -85,7 +102,6 @@ class tthemeparser extends tevents {
       $parent = ttheme::getinstance($parentname);
       $theme->templates = $parent->templates;
     }
-    
     $s = self::getfile($filename);
     $this->parsetags($theme, $s);
     $this->afterparse($theme);
@@ -232,7 +248,6 @@ class tthemeparser extends tevents {
       }
       
       if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
-      
       if (strbegin($parent, 'sidebar')) {
         if (preg_match('/^sidebar(\d)\.?/', $parent, $m)) {
           $this->sidebar_index = (int) $m[1];
@@ -258,6 +273,8 @@ class tthemeparser extends tevents {
         }
         
         $s = trim($s);
+        //retranslatepaths
+        if (isset($this->pathmap[$parent])) $parent = $this->pathmap[$parent];
         if (strbegin($parent, 'sidebar')) {
           $this->setwidgetvalue($parent, $s);
         }  elseif (isset($this->paths[$parent])) {
@@ -372,36 +389,46 @@ class tthemeparser extends tevents {
         foreach(array('file', 'image',  'audio', 'video') as $name) {
           $key = $post . 'filelist.' . $name;
           $itemkey = $key . "s.$name";
+          /*
           if (isset($templates[$itemkey])) {
             $templates[$key] = $templates[$itemkey];
             unset($templates[$itemkey]);
           }
+          */
           if (!isset($templates[$key . 's'])) $templates[$key . 's'] = '$' . $name;
           //excerpt
           $keyexcerpt = $excerpt . 'filelist.' . $name;
-          $itemkeyexcerpt = $key . "s.$name";
+          $itemkeyexcerpt = $keyexcerpt . "s.$name";
+          /*
           if (isset($templates[$itemkeyexcerpt])) {
             $templates[$keyexcerpt] = $templates[$itemkeyexcerpt];
             unset($templates[$itemkeyexcerpt]);
           } else {
             $templates[$keyexcerpt] = $templates[$key];
           }
+          */
+          if (!isset($templates[$keyexcerpt])) $templates[$keyexcerpt] = $templates[$key];
           if (!isset($templates[$keyexcerpt . 's'])) $templates[$keyexcerpt . 's'] = $templates[$key . 's'];
         }
+        
         //fix preview
         $key = $post . 'filelist.preview';
         $itemkey = $post . 'filelist.images.preview';
+        /*
         if (isset($templates[$itemkey])) {
           $templates[$key] = $templates[$itemkey];
           unset($templates[$itemkey]);
         }
-        
+        */
         $keyexcerpt = $excerpt . 'filelist.preview';
         $itemkeyexcerpt = $excerpt . 'filelist.images.preview';
+        /*
         if (isset($templates[$itemkeyexcerpt])) {
           $templates[$keyexcerpt] = $templates[$itemkeyexcerpt];
           unset($templates[$itemkeyexcerpt]);
-        } elseif ( !isset($templates[$keyexcerpt])) {
+        } else
+        */
+        if ( !isset($templates[$keyexcerpt])) {
           $templates[$keyexcerpt] = $templates[$key];
         }
         
@@ -410,7 +437,9 @@ class tthemeparser extends tevents {
         'filelist.files', 'filelist.images', 'filelist.audios', 'filelist.videos',
         'catlinks',         'catlinks.item', 'catlinks.divider',
         'taglinks',         'taglinks.item', 'taglinks.divider') as $name) {
-          if (empty($templates[$excerpt . $name])) $templates[$excerpt . $name] = $templates[$post . $name];
+          if (empty($templates[$excerpt . $name])) {
+            $templates[$excerpt . $name] = $templates[$post . $name];
+          }
         }
         
         $sidebars = &$this->theme->templates['sidebars'];
