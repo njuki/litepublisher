@@ -61,15 +61,14 @@ $(document).ready(function() {
 });
 
 $.extend({
-	load_script: function( url, callback ) {
-		return $.ajax({
-			type: 'get',
-			url: url,
-			data: undefined,
-			success: callback,
-			dataType: "script",
-cache: true
-		});
-	}
+  load_script: function( url, callback ) {
+    return $.ajax({
+      type: 'get',
+      url: url,
+      data: undefined,
+      success: callback,
+      dataType: "script",
+      cache: true
+    });
+  }
 });
-
