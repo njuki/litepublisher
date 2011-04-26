@@ -91,7 +91,7 @@ function getpollhead() {
   $template = ttemplate::instance();
   return $template->getready(
   'if ($("*[id^=\'pollform_\']").length) {'.
-    '$.getScript("$site.files/plugins/polls/polls.client.min.js", function() {'.
+    '$.load_script("$site.files/plugins/polls/polls.client.min.js", function() {'.
       ' pollclient.init();' .
     '});'.
   '}');
