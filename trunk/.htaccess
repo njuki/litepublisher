@@ -1,7 +1,6 @@
 #CharsetDisable On
 AddDefaultCharset UTF-8
 #php_value memory_limit 48M
-
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /

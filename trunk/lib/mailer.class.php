@@ -24,13 +24,13 @@ class tmailer {
     }
     
     mail($to, $subj, $body,
-    "From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver " . litepublisher::$options->version);
+    "To: $to\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nX-Priority: 3\nX-Mailer: Lite Publisher ver " . litepublisher::$options->version);
   }
   
   public static function  sendmail($fromname, $fromemail, $toname, $toemail, $subj, $body) {
     if (litepublisher::$options->mailer == 'smtp') {
       $mailer = TSMTPMailer ::Instance();
-      return $mailer->mail($fromname, $toname, $toemail, $subj, $body);
+      return $mailer->mail($fromname, $fromemail, $toname, $toemail, $subj, $body);
     }
     
     return self::send(self::CreateEmail($fromname, $fromemail), self::CreateEmail($toname, $toemail), $subj, $body);
@@ -114,7 +114,8 @@ class TSMTPMailer extends tevents {
     );
   }
   
-  public function Mail($fromname,  $toname, $toemail, $subj, $body) {
+  public function Mail($fromname,  $fromemail, $toname, $toemail, $subj, $body) {
+    $result = false;
     $options =     litepublisher::$options;
     include_once(litepublisher::$paths->libinclude . 'class-smtp.php');
     $smtp = new SMTP();
@@ -127,12 +128,14 @@ class TSMTPMailer extends tevents {
           $from = tmailer::CreateEmail($fromname, $fromemail);
           $to = tmailer::CreateEmail($toname, $toemail);
           
-          $smtp->data("From: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
+          $smtp->data("To: $to\nFrom: $from\nReply-To: $from\nContent-Type: text/plain; charset=\"utf-8\"\nContent-Transfer-Encoding: 8bit\nDate: $date\nSubject: $subj\nX-Priority: 3\nX-Mailer: Lite Publisher ver $options->version\n\n$body");
+          $result = true;
         }
         $smtp->Quit();
         $smtp->Close();
       }
     }
+    return $result;
   }
   
 }//class

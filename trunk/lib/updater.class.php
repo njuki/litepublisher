@@ -55,6 +55,8 @@ class tupdater extends tevents {
       if (strlen($ver) == 3) $ver .= '0';
       if ($log) tfiler::log("$v selected to update", 'update');
       $this->run($v);
+      litepublisher::$options->version = $v;
+      litepublisher::$options->savemodified();
       $v = $v + 0.01;
     }
     

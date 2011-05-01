@@ -158,8 +158,7 @@ $item = &$itemres[0];
 
   $post = new tpost();
 $post->id = (int) $item->ID;
-$post->date =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
-
+$post->posted =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
   $post->title = $item->post_title;
   $post->categories = wp_get_post_categories($item->ID);
 
@@ -176,7 +175,6 @@ $url = $UrlArray['path'];
 if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
 $post->url = $url;
 $post->idurl = litepublisher::$urlmap->add($post->url, get_class($post), $post->id);
-
   $post->content = $item->post_content;
 $post->commentsenabled =  'open' == $item->comment_status;
 $post->pingenabled = 'open' == $item->ping_status;
@@ -198,7 +196,9 @@ $categories->unlock();
 
 $posts->UpdateArchives();
 $posts->addrevision();
-
+if (dbversion) {
+    $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$tags->autoid);
+}
 $posts->unlock();
   $urlmap->clearcache();
 $arch = tarchives::instance();
@@ -210,13 +210,12 @@ return $item->ID;
 }
 
 function savepost($post) {
-    if ($post->date == 0) $post->date = time();
+    if ($post->posted == 0) $post->posted = time();
 $post->modified = time();
-  
+ 
 $posts =tposts::instance();
   $posts->autoid = max($posts->autoid, $post->id);
 if (dbversion) {
-    $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$tags->autoid);
     $self = tposttransform::instance($post);
     $values = array('id' => $post->id);
     foreach (tposttransform::$props as $name) {
@@ -254,12 +253,12 @@ echo "$post->id\n";
 flush();
  }
 
-function ExportComments(&$post) {
+function ExportComments(tpost $post) {
   global $wpdb;
-  $users = &TCommentUsers::instance();
-  $CommentManager = &TCommentManager::instance();
-  $comments = &$post->comments;
-  $ContentFilter = &TContentFilter::instance();
+  $users = tcommentusers::instance();
+  $CommentManager = tcommentmanager::instance();
+  $comments = $post->comments;
+  $ContentFilter = tcontentfilter::instance();
   $items = $wpdb->get_results("SELECT  * FROM $wpdb->comments 
   WHERE comment_post_ID   = $post->id");
 foreach ($items as $item) {

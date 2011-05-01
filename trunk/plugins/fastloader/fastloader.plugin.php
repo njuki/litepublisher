@@ -67,6 +67,7 @@ class tfastloader extends tplugin {
     $s = preg_replace('/\$\.\s*getScript\s*\(/im',
     'jqloader.load(', $s);
     
+    $s = str_replace('$.load_script', 'jqloader.load', $s);
     return $s;
   }
   
@@ -77,8 +78,8 @@ class tfastloader extends tplugin {
     '<script type="text/javascript" src="$1"></script>', $s);
     
     $s = str_replace('jqloader.ready', '$(document).ready', $s);
-    $s = str_replace('jqloader.load', '$.getScript', $s);
-    
+    //$s = str_replace('jqloader.load', '$.getScript', $s);
+    $s = str_replace('jqloader.load', '$.load_script', $s);
     return $s;
   }
   
