@@ -1,7 +1,7 @@
 * { 	margin: 0; 	padding: 0; }
 body {background:#f0f6f7 url(../default/images/bg7.png) repeat-x;font:12px Arial, Verdana, sans-serif;}
 #header {width:960px;background: url(../default/images/logo.png) no-repeat 30px 20px;margin:11px auto 0;height:125px;position:relative;display:block;}
-#logo {font:14px Trebuchet MS, Tahoma, Verdana, sans-serif;color:#fff;padding:30px 0 0 150px;}
+	#logo {font:14px Trebuchet MS, Tahoma, Verdana, sans-serif;color:#fff;padding:30px 0 0 150px;}
 #logo .name {font:48px Trebuchet MS, Tahoma, Verdana, sans-serif;height:95px;display:inline-block;float:left;text-shadow:1px 1px 0 #5fa9c1;padding:0 30px 0 0;}
 #logo .name a {text-decoration:none;color:#fff}
 #logo .slogan {top:16px;position:relative;}
@@ -37,6 +37,21 @@ body {background:#f0f6f7 url(../default/images/bg7.png) repeat-x;font:12px Arial
 #comment {width:650px;}
 #commentform  #subscribe {margin:0 0 0 171px;width:13px;}
 #commentform p {margin:0 0 2px 0;}
+.commentcontent blockquote {
+    background: #d6e2e8; 
+    color: #505050;
+    border-left: 1px solid #85a8b9;
+    border-top: 1px solid #85a8b9;
+    border-right: 1px solid #1f5f7f;
+    border-bottom: 1px solid #1f5f7f;
+    margin: 1em 4em;
+    padding: 1em;
+}
+
+.commentcontentblockquote p {
+   margin: 0.5em 0;
+   padding: 0;
+}
 .post-info {background-color:#fff1e2;height:24px;padding:7px 10px 0;font-size:12px;position:relative;margin:10px 0 30px;}
 .post-cat {background: url(../default/images/folder-horizontal.png) no-repeat left center;padding:0 0 0 20px;}
 .post-comments {background: url(../default/images/balloon.png) no-repeat left center;padding:0 0 0 20px;float:right;text-align:right;}
