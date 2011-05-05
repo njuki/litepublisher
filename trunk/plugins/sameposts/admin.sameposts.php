@@ -26,7 +26,7 @@ class tadminsameposts extends tadminorderwidget {
   
   protected function doprocessform(twidget $widget)  {
     $widget->maxcount = (int) $_POST['maxcount'];
-$widget->postschanged();
+    $widget->postschanged();
     return parent::doprocessform($widget);
   }
   

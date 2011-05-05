@@ -46,6 +46,7 @@ class tmenuwidget extends tclasswidget {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('submenu', $sidebar);
+    $subtml = $theme->getwidgettml($sidebar, 'submenu', 'subitems');
     // 1 submenu list
     $submenu = '';
     $childs = $menus->getchilds($id);
@@ -57,6 +58,7 @@ class tmenuwidget extends tclasswidget {
     if ($parent == 0) {
       $result = $submenu;
     } else {
+      if ($submenu != '') $submenu = str_replace($subtml, '$item', $submenu);
       $sibling = $menus->getchilds($parent);
       foreach ($sibling as $iditem) {
         $result .= $this->getitem($tml, $menus->getitem($iditem), $iditem == $id ? $submenu : '');
@@ -65,6 +67,7 @@ class tmenuwidget extends tclasswidget {
     
     $parents = $menus->getparents($id);
     foreach ($parents as $parent) {
+      $result = str_replace($subtml, '$item', $result);
       $result = $this->getitem($tml, $menus->getitem($parent), $result);
     }
     
@@ -78,7 +81,8 @@ class tmenuwidget extends tclasswidget {
     $args->anchor = $item['title'];
     $args->rel = 'menu';
     $args->icon = '';
-    $args->subitems = $subnodes == '' ? '' : sprintf('<ul>%s</ul>', $subnodes);
+    $args->subcount = '';
+    $args->subitems = $subnodes;
     $theme = ttheme::instance();
     return $theme->parsearg($tml, $args);
   }

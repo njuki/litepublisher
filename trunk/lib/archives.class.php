@@ -165,14 +165,16 @@ class tarchiveswidget extends twidget {
     $result = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('archives', $sidebar);
+    if ($this->showcount) $counttml = $theme->getwidgettml($sidebar, 'archives', 'subcount');
     $args = targs::instance();
     $args->icon = '';
+    $args->subcount = '';
     $args->subitems = '';
     $args->rel = 'archives';
     foreach ($arch->items as $date => $item) {
       $args->add($item);
       $args->text = $item['title'];
-      if ($this->showcount)     $args->subitems = sprintf('(%d)', $item['count']);
+      if ($this->showcount)     $args->subcount = str_replace($counttml, '$itemscount', $item['count']);
       $result .= $theme->parsearg($tml, $args);
     }
     

@@ -415,7 +415,6 @@ class tpost extends titem implements  itemplate {
       if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
         $this->aprev = self::instance($id);
       }
-      return false;
     } else {
       $posts = tposts::instance();
       $keys = array_keys($posts->archives);
@@ -696,7 +695,6 @@ class tpost extends titem implements  itemplate {
       ttheme::$vars['prevpost'] = $prevpost;
       $prev = $theme->parse($theme->templates['content.post.prevnext.prev']);
     }
-    
     if ($nextpost = $this->next) {
       ttheme::$vars['nextpost'] = $nextpost;
       $next = $theme->parse($theme->templates['content.post.prevnext.next']);
@@ -1595,7 +1593,7 @@ class tcommontags extends titems implements  itemplate {
     }
   }
   
-  public function getsortedcontent($parent, $tml, $subtml, $sortname, $count, $showcount) {
+  public function getsortedcontent(array $tml, $parent,  $sortname, $count, $showcount) {
     $sorted = $this->getsorted($parent, $sortname, $count);
     if (count($sorted) == 0) return '';
     $result = '';
@@ -1608,16 +1606,14 @@ class tcommontags extends titems implements  itemplate {
       $item = $this->getitem($id);
       $args->add($item);
       $args->icon = $iconenabled ? $this->geticonlink($id) : '';
-      $subitems = '';
-      if ($showcount) $subitems = sprintf(' (%d)', $item['itemscount']);
-      if ($subtml != '') $subitems .= $this->getsortedcontent($id, $tml, $subtml, $sortname, $count, $showcount);
-      $args->subitems = $subitems;
-      $result .= $theme->parsearg($tml,$args);
+      $args->subcount =$showcount ? $theme->parsearg($tml['subcount'],$args) : '';
+      $args->subitems = $tml['subitems'] != '' ? $this->getsortedcontent($tml, $id, $sortname, $count, $showcount) : '';
+      $result .= $theme->parsearg($tml['item'],$args);
     }
     if ($parent == 0) return $result;
     $args->parent = $parent;
     $args->item = $result;
-    return $theme->parsearg($subtml, $args);
+    return $theme->parsearg($tml['subitems'], $args);
   }
   
   public function geticonlink($id) {
@@ -1903,9 +1899,12 @@ class tcommontags extends titems implements  itemplate {
     $result = '';
     $theme = ttheme::instance();
     if ($this->id == 0) {
-      $items = $this->getsortedcontent(0, '<li><a href="$link" title="$title">$icon$title</a>$count</li>',
-      '<ul>$item</ul>',
-      'count', 0, 0, false);
+      $items = $this->getsortedcontent(array(
+      'item' =>'<li><a href="$link" title="$title">$icon$title</a>$subcount</li>',
+      'subcount' => '<strong>($itemscount)</strong>',
+      'subitems' =>       '<ul>$item</ul>'
+      ),
+      0, 'count', 0, 0, false);
       $result .= sprintf('<ul>%s</ul>', $items);
       return $result;
     }
@@ -2094,10 +2093,12 @@ class tcommontagswidget extends twidget {
   
   public function getcontent($id, $sidebar) {
     $theme = ttheme::instance();
-    $items = $this->owner->getsortedcontent(0,
-    $theme->getwidgetitem($this->template, $sidebar),
-    $this->showsubitems ? $theme->getwidgettml($sidebar, $this->template, 'subitems') : '',
-    $this->sortname, $this->maxcount, $this->showcount);
+    $items = $this->owner->getsortedcontent(array(
+    'item' => $theme->getwidgetitem($this->template, $sidebar),
+    'subcount' =>$theme->getwidgettml($sidebar, $this->template, 'subcount'),
+    'subitems' => $this->showsubitems ? $theme->getwidgettml($sidebar, $this->template, 'subitems') : ''
+    ),
+    0, $this->sortname, $this->maxcount, $this->showcount);
     return str_replace('$parent', 0,
     $theme->getwidgetcontent($items, $this->template, $sidebar));
   }

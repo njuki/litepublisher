@@ -731,7 +731,9 @@ $template.sidebar = [
     <div class="rubric">$title</div>
     $items = [
     <ul class="linkcat">
-      $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems = [<ul>$item</ul>]</li>]
+      $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>
+$subcount = [<strong>($itemscount)</strong>]
+$subitems = [<ul>$item</ul>]</li>]
     </ul>
     ]
   </div>
@@ -743,6 +745,7 @@ $template.sidebar = [
 $title - название виджета
 $items - шаблон списка
 $item - шаблон элемента списка
+$subcount - шаблон количества, например записей в рубрике
 $subitems - шаблон вложенного списка
 
 Видно, что все три шаблона вложены друг в друга. Если виджет в настройках является аяксовым, то используется только верхний шаблон. Для генерации контента виджета используются как раз шаблоны $items	, $item, $subitems. 
@@ -752,9 +755,11 @@ $subitems - шаблон вложенного списка
 $link - полный адрес ссылки
 $title - описание, текст для атрибута title
 $rel - текст для адрибута rel
-$icon - не обязательный html икоки, если есть
+$icon - не обязательный html иконки, если есть
 $text - текст ссылки
-$subitems - html вложенного списка, может быть другой текст, например количество записей в рубрике
+$subcount html количества, например записей в рубрике
+$itemscount - цифра количества , например количество записей в рубрике
+$subitems - html вложенного списка, может быть другой текст
 
 Как правило значения $title и $text совпадают, но могут и отличаться. Для генерации вложенного списка $subitms в для шаблона списка используется шаблон $item. $subitems является аналогом тега $items.
 
@@ -801,7 +806,7 @@ $items = [
 </div>
 ]
 
-Мы видим, что шаблон рубрик опять почти полностью повторяет шаблон по умолчанию, а единственное отличие - это шаблон $items.  Формат темы позволяет не повторять одинаковые шаблоны и для виджетов указать только отличающийся шаблон (при обязательном наличии полноготшаблона по умолчанию). Тогда пможно было бы свести шаблон рубрик к объявлению sidebar.categories.items = [<ul class="list-cat" id="widgetcategories">$item</ul>]. Следовательно для нижеследующих шаблонов будет достаточно объявить только отличающиеся подшаблоны. Вот шаблон архива:
+Мы видим, что шаблон рубрик опять почти полностью повторяет шаблон по умолчанию, а единственное отличие - это шаблон $items.  Формат темы позволяет не повторять одинаковые шаблоны и для виджетов указать только отличающийся шаблон (при обязательном наличии полноготшаблона по умолчанию). Тогда можно было бы свести шаблон рубрик к объявлению sidebar.categories.items = [<ul class="list-cat" id="widgetcategories">$item</ul>]. Следовательно для нижеследующих шаблонов будет достаточно объявить только отличающиеся подшаблоны. Вот шаблон архива:
 sidebar.archives.items = [<ul class="list-archives" id="widgetarchives">$item</ul>]
 
 Шаблон для свежих записей, в котором доступны теги $post.* :
@@ -857,10 +862,10 @@ $template.sidebar1 = [
 После чего приступаем к обявлению шаблона свежих записей:
 
 sidebar1.posts = [
-		<li id="lastposts">
+		<li class="lastposts">
 			<div class="rubric">$title</div>
     $items = [
-				<ul id="widgetposts">
+				<ul>
 					$item = [<li><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.title</a><br />
 							<small>$post.date</small></li>]
 			    </ul>
@@ -871,10 +876,10 @@ sidebar1.posts = [
 Описание тегов смотрите в комментариях к первому сайдбару. Следующим зададим шаблон свежих комментариев:
 
 sidebar1.comments = [
-		<li id="lastcomments">
+		<li class="lastcomments">
 			<div class="rubric">$title</div>
     $items = [
-				<ul id="widgetcomments">
+				<ul>
 					$item = [<li><a href="$link#comment-$id" title="$name $onrecent $title">$name $onrecent $title</a>: $content...</li>
 					]
 				</ul>
@@ -885,10 +890,10 @@ sidebar1.comments = [
 Теги шаблона виджета свежих комментариев смотрите в первом сайдбаре. Следующий виджет - мета:
 
 sidebar1.meta = [
-	<li id="meta">
+	<li class="meta">
 				<div class="rubric">$title</div>
 $items = [
-				<ul id="widgetmeta">
+				<ul>
 				      $item = [<li><a $class rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>]
 				</ul>
     ]

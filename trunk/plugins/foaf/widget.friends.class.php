@@ -37,6 +37,7 @@ class tfriendswidget extends twidget {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('friends', $sidebar);
     $args = targs::instance();
+    $args->subcount = '';
     $args->subitems = '';
     $args->$icon = '';
     $args->rel = 'friend';

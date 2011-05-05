@@ -71,12 +71,12 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 #footerbar {list-style:none;position:relative;padding:15px 0 0 25px;}
 #footerbar li {list-style:none;float:left;position:relative;width:250px;height:100%;color:#737373;display:inline;}
 
-#footerbar #lastposts {width:280px;padding-right:30px;}
-#lastposts li {margin-bottom:5px;background: url(../images/document-small.png) no-repeat;padding:0 0 0 18px;}
-#footerbar #lastcomments {width:280px;}
-#lastcomments li{margin-bottom:5px;background: url(../images/balloon-small.png) no-repeat;padding:0 0 0 18px;}
-#footerbar #meta {width:235px;margin-right:0px;position:relative;left:90px;}
-#footerbar #meta ul li {width:205px;margin-bottom:5px;}
+#footerbar .lastposts {width:280px;padding-right:30px;}
+.lastposts li {margin-bottom:5px;background: url(../images/document-small.png) no-repeat;padding:0 0 0 18px;}
+#footerbar .lastcomments {width:280px;}
+.lastcomments li{margin-bottom:5px;background: url(../images/balloon-small.png) no-repeat;padding:0 0 0 18px;}
+#footerbar .meta {width:235px;margin-right:0px;position:relative;left:90px;}
+#footerbar .meta ul li {width:205px;margin-bottom:5px;}
 #copyright {width:880px;clear: both;color:#a7a7a7;padding:10px 30px 20px 30px;}
 
 #sidebar .rubric, #sidebar .rubric a  {color:#969da3;}
