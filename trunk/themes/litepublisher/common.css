@@ -48,7 +48,7 @@ body {background:#f0f6f7 url(../default/images/bg7.png) repeat-x;font:12px Arial
     padding: 1em;
 }
 
-.commentcontentblockquote p {
+.commentcontent blockquote p {
    margin: 0.5em 0;
    padding: 0;
 }

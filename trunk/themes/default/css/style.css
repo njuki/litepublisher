@@ -37,6 +37,22 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 #comment {width:650px;}
 #commentform  #subscribe {margin:0 0 0 171px;width:13px;}
 #commentform p {margin:0 0 2px 0;}
+.commentcontent blockquote {
+    background: #d6e2e8; 
+    color: #505050;
+    border-left: 1px solid #85a8b9;
+    border-top: 1px solid #85a8b9;
+    border-right: 1px solid #1f5f7f;
+    border-bottom: 1px solid #1f5f7f;
+    margin: 1em 4em;
+    padding: 1em;
+}
+
+.commentcontent blockquote p {
+   margin: 0.5em 0;
+   padding: 0;
+}
+
 .post-info {background-color:#fff1e2;height:24px;padding:7px 10px 0;font-size:12px;position:relative;margin:10px 0 30px;}
 .post-cat {background: url(../images/folder-horizontal.png) no-repeat left center;padding:0 0 0 20px;}
 .post-comments {background: url(../images/balloon.png) no-repeat left center;padding:0 0 0 20px;float:right;text-align:right;}

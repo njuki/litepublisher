@@ -209,7 +209,9 @@ class SAPE_base {
      * Функция чтения из локального файла
      */
     function _read($filename) {
-        
+        if (false !== ($result = file_get_contents($filename))) return $result;
+return '';
+/*
         $fp = @fopen($filename, 'rb');
         @flock($fp, LOCK_SH);
         if ($fp) {
@@ -227,6 +229,7 @@ class SAPE_base {
             @fclose($fp);
 
             return $data;
+*/
         }
 
         return $this->raise_error('Не могу считать данные из файла: ' . $filename);
