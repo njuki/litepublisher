@@ -799,7 +799,7 @@ sidebar.categories = [
 $items = [
  <ul class="list-cat" id="widgetcategories-$parent">
  $item = [
-  <li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems</li>
+  <li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subcount$subitems</li>
  ]
 </ul>
 ]
@@ -852,7 +852,10 @@ $template.sidebar1 = [
     <div class="rubric">$title</div>
     $items = [
     <ul>
-       $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>$subitems = [<ul>$item</ul>]</li>]
+       $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>
+$subcount = [<strong>($itemscount)</strong>]
+$subitems = [<ul>$item</ul>]
+</li>]
     </ul>
     ]
   </li>

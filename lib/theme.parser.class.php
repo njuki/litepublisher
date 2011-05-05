@@ -8,6 +8,7 @@
 
 class tthemeparser extends tevents {
   public $theme;
+  public $fixsubcount;
   private $abouts;
   private $paths;
   private $sidebar_index;
@@ -21,6 +22,7 @@ class tthemeparser extends tevents {
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('parsed');
+    $this->fixsubcount = true;
     $this->data['replacelang'] = false;
     $this->sidebar_index = 0;
     $this->pathmap = $this->createpathmap();
@@ -339,6 +341,7 @@ class tthemeparser extends tevents {
       }
       
       private function setwidgetitem($widgetname, $path, $value) {
+        //echo "$widgetname, $path<br>";
         $sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
         if (!isset($sidebar[$widgetname])) {
           foreach ( array('', '.items', '.item', '.subcount', '.subitems') as $name) {
@@ -451,6 +454,12 @@ class tthemeparser extends tevents {
             foreach (array('', '.items', '.item', '.subcount', '.subitems') as $name) {
               if (empty($sidebar[$widgetname . $name])) $sidebar[$widgetname . $name] = $sidebar['widget' . $name];
             }
+            
+            if ($this->fixsubcount && in_array($widgetname, array('widget', 'categories', 'tags', 'archives'))) {
+              $v = $sidebar[$widgetname . '.item'];
+              if (!strpos($v, '$subcount')) $sidebar[$widgetname . '.item'] = str_replace('$subitems', '$subcount$subitems', $v);
+            }
+            
           }
           
           if (is_string($sidebar['meta.classes'])) {
