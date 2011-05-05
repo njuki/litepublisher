@@ -216,7 +216,6 @@ class tpost extends titem implements  itemplate {
       if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
         $this->aprev = self::instance($id);
       }
-      return false;
     } else {
       $posts = tposts::instance();
       $keys = array_keys($posts->archives);
@@ -497,7 +496,6 @@ class tpost extends titem implements  itemplate {
       ttheme::$vars['prevpost'] = $prevpost;
       $prev = $theme->parse($theme->templates['content.post.prevnext.prev']);
     }
-    
     if ($nextpost = $this->next) {
       ttheme::$vars['nextpost'] = $nextpost;
       $next = $theme->parse($theme->templates['content.post.prevnext.next']);
