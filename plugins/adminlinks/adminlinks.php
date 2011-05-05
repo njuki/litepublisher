@@ -77,7 +77,9 @@ class tadmincontextwidget extends torderwidget {
   }
   private function getitem($tml, $url, $title) {
     $args = targs::instance();
-    $args->icon = '';$args->subitems = '';
+    $args->subcount = '';
+    $args->icon = '';
+    $args->subitems = '';
     $args->rel = 'admin';
     if (strbegin($url, 'http://')) {
       $args->link = $url;

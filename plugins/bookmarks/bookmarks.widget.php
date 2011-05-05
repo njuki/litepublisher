@@ -42,6 +42,7 @@ class tbookmarkswidget extends tlinkswidget  {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('links', $sidebar);
     $args = targs::instance();
+    $args->subcount = '';
     $args->subitems = '';
     $args->rel = 'link bookmark';
     foreach ($this->items as $id => $item) {

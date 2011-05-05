@@ -39,6 +39,7 @@ class tlinkswidget extends twidget {
     $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . 'id=';
     $url = litepublisher::$site->url;
     $args = targs::instance();
+    $args->subcount = '';
     $args->subitems = '';
     $args->icon = '';
     $args->rel = 'link blogroll';

@@ -348,6 +348,11 @@ class ttheme extends tevents {
       case '.item':
       return '.item';
       
+      case '.items.item.subcount':
+      case '.item.subcount':
+      case '.subcount':
+      return '.subcount';
+      
       case '.items.item.subitems':
       case '.item.subitems':
       case '.subitems':

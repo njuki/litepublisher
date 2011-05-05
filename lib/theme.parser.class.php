@@ -341,7 +341,7 @@ class tthemeparser extends tevents {
       private function setwidgetitem($widgetname, $path, $value) {
         $sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
         if (!isset($sidebar[$widgetname])) {
-          foreach ( array('', '.items', '.item', '.subitems') as $name) {
+          foreach ( array('', '.items', '.item', '.subcount', '.subitems') as $name) {
             $sidebar[$widgetname . $name] = isset($sidebar['widget' . $name]) ? $sidebar['widget' . $name] : '';
           }
           if ($widgetname == 'meta') $sidebar['meta.classes'] = '';
@@ -448,7 +448,7 @@ class tthemeparser extends tevents {
         for ($i = 0; $i < $count; $i++) {
           $sidebar = &$this->theme->templates['sidebars'][$i];
           foreach (ttheme::getwidgetnames() as $widgetname) {
-            foreach (array('', '.items', '.item', '.subitems') as $name) {
+            foreach (array('', '.items', '.item', '.subcount', '.subitems') as $name) {
               if (empty($sidebar[$widgetname . $name])) $sidebar[$widgetname . $name] = $sidebar['widget' . $name];
             }
           }

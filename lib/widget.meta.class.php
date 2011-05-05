@@ -51,6 +51,7 @@ class tmetawidget extends twidget {
       if (!$item['enabled']) continue;
       $args->add($item);
       $args->icon = '';
+      $args->subcount = '';
       $args->subitems = '';
       $args->rel = $name;
       $args->class = isset($metaclasses[$name]) ? $metaclasses[$name] : '';

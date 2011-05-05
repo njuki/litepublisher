@@ -47,7 +47,9 @@ class tadminhistory extends torderwidget {
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('widget', $sidebar);
     $args = targs::instance();
-    $args->icon = '';$args->subitems = '';
+    $args->icon = '';
+    $args->subcount = '';
+    $args->subitems = '';
     $args->rel = 'admin';
     $url = litepublisher::$site->url;
     foreach ($this->items as $item) {

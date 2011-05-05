@@ -34,6 +34,7 @@ class tposteditor extends tadminmenu {
       if ($parent != $item['parent']) continue;
       $args->add($item);
       $args->checked = in_array($item['id'], $postitems);
+      $args->subcount = '';
       $args->subitems = self::getsubcategories($id, $postitems);
       $result .= $html->category($args);
     }

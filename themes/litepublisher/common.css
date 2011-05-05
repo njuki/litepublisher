@@ -1,7 +1,7 @@
 * { 	margin: 0; 	padding: 0; }
 body {background:#f0f6f7 url(../default/images/bg7.png) repeat-x;font:12px Arial, Verdana, sans-serif;}
 #header {width:960px;background: url(../default/images/logo.png) no-repeat 30px 20px;margin:11px auto 0;height:125px;position:relative;display:block;}
-	#logo {font:14px Trebuchet MS, Tahoma, Verdana, sans-serif;color:#fff;padding:30px 0 0 150px;}
+#logo {font:14px Trebuchet MS, Tahoma, Verdana, sans-serif;color:#fff;padding:30px 0 0 150px;}
 #logo .name {font:48px Trebuchet MS, Tahoma, Verdana, sans-serif;height:95px;display:inline-block;float:left;text-shadow:1px 1px 0 #5fa9c1;padding:0 30px 0 0;}
 #logo .name a {text-decoration:none;color:#fff}
 #logo .slogan {top:16px;position:relative;}
@@ -52,6 +52,7 @@ body {background:#f0f6f7 url(../default/images/bg7.png) repeat-x;font:12px Arial
    margin: 0.5em 0;
    padding: 0;
 }
+
 .post-info {background-color:#fff1e2;height:24px;padding:7px 10px 0;font-size:12px;position:relative;margin:10px 0 30px;}
 .post-cat {background: url(../default/images/folder-horizontal.png) no-repeat left center;padding:0 0 0 20px;}
 .post-comments {background: url(../default/images/balloon.png) no-repeat left center;padding:0 0 0 20px;float:right;text-align:right;}
@@ -70,12 +71,12 @@ body {background:#f0f6f7 url(../default/images/bg7.png) repeat-x;font:12px Arial
 #footerbar {list-style:none;position:relative;padding:15px 0 0 25px;}
 #footerbar li {list-style:none;float:left;position:relative;width:250px;height:100%;color:#737373;display:inline;}
 
-#footerbar #lastposts {width:280px;padding-right:30px;}
-#lastposts li {margin-bottom:5px;background: url(../default/images/document-small.png) no-repeat;padding:0 0 0 18px;}
-#footerbar #lastcomments {width:280px;}
-#lastcomments li{margin-bottom:5px;background: url(../default/images/balloon-small.png) no-repeat;padding:0 0 0 18px;}
-#footerbar #meta {width:235px;margin-right:0px;position:relative;left:90px;}
-#footerbar #meta ul li {width:205px;margin-bottom:5px;}
+#footerbar .lastposts {width:280px;padding-right:30px;}
+.lastposts li {margin-bottom:5px;background: url(../default/images/document-small.png) no-repeat;padding:0 0 0 18px;}
+#footerbar .lastcomments {width:280px;}
+.lastcomments li{margin-bottom:5px;background: url(../default/images/balloon-small.png) no-repeat;padding:0 0 0 18px;}
+#footerbar .meta {width:235px;margin-right:0px;position:relative;left:90px;}
+#footerbar .meta ul li {width:205px;margin-bottom:5px;}
 #copyright {width:880px;clear: both;color:#a7a7a7;padding:10px 30px 20px 30px;}
 
 #sidebar .rubric, #sidebar .rubric a  {color:#969da3;}
