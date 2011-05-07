@@ -7,6 +7,7 @@
 **/
 
 class texternallinks extends titems {
+public $exclude;
   
   public static function instance() {
     return getinstance(__class__);
@@ -17,6 +18,7 @@ class texternallinks extends titems {
     parent::create();
     $this->table = 'externallinks';
     $this->basename = 'externallinks';
+$this->addmap('exclude', array());
   }
   
   public function add($url) {
@@ -83,6 +85,7 @@ class texternallinks extends titems {
       if (isset($external[$link])) continue;
       if (!strbegin($link, 'http', 'ftp')) continue;
       if (strbegin($link, litepublisher::$site->url)) continue;
+if ($this->inexclude($link)) continue;
       $id = $this->add($link);
       $external[$link] = $redir . $id;
     }
@@ -92,6 +95,13 @@ class texternallinks extends titems {
       $content = str_replace(sprintf("'%s'", $src), sprintf("'%s'", $dst), $content);
     }
   }
+
+public function inexclude($link) {
+foreach ($this->exclude as $ex) {
+if (false !== strpos($link, $ex)) return true;
+}
+return false;
+}
   
 }//class
 ?>

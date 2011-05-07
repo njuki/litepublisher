@@ -616,7 +616,6 @@ content.excerpts = [
 				$post.excerptfilelist
 $post.excerptcontent
 				$post.morelink = [<a href="$post.link#more-$post.id" class="more-link">$post.moretitle</a>]
-
 			</div>
 			<div class="post-info">
 				<span class="post-comments">$post.commentslink</span>
