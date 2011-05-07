@@ -17,7 +17,7 @@ class tadminthemetree extends tadminmenu implements iwidgets {
   public function gethead() {
     $result = parent::gethead();
     $template = ttemplate::instance();
-    $result .= $template->getjavascript('/js/litepublisher/themetree.js');
+    $result .= $template->getjavascript('/js/litepublisher/themetree.min.js');
     $name = tadminhtml::getparam('theme', '');
     if (($name != '') && ttheme::exists($name)) {
       $this->theme = ttheme::getinstance($name);
@@ -95,7 +95,8 @@ class tadminthemetree extends tadminmenu implements iwidgets {
       $pre = $i == 0 ? 'sidebar' : "sidebar$i";
       foreach ($names as $name) {
         if (isset($widgets[$name])) {
-          $subitems = sprintf('<li><a rel="%s" href="">%s</a></li>', "$pre.$name.subitems", $this->ini["sidebar.widget.subitems"]);
+          $subitems = sprintf('<li><a rel="%s" href="">%s</a></li>', "$pre.$name.subcount", $this->ini["sidebar.widget.subcount"]);
+          $subitems .= sprintf('<li><a rel="%s" href="">%s</a></li>', "$pre.$name.subitems", $this->ini["sidebar.widget.subitems"]);
           $item = sprintf('<li><a rel="%s" href="">%s</a>
           <ul>%s</ul>
           </li>', "$pre.$name.item", $this->ini['sidebar.widget.item'], $subitems);
