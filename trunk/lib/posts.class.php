@@ -143,10 +143,10 @@ class tposts extends titems {
   }
   
   private function beforechange($post) {
-    $post->title = tcontentfilter::escape($post->title);
+    $post->title = trim($post->title);
     $post->modified = time();
     $post->data['revision'] = $this->revision;
-    $this->data['class'] = get_class($this);
+    $post->data['class'] = get_class($post);
     if (($post->status == 'published') && ($post->posted > time())) {
       $post->status = 'future';
     } elseif (($post->status == 'future') && ($post->posted <= time())) {
@@ -169,6 +169,7 @@ class tposts extends titems {
     $post->pagescount = count($post->pages);
     $linkgen = tlinkgenerator::instance();
     $post->url = $linkgen->addurl($post, $post->schemalink);
+    $post->title = tcontentfilter::escape($post->title);
     $urlmap = turlmap::instance();
     if (dbversion) {
       $id = $post->addtodb();
@@ -196,7 +197,7 @@ class tposts extends titems {
     $this->beforechange($post);
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($post, $post->schemalink);
-    
+    $post->title = tcontentfilter::escape($post->title);
     $this->lock();
     $this->updated($post);
     $this->cointerface('edit', $post);

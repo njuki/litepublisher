@@ -129,9 +129,9 @@ class tajaxposteditor  extends tevents {
       $result = $html->getedit('tags', $post->tagnames, $lang->tags);
       $items = array();
       $tags = ttags::instance();
-      if ($tags->dbversion) $tags->select("", "order by itemscount");
-      foreach ($tags->items as $id => $item) {
-        $items[] = '<a onclick="tagtopost(this);">' . $item['title'] . "</a>";
+      $list = $tags->getsorted(0, 'name', 0);
+      foreach ($list as $id ) {
+        $items[] = '<a onclick="tagtopost(this);">' . $tags->items[$id]['title'] . "</a>";
       }
       $result .= implode(",\n", $items);
       break;
