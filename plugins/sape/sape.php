@@ -209,27 +209,25 @@ class SAPE_base {
      * Функция чтения из локального файла
      */
     function _read($filename) {
-        if (false !== ($result = file_get_contents($filename))) return $result;
-return '';
-/*
         $fp = @fopen($filename, 'rb');
         @flock($fp, LOCK_SH);
         if ($fp) {
             clearstatcache();
             $length = @filesize($filename);
+if ($q = version_compare(PHP_VERSION, '5.3', '<')) {
             $mqr = get_magic_quotes_runtime();
             set_magic_quotes_runtime(0);
+}
             if ($length) {
                 $data = @fread($fp, $length);
             } else {
                 $data = '';
             }
-            set_magic_quotes_runtime($mqr);
+            if ($q) set_magic_quotes_runtime($mqr);
             @flock($fp, LOCK_UN);
             @fclose($fp);
 
             return $data;
-*/
         }
 
         return $this->raise_error('Не могу считать данные из файла: ' . $filename);

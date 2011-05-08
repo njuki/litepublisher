@@ -130,7 +130,6 @@ function tagtopost(link) {
   }
 }
 
-
 function error_dialog(msg) {
   $("#dialog_error").dialog( {
     autoOpen: true,

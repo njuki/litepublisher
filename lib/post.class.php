@@ -358,7 +358,7 @@ class tpost extends titem implements  itemplate {
   
   public function getmorelink() {
     if ($this->moretitle == '') return '';
-    return $this->theme->parse($this->theme->content->excerpts->excerpt->morelink);
+    return $this->theme->parse($this->theme->templates['content.excerpts.excerpt.morelink']);
   }
   
   public function gettagnames() {
