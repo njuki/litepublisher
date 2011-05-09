@@ -94,7 +94,7 @@ class tposteditor extends tadminmenu {
   public function getpostargs(tpost $post, targs $args) {
     $args->id = $post->id;
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-    $args->title = $post->title;
+    $args->title = htmlspecialchars_decode($post->title, ENT_QUOTES);
     $args->categories = $this->getpostcategories($post);
     $ajaxeditor = tajaxposteditor ::instance();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
