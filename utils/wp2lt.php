@@ -315,6 +315,20 @@ $comments->autoid = max($comments->autoid, $id);
 $comments->save();
 }
 
+function clearall() {
+$posts = tposts::instance();
+if (dbversion) {
+} else {
+$items = $posts->db->res2id($posts->db->query('select id from ' . $posts->thistable));
+foreach ($items as $id) {
+$posts->delete($id);
+}
+foreach ($posts->items as $id => $item) {
+$posts->delete($id);
+}
+}
+}
+
 $from = isset($_REQUEST['from']) ? $_REQUEST['from'] : 0;
 if ($from == 0) ExportOptions();
 if ($from = ExportPosts()) {
