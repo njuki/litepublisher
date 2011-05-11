@@ -27,6 +27,7 @@ class tticketsmenu extends tmenu {
       } else {
         $s = $this->getall();
         file_put_contents($cachefile, $s);
+@chmod($cachefile, 0666);
         $result .= $s;
       }
     } else {
