@@ -2,7 +2,6 @@
 /* export all data from Wordpress to Lite Publisher
 Export categories, tags, posts, comments
 */
-echo "<pre>\n";
 set_time_limit(300);
 @ini_set('memory_limit', '48M'); 
 define('litepublisher_mode', 'import');
@@ -12,6 +11,7 @@ require('wp-load.php');
 } else {
  require('wp-config.php');
 }
+echo "<pre>\n";
 
 function ExportOptions() {
 $options = litepublisher::$options;
@@ -85,16 +85,19 @@ if (isset($tags->items[$id])) return;
   $url = $UrlArray['path'];
   if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
         $idurl =         litepublisher::$urlmap->add($url, get_class($tags),  $id);
-$tags->autoid = max($tags->autoid, $id);
+
     if ($tags->dbversion)  {
-    $tags->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$tags->thistable,$tags->autoid);
+//$tags->autoid = max($tags->autoid, $id);
+    $tags->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$tags->thistable,$tags->autoid));
 $tags->db->insert_a(array(
       'parent' => $parent,
 'idurl' => $idurl,
       'title' => $title,
       'idview' => 1
       ));
-    }
+    } else {
+$tags->autoid = max($tags->autoid, $id);
+}
     
     $tags->items[$id] = array(
     'id' => $id,
@@ -103,7 +106,7 @@ $tags->db->insert_a(array(
     'url' =>$url,
     'title' => $title,
     'icon' => 0,
-    'idview' => $1,
+    'idview' => 1,
     'itemscount' => 0
     );
 }
@@ -113,7 +116,7 @@ $categories = tcategories::instance();
 $categories->lock();
 		if ( $cats = get_categories('get=all') ) {
 			foreach ( $cats as $cat ) {
-AddTag($categories, $cat->term_id, $cat->name, get_category_link($cat->term_id));
+AddTag($categories, $cat->term_id, $cat->parent, $cat->name, get_category_link($cat->term_id));
 }
 }
 $categories->unlock();
@@ -127,6 +130,11 @@ function  ExportPosts() {
 
 $posts = tposts::instance();
 $posts->lock();
+if (dbversion) {
+$autoid = $wpdb->get_var("SELECT max(ID) as max FROM $wpdb->posts ", 'max');
+    $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$autoid ));
+}
+
 $categories = tcategories::instance();
 $categories->loadall();
 $categories->lock();
@@ -135,9 +143,6 @@ $tags->loadall();
 $tags->lock();
 $CommentManager = tcommentmanager::instance();
 $CommentManager->lock();
-
-$users = tcommentusers::instance();
-$users->lock();
 
 if ($from == 0) {
 ExportCategories();
@@ -187,7 +192,6 @@ ExportComments($post);
 $post->free();
 }
 $cron->unlock();
-$users->unlock();
 //$CommentManager->SubscribtionEnabled = true;
 //$CommentManager->NotifyModerator = true;
 $CommentManager->unlock();
@@ -196,9 +200,6 @@ $categories->unlock();
 
 $posts->UpdateArchives();
 $posts->addrevision();
-if (dbversion) {
-    $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$tags->autoid);
-}
 $posts->unlock();
   $urlmap->clearcache();
 $arch = tarchives::instance();
@@ -255,49 +256,68 @@ flush();
 
 function ExportComments(tpost $post) {
   global $wpdb;
-  $users = tcommentusers::instance();
+  $users = dbversion ? tcomusers ::instance() : tcomusers ::instance($$post->id);
   $CommentManager = tcommentmanager::instance();
   $comments = $post->comments;
-  $ContentFilter = tcontentfilter::instance();
+  $filter = tcontentfilter::instance();
   $items = $wpdb->get_results("SELECT  * FROM $wpdb->comments 
   WHERE comment_post_ID   = $post->id");
 foreach ($items as $item) {
 if ($item->comment_type != '') continue;
-  $userid = $users->Add($item->comment_author, 
+  $userid = (int) $users->Add($item->comment_author, 
 $item->comment_author_email,
-$item->comment_author_url);
+$item->comment_author_url,
+$item->comment_author_IP 
+);
 
 $date =strtotime(mysql2date('Ymd\TH:i:s', $item->comment_date));
 $status = $item->comment_approved ==  '1' ? 'approved' : 'holld';
 $id = (int) $item->comment_ID;
-  $comments->items[$id] = array(
-  'id' => $id,
-  'uid' => $userid ,
-  'date' => $date,
-  'status' => $status,
-  'type' => $item->comment_type,
-  'content' => $ContentFilter ->GetCommentContent($item->comment_content),
-  'rawcontent' =>  $item->comment_content,
-  'ip' => $item->comment_author_IP 
-  );
 
-  $CommentManager->items[$id] = array(
-  'uid' => (int) $userid,
-  'pid' => (int) $post->id,
-  'date' => $date
-);
-if ($status != 'approved')   $CommentManager->items[$id]['status'] = $status;
-//if ($item->comment_type != '')   $CommentManager->items[$id]['type'] = $item->comment_type ;
+    $filtered = $filter->filtercomment($item->comment_content);
+if (dbversion) {
+$comments->db->insert_a(   $a = array(
+'id' => $id,
+    'post' => $post->id,
+    'parent' => 0,
+    'author' => $userid,
+    'posted' => sqldate($date),
+    'content' =>$filtered,
+    'status' => $status
+    ));
 
-$CommentManager->lastid = max($CommentManager->lastid, $item->comment_ID);
+    $comments->getdb($comments->rawtable)->add(array(
+    'id' => $id,
+    'created' => sqldate(),
+    'modified' => sqldate(),
+    'ip' => $ip,
+    'rawcontent' => $item->comment_content,
+    'hash' => md5($item->comment_content)
+    ));
+} else {
+    $a = array(
+    'author' => $userid,
+    'posted' => $date,
+    'content' => $filtered,
+    );
+$comments->autoid = max($comments->autoid, $id);
+    if ($status == 'approved') {
+      $comments->items[$id] = $a;
+    } else {
+      $comments->hold->items[++$id] =  $a;
+      $comments->hold->save();
+    }
+    $comments->raw->add($id, $item->comment_content, $item->comment_author_IP );    
+
+    //if ($status == 'approved') $commentmanager->addrecent($id, $idpost);
+}
 }
 $comments->save();
-//unset(TComments::$Instances[$post->id]);
 }
 
 $from = isset($_REQUEST['from']) ? $_REQUEST['from'] : 0;
 if ($from == 0) ExportOptions();
-if ($from = saveposts()) {
+if ($from = ExportPosts()) {
 echo "</pre>
 <form name='form' action='' type='get'>
 <input type=hidden name='from' value='$from' />
