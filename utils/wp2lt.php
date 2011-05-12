@@ -11,7 +11,12 @@ require('wp-load.php');
 } else {
  require('wp-config.php');
 }
+      Header( 'Cache-Control: no-cache, must-revalidate');
+      Header( 'Pragma: no-cache');
+    error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
+    ini_set('display_errors', 1);
 echo "<pre>\n";
+flush();
 
 function ExportOptions() {
 $options = litepublisher::$options;
@@ -38,6 +43,7 @@ $menus->lock();
 
 $list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'page'");
 foreach ($list as  $item) {
+//var_dump($item);
   $menuitem = new tmenu();
 $menuitem->id = (int) $item->ID;
 //$menuitem->date =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
@@ -84,11 +90,14 @@ if (isset($tags->items[$id])) return;
   $UrlArray = parse_url($url);
   $url = $UrlArray['path'];
   if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
-        $idurl =         litepublisher::$urlmap->add($url, get_class($tags),  $id);
+       $idurl =         litepublisher::$urlmap->add($url, get_class($tags),  $id);
 
     if ($tags->dbversion)  {
-//$tags->autoid = max($tags->autoid, $id);
-    $tags->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$tags->thistable,$tags->autoid));
+$a = $tags->db->fetchassoc($tags->db->query("SHOW TABLE STATUS like '$tags->thistable'"));
+//var_dump($a);
+$autoid = $a['Auto_increment'];
+    $tags->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$tags->thistable,max($id, $autoid)));
+//echo "after alter auto id\n";
 $tags->db->insert_a(array(
       'parent' => $parent,
 'idurl' => $idurl,
@@ -145,8 +154,10 @@ $CommentManager = tcommentmanager::instance();
 $CommentManager->lock();
 
 if ($from == 0) {
+echo "import categories\n";
 ExportCategories();
-ExportPages();
+echo "import pages\n";
+//ExportPages();
 }
 
 $cron = tcron::instance();
@@ -157,6 +168,7 @@ WHERE post_type = 'post'
 and ID > $from
 limit 500
 ");
+echo count($list), " = countposts\n";
 foreach ($list as $idresult) {
 $itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult->ID");
 $item = &$itemres[0];
@@ -179,13 +191,18 @@ $UrlArray = parse_url(get_permalink($item->ID));
 $url = $UrlArray['path'];
 if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
 $post->url = $url;
+var_dump($url);
 $post->idurl = litepublisher::$urlmap->add($post->url, get_class($post), $post->id);
+//var_dump($post->data);
   $post->content = $item->post_content;
 $post->commentsenabled =  'open' == $item->comment_status;
 $post->pingenabled = 'open' == $item->ping_status;
 $post->password = $item->post_password;
 $post->status = $item->post_status == 'publish' ? 'published' : 'draft';
+//var_dump($post->data);
+echo "before save\n";
 savepost($post);
+echo "post saved\n";
   $categories->itemsposts->setitems($post->id, $post->categories);
   $tags->itemsposts->setitems($post->id, $post->tags);
 ExportComments($post);
@@ -215,7 +232,6 @@ function savepost($post) {
 $post->modified = time();
  
 $posts =tposts::instance();
-  $posts->autoid = max($posts->autoid, $post->id);
 if (dbversion) {
     $self = tposttransform::instance($post);
     $values = array('id' => $post->id);
@@ -224,6 +240,7 @@ if (dbversion) {
     }
     $db = litepublisher::$db;
     $db->table = 'posts';
+echo "before insert\n";
 $db->insert_a($values);
     $post->rawdb->insert_a(array(
     'id' => $post->id,
@@ -238,6 +255,7 @@ $db->insert_a($values);
     }
     
 } else {
+  $posts->autoid = max($posts->autoid, $post->id);
       $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
       if (!is_dir($dir)) mkdir($dir, 0777);
       chmod($dir, 0777);
@@ -315,20 +333,44 @@ $comments->autoid = max($comments->autoid, $id);
 $comments->save();
 }
 
+
+
+function deleteitems($obj) {
+$obj->lock();
+foreach ($obj->items as $id => $item) {
+$obj->delete($id);
+}
+$obj->unlock();
+}
+
 function clearall() {
+deleteitems(tmenus::instance());
+$cats = tcategories::instance();
+$cats->loadall();
+deleteitems($cats);
+$tags= ttags::instance();
+$tags->loadall();
+deleteitems($tags);
+
 $posts = tposts::instance();
 if (dbversion) {
-} else {
 $items = $posts->db->res2id($posts->db->query('select id from ' . $posts->thistable));
 foreach ($items as $id) {
 $posts->delete($id);
 }
+tdboptimizer::instance()->deletedeleted();
+} else {
+$posts->lock();
 foreach ($posts->items as $id => $item) {
 $posts->delete($id);
 }
+$posts->unlock();
 }
 }
 
+try {
+clearall();
+echo "started\n";
 $from = isset($_REQUEST['from']) ? $_REQUEST['from'] : 0;
 if ($from == 0) ExportOptions();
 if ($from = ExportPosts()) {
@@ -341,6 +383,15 @@ echo "</pre>
 } else {
 echo "import finished<br>\n";
 }
-
+echo "final\n";
+} catch (Exception $e) {
+echo $e->GetMessage();
+echo "\n";
+echo $e->getTraceAsString();
+//litepublisher::$options->showerror = true;
+//  litepublisher::$options->handexception($e);
+}
+tstorage::savemodified();
 echo round(memory_get_usage()/1024/1024, 2), 'MB <br>'; 
+
 ?>
