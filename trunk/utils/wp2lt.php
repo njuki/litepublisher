@@ -2,7 +2,7 @@
 /* export all data from Wordpress to Lite Publisher
 Export categories, tags, posts, comments
 */
-set_time_limit(300);
+set_time_limit(10);
 @ini_set('memory_limit', '48M'); 
 define('litepublisher_mode', 'import');
 require('index.php');
@@ -168,17 +168,20 @@ WHERE post_type = 'post'
 and ID > $from
 limit 500
 ");
-echo count($list), " = countposts\n";
-foreach ($list as $idresult) {
-$itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult->ID");
-$item = &$itemres[0];
 
+
+echo count($list), " = countposts\n";
+foreach ($list as $index => $idresult) {
+//$itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult");
+$itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult->ID");
+//{ $itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = 1");
+$item = &$itemres[0];
   $post = new tpost();
 $post->id = (int) $item->ID;
+echo $post->id, " = id\n";
 $post->posted =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
   $post->title = $item->post_title;
   $post->categories = wp_get_post_categories($item->ID);
-
 $taglist = array();
 $wptags = wp_get_post_tags( $item->ID);
 foreach ($wptags as 	$wptag) {
@@ -187,22 +190,18 @@ $taglist[] = (int) $wptag->term_id ;
 }
 
   $post->tags = $taglist;
+
 $UrlArray = parse_url(get_permalink($item->ID));
 $url = $UrlArray['path'];
 if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
 $post->url = $url;
-var_dump($url);
 $post->idurl = litepublisher::$urlmap->add($post->url, get_class($post), $post->id);
-//var_dump($post->data);
-  $post->content = $item->post_content;
+ $post->content = $item->post_content;
 $post->commentsenabled =  'open' == $item->comment_status;
 $post->pingenabled = 'open' == $item->ping_status;
 $post->password = $item->post_password;
 $post->status = $item->post_status == 'publish' ? 'published' : 'draft';
-//var_dump($post->data);
-echo "before save\n";
 savepost($post);
-echo "post saved\n";
   $categories->itemsposts->setitems($post->id, $post->categories);
   $tags->itemsposts->setitems($post->id, $post->tags);
 ExportComments($post);
@@ -233,14 +232,16 @@ $post->modified = time();
  
 $posts =tposts::instance();
 if (dbversion) {
+tfiler::log($post->id);
     $self = tposttransform::instance($post);
     $values = array('id' => $post->id);
     foreach (tposttransform::$props as $name) {
-      $values[$name] = $self->__get($name);
+     $values[$name] = $self->__get($name);
+//      $values[$name] = '';
     }
+
     $db = litepublisher::$db;
     $db->table = 'posts';
-echo "before insert\n";
 $db->insert_a($values);
     $post->rawdb->insert_a(array(
     'id' => $post->id,
@@ -248,12 +249,16 @@ $db->insert_a($values);
     'modified' => sqldate(),
     'rawcontent' => $post->data['rawcontent']
     ));
-    
+
+
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('post' => $id, 'page' => $i,         'content' => $content));
+      $db->insert_a(array(
+'post' => $POST->id,
+ 'page' => $i,         
+'content' => $content
+));
     }
-    
 } else {
   $posts->autoid = max($posts->autoid, $post->id);
       $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
@@ -308,7 +313,7 @@ $comments->db->insert_a(   $a = array(
     'id' => $id,
     'created' => sqldate(),
     'modified' => sqldate(),
-    'ip' => $ip,
+    'ip' => $item->comment_author_IP,
     'rawcontent' => $item->comment_content,
     'hash' => md5($item->comment_content)
     ));
@@ -369,6 +374,9 @@ $posts->unlock();
 }
 
 try {
+
+wp_delete_post(1);
+var_dump(get_permalink(1));
 clearall();
 echo "started\n";
 $from = isset($_REQUEST['from']) ? $_REQUEST['from'] : 0;

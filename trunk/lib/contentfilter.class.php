@@ -38,7 +38,7 @@ class tcontentfilter extends tevents {
     if ($this->commentautolinks) $result = self::createlinks($result);
     $result = $this->replacecode($result);
     $result = self::auto_p($result);
-    if (!strpos($result, '<p>', 4)) {
+    if ((strlen($result) > 4) && !strpos($result, '<p>', 4)) {
       if (strbegin($result, '<p>')) $result = substr($result, 3);
       if(strend($result, '</p>')) $result = substr($result, 0, strlen($result) - 4);
       $result = trim($result);
