@@ -21,13 +21,13 @@ class tadmincustomtitle {
     $args->home = $plugin->home;
     $args->archive = $plugin->archive;
     $args->formtitle = $about['formtitle'];
-    //$args->data['$lang.before'] = $about['before'];
+    $args->data['$lang.tag'] = $about['tagcat'];
     
     $html = tadminhtml::instance();
-    return $html->adminform('[text=post] 
-[text=tag]
-[text=home]
-[text=archive]', $args);
+    return $html->adminform('[text=post]
+    [text=tag]
+    [text=home]
+    [text=archive]', $args);
   }
   
   public function processform() {

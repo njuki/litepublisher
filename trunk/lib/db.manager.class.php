@@ -50,12 +50,12 @@ class tdbmanager  {
   public function alter($table, $arg) {
     return $this->exec("alter table $this->prefix$table $arg");
   }
-
+  
   public function getautoincrement($table) {
-$a = $this->fetchassoc($this->query("SHOW TABLE STATUS like '$this->prefix$table'"));
-return $a['Auto_increment'];
+    $a = $this->fetchassoc($this->query("SHOW TABLE STATUS like '$this->prefix$table'"));
+    return $a['Auto_increment'];
   }
-
+  
   public function setautoincrement($table, $value) {
     $this->exec("ALTER TABLE $this->prefix$table AUTO_INCREMENT = $value");
   }

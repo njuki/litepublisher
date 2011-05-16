@@ -92,13 +92,11 @@ class ttemplate extends tevents_storage {
   
   public function gettitle() {
     $title = $this->itemplate ? $this->context->gettitle() : '';
-var_dump($this->context->data['title2']);
     if ($this->callevent('ontitle', array(&$title))) return $title;
-return $this->parsetitle($this->view->theme->title, $title);
-}
-
+    return $this->parsetitle($this->view->theme->title, $title);
+  }
+  
   public function parsetitle($tml, $title) {
-var_dump($title);
     $args = targs::instance();
     $args->title = $title;
     $result = $this->view->theme->parsearg($tml, $args);
@@ -228,15 +226,15 @@ var_dump($title);
     if ($page <= 1) return '';
     return sprintf(tlocal::$data['default']['pagetitle'], $page);
   }
-
-public function trimwords($s, array $words) {
-if ($s == '') return '';
-foreach ($words as $word) {
-if (strbegin($s, $word)) $s = substr($s, strlen($word));
-if (strend($s, $word)) $s = substr($s, 0, strlen($s) - strlen*($word));
-}
-return $s;
-}
+  
+  public function trimwords($s, array $words) {
+    if ($s == '') return '';
+    foreach ($words as $word) {
+      if (strbegin($s, $word)) $s = substr($s, strlen($word));
+      if (strend($s, $word)) $s = substr($s, 0, strlen($s) - strlen*($word));
+    }
+    return $s;
+  }
   
 }//class
 

@@ -291,21 +291,21 @@ class tcontentfilter extends tevents {
   
   // imported code from wordpress
   public static function createlinks($s) {
-      $s = ' ' . $s;
-      $s = preg_replace_callback('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/=?@\[\](+-]|[.,;:](?![\s<]|(\))?([\s]|$))|(?(1)\)(?![\s<.,;:]|$)|\)))+)#is', 
-array(__class__, '_make_url_clickable_cb'), $s);
-      
-      $s = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#$%&~/.\-;:=,?@\[\]+]+)#is', 
-array(__class__, '_make_web_ftp_clickable_cb'), $s);
-
-    $s = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', 
-array(__class__, '_make_email_clickable_cb'), $s);
-      
-      $s = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>", $s);
-
-      return trim($s);
-    }
+    $s = ' ' . $s;
+    $s = preg_replace_callback('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/=?@\[\](+-]|[.,;:](?![\s<]|(\))?([\s]|$))|(?(1)\)(?![\s<.,;:]|$)|\)))+)#is',
+    array(__class__, '_make_url_clickable_cb'), $s);
     
+    $s = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#$%&~/.\-;:=,?@\[\]+]+)#is',
+    array(__class__, '_make_web_ftp_clickable_cb'), $s);
+    
+  $s = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i',
+    array(__class__, '_make_email_clickable_cb'), $s);
+    
+    $s = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>", $s);
+    
+    return trim($s);
+  }
+  
   public static function _make_url_clickable_cb($matches) {
     $url = $matches[2];
     if ( empty($url) ) 		return $matches[0];
@@ -328,6 +328,6 @@ array(__class__, '_make_email_clickable_cb'), $s);
     $email = $matches[2] . '@' . $matches[3];
     return $matches[1] . "<a href=\"mailto:$email\">$email</a>";
   }
-
-  }//class  
-  ?>
+  
+}//class
+?>

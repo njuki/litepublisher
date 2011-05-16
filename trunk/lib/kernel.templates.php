@@ -429,7 +429,7 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[__class__] = $this;
     parent::create();
     $this->basename = 'template' ;
-    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'on');
+    $this->addevents('beforecontent', 'aftercontent', 'onhead', 'onbody', 'ontitle');
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
@@ -496,10 +496,14 @@ class ttemplate extends tevents_storage {
   
   public function gettitle() {
     $title = $this->itemplate ? $this->context->gettitle() : '';
+    if ($this->callevent('ontitle', array(&$title))) return $title;
+    return $this->parsetitle($this->view->theme->title, $title);
+  }
+  
+  public function parsetitle($tml, $title) {
     $args = targs::instance();
     $args->title = $title;
-    $theme = $this->view->theme;
-    $result = $theme->parsearg($theme->title, $args);
+    $result = $this->view->theme->parsearg($tml, $args);
     $result = trim($result, sprintf(' |.:%c%c', 187, 150));
     if ($result == '') return litepublisher::$site->name;
     return $result;
@@ -625,6 +629,15 @@ class ttemplate extends tevents_storage {
     $page = litepublisher::$urlmap->page;
     if ($page <= 1) return '';
     return sprintf(tlocal::$data['default']['pagetitle'], $page);
+  }
+  
+  public function trimwords($s, array $words) {
+    if ($s == '') return '';
+    foreach ($words as $word) {
+      if (strbegin($s, $word)) $s = substr($s, strlen($word));
+      if (strend($s, $word)) $s = substr($s, 0, strlen($s) - strlen*($word));
+    }
+    return $s;
   }
   
 }//class

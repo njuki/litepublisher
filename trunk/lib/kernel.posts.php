@@ -599,7 +599,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gettitle() {
-    if ($this->data['title2'] != '') return $this->data['title2'];
+    //if ($this->data['title2'] != '') return $this->data['title2'];
     return $this->data['title'];
   }
   

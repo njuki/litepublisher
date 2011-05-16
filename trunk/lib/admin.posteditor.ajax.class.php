@@ -127,8 +127,8 @@ class tajaxposteditor  extends tevents {
     switch ($_GET['get']) {
       case 'tags':
       $result = $html->getedit('tags', $post->tagnames, $lang->tags);
-$lang->section = 'editor';
-$result .= $html->h4->addtags;
+      $lang->section = 'editor';
+      $result .= $html->h4->addtags;
       $items = array();
       $tags = ttags::instance();
       $list = $tags->getsorted(0, 'name', 0);

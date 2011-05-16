@@ -7,11 +7,11 @@
 **/
 
 function tcustomtitleInstall($self) {
-$template = ttemplate::instance();
-$template->ontitle = $self->ontitle;
+  $template = ttemplate::instance();
+  $template->ontitle = $self->ontitle;
 }
 
 function tcustomtitleUninstall($self) {
-$template = ttemplate::instance();
-$template->unsubscribeclass($self);
+  $template = ttemplate::instance();
+  $template->unsubscribeclass($self);
 }

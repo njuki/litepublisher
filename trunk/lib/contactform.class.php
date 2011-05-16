@@ -15,6 +15,7 @@ class tcontactform extends tmenu {
   protected function create() {
     parent::create();
     $this->cache = false;
+    $this->data['extra'] = array();
     $this->data['subject'] = '';
     $this->data['errmesg'] = '';
     $this->data['success'] = '';
@@ -31,6 +32,11 @@ class tcontactform extends tmenu {
     $content = trim($_POST['content']);
     if (strlen($content) <= 15) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['emptycontent']);
     if (false !== strpos($content, '<a href')) return $this->errmesg;
+    foreach ($this->data['extra'] as $name => $title) {
+      if (isset($_POST[$name] )) {
+        $content .= sprintf("\n\n%s:\n%s", $title, trim($_POST[$name]));
+      }
+    }
     
     tmailer::sendmail('', $email, '', litepublisher::$options->email, $this->subject, $content);
     return $this->success;

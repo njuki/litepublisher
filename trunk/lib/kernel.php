@@ -1647,12 +1647,9 @@ class turlmap extends titems {
   }
   
   public function finditem($url) {
-    if ($i = strpos($url, '?'))  {
-      $url = substr($url, 0, $i);
-    }
-    
+    if ($result = $this->query($url)) return $result;
+    if ($i = strpos($url, '?'))  $url = substr($url, 0, $i);
     if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
-    
     //extract page number
     if (preg_match('/(.*?)\/page\/(\d*?)\/?$/', $url, $m)) {
       if ('/' != substr($url, -1))  return $this->redir301($url . '/');
@@ -1772,18 +1769,32 @@ class turlmap extends titems {
     }
     
     $this->is404 = true;
-    $obj = tnotfound404::instance();
+    $this->printclasspage('tnotfound404');
+  }
+  
+  private function printclasspage($classname) {
+    $cachefile = litepublisher::$paths->cache . $classname . '.php';
+    if (litepublisher::$options->cache && !litepublisher::$options->admincookie) {
+      if (file_exists($cachefile) && ((filemtime ($cachefile) + litepublisher::$options->expiredcache - litepublisher::$options->filetime_offset) >= time())) {
+        include($cachefile);
+        return;
+      }
+    }
+    
+    $obj = getinstance($classname);
     $Template = ttemplate::instance();
     $s = $Template->request($obj);
     eval('?>'. $s);
+    
+    if (litepublisher::$options->cache && $obj->cache &&!litepublisher::$options->admincookie) {
+      file_put_contents($cachefile, $s);
+      chmod($cachefile, 0666);
+    }
   }
   
   public function forbidden() {
     $this->is404 = true;
-    $obj = tforbidden::instance();
-    $Template = ttemplate::instance();
-    $s = $Template->request($obj);
-    eval('?>'. $s);
+    $this->printclasspage('tforbidden');
   }
   
   public function urlexists($url) {
