@@ -18,24 +18,24 @@ class tcustomtitle extends tplugin {
     $this->data['tag'] = '';
     $this->data['home'] = '';
     $this->data['archive'] = '';
-      }
+  }
   
   public function ontitle(&$title) {
-$template = ttemplate::instance();
-if ($template->context instanceof tpost) {
-$tml = $this->post;
-} elseif ($template->context instanceof tcommontags) {
-$tml = $this->tag;
-} elseif ($template->context instanceof thomepage) {
-$tml = $this->home;
-} elseif ($template->context instanceof tarchives) {
-$tml = $this->archive;
-} else {
-return false;
-}
-if ($tml == '') return;
-$title = $template->parsetitle($tml, $title);
-return true;
-}
-
+    $template = ttemplate::instance();
+    if ($template->context instanceof tpost) {
+      $tml = $this->post;
+    } elseif ($template->context instanceof tcommontags) {
+      $tml = $this->tag;
+    } elseif ($template->context instanceof thomepage) {
+      $tml = $this->home;
+    } elseif ($template->context instanceof tarchives) {
+      $tml = $this->archive;
+    } else {
+      return false;
+    }
+    if ($tml == '') return;
+    $title = $template->parsetitle($tml, $title);
+    return true;
+  }
+  
 }//class
