@@ -31,9 +31,8 @@ class tcomusers extends titems {
       if ( empty($parsed['host'])) {
         $url = '';
       } else {
-        if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
-          $parsed['scheme']= 'http';
-        }
+        if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) $parsed['scheme']= 'http';
+if (!isset($parsed['path'])) $parsed['path'] = '';
         $url = $parsed['scheme'] . '://' . $parsed['host'] . $parsed['path'];
         if (!empty($parsed['query'])) $url .= '?' . $parsed['query'];
       }
