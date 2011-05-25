@@ -248,6 +248,8 @@ class turlmap extends titems {
   }
   
   public function add($url, $class, $arg, $type = 'normal') {
+if (empty($url)) $this->error('Empty url to add');
+if (empty($class)) $this->error('Empty class name of adding url');
     if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
     if (dbversion) {
       if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
@@ -275,7 +277,6 @@ class turlmap extends titems {
   
   public function delete($url) {
     if (dbversion) {
-      echo "$url\n";
       $url = dbquote($url);
       if ($id = $this->db->findid('url = ' . $url)) {
         $this->db->iddelete($id);

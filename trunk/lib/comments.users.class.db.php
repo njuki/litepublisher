@@ -27,16 +27,14 @@ class tcomusers extends titems {
       if ( empty($parsed['host'])) {
         $url = '';
       } else {
-        if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) {
-          $parsed['scheme']= 'http';
-        }
+        if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) $parsed['scheme']= 'http';
+if (!isset($parsed['path'])) $parsed['path'] = '';
         $url = $parsed['scheme'] . '://' . $parsed['host'] . $parsed['path'];
         if (!empty($parsed['query'])) $url .= '?' . $parsed['query'];
       }
     } else {
       $url = '';
     }
-    
     $id = $this->db->add(array(
     'trust' => 0,
     'name' => $name,
@@ -45,9 +43,14 @@ class tcomusers extends titems {
     'ip' => $ip,
     'cookie' => md5uniq(),
     ));
-    
-    $manager = tcommentmanager::instance();
-    $manager->authoradded($id);
+var_dump($id);
+var_dump(litepublisher::$db->res2assoc(litepublisher::$db->query(
+//"SHOW TABLE STATUS like '$this->thistable'"
+'select LAST_INSERT_ID()'
+//'show variable LAST_INSERT_ID '
+//'select LAST_INSERT_ID from ' . $this->thistable)));
+)));
+    litepublisher::$classes->commentmanager->authoradded($id);
     return $id;
   }
   
