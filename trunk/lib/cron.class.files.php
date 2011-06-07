@@ -172,7 +172,8 @@ class tcron extends tabstractcron {
     $this->deleted($id);
   }
   
-  public function deleteclass($class) {
+  public function deleteclass($c) {
+    $class = self::get_class_name($c);
     $task = new tcrontask($this);
     $processed = array();
     if ($filelist = $this->GetFileList($processed)) {

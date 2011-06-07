@@ -192,6 +192,10 @@ class tdatabase {
   public function add(array $a) {
     $this->insertrow($this->assoctorow($a));
     return mysql_insert_id($this->handle);
+    /*
+    $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
+    return (int) $r[0];
+    */
   }
   
   public function insert_a(array $a) {
@@ -531,6 +535,10 @@ class tdata {
   
   protected function getthistable() {
     return litepublisher::$db->prefix . $this->table;
+  }
+  
+  public static function get_class_name($c) {
+    return is_object($c) ? get_class($c) : trim($c);
   }
   
 }//class
@@ -1810,6 +1818,8 @@ class turlmap extends titems {
   }
   
   public function add($url, $class, $arg, $type = 'normal') {
+    if (empty($url)) $this->error('Empty url to add');
+    if (empty($class)) $this->error('Empty class name of adding url');
     if (!in_array($type, array('normal','get','tree'))) $this->error(sprintf('Invalid url type %s', $type));
     if (dbversion) {
       if ($item = $this->db->finditem('url = ' . dbquote($url))) $this->error(sprintf('Url "%s" already exists', $url));
@@ -1837,7 +1847,6 @@ class turlmap extends titems {
   
   public function delete($url) {
     if (dbversion) {
-      echo "$url\n";
       $url = dbquote($url);
       if ($id = $this->db->findid('url = ' . $url)) {
         $this->db->iddelete($id);

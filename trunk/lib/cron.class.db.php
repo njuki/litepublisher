@@ -99,7 +99,8 @@ class tcron extends tabstractcron {
     $this->deleted($id);
   }
   
-  public function deleteclass($class) {
+  public function deleteclass($c) {
+    $class = self::get_class_name($c);
     $this->db->delete("class = '$class'");
   }
   

@@ -156,6 +156,13 @@ class tposts extends titems {
   
   public function add(tpost $post) {    if ($post->posted == 0) $post->posted = time();
     $this->beforechange($post);
+    if ($post->posted == 0) $post->posted = time();
+    if ($post->posted <= time()) {
+      if ($post->status == 'future') $post->status = 'published';
+    } else {
+      if ($post->status =='published') $post->status = 'future';
+    }
+    
     if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
       $icons = ticons::instance();
       $post->icon = $icons->getid('post');
@@ -198,13 +205,19 @@ class tposts extends titems {
     $linkgen = tlinkgenerator::instance();
     $linkgen->editurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
+    if ($post->posted <= time()) {
+      if ($post->status == 'future') $post->status = 'published';
+    } else {
+      if ($post->status =='published') $post->status = 'future';
+    }
     $this->lock();
+    $post->save();
     $this->updated($post);
     $this->cointerface('edit', $post);
-    $post->save();
     $this->unlock();
     $this->edited($post->id);
     $this->changed();
+    
     litepublisher::$urlmap->clearcache();
   }
   
@@ -287,7 +300,7 @@ class tposts extends titems {
   
   public function PublishFuture() {
     if ($this->dbversion) {
-      if ($list = $this->db->idselect(sprintf("status = 'future' and posted <= '%s' order by posted asc", sqldate()))) {
+      if ($list = $this->db->idselect(sprintf('status = \'future\' and posted <= \'%s\' order by posted asc', sqldate()))) {
         foreach( $list as $id) $this->publish($id);
       }
     } else {

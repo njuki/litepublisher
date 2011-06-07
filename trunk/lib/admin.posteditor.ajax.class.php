@@ -133,7 +133,7 @@ class tajaxposteditor  extends tevents {
       $tags = ttags::instance();
       $list = $tags->getsorted(0, 'name', 0);
       foreach ($list as $id ) {
-        $items[] = '<a href="" onclick="tagtopost(this);">' . $tags->items[$id]['title'] . "</a>";
+        $items[] = '<a href="" rel="tagtopost">' . $tags->items[$id]['title'] . "</a>";
       }
       $result .= sprintf('<p>%s</p>', implode(', ', $items));
       break;
