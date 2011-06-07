@@ -205,6 +205,10 @@ class tdata {
     return litepublisher::$db->prefix . $this->table;
   }
   
+  public static function get_class_name($c) {
+    return is_object($c) ? get_class($c) : trim($c);
+  }
+  
 }//class
 
 class tfilestorage {

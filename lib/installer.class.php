@@ -287,7 +287,7 @@ class tinstaller extends tdata {
     $post->content = $theme->parse($lang->postcontent);
     $posts = tposts::instance();
     $posts->add($post);
-
+    
     $icons = ticons::instance();
     $cats = tcategories::instance();
     $cats->setvalue($post->categories[0], 'icon', $icons->getid('news'));

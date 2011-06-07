@@ -71,6 +71,7 @@ class tposteditor extends tadminmenu {
     if ($groupname != 'admin') {
       $groups = tusergroups::instance();
       if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
+        //var_dump($post->id , litepublisher::$options->user, $post->author);
         if (($post->id != 0) && (litepublisher::$options->user != $post->author)) return 403;
       }
     }
@@ -120,6 +121,7 @@ class tposteditor extends tadminmenu {
     extract($_POST, EXTR_SKIP);
     $post->title = $title;
     $post->categories = self::processcategories();
+    if (($post->id == 0) && (litepublisher::$options->user >1)) $post->author = litepublisher::$options->user;
     if (isset($tags)) $post->tagnames = $tags;
     if (isset($icon)) $post->icon = (int) $icon;
     if (isset($idview)) $post->idview = $idview;

@@ -94,7 +94,7 @@ tlocal::clearcache();
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
-
+tfiler::log($_SERVER['REQUEST_URI']);
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }

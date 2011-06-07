@@ -115,8 +115,8 @@ function initfiletabs() {
   });
 }
 
-function tagtopost(link) {
-  var newtag  = $(link).text();
+function tagtopost() {
+  var newtag  = $(this).text();
   var tags = $('#text-tags').val();
   if (tags == '') {
     $('#text-tags').val(newtag);
@@ -124,10 +124,11 @@ function tagtopost(link) {
     var re = /\s*,\s*/;
     var list = tags.split(re);
     for (var i = list.length; i >= 0; i--) {
-      if (newtag == list[i]) return;
+      if (newtag == list[i]) return false;
     }
     $('#text-tags').val(tags + ', ' + newtag);
   }
+  return false;
 }
 
 function error_dialog(msg) {
@@ -158,6 +159,8 @@ function initposteditor () {
             });
           }
         });
+      } else {
+        $("a[rel='tagtopost']", ui.panel).click(tagtopost);
       }
     }
   });

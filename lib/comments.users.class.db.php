@@ -28,7 +28,7 @@ class tcomusers extends titems {
         $url = '';
       } else {
         if ( !isset($parsed['scheme']) || !in_array($parsed['scheme'], array('http','https')) ) $parsed['scheme']= 'http';
-if (!isset($parsed['path'])) $parsed['path'] = '';
+        if (!isset($parsed['path'])) $parsed['path'] = '';
         $url = $parsed['scheme'] . '://' . $parsed['host'] . $parsed['path'];
         if (!empty($parsed['query'])) $url .= '?' . $parsed['query'];
       }
@@ -43,13 +43,7 @@ if (!isset($parsed['path'])) $parsed['path'] = '';
     'ip' => $ip,
     'cookie' => md5uniq(),
     ));
-var_dump($id);
-var_dump(litepublisher::$db->res2assoc(litepublisher::$db->query(
-//"SHOW TABLE STATUS like '$this->thistable'"
-'select LAST_INSERT_ID()'
-//'show variable LAST_INSERT_ID '
-//'select LAST_INSERT_ID from ' . $this->thistable)));
-)));
+    
     litepublisher::$classes->commentmanager->authoradded($id);
     return $id;
   }

@@ -69,6 +69,13 @@ public function gettitle() { return $this->title; }
     }
     
     if (litepublisher::$urlmap->page  == 1) {
+      $menus = tmenus::instance();
+      $result .= '<h3>' . tlocal::$data['default']['menu'] . "</h3>\n<ul>\n";
+      foreach ($menus->items as $id => $item) {
+        if ($item['status'] == 'draft') continue;
+        $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
+      }
+      
       $result .= $this->gettags(tcategories::instance());
       $result .= $this->gettags(ttags::instance());
       $arch = tarchives::instance();
@@ -179,7 +186,6 @@ public function gettitle() { return $this->title; }
       $this->writeitem($item['url'], $this->prio);
     }
   }
-  
   
   private function writetags($tags) {
     $perpage = $tags->lite ? 1000 : litepublisher::$options->perpage;
