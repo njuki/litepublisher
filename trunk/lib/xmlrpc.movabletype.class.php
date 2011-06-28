@@ -14,7 +14,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   
   // on success, array of structs containing ISO.8601 dateCreated, String userid, String postid, String title; on failure, fault
   public function getRecentPostTitles($blogid , $username, $password, $count) {
-    $this->auth($username, $password, 'editor');
+    $this->auth($username, $password, 'author');
     $count =(int) $count;
     $posts = tposts::instance();
     $list = $posts->GetRecent($count);
@@ -34,7 +34,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   }
   // On success, an array of structs containing String categoryId and String categoryName; on failure, fault.
   public function getCategoryList($blogid, $username, $password) {
-    $this->auth($username, $password, 'editor');
+    $this->auth($username, $password, 'author');
     $categories = tcategories::instance();
     $categories->loadall();
     $result = array();
@@ -48,8 +48,8 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   }
   // on success, an array of structs containing String categoryName, String categoryId, and boolean isPrimary; on failure, fault.
   public function getPostCategories($id, $username, $password) {
-    $this->auth($username, $password, 'editor');
     $id = (int) $id;
+    $this->canedit($username, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);
@@ -71,8 +71,8 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   
   // on success, boolean true value; on failure, fault
   public function setPostCategories($id, $username, $password, $catlist) {
-    $this->auth($username, $password, 'editor');
     $id = (int) $id;
+    $this->canedit($username, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);
@@ -121,8 +121,8 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   }
   
   public function publishPost($id, $username, $password) {
-    $this->auth($username, $password, 'editor');
     $id = (int) $id;
+    $this->canedit($username, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
     $post = tpost::instance($id);

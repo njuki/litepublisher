@@ -173,7 +173,7 @@ class tdatabase {
   }
   
   public function insertrow($row) {
-    $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
+    return $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
   }
   
   public function insertassoc(array $a) {
@@ -185,17 +185,18 @@ class tdatabase {
     if ($this->idexists($a['id'])) {
       $this->updateassoc($a);
     } else {
-      $this->add($a);
+      return $this->add($a);
     }
   }
   
   public function add(array $a) {
-    $this->insertrow($this->assoctorow($a));
-    return mysql_insert_id($this->handle);
-    /*
+$this->insertrow($this->assoctorow($a));
+    if ($id = mysql_insert_id($this->handle)) {
+return $id;
+} else {
     $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
     return (int) $r[0];
-    */
+}
   }
   
   public function insert_a(array $a) {
