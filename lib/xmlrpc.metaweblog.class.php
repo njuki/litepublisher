@@ -211,21 +211,20 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   The struct returned contains one struct for each category, containing the following elements: description, htmlUrl and rssUrl. */
   
   public function getCategories($blogid, $username, $password) {
-    $this->auth($username, $password, 'editor');
-    
+    $this->auth($username, $password, 'author');
+
     $categories = tcategories::instance();
     $categories->loadall();
     $result = array();
     foreach ( $categories->items as $id => $item) {
       $result[] = array(
       'categoryId' =>   $id,
-      'parentId' => 0,
-      //$item['parent'],
+      'parentId' => $item['parent'],
       'description' => $categories->contents->getdescription($item['id']),
       'categoryName' => $item['title'],
       'title' => $item['title'],
       'htmlUrl' => litepublisher::$site->url . $item['url'],
-      'rssUrl' =>  litepublisher::$site->url . $item['url']
+      'rssUrl' =>  litepublisher::$site->url . "/rss/categories/$id.xml"
       );
     }
     
@@ -238,7 +237,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return  $this->wp_newPage($blogid, $username, $password, $struct, $publish);
     }
     
-    $this->auth($username, $password, 'editor');
+    $this->auth($username, $password, 'author');
     $posts = tposts::instance();
     $post = tpost::instance(0);
     
@@ -264,8 +263,9 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return  $this->wp_editPage(0, $postid, $username, $password, $struct, $publish);
     }
     
-    $this->auth($username, $password, 'editor');
+
     $postid = (int)$postid;
+    $this->canedit($login, $password, $postid);
     $posts = tposts::instance();
     if (!$posts->itemexists($postid))  return $this->xerror(404, "Invalid post id.");
     
@@ -289,8 +289,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   // returns struct
   public function getPost($id, $username, $password) {
-    $this->auth($username, $password, 'editor');
     $id=(int) $id;
+    $this->canedit($login, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id))  return $this->xerror(404, "Invalid post id.");
     
@@ -341,7 +341,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   // returns struct
   public function newMediaObject($blogid, $username, $password, $struct) {
-    $this->auth($username, $password, 'editor');
+    $this->auth($username, $password, 'author');
     
     //The struct must contain at least three elements, name, type and bits.
     $filename = $struct['name'] ;
@@ -350,8 +350,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     if (empty($filename)) return $this->xerror(500, "Empty filename");
     
-    
-    $parser = tmediaparser::instance();
+        $parser = tmediaparser::instance();
     $id = $parser->upload($filename, $struct['bits'], '', '', '', $overwrite );
     if (!$id)  return $this->xerror(500, "Could not write file $name");
     $files = tfiles::instance();

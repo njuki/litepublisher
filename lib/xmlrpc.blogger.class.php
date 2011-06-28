@@ -18,7 +18,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   password (string): Password for said username.
   */
   public function getUsersBlogs($appkey, $login, $password) {
-    $this->auth($login, $password, 'editor');
+    $this->auth($login, $password, 'author');
     
     $result = array(
     //'isAdmin'  => true,
@@ -30,7 +30,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getUserInfo($appkey, $login, $password) {
-    $this->auth($login, $password, 'editor');
+    $this->auth($login, $password, 'author');
     
     $result= array(
     'nickname'  => $login,
@@ -42,8 +42,8 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getPost($appkey, $id, $login, $password) {
-    $this->auth($login, $password, 'editor');
     $id    = (int) $id;
+    $this->canedit($login, $password, $id);
     $posts= tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Sorry, no such post.");
     
@@ -65,7 +65,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function getRecentPosts($appkey, $blogid, $login, $password, $count) {
-    $this->auth($login, $password, 'editor');
+    $this->auth($login, $password, 'author');
     
     $posts = tposts::instance();
     $Items = $Posts->GetPublishedRange(0, (int) $count);
@@ -125,7 +125,7 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   publish (boolean): If true, the blog will be published immediately after the post is made.
   */
   public function newPost($appkey, $blogid, $login, $password, $content, $publish) {
-    $this->auth($login, $password, 'editor');
+    $this->auth($login, $password, 'author');
     
     $posts = tposts::instance();
     $post = tpost::instance(0);
@@ -139,8 +139,8 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function editPost($appkey, $id, $login, $password, $content, $publish) {
-    $this->auth($login, $password, 'editor');
     $id = (int) $id;
+    $this->canedit($login, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, 'Sorry, no such post.');
     $post = tpost::instance($id);
@@ -154,8 +154,8 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
   }
   
   public function deletePost($appkey, $id, $login, $password) {
-    $this->auth($login, $password, 'editor');
     $id = (int) $id;
+    $this->canedit($login, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id)) return $this->xerror(404, 'Sorry, no such post.');
     $posts->delete($id);

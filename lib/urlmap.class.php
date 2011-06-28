@@ -183,7 +183,6 @@ class turlmap extends titems {
     $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
-      //tfiler::log("$this->url\n$s");
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
