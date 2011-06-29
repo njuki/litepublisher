@@ -17,8 +17,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     $this->auth($username, $password, 'author');
     $count =(int) $count;
     $posts = tposts::instance();
-    $list = $posts->GetRecent($count);
-    $posts->loaditems($list);
+    $list = $posts->getrecent(litepublisher::$options->user, $count);
     $result = array();
     foreach ($list as $id) {
       $post = tpost::instance($id);
@@ -32,6 +31,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     
     return $result;
   }
+
   // On success, an array of structs containing String categoryId and String categoryName; on failure, fault.
   public function getCategoryList($blogid, $username, $password) {
     $this->auth($username, $password, 'author');
