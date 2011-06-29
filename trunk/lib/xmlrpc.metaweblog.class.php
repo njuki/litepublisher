@@ -325,11 +325,10 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   // returns array of structs
   public function getRecentPosts($blogid, $username, $password, $numberOfPosts) {
-    $this->auth($username, $password, 'editor');
+    $this->auth($username, $password, 'author');
     $count = (int) $numberOfPosts;
     $posts = tposts::instance();
-    $list = $posts->getrecent($count);
-    $posts->loaditems($list);
+    $list = $posts->getrecent(litepublisher::$options->user, $count);
     $result = array();
     foreach ($list as $id) {
       $post = tpost::instance($id);

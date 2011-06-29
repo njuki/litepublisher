@@ -88,7 +88,7 @@ class trss extends tevents {
   public function getrecentposts() {
     $this->domrss->CreateRoot(litepublisher::$site->url. '/rss.xml', litepublisher::$site->name);
     $posts = tposts::instance();
-    $this->getrssposts($posts->getrecent(litepublisher::$options->perpage));
+    $this->getrssposts($posts->getpage(0, 1, litepublisher::$options->perpage, false));
   }
   
   public function getrssposts(array $list) {

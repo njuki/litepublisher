@@ -54,7 +54,7 @@ class thomepage extends tmenu  {
     $include = $this->data['includecats'];
     $exclude = $this->data['excludecats'];
     if ((count($include) == 0) && (count($exclude) == 0)) {
-      $result = $posts->getpage(litepublisher::$urlmap->page, $perpage, $this->invertorder);
+      $result = $posts->getpage(0, litepublisher::$urlmap->page, $perpage, $this->invertorder);
     } else {
       if (dbversion) {
         $poststable = $posts->thistable;
