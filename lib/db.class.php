@@ -190,13 +190,13 @@ class tdatabase {
   }
   
   public function add(array $a) {
-$this->insertrow($this->assoctorow($a));
+    $this->insertrow($this->assoctorow($a));
     if ($id = mysql_insert_id($this->handle)) {
-return $id;
-} else {
-    $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
-    return (int) $r[0];
-}
+      return $id;
+    } else {
+      $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
+      return (int) $r[0];
+    }
   }
   
   public function insert_a(array $a) {

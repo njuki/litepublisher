@@ -31,7 +31,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
     
     return $result;
   }
-
+  
   // On success, an array of structs containing String categoryId and String categoryName; on failure, fault.
   public function getCategoryList($blogid, $username, $password) {
     $this->auth($username, $password, 'author');

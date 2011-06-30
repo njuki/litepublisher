@@ -212,7 +212,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
   public function getCategories($blogid, $username, $password) {
     $this->auth($username, $password, 'author');
-
+    
     $categories = tcategories::instance();
     $categories->loadall();
     $result = array();
@@ -263,7 +263,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return  $this->wp_editPage(0, $postid, $username, $password, $struct, $publish);
     }
     
-
+    
     $postid = (int)$postid;
     $this->canedit($login, $password, $postid);
     $posts = tposts::instance();
@@ -349,7 +349,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     if (empty($filename)) return $this->xerror(500, "Empty filename");
     
-        $parser = tmediaparser::instance();
+    $parser = tmediaparser::instance();
     $id = $parser->upload($filename, $struct['bits'], '', '', '', $overwrite );
     if (!$id)  return $this->xerror(500, "Could not write file $name");
     $files = tfiles::instance();

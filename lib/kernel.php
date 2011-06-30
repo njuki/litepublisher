@@ -173,7 +173,7 @@ class tdatabase {
   }
   
   public function insertrow($row) {
-    $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
+    return $this->query(sprintf('INSERT INTO %s%s %s', $this->prefix, $this->table, $row));
   }
   
   public function insertassoc(array $a) {
@@ -185,17 +185,18 @@ class tdatabase {
     if ($this->idexists($a['id'])) {
       $this->updateassoc($a);
     } else {
-      $this->add($a);
+      return $this->add($a);
     }
   }
   
   public function add(array $a) {
     $this->insertrow($this->assoctorow($a));
-    return mysql_insert_id($this->handle);
-    /*
-    $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
-    return (int) $r[0];
-    */
+    if ($id = mysql_insert_id($this->handle)) {
+      return $id;
+    } else {
+      $r = mysql_fetch_row($this->query('select last_insert_id() from ' . $this->prefix . $this->table));
+      return (int) $r[0];
+    }
   }
   
   public function insert_a(array $a) {
@@ -1753,7 +1754,6 @@ class turlmap extends titems {
     $this->context = $this->getcontext($item);
     //special handling for rss
     if (method_exists($this->context, 'request') && ($s = $this->context->request($item['arg']))) {
-      //tfiler::log("$this->url\n$s");
       switch ($s) {
         case 404: return $this->notfound404();
         case 403: return $this->forbidden();
