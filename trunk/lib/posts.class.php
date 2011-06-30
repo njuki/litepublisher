@@ -311,10 +311,10 @@ class tposts extends titems {
   }
   
   public function getrecent($author, $count) {
-$author = (int) $author;
+    $author = (int) $author;
     if (dbversion) {
-$where = "status != 'deleted'";
-if ($author > 1) $where .= " and author = $author";
+      $where = "status != 'deleted'";
+      if ($author > 1) $where .= " and author = $author";
       return $this->select($where, 'order by posted desc limit ' . (int) $count);
     }  else {
       return array_slice(array_keys($this->archives), 0, $count);
@@ -322,16 +322,16 @@ if ($author > 1) $where .= " and author = $author";
   }
   
   public function getpage($author, $page, $perpage, $invertorder) {
-$author = (int) $author;
+    $author = (int) $author;
     $from = ($page - 1) * $perpage;
     if (dbversion)  {
-$where = "status = 'published'";
-if ($author > 1) $where .= " and author = $author";
+      $where = "status = 'published'";
+      if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
       return $this->select($where, " order by posted $order limit $from, $perpage");
     } else {
-    $count = $this->archivescount;
-    if ($from > $count)  return array();
+      $count = $this->archivescount;
+      if ($from > $count)  return array();
       $to = min($from + $perpage , $count);
       $result = array_keys($this->archives);
       if ($invertorder) $result =array_reverse($result);

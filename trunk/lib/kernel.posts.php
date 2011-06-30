@@ -1240,22 +1240,28 @@ class tposts extends titems {
     }
   }
   
-  public function getrecent($count) {
+  public function getrecent($author, $count) {
+    $author = (int) $author;
     if (dbversion) {
-      return $this->db->idselect("status = 'published'order by posted desc limit $count");
+      $where = "status != 'deleted'";
+      if ($author > 1) $where .= " and author = $author";
+      return $this->select($where, 'order by posted desc limit ' . (int) $count);
     }  else {
       return array_slice(array_keys($this->archives), 0, $count);
     }
   }
   
-  public function getpage($page, $perpage, $invertorder) {
-    $count = $this->archivescount;
+  public function getpage($author, $page, $perpage, $invertorder) {
+    $author = (int) $author;
     $from = ($page - 1) * $perpage;
-    if ($from > $count)  return array();
     if (dbversion)  {
+      $where = "status = 'published'";
+      if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
-      return $this->select("status = 'published'", " order by posted $order limit $from, $perpage");
+      return $this->select($where, " order by posted $order limit $from, $perpage");
     } else {
+      $count = $this->archivescount;
+      if ($from > $count)  return array();
       $to = min($from + $perpage , $count);
       $result = array_keys($this->archives);
       if ($invertorder) $result =array_reverse($result);
@@ -1350,7 +1356,7 @@ class tpostswidget extends twidget {
   
   public function getcontent($id, $sidebar) {
     $posts = tposts::instance();
-    $list = $posts->getrecent($this->maxcount);
+    $list = $posts->getpage(0, 1, $this->maxcount, false);
     $theme = ttheme::instance();
     return $theme->getpostswidgetcontent($list, $sidebar, '');
   }
