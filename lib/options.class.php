@@ -101,7 +101,7 @@ class toptions extends tevents_storage {
   public function auth($login, $password) {
     if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
     if ($login == $this->login) {
-      if ($this->password != md5("$login:$this->realm:$password"))  return false;
+      if ($this->data['password'] != md5("$login:$this->realm:$password"))  return false;
       $this->user = 1;
     } elseif(!$this->usersenabled) {
       return false;
@@ -129,7 +129,8 @@ class toptions extends tevents_storage {
   }
   
   public function changepassword($newpassword) {
-    $this->password = md5("$this->login:$this->realm:$newpassword");
+    $this->data['password'] = md5("$this->login:$this->realm:$newpassword");
+$this->save();
   }
   
   public function setdbpassword($password) {
