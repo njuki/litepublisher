@@ -421,17 +421,9 @@ class turlmap extends titems {
   
   protected function close() {
     $this->call_close_events();
-    if (defined('cronpinged')) return;
-    /*
-    $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-    $time = file_exists($cronfile) ? filemtime($cronfile) : 0;
-    if ($time + 3600 - litepublisher::$options->filetime_offset < time()) {
-      register_shutdown_function('tcron::selfping');
-    }
-    */
     if (time() > litepublisher::$options->crontime + 3600) {
       litepublisher::$options->crontime = time();
-      register_shutdown_function(array('tcron', 'selfping'));
+tcron::pinonshutdown();
     }
   }
   
