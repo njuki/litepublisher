@@ -152,7 +152,7 @@ class tadminmoderator extends tadmincommoncomments {
     $status = $kind == 'hold' ? 'hold' : 'approved';
     $total = $comments->db->getcount("status = '$status'");
     $from = $this->getfrom($perpage, $total);
-    $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted asc limit $from, $perpage");
+    $list = $comments->select("$comments->thistable.status = '$status'", "order by $comments->thistable.posted desc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();

@@ -7,6 +7,7 @@
 **/
 
 class tabstractcron extends tevents {
+public static $pinged = false;
   public $disableadd;
   
   protected function create() {
@@ -50,7 +51,6 @@ class tabstractcron extends tevents {
       fclose($fh);
       @chmod($this->path .'cron.lok', 0666);
       $this->log("finished loop");
-      $this->pop();
       return 'Ok';
     }
     return 'locked';
@@ -68,59 +68,24 @@ class tabstractcron extends tevents {
     if (!preg_match('/^single|hour|day|week$/', $type)) $this->error("Unknown cron type $type");
     if ($this->disableadd) return false;
     $id = $this->doadd($type, $class, $func, $arg);
-    
-    if (($type == 'single') && !defined('cronpinged')) {
-      define('cronpinged', true);
-      register_shutdown_function('tcron::selfping');
-    }
+    if (($type == 'single') && !self::$pinged) self::pingonshutdown();
     return $id;
   }
   
-  public static function selfping() {
-    try {
-      $self = tcron::instance();
-      $cronfile = $self->dir .  'crontime.txt';
-      @touch($cronfile, time());
-      @chmod($cronfile, 0666);
-      
-      $self->ping();
-    } catch (Exception $e) {
-      litepublisher::$options->handexception($e);
-    }
+  public static function pingonshutdown() {
+if (self::$pinged) return;
+self::$pinged = true;
+      register_shutdown_function(array(tcron::instance(), 'ping'));
   }
-  
+
   public function ping() {
-    $urlmap = turlmap::instance();
-    $this->AddToChain($urlmap->host, litepublisher::$site->subdir . $this->url);
-    $this->PingHost($urlmap->host, litepublisher::$site->subdir . $this->url);
+    $this->pinghost(litepublisher::$urlmap->host, litepublisher::$site->subdir . $this->url);
   }
   
-  private function PingHost($host, $path) {
+  private function pinghost($host, $path) {
     //$this->log("pinged host $host$path");
     if (		$socket = @fsockopen( $host, 80, $errno, $errstr, 0.10)) {
       fputs( $socket, "GET $path HTTP/1.0\r\nHost: $host\r\n\r\n");
-    }
-  }
-  
-  private function pop() {
-    $filename = $this->path .'cronchain';
-    if(!tfilestorage::loadvar($filename, $list))  return;
-    if (isset($list[litepublisher::$urlmap->host]))  unset($list[litepublisher::$urlmap->host]);
-    $item = array_splice($list, 0, 1);
-    tfilestorage::savevar($filename, $list);
-    if ($item) {
-      $this->PingHost(key($item), $item[key($item)]);
-    }
-  }
-  
-  private function AddToChain($host, $path) {
-    $filename = $this->path .'cronchain';
-    if(!tfilestorage::loadvar($filename, $list)) {
-      $list = array();
-    }
-    if (!isset($list[$host])) {
-      $list[$host] = $path;
-      tfilestorage::savevar($filename, $list);
     }
   }
   
