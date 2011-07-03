@@ -36,8 +36,8 @@ public static $site;
     'backup' => $storage . 'backup' . DIRECTORY_SEPARATOR,
     'plugins' =>  $home . 'plugins' . DIRECTORY_SEPARATOR,
     'themes' => $home . 'themes'. DIRECTORY_SEPARATOR,
-    //'files' => $home . 'files' . DIRECTORY_SEPARATOR,
-'files' => 'F:\web5\home\start.ru\wwww\files\\',
+   'files' => $home . 'files' . DIRECTORY_SEPARATOR,
+//'files' => 'F:\web5\home\start.ru\wwww\files\\',
     'js' => $home . 'js' . DIRECTORY_SEPARATOR
     );
     
@@ -103,7 +103,7 @@ tlocal::clearcache();
   //echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-//tupdater::instance()->run(4.60);
+//tupdater::instance()->run(4.64);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 //tupdater::instance()->run('4.44');
