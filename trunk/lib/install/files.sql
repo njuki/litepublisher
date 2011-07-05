@@ -11,7 +11,7 @@
   `title` text  NOT NULL,
   `description` text  NOT NULL,
   `keywords` text  NOT NULL,
-  `md5` char(32) NOT NULL,
+  `hash` char(22) NOT NULL,
   `height` int(10) unsigned NOT NULL default '0',
   `width` int(10) unsigned NOT NULL default '0',
   `bitrate` int(10) unsigned NOT NULL default '128',
