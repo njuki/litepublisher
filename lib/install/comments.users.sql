@@ -4,7 +4,7 @@
   `name` varchar(64) NOT NULL,
   `email` varchar(64) NOT NULL,
   `url` varchar(255) NOT NULL,
-  `cookie` varchar(32) NOT NULL,
+  `cookie` char(22) NOT NULL,
   `ip` varchar(15) NOT NULL default '',
 
   PRIMARY KEY  (`id`),

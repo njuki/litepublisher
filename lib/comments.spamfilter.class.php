@@ -33,7 +33,7 @@ class tspamfilter extends tevents {
     $comments = tcomments::instance($idpost);
     $content = trim($content);
     if (dbversion) {
-      $hash = md5($content);
+      $hash = basemd5($content);
       return $comments->raw->findid("hash = '$hash'");
     } else {
       return $comments->raw->IndexOf('content', $content);

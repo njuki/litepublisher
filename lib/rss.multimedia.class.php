@@ -104,8 +104,8 @@ class trssMultimedia extends tevents {
     if (!empty($file['channels'])) tnode::attr($media, 'channels', $file['channels']);
     if (!empty($file['duration'])) tnode::attr($media, 'duration', $file['duration']);
     
-    $md5 = tnode::addvalue($item, 'media:hash', $file['md5']);
-    tnode::attr($md5, 'algo', "md5");
+    $hash = tnode::addvalue($item, 'media:hash', self::hashtomd5($file['hash')]);
+    tnode::attr($hash, 'algo', "md5");
     
     if (!empty($file['keywords'])) {
       tnode::addvalue($item, 'media:keywords', $file['keywords']);
@@ -128,6 +128,14 @@ class trssMultimedia extends tevents {
     }
     
   }
+
+public static function hashtomd5($a) {
+$r ='';
+for($i=0; $i<16; $i++){
+$r .= dechex(ord($a[$i]));
+}
+return $r;
+}
   
   public function setfeedburner($url) {
     if (($this->feedburner != $url)) {

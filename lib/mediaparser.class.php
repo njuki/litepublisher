@@ -31,6 +31,11 @@ class tmediaparser extends tevents {
     $tempfilename = $this->doupload($filename, $content);
     return $this->addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite);
   }
+
+private function gettempname($parts) {
+return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $parts['filename'] .
+(empty($parts['extension']) ? '' : '.' . $parts['extension']);
+}
   
   public function uploadfile($filename, $tempfilename, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
@@ -39,8 +44,9 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
-    $newtemp = 'tmp.' . md5uniq() . '.' . $parts['filename'];
+    $newtemp = 'tmp.' . $this->md5uniq() . '.' . $parts['filename'];
     $newtemp .= empty($parts['extension']) ? '' : '.' . $parts['extension'];
+$newtemp = $this->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
     return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
   }
@@ -79,7 +85,7 @@ class tmediaparser extends tevents {
   private function doupload($filename, &$content) {
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
-    $filename = 'tmp.' . md5uniq() . '.' . $parts['filename'] .(empty($parts['extension']) ? '' : '.' . $parts['extension']);
+$filename = $this->gettempname($parts);
     if (@file_put_contents(litepublisher::$paths->files . $filename, $content)) {
       @ chmod(litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
       return $filename;
@@ -117,8 +123,8 @@ class tmediaparser extends tevents {
   
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
     $files = tfiles::instance();
-    $md5 =md5_file(litepublisher::$paths->files . $tempfilename);
-    if ($id = $files->IndexOf('md5', $md5)) {
+    $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
+    if ($id = $files->IndexOf('hash', $hash)) {
       @unlink(litepublisher::$paths->files . $tempfilename);
       return $id;
     }
@@ -159,8 +165,8 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content);
     $files = tfiles::instance();
-    $md5 =md5_file(litepublisher::$paths->files . $tempfilename);
-    if ($id = $files->IndexOf('md5', $md5)) {
+    $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
+    if ($id = $files->IndexOf('hash', $hash)) {
       @unlink(litepublisher::$paths->files . $tempfilename);
       return $id;
     }

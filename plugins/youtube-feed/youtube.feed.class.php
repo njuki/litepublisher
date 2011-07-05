@@ -46,7 +46,7 @@ class tyoutubefeed extends tplugin {
       
       $id = substr($entry->id, strrpos($entry->id, '/') + 1);
       $item['filename'] = $id;
-      $item['md5'] = $id;
+      $item['hash'] = $id;
       $item['posted'] = sqldate(strtotime($entry->published));
       
       $media = $entry->children('http://search.yahoo.com/mrss/');

@@ -21,7 +21,7 @@ function tpollsInstall($self) {
   "  `id` int(10) unsigned NOT NULL auto_increment,
   `status` enum('opened','closed') default 'opened',
   `type` enum('radio','button','link','custom') default 'radio',
-  `hash` varchar(32) NOT NULL,
+  `hash` char(22) NOT NULL,
   `title` text NOT NULL,
   `items` text NOT NULL,
   `votes` text NOT NULL,
@@ -32,7 +32,7 @@ function tpollsInstall($self) {
   
   $manager->createtable($self->userstable,
   'id int UNSIGNED NOT NULL auto_increment,
-  cookie varchar(32) NOT NULL,
+  cookie char(22) NOT NULL,
   
   PRIMARY KEY(id),
   key cookie(cookie)
