@@ -11,7 +11,6 @@ function tcommentsInstall($self) {
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
   $manager->CreateTable($self->table, file_get_contents($dir .'comments.sql'));
   $manager->CreateTable($self->rawtable, file_get_contents($dir .'comments.raw.sql'));
-  $manager->CreateTable($self->table . 'kept', file_get_contents($dir .'comments.kept.sql'));
 }
 
 ?>

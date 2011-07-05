@@ -8,7 +8,11 @@
 if (!class_exists('tkeptcomments', false)) {
   if (dbversion) {
     class tkeptcomments extends tdata {
-      
+
+        public static function instance() {
+    return getinstance(__class__);
+  }
+  
       protected function create() {
         parent::create();
         $this->table ='commentskept';
@@ -37,7 +41,11 @@ if (!class_exists('tkeptcomments', false)) {
   } else {
     
     class tkeptcomments extends titems {
-      
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
       protected function create() {
         parent::create();
         $this->basename ='comments.kept';
