@@ -19,7 +19,7 @@ class tusers extends titems {
     $this->table = 'users';
     $this->autoid = 1;
   }
-  
+
   public function add($group, $login,$password, $name, $email, $url) {
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::instance();
@@ -30,7 +30,7 @@ class tusers extends titems {
       if (!($gid = $groups->groupid($group))) return false;
     }
     if ($password == '') $password = md5uniq();
-    $password = md5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+    $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
     
     $item = array(
     'login' => $login,
@@ -75,7 +75,7 @@ class tusers extends titems {
       switch ($k) {
         case 'password':
         if ($values['password'] != '') {
-          $item['password'] = md5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
+          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
         }
         break;
         
@@ -124,11 +124,11 @@ class tusers extends titems {
   
   public function changepassword($id, $password) {
     $item = $this->getitem($id);
-    $this->setvalue($id, 'password', md5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
+    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
   }
   
   public function auth($login,$password) {
-    $password = md5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+    $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
     if ($this->dbversion) {
       $login = dbquote($login);
       if (($a = $this->select("login = $login and password = '$password'", 'limit 1')) && (count($a) > 0)) {
@@ -153,7 +153,7 @@ class tusers extends titems {
   public function authcookie($cookie) {
     $cookie = (string) $cookie;
     if (empty($cookie)) return false;
-    $cookie = md5( $cookie . litepublisher::$secret);
+    $cookie = basemd5( $cookie . litepublisher::$secret);
     if ($this->dbversion) {
       if (($a = $this->select("cookie = '$cookie'", 'limit 1')) && (count($a) > 0)) {
         $item = $this->getitem($a[0]);
@@ -182,7 +182,7 @@ class tusers extends titems {
   }
   
   public function setcookie($id, $cookie, $expired) {
-    if ($cookie != '') $cookie = md5($cookie . litepublisher::$secret);
+    if ($cookie != '') $cookie = basemd5($cookie . litepublisher::$secret);
     $expired = sqldate($expired);
     if (isset($this->items[$id])) {
       $this->items[$id]['cookie'] = $cookie;
