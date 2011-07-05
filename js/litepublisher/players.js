@@ -27,12 +27,12 @@ function playaudiofile(id, filename) {
 function playvideofile(q, filename) {
   if (ltoptions.videomutex == undefined) {
     ltoptions.videomutex = 'loading';
-    $.load_script(ltoptions.files + '/js/flowplayer/flowplayer-3.2.4.min.js', function() {
+    $.load_script(ltoptions.files + '/js/flowplayer/flowplayer-3.2.6.min.js', function() {
       ltoptions.videomutex = 'loaded';
       playvideofile(q, filename);
     });
   } else if (ltoptions.videomutex == 'loaded') {
-    $(q).flowplayer(ltoptions.files + '/js/flowplayer/flowplayer-3.2.5.swf', filename);
+    $(q).flowplayer(ltoptions.files + '/js/flowplayer/flowplayer-3.2.7.swf', filename);
     $(q).flowplayer(0).load();
   }
 }

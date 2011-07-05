@@ -184,7 +184,7 @@ class tadminmoderator extends tadmincommoncomments {
     $perpage = 20;
     $total = $pingbacks->getcount();
     $from = $this->getfrom($perpage, $total);
-    $items = $pingbacks->db->getitems("status <> 'deleted' order by posted limit $from, $perpage");
+    $items = $pingbacks->db->getitems("status <> 'deleted' order by posted desc limit $from, $perpage");
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
     $result .= $html->pingbackheader();
@@ -192,8 +192,7 @@ class tadminmoderator extends tadmincommoncomments {
     $args->adminurl = $this->adminurl;
     foreach ($items as $item) {
       $args->add($item);
-      
-      $args->idpost = $item['post'];
+            $args->idpost = $item['post'];
       unset($args->data['$post']);
       $args->website = sprintf('<a href="%1$s">%1$s</a>', $item['url']);
       $args->localstatus = tlocal::$data['commentstatus'][$item['status']];

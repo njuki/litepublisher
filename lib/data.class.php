@@ -351,9 +351,13 @@ function dbquote($s) {
 }
 
 function md5uniq() {
-  return md5(mt_rand() . litepublisher::$secret. microtime());
+  return basemd5(mt_rand() . litepublisher::$secret. microtime());
 }
 
+function basemd5($s) {
+return trim(base64_encode(md5($s, true)), '=');
+}
+  
 function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }

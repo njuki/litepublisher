@@ -59,7 +59,7 @@ class tcomments extends titems {
     'modified' => sqldate(),
     'ip' => $ip,
     'rawcontent' => $content,
-    'hash' => md5($content)
+    'hash' => basemd5($content)
     ));
     
     return $id;
@@ -84,7 +84,7 @@ class tcomments extends titems {
     'id' => $id,
     'modified' => sqldate(),
     'rawcontent' => $content,
-    'hash' => md5($content)
+    'hash' => basemd5($content)
     ));
     
     return true;
@@ -147,7 +147,7 @@ class tcomments extends titems {
     'modified' => sqldate(),
     'ip' => $ip,
     'rawcontent' => $content,
-    'hash' => md5($content)
+    'hash' => basemd5($content)
     ));
     
     return $id;
@@ -267,7 +267,7 @@ class tcomment extends tdata {
     'id' => $id,
     'modified' => sqldate(),
     'rawcontent' => $rawcontent,
-    'hash' => md5($rawcontent)
+    'hash' => basemd5($rawcontent)
     ));
   }
   
