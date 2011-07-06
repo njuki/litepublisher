@@ -44,8 +44,6 @@ return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $pa
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
-    $newtemp = 'tmp.' . $this->md5uniq() . '.' . $parts['filename'];
-    $newtemp .= empty($parts['extension']) ? '' : '.' . $parts['extension'];
 $newtemp = $this->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
     return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
@@ -87,7 +85,7 @@ $newtemp = $this->gettempname($parts);
     $parts = pathinfo($filename);
 $filename = $this->gettempname($parts);
     if (@file_put_contents(litepublisher::$paths->files . $filename, $content)) {
-      @ chmod(litepublisher::$paths->files. str_replace('/', DIRECTORY_SEPARATOR, $filename), 0666);
+      @ chmod(litepublisher::$paths->files. $filename, 0666);
       return $filename;
     }
     return false;

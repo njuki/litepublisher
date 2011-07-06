@@ -178,7 +178,7 @@ class tusers extends titems {
   }
   
   public function clearcookie($id) {
-    $this->setcookies($id, '', 0);
+    $this->setcookie($id, '', 0);
   }
   
   public function setcookie($id, $cookie, $expired) {

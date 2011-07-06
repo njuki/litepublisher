@@ -151,7 +151,7 @@ $this->save();
     }
   }
   
-  public function setcookie($cookie) {
+  public function set_cookie($cookie) {
     if ($cookie != '') $cookie = basemd5((string) $cookie . litepublisher::$secret);
     $this->data['cookie'] = $cookie;
     $this->save();
