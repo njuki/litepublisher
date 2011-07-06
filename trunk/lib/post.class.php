@@ -461,6 +461,10 @@ class tpost extends titem implements  itemplate {
     $this->save();
     return '';
   }
+
+public function setfiles(array $list) {
+$this->data['files'] = array_unique($list);
+}
   
   public function getfilelist() {
     if (count($this->files) == 0) return '';
