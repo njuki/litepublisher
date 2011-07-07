@@ -48,10 +48,10 @@ class tfiles extends titems {
   public function geticon($id) {
     return sprintf('<img src="%s" alt="icon" />', $this->geturl($id));
   }
-
-public function gethash($filename) {
-return trim(base64_encode(md5_file($filename, true)), '=');
-}
+  
+  public function gethash($filename) {
+    return trim(base64_encode(md5_file($filename, true)), '=');
+  }
   
   public function additem(array $item) {
     $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);

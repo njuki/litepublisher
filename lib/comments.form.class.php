@@ -8,11 +8,11 @@
 if (!class_exists('tkeptcomments', false)) {
   if (dbversion) {
     class tkeptcomments extends tdata {
-
-        public static function instance() {
-    return getinstance(__class__);
-  }
-  
+      
+      public static function instance() {
+        return getinstance(__class__);
+      }
+      
       protected function create() {
         parent::create();
         $this->table ='commentskept';
@@ -41,11 +41,11 @@ if (!class_exists('tkeptcomments', false)) {
   } else {
     
     class tkeptcomments extends titems {
-
-  public static function instance() {
-    return getinstance(__class__);
-  }
-  
+      
+      public static function instance() {
+        return getinstance(__class__);
+      }
+      
       protected function create() {
         parent::create();
         $this->basename ='comments.kept';
@@ -90,10 +90,10 @@ class tcommentform extends tevents {
   
   public static function getcomuser($postid) {
     if (!empty($_COOKIE['userid'])) {
-$cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
+      $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
       $comusers = tcomusers::instance($postid);
       $user = $comusers->fromcookie($cookie);
-$comusers->loadall();
+      $comusers->loadall();
       if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
         $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
         $user = $comusers2->fromcookie($cookie);
@@ -209,25 +209,25 @@ $comusers->loadall();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
     litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
-$result = '<?php ';
-
-if (empty($_COOKIE['userid'])) {
-$cookie = '';
-} else {
-$cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
-}
-
-    $usercookie = $users->getcookie($uid);    
-if ($cookie != $usercookie) {
-$cookie= md5uniq();
-$usercookie = basemd5($cookie . litepublisher::$secret);
-$users->setvalue($uid, 'cookie', $usercookie);
-    $result .= " @setcookie('userid', '$cookie', time() + 30000000,  '/', false);";
-}
-
-if (!dbversion) $result .= " @setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
-$result .= sprintf(" @header('Location: %s%s'); ?>", litepublisher::$site->url,  $posturl);
-return $result;
+    $result = '<?php ';
+    
+    if (empty($_COOKIE['userid'])) {
+      $cookie = '';
+    } else {
+      $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
+    }
+    
+    $usercookie = $users->getcookie($uid);
+    if ($cookie != $usercookie) {
+      $cookie= md5uniq();
+      $usercookie = basemd5($cookie . litepublisher::$secret);
+      $users->setvalue($uid, 'cookie', $usercookie);
+      $result .= " @setcookie('userid', '$cookie', time() + 30000000,  '/', false);";
+    }
+    
+    if (!dbversion) $result .= " @setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
+    $result .= sprintf(" @header('Location: %s%s'); ?>", litepublisher::$site->url,  $posturl);
+    return $result;
   }
   
   private function getconfirmform($confirmid) {

@@ -130,7 +130,7 @@ class toptions extends tevents_storage {
   
   public function changepassword($newpassword) {
     $this->data['password'] = basemd5("$this->login:$this->realm:$newpassword");
-$this->save();
+    $this->save();
   }
   
   public function setdbpassword($password) {

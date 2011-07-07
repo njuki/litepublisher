@@ -355,9 +355,9 @@ function md5uniq() {
 }
 
 function basemd5($s) {
-return trim(base64_encode(md5($s, true)), '=');
+  return trim(base64_encode(md5($s, true)), '=');
 }
-  
+
 function strbegin($s, $begin) {
   return strncmp($s, $begin, strlen($begin)) == 0;
 }

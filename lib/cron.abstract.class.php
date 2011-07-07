@@ -7,7 +7,7 @@
 **/
 
 class tabstractcron extends tevents {
-public static $pinged = false;
+  public static $pinged = false;
   public $disableadd;
   
   protected function create() {
@@ -73,11 +73,11 @@ public static $pinged = false;
   }
   
   public static function pingonshutdown() {
-if (self::$pinged) return;
-self::$pinged = true;
-      register_shutdown_function(array(tcron::instance(), 'ping'));
+    if (self::$pinged) return;
+    self::$pinged = true;
+    register_shutdown_function(array(tcron::instance(), 'ping'));
   }
-
+  
   public function ping() {
     $this->pinghost(litepublisher::$urlmap->host, litepublisher::$site->subdir . $this->url);
   }

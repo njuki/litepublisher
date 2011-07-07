@@ -192,7 +192,7 @@ class tadminmoderator extends tadmincommoncomments {
     $args->adminurl = $this->adminurl;
     foreach ($items as $item) {
       $args->add($item);
-            $args->idpost = $item['post'];
+      $args->idpost = $item['post'];
       unset($args->data['$post']);
       $args->website = sprintf('<a href="%1$s">%1$s</a>', $item['url']);
       $args->localstatus = tlocal::$data['commentstatus'][$item['status']];

@@ -705,6 +705,10 @@ if (!class_exists('tkeptcomments', false)) {
   if (dbversion) {
     class tkeptcomments extends tdata {
       
+      public static function instance() {
+        return getinstance(__class__);
+      }
+      
       protected function create() {
         parent::create();
         $this->table ='commentskept';
@@ -733,6 +737,10 @@ if (!class_exists('tkeptcomments', false)) {
   } else {
     
     class tkeptcomments extends titems {
+      
+      public static function instance() {
+        return getinstance(__class__);
+      }
       
       protected function create() {
         parent::create();
@@ -777,12 +785,14 @@ class tcommentform extends tevents {
   }
   
   public static function getcomuser($postid) {
-    if (!empty($_COOKIE["userid"])) {
+    if (!empty($_COOKIE['userid'])) {
+      $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
       $comusers = tcomusers::instance($postid);
-      $user = $comusers->fromcookie($_COOKIE['userid']);
+      $user = $comusers->fromcookie($cookie);
+      $comusers->loadall();
       if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
         $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
-        $user = $comusers2->fromcookie($_COOKIE['userid']);
+        $user = $comusers2->fromcookie($cookie);
       }
       return $user;
     }
@@ -889,20 +899,31 @@ class tcommentform extends tevents {
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
-    $usercookie = $users->getcookie($uid);
     if (!litepublisher::$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
     
     $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
     litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
+    $result = '<?php ';
     
-    $idpostcookie = dbversion ? '' : "@setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
-    return "<?php
-    @setcookie('userid', '$usercookie', time() + 30000000,  '/', false);
-    $idpostcookie
-    @header('Location: " . litepublisher::$site->url . "$posturl');
-    ?>";
+    if (empty($_COOKIE['userid'])) {
+      $cookie = '';
+    } else {
+      $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
+    }
+    
+    $usercookie = $users->getcookie($uid);
+    if ($cookie != $usercookie) {
+      $cookie= md5uniq();
+      $usercookie = basemd5($cookie . litepublisher::$secret);
+      $users->setvalue($uid, 'cookie', $usercookie);
+      $result .= " @setcookie('userid', '$cookie', time() + 30000000,  '/', false);";
+    }
+    
+    if (!dbversion) $result .= " @setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
+    $result .= sprintf(" @header('Location: %s%s'); ?>", litepublisher::$site->url,  $posturl);
+    return $result;
   }
   
   private function getconfirmform($confirmid) {
@@ -945,7 +966,7 @@ class tspamfilter extends tevents {
     $comments = tcomments::instance($idpost);
     $content = trim($content);
     if (dbversion) {
-      $hash = md5($content);
+      $hash = basemd5($content);
       return $comments->raw->findid("hash = '$hash'");
     } else {
       return $comments->raw->IndexOf('content', $content);
