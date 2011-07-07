@@ -661,6 +661,10 @@ class tpost extends titem implements  itemplate {
     return '';
   }
   
+  public function setfiles(array $list) {
+    $this->data['files'] = array_unique($list);
+  }
+  
   public function getfilelist() {
     if (count($this->files) == 0) return '';
     $files = tfiles::instance();
@@ -2272,11 +2276,15 @@ class tfiles extends titems {
     return sprintf('<img src="%s" alt="icon" />', $this->geturl($id));
   }
   
+  public function gethash($filename) {
+    return trim(base64_encode(md5_file($filename, true)), '=');
+  }
+  
   public function additem(array $item) {
     $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
     $item['author'] = litepublisher::$options->user;
     $item['posted'] = sqldate();
-    $item['md5'] = md5_file($realfile);
+    $item['hash'] = $this->gethash($realfile);
     $item['size'] = filesize($realfile);
     return $this->insert($item);
   }
@@ -2332,7 +2340,7 @@ class tfiles extends titems {
     $item = $this->getitem($id);
     $realfile = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $item['filename']);
     if (file_put_contents($realfile, $content)) {
-      $item['md5'] = md5_file($realfile);
+      $item['hash'] = $this->gethash($realfile);
       $item['size'] = filesize($realfile);
       $this->items[$id] = $item;
       if ($this->dbversion) {

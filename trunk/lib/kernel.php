@@ -684,7 +684,11 @@ function dbquote($s) {
 }
 
 function md5uniq() {
-  return md5(mt_rand() . litepublisher::$secret. microtime());
+  return basemd5(mt_rand() . litepublisher::$secret. microtime());
+}
+
+function basemd5($s) {
+  return trim(base64_encode(md5($s, true)), '=');
 }
 
 function strbegin($s, $begin) {
@@ -1405,7 +1409,7 @@ class toptions extends tevents_storage {
   
   public function authcookie() {
     if (empty($_COOKIE['admin']))  return false;
-    $cookie = md5((string) $_COOKIE['admin'] . litepublisher::$secret);
+    $cookie = basemd5((string) $_COOKIE['admin'] . litepublisher::$secret);
     if ($this->cookie == $cookie) {
       if ($this->cookieexpired < time()) return false;
       $this->user = 1;
@@ -1423,7 +1427,7 @@ class toptions extends tevents_storage {
   public function auth($login, $password) {
     if ($login == '' && $password == '' && $this->cookieenabled) return $this->authcookie();
     if ($login == $this->login) {
-      if ($this->password != md5("$login:$this->realm:$password"))  return false;
+      if ($this->data['password'] != basemd5("$login:$this->realm:$password"))  return false;
       $this->user = 1;
     } elseif(!$this->usersenabled) {
       return false;
@@ -1451,7 +1455,8 @@ class toptions extends tevents_storage {
   }
   
   public function changepassword($newpassword) {
-    $this->password = md5("$this->login:$this->realm:$newpassword");
+    $this->data['password'] = basemd5("$this->login:$this->realm:$newpassword");
+    $this->save();
   }
   
   public function setdbpassword($password) {
@@ -1472,8 +1477,8 @@ class toptions extends tevents_storage {
     }
   }
   
-  public function setcookie($cookie) {
-    if ($cookie != '') $cookie = md5((string) $cookie . litepublisher::$secret);
+  public function set_cookie($cookie) {
+    if ($cookie != '') $cookie = basemd5((string) $cookie . litepublisher::$secret);
     $this->data['cookie'] = $cookie;
     $this->save();
   }
@@ -1538,12 +1543,10 @@ class tsite extends tevents_storage {
   }
   
   public function __set($name, $value) {
+    if ($name == 'url') return $this->seturl($value);
     if (in_array($name, $this->eventnames)) {
       $this->addevent($name, $value['class'], $value['func']);
-      return true;
-    }
-    
-    if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
+    } elseif (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
       $this->save();
     }
@@ -1555,10 +1558,15 @@ class tsite extends tevents_storage {
     return 'http://'. litepublisher::$domain;
   }
   
+  public function getfiles() {
+    if ($this->fixedurl) return $this->data['files'];
+    return 'http://'. litepublisher::$domain;
+  }
+  
   public function seturl($url) {
     $url = rtrim($url, '/');
     $this->data['url'] = $url;
-    $this->files= $url;
+    $this->data['files'] = $url;
     $this->subdir = '';
     if ($i = strpos($url, '/', 10)) {
       $this->subdir = substr($url, $i);
@@ -1992,17 +2000,9 @@ class turlmap extends titems {
   
   protected function close() {
     $this->call_close_events();
-    if (defined('cronpinged')) return;
-    /*
-    $cronfile =litepublisher::$paths->data . 'cron' . DIRECTORY_SEPARATOR.  'crontime.txt';
-    $time = file_exists($cronfile) ? filemtime($cronfile) : 0;
-    if ($time + 3600 - litepublisher::$options->filetime_offset < time()) {
-      register_shutdown_function('tcron::selfping');
-    }
-    */
     if (time() > litepublisher::$options->crontime + 3600) {
       litepublisher::$options->crontime = time();
-      register_shutdown_function(array('tcron', 'selfping'));
+      tcron::pingonshutdown();
     }
   }
   

@@ -18,11 +18,11 @@ function tcommentformUninstall($self) {
 }
 
 function tkeptcommentsInstall($self) {
-if (dbversion) {
-  $manager = tdbmanager ::instance();
-  $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-  $manager->CreateTable($self->table, file_get_contents($dir .'comments.kept.sql'));
-}
+  if (dbversion) {
+    $manager = tdbmanager ::instance();
+    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
+    $manager->CreateTable($self->table, file_get_contents($dir .'comments.kept.sql'));
+  }
 }
 
 ?>

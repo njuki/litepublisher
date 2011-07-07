@@ -19,7 +19,7 @@ class tusers extends titems {
     $this->table = 'users';
     $this->autoid = 1;
   }
-
+  
   public function add($group, $login,$password, $name, $email, $url) {
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::instance();

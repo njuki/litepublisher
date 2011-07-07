@@ -139,6 +139,7 @@ $comusers->unlock();
 }
 }
 
+litepublisher::$options->version = '3.64';
 //echo "\nupdated";
-turlmap::redir301('/admin/service/' . litepublisher::$site->q . 'update=1');
+//turlmap::redir301('/admin/service/' . litepublisher::$site->q . 'update=1');
 }

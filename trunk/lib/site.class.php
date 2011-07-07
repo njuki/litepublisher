@@ -18,12 +18,10 @@ class tsite extends tevents_storage {
   }
   
   public function __set($name, $value) {
+    if ($name == 'url') return $this->seturl($value);
     if (in_array($name, $this->eventnames)) {
       $this->addevent($name, $value['class'], $value['func']);
-      return true;
-    }
-    
-    if (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
+    } elseif (!array_key_exists($name, $this->data)  || ($this->data[$name] != $value)) {
       $this->data[$name] = $value;
       $this->save();
     }
@@ -35,10 +33,15 @@ class tsite extends tevents_storage {
     return 'http://'. litepublisher::$domain;
   }
   
+  public function getfiles() {
+    if ($this->fixedurl) return $this->data['files'];
+    return 'http://'. litepublisher::$domain;
+  }
+  
   public function seturl($url) {
     $url = rtrim($url, '/');
     $this->data['url'] = $url;
-    $this->files= $url;
+    $this->data['files'] = $url;
     $this->subdir = '';
     if ($i = strpos($url, '/', 10)) {
       $this->subdir = substr($url, $i);

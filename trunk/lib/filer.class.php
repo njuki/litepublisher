@@ -114,7 +114,7 @@ class tfiler {
   }
   
   public static function get_filetime_offset() {
-    $filename = litepublisher::$paths->data . md5uniq() . '.tmp';
+    $filename = litepublisher::$paths->data . md5(microtime()) . '.tmp';
     $t = time();
     touch($filename, $t, $t);
     clearstatcache  ();

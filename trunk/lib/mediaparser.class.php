@@ -31,11 +31,11 @@ class tmediaparser extends tevents {
     $tempfilename = $this->doupload($filename, $content);
     return $this->addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite);
   }
-
-private function gettempname($parts) {
-return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $parts['filename'] .
-(empty($parts['extension']) ? '' : '.' . $parts['extension']);
-}
+  
+  private function gettempname($parts) {
+    return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $parts['filename'] .
+    (empty($parts['extension']) ? '' : '.' . $parts['extension']);
+  }
   
   public function uploadfile($filename, $tempfilename, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
@@ -44,7 +44,7 @@ return 'tmp.' . md5(mt_rand() . litepublisher::$secret. microtime()) . '.' . $pa
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
-$newtemp = $this->gettempname($parts);
+    $newtemp = $this->gettempname($parts);
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
     return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
   }
@@ -83,7 +83,7 @@ $newtemp = $this->gettempname($parts);
   private function doupload($filename, &$content) {
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
-$filename = $this->gettempname($parts);
+    $filename = $this->gettempname($parts);
     if (@file_put_contents(litepublisher::$paths->files . $filename, $content)) {
       @ chmod(litepublisher::$paths->files. $filename, 0666);
       return $filename;

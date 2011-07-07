@@ -423,7 +423,7 @@ class turlmap extends titems {
     $this->call_close_events();
     if (time() > litepublisher::$options->crontime + 3600) {
       litepublisher::$options->crontime = time();
-tcron::pingonshutdown();
+      tcron::pingonshutdown();
     }
   }
   
