@@ -5,19 +5,20 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function if_exists(sel, fn) {
-  $(document).ready(function() {
-    var items = $(sel);
-    if (items.length > 0) {
-      if ($.isFunction(fn)) fn(items);
-    }
-  });
-}
-
-function load_if_exists(url, sel, fn) {
-  if_exists(sell, function(items) {
-    $.getScript(url, function() {
-      if ($.isFunction(fn)) fn(items);
+$.extend({
+  load_script: function( url, callback ) {
+    return $.ajax({
+      type: 'get',
+      url: url,
+      data: undefined,
+      success: callback,
+      dataType: "script",
+      cache: true
     });
-  });
-}
+  }
+});
+
+function load_ui(fn) {
+if ($.uiscript == undefined) {
+var dir = ltoptions.files + '/js/jquery/ui-' + ltoptions.jqueryui_version;
+$('<link rel="stylesheet" type="text/css" href="'+ dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '

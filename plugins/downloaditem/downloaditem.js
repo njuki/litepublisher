@@ -32,21 +32,8 @@ return ltoptions.download_site + '/admin/service/upload/' + q + args;
 }
 
 function siteurl_dialog(fn) {
-  switch($._ui_dialog) {
-    case 'loaded':
-$("#siteurl_dialog").dialog( "open" );
-$("#text_download_site").focus();
-    break;
-    
-    case 'loading':
-//ignore
-    break;
-    
-    default:
-    $._ui_dialog = 'loading';
-var dir = ltoptions.files + '/plugins/downloaditem/resource/';
-    $('<link rel="stylesheet" type="text/css" href="'+ dir + 'jquery-ui-dialog-1.8.9.css" />').appendTo("head");
-    $.getScript(dir + "jquery-ui-dialog-1.8.9.min.js", function() {
+load_ui(function() {
+if ($._url_dialog == undefined) {
 $("#siteurl_dialog").dialog( {
 autoOpen: false,
 modal: true,
@@ -67,12 +54,11 @@ if ($.isFunction(fn)) fn();
     }
 ]
 } );
-
-        $._ui_dialog = 'loaded';
+$._url_dialog = true;
+}
 $("#siteurl_dialog").dialog( "open" );
 $("#text_download_site").focus();
     });
-  }
 }
 
 function download_item_clicked() {
