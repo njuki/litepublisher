@@ -338,8 +338,7 @@ class tmediaparser extends tevents {
     $fullname = $dir . $this->getunique($dir, basename($fullname));
     
     if (!$this->createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight)) return false;
-    
-    @chmod($fullname, 0666);
+        @chmod($fullname, 0666);
     $info = getimagesize($fullname);
     $destfilename = substr($fullname, strlen(litepublisher::$paths->files));
     $result = $this->getdefaultvalues(str_replace(DIRECTORY_SEPARATOR, '/', $destfilename));
