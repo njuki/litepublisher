@@ -70,6 +70,7 @@ function installoptions($language) {
   $options->commentsperpage = 100;
   $options->checkduplicate = true;
   $options->defaultsubscribe = true;
+$options->autocmtform = true;
   $options->version = tupdater::getversion();
   $options->echoexception = true;
   $options->parsepost = true;
