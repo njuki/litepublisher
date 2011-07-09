@@ -40,7 +40,7 @@ class tmobiletemplate extends ttemplate {
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->hovermenu && ($theme->templates['menu.hover'] == 'true');
-    $this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
+    $this->ltoptions['themename'] = $theme->name;
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     unset(ttheme::$vars['context'], ttheme::$vars['template']);

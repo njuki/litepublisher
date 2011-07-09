@@ -91,6 +91,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
 tlocal::clearcache();
+//tupdater::instance()->run(4.65);
 
 //litepublisher::$classes->delete('tajaxposteditor');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
@@ -103,7 +104,7 @@ tlocal::clearcache();
   //echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-tupdater::instance()->run(4.64);
+//tupdater::instance()->run(4.64);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
 //tupdater::instance()->run('4.44');

@@ -21,4 +21,9 @@ $.extend({
 function load_ui(fn) {
 if ($.uiscript == undefined) {
 var dir = ltoptions.files + '/js/jquery/ui-' + ltoptions.jqueryui_version;
-$('<link rel="stylesheet" type="text/css" href="'+ dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '
+$('<link rel="stylesheet" type="text/css" href="'+ dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '.custom.css" />').
+appendTo("head");
+$.uiscript = $.load_script(dir + '/jquery-ui-' + ltoptions.jqueryui_version + '.custom.min.js');
+}
+if ($.isFunction(fn)) $.uiscript.done(fn);
+}
