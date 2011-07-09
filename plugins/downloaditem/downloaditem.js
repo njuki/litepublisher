@@ -32,7 +32,7 @@ return ltoptions.download_site + '/admin/service/upload/' + q + args;
 }
 
 function siteurl_dialog(fn) {
-load_ui(function() {
+$.load_ui(function() {
 if ($._url_dialog == undefined) {
 $("#siteurl_dialog").dialog( {
 autoOpen: false,

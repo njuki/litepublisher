@@ -222,16 +222,16 @@ class tcommentform extends tevents {
       $cookie= md5uniq();
       $usercookie = basemd5($cookie . litepublisher::$secret);
       $users->setvalue($uid, 'cookie', $usercookie);
-      $result .= " @setcookie('userid', '$cookie', time() + 30000000,  '/', false);";
+      $result .= " setcookie('userid', '$cookie', time() + 30000000,  '/', false);";
     }
 
 foreach (array('name', 'email', 'url') as $field) {
-$fieldvalue = $values[$name];
-" @setcookie('comuser_$field', '$fieldvalue', time() + 30000000,  '/', false);";
+$fieldvalue = $values[$field];
+$result .= " setcookie('comuser_$field', '$fieldvalue', time() + 30000000,  '/', false);";
 }
     
     if (!dbversion) $result .= " @setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
-    $result .= sprintf(" @header('Location: %s%s'); ?>", litepublisher::$site->url,  $posturl);
+    $result .= sprintf(" header('Location: %s%s'); ?>", litepublisher::$site->url,  $posturl);
     return $result;
   }
   
