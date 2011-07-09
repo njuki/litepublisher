@@ -172,8 +172,7 @@ return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', js
     return sprintf($this->jsload, $s);
   }
   
-  
-  public function addtohead($s) {
+    public function addtohead($s) {
     $s = trim($s);
     if (false === strpos($this->heads, $s)) {
       $this->heads = trim($this->heads) . "\n" . $s;
