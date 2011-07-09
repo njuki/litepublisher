@@ -12,5 +12,3 @@ $admin = tadminmenus::instance();
 $admin->heads = str_replace('1.8.11', '$site.jqueryui_version', $admin->heads );
 $admin->save();
 }
-
-}

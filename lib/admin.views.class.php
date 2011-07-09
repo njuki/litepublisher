@@ -101,7 +101,7 @@ class tadminviews extends tadminmenu {
     $template = ttemplate::instance();
     switch ($this->name) {
       case 'views':
-      $template->ltoptions[] = sprintf('allviews: [%s]', implode(',', array_keys(tviews::instance()->items)));
+      $template->ltoptions['allviews'] = implode(',', array_keys(tviews::instance()->items));
     $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.min.js", function() {init_views();}' );
       /*
       $result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
