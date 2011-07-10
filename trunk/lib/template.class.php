@@ -30,11 +30,11 @@ class ttemplate extends tevents_storage {
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
     $this->ltoptions = array(
-'url' =>    litepublisher::$site->url,
-'files' =>litepublisher::$site->files,
- 'idurl' => litepublisher::$urlmap->itemrequested['id'],
-'jqueryui_version' => litepublisher::$site->jqueryui_version,
- );
+    'url' =>    litepublisher::$site->url,
+    'files' =>litepublisher::$site->files,
+    'idurl' => litepublisher::$urlmap->itemrequested['id'],
+    'jqueryui_version' => litepublisher::$site->jqueryui_version,
+    );
     $this->hover = true;
     $this->data['hovermenu'] = true;
     $this->data['heads'] = '';
@@ -157,7 +157,7 @@ class ttemplate extends tevents_storage {
   }
   
   private function getltoptions() {
-return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', json_encode($this->ltoptions));
+    return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', json_encode($this->ltoptions));
   }
   
   public function getjavascript($filename) {
@@ -172,7 +172,7 @@ return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', js
     return sprintf($this->jsload, $s);
   }
   
-    public function addtohead($s) {
+  public function addtohead($s) {
     $s = trim($s);
     if (false === strpos($this->heads, $s)) {
       $this->heads = trim($this->heads) . "\n" . $s;

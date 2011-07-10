@@ -664,6 +664,7 @@ if (!class_exists('tkeptcomments', false)) {
 }
 
 class tcommentform extends tevents {
+  public $htmlhelper;
   
   public static function instance() {
     return getinstance(__class__);
@@ -673,6 +674,7 @@ class tcommentform extends tevents {
     parent::create();
     $this->basename ='commentform';
     $this->cache = false;
+    $this->htmlhelper = $this;
   }
   
   public static function getcomuser($postid) {
@@ -753,16 +755,22 @@ class tcommentform extends tevents {
       $values['date'] = time();
       $values['ip'] = preg_replace( '/[^0-9., ]/', '',$_SERVER['REMOTE_ADDR']);
       $confirmid  = $kept->add($values);
-      return tsimplecontent::html($this->getconfirmform($confirmid));
+      //return tsimplecontent::html($this->getconfirmform($confirmid));
+      return $this->htmlhelper->confirm($confirmid);
     }
     
     $confirmid = $_POST['confirmid'];
     if (!($values = $kept->getitem($confirmid))) {
-      return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
+      //return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
+      return $this->htmlhelper->geterrorcontent(tlocal::$data['commentform']['notfound']);
     }
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = litepublisher::$classes->posts;
-    if(!$posts->itemexists($postid)) return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
+    if(!$posts->itemexists($postid)) {
+      //return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
+      return $this->htmlhelper->geterrorcontent(tlocal::$data['default']['postnotfound']);
+    }
+    
     $post = tpost::instance($postid);
     
     $values = array(
@@ -777,44 +785,58 @@ class tcommentform extends tevents {
     );
     
     $lang = tlocal::instance('comment');
-    if (!$this->checkspam($values['antispam']))   return tsimplecontent::content($lang->spamdetected);
-    if (empty($values['content'])) return tsimplecontent::content($lang->emptycontent);
-    if (empty($values['name'])) return tsimplecontent::content($lang->emptyname);
-    if (!tcontentfilter::ValidateEmail($values['email'])) return tsimplecontent::content($lang->invalidemail);
-    if (!$post->commentsenabled) return tsimplecontent::content($lang->commentsdisabled);
-    if ($post->status != 'published')  return tsimplecontent::content($lang->commentondraft);
+    if (!$this->checkspam($values['antispam']))          {
+      return $this->htmlhelper->geterrorcontent($lang->spamdetected);
+    }
+    
+    if (empty($values['content'])) return $this->htmlhelper->geterrorcontent($lang->emptycontent);
+    if (empty($values['name']))       return $this->htmlhelper->geterrorcontent($lang->emptyname);
+    if (!tcontentfilter::ValidateEmail($values['email'])) {
+      return $this->htmlhelper->geterrorcontent($lang->invalidemail);
+    }
+    
+    if (!$post->commentsenabled)       {
+      return $this->htmlhelper->geterrorcontent($lang->commentsdisabled);
+    }
+    
+    if ($post->status != 'published')  {
+      return $this->htmlhelper->geterrorcontent($lang->commentondraft);
+    }
+    
     if (litepublisher::$options->checkduplicate) {
-      if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) return tsimplecontent::content($lang->duplicate);
+      if (litepublisher::$classes->spamfilter->checkduplicate($postid, $values['content']) ) {
+        return $this->htmlhelper->geterrorcontent($lang->duplicate);
+      }
     }
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
     $users = tcomusers::instance($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
-    if (!litepublisher::$classes->spamfilter->canadd( $uid)) return tsimplecontent::content($lang->toomany);
+    if (!litepublisher::$classes->spamfilter->canadd( $uid)) {
+      return $this->htmlhelper->geterrorcontent($lang->toomany);
+    }
     
     $subscribers = tsubscribers::instance();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
     litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
-    $result = '<?php ';
     
-    if (empty($_COOKIE['userid'])) {
-      $cookie = '';
-    } else {
-      $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
-    }
-    
+    $cookies = array();
+    $cookie = empty($_COOKIE['userid']) ? '' : $_COOKIE['userid'];
     $usercookie = $users->getcookie($uid);
-    if ($cookie != $usercookie) {
+    if ($usercookie != basemd5($cookie . litepublisher::$secret)) {
       $cookie= md5uniq();
       $usercookie = basemd5($cookie . litepublisher::$secret);
       $users->setvalue($uid, 'cookie', $usercookie);
-      $result .= " @setcookie('userid', '$cookie', time() + 30000000,  '/', false);";
+    }
+    $cookies['userid'] = $cookie;
+    
+    foreach (array('name', 'email', 'url') as $field) {
+      $cookies["comuser_$field"] = $values[$field];
     }
     
-    if (!dbversion) $result .= " @setcookie('idpost', '$post->id', time() + 30000000,  '/', false);";
-    $result .= sprintf(" @header('Location: %s%s'); ?>", litepublisher::$site->url,  $posturl);
-    return $result;
+    if (!dbversion) $cookies['idpost'] = $post->id;
+    return $this->htmlhelper->sendcookies($cookies, litepublisher::$site->url . $posturl);
   }
   
   private function getconfirmform($confirmid) {
@@ -824,7 +846,25 @@ class tcommentform extends tevents {
     $theme = tsimplecontent::gettheme();
     return $theme->parsearg(
     $theme->templates['content.post.templatecomments.confirmform'], $args);
-    //$theme->content->post->templatecomments->confirmform, $args);
+  }
+  
+  //htmlhelper
+  public function confirm($confirmid) {
+    return tsimplecontent::html($this->getconfirmform($confirmid));
+  }
+  
+  public function geterrorcontent($s) {
+    return tsimplecontent::content($s);
+  }
+  
+  public function sendcookies($cookies, $url) {
+    $result = '<?php ';
+    foreach ($cookies as $name => $value) {
+      $result .= " setcookie('$name', '$value', time() + 30000000,  '/', false);";
+    }
+    
+    $result .= sprintf(" header('Location: %s'); ?>", $url);
+    return $result;
   }
   
 }//class
@@ -1094,9 +1134,22 @@ public function save() {}
     }
     
     if (!litepublisher::$options->commentsdisabled && $post->commentsenabled) {
-      $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
+      if (litepublisher::$options->autocmtform) {
+        $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
+      } else {
+        $lang = tlocal::instance('comment');
+        $args->name = '';
+        $args->email = '';
+        $args->url = '';
+        $args->subscribe = litepublisher::$options->defaultsubscribe;
+        $args->content = '';
+        $args->postid = $idpost;
+        $args->antispam = base64_encode('superspamer' . strtotime ("+1 hour"));
+        
+        $result .= $theme->parsearg($theme->templates['content.post.templatecomments.form'], $args);
+      }
     } else {
-      $result .= $theme->parse($theme->content->post->templatecomments->closed);
+      $result .= $theme->parse($theme->templates['content.post.templatecomments.closed']);
     }
     return $result;
   }
