@@ -433,9 +433,12 @@ class ttemplate extends tevents_storage {
     $this->path = litepublisher::$paths->themes . 'default' . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/default';
     $this->itemplate = false;
-    $this->ltoptions = array(0 =>
-    sprintf("url: '%1\$s',\nfiles: '%2\$s',\nidurl: '%3\$s'",
-    litepublisher::$site->url, litepublisher::$site->files, litepublisher::$urlmap->itemrequested['id']));
+    $this->ltoptions = array(
+    'url' =>    litepublisher::$site->url,
+    'files' =>litepublisher::$site->files,
+    'idurl' => litepublisher::$urlmap->itemrequested['id'],
+    'jqueryui_version' => litepublisher::$site->jqueryui_version,
+    );
     $this->hover = true;
     $this->data['hovermenu'] = true;
     $this->data['heads'] = '';
@@ -473,7 +476,7 @@ class ttemplate extends tevents_storage {
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
     $this->hover = $this->hovermenu && ($theme->templates['menu.hover'] == 'true');
-    $this->ltoptions[] = sprintf('themename: \'%s\'',  $theme->name);
+    $this->ltoptions['themename'] = $theme->name;
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
     unset(ttheme::$vars['context'], ttheme::$vars['template']);
@@ -558,10 +561,7 @@ class ttemplate extends tevents_storage {
   }
   
   private function getltoptions() {
-    $result = "<script type=\"text/javascript\">\nvar ltoptions = {\n";
-      $result .= implode(",\n", $this->ltoptions);
-    $result .= "\n};\n</script>\n";
-    return $result;
+    return sprintf('<script type="text/javascript">var ltoptions = %s;</script>', json_encode($this->ltoptions));
   }
   
   public function getjavascript($filename) {
@@ -575,7 +575,6 @@ class ttemplate extends tevents_storage {
   public function getloadjavascript($s) {
     return sprintf($this->jsload, $s);
   }
-  
   
   public function addtohead($s) {
     $s = trim($s);

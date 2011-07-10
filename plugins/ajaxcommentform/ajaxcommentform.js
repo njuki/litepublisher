@@ -3,6 +3,7 @@ fields: ["name", "email", "url"],
 subscribed: [],
 unsubscribed: [],
 error_dialog: false,
+confirm_dialog: false,
 
 get: function(name) {
 return $("input[name='" + name + "']").val();
@@ -77,7 +78,7 @@ set_cookie: function(name) {
 set_cookie("comuser_" + name, this.get(name));
 },
 
-error: function(name, msg) {
+error: function(msg, name) {
 $.load_ui(function() {
 if (!commentform.error_dialog) {
 commentform.error_dialog = $('<div class="ui-helper-hidden" title="' + ltoptions.commentform.error_title  +  '"><h4></h4></div>')
@@ -92,7 +93,36 @@ $(commentform.error_dialog ).dialog( {
       text: "Ok",
       click: function() {
         $(this).dialog("close");
-commentform.find(name).focus();
+if (name) commentform.find(name).focus();
+      }
+    } ]
+  } );
+});
+},
+
+confirm: function(data) {
+$.load_ui(function() {
+if (!commentform.confirm_dialog) {
+commentform.confirm_dialog= $('<div class="ui-helper-hidden" title="' + data.title + '"><h4>' + data.formhead  + '</h4></div>')
+.appendTo($("input[name='name']").closest("form"));
+}
+
+$(commentform.confirm_dialog).dialog( {
+    autoOpen: true,
+    modal: true,
+    buttons: [
+    {
+      text: data.robot,
+      click: function() {
+        $(this).dialog("close");
+      }
+    } ,
+
+    {
+      text: data.human,
+      click: function() {
+        $(this).dialog("close");
+commentform.sendconfirm(data.confirmid);
       }
     } ]
   } );
@@ -101,7 +131,7 @@ commentform.find(name).focus();
 
 empty: function(name) {
 if ("" == $.trim(this.get(name))) {
-this.error(name, lang.comment.emptyname);
+this.error(lang.comment.emptyname, name);
 return true;
 }
 return false;
@@ -110,7 +140,7 @@ return false;
 validemail: function() {
 var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 if (!filter.test(this.get("email"))) {
-this.error("email", lang.comment.invalidemail);
+this.error(lang.comment.invalidemail, "email");
 return false;
 }
 return true;
@@ -119,38 +149,83 @@ return true;
 validate: function() {
 if (this.empty("name") || this.empty("email") || !this.validemail() ) return false;
 if ("" == $.trim(this.find("content").val())) {
-this.error("content", lang.comment.emptycontent);
+this.error(lang.comment.emptycontent, "content");
 return false;
 }
 return true;
 },
 
 submit: function() {
-try {
 if (!commentform.validate()) return false;
 commentform.set_cookie("name");
 commentform.set_cookie("email");
 commentform.set_cookie("url");
 commentform.update_subscribe();
-alert('sent comment');
 commentform.send();
-} catch(e) { alert(e.message); }
 return false;
 },
 
 send: function() {
 var form = $("input[name='name']").closest("form");
-$("input, textarea, checkbox", form).attr("disabled", true);
-$.post(ltoptions.url + "/ajaxcommentform.htm", 
-{getuser : iduser, idpost: ltoptions.idpost},
+var values = {};
+$("input, textarea, checkbox", form).each(function() {
+values[$(this).attr("name")] = $(this).val();
+$(this).attr("disabled", true);
+});
+
+$.post(ltoptions.url + "/ajaxcommentform.htm", values,
 function (resp) {
 try {
 var data = $.parseJSON(resp);
+switch (data.code) {
+case 'confirm':
+commentform.confirm(data);
+break;
 
+case 'success':
+commentform.success(data);
+break;
+
+default: //error
+commentform.error(data.msg, false);
+break;
+}
+} catch(e) { commentform.error(e.message, false); }
+})
+.error(function(msg) {
+commentform.error(msg, false);
+})
+.complete(function() {
 $("input, textarea, checkbox", form).attr("disabled", false);
-} catch(e) { alert(e.message); }
 });
 
+},
+
+sendconfirm: function(confirmid) {
+$.post(ltoptions.url + "/ajaxcommentform.htm", 
+{confirmid: confirmid},
+function (resp) {
+try {
+var data = $.parseJSON(resp);
+switch (data.code) {
+case 'success':
+commentform.success(data);
+break;
+
+default: //error
+commentform.error(data.msg, false);
+break;
+}
+} catch(e) { commentform.error(e.message, false); }
+})
+.error(function(msg) {
+commentform.error(msg, false);
+});
+},
+
+success: function(data) {
+set_cookie('userid', data.userid);
+window.location = data.posturl;
 }
 
 };
