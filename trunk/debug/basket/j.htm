@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>basket test</title>
+<script src="jquery-1.6.2.min.js"></script>
+<script src="tojson.min.js"></script>
+<script src="cookie.min.js"></script>
+<script src="basket.js"></script>
+<script>
+$(document).ready(function() {
+try {
+var basket = $("#basket").litebasket ({prop: 'val'}).basket;
+//var basket ={};
+//create_basket(basket);
+alert("json " + basket);
+/*
+for (var k in basket.data.items) {
+alert(k + ":" + $.toJSON(basket.data.items[k]));
+};
+*/
+basket.add('b', 'affirst', 22);
+alert(basket);
+//basket.remove('b');
+alert('count = ' + basket.getcount());
+alert("inarray = " + basket.inArray('a'));
+//basket.save();
+ } catch(e) { alert(e.message); }
+});
+</script>
+
+<style type='text/css'>
+#basket_dialog { display: none; }
+.classictable   {
+border: 2px solid black;
+border-collapse:collapse;
+font-size:12px;
+width:98%;
+} 
+
+.classictable   th, td {
+border: 1px solid black;
+padding: 5px;
+}
+</style>
+</head>
+<body>
+<div id="basket">
+<div id="basket_dialog" title="Basket title">
+<table class="classictable">
+	<thead>
+	<tr>
+<th>product</th>
+<th align="right">Count</th>
+<th align="right">Price</th>
+		</tr>
+	</thead>
+
+	<tfoot>
+<tr>
+<td>Total</td>
+<td align="right" id="basket_count"></td>
+<td align="right" id="basket_price"></td>
+</tr>
+</tfoot>
+
+<tbody>
+
+<tr class="basket_item">
+<td class="basket_item_name"></td>
+<td align="right" class="basket_item_count"></td>
+<td align="right" class="basket_item_price"></td>
+</tr>
+
+</tbody >
+</table>
+</div>
+</div>
+</body>
+</html>
