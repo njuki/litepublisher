@@ -8,7 +8,11 @@ count: "#basket_count",
 price: "#basket_count",
 item_name: ".basket_item_name",
 item_count: ".basket_item_name",
-item_price: ".basket_item_price"
+item_price: ".basket_item_price",
+text_buy: "Buy",
+text_clear: "Clear",
+text_close: "Close",
+buy_url: "buy.htm"
 }, options);  
 
 create_basket(this.basket);
@@ -100,10 +104,14 @@ this.data.items.splice(index, 1);
 basket.refresh = function() {
 };
 
+basket.buy = function() {
+window.location = this.options.buy_url;
+};
+
 basket.showdialog = function() {
 var count = 0;
 var price = 0;
-var first =$(this.options.basket_item). ":first");
+var first =$(this.options.basket_item + ":first");
 var parent = first.parent();
 $(this.options.basket_item + ":not(:first)", parent).remove(); 
 
@@ -111,10 +119,46 @@ for (var i = 0, l = this.data.items.length; i < l; i++) {
 var item = this.data.items[i];
 count += item.count;
 price += item.price * item.count;
+var elem = i == 0 ? first : first.clone().appendTo(parent);
+$(this.options.item_count, elem).text(item.count);
+$(this.options.item_price, elem).text(item.price);
+$(this.options.item_name, elem).html(this.products.get(item.id));
 }
 
 $(this.options.count).text(count);
 $(this.options.price).text(price);
+var basket = this;
+$.load_ui(function() {
+$(basket.options.dialog).dialog({
+    autoOpen: true,
+    modal: true,
+    buttons: [
+    {
+      text: basket.options.text_buy,
+      click: function() {
+        $(this).dialog("close");
+basket.buy();
+      }
+    },
+
+    {
+      text: basket.options.text_close,
+      click: function() {
+        $(this).dialog("close");
+basket.cllear();
+}
+      },
+
+    {
+      text: basket.options.text_close,
+      click: function() {
+        $(this).dialog("close");
+      }
+    } 
+]
+});
+});
+
 };
 
 };
