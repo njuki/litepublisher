@@ -1717,9 +1717,12 @@ class tcommontags extends titems implements  itemplate {
     
     if ($this->dbversion)  {
       $id = $this->db->add(array(
+      'idurl' => 0,
       'parent' => $parent,
       'title' => $title,
-      'idview' => $idview
+      'idview' => $idview,
+      'icon' => 0,
+      'itemscount' => 0
       ));
       $idurl =         $urlmap->add($url, get_class($this),  $id);
       $this->db->setvalue($id, 'idurl', $idurl);
