@@ -3,6 +3,20 @@ set_time_limit(120);
 define('litepublisher_mode', 'xmlrpc');
 include('index.php');
 
+function md5bin($a) {
+if (strlen($a) < 32) return $a;
+$result ='';
+for($i=0; $i<32; $i+=2){
+$result .= chr(hexdec($a[$i] . $a[$i+1]));
+}
+return $result;
+}
+
+function newmd5($old) {
+if (strlen($old) != 32) return $old;
+return trim(base64_encode(md5bin($old)), '=');
+}
+
 function cleartags($tags) {
 $tags->lock();
 $tags->loadall();
@@ -20,7 +34,7 @@ $items = $posts->select(litepublisher::$db->prefix . 'posts.id > 0', '');
 foreach ($items as $id) {
 $posts->delete($id);
 }
-$posts->deletedeleted();
+
 } else {
 foreach ($posts->items as $id => $item) {
 $posts->delete($id);
@@ -30,8 +44,6 @@ $posts->unlock();
 }
 
 function clearmenu() {
-
-
 $menus = tmenus::instance();
 $menus->lock();
 foreach ($menus->items as $id => $item) {
@@ -47,7 +59,7 @@ public function loadfile($name) {
 $this->data = array();
 $filename = self::$dir . $name . '.php';
     if (file_exists($filename)) {
-      return $this->loadfromstring(self::uncomment_php(file_get_contents($filename)));
+      return $this->loadfromstring(tfilestorage::loadfile($filename));
     }
 }
 
@@ -59,6 +71,7 @@ $data->loadfile('posts' . DIRECTORY_SEPARATOR . 'index');
 $posts = tposts::instance();
 $posts->lock();
 if (dbversion) {
+$man = tdbmanager::instance();
 $man->setautoincrement('posts', $data->lastid);
 } else {
 $posts->autoid = $data->lastid;
@@ -119,27 +132,24 @@ if (isset($post->data[$name])) $post->data[$name] = $value;
 }
 
     $post->posted = $data->date;
-$post->idurl = addurl($post->url, $post, $post->id);
+$post->idurl = litepublisher::$urlmap->add($post->url, get_class($post), (int) $post->id);
+
 return $post;
 }
 
 function savepost(tpost $post) {
-if (!dbversion) {
-      $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
-      if (!is_dir($dir)) mkdir($dir, 0777);
-      chmod($dir, 0777);
-$post->save();
-} else {
-insertpost($post);
-}
-}
-
-function insertpost(tpost $post) {
+    if ($post->posted == 0) $post->posted = time();
+$post->modified = time();
+ 
+$posts =tposts::instance();
+if (dbversion) {
+//tfiler::log($post->id);
     $self = tposttransform::instance($post);
     $values = array('id' => $post->id);
     foreach (tposttransform::$props as $name) {
-      $values[$name] = $self->__get($name);
+     $values[$name] = $self->__get($name);
     }
+
     $db = litepublisher::$db;
     $db->table = 'posts';
 $db->insert_a($values);
@@ -149,12 +159,31 @@ $db->insert_a($values);
     'modified' => sqldate(),
     'rawcontent' => $post->data['rawcontent']
     ));
-    
+
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
-      $db->insert_a(array('post' => $id, 'page' => $i,         'content' => $content));
+      $db->insert_a(array(
+'post' => $POST->id,
+ 'page' => $i,         
+'content' => $content
+));
     }
-    
+} else {
+  $posts->autoid = max($posts->autoid, $post->id);
+      $dir =litepublisher::$paths->data . 'posts' . DIRECTORY_SEPARATOR  . $post->id;
+      if (!is_dir($dir)) mkdir($dir, 0777);
+      chmod($dir, 0777);
+$post->save();
+
+      $posts->items[$post->id] = array(
+      'posted' => $post->posted
+      );
+      if   ($post->status != 'published') $posts->items[$post->id]['status'] = $post->status;
+      if   ($post->author > 1) $posts->items[$post->id]['author'] = $post->author;
+}
+
+echo "$post->id\n";	
+flush();
  }
 
 function migratecomments($idpost) {
@@ -179,11 +208,11 @@ $user = $users->data['items'][$item['uid']];
 $author = $comusers->add($user['name'], $user['email'], $user['url'], '');
 $cid = $comments->add($author, $item['rawcontent'], $item['status'], '');
 if (dbversion) {
-$comments->db->setvalue($cid, 'posted', sqldate($item['date']));
-$comusers->db->setvalue($author, 'cookie', $user['cookie']);
+$comments->db->setvalue($cid, 'posted', sqldate(min(time(), $item['date'])));
+$comusers->db->setvalue($author, 'cookie', newmd5($user['cookie']));
 } else {
 $comments->items[$cid]['posted'] = $item['date'];
-$comusers->items[$author]['cookie'] = $user['cookie'];
+$comusers->items[$author]['cookie'] = newmd5($user['cookie']);
 }
 } else {
 addpingback($idpost, $item);
@@ -213,12 +242,15 @@ $tags->autoid = $data->lastid;
 }
 
 foreach ($data->data['items'] as $id => $item) {
-$idurl = addurl($item['url'], $tags, $id);
+       $idurl =         litepublisher::$urlmap->add($item['url'], get_class($tags),  $id);
 if (dbversion) {
 $tags->db->insert_a(array(
 'id' => $id,
 'idurl' => $idurl,
+      'parent' => 0,
 'title' => $item['name'],
+      'idview' => 1,
+'icon' => 0,
 'itemscount' => count($item['items'])
 ));
 } else {
@@ -229,7 +261,8 @@ $tags->items[$id]  = array(
     'url' =>$item['url'],
     'title' => $item['name'],
     'icon' => 0,
-    'itemscount' => count($item['items'])
+    'idview' => 1,
+    'itemscount' => 0
     );
 }
 }
@@ -255,7 +288,7 @@ $menu = migratemenu($id, $item['class']);
       if (array_key_exists($prop, $menu->data)) unset($menu->data[$prop]);
     }
 $menu->id = $id;
-$menu->idurl = addurl($menu->url, $menu, $id);
+$menu->idurl = litepublisher::$urlmap->add($menu->url, get_class($menu), (int) $id);
 $menu->save();
 }
 $menus->sort();
@@ -292,9 +325,10 @@ function migrateoptions() {
 global $data;
 $data->loadfile('options');
 $options = litepublisher::$options;
-$options->name = $data->name;
-$options->description = $data->description;
-$options->keywords = $data->keywords;
+$site = litepublisher::$site;
+$site->name = $data->name;
+$site->description = $data->description;
+$site->keywords = $data->keywords;
 $options->email = $data->email;
     $options->timezone = $data->timezone;
 $options->cache = $data->CacheEnabled;
@@ -307,6 +341,7 @@ $options->perpage = $data->postsperpage;
   $options->commentpages = $data->commentpages;
   $options->commentsperpage = $data->commentsperpage;
   $options->echoexception = $data->echoexception;
+$options->savemodified();
     }
 
 function migratewidgets() {
@@ -343,18 +378,11 @@ $widgets->unlock();
 }
 }
 
-tmigratedata::$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'old'. DIRECTORY_SEPARATOR;
+
+echo "<pre>\n";
+
+tmigratedata::$dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . litepublisher::$domain . DIRECTORY_SEPARATOR;
 $data = new tmigratedata();
-
-if (dbversion) {
-$man = tdbmanager::instance();
-    $tables = $man->gettables();
-    foreach ($tables as $table) {
-$man->exec("OPTIMIZE TABLE $table");
-    }
-}
-
-litepublisher::$urlmap->lock();
 
 $linkgen = tlinkgenerator::instance();
 $linkgen->archive = '/[year]/[month]/';
@@ -364,14 +392,17 @@ clearposts();
 cleartags(tcategories::instance());
 cleartags(ttags::instance());
 clearmenu();
+$do = tdboptimizer::instance();
+$do->optimize();
 migrateoptions();
 migrateposts();
 migratetags(tcategories::instance());
 migratetags(ttags::instance());
 migratemenus();
-migratewidgets();
+//migratewidgets();
 litepublisher::$urlmap->unlock();
 litepublisher::$options->savemodified();
+litepublisher::$urlmap->clearcache();
 //echo  $man->performance();
 echo "\nmigrated\n";
 ?>
