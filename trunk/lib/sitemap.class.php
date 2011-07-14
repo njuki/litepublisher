@@ -62,7 +62,7 @@ public function gettitle() { return $this->title; }
         }
         $result .= sprintf('<li><a href="%s%s" title="%s">%3$s</a>%4$s</li>', litepublisher::$site->url, $item['url'], $item['title'], $postpages);
       }
-      if ($result != '') $result = sprintf('<ul>%s</ul>', $result);
+      if ($result != '') $result = sprintf('<h1>' . tlocal::$data['default']['sitemap'] . '</h1><h2>' . tlocal::$data['default']['posts'] . '</h2><ul>%s</ul>', $result);
     } else {
       $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);
@@ -70,17 +70,18 @@ public function gettitle() { return $this->title; }
     
     if (litepublisher::$urlmap->page  == 1) {
       $menus = tmenus::instance();
-      $result .= '<h3>' . tlocal::$data['default']['menu'] . "</h3>\n<ul>\n";
+      $result .= '<h2>' . tlocal::$data['default']['menu'] . "</h2>\n<ul>\n";
       foreach ($menus->items as $id => $item) {
         if ($item['status'] == 'draft') continue;
         $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
       }
+      $result .= '</ul>';
       
       $result .= $this->gettags(tcategories::instance());
       $result .= $this->gettags(ttags::instance());
       $arch = tarchives::instance();
       if (count($arch->items) > 0) {
-        $result .= '<h3>' . tlocal::$data['default']['archive'] . "</h3>\n<ul>\n";
+        $result .= '<h2>' . tlocal::$data['default']['archive'] . "</h2>\n<ul>\n";
         foreach ($arch->items as $date => $item) {
           $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
         }

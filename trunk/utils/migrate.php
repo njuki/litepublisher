@@ -203,8 +203,8 @@ $comments->lock();
 $comusers = tcomusers::instance($idpost);
 $comusers->lock();
 foreach ($data->data['items'] as $id => $item) {
-if ($item['type'] == '') {
 $user = $users->data['items'][$item['uid']];
+if ($item['type'] == '') {
 $author = $comusers->add($user['name'], $user['email'], $user['url'], '');
 $cid = $comments->add($author, $item['rawcontent'], $item['status'], '');
 if (dbversion) {
@@ -215,7 +215,7 @@ $comments->items[$cid]['posted'] = $item['date'];
 $comusers->items[$author]['cookie'] = newmd5($user['cookie']);
 }
 } else {
-addpingback($idpost, $item);
+addpingback($idpost, $item, $user);
 }
 }
 $comusers->unlock();
@@ -224,12 +224,34 @@ $comments->unlock();
 if (dbversion) {      $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
+    $count= $comments->getdb('pingbacks')->getcount("post = $idpost and status = 'approved'");
+$comments->getdb('posts')->setvalue($idpost, 'pingbackscount', $count);
 }
 
 }
 
-function addpingback($idpost, $item) {
-
+function addpingback($idpost, $ping, $user) {
+$pingbacks = tpingbacks::instance($idpost);
+if (dbversion) {
+    $item = array(
+    'url' => $user['url'],
+    'title' => $user['name'],
+    'post' => $idpost,
+    'posted' =>sqldate($ping['date']),
+    'status' => $ping['status'],
+    'ip' => ''
+    );
+    $id =     $pingbacks->db->add($item);
+} else {
+    $pingbacks->items[++$pingbacks->autoid] = array(
+    'url' => $user['url'],
+    'title' => $user['name'],
+    'posted' => $ping['date'],
+    'ip' => '',
+    'approved' => $ping['status'] == 'approved'
+    );
+    $pingbacks->save();
+}
 }
 
 function migratetags(tcommontags $tags) {
@@ -392,6 +414,13 @@ clearposts();
 cleartags(tcategories::instance());
 cleartags(ttags::instance());
 clearmenu();
+
+if (dbversion && (litepublisher::$options->version == 4.65)) {
+$man = tdbmanager::instance();
+$man->alter('comusers', "modify `name` text NOT NULL");
+$man->alter('pingbacks', "modify `title` text NOT NULL");
+litepublisher::$options->version = 4.66;
+}
 $do = tdboptimizer::instance();
 $do->optimize();
 migrateoptions();
