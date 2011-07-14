@@ -4,25 +4,21 @@
 <script src="jquery-1.6.2.min.js"></script>
 <script src="tojson.min.js"></script>
 <script src="cookie.min.js"></script>
-<script src="litepublisher.utils.min.js"></script>
+<script src="ui/jquery-ui-1.8.14.custom.min.js"></script>
 <script src="basket.js"></script>
+  <link type="text/css" href="ui/redmond/jquery-ui-1.8.14.custom.css" rel="stylesheet" />
 <script>
 $(document).ready(function() {
 try {
 var basket = $("#basket").litebasket ({prop: 'val'}).basket;
-//var basket ={};
-//create_basket(basket);
-alert("json " + basket);
 /*
 for (var k in basket.data.items) {
 alert(k + ":" + $.toJSON(basket.data.items[k]));
 };
 */
-basket.add('b', 'affirst', 22);
-alert(basket);
+basket.add(second', 'second prod', 15);
 //basket.remove('b');
 alert('count = ' + basket.getcount());
-alert("inarray = " + basket.inArray('a'));
 //basket.save();
  } catch(e) { alert(e.message); }
 });
@@ -45,6 +41,7 @@ padding: 5px;
 </head>
 <body>
 <div id="basket">
+<a href="#">basket </a> (count, price)
 <div id="basket_dialog" title="Basket title">
 <table class="classictable">
 	<thead>
