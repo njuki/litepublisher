@@ -264,6 +264,7 @@ $tags->autoid = $data->lastid;
 }
 
 foreach ($data->data['items'] as $id => $item) {
+if ($item['count'] == 0) continue;
        $idurl =         litepublisher::$urlmap->add($item['url'], get_class($tags),  $id);
 if (dbversion) {
 $tags->db->insert_a(array(
