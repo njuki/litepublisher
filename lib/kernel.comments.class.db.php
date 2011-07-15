@@ -603,6 +603,10 @@ if (!class_exists('tkeptcomments', false)) {
       protected function create() {
         parent::create();
         $this->table ='commentskept';
+        
+      }
+      
+      public function deleteold() {
         $this->db->delete(sprintf("posted < '%s' - INTERVAL 20 minute ", sqldate()));
       }
       
@@ -638,8 +642,7 @@ if (!class_exists('tkeptcomments', false)) {
         $this->basename ='comments.kept';
       }
       
-      public function afterload() {
-        parent::AfterLoad();
+      public function deleteold() {
         foreach ($this->items as $id => $item) {
           if ($item['date']+ 600 < time()) unset($this->items[$id]);
         }
@@ -749,7 +752,8 @@ class tcommentform extends tevents {
       }
     }
     
-    $kept = new tkeptcomments();
+    $kept = tkeptcomments::instance();
+    $kept->deleteold();
     if (!isset($_POST['confirmid'])) {
       $values = $_POST;
       $values['date'] = time();
