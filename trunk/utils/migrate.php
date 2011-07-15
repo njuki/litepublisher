@@ -300,6 +300,7 @@ $menus->autoid = $data->lastid;
 
 foreach ($data->data['items'] as $id => $item) {
 $menu = migratemenu($id, $item['class']);
+if ($id == 1) $id = ++$menus->autoid;
     $menus->items[$id] = array(
     'id' => $id,
     'class' => get_class($menu)

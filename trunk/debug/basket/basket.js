@@ -7,6 +7,8 @@ load_ui: false,
 dialog: "#basket_dialog",
 count: "#basket_count",
 price: "#basket_count",
+dialog_count: "#basket_count",
+dialog_price: "#basket_count",
 item_name: ".basket_item_name",
 item_count: ".basket_item_name",
 item_price: ".basket_item_price",
@@ -131,8 +133,8 @@ $(this.options.item_name, elem).html(this.products.get(item.id));
 }
 }
 
-$(this.options.count).text(count);
-$(this.options.price).text(price);
+$(this.options.dialog_count).text(count);
+$(this.options.dialog_price).text(price);
 var basket = this;
 
 basket.load_ui(function() {
@@ -167,7 +169,6 @@ first.hide();
 ]
 });
 });
-
 };
 
 basket.load_ui= function(fn) {
