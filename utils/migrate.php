@@ -221,7 +221,7 @@ addpingback($idpost, $item, $user);
 $comusers->unlock();
 $comments->unlock();
 
-if (dbversion) {      $count = $comments->db->getcount("post = $idpost and status = 'approved'");
+if (dbversion) {      
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
     $count= $comments->getdb('pingbacks')->getcount("post = $idpost and status = 'approved'");
@@ -262,7 +262,7 @@ $man->setautoincrement($tags->table, $data->lastid);
 } else {
 $tags->autoid = $data->lastid;
 }
-
+//var_dump($data->data['items']);
 foreach ($data->data['items'] as $id => $item) {
 if ($item['count'] == 0) continue;
        $idurl =         litepublisher::$urlmap->add($item['url'], get_class($tags),  $id);
