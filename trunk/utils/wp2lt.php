@@ -1,22 +1,24 @@
 <?php
-/* export all data from Wordpress to Lite Publisher
-Export categories, tags, posts, comments
-*/
-set_time_limit(10);
+set_time_limit(100);
 @ini_set('memory_limit', '48M'); 
-define('litepublisher_mode', 'import');
-require('index.php');
-if (@file_exists('wp-load.php')) {
+
+define('litepublisher_mode', 'debug');
+//require('index.php');
+require_once('F:\web5\home\dest\www\index.debug.php');
+
+if (file_exists('wp-load.php')) {
 require('wp-load.php');
 } else {
  require('wp-config.php');
 }
-      Header( 'Cache-Control: no-cache, must-revalidate');
-      Header( 'Pragma: no-cache');
+
+      @Header( 'Cache-Control: no-cache, must-revalidate', true);
+      @Header( 'Pragma: no-cache', true);
+
     error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
     ini_set('display_errors', 1);
+
 echo "<pre>\n";
-flush();
 
 function ExportOptions() {
 $options = litepublisher::$options;
@@ -40,47 +42,52 @@ function ExportPages() {
 $menus = tmenus::instance();
 $menus->lock();
   litepublisher::$urlmap->lock();
-
+$r = $wpdb->get_results("SELECT max(ID) as autoid FROM $wpdb->posts WHERE post_type = 'page'");
+$autoid = (int) $r[0]->autoid;
+$menus->autoid = $autoid;
+      $filter = tcontentfilter::instance();
 $list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'page'");
 foreach ($list as  $item) {
-//var_dump($item);
-  $menuitem = new tmenu();
-$menuitem->id = (int) $item->ID;
-//$menuitem->date =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
-  $menuitem->title = $item->post_title;
-  $menuitem->content = $item->post_content;
-$menuitem->status = 'published';
-$menuitem->order = (int) $item->menu_order;
-$menuitem->parent = (int) $item->post_parent;
-$menuitem->password = $item->post_password;
-  
-  //if ($menuitem->date == 0) $menuitem->date = time();
-$url =get_permalink($item->ID);
+$id = (int) $item->ID;
+if ($id == 1) $id = ++$menus->autoid;
+if ($id == $menus->idhome) $id = ++$menus->autoid;
+
+$menu = new tmenu();
+$menu->data['id'] = 0;
+  $menu->data['title'] = $item->post_title;
+  $menu->data['rawcontent'] = $item->post_content;
+      $menu->data['content'] = $filter->filter($item->post_content);
+$menu->data['status'] = 'published';
+$menu->data['order'] = (int) $item->menu_order;
+$menu->data['parent'] = (int) $item->post_parent;
+
+  $url =@get_permalink($item->ID);
 $UrlArray = parse_url($url);
 $url = $UrlArray['path'];
 if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
-$menuitem->url = $url;
-    $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
-    $menuitem->idurl = litepublisher::$urlmap->Add($menuitem->url, get_class($menuitem), $menuitem->id);
-    $menus->items[$menuitem->id] = array(
-    'id' => $menuitem->id,
-    'class' => get_class($menuitem)
+$menu->data['url'] = $url;
+    //$menu->data['idurl'] = litepublisher::$urlmap->add($url, get_class($menu), $id);
+
+    $menus->items[$id] = array(
+    'id' => $id,
+    'class' => get_class($menu)
     );
-$menus->autoid = max($menus->autoid, $menuitem->id);
     //move props
     foreach (tmenu::$ownerprops as $prop) {
-      $menus->items[$menuitem->id][$prop] = $menuitem->$prop;
-      if (array_key_exists($prop, $menuitem->data)) unset($menuitem->data[$prop]);
+      $menus->items[$id][$prop] = $menu->$prop;
+      if (array_key_exists($prop, $menu->data)) unset($menu->data[$prop]);
     }
-
-  $menuitem->save();
-
-echo "menu $menuitem->id\n";	
+$menu->id = $id;
+    $menu->idurl = litepublisher::$urlmap->add($url, get_class($menu), $id);
+$menu->save();
+echo "menu $menu->id\n";	
 flush();
 }
-litepublisher::$urlmap->unlock();
+
 $menus->sort();
 $menus->unlock();
+
+litepublisher::$urlmap->unlock();
 }
 
  function AddTag($tags, $id, $parent, $title, $url) {
@@ -94,11 +101,11 @@ if (isset($tags->items[$id])) return;
 
     if ($tags->dbversion)  {
 $a = $tags->db->fetchassoc($tags->db->query("SHOW TABLE STATUS like '$tags->thistable'"));
-//var_dump($a);
-$autoid = $a['Auto_increment'];
+$autoid = (int) $a['Auto_increment'];
     $tags->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$tags->thistable,max($id, $autoid)));
 //echo "after alter auto id\n";
 $tags->db->insert_a(array(
+'id' => $id,
       'parent' => $parent,
 'idurl' => $idurl,
       'title' => $title,
@@ -125,7 +132,11 @@ $categories = tcategories::instance();
 $categories->lock();
 		if ( $cats = get_categories('get=all') ) {
 			foreach ( $cats as $cat ) {
-AddTag($categories, $cat->term_id, $cat->parent, $cat->name, get_category_link($cat->term_id));
+AddTag($categories, 
+$cat->term_id, 
+$cat->parent, 
+$cat->name, 
+get_category_link($cat->term_id));
 }
 }
 $categories->unlock();
@@ -140,7 +151,9 @@ function  ExportPosts() {
 $posts = tposts::instance();
 $posts->lock();
 if (dbversion) {
-$autoid = $wpdb->get_var("SELECT max(ID) as max FROM $wpdb->posts ", 'max');
+$r = $wpdb->get_results("SELECT max(ID) as autoid FROM $wpdb->posts ");
+$autoid = (int) $r[0]->autoid;
+echo "$autoid = auto id posts\n";
     $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$autoid ));
 }
 
@@ -150,14 +163,12 @@ $categories->lock();
 $tags = ttags::instance();
 $tags->loadall();
 $tags->lock();
-$CommentManager = tcommentmanager::instance();
-$CommentManager->lock();
 
 if ($from == 0) {
 echo "import categories\n";
 ExportCategories();
 echo "import pages\n";
-//ExportPages();
+ExportPages();
 }
 
 $cron = tcron::instance();
@@ -169,29 +180,31 @@ and ID > $from
 limit 500
 ");
 
-
 echo count($list), " = countposts\n";
 foreach ($list as $index => $idresult) {
 //$itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult");
 $itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $idresult->ID");
-//{ $itemres= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = 1");
 $item = &$itemres[0];
   $post = new tpost();
 $post->id = (int) $item->ID;
-echo $post->id, " = id\n";
+echo $post->id, " = id post\n";
 $post->posted =strtotime(mysql2date('Ymd\TH:i:s', $item->post_date));
   $post->title = $item->post_title;
   $post->categories = wp_get_post_categories($item->ID);
 $taglist = array();
 $wptags = wp_get_post_tags( $item->ID);
 foreach ($wptags as 	$wptag) {
-AddTag($tags, (int) $wptag->term_id, $wptag->name, get_tag_link($wptag->term_id ));
+AddTag($tags, 
+(int) $wptag->term_id, 
+0,
+$wptag->name, 
+get_tag_link($wptag->term_id ));
 $taglist[] = (int) $wptag->term_id ;
 }
 
   $post->tags = $taglist;
 
-$UrlArray = parse_url(get_permalink($item->ID));
+$UrlArray = parse_url(@get_permalink($item->ID));
 $url = $UrlArray['path'];
 if (!empty($UrlArray['query'])) $url .= '?' . $UrlArray['query'];
 $post->url = $url;
@@ -210,7 +223,6 @@ $post->free();
 $cron->unlock();
 //$CommentManager->SubscribtionEnabled = true;
 //$CommentManager->NotifyModerator = true;
-$CommentManager->unlock();
 $tags->unlock();
 $categories->unlock();
 
@@ -232,12 +244,10 @@ $post->modified = time();
  
 $posts =tposts::instance();
 if (dbversion) {
-tfiler::log($post->id);
     $self = tposttransform::instance($post);
     $values = array('id' => $post->id);
     foreach (tposttransform::$props as $name) {
      $values[$name] = $self->__get($name);
-//      $values[$name] = '';
     }
 
     $db = litepublisher::$db;
@@ -249,7 +259,6 @@ $db->insert_a($values);
     'modified' => sqldate(),
     'rawcontent' => $post->data['rawcontent']
     ));
-
 
     $db->table = 'pages';
     foreach ($post->data['pages'] as $i => $content) {
@@ -273,110 +282,135 @@ $post->save();
       if   ($post->author > 1) $posts->items[$post->id]['author'] = $post->author;
 }
 
-echo "$post->id\n";	
 flush();
  }
 
 function ExportComments(tpost $post) {
   global $wpdb;
-  $users = dbversion ? tcomusers ::instance() : tcomusers ::instance($$post->id);
-  $CommentManager = tcommentmanager::instance();
-  $comments = $post->comments;
-  $filter = tcontentfilter::instance();
+$comments = tcomments::instance($post->id);
+$comments->lock();
+$comusers = tcomusers::instance($post->id);
+$comusers->lock();
+
   $items = $wpdb->get_results("SELECT  * FROM $wpdb->comments 
   WHERE comment_post_ID   = $post->id");
 foreach ($items as $item) {
-if ($item->comment_type != '') continue;
-  $userid = (int) $users->Add($item->comment_author, 
+$date =strtotime(mysql2date('Ymd\TH:i:s', $item->comment_date));
+$status = $item->comment_approved ==  '1' ? 'approved' : 'hold';
+
+if ($item->comment_type != '') {
+addpingback($post->id,
+$item->comment_author, 
+$item->comment_author_url,
+$item->comment_author_IP,
+$date, $status
+);
+continue;
+}
+
+$author = $comusers->add($item->comment_author, 
 $item->comment_author_email,
 $item->comment_author_url,
 $item->comment_author_IP 
 );
 
-$date =strtotime(mysql2date('Ymd\TH:i:s', $item->comment_date));
-$status = $item->comment_approved ==  '1' ? 'approved' : 'holld';
-$id = (int) $item->comment_ID;
+$cid = $comments->add($author, 
+$item->comment_content,
+$status,
+$item->comment_author_IP);
 
-    $filtered = $filter->filtercomment($item->comment_content);
 if (dbversion) {
-$comments->db->insert_a(   $a = array(
-'id' => $id,
-    'post' => $post->id,
-    'parent' => 0,
-    'author' => $userid,
-    'posted' => sqldate($date),
-    'content' =>$filtered,
-    'status' => $status
-    ));
-
-    $comments->getdb($comments->rawtable)->add(array(
-    'id' => $id,
-    'created' => sqldate(),
-    'modified' => sqldate(),
-    'ip' => $item->comment_author_IP,
-    'rawcontent' => $item->comment_content,
-    'hash' => md5($item->comment_content)
-    ));
+$comments->db->setvalue($cid, 'posted', sqldate(min(time(), $date)));
 } else {
-    $a = array(
-    'author' => $userid,
-    'posted' => $date,
-    'content' => $filtered,
-    );
-$comments->autoid = max($comments->autoid, $id);
-    if ($status == 'approved') {
-      $comments->items[$id] = $a;
-    } else {
-      $comments->hold->items[++$id] =  $a;
-      $comments->hold->save();
-    }
-    $comments->raw->add($id, $item->comment_content, $item->comment_author_IP );    
-
-    //if ($status == 'approved') $commentmanager->addrecent($id, $idpost);
+$comments->items[$cid]['posted'] = $date;
 }
 }
-$comments->save();
-}
 
+$comusers->unlock();
+$comments->unlock();
 
-
-function deleteitems($obj) {
-$obj->lock();
-foreach ($obj->items as $id => $item) {
-$obj->delete($id);
-}
-$obj->unlock();
-}
-
-function clearall() {
-deleteitems(tmenus::instance());
-$cats = tcategories::instance();
-$cats->loadall();
-deleteitems($cats);
-$tags= ttags::instance();
-$tags->loadall();
-deleteitems($tags);
-
-$posts = tposts::instance();
 if (dbversion) {
-$items = $posts->db->res2id($posts->db->query('select id from ' . $posts->thistable));
+      $count = $comments->db->getcount("post = $post->id and status = 'approved'");
+      $comments->getdb('posts')->setvalue($post->id, 'commentscount', $count);
+    $count= $comments->getdb('pingbacks')->getcount("post = $post->id and status = 'approved'");
+$comments->getdb('posts')->setvalue($post->id, 'pingbackscount', $count);
+}
+
+}
+
+function addpingback($idpost, $title, $url, $ip, $date, $status) {
+$pingbacks = tpingbacks::instance($idpost);
+if (dbversion) {
+    $item = array(
+    'url' => $url,
+    'title' => $title,
+    'post' => $idpost,
+    'posted' =>sqldate($date),
+    'status' => $status,
+    'ip' => $ip
+    );
+    $id =     $pingbacks->db->add($item);
+} else {
+    $pingbacks->items[++$pingbacks->autoid] = array(
+    'url' => $url,
+    'title' => $title,
+    'post' => $idpost,
+    'posted' =>$date,
+    'approved' => $status == 'approved',
+    'ip' => $ip
+    );
+    $pingbacks->save();
+}
+}
+
+function cleartags($tags) {
+$tags->lock();
+$tags->loadall();
+foreach ($tags->items as $id => $item) {
+$tags->delete($id);
+}
+$tags->unlock();
+}
+
+function clearposts() {
+$posts = tposts::instance();
+$posts->lock();
+if (dbversion) {
+$items = $posts->select(litepublisher::$db->prefix . 'posts.id > 0', '');
 foreach ($items as $id) {
 $posts->delete($id);
 }
-tdboptimizer::instance()->deletedeleted();
+
 } else {
-$posts->lock();
 foreach ($posts->items as $id => $item) {
 $posts->delete($id);
 }
+}
 $posts->unlock();
+}
+
+function clearmenu() {
+$menus = tmenus::instance();
+$menus->lock();
+foreach ($menus->items as $id => $item) {
+$menus->delete($id);
+}
+$menus->unlock();
+}
+
+function clearall() {
+clearposts();
+cleartags(tcategories::instance());
+cleartags(ttags::instance());
+clearmenu();
+if (dbversion) {
+$do = tdboptimizer::instance();
+$do->optimize();
 }
 }
 
 try {
 
-wp_delete_post(1);
-var_dump(get_permalink(1));
 clearall();
 echo "started\n";
 $from = isset($_REQUEST['from']) ? $_REQUEST['from'] : 0;
@@ -401,5 +435,3 @@ echo $e->getTraceAsString();
 }
 tstorage::savemodified();
 echo round(memory_get_usage()/1024/1024, 2), 'MB <br>'; 
-
-?>
