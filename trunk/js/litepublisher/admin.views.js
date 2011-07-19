@@ -77,7 +77,7 @@ function _init_views() {
         var checked = $(this).attr("checked");
         var disabled = checked ? [] : [0];
         //$("#disableajax_" + idview).attr("disabled", checked ? "disabled" : "");
-$("#disableajax_" + idview).attr("disabled", checked);
+        $("#disableajax_" + idview).attr("disabled", checked);
       }
       
       $(this).tabs({

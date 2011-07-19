@@ -73,10 +73,10 @@ class texternallinks extends titems {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     if (!$this->itemexists($id)) return 404;
     $item = $this->getitem($id);
-$url = $item['url'];
-$filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'externallinks.txt';
-return "<?php tfiler::append('$id\n', '$filename');
-turlmap::redir('$url');";
+    $url = $item['url'];
+    $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'externallinks.txt';
+    return "<?php tfiler::append('$id\n', '$filename');
+    turlmap::redir('$url');";
   }
   
   public function filter(&$content) {
