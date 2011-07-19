@@ -14,7 +14,7 @@ class tposttransform  {
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
-  'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
+  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'icon',
   'status', 'commentsenabled', 'pingenabled',

@@ -55,11 +55,13 @@ class tadmintags extends tadminmenu {
       $result .= $html->addscript;
       $args->title = '';
       $args->parent = tadminhtml::array2combo($parents, 0);
+      $args->order = tadminhtml::array2combo(range(0,9), 1);
       $result .= $html->form($args);
     } elseif ($tags->itemexists($id)) {
       $item = $tags->getitem($id);
       $args->add($item);
       $args->parent = tadminhtml::array2combo($parents, $item['parent']);
+      $args->order = tadminhtml::array2combo(range(0,9), $item['customorder']);
       $result .= $html->form($args);
     }
     
@@ -75,6 +77,7 @@ class tadmintags extends tadminmenu {
     $result .= $html->buildtable($items, array(
     array('right', $lang->count2, '$itemscount'),
     array('left', $lang->parent, '$parentname'),
+    array('right', $lang->order, '$customorder'),
     array('left', $lang->title,'<a href="$link" title="$title">$title</a>'),
     array('center', $lang->edit, "<a href=\"$this->adminurl=\$id\">$lang->edit</a>"),
     array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
@@ -94,13 +97,15 @@ class tadmintags extends tadminmenu {
     $id = $this->idget();
     if ($id == 0) {
       $id = $tags->add((int) $parent, $title);
+      if (isset($order)) $tags->setvalue($id, 'customorder', (int) $order);
       if (isset($url)) $tags->edit($id, $title, $url);
-      if (isset($idview)) $this->setvalue($id, 'idview', (int) $idview);
-      if (isset($icon)) $this->setvalue($id, 'icon', (int) $icon);
+      if (isset($idview)) $tags->setvalue($id, 'idview', (int) $idview);
+      if (isset($icon)) $tags->setvalue($id, 'icon', (int) $icon);
     } else {
       $item = $tags->getitem($id);
       $item['title'] = $title;
       if (isset($parent)) $item['parent'] = (int) $parent;
+      if (isset($order)) $item['customorder'] = (int) $order;
       if (isset($idview)) $item['idview'] = (int) $idview;
       if (isset($icon)) $item['icon'] = (int) $icon;
       $tags->items[$id] = $item;

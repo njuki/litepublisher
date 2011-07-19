@@ -142,7 +142,7 @@ class tposteditor extends tadminmenu {
     if (isset($url)) {
       $post->url = $url;
       $post->title2 = $title2;
-      //$post->keywords = $keywords;
+      $post->keywords = $keywords;
       $post->description = $description;
     }
     

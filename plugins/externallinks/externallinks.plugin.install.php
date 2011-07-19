@@ -28,8 +28,7 @@ function texternallinksInstall($self) {
   $cron = tcron::instance();
   $cron->add('hour', get_class($self), 'updatestat');
   
-  $urlmap = turlmap::instance();
-  $urlmap->add('/externallink.htm', get_class($self), 'get');
+  litepublisher::$urlmap->addget('/externallink.htm', get_class($self));
   
   $robot = trobotstxt::instance();
   $robot->AddDisallow('/externallink.htm');

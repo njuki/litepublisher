@@ -9,12 +9,13 @@
 <p><input type='text' name='dir' id='dir' value='$dir' size='22' />
 <label for='dir'><strong>$dirlabel</strong></label></p>
 
- <p><input type="submit" name="Submit" value="$lang.update"/></p>
+<p><input type="checkbox" name="onlychanged" id="checkbox-onlychanged" $onlychanged />
+<label for="checkbox-onlychanged"><strong>$onlychangedlabel</strong></label></p>
+
+ <p><input type="submit" name="Submitbutton" value="$lang.update"/></p>
 </form>
-
-
 
 <form name="form" action="" method="post" >
 <input type="hidden" name="createnow" value="1" />
- <p><input type="submit" name="creat_now" value="$createnow"/></p>
+ <p><input type="submit" name="create_now" value="$createnow"/></p>
 </form>
