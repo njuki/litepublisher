@@ -148,7 +148,7 @@ class tcommontags extends titems implements  itemplate {
     if ($this->dbversion)  {
       $id = $this->db->add(array(
       'idurl' => 0,
-'customorder' => 0,
+      'customorder' => 0,
       'parent' => $parent,
       'title' => $title,
       'idview' => $idview,
@@ -165,7 +165,7 @@ class tcommontags extends titems implements  itemplate {
     $this->lock();
     $this->items[$id] = array(
     'id' => $id,
-'customorder' => 0,
+    'customorder' => 0,
     'parent' => $parent,
     'idurl' =>         $idurl,
     'url' =>$url,
@@ -301,19 +301,19 @@ class tcommontags extends titems implements  itemplate {
     } catch (Exception $e) {
       return 404;
     }
-
-if ($this->lite && (litepublisher::$urlmap->page > 1)) {
-return sprintf("<?php turlmap::redir301('%s');",$item['url']);
-}
-
-/*    
+    
+    if ($this->lite && (litepublisher::$urlmap->page > 1)) {
+      return sprintf("<?php turlmap::redir301('%s');",$item['url']);
+    }
+    
+    /*
     $url = $item['url'];
     if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . '/page/'. litepublisher::$urlmap->page . '/';
     if (litepublisher::$urlmap->url != $url) litepublisher::$urlmap->redir301($url);
-*/
+    */
   }
   
-/*
+  /*
   public function AfterTemplated(&$s) {
     $redir = "<?php
   \$url = '{$this->items[$this->id]['url']}';
@@ -322,7 +322,7 @@ return sprintf("<?php turlmap::redir301('%s');",$item['url']);
     ?>";
     $s = $redir.$s;
   }
-*/
+  */
   
   public function getname($id) {
     $item = $this->getitem($id);

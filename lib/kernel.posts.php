@@ -265,6 +265,7 @@ class tpost extends titem implements  itemplate {
     'excerpt' => '',
     'rss' => '',
     'rawcontent' => dbversion ? false : '',
+    'keywords' => '',
     'description' => '',
     'moretitle' => '',
     'categories' => array(),
@@ -621,7 +622,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getkeywords() {
-    return $this->Gettagnames();
+    return empty($this->data['keywords']) ? $this->Gettagnames() : $this->data['keywords'];
+  }
+  //fix for file version. For db must be deleted
+  public function setkeywords($s) {
+    $this->data['keywords'] = $s;
   }
   
   public function getdescription() {
@@ -1376,7 +1381,7 @@ class tposttransform  {
   public static $props = array('id', 'idurl', 'parent', 'author', 'revision', 'class',
   //'created', 'modified',
   'posted',
-  'title', 'title2', 'filtered', 'excerpt', 'rss', 'description', 'moretitle',
+  'title', 'title2', 'filtered', 'excerpt', 'rss', 'keywords', 'description', 'moretitle',
   'categories', 'tags', 'files',
   'password', 'idview', 'icon',
   'status', 'commentsenabled', 'pingenabled',
@@ -1718,6 +1723,7 @@ class tcommontags extends titems implements  itemplate {
     if ($this->dbversion)  {
       $id = $this->db->add(array(
       'idurl' => 0,
+      'customorder' => 0,
       'parent' => $parent,
       'title' => $title,
       'idview' => $idview,
@@ -1734,6 +1740,7 @@ class tcommontags extends titems implements  itemplate {
     $this->lock();
     $this->items[$id] = array(
     'id' => $id,
+    'customorder' => 0,
     'parent' => $parent,
     'idurl' =>         $idurl,
     'url' =>$url,
@@ -1870,11 +1877,18 @@ class tcommontags extends titems implements  itemplate {
       return 404;
     }
     
+    if ($this->lite && (litepublisher::$urlmap->page > 1)) {
+      return sprintf("<?php turlmap::redir301('%s');",$item['url']);
+    }
+    
+    /*
     $url = $item['url'];
     if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . '/page/'. litepublisher::$urlmap->page . '/';
     if (litepublisher::$urlmap->url != $url) litepublisher::$urlmap->redir301($url);
+    */
   }
   
+  /*
   public function AfterTemplated(&$s) {
     $redir = "<?php
   \$url = '{$this->items[$this->id]['url']}';
@@ -1883,6 +1897,7 @@ class tcommontags extends titems implements  itemplate {
     ?>";
     $s = $redir.$s;
   }
+  */
   
   public function getname($id) {
     $item = $this->getitem($id);

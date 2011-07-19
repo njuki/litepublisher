@@ -26,13 +26,13 @@ class tbackup2dropbox extends tplugin {
   
   public function send() {
     if ($this->password == '') return;
-if ($this->onlychanged) {
-if (($this->posts ==litepublisher::$classes->posts->count) && ($this->comments == litepublisher::$classes->commentmanager->count)) return;
-$this->posts =litepublisher::$classes->posts->count;
-$this->comments = litepublisher::$classes->commentmanager->count;
-$this->save();
-}
-
+    if ($this->onlychanged) {
+      if (($this->posts ==litepublisher::$classes->posts->count) && ($this->comments == litepublisher::$classes->commentmanager->count)) return;
+      $this->posts =litepublisher::$classes->posts->count;
+      $this->comments = litepublisher::$classes->commentmanager->count;
+      $this->save();
+    }
+    
     $backuper = tbackuper::instance();
     $filename  = $backuper->createbackup();
     

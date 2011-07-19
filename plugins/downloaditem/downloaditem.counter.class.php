@@ -47,8 +47,8 @@ class tdownloaditemcounter extends titems {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     if (!$this->itemexists($id)) return 404;
     $item = $this->getitem($id);
-$url = $item['downloadurl'];
-$filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt';
+    $url = $item['downloadurl'];
+    $filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt';
     return "<?php tfiler::append('$id\n', '$filename');
     return turlmap::redir('$url');";
   }
