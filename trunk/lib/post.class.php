@@ -66,6 +66,7 @@ class tpost extends titem implements  itemplate {
     'excerpt' => '',
     'rss' => '',
     'rawcontent' => dbversion ? false : '',
+'keywords' => '',
     'description' => '',
     'moretitle' => '',
     'categories' => array(),
@@ -422,8 +423,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getkeywords() {
-    return $this->Gettagnames();
+    return empty($this->data['keywords']) ? $this->Gettagnames() : $this->data['keywords'];
   }
+//fix for file version. For db must be deleted
+  public function setkeywords($s) {
+$this->data['keywords'] = $s;
+}
   
   public function getdescription() {
     return $this->data['description'];

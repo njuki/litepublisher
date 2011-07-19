@@ -43,12 +43,14 @@ class tdownloaditemcounter extends titems {
   }
   
   public function request($arg) {
-    $this->cache = false;
+    //$this->cache = false;
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     if (!$this->itemexists($id)) return 404;
     $item = $this->getitem($id);
-    tfiler::append("$id\n", litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt');
-    return turlmap::redir($item['downloadurl']);
+$url = $item['downloadurl'];
+$filename = litepublisher::$paths->data . 'logs' . DIRECTORY_SEPARATOR . 'downloaditemscount.txt';
+    return "<?php tfiler::append('$id\n', '$filename');
+    return turlmap::redir('$url');";
   }
   
 }//class

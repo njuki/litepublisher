@@ -11,6 +11,7 @@
   `filtered` longtext NOT NULL,
   `excerpt` text NOT NULL,
   `rss` text NOT NULL,
+  `keywords` text NOT NULL,
   `description` text NOT NULL,
   `moretitle` varchar(255) NOT NULL,
   `categories` text NOT NULL,

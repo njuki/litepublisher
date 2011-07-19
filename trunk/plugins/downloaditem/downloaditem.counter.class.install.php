@@ -10,8 +10,7 @@ function tdownloaditemcounterInstall($self) {
   $cron = tcron::instance();
   $cron->add('hour', get_class($self), 'updatestat');
   
-  $urlmap = turlmap::instance();
-  $urlmap->add('/downloaditem.htm', get_class($self), 'get');
+  litepublisher::$urlmap->addget('/downloaditem.htm', get_class($self));
   
   $robot = trobotstxt::instance();
   $robot->AddDisallow('/downloaditem.htm');
