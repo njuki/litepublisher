@@ -360,7 +360,7 @@ class Tadminoptions extends tadminmenu {
     $menus = tadminmenus::instance();
     $menus->lock();
     if ($value) {
-      $id = $menus->createitem(0, 'users', 'admin', 'tadminusers');
+      $id = $menus->createitem(0, 'users', 'author', 'tadminusers');
 $menus->createitem($id, 'options', 'admin', 'tadminusers');
     } else {
       $menus->deleteurl('/admin/users/options/');
