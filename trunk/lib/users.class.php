@@ -127,6 +127,17 @@ $pages = tuserpages::instance();
     $item = $this->getitem($id);
     $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
   }
+
+public function approve($id) {
+if (dbversion) {
+$this->db->setvalue($id, 'status', 'approved');
+} else {
+            $this->items[$id]['status'] = 'approved';
+            $this->save();
+}
+$pages = tuserpages::instance();
+if ($pages->createpage) $pages->addpage($id);
+}
   
   public function auth($login,$password) {
     $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
@@ -134,16 +145,13 @@ $pages = tuserpages::instance();
       $login = dbquote($login);
       if (($a = $this->select("login = $login and password = '$password'", 'limit 1')) && (count($a) > 0)) {
         $item = $this->getitem($a[0]);
-        if ($item['status'] == 'wait') $this->db->setvalue($item['id'], 'status', 'approved');
+        if ($item['status'] == 'wait') $this->approve($item['id']);
         return (int) $item['id'];
       }
     } else {
       foreach ($this->items as $id => $item) {
         if (($login == $item['login']) && ($password = $item['password'])) {
-          if ($item['status'] == 'wait') {
-            $this->items[$id]['status'] = 'approved';
-            $this->save();
-          }
+          if ($item['status'] == 'wait') $this->approve($id);
           return $id;
         }
       }

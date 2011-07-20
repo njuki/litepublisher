@@ -59,12 +59,19 @@ return $html->adminform(
 [text=linkschema]',
 $args);
 }
+
+if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
+      $item = $users->getitem(litepublisher::$options->user);
+      $args->add($item);
+      $args->add($pages->getitem(litepublisher::$options->user));
+return $html->userform($args);
+}
     
     $id = $this->idget();
     if ($users->itemexists($id)) {
       $item = $users->getitem($id);
       $args->add($item);
-      $args->add(tuserpages::instance()->getitem($id));
+      $args->add($pages->getitem($id));
 
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
@@ -147,12 +154,26 @@ $args->add($pages->getitem($id));
   public function processform() {
     $users = tusers::instance();
 $pages = tuserpages::instance();
+    $groups = tusergroups::instance();
+
+if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
+      extract($_POST, EXTR_SKIP);
+$pages->edit(litepublisher::$options->user, array(
+'name' => $name,
+'website' => $website,
+'rawcontent' => trim($rawcontent),
+'content' => tcontntfilter::instance()->filter($rawcontent),
+));
+
+litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
+return;
+}
+
 if ($this->name == 'options') {
 $pages->createpage = isset($_POST['createpage']);
 $pages->lite = isset($_POST['lite']);
 $pages->save();
 
-    $groups = tusergroups::instance();
 $groups->defaultgroup = $_POST['defaultgroup'];
 $groups->save();
 
@@ -176,7 +197,7 @@ return;
     $id = $this->idget();
     if ($id == 0) {
       extract($_POST, EXTR_SKIP);
-      $id = $users->add($group, $login,$password, $name, $email, $url);
+      $id = $users->add($group, $login,$password, $name, $email, $website);
       if (!$id) return $this->html->h2->invalidregdata;
     } else {
       if (!$users->edit($id, $_POST))return $this->notfound;

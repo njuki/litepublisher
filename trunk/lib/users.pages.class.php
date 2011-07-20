@@ -92,6 +92,24 @@ if ($this->id == $item['author']) $items[] = $id;
     return $result;
 }
 
+public function addpage($id) {
+$item = $this->getitem($id);
+$this->addurl($item);
+$this->items = $item;
+$this->save();
+unset($item['url']);
+$item['id'] = $id;
+if (dbversion) $this->db->updateassoc($item);
+}
+
+private function addurl(array &$item) {
+$item['url'] = '';
+    $linkgen = tlinkgenerator::instance();
+    $item['url'] = $linkgen->addurl(new tarray2prop ($item), 'user');
+$item['idurl'] = litepublisher::$urlmap->add($item['url'], get_class($this), $item['id']);
+return $item['idurl'];
+}
+
 public function add($id, $name, $email, $website) {
 $item = array(
 'id' => $id,
@@ -109,14 +127,10 @@ $item = array(
 'description' => ''
 );
 
-if ($this->createpage) {
-    $linkgen = tlinkgenerator::instance();
-    $url = $linkgen->addurl(new tarray2prop ($item), 'user');
-$item['idurl'] = llitepublisher::$urlmap->add($url, get_class($this), $id);
-}
-
-if (dbversion) $this->db->insert_a($item);
+if ($this->createpage) $this->addurl($item);
 $this->items[$id] = $item;
+unset($item['url']);
+if (dbversion) $this->db->insert_a($item);
 $this->save();
 }
 
@@ -128,10 +142,21 @@ return $parent::delete($id);
 
   public function edit($id, array $values) {
 $item = $this->getitem($id);
+$url = isset($values['url']) ? $values['url'] : '';
+unset($values['url'], $values['idurl'], $values['id']);
     foreach ($item as $k => $v) {
       if (isset($values[$k])) $item[$k] = $values[$k];
 }
 $item['id'] = $id;
+$item['content'] = tcontentfilter::instance()->filter($item['rawcontent']);
+if ($url && ($url != $item['url'])) {
+if ($item['idurl'] == 0) {
+$item['idurl'] = litepublisher::$urlmap->add($url, get_class($this), $id);
+} else {
+litepublisher::$urlmap->addredir($item['url'], $url);
+litepublisher::$urlmap->setidurl($item['idurl'], $url);
+}
+}
 $this->items[$id] = $item;
 if ($this->dbversion) {
 unset($item['url']);
