@@ -43,25 +43,32 @@ class tadminreguser extends tadminform {
     if ($this->logged) return $html->logged();
     
     $args = targs::instance();
-    foreach (array('login', 'email', 'name', 'url') as $name) {
+$form = '';
+    foreach (array('login', 'name', 'email', 'website') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
+$form .= "[text=$name]";
     }
-    return $html->regform($args);
-  }
-  
+$lang = tlocal::instance('users');
+$args->formtitle = $lang->regform;
+$args->data['$lang.email'] = 'email';
+    return $html->adminform($form, $args);
+}
+
   public function processform() {
-    extract($_POST);
+    extract($_POST, EXTR_SKIP);
     if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::$data['comment']['invalidemail'] . "</strong></p>\n";
     $users = tusers::instance();
     if ($users->loginexists($login) || $users->emailexists($email)) return $this->html->h2->invalidregdata;
     $password = md5uniq();
     $groups = tusergroups::instance();
     
-    $id = $users->add($groups->defaultgroup, $login,$password, $name, $email, $url);
+    $id = $users->add($groups->defaultgroup, $login,$password, $name, $email, $website);
     if (!$id) return $this->html->h2->invalidregdata;
     
     $args = targs::instance();
     $args->add($users->getitem($id));
+$pages = tuserpages::instance();
+$args->add($pages->getitem($id));
     $args->id = $id;
     $args->password = $password;
     $args->adminurl = litepublisher::$site->url . '/admin/users/' . litepublisher::$site->q . 'id';

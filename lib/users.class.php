@@ -37,6 +37,7 @@ $this->data['createpages'] = false;
     'login' => $login,
     'password' => $password,
     'cookie' =>  md5uniq(),
+'expired' => sqldate(),
     'gid' => $gid,
     'trust' => 0,
     'status' => 'wait'
@@ -89,7 +90,7 @@ $pages->add($id, $name, $email, $website);
     }
 
 $pages = tuserpages::instance();
-$pages->edit($values);
+$pages->edit($id, $values);
     return true;
   }
   
@@ -107,10 +108,11 @@ $pages->edit($values);
   
   public function emailexists($email) {
     if ($email == litepublisher::$options->email) return 1;
+$pages = tuserpages::instance();
     if ($this->dbversion) {
-      return $this->db->findid('email = '. dbquote($email));
+      return $pages->db->findid('email = '. dbquote($email));
     } else {
-      foreach ($this->items as $id => $item) {
+      foreach ($pages->items as $id => $item) {
         if ($email == $item['email']) return true;
       }
       return false;
@@ -212,17 +214,29 @@ $pages->edit($values);
     public function optimize() {
     if ($this->dbversion) {
       $time = sqldate(strtotime('-1 day'));
-      $this->db->delete("status = 'wait' and registered < '$time'");
+$pagetable = litepublisher::$db->prefix . 'userpage';
+$delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
+if (count($delete) > 0) {
+      $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+$pages = tuserpages::instance();
+foreach ($delete as $id) {
+$pages->delete($id);
+}
+}
     } else {
+$pages = tuserpages::instance();
+$pages->lock();
       $time = strtotime('-1 day');
       $deleted = false;
       foreach ($this->items as $id => $item) {
-        if (($item['status'] == 'wait') && ($item['registered'] < $time)) {
+        if (($item['status'] == 'wait') && ($pages->items[$id]['registered'] < $time)) {
           unset($this->items[$id]);
+$pages->delete($id);
           $deleted = true;
         }
       }
       if ($deleted) $this->save();
+$pages->unlock();
     }
   }
   

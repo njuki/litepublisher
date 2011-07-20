@@ -33,6 +33,8 @@ class tadminusers extends tadminmenu {
     if ($users->itemexists($id)) {
       $item = $users->getitem($id);
       $args->add($item);
+      $args->add(tuserpages::instance()->getitem($id));
+
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
           $users->delete($id);
@@ -77,7 +79,7 @@ class tadminusers extends tadminmenu {
     $count = $users->count;
     $from = $this->getfrom($perpage, $count);
     if ($users->dbversion) {
-      $items = $users->select('', " order by registered desc limit $from, $perpage");
+      $items = $users->select('', " order by id desc limit $from, $perpage");
       if (!$items) $items = array();
     } else {
       $items = array_slice(array_keys($users->items), $from, $perpage);
@@ -85,9 +87,11 @@ class tadminusers extends tadminmenu {
     
     $args->adminurl = $this->adminurl;
     $result .= $html->tableheader ();
+$pages = tuserpages::instance();
     foreach ($items as $id) {
       $item = $users->getitem($id);
       $args->add($item);
+$args->add($pages->getitem($id));
       $args->id = $id;
       $args->group = $a[$item['gid']];
       $args->status = $statuses[$item['status']];

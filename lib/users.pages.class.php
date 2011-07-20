@@ -19,18 +19,18 @@ public $id;
     $this->basename = 'userpage';
     $this->table = 'userpage';
 $this->data['lite'] = false;
-$this->data['createpage'] = false;
+$this->data['createpage'] = true;
   }
 
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
-    if ($where != '') $where .= ' and ';
+    if ($where != '') $where = ' where ' . $where;
     $db = litepublisher::$db;
     $table = $this->thistable;
     $res = $db->query(
 "select $table.*, $db->urlmap.url as url from $table
     left join  $db->urlmap on $db->urlmap.id  = $table.idurl
-    where $where $limit");
+    $where $limit");
     return $this->res2items($res);
   }
   
@@ -96,14 +96,17 @@ public function add($id, $name, $email, $website) {
 $item = array(
 'id' => $id,
 'idurl' => 0,
-'idview' => 0,
-    'expired' => sqldate(),
+'idview' => 1,
     'registered' => sqldate(),
     'name' => $name,
     'email' => $email,
     'website' => $website,
     'ip' => '',
-    'avatar' => 0
+    'avatar' => 0,
+'content' => '',
+'rawcontent' => '',
+'keywords' => '',
+'description' => ''
 );
 
 if ($this->createpage) {
@@ -129,10 +132,13 @@ $item = $this->getitem($id);
       if (isset($values[$k])) $item[$k] = $values[$k];
 }
 $item['id'] = $id;
-
-if ($this->dbversion) $this->updateassoc($item);
 $this->items[$id] = $item;
-if (!$this->dbversion) $this->save();
+if ($this->dbversion) {
+unset($item['url']);
+$this->db->updateassoc($item);
+} else {
+$this->save();
+}
 }
 
 }//class
