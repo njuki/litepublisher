@@ -18,6 +18,7 @@ class tusers extends titems {
     $this->basename = 'users';
     $this->table = 'users';
     $this->autoid = 1;
+$this->data['createpages'] = false;
   }
   
   public function add($group, $login,$password, $name, $email, $website) {
@@ -36,22 +37,16 @@ class tusers extends titems {
     'login' => $login,
     'password' => $password,
     'cookie' =>  md5uniq(),
-    'expired' => sqldate(),
-    'registered' => sqldate(),
     'gid' => $gid,
     'trust' => 0,
-    'status' => 'wait',
-    'name' => $name,
-    'email' => $email,
-    'website' => $website,
-    'ip' => '',
-    'avatar' => 0,
-'idurl' => 0
-    );
-    
+    'status' => 'wait'
+);
+
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
     $this->items[$id] = $item;
     if ($this->dbversion) $this->save();
+$pages = tuserpages::instance();
+$pages->add($id, $name, $email, $website);
     $this->added($id);
     return $id;
   }
@@ -92,6 +87,9 @@ class tusers extends titems {
     } else {
       $this->save();
     }
+
+$pages = tuserpages::instance();
+$pages->edit($values);
     return true;
   }
   

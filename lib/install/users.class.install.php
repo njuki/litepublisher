@@ -8,7 +8,7 @@
 
 function tusersInstall($self) {
   if ($self->dbversion) {
-    $manager = TDBManager ::instance();
+    $manager = tdbmanager::instance();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
     $manager->setautoincrement($self->table, 2);
