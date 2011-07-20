@@ -207,11 +207,10 @@ class tusers extends titems {
     $url = $item['url'];
     if (!strpos($url, '.')) $url = litepublisher::$site->url . litepublisher::$site->home;
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;
-    turlmap::redir($url);
+    return "<?php turlmap::redir('$url');";
   }
   
-  
-  public function optimize() {
+    public function optimize() {
     if ($this->dbversion) {
       $time = sqldate(strtotime('-1 day'));
       $this->db->delete("status = 'wait' and registered < '$time'");
