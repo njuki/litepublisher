@@ -6,6 +6,7 @@
   `registered` datetime NOT NULL default '2010-01-01 10:01:01',
   `gid` int unsigned NOT NULL default '0',
   `trust` int unsigned NOT NULL default '0',
+  `idurl` int unsigned NOT NULL default '0',
   `status` enum('approved','hold','lock','wait') default 'wait',
   `name` text not null,
   `email` varchar(64) NOT NULL,
