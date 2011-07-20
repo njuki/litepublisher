@@ -11,12 +11,24 @@ class tadminusers extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
-  public function getcontent() {
+
+  public function gethead() {
+    $result = parent::gethead();
+    $template = ttemplate::instance();
+  $result .= $template->getready('$("#tabs").tabs({ cache: true });');
+    return $result;
+  }
+
+    public function getcontent() {
     $result = '';
-    $lang = $this->lang;
     $users = tusers::instance();
     $groups = tusergroups::instance();
+$pages = tuserpages::instance();
+
+    $html = $this->html;
+    $lang = tlocal::instance('users');
+    $args = targs::instance();
+
     $a = array();
     foreach ($groups->items as $id => $item) {
     $a[$id] = $lang->{$item['name']};
@@ -26,9 +38,28 @@ class tadminusers extends tadminmenu {
     foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
       $statuses[$name] = $lang->$name;
     }
+
+if ($this->name == 'options') {
+$args->createpage = $pages->createpage;
+$args->lite = $pages->lite;
+    $g = array();
+    foreach ($groups->items as $id => $item) {
+    $g[$item['name']]  = $lang->{$item['name']};
+    }
+
+$args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
+$linkgen = tlinkgenerator::instance();
+$args->linkschema = $linkgen->data['user'];
+
+$args->formtitle = $lang->useroptions;
+return $html->adminform(
+'[combo=defaultgroup]
+[checkbox=createpage]
+[checkbox=lite]
+[text=linkschema]',
+$args);
+}
     
-    $html = $this->html;
-    $args = targs::instance();
     $id = $this->idget();
     if ($users->itemexists($id)) {
       $item = $users->getitem($id);
@@ -47,8 +78,8 @@ class tadminusers extends tadminmenu {
           $result .=$html->confirmform($args);
         }
       } else {
-        $args->groupcombo = $html->array2combo($a, $item['gid']);
-        $args->statuscombo = $html->array2combo($statuses, $item['status']);
+        $args->group = tadminhtml::array2combo($a, $item['gid']);
+        $args->status = tadminhtml::array2combo($statuses, $item['status']);
         $result .= $html->form($args);
       }
       
@@ -60,17 +91,25 @@ class tadminusers extends tadminmenu {
       'expired' => sqldate(),
       'registered' => sqldate(),
       'gid' => 'nobody',
-      'trust' => 0,
       'status' => 'hold',
+      'trust' => 0,
+'idurl' => 0,
+'idview' => 1,
       'name' => '',
       'email' => '',
+'website' => '',
       'url' => '',
       'ip' => '',
-      'avatar' => 0
+      'avatar' => 0,
+'content' => '',
+'rawcontent' => '',
+'keywords' => '',
+'description' => ''
       );
-      $args->groupcombo = $html->array2combo($a, $item['gid']);
-      $args->statuscombo = $html->array2combo($statuses, $item['status']);
+
       $args->add($item);
+        $args->group = tadminhtml::array2combo($a, $item['gid']);
+        $args->status = tadminhtml::array2combo($statuses, $item['status']);
       $result .= $html->form($args);
     }
     
@@ -107,6 +146,21 @@ $args->add($pages->getitem($id));
   
   public function processform() {
     $users = tusers::instance();
+$pages = tuserpages::instance();
+if ($this->name == 'options') {
+$pages->createpage = isset($_POST['createpage']);
+$pages->lite = isset($_POST['lite']);
+$pages->save();
+
+    $groups = tusergroups::instance();
+$groups->defaultgroup = $_POST['defaultgroup'];
+$groups->save();
+
+$linkgen = tlinkgenerator::instance();
+$linkgen->data['user'] = $_POST['linkschema'];
+$linkgen->save();
+return;
+}
     
     if (isset($_POST['table'])) {
       $users->lock();
