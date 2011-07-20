@@ -92,8 +92,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 //ttheme::clearcache();
 tlocal::clearcache();
 //tupdater::instance()->run(4.68);
-
-//litepublisher::$classes->delete('tajaxposteditor');
+//litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log($_SERVER['REQUEST_URI']);
   if (!defined('litepublisher_mode')) {

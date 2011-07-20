@@ -17,6 +17,7 @@ class tcommontags extends titems implements  itemplate {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
+    $this->addevents('changed');
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
@@ -176,7 +177,8 @@ class tcommontags extends titems implements  itemplate {
     );
     $this->unlock();
     
-    $this->added($this->autoid);
+    $this->added($id);
+$this->changed();
     $urlmap->clearcache();
     return $id;
   }
@@ -211,6 +213,7 @@ class tcommontags extends titems implements  itemplate {
     
     $this->items[$id] = $item;
     $this->save();
+$this->changed();
     $urlmap->clearcache();
   }
   
@@ -226,6 +229,7 @@ class tcommontags extends titems implements  itemplate {
     parent::delete($id);
     $this->unlock();
     $this->itemsposts->updateposts($list, $this->PostPropname);
+$this->changed();
     $urlmap->clearcache();
   }
   
