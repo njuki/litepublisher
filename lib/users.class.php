@@ -20,7 +20,7 @@ class tusers extends titems {
     $this->autoid = 1;
   }
   
-  public function add($group, $login,$password, $name, $email, $url) {
+  public function add($group, $login,$password, $name, $email, $website) {
     if ($this->loginexists($login)) return false;
     $groups = tusergroups::instance();
     if (is_numeric($group)) {
@@ -43,9 +43,10 @@ class tusers extends titems {
     'status' => 'wait',
     'name' => $name,
     'email' => $email,
-    'url' => $url,
+    'website' => $website,
     'ip' => '',
-    'avatar' => 0
+    'avatar' => 0,
+'idurl' => 0
     );
     
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
@@ -204,10 +205,10 @@ class tusers extends titems {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
     if (!$this->itemexists($id)) return 404;
     $item = $this->getitem($id);
-    $url = $item['url'];
-    if (!strpos($url, '.')) $url = litepublisher::$site->url . litepublisher::$site->home;
-    if (!strbegin($url, 'http://')) $url = 'http://' . $url;
-    return "<?php turlmap::redir('$url');";
+    $website = $item['website'];
+    if (!strpos($website, '.')) $website = litepublisher::$site->website . litepublisher::$site->home;
+    if (!strbegin($website, 'http://')) $website = 'http://' . $website;
+    return "<?php turlmap::redir('$website');";
   }
   
     public function optimize() {
