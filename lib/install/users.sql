@@ -1,19 +1,18 @@
   `id` int unsigned NOT NULL auto_increment,
   `login` varchar(32) NOT NULL,
   `password` varchar(22) NOT NULL,
-  `cookie` varchar(22) NOT NULL,
+  `cookie` char(22) NOT NULL,
   `expired` datetime NOT NULL default '2010-01-01 10:01:01',
   `registered` datetime NOT NULL default '2010-01-01 10:01:01',
   `gid` int unsigned NOT NULL default '0',
   `trust` int unsigned NOT NULL default '0',
   `status` enum('approved','hold','lock','wait') default 'wait',
-  `name` varchar(64) NOT NULL,
+  `name` text not null,
   `email` varchar(64) NOT NULL,
-  `url` varchar(255) NOT NULL,
+  `website` varchar(255) NOT NULL,
   `ip` varchar(15) NOT NULL default '',
   `avatar` int(10) unsigned NOT NULL default '0',
 
   PRIMARY KEY  (`id`),
   KEY `login` (`login`),
-  KEY `cookie` (`cookie`),
-  KEY `status` (`status`)
+  KEY `cookie` (`cookie`)
