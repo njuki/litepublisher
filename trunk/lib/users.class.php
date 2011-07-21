@@ -36,17 +36,17 @@ class tusers extends titems {
     'login' => $login,
     'password' => $password,
     'cookie' =>  md5uniq(),
-'expired' => sqldate(),
+    'expired' => sqldate(),
     'gid' => $gid,
     'trust' => 0,
     'status' => 'wait'
-);
-
+    );
+    
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
     $this->items[$id] = $item;
     if ($this->dbversion) $this->save();
-$pages = tuserpages::instance();
-$pages->add($id, $name, $email, $website);
+    $pages = tuserpages::instance();
+    $pages->add($id, $name, $email, $website);
     $this->added($id);
     return $id;
   }
@@ -54,12 +54,12 @@ $pages->add($id, $name, $email, $website);
   public function edit($id, array $values) {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
-    $groups = tusergroups::instance();    
-    $group = isset($values['gid']) ? $values['gid'] : 
-(isset($values['group']) ? $values['group'] : '');
-$gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
-      if (!$groups->itemexists($gid)) return false;
-
+    $groups = tusergroups::instance();
+    $group = isset($values['gid']) ? $values['gid'] :
+    (isset($values['group']) ? $values['group'] : '');
+    $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
+    if (!$groups->itemexists($gid)) return false;
+    
     $item['gid'] = $gid;
     
     foreach ($item as $k => $v) {
@@ -83,9 +83,9 @@ $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
     } else {
       $this->save();
     }
-
-$pages = tuserpages::instance();
-$pages->edit($id, $values);
+    
+    $pages = tuserpages::instance();
+    $pages->edit($id, $values);
     return true;
   }
   
@@ -103,7 +103,7 @@ $pages->edit($id, $values);
   
   public function emailexists($email) {
     if ($email == litepublisher::$options->email) return 1;
-$pages = tuserpages::instance();
+    $pages = tuserpages::instance();
     if ($this->dbversion) {
       return $pages->db->findid('email = '. dbquote($email));
     } else {
@@ -122,18 +122,18 @@ $pages = tuserpages::instance();
     $item = $this->getitem($id);
     $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
   }
-
-public function approve($id) {
-if (dbversion) {
-$this->db->setvalue($id, 'status', 'approved');
-if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
-} else {
-            $this->items[$id]['status'] = 'approved';
-            $this->save();
-}
-$pages = tuserpages::instance();
-if ($pages->createpage) $pages->addpage($id);
-}
+  
+  public function approve($id) {
+    if (dbversion) {
+      $this->db->setvalue($id, 'status', 'approved');
+      if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
+    } else {
+      $this->items[$id]['status'] = 'approved';
+      $this->save();
+    }
+    $pages = tuserpages::instance();
+    if ($pages->createpage) $pages->addpage($id);
+  }
   
   public function auth($login,$password) {
     $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
@@ -205,32 +205,32 @@ if ($pages->createpage) $pages->addpage($id);
     }
   }
   
-    public function optimize() {
+  public function optimize() {
     if ($this->dbversion) {
       $time = sqldate(strtotime('-1 day'));
-$pagetable = litepublisher::$db->prefix . 'userpage';
-$delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
-if (count($delete) > 0) {
-      $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
-$pages = tuserpages::instance();
-foreach ($delete as $id) {
-$pages->delete($id);
-}
-}
+      $pagetable = litepublisher::$db->prefix . 'userpage';
+      $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
+      if (count($delete) > 0) {
+        $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+        $pages = tuserpages::instance();
+        foreach ($delete as $id) {
+          $pages->delete($id);
+        }
+      }
     } else {
-$pages = tuserpages::instance();
-$pages->lock();
+      $pages = tuserpages::instance();
+      $pages->lock();
       $time = strtotime('-1 day');
       $deleted = false;
       foreach ($this->items as $id => $item) {
         if (($item['status'] == 'wait') && ($pages->items[$id]['registered'] < $time)) {
           unset($this->items[$id]);
-$pages->delete($id);
+          $pages->delete($id);
           $deleted = true;
         }
       }
       if ($deleted) $this->save();
-$pages->unlock();
+      $pages->unlock();
     }
   }
   

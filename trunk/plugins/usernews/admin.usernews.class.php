@@ -7,7 +7,7 @@
 **/
 
 class tadminusernews {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -16,13 +16,13 @@ class tadminusernews {
     $plugin = tusernews::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::instance();
-$form = '';
-foreach (array('_changeposts', '_canupload', '_candeletefile') as $name) {
-    $args->$name = $plugin->data[$name];
-    $args->data["\$lang.$name"] = $about[$name];
-$form .= "[checkbox=$name]";
-}
-
+    $form = '';
+    foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe') as $name) {
+      $args->$name = $plugin->data[$name];
+      $args->data["\$lang.$name"] = $about[$name];
+      $form .= "[checkbox=$name]";
+    }
+    
     $args->formtitle = $about['formtitle'];
     $html = tadminhtml::instance();
     return $html->adminform($form, $args);
@@ -30,9 +30,9 @@ $form .= "[checkbox=$name]";
   
   public function processform() {
     $plugin = tusernews::instance();
-foreach (array('_changeposts', '_canupload', '_candeletefile') as $name) {
-$plugin->data[$name] = isset($_POST[$name]);
-}
+    foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe') as $name) {
+      $plugin->data[$name] = isset($_POST[$name]);
+    }
     $plugin->save();
   }
   

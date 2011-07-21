@@ -15,22 +15,26 @@ function tusernewsInstall($self) {
   litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::instance();
   $adminoptions->usersenabled = true;
-
+  
   $groups = tusergroups  ::instance();
   $groups->defaultgroup = 'author';
   $groups->save();
-
-$rights = tauthor_rights::instance();
-$rights->lock();
-$rights->getposteditor = $self->getposteditor;
-$rights->editpost = $self->editpost;
-$rights->changeposts = $self->changeposts;
-$rights->canupload = $self->canupload;
-$rights->candeletefile = $self->candeletefile;
-$rights->unlock();
+  
+  $rights = tauthor_rights::instance();
+  $rights->lock();
+  $rights->getposteditor = $self->getposteditor;
+  $rights->editpost = $self->editpost;
+  $rights->changeposts = $self->changeposts;
+  $rights->canupload = $self->canupload;
+  $rights->candeletefile = $self->candeletefile;
+  $rights->unlock();
+  
+  $posts = tposts::instance();
+  $posts->syncmeta = true;
+  $posts->save();
 }
 
 function tusernewsUninstall($self) {
-$rights = tauthor_rights::instance();
-$rights->unsubscribeclass($self);
+  $rights = tauthor_rights::instance();
+  $rights->unsubscribeclass($self);
 }

@@ -7,22 +7,20 @@
 **/
 
 class tadminposts extends tadminmenu {
-private $isauthor;
+  private $isauthor;
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
-  public function request($arg) {
-$result = parent::request($arg);
-$this->isauthor = false;
+  
+  public function canrequest() {
+    $this->isauthor = false;
     $groupname = litepublisher::$options->group;
     if ($groupname != 'admin') {
       $groups = tusergroups::instance();
-$this->isauthor =  !$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author');
-}
-return $result;
-}
+      $this->isauthor =  !$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author');
+    }
+  }
   
   public function getcontent() {
     if (isset($_GET['action']) && in_array($_GET['action'], array('delete', 'setdraft', 'publish'))) {
@@ -35,7 +33,7 @@ return $result;
     $posts= tposts::instance();
     if (!$posts->itemexists($id)) return $this->notfound;
     $post = tpost::instance($id);
- if ($this->isauthor && ($r = tauthor_rights::instance()->changeposts($action))) return $r;   
+    if ($this->isauthor && ($r = tauthor_rights::instance()->changeposts($action))) return $r;
     if (!$this->confirmed) {
       $args = targs::instance();
       $args->id = $id;
@@ -70,7 +68,7 @@ return $result;
     $perpage = 20;
     if (dbversion) {
       $where = "status <> 'deleted' ";
-if ($this->isauthor) $where .= ' and author = ' . litepublisher::$options->user;
+      if ($this->isauthor) $where .= ' and author = ' . litepublisher::$options->user;
       $count = $posts->db->getcount($where);
       $from = $this->getfrom($perpage, $count);
       $items = $posts->select($where, " order by posted desc limit $from, $perpage");
@@ -105,7 +103,7 @@ if ($this->isauthor) $where .= ' and author = ' . litepublisher::$options->user;
     $posts = tposts::instance();
     $posts->lock();
     $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');
- if ($this->isauthor && ($r = tauthor_rights::instance()->changeposts($status))) return $r;   
+    if ($this->isauthor && ($r = tauthor_rights::instance()->changeposts($status))) return $r;
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;

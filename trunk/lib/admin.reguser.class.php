@@ -43,17 +43,17 @@ class tadminreguser extends tadminform {
     if ($this->logged) return $html->logged();
     
     $args = targs::instance();
-$form = '';
+    $form = '';
     foreach (array('login', 'name', 'email', 'website') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
-$form .= "[text=$name]";
+      $form .= "[text=$name]";
     }
-$lang = tlocal::instance('users');
-$args->formtitle = $lang->regform;
-$args->data['$lang.email'] = 'email';
+    $lang = tlocal::instance('users');
+    $args->formtitle = $lang->regform;
+    $args->data['$lang.email'] = 'email';
     return $html->adminform($form, $args);
-}
-
+  }
+  
   public function processform() {
     extract($_POST, EXTR_SKIP);
     if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::$data['comment']['invalidemail'] . "</strong></p>\n";
@@ -67,8 +67,8 @@ $args->data['$lang.email'] = 'email';
     
     $args = targs::instance();
     $args->add($users->getitem($id));
-$pages = tuserpages::instance();
-$args->add($pages->getitem($id));
+    $pages = tuserpages::instance();
+    $args->add($pages->getitem($id));
     $args->id = $id;
     $args->password = $password;
     $args->adminurl = litepublisher::$site->url . '/admin/users/' . litepublisher::$site->q . 'id';
