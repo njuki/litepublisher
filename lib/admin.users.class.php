@@ -162,7 +162,7 @@ $pages->edit(litepublisher::$options->user, array(
 'name' => $name,
 'website' => $website,
 'rawcontent' => trim($rawcontent),
-'content' => tcontntfilter::instance()->filter($rawcontent),
+'content' => tcontentfilter::instance()->filter($rawcontent),
 ));
 
 litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
