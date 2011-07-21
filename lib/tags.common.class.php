@@ -178,7 +178,7 @@ class tcommontags extends titems implements  itemplate {
     $this->unlock();
     
     $this->added($id);
-$this->changed();
+    $this->changed();
     $urlmap->clearcache();
     return $id;
   }
@@ -213,7 +213,7 @@ $this->changed();
     
     $this->items[$id] = $item;
     $this->save();
-$this->changed();
+    $this->changed();
     $urlmap->clearcache();
   }
   
@@ -229,7 +229,7 @@ $this->changed();
     parent::delete($id);
     $this->unlock();
     $this->itemsposts->updateposts($list, $this->PostPropname);
-$this->changed();
+    $this->changed();
     $urlmap->clearcache();
   }
   

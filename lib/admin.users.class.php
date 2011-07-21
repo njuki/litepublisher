@@ -11,24 +11,24 @@ class tadminusers extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-
+  
   public function gethead() {
     $result = parent::gethead();
     $template = ttemplate::instance();
   $result .= $template->getready('$("#tabs").tabs({ cache: true });');
     return $result;
   }
-
-    public function getcontent() {
+  
+  public function getcontent() {
     $result = '';
     $users = tusers::instance();
     $groups = tusergroups::instance();
-$pages = tuserpages::instance();
-
+    $pages = tuserpages::instance();
+    
     $html = $this->html;
     $lang = tlocal::instance('users');
     $args = targs::instance();
-
+    
     $a = array();
     foreach ($groups->items as $id => $item) {
     $a[$id] = $lang->{$item['name']};
@@ -38,41 +38,41 @@ $pages = tuserpages::instance();
     foreach (array('approved', 'hold', 'lock', 'wait')as $name) {
       $statuses[$name] = $lang->$name;
     }
-
-if ($this->name == 'options') {
-$args->createpage = $pages->createpage;
-$args->lite = $pages->lite;
-    $g = array();
-    foreach ($groups->items as $id => $item) {
-    $g[$item['name']]  = $lang->{$item['name']};
+    
+    if ($this->name == 'options') {
+      $args->createpage = $pages->createpage;
+      $args->lite = $pages->lite;
+      $g = array();
+      foreach ($groups->items as $id => $item) {
+      $g[$item['name']]  = $lang->{$item['name']};
+      }
+      
+      $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
+      $linkgen = tlinkgenerator::instance();
+      $args->linkschema = $linkgen->data['user'];
+      
+      $args->formtitle = $lang->useroptions;
+      return $html->adminform(
+      '[combo=defaultgroup]
+      [checkbox=createpage]
+      [checkbox=lite]
+      [text=linkschema]',
+      $args);
     }
-
-$args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
-$linkgen = tlinkgenerator::instance();
-$args->linkschema = $linkgen->data['user'];
-
-$args->formtitle = $lang->useroptions;
-return $html->adminform(
-'[combo=defaultgroup]
-[checkbox=createpage]
-[checkbox=lite]
-[text=linkschema]',
-$args);
-}
-
-if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
+    
+    if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
       $item = $users->getitem(litepublisher::$options->user);
       $args->add($item);
       $args->add($pages->getitem(litepublisher::$options->user));
-return $html->userform($args);
-}
+      return $html->userform($args);
+    }
     
     $id = $this->idget();
     if ($users->itemexists($id)) {
       $item = $users->getitem($id);
       $args->add($item);
       $args->add($pages->getitem($id));
-
+      
       if (isset($_GET['action']) &&($_GET['action'] == 'delete'))  {
         if  ($this->confirmed) {
           $users->delete($id);
@@ -100,23 +100,23 @@ return $html->userform($args);
       'gid' => 'nobody',
       'status' => 'hold',
       'trust' => 0,
-'idurl' => 0,
-'idview' => 1,
+      'idurl' => 0,
+      'idview' => 1,
       'name' => '',
       'email' => '',
-'website' => '',
+      'website' => '',
       'url' => '',
       'ip' => '',
       'avatar' => 0,
-'content' => '',
-'rawcontent' => '',
-'keywords' => '',
-'description' => ''
+      'content' => '',
+      'rawcontent' => '',
+      'keywords' => '',
+      'description' => ''
       );
-
+      
       $args->add($item);
-        $args->group = tadminhtml::array2combo($a, $item['gid']);
-        $args->status = tadminhtml::array2combo($statuses, $item['status']);
+      $args->group = tadminhtml::array2combo($a, $item['gid']);
+      $args->status = tadminhtml::array2combo($statuses, $item['status']);
       $result .= $html->form($args);
     }
     
@@ -133,11 +133,11 @@ return $html->userform($args);
     
     $args->adminurl = $this->adminurl;
     $result .= $html->tableheader ();
-$pages = tuserpages::instance();
+    $pages = tuserpages::instance();
     foreach ($items as $id) {
       $item = $users->getitem($id);
       $args->add($item);
-$args->add($pages->getitem($id));
+      $args->add($pages->getitem($id));
       $args->id = $id;
       $args->group = $a[$item['gid']];
       $args->status = $statuses[$item['status']];
@@ -153,35 +153,35 @@ $args->add($pages->getitem($id));
   
   public function processform() {
     $users = tusers::instance();
-$pages = tuserpages::instance();
+    $pages = tuserpages::instance();
     $groups = tusergroups::instance();
-
-if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
+    
+    if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
       extract($_POST, EXTR_SKIP);
-$pages->edit(litepublisher::$options->user, array(
-'name' => $name,
-'website' => $website,
-'rawcontent' => trim($rawcontent),
-'content' => tcontentfilter::instance()->filter($rawcontent),
-));
-
-litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
-return;
-}
-
-if ($this->name == 'options') {
-$pages->createpage = isset($_POST['createpage']);
-$pages->lite = isset($_POST['lite']);
-$pages->save();
-
-$groups->defaultgroup = $_POST['defaultgroup'];
-$groups->save();
-
-$linkgen = tlinkgenerator::instance();
-$linkgen->data['user'] = $_POST['linkschema'];
-$linkgen->save();
-return;
-}
+      $pages->edit(litepublisher::$options->user, array(
+      'name' => $name,
+      'website' => $website,
+      'rawcontent' => trim($rawcontent),
+      'content' => tcontentfilter::instance()->filter($rawcontent),
+      ));
+      
+      litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
+      return;
+    }
+    
+    if ($this->name == 'options') {
+      $pages->createpage = isset($_POST['createpage']);
+      $pages->lite = isset($_POST['lite']);
+      $pages->save();
+      
+      $groups->defaultgroup = $_POST['defaultgroup'];
+      $groups->save();
+      
+      $linkgen = tlinkgenerator::instance();
+      $linkgen->data['user'] = $_POST['linkschema'];
+      $linkgen->save();
+      return;
+    }
     
     if (isset($_POST['table'])) {
       $users->lock();

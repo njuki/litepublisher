@@ -8,7 +8,7 @@
 
 class tajaxposteditor  extends tevents {
   public $idpost;
-private $isauthor;
+  private $isauthor;
   
   public static function instance() {
     return getinstance(__class__);
@@ -84,7 +84,7 @@ private $isauthor;
     }
     if ($err = self::auth()) return $err;
     $this->idpost = tadminhtml::idparam();
-$this->isauthor = 'author' == litepublisher::$options->group;
+    $this->isauthor = 'author' == litepublisher::$options->group;
     if ($this->idpost > 0) {
       $posts = tposts::instance();
       if (!$posts->itemexists($this->idpost)) return self::error403();
@@ -92,7 +92,7 @@ $this->isauthor = 'author' == litepublisher::$options->group;
       if ($groupname != 'admin') {
         $groups = tusergroups::instance();
         if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
-$this->isauthor = true;
+          $this->isauthor = true;
           $post = tpost::instance($this->idpost);
           if (litepublisher::$options->user != $post->author) return self::error403();
         }
@@ -252,7 +252,7 @@ $this->isauthor = true;
       if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) ||
       $_FILES["Filedata"]["error"] != 0) return self::error403();
       if ($this->isauthor && ($r = tauthor_rights::instance()->canupload())) return $r;
-
+      
       $parser = tmediaparser::instance();
       $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
       $templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');

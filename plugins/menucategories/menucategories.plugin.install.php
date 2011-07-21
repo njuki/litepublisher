@@ -7,18 +7,18 @@
 **/
 
 function tcategoriesmenuInstall($self) {
-$categories = tcategories::instance();
-$categories->changed = $self->buildtree;
-$self->buildtree();
-
-$template = ttemplate::instance();
-$template->ongetmenu = $self->ongetmenu;
+  $categories = tcategories::instance();
+  $categories->changed = $self->buildtree;
+  $self->buildtree();
+  
+  $template = ttemplate::instance();
+  $template->ongetmenu = $self->ongetmenu;
 }
 
 function tcategoriesmenuUninstall($self) {
-$template = ttemplate::instance();
-    $template->unsubscribeclass($this);
-
-$categories = tcategories::instance();
-    $categories->unsubscribeclass($this);
+  $template = ttemplate::instance();
+  $template->unsubscribeclass($this);
+  
+  $categories = tcategories::instance();
+  $categories->unsubscribeclass($this);
 }

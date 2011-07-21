@@ -742,14 +742,14 @@ class tpost extends titem implements  itemplate {
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $item['name']);
     }
   }
-
-public function getauthorpage() {
-$id = $this->author;
-if ($id <= 1) return '';
-$pages = tuserpages::instance();
-if (!$pages->itemexists($id)) return '';
-if ($item['url'] == '') return '';
-return sprintf('<a href="%s%s" title="%3$s"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
-}
+  
+  public function getauthorpage() {
+    $id = $this->author;
+    if ($id <= 1) return '';
+    $pages = tuserpages::instance();
+    if (!$pages->itemexists($id)) return '';
+    if ($item['url'] == '') return '';
+    return sprintf('<a href="%s%s" title="%3$s"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+  }
   
 }//class

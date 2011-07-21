@@ -12,11 +12,11 @@ function tuserpagesInstall($self) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'userpage.sql'));
   }
-
-$linkgen = tlinkgenerator::instance();
-$linkgen->data['user'] = '/user/[name].htm';
-$linkgen->save();
-
+  
+  $linkgen = tlinkgenerator::instance();
+  $linkgen->data['user'] = '/user/[name].htm';
+  $linkgen->save();
+  
   litepublisher::$urlmap->add('/users.htm', get_class($self), 'url', 'get');
   
   $robots = trobotstxt ::instance();

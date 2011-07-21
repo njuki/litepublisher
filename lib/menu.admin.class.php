@@ -156,8 +156,11 @@ public function save() { return true; }
     if ($s = self::auth($this->group)) return $s;
     tlocal::loadlang('admin');
     $this->arg = litepublisher::$urlmap->argtree;
+    if ($s = $this->canrequest()) return $s;
     $this->doprocessform();
   }
+  
+public function canrequest() { }
   
   public static function idget() {
     return (int) tadminhtml::getparam('id', 0);
@@ -212,6 +215,6 @@ class tauthor_rights extends tevents {
     parent::create();
     $this->addevents('getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
     $this->basename = 'authorrights';
-}
-
+  }
+  
 }//class

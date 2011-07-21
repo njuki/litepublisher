@@ -16,9 +16,9 @@ class tadmincategoriesmenu  {
     $plugin = tcategoriesmenu::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args = targs::instance();
-      $args->cats = tposteditor::getcategories($plugin->exitems);
+    $args->cats = tposteditor::getcategories($plugin->exitems);
     $args->formtitle = $about['formtitle'];
-//    $args->data['$lang.before'] = $about['before'];
+    //    $args->data['$lang.before'] = $about['before'];
     
     $html = tadminhtml::instance();
     return $html->adminform('$cats', $args);
@@ -26,8 +26,8 @@ class tadmincategoriesmenu  {
   
   public function processform() {
     $plugin = tcategoriesmenu::instance();
-      $plugin->exitems = tadminhtml::check2array('category-');
-$plugin->save();
+    $plugin->exitems = tadminhtml::check2array('category-');
+    $plugin->save();
   }
   
 }//class
