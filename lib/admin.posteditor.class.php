@@ -8,11 +8,12 @@
 
 class tposteditor extends tadminmenu {
   public $idpost;
+private $isauthor;
   
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
-  
+
   public function gethead() {
     $result = parent::gethead();
     
@@ -57,7 +58,7 @@ class tposteditor extends tadminmenu {
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
   }
-  
+
   public function request($id) {
     if ($s = parent::request($id)) return $s;
     $this->basename = 'editor';
@@ -66,12 +67,13 @@ class tposteditor extends tadminmenu {
       $posts = tposts::instance();
       if (!$posts->itemexists($this->idpost)) return 404;
     }
+$this->isauthor = false;
     $post = tpost::instance($this->idpost);
     $groupname = litepublisher::$options->group;
     if ($groupname != 'admin') {
       $groups = tusergroups::instance();
-      if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
-        //var_dump($post->id , litepublisher::$options->user, $post->author);
+      if (!$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author')) {
+$this->isauthor = true;
         if (($post->id != 0) && (litepublisher::$options->user != $post->author)) return 403;
       }
     }
@@ -108,6 +110,7 @@ class tposteditor extends tadminmenu {
     $args = targs::instance();
     $this->getpostargs($post, $args);
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
+if ($this->isauthor &&($r = tauthor_rights::instance()->getposteditor($post, $args)))  return $r;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
     return $html->fixquote($result);
@@ -171,7 +174,7 @@ class tposteditor extends tadminmenu {
     if (empty($_POST['title'])) return $html->h2->emptytitle;
     $id = (int)$_POST['id'];
     $post = tpost::instance($id);
-    
+    if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  return $r;
     $this->set_post($post);
     
     $posts = tposts::instance();

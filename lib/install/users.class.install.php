@@ -16,15 +16,9 @@ function tusersInstall($self) {
   
   $cron = tcron::instance();
   $cron->addnightly(get_class($self), 'optimize', null);
-  
-  litepublisher::$urlmap->addget('/users.htm', get_class($self));
-  
-  $robots = trobotstxt ::instance();
-  $robots->AddDisallow('/users.htm');
 }
 
 function tusersUninstall($self) {
-  turlmap::unsub($self);
   $cron = tcron::instance();
   $cron->deleteclass(get_class($self));
 }

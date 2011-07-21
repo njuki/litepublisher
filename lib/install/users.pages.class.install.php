@@ -16,9 +16,15 @@ function tuserpagesInstall($self) {
 $linkgen = tlinkgenerator::instance();
 $linkgen->data['user'] = '/user/[name].htm';
 $linkgen->save();
+
+  litepublisher::$urlmap->add('/users.htm', get_class($self), 'url', 'get');
+  
+  $robots = trobotstxt ::instance();
+  $robots->AddDisallow('/users.htm');
 }
 
 function tuserpagesUninstall($self) {  turlmap::unsub($self);
+  turlmap::unsub($self);
 }
 
 ?>

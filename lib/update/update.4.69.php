@@ -4,12 +4,18 @@ function update469() {
 $url = '/users.htm';
 if (dbversion) {
 $item = litepublisher::$urlmap->db->finditem('url = ' . dbquote($url));
-litepublisher::$urlmap->db->setvalue($item['id'], 'type', 'get');
+$item['type'] = 'get';
+$item['class'] = 'tuserpages';
+$item['arg'] = 'url';
+litepublisher::$urlmap->db->updateassoc($item);
 } else {
 litepublisher::$urlmap->items[$url]['type'] = 'get';
+litepublisher::$urlmap->items[$url]['arg'] = 'url';
+litepublisher::$urlmap->items[$url]['class'] = 'tuserpages';
 litepublisher::$urlmap->save();
 }
 
+litepublisher::$classes->add('tauthor_rights', 'menu.admin.class.php');
 litepublisher::$classes->add('tuserpages', 'users.pages.class.php');
 
 $users = tusers::instance();
