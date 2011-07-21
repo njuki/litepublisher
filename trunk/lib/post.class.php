@@ -738,7 +738,7 @@ class tpost extends titem implements  itemplate {
       } catch (Exception $e) {
         return '';
       }
-      if (!$link || ($item['website'] == '')) return $account['name'];
+      if (!$link || ($item['website'] == '')) return $item['name'];
       return sprintf('<a href="%s/users.htm%sid=%s">%s</a>',litepublisher::$site->url, litepublisher::$site->q, $id, $item['name']);
     }
   }
