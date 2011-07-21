@@ -1,21 +1,8 @@
 <?php
 
 function update469() {
-$url = '/users.htm';
-if (dbversion) {
-$item = litepublisher::$urlmap->db->finditem('url = ' . dbquote($url));
-$item['type'] = 'get';
-$item['class'] = 'tuserpages';
-$item['arg'] = 'url';
-litepublisher::$urlmap->db->updateassoc($item);
-} else {
-litepublisher::$urlmap->items[$url]['type'] = 'get';
-litepublisher::$urlmap->items[$url]['arg'] = 'url';
-litepublisher::$urlmap->items[$url]['class'] = 'tuserpages';
-litepublisher::$urlmap->save();
-}
-
-litepublisher::$classes->add('tauthor_rights', 'menu.admin.class.php');
+litepublisher::$urlmap->delete('/users.htm');
+litepublisher::$classes->items['tauthor_rights'] = array('menu.admin.class.php', '');
 litepublisher::$classes->add('tuserpages', 'users.pages.class.php');
 
 $users = tusers::instance();
@@ -26,7 +13,7 @@ $pages->lock();
 foreach ($users->items as $id => $item) {
 $pages->add($id, $item['name'], $item['email'], $item['url']);
 if (dbversion) {
-$pages->updateassoc(array(
+$pages->db->updateassoc(array(
 'id' => $id,
 'idurl' => 0,
 'idview' => 1,

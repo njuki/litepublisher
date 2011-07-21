@@ -84,9 +84,13 @@ class tsubcatwidget extends  twidget {
     if (!isset($this->items[$id])) return '';
     $item = $this->items[$id];
     $theme = ttheme::instance();
-    return $this->tags->getsortedcontent($item['idtag'],
-    $theme->getwidgetitem($item['template'], $sidebar),
-    $item['showsubitems'] ? $theme->getwidgettml($sidebar, $item['template'], 'subitems') : '',
+    return $this->tags->getsortedcontent(
+    array(
+    'item' => $theme->getwidgetitem($item['template'], $sidebar),
+    'subcount' =>$theme->getwidgettml($sidebar, $item['template'], 'subcount'),
+    'subitems' => $item['showsubitems'] ? $theme->getwidgettml($sidebar, $item['template'], 'subitems') : '',
+    ),
+    $item['idtag'],
     $item['sortname'], $item['maxcount'], $item['showcount']);
   }
   
