@@ -66,13 +66,15 @@ $this->setvalue($this->id, 'idveiw');
 public function gethead() {}
 
   public function getcont() {
-    $result = '';
+    $item =$this->getitem($this->id);
     $theme = ttheme::instance();
+    $result = empty($item['content']) ? '' : $theme->simple($item['content']);
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
       $from = (litepublisher::$urlmap->page - 1) * $perpage;
 if (dbversion) {
       $poststable = $posts->thistable;
+      $count = $posts->db->getcount("$poststable.status = 'published' and $poststable.author = $this->id");
       $items = $posts->select("$poststable.status = 'published' and $poststable.author = $this->id",
       "order by $poststable.posted desc limit $from, $perpage");
             $result .= $theme->getposts($items, $this->lite);
@@ -84,16 +86,18 @@ if ($this->id == $item['author']) $items[] = $id;
 }      
 
       $items = $posts->sortbyposted($items);
+$count = count($items);
       $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result .= $theme->getposts($list, $this->lite);
     }
-    
-    $result .=$theme->getpages($this->geturl(), litepublisher::$urlmap->page, ceil($item['itemscount'] / $perpage));
+
+    $result .=$theme->getpages($item['url'], litepublisher::$urlmap->page, ceil($count / $perpage));
     return $result;
 }
 
 public function addpage($id) {
 $item = $this->getitem($id);
+if ($item['idurl'] > 0) return $item['idurl'];
 $this->addurl($item);
 $this->items = $item;
 $this->save();
@@ -127,7 +131,11 @@ $item = array(
 'description' => ''
 );
 
-if ($this->createpage) $this->addurl($item);
+
+if ($this->createpage) {
+$users = tusers::instance();
+if ('approved' == $users->getvalue($id, 'status')) $this->addurl($item);
+}
 $this->items[$id] = $item;
 unset($item['url']);
 if (dbversion) $this->db->insert_a($item);

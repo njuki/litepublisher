@@ -18,7 +18,6 @@ class tusers extends titems {
     $this->basename = 'users';
     $this->table = 'users';
     $this->autoid = 1;
-$this->data['createpages'] = false;
   }
   
   public function add($group, $login,$password, $name, $email, $website) {
@@ -55,16 +54,12 @@ $pages->add($id, $name, $email, $website);
   public function edit($id, array $values) {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
-    
-    $group = $values['group'];
-    $groups = tusergroups::instance();
-    if (is_numeric($group)) {
-      $gid = (int) $group;
+    $groups = tusergroups::instance();    
+    $group = isset($values['gid']) ? $values['gid'] : 
+(isset($values['group']) ? $values['group'] : '');
+$gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
       if (!$groups->itemexists($gid)) return false;
-    } else {
-      if (!($gid = $groups->groupid($group))) return false;
-    }
-    
+
     $item['gid'] = $gid;
     
     foreach ($item as $k => $v) {
@@ -131,6 +126,7 @@ $pages = tuserpages::instance();
 public function approve($id) {
 if (dbversion) {
 $this->db->setvalue($id, 'status', 'approved');
+if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
 } else {
             $this->items[$id]['status'] = 'approved';
             $this->save();
