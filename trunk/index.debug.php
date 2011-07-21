@@ -91,7 +91,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
 tlocal::clearcache();
-//tupdater::instance()->run(4.68);
+//tupdater::instance()->run(4.69);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log($_SERVER['REQUEST_URI']);

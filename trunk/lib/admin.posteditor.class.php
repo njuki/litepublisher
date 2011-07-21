@@ -60,6 +60,7 @@ private $isauthor;
   }
 
   public function request($id) {
+echo "request<br>";
     if ($s = parent::request($id)) return $s;
     $this->basename = 'editor';
     $this->idpost = $this->idget();
@@ -174,7 +175,10 @@ if ($this->isauthor &&($r = tauthor_rights::instance()->getposteditor($post, $ar
     if (empty($_POST['title'])) return $html->h2->emptytitle;
     $id = (int)$_POST['id'];
     $post = tpost::instance($id);
+var_dump($this->isauthor );
     if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  return $r;
+echo "check event<br>";
+var_dump($this->isauthor , tauthor_rights::instance()->editpost($post));
     $this->set_post($post);
     
     $posts = tposts::instance();
