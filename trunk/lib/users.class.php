@@ -205,16 +205,6 @@ if ($pages->createpage) $pages->addpage($id);
     }
   }
   
-  public function request($arg) {
-    $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-    if (!$this->itemexists($id)) return 404;
-    $item = $this->getitem($id);
-    $website = $item['website'];
-    if (!strpos($website, '.')) $website = litepublisher::$site->website . litepublisher::$site->home;
-    if (!strbegin($website, 'http://')) $website = 'http://' . $website;
-    return "<?php turlmap::redir('$website');";
-  }
-  
     public function optimize() {
     if ($this->dbversion) {
       $time = sqldate(strtotime('-1 day'));

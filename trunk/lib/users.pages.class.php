@@ -35,6 +35,16 @@ $this->data['createpage'] = true;
   }
   
 public function request($id) {
+if ($id == 'website') {
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
+    if (!$this->itemexists($id)) return 404;
+    $item = $this->getitem($id);
+    $website = $item['website'];
+    if (!strpos($website, '.')) $website = litepublisher::$site->website . litepublisher::$site->home;
+    if (!strbegin($website, 'http://')) $website = 'http://' . $website;
+    return "<?php turlmap::redir('$website');";
+  }
+  
     $this->id = (int) $id;
     if (!$this->itemexists($id)) return 404;    
 $item =$this->getitem($id);

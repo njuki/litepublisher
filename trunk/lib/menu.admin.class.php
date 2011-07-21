@@ -202,7 +202,7 @@ public function save() { return true; }
   
 }//class
 
-class tadminmenus2 extends tadminmenus {
+class tauthor_rights extends tevents {
   
   public static function instance() {
     return getinstance(__class__);
@@ -210,9 +210,8 @@ class tadminmenus2 extends tadminmenus {
   
   protected function create() {
     parent::create();
-    $this->basename = 'adminmenu2';
-  }
-  
-}//class
+    $this->addevents('getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
+    $this->basename = 'authorrights';
+}
 
-?>
+}//class
