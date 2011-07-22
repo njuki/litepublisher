@@ -7,6 +7,7 @@
 **/
 
 class tjsfiles extends titems {
+public $texts;
 
   public static function instance() {
     return getinstance(__class__);
@@ -18,6 +19,7 @@ class tjsfiles extends titems {
     $this->basename = 'jsfiles';
 $this->data['filename'] = '/files/jsfile.js';
 $this->data['revision'] = 1;
+$this->addmap('texts', array());
   }
 
 public function save() {
@@ -41,6 +43,21 @@ array_delete($this->items, $i);
 $this->save();
 }
 
+  public function addtext($s) {
+$s = trim($s);
+if (in_array($s, $this->texts)) return false;
+$this->texts[] = $s;
+$this->save();
+return count($this->texts) - 1;
+}
+
+public function deletetext($s) {
+$s = trim($s);
+if (false === ($i = array_search($s, $this->texts))) return false;
+array_delete($this->texts, $i);
+$this->save();
+}
+
 public function assemble() {
 $home = litepublisher::$paths->home;
 $s = '';
@@ -49,6 +66,7 @@ $file = file_get_contents($home . $filename);
 if ($file === false) $this->error(sprintf('Error read %s file', $filename));
 $s .= $file;
 }
+$s .= implode("\n", $this->texts);
 $jsfile = $home . sprintf('%s.%s.js', $this->filename, $this->revision);
 file_put_contents($jsfile, $s);
 @chmod($$jsfile, 0666);
@@ -56,7 +74,6 @@ file_put_contents($jsfile, $s);
 
 }//class
 
- 
 class tadminjsfiles extends tjsfiles {
   public static function instance() {
     return getinstance(__class__);
