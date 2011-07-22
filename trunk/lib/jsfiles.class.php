@@ -17,7 +17,6 @@ public $texts;
     $this->dbversion = false;
     parent::create();
     $this->basename = 'jsfiles';
-$this->data['filename'] = '/files/jsfile.js';
 $this->data['revision'] = 1;
 $this->addmap('texts', array());
   }
@@ -67,9 +66,15 @@ if ($file === false) $this->error(sprintf('Error read %s file', $filename));
 $s .= $file;
 }
 $s .= implode("\n", $this->texts);
-$jsfile = $home . sprintf('%s.%s.js', $this->filename, $this->revision);
-file_put_contents($jsfile, $s);
-@chmod($$jsfile, 0666);
+$jsfile =  sprintf('%s.%s.js', $this->filename, $this->revision);
+file_put_contents($home . $jsfile, $s);
+@chmod($home . $jsfile, 0666);
+$template = ttemplate::instance();
+$template->data[$this->basename] = $jsfile;
+$template->save();
+litepublisher::$urlmap->clearcache();
+$old = $home . sprintf('%s.%s.js', $this->filename, $this->revision - 1);
+if (file_exists($old)) @unlink($old);
 }
 
 }//class
@@ -81,8 +86,7 @@ class tadminjsfiles extends tjsfiles {
   
   protected function create() {
     parent::create();
-$this->basename = 'adminjsfiles';
-$this->data['filename'] = '/files/admin.jsfiles.js';
+$this->basename = 'adminjs';
 }
 
 }//class

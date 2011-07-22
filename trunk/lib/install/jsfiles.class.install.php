@@ -7,6 +7,7 @@
 **/
 
 function tjsfilesInstall($self) {
+if ('tjsfile' == get_class($self)) {
 $self->lock();
 $self->add(sprintf('/js/jquery/jquery.%s.js', litepublisher::$site->jquery_version));
 $self->add('/js/prettyphoto/js/jquery.prettyPhoto.js');
@@ -15,6 +16,11 @@ $self->add('/js/litepublisher/litepublisher.utils.min.js');
 $self->add('/js/litepublisher/widgets.min.js');
 $self->add('/js/litepublisher/players.min.js');
 $self->unlock();
+}
+
+$template = ttemplate::instance();
+$template->heads .= $template->getjavascript('$site.url$template.' . $self->basename);
+$template->save();
 }
 
 function tadminjsfilesInstall($self) {
