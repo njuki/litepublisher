@@ -17,7 +17,6 @@ class tcomusers extends titems {
     parent::create();
     $this->table = 'comusers';
     $this->basename = 'comusers';
-    $this->cache = false;
   }
   
   public function add($name, $email, $url, $ip) {
@@ -81,12 +80,12 @@ class tcomusers extends titems {
   
   public function request($arg) {
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
-    if (!$this->itemexists($id)) return turlmap::redir301('/');
+    if (!$this->itemexists($id)) return "<?php turlmap::redir301('/');";;
     $item = $this->getitem($id);
     $url = $item['url'];
     if (!strpos($url, '.')) $url = litepublisher::$site->url . litepublisher::$site->home;
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;
-    turlmap::redir($url);
+    return "<?php turlmap::redir('$url');";
   }
   
 }//class
