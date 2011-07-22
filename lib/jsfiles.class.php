@@ -29,6 +29,7 @@ $this->assemble();
   
   public function add($filename) {
 if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
+if (empty($filename)) returnfalse;
 if (in_array($filename, $this->items)) return false;
 $this->items[] = $filename;
 $this->save();
@@ -42,8 +43,19 @@ array_delete($this->items, $i);
 $this->save();
 }
 
+public function setfromstring($s) {{
+$this->lock();
+$this->items = array();
+$a = explode("\n", trim($s));
+foreach ($a as $filename) {
+$this->add($filename);
+}
+$this->unlock();
+}
+
   public function addtext($s) {
 $s = trim($s);
+if (empty($s)) return;
 if (in_array($s, $this->texts)) return false;
 $this->texts[] = $s;
 $this->save();
@@ -52,9 +64,19 @@ return count($this->texts) - 1;
 
 public function deletetext($s) {
 $s = trim($s);
+if (empty($s)) return false;
 if (false === ($i = array_search($s, $this->texts))) return false;
 array_delete($this->texts, $i);
 $this->save();
+return true;
+}
+
+public function deleteword($word) {
+$c = count($this->texts);
+foreach ($this->texts as $i => $text) {
+if (false !== strpos($text, $word)) array_delete($this->texts, $i);
+}
+if ($c != count($this->texts)) $this->save();
 }
 
 public function assemble() {
