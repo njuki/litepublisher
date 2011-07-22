@@ -464,13 +464,15 @@ class tuitabs {
 public $head;
 public $body;
 public $tabs;
+private static $index = 0;
 private $items;
 
 public function __construct() {
+self::$index++;
 $this->items = array();
-$this->head = '<li><a href="#tab-%d"><span>%s</span></a></li>';
-$this->body = '<div id="tab-%d">%s</div>';
-$this->tabs = '<div id="tabs" rel="tabs">
+$this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
+$this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
+$this->tabs = '<div id="tabs-' . self::$index . '" rel="tabs">
     <ul>%s</ul>
 </div>';
 }
@@ -490,6 +492,10 @@ $this->items[] = array(
 'title' => $title,
 'body' => $body
 );
+}
+
+public static function getjs() {
+return '$($("div[rel=\'tabs\']").get().reverse()).tabs()';
 }
 
 }//class
