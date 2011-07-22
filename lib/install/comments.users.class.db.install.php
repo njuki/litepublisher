@@ -11,8 +11,7 @@ function tcomusersInstall($self) {
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
   $manager->CreateTable($self->table, file_get_contents($dir .'comments.users.sql'));
   
-  $urlmap = turlmap::instance();
-  $urlmap->add('/comusers.htm', get_class($self), 'get');
+  litepublisher::$urlmap->addget('/comusers.htm', get_class($self));
   
   $robots = TRobotstxt ::instance();
   $robots->AddDisallow('/comusers.htm');
