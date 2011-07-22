@@ -233,7 +233,7 @@ class trss extends tevents {
       }
     }
     $post->onrssitem($item);
-    $this->onpostitem($item);
+    $this->onpostitem($item, $post);
     return $item;
   }
   

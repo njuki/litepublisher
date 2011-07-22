@@ -459,3 +459,37 @@ class ttablecolumns {
   }
   
 }//class
+
+class tuitabs {
+public $head;
+public $body;
+public $tabs;
+private $items;
+
+public function __construct() {
+$this->items = array();
+$this->head = '<li><a href="#tab-%d"><span>%s</span></a></li>';
+$this->body = '<div id="tab-%d">%s</div>';
+$this->tabs = '<div id="tabs" rel="tabs">
+    <ul>%s</ul>
+</div>';
+}
+
+public function get() {
+$head= '';
+$body = '';
+foreach ($this->items as $i => $item) {
+$head .= sprintf($this->head, $i, $item['title']);
+$body .= sprintf($this->body, $i, $item['body']);
+}
+return sprintf($this->tabs, $head, $body);
+}
+
+public function add($title, $body) {
+$this->items[] = array(
+'title' => $title,
+'body' => $body
+);
+}
+
+}//class
