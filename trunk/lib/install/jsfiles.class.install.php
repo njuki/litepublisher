@@ -21,6 +21,14 @@ $self->unlock();
 $template = ttemplate::instance();
 $template->heads .= $template->getjavascript('$site.url$template.' . $self->basename);
 $template->save();
+
+$updater = tupdater::instance();
+$updater->onupdated = $self->save;
+}
+
+function tjsfilesUninstall($self) {
+$updater = tupdater::instance();
+$updater->unsubscribeclass($self);
 }
 
 function tadminjsfilesInstall($self) {
@@ -28,6 +36,12 @@ $self->lock();
 $self->add(sprintf('/js/jquery/ui-%1$s/jquery-ui-%1$s.custom.min.js', litepublisher::$site->jqueryui_version);
 $self->add('/js/litepublisher/filebrowser.min.js');
 $self->add('/js/litepublisher/admin.min.js');
+
+$self->addtext('
+$(document).ready(function() {
+    $("a[rel^=\'prettyPhoto\']").prettyPhoto();
+  });');
+
 $self->unlock();
 }
 
