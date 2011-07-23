@@ -495,7 +495,8 @@ $this->items[] = array(
 }
 
 public static function getjs() {
-return '$($("div[rel=\'tabs\']").get().reverse()).tabs()';
+$template = ttemplate::instance();
+return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
 }
 
 }//class
