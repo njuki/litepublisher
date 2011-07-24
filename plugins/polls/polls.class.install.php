@@ -9,8 +9,10 @@
 function tpollsInstall($self) {
   if (!dbversion) die("Plugin can be installed only on database version");
   $about = tplugins::localabout(dirname(__file__));
-  $self->title = $about['title'];
-  $self->voted = $about['voted'];
+  $self->deftitle = $about['title'];
+  $self->voted = $about['votedmesg'];
+$self->defitems = $about['items'];
+
   $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
