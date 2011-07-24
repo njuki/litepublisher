@@ -28,8 +28,8 @@ class tticketeditor extends tposteditor {
     }
   }
   
-  public function request($id) {
-    if ($s = parent::request($id)) return $s;
+  public function camrequest() {
+    if ($s = parent::canrequest()) return $s;
     $this->basename = 'tickets';
     if ($this->idpost > 0) {
       $ticket = tticket::instance($this->idpost);

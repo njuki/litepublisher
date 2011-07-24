@@ -23,7 +23,7 @@ class tadminusernews {
       $form .= "[checkbox=$name]";
     }
 
-    foreach (array('sourcetml', 'poll') as $name) {
+    foreach (array('sourcetml') as $name) {
       $args->$name = $plugin->data[$name];
       $args->data["\$lang.$name"] = $about[$name . 'label'];
       $form .= "[text=$name]";
@@ -39,7 +39,7 @@ class tadminusernews {
     foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe') as $name) {
       $plugin->data[$name] = isset($_POST[$name]);
     }
-    foreach (array('sourcetml', 'poll') as $name) {
+    foreach (array('sourcetml') as $name) {
       $plugin->data[$name] = $_POST[$name];
 }
     $plugin->save();
