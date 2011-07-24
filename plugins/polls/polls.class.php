@@ -218,16 +218,16 @@ class tpolls extends tplugin {
     while (is_int($i = strpos($content, '[poll]', $i))) {
       $j = strpos($content, '[/poll]', $i);
       if ($j == false) {
-        // значит простая форма и надо найти первую пустую строку
+        // simple form and need to find empty string
         $j = strpos($content, "\n\n", $i);
         $s = substr($content, $i, $j - $i);
         $items = $this->extractitems($s);
         $id = $this->add('', '', '', $items);
       } else {
-        // проверить, если id у голосования
+        // has poll id?
         $j += strlen("[/poll]");
         $s = substr($content, $i, $j - $i);
-        // вычленить секцию items
+        // extract items section
         $k = strpos($s, '[items]');
         $l = strpos($s, '[/items]');
         $items = $this->extractitems(substr($s, $k, $l));
@@ -246,7 +246,7 @@ class tpolls extends tplugin {
           }
         }
       }
-      //общая для обоих случаев концовка
+      //common for both cases
       $item = $this->getitem($id);
       $stritems = implode("\n", $items);
     $replace = "[poll]\nid={$item['hash']}\n";
