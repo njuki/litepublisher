@@ -310,16 +310,10 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   }
   
   public function gethead() {
-    /*
     $template = ttemplate::instance();
-    return $template->getjavascript('/plugins/polls/polls.client.js');
-    */
-    return '<script type="text/javascript">
-    $(document).ready(function() {
-      if ($("*[id^=\'pollform_\']").length) {
+return $template->getready('if ($("*[id^=\'pollform_\']").length) {
         $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
-    }); });
-    </script>';
+});';
   }
   
   protected static function error403($msg= 'Forbidden') {
@@ -368,6 +362,26 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     if ($this->hasvote($idpoll, $iduser)) return $this->error($this->voted, 403);
     return $this->addvote($idpoll, $iduser, (int) $vote);
   }
+
+public function setdefadd($v) {
+if ($v == $this->defadd) return;
+$this->data['defadd'] = $v;
+$this->save();
+$posts = tposts::instance();
+if ($v) {
+$posts->added = $this->postadded;
+} else {
+$posts->delete_event_class('added', get_class($this));
+}
+}
+
+public function postadded($idpost) {
+$post = tpost::instance();
+$id= $this->add($this->deftitle, 'opened', $this->deftype, explode("\n", $this->defitems));
+$post->content = $this->
+$this->gethtml($id, false)
+$post->rawcontent;
+$post->save();
+}
   
 }//class
-?>

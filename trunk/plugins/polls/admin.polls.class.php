@@ -18,37 +18,43 @@ class tadminpolls {
     $args = targs::instance();
     $about = tplugins::localabout(dirname(__file__));
     foreach ($about as $name => $value) {
-      $name = 'lang' . $name;
-      $args->$name = $value;
+      $args->data["\$lang.$name"] = $value;
     }
     
     $args->deftitle = $plugin->deftitle;
     $args->defitems = $plugin->defitems;
-    $args->deftype = $plugin->deftitle;
+    $args->deftype = tadminhtml::array2combo(array_combine($plugin->types, $plugin->types), $plugin->deftype);
     $args->voted = $plugin->voted;
+$form = '[text=voted]';
+$form .= sprintf('<h4>%s</h4>', $about['defoptions']);
+$form .= '[combo=deftype] [text=deftitle] [text=defitems] [checkbox=defadd] ';
+
+$form .= sprintf('<h4>%s</h4>', $about['templateitems']);
     foreach ($plugin->types as $name) {
       $item = $name . 'item';
       $items = $name . 'items';
       $args->$item = $plugin->templateitems[$name];
       $args->$items = $plugin->templates[$name];
+$form .= "[editor=$item]\n[editor=$items]\n";
     }
 
         $args->formtitle = $about['formtitle'];
-    return $html->adminform($tml, $args);
+    return $html->adminform($form, $args);
   }
   
   public function processform() {
     extract($_POST);
     $plugin = tpolls::instance();
     $plugin->lock();
-    $plugin->title = $title;
+    $plugin->deftitle = $deftitle;
+    $plugin->deftype = $deftype;
+    $plugin->defitems = trim($defitems);
     $plugin->voted = $voted;
+$plugin->defadd = isset($defadd);
     
     foreach ($plugin->types as $name) {
-      $item = $name . 'item';
-      $items = $name . 'items';
-      $plugin->templateitems[$name] = $$item;
-      $plugin->templates[$name] = $$items;
+      $plugin->templateitems[$name] = $_POST[$name . 'item'];
+      $plugin->templates[$name] = $_POST[$name . 'items'];
     }
     
     $plugin->unlock();
