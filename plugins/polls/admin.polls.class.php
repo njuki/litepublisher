@@ -7,10 +7,13 @@
 **/
 
 class tadminpolls {
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
   
   public function getcontent() {
     $plugin = tpolls::instance();
-    $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . "adminform.tml");
     $html = tadminhtml::instance();
     $args = targs::instance();
     $about = tplugins::localabout(dirname(__file__));
@@ -19,7 +22,9 @@ class tadminpolls {
       $args->$name = $value;
     }
     
-    $args->title = $plugin->title;
+    $args->deftitle = $plugin->deftitle;
+    $args->defitems = $plugin->defitems;
+    $args->deftype = $plugin->deftitle;
     $args->voted = $plugin->voted;
     foreach ($plugin->types as $name) {
       $item = $name . 'item';
@@ -27,8 +32,9 @@ class tadminpolls {
       $args->$item = $plugin->templateitems[$name];
       $args->$items = $plugin->templates[$name];
     }
-    
-    return $html->parsearg($tml, $args);
+
+        $args->formtitle = $about['formtitle'];
+    return $html->adminform($tml, $args);
   }
   
   public function processform() {
