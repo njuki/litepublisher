@@ -28,7 +28,10 @@ class tpolls extends tplugin {
     $this->votestable = 'pollvotes';
     $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
-    $this->data['title'] = 'new poll';
+    $this->data['deftitle'] = 'new poll';
+$this->data['deftype'] = 'radio';
+$this->data['defitems'] = 'Yes,No';
+$this->data['defadd'] = false;
     $this->data['voted'] = '';
     $this->types = array('radio', 'button', 'link', 'custom');
     $a = array_combine($this->types, array_fill(0, count($this->types), ''));
@@ -121,9 +124,9 @@ class tpolls extends tplugin {
   }
   
   public function add($title, $status, $type, array $items) {
-    if ($title == '') $title = $this->title;
+    if ($title == '') $title = $this->deftitle;
     if (($status != 'opened') || ($status != 'closed')) $status = 'opened';
-    if (!in_array($type, $this->types)) $type = 'radio';
+    if (!in_array($type, $this->types)) $type = $this->deftype;
     $votes = implode(',', array_fill(0, count($items), 0));
     $item = array(
     'hash' => md5uniq(),
@@ -148,7 +151,7 @@ class tpolls extends tplugin {
     if (($status != 'opened') || ($status != 'closed')) $status = $item['status'];
     if (!in_array($type, $this->types)) $type = $item['type'];
     if (($title == $item['title']) && ($status == $item['status']) && ($type == $item['type'])) {
-      // если равны еще и списки то ничего не менять и вернут false
+      // if items is equal them return false
       $old = explode("\n", $item['items']);
       if ($old == $items) return false;
       if (count($items) > count($old)) {
@@ -159,6 +162,7 @@ class tpolls extends tplugin {
     }
     
     $item = array(
+'id' =>  $id,
     'hash' => $item['hash'],
     'title' => $title,
     'status' => $status,
@@ -240,7 +244,7 @@ class tpolls extends tplugin {
         if (!$id) {
           $id = $this->add($title, $status, $type, $items);
         } else {
-          if (!$this->edit($id, $title, $$status, $type, $items)){
+          if (!$this->edit($id, $title, $status, $type, $items)){
             $i = min($j, strlen($content));
             continue;
           }
