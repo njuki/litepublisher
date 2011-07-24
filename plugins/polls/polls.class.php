@@ -283,9 +283,14 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
       $i = min($j, strlen($content));
     }
   }
+
+public function geterror_dialog() {
+//jquery ui dialog template
+return sprintf('<div class="poll_error_dialog" style="display: none;" title="%s"><h4>%s</h4></div>', tlocal::$data['default']['error'], $this->voted);
+}
   
   public function gethtml($id, $full) {
-    $result = '';
+    $result = $this->geterror_dialog();
     $poll = $this->getitem($id);
     $items = explode("\n", $poll['items']);
     $votes = explode(',', $poll['votes']);
@@ -313,7 +318,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $template = ttemplate::instance();
 return $template->getready('if ($("*[id^=\'pollform_\']").length) {
         $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
-});';
+});');
   }
   
   protected static function error403($msg= 'Forbidden') {
@@ -370,18 +375,30 @@ $this->save();
 $posts = tposts::instance();
 if ($v) {
 $posts->added = $this->postadded;
+$posts->deleted = $this->postdeleted;
+$posts->aftercontent = $this->afterpost;
 } else {
 $posts->delete_event_class('added', get_class($this));
+$posts->delete_event_class('deleted', get_class($this));
+$posts->delete_event_class('aftercontent', get_class($this));
 }
 }
 
 public function postadded($idpost) {
-$post = tpost::instance();
-$id= $this->add($this->deftitle, 'opened', $this->deftype, explode("\n", $this->defitems));
-$post->content = $this->
-$this->gethtml($id, false)
-$post->rawcontent;
-$post->save();
+$post = tpost::instance($idpost);
+$post->meta->poll = $this->add($this->deftitle, 'opened', $this->deftype, explode(',', $this->defitems));
+}
+
+public function afterpost(tpost $post, &$content) {
+$content = $this->gethtml($post->meta->poll, true) . $content;
 }
   
+public function postdeleted($id) {
+if (!dbversion) return;
+$meta = tmetapost::instance($id);
+if (isset($meta->poll)) {
+$this->delete($meta->poll);
+}
+}
+
 }//class

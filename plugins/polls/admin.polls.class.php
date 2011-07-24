@@ -24,6 +24,7 @@ class tadminpolls {
     $args->deftitle = $plugin->deftitle;
     $args->defitems = $plugin->defitems;
     $args->deftype = tadminhtml::array2combo(array_combine($plugin->types, $plugin->types), $plugin->deftype);
+    $args->defadd = $plugin->defadd;
     $args->voted = $plugin->voted;
 $form = '[text=voted]';
 $form .= sprintf('<h4>%s</h4>', $about['defoptions']);

@@ -18,7 +18,6 @@ class tusernews extends tplugin {
     $this->data['_canupload'] = true;
     $this->data['_candeletefile'] = true;
     $this->data['autosubscribe'] = true;
-    $this->data['poll'] = 'Yes,No';
 $this->data['sourcetml'] = '<h4><a href="%1$s">%1$s</a></h4>';
   }
   
@@ -85,10 +84,6 @@ $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
 
-    $polls = tpolls::instance();
-$post->meta->poll = $polls->add('', 'opened', 'button', explode(',', $this->poll));
-$post->filtered = $polls->gethtml($post->meta->poll, true) . $post->filtered;
-
       if ($this->autosubscribe) {
         $pages = tuserpages::instance();
         $uitem = $pages->getitem(litepublisher::$options->user);
@@ -99,22 +94,10 @@ $post->filtered = $polls->gethtml($post->meta->poll, true) . $post->filtered;
         $subscribers->add($id, $uid);
       }
     } else {
-    $polls = tpolls::instance();
-$post->filtered = $polls->gethtml($post->meta->poll, true) . $post->filtered;
       $posts->edit($post);
     }
     
     return $html->h4->successedit;
   }
   
-
-public function postdeleted($id) {
-if (!dbversion) return;
-$meta = tmetapost::instance($id);
-if (isset($meta->poll)) {
-$polls = tpolls::instance();
-$pols->delete($meta->poll);
-}
-}
-
 }//class

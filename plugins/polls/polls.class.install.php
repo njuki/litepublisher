@@ -69,6 +69,12 @@ $self->defitems = $about['items'];
 }
 
 function tpollsUninstall($self) {
+  $posts = tposts::instance();
+$posts->lock();
+  $posts->syncmeta = false;
+$posts->unsubscribeclass($self);
+  $posts->unlock();
+
   turlmap::unsub($self);
   unset(litepublisher::$classes->classes['poll']);
   litepublisher::$classes->save();
