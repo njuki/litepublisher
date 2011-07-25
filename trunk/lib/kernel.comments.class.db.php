@@ -412,7 +412,8 @@ class tcommentmanager extends tevents {
   }
   
   public function addcomment($idpost, $idauthor, $content, $ip) {
-    $status = litepublisher::$classes->spamfilter->createstatus($idauthor, $content);
+    $status = litepublisher::$classes->spamfilter->createstatus($idpost, $idauthor, $content, $ip);
+    if (!$status) return false;
     $comments = tcomments::instance($idpost);
     $id = $comments->add($idauthor,  $content, $status, $ip);
     
@@ -883,9 +884,14 @@ class tspamfilter extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'spamfilter';
+    $this->addevents('is_spamer', 'onstatus');
   }
   
-  public function createstatus($idauthor, $content) {
+  public function createstatus($idpost, $idauthor, $content, $ip) {
+    $status = $this->onstatus($idpost, $idauthor, $content, $ip);
+    if (false ===  $status) return false;
+    if ($status == 'spam') return false;
+    if (($status == 'hold') || ($status == 'approved')) return $status;
     if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
     if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
     $manager = tcommentmanager::instance();
@@ -894,6 +900,7 @@ class tspamfilter extends tevents {
   }
   
   public function canadd($idauthor) {
+    if ($this->is_spamer($idauthor)) return false;
     return true;
   }
   
@@ -1033,7 +1040,10 @@ class tcomusers extends titems {
   }
   
   public function add($name, $email, $url, $ip) {
-    if ($id = $this->find($name, $email, $url)) return $id;
+    if ($id = $this->find($name, $email, $url)) {
+      $this->db->setvalue($id, 'ip', $ip);
+      return $id;
+    }
     
     if (($parsed = @parse_url($url)) &&  is_array($parsed) ) {
       if ( empty($parsed['host'])) {

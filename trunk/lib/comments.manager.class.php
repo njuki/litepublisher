@@ -75,7 +75,8 @@ class tcommentmanager extends tevents {
   }
   
   public function addcomment($idpost, $idauthor, $content, $ip) {
-    $status = litepublisher::$classes->spamfilter->createstatus($idauthor, $content);
+    $status = litepublisher::$classes->spamfilter->createstatus($idpost, $idauthor, $content, $ip);
+    if (!$status) return false;
     $comments = tcomments::instance($idpost);
     $id = $comments->add($idauthor,  $content, $status, $ip);
     
