@@ -402,7 +402,7 @@ function dumpstr($s) {
 
 function dumpvar(&$v) {
   echo "<pre>\n";
-  var_dump(v);
+  var_dump($v);
   echo "</pre>\n";
 }
 

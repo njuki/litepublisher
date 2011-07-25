@@ -474,6 +474,7 @@ $this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li
 $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
 $this->tabs = '<div id="tabs-' . self::$index . '" rel="tabs">
     <ul>%s</ul>
+%s
 </div>';
 }
 
@@ -494,7 +495,7 @@ $this->items[] = array(
 );
 }
 
-public static function getjs() {
+public static function gethead() {
 $template = ttemplate::instance();
 return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
 }

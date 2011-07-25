@@ -7,8 +7,7 @@
 **/
 
 class tadminviews extends tadminmenu {
-  private $_adminoptionsform;
-  
+
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
@@ -103,15 +102,17 @@ class tadminviews extends tadminmenu {
       case 'views':
       $template->ltoptions['allviews'] = implode(',', array_keys(tviews::instance()->items));
     $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.min.js", function() {init_views();}' );
-      /*
-      $result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
+      /*$result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
       <script type="text/javascript" >
       init_views();
       </script>';
       */
       break;
       
-      
+case 'headers':
+$result .= tuitabs      ::gethead();
+break;
+
       case 'spec':
     $result .= $template->getready('$("#tabs").tabs({ cache: true });');
       break;
@@ -271,14 +272,23 @@ class tadminviews extends tadminmenu {
       break;
       
       case 'headers':
+$tabs = new tuitabs();
       $template = ttemplate::instance();
       $args->heads = $template->heads;
+$tabs->add($lang->headstitle, '[editor=heads]');
+
+$adminmenus = tadminmenus::instance();
+      $args->adminheads = $adminmenus->heads;
+$ajax = tajaxposteditor ::instance();
+$args->ajaxvisual=  $ajax->ajaxvisual;
+$args->visual= $ajax->visual;
+$tabs->add($lang->admin, '[checkbox=ajaxvisual] [text=visual] [editor=adminheads]');
       $args->formtitle = $lang->headstitle;
-      $result = $html->adminform('[editor=heads]', $args);
+      $result = $html->adminform($tabs->get(), $args);
       break;
       
       case 'admin':
-      return $this->adminoptionsform->getform();;
+      return $this->adminoptionsform->getform();
     }
     
     return $html->fixquote($result);
@@ -412,6 +422,15 @@ class tadminviews extends tadminmenu {
       $template = ttemplate::instance();
       $template->heads = $_POST['heads'];
       $template->save();
+
+$adminmenus = tadminmenus::instance();
+$adminmenus->heads = $_POST['adminheads'];
+$adminmenus->save();
+
+$ajax = tajaxposteditor ::instance();
+$ajax->ajaxvisual = isset($_POST['ajaxvisual']);
+$ajax->visual = trim($_POST['visual']);
+$ajax->save();
       break;
       
       case 'admin':
@@ -420,17 +439,5 @@ class tadminviews extends tadminmenu {
     
     ttheme::clearcache();
   }
-  
-  public function getadminoptionsform() {
-    if (isset($this->_adminoptionsform)) return $this->_adminoptionsform;
-    $form = new tautoform(tajaxposteditor ::instance(), 'views', 'adminoptions');
-    $form->add($form->ajaxvisual, $form->visual);
-    $form->obj = tadminmenus::instance();
-    $form->add($form->heads('editor'));
-    $this->_adminoptionsform = $form;
-    return $form;
-  }
-  
-}//class
 
-?>
+}//class
