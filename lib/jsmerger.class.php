@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tjsfiles extends titems {
+class tjsmerger extends titems {
 public $texts;
 
   public static function instance() {
@@ -16,7 +16,7 @@ public $texts;
   protected function create() {
     $this->dbversion = false;
     parent::create();
-    $this->basename = 'jsfiles';
+    $this->basename = 'jsmerger';
 $this->data['revision'] = 1;
 $this->addmap('texts', array());
   }
@@ -53,30 +53,24 @@ $this->add($filename);
 $this->unlock();
 }
 
-  public function addtext($s) {
+  public function addtext($key, $s) {
 $s = trim($s);
 if (empty($s)) return;
 if (in_array($s, $this->texts)) return false;
-$this->texts[] = $s;
+$this->texts[$key] = $s;
 $this->save();
 return count($this->texts) - 1;
 }
 
-public function deletetext($s) {
-$s = trim($s);
-if (empty($s)) return false;
-if (false === ($i = array_search($s, $this->texts))) return false;
-array_delete($this->texts, $i);
+public function deletetext($key) {
+if (!isset($this->texts[$key])) return;
+unset($this->texts[$key]);
 $this->save();
 return true;
 }
 
-public function deleteword($word) {
-$c = count($this->texts);
-foreach ($this->texts as $i => $text) {
-if (false !== strpos($text, $word)) array_delete($this->texts, $i);
-}
-if ($c != count($this->texts)) $this->save();
+public function getfilename() {
+return sprintf('/files/js/%s.%s.js', $this->basename, $this->revision);
 }
 
 public function assemble() {
@@ -88,20 +82,21 @@ if ($file === false) $this->error(sprintf('Error read %s file', $filename));
 $s .= $file;
 }
 $s .= implode("\n", $this->texts);
-$jsfile =  sprintf('%s.%s.js', $this->filename, $this->revision);
-file_put_contents($home . $jsfile, $s);
-@chmod($home . $jsfile, 0666);
+$jsfile =  $this->getfilename();
+$realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $jsfile);
+file_put_contents($realfile, $s);
+@chmod($realfile, 0666);
 $template = ttemplate::instance();
 $template->data[$this->basename] = $jsfile;
 $template->save();
 litepublisher::$urlmap->clearcache();
-$old = $home . sprintf('%s.%s.js', $this->filename, $this->revision - 1);
+$old = $home . str_replace('/',DIRECTORY_SEPARATOR, sprintf('/files/js/%s.%s.js', $this->basename, $this->revision - 1));
 if (file_exists($old)) @unlink($old);
 }
 
 }//class
 
-class tadminjsfiles extends tjsfiles {
+class tadminjsmerger extends tjsmerger {
   public static function instance() {
     return getinstance(__class__);
   }
