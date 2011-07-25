@@ -49,3 +49,16 @@ $self->addtext('pretty',
 $self->unlock();
 }
 
+function tjscommentsInstall($self) {
+$self->lock();
+$self->add('/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
+$self->add('/js/litepublisher/filebrowser.min.js');
+$self->add('/js/litepublisher/admin.min.js');
+
+$self->addtext('pretty',
+'$(document).ready(function() {
+    $("a[rel^=\'prettyPhoto\']").prettyPhoto();
+  });');
+
+$self->unllock();
+}

@@ -76,9 +76,11 @@ return sprintf('/files/js/%s.%s.js', $this->basename, $this->revision);
 public function assemble() {
 $home = litepublisher::$paths->home;
 $s = '';
+$theme = ttheme::instance();
 foreach ($this->items as $filename) {
-$file = file_get_contents($home . $filename);
-if ($file === false) $this->error(sprintf('Error read %s file', $filename));
+$filename = $theme->parse($filename);
+$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+if (false === ($file = file_get_contents($home . $filename))) $this->error(sprintf('Error read %s file', $filename));
 $s .= $file;
 }
 $s .= implode("\n", $this->texts);
@@ -103,7 +105,19 @@ class tadminjsmerger extends tjsmerger {
   
   protected function create() {
     parent::create();
-$this->basename = 'adminjs';
+$this->basename = 'jsadmin';
+}
+
+}//class
+
+class tjscomments extends tjsmerger {
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+$this->basename = 'jscomments';
 }
 
 }//class
