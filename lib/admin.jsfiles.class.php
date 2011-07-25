@@ -17,19 +17,19 @@ class tadminjsfiles extends tadminmenu {
     $html = $this->html;
     $lang = $this->lang;
     $args = targs::instance();
-
+    
     $args->formtitle= $lang->edit;
-$args->jsfiles = implode("\n", $jsfiles->items);
-$args->adminjsfiles = implode("\n", $jsfiles->items);
+    $args->jsfiles = implode("\n", $jsfiles->items);
+    $args->adminjsfiles = implode("\n", $jsfiles->items);
     $result = $html->adminform('[editor=jsfiles] [editor=adminjsfiles]', $args));
     
   }
   
   public function processform() {
     $jsfiles = tjsfiles::instance();
-$jsfiles->setfromstring($_POST['jsfiles']);
+    $jsfiles->setfromstring($_POST['jsfiles']);
     $adminjsfiles = tadminjsfiles::instance();
-$adminjsfiles->setfromstring($_POST['adminjsfiles']);
-}
-
+    $adminjsfiles->setfromstring($_POST['adminjsfiles']);
+  }
+  
 }//class

@@ -1220,7 +1220,6 @@ class tcomusers extends titems {
   }
   
   public function request($arg) {
-    $this->cache = false;
     $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
     $idpost = isset($_GET['post']) ? (int) $_GET['post'] : 1;
     if ($idpost != $this->pid) {
@@ -1231,13 +1230,13 @@ class tcomusers extends titems {
     try {
       $item = $this->getitem($id);
     } catch (Exception $e) {
-      return turlmap::redir301('/');
+      return "<?[php turlmap::redir301('/');";
     }
     
     $url = $item['url'];
     if (!strpos($url, '.')) $url = litepublisher::$site->url . litepublisher::$site->home;
     if (!strbegin($url, 'http://')) $url = 'http://' . $url;
-    turlmap::redir($url);
+    return "<?php turlmap::redir($url);";
   }
   
 }//class

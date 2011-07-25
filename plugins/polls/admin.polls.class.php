@@ -7,7 +7,7 @@
 **/
 
 class tadminpolls {
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
@@ -26,20 +26,20 @@ class tadminpolls {
     $args->deftype = tadminhtml::array2combo(array_combine($plugin->types, $plugin->types), $plugin->deftype);
     $args->defadd = $plugin->defadd;
     $args->voted = $plugin->voted;
-$form = '[text=voted]';
-$form .= sprintf('<h4>%s</h4>', $about['defoptions']);
-$form .= '[combo=deftype] [text=deftitle] [text=defitems] [checkbox=defadd] ';
-
-$form .= sprintf('<h4>%s</h4>', $about['templateitems']);
+    $form = '[text=voted]';
+    $form .= sprintf('<h4>%s</h4>', $about['defoptions']);
+    $form .= '[combo=deftype] [text=deftitle] [text=defitems] [checkbox=defadd] ';
+    
+    $form .= sprintf('<h4>%s</h4>', $about['templateitems']);
     foreach ($plugin->types as $name) {
       $item = $name . 'item';
       $items = $name . 'items';
       $args->$item = $plugin->templateitems[$name];
       $args->$items = $plugin->templates[$name];
-$form .= "[editor=$item]\n[editor=$items]\n";
+      $form .= "[editor=$item]\n[editor=$items]\n";
     }
-
-        $args->formtitle = $about['formtitle'];
+    
+    $args->formtitle = $about['formtitle'];
     return $html->adminform($form, $args);
   }
   
@@ -51,7 +51,7 @@ $form .= "[editor=$item]\n[editor=$items]\n";
     $plugin->deftype = $deftype;
     $plugin->defitems = trim($defitems);
     $plugin->voted = $voted;
-$plugin->defadd = isset($defadd);
+    $plugin->defadd = isset($defadd);
     
     foreach ($plugin->types as $name) {
       $plugin->templateitems[$name] = $_POST[$name . 'item'];

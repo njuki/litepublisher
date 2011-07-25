@@ -22,7 +22,7 @@ class tadminusernews {
       $args->data["\$lang.$name"] = $about[$name];
       $form .= "[checkbox=$name]";
     }
-
+    
     foreach (array('sourcetml') as $name) {
       $args->$name = $plugin->data[$name];
       $args->data["\$lang.$name"] = $about[$name . 'label'];
@@ -41,7 +41,7 @@ class tadminusernews {
     }
     foreach (array('sourcetml') as $name) {
       $plugin->data[$name] = $_POST[$name];
-}
+    }
     $plugin->save();
   }
   

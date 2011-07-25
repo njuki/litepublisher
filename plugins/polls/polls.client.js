@@ -36,10 +36,10 @@ pollclient.sendvote = function (idpoll, vote) {
       $(idspan + i).html(items[i]);
     }
   })
-.error( function(jq, textStatus, errorThrown) {
-//alert('error ' + jq.responseText );
-pollclient.error_dialog();
-});
+  .error( function(jq, textStatus, errorThrown) {
+    //alert('error ' + jq.responseText );
+    pollclient.error_dialog();
+  });
 };
 
 pollclient.clickvote = function(idpoll, vote) {
@@ -77,18 +77,17 @@ pollclient.getcookie = function(callback) {
 };
 
 pollclient.error_dialog = function() {
-$.load_ui(function() {
-$(".poll_error_dialog:first").dialog( {
-    autoOpen: true,
-    modal: true,
-    buttons: [
-    {
-      text: "Ok",
-      click: function() {
-        $(this).dialog("close");
-      }
-    } ]
-  } );
-});
+  $.load_ui(function() {
+    $(".poll_error_dialog:first").dialog( {
+      autoOpen: true,
+      modal: true,
+      buttons: [
+      {
+        text: "Ok",
+        click: function() {
+          $(this).dialog("close");
+        }
+      } ]
+    } );
+  });
 };
-

@@ -18,7 +18,7 @@ class tusernews extends tplugin {
     $this->data['_canupload'] = true;
     $this->data['_candeletefile'] = true;
     $this->data['autosubscribe'] = true;
-$this->data['sourcetml'] = '<h4><a href="%1$s">%1$s</a></h4>';
+    $this->data['sourcetml'] = '<h4><a href="%1$s">%1$s</a></h4>';
   }
   
   public function getnorights() {
@@ -77,13 +77,13 @@ $this->data['sourcetml'] = '<h4><a href="%1$s">%1$s</a></h4>';
     }
     
     $post->content = $raw;
-$post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl);
+    $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl);
     if ($id == 0) {
       $post->status = $status;
       $id = $posts->add($post);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
-
+      
       if ($this->autosubscribe) {
         $pages = tuserpages::instance();
         $uitem = $pages->getitem(litepublisher::$options->user);
