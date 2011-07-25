@@ -29,9 +29,9 @@ class tpolls extends tplugin {
     $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
     $this->data['deftitle'] = 'new poll';
-$this->data['deftype'] = 'radio';
-$this->data['defitems'] = 'Yes,No';
-$this->data['defadd'] = false;
+    $this->data['deftype'] = 'radio';
+    $this->data['defitems'] = 'Yes,No';
+    $this->data['defadd'] = false;
     $this->data['voted'] = '';
     $this->types = array('radio', 'button', 'link', 'custom');
     $a = array_combine($this->types, array_fill(0, count($this->types), ''));
@@ -162,7 +162,7 @@ $this->data['defadd'] = false;
     }
     
     $item = array(
-'id' =>  $id,
+    'id' =>  $id,
     'hash' => $item['hash'],
     'title' => $title,
     'status' => $status,
@@ -283,11 +283,11 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
       $i = min($j, strlen($content));
     }
   }
-
-public function geterror_dialog() {
-//jquery ui dialog template
-return sprintf('<div class="poll_error_dialog" style="display: none;" title="%s"><h4>%s</h4></div>', tlocal::$data['default']['error'], $this->voted);
-}
+  
+  public function geterror_dialog() {
+    //jquery ui dialog template
+    return sprintf('<div class="poll_error_dialog" style="display: none;" title="%s"><h4>%s</h4></div>', tlocal::$data['default']['error'], $this->voted);
+  }
   
   public function gethtml($id, $full) {
     $result = $this->geterror_dialog();
@@ -316,9 +316,9 @@ return sprintf('<div class="poll_error_dialog" style="display: none;" title="%s"
   
   public function gethead() {
     $template = ttemplate::instance();
-return $template->getready('if ($("*[id^=\'pollform_\']").length) {
-        $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
-});');
+    return $template->getready('if ($("*[id^=\'pollform_\']").length) {
+      $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
+    });');
   }
   
   protected static function error403($msg= 'Forbidden') {
@@ -367,38 +367,39 @@ return $template->getready('if ($("*[id^=\'pollform_\']").length) {
     if ($this->hasvote($idpoll, $iduser)) return $this->error($this->voted, 403);
     return $this->addvote($idpoll, $iduser, (int) $vote);
   }
-
-public function setdefadd($v) {
-if ($v == $this->defadd) return;
-$this->data['defadd'] = $v;
-$this->save();
-$posts = tposts::instance();
-if ($v) {
-$posts->added = $this->postadded;
-$posts->deleted = $this->postdeleted;
-$posts->aftercontent = $this->afterpost;
-} else {
-$posts->delete_event_class('added', get_class($this));
-$posts->delete_event_class('deleted', get_class($this));
-$posts->delete_event_class('aftercontent', get_class($this));
-}
-}
-
-public function postadded($idpost) {
-$post = tpost::instance($idpost);
-$post->meta->poll = $this->add($this->deftitle, 'opened', $this->deftype, explode(',', $this->defitems));
-}
-
-public function afterpost(tpost $post, &$content) {
-$content = $this->gethtml($post->meta->poll, true) . $content;
-}
   
-public function postdeleted($id) {
-if (!dbversion) return;
-$meta = tmetapost::instance($id);
-if (isset($meta->poll)) {
-$this->delete($meta->poll);
-}
-}
-
+  public function setdefadd($v) {
+    if ($v == $this->defadd) return;
+    $this->data['defadd'] = $v;
+    $this->save();
+    $posts = tposts::instance();
+    if ($v) {
+      $posts->added = $this->postadded;
+      $posts->deleted = $this->postdeleted;
+      $posts->aftercontent = $this->afterpost;
+      $posts->syncmeta = true;
+    } else {
+      $posts->delete_event_class('added', get_class($this));
+      $posts->delete_event_class('deleted', get_class($this));
+      $posts->delete_event_class('aftercontent', get_class($this));
+    }
+  }
+  
+  public function postadded($idpost) {
+    $post = tpost::instance($idpost);
+    $post->meta->poll = $this->add($this->deftitle, 'opened', $this->deftype, explode(',', $this->defitems));
+  }
+  
+  public function afterpost(tpost $post, &$content) {
+    $content = $this->gethtml($post->meta->poll, true) . $content;
+  }
+  
+  public function postdeleted($id) {
+    if (!dbversion) return;
+    $meta = tmetapost::instance($id);
+    if (isset($meta->poll)) {
+      $this->delete($meta->poll);
+    }
+  }
+  
 }//class

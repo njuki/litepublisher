@@ -461,43 +461,43 @@ class ttablecolumns {
 }//class
 
 class tuitabs {
-public $head;
-public $body;
-public $tabs;
-private static $index = 0;
-private $items;
-
-public function __construct() {
-self::$index++;
-$this->items = array();
-$this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
-$this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
-$this->tabs = '<div id="tabs-' . self::$index . '" rel="tabs">
+  public $head;
+  public $body;
+  public $tabs;
+  private static $index = 0;
+  private $items;
+  
+  public function __construct() {
+    self::$index++;
+    $this->items = array();
+    $this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
+    $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
+    $this->tabs = '<div id="tabs-' . self::$index . '" rel="tabs">
     <ul>%s</ul>
-%s
-</div>';
-}
-
-public function get() {
-$head= '';
-$body = '';
-foreach ($this->items as $i => $item) {
-$head .= sprintf($this->head, $i, $item['title']);
-$body .= sprintf($this->body, $i, $item['body']);
-}
-return sprintf($this->tabs, $head, $body);
-}
-
-public function add($title, $body) {
-$this->items[] = array(
-'title' => $title,
-'body' => $body
-);
-}
-
-public static function gethead() {
-$template = ttemplate::instance();
-return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
-}
-
+    %s
+    </div>';
+  }
+  
+  public function get() {
+    $head= '';
+    $body = '';
+    foreach ($this->items as $i => $item) {
+      $head .= sprintf($this->head, $i, $item['title']);
+      $body .= sprintf($this->body, $i, $item['body']);
+    }
+    return sprintf($this->tabs, $head, $body);
+  }
+  
+  public function add($title, $body) {
+    $this->items[] = array(
+    'title' => $title,
+    'body' => $body
+    );
+  }
+  
+  public static function gethead() {
+    $template = ttemplate::instance();
+    return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
+  }
+  
 }//class

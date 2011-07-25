@@ -128,14 +128,14 @@ class ttheme extends tevents {
   }
   
   private function getvar($name) {
-switch ($name) {
-case 'site':
-return litepublisher::$site;
-
-case 'lang':
-return tlocal::instance();
-}
-
+    switch ($name) {
+      case 'site':
+      return litepublisher::$site;
+      
+      case 'lang':
+      return tlocal::instance();
+    }
+    
     if (isset($GLOBALS[$name])) {
       $var =  $GLOBALS[$name];
     } else {
@@ -168,8 +168,8 @@ return tlocal::instance();
       return $this->parse($this->templates['custom'][$prop]);
     } elseif ($var = $this->getvar($name)) {
       self::$vars[$name] = $var;
-} elseif (($name == 'metapost') && isset(self::$vars['post'])) {
-$var = self::$vars['post']->meta;
+    } elseif (($name == 'metapost') && isset(self::$vars['post'])) {
+      $var = self::$vars['post']->meta;
     } else {
       return '';
     }

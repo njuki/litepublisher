@@ -11,7 +11,7 @@ function tusernewsInstall($self) {
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
   $filter->save();
-
+  
   litepublisher::$options->parsepost = false;
   litepublisher::$options->reguser = true;
   $adminoptions = tadminoptions::instance();
@@ -29,12 +29,6 @@ function tusernewsInstall($self) {
   $rights->canupload = $self->canupload;
   $rights->candeletefile = $self->candeletefile;
   $rights->unlock();
-  
-  $posts = tposts::instance();
-$posts->lock();
-  $posts->syncmeta = true;
-$posts->deleted = $self->postdeleted;
-  $posts->unlock();
 }
 
 function tusernewsUninstall($self) {

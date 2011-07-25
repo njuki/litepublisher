@@ -11,8 +11,8 @@ function tpollsInstall($self) {
   $about = tplugins::localabout(dirname(__file__));
   $self->deftitle = $about['title'];
   $self->voted = $about['votedmesg'];
-$self->defitems = $about['items'];
-
+  $self->defitems = $about['items'];
+  
   $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
@@ -70,11 +70,11 @@ $self->defitems = $about['items'];
 
 function tpollsUninstall($self) {
   $posts = tposts::instance();
-$posts->lock();
+  $posts->lock();
   $posts->syncmeta = false;
-$posts->unsubscribeclass($self);
+  $posts->unsubscribeclass($self);
   $posts->unlock();
-
+  
   turlmap::unsub($self);
   unset(litepublisher::$classes->classes['poll']);
   litepublisher::$classes->save();

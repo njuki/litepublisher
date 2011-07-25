@@ -7,7 +7,7 @@
 **/
 
 class tadminviews extends tadminmenu {
-
+  
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
@@ -109,10 +109,10 @@ class tadminviews extends tadminmenu {
       */
       break;
       
-case 'headers':
-$result .= tuitabs      ::gethead();
-break;
-
+      case 'headers':
+      $result .= tuitabs      ::gethead();
+      break;
+      
       case 'spec':
     $result .= $template->getready('$("#tabs").tabs({ cache: true });');
       break;
@@ -272,17 +272,17 @@ break;
       break;
       
       case 'headers':
-$tabs = new tuitabs();
+      $tabs = new tuitabs();
       $template = ttemplate::instance();
       $args->heads = $template->heads;
-$tabs->add($lang->headstitle, '[editor=heads]');
-
-$adminmenus = tadminmenus::instance();
+      $tabs->add($lang->headstitle, '[editor=heads]');
+      
+      $adminmenus = tadminmenus::instance();
       $args->adminheads = $adminmenus->heads;
-$ajax = tajaxposteditor ::instance();
-$args->ajaxvisual=  $ajax->ajaxvisual;
-$args->visual= $ajax->visual;
-$tabs->add($lang->admin, '[checkbox=ajaxvisual] [text=visual] [editor=adminheads]');
+      $ajax = tajaxposteditor ::instance();
+      $args->ajaxvisual=  $ajax->ajaxvisual;
+      $args->visual= $ajax->visual;
+      $tabs->add($lang->admin, '[checkbox=ajaxvisual] [text=visual] [editor=adminheads]');
       $args->formtitle = $lang->headstitle;
       $result = $html->adminform($tabs->get(), $args);
       break;
@@ -422,15 +422,15 @@ $tabs->add($lang->admin, '[checkbox=ajaxvisual] [text=visual] [editor=adminheads
       $template = ttemplate::instance();
       $template->heads = $_POST['heads'];
       $template->save();
-
-$adminmenus = tadminmenus::instance();
-$adminmenus->heads = $_POST['adminheads'];
-$adminmenus->save();
-
-$ajax = tajaxposteditor ::instance();
-$ajax->ajaxvisual = isset($_POST['ajaxvisual']);
-$ajax->visual = trim($_POST['visual']);
-$ajax->save();
+      
+      $adminmenus = tadminmenus::instance();
+      $adminmenus->heads = $_POST['adminheads'];
+      $adminmenus->save();
+      
+      $ajax = tajaxposteditor ::instance();
+      $ajax->ajaxvisual = isset($_POST['ajaxvisual']);
+      $ajax->visual = trim($_POST['visual']);
+      $ajax->save();
       break;
       
       case 'admin':
@@ -439,5 +439,5 @@ $ajax->save();
     
     ttheme::clearcache();
   }
-
+  
 }//class

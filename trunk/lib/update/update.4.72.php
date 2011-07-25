@@ -4,7 +4,7 @@ function update472() {
 litepublisher::$urlmap->delete('/comusers.htm');
   litepublisher::$urlmap->addget('/comusers.htm', 'tcomusers');
 litepublisher::$classes->items['tuitabs'] = array('htmlresource.class.php', '');
-
+litepublisher::$classes->save();
 
 if (litepublisher::$classes->exists('tpolls')) {
 $polls = tpolls::instance();
