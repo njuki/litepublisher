@@ -6,10 +6,14 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tjsfilesInstall($self) {
-if ('tjsfile' == get_class($self)) {
+function tjsmergerInstall($self) {
+$dir = litepublisher::$paths->files . 'js';
+@mkdir($dir, 0777);
+@chmod($dir, 0777);
+
+if ('tjsmerger' == get_class($self)) {
 $self->lock();
-$self->add(sprintf('/js/jquery/jquery.%s.js', litepublisher::$site->jquery_version));
+$self->add('/js/jquery/jquery-$site.jquery_version.min.js');
 $self->add('/js/prettyphoto/js/jquery.prettyPhoto.js');
 $self->add('/js/litepublisher/cookie.min.js');
 $self->add('/js/litepublisher/litepublisher.utils.min.js');
@@ -19,26 +23,26 @@ $self->unlock();
 }
 
 $template = ttemplate::instance();
-$template->heads .= $template->getjavascript('$site.url$template.' . $self->basename);
+$template->heads .= $template->getjavascript('$site.files$template.' . $self->basename);
 $template->save();
 
 $updater = tupdater::instance();
 $updater->onupdated = $self->save;
 }
 
-function tjsfilesUninstall($self) {
+function tjsmergerUninstall($self) {
 $updater = tupdater::instance();
 $updater->unsubscribeclass($self);
 }
 
-function tadminjsfilesInstall($self) {
+function tadminjsmergerInstall($self) {
 $self->lock();
-$self->add(sprintf('/js/jquery/ui-%1$s/jquery-ui-%1$s.custom.min.js', litepublisher::$site->jqueryui_version);
+$self->add('/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
 $self->add('/js/litepublisher/filebrowser.min.js');
 $self->add('/js/litepublisher/admin.min.js');
 
-$self->addtext('
-$(document).ready(function() {
+$self->addtext('pretty',
+'$(document).ready(function() {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto();
   });');
 
