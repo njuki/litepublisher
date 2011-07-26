@@ -7,8 +7,7 @@
 **/
 
 class tjsmerger extends titems {
-  public $texts;
-  
+
   public static function instance() {
     return getinstance(__class__);
   }
@@ -18,7 +17,6 @@ class tjsmerger extends titems {
     parent::create();
     $this->basename = 'jsmerger';
     $this->data['revision'] = 1;
-    $this->addmap('texts', array());
   }
   
   public function save() {
@@ -27,97 +25,101 @@ class tjsmerger extends titems {
     $this->assemble();
   }
   
-  public function add($filename) {
+  public function add($section, $filename) {
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
     if (empty($filename)) returnfalse;
-    if (in_array($filename, $this->items)) return false;
-    $this->items[] = $filename;
+if (!isset($this->items[$section)) {
+$this->items[$section] = array(
+'files' => array($filename),
+'texts' => array()
+);
+} else {
+if (in_array($filename, $this->items[$section]['files'])) return false;
+    $this->items[$section][files'][] = $filename;
+}
     $this->save();
-    return count($this->items) - 1;
+    return count($this->items[$section]['files']) - 1;
   }
   
-  public function delete($filename) {
+  public function delete($section, $filename) {
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
-    if (false === ($i = array_search($filename, $this->items))) return false;
-    array_delete($this->items, $i);
+if (!isset($this->items[$section])) return false;
+    if (false === ($i = array_search($filename, $this->items[$section]['files']))) return false;
+    array_delete($this->items[$section]['files'], $i);
     $this->save();
   }
   
-  public function setfromstring($s) {{
+  public function setfromstring($section, $s) {
       $this->lock();
-      $this->items = array();
+if (isset($this->items[$section])) {
+      $this->items[$section]['files'] = array();
+} else {
+      $this->items[$section] = array(
+'files' => array(),
+'texts' => array()
+);
+}
+
       $a = explode("\n", trim($s));
       foreach ($a as $filename) {
-        $this->add($filename);
+        $this->add($section, $filename);
       }
       $this->unlock();
     }
     
-    public function addtext($key, $s) {
+    public function addtext($section, $key, $s) {
       $s = trim($s);
       if (empty($s)) return;
-      if (in_array($s, $this->texts)) return false;
-      $this->texts[$key] = $s;
+if (!isset($this->items[$section])) {
+$this->items[$section] = array(
+'files' => arrray(),
+'texts' => array($key => $s)
+);
+} else {
+      if (in_array($s, $this->items[$section]['texts'])) return false;
+      $this->items[$section]['texts'][$key] = $s;
+}
       $this->save();
-      return count($this->texts) - 1;
+      return count($this->items[$section][texts']) - 1;
     }
     
-    public function deletetext($key) {
-      if (!isset($this->texts[$key])) return;
-      unset($this->texts[$key]);
+    public function deletetext($section, $key) {
+      if (!isset($this->items[$section]['texts'][$key])) return;
+      unset($this->items[$section]['texts'][$key]);
       $this->save();
       return true;
     }
     
-    public function getfilename() {
-      return sprintf('/files/js/%s.%s.js', $this->basename, $this->revision);
+    public function getfilename($section) {
+      return sprintf('/files/js/%s.%s.js', $section, $this->revision);
     }
     
     public function assemble() {
       $home = litepublisher::$paths->home;
-      $s = '';
       $theme = ttheme::instance();
-      foreach ($this->items as $filename) {
+      $template = ttemplate::instance();
+foreach ($this->items as $section => $items) {
+      $s = '';
+      foreach ($items['files'] as $filename) {
         $filename = $theme->parse($filename);
         $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
         if (false === ($file = file_get_contents($home . $filename))) $this->error(sprintf('Error read %s file', $filename));
         $s .= $file;
       }
-      $s .= implode("\n", $this->texts);
-      $jsfile =  $this->getfilename();
+      $s .= implode("\n", $items['texts']);
+      $jsfile =  $this->getfilename($section);
       $realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $jsfile);
       file_put_contents($realfile, $s);
       @chmod($realfile, 0666);
-      $template = ttemplate::instance();
-      $template->data[$this->basename] = $jsfile;
+      $template->data[$section] = $jsfile;
+}
       $template->save();
       litepublisher::$urlmap->clearcache();
-      $old = $home . str_replace('/',DIRECTORY_SEPARATOR, sprintf('/files/js/%s.%s.js', $this->basename, $this->revision - 1));
+foreach (array_keys($this->items) as $section) {
+      $old = $home . str_replace('/',DIRECTORY_SEPARATOR, sprintf('/files/js/%s.%s.js', $section, $this->revision - 1));
       if (file_exists($old)) @unlink($old);
+}
     }
     
   }//class
   
-  class tadminjsmerger extends tjsmerger {
-    public static function instance() {
-      return getinstance(__class__);
-    }
-    
-    protected function create() {
-      parent::create();
-      $this->basename = 'jsadmin';
-    }
-    
-  }//class
-  
-  class tjscomments extends tjsmerger {
-    public static function instance() {
-      return getinstance(__class__);
-    }
-    
-    protected function create() {
-      parent::create();
-      $this->basename = 'jscomments';
-    }
-    
-  }//class
