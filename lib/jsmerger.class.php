@@ -111,7 +111,7 @@ foreach ($this->items as $section => $items) {
       $realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $jsfile);
       file_put_contents($realfile, $s);
       @chmod($realfile, 0666);
-      $template->data[$section] = $jsfile;
+      $template->data['jsmerger_' . $section] = $jsfile;
 }
       $template->save();
       litepublisher::$urlmap->clearcache();
