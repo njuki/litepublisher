@@ -127,15 +127,15 @@ class tlocal {
   }
   
   public static function ini2js($filename) {
+      if (!litepublisher::$options->installed) return;
+$jsmerger = tjsmerger::instance();
   $js = "var lang;\nif (lang == undefined) lang = {};\n";
     $base = basename($filename);
     if (strend($base, '.admin')) {
       $js .= sprintf('lang.comments = %s;',  json_encode(self::$data['comments']));
-    file_put_contents(litepublisher::$paths->files . $base . '.js', $js);
-    @chmod($filename, 0666);
+$jsmerger->addtext('moderate', 'lang', $js);
     } else {
       $js .= sprintf('lang.comment = %s;',  json_encode(self::$data['comment']));
-$jsmerger = tjsmerger::instance();
 $jsmerger->addtext('comments', 'lang', $js);
     }
 

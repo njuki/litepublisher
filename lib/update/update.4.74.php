@@ -8,7 +8,7 @@ litepublisher::$classes->add('tadminjsmerger', 'admin.jsmerger.class.php');
 $template = ttemplate::instance();
   $template->deletefromhead($template->getjavascript('$site.files$template.jsmerger_default'));
 
-
+tlocal::loadlang('admin');
 $admin = tadminmenus::instance();
 $admin->lock();
     $admin->deleteurl('/admin/views/admin/');
