@@ -30,16 +30,13 @@ $section = 'admin';
   $self->add($section, '/js/litepublisher/admin.min.js');
   
 $section = 'comments';
-  $self->add($section, '/js/jquery/ui-$site.jqueryui_version/jquery-ui-$site.jqueryui_version.custom.min.js');
-  $self->add($section, '/js/litepublisher/filebrowser.min.js');
-  $self->add($section, '/js/litepublisher/admin.min.js');
+  $self->add($section, '/js/litepublisher/comments.min.js');
   
-  $self->unllock();
+  $self->unlock();
 
   $template = ttemplate::instance();
-  $template->heads .= $template->getjavascript('$site.files$template.jsmerger_default');
-  $template->save();
-  
+  $template->addtohead($template->getjavascript('$site.files$template.jsmerger_default'));
+
   $updater = tupdater::instance();
   $updater->onupdated = $self->save;
 }

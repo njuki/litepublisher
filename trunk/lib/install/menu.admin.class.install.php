@@ -52,7 +52,7 @@ function tadminmenusInstall($self) {
     $self->createitem($views, 'defaults', 'admin', 'tadminviews');
     $self->createitem($views, 'spec', 'admin', 'tadminviews');
     $self->createitem($views, 'headers', 'admin', 'tadminviews');
-    $self->createitem($views, 'admin', 'admin', 'tadminviews');
+    $self->createitem($views, 'jsmerger', 'admin', 'tadminjsmerger');
   }
   
   $menu = $self->createitem(0, 'menu', 'editor', 'tadminmenumanager');

@@ -131,11 +131,14 @@ class tlocal {
     $base = basename($filename);
     if (strend($base, '.admin')) {
       $js .= sprintf('lang.comments = %s;',  json_encode(self::$data['comments']));
-    } else {
-      $js .= sprintf('lang.comment = %s;',  json_encode(self::$data['comment']));
-    }
     file_put_contents(litepublisher::$paths->files . $base . '.js', $js);
     @chmod($filename, 0666);
+    } else {
+      $js .= sprintf('lang.comment = %s;',  json_encode(self::$data['comment']));
+$jsmerger = tjsmerger::instance();
+$jsmerger->addtext('comments', 'lang-comment', $js);
+    }
+
   }
   
   public static function loadini($filename) {
