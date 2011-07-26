@@ -23,13 +23,14 @@ $tabs = new tuitabs();
     $args = targs::instance();
         $args->formtitle= $lang->jsmergertitle;
 foreach ($jsmerger->items as $section => $items) {
-    $args->data["\$$section-files"]= implode("\n", $items['files']);
+$name = $section . '_files';
+    $args->$name = implode("\n", $items['files']);
 $tab = new tuitabs();
-$tabs->add($lang->files, "[editor=$section-files]");
+$tab->add($lang->files, "[editor=$name]");
 $tabtext = new tuitabs();
 foreach ($items['texts'] as $key => $text) {
-$name = "$section-text-$key";
-$args->data["\$$name"] = $text;
+$name = $section . '_text_' . $key;
+$args->$name  = $text;
 $tabtext->add($key, "[editor=$name]");
 }
 $tab->add($lang->text, $tabtext->get());
@@ -44,9 +45,9 @@ return  $html->adminform($tabs->get(), $args);
 $jsmerger->lock();
 foreach ($array_keys($jsmerger->items) as $section) {
 $keys = array_keys($jsmerger->items[$section]['texts']);
-$jsmerger->setfromstring($_POST["$section-files"]);
+$jsmerger->setfromstring($_POST[$section . _files']);
 foreach ($keys as $key) {
-$jsmerger->addtext($section, $key, $_POST["$section-text-$key"]);
+$jsmerger->addtext($section, $key, $_POST[$section . '_text_' . $key"]);
 }
 }
 $jsmerger->unlock();

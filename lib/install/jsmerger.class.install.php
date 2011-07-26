@@ -12,6 +12,7 @@ function tjsmergerInstall($self) {
   @chmod($dir, 0777);
   
     $self->lock();
+$self->items = array();
 $section = 'default';
     $self->add($section, '/js/jquery/jquery-$site.jquery_version.min.js');
     $self->add($section, '/js/prettyphoto/js/jquery.prettyPhoto.js');
