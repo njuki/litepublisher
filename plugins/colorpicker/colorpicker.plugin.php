@@ -15,30 +15,17 @@ class tcolorpicker extends tplugin {
   public function install() {
     $parser = tthemeparser::instance();
     $parser->parsed = $this->themeparsed;
-    
-    $admin = tadminmenus::instance();
-    $admin->heads .= $this->gethead();
-    $admin->save();
+
+$jsmerger = tjsmerger::instance();
+$jsmerger->add('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
   }
   
   public function uninstall() {
     $parser = tthemeparser::instance();
     $parser->unsubscribeclass($this);
-    
-    $admin = tadminmenus::instance();
-    $admin->heads = trim(str_replace($this->gethead(), '', $admin->heads));
-    $admin->save();
-  }
-  
-  public function gethead() {
-    //return '<script type="text/javascript" src="$site.files/plugins/colorpicker/colorpicker.plugin.js"></script>';
-    return '<script type="text/javascript">' .
-    "\n\$(document).ready(function() {\n" .
-      "if (\$(\"input[id^='colorbutton']\").length) {\n" .
-        '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/colorpicker.plugin.js\");\n" .
-      "}\n" .
-    "});\n" .
-    "</script>";
+
+$jsmerger = tjsmerger::instance();
+$jsmerger->deletefile('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
   }
   
   public function themeparsed(ttheme $theme) {

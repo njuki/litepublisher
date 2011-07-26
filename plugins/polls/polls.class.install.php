@@ -70,7 +70,10 @@ function tpollsInstall($self) {
 $jsmerger = tjsmerger::instance();
 $jsmerger->lock();
 $jsmerger->add('default', '/plugins/polls/polls.client.min.js');
-$jsmerger->addtext('default', 'poll', getpollhead());
+$jsmerger->addtext('default', 'poll', 
+'$(document).ready(function() {
+ if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
+ });');
 $jsmerger->unlock();
 }
 
@@ -107,11 +110,6 @@ $jsmerger->unlock();
   $manager->deletetable($self->votestable);
 }
 
-function getpollhead() {
-  return '$(document).ready(function() {
- if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
- });';
-}
 
 function finddeletedpols($self) {
   $signs = $self->db->selectassoc("select id, hash from $self->thistable");

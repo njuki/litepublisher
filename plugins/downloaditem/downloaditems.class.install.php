@@ -87,10 +87,19 @@ function tdownloaditemsInstall($self) {
     litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
   }
   $menus->unlock();
-  
+
+/*  
   $template = ttemplate::instance();
   $template->addtohead(getd_download_js());
-  
+*/
+
+$jsmerger = tjsmerger::instance();
+$jsmerger->addtext('default', 'downloaditem', '$(document).ready(function() {
+if ($("a[rel='theme'], a[rel='plugin']").length) {
+$.load_script(ltoptions.files + "/plugins/downloaditem/downloaditem.min.js");
+}
+});');
+
   $parser = tthemeparser::instance();
   $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
@@ -148,9 +157,12 @@ function tdownloaditemsUninstall($self) {
   }
   $optimizer->unlock();
   
+/*
   $template = ttemplate::instance();
   $template->deletefromhead(getd_download_js());
-  
+*/
+  $jsmerger = tjsmerger::instance();
+$jsmerger->deletetext('default', 'downloaditem');
   litepublisher::$options->delete('downloaditem_themetag');
   litepublisher::$options->delete('downloaditem_plugintag');
   litepublisher::$options->savemodified();
@@ -160,7 +172,7 @@ function getd_download_js() {
   $result ='<script type="text/javascript">';
   $result .= "\n\$(document).ready(function() {\n";
     $result .= "if (\$(\"a[rel='theme'], a[rel='plugin']\").length) {\n";
-      $result .= '$.getScript("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.min.js\");\n";
+      $result .= '$.load_script("$site.files/plugins/' . basename(dirname(__file__)) . "/downloaditem.min.js\");\n";
     $result .= "}\n";
   $result.= "});\n";
   $result .= "</script>";

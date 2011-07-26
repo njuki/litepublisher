@@ -17,4 +17,34 @@ $admin->lock();
 
 $admin->heads =  str_replace('/js/litepublisher/admin.$site.jquery_version.min.js', '$template.jsmerger_admin', $admin->heads);
 $admin->unlock();
+
+$jsmerger = tjsmerger::instance();
+$jsmerger->lock();
+if (litepublisher::$classes->exists('tpolls')) {
+$jsmerger->add('default', '/plugins/polls/polls.client.min.js');
+$jsmerger->addtext('default', 'poll', 
+'$(document).ready(function() {
+ if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
+ });');
+}
+
+if (litepublisher::$classes->exists('tajaxcommentformplugin')) {
+$plugin = tajaxcommentformplugin::instance();
+$jsmerger->add('comments', '/plugins/ajaxcommentform/ajaxcommentform.min.js');
+$jsmerger->addtext('comments', 'ajaxform', $plugin->getjs());
+}
+
+if (litepublisher::$classes->exists('tcolorpicker')) {
+$jsmerger->add('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
+}
+
+if (litepublisher::$classes->exists('tdownloaditems')) {
+$jsmerger->addtext('default', 'downloaditem', '$(document).ready(function() {
+if ($("a[rel='theme'], a[rel='plugin']").length) {
+$.load_script(ltoptions.files + "/plugins/downloaditem/downloaditem.min.js");
+}
+});');
+}
+
+$jsmerger->unlock();
 }
