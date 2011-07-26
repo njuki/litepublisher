@@ -27,21 +27,21 @@ class tjsmerger extends titems {
   
   public function add($section, $filename) {
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
-    if (empty($filename)) returnfalse;
-if (!isset($this->items[$section)) {
+    if (empty($filename)) return false;
+if (!isset($this->items[$section])) {
 $this->items[$section] = array(
 'files' => array($filename),
 'texts' => array()
 );
 } else {
 if (in_array($filename, $this->items[$section]['files'])) return false;
-    $this->items[$section][files'][] = $filename;
+    $this->items[$section]['files'][] = $filename;
 }
     $this->save();
     return count($this->items[$section]['files']) - 1;
   }
   
-  public function delete($section, $filename) {
+  public function deletefile($section, $filename) {
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
 if (!isset($this->items[$section])) return false;
     if (false === ($i = array_search($filename, $this->items[$section]['files']))) return false;
@@ -72,7 +72,7 @@ if (isset($this->items[$section])) {
       if (empty($s)) return;
 if (!isset($this->items[$section])) {
 $this->items[$section] = array(
-'files' => arrray(),
+'files' => array(),
 'texts' => array($key => $s)
 );
 } else {
@@ -80,7 +80,7 @@ $this->items[$section] = array(
       $this->items[$section]['texts'][$key] = $s;
 }
       $this->save();
-      return count($this->items[$section][texts']) - 1;
+      return count($this->items[$section]['texts']) - 1;
     }
     
     public function deletetext($section, $key) {
