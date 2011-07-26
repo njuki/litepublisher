@@ -136,7 +136,7 @@ class tlocal {
     } else {
       $js .= sprintf('lang.comment = %s;',  json_encode(self::$data['comment']));
 $jsmerger = tjsmerger::instance();
-$jsmerger->addtext('comments', 'lang-comment', $js);
+$jsmerger->addtext('comments', 'lang', $js);
     }
 
   }
