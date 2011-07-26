@@ -62,10 +62,16 @@ function tpollsInstall($self) {
   litepublisher::$options->parsepost = true;
   
   litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
-  
+
+/*  
   $template = ttemplate::instance();
   $template->addtohead(getpollhead());
-  $template->save();
+*/
+$jsmerger = tjsmerger::instance();
+$jsmerger->lock();
+$jsmerger->add('default', '/plugins/polls/polls.client.min.js');
+$jsmerger->addtext('default', 'poll', getpollhead());
+$jsmerger->unlock();
 }
 
 function tpollsUninstall($self) {
@@ -84,10 +90,16 @@ function tpollsUninstall($self) {
   
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
-  
+
+  /*
   $template = ttemplate::instance();
   $template->deletefromhead(getpollhead());
-  $template->save();
+*/
+$jsmerger = tjsmerger::instance();
+$jsmerger->lock();
+$jsmerger->deletefile('default', '/plugins/polls/polls.client.min.js');
+$jsmerger->deletetext('default', 'poll');
+$jsmerger->unlock();
   
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);
@@ -96,13 +108,9 @@ function tpollsUninstall($self) {
 }
 
 function getpollhead() {
-  $template = ttemplate::instance();
-  return $template->getready(
-  'if ($("*[id^=\'pollform_\']").length) {'.
-    '$.load_script("$site.files/plugins/polls/polls.client.min.js", function() {'.
-      ' pollclient.init();' .
-    '});'.
-  '}');
+  return '$(document).ready(function() {
+ if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
+ });';
 }
 
 function finddeletedpols($self) {

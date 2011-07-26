@@ -40,13 +40,14 @@ $section = 'moderate';
   $self->add($section, '/js/litepublisher/rpc.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
 
+$self->onupdated();
   $self->unlock();
 
   $template = ttemplate::instance();
-  $template->addtohead($template->getjavascript('$site.files$template.jsmerger_default'));
+  $template->addtohead($template->getjavascript('$template.jsmerger_default'));
 
   $updater = tupdater::instance();
-  $updater->onupdated = $self->save;
+  $updater->onupdated = $self->onupdated;
 }
 
 function tjsmergerUninstall($self) {

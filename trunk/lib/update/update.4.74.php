@@ -6,7 +6,7 @@ litepublisher::$classes->add('tadminjsmerger', 'admin.jsmerger.class.php');
 
 //fix install for backward
 $template = ttemplate::instance();
-  $template->deletefromhead($template->getjavascript('$site.files$template.jsmerger_default'));
+  $template->deletefromhead($template->getjavascript('$template.jsmerger_default'));
 
 tlocal::loadlang('admin');
 $admin = tadminmenus::instance();

@@ -4,12 +4,14 @@
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
 **/
-
+(function( window, undefined ) {
 var pollclient = {
   cookierequested: false,
   cookie: '',
   voted : []
 };
+
+window.pollclient = pollclient;
 
 pollclient.init = function () {
   $("*[id^='poll_']").click(function() {
@@ -91,3 +93,4 @@ pollclient.error_dialog = function() {
     } );
   });
 };
+})(window);

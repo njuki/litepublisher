@@ -70,7 +70,7 @@ if (isset($this->items[$section])) {
     
     public function addtext($section, $key, $s) {
       $s = trim($s);
-      if (empty($s)) return;
+      if (empty($s)) return false;
 if (!isset($this->items[$section])) {
 $this->items[$section] = array(
 'files' => array(),
@@ -121,6 +121,18 @@ foreach (array_keys($this->items) as $section) {
       if (file_exists($old)) @unlink($old);
 }
     }
-    
+
+
+public function onupdated() {
+tlocal::loadlang('admin');
+$this->lock();
+  $js = "var lang;\nif (lang == undefined) lang = {};\n";
+if ($this->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment']))) ||
+$this->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode(tlocal::$data['comments'])))) {
+$this->unlock();
+} else {
+// trix to prevent increase revision
+$this->lockcount--;
+}
+}    
   }//class
-  

@@ -7,8 +7,8 @@
 
 function init_colorpicker() {
 var dir = ltoptions.files + '/plugins/colorpicker/';
-    $('<link rel="stylesheet" type="text/css" href="'+ dir + 'css/colorpicker.css" />').appendTo("head");
-    $.getScript(dir + "js/colorpicker.js", function() {
+    $('<link rel="stylesheet" type="text/css" href="'+ dir + 'css/colorpicker.css" />').appendTo("head:first");
+    $.load_script(dir + "js/colorpicker.js", function() {
 $(document).ready(function() {
 $("input[id^='colorbutton']").ColorPicker({
 	onSubmit: function(hsb, hex, rgb, el) {

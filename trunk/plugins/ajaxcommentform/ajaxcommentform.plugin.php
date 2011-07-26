@@ -15,23 +15,23 @@ class tajaxcommentformplugin extends tplugin {
   public function install() {
     litepublisher::$options->autocmtform = false;
     litepublisher::$urlmap->addget('/ajaxcommentform.htm', get_class($this));
-    
-    $parser = tthemeparser::instance();
-    $parser->parsed = $this->themeparsed;
-    ttheme::clearcache();
-  }
+
+$jsmerger = tjsmerger::instance();
+$jsmerger->lock();
+$jsmerger->add('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
+$jsmerger->addtext('comments', 'ajaxform', $this->getjs());
+$jsmerger->unlock();
+      }
   
   public function uninstall() {
     litepublisher::$options->autocmtform = true;
     turlmap::unsub($this);
-    $parser = tthemeparser::instance();
-    $parser->unsubscribeclass($this);
-    ttheme::clearcache();
-  }
-  
-  public function themeparsed(ttheme $theme) {
-    if (strpos($theme->templates['content.post.templatecomments.form'], 'ajaxcommentform')) return;
-    $theme->templates['content.post.templatecomments.form'].= $this->getjs();
+
+$jsmerger = tjsmerger::instance();
+$jsmerger->lock();
+$jsmerger->deletefile('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
+$jsmerger->deletetext('comments', 'ajaxform');
+$jsmerger->unlock();
   }
   
   public function getjs() {
@@ -40,11 +40,7 @@ class tajaxcommentformplugin extends tplugin {
     $ls = array(
     'error_title' => $lang->error
     );
-    $result = sprintf('<script type="text/javascript">ltoptions.commentform = %s;</script>', json_encode($ls));
-    
-    $template = ttemplate::instance();
-    $result .= $template->getjavascript("/plugins/$name/ajaxcommentform.min.js");
-    return $result;
+return sprintf('ltoptions.commentform = %s;', json_encode($ls));
   }
   
   public function request($arg) {
