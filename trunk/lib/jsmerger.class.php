@@ -16,10 +16,11 @@ class tjsmerger extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'jsmerger';
-    $this->data['revision'] = 1;
+    $this->data['revision'] = 0;
   }
   
   public function save() {
+    if ($this->lockcount > 0) return;
     $this->data['revision']++;
     parent::save();
     $this->assemble();
