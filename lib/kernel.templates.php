@@ -122,20 +122,8 @@ class tlocal {
       $v = parse_ini_file($filename . '.ini', true);
       self::$data = $v + self::$data ;
       tfilestorage::savevar($cachefilename, $v);
-      self::ini2js($filename);
+      //self::ini2js($filename);
     }
-  }
-  
-  public static function ini2js($filename) {
-  $js = "var lang;\nif (lang == undefined) lang = {};\n";
-    $base = basename($filename);
-    if (strend($base, '.admin')) {
-      $js .= sprintf('lang.comments = %s;',  json_encode(self::$data['comments']));
-    } else {
-      $js .= sprintf('lang.comment = %s;',  json_encode(self::$data['comment']));
-    }
-    file_put_contents(litepublisher::$paths->files . $base . '.js', $js);
-    @chmod($filename, 0666);
   }
   
   public static function loadini($filename) {

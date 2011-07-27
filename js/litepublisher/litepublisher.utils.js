@@ -17,11 +17,15 @@ $.extend({
     });
   },
   
+  load_css: function(url) {
+    $('<link rel="stylesheet" type="text/css" href="' + url + '" />').appendTo("head:first");
+  }  ,
+  
   uiscript: false,
   load_ui: function(fn) {
     if (!$.uiscript) {
       var dir = ltoptions.files + '/js/jquery/ui-' + ltoptions.jqueryui_version;
-      $('<link rel="stylesheet" type="text/css" href="' + dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '.custom.css" />').appendTo("head:first");
+      $.load_css(dir + '/redmond/jquery-ui-' + ltoptions.jqueryui_version + '.custom.css');
       $.uiscript = $.load_script(dir + '/jquery-ui-' + ltoptions.jqueryui_version + '.custom.min.js');
     }
     if ($.isFunction(fn)) $.uiscript.done(fn);
