@@ -36,14 +36,14 @@ class tgoogleanalitic extends tplugin {
     $this->user = $_POST['user'];
     $this->se = $_POST['se'];
     $this->save();
-
-$jsmerger = tjsmerger::instance();
+    
+    $jsmerger = tjsmerger::instance();
     if ($this->user == '') {
-$jsmerger->deletetext('default', 'googleanalitic');
+      $jsmerger->deletetext('default', 'googleanalitic');
     } else {
       $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'googleanalitic.js');
       $s = sprintf($s, $this->user, $this->se);
-$jsmerger->addtext('default', 'googleanalitic', $s);
+      $jsmerger->addtext('default', 'googleanalitic', $s);
     }
   }
   
@@ -53,8 +53,8 @@ $jsmerger->addtext('default', 'googleanalitic', $s);
   }
   
   public function uninstall() {
-$jsmerger = tjsmerger::instance();
-$jsmerger->deletetext('default', 'googleanalitic');
+    $jsmerger = tjsmerger::instance();
+    $jsmerger->deletetext('default', 'googleanalitic');
   }
   
 }//class

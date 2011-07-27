@@ -62,19 +62,19 @@ function tpollsInstall($self) {
   litepublisher::$options->parsepost = true;
   
   litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
-
-/*  
+  
+  /*
   $template = ttemplate::instance();
   $template->addtohead(getpollhead());
-*/
-$jsmerger = tjsmerger::instance();
-$jsmerger->lock();
-$jsmerger->add('default', '/plugins/polls/polls.client.min.js');
-$jsmerger->addtext('default', 'poll', 
-'$(document).ready(function() {
- if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
- });');
-$jsmerger->unlock();
+  */
+  $jsmerger = tjsmerger::instance();
+  $jsmerger->lock();
+  $jsmerger->add('default', '/plugins/polls/polls.client.min.js');
+  $jsmerger->addtext('default', 'poll',
+  '$(document).ready(function() {
+  if ($("*[id^=\'pollform_\']").length) { window.pollclient.init(); }
+  });');
+  $jsmerger->unlock();
 }
 
 function tpollsUninstall($self) {
@@ -93,16 +93,16 @@ function tpollsUninstall($self) {
   
   $filter = tcontentfilter::instance();
   $filter->unsubscribeclass($self);
-
+  
   /*
   $template = ttemplate::instance();
   $template->deletefromhead(getpollhead());
-*/
-$jsmerger = tjsmerger::instance();
-$jsmerger->lock();
-$jsmerger->deletefile('default', '/plugins/polls/polls.client.min.js');
-$jsmerger->deletetext('default', 'poll');
-$jsmerger->unlock();
+  */
+  $jsmerger = tjsmerger::instance();
+  $jsmerger->lock();
+  $jsmerger->deletefile('default', '/plugins/polls/polls.client.min.js');
+  $jsmerger->deletetext('default', 'poll');
+  $jsmerger->unlock();
   
   $manager = tdbmanager::instance();
   $manager->deletetable($self->table);

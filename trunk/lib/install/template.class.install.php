@@ -18,7 +18,7 @@ function ttemplateInstall($self) {
   <meta name="description" content="$template.description" />
   <link rel="sitemap" href="$site.url/sitemap.htm" />
   <link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />';
-
+  
   //footer
   $html = tadminhtml::instance();
   $html->section = 'installation';

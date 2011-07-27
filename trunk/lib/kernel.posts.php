@@ -1860,12 +1860,12 @@ class tcommontags extends titems implements  itemplate {
     if ($this->dbversion) {
       $limit  = $sortname == 'itemscount' ? "order by $this->thistable.itemscount desc" :"order by $this->thistable.$sortname asc";
       if ($count > 0) $limit .= " limit $count";
-      return $this->select("$this->thistable.parent = $parent", $limit);
+      return $this->select($parent == -1 ? '' : "$this->thistable.parent = $parent", $limit);
     }
     
     $list = array();
     foreach($this->items as $id => $item) {
-      if ($parent != $item['parent']) continue;
+      if (($parent != -1) & ($parent != $item['parent'])) continue;
       $list[$id] = $item[$sortname];
     }
     if (($sortname == 'itemscount')) {

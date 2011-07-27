@@ -15,23 +15,23 @@ class tajaxcommentformplugin extends tplugin {
   public function install() {
     litepublisher::$options->autocmtform = false;
     litepublisher::$urlmap->addget('/ajaxcommentform.htm', get_class($this));
-
-$jsmerger = tjsmerger::instance();
-$jsmerger->lock();
-$jsmerger->add('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
-$jsmerger->addtext('comments', 'ajaxform', $this->getjs());
-$jsmerger->unlock();
-      }
+    
+    $jsmerger = tjsmerger::instance();
+    $jsmerger->lock();
+    $jsmerger->add('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
+    $jsmerger->addtext('comments', 'ajaxform', $this->getjs());
+    $jsmerger->unlock();
+  }
   
   public function uninstall() {
     litepublisher::$options->autocmtform = true;
     turlmap::unsub($this);
-
-$jsmerger = tjsmerger::instance();
-$jsmerger->lock();
-$jsmerger->deletefile('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
-$jsmerger->deletetext('comments', 'ajaxform');
-$jsmerger->unlock();
+    
+    $jsmerger = tjsmerger::instance();
+    $jsmerger->lock();
+    $jsmerger->deletefile('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
+    $jsmerger->deletetext('comments', 'ajaxform');
+    $jsmerger->unlock();
   }
   
   public function getjs() {
@@ -40,7 +40,7 @@ $jsmerger->unlock();
     $ls = array(
     'error_title' => $lang->error
     );
-return sprintf('ltoptions.commentform = %s;', json_encode($ls));
+    return sprintf('ltoptions.commentform = %s;', json_encode($ls));
   }
   
   public function request($arg) {
