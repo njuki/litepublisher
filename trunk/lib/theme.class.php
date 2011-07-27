@@ -337,13 +337,12 @@ class ttheme extends tevents {
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
   }
 
-public function getajaxtitle($title, $id, $sidebar, $type) {
+public function getajaxtitle($title, $id, $sidebar, $tml) {
     $args = targs::instance();
     $args->title = $title;
 $args->id = $id;
 $args->sidebar = $sidebar;
-dumpstr($this->getwidgettml($sidebar, 'widget', $type));
-    return $this->parsearg($this->getwidgettml($sidebar, 'widget', $type), $args);
+    return $this->parsearg($this->templates[$tml], $args);
 }
 
   
@@ -359,12 +358,6 @@ dumpstr($this->getwidgettml($sidebar, 'widget', $type));
   public static function getwidgetpath($path) {
     if ($path === '') return '';
     switch ($path) {
-      case '.ajax':
-      return '.ajx';
-
-      case '.inline':
-      return '.inline';
-
       case '.items':
       return '.items';
       

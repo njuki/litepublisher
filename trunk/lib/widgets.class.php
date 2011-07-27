@@ -429,15 +429,16 @@ class twidgets extends titems_storage {
 
   public function getajax($id, $sidebar) {
     $theme = ttheme::instance();
-dumpvar($theme->templates['sidebars']);
-    $title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
-//    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajax');
+    //$title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
+    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getinline($id, $sidebar) {
-    $title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
+    $theme = ttheme::instance();
+    //$title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
+    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'inlinewidget');
     if ('cache' == $this->items[$id]['cache']) {
       $cache = twidgetscache::instance();
       $content = $cache->getcontent($id, $sidebar);
@@ -446,7 +447,6 @@ dumpvar($theme->templates['sidebars']);
       $content = $widget->getcontent($id, $sidebar);
     }
     $content = sprintf('<!--%s-->', $content);
-    $theme = ttheme::instance();
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
