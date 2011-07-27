@@ -70,8 +70,8 @@ $prev
 $next
 </p>]
 
-$template.content.post.templatecomments.form = [<script type="text/javascript" src="$site.files/js/litepublisher/comments.min.js"></script>
-    <script type="text/javascript" src="$site.files/files/$site.language.js"></script>
+$template.content.post.templatecomments.form = [
+		<script type="text/javascript" src="$site.files$template.jsmerger_comments"></script>
 <h3 id="respond">$lang.leavereply</h3>
 <form action="$site.url/send-comment.php" method="post" id="commentform">
 <p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
@@ -97,9 +97,8 @@ $template.content.post.templatecomments.confirmform = [<h2>$lang.formhead</h2>
   <p><input type="submit" name="submit" value="$lang.human"/></p>
 </form>]
 
-$template.content.post.templatecomments.moderateform = [<script type="text/javascript" src="$site.files/js/litepublisher/rpc.min.js"></script>
-    <script type="text/javascript" src="$site.files/js/litepublisher/moderate.min.js"></script>
-    <script type="text/javascript" src="$site.files/files/admin$site.language.js"></script>
+$template.content.post.templatecomments.moderateform = [
+		<script type="text/javascript" src="$site.files$template.jsmerger_moderate"></script>
 <form name="moderateform" action="$site.url/admin/comments/" method="post">
 $comments
 <p>

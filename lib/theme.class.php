@@ -336,6 +336,16 @@ class ttheme extends tevents {
     if (isset($widgets['widget' . $tml])) return $widgets['widget'  . $tml];
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
   }
+
+public function getajaxtitle($title, $id, $sidebar, $type) {
+    $args = targs::instance();
+    $args->title = $title;
+$args->id = $id;
+$args->sidebar = $sidebar;
+dumpstr($this->getwidgettml($sidebar, 'widget', $type));
+    return $this->parsearg($this->getwidgettml($sidebar, 'widget', $type), $args);
+}
+
   
   public function simple($content) {
     return str_replace('$content', $content, $this->content->simple);
@@ -349,6 +359,12 @@ class ttheme extends tevents {
   public static function getwidgetpath($path) {
     if ($path === '') return '';
     switch ($path) {
+      case '.ajax':
+      return '.ajx';
+
+      case '.inline':
+      return '.inline';
+
       case '.items':
       return '.items';
       

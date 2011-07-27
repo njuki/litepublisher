@@ -725,7 +725,10 @@ $form - шаблон формы
 $template.sidebar = [
  $widget = [
   <div class="widget">
-    <div class="rubric">$title</div>
+    <div class="rubric">$title 
+$ajax = [<a onclick="widget_load(this, $id, $sidebar)">$title</a>]
+$inline = [<a rel="inlinewidget" href="">$title</a>]
+</div>
     $items = [
     <ul class="linkcat">
       $item = [<li><a rel="$rel" href="$link" title="$title">$icon$text</a>

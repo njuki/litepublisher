@@ -7,7 +7,7 @@
 	$template.head
 	<!--[if IE 6]>
 		<script>		
-        $.getScript("$site.url/themes/default/css/DD_belatedPNG.js", function() {
+        $.load_script("$site.url/themes/default/css/DD_belatedPNG.js", function() {
     $(document).ready(function() {
 		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, .lastcomments li, .lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
 });

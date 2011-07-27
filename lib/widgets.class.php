@@ -425,11 +425,14 @@ class twidgets extends titems_storage {
     }
     return $result;
   }
-  
+
+
   public function getajax($id, $sidebar) {
-    $title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
-    $content = "<!--widgetcontent-$id-->";
     $theme = ttheme::instance();
+dumpvar($theme->templates['sidebars']);
+    $title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
+//    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajax');
+    $content = "<!--widgetcontent-$id-->";
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
