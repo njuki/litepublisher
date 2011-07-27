@@ -306,7 +306,7 @@ class tthemeparser extends tevents {
           return array(
           'path' => $path,
           'tag' => $tag,
-          'replace' => $tag == '$classes' ? '' : $tag
+          'replace' => in_array($tag, array('$ajax', '$inline', '$classes')) ? '' : $tag
           );
         }
         
@@ -344,7 +344,7 @@ class tthemeparser extends tevents {
         //echo "$widgetname, $path<br>";
         $sidebar = &$this->theme->templates['sidebars'][$this->sidebar_index];
         if (!isset($sidebar[$widgetname])) {
-          foreach ( array('', '.items', '.item', '.subcount', '.subitems') as $name) {
+          foreach ( array('', '.ajax', '.inline', '.items', '.item', '.subcount', '.subitems') as $name) {
             $sidebar[$widgetname . $name] = isset($sidebar['widget' . $name]) ? $sidebar['widget' . $name] : '';
           }
           if ($widgetname == 'meta') $sidebar['meta.classes'] = '';
@@ -451,7 +451,7 @@ class tthemeparser extends tevents {
         for ($i = 0; $i < $count; $i++) {
           $sidebar = &$this->theme->templates['sidebars'][$i];
           foreach (ttheme::getwidgetnames() as $widgetname) {
-            foreach (array('', '.items', '.item', '.subcount', '.subitems') as $name) {
+            foreach (array('', '.ajax', '.inline', '.items', '.item', '.subcount', '.subitems') as $name) {
               if (empty($sidebar[$widgetname . $name])) $sidebar[$widgetname . $name] = $sidebar['widget' . $name];
             }
             
