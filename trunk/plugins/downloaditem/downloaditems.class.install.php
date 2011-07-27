@@ -95,7 +95,7 @@ function tdownloaditemsInstall($self) {
 
 $jsmerger = tjsmerger::instance();
 $jsmerger->addtext('default', 'downloaditem', '$(document).ready(function() {
-if ($("a[rel='theme'], a[rel='plugin']").length) {
+if ($("a[rel=\'theme\'], a[rel=\'plugin\']").length) {
 $.load_script(ltoptions.files + "/plugins/downloaditem/downloaditem.min.js");
 }
 });');
