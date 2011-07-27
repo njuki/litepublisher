@@ -40,10 +40,19 @@ $jsmerger->add('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
 
 if (litepublisher::$classes->exists('tdownloaditems')) {
 $jsmerger->addtext('default', 'downloaditem', '$(document).ready(function() {
-if ($("a[rel='theme'], a[rel='plugin']").length) {
+if ($("a[rel=\'theme\'], a[rel=\'plugin\']").length) {
 $.load_script(ltoptions.files + "/plugins/downloaditem/downloaditem.min.js");
 }
 });');
+}
+
+if (litepublisher::$classes->exists('tgoogleanalitic')) {
+$plugin = tgoogleanalitic::instance();
+    if ($plugin->user != '') {
+      $s = file_get_contents(litepublisher::$paths->plugins . 'googleanalitic' . DIRECTORY_SEPARATOR . 'googleanalitic.js');
+      $s = sprintf($s, $plugin->user, $plugin->se);
+$jsmerger->addtext('default', 'googleanalitic', $s);
+}
 }
 
 $jsmerger->unlock();
