@@ -133,8 +133,8 @@ class tjsmerger extends titems {
     'colapse' => tlocal::$data['default']['colapse']
     );
     if (
-    $this->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang))) ||
-    $this->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment']))) ||
+    $this->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang))) |
+    $this->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment']))) |
     $this->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode(tlocal::$data['comments'])))) {
       $this->unlock();
     } else {
