@@ -962,6 +962,15 @@ class ttheme extends tevents {
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
   }
   
+  public function getajaxtitle($title, $id, $sidebar, $tml) {
+    $args = targs::instance();
+    $args->title = $title;
+    $args->id = $id;
+    $args->sidebar = $sidebar;
+    return $this->parsearg($this->templates[$tml], $args);
+  }
+  
+  
   public function simple($content) {
     return str_replace('$content', $content, $this->content->simple);
   }
@@ -1496,15 +1505,19 @@ class twidgets extends titems_storage {
     return $result;
   }
   
+  
   public function getajax($id, $sidebar) {
-    $title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
-    $content = "<!--widgetcontent-$id-->";
     $theme = ttheme::instance();
+    //$title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
+    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajaxwidget');
+    $content = "<!--widgetcontent-$id-->";
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
   public function getinline($id, $sidebar) {
-    $title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
+    $theme = ttheme::instance();
+    //$title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
+    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'inlinewidget');
     if ('cache' == $this->items[$id]['cache']) {
       $cache = twidgetscache::instance();
       $content = $cache->getcontent($id, $sidebar);
@@ -1513,7 +1526,6 @@ class twidgets extends titems_storage {
       $content = $widget->getcontent($id, $sidebar);
     }
     $content = sprintf('<!--%s-->', $content);
-    $theme = ttheme::instance();
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   

@@ -336,15 +336,15 @@ class ttheme extends tevents {
     if (isset($widgets['widget' . $tml])) return $widgets['widget'  . $tml];
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
   }
-
-public function getajaxtitle($title, $id, $sidebar, $tml) {
+  
+  public function getajaxtitle($title, $id, $sidebar, $tml) {
     $args = targs::instance();
     $args->title = $title;
-$args->id = $id;
-$args->sidebar = $sidebar;
+    $args->id = $id;
+    $args->sidebar = $sidebar;
     return $this->parsearg($this->templates[$tml], $args);
-}
-
+  }
+  
   
   public function simple($content) {
     return str_replace('$content', $content, $this->content->simple);

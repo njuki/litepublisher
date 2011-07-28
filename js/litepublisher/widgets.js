@@ -58,4 +58,26 @@ $(document).ready(function() {
     widget_inline(this);
     return false;
   });
+  
+  $(".inlinewidget, .ajaxwidget").each(function() {
+    var a = $('<a class="expandwidget" href="">' + lang.widgetlang.expand + '</a>');
+    $(this).append(a);
+    
+    a.one("click", function() {
+      if ($(this).parent().hasClass("inlinewidget")) {
+        widget_inline(this);
+      } else {
+        var rel = $(this).parent().attr("rel").split("-");
+        widget_load(this, rel[1], rel[2]);
+      }
+      return false;
+    });
+    
+    a.click(function() {
+      $(this).toggleClass("expandwidget colapsewidget");
+      $(this).text($(this).hasClass("expandwidget") ? lang.widgetlang.expand : lang.widgetlang.colapse);
+      return false;
+    });
+    
+  });
 });
