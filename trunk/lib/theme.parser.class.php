@@ -1020,17 +1020,17 @@ class tthemeparser extends tevents {
         'tag' => '$custom',
         'replace' => ''
         ),
-
+        
         'ajaxwidget' => array(
         'tag' => '$template.ajaxwidget',
         'replace' => '',
         ),
-
+        
         'inlinewidget' => array(
         'tag' => '$template.inlinewidget',
         'replace' => ''
         )
-
+        
         );
       }
       
