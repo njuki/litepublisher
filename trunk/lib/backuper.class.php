@@ -244,7 +244,6 @@ class tbackuper extends tevents {
     }
   }
   
-  
   public function chdir($dir) {
     if ($dir === $this->lastdir) return;
     $this->lastdir= $dir;
@@ -307,9 +306,11 @@ class tbackuper extends tevents {
     $this->createarchive();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
     
-    $this->readdata(litepublisher::$paths->data);
-    
-    if ($lib)  {
+    //$this->readdata(litepublisher::$paths->data);
+      $this->setdir('storage');
+          $this->readdir('storage/data');
+
+        if ($lib)  {
       $this->setdir('lib');
       $this->readdir('lib');
       $this->setdir('js');
