@@ -27,8 +27,10 @@ class tjsmerger extends titems {
   }
   
   public function add($section, $filename) {
+$filename = trim($filename);
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
     if (empty($filename)) return false;
+$filename = '/' . ltrim($filename, '/');
     if (!isset($this->items[$section])) {
       $this->items[$section] = array(
       'files' => array($filename),
@@ -63,7 +65,7 @@ class tjsmerger extends titems {
     
     $a = explode("\n", trim($s));
     foreach ($a as $filename) {
-      $this->add($section, $filename);
+      $this->add($section, trim($filename));
     }
     $this->unlock();
   }
@@ -96,7 +98,7 @@ class tjsmerger extends titems {
   }
   
   public function assemble() {
-    $home = litepublisher::$paths->home;
+    $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
     $theme = ttheme::instance();
     $template = ttemplate::instance();
     foreach ($this->items as $section => $items) {
@@ -122,12 +124,17 @@ class tjsmerger extends titems {
     }
   }
   
-  
-  public function onupdated() {
+    public function onupdated() {
     tlocal::loadlang('admin');
     $this->lock();
   $js = "var lang;\nif (lang == undefined) lang = {};\n";
-    if ($this->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment']))) ||
+$widgetlang = array(
+'expand' => tlocal::$data['default']['expand'],
+'colapse' => tlocal::$data['default']['colapse']
+);
+    if (
+$this->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang))) ||
+$this->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment']))) ||
     $this->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode(tlocal::$data['comments'])))) {
       $this->unlock();
     } else {

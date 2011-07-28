@@ -1,6 +1,9 @@
 <?php
 
 function update474() {
+$parser = tthemeparser::instance();
+$parser->unsubscribeclassname('tajaxcommentformplugin');
+
 litepublisher::$classes->add('tjsmerger', 'jsmerger.class.php');
 litepublisher::$classes->add('tadminjsmerger', 'admin.jsmerger.class.php');
 
