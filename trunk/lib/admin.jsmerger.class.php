@@ -41,9 +41,11 @@ class tadminjsmerger extends tadminmenu {
   public function processform() {
     $jsmerger = tjsmerger::instance();
     $jsmerger->lock();
-    foreach ($array_keys($jsmerger->items) as $section) {
+//$jsmerger->items = array();
+//$jsmerger->install();
+   foreach (array_keys($jsmerger->items) as $section) {
       $keys = array_keys($jsmerger->items[$section]['texts']);
-      $jsmerger->setfromstring($_POST[$section . '_files']);
+      $jsmerger->setfromstring($section, $_POST[$section . '_files']);
       foreach ($keys as $key) {
         $jsmerger->addtext($section, $key, $_POST[$section . '_text_' . $key]);
       }
