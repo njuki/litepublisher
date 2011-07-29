@@ -348,8 +348,10 @@ class tbackuper extends tevents {
     $this->createarchive();
     if (dbversion) $this->addfile('dump.sql', $this->getdump(), $this->filer->chmod_file);
     
-    $this->readdata(litepublisher::$paths->data);
-    
+    //$this->readdata(litepublisher::$paths->data);
+      $this->setdir('storage');
+          $this->readdir('storage/data');
+
     $this->setdir('lib');
     $this->readdir('lib');
     $this->setdir('js');
@@ -618,6 +620,48 @@ class tbackuper extends tevents {
     @chmod($filename, 0666);
     return $filename;
   }
+
+  public function createshellbackup(){
+chdir(litepublisher::$paths->backup);
+$dbconfig = litepublisher::$options->dbconfig;
+$cmd = array();
+$cmd[] = sprintf('mysqldump -u%s -p%s %s>dump.sql', $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])), $dbconfig['dbname']);
+    $filename = litepublisher::$domain . date('-Y-m-d');
+$cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../storage/data/* dump.sql', $filename);
+$cmd[] ='rm dump.sql';
+$cmd[] = "gzip $filename.tar";
+$cmd[] = "chmod 0666 $filename.tar.gz";
+exec(implode("\n", $cmd), $r);
+//echo implode("\n", $r);
+return litepublisher::$paths->backup . $filename;
+}
+
+  public function createshellfullbackup(){
+chdir(litepublisher::$paths->backup);
+$dbconfig = litepublisher::$options->dbconfig;
+$cmd = array();
+$cmd[] = sprintf('mysqldump -u%s -p%s %s>dump.sql', $dbconfig['login'], str_rot13(base64_decode($dbconfig['password'])), $dbconfig['dbname']);
+    $filename = litepublisher::$domain . date('-Y-m-d');
+$cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../storage/data/* dump.sql ../../lib/* ../../plugins/* ../../themes/* ../../js/* ../../index.php "../../.htaccess"', $filename);
+$cmd[] ='rm dump.sql';
+$cmd[] = "gzip $filename.tar";
+$cmd[] = "chmod 0666 $filename.tar.gz";
+exec(implode("\n", $cmd), $r);
+//echo implode("\n", $r);
+return litepublisher::$paths->backup . $filename;
+}
+
+  public function createshellfilesbackup(){
+chdir(litepublisher::$paths->backup);
+$cmd = array();
+    $filename = 'files_' . litepublisher::$domain . date('-Y-m-d');
+$cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../files/*', $filename);
+$cmd[] = "gzip $filename.tar";
+$cmd[] = "chmod 0666 $filename.tar.gz";
+exec(implode("\n", $cmd), $r);
+//echo implode("\n", $r);
+return litepublisher::$paths->backup . $filename;
+}
   
   public function test() {
     if (!@file_put_contents(litepublisher::$paths->data . 'index.htm', ' ')) return false;
