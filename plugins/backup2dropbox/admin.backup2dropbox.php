@@ -10,26 +10,31 @@ class tadminbackup2dropbox {
   
   public function getcontent() {
     $plugin = tbackup2dropbox::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
-    $form = file_get_contents($dir . 'backup2dropbox.tml');
     $html = tadminhtml::instance();
     $args = targs::instance();
-    $admin = tadminplugins::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args->add($about);
+    tlocal::$data['dropbox'] = $about;
+    $lang = tlocal::instance('dropbox');
     $args->add($plugin->data);
-$form = $html->adminform('[text=email] [password=password]  [text=dir [checkbox=onlychanged]] [checkbox=useshell]', $args);
-    return $html->parsearg($form, $args);
+    $args->formtitle = $about['head'];
+    $form = $html->adminform('[text=email] [password=password]  [text=dir [checkbox=uploadfiles] [checkbox=onlychanged]] [checkbox=useshell]', $args);
+    $form .= '<form name="createnowform" action="" method="post" >
+    <input type="hidden" name="createnow" value="1" />
+    <p><input type="submit" name="create_now" value="' . $lang->createnow . '"/></p>
+    </form>';
+    
+    return $form;
   }
   
   public function processform() {
     $plugin = tbackup2dropbox::instance();
     if (!isset($_POST['createnow'])) {
-      extract($_POST);
+      extract($_POST, EXTR_SKIP);
       $plugin->lock();
       $plugin->email = $email;
       $plugin->password = $password;
       $plugin->dir = $dir;
+      $plugin->uploadfiles = isset($uploadfiles);
       $plugin->onlychanged = isset($onlychanged);
       $plugin->useshell = isset($useshell);
       $plugin->unlock();
