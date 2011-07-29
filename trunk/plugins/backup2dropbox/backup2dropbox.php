@@ -45,28 +45,28 @@ class tbackup2dropbox extends tplugin {
       $uploader->upload($filename, $this->dir);
       unlink($filename);
       if ($this->uploadfiles) {
-if ($this->useshell) {
-$filename= $backuper->createshellfilesbackup();
-      $uploader->upload($filename, $this->dir);
-      unlink($filename);
-} else {
-$this->uploadfiles($uploader, '');
-}
-}
+        if ($this->useshell) {
+          $filename= $backuper->createshellfilesbackup();
+          $uploader->upload($filename, $this->dir);
+          unlink($filename);
+        } else {
+          $this->upload_files($uploader, '');
+        }
+      }
     } catch (Exception $e) {
       return $e->getMessage();
     }
     return true;
   }
   
-  private function uploadfiles(DropboxUploader $uploader, $dir) {
+  private function upload_files(DropboxUploader $uploader, $dir) {
     if ($dir != '') $dir = trim($dir, '/') . '/';
     if ($list = glob(litepublisher::$paths->files . $dir . '*')) {
       foreach($list as $filename) {
         if (is_dir($filename)) {
           $base = basename($filename);
           if ($base[0] == '.') continue;
-          $this->uploadfiles($uploader, $base);
+          $this->upload_files($uploader, $base);
         } else {
           $uploader->upload($filename, $this->dir . 'files/' . $dir);
         }
