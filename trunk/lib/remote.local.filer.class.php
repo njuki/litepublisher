@@ -34,6 +34,7 @@ class tlocalfiler extends tremotefiler {
   }
   
   public function chdir($dir) {
+    //echo "chdir $dir\n";
     return chdir($dir);
   }
   
