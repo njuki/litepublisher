@@ -4,17 +4,27 @@ if (this.basket != undefined) return this;
 this.basket = {};
 		this.basket.options =  $.extend({
 load_ui: false,
-dialog: "#basket_dialog",
+sel: {
+uidialog: "#basket_dialog",
 count: "#basket_count",
-price: "#basket_count",
-dialog_count: "#basket_count",
-dialog_price: "#basket_count",
-item_name: ".basket_item_name",
-item_count: ".basket_item_name",
-item_price: ".basket_item_price",
-text_buy: "Buy",
-text_clear: "Clear",
-text_close: "Close",
+price: "#basket_price",
+},
+
+footer: {count: "#basket_count",
+price: "#basket_count"
+},
+
+row: {
+name: ".basket_item_name",
+count: ".basket_item_name",
+price: ".basket_item_price"
+},
+
+texts: {
+buy: "Buy",
+clear: "Clear",
+close: "Close"
+},
 buy_url: "buy.htm"
 }, options);  
 
@@ -111,11 +121,20 @@ basket.buy = function() {
 window.location = this.options.buy_url;
 };
 
+basket.clear_table = function() {
+this.clear();
+var first =$(row.row + ":first");
+$(this.options.sel.basket_item + ":not(:first)", parent).remove(); 
+first.hide();
+},
+
 basket.showdialog = function() {
 var count = 0;
 var price = 0;
+var row = this.options.itemtable;
 var first =$(this.options.basket_item + ":first");
 var parent = first.parent();
+
 $(this.options.basket_item + ":not(:first)", parent).remove(); 
 var l = this.data.items.length;
 if (l == 0) {
@@ -127,23 +146,23 @@ var item = this.data.items[i];
 count += item.count;
 price += item.price * item.count;
 var elem = i == 0 ? first : first.clone().appendTo(parent);
-$(this.options.item_count, elem).text(item.count);
-$(this.options.item_price, elem).text(item.price);
-$(this.options.item_name, elem).html(this.products.get(item.id));
+$(row.count, elem).text(item.count);
+$(row.price, elem).text(item.price);
+$(row.name, elem).html(this.products.get(item.id));
 }
 }
 
-$(this.options.dialog_count).text(count);
-$(this.options.dialog_price).text(price);
+$(this.options.footer.count).text(count);
+$(this.options.footer.price).text(price);
 var basket = this;
 
 basket.load_ui(function() {
-$(basket.options.dialog).dialog({
+$(basket.options.sel.uidialog).dialog({
     autoOpen: true,
     modal: true,
     buttons: [
     {
-      text: basket.options.text_buy,
+      text: basket.options.texts.buy,
       click: function() {
         $(this).dialog("close");
 basket.buy();
@@ -151,17 +170,14 @@ basket.buy();
     },
 
     {
-      text: basket.options.text_close,
+      text: basket.options.texts.clear,
       click: function() {
-        //$(this).dialog("close");
-basket.cllear();
-$(basket.options.basket_item + ":not(:first)", parent).remove(); 
-first.hide();
+basket.cllear_table();
 }
       },
 
     {
-      text: basket.options.text_close,
+      text: basket.options.texts.close,
       click: function() {
         $(this).dialog("close");
       }
