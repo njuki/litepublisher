@@ -18,6 +18,7 @@ class tadminbackup2dropbox {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->add($about);
     $args->add($plugin->data);
+$form = $html->adminform('[text=email] [password=password]  [text=dir [checkbox=onlychanged]] [checkbox=useshell]', $args);
     return $html->parsearg($form, $args);
   }
   
@@ -30,6 +31,7 @@ class tadminbackup2dropbox {
       $plugin->password = $password;
       $plugin->dir = $dir;
       $plugin->onlychanged = isset($onlychanged);
+      $plugin->useshell = isset($useshell);
       $plugin->unlock();
       return '';
     } else {

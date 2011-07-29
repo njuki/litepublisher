@@ -22,6 +22,7 @@ class tbackup2dropbox extends tplugin {
     $this->data['onlychanged'] = false;
     $this->data['posts'] = 0;
     $this->data['comments'] = 0;
+    $this->data['useshell'] = false;
   }
   
   public function send() {
@@ -34,7 +35,7 @@ class tbackup2dropbox extends tplugin {
     }
     
     $backuper = tbackuper::instance();
-    $filename  = $backuper->createbackup();
+    $filename  = $this->useshell ? $backuper->createshellbackup() : $backuper->createbackup();
     
     require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'DropboxUploader.php');
     
@@ -43,8 +44,15 @@ class tbackup2dropbox extends tplugin {
       set_time_limit(600);
       $uploader->upload($filename, $this->dir);
       unlink($filename);
-      //if ($this->uploadfiles)
-      $this->uploadfiles($uploader, '');
+      if ($this->uploadfiles) {
+if ($this->useshell) {
+$filename= $backuper->createshellfilesbackup();
+      $uploader->upload($filename, $this->dir);
+      unlink($filename);
+} else {
+$this->uploadfiles($uploader, '');
+}
+}
     } catch (Exception $e) {
       return $e->getMessage();
     }
