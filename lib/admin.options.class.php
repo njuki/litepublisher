@@ -154,6 +154,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'secure':
       $auth = tauthdigest::instance();
+      $args->echoexception = $options->echoexception;
       $args->cookie = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
@@ -161,6 +162,7 @@ class Tadminoptions extends tadminmenu {
       $args->xxxcheck = $auth->xxxcheck;
       $filter = tcontentfilter::instance();
       $args->phpcode = $filter->phpcode;
+      $args->useshell = tupdater::instance()->useshell;
       $backuper = tbackuper::instance();
       $args->filertype = tadminhtml::array2combo(array(
       'auto' => 'auto',
@@ -304,6 +306,7 @@ class Tadminoptions extends tadminmenu {
         $auth->logout();
         return $h2->passwordchanged;
       } else {
+        $options->echoexception = isset($echoexception);
         $options->cookieenabled = isset($cookie);
         $options->reguser = isset($reguser);
         $this->usersenabled = isset($usersenabled);
@@ -319,6 +322,13 @@ class Tadminoptions extends tadminmenu {
         if ($backuper->filertype != $filertype) {
           $backuper->filertype = $filertype;
           $backuper->save();
+        }
+        
+        $useshell = isset($useshell);
+        $updater = tupdater::instance();
+        if ($useshell !== $updater->useshell) {
+          $updater->useshell = $useshell;
+          $updater->save();
         }
       }
       break;

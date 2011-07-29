@@ -17,8 +17,9 @@ class tupdater extends tevents {
   
   protected function create() {
     parent::create();
-    $this->addevents('onupdated');
     $this->basename = 'updater';
+    $this->addevents('onupdated');
+    $this->data['useshell'] = false;
     $this->version =  self::getversion();
     $this->log = false;
   }
@@ -75,7 +76,12 @@ class tupdater extends tevents {
     flush();
     $lang = tlocal::instance('service');
     $backuper = tbackuper::instance();
-    $backuper->createbackup();
+    if ($this->useshell) {
+      $backuper->createshellbackup();
+    } else {
+      $backuper->createbackup();
+    }
+    
     if ($this->download($this->latest)) {
       $this->result = $lang->successdownload;
       $this->update();
