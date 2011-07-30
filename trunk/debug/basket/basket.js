@@ -4,22 +4,19 @@ if (this.basket != undefined) return this;
 this.basket = {};
 		this.basket.options =  $.extend({
 load_ui: false,
-sel: {
+selectors: {
 uidialog: "#basket_dialog",
 count: "#basket_count",
 price: "#basket_price",
-},
 
-footer: {count: "#basket_count",
-price: "#basket_count"
-},
+footer_count: "#basket_count",
+footer_price: "#basket_count",
 
-row: {
-name: ".basket_item_name",
-count: ".basket_item_name",
-price: ".basket_item_price"
+row: ".",
+row_name: ".basket_item_name",
+row_count: ".basket_item_name",
+row_price: ".basket_item_price"
 },
-
 texts: {
 buy: "Buy",
 clear: "Clear",
@@ -123,19 +120,19 @@ window.location = this.options.buy_url;
 
 basket.clear_table = function() {
 this.clear();
-var first =$(row.row + ":first");
-$(this.options.sel.basket_item + ":not(:first)", parent).remove(); 
+var first =$(this.options.selectors.row + ":first");
 first.hide();
+$(this.options.sel.basket_item + ":not(:first)", parent).remove(); 
 },
 
 basket.showdialog = function() {
 var count = 0;
 var price = 0;
-var row = this.options.itemtable;
-var first =$(this.options.basket_item + ":first");
+var sel = this.options.selectors;
+var first =$(sel.row+ ":first");
 var parent = first.parent();
 
-$(this.options.basket_item + ":not(:first)", parent).remove(); 
+$(sel.row + ":not(:first)", parent).remove(); 
 var l = this.data.items.length;
 if (l == 0) {
 first.hide();
