@@ -3,8 +3,8 @@ set_time_limit(100);
 @ini_set('memory_limit', '48M'); 
 
 define('litepublisher_mode', 'debug');
-//require('index.php');
-require_once('F:\web5\home\dest\www\index.debug.php');
+require('index.php');
+//require_once('F:\web5\home\dest\www\index.debug.php');
 
 if (file_exists('wp-load.php')) {
 require('wp-load.php');
