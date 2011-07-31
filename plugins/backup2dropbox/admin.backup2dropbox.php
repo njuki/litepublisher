@@ -17,7 +17,7 @@ class tadminbackup2dropbox {
     $lang = tlocal::instance('dropbox');
     $args->add($plugin->data);
     $args->formtitle = $about['head'];
-    $form = $html->adminform('[text=email] [password=password]  [text=dir [checkbox=uploadfiles] [checkbox=onlychanged]] [checkbox=useshell]', $args);
+    $form = $html->adminform('[text=email] [password=password] [text=dir] [checkbox=uploadfiles] [checkbox=onlychanged]] [checkbox=useshell]', $args);
     $form .= '<form name="createnowform" action="" method="post" >
     <input type="hidden" name="createnow" value="1" />
     <p><input type="submit" name="create_now" value="' . $lang->createnow . '"/></p>
