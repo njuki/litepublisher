@@ -41,10 +41,10 @@ class ttidyfilter extends tplugin {
   }
   
   public function install() {
-    if (!class_exists('tidy')) die('PHP tidy extension is Requried');
+    if (!class_exists('tidy')) die('PHP tidy extension is required');
     $filter = tcontentfilter::instance();
     $filter->lock();
-    $filter->afterfilter = $this->filter;
+    $filter->onsimplefilter = $this->filter;
     $filter->onaftercomment = $this->filter;
     $filter->unlock();
   }
