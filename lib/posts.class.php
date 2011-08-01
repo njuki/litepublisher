@@ -110,14 +110,14 @@ class tposts extends titems {
     unset($item);
     
     foreach ($subclasses as $class => $list) {
-/*
+      /*
       $childtable =  $db->prefix .
       call_user_func_array(array($class, 'getchildtable'), array());
       $list = implode(',', $list);
       $subitems = $db->res2items($db->query("select $childtable.*
       from $childtable where id in ($list)"));
-*/
-$subitems = call_user_func_array(array($class, 'selectitems'), array($list));
+      */
+      $subitems = call_user_func_array(array($class, 'selectitems'), array($list));
       foreach ($subitems as $id => $subitem) {
         $items[$id] = array_merge($items[$id], $subitem);
       }

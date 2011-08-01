@@ -77,7 +77,7 @@ class tusernews extends tplugin {
     }
     
     $post->content = $raw;
-    $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl);
+    $post->filtered = sprintf($this->sourcetml,     $post->meta->sourceurl) .$post->filtered;
     if ($id == 0) {
       $post->status = $status;
       $id = $posts->add($post);

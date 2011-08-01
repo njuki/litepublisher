@@ -234,6 +234,19 @@ class tpost extends titem implements  itemplate {
     return '';
   }
   
+  public static function selectitems(array $items) {
+    return array();
+  }
+  
+  public static function select_child_items($table, array $items) {
+    if (($table == '') || (count($items) == 0)) return array();
+    $db = litepublisher::$db;
+    $childtable =  $db->prefix . $table;
+    $list = implode(',', $items);
+    return $db->res2items($db->query("select $childtable.*
+    from $childtable where id in ($list)"));
+  }
+  
   public static function newpost($class) {
     if (empty($class)) $class = __class__;
     return new $class();
@@ -1058,11 +1071,14 @@ class tposts extends titems {
     unset($item);
     
     foreach ($subclasses as $class => $list) {
+      /*
       $childtable =  $db->prefix .
       call_user_func_array(array($class, 'getchildtable'), array());
       $list = implode(',', $list);
       $subitems = $db->res2items($db->query("select $childtable.*
       from $childtable where id in ($list)"));
+      */
+      $subitems = call_user_func_array(array($class, 'selectitems'), array($list));
       foreach ($subitems as $id => $subitem) {
         $items[$id] = array_merge($items[$id], $subitem);
       }
@@ -1597,6 +1613,7 @@ class tcommontags extends titems implements  itemplate {
   public $PostPropname;
   public $id;
   private $newtitle;
+  private $all_loaded;
   
   protected function create() {
     $this->dbversion = dbversion;
@@ -1610,10 +1627,18 @@ class tcommontags extends titems implements  itemplate {
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
+    $this->all_loaded = false;
   }
   
   protected function getpost($id) {
     return tpost::instance($id);
+  }
+  
+  public function loadall() {
+    //prevent double request
+    if ($this->all_loaded) return;
+    $this->all_loaded = true;
+    return parent::loadall();
   }
   
   public function select($where, $limit) {

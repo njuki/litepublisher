@@ -15,11 +15,11 @@ class tticket extends tpost {
   public static function getchildtable() {
     return 'tickets';
   }
-
+  
   public static function selectitems(array $items) {
-return self::select_child_items('tickets', $items);
-}
-
+    return self::select_child_items('tickets', $items);
+  }
+  
   protected function create() {
     parent::create();
     $this->data['childdata'] = &$this->childdata;

@@ -139,7 +139,7 @@ class tcontentfilter extends tevents {
     $s = $this->replacecode($s);
     $s = self::auto_p($s);
     $this->callevent('onsimplefilter', array(&$s));
-return $s;
+    return $s;
   }
   
   public function splitfilter($s) {
