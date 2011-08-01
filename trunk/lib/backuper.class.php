@@ -636,7 +636,7 @@ class tbackuper extends tevents {
       $cmd[] = "chmod 0666 $filename.tar.gz";
       exec(implode("\n", $cmd), $r);
       //echo implode("\n", $r);
-      return litepublisher::$paths->backup . $filename;
+      return litepublisher::$paths->backup . $filename . '.tar.gz';
     }
     
     public function createshellfullbackup(){
@@ -651,7 +651,7 @@ class tbackuper extends tevents {
       $cmd[] = "chmod 0666 $filename.tar.gz";
       exec(implode("\n", $cmd), $r);
       //echo implode("\n", $r);
-      return litepublisher::$paths->backup . $filename;
+      return litepublisher::$paths->backup . $filename . '.tar.gz';
     }
     
     public function createshellfilesbackup(){
@@ -663,7 +663,7 @@ class tbackuper extends tevents {
       $cmd[] = "chmod 0666 $filename.tar.gz";
       exec(implode("\n", $cmd), $r);
       //echo implode("\n", $r);
-      return litepublisher::$paths->backup . $filename;
+      return litepublisher::$paths->backup . $filename . '.tar.gz';
     }
     
     public function test() {

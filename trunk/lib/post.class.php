@@ -35,6 +35,19 @@ class tpost extends titem implements  itemplate {
     return '';
   }
   
+  public static function selectitems(array $items) {
+return array();
+}
+
+  public static function select_child_items($table, array $items) {
+if (($table == '') || (count($items) == 0))) return array();
+$db = litepublisher::$db;
+      $childtable =  $db->prefix . $table;
+      $list = implode(',', $list);
+return $db->res2items($db->query("select $childtable.*
+      from $childtable where id in ($list)"));
+}
+
   public static function newpost($class) {
     if (empty($class)) $class = __class__;
     return new $class();
