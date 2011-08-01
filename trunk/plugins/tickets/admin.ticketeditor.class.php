@@ -148,7 +148,7 @@ class tticketeditor extends tposteditor {
       $id = $tickets->add($ticket);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
-$this->idpost = $id;
+      $this->idpost = $id;
       if (litepublisher::$options->group == 'ticket') {
         $users =tusers::instance();
         $pages = tuserpages::instance();

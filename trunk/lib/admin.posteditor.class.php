@@ -166,7 +166,10 @@ class tposteditor extends tadminmenu {
     if (empty($_POST['title'])) return $html->h2->emptytitle;
     $id = (int)$_POST['id'];
     $post = tpost::instance($id);
-    if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  return $r;
+    if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  {
+      $this->idpost = $post->id;
+      return $r;
+    }
     $this->set_post($post);
     
     $posts = tposts::instance();

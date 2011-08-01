@@ -13,7 +13,7 @@ class tcommontags extends titems implements  itemplate {
   public $PostPropname;
   public $id;
   private $newtitle;
-private $all_loaded;
+  private $all_loaded;
   
   protected function create() {
     $this->dbversion = dbversion;
@@ -27,19 +27,19 @@ private $all_loaded;
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
-$this->all_loaded = false;
+    $this->all_loaded = false;
   }
   
   protected function getpost($id) {
     return tpost::instance($id);
   }
-
+  
   public function loadall() {
-//prevent double request
-if ($this->all_loaded) return;
-$this->all_loaded = true;
-return parent::loadall();
-}
+    //prevent double request
+    if ($this->all_loaded) return;
+    $this->all_loaded = true;
+    return parent::loadall();
+  }
   
   public function select($where, $limit) {
     if (!$this->dbversion) $this->error('Select method must be called ffrom database version');
