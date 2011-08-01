@@ -11,3 +11,4 @@ $dropbox = tbackup2dropbox::instance();
     $dropbox->data['uploadfiles'] = false;
 $dropbox->save();
 }
+}
