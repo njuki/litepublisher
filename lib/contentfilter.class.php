@@ -135,10 +135,11 @@ class tcontentfilter extends tevents {
   public function simplefilter($s) {
     $s = trim($s);
     if ($s == '') return '';
-    $this->callevent('onsimplefilter', array(&$s));
     if ($this->autolinks) $s = self::createlinks($s);
     $s = $this->replacecode($s);
-    return self::auto_p($s);
+    $s = self::auto_p($s);
+    $this->callevent('onsimplefilter', array(&$s));
+return $s;
   }
   
   public function splitfilter($s) {

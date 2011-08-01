@@ -13,7 +13,7 @@ class tcommontags extends titems implements  itemplate {
   public $PostPropname;
   public $id;
   private $newtitle;
-private $all_loaded
+private $all_loaded;
   
   protected function create() {
     $this->dbversion = dbversion;

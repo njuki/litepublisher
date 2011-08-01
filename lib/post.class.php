@@ -40,10 +40,10 @@ return array();
 }
 
   public static function select_child_items($table, array $items) {
-if (($table == '') || (count($items) == 0))) return array();
+if (($table == '') || (count($items) == 0)) return array();
 $db = litepublisher::$db;
       $childtable =  $db->prefix . $table;
-      $list = implode(',', $list);
+      $list = implode(',', $items);
 return $db->res2items($db->query("select $childtable.*
       from $childtable where id in ($list)"));
 }

@@ -100,10 +100,7 @@ class tticketeditor extends tposteditor {
   }
   
   public function processform() {
-    /*
-    echo "<pre>\n";
-    var_dump($_POST);
-    echo "</pre>\n";
+    /* dumpvar($_POST);
     return;
     */
     extract($_POST, EXTR_SKIP);
@@ -151,6 +148,7 @@ class tticketeditor extends tposteditor {
       $id = $tickets->add($ticket);
       $_GET['id'] = $id;
       $_POST['id'] = $id;
+$this->idpost = $id;
       if (litepublisher::$options->group == 'ticket') {
         $users =tusers::instance();
         $pages = tuserpages::instance();
