@@ -18,16 +18,22 @@ class tadminpassword extends tadminform {
   }
   
   public function getcontent() {
-    return $this->html->form();
+$args = new targs();
+$lang = tlocal::instance('password');
+$args->formtitle = $lang->enteremail;
+    return $this->html->adminform('[text=login] [text=email]', $args);
   }
   
   public function processform() {
+    $login = trim($_POST['login']);
     $email = strtolower(trim($_POST['email']));
     if (litepublisher::$options->usersenabled) {
       $users = tusers::instance();
-      $id = $users->emailexists($email);
+      if ($id = $users->emailexists($email)) {
+$id = $login == $users->getvalue($id, 'login');
+}
     } else {
-      $id = $email == strtolower(trim(litepublisher::$options->email))  ? 1 : false;
+      $id = $email == strtolower(trim(litepublisher::$options->email))  ? ($login == litepublisher::$options->login)  : false;
     }
     if (!$id) return $this->html->h2->error;
     $password = md5uniq();

@@ -221,7 +221,7 @@ class tadminservice extends tadminmenu {
       } elseif (isset($fullbackup)) {
         $filename = str_replace('.', '-', litepublisher::$domain) . date('-Y-m-d') . $backuper->getfiletype();
         $content = $backuper->getfull();
-        $this->sendfile($content);
+        $this->sendfile($content, '');
       } elseif (isset($sqlbackup)) {
         $content = $backuper->getdump();
         $filename = litepublisher::$domain . date('-Y-m-d') . '.sql';
