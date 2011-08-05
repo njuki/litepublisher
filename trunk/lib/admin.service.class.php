@@ -25,11 +25,11 @@ class tadminservice extends tadminmenu {
       $updater = tupdater::instance();
       $islatest= $updater->islatest();
       if ($islatest === false) {
-        $result .= $html->h2->errorservice;
+        $result .= $html->h4->errorservice;
       } elseif ($islatest <= 0) {
-        $result .= $html->h3->islatest;
+        $result .= $html->h4->islatest;
       } else {
-        $args->loginform = $this->getloginform();
+        $args->loginform = $updater->useshell ? '' : $this->getloginform();
         $result .= $html->requireupdate($args);
       }
       break;
