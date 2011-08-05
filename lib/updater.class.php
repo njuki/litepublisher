@@ -121,6 +121,8 @@ class tupdater extends tevents {
   }
   
   public function download($version) {
+    if ($this->useshell) return $this->downloadshell($version);
+
     $lang = tlocal::instance('service');
     $backuper = tbackuper::instance();
     if (!$backuper->test()) {
@@ -144,6 +146,19 @@ class tupdater extends tevents {
     $this->onupdated();
     return true;
   }
+
+  public function downloadshell($version) {
+$filename = "litepublisher.$version.tar.gz";
+      $cmd = array();
+      $cmd[] = 'cd ' . litepublisher::$paths->backup;
+$cmd[] = 'wget http://litepublisher.googlecode.com/files/' . $filename;
+      $cmd[] = 'cd ' . litepublisher::$paths->home;
+$cmd[] = sprintf('tar -xf %s%s -p --overwrite', litepublisher::$paths->backup, $filename);
+$cmd[] = 'rm ' . litepublisher::$paths->backup . $filename;
+      exec(implode("\n", $cmd), $r);
+if ($s = implode("\n", $r)) return $s;
+    $this->onupdated();
+    return true;
+}
   
 }//class
-?>
