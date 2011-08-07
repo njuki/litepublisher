@@ -263,9 +263,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
       return  $this->wp_editPage(0, $postid, $username, $password, $struct, $publish);
     }
     
-    
     $postid = (int)$postid;
-    $this->canedit($login, $password, $postid);
+    $this->canedit($username, $password, $postid);
     $posts = tposts::instance();
     if (!$posts->itemexists($postid))  return $this->xerror(404, "Invalid post id.");
     
@@ -290,7 +289,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   // returns struct
   public function getPost($id, $username, $password) {
     $id=(int) $id;
-    $this->canedit($login, $password, $id);
+    $this->canedit($username, $password, $id);
     $posts = tposts::instance();
     if (!$posts->itemexists($id))  return $this->xerror(404, "Invalid post id.");
     
