@@ -102,14 +102,14 @@ class tfiler {
   public static function append($s, $filename) {
     $dir = dirname($filename);
     if (!is_dir($dir)) {
-      if (!is_dir($dir))mkdir($dir, 0777);
-      chmod($dir, 0777);
+mkdir($dir, 0777);
+      @chmod($dir, 0777);
     }
     
     if ($fp = fopen($filename,"a+")) {
       fwrite($fp, $s);
       fclose($fp);
-      chmod($filename, 0666);
+      @chmod($filename, 0666);
     }
   }
   

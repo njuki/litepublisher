@@ -24,6 +24,8 @@ class tblackip extends tplugin {
   
   public function filter($idpost, $idauthor, $content, $ip) {
     if (in_array($ip, $this->ip)) return $this->ipstatus;
+$ip = substr($ip, 0, strrpos($ip, '.') + 1);
+    if (in_array($ip, $this->ip)) return $this->ipstatus;
     foreach ($this->words as $word) {
       if (false !== strpos($content, $word)) return $this->wordstatus;
     }
