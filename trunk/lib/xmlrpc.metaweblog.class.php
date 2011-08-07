@@ -344,7 +344,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     //The struct must contain at least three elements, name, type and bits.
     $filename = $struct['name'] ;
     $mimetype =$struct['type'];
-    $overwrite = isset($struct["overwrite"]) && $struct["overwrite"]  ? true : false;
+    $overwrite = isset($struct["overwrite"]) && $struct["overwrite"];
     
     if (empty($filename)) return $this->xerror(500, "Empty filename");
     
@@ -355,7 +355,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $item = $files->getitem($id);
     
     return array(
-    'file' => $item['filename'],
+    'file' => basename($item['filename']),
     'url' => $files->geturl($id),
     'type' => $item['mime']
     );
