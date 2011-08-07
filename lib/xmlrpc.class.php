@@ -19,12 +19,12 @@ class TXMLRPCParser extends IXR_Server  {
   }
   
   function output($xml) {
-    $head = '<?xml version="1.0"?>' . "\n";
+    $head = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
     $length = strlen($head) + strlen($xml);
     $this->XMLResult = "<?php
     @header('Connection: close');
     @header('Content-Length: $length');
-    @header('Content-Type: text/xml');
+    @header('Content-Type: text/xml; charset=utf-8');
     @header('Date: ".date('r') . "');
     @Header( 'Cache-Control: no-cache, must-revalidate');
     @Header( 'Pragma: no-cache');
