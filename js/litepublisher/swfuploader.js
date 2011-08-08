@@ -8,7 +8,7 @@
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 $('#progressbar').progressbar({value: 0});
   var url = ltoptions.uploadurl == undefined ? ltoptions.url: ltoptions.uploadurl;
-    ltoptions.swfu .setUploadURL(url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
+  ltoptions.swfu .setUploadURL(url + "/admin/ajaxposteditor.htm?get=upload&id=" + ltoptions.idpost + '&random=' + Math.random());
   this.startUpload();
 }
 
@@ -31,16 +31,16 @@ function uploadError(file, errorCode, message) {
 
 function uploadComplete(file) {
   //alert('uploadComplete' + file);
-	try {
-		/*  I want the next upload to continue automatically so I'll call startUpload here */
-		if (this.getStats().files_queued === 0) {
-  $( "#progressbar" ).progressbar( "destroy" );
-		} else {	
-			this.startUpload();
-		}
-	} catch (ex) {
-		this.debug(ex);
-	}
+  try {
+    /*  I want the next upload to continue automatically so I'll call startUpload here */
+    if (this.getStats().files_queued === 0) {
+      $( "#progressbar" ).progressbar( "destroy" );
+    } else {
+      this.startUpload();
+    }
+  } catch (ex) {
+    this.debug(ex);
+  }
 }
 
 //central event
