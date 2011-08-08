@@ -33,11 +33,12 @@ class tmenus extends titems {
   }
   
   public function add(tmenu $item) {
+if ($item instanceof tfakemenu) return $this->addfakemenu($item);    
     //fix null fields
     foreach (tmenu::$ownerprops as $prop) {
       if (!isset($item->data[$prop])) $item->data[$prop] = '';
     }
-    
+
     if ($item instanceof thomepage) {
       $item->url = '/';
     } else {
@@ -72,6 +73,39 @@ class tmenus extends titems {
     $urlmap->clearcache();
     return $id;
   }
+
+  public function addfake($url, $title) {
+$fake = new tfakemenu();
+$fake->title = $title;
+$fake->url = $url;
+return $this->addfakemenu($fake);
+}
+  
+  public function addfakemenu(tmenu $item) {
+    //fix null fields
+    foreach (tmenu::$ownerprops as $prop) {
+      if (!isset($item->data[$prop])) $item->data[$prop] = '';
+    }
+    
+    $id = ++$this->autoid;
+    $this->items[$id] = array(
+    'id' => $id,
+    'class' => get_class($item)
+    );
+    //move props
+    foreach (tmenu::$ownerprops as $prop) {
+      $this->items[$id][$prop] = $item->$prop;
+      if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
+    }
+    $item->id = $id;
+    if ($item->status != 'draft') $item->status = 'published';
+    $this->lock();
+    $this->sort();
+    $this->unlock();
+    $this->added($id);
+    litepublisher::$urlmap->clearcache();
+    return $id;
+  }
   
   public function additem(array $item) {
     $item['id'] = ++$this->autoid;
@@ -91,7 +125,7 @@ class tmenus extends titems {
   }
   
   public function edit(tmenu $item) {
-    if (!($item instanceof thomepage)) {
+    if (!( ($item instanceof thomepage) || (!( ($item instanceof tfakemenu))) {
       $linkgen = tlinkgenerator::instance();
       $linkgen->editurl($item, 'menu');
     }
@@ -108,7 +142,9 @@ class tmenus extends titems {
     if (!$this->itemexists($id)) return false;
     if($id == $this->idhome) return false;
     if ($this->haschilds($id)) return false;
+if ($this->items[$id]['idurl'] > 0) {
     litepublisher::$urlmap->delete($this->items[$id]['url']);
+}
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
@@ -445,4 +481,13 @@ public function gethead() {}
   
 }//class
 
-?>
+class tfakemenu extends tmenu {
+
+  public static function instance($id = 0) {
+    return self::iteminstance(__class__,  $id);
+  }
+  
+public function load() {}
+public function save() {}
+ 
+}//class
