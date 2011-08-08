@@ -25,6 +25,7 @@ class toptions extends tevents_storage {
     $this->gmt = 0;
     $this->errorlog = '';
     $this->admincookie = false;
+$this->group = '';
   }
   
   public function afterload() {

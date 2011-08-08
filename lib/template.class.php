@@ -136,13 +136,14 @@ class ttemplate extends tevents_storage {
   public function getmenu() {
     if ($r = $this->ongetmenu()) return $r;
     $current = $this->context instanceof tmenu ? $this->context->id : 0;
-    $filename = litepublisher::$paths->cache . $this->view->theme->name . '.' . $current;
-    $filename .= litepublisher::$urlmap->adminpanel ?
-    '.' . litepublisher::$options->group . '.adminmenu.php'
-    : '.menu.php';
+$view = $this->view;
+$menuclass = $view->menuclass;
+    $filename = litepublisher::$paths->cache . $view->theme->name . sprintf('.%s.%s_%s.php',
+$menuclass, litepublisher::$options->group,  $current);
+
     if (file_exists($filename)) return file_get_contents($filename);
     
-    $menus = litepublisher::$urlmap->adminpanel ? tadminmenus::instance() : tmenus::instance();
+    $menus = getinstance($menuclass);
     $result = $menus->getmenu($this->hover, $current);
     file_put_contents($filename, $result);
     @chmod($filename, 0666);

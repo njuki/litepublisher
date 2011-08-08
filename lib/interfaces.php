@@ -28,4 +28,8 @@ interface iposts {
   public function delete($id);
 }
 
+interface imenu {
+  public function getcurrent();
+}
+
 ?>
