@@ -41,6 +41,7 @@ class tadminmenumanager extends tadminmenu {
       return $result;
       
       case 'edit':
+case 'editfake':
       $id = tadminhtml::idparam();
       $menus = tmenus::instance();
       $parents = array(0 => '-----');
@@ -73,6 +74,20 @@ class tadminmenumanager extends tadminmenu {
       'draft' => $lang->draft,
       'published' => $lang->published
       ), $status);
+
+if (($this->name == 'editfake') || (($id > 0) && ($menuitem instanceof tfakemenu))) {
+$args->url = $id == 0 ? '' : $menuitem->url;
+$args->type = 'fake';
+$args->formtitle = $lang->faketitle;
+      return $html->adminform(
+'[text=title]
+[text=url]
+[combo=parent]
+[combo=order]
+[combo=status]
+[hidden=type]
+[hidden=id]', $args);
+}
       
       $ajaxeditor = tajaxmenueditor::instance();
       $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true);
@@ -82,23 +97,30 @@ class tadminmenumanager extends tadminmenu {
   }
   
   public function processform() {
-    if ($this->name != 'edit') return '';
+    if (!(($this->name == 'edit') || ($this->name == 'editfake'))) return '';
     extract($_POST, EXTR_SKIP);
     if (empty($title)) return '';
     $id = $this->idget();
     $menus = tmenus::instance();
     if (($id != 0) && !$menus->itemexists($id)) return $this->notfound;
+if (isset($type) && ($type == 'fake')) {
+    $menuitem = tfakemenu::instance($id);
+} else  {
     $menuitem = tmenu::instance($id);
+}
+
     $menuitem->title = $title;
     $menuitem->order = (int) $order;
     $menuitem->parent = (int) $parent;
     $menuitem->status = $status == 'draft' ? 'draft' : 'published';
-    $menuitem->content = $raw;
+if (isset($raw)) $menuitem->content = $raw;
     if (isset($idview)) $menuitem->idview = $idview;
     if (isset($url)) {
       $menuitem->url = $url;
+if (!isset($type) || ($type != 'fake')) {
       $menuitem->keywords = $keywords;
       $menuitem->description = $description;
+}
     }
     if ($id == 0) {
       $_POST['id'] = $menus->add($menuitem);

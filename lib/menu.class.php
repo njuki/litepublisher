@@ -125,7 +125,7 @@ return $this->addfakemenu($fake);
   }
   
   public function edit(tmenu $item) {
-    if (!( ($item instanceof thomepage) || (!( ($item instanceof tfakemenu))) {
+    if (!( ($item instanceof thomepage) || ($item instanceof tfakemenu))) {
       $linkgen = tlinkgenerator::instance();
       $linkgen->editurl($item, 'menu');
     }
@@ -487,7 +487,9 @@ class tfakemenu extends tmenu {
     return self::iteminstance(__class__,  $id);
   }
   
-public function load() {}
+public function load() {
+return true;
+}
+
 public function save() {}
- 
 }//class

@@ -59,6 +59,8 @@ function tadminmenusInstall($self) {
   {
     $id = $self->createitem($menu, 'edit', 'editor', 'tadminmenumanager');
     $self->items[$id]['title'] = tlocal::$data['menu']['addmenu'];
+    $id = $self->createitem($menu, 'editfake', 'editor', 'tadminmenumanager');
+    $self->items[$id]['title'] = tlocal::$data['menu']['addfake'];
   }
   
   $opt = $self->createitem(0, 'options', 'admin', 'tadminoptions');
