@@ -84,11 +84,11 @@ class tfastloader extends tplugin {
   }
   
   public function replacehead($s) {
-    $script = '<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>';
+    $script = '<script type="text/javascript" src="$site.files$template.jsmerger_default"></script>';
     if ($i = strpos($s, $script)) {
       return substr($s, 0, $i) .
       '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
-      '<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>' .
+      '<script type="text/javascript">jqloader.load_jquery("$site.files$template.jsmerger_default");</script>' .
       $this->replace(substr($s, $i + strlen($script)));
     } else {
       return $s;
@@ -97,10 +97,10 @@ class tfastloader extends tplugin {
   
   public function restorehead($s) {
     $script = '<script type="text/javascript" src="$site.files/js/litepublisher/loader.min.js"></script>' .
-    '<script type="text/javascript">jqloader.load_jquery("$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js");</script>';
+    '<script type="text/javascript">jqloader.load_jquery("$site.files$template.jsmerger_default");</script>';
     if ($i = strpos($s, $script)) {
       return substr($s, 0, $i) .
-      '<script type="text/javascript" src="$site.files/js/litepublisher/litepublisher.$site.jquery_version.min.js"></script>' .
+      '<script type="text/javascript" src="$site.files$template.jsmerger_default"></script>' .
       $this->restore(substr($s, $i + strlen($script)));
     } else {
       return $s;
@@ -108,4 +108,3 @@ class tfastloader extends tplugin {
   }
   
 }//class
-?>
