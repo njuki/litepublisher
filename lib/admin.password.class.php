@@ -18,9 +18,9 @@ class tadminpassword extends tadminform {
   }
   
   public function getcontent() {
-$args = new targs();
-$lang = tlocal::instance('password');
-$args->formtitle = $lang->enteremail;
+    $args = new targs();
+    $lang = tlocal::instance('password');
+    $args->formtitle = $lang->enteremail;
     return $this->html->adminform('[text=login] [text=email]', $args);
   }
   
@@ -30,8 +30,8 @@ $args->formtitle = $lang->enteremail;
     if (litepublisher::$options->usersenabled) {
       $users = tusers::instance();
       if ($id = $users->emailexists($email)) {
-$id = $login == $users->getvalue($id, 'login');
-}
+        $id = $login == $users->getvalue($id, 'login');
+      }
     } else {
       $id = $email == strtolower(trim(litepublisher::$options->email))  ? ($login == litepublisher::$options->login)  : false;
     }

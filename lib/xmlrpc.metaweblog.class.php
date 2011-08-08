@@ -343,19 +343,20 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     //The struct must contain at least three elements, name, type and bits.
     $filename = $struct['name'] ;
-    $mimetype =$struct['type'];
+    //$mimetype =$struct['type'];
     $overwrite = isset($struct["overwrite"]) && $struct["overwrite"];
     
     if (empty($filename)) return $this->xerror(500, "Empty filename");
     
     $parser = tmediaparser::instance();
     $id = $parser->upload($filename, $struct['bits'], '', '', '', $overwrite );
+    
     if (!$id)  return $this->xerror(500, "Could not write file $name");
     $files = tfiles::instance();
     $item = $files->getitem($id);
     
     return array(
-    'file' => basename($item['filename']),
+    'file' => $item['filename'],
     'url' => $files->geturl($id),
     'type' => $item['mime']
     );

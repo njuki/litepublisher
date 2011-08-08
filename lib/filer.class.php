@@ -102,7 +102,7 @@ class tfiler {
   public static function append($s, $filename) {
     $dir = dirname($filename);
     if (!is_dir($dir)) {
-mkdir($dir, 0777);
+      mkdir($dir, 0777);
       @chmod($dir, 0777);
     }
     
