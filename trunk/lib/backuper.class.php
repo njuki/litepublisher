@@ -633,6 +633,7 @@ class tbackuper extends tevents {
       $cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../storage/data/* dump.sql', $filename);
       $cmd[] ='rm dump.sql';
       $cmd[] = "gzip $filename.tar";
+      $cmd[] = "rm $filename.tar";
       $cmd[] = "chmod 0666 $filename.tar.gz";
       exec(implode("\n", $cmd), $r);
       //echo implode("\n", $r);
@@ -648,6 +649,7 @@ class tbackuper extends tevents {
       $cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../storage/data/* dump.sql ../../lib/* ../../plugins/* ../../themes/* ../../js/* ../../index.php "../../.htaccess"', $filename);
       $cmd[] ='rm dump.sql';
       $cmd[] = "gzip $filename.tar";
+      $cmd[] = "rm $filename.tar";
       $cmd[] = "chmod 0666 $filename.tar.gz";
       exec(implode("\n", $cmd), $r);
       //echo implode("\n", $r);
@@ -660,6 +662,7 @@ class tbackuper extends tevents {
       $filename = 'files_' . litepublisher::$domain . date('-Y-m-d');
       $cmd[] = sprintf('tar --exclude="*.bak.php" --exclude="*.lok" --exclude="*.log" -cf %s.tar ../../files/*', $filename);
       $cmd[] = "gzip $filename.tar";
+      $cmd[] = "rm $filename.tar";
       $cmd[] = "chmod 0666 $filename.tar.gz";
       exec(implode("\n", $cmd), $r);
       //echo implode("\n", $r);
