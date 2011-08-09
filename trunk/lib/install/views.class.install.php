@@ -17,9 +17,11 @@ function tviewsInstall($self) {
   $def = tview::instance($default);
   $def->sidebars = array(array(), array(), array());
   
-  $admin = $self->add($lang->adminpanel);
-  
-  $self->defaults = array(
+  $idadmin = $self->add($lang->adminpanel);
+  $admin = tview::instance($idadmin);
+  $admin->menuclass = 'tadminmenus';
+
+    $self->defaults = array(
   'post' => $default,
   'menu' => $default,
   'category' => $default,
@@ -30,4 +32,3 @@ function tviewsInstall($self) {
   $self->unlock();
 }
 
-?>
