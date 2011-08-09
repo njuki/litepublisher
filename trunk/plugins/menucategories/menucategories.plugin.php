@@ -20,18 +20,6 @@ class tcategoriesmenu extends tplugin {
     $this->addmap('exitems', array());
   }
   
-  public function ongetmenu() {
-    if (litepublisher::$urlmap->adminpanel) return;
-    $template = ttemplate::instance();
-    $current = $template->context instanceof tcategories ? $template->context->id : 0;
-    $filename = litepublisher::$paths->cache . $template->view->theme->name . '.' . $current . '.catmenu.php';
-    if (file_exists($filename)) return file_get_contents($filename);
-    $result = $this->getmenu($template->hover, $current);
-    file_put_contents($filename, $result);
-    @chmod($filename, 0666);
-    return $result;
-  }
-  
   public function getmenu($hover, $current) {
     $result = '';
     $categories = tcategories::instance();
@@ -84,7 +72,7 @@ class tcategoriesmenu extends tplugin {
     $categories = tcategories::instance();
     $categories->loadall();
     $this->tree = $this->getsubtree(0);
-    var_dump($this->exitems );
+    //var_dump($this->exitems );
     $this->exitems = array_intersect(array_keys($categories->items), $this->exitems);
     $this->save();
   }
