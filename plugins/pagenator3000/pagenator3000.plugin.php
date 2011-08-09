@@ -18,12 +18,7 @@ class tpagenator3000 extends tplugin {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $head = '<script type="text/javascript"><!--
     function init_paginator3000() {
-      var head = document.head || document.getElementsByTagName( "head" )[0] || document.documentElement;
-      var link = document.createElement( "link" );
-      link.rel="stylesheet";
-      link.type="text/css";
-      link.href="' . $url . 'paginator3000.css";
-      head.insertBefore( link, head.firstChild );
+$.load_css("' . $url . 'paginator3000.css");
       $.load_script("' . $url . 'paginator3000.min.js", function() {
         $(document).ready(function() {
           var tag = $("#paginator, .navigation");

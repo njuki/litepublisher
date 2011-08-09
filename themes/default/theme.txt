@@ -77,11 +77,12 @@ $site.language - язык сайта, две буквы, для русского
 
 $template.menu = [
 $hover = [true]
-		<script type="text/javascript">
+<script type="text/javascript">
   $(document).ready(function() {
-$("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
+    $("#nav a[href='" + window.location + "']").css({'font-weight': "bold"});
+    $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
   });
-		</script>
+</script>
 	<ul id="nav">
 		$item = [<li><a href="$link" title="$title">$title</a>$submenu = [ <ul>$items</ul>]</li>]
 		$current = [		<li class="current_page_item"><a href="$link" title="$title">$title</a>$submenu</li>]
