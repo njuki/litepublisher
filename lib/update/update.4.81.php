@@ -1,7 +1,6 @@
 <?php
 
 function update481() {
-/*
 litepublisher::$classes->add('tfakemenu', 'menu.class.php');
 
 tlocal::loadlang('admin');
@@ -11,7 +10,6 @@ $admin->lock();
 'editfake', 'editor', 'tadminmenumanager');
     $admin->items[$id]['title'] = tlocal::$data['menu']['addfake'];
 $admin->unlock();
-*/
 
 $menuclass = 'tmenus';
 if (litepublisher::$classes->exists('tcategoriesmenu')) {

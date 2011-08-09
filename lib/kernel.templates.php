@@ -209,6 +209,7 @@ class tview extends titem {
     'id' => 0,
     'name' => 'default',
     'themename' => 'default',
+    'menuclass' => 'tmenus',
     'customsidebar' => false,
     'disableajax' => false,
     'custom' => array(),
@@ -527,15 +528,16 @@ class ttemplate extends tevents_storage {
   
   public function getmenu() {
     if ($r = $this->ongetmenu()) return $r;
-    $current = $this->context instanceof tmenu ? $this->context->id : 0;
-    $filename = litepublisher::$paths->cache . $this->view->theme->name . '.' . $current;
-    $filename .= litepublisher::$urlmap->adminpanel ?
-    '.' . litepublisher::$options->group . '.adminmenu.php'
-    : '.menu.php';
+    //$current = $this->context instanceof tmenu ? $this->context->id : 0;
+    $view = $this->view;
+    $menuclass = $view->menuclass;
+    $filename = litepublisher::$paths->cache . $view->theme->name . sprintf('.%s.%s.php',
+    $menuclass, litepublisher::$options->group);
+    
     if (file_exists($filename)) return file_get_contents($filename);
     
-    $menus = litepublisher::$urlmap->adminpanel ? tadminmenus::instance() : tmenus::instance();
-    $result = $menus->getmenu($this->hover, $current);
+    $menus = getinstance($menuclass);
+    $result = $menus->getmenu($this->hover, 0);
     file_put_contents($filename, $result);
     @chmod($filename, 0666);
     return $result;

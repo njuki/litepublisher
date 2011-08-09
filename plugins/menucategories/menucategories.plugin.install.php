@@ -10,13 +10,13 @@ function tcategoriesmenuInstall($self) {
   $categories = tcategories::instance();
   $categories->changed = $self->buildtree;
   $self->buildtree();
-
-tadminviews::replacemenu('tmenus', get_class($self));
+  
+  tadminviews::replacemenu('tmenus', get_class($self));
 }
 
 function tcategoriesmenuUninstall($self) {
-tadminviews::replacemenu(get_class($self), 'tmenus');
-
+  tadminviews::replacemenu(get_class($self), 'tmenus');
+  
   $categories = tcategories::instance();
   $categories->unsubscribeclass($self);
 }

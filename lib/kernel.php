@@ -1350,6 +1350,7 @@ class toptions extends tevents_storage {
     $this->gmt = 0;
     $this->errorlog = '';
     $this->admincookie = false;
+    $this->group = '';
   }
   
   public function afterload() {
@@ -2107,6 +2108,10 @@ interface iposts {
   public function add(tpost $post);
   public function edit(tpost $post);
   public function delete($id);
+}
+
+interface imenu {
+  public function getcurrent();
 }
 
 //plugin.class.php

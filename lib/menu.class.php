@@ -33,12 +33,12 @@ class tmenus extends titems {
   }
   
   public function add(tmenu $item) {
-if ($item instanceof tfakemenu) return $this->addfakemenu($item);    
+    if ($item instanceof tfakemenu) return $this->addfakemenu($item);
     //fix null fields
     foreach (tmenu::$ownerprops as $prop) {
       if (!isset($item->data[$prop])) $item->data[$prop] = '';
     }
-
+    
     if ($item instanceof thomepage) {
       $item->url = '/';
     } else {
@@ -73,13 +73,13 @@ if ($item instanceof tfakemenu) return $this->addfakemenu($item);
     $urlmap->clearcache();
     return $id;
   }
-
+  
   public function addfake($url, $title) {
-$fake = new tfakemenu();
-$fake->title = $title;
-$fake->url = $url;
-return $this->addfakemenu($fake);
-}
+    $fake = new tfakemenu();
+    $fake->title = $title;
+    $fake->url = $url;
+    return $this->addfakemenu($fake);
+  }
   
   public function addfakemenu(tmenu $item) {
     //fix null fields
@@ -142,9 +142,9 @@ return $this->addfakemenu($fake);
     if (!$this->itemexists($id)) return false;
     if($id == $this->idhome) return false;
     if ($this->haschilds($id)) return false;
-if ($this->items[$id]['idurl'] > 0) {
-    litepublisher::$urlmap->delete($this->items[$id]['url']);
-}
+    if ($this->items[$id]['idurl'] > 0) {
+      litepublisher::$urlmap->delete($this->items[$id]['url']);
+    }
     $this->lock();
     unset($this->items[$id]);
     $this->sort();
@@ -482,14 +482,14 @@ public function gethead() {}
 }//class
 
 class tfakemenu extends tmenu {
-
+  
   public static function instance($id = 0) {
     return self::iteminstance(__class__,  $id);
   }
   
-public function load() {
-return true;
-}
-
+  public function load() {
+    return true;
+  }
+  
 public function save() {}
 }//class

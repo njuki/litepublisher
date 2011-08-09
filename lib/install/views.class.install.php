@@ -20,8 +20,8 @@ function tviewsInstall($self) {
   $idadmin = $self->add($lang->adminpanel);
   $admin = tview::instance($idadmin);
   $admin->menuclass = 'tadminmenus';
-
-    $self->defaults = array(
+  
+  $self->defaults = array(
   'post' => $default,
   'menu' => $default,
   'category' => $default,
@@ -31,4 +31,3 @@ function tviewsInstall($self) {
   
   $self->unlock();
 }
-

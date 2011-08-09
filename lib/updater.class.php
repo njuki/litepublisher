@@ -122,7 +122,7 @@ class tupdater extends tevents {
   
   public function download($version) {
     //if ($this->useshell) return $this->downloadshell($version);
-        $lang = tlocal::instance('service');
+    $lang = tlocal::instance('service');
     $backuper = tbackuper::instance();
     if (!$backuper->test()) {
       $this->result = $lang->errorwrite;
@@ -154,7 +154,7 @@ class tupdater extends tevents {
     $cmd[] = 'cd ' . litepublisher::$paths->home;
     $cmd[] = sprintf('tar -xf %s%s -p --overwrite', litepublisher::$paths->backup, $filename);
     $cmd[] = 'rm ' . litepublisher::$paths->backup . $filename;
-//dumpstr(implode("\n", $cmd));
+    //dumpstr(implode("\n", $cmd));
     exec(implode("\n", $cmd), $r);
     if ($s = implode("\n", $r)) return $s;
     $this->onupdated();
