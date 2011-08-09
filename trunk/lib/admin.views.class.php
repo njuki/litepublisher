@@ -41,6 +41,14 @@ class tadminviews extends tadminmenu {
     }
     return $result;
   }
+
+public static function replacemenu($src, $dst) {
+$views = tviews::instance();
+foreach ($views->items as &$viewitem) {
+if ($viewitem['menuclass'] == $src) $viewitem['menuitem'] = $dst;
+}
+$views->save();
+}
   
   private function get_custom($idview) {
     $view = tview::instance($idview);
@@ -174,7 +182,7 @@ class tadminviews extends tadminmenu {
     return str_replace('theme_idview', 'theme_' . $idview,
     tadminthemes::getlist($this->html->radiotheme, $view->theme->name));
   }
-  
+
   public function getcontent() {
     $result = '';
     $views = tviews::instance();
@@ -185,6 +193,13 @@ class tadminviews extends tadminmenu {
       case 'views':
       $items = '';
       $content = '';
+
+$menuitems = array();
+foreach ($views->items as $id => $itemview) {
+$class = $itemview['menuclass'];
+$menuitems[$class] = $class == 'tmenus' ? $lang->stdmenu : ($class == 'tadminmenus' ? $lang->adminmenu : $class);
+}
+
       foreach ($views->items as $id => $itemview) {
         $args->add($itemview);
         $items .= $html->itemview($args);
@@ -192,6 +207,7 @@ class tadminviews extends tadminmenu {
         $args->view_theme = $this->get_view_theme($id);
         $html->section = 'views';
         $args->view_custom = $this->get_custom($id);
+$args->menucombo = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
         $content .= $html->viewtab($args);
       }
       $lang->section = 'views';
@@ -298,11 +314,7 @@ class tadminviews extends tadminmenu {
     $result = '';
     switch ($this->name) {
       case 'views':
-      /*
-      echo "<pre>\n";
-      var_dump($_POST);
-      echo "\n</pre>\n";
-      */
+// dumpvar($_POST);
       $views = tviews::instance();
       switch ($this->action) {
         case 'delete':
@@ -321,6 +333,7 @@ class tadminviews extends tadminmenu {
           }
           $view->name = trim($_POST["name_$id"]);
           $view->themename = trim($_POST["theme_$id"]);
+$view->menuclass = $_POST["menuclass_$id"];
           $this->set_custom($id);
           if (($id == 1) || $view->customsidebar) {
             foreach (range(0, 2) as $index) {

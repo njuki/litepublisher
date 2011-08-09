@@ -12,6 +12,7 @@ $admin->lock();
     $admin->items[$id]['title'] = tlocal::$data['menu']['addfake'];
 $admin->unlock();
 */
+
 $menuclass = 'tmenus';
 if (litepublisher::$classes->exists('tcategoriesmenu')) {
 $plugin = tcategoriesmenu::instance();
@@ -23,7 +24,7 @@ $menuclass = 'tcategoriesmenu';
 $views = tviews::instance();
 $views->lock();
 foreach ($views->items as &$viewitem) {
-$viewitem['menuclass'] = $menuclass
+$viewitem['menuclass'] = $menuclass;
 }
 $views->items[$views->defaults['admin']]['menuclass'] = 'tadminmenus';
 
