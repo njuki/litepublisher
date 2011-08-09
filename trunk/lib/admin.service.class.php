@@ -115,7 +115,7 @@ class tadminservice extends tadminmenu {
   
   private function doupdate($req) {
     $html = $this->html;
-      $updater = tupdater::instance();
+    $updater = tupdater::instance();
     if (isset($req['autoupdate'])) {
       if (!$this->checkbackuper()) return $html->h4->erroraccount;
       if ($updater->autoupdate())       return $html->h4->successupdated;

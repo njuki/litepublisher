@@ -41,14 +41,14 @@ class tadminviews extends tadminmenu {
     }
     return $result;
   }
-
-public static function replacemenu($src, $dst) {
-$views = tviews::instance();
-foreach ($views->items as &$viewitem) {
-if ($viewitem['menuclass'] == $src) $viewitem['menuitem'] = $dst;
-}
-$views->save();
-}
+  
+  public static function replacemenu($src, $dst) {
+    $views = tviews::instance();
+    foreach ($views->items as &$viewitem) {
+      if ($viewitem['menuclass'] == $src) $viewitem['menuitem'] = $dst;
+    }
+    $views->save();
+  }
   
   private function get_custom($idview) {
     $view = tview::instance($idview);
@@ -182,7 +182,7 @@ $views->save();
     return str_replace('theme_idview', 'theme_' . $idview,
     tadminthemes::getlist($this->html->radiotheme, $view->theme->name));
   }
-
+  
   public function getcontent() {
     $result = '';
     $views = tviews::instance();
@@ -193,13 +193,13 @@ $views->save();
       case 'views':
       $items = '';
       $content = '';
-
-$menuitems = array();
-foreach ($views->items as $id => $itemview) {
-$class = $itemview['menuclass'];
-$menuitems[$class] = $class == 'tmenus' ? $lang->stdmenu : ($class == 'tadminmenus' ? $lang->adminmenu : $class);
-}
-
+      
+      $menuitems = array();
+      foreach ($views->items as $id => $itemview) {
+        $class = $itemview['menuclass'];
+        $menuitems[$class] = $class == 'tmenus' ? $lang->stdmenu : ($class == 'tadminmenus' ? $lang->adminmenu : $class);
+      }
+      
       foreach ($views->items as $id => $itemview) {
         $args->add($itemview);
         $items .= $html->itemview($args);
@@ -207,7 +207,7 @@ $menuitems[$class] = $class == 'tmenus' ? $lang->stdmenu : ($class == 'tadminmen
         $args->view_theme = $this->get_view_theme($id);
         $html->section = 'views';
         $args->view_custom = $this->get_custom($id);
-$args->menucombo = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
+        $args->menucombo = tadminhtml  ::array2combo($menuitems, $itemview['menuclass']);
         $content .= $html->viewtab($args);
       }
       $lang->section = 'views';
@@ -314,7 +314,7 @@ $args->menucombo = tadminhtml  ::array2combo($menuitems, $itemview['menuclass'])
     $result = '';
     switch ($this->name) {
       case 'views':
-// dumpvar($_POST);
+      // dumpvar($_POST);
       $views = tviews::instance();
       switch ($this->action) {
         case 'delete':
@@ -333,7 +333,7 @@ $args->menucombo = tadminhtml  ::array2combo($menuitems, $itemview['menuclass'])
           }
           $view->name = trim($_POST["name_$id"]);
           $view->themename = trim($_POST["theme_$id"]);
-$view->menuclass = $_POST["menuclass_$id"];
+          $view->menuclass = $_POST["menuclass_$id"];
           $this->set_custom($id);
           if (($id == 1) || $view->customsidebar) {
             foreach (range(0, 2) as $index) {
