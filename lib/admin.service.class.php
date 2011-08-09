@@ -29,7 +29,7 @@ class tadminservice extends tadminmenu {
       } elseif ($islatest <= 0) {
         $result .= $html->h4->islatest;
       } else {
-        $args->loginform = $updater->useshell ? '' : $this->getloginform();
+        $args->loginform = $this->getloginform();
         $result .= $html->requireupdate($args);
       }
       break;
