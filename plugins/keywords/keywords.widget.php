@@ -53,11 +53,17 @@ class tkeywordswidget extends twidget {
       $arlinks = array_splice($this->links, 0, $this->count);
       $this->save();
       
-      $links = "\n<li>" . implode("</li>\n<li>", $arlinks)  . "</li>";
+      //$links = "\n<li>" . implode("</li>\n<li>", $arlinks)  . "</li>";
+$links = '';
+$text = '';
+foreach ($arlinks as $link) {
+$links .= sprintf('<li><a href="%s">%s</a></li>', $link['url'], $link['text']);
+$text .= $link['text'] . "\n";
+}
       file_put_contents($filename, $links);
       if ($this->notify) {
         $plugin = tkeywordsplugin::instance();
-        $plugin->added($filename, $links);
+        $plugin->added($filename, $text);
       }
     }
     
