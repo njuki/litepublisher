@@ -139,7 +139,8 @@ class tjsmerger extends titems {
       $this->unlock();
     } else {
       // trix to prevent increase revision
-      $this->lockcount--;
+      //$this->lockcount--;
+      $this->unlock();
     }
   }
 }//class

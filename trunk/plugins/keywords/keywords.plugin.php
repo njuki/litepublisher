@@ -58,11 +58,17 @@ class tkeywordsplugin  extends tplugin {
     
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     
-    $link =" <a href=\"http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]\">$keywords</a>";
-    
+    //$link =" <a href=\"http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]\">$keywords</a>";
     $widget = tkeywordswidget::instance();
-    if (in_array($link, $widget->links)) return;
-    $widget->links[] = $link;
+    //if (in_array($link, $widget->links)) return;
+foreach ($widget->links as $item) {
+if ($keywords == $item['text']) return;
+}
+    $widget->links[] = array(
+'url' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+'text' => $keywords
+);
+    
     $widget->save();
   }
   
