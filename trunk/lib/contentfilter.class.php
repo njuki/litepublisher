@@ -77,7 +77,8 @@ class tcontentfilter extends tevents {
     }
     
     $post->description = self::getpostdescription($post->data['excerpt']);
-  $this->aftercontent($post);}
+  $this->aftercontent($post);
+}
   
   public static function getpostdescription($description) {
     if (litepublisher::$options->parsepost) {

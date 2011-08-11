@@ -5,16 +5,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function get_get(name) {
-    var q = window.location.search.substring(1);
-    var vars = q.split('&');
-    for (var i=0; i<vars.length; i++) {
-        var pair = vars[i].split('=');
-        if (name == pair[0]) return decodeURIComponent(pair[1]);
-    }
-return false;
-}
-
 function get_download_site() {
 var result = '';
 if (result = get_get('site')) {
