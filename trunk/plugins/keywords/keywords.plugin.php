@@ -49,13 +49,13 @@ class tkeywordsplugin  extends tplugin {
     
     $keywords = trim($keywords);
     if (empty($keywords)) return;
-if (false !== strpos($keywords, 'site:')) return;
-if (false !== strpos($keywords, 'inurl:')) return;
-if (false !== strpos($keywords, 'http:')) return;
-if (false !== strpos($keywords, 'ftp:')) return;
-if (false !== strpos($keywords, 'ftp:')) return;
-if (false !== strpos($keywords, 'downloads%3Cscript%')) return;
-
+    if (false !== strpos($keywords, 'site:')) return;
+    if (false !== strpos($keywords, 'inurl:')) return;
+    if (false !== strpos($keywords, 'http:')) return;
+    if (false !== strpos($keywords, 'ftp:')) return;
+    if (false !== strpos($keywords, 'ftp:')) return;
+    if (false !== strpos($keywords, 'downloads%3Cscript%')) return;
+    
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     
     $link =" <a href=\"http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]\">$keywords</a>";

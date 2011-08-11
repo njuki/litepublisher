@@ -7,15 +7,14 @@
 **/
 
 function ttoptextinstall($self) {
-    $filter = tcontentfilter::instance();
-    $filter->lock();
-    $filter->beforecontent = $self->beforecontent;
-    $filter->aftercontent = $self->aftercontent;
-    $filter->unlock();
-  }
-  
+  $filter = tcontentfilter::instance();
+  $filter->lock();
+  $filter->beforecontent = $self->beforecontent;
+  $filter->aftercontent = $self->aftercontent;
+  $filter->unlock();
+}
+
 function ttoptextuninstall($self) {
-    $filter = tcontentfilter::instance();
-    $filter->unsubscribeclass($self);
-  }
-  
+  $filter = tcontentfilter::instance();
+  $filter->unsubscribeclass($self);
+}

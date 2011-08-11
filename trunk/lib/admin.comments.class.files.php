@@ -13,14 +13,14 @@ class tadminmoderator extends tadmincommoncomments  {
   }
   
   protected function getidpost() {
-    return (int) tadminhtml::getparam('idpost', 0);
+    return (int) tadminhtml::getparam('post', 0);
   }
   
   public function getcontent() {
     $result = '';
     $html = $this->html;
     $lang = $this->lang;
-   
+    
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -162,7 +162,7 @@ class tadminmoderator extends tadmincommoncomments  {
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();
     $args = targs::instance();
-    $args->adminurl = $this->adminurl ."post=$idpost&id";
+    $args->adminurl = litepublisher::$site->url .$this->url . litepublisher::$site->q . "post=$idpost&id";
     $comment = new TComment($comments);
     ttheme::$vars['comment'] = $comment;
     $body = '';
