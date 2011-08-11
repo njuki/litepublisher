@@ -17,15 +17,11 @@ class tadmincommoncomments extends tadminmenu {
   protected function create() {
     parent::create();
     $this->showcolumns = array();
-    $filename = litepublisher::$paths->data . 'commentscolumns.php';
-    if (file_exists($filename)) {
-      $this->showcolumns = unserialize(tfilestorage::uncomment_php(file_get_contents($filename)));
-    }
+    tfilestorage::loadvar(litepublisher::$paths->data . 'commentscolumns.php', $this->showcolumns);
   }
   
   protected function saveshowcolumns() {
-    tfilestorage::savetofile(litepublisher::$paths->data .'commentscolumns',
-    tfilestorage::comment_php(serialize($this->showcolumns)));
+    tfilestorage::savevar(litepublisher::$paths->data .'commentscolumns', $this->showcolumns);
   }
   
   protected function showcolumn($index, $default) {

@@ -7,22 +7,22 @@
 **/
 
 class ttoptext extends tplugin{
-public $text;
+  public $text;
   
   public static function instance() {
     return getinstance(__class__);
   }
   
   public function beforecontent(tpost $post, &$content) {
-$sign = '[toptext]';
-if ($i = strpos($content, $sign)) {
-$this->text = substr($content, 0, $i);
-$content = substr($content, $i + strlen($sign));
-      }
+    $sign = '[toptext]';
+    if ($i = strpos($content, $sign)) {
+      $this->text = substr($content, 0, $i);
+      $content = substr($content, $i + strlen($sign));
     }
+  }
   
   public function aftercontent(tpost $post) {
-if ($this->text) $post->filtered = $this->text . $post->filtered;
-}
-
+    if ($this->text) $post->filtered = $this->text . $post->filtered;
+  }
+  
 }//class
