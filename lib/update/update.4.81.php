@@ -1,7 +1,8 @@
 <?php
 
 function update481() {
-litepublisher::$classes->add('tfakemenu', 'menu.class.php');
+litepublisher::$classes->items['tfakemenu'] = array('menu.class.php', '');
+litepublisher::$classes->save();
 
 tlocal::loadlang('admin');
 $admin = tadminmenus::instance();

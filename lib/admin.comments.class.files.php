@@ -13,14 +13,14 @@ class tadminmoderator extends tadmincommoncomments  {
   }
   
   protected function getidpost() {
-    return (int) tadminhtml::getparam('post', 0);
+    return (int) tadminhtml::getparam('idpost', 0);
   }
   
   public function getcontent() {
     $result = '';
     $html = $this->html;
     $lang = $this->lang;
-    
+   
     switch ($this->name) {
       case 'comments':
       case 'hold':
@@ -356,7 +356,7 @@ class tadminmoderator extends tadmincommoncomments  {
           
           case 'edit':
           $comments = tcomments::instance($this->idpost);
-          $comment = $comments->getcomment($this->idget);
+          $comment = $comments->getcomment($this->idget());
           $comment->content = $_POST['content'];
           break;
         }

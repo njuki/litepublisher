@@ -26,7 +26,7 @@ function tviewsInstall($self) {
   'menu' => $default,
   'category' => $default,
   'tag' => $default,
-  'admin' => $admin
+  'admin' => $idadmin
   );
   
   $self->unlock();
