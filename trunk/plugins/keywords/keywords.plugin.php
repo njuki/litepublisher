@@ -77,12 +77,14 @@ if ($keywords == $item['text']) return;
   }
   
   public function added($filename, $content) {
+$filename = basename($filename);
     $site = litepublisher::$site;
     $subject ="[$site->name] new keywords added";
     $body = "The new widget has been added on
   $site->url{$_SERVER['REQUEST_URI']}
     
     Widget content:
+
     $content
     
     You can edit this links at:
