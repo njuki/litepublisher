@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tauthdigestInstall() {
+function tauthdigestInstall($self) {
   if (empty($_SERVER['HTTP_REFERER']) && isset($_POST) && (count($_POST) > 0) ) {
     $self->xxxcheck = false;
     $self->save();
