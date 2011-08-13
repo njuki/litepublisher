@@ -1408,16 +1408,23 @@ class toptions extends tevents_storage {
   }
   
   public function authcookie() {
-    if (empty($_COOKIE['admin']))  return false;
+    if (!isset($_COOKIE['admin']))  return false;
     $cookie = basemd5((string) $_COOKIE['admin'] . litepublisher::$secret);
-    if ($this->cookie == $cookie) {
+    if (    $cookie == basemd5( litepublisher::$secret)) return false;
+    if (!empty($this->cookie ) && ($this->cookie == $cookie)) {
       if ($this->cookieexpired < time()) return false;
       $this->user = 1;
     } elseif (!$this->usersenabled)  {
       return false;
     } else {
       $users = tusers::instance();
-      if (!($this->user = $users->authcookie($_COOKIE['admin']))) return false;
+      if ($iduser = $users->findcookie($cookie)){
+        $item = $users->getitem($iduser);
+        if (strtotime($item['expired']) <= time()) return false;
+        $this->user = $iduser;
+      } else {
+        return false;
+      }
     }
     
     $this->updategroup();

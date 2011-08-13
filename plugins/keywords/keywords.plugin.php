@@ -61,13 +61,13 @@ class tkeywordsplugin  extends tplugin {
     //$link =" <a href=\"http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]\">$keywords</a>";
     $widget = tkeywordswidget::instance();
     //if (in_array($link, $widget->links)) return;
-foreach ($widget->links as $item) {
-if ($keywords == $item['text']) return;
-}
+    foreach ($widget->links as $item) {
+      if ($keywords == $item['text']) return;
+    }
     $widget->links[] = array(
-'url' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-'text' => $keywords
-);
+    'url' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+    'text' => $keywords
+    );
     
     $widget->save();
   }
@@ -77,14 +77,14 @@ if ($keywords == $item['text']) return;
   }
   
   public function added($filename, $content) {
-$filename = basename($filename);
+    $filename = basename($filename);
     $site = litepublisher::$site;
     $subject ="[$site->name] new keywords added";
     $body = "The new widget has been added on
   $site->url{$_SERVER['REQUEST_URI']}
     
     Widget content:
-
+    
     $content
     
     You can edit this links at:

@@ -322,7 +322,7 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   public function processform() {
-$result = '';
+    $result = '';
     switch ($this->name) {
       case 'comments':
       case 'hold':

@@ -45,7 +45,7 @@ class tadminviews extends tadminmenu {
   public static function replacemenu($src, $dst) {
     $views = tviews::instance();
     foreach ($views->items as &$viewitem) {
-      if ($viewitem['menuclass'] == $src) $viewitem['menuitem'] = $dst;
+      if ($viewitem['menuclass'] == $src) $viewitem['menuclass'] = $dst;
     }
     $views->save();
   }

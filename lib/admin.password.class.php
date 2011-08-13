@@ -25,16 +25,19 @@ class tadminpassword extends tadminform {
   }
   
   public function processform() {
+    $id = false;
     $login = trim($_POST['login']);
     $email = strtolower(trim($_POST['email']));
-    if (litepublisher::$options->usersenabled) {
+    if (empty($email) || empty($login)) return $this->html->h2->error;
+    if (($email == strtolower(trim(litepublisher::$options->email))) && ($login == litepublisher::$options->login)) {
+      $id = 1;
+    } elseif (litepublisher::$options->usersenabled) {
       $users = tusers::instance();
       if ($id = $users->emailexists($email)) {
         $id = $login == $users->getvalue($id, 'login');
       }
-    } else {
-      $id = $email == strtolower(trim(litepublisher::$options->email))  ? ($login == litepublisher::$options->login)  : false;
     }
+    
     if (!$id) return $this->html->h2->error;
     $password = md5uniq();
     if ($id == 1) {
