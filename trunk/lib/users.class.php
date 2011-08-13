@@ -102,7 +102,6 @@ class tusers extends titems {
   }
   
   public function emailexists($email) {
-    if ($email == litepublisher::$options->email) return 1;
     $pages = tuserpages::instance();
     if ($this->dbversion) {
       return $pages->db->findid('email = '. dbquote($email));
@@ -159,18 +158,23 @@ class tusers extends titems {
     $cookie = (string) $cookie;
     if (empty($cookie)) return false;
     $cookie = basemd5( $cookie . litepublisher::$secret);
+    if ($cookie == basemd5(litepublisher::$secret)) return false;
+    if ($id = $this->findcookie($cookie)) {
+      $item = $this->getitem($id);
+      if (strtotime($item['expired']) > time()) return  $id;
+    }
+    return false;
+  }
+  
+  public function findcookie($cookie) {
     if ($this->dbversion) {
+      $cookie = dbquote($cookie);
       if (($a = $this->select("cookie = '$cookie'", 'limit 1')) && (count($a) > 0)) {
-        $item = $this->getitem($a[0]);
-        if (strtotime($item['expired']) < time()) return  false;
-        return (int) $item['id'];
+        return (int) $a[0];
       }
     } else {
       foreach ($this->items as $id => $item) {
-        if ($cookie == $item['cookie']) {
-          if (strtotime($item['expired']) < time()) return  false;
-          return $id;
-        }
+        if ($cookie == $item['cookie']) return $id;
       }
     }
     return false;

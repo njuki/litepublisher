@@ -30,8 +30,8 @@ class tslidesplugin extends tplugin {
   public function gethtml() {
     $template = ttemplate::instance();
     $result = $template->getjavascript('/plugins/slides/slides.plugin.min.js');
-$result .= '<div id="slides-holder"></div>';
-return $result;
+    $result .= '<div id="slides-holder"></div>';
+    return $result;
   }
   
 }//class
