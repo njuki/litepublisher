@@ -18,9 +18,9 @@ $.load_script(dir + "jquery.myimgscale-0.2.min.js", function() {
 $.load_script(dir + "jquery-plugins.js", function() {
 var holder = $("#slides-holder");
 var slides = $('<div class="slides_container"></div>').appendTo(holder);
-$(holder).append('<a href="#" class="prev"><img src="' + dir + 'img/arrow-prev.png" width="24" height="43" alt="Arrow Prev"></a>');
-$(holder).append('<a href="#" class="next"><img src="' + dir + 'img/arrow-next.png" width="24" height="43" alt="Arrow Next"></a>');
-//alert('slides ' + slides.width() + ':' + slides.height());
+var navi = $('<div class="slides_navi"></div>').appendTo(holder);
+$('<a href="#" class="prev_slide"><img src="' + dir + 'img/arrow-prev.png" width="24" height="43" alt="Arrow Prev"></a>').appendTo(navi);
+$('<a href="#" class="next_slide"><img src="' + dir + 'img/arrow-next.png" width="24" height="43" alt="Arrow Next"></a>').appendTo(navi);
 var a = new Array();
 images.each(function(index) {
 var d = $.Deferred();
@@ -45,6 +45,11 @@ img.src = $(this).attr("href");
 			$(holder).slides({
 				preload: false,
 				//preloadImage: 'img/loading.gif',
+	generateNextPrev: false,
+next : 'next_slide',
+prev : 'prev_slide',
+pagination : false,
+generatePagination : false,
 				play: 5000,
 				pause: 2500,
 				hoverPause: true
