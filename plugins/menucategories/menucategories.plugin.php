@@ -60,7 +60,10 @@ class tcategoriesmenu extends tplugin {
     $args = targs::instance();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
-      $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $tml_submenu);
+      $submenu = '' ;
+if ((count($items) > 0) && ($s = $this->getsubmenu($items, $current))) {
+      $submenu = str_replace('$items', $s, $tml_submenu);
+}
       $args->submenu = $submenu;
       $args->add($categories->items[$id]);
       $result .= $theme->parsearg($current == $id ?  $theme->templates['menu.current'] : $tml, $args);
