@@ -1,9 +1,11 @@
 <?php
 
 function update483() {
+if (litepublisher::$classes->exists('tkeywordswidget')) {
 $w = tkeywordswidget::instance();
 $w->links = array();
 $w->save();
+}
 
 $contact = tcontactform::instance();
 $contact->lock();
