@@ -44,7 +44,7 @@ class ttidyfilter extends tplugin {
     if (!class_exists('tidy')) die('PHP tidy extension is required');
     $filter = tcontentfilter::instance();
     $filter->lock();
-    $filter->onsimplefilter = $this->filter;
+    $filter->onaftersimple = $this->filter;
     $filter->onaftercomment = $this->filter;
     $filter->unlock();
   }
