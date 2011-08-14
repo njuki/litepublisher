@@ -55,6 +55,7 @@ class tkeywordsplugin  extends tplugin {
     if (false !== strpos($keywords, 'ftp:')) return;
     if (false !== strpos($keywords, 'ftp:')) return;
     if (false !== strpos($keywords, 'downloads%3Cscript%')) return;
+    if (false !== strpos($keywords, '\\')) return;
     
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     
