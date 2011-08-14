@@ -334,6 +334,7 @@ class tadminviews extends tadminmenu {
           $view->name = trim($_POST["name_$id"]);
           $view->themename = trim($_POST["theme_$id"]);
           $view->menuclass = $_POST["menuclass_$id"];
+          $view->hovermenu = isset($_POST["hovermenu_$id"]);
           $this->set_custom($id);
           if (($id == 1) || $view->customsidebar) {
             foreach (range(0, 2) as $index) {

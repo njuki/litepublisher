@@ -108,7 +108,6 @@ class Tadminoptions extends tadminmenu {
       $args->automorelength = $filter->automorelength;
       $args->autolinks = $filter->autolinks;
       $args->commentautolinks = $filter->commentautolinks;
-      $args->hovermenu = $template->hovermenu;
       $args->icondisabled = $options->icondisabled;
       
       $themeparser = tthemeparser::instance();
@@ -235,11 +234,7 @@ class Tadminoptions extends tadminmenu {
       $filter->autolinks = isset($autolinks);
       $filter->commentautolinks = isset($commentautolinks);
       $filter->save();
-      $template = ttemplate::instance();
-      $template->lock();
-      $template->hovermenu = isset($hovermenu);
-      $template->unlock();
-      
+
       $replacelang  = isset($replacelang );
       $themeparser = tthemeparser::instance();
       if ($replacelang != $themeparser->replacelang) {

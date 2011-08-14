@@ -36,6 +36,7 @@ class tview extends titem {
     'name' => 'default',
     'themename' => 'default',
     'menuclass' => 'tmenus',
+'hovermenu' => true,
     'customsidebar' => false,
     'disableajax' => false,
     'custom' => array(),
