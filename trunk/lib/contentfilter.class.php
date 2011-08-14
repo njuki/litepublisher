@@ -15,7 +15,7 @@ class tcontentfilter extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'contentfilter';
-    $this->addevents('oncomment', 'onaftercomment', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter', 'onsimplefilter');
+    $this->addevents('oncomment', 'onaftercomment', 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter', 'onsimplefilter', 'onaftersimple');
     $this->data['automore'] = true;
     $this->data['automorelength'] = 250;
     $this->data['phpcode'] = true;
@@ -136,10 +136,11 @@ class tcontentfilter extends tevents {
   public function simplefilter($s) {
     $s = trim($s);
     if ($s == '') return '';
+    $this->callevent('onsimplefilter', array(&$s));
     if ($this->autolinks) $s = self::createlinks($s);
     $s = $this->replacecode($s);
     $s = self::auto_p($s);
-    $this->callevent('onsimplefilter', array(&$s));
+    $this->callevent('onaftersimple', array(&$s));
     return $s;
   }
   
