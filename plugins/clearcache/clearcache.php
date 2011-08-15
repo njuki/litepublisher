@@ -16,14 +16,16 @@ class tclearcache extends tplugin {
     tfiler::delete(litepublisher::$paths->data . 'themes', false, false);
     litepublisher::$urlmap->clearcache();
   }
-  
-  public function install() {
-    litepublisher::$urlmap->beforerequest = $this->clearcache;
-  }
-  
-  public function uninstall() {
-    litepublisher::$urlmap->unsubscribeclass($this);
-  }
+
+public function themeparsed(ttheme $theme) {
+$name = $theme->name;
+$views = tviews::instance();
+foreach ($views->items as $itemview) {
+if ($name == $itemview['themename'])) {
+      $itemview['custom'] = $theme->templates['custom'];
+}
+}
+$views->save();
+}
   
 }//class
-?>
