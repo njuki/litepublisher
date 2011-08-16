@@ -227,7 +227,7 @@ class tinstaller extends tdata {
   
   public function  CheckSystem() {
     if (version_compare(PHP_VERSION, '5.1.4', '<')) {
-      echo 'Blogolet requires PHP 5.1.4 or later. You are using PHP ' . PHP_VERSION ;
+      echo 'LitePublisher requires PHP 5.1.4 or later. You are using PHP ' . PHP_VERSION ;
       exit;
     }
   }

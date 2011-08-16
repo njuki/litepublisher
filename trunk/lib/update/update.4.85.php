@@ -1,6 +1,9 @@
 <?php
 
 function update485() {
+$plugins = tplugins::instance();
+$plugins->delete('adminhover');
+
   $template = ttemplate::instance();
   unset($template->data['hovermenu']);
 $template->save();

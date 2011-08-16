@@ -8,7 +8,8 @@
 
 function tsitemapInstall($self) {
   $cron = tcron::instance();
-  $cron->add('day', get_class($self),  'Cron', null);
+  $cron->addnightly(get_class($self),  'Cron', null);
+  
   $urlmap = turlmap::instance();
   $urlmap->add('/sitemap.xml', get_class($self), 'xml');
   $urlmap->add('/sitemap.htm', get_class($self), null);
@@ -26,6 +27,8 @@ function tsitemapInstall($self) {
 
 function tsitemapUninstall($self) {
   turlmap::unsub($self);
+  $cron = tcron::instance();
+  $cron->deleteclass($self);
   $meta = tmetawidget::instance();
   $meta->delete('sitemap');
 }

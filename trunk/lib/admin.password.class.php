@@ -34,7 +34,7 @@ class tadminpassword extends tadminform {
     } elseif (litepublisher::$options->usersenabled) {
       $users = tusers::instance();
       if ($id = $users->emailexists($email)) {
-        $id = $login == $users->getvalue($id, 'login');
+        if ($login != $users->getvalue($id, 'login')) $id = false;
       }
     }
     
@@ -52,7 +52,7 @@ class tadminpassword extends tadminform {
     } else {
       $item = $users->getitem($id);
       $args->add($item);
-      $name = $item['name'];
+      $name = $item['login'];
     }
     $args->login = $name;
     $args->password = $password;
