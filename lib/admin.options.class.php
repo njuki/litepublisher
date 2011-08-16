@@ -234,7 +234,7 @@ class Tadminoptions extends tadminmenu {
       $filter->autolinks = isset($autolinks);
       $filter->commentautolinks = isset($commentautolinks);
       $filter->save();
-
+      
       $replacelang  = isset($replacelang );
       $themeparser = tthemeparser::instance();
       if ($replacelang != $themeparser->replacelang) {

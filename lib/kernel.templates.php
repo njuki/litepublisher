@@ -210,6 +210,7 @@ class tview extends titem {
     'name' => 'default',
     'themename' => 'default',
     'menuclass' => 'tmenus',
+    'hovermenu' => true,
     'customsidebar' => false,
     'disableajax' => false,
     'custom' => array(),
@@ -429,7 +430,6 @@ class ttemplate extends tevents_storage {
     'jqueryui_version' => litepublisher::$site->jqueryui_version,
     );
     $this->hover = true;
-    $this->data['hovermenu'] = true;
     $this->data['heads'] = '';
     $this->data['js'] = '<script type="text/javascript" src="%s"></script>';
   $this->data['jsready'] = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
@@ -464,7 +464,7 @@ class ttemplate extends tevents_storage {
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
     $this->url = litepublisher::$site->files . '/themes/' . $theme->name;
-    $this->hover = $this->hovermenu && ($theme->templates['menu.hover'] == 'true');
+    $this->hover = $this->view->hovermenu && ($theme->templates['menu.hover'] == 'true');
     $this->ltoptions['themename'] = $theme->name;
     $result = $this->httpheader();
     $result  .= $theme->gethtml($context);
@@ -541,14 +541,6 @@ class ttemplate extends tevents_storage {
     file_put_contents($filename, $result);
     @chmod($filename, 0666);
     return $result;
-  }
-  
-  public function sethovermenu($value) {
-    if ($value == $this->hovermenu)  return;
-    $this->data['hovermenu'] = $value;
-    $this->save();
-    
-    litepublisher::$urlmap->clearcache();
   }
   
   private function getltoptions() {
