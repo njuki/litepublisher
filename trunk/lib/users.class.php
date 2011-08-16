@@ -169,7 +169,7 @@ class tusers extends titems {
   public function findcookie($cookie) {
     if ($this->dbversion) {
       $cookie = dbquote($cookie);
-      if (($a = $this->select("cookie = '$cookie'", 'limit 1')) && (count($a) > 0)) {
+      if (($a = $this->select('cookie = ' . $cookie, 'limit 1')) && (count($a) > 0)) {
         return (int) $a[0];
       }
     } else {
