@@ -1720,7 +1720,7 @@ class turlmap extends titems {
       if ($item['type'] == 'normal') {
         $this->cachefilename =  sprintf('%s-%d.php', $item['id'], $this->page);
       } else {
-        $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($this->url));
+        $this->cachefilename = sprintf('%s-%d-%s.php', $item['id'], $this->page, md5($_SERVER['REQUEST_URI']));
       }
     }
     return litepublisher::$paths->cache . $this->cachefilename;

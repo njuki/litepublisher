@@ -868,20 +868,44 @@ class ttheme extends tevents {
     $to = $count;
     $perpage = litepublisher::$options->perpage;
     $args->perpage = $perpage;
+    $items = array();
     if ($count > $perpage * 2) {
       //$page is midle of the bar
-      $from = max(1, $page - ceil($perpage / 2));
-      $to = min($count, $from + $perpage);
+      $from = (int) max(1, $page - ceil($perpage / 2));
+      $to = (int) min($count, $from + $perpage);
     }
-    $items = range($from, $to);
-    if ($items[0] != 1) array_unshift($items, 1);
-    if ($items[count($items) -1] != $count) $items[] = $count;
+    
+    if ($from == 1) {
+      $items = range($from, $to);
+    } else {
+      $items[0] = 1;
+      if ($from > $perpage) {
+        if ($from - $perpage  - 1 < $perpage) {
+          $items[] = $perpage;
+        } else {
+          array_splice($items, count($items), 0, range($perpage, $from - 1, $perpage));
+        }
+      }
+      array_splice($items, count($items), 0, range($from, $to));
+    }
+    
+    if ($to < $count) {
+      $from2 = (int) ($perpage * ceil(($to+1) / $perpage));
+      if ($from2 + $perpage >= $count) {
+        if ($from2 < $count) $items[] = $from2;
+      } else {
+        array_splice($items, count($items), 0, range($from2, $count, $perpage));
+      }
+      if ($items[count($items) -1] != $count) $items[] = $count;
+    }
+    
     $currenttml=$this->templates['content.navi.current'];
     $tml =$this->templates['content.navi.link'];
     if (!strbegin($url, 'http')) $url = litepublisher::$site->url . $url;
     $pageurl = rtrim($url, '/') . '/page/';
     
     $a = array();
+    echo implode(' ' , $items);
     foreach ($items as $i) {
       $args->page = $i;
       $args->link = $i == 1 ? $url : $pageurl .$i . '/';

@@ -162,6 +162,16 @@ public function save() { return true; }
   
 public function canrequest() { }
   
+  
+  public function getcont() {
+    $cachefile = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI']) . '.php';
+    if (file_exists($cachefile)) return file_get_contents($cachefile);
+    $result = parent::getcont();
+    file_put_contents($cachefile, $result);
+    @chmod($filename, 0666);
+    return $result;
+  }
+  
   public static function idget() {
     return (int) tadminhtml::getparam('id', 0);
   }

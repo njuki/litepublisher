@@ -87,7 +87,9 @@ tstorage::loaddata();
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
   //if (dbversion) litepublisher::$db = tdatabase::instance();
 if (dbversion) litepublisher::$db = new tdatabase();
-  litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
+  //litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
+  litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie() && ('admin' == litepublisher::$options->group);
+
   litepublisher::$urlmap = turlmap::instance();
 //ttheme::clearcache();
 tlocal::clearcache();
