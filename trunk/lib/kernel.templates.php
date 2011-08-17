@@ -905,7 +905,6 @@ class ttheme extends tevents {
     $pageurl = rtrim($url, '/') . '/page/';
     
     $a = array();
-    echo implode(' ' , $items);
     foreach ($items as $i) {
       $args->page = $i;
       $args->link = $i == 1 ? $url : $pageurl .$i . '/';
