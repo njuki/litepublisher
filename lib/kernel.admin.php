@@ -1,0 +1,1674 @@
+<?php
+/**
+* Lite Publisher
+* Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
+* Dual licensed under the MIT (mit.txt)
+* and GPL (gpl.txt) licenses.
+**/
+//menu.admin.class.php
+class tadminmenus extends tmenus {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'adminmenu';
+    $this->addevents('onexclude');
+    $this->data['heads'] = '';
+    tadminmenu::$ownerprops = array_merge(tadminmenu::$ownerprops, array('name', 'group'));
+  }
+  
+  public function settitle($id, $title) {
+    if ($id && isset($this->items[$id])) {
+      $this->items[$id]['title'] = $title;
+      $this->save();
+      litepublisher::$urlmap->clearcache();
+    }
+  }
+  
+  public function getdir() {
+    return litepublisher::$paths->data . 'adminmenus' . DIRECTORY_SEPARATOR;
+  }
+  
+  public function getadmintitle($name) {
+    if (isset(tlocal::$data[$name]['title'])) {
+      return tlocal::$data[$name]['title'];
+    } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {
+      return tlocal::$data[tlocal::instance()->section][$name];
+    } elseif (isset(tlocal::$data['names'][$name])) {
+      return tlocal::$data['names'][$name];
+    } elseif (isset(tlocal::$data['default'][$name])) {
+      return tlocal::$data['default'][$name];
+    } elseif (isset(tlocal::$data['common'][$name])) {
+      return tlocal::$data['common'][$name];
+    } else {
+      return $name;
+    }
+  }
+  
+  public function createitem($parent, $name, $group, $class) {
+    $title = $this->getadmintitle($name);
+    $url = $parent == 0 ? "/admin/$name/" : $this->items[$parent]['url'] . "$name/";
+    return $this->additem(array(
+    'parent' => $parent,
+    'url' => $url,
+    'title' => $title,
+    'name' => $name,
+    'class' => $class,
+    'group' => $group
+    ));
+  }
+  
+  public function hasright($group) {
+    $groups = tusergroups::instance();
+    return $groups->hasright(litepublisher::$options->group, $group);
+  }
+  
+  public function getchilds($id) {
+    if ($id == 0) {
+      $result = array();
+      foreach ($this->tree as $iditem => $items) {
+        if ($this->hasright($this->items[$iditem]['group']))
+        $result[] = $iditem;
+      }
+      return $result;
+    }
+    
+    $parents = array($id);
+    $parent = $this->items[$id]['parent'];
+    while ($parent != 0) {
+      array_unshift ($parents, $parent);
+      $parent = $this->items[$parent]['parent'];
+    }
+    
+    $tree = $this->tree;
+    foreach ($parents as $parent) {
+      foreach ($tree as $iditem => $items) {
+        if ($iditem == $parent) {
+          $tree = $items;
+          break;
+        }
+      }
+    }
+    return array_keys($tree);
+  }
+  
+  public function exclude($id) {
+    if (!$this->hasright($this->items[$id]['group'])) return  true;
+    return $this->onexclude($id);
+  }
+  
+}//class
+
+class tadminmenu  extends tmenu {
+  public $arg;
+  
+  public static function getinstancename() {
+    return 'adminmenu';
+  }
+  
+  public static function getowner() {
+    return tadminmenus::instance();
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->cache = false;
+  }
+  
+public function load() { return true; }
+public function save() { return true; }
+  
+  public function gethead() {
+    return tadminmenus::instance()->heads;
+  }
+  
+  public function getidview() {
+    return tviews::instance()->defaults['admin'];
+  }
+  
+  public static function auth($group) {
+    $auth = tauthdigest::instance();
+    if (litepublisher::$options->cookieenabled) {
+      if ($s = $auth->checkattack()) return $s;
+      if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
+    }
+    elseif (!$auth->Auth())  return $auth->headers();
+    
+    if (litepublisher::$options->group != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright(litepublisher::$options->group, $group)) return 403;
+    }
+  }
+  
+  public function request($id) {
+    error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
+    ini_set('display_errors', 1);
+    
+    if (is_null($id)) $id = $this->owner->class2id(get_class($this));
+    $this->data['id'] = (int)$id;
+    if ($id > 0) {
+      $this->basename =  $this->parent == 0 ? $this->name : $this->owner->items[$this->parent]['name'];
+    }
+    
+    if ($s = self::auth($this->group)) return $s;
+    tlocal::loadlang('admin');
+    $this->arg = litepublisher::$urlmap->argtree;
+    if ($s = $this->canrequest()) return $s;
+    $this->doprocessform();
+  }
+  
+public function canrequest() { }
+  
+  protected function doprocessform() {
+    if (isset($_POST) && (count($_POST) > 0)) {
+      litepublisher::$urlmap->clearcache();
+    }
+    return parent::doprocessform();
+  }
+  
+  public function getcont() {
+    $cachefile = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI']) . '.php';
+    if (file_exists($cachefile)) return file_get_contents($cachefile);
+    $result = parent::getcont();
+    file_put_contents($cachefile, $result);
+    @chmod($filename, 0666);
+    return $result;
+  }
+  
+  public static function idget() {
+    return (int) tadminhtml::getparam('id', 0);
+  }
+  
+  public function getaction() {
+    return isset($_REQUEST['action']) ? $_REQUEST['action'] : false;
+  }
+  
+  public function gethtml($name = '') {
+    $result = tadminhtml::instance();
+    if ($name == '') $name = $this->basename;
+    if (!isset($result->ini[$name])) {
+      $name = $this->owner->items[$this->parent]['name'];
+    }
+    
+    $result->section = $name;
+    $lang = tlocal::instance($name);
+    return $result;
+  }
+  
+  public function getlang() {
+    return tlocal::instance($this->name);
+  }
+  
+  public function getconfirmed() {
+    return isset($_REQUEST['confirm']) && ($_REQUEST['confirm'] == 1);
+  }
+  
+  public function getnotfound() {
+    return $this->html->h2->notfound;
+  }
+  
+  public function getadminurl() {
+    return litepublisher::$site->url .$this->url . litepublisher::$site->q . 'id';
+  }
+  
+  public function getfrom($perpage, $count) {
+    if (litepublisher::$urlmap->page <= 1) return 0;
+    return min($count, (litepublisher::$urlmap->page - 1) * $perpage);
+  }
+  
+}//class
+
+class tauthor_rights extends tevents {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->addevents('getposteditor', 'editpost', 'changeposts', 'canupload', 'candeletefile');
+    $this->basename = 'authorrights';
+  }
+  
+}//class
+
+//authdigest.class.php
+class tauthdigest extends tevents {
+  public $stale;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function Create() {
+    parent::create();
+    $this->basename = 'authdigest';
+    $this->data['nonce'] = '';
+    $this->data['time'] = 0;
+    $this->data['xxxcheck'] = true;
+    $this->data['logoutneeded'] = false;
+    $this->stale = false;
+  }
+  
+  public function afterload() {
+    parent::afterload();
+    if ($this->time + 600 < time()) $this->newnonce();
+  }
+  
+  private function newnonce() {
+    $this->data['nonce'] = md5uniq();
+    $this->data['time'] = time();
+    $this->save();
+  }
+  
+  private function GetDigestHeader() {
+    if ($uri = preg_replace_callback('/,uri="(.*?)"/',
+    create_function('$matches', 'return \',uri="\' . urlencode($matches[1]) . \'"\';'),
+    $_SERVER["QUERY_STRING"])) {
+      parse_str($uri, $_GET);
+      parse_str($uri, $_REQUEST);
+    }
+    
+    if (function_exists('apache_request_headers') && ini_get('safe_mode') == false) {
+      $arh = apache_request_headers();
+      return  isset($arh['Authorization']) ? $arh['Authorization'] : null;
+    } elseif (isset($_SERVER['PHP_AUTH_DIGEST'])) {
+      return $_SERVER['PHP_AUTH_DIGEST'];
+    } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+      return $_SERVER['HTTP_AUTHORIZATION'];
+    } elseif (isset($_ENV['PHP_AUTH_DIGEST'])) {
+      return $_ENV['PHP_AUTH_DIGEST'];
+    } elseif (isset($_SERVER['Authorization'])) {
+      return $_SERVER['Authorization'];
+    } elseif (isset($_REQUEST['HTTP_AUTHORIZATION'])) {
+      return stripslashes(urldecode($_REQUEST['HTTP_AUTHORIZATION']));
+    }
+    return null;
+  }
+  
+  public function auth() {
+    if ($this->logoutneeded) {
+      $this->logoutneeded = false;
+      $this->save();
+      return false;
+    }
+    
+    if ($this->nonce == '') $this->newnonce();
+    if ($digest  = $this->GetDigestHeader()) {
+      $digest  = substr($digest,0,7) == 'Digest ' ?  substr($digest, strpos($digest, ' ') + 1) : $digest ;
+      preg_match_all('/(\w+)=(?:"([^"]+)"|([^\s,]+))/', $digest, $mtx, PREG_SET_ORDER);
+      $hdr = array();
+      foreach ($mtx as $m) $hdr[$m[1]] = $m[2] ? $m[2] : $m[3];
+      if (count($hdr) == 0) return false;
+      if ($this->nonce != $hdr['nonce'])  {
+        $this->stale  = true;
+        return false;
+      }
+      $users = tusers::instance();
+      if (!(litepublisher::$options->user  =$users->loginexists($hdr['username']))) return false;
+      litepublisher::$options->updategroup();
+      $a1 = strtolower(litepublisher::$options->password);
+      $a2 = md5($_SERVER['REQUEST_METHOD'] .':' . $hdr['uri']);
+      return $hdr['response'] == md5("$a1:$this->nonce:$a2");
+    }
+    return false;
+  }
+  
+  public function Headers() {
+    $protocol = $_SERVER["SERVER_PROTOCOL"];
+    if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) ) $protocol = 'HTTP/1.0';
+    $stale = $this->stale ? 'true' : 'false';
+    
+    $result = "<?php
+    @header('WWW-Authenticate: Digest realm=\"litepublisher::$options->realm\", nonce=\"$this->nonce\", stale=\"$stale\"');
+    @header('$protocol 401 Unauthorized', true, 401);
+    echo '401 Unauthorized';
+    ?>";
+    return $result;
+  }
+  
+  public function isattack() {
+    if (isset($_GET['ref'])) {
+      $ref = $_GET['ref'];
+      $url = $_SERVER['REQUEST_URI'];
+      $url = substr($url, 0, strpos($url, '&ref='));
+      if ($ref == md5(litepublisher::$secret . litepublisher::$site->url . $url)) return false;
+    }
+    
+    $host = '';
+    if (!empty($_SERVER['HTTP_REFERER'])) {
+      $p = parse_url($_SERVER['HTTP_REFERER']);
+      $host = $p['host'];
+    }
+    return $host != $_SERVER['HTTP_HOST'];
+  }
+  
+  public function checkattack() {
+    if ($this->xxxcheck  && $this->isattack()) {
+      tlocal::loadlang('admin');
+      if ($_POST) {
+        die(tlocal::$data['login']['xxxattack']);
+      }
+      if ($_GET) {
+        die(tlocal::$data['login']['confirmxxxattack'] .
+        sprintf(' <a href="%1$s">%1$s</a>', $_SERVER['REQUEST_URI']));
+      }
+    }
+    return false;
+  }
+  
+  public function logout() {
+    if (litepublisher::$options->cookieenabled) {
+      $this->setcookies('', 0);
+    }
+    $this->lock();
+    $this->newnonce();
+    $this->logoutneeded = true;
+    $this->unlock();
+  }
+  
+  public function setcookies($cookie, $expired) {
+    setcookie('admin', $cookie, $expired, litepublisher::$site->subdir . '/', false);
+    if (litepublisher::$options->user == 1) {
+      litepublisher::$options->set_cookie($cookie);
+      litepublisher::$options->cookieexpired = $expired;
+    } else {
+      $users = tusers::instance();
+      $users->setcookie(litepublisher::$options->user, $cookie, $expired);
+    }
+  }
+  
+}//class
+
+//htmlresource.class.php
+class thtmltag {
+  public $tag;
+public function __construct($tag) { $this->tag = $tag; }
+  public function __get($name) {
+    $lang = tlocal::instance();
+  return "<$this->tag>{$lang->$name}</$this->tag>\n";
+  }
+  
+}//class
+
+class tadminhtml {
+  public static $tags = array('h1', 'h2', 'h3', 'h4', 'p', 'li', 'ul', 'strong');
+  public $section;
+  public $ini;
+  private $map;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  public static function getinstance($section) {
+    $self = getinstance(__class__);
+    $self->section = $section;
+    $lang = tlocal::instance($section);
+    return $self;
+  }
+  
+  public function __construct() {
+    $this->ini = array();
+    if (litepublisher::$options->installed) {
+      $this->load('adminhtml');
+      tlocal::loadlang('admin');
+    } else {
+      $this->loadini(litepublisher::$paths->languages . 'adminhtml.ini');
+      $this->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+    }
+  }
+  
+  public function __get($name) {
+    if (in_array($name, self::$tags)) return new thtmltag($name);
+    if (isset($this->ini[$this->section][$name]))  {
+      $s = $this->ini[$this->section][$name];
+    } elseif (isset($this->ini['common'][$name]))  {
+      $s = $this->ini['common'][$name];
+    } else {
+      throw new Exception("the requested $name item not found in $this->section section");
+    }
+    return $s;
+  }
+  
+  public function __call($name, $params) {
+    if (isset($this->ini[$this->section][$name]))  {
+      $s = $this->ini[$this->section][$name];
+    } elseif (isset($this->ini['common'][$name]))  {
+      $s = $this->ini['common'][$name];
+    } else {
+      throw new Exception("the requested $name item not found in $this->section section");
+    }
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::instance();
+    return $this->parsearg($s, $args);
+  }
+  
+  public function parsearg($s, targs $args) {
+    if (!is_string($s)) $s = (string) $s;
+    $theme = ttheme::instance();
+    $admin = $theme->content->admin;
+    $admin->tostring = true;
+    // parse tags [form] .. [/form]
+    if (is_int($i = strpos($s, '[form]'))) {
+      $replace = substr($admin->form, 0, strpos($admin->form, '$items'));
+      $s = substr_replace($s, $replace, $i, strlen('[form]'));
+    }
+    
+    if ($i = strpos($s, '[/form]')) {
+      $replace = substr($admin->form, strrpos($admin->form, '$items') + strlen('$items'));
+      $s = substr_replace($s, $replace, $i, strlen('[/form]'));
+    }
+    
+    if (preg_match_all('/\[(editor|checkbox|text|password|combo|hidden)(:|=)(\w*+)\]/i', $s, $m, PREG_SET_ORDER)) {
+      foreach ($m as $item) {
+        $type = $item[1];
+        $name = $item[3];
+        $varname = '$' . $name;
+        //convert spec charsfor editor
+        if (!(($type == 'checkbox') || ($type == 'combo'))) {
+          if (isset($args->data[$varname])) {
+            $args->data[$varname] = self::specchars($args->data[$varname]);
+          } else {
+            $args->data[$varname] = '';
+          }
+        }
+        $tag = strtr($admin->$type, array(
+        '$name' => $name,
+        '$value' =>$varname
+        ));
+        $s = str_replace($item[0], $tag, $s);
+      }
+    }
+    $s = strtr($s, $args->data);
+    return $theme->parse($s);
+  }
+  
+  public static function specchars($s) {
+    return strtr(            htmlspecialchars($s), array(
+    '"' => '&quot;',
+    "'" =>'&#39;',
+    '$' => '&#36;',
+    '%' => '&#37;',
+    '_' => '&#95;'
+    ));
+  }
+  
+  
+  public function fixquote($s) {
+    $s = str_replace("\\'", '\"', $s);
+    $s = str_replace("'", '"', $s);
+    return str_replace('\"', "'", $s);
+  }
+  
+  public function load($name) {
+    $cachefilename = tlocal::getcachefilename($name);
+    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
+      $this->ini = $v + $this->ini;
+    } else {
+      $v = parse_ini_file(litepublisher::$paths->languages . $name . '.ini', true);
+      $this->ini = $v + $this->ini;
+      tfilestorage::savevar($cachefilename, $v);
+    }
+  }
+  
+  public function addini($section, $filename) {
+    if (!isset($this->ini[$section])) {
+      $this->loadini($filename);
+      tfilestorage::savevar(tlocal::getcachefilename('adminhtml'), $this->ini);
+    }
+  }
+  
+  public function loadini($filename) {
+    if( $v = parse_ini_file($filename, true)) {
+      $this->ini = $v + $this->ini;
+    }
+  }
+  
+  public static function getparam($name, $default) {
+    return !empty($_GET[$name]) ? $_GET[$name] : (!empty($_POST[$name]) ? $_POST[$name] : $default);
+  }
+  
+  public static function idparam() {
+    return (int) tadminhtml::getparam('id', 0);
+  }
+  
+  public static function getadminlink($path, $params) {
+    return litepublisher::$site->url . $path . litepublisher::$site->q . $params;
+  }
+  
+  public static function array2combo(array $items, $selected) {
+    $result = '';
+    foreach ($items as $i => $title) {
+      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $selected ? 'selected' : '', $title);
+    }
+    return $result;
+  }
+  
+  public static function getcombobox($name, array $items, $selected) {
+    return sprintf('<select name="%1$s" id="%1$s">%2$s</select>', $name,
+    self::array2combo($items, $selected));
+  }
+  
+  public function adminform($tml, targs $args) {
+    $args->items = $this->parsearg($tml, $args);
+    return $this->parsearg(ttheme::instance()->content->admin->form, $args);
+  }
+  
+  public function getcheckbox($name, $value) {
+    return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
+  }
+  
+  public function getinput($type, $name, $value, $title) {
+    $theme = ttheme::instance();
+    return strtr($theme->content->admin->$type, array(
+    '$lang.$name' => $title,
+    '$name' => $name,
+    '$value' => $value
+    ));
+  }
+  
+  public function getedit($name, $value, $title) {
+    return $this->getinput('text', $name, $value, $title);
+  }
+  
+  public function getcombo($name, $value, $title) {
+    return $this->getinput('combo', $name, $value, $title);
+  }
+  
+  public function gettable($head, $body) {
+    return strtr($this->ini['common']['table'], array(
+    '$tablehead' => $head,
+    '$tablebody' => $body));
+  }
+  
+  public function buildtable(array $items, array $tablestruct) {
+    $head = '';
+    $body = '';
+    $tml = '<tr>';
+    foreach ($tablestruct as $elem) {
+      $head .= sprintf('<th align="%s">%s</th>', $elem[0], $elem[1]);
+      $tml .= sprintf('<td align="%s">%s</td>', $elem[0], $elem[2]);
+    }
+    $tml .= '</tr>';
+    
+    $theme = ttheme::instance();
+    $args = targs::instance();
+    foreach ($items as $id => $item) {
+      $args->add($item);
+      if (!isset($item['id'])) $args->id = $id;
+      $body .= $theme->parsearg($tml, $args);
+    }
+    $args->tablehead  = $head;
+    $args->tablebody = $body;
+    return $theme->parsearg($this->ini['common']['table'], $args);
+  }
+  
+  public function confirmdelete($id, $adminurl, $mesg) {
+    $args = targs::instance();
+    $args->id = $id;
+    $args->action = 'delete';
+    $args->adminurl = $adminurl;
+    $args->confirm = $mesg;
+    return $this->confirmform($args);
+  }
+  
+  public static function check2array($prefix) {
+    $result = array();
+    foreach ($_POST as $key => $value) {
+      if (strbegin($key, $prefix)) {
+        $result[] = (int) $value;
+      }
+    }
+    return $result;
+  }
+  
+}//class
+
+class tautoform {
+  const editor = 'editor';
+  const text = 'text';
+  const checkbox = 'checkbox';
+  const hidden = 'hidden';
+  
+  public $obj;
+  public $props;
+  public $section;
+  public $_title;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  public function __construct(tdata $obj, $section, $titleindex) {
+    $this->obj = $obj;
+    $this->section = $section;
+    $this->props = array();
+    $lang = tlocal::instance($section);
+    $this->_title = $lang->$titleindex;
+  }
+  
+  public function __set($name, $value) {
+    $this->props[] = array(
+    'obj' => $this->obj,
+    'propname' => $name,
+    'type' => $value
+    );
+  }
+  
+  public function __get($name) {
+    if (isset($this->obj->$name)) {
+      return array(
+      'obj' => $this->obj,
+      'propname' => $name
+      );
+    }
+    //tlogsubsystem::error(sprintf('The property %s not found in class %s', $name, get_class($this->obj));
+  }
+  
+  public function __call($name, $args) {
+    if (isset($this->obj->$name)) {
+      $result = array(
+      'obj' => $this->obj,
+      'propname' => $name,
+      'type' => $args[0]
+      );
+      if (($result['type'] == 'combo') && isset($args[1]))  $result['items'] = $args[1];
+      return $result;
+    }
+  }
+  
+  public function add() {
+    $a = func_get_args();
+    foreach ($a as $prop) {
+      $this->addprop($prop);
+    }
+  }
+  
+  public function addsingle($obj, $propname, $type) {
+    return $this->addprop(array(
+    'obj' => $obj,
+    'propname' => $propname,
+    'type' => $type
+    ));
+  }
+  
+  public function addeditor($obj, $propname) {
+    return $this->addsingle($obj, $propname, 'editor');
+  }
+  
+  public function addprop(array $prop) {
+    if (isset($prop['type'])) {
+      $type = $prop['type'];
+    } else {
+      $type = 'text';
+    $value = $prop['obj']->{$prop['propname']};
+      if (is_bool($value)) {
+        $type = 'checkbox';
+      } elseif(strpos($value, "\n")) {
+        $type = 'editor';
+      }
+    }
+    
+    $item = array(
+    'obj' => $prop['obj'],
+    'propname' => $prop['propname'],
+    'type' => $type,
+    'title' => isset($prop['title']) ? $prop['title'] : ''
+    );
+    if (($type == 'combo') && isset($prop['items'])) $item['items'] = $prop['items'];
+    $this->props[] = $item;
+    return count($this->props) - 1;
+  }
+  
+  public function getcontent() {
+    $result = '';
+    $lang = tlocal::instance();
+    $theme = ttheme::instance();
+    $admin = $theme->content->admin;
+    $admin->tostring = true;
+    foreach ($this->props as $prop) {
+    $value = $prop['obj']->{$prop['propname']};
+      switch ($prop['type']) {
+        case 'text':
+        case 'editor':
+        $value = tadminhtml::specchars($value);
+        break;
+        
+        case 'checkbox':
+        $value = $value ? 'checked="checked"' : '';
+        break;
+        
+        case 'combo':
+        $value = tadminhtml  ::array2combo($prop['items'], $value);
+        break;
+      }
+      
+    $result .= strtr($admin->{$prop['type']}, array(
+    '$lang.$name' => empty($prop['title']) ? $lang->{$prop['propname']} : $prop['title'],
+      '$name' => $prop['propname'],
+      '$value' => $value
+      ));
+    }
+    return $result;
+  }
+  
+  public function getform() {
+    $args = targs::instance();
+    $args->formtitle = $this->_title;
+    $args->items = $this->getcontent();
+    $theme = ttheme::instance();
+    return $theme->parsearg($theme->content->admin->form, $args);
+  }
+  
+  public function processform() {
+    foreach ($this->props as $prop) {
+      if (method_exists($prop['obj'], 'lock')) $prop['obj']->lock();
+    }
+    
+    foreach ($this->props as $prop) {
+      $name = $prop['propname'];
+      if (isset($_POST[$name])) {
+        $value = trim($_POST[$name]);
+        if ($prop['type'] == 'checkbox') $value = true;
+      } else {
+        $value = false;
+      }
+      $prop['obj']->$name = $value;
+    }
+    
+    foreach ($this->props as $prop) {
+      if (method_exists($prop['obj'], 'unlock')) $prop['obj']->unlock();
+    }
+  }
+  
+}//class
+
+class ttablecolumns {
+  public $style;
+  public $head;
+  public $checkboxes;
+  public $checkbox_tml;
+  public $item;
+  public $changed_hidden;
+  public $index;
+  
+  public function __construct() {
+    $this->index = 0;
+    $this->style = '';
+    $this->checkboxes = array();
+    $this->checkbox_tml = '<input type="checkbox" name="checkbox-showcolumn-%1$d" value="%1$d" %2$s />
+    <label for="checkbox-showcolumn-%1$d"><strong>%3$s</strong></label>';
+    $this->head = '';
+    $this->body = '';
+    $this->changed_hidden = 'changed_hidden';
+  }
+  
+  public function addcolumns(array $columns) {
+    foreach ($columns as $column) {
+      list($tml, $title, $align, $show) = $column;
+      $this->add($tml, $title, $align, $show);
+    }
+  }
+  
+  public function add($tml, $title, $align, $show) {
+    $class = 'col_' . ++$this->index;
+    if (isset($_POST[$this->changed_hidden])) $show  = isset($_POST["checkbox-showcolumn-$this->index"]);
+    $display = $show ? 'block' : 'none';
+  $this->style .= ".$class { text-align: $align; display: $display; }\n";
+    $this->checkboxes[]=  sprintf($this->checkbox_tml, $this->index, $show ? 'checked="checked"' : '', $title);
+    $this->head .= sprintf('<th class="%s">%s</th>', $class, $title);
+    $this->body .= sprintf('<td class="%s">%s</td>', $class, $tml);
+    return $this->index;
+  }
+  
+  public function build($body, $buttons) {
+    $args = targs::instance();
+    $args->style = $this->style;
+    $args->checkboxes = implode("\n", $this->checkboxes);
+    $args->head = $this->head;
+    $args->body = $body;
+    $args->buttons = $buttons;
+    $tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.ini');
+    $theme = ttheme::instance();
+    return $theme->parsearg($tml, $args);
+  }
+  
+}//class
+
+class tuitabs {
+  public $head;
+  public $body;
+  public $tabs;
+  private static $index = 0;
+  private $items;
+  
+  public function __construct() {
+    self::$index++;
+    $this->items = array();
+    $this->head = '<li><a href="#tab-' . self::$index. '-%d"><span>%s</span></a></li>';
+    $this->body = '<div id="tab-' . self::$index . '-%d">%s</div>';
+    $this->tabs = '<div id="tabs-' . self::$index . '" rel="tabs">
+    <ul>%s</ul>
+    %s
+    </div>';
+  }
+  
+  public function get() {
+    $head= '';
+    $body = '';
+    foreach ($this->items as $i => $item) {
+      $head .= sprintf($this->head, $i, $item['title']);
+      $body .= sprintf($this->body, $i, $item['body']);
+    }
+    return sprintf($this->tabs, $head, $body);
+  }
+  
+  public function add($title, $body) {
+    $this->items[] = array(
+    'title' => $title,
+    'body' => $body
+    );
+  }
+  
+  public static function gethead() {
+    $template = ttemplate::instance();
+    return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
+  }
+  
+}//class
+
+//admin.posteditor.ajax.class.php
+class tajaxposteditor  extends tevents {
+  public $idpost;
+  private $isauthor;
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'ajaxposteditor';
+    $this->addevents('onhead', 'oneditor');
+    $this->data['head'] = '';
+    $this->data['visual'] = '';
+    //'/plugins/tiny_mce/init.js';
+    //'/plugins/ckeditor/init.js';
+    $this->data['ajaxvisual'] = true;
+  }
+  
+  public function dogethead($head) {
+    $template = ttemplate::instance();
+    $template->ltoptions['upload_button_text'] = tlocal::instance()->upload;
+    $head .= $this->head;
+    if ($this->visual) {
+      if ($this->ajaxvisual) {
+        $head .= $template->getready('$("a[rel~=\'loadvisual\']").one("click", function() {
+          $("#loadvisual").remove();
+          $.getScript("' . litepublisher::$site->files . $this->visual . '");
+          return false;
+        });');
+      } else {
+        $head .= $template->getjavascript($this->visual);
+      }
+    }
+    
+    $this->callevent('onhead', array(&$head));
+    return $head;
+  }
+  
+  protected static function error403() {
+    return '<?php header(\'HTTP/1.1 403 Forbidden\', true, 403); ?>' . turlmap::htmlheader(false) . 'Forbidden';
+  }
+  
+  public function getviewicon($idview, $icon) {
+    $result = tadminviews::getcomboview($idview);
+    if ($icons = tadminicons::getradio($icon)) {
+      $html = tadminhtml ::instance();
+      if ($html->section == '') $html->section = 'editor';
+      $result .= $html->h2->icons;
+      $result .= $icons;
+    }
+    return $result;
+  }
+  
+  public static function auth() {
+    if (!litepublisher::$options->cookieenabled) return self::error403();
+    if (!litepublisher::$options->authcookie()) return self::error403();
+    if (litepublisher::$options->group != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright(litepublisher::$options->group, 'author')) return self::error403();
+    }
+  }
+  
+  public function request($arg) {
+    //tfiler::log(var_export($_GET, true) . var_export($_POST, true) . var_export($_FILES, true));
+    if (isset($_GET['get']) && ($_GET['get'] == 'upload')) {
+      if (empty($_POST['admincookie'])) return self::error403();
+      if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
+        return "<?php
+        header('Allow: POST');
+        header('HTTP/1.1 405 Method Not Allowed', true, 405);
+        header('Content-Type: text/plain');
+        ?>";
+      }
+      $_COOKIE['admin'] = $_POST['admincookie'];
+    }
+    if ($err = self::auth()) return $err;
+    $this->idpost = tadminhtml::idparam();
+    $this->isauthor = 'author' == litepublisher::$options->group;
+    if ($this->idpost > 0) {
+      $posts = tposts::instance();
+      if (!$posts->itemexists($this->idpost)) return self::error403();
+      $groupname = litepublisher::$options->group;
+      if ($groupname != 'admin') {
+        $groups = tusergroups::instance();
+        if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
+          $this->isauthor = true;
+          $post = tpost::instance($this->idpost);
+          if (litepublisher::$options->user != $post->author) return self::error403();
+        }
+      }
+    }
+    return $this->getcontent();
+  }
+  
+  private function getfiletemplates($id, $idpost, $li_id) {
+    $replace = array(
+    '$id'=> $id,
+    '$post.id'=> $idpost,
+    '<li>' => sprintf('<li><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id)
+    );
+    
+    $theme = ttheme::instance();
+    $types = $theme->reg('/^content\.post\.filelist/');
+    $a = array();
+    foreach ($types as $name => $val) {
+      $name = substr($name, strrpos($name, '.') + 1);
+      if ($name == 'filelist') $name = '';
+      $a[$name] = strtr($val, $replace);
+    }
+    return new tarray2prop ($a);
+  }
+  
+  public function getcontent() {
+    $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
+    $html = tadminhtml ::instance();
+    $html->section = 'editor';
+    $lang = tlocal::instance('editor');
+    $post = tpost::instance($this->idpost);
+    ttheme::$vars['post'] = $post;
+    
+    switch ($_GET['get']) {
+      case 'tags':
+      $result = $html->getedit('tags', $post->tagnames, $lang->tags);
+      $lang->section = 'editor';
+      $result .= $html->h4->addtags;
+      $items = array();
+      $tags = ttags::instance();
+      $list = $tags->getsorted(-1, 'name', 0);
+      foreach ($list as $id ) {
+        $items[] = '<a href="" rel="tagtopost">' . $tags->items[$id]['title'] . "</a>";
+      }
+      $result .= sprintf('<p>%s</p>', implode(', ', $items));
+      break;
+      
+      case 'posted':
+      $args = targs::instance();
+      $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
+      $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
+      $result = $html->datepicker($args);
+      break;
+      
+      case 'status':
+      $form = new tautoform($post, 'editor', 'editor');
+      $form->add($form->commentsenabled, $form->pingenabled,
+      $form->status('combo', array(
+      'published' => $lang->published,
+      'draft' => $lang->draft
+      )));
+      $result = $form->getcontent();
+      break;
+      
+      case 'view':
+      $result = $this->getviewicon($post->idview, $post->icon);
+      break;
+      
+      case 'seo':
+      $form = new tautoform($post, 'editor', 'editor');
+      $form->add($form->url, $form->title2, $form->keywords, $form->description);
+      $result = $form->getcontent();
+      break;
+      
+      case 'files':
+      $args = targs::instance();
+      $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+      $files = tfiles::instance();
+      if (count($post->files) == 0) {
+        $args->currentfiles = '<ul></ul>';
+      } else {
+        $templates = $this->getfiletemplates('curfile-$id', 'curpost-$post.id', 'currentfile-$id');
+        $args->currentfiles = $files->getlist($post->files, $templates);
+      }
+      
+      if (dbversion) {
+        $sql = "parent =0 and media <> 'icon'";
+        $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
+        $count = $files->db->getcount($sql);
+      } else {
+        $list= array();
+        $uid = litepublisher::$options->user;
+        foreach ($files->items as $id => $item) {
+          if (($item['parent'] != 0) || ($item['media'] == 'icon')) continue;
+          if ($uid > 1 && $uid != $item['author']) continue;
+          $list[] = $id;
+        }
+        $count = count($list);
+      }
+      
+      $pages = '';
+      $perpage = 10;
+      $count = ceil($count/$perpage);
+      for ($i =1; $i <= $count; $i++) {
+        $args->index = $i;
+        $pages .= $html->pageindex($args);
+      }
+      
+      $args->pages = $pages;
+      $args->files = implode(',', $post->files);
+      $result = $html->browser($args);
+      break;
+      
+      case 'filepage':
+      $page = tadminhtml::getparam('page', 1);
+      $page = max(1, $page);
+      
+      $perpage = 10;
+      $files = tfiles::instance();
+      if (dbversion) {
+        $sql = "parent =0 and media <> 'icon'";
+        $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
+        $count = $files->db->getcount($sql);
+        $pagescount = ceil($count/$perpage);
+        $page = min($page, $pagescount);
+        $from = ($page -1)  * $perpage;
+        $list = $files->select($sql, " order by posted desc limit $from, $perpage");
+        if (!$list) $list = array();
+      } else {
+        $list= array();
+        $uid = litepublisher::$options->user;
+        foreach ($files->items as $id => $item) {
+          if (($item['parent'] != 0) || ($item['media'] == 'icon')) continue;
+          if ($uid > 1 && $uid != $item['author']) continue;
+          $list[] = $id;
+        }
+        $count = count($list);
+        $pagescount = ceil($count/$perpage);
+        $page = min($page, $pagescount);
+        $from = ($page -1)  * $perpage;
+        $list = array_slice($list, $from, $perpage);
+      }
+      
+      if (count($list) == 0) return '';
+      
+      $args = targs::instance();
+      $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+      $args->page = $page;
+      $templates = $this->getfiletemplates('pagefile-$id', 'pagepost-$post.id', 'itemfilepage-$id');
+      $files = tfiles::instance();
+      $result = $files->getlist($list, $templates);
+      $result .= $html->page($args);
+      break;
+      
+      case 'upload':
+      if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) ||
+      $_FILES["Filedata"]["error"] != 0) return self::error403();
+      if ($this->isauthor && ($r = tauthor_rights::instance()->canupload())) return $r;
+      
+      $parser = tmediaparser::instance();
+      $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
+      $templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');
+      $files = tfiles::instance();
+      $result = $files->getlist(array($id), $templates);
+      break;
+      
+      case 'contenttabs':
+      $args = targs::instance();
+      $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+      $result = $html->contenttabs($args);
+      break;
+      
+      case 'excerpt':
+      $result = $this->geteditor('excerpt', $post->excerpt, false);
+      break;
+      
+      case 'rss':
+      $result = $this->geteditor('rss', $post->rss, false);
+      break;
+      
+      case 'more':
+      $result = $html->getedit('more', $post->moretitle, $lang->more);
+      break;
+      
+      case 'filtered':
+      $result = $this->geteditor('filtered', $post->filtered, false);
+      break;
+      
+      case 'upd':
+      $result = $this->geteditor('upd', '', false);
+      break;
+      
+      default:
+      $result = var_export($_GET, true);
+    }
+    //tfiler::log($result);
+    return turlmap::htmlheader(false) . $result;
+  }
+  
+  public function geteditor($name, $value, $visual) {
+    $html = tadminhtml ::instance();
+    $hsect = $html->section;
+    $html->section = 'editor';
+    $lang = tlocal::instance();
+    $lsect = $lang->section;
+    $lang->section = 'editor';
+    $title = $lang->$name;
+    if ($visual && $this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
+    $result = $html->getinput('editor', $name, tadminhtml::specchars($value), $title);
+    $lang->section = $lsect;
+    $html->section = $hsect;
+    return $result;
+  }
+  
+  public function getraweditor($value) {
+    $html = tadminhtml ::instance();
+    if ($html->section == '') $html->section = 'editor';
+    $lang = tlocal::instance();
+    if ($lang->section == '') $lang->section = 'editor';
+    $title = $lang->raw;
+    if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
+    $title .= $html->loadcontenttabs();
+    return $html->getinput('editor', 'raw', tadminhtml::specchars($value), $title);
+  }
+  
+}//class
+
+//admin.posteditor.class.php
+class tposteditor extends tadminmenu {
+  public $idpost;
+  private $isauthor;
+  
+  public static function instance($id = 0) {
+    return parent::iteminstance(__class__, $id);
+  }
+  
+  public function gethead() {
+    $result = parent::gethead();
+    
+    $template = ttemplate::instance();
+    $template->ltoptions['idpost'] = $this->idget();
+    $template->ltoptions['lang'] = litepublisher::$options->language;
+    //$result .= $template->getready('$.initposteditor();');
+    $result .= $template->getready('initposteditor();');
+    $ajax = tajaxposteditor ::instance();
+    return $ajax->dogethead($result);
+  }
+  
+  private static function getsubcategories($parent, array $postitems) {
+    $result = '';
+    $categories = tcategories::instance();
+    $html = tadminhtml::getinstance('editor');
+    $args = targs::instance();
+    foreach ($categories->items  as $id => $item) {
+      if ($parent != $item['parent']) continue;
+      $args->add($item);
+      $args->checked = in_array($item['id'], $postitems);
+      $args->subcount = '';
+      $args->subitems = self::getsubcategories($id, $postitems);
+      $result .= $html->category($args);
+    }
+    
+    if ($result != '') $result = sprintf($html->categories(), $result);
+    if ($parent == 0) $result = $html->categorieshead($args) . $result;
+    return $result;
+  }
+  
+  public static function getcategories(array $items) {
+    $categories = tcategories::instance();
+    $categories->loadall();
+    $result = self::getsubcategories(0, $items);
+    return str_replace("'", '"', $result);
+  }
+  
+  protected function getpostcategories(tpost $post) {
+    $postitems = $post->categories;
+    $categories = tcategories::instance();
+    if (count($postitems) == 0) $postitems = array($categories->defaultid);
+    return self::getcategories($postitems);
+  }
+  
+  public function canrequest() {
+    $this->isauthor = false;
+    $this->basename = 'editor';
+    $this->idpost = $this->idget();
+    if ($this->idpost > 0) {
+      $posts = tposts::instance();
+      if (!$posts->itemexists($this->idpost)) return 404;
+    }
+    $post = tpost::instance($this->idpost);
+    $groupname = litepublisher::$options->group;
+    if ($groupname != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author')) {
+        $this->isauthor = true;
+        if (($post->id != 0) && (litepublisher::$options->user != $post->author)) return 403;
+      }
+    }
+  }
+  
+  public function gettitle() {
+    if ($this->idpost == 0){
+      return parent::gettitle();
+    } else {
+      return tlocal::$data[$this->name]['editor'];
+    }
+  }
+  
+  public function getexternal() {
+    $this->basename = 'editor';
+    $this->idpost = 0;
+    return $this->getcontent();
+  }
+  
+  public function getpostargs(tpost $post, targs $args) {
+    $args->id = $post->id;
+    $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
+    $args->title = htmlspecialchars_decode($post->title, ENT_QUOTES);
+    $args->categories = $this->getpostcategories($post);
+    $ajaxeditor = tajaxposteditor ::instance();
+    $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
+  }
+  
+  public function getcontent() {
+    $html = $this->html;
+    $post = tpost::instance($this->idpost);
+    ttheme::$vars['post'] = $post;
+    $args = targs::instance();
+    $this->getpostargs($post, $args);
+    $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
+    if ($this->isauthor &&($r = tauthor_rights::instance()->getposteditor($post, $args)))  return $r;
+    $result .= $html->form($args);
+    unset(ttheme::$vars['post']);
+    return $html->fixquote($result);
+  }
+  
+  public static function processcategories() {
+    return tadminhtml::check2array('category-');
+  }
+  
+  protected function set_post(tpost $post) {
+    extract($_POST, EXTR_SKIP);
+    $post->title = $title;
+    $post->categories = self::processcategories();
+    if (($post->id == 0) && (litepublisher::$options->user >1)) $post->author = litepublisher::$options->user;
+    if (isset($tags)) $post->tagnames = $tags;
+    if (isset($icon)) $post->icon = (int) $icon;
+    if (isset($idview)) $post->idview = $idview;
+    if (isset($files))  {
+      $files = trim($files);
+      $post->files = $files == '' ? array() : explode(',', $files);
+    }
+    if (isset($date) && ($date != '')  && @sscanf($date, '%d.%d.%d', $d, $m, $y) && @sscanf($time, '%d:%d', $h, $min)) {
+      $post->posted = mktime($h,$min,0, $m, $d, $y);
+    }
+    
+    if (isset($status)) {
+      $post->status = $status == 'draft' ? 'draft' : 'published';
+      $post->commentsenabled = isset($commentsenabled);
+      $post->pingenabled = isset($pingenabled);
+    }
+    
+    if (isset($url)) {
+      $post->url = $url;
+      $post->title2 = $title2;
+      $post->keywords = $keywords;
+      $post->description = $description;
+    }
+    
+    $post->content = $raw;
+    if (isset($excerpt)) $post->excerpt = $excerpt;
+    if (isset($rss)) $post->rss = $rss;
+    if (isset($more)) $post->moretitle = $more;
+    if (isset($filtered)) $post->filtered = $filtered;
+    if (isset($upd)) {
+      $update = sprintf($this->lang->updateformat, tlocal::date(time()), $upd);
+      $post->content = $post->rawcontent . "\n\n" . $update;
+    }
+    
+  }
+  
+  public function processform() {
+    // dumpvar($_POST);
+    $this->basename = 'editor';
+    $html = $this->html;
+    if (empty($_POST['title'])) return $html->h2->emptytitle;
+    $id = (int)$_POST['id'];
+    $post = tpost::instance($id);
+    if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  {
+      $this->idpost = $post->id;
+      return $r;
+    }
+    $this->set_post($post);
+    
+    $posts = tposts::instance();
+    if ($id == 0) {
+      $this->idpost = $posts->add($post);
+      $_POST['id'] = $this->idpost;
+    } else {
+      $posts->edit($post);
+    }
+    return sprintf($html->p->success,$post->bookmark);
+  }
+  
+}//class
+
+//users.class.php
+class tusers extends titems {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    $this->dbversion = dbversion;
+    parent::create();
+    $this->basename = 'users';
+    $this->table = 'users';
+    $this->autoid = 1;
+  }
+  
+  public function add($group, $login,$password, $name, $email, $website) {
+    if ($this->loginexists($login)) return false;
+    $groups = tusergroups::instance();
+    if (is_numeric($group)) {
+      $gid = (int) $group;
+      if (!$groups->itemexists($gid)) return false;
+    } else {
+      if (!($gid = $groups->groupid($group))) return false;
+    }
+    if ($password == '') $password = md5uniq();
+    $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+    
+    $item = array(
+    'login' => $login,
+    'password' => $password,
+    'cookie' =>  md5uniq(),
+    'expired' => sqldate(),
+    'gid' => $gid,
+    'trust' => 0,
+    'status' => 'wait'
+    );
+    
+    $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
+    $this->items[$id] = $item;
+    if ($this->dbversion) $this->save();
+    $pages = tuserpages::instance();
+    $pages->add($id, $name, $email, $website);
+    $this->added($id);
+    return $id;
+  }
+  
+  public function edit($id, array $values) {
+    if (!$this->itemexists($id)) return false;
+    $item = $this->getitem($id);
+    $groups = tusergroups::instance();
+    $group = isset($values['gid']) ? $values['gid'] :
+    (isset($values['group']) ? $values['group'] : '');
+    $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
+    if (!$groups->itemexists($gid)) return false;
+    
+    $item['gid'] = $gid;
+    
+    foreach ($item as $k => $v) {
+      if (!isset($values[$k])) continue;
+      switch ($k) {
+        case 'password':
+        if ($values['password'] != '') {
+          $item['password'] = basemd5(sprintf('%s:%s:%s', $values['login'],  litepublisher::$options->realm, $values['password']));
+        }
+        break;
+        
+        default:
+        $item[$k] = trim($values[$k]);
+      }
+    }
+    
+    $this->items[$id] = $item;
+    $item['id'] = $id;
+    if ($this->dbversion) {
+      $this->db->updateassoc($item);
+    } else {
+      $this->save();
+    }
+    
+    $pages = tuserpages::instance();
+    $pages->edit($id, $values);
+    return true;
+  }
+  
+  public function loginexists($login) {
+    if ($login == litepublisher::$options->login) return 1;
+    if ($this->dbversion) {
+      return $this->db->findid('login = '. dbquote($login));
+    } else {
+      foreach ($this->items as $id => $item) {
+        if ($login == $item['login']) return true;
+      }
+      return false;
+    }
+  }
+  
+  public function emailexists($email) {
+    $pages = tuserpages::instance();
+    if ($this->dbversion) {
+      return $pages->db->findid('email = '. dbquote($email));
+    } else {
+      foreach ($pages->items as $id => $item) {
+        if ($email == $item['email']) return true;
+      }
+      return false;
+    }
+  }
+  
+  public function getpassword($id) {
+    return $id == 1 ? litepublisher::$options->password : $this->getvalue($id, 'password');
+  }
+  
+  public function changepassword($id, $password) {
+    $item = $this->getitem($id);
+    $this->setvalue($id, 'password', basemd5(sprintf('%s:%s:%s', $item['login'],  litepublisher::$options->realm, $password)));
+  }
+  
+  public function approve($id) {
+    if (dbversion) {
+      $this->db->setvalue($id, 'status', 'approved');
+      if (isset(            $this->items[$id])) $this->items[$id]['status'] = 'approved';
+    } else {
+      $this->items[$id]['status'] = 'approved';
+      $this->save();
+    }
+    $pages = tuserpages::instance();
+    if ($pages->createpage) $pages->addpage($id);
+  }
+  
+  public function auth($login,$password) {
+    $password = basemd5(sprintf('%s:%s:%s', $login,  litepublisher::$options->realm, $password));
+    if ($this->dbversion) {
+      $login = dbquote($login);
+      if (($a = $this->select("login = $login and password = '$password'", 'limit 1')) && (count($a) > 0)) {
+        $item = $this->getitem($a[0]);
+        if ($item['status'] == 'wait') $this->approve($item['id']);
+        return (int) $item['id'];
+      }
+    } else {
+      foreach ($this->items as $id => $item) {
+        if (($login == $item['login']) && ($password = $item['password'])) {
+          if ($item['status'] == 'wait') $this->approve($id);
+          return $id;
+        }
+      }
+    }
+    return  false;
+  }
+  
+  public function authcookie($cookie) {
+    $cookie = (string) $cookie;
+    if (empty($cookie)) return false;
+    $cookie = basemd5( $cookie . litepublisher::$secret);
+    if ($cookie == basemd5(litepublisher::$secret)) return false;
+    if ($id = $this->findcookie($cookie)) {
+      $item = $this->getitem($id);
+      if (strtotime($item['expired']) > time()) return  $id;
+    }
+    return false;
+  }
+  
+  public function findcookie($cookie) {
+    if ($this->dbversion) {
+      $cookie = dbquote($cookie);
+      if (($a = $this->select('cookie = ' . $cookie, 'limit 1')) && (count($a) > 0)) {
+        return (int) $a[0];
+      }
+    } else {
+      foreach ($this->items as $id => $item) {
+        if ($cookie == $item['cookie']) return $id;
+      }
+    }
+    return false;
+  }
+  
+  public function getgroupname($id) {
+    $item = $this->getitem($id);
+    $groups = tusergroups::instance();
+    return $groups->items[$item['gid']]['name'];
+  }
+  
+  public function clearcookie($id) {
+    $this->setcookie($id, '', 0);
+  }
+  
+  public function setcookie($id, $cookie, $expired) {
+    if ($cookie != '') $cookie = basemd5($cookie . litepublisher::$secret);
+    $expired = sqldate($expired);
+    if (isset($this->items[$id])) {
+      $this->items[$id]['cookie'] = $cookie;
+      $this->items[$id]['expired'] = $expired;
+    }
+    
+    if ($this->dbversion) {
+      $this->db->updateassoc(array(
+      'id' => $id,
+      'cookie' => $cookie,
+      'expired' => $expired
+      ));
+    } else {
+      $this->save();
+    }
+  }
+  
+  public function optimize() {
+    if ($this->dbversion) {
+      $time = sqldate(strtotime('-1 day'));
+      $pagetable = litepublisher::$db->prefix . 'userpage';
+      $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
+      if (count($delete) > 0) {
+        $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
+        $pages = tuserpages::instance();
+        foreach ($delete as $id) {
+          $pages->delete($id);
+        }
+      }
+    } else {
+      $pages = tuserpages::instance();
+      $pages->lock();
+      $time = strtotime('-1 day');
+      $deleted = false;
+      foreach ($this->items as $id => $item) {
+        if (($item['status'] == 'wait') && ($pages->items[$id]['registered'] < $time)) {
+          unset($this->items[$id]);
+          $pages->delete($id);
+          $deleted = true;
+        }
+      }
+      if ($deleted) $this->save();
+      $pages->unlock();
+    }
+  }
+  
+}//class
+
+//users.groups.class.php
+class tusergroups extends titems {
+  
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+  protected function create() {
+    parent::create();
+    $this->basename = 'usergroups';
+    $this->data['defaultgroup'] = 'nobody';
+    $this->addevents('onhasright');
+  }
+  
+  function add($name, $home = '/ADMIN/') {
+    if ($id = $this->groupid($name)) return $id;
+    $this->items[++$this->autoid] = array(
+    'name' => $name,
+    'home' => $home
+    );
+    $this->save();
+    return $this->autoid;
+  }
+  
+  public function groupid($name) {
+    foreach ($this->items as $id => $item) {
+      if ($name == $item['name']) return $id;
+    }
+    return false;
+  }
+  
+  public function hasright($who, $group) {
+    if ($who == $group) return  true;
+    if (($who == 'admin') || ($group == 'nobody')) return true;
+    switch ($who) {
+      case 'editor':
+      if ($group == 'author') return true;
+      break;
+      
+      case 'moderator':
+      if (($group == 'subscriber') || ($group == 'author')) return true;
+      break;
+      
+      case 'subeditor':
+      if (in_array($group, array('author', 'subscriber', 'moderator'))) return true;
+      break;
+    }
+    
+    if ($this->onhasright($who, $group)) return true;
+    return false;
+  }
+  
+  public function gethome($name) {
+    if ($id = $this->groupid($name)) {
+      return isset($this->items[$id]['home']) ? $this->items[$id]['home'] : '/admin/';
+    }
+    return '/admin/';
+  }
+  
+}//class
+
+?>
