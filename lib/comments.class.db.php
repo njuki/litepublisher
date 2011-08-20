@@ -260,7 +260,7 @@ class tcomment extends tdata {
   }
   
   public function save() {
-    extract($this->data);
+    extract($this->data, EXTR_SKIP);
     $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'status', 'content'));
     
     $this->getdb($this->rawtable)->UpdateAssoc(array(
@@ -272,18 +272,18 @@ class tcomment extends tdata {
   }
   
   public function getauthorlink() {
-    if ($this->data['url'] == '')  return $this->name;
+$name = $this->data['name'];
+$url = $this->data['url'];
+    if ($url == '')  return $name;
     $manager = tcommentmanager::instance();
-    if ($manager->hidelink || !$manager->checktrust($this->trust)) return $this->name;
+    if ($manager->hidelink || !$manager->checktrust($this->trust)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
-      litepublisher::$site->url, litepublisher::$site->q, $this->author, $this->name);
-      //"<a $rel href=\"" . litepublisher::$site->url . "/comusers.htm" . litepublisher::$site->q . "id=$this->author\">$this->name</a>";
+      litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
     } else {
-      return sprintf('<a %s href="%s">%s</a>',
-      $rel,$this->data['url'], $this->name);
-      //"<a $rel href=\"$this->url\">$this->name</a>";
+      return sprintf('<a class="url fn" %s href="%s">%s</a>',
+      $rel,$url, $name);
     }
   }
   
