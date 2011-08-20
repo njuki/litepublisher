@@ -149,7 +149,7 @@ $menu.content - текст страницы меню
 content.post = [
 			<div class="post" id="post-$post.id">
 		        <h2><a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a></h2>
-					<span class="post-date">$post.date</span>
+					<span class="post-date date">$post.date</span>
 					<span class="post-tags">$post.taglinks</span>
 						<div class="post-content">
        $post.filelist
@@ -215,9 +215,9 @@ $post.countpages - максимум между количеством стран
 $post.commentpages - количество страниц комментариев, обычно это 1
 $post.lastcommenturl - адрес последней страницы, если страниц нет, то адрес записи
 $post.author - уникальный id автора, по умолчанию 0, 1 всегда у главного администратора
-$post.authorname - имя автора записи, если нет автора, то пустая строка, если авто админ и установлен плагин FOAF, то имя из профиля
+$post.authorname - имя автора записи, если нет автора, то значение тега $site.author
 $post.authorlink - html  ссылка на автора /users.htm?id= id автора, если в профиле автора есть сайт, то будет редирект на сайт автора
-$post.authorpage - html  ссылка на страницу автора, еслинет страницы - то пустая строка
+$post.authorpage - html  ссылка на страницу автора, если нет страницы - то пустая строка
 
 Получился обширный список тегов, которые вы можете использовать в шаблоне записи. Некоторым из тегов записи вы можете задать свои шаблоны, а именно вот этим:
 
@@ -241,7 +241,7 @@ content.post.more = [<a name="more-$post.id"></a>]
 
 content.post.taglinks = [
 							$lang.tags: 
-								$item = [ <a href="$link" title="$title">$icon$title</a>]
+								$item = [ <a href="$link" title="$title" rel="tag">$icon$title</a>]
 								$divider = [, ]
 ]
 
@@ -253,7 +253,7 @@ $divider - шаблон разделителя ссылок
 
 content.post.catlinks = [
 							$lang.categories: 
-								$item = [ <a href="$link" title="$title">$icon$title</a>]
+								$item = [ <a href="$link" title="$title" rel="category">$icon$title</a>]
 								$divider = [, ]
 ]
 
@@ -521,8 +521,8 @@ $comment
 content.post.templatecomments.comments.comment = [
  <li $class1=[class="alt"] $class2=[] id="comment-$comment.id">
   <a name="comment-$comment.id"></a>
-  <div class="commentmetadata"><a href="#comment-$comment.id" title="">$comment.date = [d.m.Y] $lang.attime $comment.time</a></div>
-  <span class="author"><cite>$comment.authorlink</cite> $lang.says:  </span>
+  <div class="commentmetadata"><a href="#comment-$comment.id" title=""><span class="date">$comment.date = [d.m.Y]</span> $lang.attime <span class="time">$comment.time</span></a></div>
+  <span class="vcard author"><cite>$comment.authorlink</cite> $lang.says:  </span>
   $moderate
   <div class="commentcontent" id="commentcontent-$comment.id" >$comment.content</div>
   $quotebuttons = [
