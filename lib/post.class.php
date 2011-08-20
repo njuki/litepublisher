@@ -740,14 +740,12 @@ return $this->parsetml('content.post.rsslink');
   }
   
   protected function getusername($id, $link) {
-    if ($id == 0) return '';
-    if ($id == 1) {
-      if (litepublisher::$classes->exists('tprofile')) {
-        $profile = tprofile::instance();
-        return $profile->nick;
-      } else {
-        return 'admin';
-      }
+    if ($id <= 1) {
+if ($link) {
+      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author;
+} else {
+return litepublisher::$site->author;
+}
     } else {
       $pages = tuserpages::instance();
       try {
@@ -762,11 +760,14 @@ return $this->parsetml('content.post.rsslink');
   
   public function getauthorpage() {
     $id = $this->author;
-    if ($id <= 1) return '';
+    if ($id <= 1) {
+      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author;
+} else {
     $pages = tuserpages::instance();
     if (!$pages->itemexists($id)) return '';
     if ($item['url'] == '') return '';
-    return sprintf('<a href="%s%s" title="%3$s"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+    return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+}
   }
   
 }//class
