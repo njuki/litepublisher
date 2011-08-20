@@ -18,7 +18,7 @@ class Tadminoptions extends tadminmenu {
     switch ($name) {
       case 'options':
       $form = new tautoform(litepublisher::$site, 'options', 'blogdescription');
-      $form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords);
+      $form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords, $form->author);
       $form->obj = ttemplate::instance();
       $form->add($form->footer('editor'));
       break;
