@@ -261,7 +261,7 @@ class tcomments extends titems {
       '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
       ));
       
-      $i = 1;
+      $index = $from;
       $class1 = $tmlcomment->class1;
       $class2 = $tmlcomment->class2;
       foreach ($items as $id) {
@@ -270,7 +270,8 @@ class tcomments extends titems {
           if ($idauthor != $this->items[$id]['author']) continue;
         }
         $comment->id = $id;
-        $args->class = (++$i % 2) == 0 ? $class1 : $class2;
+$args->index = $index++;
+        $args->class = ($index % 2) == 0 ? $class1 : $class2;
         $result .= $theme->parsearg($tml, $args);
       }
     }//if count
