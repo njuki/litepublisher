@@ -290,7 +290,8 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   }
   
   public function gethtml($id, $full) {
-    $result = $this->geterror_dialog();
+    $result = '';
+    $dialog = $this->geterror_dialog();
     $poll = $this->getitem($id);
     $items = explode("\n", $poll['items']);
     $votes = explode(',', $poll['votes']);
@@ -310,8 +311,8 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
     $tml = $this->templates[$poll['type']];
     $result = $theme->parsearg($tml, $args);
-    //$result = $this->gethead() .  $result;
-    return str_replace(array("'", '&#36;'), array('"', '$'), $result);
+    return str_replace(array("'", '&#36;'), array('"', '$'), 
+$dialog . $result);
   }
   
   public function gethead() {
