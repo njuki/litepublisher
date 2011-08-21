@@ -21,17 +21,12 @@
 
 $template = {@import(index.tml)}
 
-Если посмотреть файл index.tml то там увидим немного измененную секцию head, где подключается скрипт фоновой загрузки loader.min.js, а далее используется функция load_script, которая собствено и подружает javascript. Также из шаблона меню в секцию head перенес скрипт поддержки всплывающего меню, поэтому необходимо переписать шаблон меню, удалив оттуда javascript:
-
-$template.menu = [<ul id="nav">
-  $item
-</ul>]
-
+Если посмотреть файл index.tml то там увидим немного измененную секцию head, где подключается скрипт фоновой загрузки loader.min.js, а далее используется функция load_script, которая собствено и подружает javascript. 
 Остаются еще шаблоны, где подключаются javascript, перепишим их:
 
 content.post.templatecomments.form = [
   <script type="text/javascript">$.load_script("$site.files$template.jsmerger_comments");</script>
-								<p id="respond">$lang.leavereply</>
+								<p id="respond">$lang.leavereply</p>
 								<form action="$options.url/send-comment.php" method="post" id="commentform">
 									<p><input type="text" name="name" id="name" value="$name" size="22" tabindex="1" />
 									<label for="name">$lang.name</label></p>

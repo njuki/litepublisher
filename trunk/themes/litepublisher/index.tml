@@ -14,12 +14,6 @@
 });
 		 </script>
 	<![endif]--> 
-  <script type="text/javascript">
-  $(document).ready(function() {
-    $("#nav a[href='" + window.location + "']").addClass("current_page_link");
-   $("#nav li").hover(function(){$(this).addClass("jshover");}, function(){$(this).removeClass("jshover");}); 
-  });
-  </script>
 </head>
 <body>
 	<div id="header"><div id="logo"><span class="name"><a href="$site.url/">$site.name</a></span><span class="slogan">$site.description</span>
