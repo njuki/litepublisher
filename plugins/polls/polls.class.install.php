@@ -16,6 +16,7 @@ function tpollsInstall($self) {
   $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
+  $self->templates['microformat'] = $templates['microformat']['rate'];
   $self->save();
   
   $manager = tdbmanager::instance();
@@ -85,6 +86,9 @@ function tpollsUninstall($self) {
   $posts->syncmeta = false;
   $posts->unsubscribeclass($self);
   $posts->unlock();
+
+litepublisher::$db->table = 'postsmeta';
+litepublisher::$db->delete("name = 'poll'");
   
   turlmap::unsub($self);
   unset(litepublisher::$classes->classes['poll']);
