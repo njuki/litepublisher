@@ -393,6 +393,7 @@ $dialog . $result);
   public function setdefadd($v) {
     if ($v == $this->defadd) return;
     $this->data['defadd'] = $v;
+    $this->data['garbage'] = ! $v;
     $this->save();
     $posts = tposts::instance();
     if ($v) {

@@ -38,6 +38,9 @@ class tadminpolls {
       $args->$items = $plugin->templates[$name];
       $form .= "[editor=$item]\n[editor=$items]\n";
     }
+
+      $args->microformat = $plugin->templates['microformat'];
+      $form .= '[editor=microformat]';
     
     $args->formtitle = $about['formtitle'];
     return $html->adminform($form, $args);
@@ -57,7 +60,7 @@ class tadminpolls {
       $plugin->templateitems[$name] = $_POST[$name . 'item'];
       $plugin->templates[$name] = $_POST[$name . 'items'];
     }
-    
+          $plugin->templates['microformat'] = $_POST['microformat'];
     $plugin->unlock();
     return '';
   }
