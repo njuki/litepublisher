@@ -325,9 +325,16 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
     $tml = $this->templates[$poll['type']];
     $result = $theme->parsearg($tml, $args);
+
+$args->count = array_sum($votes);
+$args->rate = $poll['rate'] / 10;
+$args->worst = 1;
+$args->best = count($items) + 1;
+$result .= $theme->parsearg($this->templates['microformat'], $args);
+
     return str_replace(array("'", '&#36;'), array('"', '$'), 
 $dialog . $result);
-  }
+}
   
   public function gethead() {
     $template = ttemplate::instance();
