@@ -270,7 +270,7 @@ class tcomments extends titems {
           if ($idauthor != $this->items[$id]['author']) continue;
         }
         $comment->id = $id;
-$args->index = $index++;
+$args->index = ++$index;
         $args->class = ($index % 2) == 0 ? $class1 : $class2;
         $result .= $theme->parsearg($tml, $args);
       }

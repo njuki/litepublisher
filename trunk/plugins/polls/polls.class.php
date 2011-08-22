@@ -29,11 +29,11 @@ class tpolls extends tplugin {
     $this->addevents('added', 'deleted', 'edited');
     $this->data['garbage'] = true;
     $this->data['deftitle'] = 'new poll';
-    $this->data['deftype'] = 'radio';
+    $this->data['deftype'] = 'star';
     $this->data['defitems'] = 'Yes,No';
     $this->data['defadd'] = false;
     $this->data['voted'] = '';
-    $this->types = array('radio', 'button', 'link', 'custom');
+    $this->types = array('star', 'radio', 'button', 'link', 'custom');
     $a = array_combine($this->types, array_fill(0, count($this->types), ''));
     $this->addmap('templateitems', $a);
     $this->addmap('templates', $a);
@@ -69,6 +69,7 @@ class tpolls extends tplugin {
     if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
     return $this->error("Item $id not found in class ". get_class($this));
   }
+
   public function select($where, $limit) {
     if ($where != '') $where = 'where '. $where;
     $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
@@ -96,6 +97,14 @@ class tpolls extends tplugin {
     }
     return false;
   }
+
+public function getrate(array $votes){
+$sum = 0;
+foreach ($votes as $i => $count) {
+$sum += ($i + 1) * $count;
+}
+return (int) round($sum / count($votes) * 10);
+}
   
   public function addvote($id, $iduser, $vote) {
     if (!$this->itemexists($id)) return  false;
@@ -107,10 +116,8 @@ class tpolls extends tplugin {
     'vote' => $vote
     ));
     
-    // потому что после подсчета в запросе будут только не нулевые результаты
     $item = $this->getitem($id);
     $votes = explode(',', $item['votes']);
-    
     $table = $db->prefix . $this->votestable;
     $res = $db->query("select vote as vote, count(user) as count from $table
     where id = $id group by vote order by vote asc");
@@ -119,7 +126,11 @@ class tpolls extends tplugin {
       $votes[$item['vote']] = $item['count'];
     }
     
-    $this->db->setvalue($id, 'votes', implode(',', $votes));
+    $this->db->updateassoc(array(
+'id' => $id, 
+'rate' => $this->getrate($votes),
+'votes' =>  implode(',', $votes)
+));
     return $votes;
   }
   
@@ -134,7 +145,8 @@ class tpolls extends tplugin {
     'status' => $status,
     'type' => $type,
     'items' => implode("\n", $items),
-    'votes' => $votes
+    'votes' => $votes,
+'rate' => 0
     );
     
     $id = $this->db->add($item);
@@ -147,6 +159,7 @@ class tpolls extends tplugin {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
     $votes = explode(',', $item['votes']);
+$rate = $this->getrate($votes);
     if ($title == '') $title = $item['title'];
     if (($status != 'opened') || ($status != 'closed')) $status = $item['status'];
     if (!in_array($type, $this->types)) $type = $item['type'];
@@ -163,6 +176,7 @@ class tpolls extends tplugin {
     
     $item = array(
     'id' =>  $id,
+'rate' => $rate,
     'hash' => $item['hash'],
     'title' => $title,
     'status' => $status,

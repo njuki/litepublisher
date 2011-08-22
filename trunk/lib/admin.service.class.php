@@ -10,6 +10,10 @@ class tadminservice extends tadminmenu {
   public static function instance($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
+
+  public function getcont() {
+return ttheme::parsevar('menu', $this, ttheme::instance()->templates['content.menu']);
+}
   
   public function getcontent() {
     $result = '';

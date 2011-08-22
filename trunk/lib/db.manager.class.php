@@ -86,11 +86,6 @@ class tdbmanager  {
     $this->exec("update $this->prefix$table set $tmp = $column + 0");
     $this->exec("alter table $this->prefix$table drop $column");
     $this->exec("alter table $this->prefix$table change $tmp $column enum($items)");
-    /*
-    $res = $this->query("describe $this->prefix$table");
-    echo "<pre>\n";
-    var_dump($this->res2assoc($res));
-    */
   }
   
   public function addenum($table, $column, $value) {

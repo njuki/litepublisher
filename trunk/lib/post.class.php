@@ -742,7 +742,7 @@ return $this->parsetml('content.post.rsslink');
   protected function getusername($id, $link) {
     if ($id <= 1) {
 if ($link) {
-      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author;
+      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
 } else {
 return litepublisher::$site->author;
 }
@@ -761,7 +761,7 @@ return litepublisher::$site->author;
   public function getauthorpage() {
     $id = $this->author;
     if ($id <= 1) {
-      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author;
+      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
 } else {
     $pages = tuserpages::instance();
     if (!$pages->itemexists($id)) return '';
