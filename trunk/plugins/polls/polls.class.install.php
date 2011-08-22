@@ -8,7 +8,7 @@
 
 function tpollsInstall($self) {
   if (!dbversion) die("Plugin can be installed only on database version");
-  $about = tplugins::localabout(dirname(__file__));
+  $about = tplugins::getabout(tplugins::getname(__file__));
   $self->deftitle = $about['title'];
   $self->voted = $about['votedmesg'];
   $self->defitems = $about['items'];
@@ -16,7 +16,10 @@ function tpollsInstall($self) {
   $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
-  $self->templates['microformat'] = $templates['microformat']['rate'];
+$theme = ttheme::instance();
+tlocal::$data['polls'] = $about;
+$lang = tlocal::instance('polls');
+  $self->templates['microformat'] = $theme->replacelang($templates['microformat']['rate'], $lang);
   $self->save();
   
   $manager = tdbmanager::instance();
