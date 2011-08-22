@@ -223,7 +223,7 @@ class tcomments extends titems {
     $class2 = $tmlcomment->class2;
     foreach ($items as $id) {
       $comment->id = $id;
-$args->index = $index++;
+$args->index = ++$index;
       $args->class = ($index % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
