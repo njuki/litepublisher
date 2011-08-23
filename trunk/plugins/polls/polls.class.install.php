@@ -16,16 +16,16 @@ function tpollsInstall($self) {
   $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
-$theme = ttheme::instance();
-tlocal::$data['polls'] = $about;
-$lang = tlocal::instance('polls');
+  $theme = ttheme::instance();
+  tlocal::$data['polls'] = $about;
+  $lang = tlocal::instance('polls');
   $self->templates['microformat'] = $theme->replacelang($templates['microformat']['rate'], $lang);
   $self->save();
   
   $manager = tdbmanager::instance();
   $manager->createtable($self->table,
   "  `id` int(10) unsigned NOT NULL auto_increment,
-    `rate` tinyint unsigned NOT NULL default '0',
+  `rate` tinyint unsigned NOT NULL default '0',
   `status` enum('opened','closed') default 'opened',
   `type` enum('star', 'radio','button','link','custom') default 'star',
   `hash` char(22) NOT NULL,
@@ -89,9 +89,9 @@ function tpollsUninstall($self) {
   $posts->syncmeta = false;
   $posts->unsubscribeclass($self);
   $posts->unlock();
-
-litepublisher::$db->table = 'postsmeta';
-litepublisher::$db->delete("name = 'poll'");
+  
+  litepublisher::$db->table = 'postsmeta';
+  litepublisher::$db->delete("name = 'poll'");
   
   turlmap::unsub($self);
   unset(litepublisher::$classes->classes['poll']);

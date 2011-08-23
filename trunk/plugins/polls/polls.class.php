@@ -69,7 +69,7 @@ class tpolls extends tplugin {
     if ($this->select("$this->thistable.id = $id", 'limit 1')) return $this->items[$id];
     return $this->error("Item $id not found in class ". get_class($this));
   }
-
+  
   public function select($where, $limit) {
     if ($where != '') $where = 'where '. $where;
     $res = $this->db->query("SELECT * FROM $this->thistable $where $limit");
@@ -97,14 +97,14 @@ class tpolls extends tplugin {
     }
     return false;
   }
-
-public function getrate(array $votes){
-$sum = 0;
-foreach ($votes as $i => $count) {
-$sum += ($i + 1) * $count;
-}
-return (int) round($sum / count($votes) * 10);
-}
+  
+  public function getrate(array $votes){
+    $sum = 0;
+    foreach ($votes as $i => $count) {
+      $sum += ($i + 1) * $count;
+    }
+    return (int) round($sum / count($votes) * 10);
+  }
   
   public function addvote($id, $iduser, $vote) {
     if (!$this->itemexists($id)) return  false;
@@ -127,10 +127,10 @@ return (int) round($sum / count($votes) * 10);
     }
     
     $this->db->updateassoc(array(
-'id' => $id, 
-'rate' => $this->getrate($votes),
-'votes' =>  implode(',', $votes)
-));
+    'id' => $id,
+    'rate' => $this->getrate($votes),
+    'votes' =>  implode(',', $votes)
+    ));
     return $votes;
   }
   
@@ -146,7 +146,7 @@ return (int) round($sum / count($votes) * 10);
     'type' => $type,
     'items' => implode("\n", $items),
     'votes' => $votes,
-'rate' => 0
+    'rate' => 0
     );
     
     $id = $this->db->add($item);
@@ -159,7 +159,7 @@ return (int) round($sum / count($votes) * 10);
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
     $votes = explode(',', $item['votes']);
-$rate = $this->getrate($votes);
+    $rate = $this->getrate($votes);
     if ($title == '') $title = $item['title'];
     if (($status != 'opened') || ($status != 'closed')) $status = $item['status'];
     if (!in_array($type, $this->types)) $type = $item['type'];
@@ -176,7 +176,7 @@ $rate = $this->getrate($votes);
     
     $item = array(
     'id' =>  $id,
-'rate' => $rate,
+    'rate' => $rate,
     'hash' => $item['hash'],
     'title' => $title,
     'status' => $status,
@@ -325,16 +325,18 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $args->items = $full ? $result : sprintf('&#36;poll.start_%d %s &#36;poll.end', $id, $result);
     $tml = $this->templates[$poll['type']];
     $result = $theme->parsearg($tml, $args);
-
-$args->count = array_sum($votes);
-$args->rate = $poll['rate'] / 10;
-$args->worst = 1;
-$args->best = count($items) + 1;
-$result .= $theme->parsearg($this->templates['microformat'], $args);
-
-    return str_replace(array("'", '&#36;'), array('"', '$'), 
-$dialog . $result);
-}
+    
+    if ($poll['rate'] > 0) {
+      $args->count = array_sum($votes);
+      $args->rate = $poll['rate'] / 10;
+      $args->worst = 1;
+      $args->best = count($items) + 1;
+      $result .= $theme->parsearg($this->templates['microformat'], $args);
+    }
+    
+    return str_replace(array("'", '&#36;'), array('"', '$'),
+    $dialog . $result);
+  }
   
   public function gethead() {
     $template = ttemplate::instance();
@@ -414,7 +416,9 @@ $dialog . $result);
   }
   
   public function afterpost(tpost $post, &$content) {
-    $content = $this->gethtml($post->meta->poll, true) . $content;
+    if (isset($post->meta->poll)) {
+      $content = $this->gethtml($post->meta->poll, true) . $content;
+    }
   }
   
   public function postdeleted($id) {

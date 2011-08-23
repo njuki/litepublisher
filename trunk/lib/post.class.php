@@ -283,12 +283,12 @@ class tpost extends titem implements  itemplate {
     $this->_theme = tview::getview($this)->theme;
     return $this->_theme;
   }
-
-public function parsetml($path) {
-$theme = $this->theme;
-return $theme->parse($theme->templates[$path]);
+  
+  public function parsetml($path) {
+    $theme = $this->theme;
+    return $theme->parse($theme->templates[$path]);
   }
-
+  
   public function getbookmark() {
     return $this->theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
   }
@@ -507,7 +507,7 @@ return $theme->parse($theme->templates[$path]);
   
   public function getrsslink() {
     if ($this->commentsenabled && ($this->commentscount > 0)) {
-return $this->parsetml('content.post.rsslink');
+      return $this->parsetml('content.post.rsslink');
     }
     return '';
   }
@@ -741,11 +741,11 @@ return $this->parsetml('content.post.rsslink');
   
   protected function getusername($id, $link) {
     if ($id <= 1) {
-if ($link) {
-      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
-} else {
-return litepublisher::$site->author;
-}
+      if ($link) {
+        return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
+      } else {
+        return litepublisher::$site->author;
+      }
     } else {
       $pages = tuserpages::instance();
       try {
@@ -762,12 +762,12 @@ return litepublisher::$site->author;
     $id = $this->author;
     if ($id <= 1) {
       return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
-} else {
-    $pages = tuserpages::instance();
-    if (!$pages->itemexists($id)) return '';
-    if ($item['url'] == '') return '';
-    return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
-}
+    } else {
+      $pages = tuserpages::instance();
+      if (!$pages->itemexists($id)) return '';
+      if ($item['url'] == '') return '';
+      return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+    }
   }
   
 }//class
