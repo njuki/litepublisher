@@ -6,9 +6,11 @@
 	<link rel="stylesheet" href="$template.url/css/style.css" type="text/css" media="all" />
 	$template.head
 	<!--[if IE 6]>
-		<script src="$template.url/css/DD_belatedPNG.js"></script>
-		<script>		
+		<script type="text/javascript">
+$.load_script("$template.url/css/DD_belatedPNG.js", function() {
+$(document).ready(function() {
 		  DD_belatedPNG.fix('.rss, .rss-comments, .foaf, .lastcomments li, .lastposts li, .post-comments, .post-cat, .post-time, .post-tags, #header');
+}); });
 		 </script>
 	<![endif]--> 
 </head>

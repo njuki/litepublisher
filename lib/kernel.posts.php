@@ -483,6 +483,11 @@ class tpost extends titem implements  itemplate {
     return $this->_theme;
   }
   
+  public function parsetml($path) {
+    $theme = $this->theme;
+    return $theme->parse($theme->templates[$path]);
+  }
+  
   public function getbookmark() {
     return $this->theme->parse('<a href="$post.link" rel="bookmark" title="$lang.permalink $post.title">$post.iconlink$post.title</a>');
   }
@@ -571,7 +576,7 @@ class tpost extends titem implements  itemplate {
   
   public function getmorelink() {
     if ($this->moretitle == '') return '';
-    return $this->theme->parse($this->theme->templates['content.excerpts.excerpt.morelink']);
+    return $this->parsetml('content.excerpts.excerpt.morelink');
   }
   
   public function gettagnames() {
@@ -696,12 +701,12 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcont() {
-    return $this->theme->content->post();
+    return $this->parsetml('content.post');
   }
   
   public function getrsslink() {
     if ($this->commentsenabled && ($this->commentscount > 0)) {
-      return $this->theme->content->post->rsslink();
+      return $this->parsetml('content.post.rsslink');
     }
     return '';
   }
@@ -770,10 +775,9 @@ class tpost extends titem implements  itemplate {
   }
   
   public function replacemore($content, $excerpt) {
-    $theme = $this->theme;
-    $more = $theme->parse($excerpt ?
-    $theme->templates['content.excerpts.excerpt.morelink'] :
-    $theme->templates['content.post.more']);
+    $more = $this->parsetml($excerpt ?
+    'content.excerpts.excerpt.morelink' :
+    'content.post.more');
     $tag = '<!--more-->';
     if ($i =strpos($content, $tag)) {
       return str_replace($tag, $more, $content);
@@ -935,13 +939,11 @@ class tpost extends titem implements  itemplate {
   }
   
   protected function getusername($id, $link) {
-    if ($id == 0) return '';
-    if ($id == 1) {
-      if (litepublisher::$classes->exists('tprofile')) {
-        $profile = tprofile::instance();
-        return $profile->nick;
+    if ($id <= 1) {
+      if ($link) {
+        return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
       } else {
-        return 'admin';
+        return litepublisher::$site->author;
       }
     } else {
       $pages = tuserpages::instance();
@@ -957,11 +959,14 @@ class tpost extends titem implements  itemplate {
   
   public function getauthorpage() {
     $id = $this->author;
-    if ($id <= 1) return '';
-    $pages = tuserpages::instance();
-    if (!$pages->itemexists($id)) return '';
-    if ($item['url'] == '') return '';
-    return sprintf('<a href="%s%s" title="%3$s"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+    if ($id <= 1) {
+      return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
+    } else {
+      $pages = tuserpages::instance();
+      if (!$pages->itemexists($id)) return '';
+      if ($item['url'] == '') return '';
+      return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
+    }
   }
   
 }//class

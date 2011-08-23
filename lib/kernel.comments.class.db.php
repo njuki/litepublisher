@@ -218,12 +218,13 @@ class tcomments extends titems {
     '$quotebuttons' => $post->commentsenabled ? $tmlcomment->quotebuttons : ''
     ));
     
-    $i = 1;
+    $index = $from;
     $class1 = $tmlcomment->class1;
     $class2 = $tmlcomment->class2;
     foreach ($items as $id) {
       $comment->id = $id;
-      $args->class = (++$i % 2) == 0 ? $class1 : $class2;
+      $args->index = ++$index;
+      $args->class = ($index % 2) == 0 ? $class1 : $class2;
       $result .= $theme->parsearg($tml, $args);
     }
     unset(ttheme::$vars['comment']);
@@ -260,7 +261,7 @@ class tcomment extends tdata {
   }
   
   public function save() {
-    extract($this->data);
+    extract($this->data, EXTR_SKIP);
     $this->db->UpdateAssoc(compact('id', 'post', 'author', 'parent', 'posted', 'status', 'content'));
     
     $this->getdb($this->rawtable)->UpdateAssoc(array(
@@ -272,18 +273,18 @@ class tcomment extends tdata {
   }
   
   public function getauthorlink() {
-    if ($this->data['url'] == '')  return $this->name;
+    $name = $this->data['name'];
+    $url = $this->data['url'];
+    if ($url == '')  return $name;
     $manager = tcommentmanager::instance();
-    if ($manager->hidelink || !$manager->checktrust($this->trust)) return $this->name;
+    if ($manager->hidelink || !$manager->checktrust($this->trust)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
-      litepublisher::$site->url, litepublisher::$site->q, $this->author, $this->name);
-      //"<a $rel href=\"" . litepublisher::$site->url . "/comusers.htm" . litepublisher::$site->q . "id=$this->author\">$this->name</a>";
+      litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
     } else {
-      return sprintf('<a %s href="%s">%s</a>',
-      $rel,$this->data['url'], $this->name);
-      //"<a $rel href=\"$this->url\">$this->name</a>";
+      return sprintf('<a class="url fn" %s href="%s">%s</a>',
+      $rel,$url, $name);
     }
   }
   
@@ -446,12 +447,14 @@ class tcommentmanager extends tevents {
     $idpost = (int) $idpost;
     $email = litepublisher::$options->fromemail;
     $site = litepublisher::$site->url . litepublisher::$site->home;
-    $name = 'Admin';
+    $name = litepublisher::$site->author;
+    /*
     if (class_exists('tprofile')) {
       $profile = tprofile::instance();
       $email = $profile->mbox!= '' ? $profile->mbox : $email;
       $name = $profile->nick != '' ? $profile->nick : 'Admin';
     }
+    */
     $comusers = tcomusers::instance($idpost);
     $idauthor = $comusers->add($name, $email, $site, '');
     $comments = tcomments::instance($idpost);
