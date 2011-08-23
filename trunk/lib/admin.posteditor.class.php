@@ -179,6 +179,7 @@ class tposteditor extends tadminmenu {
     } else {
       $posts->edit($post);
     }
+      $_GET['id'] = $this->idpost;
     return sprintf($html->p->success,$post->bookmark);
   }
   
