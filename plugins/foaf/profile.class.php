@@ -23,7 +23,7 @@ class tprofile extends tevents_itemplate implements itemplate {
     'gender' => 'male',
     'img' => '',
     
-'skype' => '',
+    'skype' => '',
     'icqChatID' => '',
     'aimChatID' => '',
     'jabberID' => '',
@@ -38,7 +38,7 @@ class tprofile extends tevents_itemplate implements itemplate {
     'bio' => '',
     'interests' => '',
     'interesturl' => '  http://www.livejournal.com/interests.bml?int=',
-'googleprofile' => ''
+    'googleprofile' => ''
     );
   }
   
@@ -49,23 +49,23 @@ class tprofile extends tevents_itemplate implements itemplate {
     $manager = litepublisher::$classes->commentmanager;
     
     $result = tfoaf::getparam('name', $this->nick);
-foreach (array(
-'nick',
-'dateOfBirth',
-'gender',
-'icqChatID',
-'aimChatID',
-'jabberID',
-'msnChatID',
-'yahooChatID',
-'mbox'
-) as $name) {
-    $result .= tfoaf::getparam($name, $this->data[$name]);
-}
-
+    foreach (array(
+    'nick',
+    'dateOfBirth',
+    'gender',
+    'icqChatID',
+    'aimChatID',
+    'jabberID',
+    'msnChatID',
+    'yahooChatID',
+    'mbox'
+    ) as $name) {
+      $result .= tfoaf::getparam($name, $this->data[$name]);
+    }
+    
     $result .= '<foaf:img rdf:resource="' . tfoaf::escape($this->img) . '" />';
     $result .= tfoaf::getparam('homepage', litepublisher::$site->url . '/');
-
+    
     $result .= '<foaf:weblog ' .
     'dc:title="'. tfoaf::escape(litepublisher::$site->name) . '" ' .
     'rdf:resource="' . tfoaf::escape(litepublisher::$site->url) . '/" />' .
@@ -179,10 +179,10 @@ public function gethead() { }
     $lang = tlocal::instance('foaf');
     $result = array();
     if ($this->img != '') {
-$i = strrpos($this->img, '.');
-$preview = substr($this->img, 0, $i) . '.preview' . substr($this->img, $i);
-$result[] = sprintf('<a rel="prettyPhoto" href="%s"><img src="%s" alt="profile" /></a>', $this->img, $preview);
-}
+      $i = strrpos($this->img, '.');
+      $preview = substr($this->img, 0, $i) . '.preview' . substr($this->img, $i);
+      $result[] = sprintf('<a rel="prettyPhoto" href="%s"><img src="%s" alt="profile" /></a>', $this->img, $preview);
+    }
     if ($this->nick != '') $result[] = "$lang->nick $this->nick";
     if (($this->dateOfBirth != '')  && @sscanf($this->dateOfBirth , '%d-%d-%d', $y, $m, $d)) {
       $date = mktime(0,0,0, $m, $d, $y);
@@ -195,13 +195,13 @@ $result[] = sprintf('<a rel="prettyPhoto" href="%s"><img src="%s" alt="profile" 
     if (!$this->country != '') $result[] = $this->country;
     if (!$this->region != '') $result[] = $this->region;
     if (!$this->city != '') $result[] = $this->city;
-$result[] = sprintf('<a rel="me" href="%s">Google profile</a>', $this->googleprofile);
+    $result[] = sprintf('<a rel="me" href="%s">Google profile</a>', $this->googleprofile);
     return implode("</li>\n<li>", $result);
   }
   
   protected function getcontacts() {
     $contacts = array(
-'skype' => 'Skype',
+    'skype' => 'Skype',
     'icqChatID' => 'ICQ',
     'aimChatID' => 'AIM',
     'jabberID' => 'Jabber',

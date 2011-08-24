@@ -70,7 +70,7 @@ class tadminfoaf extends tadminmenu {
   
   
   public function getcontent() {
-$lang = tlocal::instance('foaf');
+    $lang = tlocal::instance('foaf');
     $result = '';
     $foaf = tfoaf::instance();
     $html = $this->html;
@@ -116,31 +116,38 @@ $lang = tlocal::instance('foaf');
       $profile = tprofile::instance();
       ttheme::$vars['profile '] = $profile;
       $args = targs::instance();
+      $form = '';
+      foreach (array(
+      'nick',
+      'img',
+      'dateOfBirth',
+      'googleprofile',
+      'skype',
+      'icqChatID',
+      'aimChatID',
+      'jabberID',
+      'msnChatID',
+      'yahooChatID',
+      'mbox',
+      'country',
+      'region',
+      'city',
+      'geourl',
+      'interests',
+      'interesturl'
+      ) as $name) {
+        $args->$name = $profile->$name;
+        $form .= is_bool($profile->$name) ? "[checkbox=$name]" : "[text=$name]";
+        if (!isset(tlocal::$data['foaf'][$name])) $args->data["\$lang.$name"] = $name;
+      }
       $args->gender = $profile->gender != 'female';
-$form = '';
-foreach (array(
-'nick',
-'img',
-'dateOfBirth',
-'skype',
-'icqChatID',
-'aimChatID',
-'jabberID',
-'msnChatID',
-'yahooChatID',
-'mbox'
-) as $name) {
-$args->$name = $profile->$name;
-$form .= is_bool($profile->$name) ? "[checkbox=$name]" : "[text=$name]";
-if (!isset($lang->$name)) $args->data["\$lang.$name"] = $name;
-}
-
-$args->bio = $profile->bio;
-$args->formtitle = $lang->profileform;
+      $args->data['$lang.gender'] = $lang->ismale;
+      $args->bio = $profile->bio;
+      $args->formtitle = $lang->profileform;
       $result .= $html->adminform($form .
-'[checkbox=gender]
-[editor=bio]
-',$args);
+      '[checkbox=gender]
+      [editor=bio]
+      ',$args);
       break;
       
       case 'profiletemplate':
@@ -161,7 +168,7 @@ $args->formtitle = $lang->profileform;
     switch ($this->name) {
       case 'foaf':
       if (!isset($_POST['foaftable'])) {
-        extract($_POST);
+        extract($_POST, EXTR_SKIP);
         if ($this->action == 'edit') {
           $id = $this->idget();
           if (!$foaf->itemexists($id)) return '';

@@ -54,9 +54,9 @@ class tmetawidget extends twidget {
       $args->subcount = '';
       $args->subitems = '';
       $args->rel = $name;
-if ($name == 'profile') {
-$args->rel = 'author profile';
-}
+      if ($name == 'profile') {
+        $args->rel = 'author profile';
+      }
       $args->class = isset($metaclasses[$name]) ? $metaclasses[$name] : '';
       $result .= $theme->parsearg($tml, $args);
     }
