@@ -7,14 +7,9 @@
 **/
 
 function tfoafInstall($self) {
+  //turlmap::unsub($self);
   $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-  if (!isset(tlocal::$data['foaf'])) {
-    if (file_exists($dir . litepublisher::$options->language . '.ini')) {
-      tlocal::loadini($dir . litepublisher::$options->language . '.ini');
-    } else {
-      tlocal::loadini($dir . 'en.ini');
-    }
-  }
+    tlocal::loadsection('', 'foaf', $dir);
   $lang = tlocal::instance('foaf');
   
   if ($self->dbversion) {
@@ -53,7 +48,7 @@ function tfoafInstall($self) {
   $urlmap->unlock();
   
   $template = ttemplate::instance();
-  $template->addtohead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />';
+  $template->addtohead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />');
   $about = tplugins::getabout($name);
   $meta = tmetawidget::instance();
   $meta->lock();
@@ -94,7 +89,7 @@ function tfoafUninstall($self) {
   }
   
   $template = ttemplate::instance();
-  $template->deletefromhead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />';
+  $template->deletefromhead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />');
   
   $meta = tmetawidget::instance();
   $meta->lock();

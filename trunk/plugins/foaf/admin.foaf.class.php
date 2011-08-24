@@ -123,7 +123,11 @@ class tadminfoaf extends tadminmenu {
       ttheme::$vars['profile '] = $profile;
       $args = targs::instance();
       $args->gender = $profile->gender != 'female';
-      $result .= $html->profileform($args);
+$args->bio = $profile->bio;
+$args->formtitle = $lang->profileform;
+      $result .= $html->adminform('
+[editor=bio]
+',$args);
       break;
       
       case 'profiletemplate':

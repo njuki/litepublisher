@@ -57,6 +57,7 @@ function installoptions($language) {
   $options->mailer = '';
   $options->data['cache'] = true;
   $options->expiredcache= 3600;
+  $options->admincache = false;
   $options->ob_cache = true;
   $options->compress = false;
   $options->filetime_offset = tfiler::get_filetime_offset();
