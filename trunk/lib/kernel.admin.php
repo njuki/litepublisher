@@ -170,12 +170,17 @@ public function canrequest() { }
   }
   
   public function getcont() {
-    $cachefile = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI']) . '.php';
-    if (file_exists($cachefile)) return file_get_contents($cachefile);
-    $result = parent::getcont();
-    file_put_contents($cachefile, $result);
-    @chmod($filename, 0666);
-    return $result;
+    if (litepublisher::$options->admincache) {
+      $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+      $cachefile = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
+      if (file_exists($cachefile)) return file_get_contents($cachefile);
+      $result = parent::getcont();
+      file_put_contents($cachefile, $result);
+      @chmod($filename, 0666);
+      return $result;
+    } else {
+      return parent::getcont();
+    }
   }
   
   public static function idget() {
@@ -1370,6 +1375,7 @@ class tposteditor extends tadminmenu {
     } else {
       $posts->edit($post);
     }
+    $_GET['id'] = $this->idpost;
     return sprintf($html->p->success,$post->bookmark);
   }
   

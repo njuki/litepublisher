@@ -12,7 +12,7 @@ function tprofileInstall($self) {
   
   $sitemap = tsitemap::instance();
   $sitemap->add($self->url, 7);
-
+  
   $template = ttemplate::instance();
   $template->addtohead('	<link rel="author profile" title="Profile" href="$site.url/profile.htm" />');
 }
@@ -22,7 +22,7 @@ function tprofileUninstall($self) {
   
   $sitemap = tsitemap::instance();
   $sitemap->delete('/profile.htm');
-
+  
   $template = ttemplate::instance();
   $template->deletefromhead('	<link rel="author profile" title="Profile" href="$site.url/profile.htm" />');
 }

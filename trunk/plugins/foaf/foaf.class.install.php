@@ -9,7 +9,7 @@
 function tfoafInstall($self) {
   //turlmap::unsub($self);
   $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-    tlocal::loadsection('', 'foaf', $dir);
+  tlocal::loadsection('', 'foaf', $dir);
   $lang = tlocal::instance('foaf');
   
   if ($self->dbversion) {

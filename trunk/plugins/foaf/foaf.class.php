@@ -280,10 +280,10 @@ class tfoaf extends titems {
   public static  function escape($s) {
     return strtr (htmlspecialchars($s), array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;'));
   }
-
-public static function getparam($name, $value) {
-return sprintf('<foaf:%1$s>%2$s</foaf:%1$s>', $name, self::escape($value));
-}
+  
+  public static function getparam($name, $value) {
+    return sprintf('<foaf:%1$s>%2$s</foaf:%1$s>', $name, self::escape($value));
+  }
   
 }//class
 
