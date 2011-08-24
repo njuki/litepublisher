@@ -218,7 +218,7 @@ class tfoaf extends titems {
     $item = $this->getitem($id);
     $args = targs::instance();
     $args->add($item);
-    tlocal::loadlang('admin');
+    tlocal::loadsection('', 'foaf', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('foaf');
     $event = 'mail' . $event;
     $args->event = $lang->$event;
@@ -280,6 +280,10 @@ class tfoaf extends titems {
   public static  function escape($s) {
     return strtr (htmlspecialchars($s), array('"'=> '&quot;', "'" => '&#039;', '\\'=> '&#092;'));
   }
+
+public static function getparam($name, $value) {
+return sprintf('<foaf:%1$s>%2$s</foaf:%1$s>', $name, self::escape($value));
+}
   
 }//class
 

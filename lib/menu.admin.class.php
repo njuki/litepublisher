@@ -170,6 +170,7 @@ public function canrequest() { }
   }
   
   public function getcont() {
+if (litepublisher::$options->admincache) {
 $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
     $cachefile = litepublisher::$paths->cache . 'adminmenu.' . litepublisher::$options->user . '.' .md5($_SERVER['REQUEST_URI'] . '&id=' . $id) . '.php';
     if (file_exists($cachefile)) return file_get_contents($cachefile);
@@ -177,6 +178,9 @@ $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
     file_put_contents($cachefile, $result);
     @chmod($filename, 0666);
     return $result;
+} else {
+return parent::getcont();
+}
   }
   
   public static function idget() {

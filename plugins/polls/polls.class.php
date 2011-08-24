@@ -327,10 +327,10 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $result = $theme->parsearg($tml, $args);
     
     if ($poll['rate'] > 0) {
-      $args->count = array_sum($votes);
-      $args->rate = $poll['rate'] / 10;
+      $args->votes = array_sum($votes);
+      $args->rate =1 + $poll['rate'] / 10;
       $args->worst = 1;
-      $args->best = count($items) + 1;
+      $args->best = count($items);
       $result .= $theme->parsearg($this->templates['microformat'], $args);
     }
     

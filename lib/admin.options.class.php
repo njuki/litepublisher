@@ -128,6 +128,7 @@ class Tadminoptions extends tadminmenu {
       
       case 'cache':
       $args->cache = $options->cache;
+      $args->admincache = $options->admincache;
       $args->ob_cache = $options->ob_cache;
       $args->compress = $options->compress;
       break;
@@ -182,7 +183,6 @@ class Tadminoptions extends tadminmenu {
   }
   
   public function processform() {
-    litepublisher::$urlmap->clearcache();
     if ($form = $this->getautoform($this->name)) return $form->processform();
     extract($_POST, EXTR_SKIP);
     $options = litepublisher::$options;
@@ -268,6 +268,7 @@ class Tadminoptions extends tadminmenu {
       } else {
         $options->lock();
         $options->cache = isset($cache );
+        $options->admincache = isset($admincache );
         if (!empty($cacheexpired)) $options->expiredcache = (int) $cacheexpired;
         $options->ob_cache = isset($ob_cache);
         $options->compress = isset($compress);

@@ -23,6 +23,7 @@ class tprofile extends tevents_itemplate implements itemplate {
     'gender' => 'male',
     'img' => '',
     
+'skype' => '',
     'icqChatID' => '',
     'aimChatID' => '',
     'jabberID' => '',
@@ -36,7 +37,8 @@ class tprofile extends tevents_itemplate implements itemplate {
     'geourl' => 'http://beta-maps.yandex.ru/?text=',
     'bio' => '',
     'interests' => '',
-    'interesturl' => '  http://www.livejournal.com/interests.bml?int='
+    'interesturl' => '  http://www.livejournal.com/interests.bml?int=',
+'googleprofile' => ''
     );
   }
   
@@ -46,19 +48,25 @@ class tprofile extends tevents_itemplate implements itemplate {
     $postscount = $posts->archivescount;
     $manager = litepublisher::$classes->commentmanager;
     
-    $result = '<foaf:nick>' . tfoaf::escape($this->nick) . '</foaf:nick>' .
-    '<foaf:name>' . tfoaf::escape($this->nick) . '</foaf:name>' .
-    '<foaf:dateOfBirth>' . tfoaf::escape($this->dateOfBirth) . '</foaf:dateOfBirth>' .
-    "<foaf:gender>$this->gender</foaf:gender>" .
-    '<foaf:img rdf:resource="' . tfoaf::escape($this->img) . '" />' .
-    '<foaf:icqChatID>' . tfoaf::escape($this->icqChatID) . '</foaf:icqChatID>' .
-    '<foaf:aimChatID>' . tfoaf::escape($this->aimChatID) . '</foaf:aimChatID>' .
-    '<foaf:jabberID>' . tfoaf::escape($this->jabberID) . '</foaf:jabberID>' .
-    '<foaf:msnChatID>' . tfoaf::escape($this->msnChatID) . '</foaf:msnChatID>' .
-    '<foaf:yahooChatID>' . tfoaf::escape($this->yahooChatID) . '</foaf:yahooChatID>' .
-    '<foaf:homepage>' . tfoaf::escape(litepublisher::$site->url) . '/</foaf:homepage>' .
-    '<foaf:mbox>' . tfoaf::escape($this->mbox) . '</foaf:mbox>' .
-    '<foaf:weblog ' .
+    $result = tfoaf::getparam('name', $this->nick);
+foreach (array(
+'nick',
+'dateOfBirth',
+'gender',
+'icqChatID',
+'aimChatID',
+'jabberID',
+'msnChatID',
+'yahooChatID',
+'mbox'
+) as $name) {
+    $result .= tfoaf::getparam($name, $this->data[$name]);
+}
+
+    $result .= '<foaf:img rdf:resource="' . tfoaf::escape($this->img) . '" />';
+    $result .= tfoaf::getparam('homepage', litepublisher::$site->url . '/');
+
+    $result .= '<foaf:weblog ' .
     'dc:title="'. tfoaf::escape(litepublisher::$site->name) . '" ' .
     'rdf:resource="' . tfoaf::escape(litepublisher::$site->url) . '/" />' .
     
@@ -129,14 +137,7 @@ class tprofile extends tevents_itemplate implements itemplate {
   }
   
   public function request($arg) {
-    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-    if (!isset(tlocal::$data['foaf'])) {
-      if (file_exists($dir . litepublisher::$options->language . '.ini')) {
-        tlocal::loadini($dir . litepublisher::$options->language . '.ini');
-      } else {
-        tlocal::loadini($dir . 'en.ini');
-      }
-    }
+    tlocal::loadsection('', 'foaf', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('foaf');
   }
   
@@ -170,19 +171,22 @@ public function gethead() { }
   protected function getstat() {
     $posts = tposts::instance();
     $manager = tcommentmanager::instance();
-    $lang =
-    tlocal::instance('foaf');
+    $lang = tlocal::instance('foaf');
     return sprintf($lang->statistic, $posts->archivescount, $manager->count);
   }
   
   protected function getmyself() {
     $lang = tlocal::instance('foaf');
     $result = array();
-    if ($this->img != '') $result[] = "<img src=\"$this->img\" />";
+    if ($this->img != '') {
+$i = strrpos($this->img, '.');
+$preview = substr($this->img, 0, $i) . '.preview' . substr($this->img, $i);
+$result[] = sprintf('<a rel="prettyPhoto" href="%s"><img src="%s" alt="profile" /></a>', $this->img, $preview);
+}
     if ($this->nick != '') $result[] = "$lang->nick $this->nick";
     if (($this->dateOfBirth != '')  && @sscanf($this->dateOfBirth , '%d-%d-%d', $y, $m, $d)) {
       $date = mktime(0,0,0, $m, $d, $y);
-      $ldate = TLocal::date($date);
+      $ldate = tlocal::date($date);
       $result[] = sprintf($lang->birthday, $ldate);
     }
     
@@ -191,11 +195,13 @@ public function gethead() { }
     if (!$this->country != '') $result[] = $this->country;
     if (!$this->region != '') $result[] = $this->region;
     if (!$this->city != '') $result[] = $this->city;
-    return "<p>\n" . implode(", ", $result) . "</p>\n";
+$result[] = sprintf('<a rel="me" href="%s">Google profile</a>', $this->googleprofile);
+    return implode("</li>\n<li>", $result);
   }
   
   protected function getcontacts() {
     $contacts = array(
+'skype' => 'Skype',
     'icqChatID' => 'ICQ',
     'aimChatID' => 'AIM',
     'jabberID' => 'Jabber',
@@ -204,7 +210,7 @@ public function gethead() { }
     'mbox' => 'E-Mail'
     );
     $lang = tlocal::instance('foaf');
-    $result = "<table>
+    $result = "<table class=\"classictable\">
     <thead>
     <tr>
     <th align=\"left\">$lang->contactname</th>
