@@ -16,14 +16,7 @@ class tadminfoaf extends tadminmenu {
   
   public function gethtml($name = '') {
     $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-    if (!isset(tlocal::$data['foaf'])) {
-      if (file_exists($dir . litepublisher::$options->language . '.ini')) {
-        tlocal::loadini($dir . litepublisher::$options->language . '.ini');
-      } else {
-        tlocal::loadini($dir . 'en.ini');
-      }
-    }
-    
+    tlocal::loadsection('', 'foaf', $dir);
     $html = tadminhtml::instance();
     if (!isset($html->ini['foaf'])) {
       $html->loadini($dir . 'html.ini');
@@ -77,6 +70,7 @@ class tadminfoaf extends tadminmenu {
   
   
   public function getcontent() {
+$lang = tlocal::instance('foaf');
     $result = '';
     $foaf = tfoaf::instance();
     $html = $this->html;
@@ -123,9 +117,28 @@ class tadminfoaf extends tadminmenu {
       ttheme::$vars['profile '] = $profile;
       $args = targs::instance();
       $args->gender = $profile->gender != 'female';
+$form = '';
+foreach (array(
+'nick',
+'img',
+'dateOfBirth',
+'skype',
+'icqChatID',
+'aimChatID',
+'jabberID',
+'msnChatID',
+'yahooChatID',
+'mbox'
+) as $name) {
+$args->$name = $profile->$name;
+$form .= is_bool($profile->$name) ? "[checkbox=$name]" : "[text=$name]";
+if (!isset($lang->$name)) $args->data["\$lang.$name"] = $name;
+}
+
 $args->bio = $profile->bio;
 $args->formtitle = $lang->profileform;
-      $result .= $html->adminform('
+      $result .= $html->adminform($form .
+'[checkbox=gender]
 [editor=bio]
 ',$args);
       break;
