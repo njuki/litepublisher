@@ -1,0 +1,4 @@
+    $c = tnode::addvalue($item, 'content:encoded', $content);
+tnode::attr($c, 'type', 'text/html');
+$j = tnode::addcdata($c, 'script', 'alert("hi");');
+tnode::attr($j, 'type', 'text/javascript');
