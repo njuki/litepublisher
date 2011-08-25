@@ -19,3 +19,4 @@ class tlazybuttons extends tplugin {
     $theme->templates['content.post']);
   }
   
+}//class

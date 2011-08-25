@@ -17,25 +17,25 @@ $o = array(
 
 $jsmerger = tjsmerger::instance();
 $jsmerger->lock();
-$jsmerger->add('default', dirname(__file__) . 'lazybuttons.min.js');
+$jsmerger->add('default', dirname(__file__) . '/lazybuttons.min.js');
 $jsmerger->addtext('default', 'lazybuttons',
 sprintf('var lazyoptions = %s;', json_encode($o)));
 $jsmerger->unlock();
 
     $parser = tthemeparser::instance();
-    $parser->parsed = $this->themeparsed;
+    $parser->parsed = $self->themeparsed;
     ttheme::clearcache();
   }
   
 function tlazybuttonsUninstall($self) {
 $jsmerger = tjsmerger::instance();
 $jsmerger->lock();
-$jsmerger->deletefile('default', dirname(__file__) . 'lazybuttons.min.js');
+$jsmerger->deletefile('default', dirname(__file__) . '/lazybuttons.min.js');
 $jsmerger->deletetext('default', 'lazybuttons');
     $jsmerger->unlock();
 
     $parser = tthemeparser::instance();
-    $parser->unsubscribeclass($this);
+    $parser->unsubscribeclass($self);
     ttheme::clearcache();
   }
   
