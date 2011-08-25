@@ -1,4 +1,6 @@
-$(document).ready(function() {
+alert('rea');
+  $(document).ready(function() {
+alert('rea');
 function show_lazybuttons() {
 		  var url = document.location;
 		  var title = document.title.replace("'",'&apos;');
