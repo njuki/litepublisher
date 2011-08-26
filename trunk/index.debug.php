@@ -98,7 +98,7 @@ tlocal::clearcache();
 //tupdater::instance()->run(4.90);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
-//tfiler::log($_SERVER['REQUEST_URI']);
+//tfiler::log(var_export($_SERVER, true));
   if (!defined('litepublisher_mode')) {
     litepublisher::$urlmap->request(strtolower($_SERVER['HTTP_HOST']), $_SERVER['REQUEST_URI']);
   }
@@ -122,4 +122,6 @@ echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
 //tdebugproxy::showperformance();
 //echo json_encode(tlocal::$data);
+//dumpvar($_GET);
+//dumpvar($_SERVER);
 ?>

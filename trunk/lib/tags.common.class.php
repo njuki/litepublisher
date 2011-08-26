@@ -319,23 +319,7 @@ class tcommontags extends titems implements  itemplate {
       return sprintf("<?php turlmap::redir301('%s');",$item['url']);
     }
     
-    /*
-    $url = $item['url'];
-    if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . '/page/'. litepublisher::$urlmap->page . '/';
-    if (litepublisher::$urlmap->url != $url) litepublisher::$urlmap->redir301($url);
-    */
   }
-  
-  /*
-  public function AfterTemplated(&$s) {
-    $redir = "<?php
-  \$url = '{$this->items[$this->id]['url']}';
-    if(litepublisher::\$urlmap->page != 1) \$url = rtrim(\$url, '/') . \"/page/\$urlmap->page/\";
-    if (litepublisher::\$urlmap->url != \$url) litepublisher::\$urlmap->redir301(\$url);
-    ?>";
-    $s = $redir.$s;
-  }
-  */
   
   public function getname($id) {
     $item = $this->getitem($id);
