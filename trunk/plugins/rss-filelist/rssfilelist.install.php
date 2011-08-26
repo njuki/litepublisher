@@ -10,15 +10,6 @@ function trssfilelistInstall($self) {
   $rss = trss::instance();
   $rss->beforepost = $self->beforepost;
 
-$jsmerger = tjsmerger::instance();
-$jsmerger->addtext('default', 'rssfilelist',
-'$(document).ready(function() {
-var urlfile = get_cookie("rssfilelist");
-if (urlfile) {
-//prety
-}
-});'
-  
   litepublisher::$urlmap->clearcache();
 }
 
@@ -26,8 +17,5 @@ function trssfilelistUninstall($self) {
   $rss = trss::instance();
   $rss->unsubscribeclass($self);
 
-$jsmerger = tjsmerger::instance();
-$jsmerger->deletetext('default', 'rssfilelist');
-  
   litepublisher::$urlmap->clearcache();
 }
