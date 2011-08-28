@@ -17,8 +17,7 @@ $(document).ready(function() {
 <body>
 	<div id="header"><div id="logo"><span class="name"><a href="$site.url/">$site.name</a></span><span class="slogan">$site.description</span>
 </div></div>
-	<div id="topmenu" xmlns:v="http://rdf.data-vocabulary.org/#">
-
+	<div id="topmenu">
 	 $template.menu
 </div>
 <div id="out">

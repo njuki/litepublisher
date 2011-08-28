@@ -14,14 +14,14 @@ class trssfilelist extends tplugin {
   
   public function beforepost($id, &$content) {
     $post = tpost::instance($id);
-if (count($post->files) > 0) {
-$theme = $post->theme;
-$image = $theme->templates['content.post.filelist.image'];
-$theme->templates['content.post.filelist.image'] = str_replace('href="$link"', 
-'href="$post.link#!prettyPhoto[gallery-$post.id]/$typeindex/"', $image);
-    $content .= $post->filelist;
-$theme->templates['content.post.filelist.image'] = $image;
-}
+    if (count($post->files) > 0) {
+      $theme = $post->theme;
+      $image = $theme->templates['content.post.filelist.image'];
+      $theme->templates['content.post.filelist.image'] = str_replace('href="$link"',
+      'href="$post.link#!prettyPhoto[gallery-$post.id]/$typeindex/"', $image);
+      $content .= $post->filelist;
+      $theme->templates['content.post.filelist.image'] = $image;
+    }
   }
-
+  
 }//class

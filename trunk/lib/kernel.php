@@ -1738,6 +1738,7 @@ class turlmap extends titems {
   
   public function finditem($url) {
     if ($result = $this->query($url)) return $result;
+    $srcurl = $url;
     if ($i = strpos($url, '?'))  $url = substr($url, 0, $i);
     if ('//' == substr($url, -2)) $this->redir301(rtrim($url, '/') . '/');
     //extract page number
@@ -1748,7 +1749,10 @@ class turlmap extends titems {
       $this->page = max(1, abs((int) $m[2]));
     }
     
-    if ($result = $this->query($url)) return $result;
+    if ($result = $this->query($url)) {
+      if (($this->page == 1) && ($result['type'] == 'normal') && ($srcurl != $result['url'])) return $this->redir301($url);
+      return $result;
+    }
     $url = $url != rtrim($url, '/') ? rtrim($url, '/') : $url . '/';
     if ($result = $this->query($url)) {
       if ($this->page > 1) return $result;

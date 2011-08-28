@@ -25,18 +25,18 @@ class tjsmerger extends titems {
     parent::save();
     $this->assemble();
   }
-
-public function normfilename($filename) {
+  
+  public function normfilename($filename) {
     $filename = trim($filename);
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
     if (empty($filename)) return false;
-$filename = str_replace(DIRECTORY_SEPARATOR, '/', $filename);
+    $filename = str_replace(DIRECTORY_SEPARATOR, '/', $filename);
     $filename = '/' . ltrim($filename, '/');
-return $filename;
-}
+    return $filename;
+  }
   
   public function add($section, $filename) {
-if (!($filename = $this->normfilename($filename))) return false;
+    if (!($filename = $this->normfilename($filename))) return false;
     if (!isset($this->items[$section])) {
       $this->items[$section] = array(
       'files' => array($filename),
@@ -52,7 +52,7 @@ if (!($filename = $this->normfilename($filename))) return false;
   
   public function deletefile($section, $filename) {
     if (!isset($this->items[$section])) return false;
-if (!($filename = $this->normfilename($filename))) return false;
+    if (!($filename = $this->normfilename($filename))) return false;
     if (false === ($i = array_search($filename, $this->items[$section]['files']))) return false;
     array_delete($this->items[$section]['files'], $i);
     $this->save();
@@ -114,7 +114,7 @@ if (!($filename = $this->normfilename($filename))) return false;
         $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
         if (false === ($file = file_get_contents($home . $filename))) $this->error(sprintf('Error read %s file', $filename));
         $s .= $file;
-$s .= "\n"; //prevent coomments
+        $s .= "\n"; //prevent coomments
       }
       $s .= implode("\n", $items['texts']);
       $jsfile =  $this->getfilename($section);

@@ -84,7 +84,7 @@ $hover = [true]
   });
 </script>
 	<ul id="nav">
-		$item = [<li><a href="$link" title="$title" rel="v:url" property="v:title">$title</a>$submenu = [ <ul rel="v:child">$items</ul>]</li>]
+		$item = [<li><a href="$link" title="$title">$title</a>$submenu = [ <ul>$items</ul>]</li>]
 		$current = [		<li class="current_page_item"><a href="$link" title="$title">$title</a>$submenu</li>]
 	</ul>
 ]
