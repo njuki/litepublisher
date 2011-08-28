@@ -213,10 +213,10 @@ class trss extends tevents {
     if ($this->template == '') {
       $content .= $post->replacemore($post->rss, true);
     } else {
-$content .= ttheme::parsevar('post', $post, $this->template);
+      $content .= ttheme::parsevar('post', $post, $this->template);
     }
     $this->callevent('afterpost', array($post->id, &$content));
-     tnode::addcdata($item, 'content:encoded', $content);
+    tnode::addcdata($item, 'content:encoded', $content);
     tnode::addcdata($item, 'description', strip_tags($content));
     tnode::addvalue($item, 'wfw:commentRss', $post->rsscomments);
     

@@ -1924,23 +1924,7 @@ class tcommontags extends titems implements  itemplate {
       return sprintf("<?php turlmap::redir301('%s');",$item['url']);
     }
     
-    /*
-    $url = $item['url'];
-    if(litepublisher::$urlmap->page != 1) $url = rtrim($url, '/') . '/page/'. litepublisher::$urlmap->page . '/';
-    if (litepublisher::$urlmap->url != $url) litepublisher::$urlmap->redir301($url);
-    */
   }
-  
-  /*
-  public function AfterTemplated(&$s) {
-    $redir = "<?php
-  \$url = '{$this->items[$this->id]['url']}';
-    if(litepublisher::\$urlmap->page != 1) \$url = rtrim(\$url, '/') . \"/page/\$urlmap->page/\";
-    if (litepublisher::\$urlmap->url != \$url) litepublisher::\$urlmap->redir301(\$url);
-    ?>";
-    $s = $redir.$s;
-  }
-  */
   
   public function getname($id) {
     $item = $this->getitem($id);
@@ -2458,14 +2442,17 @@ class tfiles extends titems {
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
+    $index = 0;
     foreach ($items as $type => $subitems) {
       $sublist = '';
-      foreach ($subitems as $id) {
+      foreach ($subitems as $typeindex => $id) {
         $item = $this->items[$id];
         $args->preview  = '';
         $args->add($item);
         $args->link = $url . $item['filename'];
         $args->id = $id;
+        $args->typeindex = $typeindex;
+        $args->index = $index++;
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
           if ($preview->media === 'image') {

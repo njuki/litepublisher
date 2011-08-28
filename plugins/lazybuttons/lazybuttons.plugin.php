@@ -13,10 +13,13 @@ class tlazybuttons extends tplugin {
   }
   
   public function themeparsed(ttheme $theme) {
-    if (strpos($theme->templates['content.post'], 'lazybuttons')) return;
-    $theme->templates['content.post'] = str_replace('$post.content', '$post.content' .
-    '<div class="lazybuttons"></div>',
-    $theme->templates['content.post']);
+    if (!strpos($theme->templates['content.post'], 'lazybuttons')) {
+      $theme->templates['content.post'] = str_replace('$post.content', '$post.content' . '<div class="lazybuttons"></div>', $theme->templates['content.post']);
+    }
+    
+    if (!strpos($theme->templates['content.menu'], 'lazybuttons')) {
+      $theme->templates['content.menu'] = str_replace('$post.content', '$post.content' . '<div class="lazybuttons"></div>', $theme->templates['content.menu']);
+    }
   }
   
 }//class

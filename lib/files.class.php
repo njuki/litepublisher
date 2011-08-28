@@ -170,7 +170,7 @@ class tfiles extends titems {
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
-$index = 0;
+    $index = 0;
     foreach ($items as $type => $subitems) {
       $sublist = '';
       foreach ($subitems as $typeindex => $id) {
@@ -179,8 +179,8 @@ $index = 0;
         $args->add($item);
         $args->link = $url . $item['filename'];
         $args->id = $id;
-$args->typeindex = $typeindex;
-$args->index = $index++;
+        $args->typeindex = $typeindex;
+        $args->index = $index++;
         if ($item['preview'] > 0) {
           $preview->array = $this->getitem($item['preview']);
           if ($preview->media === 'image') {
