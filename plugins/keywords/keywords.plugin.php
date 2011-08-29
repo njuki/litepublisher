@@ -51,6 +51,7 @@ class tkeywordsplugin  extends tplugin {
     if (empty($keywords)) return;
     if (false !== strpos($keywords, 'site:')) return;
     if (false !== strpos($keywords, 'inurl:')) return;
+    if (false !== strpos($keywords, 'intext:')) return;
     if (false !== strpos($keywords, 'http:')) return;
     if (false !== strpos($keywords, 'ftp:')) return;
     if (false !== strpos($keywords, 'ftp:')) return;
