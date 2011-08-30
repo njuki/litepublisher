@@ -6,35 +6,24 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function tlazybuttonsInstall($self) {
-  $about = tplugins::getabout(tplugins::getname(__file__));
-  $o = array(
-  'lang' => litepublisher::$options->language,
-  'twituser' => '',
-  'show' => $about['show'],
-  'hide' =>  $about['hide']
-  );
-  
-  $jsmerger = tjsmerger::instance();
-  $jsmerger->lock();
-  $jsmerger->add('default', dirname(__file__) . '/lazybuttons.min.js');
-  $jsmerger->addtext('default', 'lazybuttons',
-  sprintf('var lazyoptions = %s;', json_encode($o)));
-  $jsmerger->unlock();
-  
-  $parser = tthemeparser::instance();
-  $parser->parsed = $self->themeparsed;
-  ttheme::clearcache();
-}
+function tfilepropspluginInstall($self) {
+litepublisher::$urlmap->addget('/admin/fileprops.htm', get_class($self));
 
-function tlazybuttonsUninstall($self) {
+$js = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'fileprops.min.js');
+  $about = tplugins::getabout(tplugins::getname(__file__));
+$js = str_replace('%%lang_titledialog%%', $about['titledialog'], $js);
+$lang = tlocal::instance('common');
+$theme = ttheme::instance();
+$js = $theme->replacelang($js, $lang);
+file_put_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'min.js', $js);
+return;
   $jsmerger = tjsmerger::instance();
-  $jsmerger->lock();
-  $jsmerger->deletefile('default', dirname(__file__) . '/lazybuttons.min.js');
-  $jsmerger->deletetext('default', 'lazybuttons');
-  $jsmerger->unlock();
-  
-  $parser = tthemeparser::instance();
-  $parser->unsubscribeclass($self);
-  ttheme::clearcache();
+  $jsmerger->addtext('admin', 'fileprops', $js);
+ }
+
+function tfilepropspluginUninstall($self) {
+turlmap::unsub($self);
+
+  $jsmerger = tjsmerger::instance();
+  $jsmerger->deletetext('admin', 'fileprops');
 }

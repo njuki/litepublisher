@@ -5,11 +5,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function inittabs(sel, fn) {
-$(sel).tabs({ cache: true });
-  if ($.isFunction(fn)) fn();
-}
-
 $(document).ready(function() {
   $("input[rel='checkall']").click(function() {
     $(this).closest("form").find("input:checkbox").attr("checked", true);
