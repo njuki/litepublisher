@@ -129,6 +129,10 @@ class toptions extends tevents_storage {
       $this->group = $users->getgroupname($this->user);
     }
   }
+
+public function can_edit($idauthor) {
+return ($idauthor == $this->user) || ($this->group == 'admin') || ($this->group == 'editor');
+}(
   
   public function getpassword() {
     if ($this->user <= 1) return $this->data['password'];

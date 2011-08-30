@@ -6,20 +6,47 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tlazybuttons extends tplugin {
+class tfilepropsplugin extends tplugin {
   
   public static function instance() {
     return getinstance(__class__);
   }
   
-  public function themeparsed(ttheme $theme) {
-    if (!strpos($theme->templates['content.post'], 'lazybuttons')) {
-      $theme->templates['content.post'] = str_replace('$post.content', '$post.content <div class="lazybuttons"></div>', $theme->templates['content.post']);
+  public function request($arg) {
+$this->cache = false;
+    if (!litepublisher::$options->cookieenabled) return 403;
+    if (!litepublisher::$options->authcookie()) return 403;
+    if (litepublisher::$options->group != 'admin') {
+      $groups = tusergroups::instance();
+      if (!$groups->hasright(litepublisher::$options->group, 'author')) return 403;
     }
-    
-    if (!strpos($theme->templates['content.menu'], 'lazybuttons')) {
-      $theme->templates['content.menu'] = str_replace('$menu.content', '$menu.content <div class="lazybuttons"></div>', $theme->templates['content.menu']);
-    }
-  }
-  
+
+if (!isset($_GET['action'])) return 403;
+$files = tfiles::instance();
+
+switch ($_GET['action']) {
+case 'get':
+$filename = substr($_GET['filename'], strlen(litepublisher::$site->files));
+if ($id = $files->IndexOf('filename', $filename)) {
+$item = $files->getitem($id);
+if (!litepublisher::$options->can_edit($item['author'])) return 403;
+return turlmap::send_json($item);
+} else {
+return 404;
+}
+break;
+
+case 'set':
+$id = (int) $_GET['id']);
+if (!$files->itemexists($id)) return 404;
+$item = $files->getitem($id);
+if (!litepublisher::$options->can_edit($item['author'])) return 403;
+$files->edit($id, $_GET['title'], $_GET['description'], $_GET['keywords']);
+return turlmap::send_json($item);
+
+default:
+return 404;
+}
+}
+
 }//class
