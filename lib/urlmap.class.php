@@ -511,5 +511,3 @@ class turlmap extends titems {
   }
   
 }//class
-
-?>
