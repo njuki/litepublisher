@@ -102,7 +102,7 @@ function initfiletabs() {
       $("input:checked[id^='currentfile']").each(function() {
         $(this).parent().remove();
       } );
-return false;
+      return false;
     });
     
     $('form:first').submit(function() {
