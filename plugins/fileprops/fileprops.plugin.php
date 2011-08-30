@@ -26,26 +26,27 @@ $files = tfiles::instance();
 
 switch ($_GET['action']) {
 case 'get':
-$filename = substr($_GET['filename'], strlen(litepublisher::$site->files));
+$filename = substr($_GET['filename'], strlen(litepublisher::$site->files . '/files/'));
 if ($id = $files->IndexOf('filename', $filename)) {
 $item = $files->getitem($id);
 if (!litepublisher::$options->can_edit($item['author'])) return 403;
-return turlmap::send_json($item);
-} else {
-return 404;
+return turlmap::htmlheader(false) . json_encode($item);
 }
-break;
+return 404;
 
 case 'set':
-$id = (int) $_GET['id']);
+$id = (int) $_GET['id'];
 if (!$files->itemexists($id)) return 404;
 $item = $files->getitem($id);
 if (!litepublisher::$options->can_edit($item['author'])) return 403;
 $files->edit($id, $_GET['title'], $_GET['description'], $_GET['keywords']);
-return turlmap::send_json($item);
+$item = $files->getitem($id);
+return turlmap::htmlheader(false) . 
+//json_encode($item);
+json_encode($_GET);
 
 default:
-return 404;
+return 403;
 }
 }
 
