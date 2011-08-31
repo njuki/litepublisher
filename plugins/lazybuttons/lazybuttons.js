@@ -28,7 +28,8 @@ lazy.append(
 '<g:plusone size="standard" count="true" callback="$.plusone_callback" href="'+url +'"></g:plusone>');
 
  var js = lazyoptions.lang == 'en' ? '' : "{lang: '"+lazyoptions.lang+"'}";
-var script = $('<script src="' +document.location.protocol + '//apis.google.com/js/plusone.js'+ '">' + js + "</script>");
+//var script = $('<script src="' +document.location.protocol + '//apis.google.com/js/plusone.js'+ '">' + js + "</script>");
+var script = $('<script src="https//apis.google.com/js/plusone.js'+ '">' + js + "</script>");
 		    		    $('head:first').append(script);
 
 //facebook
@@ -36,9 +37,13 @@ lazy.append('<div><iframe src="http://www.facebook.com/plugins/like.php?locale=r
 '&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font=segoe+ui&amp;colorscheme=light" frameborder="0" </iframe></div>');
 
 //twitter
+var twituser = lazyoptions.twituser == '' ? '' :'<script type="text/javascript">tweetmeme_source = "' + lazyoptions.twituser  + '";</script>';
+lazy.append('<div>' + twituser + '<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script></div>');
+
+/*
 	  		var via = lazyoptions.twituser == '' ? '' : 'data-via="'+lazyoptions.twituser +'" ';
 lazy.append('<div><a href="http://twitter.com/share" class="twitter-share-button" data-url="'+url +'" ' + via+'data-text="'+title +'" data-lang="'+lazyoptions.lang +'" data-count="vertical">Tweet</a></div>');
-/*
+
 $.load_script('http://platform.twitter.com/widgets.js', function() {
 return;
 function ga_track(type, value) {
