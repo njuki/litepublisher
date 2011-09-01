@@ -425,7 +425,13 @@ class turlmap extends titems {
   
   protected function close() {
     $this->call_close_events();
-    if (time() > litepublisher::$options->crontime + 3600) {
+if (tfilestorage::$memcache) {
+$crontime = tfilestorage::$memcache->get(litepublisher::$domain . ' .crontime');
+    if (!$crontime || (time() > $crontime + 3600)) {
+tfilestorage::$memcache->set(litepublisher::$domain . ' .crontime'), time(), false, 3600);
+      tcron::pingonshutdown();
+    }
+} elseif (time() > litepublisher::$options->crontime + 3600) {
       litepublisher::$options->crontime = time();
       tcron::pingonshutdown();
     }
