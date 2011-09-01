@@ -8,9 +8,9 @@
 
 class tthemeparser extends tevents {
   public $theme;
+  public $paths;
   public $fixsubcount;
   private $abouts;
-  private $paths;
   private $sidebar_index;
   private $pathmap;
   
@@ -21,7 +21,7 @@ class tthemeparser extends tevents {
   protected function create() {
     parent::create();
     $this->basename = 'themeparser';
-    $this->addevents('parsed');
+    $this->addevents('beforeparse', 'parsed');
     $this->fixsubcount = true;
     $this->data['replacelang'] = false;
     $this->sidebar_index = 0;
@@ -217,6 +217,7 @@ class tthemeparser extends tevents {
     $this->theme = $theme;
     $this->paths = self::getpaths($theme);
     $s = trim($s);
+$this->callevent('beforeparse', array(&$s));
     while ($s != '') {
       if (preg_match('/^(((\$template|\$custom)?\.?)?\w*+(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           $tag = $m[1];
