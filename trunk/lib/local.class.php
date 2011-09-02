@@ -6,60 +6,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class targs {
-  public $data;
-  
-  public static function instance() {
-    return litepublisher::$classes->newinstance(__class__);
-  }
-  
-  public function __construct($thisthis = null) {
-    $site = litepublisher::$site;
-    $this->data = array(
-    '$site.url' => $site->url,
-  '{$site.q}' => $site->q,
-    '$site.q' => $site->q,
-    '$site.files' => $site->files
-    );
-    if (isset($thisthis)) $this->data['$this'] = $thisthis;
-  }
-  
-  public function __get($name) {
-    if (($name == 'link') && !isset($this->data['$link'])  && isset($this->data['$url'])) {
-      return litepublisher::$site->url . $this->data['$url'];
-    }
-    return $this->data['$' . $name];
-  }
-  
-  public function __set($name, $value) {
-    if (is_bool($value)) {
-      $value = $value ? 'checked="checked"' : '';
-    }
-    
-    $this->data['$'.$name] = $value;
-    $this->data["%%$name%%"] = $value;
-    
-    if (($name == 'url') && !isset($this->data['$link'])) {
-      $this->data['$link'] = litepublisher::$site->url . $value;
-      $this->data['%%link%%'] = litepublisher::$site->url . $value;
-    }
-  }
-  
-  public function add(array $a) {
-    foreach ($a as $key => $value) {
-      $this->__set($key, $value);
-      if ($key == 'url') {
-        $this->data['$link'] = litepublisher::$site->url . $value;
-        $this->data['%%link%%'] = litepublisher::$site->url . $value;
-      }
-    }
-    
-    if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
-    if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
-  }
-  
-}//class
-
 class tlocal {
   public static $data;
   public $section;
@@ -131,13 +77,6 @@ class tlocal {
       self::$data = $v + self::$data ;
       self::$files[] = $filename;
     }
-  }
-  
-  public static function install() {
-    $dir =litepublisher::$paths->data . 'languages';
-    if (!is_dir($dir)) @mkdir($dir, 0777);
-    @chmod($dir, 0777);
-    self::checkload();
   }
   
   public static function getcachedir() {
