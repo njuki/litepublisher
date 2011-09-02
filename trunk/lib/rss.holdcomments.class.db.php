@@ -70,7 +70,7 @@ class trssholdcomments extends tevents {
       $tml = $html->rsstemplate;
     }
     $tml = str_replace('$adminurl', '/admin/comments/'. litepublisher::$site->q . 'id=$comment.id&action=', $tml);
-    tlocal::load('admin');
+    tlocal::loadlang('admin');
     $lang = tlocal::instance('comments');
     foreach ($recent  as $item) {
       $comment->array = $item;

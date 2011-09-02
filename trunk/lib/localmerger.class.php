@@ -21,7 +21,7 @@ class tlocalmerger extends titems {
   public function save() {
     if ($this->lockcount > 0) return;
     parent::save();
-    $this->assemble();
+    $this->parse();
   }
   
   public function normfilename($filename) {
@@ -107,7 +107,7 @@ $dir = isset(litepublisher::$_paths[$name]) ? litepublisher::$_paths[$name] ? li
 return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
 }
   
-  public function assemble() {
+  public function parse() {
 $savedir = litepublisher::$paths->data . 'languages' . DIRECTORY_SEPARATOR;
     foreach ($this->items as $name => $items) {
       $ini = array();
