@@ -43,5 +43,3 @@ class tcontactform extends tmenu {
   }
   
 }//class
-
-?>
