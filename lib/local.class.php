@@ -62,7 +62,6 @@ class targs {
 
 class tlocal {
   public static $data;
-  private static $files;
   public $section;
   
   public function __get($name) {
@@ -175,7 +174,3 @@ class tdateformater {
 public function __construct($date) { $this->date = $date; }
 public function __get($name) { return tlocal::translate(date($name, $this->date), 'datetime'); }
 }
-
-//init
-tlocal::checkload();
-?>

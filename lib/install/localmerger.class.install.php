@@ -7,8 +7,15 @@
 **/
 
 function tlocalmergerInstall($self) {
-$self->lock();
+    $dir =litepublisher::$paths->data . 'languages';
+    if (!is_dir($dir)) @mkdir($dir, 0777);
+    @chmod($dir, 0777);
 
+$lang = litepublisher::$options->language;
+$self->lock();
+$self->add('default', "lib/languages/$lang/default.ini");
+$self->add('admin', "lib/languages/$lang/admin.ini");
+$self->add('theme', "lib/languages/$lang/theme.ini");
 $self->unlock();
 }
 
