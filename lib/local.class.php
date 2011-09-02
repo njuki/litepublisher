@@ -7,13 +7,32 @@
 **/
 
 class tlocal {
-  public static $data;
+private $self;
+private $loaded;
+public $ini;
   public $section;
+
+  public static function instance($section = '') {
+if (!isset(self::$self)) $self::$self= getinstance(__class__);
+if (!isset($result->loaded['default'])) $result->load('default');
+    if ($section != '') self::$self->section = $section;
+    return self::$self;
+  }
+
+  public static function admin($section = '') {
+$result = self::instance($section);
+if (!isset($result->loaded['admin'])) $result->load('admin');
+return $result;
+  }
+
+public function get($section, $key) {
+return $this->ini[$section][$key];
+}
   
-  public function __get($name) {
-    if (isset(self::$data[$this->section][$name])) return self::$data[$this->section][$name];
-    if (isset(self::$data['common'][$name])) return self::$data['common'][$name];
-    if (isset(self::$data['default'][$name])) return self::$data['default'][$name];
+    public function __get($name) {
+    if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
+    if (isset($this->ini['common'][$name])) return $this->ini['common'][$name];
+    if (isset($this->ini['default'][$name])) return $this->ini['default'][$name];
     return '';
   }
   
@@ -21,29 +40,23 @@ class tlocal {
     return strtr ($this->__get($name), $args->data);
   }
   
-  public static function instance($section = '') {
-    $result = getinstance(__class__);
-    if ($section != '') $result->section = $section;
-    return $result;
+  public function date($date, $format = '') {
+    if (empty($format)) $format = $this->getdateformat();
+    return $this->translate(date($format, $date), 'datetime');
   }
   
-  public static function date($date, $format = '') {
-    if (empty($format)) $format = self::getdateformat();
-    return self::translate(date($format, $date), 'datetime');
-  }
-  
-  public static function getdateformat() {
+  public function getdateformat() {
     $format = litepublisher::$options->dateformat;
-    return $format != ''? $format : self::$data['datetime']['dateformat'];
+    return $format != ''? $format : $this->ini['datetime']['dateformat'];
   }
   
-  public static function translate($s, $section = 'default') {
-    return strtr($s, self::$data[$section]);
+  public function translate($s, $section = 'default') {
+    return strtr($s, $this->ini[$section]);
   }
   
   public static function checkload() {
-    if (!isset(self::$data)) {
-      self::$data = array();
+    if (!isset($this->ini)) {
+      $this->ini = array();
       self::$files = array();
       if (litepublisher::$options->installed) self::loadlang('');
     }
@@ -62,10 +75,10 @@ class tlocal {
     self::$files[] = $filename;
     $cachefilename = self::getcachefilename(basename($filename));
     if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
-      self::$data = $v + self::$data ;
+      $this->ini = $v + $this->ini ;
     } else {
       $v = parse_ini_file($filename . '.ini', true);
-      self::$data = $v + self::$data ;
+      $this->ini = $v + $this->ini ;
       tfilestorage::savevar($cachefilename, $v);
       //self::ini2js($filename);
     }
@@ -74,7 +87,7 @@ class tlocal {
   public static function loadini($filename) {
     if (in_array($filename, self::$files)) return;
     if (file_exists($filename) && ($v = parse_ini_file($filename, true))) {
-      self::$data = $v + self::$data ;
+      $this->ini = $v + $this->ini ;
       self::$files[] = $filename;
     }
   }
@@ -85,7 +98,7 @@ class tlocal {
   
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
-    self::$files = array();
+    self::instance()->loaded = array();
   }
   
   public static function getcachefilename($name) {
@@ -94,11 +107,11 @@ class tlocal {
   
   public static function loadsection($name, $section, $dir) {
     tlocal::loadlang($name);
-    if (!isset(self::$data[$section])) {
+    if (!isset($this->ini[$section])) {
       $language = litepublisher::$options->language;
       if ($name != '') $name = '.' . $name;
       self::loadini($dir . $language . $name . '.ini');
-      tfilestorage::savevar(self::getcachefilename($language . $name), self::$data);
+      tfilestorage::savevar(self::getcachefilename($language . $name), $this->ini);
     }
   }
   
