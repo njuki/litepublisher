@@ -33,35 +33,35 @@ class tlocalmerger extends titems {
     return $filename;
   }
   
-  public function add($section, $filename) {
+  public function add($name, $filename) {
     if (!($filename = $this->normfilename($filename))) return false;
-    if (!isset($this->items[$section])) {
-      $this->items[$section] = array(
+    if (!isset($this->items[$name])) {
+      $this->items[$name] = array(
       'files' => array($filename),
       'texts' => array()
       );
     } else {
-      if (in_array($filename, $this->items[$section]['files'])) return false;
-      $this->items[$section]['files'][] = $filename;
+      if (in_array($filename, $this->items[$name]['files'])) return false;
+      $this->items[$name]['files'][] = $filename;
     }
     $this->save();
-    return count($this->items[$section]['files']) - 1;
+    return count($this->items[$name]['files']) - 1;
   }
   
-  public function deletefile($section, $filename) {
-    if (!isset($this->items[$section])) return false;
+  public function deletefile($name, $filename) {
+    if (!isset($this->items[$name])) return false;
     if (!($filename = $this->normfilename($filename))) return false;
-    if (false === ($i = array_search($filename, $this->items[$section]['files']))) return false;
-    array_delete($this->items[$section]['files'], $i);
+    if (false === ($i = array_search($filename, $this->items[$name]['files']))) return false;
+    array_delete($this->items[$name]['files'], $i);
     $this->save();
   }
   
-  public function setfromstring($section, $s) {
+  public function setfromstring($name, $s) {
     $this->lock();
-    if (isset($this->items[$section])) {
-      $this->items[$section]['files'] = array();
+    if (isset($this->items[$name])) {
+      $this->items[$name]['files'] = array();
     } else {
-      $this->items[$section] = array(
+      $this->items[$name] = array(
       'files' => array(),
       'texts' => array()
       );
@@ -69,59 +69,66 @@ class tlocalmerger extends titems {
     
     $a = explode("\n", trim($s));
     foreach ($a as $filename) {
-      $this->add($section, trim($filename));
+      $this->add($name, trim($filename));
     }
     $this->unlock();
   }
+
+  public function addtext($name, $section, $s) {
+$s = trim($s);
+if ($s != '') $this->addsection($name, $section, tini2array::parsesection($s));
+}
   
-  public function addtext($section, $key, $s) {
-    $s = trim($s);
-    if (empty($s)) return false;
-    if (!isset($this->items[$section])) {
-      $this->items[$section] = array(
+  public function addsection($name, $section, array $items) {
+    if (!isset($this->items[$name])) {
+      $this->items[$name] = array(
       'files' => array(),
-      'texts' => array($key => $s)
+      'texts' => array($key => $items)
       );
-    } else {
-      if (in_array($s, $this->items[$section]['texts'])) return false;
-      $this->items[$section]['texts'][$key] = $s;
+    } elseif (!isset(      $this->items[$name]['texts'][$section])) {
+      $this->items[$name]['texts'][$section] = $items;
+} else {
+      $this->items[$name]['texts'][$section] = $items + $this->items[$name]['texts'][$section];
     }
     $this->save();
-    return count($this->items[$section]['texts']) - 1;
+    return count($this->items[$name]['texts']) - 1;
   }
   
-  public function deletetext($section, $key) {
-    if (!isset($this->items[$section]['texts'][$key])) return;
-    unset($this->items[$section]['texts'][$key]);
+  public function deletetext($name, $key) {
+    if (!isset($this->items[$name]['texts'][$key])) return;
+    unset($this->items[$name]['texts'][$key]);
     $this->save();
     return true;
   }
+
+public function getrealfilename($filename) {
+$name = substr($filename, 0, strpos($filename, '/'));
+$dir = isset(litepublisher::$_paths[$name]) ? litepublisher::$_paths[$name] ? litepublisher::$paths->home;
+return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+}
   
   public function assemble() {
-    $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
-    $theme = ttheme::instance();
-    foreach ($this->items as $section => $items) {
-      $s = '';
+$savedir = litepublisher::$paths->data . 'languages' . DIRECTORY_SEPARATOR;
+    foreach ($this->items as $name => $items) {
+      $ini = array();
       foreach ($items['files'] as $filename) {
-        $filename = $theme->parse($filename);
-        $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-        if (false === ($file = file_get_contents($home . $filename))) $this->error(sprintf('Error read %s file', $filename));
-        $s .= $file;
-        $s .= "\n"; //prevent coomments
-      }
-      $s .= implode("\n", $items['texts']);
-      $jsfile =  $this->getfilename($section);
-      $realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $jsfile);
-      file_put_contents($realfile, $s);
-      @chmod($realfile, 0666);
+        $realfilename = $this->getrealfilename($filename);
+        if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
+if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
+if (count($ini) == 0) {
+$ini = $parsed;
+} else {
+foreach ($parsed as $section => $itemsini) {
+$ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
+}
+}
 
-    }
+foreach ($items['texts'] as $section = $itemsini) {
+$ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
+}
 
-    litepublisher::$urlmap->clearcache();
-    foreach (array_keys($this->items) as $section) {
-      $old = $home . str_replace('/',DIRECTORY_SEPARATOR, sprintf('/files/js/%s.%s.js', $section, $this->revision - 1));
-      if (file_exists($old)) @unlink($old);
+tfilestorage::savevar($savedir . $name , $ini);
     }
-  }
-  
-}//class
+}
+
+} //class
