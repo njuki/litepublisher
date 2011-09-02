@@ -131,20 +131,4 @@ class tjsmerger extends titems {
     }
   }
   
-  public function onupdated() {
-    tlocal::loadlang('admin');
-    $this->lock();
-  $js = "var lang;\nif (lang == undefined) lang = {};\n";
-    $widgetlang = array(
-    'expand' => tlocal::$data['default']['expand'],
-    'colapse' => tlocal::$data['default']['colapse']
-    );
-    
-    $this->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
-    $this->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment'])));
-    $this->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode(tlocal::$data['comments'])));
-    
-    $this->unlock();
-  }
-  
 }//class

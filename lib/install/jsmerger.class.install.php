@@ -39,8 +39,20 @@ function tjsmergerInstall($self) {
   $section = 'moderate';
   $self->add($section, '/js/litepublisher/rpc.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
+
+    tlocal::loadlang('admin');
+    $self->lock();
+  $js = "var lang;\nif (lang == undefined) lang = {};\n";
+    $widgetlang = array(
+    'expand' => tlocal::$data['default']['expand'],
+    'colapse' => tlocal::$data['default']['colapse']
+    );
+    
+    $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
+    $self->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode(tlocal::$data['comment'])));
+    $self->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode(tlocal::$data['comments'])));
+    
   
-  $self->onupdated();
   $self->unlock();
   
   $template = ttemplate::instance();
