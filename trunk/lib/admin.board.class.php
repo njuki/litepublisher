@@ -22,7 +22,7 @@ public function save() { return true; }
   
   public function request($id) {
     if ($s = tadminmenu::auth('editor')) return $s;
-    tlocal::loadlang('admin');
+    tlocal::check('admin');
   }
   
   public function gethead() {
@@ -31,7 +31,7 @@ public function save() { return true; }
   }
   
   public function gettitle() {
-    return tlocal::$data['names']['board'];
+    return tlocal::get('names', 'board');
   }
   
   public function getkeywords() {
@@ -63,12 +63,12 @@ public function setidview($id) {}
     $result = tadminhtml ::instance();
     if ($name == '') $name = 'login';
     $result->section = $name;
-    $lang = tlocal::instance($name);
+    $lang = tlocal::admin($name);
     return $result;
   }
   
   public function getlang() {
-    return tlocal::instance('login');
+    return tlocal::admin('login');
   }
   
 }//class

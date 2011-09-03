@@ -165,7 +165,7 @@ class tcomments extends titems {
     $result = $this->getcontentwhere('approved', '');
     if (!$this->moderator) return $result;
     $theme = ttheme::instance();
-    tlocal::loadlang('admin');
+    tlocal::check('admin');
     $args = targs::instance();
     $post = tpost::instance($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
@@ -207,7 +207,7 @@ class tcomments extends titems {
     $lang = tlocal::instance('comment');
     $theme = ttheme::instance();
     if ($ismoder = $this->moderator) {
-      tlocal::loadlang('admin');
+      tlocal::check('admin');
       $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
     } else {
       $moderate = '';
@@ -294,7 +294,7 @@ class tcomment extends tdata {
   }
   
   public function Getlocalstatus() {
-    return tlocal::$data['commentstatus'][$this->status];
+    return tlocal::get('commentstatus', $this->status);
   }
   
   public function getposted() {

@@ -502,15 +502,13 @@ class tbackuper extends tevents {
     }
     
     private function errorwrite($filename) {
-      tlocal::loadlang('admin');
-      $lang = tlocal::instance('service');
+      $lang = tlocal::admin('service');
       $this->result = sprintf($lang->errorwritefile, $filename);
       return false;
     }
     
     private function errorarch() {
-      tlocal::loadlang('admin');
-      $lang = tlocal::instance('service');
+      $lang = tlocal::admin('service');
       $this->result = $lang->errorarchive;
       return false;
     }

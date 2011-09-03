@@ -23,7 +23,7 @@ self::$self->loadfile('default');
 
   public static function admin($section = '') {
 $result = self::instance($section);
-if (!isset($result->loaded['admin'])) $result->load('admin');
+$result->check('admin');
 return $result;
   }
 
@@ -32,7 +32,7 @@ public function __construct() {
 $this->loaded = array();
 }
 
-public function get($section, $key) {
+public static function get($section, $key) {
 return self::$self->ini[$section][$key];
 }
   
@@ -47,9 +47,9 @@ return self::$self->ini[$section][$key];
     return strtr ($this->__get($name), $args->data);
   }
   
-  public function date($date, $format = '') {
+  public static function date($date, $format = '') {
     if (empty($format)) $format = $this->getdateformat();
-    return $this->translate(date($format, $date), 'datetime');
+    return self::instance()->translate(date($format, $date), 'datetime');
   }
   
   public function getdateformat() {
@@ -74,14 +74,6 @@ $this->loaded[] = $name;
     } else {
 $merger = tlocalmerger::instance();
 $merger->parse();
-    }
-  }
-  
-  public static function loadlang($name) {
-    $langname = litepublisher::$options->language;
-    if ($langname != '') {
-      if ($name != '') $name = '.' . $name;
-      self::load(litepublisher::$paths->languages . $langname . $name);
     }
   }
   

@@ -12,7 +12,7 @@ class tadminform extends tevents implements itemplate {
   protected $section;
   
   public function gettitle() {
-    return tlocal::$data[$this->section]['title'];
+    return tlocal::get($this->section, 'title');
   }
   
 public function gethead() {}
@@ -27,7 +27,7 @@ public function setidview($id) {}
   
   public function request($arg) {
     $this->cache = false;
-    tlocal::loadlang('admin');
+    tlocal::check('admin');
     $this->formresult = '';
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {
@@ -53,7 +53,7 @@ public function setidview($id) {}
   public function gethtml() {
     $result = tadminhtml ::instance();
     $result->section = $this->section;
-    $lang = tlocal::instance($this->section);
+    $lang = tlocal::admin($this->section);
     return $result;
   }
   
