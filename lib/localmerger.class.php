@@ -108,6 +108,7 @@ return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
 }
   
   public function parse() {
+tlocal::$self->ini = array();
 $savedir = litepublisher::$paths->data . 'languages' . DIRECTORY_SEPARATOR;
     foreach ($this->items as $name => $items) {
       $ini = array();
@@ -128,6 +129,7 @@ $ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
 }
 
 tfilestorage::savevar($savedir . $name , $ini);
+tlocal::$self->ini = $ini + tlocal::$self->ini;
     }
 }
 

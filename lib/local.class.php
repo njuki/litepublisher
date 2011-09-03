@@ -13,8 +13,10 @@ public $ini;
   public $section;
 
   public static function instance($section = '') {
-if (!isset(self::$self)) $self::$self= getinstance(__class__);
-if (!isset($result->loaded['default'])) $result->load('default');
+if (!isset(self::$self)) {
+self::$self= getinstance(__class__);
+self::$self->loadfile('default');
+}
     if ($section != '') self::$self->section = $section;
     return self::$self;
   }
@@ -25,8 +27,13 @@ if (!isset($result->loaded['admin'])) $result->load('admin');
 return $result;
   }
 
+public function __construct() {
+      $this->ini = array();
+$this->loaded = array();
+}
+
 public function get($section, $key) {
-return $this->ini[$section][$key];
+return self::$self->ini[$section][$key];
 }
   
     public function __get($name) {
@@ -54,11 +61,19 @@ return $this->ini[$section][$key];
     return strtr($s, $this->ini[$section]);
   }
   
-  public static function checkload() {
-    if (!isset($this->ini)) {
-      $this->ini = array();
-      self::$files = array();
-      if (litepublisher::$options->installed) self::loadlang('');
+  public function check($name) {
+if ($name == '') $name = 'default';
+if (!in_array($name, $this->loaded)) $this->loadfile($name);
+  }
+
+  public function loadfile($name) {
+$this->loaded[] = $name;
+    $filename = self::getcachedir() . $name;
+    if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
+      $this->ini = $v + $this->ini ;
+    } else {
+$merger = tlocalmerger::instance();
+$merger->parse();
     }
   }
   
@@ -113,10 +128,6 @@ return $this->ini[$section][$key];
       self::loadini($dir . $language . $name . '.ini');
       tfilestorage::savevar(self::getcachefilename($language . $name), $this->ini);
     }
-  }
-  
-  public static function loadinstall() {
-    self::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
   }
   
 }//class
