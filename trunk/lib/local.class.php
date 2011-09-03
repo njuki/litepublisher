@@ -76,6 +76,11 @@ $merger = tlocalmerger::instance();
 $merger->parse();
     }
   }
+
+//backward
+public static function loadlang($name) {
+self::$self->check($name);
+}
   
   public static function load($filename) {
     if (in_array($filename, self::$files)) return;
