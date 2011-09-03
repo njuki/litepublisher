@@ -11,8 +11,7 @@ function tviewsInstall($self) {
   $widgets->deleted = $self->widgetdeleted;
   
   $self->lock();
-  tlocal::loadlang('admin');
-  $lang = tlocal::instance('names');
+  $lang = tlocal::admin('names');
   $default = $self->add($lang->default);
   $def = tview::instance($default);
   $def->sidebars = array(array(), array(), array());

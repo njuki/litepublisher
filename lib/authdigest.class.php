@@ -118,12 +118,12 @@ class tauthdigest extends tevents {
   
   public function checkattack() {
     if ($this->xxxcheck  && $this->isattack()) {
-      tlocal::loadlang('admin');
+      tlocal::check('admin');
       if ($_POST) {
-        die(tlocal::$data['login']['xxxattack']);
+        die(tlocal::get('login', 'xxxattack'));
       }
       if ($_GET) {
-        die(tlocal::$data['login']['confirmxxxattack'] .
+        die(tlocal::get('login', 'confirmxxxattack') .
         sprintf(' <a href="%1$s">%1$s</a>', $_SERVER['REQUEST_URI']));
       }
     }
