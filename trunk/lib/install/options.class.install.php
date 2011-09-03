@@ -37,12 +37,12 @@ function installoptions($language) {
   
   $options->language = $language;
   
-  tlocal::loadlang('');
-  tlocal::loadlang('admin');
-  tlocal::loadinstall();
+$ini = parse_ini_file(litepublisher::$paths->languages . $language .DIRECTORY_SEPARATOR . 'install.ini', true);
+$adminlang = tlocal::admin();
+$adminlang->ini = $ini + $adminlang->ini;
   
-  $options->timezone = tlocal::$data['installation']['timezone'];
-  date_default_timezone_set(tlocal::$data['installation']['timezone']);
+  $options->timezone = tlocal::get('installation', 'timezone');
+  date_default_timezone_set(tlocal::get('installation', 'timezone'));
   $options->dateformat = '';
   $options->login = "admin";
   $options->password = "";
