@@ -7,8 +7,8 @@
 **/
 
 class tlocal {
-private $self;
-private $loaded;
+public $self;
+public $loaded;
 public $ini;
   public $section;
 
@@ -73,28 +73,18 @@ $this->loaded[] = $name;
       $this->ini = $v + $this->ini ;
     } else {
 $merger = tlocalmerger::instance();
-$merger->parse();
+$merger->parse($name);
     }
   }
 
+public static function usefile($name) {
+self::instance()->check($name);
+}
+
 //backward
 public static function loadlang($name) {
-self::$self->check($name);
+self::usefile($name);
 }
-  
-  public static function load($filename) {
-    if (in_array($filename, self::$files)) return;
-    self::$files[] = $filename;
-    $cachefilename = self::getcachefilename(basename($filename));
-    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
-      $this->ini = $v + $this->ini ;
-    } else {
-      $v = parse_ini_file($filename . '.ini', true);
-      $this->ini = $v + $this->ini ;
-      tfilestorage::savevar($cachefilename, $v);
-      //self::ini2js($filename);
-    }
-  }
   
   public static function loadini($filename) {
     if (in_array($filename, self::$files)) return;
@@ -111,10 +101,6 @@ self::$self->check($name);
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
     self::instance()->loaded = array();
-  }
-  
-  public static function getcachefilename($name) {
-    return self::getcachedir() . $name;
   }
   
   public static function loadsection($name, $section, $dir) {
