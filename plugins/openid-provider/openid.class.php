@@ -38,12 +38,25 @@ class topenid extends tevents {
     
     $template = ttemplate::instance();
     $template->addtohead($this->get_head());
+
+$merger = tlocalmerger::instance();
+$merger->lock();
+$merger->add('default', sprintf('plugins/%s/resource/%s.ini', basename(dirname(__file__)), litepublisher::$options->language));
+$merger->addhtml(sprintf('plugins/%s/resource/html.ini', basename(dirname(__file__)));
+$merger->unlock();
   }
   
   public function uninstall() {
     turlmap::unsub($this);
     $template = ttemplate::instance();
     $template->deletefromhead($this->get_head());
+
+$merger = tlocalmerger::instance();
+$merger->lock();
+$merger->deletefile('default', sprintf('plugins/%s/resource/%s.ini', basename(dirname(__file__)), litepublisher::$options->language));
+$merger->deletehtml(sprintf('plugins/%s/resource/html.ini', basename(dirname(__file__)));
+$merger->unlock();
+
     litepublisher::$urlmap->clearcache();
   }
   
@@ -90,12 +103,6 @@ class topenid extends tevents {
     }
     $this->LoadBigMath();
     ini_set('arg_separator.output', '&');
-    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-    if (file_exists($dir . litepublisher::$options->language . '.ini')) {
-      tlocal::loadini($dir . litepublisher::$options->language . '.ini');
-    } else {
-      tlocal::loadini($dir . 'en.ini');
-    }
     
     if (!isset($_REQUEST['openid_mode'])) return $this->nomode();
     switch ($_REQUEST['openid_mode']) {
@@ -126,21 +133,21 @@ class topenid extends tevents {
   }
   
   private function nomode() {
-    return tsimplecontent::html(tlocal::$data['openidserver']['nomode']);
+    return tsimplecontent::html(tlocal::get('openidserver', 'nomode'));
   }
   
   private function id_res() {
     $auth = &TAuthDigest::instance();
     if (!$auth->auth())  return $auth->Headers();
-    return tsimplecontent::html(tlocal::$data['openidserver']['logged']);
+    return tsimplecontent::html(tlocal::get('openidserver', 'logged'));
   }
   
   private function cancel() {
-    return tsimplecontent::html(tlocal::$data['openidserver']['canceled']);
+    return tsimplecontent::html(tlocal::get('openidserver', 'canceled'));
   }
   
   private function GetMessage($key, $defkey) {
-    $lang = &tlocal::$data['openidserver'];
+    $lang = tlocal::instance()->ini['openidserver'];
     return empty($lang[$key]) ? $lang[$defkey] : $lang[$key];
   }
   
@@ -365,8 +372,6 @@ class topenid extends tevents {
         }
         
         $html = tadminhtml::instance();
-        $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-        $html->loadini($dir . 'html.ini');
         $html->section = 'openidserver';
         $lang = tlocal::instance('openidserver');
         $args = targs::instance();
