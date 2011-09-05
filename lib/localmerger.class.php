@@ -7,6 +7,7 @@
 **/
 
 class tlocalmerger extends titems {
+public $html;
   
   public static function instance() {
     return getinstance(__class__);
@@ -16,6 +17,7 @@ class tlocalmerger extends titems {
     $this->dbversion = false;
     parent::create();
     $this->basename = 'localmerger';
+$this->addmap('html', array());
   }
   
   public function save() {
@@ -113,6 +115,7 @@ tlocal::$self->ini = array();
     foreach ($this->items as $name => $items) {
 $this->parse($name);
 }
+$this->parsehtml();
 }
 
   public function parse($name) {
@@ -137,6 +140,38 @@ $ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
 
 tfilestorage::savevar(tlocal::getcachedir() . $name , $ini);
 tlocal::$self->ini = $ini + tlocal::$self->ini;
+}
+
+  public function addhtml($filename) {
+    if (!($filename = $this->normfilename($filename))) return false;
+      if (in_array($filename, $this->html)) return false;
+      $this->html[] = $filename;
+    $this->save();
+    return count($this->html);
+  }
+  
+  public function deletehtml($filename) {
+    if (!($filename = $this->normfilename($filename))) return false;
+    if (false === ($i = array_search($filename, $this->html))) return false;
+    array_delete($this->html, $i);
+    $this->save();
+  }
+    public function parsehtml() {
+$html = tadminhtml::instance();
+$html->ini = array();
+      foreach ($this->html as $filename) {
+        $realfilename = $this->getrealfilename($filename);
+        if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
+if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
+if (count($html->ini) == 0) {
+$jhtml->ini = $parsed;
+} else {
+foreach ($parsed as $section => $itemsini) {
+$html->ini[$section] = isset($html->ini[$section]) ? $itemsini + $html->ini[$section] : $itemsini;
+}
+}
+
+tfilestorage::savevar(tlocal::getcachedir() . 'adminhtml', $html->ini);
 }
 
 } //class

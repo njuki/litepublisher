@@ -29,19 +29,14 @@ class tadminhtml {
   public static function getinstance($section) {
     $self = getinstance(__class__);
     $self->section = $section;
-    $lang = tlocal::instance($section);
+tlocal::instance($section);
     return $self;
   }
   
   public function __construct() {
+      tlocal::usefile('admin');
     $this->ini = array();
-    if (litepublisher::$options->installed) {
       $this->load('adminhtml');
-      tlocal::loadlang('admin');
-    } else {
-      $this->loadini(litepublisher::$paths->languages . 'adminhtml.ini');
-      $this->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
-    }
   }
   
   public function __get($name) {
@@ -125,14 +120,14 @@ class tadminhtml {
     return str_replace('\"', "'", $s);
   }
   
-  public function load($name) {
-    $cachefilename = tlocal::getcachefilename($name);
-    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
+  public function load() {
+    $dir = tlocal::getcachedir();
+    if (tfilestorage::loadvar($dir . $name, $v) && is_array($v)) {
       $this->ini = $v + $this->ini;
     } else {
       $v = parse_ini_file(litepublisher::$paths->languages . $name . '.ini', true);
       $this->ini = $v + $this->ini;
-      tfilestorage::savevar($cachefilename, $v);
+if (is_dir($dir)) tfilestorage::savevar($dir . $name, $v);
     }
   }
   
@@ -143,7 +138,8 @@ class tadminhtml {
     }
   }
   
-  public function loadini($filename) {
+  public function loadinstall() {
+if (isset($this->ini['install'])) return;
     if( $v = parse_ini_file($filename, true)) {
       $this->ini = $v + $this->ini;
     }
