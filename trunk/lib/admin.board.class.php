@@ -22,7 +22,7 @@ public function save() { return true; }
   
   public function request($id) {
     if ($s = tadminmenu::auth('editor')) return $s;
-    tlocal::check('admin');
+    tlocal::usefile('admin');
   }
   
   public function gethead() {

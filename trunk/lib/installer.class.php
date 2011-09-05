@@ -252,7 +252,7 @@ class tinstaller extends tdata {
       eval('$checkrewrite =  "'. $html->checkrewrite . '\n";');
     }
     $dbprefix = strtolower(str_replace(array('.', '-'), '', litepublisher::$domain)) . '_';
-    $title = tlocal::$data['installation']['title'];
+    $title = tlocal::get('installation', 'title');
     $form = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'installform.tml');
     $form = str_replace('"', '\"', $form);
     eval('$form = "'. $form . '\n";');
@@ -310,9 +310,7 @@ class tinstaller extends tdata {
   }
   
   public static function sendmail() {
-    //tlocal::loadlang('admin');
-    if (!isset(tlocal::$data['installation'])) tlocal::loadini(litepublisher::$paths->languages . litepublisher::$options->language . 'admin.ini');
-    $lang = &tlocal::$data['installation'];
+    $lang = tlocal::$self->ini['installation'];
     $body = sprintf($lang['body'], litepublisher::$site->url, litepublisher::$options->login, mailpassword);
     
     tmailer::sendmail('', litepublisher::$options->fromemail,
@@ -341,21 +339,25 @@ class tinstaller extends tdata {
   }
   
   private function loadlang() {
-    litepublisher::$options = $this;
-    require_once(litepublisher::$paths->lib . 'filer.class.php');
+    //litepublisher::$options = $this;
+    //require_once(litepublisher::$paths->lib . 'filer.class.php');
     require_once(litepublisher::$paths->lib . 'local.class.php');
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
-    
-    $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.ini';
-    tlocal::loadini($ini);
-    
-    $ini = litepublisher::$paths->languages . 'admin' . litepublisher::$options->language . '.ini';
-    tlocal::loadini($ini);
-    
-    $ini = litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini';
-    tlocal::loadini($ini);
-    
-    date_default_timezone_set(tlocal::$data['installation']['timezone']);
+
+$lang = new tlocal();    
+tlocal::$self = $lang;
+litepublisher::$classes->instances['tlocal'] = $lang;
+    $dir = litepublisher::$paths->languages . $this->language . DIRECTORY_SEPARATOR;
+foreach (array('default', 'admin', 'install') as $name) {
+$ini = parse_ini_file($dir . $name . '.ini', true);
+$lang->ini = $ini + $lang->ini;
+$lang->loaded[] = $name;
+    }
+    date_default_timezone_set(tlocal::get('installation', 'timezone'));
+
+$html = tadminhtml::instance();
+$ini = parse_ini_file(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini', true);
+$html->ini = $ini + $html->ini;
   }
   
   private function GetBrowserLang() {

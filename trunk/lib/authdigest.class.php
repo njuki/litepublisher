@@ -118,7 +118,7 @@ class tauthdigest extends tevents {
   
   public function checkattack() {
     if ($this->xxxcheck  && $this->isattack()) {
-      tlocal::check('admin');
+      tlocal::usefile('admin');
       if ($_POST) {
         die(tlocal::get('login', 'xxxattack'));
       }

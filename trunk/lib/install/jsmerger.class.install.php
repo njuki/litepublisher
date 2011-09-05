@@ -40,7 +40,7 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/rpc.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
 
-    tlocal::check('admin');
+    tlocal::usefile('admin');
     $self->lock();
   $js = "var lang;\nif (lang == undefined) lang = {};\n";
     $widgetlang = array(
@@ -52,8 +52,7 @@ $lang = tlocal::admin();
     $self->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode($lang->ini['comment'])));
     $self->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode($lang->ini['comments'])));
     
-  
-  $self->unlock();
+    $self->unlock();
   
   $template = ttemplate::instance();
   $template->addtohead(sprintf($template->js, '$site.files$template.jsmerger_default'));
