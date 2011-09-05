@@ -27,7 +27,7 @@ public function setidview($id) {}
   
   public function request($arg) {
     $this->cache = false;
-    tlocal::check('admin');
+    tlocal::usefile('admin');
     $this->formresult = '';
     if (isset($_POST) && (count($_POST) > 0)) {
       if (get_magic_quotes_gpc()) {

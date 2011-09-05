@@ -18,6 +18,3 @@ $self->add('admin', "lib/languages/$lang/admin.ini");
 $self->add('theme', "lib/languages/$lang/theme.ini");
 $self->unlock();
 }
-
-function tlocalmergerUninstall($self) {
-}

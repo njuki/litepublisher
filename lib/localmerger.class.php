@@ -21,7 +21,7 @@ class tlocalmerger extends titems {
   public function save() {
     if ($this->lockcount > 0) return;
     parent::save();
-    $this->parse();
+    $this->assemble();
   }
   
   public function normfilename($filename) {
@@ -107,12 +107,19 @@ $dir = isset(litepublisher::$_paths[$name]) ? litepublisher::$_paths[$name] ? li
 return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
 }
   
-  public function parse() {
+  public function assemble() {
+if (!isset(tlocal::$self)) $this->error('The tlocal instance not exists');
 tlocal::$self->ini = array();
-$savedir = litepublisher::$paths->data . 'languages' . DIRECTORY_SEPARATOR;
     foreach ($this->items as $name => $items) {
+$this->parse($name);
+}
+}
+
+  public function parse($name) {
+if (!isset(tlocal::$self)) $this->error('The tlocal instance not exists');
+if (!isset($this->items[$name])) $this->error(sprintf('The "%s" partition not found', $name));
       $ini = array();
-      foreach ($items['files'] as $filename) {
+      foreach ($this->items[$name]['files'] as $filename) {
         $realfilename = $this->getrealfilename($filename);
         if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
 if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
@@ -124,13 +131,12 @@ $ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
 }
 }
 
-foreach ($items['texts'] as $section = $itemsini) {
+foreach ($this->items[$name]['texts'] as $section = $itemsini) {
 $ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
 }
 
-tfilestorage::savevar($savedir . $name , $ini);
+tfilestorage::savevar(tlocal::getcachedir() . $name , $ini);
 tlocal::$self->ini = $ini + tlocal::$self->ini;
-    }
 }
 
 } //class

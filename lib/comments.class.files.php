@@ -248,7 +248,7 @@ class tcomments extends titems {
       $lang = tlocal::instance('comment');
       
       if ($ismoder) {
-        tlocal::check('admin');
+        tlocal::usefile('admin');
         $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
       } else {
         $moderate = '';
