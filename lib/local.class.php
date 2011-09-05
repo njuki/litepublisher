@@ -86,14 +86,6 @@ public static function loadlang($name) {
 self::usefile($name);
 }
   
-  public static function loadini($filename) {
-    if (in_array($filename, self::$files)) return;
-    if (file_exists($filename) && ($v = parse_ini_file($filename, true))) {
-      $this->ini = $v + $this->ini ;
-      self::$files[] = $filename;
-    }
-  }
-  
   public static function getcachedir() {
     return litepublisher::$paths->data . 'languages' . DIRECTORY_SEPARATOR;
   }
@@ -101,16 +93,6 @@ self::usefile($name);
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
     self::instance()->loaded = array();
-  }
-  
-  public static function loadsection($name, $section, $dir) {
-    tlocal::loadlang($name);
-    if (!isset($this->ini[$section])) {
-      $language = litepublisher::$options->language;
-      if ($name != '') $name = '.' . $name;
-      self::loadini($dir . $language . $name . '.ini');
-      tfilestorage::savevar(self::getcachefilename($language . $name), $this->ini);
-    }
   }
   
 }//class
