@@ -71,7 +71,7 @@ function doinstallclasses() {
   $xmlrpc->lock();
   $theme = ttheme::getinstance('default');
   $html = tadminhtml::instance();
-  if (!isset($html->ini['installation'])) $html->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
+      $html->loadinstall();
   
   foreach(litepublisher::$classes->items as $class => $item) {
     //echo "$class<br>\n";

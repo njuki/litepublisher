@@ -23,7 +23,9 @@ class tadminhtml {
   private $map;
   
   public static function instance() {
-    return getinstance(__class__);
+    $result = getinstance(__class__);
+if (count($result->ini) == 0) $result->load('adminhtml');
+return $result;
   }
   
   public static function getinstance($section) {
@@ -34,9 +36,8 @@ tlocal::instance($section);
   }
   
   public function __construct() {
-      tlocal::usefile('admin');
     $this->ini = array();
-      $this->load('adminhtml');
+      tlocal::usefile('admin');
   }
   
   public function __get($name) {
@@ -122,25 +123,19 @@ tlocal::instance($section);
   
   public function load() {
     $dir = tlocal::getcachedir();
-    if (tfilestorage::loadvar($dir . $name, $v) && is_array($v)) {
+$name = 'install';
+    if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini;
     } else {
-      $v = parse_ini_file(litepublisher::$paths->languages . $name . '.ini', true);
-      $this->ini = $v + $this->ini;
-if (is_dir($dir)) tfilestorage::savevar($dir . $name, $v);
-    }
-  }
-  
-  public function addini($section, $filename) {
-    if (!isset($this->ini[$section])) {
-      $this->loadini($filename);
-      tfilestorage::savevar(tlocal::getcachefilename('adminhtml'), $this->ini);
+$merger = tlocalmerger::instance();
+$merger->parsehtml();
     }
   }
   
   public function loadinstall() {
-if (isset($this->ini['install'])) return;
-    if( $v = parse_ini_file($filename, true)) {
+if (isset($this->ini['installation'])) return;
+tlocal::usefile('install');
+    if( $v = parse_ini_file(litepublisher::$paths->languages . 'install.ini', true)) {
       $this->ini = $v + $this->ini;
     }
   }
