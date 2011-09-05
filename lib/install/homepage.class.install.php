@@ -11,8 +11,8 @@ function thomepageInstall($self) {
   $menus = tmenus::instance();
   $menus->lock();
   $self->url = '/';
-  $self->title = tlocal::$data['default']['home'];
-  $self->idview = tviews::instance()->add(tlocal::$data['names']['home']);
+  $self->title = tlocal::get('default', 'home');
+  $self->idview = tviews::instance()->add(tlocal::get('names', 'home'));
   $homeview = tview::instance($self->idview);
   $homeview->disableajax = true;
   $homeview->save();

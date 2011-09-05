@@ -21,8 +21,8 @@ function trssInstall($self) {
   
   $meta = tmetawidget::instance();
   $meta->lock();
-  $meta->add('rss', '/rss.xml', tlocal::$data['default']['rss']);
-  $meta->add('comments', '/comments.xml', tlocal::$data['default']['rsscomments']);
+  $meta->add('rss', '/rss.xml', tlocal::get('default', 'rss'));
+  $meta->add('comments', '/comments.xml', tlocal::get('default', 'rsscomments'));
   $meta->unlock();
 }
 

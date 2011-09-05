@@ -65,7 +65,7 @@ class tadmintagswidget extends tadminwidget {
     $args->showcount = $widget->showcount;
     $args->showsubitems = $widget->showsubitems;
     $args->maxcount = $widget->maxcount;
-    $args->sort = tadminhtml::array2combo(tlocal::$data['sortnametags'], $widget->sortname);
+    $args->sort = tadminhtml::array2combo(tlocal::instance()->ini['sortnametags'], $widget->sortname);
     return $this->html->parsearg('[combo=sort] [checkbox=showsubitems] [checkbox=showcount] [text=maxcount]', $args);
   }
   

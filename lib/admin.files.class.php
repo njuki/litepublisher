@@ -103,7 +103,7 @@ class tadminfiles extends tadminmenu {
       $isauthor = 'author' == litepublisher::$options->group;
       if ($_POST['uploadmode'] == 'upload') {
         if (isset($_FILES["filename"]["error"]) && $_FILES["filename"]["error"] > 0) {
-          $error = tlocal::$data['uploaderrors'][$_FILES["filename"]["error"]];
+          $error = tlocal::get('uploaderrors', $_FILES["filename"]["error"]);
           return "<h2>$error</h2>\n";
         }
         if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);

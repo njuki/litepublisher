@@ -20,7 +20,7 @@ function trssMultimediaInstall($self) {
   $self->save();
   
   $meta = tmetawidget::instance();
-  $meta->add('media', '/rss/multimedia.xml', tlocal::$data['default']['rssmedia']);
+  $meta->add('media', '/rss/multimedia.xml', tlocal::get('default', 'rssmedia'));
 }
 
 function trssMultimediaUninstall($self) {

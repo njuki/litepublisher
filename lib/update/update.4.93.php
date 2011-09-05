@@ -8,6 +8,16 @@ litepublisher::$classes->items['targs'][2] = 'theme.class.php';
 litepublisher::$classes->add('tlocalmerger', 'localmerger.class.php');
 litepublisher::$classes->save();
 
-if (litepublisher::$classes->exists('tticket')) {
+$merger = tlocalmerger::instance();
+$merger->lock();
+$plugins = tplugins::instance();
+$language = litepublisher::$options->language;
+foreach (array('foaf', 'openid-provider'
+if )(!isset($plugins->items[$name])) continue;
+$merger->add('default', "plugins/$name/resource/$language.ini");
+$merger->addhtml("plugins/$name/resource/html.ini");
 }
+
+
+$merger->unlock();
 }

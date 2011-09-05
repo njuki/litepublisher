@@ -27,10 +27,10 @@ class tcontactform extends tmenu {
     if (time() >  $time) return $this->errmesg;
     $email = trim($_POST['email']);
     
-    if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['invalidemail']);
+    if (!tcontentfilter::ValidateEmail($email)) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'invalidemail'));
     
     $content = trim($_POST['content']);
-    if (strlen($content) <= 10) return sprintf('<p><strong>%s</strong></p>', tlocal::$data['comment']['emptycontent']);
+    if (strlen($content) <= 10) return sprintf('<p><strong>%s</strong></p>', tlocal::get('comment', 'emptycontent'));
     if (false !== strpos($content, '<a href')) return $this->errmesg;
     foreach ($this->data['extra'] as $name => $title) {
       if (isset($_POST[$name] )) {

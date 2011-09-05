@@ -21,7 +21,7 @@ class tmenuwidget extends tclasswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['submenu'];
+    return tlocal::get('default', 'submenu');
   }
   
   public function getwidget($id, $sidebar) {

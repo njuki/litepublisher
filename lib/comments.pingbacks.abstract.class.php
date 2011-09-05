@@ -40,7 +40,7 @@ class tabstractpingbacks extends titems {
     $args->add($item);
     $args->id = $id;
     $status = dbversion ? $item['status'] : ($item['approved'] ? 'approved' : 'hold');
-    $args->localstatus = tlocal::$data['commentstatus'][$status];
+    $args->localstatus = tlocal::get('commentstatus', $status);
   $args->adminurl = litepublisher::$site->url . '/admin/comments/pingback/'. litepublisher::$site->q . "id=$id&post={$item['post']}&action";
     $post = tpost::instance($item['post']);
     $args->posttitle =$post->title;
