@@ -22,7 +22,7 @@ class tcommentswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['recentcomments'];
+    return tlocal::get('default', 'recentcomments');
   }
   
   public function getcontent($id, $sidebar) {
@@ -34,7 +34,7 @@ class tcommentswidget extends twidget {
     $tml = $theme->getwidgetitem('comments', $sidebar);
     $url = litepublisher::$site->url;
     $args = targs::instance();
-    $args->onrecent = tlocal::$data['comment']['onrecent'];
+    $args->onrecent = tlocal::get('comment', 'onrecent');
     foreach ($recent as $item) {
       $args->add($item);
       $args->link = $url . $item['posturl'];

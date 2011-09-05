@@ -152,7 +152,7 @@ class tarchiveswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['archives'];
+    return tlocal::get('default', 'archives');
   }
   
   protected function setshowcount($value) {

@@ -140,7 +140,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     if ($more == '') {
       $post->content = $struct['description'];
     } else {
-      $morelink = sprintf("\n<!--more %s-->\n", tlocal::$data['post']['more']);
+      $morelink = sprintf("\n<!--more %s-->\n", tlocal::get('post', 'more'));
       $post->content = $struct['description']. $morelink . $more;
     }
     

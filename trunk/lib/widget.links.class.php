@@ -28,7 +28,7 @@ class tlinkswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['links'];
+    return tlocal::get('default', 'links');
   }
   
   public function getcontent($id, $sidebar) {

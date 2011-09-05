@@ -25,7 +25,7 @@ class tadminreguser extends tadminform {
   }
   
   public function gettitle() {
-    return tlocal::$data['users']['adduser'];
+    return tlocal::get('users', 'adduser');
   }
   
   public function getlogged() {
@@ -56,7 +56,7 @@ class tadminreguser extends tadminform {
   
   public function processform() {
     extract($_POST, EXTR_SKIP);
-    if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::$data['comment']['invalidemail'] . "</strong></p>\n";
+    if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::get('comment', 'invalidemail') . "</strong></p>\n";
     $users = tusers::instance();
     if ($users->loginexists($login) || $users->emailexists($email)) return $this->html->h2->invalidregdata;
     $password = md5uniq();

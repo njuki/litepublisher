@@ -150,7 +150,7 @@ function get_the_content($more_link_text = null, $stripteaser = 0) {
 
 function the_tags( $before = null, $sep = ', ', $after = '' ) {
   if ( null === $before )
-  $before = tlocal::$data['default']['tags'];
+  $before = tlocal::get('default', 'tags');
   echo get_the_tag_list($before, $sep, $after);
 }
 
@@ -455,7 +455,7 @@ function wp_list_categories( $args = '' ) {
   'exclude_tree' => '',
   'current_category' => 0,
   'hierarchical' => true,
-  'title_li' => tlocal::$data['default']['categories'],
+  'title_li' => tlocal::get('default', 'categories'),
   'echo' => 1,
   'depth' => 0
   );
@@ -871,7 +871,7 @@ function wp_list_pages($args = '') {
   'depth' => 0, 'show_date' => '',
   'date_format' => get_option('date_format'),
   'child_of' => 0, 'exclude' => '',
-  'title_li' => tlocal::$data['default']['menus'], 'echo' => 1,
+  'title_li' => tlocal::get('default', 'menus'), 'echo' => 1,
   'authors' => '', 'sort_column' => 'menu_order, post_title',
   'link_before' => '', 'link_after' => '', 'walker' => '',
   );

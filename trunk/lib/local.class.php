@@ -42,6 +42,13 @@ return self::$self->ini[$section][$key];
     if (isset($this->ini['default'][$name])) return $this->ini['default'][$name];
     return '';
   }
+
+    public function __isset($name) {
+return isset($this->ini[$this->section][$name]) ||
+isset($this->ini['common'][$name]) ||
+isset($this->ini['default'][$name]);
+  }
+  
   
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);

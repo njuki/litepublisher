@@ -178,14 +178,12 @@ class tcommentform extends tevents {
     
     $confirmid = $_POST['confirmid'];
     if (!($values = $kept->getitem($confirmid))) {
-      //return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
-      return $this->htmlhelper->geterrorcontent(tlocal::$data['commentform']['notfound']);
+      return $this->htmlhelper->geterrorcontent(tlocal::get('commentform', 'notfound'));
     }
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = litepublisher::$classes->posts;
     if(!$posts->itemexists($postid)) {
-      //return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
-      return $this->htmlhelper->geterrorcontent(tlocal::$data['default']['postnotfound']);
+      return $this->htmlhelper->geterrorcontent(tlocal::get('default', 'postnotfound'));
     }
     
     $post = tpost::instance($postid);

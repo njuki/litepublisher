@@ -140,7 +140,7 @@ class tadminmenumanager extends tadminmenu {
     foreach ($menus->items as $id => $item) {
       $args->add($item);
       $args->link = $menus->getlink($id);
-      $args->status = tlocal::$data['common'][$item['status']];
+      $args->status = tlocal::get('common', $item['status']);
       $args->parent = $item['parent'] == 0 ? '---' : $menus->getlink($item['parent']);
       $result .=$html->itemlist($args);
     }
@@ -161,7 +161,7 @@ class tadminmenumanager extends tadminmenu {
         $args->adminurl = $this->adminurl;
         $args->id = $id;
         $args->action = 'delete';
-        $args->confirm = sprintf($this->lang->confirm, tlocal::$data['common'][$action], $menus->getlink($id));
+        $args->confirm = sprintf($this->lang->confirm, tlocal::get('common', $action), $menus->getlink($id));
         return $this->html->confirmform($args);
       } else {
         $menus->delete($id);

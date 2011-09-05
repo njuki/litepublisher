@@ -195,7 +195,7 @@ class tadminmoderator extends tadmincommoncomments {
       $args->idpost = $item['post'];
       unset($args->data['$post']);
       $args->website = sprintf('<a href="%1$s">%1$s</a>', $item['url']);
-      $args->localstatus = tlocal::$data['commentstatus'][$item['status']];
+      $args->localstatus = tlocal::get('commentstatus', $item['status']);
       $args->date = tlocal::date(strtotime($item['posted']));
       $post = tpost::instance($item['post']);
       ttheme::$vars['post'] = $post;

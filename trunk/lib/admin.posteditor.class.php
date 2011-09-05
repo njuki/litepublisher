@@ -82,7 +82,7 @@ class tposteditor extends tadminmenu {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      return tlocal::$data[$this->name]['editor'];
+      return tlocal::get($this->name, 'editor');
     }
   }
   
