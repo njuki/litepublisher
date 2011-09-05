@@ -45,17 +45,13 @@ class twikiwords extends titems {
     $word = $item['word'];
     if (isset($this->links[$word])) return $this->links[$word];
     $items = $this->itemsposts->getposts($id);
-    switch (count($items)) {
-      case 0:
+$c = count($items);
+if ($c == 0) {
       $result = sprintf('<strong>%s</strong>', $word);
-      break;
-      
-      case 1:
+elseif ($c == 1) {
       $post = tpost::instance($items[0]);
       $result = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
-      break;
-      
-      default:
+} else {
       $links = array();
       $posts = tposts::instance();
       $posts->loaditems($items);
@@ -64,8 +60,8 @@ class twikiwords extends titems {
         $links[] = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $post->title, $id);
       }
       $result = sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
-      break;
     }
+
     $this->links[$word] = $result;
     return $result;
   }
@@ -156,7 +152,7 @@ class twikiwords extends titems {
         if ($id = $this->add($word, $post->id)) {
           $result[] = $id;
           if ($post->id == 0) $this->fix[$id] = $post;
-          $content = str_replace($item[0], "<a name=\"wikiword-$id\"></a><strong>$word</strong>", $content);
+          $content = str_replace($item[0], "<a id=\"wikiword-$id\"></a><strong>$word</strong>", $content);
         }
       }
       $this->unlock();

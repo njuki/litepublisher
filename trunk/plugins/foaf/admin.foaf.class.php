@@ -14,17 +14,6 @@ class tadminfoaf extends tadminmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-  public function gethtml($name = '') {
-    $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-    tlocal::loadsection('', 'foaf', $dir);
-    $html = tadminhtml::instance();
-    if (!isset($html->ini['foaf'])) {
-      $html->loadini($dir . 'html.ini');
-    }
-    
-    return parent::gethtml($name = '');
-  }
-  
   private function getcombo($id, $status) {
     $lang = tlocal::instance('foaf');
     $names = array('approved', 'hold', 'invated', 'rejected', 'spam', 'error');
@@ -58,7 +47,7 @@ class tadminfoaf extends tadminmenu {
       $item = $foaf->getitem($id);
       $args->add($item);
       $args->id = $id;
-      $args->status = tlocal::$data['foaf'][$item['status']];
+      $args->status = tlocal::get('foaf', $item['status']);
       $result .= $html->itemlist($args);
     }
     $result .= $html->tablefooter();
@@ -138,7 +127,7 @@ class tadminfoaf extends tadminmenu {
       ) as $name) {
         $args->$name = $profile->$name;
         $form .= is_bool($profile->$name) ? "[checkbox=$name]" : "[text=$name]";
-        if (!isset(tlocal::$data['foaf'][$name])) $args->data["\$lang.$name"] = $name;
+        if (!isset($lang->$name)) $args->data["\$lang.$name"] = $name;
       }
       $args->gender = $profile->gender != 'female';
       $args->data['$lang.gender'] = $lang->ismale;

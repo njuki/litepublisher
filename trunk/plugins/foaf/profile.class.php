@@ -137,12 +137,11 @@ class tprofile extends tevents_itemplate implements itemplate {
   }
   
   public function request($arg) {
-    tlocal::loadsection('', 'foaf', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('foaf');
   }
   
   public function gettitle() {
-    return tlocal::$data['foaf']['profile'];
+    return tlocal::get('foaf', 'profile');
   }
   
 public function gethead() { }
@@ -161,7 +160,6 @@ public function gethead() { }
     $tml = $this->template;
     if ($tml == '') {
       $html = tadminhtml::instance();
-      if (!isset($html->ini['foaf'])) $html->loadini(dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR . 'html.ini');
       $html->section = 'foaf';
       $tml = $html->profile;
     }

@@ -25,7 +25,8 @@ _gaq.push(['_trackEvent','google', 'unplussed', title]);
 };
 
 lazy.append(
-'<g:plusone size="standard" count="true" callback="$.plusone_callback" href="'+url +'"></g:plusone>');
+'<div class="g-plusone"></div>');
+//'<g:plusone size="standard" count="true" callback="$.plusone_callback" href="'+url +'"></g:plusone>');
 
  var js = lazyoptions.lang == 'en' ? '' : "{lang: '"+lazyoptions.lang+"'}";
 //var script = $('<script src="' +document.location.protocol + '//apis.google.com/js/plusone.js'+ '">' + js + "</script>");
