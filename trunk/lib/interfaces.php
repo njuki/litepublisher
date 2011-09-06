@@ -31,5 +31,3 @@ interface iposts {
 interface imenu {
   public function getcurrent();
 }
-
-?>

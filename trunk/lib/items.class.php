@@ -180,5 +180,3 @@ class tsingleitems extends titems {
   }
   
 }//class
-
-?>

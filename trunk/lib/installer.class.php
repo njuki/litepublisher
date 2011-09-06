@@ -381,5 +381,3 @@ $html->ini = $ini + $html->ini;
   }
   
 }//class
-
-?>

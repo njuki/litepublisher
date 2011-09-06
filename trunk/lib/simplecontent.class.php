@@ -51,5 +51,3 @@ public function gettitle() {}
   }
   
 }//class
-
-?>

@@ -74,5 +74,3 @@ class tdboptimizer extends tevents {
   }
   
 }//class
-
-?>

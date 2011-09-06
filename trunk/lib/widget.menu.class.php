@@ -88,5 +88,3 @@ class tmenuwidget extends tclasswidget {
   }
   
 }//class
-
-?>

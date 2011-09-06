@@ -180,5 +180,3 @@ class tdomrss extends domDocument {
   }
   
 }//class
-
-?>

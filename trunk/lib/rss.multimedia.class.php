@@ -147,5 +147,3 @@ class trssMultimedia extends tevents {
   }
   
 }//class
-
-?>

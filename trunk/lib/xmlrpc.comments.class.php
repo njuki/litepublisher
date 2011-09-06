@@ -247,4 +247,3 @@ class TXMLRPCComments extends TXMLRPCAbstract {
   }
   
 }//class
-?>

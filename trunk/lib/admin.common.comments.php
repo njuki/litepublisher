@@ -35,7 +35,7 @@ class tadmincommoncomments extends tadminmenu {
   }
   
   public function createtable() {
-    $lang = tlocal::instance('comments');
+    $lang = tlocal::admin('comments');
     $table = new ttablecolumns();
     $table->index = 1;
     $table->checkboxes[]  = "<h4>$lang->showcolumns</h4><p>$lang->author: ";

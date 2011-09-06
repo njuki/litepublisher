@@ -205,5 +205,3 @@ class tpinger extends tevents {
   }
   
 }//class
-
-?>

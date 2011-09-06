@@ -56,7 +56,7 @@ class tadminicons extends tadminmenu {
     $files = tfiles::instance();
     $icons = ticons::instance();
     $html = $this->html;
-    $lang = tlocal::instance('files');
+    $lang = tlocal::admin('files');
     $args = targs::instance();
     $a = array();
     //добавить 0 для отсутствия иконки

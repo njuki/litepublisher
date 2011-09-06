@@ -66,4 +66,3 @@ class tmetawidget extends twidget {
   }
   
 }//class
-?>

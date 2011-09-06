@@ -96,5 +96,3 @@ class tlinkswidget extends twidget {
   }
   
 }//class
-
-?>

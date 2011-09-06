@@ -58,5 +58,3 @@ class tsite extends tevents_storage {
   }
   
 }//class
-
-?>

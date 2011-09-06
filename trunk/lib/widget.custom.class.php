@@ -89,4 +89,3 @@ class tcustomwidget extends twidget {
   }
   
 } //class
-?>

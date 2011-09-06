@@ -543,7 +543,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcmtcount() {
-    $l = &tlocal::$data['comment'];
+    $l = tlocal::instance()->ini['comment'];
     switch($this->commentscount) {
       case 0: return $l[0];
       case 1: return $l[1];

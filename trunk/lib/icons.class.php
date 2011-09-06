@@ -42,4 +42,3 @@ class ticons extends titems {
   }
   
 }//class
-?>

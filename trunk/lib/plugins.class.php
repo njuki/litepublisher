@@ -138,5 +138,3 @@ class tplugins extends TItems {
   }
   
 } //class
-
-?>

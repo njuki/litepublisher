@@ -108,10 +108,10 @@ class trss extends tevents {
   }
   
   public function GetRecentComments() {
-    $this->domrss->CreateRoot(litepublisher::$site->url . '/comments.xml', tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$site->name);
+    $this->domrss->CreateRoot(litepublisher::$site->url . '/comments.xml', tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent(litepublisher::$options->perpage);
-    $title = tlocal::$data['comment']['onpost'] . ' ';
+    $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
     foreach ($recent  as $item) {
       $comment->array = $item;
@@ -127,10 +127,10 @@ class trss extends tevents {
   }
   
   private function dogetholdcomments($url, $count) {
-    $this->domrss->CreateRoot(litepublisher::$site->url . $url, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$site->name);
+    $this->domrss->CreateRoot(litepublisher::$site->url . $url, tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($count, 'hold');
-    $title = tlocal::$data['comment']['onpost'] . ' ';
+    $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
     foreach ($recent  as $item) {
       $comment->array = $item;
@@ -259,5 +259,3 @@ class trss extends tevents {
   }
   
 }//class
-
-?>

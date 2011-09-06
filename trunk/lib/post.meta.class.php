@@ -101,4 +101,3 @@ class tmetapost extends titem {
   }
   
 }//class
-?>

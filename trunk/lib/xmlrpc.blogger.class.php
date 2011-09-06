@@ -170,5 +170,3 @@ class TXMLRPCBlogger  extends TXMLRPCAbstract {
     return true;
   }
 }
-
-?>

@@ -14,5 +14,3 @@ class tplugin extends tevents {
   }
   
 }
-
-?>
