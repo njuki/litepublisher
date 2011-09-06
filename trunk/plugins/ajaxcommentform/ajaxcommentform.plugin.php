@@ -71,8 +71,8 @@ class tajaxcommentformplugin extends tplugin {
   
   //htmlhelper
   public function confirm($confirmid) {
-    $result = tlocal::$data['commentform'];
-    $result['title'] = tlocal::$data['default']['confirm'];
+    $result = tlocal::instance()->ini['commentform'];
+    $result['title'] = tlocal::get('default', 'confirm');
     $result['confirmid'] = $confirmid;
     $result['code'] = 'confirm';
     return json_encode($result);

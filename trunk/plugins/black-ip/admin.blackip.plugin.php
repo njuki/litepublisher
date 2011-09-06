@@ -14,9 +14,7 @@ class tadminblackip {
   
   public function getcontent() {
     $plugin = tblackip::instance();
-    $about = tplugins::getabout(tplugins::getname(__file__));
-    tlocal::$data['blackip'] = $about;
-    $lang = tlocal::instance('blackip');
+    $lang = tplugins::getlangabout(__file__);
     $args = targs::instance();
     $args->ip = implode("\n", $plugin->ip);
     $args->words = implode("\n", $plugin->words);

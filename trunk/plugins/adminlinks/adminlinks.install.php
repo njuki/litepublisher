@@ -14,5 +14,3 @@ function tadmincontextwidgetInstall($self) {
   $widgets->unlock();
   $self->save();
 }
-
-?>

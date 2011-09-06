@@ -16,5 +16,3 @@ function tbackup2emailUninstall(&$self) {
   $cron = tcron::instance();
   $cron->deleteclass($self);
 }
-
-?>

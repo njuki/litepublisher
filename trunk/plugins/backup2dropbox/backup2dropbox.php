@@ -76,5 +76,3 @@ class tbackup2dropbox extends tplugin {
   }
   
 }//class
-
-?>

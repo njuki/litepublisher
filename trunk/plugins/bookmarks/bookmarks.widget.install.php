@@ -143,5 +143,3 @@ function tbookmarkswidgetInstall($self) {
   //trick: lock data to prevent add link from parent class tlinkswidget
   $self->lock();
 }
-
-?>
