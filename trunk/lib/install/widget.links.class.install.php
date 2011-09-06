@@ -22,5 +22,3 @@ function tlinkswidgetInstall($self) {
 function tlinkswidgetUninstall($self) {
   turlmap::unsub($self);
 }
-
-?>

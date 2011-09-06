@@ -4,12 +4,12 @@ function update481() {
 litepublisher::$classes->items['tfakemenu'] = array('menu.class.php', '');
 litepublisher::$classes->save();
 
-tlocal::usefile('admin');
+tlocal::loadlang('admin');
 $admin = tadminmenus::instance();
 $admin->lock();
     $id = $admin->createitem($admin->url2id('/admin/menu/'),
 'editfake', 'editor', 'tadminmenumanager');
-    $admin->items[$id]['title'] = tlocal::get('menu', 'addfake');
+    $admin->items[$id]['title'] = tlocal::$data['menu']['addfake'];
 $admin->unlock();
 
 $menuclass = 'tmenus';
