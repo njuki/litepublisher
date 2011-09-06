@@ -28,5 +28,3 @@ class tbackup2email extends tplugin {
   }
   
 }//class
-
-?>

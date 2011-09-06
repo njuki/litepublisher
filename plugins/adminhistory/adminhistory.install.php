@@ -14,5 +14,3 @@ function tadminhistoryInstall($self) {
   $widgets->unlock();
   $self->save();
 }
-
-?>

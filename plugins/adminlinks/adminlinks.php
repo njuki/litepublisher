@@ -28,7 +28,7 @@ class tadmincontextwidget extends torderwidget {
     $links = '';
     $theme = ttheme::instance();
     $tml = $theme->getwidgetitem('widget', $sidebar);
-    tlocal::loadlang('admin');
+    tlocal::usefile('admin');
     
     if (litepublisher::$urlmap->context instanceof tpost) {
       $post = litepublisher::$urlmap->context;
@@ -93,5 +93,3 @@ class tadmincontextwidget extends torderwidget {
   }
   
 }//class
-
-?>

@@ -13,7 +13,7 @@ class tadminbackup2dropbox {
     $html = tadminhtml::instance();
     $args = targs::instance();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    tlocal::$data['dropbox'] = $about;
+    tlocal::admin()->ini['dropbox'] = $about;
     $lang = tlocal::instance('dropbox');
     $args->add($plugin->data);
     $args->formtitle = $about['head'];
