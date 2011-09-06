@@ -32,5 +32,3 @@ function tcontactsiteUninstall($self) {
   while ($id = $menus->class2id(get_class($self))) $menus->delete($id);
   $menus->unlock();
 }
-
-?>

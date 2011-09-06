@@ -199,7 +199,8 @@ class tcodedocfilter extends titems {
     }
     $args->description = $this->getdescription($post, $item['description']);
     $args->idwiki = $wiki->add($item['name'], $post->id);
-    if (isset(tlocal::$data['codedoc'][$item['access']]))  $args->access = tlocal::$data['codedoc'][$item['access']];
+$lang =tlocal::instance('codedoc');
+    if ($lang->__isset($item['access']))  $args->access = $lang->__get($item['access']);
     return $this->html->item($args);
   }
   
@@ -292,17 +293,10 @@ class tcodedocfilter extends titems {
   
   public function gethtml($name = '') {
     if ($name == '') $name = 'codedoc';
-    $this->checkadminlang();
     $result = tadminhtml ::instance();
-    $result->addini('codedoc', self::getresource() . 'html.ini');
     $result->section = $name;
     $lang = tlocal::instance($name);
     return $result;
   }
   
-  public function checkadminlang() {
-    tlocal::loadsection('admin', 'codedoc', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-  }
-  
 }//class
-?>

@@ -73,4 +73,3 @@ class tcodedocmenu extends tmenu {
   }
   
 }//class
-?>
