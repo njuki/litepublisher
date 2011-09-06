@@ -7,9 +7,9 @@
 **/
 
 function tlinkswidgetInstall($self) {
-  tlocal::loadlang('admin');
-  $lang = &tlocal::$data['installation'];
-  $self->add($lang['homeurl'], $lang['homedescription'], $lang['homename']);
+  tlocal::usefile('admin');
+  $lang = tlocal::instance('installation');
+  $self->add($lang->homeurl, $lang->homedescription, $lang->homename);
   
   $urlmap = turlmap::instance();
   $urlmap->add($self->redirlink, get_class($self), null, 'get');
