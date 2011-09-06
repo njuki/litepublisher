@@ -33,16 +33,18 @@ class tadminmenus extends tmenus {
   }
   
   public function getadmintitle($name) {
-    if (isset(tlocal::$data[$name]['title'])) {
-      return tlocal::$data[$name]['title'];
-    } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {
-      return tlocal::$data[tlocal::instance()->section][$name];
-    } elseif (isset(tlocal::$data['names'][$name])) {
-      return tlocal::$data['names'][$name];
-    } elseif (isset(tlocal::$data['default'][$name])) {
-      return tlocal::$data['default'][$name];
-    } elseif (isset(tlocal::$data['common'][$name])) {
-      return tlocal::$data['common'][$name];
+$lang = tlocal::instance();
+$ini = &$lang->ini;
+    if (isset($ini[$name]['title'])) {
+      return $ini[$name]['title'];
+    } elseif (isset($ini[$lang->section][$name])) {
+      return $ini[$lang->section][$name];
+    } elseif (isset($ini['names'][$name])) {
+      return $ini['names'][$name];
+    } elseif (isset($ini['default'][$name])) {
+      return $ini['default'][$name];
+    } elseif (isset($ini['common'][$name])) {
+      return $ini['common'][$name];
     } else {
       return $name;
     }
@@ -154,7 +156,7 @@ public function save() { return true; }
     }
     
     if ($s = self::auth($this->group)) return $s;
-    tlocal::loadlang('admin');
+    tlocal::usefile('admin');
     $this->arg = litepublisher::$urlmap->argtree;
     if ($s = $this->canrequest()) return $s;
     $this->doprocessform();
