@@ -67,4 +67,3 @@ class tcodedocplugin extends tplugin {
   }
   
 }//class
-?>
