@@ -123,5 +123,3 @@ class TXMLRPCAction extends titems {
   }
   
 }//class
-
-?>

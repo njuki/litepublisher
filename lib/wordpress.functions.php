@@ -1134,5 +1134,3 @@ function do_action($tag, $arg = '') {
     echo '<input type="hidden" name="antispam" value="_Value' . strtotime ('+1 hour') . '" />';
   }
 }
-
-?>

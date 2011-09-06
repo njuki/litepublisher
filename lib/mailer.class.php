@@ -139,4 +139,3 @@ class TSMTPMailer extends tevents {
   }
   
 }//class
-?>

@@ -424,7 +424,7 @@ class tpostswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['recentposts'];
+    return tlocal::get('default', 'recentposts');
   }
   
   public function getcontent($id, $sidebar) {
@@ -435,5 +435,3 @@ class tpostswidget extends twidget {
   }
   
 }//class
-
-?>

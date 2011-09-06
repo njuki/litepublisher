@@ -216,7 +216,7 @@ class ttemplate extends tevents_storage {
   public function getpage() {
     $page = litepublisher::$urlmap->page;
     if ($page <= 1) return '';
-    return sprintf(tlocal::$data['default']['pagetitle'], $page);
+    return sprintf(tlocal::get('default', 'pagetitle'), $page);
   }
   
   public function trimwords($s, array $words) {
@@ -229,5 +229,3 @@ class ttemplate extends tevents_storage {
   }
   
 }//class
-
-?>

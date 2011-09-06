@@ -132,5 +132,3 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   }
   
 }//class
-
-?>

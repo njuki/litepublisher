@@ -19,7 +19,7 @@ class tadminpassword extends tadminform {
   
   public function getcontent() {
     $args = new targs();
-    $lang = tlocal::instance('password');
+    $lang = tlocal::admin('password');
     $args->formtitle = $lang->enteremail;
     return $this->html->adminform('[text=login] [text=email]', $args);
   }

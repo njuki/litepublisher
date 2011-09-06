@@ -63,5 +63,3 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
   }
   
 }//class
-
-?>

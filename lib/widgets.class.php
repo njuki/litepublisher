@@ -637,5 +637,3 @@ class twidgetscache extends titems {
   }
   
 }//class
-
-?>

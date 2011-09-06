@@ -614,7 +614,7 @@ class tcategorieswidget extends tcommontagswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['categories'];
+    return tlocal::get('default', 'categories');
   }
   
   public function getowner() {
@@ -663,7 +663,7 @@ class ttagswidget extends tcommontagswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['tags'];
+    return tlocal::get('default', 'tags');
   }
   
   public function getowner() {

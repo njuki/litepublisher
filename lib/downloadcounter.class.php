@@ -48,5 +48,3 @@ class tdownloadcounter extends titems {
   }
   
 }//class
-
-?>

@@ -174,5 +174,3 @@ class TXMLRPCAbstract extends tevents {
   }
   
 }//class
-
-?>

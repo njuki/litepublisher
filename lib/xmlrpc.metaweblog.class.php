@@ -363,5 +363,3 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   }
   
 }//class
-
-?>

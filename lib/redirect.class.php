@@ -41,4 +41,3 @@ class tredirector extends titems {
   }
   
 }//class
-?>

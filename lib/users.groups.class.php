@@ -65,4 +65,3 @@ class tusergroups extends titems {
   }
   
 }//class
-?>

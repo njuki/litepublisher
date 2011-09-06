@@ -36,7 +36,7 @@ class tmailtemplate extends titems {
   }
   
   public function getpart($part, targs $args) {
-    tlocal::loadlang('admin');
+    tlocal::usefile('admin');
     tlocal::instance($this->name);
     $theme = ttheme::instance();
     return $theme->parsearg($this->gettml($this->name, $part), $args);
@@ -50,4 +50,3 @@ class tmailtemplate extends titems {
   }
   
 }//class
-?>

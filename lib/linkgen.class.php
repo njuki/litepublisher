@@ -218,5 +218,3 @@ class tlinkgenerator extends tevents {
   }
   
 }//class
-
-?>

@@ -51,5 +51,3 @@ class trobotstxt extends titems {
   }
   
 }//class
-
-?>

@@ -168,5 +168,3 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   */
   
 }//class
-
-?>

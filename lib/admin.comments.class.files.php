@@ -232,7 +232,6 @@ class tadminmoderator extends tadmincommoncomments  {
       $args->website = sprintf("<a href='%s'>%s</a>", $item['url']);
       $status = $item['approved'] ? 'approved' : 'hold';
       $args->localstatus = tlocal::get('commentstatus', $status);
-      
       $args->date = tlocal::date(strtotime($item['posted']));
       $result .=$html->pingbackitem($args);
     }

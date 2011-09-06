@@ -62,7 +62,7 @@ public function gettitle() { return $this->title; }
         }
         $result .= sprintf('<li><a href="%s%s" title="%s">%3$s</a>%4$s</li>', litepublisher::$site->url, $item['url'], $item['title'], $postpages);
       }
-      if ($result != '') $result = sprintf('<h1>' . tlocal::$data['default']['sitemap'] . '</h1><h2>' . tlocal::$data['default']['posts'] . '</h2><ul>%s</ul>', $result);
+      if ($result != '') $result = sprintf('<h1>' . tlocal::get('default', 'sitemap') . '</h1><h2>' . tlocal::get('default',, 'posts') . '</h2><ul>%s</ul>', $result);
     } else {
       $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);
@@ -70,7 +70,7 @@ public function gettitle() { return $this->title; }
     
     if (litepublisher::$urlmap->page  == 1) {
       $menus = tmenus::instance();
-      $result .= '<h2>' . tlocal::$data['default']['menu'] . "</h2>\n<ul>\n";
+      $result .= '<h2>' . tlocal::get('default', 'menu') . "</h2>\n<ul>\n";
       foreach ($menus->items as $id => $item) {
         if ($item['status'] == 'draft') continue;
         $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
@@ -81,7 +81,7 @@ public function gettitle() { return $this->title; }
       $result .= $this->gettags(ttags::instance());
       $arch = tarchives::instance();
       if (count($arch->items) > 0) {
-        $result .= '<h2>' . tlocal::$data['default']['archive'] . "</h2>\n<ul>\n";
+        $result .= '<h2>' . tlocal::get('default', 'archive') . "</h2>\n<ul>\n";
         foreach ($arch->items as $date => $item) {
           $result .= sprintf('<li><a href="%s%s" title="%3$s">%3$s</a></li>', litepublisher::$site->url, $item['url'], $item['title']);
         }
@@ -96,7 +96,7 @@ public function gettitle() { return $this->title; }
   private function gettags(tcommontags $tags) {
     $tags->loadall();
     if ($tags->count == 0)  return '';
-    $result = '<h2>' . tlocal::$data['default'][$tags->PostPropname] . "</h2>\n<p>\n";
+    $result = '<h2>' . tlocal::get('default', $tags->PostPropname) . "</h2>\n<p>\n";
     foreach ($tags->items as $id => $item) {
       $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>, ', litepublisher::$site->url, $item['url'], $item['title']);
     }
@@ -110,7 +110,7 @@ public function gettitle() { return $this->title; }
       $this->GetIndex();
     }
     
-    $this->title = tlocal::$data['default']['sitemap'];
+    $this->title = tlocal::get('default', 'sitemap');
   }
   
   public function getIndex() {
@@ -270,5 +270,3 @@ public function gettitle() { return $this->title; }
   }
   
 }//class
-
-?>

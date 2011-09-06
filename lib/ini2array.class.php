@@ -82,5 +82,3 @@ class tini2array {
   }
   
 }//class
-
-?>

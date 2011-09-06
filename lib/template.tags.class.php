@@ -64,5 +64,3 @@ class ttemplatetags {
   }
   
 }//class
-
-?>

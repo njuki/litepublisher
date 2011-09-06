@@ -72,5 +72,3 @@ class tnotfound404 extends tforbidden {
   }
   
 }//class
-
-?>

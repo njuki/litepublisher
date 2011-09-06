@@ -100,4 +100,3 @@ public function gethead() { }
   }
   
 }//class
-?>

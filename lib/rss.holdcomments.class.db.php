@@ -56,10 +56,10 @@ class trssholdcomments extends tevents {
   }
   
   private function dogetholdcomments($rss) {
-    $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::$data['comment']['onrecent'] . ' '. litepublisher::$site->name);
+    $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::get('comment'., 'onrecent') . ' '. litepublisher::$site->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($this->count, 'hold');
-    $title = tlocal::$data['comment']['onpost'] . ' ';
+    $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
     ttheme::$vars['comment'] = $comment;
     $theme = ttheme::instance();
@@ -70,8 +70,7 @@ class trssholdcomments extends tevents {
       $tml = $html->rsstemplate;
     }
     $tml = str_replace('$adminurl', '/admin/comments/'. litepublisher::$site->q . 'id=$comment.id&action=', $tml);
-    tlocal::loadlang('admin');
-    $lang = tlocal::instance('comments');
+    $lang = tlocal::admin('comments');
     foreach ($recent  as $item) {
       $comment->array = $item;
       $comment->content = $theme->parse($tml);
@@ -80,4 +79,3 @@ class trssholdcomments extends tevents {
   }
   
 }//class
-?>

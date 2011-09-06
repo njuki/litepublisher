@@ -111,5 +111,4 @@ class tmanifest extends tevents {
     return  $s;
   }
   
-}
-?>
+}//class

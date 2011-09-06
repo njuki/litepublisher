@@ -498,7 +498,7 @@ $this->callevent('beforeparse', array(&$s));
           $value = trim($value);
           if ($value == trim($parent->templates[$name])) continue;
           if (strend($name, '.date')) {
-            if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::$data['datetime']['dateformat'])) continue;
+            if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::get('datetime',, 'dateformat'))) continue;
           }
           $result .= "\$template.$name = [$value]\n\n";
         }
@@ -1036,4 +1036,3 @@ $this->callevent('beforeparse', array(&$s));
       }
       
     }//class
-    ?>
