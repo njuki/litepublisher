@@ -174,4 +174,23 @@ $html->ini[$section] = isset($html->ini[$section]) ? $itemsini + $html->ini[$sec
 tfilestorage::savevar(tlocal::getcachedir() . 'adminhtml', $html->ini);
 }
 
+public function addplugin($name) {
+$language = litepublisher::$options->language;
+$dir = litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+$this->lock();
+if (file_exists($dir . $language . '.ini')) $this->add('default', "plugins/$name/resource/$language.ini");
+if (file_exists($dir . $language . '.admin.ini')) $this->add('admin', "plugins/$name/resource/$language.admin.ini");
+if (file_exists($dir . 'html.ini')) $this->addhtml("plugins/$name/resource/html.ini");
+$this->unlock();
+}
+
+public function deleteplugin($name) {
+$language = litepublisher::$options->language;
+$this->lock();
+$this->deletefile('default', "plugins/$name/resource/$language.ini");
+$this->deletefile('admin', "plugins/$name/resource/$language.admin.ini");
+$this->deletehtml("plugins/$name/resource/html.ini");
+$this->unlock();
+}
+
 } //class
