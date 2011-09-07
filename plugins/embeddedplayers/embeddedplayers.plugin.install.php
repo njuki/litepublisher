@@ -37,4 +37,3 @@ function tembeddedplayersUninstall($self) {
   $parser->unsubscribeclass($self);
   ttheme::clearcache();
 }
-?>

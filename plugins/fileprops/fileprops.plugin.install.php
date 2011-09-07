@@ -12,7 +12,7 @@ function tfilepropspluginInstall($self) {
   $js = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'fileprops.min.js');
   $about = tplugins::getabout(tplugins::getname(__file__));
   $js = str_replace('%%lang_titledialog%%', $about['titledialog'], $js);
-  $lang = tlocal::instance('common');
+  $lang = tlocal::admin('common');
   $theme = ttheme::instance();
   $js = $theme->replacelang($js, $lang);
   file_put_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'min.js', $js);

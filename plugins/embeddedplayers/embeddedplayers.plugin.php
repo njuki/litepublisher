@@ -26,4 +26,3 @@ class tembeddedplayers extends tplugin {
   }
   
 }//class
-?>
