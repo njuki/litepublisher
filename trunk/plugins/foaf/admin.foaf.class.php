@@ -206,5 +206,3 @@ class tadminfoaf extends tadminmenu {
   }
   
 }//class
-
-?>

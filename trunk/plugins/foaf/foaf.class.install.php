@@ -7,9 +7,10 @@
 **/
 
 function tfoafInstall($self) {
-  //turlmap::unsub($self);
+$merger = tlocalmerger::instance();
+$merger->addplugin(tplugins::getname(__file__));
+
   $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-  tlocal::loadsection('', 'foaf', $dir);
   $lang = tlocal::instance('foaf');
   
   if ($self->dbversion) {
@@ -59,6 +60,9 @@ function tfoafInstall($self) {
 }
 
 function tfoafUninstall($self) {
+$merger = tlocalmerger::instance();
+$merger->deleteplugin(tplugins::getname(__file__));
+
   $actions = TXMLRPCAction ::instance();
   $actions->deleteclass(get_class($self));
   
@@ -99,5 +103,3 @@ function tfoafUninstall($self) {
   
   ttheme::clearcache();
 }
-
-?>

@@ -16,5 +16,3 @@ function tfriendswidgetUninstall($self) {
   turlmap::unsub($self);
   litepublisher::$classes->delete('tadminfriendswidget');
 }
-
-?>
