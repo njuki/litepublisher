@@ -96,5 +96,3 @@ class tsimpleimporter extends timporter {
   }
   
 }//class
-
-?>

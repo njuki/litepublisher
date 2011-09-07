@@ -8,8 +8,10 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
+$merger = tlocalmerger::instance();
+$merger->addplugin(tplugins::getname(__file__));
+
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  tlocal::loadsection('admin', 'tickets', $dir);
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
   $filter->save();
@@ -46,16 +48,16 @@ function tticketsInstall($self) {
   $adminmenus = tadminmenus::instance();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
-  $adminmenus->items[$parent]['title'] = tlocal::$data['tickets']['tickets'];
+  $adminmenus->items[$parent]['title'] = tlocal::get('tickets', 'tickets');
   
   $idmenu = $adminmenus->createitem($parent, 'opened', 'ticket', 'tadmintickets');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['opened'];
+  $adminmenus->items[$idmenu]['title'] = tlocal::get('ticket', 'opened');
   
   $idmenu = $adminmenus->createitem($parent, 'fixed', 'ticket', 'tadmintickets');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['ticket']['fixed'];
+  $adminmenus->items[$idmenu]['title'] = tlocal::get('ticket', 'fixed');
   
   $idmenu = $adminmenus->createitem($parent, 'editor', 'ticket', 'tticketeditor');
-  $adminmenus->items[$idmenu]['title'] = tlocal::$data['tickets']['editortitle'];
+  $adminmenus->items[$idmenu]['title'] = tlocal::get('tickets', 'editortitle');
   
   $adminmenus->onexclude = $self->onexclude;
   $adminmenus->unlock();
@@ -128,8 +130,7 @@ function tticketsUninstall($self) {
     $polls->garbage = true;
     $polls->save();
   }
-  tlocal::clearcache();
-  
+
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
   $manager->delete_enum('posts', 'class', 'tticket');
@@ -141,7 +142,7 @@ function tticketsUninstall($self) {
     unset($optimizer->childtables[$i]);
   }
   $optimizer->unlock();
-  
-}
 
-?>
+$merger = tlocalmerger::instance();
+$merger->deleteplugin(tplugins::getname(__file__));
+}

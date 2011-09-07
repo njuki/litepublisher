@@ -35,4 +35,3 @@ class tstatfooter extends tplugin {
   }
   
 }//class
-?>

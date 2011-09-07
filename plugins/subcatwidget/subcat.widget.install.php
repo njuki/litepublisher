@@ -16,4 +16,3 @@ function tsubcatwidgetInstall($self) {
 function tsubcatwidgetUninstall($self) {
   $self->tags->unsubscribeclass($self);
 }
-?>

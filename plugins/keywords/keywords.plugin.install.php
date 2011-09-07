@@ -35,5 +35,3 @@ function tkeywordspluginUninstall($self) {
   litepublisher::$classes->delete('tkeywordswidget');
   //TFiler::DeleteFiles(litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  , true);
 }
-
-?>

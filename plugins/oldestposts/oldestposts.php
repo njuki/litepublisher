@@ -22,7 +22,7 @@ class toldestposts extends tclasswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['prev'];
+    return tlocal::get('default', 'prev');
   }
   
   public function getcontent($id, $sidebar) {
@@ -44,5 +44,3 @@ class toldestposts extends tclasswidget {
   }
   
 }//class
-
-?>

@@ -18,4 +18,3 @@ function tpostcatwidgetUninstall($self) {
   $widgets = twidgets::instance();
   $widgets->unsubscribeclass($self);
 }
-?>

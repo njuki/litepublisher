@@ -45,4 +45,3 @@ class tmarkdownplugin extends tplugin {
   }
   
 }//class
-?>

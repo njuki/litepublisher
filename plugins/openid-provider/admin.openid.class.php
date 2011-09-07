@@ -41,4 +41,3 @@ class tadminopenid {
   }
   
 }//class
-?>

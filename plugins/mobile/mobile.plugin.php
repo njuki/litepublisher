@@ -54,4 +54,3 @@ class tmobileplugin extends tplugin {
   }
   
 }//class
-?>

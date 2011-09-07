@@ -23,8 +23,7 @@ class tticketeditor extends tposteditor {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      tlocal::loadsection('admin', 'tickets', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-      return tlocal::$data['tickets']['editor'];
+      return tlocal::$admin('tickets')->editor;
     }
   }
   
@@ -38,13 +37,8 @@ class tticketeditor extends tposteditor {
   }
   
   public function gethtml($name = '') {
-    $html = tadminhtml::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    $html->addini('tickets', $dir . 'html.ini');
-    //$html->section = 'tickets';
-    tlocal::loadsection('', 'ticket', $dir);
-    tlocal::loadsection('admin', 'tickets', $dir);
-    tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
+$lang = tlocal::admin('tickets');
+$lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
     return parent::gethtml($name);
   }
   
@@ -66,16 +60,16 @@ class tticketeditor extends tposteditor {
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
     
     $html = $this->html;
-    $lang = tlocal::instance('tickets');
+    $lang = tlocal::admin('tickets');
     
     $args->code = $html->getinput('editor', 'code', tadminhtml::specchars($ticket->code), $lang->codetext);
     
     $args->fixed = $ticket->state == 'fixed';
     $types = array(
-    'bug' => tlocal::$data['ticket']['bug'],
-    'feature' => tlocal::$data['ticket']['feature'],
-    'support' => tlocal::$data['ticket']['support'],
-    'task' => tlocal::$data['ticket']['task'],
+    'bug' => $lang->bug,
+    'feature' => $lang->feature,
+    'support' => tlocal$lang->support,
+    'task' => $lang->task
     );
     
     $args->typecombo= $html->array2combo($types, $ticket->type);
@@ -83,13 +77,13 @@ class tticketeditor extends tposteditor {
     
     $states =array();
     foreach (array('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') as $state) {
-      $states[$state] = tlocal::$data['ticket'][$state];
+      $states[$state] = $$lang->$state;
     }
     $args->statecombo= $html->array2combo($states, $ticket->state);
     
     $prio = array();
     foreach (array('trivial', 'minor', 'major', 'critical', 'blocker') as $p) {
-      $prio[$p] = tlocal::$data['ticket'][$p];
+      $prio[$p] = $lang->$p;
     }
     $args->priocombo = $html->array2combo($prio, $ticket->prio);
     
@@ -167,4 +161,3 @@ class tticketeditor extends tposteditor {
   }
   
 }//class
-?>

@@ -52,4 +52,3 @@ class tyoutubeplayer extends tplugin {
   }
   
 }//class
-?>

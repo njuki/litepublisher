@@ -732,5 +732,3 @@ class SAPE_context extends SAPE_base {
         }
     }
 }
-
-?>

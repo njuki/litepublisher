@@ -28,7 +28,7 @@ class tsameposts extends tclasswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['sameposts'];
+    return tlocal::get('default', 'sameposts');
   }
   
   public function postschanged() {
@@ -99,4 +99,3 @@ class tsameposts extends tclasswidget {
   }
   
 }//class
-?>

@@ -151,5 +151,3 @@ class twprssimporter extends timporter {
   }
   
 }//class
-
-?>

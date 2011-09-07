@@ -268,5 +268,3 @@ function new_secret () {
   for($i=0; $i<20; $i++) $r .= chr(mt_rand(0, 255));
   return $r;
 }
-
-?>

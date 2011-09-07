@@ -86,4 +86,3 @@ class tyoutubefeed extends tplugin {
   }
   
 }//class
-?>
