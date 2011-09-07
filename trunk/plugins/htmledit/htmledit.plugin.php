@@ -38,4 +38,3 @@ class themleditplugin extends tplugin {
   }
   
 }//class
-?>
