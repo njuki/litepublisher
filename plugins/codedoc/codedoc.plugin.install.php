@@ -15,13 +15,10 @@ function tcodedocpluginInstall($self) {
   class varchar(32) NOT NULL,
   KEY id (id)
   ');
-  
-$name = tplugins::getname(__file__);
+
 $merger = tlocalmerger::instance();
-$merger->lock();
-$merger->add('admin',  sprintf('plugins/%s/resource/%s.admin.ini', $name, litepublisher::$options->language));
-$merger->addhtml("plugins/$name/resource/html.ini");
-$merger->unlock();
+$merger->addplugin(tplugins::getname(__file__));
+  
   $posts = tposts::instance();
   $posts->lock();
   $posts->deleted = $self->postdeleted;
@@ -76,10 +73,7 @@ function tcodedocpluginUninstall($self) {
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->table);
   
-$name = tplugins::getname(__file__);
+
 $merger = tlocalmerger::instance();
-$merger->lock();
-$merger->deletefile('admin',  sprintf('plugins/%s/resource/%s.admin.ini', $name, litepublisher::$options->language));
-$merger->deletehtml("plugins/$name/resource/html.ini");
-$merger->unlock();
+$merger->deleteplugin(tplugins::getname(__file__));
 }
