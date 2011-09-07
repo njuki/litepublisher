@@ -27,4 +27,3 @@ class tpostcontentplugin extends tplugin {
   }
   
 }//class
-?>

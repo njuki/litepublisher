@@ -46,5 +46,3 @@ function twikiwordsUninstall($self) {
     $manager->deletetable($self->itemsposts->table);
   }
 }
-
-?>

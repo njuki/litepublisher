@@ -17,10 +17,9 @@ class tadminlivejournalposter {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     if ($plugin->template == '') $plugin->template = file_get_contents($dir. 'livejournalposter.tml');
     $about = tplugins::getabout(tplugins::getname(__file__));
-    tlocal::$data['lj'] = $about;
-    $lang = tlocal::instance('lj');
+    $lang = tplugins::getlangabout(__file__);
     $html = tadminhtml::instance();
-    $html->section = 'lj';
+    $html->section = $lang->section;
     $args = targs::instance();
     $args->add($about);
     $args->add($plugin->data);
@@ -52,4 +51,3 @@ class tadminlivejournalposter {
   }
   
 }
-?>

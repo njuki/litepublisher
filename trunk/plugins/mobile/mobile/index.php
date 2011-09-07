@@ -47,7 +47,6 @@ class tmobiletemplate extends ttemplate {
     return $result;
   }
   
-
 }//class
 
 litepublisher::$site = tmobilesite::instance();
@@ -70,4 +69,3 @@ try {
 }
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
-?>

@@ -18,5 +18,3 @@ function tlivejournalposterUninstall($self) {
     //litepublisher::$db->delete("name = 'ljid'");
   }
 }
-
-?>

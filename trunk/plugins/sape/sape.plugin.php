@@ -26,7 +26,7 @@ class tsapeplugin extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['links'];
+    return tlocal::get('default', 'links');
   }
   
   private function createsape() {

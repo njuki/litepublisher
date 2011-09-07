@@ -18,5 +18,3 @@ function tsourcefilesmenuUninstall($self) {
   $menus = tmenus::instance();
   $menus->deleteurl('/source/');
 }
-
-?>

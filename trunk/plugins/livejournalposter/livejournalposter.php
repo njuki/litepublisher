@@ -96,4 +96,3 @@ class tlivejournalposter extends tplugin {
   }
   
 }//class
-?>

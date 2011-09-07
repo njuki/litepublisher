@@ -72,7 +72,6 @@ class tticket extends tpost {
     $filter->filterpost($this,$this->rawcontent);
     $result .= $this->filtered;
     if (!empty($this->childdata['code'])) {
-      self::checklang();
       $lang = tlocal::instance('ticket');
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
@@ -81,7 +80,6 @@ class tticket extends tpost {
   }
   
   public function getticketcontent() {
-    self::checklang();
     $lang = tlocal::instance('ticket');
     $args = targs::instance();
     foreach (array('type', 'state', 'prio') as $prop) {
@@ -111,13 +109,8 @@ class tticket extends tpost {
     return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   }
   
-  public static function checklang() {
-    tlocal::loadsection('', 'ticket', self::getresource());
-  }
-  
   public function getschemalink() {
     return 'ticket';
   }
   
 }//class
-?>

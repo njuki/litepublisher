@@ -98,5 +98,3 @@ class tkeywordsplugin  extends tplugin {
   }
   
 }//class
-
-?>

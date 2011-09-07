@@ -13,12 +13,8 @@ class tadmintickets extends tadminmenu {
   }
   
   public function gethtml($name = '') {
-    $html = tadminhtml::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    $html->addini('tickets', $dir . 'html.ini');
-    tlocal::loadsection('', 'ticket', $dir);
-    tlocal::loadsection('admin', 'tickets', $dir);
-    tlocal::$data['tickets'] = tlocal::$data['ticket'] + tlocal::$data['tickets'];
+$lang = tlocal::admin('tickets');
+$lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
     return parent::gethtml($name);
   }
   
@@ -57,14 +53,14 @@ class tadmintickets extends tadminmenu {
     $args = targs::instance();
     $args->adminurl = $this->adminurl;
     $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id');
-    $lang = tlocal::instance('tickets');
+    $lang = tlocal::admin('tickets');
     foreach ($items  as $id ) {
       $ticket = tticket::instance($id);
       ttheme::$vars['ticket'] = $ticket;
     $args->status = $lang->{$ticket->status};
-      $args->type = tlocal::$data['ticket'][$ticket->type];
-      $args->prio = tlocal::$data['ticket'][$ticket->prio];
-      $args->state = tlocal::$data['ticket'][$ticket->state];
+      $args->type = $lang->{$ticket->type};
+      $args->prio = $lang->{$ticket->prio};
+      $args->state = $lang->{$ticket->state};
       $result .= $html->itemlist($args);
     }
     $result .= $html->footer();
@@ -103,4 +99,3 @@ class tadmintickets extends tadminmenu {
   }
   
 }//class
-?>

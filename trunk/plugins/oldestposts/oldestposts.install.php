@@ -10,5 +10,3 @@ function toldestpostsInstall($self) {
   $widgets = twidgets::instance();
   $widgets->addclass($self, 'tpost');
 }
-
-?>

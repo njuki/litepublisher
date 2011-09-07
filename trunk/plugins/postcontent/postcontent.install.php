@@ -18,5 +18,3 @@ function tpostcontentpluginInstall($self) {
 function tpostcontentpluginUninstall($self) {
   tposts::unsub($self);
 }
-
-?>

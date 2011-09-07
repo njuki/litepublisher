@@ -243,4 +243,3 @@ public function gethead() { }
   }
   
 }//class
-?>

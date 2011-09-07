@@ -29,4 +29,3 @@ function tyoutubefeedUninstall($self) {
   $parser = tthemeparser::instance();
   $parser->unsubscribeclass($self);
 }
-?>

@@ -31,5 +31,3 @@ class tadminsameposts extends tadminorderwidget {
   }
   
 }//class
-
-?>

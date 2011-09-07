@@ -40,8 +40,7 @@ class tadminkeywords extends tadminwidget {
       $args->notify = $widget->notify;
       $args->optionsform = 1;
       $args->title =       $widget->gettitle($idwidget);
-      tlocal::$data['keywords']  = $about;
-      $lang = tlocal::instance('keywords');
+      $lang = tplugins::getlangabout(__file__);
       $args->formtitle = $about['name'];
       $result .= $html->adminform(
       '[text=title]
@@ -127,5 +126,3 @@ class tadminkeywords extends tadminwidget {
   }
   
 }//class
-
-?>

@@ -30,5 +30,3 @@ class tadminoldestposts extends tadminorderwidget {
   }
   
 }//class
-
-?>

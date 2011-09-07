@@ -57,4 +57,3 @@ class tshortcode extends titems {
   }
   
 }//class
-?>

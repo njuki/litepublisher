@@ -21,5 +21,3 @@ function TRSSPrevNextUninstall($self) {
   $urlmap = turlmap::instance();
   $urlmap->clearcache();
 }
-
-?>

@@ -300,7 +300,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   
   public function geterror_dialog() {
     //jquery ui dialog template
-    return sprintf('<div class="poll_error_dialog" style="display: none;" title="%s"><h4>%s</h4></div>', tlocal::$data['default']['error'], $this->voted);
+    return sprintf('<div class="poll_error_dialog" style="display: none;" title="%s"><h4>%s</h4></div>', tlocal::get('default', 'error'), $this->voted);
   }
   
   public function gethtml($id, $full) {

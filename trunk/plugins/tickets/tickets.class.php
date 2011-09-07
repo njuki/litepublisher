@@ -22,8 +22,7 @@ class ttickets extends tposts {
   }
   
   public function createpoll() {
-    tlocal::loadsection('admin', 'tickets', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-    $lang = tlocal::instance('tickets');
+    $lang = tlocal::admin('tickets');
     $items = explode(',', $lang->pollitems);
     $polls = tpolls::instance();
     return $polls->add('', 'opened', 'button', $items);
@@ -76,4 +75,3 @@ class ttickets extends tposts {
   }
   
 }//class
-?>

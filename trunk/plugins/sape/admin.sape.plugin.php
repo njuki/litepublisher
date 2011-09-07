@@ -48,4 +48,3 @@ class tadminsapeplugin extends tadminwidget {
   }
   
 }//class
-?>

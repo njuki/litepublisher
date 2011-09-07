@@ -67,7 +67,7 @@ class tticketsmenu extends tmenu {
     $index = $this->type == 'tickets' ? 'type' : 'state';
     $theme = ttheme::instance();
     tticket::checklang();
-    $langticket = tlocal::$data['ticket'];
+    $langticket = tlocal::instance()->ini['ticket'];
     $args = targs::instance();
     $tml = '<tr>
     <td align="left">$state</td>
@@ -102,4 +102,3 @@ class tticketsmenu extends tmenu {
   }
   
 }//class
-?>

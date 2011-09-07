@@ -17,8 +17,7 @@ function tpollsInstall($self) {
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
   $theme = ttheme::instance();
-  tlocal::$data['polls'] = $about;
-  $lang = tlocal::instance('polls');
+  $lang = tplugins::getlangabout(__file__);
   $self->templates['microformat'] = $theme->replacelang($templates['microformat']['rate'], $lang);
   $self->save();
   
@@ -154,5 +153,3 @@ function tpollsOptimize($self) {
   $db = $self->getdb($self->userstable);
   $db->delete("id not in (select distinct user from $db->prefix$self->votestable)");
 }
-
-?>

@@ -69,4 +69,3 @@ class tpagenator3000 extends tplugin {
   }
   
 }//class
-?>

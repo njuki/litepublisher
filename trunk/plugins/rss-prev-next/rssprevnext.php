@@ -18,4 +18,3 @@ class TRSSPrevNext extends tplugin {
   }
   
 }//class
-?>

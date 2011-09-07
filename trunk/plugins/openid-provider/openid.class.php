@@ -40,10 +40,7 @@ class topenid extends tevents {
     $template->addtohead($this->get_head());
 
 $merger = tlocalmerger::instance();
-$merger->lock();
-$merger->add('default', sprintf('plugins/%s/resource/%s.ini', basename(dirname(__file__)), litepublisher::$options->language));
-$merger->addhtml(sprintf('plugins/%s/resource/html.ini', basename(dirname(__file__)));
-$merger->unlock();
+$merger->addplugin(tplugins::getname(__file__));
   }
   
   public function uninstall() {
@@ -52,10 +49,7 @@ $merger->unlock();
     $template->deletefromhead($this->get_head());
 
 $merger = tlocalmerger::instance();
-$merger->lock();
-$merger->deletefile('default', sprintf('plugins/%s/resource/%s.ini', basename(dirname(__file__)), litepublisher::$options->language));
-$merger->deletehtml(sprintf('plugins/%s/resource/html.ini', basename(dirname(__file__)));
-$merger->unlock();
+$merger->deleteplugin(tplugins::getname(__file__));
 
     litepublisher::$urlmap->clearcache();
   }
@@ -487,5 +481,3 @@ $merger->unlock();
   
   
 }//class
-
-?>
