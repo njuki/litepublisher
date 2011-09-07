@@ -12,12 +12,10 @@ $merger = tlocalmerger::instance();
 $merger->lock();
 $plugins = tplugins::instance();
 $language = litepublisher::$options->language;
-foreach (array('foaf', 'openid-provider'
-if )(!isset($plugins->items[$name])) continue;
-$merger->add('default', "plugins/$name/resource/$language.ini");
-$merger->addhtml("plugins/$name/resource/html.ini");
+foreach (array('codedoc', 'downloaditem', 'foaf', 'openid-provider',
+if (!isset($plugins->items[$name])) continue;
+$merger->addplugin($name);
 }
-
 
 $merger->unlock();
 }
