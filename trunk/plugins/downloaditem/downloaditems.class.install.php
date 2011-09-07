@@ -18,9 +18,10 @@ function tdownloaditemsInstall($self) {
   $optimizer->childtables[] = 'downloaditems';
   $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
+
+$merger = tlocalmerger::instance();
+$merger->addplugin(tplugins::getname(__file__));
   
-  tlocal::loadsection('admin', 'downloaditems', $dir);
-  tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
   
   $tags = ttags::instance();
@@ -124,7 +125,7 @@ function tdownloaditemsUninstall($self) {
   $parser->unsubscribeclass($self);
   ttheme::clearcache();
   
-  
+ 
   $classes = litepublisher::$classes;
   $classes->lock();
   $classes->delete('tdownloaditem');
@@ -143,9 +144,10 @@ function tdownloaditemsUninstall($self) {
   }
   */
   
-  tlocal::clearcache();
-  
-  $manager = tdbmanager ::instance();
+$merger = tlocalmerger::instance();
+$merger->deleteplugin(tplugins::getname(__file__));
+
+    $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
   $manager->delete_enum('posts', 'class', 'tdownloaditem');
   
@@ -182,9 +184,7 @@ function getd_download_js() {
 function add_downloaditems_to_theme($theme) {
   if (empty($theme->templates['custom']['downloadexcerpt'])) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    tlocal::loadsection('', 'downloaditem', $dir);
-    tlocal::loadsection('admin', 'downloaditems', $dir);
-    ttheme::$vars['lang'] = tlocal::instance('downloaditems');
+    ttheme::$vars['lang'] = tlocal::admin('downloaditems');
     $custom = &$theme->templates['custom'];
     $custom['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), tlocal::instance('downloaditem'));
     $lang = tlocal::instance('downloaditems');

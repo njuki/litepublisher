@@ -13,12 +13,8 @@ class tadmindownloaditems extends tadminmenu {
   }
   
   public function gethtml($name = '') {
-    $html = tadminhtml::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    $html->addini('downloaditems', $dir . 'html.ini');
-    tlocal::loadsection('', 'downloaditem', $dir);
-    tlocal::loadsection('admin', 'downloaditems', $dir);
-    tlocal::$data['downloaditems'] = tlocal::$data['downloaditem'] + tlocal::$data['downloaditems'];
+    $lang = tlocal::admin();
+$lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
     return parent::gethtml($name);
   }
   
@@ -68,7 +64,7 @@ class tadmindownloaditems extends tadminmenu {
       $downloaditem = tdownloaditem::instance($id);
       ttheme::$vars['downloaditem'] = $downloaditem;
     $args->status = $lang->{$downloaditem->status};
-      $args->type = tlocal::$data['downloaditem'][$downloaditem->type];
+      $args->type = tlocal::get('downloaditem', $downloaditem->type);
       $tablebody .= $html->itemlist($args);
     }
     

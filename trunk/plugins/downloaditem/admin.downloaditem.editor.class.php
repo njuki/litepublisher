@@ -16,18 +16,13 @@ class tdownloaditemeditor extends tposteditor {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      tlocal::loadsection('admin', 'downloaditems', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-      return tlocal::$data['downloaditems']['editor'];
+      return tlocal::admin('downloaditems')->editor;
     }
   }
   
   public function gethtml($name = '') {
-    $html = tadminhtml::instance();
-    $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-    $html->addini('downloaditems', $dir . 'html.ini');
-    tlocal::loadsection('', 'downloaditem', $dir);
-    tlocal::loadsection('admin', 'downloaditems', $dir);
-    tlocal::$data['downloaditems'] = tlocal::$data['downloaditem'] + tlocal::$data['downloaditems'];
+    $lang = tlocal::admin();
+$lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
     return parent::gethtml($name);
   }
   
@@ -47,8 +42,8 @@ class tdownloaditemeditor extends tposteditor {
     $lang = tlocal::instance('downloaditems');
     
     $types = array(
-    'theme' => tlocal::$data['downloaditem']['theme'],
-    'plugin' => tlocal::$data['downloaditem']['plugin']
+    'theme' => tlocal::get('downloaditem', 'theme'),
+    'plugin' => tlocal::get('downloaditem', 'plugin')
     );
     
     $args->type = tadminhtml::array2combo($types, $downloaditem->type);
@@ -92,4 +87,3 @@ class tdownloaditemeditor extends tposteditor {
   }
   
 }//class
-?>

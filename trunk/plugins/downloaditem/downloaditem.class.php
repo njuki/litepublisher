@@ -80,7 +80,6 @@ class tdownloaditem extends tpost {
   }
   
   public function getdownloadcontent() {
-    tlocal::loadsection('', 'downloaditem', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     ttheme::$vars['lang'] = tlocal::instance('downloaditem');
     ttheme::$vars['post'] = $this;
     $theme = $this->theme;
@@ -88,7 +87,7 @@ class tdownloaditem extends tpost {
   }
   
   public function getdownloadcount() {
-    return sprintf(tlocal::$data['downloaditem']['downloaded'], $this->downloads);
+    return sprintf(tlocal::get('downloaditem', 'downloaded'), $this->downloads);
   }
   
   public function closepoll() {
@@ -97,4 +96,3 @@ class tdownloaditem extends tpost {
   }
   
 }//class
-?>
