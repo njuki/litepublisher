@@ -106,4 +106,3 @@ class texternallinks extends titems {
   }
   
 }//class
-?>

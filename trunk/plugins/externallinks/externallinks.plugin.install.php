@@ -51,5 +51,3 @@ function texternallinksUninstall($self) {
     $posts->addrevision();
   }
 }
-
-?>
