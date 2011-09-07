@@ -86,5 +86,3 @@ class ticonsetplugin extends tplugin {
   }
   
 }//class
-
-?>

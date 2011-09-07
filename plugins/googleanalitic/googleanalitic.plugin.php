@@ -58,4 +58,3 @@ class tgoogleanalitic extends tplugin {
   }
   
 }//class
-?>
