@@ -14,12 +14,6 @@ function tprofileInstall($self) {
   
   $template = ttemplate::instance();
   $template->addtohead('	<link rel="author profile" title="Profile" href="$site.url/profile.htm" />');
-
-$merger = tlocalmerger::instance();
-$merger->lock();
-$merger->add('default', sprintf('plugins/%s/resource/%s.ini', basename(dirname(__file__)), litepublisher::$options->language));
-$merger->addhtml(sprintf('plugins/%s/resource/html.ini', basename(dirname(__file__)));
-$merger->unlock();
 }
 
 function tprofileUninstall($self) {
@@ -30,12 +24,4 @@ function tprofileUninstall($self) {
   
   $template = ttemplate::instance();
   $template->deletefromhead('	<link rel="author profile" title="Profile" href="$site.url/profile.htm" />');
-
-$merger = tlocalmerger::instance();
-$merger->lock();
-$merger->deletefile('default', sprintf('plugins/%s/resource/%s.ini', basename(dirname(__file__)), litepublisher::$options->language));
-$merger->deletehtml(sprintf('plugins/%s/resource/html.ini', basename(dirname(__file__)));
-$merger->unlock();
 }
-
-?>

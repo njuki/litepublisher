@@ -15,5 +15,3 @@ function tfoafutilUninstall($self) {
   $cron = tcron::instance();
   $cron->deleteclass(get_class($self));
 }
-
-?>

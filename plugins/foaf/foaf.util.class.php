@@ -79,8 +79,7 @@ class tfoafutil  extends tevents {
   
   public function check() {
     $result = '';
-    tlocal::loadsection('', 'foaf', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
-    $lang = tlocal::$instance('foaf');
+    $lang = tlocal::instance('foaf');
     $foaf = tfoaf::instance();
     $items = $foaf->getapproved(0);
     foreach ($items as $id) {
@@ -110,5 +109,3 @@ class tfoafutil  extends tevents {
   }
   
 }//class
-
-?>

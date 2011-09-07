@@ -24,5 +24,3 @@ class tadminfriendswidget extends tadminwidget {
   }
   
 }//class
-
-?>

@@ -218,7 +218,6 @@ class tfoaf extends titems {
     $item = $this->getitem($id);
     $args = targs::instance();
     $args->add($item);
-    tlocal::loadsection('', 'foaf', dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR);
     $lang = tlocal::instance('foaf');
     $event = 'mail' . $event;
     $args->event = $lang->$event;
@@ -286,5 +285,3 @@ class tfoaf extends titems {
   }
   
 }//class
-
-?>
