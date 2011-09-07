@@ -12,7 +12,7 @@ $merger = tlocalmerger::instance();
 $merger->lock();
 $plugins = tplugins::instance();
 $language = litepublisher::$options->language;
-foreach (array('codedoc', 'downloaditem', 'foaf', 'openid-provider',
+foreach (array('codedoc', 'downloaditem', 'foaf', 'openid-provider', 'tickets') as $name) {
 if (!isset($plugins->items[$name])) continue;
 $merger->addplugin($name);
 }
