@@ -62,7 +62,7 @@ public function gettitle() { return $this->title; }
         }
         $result .= sprintf('<li><a href="%s%s" title="%s">%3$s</a>%4$s</li>', litepublisher::$site->url, $item['url'], $item['title'], $postpages);
       }
-      if ($result != '') $result = sprintf('<h1>' . tlocal::get('default', 'sitemap') . '</h1><h2>' . tlocal::get('default',, 'posts') . '</h2><ul>%s</ul>', $result);
+      if ($result != '') $result = sprintf('<h1>' . tlocal::get('default', 'sitemap') . '</h1><h2>' . tlocal::get('default', 'posts') . '</h2><ul>%s</ul>', $result);
     } else {
       $list = array_slice(array_keys($posts->archives), (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
       $result = $theme->getposts($list, true);

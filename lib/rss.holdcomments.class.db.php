@@ -56,7 +56,7 @@ class trssholdcomments extends tevents {
   }
   
   private function dogetholdcomments($rss) {
-    $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::get('comment'., 'onrecent') . ' '. litepublisher::$site->name);
+    $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
     $manager = tcommentmanager::instance();
     $recent = $manager->getrecent($this->count, 'hold');
     $title = tlocal::get('comment', 'onpost') . ' ';
