@@ -36,7 +36,6 @@ function tticketsInstall($self) {
   $polls->save();
   
   litepublisher::$classes->Add('tticket', 'ticket.class.php', basename(dirname(__file__) ));
-  tticket::checklang();
   litepublisher::$classes->Add('tticketsmenu', 'tickets.menu.class.php', basename(dirname(__file__) ));
   litepublisher::$classes->Add('tticketeditor', 'admin.ticketeditor.class.php', basename(dirname(__file__)));
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
