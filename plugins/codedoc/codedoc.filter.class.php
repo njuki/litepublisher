@@ -199,7 +199,7 @@ class tcodedocfilter extends titems {
     }
     $args->description = $this->getdescription($post, $item['description']);
     $args->idwiki = $wiki->add($item['name'], $post->id);
-$lang =tlocal::instance('codedoc');
+    $lang =tlocal::instance('codedoc');
     if ($lang->__isset($item['access']))  $args->access = $lang->__get($item['access']);
     return $this->html->item($args);
   }

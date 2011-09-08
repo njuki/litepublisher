@@ -7,9 +7,9 @@
 **/
 
 function tfoafInstall($self) {
-$merger = tlocalmerger::instance();
-$merger->addplugin(tplugins::getname(__file__));
-
+  $merger = tlocalmerger::instance();
+  $merger->addplugin(tplugins::getname(__file__));
+  
   $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
   $lang = tlocal::instance('foaf');
   
@@ -60,9 +60,9 @@ $merger->addplugin(tplugins::getname(__file__));
 }
 
 function tfoafUninstall($self) {
-$merger = tlocalmerger::instance();
-$merger->deleteplugin(tplugins::getname(__file__));
-
+  $merger = tlocalmerger::instance();
+  $merger->deleteplugin(tplugins::getname(__file__));
+  
   $actions = TXMLRPCAction ::instance();
   $actions->deleteclass(get_class($self));
   

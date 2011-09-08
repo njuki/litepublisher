@@ -22,7 +22,7 @@ class tdownloaditemeditor extends tposteditor {
   
   public function gethtml($name = '') {
     $lang = tlocal::admin();
-$lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
+    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
     return parent::gethtml($name);
   }
   

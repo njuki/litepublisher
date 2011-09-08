@@ -13,8 +13,8 @@ class tadmintickets extends tadminmenu {
   }
   
   public function gethtml($name = '') {
-$lang = tlocal::admin('tickets');
-$lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
+    $lang = tlocal::admin('tickets');
+    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
     return parent::gethtml($name);
   }
   
@@ -58,9 +58,9 @@ $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
       $ticket = tticket::instance($id);
       ttheme::$vars['ticket'] = $ticket;
     $args->status = $lang->{$ticket->status};
-      $args->type = $lang->{$ticket->type};
-      $args->prio = $lang->{$ticket->prio};
-      $args->state = $lang->{$ticket->state};
+    $args->type = $lang->{$ticket->type};
+    $args->prio = $lang->{$ticket->prio};
+    $args->state = $lang->{$ticket->state};
       $result .= $html->itemlist($args);
     }
     $result .= $html->footer();

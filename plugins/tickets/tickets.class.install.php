@@ -8,9 +8,9 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-$merger = tlocalmerger::instance();
-$merger->addplugin(tplugins::getname(__file__));
-
+  $merger = tlocalmerger::instance();
+  $merger->addplugin(tplugins::getname(__file__));
+  
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
   $filter = tcontentfilter::instance();
   $filter->phpcode = true;
@@ -130,7 +130,7 @@ function tticketsUninstall($self) {
     $polls->garbage = true;
     $polls->save();
   }
-
+  
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
   $manager->delete_enum('posts', 'class', 'tticket');
@@ -142,7 +142,7 @@ function tticketsUninstall($self) {
     unset($optimizer->childtables[$i]);
   }
   $optimizer->unlock();
-
-$merger = tlocalmerger::instance();
-$merger->deleteplugin(tplugins::getname(__file__));
+  
+  $merger = tlocalmerger::instance();
+  $merger->deleteplugin(tplugins::getname(__file__));
 }

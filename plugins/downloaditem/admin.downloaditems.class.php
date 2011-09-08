@@ -14,7 +14,7 @@ class tadmindownloaditems extends tadminmenu {
   
   public function gethtml($name = '') {
     $lang = tlocal::admin();
-$lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
+    $lang->ini['downloaditems'] = $lang->ini['downloaditem'] + $lang->ini['downloaditems'];
     return parent::gethtml($name);
   }
   
