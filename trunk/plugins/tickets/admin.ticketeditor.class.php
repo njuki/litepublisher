@@ -37,8 +37,8 @@ class tticketeditor extends tposteditor {
   }
   
   public function gethtml($name = '') {
-$lang = tlocal::admin('tickets');
-$lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
+    $lang = tlocal::admin('tickets');
+    $lang->ini['tickets'] = $lang->ini['ticket'] + $lang->ini['tickets'];
     return parent::gethtml($name);
   }
   

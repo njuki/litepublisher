@@ -18,9 +18,9 @@ function tdownloaditemsInstall($self) {
   $optimizer->childtables[] = 'downloaditems';
   $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
-
-$merger = tlocalmerger::instance();
-$merger->addplugin(tplugins::getname(__file__));
+  
+  $merger = tlocalmerger::instance();
+  $merger->addplugin(tplugins::getname(__file__));
   
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
   
@@ -125,7 +125,7 @@ function tdownloaditemsUninstall($self) {
   $parser->unsubscribeclass($self);
   ttheme::clearcache();
   
- 
+  
   $classes = litepublisher::$classes;
   $classes->lock();
   $classes->delete('tdownloaditem');
@@ -144,10 +144,10 @@ function tdownloaditemsUninstall($self) {
   }
   */
   
-$merger = tlocalmerger::instance();
-$merger->deleteplugin(tplugins::getname(__file__));
-
-    $manager = tdbmanager ::instance();
+  $merger = tlocalmerger::instance();
+  $merger->deleteplugin(tplugins::getname(__file__));
+  
+  $manager = tdbmanager ::instance();
   $manager->deletetable($self->childtable);
   $manager->delete_enum('posts', 'class', 'tdownloaditem');
   

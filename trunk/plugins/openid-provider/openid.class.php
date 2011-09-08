@@ -38,19 +38,19 @@ class topenid extends tevents {
     
     $template = ttemplate::instance();
     $template->addtohead($this->get_head());
-
-$merger = tlocalmerger::instance();
-$merger->addplugin(tplugins::getname(__file__));
+    
+    $merger = tlocalmerger::instance();
+    $merger->addplugin(tplugins::getname(__file__));
   }
   
   public function uninstall() {
     turlmap::unsub($this);
     $template = ttemplate::instance();
     $template->deletefromhead($this->get_head());
-
-$merger = tlocalmerger::instance();
-$merger->deleteplugin(tplugins::getname(__file__));
-
+    
+    $merger = tlocalmerger::instance();
+    $merger->deleteplugin(tplugins::getname(__file__));
+    
     litepublisher::$urlmap->clearcache();
   }
   

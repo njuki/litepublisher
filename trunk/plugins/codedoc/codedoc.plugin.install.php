@@ -15,9 +15,9 @@ function tcodedocpluginInstall($self) {
   class varchar(32) NOT NULL,
   KEY id (id)
   ');
-
-$merger = tlocalmerger::instance();
-$merger->addplugin(tplugins::getname(__file__));
+  
+  $merger = tlocalmerger::instance();
+  $merger->addplugin(tplugins::getname(__file__));
   
   $posts = tposts::instance();
   $posts->lock();
@@ -73,7 +73,7 @@ function tcodedocpluginUninstall($self) {
   $manager = tdbmanager ::instance();
   $manager->deletetable($self->table);
   
-
-$merger = tlocalmerger::instance();
-$merger->deleteplugin(tplugins::getname(__file__));
+  
+  $merger = tlocalmerger::instance();
+  $merger->deleteplugin(tplugins::getname(__file__));
 }
