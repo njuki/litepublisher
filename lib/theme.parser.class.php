@@ -217,7 +217,7 @@ class tthemeparser extends tevents {
     $this->theme = $theme;
     $this->paths = self::getpaths($theme);
     $s = trim($s);
-$this->callevent('beforeparse', array(&$s));
+    $this->callevent('beforeparse', array(&$s));
     while ($s != '') {
       if (preg_match('/^(((\$template|\$custom)?\.?)?\w*+(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           $tag = $m[1];
@@ -498,7 +498,7 @@ $this->callevent('beforeparse', array(&$s));
           $value = trim($value);
           if ($value == trim($parent->templates[$name])) continue;
           if (strend($name, '.date')) {
-            if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::get('datetime',, 'dateformat'))) continue;
+            if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::get('datetime', 'dateformat'))) continue;
           }
           $result .= "\$template.$name = [$value]\n\n";
         }

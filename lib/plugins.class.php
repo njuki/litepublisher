@@ -42,14 +42,14 @@ class tplugins extends TItems {
   }
   
   public static function getlangabout($filename) {
-$name = self::getname($filename);
-$about = self::getabout($name);
-$lang = tlocal::admin();
-$lang->ini[$name] = $about;
-$lang->section = $name;
-return $lang;
-}
-
+    $name = self::getname($filename);
+    $about = self::getabout($name);
+    $lang = tlocal::admin();
+    $lang->ini[$name] = $about;
+    $lang->section = $name;
+    return $lang;
+  }
+  
   public function add($name) {
     if (!@is_dir(litepublisher::$paths->plugins . $name)) return false;
     $about = self::getabout($name);

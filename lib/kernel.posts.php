@@ -742,7 +742,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcmtcount() {
-    $l = &tlocal::$data['comment'];
+    $l = tlocal::instance()->ini['comment'];
     switch($this->commentscount) {
       case 0: return $l[0];
       case 1: return $l[1];
@@ -1390,7 +1390,7 @@ class tpostswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['recentposts'];
+    return tlocal::get('default', 'recentposts');
   }
   
   public function getcontent($id, $sidebar) {
@@ -2219,7 +2219,7 @@ class tcategorieswidget extends tcommontagswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['categories'];
+    return tlocal::get('default', 'categories');
   }
   
   public function getowner() {
@@ -2268,7 +2268,7 @@ class ttagswidget extends tcommontagswidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['tags'];
+    return tlocal::get('default', 'tags');
   }
   
   public function getowner() {
