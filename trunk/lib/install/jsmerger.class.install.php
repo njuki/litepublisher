@@ -41,7 +41,6 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/moderate.min.js');
   
   tlocal::usefile('admin');
-  $self->lock();
 $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $widgetlang = array(
   'expand' => tlocal::get('default', 'expand'),
@@ -53,15 +52,7 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $self->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode($lang->ini['comments'])));
   
   $self->unlock();
-  
+
   $template = ttemplate::instance();
   $template->addtohead(sprintf($template->js, '$site.files$template.jsmerger_default'));
-  
-  $updater = tupdater::instance();
-  $updater->onupdated = $self->onupdated;
-}
-
-function tjsmergerUninstall($self) {
-  $updater = tupdater::instance();
-  $updater->unsubscribeclass($self);
-}
+ }

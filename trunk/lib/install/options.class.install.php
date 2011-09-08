@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-/* to prevent recurse call function toptionsInstall not exists */
+/* to prevent recurse call */
 function installoptions($language) {
   $options = toptions::instance();
   $options->lock();
@@ -37,12 +37,6 @@ function installoptions($language) {
   
   $options->language = $language;
   
-  //$ini = parse_ini_file(litepublisher::$paths->languages . $language .DIRECTORY_SEPARATOR . 'install.ini', true);
-  $adminlang = tlocal::admin();
-  //$adminlang->ini = $ini + $adminlang->ini;
-  
-  $options->timezone = tlocal::get('installation', 'timezone');
-  date_default_timezone_set(tlocal::get('installation', 'timezone'));
   $options->dateformat = '';
   $options->login = "admin";
   $options->password = "";
@@ -82,5 +76,3 @@ function installoptions($language) {
   $options->unlock();
   return $password;
 }
-
-?>

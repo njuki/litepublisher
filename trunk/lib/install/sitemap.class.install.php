@@ -22,7 +22,7 @@ function tsitemapInstall($self) {
   $self->createfiles();
   
   $meta = tmetawidget::instance();
-  $meta->add('sitemap', '/sitemap.htm', tlocal::get('default', 'sitemap')));
+  $meta->add('sitemap', '/sitemap.htm', tlocal::get('default', 'sitemap'));
 }
 
 function tsitemapUninstall($self) {

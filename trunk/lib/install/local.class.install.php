@@ -1,5 +1,6 @@
-<?php
-/**
+f<?php
+/
+**
 * Lite Publisher
 * Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
@@ -7,9 +8,11 @@
 **/
 
 function tlocalInstall($self) {
+tlocal::$self = $self;
 //check double install
 if (count($self->ini) > 0) return;
 preloadlanguage($self, litepublisher::$options->language);
+  litepublisher::$options->timezone = tlocal::get('installation', 'timezone');
 }
 
 function tlocalPreinstall($language) {

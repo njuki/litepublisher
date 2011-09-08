@@ -21,4 +21,12 @@ function tlocalmergerInstall($self) {
   $self->addhtml('lib/languages/adminhtml.ini');
   
   $self->unlock();
+
+
+//post install
+  litepublisher::$options->timezone = tlocal::get('installation', 'timezone');
+    date_default_timezone_set(tlocal::get('installation', 'timezone'));
+
+$html = tadminhtml::instance();
+$html->loadinstall();
 }
