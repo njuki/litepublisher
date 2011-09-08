@@ -35,7 +35,7 @@ class tinstaller extends tdata {
     }
     
     if (!empty($_GET['lang']))  {
-      if (@file_exists(litepublisher::$paths->languages . $_GET['lang'] . '.ini')) $this->language = $_GET['lang'];
+      if ($this->langexists($_GET['lang'])) $this->language = $_GET['lang'];
     }
     
     if (!empty($_GET['mode'])) $this->mode = $_GET['mode'];
@@ -197,7 +197,7 @@ class tinstaller extends tdata {
     $this->checkFolder(litepublisher::$paths->data);
     $this->CheckFolder(litepublisher::$paths->cache);
     $this->CheckFolder(litepublisher::$paths->files);
-    $this->CheckFolder(litepublisher::$paths->languages);
+    //$this->CheckFolder(litepublisher::$paths->languages);
     //$this->CheckFolder(litepublisher::$paths->plugins);
     //$this->CheckFolder(litepublisher::$paths->themes);
   }
@@ -342,34 +342,22 @@ class tinstaller extends tdata {
     //litepublisher::$options = $this;
     //require_once(litepublisher::$paths->lib . 'filer.class.php');
     require_once(litepublisher::$paths->lib . 'local.class.php');
+    require_once(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'local.class.install.php');
     require_once(litepublisher::$paths->lib . 'htmlresource.class.php');
-
-$lang = new tlocal();    
-tlocal::$self = $lang;
-litepublisher::$classes->instances['tlocal'] = $lang;
-    $dir = litepublisher::$paths->languages . $this->language . DIRECTORY_SEPARATOR;
-foreach (array('default', 'admin', 'install') as $name) {
-$ini = parse_ini_file($dir . $name . '.ini', true);
-$lang->ini = $ini + $lang->ini;
-$lang->loaded[] = $name;
-    }
-    date_default_timezone_set(tlocal::get('installation', 'timezone'));
-
-$html = new tadminhtml();
-litepublisher::$classes->instances['tadminhtml'] = $html;
-$ini = parse_ini_file(litepublisher::$paths->languages . 'adminhtml.ini', true);
-$html->ini = $ini + $html->ini;
-$ini = parse_ini_file(litepublisher::$paths->languages . 'install.ini', true);
-$html->ini = $ini + $html->ini;
+    tlocalPreinstall($this->language);
   }
   
   private function GetBrowserLang() {
     if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
       $result = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']);
       $result = substr($result, 0, 2);
-      if (@file_exists(litepublisher::$paths->languages . "$result.ini")) return $result;
+      if ($this->langexists($result))  return $result;
     }
     return 'en';
+  }
+  
+  public function langexists($language) {
+    return @file_exists(litepublisher::$paths->languages . $language . DIRECTORY_SEPARATOR . 'default.ini');
   }
   
   public function echohtml($html) {

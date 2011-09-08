@@ -39,20 +39,20 @@ function tjsmergerInstall($self) {
   $section = 'moderate';
   $self->add($section, '/js/litepublisher/rpc.min.js');
   $self->add($section, '/js/litepublisher/moderate.min.js');
-
-    tlocal::usefile('admin');
-    $self->lock();
-  $js = "var lang;\nif (lang == undefined) lang = {};\n";
-    $widgetlang = array(
-    'expand' => tlocal::get('default', 'expand'),
-    'colapse' => tlocal::get('default', 'colapse')
-    );
-$lang = tlocal::admin();
-    $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
-    $self->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode($lang->ini['comment'])));
-    $self->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode($lang->ini['comments'])));
-    
-    $self->unlock();
+  
+  tlocal::usefile('admin');
+  $self->lock();
+$js = "var lang;\nif (lang == undefined) lang = {};\n";
+  $widgetlang = array(
+  'expand' => tlocal::get('default', 'expand'),
+  'colapse' => tlocal::get('default', 'colapse')
+  );
+  $lang = tlocal::admin();
+  $self->addtext('default', 'widgetlang', $js . sprintf('lang.widgetlang= %s;',  json_encode($widgetlang)));
+  $self->addtext('comments', 'lang', $js . sprintf('lang.comment = %s;',  json_encode($lang->ini['comment'])));
+  $self->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode($lang->ini['comments'])));
+  
+  $self->unlock();
   
   $template = ttemplate::instance();
   $template->addtohead(sprintf($template->js, '$site.files$template.jsmerger_default'));

@@ -33,16 +33,18 @@ class tadminmenus extends tmenus {
   }
   
   public function getadmintitle($name) {
-    if (isset(tlocal::$data[$name]['title'])) {
-      return tlocal::$data[$name]['title'];
-    } elseif (isset(tlocal::$data[tlocal::instance()->section][$name])) {
-      return tlocal::$data[tlocal::instance()->section][$name];
-    } elseif (isset(tlocal::$data['names'][$name])) {
-      return tlocal::$data['names'][$name];
-    } elseif (isset(tlocal::$data['default'][$name])) {
-      return tlocal::$data['default'][$name];
-    } elseif (isset(tlocal::$data['common'][$name])) {
-      return tlocal::$data['common'][$name];
+    $lang = tlocal::instance();
+    $ini = &$lang->ini;
+    if (isset($ini[$name]['title'])) {
+      return $ini[$name]['title'];
+    } elseif (isset($ini[$lang->section][$name])) {
+      return $ini[$lang->section][$name];
+    } elseif (isset($ini['names'][$name])) {
+      return $ini['names'][$name];
+    } elseif (isset($ini['default'][$name])) {
+      return $ini['default'][$name];
+    } elseif (isset($ini['common'][$name])) {
+      return $ini['common'][$name];
     } else {
       return $name;
     }
@@ -154,7 +156,7 @@ public function save() { return true; }
     }
     
     if ($s = self::auth($this->group)) return $s;
-    tlocal::loadlang('admin');
+    tlocal::usefile('admin');
     $this->arg = litepublisher::$urlmap->argtree;
     if ($s = $this->canrequest()) return $s;
     $this->doprocessform();
@@ -353,12 +355,12 @@ class tauthdigest extends tevents {
   
   public function checkattack() {
     if ($this->xxxcheck  && $this->isattack()) {
-      tlocal::loadlang('admin');
+      tlocal::usefile('admin');
       if ($_POST) {
-        die(tlocal::$data['login']['xxxattack']);
+        die(tlocal::get('login', 'xxxattack'));
       }
       if ($_GET) {
-        die(tlocal::$data['login']['confirmxxxattack'] .
+        die(tlocal::get('login', 'confirmxxxattack') .
         sprintf(' <a href="%1$s">%1$s</a>', $_SERVER['REQUEST_URI']));
       }
     }
@@ -406,25 +408,21 @@ class tadminhtml {
   private $map;
   
   public static function instance() {
-    return getinstance(__class__);
+    $result = getinstance(__class__);
+    if (count($result->ini) == 0) $result->load('adminhtml');
+    return $result;
   }
   
   public static function getinstance($section) {
     $self = getinstance(__class__);
     $self->section = $section;
-    $lang = tlocal::instance($section);
+    tlocal::instance($section);
     return $self;
   }
   
   public function __construct() {
     $this->ini = array();
-    if (litepublisher::$options->installed) {
-      $this->load('adminhtml');
-      tlocal::loadlang('admin');
-    } else {
-      $this->loadini(litepublisher::$paths->languages . 'adminhtml.ini');
-      $this->loadini(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.ini');
-    }
+    tlocal::usefile('admin');
   }
   
   public function __get($name) {
@@ -501,33 +499,26 @@ class tadminhtml {
     ));
   }
   
-  
   public function fixquote($s) {
     $s = str_replace("\\'", '\"', $s);
     $s = str_replace("'", '"', $s);
     return str_replace('\"', "'", $s);
   }
   
-  public function load($name) {
-    $cachefilename = tlocal::getcachefilename($name);
-    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
+  public function load() {
+    $filename = tlocal::getcachedir() . 'adminhtml';
+    if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini;
     } else {
-      $v = parse_ini_file(litepublisher::$paths->languages . $name . '.ini', true);
-      $this->ini = $v + $this->ini;
-      tfilestorage::savevar($cachefilename, $v);
+      $merger = tlocalmerger::instance();
+      $merger->parsehtml();
     }
   }
   
-  public function addini($section, $filename) {
-    if (!isset($this->ini[$section])) {
-      $this->loadini($filename);
-      tfilestorage::savevar(tlocal::getcachefilename('adminhtml'), $this->ini);
-    }
-  }
-  
-  public function loadini($filename) {
-    if( $v = parse_ini_file($filename, true)) {
+  public function loadinstall() {
+    if (isset($this->ini['installation'])) return;
+    tlocal::usefile('install');
+    if( $v = parse_ini_file(litepublisher::$paths->languages . 'install.ini', true)) {
       $this->ini = $v + $this->ini;
     }
   }
@@ -1278,7 +1269,7 @@ class tposteditor extends tadminmenu {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      return tlocal::$data[$this->name]['editor'];
+      return tlocal::get($this->name, 'editor');
     }
   }
   

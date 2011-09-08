@@ -17,8 +17,6 @@ function installclasses($language) {
   return $password;
 }
 
-
-
 function ParseClassesIni() {
   $ini = parse_ini_file(litepublisher::$paths->lib.'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
   $classes = litepublisher::$classes;
@@ -57,8 +55,8 @@ function ParseClassesIni() {
   @mkdir(litepublisher::$paths->data . 'themes', 0777);
   @chmod(litepublisher::$paths->data . 'themes', 0777);
   
-  @mkdir(litepublisher::$paths->data . 'languages', 0777);
-  @chmod(litepublisher::$paths->data . 'languages', 0777);
+  //@mkdir(litepublisher::$paths->data . 'languages', 0777);
+  //@chmod(litepublisher::$paths->data . 'languages', 0777);
 }
 
 function doinstallclasses() {

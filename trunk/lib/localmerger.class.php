@@ -7,7 +7,7 @@
 **/
 
 class tlocalmerger extends titems {
-public $html;
+  public $html;
   
   public static function instance() {
     return getinstance(__class__);
@@ -17,7 +17,7 @@ public $html;
     $this->dbversion = false;
     parent::create();
     $this->basename = 'localmerger';
-$this->addmap('html', array());
+    $this->addmap('html', array());
   }
   
   public function save() {
@@ -75,11 +75,11 @@ $this->addmap('html', array());
     }
     $this->unlock();
   }
-
+  
   public function addtext($name, $section, $s) {
-$s = trim($s);
-if ($s != '') $this->addsection($name, $section, tini2array::parsesection($s));
-}
+    $s = trim($s);
+    if ($s != '') $this->addsection($name, $section, tini2array::parsesection($s));
+  }
   
   public function addsection($name, $section, array $items) {
     if (!isset($this->items[$name])) {
@@ -89,7 +89,7 @@ if ($s != '') $this->addsection($name, $section, tini2array::parsesection($s));
       );
     } elseif (!isset(      $this->items[$name]['texts'][$section])) {
       $this->items[$name]['texts'][$section] = $items;
-} else {
+    } else {
       $this->items[$name]['texts'][$section] = $items + $this->items[$name]['texts'][$section];
     }
     $this->save();
@@ -102,50 +102,52 @@ if ($s != '') $this->addsection($name, $section, tini2array::parsesection($s));
     $this->save();
     return true;
   }
-
-public function getrealfilename($filename) {
-$name = substr($filename, 0, strpos($filename, '/'));
-$dir = isset(litepublisher::$_paths[$name]) ? litepublisher::$_paths[$name] ? litepublisher::$paths->home;
-return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
-}
+  
+  public function getrealfilename($filename) {
+    $name = substr($filename, 0, strpos($filename, '/'));
+    $dir = isset(litepublisher::$_paths[$name]) ? litepublisher::$_paths[$name] : litepublisher::$paths->home;
+    return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+  }
   
   public function assemble() {
-if (!isset(tlocal::$self)) $this->error('The tlocal instance not exists');
-tlocal::$self->ini = array();
+    $lang = getinstance('tlocal');
+    $lang->ini = array();
     foreach ($this->items as $name => $items) {
-$this->parse($name);
-}
-$this->parsehtml();
-}
-
+      $this->parse($name);
+    }
+    $this->parsehtml();
+  }
+  
   public function parse($name) {
-if (!isset(tlocal::$self)) $this->error('The tlocal instance not exists');
-if (!isset($this->items[$name])) $this->error(sprintf('The "%s" partition not found', $name));
-      $ini = array();
-      foreach ($this->items[$name]['files'] as $filename) {
-        $realfilename = $this->getrealfilename($filename);
-        if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
-if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
-if (count($ini) == 0) {
-$ini = $parsed;
-} else {
-foreach ($parsed as $section => $itemsini) {
-$ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
-}
-}
-
-foreach ($this->items[$name]['texts'] as $section = $itemsini) {
-$ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
-}
-
-tfilestorage::savevar(tlocal::getcachedir() . $name , $ini);
-tlocal::$self->ini = $ini + tlocal::$self->ini;
-}
-
+    $lang = getinstance('tlocal');
+    if (!isset($this->items[$name])) $this->error(sprintf('The "%s" partition not found', $name));
+    $ini = array();
+    foreach ($this->items[$name]['files'] as $filename) {
+      $realfilename = $this->getrealfilename($filename);
+      if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
+      if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
+      if (count($ini) == 0) {
+        $ini = $parsed;
+      } else {
+        foreach ($parsed as $section => $itemsini) {
+          $ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
+        }
+      }
+    }
+    
+    foreach ($this->items[$name]['texts'] as $section => $itemsini) {
+      $ini[$section] = isset($ini[$section]) ? $itemsini + $ini[$section] : $itemsini;
+    }
+    
+    tfilestorage::savevar(tlocal::getcachedir() . $name , $ini);
+    $lang->ini = $ini + $lang->ini;
+    $lang->loaded[] = $name;
+  }
+  
   public function addhtml($filename) {
     if (!($filename = $this->normfilename($filename))) return false;
-      if (in_array($filename, $this->html)) return false;
-      $this->html[] = $filename;
+    if (in_array($filename, $this->html)) return false;
+    $this->html[] = $filename;
     $this->save();
     return count($this->html);
   }
@@ -156,41 +158,43 @@ tlocal::$self->ini = $ini + tlocal::$self->ini;
     array_delete($this->html, $i);
     $this->save();
   }
-    public function parsehtml() {
-$html = tadminhtml::instance();
-$html->ini = array();
-      foreach ($this->html as $filename) {
-        $realfilename = $this->getrealfilename($filename);
-        if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
-if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
-if (count($html->ini) == 0) {
-$jhtml->ini = $parsed;
-} else {
-foreach ($parsed as $section => $itemsini) {
-$html->ini[$section] = isset($html->ini[$section]) ? $itemsini + $html->ini[$section] : $itemsini;
-}
-}
-
-tfilestorage::savevar(tlocal::getcachedir() . 'adminhtml', $html->ini);
-}
-
-public function addplugin($name) {
-$language = litepublisher::$options->language;
-$dir = litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-$this->lock();
-if (file_exists($dir . $language . '.ini')) $this->add('default', "plugins/$name/resource/$language.ini");
-if (file_exists($dir . $language . '.admin.ini')) $this->add('admin', "plugins/$name/resource/$language.admin.ini");
-if (file_exists($dir . 'html.ini')) $this->addhtml("plugins/$name/resource/html.ini");
-$this->unlock();
-}
-
-public function deleteplugin($name) {
-$language = litepublisher::$options->language;
-$this->lock();
-$this->deletefile('default', "plugins/$name/resource/$language.ini");
-$this->deletefile('admin', "plugins/$name/resource/$language.admin.ini");
-$this->deletehtml("plugins/$name/resource/html.ini");
-$this->unlock();
-}
-
+  
+  public function parsehtml() {
+    $html = getinstance('tadminhtml');
+    $html->ini = array();
+    foreach ($this->html as $filename) {
+      $realfilename = $this->getrealfilename($filename);
+      if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
+      if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
+      if (count($html->ini) == 0) {
+        $html->ini = $parsed;
+      } else {
+        foreach ($parsed as $section => $itemsini) {
+          $html->ini[$section] = isset($html->ini[$section]) ? $itemsini + $html->ini[$section] : $itemsini;
+        }
+      }
+    }
+    
+    tfilestorage::savevar(tlocal::getcachedir() . 'adminhtml', $html->ini);
+  }
+  
+  public function addplugin($name) {
+    $language = litepublisher::$options->language;
+    $dir = litepublisher::$paths->plugins . $name . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
+    $this->lock();
+    if (file_exists($dir . $language . '.ini')) $this->add('default', "plugins/$name/resource/$language.ini");
+    if (file_exists($dir . $language . '.admin.ini')) $this->add('admin', "plugins/$name/resource/$language.admin.ini");
+    if (file_exists($dir . 'html.ini')) $this->addhtml("plugins/$name/resource/html.ini");
+    $this->unlock();
+  }
+  
+  public function deleteplugin($name) {
+    $language = litepublisher::$options->language;
+    $this->lock();
+    $this->deletefile('default', "plugins/$name/resource/$language.ini");
+    $this->deletefile('admin', "plugins/$name/resource/$language.admin.ini");
+    $this->deletehtml("plugins/$name/resource/html.ini");
+    $this->unlock();
+  }
+  
 } //class

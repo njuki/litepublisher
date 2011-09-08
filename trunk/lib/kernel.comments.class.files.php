@@ -210,8 +210,7 @@ class tcomments extends titems {
     $result = $this->dogetcontent(false, 0);
     if (!$this->moderator) return $result;
     $theme = ttheme::instance();
-    tlocal::loadlang('admin');
-    $lang = tlocal::instance('comment');
+    $lang = tlocal::admin('comment');
     $post = tpost::instance($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->hold->dogetcontent(true, 0);
@@ -249,7 +248,7 @@ class tcomments extends titems {
       $lang = tlocal::instance('comment');
       
       if ($ismoder) {
-        tlocal::loadlang('admin');
+        tlocal::usefile('admin');
         $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
       } else {
         $moderate = '';
@@ -425,7 +424,7 @@ class TComment {
   }
   
   public function getlocalstatus() {
-    return tlocal::$data['commentstatus'][$this->status];
+    return tlocal::get('commentstatus', $this->status);
   }
   
   public function  gettime() {
@@ -878,14 +877,12 @@ class tcommentform extends tevents {
     
     $confirmid = $_POST['confirmid'];
     if (!($values = $kept->getitem($confirmid))) {
-      //return tsimplecontent::content(tlocal::$data['commentform']['notfound']);
-      return $this->htmlhelper->geterrorcontent(tlocal::$data['commentform']['notfound']);
+      return $this->htmlhelper->geterrorcontent(tlocal::get('commentform', 'notfound'));
     }
     $postid = isset($values['postid']) ? (int) $values['postid'] : 0;
     $posts = litepublisher::$classes->posts;
     if(!$posts->itemexists($postid)) {
-      //return tsimplecontent::content(tlocal::$data['default']['postnotfound']);
-      return $this->htmlhelper->geterrorcontent(tlocal::$data['default']['postnotfound']);
+      return $this->htmlhelper->geterrorcontent(tlocal::get('default', 'postnotfound'));
     }
     
     $post = tpost::instance($postid);
@@ -1324,7 +1321,7 @@ class tcommentswidget extends twidget {
   }
   
   public function getdeftitle() {
-    return tlocal::$data['default']['recentcomments'];
+    return tlocal::get('default', 'recentcomments');
   }
   
   public function getcontent($id, $sidebar) {
@@ -1336,7 +1333,7 @@ class tcommentswidget extends twidget {
     $tml = $theme->getwidgetitem('comments', $sidebar);
     $url = litepublisher::$site->url;
     $args = targs::instance();
-    $args->onrecent = tlocal::$data['comment']['onrecent'];
+    $args->onrecent = tlocal::get('comment', 'onrecent');
     foreach ($recent as $item) {
       $args->add($item);
       $args->link = $url . $item['posturl'];

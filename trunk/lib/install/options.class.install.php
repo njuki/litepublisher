@@ -37,9 +37,9 @@ function installoptions($language) {
   
   $options->language = $language;
   
-$ini = parse_ini_file(litepublisher::$paths->languages . $language .DIRECTORY_SEPARATOR . 'install.ini', true);
-$adminlang = tlocal::admin();
-$adminlang->ini = $ini + $adminlang->ini;
+  //$ini = parse_ini_file(litepublisher::$paths->languages . $language .DIRECTORY_SEPARATOR . 'install.ini', true);
+  $adminlang = tlocal::admin();
+  //$adminlang->ini = $ini + $adminlang->ini;
   
   $options->timezone = tlocal::get('installation', 'timezone');
   date_default_timezone_set(tlocal::get('installation', 'timezone'));

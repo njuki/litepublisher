@@ -33,8 +33,8 @@ class tadminmenus extends tmenus {
   }
   
   public function getadmintitle($name) {
-$lang = tlocal::instance();
-$ini = &$lang->ini;
+    $lang = tlocal::instance();
+    $ini = &$lang->ini;
     if (isset($ini[$name]['title'])) {
       return $ini[$name]['title'];
     } elseif (isset($ini[$lang->section][$name])) {

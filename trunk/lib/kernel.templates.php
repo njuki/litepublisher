@@ -6,139 +6,91 @@
 * and GPL (gpl.txt) licenses.
 **/
 //local.class.php
-class targs {
-  public $data;
-  
-  public static function instance() {
-    return litepublisher::$classes->newinstance(__class__);
-  }
-  
-  public function __construct($thisthis = null) {
-    $site = litepublisher::$site;
-    $this->data = array(
-    '$site.url' => $site->url,
-  '{$site.q}' => $site->q,
-    '$site.q' => $site->q,
-    '$site.files' => $site->files
-    );
-    if (isset($thisthis)) $this->data['$this'] = $thisthis;
-  }
-  
-  public function __get($name) {
-    if (($name == 'link') && !isset($this->data['$link'])  && isset($this->data['$url'])) {
-      return litepublisher::$site->url . $this->data['$url'];
-    }
-    return $this->data['$' . $name];
-  }
-  
-  public function __set($name, $value) {
-    if (is_bool($value)) {
-      $value = $value ? 'checked="checked"' : '';
-    }
-    
-    $this->data['$'.$name] = $value;
-    $this->data["%%$name%%"] = $value;
-    
-    if (($name == 'url') && !isset($this->data['$link'])) {
-      $this->data['$link'] = litepublisher::$site->url . $value;
-      $this->data['%%link%%'] = litepublisher::$site->url . $value;
-    }
-  }
-  
-  public function add(array $a) {
-    foreach ($a as $key => $value) {
-      $this->__set($key, $value);
-      if ($key == 'url') {
-        $this->data['$link'] = litepublisher::$site->url . $value;
-        $this->data['%%link%%'] = litepublisher::$site->url . $value;
-      }
-    }
-    
-    if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
-    if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
-  }
-  
-}//class
-
 class tlocal {
-  public static $data;
-  private static $files;
+  public static $self;
+  public $loaded;
+  public $ini;
   public $section;
   
+  public static function instance($section = '') {
+    if (!isset(self::$self)) {
+      self::$self= getinstance(__class__);
+      self::$self->loadfile('default');
+    }
+    if ($section != '') self::$self->section = $section;
+    return self::$self;
+  }
+  
+  public static function admin($section = '') {
+    $result = self::instance($section);
+    $result->check('admin');
+    return $result;
+  }
+  
+  public function __construct() {
+    $this->ini = array();
+    $this->loaded = array();
+  }
+  
+  public static function get($section, $key) {
+    return self::$self->ini[$section][$key];
+  }
+  
   public function __get($name) {
-    if (isset(self::$data[$this->section][$name])) return self::$data[$this->section][$name];
-    if (isset(self::$data['common'][$name])) return self::$data['common'][$name];
-    if (isset(self::$data['default'][$name])) return self::$data['default'][$name];
+    if (isset($this->ini[$this->section][$name])) return $this->ini[$this->section][$name];
+    if (isset($this->ini['common'][$name])) return $this->ini['common'][$name];
+    if (isset($this->ini['default'][$name])) return $this->ini['default'][$name];
     return '';
   }
+  
+  public function __isset($name) {
+    return isset($this->ini[$this->section][$name]) ||
+    isset($this->ini['common'][$name]) ||
+    isset($this->ini['default'][$name]);
+  }
+  
   
   public function __call($name, $args) {
     return strtr ($this->__get($name), $args->data);
   }
   
-  public static function instance($section = '') {
-    $result = getinstance(__class__);
-    if ($section != '') $result->section = $section;
-    return $result;
-  }
-  
   public static function date($date, $format = '') {
-    if (empty($format)) $format = self::getdateformat();
-    return self::translate(date($format, $date), 'datetime');
+    if (empty($format)) $format = $this->getdateformat();
+    return self::instance()->translate(date($format, $date), 'datetime');
   }
   
-  public static function getdateformat() {
+  public function getdateformat() {
     $format = litepublisher::$options->dateformat;
-    return $format != ''? $format : self::$data['datetime']['dateformat'];
+    return $format != ''? $format : $this->ini['datetime']['dateformat'];
   }
   
-  public static function translate($s, $section = 'default') {
-    return strtr($s, self::$data[$section]);
+  public function translate($s, $section = 'default') {
+    return strtr($s, $this->ini[$section]);
   }
   
-  public static function checkload() {
-    if (!isset(self::$data)) {
-      self::$data = array();
-      self::$files = array();
-      if (litepublisher::$options->installed) self::loadlang('');
-    }
+  public function check($name) {
+    if ($name == '') $name = 'default';
+    if (!in_array($name, $this->loaded)) $this->loadfile($name);
   }
   
-  public static function loadlang($name) {
-    $langname = litepublisher::$options->language;
-    if ($langname != '') {
-      if ($name != '') $name = '.' . $name;
-      self::load(litepublisher::$paths->languages . $langname . $name);
-    }
-  }
-  
-  public static function load($filename) {
-    if (in_array($filename, self::$files)) return;
-    self::$files[] = $filename;
-    $cachefilename = self::getcachefilename(basename($filename));
-    if (tfilestorage::loadvar($cachefilename, $v) && is_array($v)) {
-      self::$data = $v + self::$data ;
+  public function loadfile($name) {
+    $this->loaded[] = $name;
+    $filename = self::getcachedir() . $name;
+    if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
+      $this->ini = $v + $this->ini ;
     } else {
-      $v = parse_ini_file($filename . '.ini', true);
-      self::$data = $v + self::$data ;
-      tfilestorage::savevar($cachefilename, $v);
-      //self::ini2js($filename);
+      $merger = tlocalmerger::instance();
+      $merger->parse($name);
     }
   }
   
-  public static function loadini($filename) {
-    if (in_array($filename, self::$files)) return;
-    if (file_exists($filename) && ($v = parse_ini_file($filename, true))) {
-      self::$data = $v + self::$data ;
-      self::$files[] = $filename;
-    }
+  public static function usefile($name) {
+    self::instance()->check($name);
   }
   
-  public static function install() {
-    $dir =litepublisher::$paths->data . 'languages';
-    if (!is_dir($dir)) @mkdir($dir, 0777);
-    @chmod($dir, 0777);
-    self::checkload();
+  //backward
+  public static function loadlang($name) {
+    self::usefile($name);
   }
   
   public static function getcachedir() {
@@ -147,25 +99,7 @@ class tlocal {
   
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
-    self::$files = array();
-  }
-  
-  public static function getcachefilename($name) {
-    return self::getcachedir() . $name;
-  }
-  
-  public static function loadsection($name, $section, $dir) {
-    tlocal::loadlang($name);
-    if (!isset(self::$data[$section])) {
-      $language = litepublisher::$options->language;
-      if ($name != '') $name = '.' . $name;
-      self::loadini($dir . $language . $name . '.ini');
-      tfilestorage::savevar(self::getcachefilename($language . $name), self::$data);
-    }
-  }
-  
-  public static function loadinstall() {
-    self::loadini(litepublisher::$paths->languages . litepublisher::$options->language . '.install.ini');
+    self::instance()->loaded = array();
   }
   
 }//class
@@ -175,9 +109,6 @@ class tdateformater {
 public function __construct($date) { $this->date = $date; }
 public function __get($name) { return tlocal::translate(date($name, $this->date), 'datetime'); }
 }
-
-//init
-tlocal::checkload();
 
 //views.class.php
 class tview extends titem {
@@ -610,7 +541,7 @@ class ttemplate extends tevents_storage {
   public function getpage() {
     $page = litepublisher::$urlmap->page;
     if ($page <= 1) return '';
-    return sprintf(tlocal::$data['default']['pagetitle'], $page);
+    return sprintf(tlocal::get('default', 'pagetitle'), $page);
   }
   
   public function trimwords($s, array $words) {
@@ -1097,6 +1028,61 @@ class tthemeprops {
   
   public function __isset($name) {
     return array_key_exists($this->getpath($name), $this->root);
+  }
+  
+}//class
+
+
+class targs {
+  public $data;
+  
+  public static function instance() {
+    return litepublisher::$classes->newinstance(__class__);
+  }
+  
+  public function __construct($thisthis = null) {
+    $site = litepublisher::$site;
+    $this->data = array(
+    '$site.url' => $site->url,
+  '{$site.q}' => $site->q,
+    '$site.q' => $site->q,
+    '$site.files' => $site->files
+    );
+    if (isset($thisthis)) $this->data['$this'] = $thisthis;
+  }
+  
+  public function __get($name) {
+    if (($name == 'link') && !isset($this->data['$link'])  && isset($this->data['$url'])) {
+      return litepublisher::$site->url . $this->data['$url'];
+    }
+    return $this->data['$' . $name];
+  }
+  
+  public function __set($name, $value) {
+    if (is_bool($value)) {
+      $value = $value ? 'checked="checked"' : '';
+    }
+    
+    $this->data['$'.$name] = $value;
+    $this->data["%%$name%%"] = $value;
+    
+    if (($name == 'url') && !isset($this->data['$link'])) {
+      $this->data['$link'] = litepublisher::$site->url . $value;
+      $this->data['%%link%%'] = litepublisher::$site->url . $value;
+    }
+  }
+  
+  public function add(array $a) {
+    foreach ($a as $key => $value) {
+      $this->__set($key, $value);
+      if ($key == 'url') {
+        $this->data['$link'] = litepublisher::$site->url . $value;
+        $this->data['%%link%%'] = litepublisher::$site->url . $value;
+      }
+    }
+    
+    if (isset($a['title']) && !isset($a['text'])) $this->__set('text', $a['title']);
+    if (isset($a['text']) && !isset($a['title']))  $this->__set('title', $a['text']);
   }
   
 }//class
