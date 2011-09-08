@@ -48,7 +48,7 @@ class twikiwords extends titems {
     $c = count($items);
     if ($c == 0) {
       $result = sprintf('<strong>%s</strong>', $word);
-      elseif ($c == 1) {
+      } elseif ($c == 1) {
         $post = tpost::instance($items[0]);
         $result = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
       } else {

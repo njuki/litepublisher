@@ -7,7 +7,7 @@
 **/
 
 function tprofileInstall($self) {
-  litepublisher::$Urlmap->add($self->url, get_class($self), null);
+  litepublisher::$urlmap->add($self->url, get_class($self), null);
   
   $sitemap = tsitemap::instance();
   $sitemap->add($self->url, 7);
