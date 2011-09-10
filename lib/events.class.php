@@ -169,13 +169,17 @@ class tevents extends tdata {
   }
   
   public function delete_event_class($name, $class) {
-    if (    $list = $this->get_events($name)) {
-      foreach ($list  as $i => $item) {
-        if ($item['class'] == $class) {
-          $this->delete_event_item($name, $i);
-          return true;
-        }
+    if (isset($this->events[$name])) {
+$list = &$this->events[$name];
+$deleted = false;
+for ($i = count($list) - 1; $i >= 0; $i--) {
+        if ($list[$i]['class'] == $class) {
+array_splice($list, $i, 1);
+$deleted = true;
+}
       }
+if ($deleted) $this->save();
+return $deleted;
     }
     return false;
   }
