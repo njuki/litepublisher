@@ -1,3 +1,4 @@
+* {margin: 0; padding: 0; border: 0;}
 #topmenu{position:relative; z-index: 50; height: 40px; width: 960px; margin: 0 auto; border: 1px solid #fff; font: 14px Trebuchet MS, Tahoma, Verdana, sans-serif; color: #0c588a;} 
 #topmenu ul li a {color: #0c588a; height: 30px; text-shadow: 1px 1px 0 #eefaff; text-decoration: none;} 
 #topmenu ul li a:hover {text-decoration:underline;} 
