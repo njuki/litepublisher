@@ -26,11 +26,15 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
 .post-tags a, .post-time {font-size:12px;}
 .post-date {background: url(../images/clock.png) no-repeat left top;padding:0 0 0 20px;float:right;color:#737373;font-size:12px;}
 .post-content, #commentlist li p  {margin:15px 0 15px 0;}
+.post-info {background-color:#fff1e2;height:24px;padding:7px 10px 0;font-size:12px;position:relative;margin:10px 0 30px;}
+.post-cat {background: url(../images/folder-horizontal.png) no-repeat left center;padding:0 0 0 20px;}
+.post-cat a, .post-comments a {color:#e6674a;}
 .post-rsscomments{float:right;background: url(../images/feed-balloon.png) no-repeat left center;padding:0 0 0 20px;}
-#content #comments, #content .hold, #content #respond {margin:30px 0 15px 0;}
 #prevnext {padding:10px 5px;border:5px solid #F3F3F3;margin:-10px 0 0;}
 #prevnext p {margin:0;}
 #prevnext #next {text-align:right;}
+.post-comments {background: url(../images/balloon.png) no-repeat left center;padding:0 0 0 20px;float:right;text-align:right;}
+#content #comments, #content .hold, #content #respond {margin:30px 0 15px 0;}
 .moderationbuttons, .replyquotebuttons {margin:15px 0 15px 0;text-align:right;}
 .commentmetadata a{font-size:10px;color:#A7A7A7;}
 .commentmetadata {float:right;}
@@ -53,11 +57,6 @@ body {background:#f0f6f7 url(../images/bg7.png) repeat-x;font:12px Arial, Verdan
    margin: 0.5em 0;
    padding: 0;
 }
-
-.post-info {background-color:#fff1e2;height:24px;padding:7px 10px 0;font-size:12px;position:relative;margin:10px 0 30px;}
-.post-cat {background: url(../images/folder-horizontal.png) no-repeat left center;padding:0 0 0 20px;}
-.post-comments {background: url(../images/balloon.png) no-repeat left center;padding:0 0 0 20px;float:right;text-align:right;}
-.post-cat a, .post-comments a {color:#e6674a;}
 
 #content ul {margin:10px 0}
 #content li {margin:0 0 5px 30px;}

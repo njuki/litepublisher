@@ -95,4 +95,3 @@ try {
 }
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
-?>

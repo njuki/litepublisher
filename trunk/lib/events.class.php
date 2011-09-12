@@ -178,7 +178,10 @@ array_splice($list, $i, 1);
 $deleted = true;
 }
       }
-if ($deleted) $this->save();
+if ($deleted) {
+if (count($list) == 0) unset($this->events[$name]);
+$this->save();
+}
 return $deleted;
     }
     return false;

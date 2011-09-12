@@ -1,5 +1,5 @@
 <?php
-//set_time_limit(10);
+//set_time_limit(1);
 error_reporting(E_ALL | E_NOTICE | E_STRICT | E_WARNING );
 ini_set('display_errors', 1);
  Header( 'Cache-Control: no-cache, must-revalidate');
@@ -95,7 +95,7 @@ if (dbversion) litepublisher::$db = new tdatabase();
 tlocal::clearcache();
 //require('lib/update/update.4.81.php');
 //tjsmerger::instance()->onupdated();
-//tupdater::instance()->run(4.90);
+//tupdater::instance()->run(4.93);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));
@@ -104,7 +104,7 @@ tlocal::clearcache();
   }
   
 } catch (Exception $e) {
-  //echo $e->GetMessage();
+// echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
 //tupdater::instance()->run(4.64);
@@ -124,4 +124,3 @@ echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 //echo json_encode(tlocal::$data);
 //dumpvar($_GET);
 //dumpvar($_SERVER);
-?>

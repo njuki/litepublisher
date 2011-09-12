@@ -1,6 +1,8 @@
 <?php
 
 function update493() {
+  litepublisher::$site->jquery_version = '1.6.3';
+
 $updater = tupdater::instance();
 $updater->unsubscribeclassname('tjsmerger');
 
