@@ -19,7 +19,6 @@ class tcssmerger extends tjsmerger {
 
 public function replaceurl($m) {
 $url = $m[1];
-//echo "\nurl = $url\n";
 $url = realpath($url);
 $url = substr($url, strlen(litepublisher::$paths->home));
 $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
@@ -30,15 +29,14 @@ return sprintf(' url(%s)', litepublisher::$site->files . $url);
 public function readfile($filename) {
 if ($result = parent::readfile($filename)) {
 chdir(dirname($filename));
-$result = preg_replace_callback(
-'/\surl\s*\(\s*[\'"]?(.*?)[\'"]?\s*\)/i',
+$result = preg_replace_callback('/\surl\s*\(\s*[\'"]?(.*?)[\'"]?\s*\)/i',
 array($this, 'replaceurl'), $result);
 return $result;
 }
 }
 
-  public function getfilename($section) {
-    return sprintf('/files/css/%s.%s.css', $section, $this->revision);
+  public function getfilename($section, $revision) {
+    return sprintf('/files/css/%s.%s.css', $section, $revision);
   }
 
 

@@ -99,8 +99,8 @@ class tjsmerger extends titems {
     return true;
   }
   
-  public function getfilename($section) {
-    return sprintf('/files/js/%s.%s.js', $section, $this->revision);
+  public function getfilename($section, $revision) {
+    return sprintf('/files/js/%s.%s.js', $section, $revision);
   }
 
 public function readfile($filename) {
@@ -124,16 +124,16 @@ return $result;
 }
       }
       $s .= implode("\n", $items['texts']);
-      $jsfile =  $this->getfilename($section);
+      $jsfile =  $this->getfilename($section, $this->revision);
       $realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $jsfile);
       file_put_contents($realfile, $s);
       @chmod($realfile, 0666);
-      $template->data['jsmerger_' . $section] = $jsfile;
+      $template->data[$this->basename . '_' . $section] = $jsfile;
     }
     $template->save();
     litepublisher::$urlmap->clearcache();
     foreach (array_keys($this->items) as $section) {
-      $old = $home . str_replace('/',DIRECTORY_SEPARATOR, sprintf('/files/js/%s.%s.js', $section, $this->revision - 1));
+      $old = $home . str_replace('/',DIRECTORY_SEPARATOR, $this->getfilename($section, $this->revision - 1));
       if (file_exists($old)) @unlink($old);
     }
   }
