@@ -102,6 +102,12 @@ class tjsmerger extends titems {
   public function getfilename($section) {
     return sprintf('/files/js/%s.%s.js', $section, $this->revision);
   }
+
+public function readfile($filename) {
+$result = file_get_contents($filename);
+if ($result === false) $this->error(sprintf('Error read %s file', $filename));
+return $result;
+}
   
   public function assemble() {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
@@ -111,10 +117,11 @@ class tjsmerger extends titems {
       $s = '';
       foreach ($items['files'] as $filename) {
         $filename = $theme->parse($filename);
-        $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-        if (false === ($file = file_get_contents($home . $filename))) $this->error(sprintf('Error read %s file', $filename));
-        $s .= $file;
-        $s .= "\n"; //prevent coomments
+        $filename = $home . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+        if (file_exists($filename)) {
+        $s .= $this->readfile($filename);
+        $s .= "\n"; //prevent comments
+}
       }
       $s .= implode("\n", $items['texts']);
       $jsfile =  $this->getfilename($section);
