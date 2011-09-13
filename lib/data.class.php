@@ -15,6 +15,10 @@ class tdata {
   public $data;
   public $lockcount;
   public $table;
+
+  public static function i() {
+return getinstance(get_called_class());
+}
   
   public function __construct() {
     $this->lockcount = 0;
