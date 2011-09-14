@@ -8,6 +8,7 @@
 
 class tlinkgenerator extends tevents {
   public $source;
+private $translitmap;
   
   public static function instance() {
     return getinstance(__class__);
@@ -75,16 +76,21 @@ class tlinkgenerator extends tevents {
     $s = trim($s, "\n\r\t \x0B\0,.;?!/\\<>():;-\"'");
     $this->callevent('onencode', array(&$s));
     if ($this->urlencode) return rawurlencode($s);
-    if (litepublisher::$options->language == 'ru') $s = self::ru2lat($s);
+    if (litepublisher::$options->language != 'en') $s = $this->translit($s);
     return strtolower($s);
   }
   
-  public static function ru2lat($s) {
-    static $ru2lat_iso;
-    if (!isset($ru2lat_iso)) {
-      require_once(litepublisher::$paths->libinclude . 'ru2lat-iso.php');
+  public function translit($s) {
+    if (!isset($this->translitmap)) {
+$filename = litepublisher::$paths->languages . litepublisher::$options->language . DIRECTORY_SEPARATOR . 'translit.ini';
+if (file_exists($filename)) {
+$ini = tini2array::parse(file_get_contents($filename));
+$this->translitmap = $ini['translit'];
+} else {
+$this->translitmap = array();
+}
     }
-    return strtr($s, $ru2lat_iso);
+    return strtr($s, $translitmap);
   }
   
   public function clean($url) {
