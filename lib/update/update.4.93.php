@@ -1,10 +1,9 @@
 <?php
 
 function update493() {
-  litepublisher::$site->jquery_version = '1.6.3';
-
+  litepublisher::$site->jquery_version = '1.6.4';
 $updater = tupdater::instance();
-$updater->unsubscribeclassname('tjsmerger');
+  $updater->onupdated = tjsmerger::instance()->onupdated;
 
 litepublisher::$classes->items['targs'][2] = 'theme.class.php';
 litepublisher::$classes->add('tlocalmerger', 'localmerger.class.php');
