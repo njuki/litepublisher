@@ -81,16 +81,8 @@ private $translitmap;
   }
   
   public function translit($s) {
-    if (!isset($this->translitmap)) {
-$filename = litepublisher::$paths->languages . litepublisher::$options->language . DIRECTORY_SEPARATOR . 'translit.ini';
-if (file_exists($filename)) {
-$ini = tini2array::parse(file_get_contents($filename));
-$this->translitmap = $ini['translit'];
-} else {
-$this->translitmap = array();
-}
-    }
-    return strtr($s, $translitmap);
+tlocal::usefile('translit');
+    return strtr($s, tlocal::$self->ini['translit']);
   }
   
   public function clean($url) {

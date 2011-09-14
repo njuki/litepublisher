@@ -21,8 +21,8 @@ class tadminthemetree extends tadminmenu implements iwidgets {
     $name = tadminhtml::getparam('theme', '');
     if (($name != '') && ttheme::exists($name)) {
       $this->theme = ttheme::getinstance($name);
-      $this->ini = tini2array::parsesection(file_get_contents(litepublisher::$paths->languages . litepublisher::$options->language . '.theme.ini'));
-      $result .= $this->themetojavascript($name);
+tlocal::usefile('theme');
+      $this->ini = tlocal::$self->ini['themetree'];
     }
     return $result;
   }
