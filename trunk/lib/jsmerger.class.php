@@ -25,6 +25,10 @@ class tjsmerger extends titems {
     parent::save();
     $this->assemble();
   }
+
+public function onupdated() {
+$this->save();
+}
   
   public function normfilename($filename) {
     $filename = trim($filename);
@@ -138,4 +142,5 @@ return $result;
     }
   }
   
+
 }//class

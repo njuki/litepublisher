@@ -55,4 +55,12 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
 
   $template = ttemplate::instance();
   $template->addtohead(sprintf($template->js, '$site.files$template.jsmerger_default'));
- }
+
+$updater = tupdater::instance();
+  $updater->onupdated = $self->onupdated;
+}
+
+function tjsmergerUninstall($self) {
+  $updater = tupdater::instance();
+  $updater->unsubscribeclass($self);
+}
