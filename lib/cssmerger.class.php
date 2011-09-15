@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcssmerger extends tjsmerger {
+class tcssmerger extends tfilemerger {
   
   public static function instance() {
     return getinstance(__class__);

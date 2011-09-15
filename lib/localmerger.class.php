@@ -23,7 +23,7 @@ class tlocalmerger extends titems {
   public function save() {
     if ($this->lockcount > 0) return;
     parent::save();
-    $this->assemble();
+    $this->merge();
   }
   
   public function normfilename($filename) {
@@ -109,7 +109,7 @@ class tlocalmerger extends titems {
     return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
   }
   
-  public function assemble() {
+  public function merge() {
     $lang = getinstance('tlocal');
     $lang->ini = array();
     foreach ($this->items as $name => $items) {

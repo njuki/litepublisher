@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tjsmerger extends titems {
+class tfilemerger extends titems {
   
   public static function instance() {
     return getinstance(__class__);
@@ -23,13 +23,9 @@ class tjsmerger extends titems {
     if ($this->lockcount > 0) return;
     $this->data['revision']++;
     parent::save();
-    $this->assemble();
+    $this->merge();
   }
 
-public function onupdated() {
-$this->save();
-}
-  
   public function normfilename($filename) {
     $filename = trim($filename);
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
@@ -113,7 +109,7 @@ if ($result === false) $this->error(sprintf('Error read %s file', $filename));
 return $result;
 }
   
-  public function assemble() {
+  public function merge() {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
     $theme = ttheme::instance();
     $template = ttemplate::instance();
@@ -128,11 +124,11 @@ return $result;
 }
       }
       $s .= implode("\n", $items['texts']);
-      $jsfile =  $this->getfilename($section, $this->revision);
-      $realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $jsfile);
+      $savefile =  $this->getfilename($section, $this->revision);
+      $realfile= $home . str_replace('/',DIRECTORY_SEPARATOR, $savefile);
       file_put_contents($realfile, $s);
       @chmod($realfile, 0666);
-      $template->data[$this->basename . '_' . $section] = $jsfile;
+      $template->data[$this->basename . '_' . $section] = $savefile;
     }
     $template->save();
     litepublisher::$urlmap->clearcache();
@@ -142,5 +138,16 @@ return $result;
     }
   }
   
+}//class
 
+class tjsmerger extends tfilemerger {
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
+public function onupdated() {
+$this->save();
+}
+  
 }//class
