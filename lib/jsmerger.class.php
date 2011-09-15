@@ -58,7 +58,7 @@ class tfilemerger extends titems {
     $this->save();
   }
   
-  public function setfromstring($section, $s) {
+  public function setfiles($section, $s) {
     $this->lock();
     if (isset($this->items[$section])) {
       $this->items[$section]['files'] = array();
