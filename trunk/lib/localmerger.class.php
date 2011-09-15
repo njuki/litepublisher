@@ -58,7 +58,7 @@ class tlocalmerger extends titems {
     $this->save();
   }
   
-  public function setfromstring($name, $s) {
+  public function setfiles($name, $s) {
     $this->lock();
     if (isset($this->items[$name])) {
       $this->items[$name]['files'] = array();
