@@ -6,6 +6,7 @@ $updater = tupdater::instance();
   $updater->onupdated = tjsmerger::instance()->onupdated;
 
 litepublisher::$classes->items['targs'][2] = 'theme.class.php';
+litepublisher::$classes->add('tfilemerger', 'jsmerger.class.php');
 litepublisher::$classes->add('tlocalmerger', 'localmerger.class.php');
 litepublisher::$classes->save();
 

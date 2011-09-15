@@ -148,5 +148,3 @@ class tclasses extends titems {
 function getinstance($class) {
   return litepublisher::$classes->getinstance($class);
 }
-
-?>

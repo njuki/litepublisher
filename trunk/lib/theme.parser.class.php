@@ -1006,6 +1006,16 @@ class tthemeparser extends tevents {
         'tag' => '$checkbox',
         'replace' => ''
         ),
+
+        'content.admin.radioitem' => array(
+        'tag' => '$radioitem',
+        'replace' => ''
+        ),
+
+        'content.admin.radio' => array(
+        'tag' => '$radio',
+        'replace' => ''
+        ),
         
         'content.admin.hidden' => array(
         'tag' => '$hidden',
