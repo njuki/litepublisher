@@ -172,10 +172,6 @@ class Tadminoptions extends tadminmenu {
       //'ssh2' => 'ssh2'
       ), $backuper->filertype);
       break;
-      
-      case 'local':
-      $args->timezones = $this->gettimezones();
-      break;
     }
     
   $result  = $this->html->{$this->name}($args);
@@ -328,36 +324,9 @@ class Tadminoptions extends tadminmenu {
         }
       }
       break;
-      
-      case 'local':
-      $options->lock();
-      $options->dateformat = $dateformat;
-      if ($options->language != $language) {
-        if (file_exists(litepublisher::$paths->languages . "$language.ini")) $options->language = $language;
-      }
-      if ($options->timezone != $timezone) {
-        $options->timezone = $timezone;
-        $archives = tarchives::instance();
-        TUrlmap::unsub($archives);
-        $archives->PostsChanged();
-      }
-      $options->unlock();
-      litepublisher::$urlmap->clearcache();
-      break;
     }
     
     return '';
-  }
-  
-  private function gettimezones() {
-    $zones = timezone_identifiers_list ();
-    $result = "<select name='timezone' id='timezone'>\n";
-    foreach ($zones as $zone) {
-      $selected = $zone == litepublisher::$options->timezone ? 'selected' : '';
-      $result .= "<option value='$zone' $selected>$zone</option>\n";
-    }
-    $result .= "</select>";
-    return $result;
   }
   
   public function setusersenabled($value) {
@@ -376,4 +345,3 @@ class Tadminoptions extends tadminmenu {
   }
   
 }//class
-?>
