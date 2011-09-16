@@ -34,8 +34,11 @@ class tadminlocalmerger extends tadminmenu {
       $tab->add($lang->text, $tabtext->get());
       $tabs->add($section, $tab->get());
     }
-    
-    return  $html->adminform($tabs->get(), $args);
+
+      $tabs->add('HTML', $html->getinput('editor',
+      'adminhtml_files', tadminhtml::specchars(implode("\n", $merger->html)), $lang->files));
+
+        return  $html->adminform($tabs->get(), $args);
   }
   
   public function processform() {
@@ -50,6 +53,8 @@ class tadminlocalmerger extends tadminmenu {
         $merger->addtext($name, $key, $_POST[$name . '_text_' . $key]);
       }
     }
+
+$merger->html = explode("\n", trim($_POST['adminhtml_files']));
     $merger->unlock();
   }
   
