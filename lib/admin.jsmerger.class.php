@@ -45,7 +45,7 @@ class tadminjsmerger extends tadminmenu {
     //$jsmerger->install();
     foreach (array_keys($jsmerger->items) as $section) {
       $keys = array_keys($jsmerger->items[$section]['texts']);
-      $jsmerger->setfromstring($section, $_POST[$section . '_files']);
+      $jsmerger->setfiles($section, $_POST[$section . '_files']);
       foreach ($keys as $key) {
         $jsmerger->addtext($section, $key, $_POST[$section . '_text_' . $key]);
       }
