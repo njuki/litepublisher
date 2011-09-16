@@ -72,9 +72,8 @@ class tadminviews extends tadminmenu {
         break;
 
         case 'radio':
-        $value = tadminhtml  ::getradioitems(    "custom_{$idview}_$name" $customadmin[$name]['values'], $value);
+        $value = tadminhtml  ::getradioitems(    "custom_{$idview}_$name", $customadmin[$name]['values'], $value);
         break;
-
       }
       
       $result .= $html->getinput(

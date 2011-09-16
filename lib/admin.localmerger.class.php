@@ -52,7 +52,7 @@ $zones = timezone_identifiers_list ();
   }
   
   public function processform() {
-      litepublisher::$options->dateformat = $dateformat;
+      litepublisher::$options->dateformat = $_POST['dateformat'];
 litepublisher::$options->language = $_POST['language'];
       if (litepublisher::$options->timezone != $_POST['timezone']) {
         litepublisher::$options->timezone = $_POST['timezone'];
@@ -74,6 +74,7 @@ litepublisher::$options->language = $_POST['language'];
     }
 
 $merger->html = explode("\n", trim($_POST['adminhtml_files']));
+foreach ($merger->html  as $i => $filename) $merger->html[$i] = trim($filename);
     $merger->unlock();
   }
   

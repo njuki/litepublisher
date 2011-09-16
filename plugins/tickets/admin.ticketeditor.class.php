@@ -68,7 +68,7 @@ class tticketeditor extends tposteditor {
     $types = array(
     'bug' => $lang->bug,
     'feature' => $lang->feature,
-    'support' => tlocal$lang->support,
+    'support' => $lang->support,
     'task' => $lang->task
     );
     

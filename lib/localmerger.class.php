@@ -41,9 +41,12 @@ class tlocalmerger extends tfilemerger {
   }
   
   public function getrealfilename($filename) {
+$filename = ltrim($filename, '/');
     $name = substr($filename, 0, strpos($filename, '/'));
-    $dir = isset(litepublisher::$_paths[$name]) ? litepublisher::$_paths[$name] : litepublisher::$paths->home;
-    return $dir . str_replace('/', DIRECTORY_SEPARATOR, $filename);
+if (isset(litepublisher::$_paths[$name])) {
+return litepublisher::$_paths[$name]  . str_replace('/', DIRECTORY_SEPARATOR, substr($filename, strlen($name) + 1));
+}
+return  litepublisher::$paths->home . str_replace('/', DIRECTORY_SEPARATOR, $filename);
   }
   
   public function merge() {
@@ -101,7 +104,7 @@ class tlocalmerger extends tfilemerger {
     $html->ini = array();
     foreach ($this->html as $filename) {
       $realfilename = $this->getrealfilename($filename);
-      if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $filename));
+      if  (!file_exists($realfilename)) $this->error(sprintf('The file "%s" not found', $realfilename));
       if (!($parsed = parse_ini_file($realfilename, true))) $this->error(sprintf('Error parse "%s" ini file', $realfilename));
       if (count($html->ini) == 0) {
         $html->ini = $parsed;

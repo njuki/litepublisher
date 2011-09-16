@@ -19,7 +19,10 @@ function tlocalmergerInstall($self) {
 if (litepublisher::$options->language != 'en') {
 $self->add('translit', "lib/languages/$lang/translit.ini");
 } else {
-$self->items['translit'] = array('files => array(), 'text' => array());
+$self->items['translit'] = array(
+'files' => array(),
+ 'texts' => array()
+);
 }
   $self->add('install', "lib/languages/$lang/install.ini");
   
