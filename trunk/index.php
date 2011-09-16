@@ -7,7 +7,7 @@
 **/
 
 if (version_compare(PHP_VERSION, '5.1', '<')) {
-  die('Lite Publisher requires PHP 5.2 or later. You are using PHP ' . PHP_VERSION) ;
+  die('Lite Publisher requires PHP 5.1 or later. You are using PHP ' . PHP_VERSION) ;
 }
 
 class litepublisher {
@@ -33,11 +33,11 @@ class litepublisher {
     self::$_paths = array(
     'home' => $home,
     'lib' => $home .'lib'. DIRECTORY_SEPARATOR,
+    'data' => $storage . 'data'. DIRECTORY_SEPARATOR,
+    'cache' => $storage . 'cache'. DIRECTORY_SEPARATOR,
     'libinclude' => $home .'lib'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR,
     'languages' => $home .'lib'. DIRECTORY_SEPARATOR . 'languages'. DIRECTORY_SEPARATOR,
     'storage' => $storage,
-    'data' => $storage . 'data'. DIRECTORY_SEPARATOR,
-    'cache' => $storage . 'cache'. DIRECTORY_SEPARATOR,
     'backup' => $storage . 'backup' . DIRECTORY_SEPARATOR,
     'plugins' =>  $home . 'plugins' . DIRECTORY_SEPARATOR,
     'themes' => $home . 'themes'. DIRECTORY_SEPARATOR,

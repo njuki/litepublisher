@@ -179,7 +179,7 @@ $tml = $theme->templates['content.admin.radioitems'];
     foreach ($items as $index => $value) {
     $result .= strtr($tml, array(
 '$index' => $index,
-'$checked' = $value == $selected ? 'checked="checked"' : '',
+'$checked' => $value == $selected ? 'checked="checked"' : '',
     '$name' => $name,
     '$value' => self::specchars($value)
     ));

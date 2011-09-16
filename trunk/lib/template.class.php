@@ -39,7 +39,7 @@ class ttemplate extends tevents_storage {
     $this->data['heads'] = '';
     $this->data['js'] = '<script type="text/javascript" src="%s"></script>';
   $this->data['jsready'] = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
-    $this->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</script>';
+    $this->data['jsload'] = '<script type="text/javascript">$.load_script(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
   }
