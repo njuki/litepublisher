@@ -15,13 +15,25 @@ class tadminlocalmerger extends tadminmenu {
     return parent::gethead() . tuitabs::gethead();
   }
   
+  private function gettimezones() {
+    $zones = timezone_identifiers_list ();
+    $result = "<select name='timezone' id='timezone'>\n";
+    foreach ($zones as $zone) {
+      $selected = $zone == litepublisher::$options->timezone ? 'selected' : '';
+      $result .= "<option value='$zone' $selected>$zone</option>\n";
+    }
+    $result .= "</select>";
+    return $result;
+  }
+  
+
   public function getcontent() {
     $merger = tlocalmerger::instance();
     $tabs = new tuitabs();
     $html = $this->html;
     $lang = tlocal::instance('views');
     $args = targs::instance();
-    $args->formtitle= $lang->mergertitle;
+
     foreach ($merger->items as $section => $items) {
       $tab = new tuitabs();
       $tab->add($lang->files, $html->getinput('editor',
@@ -38,10 +50,28 @@ class tadminlocalmerger extends tadminmenu {
       $tabs->add('HTML', $html->getinput('editor',
       'adminhtml_files', tadminhtml::specchars(implode("\n", $merger->html)), $lang->files));
 
-        return  $html->adminform($tabs->get(), $args);
+    $args->formtitle= $lang->optionslocal;
+$args->dateformat = litepublisher::$options->dateformat;
+$dirs = tfiler::getdir(litepublisher::$paths->languages);
+
+      $args->timezones = $this->gettimezones();
+
+        return  $html->adminform('[text=dateformat]
+[combo=language]
+[combo=timezone]' 
+ . $tabs->get(), $args);
   }
   
   public function processform() {
+      litepublisher::$options->dateformat = $dateformat;
+litepublisher::$options->language = $_POST['language'];
+      if (litepublisher::$options->timezone != $_POST['timezone']) {
+        litepublisher::$options->timezone = $_POST['timezone'];
+        $archives = tarchives::instance();
+        turlmap::unsub($archives);
+        $archives->PostsChanged();
+      }
+
     $merger = tlocalmerger::instance();
     $merger->lock();
     //$merger->items = array();
