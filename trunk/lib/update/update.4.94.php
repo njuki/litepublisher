@@ -1,0 +1,20 @@
+<?php
+
+function update494() {
+litepublisher::$classes->items['targs'][2] = 'theme.class.php';
+litepublisher::$classes->items['tfilemerger'] = array('jsmerger.class.php', '');
+litepublisher::$classes->items['tlocalmerger'] = array('localmerger.class.php', '');
+litepublisher::$classes->save();
+
+$merger = tlocalmerger::instance();
+$merger->lock();
+$merger->install();
+$plugins = tplugins::instance();
+$language = litepublisher::$options->language;
+foreach (array('codedoc', 'downloaditem', 'foaf', 'openid-provider', 'tickets') as $name) {
+if (!isset($plugins->items[$name])) continue;
+$merger->addplugin($name);
+}
+
+$merger->unlock();
+}
