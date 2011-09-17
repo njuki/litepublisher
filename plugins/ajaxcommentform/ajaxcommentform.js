@@ -13,16 +13,16 @@ error_dialog: false,
 confirm_dialog: false,
 
 get: function(name) {
-return $("input[name='" + name + "']").val();
+return $("input[name='" + name + "']", "#commentform").val();
 },
 
 set: function(name, value) {
-$("input[name='" + name + "']").val(value);
+$("input[name='" + name + "']", "#commentform").val(value);
 },
 
 find: function(name) {
-if (name == 'content') return $("textarea[name='content']");
-return $("input[name='" + name + "']");
+if (name == 'content') return $("textarea[name='content']", "#commentform");
+return $("input[name='" + name + "']", "#commentform");
 },
 
 init_field: function(name) {
@@ -57,7 +57,7 @@ set_cookie("comuser_unsubscribed", this.unsubscribed.join(","));
 },
 
 init: function() {
-$("input[name='name']").closest("form").submit(commentform.submit);
+$("#commentform").submit(commentform.submit);
 if (commentform.init_field("name")) {
 commentform.init_field("email");
 commentform.init_field("url");
