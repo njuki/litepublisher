@@ -59,6 +59,11 @@ class tfiles extends titems {
     $item['posted'] = sqldate();
     $item['hash'] = $this->gethash($realfile);
     $item['size'] = filesize($realfile);
+
+//fix empty props
+foreach (array('mime', 'title', 'description', 'keywords') as $prop) {
+if (!isset($item[$prop])) $item[$prop] = '';
+}
     return $this->insert($item);
   }
   
