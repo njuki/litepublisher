@@ -21,8 +21,8 @@
   `duration` int(10) unsigned NOT NULL default '0',
 
   PRIMARY KEY  (`id`),
-  KEY `media` (`media`),
-  KEY `posted` (`posted`),
-  KEY `author` (`author`),
   KEY `parent` (`parent`),
-  KEY `preview` (`preview`)
+  KEY `preview` (`preview`),
+ KEY `author` (`author`),
+  KEY `media` (`media`),
+  KEY `posted` (`posted`)
