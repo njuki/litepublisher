@@ -11,6 +11,10 @@ class tsite extends tevents_storage {
   public static function i() {
     return getinstance(__class__);
   }
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
   
   protected function create() {
     parent::create();

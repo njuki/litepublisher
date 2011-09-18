@@ -26,6 +26,10 @@ class tclasses extends titems {
     }
     return litepublisher::$classes;
   }
+
+  public static function instance() {
+    return self::i();
+  }
   
   protected function create() {
     parent::create();
@@ -36,7 +40,7 @@ class tclasses extends titems {
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
-    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
+    if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
   }
   
   public function load() {
@@ -67,7 +71,6 @@ class tclasses extends titems {
   }
   
   public function newitem($name, $class, $id) {
-    //echo"$name:$class:$id new<br>\n";
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
     $this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();
