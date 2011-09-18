@@ -23,6 +23,10 @@ class turlmap extends titems {
   public static function i() {
     return getinstance(__class__);
   }
+
+  public static function instance() {
+    return getinstance(__class__);
+  }
   
   protected function create() {
     $this->dbversion = dbversion;
@@ -177,7 +181,7 @@ class turlmap extends titems {
     $class = $item['class'];
     $parents = class_parents($class);
     if (in_array('titem', $parents)) {
-      return call_user_func_array(array($class, 'instance'), array($item['arg']));
+      return call_user_func_array(array($class, 'i'), array($item['arg']));
     } else {
       return getinstance($class);
     }

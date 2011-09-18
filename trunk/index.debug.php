@@ -80,22 +80,22 @@ tfilestorage::$memcache->connect('127.0.0.1', 11211);
 */
 
 tstorage::loaddata();
-  litepublisher::$classes = tclasses::instance();
-  litepublisher::$options = toptions::instance();
-  litepublisher::$site = tsite::instance();
+  litepublisher::$classes = tclasses::i();
+  litepublisher::$options = toptions::i();
+  litepublisher::$site = tsite::i();
 
   if (!litepublisher::$options->installed) require_once(litepublisher::$paths->lib .'install' . DIRECTORY_SEPARATOR . 'install.php');
-  //if (dbversion) litepublisher::$db = tdatabase::instance();
+  //if (dbversion) litepublisher::$db = tdatabase::i();
 if (dbversion) litepublisher::$db = new tdatabase();
   //litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie() && ('admin' == litepublisher::$options->group);
 
-  litepublisher::$urlmap = turlmap::instance();
+  litepublisher::$urlmap = turlmap::i();
 //ttheme::clearcache();
 tlocal::clearcache();
 //require('lib/update/update.4.81.php');
-//tjsmerger::instance()->onupdated();
-//tupdater::instance()->run(4.93);
+//tjsmerger::i()->onupdated();
+//tupdater::i()->run(4.93);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));
@@ -107,16 +107,16 @@ tlocal::clearcache();
 // echo $e->GetMessage();
 litepublisher::$options->handexception($e);
 }
-//tupdater::instance()->run(4.64);
+//tupdater::i()->run(4.64);
 litepublisher::$options->savemodified();
 litepublisher::$options->showerrors();
-//tupdater::instance()->run('4.44');
+//tupdater::i()->run('4.44');
 //litepublisher::$urlmap->delete('/getwidget.htm');
 //litepublisher::$urlmap->addget('/getwidget.htm', 'twidgets');
 //litepublisher::$urlmap->addget('/admin/ajaxposteditor.htm', 'tajaxposteditor ');
 /*
 echo "<pre>\n";
-$man = tdbmanager::instance();
+$man = tdbmanager::i();
 echo $man->performance();
 echo round(microtime(true) - litepublisher::$microtime, 2), "\n";
 */
