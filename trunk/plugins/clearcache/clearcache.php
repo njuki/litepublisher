@@ -8,7 +8,7 @@
 
 class tclearcache extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -19,7 +19,7 @@ class tclearcache extends tplugin {
   
   public function themeparsed(ttheme $theme) {
     $name = $theme->name;
-    $views = tviews::instance();
+    $views = tviews::i();
     foreach ($views->items as &$itemview) {
       if ($name == $itemview['themename']) {
         $itemview['custom'] = $theme->templates['custom'];

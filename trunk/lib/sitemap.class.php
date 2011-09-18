@@ -13,7 +13,7 @@ class tsitemap extends titems_itemplate implements itemplate {
   private $fd;
   private $prio;
   
-  public static function instance() {
+  public static function i() {
     return Getinstance(__class__);
   }
   
@@ -39,7 +39,7 @@ public function gettitle() { return $this->title; }
   
   public function getcont() {
     $result = '';
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $theme = $this->view->theme;
     $perpage = 1000;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
@@ -69,7 +69,7 @@ public function gettitle() { return $this->title; }
     }
     
     if (litepublisher::$urlmap->page  == 1) {
-      $menus = tmenus::instance();
+      $menus = tmenus::i();
       $result .= '<h2>' . tlocal::get('default', 'menu') . "</h2>\n<ul>\n";
       foreach ($menus->items as $id => $item) {
         if ($item['status'] == 'draft') continue;
@@ -77,9 +77,9 @@ public function gettitle() { return $this->title; }
       }
       $result .= '</ul>';
       
-      $result .= $this->gettags(tcategories::instance());
-      $result .= $this->gettags(ttags::instance());
-      $arch = tarchives::instance();
+      $result .= $this->gettags(tcategories::i());
+      $result .= $this->gettags(ttags::i());
+      $arch = tarchives::i();
       if (count($arch->items) > 0) {
         $result .= '<h2>' . tlocal::get('default', 'archive') . "</h2>\n<ul>\n";
         foreach ($arch->items as $date => $item) {
@@ -171,9 +171,9 @@ public function gettitle() { return $this->title; }
         $this->write($item['url'], max($item['pagescount'], $comments));
       }
     } else {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       foreach ($posts->archives as $id => $posted) {
-        $post = tpost::instance($id);
+        $post = tpost::i($id);
         $this->write($post->url, $post->countpages);
         $post->free();
       }
@@ -181,7 +181,7 @@ public function gettitle() { return $this->title; }
   }
   
   private function writemenus() {
-    $menus = tmenus::instance();
+    $menus = tmenus::i();
     foreach ($menus->items as $id => $item) {
       if ($item['status'] == 'draft') continue;
       $this->writeitem($item['url'], $this->prio);
@@ -208,7 +208,7 @@ public function gettitle() { return $this->title; }
   
   private function writearchives() {
     $db = litepublisher::$db;
-    $arch = tarchives::instance();
+    $arch = tarchives::i();
     $perpage = $arch->lite ? 1000 : litepublisher::$options->perpage;
     if (dbversion) $db->table = 'posts';
     foreach ($arch->items as $date => $item) {

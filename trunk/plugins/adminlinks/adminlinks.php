@@ -8,7 +8,7 @@
 
 class tadmincontextwidget extends torderwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -26,13 +26,13 @@ class tadmincontextwidget extends torderwidget {
   
   public function getwidget($id, $sidebar) {
     $links = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('widget', $sidebar);
     tlocal::usefile('admin');
     
     if (litepublisher::$urlmap->context instanceof tpost) {
       $post = litepublisher::$urlmap->context;
-      $lang = tlocal::instance('posts');
+      $lang = tlocal::i('posts');
       $title = $lang->adminpost;
       $action = tadminhtml::getadminlink('/admin/posts/', "id=$post->id&action");
       $links = $this->getitem($tml, tadminhtml::getadminlink('/admin/posts/editor/', 'id=' . $post->id), $lang->edit);
@@ -44,7 +44,7 @@ class tadmincontextwidget extends torderwidget {
         $tags = litepublisher::$urlmap->context;
         $name = $tags instanceof ttags ? 'tags' : 'categories';
         $adminurl = litepublisher::$site->url . "/admin/posts/$name/";
-        $lang = tlocal::instance('tags');
+        $lang = tlocal::i('tags');
       $title = $lang->{$name};
         $links = $this->getitem($tml,$adminurl, $lang->add);
         $adminurl .= litepublisher::$site->q . "id=$tags->id";
@@ -54,7 +54,7 @@ class tadmincontextwidget extends torderwidget {
         break;
         
         case 'thomepage':
-        $lang = tlocal::instance('options');
+        $lang = tlocal::i('options');
         $title = $lang->home;
         $links .= $this->getitem($tml, "/admin/options/home/", $lang->title);
         break;
@@ -62,7 +62,7 @@ class tadmincontextwidget extends torderwidget {
       
       if ((litepublisher::$urlmap->context instanceof tmenu) && !(litepublisher::$urlmap->context instanceof tadminmenu)) {
         $menu = litepublisher::$urlmap->context;
-        $lang = tlocal::instance('menu');
+        $lang = tlocal::i('menu');
         $title = $lang->title;
         $adminurl = litepublisher::$site->url . "/admin/menu/edit/";
         $links .= $this->getitem($tml,$adminurl, $lang->addmenu);
@@ -76,7 +76,7 @@ class tadmincontextwidget extends torderwidget {
     return $theme->getwidget($this->gettitle($id), $links, 'widget', $sidebar);
   }
   private function getitem($tml, $url, $title) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->subcount = '';
     $args->icon = '';
     $args->subitems = '';
@@ -88,7 +88,7 @@ class tadmincontextwidget extends torderwidget {
     }
     $args->title = $title;
     $args->text = $title;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->parsearg($tml, $args);
   }
   

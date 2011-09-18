@@ -8,24 +8,24 @@
 
 class tadmincategoriesmenu  {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tcategoriesmenu::instance();
+    $plugin = tcategoriesmenu::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $args->cats = tposteditor::getcategories($plugin->exitems);
     $args->formtitle = $about['formtitle'];
     //    $args->data['$lang.before'] = $about['before'];
     
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform('$cats', $args);
   }
   
   public function processform() {
-    $plugin = tcategoriesmenu::instance();
+    $plugin = tcategoriesmenu::i();
     $plugin->exitems = tadminhtml::check2array('category-');
     $plugin->save();
   }

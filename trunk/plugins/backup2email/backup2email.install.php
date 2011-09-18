@@ -7,12 +7,12 @@
 **/
 
 function tbackup2emailInstall($self) {
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $self->idcron = $cron->add('week', get_class($self), 'send', null);
   $self->save();
 }
 
 function tbackup2emailUninstall(&$self) {
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->deleteclass($self);
 }

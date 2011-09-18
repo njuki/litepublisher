@@ -9,7 +9,7 @@
 class twprssimporter extends timporter {
   private $tagsmap;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -29,14 +29,14 @@ class twprssimporter extends timporter {
   
   public function getcontent() {
     $result = parent::getcontent();
-    $args = targs::instance();
+    $args = targs::i();
     $args->script = $this->script;
     $args->ignorelink = $this->ignorelink;
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->scriptlabel = $about['scriptlabel'];
     $args->ignorelinklabel = $about['ignorelink'];
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $result .= $html->parsearg($tml, $args);
     return $result;
   }
@@ -52,13 +52,13 @@ class twprssimporter extends timporter {
     require_once(litepublisher::$paths->lib . 'domrss.class.php');
     $a = xml2array($s);
     
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->lock();
-    $cats = tcategories::instance();
+    $cats = tcategories::i();
     $cats->lock();
-    $tags = ttags::instance();
+    $tags = ttags::i();
     $tags->lock();
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->lock();
     foreach ($a['rss']['channel'][0]['item'] as $item) {
       if ($post = $this->add($item)) {
@@ -77,7 +77,7 @@ class twprssimporter extends timporter {
   
   public function add(array $item) {
     if (isset($item['wp:post_type']) && ($item['wp:post_type'] != 'post')) return false;
-    $post = tpost::instance();
+    $post = tpost::i();
     foreach ($this->tagsmap as $key => $val) {
       if (isset($item[$key])) {
       $post->{$val} = $item[$key];
@@ -108,7 +108,7 @@ class twprssimporter extends timporter {
   
   private function getcategories($values, $type) {
     $result = array();
-    $tags = $type == 'tag' ? ttags::instance() : tcategories::instance();
+    $tags = $type == 'tag' ? ttags::i() : tcategories::i();
     if (!is_array($values)) {
       if ($type == 'tag') return $result;
       $result[] = $tags->add($values);
@@ -130,15 +130,15 @@ class twprssimporter extends timporter {
   }
   
   private function importcomments(array $items, $idpost) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $comments->lock();
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $comusers->lock();
     foreach ($items as $item) {
       $status = $item['wp:comment_approved'] == '1' ? 'approved' : 'hold';
       $posted = strtotime($item['wp:comment_date']);
       if ($item['wp:comment_type'] == 'pingback') {
-        $pingbacks = tpingbacks::instance($idpost);
+        $pingbacks = tpingbacks::i($idpost);
         $pingbacks->import( $item['wp:comment_author_url'], $item['wp:comment_author'], $posted, $item['wp:comment_author_IP'], $status);
         continue;
       }

@@ -10,7 +10,7 @@ class tsapeplugin extends twidget {
   public $sape;
   public $counts;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -57,7 +57,7 @@ class tsapeplugin extends twidget {
   
   public function setcount($id ,$count) {
     $this->counts[$id] = $count;
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     foreach ($this->counts as $id => $count) {
       if (!isset($widgets->items[$id])) unset($this->counts[$id]);
     }

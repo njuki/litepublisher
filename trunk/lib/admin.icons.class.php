@@ -7,23 +7,23 @@
 **/
 
 class tadminicons extends tadminmenu {
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public static function getradio($idicon) {
     $items = self::getallicons();
     if (count($items) == 0) return '';
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'files';
-    $args = targs::instance();
+    $args = targs::i();
     //add empty icon
     $args->id = 0;
     $args->checked = 0 == $idicon;
     $args->filename = '';
     $args->title = tlocal::get('common', 'empty');
     $result = $html->radioicon($args);
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $url = litepublisher::$site->files . '/files/';
     foreach ($items as $id) {
       $item = $files->getitem($id);
@@ -38,7 +38,7 @@ class tadminicons extends tadminmenu {
   }
   
   public static function getallicons() {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if ($files->dbversion) {
       if ($result = $files->select("parent = 0 and media = 'icon'", "")) return $result;
       return array();
@@ -53,11 +53,11 @@ class tadminicons extends tadminmenu {
   
   public function getcontent() {
     $result = '';
-    $files = tfiles::instance();
-    $icons = ticons::instance();
+    $files = tfiles::i();
+    $icons = ticons::i();
     $html = $this->html;
     $lang = tlocal::admin('files');
-    $args = targs::instance();
+    $args = targs::i();
     $a = array();
     //добавить 0 для отсутствия иконки
     $a[0] = $lang->noicon;
@@ -84,13 +84,13 @@ class tadminicons extends tadminmenu {
   }
   
   public function processform() {
-    $icons = ticons::instance();
+    $icons = ticons::i();
     foreach ($_POST as $name => $value) {
       if (isset($icons->items[$name])) $icons->items[$name] = (int) $value;
     }
     $icons->save();
     
-    $lang = tlocal::instance('files');
+    $lang = tlocal::i('files');
     return $this->html->h2->iconupdated;
   }
   

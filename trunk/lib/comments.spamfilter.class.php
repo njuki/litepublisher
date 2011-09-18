@@ -8,7 +8,7 @@
 
 class tspamfilter extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -25,7 +25,7 @@ class tspamfilter extends tevents {
     if (($status == 'hold') || ($status == 'approved')) return $status;
     if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
     if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     if ($manager->trusted($idauthor)) return  'approved';
     return 'hold';
   }
@@ -36,7 +36,7 @@ class tspamfilter extends tevents {
   }
   
   public function checkduplicate($idpost, $content) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $content = trim($content);
     if (dbversion) {
       $hash = basemd5($content);

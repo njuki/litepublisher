@@ -12,7 +12,7 @@ class tcomments extends titems {
   private $holditems;
   private static $instances;
   
-  public static function instance($pid) {
+  public static function i($pid) {
     $pid = (int) $pid;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
@@ -58,7 +58,7 @@ class tcomments extends titems {
   }
   
   public function add($author, $content, $status, $ip) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item  = array(
     'author' => $author,
     'posted' => time(),
@@ -89,7 +89,7 @@ class tcomments extends titems {
       return false;
     }
     
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     
     $item['author'] = $author;
     $item['content'] = $filter->filtercomment($content);
@@ -134,7 +134,7 @@ class tcomments extends titems {
     }
     
     //автора не нашли
-    $comusers = tcomusers::instance($this->pid);
+    $comusers = tcomusers::i($this->pid);
     $comusers->delete($author);
   }
   
@@ -173,7 +173,7 @@ class tcomments extends titems {
   }
   
   public function insert($author, $content, $ip, $posted, $status) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item  = array(
     'author' => $author,
     'posted' => $posted,
@@ -202,32 +202,32 @@ class tcomments extends titems {
   public function getmoderator() {
     if (!litepublisher::$options->admincookie) return false;
     if (litepublisher::$options->group == 'admin') return true;
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->hasrigt(litepublisher::$options->group, 'moderator');
   }
   
   public function getcontent() {
     $result = $this->dogetcontent(false, 0);
     if (!$this->moderator) return $result;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $lang = tlocal::admin('comment');
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->hold->dogetcontent(true, 0);
     } else {
       //add empty list of hold comments
-      $args = targs::instance();
+      $args = targs::i();
       $args->comment = '';
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
-    $args = targs::instance();
+    $args = targs::i();
     $args->comments = $result;
     return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
   }
   
   public function dogetcontent($hold, $idauthor) {
     $result = '';
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     $from = 0;
     $items = array_keys($this->items);
     if (!$hold) {
@@ -238,14 +238,14 @@ class tcomments extends titems {
     }
     
     $ismoder = $this->moderator;
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     if (count($items) > 0) {
       $args->from = $from;
       $comment = new tcomment($this);
       ttheme::$vars['comment'] = $comment;
       if ($hold) $comment->status = 'hold';
-      $lang = tlocal::instance('comment');
+      $lang = tlocal::i('comment');
       
       if ($ismoder) {
         tlocal::usefile('admin');
@@ -297,8 +297,8 @@ class tholdcomments extends tcomments {
   public $owner;
   public $idauthor;
   
-  public static function instance($pid) {
-    $owner = tcomments::instance($pid);
+  public static function i($pid) {
+    $owner = tcomments::i($pid);
     return $owner->hold;
   }
   
@@ -377,7 +377,7 @@ class TComment {
   }
   
   private function setcontent($value) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $this->owner->items[$this->id]['content'] = $filter->filtercomment($value);
     $this->save();
     $this->owner->raw->items[$this->id]['content'] =  $value;
@@ -385,7 +385,7 @@ class TComment {
   }
   
   private function getauthoritem() {
-    $comusers = tcomusers::instance($this->owner->pid);
+    $comusers = tcomusers::i($this->owner->pid);
     return  $comusers->getitem($this->author);
   }
   
@@ -403,12 +403,12 @@ class TComment {
   
   public function getauthorlink() {
     $idpost = $this->owner->pid;
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $item = $comusers->getitem($this->author);
     $name = $item['name'];
     
     if (empty($url)) return $name;
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     if ($manager->hidelink) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
@@ -419,7 +419,7 @@ class TComment {
   }
   
   public function getdate() {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return tlocal::date($this->posted, $theme->templates['content.post.templatecomments.comments.comment.date']);
   }
   
@@ -432,12 +432,12 @@ class TComment {
   }
   
   public function geturl() {
-    $post = tpost::instance($this->owner->pid);
+    $post = tpost::i($this->owner->pid);
     return "$post->link#comment-$this->id";
   }
   
   public function getposttitle() {
-    $post = tpost::instance($this->owner->pid);
+    $post = tpost::i($this->owner->pid);
     return $post->title;
   }
   

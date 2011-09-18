@@ -101,7 +101,7 @@ function tadminmenusInstall($self) {
   */
   $self->unlock();
   
-  $redir = tredirector::instance();
+  $redir = tredirector::i();
   $redir->add('/admin/', '/admin/posts/editor/');
 }
 

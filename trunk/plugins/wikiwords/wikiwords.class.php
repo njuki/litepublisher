@@ -12,7 +12,7 @@ class twikiwords extends titems {
   private $words;
   private $links;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -49,14 +49,14 @@ class twikiwords extends titems {
     if ($c == 0) {
       $result = sprintf('<strong>%s</strong>', $word);
       } elseif ($c == 1) {
-        $post = tpost::instance($items[0]);
+        $post = tpost::i($items[0]);
         $result = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
       } else {
         $links = array();
-        $posts = tposts::instance();
+        $posts = tposts::i();
         $posts->loaditems($items);
         foreach ($items as $idpost) {
-          $post = tpost::instance($idpost);
+          $post = tpost::i($idpost);
           $links[] = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $post->title, $id);
         }
         $result = sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
@@ -80,7 +80,7 @@ class twikiwords extends titems {
       if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
         $this->itemsposts->add($idpost, $id);
         if (isset($this->links[$word])) unset($this->links[$word]);
-        $posts = tposts::instance();
+        $posts = tposts::i();
         $posts->addrevision();
       }
       
@@ -127,13 +127,13 @@ class twikiwords extends titems {
         }
       }
       $this->unlock();
-      $posts = tposts::instance();
+      $posts = tposts::i();
       $posts->addrevision();
     }
     
     public function postdeleted($idpost) {
       if (count($this->itemsposts->deletepost($idpost)) > 0) {
-        $posts = tposts::instance();
+        $posts = tposts::i();
         $posts->addrevision();
       }
     }

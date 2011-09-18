@@ -7,14 +7,14 @@
 **/
 
 function tpostcatwidgetInstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleted = $self->widgetdeleted;
   
-  tcategories::instance()->deleted = $self->tagdeleted;
+  tcategories::i()->deleted = $self->tagdeleted;
 }
 
 function tpostcatwidgetUninstall($self) {
-  tcategories::instance()->unsubscribeclass($self);
-  $widgets = twidgets::instance();
+  tcategories::i()->unsubscribeclass($self);
+  $widgets = twidgets::i();
   $widgets->unsubscribeclass($self);
 }

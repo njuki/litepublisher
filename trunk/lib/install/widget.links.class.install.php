@@ -8,13 +8,13 @@
 
 function tlinkswidgetInstall($self) {
   tlocal::usefile('admin');
-  $lang = tlocal::instance('installation');
+  $lang = tlocal::i('installation');
   $self->add($lang->homeurl, $lang->homedescription, $lang->homename);
   
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->add($self->redirlink, get_class($self), null, 'get');
   
-  $robots = trobotstxt ::instance();
+  $robots = trobotstxt ::i();
   $robots->AddDisallow($self->redirlink);
   $robots->save();
 }

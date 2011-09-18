@@ -7,7 +7,7 @@
 **/
 
 function ticonsInstall($self) {
-  $files = tfiles::instance();
+  $files = tfiles::i();
   $files->lock();
   $files->deleted = $self->filedeleted;
 }

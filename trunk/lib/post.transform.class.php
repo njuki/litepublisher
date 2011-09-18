@@ -21,14 +21,14 @@ class tposttransform  {
   'commentscount', 'pingbackscount', 'pagescount',
   );
   
-  public static function instance(tpost $post) {
+  public static function i(tpost $post) {
     $self = getinstance(__class__);
     $self->post = $post;
     return $self;
   }
   
   public static function add(tpost $post) {
-    $self = self::instance($post);
+    $self = self::i($post);
     $values = array();
     foreach (self::$props as $name) {
       $values[$name] = $self->__get($name);

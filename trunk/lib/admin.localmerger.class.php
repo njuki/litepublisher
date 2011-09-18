@@ -7,7 +7,7 @@
 **/
 
 class tadminlocalmerger extends tadminmenu {
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -16,11 +16,11 @@ class tadminlocalmerger extends tadminmenu {
   }
   
   public function getcontent() {
-    $merger = tlocalmerger::instance();
+    $merger = tlocalmerger::i();
     $tabs = new tuitabs();
     $html = $this->html;
-    $lang = tlocal::instance('options');
-    $args = targs::instance();
+    $lang = tlocal::i('options');
+    $args = targs::i();
 
     foreach ($merger->items as $section => $items) {
       $tab = new tuitabs();
@@ -56,12 +56,12 @@ $zones = timezone_identifiers_list ();
 litepublisher::$options->language = $_POST['language'];
       if (litepublisher::$options->timezone != $_POST['timezone']) {
         litepublisher::$options->timezone = $_POST['timezone'];
-        $archives = tarchives::instance();
+        $archives = tarchives::i();
         turlmap::unsub($archives);
         $archives->PostsChanged();
       }
 
-    $merger = tlocalmerger::instance();
+    $merger = tlocalmerger::i();
     $merger->lock();
     //$merger->items = array();
     //$merger->install();

@@ -10,7 +10,7 @@ class tlinkgenerator extends tevents {
   public $source;
 private $translitmap;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -138,7 +138,7 @@ tlocal::usefile('translit');
   }
   
   public function MakeUnique($url) {
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if(!$urlmap->urlexists($url)) return $url;
     $l = strlen($url);
     if (substr($url, $l-1, 1) == '/') {
@@ -175,7 +175,7 @@ tlocal::usefile('translit');
   
   public function editurl($obj, $schema) {
     if (!isset($obj->url) || !isset($obj->idurl) || !isset($obj->url)) return $this->error("The properties url and title not found");
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $oldurl = $urlmap->getidurl($obj->idurl);
     if ($oldurl == $obj->url)return;
     if ($obj->url == '') {

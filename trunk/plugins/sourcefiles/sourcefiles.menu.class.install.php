@@ -10,11 +10,11 @@ function tsourcefilesmenuInstall($self) {
   $about = tplugins::localabout(dirname(__file__));
   $self->title = $about['title'];
   $self->url = '/source/';
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->add($self);
 }
 
 function tsourcefilesmenuUninstall($self) {
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->deleteurl('/source/');
 }

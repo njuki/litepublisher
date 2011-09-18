@@ -10,7 +10,7 @@ class tsubcatwidget extends  twidget {
   public $items;
   public $tags;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -19,7 +19,7 @@ class tsubcatwidget extends  twidget {
     $this->adminclass = 'tadminsubcatwidget';
     $this->basename = 'widget.subcat';
     $this->addmap('items', array());
-    $this->tags = tcategories::instance();
+    $this->tags = tcategories::i();
   }
   
   public function getidwidget($idtag) {
@@ -31,7 +31,7 @@ class tsubcatwidget extends  twidget {
   
   public function add($idtag) {
     $tag = $this->tags->getitem($idtag);
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $id = $widgets->addext($this, $tag['title'], 'categories');
     $this->items[$id] = array(
     'idtag' => $idtag,
@@ -42,7 +42,7 @@ class tsubcatwidget extends  twidget {
     'template' => 'categories'
     );
     
-    $sidebars = tsidebars::instance();
+    $sidebars = tsidebars::i();
     $sidebars->add($id);
     $this->save();
     //$this->added($id);
@@ -54,7 +54,7 @@ class tsubcatwidget extends  twidget {
       unset($this->items[$id]);
       $this->save();
       
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       $widgets->delete($id);
       //$this->deleted($id);
     }
@@ -83,7 +83,7 @@ class tsubcatwidget extends  twidget {
   public function getcontent($id, $sidebar) {
     if (!isset($this->items[$id])) return '';
     $item = $this->items[$id];
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $this->tags->getsortedcontent(
     array(
     'item' => $theme->getwidgetitem($item['template'], $sidebar),

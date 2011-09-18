@@ -8,24 +8,24 @@
 
 class tplusoneplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function install() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->addtohead($this->getjs());
     
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->parsed = $this->themeparsed;
     ttheme::clearcache();
   }
   
   public function uninstall() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->deletefromhead($this->getjs());
     
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->unsubscribeclass($this);
     ttheme::clearcache();
   }

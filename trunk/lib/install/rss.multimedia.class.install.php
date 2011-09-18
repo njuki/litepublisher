@@ -7,7 +7,7 @@
 **/
 
 function trssMultimediaInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->lock();
   $urlmap->add('/rss/multimedia.xml', get_class($self), '');
   $urlmap->add('/rss/images.xml', get_class($self), 'image');
@@ -15,20 +15,20 @@ function trssMultimediaInstall($self) {
   $urlmap->add('/rss/video.xml', get_class($self), 'video');
   $urlmap->unlock();
   
-  $files = tfiles::instance();
+  $files = tfiles::i();
   $files->changed = $self->fileschanged;
   $self->save();
   
-  $meta = tmetawidget::instance();
+  $meta = tmetawidget::i();
   $meta->add('media', '/rss/multimedia.xml', tlocal::get('default', 'rssmedia'));
 }
 
 function trssMultimediaUninstall($self) {
   turlmap::unsub($self);
-  $files = tfiles::instance();
+  $files = tfiles::i();
   $files->unsubscribeclass($self);
   
-  $meta = tmetawidget::instance();
+  $meta = tmetawidget::i();
   $meta->delete('media');
 }
 

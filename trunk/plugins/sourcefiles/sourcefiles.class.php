@@ -11,7 +11,7 @@ class tsourcefiles extends tplugin implements itemplate {
   private $item;
   private $geshi;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -52,7 +52,7 @@ public function gethead() { }
     $updir = $filename == '' ? '' :
     ($dir == '' ? '' : sprintf('<ul><li><a href="%1$s/source/%2$s/" title="%2$s">..</a></li></ul>', litepublisher::$site->url, $dir));
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->simple($updir . $this->getcachecontent($dir, $filename));
   }
   

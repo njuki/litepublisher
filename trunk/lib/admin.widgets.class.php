@@ -8,14 +8,14 @@
 
 class tadminwidgets extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public static function getsidebarnames(tview $view) {
     $count = $view->theme->sidebarscount;
     $result = range(1, $count);
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $about = $parser->getabout($view->theme->name);
     foreach ($result as $key => $value) {
       if (isset($about["sidebar$key"])) $result[$key] = $about["sidebar$key"];
@@ -25,17 +25,17 @@ class tadminwidgets extends tadminmenu {
   
   public static function getsidebarsform() {
     $idview = (int) tadminhtml::getparam('idview', 1);
-    $view = tview::instance($idview);
-    $widgets = twidgets::instance();
-    $html = tadminhtml ::instance();
+    $view = tview::i($idview);
+    $widgets = twidgets::i();
+    $html = tadminhtml ::i();
     $html->section = 'widgets';
-    $args = targs::instance();
+    $args = targs::i();
     $args->idview = $idview;
-    $lang = tlocal::instance('views');
+    $lang = tlocal::i('views');
     $args->customsidebar = $idview == 1 ? '' :
     $view->theme->parse($html->getcheckbox('customsidebar', true));
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
-    $lang = tlocal::instance('widgets');
+    $lang = tlocal::i('widgets');
     $result = $html->formhead($args);
     $count = count($view->sidebars);
     $sidebarnames = self::getsidebarnames($view);
@@ -102,18 +102,18 @@ class tadminwidgets extends tadminmenu {
     switch ($this->name) {
       case 'widgets':
       $idwidget = tadminhtml::getparam('idwidget', 0);
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->getcontent();
       } else {
         $idview = (int) tadminhtml::getparam('idview', 1);
-        $view = tview::instance($idview);
+        $view = tview::i($idview);
         $result = tadminviews::getviewform('/admin/views/widgets/');
         if (($idview == 1) || $view->customsidebar) {
           $result .= self::getsidebarsform();
         } else {
-          $args = targs::instance();
+          $args = targs::i();
           $args->idview = $idview;
           $args->customsidebar = $view->customsidebar;
           $args->disableajax = $view->disableajax;
@@ -124,7 +124,7 @@ class tadminwidgets extends tadminmenu {
       }
       
       case 'addcustom':
-      $widget = tcustomwidget::instance();
+      $widget = tcustomwidget::i();
       return  $widget->admin->getcontent();
     }
   }
@@ -134,7 +134,7 @@ class tadminwidgets extends tadminmenu {
     switch ($this->name) {
       case 'widgets':
       $idwidget = (int) tadminhtml::getparam('idwidget', 0);
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       if ($widgets->itemexists($idwidget)) {
         $widget = $widgets->getwidget($idwidget);
         return  $widget->admin->processform();
@@ -144,14 +144,14 @@ class tadminwidgets extends tadminmenu {
       }
       
       case 'addcustom':
-      $widget = tcustomwidget::instance();
+      $widget = tcustomwidget::i();
       return  $widget->admin->processform();
     }
   }
   
   public static function setsidebars() {
     $idview = (int) tadminhtml::getparam('idview', 1);
-    $view = tview::instance($idview);
+    $view = tview::i($idview);
     
     switch ($_POST['action']) {
       case 'options':
@@ -170,8 +170,8 @@ class tadminwidgets extends tadminmenu {
       case 'add':
       $idview = (int) tadminhtml::getparam('id_view', 1);
       $_GET['idview'] = $idview;
-      $view = tview::instance($idview);
-      $widgets = twidgets::instance();
+      $view = tview::i($idview);
+      $widgets = twidgets::i();
       foreach ($_POST as $key => $value) {
         if (strbegin($key, 'addwidget-')){
           $id = (int) $value;
@@ -191,10 +191,10 @@ class tadminwidgets extends tadminmenu {
 class tsidebars extends tdata {
   public $items;
   
-  public static function instance($idview = 0) {
+  public static function i($idview = 0) {
     $result = getinstance(__class__);
     if ($idview > 0) {
-      $view = tview::instance((int) $idview);
+      $view = tview::i((int) $idview);
       $result->items = &$view->sidebars;
     }
     return $result;
@@ -202,14 +202,14 @@ class tsidebars extends tdata {
   
   protected function create() {
     parent::create();
-    $view = tview::instance();
+    $view = tview::i();
     $this->items = &$view->sidebars;
   }
   
 public function load() {}
   
   public function save() {
-    tview::instance()->save();
+    tview::i()->save();
   }
   
   public function add($id) {
@@ -274,14 +274,14 @@ public function load() {}
   }
   
   public static function fix() {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     foreach ($widgets->classes as $classname => &$items) {
       foreach ($items as $i => $item) {
         if (!isset($widgets->items[$item['id']])) unset($items[$i]);
       }
     }
     
-    $views = tviews::instance();
+    $views = tviews::i();
     foreach ($views->items as &$viewitem) {
       if (($viewitem['id'] != 1) && !$viewitem['customsidebar']) continue;
       unset($sidebar);

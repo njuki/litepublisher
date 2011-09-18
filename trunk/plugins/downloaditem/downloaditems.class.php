@@ -8,7 +8,7 @@
 
 class tdownloaditems extends tposts {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -20,7 +20,7 @@ class tdownloaditems extends tposts {
   public function createpoll() {
     $lang = tlocal::admin('downloaditems');
     $items = explode(',', $lang->pollitems);
-    $polls = tpolls::instance();
+    $polls = tpolls::i();
     return $polls->add('', 'opened', 'button', $items);
   }
   
@@ -40,7 +40,7 @@ class tdownloaditems extends tposts {
     $db = $this->getdb($this->childtable);
     $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childtable where (id in ($deleted)) and (poll  > 0)"));
     if (count ($idpolls) > 0) {
-      $polls = tpolls::instance();
+      $polls = tpolls::i();
       foreach ($idpolls as $idpoll)       $pols->delete($idpoll);
     }
   }

@@ -8,7 +8,7 @@
 
 function tcodedocpluginInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->CreateTable($self->table, '
   id int unsigned NOT NULL default 0,
   parent int unsigned NOT NULL default 0,
@@ -16,10 +16,10 @@ function tcodedocpluginInstall($self) {
   KEY id (id)
   ');
   
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->lock();
   $posts->deleted = $self->postdeleted;
   $posts->added = $self->postadded;
@@ -29,25 +29,25 @@ function tcodedocpluginInstall($self) {
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
   litepublisher::$classes->Add('tcodedocmenu', 'codedoc.menu.class.php', basename(dirname(__file__) ));
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->lock();
   $filter->beforecontent = $self->beforefilter;
   $filter->seteventorder('beforecontent', $self, 0);
-  $plugins = tplugins::instance();
+  $plugins = tplugins::i();
   if (!isset($plugins->items['wikiwords'])) $plugins->add('wikiwords');
   $filter->unlock();
   
   $about = tplugins::localabout(dirname(__file__));
-  $menu = tcodedocmenu::instance();
+  $menu = tcodedocmenu::i();
   $menu->url = '/doc/';
   $menu->title = $about['menutitle'];
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->add($menu);
   
   litepublisher::$classes->unlock();
   
-  $linkgen = tlinkgenerator::instance();
+  $linkgen = tlinkgenerator::i();
   $linkgen->data['codedoc'] = '/doc/[title].htm';
   $linkgen->save();
 }
@@ -58,7 +58,7 @@ function tcodedocpluginUninstall($self) {
   if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
   $menus->deleteurl('/doc/');
   $menus->unlock();
@@ -67,13 +67,13 @@ function tcodedocpluginUninstall($self) {
   litepublisher::$classes->delete('tcodedocmenu');
   litepublisher::$classes->unlock();
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->unsubscribeclass($self);
   
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->deletetable($self->table);
   
   
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->deleteplugin(tplugins::getname(__file__));
 }

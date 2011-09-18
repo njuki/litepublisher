@@ -7,7 +7,7 @@
 **/
 
 function tcategoriesmenuInstall($self) {
-  $categories = tcategories::instance();
+  $categories = tcategories::i();
   $categories->changed = $self->buildtree;
   $self->buildtree();
   
@@ -17,6 +17,6 @@ function tcategoriesmenuInstall($self) {
 function tcategoriesmenuUninstall($self) {
   tadminviews::replacemenu(get_class($self), 'tmenus');
   
-  $categories = tcategories::instance();
+  $categories = tcategories::i();
   $categories->unsubscribeclass($self);
 }

@@ -7,9 +7,9 @@
 **/
 
 function tcontactformInstall($self) {
-  $html = tadminhtml::instance();
+  $html = tadminhtml::i();
   $html->section = 'contactform';
-  $lang = tlocal::instance('contactform');
+  $lang = tlocal::i('contactform');
   $self->title =  $lang->title;;
   $self->subject = $lang->subject;
   $self->success  = $html->success();
@@ -17,12 +17,12 @@ function tcontactformInstall($self) {
   $self->content = $html->form();
   $self->order = 10;
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->add($self);
 }
 
 function tcontactformUninstall($self) {
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->delete($self->id);
 }
 

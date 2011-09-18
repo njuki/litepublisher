@@ -7,18 +7,18 @@
 **/
 
 function tfoafInstall($self) {
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
   $dir = dirname(__file__) .DIRECTORY_SEPARATOR  . 'resource' . DIRECTORY_SEPARATOR;
-  $lang = tlocal::instance('foaf');
+  $lang = tlocal::i('foaf');
   
   if ($self->dbversion) {
-    $manager = tdbmanager ::instance();
+    $manager = tdbmanager ::i();
     $manager->createtable($self->table, file_get_contents($dir .'foaf.sql'));
   }
   
-  $actions = TXMLRPCAction ::instance();
+  $actions = TXMLRPCAction ::i();
   $actions->lock();
   $actions->add('invatefriend', get_class($self), 'Invate');
   $actions->add('rejectfriend', get_class($self), 'Reject');
@@ -38,7 +38,7 @@ function tfoafInstall($self) {
   $classes->add('tfriendswidget', 'widget.friends.class.php', $name);
   $classes->unlock();
   
-  $admin = tadminmenus::instance();
+  $admin = tadminmenus::i();
   $admin->lock();
   $id = $admin->createitem(0, 'foaf', 'admin', 'tadminfoaf');
   {
@@ -48,10 +48,10 @@ function tfoafInstall($self) {
   $admin->unlock();
   $urlmap->unlock();
   
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->addtohead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />');
   $about = tplugins::getabout($name);
-  $meta = tmetawidget::instance();
+  $meta = tmetawidget::i();
   $meta->lock();
   $meta->add('foaf', '/foaf.xml', $about['name']);
   $meta->add('profile', '/profile.htm', $lang->profile);
@@ -60,10 +60,10 @@ function tfoafInstall($self) {
 }
 
 function tfoafUninstall($self) {
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->deleteplugin(tplugins::getname(__file__));
   
-  $actions = TXMLRPCAction ::instance();
+  $actions = TXMLRPCAction ::i();
   $actions->deleteclass(get_class($self));
   
   $urlmap = litepublisher::$urlmap;
@@ -78,7 +78,7 @@ function tfoafUninstall($self) {
   $classes->delete('tadminfoaf');
   $classes->unlock();
   
-  $admin = tadminmenus::instance();
+  $admin = tadminmenus::i();
   $admin->lock();
   $admin->deleteurl('/admin/foaf/profiletemplate/');
   $admin->deleteurl('/admin/foaf/profile/');
@@ -88,14 +88,14 @@ function tfoafUninstall($self) {
   $urlmap->unlock();
   
   if ($self->dbversion) {
-    $manager = tdbmanager ::instance();
+    $manager = tdbmanager ::i();
     $manager->deletetable($self->table);
   }
   
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->deletefromhead('	<link rel="meta" type="application/rdf+xml" title="FOAF" href="$site.url/foaf.xml" />');
   
-  $meta = tmetawidget::instance();
+  $meta = tmetawidget::i();
   $meta->lock();
   $meta->delete('foaf');
   $meta->delete('profile');

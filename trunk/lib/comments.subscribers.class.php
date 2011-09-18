@@ -8,7 +8,7 @@
 
 class tsubscribers extends titemsposts {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -70,21 +70,21 @@ class tsubscribers extends titemsposts {
   
   public function sendmail($id, $idpost) {
     if (!$this->enabled) return;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
     if (dbversion) {
       if (($item['status'] != 'approved')) return;
     }
     
-    $cron = tcron::instance();
+    $cron = tcron::i();
     $cron->add('single', get_class($this),  'cronsendmail', array((int) $id, (int) $idpost));
   }
   
   public function cronsendmail($arg) {
     $id = $arg[0];
     $pid = $arg[1];
-    $comments = tcomments::instance($pid);
+    $comments = tcomments::i($pid);
     try {
       $item = $comments->getitem($id);
     } catch (Exception $e) {
@@ -95,12 +95,12 @@ class tsubscribers extends titemsposts {
     if (!$subscribers  || (count($subscribers ) == 0)) return;
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
     $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;

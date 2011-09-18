@@ -7,7 +7,7 @@
 **/
 
 function tarchivesInstall($self) {
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->changed = $self->postschanged;
   if (!dbversion) $self->postschanged();
 }
@@ -15,7 +15,7 @@ function tarchivesInstall($self) {
 function tarchivesUninstall($self) {
   turlmap::unsub($self);
   tposts::unsub($self);
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleteclass(get_class($self));
 }
 

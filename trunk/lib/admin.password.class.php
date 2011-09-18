@@ -8,7 +8,7 @@
 
 class tadminpassword extends tadminform {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -32,7 +32,7 @@ class tadminpassword extends tadminform {
     if (($email == strtolower(trim(litepublisher::$options->email))) && ($login == litepublisher::$options->login)) {
       $id = 1;
     } elseif (litepublisher::$options->usersenabled) {
-      $users = tusers::instance();
+      $users = tusers::i();
       if ($id = $users->emailexists($email)) {
         if ($login != $users->getvalue($id, 'login')) $id = false;
       }
@@ -46,7 +46,7 @@ class tadminpassword extends tadminform {
       $users->changepassword($id, $password);
     }
     
-    $args = targs::instance();
+    $args = targs::i();
     if ($id == 1) {
       $name = 'admin';
     } else {
@@ -56,7 +56,7 @@ class tadminpassword extends tadminform {
     }
     $args->login = $name;
     $args->password = $password;
-    $mailtemplate = tmailtemplate::instance($this->section);
+    $mailtemplate = tmailtemplate::i($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     

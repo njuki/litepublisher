@@ -8,7 +8,7 @@
 
 class ttidyfilter extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -42,7 +42,7 @@ class ttidyfilter extends tplugin {
   
   public function install() {
     if (!class_exists('tidy')) die('PHP tidy extension is required');
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->lock();
     $filter->onaftersimple = $this->filter;
     $filter->onaftercomment = $this->filter;
@@ -50,7 +50,7 @@ class ttidyfilter extends tplugin {
   }
   
   public function uninstall() {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->unsubscribeclass($this);
   }
   

@@ -9,17 +9,17 @@
 class ttemplatetags {
   private $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function __construct() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $this->items = &$template->data['tags'];
   }
   
   public function save() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->save();
   }
   

@@ -9,7 +9,7 @@
 function tpostsInstall($self) {
   if ('tposts' != get_class($self)) return;
   if (dbversion) {
-    $manager = tdbmanager ::instance();
+    $manager = tdbmanager ::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'posts.sql'));
     $manager->CreateTable('pages', file_get_contents($dir .'postspages.sql'));
@@ -19,16 +19,16 @@ function tpostsInstall($self) {
     @mkdir($dir, 0777);
     @chmod($dir, 0777);
   }
-  $Cron = tcron::instance();
+  $Cron = tcron::i();
   $Cron->add('hour', get_class($self), 'HourCron');
 }
 
 function tpostsUninstall($self) {
   if ('tposts' != get_class($self)) return;
-  $Cron = tcron::instance();
+  $Cron = tcron::i();
   $Cron->deleteclass(get_class($self));
   
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleteclass($self);
   //@rmdir(litepublisher::$paths->data . 'posts');
 }

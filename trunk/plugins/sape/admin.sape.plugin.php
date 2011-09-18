@@ -8,19 +8,19 @@
 
 class tadminsapeplugin extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-    $this->widget = tsapeplugin::instance();
+    $this->widget = tsapeplugin::i();
   }
   
   public function getcontent(){
     $result = '';
     $widget = $this->widget;
-    $args = targs::instance();
+    $args = targs::i();
     if ($widget->id != 0) {
       $args->maxcount = $widget->counts[$widget->id];
       $result .= $this->optionsform(

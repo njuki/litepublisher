@@ -8,7 +8,7 @@
 
 class tyoutubeplayer extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -42,12 +42,12 @@ class tyoutubeplayer extends tplugin {
   }
   
   public function install() {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->afterfilter = $this->filter;
   }
   
   public function uninstall() {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->unsubscribeclass($this);
   }
   

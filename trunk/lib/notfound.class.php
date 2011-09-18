@@ -8,7 +8,7 @@
 
 class tforbidden extends tevents_itemplate implements itemplate {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -30,7 +30,7 @@ public function gettitle() {}
     $theme = $view->theme;
     if ($this->text != '') return $theme->simple($this->text);
     
-    $lang = tlocal::instance('default');
+    $lang = tlocal::i('default');
     if ($this->basename == 'forbidden') {
       return $theme->simple(sprintf('<h1>%s</h1>', $lang->forbidden));
     } else {
@@ -42,7 +42,7 @@ public function gettitle() {}
 
 class tnotfound404 extends tforbidden {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -62,10 +62,10 @@ class tnotfound404 extends tforbidden {
   }
   
   private function sendmail() {
-    $args = targs::instance();
+    $args = targs::i();
     $args->url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $args->ref =  isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-    $mailtemplate = tmailtemplate::instance('notfound');
+    $mailtemplate = tmailtemplate::i('notfound');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body, true);

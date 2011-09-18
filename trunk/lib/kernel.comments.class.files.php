@@ -12,7 +12,7 @@ class tcomments extends titems {
   private $holditems;
   private static $instances;
   
-  public static function instance($pid) {
+  public static function i($pid) {
     $pid = (int) $pid;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
@@ -58,7 +58,7 @@ class tcomments extends titems {
   }
   
   public function add($author, $content, $status, $ip) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item  = array(
     'author' => $author,
     'posted' => time(),
@@ -89,7 +89,7 @@ class tcomments extends titems {
       return false;
     }
     
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     
     $item['author'] = $author;
     $item['content'] = $filter->filtercomment($content);
@@ -134,7 +134,7 @@ class tcomments extends titems {
     }
     
     //автора не нашли
-    $comusers = tcomusers::instance($this->pid);
+    $comusers = tcomusers::i($this->pid);
     $comusers->delete($author);
   }
   
@@ -173,7 +173,7 @@ class tcomments extends titems {
   }
   
   public function insert($author, $content, $ip, $posted, $status) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item  = array(
     'author' => $author,
     'posted' => $posted,
@@ -202,32 +202,32 @@ class tcomments extends titems {
   public function getmoderator() {
     if (!litepublisher::$options->admincookie) return false;
     if (litepublisher::$options->group == 'admin') return true;
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->hasrigt(litepublisher::$options->group, 'moderator');
   }
   
   public function getcontent() {
     $result = $this->dogetcontent(false, 0);
     if (!$this->moderator) return $result;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $lang = tlocal::admin('comment');
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->hold->dogetcontent(true, 0);
     } else {
       //add empty list of hold comments
-      $args = targs::instance();
+      $args = targs::i();
       $args->comment = '';
       $result .= $theme->parsearg($theme->templates['content.post.templatecomments.holdcomments'], $args);
     }
-    $args = targs::instance();
+    $args = targs::i();
     $args->comments = $result;
     return $theme->parsearg($theme->templates['content.post.templatecomments.moderateform'], $args);
   }
   
   public function dogetcontent($hold, $idauthor) {
     $result = '';
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     $from = 0;
     $items = array_keys($this->items);
     if (!$hold) {
@@ -238,14 +238,14 @@ class tcomments extends titems {
     }
     
     $ismoder = $this->moderator;
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     if (count($items) > 0) {
       $args->from = $from;
       $comment = new tcomment($this);
       ttheme::$vars['comment'] = $comment;
       if ($hold) $comment->status = 'hold';
-      $lang = tlocal::instance('comment');
+      $lang = tlocal::i('comment');
       
       if ($ismoder) {
         tlocal::usefile('admin');
@@ -297,8 +297,8 @@ class tholdcomments extends tcomments {
   public $owner;
   public $idauthor;
   
-  public static function instance($pid) {
-    $owner = tcomments::instance($pid);
+  public static function i($pid) {
+    $owner = tcomments::i($pid);
     return $owner->hold;
   }
   
@@ -377,7 +377,7 @@ class TComment {
   }
   
   private function setcontent($value) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $this->owner->items[$this->id]['content'] = $filter->filtercomment($value);
     $this->save();
     $this->owner->raw->items[$this->id]['content'] =  $value;
@@ -385,7 +385,7 @@ class TComment {
   }
   
   private function getauthoritem() {
-    $comusers = tcomusers::instance($this->owner->pid);
+    $comusers = tcomusers::i($this->owner->pid);
     return  $comusers->getitem($this->author);
   }
   
@@ -403,12 +403,12 @@ class TComment {
   
   public function getauthorlink() {
     $idpost = $this->owner->pid;
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $item = $comusers->getitem($this->author);
     $name = $item['name'];
     
     if (empty($url)) return $name;
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     if ($manager->hidelink) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
@@ -419,7 +419,7 @@ class TComment {
   }
   
   public function getdate() {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return tlocal::date($this->posted, $theme->templates['content.post.templatecomments.comments.comment.date']);
   }
   
@@ -432,12 +432,12 @@ class TComment {
   }
   
   public function geturl() {
-    $post = tpost::instance($this->owner->pid);
+    $post = tpost::i($this->owner->pid);
     return "$post->link#comment-$this->id";
   }
   
   public function getposttitle() {
-    $post = tpost::instance($this->owner->pid);
+    $post = tpost::i($this->owner->pid);
     return $post->title;
   }
   
@@ -455,7 +455,7 @@ class TComment {
 class tcommentmanager extends tevents {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -495,7 +495,7 @@ class tcommentmanager extends tevents {
   
   private function addrecent($id, $idpost) {
     if (is_int($i = $this->indexofrecent($id, $idpost)))  return;
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     if ($post->status != 'published') return;
     $item = $post->comments->items[$id];
     $item['id'] = $id;
@@ -503,7 +503,7 @@ class tcommentmanager extends tevents {
     $item['title'] = $post->title;
     $item['posturl'] =     $post->lastcommenturl;
     
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $author = $comusers->items[$item['author']];
     $item['name'] = $author['name'];
     $item['email'] = $author['email'];
@@ -515,7 +515,7 @@ class tcommentmanager extends tevents {
   }
   
   public function add($idpost, $name, $email, $url, $content, $ip) {
-    $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
+    $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, $ip);
     return $this->addcomment($idpost, $idauthor, $content, $ip);
   }
@@ -523,7 +523,7 @@ class tcommentmanager extends tevents {
   public function addcomment($idpost, $idauthor, $content, $ip) {
     $status = litepublisher::$classes->spamfilter->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $id = $comments->add($idauthor,  $content, $status, $ip);
     
     if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
@@ -535,13 +535,13 @@ class tcommentmanager extends tevents {
   }
   
   public function edit($id, $idpost, $name, $email, $url, $content) {
-    $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
+    $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, '');
     return $this->editcomment($id, $idpost, $idauthor, $content);
   }
   
   public function editcomment($id, $idpost, $idauthor, $content) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if (!$comments->edit($id, $idauthor,  $content)) return false;
     //if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
     
@@ -558,14 +558,14 @@ class tcommentmanager extends tevents {
     $name = litepublisher::$site->author;
     /*
     if (class_exists('tprofile')) {
-      $profile = tprofile::instance();
+      $profile = tprofile::i();
       $email = $profile->mbox!= '' ? $profile->mbox : $email;
       $name = $profile->nick != '' ? $profile->nick : 'Admin';
     }
     */
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $idauthor = $comusers->add($name, $email, $site, '');
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $id = $comments->add($idauthor,  $content, $status, '');
     
     if (!dbversion) $this->addrecent($id, $idpost);
@@ -578,26 +578,26 @@ class tcommentmanager extends tevents {
   
   private function dochanged($id, $idpost) {
     if (dbversion) {
-      $comments = tcomments::instance($idpost);
+      $comments = tcomments::i($idpost);
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
       //update trust
       try {
         $item = $comments->getitem($id);
         $idauthor = $item['author'];
-        $comusers = tcomusers::instance($idpost);
+        $comusers = tcomusers::i($idpost);
         $comusers->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idauthor and status = 'approved' limit 5"));
       } catch (Exception $e) {
       }
     }
     
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     $post->clearcache();
     $this->changed($id, $idpost);
   }
   
   public function delete($id, $idpost) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if ($comments->delete($id)) {
       if (!dbversion) $this->deleterecent($id, $idpost);
       $this->deleted($id, $idpost);
@@ -609,7 +609,7 @@ class tcommentmanager extends tevents {
   
   public function postdeleted($idpost) {
     if (dbversion) {
-      $comments = tcomments::instance($idpost);
+      $comments = tcomments::i($idpost);
       $comments->db->update("status = 'deleted'", "post = $idpost");
     } else {
       $deleted = false;
@@ -629,7 +629,7 @@ class tcommentmanager extends tevents {
   
   public function setstatus($id, $idpost, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if ($comments->setstatus($id, $status)) {
       if (!dbversion){
         if ($status == 'approved') {
@@ -650,23 +650,23 @@ class tcommentmanager extends tevents {
   
   public function trusted($idauthor) {
     if (!dbversion) return true;
-    $comusers = tcomusers::instance(0);
+    $comusers = tcomusers::i(0);
     $item = $comusers->getitem($idauthor);
     return $this->checktrust($item['trust']);
   }
   
   public function sendmail($id, $idpost) {
     if (!$this->sendnotification) return;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $args = targs::instance();
+    $args = targs::i();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id&post=$idpost";
     $ref = md5(litepublisher::$secret . $adminurl);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;
     
-    $mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body, true);
@@ -708,7 +708,7 @@ if (!class_exists('tkeptcomments', false)) {
   if (dbversion) {
     class tkeptcomments extends tdata {
       
-      public static function instance() {
+      public static function i() {
         return getinstance(__class__);
       }
       
@@ -745,7 +745,7 @@ if (!class_exists('tkeptcomments', false)) {
     
     class tkeptcomments extends titems {
       
-      public static function instance() {
+      public static function i() {
         return getinstance(__class__);
       }
       
@@ -781,7 +781,7 @@ if (!class_exists('tkeptcomments', false)) {
 class tcommentform extends tevents {
   public $htmlhelper;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -795,11 +795,11 @@ class tcommentform extends tevents {
   public static function getcomuser($postid) {
     if (!empty($_COOKIE['userid'])) {
       $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
-      $comusers = tcomusers::instance($postid);
+      $comusers = tcomusers::i($postid);
       $user = $comusers->fromcookie($cookie);
       $comusers->loadall();
       if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
-        $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
+        $comusers2 = tcomusers::i( (int) $_COOKIE['idpost']);
         $user = $comusers2->fromcookie($cookie);
       }
       return $user;
@@ -809,10 +809,10 @@ class tcommentform extends tevents {
   
   public static function printform($postid, $themename) {
     $result = '';
-    $self = self::instance();
-    $lang = tlocal::instance('comment');
+    $self = self::i();
+    $lang = tlocal::i('comment');
     $theme = ttheme::getinstance($themename);
-    $args = targs::instance();
+    $args = targs::i();
     $args->name = '';
     $args->email = '';
     $args->url = '';
@@ -825,10 +825,10 @@ class tcommentform extends tevents {
       $args->name = $user['name'];
       $args->email = $user['email'];
       $args->url = $user['url'];
-      $subscribers = tsubscribers::instance();
+      $subscribers = tsubscribers::i();
       $args->subscribe = $subscribers->subscribed($postid, $user['id']);
       
-      $comments = tcomments::instance($postid);
+      $comments = tcomments::i($postid);
       if ($hold = $comments->getholdcontent($user['id'])) {
         $result .= $hold;
       }
@@ -864,7 +864,7 @@ class tcommentform extends tevents {
       }
     }
     
-    $kept = tkeptcomments::instance();
+    $kept = tkeptcomments::i();
     $kept->deleteold();
     if (!isset($_POST['confirmid'])) {
       $values = $_POST;
@@ -885,7 +885,7 @@ class tcommentform extends tevents {
       return $this->htmlhelper->geterrorcontent(tlocal::get('default', 'postnotfound'));
     }
     
-    $post = tpost::instance($postid);
+    $post = tpost::i($postid);
     
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
@@ -898,7 +898,7 @@ class tcommentform extends tevents {
     'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
     );
     
-    $lang = tlocal::instance('comment');
+    $lang = tlocal::i('comment');
     if (!$this->checkspam($values['antispam']))          {
       return $this->htmlhelper->geterrorcontent($lang->spamdetected);
     }
@@ -924,13 +924,13 @@ class tcommentform extends tevents {
     }
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-    $users = tcomusers::instance($postid);
+    $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     if (!litepublisher::$classes->spamfilter->canadd( $uid)) {
       return $this->htmlhelper->geterrorcontent($lang->toomany);
     }
     
-    $subscribers = tsubscribers::instance();
+    $subscribers = tsubscribers::i();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
     litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
@@ -954,8 +954,8 @@ class tcommentform extends tevents {
   }
   
   private function getconfirmform($confirmid) {
-    ttheme::$vars['lang'] = tlocal::instance($this->basename);
-    $args = targs::instance();
+    ttheme::$vars['lang'] = tlocal::i($this->basename);
+    $args = targs::i();
     $args->confirmid = $confirmid;
     $theme = tsimplecontent::gettheme();
     return $theme->parsearg(
@@ -986,7 +986,7 @@ class tcommentform extends tevents {
 //comments.spamfilter.class.php
 class tspamfilter extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1003,7 +1003,7 @@ class tspamfilter extends tevents {
     if (($status == 'hold') || ($status == 'approved')) return $status;
     if (!litepublisher::$options->filtercommentstatus) return litepublisher::$options->DefaultCommentStatus;
     if (litepublisher::$options->DefaultCommentStatus == 'approved') return 'approved';
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     if ($manager->trusted($idauthor)) return  'approved';
     return 'hold';
   }
@@ -1014,7 +1014,7 @@ class tspamfilter extends tevents {
   }
   
   public function checkduplicate($idpost, $content) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $content = trim($content);
     if (dbversion) {
       $hash = basemd5($content);
@@ -1029,7 +1029,7 @@ class tspamfilter extends tevents {
 //comments.subscribers.class.php
 class tsubscribers extends titemsposts {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1091,21 +1091,21 @@ class tsubscribers extends titemsposts {
   
   public function sendmail($id, $idpost) {
     if (!$this->enabled) return;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if (!$comments->itemexists($id)) return;
     $item = $comments->getitem($id);
     if (dbversion) {
       if (($item['status'] != 'approved')) return;
     }
     
-    $cron = tcron::instance();
+    $cron = tcron::i();
     $cron->add('single', get_class($this),  'cronsendmail', array((int) $id, (int) $idpost));
   }
   
   public function cronsendmail($arg) {
     $id = $arg[0];
     $pid = $arg[1];
-    $comments = tcomments::instance($pid);
+    $comments = tcomments::i($pid);
     try {
       $item = $comments->getitem($id);
     } catch (Exception $e) {
@@ -1116,12 +1116,12 @@ class tsubscribers extends titemsposts {
     if (!$subscribers  || (count($subscribers ) == 0)) return;
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->subscribesubj ();
     $body = $mailtemplate->subscribebody();
     $body .= sprintf("\n%s/admin/subscribers/%suserid=", litepublisher::$site->url, litepublisher::$site->q);
     
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     foreach ($subscribers as $uid) {
       $user = $comusers->getitem($uid);
       if (empty($user['email'])) continue;
@@ -1139,7 +1139,7 @@ class tcomusers extends titems {
   public $pid;
   private static $instances;
   
-  public static function instance($pid) {
+  public static function i($pid) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
     $self = litepublisher::$classes->newinstance(__class__);
@@ -1179,7 +1179,7 @@ class tcomusers extends titems {
     );
     
     $this->unlock();
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authoradded($this->autoid);
     return $this->autoid;
   }
@@ -1192,14 +1192,14 @@ class tcomusers extends titems {
     $item['email'] = $email;
     $item['ip'] = $ip;
     $this->unlock();
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authoredited($id);
     return $id;
   }
   
   public function delete($id) {
     parent::delete($id);
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authordeleted($id);
   }
   
@@ -1251,7 +1251,7 @@ class tcomusers extends titems {
 //template.comments.class.php
 class ttemplatecomments extends tdata {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1260,24 +1260,24 @@ public function save() {}
   
   public function getcomments($idpost) {
     $result = '';
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $idpost = (int) $idpost;
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
-    $lang = tlocal::instance('comment');
-    $comments = tcomments::instance($idpost);
+    $lang = tlocal::i('comment');
+    $comments = tcomments::i($idpost);
     $list = $comments->getcontent();
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->content->post->templatecomments->comments;
-    $args = targs::instance();
+    $args = targs::i();
     $args->count = $post->cmtcount;
     $result .= $tml->count($args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
-      $pingbacks = tpingbacks::instance($post->id);
+      $pingbacks = tpingbacks::i($post->id);
       $result .= $pingbacks->getcontent();
     }
     
@@ -1285,7 +1285,7 @@ public function save() {}
       if (litepublisher::$options->autocmtform) {
         $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
       } else {
-        $lang = tlocal::instance('comment');
+        $lang = tlocal::i('comment');
         $args->name = '';
         $args->email = '';
         $args->url = '';
@@ -1307,7 +1307,7 @@ public function save() {}
 //widget.comments.class.php
 class tcommentswidget extends twidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1325,14 +1325,14 @@ class tcommentswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $recent = $manager->getrecent($this->maxcount);
     if (count($recent) == 0) return '';
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('comments', $sidebar);
     $url = litepublisher::$site->url;
-    $args = targs::instance();
+    $args = targs::i();
     $args->onrecent = tlocal::get('comment', 'onrecent');
     foreach ($recent as $item) {
       $args->add($item);

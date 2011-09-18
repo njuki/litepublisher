@@ -8,12 +8,12 @@
 
 class tadminlogin extends tadminform {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function auth() {
-    $auth = tauthdigest::instance();
+    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
@@ -22,7 +22,7 @@ class tadminlogin extends tadminform {
   }
   
   private function logout() {
-    $auth = tauthdigest::instance();
+    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
       if (litepublisher::$options->authcookie()) $auth->logout();
     } elseif ($auth->auth()) {
@@ -49,11 +49,11 @@ class tadminlogin extends tadminform {
     
     $expired = isset($_POST['remember']) ? time() + 1210000 : time() + 8*3600;
     $cookie = md5uniq();
-    $auth = tauthdigest::instance();
+    $auth = tauthdigest::i();
     $auth->setcookies($cookie, $expired);
     $url = '/admin/';
     if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       $url = $groups->gethome(litepublisher::$options->group);
     }
     
@@ -61,7 +61,7 @@ class tadminlogin extends tadminform {
   }
   
   public function getcontent() {
-    $args = targs::instance();
+    $args = targs::i();
     $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
     return $this->html->form($args);

@@ -8,7 +8,7 @@
 
 class tusers extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -22,7 +22,7 @@ class tusers extends titems {
   
   public function add($group, $login,$password, $name, $email, $website) {
     if ($this->loginexists($login)) return false;
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     if (is_numeric($group)) {
       $gid = (int) $group;
       if (!$groups->itemexists($gid)) return false;
@@ -45,7 +45,7 @@ class tusers extends titems {
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
     $this->items[$id] = $item;
     if ($this->dbversion) $this->save();
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     $pages->add($id, $name, $email, $website);
     $this->added($id);
     return $id;
@@ -54,7 +54,7 @@ class tusers extends titems {
   public function edit($id, array $values) {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     $group = isset($values['gid']) ? $values['gid'] :
     (isset($values['group']) ? $values['group'] : '');
     $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
@@ -84,7 +84,7 @@ class tusers extends titems {
       $this->save();
     }
     
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     $pages->edit($id, $values);
     return true;
   }
@@ -102,7 +102,7 @@ class tusers extends titems {
   }
   
   public function emailexists($email) {
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     if ($this->dbversion) {
       return $pages->db->findid('email = '. dbquote($email));
     } else {
@@ -130,7 +130,7 @@ class tusers extends titems {
       $this->items[$id]['status'] = 'approved';
       $this->save();
     }
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     if ($pages->createpage) $pages->addpage($id);
   }
   
@@ -182,7 +182,7 @@ class tusers extends titems {
   
   public function getgroupname($id) {
     $item = $this->getitem($id);
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->items[$item['gid']]['name'];
   }
   
@@ -216,13 +216,13 @@ class tusers extends titems {
       $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
       if (count($delete) > 0) {
         $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
-        $pages = tuserpages::instance();
+        $pages = tuserpages::i();
         foreach ($delete as $id) {
           $pages->delete($id);
         }
       }
     } else {
-      $pages = tuserpages::instance();
+      $pages = tuserpages::i();
       $pages->lock();
       $time = strtotime('-1 day');
       $deleted = false;

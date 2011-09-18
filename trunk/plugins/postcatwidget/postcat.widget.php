@@ -9,7 +9,7 @@
 class tpostcatwidget extends tclasswidget {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -22,7 +22,7 @@ class tpostcatwidget extends tclasswidget {
   }
   
   public function add($title, $content, $template, $cats) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widgets->lock();
     $id =   $widgets->addclass($this, 'tpost');
     $widgets->items[$id]['title'] = $title;
@@ -44,7 +44,7 @@ class tpostcatwidget extends tclasswidget {
       unset($this->items[$id]);
       $this->save();
       
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       $widgets->delete($id);
       //$this->deleted($id);
     }
@@ -70,7 +70,7 @@ class tpostcatwidget extends tclasswidget {
     $post = $this->getcontext('tpost');
     if (0 == count(array_intersect($item['cats'], $post->categories))) return '';
     if ($item['template'] == '') return $item['content'];
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($item['title'], $item['content'], $item['template'], $sidebar);
   }
   

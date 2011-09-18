@@ -53,14 +53,14 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   
   $self->unlock();
 
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->addtohead(sprintf($template->js, '$site.files$template.jsmerger_default'));
 
-$updater = tupdater::instance();
+$updater = tupdater::i();
   $updater->onupdated = $self->onupdated;
 }
 
 function tjsmergerUninstall($self) {
-  $updater = tupdater::instance();
+  $updater = tupdater::i();
   $updater->unsubscribeclass($self);
 }

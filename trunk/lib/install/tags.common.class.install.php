@@ -9,18 +9,18 @@
 function tcommontagsInstall($self) {
   if ('tcommontags' == get_class($self)) return;
   
-  $posts= tposts::instance();
+  $posts= tposts::i();
   $posts->lock();
   $posts->added = $self->postedited;
   $posts->edited = $self->postedited;
   $posts->deleted = $self->postdeleted;
   $posts->unlock();
   
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->add("/$self->PermalinkIndex/", get_class($self), 0);
   
   if (dbversion) {
-    $manager = TDBManager ::instance();
+    $manager = TDBManager ::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->createtable($self->table, file_get_contents($dir .'tags.sql'));
     $manager->createtable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
@@ -37,7 +37,7 @@ function tcommontagsUninstall(&$self) {
   tposts::unsub($self);
   turlmap::unsub($self);
   
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleteclass(get_class($self));
 }
 

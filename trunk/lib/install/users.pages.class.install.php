@@ -8,18 +8,18 @@
 
 function tuserpagesInstall($self) {
   if ($self->dbversion) {
-    $manager = tdbmanager::instance();
+    $manager = tdbmanager::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'userpage.sql'));
   }
   
-  $linkgen = tlinkgenerator::instance();
+  $linkgen = tlinkgenerator::i();
   $linkgen->data['user'] = '/user/[name].htm';
   $linkgen->save();
   
   litepublisher::$urlmap->add('/users.htm', get_class($self), 'url', 'get');
   
-  $robots = trobotstxt ::instance();
+  $robots = trobotstxt ::i();
   $robots->AddDisallow('/users.htm');
 }
 

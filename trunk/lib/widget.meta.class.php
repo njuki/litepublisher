@@ -9,7 +9,7 @@
 class tmetawidget extends twidget {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -43,10 +43,10 @@ class tmetawidget extends twidget {
   
   public function getcontent($id, $sidebar) {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('meta', $sidebar);
     $metaclasses = $theme->getwidgettml($sidebar, 'meta', 'classes');
-    $args = targs::instance();
+    $args = targs::i();
     foreach    ($this->items as $name => $item) {
       if (!$item['enabled']) continue;
       $args->add($item);

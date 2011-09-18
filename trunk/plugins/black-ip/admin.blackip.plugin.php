@@ -8,14 +8,14 @@
 
 class tadminblackip {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tblackip::instance();
+    $plugin = tblackip::i();
     $lang = tplugins::getlangabout(__file__);
-    $args = targs::instance();
+    $args = targs::i();
     $args->ip = implode("\n", $plugin->ip);
     $args->words = implode("\n", $plugin->words);
     $args->ipstatus = tadminhtml::array2combo(tlocal::$data['commentstatus'], $plugin->ipstatus);
@@ -26,12 +26,12 @@ class tadminblackip {
     $tabs->add($lang->wordtitle, '[combo=wordstatus] [editor=words]');
     
     $args->formtitle = $about['formtitle'];
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return tuitabs::gethead() . $html->adminform($tabs->get(), $args);
   }
   
   public function processform() {
-    $plugin = tblackip::instance();
+    $plugin = tblackip::i();
     $plugin->ipstatus = $_POST['ipstatus'];
     $plugin->wordstatus = $_POST['wordstatus'];
     $ip = str_replace(array("\r\n", "\r"), "\n", $_POST['ip']);

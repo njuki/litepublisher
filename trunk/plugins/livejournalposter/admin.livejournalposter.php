@@ -8,19 +8,19 @@
 
 class tadminlivejournalposter {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tlivejournalposter::instance();
+    $plugin = tlivejournalposter::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     if ($plugin->template == '') $plugin->template = file_get_contents($dir. 'livejournalposter.tml');
     $about = tplugins::getabout(tplugins::getname(__file__));
     $lang = tplugins::getlangabout(__file__);
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = $lang->section;
-    $args = targs::instance();
+    $args = targs::i();
     $args->add($about);
     $args->add($plugin->data);
     $args->public = 'public' == $plugin->privacy;
@@ -38,7 +38,7 @@ class tadminlivejournalposter {
   
   public function processform() {
     extract($_POST, EXTR_SKIP);
-    $plugin = tlivejournalposter::instance();
+    $plugin = tlivejournalposter::i();
     $plugin->lock();
     $plugin->host = $host;
     $plugin->login = $login;

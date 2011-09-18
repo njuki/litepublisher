@@ -8,7 +8,7 @@
 
 /* to prevent recurse call */
 function installoptions($language) {
-  $options = toptions::instance();
+  $options = toptions::i();
   $options->lock();
   if (dbversion) {
     $usehost = $_REQUEST['usehost'] == '1';

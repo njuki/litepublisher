@@ -8,7 +8,7 @@
 
 class tajaxcommentformplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -16,7 +16,7 @@ class tajaxcommentformplugin extends tplugin {
     litepublisher::$options->autocmtform = false;
     litepublisher::$urlmap->addget('/ajaxcommentform.htm', get_class($this));
     
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $jsmerger->lock();
     $jsmerger->add('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
     $jsmerger->addtext('comments', 'ajaxform', $this->getjs());
@@ -27,7 +27,7 @@ class tajaxcommentformplugin extends tplugin {
     litepublisher::$options->autocmtform = true;
     turlmap::unsub($this);
     
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $jsmerger->lock();
     $jsmerger->deletefile('comments', '/plugins/' . basename(dirname(__file__)) . '/ajaxcommentform.min.js');
     $jsmerger->deletetext('comments', 'ajaxform');
@@ -36,7 +36,7 @@ class tajaxcommentformplugin extends tplugin {
   
   public function getjs() {
     $name = basename(dirname(__file__));
-    $lang = tlocal::instance('comments');
+    $lang = tlocal::i('comments');
     $ls = array(
     'error_title' => $lang->error
     );
@@ -48,7 +48,7 @@ class tajaxcommentformplugin extends tplugin {
     if (!empty($_GET['getuser'])) {
       $cookie = basemd5($_GET['getuser']  . litepublisher::$secret);
       $idpost = (int) $_GET['idpost'];
-      $comusers = tcomusers::instance($idpost);
+      $comusers = tcomusers::i($idpost);
       if ($user = $comusers->fromcookie($cookie)) {
         $data = array(
         'name' => $user['name'],
@@ -56,7 +56,7 @@ class tajaxcommentformplugin extends tplugin {
         'url' => $user['url']
         );
         
-        $subscribers = tsubscribers::instance();
+        $subscribers = tsubscribers::i();
         $data['subscribe'] = $subscribers->subscribed($idpost, $user['id']);
         
         return turlmap::htmlheader(false) . json_encode($data);
@@ -64,14 +64,14 @@ class tajaxcommentformplugin extends tplugin {
       return 403;
     }
     
-    $commentform = tcommentform::instance();
+    $commentform = tcommentform::i();
     $commentform->htmlhelper = $this;
     return turlmap::htmlheader(false) .$commentform->request(null);
   }
   
   //htmlhelper
   public function confirm($confirmid) {
-    $result = tlocal::instance()->ini['commentform'];
+    $result = tlocal::i()->ini['commentform'];
     $result['title'] = tlocal::get('default', 'confirm');
     $result['confirmid'] = $confirmid;
     $result['code'] = 'confirm';

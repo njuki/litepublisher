@@ -8,7 +8,7 @@
 
 class tcontactform extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
   }
   

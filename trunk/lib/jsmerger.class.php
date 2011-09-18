@@ -8,7 +8,7 @@
 
 class tfilemerger extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -111,8 +111,8 @@ return $result;
   
   public function merge() {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
-    $theme = ttheme::instance();
-    $template = ttemplate::instance();
+    $theme = ttheme::i();
+    $template = ttemplate::i();
     foreach ($this->items as $section => $items) {
       $s = '';
       foreach ($items['files'] as $filename) {
@@ -142,7 +142,7 @@ return $result;
 
 class tjsmerger extends tfilemerger {
 
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

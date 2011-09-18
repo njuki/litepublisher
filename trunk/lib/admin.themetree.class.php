@@ -10,13 +10,13 @@ class tadminthemetree extends tadminmenu implements iwidgets {
   private $ini;
   private $theme;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $result .= $template->getjavascript('/js/litepublisher/themetree.min.js');
     $name = tadminhtml::getparam('theme', '');
     if (($name != '') && ttheme::exists($name)) {
@@ -134,7 +134,7 @@ tlocal::usefile('theme');
     $title = $this->gettitle();
     $content = $this->getwidgetcontent(0, $sidebar);
     $content = str_replace('<ul>', '<ul style="display: none;">', $content);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, 'widget', $sidebar);
   }
   
@@ -148,7 +148,7 @@ public function getwidgets(array &$items, $sidebar) { }
   
   public function getcontent() {
     $html = $this->html;
-    $args = targs::instance();
+    $args = targs::i();
     if (isset($this->theme)) {
       $args->formtitle = $this->gettitle();
       return $html->adminform('<div id="themeeditor"></div>', $args);

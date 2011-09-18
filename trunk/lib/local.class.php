@@ -12,7 +12,7 @@ class tlocal {
   public $ini;
   public $section;
   
-  public static function instance($section = '') {
+  public static function i($section = '') {
     if (!isset(self::$self)) {
       self::$self= getinstance(__class__);
       self::$self->loadfile('default');
@@ -22,7 +22,7 @@ class tlocal {
   }
   
   public static function admin($section = '') {
-    $result = self::instance($section);
+    $result = self::i($section);
     $result->check('admin');
     return $result;
   }
@@ -56,7 +56,7 @@ class tlocal {
   
   public static function date($date, $format = '') {
     if (empty($format)) $format = $this->getdateformat();
-    return self::instance()->translate(date($format, $date), 'datetime');
+    return self::i()->translate(date($format, $date), 'datetime');
   }
   
   public function getdateformat() {
@@ -79,13 +79,13 @@ class tlocal {
     if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini ;
     } else {
-      $merger = tlocalmerger::instance();
+      $merger = tlocalmerger::i();
       $merger->parse($name);
     }
   }
   
   public static function usefile($name) {
-    self::instance()->check($name);
+    self::i()->check($name);
   }
   
   //backward
@@ -99,7 +99,7 @@ class tlocal {
   
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
-    self::instance()->loaded = array();
+    self::i()->loaded = array();
   }
   
 }//class

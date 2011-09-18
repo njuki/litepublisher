@@ -8,7 +8,7 @@
 
 class tcomusers extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -58,13 +58,13 @@ class tcomusers extends titems {
     'url' => $url,
     'ip' => $ip
     ));
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authoredited($id);
   }
   
   public function delete($id) {
     parent::delete($id);
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authordeleted($id);
   }
   

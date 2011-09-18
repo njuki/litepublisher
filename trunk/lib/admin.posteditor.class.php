@@ -10,27 +10,27 @@ class tposteditor extends tadminmenu {
   public $idpost;
   private $isauthor;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
     
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
     //$result .= $template->getready('$.initposteditor();');
     $result .= $template->getready('initposteditor();');
-    $ajax = tajaxposteditor ::instance();
+    $ajax = tajaxposteditor ::i();
     return $ajax->dogethead($result);
   }
   
   private static function getsubcategories($parent, array $postitems) {
     $result = '';
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $html = tadminhtml::getinstance('editor');
-    $args = targs::instance();
+    $args = targs::i();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
       $args->add($item);
@@ -46,7 +46,7 @@ class tposteditor extends tadminmenu {
   }
   
   public static function getcategories(array $items) {
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $categories->loadall();
     $result = self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
@@ -54,7 +54,7 @@ class tposteditor extends tadminmenu {
   
   protected function getpostcategories(tpost $post) {
     $postitems = $post->categories;
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
   }
@@ -64,13 +64,13 @@ class tposteditor extends tadminmenu {
     $this->basename = 'editor';
     $this->idpost = $this->idget();
     if ($this->idpost > 0) {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       if (!$posts->itemexists($this->idpost)) return 404;
     }
-    $post = tpost::instance($this->idpost);
+    $post = tpost::i($this->idpost);
     $groupname = litepublisher::$options->group;
     if ($groupname != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if (!$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author')) {
         $this->isauthor = true;
         if (($post->id != 0) && (litepublisher::$options->user != $post->author)) return 403;
@@ -97,18 +97,18 @@ class tposteditor extends tadminmenu {
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = htmlspecialchars_decode($post->title, ENT_QUOTES);
     $args->categories = $this->getpostcategories($post);
-    $ajaxeditor = tajaxposteditor ::instance();
+    $ajaxeditor = tajaxposteditor ::i();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
   }
   
   public function getcontent() {
     $html = $this->html;
-    $post = tpost::instance($this->idpost);
+    $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
-    $args = targs::instance();
+    $args = targs::i();
     $this->getpostargs($post, $args);
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
-    if ($this->isauthor &&($r = tauthor_rights::instance()->getposteditor($post, $args)))  return $r;
+    if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
     return $html->fixquote($result);
@@ -165,14 +165,14 @@ class tposteditor extends tadminmenu {
     $html = $this->html;
     if (empty($_POST['title'])) return $html->h2->emptytitle;
     $id = (int)$_POST['id'];
-    $post = tpost::instance($id);
-    if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  {
+    $post = tpost::i($id);
+    if ($this->isauthor &&($r = tauthor_rights::i()->editpost($post)))  {
       $this->idpost = $post->id;
       return $r;
     }
     $this->set_post($post);
     
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if ($id == 0) {
       $this->idpost = $posts->add($post);
       $_POST['id'] = $this->idpost;

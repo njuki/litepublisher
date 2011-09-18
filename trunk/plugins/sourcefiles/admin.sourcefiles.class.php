@@ -8,14 +8,14 @@
 
 class tadminsourcefiles  {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tsourcefiles::instance();
-    $html = tadminhtml::instance();
-    $args = targs::instance();
+    $plugin = tsourcefiles::i();
+    $html = tadminhtml::i();
+    $args = targs::i();
     $args->root = $plugin->root;
     $args->formtitle = 'Source files option';
     $args->data['$lang.root'] = 'Path to source files';
@@ -30,7 +30,7 @@ class tadminsourcefiles  {
   }
   
   public function processform() {
-    $plugin = tsourcefiles::instance();
+    $plugin = tsourcefiles::i();
     if (isset($_POST['download'])) {
       set_time_limit(300);
       $version = litepublisher::$options->version;

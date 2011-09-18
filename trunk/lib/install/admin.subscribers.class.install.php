@@ -7,7 +7,7 @@
 **/
 
 function tadminsubscribersInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->add('/admin/subscribers/', get_class($self), null, 'normal');
 }
 

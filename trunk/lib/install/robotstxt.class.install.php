@@ -7,7 +7,7 @@
 **/
 function trobotstxtInstall($self) {
   $self->lock();
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $self->idurl = $urlmap->add('/robots.txt', get_class($self), null);
   
   $self->add("#" . litepublisher::$site->url . "/");

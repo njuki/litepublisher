@@ -8,7 +8,7 @@
 
 function tsourcefilesInstall($self) {
   if (!dbversion) die("Plugin required data base");
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->CreateTable($self->table, "
   `id` int unsigned NOT NULL auto_increment,
   `idurl` int unsigned NOT NULL default '0',
@@ -29,7 +29,7 @@ function tsourcefilesInstall($self) {
 function tsourcefilesUninstall($self) {
   //die("Warning! You can lost all tickets!");
   litepublisher::$classes->delete('tsourcefilesmenu');
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->deletetable($self->table);
   Turlmap::unsub($self);
   tfiler::delete(litepublisher::$paths->data . 'sourcefiles', true, true);

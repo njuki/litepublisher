@@ -7,7 +7,7 @@
 **/
 
 function tadminpasswordInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->add('/admin/password/', get_class($self), null, 'normal');
 }
 

@@ -9,7 +9,7 @@
 class tdbmanager  {
   private $max_allowed_packet;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

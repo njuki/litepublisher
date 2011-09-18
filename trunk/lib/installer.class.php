@@ -13,7 +13,7 @@ class tinstaller extends tdata {
   public $resulttype;
   public $installed;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -87,7 +87,7 @@ class tinstaller extends tdata {
         $r = new IXR_Value($result);
         $resultxml = $r->getXml();
         // Create the XML
-        $html = tadminhtml::instance();
+        $html = tadminhtml::i();
         $html->section = 'installation';
         eval('$xml = "'. $html->xmlrpc . '\n";');
         // Send it
@@ -243,9 +243,9 @@ class tinstaller extends tdata {
   public function wizardform() {
     $this->loadlang();
     $combobox = $this->getlangcombo();
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'installation';
-    $lang = tlocal::instance('installation');
+    $lang = tlocal::i('installation');
     if (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules())) {
       $checkrewrite   = '';
     } else {
@@ -275,28 +275,28 @@ class tinstaller extends tdata {
   }
   
   public function CreateFirstPost() {
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'installation';
-    $lang = tlocal::instance();
-    $theme = ttheme::instance();
+    $lang = tlocal::i();
+    $theme = ttheme::i();
     
-    $post = tpost::instance(0);
+    $post = tpost::i(0);
     $post->title = $lang->posttitle;
     $post->catnames = $lang->postcategories;
     $post->tagnames = $lang->posttags;
     $post->content = $theme->parse($lang->postcontent);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->add($post);
     
-    $icons = ticons::instance();
-    $cats = tcategories::instance();
+    $icons = ticons::i();
+    $cats = tcategories::i();
     $cats->setvalue($post->categories[0], 'icon', $icons->getid('news'));
     
-    $comusers = tcomusers::instance($post->id);
+    $comusers = tcomusers::i($post->id);
     $userid = $comusers->add($lang->author, $lang->email, $lang->homeurl, '127.0.0.1');
     litepublisher::$classes->commentmanager->addcomment($post->id, $userid,$lang->postcomment, '127.0.0.1');
     
-    $plugins = tplugins::instance();
+    $plugins = tplugins::i();
     $plugins->lock();
     $plugins->add('oldestposts');
     //$plugins->add('adminlinks');
@@ -321,10 +321,10 @@ class tinstaller extends tdata {
     global  $lang;
     $tml = file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'install.congratulation.tml');
     $theme = ttheme::getinstance('default');
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'installation';
-    $lang = tlocal::instance('installation');
-    $args = targs::instance();
+    $lang = tlocal::i('installation');
+    $args = targs::i();
     $args->title = litepublisher::$site->name;
     $args->url = litepublisher::$site->url . '/';
     $args->password = $password;

@@ -8,7 +8,7 @@
 
 class tadminmoderator extends tadmincommoncomments {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -23,7 +23,7 @@ class tadminmoderator extends tadmincommoncomments {
       
       if ($action = $this->action) {
         $id = $this->idget();
-        $comments = tcomments::instance();
+        $comments = tcomments::i();
         if (!$comments->itemexists($id)) return $this->notfound;
         switch($action) {
           case 'delete':
@@ -58,7 +58,7 @@ class tadminmoderator extends tadmincommoncomments {
       case 'pingback':
       if ($action = $this->action) {
         $id = $this->idget();
-        $pingbacks = tpingbacks::instance();
+        $pingbacks = tpingbacks::i();
         if (!$pingbacks->itemexists($id)) return $this->notfound;
         switch($action) {
           case 'delete':
@@ -107,8 +107,8 @@ class tadminmoderator extends tadmincommoncomments {
       return $result;
       
       case 'holdrss':
-      $rss = trssholdcomments::instance();
-      $args = targs::instance();
+      $rss = trssholdcomments::i();
+      $args = targs::i();
       $args->rssurl = $rss->rssurl;
       $args->key = $rss->key;
       $args->count = $rss->count;
@@ -126,7 +126,7 @@ class tadminmoderator extends tadmincommoncomments {
   private function editcomment($id) {
     $comment = new tcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $args = targs::instance();
+    $args = targs::i();
     $args->content = $comment->content;
     $args->adminurl =$this->adminurl . "=$id&action";
     $result = $this->html->info($args);
@@ -137,7 +137,7 @@ class tadminmoderator extends tadmincommoncomments {
   private function reply($id) {
     $comment = new tcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl =$this->adminurl . "=$id&action";
     $result = $this->html->info($args);
     $result .= $this->html->replyform();
@@ -146,7 +146,7 @@ class tadminmoderator extends tadmincommoncomments {
   
   private function getlist($kind) {
     $result = '';
-    $comments = tcomments::instance(0);
+    $comments = tcomments::i(0);
     $perpage = 20;
     // get total count
     $status = $kind == 'hold' ? 'hold' : 'approved';
@@ -157,7 +157,7 @@ class tadminmoderator extends tadmincommoncomments {
     $result .= sprintf($html->h2->listhead, $from, $from + count($list), $total);
     $table = $this->createtable();
     
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     $comment = new tcomment(null);
     ttheme::$vars['comment'] = $comment;
@@ -173,14 +173,14 @@ class tadminmoderator extends tadmincommoncomments {
     }
     $result .= $table->build($body, $html->tablebuttons());
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   private function getpingbackslist() {
     $result = '';
-    $pingbacks = tpingbacks::instance();
+    $pingbacks = tpingbacks::i();
     $perpage = 20;
     $total = $pingbacks->getcount();
     $from = $this->getfrom($perpage, $total);
@@ -188,7 +188,7 @@ class tadminmoderator extends tadmincommoncomments {
     $html = $this->html;
     $result .= sprintf($html->h2->pingbackhead, $from, $from + count($items), $total);
     $result .= $html->pingbackheader();
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     foreach ($items as $item) {
       $args->add($item);
@@ -197,7 +197,7 @@ class tadminmoderator extends tadmincommoncomments {
       $args->website = sprintf('<a href="%1$s">%1$s</a>', $item['url']);
       $args->localstatus = tlocal::get('commentstatus', $item['status']);
       $args->date = tlocal::date(strtotime($item['posted']));
-      $post = tpost::instance($item['post']);
+      $post = tpost::i($item['post']);
       ttheme::$vars['post'] = $post;
       $args->posttitle =$post->title;
       $args->postlink = $post->link;
@@ -206,14 +206,14 @@ class tadminmoderator extends tadmincommoncomments {
     $result .= $html->tablefooter();
     $result = $html->fixquote($result);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   private function editpingback($id) {
-    $pingbacks = tpingbacks::instance();
-    $args = targs::instance();
+    $pingbacks = tpingbacks::i();
+    $args = targs::i();
     $args->add($pingbacks->getitem($id));
     return $this->html->pingbackedit($args);
   }
@@ -226,7 +226,7 @@ class tadminmoderator extends tadmincommoncomments {
   
   private function getinfo($id) {
     if (!isset(ttheme::$vars['comment'])) ttheme::$vars['comment'] = new tcomment($id);
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl =$this->adminurl . "=$id&action";
     return $this->html->info($args);
   }
@@ -238,7 +238,7 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   private function getconfirmform($id, $confirm) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->id = $id;
     $args->action = 'delete';
     $args->adminurl = litepublisher::$site->url . $this->url . litepublisher::$site->q . 'id';
@@ -247,16 +247,16 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   private function deleteauthor($uid) {
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     if (!$comusers->itemexists($uid)) return false;
-    $comments = tcomments::instance();
+    $comments = tcomments::i();
     $comments->db->delete("author = $uid");
     $comusers->delete($uid);
     return true;
   }
   
   private function editauthor($id) {
-    $args = targs::instance();
+    $args = targs::i();
     if ($id == 0) {
       $args->id = 0;
       $args->name = '';
@@ -264,7 +264,7 @@ class tadminmoderator extends tadmincommoncomments {
       $args->url = '';
       $args->subscribed = '';
     } else {
-      $comusers = tcomusers::instance();
+      $comusers = tcomusers::i();
       if (!$comusers->itemexists($id)) return $this->notfound;
       $args->add($comusers->getitem($id));
       $args->subscribed = $this->getsubscribed($id);
@@ -273,8 +273,8 @@ class tadminmoderator extends tadmincommoncomments {
   }
   
   private function getauthorslist() {
-    $comusers = tcomusers::instance();
-    $args = targs::instance();
+    $comusers = tcomusers::i();
+    $args = targs::i();
     $perpage = 20;
     $total = $comusers->count;
     $from = $this->getfrom($perpage, $total);
@@ -290,7 +290,7 @@ class tadminmoderator extends tadmincommoncomments {
     }
     $result .= $html->authorfooter;
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
@@ -298,7 +298,7 @@ class tadminmoderator extends tadmincommoncomments {
   private function getsubscribed($authorid) {
     $db = litepublisher::$db;
     $authorid = (int) $authorid;
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     if (!$comusers->itemexists($authorid))  return '';
     $html = $this->gethtml('moderator');
     $result = '';
@@ -309,9 +309,9 @@ class tadminmoderator extends tadmincommoncomments {
     order by $db->posts.posted desc");
     $items = $db->res2assoc($res);
     
-    $subscribers = tsubscribers::instance();
+    $subscribers = tsubscribers::i();
     $subscribed = $subscribers->getposts($authorid);
-    $args = targs::instance();
+    $args = targs::i();
     foreach ($items as $item) {
       $args->add($item);
       $args->subscribed = in_array($item['id'], $subscribed);
@@ -330,20 +330,20 @@ class tadminmoderator extends tadmincommoncomments {
       if (isset($_REQUEST['action'])) {
         switch ($_REQUEST['action']) {
           case 'reply':
-          $comments = tcomments::instance();
+          $comments = tcomments::i();
           $item = $comments->getitem($this->idget() );
-          $post = tpost::instance( (int) $item['post']);
+          $post = tpost::i( (int) $item['post']);
           $this->manager->reply($this->idget(), $post->id, $_POST['content']);
           return turlmap::redir301($post->lastcommenturl);
           
           case 'edit':
-          $comments = tcomments::instance();
+          $comments = tcomments::i();
           $comments->edit($this->idget(), 0, $_POST['content']);
           break;
         }
       } else {
         $manager = $this->manager;
-        $comments = tcomments::instance(0);
+        $comments = tcomments::i(0);
         $status = isset($_POST['approve']) ? 'approved' : (isset($_POST['hold']) ? 'hold' : 'delete');
         foreach ($_POST as $key => $id) {
           if (!is_numeric($id))  continue;
@@ -362,7 +362,7 @@ class tadminmoderator extends tadmincommoncomments {
       break;
       
       case 'pingback':
-      $pingbacks = tpingbacks::instance();
+      $pingbacks = tpingbacks::i();
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         extract($_POST, EXTR_SKIP);
         $pingbacks->edit($this->idget(), $title, $url);
@@ -384,10 +384,10 @@ class tadminmoderator extends tadmincommoncomments {
       case 'authors':
       if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit') {
         $id = $this->idget();
-        $comusers = tcomusers::instance();
+        $comusers = tcomusers::i();
         if (!$comusers->itemexists($id)) return $this->notfound;
         $comusers->edit($id, $_POST['name'], $_POST['url'], $_POST['email'], $_POST['ip']);
-        $subscribers = tsubscribers::instance();
+        $subscribers = tsubscribers::i();
         $subscribed = $subscribers->getposts($id);
         $checked = array();
         foreach ($_POST as $idpost => $value) {
@@ -409,7 +409,7 @@ class tadminmoderator extends tadmincommoncomments {
       
       case 'holdrss':
       extract($_POST, EXTR_SKIP);
-      $rss = trssholdcomments::instance();
+      $rss = trssholdcomments::i();
       $rss->lock();
       $rss->key = $key;
       $rss->count = (int) $count;

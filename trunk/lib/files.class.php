@@ -9,7 +9,7 @@
 class tfiles extends titems {
   public $itemsposts;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -19,7 +19,7 @@ class tfiles extends titems {
     $this->basename = 'files';
     $this->table = 'files';
     $this->addevents('changed', 'edited', 'ongetfilelist');
-    $this->itemsposts = tfileitems ::instance();
+    $this->itemsposts = tfileitems ::i();
   }
   
   public function preload(array $items) {
@@ -131,7 +131,7 @@ class tfiles extends titems {
   
   public function getfilelist(array $list, $excerpt) {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $this->getlist($list, $excerpt ?
     $theme->gettag('content.excerpts.excerpt.filelist') :
     $theme->gettag('content.post.filelist'));
@@ -165,8 +165,8 @@ class tfiles extends titems {
         $items['file'][] = $id;
       }
     }
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
@@ -206,7 +206,7 @@ class tfiles extends titems {
   }
   
   public function postedited($idpost) {
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     $this->itemsposts->setitems($idpost, $post->files);
   }
   
@@ -214,7 +214,7 @@ class tfiles extends titems {
 
 class tfileitems extends titemsposts {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

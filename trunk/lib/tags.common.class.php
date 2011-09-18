@@ -31,7 +31,7 @@ class tcommontags extends titems implements  itemplate {
   }
   
   protected function getpost($id) {
-    return tpost::instance($id);
+    return tpost::i($id);
   }
   
   public function loadall() {
@@ -62,8 +62,8 @@ class tcommontags extends titems implements  itemplate {
     if (count($sorted) == 0) return '';
     $result = '';
     $iconenabled = ! litepublisher::$options->icondisabled;
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     $args->rel = $this->PermalinkIndex;
     $args->parent = $parent;
     foreach($sorted as $id) {
@@ -83,7 +83,7 @@ class tcommontags extends titems implements  itemplate {
   public function geticonlink($id) {
     $item = $this->getitem($id);
     if ($item['icon'] == 0)  return '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if ($files->itemexists($item['icon'])) return $files->geticon($item['icon'], $item['title']);
     $this->setvalue($id, 'icon', 0);
     if (!$this->dbversion) $this->save();
@@ -148,11 +148,11 @@ class tcommontags extends titems implements  itemplate {
     $parent = (int) $parent;
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
-    $urlmap =turlmap::instance();
-    $linkgen = tlinkgenerator::instance();
+    $urlmap =turlmap::i();
+    $linkgen = tlinkgenerator::i();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
     
-    $views = tviews::instance();
+    $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
     if ($this->dbversion)  {
@@ -203,8 +203,8 @@ class tcommontags extends titems implements  itemplate {
       ));
     }
     
-    $urlmap = turlmap::instance();
-    $linkgen = tlinkgenerator::instance();
+    $urlmap = turlmap::i();
+    $linkgen = tlinkgenerator::i();
     $url = trim($url);
     // try rebuild url
     if ($url == '') {
@@ -228,7 +228,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function delete($id) {
     $item = $this->getitem($id);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->deleteitem($item['idurl']);
     
     $this->lock();
@@ -361,7 +361,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function getcont() {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     if ($this->id == 0) {
       $items = $this->getsortedcontent(array(
       'item' =>'<li><a href="$link" title="$title">$icon$title</a>$subcount</li>',
@@ -488,7 +488,7 @@ class ttagcontent extends tdata {
   
   public function edit($id, $content, $description, $keywords) {
     $item = $this->getitem($id);
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item =array(
     'content' => $filter->filter($content),
     'rawcontent' => $content,
@@ -523,7 +523,7 @@ class ttagcontent extends tdata {
   
   public function setcontent($id, $content) {
     $item = $this->getitem($id);
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item['rawcontent'] = $content;
     $item['content'] = $filter->filter($content);
     $item['description'] = tcontentfilter::getexcerpt($content, 80);
@@ -556,7 +556,7 @@ class tcommontagswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $items = $this->owner->getsortedcontent(array(
     'item' => $theme->getwidgetitem($this->template, $sidebar),
     'subcount' =>$theme->getwidgettml($sidebar, $this->template, 'subcount'),
@@ -572,7 +572,7 @@ class tcommontagswidget extends twidget {
 class tcategories extends tcommontags {
   //public  $defaultid;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -595,7 +595,7 @@ class tcategories extends tcommontags {
   public function save() {
     parent::save();
     if (!$this->locked)  {
-      tcategorieswidget::instance()->expire();
+      tcategorieswidget::i()->expire();
     }
   }
   
@@ -603,7 +603,7 @@ class tcategories extends tcommontags {
 
 class tcategorieswidget extends tcommontagswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -618,14 +618,14 @@ class tcategorieswidget extends tcommontagswidget {
   }
   
   public function getowner() {
-    return tcategories::instance();
+    return tcategories::i();
   }
   
 }//class
 
 class ttags extends tcommontags {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -642,7 +642,7 @@ class ttags extends tcommontags {
   public function save() {
     parent::save();
     if (!$this->locked)  {
-      ttagswidget::instance()->expire();
+      ttagswidget::i()->expire();
     }
   }
   
@@ -650,7 +650,7 @@ class ttags extends tcommontags {
 
 class ttagswidget extends tcommontagswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -667,7 +667,7 @@ class ttagswidget extends tcommontagswidget {
   }
   
   public function getowner() {
-    return ttags::instance();
+    return ttags::i();
   }
   
 }//class

@@ -8,7 +8,7 @@
 
 class tpinger extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -21,7 +21,7 @@ class tpinger extends tevents {
   
   public function install() {
     if ($this->services == '') $this->services = file_get_contents(litepublisher::$paths->libinclude . 'pingservices.txt');
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->singlecron = $this->pingpost;
   }
   
@@ -47,7 +47,7 @@ class tpinger extends tevents {
   
   public function pingpost($id) {
     if (!isset($id)) return;
-    $post = tpost::instance((int) $id);
+    $post = tpost::i((int) $id);
     if (!is_object($post)) return;
     if ($post->status != 'published') return;
     $posturl = $post->link;

@@ -7,7 +7,7 @@
 **/
 
 function tadminloginInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->lock();
   $urlmap->add('/admin/login/', get_class($self), null, 'normal');
   $urlmap->add('/admin/logout/', get_class($self), 'out', 'normal');

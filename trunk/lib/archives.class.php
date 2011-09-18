@@ -9,7 +9,7 @@
 class tarchives extends titems_itemplate implements  itemplate {
   public $date;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -36,11 +36,11 @@ class tarchives extends titems_itemplate implements  itemplate {
   }
   
   public function postschanged() {
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $this->lock();
     $this->items = array();
     //sort archive by months
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     if (dbversion) {
       $db = litepublisher::$db;
       $res = $db->query("SELECT YEAR(posted) AS 'year', MONTH(posted) AS 'month', count(id) as 'count' FROM  $db->posts
@@ -117,7 +117,7 @@ class tarchives extends titems_itemplate implements  itemplate {
   public function getcont() {
     $items = $this->getposts();
     if (count($items) == 0)return '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
     $result = $theme->getposts($list, $this->lite);
@@ -139,7 +139,7 @@ class tarchives extends titems_itemplate implements  itemplate {
 
 class tarchiveswidget extends twidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -163,13 +163,13 @@ class tarchiveswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $arch = tarchives::instance();
+    $arch = tarchives::i();
     if (count($arch->items) == 0) return '';
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('archives', $sidebar);
     if ($this->showcount) $counttml = $theme->getwidgettml($sidebar, 'archives', 'subcount');
-    $args = targs::instance();
+    $args = targs::i();
     $args->icon = '';
     $args->subcount = '';
     $args->subitems = '';

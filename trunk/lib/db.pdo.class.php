@@ -13,7 +13,7 @@ class tdatabase extends PDO {
   public $prefix;
   public $history;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -95,7 +95,7 @@ class tdatabase extends PDO {
       $log = "exception:\n" . $e->getMessage();
       $log .= "\n$this->sql\n";
       $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
-      $man = tdbmanager::instance();
+      $man = tdbmanager::i();
       $log .= $man->performance();
       $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
       die($log);

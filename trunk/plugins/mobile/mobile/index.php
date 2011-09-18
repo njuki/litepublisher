@@ -11,7 +11,7 @@ require('../index.php');
 
 class tmobilesite extends tsite {
 
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
 
@@ -25,7 +25,7 @@ public function uninstall() {}
 
 class tmobiletemplate extends ttemplate {
 
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
 
@@ -34,7 +34,7 @@ class tmobiletemplate extends ttemplate {
     ttheme::$vars['context'] = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
-    $this->view = $this->itemplate ? tview::getview($context) : tview::instance();
+    $this->view = $this->itemplate ? tview::getview($context) : tview::i();
     $theme = ttheme::getinstance('pda');
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
@@ -49,9 +49,9 @@ class tmobiletemplate extends ttemplate {
   
 }//class
 
-litepublisher::$site = tmobilesite::instance();
+litepublisher::$site = tmobilesite::i();
 litepublisher::$paths->cache = litepublisher::$paths->cache . 'mobile.';
-litepublisher::$classes->instances['ttemplate'] = tmobiletemplate::instance();
+litepublisher::$classes->instances['ttemplate'] = tmobiletemplate::i();
 
 $url = $_SERVER['REQUEST_URI'];
     if (strbegin($url, '/mobile/') || ($url == '/mobile')) {

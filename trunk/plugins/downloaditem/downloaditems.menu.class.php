@@ -8,7 +8,7 @@
 
 class tdownloaditemsmenu extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -19,13 +19,13 @@ class tdownloaditemsmenu extends tmenu {
   
   public function getcont() {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     if ((litepublisher::$urlmap->page == 1) && ($this->content != '')) {
       $result .= $theme->simple($theme->parse($this->rawcontent));
     }
     
     $perpage = litepublisher::$options->perpage;
-    $downloaditems = tdownloaditems::instance();
+    $downloaditems = tdownloaditems::i();
     $d = litepublisher::$db->prefix . $downloaditems->childtable;
     $p = litepublisher::$db->posts;
     $where = $this->type == '' ? '' : " and $d.type = '$this->type'";
@@ -33,12 +33,12 @@ class tdownloaditemsmenu extends tmenu {
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     if ($from <= $count)  {
       $items = $downloaditems->select("$p.status = 'published' $where", " order by $p.posted desc limit $from, $perpage");
-      ttheme::$vars['lang'] = tlocal::instance('downloaditem');
+      ttheme::$vars['lang'] = tlocal::i('downloaditem');
       $tml = $theme->templates['custom']['downloadexcerpt'];
       if (count($items) > 0) {
         $result .= $theme->templates['custom']['siteform'];
         foreach($items as $id) {
-          ttheme::$vars['post'] = tdownloaditem::instance($id);
+          ttheme::$vars['post'] = tdownloaditem::i($id);
           $result .= $theme->parse($tml);
         }
       }

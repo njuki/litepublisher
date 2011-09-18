@@ -8,7 +8,7 @@
 
 class tdownloaditemeditor extends tposteditor {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -29,9 +29,9 @@ class tdownloaditemeditor extends tposteditor {
   public function getcontent() {
     $result = '';
     $this->basename = 'downloaditems';
-    $downloaditem = tdownloaditem::instance($this->idpost);
+    $downloaditem = tdownloaditem::i($this->idpost);
     ttheme::$vars['downloaditem'] = $downloaditem;
-    $args = targs::instance();
+    $args = targs::i();
     $this->getpostargs($downloaditem, $args);
     $args->downloadurl = $downloaditem->downloadurl;
     $args->authorname = $downloaditem->authorname;
@@ -39,7 +39,7 @@ class tdownloaditemeditor extends tposteditor {
     $args->version = $downloaditem->version;
     
     $html = $this->html;
-    $lang = tlocal::instance('downloaditems');
+    $lang = tlocal::i('downloaditems');
     
     $types = array(
     'theme' => tlocal::get('downloaditem', 'theme'),
@@ -65,16 +65,16 @@ class tdownloaditemeditor extends tposteditor {
     extract($_POST, EXTR_SKIP);
     $this->basename = 'downloaditems';
     $html = $this->html;
-    $lang = tlocal::instance('editor');
+    $lang = tlocal::i('editor');
     if (empty($_POST['title'])) return $html->h2->emptytitle;
-    $downloaditem = tdownloaditem::instance((int)$id);
+    $downloaditem = tdownloaditem::i((int)$id);
     $this->set_post($downloaditem);
     $downloaditem->version = $version;
     $downloaditem->type = $type;
     $downloaditem->downloadurl = $downloadurl;
     $downloaditem->authorname = $authorname;
     $downloaditem->authorurl = $authorurl;
-    $downloaditems = tdownloaditems::instance();
+    $downloaditems = tdownloaditems::i();
     if ($downloaditem->id == 0) {
       $id = $downloaditems->add($downloaditem);
       $_GET['id'] = $id;
@@ -82,7 +82,7 @@ class tdownloaditemeditor extends tposteditor {
     } else {
       $downloaditems->edit($downloaditem);
     }
-    $lang = tlocal::instance('downloaditems');
+    $lang = tlocal::i('downloaditems');
     return $html->h2->successedit;
   }
   

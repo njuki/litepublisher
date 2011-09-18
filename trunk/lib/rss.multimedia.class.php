@@ -9,7 +9,7 @@
 class trssMultimedia extends tevents {
   public $domrss;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -51,7 +51,7 @@ class trssMultimedia extends tevents {
   }
   
   private function getrecent($type, $count) {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if (dbversion) {
       $sql = $type == '' ? '' : "media = '$type' ";
       return $files->select($sql . 'parent = 0', " order by posted desc limit $count");
@@ -70,14 +70,14 @@ class trssMultimedia extends tevents {
   }
   
   public function addfile($id) {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $file = $files->getitem($id);
     $posts = $files->itemsposts->getposts($id);
     
     if (count($posts) == 0) {
       $postlink = litepublisher::$site->url . '/';
     } else {
-      $post = tpost::instance($posts[0]);
+      $post = tpost::i($posts[0]);
       $postlink = $post->link;
     }
     

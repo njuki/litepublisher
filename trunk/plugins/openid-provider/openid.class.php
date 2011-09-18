@@ -11,7 +11,7 @@ class topenid extends tevents {
   public $trusted;
   public $url;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -36,19 +36,19 @@ class topenid extends tevents {
   public function install() {
     litepublisher::$urlmap->add($this->url, get_class($this), null, 'get');
     
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->addtohead($this->get_head());
     
-    $merger = tlocalmerger::instance();
+    $merger = tlocalmerger::i();
     $merger->addplugin(tplugins::getname(__file__));
   }
   
   public function uninstall() {
     turlmap::unsub($this);
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->deletefromhead($this->get_head());
     
-    $merger = tlocalmerger::instance();
+    $merger = tlocalmerger::i();
     $merger->deleteplugin(tplugins::getname(__file__));
     
     litepublisher::$urlmap->clearcache();
@@ -131,7 +131,7 @@ class topenid extends tevents {
   }
   
   private function id_res() {
-    $auth = &TAuthDigest::instance();
+    $auth = &TAuthDigest::i();
     if (!$auth->auth())  return $auth->Headers();
     return tsimplecontent::html(tlocal::get('openidserver', 'logged'));
   }
@@ -141,7 +141,7 @@ class topenid extends tevents {
   }
   
   private function GetMessage($key, $defkey) {
-    $lang = tlocal::instance()->ini['openidserver'];
+    $lang = tlocal::i()->ini['openidserver'];
     return empty($lang[$key]) ? $lang[$defkey] : $lang[$key];
   }
   
@@ -346,7 +346,7 @@ class topenid extends tevents {
     //join  fields
     $sreg_required .= ',' . $sreg_optional;
     
-    $auth = tauthdigest::instance();
+    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
       //if ($s = $auth->checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
@@ -365,10 +365,10 @@ class topenid extends tevents {
           $this->save();
         }
         
-        $html = tadminhtml::instance();
+        $html = tadminhtml::i();
         $html->section = 'openidserver';
-        $lang = tlocal::instance('openidserver');
-        $args = targs::instance();
+        $lang = tlocal::i('openidserver');
+        $args = targs::i();
         $args->trust_root = $trust_root;
         $args->assoc_handle = $assoc_handle;
         $form = $html->trustform($args);
@@ -421,7 +421,7 @@ class topenid extends tevents {
   }
   
   private function GetReg($key) {
-    $profile = tprofile::instance();
+    $profile = tprofile::i();
     switch ($key) {
       case 'nickname':
       case 'fullname':

@@ -9,7 +9,7 @@
 class Tadminoptions extends tadminmenu {
   private $_form;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -19,12 +19,12 @@ class Tadminoptions extends tadminmenu {
       case 'options':
       $form = new tautoform(litepublisher::$site, 'options', 'blogdescription');
       $form->add($form->fixedurl, $form->url, $form->name, $form->description, $form->keywords, $form->author);
-      $form->obj = ttemplate::instance();
+      $form->obj = ttemplate::i();
       $form->add($form->footer('editor'));
       break;
       
       case 'rss':
-      $form = new tautoform(trss::instance(), 'options', 'rssoptions');
+      $form = new tautoform(trss::i(), 'options', 'rssoptions');
       $form->add($form->feedburner, $form->feedburnercomments, $form->template('editor'));
       break;
       
@@ -34,21 +34,21 @@ class Tadminoptions extends tadminmenu {
       $form->commentpages, $form->commentsperpage);
       $form->obj = litepublisher::$classes->commentmanager;
       $form->add($form->sendnotification, $form->hidelink,  $form->redir, $form->nofollow);
-      $form->addeditor(tsubscribers::instance(), 'locklist');
+      $form->addeditor(tsubscribers::i(), 'locklist');
       break;
       
       case 'ping':
-      $form = new tautoform(tpinger::instance(), 'options', 'optionsping');
+      $form = new tautoform(tpinger::i(), 'options', 'optionsping');
       $form->add($form->enabled, $form->services('editor'));
       break;
       
       case 'robots':
-      $form = new tautoform(trobotstxt::instance(), 'options', 'editrobot');
+      $form = new tautoform(trobotstxt::i(), 'options', 'editrobot');
       $form->add($form->text('editor'));
       break;
       
       case 'notfound404':
-      $form = new tautoform(tnotfound404::instance(), 'options', 'edit404');
+      $form = new tautoform(tnotfound404::i(), 'options', 'edit404');
       $form->add($form->notify, $form->text('editor'));
       break;
       
@@ -64,7 +64,7 @@ class Tadminoptions extends tadminmenu {
     $result = parent::gethead();
     switch ($this->name) {
       case 'home':
-      $template = ttemplate::instance();
+      $template = ttemplate::i();
     $result .= $template->getready('$("#tabs").tabs({ cache: true });');
       break;
     }
@@ -74,19 +74,19 @@ class Tadminoptions extends tadminmenu {
   public function getcontent() {
     if ($form = $this->getautoform($this->name)) return $form->getform();
     $options = litepublisher::$options;
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     ttheme::$vars['template'] = $template;
     $result = '';
-    $args = targs::instance();
+    $args = targs::i();
     
     switch ($this->name) {
       case 'home':
-      $home = thomepage::instance();
+      $home = thomepage::i();
       $args->hideposts = $home->hideposts;
       $args->invertorder = $home->invertorder;
       $args->image = $home->image;
       $args->idhome =  $home->id;
-      $menus = tmenus::instance();
+      $menus = tmenus::i();
       $args->homemenu =  $menus->home;
       
       $args->includecats = tposteditor::getcategories($home->includecats);
@@ -96,13 +96,13 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'mail':
-      ttheme::$vars['subscribers'] = tsubscribers::instance();
-      ttheme::$vars['mailer'] = TSMTPMailer ::instance();
+      ttheme::$vars['subscribers'] = tsubscribers::i();
+      ttheme::$vars['mailer'] = TSMTPMailer ::i();
       $args->mailerchecked = $options->mailer == 'smtp';
       break;
       
       case 'view':
-      $filter = tcontentfilter::instance();
+      $filter = tcontentfilter::i();
       $args->usefilter = $filter->usefilter;
       $args->automore = $filter->automore;
       $args->automorelength = $filter->automorelength;
@@ -110,10 +110,10 @@ class Tadminoptions extends tadminmenu {
       $args->commentautolinks = $filter->commentautolinks;
       $args->icondisabled = $options->icondisabled;
       
-      $themeparser = tthemeparser::instance();
+      $themeparser = tthemeparser::i();
       $args->replacelang = $themeparser->replacelang;
       
-      $parser = tmediaparser::instance();
+      $parser = tmediaparser::i();
       $args->enablepreview = $parser->enablepreview;
       $args->ratio = $parser->ratio;
       $args->previewwidth = $parser->previewwidth;
@@ -121,7 +121,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'links':
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       ttheme::$vars['linkgen'] = $linkgen;
       $args->urlencode = $linkgen->urlencode;
       break;
@@ -144,7 +144,7 @@ class Tadminoptions extends tadminmenu {
       $args->litetags = $tags->lite;
       $args->parenttags = $tags->includeparents;
       $args->childtags = $tags->includechilds;
-      $lang = tlocal::instance('options');
+      $lang = tlocal::i('options');
       $args->formtitle = $lang->catstags;
       $html = $this->html;
       return $html->adminform('[checkbox=litearch]
@@ -153,17 +153,17 @@ class Tadminoptions extends tadminmenu {
       $html->p->notecatstags;
       
       case 'secure':
-      $auth = tauthdigest::instance();
+      $auth = tauthdigest::i();
       $args->echoexception = $options->echoexception;
       $args->cookie = $options->cookieenabled;
       $args->usersenabled = $options->usersenabled;
       $args->reguser = $options->reguser;
       $args->parsepost = $options->parsepost;
       $args->xxxcheck = $auth->xxxcheck;
-      $filter = tcontentfilter::instance();
+      $filter = tcontentfilter::i();
       $args->phpcode = $filter->phpcode;
-      $args->useshell = tupdater::instance()->useshell;
-      $backuper = tbackuper::instance();
+      $args->useshell = tupdater::i()->useshell;
+      $backuper = tbackuper::i();
       $args->filertype = tadminhtml::array2combo(array(
       'auto' => 'auto',
       'file' => 'file',
@@ -185,7 +185,7 @@ class Tadminoptions extends tadminmenu {
     
     switch ($this->name) {
       case 'home':
-      $home = thomepage::instance();
+      $home = thomepage::i();
       $home->lock();
       $home->image = $image;
       $home->hideposts = isset($hideposts);
@@ -194,7 +194,7 @@ class Tadminoptions extends tadminmenu {
       $home->excludecats = tadminhtml::check2array('exclude_category-');
       $home->unlock();
       
-      $menus = tmenus::instance();
+      $menus = tmenus::i();
       $menus->home = isset($homemenu);
       $menus->save();
       break;
@@ -206,12 +206,12 @@ class Tadminoptions extends tadminmenu {
       $options->mailer = empty($mailer) ? '': 'smtp';
       $options->unlock();
       if (!empty($subscribeemail)) {
-        $subscribe = tsubscribers::instance();
+        $subscribe = tsubscribers::i();
         $subscribe->fromemail = $subscribeemail;
         $subscribe->save();
       }
       
-      $mailer = TSMTPMailer ::instance();
+      $mailer = TSMTPMailer ::i();
       $mailer->lock();
       $mailer->host = $host;
       $mailer->login = $login;
@@ -223,7 +223,7 @@ class Tadminoptions extends tadminmenu {
       case 'view':
       $options->icondisabled = isset($icondisabled);
       if (!empty($perpage)) $options->perpage = (int) $perpage;
-      $filter = tcontentfilter::instance();
+      $filter = tcontentfilter::i();
       $filter->usefilter = isset($usefilter);
       $filter->automore = isset($automore);
       $filter->automorelength = (int) $automorelength;
@@ -232,13 +232,13 @@ class Tadminoptions extends tadminmenu {
       $filter->save();
       
       $replacelang  = isset($replacelang );
-      $themeparser = tthemeparser::instance();
+      $themeparser = tthemeparser::i();
       if ($replacelang != $themeparser->replacelang) {
         $themeparser->replacelang = $replacelang;
         $themeparser->save();
       }
       
-      $parser = tmediaparser::instance();
+      $parser = tmediaparser::i();
       $parser->enablepreview = isset($enablepreview);
       $parser->ratio = isset($ratio);
       $parser->previewwidth = $previewwidth;
@@ -247,7 +247,7 @@ class Tadminoptions extends tadminmenu {
       break;
       
       case 'links':
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $linkgen->urlencode = isset($urlencode);
       if (!empty($post)) $linkgen->post = $post;
       if (!empty($menu)) $linkgen->menu = $menu;
@@ -294,7 +294,7 @@ class Tadminoptions extends tadminmenu {
         if (($newpassword == '') || ($newpassword != $repassword))  return $h2->difpassword;
         if (!$options->auth($options->login, $oldpassword)) return $h2->badpassword;
         $options->changepassword($newpassword);
-        $auth = tauthdigest::instance();
+        $auth = tauthdigest::i();
         $auth->logout();
         return $h2->passwordchanged;
       } else {
@@ -303,21 +303,21 @@ class Tadminoptions extends tadminmenu {
         $options->reguser = isset($reguser);
         $this->usersenabled = isset($usersenabled);
         $options->parsepost = isset($parsepost);
-        $auth = tauthdigest::instance();
+        $auth = tauthdigest::i();
         $auth->xxxcheck = isset($xxxcheck);
         $auth->save();
-        $filter = tcontentfilter::instance();
+        $filter = tcontentfilter::i();
         $filter->phpcode = isset($phpcode);
         $filter->save();
         
-        $backuper = tbackuper::instance();
+        $backuper = tbackuper::i();
         if ($backuper->filertype != $filertype) {
           $backuper->filertype = $filertype;
           $backuper->save();
         }
         
         $useshell = isset($useshell);
-        $updater = tupdater::instance();
+        $updater = tupdater::i();
         if ($useshell !== $updater->useshell) {
           $updater->useshell = $useshell;
           $updater->save();
@@ -332,7 +332,7 @@ class Tadminoptions extends tadminmenu {
   public function setusersenabled($value) {
     if (litepublisher::$options->usersenabled == $value) return;
     litepublisher::$options->usersenabled = $value;
-    $menus = tadminmenus::instance();
+    $menus = tadminmenus::i();
     $menus->lock();
     if ($value) {
       $id = $menus->createitem(0, 'users', 'author', 'tadminusers');

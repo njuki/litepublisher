@@ -8,20 +8,20 @@
 
 class tadminyoutubefeed {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $feed = tyoutubefeed::instance();
+    $feed = tyoutubefeed::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
-    $html = tadminhtml::instance();
+    $args = targs::i();
+    $html = tadminhtml::i();
     if (!isset($_POST['step'])) $_POST['step'] = 1;
     switch ($_POST['step']) {
       case 2:
       case 3:
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $args->step = 3;
       $args->formtitle = $about['feeditems'];
       $tml = '<tr>
@@ -70,7 +70,7 @@ class tadminyoutubefeed {
   }
   
   public function processform() {
-    $feed = tyoutubefeed::instance();
+    $feed = tyoutubefeed::i();
     switch ($_POST['step']) {
       case 'options':
       $feed->player = $_POST['player'];
@@ -86,7 +86,7 @@ class tadminyoutubefeed {
       break;
       
       case 3:
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $files->lock();
       foreach ($_POST as $k => $v) {
         if (strbegin($k, 'youtubeid-') && isset($feed->items[$v]) && !$files->exists($v)) {

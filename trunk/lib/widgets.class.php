@@ -21,9 +21,9 @@ class twidget extends tevents {
   }
   
   public function addtosidebar($sidebar) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $id = $widgets->add($this);
-    $sidebars = tsidebars::instance();
+    $sidebars = tsidebars::i();
     $sidebars->insert($id, false, $sidebar, -1);
     
     litepublisher::$urlmap->clearcache();
@@ -48,7 +48,7 @@ class twidget extends tevents {
       return '';
     }
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, $this->template, $sidebar);
   }
   
@@ -58,7 +58,7 @@ class twidget extends tevents {
   
   public function gettitle($id) {
     if (!isset($id)) $this->error('no id');
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     if (isset($widgets->items[$id])) {
       return $widgets->items[$id]['title'];
     }
@@ -66,7 +66,7 @@ class twidget extends tevents {
   }
   
   public function settitle($id, $title) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     if (isset($widgets->items[$id]) && ($widgets->items[$id]['title'] != $title)) {
       $widgets->items[$id]['title'] = $title;
       $widgets->save();
@@ -78,9 +78,9 @@ class twidget extends tevents {
   }
   
   public static function getcachefilename($id) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     if ($theme->name == '') {
-      $theme = tview::instance()->theme;
+      $theme = tview::i()->theme;
     }
     return litepublisher::$paths->cache . sprintf('widget.%s.%d.php', $theme->name, $id);
   }
@@ -88,7 +88,7 @@ class twidget extends tevents {
   public function expired($id) {
     switch ($this->cache) {
       case 'cache':
-      $cache = twidgetscache::instance();
+      $cache = twidgetscache::i();
       $cache->expired($id);
       break;
       
@@ -101,7 +101,7 @@ class twidget extends tevents {
   }
   
   public static function findsidebar($id) {
-    $view = tview::instance();
+    $view = tview::i();
     foreach ($view->sidebars as $i=> $sidebar) {
       foreach ($sidebar as $item) {
         if ($id == $item['id']) return $i;
@@ -111,7 +111,7 @@ class twidget extends tevents {
   }
   
   public function expire() {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     foreach ($widgets->items as $id => $item) {
       if ($this instanceof $item['class']) $this->expired($id);
     }
@@ -120,7 +120,7 @@ class twidget extends tevents {
   public function getcontext($class) {
     if (litepublisher::$urlmap->context instanceof $class) return litepublisher::$urlmap->context;
     //ajax
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     return litepublisher::$urlmap->getidcontext($widgets->idurlcontext);
   }
   
@@ -156,7 +156,7 @@ class tclasswidget extends twidget {
   public function __get($name) {
     if ($this->isvalue($name)) {
       if (!$this->item) {
-        $widgets = twidgets::instance();
+        $widgets = twidgets::i();
         $this->item = &$widgets->finditem($widgets->find($this));
       }
       return $this->item[$name];
@@ -167,7 +167,7 @@ class tclasswidget extends twidget {
   public function __set($name, $value) {
     if ($this->isvalue($name)) {
       if (!$this->item) {
-        $widgets = twidgets::instance();
+        $widgets = twidgets::i();
         $this->item = &$widgets->finditem($widgets->find($this));
       }
       $this->item[$name] = $value;
@@ -178,7 +178,7 @@ class tclasswidget extends twidget {
   
   public function save() {
     parent::save();
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widgets->save();
   }
   
@@ -190,7 +190,7 @@ class twidgets extends titems_storage {
   public $idwidget;
   public $idurlcontext;
   
-  public static function instance($id = null) {
+  public static function i($id = null) {
     return getinstance(__class__);
   }
   
@@ -315,7 +315,7 @@ class twidgets extends titems_storage {
   private function getwidgets($context, tview $view, $sidebar) {
     $theme = $view->theme;
     if (($view->id >  1) && !$view->customsidebar) {
-      $view = tview::instance(1);
+      $view = tview::i(1);
     }
     
     $items =  isset($view->sidebars[$sidebar]) ? $view->sidebars[$sidebar] : array();
@@ -428,7 +428,7 @@ class twidgets extends titems_storage {
   
   
   public function getajax($id, $sidebar) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     //$title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
     $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";
@@ -436,11 +436,11 @@ class twidgets extends titems_storage {
   }
   
   public function getinline($id, $sidebar) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     //$title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
     $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'inlinewidget');
     if ('cache' == $this->items[$id]['cache']) {
-      $cache = twidgetscache::instance();
+      $cache = twidgetscache::i();
       $content = $cache->getcontent($id, $sidebar);
     } else {
       $widget = $this->getwidget($id);
@@ -452,9 +452,9 @@ class twidgets extends titems_storage {
   
   public function getwidgetcache($id, $sidebar) {
     $title = $this->items[$id]['title'];
-    $cache = twidgetscache::instance();
+    $cache = twidgetscache::i();
     $content = $cache->getcontent($id, $sidebar);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
@@ -467,7 +467,7 @@ class twidgets extends titems_storage {
       @chmod($filename, 0666);
     }
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($this->items[$id]['title'], "\n<?php @include('$filename'); ?>\n", $this->items[
     $id]['template'], $sidebar);
   }
@@ -475,7 +475,7 @@ class twidgets extends titems_storage {
   private function getcode($id, $sidebar) {
     $class = $this->items[$id]['class'];
     return "\n<?php
-    \$widget = $class::instance();
+    \$widget = $class::i();
     \$widget->id = \$id;
     echo \$widget->getwidget($id, $sidebar);
     ?>\n";
@@ -511,8 +511,8 @@ class twidgets extends titems_storage {
     $sidebar = self::getget('sidebar');
     $this->idurlcontext = self::getget('idurl');
     if (($id === false) || ($sidebar === false) || !$this->itemexists($id)) return $this->error_request('Invalid params');
-    $themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::instance(1)->themename;
-    if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::instance(1)->themename;
+    $themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::i(1)->themename;
+    if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::i(1)->themename;
     $theme = ttheme::getinstance($themename);
     
     try {
@@ -527,7 +527,7 @@ class twidgets extends titems_storage {
     if (!isset($this->items[$id])) return false;
     switch ($this->items[$id]['cache']) {
       case 'cache':
-      $cache = twidgetscache::instance();
+      $cache = twidgetscache::i();
       $result = $cache->getcontent($id, $sidebar);
       break;
       
@@ -573,7 +573,7 @@ class twidgets extends titems_storage {
 class twidgetscache extends titems {
   private $modified;
   
-  public static function instance($id = null) {
+  public static function i($id = null) {
     return getinstance(__class__);
   }
   
@@ -584,7 +584,7 @@ class twidgetscache extends titems {
   }
   
   public function getbasename() {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return 'widgetscache.' . $theme->name;
   }
   
@@ -616,7 +616,7 @@ class twidgetscache extends titems {
   }
   
   public function setcontent($id, $sidebar) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widget = $widgets->getwidget($id);
     $result = $widget->getcontent($id, $sidebar);
     $this->items[$id][$sidebar] = $result;

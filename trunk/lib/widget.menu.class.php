@@ -8,7 +8,7 @@
 
 class tmenuwidget extends tclasswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -25,12 +25,12 @@ class tmenuwidget extends tclasswidget {
   }
   
   public function getwidget($id, $sidebar) {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     if ($template->hover) return '';
     $content = $this->getcontent($id, $sidebar);
     if ($content == '') return '';
     $title = $this->gettitle($id);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, $this->template, $sidebar);
   }
   
@@ -44,7 +44,7 @@ class tmenuwidget extends tclasswidget {
     $id = $menu->id;
     $menus = $menu->owner;
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('submenu', $sidebar);
     $subtml = $theme->getwidgettml($sidebar, 'submenu', 'subitems');
     // 1 submenu list
@@ -76,14 +76,14 @@ class tmenuwidget extends tclasswidget {
   }
   
   private function getitem($tml, $item, $subnodes) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->add($item);
     $args->anchor = $item['title'];
     $args->rel = 'menu';
     $args->icon = '';
     $args->subcount = '';
     $args->subitems = $subnodes;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->parsearg($tml, $args);
   }
   

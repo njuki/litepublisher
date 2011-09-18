@@ -19,7 +19,7 @@ function tcommentformUninstall($self) {
 
 function tkeptcommentsInstall($self) {
   if (dbversion) {
-    $manager = tdbmanager ::instance();
+    $manager = tdbmanager ::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'comments.kept.sql'));
   }

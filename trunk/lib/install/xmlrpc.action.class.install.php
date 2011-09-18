@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCActionInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   $caller->add('litepublisher.action.send', 'send', get_class($self));
   $caller->add('litepublisher.action.confirm', 'confirm', get_class($self));
@@ -15,7 +15,7 @@ function TXMLRPCActionInstall($self) {
 }
 
 function TXMLRPCActionUninstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->deleteclass(get_class($self));
 }
 

@@ -9,18 +9,18 @@
 class tadminyoutubeplayer {
   
   public function getcontent() {
-    $plugin = tyoutubeplayer::instance();
+    $plugin = tyoutubeplayer::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.template'] = $about['template'];
     $args->template = $plugin->template;
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform('[editor:template]', $args);
   }
   
   public function processform() {
-    $plugin = tyoutubeplayer::instance();
+    $plugin = tyoutubeplayer::i();
     $plugin->template = $_POST['template'];
     $plugin->save();
   }

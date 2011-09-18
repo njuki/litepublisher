@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCBloggerInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   
   // Blogger API

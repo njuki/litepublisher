@@ -8,7 +8,7 @@
 
 class themleditplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -25,14 +25,14 @@ class themleditplugin extends tplugin {
   }
   
   public function install() {
-    $admin = tadminmenus::instance();
+    $admin = tadminmenus::i();
     $admin->heads .= $this->gethead();
     $admin->save();
   }
   
   public function uninstall() {
     $head = $this->gethead();
-    $admin = tadminmenus::instance();
+    $admin = tadminmenus::i();
     $admin->heads = str_replace($head, '', $admin->heads);
     $admin->save();
   }

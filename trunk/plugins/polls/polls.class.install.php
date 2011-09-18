@@ -16,12 +16,12 @@ function tpollsInstall($self) {
   $templates = parse_ini_file(dirname(__file__) . DIRECTORY_SEPARATOR . 'templates.ini',  true);
   $self->templateitems = $templates['item'];
   $self->templates = $templates['items'];
-  $theme = ttheme::instance();
+  $theme = ttheme::i();
   $lang = tplugins::getlangabout(__file__);
   $self->templates['microformat'] = $theme->replacelang($templates['microformat']['rate'], $lang);
   $self->save();
   
-  $manager = tdbmanager::instance();
+  $manager = tdbmanager::i();
   $manager->createtable($self->table,
   "  `id` int(10) unsigned NOT NULL auto_increment,
   `rate` tinyint unsigned NOT NULL default '0',
@@ -52,10 +52,10 @@ function tpollsInstall($self) {
   PRIMARY KEY(id, user)
   ');
   
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->addweekly(get_class($self), 'optimize', null);
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->lock();
   $filter->beforecontent = $self->beforefilter;
   $filter->beforefilter = $self->filter;
@@ -69,10 +69,10 @@ function tpollsInstall($self) {
   litepublisher::$urlmap->addget('/ajaxpollserver.htm', get_class($self));
   
   /*
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->addtohead(getpollhead());
   */
-  $jsmerger = tjsmerger::instance();
+  $jsmerger = tjsmerger::i();
   $jsmerger->lock();
   $jsmerger->add('default', '/plugins/polls/polls.client.min.js');
   $jsmerger->addtext('default', 'poll',
@@ -83,7 +83,7 @@ function tpollsInstall($self) {
 }
 
 function tpollsUninstall($self) {
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->lock();
   $posts->syncmeta = false;
   $posts->unsubscribeclass($self);
@@ -96,23 +96,23 @@ function tpollsUninstall($self) {
   unset(litepublisher::$classes->classes['poll']);
   litepublisher::$classes->save();
   
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->deleteclass(get_class($self));
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->unsubscribeclass($self);
   
   /*
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->deletefromhead(getpollhead());
   */
-  $jsmerger = tjsmerger::instance();
+  $jsmerger = tjsmerger::i();
   $jsmerger->lock();
   $jsmerger->deletefile('default', '/plugins/polls/polls.client.min.js');
   $jsmerger->deletetext('default', 'poll');
   $jsmerger->unlock();
   
-  $manager = tdbmanager::instance();
+  $manager = tdbmanager::i();
   $manager->deletetable($self->table);
   $manager->deletetable($self->userstable);
   $manager->deletetable($self->votestable);
@@ -123,7 +123,7 @@ function finddeletedpols($self) {
   $signs = $self->db->selectassoc("select id, hash from $self->thistable");
   if (!$signs) return array();
   $db = litepublisher::$db;
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $db->table = $posts->rawtable;
   $deleted = array();
   foreach ($signs as $item) {

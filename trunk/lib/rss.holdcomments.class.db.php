@@ -9,7 +9,7 @@
 class trssholdcomments extends tevents {
   public $url;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -46,7 +46,7 @@ class trssholdcomments extends tevents {
   public function request($arg) {
     if (isset($_GET['key']) && ($this->key != '') && ($this->key == $_GET['key'])) {
       $result = '<?php turlmap::sendxml(); ?>';
-      $rss = trss::instance();
+      $rss = trss::i();
       $rss->domrss = new tdomrss;
       $this->dogetholdcomments($rss);
       $result .= $rss->domrss->GetStripedXML();
@@ -57,15 +57,15 @@ class trssholdcomments extends tevents {
   
   private function dogetholdcomments($rss) {
     $rss->domrss->CreateRoot(litepublisher::$site->url . $this->rssurl, tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $recent = $manager->getrecent($this->count, 'hold');
     $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
     ttheme::$vars['comment'] = $comment;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $this->template;
     if ($tml == '') {
-      $html = tadminhtml ::instance();
+      $html = tadminhtml ::i();
       $html->section = 'comments';
       $tml = $html->rsstemplate;
     }

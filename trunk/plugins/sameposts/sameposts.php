@@ -8,7 +8,7 @@
 
 class tsameposts extends tclasswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -41,10 +41,10 @@ class tsameposts extends tclasswidget {
   }
   
   private function findsame($idpost) {
-    $posts = tposts::instance();
-    $post = tpost::instance($idpost);
+    $posts = tposts::i();
+    $post = tpost::i($idpost);
     if (count($post->categories) == 0) return array();
-    $cats = tcategories::instance();
+    $cats = tcategories::i();
     $cats->loadall();
     $same = array();
     foreach ($post->categories as $idcat) {
@@ -92,9 +92,9 @@ class tsameposts extends tclasswidget {
     $post = $this->getcontext('tpost');
     $list = $this->getsame($post->id);
     if (count($list) == 0) return'';
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->loaditems($list);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getpostswidgetcontent($list, $sidebar, '');
   }
   

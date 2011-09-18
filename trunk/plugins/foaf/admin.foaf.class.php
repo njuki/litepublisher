@@ -10,12 +10,12 @@ class tadminfoaf extends tadminmenu {
   
   private $user;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   private function getcombo($id, $status) {
-    $lang = tlocal::instance('foaf');
+    $lang = tlocal::i('foaf');
     $names = array('approved', 'hold', 'invated', 'rejected', 'spam', 'error');
     $result = "<select name='status-$id' >\n";
     
@@ -29,7 +29,7 @@ class tadminfoaf extends tadminmenu {
   }
   
   private function getlist() {
-    $foaf = tfoaf::instance();
+    $foaf = tfoaf::i();
     $perpage = 20;
     $total = $foaf->getcount();
     $from = $this->getfrom($perpage, $total);
@@ -41,7 +41,7 @@ class tadminfoaf extends tadminmenu {
     }
     $html = $this->html;
     $result = $html->tableheader();
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     foreach ($items as $id )  {
       $item = $foaf->getitem($id);
@@ -52,16 +52,16 @@ class tadminfoaf extends tadminmenu {
     }
     $result .= $html->tablefooter();
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages('/admin/foaf/', litepublisher::$urlmap->page, ceil($total/$perpage));
     return $result;
   }
   
   
   public function getcontent() {
-    $lang = tlocal::instance('foaf');
+    $lang = tlocal::i('foaf');
     $result = '';
-    $foaf = tfoaf::instance();
+    $foaf = tfoaf::i();
     $html = $this->html;
     
     switch ($this->name) {
@@ -75,7 +75,7 @@ class tadminfoaf extends tadminmenu {
         $id = $this->idget();
         if (!$foaf->itemexists($id)) return $this->notfound;
         $item = $foaf->getitem($id);
-        $args = targs::instance();
+        $args = targs::i();
         $args->add($item);
         $args->status = $this->getcombo($id, $item['status']);
         $result .= $html->editform($args);
@@ -89,7 +89,7 @@ class tadminfoaf extends tadminmenu {
           $result .= $html->h2->deleted;
         } else {
           $item = $foaf->getitem($id);
-          $args = targs::instance();
+          $args = targs::i();
           $args->add($item);
           $args->adminurl = $this->adminurl;
           $args->action = 'delete';
@@ -102,9 +102,9 @@ class tadminfoaf extends tadminmenu {
       break;
       
       case 'profile':
-      $profile = tprofile::instance();
+      $profile = tprofile::i();
       ttheme::$vars['profile '] = $profile;
-      $args = targs::instance();
+      $args = targs::i();
       $form = '';
       foreach (array(
       'nick',
@@ -140,8 +140,8 @@ class tadminfoaf extends tadminmenu {
       break;
       
       case 'profiletemplate':
-      $profile = tprofile::instance();
-      $args = targs::instance();
+      $profile = tprofile::i();
+      $args = targs::i();
       $args->template = $profile->template;
       $result .= $html->profiletemplate($args);
       break;
@@ -151,7 +151,7 @@ class tadminfoaf extends tadminmenu {
   }
   
   public function processform() {
-    $foaf = tfoaf::instance();
+    $foaf = tfoaf::i();
     $html = $this->html;
     
     switch ($this->name) {
@@ -187,7 +187,7 @@ class tadminfoaf extends tadminmenu {
       }
       
       case 'profile':
-      $profile = tprofile::instance();
+      $profile = tprofile::i();
       foreach ($_POST as $key => $value) {
         if (isset($profile->data[$key])) $profile->data[$key] = $value;
       }
@@ -196,7 +196,7 @@ class tadminfoaf extends tadminmenu {
       return $html->h2->successprofile;
       
       case 'profiletemplate':
-      $profile = tprofile::instance();
+      $profile = tprofile::i();
       $profile->template = $_POST['template'];
       $profile->save();
       return $html->h2->successprofile;

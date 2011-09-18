@@ -8,7 +8,7 @@
 
 class trobotstxt extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -27,7 +27,7 @@ class trobotstxt extends titems {
     if (!in_array($value, $this->items)) {
       $this->items[] = $value;
       $this->save();
-      $urlmap = turlmap::instance();
+      $urlmap = turlmap::i();
       $urlmap->setexpired($this->idurl);
       $this->added($value);
     }

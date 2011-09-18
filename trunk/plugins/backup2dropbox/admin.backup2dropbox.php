@@ -9,12 +9,12 @@
 class tadminbackup2dropbox {
   
   public function getcontent() {
-    $plugin = tbackup2dropbox::instance();
-    $html = tadminhtml::instance();
-    $args = targs::instance();
+    $plugin = tbackup2dropbox::i();
+    $html = tadminhtml::i();
+    $args = targs::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
     tlocal::admin()->ini['dropbox'] = $about;
-    $lang = tlocal::instance('dropbox');
+    $lang = tlocal::i('dropbox');
     $args->add($plugin->data);
     $args->formtitle = $about['head'];
     $form = $html->adminform('[text=email] [password=password] [text=dir] [checkbox=uploadfiles] [checkbox=onlychanged]] [checkbox=useshell]', $args);
@@ -27,7 +27,7 @@ class tadminbackup2dropbox {
   }
   
   public function processform() {
-    $plugin = tbackup2dropbox::instance();
+    $plugin = tbackup2dropbox::i();
     if (!isset($_POST['createnow'])) {
       extract($_POST, EXTR_SKIP);
       $plugin->lock();

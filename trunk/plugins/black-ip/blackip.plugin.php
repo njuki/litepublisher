@@ -10,7 +10,7 @@ class tblackip extends tplugin {
   public $ip;
   public $words;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

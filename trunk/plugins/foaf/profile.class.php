@@ -8,7 +8,7 @@
 
 class tprofile extends tevents_itemplate implements itemplate {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return getinstance(__class__);
   }
   
@@ -44,7 +44,7 @@ class tprofile extends tevents_itemplate implements itemplate {
   
   public function getfoaf() {
     $options = litepublisher::$options;
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $postscount = $posts->archivescount;
     $manager = litepublisher::$classes->commentmanager;
     
@@ -137,7 +137,7 @@ class tprofile extends tevents_itemplate implements itemplate {
   }
   
   public function request($arg) {
-    $lang = tlocal::instance('foaf');
+    $lang = tlocal::i('foaf');
   }
   
   public function gettitle() {
@@ -156,10 +156,10 @@ public function gethead() { }
   
   public function getcont() {
     ttheme::$vars['profile'] = $this;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $this->template;
     if ($tml == '') {
-      $html = tadminhtml::instance();
+      $html = tadminhtml::i();
       $html->section = 'foaf';
       $tml = $html->profile;
     }
@@ -167,14 +167,14 @@ public function gethead() { }
   }
   
   protected function getstat() {
-    $posts = tposts::instance();
-    $manager = tcommentmanager::instance();
-    $lang = tlocal::instance('foaf');
+    $posts = tposts::i();
+    $manager = tcommentmanager::i();
+    $lang = tlocal::i('foaf');
     return sprintf($lang->statistic, $posts->archivescount, $manager->count);
   }
   
   protected function getmyself() {
-    $lang = tlocal::instance('foaf');
+    $lang = tlocal::i('foaf');
     $result = array();
     if ($this->img != '') {
       $i = strrpos($this->img, '.');
@@ -207,7 +207,7 @@ public function gethead() { }
     'yahooChatID' => 'Yahoo',
     'mbox' => 'E-Mail'
     );
-    $lang = tlocal::instance('foaf');
+    $lang = tlocal::i('foaf');
     $result = "<table class=\"classictable\">
     <thead>
     <tr>
@@ -245,8 +245,8 @@ public function gethead() { }
   
   protected function getfriendslist() {
     $result = "<p>\n";
-    $foaf = tfoaf::instance();
-    $widget = tfriendswidget::instance();
+    $foaf = tfoaf::i();
+    $widget = tfriendswidget::i();
     $foaf->loadall();
     foreach ($foaf->items As $id => $item) {
     $url = $widget->redir ?"litepublisher::$site->url$widget->redirlink{litepublisher::$site->q}friend=$id" : $item['url'];

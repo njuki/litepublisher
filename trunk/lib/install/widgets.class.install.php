@@ -7,23 +7,23 @@
 **/
 
 function twidgetUninstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleteclass(get_class($self));
 }
 
 function twidgetsInstall($self) {
   litepublisher::$urlmap->addget('/getwidget.htm', get_class($self));
-  $robot = trobotstxt::instance();
+  $robot = trobotstxt::i();
   $robot->AddDisallow('/getwidget.htm');
   
-  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc = TXMLRPC::i();
   $xmlrpc->add('litepublisher.getwidget', 'xmlrpcgetwidget', get_class($self));
   install_std_widgets($self);
 }
 
 function twidgetsUninstall($self) {
   turlmap::unsub($self);
-  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc = TXMLRPC::i();
   $xmlrpc->deleteclass(get_class($self));
 }
 
@@ -37,26 +37,26 @@ function twidgetscacheUninstall($self) {
 
 function install_std_widgets($widgets) {
   $widgets->lock();
-  $sidebars = tsidebars::instance();
+  $sidebars = tsidebars::i();
   
-  $id = $widgets->add(tcategorieswidget::instance());
+  $id = $widgets->add(tcategorieswidget::i());
   $sidebars->insert($id, 'inline', 0, -1);
   
-  $id = $widgets->add(ttagswidget::instance());
+  $id = $widgets->add(ttagswidget::i());
   
-  $id = $widgets->add(tarchiveswidget::instance());
+  $id = $widgets->add(tarchiveswidget::i());
   $sidebars->insert($id, 'inline', 0, -1);
   
-  $id = $widgets->add(tlinkswidget::instance());
+  $id = $widgets->add(tlinkswidget::i());
   $sidebars->insert($id, 'inline', 0, -1);
   
-  $id = $widgets->add(tpostswidget::instance());
+  $id = $widgets->add(tpostswidget::i());
   $sidebars->insert($id, 'inline', 1, -1);
   
-  $id = $widgets->add(tcommentswidget::instance());
+  $id = $widgets->add(tcommentswidget::i());
   $sidebars->insert($id, true, 1, -1);
   
-  $id = $widgets->add(tmetawidget::instance());
+  $id = $widgets->add(tmetawidget::i());
   $sidebars->insert($id, 'inline', 1, -1);
   
   $widgets->unlock();

@@ -8,7 +8,7 @@
 //menu.admin.class.php
 class tadminmenus extends tmenus {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -33,7 +33,7 @@ class tadminmenus extends tmenus {
   }
   
   public function getadmintitle($name) {
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
     $ini = &$lang->ini;
     if (isset($ini[$name]['title'])) {
       return $ini[$name]['title'];
@@ -64,7 +64,7 @@ class tadminmenus extends tmenus {
   }
   
   public function hasright($group) {
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->hasright(litepublisher::$options->group, $group);
   }
   
@@ -112,7 +112,7 @@ class tadminmenu  extends tmenu {
   }
   
   public static function getowner() {
-    return tadminmenus::instance();
+    return tadminmenus::i();
   }
   
   protected function create() {
@@ -124,15 +124,15 @@ public function load() { return true; }
 public function save() { return true; }
   
   public function gethead() {
-    return tadminmenus::instance()->heads;
+    return tadminmenus::i()->heads;
   }
   
   public function getidview() {
-    return tviews::instance()->defaults['admin'];
+    return tviews::i()->defaults['admin'];
   }
   
   public static function auth($group) {
-    $auth = tauthdigest::instance();
+    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
@@ -140,7 +140,7 @@ public function save() { return true; }
     elseif (!$auth->Auth())  return $auth->headers();
     
     if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if (!$groups->hasright(litepublisher::$options->group, $group)) return 403;
     }
   }
@@ -194,19 +194,19 @@ public function canrequest() { }
   }
   
   public function gethtml($name = '') {
-    $result = tadminhtml::instance();
+    $result = tadminhtml::i();
     if ($name == '') $name = $this->basename;
     if (!isset($result->ini[$name])) {
       $name = $this->owner->items[$this->parent]['name'];
     }
     
     $result->section = $name;
-    $lang = tlocal::instance($name);
+    $lang = tlocal::i($name);
     return $result;
   }
   
   public function getlang() {
-    return tlocal::instance($this->name);
+    return tlocal::i($this->name);
   }
   
   public function getconfirmed() {
@@ -230,7 +230,7 @@ public function canrequest() { }
 
 class tauthor_rights extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -246,7 +246,7 @@ class tauthor_rights extends tevents {
 class tauthdigest extends tevents {
   public $stale;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -314,7 +314,7 @@ class tauthdigest extends tevents {
         $this->stale  = true;
         return false;
       }
-      $users = tusers::instance();
+      $users = tusers::i();
       if (!(litepublisher::$options->user  =$users->loginexists($hdr['username']))) return false;
       litepublisher::$options->updategroup();
       $a1 = strtolower(litepublisher::$options->password);
@@ -383,7 +383,7 @@ class tauthdigest extends tevents {
       litepublisher::$options->set_cookie($cookie);
       litepublisher::$options->cookieexpired = $expired;
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       $users->setcookie(litepublisher::$options->user, $cookie, $expired);
     }
   }
@@ -395,7 +395,7 @@ class thtmltag {
   public $tag;
 public function __construct($tag) { $this->tag = $tag; }
   public function __get($name) {
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
   return "<$this->tag>{$lang->$name}</$this->tag>\n";
   }
   
@@ -407,7 +407,7 @@ class tadminhtml {
   public $ini;
   private $map;
   
-  public static function instance() {
+  public static function i() {
     $result = getinstance(__class__);
     if (count($result->ini) == 0) $result->load('adminhtml');
     return $result;
@@ -416,7 +416,7 @@ class tadminhtml {
   public static function getinstance($section) {
     $self = getinstance(__class__);
     $self->section = $section;
-    tlocal::instance($section);
+    tlocal::i($section);
     return $self;
   }
   
@@ -445,13 +445,13 @@ class tadminhtml {
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
-    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::instance();
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
     return $this->parsearg($s, $args);
   }
   
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $admin = $theme->content->admin;
     $admin->tostring = true;
     // parse tags [form] .. [/form]
@@ -510,7 +510,7 @@ class tadminhtml {
     if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini;
     } else {
-      $merger = tlocalmerger::instance();
+      $merger = tlocalmerger::i();
       $merger->parsehtml();
     }
   }
@@ -550,7 +550,7 @@ class tadminhtml {
   
   public function adminform($tml, targs $args) {
     $args->items = $this->parsearg($tml, $args);
-    return $this->parsearg(ttheme::instance()->content->admin->form, $args);
+    return $this->parsearg(ttheme::i()->content->admin->form, $args);
   }
   
   public function getcheckbox($name, $value) {
@@ -558,7 +558,7 @@ class tadminhtml {
   }
   
   public function getinput($type, $name, $value, $title) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return strtr($theme->content->admin->$type, array(
     '$lang.$name' => $title,
     '$name' => $name,
@@ -590,8 +590,8 @@ class tadminhtml {
     }
     $tml .= '</tr>';
     
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     foreach ($items as $id => $item) {
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
@@ -603,7 +603,7 @@ class tadminhtml {
   }
   
   public function confirmdelete($id, $adminurl, $mesg) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->id = $id;
     $args->action = 'delete';
     $args->adminurl = $adminurl;
@@ -634,7 +634,7 @@ class tautoform {
   public $section;
   public $_title;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -642,7 +642,7 @@ class tautoform {
     $this->obj = $obj;
     $this->section = $section;
     $this->props = array();
-    $lang = tlocal::instance($section);
+    $lang = tlocal::i($section);
     $this->_title = $lang->$titleindex;
   }
   
@@ -721,8 +721,8 @@ class tautoform {
   
   public function getcontent() {
     $result = '';
-    $lang = tlocal::instance();
-    $theme = ttheme::instance();
+    $lang = tlocal::i();
+    $theme = ttheme::i();
     $admin = $theme->content->admin;
     $admin->tostring = true;
     foreach ($this->props as $prop) {
@@ -752,10 +752,10 @@ class tautoform {
   }
   
   public function getform() {
-    $args = targs::instance();
+    $args = targs::i();
     $args->formtitle = $this->_title;
     $args->items = $this->getcontent();
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->parsearg($theme->content->admin->form, $args);
   }
   
@@ -821,14 +821,14 @@ class ttablecolumns {
   }
   
   public function build($body, $buttons) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->style = $this->style;
     $args->checkboxes = implode("\n", $this->checkboxes);
     $args->head = $this->head;
     $args->body = $body;
     $args->buttons = $buttons;
     $tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.ini');
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->parsearg($tml, $args);
   }
   
@@ -870,7 +870,7 @@ class tuitabs {
   }
   
   public static function gethead() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
   }
   
@@ -881,7 +881,7 @@ class tajaxposteditor  extends tevents {
   public $idpost;
   private $isauthor;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -897,8 +897,8 @@ class tajaxposteditor  extends tevents {
   }
   
   public function dogethead($head) {
-    $template = ttemplate::instance();
-    $template->ltoptions['upload_button_text'] = tlocal::instance()->upload;
+    $template = ttemplate::i();
+    $template->ltoptions['upload_button_text'] = tlocal::i()->upload;
     $head .= $this->head;
     if ($this->visual) {
       if ($this->ajaxvisual) {
@@ -923,7 +923,7 @@ class tajaxposteditor  extends tevents {
   public function getviewicon($idview, $icon) {
     $result = tadminviews::getcomboview($idview);
     if ($icons = tadminicons::getradio($icon)) {
-      $html = tadminhtml ::instance();
+      $html = tadminhtml ::i();
       if ($html->section == '') $html->section = 'editor';
       $result .= $html->h2->icons;
       $result .= $icons;
@@ -935,7 +935,7 @@ class tajaxposteditor  extends tevents {
     if (!litepublisher::$options->cookieenabled) return self::error403();
     if (!litepublisher::$options->authcookie()) return self::error403();
     if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if (!$groups->hasright(litepublisher::$options->group, 'author')) return self::error403();
     }
   }
@@ -957,14 +957,14 @@ class tajaxposteditor  extends tevents {
     $this->idpost = tadminhtml::idparam();
     $this->isauthor = 'author' == litepublisher::$options->group;
     if ($this->idpost > 0) {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       if (!$posts->itemexists($this->idpost)) return self::error403();
       $groupname = litepublisher::$options->group;
       if ($groupname != 'admin') {
-        $groups = tusergroups::instance();
+        $groups = tusergroups::i();
         if (!$groups->hasright($groupname, 'editor') and  $groups->hasright($groupname, 'author')) {
           $this->isauthor = true;
-          $post = tpost::instance($this->idpost);
+          $post = tpost::i($this->idpost);
           if (litepublisher::$options->user != $post->author) return self::error403();
         }
       }
@@ -979,7 +979,7 @@ class tajaxposteditor  extends tevents {
     '<li>' => sprintf('<li><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id)
     );
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $types = $theme->reg('/^content\.post\.filelist/');
     $a = array();
     foreach ($types as $name => $val) {
@@ -991,11 +991,11 @@ class tajaxposteditor  extends tevents {
   }
   
   public function getcontent() {
-    $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
-    $html = tadminhtml ::instance();
+    $theme = tview::i(tviews::i()->defaults['admin'])->theme;
+    $html = tadminhtml ::i();
     $html->section = 'editor';
-    $lang = tlocal::instance('editor');
-    $post = tpost::instance($this->idpost);
+    $lang = tlocal::i('editor');
+    $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
     
     switch ($_GET['get']) {
@@ -1004,7 +1004,7 @@ class tajaxposteditor  extends tevents {
       $lang->section = 'editor';
       $result .= $html->h4->addtags;
       $items = array();
-      $tags = ttags::instance();
+      $tags = ttags::i();
       $list = $tags->getsorted(-1, 'name', 0);
       foreach ($list as $id ) {
         $items[] = '<a href="" rel="tagtopost">' . $tags->items[$id]['title'] . "</a>";
@@ -1013,7 +1013,7 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'posted':
-      $args = targs::instance();
+      $args = targs::i();
       $args->date = $post->posted != 0 ?date('d.m.Y', $post->posted) : '';
       $args->time  = $post->posted != 0 ?date('H:i', $post->posted) : '';
       $result = $html->datepicker($args);
@@ -1040,9 +1040,9 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'files':
-      $args = targs::instance();
+      $args = targs::i();
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
-      $files = tfiles::instance();
+      $files = tfiles::i();
       if (count($post->files) == 0) {
         $args->currentfiles = '<ul></ul>';
       } else {
@@ -1083,7 +1083,7 @@ class tajaxposteditor  extends tevents {
       $page = max(1, $page);
       
       $perpage = 10;
-      $files = tfiles::instance();
+      $files = tfiles::i();
       if (dbversion) {
         $sql = "parent =0 and media <> 'icon'";
         $sql .= litepublisher::$options->user <= 1 ? '' : ' and author = ' . litepublisher::$options->user;
@@ -1110,11 +1110,11 @@ class tajaxposteditor  extends tevents {
       
       if (count($list) == 0) return '';
       
-      $args = targs::instance();
+      $args = targs::i();
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
       $args->page = $page;
       $templates = $this->getfiletemplates('pagefile-$id', 'pagepost-$post.id', 'itemfilepage-$id');
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $result = $files->getlist($list, $templates);
       $result .= $html->page($args);
       break;
@@ -1122,17 +1122,17 @@ class tajaxposteditor  extends tevents {
       case 'upload':
       if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) ||
       $_FILES["Filedata"]["error"] != 0) return self::error403();
-      if ($this->isauthor && ($r = tauthor_rights::instance()->canupload())) return $r;
+      if ($this->isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
       
-      $parser = tmediaparser::instance();
+      $parser = tmediaparser::i();
       $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
       $templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $result = $files->getlist(array($id), $templates);
       break;
       
       case 'contenttabs':
-      $args = targs::instance();
+      $args = targs::i();
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
       $result = $html->contenttabs($args);
       break;
@@ -1165,10 +1165,10 @@ class tajaxposteditor  extends tevents {
   }
   
   public function geteditor($name, $value, $visual) {
-    $html = tadminhtml ::instance();
+    $html = tadminhtml ::i();
     $hsect = $html->section;
     $html->section = 'editor';
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
     $lsect = $lang->section;
     $lang->section = 'editor';
     $title = $lang->$name;
@@ -1180,9 +1180,9 @@ class tajaxposteditor  extends tevents {
   }
   
   public function getraweditor($value) {
-    $html = tadminhtml ::instance();
+    $html = tadminhtml ::i();
     if ($html->section == '') $html->section = 'editor';
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
     if ($lang->section == '') $lang->section = 'editor';
     $title = $lang->raw;
     if ($this->ajaxvisual && $this->visual) $title .= $html->loadvisual();
@@ -1197,27 +1197,27 @@ class tposteditor extends tadminmenu {
   public $idpost;
   private $isauthor;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
     
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language;
     //$result .= $template->getready('$.initposteditor();');
     $result .= $template->getready('initposteditor();');
-    $ajax = tajaxposteditor ::instance();
+    $ajax = tajaxposteditor ::i();
     return $ajax->dogethead($result);
   }
   
   private static function getsubcategories($parent, array $postitems) {
     $result = '';
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $html = tadminhtml::getinstance('editor');
-    $args = targs::instance();
+    $args = targs::i();
     foreach ($categories->items  as $id => $item) {
       if ($parent != $item['parent']) continue;
       $args->add($item);
@@ -1233,7 +1233,7 @@ class tposteditor extends tadminmenu {
   }
   
   public static function getcategories(array $items) {
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $categories->loadall();
     $result = self::getsubcategories(0, $items);
     return str_replace("'", '"', $result);
@@ -1241,7 +1241,7 @@ class tposteditor extends tadminmenu {
   
   protected function getpostcategories(tpost $post) {
     $postitems = $post->categories;
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     if (count($postitems) == 0) $postitems = array($categories->defaultid);
     return self::getcategories($postitems);
   }
@@ -1251,13 +1251,13 @@ class tposteditor extends tadminmenu {
     $this->basename = 'editor';
     $this->idpost = $this->idget();
     if ($this->idpost > 0) {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       if (!$posts->itemexists($this->idpost)) return 404;
     }
-    $post = tpost::instance($this->idpost);
+    $post = tpost::i($this->idpost);
     $groupname = litepublisher::$options->group;
     if ($groupname != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if (!$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author')) {
         $this->isauthor = true;
         if (($post->id != 0) && (litepublisher::$options->user != $post->author)) return 403;
@@ -1284,18 +1284,18 @@ class tposteditor extends tadminmenu {
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$post->id&get");
     $args->title = htmlspecialchars_decode($post->title, ENT_QUOTES);
     $args->categories = $this->getpostcategories($post);
-    $ajaxeditor = tajaxposteditor ::instance();
+    $ajaxeditor = tajaxposteditor ::i();
     $args->editor = $ajaxeditor->getraweditor($post->rawcontent);
   }
   
   public function getcontent() {
     $html = $this->html;
-    $post = tpost::instance($this->idpost);
+    $post = tpost::i($this->idpost);
     ttheme::$vars['post'] = $post;
-    $args = targs::instance();
+    $args = targs::i();
     $this->getpostargs($post, $args);
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
-    if ($this->isauthor &&($r = tauthor_rights::instance()->getposteditor($post, $args)))  return $r;
+    if ($this->isauthor &&($r = tauthor_rights::i()->getposteditor($post, $args)))  return $r;
     $result .= $html->form($args);
     unset(ttheme::$vars['post']);
     return $html->fixquote($result);
@@ -1352,14 +1352,14 @@ class tposteditor extends tadminmenu {
     $html = $this->html;
     if (empty($_POST['title'])) return $html->h2->emptytitle;
     $id = (int)$_POST['id'];
-    $post = tpost::instance($id);
-    if ($this->isauthor &&($r = tauthor_rights::instance()->editpost($post)))  {
+    $post = tpost::i($id);
+    if ($this->isauthor &&($r = tauthor_rights::i()->editpost($post)))  {
       $this->idpost = $post->id;
       return $r;
     }
     $this->set_post($post);
     
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if ($id == 0) {
       $this->idpost = $posts->add($post);
       $_POST['id'] = $this->idpost;
@@ -1375,7 +1375,7 @@ class tposteditor extends tadminmenu {
 //users.class.php
 class tusers extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1389,7 +1389,7 @@ class tusers extends titems {
   
   public function add($group, $login,$password, $name, $email, $website) {
     if ($this->loginexists($login)) return false;
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     if (is_numeric($group)) {
       $gid = (int) $group;
       if (!$groups->itemexists($gid)) return false;
@@ -1412,7 +1412,7 @@ class tusers extends titems {
     $id = $this->dbversion ? $this->db->add($item) : ++$this->autoid;
     $this->items[$id] = $item;
     if ($this->dbversion) $this->save();
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     $pages->add($id, $name, $email, $website);
     $this->added($id);
     return $id;
@@ -1421,7 +1421,7 @@ class tusers extends titems {
   public function edit($id, array $values) {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     $group = isset($values['gid']) ? $values['gid'] :
     (isset($values['group']) ? $values['group'] : '');
     $gid = is_numeric($group) ?       (int) $group : $groups->groupid($group);
@@ -1451,7 +1451,7 @@ class tusers extends titems {
       $this->save();
     }
     
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     $pages->edit($id, $values);
     return true;
   }
@@ -1469,7 +1469,7 @@ class tusers extends titems {
   }
   
   public function emailexists($email) {
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     if ($this->dbversion) {
       return $pages->db->findid('email = '. dbquote($email));
     } else {
@@ -1497,7 +1497,7 @@ class tusers extends titems {
       $this->items[$id]['status'] = 'approved';
       $this->save();
     }
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     if ($pages->createpage) $pages->addpage($id);
   }
   
@@ -1549,7 +1549,7 @@ class tusers extends titems {
   
   public function getgroupname($id) {
     $item = $this->getitem($id);
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->items[$item['gid']]['name'];
   }
   
@@ -1583,13 +1583,13 @@ class tusers extends titems {
       $delete = $this->db->idselect("status = 'wait' and id in (select id from $pagetable where registered < '$time')");
       if (count($delete) > 0) {
         $this->db->delete(sprintf('id in (%s)', implode(',', $delete)));
-        $pages = tuserpages::instance();
+        $pages = tuserpages::i();
         foreach ($delete as $id) {
           $pages->delete($id);
         }
       }
     } else {
-      $pages = tuserpages::instance();
+      $pages = tuserpages::i();
       $pages->lock();
       $time = strtotime('-1 day');
       $deleted = false;
@@ -1610,7 +1610,7 @@ class tusers extends titems {
 //users.groups.class.php
 class tusergroups extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

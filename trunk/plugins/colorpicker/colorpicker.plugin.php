@@ -8,23 +8,23 @@
 
 class tcolorpicker extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function install() {
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->parsed = $this->themeparsed;
     
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $jsmerger->add('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
   }
   
   public function uninstall() {
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->unsubscribeclass($this);
     
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $jsmerger->deletefile('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
   }
   

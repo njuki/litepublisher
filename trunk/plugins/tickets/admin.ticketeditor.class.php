@@ -8,13 +8,13 @@
 
 class tticketeditor extends tposteditor {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
   $result .= $template->getready('$("#tabs, #contenttabs").tabs({ cache: true });');
     return $result;
   }
@@ -31,7 +31,7 @@ class tticketeditor extends tposteditor {
     if ($s = parent::canrequest()) return $s;
     $this->basename = 'tickets';
     if ($this->idpost > 0) {
-      $ticket = tticket::instance($this->idpost);
+      $ticket = tticket::i($this->idpost);
       if ((litepublisher::$options->group == 'ticket') && (litepublisher::$options->user != $ticket->author)) return 403;
     }
   }
@@ -49,14 +49,14 @@ class tticketeditor extends tposteditor {
   public function getcontent() {
     $result = $this->logoutlink;
     $this->basename = 'tickets';
-    $ticket = tticket::instance($this->idpost);
+    $ticket = tticket::i($this->idpost);
     ttheme::$vars['ticket'] = $ticket;
-    $args = targs::instance();
+    $args = targs::i();
     $args->id = $this->idpost;
     $args->title = htmlspecialchars_decode($ticket->title, ENT_QUOTES);
     $args->categories = $this->getpostcategories($ticket);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
-    $ajaxeditor = tajaxposteditor ::instance();
+    $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
     
     $html = $this->html;
@@ -98,7 +98,7 @@ class tticketeditor extends tposteditor {
     return;
     */
     extract($_POST, EXTR_SKIP);
-    $tickets = ttickets::instance();
+    $tickets = ttickets::i();
     $this->basename = 'tickets';
     $html = $this->html;
     
@@ -115,10 +115,10 @@ class tticketeditor extends tposteditor {
       }
     }
     if (empty($title)) {
-      $lang =tlocal::instance('editor');
+      $lang =tlocal::i('editor');
       return $html->h4->emptytitle;
     }
-    $ticket = tticket::instance((int)$id);
+    $ticket = tticket::i((int)$id);
     $ticket->title = $title;
     $ticket->categories = self::processcategories();
     if (isset($tags)) $ticket->tagnames = $tags;
@@ -144,13 +144,13 @@ class tticketeditor extends tposteditor {
       $_POST['id'] = $id;
       $this->idpost = $id;
       if (litepublisher::$options->group == 'ticket') {
-        $users =tusers::instance();
-        $pages = tuserpages::instance();
+        $users =tusers::i();
+        $pages = tuserpages::i();
         $user = $pages->getitem(litepublisher::$options->user);
-        $comusers = tcomusers::instance();
+        $comusers = tcomusers::i();
         $uid = $comusers->add($user['name'], $user['email'], $user['url'], '');
         $comusers->setvalue($uid, 'cookie', $users->getvalue($user['id'], 'cookie'));
-        $subscribers = tsubscribers::instance();
+        $subscribers = tsubscribers::i();
         $subscribers->add($id, $uid);
       }
     } else {

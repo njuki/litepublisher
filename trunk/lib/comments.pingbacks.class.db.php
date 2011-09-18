@@ -8,7 +8,7 @@
 
 class tpingbacks extends tabstractpingbacks implements ipingbacks {
   
-  public static function instance($pid = 0) {
+  public static function i($pid = 0) {
     $result = getinstance(__class__);
     $result->pid = $pid;
     return $result;
@@ -83,8 +83,8 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     $items = $this->db->getitems("post = $this->pid and status = 'approved' order by posted");
     $pingback = new tarray2prop();
     ttheme::$vars['pingback'] = $pingback;
-    $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
+    $lang = tlocal::i('comment');
+    $theme = ttheme::i();
     $tml = $theme->content->post->templatecomments->pingbacks->pingback;
     foreach ($items as $item) {
       $pingback->array = $item;

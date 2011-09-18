@@ -8,13 +8,13 @@
 
 class tadminoldestposts extends tadminorderwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   protected function create() {
     parent::create();
-    $this->widget = toldestposts::instance();
+    $this->widget = toldestposts::i();
   }
   
   protected function dogetcontent(twidget $widget, targs $args){

@@ -10,7 +10,7 @@ class tsimplecontent  extends tevents_itemplate implements itemplate {
   public $text;
   public $html;
   
-  public static function instance() {
+  public static function i() {
     return Getinstance(__class__);
   }
   
@@ -33,21 +33,21 @@ public function gettitle() {}
   
   public static function html($content) {
     $class = __class__;
-    $self = self::instance();
+    $self = self::i();
     $self->html = $content;
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     return $template->request($self);
   }
   
   public static function content($content) {
-    $self = self::instance();
+    $self = self::i();
     $self->text = $content;
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     return $template->request($self);
   }
   
   public static function gettheme() {
-    return tview::getview(self::instance())->theme;
+    return tview::getview(self::i())->theme;
   }
   
 }//class

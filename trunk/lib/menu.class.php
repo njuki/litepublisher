@@ -9,7 +9,7 @@
 class tmenus extends titems {
   public $tree;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -42,12 +42,12 @@ class tmenus extends titems {
     if ($item instanceof thomepage) {
       $item->url = '/';
     } else {
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $item->url = $linkgen->addurl($item, 'menu');
     }
     
     if ($item->idview == 1) {
-      $views = tviews::instance();
+      $views = tviews::i();
       if (isset($views->defaults['menu'])) $item->data['idview'] = $views->defaults['menu'];
     }
     
@@ -62,7 +62,7 @@ class tmenus extends titems {
       if (array_key_exists($prop, $item->data)) unset($item->data[$prop]);
     }
     $item->id = $id;
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $item->idurl = $urlmap->Add($item->url, get_class($item), $item->id);
     if ($item->status != 'draft') $item->status = 'published';
     $this->lock();
@@ -126,7 +126,7 @@ class tmenus extends titems {
   
   public function edit(tmenu $item) {
     if (!( ($item instanceof thomepage) || ($item instanceof tfakemenu))) {
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $linkgen->editurl($item, 'menu');
     }
     
@@ -275,13 +275,13 @@ class tmenus extends titems {
     $result = '';
     $this->callevent('onbeforemenu', array(&$result, &$hover,$current ));
     if (count($this->tree) > 0) {
-      $theme = ttheme::instance();
+      $theme = ttheme::i();
       if ($hover) {
         $items = $this->getsubmenu($this->tree, $current);
       } else {
         $items = '';
         $tml = $theme->templates['menu.item'];
-        $args = targs::instance();
+        $args = targs::i();
         $args->submenu = '';
         foreach ($this->tree as $id => $subitems) {
           if ($this->exclude($id)) continue;
@@ -299,10 +299,10 @@ class tmenus extends titems {
   
   private function getsubmenu(&$tree, $current) {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->templates['menu.item'];
     $tml_submenu = $theme->templates['menu.item.submenu'];
-    $args = targs::instance();
+    $args = targs::i();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
       $submenu = count($items) == 0 ? '' :  str_replace('$items', $this->getsubmenu($items, $current), $tml_submenu);
@@ -327,7 +327,7 @@ class tmenu extends titem implements  itemplate {
   public static $ownerprops = array('title', 'url', 'idurl', 'parent', 'order', 'status');
   public $formresult;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     $class = $id == 0 ? __class__ : self::getowner()->items[$id]['class'];
     return self::iteminstance($class,  $id);
   }
@@ -353,7 +353,7 @@ class tmenu extends titem implements  itemplate {
   }
   
   public static function getowner() {
-    return tmenus::instance();
+    return tmenus::i();
   }
   
   protected function create() {
@@ -459,7 +459,7 @@ public function gethead() {}
   }
   
   public function getcont() {
-    return ttheme::parsevar('menu', $this, ttheme::instance()->templates['content.menu']);
+    return ttheme::parsevar('menu', $this, ttheme::i()->templates['content.menu']);
   }
   
   public function getlink() {
@@ -474,7 +474,7 @@ public function gethead() {}
     if (!is_string($s)) $this->error('Error! Page content must be string');
     if ($s != $this->rawcontent) {
       $this->rawcontent = $s;
-      $filter = tcontentfilter::instance();
+      $filter = tcontentfilter::i();
       $this->data['content'] = $filter->filter($s);
     }
   }
@@ -483,7 +483,7 @@ public function gethead() {}
 
 class tfakemenu extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return self::iteminstance(__class__,  $id);
   }
   

@@ -7,7 +7,7 @@
 **/
 
 function tcustomwidgetInstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleted = $self->widgetdeleted;
 }
 ?>

@@ -8,13 +8,13 @@
 
 class tsourcefilesmenu extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return $id == 0 ? self::singleinstance(__class__) : self::iteminstance(__class__, $id);
   }
   
   public function getcontent() {
     $result = parent::getcontent();
-    $plugin = tsourcefiles::instance();
+    $plugin = tsourcefiles::i();
     $result .= $plugin->getcachecontent('', '');
     return $result;
   }

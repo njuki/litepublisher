@@ -8,7 +8,7 @@
 
 class tadminsubscribers extends tadminform {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -19,16 +19,16 @@ class tadminsubscribers extends tadminform {
   
   public function getcontent() {
     $html= $this->html;
-    $args = targs::instance();
-    $comusers = tcomusers::instance();
+    $args = targs::i();
+    $comusers = tcomusers::i();
     if (!($user = $comusers->fromcookie($_GET['userid']))) return $html->h2->nosubscribtions  ;
-    $subscribers=  tsubscribers::instance();
+    $subscribers=  tsubscribers::i();
     $items = $subscribers->getposts($user['id']);
     if (count($items) == 0) return $html->h2->nosubscribtions;
     $args->email = $user['email'];
     $result =$html->formhead($args);
     foreach ($items as $postid) {
-      $post = tpost::instance($postid);
+      $post = tpost::i($postid);
       ttheme::$vars['post'] = $post;
       if ($post->status != 'published') continue;
       $args->postid = $postid;
@@ -39,9 +39,9 @@ class tadminsubscribers extends tadminform {
   }
   
   public function processform() {
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     if (!($user = $comusers->fromcookie($_GET['userid']))) return '';
-    $subscribers = tsubscribers::instance();
+    $subscribers = tsubscribers::i();
     $subscribers->lock();
     foreach ($_POST as $name => $value) {
       if (strbegin($name, 'postid-')) {

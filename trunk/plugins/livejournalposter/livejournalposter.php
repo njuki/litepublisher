@@ -8,7 +8,7 @@
 
 class tlivejournalposter extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -24,9 +24,9 @@ class tlivejournalposter extends tplugin {
   
   public function sendpost($id) {
     if ($this->host == '' || $this->login == '') return false;
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     ttheme::$vars['post'] = $post;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $content = $theme->parse($this->template);
     $date = getdate($post->posted);
     

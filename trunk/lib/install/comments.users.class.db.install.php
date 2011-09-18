@@ -7,13 +7,13 @@
 **/
 
 function tcomusersInstall($self) {
-  $manager = TDBManager ::instance();
+  $manager = TDBManager ::i();
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
   $manager->CreateTable($self->table, file_get_contents($dir .'comments.users.sql'));
   
   litepublisher::$urlmap->addget('/comusers.htm', get_class($self));
   
-  $robots = TRobotstxt ::instance();
+  $robots = TRobotstxt ::i();
   $robots->AddDisallow('/comusers.htm');
 }
 

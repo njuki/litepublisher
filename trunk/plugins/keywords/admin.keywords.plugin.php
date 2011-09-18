@@ -8,7 +8,7 @@
 
 class tadminkeywords extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -19,7 +19,7 @@ class tadminkeywords extends tadminwidget {
     $about = tplugins::getabout(tplugins::getname(__file__));
     $html = $this->html;
     $lang = $this->lang;
-    $args = targs::instance();
+    $args = targs::i();
     if (isset($_GET['filename'])) {
       $filename = $_GET['filename'];
       if (!@file_exists($datadir . $filename)) return $html->h3->notfound;
@@ -32,8 +32,8 @@ class tadminkeywords extends tadminwidget {
     $page = isset($_GET['page'])  ? (int) $_GET['page'] : 1;
     $result = '';
     if ($page == 1) {
-      $widget = tkeywordswidget::instance();
-      $widgets = twidgets::instance();
+      $widget = tkeywordswidget::i();
+      $widgets = twidgets::i();
       $idwidget = $widgets->find($widget);
       $args->count = $widget->count;
       $args->trace = $widget->trace;
@@ -86,8 +86,8 @@ class tadminkeywords extends tadminwidget {
     $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
     if (isset($_POST['optionsform'])) {
       extract($_POST, EXTR_SKIP);
-      $widget = tkeywordswidget::instance();
-      $widgets = twidgets::instance();
+      $widget = tkeywordswidget::i();
+      $widgets = twidgets::i();
       $idwidget = $widgets->find($widget);
       $widget->lock();
       $widget->settitle($idwidget, $title);
@@ -95,7 +95,7 @@ class tadminkeywords extends tadminwidget {
       $widget->notify = isset($notify);
       $trace = isset($trace);
       if ($widget->trace != $trace) {
-        $plugin = tkeywordsplugin::instance();
+        $plugin = tkeywordsplugin::i();
         if ($trace) {
           litepublisher::$urlmap->afterrequest = $plugin->parseref;
         } else {

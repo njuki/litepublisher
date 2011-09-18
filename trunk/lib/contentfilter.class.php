@@ -8,7 +8,7 @@
 
 class tcontentfilter extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -82,7 +82,7 @@ class tcontentfilter extends tevents {
   
   public static function getpostdescription($description) {
     if (litepublisher::$options->parsepost) {
-      $theme = ttheme::instance();
+      $theme = ttheme::i();
       $description = $theme->parse($description);
     }
     $description = self::gettitle($description);

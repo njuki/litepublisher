@@ -8,7 +8,7 @@
 
 class tadmindownloaditems extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -26,12 +26,12 @@ class tadmindownloaditems extends tadminmenu {
     $result = '';
     //$result = $this->logoutlink;
     $html = $this->html;
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     $args->editurl = tadminhtml::getadminlink('/admin/downloaditems/editor/', 'id');
-    $lang = tlocal::instance('downloaditems');
+    $lang = tlocal::i('downloaditems');
     
-    $downloaditems = tdownloaditems::instance();
+    $downloaditems = tdownloaditems::i();
     $perpage = 20;
     $where = litepublisher::$options->group == 'downloaditem' ? ' and author = ' . litepublisher::$options->user : '';
     
@@ -61,7 +61,7 @@ class tadmindownloaditems extends tadminmenu {
     
     $tablebody = '';
     foreach ($items  as $id ) {
-      $downloaditem = tdownloaditem::instance($id);
+      $downloaditem = tdownloaditem::i($id);
       ttheme::$vars['downloaditem'] = $downloaditem;
     $args->status = $lang->{$downloaditem->status};
       $args->type = tlocal::get('downloaditem', $downloaditem->type);
@@ -73,13 +73,13 @@ class tadmindownloaditems extends tadminmenu {
     $result .= $html->footer();
     $result = $html->fixquote($result);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
   public function processform() {
-    $downloaditems = tdownloaditems::instance();
+    $downloaditems = tdownloaditems::i();
     if ($this->name == 'addurl') {
       $url = trim($_POST['url']);
       if ($url == '') return '';
@@ -99,7 +99,7 @@ class tadmindownloaditems extends tadminmenu {
       if ($status == 'delete') {
         $downloaditems->delete($id);
       } else {
-        $downloaditem = tdownloaditem::instance($id);
+        $downloaditem = tdownloaditem::i($id);
         $downloaditem->status = $status;
         $downloaditems->edit($downloaditem);
       }

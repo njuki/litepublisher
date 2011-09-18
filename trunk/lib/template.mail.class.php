@@ -9,7 +9,7 @@
 class tmailtemplate extends titems {
   public $name;
   
-  public static function instance($name = '') {
+  public static function i($name = '') {
     $result = getinstance(__class__);
     $result->name = $name;
     return $result;
@@ -31,20 +31,20 @@ class tmailtemplate extends titems {
   }
   
   public function __call($name, $params) {
-    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::instance();
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
     return $this->getpart($name, $args);
   }
   
   public function getpart($part, targs $args) {
     tlocal::usefile('admin');
-    tlocal::instance($this->name);
-    $theme = ttheme::instance();
+    tlocal::i($this->name);
+    $theme = ttheme::i();
     return $theme->parsearg($this->gettml($this->name, $part), $args);
   }
   
   public function gettml($name, $part) {
     if (isset($this->items[$name])) return $this->items[$name][$part];
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = $name;
     return $html->$part;
   }

@@ -7,7 +7,7 @@
 **/
 
 function tsubcatwidgetInstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleted = $self->widgetdeleted;
   
   $self->tags->deleted = $self->tagdeleted;

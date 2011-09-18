@@ -11,7 +11,7 @@ class tlinkswidget extends twidget {
   public $autoid;
   public $redirlink;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -34,11 +34,11 @@ class tlinkswidget extends twidget {
   public function getcontent($id, $sidebar) {
     if (count($this->items) == 0) return '';
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('links', $sidebar);
     $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . 'id=';
     $url = litepublisher::$site->url;
-    $args = targs::instance();
+    $args = targs::i();
     $args->subcount = '';
     $args->subitems = '';
     $args->icon = '';

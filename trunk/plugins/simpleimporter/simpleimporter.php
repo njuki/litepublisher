@@ -9,7 +9,7 @@
 class tsimpleimporter extends timporter {
   public $tagsmap;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -30,14 +30,14 @@ class tsimpleimporter extends timporter {
     foreach ($this->tagsmap as $key => $val) {
       $tagsmap .= "$key = $val\n";
     }
-    $args = targs::instance();
+    $args = targs::i();
     $args->tagsmap = $tagsmap;
     $args->script = $this->script;
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->maplabel = $about['maplabel'];
     $args->scriptlabel = $about['scriptlabel'];
     $tml = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'form.tml');
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $result .= $html->parsearg($tml, $args);
     return $result;
   }
@@ -65,13 +65,13 @@ class tsimpleimporter extends timporter {
     require_once(litepublisher::$paths->lib . 'domrss.class.php');
     $a = xml2array($s);
     
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->lock();
-    $cats = tcategories::instance();
+    $cats = tcategories::i();
     $cats->lock();
-    $tags = ttags::instance();
+    $tags = ttags::i();
     $tags->lock();
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->lock();
     foreach ($a['rss']['channel'][0]['item'] as $item) {
       $post = $this->add($item);
@@ -85,7 +85,7 @@ class tsimpleimporter extends timporter {
   }
   
   public function add(array $item) {
-    $post = tpost::instance();
+    $post = tpost::i();
     foreach ($this->tagsmap as $key => $val) {
       if (isset($item[$key])) {
       $post->{$val} = $item[$key];

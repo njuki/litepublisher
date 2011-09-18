@@ -8,7 +8,7 @@
 
 class tremoteadmin extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -38,17 +38,17 @@ class tremoteadmin extends tevents {
   }
   
   public function setplugins($names) {
-    $plugins = tplugins::instance();
+    $plugins = tplugins::i();
     $plugins->setplugins($names);
   }
   
   public function deleteplugins($names) {
-    $plugins = tplugins::instance();
+    $plugins = tplugins::i();
     $plugins->deleteplugins($names);
   }
   
   public function settheme($name) {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->theme = $name;
   }
   
@@ -106,13 +106,13 @@ class tremoteadmin extends tevents {
       $this->ReadDirToZip($zip, litepublisher::$paths->lib, '', 'lib/');
     }
     if ($theme) {
-      $Template = &TTemplate::instance();
+      $Template = &TTemplate::i();
       $themename = $Template->themename;
       $this->ReadDirToZip($zip, litepublisher::$paths->themes . $themename, '', "themes/$themename/");
     }
     
     if ($plugins) {
-      $plugins = &TPlugins::instance();
+      $plugins = &TPlugins::i();
       foreach ($plugins->items as $name => $item) {
         if (@is_dir(litepublisher::$paths->plugins . $name)) {
           $this->ReadDirToZip($zip, litepublisher::$paths->plugins . $name, '', "plugins/$name/");
@@ -124,7 +124,7 @@ class tremoteadmin extends tevents {
   }
   
   public function getdump() {
-    $dbmanager = tdbmanager ::instance();
+    $dbmanager = tdbmanager ::i();
     return $dbmanager->export();
   }
   

@@ -7,7 +7,7 @@
 **/
 
 function tadmincontextwidgetInstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->lock();
   $self->id = $widgets->add($self);
   $widgets->onadminlogged = $self->onsidebar;

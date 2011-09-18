@@ -8,7 +8,7 @@
 
 class tusernews extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -43,9 +43,9 @@ class tusernews extends tplugin {
     $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'editor.htm');
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->data['$lang.sourceurl'] = $about['sourceurl'];
-    $ajaxeditor = tajaxposteditor ::instance();
+    $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $post->rawcontent, true);
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $result = $post->id == 0 ? '' : $html->h2->formhead . $post->bookmark;
     $result .= $html->parsearg($form, $args);
     unset(ttheme::$vars['post']);
@@ -54,8 +54,8 @@ class tusernews extends tplugin {
   
   public function editpost(tpost $post) {
     extract($_POST, EXTR_SKIP);
-    $posts = tposts::instance();
-    $html = tadminhtml::instance();
+    $posts = tposts::i();
+    $html = tadminhtml::i();
     // check spam
     if ($id == 0) {
       $status = 'published';
@@ -85,12 +85,12 @@ class tusernews extends tplugin {
       $_POST['id'] = $id;
       
       if ($this->autosubscribe) {
-        $pages = tuserpages::instance();
+        $pages = tuserpages::i();
         $uitem = $pages->getitem(litepublisher::$options->user);
-        $comusers = tcomusers::instance();
+        $comusers = tcomusers::i();
         $uid = $comusers->add($uitem['name'], $uitem['email'], $uitem['website'], '');
-        $comusers->setvalue($uid, 'cookie', tusers::instance()->getvalue($uitem['id'], 'cookie'));
-        $subscribers = tsubscribers::instance();
+        $comusers->setvalue($uid, 'cookie', tusers::i()->getvalue($uitem['id'], 'cookie'));
+        $subscribers = tsubscribers::i();
         $subscribers->add($id, $uid);
       }
     } else {

@@ -8,32 +8,32 @@
 
 class tlazyloader extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function install() {
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->parsed = $this->themeparsed;
     
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->js = '<script type="text/javascript">$.load_script("%s");</script>';
     $template->save();
     
-    $admin = tadminmenus::instance();
+    $admin = tadminmenus::i();
     $admin->heads = $this->replace($admin->heads);
     $admin->save();
     ttheme::clearcache();
   }
   
   public function uninstall() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->js = '<script type="text/javascript" src="%s"></script>';
     $template->save();
     
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->unsubscribeclass($this);
-    $admin = tadminmenus::instance();
+    $admin = tadminmenus::i();
     $admin->heads = $this->restore($admin->heads);
     $admin->save();
     ttheme::clearcache();

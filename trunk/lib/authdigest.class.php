@@ -9,7 +9,7 @@
 class tauthdigest extends tevents {
   public $stale;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -77,7 +77,7 @@ class tauthdigest extends tevents {
         $this->stale  = true;
         return false;
       }
-      $users = tusers::instance();
+      $users = tusers::i();
       if (!(litepublisher::$options->user  =$users->loginexists($hdr['username']))) return false;
       litepublisher::$options->updategroup();
       $a1 = strtolower(litepublisher::$options->password);
@@ -146,7 +146,7 @@ class tauthdigest extends tevents {
       litepublisher::$options->set_cookie($cookie);
       litepublisher::$options->cookieexpired = $expired;
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       $users->setcookie(litepublisher::$options->user, $cookie, $expired);
     }
   }

@@ -8,14 +8,14 @@
 
 class tadmincustomtitle {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tcustomtitle::instance();
+    $plugin = tcustomtitle::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $args->post = $plugin->post;
     $args->tag = $plugin->tag;
     $args->home = $plugin->home;
@@ -23,7 +23,7 @@ class tadmincustomtitle {
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.tag'] = $about['tagcat'];
     
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform('[text=post]
     [text=tag]
     [text=home]
@@ -31,7 +31,7 @@ class tadmincustomtitle {
   }
   
   public function processform() {
-    $plugin = tcustomtitle::instance();
+    $plugin = tcustomtitle::i();
     $plugin->post = $_POST['post'];
     $plugin->tag = $_POST['tag'];
     $plugin->home = $_POST['home'];

@@ -8,12 +8,12 @@
 
 function thomepageInstall($self) {
   litepublisher::$site->home = '/';
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
   $self->url = '/';
   $self->title = tlocal::get('default', 'home');
-  $self->idview = tviews::instance()->add(tlocal::get('names', 'home'));
-  $homeview = tview::instance($self->idview);
+  $self->idview = tviews::i()->add(tlocal::get('names', 'home'));
+  $homeview = tview::i($self->idview);
   $homeview->disableajax = true;
   $homeview->save();
   
@@ -23,7 +23,7 @@ function thomepageInstall($self) {
 
 function thomepageUninstall($self) {
   turlmap::unsub($self);
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
   unset($menus->items[$menus->idhome]);
   $menus->sort();

@@ -9,7 +9,7 @@
 class tstaticpages extends titems implements itemplate {
   private $id;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -56,11 +56,11 @@ public function gethead() { }
   }
   
   public function add($title, $description, $keywords, $content) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $title = tcontentfilter::escape($title);
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $url = $linkgen->createurl($title, 'menu', true);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $this->items[++$this->autoid] = array(
     'idurl' => $urlmap->add($url, get_class($this),  $this->autoid),
     'url' => $url,
@@ -77,7 +77,7 @@ public function gethead() { }
   
   public function edit($id, $title, $description, $keywords, $content) {
     if (!$this->itemexists($id)) return false;
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item = $this->items[$id];
     $this->items[$id] = array(
     'idurl' => $item['idurl'],
@@ -94,7 +94,7 @@ public function gethead() { }
   }
   
   public function delete($id) {
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->deleteitem($this->items[$id]['idurl']);
     parent::delete($id);
   }

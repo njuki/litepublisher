@@ -9,22 +9,22 @@
 function tdownloaditemsInstall($self) {
   if (!dbversion) die("Downloads require database");
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->CreateTable($self->childtable, file_get_contents($dir .'downloaditem.sql'));
   $manager->addenum('posts', 'class', 'tdownloaditem');
   
-  $optimizer = tdboptimizer::instance();
+  $optimizer = tdboptimizer::i();
   $optimizer->lock();
   $optimizer->childtables[] = 'downloaditems';
   $optimizer->addevent('postsdeleted', get_class($self), 'postsdeleted');
   $optimizer->unlock();
   
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
   
-  $tags = ttags::instance();
+  $tags = ttags::i();
   litepublisher::$options->downloaditem_themetag = $tags->add(0, $ini['themetag']);
   litepublisher::$options->downloaditem_plugintag = $tags->add(0, $ini['plugintag']);
   $base = basename(dirname(__file__));
@@ -32,9 +32,9 @@ function tdownloaditemsInstall($self) {
   $classes->lock();
   /*
   //install polls if its needed
-  $plugins = tplugins::instance();
+  $plugins = tplugins::i();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
-  $polls = tpolls::instance();
+  $polls = tpolls::i();
   $polls->garbage = false;
   $polls->save();
   */
@@ -47,8 +47,8 @@ function tdownloaditemsInstall($self) {
   $classes->Add('taboutparser', 'about.parser.class.php', $base);
   $classes->unlock();
   
-  $lang = tlocal::instance('downloaditems');
-  $adminmenus = tadminmenus::instance();
+  $lang = tlocal::i('downloaditems');
+  $adminmenus = tadminmenus::i();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'downloaditems', 'editor', 'tadmindownloaditems');
   $adminmenus->items[$parent]['title'] = $lang->downloaditems;
@@ -67,9 +67,9 @@ function tdownloaditemsInstall($self) {
   
   $adminmenus->unlock();
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
-  $menu = tdownloaditemsmenu::instance();
+  $menu = tdownloaditemsmenu::i();
   $menu->type = '';
   $menu->url = '/downloads.htm';
   $menu->title = $ini['downloads'];
@@ -78,7 +78,7 @@ function tdownloaditemsInstall($self) {
   litepublisher::$urlmap->db->setvalue($menu->idurl, 'type', 'get');
   
   foreach (array('theme', 'plugin') as $type) {
-    $menu = tdownloaditemsmenu::instance();
+    $menu = tdownloaditemsmenu::i();
     $menu->type = $type;
     $menu->parent = $id;
     $menu->url = sprintf('/downloads/%ss.htm', $type);
@@ -90,22 +90,22 @@ function tdownloaditemsInstall($self) {
   $menus->unlock();
   
   /*
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->addtohead(getd_download_js());
   */
   
-  $jsmerger = tjsmerger::instance();
+  $jsmerger = tjsmerger::i();
   $jsmerger->addtext('default', 'downloaditem', '$(document).ready(function() {
     if ($("a[rel=\'theme\'], a[rel=\'plugin\']").length) {
       $.load_script(ltoptions.files + "/plugins/downloaditem/downloaditem.min.js");
     }
   });');
   
-  $parser = tthemeparser::instance();
+  $parser = tthemeparser::i();
   $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
   
-  $linkgen = tlinkgenerator::instance();
+  $linkgen = tlinkgenerator::i();
   $linkgen->data['downloaditem'] = '/[type]/[title].htm';
   $linkgen->save();
   litepublisher::$options->savemodified();
@@ -115,13 +115,13 @@ function tdownloaditemsUninstall($self) {
   //die("Warning! You can lost all downloaditems!");
   tposts::unsub($self);
   
-  $adminmenus = tadminmenus::instance();
+  $adminmenus = tadminmenus::i();
   $adminmenus->deletetree($adminmenus->url2id('/admin/downloaditems/'));
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->deletetree($menus->class2id('tdownloaditemsmenu'));
   
-  $parser = tthemeparser::instance();
+  $parser = tthemeparser::i();
   $parser->unsubscribeclass($self);
   ttheme::clearcache();
   
@@ -138,20 +138,20 @@ function tdownloaditemsUninstall($self) {
   
   /*
   if (class_exists('tpolls')) {
-    $polls = tpolls::instance();
+    $polls = tpolls::i();
     $polls->garbage = true;
     $polls->save();
   }
   */
   
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->deleteplugin(tplugins::getname(__file__));
   
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->deletetable($self->childtable);
   $manager->delete_enum('posts', 'class', 'tdownloaditem');
   
-  $optimizer = tdboptimizer::instance();
+  $optimizer = tdboptimizer::i();
   $optimizer->lock();
   $optimizer->unsubscribeclass($self);
   if (false !== ($i = array_search('downloaditems', $optimizer->childtables))) {
@@ -160,10 +160,10 @@ function tdownloaditemsUninstall($self) {
   $optimizer->unlock();
   
   /*
-  $template = ttemplate::instance();
+  $template = ttemplate::i();
   $template->deletefromhead(getd_download_js());
   */
-  $jsmerger = tjsmerger::instance();
+  $jsmerger = tjsmerger::i();
   $jsmerger->deletetext('default', 'downloaditem');
   litepublisher::$options->delete('downloaditem_themetag');
   litepublisher::$options->delete('downloaditem_plugintag');
@@ -186,8 +186,8 @@ function add_downloaditems_to_theme($theme) {
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
     ttheme::$vars['lang'] = tlocal::admin('downloaditems');
     $custom = &$theme->templates['custom'];
-    $custom['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), tlocal::instance('downloaditem'));
-    $lang = tlocal::instance('downloaditems');
+    $custom['downloaditem'] = $theme->replacelang(file_get_contents($dir . 'downloaditem.tml'), tlocal::i('downloaditem'));
+    $lang = tlocal::i('downloaditems');
     $custom['downloadexcerpt'] = $theme->replacelang(file_get_contents($dir . 'downloadexcerpt.tml'), $lang);
     $custom['siteform'] = $theme->parse(file_get_contents($dir . 'siteform.tml'));
     

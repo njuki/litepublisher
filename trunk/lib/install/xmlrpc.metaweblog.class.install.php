@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCMetaWeblogInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   // MetaWeblog API (with MT extensions to structs)
   $caller->add('metaWeblog.newPost', 'newPost', get_class($self));

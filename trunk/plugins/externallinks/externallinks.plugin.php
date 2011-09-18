@@ -9,7 +9,7 @@
 class texternallinks extends titems {
   public $exclude;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

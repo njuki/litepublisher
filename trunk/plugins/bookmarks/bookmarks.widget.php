@@ -8,7 +8,7 @@
 
 class tbookmarkswidget extends tlinkswidget  {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -26,7 +26,7 @@ class tbookmarkswidget extends tlinkswidget  {
   }
   
   public function getwidget($id, $sidebar) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     return $widgets->getinline($id, $sidebar);
   }
   
@@ -35,13 +35,13 @@ class tbookmarkswidget extends tlinkswidget  {
     $result = '';
     $a = array(
     '$url' => urlencode(litepublisher::$site->url .  litepublisher::$urlmap->url),
-    '$title' => urlencode(ttemplate::instance()->title)
+    '$title' => urlencode(ttemplate::i()->title)
     );
     $redirlink = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . strtr('url=$url&title=$title&id=', $a);
     $iconurl = litepublisher::$site->files . sprintf('/plugins/%s/icons/', basename(dirname(__file__)));
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('links', $sidebar);
-    $args = targs::instance();
+    $args = targs::i();
     $args->subcount = '';
     $args->subitems = '';
     $args->rel = 'link bookmark';

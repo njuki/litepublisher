@@ -9,7 +9,7 @@
 class tcustomwidget extends twidget {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -25,7 +25,7 @@ class tcustomwidget extends twidget {
     if (!isset($this->items[$id])) return '';
     $item = $this->items[$id];
     if ($item['template'] == '') return $item['content'];
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($item['title'], $item['content'], $item['template'], $sidebar);
   }
   
@@ -38,7 +38,7 @@ class tcustomwidget extends twidget {
   }
   
   public function add($idview, $title, $content, $template) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widgets->lock();
     $id = $widgets->addext($this, $title, $template);
     $this->items[$id] = array(
@@ -47,7 +47,7 @@ class tcustomwidget extends twidget {
     'template' => $template
     );
     
-    $sidebars = tsidebars::instance($idview);
+    $sidebars = tsidebars::i($idview);
     $sidebars->add($id);
     $widgets->unlock();
     $this->save();
@@ -63,7 +63,7 @@ class tcustomwidget extends twidget {
     );
     $this->save();
     
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widgets->items[$id]['title'] = $title;
     $widgets->save();
     $this->expired($id);
@@ -75,7 +75,7 @@ class tcustomwidget extends twidget {
       unset($this->items[$id]);
       $this->save();
       
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       $widgets->delete($id);
       $this->deleted($id);
     }

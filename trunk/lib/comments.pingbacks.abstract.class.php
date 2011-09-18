@@ -18,7 +18,7 @@ class tabstractpingbacks extends titems {
   public $pid;
   
   public function add($url, $title) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $title = $filter->gettitle($title);
     $id = $this->doadd($url, $title);
     $this->added($id);
@@ -36,17 +36,17 @@ class tabstractpingbacks extends titems {
   
   private function sendmail($id) {
     $item = $this->getitem($id);
-    $args = targs::instance();
+    $args = targs::i();
     $args->add($item);
     $args->id = $id;
     $status = dbversion ? $item['status'] : ($item['approved'] ? 'approved' : 'hold');
     $args->localstatus = tlocal::get('commentstatus', $status);
   $args->adminurl = litepublisher::$site->url . '/admin/comments/pingback/'. litepublisher::$site->q . "id=$id&post={$item['post']}&action";
-    $post = tpost::instance($item['post']);
+    $post = tpost::i($item['post']);
     $args->posttitle =$post->title;
     $args->postlink = $post->link;
     
-    $mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->pingbacksubj($args);
     $body = $mailtemplate->pingbackbody($args);
     

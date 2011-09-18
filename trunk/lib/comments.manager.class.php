@@ -9,7 +9,7 @@
 class tcommentmanager extends tevents {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -49,7 +49,7 @@ class tcommentmanager extends tevents {
   
   private function addrecent($id, $idpost) {
     if (is_int($i = $this->indexofrecent($id, $idpost)))  return;
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     if ($post->status != 'published') return;
     $item = $post->comments->items[$id];
     $item['id'] = $id;
@@ -57,7 +57,7 @@ class tcommentmanager extends tevents {
     $item['title'] = $post->title;
     $item['posturl'] =     $post->lastcommenturl;
     
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $author = $comusers->items[$item['author']];
     $item['name'] = $author['name'];
     $item['email'] = $author['email'];
@@ -69,7 +69,7 @@ class tcommentmanager extends tevents {
   }
   
   public function add($idpost, $name, $email, $url, $content, $ip) {
-    $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
+    $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, $ip);
     return $this->addcomment($idpost, $idauthor, $content, $ip);
   }
@@ -77,7 +77,7 @@ class tcommentmanager extends tevents {
   public function addcomment($idpost, $idauthor, $content, $ip) {
     $status = litepublisher::$classes->spamfilter->createstatus($idpost, $idauthor, $content, $ip);
     if (!$status) return false;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $id = $comments->add($idauthor,  $content, $status, $ip);
     
     if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
@@ -89,13 +89,13 @@ class tcommentmanager extends tevents {
   }
   
   public function edit($id, $idpost, $name, $email, $url, $content) {
-    $comusers = dbversion ? tcomusers ::instance() : tcomusers ::instance($idpost);
+    $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, '');
     return $this->editcomment($id, $idpost, $idauthor, $content);
   }
   
   public function editcomment($id, $idpost, $idauthor, $content) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if (!$comments->edit($id, $idauthor,  $content)) return false;
     //if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
     
@@ -112,14 +112,14 @@ class tcommentmanager extends tevents {
     $name = litepublisher::$site->author;
     /*
     if (class_exists('tprofile')) {
-      $profile = tprofile::instance();
+      $profile = tprofile::i();
       $email = $profile->mbox!= '' ? $profile->mbox : $email;
       $name = $profile->nick != '' ? $profile->nick : 'Admin';
     }
     */
-    $comusers = tcomusers::instance($idpost);
+    $comusers = tcomusers::i($idpost);
     $idauthor = $comusers->add($name, $email, $site, '');
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $id = $comments->add($idauthor,  $content, $status, '');
     
     if (!dbversion) $this->addrecent($id, $idpost);
@@ -132,26 +132,26 @@ class tcommentmanager extends tevents {
   
   private function dochanged($id, $idpost) {
     if (dbversion) {
-      $comments = tcomments::instance($idpost);
+      $comments = tcomments::i($idpost);
       $count = $comments->db->getcount("post = $idpost and status = 'approved'");
       $comments->getdb('posts')->setvalue($idpost, 'commentscount', $count);
       //update trust
       try {
         $item = $comments->getitem($id);
         $idauthor = $item['author'];
-        $comusers = tcomusers::instance($idpost);
+        $comusers = tcomusers::i($idpost);
         $comusers->setvalue($idauthor, 'trust', $comments->db->getcount("author = $idauthor and status = 'approved' limit 5"));
       } catch (Exception $e) {
       }
     }
     
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     $post->clearcache();
     $this->changed($id, $idpost);
   }
   
   public function delete($id, $idpost) {
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if ($comments->delete($id)) {
       if (!dbversion) $this->deleterecent($id, $idpost);
       $this->deleted($id, $idpost);
@@ -163,7 +163,7 @@ class tcommentmanager extends tevents {
   
   public function postdeleted($idpost) {
     if (dbversion) {
-      $comments = tcomments::instance($idpost);
+      $comments = tcomments::i($idpost);
       $comments->db->update("status = 'deleted'", "post = $idpost");
     } else {
       $deleted = false;
@@ -183,7 +183,7 @@ class tcommentmanager extends tevents {
   
   public function setstatus($id, $idpost, $status) {
     if (!in_array($status, array('approved', 'hold', 'spam')))  return false;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     if ($comments->setstatus($id, $status)) {
       if (!dbversion){
         if ($status == 'approved') {
@@ -204,23 +204,23 @@ class tcommentmanager extends tevents {
   
   public function trusted($idauthor) {
     if (!dbversion) return true;
-    $comusers = tcomusers::instance(0);
+    $comusers = tcomusers::i(0);
     $item = $comusers->getitem($idauthor);
     return $this->checktrust($item['trust']);
   }
   
   public function sendmail($id, $idpost) {
     if (!$this->sendnotification) return;
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $comment = $comments->getcomment($id);
     ttheme::$vars['comment'] = $comment;
-    $args = targs::instance();
+    $args = targs::i();
     $adminurl = litepublisher::$site->url . '/admin/comments/'. litepublisher::$site->q . "id=$id&post=$idpost";
     $ref = md5(litepublisher::$secret . $adminurl);
     $adminurl .= "&ref=$ref&action";
     $args->adminurl = $adminurl;
     
-    $mailtemplate = tmailtemplate::instance('comments');
+    $mailtemplate = tmailtemplate::i('comments');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body, true);

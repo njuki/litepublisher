@@ -8,7 +8,7 @@
 
 class titemsposts extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -155,7 +155,7 @@ class titemsposts extends titems {
   
   public function getpostscount($ititem) {
     $items = $this->getposts($ititem);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $items = $posts->stripdrafts($items);
     return count($items);
   }
@@ -171,7 +171,7 @@ class titemsposts extends titems {
     } else {
       foreach ($list as $idpost) {
         $items = $this->items[$idpost];
-        $post = tpost::instance($idpost);
+        $post = tpost::i($idpost);
         if ($items != $post->$propname) {
           $post->$propname = $items;
           $post->Save();

@@ -8,7 +8,7 @@
 
 class tcron extends tabstractcron {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

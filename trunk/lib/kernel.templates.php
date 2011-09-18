@@ -12,7 +12,7 @@ class tlocal {
   public $ini;
   public $section;
   
-  public static function instance($section = '') {
+  public static function i($section = '') {
     if (!isset(self::$self)) {
       self::$self= getinstance(__class__);
       self::$self->loadfile('default');
@@ -22,7 +22,7 @@ class tlocal {
   }
   
   public static function admin($section = '') {
-    $result = self::instance($section);
+    $result = self::i($section);
     $result->check('admin');
     return $result;
   }
@@ -56,7 +56,7 @@ class tlocal {
   
   public static function date($date, $format = '') {
     if (empty($format)) $format = $this->getdateformat();
-    return self::instance()->translate(date($format, $date), 'datetime');
+    return self::i()->translate(date($format, $date), 'datetime');
   }
   
   public function getdateformat() {
@@ -79,13 +79,13 @@ class tlocal {
     if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini ;
     } else {
-      $merger = tlocalmerger::instance();
+      $merger = tlocalmerger::i();
       $merger->parse($name);
     }
   }
   
   public static function usefile($name) {
-    self::instance()->check($name);
+    self::i()->check($name);
   }
   
   //backward
@@ -99,7 +99,7 @@ class tlocal {
   
   public static function clearcache() {
     tfiler::delete(self::getcachedir(), false, false);
-    self::instance()->loaded = array();
+    self::i()->loaded = array();
   }
   
 }//class
@@ -115,7 +115,7 @@ class tview extends titem {
   public $sidebars;
   private $themeinstance;
   
-  public static function instance($id = 1) {
+  public static function i($id = 1) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -126,12 +126,12 @@ class tview extends titem {
   public static function getview($instance) {
     $id = $instance->getidview();
     if (isset(self::$instances['view'][$id]))     return self::$instances['view'][$id];
-    $views = tviews::instance();
+    $views = tviews::i();
     if (!$views->itemexists($id)) {
       $id = 1; //default, wich always exists
       $instance->setidview($id);
     }
-    return self::instance($id);
+    return self::i($id);
   }
   
   protected function create() {
@@ -157,7 +157,7 @@ class tview extends titem {
   }
   
   public function load() {
-    $views = tviews::instance();
+    $views = tviews::i();
     if ($views->itemexists($this->id)) {
       $this->data = &$views->items[$this->id];
       $this->sidebars = &$this->data['sidebars'];
@@ -167,7 +167,7 @@ class tview extends titem {
   }
   
   public function save() {
-    return tviews::instance()->save();
+    return tviews::i()->save();
   }
   
   public function setthemename($name) {
@@ -177,7 +177,7 @@ class tview extends titem {
       $this->themeinstance = ttheme::getinstance($name);
       $this->data['custom'] = $this->themeinstance->templates['custom'];
       $this->save();
-      tviews::instance()->themechanged($this);
+      tviews::i()->themechanged($this);
     }
   }
   
@@ -201,7 +201,7 @@ class tview extends titem {
     if ($value != $this->customsidebar) {
       if ($this->id == 1) return false;
       if ($value) {
-        $default = tview::instance(1);
+        $default = tview::i(1);
         $this->sidebars = $default->sidebars;
       } else {
         $this->sidebars = array();
@@ -216,7 +216,7 @@ class tview extends titem {
 class tviews extends titems_storage {
   public $defaults;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -341,7 +341,7 @@ class ttemplate extends tevents_storage {
   public $hover;
   //public $footer;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -373,12 +373,12 @@ class ttemplate extends tevents_storage {
     if (method_exists($this, $get = 'get' . $name)) return $this->$get();
     if (array_key_exists($name, $this->data)) return $this->data[$name];
     if (preg_match('/^sidebar(\d)$/', $name, $m)) {
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       return $widgets->getsidebarindex($this->context, $this->view, (int) $m[1]);
     }
     
     if (array_key_exists($name, $this->data['tags'])) {
-      $tags = ttemplatetags::instance();
+      $tags = ttemplatetags::i();
       return $tags->__get($name);
     }
     if (isset($this->context) && isset($this->context->$name)) return $this->context->$name;
@@ -390,7 +390,7 @@ class ttemplate extends tevents_storage {
     ttheme::$vars['context'] = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
-    $this->view = $this->itemplate ? tview::getview($context) : tview::instance();
+    $this->view = $this->itemplate ? tview::getview($context) : tview::i();
     $theme = $this->view->theme;
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
@@ -413,7 +413,7 @@ class ttemplate extends tevents_storage {
   
   //html tags
   public function getsidebar() {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     return $widgets->getsidebar($this->context, $this->view);
   }
   
@@ -424,7 +424,7 @@ class ttemplate extends tevents_storage {
   }
   
   public function parsetitle($tml, $title) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->title = $title;
     $result = $this->view->theme->parsearg($tml, $args);
     $result = trim($result, sprintf(' |.:%c%c', 187, 150));
@@ -437,7 +437,7 @@ class ttemplate extends tevents_storage {
     if (isset($this->context) && isset($this->context->icon)) {
       $icon = $this->context->icon;
       if ($icon > 0) {
-        $files = tfiles::instance();
+        $files = tfiles::i();
         if ($files->itemexists($icon)) $result = $files->geturl($icon);
       }
     }
@@ -569,7 +569,7 @@ class ttheme extends tevents {
     file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  . 'about.ini');
   }
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -628,7 +628,7 @@ class ttheme extends tevents {
       $this->error(sprintf('The %s theme not exists', $this->name));
     }
     
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     if ($parser->parse($this)) {
       self::$instances[$this->name] = $this;
       $this->save();
@@ -683,7 +683,7 @@ class ttheme extends tevents {
       return litepublisher::$site;
       
       case 'lang':
-      return tlocal::instance();
+      return tlocal::i();
     }
     
     if (isset($GLOBALS[$name])) {
@@ -753,7 +753,7 @@ class ttheme extends tevents {
   
   public function replacelang($s, $lang) {
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', (string) $s);
-    self::$vars['lang'] = isset($lang) ? $lang : tlocal::instance('default');
+    self::$vars['lang'] = isset($lang) ? $lang : tlocal::i('default');
     $s = strtr($s, array(
     '$site.url' => litepublisher::$site->url,
     '$site.files' => litepublisher::$site->files,
@@ -772,7 +772,7 @@ class ttheme extends tevents {
   
   public static function parsevar($name, $var, $s) {
     self::$vars[$name] = $var;
-    $self = self::instance();
+    $self = self::i();
     return $self->parse($s);
   }
   
@@ -793,7 +793,7 @@ class ttheme extends tevents {
   
   public function getpages($url, $page, $count) {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $args = targs::instance();
+    $args = targs::i();
     $args->count = $count;
     $from = 1;
     $to = $count;
@@ -852,15 +852,15 @@ class ttheme extends tevents {
   public function getposts(array $items, $lite) {
     if (count($items) == 0) return '';
     if (dbversion) {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       $posts->loaditems($items);
     }
     
     $result = '';
-    self::$vars['lang'] = tlocal::instance('default');
+    self::$vars['lang'] = tlocal::i('default');
     $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
-      self::$vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::i($id);
       $result .= $this->parse($tml);
     }
     
@@ -874,7 +874,7 @@ class ttheme extends tevents {
     $result = '';
     if ($tml == '') $tml = $this->getwidgetitem('posts', $sidebar);
     foreach ($items as $id) {
-      self::$vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::i($id);
       $result .= $this->parse($tml);
     }
     unset(self::$vars['post']);
@@ -886,7 +886,7 @@ class ttheme extends tevents {
   }
   
   public function getwidget($title, $content, $template, $sidebar) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->title = $title;
     $args->items = $content;
     return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
@@ -911,7 +911,7 @@ class ttheme extends tevents {
   }
   
   public function getajaxtitle($title, $id, $sidebar, $tml) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->title = $title;
     $args->id = $id;
     $args->sidebar = $sidebar;
@@ -1036,7 +1036,7 @@ class tthemeprops {
 class targs {
   public $data;
   
-  public static function instance() {
+  public static function i() {
     return litepublisher::$classes->newinstance(__class__);
   }
   
@@ -1103,9 +1103,9 @@ class twidget extends tevents {
   }
   
   public function addtosidebar($sidebar) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $id = $widgets->add($this);
-    $sidebars = tsidebars::instance();
+    $sidebars = tsidebars::i();
     $sidebars->insert($id, false, $sidebar, -1);
     
     litepublisher::$urlmap->clearcache();
@@ -1130,7 +1130,7 @@ class twidget extends tevents {
       return '';
     }
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, $this->template, $sidebar);
   }
   
@@ -1140,7 +1140,7 @@ class twidget extends tevents {
   
   public function gettitle($id) {
     if (!isset($id)) $this->error('no id');
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     if (isset($widgets->items[$id])) {
       return $widgets->items[$id]['title'];
     }
@@ -1148,7 +1148,7 @@ class twidget extends tevents {
   }
   
   public function settitle($id, $title) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     if (isset($widgets->items[$id]) && ($widgets->items[$id]['title'] != $title)) {
       $widgets->items[$id]['title'] = $title;
       $widgets->save();
@@ -1160,9 +1160,9 @@ class twidget extends tevents {
   }
   
   public static function getcachefilename($id) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     if ($theme->name == '') {
-      $theme = tview::instance()->theme;
+      $theme = tview::i()->theme;
     }
     return litepublisher::$paths->cache . sprintf('widget.%s.%d.php', $theme->name, $id);
   }
@@ -1170,7 +1170,7 @@ class twidget extends tevents {
   public function expired($id) {
     switch ($this->cache) {
       case 'cache':
-      $cache = twidgetscache::instance();
+      $cache = twidgetscache::i();
       $cache->expired($id);
       break;
       
@@ -1183,7 +1183,7 @@ class twidget extends tevents {
   }
   
   public static function findsidebar($id) {
-    $view = tview::instance();
+    $view = tview::i();
     foreach ($view->sidebars as $i=> $sidebar) {
       foreach ($sidebar as $item) {
         if ($id == $item['id']) return $i;
@@ -1193,7 +1193,7 @@ class twidget extends tevents {
   }
   
   public function expire() {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     foreach ($widgets->items as $id => $item) {
       if ($this instanceof $item['class']) $this->expired($id);
     }
@@ -1202,7 +1202,7 @@ class twidget extends tevents {
   public function getcontext($class) {
     if (litepublisher::$urlmap->context instanceof $class) return litepublisher::$urlmap->context;
     //ajax
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     return litepublisher::$urlmap->getidcontext($widgets->idurlcontext);
   }
   
@@ -1238,7 +1238,7 @@ class tclasswidget extends twidget {
   public function __get($name) {
     if ($this->isvalue($name)) {
       if (!$this->item) {
-        $widgets = twidgets::instance();
+        $widgets = twidgets::i();
         $this->item = &$widgets->finditem($widgets->find($this));
       }
       return $this->item[$name];
@@ -1249,7 +1249,7 @@ class tclasswidget extends twidget {
   public function __set($name, $value) {
     if ($this->isvalue($name)) {
       if (!$this->item) {
-        $widgets = twidgets::instance();
+        $widgets = twidgets::i();
         $this->item = &$widgets->finditem($widgets->find($this));
       }
       $this->item[$name] = $value;
@@ -1260,7 +1260,7 @@ class tclasswidget extends twidget {
   
   public function save() {
     parent::save();
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widgets->save();
   }
   
@@ -1272,7 +1272,7 @@ class twidgets extends titems_storage {
   public $idwidget;
   public $idurlcontext;
   
-  public static function instance($id = null) {
+  public static function i($id = null) {
     return getinstance(__class__);
   }
   
@@ -1397,7 +1397,7 @@ class twidgets extends titems_storage {
   private function getwidgets($context, tview $view, $sidebar) {
     $theme = $view->theme;
     if (($view->id >  1) && !$view->customsidebar) {
-      $view = tview::instance(1);
+      $view = tview::i(1);
     }
     
     $items =  isset($view->sidebars[$sidebar]) ? $view->sidebars[$sidebar] : array();
@@ -1510,7 +1510,7 @@ class twidgets extends titems_storage {
   
   
   public function getajax($id, $sidebar) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     //$title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
     $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";
@@ -1518,11 +1518,11 @@ class twidgets extends titems_storage {
   }
   
   public function getinline($id, $sidebar) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     //$title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
     $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'inlinewidget');
     if ('cache' == $this->items[$id]['cache']) {
-      $cache = twidgetscache::instance();
+      $cache = twidgetscache::i();
       $content = $cache->getcontent($id, $sidebar);
     } else {
       $widget = $this->getwidget($id);
@@ -1534,9 +1534,9 @@ class twidgets extends titems_storage {
   
   public function getwidgetcache($id, $sidebar) {
     $title = $this->items[$id]['title'];
-    $cache = twidgetscache::instance();
+    $cache = twidgetscache::i();
     $content = $cache->getcontent($id, $sidebar);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
   
@@ -1549,7 +1549,7 @@ class twidgets extends titems_storage {
       @chmod($filename, 0666);
     }
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($this->items[$id]['title'], "\n<?php @include('$filename'); ?>\n", $this->items[
     $id]['template'], $sidebar);
   }
@@ -1557,7 +1557,7 @@ class twidgets extends titems_storage {
   private function getcode($id, $sidebar) {
     $class = $this->items[$id]['class'];
     return "\n<?php
-    \$widget = $class::instance();
+    \$widget = $class::i();
     \$widget->id = \$id;
     echo \$widget->getwidget($id, $sidebar);
     ?>\n";
@@ -1593,8 +1593,8 @@ class twidgets extends titems_storage {
     $sidebar = self::getget('sidebar');
     $this->idurlcontext = self::getget('idurl');
     if (($id === false) || ($sidebar === false) || !$this->itemexists($id)) return $this->error_request('Invalid params');
-    $themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::instance(1)->themename;
-    if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::instance(1)->themename;
+    $themename = isset($_GET['themename']) ? trim($_GET['themename']) : tview::i(1)->themename;
+    if (!preg_match('/^\w[\w\.\-_]*+$/', $themename) || !ttheme::exists($themename)) $themename = tviews::i(1)->themename;
     $theme = ttheme::getinstance($themename);
     
     try {
@@ -1609,7 +1609,7 @@ class twidgets extends titems_storage {
     if (!isset($this->items[$id])) return false;
     switch ($this->items[$id]['cache']) {
       case 'cache':
-      $cache = twidgetscache::instance();
+      $cache = twidgetscache::i();
       $result = $cache->getcontent($id, $sidebar);
       break;
       
@@ -1655,7 +1655,7 @@ class twidgets extends titems_storage {
 class twidgetscache extends titems {
   private $modified;
   
-  public static function instance($id = null) {
+  public static function i($id = null) {
     return getinstance(__class__);
   }
   
@@ -1666,7 +1666,7 @@ class twidgetscache extends titems {
   }
   
   public function getbasename() {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return 'widgetscache.' . $theme->name;
   }
   
@@ -1698,7 +1698,7 @@ class twidgetscache extends titems {
   }
   
   public function setcontent($id, $sidebar) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widget = $widgets->getwidget($id);
     $result = $widget->getcontent($id, $sidebar);
     $this->items[$id][$sidebar] = $result;

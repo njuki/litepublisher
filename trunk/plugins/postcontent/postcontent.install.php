@@ -8,7 +8,7 @@
 
 
 function tpostcontentpluginInstall($self) {
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->lock();
   $posts->beforecontent = $self->beforecontent;
   $posts->aftercontent = $self->aftercontent;
