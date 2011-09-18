@@ -8,19 +8,19 @@
 
 class tslidesplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function install() {
-    $home = thomepage::instance();
+    $home = thomepage::i();
     $home->content = $this->gethtml()  . $home->rawcontent;
     $home->save();
     litepublisher::$urlmap->clearcache();
   }
   
   public function uninstall() {
-    $home = thomepage::instance();
+    $home = thomepage::i();
     $html = $this->gethtml();
     $home->content = str_replace($html, '', $home->rawcontent);
     $home->save();
@@ -28,7 +28,7 @@ class tslidesplugin extends tplugin {
   }
   
   public function gethtml() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $result = $template->getjavascript('/plugins/slides/slides.plugin.min.js');
     $result .= '<div id="slides-holder"></div>';
     return $result;

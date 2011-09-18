@@ -10,7 +10,7 @@ class tcomusers extends titems {
   public $pid;
   private static $instances;
   
-  public static function instance($pid) {
+  public static function i($pid) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
     $self = litepublisher::$classes->newinstance(__class__);
@@ -50,7 +50,7 @@ class tcomusers extends titems {
     );
     
     $this->unlock();
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authoradded($this->autoid);
     return $this->autoid;
   }
@@ -63,14 +63,14 @@ class tcomusers extends titems {
     $item['email'] = $email;
     $item['ip'] = $ip;
     $this->unlock();
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authoredited($id);
     return $id;
   }
   
   public function delete($id) {
     parent::delete($id);
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $manager->authordeleted($id);
   }
   

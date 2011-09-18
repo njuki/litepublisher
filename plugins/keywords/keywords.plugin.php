@@ -8,7 +8,7 @@
 
 class tkeywordsplugin  extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -61,7 +61,7 @@ class tkeywordsplugin  extends tplugin {
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     
     //$link =" <a href=\"http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]\">$keywords</a>";
-    $widget = tkeywordswidget::instance();
+    $widget = tkeywordswidget::i();
     //if (in_array($link, $widget->links)) return;
     foreach ($widget->links as $item) {
       if ($keywords == $item['text']) return;

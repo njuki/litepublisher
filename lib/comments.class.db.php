@@ -10,7 +10,7 @@ class tcomments extends titems {
   public $rawtable;
   private $pid;
   
-  public static function instance($pid = 0) {
+  public static function i($pid = 0) {
     $result = getinstance(__class__);
     if ($pid > 0) $result->pid = $pid;
     return $result;
@@ -28,7 +28,7 @@ class tcomments extends titems {
   
   public function add($idauthor, $content, $status, $ip) {
     if ($idauthor == 0) $this->error('Author id = 0');
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filtered = $filter->filtercomment($content);
     
     $item = array(
@@ -43,7 +43,7 @@ class tcomments extends titems {
     $id = (int) $this->db->add($item);
     $item['rawcontent'] = $content;
     
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     if ($author = $comusers->getitem($idauthor)) {
       $item = $item + $author;
     } else {
@@ -68,7 +68,7 @@ class tcomments extends titems {
   public function edit($id, $idauthor, $content) {
     if (!$this->itemexists($id)) return false;
     if ($idauthor == 0) $idauthor = $this->db->getvalue($id, 'author');
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item = array(
     'id' => (int) $id,
     'author' => (int)$idauthor,
@@ -108,7 +108,7 @@ class tcomments extends titems {
   
   public function select($where, $limit) {
     if ($where != '') $where .= ' and ';
-    $comusers = tcomusers::instance();
+    $comusers = tcomusers::i();
     $authors = $comusers->thistable;
     $table = $this->thistable;
     $res = litepublisher::$db->query("select $table.*, $authors.name, $authors.email, $authors.url, $authors.trust from $table, $authors
@@ -126,7 +126,7 @@ class tcomments extends titems {
   }
   
   public function insert($idauthor, $content, $ip, $posted, $status) {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filtered = $filter->filtercomment($content);
     $item = array(
     'post' => $this->pid,
@@ -157,17 +157,17 @@ class tcomments extends titems {
   public function getmoderator() {
     if (!litepublisher::$options->admincookie) return false;
     if (litepublisher::$options->group == 'admin') return true;
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->hasright(litepublisher::$options->group, 'moderator');
   }
   
   public function getcontent() {
     $result = $this->getcontentwhere('approved', '');
     if (!$this->moderator) return $result;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     tlocal::usefile('admin');
-    $args = targs::instance();
-    $post = tpost::instance($this->pid);
+    $args = targs::i();
+    $post = tpost::i($this->pid);
     if ($post->commentpages == litepublisher::$urlmap->page) {
       $result .= $this->getcontentwhere('hold', '');
     } else {
@@ -187,7 +187,7 @@ class tcomments extends titems {
   
   private function getcontentwhere($status, $whereauthor) {
     $result = '';
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     if ($status == 'approved') {
       $from = litepublisher::$options->commentpages  ? (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage : 0;
       $count = litepublisher::$options->commentpages  ? litepublisher::$options->commentsperpage : $post->commentscount;
@@ -200,12 +200,12 @@ class tcomments extends titems {
     $items = $this->select("$table.post = $this->pid $whereauthor  and $table.status = '$status'",
     "order by $table.posted asc limit $from, $count");
     
-    $args = targs::instance();
+    $args = targs::i();
     $args->from = $from;
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
-    $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
+    $lang = tlocal::i('comment');
+    $theme = ttheme::i();
     if ($ismoder = $this->moderator) {
       tlocal::usefile('admin');
       $moderate =$theme->templates['content.post.templatecomments.comments.comment.moderate'];
@@ -256,7 +256,7 @@ class tcomment extends tdata {
   }
   
   public function setid($id) {
-    $comments = tcomments::instance();
+    $comments = tcomments::i();
     $this->data = $comments->getitem($id);
   }
   
@@ -276,7 +276,7 @@ class tcomment extends tdata {
     $name = $this->data['name'];
     $url = $this->data['url'];
     if ($url == '')  return $name;
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     if ($manager->hidelink || !$manager->checktrust($this->trust)) return $name;
     $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
     if ($manager->redir) {
@@ -289,7 +289,7 @@ class tcomment extends tdata {
   }
   
   public function getdate() {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return tlocal::date($this->posted, $theme->templates['content.post.templatecomments.comments.comment.date']);
   }
   
@@ -314,30 +314,30 @@ class tcomment extends tdata {
   }
   
   public function geturl() {
-    $post = tpost::instance($this->post);
+    $post = tpost::i($this->post);
     return $post->link . "#comment-$this->id";
   }
   
   public function getposttitle() {
-    $post = tpost::instance($this->post);
+    $post = tpost::i($this->post);
     return $post->title;
   }
   
   public function getrawcontent() {
     if (isset($this->data['rawcontent'])) return $this->data['rawcontent'];
-    $comments = tcomments::instance($this->post);
+    $comments = tcomments::i($this->post);
     return $comments->raw->getvalue($this->id, 'rawcontent');
   }
   
   public function setrawcontent($s) {
     $this->data['rawcontent'] = $s;
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $this->data['content'] = $filter->filtercomment($s);
   }
   
   public function getip() {
     if (isset($this->data['ip'])) return $this->data['ip'];
-    $comments = tcomments::instance($this->post);
+    $comments = tcomments::i($this->post);
     return $comments->raw->getvalue($this->id, 'ip');
   }
   

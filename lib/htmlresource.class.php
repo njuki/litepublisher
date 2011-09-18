@@ -10,7 +10,7 @@ class thtmltag {
   public $tag;
 public function __construct($tag) { $this->tag = $tag; }
   public function __get($name) {
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
   return "<$this->tag>{$lang->$name}</$this->tag>\n";
   }
   
@@ -22,7 +22,7 @@ class tadminhtml {
   public $ini;
   private $map;
   
-  public static function instance() {
+  public static function i() {
     $self = getinstance(__class__);
     if (count($self->ini) == 0) $self->load();
     return $self;
@@ -31,7 +31,7 @@ class tadminhtml {
   public static function getinstance($section) {
     $self = getinstance(__class__);
     $self->section = $section;
-    tlocal::instance($section);
+    tlocal::i($section);
     return $self;
   }
   
@@ -60,13 +60,13 @@ class tadminhtml {
     } else {
       throw new Exception("the requested $name item not found in $this->section section");
     }
-    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::instance();
+    $args = isset($params[0]) && $params[0] instanceof targs ? $params[0] : targs::i();
     return $this->parsearg($s, $args);
   }
   
   public function parsearg($s, targs $args) {
     if (!is_string($s)) $s = (string) $s;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $admin = $theme->content->admin;
     $admin->tostring = true;
     // parse tags [form] .. [/form]
@@ -125,7 +125,7 @@ class tadminhtml {
     if (tfilestorage::loadvar($filename, $v) && is_array($v)) {
       $this->ini = $v + $this->ini;
     } else {
-      $merger = tlocalmerger::instance();
+      $merger = tlocalmerger::i();
       $merger->parsehtml();
     }
   }
@@ -165,7 +165,7 @@ class tadminhtml {
 
     public function adminform($tml, targs $args) {
     $args->items = $this->parsearg($tml, $args);
-    return $this->parsearg(ttheme::instance()->content->admin->form, $args);
+    return $this->parsearg(ttheme::i()->content->admin->form, $args);
   }
   
   public function getcheckbox($name, $value) {
@@ -174,7 +174,7 @@ class tadminhtml {
 
   public function getradioitems($name, array $items, $selected) {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
 $tml = $theme->templates['content.admin.radioitems'];
     foreach ($items as $index => $value) {
     $result .= strtr($tml, array(
@@ -188,7 +188,7 @@ $tml = $theme->templates['content.admin.radioitems'];
   }
   
   public function getinput($type, $name, $value, $title) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return strtr($theme->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
     '$name' => $name,
@@ -220,8 +220,8 @@ $tml = $theme->templates['content.admin.radioitems'];
     }
     $tml .= '</tr>';
     
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     foreach ($items as $id => $item) {
       $args->add($item);
       if (!isset($item['id'])) $args->id = $id;
@@ -233,7 +233,7 @@ $tml = $theme->templates['content.admin.radioitems'];
   }
   
   public function confirmdelete($id, $adminurl, $mesg) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->id = $id;
     $args->action = 'delete';
     $args->adminurl = $adminurl;
@@ -264,7 +264,7 @@ class tautoform {
   public $section;
   public $_title;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -272,7 +272,7 @@ class tautoform {
     $this->obj = $obj;
     $this->section = $section;
     $this->props = array();
-    $lang = tlocal::instance($section);
+    $lang = tlocal::i($section);
     $this->_title = $lang->$titleindex;
   }
   
@@ -351,8 +351,8 @@ class tautoform {
   
   public function getcontent() {
     $result = '';
-    $lang = tlocal::instance();
-    $theme = ttheme::instance();
+    $lang = tlocal::i();
+    $theme = ttheme::i();
     $admin = $theme->content->admin;
     $admin->tostring = true;
     foreach ($this->props as $prop) {
@@ -382,10 +382,10 @@ class tautoform {
   }
   
   public function getform() {
-    $args = targs::instance();
+    $args = targs::i();
     $args->formtitle = $this->_title;
     $args->items = $this->getcontent();
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->parsearg($theme->content->admin->form, $args);
   }
   
@@ -451,14 +451,14 @@ class ttablecolumns {
   }
   
   public function build($body, $buttons) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->style = $this->style;
     $args->checkboxes = implode("\n", $this->checkboxes);
     $args->head = $this->head;
     $args->body = $body;
     $args->buttons = $buttons;
     $tml = file_get_contents(litepublisher::$paths->languages . 'tablecolumns.ini');
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->parsearg($tml, $args);
   }
   
@@ -500,7 +500,7 @@ class tuitabs {
   }
   
   public static function gethead() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     return $template->getready('$($("div[rel=\'tabs\']").get().reverse()).tabs()');
   }
   

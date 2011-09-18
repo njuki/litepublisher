@@ -9,7 +9,7 @@
 class tcodedocplugin extends tplugin {
   private $fix;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -22,7 +22,7 @@ class tcodedocplugin extends tplugin {
   public function beforefilter($post, $content) {
     $content = trim($content);
     if (!strbegin($content, '[document]')) return;
-    $filter = tcodedocfilter::instance();
+    $filter = tcodedocfilter::i();
     $result = $filter->convert($post, $content);
     if ($post->id == 0) {
       $result['post'] = $post;
@@ -45,10 +45,10 @@ class tcodedocplugin extends tplugin {
         'class' => $item['class']
         ));
         
-        $filter = tcodedocfilter::instance();
+        $filter = tcodedocfilter::i();
         $filtered = str_replace('__childs__', $filter->getchilds($post->id), $post->filtered);
         
-        $posts = tposts::instance();
+        $posts = tposts::i();
         $posts->addrevision();
         
         $post->db->updateassoc(array(

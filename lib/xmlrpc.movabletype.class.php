@@ -8,7 +8,7 @@
 
 class TXMLRPCMovableType extends TXMLRPCAbstract {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -16,11 +16,11 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   public function getRecentPostTitles($blogid , $username, $password, $count) {
     $this->auth($username, $password, 'author');
     $count =(int) $count;
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $list = $posts->getrecent(litepublisher::$options->user, $count);
     $result = array();
     foreach ($list as $id) {
-      $post = tpost::instance($id);
+      $post = tpost::i($id);
       $result[] = array(
       'dateCreated' => new IXR_Date($post->posted),
       'userid' => (string) $post->author,
@@ -35,7 +35,7 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   // On success, an array of structs containing String categoryId and String categoryName; on failure, fault.
   public function getCategoryList($blogid, $username, $password) {
     $this->auth($username, $password, 'author');
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $categories->loadall();
     $result = array();
     foreach ($categories->items as $id => $item) {
@@ -50,10 +50,10 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   public function getPostCategories($id, $username, $password) {
     $id = (int) $id;
     $this->canedit($username, $password, $id);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
-    $post = tpost::instance($id);
-    $categories = tcategories::instance();
+    $post = tpost::i($id);
+    $categories = tcategories::i();
     $categories->loaditems($post->categories);
     $isPrimary = true;
     $result = array();
@@ -73,9 +73,9 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   public function setPostCategories($id, $username, $password, $catlist) {
     $id = (int) $id;
     $this->canedit($username, $password, $id);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     
     $list = array();
     foreach ($catlist as  $Cat) {
@@ -92,12 +92,12 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   
   public function getTrackbackPings($id) {
     $id = (int) $id;
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     if ($post->status != 'published') return $this->xerror(403, 'Target post not published');
     $result = array();
-    $pingbacks = tpingbacks::instance($id);
+    $pingbacks = tpingbacks::i($id);
     if (dbversion) {
       $items = $tpingbacks->db->getitems("post = $id and status = 'approved' order by posted");
       foreach ($items as $item) {
@@ -123,9 +123,9 @@ class TXMLRPCMovableType extends TXMLRPCAbstract {
   public function publishPost($id, $username, $password) {
     $id = (int) $id;
     $this->canedit($username, $password, $id);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (!$posts->itemexists($id)) return $this->xerror(404, "Invalid post id.");
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     $post->status = 'published';
     $posts->edit($post);
     return true;

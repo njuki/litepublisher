@@ -8,23 +8,23 @@
 
 class tadminviews extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public static function getviewform($url) {
-    $html = tadminhtml ::instance();
+    $html = tadminhtml ::i();
     $html->section = 'views';
-    $lang = tlocal::instance('views');
-    $args = targs::instance();
+    $lang = tlocal::i('views');
+    $args = targs::i();
     $args->url = litepublisher::$site->url . $url;
     $args->items = self::getcombo(tadminhtml::getparam('idview', 1));
     return $html->comboform($args);
   }
   
   public static function getcomboview($idview, $name = 'idview') {
-    $lang = tlocal::instance('views');
-    $theme = ttheme::instance();
+    $lang = tlocal::i('views');
+    $theme = ttheme::i();
     return strtr($theme->templates['content.admin.combo'], array(
     '$lang.$name' => $lang->view,
     '$name' => $name,
@@ -34,7 +34,7 @@ class tadminviews extends tadminmenu {
   
   public static function getcombo($idview) {
     $result = '';
-    $views = tviews::instance();
+    $views = tviews::i();
     foreach ($views->items as $id => $item) {
       $result .= sprintf('<option value="%d" %s>%s</option>', $id,
       $idview == $id ? 'selected="selected"' : '', $item['name']);
@@ -43,7 +43,7 @@ class tadminviews extends tadminmenu {
   }
   
   public static function replacemenu($src, $dst) {
-    $views = tviews::instance();
+    $views = tviews::i();
     foreach ($views->items as &$viewitem) {
       if ($viewitem['menuclass'] == $src) $viewitem['menuclass'] = $dst;
     }
@@ -51,7 +51,7 @@ class tadminviews extends tadminmenu {
   }
   
   private function get_custom($idview) {
-    $view = tview::instance($idview);
+    $view = tview::i($idview);
     if (count($view->custom) == 0) return '';
     $result = '';
     $html = $this->html;
@@ -87,7 +87,7 @@ class tadminviews extends tadminmenu {
   }
   
   private function set_custom($idview) {
-    $view = tview::instance($idview);
+    $view = tview::i($idview);
     if (count($view->custom) == 0) return;
     $customadmin = $view->theme->templates['customadmin'];
     foreach ($view->data['custom'] as $name => $value) {
@@ -113,10 +113,10 @@ class tadminviews extends tadminmenu {
   
   public function gethead() {
     $result = parent::gethead();
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     switch ($this->name) {
       case 'views':
-      $template->ltoptions['allviews'] = implode(',', array_keys(tviews::instance()->items));
+      $template->ltoptions['allviews'] = implode(',', array_keys(tviews::i()->items));
     $result .= $template->getloadjavascript('"$site.files/js/litepublisher/admin.views.min.js", function() {init_views();}' );
       /*$result .= '<script type="text/javascript" src="$site.files/js/litepublisher/admin.views.js"></script>
       <script type="text/javascript" >
@@ -137,25 +137,25 @@ class tadminviews extends tadminmenu {
   }
   
   private function get_view_sidebars($idview) {
-    $view = tview::instance($idview);
-    $widgets = twidgets::instance();
+    $view = tview::i($idview);
+    $widgets = twidgets::i();
     $html = $this->html;
     $html->section = 'views';
-    $lang = tlocal::instance('views');
-    $args = targs::instance();
+    $lang = tlocal::i('views');
+    $args = targs::i();
     $args->idview = $idview;
     $args->adminurl = tadminhtml::getadminlink('/admin/views/widgets/', 'idwidget');
     $view_sidebars = '';
     $widgetoptions = '';
     $count = count($view->sidebars);
     $sidebarnames = range(1, 3);
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $about = $parser->getabout($view->theme->name);
     foreach ($sidebarnames as $key => $value) {
       if (isset($about["sidebar$key"])) $sidebarnames[$key] = $about["sidebar$key"];
     }
     
-    if (($idview > 1) && !$view->customsidebar) $view = tview::instance(1);
+    if (($idview > 1) && !$view->customsidebar) $view = tview::i(1);
     foreach ($view->sidebars as $index => $sidebar) {
       $args->index = $index;
       $widgetlist = '';
@@ -185,18 +185,18 @@ class tadminviews extends tadminmenu {
   }
   
   private function get_view_theme($idview) {
-    $view = tview::instance($idview);
-    $lang = tlocal::instance('themes');
+    $view = tview::i($idview);
+    $lang = tlocal::i('themes');
     return str_replace('theme_idview', 'theme_' . $idview,
     tadminthemes::getlist($this->html->radiotheme, $view->theme->name));
   }
   
   public function getcontent() {
     $result = '';
-    $views = tviews::instance();
+    $views = tviews::i();
     $html = $this->html;
-    $lang = tlocal::instance('views');
-    $args = targs::instance();
+    $lang = tlocal::i('views');
+    $args = targs::i();
     switch ($this->name) {
       case 'views':
       $items = '';
@@ -223,7 +223,7 @@ class tadminviews extends tadminmenu {
       $args->content = $content;
       
       $widgetlist = '';
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       foreach ($widgets->items as $id => $item) {
         $args->id = $id;
         $args->add($item);
@@ -272,7 +272,7 @@ class tadminviews extends tadminmenu {
       
       $args->formname = 'themes';
       $args->formtitle = $lang->themeviews;
-      $view = tview::instance();
+      $view = tview::i();
       $list =    tfiler::getdir(litepublisher::$paths->themes);
       sort($list);
       $themes = array_combine($list, $list);
@@ -282,7 +282,7 @@ class tadminviews extends tadminmenu {
       
       case 'defaults':
       $items = '';
-      $theme = ttheme::instance();
+      $theme = ttheme::i();
       $tml = $theme->templates['content.admin.combo'];
       foreach ($views->defaults as $name => $id) {
         $args->name = $name;
@@ -297,13 +297,13 @@ class tadminviews extends tadminmenu {
       
       case 'headers':
       $tabs = new tuitabs();
-      $template = ttemplate::instance();
+      $template = ttemplate::i();
       $args->heads = $template->heads;
       $tabs->add($lang->headstitle, '[editor=heads]');
       
-      $adminmenus = tadminmenus::instance();
+      $adminmenus = tadminmenus::i();
       $args->adminheads = $adminmenus->heads;
-      $ajax = tajaxposteditor ::instance();
+      $ajax = tajaxposteditor ::i();
       $args->ajaxvisual=  $ajax->ajaxvisual;
       $args->visual= $ajax->visual;
       $tabs->add($lang->admin, '[checkbox=ajaxvisual] [text=visual] [editor=adminheads]');
@@ -323,7 +323,7 @@ class tadminviews extends tadminmenu {
     switch ($this->name) {
       case 'views':
       // dumpvar($_POST);
-      $views = tviews::instance();
+      $views = tviews::i();
       switch ($this->action) {
         case 'delete':
         $idview = (int) $_POST['action_value'];
@@ -332,9 +332,9 @@ class tadminviews extends tadminmenu {
         
         case 'widgets':
         $views->lock();
-        $widgets = twidgets::instance();
+        $widgets = twidgets::i();
         foreach ($views->items as $id => $item) {
-          $view = tview::instance($id);
+          $view = tview::i($id);
           if ($id > 1) {
             $view->customsidebar = isset($_POST["customsidebar_$id"]);
             $view->disableajax = isset($_POST["disableajax_$id"]);
@@ -368,7 +368,7 @@ class tadminviews extends tadminmenu {
       case 'addview':
       $name = trim($_POST['name']);
       if ($name != '') {
-        $views = tviews::instance();
+        $views = tviews::i();
         $id = $views->add($name);
       }
       break;
@@ -394,13 +394,13 @@ class tadminviews extends tadminmenu {
       
       switch ($action) {
         case 'posts':
-        $posts = tposts::instance();
+        $posts = tposts::i();
         $idview = (int) $_POST['postview'];
         if (dbversion) {
           $posts->db->update("idview = '$idview'", 'id > 0');
         } else {
           foreach ($posts->items as $id => $item) {
-            $post = tpost::instance($id);
+            $post = tpost::i($id);
             $post->idview = $idview;
             $post->save();
             $post->free();
@@ -410,9 +410,9 @@ class tadminviews extends tadminmenu {
         
         case 'menus':
         $idview = (int) $_POST['menuview'];
-        $menus = tmenus::instance();
+        $menus = tmenus::i();
         foreach ($menus->items as $id => $item) {
-          $menu = tmenu::instance($id);
+          $menu = tmenu::i($id);
           $menu->idview = $idview;
           $menu->save();
         }
@@ -420,10 +420,10 @@ class tadminviews extends tadminmenu {
         
         case 'themes':
         $themename = $_POST['themeview'];
-        $views = tviews::instance();
+        $views = tviews::i();
         $views->lock();
         foreach ($views->items as $id => $item) {
-          $view = tview::instance($id);
+          $view = tview::i($id);
           $view->themename = $themename;
           $view->save();
         }
@@ -433,7 +433,7 @@ class tadminviews extends tadminmenu {
       break;
       
       case 'defaults':
-      $views = tviews::instance();
+      $views = tviews::i();
       foreach ($views->defaults as $name => $id) {
         $views->defaults[$name] = (int) $_POST[$name];
       }
@@ -441,15 +441,15 @@ class tadminviews extends tadminmenu {
       break;
       
       case 'headers':
-      $template = ttemplate::instance();
+      $template = ttemplate::i();
       $template->heads = $_POST['heads'];
       $template->save();
       
-      $adminmenus = tadminmenus::instance();
+      $adminmenus = tadminmenus::i();
       $adminmenus->heads = $_POST['adminheads'];
       $adminmenus->save();
       
-      $ajax = tajaxposteditor ::instance();
+      $ajax = tajaxposteditor ::i();
       $ajax->ajaxvisual = isset($_POST['ajaxvisual']);
       $ajax->visual = trim($_POST['visual']);
       $ajax->save();

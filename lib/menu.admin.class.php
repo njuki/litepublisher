@@ -8,7 +8,7 @@
 
 class tadminmenus extends tmenus {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -33,7 +33,7 @@ class tadminmenus extends tmenus {
   }
   
   public function getadmintitle($name) {
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
     $ini = &$lang->ini;
     if (isset($ini[$name]['title'])) {
       return $ini[$name]['title'];
@@ -64,7 +64,7 @@ class tadminmenus extends tmenus {
   }
   
   public function hasright($group) {
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     return $groups->hasright(litepublisher::$options->group, $group);
   }
   
@@ -112,7 +112,7 @@ class tadminmenu  extends tmenu {
   }
   
   public static function getowner() {
-    return tadminmenus::instance();
+    return tadminmenus::i();
   }
   
   protected function create() {
@@ -124,15 +124,15 @@ public function load() { return true; }
 public function save() { return true; }
   
   public function gethead() {
-    return tadminmenus::instance()->heads;
+    return tadminmenus::i()->heads;
   }
   
   public function getidview() {
-    return tviews::instance()->defaults['admin'];
+    return tviews::i()->defaults['admin'];
   }
   
   public static function auth($group) {
-    $auth = tauthdigest::instance();
+    $auth = tauthdigest::i();
     if (litepublisher::$options->cookieenabled) {
       if ($s = $auth->checkattack()) return $s;
       if (!litepublisher::$options->authcookie()) return litepublisher::$urlmap->redir301('/admin/login/');
@@ -140,7 +140,7 @@ public function save() { return true; }
     elseif (!$auth->Auth())  return $auth->headers();
     
     if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if (!$groups->hasright(litepublisher::$options->group, $group)) return 403;
     }
   }
@@ -194,19 +194,19 @@ public function canrequest() { }
   }
   
   public function gethtml($name = '') {
-    $result = tadminhtml::instance();
+    $result = tadminhtml::i();
     if ($name == '') $name = $this->basename;
     if (!isset($result->ini[$name])) {
       $name = $this->owner->items[$this->parent]['name'];
     }
     
     $result->section = $name;
-    $lang = tlocal::instance($name);
+    $lang = tlocal::i($name);
     return $result;
   }
   
   public function getlang() {
-    return tlocal::instance($this->name);
+    return tlocal::i($this->name);
   }
   
   public function getconfirmed() {
@@ -230,7 +230,7 @@ public function canrequest() { }
 
 class tauthor_rights extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

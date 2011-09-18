@@ -10,7 +10,7 @@ class tcategoriesmenu extends tplugin {
   public $tree;
   public $exitems;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -22,18 +22,18 @@ class tcategoriesmenu extends tplugin {
   
   public function getmenu($hover, $current) {
     $result = '';
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $categories->loadall();
     //$this->buildtree();
     //var_dump($this->tree);
     if (count($this->tree) > 0) {
-      $theme = ttheme::instance();
+      $theme = ttheme::i();
       if ($hover) {
         $items = $this->getsubmenu($this->tree, $current);
       } else {
         $items = '';
         $tml = $theme->templates['menu.item'];
-        $args = targs::instance();
+        $args = targs::i();
         $args->submenu = '';
         foreach ($this->tree as $id => $subitems) {
           if ($this->exclude($id)) continue;
@@ -53,11 +53,11 @@ class tcategoriesmenu extends tplugin {
   
   private function getsubmenu(&$tree, $current) {
     $result = '';
-    $categories = tcategories::instance();
-    $theme = ttheme::instance();
+    $categories = tcategories::i();
+    $theme = ttheme::i();
     $tml = $theme->templates['menu.item'];
     $tml_submenu = $theme->templates['menu.item.submenu'];
-    $args = targs::instance();
+    $args = targs::i();
     foreach ($tree as $id => $items) {
       if ($this->exclude($id)) continue;
       $submenu = '' ;
@@ -72,7 +72,7 @@ class tcategoriesmenu extends tplugin {
   }
   
   public function buildtree() {
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $categories->loadall();
     $this->tree = $this->getsubtree(0);
     //var_dump($this->exitems );
@@ -82,7 +82,7 @@ class tcategoriesmenu extends tplugin {
   
   private function getsubtree($parent) {
     $result = array();
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     // first step is a find all childs and sort them
     $sort= array();
     foreach ($categories->items as $id => $item) {

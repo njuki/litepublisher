@@ -9,7 +9,7 @@
 class tuserpages extends titems implements itemplate {
   public $id;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -77,7 +77,7 @@ public function gethead() {}
   
   public function getcont() {
     $item =$this->getitem($this->id);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result = empty($item['content']) ? '' : $theme->simple($item['content']);
     $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
@@ -118,7 +118,7 @@ public function gethead() {}
   
   private function addurl(array &$item) {
     $item['url'] = '';
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $item['url'] = $linkgen->addurl(new tarray2prop ($item), 'user');
     $item['idurl'] = litepublisher::$urlmap->add($item['url'], get_class($this), $item['id']);
     return $item['idurl'];
@@ -142,7 +142,7 @@ public function gethead() {}
     );
     
     if ($this->createpage) {
-      $users = tusers::instance();
+      $users = tusers::i();
       if ('approved' == $users->getvalue($id, 'status')) $this->addurl($item);
     }
     $this->items[$id] = $item;
@@ -165,7 +165,7 @@ public function gethead() {}
       if (isset($values[$k])) $item[$k] = $values[$k];
     }
     $item['id'] = $id;
-    $item['content'] = tcontentfilter::instance()->filter($item['rawcontent']);
+    $item['content'] = tcontentfilter::i()->filter($item['rawcontent']);
     if ($url && ($url != $item['url'])) {
       if ($item['idurl'] == 0) {
         $item['idurl'] = litepublisher::$urlmap->add($url, get_class($this), $id);

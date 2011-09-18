@@ -10,7 +10,7 @@ class tftpfiler extends tremotefiler {
   public $ssl;
   private $tempfilehandle;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

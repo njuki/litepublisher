@@ -9,7 +9,7 @@
 class tpingbacks extends tabstractpingbacks implements ipingbacks {
   private static $instances;
   
-  public static function instance($pid) {
+  public static function i($pid) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
     $self = litepublisher::$classes->newinstance(__class__);
@@ -42,7 +42,7 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
       if ($item['approved']) $count++;
     }
     
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     $post->pingbackscount = $count;
     $post->save();
     $post->clearcache();
@@ -89,8 +89,8 @@ class tpingbacks extends tabstractpingbacks implements ipingbacks {
     $result = '';
     $pingback = new tarray2props();
     ttheme::$vars['pingback'] = $pingback;
-    $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
+    $lang = tlocal::i('comment');
+    $theme = ttheme::i();
     $tml = $theme->content->post->templatecomments->pingbacks->pingback;
     foreach ($this->items as $url => $item) {
       if (!$item['approved']) continue;

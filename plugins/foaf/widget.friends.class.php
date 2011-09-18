@@ -8,7 +8,7 @@
 
 class tfriendswidget extends twidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -28,15 +28,15 @@ class tfriendswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $foaf = tfoaf::instance();
+    $foaf = tfoaf::i();
     $items = $foaf->getapproved($this->maxcount);
     if (count($items) == 0) return '';
     $result = '';
     $url = litepublisher::$site->url;
     $redirlink  = litepublisher::$site->url . $this->redirlink . litepublisher::$site->q . 'id=';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('friends', $sidebar);
-    $args = targs::instance();
+    $args = targs::i();
     $args->subcount = '';
     $args->subitems = '';
     $args->$icon = '';
@@ -56,7 +56,7 @@ class tfriendswidget extends twidget {
   
   public function request($arg) {
     $id = empty($_GET['id']) ? 1 : (int) $_GET['id'];
-    $foaf = tfoaf::instance();
+    $foaf = tfoaf::i();
     if (!$foaf->itemexists($id)) return 404;
     $item = $foaf->getitem($id);
     $this->cache = false;

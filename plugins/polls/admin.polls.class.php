@@ -8,14 +8,14 @@
 
 class tadminpolls {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tpolls::instance();
-    $html = tadminhtml::instance();
-    $args = targs::instance();
+    $plugin = tpolls::i();
+    $html = tadminhtml::i();
+    $args = targs::i();
     $about = tplugins::localabout(dirname(__file__));
     foreach ($about as $name => $value) {
       $args->data["\$lang.$name"] = $value;
@@ -48,7 +48,7 @@ class tadminpolls {
   
   public function processform() {
     extract($_POST);
-    $plugin = tpolls::instance();
+    $plugin = tpolls::i();
     $plugin->lock();
     $plugin->deftitle = $deftitle;
     $plugin->deftype = $deftype;

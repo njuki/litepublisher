@@ -12,12 +12,12 @@ class tposts extends titems {
   public $rawtable;
   public $childtable;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public static function unsub($obj) {
-    $self = self::instance();
+    $self = self::i();
     $self->unsubscribeclassname(get_class($obj));
   }
   
@@ -38,10 +38,10 @@ class tposts extends titems {
   
   public function getitem($id) {
     if (dbversion) {
-      if ($result = tpost::instance($id)) return $result;
+      if ($result = tpost::i($id)) return $result;
       $this->error("Item $id not found in class ". get_class($this));
     } else {
-      if (isset($this->items[$id])) return tpost::instance($id);
+      if (isset($this->items[$id])) return tpost::i($id);
     }
     return $this->error("Item $id not found in class ". get_class($this));
   }
@@ -72,7 +72,7 @@ class tposts extends titems {
     unset($t);
     if ($this->syncmeta)  tmetapost::loaditems($result);
     if (count($fileitems) > 0) {
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $files->preload($fileitems);
     }
     
@@ -167,20 +167,20 @@ class tposts extends titems {
     }
     
     if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
-      $icons = ticons::instance();
+      $icons = ticons::i();
       $post->icon = $icons->getid('post');
     }
     
     if ($post->idview == 1) {
-      $views = tviews::instance();
+      $views = tviews::i();
       if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
     }
     
     $post->pagescount = count($post->pages);
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if (dbversion) {
       $id = $post->addtodb();
       $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
@@ -205,7 +205,7 @@ class tposts extends titems {
   
   public function edit(tpost $post) {
     $this->beforechange($post);
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $linkgen->editurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
     if ($post->posted <= time()) {
@@ -226,7 +226,7 @@ class tposts extends titems {
   
   public function delete($id) {
     if (!$this->itemexists($id)) return false;
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
@@ -235,7 +235,7 @@ class tposts extends titems {
         $db->delete("id = $id");
       }
     } else {
-      if ($post = tpost::instance($id)) {
+      if ($post = tpost::i($id)) {
         $idurl = $post->idurl;
         $post->free();
       }
@@ -266,7 +266,7 @@ class tposts extends titems {
     }
     $this->PublishFuture();
     $this->UpdateArchives();
-    $cron = tcron::instance();
+    $cron = tcron::i();
     $cron->add('single', get_class($this), 'dosinglecron', $post->id);
   }
   
@@ -287,7 +287,7 @@ class tposts extends titems {
   
   public function dosinglecron($id) {
     $this->PublishFuture();
-    ttheme::$vars['post'] = tpost::instance($id);
+    ttheme::$vars['post'] = tpost::i($id);
     $this->singlecron($id);
   }
   
@@ -296,7 +296,7 @@ class tposts extends titems {
   }
   
   private function publish($id) {
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     $post->status = 'published';
     $this->edit($post);
   }
@@ -411,7 +411,7 @@ class tposts extends titems {
 
 class tpostswidget extends twidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -428,9 +428,9 @@ class tpostswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $list = $posts->getpage(0, 1, $this->maxcount, false);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getpostswidgetcontent($list, $sidebar, '');
   }
   

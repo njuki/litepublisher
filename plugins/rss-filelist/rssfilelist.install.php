@@ -7,14 +7,14 @@
 **/
 
 function trssfilelistInstall($self) {
-  $rss = trss::instance();
+  $rss = trss::i();
   $rss->beforepost = $self->beforepost;
   
   litepublisher::$urlmap->clearcache();
 }
 
 function trssfilelistUninstall($self) {
-  $rss = trss::instance();
+  $rss = trss::i();
   $rss->unsubscribeclass($self);
   
   litepublisher::$urlmap->clearcache();

@@ -8,16 +8,16 @@
 
 class tadminfiles extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function getcontent() {
     $result = '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $html = $this->html;
     if (!isset($_GET['action'])) {
-      $args = targs::instance();
+      $args = targs::i();
       $args->adminurl = $this->url;
       $result .= $html->uploadform($args);
     } else {
@@ -26,12 +26,12 @@ class tadminfiles extends tadminmenu {
       switch ($_GET['action']) {
         case 'delete':
         if ($this->confirmed) {
-          if (('author' == litepublisher::$options->group) && ($r = tauthor_rights::instance()->candeletefile($id))) return $r;
+          if (('author' == litepublisher::$options->group) && ($r = tauthor_rights::i()->candeletefile($id))) return $r;
           $files->delete($id);
           $result .= $html->h2->deleted;
         } else {
           $item = $files->getitem($id);
-          $args = targs::instance();
+          $args = targs::i();
           $args->add($item);
           $args->id = $id;
           $args->adminurl = $this->adminurl;
@@ -42,7 +42,7 @@ class tadminfiles extends tadminmenu {
         break;
         
         case 'edit':
-        $args = targs::instance();
+        $args = targs::i();
         $args->add($files->getitem($id));
         $result .= $html->editform($args);
         break;
@@ -80,7 +80,7 @@ class tadminfiles extends tadminmenu {
     $result .= sprintf($html->h2->countfiles, $count, $from, $from + count($list));
     //if ($type != 'icon') $result .= $files->getlist($list);
     $result .= $html->tableheader();
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     foreach ($list as $id) {
       $item = $files->items[$id];
@@ -92,13 +92,13 @@ class tadminfiles extends tadminmenu {
     
     $result .= $html->tablefooter;
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
   public function processform() {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if (empty($_GET['action'])) {
       $isauthor = 'author' == litepublisher::$options->group;
       if ($_POST['uploadmode'] == 'upload') {
@@ -107,9 +107,9 @@ class tadminfiles extends tadminmenu {
           return "<h2>$error</h2>\n";
         }
         if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) return sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
-        if ($isauthor && ($r = tauthor_rights::instance()->canupload())) return $r;
+        if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
         $overwrite  = isset($_POST['overwrite']);
-        $parser = tmediaparser::instance();
+        $parser = tmediaparser::i();
         $parser->uploadfile($_FILES["filename"]["name"], $_FILES["filename"]["tmp_name"], $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
       } else {
         //downloadurl
@@ -117,9 +117,9 @@ class tadminfiles extends tadminmenu {
         if ($content == false) return $this->html->h2->errordownloadurl;
         $filename = basename(trim($_POST['downloadurl'], '/'));
         if ($filename == '') $filename = 'noname.txt';
-        if ($isauthor && ($r = tauthor_rights::instance()->canupload())) return $r;
+        if ($isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
         $overwrite  = isset($_POST['overwrite']);
-        $parser = tmediaparser::instance();
+        $parser = tmediaparser::i();
         $parser->upload($filename, $content, $_POST['title'], $_POST['description'], $_POST['keywords'], $overwrite);
       }
       return $this->html->h2->success;

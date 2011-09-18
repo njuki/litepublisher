@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCSystemInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   
   $caller->add('system.listMethods' , 'listMethods', get_class($self));

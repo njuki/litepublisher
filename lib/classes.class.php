@@ -18,7 +18,7 @@ class tclasses extends titems {
   public $remap;
   public $instances;
   
-  public static function instance() {
+  public static function i() {
     if (!isset(litepublisher::$classes)) {
       $class = __class__;
       litepublisher::$classes = new $class();

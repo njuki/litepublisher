@@ -11,7 +11,7 @@ class tthemeparserver3 extends tevents {
   private $default;
   private $fixold;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -25,7 +25,7 @@ class tthemeparserver3 extends tevents {
     $filename = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR . 'index.tml';
     if (!file_exists($filename))  return false;
     if ($theme->name == 'default') $this->error('Default theme must be in new format');
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $about = $parser->getabout($theme->name);
     if (empty($about['parent'])) {
       $this->default = ttheme::getinstance('default');

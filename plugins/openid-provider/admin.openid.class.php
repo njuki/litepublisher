@@ -7,13 +7,13 @@
 **/
 
 class tadminopenid {
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $openid = topenid::instance();
-    $args = targs::instance();
+    $openid = topenid::i();
+    $args = targs::i();
     $args->confirm = $openid->confirm;
     $args->usebigmath = $openid->usebigmath;
     $args->trusted = implode("\n", $openid->trusted);
@@ -27,13 +27,13 @@ class tadminopenid {
     $args->data['$lang.usebigmath'] = $about['usebigmath'];
     $args->data['$lang.trusted'] = $about['trusted'];
     
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform($tml, $args);
   }
   
   public function processform() {
     extract($_POST, EXTR_SKIP);
-    $openid = topenid::instance();
+    $openid = topenid::i();
     $openid->confirm = isset($confirm);
     $openid->usebigmath = isset($usebigmath);
     $openid->trusted = explode("\n", trim($trusted));

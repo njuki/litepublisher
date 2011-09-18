@@ -9,7 +9,7 @@
 class trss extends tevents {
   public $domrss;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -66,7 +66,7 @@ class trss extends tevents {
       case 'tags':
       if (!preg_match('/\/(\d*?)\.xml$/', litepublisher::$urlmap->url, $match)) return 404;
       $id = (int) $match[1];
-      $tags = $arg == 'categories' ? tcategories::instance() : ttags::instance();
+      $tags = $arg == 'categories' ? tcategories::i() : ttags::i();
       if (!$tags->itemexists($id)) return 404;
       $this->gettagrss($tags, $id);
       break;
@@ -74,9 +74,9 @@ class trss extends tevents {
       default:
       if (!preg_match('/\/(\d*?)\.xml$/', litepublisher::$urlmap->url, $match)) return 404;
       $idpost = (int) $match[1];
-      $posts = tposts::instance();
+      $posts = tposts::i();
       if (!$posts->itemexists($idpost)) return 404;
-      $post = tpost::instance($idpost);
+      $post = tpost::i($idpost);
       if ($post->status != 'published') return 404;
       $this->GetRSSPostComments($idpost);
     }
@@ -87,13 +87,13 @@ class trss extends tevents {
   
   public function getrecentposts() {
     $this->domrss->CreateRoot(litepublisher::$site->url. '/rss.xml', litepublisher::$site->name);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $this->getrssposts($posts->getpage(0, 1, litepublisher::$options->perpage, false));
   }
   
   public function getrssposts(array $list) {
     foreach ($list as $id ) {
-      $this->addpost(tpost::instance($id));
+      $this->addpost(tpost::i($id));
     }
   }
   
@@ -109,7 +109,7 @@ class trss extends tevents {
   
   public function GetRecentComments() {
     $this->domrss->CreateRoot(litepublisher::$site->url . '/comments.xml', tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $recent = $manager->getrecent(litepublisher::$options->perpage);
     $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
@@ -128,7 +128,7 @@ class trss extends tevents {
   
   private function dogetholdcomments($url, $count) {
     $this->domrss->CreateRoot(litepublisher::$site->url . $url, tlocal::get('comment', 'onrecent') . ' '. litepublisher::$site->name);
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $recent = $manager->getrecent($count, 'hold');
     $title = tlocal::get('comment', 'onpost') . ' ';
     $comment = new tarray2prop();
@@ -139,11 +139,11 @@ class trss extends tevents {
   }
   
   public function GetRSSPostComments($idpost) {
-    $post = tpost::instance($idpost);
-    $lang = tlocal::instance('comment');
+    $post = tpost::i($idpost);
+    $lang = tlocal::i('comment');
     $title = $lang->from . ' ';
     $this->domrss->CreateRoot($post->rsscomments, "$lang->onpost $post->title");
-    $comments = tcomments::instance($idpost);
+    $comments = tcomments::i($idpost);
     $comment = new tarray2prop();
     if (dbversion) {
       $recent = $comments->select("post = $idpost and status = 'approved'",
@@ -159,7 +159,7 @@ class trss extends tevents {
       $from =max(0, count($comments->items) - litepublisher::$options->perpage);
       $items = array_slice(array_keys($comments->items), $from, litepublisher::$options->perpage);
       $items = array_reverse($items);
-      $comusers = tcomusers::instance($idpost);
+      $comusers = tcomusers::i($idpost);
       foreach ($items as $id) {
         $item = $comments->items[$id];
         $item['id'] = $id;
@@ -188,20 +188,20 @@ class trss extends tevents {
     $guid  = tnode::addvalue($item, 'guid', $post->link);
     tnode::attr($guid, 'isPermaLink', 'true');
     if (class_exists   ('tprofile')) {
-      $profile = tprofile::instance();
+      $profile = tprofile::i();
       tnode::addvalue($item, 'dc:creator', $profile->nick);
     } else {
       tnode::addvalue($item, 'dc:creator', 'admin');
     }
     
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $names = $categories->getnames($post->categories);
     foreach ($names as $name) {
       if (empty($name)) continue;
       tnode::addcdata($item, 'category', $name);
     }
     
-    $tags = ttags::instance();
+    $tags = ttags::i();
     $names = $tags->getnames($post->tags);
     foreach ($names as $name) {
       if (empty($name)) continue;
@@ -221,7 +221,7 @@ class trss extends tevents {
     tnode::addvalue($item, 'wfw:commentRss', $post->rsscomments);
     
     if (count($post->files) > 0) {
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $files->loaditems($post->files);
       foreach ($post->files as $idfile) {
         $file = $files->getitem($idfile);

@@ -8,7 +8,7 @@
 
 class tdownloaditem extends tpost {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -51,7 +51,7 @@ class tdownloaditem extends tpost {
       return;
     }
     $parent = $this->getparenttag();
-    $tags = ttags::instance();
+    $tags = ttags::i();
     $items = array();
     $list = explode(',', trim($names));
     foreach ($list as $title) {
@@ -71,7 +71,7 @@ class tdownloaditem extends tpost {
     $result = $this->theme->templates['custom']['siteform'];
     $result .= $this->getdownloadcontent();
     if ($this->poll > 0) {
-      $polls = tpolls::instance();
+      $polls = tpolls::i();
       $result .= $polls->gethtml($this->poll, true);
     }
     
@@ -80,7 +80,7 @@ class tdownloaditem extends tpost {
   }
   
   public function getdownloadcontent() {
-    ttheme::$vars['lang'] = tlocal::instance('downloaditem');
+    ttheme::$vars['lang'] = tlocal::i('downloaditem');
     ttheme::$vars['post'] = $this;
     $theme = $this->theme;
     return $theme->parse($theme->templates['custom']['downloaditem']);
@@ -91,7 +91,7 @@ class tdownloaditem extends tpost {
   }
   
   public function closepoll() {
-    $polls = tpolls::instance();
+    $polls = tpolls::i();
     $polls->db->setvalue($this->poll, 'status', 'closed');
   }
   

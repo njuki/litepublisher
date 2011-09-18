@@ -8,7 +8,7 @@
 
 function texternallinksInstall($self) {
   if (dbversion) {
-    $manager = tdbmanager::instance();
+    $manager = tdbmanager::i();
     $manager->createtable($self->table,
     'id int UNSIGNED NOT NULL auto_increment,
     clicked int UNSIGNED NOT NULL default 0,
@@ -19,35 +19,35 @@ function texternallinksInstall($self) {
   } else {
   }
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->lock();
   $filter->afterfilter = $self->filter;
   $filter->onaftercomment = $self->filter;
   $filter->unlock();
   
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->add('hour', get_class($self), 'updatestat');
   
   litepublisher::$urlmap->addget('/externallink.htm', get_class($self));
   
-  $robot = trobotstxt::instance();
+  $robot = trobotstxt::i();
   $robot->AddDisallow('/externallink.htm');
 }
 
 function texternallinksUninstall($self) {
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->unsubscribeclass($self);
   
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->deleteclass(get_class($self));
   
   turlmap::unsub($self);
   
   if (dbversion) {
-    $manager = tdbmanager::instance();
+    $manager = tdbmanager::i();
     $manager->deletetable($self->table);
     
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->addrevision();
   }
 }

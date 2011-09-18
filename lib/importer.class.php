@@ -8,7 +8,7 @@
 
 class timporter extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -17,9 +17,9 @@ class timporter extends tplugin {
   
   //template
   public function getcontent() {
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'importer';
-    $lang = tlocal::instance('importer');
+    $lang = tlocal::i('importer');
     return $html->form();
   }
   
@@ -50,10 +50,10 @@ class timporter extends tplugin {
     if ($test) tdata::$savedisabled = true;
     $this->import($s);
     
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $items = array_slice(array_keys($posts->items), -5, 5);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return  $theme->getposts($items, false);
   }
   

@@ -8,7 +8,7 @@
 
 function installclasses($language) {
   ParseClassesIni();
-  $options = toptions::instance();
+  $options = toptions::i();
   $options->lock();
   require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'options.class.install.php');
   $password = installoptions($language);
@@ -62,15 +62,15 @@ function ParseClassesIni() {
 }
 
 function doinstallclasses() {
-  litepublisher::$urlmap = turlmap::instance();
+  litepublisher::$urlmap = turlmap::i();
   litepublisher::$urlmap->lock();
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->lock();
   
-  $xmlrpc = TXMLRPC::instance();
+  $xmlrpc = TXMLRPC::i();
   $xmlrpc->lock();
   $theme = ttheme::getinstance('default');
-//  $html = tadminhtml::instance();
+//  $html = tadminhtml::i();
 //      $html->loadinstall();
   
   foreach(litepublisher::$classes->items as $class => $item) {

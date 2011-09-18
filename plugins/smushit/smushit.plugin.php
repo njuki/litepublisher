@@ -8,23 +8,23 @@
 
 class tsmushitplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function install() {
     
-    $parser = tmediaparser::instance();
+    $parser = tmediaparser::i();
     $parser->added = $this->fileadded;
   }
   
   public function uninstall() {
-    $parser = tmediaparser::instance();
+    $parser = tmediaparser::i();
     $parser->unsubscribeclass($this);
   }
   
   public function fileadded($id) {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $item = $files->getitem($id);
     if ('image' != $item['media']) return;
     $fileurl = $files->geturl($id);

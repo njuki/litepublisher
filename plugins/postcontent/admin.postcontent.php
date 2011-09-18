@@ -8,14 +8,14 @@
 
 class tadminpostcontentplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tpostcontentplugin ::instance();
-    $html = tadminhtml::instance();
-    $args = targs::instance();
+    $plugin = tpostcontentplugin ::i();
+    $html = tadminhtml::i();
+    $args = targs::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.before'] = $about['before'];
@@ -27,7 +27,7 @@ class tadminpostcontentplugin {
   
   public function processform() {
     extract($_POST, EXTR_SKIP);
-    $plugin = tpostcontentplugin ::instance();
+    $plugin = tpostcontentplugin ::i();
     $plugin->lock();
     $plugin->before = $before;
     $plugin->after = $after;

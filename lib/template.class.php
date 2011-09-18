@@ -16,7 +16,7 @@ class ttemplate extends tevents_storage {
   public $hover;
   //public $footer;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -48,12 +48,12 @@ class ttemplate extends tevents_storage {
     if (method_exists($this, $get = 'get' . $name)) return $this->$get();
     if (array_key_exists($name, $this->data)) return $this->data[$name];
     if (preg_match('/^sidebar(\d)$/', $name, $m)) {
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       return $widgets->getsidebarindex($this->context, $this->view, (int) $m[1]);
     }
     
     if (array_key_exists($name, $this->data['tags'])) {
-      $tags = ttemplatetags::instance();
+      $tags = ttemplatetags::i();
       return $tags->__get($name);
     }
     if (isset($this->context) && isset($this->context->$name)) return $this->context->$name;
@@ -65,7 +65,7 @@ class ttemplate extends tevents_storage {
     ttheme::$vars['context'] = $context;
     ttheme::$vars['template'] = $this;
     $this->itemplate = $context instanceof itemplate;
-    $this->view = $this->itemplate ? tview::getview($context) : tview::instance();
+    $this->view = $this->itemplate ? tview::getview($context) : tview::i();
     $theme = $this->view->theme;
     litepublisher::$classes->instances[get_class($theme)] = $theme;
     $this->path = litepublisher::$paths->themes . $theme->name . DIRECTORY_SEPARATOR ;
@@ -88,7 +88,7 @@ class ttemplate extends tevents_storage {
   
   //html tags
   public function getsidebar() {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     return $widgets->getsidebar($this->context, $this->view);
   }
   
@@ -99,7 +99,7 @@ class ttemplate extends tevents_storage {
   }
   
   public function parsetitle($tml, $title) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->title = $title;
     $result = $this->view->theme->parsearg($tml, $args);
     $result = trim($result, sprintf(' |.:%c%c', 187, 150));
@@ -112,7 +112,7 @@ class ttemplate extends tevents_storage {
     if (isset($this->context) && isset($this->context->icon)) {
       $icon = $this->context->icon;
       if ($icon > 0) {
-        $files = tfiles::instance();
+        $files = tfiles::i();
         if ($files->itemexists($icon)) $result = $files->geturl($icon);
       }
     }

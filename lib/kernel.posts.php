@@ -8,7 +8,7 @@
 //items.posts.class.php
 class titemsposts extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -155,7 +155,7 @@ class titemsposts extends titems {
   
   public function getpostscount($ititem) {
     $items = $this->getposts($ititem);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $items = $posts->stripdrafts($items);
     return count($items);
   }
@@ -171,7 +171,7 @@ class titemsposts extends titems {
     } else {
       foreach ($list as $idpost) {
         $items = $this->items[$idpost];
-        $post = tpost::instance($idpost);
+        $post = tpost::i($idpost);
         if ($items != $post->$propname) {
           $post->$propname = $items;
           $post->Save();
@@ -213,7 +213,7 @@ class tpost extends titem implements  itemplate {
   private $ameta;
   private $_theme;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     $id = (int) $id;
     if (dbversion && ($id > 0)) {
       if (isset(self::$instances['post'][$id]))     return self::$instances['post'][$id];
@@ -295,7 +295,7 @@ class tpost extends titem implements  itemplate {
     'pages' => array()
     );
     
-    $posts = tposts::instance();
+    $posts = tposts::i();
     foreach ($posts->itemcoclasses as $class) {
       $coinstance = litepublisher::$classes->newinstance($class);
       $coinstance->post = $this;
@@ -373,7 +373,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function setassoc(array $a) {
-    $trans = tposttransform::instance($this);
+    $trans = tposttransform::i($this);
     $trans->setassoc($a);
     if ($this->childtable) {
       if ($a = $this->getdb($this->childtable)->getitem($this->id)) {
@@ -389,7 +389,7 @@ class tpost extends titem implements  itemplate {
   }
   
   protected function SaveToDB() {
-    tposttransform ::instance($this)->save();
+    tposttransform ::i($this)->save();
     if ($this->childtable) {
       $this->beforedb();
       $this->childdata['id'] = $this->id;
@@ -415,11 +415,11 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcomments() {
-    return tcomments::instance($this->id);
+    return tcomments::i($this->id);
   }
   
   public function getpingbacks() {
-    return tpingbacks::instance($this->id);
+    return tpingbacks::i($this->id);
   }
   
   public function getprev() {
@@ -427,13 +427,13 @@ class tpost extends titem implements  itemplate {
     $this->aprev = false;
     if (dbversion) {
       if ($id = $this->db->findid("status = 'published' and posted < '$this->sqldate' order by posted desc")) {
-        $this->aprev = self::instance($id);
+        $this->aprev = self::i($id);
       }
     } else {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       $keys = array_keys($posts->archives);
       $i = array_search($this->id, $keys);
-      if ($i < count($keys) -1) $this->aprev = self::instance($keys[$i + 1]);
+      if ($i < count($keys) -1) $this->aprev = self::i($keys[$i + 1]);
     }
     return $this->aprev;
   }
@@ -443,13 +443,13 @@ class tpost extends titem implements  itemplate {
     $this->anext = false;
     if (dbversion) {
       if ($id = $this->db->findid("status = 'published' and posted > '$this->sqldate' order by posted asc")) {
-        $this->anext = self::instance($id);
+        $this->anext = self::i($id);
       }
     } else {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       $keys = array_keys($posts->archives);
       $i = array_search($this->id, $keys);
-      if ($i > 0 ) $this->anext = self::instance($keys[$i - 1]);
+      if ($i > 0 ) $this->anext = self::i($keys[$i - 1]);
       
     }
     return $this->anext;
@@ -457,7 +457,7 @@ class tpost extends titem implements  itemplate {
   
   public function getmeta() {
     if (!isset($this->ameta)) {
-      $this->ameta = tmetapost::instance($this->id);
+      $this->ameta = tmetapost::i($this->id);
     }
     return $this->ameta;
   }
@@ -533,7 +533,7 @@ class tpost extends titem implements  itemplate {
     $tmlitem = $theme->templates[$tmlpath . '.item'];
     $tags= litepublisher::$classes->$names;
     $tags->loaditems($this->$names);
-    $args = targs::instance();
+    $args = targs::i();
     $list = array();
     foreach ($this->$names as $id) {
       $item = $tags->getitem($id);
@@ -541,7 +541,7 @@ class tpost extends titem implements  itemplate {
       if (($item['icon'] == 0) || litepublisher::$options->icondisabled) {
         $args->icon = '';
       } else {
-        $files = tfiles::instance();
+        $files = tfiles::i();
         if ($files->itemexists($item['icon'])) {
           $args->icon = $files->geticon($item['icon']);
         } else {
@@ -581,23 +581,23 @@ class tpost extends titem implements  itemplate {
   
   public function gettagnames() {
     if (count($this->tags) == 0) return '';
-    $tags = ttags::instance();
+    $tags = ttags::i();
     return implode(', ', $tags->getnames($this->tags));
   }
   
   public function settagnames($names) {
-    $tags = ttags::instance();
+    $tags = ttags::i();
     $this->tags=  $tags->createnames($names);
   }
   
   public function getcatnames() {
     if (count($this->categories) == 0)  return '';
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     return implode(', ', $categories->getnames($this->categories));
   }
   
   public function setcatnames($names) {
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $this->categories = $categories->createnames($names);
     if (count($this->categories ) == 0) {
       $defaultid = $categories->defaultid;
@@ -607,7 +607,7 @@ class tpost extends titem implements  itemplate {
   
   public function getcategory() {
     if (count($this->categories) == 0) return '';
-    $cats = tcategories::instance();
+    $cats = tcategories::i();
     return $cats->getname($this->categories[0]);
   }
   
@@ -625,14 +625,14 @@ class tpost extends titem implements  itemplate {
   public function gethead() {
     $result = '';
     $options = litepublisher::$options;
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->id;
     
     if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
     if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
     
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
-      $lang = tlocal::instance('comment');
+      $lang = tlocal::i('comment');
       $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
     }
     
@@ -668,7 +668,7 @@ class tpost extends titem implements  itemplate {
   
   public function geticonurl() {
     if ($this->icon == 0) return '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if ($files->itemexists($this->icon)) return $files->geturl($this->icon);
     $this->icon = 0;
     $this->save();
@@ -677,7 +677,7 @@ class tpost extends titem implements  itemplate {
   
   public function geticonlink() {
     if (($this->icon == 0) || litepublisher::$options->icondisabled) return '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if ($files->itemexists($this->icon)) return $files->geticon($this->icon);
     $this->icon = 0;
     $this->save();
@@ -690,13 +690,13 @@ class tpost extends titem implements  itemplate {
   
   public function getfilelist() {
     if (count($this->files) == 0) return '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     return $files->getfilelist($this->files, false);
   }
   
   public function getexcerptfilelist() {
     if (count($this->files) == 0) return '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     return $files->getfilelist($this->files, true);
   }
   
@@ -742,7 +742,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getcmtcount() {
-    $l = tlocal::instance()->ini['comment'];
+    $l = tlocal::i()->ini['comment'];
     switch($this->commentscount) {
       case 0: return $l[0];
       case 1: return $l[1];
@@ -753,7 +753,7 @@ class tpost extends titem implements  itemplate {
   public function  gettemplatecomments() {
     if (($this->commentscount == 0) && !$this->commentsenabled && ($this->pingbackscount ==0)) return '';
     if ($this->haspages && ($this->commentpages < $urlmap->page)) return $this->getcommentslink();
-    $tc = ttemplatecomments::instance();
+    $tc = ttemplatecomments::i();
     return $tc->getcomments($this->id);
   }
   
@@ -762,7 +762,7 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getexcerptcontent() {
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
     $result = $this->get_excerpt();
     $posts->beforeexcerpt($this, $result);
@@ -807,7 +807,7 @@ class tpost extends titem implements  itemplate {
     } elseif ($page <= $this->commentpages) {
       //$result .= '';
     } else {
-      $lang = tlocal::instance();
+      $lang = tlocal::i();
       $result .= $lang->notfound;
     }
     
@@ -819,7 +819,7 @@ class tpost extends titem implements  itemplate {
   
   public function getcontent() {
     $result = '';
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->beforecontent($this, $result);
     //$posts->addrevision();
     if ($this->revision < $posts->revision) $this->setrevision($posts->revision);
@@ -835,7 +835,7 @@ class tpost extends titem implements  itemplate {
     if (!is_string($s)) $this->error('Error! Post content must be string');
     if ($s != $this->rawcontent) {
       $this->rawcontent = $s;
-      $filter = tcontentfilter::instance();
+      $filter = tcontentfilter::i();
       $filter->filterpost($this,$s);
     }
   }
@@ -843,14 +843,14 @@ class tpost extends titem implements  itemplate {
   public function setrevision($value) {
     if ($value != $this->data['revision']) {
       $this->updatefiltered();
-      $posts = tposts::instance();
+      $posts = tposts::i();
       $this->data['revision'] = (int) $posts->revision;
       if ($this->id > 0) $this->save();
     }
   }
   
   public function updatefiltered() {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->filterpost($this,$this->rawcontent);
   }
   
@@ -946,7 +946,7 @@ class tpost extends titem implements  itemplate {
         return litepublisher::$site->author;
       }
     } else {
-      $pages = tuserpages::instance();
+      $pages = tuserpages::i();
       try {
         $item = $pages->getitem($id);
       } catch (Exception $e) {
@@ -962,7 +962,7 @@ class tpost extends titem implements  itemplate {
     if ($id <= 1) {
       return sprintf('<a href="%s/" rel="author" title="%2$s">%2$s</a>', litepublisher::$site->url, litepublisher::$site->author);
     } else {
-      $pages = tuserpages::instance();
+      $pages = tuserpages::i();
       if (!$pages->itemexists($id)) return '';
       if ($item['url'] == '') return '';
       return sprintf('<a href="%s%s" title="%3$s" rel="author"><%3$s</a>', litepublisher::$site->url, $item['url'], $item['name']);
@@ -978,12 +978,12 @@ class tposts extends titems {
   public $rawtable;
   public $childtable;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public static function unsub($obj) {
-    $self = self::instance();
+    $self = self::i();
     $self->unsubscribeclassname(get_class($obj));
   }
   
@@ -1004,10 +1004,10 @@ class tposts extends titems {
   
   public function getitem($id) {
     if (dbversion) {
-      if ($result = tpost::instance($id)) return $result;
+      if ($result = tpost::i($id)) return $result;
       $this->error("Item $id not found in class ". get_class($this));
     } else {
-      if (isset($this->items[$id])) return tpost::instance($id);
+      if (isset($this->items[$id])) return tpost::i($id);
     }
     return $this->error("Item $id not found in class ". get_class($this));
   }
@@ -1038,7 +1038,7 @@ class tposts extends titems {
     unset($t);
     if ($this->syncmeta)  tmetapost::loaditems($result);
     if (count($fileitems) > 0) {
-      $files = tfiles::instance();
+      $files = tfiles::i();
       $files->preload($fileitems);
     }
     
@@ -1133,20 +1133,20 @@ class tposts extends titems {
     }
     
     if (($post->icon == 0) && !litepublisher::$options->icondisabled) {
-      $icons = ticons::instance();
+      $icons = ticons::i();
       $post->icon = $icons->getid('post');
     }
     
     if ($post->idview == 1) {
-      $views = tviews::instance();
+      $views = tviews::i();
       if (isset($views->defaults['post'])) $post->data['idview'] = $views->defaults['post'];
     }
     
     $post->pagescount = count($post->pages);
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $post->url = $linkgen->addurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if (dbversion) {
       $id = $post->addtodb();
       $post->idurl = $urlmap->add($post->url, get_class($post), (int) $post->id);
@@ -1171,7 +1171,7 @@ class tposts extends titems {
   
   public function edit(tpost $post) {
     $this->beforechange($post);
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $linkgen->editurl($post, $post->schemalink);
     $post->title = tcontentfilter::escape($post->title);
     if ($post->posted <= time()) {
@@ -1192,7 +1192,7 @@ class tposts extends titems {
   
   public function delete($id) {
     if (!$this->itemexists($id)) return false;
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if ($this->dbversion) {
       $idurl = $this->db->getvalue($id, 'idurl');
       $this->db->setvalue($id, 'status', 'deleted');
@@ -1201,7 +1201,7 @@ class tposts extends titems {
         $db->delete("id = $id");
       }
     } else {
-      if ($post = tpost::instance($id)) {
+      if ($post = tpost::i($id)) {
         $idurl = $post->idurl;
         $post->free();
       }
@@ -1232,7 +1232,7 @@ class tposts extends titems {
     }
     $this->PublishFuture();
     $this->UpdateArchives();
-    $cron = tcron::instance();
+    $cron = tcron::i();
     $cron->add('single', get_class($this), 'dosinglecron', $post->id);
   }
   
@@ -1253,7 +1253,7 @@ class tposts extends titems {
   
   public function dosinglecron($id) {
     $this->PublishFuture();
-    ttheme::$vars['post'] = tpost::instance($id);
+    ttheme::$vars['post'] = tpost::i($id);
     $this->singlecron($id);
   }
   
@@ -1262,7 +1262,7 @@ class tposts extends titems {
   }
   
   private function publish($id) {
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     $post->status = 'published';
     $this->edit($post);
   }
@@ -1377,7 +1377,7 @@ class tposts extends titems {
 
 class tpostswidget extends twidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1394,9 +1394,9 @@ class tpostswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $list = $posts->getpage(0, 1, $this->maxcount, false);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getpostswidgetcontent($list, $sidebar, '');
   }
   
@@ -1418,14 +1418,14 @@ class tposttransform  {
   'commentscount', 'pingbackscount', 'pagescount',
   );
   
-  public static function instance(tpost $post) {
+  public static function i(tpost $post) {
     $self = getinstance(__class__);
     $self->post = $post;
     return $self;
   }
   
   public static function add(tpost $post) {
-    $self = self::instance($post);
+    $self = self::i($post);
     $values = array();
     foreach (self::$props as $name) {
       $values[$name] = $self->__get($name);
@@ -1516,7 +1516,7 @@ class tposttransform  {
 //post.meta.class.php
 class tmetapost extends titem {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, (int) $id);
   }
   
@@ -1636,7 +1636,7 @@ class tcommontags extends titems implements  itemplate {
   }
   
   protected function getpost($id) {
-    return tpost::instance($id);
+    return tpost::i($id);
   }
   
   public function loadall() {
@@ -1667,8 +1667,8 @@ class tcommontags extends titems implements  itemplate {
     if (count($sorted) == 0) return '';
     $result = '';
     $iconenabled = ! litepublisher::$options->icondisabled;
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     $args->rel = $this->PermalinkIndex;
     $args->parent = $parent;
     foreach($sorted as $id) {
@@ -1688,7 +1688,7 @@ class tcommontags extends titems implements  itemplate {
   public function geticonlink($id) {
     $item = $this->getitem($id);
     if ($item['icon'] == 0)  return '';
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if ($files->itemexists($item['icon'])) return $files->geticon($item['icon'], $item['title']);
     $this->setvalue($id, 'icon', 0);
     if (!$this->dbversion) $this->save();
@@ -1753,11 +1753,11 @@ class tcommontags extends titems implements  itemplate {
     $parent = (int) $parent;
     if (($parent != 0) && !$this->itemexists($parent)) $parent = 0;
     
-    $urlmap =turlmap::instance();
-    $linkgen = tlinkgenerator::instance();
+    $urlmap =turlmap::i();
+    $linkgen = tlinkgenerator::i();
     $url = $linkgen->createurl($title, $this->PermalinkIndex, true);
     
-    $views = tviews::instance();
+    $views = tviews::i();
     $idview = isset($views->defaults[$this->PermalinkIndex]) ? $views->defaults[$this->PermalinkIndex] : 1;
     
     if ($this->dbversion)  {
@@ -1808,8 +1808,8 @@ class tcommontags extends titems implements  itemplate {
       ));
     }
     
-    $urlmap = turlmap::instance();
-    $linkgen = tlinkgenerator::instance();
+    $urlmap = turlmap::i();
+    $linkgen = tlinkgenerator::i();
     $url = trim($url);
     // try rebuild url
     if ($url == '') {
@@ -1833,7 +1833,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function delete($id) {
     $item = $this->getitem($id);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->deleteitem($item['idurl']);
     
     $this->lock();
@@ -1966,7 +1966,7 @@ class tcommontags extends titems implements  itemplate {
   
   public function getcont() {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     if ($this->id == 0) {
       $items = $this->getsortedcontent(array(
       'item' =>'<li><a href="$link" title="$title">$icon$title</a>$subcount</li>',
@@ -2093,7 +2093,7 @@ class ttagcontent extends tdata {
   
   public function edit($id, $content, $description, $keywords) {
     $item = $this->getitem($id);
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item =array(
     'content' => $filter->filter($content),
     'rawcontent' => $content,
@@ -2128,7 +2128,7 @@ class ttagcontent extends tdata {
   
   public function setcontent($id, $content) {
     $item = $this->getitem($id);
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $item['rawcontent'] = $content;
     $item['content'] = $filter->filter($content);
     $item['description'] = tcontentfilter::getexcerpt($content, 80);
@@ -2161,7 +2161,7 @@ class tcommontagswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $items = $this->owner->getsortedcontent(array(
     'item' => $theme->getwidgetitem($this->template, $sidebar),
     'subcount' =>$theme->getwidgettml($sidebar, $this->template, 'subcount'),
@@ -2177,7 +2177,7 @@ class tcommontagswidget extends twidget {
 class tcategories extends tcommontags {
   //public  $defaultid;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -2200,7 +2200,7 @@ class tcategories extends tcommontags {
   public function save() {
     parent::save();
     if (!$this->locked)  {
-      tcategorieswidget::instance()->expire();
+      tcategorieswidget::i()->expire();
     }
   }
   
@@ -2208,7 +2208,7 @@ class tcategories extends tcommontags {
 
 class tcategorieswidget extends tcommontagswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -2223,14 +2223,14 @@ class tcategorieswidget extends tcommontagswidget {
   }
   
   public function getowner() {
-    return tcategories::instance();
+    return tcategories::i();
   }
   
 }//class
 
 class ttags extends tcommontags {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -2247,7 +2247,7 @@ class ttags extends tcommontags {
   public function save() {
     parent::save();
     if (!$this->locked)  {
-      ttagswidget::instance()->expire();
+      ttagswidget::i()->expire();
     }
   }
   
@@ -2255,7 +2255,7 @@ class ttags extends tcommontags {
 
 class ttagswidget extends tcommontagswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -2272,7 +2272,7 @@ class ttagswidget extends tcommontagswidget {
   }
   
   public function getowner() {
-    return ttags::instance();
+    return ttags::i();
   }
   
 }//class
@@ -2281,7 +2281,7 @@ class ttagswidget extends tcommontagswidget {
 class tfiles extends titems {
   public $itemsposts;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -2291,7 +2291,7 @@ class tfiles extends titems {
     $this->basename = 'files';
     $this->table = 'files';
     $this->addevents('changed', 'edited', 'ongetfilelist');
-    $this->itemsposts = tfileitems ::instance();
+    $this->itemsposts = tfileitems ::i();
   }
   
   public function preload(array $items) {
@@ -2403,7 +2403,7 @@ class tfiles extends titems {
   
   public function getfilelist(array $list, $excerpt) {
     if ($result = $this->ongetfilelist($list, $excerpt)) return $result;
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $this->getlist($list, $excerpt ?
     $theme->gettag('content.excerpts.excerpt.filelist') :
     $theme->gettag('content.post.filelist'));
@@ -2437,8 +2437,8 @@ class tfiles extends titems {
         $items['file'][] = $id;
       }
     }
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     $url = litepublisher::$site->files . '/files/';
     $preview = new tarray2prop();
     ttheme::$vars['preview'] = $preview;
@@ -2478,7 +2478,7 @@ class tfiles extends titems {
   }
   
   public function postedited($idpost) {
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     $this->itemsposts->setitems($idpost, $post->files);
   }
   
@@ -2486,7 +2486,7 @@ class tfiles extends titems {
 
 class tfileitems extends titemsposts {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

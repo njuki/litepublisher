@@ -8,14 +8,14 @@
 
 class textracontact extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
     $contact = tcontactform::singleinstance('tcontactform');
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $items = '';
     foreach ($contact->data['extra'] as $name => $title) {
       $items .= "$name =$title\n";
@@ -24,7 +24,7 @@ class textracontact extends tplugin {
     
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.items'] = $about['items'];
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform('[editor=items]', $args);
   }
   

@@ -27,13 +27,13 @@ function tembeddedplayersInstall($self) {
   </li>';
   
   $self->save();
-  $parser = tthemeparser::instance();
+  $parser = tthemeparser::i();
   $parser->parsed = $self->themeparsed;
   ttheme::clearcache();
 }
 
 function tembeddedplayersUninstall($self) {
-  $parser = tthemeparser::instance();
+  $parser = tthemeparser::i();
   $parser->unsubscribeclass($self);
   ttheme::clearcache();
 }

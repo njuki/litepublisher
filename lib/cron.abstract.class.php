@@ -75,7 +75,7 @@ class tabstractcron extends tevents {
   public static function pingonshutdown() {
     if (self::$pinged) return;
     self::$pinged = true;
-    register_shutdown_function(array(tcron::instance(), 'ping'));
+    register_shutdown_function(array(tcron::i(), 'ping'));
   }
   
   public function ping() {

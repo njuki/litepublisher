@@ -8,7 +8,7 @@
 
 class tdownloadcounter extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -22,7 +22,7 @@ class tdownloadcounter extends titems {
   public function reqest($args) {
     if (!isset($_GET['id']))  return 404;
     $id = (int) $_GET['fileid'];
-    $files = tfiles::instance();
+    $files = tfiles::i();
     if (!$files->itemexists($id)) return 404;
     if (dbversion) {
       if ($count = $this->db->getvalue($id, 'downloaded')) {

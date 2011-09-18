@@ -10,7 +10,7 @@ class tview extends titem {
   public $sidebars;
   private $themeinstance;
   
-  public static function instance($id = 1) {
+  public static function i($id = 1) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -21,12 +21,12 @@ class tview extends titem {
   public static function getview($instance) {
     $id = $instance->getidview();
     if (isset(self::$instances['view'][$id]))     return self::$instances['view'][$id];
-    $views = tviews::instance();
+    $views = tviews::i();
     if (!$views->itemexists($id)) {
       $id = 1; //default, wich always exists
       $instance->setidview($id);
     }
-    return self::instance($id);
+    return self::i($id);
   }
   
   protected function create() {
@@ -52,7 +52,7 @@ class tview extends titem {
   }
   
   public function load() {
-    $views = tviews::instance();
+    $views = tviews::i();
     if ($views->itemexists($this->id)) {
       $this->data = &$views->items[$this->id];
       $this->sidebars = &$this->data['sidebars'];
@@ -62,7 +62,7 @@ class tview extends titem {
   }
   
   public function save() {
-    return tviews::instance()->save();
+    return tviews::i()->save();
   }
   
   public function setthemename($name) {
@@ -72,7 +72,7 @@ class tview extends titem {
       $this->themeinstance = ttheme::getinstance($name);
       $this->data['custom'] = $this->themeinstance->templates['custom'];
       $this->save();
-      tviews::instance()->themechanged($this);
+      tviews::i()->themechanged($this);
     }
   }
   
@@ -96,7 +96,7 @@ class tview extends titem {
     if ($value != $this->customsidebar) {
       if ($this->id == 1) return false;
       if ($value) {
-        $default = tview::instance(1);
+        $default = tview::i(1);
         $this->sidebars = $default->sidebars;
       } else {
         $this->sidebars = array();
@@ -111,7 +111,7 @@ class tview extends titem {
 class tviews extends titems_storage {
   public $defaults;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

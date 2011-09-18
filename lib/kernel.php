@@ -14,7 +14,7 @@ class tdatabase {
   public $history;
   public $handle;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -105,7 +105,7 @@ class tdatabase {
       } catch (Exception $e) {
         $log .=str_replace(litepublisher::$paths->home, '', $e->getTraceAsString());
       }
-      $man = tdbmanager::instance();
+      $man = tdbmanager::i();
       $log .= $man->performance();
       $log = str_replace("\n", "<br />\n", htmlspecialchars($log));
       die($log);
@@ -1265,7 +1265,7 @@ class tclasses extends titems {
   public $remap;
   public $instances;
   
-  public static function instance() {
+  public static function i() {
     if (!isset(litepublisher::$classes)) {
       $class = __class__;
       litepublisher::$classes = new $class();
@@ -1404,7 +1404,7 @@ class toptions extends tevents_storage {
   public $gmt;
   public $errorlog;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1456,10 +1456,10 @@ class toptions extends tevents_storage {
   private function dochanged($name, $value) {
     if ($name == 'perpage') {
       $this->perpagechanged();
-      $urlmap = turlmap::instance();
+      $urlmap = turlmap::i();
       $urlmap->clearcache();
     } elseif ($name == 'cache') {
-      $urlmap = turlmap::instance();
+      $urlmap = turlmap::i();
       $urlmap->clearcache();
     } else {
       $this->changed($name, $value);
@@ -1483,7 +1483,7 @@ class toptions extends tevents_storage {
     } elseif (!$this->usersenabled)  {
       return false;
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
@@ -1505,7 +1505,7 @@ class toptions extends tevents_storage {
     } elseif(!$this->usersenabled) {
       return false;
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       if (!($this->user = $users->auth($login, $password))) return false;
     }
     $this->updategroup();
@@ -1516,7 +1516,7 @@ class toptions extends tevents_storage {
     if ($this->user == 1) {
       $this->group = 'admin';
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       $this->group = $users->getgroupname($this->user);
     }
   }
@@ -1527,7 +1527,7 @@ class toptions extends tevents_storage {
   
   public function getpassword() {
     if ($this->user <= 1) return $this->data['password'];
-    $users = tusers::instance();
+    $users = tusers::i();
     return $users->getvalue($this->user, 'password');
   }
   
@@ -1585,7 +1585,7 @@ class toptions extends tevents_storage {
     $log = $message . "\n" . $trace;
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     tfiler::log($log, 'exceptions.log');
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || $urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }
@@ -1610,7 +1610,7 @@ class toptions extends tevents_storage {
 //site.class.php
 class tsite extends tevents_storage {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1676,7 +1676,7 @@ class turlmap extends titems {
   public $mobile;
   public $onclose;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -1848,7 +1848,7 @@ class turlmap extends titems {
         case 403: return $this->forbidden();
       }
     } else {
-      $template = ttemplate::instance();
+      $template = ttemplate::i();
       $s = $template->request($this->context);
     }
     eval('?>'. $s);
@@ -1860,7 +1860,7 @@ class turlmap extends titems {
   }
   
   public function notfound404() {
-    $redir = tredirector::instance();
+    $redir = tredirector::i();
     if ($url  = $redir->get($this->url)) {
       return $this->redir301($url);
     }
@@ -1879,7 +1879,7 @@ class turlmap extends titems {
     }
     
     $obj = getinstance($classname);
-    $Template = ttemplate::instance();
+    $Template = ttemplate::i();
     $s = $Template->request($obj);
     eval('?>'. $s);
     
@@ -2056,12 +2056,12 @@ class turlmap extends titems {
   
   public function addredir($from, $to) {
     if ($from == $to) return;
-    $Redir = tredirector::instance();
+    $Redir = tredirector::i();
     $Redir->add($from, $to);
   }
   
   public static function unsub($obj) {
-    $self = self::instance();
+    $self = self::i();
     $self->lock();
     $self->unsubscribeclassname(get_class($obj));
     $self->deleteclass(get_class($obj));

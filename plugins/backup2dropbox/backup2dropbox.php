@@ -8,7 +8,7 @@
 
 class tbackup2dropbox extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -34,7 +34,7 @@ class tbackup2dropbox extends tplugin {
       $this->save();
     }
     
-    $backuper = tbackuper::instance();
+    $backuper = tbackuper::i();
     $filename  = $this->useshell ? $backuper->createshellbackup() : $backuper->createbackup();
     
     require_once(dirname(__file__) . DIRECTORY_SEPARATOR . 'DropboxUploader.php');

@@ -9,7 +9,7 @@
 class tyoutubefeed extends tplugin {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   protected function create() {
@@ -63,12 +63,12 @@ class tyoutubefeed extends tplugin {
   }
   
   public function addtofiles(array $item) {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $files->lock();
     if ($image = http::get($item['preview'])) {
       $ext = substr($item['preview'], strrpos($item['preview'], '.'));
       $filename = sprintf('thumbnail.%s%s', $item['filename'], $ext);
-      $mediaparser = tmediaparser::instance();
+      $mediaparser = tmediaparser::i();
       $item['preview'] = $mediaparser->uploadthumbnail($filename, $image);
     } else {
       $item['preview'] = 0;

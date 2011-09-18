@@ -8,7 +8,7 @@
 
 class tfilepropsplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -17,12 +17,12 @@ class tfilepropsplugin extends tplugin {
     if (!litepublisher::$options->cookieenabled) return 403;
     if (!litepublisher::$options->authcookie()) return 403;
     if (litepublisher::$options->group != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if (!$groups->hasright(litepublisher::$options->group, 'author')) return 403;
     }
     
     if (!isset($_GET['action'])) return 403;
-    $files = tfiles::instance();
+    $files = tfiles::i();
     
     switch ($_GET['action']) {
       case 'get':

@@ -8,7 +8,7 @@
 
 class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -95,8 +95,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   //forward implementation
   public function wp_newPage($blogid, $username, $password, $struct, $publish) {
     $this->auth($username, $password, 'editor');
-    $menus = tmenus::instance();
-    $menu = tmenu::instance(0);
+    $menus = tmenus::i();
+    $menu = tmenu::i(0);
     $menu->status = $publish ? 'published' : 'draft';
     $this->WPAssignPage($struct, $menu);
     return "menu_" . $menus->add($menu);
@@ -111,7 +111,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     if(!empty($struct["wp_slug"])) {
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $menu->url = $linkgen->AddSlashes($struct['wp_slug']);
     }
     
@@ -152,7 +152,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     if(!empty($struct["wp_slug"])) {
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $post->url = $linkgen->AddSlashes($struct["wp_slug"] . '/');
     } elseif (!empty($struct['link'])) {
       $post->link = $struct['link'];
@@ -198,9 +198,9 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     $this->auth($username, $password, 'editor');
     if (strbegin($id, 'menu_')) $id = substr($id, strlen('menu_'));
     $id = (int) $id;
-    $menus = tmenus::instance();
+    $menus = tmenus::i();
     if (!$menus->itemexists($id))  return $this->xerror(404, "Sorry, no such page.");
-    $menu = tmenu::instance($id);
+    $menu = tmenu::i($id);
     $menu->status = $publish ? 'published' : 'draft';
     $this->WPAssignPage($struct, $menu);
     $menus->edit($menu);
@@ -213,7 +213,7 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   public function getCategories($blogid, $username, $password) {
     $this->auth($username, $password, 'author');
     
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     $categories->loadall();
     $result = array();
     foreach ( $categories->items as $id => $item) {
@@ -238,8 +238,8 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     }
     
     $this->auth($username, $password, 'author');
-    $posts = tposts::instance();
-    $post = tpost::instance(0);
+    $posts = tposts::i();
+    $post = tpost::i(0);
     
     switch ($publish) {
       case 1:
@@ -265,10 +265,10 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     $postid = (int)$postid;
     $this->canedit($username, $password, $postid);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (!$posts->itemexists($postid))  return $this->xerror(404, "Invalid post id.");
     
-    $post = tpost::instance($postid);
+    $post = tpost::i($postid);
     switch ($publish) {
       case 1:
       case 'true':
@@ -290,15 +290,15 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   public function getPost($id, $username, $password) {
     $id=(int) $id;
     $this->canedit($username, $password, $id);
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (!$posts->itemexists($id))  return $this->xerror(404, "Invalid post id.");
     
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     return $this->GetStruct($post);;
   }
   
   private function GetStruct(tpost $post) {
-    $categories = tcategories::instance();
+    $categories = tcategories::i();
     return array(
     'dateCreated' => new IXR_Date($post->posted),
     'userid' => (string) $post->author,
@@ -326,11 +326,11 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
   public function getRecentPosts($blogid, $username, $password, $numberOfPosts) {
     $this->auth($username, $password, 'author');
     $count = (int) $numberOfPosts;
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $list = $posts->getrecent(litepublisher::$options->user, $count);
     $result = array();
     foreach ($list as $id) {
-      $post = tpost::instance($id);
+      $post = tpost::i($id);
       $result[] = $this->GetStruct($post);
     }
     
@@ -348,11 +348,11 @@ class TXMLRPCMetaWeblog extends TXMLRPCAbstract {
     
     if (empty($filename)) return $this->xerror(500, "Empty filename");
     
-    $parser = tmediaparser::instance();
+    $parser = tmediaparser::i();
     $id = $parser->upload($filename, $struct['bits'], '', '', '', $overwrite );
     
     if (!$id)  return $this->xerror(500, "Could not write file $name");
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $item = $files->getitem($id);
     
     return array(

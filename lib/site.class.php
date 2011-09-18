@@ -8,7 +8,7 @@
 
 class tsite extends tevents_storage {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

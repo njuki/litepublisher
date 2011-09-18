@@ -7,7 +7,7 @@
 **/
 
 function tmenuwidgetInstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->addclass($self, 'tmenu');
 }
 

@@ -8,18 +8,18 @@
 
 function tusersInstall($self) {
   if ($self->dbversion) {
-    $manager = tdbmanager::instance();
+    $manager = tdbmanager::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'users.sql'));
     $manager->setautoincrement($self->table, 2);
   }
   
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->addnightly(get_class($self), 'optimize', null);
 }
 
 function tusersUninstall($self) {
-  $cron = tcron::instance();
+  $cron = tcron::i();
   $cron->deleteclass(get_class($self));
 }
 

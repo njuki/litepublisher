@@ -8,7 +8,7 @@
 
 class tshortcode extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -44,7 +44,7 @@ class tshortcode extends titems {
   }
   
   public function install() {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->lock();
     $filter->beforefilter = $this->filter;
     $filter->oncomment = $this->filter;
@@ -52,7 +52,7 @@ class tshortcode extends titems {
   }
   
   public function uninstall() {
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->unsubscribeclass($this);
   }
   

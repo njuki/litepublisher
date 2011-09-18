@@ -13,7 +13,7 @@ class toptions extends tevents_storage {
   public $gmt;
   public $errorlog;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -65,10 +65,10 @@ class toptions extends tevents_storage {
   private function dochanged($name, $value) {
     if ($name == 'perpage') {
       $this->perpagechanged();
-      $urlmap = turlmap::instance();
+      $urlmap = turlmap::i();
       $urlmap->clearcache();
     } elseif ($name == 'cache') {
-      $urlmap = turlmap::instance();
+      $urlmap = turlmap::i();
       $urlmap->clearcache();
     } else {
       $this->changed($name, $value);
@@ -92,7 +92,7 @@ class toptions extends tevents_storage {
     } elseif (!$this->usersenabled)  {
       return false;
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       if ($iduser = $users->findcookie($cookie)){
         $item = $users->getitem($iduser);
         if (strtotime($item['expired']) <= time()) return false;
@@ -114,7 +114,7 @@ class toptions extends tevents_storage {
     } elseif(!$this->usersenabled) {
       return false;
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       if (!($this->user = $users->auth($login, $password))) return false;
     }
     $this->updategroup();
@@ -125,7 +125,7 @@ class toptions extends tevents_storage {
     if ($this->user == 1) {
       $this->group = 'admin';
     } else {
-      $users = tusers::instance();
+      $users = tusers::i();
       $this->group = $users->getgroupname($this->user);
     }
   }
@@ -136,7 +136,7 @@ class toptions extends tevents_storage {
   
   public function getpassword() {
     if ($this->user <= 1) return $this->data['password'];
-    $users = tusers::instance();
+    $users = tusers::i();
     return $users->getvalue($this->user, 'password');
   }
   
@@ -194,7 +194,7 @@ class toptions extends tevents_storage {
     $log = $message . "\n" . $trace;
     $this->errorlog .= str_replace("\n", "<br />\n", htmlspecialchars($log));
     tfiler::log($log, 'exceptions.log');
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if (!(litepublisher::$debug || $this->echoexception || $this->admincookie || $urlmap->adminpanel)) {
       tfiler::log($log, 'exceptionsmail.log');
     }

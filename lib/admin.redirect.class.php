@@ -7,15 +7,15 @@
 **/
 
 class tadminredirector extends tadminmenu {
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function getcontent() {
-    $redir = tredirector::instance();
+    $redir = tredirector::i();
     $html = $this->html;
     $lang = $this->lang;
-    $args = targs::instance();
+    $args = targs::i();
     $from = tadminhtml::getparam('from', '');
     if (isset($redir->items[$from])) {
       $args->from = $from;
@@ -57,7 +57,7 @@ class tadminredirector extends tadminmenu {
   }
   
   public function processform() {
-    $redir = tredirector::instance();
+    $redir = tredirector::i();
     switch ($_POST['action']) {
       case 'edit':
       $redir->items[$_POST['from']] = $_POST['to'];

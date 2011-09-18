@@ -9,7 +9,7 @@
 class tadminhistory extends torderwidget {
   public $items;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -44,9 +44,9 @@ class tadminhistory extends torderwidget {
   
   public function getcontent($id, $sidebar) {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('widget', $sidebar);
-    $args = targs::instance();
+    $args = targs::i();
     $args->icon = '';
     $args->subcount = '';
     $args->subitems = '';

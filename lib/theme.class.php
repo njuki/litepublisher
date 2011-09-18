@@ -19,7 +19,7 @@ class ttheme extends tevents {
     file_exists(litepublisher::$paths->themes . $name . DIRECTORY_SEPARATOR  . 'about.ini');
   }
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -78,7 +78,7 @@ class ttheme extends tevents {
       $this->error(sprintf('The %s theme not exists', $this->name));
     }
     
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     if ($parser->parse($this)) {
       self::$instances[$this->name] = $this;
       $this->save();
@@ -133,7 +133,7 @@ class ttheme extends tevents {
       return litepublisher::$site;
       
       case 'lang':
-      return tlocal::instance();
+      return tlocal::i();
     }
     
     if (isset($GLOBALS[$name])) {
@@ -203,7 +203,7 @@ class ttheme extends tevents {
   
   public function replacelang($s, $lang) {
     $s = preg_replace('/%%([a-zA-Z0-9]*+)_(\w\w*+)%%/', '\$$1.$2', (string) $s);
-    self::$vars['lang'] = isset($lang) ? $lang : tlocal::instance('default');
+    self::$vars['lang'] = isset($lang) ? $lang : tlocal::i('default');
     $s = strtr($s, array(
     '$site.url' => litepublisher::$site->url,
     '$site.files' => litepublisher::$site->files,
@@ -222,7 +222,7 @@ class ttheme extends tevents {
   
   public static function parsevar($name, $var, $s) {
     self::$vars[$name] = $var;
-    $self = self::instance();
+    $self = self::i();
     return $self->parse($s);
   }
   
@@ -243,7 +243,7 @@ class ttheme extends tevents {
   
   public function getpages($url, $page, $count) {
     if (!(($count > 1) && ($page >=1) && ($page <= $count)))  return '';
-    $args = targs::instance();
+    $args = targs::i();
     $args->count = $count;
     $from = 1;
     $to = $count;
@@ -302,15 +302,15 @@ class ttheme extends tevents {
   public function getposts(array $items, $lite) {
     if (count($items) == 0) return '';
     if (dbversion) {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       $posts->loaditems($items);
     }
     
     $result = '';
-    self::$vars['lang'] = tlocal::instance('default');
+    self::$vars['lang'] = tlocal::i('default');
     $tml = $lite ? $this->templates['content.excerpts.lite.excerpt'] : $this->templates['content.excerpts.excerpt'];
     foreach($items as $id) {
-      self::$vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::i($id);
       $result .= $this->parse($tml);
     }
     
@@ -324,7 +324,7 @@ class ttheme extends tevents {
     $result = '';
     if ($tml == '') $tml = $this->getwidgetitem('posts', $sidebar);
     foreach ($items as $id) {
-      self::$vars['post'] = tpost::instance($id);
+      self::$vars['post'] = tpost::i($id);
       $result .= $this->parse($tml);
     }
     unset(self::$vars['post']);
@@ -336,7 +336,7 @@ class ttheme extends tevents {
   }
   
   public function getwidget($title, $content, $template, $sidebar) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->title = $title;
     $args->items = $content;
     return $this->parsearg($this->getwidgettml($sidebar, $template, ''), $args);
@@ -361,7 +361,7 @@ class ttheme extends tevents {
   }
   
   public function getajaxtitle($title, $id, $sidebar, $tml) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->title = $title;
     $args->id = $id;
     $args->sidebar = $sidebar;
@@ -486,7 +486,7 @@ class tthemeprops {
 class targs {
   public $data;
   
-  public static function instance() {
+  public static function i() {
     return litepublisher::$classes->newinstance(__class__);
   }
   

@@ -8,7 +8,7 @@
 
 class TXMLRPCLivejournal extends TXMLRPCAbstract {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -45,7 +45,7 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   
   public function login($struct) {
     $this->_auth($struct);
-    $profile = tprofile::instance();
+    $profile = tprofile::i();
     $result = array(
     'userid' => 1,
     'fullname' => $profile->nick,
@@ -74,11 +74,11 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
   }
   
   private function EditPost($id, $struct) {
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if ($id > 0) {
       if ($posts->itemexists($id)) return $this->xerror(403, 'Post not found');
     }
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     $post->content = $struct['event'];
     //$lineendings = $struct['lineendings']; canbe \n \r \r\n
     $post->title = $struct['subject'];
@@ -144,9 +144,9 @@ class TXMLRPCLivejournal extends TXMLRPCAbstract {
     $this->lj_auth($struct);
     $id = (int) $struct['itemid'];
     if (empty($struct['event'])) {
-      $posts = tposts::instance();
+      $posts = tposts::i();
       if (!$posts->itemexists($id)) return $this->xerror(404, 'Post not found');
-      $post = tpost::instance($id);
+      $post = tpost::i($id);
       $url = $post->url;
       $posts->delete($id);
       return array(

@@ -8,7 +8,7 @@
 
 class thomepage extends tmenu  {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return $id == 0 ? self::singleinstance(__class__) : self::iteminstance(__class__, $id);
   }
   
@@ -28,7 +28,7 @@ class thomepage extends tmenu  {
   
   public function getcont() {
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     if (litepublisher::$urlmap->page == 1) {
       $image = $this->image;
       if ($image != '') {
@@ -41,14 +41,14 @@ class thomepage extends tmenu  {
     
     $items =  $this->getitems();
     $result .= $theme->getposts($items, false);
-    $Posts = tposts::instance();
+    $Posts = tposts::i();
     $result .=$theme->getpages($this->url, litepublisher::$urlmap->page, ceil($Posts->archivescount / litepublisher::$options->perpage));
     return $result;
   }
   
   public function getitems() {
     if($result = $this->onbeforegetitems()) return $result;
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $perpage = litepublisher::$options->perpage;
     $from = (litepublisher::$urlmap->page - 1) * $perpage;
     $include = $this->data['includecats'];
@@ -71,7 +71,7 @@ class thomepage extends tmenu  {
         (select DISTINCT post from $catstable  where $where)",
         "order by $poststable.posted $order limit $from, $perpage");
       } else {
-        $catsposts = tcategories::instance()->itemsposts;
+        $catsposts = tcategories::i()->itemsposts;
         if (count($include) == 0) {
           $result = array_keys($posts->archives);
         } else {

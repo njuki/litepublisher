@@ -20,7 +20,7 @@ public function getkeywords() {}
 public function getdescription() {}
   
   public function getidview() {
-    return tviews::instance()->defaults['admin'];
+    return tviews::i()->defaults['admin'];
   }
   
 public function setidview($id) {}
@@ -46,12 +46,12 @@ public function setidview($id) {}
   public function getcont() {
     $result = $this->formresult;
     $result .= $this->getcontent();
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->simple($result);
   }
   
   public function gethtml() {
-    $result = tadminhtml ::instance();
+    $result = tadminhtml ::i();
     $result->section = $this->section;
     $lang = tlocal::admin($this->section);
     return $result;

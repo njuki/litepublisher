@@ -18,7 +18,7 @@ class tbackuper extends tevents {
   private $stdfolders;
   private $hasdata;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -93,12 +93,12 @@ class tbackuper extends tevents {
       break;
       
       case 'file':
-      $result = tlocalfiler::instance();
+      $result = tlocalfiler::i();
       break;
       
       default:
       $this->filertype = 'file';
-      $result = tlocalfiler::instance();
+      $result = tlocalfiler::i();
       $result->chmod_file = 0666;
       $result->chmod_dir = 0777;
       break;
@@ -206,7 +206,7 @@ class tbackuper extends tevents {
   
   private function readdata($path) {
     $path = rtrim($path, DIRECTORY_SEPARATOR );
-    $filer = tlocalfiler::instance();
+    $filer = tlocalfiler::i();
     if ($list = $filer->getdir($path)) {
       $dir = 'storage/data/' . str_replace(DIRECTORY_SEPARATOR  , '/', substr($path, strlen(litepublisher::$paths->data)));
       $this->adddir($dir, $filer->getchmod($path));
@@ -322,7 +322,7 @@ class tbackuper extends tevents {
       
       if ($theme)  {
         $this->setdir('themes');
-        $views = tviews::instance();
+        $views = tviews::i();
         $names = array();
         foreach ($views->items as $id => $item) {
           if (in_array($item['themename'], $names))continue;
@@ -333,7 +333,7 @@ class tbackuper extends tevents {
       
       if ($plugins) {
         $this->setdir('plugins');
-        $plugins = tplugins::instance();
+        $plugins = tplugins::i();
         foreach ($plugins->items as $name => $item) {
           if (@is_dir(litepublisher::$paths->plugins . $name)) {
             $this->readdir('plugins/' . $name);
@@ -369,12 +369,12 @@ class tbackuper extends tevents {
     }
     
     public function getdump() {
-      $dbmanager = tdbmanager ::instance();
+      $dbmanager = tdbmanager ::i();
       return $dbmanager->export();
     }
     
     public function setdump(&$dump) {
-      $dbmanager = tdbmanager ::instance();
+      $dbmanager = tdbmanager ::i();
       return $dbmanager->import($dump);
     }
     
@@ -606,7 +606,7 @@ class tbackuper extends tevents {
       /*
       $filer = $this->__filer;
       if (!isset($filer) || ! ($filer instanceof tlocalfiler)) {
-        $this->__filer = tlocalfiler::instance();
+        $this->__filer = tlocalfiler::i();
       }
       */
       $result = $this->_savebackup($this->getpartial(false, false, false));

@@ -7,17 +7,17 @@
 **/
 
 function tviewsInstall($self) {
-  $widgets = twidgets::instance();
+  $widgets = twidgets::i();
   $widgets->deleted = $self->widgetdeleted;
   
   $self->lock();
   $lang = tlocal::admin('names');
   $default = $self->add($lang->default);
-  $def = tview::instance($default);
+  $def = tview::i($default);
   $def->sidebars = array(array(), array(), array());
   
   $idadmin = $self->add($lang->adminpanel);
-  $admin = tview::instance($idadmin);
+  $admin = tview::i($idadmin);
   $admin->menuclass = 'tadminmenus';
   
   $self->defaults = array(

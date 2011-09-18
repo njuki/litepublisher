@@ -8,7 +8,7 @@
 
 class ttemplatecomments extends tdata {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -17,24 +17,24 @@ public function save() {}
   
   public function getcomments($idpost) {
     $result = '';
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $idpost = (int) $idpost;
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     //    if (($post->commentscount == 0) && !$post->commentsenabled) return '';
     if ($post->haspages && ($post->commentpages < $urlmap->page)) return $post->getcommentslink();
-    $lang = tlocal::instance('comment');
-    $comments = tcomments::instance($idpost);
+    $lang = tlocal::i('comment');
+    $comments = tcomments::i($idpost);
     $list = $comments->getcontent();
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->content->post->templatecomments->comments;
-    $args = targs::instance();
+    $args = targs::i();
     $args->count = $post->cmtcount;
     $result .= $tml->count($args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {
-      $pingbacks = tpingbacks::instance($post->id);
+      $pingbacks = tpingbacks::i($post->id);
       $result .= $pingbacks->getcontent();
     }
     
@@ -42,7 +42,7 @@ public function save() {}
       if (litepublisher::$options->autocmtform) {
         $result .=  "<?php  echo tcommentform::printform($idpost, '$theme->name'); ?>\n";
       } else {
-        $lang = tlocal::instance('comment');
+        $lang = tlocal::i('comment');
         $args->name = '';
         $args->email = '';
         $args->url = '';

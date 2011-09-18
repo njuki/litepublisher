@@ -7,8 +7,8 @@
 **/
 
 function tcontactsiteInstall($self) {
-  $theme = ttheme::instance();
-  $args = targs::instance();
+  $theme = ttheme::i();
+  $args = targs::i();
   $about = tplugins::getabout(tplugins::getname(__file__));
   $args->add($about);
   $self->title =  $about['title'];
@@ -22,12 +22,12 @@ function tcontactsiteInstall($self) {
   
   $self->order = 9;
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->add($self);
 }
 
 function tcontactsiteUninstall($self) {
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
   while ($id = $menus->class2id(get_class($self))) $menus->delete($id);
   $menus->unlock();

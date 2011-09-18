@@ -8,17 +8,17 @@
 
 class tadmintags extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
     
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->ltoptions['lang'] = litepublisher::$options->language ;
   $result .= $template->getready('$("#tabs").tabs({ cache: true });');
-    $ajax = tajaxtageditor::instance();
+    $ajax = tajaxtageditor::i();
     return $ajax->dogethead($result);
   }
   
@@ -34,9 +34,9 @@ class tadmintags extends tadminmenu {
     
     $this->basename = 'tags';
     $html = $this->html;
-    $lang = tlocal::instance('tags');
+    $lang = tlocal::i('tags');
     $id = $this->idget();
-    $args = targs::instance();
+    $args = targs::i();
     $args->id = $id;
     $args->adminurl = $this->adminurl;
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxtageditor.htm', sprintf('id=%d&type=%s&get', $id, $istags  ? 'tags' : 'categories'));
@@ -83,7 +83,7 @@ class tadmintags extends tadminmenu {
     array('center', $lang->delete, "<a href=\"$this->adminurl=\$id&action=delete\">$lang->delete</a>")
     ));
     $result = $html->fixquote($result);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
@@ -117,7 +117,7 @@ class tadmintags extends tadminmenu {
     if (isset($raw) || isset($keywords)) {
       $item = $tags->contents->getitem($id);
       if (isset($raw)) {
-        $filter = tcontentfilter::instance();
+        $filter = tcontentfilter::i();
         $item['rawcontent'] = $raw;
         $item['content'] = $filter->filter($raw);
       }

@@ -7,17 +7,17 @@
 **/
 
 function TRSSPrevNextInstall($self) {
-  $rss = trss::instance();
+  $rss = trss::i();
   $rss->beforepost = $self->beforepost;
   
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->clearcache();
 }
 
 function TRSSPrevNextUninstall($self) {
-  $rss = trss::instance();
+  $rss = trss::i();
   $rss->unsubscribeclass($self);
   
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->clearcache();
 }

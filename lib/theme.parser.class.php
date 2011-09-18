@@ -14,7 +14,7 @@ class tthemeparser extends tevents {
   private $sidebar_index;
   private $pathmap;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -59,7 +59,7 @@ class tthemeparser extends tevents {
       case 'litepublisher3':
       case 'litepublisher':
       $theme->type = 'litepublisher';
-      $ver3 = tthemeparserver3::instance();
+      $ver3 = tthemeparserver3::i();
       $ver3->parse($theme);
       break;
       
@@ -80,7 +80,7 @@ class tthemeparser extends tevents {
   }
   
   public function doreplacelang($theme) {
-    $lang = tlocal::instance('default');
+    $lang = tlocal::i('default');
     foreach ($theme->templates as &$value) {
       if (is_string($value)) $value = $theme->replacelang($value, $lang);
     }
@@ -160,10 +160,10 @@ class tthemeparser extends tevents {
   }
   
   public function changetheme($old, $name) {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     if ($about = $this->getabout($old)) {
       if (!empty($about['about']['pluginclassname'])) {
-        $plugins = tplugins::instance();
+        $plugins = tplugins::i();
         $plugins->delete($old);
       }
     }
@@ -176,7 +176,7 @@ class tthemeparser extends tevents {
     
     $about = $this->getabout($name);
     if (!empty($about['about']['pluginclassname'])) {
-      $plugins = tplugins::instance();
+      $plugins = tplugins::i();
       $plugins->addext($name, $about['about']['pluginclassname'], $about['about']['pluginfilename']);
     }
     
@@ -184,7 +184,7 @@ class tthemeparser extends tevents {
   }
   
   public function reparse() {
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $theme->lock();
     $this->parse($theme);
     ttheme::clearcache();

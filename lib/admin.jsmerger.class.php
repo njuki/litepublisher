@@ -7,7 +7,7 @@
 **/
 
 class tadminjsmerger extends tadminmenu {
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -16,11 +16,11 @@ class tadminjsmerger extends tadminmenu {
   }
   
   public function getcontent() {
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $tabs = new tuitabs();
     $html = $this->html;
-    $lang = tlocal::instance('views');
-    $args = targs::instance();
+    $lang = tlocal::i('views');
+    $args = targs::i();
     $args->formtitle= $lang->jsmergertitle;
     foreach ($jsmerger->items as $section => $items) {
       $tab = new tuitabs();
@@ -39,7 +39,7 @@ class tadminjsmerger extends tadminmenu {
   }
   
   public function processform() {
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $jsmerger->lock();
     //$jsmerger->items = array();
     //$jsmerger->install();

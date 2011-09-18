@@ -8,7 +8,7 @@
 
 class toldestposts extends tclasswidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -27,7 +27,7 @@ class toldestposts extends tclasswidget {
   
   public function getcontent($id, $sidebar) {
     $post = $this->getcontext('tpost');
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if (dbversion) {
       $items = $posts->select("status = 'published' and posted < '$post->sqldate' ",' order by posted desc limit '. $this->maxcount);
     } else {
@@ -39,7 +39,7 @@ class toldestposts extends tclasswidget {
     
     if (count($items) == 0) return '';
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getpostswidgetcontent($items, $sidebar, '');
   }
   

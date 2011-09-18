@@ -8,7 +8,7 @@
 
 class tmobileplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -24,8 +24,8 @@ class tmobileplugin extends tplugin {
     litepublisher::$classes->Add('tmobileurlmap', $filename, $dir);
     litepublisher::$classes->unlock();
     */
-    $menus = tmenus::instance();
-    $menu = tmenu::instance();
+    $menus = tmenus::i();
+    $menu = tmenu::i();
     $menu->parent = 0;
     $menu->order = $menus->count;
     $about = tplugins::getabout(tplugins::getname(__file__));
@@ -33,14 +33,14 @@ class tmobileplugin extends tplugin {
     $menu->url = '/mobile/';
     $menus->add($menu);
     
-    $robot = trobotstxt::instance();
+    $robot = trobotstxt::i();
     $robot->AddDisallow('/mobile/');
     
     litepublisher::$urlmap->clearcache();
   }
   
   public function uninstall() {
-    $menus = tmenus::instance();
+    $menus = tmenus::i();
     $menus->deleteurl('/mobile/');
     
     /*

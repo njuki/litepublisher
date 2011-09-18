@@ -8,21 +8,21 @@
 
 function tdownloadcounterInstall($self) {
   if (dbversion) {
-    $manager = TDBManager ::instance();
+    $manager = TDBManager ::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->CreateTable($self->table, file_get_contents($dir .'downloadcounter.sql'));
   }
   
-  $files = tfiles::instance();
+  $files = tfiles::i();
   $files->deleted = $self->delete;
   
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->add('/downloadcounter/', get_class($self), null, 'get');
 }
 
 function tdownloadcounterUninstall(&$self) {
   turlmap::unsub($self);
-  $files = tfiles::instance();
+  $files = tfiles::i();
   $files->unsubscribeclass($self);
 }
 

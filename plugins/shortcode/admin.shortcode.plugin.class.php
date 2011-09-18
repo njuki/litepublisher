@@ -8,24 +8,24 @@
 
 class tadminshortcodeplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tshortcode::instance();
+    $plugin = tshortcode::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $args->codes = $plugin->codes;
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.codes'] = $about['codes'];
     
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform('[editor=codes]', $args);
   }
   
   public function processform() {
-    $plugin = tshortcode::instance();
+    $plugin = tshortcode::i();
     $plugin->setcodes($_POST['codes']);
   }
   

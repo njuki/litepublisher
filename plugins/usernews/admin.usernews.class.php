@@ -8,14 +8,14 @@
 
 class tadminusernews {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $plugin = tusernews::instance();
+    $plugin = tusernews::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $form = '';
     foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe') as $name) {
       $args->$name = $plugin->data[$name];
@@ -30,12 +30,12 @@ class tadminusernews {
     }
     
     $args->formtitle = $about['formtitle'];
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     return $html->adminform($form, $args);
   }
   
   public function processform() {
-    $plugin = tusernews::instance();
+    $plugin = tusernews::i();
     foreach (array('_changeposts', '_canupload', '_candeletefile', 'autosubscribe') as $name) {
       $plugin->data[$name] = isset($_POST[$name]);
     }

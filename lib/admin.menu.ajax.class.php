@@ -8,7 +8,7 @@
 
 class tajaxmenueditor extends tajaxposteditor  {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -23,15 +23,15 @@ class tajaxmenueditor extends tajaxposteditor  {
   
   public function getcontent() {
     $id = tadminhtml::idparam();
-    $menus = tmenus::instance();
+    $menus = tmenus::i();
     if (($id != 0) && !$menus->itemexists($id)) return self::error403();
-    $menu = tmenu::instance($id);
+    $menu = tmenu::i($id);
     if ((litepublisher::$options->group == 'author') && (litepublisher::$options->user != $menu->author)) return self::error403();
     if (($id > 0) && !$menus->itemexists($id)) return self::error403();
     
-    $views = tviews::instance();
-    $theme = tview::instance($views->defaults['admin'])->theme;
-    $html = tadminhtml ::instance();
+    $views = tviews::i();
+    $theme = tview::i($views->defaults['admin'])->theme;
+    $html = tadminhtml ::i();
     $html->section = 'menu';
     
     switch ($_GET['get']) {
@@ -40,7 +40,7 @@ class tajaxmenueditor extends tajaxposteditor  {
       break;
       
       case 'seo':
-      $args = targs::instance();
+      $args = targs::i();
       $args->url = $menu->url;
       $args->keywords = $menu->keywords;
       $args->description = $menu->description;

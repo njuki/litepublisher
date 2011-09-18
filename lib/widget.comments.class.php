@@ -8,7 +8,7 @@
 
 class tcommentswidget extends twidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -26,14 +26,14 @@ class tcommentswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    $manager = tcommentmanager::instance();
+    $manager = tcommentmanager::i();
     $recent = $manager->getrecent($this->maxcount);
     if (count($recent) == 0) return '';
     $result = '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = $theme->getwidgetitem('comments', $sidebar);
     $url = litepublisher::$site->url;
-    $args = targs::instance();
+    $args = targs::i();
     $args->onrecent = tlocal::get('comment', 'onrecent');
     foreach ($recent as $item) {
       $args->add($item);

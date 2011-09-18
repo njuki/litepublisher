@@ -8,7 +8,7 @@
 
 class ticons extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -18,7 +18,7 @@ class ticons extends titems {
   
   public function geturl($name) {
     if (isset($this->items[$name])) {
-      $files = tfiles::instance();
+      $files = tfiles::i();
       return $files->geturl($this->items[$name]);
     }
     return '';
@@ -26,7 +26,7 @@ class ticons extends titems {
   
   public function geticon($name) {
     if (isset($this->items[$name]) && ($this->items[$name] > 0)) {
-      $files = tfiles::instance();
+      $files = tfiles::i();
       return $files->geticon($this->items[$name]);
     }
     return '';

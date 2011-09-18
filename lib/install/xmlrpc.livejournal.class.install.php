@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCLivejournalInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   
   //Live journal api

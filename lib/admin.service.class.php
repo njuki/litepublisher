@@ -7,18 +7,18 @@
 **/
 
 class tadminservice extends tadminmenu {
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function getcont() {
-    return ttheme::parsevar('menu', $this, ttheme::instance()->templates['content.menu']);
+    return ttheme::parsevar('menu', $this, ttheme::i()->templates['content.menu']);
   }
   
   public function getcontent() {
     $result = '';
     $html = $this->html;
-    $args = targs::instance();
+    $args = targs::i();
     
     switch ($this->name) {
       case 'service':
@@ -26,7 +26,7 @@ class tadminservice extends tadminmenu {
       $args->postscount = litepublisher::$classes->posts->count;
       $args->commentscount = litepublisher::$classes->commentmanager->count;
       $result .= $html->info($args);
-      $updater = tupdater::instance();
+      $updater = tupdater::i();
       $islatest= $updater->islatest();
       if ($islatest === false) {
         $result .= $html->h4->errorservice;
@@ -119,7 +119,7 @@ class tadminservice extends tadminmenu {
   
   private function doupdate($req) {
     $html = $this->html;
-    $updater = tupdater::instance();
+    $updater = tupdater::i();
     if (isset($req['autoupdate'])) {
       if (!$this->checkbackuper()) return $html->h4->erroraccount;
       if ($updater->autoupdate())       return $html->h4->successupdated;
@@ -132,7 +132,7 @@ class tadminservice extends tadminmenu {
   }
   
   public function checkbackuper() {
-    $backuper = tbackuper::instance();
+    $backuper = tbackuper::i();
     if ($backuper->filertype == 'file') return true;
     $host = tadminhtml::getparam('host', '');
     $login = tadminhtml::getparam('login', '');
@@ -143,11 +143,11 @@ class tadminservice extends tadminmenu {
   }
   
   public function getloginform() {
-    $backuper = tbackuper::instance();
+    $backuper = tbackuper::i();
     //$backuper->filertype = 'ftp';
     if ($backuper->filertype == 'file') return '';
     $html = $this->html;
-    $args = targs::instance();
+    $args = targs::i();
     $acc = $backuper->filertype == 'ssh2' ? $html->h3->ssh2account : $html->h3->ftpaccount;
     $args->host = tadminhtml::getparam('host', '');
     $args->login = tadminhtml::getparam('login', '');
@@ -165,7 +165,7 @@ class tadminservice extends tadminmenu {
       case 'engine':
       $inifile = parse_ini_file(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'classes.ini', true);
       $ini = &$inifile['items'];
-      $lang = tlocal::instance('service');
+      $lang = tlocal::i('service');
       litepublisher::$classes->lock();
       foreach ($_POST as $name => $value) {
         if ( isset($ini[$name]) || isset(litepublisher::$classes->items[$name])) {
@@ -175,7 +175,7 @@ class tadminservice extends tadminmenu {
             break;
             
             case $lang->uninstall:
-            $plugins = tplugins::instance();
+            $plugins = tplugins::i();
             $plugins->deleteclass($name);
             litepublisher::$classes->delete($name);
             break;
@@ -192,7 +192,7 @@ class tadminservice extends tadminmenu {
       case 'backup':
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
       extract($_POST, EXTR_SKIP);
-      $backuper = tbackuper::instance();
+      $backuper = tbackuper::i();
       if (isset($upload)) {
         if (!is_uploaded_file($_FILES["filename"]["tmp_name"])) {
           return $html->attack($_FILES["filename"]["name"]);
@@ -268,7 +268,7 @@ class tadminservice extends tadminmenu {
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
       if ($s = http::get($url)) {
         $itemtype = tadminhtml::getparam('itemtype', 'theme');
-        $backuper = tbackuper::instance();
+        $backuper = tbackuper::i();
         if (!($archtype = $backuper->getarchtype($url))) {
           //         local file header signature     4 bytes  (0x04034b50)
           $archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
@@ -302,7 +302,7 @@ class tadminservice extends tadminmenu {
   private function getbackupfilelist() {
     $html = $this->html;
     $result = $html->backupheader();
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     if ($list = glob(litepublisher::$paths->backup . '*.gz;*.zip')) {
       foreach($list as $filename) {

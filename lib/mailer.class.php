@@ -29,7 +29,7 @@ class tmailer {
   
   public static function  sendmail($fromname, $fromemail, $toname, $toemail, $subj, $body) {
     if (litepublisher::$options->mailer == 'smtp') {
-      $mailer = TSMTPMailer ::Instance();
+      $mailer = TSMTPMailer ::i();
       return $mailer->mail($fromname, $fromemail, $toname, $toemail, $subj, $body);
     }
     
@@ -99,7 +99,7 @@ class TSMTPMailer extends tevents {
   //public $password;
   //public $port;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

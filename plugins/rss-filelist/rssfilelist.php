@@ -8,12 +8,12 @@
 
 class trssfilelist extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function beforepost($id, &$content) {
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     if (count($post->files) > 0) {
       $theme = $post->theme;
       $image = $theme->templates['content.post.filelist.image'];

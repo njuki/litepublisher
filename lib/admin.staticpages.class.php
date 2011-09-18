@@ -8,7 +8,7 @@
 
 class tadminstaticpages extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -20,13 +20,13 @@ class tadminstaticpages extends tadminmenu {
   
   public function getcontent() {
     $result = '';
-    $pages = tstaticpages::instance();
+    $pages = tstaticpages::i();
     $this->basename = 'staticpages';
     $html = $this->html;
-    $lang = tlocal::instance('staticpages');
+    $lang = tlocal::i('staticpages');
     $id = $this->idget();
     if (!$pages->itemexists($id)) $id = 0;
-    $args = targs::instance();
+    $args = targs::i();
     $args->id = $id;
     $args->adminurl = $this->adminurl;
     
@@ -65,7 +65,7 @@ class tadminstaticpages extends tadminmenu {
   public function processform() {
     if (empty($_POST['title'])) return '';
     extract($_POST);
-    $pages = tstaticpages::instance();
+    $pages = tstaticpages::i();
     $id = $this->idget();
     if ($id == 0) {
       $_POST['id'] = $pages->add($title, $description, $keywords, $text);

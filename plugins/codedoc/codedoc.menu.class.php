@@ -8,13 +8,13 @@
 
 class tcodedocmenu extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function setcontent($s) {
     $this->rawcontent = $s;
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $this->data['content'] = $filter->filter($s);
   }
   
@@ -33,7 +33,7 @@ class tcodedocmenu extends tmenu {
     } else {
       $result = '';
       $perpage = litepublisher::$options->perpage;
-      $theme = ttheme::instance();
+      $theme = ttheme::i();
       $count = $this->getdb('codedoc')->getcount();
       $from = ($page - 1) * $perpage;
       if ($from <= $count)  {
@@ -67,7 +67,7 @@ class tcodedocmenu extends tmenu {
     if ($count == 0) return '';
     $result = sprintf('<ul>%s</ul>', $result);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .=$theme->getpages($this->url, 1, ceil($count/ litepublisher::$options->perpage) + 1);
     return $result;
   }

@@ -93,7 +93,7 @@ $this->owner->log("task started:\n{$this->class}->{$this->func}");
 
 class tcron extends tabstractcron {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

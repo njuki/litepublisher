@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCPingbackInstall(&$self) {
-  $Caller = TXMLRPC::Instance();
+  $Caller = TXMLRPC::i();
   $Caller->Add('pingback.ping', 'ping', get_class($self));
 }
 

@@ -8,17 +8,17 @@
 
 function tsubscribersInstall($self) {
   if (dbversion) {
-    $dbmanager = TDBManager ::instance();
+    $dbmanager = TDBManager ::i();
     $dbmanager->CreateTable($self->table, file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'items.posts.sql'));
   }
   
   $self->fromemail = 'litepublisher@' . $_SERVER['HTTP_HOST'];
   $self->save();
   
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->deleted = $self->deletepost;
   
-  $manager = tcommentmanager::instance();
+  $manager = tcommentmanager::i();
   $manager->lock();
   $manager->authordeleted = $self->deleteitem;
   $manager->added = $self->sendmail;

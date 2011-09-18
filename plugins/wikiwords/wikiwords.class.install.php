@@ -8,7 +8,7 @@
 
 function twikiwordsInstall($self) {
   if ($self->dbversion) {
-    $manager = tdbmanager::instance();
+    $manager = tdbmanager::i();
     $manager->createtable($self->table,
     "  `id` int(10) unsigned NOT NULL auto_increment,
     `word` text NOT NULL,
@@ -17,12 +17,12 @@ function twikiwordsInstall($self) {
     $manager->createtable($self->itemsposts->table, file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'items.posts.sql'));
   }
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->lock();
   $filter->beforecontent = $self->beforefilter;
   $filter->unlock();
   
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->lock();
   $posts->added = $self->postadded;
   $posts->deleted = $self->postdeleted;
@@ -36,12 +36,12 @@ function twikiwordsUninstall($self) {
   unset(litepublisher::$classes->classes['wikiword']);
   litepublisher::$classes->save();
   
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->unsubscribeclass($self);
   
   tposts::unsub($self);
   if ($self->dbversion) {
-    $manager = tdbmanager::instance();
+    $manager = tdbmanager::i();
     $manager->deletetable($self->table);
     $manager->deletetable($self->itemsposts->table);
   }

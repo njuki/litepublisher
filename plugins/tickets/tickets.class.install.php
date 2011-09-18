@@ -8,20 +8,20 @@
 
 function tticketsInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
   $dir = dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->phpcode = true;
   $filter->save();
   litepublisher::$options->parsepost = false;
   
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->CreateTable($self->childtable, file_get_contents($dir .'ticket.sql'));
   $manager->addenum('posts', 'class', 'tticket');
   
-  $optimizer = tdboptimizer::instance();
+  $optimizer = tdboptimizer::i();
   $optimizer->lock();
   $optimizer->childtables[] = 'tickets';
   $optimizer->addevent('postsdeleted', 'ttickets', 'postsdeleted');
@@ -29,9 +29,9 @@ function tticketsInstall($self) {
   
   litepublisher::$classes->lock();
   //install polls if its needed
-  $plugins = tplugins::instance();
+  $plugins = tplugins::i();
   if (!isset($plugins->items['polls'])) $plugins->add('polls');
-  $polls = tpolls::instance();
+  $polls = tpolls::i();
   $polls->garbage = false;
   $polls->save();
   
@@ -41,10 +41,10 @@ function tticketsInstall($self) {
   litepublisher::$classes->Add('tadmintickets', 'admin.tickets.class.php', basename(dirname(__file__)));
   
   litepublisher::$options->reguser = true;
-  $adminoptions = tadminoptions::instance();
+  $adminoptions = tadminoptions::i();
   $adminoptions->usersenabled = true;
   
-  $adminmenus = tadminmenus::instance();
+  $adminmenus = tadminmenus::i();
   $adminmenus->lock();
   $parent = $adminmenus->createitem(0, 'tickets', 'ticket', 'tadmintickets');
   $adminmenus->items[$parent]['title'] = tlocal::get('tickets', 'tickets');
@@ -61,11 +61,11 @@ function tticketsInstall($self) {
   $adminmenus->onexclude = $self->onexclude;
   $adminmenus->unlock();
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
   $ini = parse_ini_file($dir . litepublisher::$options->language . '.install.ini', false);
   
-  $menu = tticketsmenu::instance();
+  $menu = tticketsmenu::i();
   $menu->type = 'tickets';
   $menu->url = '/tickets/';
   $menu->title = $ini['tickets'];
@@ -73,7 +73,7 @@ function tticketsInstall($self) {
   $id = $menus->add($menu);
   
   foreach (array('bug', 'feature', 'support', 'task') as $type) {
-    $menu = tticketsmenu::instance();
+    $menu = tticketsmenu::i();
     $menu->type = $type;
     $menu->parent = $id;
     $menu->url = "/$type/";
@@ -85,11 +85,11 @@ function tticketsInstall($self) {
   
   litepublisher::$classes->unlock();
   
-  $linkgen = tlinkgenerator::instance();
+  $linkgen = tlinkgenerator::i();
   $linkgen->data['ticket'] = '/[type]/[title].htm';
   $linkgen->save();
   
-  $groups = tusergroups  ::instance();
+  $groups = tusergroups  ::i();
   $groups->lock();
   $groups->add('ticket', '/admin/tickets/editor/');
   $groups->defaultgroup = 'ticket';
@@ -107,13 +107,13 @@ function tticketsUninstall($self) {
   litepublisher::$classes->delete('tticketeditor');
   litepublisher::$classes->delete('tadmintickets');
   
-  $adminmenus = tadminmenus::instance();
+  $adminmenus = tadminmenus::i();
   $adminmenus->lock();
   $adminmenus->deletetree($adminmenus->url2id('/admin/tickets/'));
   $adminmenus->unsubscribeclass($self);
   $adminmenus->unlock();
   
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   $menus->lock();
   foreach (array('bug', 'feature', 'support', 'task') as $type) {
     $menus->deleteurl("/$type/");
@@ -125,16 +125,16 @@ function tticketsUninstall($self) {
   litepublisher::$classes->unlock();
   
   if (class_exists('tpolls')) {
-    $polls = tpolls::instance();
+    $polls = tpolls::i();
     $polls->garbage = true;
     $polls->save();
   }
   
-  $manager = tdbmanager ::instance();
+  $manager = tdbmanager ::i();
   $manager->deletetable($self->childtable);
   $manager->delete_enum('posts', 'class', 'tticket');
   
-  $optimizer = tdboptimizer::instance();
+  $optimizer = tdboptimizer::i();
   $optimizer->lock();
   $optimizer->unsubscribeclass($self);
   if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
@@ -142,6 +142,6 @@ function tticketsUninstall($self) {
   }
   $optimizer->unlock();
   
-  $merger = tlocalmerger::instance();
+  $merger = tlocalmerger::i();
   $merger->deleteplugin(tplugins::getname(__file__));
 }

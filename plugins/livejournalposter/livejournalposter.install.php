@@ -7,7 +7,7 @@
 **/
 
 function tlivejournalposterInstall($self) {
-  $posts = tposts::instance();
+  $posts = tposts::i();
   $posts->singlecron = $self->sendpost;
 }
 

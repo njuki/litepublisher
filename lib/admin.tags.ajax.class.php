@@ -8,7 +8,7 @@
 
 class tajaxtageditor extends tajaxposteditor  {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -23,17 +23,17 @@ class tajaxtageditor extends tajaxposteditor  {
   
   public function getcontent() {
     $type = tadminhtml::getparam('type', 'tags') == 'tags' ? 'tags' : 'categories';
-    $tags = $type == 'tags' ? ttags::instance() : tcategories::instance();if ($err = self::auth()) return $err;
+    $tags = $type == 'tags' ? ttags::i() : tcategories::i();if ($err = self::auth()) return $err;
     $id = tadminhtml::idparam();
     if (($id > 0) && !$tags->itemexists($id)) return self::error403();
     
-    $theme = tview::instance(tviews::instance()->defaults['admin'])->theme;
-    $html = tadminhtml ::instance();
+    $theme = tview::i(tviews::i()->defaults['admin'])->theme;
+    $html = tadminhtml ::i();
     $html->section = 'tags';
-    $lang = tlocal::instance('tags');
+    $lang = tlocal::i('tags');
     
     if ($id == 0) {
-      $views = tviews::instance();
+      $views = tviews::i();
       $name = $type == 'tags' ? 'tag' : 'category';
       $item = array(
       'title' => '',
@@ -53,7 +53,7 @@ class tajaxtageditor extends tajaxposteditor  {
       break;
       
       case 'seo':
-      $args = targs::instance();
+      $args = targs::i();
       if ($id == 0) {
         $args->url = '';
         $args->keywords = '';

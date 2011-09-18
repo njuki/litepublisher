@@ -38,7 +38,7 @@ class TXMLRPCParser extends IXR_Server  {
 class TXMLRPC extends titems {
   public $Server;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -142,14 +142,14 @@ class TXMLRPC extends titems {
 class TXMLRPCAbstract extends tevents {
   
   public function uninstall() {
-    $caller = TXMLRPC::instance();
+    $caller = TXMLRPC::i();
     $caller->deleteclass(get_class($this));
   }
   
   public static function auth($login, $password, $group) {
     if (litepublisher::$options->auth($login, $password))  {
       if ((litepublisher::$options->group == 'admin') || (litepublisher::$options->group == $group) || ($group == 'nobody')) return true;
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if ($groups->hasright(litepublisher::$options->group, $group)) return true;
     }
     throw new Exception('Bad login/pass combination.', 403);
@@ -159,10 +159,10 @@ class TXMLRPCAbstract extends tevents {
     if (litepublisher::$options->auth($login, $password))  {
       $group = litepublisher::$options->group;
       if (($group == 'admin') || ($group == 'editor')) return true;
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       if ($groups->hasright($group, 'author')) {
         if ($idpost == 0) return true;
-        $post = tpost::instance($idpost);
+        $post = tpost::i($idpost);
         return $post->author == litepublisher::$options->user;
       }
     }

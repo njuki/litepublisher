@@ -8,7 +8,7 @@
 
 class tmanifest extends tevents {
   
-  static function instance() {
+  static function i() {
     return getinstance(__class__);
   }
   

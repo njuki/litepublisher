@@ -11,7 +11,7 @@ class tupdater extends tevents {
   public $result;
   public $log;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -74,8 +74,8 @@ class tupdater extends tevents {
     Header( 'Pragma: no-cache');
     echo "\n";
     flush();
-    $lang = tlocal::instance('service');
-    $backuper = tbackuper::instance();
+    $lang = tlocal::i('service');
+    $backuper = tbackuper::i();
     if ($this->useshell) {
       $backuper->createshellbackup();
     } else {
@@ -92,7 +92,7 @@ class tupdater extends tevents {
   }
   
   public function auto2($ver) {
-    $lang = tlocal::instance('service');
+    $lang = tlocal::i('service');
     $latest = $this->latest;
     if($latest == litepublisher::$options->version) return 'Already updated';
     if (($ver == 0) || ($ver > $latest)) $ver = $latest;
@@ -122,8 +122,8 @@ class tupdater extends tevents {
   
   public function download($version) {
     //if ($this->useshell) return $this->downloadshell($version);
-    $lang = tlocal::instance('service');
-    $backuper = tbackuper::instance();
+    $lang = tlocal::i('service');
+    $backuper = tbackuper::i();
     if (!$backuper->test()) {
       $this->result = $lang->errorwrite;
       return  false;

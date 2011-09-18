@@ -15,7 +15,7 @@ function tabstractcronInstall($self) {
   $self->password =  md5uniq();
   $self->save();
   
-  $urlmap  = turlmap::instance();
+  $urlmap  = turlmap::i();
   $urlmap->add('/croncron.htm', get_class($self), null, 'get');
 }
 

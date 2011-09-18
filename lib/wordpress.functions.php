@@ -2,7 +2,7 @@
 /*
   public function getcontentlist($tml, $class1, $class2) {
     $result = '';
-    $post = tpost::instance($this->pid);
+    $post = tpost::i($this->pid);
     $from = litepublisher::$options->commentpages  ? (litepublisher::$urlmap->page - 1) * litepublisher::$options->commentsperpage : 0;
     $count = litepublisher::$options->commentpages  ? litepublisher::$options->commentsperpage : $post->commentscount;
     
@@ -10,12 +10,12 @@
     $items = $this->select("$table.post = $this->pid and $table.status = 'approved'",
     "order by $table.posted asc limit $from, $count");
     
-    $args = targs::instance();
+    $args = targs::i();
     $args->from = $from;
     $comment = new tcomment(0);
     ttheme::$vars['comment'] = $comment;
-    $lang = tlocal::instance('comment');
-    $theme = ttheme::instance();
+    $lang = tlocal::i('comment');
+    $theme = ttheme::i();
     $i = 1;
     foreach ($items as $id) {
       $comment->id = $id;
@@ -49,7 +49,7 @@ class wordpress {
   
   public static function have_posts() {
     if (self::$post_count == -1) {
-      $context = ttemplate::instance()->context;
+      $context = ttemplate::i()->context;
       $items = array();
       if ($context instanceof tpost) {
         self::$posts = array(0 => $context->id);
@@ -82,7 +82,7 @@ class wordpress {
   
   public static function next_post() {
     self::$current_post++;
-    self::$post = tpost::instance(self::$posts[self::$current_post]);
+    self::$post = tpost::i(self::$posts[self::$current_post]);
     return self::$post;
   }
   
@@ -155,7 +155,7 @@ function the_tags( $before = null, $sep = ', ', $after = '' ) {
 }
 
 function get_the_tag_list( $before = '', $sep = '', $after = '' ) {
-  $tags = ttags::instance();
+  $tags = ttags::i();
   $links = $tags->getlinks(wordpress::$post->tags);
   if (count($links) == 0) return false;
   return $before . join( $sep, $links) . $after;
@@ -166,12 +166,12 @@ function the_category( $separator = '', $parents='', $post_id = false ) {
 }
 
 function get_the_category_list( $separator = '', $parents='', $post_id = false ) {
-  $post = $post_id ? tpost::instance($post_id) : wordpress::$post;
+  $post = $post_id ? tpost::i($post_id) : wordpress::$post;
   if (count($post->categories) == 0) return 'Uncategorized';
   
   $rel = 'rel="category"';
   $thelist = '';
-  $cats = tcategories::instance();
+  $cats = tcategories::i();
   $cats->loaditems($post->categories);
   $links = array();
   foreach ( $post->categories as $id) {
@@ -236,7 +236,7 @@ function next_post_link($format='%link &raquo;', $link='%title', $in_same_cat = 
 }
 
 function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
-  $title = ttemplate::instance()->gettitle();
+  $title = ttemplate::i()->gettitle();
   if ( $display )
   echo $title;
   else
@@ -244,7 +244,7 @@ function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
 }
 
 function wp_head() {
-  echo ttemplate::instance()->gethead();
+  echo ttemplate::i()->gethead();
 }
 
 function bloginfo($show='') {
@@ -381,7 +381,7 @@ function get_stylesheet_uri() {
 }
 
 function get_stylesheet_directory_uri() {
-  return ttemplate::instance()->url . '/style.css';
+  return ttemplate::i()->url . '/style.css';
 }
 
 function get_stylesheet() {
@@ -397,7 +397,7 @@ function get_theme_root( $stylesheet_or_template = false ) {
 }
 
 function get_template_directory_uri() {
-  return ttemplate::instance()->url;
+  return ttemplate::i()->url;
 }
 
 function get_bloginfo_rss($show = '') {
@@ -466,7 +466,7 @@ function wp_list_categories( $args = '' ) {
   
   $output = '';
   if ( $title_li && 'list' == $style ) $output = '<li class="categories">' . $r['title_li'] . '<ul>';
-  $cats = tcategories::instance();
+  $cats = tcategories::i();
   if ($cats->count == 0 ) {
     if ( 'list' == $style )
     $output .= '<li>No categories</li>';
@@ -491,9 +491,9 @@ function wp_list_categories( $args = '' ) {
     $limit = isset($number) ? $number : 0;
     
     $items = $cats->getsorted($sortnames[$r['orderby']], $limit);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $tml = '<li class="cat-item cat-item-$id"><a href="$link" title="View all posts filed under $title">$icon$title</a>$count</li>';
-    $args = targs::instance();
+    $args = targs::i();
     $args->count = '';
     foreach ($items as $id) {
       $item = $cats->getitem($id);
@@ -524,7 +524,7 @@ function wp_get_archives($args = '') {
   $r = wp_parse_args( $args, $defaults );
   extract( $r, EXTR_SKIP );
   $output = '';
-  $arch = tarchives::instance();
+  $arch = tarchives::i();
   
   if ('link' == $format)
   $tml = "\t<link rel='archives' title='\$title' href='\$url' />\n";
@@ -535,8 +535,8 @@ function wp_get_archives($args = '') {
   else // custom
   $tml = "\t$before<a href='\$url' title='\$title'>\$title</a>\$count$after\n";
   
-  $theme = ttheme::instance();
-  $args = targs::instance();
+  $theme = ttheme::i();
+  $args = targs::i();
   foreach ($arch->items as $date => $item) {
     $args->add($item);
     $args->icon = '';
@@ -568,15 +568,15 @@ function wp_list_bookmarks($args = '') {
   $r = wp_parse_args( $args, $defaults );
   extract( $r, EXTR_SKIP );
   $output = '';
-  $links = tlinkswidget::instance();
+  $links = tlinkswidget::i();
   if (count($links->items) > 0) {
     if ( !empty( $title_li ) ){
       $output .= str_replace(array('%id', '%class'), array("linkcat-1", $class), $category_before);
       $output .= "$title_before$title_li$title_after\n\t<ul class='xoxo blogroll'>\n";
     }
     $tml = "$before<a href=\"%1\$s\" title=\"%2\$s\">%3\$s</a>$after\n";
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     foreach ($links->items as $id => $item) {
       $url =  $item['url'];
       if ($links->redir && !strbegin($url, litepublisher::$site->url)) {
@@ -844,7 +844,7 @@ function locate_template($template_names, $load = false) {
   return '';
   
   $located = '';
-  $path = ttemplate::instance()->path;
+  $path = ttemplate::i()->path;
   $path = litepublisher::$paths->home . "themes\\wpdefault\\";
   foreach($template_names as $template_name) {
     if ( file_exists($path . $template_name)) {
@@ -884,7 +884,7 @@ function wp_list_pages($args = '') {
   $output .= '<li class="pagenav">' . $r['title_li'] . '<ul>';
   
   $tml = 		'<li><a href="%1$s" title="%2$s">%2$s</a></li>';
-  $menus = tmenus::instance();
+  $menus = tmenus::i();
   foreach ($menus->tree as $id => $items) {
     $item = $menus->items[$id];
     $output .= sprintf($tml, litepublisher::$site->url . $item['url'], $item['title'], '');
@@ -904,11 +904,11 @@ function wp_loginout() {}
 
 function wp_meta() {
   $result = '';
-  $std = tstdwidgets::instance();
+  $std = tstdwidgets::i();
   extract($std->data['meta']);
   $tml = '<li><a href="%1$s" >%2$s</a></li>';
   $metaclasses = array('rss' => '', 'comments' => '', 'media' => '', 'foaf' => '', 'profile' => '', 'sitemap' => '');
-  $lang = tlocal::instance('default');
+  $lang = tlocal::i('default');
   if ($rss) $result .= sprintf($tml, litepublisher::$site->url . '/rss.xml', $lang->rss, $metaclasses['rss']);
   if ($comments) $result .= sprintf($tml, litepublisher::$site->url . '/comments.xml', $lang->rsscomments, $metaclasses['comments']);
   if ($media) $result .= sprintf($tml, litepublisher::$site->url . '/rss/multimedia.xml', $lang->rssmedia, $metaclasses['media']);
@@ -919,7 +919,7 @@ function wp_meta() {
 }
 
 function wp_footer() {
-  echo ttemplate::instance()->footer;
+  echo ttemplate::i()->footer;
 }
 
 function post_password_required() {
@@ -931,7 +931,7 @@ function have_comments() {
 }
 
 function comments_number( $zero = false, $one = false, $more = false, $deprecated = '' ) {
-  echo ttemplatecomments::instance()->getcount( litepublisher::$urlmap->context->commentscount);
+  echo ttemplatecomments::i()->getcount( litepublisher::$urlmap->context->commentscount);
 }
 
 function previous_comments_link() {}
@@ -975,7 +975,7 @@ function wp_list_comments($args = array(), $comments = null ) {
   $class1 =comment_class('', null, null, false);
   $class2 =comment_class('', null, null, false);
   $in_comment_loop = false;
-  $c = tcomments::instance(wordpress::$post->id);
+  $c = tcomments::i(wordpress::$post->id);
   echo $c->getcontentlist($tml, $class1, $class2);
 }
 
@@ -1060,7 +1060,7 @@ function comment_text() {
 }
 
 function comments_popup_link( $zero = false, $one = false, $more = false, $css_class = '', $none = false ) {
-  $number = ttemplatecomments::instance()->getcount(wordpress::$post->commentscount);
+  $number = ttemplatecomments::i()->getcount(wordpress::$post->commentscount);
   
   if ( 0 == $number && !wordpress::$post->commentsenabled ) {
     echo '<span' . ((!empty($css_class)) ? ' class="' . esc_attr( $css_class ) . '"' : '') . '>' . $none . '</span>';
@@ -1080,7 +1080,7 @@ function wp_link_pages($args = '') {}
 
 function post_comments_feed_link( $link_text = '', $post_id = '', $feed = '' ) {
   if ( empty($link_text) ) {
-    $lang = tlocal::instance();
+    $lang = tlocal::i();
     $link_text = $lang->subscribetorsscomments;
   }
   
@@ -1101,7 +1101,7 @@ function trackback_url($deprecated = true) {
 }
 
 function comment_form_title( $noreplytext = false, $replytext = false, $linktoparent = TRUE ) {
-  $lang = tlocal::instance('comment');
+  $lang = tlocal::i('comment');
   if ( false === $noreplytext ) $noreplytext = $lang->leavereply;
   echo $noreplytext;
 }

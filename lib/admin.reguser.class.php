@@ -9,7 +9,7 @@
 class tadminreguser extends tadminform {
   private $registered;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -32,7 +32,7 @@ class tadminreguser extends tadminform {
     if (litepublisher::$options->cookieenabled) {
       return litepublisher::$options->authcookie();
     } else {
-      $auth = tauthdigest::instance();
+      $auth = tauthdigest::i();
       return $auth->auth();
     }
   }
@@ -42,13 +42,13 @@ class tadminreguser extends tadminform {
     if ($this->registered) return $html->waitconfirm();
     if ($this->logged) return $html->logged();
     
-    $args = targs::instance();
+    $args = targs::i();
     $form = '';
     foreach (array('login', 'name', 'email', 'website') as $name) {
       $args->$name = isset($_POST[$name]) ? $_POST[$name] : '';
       $form .= "[text=$name]";
     }
-    $lang = tlocal::instance('users');
+    $lang = tlocal::i('users');
     $args->formtitle = $lang->regform;
     $args->data['$lang.email'] = 'email';
     return $html->adminform($form, $args);
@@ -57,22 +57,22 @@ class tadminreguser extends tadminform {
   public function processform() {
     extract($_POST, EXTR_SKIP);
     if (!tcontentfilter::ValidateEmail($email)) return '<p><strong>' .  tlocal::get('comment', 'invalidemail') . "</strong></p>\n";
-    $users = tusers::instance();
+    $users = tusers::i();
     if ($users->loginexists($login) || $users->emailexists($email)) return $this->html->h2->invalidregdata;
     $password = md5uniq();
-    $groups = tusergroups::instance();
+    $groups = tusergroups::i();
     
     $id = $users->add($groups->defaultgroup, $login,$password, $name, $email, $website);
     if (!$id) return $this->html->h2->invalidregdata;
     
-    $args = targs::instance();
+    $args = targs::i();
     $args->add($users->getitem($id));
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     $args->add($pages->getitem($id));
     $args->id = $id;
     $args->password = $password;
     $args->adminurl = litepublisher::$site->url . '/admin/users/' . litepublisher::$site->q . 'id';
-    $mailtemplate = tmailtemplate::instance($this->section);
+    $mailtemplate = tmailtemplate::i($this->section);
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     $adminbody = $mailtemplate->adminbody($args);

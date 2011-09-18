@@ -8,7 +8,7 @@
 
 class tadmintickets extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -24,7 +24,7 @@ class tadmintickets extends tadminmenu {
   
   public function getcontent() {
     $result = $this->logoutlink;
-    $tickets = ttickets::instance();
+    $tickets = ttickets::i();
     $perpage = 20;
     $where = litepublisher::$options->group == 'ticket' ? ' and author = ' . litepublisher::$options->user : '';
     
@@ -50,12 +50,12 @@ class tadmintickets extends tadminmenu {
     $html = $this->html;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     $args->editurl = tadminhtml::getadminlink('/admin/tickets/editor/', 'id');
     $lang = tlocal::admin('tickets');
     foreach ($items  as $id ) {
-      $ticket = tticket::instance($id);
+      $ticket = tticket::i($id);
       ttheme::$vars['ticket'] = $ticket;
     $args->status = $lang->{$ticket->status};
     $args->type = $lang->{$ticket->type};
@@ -70,14 +70,14 @@ class tadmintickets extends tadminmenu {
     }
     $result = $html->fixquote($result);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
   public function processform() {
     if (litepublisher::$options->group == 'ticket') return '';
-    $tickets = ttickets::instance();
+    $tickets = ttickets::i();
     $status = isset($_POST['publish']) ? 'published' :
     (isset($_POST['setdraft']) ? 'draft' :
     (isset($_POST['setfixed']) ? 'fixed' :'delete'));
@@ -87,7 +87,7 @@ class tadmintickets extends tadminmenu {
       if ($status == 'delete') {
         $tickets->delete($id);
       } else {
-        $ticket = tticket::instance($id);
+        $ticket = tticket::i($id);
         if ($status == 'fixed') {
           $ticket->state = $status;
         } else {

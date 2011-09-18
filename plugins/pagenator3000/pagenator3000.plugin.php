@@ -8,7 +8,7 @@
 
 class tpagenator3000 extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -57,13 +57,13 @@ class tpagenator3000 extends tplugin {
   }
   
   public function install() {
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->parsed = $this->themeparsed;
     ttheme::clearcache();
   }
   
   public function uninstall() {
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     $parser->unsubscribeclass($this);
     ttheme::clearcache();
   }

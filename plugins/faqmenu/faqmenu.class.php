@@ -8,7 +8,7 @@
 
 class tfaqmenu extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return self::iteminstance(__class__, $id);
   }
   
@@ -39,7 +39,7 @@ class tfaqmenu extends tmenu {
     $lines = explode("\n", $content);
     $q = array();
     $a = array();
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     foreach ($lines as $s) {
       $s = trim($s);
       if (strbegin($s, 'q:') || strbegin($s, 'Q:')) {

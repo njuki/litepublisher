@@ -9,7 +9,7 @@ if (!class_exists('tkeptcomments', false)) {
   if (dbversion) {
     class tkeptcomments extends tdata {
       
-      public static function instance() {
+      public static function i() {
         return getinstance(__class__);
       }
       
@@ -46,7 +46,7 @@ if (!class_exists('tkeptcomments', false)) {
     
     class tkeptcomments extends titems {
       
-      public static function instance() {
+      public static function i() {
         return getinstance(__class__);
       }
       
@@ -82,7 +82,7 @@ if (!class_exists('tkeptcomments', false)) {
 class tcommentform extends tevents {
   public $htmlhelper;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -96,11 +96,11 @@ class tcommentform extends tevents {
   public static function getcomuser($postid) {
     if (!empty($_COOKIE['userid'])) {
       $cookie = basemd5($_COOKIE['userid']  . litepublisher::$secret);
-      $comusers = tcomusers::instance($postid);
+      $comusers = tcomusers::i($postid);
       $user = $comusers->fromcookie($cookie);
       $comusers->loadall();
       if (!dbversion && !$user && !empty($_COOKIE["idpost"])) {
-        $comusers2 = tcomusers::instance( (int) $_COOKIE['idpost']);
+        $comusers2 = tcomusers::i( (int) $_COOKIE['idpost']);
         $user = $comusers2->fromcookie($cookie);
       }
       return $user;
@@ -110,10 +110,10 @@ class tcommentform extends tevents {
   
   public static function printform($postid, $themename) {
     $result = '';
-    $self = self::instance();
-    $lang = tlocal::instance('comment');
+    $self = self::i();
+    $lang = tlocal::i('comment');
     $theme = ttheme::getinstance($themename);
-    $args = targs::instance();
+    $args = targs::i();
     $args->name = '';
     $args->email = '';
     $args->url = '';
@@ -126,10 +126,10 @@ class tcommentform extends tevents {
       $args->name = $user['name'];
       $args->email = $user['email'];
       $args->url = $user['url'];
-      $subscribers = tsubscribers::instance();
+      $subscribers = tsubscribers::i();
       $args->subscribe = $subscribers->subscribed($postid, $user['id']);
       
-      $comments = tcomments::instance($postid);
+      $comments = tcomments::i($postid);
       if ($hold = $comments->getholdcontent($user['id'])) {
         $result .= $hold;
       }
@@ -165,7 +165,7 @@ class tcommentform extends tevents {
       }
     }
     
-    $kept = tkeptcomments::instance();
+    $kept = tkeptcomments::i();
     $kept->deleteold();
     if (!isset($_POST['confirmid'])) {
       $values = $_POST;
@@ -186,7 +186,7 @@ class tcommentform extends tevents {
       return $this->htmlhelper->geterrorcontent(tlocal::get('default', 'postnotfound'));
     }
     
-    $post = tpost::instance($postid);
+    $post = tpost::i($postid);
     
     $values = array(
     'name' => isset($values['name']) ? tcontentfilter::escape($values['name']) : '',
@@ -199,7 +199,7 @@ class tcommentform extends tevents {
     'antispam' => isset($values['antispam']) ? $values['antispam'] : ''
     );
     
-    $lang = tlocal::instance('comment');
+    $lang = tlocal::i('comment');
     if (!$this->checkspam($values['antispam']))          {
       return $this->htmlhelper->geterrorcontent($lang->spamdetected);
     }
@@ -225,13 +225,13 @@ class tcommentform extends tevents {
     }
     
     $posturl = $post->haspages ? rtrim($post->url, '/') . "/page/$post->commentpages/" : $post->url;
-    $users = tcomusers::instance($postid);
+    $users = tcomusers::i($postid);
     $uid = $users->add($values['name'], $values['email'], $values['url'], $values['ip']);
     if (!litepublisher::$classes->spamfilter->canadd( $uid)) {
       return $this->htmlhelper->geterrorcontent($lang->toomany);
     }
     
-    $subscribers = tsubscribers::instance();
+    $subscribers = tsubscribers::i();
     $subscribers->update($post->id, $uid, $values['subscribe']);
     
     litepublisher::$classes->commentmanager->addcomment($post->id, $uid, $values['content'], $values['ip']);
@@ -255,8 +255,8 @@ class tcommentform extends tevents {
   }
   
   private function getconfirmform($confirmid) {
-    ttheme::$vars['lang'] = tlocal::instance($this->basename);
-    $args = targs::instance();
+    ttheme::$vars['lang'] = tlocal::i($this->basename);
+    $args = targs::i();
     $args->confirmid = $confirmid;
     $theme = tsimplecontent::gettheme();
     return $theme->parsearg(

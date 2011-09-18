@@ -8,15 +8,15 @@
 
 class tadminsingletagwidget  extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $widget = tsingletagwidget::instance();
+    $widget = tsingletagwidget::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $html= $this->html;
-    $args = targs::instance();
+    $args = targs::i();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $args->add($widget->items[$id]);
@@ -37,7 +37,7 @@ class tadminsingletagwidget  extends tadminwidget {
   }
   
   public function processform()  {
-    $widget = tsingletagwidget::instance();
+    $widget = tsingletagwidget::i();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $widget->items[$id]['maxcount'] = (int) $_POST['maxcount'];

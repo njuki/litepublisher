@@ -8,20 +8,20 @@
 
 function tusernewsInstall($self) {
   //if (!dbversion) die("Ticket  system only for database version");
-  $filter = tcontentfilter::instance();
+  $filter = tcontentfilter::i();
   $filter->phpcode = true;
   $filter->save();
   
   litepublisher::$options->parsepost = false;
   litepublisher::$options->reguser = true;
-  $adminoptions = tadminoptions::instance();
+  $adminoptions = tadminoptions::i();
   $adminoptions->usersenabled = true;
   
-  $groups = tusergroups  ::instance();
+  $groups = tusergroups  ::i();
   $groups->defaultgroup = 'author';
   $groups->save();
   
-  $rights = tauthor_rights::instance();
+  $rights = tauthor_rights::i();
   $rights->lock();
   $rights->getposteditor = $self->getposteditor;
   $rights->editpost = $self->editpost;
@@ -32,6 +32,6 @@ function tusernewsInstall($self) {
 }
 
 function tusernewsUninstall($self) {
-  $rights = tauthor_rights::instance();
+  $rights = tauthor_rights::i();
   $rights->unsubscribeclass($self);
 }

@@ -8,7 +8,7 @@
 
 class tgoogleanalitic extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -21,8 +21,8 @@ class tgoogleanalitic extends tplugin {
   public function getcontent() {
     $tml = '[text:user]
     [editor:se]';
-    $html = tadminhtml::instance();
-    $args = targs::instance();
+    $html = tadminhtml::i();
+    $args = targs::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
     $args->formtitle = $about['formtitle'];
     $args->data['$lang.user'] = $about['user'];
@@ -37,7 +37,7 @@ class tgoogleanalitic extends tplugin {
     $this->se = $_POST['se'];
     $this->save();
     
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     if ($this->user == '') {
       $jsmerger->deletetext('default', 'googleanalitic');
     } else {
@@ -53,7 +53,7 @@ class tgoogleanalitic extends tplugin {
   }
   
   public function uninstall() {
-    $jsmerger = tjsmerger::instance();
+    $jsmerger = tjsmerger::i();
     $jsmerger->deletetext('default', 'googleanalitic');
   }
   

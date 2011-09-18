@@ -8,7 +8,7 @@
 
 class tadminboard extends tevents implements itemplate {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -26,7 +26,7 @@ public function save() { return true; }
   }
   
   public function gethead() {
-    $editor = tposteditor::instance();
+    $editor = tposteditor::i();
     return $editor->gethead();
   }
   
@@ -43,14 +43,14 @@ public function save() { return true; }
   }
   
   public function getidview() {
-    return tviews::instance()->defaults['admin'];
+    return tviews::i()->defaults['admin'];
   }
   
 public function setidview($id) {}
   
   public function getcont() {
     $result = $this->logoutlink;
-    $editor = tposteditor::instance();
+    $editor = tposteditor::i();
     $result .= $editor->getexternal();
     return $result;
   }
@@ -60,7 +60,7 @@ public function setidview($id) {}
   }
   
   public function gethtml($name = '') {
-    $result = tadminhtml ::instance();
+    $result = tadminhtml ::i();
     if ($name == '') $name = 'login';
     $result->section = $name;
     $lang = tlocal::admin($name);
@@ -72,4 +72,3 @@ public function setidview($id) {}
   }
   
 }//class
-?>

@@ -8,26 +8,26 @@
 
 class tadminusers extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
   $result .= $template->getready('$("#tabs").tabs({ cache: true });');
     return $result;
   }
   
   public function getcontent() {
     $result = '';
-    $users = tusers::instance();
-    $groups = tusergroups::instance();
-    $pages = tuserpages::instance();
+    $users = tusers::i();
+    $groups = tusergroups::i();
+    $pages = tuserpages::i();
     
     $html = $this->html;
-    $lang = tlocal::instance('users');
-    $args = targs::instance();
+    $lang = tlocal::i('users');
+    $args = targs::i();
     
     $a = array();
     foreach ($groups->items as $id => $item) {
@@ -48,7 +48,7 @@ class tadminusers extends tadminmenu {
       }
       
       $args->defaultgroup =tadminhtml::array2combo($g, $groups->defaultgroup);
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $args->linkschema = $linkgen->data['user'];
       
       $args->formtitle = $lang->useroptions;
@@ -133,7 +133,7 @@ class tadminusers extends tadminmenu {
     
     $args->adminurl = $this->adminurl;
     $result .= $html->tableheader ();
-    $pages = tuserpages::instance();
+    $pages = tuserpages::i();
     foreach ($items as $id) {
       $item = $users->getitem($id);
       $args->add($item);
@@ -146,15 +146,15 @@ class tadminusers extends tadminmenu {
     $result .= $html->tablefooter();
     $result = $html->fixquote($result);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages($this->url, litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
   public function processform() {
-    $users = tusers::instance();
-    $pages = tuserpages::instance();
-    $groups = tusergroups::instance();
+    $users = tusers::i();
+    $pages = tuserpages::i();
+    $groups = tusergroups::i();
     
     if (!$groups->hasright(litepublisher::$options->group, 'admin')) {
       extract($_POST, EXTR_SKIP);
@@ -162,7 +162,7 @@ class tadminusers extends tadminmenu {
       'name' => $name,
       'website' => $website,
       'rawcontent' => trim($rawcontent),
-      'content' => tcontentfilter::instance()->filter($rawcontent),
+      'content' => tcontentfilter::i()->filter($rawcontent),
       ));
       
       litepublisher::$urlmap->setexpired($pages->getvalue(litepublisher::$options->user, 'idurl'));
@@ -177,7 +177,7 @@ class tadminusers extends tadminmenu {
       $groups->defaultgroup = $_POST['defaultgroup'];
       $groups->save();
       
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $linkgen->data['user'] = $_POST['linkschema'];
       $linkgen->save();
       return;

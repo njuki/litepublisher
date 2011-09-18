@@ -7,7 +7,7 @@
 **/
 
 function trssInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->lock();
   $urlmap->add('/rss.xml', get_class($self), 'posts');
   $self->idcomments = $urlmap->add('/comments.xml', get_class($self), 'comments');
@@ -19,7 +19,7 @@ function trssInstall($self) {
   litepublisher::$classes->commentmanager->changed = $self->commentschanged;
   $self->save();
   
-  $meta = tmetawidget::instance();
+  $meta = tmetawidget::i();
   $meta->lock();
   $meta->add('rss', '/rss.xml', tlocal::get('default', 'rss'));
   $meta->add('comments', '/comments.xml', tlocal::get('default', 'rsscomments'));
@@ -29,7 +29,7 @@ function trssInstall($self) {
 function trssUninstall($self) {
   turlmap::unsub($self);
   litepublisher::$classes->commentmanager->unsubscribeclass($self);
-  $meta = tmetawidget::instance();
+  $meta = tmetawidget::i();
   $meta->lock();
   $meta->delete('rss');
   $meta->delete('comments');

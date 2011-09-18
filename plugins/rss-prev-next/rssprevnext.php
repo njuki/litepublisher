@@ -8,12 +8,12 @@
 
 class TRSSPrevNext extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function beforepost($id, &$content) {
-    $post = tpost::instance($id);
+    $post = tpost::i($id);
     $content .= $post->prevnext;
   }
   

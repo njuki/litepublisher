@@ -8,13 +8,13 @@
 
 function tfilesInstall($self) {
   if (dbversion) {
-    $manager = tdbmanager ::instance();
+    $manager = tdbmanager ::i();
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;
     $manager->createtable($self->table, file_get_contents($dir .'files.sql'));
     $manager->createtable($self->itemsposts->table, file_get_contents($dir .'items.posts.sql'));
   }
   
-  $posts= tposts::instance();
+  $posts= tposts::i();
   $posts->lock();
   $posts->added = $self->postedited;
   $posts->edited = $self->postedited;

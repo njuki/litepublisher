@@ -8,7 +8,7 @@
 
 class tfoafutil  extends tevents {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -79,8 +79,8 @@ class tfoafutil  extends tevents {
   
   public function check() {
     $result = '';
-    $lang = tlocal::instance('foaf');
-    $foaf = tfoaf::instance();
+    $lang = tlocal::i('foaf');
+    $foaf = tfoaf::i();
     $items = $foaf->getapproved(0);
     foreach ($items as $id) {
       $item = $foaf->getitem($item);
@@ -99,9 +99,9 @@ class tfoafutil  extends tevents {
     if($result != '') {
       $result = $lang->founderrors . $result;
       $result = str_replace('\n', "\n", $result);
-      $args = targs::instance();
+      $args = targs::i();
       $args->errors = $result;
-      $mailtemplate = tmailtemplate::instance('foaf');
+      $mailtemplate = tmailtemplate::i('foaf');
       $subject = $mailtemplate->errorsubj($args);
       $body = $mailtemplate->errorbody ($args);
       tmailer::sendtoadmin($subject, $body);

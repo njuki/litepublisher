@@ -10,7 +10,7 @@ class tsingletagwidget extends  twidget {
   public $items;
   public $tags;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -19,7 +19,7 @@ class tsingletagwidget extends  twidget {
     $this->adminclass = 'tadminsingletagwidget';
     $this->basename = 'widget.singletag';
     $this->addmap('items', array());
-    $this->tags = tcategories::instance();
+    $this->tags = tcategories::i();
   }
   
   public function getidwidget($idtag) {
@@ -31,7 +31,7 @@ class tsingletagwidget extends  twidget {
   
   public function add($idtag) {
     $tag = $this->tags->getitem($idtag);
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $id = $widgets->addext($this, $tag['title'], 'widget');
     $this->items[$id] = array(
     'idtag' => $idtag,
@@ -39,7 +39,7 @@ class tsingletagwidget extends  twidget {
     'invertorder' => false
     );
     
-    $sidebars = tsidebars::instance();
+    $sidebars = tsidebars::i();
     $sidebars->add($id);
     $this->save();
     //$this->added($id);
@@ -51,7 +51,7 @@ class tsingletagwidget extends  twidget {
       unset($this->items[$id]);
       $this->save();
       
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       $widgets->delete($id);
       //$this->deleted($id);
     }
@@ -94,7 +94,7 @@ class tsingletagwidget extends  twidget {
     }
     
     if (count($items) == 0) return '';
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getpostswidgetcontent($items, $sidebar, '');
   }
   

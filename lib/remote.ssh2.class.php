@@ -12,7 +12,7 @@ class tssh2filer extends tremotefiler {
   protected $public_key;
   protected $private_key;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

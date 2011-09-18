@@ -20,11 +20,11 @@ function ttemplateInstall($self) {
   <link type="text/css" href="$site.files/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" />';
   
   //footer
-  $html = tadminhtml::instance();
+  $html = tadminhtml::i();
   $html->section = 'installation';
-  $lang = tlocal::instance('installation');
+  $lang = tlocal::i('installation');
   ttheme::$vars['lang'] = $lang;
-  $theme = ttheme::instance();
+  $theme = ttheme::i();
   $self->footer = $theme->parse($html->footer);
 }
 

@@ -9,7 +9,7 @@
 class tfoaf extends titems {
   public $title;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -58,7 +58,7 @@ class tfoaf extends titems {
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
     $this->added($id);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->clearcache();
     return $id;
   }
@@ -77,14 +77,14 @@ class tfoaf extends titems {
     $this->items[$id] = $item;
     if (!$this->dbversion) $this->save();
     $this->edited($id);
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     $urlmap->clearcache();
     return true;
   }
   
   public function delete($id) {
     if (  parent::delete($id)) {
-      $urlmap = turlmap::instance();
+      $urlmap = turlmap::i();
       $urlmap->clearcache();
       return true;
     }
@@ -113,7 +113,7 @@ class tfoaf extends titems {
     'xmlns:dc="http://purl.org/dc/elements/1.1/">' .
     '<foaf:Person>';
     
-    $profile = tprofile::instance();
+    $profile = tprofile::i();
     $result .= $profile-> getfoaf();
     $result .= $this->getknows();
     
@@ -216,19 +216,19 @@ class tfoaf extends titems {
   /* end remote calls */
   private function sendmail($id, $event) {
     $item = $this->getitem($id);
-    $args = targs::instance();
+    $args = targs::i();
     $args->add($item);
-    $lang = tlocal::instance('foaf');
+    $lang = tlocal::i('foaf');
     $event = 'mail' . $event;
     $args->event = $lang->$event;
-    $mailtemplate = tmailtemplate::instance('foaf');
+    $mailtemplate = tmailtemplate::i('foaf');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body);
   }
   
   protected function getprofile() {
-    $profile = tprofile::instance();
+    $profile = tprofile::i();
     return array(
     'nick' => $profile->nick,
     'url' => litepublisher::$site->url . litepublisher::$site->home,
@@ -238,9 +238,9 @@ class tfoaf extends titems {
   
   public function addurl($url) {
     if ($ping = tpinger::discover($url)) {
-      $actions = TXMLRPCAction::instance();
+      $actions = TXMLRPCAction::i();
       if ($actions->invatefriend($ping, $this->profile)) {
-        $util = tfoafutil::instance();
+        $util = tfoafutil::i();
         if ($info = $util->getinfo($url)) {
           return $this->add($info['nick'], $info['url'], $info['foafurl'], 'invated');
         }
@@ -253,7 +253,7 @@ class tfoaf extends titems {
     if (!$this->itemexists($id)) return false;
     $item = $this->getitem($id);
     if ($ping = tpinger::Discover($item['url'])) {
-      $actions =  TXMLRPCAction::instance();
+      $actions =  TXMLRPCAction::i();
       if ($actions->acceptfriend($ping, $this->profile)) {
         $this->setstatus($id, 'approved');
         return true;
@@ -267,7 +267,7 @@ class tfoaf extends titems {
     $item = $this->getitem($id);
     $this->setstatus($id, 'rejected');
     if ($ping = tpinger::Discover($item['url'])) {
-      $actions =  TXMLRPCAction::instance();
+      $actions =  TXMLRPCAction::i();
       if ($actions->rejectfriend($ping, $this->profile)) {
         return true;
       }

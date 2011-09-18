@@ -8,7 +8,7 @@
 
 class tticket extends tpost {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -58,7 +58,7 @@ class tticket extends tpost {
   protected function getcontentpage($page) {
     $result = '';
     if ($this->poll > 0) {
-      $polls = tpolls::instance();
+      $polls = tpolls::i();
       $result .= $polls->gethtml($this->poll, true);
     }
     
@@ -68,11 +68,11 @@ class tticket extends tpost {
   
   public function updatefiltered() {
     $result = $this->getticketcontent();
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     $filter->filterpost($this,$this->rawcontent);
     $result .= $this->filtered;
     if (!empty($this->childdata['code'])) {
-      $lang = tlocal::instance('ticket');
+      $lang = tlocal::i('ticket');
       $result .= sprintf('<h2>%s</h2>', $lang->code);
       $result .= highlight_string($this->code, true);
     }
@@ -80,8 +80,8 @@ class tticket extends tpost {
   }
   
   public function getticketcontent() {
-    $lang = tlocal::instance('ticket');
-    $args = targs::instance();
+    $lang = tlocal::i('ticket');
+    $args = targs::i();
     foreach (array('type', 'state', 'prio') as $prop) {
       $value = $this->$prop;
       $args->$prop = $lang->$value;
@@ -101,7 +101,7 @@ class tticket extends tpost {
   }
   
   public function closepoll() {
-    $polls = tpolls::instance();
+    $polls = tpolls::i();
     $polls->db->setvalue($this->poll, 'status', 'closed');
   }
   

@@ -8,7 +8,7 @@
 
 class tadminthemefiles extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -31,8 +31,8 @@ class tadminthemefiles extends tadminmenu {
     if (($themename == '') || !self::theme_exists($themename)) return tadminthemes::getthemes();
     
     $html = $this->gethtml('themefiles');
-    $lang = tlocal::instance('themefiles');
-    $args = targs::instance();
+    $lang = tlocal::i('themefiles');
+    $args = targs::i();
     $result = sprintf($html->h2->filelist, $themename);
     $list = tfiler::getfiles(litepublisher::$paths->themes . $themename . DIRECTORY_SEPARATOR  );
     sort($list);

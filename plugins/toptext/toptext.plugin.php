@@ -9,7 +9,7 @@
 class ttoptext extends tplugin{
   public $text;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

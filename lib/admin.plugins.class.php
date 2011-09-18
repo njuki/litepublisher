@@ -9,7 +9,7 @@
 class tadminplugins extends tadminmenu {
   private $names;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -22,7 +22,7 @@ class tadminplugins extends tadminmenu {
   public function getpluginsmenu() {
     $result = '';
     $link = tadminhtml::getadminlink($this->url,'plugin=');
-    $plugins = tplugins::instance();
+    $plugins = tplugins::i();
     foreach ($this->names as $name) {
       $about = tplugins::getabout($name);
       if (isset($plugins->items[$name]) && !empty($about['adminclassname'])) {
@@ -36,10 +36,10 @@ class tadminplugins extends tadminmenu {
   public function getcontent() {
     $result = $this->getpluginsmenu();
     $html = $this->html;
-    $plugins = tplugins::instance();
+    $plugins = tplugins::i();
     if (empty($_GET['plugin'])) {
       $result .= $html->formhead();
-      $args = targs::instance();
+      $args = targs::i();
       foreach ($this->names as $name) {
         $about = tplugins::getabout($name);
         $args->add($about);
@@ -65,7 +65,7 @@ class tadminplugins extends tadminmenu {
     if (!isset($_GET['plugin'])) {
       $list = array_keys($_POST);
       array_pop($list);
-      $plugins = tplugins::instance();
+      $plugins = tplugins::i();
       try {
         $plugins->update($list);
       } catch (Exception $e) {

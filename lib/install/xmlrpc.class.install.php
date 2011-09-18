@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->lock();
   $urlmap->add('/rpc.xml', get_class($self), null);
   $urlmap->add('/xmlrpc.php', get_class($self), null);

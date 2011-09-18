@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCWordpressInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   // WordPress API
   $caller->add('wp.getPage',		'wp_getPage', get_class($self));

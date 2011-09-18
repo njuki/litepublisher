@@ -12,10 +12,10 @@ class tadminwidget extends tdata {
   protected $lang;
   
   protected function create() {
-    //parent::instance();
-    $this->html = tadminhtml ::instance();
+    //parent::i();
+    $this->html = tadminhtml ::i();
     $this->html->section = 'widgets';
-    $this->lang = tlocal::instance('widgets');
+    $this->lang = tlocal::i('widgets');
   }
   
   protected function getadminurl() {
@@ -27,17 +27,17 @@ class tadminwidget extends tdata {
   }
   
   protected function optionsform($widgettitle, $content) {
-    $args = targs::instance();
+    $args = targs::i();
     $args->formtitle = $widgettitle . ' ' . $this->lang->widget;
     $args->title = $widgettitle;
     $args->items = $this->html->getedit('title', $widgettitle, $this->lang->widgettitle) . $content;
-    return $this->html->parsearg(ttheme::instance()->templates['content.admin.form'], $args);
+    return $this->html->parsearg(ttheme::i()->templates['content.admin.form'], $args);
   }
   
   public function getcontent(){
     return $this->optionsform(
     $this->widget->gettitle($this->widget->id),
-    $this->dogetcontent($this->widget, targs::instance()));
+    $this->dogetcontent($this->widget, targs::i()));
   }
   
   public function processform()  {
@@ -57,7 +57,7 @@ class tadminwidget extends tdata {
 
 class tadmintagswidget extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -65,7 +65,7 @@ class tadmintagswidget extends tadminwidget {
     $args->showcount = $widget->showcount;
     $args->showsubitems = $widget->showsubitems;
     $args->maxcount = $widget->maxcount;
-    $args->sort = tadminhtml::array2combo(tlocal::instance()->ini['sortnametags'], $widget->sortname);
+    $args->sort = tadminhtml::array2combo(tlocal::i()->ini['sortnametags'], $widget->sortname);
     return $this->html->parsearg('[combo=sort] [checkbox=showsubitems] [checkbox=showcount] [text=maxcount]', $args);
   }
   
@@ -81,7 +81,7 @@ class tadmintagswidget extends tadminwidget {
 
 class tadminmaxcount extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -98,7 +98,7 @@ class tadminmaxcount extends tadminwidget {
 
 class tadminshowcount extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -115,13 +115,13 @@ class tadminshowcount extends tadminwidget {
 
 class tadminorderwidget extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   protected function dogetcontent(twidget $widget, targs $args){
     $idview = tadminhtml::getparam('idview', 1);
-    $view = tview::instance($idview);
+    $view = tview::i($idview);
     $args->sidebar = tadminhtml::array2combo(tadminwidgets::getsidebarnames($view), $widget->sidebar);
     $args->order = tadminhtml::array2combo(range(-1, 10), $widget->order + 1);
     $args->ajax = $widget->ajax;
@@ -138,13 +138,13 @@ class tadminorderwidget extends tadminwidget {
 
 class tadmincustomwidget extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public static function gettemplates() {
     $result = array();
-    $lang = tlocal::instance('widgets');
+    $lang = tlocal::i('widgets');
     $result['widget'] = $lang->defaulttemplate;
     foreach (ttheme::getwidgetnames() as $name) {
       $result[$name] = $lang->$name;
@@ -154,7 +154,7 @@ class tadmincustomwidget extends tadminwidget {
   
   public function getcontent() {
     $widget = $this->widget;
-    $args = targs::instance();
+    $args = targs::i();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
@@ -187,7 +187,7 @@ class tadmincustomwidget extends tadminwidget {
   }
   
   public function getlist(twidget $widget) {
-    $args = targs::instance();
+    $args = targs::i();
     $html = $this->html;
     $result = $html->customheader();
     $args->adminurl = $this->adminurl;
@@ -221,7 +221,7 @@ class tadmincustomwidget extends tadminwidget {
   }
   
   public function deletewidgets(twidget $widget) {
-    $widgets = twidgets::instance();
+    $widgets = twidgets::i();
     $widgets->lock();
     $widget->lock();
     foreach ($_POST as $key => $value) {
@@ -234,7 +234,7 @@ class tadmincustomwidget extends tadminwidget {
 }//class
 class tadminlinkswidget extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -247,7 +247,7 @@ class tadminlinkswidget extends tadminwidget {
     $result = parent::getcontent();
     $widget = $this->widget;
     $html= $this->html;
-    $args = targs::instance();
+    $args = targs::i();
     $id = isset($_GET['idlink']) ? (int) $_GET['idlink'] : 0;
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
@@ -308,7 +308,7 @@ class tadminlinkswidget extends tadminwidget {
 
 class tadminmetawidget extends tadminwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   

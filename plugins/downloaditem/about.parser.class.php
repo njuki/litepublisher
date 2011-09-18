@@ -8,13 +8,13 @@
 
 class taboutparser {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public static function parse($url) {
     if ($s = http::get($url)) {
-      $backuper = tbackuper::instance();
+      $backuper = tbackuper::i();
       $archtype = $backuper->getarchtype($url);
       if ($files = $backuper->unpack($s, $archtype)) {
         list($filename, $content) = each($files);
@@ -29,7 +29,7 @@ class taboutparser {
           $item->version = $about['version'];
           $item->tagnames = empty($about['tags']) ? '' : trim($about['tags']);
           if ($screenshot = self::getfile($files, 'screenshot.png')) {
-            $media = tmediaparser::instance();
+            $media = tmediaparser::i();
             $idscreenshot= $media->uploadthumbnail($about['name'] . '.png', $screenshot);
             $item->files = array($idscreenshot);
           }

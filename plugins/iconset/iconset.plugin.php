@@ -8,7 +8,7 @@
 
 class ticonsetplugin extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -17,15 +17,15 @@ class ticonsetplugin extends tplugin {
   }
   
   public function add($name, $filename) {
-    $icons = ticons::instance();
-    $parser = tmediaparser::instance();
+    $icons = ticons::i();
+    $parser = tmediaparser::i();
     $icons->items[$name] = $parser->uploadicon($filename, file_get_contents($this->dir . $filename), true);
     $icons->save();
   }
   
   public function delete($name, $filename) {
-    $files = tfiles::instance();
-    $icons = ticons::instance();
+    $files = tfiles::i();
+    $icons = ticons::i();
     $id = $icons->items[$name];
     if ($files->itemexists($id)) {
       $item = $files->getitem($id);
@@ -37,9 +37,9 @@ class ticonsetplugin extends tplugin {
   }
   
   public function install() {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $files->lock();
-    $icons = ticons::instance();
+    $icons = ticons::i();
     $icons->lock();
     $this->add('post', 'document-list.png');
     $this->add('categories', 'asterisk.png');
@@ -65,9 +65,9 @@ class ticonsetplugin extends tplugin {
   }
   
   public function uninstall() {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $files->lock();
-    $icons = ticons::instance();
+    $icons = ticons::i();
     $icons->lock();
     $this->delete('post', 'document-list.png');
     $this->delete('categories', 'asterisk.png');

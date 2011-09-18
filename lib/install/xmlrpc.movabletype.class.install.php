@@ -7,7 +7,7 @@
 **/
 
 function TXMLRPCMovableTypeInstall($self) {
-  $caller = TXMLRPC::instance();
+  $caller = TXMLRPC::i();
   $caller->lock();
   
   // MovableType API

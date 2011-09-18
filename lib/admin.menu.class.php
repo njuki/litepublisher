@@ -8,18 +8,18 @@
 
 class tadminmenumanager extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public function gethead() {
     $result = parent::gethead();
     
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->ltoptions['idpost'] = $this->idget();
     $template->ltoptions['lang'] = litepublisher::$options->language ;
   $result .= $template->getready('$("#tabs").tabs({ cache: true });');
-    $ajax = tajaxmenueditor ::instance();
+    $ajax = tajaxmenueditor ::i();
     return $ajax->dogethead($result);
   }
   
@@ -43,15 +43,15 @@ class tadminmenumanager extends tadminmenu {
       case 'edit':
       case 'editfake':
       $id = tadminhtml::idparam();
-      $menus = tmenus::instance();
+      $menus = tmenus::i();
       $parents = array(0 => '-----');
       foreach ($menus->items as $item) {
         $parents[$item['id']] = $item['title'];
       }
       
       $html = $this->html;
-      $lang = tlocal::instance('menu');
-      $args = targs::instance();
+      $lang = tlocal::i('menu');
+      $args = targs::i();
       $args->adminurl = $this->adminurl;
       $args->ajax = tadminhtml::getadminlink('/admin/ajaxmenueditor.htm', "id=$id&get");
       $args->editurl = tadminhtml::getadminlink('/admin/menu/edit', 'id');
@@ -63,7 +63,7 @@ class tadminmenumanager extends tadminmenu {
         $status = 'published';
       } else {
         if (!$menus->itemexists($id)) return $this->notfound;
-        $menuitem = tmenu::instance($id);
+        $menuitem = tmenu::i($id);
         $args->id = $id;
         $args->title = $menuitem->title;
         $args->parent = tadminhtml::array2combo($parents, $menuitem->parent);
@@ -89,7 +89,7 @@ class tadminmenumanager extends tadminmenu {
         [hidden=id]', $args);
       }
       
-      $ajaxeditor = tajaxmenueditor::instance();
+      $ajaxeditor = tajaxmenueditor::i();
       $args->editor = $ajaxeditor->geteditor('raw', $id == 0 ? '' : $menuitem->rawcontent, true);
       $html->section = 'menu';
       return $html->form($args);
@@ -101,12 +101,12 @@ class tadminmenumanager extends tadminmenu {
     extract($_POST, EXTR_SKIP);
     if (empty($title)) return '';
     $id = $this->idget();
-    $menus = tmenus::instance();
+    $menus = tmenus::i();
     if (($id != 0) && !$menus->itemexists($id)) return $this->notfound;
     if (isset($type) && ($type == 'fake')) {
-      $menuitem = tfakemenu::instance($id);
+      $menuitem = tfakemenu::i($id);
     } else  {
-      $menuitem = tmenu::instance($id);
+      $menuitem = tmenu::i($id);
     }
     
     $menuitem->title = $title;
@@ -131,8 +131,8 @@ class tadminmenumanager extends tadminmenu {
   }
   
   private function getmenulist() {
-    $menus = tmenus::instance();
-    $args = targs::instance();
+    $menus = tmenus::i();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     $args->editurl = litepublisher::$site->url .$this->url . 'edit/' . litepublisher::$site->q . 'id';
     $html = $this->html;
@@ -149,12 +149,12 @@ class tadminmenumanager extends tadminmenu {
   }
   
   private function doaction($id, $action) {
-    $menus = tmenus::instance();
+    $menus = tmenus::i();
     if (!$menus->itemexists($id))  return $this->notfound;
-    $args = targs::instance();
+    $args = targs::i();
     $html = $this->html;
     $h2 = $html->h2;
-    $menuitem = tmenu::instance($id);
+    $menuitem = tmenu::i($id);
     switch ($action) {
       case 'delete' :
       if  (!$this->confirmed) {

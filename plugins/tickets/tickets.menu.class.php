@@ -8,7 +8,7 @@
 
 class tticketsmenu extends tmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -32,8 +32,8 @@ class tticketsmenu extends tmenu {
       }
     } else {
       $perpage = litepublisher::$options->perpage;
-      $theme = ttheme::instance();
-      $tickets = ttickets::instance();
+      $theme = ttheme::i();
+      $tickets = ttickets::i();
       $tt = litepublisher::$db->prefix . $tickets->childtable;
       $pt = litepublisher::$db->posts;
       $where = $this->type == 'tickets' ? '' : " and $tt.type = '$this->type'";
@@ -50,7 +50,7 @@ class tticketsmenu extends tmenu {
   
   private function getall() {
     $result = '';
-    $tickets = ttickets::instance();
+    $tickets = ttickets::i();
     $db = litepublisher::$db;
     $tt = $db->prefix . $tickets->childtable;
     $pt = $db->posts;
@@ -65,9 +65,9 @@ class tticketsmenu extends tmenu {
     if (count($items) == 0) return '';
     
     $index = $this->type == 'tickets' ? 'type' : 'state';
-    $theme = ttheme::instance();
-    $langticket = tlocal::instance()->ini['ticket'];
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $langticket = tlocal::i()->ini['ticket'];
+    $args = targs::i();
     $tml = '<tr>
     <td align="left">$state</td>
     <td align="right">$commentscount</td>
@@ -81,7 +81,7 @@ class tticketsmenu extends tmenu {
     }
     
     $args->tablebody = $result;
-    $lang = tlocal::instance('ticket');
+    $lang = tlocal::i('ticket');
     $result = $theme->parsearg('<table class="classictable">
     <thead>
     <tr>

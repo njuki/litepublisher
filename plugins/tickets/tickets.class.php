@@ -8,7 +8,7 @@
 
 class ttickets extends tposts {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -18,13 +18,13 @@ class ttickets extends tposts {
   }
   
   public function newpost() {
-    return tticket::instance();
+    return tticket::i();
   }
   
   public function createpoll() {
     $lang = tlocal::admin('tickets');
     $items = explode(',', $lang->pollitems);
-    $polls = tpolls::instance();
+    $polls = tpolls::i();
     return $polls->add('', 'opened', 'button', $items);
   }
   
@@ -39,9 +39,9 @@ class ttickets extends tposts {
   
   private function notify(tticket $ticket) {
     ttheme::$vars['ticket'] = $ticket;
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = litepublisher::$site->url . '/admin/tickets/editor/'. litepublisher::$site->q . 'id=' . $ticket->id;
-    $mailtemplate = tmailtemplate::instance('tickets');
+    $mailtemplate = tmailtemplate::i('tickets');
     $subject = $mailtemplate->subject($args);
     $body = $mailtemplate->body($args);
     tmailer::sendtoadmin($subject, $body);
@@ -57,7 +57,7 @@ class ttickets extends tposts {
     $db = $this->getdb($this->childtable);
     $idpolls = $db->res2id($db->query("select poll from $db->prefix$this->childtable where (id in ($deleted)) and (poll  > 0)"));
     if (count ($idpolls) > 0) {
-      $polls = tpolls::instance();
+      $polls = tpolls::i();
       foreach ($idpolls as $idpoll)       $pols->delete($idpoll);
     }
   }
@@ -68,7 +68,7 @@ class ttickets extends tposts {
   
   public function onexclude($id) {
     if (litepublisher::$options->group == 'ticket') {
-      $admin = tadminmenus::instance();
+      $admin = tadminmenus::i();
       return $admin->items[$id]['url'] == '/admin/posts/';
     }
     return false;

@@ -13,12 +13,12 @@ class TXMLRPCSystem extends TXMLRPCAbstract {
   }
   
   public function listMethods() {
-    $caller = TXMLRPC::instance();
+    $caller = TXMLRPC::i();
     return array_keys($caller->items);
   }
   
   public function methodSignature($name) {
-    $caller = TXMLRPC::instance();
+    $caller = TXMLRPC::i();
     if (!$caller->itemexists($name)) return new IXR_Error(-32601, "server error. requested method $name does not exist.");
     $item = $caller->getitem($name);
     if ($item['class'] != __class__) {
@@ -66,7 +66,7 @@ class TXMLRPCSystem extends TXMLRPCAbstract {
   
   public function multicall(array $items) {
     $result = array();
-    $caller = TXMLRPC::instance();
+    $caller = TXMLRPC::i();
     foreach ($items as $item) {
       $r = $caller->call($item['methodName'], isset($item['params']) ? $item['params'] : null);
       if ($r instanceof IXR_Error) {
@@ -82,7 +82,7 @@ class TXMLRPCSystem extends TXMLRPCAbstract {
   }
   
   public function methodExist($name) {
-    $caller = TXMLRPC::instance();
+    $caller = TXMLRPC::i();
     return $caller->itemexists($name);
   }
   

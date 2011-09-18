@@ -8,7 +8,7 @@
 
 class TXMLRPCPingback extends TXMLRPCAbstract {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -18,7 +18,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
     }
     
     $url = substr($to, strlen(litepublisher::$site->url) );
-    $urlmap = turlmap::instance();
+    $urlmap = turlmap::i();
     if (!($item = $urlmap->finditem($url))) {
       return $this->xerror(0, 'Is there no link to us?');
     }
@@ -27,7 +27,7 @@ class TXMLRPCPingback extends TXMLRPCAbstract {
       return $this->xerror(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }
     
-    $post = tpost::instance($item['arg']);
+    $post = tpost::i($item['arg']);
     if (!$post->pingenabled || ($post->status != 'published')) {
       return $this->xerror(33, 'The specified target URL cannot be used as a target. It either doesn\'t exist, or it is not a pingback-enabled resource.');
     }

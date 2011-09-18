@@ -8,7 +8,7 @@
 
 class tmetapost extends titem {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, (int) $id);
   }
   

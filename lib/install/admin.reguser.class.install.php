@@ -7,7 +7,7 @@
 **/
 
 function tadminreguserInstall($self) {
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->add('/admin/reguser/', get_class($self), null, 'normal');
 }
 

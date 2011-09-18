@@ -8,7 +8,7 @@
 
 class tstatfooter extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -20,7 +20,7 @@ class tstatfooter extends tplugin {
   
   public function install() {
     $footer = $this->getfooter();
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     if (!strpos($template->footer, $footer)) {
       $template->footer .= $footer;
       $template->save();
@@ -29,7 +29,7 @@ class tstatfooter extends tplugin {
   
   public function uninstall() {
     $footer = $this->getfooter();
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     $template->footer = str_replace($footer, '', $template->footer);
     $template->save();
   }

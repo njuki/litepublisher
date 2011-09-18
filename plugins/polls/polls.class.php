@@ -16,7 +16,7 @@ class tpolls extends tplugin {
   private $id;
   private $curvote;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -309,8 +309,8 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $poll = $this->getitem($id);
     $items = explode("\n", $poll['items']);
     $votes = explode(',', $poll['votes']);
-    $theme = ttheme::instance();
-    $args = targs::instance();
+    $theme = ttheme::i();
+    $args = targs::i();
     $args->id = $id;
     $args->title = $poll['title'];
     if (!$full) $args->votes = '&#36;poll.votes';
@@ -339,7 +339,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   }
   
   public function gethead() {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     return $template->getready('if ($("*[id^=\'pollform_\']").length) {
       $.load_script(ltoptions.files + "/plugins/polls/polls.client.js");
     });');
@@ -397,7 +397,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
     $this->data['defadd'] = $v;
     $this->data['garbage'] = ! $v;
     $this->save();
-    $posts = tposts::instance();
+    $posts = tposts::i();
     if ($v) {
       $posts->added = $this->postadded;
       $posts->deleted = $this->postdeleted;
@@ -411,7 +411,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   }
   
   public function postadded($idpost) {
-    $post = tpost::instance($idpost);
+    $post = tpost::i($idpost);
     $post->meta->poll = $this->add($this->deftitle, 'opened', $this->deftype, explode(',', $this->defitems));
   }
   
@@ -423,7 +423,7 @@ $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title
   
   public function postdeleted($id) {
     if (!dbversion) return;
-    $meta = tmetapost::instance($id);
+    $meta = tmetapost::i($id);
     if (isset($meta->poll)) {
       $this->delete($meta->poll);
     }

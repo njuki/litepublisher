@@ -9,7 +9,7 @@
 class tadminposts extends tadminmenu {
   private $isauthor;
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
@@ -17,7 +17,7 @@ class tadminposts extends tadminmenu {
     $this->isauthor = false;
     $groupname = litepublisher::$options->group;
     if ($groupname != 'admin') {
-      $groups = tusergroups::instance();
+      $groups = tusergroups::i();
       $this->isauthor =  !$groups->hasright($groupname, 'editor') &&  $groups->hasright($groupname, 'author');
     }
   }
@@ -30,12 +30,12 @@ class tadminposts extends tadminmenu {
     }
     
     $id = $this->idget();
-    $posts= tposts::instance();
+    $posts= tposts::i();
     if (!$posts->itemexists($id)) return $this->notfound;
-    $post = tpost::instance($id);
-    if ($this->isauthor && ($r = tauthor_rights::instance()->changeposts($action))) return $r;
+    $post = tpost::i($id);
+    if ($this->isauthor && ($r = tauthor_rights::i()->changeposts($action))) return $r;
     if (!$this->confirmed) {
-      $args = targs::instance();
+      $args = targs::i();
       $args->id = $id;
       $args->adminurl = $this->adminurl;
       $args->action = $action;
@@ -64,7 +64,7 @@ class tadminposts extends tadminmenu {
   
   private function getlist() {
     $result = '';
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $perpage = 20;
     if (dbversion) {
       $where = "status <> 'deleted' ";
@@ -82,11 +82,11 @@ class tadminposts extends tadminmenu {
     $html = $this->html;
     $result .=sprintf($html->h2->count, $from, $from + count($items), $count);
     $result .= $html->listhead();
-    $args = targs::instance();
+    $args = targs::i();
     $args->adminurl = $this->adminurl;
     $args->editurl = litepublisher::$site->url . $this->url . 'editor/' . litepublisher::$site->q . 'id';
     foreach ($items  as $id ) {
-      $post = tpost::instance($id);
+      $post = tpost::i($id);
       ttheme::$vars['post'] = $post;
     $args->status = $this->lang->{$post->status};
       $result .= $html->itemlist($args);
@@ -94,23 +94,23 @@ class tadminposts extends tadminmenu {
     $result .= $html->listfooter();
     $result = $html->fixquote($result);
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $result .= $theme->getpages('/admin/posts/', litepublisher::$urlmap->page, ceil($count/$perpage));
     return $result;
   }
   
   public function processform() {
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->lock();
     $status = isset($_POST['publish']) ? 'published' : (isset($_POST['setdraft']) ? 'draft' : 'delete');
-    if ($this->isauthor && ($r = tauthor_rights::instance()->changeposts($status))) return $r;
+    if ($this->isauthor && ($r = tauthor_rights::i()->changeposts($status))) return $r;
     foreach ($_POST as $key => $id) {
       if (!is_numeric($id))  continue;
       $id = (int) $id;
       if ($status == 'delete') {
         $posts->delete($id);
       } else {
-        $post = tpost::instance($id);
+        $post = tpost::i($id);
         $post->status = $status;
         $posts->edit($post);
       }

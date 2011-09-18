@@ -8,7 +8,7 @@
 
 class tcustomtitle extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -21,7 +21,7 @@ class tcustomtitle extends tplugin {
   }
   
   public function ontitle(&$title) {
-    $template = ttemplate::instance();
+    $template = ttemplate::i();
     if ($template->context instanceof tpost) {
       $tml = $this->post;
     } elseif ($template->context instanceof tcommontags) {

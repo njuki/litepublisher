@@ -8,7 +8,7 @@
 
 class tbackup2email extends tplugin {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -18,7 +18,7 @@ class tbackup2email extends tplugin {
   }
   
   public function send() {
-    $backuper = tbackuper::instance();
+    $backuper = tbackuper::i();
     $filename  = $backuper->createbackup();
     
     $dir = dirname(__file__) . DIRECTORY_SEPARATOR;

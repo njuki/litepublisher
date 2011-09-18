@@ -9,7 +9,7 @@
 class tkeywordswidget extends twidget {
   public $links;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -33,14 +33,14 @@ class tkeywordswidget extends twidget {
     $content = $this->getcontent($id, $sidebar);
     if ($content == '') return '';
     $title = $this->gettitle($id);
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidget($title, $content, $this->template, $sidebar);
   }
   
   public function getcontent($id, $sidebar) {
     if (litepublisher::$urlmap->adminpanel || strbegin(litepublisher::$urlmap->url, '/croncron.php')) return '';
     if (strend(litepublisher::$urlmap->url, '.xml')) {
-      $widgets = twidgets::instance();
+      $widgets = twidgets::i();
       $id = $widgets->idurlcontext;
     } else {
       $id = litepublisher::$urlmap->itemrequested['id'];
@@ -62,12 +62,12 @@ class tkeywordswidget extends twidget {
       }
       file_put_contents($filename, $links);
       if ($this->notify) {
-        $plugin = tkeywordsplugin::instance();
+        $plugin = tkeywordsplugin::i();
         $plugin->added($filename, $text);
       }
     }
     
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     return $theme->getwidgetcontent($links, $this->template, $sidebar);
   }
   

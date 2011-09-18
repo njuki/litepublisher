@@ -35,6 +35,6 @@ $self->items['translit'] = array(
   litepublisher::$options->timezone = tlocal::get('installation', 'timezone');
     date_default_timezone_set(tlocal::get('installation', 'timezone'));
 
-$html = tadminhtml::instance();
+$html = tadminhtml::i();
 $html->loadinstall();
 }

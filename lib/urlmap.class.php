@@ -20,7 +20,7 @@ class turlmap extends titems {
   public $mobile;
   public $onclose;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -192,7 +192,7 @@ class turlmap extends titems {
         case 403: return $this->forbidden();
       }
     } else {
-      $template = ttemplate::instance();
+      $template = ttemplate::i();
       $s = $template->request($this->context);
     }
     eval('?>'. $s);
@@ -204,7 +204,7 @@ class turlmap extends titems {
   }
   
   public function notfound404() {
-    $redir = tredirector::instance();
+    $redir = tredirector::i();
     if ($url  = $redir->get($this->url)) {
       return $this->redir301($url);
     }
@@ -223,7 +223,7 @@ class turlmap extends titems {
     }
     
     $obj = getinstance($classname);
-    $Template = ttemplate::instance();
+    $Template = ttemplate::i();
     $s = $Template->request($obj);
     eval('?>'. $s);
     
@@ -400,12 +400,12 @@ class turlmap extends titems {
   
   public function addredir($from, $to) {
     if ($from == $to) return;
-    $Redir = tredirector::instance();
+    $Redir = tredirector::i();
     $Redir->add($from, $to);
   }
   
   public static function unsub($obj) {
-    $self = self::instance();
+    $self = self::i();
     $self->lock();
     $self->unsubscribeclassname(get_class($obj));
     $self->deleteclass(get_class($obj));

@@ -7,7 +7,7 @@
 **/
 
 function TManifestInstall(&$self) {
-  $Urlmap = TUrlmap::Instance();
+  $Urlmap = TUrlmap::i();
   $Urlmap->Lock();
   $Urlmap->Add('/wlwmanifest.xml', get_class($self), 'manifest');
   $Urlmap->Add('/rsd.xml', get_class($self), 'rsd');

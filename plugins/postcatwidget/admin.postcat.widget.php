@@ -8,14 +8,14 @@
 
 class tadminpostcatwidget extends tadmincustomwidget {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
   public function getcontent() {
-    $widget = tpostcatwidget::instance();
+    $widget = tpostcatwidget::i();
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $args = targs::instance();
+    $args = targs::i();
     $id = (int) tadminhtml::getparam('idwidget', 0);
     if (isset($widget->items[$id])) {
       $item = $widget->items[$id];
@@ -53,7 +53,7 @@ class tadminpostcatwidget extends tadmincustomwidget {
   }
   
   public function processform()  {
-    $widget = tpostcatwidget ::instance();
+    $widget = tpostcatwidget ::i();
     if (isset($_POST['mode'])) {
       extract($_POST, EXTR_SKIP);
       switch ($mode) {
@@ -72,7 +72,7 @@ class tadminpostcatwidget extends tadmincustomwidget {
         $widget->items[$id]  = $item;
         $widget->save();
         
-        $widgets = twidgets::instance();
+        $widgets = twidgets::i();
         $widgets->items[$id]['title'] = $widgettitle;
         $widgets->save();
         break;

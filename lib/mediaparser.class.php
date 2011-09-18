@@ -8,7 +8,7 @@
 
 class tmediaparser extends tevents {
   
-  public   static function instance() {
+  public   static function i() {
     return getinstance(__class__);
   }
   
@@ -25,7 +25,7 @@ class tmediaparser extends tevents {
   
   public function upload($filename, $content, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $tempfilename = $this->doupload($filename, $content);
@@ -40,7 +40,7 @@ class tmediaparser extends tevents {
   public function uploadfile($filename, $tempfilename, $title, $description, $keywords, $overwrite ) {
     if ($title == '') $title = $filename;
     if ($description == '') $description = $title;
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $parts = pathinfo($filename);
@@ -50,7 +50,7 @@ class tmediaparser extends tevents {
   }
   
   public function uploadicon($filename, $content, $overwrite ) {
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content, $overwrite);
     $info = $this->getinfo($tempfilename);
@@ -62,7 +62,7 @@ class tmediaparser extends tevents {
     'description' => ''
     );
     
-    $files = tfiles::instance();
+    $files = tfiles::i();
     return $files->additem($item);
   }
   
@@ -76,7 +76,7 @@ class tmediaparser extends tevents {
     'description' => ''
     );
     
-    $files = tfiles::instance();
+    $files = tfiles::i();
     return $files->additem($item);
   }
   
@@ -120,7 +120,7 @@ class tmediaparser extends tevents {
   }
   
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
     if ($id = $files->IndexOf('hash', $hash)) {
       @unlink(litepublisher::$paths->files . $tempfilename);
@@ -159,10 +159,10 @@ class tmediaparser extends tevents {
   
   public function uploadthumbnail($filename, $content) {
     if (!preg_match('/\.(jpg|gif|png|bmp)$/i', $filename)) return false;
-    $linkgen = tlinkgenerator::instance();
+    $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content);
-    $files = tfiles::instance();
+    $files = tfiles::i();
     $hash =$files->gethash(litepublisher::$paths->files . $tempfilename);
     if ($id = $files->IndexOf('hash', $hash)) {
       @unlink(litepublisher::$paths->files . $tempfilename);

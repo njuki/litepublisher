@@ -8,7 +8,7 @@
 
 class tcodedocfilter extends titems {
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -31,24 +31,24 @@ class tcodedocfilter extends titems {
   }
   
   private function getdescription(tpost $post, $s) {
-    $wiki = twikiwords::instance();
+    $wiki = twikiwords::i();
     $wiki->createwords($post, $s);
     $s = $this->classtowiki($s);
     $wiki->replacewords($s);
     $s = str_replace('->', '-&gt;', $s);
-    $filter = tcontentfilter::instance();
+    $filter = tcontentfilter::i();
     return $filter->filter($s);
   }
   
   private function classtowiki($s) {
     if (preg_match_all('/\[\[(\w*?)::(.*?)\]\]/', $s, $m, PREG_SET_ORDER)) {
-      $wiki = twikiwords::instance();
+      $wiki = twikiwords::i();
       foreach ($m as $item) {
         $class = trim($item[1]);
         $word = trim($item[2]);
         $link = $word;
         if ($idpost = $this->IndexOf('class', $class)) {
-          $post = tpost::instance();
+          $post = tpost::i();
           if ($id =$wiki->add($word, 0)) {
             $link = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
           } else {
@@ -63,7 +63,7 @@ class tcodedocfilter extends titems {
   
   public function convert(tpost $post, $s) {
     $this->checkadminlang();
-    $lang = tlocal::instance('codedoc');
+    $lang = tlocal::i('codedoc');
     $ini = tini2array::parse($s);
     $doc = $ini['document'];
     $result = array(
@@ -73,7 +73,7 @@ class tcodedocfilter extends titems {
     
     if ($post->id == 0) {
       $post->title = $doc['name'];
-      $linkgen = tlinkgenerator::instance();
+      $linkgen = tlinkgenerator::i();
       $post->url = $linkgen->addurl($post, 'codedoc');
     }
     
@@ -96,7 +96,7 @@ class tcodedocfilter extends titems {
     $post->description = tcontentfilter::getpostdescription($post->excerpt);
     $post->moretitle = sprintf($lang->moretitle, $post->title);
     /*
-    /$cat = tcategories::instance();
+    /$cat = tcategories::i();
     $idcat = $cat->add($lang->documentation);
     if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
     */
@@ -105,11 +105,11 @@ class tcodedocfilter extends titems {
   
   private function filterclass(tpost $post, array &$ini) {
     $doc = $ini['document'];
-    $wiki = twikiwords::instance();
+    $wiki = twikiwords::i();
     $headers = '';
     $content = '';
-    $lang = tlocal::instance('codedoc');
-    $args = targs::instance();
+    $lang = tlocal::i('codedoc');
+    $args = targs::i();
     $class = $doc['name'];
     $post->title = sprintf($lang->classtitle, $class);
     $id = $wiki->add($class, $post->id);
@@ -157,16 +157,16 @@ class tcodedocfilter extends titems {
     $args->headers = $headers;
     $args->content = $content;
     $tml = file_get_contents(self::getresource() . 'class.tml');
-    $theme = ttheme::instance();
+    $theme = ttheme::i();
     $post->filtered = $theme->parsearg($tml, $args);
     return $idparent;
   }
   
   private function convertitems(tpost $post, array &$ini, $name, $names) {
     if (!isset($ini[$name])) return '';
-    $lang = tlocal::instance('codedoc');
+    $lang = tlocal::i('codedoc');
     $headers = $lang->$names . ': ';
-    $wiki = twikiwords::instance();
+    $wiki = twikiwords::i();
     $items = &$ini[$name];
     if (isset($items[0])) {
       foreach ($items as $i => $item) $list[$i] = $item['name'];
@@ -183,7 +183,7 @@ class tcodedocfilter extends titems {
     }
     
     if ($content == '') return '';
-    $args = targs::instance();
+    $args = targs::i();
     $args->names = $names;
     $args->headers = $headers;
     $args->items = $content;
@@ -191,15 +191,15 @@ class tcodedocfilter extends titems {
   }
   
   private function convertitem(tpost $post, array $item, $name) {
-    $wiki = twikiwords::instance();
-    $args = targs::instance();
+    $wiki = twikiwords::i();
+    $args = targs::i();
     $args->add($item);
     if (!empty($item['type']) && preg_match_all('/\[\[(.*?)\]\]/i', $item['type'], $m)) {
       if ($id = $wiki->add($m[1], 0)) $args->type = $wiki->getlink($id);
     }
     $args->description = $this->getdescription($post, $item['description']);
     $args->idwiki = $wiki->add($item['name'], $post->id);
-    $lang =tlocal::instance('codedoc');
+    $lang =tlocal::i('codedoc');
     if ($lang->__isset($item['access']))  $args->access = $lang->__get($item['access']);
     return $this->html->item($args);
   }
@@ -209,11 +209,11 @@ class tcodedocfilter extends titems {
     $items = $this->select('parent = ' . $idpost, '');
     if (count($items) == 0) return '';
     $links = array();
-    $posts = tposts::instance();
+    $posts = tposts::i();
     $posts->loaditems($items);
     foreach ($items as $id) {
       $item = $this->getitem($id);
-      $post = tpost::instance($id);
+      $post = tpost::i($id);
       $links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $item['class'], $id);
     }
     return implode(', ', $links);
@@ -233,8 +233,8 @@ class tcodedocfilter extends titems {
   private function getclasslink($class) {
     //var_dump($this->db->res2assoc($this->db->query("select * from $this->thistable")));
     if ($idpost = $this->db->findid('class = ' .dbquote($class))) {
-      $post = tpost::instance($idpost);
-      $wiki = twikiwords::instance();
+      $post = tpost::i($idpost);
+      $wiki = twikiwords::i();
       if ($id = $wiki->IndexOf('word', $class)) {
         return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $class, $id);
       } else {
@@ -246,9 +246,9 @@ class tcodedocfilter extends titems {
   
   private function getinterface(tpost $post, array &$ini) {
     $doc = $ini['document'];
-    $wiki = twikiwords::instance();
-    $lang = tlocal::instance('codedoc');
-    $args = targs::instance();
+    $wiki = twikiwords::i();
+    $lang = tlocal::i('codedoc');
+    $args = targs::i();
     $class = $doc['name'];
     $post->title = sprintf($lang->interfacetitle, $class);
     $id = $wiki->add($class, $post->id);
@@ -270,8 +270,8 @@ class tcodedocfilter extends titems {
   
   private function getmanual(tpost $post, array &$ini) {
     $doc = $ini['document'];
-    $wiki = twikiwords::instance();
-    $lang = tlocal::instance('codedoc');
+    $wiki = twikiwords::i();
+    $lang = tlocal::i('codedoc');
     $post->title = $doc['name'];
     
     $content = $this->getdescription($post, $doc['description']);
@@ -293,9 +293,9 @@ class tcodedocfilter extends titems {
   
   public function gethtml($name = '') {
     if ($name == '') $name = 'codedoc';
-    $result = tadminhtml ::instance();
+    $result = tadminhtml ::i();
     $result->section = $name;
-    $lang = tlocal::instance($name);
+    $lang = tlocal::i($name);
     return $result;
   }
   

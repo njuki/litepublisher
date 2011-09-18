@@ -8,26 +8,26 @@
 
 class tadminthemes extends tadminmenu {
   
-  public static function instance($id = 0) {
+  public static function i($id = 0) {
     return parent::iteminstance(__class__, $id);
   }
   
   public static function getthemes() {
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'themes';
     return sprintf('<ul>%s</ul>', self::getlist($html->item, ''));
   }
   
   public static function getlist($tml, $selected) {
     $result = '';
-    $html = tadminhtml::instance();
+    $html = tadminhtml::i();
     $html->section = 'themes';
-    $args = targs::instance();
+    $args = targs::i();
     $list =    tfiler::getdir(litepublisher::$paths->themes);
     sort($list);
     $args->editurl = tadminhtml::getadminlink('/admin/views/edittheme/', 'theme');
     $args->filesurl = tadminhtml::getadminlink('/admin/views/themefiles/', 'theme');
-    $parser = tthemeparser::instance();
+    $parser = tthemeparser::i();
     foreach ($list as $name) {
       if ($about = $parser->getabout($name)) {
         $about['name'] = $name;
@@ -42,9 +42,9 @@ class tadminthemes extends tadminmenu {
   public function getcontent() {
     $result = tadminviews::getviewform('/admin/views/themes/');
     $idview = tadminhtml::getparam('idview', 1);
-    $view = tview::instance($idview);
+    $view = tview::i($idview);
     $html = $this->gethtml('themes');
-    $args = targs::instance();
+    $args = targs::i();
     $args->idview = $idview;
     $theme = $view->theme;
     
@@ -57,10 +57,10 @@ class tadminthemes extends tadminmenu {
   public function processform() {
     $result = '';
     $idview = tadminhtml::getparam('idview', 1);
-    $view = tview::instance($idview);
+    $view = tview::i($idview);
     
     if  (isset($_POST['reparse'])) {
-      $parser = tthemeparser::instance();
+      $parser = tthemeparser::i();
       try {
         $parser->reparse($view->theme->name);
       } catch (Exception $e) {

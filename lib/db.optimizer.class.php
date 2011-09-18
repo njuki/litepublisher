@@ -9,7 +9,7 @@
 class tdboptimizer extends tevents {
   public $childtables;
   
-  public static function instance() {
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -69,7 +69,7 @@ class tdboptimizer extends tevents {
   public function optimize() {
     $this->deletedeleted();
     sleep(2);
-    $man = tdbmanager::instance();
+    $man = tdbmanager::i();
     $man->optimize();
   }
   
