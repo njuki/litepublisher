@@ -278,7 +278,7 @@ class tcomment extends tdata {
     if ($url == '')  return $name;
     $manager = tcommentmanager::i();
     if ($manager->hidelink || !$manager->checktrust($this->trust)) return $name;
-    $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
+    $rel = $manager->nofollow ? 'rel="nofollow"' : '';
     if ($manager->redir) {
       return sprintf('<a %s href="%s/comusers.htm%sid=%d">%s</a>',$rel,
       litepublisher::$site->url, litepublisher::$site->q, $this->author, $name);
