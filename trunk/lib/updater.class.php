@@ -27,7 +27,7 @@ private $releases;
   }
   
   public static function getversions() {
-return strtoarray(file_get_contents(litepublisher::$paths->lib 'install' . DIRECTORY_SEPARATOR . 'versions.txt'));
+return strtoarray(file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'versions.txt'));
   }
 
 public function getversion() {
@@ -35,10 +35,10 @@ return $this->versions[0];
 }
 
 public function getnextversion() {
-return $this->getnextver($this->versions);
+return $this->getnext($this->versions);
 }
 
-public function getnextver(array $versions) {
+public function getnext(array $versions) {
 $cur = litepublisher::$options->version;
 for ($i = count($versions) - 1; $i >= 0; $i--) {
 if ($cur < $versions[$i]) return $versions[$i];
@@ -101,7 +101,7 @@ $nextver = $this->nextversion;
     }
 
 $releases = $this->downloadreleases();    
-$latest = $this->getnext($releases);(
+$latest = $this->getnext($releases);
     if ($this->download($latest)) {
       $this->result = $lang->successdownload;
       $this->update();
