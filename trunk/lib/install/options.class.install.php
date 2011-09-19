@@ -66,7 +66,8 @@ function installoptions($language) {
   $options->checkduplicate = true;
   $options->defaultsubscribe = true;
   $options->autocmtform = true;
-  $options->version = tupdater::getversion();
+$versions = strtoarray(file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'versions.txt'));
+  $options->version = $versions[0];
   $options->echoexception = true;
   $options->parsepost = true;
   $options->usersenabled = false;
