@@ -400,6 +400,12 @@ function array_move(array &$a, $oldindex, $newindex) {
   array_splice($a, $newindex, 0, array($item));
 }
 
+function strtoarray($s) {
+$a = explode("\n", trim($s));
+foreach ($a as $k => $v) $a[$k] = trim($v);
+return $a;
+}
+
 function dumpstr($s) {
   echo "<pre>\n", htmlspecialchars($s), "</pre>\n";
 }

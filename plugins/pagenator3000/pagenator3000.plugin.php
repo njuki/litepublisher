@@ -16,9 +16,9 @@ class tpagenator3000 extends tplugin {
     if (strpos($theme->templates['content.navi'], 'paginator3000.min.js')) return;
     $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
     $about = tplugins::getabout(tplugins::getname(__file__));
-    $head = '<script type="text/javascript"><!--
+    $head = '<link type="text/css" href="' . $url . 'paginator3000.css" rel="stylesheet" />
+<script type="text/javascript"><!--
     function init_paginator3000() {
-      $.load_css("' . $url . 'paginator3000.css");
       $.load_script("' . $url . 'paginator3000.min.js", function() {
         $(document).ready(function() {
           var tag = $("#paginator, .navigation");

@@ -7,11 +7,13 @@
 **/
 
 class tupdater extends tevents {
-  public $version;
+private $releases;
+  public $versions;
   public $result;
   public $log;
+
   
-  public static function i() {
+ public static function i() {
     return getinstance(__class__);
   }
   
@@ -20,13 +22,29 @@ class tupdater extends tevents {
     $this->basename = 'updater';
     $this->addevents('onupdated');
     $this->data['useshell'] = false;
-    $this->version =  self::getversion();
+    $this->versions =  self::getversions();
     $this->log = false;
   }
   
-  public static function getversion() {
-    return trim(file_get_contents(litepublisher::$paths->libinclude . 'version.txt'));
+  public static function getversions() {
+return strtoarray(file_get_contents(litepublisher::$paths->lib 'install' . DIRECTORY_SEPARATOR . 'versions.txt'));
   }
+
+public function getversion() {
+return $this->versions[0];
+}
+
+public function getnextversion() {
+return $this->getnextver($this->versions);
+}
+
+public function getnextver(array $versions) {
+$cur = litepublisher::$options->version;
+for ($i = count($versions) - 1; $i >= 0; $i--) {
+if ($cur < $versions[$i]) return $versions[$i];
+}
+return $versions[0];
+}
   
   public function run($ver) {
     $ver = (string) $ver;
@@ -48,10 +66,11 @@ class tupdater extends tevents {
     $log =$this->log;false;
     if ($log) tfiler::log("begin update", 'update');
     tlocal::clearcache();
-    $this->version =  self::getversion();
+    $this->versions =  self::getversions();
+$nextver = $this->nextversion;
     if ($log) tfiler::log("update started from litepublisher::$options->version to $this->version", 'update');
     $v = litepublisher::$options->version + 0.01;
-    while ( $v<= $this->version) {
+    while ( $v<= $nextver) {
       $ver = (string) $v;
       if (strlen($ver) == 3) $ver .= '0';
       if ($log) tfiler::log("$v selected to update", 'update');
@@ -61,7 +80,6 @@ class tupdater extends tevents {
       $v = $v + 0.01;
     }
     
-    litepublisher::$options->version = $this->version;
     ttheme::clearcache();
     tlocal::clearcache();
     if ($log) tfiler::log("update finished", 'update');
@@ -81,8 +99,10 @@ class tupdater extends tevents {
     } else {
       $backuper->createbackup();
     }
-    
-    if ($this->download($this->latest)) {
+
+$releases = $this->downloadreleases();    
+$latest = $this->getnext($releases);(
+    if ($this->download($latest)) {
       $this->result = $lang->successdownload;
       $this->update();
       $this->result .= $lang->successupdated;
@@ -113,9 +133,16 @@ class tupdater extends tevents {
   }
   
   public function getlatest() {
-    if (($s = http::get('http://litepublisher.com/service/version.txt'))  ||
-    ($s = http::get('http://litepublisher.googlecode.com/svn/trunk/lib/include/version.txt') )) {
-      return $s;
+if ($releases = $this->downloadreleases()) return $releases[0];
+return false;
+}
+
+  public function downloadreleases() {
+if (isset($this->releases)) return $this->releases;
+    if (($s = http::get('http://litepublisher.com/service/versions.txt'))  ||
+    ($s = http::get('http://litepublisher.googlecode.com/svn/trunk/lib/install/versions.txt') )) {
+$this->releases = strtoarray($s);
+return $this->releases;
     }
     return false;
   }
