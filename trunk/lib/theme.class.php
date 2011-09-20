@@ -360,7 +360,7 @@ class ttheme extends tevents {
     $this->error("Unknown widget '$name' and template '$tml' in $index sidebar");
   }
   
-  public function getajaxtitle($title, $id, $sidebar, $tml) {
+  public function getajaxtitle($id, $title, $sidebar, $tml) {
     $args = targs::i();
     $args->title = $title;
     $args->id = $id;
