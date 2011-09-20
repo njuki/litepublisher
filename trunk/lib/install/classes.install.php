@@ -13,7 +13,7 @@ function installclasses($language) {
   require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'options.class.install.php');
   $password = installoptions($language);
   //require_once(dirname(__file__) . DIRECTORY_SEPARATOR. 'local.class.install.php');
-//tlocalInstall(getinstance('tlocal'));
+  //tlocalInstall(getinstance('tlocal'));
   doinstallclasses();
   $options->unlock();
   return $password;
@@ -70,8 +70,8 @@ function doinstallclasses() {
   $xmlrpc = TXMLRPC::i();
   $xmlrpc->lock();
   $theme = ttheme::getinstance('default');
-//  $html = tadminhtml::i();
-//      $html->loadinstall();
+  //  $html = tadminhtml::i();
+  //      $html->loadinstall();
   
   foreach(litepublisher::$classes->items as $class => $item) {
     //echo "$class<br>\n";

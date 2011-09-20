@@ -8,8 +8,8 @@
 
 class TXMLRPCSystem extends TXMLRPCAbstract {
   
-  public static function &Instance() {
-    return GetInstance(__class__);
+  public static function i() {
+    return getinstance(__class__);
   }
   
   public function listMethods() {

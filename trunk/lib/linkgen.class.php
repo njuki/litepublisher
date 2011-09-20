@@ -8,7 +8,7 @@
 
 class tlinkgenerator extends tevents {
   public $source;
-private $translitmap;
+  private $translitmap;
   
   public static function i() {
     return getinstance(__class__);
@@ -81,7 +81,7 @@ private $translitmap;
   }
   
   public function translit($s) {
-tlocal::usefile('translit');
+    tlocal::usefile('translit');
     return strtr($s, tlocal::$self->ini['translit']);
   }
   

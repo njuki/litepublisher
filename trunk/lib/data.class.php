@@ -15,10 +15,14 @@ class tdata {
   public $data;
   public $lockcount;
   public $table;
-
+  
   public static function i() {
-return getinstance(get_called_class());
-}
+    return getinstance(get_called_class());
+  }
+  
+  public static function instance() {
+    return getinstance(get_called_class());
+  }
   
   public function __construct() {
     $this->lockcount = 0;
@@ -401,9 +405,9 @@ function array_move(array &$a, $oldindex, $newindex) {
 }
 
 function strtoarray($s) {
-$a = explode("\n", trim($s));
-foreach ($a as $k => $v) $a[$k] = trim($v);
-return $a;
+  $a = explode("\n", trim($s));
+  foreach ($a as $k => $v) $a[$k] = trim($v);
+  return $a;
 }
 
 function dumpstr($s) {

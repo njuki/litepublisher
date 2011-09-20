@@ -21,7 +21,7 @@ class tadminlocalmerger extends tadminmenu {
     $html = $this->html;
     $lang = tlocal::i('options');
     $args = targs::i();
-
+    
     foreach ($merger->items as $section => $items) {
       $tab = new tuitabs();
       $tab->add($lang->files, $html->getinput('editor',
@@ -34,33 +34,33 @@ class tadminlocalmerger extends tadminmenu {
       $tab->add($lang->text, $tabtext->get());
       $tabs->add($section, $tab->get());
     }
-
-      $tabs->add('HTML', $html->getinput('editor',
-      'adminhtml_files', tadminhtml::specchars(implode("\n", $merger->html)), $lang->files));
-
+    
+    $tabs->add('HTML', $html->getinput('editor',
+    'adminhtml_files', tadminhtml::specchars(implode("\n", $merger->html)), $lang->files));
+    
     $args->formtitle= $lang->optionslocal;
-$args->dateformat = litepublisher::$options->dateformat;
-$dirs = tfiler::getdir(litepublisher::$paths->languages);
-$args->language = tadminhtml::array2combo(array_combine($dirs, $dirs), litepublisher::$options->language);
-$zones = timezone_identifiers_list ();
-      $args->timezone = tadminhtml::array2combo(array_combine($zones, $zones), litepublisher::$options->timezone);
-
-        return  $html->adminform('[text=dateformat]
-[combo=language]
-[combo=timezone]' 
- . $tabs->get(), $args);
+    $args->dateformat = litepublisher::$options->dateformat;
+    $dirs = tfiler::getdir(litepublisher::$paths->languages);
+    $args->language = tadminhtml::array2combo(array_combine($dirs, $dirs), litepublisher::$options->language);
+    $zones = timezone_identifiers_list ();
+    $args->timezone = tadminhtml::array2combo(array_combine($zones, $zones), litepublisher::$options->timezone);
+    
+    return  $html->adminform('[text=dateformat]
+    [combo=language]
+    [combo=timezone]'
+    . $tabs->get(), $args);
   }
   
   public function processform() {
-      litepublisher::$options->dateformat = $_POST['dateformat'];
-litepublisher::$options->language = $_POST['language'];
-      if (litepublisher::$options->timezone != $_POST['timezone']) {
-        litepublisher::$options->timezone = $_POST['timezone'];
-        $archives = tarchives::i();
-        turlmap::unsub($archives);
-        $archives->PostsChanged();
-      }
-
+    litepublisher::$options->dateformat = $_POST['dateformat'];
+    litepublisher::$options->language = $_POST['language'];
+    if (litepublisher::$options->timezone != $_POST['timezone']) {
+      litepublisher::$options->timezone = $_POST['timezone'];
+      $archives = tarchives::i();
+      turlmap::unsub($archives);
+      $archives->PostsChanged();
+    }
+    
     $merger = tlocalmerger::i();
     $merger->lock();
     //$merger->items = array();
@@ -72,9 +72,9 @@ litepublisher::$options->language = $_POST['language'];
         $merger->addtext($name, $key, $_POST[$name . '_text_' . $key]);
       }
     }
-
-$merger->html = explode("\n", trim($_POST['adminhtml_files']));
-foreach ($merger->html  as $i => $filename) $merger->html[$i] = trim($filename);
+    
+    $merger->html = explode("\n", trim($_POST['adminhtml_files']));
+    foreach ($merger->html  as $i => $filename) $merger->html[$i] = trim($filename);
     $merger->unlock();
   }
   

@@ -70,9 +70,9 @@ class tadminviews extends tadminmenu {
         case 'combo':
         $value = tadminhtml  ::array2combo($customadmin[$name]['values'], $value);
         break;
-
+        
         case 'radio':
-        $value = tadminhtml  ::getradioitems(    "custom_{$idview}_$name", $customadmin[$name]['values'], $value);
+      $value = tadminhtml  ::getradioitems(    "custom_{$idview}_$name", $customadmin[$name]['values'], $value);
         break;
       }
       
@@ -95,7 +95,7 @@ class tadminviews extends tadminmenu {
         case 'checkbox':
       $view->data['custom'][$name] = isset($_POST["custom_{$idview}_$name"]);
         break;
-
+        
         case 'radio':
       $view->data['custom'][$name] = $customadmin[$name]['values'][(int) $_POST["custom_{$idview}_$name"]];
         break;

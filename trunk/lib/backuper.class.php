@@ -396,7 +396,7 @@ class tbackuper extends tevents {
         $tar = new tar();
         $tar->loadfromstring($s);
         foreach ($tar->files as $item) {
-          if (!$strend($item['name'],'.sql')) {
+          if (!strend($item['name'],'.sql')) {
             $s = $item['file'];
             break;
           }

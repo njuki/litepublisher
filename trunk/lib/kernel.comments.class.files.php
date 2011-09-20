@@ -410,7 +410,7 @@ class TComment {
     if (empty($url)) return $name;
     $manager = tcommentmanager::i();
     if ($manager->hidelink) return $name;
-    $rel = $manager->nofollow ? 'rel="nofollow noindex"' : '';
+    $rel = $manager->nofollow ? 'rel="nofollow"' : '';
     if ($manager->redir) {
       return "<a $rel href=\"" . litepublisher::$site->url . "/comusers.htm" . litepublisher::$site->q . "id=$this->author&post=$idpost\">$name</a>";
     } else {

@@ -7,13 +7,13 @@
 **/
 
 class tupdater extends tevents {
-private $releases;
+  private $releases;
   public $versions;
   public $result;
   public $log;
-
   
- public static function i() {
+  
+  public static function i() {
     return getinstance(__class__);
   }
   
@@ -27,24 +27,24 @@ private $releases;
   }
   
   public static function getversions() {
-return strtoarray(file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'versions.txt'));
+    return strtoarray(file_get_contents(litepublisher::$paths->lib . 'install' . DIRECTORY_SEPARATOR . 'versions.txt'));
   }
-
-public function getversion() {
-return $this->versions[0];
-}
-
-public function getnextversion() {
-return $this->getnext($this->versions);
-}
-
-public function getnext(array $versions) {
-$cur = litepublisher::$options->version;
-for ($i = count($versions) - 1; $i >= 0; $i--) {
-if ($cur < $versions[$i]) return $versions[$i];
-}
-return $versions[0];
-}
+  
+  public function getversion() {
+    return $this->versions[0];
+  }
+  
+  public function getnextversion() {
+    return $this->getnext($this->versions);
+  }
+  
+  public function getnext(array $versions) {
+    $cur = litepublisher::$options->version;
+    for ($i = count($versions) - 1; $i >= 0; $i--) {
+      if ($cur < $versions[$i]) return $versions[$i];
+    }
+    return $versions[0];
+  }
   
   public function run($ver) {
     $ver = (string) $ver;
@@ -67,7 +67,7 @@ return $versions[0];
     if ($log) tfiler::log("begin update", 'update');
     tlocal::clearcache();
     $this->versions =  self::getversions();
-$nextver = $this->nextversion;
+    $nextver = $this->nextversion;
     if ($log) tfiler::log("update started from litepublisher::$options->version to $this->version", 'update');
     $v = litepublisher::$options->version + 0.01;
     while ( $v<= $nextver) {
@@ -99,9 +99,9 @@ $nextver = $this->nextversion;
     } else {
       $backuper->createbackup();
     }
-
-$releases = $this->downloadreleases();    
-$latest = $this->getnext($releases);
+    
+    $releases = $this->downloadreleases();
+    $latest = $this->getnext($releases);
     if ($this->download($latest)) {
       $this->result = $lang->successdownload;
       $this->update();
@@ -133,16 +133,16 @@ $latest = $this->getnext($releases);
   }
   
   public function getlatest() {
-if ($releases = $this->downloadreleases()) return $releases[0];
-return false;
-}
-
+    if ($releases = $this->downloadreleases()) return $releases[0];
+    return false;
+  }
+  
   public function downloadreleases() {
-if (isset($this->releases)) return $this->releases;
+    if (isset($this->releases)) return $this->releases;
     if (($s = http::get('http://litepublisher.com/service/versions.txt'))  ||
     ($s = http::get('http://litepublisher.googlecode.com/svn/trunk/lib/install/versions.txt') )) {
-$this->releases = strtoarray($s);
-return $this->releases;
+      $this->releases = strtoarray($s);
+      return $this->releases;
     }
     return false;
   }

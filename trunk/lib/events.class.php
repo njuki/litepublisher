@@ -170,19 +170,19 @@ class tevents extends tdata {
   
   public function delete_event_class($name, $class) {
     if (isset($this->events[$name])) {
-$list = &$this->events[$name];
-$deleted = false;
-for ($i = count($list) - 1; $i >= 0; $i--) {
+      $list = &$this->events[$name];
+      $deleted = false;
+      for ($i = count($list) - 1; $i >= 0; $i--) {
         if ($list[$i]['class'] == $class) {
-array_splice($list, $i, 1);
-$deleted = true;
-}
+          array_splice($list, $i, 1);
+          $deleted = true;
+        }
       }
-if ($deleted) {
-if (count($list) == 0) unset($this->events[$name]);
-$this->save();
-}
-return $deleted;
+      if ($deleted) {
+        if (count($list) == 0) unset($this->events[$name]);
+        $this->save();
+      }
+      return $deleted;
     }
     return false;
   }

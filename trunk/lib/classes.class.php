@@ -26,7 +26,7 @@ class tclasses extends titems {
     }
     return litepublisher::$classes;
   }
-
+  
   public static function instance() {
     return self::i();
   }

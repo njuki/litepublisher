@@ -408,9 +408,9 @@ class tadminhtml {
   private $map;
   
   public static function i() {
-    $result = getinstance(__class__);
-    if (count($result->ini) == 0) $result->load('adminhtml');
-    return $result;
+    $self = getinstance(__class__);
+    if (count($self->ini) == 0) $self->load();
+    return $self;
   }
   
   public static function getinstance($section) {
@@ -538,7 +538,7 @@ class tadminhtml {
   public static function array2combo(array $items, $selected) {
     $result = '';
     foreach ($items as $i => $title) {
-      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $selected ? 'selected' : '', $title);
+      $result .= sprintf('<option value="%s" %s>%s</option>', $i, $i == $selected ? 'selected' : '', self::specchars($title));
     }
     return $result;
   }
@@ -557,9 +557,24 @@ class tadminhtml {
     return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }
   
+  public function getradioitems($name, array $items, $selected) {
+    $result = '';
+    $theme = ttheme::i();
+    $tml = $theme->templates['content.admin.radioitems'];
+    foreach ($items as $index => $value) {
+      $result .= strtr($tml, array(
+      '$index' => $index,
+      '$checked' => $value == $selected ? 'checked="checked"' : '',
+      '$name' => $name,
+      '$value' => self::specchars($value)
+      ));
+    }
+    return $result;
+  }
+  
   public function getinput($type, $name, $value, $title) {
     $theme = ttheme::i();
-    return strtr($theme->content->admin->$type, array(
+    return strtr($theme->templates['content.admin.' . $type], array(
     '$lang.$name' => $title,
     '$name' => $name,
     '$value' => $value

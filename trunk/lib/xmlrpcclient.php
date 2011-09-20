@@ -8,13 +8,13 @@
 
 require_once(litepublisher::$paths->llibinclude. 'class-IXR.php');
 
-class TXMLRPCClient  extends TDataClass {
+class TXMLRPCClient  extends tdata {
   protected $client;
   protected $login;
   protected $password;
   
-  public static function &Instance($id) {
-    return GetInstance(__class__);
+  public static function i($id) {
+    return getinstance(__class__);
   }
   
   public function SetServer($url, $login, $password) {
