@@ -18,6 +18,10 @@ class tdatabase {
     return getinstance(__class__);
   }
   
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
   public function __construct() {
     if (!isset(litepublisher::$options->dbconfig)) return false;
     $dbconfig = litepublisher::$options->dbconfig;
@@ -348,6 +352,14 @@ class tdata {
   public $data;
   public $lockcount;
   public $table;
+  
+  public static function i() {
+    return getinstance(get_called_class());
+  }
+  
+  public static function instance() {
+    return getinstance(get_called_class());
+  }
   
   public function __construct() {
     $this->lockcount = 0;
@@ -729,6 +741,12 @@ function array_move(array &$a, $oldindex, $newindex) {
   array_splice($a, $newindex, 0, array($item));
 }
 
+function strtoarray($s) {
+  $a = explode("\n", trim($s));
+  foreach ($a as $k => $v) $a[$k] = trim($v);
+  return $a;
+}
+
 function dumpstr($s) {
   echo "<pre>\n", htmlspecialchars($s), "</pre>\n";
 }
@@ -903,13 +921,20 @@ class tevents extends tdata {
   }
   
   public function delete_event_class($name, $class) {
-    if (    $list = $this->get_events($name)) {
-      foreach ($list  as $i => $item) {
-        if ($item['class'] == $class) {
-          $this->delete_event_item($name, $i);
-          return true;
+    if (isset($this->events[$name])) {
+      $list = &$this->events[$name];
+      $deleted = false;
+      for ($i = count($list) - 1; $i >= 0; $i--) {
+        if ($list[$i]['class'] == $class) {
+          array_splice($list, $i, 1);
+          $deleted = true;
         }
       }
+      if ($deleted) {
+        if (count($list) == 0) unset($this->events[$name]);
+        $this->save();
+      }
+      return $deleted;
     }
     return false;
   }
@@ -1274,6 +1299,10 @@ class tclasses extends titems {
     return litepublisher::$classes;
   }
   
+  public static function instance() {
+    return self::i();
+  }
+  
   protected function create() {
     parent::create();
     $this->basename = 'classes';
@@ -1283,7 +1312,7 @@ class tclasses extends titems {
     $this->addmap('interfaces', array());
     $this->addmap('remap', array());
     $this->instances = array();
-    if (function_exists('spl_autoload_register')) spl_autoload_register(array(&$this, '_autoload'));
+    if (function_exists('spl_autoload_register')) spl_autoload_register(array($this, '_autoload'));
   }
   
   public function load() {
@@ -1314,7 +1343,6 @@ class tclasses extends titems {
   }
   
   public function newitem($name, $class, $id) {
-    //echo"$name:$class:$id new<br>\n";
     if (!empty($this->remap[$class])) $class = $this->remap[$class];
     $this->callevent('onnewitem', array($name, &$class, $id));
     return new $class();
@@ -1405,6 +1433,10 @@ class toptions extends tevents_storage {
   public $errorlog;
   
   public static function i() {
+    return getinstance(__class__);
+  }
+  
+  public static function instance() {
     return getinstance(__class__);
   }
   
@@ -1614,6 +1646,10 @@ class tsite extends tevents_storage {
     return getinstance(__class__);
   }
   
+  public static function instance() {
+    return getinstance(__class__);
+  }
+  
   protected function create() {
     parent::create();
     $this->basename = 'site';
@@ -1677,6 +1713,10 @@ class turlmap extends titems {
   public $onclose;
   
   public static function i() {
+    return getinstance(__class__);
+  }
+  
+  public static function instance() {
     return getinstance(__class__);
   }
   
@@ -1833,7 +1873,7 @@ class turlmap extends titems {
     $class = $item['class'];
     $parents = class_parents($class);
     if (in_array('titem', $parents)) {
-      return call_user_func_array(array($class, 'instance'), array($item['arg']));
+      return call_user_func_array(array($class, 'i'), array($item['arg']));
     } else {
       return getinstance($class);
     }

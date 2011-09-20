@@ -52,11 +52,11 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
   $self->addtext('moderate', 'lang', $js . sprintf('lang.comments = %s;',  json_encode($lang->ini['comments'])));
   
   $self->unlock();
-
+  
   $template = ttemplate::i();
   $template->addtohead(sprintf($template->js, '$site.files$template.jsmerger_default'));
-
-$updater = tupdater::i();
+  
+  $updater = tupdater::i();
   $updater->onupdated = $self->onupdated;
 }
 

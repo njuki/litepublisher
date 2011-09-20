@@ -16,25 +16,26 @@ function tlocalmergerInstall($self) {
   $self->add('default', "lib/languages/$lang/default.ini");
   $self->add('admin', "lib/languages/$lang/admin.ini");
   $self->add('theme', "lib/languages/$lang/theme.ini");
-if (litepublisher::$options->language != 'en') {
-$self->add('translit', "lib/languages/$lang/translit.ini");
-} else {
-$self->items['translit'] = array(
-'files' => array(),
- 'texts' => array()
-);
-}
+  
+  if (litepublisher::$options->language != 'en') {
+    $self->add('translit', "lib/languages/$lang/translit.ini");
+  } else {
+    $self->items['translit'] = array(
+    'files' => array(),
+    'texts' => array()
+    );
+  }
+  
   $self->add('install', "lib/languages/$lang/install.ini");
   
   $self->addhtml('lib/languages/adminhtml.ini');
   
   $self->unlock();
-
-
-//post install
+  
+  //after install
   litepublisher::$options->timezone = tlocal::get('installation', 'timezone');
-    date_default_timezone_set(tlocal::get('installation', 'timezone'));
-
-$html = tadminhtml::i();
-$html->loadinstall();
+  date_default_timezone_set(tlocal::get('installation', 'timezone'));
+  
+  $html = tadminhtml::i();
+  $html->loadinstall();
 }

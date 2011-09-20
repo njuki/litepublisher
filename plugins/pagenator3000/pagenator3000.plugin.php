@@ -17,7 +17,7 @@ class tpagenator3000 extends tplugin {
     $url = litepublisher::$site->files . '/plugins/' . basename(dirname(__file__)) . '/';
     $about = tplugins::getabout(tplugins::getname(__file__));
     $head = '<link type="text/css" href="' . $url . 'paginator3000.css" rel="stylesheet" />
-<script type="text/javascript"><!--
+    <script type="text/javascript"><!--
     function init_paginator3000() {
       $.load_script("' . $url . 'paginator3000.min.js", function() {
         $(document).ready(function() {

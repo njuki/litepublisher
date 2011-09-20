@@ -162,8 +162,8 @@ class tadminhtml {
     return sprintf('<select name="%1$s" id="%1$s">%2$s</select>', $name,
     self::array2combo($items, $selected));
   }
-
-    public function adminform($tml, targs $args) {
+  
+  public function adminform($tml, targs $args) {
     $args->items = $this->parsearg($tml, $args);
     return $this->parsearg(ttheme::i()->content->admin->form, $args);
   }
@@ -171,18 +171,18 @@ class tadminhtml {
   public function getcheckbox($name, $value) {
     return $this->getinput('checkbox', $name, $value ? 'checked="checked"' : '', '$lang.' . $name);
   }
-
+  
   public function getradioitems($name, array $items, $selected) {
     $result = '';
     $theme = ttheme::i();
-$tml = $theme->templates['content.admin.radioitems'];
+    $tml = $theme->templates['content.admin.radioitems'];
     foreach ($items as $index => $value) {
-    $result .= strtr($tml, array(
-'$index' => $index,
-'$checked' => $value == $selected ? 'checked="checked"' : '',
-    '$name' => $name,
-    '$value' => self::specchars($value)
-    ));
+      $result .= strtr($tml, array(
+      '$index' => $index,
+      '$checked' => $value == $selected ? 'checked="checked"' : '',
+      '$name' => $name,
+      '$value' => self::specchars($value)
+      ));
     }
     return $result;
   }

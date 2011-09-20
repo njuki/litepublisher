@@ -181,6 +181,6 @@ public function gethead() {}
     } else {
       $this->save();
     }
-}
-
-  }//class
+  }
+  
+}//class

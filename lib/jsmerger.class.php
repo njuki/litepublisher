@@ -25,7 +25,7 @@ class tfilemerger extends titems {
     parent::save();
     $this->merge();
   }
-
+  
   public function normfilename($filename) {
     $filename = trim($filename);
     if (strbegin($filename,litepublisher::$paths->home)) $filename = substr($filename, strlen(litepublisher::$paths->home));
@@ -102,12 +102,12 @@ class tfilemerger extends titems {
   public function getfilename($section, $revision) {
     return sprintf('/files/js/%s.%s.js', $section, $revision);
   }
-
-public function readfile($filename) {
-$result = file_get_contents($filename);
-if ($result === false) $this->error(sprintf('Error read %s file', $filename));
-return $result;
-}
+  
+  public function readfile($filename) {
+    $result = file_get_contents($filename);
+    if ($result === false) $this->error(sprintf('Error read %s file', $filename));
+    return $result;
+  }
   
   public function merge() {
     $home = rtrim(litepublisher::$paths->home, DIRECTORY_SEPARATOR);
@@ -119,9 +119,9 @@ return $result;
         $filename = $theme->parse($filename);
         $filename = $home . str_replace('/', DIRECTORY_SEPARATOR, $filename);
         if (file_exists($filename)) {
-        $s .= $this->readfile($filename);
-        $s .= "\n"; //prevent comments
-}
+          $s .= $this->readfile($filename);
+          $s .= "\n"; //prevent comments
+        }
       }
       $s .= implode("\n", $items['texts']);
       $savefile =  $this->getfilename($section, $this->revision);
@@ -141,13 +141,13 @@ return $result;
 }//class
 
 class tjsmerger extends tfilemerger {
-
+  
   public static function i() {
     return getinstance(__class__);
   }
   
-public function onupdated() {
-$this->save();
-}
+  public function onupdated() {
+    $this->save();
+  }
   
 }//class

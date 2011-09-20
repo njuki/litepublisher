@@ -7,12 +7,12 @@
 **/
 
 class  core {
-public static $paths;
-public static $filestorage;
-public static $getinstance($class);
-
-public function getinstance($class) {
-return self::$getinstance($class);
-}
-
+  public static $paths;
+  public static $filestorage;
+  public static $getinstance($class);
+  
+  public function getinstance($class) {
+    return self::$getinstance($class);
+  }
+  
 }//class

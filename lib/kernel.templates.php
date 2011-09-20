@@ -33,6 +33,7 @@ class tlocal {
   }
   
   public static function get($section, $key) {
+    //if (!isset(self::$self->ini[$section][$key])) throw new Exception($section);
     return self::$self->ini[$section][$key];
   }
   
@@ -364,7 +365,7 @@ class ttemplate extends tevents_storage {
     $this->data['heads'] = '';
     $this->data['js'] = '<script type="text/javascript" src="%s"></script>';
   $this->data['jsready'] = '<script type="text/javascript">$(document).ready(function() {%s});</script>';
-    $this->data['jsload'] = '<script type="text/javascript">$.getScript(%s);</script>';
+    $this->data['jsload'] = '<script type="text/javascript">$.load_script(%s);</script>';
     $this->data['footer']=   '<a href="http://litepublisher.com/">Powered by Lite Publisher</a>';
     $this->data['tags'] = array();
   }
@@ -472,6 +473,10 @@ class ttemplate extends tevents_storage {
     file_put_contents($filename, $result);
     @chmod($filename, 0666);
     return $result;
+  }
+  
+  public function getcssfile() {
+    return sprintf('%s/files/css/%s.css', litepublisher::$site->files, $this->view->theme->name);
   }
   
   private function getltoptions() {

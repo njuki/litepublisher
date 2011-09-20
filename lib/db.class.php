@@ -17,12 +17,12 @@ class tdatabase {
   public static function i() {
     return getinstance(__class__);
   }
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
   
-    public function __construct() {
+  public function __construct() {
     if (!isset(litepublisher::$options->dbconfig)) return false;
     $dbconfig = litepublisher::$options->dbconfig;
     $this->table = '';

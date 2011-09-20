@@ -23,7 +23,7 @@ class turlmap extends titems {
   public static function i() {
     return getinstance(__class__);
   }
-
+  
   public static function instance() {
     return getinstance(__class__);
   }
