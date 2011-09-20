@@ -41,7 +41,7 @@ class tupdater extends tevents {
   public function getnext(array $versions) {
     $cur = litepublisher::$options->version;
     for ($i = count($versions) - 1; $i >= 0; $i--) {
-      if ($cur < $versions[$i]) return $versions[$i];
+      if (version_compare($cur, $versions[$i]) < 0) return $versions[$i];
     }
     return $versions[0];
   }
@@ -127,7 +127,7 @@ class tupdater extends tevents {
   
   public function islatest() {
     if ($latest = $this->getlatest()) {
-      return $latest - litepublisher::$options->version ;
+      return version_compare($latest, litepublisher::$options->version);
     }
     return false;
   }

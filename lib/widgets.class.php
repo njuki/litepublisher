@@ -430,7 +430,7 @@ class twidgets extends titems_storage {
   public function getajax($id, $sidebar) {
     $theme = ttheme::i();
     //$title = sprintf('<a onclick="widget_load(this, %d, %d)">%s</a>', $id, $sidebar, $this->items[$id]['title']);
-    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'ajaxwidget');
+    $title = $theme->getajaxtitle($id, $this->items[$id]['title'], $sidebar, 'ajaxwidget');
     $content = "<!--widgetcontent-$id-->";
     return $theme->getwidget($title, $content, $this->items[$id]['template'], $sidebar);
   }
@@ -438,7 +438,7 @@ class twidgets extends titems_storage {
   public function getinline($id, $sidebar) {
     $theme = ttheme::i();
     //$title = sprintf('<a rel="inlinewidget" href="">%s</a>', $this->items[$id]['title']);
-    $title = $theme->getajaxtitle($this->items[$id]['title'], $id, $sidebar, 'inlinewidget');
+    $title = $theme->getajaxtitle($id, $this->items[$id]['title'], $sidebar, 'inlinewidget');
     if ('cache' == $this->items[$id]['cache']) {
       $cache = twidgetscache::i();
       $content = $cache->getcontent($id, $sidebar);
