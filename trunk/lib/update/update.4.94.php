@@ -17,12 +17,15 @@ foreach (array('codedoc', 'downloaditem', 'foaf', 'openid-provider', 'tickets') 
 if (!isset($plugins->items[$name])) continue;
 $merger->addplugin($name);
 }
-
 $merger->unlock();
 
 $admin = tadminmenus::i();
 if ($id = $admin->url2id('/admin/options/local/')) {
 $admin->items[$id]['class'] = 'tadminlocalmerger';
 $admin->save();
+litepublisher::$urlmap->setvalue($admin->items[$id]['idurl'], 'class', 'tadminlocalmerger');
 }
+
+litepublisher::$options->version = 4.94;
+litepublisher::$options->savemodified();
 }
