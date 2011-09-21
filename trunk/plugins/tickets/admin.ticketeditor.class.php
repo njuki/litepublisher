@@ -23,7 +23,7 @@ class tticketeditor extends tposteditor {
     if ($this->idpost == 0){
       return parent::gettitle();
     } else {
-      return tlocal::$admin('tickets')->editor;
+      return tlocal::admin('tickets')->editor;
     }
   }
   
@@ -77,7 +77,7 @@ class tticketeditor extends tposteditor {
     
     $states =array();
     foreach (array('fixed', 'opened', 'wontfix', 'invalid', 'duplicate', 'reassign') as $state) {
-      $states[$state] = $$lang->$state;
+      $states[$state] = $lang->$state;
     }
     $args->statecombo= $html->array2combo($states, $ticket->state);
     
