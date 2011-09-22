@@ -268,6 +268,25 @@ class tfilestorage {
     }
     return true;
   }
+
+  public static function getfile($filename) {
+    if (self::$memcache) {
+      if ($s =  self::$memcache->get($filename)) return $s;
+    }
+    
+    if (file_exists($filename)) {
+      $s = file_get_contents($filename);
+      if (self::$memcache) self::$memcache->set($filename, $s, false, 3600);
+      return $s;
+    }
+    return false;
+  }
+  
+  public static function setfile($filename, $content) {
+    if (self::$memcache) self::$memcache->set($filename, $content, false, 3600);
+file_put_contents($filename, $content);
+@chmod($filename, 0666);
+}
   
   public static function savevar($filename, &$var) {
     return self::savetofile($filename, serialize($var));
