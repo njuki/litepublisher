@@ -292,7 +292,17 @@ class tthemeparser extends tevents {
       }
       
       public function tagtopath($parent, $tag) {
-        if (($parent == '') || ($tag == '$template')) return 'index';
+if (strbegin($tag,  '$template.sidebar') && (substr_count($tag, '.') == 1)) {
+          return array(
+          'path' => substr($tag, strlen('$template.')),
+          'tag' => $tag,
+          'replace' => $tag
+          );
+}
+
+       if (($parent == '') || ($tag == '$template')) return 'index';
+      if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
+if ($parent == '$template') $parent = '';
         foreach ($this->paths as $path => $info) {
           if (strbegin($path, $parent)) {
             if ($tag == $info['tag']) {
@@ -301,6 +311,7 @@ class tthemeparser extends tevents {
             }
           }
         }
+
         $name = substr($tag, 1);
         $path = $parent . '.' . $name;
         if (strbegin($parent, 'sidebar')) {
@@ -311,7 +322,7 @@ class tthemeparser extends tevents {
           );
         }
         
-        if (strbegin($parent, '$custom') || strbegin($parentpath, 'custom')) {
+        if (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
           return array(
           'path' => $path,
           'tag' => $tag,
@@ -319,7 +330,7 @@ class tthemeparser extends tevents {
           );
         }
         
-        $this->error("The '$tag' not found in path '$parentpath'");
+        $this->error("The '$tag' not found in path '$parent'");
       }
       
       private function setwidgetvalue($path, $value) {
