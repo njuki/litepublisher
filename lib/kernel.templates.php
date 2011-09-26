@@ -466,12 +466,14 @@ class ttemplate extends tevents_storage {
     $filename = litepublisher::$paths->cache . $view->theme->name . sprintf('.%s.%s.php',
     $menuclass, litepublisher::$options->group);
     
-    if (file_exists($filename)) return file_get_contents($filename);
+    //if (file_exists($filename)) return file_get_contents($filename);
+    //use memcache
+    if ($result = tfilestorage::getfile($filename)) return $result;
     
     $menus = getinstance($menuclass);
     $result = $menus->getmenu($this->hover, 0);
-    file_put_contents($filename, $result);
-    @chmod($filename, 0666);
+    //file_put_contents($filename, $result);
+    tfilestorage::setfile($filename, $result);
     return $result;
   }
   

@@ -292,17 +292,17 @@ class tthemeparser extends tevents {
       }
       
       public function tagtopath($parent, $tag) {
-if (strbegin($tag,  '$template.sidebar') && (substr_count($tag, '.') == 1)) {
+        if (strbegin($tag,  '$template.sidebar') && (substr_count($tag, '.') == 1)) {
           return array(
           'path' => substr($tag, strlen('$template.')),
           'tag' => $tag,
           'replace' => $tag
           );
-}
-
-       if (($parent == '') || ($tag == '$template')) return 'index';
-      if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
-if ($parent == '$template') $parent = '';
+        }
+        
+        if (($parent == '') || ($tag == '$template')) return 'index';
+        if (strbegin($parent, '$template.')) $parent = substr($parent, strlen('$template.'));
+        if ($parent == '$template') $parent = '';
         foreach ($this->paths as $path => $info) {
           if (strbegin($path, $parent)) {
             if ($tag == $info['tag']) {
@@ -311,7 +311,7 @@ if ($parent == '$template') $parent = '';
             }
           }
         }
-
+        
         $name = substr($tag, 1);
         $path = $parent . '.' . $name;
         if (strbegin($parent, 'sidebar')) {

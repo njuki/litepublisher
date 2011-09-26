@@ -366,7 +366,7 @@ class turlmap extends titems {
           tfiler::delete($file . DIRECTORY_SEPARATOR, true, true);
         } else {
           unlink($file);
-if (tfilestorage::$memcache) tfilestorage::$memcache->delete($file);
+          if (tfilestorage::$memcache) tfilestorage::$memcache->delete($file);
         }
       }
       closedir($h);

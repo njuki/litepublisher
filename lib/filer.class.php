@@ -37,7 +37,7 @@ class tfiler {
             chmod($file, 0666);
             unlink($file);
           }
-if (tfilestorage::$memcache) tfilestorage::$memcache->delete($file);
+          if (tfilestorage::$memcache) tfilestorage::$memcache->delete($file);
         }
       }
       closedir($h);
