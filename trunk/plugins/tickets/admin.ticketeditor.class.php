@@ -128,7 +128,7 @@ class tticketeditor extends tposteditor {
       $ticket->files = $files == '' ? array() : explode(',', $files);
     }
     
-    $ticket->content = $raw;
+    $ticket->content = tcontentfilter::quote(htmlspecialchars($raw));
     $ticket->code = $code;
     $ticket->prio = $prio;
     $ticket->state = $state;

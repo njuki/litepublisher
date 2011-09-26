@@ -31,6 +31,7 @@ class tadminthemes extends tadminmenu {
     foreach ($list as $name) {
       if ($about = $parser->getabout($name)) {
         $about['name'] = $name;
+        if (!isset($about['screenshot'])) $about['screenshot'] = 'screenshot.png';
         $args->add($about);
         $args->checked = $name == $selected;
         $result .= $html->parsearg($tml, $args);

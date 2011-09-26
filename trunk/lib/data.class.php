@@ -268,7 +268,7 @@ class tfilestorage {
     }
     return true;
   }
-
+  
   public static function getfile($filename) {
     if (self::$memcache) {
       if ($s =  self::$memcache->get($filename)) return $s;
@@ -284,9 +284,9 @@ class tfilestorage {
   
   public static function setfile($filename, $content) {
     if (self::$memcache) self::$memcache->set($filename, $content, false, 3600);
-file_put_contents($filename, $content);
-@chmod($filename, 0666);
-}
+    file_put_contents($filename, $content);
+    @chmod($filename, 0666);
+  }
   
   public static function savevar($filename, &$var) {
     return self::savetofile($filename, serialize($var));

@@ -141,13 +141,13 @@ class ttemplate extends tevents_storage {
     $menuclass, litepublisher::$options->group);
     
     //if (file_exists($filename)) return file_get_contents($filename);
-//use memcache
+    //use memcache
     if ($result = tfilestorage::getfile($filename)) return $result;
     
     $menus = getinstance($menuclass);
     $result = $menus->getmenu($this->hover, 0);
     //file_put_contents($filename, $result);
-tfilestorage::setfile($filename, $result);
+    tfilestorage::setfile($filename, $result);
     return $result;
   }
   
