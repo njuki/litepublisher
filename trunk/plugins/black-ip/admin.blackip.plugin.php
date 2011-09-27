@@ -18,8 +18,8 @@ class tadminblackip {
     $args = targs::i();
     $args->ip = implode("\n", $plugin->ip);
     $args->words = implode("\n", $plugin->words);
-    $args->ipstatus = tadminhtml::array2combo(tlocal::$data['commentstatus'], $plugin->ipstatus);
-    $args->wordstatus = tadminhtml::array2combo(tlocal::$data['commentstatus'], $plugin->wordstatus);
+    $args->ipstatus = tadminhtml::array2combo(tlocal::i()->ini['commentstatus'], $plugin->ipstatus);
+    $args->wordstatus = tadminhtml::array2combo(tlocal::i()->ini['commentstatus'], $plugin->wordstatus);
     
     $tabs = new tuitabs();
     $tabs->add('IP', '[combo=ipstatus] [editor=ip]');
