@@ -414,7 +414,7 @@ class tadminhtml {
   }
   
   public static function getinstance($section) {
-    $self = getinstance(__class__);
+    $self = self::i();
     $self->section = $section;
     tlocal::i($section);
     return $self;

@@ -40,9 +40,10 @@ class tadminlogin extends tadminform {
       $this->formresult = $this->html->h2->cookiedisabled;
       return;
     }
-    
-    if (empty($_POST['login']) || empty($_POST['password'])) return;
-    if (!litepublisher::$options->auth($_POST['login'], $_POST['password'])) {
+$login = trim($_POST['login']);
+$password = trim($_POST['password']);
+    if (empty($login) || empty($password)) return;
+    if (!litepublisher::$options->auth($login, $password)) {
       $this->formresult = $this->html->h2->error;
       return;
     }

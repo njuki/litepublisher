@@ -71,7 +71,7 @@ class tadmincontextwidget extends torderwidget {
     }
     
     if ($links == '') return '';
-    $links .= $this->getitem($tml, '/admin/logout/', tlocal::$data['login']['logout']);
+    $links .= $this->getitem($tml, '/admin/logout/', tlocal::get('login', 'logout'));
     $links = $theme->getwidgetcontent($links, 'widget', $sidebar);
     return $theme->getwidget($this->gettitle($id), $links, 'widget', $sidebar);
   }
