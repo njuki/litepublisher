@@ -34,7 +34,7 @@ class tlocal {
   
   public static function get($section, $key) {
     //if (!isset(self::$self->ini[$section][$key])) throw new Exception($section);
-    return self::$self->ini[$section][$key];
+    return self::i()->ini[$section][$key];
   }
   
   public function __get($name) {
@@ -56,7 +56,7 @@ class tlocal {
   }
   
   public static function date($date, $format = '') {
-    if (empty($format)) $format = $this->getdateformat();
+    if (empty($format)) $format = self::i()->getdateformat();
     return self::i()->translate(date($format, $date), 'datetime');
   }
   
