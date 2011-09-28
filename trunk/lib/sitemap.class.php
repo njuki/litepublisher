@@ -7,7 +7,6 @@
 **/
 
 class tsitemap extends titems_itemplate implements itemplate {
-  public $title;
   private $lastmod;
   private $count;
   private $fd;
@@ -35,7 +34,10 @@ class tsitemap extends titems_itemplate implements itemplate {
   }
   
   //itemplate
-public function gettitle() { return $this->title; }
+  public function gettitle() {
+    //dumpvar(tlocal::i()->ini['default']);
+    return     tlocal::get('default', 'sitemap');
+  }
   
   public function getcont() {
     $result = '';
@@ -109,8 +111,6 @@ public function gettitle() { return $this->title; }
       return '<?php turlmap::sendxml(); ?>' .
       $this->GetIndex();
     }
-    
-    $this->title = tlocal::get('default', 'sitemap');
   }
   
   public function getIndex() {
