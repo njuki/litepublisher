@@ -7,9 +7,9 @@
 **/
 
 function tlitecategoriesInstall($self) {
-tcategories::i()->onlite = $self->onlite;
+  tcategories::i()->onlite = $self->onlite;
 }
 
 function tlitecategoriesUninstall($self) {
-tcategories::i()->unsubscribeclass($self);
+  tcategories::i()->unsubscribeclass($self);
 }

@@ -7,9 +7,9 @@
 **/
 
 class tlitecategories extends  tplugin {
-public $lite;
+  public $lite;
   public $expand;
-
+  
   public static function i() {
     return getinstance(__class__);
   }
@@ -21,11 +21,11 @@ public $lite;
   }
   
   public function onlite($id, &$lite) {
-if (in_array($id, $this->lite)) {
-$lite = true;
-} elseif (in_array($id, $this->expand)) {
-$lite = false;
-}
-}
-
+    if (in_array($id, $this->lite)) {
+      $lite = true;
+    } elseif (in_array($id, $this->expand)) {
+      $lite = false;
+    }
+  }
+  
 }//class

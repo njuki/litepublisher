@@ -177,7 +177,7 @@ class tcommentform extends tevents {
     }
     
     $confirmid = $_POST['confirmid'];
-$lang = tlocal::i('commentform');
+    $lang = tlocal::i('commentform');
     if (!($values = $kept->getitem($confirmid))) {
       return $this->htmlhelper->geterrorcontent($lang->notfound);
     }

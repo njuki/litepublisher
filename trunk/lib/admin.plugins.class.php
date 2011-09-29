@@ -33,6 +33,19 @@ class tadminplugins extends tadminmenu {
     return sprintf('<ul>%s</ul>', $result);
   }
   
+  public function gethead() {
+    $result = parent::gethead();
+    if (!empty($_GET['plugin'])) {
+      $name = $_GET['plugin'];
+      if (in_array($name, $this->names)) {
+        if ($admin = $this->getadminplugin($name)) {
+          if (method_exists($admin, 'gethead')) $result .= $admin->gethead();
+        }
+      }
+    }
+    return $result;
+  }
+  
   public function getcontent() {
     $result = $this->getpluginsmenu();
     $html = $this->html;
