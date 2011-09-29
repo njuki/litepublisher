@@ -1623,7 +1623,7 @@ class tcommontags extends titems implements  itemplate {
   protected function create() {
     $this->dbversion = dbversion;
     parent::create();
-    $this->addevents('changed');
+    $this->addevents('changed', 'onlite');
     $this->data['lite'] = false;
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
@@ -1981,7 +1981,9 @@ class tcommontags extends titems implements  itemplate {
     $result .= $this->contents->getcontent($this->id);
     if ($result != '') $result = $theme->simple($result);
     
-    $perpage = $this->lite ? 1000 : litepublisher::$options->perpage;
+    $lite = $this->lite;
+    $this->callevent('onlite', array($this->id, &$lite));
+    $perpage = $lite ? 1000 : litepublisher::$options->perpage;
     $posts = litepublisher::$classes->posts;
     if ($this->dbversion) {
       if ($this->includeparents || $this->includechilds) {
@@ -2001,7 +2003,7 @@ class tcommontags extends titems implements  itemplate {
       (select DISTINCT post from $itemstable  where $itemstable .item $tags)",
       "order by $poststable.posted desc limit $from, $perpage");
       
-      $result .= $theme->getposts($items, $this->lite);
+      $result .= $theme->getposts($items, $lite);
     } else {
       $items = $this->itemsposts->getposts($this->id);
       if ($this->dbversion && ($this->includeparents || $this->includechilds)) $this->loadall();
@@ -2022,7 +2024,7 @@ class tcommontags extends titems implements  itemplate {
       $items = $posts->stripdrafts($items);
       $items = $posts->sortbyposted($items);
       $list = array_slice($items, (litepublisher::$urlmap->page - 1) * $perpage, $perpage);
-      $result .= $theme->getposts($list, $this->lite);
+      $result .= $theme->getposts($list, $lite);
     }
     
     $item = $this->getitem($this->id);

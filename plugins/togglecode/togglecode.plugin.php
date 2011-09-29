@@ -13,15 +13,15 @@ class ttogglecode extends tplugin {
   }
   
   public function install() {
-tjsmerger::i()->add('default', $this->jsfile);
-}
-
+    tjsmerger::i()->add('default', $this->jsfile);
+  }
+  
   public function uninstall() {
-tjsmerger::i()->deletefile('default', $this->jsfile);
-}
-
-public function getjsfile() {
-return '/plugins/' . basename(dirname(__file__)) . '/togglecode.min.js';
-}
-
+    tjsmerger::i()->deletefile('default', $this->jsfile);
+  }
+  
+  public function getjsfile() {
+    return '/plugins/' . basename(dirname(__file__)) . '/togglecode.min.js';
+  }
+  
 }//class
