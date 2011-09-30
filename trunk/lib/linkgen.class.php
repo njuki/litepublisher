@@ -8,7 +8,6 @@
 
 class tlinkgenerator extends tevents {
   public $source;
-  private $translitmap;
   
   public static function i() {
     return getinstance(__class__);

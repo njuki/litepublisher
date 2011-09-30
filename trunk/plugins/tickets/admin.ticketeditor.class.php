@@ -54,7 +54,7 @@ class tticketeditor extends tposteditor {
     $args = targs::i();
     $args->id = $this->idpost;
     $args->title = htmlspecialchars_decode($ticket->title, ENT_QUOTES);
-    $args->categories = $this->getpostcategories($ticket);
+    //$args->categories = $this->getpostcategories($ticket);
     $args->ajax = tadminhtml::getadminlink('/admin/ajaxposteditor.htm', "id=$ticket->id&get");
     $ajaxeditor = tajaxposteditor ::i();
     $args->raw = $ajaxeditor->geteditor('raw', $ticket->rawcontent, true);
@@ -120,7 +120,7 @@ class tticketeditor extends tposteditor {
     }
     $ticket = tticket::i((int)$id);
     $ticket->title = $title;
-    $ticket->categories = self::processcategories();
+    //$ticket->categories = self::processcategories();
     if (isset($tags)) $ticket->tagnames = $tags;
     if ($ticket->author == 0) $ticket->author = litepublisher::$options->user;
     if (isset($files))  {

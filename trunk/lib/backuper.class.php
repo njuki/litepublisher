@@ -417,6 +417,11 @@ class tbackuper extends tevents {
       $filename = substr($filename, strlen('storage/data/'));
       $filename =str_replace('/', DIRECTORY_SEPARATOR, $filename);
       $filename = litepublisher::$paths->storage . 'newdata' . DIRECTORY_SEPARATOR . $filename;
+      $dir = dirname($filename);
+      if (!is_dir($dir)) {
+        mkdir($dir, 0777);
+        @chmod($dir, 0777);
+      }
       if (file_put_contents($filename, $content) === false) return false;
       @chmod($filename, $mode);
       return true;
@@ -494,11 +499,15 @@ class tbackuper extends tevents {
     }
     
     private function renamedata() {
-      $old = litepublisher::$paths->backup . 'data-' . time();
+      if (!is_dir(litepublisher::$paths->backup)) {
+        mkdir(litepublisher::$paths->backup, 0777);
+        @chmod(litepublisher::$paths->backup, 0777);
+      }
+      $backup  = litepublisher::$paths->backup . 'data-' . time();
       $data =rtrim(litepublisher::$paths->data, DIRECTORY_SEPARATOR);
-      rename($data, $old);
+      rename($data, $backup);
       rename(litepublisher::$paths->storage . 'newdata', $data);
-      tfiler::delete($old, true, true);
+      tfiler::delete($backup, true, true);
     }
     
     private function errorwrite($filename) {

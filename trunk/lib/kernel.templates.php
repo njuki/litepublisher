@@ -428,7 +428,8 @@ class ttemplate extends tevents_storage {
     $args = targs::i();
     $args->title = $title;
     $result = $this->view->theme->parsearg($tml, $args);
-    $result = trim($result, sprintf(' |.:%c%c', 187, 150));
+    //$result = trim($result, sprintf(' |.:%c%c', 187, 150));
+    $result = trim($result, " |.:\n\r\t");
     if ($result == '') return litepublisher::$site->name;
     return $result;
   }

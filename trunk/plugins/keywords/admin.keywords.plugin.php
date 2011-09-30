@@ -40,6 +40,7 @@ class tadminkeywords extends tadminwidget {
       $args->notify = $widget->notify;
       $args->optionsform = 1;
       $args->title =       $widget->gettitle($idwidget);
+      $args->blackwords = tadminhtml::specchars(implode("\n", tkeywordsplugin ::i()->blackwords));
       $lang = tplugins::getlangabout(__file__);
       $args->formtitle = $about['name'];
       $result .= $html->adminform(
@@ -47,6 +48,7 @@ class tadminkeywords extends tadminwidget {
       [text=count]
       [checkbox=trace]
       [checkbox=notify]
+      [editor=blackwords]
       [hidden=optionsform]',
       $args);
     }
@@ -86,6 +88,7 @@ class tadminkeywords extends tadminwidget {
     $datadir = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR  ;
     if (isset($_POST['optionsform'])) {
       extract($_POST, EXTR_SKIP);
+      $plugin = tkeywordsplugin::i();
       $widget = tkeywordswidget::i();
       $widgets = twidgets::i();
       $idwidget = $widgets->find($widget);
@@ -95,7 +98,6 @@ class tadminkeywords extends tadminwidget {
       $widget->notify = isset($notify);
       $trace = isset($trace);
       if ($widget->trace != $trace) {
-        $plugin = tkeywordsplugin::i();
         if ($trace) {
           litepublisher::$urlmap->afterrequest = $plugin->parseref;
         } else {
@@ -105,6 +107,16 @@ class tadminkeywords extends tadminwidget {
       
       $widget->trace = $trace;
       $widget->unlock();
+      
+      $plugin->blackwords = strtoarray($blackwords);
+      if (litepublisher::$options->language != 'en') {
+        tlocal::usefile('translit');
+        foreach ($plugin->blackwords as $i => $word) {
+          $word = strtr($word, tlocal::$self->ini['translit']);
+          $plugin->blackwords[$i] = strtolower($word);
+        }
+      }
+      $plugin->save();
       return;
     }
     
