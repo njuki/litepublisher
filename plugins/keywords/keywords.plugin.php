@@ -7,9 +7,15 @@
 **/
 
 class tkeywordsplugin  extends tplugin {
+  public $blackwords;
   
   public static function i() {
     return getinstance(__class__);
+  }
+  
+  public function create() {
+    parent::create();
+    $this->addmap('blackwords', array());
   }
   
   public function urldeleted($item) {
@@ -57,7 +63,7 @@ class tkeywordsplugin  extends tplugin {
     if (false !== strpos($keywords, 'ftp:')) return;
     if (false !== strpos($keywords, 'downloads%3Cscript%')) return;
     if (false !== strpos($keywords, '\\')) return;
-    
+    if ($this->inblack($keywords)) return;
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     
     //$link =" <a href=\"http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]\">$keywords</a>";
@@ -95,6 +101,19 @@ class tkeywordsplugin  extends tplugin {
     
     tmailer::sendmail($site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email,  $subject, $body);
+  }
+  
+  
+  public function inblack($s) {
+    if (litepublisher::$options->languages != 'en') {
+      tlocal::usefile('translit');
+      $s = strtr($s, tlocal::$self->ini['translit']);
+    }
+    $s = strtolower($s);
+    foreach ($this->blackwords as $word) {
+      if (false !== strpos($s, $word)) return true;
+    }
+    return false;
   }
   
 }//class
