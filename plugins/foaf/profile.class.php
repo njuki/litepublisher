@@ -208,7 +208,8 @@ public function gethead() { }
     'mbox' => 'E-Mail'
     );
     $lang = tlocal::i('foaf');
-    $result = "<table class=\"classictable\">
+    $result = "<div class=\"div-table\">
+<table class=\"classictable\">
     <thead>
     <tr>
     <th align=\"left\">$lang->contactname</th>
@@ -227,7 +228,8 @@ public function gethead() { }
     }
     
     $result .= "</tbody >
-    </table>";
+    </table>
+</div>";
     return $result;
   }
   
