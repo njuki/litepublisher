@@ -417,11 +417,7 @@ class tbackuper extends tevents {
       $filename = substr($filename, strlen('storage/data/'));
       $filename =str_replace('/', DIRECTORY_SEPARATOR, $filename);
       $filename = litepublisher::$paths->storage . 'newdata' . DIRECTORY_SEPARATOR . $filename;
-      $dir = dirname($filename);
-      if (!is_dir($dir)) {
-        mkdir($dir, 0777);
-        @chmod($dir, 0777);
-      }
+tfiler::forcedir(dirname($filename));
       if (file_put_contents($filename, $content) === false) return false;
       @chmod($filename, $mode);
       return true;
