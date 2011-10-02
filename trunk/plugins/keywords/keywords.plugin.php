@@ -105,7 +105,7 @@ class tkeywordsplugin  extends tplugin {
   
   
   public function inblack($s) {
-    if (litepublisher::$options->languages != 'en') {
+    if (litepublisher::$options->language != 'en') {
       tlocal::usefile('translit');
       $s = strtr($s, tlocal::$self->ini['translit']);
     }
