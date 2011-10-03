@@ -55,7 +55,11 @@ $site.description
   <p>$lang.lostpass:  <strong><a href='$site.url/admin/password/'>$site.url/admin/password/</a></strong></p>
 
    <p>$lang.moresteps</p>
-			
+
+<div><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2F$likeurl%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font=segoe+ui&amp;colorscheme=light" frameborder="0"></iframe></div>
+
+<div><a href="http://twitter.com/share?url=http%3A%2F%2F$likeurl%2F&amp;text=LitePublisher">Tweet</a></div>
+
 </div>	
 </div>
 </div>

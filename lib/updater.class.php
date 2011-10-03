@@ -49,6 +49,7 @@ class tupdater extends tevents {
   public function run($ver) {
     $ver = (string) $ver;
     if (strlen($ver) == 3) $ver .= '0';
+    if (strlen($ver) == 1) $ver .= '.00';
     $filename =     litepublisher::$paths->lib . 'update' . DIRECTORY_SEPARATOR . "update.$ver.php";
     if (file_exists($filename)) {
       require_once($filename);
@@ -73,6 +74,7 @@ class tupdater extends tevents {
     while ( $v<= $nextver) {
       $ver = (string) $v;
       if (strlen($ver) == 3) $ver .= '0';
+      if (strlen($ver) == 1) $ver .= '.00';
       if ($log) tfiler::log("$v selected to update", 'update');
       $this->run($v);
       litepublisher::$options->version = $v;

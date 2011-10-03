@@ -83,7 +83,7 @@ class tticketsmenu extends tmenu {
     $args->tablebody = $result;
     $lang = tlocal::i('ticket');
     $result = $theme->parsearg('<div class="div-table">
-<table class="classictable">
+    <table class="classictable">
     <thead>
     <tr>
     <td align="left">$lang.state</td>
@@ -95,7 +95,7 @@ class tticketsmenu extends tmenu {
     $tablebody
     </tbody >
     </table>
-</div>',
+    </div>',
     $args);
     
     $result .=$theme->getpages($this->url, 1, ceil(count($items)/ litepublisher::$options->perpage) + 1);
