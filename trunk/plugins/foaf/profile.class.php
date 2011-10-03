@@ -209,7 +209,7 @@ public function gethead() { }
     );
     $lang = tlocal::i('foaf');
     $result = "<div class=\"div-table\">
-<table class=\"classictable\">
+    <table class=\"classictable\">
     <thead>
     <tr>
     <th align=\"left\">$lang->contactname</th>
@@ -229,7 +229,7 @@ public function gethead() { }
     
     $result .= "</tbody >
     </table>
-</div>";
+    </div>";
     return $result;
   }
   

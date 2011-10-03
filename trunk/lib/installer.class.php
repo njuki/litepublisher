@@ -328,6 +328,7 @@ class tinstaller extends tdata {
     $args->title = litepublisher::$site->name;
     $args->url = litepublisher::$site->url . '/';
     $args->password = $password;
+    $args->likeurl = litepublisher::$options->language == 'ru' ? 'litepublisher.ru' : 'litepublisher.com';
     $content = $html->parsearg($tml, $args);
     $this->echohtml($content);
   }
