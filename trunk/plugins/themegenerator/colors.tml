@@ -1,0 +1,20 @@
+body{color:#$body;background:#$bodybackground} 
+a,a:link,a:visited{color:#$link}
+#content a,#content a:link,#content a:visited{color:#$linkcontent}
+a:hover,#content a:hover{color:#$hoverlink}
+h1,h2,h3,h4,h5,h6{color:#$h} 
+#top {background:url($headerurl) repeat-x top center #$header;}
+a#logo{background:url($logourl) no-repeat scroll 0 0 transparent;color:#$logo}
+#content{background:#$contentbackground}
+
+#wrapper{background:#$sidebarbackground}
+.sbar{color:#$sidebar} 
+.sbar h3{color:#$headsidebar}
+
+#nav a{color:#fff} /*цвет ссылок навигации такой-же как название блога*/
+#nav a:hover,#nav li.jshover a{background:#fff;color:#c60} /*цвет ссылок навигации и заднего фона при наведении мышки*/
+#nav li a.current_page_link{background:#fff;color:#000} /*цвет ссылки и фона активной странивцы навигации*/
+#nav li a.current_page_link:hover,#nav li.jshover a.current_page_link{background:#fff;color:#c60} /*цвет ссылки и фона активной странивцы при наведении мышки*/
+#nav li ul li a,#nav li.jshover ul li a{background:#dfe9f5;color:#36c} /*цвет ссылок подменю навигации и заднего фона*/
+#nav li ul li a:hover,#nav li ul li.jshover,#nav li.jshover ul li a:hover{background:#fff;color:#c60} /*цвет ссылок подменю навигации и заднего фона при наведении мышки*/
+#btm{background:#bebebe;border-top:1px solid #7E7E7E;color:#222}
