@@ -61,9 +61,9 @@ $colors = parse_ini_file($_FILES['filename']['tmp_name']);
 if (!isset($colors)) $colors =  $scheme['colors'];
 
 $tml = '<p>
+      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="text-color-$name" value="' . $lng['selectcolor'] . '" />
       <input type="text" name="color_$name" id="text-color-$name" value="$value" size="22" />
       <label for="text-color-$name"><strong>$label</strong></label>
-      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="text-color-$name" value="' . $lng['selectcolor'] . '" />
 </p>';
 
 $args = new targs();
