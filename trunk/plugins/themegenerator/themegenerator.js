@@ -6,10 +6,6 @@
 **/
 
 $(document).ready(function() {
-      if ($("input[id^='colorbutton']").length) {
-var dir = ltoptions.files + '/plugins/colorpicker/';
-    $('<link rel="stylesheet" type="text/css" href="'+ dir + 'css/colorpicker.css" />').appendTo("head:first");
-    $.load_script(dir + "js/colorpicker.js", function() {
 $("input[id^='colorbutton']").ColorPicker({
 	onSubmit: function(hsb, hex, rgb, el) {
 		$("#" + $(el).attr("rel")).val(hex);
@@ -22,6 +18,4 @@ $(this).ColorPickerSetColor($(edit).val());
 	}
 });
 
-});
-}
 });
