@@ -46,29 +46,36 @@ $this->processform();
   public function getcont() {
 $result = '';
 $scheme = parse_ini_file(dirname(__file__) .DIRECTORY_SEPARATOR   . 'scheme.ini', true);
+$lng = $scheme[litepublisher::$options->language];
         if (isset($_FILES['filename'])) {
         if (isset($_FILES['filename']['error']) && $_FILES['filename']['error'] > 0) {
 $lang = tlocal::admin('uploaderrors');
-          $result .= sprintf('<h4>%s</h4>', $lang->__get($_FILES['filename']['error']);
+          $result .= sprintf('<h4>%s</h4>', $lang->__get($_FILES['filename']['error']));
         } elseif (!is_uploaded_file($_FILES['filename']['tmp_name'])) {
-$result .= sprintf($this->html->h2->attack, $_FILES["filename"]["name"]);
+$result .= sprintf('<h4>%s</h4>', $lng['attack']);
 } else {
 $colors = parse_ini_file($_FILES['filename']['tmp_name']);
 }
 }
 
-
 if (!isset($colors)) $colors =  $scheme['colors'];
 
+$tml = '<p>
+      <input type="text" name="color_$name" id="text-color-$name" value="$value" size="22" />
+      <label for="text-color-$name"><strong>$label</strong></label>
+      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="text-color-$name" value="' . $lng['selectcolor'] . '" />
+</p>';
 
-
-      '<p>
-      <input type="text" name="$name" id="text-$name" value="$value" size="22" />
-      <label for="text-$name"><strong>$lang.$name</strong></label>
-      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="text-$name"
-      value="' . $about['changecolor'] . '" />
-      </p>';
-    }
+$args = new targs();
+$a = new targs;
+foreach ($scheme['colors'] as $name => $value) {
+$args->name = $name;
+$args->value = $value;
+$args->label = $lng[$name];
+$a->$name = $theme->parsearg($tml, $args);
+}
+$result .= $theme->parsearg($form, $a);
+return $theme->simple($result);
   }
 
 public function processform() {

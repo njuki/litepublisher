@@ -1,0 +1,34 @@
+<form name="uploadcolor" id="uploadcolor" method="post">
+
+</form>
+<form name="colorform" id="colorform" method="post">
+body = " основной цвет шрифта"
+bodybackground ="цвет заднего фона страницы"
+link = "цвет ссылок и ссылок-заголовков в сайдбаре"
+linkcontent = "цвет ссылок в контенте"
+hoverlink = "цвет ссылок при наведении мышки"
+h = "цвет заголовков"
+headerurl = "фоновая картинка шапки"
+headerbackground = "цвет фона шапки"
+logourl = "адрес картинки лого (40х32px)"
+logo = "цвет ссылки названия блога в шапке"
+menu = "цвет ссылок menu"
+menubackground= "цвет фона меню при наведении"
+menuhover = "цвет меню при наведении"
+submenubackground = "цвет фона подменю"
+submenu = "цвет подменю"
+hoversubmenubackground = "цвет фона подменю при наведении"
+hoversubmenu = "цвет подменю при наведении"
+currentmenubackground = "цвет фона ссылки в меню на открытую страницу"
+currentmenu = "цвет ссылки в меню на открытую страницу"
+hovercurrentmenubackground = "цвет фона ссылки в меню на открытую страницу при наведении"
+hovercurrentmenu = "цвет ссылки в меню на открытую страницу при наведении"
+
+contentbackground= "цвет фона основного контента"
+sidebarbackground =  "цвет фона сайдбаров"
+sidebar = "цвет простого текста в сайдбарах"
+headsidebar = "цвет заголовков в сайдбарах (не ссылок)"
+footerbackground= " цвет фона подвала"
+footerborder= " цвет верхней границы подвала"
+footer = " цвет подвала"
+</form>
