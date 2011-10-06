@@ -25,12 +25,36 @@ $this->colors = array();
 public function getselectors() {
 $result = array();
 $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
-$css = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
+$lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
+$css = array();
+foreach ($lines as $line) {
+$i = strpos($line, '{');
+$sel = trim(substr($line, 0, $i ));
+$list = explode(';', trim(trim(substr($line, $i)), '{}; '));
+$props = array();
+foreach ($list as $v) {
+$v =trim($v, '; ');
+if ($v == '') continue;
+$prop = explode(':', $v);
+$props[trim($prop]0])] = trim($prop[1]);
+}
+$css[$sel] = $props;
+}
+
 foreach ($this->values as $name => $value) {
-foreach ($css as $line) {
-if (strpos($line, "%%$name%%")) $result[$name] = $line;
+foreach ($css as $sel => $props) {
+foreach ($props as $propname => $propvalue) {
+if (strpos($propvalue, "%%$name%%")) {
+$result[] = array(
+'name' => $name,
+'sel' => $sel,
+'prop' => $prop
+);
 }
 }
+}
+}
+
 return json_encode($result);
 }
 

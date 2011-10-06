@@ -17,5 +17,5 @@ a#logo{background:url(%%logourl%%) no-repeat scroll 0 0 transparent;color:#%%log
 
 #wrapper{background:#%%sidebarbackground%%}
 .sbar{color:#%%sidebar%%}
-.sbar h3{color:#%%headsidebar%%}
+.sbar h3 {color:#%%headsidebar%%}
 #btm{background:#%%footerbackground%%;border-top:1px solid #%%footerborder%%;color:#%%footer%%}
