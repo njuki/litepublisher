@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcolorpicker extends tplugin {
+class tthemegenerator extends tplugin {
   
   public static function i() {
     return getinstance(__class__);
