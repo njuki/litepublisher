@@ -7,6 +7,7 @@
 **/
 
 class tthemegenerator extends tevents_itemplate {
+public $values;
 private $colors;
   
   public static function i() {
@@ -17,8 +18,21 @@ private $colors;
     parent::create();
 $this->cache = false;
     $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
+$this->addmap('values', array());
 $this->colors = array();
   }
+
+public function getselectors() {
+$result = array();
+$s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
+$css = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
+foreach ($this->values as $name => $value) {
+foreach ($css as $line) {
+if (strpos($line, "%%$name%%")) $result[$name] = $line;
+}
+}
+return json_encode($result);
+}
 
 public function gethead() {
 $pickerpath = litepublisher::$site->files . '/plugins/colorpicker/';
@@ -54,7 +68,7 @@ $this->processform();
 $result = '';
 $tml = '<p>
       <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="text-color-$name" value="' . $lng['selectcolor'] . '" />
-      <input type="text" name="color_$name" id="text-color-$name" value="$value" size="22" />
+      #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="22" />
       <label for="text-color-$name"><strong>$label</strong></label>
 </p>';
 
@@ -73,13 +87,22 @@ $result .= $theme->parsearg($form, $a);
 return $theme->simple($result);
   }
 
+public function setcolor($name, $value) {
+if (isset($this->colors[$name])) {
+$value = trim($value);
+if (preg_match('/[0-9a-zA-Z]?*/', $value)) {
+$this->colors[$name] = $value;
+}
+}
+}
+
 public function processform() {
 switch ($_POST['formtype']) {
 case 'colors':
 foreach ($_POST as $name => $value) {
 if (strbegin($name, 'color_')) {
 $name = substr($name, strlen('color_'));
-if (isset($this->colors[$name])) $this->colors[$name] = trim($value);
+$this->setcolor($name, $value);
 }
 }
 $this->sendfile();
@@ -95,7 +118,7 @@ $result .= sprintf('<h4>%s</h4>', $lng['attack']);
 } else {
 $colors = parse_ini_file($_FILES['filename']['tmp_name']);
 foreach ($colors as $name => $value) {
-if (isset($this->colors[$name])) $this->colors[$name] = trim($value);
+$this->setcolor($name, $value);
 }
 }
 }
