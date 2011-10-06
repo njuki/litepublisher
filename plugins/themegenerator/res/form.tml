@@ -1,34 +1,41 @@
-<form name="uploadcolor" id="uploadcolor" method="post">
-
+<form name="uploadcolor" id="uploadcolor" action="" method="post" ENCTYPE="multipart/form-data">
+<p><strong>$lang.uploadfilename:</strong><br />
+<INPUT type="file" name="filename" value=""></p>
+<p><input type="submit" name="uploadcolors" value="$uploadcolors" /></p>
 </form>
 <form name="colorform" id="colorform" method="post">
-body = " основной цвет шрифта"
-bodybackground ="цвет заднего фона страницы"
-link = "цвет ссылок и ссылок-заголовков в сайдбаре"
-linkcontent = "цвет ссылок в контенте"
-hoverlink = "цвет ссылок при наведении мышки"
-h = "цвет заголовков"
-headerurl = "фоновая картинка шапки"
-headerbackground = "цвет фона шапки"
-logourl = "адрес картинки лого (40х32px)"
-logo = "цвет ссылки названия блога в шапке"
-menu = "цвет ссылок menu"
-menubackground= "цвет фона меню при наведении"
-menuhover = "цвет меню при наведении"
-submenubackground = "цвет фона подменю"
-submenu = "цвет подменю"
-hoversubmenubackground = "цвет фона подменю при наведении"
-hoversubmenu = "цвет подменю при наведении"
-currentmenubackground = "цвет фона ссылки в меню на открытую страницу"
-currentmenu = "цвет ссылки в меню на открытую страницу"
-hovercurrentmenubackground = "цвет фона ссылки в меню на открытую страницу при наведении"
-hovercurrentmenu = "цвет ссылки в меню на открытую страницу при наведении"
+$body 
+$bodybackground
+$link
+$linkcontent
+$hoverlink
+$h
+$headerurl
+$headerbackground
+$logourl
+$logo
+<h4><a href="" id="showmenucolors">$showmenucolors</a></h4>
+<div class="hidden">
+$menu
+$menubackground
+$menuhover
+$submenu
+$hoversubmenu
+$submenubackground
+$hoversubmenubackground
+$currentmenu
+$hovercurrentmenu = "цвет ссылки в меню на открытую страницу при наведении"
+$currentmenubackground
+$hovercurrentmenubackground
+</div>
 
-contentbackground= "цвет фона основного контента"
-sidebarbackground =  "цвет фона сайдбаров"
-sidebar = "цвет простого текста в сайдбарах"
-headsidebar = "цвет заголовков в сайдбарах (не ссылок)"
-footerbackground= " цвет фона подвала"
-footerborder= " цвет верхней границы подвала"
-footer = " цвет подвала"
+$contentbackground
+$sidebar
+$headsidebar
+$sidebarbackground
+$footer
+$footerbackground
+$footerborder
+
+<p><input type="submit" name="submitcolors" value="$submitcolors" /></p>
 </form>
