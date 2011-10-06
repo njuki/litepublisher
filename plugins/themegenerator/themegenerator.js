@@ -6,6 +6,10 @@
 **/
 
 $(document).ready(function() {
+$("#showmenucolors").click(function() {
+$("#menucolors").slideToggle();
+});
+
 $("input[id^='colorbutton']").ColorPicker({
 	onSubmit: function(hsb, hex, rgb, el) {
 		$("#" + $(el).attr("rel")).val(hex);
