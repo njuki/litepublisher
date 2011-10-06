@@ -6,29 +6,21 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tthemegenerator extends tplugin {
+class tthemegenerator extends tevents_itemplate {
   
   public static function i() {
     return getinstance(__class__);
   }
   
-  public function install() {
-    $parser = tthemeparser::i();
-    $parser->parsed = $this->themeparsed;
-    
-    $jsmerger = tjsmerger::i();
-    $jsmerger->add('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
+  protected function create() {
+    parent::create();
+    $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
   }
-  
-  public function uninstall() {
-    $parser = tthemeparser::i();
-    $parser->unsubscribeclass($this);
-    
-    $jsmerger = tjsmerger::i();
-    $jsmerger->deletefile('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');
-  }
-  
-  public function themeparsed(ttheme $theme) {
+
+public function gethead() {
+
+}
+  public function getcont() {
     if (empty($theme->templates['content.admin.color'])) {
       $about = tplugins::getabout(tplugins::getname(__file__));
       $theme->templates['content.admin.color'] =
