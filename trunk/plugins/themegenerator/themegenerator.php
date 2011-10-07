@@ -8,6 +8,7 @@
 
 class tthemegenerator extends tevents_itemplate {
 public $values;
+public $selectors;
 private $colors;
   
   public static function i() {
@@ -19,11 +20,12 @@ private $colors;
 $this->cache = false;
     $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
 $this->addmap('values', array());
+$this->addmap('selectors', array());
 $this->colors = array();
   }
 
-public function getselectors() {
-$result = array();
+public function parseselectors() {
+$this->selectors = array();
 $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
 $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
 $css = array();
@@ -40,12 +42,19 @@ if ($v == '') continue;
 $prop = explode(':', $v);
 $propname = trim($prop[0]);
 $propvalue =trim($prop[1]);
+if (preg_match_all('/%%(\w*+)%%/', $propvalue, $m, PREG_SET_ORDER)) {
+      foreach ($m as $item) {
+$name = $m[1];
+$this->selectors[] = array(
+'name' => $name,
+'sel' => $sel,
+'propname' => $propname,
+'value' => $propvalue
+);
 }
-
 }
-
-
-return json_encode($result);
+}
+$this->save();
 }
 
 public function gethead() {
@@ -53,6 +62,7 @@ $pickerpath = litepublisher::$site->files . '/plugins/colorpicker/';
 $result =   '<link type="text/css" href="' $pickerpath . 'css/colorpicker.css" rel="stylesheet" />';
 
 $template = ttemplate::i();
+$template->ltoptions['colors'] = $this->selectors;
 $result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
 $result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
 return $result;
@@ -81,7 +91,7 @@ $this->processform();
   public function getcont() {
 $result = '';
 $tml = '<p>
-      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="text-color-$name" value="' . $lng['selectcolor'] . '" />
+      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lng['selectcolor'] . '" />
       #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="22" />
       <label for="text-color-$name"><strong>$label</strong></label>
 </p>';
