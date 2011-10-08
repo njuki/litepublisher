@@ -1,11 +1,4 @@
-<form name="uploadcolor" id="uploadcolor" action="" method="post" ENCTYPE="multipart/form-data">
-<h4>$lang.uploadcolors</h4>
-<p><strong>$lang.uploadfilename:</strong><br />
-<INPUT type="file" name="filename" value=""></p>
-<p>
-<input type="hidden" name="formtype" value="uploadcolors" />
-<input type="submit" name="uploadcolors" value="$uploadcolors" /></p>
-</form>
+<h3>$lang.formtitle</h3>
 <form name="colorform" id="colorform" action="" method="post">
 $body 
 $bodybackground
@@ -17,30 +10,35 @@ $headerurl
 $headerbackground
 $logourl
 $logo
+
 <h4><a href="" id="showmenucolors">$showmenucolors</a></h4>
 <div id="menucolors" class="hidden">
 $menu
 $menubackground
 $menuhover
 $submenu
-$hoversubmenu
-$submenubackground
 $hoversubmenubackground
 $currentmenu
-$hovercurrentmenu = "цвет ссылки в меню на открытую страницу при наведении"
 $currentmenubackground
 $hovercurrentmenubackground
 </div>
 
 $contentbackground
 $sidebar
-$headsidebar
 $sidebarbackground
 $footer
 $footerbackground
-$footerborder
 
 <p>
 <input type="hidden" name="formtype" value="colors" />
 <input type="submit" name="submitcolors" value="$submitcolors" /></p>
+</form>
+
+<form name="uploadcolor" id="uploadcolor" action="" method="post" ENCTYPE="multipart/form-data">
+<p>$lang.uploadcolors</p>
+<p><strong>$lang.uploadfilename:</strong><br />
+<INPUT type="file" name="filename" value=""></p>
+<p>
+<input type="hidden" name="formtype" value="uploadcolors" />
+<input type="submit" name="uploadcolors" value="$lang.uploadbutton" /></p>
 </form>

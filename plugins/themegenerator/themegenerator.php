@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tthemegenerator extends tevents_itemplate {
+class tthemegenerator extends tevents_itemplate implements itemplate {
 public $values;
 public $selectors;
 private $colors;
@@ -26,9 +26,8 @@ $this->colors = array();
 
 public function parseselectors() {
 $this->selectors = array();
-$s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
+$s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
 $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
-$css = array();
 foreach ($lines as $line) {
 $line = trim($line);
 if ($line == '') continue;
@@ -44,9 +43,8 @@ $propname = trim($prop[0]);
 $propvalue =trim($prop[1]);
 if (preg_match_all('/%%(\w*+)%%/', $propvalue, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
-$name = $m[1];
 $this->selectors[] = array(
-'name' => $name,
+'name' => $item[1],
 'sel' => $sel,
 'propname' => $propname,
 'value' => $propvalue
@@ -54,12 +52,14 @@ $this->selectors[] = array(
 }
 }
 }
+}
+//dumpvar($this->selectors);
 $this->save();
 }
 
 public function gethead() {
 $pickerpath = litepublisher::$site->files . '/plugins/colorpicker/';
-$result =   '<link type="text/css" href="' $pickerpath . 'css/colorpicker.css" rel="stylesheet" />';
+$result =   '<link type="text/css" href="' . $pickerpath . 'css/colorpicker.css" rel="stylesheet" />';
 
 $template = ttemplate::i();
 $template->ltoptions['colors'] = $this->selectors;
@@ -73,6 +73,7 @@ return $this->data['title'];
 }
 
 public function request($arg) {
+//$this->parseselectors();
 tlocal::usefile('themegenerator');
 $lang = tlocal::i('themegenerator');
 $this->colors = $lang->ini['themecolors'];
@@ -90,15 +91,16 @@ $this->processform();
 
   public function getcont() {
 $result = '';
+tlocal::usefile('themegenerator');
+$lang = tlocal::i('themegenerator');
+
 $tml = '<p>
-      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lng['selectcolor'] . '" />
-      #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="22" />
+      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lang->selectcolor . '" />
+      #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="16" />
       <label for="text-color-$name"><strong>$label</strong></label>
 </p>';
 
 $theme = $this->view->theme;
-tlocal::usefile('themegenerator');
-$lang = tlocal::i('themegenerator');
 $args = new targs();
 $a = new targs;
 foreach ($this->colors as $name => $value) {
@@ -107,6 +109,7 @@ $args->value = $value;
 $args->label = $lang->$name;
 $a->$name = $theme->parsearg($tml, $args);
 }
+$form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR  . 'form.tml');
 $result .= $theme->parsearg($form, $a);
 return $theme->simple($result);
   }
@@ -161,9 +164,10 @@ $args->$name = $value;
 }
 
 $res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
-$css .= strtr(file_get_contents($res . scheme.tml'), $args->data);
+$css .= strtr(file_get_contents($res . 'scheme.tml'), $args->data);
 
-$path = "themes/generator$u/"
+$u = time();
+$path = "themes/generator$u/";
 
     require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
 $zip = new zipfile();
