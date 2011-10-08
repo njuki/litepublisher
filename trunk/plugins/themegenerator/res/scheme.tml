@@ -9,13 +9,13 @@ a#logo{background:url(%%logourl%%) no-repeat scroll 0 0 transparent;color:#%%log
 #nav a{color:#%%menu%%}
 #nav a:hover,#nav li.jshover a{background:#%%menubackground%%;color:#%%menuhover%%}
 #nav li a.current_page_link{background:#%%currentmenubackground%%;color:#%%currentmenu%%}
-#nav li a.current_page_link:hover,#nav li.jshover a.current_page_link{background:#%%hovercurrentmenubackground%%;color:#%%hovercurrentmenu%%}
+#nav li a.current_page_link:hover,#nav li.jshover a.current_page_link{background:#%%hovercurrentmenubackground%%;color:#%%menuhover%%}
 #nav li ul li a,#nav li.jshover ul li a{background:#%%sidebarbackground%%;color:#%%submenu%%}
-#nav li ul li a:hover,#nav li ul li.jshover,#nav li.jshover ul li a:hover{background:#%%hoversubmenubackground%%;color:#%%hoversubmenu%%}
+#nav li ul li a:hover,#nav li ul li.jshover,#nav li.jshover ul li a:hover{background:#%%hoversubmenubackground%%;color:#%%menuhover%%}
 
 #content{background:#%%contentbackground%%}
 
 #wrapper{background:#%%sidebarbackground%%}
 .sbar{color:#%%sidebar%%}
-.sbar h3 {color:#%%headsidebar%%}
+.sbar h3 {color:#%%h%%}
 #btm{background:#%%footerbackground%%;border-top:1px solid #%%bodybackground%%;color:#%%footer%%}
