@@ -10,6 +10,7 @@ class tthemegenerator extends tevents_itemplate implements itemplate {
 public $values;
 public $selectors;
 private $colors;
+private $colorsuploaded;
   
   public static function i() {
     return getinstance(__class__);
@@ -22,6 +23,7 @@ $this->cache = false;
 $this->addmap('values', array());
 $this->addmap('selectors', array());
 $this->colors = array();
+$this->colorsuploaded = false;
   }
 
 public function parseselectors() {
@@ -65,6 +67,16 @@ $template = ttemplate::i();
 $template->ltoptions['colors'] = $this->selectors;
 $result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
 $result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
+
+if ($this->colorsuploaded) {
+$args = new targs();
+foreach ($this->colors as $name => $value) {
+$args->$name = $value;
+}
+$res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
+$css = strtr(file_get_contents($res . 'scheme.tml'), $args->data);
+$result .= "<style type=\"text/css\">\n$css</style>\n";
+}
 return $result;
 }
 
@@ -96,7 +108,7 @@ $lang = tlocal::i('themegenerator');
 
 $tml = '<p>
       <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lang->selectcolor . '" />
-      #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="16" />
+      #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="6" />
       <label for="text-color-$name"><strong>$label</strong></label>
 </p>';
 
@@ -143,6 +155,7 @@ $lang = tlocal::admin('uploaderrors');
         } elseif (!is_uploaded_file($_FILES['filename']['tmp_name'])) {
 $result .= sprintf('<h4>%s</h4>', $lng['attack']);
 } else {
+$this->colorsuploaded = true;
 $colors = parse_ini_file($_FILES['filename']['tmp_name']);
 foreach ($colors as $name => $value) {
 $this->setcolor($name, $value);

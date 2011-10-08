@@ -11,7 +11,7 @@ $headerbackground
 $logourl
 $logo
 
-<h4><a href="" id="showmenucolors">$showmenucolors</a></h4>
+<h4><a href="" id="showmenucolors">$lang.showmenucolors</a></h4>
 <div id="menucolors" class="hidden">
 $menu
 $menubackground
