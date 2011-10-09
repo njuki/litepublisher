@@ -1,4 +1,5 @@
 <h3>$lang.formtitle</h3>
+<p>$lang.note</p>
 <form name="colorform" id="colorform" action="" method="post">
 $body 
 $bodybackground
@@ -6,8 +7,8 @@ $link
 $linkcontent
 $hoverlink
 $h
-$headerurl
 $headerbackground
+$headerurl
 $logourl
 $logo
 
@@ -31,7 +32,7 @@ $footerbackground
 
 <p>
 <input type="hidden" name="formtype" value="colors" />
-<input type="submit" name="submitcolors" value="$submitcolors" /></p>
+<input type="submit" name="submitcolors" value="$lang.submitcolors" /></p>
 </form>
 
 <form name="uploadcolor" id="uploadcolor" action="" method="post" ENCTYPE="multipart/form-data">

@@ -129,7 +129,7 @@ return $theme->simple($result);
 public function setcolor($name, $value) {
 if (isset($this->colors[$name])) {
 $value = trim($value);
-if (preg_match('/[0-9a-zA-Z]?*/', $value)) {
+if (preg_match('/^[0-9a-zA-Z]*+$/', $value)) {
 $this->colors[$name] = $value;
 }
 }
@@ -168,7 +168,6 @@ break;
 
 public function sendfile() {
 $themedir = litepublisher::$paths->themes . 'generator' . DIRECTORY_SEPARATOR;
-$css = file_get_contents($themedir . 'style.css');
 $args = new targs();
 $colors = "[themecolors]\n";
 foreach ($this->colors as $name => $value) {
@@ -177,7 +176,7 @@ $args->$name = $value;
 }
 
 $res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
-$css .= strtr(file_get_contents($res . 'scheme.tml'), $args->data);
+$css = strtr(file_get_contents($res . 'scheme.tml'), $args->data);
 
 $u = time();
 $path = "themes/generator$u/";
@@ -185,9 +184,42 @@ $path = "themes/generator$u/";
     require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
 $zip = new zipfile();
 $zip->addFile($colors, $path . 'colors.ini');
-$zip->addFile($css, $path . 'style.css');
+
+$filelist = tfiler::getfiles($themedir);
+foreach ($filelist as $filename) {
+$content = file_get_contents($themedir . $filename);
+switch ($filename) {
+case 'style.css':
+$content .= $css;
+break;
+
+case 'about.ini':
+$content = str_replace('name = generator', "name = generator$u", $content);
+break;
+}
+
+$zip->addFile($content, $path . $filename);
+}
+
+$themedir .= 'images' . DIRECTORY_SEPARATOR ;
+$filelist = tfiler::getfiles($themedir);
+foreach ($filelist as $filename) {
+$zip->addFile(file_get_contents($themedir . $filename), $path . 'images/' . $filename);
+}
 
       $result = $zip->file();
+
+    if (ob_get_level()) @ob_end_clean ();
+    header('HTTP/1.1 200 OK', true, 200);
+    header('Content-type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=generator.theme.' . $u . '.zip');
+    header('Content-Length: ' .strlen($result));
+    header('Last-Modified: ' . date('r'));
+      Header( 'Cache-Control: no-cache, must-revalidate');
+      Header( 'Pragma: no-cache');
+    
+echo $result;
+    exit();
 }
   
 }//class
