@@ -6,16 +6,14 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function TManifestInstall(&$self) {
-  $Urlmap = TUrlmap::i();
-  $Urlmap->Lock();
-  $Urlmap->Add('/wlwmanifest.xml', get_class($self), 'manifest');
-  $Urlmap->Add('/rsd.xml', get_class($self), 'rsd');
-  $Urlmap->Unlock();
+function tmanifestInstall($self) {
+  $urlmap = turlmap::i();
+  $urlmap->lock();
+  $urlmap->add('/wlwmanifest.xml', get_class($self), 'manifest');
+  $urlmap->add('/rsd.xml', get_class($self), 'rsd');
+  $urlmap->Unlock();
 }
 
-function TManifestUninstall(&$self) {
-  TUrlmap::unsub($self);
+function tmanifestUninstall($self) {
+  turlmap::unsub($self);
 }
-
-?>
