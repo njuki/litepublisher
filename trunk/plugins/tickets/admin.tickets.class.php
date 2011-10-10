@@ -89,7 +89,7 @@ class tadmintickets extends tadminmenu {
       } else {
         $ticket = tticket::i($id);
         if ($status == 'fixed') {
-          $ticket->state = $status;
+          $ticket->set_state($status);
         } else {
           $ticket->status = $status;
         }

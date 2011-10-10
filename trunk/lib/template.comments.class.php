@@ -27,10 +27,9 @@ public function save() {}
     $list = $comments->getcontent();
     
     $theme = ttheme::i();
-    $tml = $theme->content->post->templatecomments->comments;
     $args = targs::i();
     $args->count = $post->cmtcount;
-    $result .= $tml->count($args);
+    $result .= $post->theme->parsearg($post->theme->templates['content.post.templatecomments.comments.count'], $args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {

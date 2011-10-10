@@ -131,10 +131,10 @@ class tticketeditor extends tposteditor {
     $ticket->content = tcontentfilter::quote(htmlspecialchars($raw));
     $ticket->code = $code;
     $ticket->prio = $prio;
-    $ticket->state = $state;
+    $ticket->set_state($state);
     $ticket->version = $version;
     $ticket->os = $os;
-    if (litepublisher::$options->group != 'ticket') $ticket->state = $state;
+    //if (litepublisher::$options->group != 'ticket') $ticket->state = $state;
     if ($id == 0) {
       $ticket->status = $newstatus;
       $ticket->type = $type;
