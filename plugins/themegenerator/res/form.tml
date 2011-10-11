@@ -8,8 +8,12 @@ $linkcontent
 $hoverlink
 $h
 $headerbackground
-$headerurl
-$logourl
+<div id="imagefiles">
+<p>$lang.imagenotes</p>
+<div id="uploadbutton"></div>
+<div id="progressbar" class="hidden">$lang.uploadedpercent: <strong id="uploadedpercent"></strong></div>
+<!--- headerurl logourl -->
+</div>
 $logo
 
 <h4><a href="" id="showmenucolors">$lang.showmenucolors</a></h4>
