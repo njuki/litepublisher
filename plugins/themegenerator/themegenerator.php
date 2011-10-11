@@ -68,6 +68,7 @@ $result =   '<link type="text/css" href="' . $pickerpath . 'css/colorpicker.css"
 $template = ttemplate::i();
 $template->ltoptions['colors'] = $this->selectors;
 $result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
+$result .= $template->getjavascript('/js/swfupload/swfupload.js');
 $result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
 
 if ($this->colorsuploaded) {
@@ -238,28 +239,36 @@ echo $result;
 
 public function imageresize($name, $filename) {
 if (!($source = tmediaparser::readimage($filename))) return false;
-$parser = tmediaparser::i();
-$result = $parser->
+
+$x = $this->colors['x'];
+$y = $this->colors['y'];
+
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) {
+if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
+@chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
+return litepublisher::$site->files . '/' . $result;
 }
-    if ($ratio) {
+
+$result = tmediaparser::prepare_filename($name, 'themegen');
+$realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
+
       $ratio = $sourcex / $sourcey;
       if ($x/$y > $ratio) {
         $x = $y *$ratio;
       } else {
         $y = $x /$ratio;
       }
-    }
-    
+
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-    imagejpeg($dest, $destfilename, 100);
+    imagejpeg($dest, $realfilename, 100);
     imagedestroy($dest);
     imagedestroy($source);
-    return true;
 
+@chmod($realfilename, 0666);
+    return litepublisher::$site->files . '/'. $result;
 }
   
 }//class
