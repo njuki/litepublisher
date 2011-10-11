@@ -11,6 +11,7 @@ public $values;
 public $selectors;
 private $colors;
 private $colorsuploaded;
+private $formresult;
   
   public static function i() {
     return getinstance(__class__);
@@ -24,6 +25,7 @@ $this->addmap('values', array());
 $this->addmap('selectors', array());
 $this->colors = array();
 $this->colorsuploaded = false;
+$this->formresult = '';
   }
 
 public function parseselectors() {
@@ -97,12 +99,13 @@ $this->colors = $lang->ini['themecolors'];
         }
       }
 
-$this->processform();
+$this->formresult = $this->processform();
+if (isset($_POST['formtype']) && ($_POST['formtype'] == 'image')) return $this->formresult;
     }
 }
 
   public function getcont() {
-$result = '';
+$result = $this->formresult;
 tlocal::usefile('themegenerator');
 $lang = tlocal::i('themegenerator');
 
@@ -151,9 +154,9 @@ case 'uploadcolors':
         if (isset($_FILES['filename'])) {
         if (isset($_FILES['filename']['error']) && $_FILES['filename']['error'] > 0) {
 $lang = tlocal::admin('uploaderrors');
-          $result .= sprintf('<h4>%s</h4>', $lang->__get($_FILES['filename']['error']));
+return sprintf('<h4>%s</h4>', $lang->__get($_FILES['filename']['error']));
         } elseif (!is_uploaded_file($_FILES['filename']['tmp_name'])) {
-$result .= sprintf('<h4>%s</h4>', $lng['attack']);
+return sprintf('<h4>%s</h4>', $lng['attack']);
 } else {
 $this->colorsuploaded = true;
 $colors = parse_ini_file($_FILES['filename']['tmp_name']);
@@ -163,7 +166,18 @@ $this->setcolor($name, $value);
 }
 }
 break;
+
+case 'image':
+      if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
+      $_FILES['Filedata']['error'] != 0) return 403;
+      
+      if ($result = $this->imageresize($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'])) {
+return turlmap::htmlheader(false) . $result;
 }
+return 403;
+}
+
+return '';
 }
 
 public function sendfile() {
@@ -222,11 +236,14 @@ echo $result;
     exit();
 }
 
-public function imageresize($filename) {
+public function imageresize($name, $filename) {
 if (!($source = tmediaparser::readimage($filename))) return false;
+$parser = tmediaparser::i();
+$result = $parser->
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
-    if (($x >= $sourcex) && ($y >= $sourcey)) return false;
+    if (($x >= $sourcex) && ($y >= $sourcey)) {
+}
     if ($ratio) {
       $ratio = $sourcex / $sourcey;
       if ($x/$y > $ratio) {

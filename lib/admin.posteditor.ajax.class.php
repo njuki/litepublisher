@@ -257,12 +257,12 @@ class tajaxposteditor  extends tevents {
       break;
       
       case 'upload':
-      if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) ||
-      $_FILES["Filedata"]["error"] != 0) return self::error403();
+      if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
+      $_FILES['Filedata']['error'] != 0) return self::error403();
       if ($this->isauthor && ($r = tauthor_rights::i()->canupload())) return $r;
       
       $parser = tmediaparser::i();
-      $id = $parser->uploadfile($_FILES["Filedata"]["name"], $_FILES["Filedata"]["tmp_name"], '', '', '', false);
+      $id = $parser->uploadfile($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], '', '', '', false);
       $templates = $this->getfiletemplates('uploaded-$id', 'new-post-$post.id', 'newfile-$id');
       $files = tfiles::i();
       $result = $files->getlist(array($id), $templates);

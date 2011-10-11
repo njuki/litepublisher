@@ -91,23 +91,23 @@ class tmediaparser extends tevents {
     return false;
   }
   
-  private function getunique($dir, $filename) {
+  public function getunique($dir, $filename) {
     if  (!@file_exists($dir . $filename)) return $filename;
     $parts = pathinfo($filename);
     $base = $parts['filename'];
     $ext = empty($parts['extension']) ? '' : ".$parts[extension]";
     for ($i = 2; $i < 10000; $i++) {
       $filename = "$base$i$ext";
-      if  (!@file_exists($dir . $filename)) return $filename;
+      if  (!file_exists($dir . $filename)) return $filename;
     }
     return $filename;
   }
   
-  private function movetofolder($filename, $tempfilename, $media, $overwrite) {
+  public function movetofolder($filename, $tempfilename, $media, $overwrite) {
     $dir = litepublisher::$paths->files . $media;
     if (!is_dir($dir)) {
       mkdir($dir, 0777);
-      chmod($dir, 0777);
+      @chmod($dir, 0777);
     }
     if ($media) $dir .= DIRECTORY_SEPARATOR;
     if ($overwrite  )  {
