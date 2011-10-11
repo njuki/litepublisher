@@ -48,8 +48,26 @@ class tmediaparser extends tevents {
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
     return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
   }
-  
-  public function uploadicon($filename, $content, $overwrite ) {
+
+  public static function move_uploaded($filename, $tempfilename, $media) {
+    $linkgen = tlinkgenerator::i();
+    $filename = $linkgen->filterfilename($filename);
+    if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
+$filename = self::create_filename($filename, $media, false);
+if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
+    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $media . $filename)) return false;
+return "$media/$filename";
+  }
+
+  public static function prepare_filename($filename, $media) {
+    $linkgen = tlinkgenerator::i();
+    $filename = $linkgen->filterfilename($filename);
+    if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
+$filename = self::create_filename($filename, $media, false);
+return "$media/$filename";
+  }
+
+    public function uploadicon($filename, $content, $overwrite ) {
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content, $overwrite);
@@ -91,7 +109,7 @@ class tmediaparser extends tevents {
     return false;
   }
   
-  public function getunique($dir, $filename) {
+  public static function getunique($dir, $filename) {
     if  (!@file_exists($dir . $filename)) return $filename;
     $parts = pathinfo($filename);
     $base = $parts['filename'];
@@ -102,8 +120,8 @@ class tmediaparser extends tevents {
     }
     return $filename;
   }
-  
-  public function movetofolder($filename, $tempfilename, $media, $overwrite) {
+
+  public static function create_filename($filename, $media, $overwrite) {
     $dir = litepublisher::$paths->files . $media;
     if (!is_dir($dir)) {
       mkdir($dir, 0777);
@@ -113,8 +131,14 @@ class tmediaparser extends tevents {
     if ($overwrite  )  {
       if (file_exists($dir . $filename)) unlink($dir . $filename);
     } else {
-      $filename = $this->getunique($dir, $filename);
+      $filename = self::getunique($dir, $filename);
     }
+
+    return $filename;
+  }
+  
+  public function movetofolder($filename, $tempfilename, $media, $overwrite) {
+$filename = self::create_filename($filename, $media, $overwrite);
     if (!rename(litepublisher::$paths->files . $tempfilename, $dir . $filename)) return $this->error("Error rename file $tempfilename to $dir$filename");
     return "$media/$filename";
   }
@@ -334,7 +358,7 @@ if (!($source = self::readimage($srcfilename))) return false;
     
     $fullname = litepublisher::$paths->files . $destfilename ;
     $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
-    $fullname = $dir . $this->getunique($dir, basename($fullname));
+    $fullname = $dir . self::getunique($dir, basename($fullname));
     
     if (!self::createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight, $this->ratio)) return false;
     @chmod($fullname, 0666);
