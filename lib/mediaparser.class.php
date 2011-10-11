@@ -264,22 +264,21 @@ class tmediaparser extends tevents {
     return false;
   }
   
-  public function createsnapshot($srcfilename, $destfilename, $x, $y) {
+  public static function readimage($srcfilename) {
     if (!file_exists($srcfilename)) return false;
-    $info = getimagesize($srcfilename);
+    if (!($info = @getimagesize($srcfilename))) return false;
+if (($info[0] == 0) || ($info[1] == 0)) return false;
+
     switch ($info[2]) {
       case 1:
-      $source = @imagecreatefromgif($srcfilename);
-      break;
-      
+return @imagecreatefromgif($srcfilename);
+
       case 2:
-      $source = @imagecreatefromjpeg($srcfilename);
-      break;
-      
+      return @imagecreatefromjpeg($srcfilename);
+
       case 3:
-      $source = @imagecreatefrompng($srcfilename);
-      break;
-      
+      return @imagecreatefrompng($srcfilename);
+
       /*
       4 IMAGETYPE_SWF
       5 IMAGETYPE_PSD
@@ -293,22 +292,22 @@ class tmediaparser extends tevents {
       13 IMAGETYPE_SWC
       14 IMAGETYPE_IFF
       */
+
       case 15:
-      $source = @imagecreatefromwbmp($srcfilename);
-      break;
-      
+      return @imagecreatefromwbmp($srcfilename);
+
       case 16:
-      $source = @imagecreatefromxbm($srcfilename);
-      break;
-      
-      default:
-      return false;
+      return @imagecreatefromxbm($srcfilename);
     }
+return false;
+}
     
+  public static function createsnapshot($srcfilename, $destfilename, $x, $y, $ratio) {
+if (!($source = self::readimage($srcfilename))) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;
-    if ($this->ratio) {
+    if ($ratio) {
       $ratio = $sourcex / $sourcey;
       if ($x/$y > $ratio) {
         $x = $y *$ratio;
@@ -337,7 +336,7 @@ class tmediaparser extends tevents {
     $dir = dirname($fullname) . DIRECTORY_SEPARATOR;
     $fullname = $dir . $this->getunique($dir, basename($fullname));
     
-    if (!$this->createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight)) return false;
+    if (!self::createsnapshot(litepublisher::$paths->files . $filename, $fullname, $this->previewwidth, $this->previewheight, $this->ratio)) return false;
     @chmod($fullname, 0666);
     $info = getimagesize($fullname);
     $destfilename = substr($fullname, strlen(litepublisher::$paths->files));

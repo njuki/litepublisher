@@ -221,5 +221,28 @@ $zip->addFile(file_get_contents($themedir . $filename), $path . 'images/' . $fil
 echo $result;
     exit();
 }
+
+public function imageresize($filename) {
+if (!($source = tmediaparser::readimage($filename))) return false;
+    $sourcex = imagesx($source);
+    $sourcey = imagesy($source);
+    if (($x >= $sourcex) && ($y >= $sourcey)) return false;
+    if ($ratio) {
+      $ratio = $sourcex / $sourcey;
+      if ($x/$y > $ratio) {
+        $x = $y *$ratio;
+      } else {
+        $y = $x /$ratio;
+      }
+    }
+    
+    $dest = imagecreatetruecolor($x, $y);
+    imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+    imagejpeg($dest, $destfilename, 100);
+    imagedestroy($dest);
+    imagedestroy($source);
+    return true;
+
+}
   
 }//class
