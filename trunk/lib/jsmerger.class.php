@@ -91,7 +91,13 @@ class tfilemerger extends titems {
     $this->save();
     return count($this->items[$section]['texts']) - 1;
   }
-  
+
+  public function addtlang($section, $key, array $lang) {
+return $this->addtext($section, $key,
+"var lang;\nif (lang == undefined) lang = {};\n" . 
+sprintf('lang.%s = %s;', $section, json_encode($lang)));
+  }
+
   public function deletetext($section, $key) {
     if (!isset($this->items[$section]['texts'][$key])) return;
     unset($this->items[$section]['texts'][$key]);
