@@ -27,6 +27,15 @@ $merger->lock();
   $merger->add('themegenerator', "plugins/$name/res/scheme.ini");
   $merger->add('themegenerator', sprintf('plugins/%s/res/%s.ini', $name, litepublisher::$options->language));
 $merger->unlock();
+
+$js = tjsmerger::i();
+$js->lock();
+$js->add('themegenerator', '/plugins/colorpicker/js/colorpicker.js');
+$js->add('themegenerator', '/js/swfupload/swfupload.js');
+$js->add('themegenerator', sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
+$js->unlock();
+
+tcron::i()->addnightly(get_class($self), 'cron', null);
   }
 
 function tthemegeneratorUninstall($self) {
@@ -37,4 +46,14 @@ $views->delete($self->idview);
 $merger = tlocalmerger::i();
 unset($merger->items['themegenerator']);
 $merger->save();
+
+$js = tjsmerger::i();
+unset($js->items['themegenerator']);
+$js->save();
+
+$template = ttemplate::i();
+unset($templates->data['jsmerger_themegenerator']);
+$template->save();
+
+tcron::i()->unsubscribeclass($self);
 }

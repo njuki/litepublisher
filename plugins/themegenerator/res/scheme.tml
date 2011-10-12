@@ -3,7 +3,7 @@ a,a:link,a:visited{color:#%%link%%}
 #content a,#content a:link,#content a:visited{color:#%%linkcontent%%}
 a:hover,#content a:hover{color:#%%hoverlink%%}
 h1,h2,h3,h4,h5,h6{color:#%%h%%}
-#top {background:url(%%headerurl%%) repeat-x top center #%%header%%;}
+#top {background:url(%%headerurl%%) repeat-x top center #%%headerbackground%%;}
 a#logo{background:url(%%logourl%%) no-repeat scroll 0 0 transparent;color:#%%logo%%}
 
 #nav a{color:#%%menu%%}
