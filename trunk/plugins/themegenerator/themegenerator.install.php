@@ -33,6 +33,11 @@ $js->lock();
 $js->add('themegenerator', '/plugins/colorpicker/js/colorpicker.js');
 $js->add('themegenerator', '/js/swfupload/swfupload.js');
 $js->add('themegenerator', sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
+  $js->addlang('themegenerator', 'lang', array(
+'upload_image' => $about['upload_image']
+));
+"var lang;\nif (lang == undefined) lang = {};\n" . 
+sprintf('lang.themegenerator = %s;',  json_encode($lang->ini['comments'])));
 $js->unlock();
 
 tcron::i()->addnightly(get_class($self), 'cron', null);
