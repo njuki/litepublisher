@@ -13,8 +13,13 @@ $headerbackground
 <div id="uploadbutton"></div>
 <div id="progressbar" class="hidden">$lang.uploadedpercent: <strong id="uploadedpercent"></strong></div>
      <input type="hidden" name="color_headerurl" id="text-color-headerurl" value="$headerurl" />
-<!--- headerurl logourl -->
+
+<p>$lang.logonotes</p>
+<div id="uploadlogo"></div>
+<div id="progressbar" class="hidden">$lang.uploadedpercent: <strong id="uploadedpercent"></strong></div>
+     <input type="hidden" name="color_logourl" id="text-color-logourl" value="$logourl" />
 </div>
+
 $logo
 
 <h4><a href="" id="showmenucolors">$lang.showmenucolors</a></h4>
