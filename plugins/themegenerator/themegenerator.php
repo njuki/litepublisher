@@ -180,12 +180,20 @@ $this->setcolor($name, $value);
 }
 break;
 
-case 'image':
-case 'logo':
+case 'headerurl':
       if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
       $_FILES['Filedata']['error'] != 0) return 403;
       
       if ($result = $this->imageresize($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], $this->colors['headerwidth'], $this->colors['headerheight'])) {
+return turlmap::htmlheader(false) . $result;
+}
+return 403;
+
+case 'logourl':
+      if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
+      $_FILES['Filedata']['error'] != 0) return 403;
+      
+      if ($result = $this->uploadlogo($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], $this->colors['logowidth'], $this->colors['logoheight'])) {
 return turlmap::htmlheader(false) . $result;
 }
 return 403;
@@ -261,6 +269,54 @@ echo $result;
 }
 
 public function imageresize($name, $filename, $x, $y) {
+if (!($source = tmediaparser::readimage($filename))) return false;
+    $sourcex = imagesx($source);
+    $sourcey = imagesy($source);
+    if (($x >= $sourcex) && ($y >= $sourcey)) {
+if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
+@chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
+return litepublisher::$site->files . '/files/' . $result;
+}
+
+$result = tmediaparser::prepare_filename($name, 'themegen');
+$realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
+
+      $ratio = $sourcex / $sourcey;
+      if ($x/$y > $ratio) {
+        $x = $y *$ratio;
+      } else {
+        $y = $x /$ratio;
+      }
+
+    $dest = imagecreatetruecolor($x, $y);
+    imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+switch (substr($result, strrpos($result, '.')+ 1)) {
+case 'jpg':
+    imagejpeg($dest, $realfilename, 100);
+break;
+
+case 'png':
+    imagepng($dest, $realfilename);
+break;
+
+case 'gif':
+    imagegif($dest, $realfilename);
+break;
+
+default:
+$realfilename .= '.jpg';
+$result .= '.jpg';
+    imagejpeg($dest, $realfilename, 100);
+}
+
+    imagedestroy($dest);
+    imagedestroy($source);
+
+@chmod($realfilename, 0666);
+    return litepublisher::$site->files . '/files/'. $result;
+}
+  
+public function uploadlogo($name, $filename, $x, $y) {
 if (!($source = tmediaparser::readimage($filename))) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
