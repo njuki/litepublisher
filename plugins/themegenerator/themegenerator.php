@@ -320,7 +320,7 @@ public function uploadlogo($name, $filename, $x, $y) {
 if (!($source = tmediaparser::readimage($filename))) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
-    if (($x >= $sourcex) && ($y >= $sourcey)) {
+    if (($x == $sourcex) && ($y == $sourcey)) {
 if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
 @chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
 return litepublisher::$site->files . '/files/' . $result;
@@ -329,33 +329,14 @@ return litepublisher::$site->files . '/files/' . $result;
 $result = tmediaparser::prepare_filename($name, 'themegen');
 $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result);
 
-      $ratio = $sourcex / $sourcey;
-      if ($x/$y > $ratio) {
-        $x = $y *$ratio;
-      } else {
-        $y = $x /$ratio;
-      }
-
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
-switch (substr($result, strrpos($result, '.')+ 1)) {
-case 'jpg':
-    imagejpeg($dest, $realfilename, 100);
-break;
 
-case 'png':
-    imagepng($dest, $realfilename);
-break;
-
-case 'gif':
-    imagegif($dest, $realfilename);
-break;
-
-default:
-$realfilename .= '.jpg';
-$result .= '.jpg';
-    imagejpeg($dest, $realfilename, 100);
+if ('png' != substr($result, strrpos($result, '.')+ 1)){
 }
+
+
+    imagepng($dest, $realfilename);
 
     imagedestroy($dest);
     imagedestroy($source);
