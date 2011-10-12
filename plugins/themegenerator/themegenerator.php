@@ -211,10 +211,8 @@ $args->$name = $value;
 
 foreach (array('headerurl', 'logourl') as $name) {
 if (strbegin($this->colors[$name], 'http://')) {
-$filename = substr($this->colors[$name], strlen(litepublisher::$site->files));
-$basename = substr($filename, strrpos($filename, '/') + 1);
-$filename = ltrim($filename, '/');
-$filename = litepublisher::$paths->files . str_replace('/',DIRECTORY_SEPARATOR, $filename);
+$basename = substr($this->colors[$name], strrpos($this->colors[$name], '/') + 1);
+$filename = litepublisher::$paths->files . 'themegen' . DIRECTORY_SEPARATOR . $basename;
 $zip->addFile(file_get_contents($filename), $path . 'images/' . $basename);
 $args->$name = 'images/' . $basename;
 }
