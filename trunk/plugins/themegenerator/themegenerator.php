@@ -28,6 +28,14 @@ $this->colorsuploaded = false;
 $this->formresult = '';
   }
 
+public function cron() {
+tfiler::callback(array($this, 'deleteold'), litepublisher::$paths->files . 'themegen', false);
+}
+
+public function deleteold($filename) {
+if (@filectime ($filename) + 24*3600 < time()) unlink($filename);
+}
+
 public function parseselectors() {
 $this->selectors = array();
 $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
@@ -67,6 +75,7 @@ $result =   '<link type="text/css" href="' . $pickerpath . 'css/colorpicker.css"
 
 $template = ttemplate::i();
 $template->ltoptions['colors'] = $this->selectors;
+//$result .= $template->getjavascript($template->jsmerger_themegenerator);
 $result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
 $result .= $template->getjavascript('/js/swfupload/swfupload.js');
 $result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
@@ -111,10 +120,9 @@ tlocal::usefile('themegenerator');
 $lang = tlocal::i('themegenerator');
 
 $tml = '<p>
-      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lang->selectcolor . '" />
-      #<input type="text" name="color_$name" id="text-color-$name" value="$value" size="6" />
-      <label for="text-color-$name"><strong>$label</strong></label>
-</p>';
+<input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lang->selectcolor . '" />
+     <input type="hidden" name="color_$name" id="text-color-$name" value="$value" />
+<strong>$label</strong></p>';
 
 $theme = $this->view->theme;
 $args = new targs();
@@ -125,6 +133,10 @@ $args->value = $value;
 $args->label = $lang->$name;
 $a->$name = $theme->parsearg($tml, $args);
 }
+
+$a->headerurl = $this->colors['headerurl'];
+$a->logourl = $this->colors['logourl'];
+
 $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR  . 'form.tml');
 $result .= $theme->parsearg($form, $a);
 return $theme->simple($result);
@@ -169,10 +181,11 @@ $this->setcolor($name, $value);
 break;
 
 case 'image':
+case 'logo':
       if (!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name']) ||
       $_FILES['Filedata']['error'] != 0) return 403;
       
-      if ($result = $this->imageresize($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'])) {
+      if ($result = $this->imageresize($_FILES['Filedata']['name'], $_FILES['Filedata']['tmp_name'], $this->colors['headerwidth'], $this->colors['headerheight'])) {
 return turlmap::htmlheader(false) . $result;
 }
 return 403;
@@ -182,6 +195,12 @@ return '';
 }
 
 public function sendfile() {
+$u = time();
+$path = "themes/generator$u/";
+
+    require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
+$zip = new zipfile();
+
 $themedir = litepublisher::$paths->themes . 'generator' . DIRECTORY_SEPARATOR;
 $args = new targs();
 $colors = "[themecolors]\n";
@@ -190,14 +209,20 @@ $colors .= "$name = \"$value\"\n";
 $args->$name = $value;
 }
 
+foreach (array('headerurl', 'logourl') as $name) {
+if (strbegin($this->colors[$name], 'http://')) {
+$filename = substr($this->colors[$name], strlen(litepublisher::$site->files));
+$basename = substr($filename, strrpos($filename, '/') + 1);
+$filename = ltrim($filename, '/');
+$filename = litepublisher::$paths->files . str_replace('/',DIRECTORY_SEPARATOR, $filename);
+$zip->addFile(file_get_contents($filename), $path . 'images/' . $basename);
+$args->$name = 'images/' . $basename;
+}
+}
+
 $res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
 $css = strtr(file_get_contents($res . 'scheme.tml'), $args->data);
 
-$u = time();
-$path = "themes/generator$u/";
-
-    require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
-$zip = new zipfile();
 $zip->addFile($colors, $path . 'colors.ini');
 
 $filelist = tfiler::getfiles($themedir);
@@ -237,18 +262,14 @@ echo $result;
     exit();
 }
 
-public function imageresize($name, $filename) {
+public function imageresize($name, $filename, $x, $y) {
 if (!($source = tmediaparser::readimage($filename))) return false;
-
-$x = $this->colors['x'];
-$y = $this->colors['y'];
-
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) {
 if (!($result = tmediaparser::move_uploaded($name, $filename, 'themegen'))) return false;
 @chmod(litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARATOR, $result), 0666);
-return litepublisher::$site->files . '/' . $result;
+return litepublisher::$site->files . '/files/' . $result;
 }
 
 $result = tmediaparser::prepare_filename($name, 'themegen');
@@ -263,12 +284,30 @@ $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARA
 
     $dest = imagecreatetruecolor($x, $y);
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
+switch (substr($result, strrpos($result, '.')+ 1)) {
+case 'jpg':
     imagejpeg($dest, $realfilename, 100);
+break;
+
+case 'png':
+    imagepng($dest, $realfilename);
+break;
+
+case 'gif':
+    imagegif($dest, $realfilename);
+break;
+
+default:
+$realfilename .= '.jpg';
+$result .= '.jpg';
+    imagejpeg($dest, $realfilename, 100);
+}
+
     imagedestroy($dest);
     imagedestroy($source);
 
 @chmod($realfilename, 0666);
-    return litepublisher::$site->files . '/'. $result;
+    return litepublisher::$site->files . '/files/'. $result;
 }
   
 }//class

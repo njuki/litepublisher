@@ -56,7 +56,7 @@ function createswfu () {
     upload_url: ltoptions.url + "/theme-generator.htm",
     // prevent_swf_caching: false,
   post_params: {"formtype": "image"},
-    file_size_limit : "2 MB",
+    file_size_limit : "4 MB",
     file_types : "*.jpg;*.png;*.gif",
     file_types_description : "Images",
     file_upload_limit : 1,
@@ -87,6 +87,7 @@ button_text_left_padding: 5,
 }
 
 function set_color(name, value) {
+		$("#text-color-" + name).val(value);
 for (var i = 0, l =ltoptions.colors.length ; i < l; i++) {
 var item = ltoptions.colors[i];
 if (name == item['name']) {
@@ -96,7 +97,7 @@ if (a.length >= 2) {
 var name2= a[1];
 propvalue = propvalue.replace('%%' + name2 + '%%', $('#text-color-' + name2).val());
 }
-
+//alert(propvalue);
 $(item['sel']).css(item['propname'], propvalue);
 }
 }
@@ -111,7 +112,6 @@ return false;
 ltoptions.swfu = createswfu();
 $("input[id^='colorbutton']").ColorPicker({
 	onSubmit: function(hsb, hex, rgb, el) {
-		$("#text-color-" + $(el).attr("rel")).val(hex);
 		$(el).ColorPickerHide();
 try {
 set_color($(el).attr("rel"), hex);

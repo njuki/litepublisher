@@ -12,6 +12,7 @@ $headerbackground
 <p>$lang.imagenotes</p>
 <div id="uploadbutton"></div>
 <div id="progressbar" class="hidden">$lang.uploadedpercent: <strong id="uploadedpercent"></strong></div>
+     <input type="hidden" name="color_headerurl" id="text-color-headerurl" value="$headerurl" />
 <!--- headerurl logourl -->
 </div>
 $logo
