@@ -65,7 +65,6 @@ $this->selectors[] = array(
 }
 }
 }
-//dumpvar($this->selectors);
 $this->save();
 }
 
@@ -110,7 +109,7 @@ $this->colors = $lang->ini['themecolors'];
       }
 
 $this->formresult = $this->processform();
-if (isset($_POST['formtype']) && ($_POST['formtype'] == 'image')) return $this->formresult;
+if (isset($_POST['formtype']) && (($_POST['formtype'] == 'headerurl') || ($_POST['formtype'] == 'logourl'))) return $this->formresult;
     }
 }
 
@@ -142,10 +141,11 @@ $result .= $theme->parsearg($form, $a);
 return $theme->simple($result);
   }
 
+
 public function setcolor($name, $value) {
 if (isset($this->colors[$name])) {
 $value = trim($value);
-if (preg_match('/^[0-9a-zA-Z]*+$/', $value)) {
+if (strend($name, 'url') || preg_match('/^[0-9a-zA-Z]*+$/', $value)) {
 $this->colors[$name] = $value;
 }
 }
@@ -154,6 +154,7 @@ $this->colors[$name] = $value;
 public function processform() {
 switch ($_POST['formtype']) {
 case 'colors':
+
 foreach ($_POST as $name => $value) {
 if (strbegin($name, 'color_')) {
 $name = substr($name, strlen('color_'));
@@ -216,7 +217,6 @@ foreach ($this->colors as $name => $value) {
 $colors .= "$name = \"$value\"\n";
 $args->$name = $value;
 }
-
 foreach (array('headerurl', 'logourl') as $name) {
 if (strbegin($this->colors[$name], 'http://')) {
 $basename = substr($this->colors[$name], strrpos($this->colors[$name], '/') + 1);
@@ -333,8 +333,12 @@ $realfilename = litepublisher::$paths->files . str_replace('/', DIRECTORY_SEPARA
     imagecopyresampled($dest, $source, 0, 0, 0, 0, $x, $y, $sourcex, $sourcey);
 
 if ('png' != substr($result, strrpos($result, '.')+ 1)){
+$index = imagecolorexact($dest, 255, 255, 255); 
+if ($index == -1) {
+$index = imagecolorallocate($dest, 255, 255, 255);
 }
-
+imagecolortransparent($dest, $index); 
+}
 
     imagepng($dest, $realfilename);
 
