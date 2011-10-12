@@ -8,7 +8,7 @@
 
 function tthemegeneratorInstall($self) {
 if (!ttheme::exists('generator')) die('Theme "generator" not exists');
-litepublisher::$urlmap->add('/theme-generator.htm', get_class($self), null);
+litepublisher::$urlmap->addget('/theme-generator.htm', get_class($self));
 
 $about = tplugins::getabout(tplugins::getname(__file__));
 $self->lock();
