@@ -41,22 +41,29 @@ class tyoutubefeed extends tplugin {
       'preview' => 0,
       'icon' => 0,
       'author' => litepublisher::$options->user,
-      'size' => 0
+      'size' => 0,
+'description' => '',
+'keywords' => '',
+'preview' => ''
       );
-      
+
       $id = substr($entry->id, strrpos($entry->id, '/') + 1);
       $item['filename'] = $id;
       $item['hash'] = $id;
       $item['posted'] = sqldate(strtotime($entry->published));
-      
+      $item['title'] = (string) $entry->title;      
+
+/*
       $media = $entry->children('http://search.yahoo.com/mrss/');
       $group = $media->group;
-      $item['title'] = (string) $group->title;
+      //$item['title'] = (string) $group->title;
       $item['description'] = (string) $group->description;
       $item['keywords'] = (string) $group->keywords;
-      
+  dumpvar($item);    
       $attrs = $group->thumbnail[0]->attributes();
       $item['preview'] = (string) $attrs['url'];
+*/
+
       $result[$id] = $item;
     }
     return $result;
@@ -65,7 +72,7 @@ class tyoutubefeed extends tplugin {
   public function addtofiles(array $item) {
     $files = tfiles::i();
     $files->lock();
-    if ($image = http::get($item['preview'])) {
+    if (!empty($item['preview']) && ($image = http::get($item['preview']))) {
       $ext = substr($item['preview'], strrpos($item['preview'], '.'));
       $filename = sprintf('thumbnail.%s%s', $item['filename'], $ext);
       $mediaparser = tmediaparser::i();
@@ -82,7 +89,9 @@ class tyoutubefeed extends tplugin {
   
   public function themeparsed($theme) {
     $theme->templates['content.excerpts.excerpt.filelist.youtube'] = $this->player;
+    $theme->templates['content.excerpts.excerpt.filelist.youtubes'] = '$youtube';
     $theme->templates['content.post.filelist.youtube'] = $this->player;
+    $theme->templates['content.post.filelist.youtubes'] = '$youtube';
   }
   
 }//class
