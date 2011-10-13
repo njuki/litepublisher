@@ -10,7 +10,7 @@ class tcomusers extends titems {
   public $pid;
   private static $instances;
   
-  public static function i($pid) {
+  public static function i($pid = 0) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
     $self = litepublisher::$classes->newinstance(__class__);
