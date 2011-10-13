@@ -151,7 +151,7 @@ class tjsmerger extends tfilemerger {
     return getinstance(__class__);
   }
 
-  public function addtlang($section, $key, array $lang) {
+  public function addlang($section, $key, array $lang) {
 return $this->addtext($section, $key,
 "var lang;\nif (lang == undefined) lang = {};\n" . 
 sprintf('lang.%s = %s;', $section, json_encode($lang)));
