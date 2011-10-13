@@ -139,7 +139,8 @@ return "$media/$filename";
   
   public function movetofolder($filename, $tempfilename, $media, $overwrite) {
 $filename = self::create_filename($filename, $media, $overwrite);
-    if (!rename(litepublisher::$paths->files . $tempfilename, $dir . $filename)) return $this->error("Error rename file $tempfilename to $dir$filename");
+if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
+    if (!rename(litepublisher::$paths->files . $tempfilename, litepublisher::$paths->files . $media . $filename)) return $this->error(sprintf('Error rename file %s to %s',$tempfilename, $filename));
     return "$media/$filename";
   }
   

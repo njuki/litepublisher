@@ -40,6 +40,7 @@ class tadminlogin extends tadminform {
       $this->formresult = $this->html->h2->cookiedisabled;
       return;
     }
+    if (!isset($_POST['login']) || !isset($_POST['password'])) return;
     $login = trim($_POST['login']);
     $password = trim($_POST['password']);
     if (empty($login) || empty($password)) return;
