@@ -85,6 +85,10 @@ $self->unlock();
  }
 
 function tthemegeneratorUninstall($self) {
+if ($self->id == 0) {
+    if ($id = $self->getowner()->class2id(get_class($self))) $self->loaddata($id);
+}
+
 $views = tviews::instance();
 $views->delete($self->idview);
 

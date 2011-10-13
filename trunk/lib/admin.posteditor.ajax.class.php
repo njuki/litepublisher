@@ -108,7 +108,7 @@ class tajaxposteditor  extends tevents {
     '$post.id'=> $idpost
     );
     
-    $checkbox = sprintf('><input type="checkbox" name="%1$s" id="%1$s" value="$id">', $li_id);
+    $checkbox = sprintf('><input type="checkbox" name="%1$s" id="%1$s" value="$id" />', $li_id);
     
     $theme = ttheme::i();
     $types = $theme->reg('/^content\.post\.filelist/');
