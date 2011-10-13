@@ -6,26 +6,21 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tthemegenerator extends tevents_itemplate implements itemplate {
-public $values;
-public $selectors;
-private $colors;
+class tthemegenerator extends tmenu {
+public $colors;
 private $colorsuploaded;
-private $formresult;
-  
-  public static function i() {
-    return getinstance(__class__);
+
+  public static function i($id = 0) {
+    return self::iteminstance(__class__, $id);
   }
   
   protected function create() {
     parent::create();
 $this->cache = false;
-    $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
-$this->addmap('values', array());
-$this->addmap('selectors', array());
+$this->data['values'] =  array();
+$this->data['selectors'] = array();
 $this->colors = array();
 $this->colorsuploaded = false;
-$this->formresult = '';
   }
 
 public function cron() {
@@ -37,7 +32,7 @@ if (@filectime ($filename) + 24*3600 < time()) unlink($filename);
 }
 
 public function parseselectors() {
-$this->selectors = array();
+$this->data['selectors'] = array();
 $s = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR   . 'scheme.tml');
 $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($s)));
 foreach ($lines as $line) {
@@ -55,7 +50,7 @@ $propname = trim($prop[0]);
 $propvalue =trim($prop[1]);
 if (preg_match_all('/%%(\w*+)%%/', $propvalue, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
-$this->selectors[] = array(
+$this->data['selectors'][] = array(
 'name' => $item[1],
 'sel' => $sel,
 'propname' => $propname,
@@ -73,15 +68,15 @@ $pickerpath = litepublisher::$site->files . '/plugins/colorpicker/';
 $result =   '<link type="text/css" href="' . $pickerpath . 'css/colorpicker.css" rel="stylesheet" />';
 
 $template = ttemplate::i();
-$template->ltoptions['colors'] = $this->selectors;
-//$result .= $template->getjavascript($template->jsmerger_themegenerator);
-$result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
-$result .= $template->getjavascript('/js/swfupload/swfupload.js');
-$result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
+$template->ltoptions['colors'] = $this->data['selectors'];
+$result .= $template->getjavascript($template->jsmerger_themegenerator);
+//$result .= $template->getjavascript('/plugins/colorpicker/js/colorpicker.js');
+//$result .= $template->getjavascript('/js/swfupload/swfupload.js');
+//$result .= $template->getjavascript(sprintf('/plugins/%s/themegenerator.min.js', basename(dirname(__file__))));
 
 if ($this->colorsuploaded) {
 $args = new targs();
-foreach ($this->colors as $name => $value) {
+foreach ($this->data['colors'] as $name => $value) {
 $args->$name = $value;
 }
 $res = dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR ;
@@ -91,30 +86,19 @@ $result .= "<style type=\"text/css\">\n$css</style>\n";
 return $result;
 }
 
-public function gettitle() {
-return $this->data['title'];
-}
-
 public function request($arg) {
+var_dump($this->idview);
 //$this->parseselectors();
 tlocal::usefile('themegenerator');
 $lang = tlocal::i('themegenerator');
 $this->colors = $lang->ini['themecolors'];
-
-    if (isset($_POST) && (count($_POST) > 0)) {
-      if (get_magic_quotes_gpc()) {
-        foreach ($_POST as $name => $value) {
-          $_POST[$name] = stripslashes($_POST[$name]);
-        }
-      }
-
-$this->formresult = $this->processform();
+parent::request($arg);
 if (isset($_POST['formtype']) && (($_POST['formtype'] == 'headerurl') || ($_POST['formtype'] == 'logourl'))) return $this->formresult;
-    }
 }
 
-  public function getcont() {
-$result = $this->formresult;
+/*
+  public function getcontent() {
+$result = '';
 tlocal::usefile('themegenerator');
 $lang = tlocal::i('themegenerator');
 
@@ -123,7 +107,7 @@ $tml = '<p>
      <input type="hidden" name="color_$name" id="text-color-$name" value="$value" />
 <strong>$label</strong></p>';
 
-$theme = $this->view->theme;
+$theme = tview::i($this->idview)->theme;
 $args = new targs();
 $a = new targs;
 foreach ($this->colors as $name => $value) {
@@ -140,7 +124,7 @@ $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIR
 $result .= $theme->parsearg($form, $a);
 return $theme->simple($result);
   }
-
+*/
 
 public function setcolor($name, $value) {
 if (isset($this->colors[$name])) {

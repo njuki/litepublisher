@@ -1,5 +1,6 @@
 /**
-* Lite Publisher
+*
+ Lite Publisher
 * Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
 * Dual licensed under the MIT (mit.txt)
 * and GPL (gpl.txt) licenses.
@@ -54,10 +55,11 @@ set_color(this.customSettings.name, serverData);
 function createswfu (type) {
   var settings = {
     flash_url : ltoptions.files + "/js/swfupload/swfupload.swf",
-    upload_url: ltoptions.url + "/theme-generator.htm",
+    upload_url: document.location,
+//ltoptions.url + "/theme-generator.htm",
     // prevent_swf_caching: false,
   post_params: {"formtype": type ? 'headerurl' : 'logourl'},
-    file_size_limit : type ? "4 MB" : "9 MB",
+    file_size_limit : type ? "4 MB" : "1 MB",
     file_types : type ? "*.jpg;*.png;*.gif" : "*.png",
     file_types_description : "Images",
     file_upload_limit : 1,
@@ -66,7 +68,7 @@ function createswfu (type) {
     
     // Button settings
     button_image_url: ltoptions.files + "/js/swfupload/images/XPButtonNoText_160x22.png",
-    button_text: '<span class="upload_button">' + (type ? 'lang.themegenerator.upload_image' : 'lang.themegenerator.upload_logo') + '</span>',
+    button_text: '<span class="upload_button">' + (type ? lang.themegenerator.upload_header  : lang.themegenerator.upload_logo) + '</span>',
     button_placeholder_id : type ? "uploadbutton" : "uploadlogo",
     button_width: 160,
     button_height: 22,
@@ -93,7 +95,10 @@ name : type? "headerurl" : "logourl",
 }
 
 function set_color(name, value) {
-		$("#text-color-" + name).val(value);
+var input = 		$("#text-color-" + name);
+if (input.length == 0) return;
+//alert(name + '=' + value);
+input.val(value);
 for (var i = 0, l =ltoptions.colors.length ; i < l; i++) {
 var item = ltoptions.colors[i];
 if (name == item['name']) {
@@ -104,14 +109,55 @@ var name2= a[1];
 propvalue = propvalue.replace('%%' + name2 + '%%', $('#text-color-' + name2).val());
 }
 //alert(propvalue);
-$(item['sel']).css(item['propname'], propvalue);
+try {
+var sel = item['sel'];
+if (sel.indexOf(":") == -1) {
+$(sel).css(item['propname'], propvalue);
+} else {
+$('head:first').append('<style type="text/css">' + 
+sel + "{" + item['propname'] + ":" + propvalue + "}" +
+'</style>');
+}
+} catch(e) {
+alert(item['sel'] + "\n" + item['propname']  + ' = ' +propvalue);
+}
+/*
+//alert(propvalue);
+var sel = item['sel'].split(',');
+for (j =0; j < sel.length; j++) {
+try {
+var cs = $.trim(sel[j]);
+$(cs).css(item['propname'], propvalue);
+} catch(e) {
+alert('"' + cs + '"' + "\n" + 
+item['propname']  + ' = ' +propvalue);
+}
+}
+*/
+
+}
+}
+}
+
+function parse_ini(initext) {
+var lines = initext.split("\n");
+for (var i = 0, l = lines.length; i < l; i++) {
+var s = $.trim(lines[i]);
+if ((s == '') || (s.charAt(0) == '[')) continue;
+var a = s.split('=');
+if (a.length != 2) continue;
+
+var name = $.trim(a[0]);
+var value = $.trim(a[1].replace('"', "").replace('"', ""));
+if ((name !== '') && (value != '')) {
+set_color(name, value);
 }
 }
 }
 
 $(document).ready(function() {
-$("#showmenucolors").click(function() {
-$("#menucolors").slideToggle();
+$("#menucolors, #ini_colors").click(function() {
+$("#" + $(this).attr("id") + "_toggle").slideToggle();
 return false;
 });
 
@@ -134,4 +180,9 @@ $(this).ColorPickerSetColor($(edit).val());
 	}
 });
 
+$("#uploadcolor").submit(function() {
+parse_ini($("#inicolors").val());
+$("#inicolors").val("");
+return false;
+});
 });

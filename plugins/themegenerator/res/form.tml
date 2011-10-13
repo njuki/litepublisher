@@ -22,8 +22,8 @@ $headerbackground
 
 $logo
 
-<h4><a href="" id="showmenucolors">$lang.showmenucolors</a></h4>
-<div id="menucolors" class="hidden">
+<h4><a href="" id="menucolors">$lang.showmenucolors</a></h4>
+<div id="menucolors_toggle" class="hidden">
 $menu
 $menubackground
 $menuhover
@@ -45,11 +45,13 @@ $footerbackground
 <input type="submit" name="submitcolors" value="$lang.submitcolors" /></p>
 </form>
 
+<h4><a href="" id="ini_colors">$lang.showinicolors</a></h4>
+<div id="ini_colors_toggle" class="hidden">
 <form name="uploadcolor" id="uploadcolor" action="" method="post" ENCTYPE="multipart/form-data">
-<p>$lang.uploadcolors</p>
-<p><strong>$lang.uploadfilename:</strong><br />
-<INPUT type="file" name="filename" value=""></p>
+<p>$lang.inicolors:</ br>
+<textarea name="inicolors" id="inicolors" rows="10" cols="62%"></textarea></p>
 <p>
 <input type="hidden" name="formtype" value="uploadcolors" />
-<input type="submit" name="uploadcolors" value="$lang.uploadbutton" /></p>
+<input type="submit" name="uploadcolors" value="$lang.uploadcolorsini" /></p>
 </form>
+</div>
