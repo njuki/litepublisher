@@ -11,7 +11,7 @@ public $colors;
 private $colorsuploaded;
 
   public static function i($id = 0) {
-    return self::iteminstance(__class__, $id);
+    return self::singleinstance(__class__);
   }
   
   protected function create() {
@@ -87,7 +87,6 @@ return $result;
 }
 
 public function request($arg) {
-var_dump($this->idview);
 //$this->parseselectors();
 tlocal::usefile('themegenerator');
 $lang = tlocal::i('themegenerator');

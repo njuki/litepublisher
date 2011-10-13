@@ -82,18 +82,11 @@ $self->parseselectors();
   $menus = tmenus::i();
   $menus->add($self);
 $self->unlock();
-var_dump($self->idview);
  }
 
 function tthemegeneratorUninstall($self) {
-if ($self->id == 0) {
-
-}
-var_dump($self->id, $self->idview);
-
-//turlmap::unsub($self);
 $views = tviews::instance();
-//$views->delete($self->idview);
+$views->delete($self->idview);
 
 $merger = tlocalmerger::i();
 unset($merger->items['themegenerator']);
