@@ -77,9 +77,10 @@ $template.content.post.templatecomments.form = [
 <p><input type="checkbox" name="subscribe" id="subscribe" $subscribe size="22" tabindex="4" />
 <label for="subscribe"><strong>$lang.subscribe</strong></label></p>
 <p><textarea name="content" id="comment" cols="100%" rows="10" tabindex="5"></textarea></p>
+<p>
 <input type="hidden" name="postid" value="$postid" />
 <input type="hidden" name="antispam" value="$antispam" />
-<p><input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" /></p>
+<input name="submit" type="submit" id="submit" tabindex="6" value="$lang.send" /></p>
 </form>]
 
 $template.content.post.templatecomments.confirmform = [<h2>$lang.formhead</h2>
@@ -89,18 +90,6 @@ $template.content.post.templatecomments.confirmform = [<h2>$lang.formhead</h2>
 <form name="form" method="post" action="">
 <input type="hidden" name="confirmid" value="$confirmid" />
   <p><input type="submit" name="submit" value="$lang.human"/></p>
-</form>]
-
-$template.content.post.templatecomments.moderateform = [
-		<script type="text/javascript" src="$site.files$template.jsmerger_moderate"></script>
-<form name="moderateform" action="$site.url/admin/comments/" method="post">
-$comments
-<p>
-<input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />
-<input type="button" name="deletebutton" value="$lang.delete" onclick="submitmoderateform(this.form, 'delete');" />
-<input type="button" name="holdbutton" value="$lang.holdbutton" onclick="submitmoderateform(this.form, 'hold');" />
-<input type="button" value="$lang.sendreply" onclick="sendreply();" />
-</p>
 </form>]
 
 $template.content.post.templatecomments.comments.count = [<h3 id="comments">$count $lang.topost &#8220;$post.title&#8221;</h3>]

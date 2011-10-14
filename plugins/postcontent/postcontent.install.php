@@ -6,7 +6,6 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-
 function tpostcontentpluginInstall($self) {
   $posts = tposts::i();
   $posts->lock();

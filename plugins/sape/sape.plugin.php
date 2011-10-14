@@ -47,12 +47,16 @@ class tsapeplugin extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
+    $links = $this->getlinks();
+    if (empty($links)) return '';
+    return sprintf('<ul><li>%s</li></ul>', $links);
+  }
+  
+  public function getlinks() {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';
     if (!isset($this->sape)) $this->createsape();
-    $links = $this->sape->return_links($this->counts[$id]);
-    if (empty($links)) return '';
-    return sprintf('<ul><li>%s</li></ul>', $links);
+    return $this->sape->return_links($this->counts[$id]);
   }
   
   public function setcount($id ,$count) {
