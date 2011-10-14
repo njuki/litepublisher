@@ -48,26 +48,26 @@ class tmediaparser extends tevents {
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $newtemp)) return $this->error("Error access to uploaded file");
     return $this->addfile($filename, $newtemp, $title, $description, $keywords, $overwrite);
   }
-
+  
   public static function move_uploaded($filename, $tempfilename, $media) {
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
-$filename = self::create_filename($filename, $media, false);
-if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
+    $filename = self::create_filename($filename, $media, false);
+    if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $media . $filename)) return false;
-return "$media/$filename";
+    return "$media/$filename";
   }
-
+  
   public static function prepare_filename($filename, $media) {
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
-$filename = self::create_filename($filename, $media, false);
-return "$media/$filename";
+    $filename = self::create_filename($filename, $media, false);
+    return "$media/$filename";
   }
-
-    public function uploadicon($filename, $content, $overwrite ) {
+  
+  public function uploadicon($filename, $content, $overwrite ) {
     $linkgen = tlinkgenerator::i();
     $filename = $linkgen->filterfilename($filename);
     $tempfilename = $this->doupload($filename, $content, $overwrite);
@@ -120,7 +120,7 @@ return "$media/$filename";
     }
     return $filename;
   }
-
+  
   public static function create_filename($filename, $media, $overwrite) {
     $dir = litepublisher::$paths->files . $media;
     if (!is_dir($dir)) {
@@ -133,13 +133,13 @@ return "$media/$filename";
     } else {
       $filename = self::getunique($dir, $filename);
     }
-
+    
     return $filename;
   }
   
   public function movetofolder($filename, $tempfilename, $media, $overwrite) {
-$filename = self::create_filename($filename, $media, $overwrite);
-if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
+    $filename = self::create_filename($filename, $media, $overwrite);
+    if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
     if (!rename(litepublisher::$paths->files . $tempfilename, litepublisher::$paths->files . $media . $filename)) return $this->error(sprintf('Error rename file %s to %s',$tempfilename, $filename));
     return "$media/$filename";
   }
@@ -292,18 +292,18 @@ if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
   public static function readimage($srcfilename) {
     if (!file_exists($srcfilename)) return false;
     if (!($info = @getimagesize($srcfilename))) return false;
-if (($info[0] == 0) || ($info[1] == 0)) return false;
-
+    if (($info[0] == 0) || ($info[1] == 0)) return false;
+    
     switch ($info[2]) {
       case 1:
-return @imagecreatefromgif($srcfilename);
-
+      return @imagecreatefromgif($srcfilename);
+      
       case 2:
       return @imagecreatefromjpeg($srcfilename);
-
+      
       case 3:
       return @imagecreatefrompng($srcfilename);
-
+      
       /*
       4 IMAGETYPE_SWF
       5 IMAGETYPE_PSD
@@ -317,18 +317,18 @@ return @imagecreatefromgif($srcfilename);
       13 IMAGETYPE_SWC
       14 IMAGETYPE_IFF
       */
-
+      
       case 15:
       return @imagecreatefromwbmp($srcfilename);
-
+      
       case 16:
       return @imagecreatefromxbm($srcfilename);
     }
-return false;
-}
-    
+    return false;
+  }
+  
   public static function createsnapshot($srcfilename, $destfilename, $x, $y, $ratio) {
-if (!($source = self::readimage($srcfilename))) return false;
+    if (!($source = self::readimage($srcfilename))) return false;
     $sourcex = imagesx($source);
     $sourcey = imagesy($source);
     if (($x >= $sourcex) && ($y >= $sourcey)) return false;

@@ -469,7 +469,7 @@ $confirmid - строка с набором цифр и букв для подт
 
 content.post.templatecomments.moderateform= [
 		<script type="text/javascript" src="$site.files$template.jsmerger_moderate"></script>
-								<form name="moderateform" id="moderateform" action="$options.url/admin/comments/" method="post">
+								<form name="moderateform" id="moderateform" action="$site.url/admin/comments/" method="post">
 								$comments
 								<p>
 								<input type="button" name="approvebutton" value="$lang.approve" onclick="submitmoderateform(this.form, 'approved');" />

@@ -12,7 +12,7 @@ class tcomments extends titems {
   private $holditems;
   private static $instances;
   
-  public static function i($pid) {
+  public static function i($pid = 0) {
     $pid = (int) $pid;
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
@@ -297,7 +297,7 @@ class tholdcomments extends tcomments {
   public $owner;
   public $idauthor;
   
-  public static function i($pid) {
+  public static function i($pid = 0) {
     $owner = tcomments::i($pid);
     return $owner->hold;
   }
@@ -1140,7 +1140,7 @@ class tcomusers extends titems {
   public $pid;
   private static $instances;
   
-  public static function i($pid) {
+  public static function i($pid = 0) {
     if (!isset(self::$instances)) self::$instances = array();
     if (isset(self::$instances[$pid]))       return self::$instances[$pid];
     $self = litepublisher::$classes->newinstance(__class__);
@@ -1271,10 +1271,9 @@ public function save() {}
     $list = $comments->getcontent();
     
     $theme = ttheme::i();
-    $tml = $theme->content->post->templatecomments->comments;
     $args = targs::i();
     $args->count = $post->cmtcount;
-    $result .= $tml->count($args);
+    $result .= $post->theme->parsearg($post->theme->templates['content.post.templatecomments.comments.count'], $args);
     $result .= $list;
     
     if (($urlmap->page == 1) && ($post->pingbackscount > 0))  {

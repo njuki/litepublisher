@@ -42,28 +42,28 @@ class tyoutubefeed extends tplugin {
       'icon' => 0,
       'author' => litepublisher::$options->user,
       'size' => 0,
-'description' => '',
-'keywords' => '',
-'preview' => ''
+      'description' => '',
+      'keywords' => '',
+      'preview' => ''
       );
-
+      
       $id = substr($entry->id, strrpos($entry->id, '/') + 1);
       $item['filename'] = $id;
       $item['hash'] = $id;
       $item['posted'] = sqldate(strtotime($entry->published));
-      $item['title'] = (string) $entry->title;      
-
-/*
+      $item['title'] = (string) $entry->title;
+      
+      /*
       $media = $entry->children('http://search.yahoo.com/mrss/');
       $group = $media->group;
       //$item['title'] = (string) $group->title;
       $item['description'] = (string) $group->description;
       $item['keywords'] = (string) $group->keywords;
-  dumpvar($item);    
+      dumpvar($item);
       $attrs = $group->thumbnail[0]->attributes();
       $item['preview'] = (string) $attrs['url'];
-*/
-
+      */
+      
       $result[$id] = $item;
     }
     return $result;

@@ -113,21 +113,21 @@ class tticket extends tpost {
     return 'ticket';
   }
   
-
-public function set_state($state) {
-$old = $this->state;
-if ($state == $old) return;
-$this->childdata['state'] = $state;
-if ($this->id == 0) return;
-
-$lang = tlocal::i('ticket');
-$content = sprintf($lang->statechanged, $lang->$old, $lang->$state);
+  
+  public function set_state($state) {
+    $old = $this->state;
+    if ($state == $old) return;
+    $this->childdata['state'] = $state;
+    if ($this->id == 0) return;
+    
+    $lang = tlocal::i('ticket');
+    $content = sprintf($lang->statechanged, $lang->$old, $lang->$state);
     $email = litepublisher::$options->fromemail;
-
+    
     $comusers = tcomusers::i();
     $idauthor = $comusers->add($lang->comname, $email, '', '');
-$this->comments->add($idauthor,  $content, 'approved', '');
-$this->commentscount = $this->comments->db->getcount("post = $this->id and status = 'approved'");
-      }
-
+    $this->comments->add($idauthor,  $content, 'approved', '');
+    $this->commentscount = $this->comments->db->getcount("post = $this->id and status = 'approved'");
+  }
+  
 }//class
