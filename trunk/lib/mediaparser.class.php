@@ -54,9 +54,9 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $filename = self::create_filename($filename, $media, false);
-    if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
-    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $media . $filename)) return false;
-    return "$media/$filename";
+    $sep = $media == '' ? ''  $media . DIRECTORY_SEPARATOR;
+    if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $sep . $filename)) return false;
+    return $media == '' ? $filename : "$media/$filename";
   }
   
   public static function prepare_filename($filename, $media) {
@@ -64,7 +64,7 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $filename = self::create_filename($filename, $media, false);
-    return "$media/$filename";
+    return $media == ' ? $filename : "$media/$filename";
   }
   
   public function uploadicon($filename, $content, $overwrite ) {
@@ -139,9 +139,9 @@ class tmediaparser extends tevents {
   
   public function movetofolder($filename, $tempfilename, $media, $overwrite) {
     $filename = self::create_filename($filename, $media, $overwrite);
-    if ($media != '') $media = $media . DIRECTORY_SEPARATOR;
-    if (!rename(litepublisher::$paths->files . $tempfilename, litepublisher::$paths->files . $media . $filename)) return $this->error(sprintf('Error rename file %s to %s',$tempfilename, $filename));
-    return "$media/$filename";
+    $sep = $media == '' ? '' : $media . DIRECTORY_SEPARATOR;
+    if (!rename(litepublisher::$paths->files . $tempfilename, litepublisher::$paths->files . $sep . $filename)) return $this->error(sprintf('Error rename file %s to %s',$tempfilename, $filename));
+    return $media == '' ? $filename : "$media/$filename";
   }
   
   public function addfile($filename, $tempfilename, $title, $description, $keywords, $overwrite) {
