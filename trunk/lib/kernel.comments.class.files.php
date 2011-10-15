@@ -1129,7 +1129,7 @@ class tsubscribers extends titemsposts {
       if ($user['email'] == $comment->email) continue;
       if (strpos($this->locklist, $user['email']) !== false) continue;
       tmailer::sendmail(litepublisher::$site->name, $this->fromemail,  $user['name'], $user['email'],
-      $subject, $body . $user['cookie']);
+      $subject, $body . rawurlencode($user['cookie']));
     }
   }
   
