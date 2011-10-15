@@ -54,7 +54,7 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $filename = self::create_filename($filename, $media, false);
-    $sep = $media == '' ? ''  $media . DIRECTORY_SEPARATOR;
+    $sep = $media == '' ? '' : $media . DIRECTORY_SEPARATOR;
     if (!move_uploaded_file($tempfilename, litepublisher::$paths->files . $sep . $filename)) return false;
     return $media == '' ? $filename : "$media/$filename";
   }
@@ -64,7 +64,7 @@ class tmediaparser extends tevents {
     $filename = $linkgen->filterfilename($filename);
     if (preg_match('/\.(htm|html|php|phtml|php\d|htaccess)$/i', $filename)) $filename .= '.txt';
     $filename = self::create_filename($filename, $media, false);
-    return $media == ' ? $filename : "$media/$filename";
+    return $media == '' ? $filename : "$media/$filename";
   }
   
   public function uploadicon($filename, $content, $overwrite ) {
