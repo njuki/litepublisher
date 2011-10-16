@@ -35,12 +35,12 @@ class tuserpages extends titems implements itemplate {
   }
   
   public function request($id) {
-    if ($id == 'website') {
+    if ($id == 'url') {
       $id = isset($_GET['id']) ? (int) $_GET['id'] : 1;
       if (!$this->itemexists($id)) return 404;
       $item = $this->getitem($id);
       $website = $item['website'];
-      if (!strpos($website, '.')) $website = litepublisher::$site->website . litepublisher::$site->home;
+      if (!strpos($website, '.')) $website = litepublisher::$site->url . litepublisher::$site->home;
       if (!strbegin($website, 'http://')) $website = 'http://' . $website;
       return "<?php turlmap::redir('$website');";
     }
