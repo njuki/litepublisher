@@ -26,5 +26,3 @@ function tuserpagesInstall($self) {
 function tuserpagesUninstall($self) {  turlmap::unsub($self);
   turlmap::unsub($self);
 }
-
-?>
