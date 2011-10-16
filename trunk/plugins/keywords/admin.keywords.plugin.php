@@ -108,12 +108,15 @@ class tadminkeywords extends tadminwidget {
       $widget->trace = $trace;
       $widget->unlock();
       
-      $plugin->blackwords = strtoarray($blackwords);
+      $plugin->blackwords = array();
+$words = strtoarray($blackwords);
       if (litepublisher::$options->language != 'en') {
         tlocal::usefile('translit');
-        foreach ($plugin->blackwords as $i => $word) {
+        foreach ($words as $word) {
           $word = strtr($word, tlocal::$self->ini['translit']);
-          $plugin->blackwords[$i] = strtolower($word);
+$word = trim($word);
+if (empty($word)) continue;
+          $plugin->blackwords[] = strtolower($word);
         }
       }
       $plugin->save();
