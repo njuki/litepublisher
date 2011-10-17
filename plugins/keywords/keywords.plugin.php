@@ -38,7 +38,7 @@ class tkeywordsplugin  extends tplugin {
     } elseif ($host == 'www.rambler.ru') {
       parse_str($urlarray['query']);
       $keywords= @iconv("windows-1251", "utf-8", $words);
-    } elseif ($host == 'www.yandex.ru') {
+    } elseif (($host == 'www.yandex.ru') || ($host == 'yandex.ru')) {
       parse_str($urlarray['query']);
       $keywords = $text;
     } else {
