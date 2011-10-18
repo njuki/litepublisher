@@ -412,7 +412,7 @@ class turlmap extends titems {
   public static function unsub($obj) {
     $self = self::i();
     $self->lock();
-    $self->unsubscribeclassname(get_class($obj));
+    $self->unbind($obj);
     $self->deleteclass(get_class($obj));
     $self->unlock();
   }

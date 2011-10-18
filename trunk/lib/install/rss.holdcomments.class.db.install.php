@@ -13,7 +13,7 @@ function trssholdcommentsInstall($self) {
 
 function trssholdcommentsUninstall($self) {
   turlmap::unsub($self);
-  litepublisher::$classes->commentmanager->unsubscribeclass($self);
+  litepublisher::$classes->commentmanager->unbind($self);
 }
 
 ?>

@@ -12,4 +12,5 @@ tthemeparser::i()->parsed = $self->themeparsed;
 
 function ttagreplacerUninstall($self) {
 tthemeparser::i()->unbind($self);
+ttheme::clearcache();
 }

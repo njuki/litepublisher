@@ -20,7 +20,7 @@ class tsmushitplugin extends tplugin {
   
   public function uninstall() {
     $parser = tmediaparser::i();
-    $parser->unsubscribeclass($this);
+    $parser->unbind($this);
   }
   
   public function fileadded($id) {

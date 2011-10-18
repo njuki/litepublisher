@@ -27,8 +27,6 @@ function tsubscribersInstall($self) {
 }
 
 function tsubscribersUninstall(&$self) {
-  litepublisher::$classes->commentmanager->unsubscribeclass($self);
-  litepublisher::$classes->posts->unsubscribeclass($self);
+  litepublisher::$classes->commentmanager->unbind($self);
+  litepublisher::$classes->posts->unbind($self);
 }
-
-?>

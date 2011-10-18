@@ -26,7 +26,7 @@ function trssMultimediaInstall($self) {
 function trssMultimediaUninstall($self) {
   turlmap::unsub($self);
   $files = tfiles::i();
-  $files->unsubscribeclass($self);
+  $files->unbind($self);
   
   $meta = tmetawidget::i();
   $meta->delete('media');

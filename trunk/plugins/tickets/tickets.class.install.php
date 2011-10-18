@@ -110,7 +110,7 @@ function tticketsUninstall($self) {
   $adminmenus = tadminmenus::i();
   $adminmenus->lock();
   $adminmenus->deletetree($adminmenus->url2id('/admin/tickets/'));
-  $adminmenus->unsubscribeclass($self);
+  $adminmenus->unbind($self);
   $adminmenus->unlock();
   
   $menus = tmenus::i();
@@ -136,7 +136,7 @@ function tticketsUninstall($self) {
   
   $optimizer = tdboptimizer::i();
   $optimizer->lock();
-  $optimizer->unsubscribeclass($self);
+  $optimizer->unbind($self);
   if (false !== ($i = array_search('tickets', $optimizer->childtables))) {
     unset($optimizer->childtables[$i]);
   }

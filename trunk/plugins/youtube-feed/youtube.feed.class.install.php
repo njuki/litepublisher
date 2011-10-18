@@ -27,5 +27,5 @@ function tyoutubefeedUninstall($self) {
   $admin->deleteurl('/admin/files/youtube/');
   
   $parser = tthemeparser::i();
-  $parser->unsubscribeclass($self);
+  $parser->unbind($self);
 }

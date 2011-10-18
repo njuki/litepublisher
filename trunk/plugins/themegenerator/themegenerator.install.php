@@ -104,7 +104,7 @@ function tthemegeneratorUninstall($self) {
   unset($template->data['jsmerger_themegenerator']);
   $template->save();
   
-  tcron::i()->unsubscribeclass($self);
+  tcron::i()->unbind($self);
   
   $menus = tmenus::i();
   $menus->delete($self->id);

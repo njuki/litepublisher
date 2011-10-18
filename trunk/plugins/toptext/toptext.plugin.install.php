@@ -16,5 +16,5 @@ function ttoptextinstall($self) {
 
 function ttoptextuninstall($self) {
   $filter = tcontentfilter::i();
-  $filter->unsubscribeclass($self);
+  $filter->unbind($self);
 }

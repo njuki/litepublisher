@@ -23,7 +23,5 @@ function tdownloadcounterInstall($self) {
 function tdownloadcounterUninstall(&$self) {
   turlmap::unsub($self);
   $files = tfiles::i();
-  $files->unsubscribeclass($self);
+  $files->unbind($self);
 }
-
-?>

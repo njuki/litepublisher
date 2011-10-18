@@ -33,5 +33,5 @@ function tusernewsInstall($self) {
 
 function tusernewsUninstall($self) {
   $rights = tauthor_rights::i();
-  $rights->unsubscribeclass($self);
+  $rights->unbind($self);
 }
