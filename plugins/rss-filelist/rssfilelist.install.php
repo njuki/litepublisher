@@ -15,7 +15,7 @@ function trssfilelistInstall($self) {
 
 function trssfilelistUninstall($self) {
   $rss = trss::i();
-  $rss->unsubscribeclass($self);
+  $rss->unbind($self);
   
   litepublisher::$urlmap->clearcache();
 }

@@ -18,5 +18,5 @@ function tcategoriesmenuUninstall($self) {
   tadminviews::replacemenu(get_class($self), 'tmenus');
   
   $categories = tcategories::i();
-  $categories->unsubscribeclass($self);
+  $categories->unbind($self);
 }

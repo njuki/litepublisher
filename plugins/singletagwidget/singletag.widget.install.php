@@ -14,5 +14,5 @@ function tsingletagwidgetInstall($self) {
 }
 
 function tsingletagwidgetUninstall($self) {
-  $self->tags->unsubscribeclass($self);
+  $self->tags->unbind($self);
 }

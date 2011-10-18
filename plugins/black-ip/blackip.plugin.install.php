@@ -13,5 +13,5 @@ function tblackipInstall($self) {
 
 function tblackipUninstall(&$self) {
   $spamfilter = tspamfilter::i();
-  $spamfilter->unsubscribeclass($self);
+  $spamfilter->unbind($self);
 }

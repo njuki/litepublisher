@@ -34,6 +34,6 @@ function tembeddedplayersInstall($self) {
 
 function tembeddedplayersUninstall($self) {
   $parser = tthemeparser::i();
-  $parser->unsubscribeclass($self);
+  $parser->unbind($self);
   ttheme::clearcache();
 }

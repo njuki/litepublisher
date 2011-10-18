@@ -13,7 +13,7 @@ function tclearcacheInstall($self) {
 }
 
 function tclearcacheUninstall($self) {
-  litepublisher::$urlmap->unsubscribeclass($self);
+  litepublisher::$urlmap->unbind($self);
   $parser = tthemeparser::i();
-  $parser->unsubscribeclass($self);
+  $parser->unbind($self);
 }

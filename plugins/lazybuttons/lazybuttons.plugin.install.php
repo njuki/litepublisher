@@ -35,6 +35,6 @@ function tlazybuttonsUninstall($self) {
   $jsmerger->unlock();
   
   $parser = tthemeparser::i();
-  $parser->unsubscribeclass($self);
+  $parser->unbind($self);
   ttheme::clearcache();
 }

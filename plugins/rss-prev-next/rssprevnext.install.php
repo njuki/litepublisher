@@ -16,7 +16,7 @@ function TRSSPrevNextInstall($self) {
 
 function TRSSPrevNextUninstall($self) {
   $rss = trss::i();
-  $rss->unsubscribeclass($self);
+  $rss->unbind($self);
   
   $urlmap = turlmap::i();
   $urlmap->clearcache();

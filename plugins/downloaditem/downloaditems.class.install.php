@@ -122,7 +122,7 @@ function tdownloaditemsUninstall($self) {
   $menus->deletetree($menus->class2id('tdownloaditemsmenu'));
   
   $parser = tthemeparser::i();
-  $parser->unsubscribeclass($self);
+  $parser->unbind($self);
   ttheme::clearcache();
   
   
@@ -153,7 +153,7 @@ function tdownloaditemsUninstall($self) {
   
   $optimizer = tdboptimizer::i();
   $optimizer->lock();
-  $optimizer->unsubscribeclass($self);
+  $optimizer->unbind($self);
   if (false !== ($i = array_search('downloaditems', $optimizer->childtables))) {
     unset($optimizer->childtables[$i]);
   }

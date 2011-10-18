@@ -28,10 +28,10 @@ litepublisher::$site->description = get_option('blogdescription');
 $options->email = get_option('admin_email');
 $options->unlock();
 
- $robots = trobotstxt ::instance();
+ $robots = trobotstxt ::i();
  $robots->AddDisallow('/feed/');
 
-$redir = tredirector::instance();
+$redir = tredirector::i();
 $redir->items['/feed/'] = '/rss.xml';
 $redir->items['/feed'] = '/rss.xml';
 $redir->save();
@@ -39,13 +39,13 @@ $redir->save();
 
 function ExportPages() {
 		global $wpdb;
-$menus = tmenus::instance();
+$menus = tmenus::i();
 $menus->lock();
   litepublisher::$urlmap->lock();
 $r = $wpdb->get_results("SELECT max(ID) as autoid FROM $wpdb->posts WHERE post_type = 'page'");
 $autoid = (int) $r[0]->autoid;
 $menus->autoid = $autoid;
-      $filter = tcontentfilter::instance();
+      $filter = tcontentfilter::i();
 $list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'page'");
 foreach ($list as  $item) {
 $id = (int) $item->ID;
@@ -128,7 +128,7 @@ $tags->autoid = max($tags->autoid, $id);
 }
     
 function ExportCategories() {
-$categories = tcategories::instance();
+$categories = tcategories::i();
 $categories->lock();
 		if ( $cats = get_categories('get=all') ) {
 			foreach ( $cats as $cat ) {
@@ -145,10 +145,10 @@ $categories->unlock();
 function  ExportPosts() {
 		global $wpdb, $from;
 
-  $urlmap = turlmap::instance();
+  $urlmap = turlmap::i();
   $urlmap->lock();
 
-$posts = tposts::instance();
+$posts = tposts::i();
 $posts->lock();
 if (dbversion) {
 $r = $wpdb->get_results("SELECT max(ID) as autoid FROM $wpdb->posts ");
@@ -157,10 +157,10 @@ echo "$autoid = auto id posts\n";
     $posts->db->exec(sprintf('ALTER TABLE %s AUTO_INCREMENT = %d',$posts->thistable,$autoid ));
 }
 
-$categories = tcategories::instance();
+$categories = tcategories::i();
 $categories->loadall();
 $categories->lock();
-$tags = ttags::instance();
+$tags = ttags::i();
 $tags->loadall();
 $tags->lock();
 
@@ -171,7 +171,7 @@ echo "import pages\n";
 ExportPages();
 }
 
-$cron = tcron::instance();
+$cron = tcron::i();
 $cron->disableadd = true;
 //$list = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'post'");
 $list = $wpdb->get_results("SELECT ID FROM $wpdb->posts 
@@ -230,7 +230,7 @@ $posts->UpdateArchives();
 $posts->addrevision();
 $posts->unlock();
   $urlmap->clearcache();
-$arch = tarchives::instance();
+$arch = tarchives::i();
 $arch->postschanged();
   $urlmap->unlock();
 
@@ -242,9 +242,9 @@ function savepost($post) {
     if ($post->posted == 0) $post->posted = time();
 $post->modified = time();
  
-$posts =tposts::instance();
+$posts =tposts::i();
 if (dbversion) {
-    $self = tposttransform::instance($post);
+    $self = tposttransform::i($post);
     $values = array('id' => $post->id);
     foreach (tposttransform::$props as $name) {
      $values[$name] = $self->__get($name);
@@ -287,9 +287,9 @@ flush();
 
 function ExportComments(tpost $post) {
   global $wpdb;
-$comments = tcomments::instance($post->id);
+$comments = tcomments::i($post->id);
 $comments->lock();
-$comusers = tcomusers::instance($post->id);
+$comusers = tcomusers::i($post->id);
 $comusers->lock();
 
   $items = $wpdb->get_results("SELECT  * FROM $wpdb->comments 
@@ -339,7 +339,7 @@ $comments->getdb('posts')->setvalue($post->id, 'pingbackscount', $count);
 }
 
 function addpingback($idpost, $title, $url, $ip, $date, $status) {
-$pingbacks = tpingbacks::instance($idpost);
+$pingbacks = tpingbacks::i($idpost);
 if (dbversion) {
     $item = array(
     'url' => $url,
@@ -373,7 +373,7 @@ $tags->unlock();
 }
 
 function clearposts() {
-$posts = tposts::instance();
+$posts = tposts::i();
 $posts->lock();
 if (dbversion) {
 $items = $posts->select(litepublisher::$db->prefix . 'posts.id > 0', '');
@@ -390,7 +390,7 @@ $posts->unlock();
 }
 
 function clearmenu() {
-$menus = tmenus::instance();
+$menus = tmenus::i();
 $menus->lock();
 foreach ($menus->items as $id => $item) {
 $menus->delete($id);
@@ -400,11 +400,11 @@ $menus->unlock();
 
 function clearall() {
 clearposts();
-cleartags(tcategories::instance());
-cleartags(ttags::instance());
+cleartags(tcategories::i());
+cleartags(ttags::i());
 clearmenu();
 if (dbversion) {
-$do = tdboptimizer::instance();
+$do = tdboptimizer::i();
 $do->optimize();
 }
 }
