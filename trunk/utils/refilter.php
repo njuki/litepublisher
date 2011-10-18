@@ -7,7 +7,7 @@ define('litepublisher_mode', 'xmlrpc');
 include('index.php');
 set_time_limit(600);
 echo "<pre>\n";
-$posts = tposts::instance();
+$posts = tposts::i();
 echo "$posts->revision\n";
 
 $db = litepublisher::$db;
@@ -22,7 +22,7 @@ $posts->addrevision();
 echo "$posts->revision\n";
 litepublisher::$options->savemodified();
 
-$filter = tcontentfilter::instance();
+$filter = tcontentfilter::i();
 $from = 0;
 while ($a = $db->res2assoc($db->query("select id, rawcontent from $db->rawcomments where id > $from limit 600"))) {
 foreach ($a as $item) {

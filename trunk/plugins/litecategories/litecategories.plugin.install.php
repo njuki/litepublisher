@@ -11,5 +11,5 @@ function tlitecategoriesInstall($self) {
 }
 
 function tlitecategoriesUninstall($self) {
-  tcategories::i()->unsubscribeclass($self);
+  tcategories::i()->unbind($self);
 }

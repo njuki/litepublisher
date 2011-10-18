@@ -86,7 +86,7 @@ function tpollsUninstall($self) {
   $posts = tposts::i();
   $posts->lock();
   $posts->syncmeta = false;
-  $posts->unsubscribeclass($self);
+  $posts->unbind($self);
   $posts->unlock();
   
   litepublisher::$db->table = 'postsmeta';
@@ -100,7 +100,7 @@ function tpollsUninstall($self) {
   $cron->deleteclass(get_class($self));
   
   $filter = tcontentfilter::i();
-  $filter->unsubscribeclass($self);
+  $filter->unbind($self);
   
   /*
   $template = ttemplate::i();

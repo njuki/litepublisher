@@ -7,7 +7,7 @@
 define('litepublisher_mode', 'xmlrpc');
 include('index.php');
 litepublisher::$debug = true;
-$cron = tcron::instance();
+$cron = tcron::i();
 $_GET['cronpass'] = $cron->password;
 echo "mustbe start<br>";
 flush();

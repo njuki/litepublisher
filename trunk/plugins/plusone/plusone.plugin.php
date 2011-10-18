@@ -26,7 +26,7 @@ class tplusoneplugin extends tplugin {
     $template->deletefromhead($this->getjs());
     
     $parser = tthemeparser::i();
-    $parser->unsubscribeclass($this);
+    $parser->unbind($this);
     ttheme::clearcache();
   }
   

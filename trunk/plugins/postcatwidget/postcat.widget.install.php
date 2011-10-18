@@ -14,7 +14,7 @@ function tpostcatwidgetInstall($self) {
 }
 
 function tpostcatwidgetUninstall($self) {
-  tcategories::i()->unsubscribeclass($self);
+  tcategories::i()->unbind($self);
   $widgets = twidgets::i();
-  $widgets->unsubscribeclass($self);
+  $widgets->unbind($self);
 }

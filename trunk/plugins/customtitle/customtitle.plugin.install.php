@@ -13,5 +13,5 @@ function tcustomtitleInstall($self) {
 
 function tcustomtitleUninstall($self) {
   $template = ttemplate::i();
-  $template->unsubscribeclass($self);
+  $template->unbind($self);
 }

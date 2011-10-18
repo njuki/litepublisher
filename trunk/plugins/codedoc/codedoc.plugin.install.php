@@ -68,7 +68,7 @@ function tcodedocpluginUninstall($self) {
   litepublisher::$classes->unlock();
   
   $filter = tcontentfilter::i();
-  $filter->unsubscribeclass($self);
+  $filter->unbind($self);
   
   $manager = tdbmanager ::i();
   $manager->deletetable($self->table);

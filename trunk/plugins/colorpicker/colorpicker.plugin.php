@@ -22,7 +22,7 @@ class tcolorpicker extends tplugin {
   
   public function uninstall() {
     $parser = tthemeparser::i();
-    $parser->unsubscribeclass($this);
+    $parser->unbind($this);
     
     $jsmerger = tjsmerger::i();
     $jsmerger->deletefile('admin', '/plugins/colorpicker/colorpicker.plugin.min.js');

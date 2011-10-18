@@ -6,14 +6,13 @@ echo "<pre>\nStart update from $Options->version\n";
   $Options->commentsenabled = false;
   $Options->pingenabled = false;
 
-$posts = &TPosts::Instance();
+$posts = tposts::i();
 foreach ($posts->items as $id => $item) {
-$post = &TPost::Instance($id);
+$post = tpost::i($id);
 $post->commentsenabled = false;
 $post->pingenabled = false;
-$post->Save();
+$post->save();
 }
 
-$Urlmap->ClearCache();
+litepublisher::$urlmap->clearcache();
 echo "comments must be closed";
-?>

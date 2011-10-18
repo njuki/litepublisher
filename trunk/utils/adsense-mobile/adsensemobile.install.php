@@ -7,7 +7,5 @@ $Template = TTemplate::Instance();
 
 function TAdsensemobileUninstall(&$self) {
   $Template = &TTemplate::Instance();
-  $Template->UnsubscribeClass(get_class($self));
+  $Template->unbind($self);
 }
-
-?>

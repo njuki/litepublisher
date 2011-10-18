@@ -36,7 +36,7 @@ function texternallinksInstall($self) {
 
 function texternallinksUninstall($self) {
   $filter = tcontentfilter::i();
-  $filter->unsubscribeclass($self);
+  $filter->unbind($self);
   
   $cron = tcron::i();
   $cron->deleteclass(get_class($self));

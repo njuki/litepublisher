@@ -32,7 +32,7 @@ class tlazyloader extends tplugin {
     $template->save();
     
     $parser = tthemeparser::i();
-    $parser->unsubscribeclass($this);
+    $parser->unbind($this);
     $admin = tadminmenus::i();
     $admin->heads = $this->restore($admin->heads);
     $admin->save();

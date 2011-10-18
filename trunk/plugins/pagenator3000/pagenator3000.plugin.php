@@ -64,7 +64,7 @@ class tpagenator3000 extends tplugin {
   
   public function uninstall() {
     $parser = tthemeparser::i();
-    $parser->unsubscribeclass($this);
+    $parser->unbind($this);
     ttheme::clearcache();
   }
   
