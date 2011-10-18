@@ -37,7 +37,7 @@ function twikiwordsUninstall($self) {
   litepublisher::$classes->save();
   
   $filter = tcontentfilter::i();
-  $filter->unsubscribeclass($self);
+  $filter->unbind($self);
   
   tposts::unsub($self);
   if ($self->dbversion) {

@@ -19,8 +19,9 @@ class ttagreplacer extends titems {
 
     public function themeparsed(ttheme $theme) {
 foreach ($this->items as $item) {
-if (isset($theme->templates[$item['template']])) && (false == strpos($theme->templates[$item['template']], $item['replace']))) {
-$theme->templates[$item['template']] = str_replace($item['source'], $item['replace'], $theme->templates[$item['template']]);
+$where = $item['where'];
+if (isset($theme->templates[$where]) && (false == strpos($theme->templates[$where], $item['replace']))) {
+$theme->templates[$where] = str_replace($item['search'], $item['replace'], $theme->templates[$where]);
 }
 }
 }

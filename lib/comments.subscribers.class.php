@@ -63,7 +63,7 @@ class tsubscribers extends titemsposts {
         $manager->approved = $this->sendmail;
         $manager->unlock();
       } else {
-        $manager->unsubscribeclass($this);
+        $manager->unbind($this);
       }
     }
   }

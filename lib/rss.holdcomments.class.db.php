@@ -26,7 +26,7 @@ class trssholdcomments extends tevents {
   public function setkey($key) {
     if ($this->key != $key) {
       if ($key == '') {
-        litepublisher::$classes->commentmanager->unsubscribeclass($self);
+        litepublisher::$classes->commentmanager->unbind($self);
       } else {
         litepublisher::$classes->commentmanager->changed = $this->commentschanged;
       }

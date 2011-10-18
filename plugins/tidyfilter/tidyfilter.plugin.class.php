@@ -51,7 +51,7 @@ class ttidyfilter extends tplugin {
   
   public function uninstall() {
     $filter = tcontentfilter::i();
-    $filter->unsubscribeclass($this);
+    $filter->unbind($this);
   }
   
 }//class

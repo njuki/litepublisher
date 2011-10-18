@@ -28,7 +28,7 @@ function trssInstall($self) {
 
 function trssUninstall($self) {
   turlmap::unsub($self);
-  litepublisher::$classes->commentmanager->unsubscribeclass($self);
+  litepublisher::$classes->commentmanager->unbind($self);
   $meta = tmetawidget::i();
   $meta->lock();
   $meta->delete('rss');

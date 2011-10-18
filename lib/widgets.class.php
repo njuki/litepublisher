@@ -261,7 +261,7 @@ class twidgets extends titems_storage {
   }
   
   public function deleteclass($class) {
-    $this->unsubscribeclassname($class);
+    $this->unbind($class);
     $deleted = array();
     foreach ($this->items as $id => $item) {
       if($class == $item['class']) {

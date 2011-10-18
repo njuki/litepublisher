@@ -11,7 +11,7 @@ function tcommentswidgetInstall($self) {
 }
 
 function tcommentswidgetUninstall($self) {
-  litepublisher::$classes->commentmanager->unsubscribeclass($self);
+  litepublisher::$classes->commentmanager->unbind($self);
 }
 
 ?>

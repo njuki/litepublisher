@@ -62,5 +62,5 @@ $js = "var lang;\nif (lang == undefined) lang = {};\n";
 
 function tjsmergerUninstall($self) {
   $updater = tupdater::i();
-  $updater->unsubscribeclass($self);
+  $updater->unbind($self);
 }
