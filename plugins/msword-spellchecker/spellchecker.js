@@ -17,10 +17,10 @@ this.area = area;
   this.laststart = 0;
 var sel = area_getsel(area);
   this.curpos = sell.start;
-return this.spell_loop("start");
+return this.next_step("start");
 }
 
-spell_loop: function(step) {
+next_step: function(step) {
   while (this.curpos < this.area.value.length) {
 switch (step) {
 case "start":
@@ -49,6 +49,10 @@ case "checked":
 var sel = area_getsel(this.area);
       this.curpos = sel.start;
 
+case "spaces":
+case "checked":
+case "dupl":
+case "start":
     if fDuplicateSpaces then
       if DuplSpaces(area, this.curpos) then {
         area.SelStart = this.curpos;
@@ -109,7 +113,7 @@ repeative_word_dlg: function(word) {
               area.SetSelection(this.start, this.curpos + 1, true);
               area.ClearSelection;
               this.curpos = this.start;
-              return this.spell_loop("dupl");
+              return this.next_step("dupl");
             }
           mrCancel: {
               area.SelStart = this.start;
@@ -117,16 +121,22 @@ repeative_word_dlg: function(word) {
             }
         }
 
-mis_word_dlg: function(Word, NewWord) {
+mis_word_dlg: function(Word, suggest) {
 var self = this;
+var combo = "";
+for (var i = 0, l= suggest.length; i < l; i++) {
+combo += "<option>" + suggest[i] + "</option>";
+}
+
+
         mrCancel: {
             area_setsel(self.area, self.start, self.start);
-            return false;
           }
 
         scIgnore:
 var start = self.start + word.length;
           area_setsel(self.area, start, start);
+self.next_step("checked");
 
         scIgnoreAll: {
             self.ignorelist.push(NewWord);
@@ -150,6 +160,7 @@ var start = self.start + word.length;
             area.SelStart = this.curpos + 1;
 }
 }
+
 checkword: function(word) {
 if ((word == '') || ($.inArray(word, this.ignorelist) != -1) || ($.inArray(word, this.customdict) != -1)) return true;
 return msword_spellchecker.checkword(word);
