@@ -1,7 +1,14 @@
 fvar area_spellchecker = {
+//options
 duplicate_words: true,
+ignore_brackets: true,
+ignore_internet: true,
+ignore_files: true,
+ignore_numbers: true,
+//dictionaries
 ignorelist: [],
 customdict: [],
+//private props
   curpos: 0,
  start: 0,
  laststart: 0,
@@ -39,9 +46,9 @@ case "start":
     this.lastword = this.Word;
     this.laststart = this.start;
 var striped = this.stripword(this.word);
-var checked = this.checkword(striped);
-    if (checked !== true) {
-return this.mis_word_dlg(striped, checked);
+var suggest = this.checkword(striped);
+    if (suggest !== true) {
+return this.mis_word_dlg(striped, suggest);
     } else this.curpos++;
 
 case "checked":
@@ -125,54 +132,43 @@ if (!((s.charCodeAt(i) <= 32)  || (delim.indexOf(s.charAt(i)) == -1))) break;
 return s.substr(1, I);
   }
 
-  function StripComments(const Str: widestring; StartChar, FinishChar: widechar): wideString;
-  var
-    st, en: integer;
-  {
-    Result = Str;
-    St = WideCharPos(StartChar, Result);
-    while St > 0 do {
-      en = WideCharPos(FinishChar, Result);
-      if st > en then // If no closing brack then exit //
-        Exit;
-      Delete(Result, En, 1);
-      delete(Result, St, 1);
-      St = WideCharPos(StartChar, Result);
+  function strip_comments(s, open, close) {
+var i = s.indexOf(open);
+while (var i >= 0) {
+var j = s.indexOf(close);
+if (i > j) return s;
+s = s.substring(0, i ) + s.substring(i + 1, j) + s.substring(j + 1);
+i = s.indexOf(open);
     }
+return s;
   }
 
-var
-  TmpKey, Tmp: wideString;
-
-  Result = Key;
-  if fIgnoreBrackets then {
-    Result = StripComments(Result, '{', '}');
-    Result = StripComments(Result, '(', ')');
-    Result = StripComments(Result, '[', ']');
-  }
-  Result = left_trim(right_trim(Result));
-
-    if fIgnoreInternet and (Result <> '') then {
-    if (pos('@', Result) > 0) and (pos('.', Result) > 0) then
-      result = '';
-    Tmp = Tnt_WideLowerCase(Result);
-    if (pos('mailto:', Tmp) > 0) or
-      (pos('www.', Tmp) > 0) or
-      (pos('http://', Tmp) > 0) or
-      (pos('ftp.', Tmp) > 0) or
-      (pos('https://', Tmp) > 0) then
-      result = '';
+  var s = $.trim(word);
+  if (this.ignore_brackets {
+    s = strip_comments(s, '{', '}');
+    s = strip_comments(s, '(', ')');
+    s = strip_comments(s, '[', ']');
   }
 
-    if fIgnoreAllUpperCase and (Result <> '') and (Result = Tnt_WideUppercase(Result)) then {
-    result = '';
+  s = left_trim(right_trim(s));
+
+    if (this.ignore_internet && (s != '')) {
+    if ((s.indexOf('@')  >= 0)  && (s.indexOf('.') >= 0)) {
+s = "";
+} else {
+    if ((s.indexOf('mailto:') >= 0) ||
+      (s.indexOf('www.') >= 0) ||
+      (s.indexOf('http://') >= 0) ||
+      (s.indexOf('ftp.') >= 0) ||
+      (s.indexOf('https://') >= 0)) s = '';
   }
-  if fIgnoreFiles and (Result <> '') then {
-    if (Copy(Result, 1, 2) = '\\') or (copy(Result, 2, 2) = ':\') then
-      result = '';
+}
+
+  if (this.ignore_files && (s != '')) {
+if (s.substr(0, 2) == '\:') s = "";
   }
 
-  if fIgnoreNumbers then {
+  if (this.ignore_numbers) {
     TmpKey = StripDelimiter('0123456789-.' + DateSeparator, Key);
     Tmp = Tnt_WideLowerCase(TmpKey);
     if (TmpKey = '') or
@@ -189,9 +185,9 @@ var
       (Tmp = 'XI') then
       result = '';
   }
-//  if result <> '' then  Result = StripDelimiter('.', result);
-}
 
+}
+return s;
 },
 
 repeative_word_dlg: function(word) {
