@@ -168,25 +168,14 @@ s = "";
 if (s.substr(0, 2) == '\:') s = "";
   }
 
-  if (this.ignore_numbers) {
-    TmpKey = StripDelimiter('0123456789-.' + DateSeparator, Key);
-    Tmp = Tnt_WideLowerCase(TmpKey);
-    if (TmpKey = '') or
-      (((Tmp = 'st') or
-      (Tmp = 'nd') or
-      (Tmp = 'rd') or
-      (Tmp = 'th'))
-      and (key <> TmpKey)) then
-      result = '';
-    Tmp = Tnt_WideUpperCase(TmpKey);
-    if (Tmp = 'II') or (Tmp = 'III') or (Tmp = 'IV') or
-      (Tmp = 'V') or (Tmp = 'VI') or (Tmp = 'VII') or
-      (Tmp = 'VIII') or (Tmp = 'IX') or (Tmp = 'X') or
-      (Tmp = 'XI') then
-      result = '';
+  if (this.ignore_numbers && (s != "")) {
+if (/^[\d\.\-\,]*?(|st|nd|rd)$/i.test(s)) {
+s = "";
+} else if (/^(II|III|IV|V|VI|VII|VIII|IX|X|XI)$/i.test(s)) {
+      s = "";
   }
-
 }
+
 return s;
 },
 
