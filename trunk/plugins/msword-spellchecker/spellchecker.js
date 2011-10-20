@@ -1,3 +1,10 @@
+var lang = {
+spellchecker: {
+yes: "Yes",
+no: "No"
+}
+};
+
 fvar area_spellchecker = {
 //options
 duplicate_words: true,
@@ -6,8 +13,12 @@ ignore_internet: true,
 ignore_files: true,
 ignore_numbers: true,
 //dictionaries
-ignorelist: [],
+ignoredict: [],
 customdict: [],
+//selectors 
+dlg_duplicate: "#dlg_duplicate",
+dlg_duplicate_word: "#dlg_duplicate_word",
+
 //private props
   curpos: 0,
  start: 0,
@@ -180,16 +191,30 @@ return s;
 },
 
 repeative_word_dlg: function(word) {
-          mrYes: {
-              area.SetSelection(this.start, this.curpos + 1, true);
-              area.ClearSelection;
-              this.curpos = this.start;
-              return this.next_step("dupl");
+var self = this;
+$(this.dlg_duplicate_word).text(word);
+$(this.dlg_duplicate).dialog( {
+autoOpen: true,
+modal: true,
+buttons: [
+{
+        text: lang.spellchecker.yes,
+        click: function() {
+ $(this).dialog("close"); 
+              area_setpos(self.area, self.start, self.curpos + 1);
+area_clear(self.area);
+              self.curpos = self.start;
+              return self.next_step("dupl");
             }
-          mrCancel: {
-              area.SelStart = this.start;
-              return false;
+    },
+{
+        text: lang.spellchecker.no,
+        click: function() { $(this).dialog("close"); }
+ $(this).dialog("close"); 
+              area_setsel(self.area, self.start, self.start);
             }
+]
+} );
         }
 
 mis_word_dlg: function(Word, suggest) {
@@ -210,7 +235,7 @@ var start = self.start + word.length;
 self.next_step("checked");
 
         scIgnoreAll: {
-            self.ignorelist.push(NewWord);
+            self.ignoredict.push(NewWord);
 var start = self.start + word.length;
           area_setsel(self.area, start, start);
           }
@@ -233,7 +258,7 @@ var start = self.start + word.length;
 }
 
 checkword: function(word) {
-if ((word == '') || ($.inArray(word, this.ignorelist) != -1) || ($.inArray(word, this.customdict) != -1)) return true;
+if ((word == '') || ($.inArray(word, this.ignoredict) != -1) || ($.inArray(word, this.customdict) != -1)) return true;
 return msword_spellchecker.checkword(word);
 }
 
