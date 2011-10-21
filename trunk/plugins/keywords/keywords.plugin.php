@@ -55,14 +55,10 @@ class tkeywordsplugin  extends tplugin {
     
     $keywords = trim($keywords);
     if (empty($keywords)) return;
-    if (false !== strpos($keywords, 'site:')) return;
-    if (false !== strpos($keywords, 'inurl:')) return;
-    if (false !== strpos($keywords, 'intext:')) return;
-    if (false !== strpos($keywords, 'http:')) return;
-    if (false !== strpos($keywords, 'ftp:')) return;
-    if (false !== strpos($keywords, 'ftp:')) return;
-    if (false !== strpos($keywords, 'downloads%3Cscript%')) return;
-    if (false !== strpos($keywords, '\\')) return;
+foreach (array('site:', 'inurl:', '%', 'intext:', 'http:', 'ftp:', '\\') as $k) {
+    if (false !== strpos($keywords, $k)) return;
+}
+
     if ($this->inblack($keywords)) return;
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     
