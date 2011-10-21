@@ -357,6 +357,7 @@ class tadminmoderator extends tadmincommoncomments  {
           $comments = tcomments::i($this->idpost);
           $comment = $comments->getcomment($this->idget());
           $comment->content = $_POST['content'];
+litepublisher::$classes->commentmanager->editrecent($comment->id, $comments->pid);
           break;
         }
       } else {
