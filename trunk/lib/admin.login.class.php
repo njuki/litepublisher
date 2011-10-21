@@ -64,9 +64,16 @@ class tadminlogin extends tadminform {
   
   public function getcontent() {
     $args = targs::i();
+    $lang = tlocal::admin('login');
+$args->formtitle = $lang->formhead;
     $args->login = !empty($_POST['login']) ? strip_tags($_POST['login']) : '';
     $args->password = !empty($_POST['password']) ? strip_tags($_POST['password']) : '';
-    return $this->html->form($args);
+$args->remember = isset($_POST['remember']);
+    return $this->html->adminform('[text=login]
+[password=password]
+[checkbox=remember]',
+$args) .
+$this->html->lostpass();
   }
   
 }//class
