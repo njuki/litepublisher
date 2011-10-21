@@ -17,7 +17,7 @@ if (strpos($item['filename'], DIRECTORY_SEPARATOR.  '/')) {
 $files->items[$id]['filename'] = str_replace(DIRECTORY_SEPARATOR.  '/', '/', $item['filename']);
 }
 }
-$filess->save();
+$files->save();
 }
 
 }
