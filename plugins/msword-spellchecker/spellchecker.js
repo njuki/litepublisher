@@ -86,7 +86,10 @@ return this.dlg_duplspace()
 }
 }
 
-    this.curpos = FindNextWord(area, this.curpos);
+//FindNextWord
+  var value = this.area.value;
+var Len = value.length;
+while((this.curpos  < len)  && (value.charCodeAt(this.curpos) <= 32)) this.curpos++;
   }
   return true;
 },
