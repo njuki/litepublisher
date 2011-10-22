@@ -12,6 +12,7 @@ add: "Add"
 fvar area_spellchecker = {
 //options
 duplicate_words: true,
+duplicate_spaces: true,
 ignore_brackets: true,
 ignore_internet: true,
 ignore_files: true,
@@ -19,12 +20,14 @@ ignore_numbers: true,
 //selectors 
 dlg_duplicate: "#dlg_duplicate",
 dlg_duplicate_word: "#dlg_duplicate_word",
-dlg_mis_word: "#dlg_mis_word",
+dlg_misword: "#dlg_misword",
 dlg_suggest_combo: "#combo-suggest",
+dlg_misword_replace: "#dlg_misword_replace",
 
 //dictionaries
 ignoredict: [],
 customdict: [],
+
 //private props
   curpos: 0,
  start: 0,
@@ -32,7 +35,6 @@ customdict: [],
  word: "",
 lastword: "",
  mewword: "",
- //StripedWord: wideString;
 area: null,
 
 spellcheck: function(area) {
@@ -77,21 +79,13 @@ case "spaces":
 case "checked":
 case "dupl":
 case "start":
-    if fDuplicateSpaces then
-      if DuplSpaces(area, this.curpos) then {
-        area.SelStart = this.curpos;
-        case RemoveDupSpaceDlg(area.Lines[area.CaretPos.Y]) of
-          mrYes: {
-              this.curpos++;
-              area.SetSelection(this.curpos, SkipSpaces(area, this.curpos), true);
-              area.SelText = '';
-            }
-          mrCancel: {
-              area.SelStart = this.start;
-              return false;
-            }
-        }
-      }
+    if (this.duplicate_spaces)) {
+      if (this.area.value.substr(this.start, 2) == "  ") {
+area_setsel(this.area, this.start, this.start);
+return this.dlg_duplspace()
+}
+}
+
     this.curpos = FindNextWord(area, this.curpos);
   }
   return true;
@@ -223,6 +217,37 @@ area_clear(self.area);
 } );
         }
 
+dlg_duplspace: function() {
+var self = this;
+$(this.dlg_space).dialog( {
+autoOpen: true,
+modal: true,
+buttons: [
+{
+        text: lang.spellchecker.yes,
+        click: function() {
+ $(this).dialog("close"); 
+              this.curpos++;
+              area.SetSelection(this.curpos, SkipSpaces(area, this.curpos), true);
+              area.SelText = '';
+
+              area_setpos(self.area, self.start, self.curpos + 1);
+area_clear(self.area);
+              self.curpos = self.start;
+              return self.next_step("spaces");
+            }
+    },
+
+{
+        text: lang.spellchecker.cancel,
+        click: function() { $(this).dialog("close"); }
+ $(this).dialog("close"); 
+              area_setsel(self.area, self.start, self.start);
+            }
+]
+} );
+        }
+
 mis_word_dlg: function(Word, suggest) {
 var self = this;
 var combo = "";
@@ -235,7 +260,8 @@ combo += "<option>" + suggest[i] + "</option>";
 }
 
 $(this.dlg_suggest_combo).html(combo);
-$(this.dlg_mis_word).dialog( {
+$(this.dlg_misword).val(word);
+$(this.dlg_misword).dialog( {
 autoOpen: true,
 modal: true,
 buttons: [
@@ -252,7 +278,7 @@ self.next_step("checked");
         text: lang.spellchecker.ignoreall,
         click: function() {
  $(this).dialog("close"); 
-            self.ignoredict.push(NewWord);
+            self.ignoredict.push(word);
 var start = self.start + word.length;
           area_setsel(self.area, start, start);
 self.next_step("checked");
@@ -263,9 +289,10 @@ self.next_step("checked");
         text: lang.spellchecker.change,
         click: function() {
  $(this).dialog("close"); 
-            area.SetSelPos(self.start + pos(StripedWord, Tnt_WideUppercase(Word)) - 1, length(StripedWord));
-            area.SelText = NewWord;
-            area.SelStart = this.start + length(Word) - length(StripedWord) + length(NewWord);
+var replaceword = $(self.dlg_misword_replace).val();
+area_setsel(self.area, self.start, self.start + word.length);
+            area_settext(self.area, replaceword);
+area_setsel(self.area, self.start + replaceword.length, self.start + replaceword.length);
 self.next_step("checked");
           }
 },
@@ -284,8 +311,9 @@ self.next_step("checked");
         text: lang.spellchecker.add,
         click: function() {
  $(this).dialog("close"); 
-            CustomDictAdd(StripedWord);
-            area.SelStart = this.curpos + 1;
+self.customdict.push(word);
+//send to server new word
+area_setsel(self.area, self.start + 1);
 self.next_step("checked");
 }
 },
