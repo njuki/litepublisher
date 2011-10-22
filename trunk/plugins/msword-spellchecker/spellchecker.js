@@ -1,7 +1,11 @@
 var lang = {
 spellchecker: {
 yes: "Yes",
-no: "No"
+no: "No",
+cancel: "Cancel",
+ignore: "Ignore",
+ignoreall: "Ignore all",
+add: "Add"
 }
 };
 
@@ -12,13 +16,14 @@ ignore_brackets: true,
 ignore_internet: true,
 ignore_files: true,
 ignore_numbers: true,
-//dictionaries
-ignoredict: [],
-customdict: [],
 //selectors 
 dlg_duplicate: "#dlg_duplicate",
 dlg_duplicate_word: "#dlg_duplicate_word",
+dlg_checkword: "#dlg_checkword",
 
+//dictionaries
+ignoredict: [],
+customdict: [],
 //private props
   curpos: 0,
  start: 0,
@@ -220,41 +225,80 @@ area_clear(self.area);
 mis_word_dlg: function(Word, suggest) {
 var self = this;
 var combo = "";
-for (var i = 0, l= suggest.length; i < l; i++) {
+var l= suggest.length;
+if (l >= 1) {
+combo += '<option selected="selected">' + suggest[0] + '</option>';
+for (var i = 1; i < l; i++) {
 combo += "<option>" + suggest[i] + "</option>";
 }
+}
 
+var self = this;
+$(this.dlg_duplicate_word).text(word);
 
-        mrCancel: {
-            area_setsel(self.area, self.start, self.start);
-          }
-
-        scIgnore:
+$(this.dlg_checkword).dialog( {
+autoOpen: true,
+modal: true,
+buttons: [
+{
+        text: lang.spellchecker.ignore,
+        click: function() {
+ $(this).dialog("close"); 
 var start = self.start + word.length;
           area_setsel(self.area, start, start);
 self.next_step("checked");
-
-        scIgnoreAll: {
+}
+},
+{
+        text: lang.spellchecker.ignoreall,
+        click: function() {
+ $(this).dialog("close"); 
             self.ignoredict.push(NewWord);
 var start = self.start + word.length;
           area_setsel(self.area, start, start);
+self.next_step("checked");
           }
+},
 
-        scChange: {
-            area.SetSelPos(this.start + pos(StripedWord, Tnt_WideUppercase(Word)) - 1, length(StripedWord));
+{
+        text: lang.spellchecker.change,
+        click: function() {
+ $(this).dialog("close"); 
+            area.SetSelPos(self.start + pos(StripedWord, Tnt_WideUppercase(Word)) - 1, length(StripedWord));
             area.SelText = NewWord;
             area.SelStart = this.start + length(Word) - length(StripedWord) + length(NewWord);
+self.next_step("checked");
           }
+},
 
-        scChangeAll: {
+{
+        text: lang.spellchecker.changeall,
+        click: function() {
+ $(this).dialog("close"); 
             ReplaceAll(area, StripedWord, NewWord);
             area.SelStart = this.start + length(Word) - length(StripedWord) + length(NewWord);
+self.next_step("checked");
           }
+},
 
-        scAdd: {
+{
+        text: lang.spellchecker.add,
+        click: function() {
+ $(this).dialog("close"); 
             CustomDictAdd(StripedWord);
             area.SelStart = this.curpos + 1;
+self.next_step("checked");
 }
+},
+
+{
+        text: lang.spellchecker.Cancel,
+        click: function() {
+ $(this).dialog("close"); 
+            area_setsel(self.area, self.start, self.start);
+          }
+}
+]);
 }
 
 checkword: function(word) {
