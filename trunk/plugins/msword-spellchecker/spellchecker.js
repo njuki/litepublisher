@@ -19,7 +19,8 @@ ignore_numbers: true,
 //selectors 
 dlg_duplicate: "#dlg_duplicate",
 dlg_duplicate_word: "#dlg_duplicate_word",
-dlg_checkword: "#dlg_checkword",
+dlg_mis_word: "#dlg_mis_word",
+dlg_suggest_combo: "#combo-suggest",
 
 //dictionaries
 ignoredict: [],
@@ -233,10 +234,8 @@ combo += "<option>" + suggest[i] + "</option>";
 }
 }
 
-var self = this;
-$(this.dlg_duplicate_word).text(word);
-
-$(this.dlg_checkword).dialog( {
+$(this.dlg_suggest_combo).html(combo);
+$(this.dlg_mis_word).dialog( {
 autoOpen: true,
 modal: true,
 buttons: [
