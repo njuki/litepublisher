@@ -17,6 +17,8 @@ ignore_brackets: true,
 ignore_internet: true,
 ignore_files: true,
 ignore_numbers: true,
+//event
+addcustom: null,
 //selectors 
 dlg_duplicate: "#dlg_duplicate",
 dlg_duplicate_word: "#dlg_duplicate_word",
@@ -34,7 +36,6 @@ customdict: [],
  laststart: 0,
  word: "",
 lastword: "",
- mewword: "",
 area: null,
 
 spellcheck: function(area) {
@@ -67,6 +68,7 @@ case "start":
 var striped = this.stripword(this.word);
 var suggest = this.checkword(striped);
     if (suggest !== true) {
+$this.start += this.word.indexOf(striped);
 return this.mis_word_dlg(striped, suggest);
     } else this.curpos++;
 
@@ -210,6 +212,7 @@ area_clear(self.area);
               return self.next_step("dupl");
             }
     },
+
 {
         text: lang.spellchecker.no,
         click: function() { $(this).dialog("close"); }
@@ -277,6 +280,7 @@ var start = self.start + word.length;
 self.next_step("checked");
 }
 },
+
 {
         text: lang.spellchecker.ignoreall,
         click: function() {
@@ -304,8 +308,18 @@ self.next_step("checked");
         text: lang.spellchecker.changeall,
         click: function() {
  $(this).dialog("close"); 
-            ReplaceAll(area, StripedWord, NewWord);
-            area.SelStart = this.start + length(Word) - length(StripedWord) + length(NewWord);
+var replaceword = $(self.dlg_misword_replace).val();
+//replace_all
+var value = self.area.value;
+var s = value.substring(this.start);
+    var i = s.indexOf(word);
+    while(i>-1){
+      s = s.replace(word, replaceword);
+      i = s.indexOf(word, i);
+    }
+
+self.area.value = value.substring(0, self.start) + s;
+area_setsel(self.area, self.start + replaceword.length, self.start + replaceword.length);
 self.next_step("checked");
           }
 },
@@ -315,8 +329,8 @@ self.next_step("checked");
         click: function() {
  $(this).dialog("close"); 
 self.customdict.push(word);
-//send to server new word
-area_setsel(self.area, self.start + 1);
+    if ($.isFunction(self.addcustom)) self.addcustom(word);
+area_setsel(self.area, self.curpos + 1, self.curpos + 1);
 self.next_step("checked");
 }
 },
