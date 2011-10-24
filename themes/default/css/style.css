@@ -121,4 +121,6 @@ border: 1px solid black;
 padding: 5px;
 }
 
+.div-table{overflow:auto}
+
 .hidden {display: none}
