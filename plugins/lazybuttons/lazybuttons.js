@@ -44,6 +44,9 @@ lazy.append('<div><a href="http://twitter.com/share?url='+ encodeURIComponent(ur
 '&amp;text=' + encodeURIComponent(title) + 
 '&amp;' + via + '">Tweet</a></div>');
 
+<iframe allowtransparency="true" frameborder="0" scrolling="no" src="http://platform.twitter.com/widgets/tweet_button.html" style="width:130px; height:20px;"></iframe>
+
+//hide button
 lazy.append('<div><a href="">' + lazyoptions.hide + '</a></div>').click(function() {
 set_cookie("lazybuttons", "hide");
 return false;
