@@ -39,12 +39,15 @@ lazy.append('<div><iframe src="http://www.facebook.com/plugins/like.php?locale=r
 
 //twitter
   		var via = lazyoptions.twituser == '' ? '' : 'via='+lazyoptions.twituser;
-
+/*
 lazy.append('<div><a href="http://twitter.com/share?url='+ encodeURIComponent(url) + 
 '&amp;text=' + encodeURIComponent(title) + 
 '&amp;' + via + '">Tweet</a></div>');
+*/
 
-<iframe allowtransparency="true" frameborder="0" scrolling="no" src="http://platform.twitter.com/widgets/tweet_button.html" style="width:130px; height:20px;"></iframe>
+lazy.append('<div><iframe allowtransparency="true" frameborder="0" scrolling="no" src="http://platform.twitter.com/widgets/tweet_button.html?url='+ encodeURIComponent(url) + 
+'&amp;text=' + encodeURIComponent(title) + 
+'&amp;' + via + '" style="width:130px; height:20px;"></iframe></div>');
 
 //hide button
 lazy.append('<div><a href="">' + lazyoptions.hide + '</a></div>').click(function() {
