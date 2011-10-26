@@ -103,6 +103,7 @@ class tthemeparser extends tevents {
       $parentname = empty($about['parent']) ? 'default' : $about['parent'];
       $parent = ttheme::getinstance($parentname);
       $theme->templates = $parent->templates;
+$theme->parent = $parent->name;
     }
     $s = self::getfile($filename);
     $this->parsetags($theme, $s);
@@ -500,7 +501,7 @@ class tthemeparser extends tevents {
         if ($theme->templates['index'] != $parent->templates['index']) {
           if (file_put_contents($dir . 'index.tml', $theme->templates['index']) === false) return false;
         $result .= '$template = {@import(index.tml)}';
-          $result .= "\n";
+          $result .= "\n\n";
         }
         
         foreach ($theme->templates as $name => $value) {
@@ -512,6 +513,9 @@ class tthemeparser extends tevents {
             if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::get('datetime', 'dateformat'))) continue;
           }
           $result .= "\$template.$name = [$value]\n\n";
+echo $parent->templates[$name];
+echo "<br>$value<br>";
+
         }
         
         for ($i =0; $i < count($theme->templates['sidebars']); $i++ ) {
