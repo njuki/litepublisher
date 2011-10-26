@@ -88,7 +88,7 @@ class ttheme extends tevents {
   }
   
   public function __tostring() {
-    return $this->templates[0];
+    return $this->templates['index'];
   }
   
   public function __get($name) {
