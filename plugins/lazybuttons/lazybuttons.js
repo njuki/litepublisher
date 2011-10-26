@@ -71,5 +71,5 @@ return false;
 } else {
 show_lazybuttons();
 }
-    }, 120);
+    }, 220);
 });
