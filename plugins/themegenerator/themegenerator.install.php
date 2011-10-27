@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function get_themegen_content($self) {
+function get_themegen_content($self, $formtype) {
   $result = '';
   tlocal::usefile('themegenerator');
   $lang = tlocal::i('themegenerator');
@@ -29,6 +29,7 @@ function get_themegen_content($self) {
   
   $a->headerurl = $self->colors['headerurl'];
   $a->logourl = $self->colors['logourl'];
+$a->themetype = $themetype;
   
   $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR  . 'form.tml');
   $result .= $theme->parsearg($form, $a);
@@ -76,7 +77,7 @@ function tthemegeneratorInstall($self) {
   $view->themename = 'generator';
   
   $self->url = '/theme-generator.htm';
-  $self->content = get_themegen_content($self);
+  $self->content = get_themegen_content($self, 'midle");
   $self->parseselectors();
   
   $menus = tmenus::i();
