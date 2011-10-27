@@ -513,9 +513,6 @@ $theme->parent = $parent->name;
             if (($value == '') || ($value == litepublisher::$options->dateformat) || ($value == tlocal::get('datetime', 'dateformat'))) continue;
           }
           $result .= "\$template.$name = [$value]\n\n";
-echo $parent->templates[$name];
-echo "<br>$value<br>";
-
         }
         
         for ($i =0; $i < count($theme->templates['sidebars']); $i++ ) {
