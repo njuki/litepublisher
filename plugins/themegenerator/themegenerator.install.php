@@ -6,7 +6,7 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-function get_themegen_content($self, $formtype) {
+function get_themegen_content($self) {
   $result = '';
   tlocal::usefile('themegenerator');
   $lang = tlocal::i('themegenerator');
@@ -29,7 +29,6 @@ function get_themegen_content($self, $formtype) {
   
   $a->headerurl = $self->colors['headerurl'];
   $a->logourl = $self->colors['logourl'];
-$a->themetype = $themetype;
   
   $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR  . 'form.tml');
   $result .= $theme->parsearg($form, $a);
@@ -75,9 +74,16 @@ function tthemegeneratorInstall($self) {
   $self->idview = $views->add($about['name']);
   $view = tview::i($self->idview);
   $view->themename = 'generator';
+
+    $self->data['leftview'] = $views->add('Left theme generator');
+  $view = tview::i($self->leftview);
+  $view->themename = 'generator-left';
+    $self->data['rightview'] = $views->add('Right theme generator');
+  $view = tview::i($self->leftview);
+  $view->themename = 'generator-right';
   
   $self->url = '/theme-generator.htm';
-  $self->content = get_themegen_content($self, 'midle");
+  $self->content = get_themegen_content($self();
   $self->parseselectors();
   
   $menus = tmenus::i();
@@ -92,6 +98,8 @@ function tthemegeneratorUninstall($self) {
   
   $views = tviews::instance();
   $views->delete($self->idview);
+  $views->delete($self->leftview);
+  $views->delete($self->rightview);
   
   $merger = tlocalmerger::i();
   unset($merger->items['themegenerator']);

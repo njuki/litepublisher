@@ -42,7 +42,6 @@ $footerbackground
 
 <p>
 <input type="hidden" name="formtype" value="colors" />
-<input type="hidden" name="themetype" value="$themetype" />
 <input type="submit" name="submitcolors" value="$lang.submitcolors" /></p>
 </form>
 
