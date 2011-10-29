@@ -262,7 +262,11 @@ $theme->parent = $parent->name;
       }
       
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
-          if (!isset($m[3])) $this->error('The bracket not found');
+          if (!isset($m[3])) {
+dumpstr($s);
+dumpvar($m);
+$this->error('The bracket not found');
+}
           $tag = $m[1];
           $j = strpos($s, $m[0]);
           $pre  = rtrim(substr($s, 0, $j));
