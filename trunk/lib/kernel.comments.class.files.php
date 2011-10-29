@@ -514,6 +514,14 @@ class tcommentmanager extends tevents {
     $this->save();
   }
   
+  public function editrecent($id, $idpost) {
+    if (!is_int($i = $this->indexofrecent($id, $idpost)))  return;
+    $item = tcomments::i($idpost)->items[$id];
+    $this->items[$i]['content'] = $item['content'];
+    $this->save();
+  }
+  
+  
   public function add($idpost, $name, $email, $url, $content, $ip) {
     $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, $ip);
@@ -543,7 +551,7 @@ class tcommentmanager extends tevents {
   public function editcomment($id, $idpost, $idauthor, $content) {
     $comments = tcomments::i($idpost);
     if (!$comments->edit($id, $idauthor,  $content)) return false;
-    //if (!dbversion && $status == 'approved') $this->addrecent($id, $idpost);
+    if (!dbversion && $status == 'approved') $this->editrecent($id, $idpost);
     
     $this->dochanged($id, $idpost);
     $this->edited($id, $idpost);
@@ -1085,7 +1093,7 @@ class tsubscribers extends titemsposts {
         $manager->approved = $this->sendmail;
         $manager->unlock();
       } else {
-        $manager->unsubscribeclass($this);
+        $manager->unbind($this);
       }
     }
   }

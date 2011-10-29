@@ -12,8 +12,9 @@ $themegen = tthemegenerator::i();
     $themegen->data['leftview'] = $views->add($about['left']);
   $view = tview::i($themegen->leftview);
   $view->themename = 'generator-left';
+
     $themegen->data['rightview'] = $views->add($about['right']);
-  $view = tview::i($themegen->leftview);
+  $view = tview::i($themegen->rightview);
   $view->themename = 'generator-right';
   $themegen->save();
 

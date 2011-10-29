@@ -53,8 +53,8 @@ class tsapeplugin extends twidget {
   }
   
   public function getcont() {
-return $this->getcontent(0, 0);
-}
+    return $this->getcontent(0, 0);
+  }
   public function getlinks() {
     if ($this->user == '') return '';
     if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel) return '';

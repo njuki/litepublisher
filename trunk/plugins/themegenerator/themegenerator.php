@@ -8,7 +8,7 @@
 
 class tthemegenerator extends tmenu {
   public $colors;
-private $type;
+  private $type;
   private $colorsuploaded;
   
   public static function i($id = 0) {
@@ -18,7 +18,7 @@ private $type;
   protected function create() {
     parent::create();
     $this->cache = false;
-$this->type = 'midle';
+    $this->type = 'midle';
     $this->data['values'] =  array();
     $this->data['selectors'] = array();
     $this->data['leftview'] = 0;
@@ -89,23 +89,23 @@ $this->type = 'midle';
       }
       return $result;
     }
-
-public function getidview() {
-switch ($this->type) {
-case 'left':
-return$this->leftview;
-
-case 'right':
-return $this->rightview;
-
-default:
-return parent::getidview();
-}
-}
+    
+    public function getidview() {
+      switch ($this->type) {
+        case 'left':
+        return$this->leftview;
+        
+        case 'right':
+        return $this->rightview;
+        
+        default:
+        return parent::getidview();
+      }
+    }
     
     public function request($arg) {
       //$this->parseselectors();
-$this->type = isset($_GET['type']) ? trim($_GET['type']) : 'midle';
+      $this->type = isset($_GET['type']) ? trim($_GET['type']) : 'midle';
       tlocal::usefile('themegenerator');
       $lang = tlocal::i('themegenerator');
       $this->colors = $lang->ini['themecolors'];

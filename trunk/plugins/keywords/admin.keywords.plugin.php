@@ -109,13 +109,13 @@ class tadminkeywords extends tadminwidget {
       $widget->unlock();
       
       $plugin->blackwords = array();
-$words = strtoarray($blackwords);
+      $words = strtoarray($blackwords);
       if (litepublisher::$options->language != 'en') {
         tlocal::usefile('translit');
         foreach ($words as $word) {
           $word = strtr($word, tlocal::$self->ini['translit']);
-$word = trim($word);
-if (empty($word)) continue;
+          $word = trim($word);
+          if (empty($word)) continue;
           $plugin->blackwords[] = strtolower($word);
         }
       }

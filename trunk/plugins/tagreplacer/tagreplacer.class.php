@@ -15,15 +15,15 @@ class ttagreplacer extends titems {
   protected function create() {
     parent::create();
     $this->basename=  'plugins' .DIRECTORY_SEPARATOR  . strtolower(get_class($this));
-}
-
-    public function themeparsed(ttheme $theme) {
-foreach ($this->items as $item) {
-$where = $item['where'];
-if (isset($theme->templates[$where]) && (false == strpos($theme->templates[$where], $item['replace']))) {
-$theme->templates[$where] = str_replace($item['search'], $item['replace'], $theme->templates[$where]);
-}
-}
-}
-
+  }
+  
+  public function themeparsed(ttheme $theme) {
+    foreach ($this->items as $item) {
+      $where = $item['where'];
+      if (isset($theme->templates[$where]) && (false == strpos($theme->templates[$where], $item['replace']))) {
+        $theme->templates[$where] = str_replace($item['search'], $item['replace'], $theme->templates[$where]);
+      }
+    }
+  }
+  
 }//class

@@ -646,7 +646,7 @@ class ttheme extends tevents {
   }
   
   public function __tostring() {
-    return $this->templates[0];
+    return $this->templates['index'];
   }
   
   public function __get($name) {
@@ -1351,7 +1351,7 @@ class twidgets extends titems_storage {
   }
   
   public function deleteclass($class) {
-    $this->unsubscribeclassname($class);
+    $this->unbind($class);
     $deleted = array();
     foreach ($this->items as $id => $item) {
       if($class == $item['class']) {

@@ -537,7 +537,6 @@ $comment
 content.post.templatecomments.comments.comment = [
  <li $class1=[class="alt"] $class2=[] id="comment-$comment.id">
  $index .
-  <a id="comment-$comment.id"></a>
   <div class="commentmetadata"><a href="#comment-$comment.id" title=""><span class="date">$comment.date = [d.m.Y]</span> $lang.attime <span class="time">$comment.time</span></a></div>
   <span class="vcard author"><cite>$comment.authorlink</cite> $lang.says:  </span>
   $moderate
