@@ -8,7 +8,7 @@
 
 class tadminjsmerger extends tadminmenu {
   public static function i($id = 0) {
-    return parent::iteminstance(__class__, $id);
+    return self::iteminstance(__class__, $id);
   }
   
   public function  gethead() {
