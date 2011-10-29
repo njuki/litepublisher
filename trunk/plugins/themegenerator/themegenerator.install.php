@@ -75,13 +75,14 @@ function tthemegeneratorInstall($self) {
   $view = tview::i($self->idview);
   $view->themename = 'generator';
 
-    $self->data['leftview'] = $views->add($about['left']);
+    $self->leftview = $views->add($about['left']);
   $view = tview::i($self->leftview);
   $view->themename = 'generator-left';
-    $self->data['rightview'] = $views->add($about['right']);
-  $view = tview::i($self->leftview);
+
+    $self->rightview = $views->add($about['right']);
+  $view = tview::i($self->rightview);
   $view->themename = 'generator-right';
-  
+
   $self->url = '/theme-generator.htm';
   $self->content = get_themegen_content($self);
   $self->parseselectors();
