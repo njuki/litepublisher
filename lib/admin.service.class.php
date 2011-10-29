@@ -262,29 +262,29 @@ class tadminservice extends tadminmenu {
       return $result;
       
       case 'upload':
-        $backuper = tbackuper::i();
+      $backuper = tbackuper::i();
       if (!$this->checkbackuper()) return $html->h3->erroraccount;
-        $itemtype = tadminhtml::getparam('itemtype', 'theme');
-if (is_uploaded_file($_FILES['filename']['tmp_name']) && !(isset($_FILES['filename']['error']) && ($_FILES['filename']['error'] > 0))) {
-$s = file_get_contents($_FILES['filename']['tmp_name']);
-$archtype = $backuper->getarchtype($_FILES['filename']['name']);
-} else {
-      $url = trim($_POST['url']);
-      if (empty($url)) return '';
-      if (!($s = http::get($url))) return $html->h3->errordownload;
-$archtype = $backuper->getarchtype($url);
-}
-
-if (!$archtype) {
-          //         local file header signature     4 bytes  (0x04034b50)
-          $archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
-        }
-
-        if ($backuper->uploaditem($s, $archtype, $itemtype)) {
-          return $html->h3->itemuploaded;
-        } else {
-          return sprintf('<h3>%s</h3>', $backuper->result);
-        }
+      $itemtype = tadminhtml::getparam('itemtype', 'theme');
+      if (is_uploaded_file($_FILES['filename']['tmp_name']) && !(isset($_FILES['filename']['error']) && ($_FILES['filename']['error'] > 0))) {
+        $s = file_get_contents($_FILES['filename']['tmp_name']);
+        $archtype = $backuper->getarchtype($_FILES['filename']['name']);
+      } else {
+        $url = trim($_POST['url']);
+        if (empty($url)) return '';
+        if (!($s = http::get($url))) return $html->h3->errordownload;
+        $archtype = $backuper->getarchtype($url);
+      }
+      
+      if (!$archtype) {
+        //         local file header signature     4 bytes  (0x04034b50)
+        $archtype = strbegin($s, "\x50\x4b\x03\x04") ? 'zip' : 'tar';
+      }
+      
+      if ($backuper->uploaditem($s, $archtype, $itemtype)) {
+        return $html->h3->itemuploaded;
+      } else {
+        return sprintf('<h3>%s</h3>', $backuper->result);
+      }
       break;
     }
     

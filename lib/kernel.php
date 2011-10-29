@@ -959,10 +959,17 @@ class tevents extends tdata {
   }
   
   public function unsubscribeclass($obj) {
-    $this->unsubscribeclassname(get_class($obj));
+    $this->unbind($obj);
   }
   
   public function unsubscribeclassname($class) {
+    $this->unbind($class);
+  }
+  
+  public function unbind($a) {
+    $class = is_object($a) ? get_class($a) :
+    (is_string($a) ? trim($a) : $this->error('Unknown class'));
+    
     foreach ($this->events as $name => $events) {
       foreach ($events as $i => $item) {
         if ($item['class'] == $class) array_splice($this->events[$name], $i, 1);
@@ -2123,7 +2130,7 @@ class turlmap extends titems {
   public static function unsub($obj) {
     $self = self::i();
     $self->lock();
-    $self->unsubscribeclassname(get_class($obj));
+    $self->unbind($obj);
     $self->deleteclass(get_class($obj));
     $self->unlock();
   }

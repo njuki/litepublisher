@@ -74,38 +74,38 @@ function tthemegeneratorInstall($self) {
   $self->idview = $views->add($about['name']);
   $view = tview::i($self->idview);
   $view->themename = 'generator';
-
-    $self->leftview = $views->add($about['left']);
+  
+  $self->leftview = $views->add($about['left']);
   $view = tview::i($self->leftview);
   $view->themename = 'generator-left';
-
-    $self->rightview = $views->add($about['right']);
+  
+  $self->rightview = $views->add($about['right']);
   $view = tview::i($self->rightview);
   $view->themename = 'generator-right';
-
+  
   $self->url = '/theme-generator.htm';
   $self->content = get_themegen_content($self);
   $self->parseselectors();
   
   $menus = tmenus::i();
-$menus->lock();
+  $menus->lock();
   $menus->add($self);
-
-$fake = new tfakemenu();
-    $fake->title = $about['left'];
-$fake->url = $self->url . '?type=left';
-    $fake->parent = $self->id;
-$menus->add($fake);
-
-$fake = new tfakemenu();
-    $fake->title = $about['right'];
-$fake->url = $self->url . '?type=right';
-    $fake->parent = $self->id;
-$menus->add($fake);
-
-$menus->unlock();
+  
+  $fake = new tfakemenu();
+  $fake->title = $about['left'];
+  $fake->url = $self->url . '?type=left';
+  $fake->parent = $self->id;
+  $menus->add($fake);
+  
+  $fake = new tfakemenu();
+  $fake->title = $about['right'];
+  $fake->url = $self->url . '?type=right';
+  $fake->parent = $self->id;
+  $menus->add($fake);
+  
+  $menus->unlock();
   $self->unlock();
-litepublisher::$urlmap->setvalue($self->idurl, 'type', 'get');
+  litepublisher::$urlmap->setvalue($self->idurl, 'type', 'get');
 }
 
 function tthemegeneratorUninstall($self) {
@@ -134,6 +134,6 @@ function tthemegeneratorUninstall($self) {
   
   $menus = tmenus::i();
   $menus->deletetree($self->id);
- 
+  
   tfiler::delete(litepublisher::$paths->files . 'themegen', true, true);
 }

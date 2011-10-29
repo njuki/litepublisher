@@ -67,15 +67,15 @@ class tcommentmanager extends tevents {
     array_unshift($this->items, $item);
     $this->save();
   }
-
+  
   public function editrecent($id, $idpost) {
     if (!is_int($i = $this->indexofrecent($id, $idpost)))  return;
     $item = tcomments::i($idpost)->items[$id];
-$this->items[$i]['content'] = $item['content'];
-$this->save();
+    $this->items[$i]['content'] = $item['content'];
+    $this->save();
   }
-
-
+  
+  
   public function add($idpost, $name, $email, $url, $content, $ip) {
     $comusers = dbversion ? tcomusers ::i() : tcomusers ::i($idpost);
     $idauthor = $comusers->add($name, $email, $url, $ip);

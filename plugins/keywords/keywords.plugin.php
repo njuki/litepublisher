@@ -55,10 +55,10 @@ class tkeywordsplugin  extends tplugin {
     
     $keywords = trim($keywords);
     if (empty($keywords)) return;
-foreach (array('site:', 'inurl:', '%', 'intext:', 'http:', 'ftp:', '\\') as $k) {
-    if (false !== strpos($keywords, $k)) return;
-}
-
+    foreach (array('site:', 'inurl:', '%', 'intext:', 'http:', 'ftp:', '\\') as $k) {
+      if (false !== strpos($keywords, $k)) return;
+    }
+    
     if ($this->inblack($keywords)) return;
     $keywords = htmlspecialchars($keywords, ENT_QUOTES);
     

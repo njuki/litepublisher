@@ -984,7 +984,7 @@ class tposts extends titems {
   
   public static function unsub($obj) {
     $self = self::i();
-    $self->unsubscribeclassname(get_class($obj));
+    $self->unbind($obj);
   }
   
   protected function create() {

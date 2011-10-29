@@ -38,10 +38,10 @@ class tkeywordswidget extends twidget {
   }
   
   public function getcontent($id, $sidebar) {
-    if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel || 
-strbegin(litepublisher::$urlmap->url, '/croncron.php') || strend(litepublisher::$urlmap->url, '.xml'))  return '';
-
-      $id = litepublisher::$urlmap->itemrequested['id'];
+    if (litepublisher::$urlmap->is404 || litepublisher::$urlmap->adminpanel ||
+    strbegin(litepublisher::$urlmap->url, '/croncron.php') || strend(litepublisher::$urlmap->url, '.xml'))  return '';
+    
+    $id = litepublisher::$urlmap->itemrequested['id'];
     $filename = litepublisher::$paths->data . 'keywords' . DIRECTORY_SEPARATOR.$id . '.' . litepublisher::$urlmap->page . '.php';
     if (@file_exists($filename)) {
       $links = file_get_contents($filename);
