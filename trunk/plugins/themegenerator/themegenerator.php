@@ -105,43 +105,15 @@ class tthemegenerator extends tmenu {
     
     public function request($arg) {
       //$this->parseselectors();
-      $this->type = isset($_GET['type']) ? trim($_GET['type']) : 'midle';
+if (isset($_GET['type'])) {
+$this->type = trim($_GET['type']) == 'left' ? 'left': 'right';
+}
       tlocal::usefile('themegenerator');
       $lang = tlocal::i('themegenerator');
       $this->colors = $lang->ini['themecolors'];
       parent::request($arg);
       if (isset($_POST['formtype']) && (($_POST['formtype'] == 'headerurl') || ($_POST['formtype'] == 'logourl'))) return $this->formresult;
     }
-    
-    /*
-    public function getcontent() {
-      $result = '';
-      tlocal::usefile('themegenerator');
-      $lang = tlocal::i('themegenerator');
-      
-      $tml = '<p>
-      <input type="button" name="colorbutton-$name" id="colorbutton-$name" rel="$name" value="' . $lang->selectcolor . '" />
-      <input type="hidden" name="color_$name" id="text-color-$name" value="$value" />
-      <strong>$label</strong></p>';
-      
-      $theme = tview::i($this->idview)->theme;
-      $args = new targs();
-      $a = new targs;
-      foreach ($this->colors as $name => $value) {
-        $args->name = $name;
-        $args->value = $value;
-        $args->label = $lang->$name;
-        $a->$name = $theme->parsearg($tml, $args);
-      }
-      
-      $a->headerurl = $this->colors['headerurl'];
-      $a->logourl = $this->colors['logourl'];
-      
-      $form = file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR  . 'res' . DIRECTORY_SEPARATOR  . 'form.tml');
-      $result .= $theme->parsearg($form, $a);
-      return $theme->simple($result);
-    }
-    */
     
     public function setcolor($name, $value) {
       if (isset($this->colors[$name])) {
@@ -207,11 +179,12 @@ class tthemegenerator extends tmenu {
     public function sendfile() {
       $u = time();
       $path = "themes/generator$u/";
-      
+
       require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
       $zip = new zipfile();
       
-      $themedir = litepublisher::$paths->themes . 'generator' . DIRECTORY_SEPARATOR;
+      //$themedir = litepublisher::$paths->themes . 'generator' . DIRECTORY_SEPARATOR;
+$themedir = dirname(__file__) . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;
       $args = new targs();
       $colors = "[themecolors]\n";
       foreach ($this->colors as $name => $value) {
@@ -246,12 +219,6 @@ class tthemegenerator extends tmenu {
         }
         
         $zip->addFile($content, $path . $filename);
-      }
-      
-      $themedir .= 'images' . DIRECTORY_SEPARATOR ;
-      $filelist = tfiler::getfiles($themedir);
-      foreach ($filelist as $filename) {
-        $zip->addFile(file_get_contents($themedir . $filename), $path . 'images/' . $filename);
       }
       
       $result = $zip->file();
