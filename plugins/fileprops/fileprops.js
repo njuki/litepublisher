@@ -62,7 +62,8 @@ keywords: props.keywords
 });
 }
 
-$("#filebrowser a[rel^='prettyPhoto']").live('click', function() {
+//$("#filebrowser a[rel^='prettyPhoto']").live('click', function() {
+$(document).on('click', "#filebrowser a[rel^='prettyPhoto']", function() {
 var props = $(this).data("fileprops");
 if (props) {
 fileprops_dialog(props);
