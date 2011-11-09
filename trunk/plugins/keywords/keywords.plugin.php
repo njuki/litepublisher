@@ -55,7 +55,7 @@ class tkeywordsplugin  extends tplugin {
     
     $keywords = trim($keywords);
     if (empty($keywords)) return;
-    foreach (array('site:', 'inurl:', '%', 'intext:', 'http:', 'ftp:', '\\') as $k) {
+    foreach (array('site:', 'inurl:', '%', '@', '<', '>', 'intext:', 'http:', 'ftp:', '\\') as $k) {
       if (false !== strpos($keywords, $k)) return;
     }
     
@@ -84,16 +84,7 @@ class tkeywordsplugin  extends tplugin {
     $filename = basename($filename);
     $site = litepublisher::$site;
     $subject ="[$site->name] new keywords added";
-    $body = "The new widget has been added on
-  $site->url{$_SERVER['REQUEST_URI']}
-    
-    Widget content:
-    
-    $content
-    
-    You can edit this links at:
-  $site->url/admin/plugins/{$site->q}plugin=keywords&filename=$filename
-    ";
+    $body = "The new widget has been added on\n$site->url{$_SERVER['REQUEST_URI']}\n\nWidget content:\n\n$content\n\nYou can edit this links at:\n$site->url/admin/plugins/{$site->q}plugin=keywords&filename=$filename\n";
     
     tmailer::sendmail($site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email,  $subject, $body);

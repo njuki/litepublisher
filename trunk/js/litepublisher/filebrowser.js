@@ -96,8 +96,9 @@ function initfiletabs() {
   function (html) {
     $("#filebrowser").html(html);
   $('#filetabs').tabs({cache: true});
-    $("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
-    
+    //$("input[id^='addfilesbutton']").live('click', addtocurrentfiles);
+$(document).on("click", "input[id^='addfilesbutton']", addtocurrentfiles);
+
     $("#deletecurrentfiles").click(function() {
       $("input:checked[id^='currentfile']").each(function() {
         $(this).parent().remove();
