@@ -22,8 +22,10 @@ class tthemeparser extends tevents {
     parent::create();
     $this->basename = 'themeparser';
     $this->addevents('beforeparse', 'parsed');
-    $this->fixsubcount = true;
     $this->data['replacelang'] = false;
+    $this->data['removephp'] = true;
+    $this->fixsubcount = true;
+
     $this->sidebar_index = 0;
     $this->pathmap = $this->createpathmap();
   }
@@ -93,6 +95,22 @@ class tthemeparser extends tevents {
     }
     
   }
+
+public function callback_replace_php($m) {
+return strtr($m[0], array(
+    '$' => '&#36;',
+'?'
+'(',
+')',
+'['
+
+));
+}
+
+public function callback_restore_php($m) {
+return strtr($m[0], array(
+));
+}
   
   public function parsetheme(ttheme $theme) {
     $about = $this->getabout($theme->name);
@@ -219,6 +237,12 @@ class tthemeparser extends tevents {
     $this->paths = self::getpaths($theme);
     $s = trim($s);
     $this->callevent('beforeparse', array(&$s));
+if ($this->removephp) {
+$s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
+} else {
+      $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array($this, 'callback_replace_php'), $s);
+}
+
     while ($s != '') {
       if (preg_match('/^(((\$template|\$custom)?\.?)?\w*+(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           $tag = $m[1];
@@ -261,6 +285,12 @@ class tthemeparser extends tevents {
         if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
       }
       
+if ($this->removephp) {
+$s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
+} else {
+      $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array($this, 'callback_replace_php'), $s);
+}
+
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           if (!isset($m[3])) {
             dumpstr($s);
@@ -281,6 +311,10 @@ class tthemeparser extends tevents {
         }
         
         $s = trim($s);
+if (!$this->removephp) {
+      $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array($this, 'callback_restore_php'), $s);
+}
+
         //retranslatepaths
         if (isset($this->pathmap[$parent])) $parent = $this->pathmap[$parent];
         if (strbegin($parent, 'sidebar')) {
