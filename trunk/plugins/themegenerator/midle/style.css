@@ -44,9 +44,9 @@ button,input[type="submit"],input[type="reset"],input[type="button"]{cursor:poin
 button,input,select,textarea{margin:2px 2px 2px 0;padding:1px 2px}
 form#moderateform input,.quote input{font-size:11px}
 #wrapper{width:980px;margin:0 auto;min-height:100%;height:auto !important;height:100%;background:#dfe9f5;position:relative;}
-#top {width:980px;padding-top:10px;background:url(../generator/images/top1.jpg) repeat-x top center #002362;}
-#main{width:100%;float:left;position:relative;overflow:hidden;}
-#main:after,#ls:after,#rs:after,ul#nav:after,.entry:after{clear:both;content:'.';display:block;height:0;visibility:hidden}
+#top {width:980px;padding-top:10px;background:url(../generator/images/top1.jpg) repeat-x top center #002362;position:relative;z-index:2}
+#main{width:100%;float:left;min-height:400px;position:relative;overflow:hidden;}
+#main:after,#ls:after,#rs:after,#top:after,ul#nav:after,.entry:after{clear:both;content:'.';display:block;height:0;visibility:hidden}
 #content{position:relative;width:565px;padding:10px 15px;margin:0 220px 0 165px;background:#fff;min-height:400px;overflow:hidden;}
 #ls{float:left;width:150px;margin-left:-980px;padding:10px 10px 0 5px;position:relative;}
 #rs{float:left;width:205px;margin-left:-220px;margin-right:-3px;padding:10px 5px 0 10px;position:relative;}
@@ -54,11 +54,8 @@ form#moderateform input,.quote input{font-size:11px}
 .post{clear:both;border-bottom:1px dotted #cdcdcd;position:relative}
 .meta{clear:both;color:#666;font-size:11px;line-height:16px;margin:15px 0}
 .hreview{margin:20px 0}
-.hreview dl{display:inline}
-.hreview dt{display:block;font-size:12px;border-bottom:1px dotted #cdcdcd;line-height:16px;margin:10px 0;padding-bottom:5px}
-.hreview dt .date{font-weight:400;font-size:11px}
-.hreview dd{margin:10px 0}
-.moderate{text-align:right}
+.hreview ins{display:block;padding:10px 0;border-top:1px solid #cfcfcf;line-height:18px}
+.moderate{margin-top:10px;text-align:right}
 
 .image{float:left;margin:5px 15px 5px 0}
 .ui-tabs-panel .file{clear:both;display:block}
@@ -83,21 +80,21 @@ form#moderateform input,.quote input{font-size:11px}
 a#logo{background:url(../generator/images/logo.png) no-repeat scroll 0 0 transparent;color:#fff;display:block;font:italic 28px Georgia,Serif;margin:0 0 10px 20px;padding-left:50px;text-decoration:none;text-shadow:2px 2px 2px #69c}
 #top p{clear:left;color:#666;font-size:11px;margin:0 0 15px 70px}
 
-ul#nav{display:block;list-style:none;margin:0 20px;width:940px}
+ul#nav{display:block;list-style:none;margin:0 20px;width:940px;position:relative;z-index:2}
 #nav li{float:left;position:relative}
 #nav a{color:#fff;display:block;float:left;height:23px;line-height:23px;padding:0 12px}
 #nav a:hover,#nav li.jshover a{background:#fff;color:#c60;text-decoration:none;border-radius:10px 10px 0 0}
 #nav li a.current_page_link{background:#fff;color:#000;border-radius:10px 10px 0 0}
 #nav li.jshover ul li a.current_page_link{border-radius:0 0 0 0}
 #nav li a.current_page_link:hover,#nav li.jshover a.current_page_link{background:#fff;color:#c60;text-decoration:none;border-radius:10px 10px 0 0}
-#nav li ul{border:1px solid #002362;border-top:0;display:none;left:-29px;list-style:none;position:absolute;top:13px;width:200px;z-index:998}
+#nav li ul{border:1px solid #002362;background:#dfe9f5;border-top:0;display:none;left:-29px;list-style:none;position:absolute;top:13px;width:200px}
 #nav li ul li{float:none}
 #nav li ul li a,#nav li.jshover ul li a{background:#dfe9f5;border-bottom:1px dotted #fff;color:#36c;display:block;float:none;height:22px;line-height:22px;border-radius:0 0 0 0}
 #nav li ul li a:hover,#nav li ul li.jshover,#nav li.jshover ul li a:hover{background:#fff;color:#c60}
 #nav li ul li a:hover,#nav li ul li:hover,#nav li ul li.jshover{color:#c60}
 #nav li:hover ul,#nav li.jshover ul,#nav li ul:hover,#nav li ul.jshover li,#nav li ul:hover li,#nav li ul.jshover{display:block}
 
-.categories,.tags,.dtreviewed{float:right;text-align:right}
+.categories,.tags,.dtreviewed{float:right;text-align:right;line-height:16px;font-size:11px}
 .date{background:transparent url(../generator/images/icons.png) no-repeat scroll 0 0;padding-left:18px}
 .author,.reviewer{background:transparent url(../generator/images/icons.png) no-repeat scroll 0 -72px;padding-left:18px}
 .tags{background:transparent url(../generator/images/icons.png) no-repeat scroll 0 -34px;padding-left:18px}
