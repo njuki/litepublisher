@@ -91,11 +91,11 @@ if (dbversion) litepublisher::$db = new tdatabase();
   litepublisher::$options->admincookie = litepublisher::$options->cookieenabled && litepublisher::$options->authcookie() && ('admin' == litepublisher::$options->group);
 
   litepublisher::$urlmap = turlmap::i();
-//ttheme::clearcache();
+ttheme::clearcache();
 tlocal::clearcache();
 //require('lib/update/update.4.81.php');
 //tjsmerger::i()->onupdated();
-//tupdater::i()->run(5.02);
+//tupdater::i()->run(5.04);
 //litepublisher::$classes->delete('tcategoriesmenu');
 //litepublisher::$classes->add('tajaxmenueditor', 'admin.menu.ajax.class.php');
 //tfiler::log(var_export($_SERVER, true));
