@@ -105,9 +105,9 @@ class tthemegenerator extends tmenu {
     
     public function request($arg) {
       //$this->parseselectors();
-if (isset($_GET['type'])) {
-$this->type = trim($_GET['type']) == 'left' ? 'left': 'right';
-}
+      if (isset($_GET['type'])) {
+        $this->type = trim($_GET['type']) == 'left' ? 'left': 'right';
+      }
       tlocal::usefile('themegenerator');
       $lang = tlocal::i('themegenerator');
       $this->colors = $lang->ini['themecolors'];
@@ -179,12 +179,12 @@ $this->type = trim($_GET['type']) == 'left' ? 'left': 'right';
     public function sendfile() {
       $u = time();
       $path = "themes/generator$u/";
-
+      
       require_once(litepublisher::$paths->libinclude . 'zip.lib.php');
       $zip = new zipfile();
       
       //$themedir = litepublisher::$paths->themes . 'generator' . DIRECTORY_SEPARATOR;
-$themedir = dirname(__file__) . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;
+      $themedir = dirname(__file__) . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR;
       $args = new targs();
       $colors = "[themecolors]\n";
       foreach ($this->colors as $name => $value) {

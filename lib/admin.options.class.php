@@ -162,7 +162,7 @@ class Tadminoptions extends tadminmenu {
       $args->xxxcheck = $auth->xxxcheck;
       $filter = tcontentfilter::i();
       $args->phpcode = $filter->phpcode;
-$args->removephp = tthemeparser::i()->removephp;
+      $args->removephp = tthemeparser::i()->removephp;
       $args->useshell = tupdater::i()->useshell;
       $backuper = tbackuper::i();
       $args->filertype = tadminhtml::array2combo(array(
@@ -310,10 +310,10 @@ $args->removephp = tthemeparser::i()->removephp;
         $filter = tcontentfilter::i();
         $filter->phpcode = isset($phpcode);
         $filter->save();
-
-$parser = tthemeparser::i();
-$parser->removephp =isset($removephp );
-$parser->save();
+        
+        $parser = tthemeparser::i();
+        $parser->removephp =isset($removephp );
+        $parser->save();
         
         $backuper = tbackuper::i();
         if ($backuper->filertype != $filertype) {

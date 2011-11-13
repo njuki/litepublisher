@@ -25,7 +25,7 @@ class tthemeparser extends tevents {
     $this->data['replacelang'] = false;
     $this->data['removephp'] = true;
     $this->fixsubcount = true;
-
+    
     $this->sidebar_index = 0;
     $this->pathmap = $this->createpathmap();
   }
@@ -95,32 +95,32 @@ class tthemeparser extends tevents {
     }
     
   }
-
-public function callback_replace_php($m) {
-return strtr($m[0], array(
+  
+  public function callback_replace_php($m) {
+    return strtr($m[0], array(
     '$' => '&#36;',
-'?' => '&#63;',
-'(' => '&#40;',
-')' => '&#41;',
-'[' => '&#91;',
-']' => '&#93;',
-'{' => '&#123;',
-'}' => '&#125;'
-));
-}
-
-public function callback_restore_php($m) {
-return strtr($m[0], array(
-'&#36;' => '$',
-'&#63;' => '?',
-'&#40;' => '(',
-'&#41;' => ')',
-'&#91;' => '[',
-'&#93;' => ']',
-'&#123;' => '{',
-'&#125;' => '}'
-));
-}
+    '?' => '&#63;',
+    '(' => '&#40;',
+    ')' => '&#41;',
+    '[' => '&#91;',
+    ']' => '&#93;',
+    '{' => '&#123;',
+    '}' => '&#125;'
+    ));
+  }
+  
+  public function callback_restore_php($m) {
+    return strtr($m[0], array(
+    '&#36;' => '$',
+    '&#63;' => '?',
+    '&#40;' => '(',
+    '&#41;' => ')',
+    '&#91;' => '[',
+    '&#93;' => ']',
+    '&#123;' => '{',
+    '&#125;' => '}'
+    ));
+  }
   
   public function parsetheme(ttheme $theme) {
     $about = $this->getabout($theme->name);
@@ -247,12 +247,12 @@ return strtr($m[0], array(
     $this->paths = self::getpaths($theme);
     $s = trim($s);
     $this->callevent('beforeparse', array(&$s));
-if ($this->removephp) {
-$s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
-} else {
+    if ($this->removephp) {
+      $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
+    } else {
       $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array($this, 'callback_replace_php'), $s);
-}
-
+    }
+    
     while ($s != '') {
       if (preg_match('/^(((\$template|\$custom)?\.?)?\w*+(\.\w\w*+)*)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           $tag = $m[1];
@@ -295,13 +295,13 @@ $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
         if (!isset($this->theme->templates['sidebars'][$this->sidebar_index])) $this->theme->templates['sidebars'][$this->sidebar_index] = array();
       }
       
-if ($this->removephp) {
-//if (preg_match('/\<\?.*?\?\>/ims', $s, $m)) dumpvar($m);
-$s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
-} else {
-      $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array($this, 'callback_replace_php'), $s);
-}
-
+      if ($this->removephp) {
+        //if (preg_match('/\<\?.*?\?\>/ims', $s, $m)) dumpvar($m);
+        $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
+      } else {
+        $s = preg_replace_callback('/\<\?(.*?)\?\>/ims', array($this, 'callback_replace_php'), $s);
+      }
+      
       while (($s != '') && preg_match('/(\$\w*+(\.\w\w*+)?)\s*=\s*(\[|\{|\()?/i', $s, $m)) {
           if (!isset($m[3])) {
             dumpstr($s);
@@ -322,10 +322,10 @@ $s = preg_replace('/\<\?.*?\?\>/ims', '', $s);
         }
         
         $s = trim($s);
-if (!$this->removephp) {
-      $s = preg_replace_callback('/\<\&\#63;.*?\&\#63;\>/ims', array($this, 'callback_restore_php'), $s);
-}
-
+        if (!$this->removephp) {
+          $s = preg_replace_callback('/\<\&\#63;.*?\&\#63;\>/ims', array($this, 'callback_restore_php'), $s);
+        }
+        
         //retranslatepaths
         if (isset($this->pathmap[$parent])) $parent = $this->pathmap[$parent];
         if (strbegin($parent, 'sidebar')) {
@@ -334,7 +334,7 @@ if (!$this->removephp) {
           $this->theme->templates[$parent] = $s;
         } elseif (($parent == '') || ($parent == '$template')) {
           $this->theme->templates['index'] = $s;
-//dumpstr($s);
+          //dumpstr($s);
         } elseif (strbegin($parent, '$custom') || strbegin($parent, 'custom')) {
           $this->setcustom($parent, $s);
         } else {

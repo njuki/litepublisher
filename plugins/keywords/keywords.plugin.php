@@ -84,7 +84,7 @@ class tkeywordsplugin  extends tplugin {
     $filename = basename($filename);
     $site = litepublisher::$site;
     $subject ="[$site->name] new keywords added";
-    $body = "The new widget has been added on\n$site->url{$_SERVER['REQUEST_URI']}\n\nWidget content:\n\n$content\n\nYou can edit this links at:\n$site->url/admin/plugins/{$site->q}plugin=keywords&filename=$filename\n";
+$body = "The new widget has been added on\n$site->url{$_SERVER['REQUEST_URI']}\n\nWidget content:\n\n$content\n\nYou can edit this links at:\n$site->url/admin/plugins/{$site->q}plugin=keywords&filename=$filename\n";
     
     tmailer::sendmail($site->name, litepublisher::$options->fromemail,
     'admin', litepublisher::$options->email,  $subject, $body);
