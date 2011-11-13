@@ -4,7 +4,7 @@ function update503() {
 if (!litepublisher::$urlmap->finditem('/users.htm')) {
   litepublisher::$urlmap->add('/users.htm', 'tuserpages', 'url', 'get');
 }
-
+return;
 if (litepublisher::$classes->exists('tthemegenerator')) {
 $about = tplugins::getabout('themegenerator');
   $views = tviews::i();

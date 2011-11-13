@@ -39,7 +39,7 @@ class tyoutubeplayer extends tplugin {
         str_replace('$id', $id, $this->template), $content);
       }
     }
-
+    
     if (preg_match_all('/http:\/\/youtu\.be\/(\w*+)/',
     $content, $m, PREG_SET_ORDER)) {
       foreach ($m as $item) {
@@ -47,7 +47,7 @@ class tyoutubeplayer extends tplugin {
         $content = str_replace($item[0],
         str_replace('$id', $id, $this->template), $content);
       }
-}
+    }
   }
   
   public function install() {
