@@ -19,12 +19,13 @@ class ttidyfilter extends tplugin {
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>title</title>
     </head>
-    <body>%s</body></html>', $s);
+    <body><div>%s</div></body></html>', $s);
   }
   
   public function getbody($s) {
-    $i = strpos($s, '<body>') + 6;
-    $j = strpos($s, '</body');
+$tag = '<body><div>';
+    $i = strpos($s, $tag) + strlen($tag);
+    $j = strpos($s, '</div></body');
     return substr($s, $i, $j - $i);
   }
   
@@ -38,20 +39,6 @@ class ttidyfilter extends tplugin {
     $tidy->parseString($this->gethtml($content), $config, 'utf8');
     $tidy->cleanRepair();
     $content = $this->getbody((string) $tidy);
-  }
-  
-  public function install() {
-    if (!class_exists('tidy')) die('PHP tidy extension is required');
-    $filter = tcontentfilter::i();
-    $filter->lock();
-    $filter->onaftersimple = $this->filter;
-    $filter->onaftercomment = $this->filter;
-    $filter->unlock();
-  }
-  
-  public function uninstall() {
-    $filter = tcontentfilter::i();
-    $filter->unbind($this);
   }
   
 }//class
