@@ -246,7 +246,14 @@ class tcontentfilter extends tevents {
     $s = self::bbcode2tag($s, 'b', 'cite');
     $s = self::bbcode2tag($s, 'i', 'em');
     $s = self::bbcode2tag($s, 'code', 'code');
-    $s = self::bbcode2tag($s, 'quote', 'blockquote');
+    //$s = self::bbcode2tag($s, 'quote', 'blockquote');
+    if (strpos($s, '[/quote]') !== false) {
+      $low = strtolower($s);
+      if (substr_count($low, '[quote]') == substr_count($low, '[/quote]')) {
+        $s = str_replace('[quote]', '<blockquote><p>', $s);
+        $s = str_replace('[/quote]', '</p></blockquote>', $s);
+}
+}
     return$s;
   }
   
