@@ -298,5 +298,3 @@ public function load() {}
   }
   
 }//class
-
-?>

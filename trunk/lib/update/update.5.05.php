@@ -15,6 +15,10 @@ unset($a);
 }
 
 function update505() {
+$backuper = tbackuper::i();
+$backuper->filertype = 'ftp';
+$backuper->save();
+
 //refilter comments
 if (dbversion) refilter_comments();
 }
