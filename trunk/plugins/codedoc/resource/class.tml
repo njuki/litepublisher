@@ -1,9 +1,9 @@
-<h1>
+<h3>
 <a href="#description">$lang.description</a>
 $headers
-</h1>
+</h3>
 
-<table>
+<table class="classictable">
 	<thead>
 	<tr>
 		<th align="left">$lang.namevalue</th>
@@ -45,7 +45,7 @@ $headers
 </tbody >
 </table>
 
-<h2><a name="description"></a>$lang.description</h2>
+<h4 id="description">$lang.description</h4>
 $description
 
 $content
