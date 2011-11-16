@@ -17,6 +17,29 @@ class tcodedocfilter extends titems {
     parent::create();
     $this->table = 'codedoc';
   }
+
+public function getheaders(array &$a) {
+$result = array();
+while (count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+$result[$m[1]] = $m[2];
+  array_splice($a, 0, 1);
+} else {
+return $result;
+}
+
+public function getbody(array &$a) {
+$this->skip($a);
+$result = '';
+while ($s = array_shift($a)) {
+$result .= $s 
+}
+$this->skip($a);
+return $result;
+}
+
+public function skip(array &$a) {
+while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
+}
   
   private function getdescription(tpost $post, $s) {
     $wiki = twikiwords::i();
@@ -52,7 +75,9 @@ class tcodedocfilter extends titems {
   public function convert(tpost $post, $s, $type) {
     $lang = tlocal::i('codedoc');
     $s = str_replace('->', '-&gt;', $s);
-
+$s = str_replace(array("\r\n", "\r"), "\n", $s);
+$lines = explode("\n", $s);
+$headers = $this->getheaders($lines);
     $result = array(
     'parent' => 0,
     'class' => $doc['name']
@@ -64,7 +89,7 @@ class tcodedocfilter extends titems {
       $post->url = $linkgen->addurl($post, 'codedoc');
     }
     
-    switch ($doc['type']) {
+    switch ($type) {
       case 'class':
       $result['parent'] = $this->filterclass($post, $ini);
       break;
