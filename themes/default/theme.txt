@@ -501,7 +501,6 @@ $lang.topost - строка "на запись"
 
 А вот и сам список комментариев:
 content.post.templatecomments.comments = [
-  <a id="comments"></a>
 $id = [commentlist]
 $idhold = [holdcommentlist]
   <ol class="commentlist" id="commentlist" start="$from">
@@ -527,7 +526,6 @@ $comment
 Следует обратить внимание на  атрибут startтега ol, который не является валидным для xhtml, но является валидным в html5 и html4. Поскольку эта тема имеет doctype xhtml, то шаблон списка комментариев не пройдет валидацию. LitePublisher предоставляет способ обойти это ограничение. Следует отказаться от тега ol в пользу тега ul без атрибута start, а в  стилях прописать list-style: none; и в шаблоне комментария использовать $index для нумерации комментариев. Передекларируем список комментариев (формат темы это позволяет - последнее объявление шаблона будет использовано в конечном итоге)
 
 content.post.templatecomments.comments = [
-  <a id="comments"></a>
   <ul class="commentlist" id="commentlist" style="list-style: none;">
 $comment
 										</ul>]

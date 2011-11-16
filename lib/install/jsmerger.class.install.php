@@ -25,7 +25,9 @@ function tjsmergerInstall($self) {
   $self->add($section, '/js/litepublisher/players.min.js');
   $self->addtext($section, 'pretty',
   '$(document).ready(function() {
-    $("a[rel^=\'prettyPhoto\']").prettyPhoto();
+    $("a[rel^=\'prettyPhoto\']").prettyPhoto({
+social_tools: false
+});
   });');
   
   $section = 'admin';

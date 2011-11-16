@@ -45,7 +45,7 @@ class tbackuper extends tevents {
     $this->unzip = null;
     $this->archtype = 'zip';
     $this->lastdir = '';
-    $this->data['filertype'] = 'auto';
+    $this->data['filertype'] = 'ftp';
   }
   
   public function __destruct() {
