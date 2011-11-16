@@ -18,18 +18,6 @@ class tcodedocfilter extends titems {
     $this->table = 'codedoc';
   }
   
-  public function getwords($words) {
-    $words = trim($words);
-    if ($words == '') return '';
-    $links = array();
-    foreach (explode(',', $words) as $word) {
-      $word= trim($word);
-      if ($word == '') continue;
-      $links[] = $wiki->getwordlink($word);
-    }
-    return implode(', ', $links);
-  }
-  
   private function getdescription(tpost $post, $s) {
     $wiki = twikiwords::i();
     $wiki->createwords($post, $s);
@@ -61,11 +49,10 @@ class tcodedocfilter extends titems {
     return $s;
   }
   
-  public function convert(tpost $post, $s) {
-    $this->checkadminlang();
+  public function convert(tpost $post, $s, $type) {
     $lang = tlocal::i('codedoc');
-    $ini = tini2array::parse($s);
-    $doc = $ini['document'];
+    $s = str_replace('->', '-&gt;', $s);
+
     $result = array(
     'parent' => 0,
     'class' => $doc['name']
