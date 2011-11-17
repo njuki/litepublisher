@@ -47,7 +47,7 @@ class twikiwords extends titems {
     $items = $this->itemsposts->getposts($id);
     $c = count($items);
     if ($c == 0) {
-      $result = sprintf('<strong>%s</strong>', $word);
+      $result = sprintf('<span class="wikiword">%s</span>', $word);
     } elseif ($c == 1) {
       $post = tpost::i($items[0]);
       $result = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
@@ -59,7 +59,7 @@ class twikiwords extends titems {
         $post = tpost::i($idpost);
         $links[] = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $post->title, $id);
       }
-      $result = sprintf('<strong>%s</strong> (%s)', $word, implode(', ', $links));
+      $result = sprintf('<span class="wikiword">%s</span> (%s)', $word, implode(', ', $links));
     }
     
     $this->links[$word] = $result;
@@ -152,7 +152,7 @@ class twikiwords extends titems {
         if ($id = $this->add($word, $post->id)) {
           $result[] = $id;
           if ($post->id == 0) $this->fix[$id] = $post;
-          $content = str_replace($item[0], "<a id=\"wikiword-$id\"></a><strong>$word</strong>", $content);
+          $content = str_replace($item[0], "<span class=\"wiki\" id=\"wikiword-$id\">$word</span>", $content);
         }
       }
       $this->unlock();

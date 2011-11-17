@@ -1,4 +1,6 @@
 .doc-itemname {
 text-align: left;
-font-weight: bold;}
+font-weight: bold;
 }
+
+.wikiword, .wiki { font-weight: bold;}

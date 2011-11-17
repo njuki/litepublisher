@@ -23,24 +23,66 @@ $result = array();
 while (count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
 $result[$m[1]] = $m[2];
   array_splice($a, 0, 1);
-} else {
+}
 return $result;
 }
 
 public function getbody(array &$a) {
-$this->skip($a);
 $result = '';
-while ($s = array_shift($a)) {
-$result .= $s 
+while (count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+$result .= array_shift($a) . "\n";
 }
-$this->skip($a);
-return $result;
+return trim($result);
 }
 
 public function skip(array &$a) {
 while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
 }
   
+  public function convert(tpost $post, $s, $type) {
+    $lang = tlocal::i('codedoc');
+    $s = str_replace('->', '-&gt;', $s);
+$s = str_replace(array("\r\n", "\r"), "\n", $s);
+$lines = explode("\n", $s);
+$headers = $this->getheaders($lines);
+
+    $result = array(
+    'parent' => 0,
+    'class' => $doc['name']
+    );
+    
+    if ($post->id == 0) {
+      $post->title = $doc['name'];
+      $linkgen = tlinkgenerator::i();
+      $post->url = $linkgen->addurl($post, 'codedoc');
+    }
+    
+    switch ($type) {
+      case 'class':
+      $result['parent'] = $this->filterclass($post, $lines);
+      break;
+      
+      case 'interface':
+      $this->getinterface($post, $ini);
+      break;
+      
+      case 'manual':
+      $result['class'] = '';
+      $this->getmanual($post, $ini);
+      break;
+    }
+    
+    $post->rss = $post->excerpt;
+    $post->description = tcontentfilter::getpostdescription($post->excerpt);
+    $post->moretitle = sprintf($lang->moretitle, $post->title);
+    /*
+    /$cat = tcategories::i();
+    $idcat = $cat->add($lang->documentation);
+    if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
+    */
+    return $result;
+  }
+
   private function getdescription(tpost $post, $s) {
     $wiki = twikiwords::i();
     $wiki->createwords($post, $s);
@@ -72,60 +114,17 @@ while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
     return $s;
   }
   
-  public function convert(tpost $post, $s, $type) {
-    $lang = tlocal::i('codedoc');
-    $s = str_replace('->', '-&gt;', $s);
-$s = str_replace(array("\r\n", "\r"), "\n", $s);
-$lines = explode("\n", $s);
-$headers = $this->getheaders($lines);
-    $result = array(
-    'parent' => 0,
-    'class' => $doc['name']
-    );
-    
-    if ($post->id == 0) {
-      $post->title = $doc['name'];
-      $linkgen = tlinkgenerator::i();
-      $post->url = $linkgen->addurl($post, 'codedoc');
-    }
-    
-    switch ($type) {
-      case 'class':
-      $result['parent'] = $this->filterclass($post, $ini);
-      break;
-      
-      case 'interface':
-      $this->getinterface($post, $ini);
-      break;
-      
-      case 'manual':
-      $result['class'] = '';
-      $this->getmanual($post, $ini);
-      break;
-    }
-    
-    $post->rss = $post->excerpt;
-    $post->description = tcontentfilter::getpostdescription($post->excerpt);
-    $post->moretitle = sprintf($lang->moretitle, $post->title);
-    /*
-    /$cat = tcategories::i();
-    $idcat = $cat->add($lang->documentation);
-    if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
-    */
-    return $result;
-  }
-  
-  private function filterclass(tpost $post, array &$ini) {
-    $doc = $ini['document'];
+  private function filterclass(tpost $post, array &$a) {
+
     $wiki = twikiwords::i();
     $headers = '';
     $content = '';
     $lang = tlocal::i('codedoc');
     $args = targs::i();
-    $class = $doc['name'];
+    $class = $headers['classname'];
     $post->title = sprintf($lang->classtitle, $class);
     $id = $wiki->add($class, $post->id);
-    $args->class = sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
+    $args->class = sprintf('<span id="wikiword-%d">%s</span>', $id, $class);
     
     $idparent = 0;
     $parent = isset($doc['parent']) ? trim($doc['parent']) : '';
