@@ -4,3 +4,16 @@ font-weight: bold;
 }
 
 .wikiword, .wiki { font-weight: bold;}
+
+dl {
+	overflow: hidden;
+}
+dt {
+	float: left;
+	margin-right: 4px;
+	clear:left;
+}
+
+dd{
+	min-height:15px;  /* высота строки, подбирается вручную */
+}

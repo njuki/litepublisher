@@ -141,6 +141,10 @@ $types = array_keys($parts);
 while (count($a) >0) {
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
+if (isset($headers['prop'])) {
+$headers['property'] = $headers['prop'];
+unset($headers['prop'];
+}
 foreach ($types as $type) {
 if (isset($headers[$type])) {
 $parts[$type][$headers[$type]] = array(
@@ -162,7 +166,8 @@ foreach ($parts as $type => $items) {
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->body = $item['body'];
-$result .= $html->$type($args);
+$args->access = $lang->__isset($item['headers']['access'])$lang->__get($item['headers']['access']) : '';
+$result .= $html->item($args);
 }
 }
 
@@ -170,18 +175,7 @@ return $result;
 }
 /*
 
-    $a = array(
-    'method' => 'methods',
-    'property' => 'properties',
-    'event' => 'events');
-    
     foreach ($a as $name => $names) {
-      if ($items = $this->convertitems($post, $ini, $name, $names)) {
-        $headers .= sprintf(' <a href="#%1$s">%2$s</a>', $names, $lang->$names);
-        $content .= $items;
-      }
-    }
-    
     if (!empty($doc['example'])) {
       $headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
       $content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
@@ -236,20 +230,6 @@ $args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']
     $args->headers = $headers;
     $args->items = $content;
     return $this->html->items($args);
-  }
-  
-  private function convertitem(tpost $post, array $item, $name) {
-    $wiki = twikiwords::i();
-    $args = targs::i();
-    $args->add($item);
-    if (!empty($item['type']) && preg_match_all('/\[\[(.*?)\]\]/i', $item['type'], $m)) {
-      if ($id = $wiki->add($m[1], 0)) $args->type = $wiki->getlink($id);
-    }
-    $args->description = $this->getdescription($post, $item['description']);
-    $args->idwiki = $wiki->add($item['name'], $post->id);
-    $lang =tlocal::i('codedoc');
-    if ($lang->__isset($item['access']))  $args->access = $lang->__get($item['access']);
-    return $this->html->item($args);
   }
   
   public function getchilds($idpost) {
