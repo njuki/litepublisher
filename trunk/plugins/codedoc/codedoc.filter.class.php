@@ -115,38 +115,15 @@ $headers = $this->getheaders($lines);
   }
   
   private function filterclass(tpost $post, array &$a) {
-
     $wiki = twikiwords::i();
     $headers = '';
     $content = '';
     $lang = tlocal::i('codedoc');
     $args = targs::i();
-    $class = $headers['classname'];
-    $post->title = sprintf($lang->classtitle, $class);
-    $id = $wiki->add($class, $post->id);
-    $args->class = sprintf('<span id="wikiword-%d">%s</span>', $id, $class);
-    
-    $idparent = 0;
-    $parent = isset($doc['parent']) ? trim($doc['parent']) : '';
-    if ($parent == '') {
-      $args->parent = '';
-    } else {
-      $args->parent = $this->getclasslink($parent);
-      if ($idparent = $this->db->findid('class = ' .dbquote($parent))) {
-        if ($post->id > 0) $this->db->setvalue($post->id, 'parent', $idparent);
-      } else {
-        $idparent = 0;
-      }
-    }
-    
-    $args->childs = $this->getchilds($post->id);
-    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
-    $args->interfaces = $this->getclasses($doc, 'interface');
-    $args->dependent = $this->getclasses($doc, 'dependent');
-    $description = $this->getdescription($post, $doc['description']);
-    $post->excerpt = $description;
-    $args->description = $description;
-    
+
+$headers = $this->getheaders($a);
+$body = $this->getbody($a);
+$aboutclass = $this->getaboutclass($headers, $body);
     $a = array(
     'method' => 'methods',
     'property' => 'properties',
@@ -172,6 +149,25 @@ $headers = $this->getheaders($lines);
     $post->filtered = $theme->parsearg($tml, $args);
     return $idparent;
   }
+
+public function getaboutclass(tpost $post, array $headers, $body) {
+$class = $headers['classname'];
+$lang = tlocal::i('codedoc');
+    $post->title = sprintf($lang->classtitle, $class);
+$post->meta->class = $class;
+    $post->excerpt = $body;
+if (isset($headers['parent'])) $post->meta->parentclass = $headers['parent'];
+
+$args = new targs();
+    $args->class = $class;
+$args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']) : $lang->noparent;
+    $args->childs = $this->getchilds($class);
+    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
+    $args->interfaces = $this->getclasses($headers['interface']);
+    $args->dependent = $this->getclasses($headers['dependent']);
+    $args->body = $body;
+ return $this->html->aboutclass($args);
+}
   
   private function convertitems(tpost $post, array &$ini, $name, $names) {
     if (!isset($ini[$name])) return '';
@@ -217,15 +213,17 @@ $headers = $this->getheaders($lines);
   
   public function getchilds($idpost) {
     IF ($idpost == 0) return '__childs__';
-    $items = $this->select('parent = ' . $idpost, '');
+$db = litepublisher::$db;
+$db->table = 'postsmeta';
+    $items = $db->idselect("name = 'parentclass' and value = '$idpost'");
     if (count($items) == 0) return '';
+    $names = $db->res2items($db->select(sprintf('name = \'class\' and id in(%s)', implode(',', $items)));
     $links = array();
     $posts = tposts::i();
     $posts->loaditems($items);
     foreach ($items as $id) {
-      $item = $this->getitem($id);
       $post = tpost::i($id);
-      $links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $item['class'], $id);
+      $links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $names[$id]['class'], $id);
     }
     return implode(', ', $links);
   }

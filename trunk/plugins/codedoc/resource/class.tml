@@ -5,7 +5,7 @@ $headers
 
 <dl>
 		<dt>$lang.class</dt>
-		<dd>$class</dd>
+		<dd>[wiki:$class]</dd>
 
 		<dt>$lang.parent</dt>
 		<dd>$parent</dd>
