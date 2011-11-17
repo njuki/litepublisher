@@ -124,6 +124,52 @@ $headers = $this->getheaders($lines);
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 $aboutclass = $this->getaboutclass($headers, $body);
+    $post->title = sprintf($lang->classtitle, $class);
+$post->meta->class = $class;
+    $post->excerpt = $body;
+if (isset($headers['parent'])) $post->meta->parentclass = $headers['parent'];
+
+$parts = array(
+'method' => array(),
+'property' =>  array(),
+'event' => array()
+);
+
+$types = array_keys($parts);
+
+//parse and collect parts
+while (count($a) >0) {
+$headers = $this->getheaders($a);
+$body = $this->getbody($a);
+foreach ($types as $type) {
+if (isset($headers[$type])) {
+$parts[$type][$headers[$type]] = array(
+'headers' => $headers,
+'body' => $body
+);
+break;
+}
+}
+}
+
+//sort by name
+foreach ($types as $type) {
+ksort($parts[$type]);
+}
+
+//generate content
+foreach ($parts as $type => $items) {
+foreach ($items as $name => $item) {
+$args->add($item['headers']);
+$args->body = $item['body'];
+$result .= $html->$type($args);
+}
+}
+
+return $result;
+}
+/*
+
     $a = array(
     'method' => 'methods',
     'property' => 'properties',
@@ -153,18 +199,13 @@ $aboutclass = $this->getaboutclass($headers, $body);
 public function getaboutclass(tpost $post, array $headers, $body) {
 $class = $headers['classname'];
 $lang = tlocal::i('codedoc');
-    $post->title = sprintf($lang->classtitle, $class);
-$post->meta->class = $class;
-    $post->excerpt = $body;
-if (isset($headers['parent'])) $post->meta->parentclass = $headers['parent'];
-
 $args = new targs();
     $args->class = $class;
 $args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']) : $lang->noparent;
     $args->childs = $this->getchilds($class);
     $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
-    $args->interfaces = $this->getclasses($headers['interface']);
-    $args->dependent = $this->getclasses($headers['dependent']);
+    $args->interfaces = $this->getclasses($headers, 'interface');
+    $args->dependent = $this->getclasses($headers, 'dependent');
     $args->body = $body;
  return $this->html->aboutclass($args);
 }
@@ -230,11 +271,13 @@ $db->table = 'postsmeta';
   
   private function getclasses(array $doc, $name) {
     if (empty($doc[$name])) return '';
+return preg_replace('/\w*+/', '[[$0]]', $doc[$name);
+
     $links = array();
     foreach (explode(',', $doc[$name]) as $class) {
       $class = trim($class);
       if ($class == '') continue;;
-      $links[] = $this->getclasslink($class);
+      $links[] = "[[$class]]";
     }
     return implode(', ', $links);
   }
