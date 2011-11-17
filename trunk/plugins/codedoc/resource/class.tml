@@ -3,47 +3,25 @@
 $headers
 </h3>
 
-<table class="classictable">
-	<thead>
-	<tr>
-		<th align="left">$lang.namevalue</th>
-		<th align="left">$lang.value</th>
-</tr>
-	</thead>
-<tbody>
+<dl>
+		<dt>$lang.class</dt>
+		<dd>$class</dd>
 
-<tr>
-		<td  align="left">$lang.class</td>
-		<dd align="left">$class</td>
-</tr>
+		<dt>$lang.parent</dt>
+		<dd>$parent</dd>
 
-<tr>
-		<td  align="left">$lang.parent</td>
-		<dd align="left">$parent</td>
-</tr>
+		<dt>$lang.childs</dt>
+		<dd$childs</dd>
 
-<tr>
-		<td  align="left">$lang.childs</td>
-		<dd align="left">$childs</td>
-</tr>
+		<dt>$lang.source</dt>
+		<dd>$source</dd>
 
-<tr>
-		<td  align="left">$lang.source</td>
-		<dd align="left">$source</td>
-</tr>
+		<dt >$lang.interfaces</dt>
+		<dd>$interfaces</dd>
 
-<tr>
-		<td  align="left">$lang.interfaces</td>
-		<dd align="left">$interfaces</td>
-</tr>
-
-<tr>
-		<td  align="left">$lang.dependent</td>
-		<dd align="left">$dependent</td>
-</tr>
-
-</tbody >
-</table>
+		<dt>$lang.dependent</dt>
+		<dd>$dependent</dd>
+</dl>
 
 <h4 id="description">$lang.description</h4>
 $description
