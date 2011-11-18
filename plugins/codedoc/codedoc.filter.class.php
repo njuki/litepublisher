@@ -145,28 +145,30 @@ break;
 }
 
 //sort by name
+$maxcount = 0;
 foreach ($types as $type) {
 ksort($parts[$type]);
+$maxcount = max($maxcount, count($parts[$type]));
 }
 
 //generate content
+$table = array();
 foreach ($parts as $type => $items) {
 if (count($items) == 0) continue;
+
 $args->itemtype = $lang->$type;
 $args->toctype = $type;
 $itemtoc = '';
-$list = '';
+$result .= $html->items($args);
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->body = $item['body'];
 $args->access = $lang->__isset($item['headers']['access'])$lang->__get($item['headers']['access']) : '';
-$list .= $html->item($args);
-$itemtoc .= $html->toc($args);
+$itemtoc .= $html->itemtoc($args);
+$result .= $html->item($args);
 }
 $args->itemtoc = $itemtoc;
 $toc .= $html->toc($args);
-$args->items = $list;
-$result .= $html->items($args);
 }
 
 return $toc . $result;
