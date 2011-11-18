@@ -1,29 +1,28 @@
-<h3>
-<a href="#description">$lang.description</a>
-$headers
-</h3>
-
-<dl>
-		<dt>$lang.class</dt>
-		<dd>[wiki:$class]</dd>
-
-		<dt>$lang.parent</dt>
-		<dd>$parent</dd>
-
-		<dt>$lang.childs</dt>
-		<dd$childs</dd>
-
-		<dt>$lang.source</dt>
-		<dd>$source</dd>
-
-		<dt >$lang.interfaces</dt>
-		<dd>$interfaces</dd>
-
-		<dt>$lang.dependent</dt>
-		<dd>$dependent</dd>
-</dl>
-
-<h4 id="description">$lang.description</h4>
-$description
-
-$content
+<div>
+<div class='div-table'>
+<table class='classictable'>
+<tbody>
+<tr>
+		<td>$lang.class</td>
+		<td>[wiki:$class]</td>
+</tr><tr>
+		<td>$lang.parent</td>
+		<td>$parent</td>
+</tr><tr>
+		<td>$lang.childs</td>
+		<td>$childs</td>
+</tr><tr>
+		<td>$lang.source</td>
+		<td>$source</td>
+</tr><tr>
+		<td >$lang.interfaces</td>
+		<td>$interfaces</td>
+</tr><tr>
+		<td>$lang.dependent</td>
+		<td>$dependent</td>
+</tr>
+</tbody >
+</table>
+</div>
+<div>$body</div>
+</div>

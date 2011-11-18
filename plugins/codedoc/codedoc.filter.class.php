@@ -153,7 +153,7 @@ ksort($parts[$type]);
 foreach ($parts as $type => $items) {
 if (count($items) == 0) continue;
 $args->itemtype = $lang->$type;
-$args->type = $lang->$type;
+$args->toctype = $type;
 $itemtoc = '';
 $list = '';
 foreach ($items as $name => $item) {
