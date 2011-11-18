@@ -67,6 +67,7 @@ $this->filterclass($post, $lines);
     $post->rss = $post->excerpt;
     $post->description = tcontentfilter::getpostdescription($post->excerpt);
     $post->moretitle = sprintf($lang->moretitle, $post->title);
+
     $cat = tcategories::i();
     $idcat = $cat->add($lang->$type);
     if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
@@ -110,6 +111,7 @@ $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 $result = $this->getaboutclass($headers, $body);
 
+$class =$headers['classname'];
     $post->title = sprintf($lang->classtitle, $class);
 $post->meta->class = $class;
     $post->excerpt = $body;
@@ -149,16 +151,25 @@ ksort($parts[$type]);
 
 //generate content
 foreach ($parts as $type => $items) {
+if (count($items) == 0) continue;
 $args->itemtype = $lang->$type;
+$args->type = $lang->$type;
+$itemtoc = '';
+$list = '';
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->body = $item['body'];
 $args->access = $lang->__isset($item['headers']['access'])$lang->__get($item['headers']['access']) : '';
-$result .= $html->item($args);
+$list .= $html->item($args);
+$itemtoc .= $html->toc($args);
 }
+$args->itemtoc = $itemtoc;
+$toc .= $html->toc($args);
+$args->items = $list;
+$result .= $html->items($args);
 }
 
-return $result;
+return $toc . $result;
 }
 /*
 
