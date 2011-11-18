@@ -116,14 +116,15 @@ $headers = $this->getheaders($lines);
   
   private function filterclass(tpost $post, array &$a) {
     $wiki = twikiwords::i();
-    $headers = '';
-    $content = '';
+    $h = '';
+    $result = '';
     $lang = tlocal::i('codedoc');
     $args = targs::i();
 
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
-$aboutclass = $this->getaboutclass($headers, $body);
+$result = $this->getaboutclass($headers, $body);
+
     $post->title = sprintf($lang->classtitle, $class);
 $post->meta->class = $class;
     $post->excerpt = $body;
@@ -163,6 +164,7 @@ ksort($parts[$type]);
 
 //generate content
 foreach ($parts as $type => $items) {
+$args->itemtype = $lang->$type;
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->body = $item['body'];
