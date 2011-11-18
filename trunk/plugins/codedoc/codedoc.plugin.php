@@ -22,7 +22,7 @@ class tcodedocplugin extends tplugin {
   public function beforefilter($post, $content) {
     $content = trim($content);
     //if (!strbegin($content, '[document]')) return;
-if (!preg_match('/^codedoc\s*=\s*(class|interface|manual)/', $content, $m)) return;
+if (!preg_match('/^\s*codedoc\s*[=:]\s*(class|interface|manual)/', $content, $m)) return;
     $filter = tcodedocfilter::i();
     $result = $filter->convert($post, $content, $m[1]);
     if ($post->id == 0) {
@@ -61,10 +61,6 @@ if (!preg_match('/^codedoc\s*=\s*(class|interface|manual)/', $content, $m)) retu
         return;
       }
     }
-  }
-  
-  public function postdeleted($id) {
-    $this->db->iddelete($id);
   }
   
 }//class

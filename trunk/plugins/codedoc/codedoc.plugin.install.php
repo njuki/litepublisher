@@ -8,22 +8,12 @@
 
 function tcodedocpluginInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
-  $manager = tdbmanager ::i();
-  $manager->CreateTable($self->table, '
-  id int unsigned NOT NULL default 0,
-  parent int unsigned NOT NULL default 0,
-  class varchar(32) NOT NULL,
-  KEY id (id)
-  ');
-  
   $merger = tlocalmerger::i();
   $merger->addplugin(tplugins::getname(__file__));
   
   $posts = tposts::i();
-  $posts->lock();
-  $posts->deleted = $self->postdeleted;
   $posts->added = $self->postadded;
-  $posts->unlock();
+
   
   litepublisher::$classes->lock();
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
@@ -55,7 +45,6 @@ function tcodedocpluginInstall($self) {
 function tcodedocpluginUninstall($self) {
   //die("Warning! You can lost all tickets!");
   litepublisher::$classes->lock();
-  if (litepublisher::$debug) litepublisher::$classes->delete('tpostclasses');
   tposts::unsub($self);
   
   $menus = tmenus::i();
@@ -70,10 +59,9 @@ function tcodedocpluginUninstall($self) {
   $filter = tcontentfilter::i();
   $filter->unbind($self);
   
-  $manager = tdbmanager ::i();
-  $manager->deletetable($self->table);
-  
-  
   $merger = tlocalmerger::i();
   $merger->deleteplugin(tplugins::getname(__file__));
+
+litepublisher::$db->table = 'postsmeta';
+litepublisher::$db->delete("name = 'parentclass'");
 }
