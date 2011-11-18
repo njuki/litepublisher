@@ -6,18 +6,12 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcodedocfilter extends titems {
+class tcodedocfilter extends tevents {
   
   public static function i() {
     return getinstance(__class__);
   }
   
-  protected function create() {
-    $this->dbversion = dbversion;
-    parent::create();
-    $this->table = 'codedoc';
-  }
-
 public function getheaders(array &$a) {
 $result = array();
 while (count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
@@ -40,17 +34,15 @@ while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
 }
   
   public function convert(tpost $post, $s, $type) {
+tlocal::use('codedoc');
     $lang = tlocal::i('codedoc');
     $s = str_replace('->', '-&gt;', $s);
 $s = str_replace(array("\r\n", "\r"), "\n", $s);
+$s = $this->replace_props($s);
+
 $lines = explode("\n", $s);
 $headers = $this->getheaders($lines);
 
-    $result = array(
-    'parent' => 0,
-    'class' => $doc['name']
-    );
-    
     if ($post->id == 0) {
       $post->title = $doc['name'];
       $linkgen = tlinkgenerator::i();
@@ -59,7 +51,7 @@ $headers = $this->getheaders($lines);
     
     switch ($type) {
       case 'class':
-      $result['parent'] = $this->filterclass($post, $lines);
+$this->filterclass($post, $lines);
       break;
       
       case 'interface':
@@ -75,37 +67,21 @@ $headers = $this->getheaders($lines);
     $post->rss = $post->excerpt;
     $post->description = tcontentfilter::getpostdescription($post->excerpt);
     $post->moretitle = sprintf($lang->moretitle, $post->title);
-    /*
-    /$cat = tcategories::i();
-    $idcat = $cat->add($lang->documentation);
+    $cat = tcategories::i();
+    $idcat = $cat->add($lang->$type);
     if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
-    */
-    return $result;
   }
 
-  private function getdescription(tpost $post, $s) {
-    $wiki = twikiwords::i();
-    $wiki->createwords($post, $s);
-    $s = $this->classtowiki($s);
-    $wiki->replacewords($s);
-    $s = str_replace('->', '-&gt;', $s);
-    $filter = tcontentfilter::i();
-    return $filter->filter($s);
-  }
-  
-  private function classtowiki($s) {
+  public function replace_props($s) {
     if (preg_match_all('/\[\[(\w*?)::(.*?)\]\]/', $s, $m, PREG_SET_ORDER)) {
-      $wiki = twikiwords::i();
       foreach ($m as $item) {
-        $class = trim($item[1]);
-        $word = trim($item[2]);
-        $link = $word;
-        if ($idpost = $this->IndexOf('class', $class)) {
-          $post = tpost::i();
-          if ($id =$wiki->add($word, 0)) {
-            $link = sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $id);
+        $class = $item[1];
+        $prop = $item[2];
+        if ($idpost = $this->find_class($class)) {
+          $post = tpost::i($idpost);
+            $link = sprintf('<a href="%1$s#itemdoc-%2$s" title="%2$s">%2$s</a>', $post->link, $prop);
           } else {
-            $link = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $word, $post->id);
+            $link = $prop;
           }
         }
         $s = str_replace($item[0], $link, $s);
@@ -113,6 +89,15 @@ $headers = $this->getheaders($lines);
     }
     return $s;
   }
+
+public function find_class($class) {
+//check cache array
+if (isset($this->classes[$class])) return $this->classes[$class];
+litepublisher::$db->table = 'postsmeta';
+$result = litepublisher::$db->findid("name = 'class' and value = " . dbquote($class));
+$this->classes[$class] = $result;
+return $result;
+}
   
   private function filterclass(tpost $post, array &$a) {
     $wiki = twikiwords::i();
