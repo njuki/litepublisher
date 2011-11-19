@@ -62,5 +62,29 @@ if (!preg_match('/^\s*codedoc\s*[=:]\s*(class|interface|manual)/', $content, $m)
       }
     }
   }
-  
+
+  public function beforeparse(tthemeparser $parser, &$s) {
+    if (!isset($parser->theme->templates['content.codedoc'])) {
+tlocal::usefile('codedoc');
+      $s .= $parser->theme->replacelang(file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR . 'codedoc.tml'), tlocal::i('codedoc'));
+    }
+
+    if (!isset($parser->paths['content.codedoc']))  {
+      $parser->paths['content.codedoc'] = array(
+      'tag' => '$codedoc',
+      'replace' => ''
+      );
+      
+      $parser->paths['content.codedoc.prices' => array(
+      'tag' => '$codedoc.prices',
+      'replace' => '$post.prices'
+      );
+      
+      $parser->paths['content.codedoc.prices' => array(
+      'tag' => '$codedoc.prices',
+      'replace' => '$post.prices'
+      );
+}
+}
+
 }//class
