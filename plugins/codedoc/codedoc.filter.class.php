@@ -160,14 +160,15 @@ $tablehead = ''';
 $rows = array_fill(0, $maxcount, '');
 foreach ($parts as $type => $items) {
 $i = 0;
-$args->itemtype = $lang->$type;
 $args->toctype = $type;
+$args->tocname = $lang->{$type . 's'};
 $tablehead .= $html->tablehead($args);
 $result .= $html->items($args);
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->body = $item['body'];
-$args->access = $lang->__isset($item['headers']['access'])$lang->__get($item['headers']['access']) : '';
+$access = isset($item['headers']['access']) ? $item['headers']['access'] : 'public';
+$args->access = isset($lang->$access) ? $lang->$access : $access;
 $row[$i++] .= $html->itemtoc($args);
 $result .= $html->item($args);
 }
