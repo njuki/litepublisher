@@ -11,6 +11,11 @@ class tcodedocfilter extends tevents {
   public static function i() {
     return getinstance(__class__);
   }
+
+public function html($key, targs $args) {
+$theme = ttheme::instance();
+return $theme->parsearg(tlocal::get('htmlcodedoc', $key], $args);
+}
   
 public function getheaders(array &$a) {
 $result = array();
@@ -169,15 +174,15 @@ $args->add($item['headers']);
 $args->body = $item['body'];
 $access = isset($item['headers']['access']) ? $item['headers']['access'] : 'public';
 $args->access = isset($lang->$access) ? $lang->$access : $access;
-$row[$i++] .= $html->itemtoc($args);
-$result .= $html->item($args);
+$row[$i++] .= $this->html('itemtoc', $args);
+$result .= $this->html('item',  $args);
 }
 while ($i < $maxcount) $rows[$i++] .= '<td></td>';
 }
 
 $args->tablehead = $tablehead;
 $args->itemtoc = implode('</tr><tr>', $rows);
-$toc .= $html->toc($args);
+$toc .= $this->html('toc', $args);
 
 return $toc . $result;
 }
