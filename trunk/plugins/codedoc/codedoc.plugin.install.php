@@ -8,9 +8,19 @@
 
 function tcodedocpluginInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
+$name = basename(dirname(__file__));
+$language = litepublisher::$options->language;
   $merger = tlocalmerger::i();
-  $merger->addplugin(tplugins::getname(__file__));
+  //$merger->addplugin(tplugins::getname(__file__));
+  $merger->add('codedoc', "plugins/$name/resource/$language.ini");
+  $merger->add('codedoc', "plugins/$name/resource/$language.ini");
   
+  $parser = tthemeparser::i();
+$parser->lock();
+$parser->beforeparse = $self->beforeparse;
+  $parser->parsed = $self->themeparsed;
+$parser->unlock();
+
   $posts = tposts::i();
   $posts->added = $self->postadded;
 
@@ -60,7 +70,12 @@ function tcodedocpluginUninstall($self) {
   $filter->unbind($self);
   
   $merger = tlocalmerger::i();
-  $merger->deleteplugin(tplugins::getname(__file__));
+  //$merger->deleteplugin(tplugins::getname(__file__));
+$merger->delete('codedoc');
+
+  $parser = tthemeparser::i();
+  $parser->unbind($self);
+
 
 litepublisher::$db->table = 'postsmeta';
 litepublisher::$db->delete("name = 'parentclass'");

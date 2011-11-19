@@ -52,7 +52,7 @@ item = "<div>
 itemtoc = "<td><a href="#itemdoc-$name'>$name</a></td>"
 toc = "<h4 id='toptoc'>$lang.topic</h4>
 <div class='div-table'>
-<table class='classictable'>
+<table class='classictable' rules='cols'>
 	<thead>
 	<tr>
 $tablehead
