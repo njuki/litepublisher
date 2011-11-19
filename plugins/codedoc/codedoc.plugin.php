@@ -74,16 +74,21 @@ tlocal::usefile('codedoc');
       'tag' => '$codedoc',
       'replace' => ''
       );
-      
-      $parser->paths['content.codedoc.prices' => array(
-      'tag' => '$codedoc.prices',
-      'replace' => '$post.prices'
+
+foreach(array('class', 'item', 'toc', 'items', 'interface') as $name {
+      $parser->paths["content.codedoc.$name"] = array(
+      'tag' => '$' . $name,
+      'replace' => ''
       );
+}
       
-      $parser->paths['content.codedoc.prices' => array(
-      'tag' => '$codedoc.prices',
-      'replace' => '$post.prices'
+foreach(array('tablehead', 'itemtoc') as $name {
+      $parser->paths["content.codedoc.$name"] = array(
+      'tag' => '$' . $name,
+      'replace' => '$' . $name
       );
+}
+
 }
 }
 
