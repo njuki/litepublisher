@@ -147,29 +147,36 @@ break;
 //sort by name
 $maxcount = 0;
 foreach ($types as $type) {
+if (count($parts[$type]) > 0) {
 ksort($parts[$type]);
 $maxcount = max($maxcount, count($parts[$type]));
+} else {
+unset($parts($type);
+}
 }
 
 //generate content
-$table = array();
+$tablehead = ''';
+$rows = array_fill(0, $maxcount, '');
 foreach ($parts as $type => $items) {
-if (count($items) == 0) continue;
-
+$i = 0;
 $args->itemtype = $lang->$type;
 $args->toctype = $type;
-$itemtoc = '';
+$tablehead .= $html->tablehead($args);
 $result .= $html->items($args);
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->body = $item['body'];
 $args->access = $lang->__isset($item['headers']['access'])$lang->__get($item['headers']['access']) : '';
-$itemtoc .= $html->itemtoc($args);
+$row[$i++] .= $html->itemtoc($args);
 $result .= $html->item($args);
 }
-$args->itemtoc = $itemtoc;
-$toc .= $html->toc($args);
+while ($i < $maxcount) $rows[$i++] .= '<td></td>';
 }
+
+$args->tablehead = $tablehead;
+$args->tablebody = implode('</tr><tr>', $rows);
+$toc .= $html->toc($args);
 
 return $toc . $result;
 }
