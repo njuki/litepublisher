@@ -176,7 +176,7 @@ while ($i < $maxcount) $rows[$i++] .= '<td></td>';
 }
 
 $args->tablehead = $tablehead;
-$args->tablebody = implode('</tr><tr>', $rows);
+$args->itemtoc = implode('</tr><tr>', $rows);
 $toc .= $html->toc($args);
 
 return $toc . $result;
