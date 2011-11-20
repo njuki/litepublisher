@@ -192,6 +192,7 @@ class tposts extends titems {
       chmod($dir, 0777);
       $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
     }
+$post->onid();
     $this->lock();
     $this->updated($post);
     $this->cointerface('add', $post);
