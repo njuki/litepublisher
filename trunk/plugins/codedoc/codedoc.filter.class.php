@@ -217,34 +217,6 @@ $args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']
  return $this->html->aboutclass($args);
 }
   
-  private function convertitems(tpost $post, array &$ini, $name, $names) {
-    if (!isset($ini[$name])) return '';
-    $lang = tlocal::i('codedoc');
-    $headers = $lang->$names . ': ';
-    $wiki = twikiwords::i();
-    $items = &$ini[$name];
-    if (isset($items[0])) {
-      foreach ($items as $i => $item) $list[$i] = $item['name'];
-      asort($list);
-      
-      foreach ($list as $i => $itemname) {
-        $item = $items[$i];
-        $headers .= sprintf('<a href="#wikiword-%1$d" title="%2$s">%2$s</a> ', $wiki->add($itemname, $post->id), $itemname);
-        $content .= $this->convertitem($post, $item, $name);
-      }
-    } else {
-      $headers .= sprintf('<a href="#wikiword-%1$d" title="%2$s">%2$s</a> ', $wiki->add($items['name'], $post->id), $items['name']);
-      $content = $this->convertitem($post, $items, $name);
-    }
-    
-    if ($content == '') return '';
-    $args = targs::i();
-    $args->names = $names;
-    $args->headers = $headers;
-    $args->items = $content;
-    return $this->html->items($args);
-  }
-  
   public function getchilds($idpost) {
     IF ($idpost == 0) return '__childs__';
 $db = litepublisher::$db;
