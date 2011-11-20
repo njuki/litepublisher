@@ -39,7 +39,15 @@ class twikiwords extends titems {
     
     return parent::__get($name);
   }
-  
+
+public function getpost($word) {
+    if ($id =$this->add($word, 0)) {
+    $items = $this->itemsposts->getposts($id);
+if (count($items) > 0) return $items[0];
+    }
+    return false;
+  }
+
   public function getlink($id) {
     $item = $this->getitem($id);
     $word = $item['word'];
@@ -116,17 +124,20 @@ class twikiwords extends titems {
     }
     return $word;
   }
+
+public function fixpost(tpost $post) {
+
+}
   
   public function postadded($idpost) {
     if (count($this->fix) == 0) return;
-    $this->lock();
     foreach ($this->fix as $id => $post) {
       if ($idpost == $post->id) {
         $this->itemsposts->add($idpost, $id);
         unset($this->fix[$id]);
       }
     }
-    $this->unlock();
+
     $posts = tposts::i();
     $posts->addrevision();
   }
@@ -146,16 +157,17 @@ class twikiwords extends titems {
   public function createwords($post, &$content) {
     $result = array();
     if (preg_match_all('/\[wiki:(.*?)\]/i', $content, $m, PREG_SET_ORDER)) {
-      $this->lock();
       foreach ($m as $item) {
         $word = $item[1];
         if ($id = $this->add($word, $post->id)) {
           $result[] = $id;
-          if ($post->id == 0) $this->fix[$id] = $post;
+          if ($post->id == 0) {
+$this->fix[$id] = $post;
+$post->onfix = $this->fixpost;
+}
           $content = str_replace($item[0], "<span class=\"wiki\" id=\"wikiword-$id\">$word</span>", $content);
         }
       }
-      $this->unlock();
     }
     return $result;
   }

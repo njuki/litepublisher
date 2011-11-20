@@ -9,6 +9,7 @@
 class tpost extends titem implements  itemplate {
   public $childdata;
   public $childtable;
+public $onid;
   private $aprev;
   private $anext;
   private $ameta;
@@ -208,6 +209,19 @@ class tpost extends titem implements  itemplate {
     }
     return $id;
   }
+
+public function onid() {
+if (isset($this->onid) && count($this->onid) > 0) {
+foreach ($this->onid as  $call) {
+try {
+if (is_callable($call)) call_user_func ($call, $this);
+    } catch (Exception $e) {
+litepublisher::$options->handexception($e);
+}
+}
+unset($this->onid);
+}
+}
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();

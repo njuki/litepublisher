@@ -6,40 +6,14 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcodedocfilter extends tevents {
+class tcodedocfilter extends tplugin {
   
   public static function i() {
     return getinstance(__class__);
   }
 
-public function html($key, targs $args) {
-$theme = ttheme::instance();
-return $theme->parsearg(tlocal::get('htmlcodedoc', $key], $args);
-}
-  
-public function getheaders(array &$a) {
-$result = array();
-while (count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
-$result[$m[1]] = $m[2];
-  array_splice($a, 0, 1);
-}
-return $result;
-}
-
-public function getbody(array &$a) {
-$result = '';
-while (count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
-$result .= array_shift($a) . "\n";
-}
-return trim($result);
-}
-
-public function skip(array &$a) {
-while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
-}
-  
-  public function convert(tpost $post, $s, $type) {
-tlocal::use('codedoc');
+  public function filter(tpost $post, $s, $type) {
+tlocal::usefile('codedoc');
     $lang = tlocal::i('codedoc');
     $s = str_replace('->', '-&gt;', $s);
 $s = str_replace(array("\r\n", "\r"), "\n", $s);
@@ -77,6 +51,33 @@ $this->filterclass($post, $lines);
     $idcat = $cat->add($lang->$type);
     if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
   }
+
+public function html($key, targs $args) {
+$theme = ttheme::instance();
+return $theme->parsearg(tlocal::get('htmlcodedoc', $key], $args);
+}
+  
+public function getheaders(array &$a) {
+$result = array();
+while (count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+$result[$m[1]] = $m[2];
+  array_splice($a, 0, 1);
+}
+return $result;
+}
+
+public function getbody(array &$a) {
+$result = '';
+while (count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+$result .= array_shift($a) . "\n";
+}
+return trim($result);
+}
+
+public function skip(array &$a) {
+while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
+}
+  
 
   public function replace_props($s) {
     if (preg_match_all('/\[\[(\w*?)::(.*?)\]\]/', $s, $m, PREG_SET_ORDER)) {
@@ -302,18 +303,6 @@ return preg_replace('/\w*+/', '[[$0]]', $doc[$name);
     }
     
     $post->filtered = $content;
-  }
-  
-  public static function getresource() {
-    return dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR;
-  }
-  
-  public function gethtml($name = '') {
-    if ($name == '') $name = 'codedoc';
-    $result = tadminhtml ::i();
-    $result->section = $name;
-    $lang = tlocal::i($name);
-    return $result;
   }
   
 }//class
