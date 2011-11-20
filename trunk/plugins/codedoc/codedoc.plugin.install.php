@@ -18,24 +18,12 @@ $merger->lock();
 $merger->unlock();
   $merger->add('codedoc', "plugins/$name/resource/$language.ini");
 
-  $manager = tdbmanager ::i();
-  $manager->CreateTable($self->table, '
-  id int unsigned NOT NULL default 0,
-  parent int unsigned NOT NULL default 0,
-  class varchar(32) NOT NULL,
-depended text not null,
-used text not null,
-interfaces text not null,
-  KEY id (id)
-  ');
-  
   $posts = tposts::i();
   $posts->added = $self->postadded;
 
-  
-  litepublisher::$classes->lock();
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
-  litepublisher::$classes->Add('tcodedocmenu', 'codedoc.menu.class.php', basename(dirname(__file__) ));
+  litepublisher::$classes->Add('tcodedocclasses', 'codedoc.classes.class.php', basename(dirname(__file__) ));
+
   
   $filter = tcontentfilter::i();
   $filter->lock();
@@ -46,14 +34,6 @@ interfaces text not null,
   $filter->unlock();
   
   $about = tplugins::localabout(dirname(__file__));
-  $menu = tcodedocmenu::i();
-  $menu->url = '/doc/';
-  $menu->title = $about['menutitle'];
-  
-  $menus = tmenus::i();
-  $menus->add($menu);
-  
-  litepublisher::$classes->unlock();
   
   $linkgen = tlinkgenerator::i();
   $linkgen->data['codedoc'] = '/doc/[title].htm';
@@ -62,17 +42,11 @@ interfaces text not null,
 
 function tcodedocpluginUninstall($self) {
   //die("Warning! You can lost all tickets!");
-  litepublisher::$classes->lock();
   tposts::unsub($self);
   
-  $menus = tmenus::i();
-  $menus->lock();
-  $menus->deleteurl('/doc/');
-  $menus->unlock();
-  
   litepublisher::$classes->delete('tcodedocfilter');
-  litepublisher::$classes->delete('tcodedocmenu');
-  litepublisher::$classes->unlock();
+  litepublisher::$classes->delete('tcodedocclasses');
+
   
   $filter = tcontentfilter::i();
   $filter->unbind($self);

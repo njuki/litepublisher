@@ -18,49 +18,40 @@ parent::create();
 $this->basename = 'codedoc.classes';
 }
 
-public function add($idpost, $classname, $parentclass, $depended, $interfaces) {
-$this->items[$idpost] = array(
-'parent' => $this->findpost($parentclass),
-'childs' => $this->findchilds($idpost),
-'depended' => $this->findclasses($depended),
-'used' =>  $this->finduse($idpost, 'depended'),
-'interfaces' => $this->findclasses($interfaces)
+public function add($classname, $parent, $depended, $interfaces) {
+$this->items[$classname] = array(
+'parent' => $parent,
+'depended' => $this->getclasses($depended),
+'interfaces' => $this->getclasses($interfaces)
 );
 
 $this->save();
 }
 
-public function findchilds($id) {
+public function getchilds($parent) {
 $result = array();
-foreach ($this->items as $idpost => $item) {
-if ($id == $item['parent']) $result[] $idpost;
+foreach ($this->items as $class => $item) {
+if ($parent == $item['parent']) $result[] "[[$class]]";
 }
-return $result;
-}
-
-public function findpost($classname) {
-foreach ($this->items as $idpost => $item) {
-if ($classname == $item['classname']) return $idpost;
-}
-return 0;
+return implode(', ', $result);
 }
 
-public function findclasses($s) {
+public function getclasses($s) {
 $result = array();
 foreach (explode(',', $s) as $classname) {
 $classname = trim($classname);
 if ($classname == '') continue;
-if ($idpost = $this->findclass($classname)) $result[] = $idpost;
+$result[] = $classname;
 }
 return array_unique($result);
 }
 
-public function finduse($id, $key) {
+public function getuse($what, $where) {
 $result = array();
-foreach ($this->items as $idpost => $item) {
-if (in_array($id, $item[$key])) $result[] = $idpost;
+foreach ($this->items as $class => $item) {
+if (in_array($what, $item[$key])) $result[] = "[[$class]]";
 }
-return $result;
+return implode(', ', $result);
 }
 
 }//class
