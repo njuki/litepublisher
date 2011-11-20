@@ -1,7 +1,7 @@
-content.codedoc = (
-$class = (<div>
-<div class="div-table">
-<table class="classictable">
+[htmlcodedoc]
+class = "<div>
+<div class='div-table'>
+<table class='classictable'>
 <tbody>
 <tr>
 		<td>$lang.class</td>
@@ -26,16 +26,15 @@ $class = (<div>
 </table>
 </div>
 <div>$body</div>
-</div>
-)
+</div>"
 
-$item = (<div>
-<div class="div-table">
-<table class="classictable">
+item = "<div>
+<div class='div-table'>
+<table class='classictable'>
 <tbody>
 <tr>
 <td>$itemname</td>
- <td id="itemdoc-$name">[wiki:$name]</td>
+ <td id='itemdoc-$name'>[wiki:$name]</td>
 </tr><tr>
 		<td>$lang.type</td>
 		<td>$type</td>
@@ -47,32 +46,33 @@ $item = (<div>
 </table>
 </div>
 <div>$body</div>
-<h5><a href="#toptoc">$lang.toptoc</a></h5>
-</div>
-)
+<h5><a href='#toptoc'>$lang.toptoc</a></h5>
+</div>"
 
-$toc = (<h4 id="toptoc">$lang.topic</h4>
-<div class="div-table">
-<table class="classictable" rules="cols">
+toc = "<h4 id='toptoc'>$lang.topic</h4>
+<div class='div-table'>
+<table class='classictable' rules='cols'>
 	<thead>
 	<tr>
-$tablehead = (<th><a href="#tocitem-$toctype">$tocname</a></th>)
+$tablehead
 		</tr>
 	</thead>
 <tbody>
 <tr>
-$itemtoc = (<td><a href="#itemdoc-$name">$name</a></td>)
+$itemtoc
 </tr>
 </tbody >
 </table>
-</div>
-)
+</div>"
 
-$items = (<h4 id="tocitem-$toctype">$tocname</h4>)
+tablehead = "<th><a href='#tocitem-$toctype'>$tocname</a></th>"
+itemtoc = "<td><a href='#itemdoc-$name'>$name</a></td>"
 
-$interface = (<div>
-<div class="div-table">
-<table class="classictable">
+items = "<h4 id='tocitem-$toctype'>$tocname</h4>"
+
+interface = "<div>
+<div class='div-table'>
+<table class='classictable'>
 <tbody>
 <tr>
 		<td>$lang.interface</td>
@@ -88,5 +88,5 @@ $interface = (<div>
 </table>
 </div>
 <div>$body</div>
-</div>)
-)
+</div>"
+
