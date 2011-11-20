@@ -63,33 +63,3 @@ if (!preg_match('/^\s*codedoc\s*[=:]\s*(class|interface|manual)/', $content, $m)
     }
   }
 
-  public function beforeparse(tthemeparser $parser, &$s) {
-    if (!isset($parser->theme->templates['content.codedoc'])) {
-tlocal::usefile('codedoc');
-      $s .= $parser->theme->replacelang(file_get_contents(dirname(__file__) . DIRECTORY_SEPARATOR . 'resource' . DIRECTORY_SEPARATOR . 'codedoc.tml'), tlocal::i('codedoc'));
-    }
-
-    if (!isset($parser->paths['content.codedoc']))  {
-      $parser->paths['content.codedoc'] = array(
-      'tag' => '$codedoc',
-      'replace' => ''
-      );
-
-foreach(array('class', 'item', 'toc', 'items', 'interface') as $name {
-      $parser->paths["content.codedoc.$name"] = array(
-      'tag' => '$' . $name,
-      'replace' => ''
-      );
-}
-      
-foreach(array('tablehead', 'itemtoc') as $name {
-      $parser->paths["content.codedoc.$name"] = array(
-      'tag' => '$' . $name,
-      'replace' => '$' . $name
-      );
-}
-
-}
-}
-
-}//class
