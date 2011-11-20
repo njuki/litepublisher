@@ -11,16 +11,24 @@ function tcodedocpluginInstall($self) {
 $name = basename(dirname(__file__));
 $language = litepublisher::$options->language;
   $merger = tlocalmerger::i();
+$merger->lock();
   //$merger->addplugin(tplugins::getname(__file__));
   $merger->add('codedoc', "plugins/$name/resource/$language.ini");
+  $merger->add('codedoc', "plugins/$name/resource/html.ini");
+$merger->unlock();
   $merger->add('codedoc', "plugins/$name/resource/$language.ini");
-  
-  $parser = tthemeparser::i();
-$parser->lock();
-$parser->beforeparse = $self->beforeparse;
-  $parser->parsed = $self->themeparsed;
-$parser->unlock();
 
+  $manager = tdbmanager ::i();
+  $manager->CreateTable($self->table, '
+  id int unsigned NOT NULL default 0,
+  parent int unsigned NOT NULL default 0,
+  class varchar(32) NOT NULL,
+depended text not null,
+used text not null,
+interfaces text not null,
+  KEY id (id)
+  ');
+  
   $posts = tposts::i();
   $posts->added = $self->postadded;
 
@@ -73,9 +81,8 @@ function tcodedocpluginUninstall($self) {
   //$merger->deleteplugin(tplugins::getname(__file__));
 $merger->delete('codedoc');
 
-  $parser = tthemeparser::i();
-  $parser->unbind($self);
-
+  $manager = tdbmanager ::i();
+  $manager->deletetable($self->table);
 
 litepublisher::$db->table = 'postsmeta';
 litepublisher::$db->delete("name = 'parentclass'");
