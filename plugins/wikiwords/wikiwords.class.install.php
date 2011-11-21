@@ -23,11 +23,8 @@ function twikiwordsInstall($self) {
   $filter->unlock();
   
   $posts = tposts::i();
-  $posts->lock();
-  $posts->added = $self->postadded;
   $posts->deleted = $self->postdeleted;
-  $posts->unlock();
-  
+
   litepublisher::$classes->classes['wikiwords'] = get_class($self);
   litepublisher::$classes->save();
 }

@@ -48,8 +48,8 @@ class tcontentfilter extends tevents {
   }
   
   public function filterpost(tpost $post, $s) {
-    $moretag = ' <!--more-->';
     if ($this->callevent('beforecontent', array($post, &$s))) return;
+    $moretag = ' <!--more-->';
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
     preg_match('/\[cut(.*?)?\]/', $s, $matches)

@@ -88,8 +88,7 @@ if (count($items) > 0) return $items[0];
     if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
       $this->itemsposts->add($idpost, $id);
       if (isset($this->links[$word])) unset($this->links[$word]);
-      $posts = tposts::i();
-      $posts->addrevision();
+tposts::i()->addrevision();
     }
     
     return $id;
@@ -126,26 +125,20 @@ if (count($items) > 0) return $items[0];
   }
 
 public function fixpost(tpost $post) {
-
-}
-  
-  public function postadded($idpost) {
     if (count($this->fix) == 0) return;
-    foreach ($this->fix as $id => $post) {
-      if ($idpost == $post->id) {
-        $this->itemsposts->add($idpost, $id);
+    foreach ($this->fix as $id => $wikipost) {
+      if ($post == $wikipost) {
+        $this->itemsposts->add($post->id, $id);
         unset($this->fix[$id]);
       }
     }
 
-    $posts = tposts::i();
-    $posts->addrevision();
+tposts::i()->addrevision();
   }
   
   public function postdeleted($idpost) {
     if (count($this->itemsposts->deletepost($idpost)) > 0) {
-      $posts = tposts::i();
-      $posts->addrevision();
+tposts::i()->addrevision();
     }
   }
   

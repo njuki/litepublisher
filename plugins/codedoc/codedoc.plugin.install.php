@@ -12,23 +12,18 @@ $name = basename(dirname(__file__));
 $language = litepublisher::$options->language;
   $merger = tlocalmerger::i();
 $merger->lock();
-  //$merger->addplugin(tplugins::getname(__file__));
   $merger->add('codedoc', "plugins/$name/resource/$language.ini");
   $merger->add('codedoc', "plugins/$name/resource/html.ini");
 $merger->unlock();
-  $merger->add('codedoc', "plugins/$name/resource/$language.ini");
-
-  $posts = tposts::i();
-  $posts->added = $self->postadded;
 
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
-  litepublisher::$classes->Add('tcodedocclasses', 'codedoc.classes.class.php', basename(dirname(__file__) ));
+  //litepublisher::$classes->Add('tcodedocclasses', 'codedoc.classes.class.php', basename(dirname(__file__) ));
 
-  
-  $filter = tcontentfilter::i();
+    $filter = tcontentfilter::i();
   $filter->lock();
-  $filter->beforecontent = $self->beforefilter;
+  $filter->beforecontent = $self->filterpost;
   $filter->seteventorder('beforecontent', $self, 0);
+
   $plugins = tplugins::i();
   if (!isset($plugins->items['wikiwords'])) $plugins->add('wikiwords');
   $filter->unlock();
@@ -42,22 +37,15 @@ $merger->unlock();
 
 function tcodedocpluginUninstall($self) {
   //die("Warning! You can lost all tickets!");
-  tposts::unsub($self);
-  
   litepublisher::$classes->delete('tcodedocfilter');
-  litepublisher::$classes->delete('tcodedocclasses');
+  //litepublisher::$classes->delete('tcodedocclasses');
 
-  
-  $filter = tcontentfilter::i();
+    $filter = tcontentfilter::i();
   $filter->unbind($self);
   
   $merger = tlocalmerger::i();
-  //$merger->deleteplugin(tplugins::getname(__file__));
 $merger->delete('codedoc');
 
-  $manager = tdbmanager ::i();
-  $manager->deletetable($self->table);
-
 litepublisher::$db->table = 'postsmeta';
-litepublisher::$db->delete("name = 'parentclass'");
+litepublisher::$db->delete("name = 'parentclass' or name = 'classname'");
 }
