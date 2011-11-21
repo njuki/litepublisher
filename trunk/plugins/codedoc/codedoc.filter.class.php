@@ -15,19 +15,15 @@ class tcodedocfilter extends tplugin {
   public function filter(tpost $post, $s, $type) {
 tlocal::usefile('codedoc');
     $lang = tlocal::i('codedoc');
+
+//prepare content
     $s = str_replace('->', '-&gt;', $s);
 $s = str_replace(array("\r\n", "\r"), "\n", $s);
+$s = trim($s);
 $s = $this->replace_props($s);
 
 $lines = explode("\n", $s);
-$headers = $this->getheaders($lines);
 
-    if ($post->id == 0) {
-      $post->title = $doc['name'];
-      $linkgen = tlinkgenerator::i();
-      $post->url = $linkgen->addurl($post, 'codedoc');
-    }
-    
     switch ($type) {
       case 'class':
 $this->filterclass($post, $lines);
@@ -35,11 +31,6 @@ $this->filterclass($post, $lines);
       
       case 'interface':
       $this->getinterface($post, $ini);
-      break;
-      
-      case 'manual':
-      $result['class'] = '';
-      $this->getmanual($post, $ini);
       break;
     }
     
@@ -106,22 +97,23 @@ $this->classes[$class] = $result;
 return $result;
 }
   
-  private function filterclass(tpost $post, array &$a) {
-    $wiki = twikiwords::i();
-    $h = '';
-    $result = '';
+  public function filterclass(tpost $post, array &$a) {
     $lang = tlocal::i('codedoc');
-    $args = targs::i();
+    $args = new targs();
 
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 $result = $this->getaboutclass($headers, $body);
-
 $class =$headers['classname'];
-    $post->title = sprintf($lang->classtitle, $class);
-$post->meta->class = $class;
-    $post->excerpt = $body;
+$post->meta->classname = $class;
 if (isset($headers['parent'])) $post->meta->parentclass = $headers['parent'];
+    $post->excerpt = tcontentfilter::i()->filter($body);
+$post->rss = $post->excerpt;
+    if ($post->id == 0) {
+    $post->title = sprintf($lang->classtitle, $class);
+      $linkgen = tlinkgenerator::i();
+      $post->url = $linkgen->addurl($post, 'codedoc');
+}
 
 $parts = array(
 'method' => array(),
@@ -131,7 +123,7 @@ $parts = array(
 
 $types = array_keys($parts);
 
-//parse and collect parts
+//parse content and collect parts
 while (count($a) >0) {
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
@@ -141,7 +133,8 @@ unset($headers['prop'];
 }
 foreach ($types as $type) {
 if (isset($headers[$type])) {
-$parts[$type][$headers[$type]] = array(
+$name = $headers[$type];
+$parts[$type][$name] = array(
 'headers' => $headers,
 'body' => $body
 );
@@ -157,7 +150,7 @@ if (count($parts[$type]) > 0) {
 ksort($parts[$type]);
 $maxcount = max($maxcount, count($parts[$type]));
 } else {
-unset($parts($type);
+unset($parts[$type]);
 }
 }
 
@@ -187,22 +180,6 @@ $toc .= $this->html('toc', $args);
 
 return $toc . $result;
 }
-/*
-
-    foreach ($a as $name => $names) {
-    if (!empty($doc['example'])) {
-      $headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
-      $content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
-      $content .= highlight_string($doc['example'], true);
-    }
-    
-    $args->headers = $headers;
-    $args->content = $content;
-    $tml = file_get_contents(self::getresource() . 'class.tml');
-    $theme = ttheme::i();
-    $post->filtered = $theme->parsearg($tml, $args);
-    return $idparent;
-  }
 
 public function getaboutclass(tpost $post, array $headers, $body) {
 $class = $headers['classname'];
@@ -238,71 +215,6 @@ $db->table = 'postsmeta';
   private function getclasses(array $doc, $name) {
     if (empty($doc[$name])) return '';
 return preg_replace('/\w*+/', '[[$0]]', $doc[$name);
+}
 
-    $links = array();
-    foreach (explode(',', $doc[$name]) as $class) {
-      $class = trim($class);
-      if ($class == '') continue;;
-      $links[] = "[[$class]]";
-    }
-    return implode(', ', $links);
-  }
-  
-  private function getclasslink($class) {
-    //var_dump($this->db->res2assoc($this->db->query("select * from $this->thistable")));
-    if ($idpost = $this->db->findid('class = ' .dbquote($class))) {
-      $post = tpost::i($idpost);
-      $wiki = twikiwords::i();
-      if ($id = $wiki->IndexOf('word', $class)) {
-        return sprintf('<a href="%1$s#wikiword-%3$d" title="%2$s">%2$s</a>', $post->link, $class, $id);
-      } else {
-        return sprintf('<a href="%1$s" title="%2$s">%2$s</a>', $post->link, $class);
-      }
-    }
-    return $class;
-  }
-  
-  private function getinterface(tpost $post, array &$ini) {
-    $doc = $ini['document'];
-    $wiki = twikiwords::i();
-    $lang = tlocal::i('codedoc');
-    $args = targs::i();
-    $class = $doc['name'];
-    $post->title = sprintf($lang->interfacetitle, $class);
-    $id = $wiki->add($class, $post->id);
-    $args->class = sprintf('<a name="wikiword-%d"></a><strong>%s</strong>', $id, $class);
-    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
-    $content = $this->getdescription($post, $doc['description']);
-    $post->excerpt = $content;
-    $content .= $this->convertitems($post, $ini, 'method', 'methods');
-    if (!empty($doc['example'])) {
-      $headers .= sprintf(' <a href="#example">%s</a>', $lang->example);
-      $content .= sprintf('<h2><a name="example"></a>%s</h2>', $lang->example);
-      $content .= highlight_string($doc['example'], true);
-    }
-    
-    $args->headers = $headers;
-    $args->content = $content;
-    $post->filtered = $this->html->interface($args);
-  }
-  
-  private function getmanual(tpost $post, array &$ini) {
-    $doc = $ini['document'];
-    $wiki = twikiwords::i();
-    $lang = tlocal::i('codedoc');
-    $post->title = $doc['name'];
-    
-    $content = $this->getdescription($post, $doc['description']);
-    $post->excerpt = $content;
-    $post->excerpt = tcontentfilter::GetExcerpt($s, 250);
-    
-    if (!empty($doc['example'])) {
-      $content = sprintf('<h2><a href="#example">%2$s</a></h2>%1$s<h2><a name="example"></a>%2$s</h2>',
-      $content, $lang->example);
-      $content .= highlight_string($doc['example'], true);
-    }
-    
-    $post->filtered = $content;
-  }
-  
 }//class

@@ -21,4 +21,8 @@ $backuper->save();
 
 //refilter comments
 if (dbversion) refilter_comments();
+
+if (litepublisher::$classes->exists('twikiwords')) {
+tposts::i()->delete_event_class('added', 'twikiwords');
+}
 }
