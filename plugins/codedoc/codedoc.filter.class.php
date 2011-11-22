@@ -1,4 +1,4 @@
-?php
+<?php
 /**
 * Lite Publisher
 * Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
@@ -31,9 +31,8 @@ $s = trim($s);
 $s = $this->replace_props($s);
 
 $lines = explode("\n", $s);
-
     switch ($type) {
-      case 'class':
+      case 'classname':
 return $this->filterclass($post, $lines);
       break;
       
@@ -72,8 +71,8 @@ return $theme->parsearg(tlocal::get('htmlcodedoc', $key), $args);
   
 public function getheaders(array &$a) {
 $result = array();
-while ((count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
-$result[$m[1]] = $m[2];
+while ((count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(.*+)/', $a[0], $m)) {
+$result[$m[1]] = trim($m[2]);
   array_splice($a, 0, 1);
 }
 return $result;
@@ -81,7 +80,7 @@ return $result;
 
 public function getbody(array &$a) {
 $result = '';
-while ((count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+while ((count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(.*+)/', $a[0], $m)) {
 $result .= array_shift($a) . "\n";
 }
 return trim($result);
@@ -125,8 +124,10 @@ return $result;
 
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
+dumpvar($headers);
+dumpstr($body);
 $result = $this->getaboutclass($headers, $body);
-dumpstr($result);
+//dumpstr($result);
 $class =$headers['classname'];
 $parentclass = isset($headers['parent']) ? $headers['parent'] : '';
 $docitem = array(
@@ -202,14 +203,16 @@ foreach ($parts as $type => $items) {
 $i = 0;
 $args->toctype = $type;
 $args->tocname = $lang->{$type . 's'};
-$tablehead .= $html->tablehead($args);
-$result .= $html->items($args);
+$args->itemname = $lang->$type;
+$tablehead .= $this->html('tablehead', $args);
+$result .= $this->html('items', $args);
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
+$args->name = $name;
 $args->body = $item['body'];
 $access = isset($item['headers']['access']) ? $item['headers']['access'] : 'public';
 $args->access = isset($lang->$access) ? $lang->$access : $access;
-$row[$i++] .= $this->html('itemtoc', $args);
+$rows[$i++] .= $this->html('itemtoc', $args);
 $result .= $this->html('item',  $args);
 }
 while ($i < $maxcount) $rows[$i++] .= '<td></td>';
@@ -217,23 +220,24 @@ while ($i < $maxcount) $rows[$i++] .= '<td></td>';
 
 $args->tablehead = $tablehead;
 $args->itemtoc = implode('</tr><tr>', $rows);
-$toc .= $this->html('toc', $args);
+$toc = $this->html('toc', $args);
 
+dumpstr($toc . $result);
 return $toc . $result;
 }
 
-public function getaboutclass(tpost $post, array $headers, $body) {
+public function getaboutclass(array $headers, $body) {
 $class = $headers['classname'];
 $lang = tlocal::i('codedoc');
 $args = new targs();
     $args->class = $class;
 $args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']) : $lang->noparent;
     $args->childs = $this->getchilds($class);
-    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $doc['source']);
+    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $headers['source']);
     $args->interfaces = $this->getclasses($headers, 'interface');
     $args->dependent = $this->getclasses($headers, 'dependent');
     $args->body = $body;
- return $this->html->aboutclass($args);
+ return $this->html('class', $args);
 }
   
   public function getchilds($parent) {
@@ -253,7 +257,7 @@ tposts::i()->loaditems(array_keys($items));
   
   private function getclasses(array $doc, $name) {
     if (empty($doc[$name])) return '';
-return preg_replace('/\w*+/', '[[$0]]', $doc[$name]);
+return preg_replace('/\w\w*+/', '[[$0]]', $doc[$name]);
 }
 
 }//class
