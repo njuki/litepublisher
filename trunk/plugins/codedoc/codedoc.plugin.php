@@ -19,4 +19,8 @@ $content = $filter->filter($post, $content, $m[1]);
 }
   }
   
+public function postdeleted($id) {
+litepublisher::$db->table = 'codedoc';
+litepublisher::$db->delete("id = $id");
+}
 }//class

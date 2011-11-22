@@ -11,6 +11,7 @@ function tcodedocpluginInstall($self) {
 $name = basename(dirname(__file__));
 $language = litepublisher::$options->language;
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', $name);
+
   $merger = tlocalmerger::i();
 $merger->lock();
   $merger->add('codedoc', "plugins/$name/resource/$language.ini");
@@ -18,7 +19,7 @@ $merger->lock();
 $merger->unlock();
 
   $manager = tdbmanager ::i();
-  $manager->CreateTable($self->table, '
+  $manager->CreateTable('codedoc', '
   id int unsigned NOT NULL default 0,
   class varchar(32) NOT NULL,
   parentclass varchar(32) NOT NULL,
@@ -44,10 +45,13 @@ events text not null,
   $linkgen = tlinkgenerator::i();
   $linkgen->data['codedoc'] = '/doc/[title].htm';
   $linkgen->save();
+
+tposts::i()->deleted = $self->postdeleted;
 }
 
 function tcodedocpluginUninstall($self) {
   //die("Warning! You can lost all tickets!");
+tposts::unsub($self);
   litepublisher::$classes->delete('tcodedocfilter');
   //litepublisher::$classes->delete('tcodedocclasses');
 
@@ -58,5 +62,5 @@ function tcodedocpluginUninstall($self) {
 $merger->delete('codedoc');
 
   $manager = tdbmanager ::i();
-  $manager->deletetable($self->table);
+  $manager->deletetable('codedoc');
 }
