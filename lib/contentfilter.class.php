@@ -56,29 +56,28 @@ class tcontentfilter extends tevents {
     ) {
       $parts = explode($matches[0], $s, 2);
       $excerpt = $this->filter(trim($parts[0]) . $moretag);
-      $post->excerpt = $excerpt;
       $post->filtered = $excerpt . $this->ExtractPages($post,trim($parts[1]));
-      $post->rss =  $excerpt;
-      $post->moretitle =  self::gettitle($matches[1]);
+$this->setexcerpt($post, $excerpt, self::gettitle($matches[1]));
       if ($post->moretitle == '')  $post->moretitle = tlocal::get('default', 'more');
     } else {
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
-        $excerpt = $this->filter(trim(self::GetExcerpt($s, $this->automorelength)) . $moretag);
-        $post->excerpt = $excerpt;
-        $post->rss =  $excerpt;
-        $post->moretitle = tlocal::get('default', 'more');
+$this->setexcerpt($post, $this->filter(trim(self::GetExcerpt($s, $this->automorelength)) . $moretag), tlocal::get('default', 'more'));
       } else {
         $post->filtered = $this->ExtractPages($post, $s);
-        $post->excerpt = $post->filtered;
-        $post->rss =  $post->filtered;
-        $post->moretitle =  '';
+$this->setexcerpt($post, $post->filtered, '');
       }
     }
     
     $post->description = self::getpostdescription($post->data['excerpt']);
     $this->aftercontent($post);
   }
+
+public function setexcerpt(tpost $post, $excerpt, $more) {
+        $post->excerpt = $excerpt;
+        $post->rss =  $excerpt
+        $post->moretitle =  $more;
+}
   
   public static function getpostdescription($description) {
     if (litepublisher::$options->parsepost) {
