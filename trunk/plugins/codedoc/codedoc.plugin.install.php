@@ -10,6 +10,7 @@ function tcodedocpluginInstall($self) {
   if (!dbversion) die("Ticket  system only for database version");
 $name = basename(dirname(__file__));
 $language = litepublisher::$options->language;
+  litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', $name);
   $merger = tlocalmerger::i();
 $merger->lock();
   $merger->add('codedoc', "plugins/$name/resource/$language.ini");
@@ -28,9 +29,6 @@ events text not null,
   KEY id (id),
   KEY parentclass (parentclass)
   ');
-
-  litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
-  //litepublisher::$classes->Add('tcodedocclasses', 'codedoc.classes.class.php', basename(dirname(__file__) ));
 
     $filter = tcontentfilter::i();
   $filter->lock();

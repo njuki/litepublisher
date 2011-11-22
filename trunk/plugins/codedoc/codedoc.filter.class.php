@@ -1,4 +1,4 @@
-<?php
+?php
 /**
 * Lite Publisher
 * Copyright (C) 2010, 2011 Vladimir Yushko http://litepublisher.com/
@@ -34,21 +34,23 @@ $lines = explode("\n", $s);
 
     switch ($type) {
       case 'class':
-$this->filterclass($post, $lines);
+return $this->filterclass($post, $lines);
       break;
       
       case 'interface':
       $this->getinterface($post, $ini);
       break;
     }
-    
+
+
+return;    
     $post->rss = $post->excerpt;
     $post->description = tcontentfilter::getpostdescription($post->excerpt);
     $post->moretitle = sprintf($lang->moretitle, $post->title);
 
     $cat = tcategories::i();
     $idcat = $cat->add($lang->$type);
-    if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
+   if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
   }
 
 public function fixpost(tpost $post) {
@@ -56,7 +58,7 @@ if (count($this->fix) == 0) return;
 foreach ($this->fix as $i => $item) {
 if ($post == $item['post']) {
 unset($item['post']);
-$item['id'] => $post->id;
+$item['id'] = $post->id;
 $this->db->insertrow($this->db->assoctorow($item));
 unset($this->fix[$i]);
 }
@@ -65,12 +67,12 @@ unset($this->fix[$i]);
 
 public function html($key, targs $args) {
 $theme = ttheme::instance();
-return $theme->parsearg(tlocal::get('htmlcodedoc', $key], $args);
+return $theme->parsearg(tlocal::get('htmlcodedoc', $key), $args);
 }
   
 public function getheaders(array &$a) {
 $result = array();
-while (count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+while ((count($a) > 0) && preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
 $result[$m[1]] = $m[2];
   array_splice($a, 0, 1);
 }
@@ -79,7 +81,7 @@ return $result;
 
 public function getbody(array &$a) {
 $result = '';
-while (count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
+while ((count($a) > 0) && !preg_match('/^\s*(\w*+)\s*[=:]\s*(\w*+)', $a[0], $m)) {
 $result .= array_shift($a) . "\n";
 }
 return trim($result);
@@ -100,8 +102,8 @@ while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
             $link = sprintf('<a href="%1$s#itemdoc-%2$s" title="%2$s">%2$s</a>', $post->link, $prop);
           } else {
             $link = $prop;
-          }
         }
+
         $s = str_replace($item[0], $link, $s);
       }
     }
@@ -124,10 +126,11 @@ return $result;
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 $result = $this->getaboutclass($headers, $body);
+dumpstr($result);
 $class =$headers['classname'];
 $parentclass = isset($headers['parent']) ? $headers['parent'] : '';
 $docitem = array(
-'id' = $post->id,
+'id' => $post->id,
 'class' => $class,
 'parentclass' => $parentclass,
 'methods' => '',
@@ -135,6 +138,7 @@ $docitem = array(
 'events' => ''
 );
 
+/*
     $post->excerpt = tcontentfilter::i()->filter($body);
 $post->rss = $post->excerpt;
     if ($post->id == 0) {
@@ -142,7 +146,7 @@ $post->rss = $post->excerpt;
       $linkgen = tlinkgenerator::i();
       $post->url = $linkgen->addurl($post, 'codedoc');
 }
-
+*/
 $parts = array(
 'method' => array(),
 'prop' =>  array(),
@@ -157,7 +161,7 @@ $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 if (isset($headers['property'])) {
 $headers['prop'] = $headers['property'];
-unset($headers['property'];
+unset($headers['property']);
 }
 foreach ($types as $type) {
 if (isset($headers[$type])) {
@@ -192,7 +196,7 @@ $post->onid = $this->fixpost;
 }
 
 //generate content
-$tablehead = ''';
+$tablehead = '';
 $rows = array_fill(0, $maxcount, '');
 foreach ($parts as $type => $items) {
 $i = 0;
@@ -249,7 +253,7 @@ tposts::i()->loaditems(array_keys($items));
   
   private function getclasses(array $doc, $name) {
     if (empty($doc[$name])) return '';
-return preg_replace('/\w*+/', '[[$0]]', $doc[$name);
+return preg_replace('/\w*+/', '[[$0]]', $doc[$name]);
 }
 
 }//class
