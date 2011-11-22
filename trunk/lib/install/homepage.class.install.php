@@ -29,5 +29,3 @@ function thomepageUninstall($self) {
   $menus->sort();
   $menus->unlock();
 }
-
-?>
