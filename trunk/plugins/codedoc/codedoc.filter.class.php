@@ -6,11 +6,19 @@
 * and GPL (gpl.txt) licenses.
 **/
 
-class tcodedocfilter extends tplugin {
+class tcodedocfilter extends titems {
+private $fix;
   
   public static function i() {
     return getinstance(__class__);
   }
+
+  protected function create() {
+    $this->dbversion = true;
+    parent::create();
+    $this->table = 'codedoc';
+    $this->fix = array();
+}
 
   public function filter(tpost $post, $s, $type) {
 tlocal::usefile('codedoc');
@@ -42,6 +50,18 @@ $this->filterclass($post, $lines);
     $idcat = $cat->add($lang->$type);
     if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
   }
+
+public function fixpost(tpost $post) {
+if (count($this->fix) == 0) return;
+foreach ($this->fix as $i => $item) {
+if ($post == $item['post']) {
+unset($item['post']);
+$item['id'] => $post->id;
+$this->db->insertrow($this->db->assoctorow($item));
+unset($this->fix[$i]);
+}
+}
+}
 
 public function html($key, targs $args) {
 $theme = ttheme::instance();
@@ -105,8 +125,16 @@ $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 $result = $this->getaboutclass($headers, $body);
 $class =$headers['classname'];
-$post->meta->classname = $class;
-if (isset($headers['parent'])) $post->meta->parentclass = $headers['parent'];
+$parentclass = isset($headers['parent']) ? $headers['parent'] : '';
+$docitem = array(
+'id' = $post->id,
+'class' => $class,
+'parentclass' => $parentclass,
+'methods' => '',
+'properties' => '',
+'events' => ''
+);
+
     $post->excerpt = tcontentfilter::i()->filter($body);
 $post->rss = $post->excerpt;
     if ($post->id == 0) {
@@ -117,7 +145,7 @@ $post->rss = $post->excerpt;
 
 $parts = array(
 'method' => array(),
-'property' =>  array(),
+'prop' =>  array(),
 'event' => array()
 );
 
@@ -127,9 +155,9 @@ $types = array_keys($parts);
 while (count($a) >0) {
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
-if (isset($headers['prop'])) {
-$headers['property'] = $headers['prop'];
-unset($headers['prop'];
+if (isset($headers['property'])) {
+$headers['prop'] = $headers['property'];
+unset($headers['property'];
 }
 foreach ($types as $type) {
 if (isset($headers[$type])) {
@@ -148,10 +176,19 @@ $maxcount = 0;
 foreach ($types as $type) {
 if (count($parts[$type]) > 0) {
 ksort($parts[$type]);
+$docitem[$type . 's'] = implode(',', array_keys($parts[$type]));
 $maxcount = max($maxcount, count($parts[$type]));
 } else {
 unset($parts[$type]);
 }
+}
+
+if ($post->id > 0) {
+$this->db->insert($docitem);
+} else {
+$docitem['post'] = $post;
+$this->fix[] = $docitem;
+$post->onid = $this->fixpost;
 }
 
 //generate content
@@ -195,19 +232,17 @@ $args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']
  return $this->html->aboutclass($args);
 }
   
-  public function getchilds($idpost) {
-    IF ($idpost == 0) return '__childs__';
-$db = litepublisher::$db;
-$db->table = 'postsmeta';
-    $items = $db->idselect("name = 'parentclass' and value = '$idpost'");
+  public function getchilds($parent) {
+    IF ($parent == '') return '';
+    $items = $this->db->res2items($this->db->query(
+sprintf('select id, class from %s where parentclass = %s order by class', $this->thistable, dbquote($parent)) ));
     if (count($items) == 0) return '';
-    $names = $db->res2items($db->select(sprintf('name = \'class\' and id in(%s)', implode(',', $items)));
+
     $links = array();
-    $posts = tposts::i();
-    $posts->loaditems($items);
-    foreach ($items as $id) {
+tposts::i()->loaditems(array_keys($items));
+    foreach ($items as $id => $item) {
       $post = tpost::i($id);
-      $links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $names[$id]['class'], $id);
+      $links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $item['class']);
     }
     return implode(', ', $links);
   }
