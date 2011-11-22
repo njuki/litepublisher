@@ -13,9 +13,9 @@ class tcodedocplugin extends tplugin {
   }
   
   public function filterpost($post, $content) {
-if (preg_match('/^\s*(classname|interface)\s*[=:]\s*\w*?/im', $content, $m)) {
+if (preg_match('/^\s*(classname|interface)\s*[=:]\s*\w*+/im', $content, $m)) {
     $filter = tcodedocfilter::i();
-filter->filter($post, $content, $m[1]);
+$content = $filter->filter($post, $content, $m[1]);
 }
   }
   

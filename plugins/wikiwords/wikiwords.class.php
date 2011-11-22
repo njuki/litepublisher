@@ -156,7 +156,7 @@ tposts::i()->addrevision();
           $result[] = $id;
           if ($post->id == 0) {
 $this->fix[$id] = $post;
-$post->onfix = $this->fixpost;
+$post->onid = $this->fixpost;
 }
           $content = str_replace($item[0], "<span class=\"wiki\" id=\"wikiword-$id\">$word</span>", $content);
         }
