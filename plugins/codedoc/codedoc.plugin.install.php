@@ -16,6 +16,19 @@ $merger->lock();
   $merger->add('codedoc', "plugins/$name/resource/html.ini");
 $merger->unlock();
 
+  $manager = tdbmanager ::i();
+  $manager->CreateTable($self->table, '
+  id int unsigned NOT NULL default 0,
+  class varchar(32) NOT NULL,
+  parentclass varchar(32) NOT NULL,
+methods text not null,
+props text not null,
+events text not null,
+
+  KEY id (id),
+  KEY parentclass (parentclass)
+  ');
+
   litepublisher::$classes->Add('tcodedocfilter', 'codedoc.filter.class.php', basename(dirname(__file__) ));
   //litepublisher::$classes->Add('tcodedocclasses', 'codedoc.classes.class.php', basename(dirname(__file__) ));
 
@@ -46,6 +59,6 @@ function tcodedocpluginUninstall($self) {
   $merger = tlocalmerger::i();
 $merger->delete('codedoc');
 
-litepublisher::$db->table = 'postsmeta';
-litepublisher::$db->delete("name = 'parentclass' or name = 'classname'");
+  $manager = tdbmanager ::i();
+  $manager->deletetable($self->table);
 }
