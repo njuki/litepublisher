@@ -18,9 +18,8 @@ function twikiwordsInstall($self) {
   }
   
   $filter = tcontentfilter::i();
-  $filter->lock();
   $filter->beforecontent = $self->beforefilter;
-  $filter->unlock();
+
   
   $posts = tposts::i();
   $posts->deleted = $self->postdeleted;
