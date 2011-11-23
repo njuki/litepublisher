@@ -8,6 +8,7 @@
 
 class tcodedocfilter extends titems {
 private $fix;
+private $classes;
   
   public static function i() {
     return getinstance(__class__);
@@ -18,6 +19,7 @@ private $fix;
     parent::create();
     $this->table = 'codedoc';
     $this->fix = array();
+$this->classes = array();
 }
 
   public function filter(tpost $post, $s, $type) {
@@ -28,7 +30,9 @@ tlocal::usefile('codedoc');
     $s = str_replace('->', '-&gt;', $s);
 $s = str_replace(array("\r\n", "\r"), "\n", $s);
 $s = trim($s);
+//die('repa');
 $s = $this->replace_props($s);
+//die('pla');
 
 $lines = explode("\n", $s);
     switch ($type) {
@@ -93,7 +97,7 @@ while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
 
   public function replace_props($s) {
     if (preg_match_all('/\[\[(\w*?)::(.*?)\]\]/', $s, $m, PREG_SET_ORDER)) {
-      foreach ($m as $item) {
+     foreach ($m as $item) {
         $class = $item[1];
         $prop = $item[2];
         if ($idpost = $this->find_class($class)) {
@@ -112,21 +116,21 @@ while ((count($a) > 0) && (trim($a[0]) == '') ) array_splice($a, 0, 1);
 public function find_class($class) {
 //check cache array
 if (isset($this->classes[$class])) return $this->classes[$class];
-litepublisher::$db->table = 'postsmeta';
-$result = litepublisher::$db->findid("name = 'class' and value = " . dbquote($class));
+$result = $this->IndexOf('class', $class);
 $this->classes[$class] = $result;
 return $result;
 }
   
   public function filterclass(tpost $post, array &$a) {
+//die('fil cla');
     $lang = tlocal::i('codedoc');
     $args = new targs();
 $contentfilter = tcontentfilter::i();
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
 $body = $contentfilter->filter($body);
-dumpvar($headers);
-dumpstr($body);
+//dumpvar($headers);
+//dumpstr($body);
 $result = $this->getaboutclass($headers, $body);
 //dumpstr($result);
 $class =$headers['classname'];
@@ -136,9 +140,10 @@ $docitem = array(
 'class' => $class,
 'parentclass' => $parentclass,
 'methods' => '',
-'properties' => '',
+'props' => '',
 'events' => ''
 );
+//die('0');
 
 $contentfilter->setexcerpt($post, $body, sprintf($lang->moretitle, $class));
     if ($post->id == 0) {
@@ -221,7 +226,8 @@ $args->tablehead = $tablehead;
 $args->itemtoc = implode('</tr><tr>', $rows);
 $toc = $this->html('toc', $args);
 
-dumpstr($toc . $result);
+//dumpstr($toc . $result);
+//die('tocc');
 $post->filtered = $toc . $result;
 }
 
