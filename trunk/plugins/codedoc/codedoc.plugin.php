@@ -12,10 +12,11 @@ class tcodedocplugin extends tplugin {
     return getinstance(__class__);
   }
   
-  public function filterpost($post, $content) {
+  public function filterpost($post, &$content, &$cancel) {
 if (preg_match('/^\s*(classname|interface)\s*[=:]\s*\w*+/im', $content, $m)) {
     $filter = tcodedocfilter::i();
-$content = $filter->filter($post, $content, $m[1]);
+$filter->filter($post, $content, $m[1]);
+$cancel = true;
 }
   }
   

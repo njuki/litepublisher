@@ -7,7 +7,6 @@
 **/
 
 class tdata {
-  public static $savedisabled;
   public $basename;
   public $cache;
   public $coclasses;
