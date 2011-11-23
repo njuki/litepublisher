@@ -13,7 +13,7 @@ class ttoptext extends tplugin{
     return getinstance(__class__);
   }
   
-  public function beforecontent(tpost $post, &$content) {
+  public function beforecontent(tpost $post, &$content, &$cancel) {
     $sign = '[toptext]';
     if ($i = strpos($content, $sign)) {
       $this->text = substr($content, 0, $i);

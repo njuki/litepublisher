@@ -121,9 +121,10 @@ return $result;
   public function filterclass(tpost $post, array &$a) {
     $lang = tlocal::i('codedoc');
     $args = new targs();
-
+$contentfilter = tcontentfilter::i();
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
+$body = $contentfilter->filter($body);
 dumpvar($headers);
 dumpstr($body);
 $result = $this->getaboutclass($headers, $body);
@@ -139,15 +140,13 @@ $docitem = array(
 'events' => ''
 );
 
-/*
-    $post->excerpt = tcontentfilter::i()->filter($body);
-$post->rss = $post->excerpt;
+$contentfilter->setexcerpt($post, $body, sprintf($lang->moretitle, $class));
     if ($post->id == 0) {
     $post->title = sprintf($lang->classtitle, $class);
       $linkgen = tlinkgenerator::i();
       $post->url = $linkgen->addurl($post, 'codedoc');
 }
-*/
+
 $parts = array(
 'method' => array(),
 'prop' =>  array(),
@@ -209,7 +208,7 @@ $result .= $this->html('items', $args);
 foreach ($items as $name => $item) {
 $args->add($item['headers']);
 $args->name = $name;
-$args->body = $item['body'];
+$args->body = $contentfilter->filter($item['body']);
 $access = isset($item['headers']['access']) ? $item['headers']['access'] : 'public';
 $args->access = isset($lang->$access) ? $lang->$access : $access;
 $rows[$i++] .= $this->html('itemtoc', $args);
@@ -223,7 +222,7 @@ $args->itemtoc = implode('</tr><tr>', $rows);
 $toc = $this->html('toc', $args);
 
 dumpstr($toc . $result);
-return $toc . $result;
+$post->filtered = $toc . $result;
 }
 
 public function getaboutclass(array $headers, $body) {

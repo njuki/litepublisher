@@ -48,7 +48,10 @@ class tcontentfilter extends tevents {
   }
   
   public function filterpost(tpost $post, $s) {
-    if ($this->callevent('beforecontent', array($post, &$s))) return;
+$cancel = false;
+$this->callevent('beforecontent', array($post, &$s, &$cancel));
+if ($cancel) return     $this->aftercontent($post);
+
     $moretag = ' <!--more-->';
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
@@ -75,8 +78,9 @@ $this->setexcerpt($post, $post->filtered, '');
 
 public function setexcerpt(tpost $post, $excerpt, $more) {
         $post->excerpt = $excerpt;
-        $post->rss =  $excerpt
+        $post->rss =  $excerpt;
         $post->moretitle =  $more;
+    $post->description = self::getpostdescription($excerpt);
 }
   
   public static function getpostdescription($description) {

@@ -142,7 +142,7 @@ tposts::i()->addrevision();
     }
   }
   
-  public function beforefilter($post, &$content) {
+  public function beforefilter($post, &$content, &$cancel) {
     $this->createwords($post, $content);
     $this->replacewords($content);
   }
