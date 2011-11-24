@@ -47,7 +47,7 @@ class timporter extends tplugin {
       return 'error';
     }
     
-    if ($test) tfilestorage::disabled = true;
+    if ($test) tfilestorage::$disabled = true;
     $this->import($s);
     
     $posts = tposts::i();

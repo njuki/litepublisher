@@ -3,7 +3,7 @@ parent = tdata
 source = lib/events.class.php
 depended = 
 
-Базовый класс для событий в Lite Publisher. Реализовано управление событиями. Смотрите также документ [[events]]. 
+Базовый класс для событий в Lite Publisher. Реализовано управление событиями. Смотрите также документ [[События]]. 
 
 method = __construct
 type = void
