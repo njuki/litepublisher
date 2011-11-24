@@ -15,6 +15,8 @@ unset($a);
 }
 
 function update505() {
+litepublisher::$site->jquery_version = '1.7.1';
+
 $backuper = tbackuper::i();
 $backuper->filertype = 'ftp';
 $backuper->save();

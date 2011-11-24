@@ -195,10 +195,8 @@ class tevents extends tdata {
     $this->unbind($class);
   }
   
-  public function unbind($a) {
-    $class = is_object($a) ? get_class($a) :
-    (is_string($a) ? trim($a) : $this->error('Unknown class'));
-    
+  public function unbind($c) {
+    $class = self::get_class_name($c);
     foreach ($this->events as $name => $events) {
       foreach ($events as $i => $item) {
         if ($item['class'] == $class) array_splice($this->events[$name], $i, 1);
@@ -208,16 +206,17 @@ class tevents extends tdata {
     $this->save();
   }
   
-  public function seteventorder($eventname, $instance, $order) {
+  public function seteventorder($eventname, $c, $order) {
     if (!isset($this->events[$eventname])) return false;
-    $class = get_class($instance);
-    $count = count($this->events[$eventname]);
+$events = &$this->events[$eventname];
+    $class = self::get_class_name($c);
+    $count = count($events);
     if (($order < 0) || ($order >= $count)) $order = $count - 1;
-    foreach ($this->events[$eventname] as $i => $event) {
+    foreach ($events as $i => $event) {
       if ($class == $event['class']) {
         if ($i == $order) return true;
-        array_splice($this->events[$eventname], $i, 1);
-        array_splice($this->events[$eventname], $order, 0, array(0 => $event));
+        array_splice($events, $i, 1);
+        array_splice($events, $order, 0, array(0 => $event));
         $this->save();
         return true;
       }

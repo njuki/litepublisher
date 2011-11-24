@@ -1,0 +1,17 @@
+classname = ECancelEvent 
+parent = Exception 
+
+
+Утилитарный маленький класс для досрочного прерывания цепочки событий. Используется в [[tevents::cancelevent]] и более нигде не встречается.
+
+method = __construct
+type = void
+access = public
+
+Перекрывает родительский метод __construct, сообщение сохраняется в result.
+
+prop = result
+type = string
+access = public
+
+Свойство хранит строку с которой было вызывано исключение.
