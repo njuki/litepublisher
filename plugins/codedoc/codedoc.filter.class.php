@@ -30,9 +30,8 @@ tlocal::usefile('codedoc');
     $s = str_replace('->', '-&gt;', $s);
 $s = str_replace(array("\r\n", "\r"), "\n", $s);
 $s = trim($s);
-//die('repa');
 $s = $this->replace_props($s);
-//die('pla');
+
 
 $lines = explode("\n", $s);
     switch ($type) {
@@ -70,7 +69,7 @@ unset($this->fix[$i]);
 
 public function html($key, targs $args) {
 $theme = ttheme::instance();
-return $theme->parsearg(tlocal::get('htmlcodedoc', $key), $args);
+return $theme->parsearg(str_replace("'", '"', tlocal::get('htmlcodedoc', $key)), $args);
 }
   
 public function getheaders(array &$a) {
@@ -228,7 +227,7 @@ $toc = $this->html('toc', $args);
 
 //dumpstr($toc . $result);
 //die('tocc');
-$post->filtered = $toc . $result;
+return $toc . $result;
 }
 
 public function getaboutclass(array $headers, $body) {

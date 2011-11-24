@@ -38,6 +38,8 @@ events text not null,
 
   $plugins = tplugins::i();
   if (!isset($plugins->items['wikiwords'])) $plugins->add('wikiwords');
+
+  $filter->beforecontent = $self->afterfilter;
   $filter->unlock();
   
   $about = tplugins::localabout(dirname(__file__));
