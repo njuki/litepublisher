@@ -1,0 +1,17 @@
+class = tevents_storage
+parent = tevents
+source = events.class.php
+depended = 
+
+ ласс, который хранит свои данные в глобальном хранилище [[tstorage]]. ¬се потомки этого класса следовательно оже хран€т свои данные в хранилище [[tstorage]]
+
+method = save
+type = boolean
+
+—охран€ет данные в хранилище [[tstorage]]
+
+method = load
+type = boolean
+
+
+¬осстанавливает данные из хранилища [[tstorage]]
