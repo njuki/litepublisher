@@ -1,0 +1,77 @@
+classname = tpaths
+source = index.php
+depended = litepublisher
+
+Класс используется ддля указания путей к файлам litepublisher. Везде, где требуетя составить абсолютное имя к файлу часто используется этот класс. Объект класса всегда доступен как litepublisher::$paths (смотрите [[litepublisher::paths]]). .Класс является оберткой для доступа к ассоциативному массиву [[litepublisher::_paths]]. Все ключи массива [[litepublisher::_paths]] являются свойствами этого класса и доступны для чтения и записи.
+
+prop = home
+type = string
+access = rw
+
+Корневая папка сайта.
+
+prop = lib
+type = string
+access = rw
+
+Папка lib с файлами библиотеки litepublisher
+
+prop = data
+type = string
+access = rw
+
+папка с данными, где хранят свою информацию классы. По умолчанию это storage/data
+
+prop = cache
+type = string
+access = rw
+
+Папка для кеша. По умолчанию storage/cache
+
+prop = libinclude
+type = string
+access = rw
+
+Папка дополнительных модулей, как правило это сторонние библиотеки, например zip, tar, ftp, smtp. По умолчанию это lib/include
+
+prop = languages
+type = string
+access = rw
+
+Папка с языковыми ini файлами, по умолчанию lib/languages
+
+prop = storage
+type = string
+access = rw
+
+папка данных, где находятся папки кеширования, данных и бекапа.
+
+prop = backup
+type = string
+access = rw
+
+Папка для бекапов, которые создаются при автоматическом обновлении. Доступны из админки на странице Обслуживание/Резирвирование
+
+prop = plugins
+type = string
+access = rw
+
+Папка с плагинами.
+
+prop = themes
+type = string
+access = rw
+
+Папка с темами
+
+prop = files
+type = string
+access = rw
+
+Папка с загруженными файлами в том числе и сборщика javascript. Файллы доступны для скачивания. Каждый тип файлов сохраняется в подпапке, например картинки будут в подпапке image
+
+prop = jjs
+type = string
+access = rw
+
+Папка с библиотеками javascript, в частности jquery	, галерея prettyPhoto, проигриватели аудио и видео.
