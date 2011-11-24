@@ -7,6 +7,7 @@
 **/
 
 class tcodedocplugin extends tplugin {
+private $post;
 
   public static function i() {
     return getinstance(__class__);
@@ -14,12 +15,19 @@ class tcodedocplugin extends tplugin {
   
   public function filterpost($post, &$content, &$cancel) {
 if (preg_match('/^\s*(classname|interface)\s*[=:]\s*\w*+/im', $content, $m)) {
+$this->post = $post;
     $filter = tcodedocfilter::i();
-$filter->filter($post, $content, $m[1]);
-//die('set fil');
+$content = $filter->filter($post, $content, $m[1]);
 $cancel = true;
 }
   }
+
+  public function afterfilter($post, &$content, &$cancel) {
+if ($post == $this->post) {
+$post->filtered = $content;
+$cancel = true;
+}
+}
   
 public function postdeleted($id) {
 litepublisher::$db->table = 'codedoc';

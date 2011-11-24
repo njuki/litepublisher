@@ -148,11 +148,8 @@ tposts::i()->addrevision();
   }
   
   public function createwords($post, &$content) {
-dumpvar($content);
-var_dump(strpos($content, '[wiki:'));
     $result = array();
     if (preg_match_all('/\[wiki\:(.*?)\]/im', $content, $m, PREG_SET_ORDER)) {
-dumpvar($m);
       foreach ($m as $item) {
         $word = $item[1];
         if ($id = $this->add($word, $post->id)) {
