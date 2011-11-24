@@ -12,4 +12,21 @@ public function filtercomment(&$content) {...}
 Вызывается перед обработкой текста комментария, но после замены перевода строк и замены всех спецсимволов. Если последний обработчик события возвращает true, то последдующей обработки не будет и будет вызвано событие [[onaftercomment]].
 
 event = onaftercomment
-, 'beforecontent', 'aftercontent', 'beforefilter', 'afterfilter', 'onsimplefilter', 'onaftersimple');
+
+Вызывается после обработки текста комментария. Вы можете сделать изменения после всех фильтров в методе [[filtercomment]]
+
+method = filtercomment
+type = string
+
+Вызывается из [[tcomments::add]] и [[tcomments::edit]]. Метод преобразует сырой текст комментария в конечный html, который будет использован при генерации списка комментариев на странице записи. Иными словами метод конвертирует $comment.rawcontent в $comment.content, и как раз тег $comment.content и используется в шаблоне комментария 
+content.post.templatecomments.comments.comment
+
+Вначале метод нормализует переводыстроки заменяет все спецсимволы на html сущности. После чего вызывается событие [[beforecomment]], потом заменяются все bbcode, в зависимости от настроек создаются ссылки из текста. В конце вызывается событие [[aftercomment]]
+
+method = filterpost
+
+Центральный метод класса, который конвертирует сырой текст записи в законченный html записи, в том числе формируя анонс, сылку далее и RSS. Этот метод вызывается 
+
+
+beforecontent
+ 'aftercontent', 'beforefilter', 'afterfilter', 'onsimplefilter', 'onaftersimple');
