@@ -6,14 +6,33 @@ parent = tevents
 event = oncomment
 type = boolean
 
-Вызывается в методе [[filtercomment]] фильтрации комментария, в качестве аргумента -текст комментария, пример метода обработчика:
-public function filtercomment(&$content) {...}
-
-Вызывается перед обработкой текста комментария, но после замены перевода строк и замены всех спецсимволов. Если последний обработчик события возвращает true, то последдующей обработки не будет и будет вызвано событие [[onaftercomment]].
+Вызывается в методе [[filtercomment]] фильтрации комментария, в качестве аргумента -текст комментария. Вызывается перед обработкой текста комментария, но после замены перевода строк и замены всех спецсимволов. Если последний обработчик события возвращает true, то последдующей обработки не будет и будет вызвано событие [[onaftercomment]]. Пример использования, где слово home будет заменено адресом главной страницы сайта:
+<code>
+//подписываемся на событие
+tcontentfilter::i()->oncomment =tmyclass::i()->filtercomment;
+//наш класс
+class tmyclass extends tplugin {
+  public function filtercomment(&$s) {
+    $s = str_replace('home', litepublisher::$site->url . '/', $s);
+  }
+}
+</code>
 
 event = onaftercomment
 
 Вызывается после обработки текста комментария. Вы можете сделать изменения после всех фильтров в методе [[filtercomment]]
+
+Пример использования, в конце комментария добавим параграф "Hellow World"":
+<code>
+//подписываемся на событие
+tcontentfilter::i()->onaftercomment =tmyclass::i()->aftercomment;
+//наш класс
+class tmyclass extends tplugin {
+  public function aftercomment(&$s) {
+    $s .= "\n<p>Hello world</p>\n"; . $s;
+  }
+}
+</code>
 
 method = filtercomment
 type = string
@@ -84,4 +103,29 @@ type = string
 Вывод - если нужно конвертировать исключительно текст, то используйте события [[onsimplefilter]] и [[onaftersimple]]. Пример таких плагинов - плагин внешних ссылок, markdown
 
 event = onsimplefilter
-onaftersimple
+
+Вызывается из метода [[simplefilter]] в самом начале метода. Параграфы в тексте события еще не расставлены. В методе будутрасставлены параграфы. Пример использования, где перед текстом будет добавлена строка "Hello world":
+<code>
+//подписываемся на событие
+tcontentfilter::i()->onsimplefilter =tmyclass::i()->beforesimple;
+//наш класс
+class tmyclass extends tplugin {
+  public function beforesimple(&$s) {
+    $s = "Hello world\n\n" . $s;
+  }
+}
+</code>
+
+event = onaftersimple
+
+Вызывается из метода [[simplefilter]] уже самом конце метода. Параграфы в тексте события уже расставлены. Текст будет возвращен из метода. Пример использования, в конце строки добавим параграф:
+<code>
+//подписываемся на событие
+tcontentfilter::i()->onaftersimple =tmyclass::i()->aftersimple;
+//наш класс
+class tmyclass extends tplugin {
+  public function aftersimple(&$s) {
+    $s .= "\n<p>Hello world</p>\n"; . $s;
+  }
+}
+</code>
