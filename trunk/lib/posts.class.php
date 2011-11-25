@@ -45,8 +45,14 @@ class tposts extends titems {
     }
     return $this->error("Item $id not found in class ". get_class($this));
   }
-  
-  public function loaditems(array $items) {
+
+public function finditems($where, $limit) {
+$result = $this->db->idselect($where);
+$this->loaditems($result);
+return $result;
+}
+
+    public function loaditems(array $items) {
     if (!dbversion || count($items) == 0) return;
     //exclude already loaded items
     if (isset(titem::$instances['post'])) {
@@ -319,7 +325,7 @@ $post->onid();
     if (dbversion) {
       $where = "status != 'deleted'";
       if ($author > 1) $where .= " and author = $author";
-      return $this->select($where, 'order by posted desc limit ' . (int) $count);
+      return $this->finditems($where. ' order by posted desc limit ' . (int) $count);
     }  else {
       return array_slice(array_keys($this->archives), 0, $count);
     }
@@ -351,7 +357,7 @@ return $result;
     $from = ($page - 1) * $perpage;
     if ($from > $count)  return array();
     if (dbversion)  {
-      return $this->select("status = 'published'", " order by posted desc limit $from, $perpage");
+      return $this->finditems("status = 'published' order by posted desc limit $from, $perpage");
     } else {
       $to = min($from + $perpage , $count);
       return array_slice(array_keys($this->archives), $from, $to - $from);
