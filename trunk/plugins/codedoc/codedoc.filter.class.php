@@ -27,16 +27,24 @@ tlocal::usefile('codedoc');
     $lang = tlocal::i('codedoc');
 
 //prepare content
-    $s = str_replace('->', '-&gt;', $s);
 $s = str_replace(array("\r\n", "\r"), "\n", $s);
+// prevent tcontentfilter replace code tag
+    $s =preg_replace_callback('/<code>(.*?)<\/code>/ims', array($this, 'callback_replace_code'), $s);
+//$s =preg_replace'/<code>(.*?)<\/code>/ims', '<div class="tempcode">$1</div>', $s);
+    $s = strtr($s, array(
+'->' => '-&gt;',
+    '$' => '&#36;'
+));
+
 $s = trim($s);
 $s = $this->replace_props($s);
-
 
 $lines = explode("\n", $s);
     switch ($type) {
       case 'classname':
-return $this->filterclass($post, $lines);
+$result = $this->filterclass($post, $lines);
+$result =preg_replace('/<div class="tempcode">(.*?)<\/div>/ims', '<code>$1</code>', $result);
+return $result;
       break;
       
       case 'interface':
@@ -54,6 +62,19 @@ return;
     $idcat = $cat->add($lang->$type);
    if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
   }
+
+  public function callback_replace_code($m) {
+    $s = strtr(    htmlspecialchars($m[1]), array(
+    '"' =>'&quot;',
+    "'" =>  '&#39;',
+    '$' => '&#36;',
+    '  ' => '&nbsp;&nbsp;'
+    ));
+
+    //double space for prevent auto_p
+    $s = str_replace("\n", '<br  />', $s);
+    return sprintf('<div class="tempcode">%s</div>', $s);
+}
 
 public function fixpost(tpost $post) {
 if (count($this->fix) == 0) return;
@@ -210,6 +231,8 @@ $args->itemname = $lang->$type;
 $tablehead .= $this->html('tablehead', $args);
 $result .= $this->html('items', $args);
 foreach ($items as $name => $item) {
+if (!isset($item['type'])) $item['type'] = 'void';
+if (!isset($item['access'])) $item['access'] = 'public';
 $args->add($item['headers']);
 $args->name = $name;
 $args->body = $contentfilter->filter($item['body']);
@@ -254,7 +277,7 @@ sprintf('select id, class from %s where parentclass = %s order by class', $this-
 tposts::i()->loaditems(array_keys($items));
     foreach ($items as $id => $item) {
       $post = tpost::i($id);
-      $links[] = sprintf('<a href="%1$s#more-%3$d" title="%2$s">%2$s</a>', $post->link, $item['class']);
+      $links[] = sprintf('<a href="%1$s#toptoc" title="%2$s">%2$s</a>', $post->link, $item['class']);
     }
     return implode(', ', $links);
   }
