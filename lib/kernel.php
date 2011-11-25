@@ -1282,6 +1282,7 @@ class titem extends tdata {
   
   public function setid($id) {
     if ($id != $this->id) {
+      self::$instances[$this->instancename][$id] = 'some';
       self::$instances[$this->instancename][$id] = $this;
       if (isset(   self::$instances[$this->instancename][$this->id])) unset(self::$instances[$this->instancename][$this->id]);
       $this->data['id'] = $id;

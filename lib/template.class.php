@@ -139,7 +139,7 @@ class ttemplate extends tevents_storage {
     $view = $this->view;
     $menuclass = $view->menuclass;
     $filename = litepublisher::$paths->cache . $view->theme->name . sprintf('.%s.%s.php',
-    $menuclass, litepublisher::$options->group);
+    $menuclass, litepublisher::$options->group ? litepublisher::$options->group : 'nobody');
     
     //if (file_exists($filename)) return file_get_contents($filename);
     //use memcache
