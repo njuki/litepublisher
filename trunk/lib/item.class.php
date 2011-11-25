@@ -55,8 +55,7 @@ if (!isset(self::$instances)) self::$instances = array();
 if (!isset(self::$instances[$name])) self::$instances[$name] = array();
       $a = &self::$instances[$this->instancename];
       if (isset(   $a[$this->id])) unset($a[$this->id]);
-// very strange PHP bug
-$a[$id] = 'a';
+if (isset($a[$id])) $a[$id] = 'a';
 $a[$id] = $this;
       $this->data['id'] = $id;
     }

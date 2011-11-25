@@ -332,7 +332,7 @@ $post->onid();
       $where = "status = 'published'";
       if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
-      //return $this->select($where, " order by posted $order limit $from, $perpage");
+//      return $this->select($where, " order by posted $order limit $from, $perpage");
 $result = $this->db->idselect($where . " order by posted $order limit $from, $perpage");
 $this->loaditems($result);
 return $result;
