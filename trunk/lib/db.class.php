@@ -282,10 +282,12 @@ class tdatabase {
   
   public function res2array($res) {
     $result = array();
-    while ($row = mysql_fetch_row($res)) {
-      $result[] = $row;
+    if (is_resource($res)) {
+      while ($row = mysql_fetch_row($res)) {
+        $result[] = $row;
+      }
+      return $result;
     }
-    return $result;
   }
   
   public function res2id($res) {
@@ -300,7 +302,7 @@ class tdatabase {
   
   public function res2assoc($res) {
     $result = array();
-    if ($res) {
+    if (is_resource($res)) {
       while ($r = mysql_fetch_assoc($res)) {
         $result[] = $r;
       }
@@ -310,7 +312,7 @@ class tdatabase {
   
   public function res2items($res) {
     $result = array();
-    if ($res) {
+    if (is_resource($res)) {
       while ($r = mysql_fetch_assoc($res)) {
         $result[(int) $r['id']] = $r;
       }
@@ -319,15 +321,15 @@ class tdatabase {
   }
   
   public function fetchassoc($res) {
-    return mysql_fetch_assoc($res);
+    return is_resource($res) ? mysql_fetch_assoc($res) : false;
   }
   
   public function fetchnum($res) {
-    return mysql_fetch_row($res);
+    return is_resource($res) ? mysql_fetch_row($res) : false;
   }
   
   public function countof($res) {
-    return  mysql_num_rows($res);
+    return  is_resource($res) ? mysql_num_rows($res) : 0;
   }
   
   public static function str2array($s) {
