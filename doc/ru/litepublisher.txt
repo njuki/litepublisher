@@ -51,7 +51,7 @@ prop = _paths
 type = array
 access = rw
 
-јссоциативный массив путей к папкам Lite Publisher. Ётот массив исползуетс€ в классе [[tpaths]] дл€ более простого доступа к ключам масива.
+јссоциативный массив путей к папкам Lite Publisher. Ётот массив используетс€ в классе [[tpaths]] дл€ более простого доступа к ключам массива.
 
 prop = debug
 type = boolean
@@ -75,11 +75,11 @@ prop = site
 type = tsite
 access = rw
 
-Ёкземпл€р [[tsite]] где наход€тс€ адреса сайта и версии jquery библиоттек.
+Ёкземпл€р [[tsite]] где наход€тс€ адреса сайта и версии jquery библиотек.
 
 
 prop = storage
 type = tstorage
-access = trw
+access = rw
 
 √лобальное хранилище данных, используетс€ классами [[toptions]], [[tsite]], [[ttemplate]] и другими дл€ хранени€ данных.

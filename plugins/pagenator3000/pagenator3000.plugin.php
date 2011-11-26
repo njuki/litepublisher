@@ -28,6 +28,7 @@ class tpagenator3000 extends tplugin {
             pagesSpan : %%perpage%%,
             pageCurrent : %%page%% - 1,
             baseUrl : function(page) {
+              if (isNaN(page)) return;
               window.location= ++page == 1 ? "%%link%%" :
               "%%pageurl%%" + page + "/";
             },
