@@ -40,27 +40,9 @@ $s = trim($s);
 $s = $this->replace_props($s);
 
 $lines = explode("\n", $s);
-    switch ($type) {
-      case 'classname':
-$result = $this->filterclass($post, $lines);
+$result = $this->parsedoc($post, $lines, $type);
 $result =preg_replace('/<div class="tempcode">(.*?)<\/div>/ims', '<code>$1</code>', $result);
 return $result;
-      break;
-      
-      case 'interface':
-      $this->getinterface($post, $ini);
-      break;
-    }
-
-
-return;    
-    $post->rss = $post->excerpt;
-    $post->description = tcontentfilter::getpostdescription($post->excerpt);
-    $post->moretitle = sprintf($lang->moretitle, $post->title);
-
-    $cat = tcategories::i();
-    $idcat = $cat->add($lang->$type);
-   if (($idcat != 0) && !in_array($idcat , $post->categories)) $post->categories[] = $idcat;
   }
 
   public function callback_replace_code($m) {
@@ -141,20 +123,27 @@ $this->classes[$class] = $result;
 return $result;
 }
   
-  public function filterclass(tpost $post, array &$a) {
-//die('fil cla');
+  public function parsedoc(tpost $post, array &$a, $typedoc) {
     $lang = tlocal::i('codedoc');
     $args = new targs();
 $contentfilter = tcontentfilter::i();
 $headers = $this->getheaders($a);
 $body = $this->getbody($a);
-$body = $contentfilter->filter($body);
-//dumpvar($headers);
-//dumpstr($body);
+$body = $contentfilter->filter($body . ' <!--more-->');
+
+if ($typedoc == 'interface') {
+$class =$headers['interface'];
+$parentclass = '';
+    $args->class = $class;
+    $args->source = sprintf('<a href="%1$s/source/%2$s" title="%2$s">%2$s</a>', litepublisher::$site->url, $headers['source']);
+    $args->body = $body;
+ $result = $this->html('interface', $args);
+} else {
 $result = $this->getaboutclass($headers, $body);
-//dumpstr($result);
 $class =$headers['classname'];
 $parentclass = isset($headers['parent']) ? $headers['parent'] : '';
+}
+
 $docitem = array(
 'id' => $post->id,
 'class' => $class,
@@ -163,11 +152,12 @@ $docitem = array(
 'props' => '',
 'events' => ''
 );
-//die('0');
 
-$contentfilter->setexcerpt($post, $body, sprintf($lang->moretitle, $class));
+$contentfilter->setexcerpt($post, $body, sprintf(
+$typedoc == 'interface' ? $lang->moreinterface : $lang->moretitle, $class));
+
     if ($post->id == 0) {
-    $post->title = sprintf($lang->classtitle, $class);
+    $post->title = sprintf($typedoc == 'interface' ? $lang->interfacetitle : $lang->classtitle, $class);
       $linkgen = tlinkgenerator::i();
       $post->url = $linkgen->addurl($post, 'codedoc');
 }
@@ -266,7 +256,7 @@ $args->parent = isset($headers['parent']) ? sprintf('[[%s]]', $headers['parent']
     $args->body = $body;
  return $this->html('class', $args);
 }
-  
+
   public function getchilds($parent) {
     IF ($parent == '') return '';
     $items = $this->db->res2items($this->db->query(

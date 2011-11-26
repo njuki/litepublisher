@@ -79,8 +79,8 @@ $this->setexcerpt($post, $post->filtered, '');
 public function setexcerpt(tpost $post, $excerpt, $more) {
         $post->excerpt = $excerpt;
         $post->rss =  $excerpt;
-        $post->moretitle =  $more;
     $post->description = self::getpostdescription($excerpt);
+        $post->moretitle =  $more;
 }
   
   public static function getpostdescription($description) {
