@@ -84,6 +84,7 @@ class tupdater extends tevents {
     
     ttheme::clearcache();
     tlocal::clearcache();
+    tsidebars::fix();
     if ($log) tfiler::log("update finished", 'update');
   }
   

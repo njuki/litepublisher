@@ -23,7 +23,7 @@ class ttidyfilter extends tplugin {
   }
   
   public function getbody($s) {
-$tag = '<div>';
+    $tag = '<div>';
     $i = strpos($s, $tag) + strlen($tag);
     $j = strrpos($s, '</div>');
     return substr($s, $i, $j - $i);
@@ -31,14 +31,14 @@ $tag = '<div>';
   
   public function filter(&$content) {
     $config = array(
-'clean' => true,
-'enclose-block-text' => true,
-'enclose-text' => true,
-//'input-xml' => true,
-'logical-emphasis' => true,
-'char-encoding' => 'utf8',
-//'input-encoding' => 'utf8',
-//'output-encoding' => 'utf8',
+    'clean' => true,
+    'enclose-block-text' => true,
+    'enclose-text' => true,
+    //'input-xml' => true,
+    'logical-emphasis' => true,
+    'char-encoding' => 'utf8',
+    //'input-encoding' => 'utf8',
+    //'output-encoding' => 'utf8',
     'indent'         => 'auto',  //true,
     'output-xhtml'   => true,
     'wrap'           => 200);

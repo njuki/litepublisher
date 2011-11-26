@@ -1,6 +1,7 @@
 <?php
 
 function refilter_comments() {
+$db = litepublisher::$db;
 $filter = tcontentfilter::i();
 $from = 0;
 while ($a = $db->res2assoc($db->query("select id, rawcontent from $db->rawcomments where id > $from limit 600"))) {

@@ -45,18 +45,18 @@ class tposts extends titems {
     }
     return $this->error("Item $id not found in class ". get_class($this));
   }
-
-public function finditems($where, $limit) {
+  
+  public function finditems($where, $limit) {
     if (isset(titem::$instances['post']) && (count(titem::$instances['post']) > 0)) {
-$result = $this->db->idselect($where . ' '. $limit);
-$this->loaditems($result);
-return $result;
-} else {
-return $this->select($where, $limit);
-}
-}
-
-    public function loaditems(array $items) {
+      $result = $this->db->idselect($where . ' '. $limit);
+      $this->loaditems($result);
+      return $result;
+    } else {
+      return $this->select($where, $limit);
+    }
+  }
+  
+  public function loaditems(array $items) {
     if (!dbversion || count($items) == 0) return;
     //exclude already loaded items
     if (isset(titem::$instances['post'])) {
@@ -202,7 +202,7 @@ return $this->select($where, $limit);
       chmod($dir, 0777);
       $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
     }
-$post->onid();
+    $post->onid();
     $this->lock();
     $this->updated($post);
     $this->cointerface('add', $post);
@@ -342,8 +342,8 @@ $post->onid();
       $where = "status = 'published'";
       if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
-//      return $this->select($where, " order by posted $order limit $from, $perpage");
-return $this->finditems($where,  " order by posted $order limit $from, $perpage");
+      //      return $this->select($where, " order by posted $order limit $from, $perpage");
+      return $this->finditems($where,  " order by posted $order limit $from, $perpage");
     } else {
       $count = $this->archivescount;
       if ($from > $count)  return array();

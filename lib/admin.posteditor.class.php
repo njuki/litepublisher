@@ -170,7 +170,7 @@ class tposteditor extends tadminmenu {
       $this->idpost = $post->id;
       return $r;
     }
-
+    
     $this->set_post($post);
     $posts = tposts::i();
     if ($id == 0) {

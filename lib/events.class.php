@@ -208,7 +208,7 @@ class tevents extends tdata {
   
   public function seteventorder($eventname, $c, $order) {
     if (!isset($this->events[$eventname])) return false;
-$events = &$this->events[$eventname];
+    $events = &$this->events[$eventname];
     $class = self::get_class_name($c);
     $count = count($events);
     if (($order < 0) || ($order >= $count)) $order = $count - 1;

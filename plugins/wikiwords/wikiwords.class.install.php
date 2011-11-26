@@ -19,11 +19,11 @@ function twikiwordsInstall($self) {
   
   $filter = tcontentfilter::i();
   $filter->beforecontent = $self->beforefilter;
-
+  
   
   $posts = tposts::i();
   $posts->deleted = $self->postdeleted;
-
+  
   litepublisher::$classes->classes['wikiwords'] = get_class($self);
   litepublisher::$classes->save();
 }

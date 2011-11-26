@@ -7,16 +7,15 @@
 **/
 
 function ttidyfilterInstall($self) {
-    if (!class_exists('tidy')) die('PHP tidy extension is required');
-    $filter = tcontentfilter::i();
-    $filter->lock();
-    $filter->onaftersimple = $self->filter;
-    $filter->onaftercomment = $self->filter;
-    $filter->unlock();
-  }
-  
+  if (!class_exists('tidy')) die('PHP tidy extension is required');
+  $filter = tcontentfilter::i();
+  $filter->lock();
+  $filter->onaftersimple = $self->filter;
+  $filter->onaftercomment = $self->filter;
+  $filter->unlock();
+}
+
 function ttidyfilterUninstall($self) {
-    $filter = tcontentfilter::i();
-    $filter->unbind($self);
-  }
-  
+  $filter = tcontentfilter::i();
+  $filter->unbind($self);
+}
