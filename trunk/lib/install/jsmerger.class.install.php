@@ -26,8 +26,8 @@ function tjsmergerInstall($self) {
   $self->addtext($section, 'pretty',
   '$(document).ready(function() {
     $("a[rel^=\'prettyPhoto\']").prettyPhoto({
-social_tools: false
-});
+      social_tools: false
+    });
   });');
   
   $section = 'admin';

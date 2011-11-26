@@ -210,8 +210,9 @@ class tpost extends titem implements  itemplate {
   public $childtable;
   private $aprev;
   private $anext;
-  private $ameta;
+  private $_meta;
   private $_theme;
+  private $_onid;
   
   public static function i($id = 0) {
     $id = (int) $id;
@@ -408,9 +409,36 @@ class tpost extends titem implements  itemplate {
     return $id;
   }
   
+  public function onid() {
+    if (isset($this->_onid) && count($this->_onid) > 0) {
+      foreach ($this->_onid as  $call) {
+        try {
+          call_user_func ($call, $this);
+        } catch (Exception $e) {
+          litepublisher::$options->handexception($e);
+        }
+      }
+      unset($this->_onid);
+    }
+    
+    if (isset($this->_meta)) {
+      $this->_meta->id = $this->id;
+      $this->_meta->save();
+    }
+  }
+  
+  public function setonid($call) {
+    if (!is_callable($call)) $this->error('Event onid not callable');
+    if (isset($this->_onid)) {
+      $this->_onid[] = $call;
+    } else {
+      $this->_onid = array($call);
+    }
+  }
+  
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
-    unset($this->aprev, $this->anext, $this->ameta, $this->_theme);
+    unset($this->aprev, $this->anext, $this->_meta, $this->_theme, $this->_onid);
     parent::free();
   }
   
@@ -456,10 +484,8 @@ class tpost extends titem implements  itemplate {
   }
   
   public function getmeta() {
-    if (!isset($this->ameta)) {
-      $this->ameta = tmetapost::i($this->id);
-    }
-    return $this->ameta;
+    if (!isset($this->_meta)) $this->_meta = tmetapost::i($this->id);
+    return $this->_meta;
   }
   
   public function Getlink() {
@@ -1012,6 +1038,16 @@ class tposts extends titems {
     return $this->error("Item $id not found in class ". get_class($this));
   }
   
+  public function finditems($where, $limit) {
+    if (isset(titem::$instances['post']) && (count(titem::$instances['post']) > 0)) {
+      $result = $this->db->idselect($where . ' '. $limit);
+      $this->loaditems($result);
+      return $result;
+    } else {
+      return $this->select($where, $limit);
+    }
+  }
+  
   public function loaditems(array $items) {
     if (!dbversion || count($items) == 0) return;
     //exclude already loaded items
@@ -1158,6 +1194,7 @@ class tposts extends titems {
       chmod($dir, 0777);
       $post->idurl = $urlmap->Add($post->url, get_class($post), $post->id);
     }
+    $post->onid();
     $this->lock();
     $this->updated($post);
     $this->cointerface('add', $post);
@@ -1284,7 +1321,7 @@ class tposts extends titems {
     if (dbversion) {
       $where = "status != 'deleted'";
       if ($author > 1) $where .= " and author = $author";
-      return $this->select($where, 'order by posted desc limit ' . (int) $count);
+      return $this->finditems($where, ' order by posted desc limit ' . (int) $count);
     }  else {
       return array_slice(array_keys($this->archives), 0, $count);
     }
@@ -1297,7 +1334,8 @@ class tposts extends titems {
       $where = "status = 'published'";
       if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
-      return $this->select($where, " order by posted $order limit $from, $perpage");
+      //      return $this->select($where, " order by posted $order limit $from, $perpage");
+      return $this->finditems($where,  " order by posted $order limit $from, $perpage");
     } else {
       $count = $this->archivescount;
       if ($from > $count)  return array();
@@ -1313,7 +1351,7 @@ class tposts extends titems {
     $from = ($page - 1) * $perpage;
     if ($from > $count)  return array();
     if (dbversion)  {
-      return $this->select("status = 'published'", " order by posted desc limit $from, $perpage");
+      return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
     } else {
       $to = min($from + $perpage , $count);
       return array_slice(array_keys($this->archives), $from, $to - $from);

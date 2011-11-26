@@ -48,10 +48,10 @@ class tcontentfilter extends tevents {
   }
   
   public function filterpost(tpost $post, $s) {
-$cancel = false;
-$this->callevent('beforecontent', array($post, &$s, &$cancel));
-if ($cancel) return     $this->aftercontent($post);
-
+    $cancel = false;
+    $this->callevent('beforecontent', array($post, &$s, &$cancel));
+    if ($cancel) return     $this->aftercontent($post);
+    
     $moretag = ' <!--more-->';
     if ( preg_match('/<!--more(.*?)?-->/', $s, $matches)  ||
     preg_match('/\[more(.*?)?\]/', $s, $matches)  ||
@@ -60,28 +60,28 @@ if ($cancel) return     $this->aftercontent($post);
       $parts = explode($matches[0], $s, 2);
       $excerpt = $this->filter(trim($parts[0]) . $moretag);
       $post->filtered = $excerpt . $this->ExtractPages($post,trim($parts[1]));
-$this->setexcerpt($post, $excerpt, self::gettitle($matches[1]));
+      $this->setexcerpt($post, $excerpt, self::gettitle($matches[1]));
       if ($post->moretitle == '')  $post->moretitle = tlocal::get('default', 'more');
     } else {
       if ($this->automore) {
         $post->filtered = $this->ExtractPages($post, $s);
-$this->setexcerpt($post, $this->filter(trim(self::GetExcerpt($s, $this->automorelength)) . $moretag), tlocal::get('default', 'more'));
+        $this->setexcerpt($post, $this->filter(trim(self::GetExcerpt($s, $this->automorelength)) . $moretag), tlocal::get('default', 'more'));
       } else {
         $post->filtered = $this->ExtractPages($post, $s);
-$this->setexcerpt($post, $post->filtered, '');
+        $this->setexcerpt($post, $post->filtered, '');
       }
     }
     
     $post->description = self::getpostdescription($post->data['excerpt']);
     $this->aftercontent($post);
   }
-
-public function setexcerpt(tpost $post, $excerpt, $more) {
-        $post->excerpt = $excerpt;
-        $post->rss =  $excerpt;
+  
+  public function setexcerpt(tpost $post, $excerpt, $more) {
+    $post->excerpt = $excerpt;
+    $post->rss =  $excerpt;
     $post->description = self::getpostdescription($excerpt);
-        $post->moretitle =  $more;
-}
+    $post->moretitle =  $more;
+  }
   
   public static function getpostdescription($description) {
     if (litepublisher::$options->parsepost) {
@@ -255,8 +255,8 @@ public function setexcerpt(tpost $post, $excerpt, $more) {
       if (substr_count($low, '[quote]') == substr_count($low, '[/quote]')) {
         $s = str_replace('[quote]', '<blockquote><p>', $s);
         $s = str_replace('[/quote]', '</p></blockquote>', $s);
-}
-}
+      }
+    }
     return$s;
   }
   

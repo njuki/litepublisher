@@ -39,15 +39,15 @@ class twikiwords extends titems {
     
     return parent::__get($name);
   }
-
-public function getpost($word) {
+  
+  public function getpost($word) {
     if ($id =$this->add($word, 0)) {
-    $items = $this->itemsposts->getposts($id);
-if (count($items) > 0) return $items[0];
+      $items = $this->itemsposts->getposts($id);
+      if (count($items) > 0) return $items[0];
     }
     return false;
   }
-
+  
   public function getlink($id) {
     $item = $this->getitem($id);
     $word = $item['word'];
@@ -88,7 +88,7 @@ if (count($items) > 0) return $items[0];
     if (($idpost > 0) && !$this->itemsposts->exists($idpost, $id)) {
       $this->itemsposts->add($idpost, $id);
       if (isset($this->links[$word])) unset($this->links[$word]);
-tposts::i()->addrevision();
+      tposts::i()->addrevision();
     }
     
     return $id;
@@ -123,8 +123,8 @@ tposts::i()->addrevision();
     }
     return $word;
   }
-
-public function fixpost(tpost $post) {
+  
+  public function fixpost(tpost $post) {
     if (count($this->fix) == 0) return;
     foreach ($this->fix as $id => $wikipost) {
       if ($post == $wikipost) {
@@ -132,13 +132,13 @@ public function fixpost(tpost $post) {
         unset($this->fix[$id]);
       }
     }
-
-tposts::i()->addrevision();
+    
+    tposts::i()->addrevision();
   }
   
   public function postdeleted($idpost) {
     if (count($this->itemsposts->deletepost($idpost)) > 0) {
-tposts::i()->addrevision();
+      tposts::i()->addrevision();
     }
   }
   
@@ -155,9 +155,9 @@ tposts::i()->addrevision();
         if ($id = $this->add($word, $post->id)) {
           $result[] = $id;
           if ($post->id == 0) {
-$this->fix[$id] = $post;
-$post->onid = $this->fixpost;
-}
+            $this->fix[$id] = $post;
+            $post->onid = array($this, 'fixpost');
+          }
           $content = str_replace($item[0], "<span class=\"wiki\" id=\"wikiword-$id\">$word</span>", $content);
         }
       }

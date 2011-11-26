@@ -50,13 +50,13 @@ class titem extends tdata {
   
   public function setid($id) {
     if ($id != $this->id) {
-$name = $this->instancename;
-if (!isset(self::$instances)) self::$instances = array();
-if (!isset(self::$instances[$name])) self::$instances[$name] = array();
+      $name = $this->instancename;
+      if (!isset(self::$instances)) self::$instances = array();
+      if (!isset(self::$instances[$name])) self::$instances[$name] = array();
       $a = &self::$instances[$this->instancename];
       if (isset(   $a[$this->id])) unset($a[$this->id]);
-if (isset($a[$id])) $a[$id] = 0;
-$a[$id] = $this;
+      if (isset($a[$id])) $a[$id] = 0;
+      $a[$id] = $this;
       $this->data['id'] = $id;
     }
   }

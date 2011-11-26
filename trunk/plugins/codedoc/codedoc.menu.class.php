@@ -12,12 +12,12 @@ class tcodedocmenu extends tmenu {
     return parent::iteminstance(__class__, $id);
   }
   
-public function gethead() {
-$result = parent::gethead();
+  public function gethead() {
+    $result = parent::gethead();
     $result .=   '<style type="text/css">
-.doc_classes p { display:none;}
-</style>
-<script type="text/javascript">
+  .doc_classes p { display:none;}
+    </style>
+    <script type="text/javascript">
     $(document).ready(function() {
       $("a[href=\'#\']", ".doc_classes").click(function() {
         $(this).parent().children("p").slideToggle();
@@ -25,26 +25,27 @@ $result = parent::gethead();
       });
     });
     </script>';
-}
-return $result;
-}
-  
-  public function getcontent() {
-      $result = parent::getcontent();
-        $db = litepublisher::$db;
-    $items = $db->res2items($db->query("select id, class from {$db->prefix}codedoc order by class"));
-if (count($items) == 0) return $result;
-tposts::i()->loaditems($items);
-      $theme = tview::getview($this)->theme;
-$args = new targs();
-$result .= '<ul class="doc_classes">';
-    $tml = '<li id="doc-class-$id"><a href="#">$class</a> $post.excerptcontent</li>';
-    foreach ($items as $id => $item) {
-$args->add($item);
-      ttheme::$vars['post'] = tpost::i($id);
-      $result .= $theme->parsearg($tml, $args);
-}
-
-$result .= '</ul>';
     return $result;
   }
+  
+  public function getcontent() {
+    $result = parent::getcontent();
+    $db = litepublisher::$db;
+  $items = $db->res2items($db->query("select id, class from {$db->prefix}codedoc order by class"));
+    if (count($items) == 0) return $result;
+    tposts::i()->loaditems(array_keys($items));
+    $theme = tview::getview($this)->theme;
+    $args = new targs();
+    $result .= '<ul class="doc_classes">';
+    $tml = '<li id="doc-class-$id"><a href="#">$class</a> $post.excerptcontent</li>';
+    foreach ($items as $id => $item) {
+      $args->add($item);
+      ttheme::$vars['post'] = tpost::i($id);
+      $result .= $theme->parsearg($tml, $args);
+    }
+    
+    $result .= '</ul>';
+    return $result;
+  }
+  
+}//class

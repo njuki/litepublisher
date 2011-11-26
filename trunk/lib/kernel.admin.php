@@ -1370,7 +1370,7 @@ class tposteditor extends tadminmenu {
   }
   
   public function processform() {
-    // dumpvar($_POST);
+    //dumpvar($_POST);
     $this->basename = 'editor';
     $html = $this->html;
     if (empty($_POST['title'])) return $html->h2->emptytitle;
@@ -1380,8 +1380,8 @@ class tposteditor extends tadminmenu {
       $this->idpost = $post->id;
       return $r;
     }
-    $this->set_post($post);
     
+    $this->set_post($post);
     $posts = tposts::i();
     if ($id == 0) {
       $this->idpost = $posts->add($post);

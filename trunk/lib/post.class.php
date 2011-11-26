@@ -13,7 +13,7 @@ class tpost extends titem implements  itemplate {
   private $anext;
   private $_meta;
   private $_theme;
-private $_onid;
+  private $_onid;
   
   public static function i($id = 0) {
     $id = (int) $id;
@@ -209,33 +209,33 @@ private $_onid;
     }
     return $id;
   }
-
-public function onid() {
-if (isset($this->_onid) && count($this->_onid) > 0) {
-foreach ($this->_onid as  $call) {
-try {
-call_user_func ($call, $this);
-    } catch (Exception $e) {
-litepublisher::$options->handexception($e);
-}
-}
-unset($this->_onid);
-}
-
-if (isset($this->_meta)) {
-$this->_meta->id = $this->id;
-$this->_meta->save();
-}
-}
-
-public function setonid($call) {
-if (!is_callable($call)) return;
-if (isset($this->_onid)) {
-$this->_onid[] = $call;
-} else {
-$this->_onid = array($call);
-}
-}
+  
+  public function onid() {
+    if (isset($this->_onid) && count($this->_onid) > 0) {
+      foreach ($this->_onid as  $call) {
+        try {
+          call_user_func ($call, $this);
+        } catch (Exception $e) {
+          litepublisher::$options->handexception($e);
+        }
+      }
+      unset($this->_onid);
+    }
+    
+    if (isset($this->_meta)) {
+      $this->_meta->id = $this->id;
+      $this->_meta->save();
+    }
+  }
+  
+  public function setonid($call) {
+    if (!is_callable($call)) $this->error('Event onid not callable');
+    if (isset($this->_onid)) {
+      $this->_onid[] = $call;
+    } else {
+      $this->_onid = array($call);
+    }
+  }
   
   public function free() {
     foreach ($this->coinstances as $coinstance) $coinstance->free();
