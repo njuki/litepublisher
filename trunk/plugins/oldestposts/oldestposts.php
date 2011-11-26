@@ -29,7 +29,7 @@ class toldestposts extends tclasswidget {
     $post = $this->getcontext('tpost');
     $posts = tposts::i();
     if (dbversion) {
-      $items = $posts->select("status = 'published' and posted < '$post->sqldate' ",' order by posted desc limit '. $this->maxcount);
+      $items = $posts->finditems("status = 'published' and posted < '$post->sqldate' ",' order by posted desc limit '. $this->maxcount);
     } else {
       $arch = array_keys($posts->archives);
       $i = array_search($post->id, $arch);

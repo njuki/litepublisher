@@ -47,9 +47,13 @@ class tposts extends titems {
   }
 
 public function finditems($where, $limit) {
-$result = $this->db->idselect($where);
+    if (isset(titem::$instances['post']) && (count(titem::$instances['post']) > 0)) {
+$result = $this->db->idselect($where . ' '. $limit);
 $this->loaditems($result);
 return $result;
+} else {
+return $this->select($where, $limit);
+}
 }
 
     public function loaditems(array $items) {
@@ -325,7 +329,7 @@ $post->onid();
     if (dbversion) {
       $where = "status != 'deleted'";
       if ($author > 1) $where .= " and author = $author";
-      return $this->finditems($where. ' order by posted desc limit ' . (int) $count);
+      return $this->finditems($where, ' order by posted desc limit ' . (int) $count);
     }  else {
       return array_slice(array_keys($this->archives), 0, $count);
     }
@@ -339,9 +343,7 @@ $post->onid();
       if ($author > 1) $where .= " and author = $author";
       $order = $invertorder ? 'asc' : 'desc';
 //      return $this->select($where, " order by posted $order limit $from, $perpage");
-$result = $this->db->idselect($where . " order by posted $order limit $from, $perpage");
-$this->loaditems($result);
-return $result;
+return $this->finditems($where,  " order by posted $order limit $from, $perpage");
     } else {
       $count = $this->archivescount;
       if ($from > $count)  return array();
@@ -357,7 +359,7 @@ return $result;
     $from = ($page - 1) * $perpage;
     if ($from > $count)  return array();
     if (dbversion)  {
-      return $this->finditems("status = 'published' order by posted desc limit $from, $perpage");
+      return $this->finditems("status = 'published'", " order by posted desc limit $from, $perpage");
     } else {
       $to = min($from + $perpage , $count);
       return array_slice(array_keys($this->archives), $from, $to - $from);
