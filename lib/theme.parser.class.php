@@ -623,7 +623,32 @@ class tthemeparser extends tevents {
         'tag' => '$submenu',
         'replace' => '$submenu'
         ),
+
+
+        'head' => array(
+        'tag' => '$template.head',
+        'replace' => '$template.head'
+        ),
         
+        'head.post' => array(
+        'tag' => '$post',
+        'replace' => ''
+        ),
+        
+        'head.post.prev' => array(
+        'tag' => '$prev',
+        'replace' => ''
+        ),
+                'head.post.next' => array(
+        'tag' => '$next',
+        'replace' => ''
+        ),
+        
+        'head.post.rss' => array(
+        'tag' => '$rss',
+        'replace' => ''
+        ),
+                
         'content' => array(
         'tag' => '$template.content',
         'replace' => '$template.content'
