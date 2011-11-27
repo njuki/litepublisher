@@ -270,10 +270,12 @@ class tpolls extends tplugin {
     $replace = "[poll]\nid={$item['hash']}\n";
 $replace .= "status={$item['status']}\ntype={$item['type']}\ntitle={$item['title']}\n";
       $replace .= "[items]\n$stritems\n[/items]\n[/poll]";
+
+$src = substr($content, $i, $j - $i);
       $content = substr_replace($content, $replace, $i, $j - $i);
+$post->rawcontent = str_replace($src, $replace, $post->rawcontent);
       $i = min($j, strlen($content));
     }
-    $post->rawcontent = $content;
   }
   
   public function filter(&$content) {

@@ -657,7 +657,7 @@ class tpost extends titem implements  itemplate {
     $posts->aftercontent($this, $result);
     return $result;
   }
-  
+
   public function setcontent($s) {
     if (!is_string($s)) $this->error('Error! Post content must be string');
     if ($s != $this->rawcontent) {
