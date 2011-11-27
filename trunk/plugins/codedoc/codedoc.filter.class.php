@@ -158,8 +158,8 @@ class tcodedocfilter extends titems {
     
     if ($post->id == 0) {
       $post->title = sprintf($typedoc == 'interface' ? $lang->interfacetitle : $lang->classtitle, $class);
-      $linkgen = tlinkgenerator::i();
-      $post->url = $linkgen->addurl($post, 'codedoc');
+      $post->url = "/doc/$class";
+//tlinkgenerator::i()->addurl($post, 'codedoc');
     }
     
     $parts = array(
