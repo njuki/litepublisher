@@ -450,20 +450,27 @@ class tpost extends titem implements  itemplate {
   }
   
   public function gethead() {
-    $result = '';
-    $options = litepublisher::$options;
-    $template = ttemplate::i();
-    $template->ltoptions['idpost'] = $this->id;
-    
-    if ($prev = $this->prev) $result .= "<link rel=\"prev\" title=\"$prev->title\" href=\"$prev->link\" />\n";
-    if ($next = $this->next) $result .= "<link rel=\"next\" title=\"$next->title\" href=\"$next->link\" />\n";
+// backward compatably with file version
+$result = isset($this->data['head']) ? $this->data['head'] : '';
+ttemplate::i()->ltoptions['idpost'] = $this->id;
+$theme = $this->theme;
+    $result .= $theme->templates['head.post'];
+    if ($prev = $this->prev) {
+ttheme::$vars['prev'] = $prev;
+$result .= $theme->templates['head.post.prev'];
+}
+
+    if ($next = $this->next) {
+ttheme::$vars['next'] = $next;
+$result .= $theme->templates['head.post.next'];
+}
     
     if ($this->commentsenabled && ($this->commentscount > 0) ) {
       $lang = tlocal::i('comment');
-      $result .= "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"$lang->onpost $this->title\" href=\"$this->rsscomments\" />\n";
+      $result .= $thme->templates['head.post.rss'];
     }
-    
-    return $result;
+
+return $theme->parse($result);    
   }
   
   public function getkeywords() {
