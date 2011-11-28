@@ -107,7 +107,7 @@ class tadminviews extends tadminmenu {
     }
   }
   
-  public function getspecclasses() {
+  public static function getspecclasses() {
     return array('thomepage', 'tarchives', 'tnotfound404', 'tsitemap');
   }
   

@@ -98,7 +98,7 @@ class tsitemap extends titems_itemplate implements itemplate {
   private function gettags(tcommontags $tags) {
     $tags->loadall();
     if ($tags->count == 0)  return '';
-    $result = '<h2>' . tlocal::get('default', $tags->PostPropname) . "</h2>\n<p>\n";
+    $result = '<h2>' . tlocal::get('default', $tags->postpropname) . "</h2>\n<p>\n";
     foreach ($tags->items as $id => $item) {
       $result .= sprintf('<a href="%s%s" title="%3$s">%3$s</a>, ', litepublisher::$site->url, $item['url'], $item['title']);
     }

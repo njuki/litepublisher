@@ -113,7 +113,7 @@ $template.head = [
     $prev = [<link rel="prev" title="$prev.title" href="$prev.link" />]
     $next = [<link rel="next" title="$next.title" href="$next.link" />]
   ]
-$tags = [<link rel="alternate" type="application/rss+xml" title="$context.title" href="$site.url/rss/$context.propname/$context.id.xml" />]
+$tags = [<link rel="alternate" type="application/rss+xml" title="$context.title" href="$site.url/rss/$context.postpropname/$context.id.xml" />]
 ]
 
 В шаблоне $template.head находится шаблоны для полной записи $post. В данном случае шабон пустой и включает в себя 3 подшаблона:

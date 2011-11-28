@@ -10,7 +10,7 @@ class tcommontags extends titems implements  itemplate {
   public $contents;
   public $itemsposts;
   public $PermalinkIndex;
-  public $PostPropname;
+  public $postpropname;
   public $id;
   private $newtitle;
   private $all_loaded;
@@ -23,7 +23,7 @@ class tcommontags extends titems implements  itemplate {
     $this->data['includechilds'] = false;
     $this->data['includeparents'] = false;
     $this->PermalinkIndex = 'category';
-    $this->PostPropname = 'categories';
+    $this->postpropname = 'categories';
     $this->contents = new ttagcontent($this);
     if (!$this->dbversion)  $this->data['itemsposts'] = array();
     $this->itemsposts = new titemspostsowner ($this);
@@ -103,7 +103,7 @@ class tcommontags extends titems implements  itemplate {
   public function postedited($idpost) {
     $post = $this->getpost((int) $idpost);
     $this->lock();
-  $changed = $this->itemsposts->setitems($idpost, $post->{$this->PostPropname});
+  $changed = $this->itemsposts->setitems($idpost, $post->{$this->postpropname});
     $this->updatecount($changed);
     $this->unlock();
   }
@@ -237,7 +237,7 @@ class tcommontags extends titems implements  itemplate {
     $this->itemsposts->deleteitem($id);
     parent::delete($id);
     $this->unlock();
-    $this->itemsposts->updateposts($list, $this->PostPropname);
+    $this->itemsposts->updateposts($list, $this->postpropname);
     $this->changed();
     $urlmap->clearcache();
   }
@@ -643,7 +643,7 @@ class ttags extends tcommontags {
     $this->table = 'tags';
     $this->basename = 'tags';
     $this->PermalinkIndex = 'tag';
-    $this->PostPropname = 'tags';
+    $this->postpropname = 'tags';
     $this->contents->table = 'tagscontent';
     $this->itemsposts->table = $this->table . 'items';
   }
